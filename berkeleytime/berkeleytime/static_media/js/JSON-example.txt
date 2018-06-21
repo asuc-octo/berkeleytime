@@ -1,0 +1,19 @@
+[
+	{"standard_department" : "Computer Science", "course_number" : "61A",
+		...all of the attributes of haste.henerate.course maybe..., "display_constant" : "b+", "id" : 108},
+	{"standard_department" : "Comparative Literature", "course_number" : "R1B",
+		...all of the attributes of haste.henerate.course maybe..., "display_constant" : "a-", "id" : 2289},
+	{"standard_department" : "Linguistics", "course_number" : "114",
+		...all of the attributes of haste.henerate.course maybe..., "display_constant" : "b-", "id" : 112}
+]
+
+// all "course" dictionaries should have all the following keys (though they can have more if needed):
+// standard_department, the department to be displayed
+// abbreviation, the standard department abbreviation
+// title, the title to be displayed under the department and course number
+// course_number, the course number
+// display_constant, the "b+" or "MWF" maybe, that will be displayed to the right of the course listing
+// id, the id number of the CourseRequirementEntry object
+// color, the hex value (e.g. 34B62F) that the color should be displayed in.
+
+// Note: the keys are all strings.

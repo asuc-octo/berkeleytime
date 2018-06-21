@@ -1,0 +1,19 @@
+{% load staticfiles %}
+
+{% spaceless %}
+<div class='marketplace-action-container'>
+    <button type='button' {% if price_difference %}class='price-cta'{% endif %}>
+        <span class='buy-button-text'>{{cta_text}}</span>
+    </button>
+    <div class="action-description-container">
+        {% if price_difference %}
+            <span class="action-description">Lowest price on<span class='action-logo'><img src="{% static 'css/img/amazon.png' %}"></span> compared to Cal Bookstore</span>
+        {% else %}
+            {% comment %}
+            <span class="action-description">Buy/Rent with</span>
+            <span class='action-logo'><img src="{% static 'css/img/amazon.png' %}"></span>
+            {% endcomment %}
+        {% endif %}
+    </div>
+</div>
+{% endspaceless %}

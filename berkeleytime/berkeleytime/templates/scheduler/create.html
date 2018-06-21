@@ -1,0 +1,9 @@
+<div id='message'>Name Your Schedule</div>
+<div id='create-box'>
+    <div id='title'>Name Your Schedule</div>
+    <form id='create_form' method='post' action='/schedule/create/'>{% csrf_token %}
+        <input type='text' name='name' id='sayer' class='input'><br>
+        <input type='checkbox' name="main"><label>Main?</label>
+    </form>
+</div>
+

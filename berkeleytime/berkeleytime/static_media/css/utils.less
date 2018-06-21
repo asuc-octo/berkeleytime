@@ -1,0 +1,131 @@
+.border-radius(@topleft: 5px, @topright: 5px, @bottomright: 5px, @bottomleft: 5px) {
+    -webkit-border-radius: @topleft @topright @bottomright @bottomleft;
+    -moz-border-radius: @topleft @topright @bottomright @bottomleft;
+    -o-border-radius: @topleft @topright @bottomright @bottomleft;
+    border-radius: @topleft @topright @bottomright @bottomleft;
+}
+
+.linear-gradient-two(@first: black, @second: white, @first-percent: 0%, @second-percent: 100%) {
+    background: -moz-linear-gradient(@first @first-percent, @second @second-percent); /* FF 3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(@first-percent, @first), color-stop(@second-percent, @second)); /* Safari 4+, Chrome 2+ */
+    background: -webkit-linear-gradient(@first @first-percent, @second @second-percent); /* Safari 5.1+, Chrome 10+ */
+    background: -o-linear-gradient(@first @first-percent, @second @second-percent); /* Opera 11.10 */
+    background: linear-gradient(@first @first-percent, @second @second-percent); /* the standard */
+}
+
+.height(@h, @t) {
+    height: @h;
+    line-height: @h;
+    font-size: @t;
+}
+
+.line-height(@h, @t) {
+    line-height: @h;
+    font-size: @t;
+}
+
+.font(@f, @w) {
+    font-family: @f;
+    font-weight: @w;
+}
+
+.ellipsis-overflow() {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.disable-ellipsis-overflow() {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;   
+}
+
+.circle-picture(@diameter, @picture-border: 2px) {
+    width: @diameter - 2 * @picture-border;
+    height: @diameter - 2 * @picture-border;
+    margin: 0 auto;
+    -webkit-border-radius: 99em;
+    -moz-border-radius: 99em;
+    border-radius: 99em;
+    border: @picture-border solid #eee;
+    box-shadow: 0 3px 2px rgba(0, 0, 0, 0.3);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.unselectable() {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: moz-none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.input-font(@font, @weight) {
+    ::-webkit-input-placeholder { .font(@font, @weight) }
+    ::-moz-placeholder { .font(@font, @weight) } /* firefox 19+ */
+    :-ms-input-placeholder { .font(@font, @weight) } /* ie */
+    input:-moz-placeholder { .font(@font, @weight) }
+    input[type="text"] { .font(@font, @weight) }
+    textarea { .font(@font, @weight) }
+}
+
+.dark-link(@color, @p: 10%) {
+    cursor: pointer;
+    color: @color;
+    &:hover {
+        color: darken(@color, @p);
+    }
+}
+
+.light-link(@color, @p: 20%) {
+    cursor: pointer;
+    color: @color;
+    &:hover {
+        color: lighten(@color, @p);
+    }
+}
+
+.rotate(@deg) {
+    transform: rotate(@deg);
+    -webkit-transform: rotate(@deg);
+    -ms-transform: rotate(@deg);
+    -moz-transform: rotate(@deg);
+    -o-transform: rotate(@deg);
+}
+
+.text-with-divider(@color: #bbb, @divider-width: 1px, @bg-color: white) {
+    display: block;
+    height: 0.5em;
+    border: none;
+    border-bottom: @divider-width solid @color;
+    margin-bottom: 0.5em;
+    &:first-line {
+        background-color: @bg-color;
+    }
+    &:before {
+        content: "\a0\a0\a0";
+    }
+    &:after {
+        content: "\a0\a0\a0";
+    }
+}
+
+.background(@url) {
+    background: url(@url) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.absolute-center(@width, @top) {
+    position: absolute;
+    top: @top;
+    width: @width;
+    left: 50%;
+    margin-left: -@width/2;
+}

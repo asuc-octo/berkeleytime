@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Promote Your Organization{% endblock %}
+
+{% block stylesheets %}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/secret.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/pe-icon-7-stroke.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/helper.css' %}">
+{% endblock %}
+
+
+{% block scripts %}
+<script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.10/angular.min.js"></script>
+<script type='text/javascript' src="{% static 'js/secret.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+{% spaceless %}
+<div id="container" ng-app="Secret" ng-controller="secretController">
+    <div class="header-container">
+        <div class="shade"></div>
+        <div class="header-content">
+            <h1>promo<span class="logo-t">t</span>e.</h1>
+        </div>
+    </div>
+
+    <div class="content-container" >
+
+        <div class="features-container">
+            <div class="column">
+                <div class="icon-container">
+                    <i class="feature-icon pe-7s-rocket"></i>
+                </div>
+                <div class="text title-container">
+                    <h2>Reach 1000s of Students</h2>
+                </div>
+
+                <div class="text description-container">
+                Thousands of students use Berkeleytime every week. Help support us by advertising your organization on our website.
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="icon-container">
+                    <i class="feature-icon pe-7s-piggy"></i>
+                </div>
+                <div class="text title-container">
+                    <h2>$1 A Day</h2>
+                </div>
+
+                <div class="text description-container">
+                We want to help get as many organizations and events out there as possible. Putting your organization on top costs less a few flyers.
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="icon-container">
+                    <i class="feature-icon pe-7s-coffee"></i>
+                </div>
+                <div class="text title-container">
+                    <h2>Contact Us Now</h2>
+                </div>
+
+                <div class="text description-container">
+                Email yu<!-- spamspamgoaway -->xinzhu<!-- idontwantspam -->@b<!-- noooo -->e<!-- noooo -->rkel<!-- noooo -->ey.edu, and we will work one-on-one with your organization to give you a customized experience.
+                </div>
+            </div>
+        </div>
+
+        <div class="build-header">Try customizing your own ad below:</div>
+
+        <div class="build-container">
+            <div class="render-container">
+                <div class="secret-container">
+                    <div class="secret-banner">From the student community</div>
+                    <div class="secret-content" style="background-color: [[secretDefaultColor]]; border: 1px solid [[secretBorderColor]]">
+                        <div class="secret-header">[[secretOrgName]]</div>
+                        <div class="secret-subtitle">[[secretDescription]]</div>
+                    </div>
+                </div>
+
+                <div class="color-picker">
+                    <ul>
+                        <li ng-repeat="color in secretColors" class="color-container" ng-mouseover="toggleColor(color.hex)">
+                            <div class="color-circle" style="background-color: [[color.hex]]"></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="form-container">
+                <div class="input-container">
+                    <div class="input-field">
+                        <input ng-maxlength="100" class="short" type="text" name="organization" ng-model="secretOrgName">
+                    </div>
+                    <div class="footer">Organization Name</div>
+                </div>
+            
+
+                <div class="input-container">
+                    <div class="input-field">
+                        <input class="short" type="text" name="url" placeholder="Circle K" ng-model="secretOrgURL">
+                    </div>
+                    <div class="footer">URL</div>
+                </div>
+
+                <div class="input-container">
+                    <textarea ng-maxlength="140" ng-model="secretDescription" rows="6" cols="50" placeholder="Whether you’ve been here before or you’re brand new, we are unbelievably excited to have you! We truly have a diverse array of events for you."></textarea>
+                    <div class="footer">Description (max: 140 char)</div>
+                </div>               
+
+        </div>
+    </div>
+</div>
+{% endspaceless %}
+{% endblock %}

@@ -1,0 +1,177 @@
+@import "utils.less";
+@import "standard.less";
+
+#container {
+    width: 100%;
+}
+
+.contact-row {
+    min-width: 960px;
+}
+
+.contact-container, .people-container {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.contact-header {
+    margin-top: 50px;
+    .height(70px, 40px);
+    text-align: center;
+}
+.contact-container {
+    background: url("img/pattern.png") repeat center center;
+    width: 40%;
+    height: 500px;
+}
+
+@contact-form-container-width: 350px;
+.contact-form {
+    margin: 20px auto;
+    position: relative;
+    width: @contact-form-container-width;
+}
+
+.input-font(@main-font, 300);
+
+
+.contact-form-container {
+    ul, ol, li {
+        padding: 0;
+        margin: 0;
+    }
+    position: relative;
+    display: block;
+    margin: 25px auto 100px auto;
+    width: @contact-form-container-width;
+}
+
+input, textarea {
+    width: @contact-form-container-width;
+    outline: none !important; // cancels border glow
+    box-shadow: none !important;
+    border-radius: 0px !important;
+    margin: 0;
+    padding: 0;
+    padding: 5px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.input-header {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+@button-width: 100px;
+#ss-submit {
+    .font(@main-font, 300);
+    margin-top: 0px;
+    padding: 0;
+    background-color: @berkeleytime-blue;
+    color: white;
+    text-align: center;
+    .height(33px, 13px);
+    overflow: hidden;
+    border: none;
+    width: @button-width;
+
+    &:hover {
+        background-color: lighten(@berkeleytime-blue, 10%);
+    }
+    cursor: pointer;
+}
+
+.people-container {
+    overflow-y: scroll;
+    width: 57%;
+    margin-left: 3%;
+}
+
+@person-height: 150px;
+.person-container {
+    margin-top: 40px;
+    @diameter: 150px;
+    .picture-container, .text-container {
+        display: inline-block;
+        vertical-align: top;
+    }
+    .picture-container {
+        width: 30%;
+    }
+    .text-container {
+        width: 60%;
+    }
+    .picture-container .picture {
+        @picture-border: 2px;
+        width: @diameter;
+        height: @diameter;
+        // width: @diameter - 2 * @picture-border;
+        // height: @diameter - 2 * @picture-border;
+        margin: 0 auto;
+        -webkit-border-radius: 99em;
+        -moz-border-radius: 99em;
+        border-radius: 99em;
+        // border: @picture-border solid #eee;
+        // box-shadow: 0 3px 2px rgba(0, 0, 0, 0.3);
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        &.yuxin {
+            background-image: url("http://yuxinzhu.com/images/me.jpg");
+        }
+        &.noah {
+            background-image: url("https://scontent-sjc2-1.xx.fbcdn.net/hphotos-xat1/v/t1.0-9/11212766_10153421205099809_7311188640885507363_n.jpg?oh=7ba7313bd07346740685e9e87ec97efb&oe=566CA24A");
+        }
+        &.ashwin {
+            background-image: url("https://scontent-b-sjc.xx.fbcdn.net/hphotos-xfp1/l/t31.0-8/1512163_677109762339468_1561925069_o.jpg");
+        }
+    }
+    .text-container {
+        margin-left: 10px;
+        .name {
+            .height(26px, 20px);
+        }
+        .subtitle {
+            .height(19px, 13px);
+            overflow: hidden;
+        }
+        .description {
+            margin-top: 5px;
+            .line-height(18px, 12px);
+        }
+    }
+}
+
+.submitted-content {
+    display: none;
+    margin: 0 auto;
+    margin-top: 180px;
+    width: 300px;
+    .height(130px, 90px);
+    text-align: center;
+    i {
+        color: @header-blue;
+    }
+    .submitted-text {
+        .height(28px, 16px);
+    }
+}
+
+.blue-link {
+    color: @berkeleytime-blue;
+    text-decoration: none;
+
+    &:hover {
+        cursor: pointer;
+        color: darken(@berkeleytime-blue, 20%);
+    }
+}
+
+.minions-content {
+    width: 600px;
+    margin: 0 auto;
+    margin-top: 25px;
+    .line-height(18px, 11px);
+    margin-bottom: 25px;
+}

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Grades{% endblock %}
+
+{% block meta %}
+    <meta name="description" content="See course grade distributions from official university records and compare across different semsters and sections.">
+    <meta name="keywords" content="berkeley, courses, grades, average, curve, rankings, difficult, drop deadline, professor, easy, uc, cal, uc berkeley">
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet">
+    <link rel='stylesheet' type='text/css' href="{% static 'bootstrap/css/bootstrap-modal.min.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/catalog/course_box.css' %}">
+    <link rel="stylesheet" type='text/css' href="{% static 'css/popover.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/data/grades.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/tour/grumble.min.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/common/welcome.css' %}">
+    <link rel="stylesheet" type='text/css' href="{% static 'css/elusive-webfont.css' %}">
+{% endblock %}
+
+{% block scripts %}
+    <!-- vendor scripts -->
+    <script type='text/javascript' src="{% static 'js/jquery.min.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/csrf-ajax.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/underscore.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/d3.v3.min.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/common/frame.js' %}"></script>
+    <script type='text/javascript' src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.popover.js' %}"></script>
+
+    <!-- import scripts -->
+    <script type='text/javascript' src="{% static 'js/common/colors.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/bt-utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/course-box.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/tour/Bubble.min.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/tour/jquery.grumble.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tour/tour.js' %}"></script>
+
+    <!-- grades scripts -->
+    <script type="text/javascript" src="{% static 'js/data/grades-utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/data/grades.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+    <div id="container">
+        {% spaceless %}
+        <div id="section_select">
+            {% if courses %}
+            <div class="select_container">
+                <select id='select_course' data-placeholder='Search for a class...'>
+                    <option></option>
+                    {% for course in courses %}
+                        <option data-title="{{course.abbreviation}} {{course.course_number}}" value="{{ course.id }}">
+                            <p class="title">{{course.abbreviation}} {{course.course_number}}</p>
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+
+            <div class="select_container">
+                <select id='select_type'>
+                    <option value='instructor'>By Instructor</option>
+                    <option value='semester'>By Semester</option>
+                </select>
+            </div>
+            <div class="select_container">
+                <select disabled id='select_primary' data-placeholder='Select an option...'></select>
+            </div>
+            <div class="select_container">
+                <select disabled id='select_secondary' data-placeholder='Select an option...'>
+                    <option></option>
+                </select>
+            </div>
+
+            <div id='select_add_button' class='select-button'>
+                <i class='icon-plus-sign'></i>
+            </div>
+            <div style='display: none;' id='select_question_button' class='select-button'>
+                <i class='icon-question-sign'></i>
+            </div>
+            <div style='display: none;' id='select_question_button_2' class='select-button'>
+                <i class='icon-question-sign'></i>
+            </div>
+            <div style='display: none;' id='select_question_button_3' class='select-button'>
+                <i class='icon-question-sign'></i>
+            </div>
+        </div>
+        <div id="graph_container">
+            <div class="loading" style="display: none;"><img src="{% static 'css/img/loading.gif' %}"></div>
+            <div class="welcome" style="display: none;">
+                <div class="greeting"><i class="icon-signal"></i></div>
+                <h1 class="welcome-subheading">Grade distributions for every class, all in one place. <a class="welcome-highlight">Take a tour</a>.</h1>
+                <h2 class="welcome-paragraph">
+                    Filter distributions by instructor or semester, and compare classes to each other easily. Additional info is shown on the right.
+                </h2>
+            </div>
+        </div>
+        <div id="info">
+                {% if ad %}
+                <div id="secret_info_container">
+                    <div class="secret-banner">From the student community</div>
+                    <div class="grades-secret berkeleytime-secret" data-color="{{ad.color}}" data-url="{{ad.url}}">
+                        <div class="secret-header">{{ad.title|safe}}</div>
+                        <div class="secret-subtitle">{{ad.text|safe}}</div>
+                        <div class="secret-footer"><a target="_blank" href="/advertise">(?)</a></div>
+                    </div>
+
+                </div>
+                {% endif %}
+                <div id="section_info_container"></div>
+                <div id="grades_info_container"></div>
+        </div>
+        {% endspaceless %}
+
+        <a href="https://docs.google.com/a/berkeley.edu/forms/d/1eGJd2Vk52Y-6R9T7fY9JWzGvu9nsck6YhJWadWKfldE/viewform"  target="_blank">
+            <button id="feedback-button">
+                Report a Problem
+            </button>
+        </a>
+
+    </div>
+{% endblock %}
+
+

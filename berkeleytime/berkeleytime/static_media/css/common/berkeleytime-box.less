@@ -1,0 +1,140 @@
+// styles for berkeleytime box
+// the berkeleytime box is a floating UI component dialog box which displays a header message,
+// content, and a selection of buttons.
+
+@import "utils.less";
+@import "standard.less";
+
+@box-width: 300px;
+@box-padding-bottom: 30px;
+.bt-box {
+    width: @box-width;
+    .font(@main-font, 300);
+    padding-bottom: @box-padding-bottom;
+
+    position: absolute; // the berkeleytime box always floats
+    visibility: hidden; // hidden by default
+    // note that we dont use display: none here because we still want the width
+
+    background-color: white;
+    z-index: 9999; // always on top of everything
+
+
+    @min-message-height: 30px;
+    @message-font-size: 13px;
+    @message-line-height: @min-message-height;
+    .message {
+        height: @min-message-height;
+        line-height: @message-line-height;
+        font-size: @message-font-size;
+        width: @box-width;
+        color: white;
+
+        text-align: center;
+    }
+
+
+    @content-padding-sides: 20px;
+    @content-padding-topbottom: 30px;
+    @content-font-size: 14px;
+    .content {
+        padding: @content-padding-topbottom @content-padding-sides;
+        text-align: center;
+        width: @box-width - 2 * @content-padding-sides;
+        font-size: @content-font-size;
+    }
+
+
+    @controls-padding-top: 10px;
+    @controls-padding-sides: @content-padding-sides;
+    .controls {
+        padding: @controls-padding-top @controls-padding-sides 0 @controls-padding-sides;
+
+
+        @button-blue: #5AB2DE;
+        @button-height: 30px;
+        @button-font-size: 13px;
+        button {
+            display: inline-block;
+            .height(@button-height, @button-font-size);
+
+            color: white;
+            background-color: @button-blue;
+            cursor: pointer;
+
+            overflow: hidden;
+            border: none;
+
+            text-align: center;
+
+            &:hover {
+                background-color: lighten(@button-blue, 10%);
+            }
+        }
+    }
+
+
+    @between-buttons-margin: 10px;
+    @one-button-width: @box-width - 2 * @controls-padding-sides;
+    @two-buttons-width: (@box-width - 2 * @controls-padding-sides - @between-buttons-margin) / 2;
+    .controls.one-button {
+        button {
+            width: @one-button-width;
+        }
+    }
+    .controls.two-buttons {
+        button {
+            width: @two-buttons-width;
+            margin-right: @between-buttons-margin;
+        }
+        button:last-of-type {
+            margin-right: 0;
+        }
+    }
+
+    @sections-padding-bottom: 20px;
+    @sections-padding-sides: @content-padding-sides;
+    .box-sections {
+        display: block;
+        padding: 0 @sections-padding-sides @sections-padding-bottom @sections-padding-sides;
+        max-height: 200px;
+        overflow-y: scroll;
+
+        @section-height: 30px;
+        @section-font-size: 12px;
+        .box-section {
+            display: block;
+            width: @box-width - 2 * @sections-padding-sides - 2;
+            .height(@section-height, @section-font-size);
+            border: 1px solid #aaa;
+            border-bottom: none;
+
+            overflow: hidden;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        @button-blue: #5AB2DE;
+        .box-section:hover, .box-section.active {
+            color: white;
+            background-color: @button-blue;
+            border-color: @button-blue;
+        }
+
+        .box-section:last-of-type {
+            border-bottom: 1px solid #aaa;
+        }
+    }
+}
+
+.bt-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.2);
+    z-index: 970; // in between the actual berkeleytime box and (possibly) the frame from the schedule ghost selection.
+}

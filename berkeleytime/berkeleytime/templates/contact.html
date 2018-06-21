@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Contact{% endblock %}
+
+{% block stylesheets %}
+    <link rel='stylesheet' type='text/css' href="{% static 'bootstrap/css/bootstrap-modal.min.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/contact.css' %}">
+    <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css">
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+    window.hideFeedbackForm = function () {
+        $(".contact-container").html("<div class='submitted-content'><i class='icon-envelope'></i><div class='submitted-text'>Thanks for the feedback!</div></div>")
+        $(".submitted-content").slideDown("slow");
+    }
+
+    var correctHeight = function() {
+        var setHeight = $(window).height() - 25;
+        if (setHeight >= 500) {
+            $(".content-container").height(setHeight);
+        } else {
+            $(".content-container").height(500);
+        }
+    };
+
+    correctHeight();
+    $(window).resize(function() {
+        correctHeight();
+    });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+{% spaceless %}
+<div id="container">
+    <div class="contact-row">
+        <div class="people-container content-container">
+            <div class="person-container">
+                <div class="picture-container">
+                    <div class="picture yuxin"></div>
+                </div>
+                <div class="text-container">
+                    <div class="name">Yuxin Zhu</div>
+                    <div class="subtitle"><a target="_blank" class="blue-link" href="http://www.yuxinzhu.com">yuxinzhu.com</a> — yuxinzhu@berkeley.edu — Computer Science '15</div>
+                    <div class="description">Hey! My name is Yuxin, and I'm a 4th year Computer Science major here at UC Berkeley. Ever since I could remember, I had knack for adventure. My ultimate goal is to become personally involved in human space exploration and interplanetary travel. In the meantime, I want to help the people on Earth live in the future through technology.</div>
+                </div>
+            </div>
+
+            <div class="person-container">
+                <div class="picture-container">
+                    <div class="picture noah"></div>
+                </div>
+                <div class="text-container">
+                    <div class="name">Noah Gilmore</div>
+                    <div class="subtitle"><a target="_blank" class="blue-link" href="http://www.noahgilmore.com">noahgilmore.com</a> — noah.gilmore@berkeley.edu — EECS '15</div>
+                    <div class="description">Hi, I'm Noah. I'm a 4th year student at Berkeley studying Electrical Engineering and Computer Science. I'm really interested in web, graphic, UI, and product design, as well as full stack development and software engineering in general. My dream is to create the next big thing in technology, and make an impact by helping people along the way. In my spare time, I do web design work for a few campus organizations, help out nonprofits with <a target="_blank" class="blue-link" href="http://www.calblueprint.org/">Blueprint</a>, and play bass drum in the Cal Band.</div>
+                </div>
+            </div>
+
+            <div class="person-container">
+                <div class="picture-container">
+                    <div class="picture ashwin"></div>
+                </div>
+                <div class="text-container">
+                    <div class="name">Ashwin Iyengar</div>
+                    <div class="subtitle"><a target="_blank" class="blue-link" href="http://www.ashwiniyengar.com">ashwiniyengar.com</a> — aiyengar@berkeley.edu — Astrophysics + CS '16</div>
+                    <div class="description">Hi! My name is Ashwin Iyengar, and I'm a 3rd year at UC Berkeley, intending to major in computer science and astrophysics. In the future, I have no idea what I want to do, but I think it'll lie either in astronomy or playing the drums. If you want to know anything else about me, just send me an e-mail!</div>
+                </div>
+            </div>
+
+            <div class="minions-container">
+                <div class="minions-content">
+                    This project would have been impossible without the help of many other students and administrators. In particular, we would like to thank Sanchit Bareja, Niraj Almakanti, Emily Chen, Ronald Lee, Benjamin Liu.
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-container content-container">
+            <div class="contact-header">Feedback</div>
+            <div class="contact-form"><script type="text/javascript">var submitted=false;</script>
+            <iframe name="hidden_iframe" id="hidden_iframe"
+            style="display:none;" onload="if(submitted)
+            {window.hideFeedbackForm();}"></iframe>
+            <form action="https://docs.google.com/forms/d/1gbeKxSWdnmk4IXbVrZz-0ii80k54n5n1IXPLP4GFeTM/formResponse" method="post"
+            target="hidden_iframe" onsubmit="submitted=true;"><ol style="padding-left: 0">
+            <div class="ss-form-question errorbox-good">
+            <div dir="ltr" class="ss-item  ss-text"><div class="ss-form-entry"><label class="ss-q-item-label" for="entry_1439067646"><div class="ss-q-title">
+            </div>
+            <div class="ss-q-help ss-secondary-text" dir="ltr"></div></label>
+            <input type="text" name="entry.1439067646" value="" class="ss-q-short" id="entry_1439067646" dir="auto" title="" placeholder="Name (optional)">
+
+
+            </div></div></div> <div class="ss-form-question errorbox-good">
+            <div dir="ltr" class="ss-item  ss-text"><div class="ss-form-entry"><label class="ss-q-item-label" for="entry_1817448923"><div class="ss-q-title">
+            </div>
+            <div class="ss-q-help ss-secondary-text" dir="ltr"></div></label>
+            <input type="text" name="entry.1817448923" value="" class="ss-q-short" id="entry_1817448923" dir="auto" title="" placeholder="Email (optional)">
+
+            </div></div></div> <div class="ss-form-question errorbox-good">
+            <div dir="ltr" class="ss-item  ss-paragraph-text"><div class="ss-form-entry"><label class="ss-q-item-label" for="entry_1711195886">
+            <div class="ss-q-help ss-secondary-text" dir="ltr"></div></label>
+            <textarea name="entry.1711195886" rows="8" cols="0" class="ss-q-long" id="entry_1711195886" dir="auto" placeholder="Tell us what we did right or wrong, or just say hello!"></textarea>
+            <div class="error-message"></div>
+
+            </div></div></div>
+            <input type="hidden" name="draftResponse" value="[]
+            ">
+            <input type="hidden" name="pageHistory" value="0">
+
+
+            <div class="ss-item ss-navigate"><table id="navigation-table"><tbody><tr><td class="ss-form-entry goog-inline-block" id="navigation-buttons" dir="ltr">
+            <input type="submit" name="submit" value="Submit" id="ss-submit">
+            </td>
+            </tr></tbody></table></div></ol></form></div>
+        </div>
+    </div>
+</div>
+{% endspaceless %}
+{% endblock %}

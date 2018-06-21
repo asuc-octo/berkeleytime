@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Campus{% endblock %}
+
+{% block meta %}
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+    <meta name="description" content="See a map of the campus with all ongoing classes. Search for an empty room or an interesting lecture going on nearby at any time of the day.">
+    <meta name="keywords" content="berkeley, map, campus, buildings, rooms, lectures, interesting, empty, empty rooms, studying, time, topics, cal, uc berkeley">
+{% endblock %}
+
+{% block stylesheets %}
+  <link href='https://api.tiles.mapbox.com/mapbox.js/v1.3.1/mapbox.css' rel='stylesheet' />
+  <!--[if lte IE 8]>
+    <link href='https://api.tiles.mapbox.com/mapbox.js/v1.3.1/mapbox.ie.css' rel='stylesheet' >
+  <![endif]-->
+  <link rel='stylesheet' type='text/css' href="{% static 'bootstrap/css/bootstrap-modal.min.css' %}">
+  <link rel='stylesheet' type='text/css' href="{% static 'css/catalog/course_box.css' %}">
+  <link rel='stylesheet' type='text/css' href="{% static 'css/common/berkeleytime-box.css' %}">
+  <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css">
+  <link rel='stylesheet' type='text/css' href="{% static 'css/common/welcome.css' %}">
+  <link rel='stylesheet' type='text/css' href="{% static 'css/tour/grumble.min.css' %}">
+  <link rel='stylesheet' type='text/css' href="{% static 'css/campus/campus.css' %}">
+{% endblock %}
+
+{% block scripts %}
+    <script type='text/javascript' src="{% static 'js/underscore.min.js' %}"></script>
+    <script type='text/javascript' src='https://api.tiles.mapbox.com/mapbox.js/v1.3.1/mapbox.js'></script>
+    <script type="text/javascript" src="{% static 'js/resources/jquery-mousewheel.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/underscore.min.js' %}"></script>
+    <script type='text/javascript' src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bt-utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/course-box.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/common/colors.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/common/time.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/common/berkeleytime-box.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/common/schedule-block.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/common/frame.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/schedule/grid.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/campus/controls.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/campus/popup.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/tour/Bubble.min.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/tour/jquery.grumble.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/tour/tour.js' %}"></script>
+
+    <script type="text/javascript" src="{% static 'js/campus/campus-utils.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/campus/campus.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div id="container">
+        <div id="map">
+        </div>
+        {% spaceless %}
+        <div class="datetime-controls">
+          <div class="date-controls">
+            <div class="horizontal control-field day">
+              <div class="control prev"><i class="icon-angle-left"></i></div>
+              <div class="field-content">
+                <div class="day"></div>
+                <div class="date"></div>
+              </div>
+              <div class="control next"><i class="icon-angle-right"></i></div>
+            </div>
+          </div>
+          <div class="time-controls">
+            <div class="vertical control-field time">
+              <div class="control next"><i class="icon-angle-up"></i></div>
+              <div class="field-content">
+                <input type="text" value="">
+              </div>
+              <div class="control prev"><i class="icon-angle-down"></i></div>
+            </div>
+
+            <div class="vertical control-field ampm">
+              <div class="control next"><i class="icon-angle-up"></i></div>
+              <div class="field-content"></div>
+              <div class="control prev"><i class="icon-angle-down"></i></div>
+            </div>
+          </div>
+          <div class="datetime-controls-submit">
+            <div class="control-field submit">see berkeley at this time</div>
+          </div>
+        </div>
+
+        <div class="campus-info-container">
+          <div class="search-bar-container">
+            <input class="search-bar" type="text" placeholder="Search... (ie. 155 Dwinelle or Psych)"></input>
+            <i class='clear-search icon-remove-sign'></i>
+          </div>
+          {% if ad %}
+          <div class="secret-divider-container">
+            <div class="secret-divider">from the student community</div>
+          </div>
+          <div class="campus-secret-container">
+            <div class="campus-secret berkeleytime-secret" data-color="{{ad.color}}" data-url="{{ad.url}}">
+              <div class="secret-body">
+                <div class="secret-title">{{ad.title|safe}}</div>
+                <div class="secret-subtitle">{{ad.text|safe}}</div>
+                <div class="secret-footer"><a target="_blank" href="/advertise">(?)</a></div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          <div class="result-message">
+          </div>
+
+          <div class="result-list">
+          </div>
+        </div>
+        {% endspaceless %}
+    </div>
+
+{% endblock %}

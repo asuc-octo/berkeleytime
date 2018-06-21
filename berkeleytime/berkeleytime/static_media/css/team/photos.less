@@ -1,0 +1,99 @@
+@diameter: 110px;
+.picture {
+    transition: background-size 0.1s ease-in;
+    @picture-border: 2px;
+    width: @diameter;
+    height: @diameter;
+    margin: 0 auto;
+    -webkit-border-radius: 99em;
+    -moz-border-radius: 99em;
+    border-radius: 99em;
+    background-size: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    &:hover {
+        background-size: 105%;
+    }
+}
+
+.yuxin {
+    background-image: url("https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAKnAAAAJDQ1ZGIzMGZkLWI0ODYtNGUwOS1hMjYyLTgxMWU2MDI1ODZiYw.jpg");
+    .top-center();
+}
+
+.noah {
+    background-image: url("https://scontent-ort2-2.xx.fbcdn.net/v/t1.0-9/12003172_10153663459889809_1814637104134126108_n.jpg?oh=2f0abafefce675d8c39121827825ff15&oe=5A26C7BF")
+}
+
+.jennifer {
+    .url("https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAKxAAAAJDQ2NWIwOWY2LTgyNWUtNDQ3My1hZjM2LTQ5MDNiMjhhMjUxZg.jpg");
+}
+
+.mihir {
+    .url("https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAVZAAAAJGY5ZmE2ODQ3LWVjMGUtNDJjNS1iNDIwLTkxMjRlYzBkMjcyNA.jpg");
+}
+
+.kimya {
+    .url("https://scontent.fsnc1-1.fna.fbcdn.net/hphotos-prn2/t31.0-8/10604721_10152660697759288_4975322331799077940_o.jpg");
+}
+
+.jesmin {
+    .url("http://jesminngo.me/assets/images/mypic.png");
+}
+
+
+.eric {
+    .url("http://erichuynhing.com/img/me.jpg");
+}
+
+.ashwin {
+    .url("http://ashwiniyengar.com/pic.png");
+}
+
+.emily {
+    .url("https://scontent-sjc2-1.xx.fbcdn.net/hphotos-xfp1/t31.0-8/1495973_10153667259530226_1630010267_o.jpg");
+}
+
+.niraj {
+    .url("https://scontent-sjc2-1.xx.fbcdn.net/hphotos-xfp1/v/t1.0-9/1045131_606019832789382_502193119_n.jpg?oh=7ca59e2f9e43da08e6cd1c58e630aad4&oe=56886EA7");
+    .top-center();
+}
+
+.sanchit {
+    .url("https://scontent-sjc2-1.xx.fbcdn.net/hphotos-xtf1/v/t1.0-9/11880387_10153507551304110_7025590608844928171_n.jpg?oh=ab9caa2c777f24f691c6b79929934d29&oe=56D20F24");
+}
+
+.ronald {
+    .url("https://scontent-sjc2-1.xx.fbcdn.net/hphotos-xaf1/t31.0-8/885876_10204845723486962_5782003977958844932_o.jpg");
+}
+
+.vaibhav {
+    .url("https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAYWAAAAJDk0YTNlZDhmLWI2MDEtNGUwOC1iMTZjLWFhNWM1YmZjNDg2MQ.jpg");
+}
+
+.christine {
+    .url("https://lh3.googleusercontent.com/u2K_ytHQrSJf2XX1TYmhx3rIYx8qpDswhQ7MKQen6XXfgFss_PrUScMJiDQhGhIligZD46ZD_DCyrbYKNrspoiI_3U8ZaTS0qqQfsVQykbQc1gCYTLvUHoAWts16OlgzB03m39AoHV-Pi3XuHpe1XF5yVs535yjnnDva0QBc2nAXwOkUNrzq3e-_XFKSkwtk8QL-lsx10t5rZswxU3MW6SZvvHDXIflMuM4N5nqWNTWPU3_yQRWfn0eDukndYfZ3l88NhG0N8hKrwJs-2wqNNWiV7PSigpYcJbSsk4tcEaCeF530XWSVuAp8S662yWz7Sc2lso9UKW46HuUKO_zYERQzipbofsJSx06vwqQVUgSkJGfj9jqUTKuC8Tucba9KBPGGY14VNTfy4OXR9O2Ux2K_2Hw8Hq4p41leruFYyByN1aQT5gqk9ls0EPLbLbpAmh1pCeM6Xpe7MXwpFtqUc0KmzYWLcWys2bmDzNHr8DDD8PBRe3jJto7E6wSH--KlKnpDVNNz6qWc0NpKplCgN0MfwUcWsAB7lrJZ0yPesqLd97aYS0V1nPyrsRbt4Qj5Uztm=s684-no");
+}
+
+.laura {
+    .url("https://media.licdn.com/mpr/mpr/shrinknp_400_400/AAEAAQAAAAAAAAj_AAAAJGI1NmRiNjk4LWRiZDEtNGE3Yy05ZmI0LWNhZTA1NzQ1NDkxMA.jpg");
+}
+
+// past contributors
+
+.url(@url) {
+    background-image: url(@url);
+}
+
+.top-center() {
+    background-position: top center;
+}
+
+.center-right() {
+    background-position: center right;
+}
+
+.cover() {
+    background-size: cover;
+}

@@ -1,0 +1,277 @@
+{% load staticfiles %}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".cover-photo").css("background", "url({% static 'css/img/cover_photos/'|add:cover_photo|add:'.jpg' %})")
+            .css("background-size", "cover")
+            .css("background-position", "left center")
+            .css("background-repeat", "no-repeat")
+            .css("position", "relative");
+
+        //mapping of string length to font-sizes
+        var fontSizeArr = ["40px", "30px", "25px", "10px"]
+        var enrolledPercentage = window.parseFloat("{{course.enrolled_percentage|escapejs}}");
+        var waitlisted = window.parseInt("{{course.waitlisted|escapejs}}");
+        var letterAverage = "{{course.letter_average|escapejs}}";
+        var units = "{{course.display_units|escapejs}}";
+        var favoriteCount = "{{course.favorite_count|escapejs}}";
+
+        if (units && units.length < fontSizeArr.length) {
+            $(".box-units-data").css("font-size", fontSizeArr[units.length-1]);
+        } else {
+            $(".box-units-data").parent().hide();
+        }
+
+        if (enrolledPercentage !== -1.0) {
+            var displayConstant = String(Math.floor(enrolledPercentage*100, 100));
+            $(".box-enrolled-data").text(displayConstant) //don't want a percentage here
+                .css("color", bt_utils.percentToColor(displayConstant))
+                .css("font-size", fontSizeArr[displayConstant.length-1]);
+        }
+
+        if (waitlisted !== -1) {
+            $(".box-waitlisted-data").css("color", bt_utils.binaryToColor(waitlisted))
+                .css("font-size", fontSizeArr[waitlisted.toString().length-1]);
+        }
+
+        if (letterAverage) {
+            $(".box-avg-grade").css("color", bt_utils.gradeToColor(letterAverage));
+        }
+
+        if (favoriteCount && favoriteCount.length < fontSizeArr.length) {
+            $(".box-favorite-data").css("font-size", fontSizeArr[favoriteCount.length-1]);
+        }
+    });
+</script>
+
+{% spaceless %}
+<div class='course-info'>
+    <div class='cover-photo'>
+        <button class='save-to-schedule' type='submit'>Save to Schedule</button>
+        <div class='course-header'>
+            <div class='title-text-box'><div class='title'>{{course.abbreviation}} {{course.course_number}}</div><div class='subtitle'>{{course.title}}</div></div>{% if user.is_authenticated %}{% if favorited %}<i class='favorite-icon favorited'></i>{% else %}<i class='favorite-icon'></i>{% endif %}{% endif %}
+        </div>
+    </div>
+
+
+    <div class='menu-wrapper'>
+        <ul class='menu-bar'>
+            <li><a class='course-box-tab' data-tab='overview' href="#">overview</a></li>
+            <li><a class='course-box-tab' data-tab='current' href="#">{{CURRENT_SEMESTER}} {{CURRENT_YEAR}}</a></li>
+            {% if ongoing %}
+            <li><a class='course-box-tab' data-tab='ongoing' href="#">{{ONGOING_SEMESTER}} {{ONGOING_YEAR}}</a></li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div class='box-content overview'>
+        <div class="row-fluid">
+            <div class="row-fluid span6">
+                <div class="span6 grade-info">
+                    <div class='numbers'>
+                        {% if course.letter_average %}
+                        <div class='generic-bar-container'>
+                            <span class='blocks box-avg-grade generic-data'>{{course.letter_average}}</span><div class='blocks generic-text-box'><div class='generic-description'>Course Average</div><div class='generic-link'><a class="blue-link" href='/grades/?course1={{course.id}}-all-all' target ='_blank'>See grade distributions</a></div></div>
+                        </div>
+                        {% endif %}
+
+                        {% if course.enrolled_percentage != -1.0 %}
+                        <div class='generic-bar-container'>
+                            <span class='blocks box-enrolled-data generic-data'></span><div class='blocks generic-text-box'><div class='generic-description'>Percent Enrolled</div><div class='generic-link'>
+
+                        {% if not TELEBEARS_ALREADY_STARTED %}
+                        {# We have enrollment data, but we don't graph it since its not telebears yet #}
+                            <a class="blue-link telebears-not-started" href='/enrollment/' target ='_blank'>Enrollment hasn't started.</a>
+                        {% elif course.enrolled_percentage != -1.0 %}
+                            <a class="blue-link" href='/enrollment/?course1={{course.id}}-{{CURRENT_SEMESTER}}-{{CURRENT_YEAR}}-all' target ='_blank'>See enrollment history</a>
+                        {% else %}
+                        {# This should never happen, but in case of an error we let the user know what's going on. #}
+                            No history available.
+                        {% endif %}
+
+                        </div></div>
+                        </div>
+                        {% endif %}
+
+                        {% if course.waitlisted != -1 %}
+                        <div class='generic-bar-container'>
+                            <span class='blocks box-waitlisted-data generic-data'>{{ course.waitlisted }}</span><div class='blocks generic-text-box'><div class='generic-description'>Waitlisted</div><div class='waitlisted-information'>{% if last_enrollment_update %}{{ last_enrollment_update|date:"M d, Y" }}{% endif %}</div></div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="span6 grade-info">
+                    <div class='numbers'>
+                        {% if course.units %}
+                        <div class='generic-bar-container'>
+                            <span class='blocks box-units-data generic-data'>{{ course.display_units }} </span><div class='blocks generic-text-box'>Units</div>
+                        </div>
+                        {% endif %}
+
+                        <div class='generic-bar-container'>
+                            <span class='blocks box-favorite-data generic-data'>{{ course.favorite_count }}</span><div class='blocks generic-text-box'><div class='generic-description'>Favorites</div><div class='generic-link'>Number of times favorited</div></div>
+                        </div>
+
+                        {% comment %}
+                        <div class='generic-bar-container'>
+                            <span class='blocks box-schedule-data generic-data'></span><div class='blocks generic-text-box'><div class='generic-description'>Schedules</div><div class='generic-link'>Number of times scheduled</div></div>
+                        </div>
+                        {% endcomment %}
+                    </div>
+                </div>
+                <div class="requirements span12">
+                    {% for req in requirements %}
+                        <span class="box-breadcrumb">{{ req }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="span6">
+                {% if course.description %}
+                <div class='box-description-container'>
+                    <div class='box-description-content'><span class='box-description-header'>Description:&nbsp;</span>{{course.description}}</div>
+                </div>
+                {% endif %}
+
+                {% if course.prerequisites %}
+                <div class='box-description-container'>
+                    <div class='box-description-content'><span class='box-description-header'>Prerequisites:&nbsp;</span>{{course.prerequisites}}</div>
+                </div>
+                {% endif %}
+
+                {% if marketplace.textbook_context_by_section %}
+                    <div class="textbook-container box-textbook-container">
+                    {% for textbook_context in marketplace.textbook_context_by_section %}
+                        {% include "marketplace/textbook_table.html" %}
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class='box-content current sections'>
+        {% if sections %}
+        <table class="table section-table">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Type</th>
+                    <th>Class #</th>
+                    <th>Time</th>
+                    <th>Location</th>
+                    <th>Instructor</th>
+                    <th>Enrolled</th>
+                    <th>Waitlisted</th>
+                    <th>Final Exam Time *</th>
+                </tr>
+            </thead>
+
+            {% for s in sections %}
+            <tbody>
+                <tr class="section-row" data-id="{{s.id}}" data-enrolled="{{s.enrolled|escapejs}}" data-enrolled-max="{{s.enrolled_max|escapejs}}">
+                    <td>{{ s.section_number }}</td>
+                    <td>{{ s.kind }}</td>
+                    <td>{{ s.ccn }}</td>
+                    {% if s.start_time and s.end_time %}
+                        <td><span class="bold">{{ s.word_days }}</span> {{ s.start_time|date:"f A" }} - {{ s.end_time|date:"f A" }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td>{{ s.location_name }}</td>
+                    <td>{{ s.instructor }}</td>
+                    {% if s.enrolled != None and s.enrolled_max != None %}
+                        <td class="center">{{ s.enrolled }}/{{ s.enrolled_max }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+
+                    {% if s.waitlisted != None %}
+                        <td class="center">{{ s.waitlisted }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+
+                    {% if s.final_day != None and s.final_start != None and s.final_end != None %}
+                        <td><span class="bold">{{ s.final_word_day }}</span> {{ s.final_start|date:"f A" }} - {{ s.final_end|date:"f A" }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+        <div style="font-size: 8pt; position: absolute; bottom: 5px; width: 90%; background-color: white" >
+            * While we try to offer the most accurate information, final times may sometimes be incorrect. Please consult the registrar or course staff for official final times.</div>
+        {% else %}
+        <div class="not-offered-container">
+            <div class="not-offered-icon"><i class="icon-calendar-empty"></i></div>
+            <div class="not-offered"><span class="bold">{{ course.department }} {{course.course_number }}</span> is not offered in <span class="bold">{{ CURRENT_SEMESTER|title }} {{ CURRENT_YEAR }}</span>.</div>
+        </div>
+        {% endif %}
+    </div>
+
+
+    {% if ongoing %}
+    <div class='box-content ongoing sections'>
+        {% if ongoing_sections %}
+        <table class="table section-table">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Type</th>
+                    <th>Class #</th>
+                    <th>Time</th>
+                    <th>Location</th>
+                    <th>Instructor</th>
+                    <th>Enrolled</th>
+                    <th>Waitlisted</th>
+                    <th>Final Exam Time *</th>
+                </tr>
+            </thead>
+
+            {% for s in ongoing_sections %}
+            <tbody>
+                <tr class="section-row" data-id="{{s.id}}" data-enrolled="{{s.enrolled|escapejs}}" data-enrolled-max="{{s.enrolled_max|escapejs}}">
+                    <td>{{ s.section_number }}</td>
+                    <td>{{ s.kind }}</td>
+                    <td>{{ s.ccn }}</td>
+                    {% if s.start_time and s.end_time %}
+                        <td><span class="bold">{{ s.word_days }}</span> {{ s.start_time|date:"f A" }} - {{ s.end_time|date:"f A" }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                    <td>{{ s.location_name }}</td>
+                    <td>{{ s.instructor }}</td>
+                    {% if s.enrolled != None and s.enrolled_max != None %}
+                        <td class="center">{{ s.enrolled }}/{{ s.enrolled_max }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+
+                    {% if s.waitlisted != None %}
+                        <td class="center">{{ s.waitlisted }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+
+                    {% if s.final_day != None and s.final_start != None and s.final_end != None %}
+                        <td><span class="bold">{{ s.final_word_day }}</span> {{ s.final_start|date:"f A" }} - {{ s.final_end|date:"f A" }}</td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+        <div style="font-size: 8pt; position: absolute; bottom: 5px; width: 90%; background-color: white" >
+            * While we try to offer the most accurate information, final times may sometimes be incorrect. Please consult the registrar or course staff for official final times.</div>
+        {% else %}
+        <div class="not-offered-container">
+            <div class="not-offered-icon"><i class="icon-calendar-empty"></i></div>
+            <div class="not-offered"><span class="bold">{{ course.department }} {{course.course_number }}</span> is not offered in <span class="bold">{{ ONGOING_SEMESTER|title }} {{ ONGOING_YEAR }}</span>.</div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endspaceless %}

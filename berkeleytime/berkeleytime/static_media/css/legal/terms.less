@@ -1,0 +1,75 @@
+@import "../utils.less";
+@import "../standard.less";
+
+html {
+    width: 100%;
+    height: 100%;
+    .background("../img/berkeley.jpg");
+}
+
+@width: 350px;
+@height: 500px;
+.terms-box {
+    .font(@main-font, 300);
+    padding: 20px 0px 30px 0px;
+    display: block;
+    width: @width;
+    height: @height;
+    overflow-y: scroll;
+    .absolute-center(@width, 60px);
+    background-color: @form-container-bg;
+    border: none;
+    .terms-header {
+        text-align: center;
+        width: 100%;
+        .height (30px, 20px);
+        margin: 25px auto 15px auto;
+    }
+    .text {
+        display: block;
+        line-height: 17px;
+        font-size: 13px;
+        text-align: justify;
+        width: 85%;
+        margin: 0 auto;
+        position: relative;
+    }
+    .privacy-divider {
+        text-align: center;
+        font-size: 20px;
+    }
+    .privacy-text {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+}
+
+.top {
+    .height(15px, 12px);
+    .dark-link(@button-blue);
+}
+
+#top-header {
+    text-align: center;
+    width: 100%;
+    margin-top: 5px;
+    .height(40px, 28px);
+}
+
+.top-subtitle {
+    text-align: center;
+    .height(20px, 12px);
+}
+
+.top-link {
+    a {
+        text-decoration: none;
+        .dark-link(@button-blue);
+    }
+    text-align: center;
+    padding-bottom: 15px;
+    .height(20px, 12px);
+    &.privacy-link {
+        padding-bottom: 0px;
+    }
+}

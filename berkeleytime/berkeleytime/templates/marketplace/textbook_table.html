@@ -1,0 +1,40 @@
+<div class='textbook-table-container'>
+    <div class='gamma'>{{ marketplace.display_text }}</div>
+
+    <div class='semester-subheader'>{{ textbook_context.display_text }}</div>
+    <table class="table berkeleytime-table">
+        <thead>
+        </thead>
+
+        <tbody>
+            {% for textbook in textbook_context.textbooks %}
+            <tr
+                class="table--row cursor--pointer textbook-action-area"
+                {% if textbook.amazon_affiliate_url %}
+                data-amazon-affiliate-url={{ textbook.amazon_affiliate_url }}
+                {% endif %}
+                data-isbn='isbn-{{textbook.isbn}}'>
+                <td>
+                    <div class='textbook-title'>
+                        <span>{{ textbook.title|title }}</span>
+                        {% if textbook.is_required %}
+                        <span class='textbook-is-required'>Required</span>
+                        {% endif %}
+                    </div>
+                    <div class='textbook-author'>{{ textbook.author|title }}</div>
+                </td>
+                <td class='vertical-align--middle'>
+                    {% if textbook.amazon_affiliate_url %}
+                    <div class='marketplace-action-container text--right'>
+                        <button type='button'>
+                            <span class='buy-button-text'>VIEW</span>
+                        </button>
+                    </div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table>
+</div>

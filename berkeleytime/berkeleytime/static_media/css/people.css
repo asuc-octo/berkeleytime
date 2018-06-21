@@ -1,0 +1,83 @@
+/* Actual Standard Stuff */
+.about-container {
+  height: 100%;
+  width: 100%;
+}
+.about-picture {
+  width: 50%;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  min-width: 400px;
+  background-color: red;
+}
+.about-content {
+  width: 50%;
+  display: inline-block;
+  vertical-align: top;
+}
+::-webkit-input-placeholder {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+}
+::-moz-placeholder {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+}
+/* firefox 19+ */
+:-ms-input-placeholder {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+}
+/* ie */
+input:-moz-placeholder {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+}
+input[type="text"] {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+}
+.about-container {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+}
+.person-container {
+  margin-top: 40px;
+}
+.person-container .picture {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  -webkit-border-radius: 99em;
+  -moz-border-radius: 99em;
+  border-radius: 99em;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.person-container .picture.yuxin {
+  background-image: url("https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-frc3/240897_10152318601035034_896218568_o.jpg");
+}
+.person-container .picture.noah {
+  background-image: url("https://fbcdn-sphotos-f-a.akamaihd.net/hphotos-ak-prn2/208992_10151601915759809_2026386494_n.jpg");
+}
+.person-container .person-text {
+  height: 150px;
+}
+.person-container .name {
+  height: 30px;
+  line-height: 30px;
+  font-size: 20px;
+}
+.person-container .subtitle {
+  height: 30px;
+  line-height: 30px;
+  font-size: 13px;
+  font-weight: 400;
+}
+.person-container .description {
+  line-height: 18px;
+  font-size: 13px;
+  text-align: justify;
+}
