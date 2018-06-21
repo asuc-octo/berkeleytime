@@ -1,0 +1,13 @@
+#window {
+  width: 100%;
+  height: 100%;
+}
+#window #message {
+  display: block;
+  width: 100%;
+  min-width: 960px;
+  height: 25px;
+  line-height: 25px;
+  font-size: 14px;
+  background: #f43d6b;
+}

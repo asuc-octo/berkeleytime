@@ -1,0 +1,151 @@
+@import "../utils.less";
+@import "../standard.less";
+
+.input-font(@main-font, 300);
+textarea, input { outline: none; }
+@border-color: #ccc;
+
+#map {
+    position: absolute;
+    top: 25px;
+    bottom: 0;
+    width: 100%;
+}
+
+@category-container-height: 85px;
+@category-container-padding: 10px;
+@category-container-width: 300px;
+.category-container {
+    .font(@main-font, 300);
+    position: absolute;
+    top: 55px;
+    left: 55px;
+    width: @category-container-width;
+    height: @category-container-height;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: @category-container-padding;
+}
+
+@selected-height: 0.75 * @category-container-height;
+.selected-category-container {
+    .unselectable();
+    display: block;
+    background-color: white;
+    height: @selected-height;
+    width: 100%;
+    text-align: center;
+    .height(@selected-height, 24px);
+    .selected-text, .selected-icon {
+        .unselectable();
+        display: inline-block;
+        vertical-align: baseline;
+    }
+    .selected-icon {
+        padding-right: 10px;
+        font-size: 22px;
+    }
+}
+
+@choices-height: @category-container-height - @selected-height;
+.category-choices {
+    .unselectable();
+    display: block;
+    height: @choices-height;
+}
+
+@category-count: 6;
+@category-border-width: 1px;
+@category-border-color: #d9d9d9;
+@total-border-width: (@category-count - 1) * @category-border-width;
+.category {
+    width: (@category-container-width - @total-border-width)/@category-count;
+    .height(@choices-height, 13px);
+    list-style: none;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    cursor: pointer;
+    background-color: #efefef;
+    border-left: @category-border-color @category-border-width solid;
+    &:first-of-type { border-left: none; };
+    &.active {
+        background-color: white;
+        color: @berkeleytime-red;
+    }
+}
+
+
+@event-info-width: 280px;
+@event-info-height: 425px;
+.event-info-container {
+    position: absolute;
+    right: 55px;
+    top: 55px;
+    width: @event-info-width;
+}
+
+@search-vertical-margin: 15px;
+.search-bar-container {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    position: relative;
+}
+
+//instantiated below for margin calculation
+@search-bar-width: 0.80 * @event-info-width;
+@search-bar-left-padding: 5px;
+@search-bar-right-padding: 30px;
+@search-bar-border: 1px;
+@search-bar-outer-width: @search-bar-width + @search-bar-left-padding +
+    @search-bar-right-padding + 2 * @search-bar-border;
+@search-horizontal-margin: (@event-info-width - @search-bar-outer-width)/2;
+@search-bar-vertical-padding: 5px;
+@search-bar-height: 20px; //primary control for search bar
+.search-bar {
+    width: @search-bar-width;
+    .height(@search-bar-height, 16px);
+    padding: @search-bar-vertical-padding @search-bar-left-padding;
+    margin: @search-vertical-margin @search-horizontal-margin;
+    padding-right: @search-bar-right-padding;
+    border: @border-color @search-bar-border solid;
+    font-size: 14px;
+}
+
+// .clear-search {
+//     @clear-search-line-height: @search-bar-height + 2 * @search-bar-vertical-padding + 2* @search-bar-border;
+//     position: absolute;
+//     width: 20px;
+//     font-weight: 400;
+//     line-height: @clear-search-line-height;
+//     font-size: 19px;
+//     color: grey;
+//     cursor: pointer;
+//     text-align: center;
+//     right: @search-horizontal-margin + 5px;
+//     top: @search-vertical-margin;
+//     display: none;
+//     &:hover {
+//         color: darken(grey, 10%);
+//     }
+// }
+
+@result-message-height: 35px;
+@building-border: 1px;
+.result-message {
+    .font(@main-font, 300);
+    .height(@result-message-height, 14px);
+    background-color: white;
+    border-bottom: @border-color @building-border solid;
+    padding-left: 10px;
+    font-size: 12px;
+}
+
+@result-list-height: @event-info-height - (@search-vertical-margin - @result-message-height);
+.result-list {
+    .font(@main-font, 300);
+    overflow-y: scroll;
+    overflow-x: hidden; //for non-Mountain Lion users
+    max-height: @result-list-height;
+    width: 100%;
+    background-color: white;
+}

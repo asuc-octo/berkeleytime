@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Scheduler{% endblock %}
+
+{% block stylesheets %}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/schedule/under_construction.css' %}">
+{% endblock %}
+
+{% block content %}
+{% spaceless %}
+<div id="container">
+    <div class="redirect-content">
+        <div class="redirect-title">stay tuned!</div>
+        <div class="redirect-text">we're hard at work building an awesome course scheduler for you, to be released fall 2017. in the meantime, please check out these alternatives:</div>
+        <a href="https://berkeley.collegescheduler.com/spa#"  target="_blank">
+            <button type="button" class="redirect-button">official course scheduler</button>
+        </a>
+        <a href="http://berkeleyscheduler.com"  target="_blank">
+            <button type="button" class="redirect-button">berkeleyscheduler.com</button>
+        </a>
+    </div>
+</div>
+{% endspaceless %}
+{% endblock %}

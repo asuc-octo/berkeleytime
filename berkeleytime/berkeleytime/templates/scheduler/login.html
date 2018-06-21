@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Scheduler{% endblock %}
+
+{% block stylesheets %}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/schedule/under_construction.css' %}">
+{% endblock %}
+
+{% block content %}
+{% spaceless %}
+<div id="container">
+    <div class="redirect-content">
+        <div class="redirect-title" 
+             style="font-size: 48pt; border: solid 0px red; height: 80px; line-height: 80px; padding-left: 10px">
+            scheduler</div>
+        <div class="redirect-text" style="font-size: 18pt; letter-spacing: 15px; padding-left: 10px">beta</div><br>
+        <div class="redirect-text">To use the Berkeleytime scheduler, please login with you Google account.</div>
+        <a href="/accounts/google/login/?process=login"  target="_blank">
+            <button type="button" class="redirect-button" style="border-radius: 55px">login</button>
+        </a>
+    </div>
+</div>
+{% endspaceless %}
+{% endblock %}

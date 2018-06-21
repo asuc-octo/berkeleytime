@@ -1,0 +1,60 @@
+@import "./base.less";
+@import "./standard.less";
+
+html {
+    width: 100%;
+    height: 100%;
+
+    background: url(../img/howl.jpg) no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.berkeleytime-box {
+    #header {
+        p {
+            font-size: 37px;
+            margin: 20px 0px 20px 0px;
+            text-align: center;
+            font-family: "Lobster";
+        }
+    }
+    margin: 30px 0px 0px 0px;
+    padding-top: 0px;
+    @width: 375px;
+    width: @width;
+    min-width: @width;
+    max-width: @width;
+    top: 25%;
+    left: 50%;
+    margin-left: -@width/2;
+    p {
+        margin-top: 20px;
+        text-align: center;
+    }
+    #major-form {
+        margin-left: 37px;
+
+        select {
+            width: 300px;
+        }
+        input {
+            height: 15px;
+            font-size: 13px;
+            line-height: 13px;
+        }
+        .major-select {
+            margin-bottom: 10px;
+        }
+    }
+}
+
+        // width: @field-width - @field-padding;
+        // height: @field-height;
+        // line-height: @field-height;
+
+        // padding-left: @field-padding;
+        // @side-margin: (100% - @field-width)/2;
+        // margin: 0px @side-margin 5px @side-margin;

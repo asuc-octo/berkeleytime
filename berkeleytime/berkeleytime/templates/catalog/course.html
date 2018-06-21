@@ -1,0 +1,152 @@
+{% load staticfiles %}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".cover-photo").css("background", "url({% static 'css/img/cover_photos/'|add:cover_photo|add:'.jpg' %})")
+            .css("background-size", "cover")
+            .css("background-position", "center center")
+            .css("background-repeat", "no-repeat")
+            .css("position", "relative");
+
+        window.history.replaceState(null, null, '/catalog/' + "{{ course.abbreviation }}" + "/" + "{{ course.course_number }}");
+        var enrolledPercentage = window.parseFloat("{{course.enrolled_percentage|escapejs}}");
+        var waitlisted = window.parseInt("{{course.waitlisted|escapejs}}");
+        var letterAverage = "{{course.letter_average|escapejs}}";
+        if (enrolledPercentage !== -1.0 && waitlisted !== -1.0) {
+            var displayConstant = Math.floor(enrolledPercentage*100, 100);
+            $(".enrolled-data").text(displayConstant + "%")
+                .css("color", bt_utils.percentToColor(displayConstant));
+            $(".waitlisted-data").text(waitlisted).css("color", bt_utils.binaryToColor(waitlisted));
+        }
+        if (letterAverage) {
+            $(".avg-grade").css("color", bt_utils.gradeToColor(letterAverage));
+        }
+    });
+</script>
+
+{% if course %}
+{% spaceless %}
+<div class='course-info'>
+    <div class='cover-photo'>
+        <div class='course-header'>
+            <div class='title-text-box'><div class='title'>{{course.abbreviation}} {{course.course_number}}</div><div class='subtitle'>{{course.title|truncatechars:50}}</div></div>{% if user.is_authenticated %}{% if favorited %}<i class='favorite-icon favorited'></i>{% else %}<i class='favorite-icon'></i>{% endif %}{% endif %}
+        </div>
+    </div>
+
+    {% if marketplace.recommended_textbook.textbook %}
+    <div>
+        <div class='description-container'>
+            <span class='description'>{{marketplace.recommended_textbook.display_text}}&nbsp;</span>
+            <span class="description-info-button blue-link">See All Textbooks</span>
+        </div>
+        <div 
+            class='recommended-textbook-container recommended-textbook-action-area'
+
+            {% if marketplace.recommended_textbook.textbook.amazon_affiliate_url %}
+            data-amazon-affiliate-url={{marketplace.recommended_textbook.textbook.amazon_affiliate_url}}
+            {% endif %}
+
+            {% if marketplace.recommended_textbook.textbook.price_difference %}
+            data-cta-type='price-difference'
+            {% else %}
+            data-cta-type='standard'
+            {% endif %}
+
+            data-isbn='isbn-{{marketplace.recommended_textbook.textbook.isbn}}'>
+            {% if marketplace.recommended_textbook.textbook.amazon_image_url %}
+            <div class='textbook-cover-container display--inline-block'>
+                <img src={{marketplace.recommended_textbook.textbook.amazon_image_url}} />
+            </div>
+            {% endif %}
+
+            <div class='recommended-description-container{% if marketplace.recommended_textbook.textbook.price_difference %} price-cta{% endif %} display--inline-block'>
+                <div class='textbook-title'>{{marketplace.recommended_textbook.textbook.title|truncatechars:100|title}}</div>
+                <div class='textbook-author'>{{marketplace.recommended_textbook.textbook.author|truncatechars:50|title}}</div>
+            </div>
+
+            <div class='recommended-action-container{% if marketplace.recommended_textbook.textbook.price_difference %} price-cta{% endif %} display--inline-block'>
+                {% include "marketplace/buy.html" with cta_text=marketplace.recommended_textbook.textbook.recommended_cta_text price_difference=marketplace.recommended_textbook.textbook.price_difference %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class='numbers'>
+        {% if course.letter_average or course.units and course.units != "Unknown" %}
+        <div class='grade-bar-container'>
+            <span class='blocks avg-grade'>{{course.letter_average|default_if_none:""}}</span>
+            <div class='blocks grade-text-box'>
+                {% if course.letter_average %}
+                    <div class='grade-description'>Course Average</div>
+                    <div class='grade-link'>
+                        <a class="blue-link" href='/grades/?course1={{course.id}}-all-all' target ='_blank'>See grade distributions</a>
+                    </div>
+                {% else %}
+                    <div class="grade-description">No course average available</div>
+                {% endif %}
+            </div>
+            <span class='blocks units'>{% if course.units and course.units != "Unknown" %}{{course.display_units}}{% endif %}</span>
+            <div class='blocks units-text-box'>
+                {% if course.units and course.units != "Unknown" %}
+                    <div class='units-description'>Units</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if offered and course.enrolled_percentage != -1 and course.waitlisted != -1 %}
+        <div class='enrolled-bar-container'>
+            <span class='blocks enrolled-data'></span>
+            <div class='blocks enrolled-text-box'>
+                <div class='enrolled-description'>Percent Enrolled</div>
+                <div class='enrolled-link'>
+                    {% if not TELEBEARS_ALREADY_STARTED %}
+                    {# We have enrollment data, but we don't graph it since its not telebears yet #}
+                        <a class="blue-link telebears-not-started" href='/enrollment/' target ='_blank'>Enrollment hasn't started.</a>
+                    {% elif course.enrolled_percentage != -1.0 %}
+                        <a class="blue-link" href='/enrollment/?course1={{course.id}}-{{CURRENT_SEMESTER}}-{{CURRENT_YEAR}}-all' target ='_blank'>See enrollment history</a>
+                    {% else %}
+                    {# This should never happen, but in case of an error we let the user know what's going on. #}
+                        No history available.
+                    {% endif %}
+
+                </div>
+            </div>
+            <span class='blocks waitlisted-data'></span>
+            <div class='blocks waitlisted-text-box'>
+                <div class='waitlisted-description'>Total Waitlisted</div>
+                <div class='waitlisted-information'>
+                    {% if last_enrollment_update %}{{ last_enrollment_update |date:"M d, Y" }}{% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {% if course.description %}
+    <div class='description-container'>
+        <span class='description'>Description:&nbsp;</span>{{course.description|truncatechars:600}} <span class="description-info-button blue-link"> See Course Information</span>
+    </div>
+    {% endif %}
+
+    <button type="button" class='section-info-button'>See Sections</button>
+
+    {% if course.prerequisites %}
+    <div class='description-container'>
+        <span class='description'>Prerequisites:&nbsp;</span>{{course.prerequisites}}
+    </div>
+    {% endif %}
+
+    {% if marketplace.textbook_context_by_section %}
+        <div class="textbook-container course-textbook-container">
+        {% for textbook_context in marketplace.textbook_context_by_section %}
+            {% include "marketplace/textbook_table.html" %}
+        {% endfor %}
+        </div>
+    {% endif %}
+
+
+    
+</div>
+{% endspaceless %}
+{% endif %}

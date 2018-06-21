@@ -1,0 +1,243 @@
+@import "data.less";
+@import "../utils.less";
+@import "../standard.less";
+
+//override height in data.less
+@graph-height: 425px;
+
+.ad-container--enrollment {
+    margin-top: 10px;
+}
+
+#container {
+    padding-top: 10px; /* Override Bootstrap.js */
+}
+
+#graph_container {
+    height: auto;
+    margin-bottom: 20px;
+
+    #graph {
+        height: @graph-height - @graph-padding * 2;
+        font-size: 10px;
+        padding: @graph-padding;
+    }
+
+    .axis path {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+
+    .line {
+        stroke-width: 1.5px;
+        fill: none;
+    }
+
+    .barline line {
+        stroke: #888;
+    }
+
+    .indicator {
+
+            &.phase1 rect {
+                fill: #999;
+            }
+            &.phase2 rect {
+                fill: #777;
+            }
+            &.adjustment rect {
+                fill: #555;
+            }
+    }
+
+    .indicator-text text {
+        fill: #bbb;
+    }
+
+    .capacity line {
+        fill: none;
+        stroke: #f46d52;
+    }
+
+    .now {
+        circle.outer {
+            fill: #fff;
+        }
+        circle.inner {
+            fill: #f46d52;
+        }
+    }
+
+    .title {
+        font-size: 14px;
+    }
+
+    .radio {
+        .inner {
+            fill: white;
+        }
+        &.selected .inner {
+            fill: black;
+        }
+        .outer {
+            fill: white;
+            stroke: black;
+        }
+    }
+
+    path {
+        stroke: black;
+        stroke-width:1;
+        fill:none;
+    }
+
+    polyline {
+          stroke:none;
+          fill:none;
+          stroke-width:0.5;
+          marker-start:url(#t);
+        marker-mid:url(#t);
+        marker-end:url(#t);
+    }
+
+    .telebears-warning {
+        display: block;
+        text-align: center;
+        width: 100%;
+        .height(30px, 13px);
+        margin-bottom: 10px;
+        background-color: @berkeleytime-red;
+        color: white;
+        display: none;
+    }
+
+    #enrollment_info {
+        height: 70px;
+        margin-bottom: 10px;
+        padding: 10px 0;
+        background-color: white;
+        padding: @graph-padding;
+        padding-bottom: 0;
+
+        >div {
+            float: left;
+            height: 100%;
+        }
+
+        #title_container {
+            width: 19%;
+            margin: 0 1%;
+
+            .title {
+                font-size: 18px;
+                padding: 7px 7px 0 7px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+                padding-left: 7px;
+            }
+
+            .card-link {
+                display: inline-block;
+                font-size: 12px;
+                .dark-link(white);
+                cursor: pointer;
+                margin-left: 10px;
+            }
+        }
+
+        #section_info_container {
+            width: 19%;
+            margin: 0 1%;
+
+            >div {
+                font-size: 12px;
+                padding: 3px 5px;
+                margin: 2px;
+            }
+
+            .date {
+                margin-top: 0;
+                padding-top: 0;
+            }
+        }
+
+        #day_info_container {
+            width: 28%;
+            margin: 0 1%;
+            font-size: 12px;
+
+            .phase-day {
+                width: auto;
+                text-align: center;
+                font-size: 16px;
+                padding: 5px;
+                float: right;
+
+                background-color: #31E627;
+            }
+
+            .percentage {
+                font-size: 30px;
+                width: 100px;
+                margin: 1px 10px;
+                float: left;
+                text-align: right;
+
+                .number {
+                    font-size: 50px;
+                }
+            }
+
+            .day-info {
+                float: left;
+                margin-left: 5px;
+
+                >div {
+                    font-size: 11px;
+                    padding: 3px 5px;
+                    margin: 2px;
+                }
+            }
+        }
+    }
+}
+
+.welcome {
+    margin: 0 auto;
+    width: 400px;
+    height: 400px;
+    padding-top: 50px;
+
+    .greeting {
+        .height(65px, 65px);
+    }
+}
+
+// ADS ADS ADS
+@and-orange: #ff9b40;
+.enrollment-secret-container {
+    display: none; // initially not shown, display will be changed by js
+    width: 28%;
+
+    .secret-divider-container {
+        .secret-divider {
+            .text-with-divider(@color: rgba(0, 0, 0, 0.1));
+            color: rgba(0, 0, 0, 0.4);
+            .line-height(12px, 11px);
+            text-transform: uppercase;
+            width: 100%;
+            text-align: center;
+
+            // overrides
+            margin-bottom: 0.75em;
+        }
+    }
+
+    .enrollment-secret {
+        height: 41px; // hardcoded height for enrollment specifically
+        &:hover { height: auto; }
+    }
+}

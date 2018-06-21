@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block stylesheets %}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/error.css' %}">
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $(".error-content").slideDown("slow");
+});
+</script>
+{% endblock %}
+
+{% block content %}
+{% spaceless %}
+<div id="container">
+    <div class="error-content">
+        <div class="error-title">boom!</div>
+        <div class="error-text">our servers just exploded (500 error)</div>
+    </div>
+</div>
+{% endspaceless %}
+{% endblock %}

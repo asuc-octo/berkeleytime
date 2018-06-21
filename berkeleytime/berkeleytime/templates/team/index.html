@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block title %}Contact{% endblock %}
+
+{% block bootstrap %}
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+{% endblock %}
+{% block stylesheets %}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/team/index.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/team/photos.css' %}">
+    <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:300,400' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $(".xl-person-container").css("display", "none");
+    $("#yuxin").css("display", "block");
+
+    $(".trigger").mouseenter(function() {
+        $(".xl-person-container").css("display", "none");
+        var $this = $(this);
+        var name = $this.attr("data-name");
+        $("#" + name).css("display", "block");
+    });
+});
+</script>
+{% endblock %}
+
+
+{% block content %}
+{% spaceless %}
+<div id="container">
+
+    <div class="container overview-container">
+        <div class="row">
+            <div class="col-md-6 artifact-container">
+                <div class="img-container"><img src="{% static 'images/about/octo.jpg' %}"></div>
+            </div>
+
+            <div class="col-md-6 news-container">
+                <div class="news-header">Recent Updates</div>
+                <div class="story-container">
+                    <div class="title"><span class="alert yay">Scheduler Released</span><span class="date">April 22nd 2018</span></div>
+                    <div class="description">We are excited to announce we are finally releasing the Berkeleytime Scheduler! Look for bug fixes in the near future. To submit a bug click <span><a href="https://docs.google.com/a/berkeley.edu/forms/d/1eGJd2Vk52Y-6R9T7fY9JWzGvu9nsck6YhJWadWKfldE/edit?usp=sharing_eid">here</a></span>.</div>
+                </div>
+                <div class="story-container">
+                    <div class="title"><span class="alert yay">Schedule Updated</span><span class="date">April 22nd 2018</span></div>
+                    <div class="description">We've updated our website with the Fall 2018 schedule!</div>
+                </div>
+                <div class="story-container">
+                    <div class="title"><span class="alert yay">Grades Updated</span><span class="date">October 14th 2017</span></div>
+                    <div class="description">We now have the Spring 2017 grade distribution for all your favorite classes! Check it out in the Grades tab!</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mission-container">
+                <div class="mission-header">What We Do</div>
+                <div class="mission-description">The vision of Berkeleytime is to improve the student experience at UC Berkeley through technology. From having an all-inclusive course catalog to an awesome course scheduler, we want to make Cal a little smaller for everyone.</div>
+            </div>
+        </div>
+
+        <!-- People info is localed in templates/team/members.yaml -->
+
+        <div class="row" style="text-align: center;">
+            <div id="team-members" style="width: 92%; margin: 0 auto; min-width: 500px;" >
+                {% for member in members.current %}
+                <div style="display: inline-block; width: 200px;" class="person-container">
+                <div class="picture-container" style="margin: 0 auto; text-align: center; width: 150px;">
+                    <img class="picture trigger" style="height: 110px; width: 110px; object-fit: cover" src="{% static member.image %}">
+                </div>
+                <div class="text-container">
+                    <div class="name">
+                        {% if member.site %}
+                            <a href="{{ member.site }}" target="_blank" style="color: black; font-weight: 500;">{{ member.name }}</a>
+                        {% else %}
+                            <p style="color: black; font-weight: 500;">{{ member.name }}</p>
+                        {% endif %}
+                    </div>
+                    {% if member.educ %}
+                        <div class="position">{{ member.educ }}</div>
+                        <div class="position">{{ member.role }}</div>
+                    {% else %}
+                        <div class="position">{{ member.role }}</div>
+                        <br>
+                    {% endif %}
+                </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row" style="text-align: center;">
+            <div id="past-header">Past Contributors</div>
+            <div id="past-members">                
+                {% for member in members.past %}
+                    <div style="display: inline-block; width: 200px; height: 40px; line-height: 40px;">
+                        {% if member.site %}
+                            <a href="{{ member.site }}" style="color: black">{{ member.name }}</a>
+                        {% else %}
+                            {{ member.name }}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12 mission-container">
+                <div class="mission-header">Join Berkeleytime</div>
+                <div class="mission-description">Berkeleytime recruits through the
+                    <a href="http://asucocto.org" style="color: black; font-weight: 500;">ASUC Office of the CTO</a> 
+                    at the beginning of every semester.</div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endspaceless %}
+{% endblock %}

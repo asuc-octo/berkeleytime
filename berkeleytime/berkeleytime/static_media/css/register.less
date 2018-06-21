@@ -1,0 +1,124 @@
+@import "utils.less";
+@import "standard.less";
+
+html {
+    width: 100%;
+    height: 100%;
+    .background("img/berkeley.jpg");
+}
+
+.input-font(@main-font, 300);
+
+@button-width: 100px;
+@field-font-size: 13px;
+@field-height: 30px;
+@width: 300px;
+@message-height: 30px;
+@field-width: 0.85 * @width;
+@field-padding: 10px;
+@field-border-width: 2px;
+
+.register-box {
+    .font(@main-font, 300);
+    padding: 30px 0px 30px 0px;
+    display: block;
+    width: @width;
+    .absolute-center(@width, 15%);
+    background-color: @form-container-bg;
+    border: none;
+    font-size: @field-font-size;
+
+    .message {
+        width: @width;
+        z-index: 10;
+        text-align: center;
+        vertical-align: middle;
+        .height(@message-height, 12px);
+        margin-top: -@message-height;
+        .error-short { background: #f43d6b; }
+        .welcome { background: #5aa834; }
+
+        a {
+            text-decoration: none;
+            .light-link(black);
+        }
+    }
+
+    input {
+        display: block;
+        margin: 5px auto 0px auto;
+        position: relative;
+        width: @field-width - 2 * @field-padding - 2 * @field-border-width;
+        .height(@field-height, @field-font-size);
+        padding-left: @field-padding;
+        padding-right: @field-padding;
+        font-size: @field-font-size;
+    }
+
+    @side-margin: (@width - @field-width)/2;
+    button {
+        width: @button-width;
+        margin-top: 10px;
+        margin-left: @field-width + @side-margin - @button-width;
+        padding: 0;
+
+        background-color: @button-blue;
+        color: white;
+        text-align: center;
+        height: @field-height;
+        line-height: @field-font-size;
+        font-size: @field-font-size;
+        overflow: hidden;
+        border: none;
+
+        &:hover {
+            background-color: lighten(@button-blue, 10%);
+        }
+        cursor: pointer;
+    }
+
+    fieldset {
+        border-top: 1px solid grey;
+        border-bottom: none;
+        border-left: none;
+        border-right: none;
+        display:block;
+        text-align:center;
+        legend {
+            padding:10px;
+            font-family: 'Lobster';
+            font-size: 17px;
+        }
+    }
+
+    #header {
+        p {
+            font-size: 37px;
+            margin: 20px 0px 20px 0px;
+            text-align: center;
+            font-family: "Lobster";
+
+        }
+    }
+    .terms {
+        p {
+            color: lighten(black, 10%);
+            text-align: right;
+            font-size: 12px;
+            margin: 10px 20px 10px 20px;
+            a {
+                text-decoration: none;
+                color: lighten(black, 25%);
+                &:hover {
+                    color: lighten(black, 50%);
+                }
+                cursor: pointer;
+            }
+
+        }
+    }
+}
+
+
+
+

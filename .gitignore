@@ -1,0 +1,13 @@
+*.pyc
+*.DS_Store
+*.log
+venv
+*.db
+berkeleytime/berkeleytime/static_media/images
+*.dump
+*.rdb
+.vagrant
+.idea
+vagrant/data/data.tar.gz
+
+.sass-cache/

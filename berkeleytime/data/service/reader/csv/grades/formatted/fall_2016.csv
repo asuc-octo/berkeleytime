@@ -1,0 +1,2075 @@
+Course Subject Cd,Course Number,Section Nbr,Instr Name Concat,A+,A,A-,B+,B,B-,C+,C,C-,D+,D,D-,F,Pass,Satisfactory,Not Pass,Unsatisfactory,Incomplete
+AFRICAM,R1A,1,Aparajita Nanda,,5,7,2,2,1,,,,,,,1,,,,,
+AFRICAM,R1B,1,Aparajita Nanda,,3,5,4,1,3,,,,,,,,,,,,
+AFRICAM,R1B,2,Christina Bush,,1,,1,8,5,1,,,,,,,,,,,
+AFRICAM,4A,1,G. Ugo NWOKEJ,9,20,9,10,3,3,2,,1,1,,,2,6,,2,,1
+AFRICAM,5A,1,Brandi Catanese,2,15,8,5,12,2,5,3,4,,1,2,1,8,,5,,
+AFRICAM,11A,1,David Kyeu,,14,,,,,,,,,,,,,1,,,
+AFRICAM,27AC,1,Michael Cohen,,76,48,13,11,4,1,2,4,2,,,,20,,2,,1
+AFRICAM,100,1,Leigh Raiford,,7,6,8,3,2,1,,,,,,,4,,,,2
+AFRICAM,111,1,Stephen Small,8,6,20,14,6,3,,2,,,,,,10,,2,,
+AFRICAM,116,1,Ula Taylor,,5,5,4,2,4,5,3,2,,1,,,1,,1,,2
+AFRICAM,123,1,Stephen Small,,6,6,12,3,1,,,,,,,3,3,,1,,2
+AFRICAM,C134,1,Michel Laguerre,,7,6,,,,,,,,,,,1,,,,
+AFRICAM,137,1,Michel Laguerre,,13,5,2,,1,,,,,,,,,,,,2
+AFRICAM,139,1,Nikki Jones,2,21,6,3,2,2,1,,,,,,,1,,,,2
+AFRICAM,158A,1,Aya De Leon,,11,1,,1,,,,,,,,,,,,,1
+AFRICAM,159,1,Aya De Leon,,9,2,1,2,1,,,1,,,,,,,,,
+AFRICAM,159,2,Chiyuma Elliott,1,5,1,2,,,,,1,,,,,,,,,
+AFRICAM,198,3,Leigh Raiford,,,,,,,,,,,,,,43,,2,,
+ENVECON,C1,1,Peter Berck,,5,8,9,13,5,13,11,,,,,2,4,,1,,
+ENVECON,100,1,Ethan Ligon,1,33,28,15,3,3,,,1,1,,,1,6,,2,,
+ENVECON,C102,1,Larry Karp,2,13,3,10,18,7,,3,1,,1,,1,,,,,
+ENVECON,C118,1,Elisabeth Sadoulet,8,8,10,11,12,16,10,10,8,,1,,1,,,1,,1
+ENVECON,141,1,David Zilberman,10,16,20,8,6,,,,,,,,,1,,,,
+ENVECON,145,1,Michael Anderson,4,14,15,14,23,9,6,6,5,,,1,,,,,,1
+ENVECON,C151,1,Aprajit Mahajan,,15,11,15,10,9,7,5,2,1,,,,4,,1,,
+ENVECON,152,1,Jeremy Magruder,4,4,3,7,4,5,2,,,,,,1,3,,,,
+ENVECON,C181,1,Thibault Fally,4,3,2,1,6,7,3,6,11,,1,,1,,,,,3
+ANTHRO,1,1,Lisa Johnson,12,34,27,24,16,9,4,6,1,3,1,1,5,19,,4,,
+ANTHRO,2AC,1,Michael Grone,9,77,49,34,24,15,7,2,8,2,3,,4,28,,7,,
+ANTHRO,3AC,1,James Holston,12,208,113,46,27,6,4,8,2,,4,,4,38,,3,,
+ANTHRO,R5B,1,Laurie Wilkie,3,13,,1,,,,,,,,,,,,,,
+ANTHRO,R5B,2,Samuele Collu,1,8,4,1,2,1,,,,,,,,,,,,
+ANTHRO,R5B,3,Laurie Wilkie,,7,8,1,,1,,,,,,,,,,,,
+ANTHRO,R5B,4,Laurie Wilkie,5,4,5,1,,,,,,2,,,,,,,,
+ANTHRO,84,2,Rosemary Joyce,,,,,,,,,,,,,,11,,1,,
+ANTHRO,107,1,Terrence Deacon,8,14,14,15,13,18,15,11,6,,,,1,10,,3,,
+ANTHRO,114,1,Mary George,7,44,20,3,5,1,,1,2,,,,1,6,,1,,
+ANTHRO,115,1,Nancy Scheper-Hughes,4,24,8,7,3,1,,,,,,,2,2,,2,,1
+ANTHRO,119,1,Stefania Pandolfo,4,24,6,2,1,,,,,,,,,1,,1,,2
+ANTHRO,121C,1,Laurie Wilkie,11,1,3,,3,,1,,,1,,,,,,,,
+ANTHRO,122A,1,Jun Sunseri,16,15,6,,1,,,,1,,,1,,1,,,,1
+ANTHRO,C125A,1,Junko Habu,1,11,5,6,5,,1,,,,,,1,1,,1,,
+ANTHRO,127A,1,Sabrina Agarwal,3,4,3,3,1,1,,,,,,1,,,,,,
+ANTHRO,135,1,Christine Hastorf,2,3,1,,3,1,2,3,,,2,,1,,,,,
+ANTHRO,136F,1,Rosemary Joyce,1,14,2,,1,,,,,,,,,2,,,,
+ANTHRO,136G,1,Rosemary Joyce,14,17,3,,2,,,,,,1,,2,1,,1,,
+ANTHRO,138A,1,Daniel Fisher,,14,18,10,22,5,5,3,1,,,,2,4,,2,,2
+ANTHRO,150,1,Alexei Yurchak,3,22,14,8,6,1,,,,,,,1,5,,2,,
+ANTHRO,155,1,Paul Rabinow,,5,12,11,3,2,,,,,1,,,1,,,,
+ANTHRO,157,1,Laura Nader,33,24,5,4,4,1,1,,,2,,,6,9,,1,,
+ANTHRO,158,1,Peter Skafish,,10,3,3,,,,,,,,,,3,,,,4
+ANTHRO,169C,1,William Hanks,2,7,7,3,2,,,,,,,,,,,,,
+ANTHRO,189,1,Xin Liu,4,6,2,,2,1,,,,,,,,3,,3,,3
+ANTHRO,189,4,Peter Skafish,1,6,6,1,,,,,,,,,,,,,,1
+ANTHRO,189,5,Marlee Tichenor,2,20,6,2,1,3,,,,,,,,,,,,
+ANTHRO,198,22,Daniel Fisher,,,,,,,,,,,,,,26,,2,,
+ARCH,11A,1,Darell Fields,,,6,15,16,15,3,5,1,,1,,1,2,,1,,4
+ARCH,39,1,M Ubbelohde,,,,,,,,,,,,,,16,,,,1
+ARCH,98,1,Galen Cranz,,,,,,,,,,,,,,14,,1,,
+ARCH,98BC,1,C Crysler,,,,,,,,,,,,,,19,,1,,
+ARCH,100A,1,Lisa Iwamoto,4,17,14,20,30,28,15,9,2,,1,,2,,,3,,1
+ARCH,100C,2,Jean Bourdier,2,5,4,,1,,,,,,,,,,,,,
+ARCH,100C,3,Rene Davids,2,2,7,1,,,,,,,,,,,,,,
+ARCH,100C,4,William Atwood,,7,4,1,2,,,,,,,,,,,,,
+ARCH,100C,5,Cass Smith,3,1,3,3,2,1,,,1,,,,,,,,,
+ARCH,100C,6,Lisa Iwamoto,1,2,3,2,5,1,,,,,,,,,,,,
+ARCH,102A,1,Darell Fields,,,,2,3,,4,2,,1,,,,,,,,1
+ARCH,102A,2,Darell Fields,,,1,2,3,4,,,,,,,,,,,,
+ARCH,110AC,1,Leonardo Chiesi,,4,34,19,28,17,5,8,4,,1,,1,3,,,,
+ARCH,130,1,C Crysler,,19,9,9,3,4,2,,,,,,2,,,,,2
+ARCH,142,1,Gail Brager,,,,,,,,,,,,,,79,,2,,
+ARCH,144,1,Charles Salter,,,,,,,,,,,,,,8,2,1,,
+ARCH,150,1,R.Gary Black,4,22,13,19,13,9,12,5,6,,,,,,,,,
+ARCH,170A,1,Razieh Ghorbani Kharaji,3,18,18,20,17,21,21,8,10,6,2,,3,3,,,,2
+ARCH,198,3,Keith Plymale,,,,,,,,,,,,,,9,,2,,
+ARCH,198BC,1,Amina Al-kandari,,,,,,,,,,,,,,17,,3,,
+ARCH,198BC,2,C Crysler,,,,,,,,,,,,,,19,,1,,
+ENV DES,1,1,Nicholas de Monchaux,11,23,28,32,19,16,6,4,2,1,,,2,8,,,,1
+ENV DES,4A,1,Greg Castillo,19,36,22,16,13,1,4,3,,,,,4,3,,2,,2
+ENV DES,101B,1,Raymond Lifchez,4,4,1,,1,,,,,,1,,,,,,,
+ENV DES,102,1,David Waldron,2,12,9,13,7,1,1,1,,,,,,1,,,,
+ENV DES,104,1,Emily Pilloton,1,20,5,,4,,,,,,,,1,,,,,
+VIS STD,185X,1,Anthony Dubovsky,2,10,2,,,,,,,,,,,,,,,
+VIS STD,186B,1,Jean Bourdier,4,6,,1,1,,,,,,,,,,,,,
+ART,8,1,John Mcnamara,23,21,16,5,1,1,2,,,,,,,,,1,,
+ART,12,1,Masako Miki,,21,,,2,,,,,,,,,1,,,,
+ART,12,2,Craig Nagasawa,,19,,,1,,,,,,,,,1,,,,
+ART,13,1,John Mcnamara,,19,3,,1,,,,,,,,,1,,,,
+ART,14,1,Randy Hussong,,10,3,4,1,1,,,,,,,,,,,,
+ART,15,1,Erik Scollon,,4,9,,3,,2,,,,,,,4,,,,
+ART,16,1,Randy Hussong,,15,3,,,,,1,,,,,,,,,,
+ART,21,1,Stephanie Syjuco,2,7,6,2,,,,,,,,,,1,,,,
+ART,102,1,James Pitt,1,16,,,,,,,,,,,,,,,,1
+ART,102,2,Indira Morre,4,10,7,,1,,,,,,,,,,,,,
+ART,117,1,Craig Nagasawa,,12,1,,1,,,,,,,,,,,,,
+ART,118,1,Indira Morre,3,15,4,1,1,,,,,,,,,,,,,
+ART,119,1,Jenifer Wofford,2,5,4,,5,1,,1,,1,,,,,,,,
+ART,123,1,Randy Hussong,,11,,3,1,,,,,,,,,,,,,
+ART,132,1,Stacy Jo Scott,2,5,4,2,1,,,,,,,,,,1,,,
+ART,133,1,Brody Reiman,2,10,1,,,,,,,,,,,,,,,
+ART,163,1,Stephanie Syjuco,4,10,2,,,,,,,,,,,,,,,
+ART,171,1,Azin Seraj,1,5,2,2,3,,,,,,,,,2,,1,,
+ART,173,1,Christopher Kubick,,7,8,3,,1,,,,,,,,,,,,
+ART,184,1,Brody Reiman,1,9,1,3,,,,,,,,,,,,,,1
+ART,185,1,,1,7,4,,,,,,,,,,,,,,,
+ART,185,2,Asma Kazmi,6,1,3,1,,,,,,,,,,,,,,
+ART,198,1,John Mcnamara,,,,,,,,,,,,,,15,,1,,
+ART,198,2,Greg Niemeyer,,,,,,,,,,,,,,29,1,,,
+ASTRON,7A,1,Eugene Chiang,1,7,7,8,13,8,5,2,1,,,,,9,,1,,1
+ASTRON,C10,1,Jacob Duncan,51,124,58,28,54,12,11,6,4,,1,,,295,,24,,4
+ASTRON,C13,1,Eliot Quataert,4,14,7,6,5,2,,,,,1,,,30,,3,,
+ASTRON,120,101,Gaspard Duchene,2,3,6,2,2,3,2,,,,,,,,,,,
+ASTRON,160,1,Eliot Quataert,2,4,2,3,8,3,1,2,1,,,,,2,,2,,
+ASTRON,C162,1,Imke De Pater,1,9,3,3,5,,,1,,,,,1,,,,,
+BIO ENG,10,1,Terry Johnson,3,84,40,4,5,1,,,,1,,1,,,,,,
+BIO ENG,24,1,Hayley Lam,,,,,,,,,,,,,,248,,2,,
+BIO ENG,100,1,Hayley Lam,24,74,2,2,1,1,,1,,,,,1,9,,,,
+BIO ENG,102,1,Mohammad Mofrad,,13,11,20,11,4,2,1,3,,,,1,,,,,
+BIO ENG,114,1,Irina Conboy,14,6,1,2,,1,,,,,,,,2,,,,
+BIO ENG,115,1,Hayley Lam,2,17,7,2,,,,,,,,,,,,,,
+BIO ENG,121L,11,Dorian Liepmann,2,12,2,,,,,,,,,,,,,,,
+BIO ENG,124,1,Niren Murthy,18,,13,5,1,,,,,,,,,1,,,,
+BIO ENG,131,1,Ian Holmes,4,5,7,,2,1,1,1,,,,1,,2,,1,,
+BIO ENG,147,1,Adam Arkin,1,3,3,4,,3,1,2,1,,,,1,,,2,,
+BIO ENG,148,1,John Dueber,1,6,5,4,1,3,1,,,,,,,,,,,
+BIO ENG,150,1,Seung-Wuk Lee,15,12,,11,4,,2,,,,1,,,,,,,
+BIO ENG,163,1,Gerard Marriott,3,7,5,,,,,,,,,,,,,,,1
+BIO ENG,190,1,Kimmen Sjolander,,6,2,4,,,,,,,1,,,,,,,
+BIO ENG,192,1,Amy Herr,,27,,1,,,,,,,,,,,,,,
+BUDDSTD,C50,1,Robert Sharf,,5,7,6,8,4,,1,3,,1,,,11,,3,,
+BUDDSTD,C114,1,Jann Ronis,,2,7,2,,,,,,,,,,1,,,,
+BUDDSTD,C120,1,Sanjyot Mehendale,1,14,,,,,,,,,,,,4,,,,
+UGBA,10,1,Judy Hopelain,24,63,133,100,95,24,15,2,2,,,,1,21,,1,,
+UGBA,39AC,1,Colin Lacon,,4,12,16,,,,,,,,,,2,,,,
+UGBA,39E,1,David Harris,4,6,1,,,,,,2,,,,,4,,,,
+UGBA,100,1,Daniel Himelstein,,,24,9,,,,,,,,,,,,,,
+UGBA,100,2,Janet Brady,,3,10,10,7,,,,,,,,,,,,,
+UGBA,100,3,Krystal Thomas,,2,15,12,,1,,,,,,,,,,,,
+UGBA,100,4,Arturo Perez-Reyes,,,8,11,10,,,,,,,,1,,,,,
+UGBA,100,5,Arturo Perez-Reyes,,2,6,9,5,,1,,,,,,,,,,,
+UGBA,100,6,Krystal Thomas,,2,13,12,,1,,,,,,,,,,,,
+UGBA,101A,1,Todd Fitch,,17,19,38,23,5,3,1,1,,2,,1,1,,1,,
+UGBA,101A,2,Todd Fitch,,22,19,32,26,9,1,3,,,1,,1,4,,2,,
+UGBA,101B,1,Steven Wood,,8,10,8,6,7,9,4,4,,2,,2,,,,,
+UGBA,102A,1,Francis Stanton,13,29,29,,23,17,,6,1,,,,,10,,1,,
+UGBA,102A,2,Francis Stanton,8,6,19,5,9,11,3,1,,,,,,,,,,
+UGBA,102A,3,Tiffany Rasmussen,,30,31,29,25,15,2,,,,,,,1,,,,
+UGBA,102B,1,John Briginshaw,5,19,36,22,23,16,7,2,1,,2,,,1,,,,
+UGBA,103,1,William Fuchs,5,24,17,23,22,22,2,3,,,,,,14,,,,
+UGBA,103,2,William Fuchs,5,23,20,25,17,22,1,4,,,,,2,11,,1,,
+UGBA,104,1,Andrew Shogan,,59,61,72,5,6,3,5,8,,,,5,3,,1,,5
+UGBA,105,1,Dana Carney,17,38,42,80,61,12,,,,,,,,5,,1,,1
+UGBA,106,1,Wasim Azhar,6,53,39,66,40,17,9,3,,,,,,2,,,,2
+UGBA,107,1,Juan Ramirez,4,27,69,86,34,11,3,1,,,,,,,,,,2
+UGBA,115,1,Frank Schultz,,6,15,8,1,,1,,,,,,,,,,,
+UGBA,115,2,Frank Schultz,,5,15,11,,,,,,,,,1,,,,,
+UGBA,120AA,1,Alastair Lawrence,20,,22,7,,4,,2,,,,,,11,,1,,
+UGBA,120B,1,Francis Stanton,3,11,5,1,7,,,,,,,,,4,,,,
+UGBA,121,1,Alan Cerf,2,14,3,,13,,,1,,,,,,1,,,,
+UGBA,122,1,Patricia Dechow,13,15,4,2,3,,2,,1,,,,,8,,,,
+UGBA,126,1,Tiffany Rasmussen,,9,4,4,2,1,,,,,,,,1,,,,
+UGBA,127,1,John Mccauley,5,2,4,4,1,,,,,,,,,10,,,,
+UGBA,127,2,Tiffany Rasmussen,,12,11,2,4,1,,,,,,,,2,,,,
+UGBA,131,1,Stephen Etter,,24,6,11,5,,,,,,,,,3,,1,,
+UGBA,133,1,Samuel Olesky,1,12,17,13,5,,,,,,,,,,,,,
+UGBA,151,1,Cristina Banks,1,13,8,6,7,,6,,,,,,1,10,,2,,
+UGBA,152,1,Holly Schroth,,10,13,9,3,1,2,,,,,,,,,,,
+UGBA,152,2,Holly Schroth,,10,19,3,7,1,,,,,,,,,,,,
+UGBA,154,1,Edward Kass,,14,4,3,9,,,,,,,,,2,,,,
+UGBA,162,1,Judy Hopelain,,9,11,10,6,1,1,,,,,,,1,,,,
+UGBA,162A,1,Krystal Thomas,,2,15,5,1,,,,,,,,,7,,,,
+UGBA,165,1,William Fanning,,5,4,6,3,1,,,,,,,,3,,,,
+UGBA,167,1,David Robinson,1,7,11,7,5,3,1,1,,,,,,6,,,,
+UGBA,175,1,Alan Ross,1,8,7,10,5,4,,1,1,,1,,,8,,,,
+UGBA,176,1,Diane Dwyer,,1,23,7,1,2,,,,,,,,2,,,,
+UGBA,178,1,Daniel Himelstein,,3,28,8,6,1,,,,,,,,5,,,,
+UGBA,179,1,Daniel Himelstein,,2,35,9,2,1,,,,,,,,,,,,
+UGBA,180,1,David Nelson,5,54,10,21,19,7,,2,2,,,,,12,,,,
+UGBA,190T,1,Clark Kellogg,,14,19,15,3,,1,1,,,,,,3,,,,
+UGBA,190T,2,Virginia Rath,3,6,8,4,1,,,,,,,,,1,,,,
+UGBA,190T,3,Jon Metzler,,16,8,2,1,,,,,,,,,1,,,,
+UGBA,191C,1,Ericka Lutz,,14,8,8,6,3,,,,,,,,8,,1,,
+UGBA,191I,1,Cort Worthington,,7,11,8,1,,,,,,,,,2,,,,
+UGBA,192AC,1,David Harris,10,20,6,,,2,,,,,,,,1,,,,
+UGBA,192N,1,Joseph Dougherty,2,4,11,8,3,,,,,,,,,2,,,,1
+UGBA,192P,1,Grace Lesser,2,10,7,6,2,,,,,,,,,2,,,,
+UGBA,193B,1,James Rector,,6,10,1,4,,,,,,,,,5,,,,
+UGBA,194,1,William Shireman,,,,,,,,,,,,,,39,,1,,
+UGBA,195P,1,Peter Molloy,,9,10,9,3,,,,,,,,,2,,,,
+UGBA,195T,1,Robin Chandra,8,8,30,7,9,2,,,,,,,,,,,,
+UGBA,196,1,Fred Selinger,11,45,37,17,15,4,1,1,,,,,,131,,,,
+UGBA,196,2,Fred Selinger,11,23,18,8,9,2,1,,,,,,,58,,1,,
+UGBA,196,3,Solomon Fulp,1,5,17,4,2,,,,,,,,1,3,,,,
+UGBA,196,4,Ericka Lutz,1,5,4,6,1,,,,,,,,,1,,,,
+UGBA,198,3,Brett Green,,,,,,,,,,,,,,30,,1,,
+UGBA,198,5,Zsolt Katona,,,,,,,,,,,,,,26,,1,,
+UGBA,198,8,Cort Worthington,,,,,,,,,,,,,,23,,1,,
+UGBA,198,9,Holly Schroth,,,,,,,,,,,,,,24,,2,,
+UGBA,198,10,Todd Fitch,,,,,,,,,,,,,,23,,2,,
+UGBA,198,12,Todd Fitch,,,,,,,,,,,,,,23,,1,,
+UGBA,198,17,Karlene Roberts,,,,,,,,,,,,,,22,,1,,
+CHM ENG,40,1,Marjorie Went,6,48,29,16,19,12,,5,2,,,,,8,,1,,1
+CHM ENG,140,1,David Graves,4,19,21,24,24,22,16,9,4,1,2,,3,7,,,,
+CHM ENG,142,1,Haefa Mansour,3,20,24,10,6,21,24,6,3,,3,,3,,,,,
+CHM ENG,150B,1,Joseph Papp,4,9,11,20,8,12,5,7,4,,3,,3,,,,,
+CHM ENG,154,1,Ari Fischer,,9,7,8,10,2,,,,,,,,,,,,
+CHM ENG,160,1,George Tyson,2,6,4,3,10,1,4,3,,,,,1,,,,,
+CHM ENG,162,1,Samuel Leung,3,7,6,10,7,,3,1,1,,1,,1,,,,,
+CHM ENG,170A,1,Wenjun Zhang,1,5,8,5,8,6,2,1,,,,,,,2,,,
+CHM ENG,176,1,Bryan Mccloskey,4,10,6,7,8,3,,,2,,,,,1,5,,,
+CHM ENG,C178,1,Susan Muller,1,2,1,5,4,1,1,1,,,,,,,1,,,
+CHM ENG,179,1,Brandon Curtis,,2,3,,5,4,,1,,,,,,1,5,,,
+CHM ENG,180,1,Gregory Schoofs,,4,5,3,6,,,3,1,,,,,,,,,
+CHM ENG,185,1,Sabrina Sun,,12,5,8,9,3,,1,,,,,1,,,,,
+CHEM,1A,1,Martin Head-Gordon,23,54,45,39,73,48,25,33,12,8,7,3,13,10,,16,,
+CHEM,1A,2,Teresa Head-Gordon,12,41,32,31,36,34,28,30,18,9,9,3,19,8,,17,,
+CHEM,1A,3,Martin Head-Gordon,6,45,35,22,35,26,22,24,6,3,6,5,11,10,,9,,
+CHEM,1A,4,Angelica Stacy,,11,6,11,29,10,12,19,7,,2,,,3,,6,,
+CHEM,1AL,1,Anjum Sareshwala,39,155,44,23,39,4,4,6,4,,2,,2,3,,1,,
+CHEM,1AL,2,Michelle Douskey,43,206,35,21,33,3,1,2,1,,,,8,1,,1,,
+CHEM,1AL,3,Michelle Douskey,39,181,43,39,53,9,2,3,2,,1,,6,1,,1,,2
+CHEM,3A,1,Steven Pedersen,,36,11,40,35,34,27,20,37,,10,,16,4,,11,,8
+CHEM,3A,2,Steven Pedersen,5,53,18,42,59,29,37,25,72,,16,,19,5,,8,,4
+CHEM,3AL,1,Anjum Sareshwala,37,267,10,5,,,,,,,,,1,1,,3,,2
+CHEM,3AL,2,Peter Marsden,24,201,12,6,,,,1,,,,,1,1,,,,
+CHEM,3B,1,Maryann Robak,10,77,42,27,12,26,14,6,13,,7,,1,1,,4,,
+CHEM,3B,2,Maryann Robak,8,75,24,26,21,19,12,13,17,,6,,1,1,,3,,1
+CHEM,3BL,1,Peter Marsden,19,221,30,5,2,5,3,2,,,,,,,,2,,1
+CHEM,3BL,2,Peter Marsden,8,145,12,5,2,,2,3,,,,,,,,1,,
+CHEM,4A,1,Anjum Sareshwala,1,27,28,41,57,43,19,21,4,1,5,,3,3,,,,2
+CHEM,15,1,Daniel Neumark,1,9,3,3,9,5,2,3,3,,,,4,,,,,
+CHEM,103,1,Christopher Chang,7,35,15,7,8,,7,3,1,,,,1,2,,1,,
+CHEM,104A,1,T Tilley,,12,11,10,10,11,11,7,12,,6,,5,3,,1,,
+CHEM,108,1,Richard Andersen,,4,4,1,1,1,1,,1,,,,,1,,,,
+CHEM,C110L,1,Andreas Martin,,2,1,2,3,3,1,,,,,,,,,,,
+CHEM,112A,1,Anjum Sareshwala,,26,49,31,30,19,24,12,15,1,3,1,2,,,1,,
+CHEM,113,1,Gregory Veber,3,4,10,8,9,6,2,1,1,,,,2,5,,1,,
+CHEM,115,1,Dean Toste,1,8,3,,1,,,,,,,,,,,,,
+CHEM,120A,1,Eric Neuscamman,1,10,8,5,6,5,8,6,4,,,,2,,,1,,
+CHEM,120B,1,Luning Zhao,3,30,13,14,11,8,19,14,3,,,,2,,,,,2
+CHEM,125,1,Stephen Leone,2,7,,2,5,5,4,2,1,,,,1,,,,,
+CHEM,C130,1,David Savage,4,5,5,1,2,1,2,,,,,,1,1,1,,,
+CHEM,135,1,Evan Miller,4,18,20,8,15,24,11,11,7,,4,,1,4,1,2,,2
+CHEM,143,1,Luciano Moretto,,3,1,1,1,3,,1,,,,,,3,,2,,
+CY PLAN,110,1,Jason Luger,9,61,31,11,18,4,5,3,1,1,1,1,,9,,2,,2
+CY PLAN,113A,1,Sara Hinkley,1,16,15,8,7,6,,3,2,,,,1,3,,3,,1
+CY PLAN,119,1,Hayden Shelby,,45,9,12,2,,,,2,,,,1,2,,,,
+CY PLAN,140,1,Elizabeth Macdonald,3,12,15,12,3,14,3,2,,,,,,,,1,,1
+CIV ENG,24,3,Evan Variano,,12,,,1,,,,,,,,,2,,,,
+CIV ENG,C30,1,Ayyana Chakravartula,,1,,1,2,2,4,2,,,1,1,1,,,,,
+CIV ENG,C30,2,Shaofan Li,4,19,17,12,10,5,2,,,2,,,1,,,,,1
+CIV ENG,60,1,Paulo Monteiro,2,17,10,8,10,9,8,8,5,,,,1,,,,,
+CIV ENG,70,1,Steven Glaser,,1,14,11,21,9,6,6,5,,,,1,,,,,1
+CIV ENG,88,1,Alexey Pozdnukhov,6,15,4,1,1,,,,,,,,,8,,3,,
+CIV ENG,92,1,Rachel Allen,,,,,,,,,,,,,,107,,3,,
+CIV ENG,93,1,Mark Hansen,,3,12,7,7,10,4,4,,,,,,1,,,,
+CIV ENG,98,1,Susan Shaheen,,,,,,,,,,,,,,10,,1,,
+CIV ENG,98,6,Paulo Monteiro,,,,,,,,,,,,,,25,,1,,
+CIV ENG,100,1,Evan Variano,,3,29,27,15,4,3,,,,,,,,,,,
+CIV ENG,105,1,Sally Thompson,8,12,,,,,,,,,,,,,,,,
+CIV ENG,111,1,Kara Nelson,2,11,11,16,8,7,5,9,1,3,,,1,1,,2,,
+CIV ENG,111L,1,Kara Nelson,,16,1,,,,,,,,,,,,,,,
+CIV ENG,115,1,David Sedlak,,3,6,8,6,3,5,,,,,,,1,,1,,
+CIV ENG,121,1,Filippos Filippou,1,9,11,23,10,6,2,,,,,,1,,,,,
+CIV ENG,122N,1,Xin Qian,2,11,10,3,,1,,,,,,,,,,,,
+CIV ENG,123N,1,Grace West,2,15,8,6,6,,,,,,,,,,,,,
+CIV ENG,124,1,Mark Ma,8,13,,3,4,,,1,,,,,,,,,,
+CIV ENG,153,1,Jasenka Rakas,,35,6,,,,,,,,,,,,,,,
+CIV ENG,165,1,Paulo Monteiro,1,11,4,5,3,,1,,,,,,,,,,,
+CIV ENG,167,1,Audrey Bascoul,4,18,7,12,20,13,4,5,4,1,1,,,,1,,,
+CIV ENG,173,1,Chin Man Mok,1,7,12,6,5,,,3,,,,,,,,,,
+CIV ENG,175,1,Jonathan Bray,1,1,9,9,4,5,5,3,,,1,,,,,,,
+CIV ENG,186,1,Scott Moura,4,32,4,1,2,,,,,,,,,,,,,
+CIV ENG,191,1,Alexandre Bayen,9,27,6,11,6,2,3,,,,,,,1,,,,
+CIV ENG,192,1,Sofia Hamilton,,83,,,5,,,,,,,,1,2,1,,,
+CIV ENG,198,1,Fabiola Lopez,,,,,,,,,,,,,,22,,3,,
+CIV ENG,198,2,Jasenka Rakas,,,,,,,,,,,,,,13,,9,,
+CIV ENG,198,5,Carl Bello,,,,,,,,,,,,,,10,,2,,
+CLASSIC,10A,1,Mark Griffith,4,16,33,19,12,9,6,1,,,,,2,41,,,,1
+CLASSIC,17A,1,Kim Shelton,,6,7,1,3,2,2,1,,,1,,1,12,,5,,
+CLASSIC,36,1,Sara Magrin,9,14,6,16,5,3,1,,,,,,,42,,2,,
+CLASSIC,R44,1,Trevor Murphy,1,28,34,23,13,4,1,,1,2,,,,,,,,
+CLASSIC,130,2,Frank Bezner,4,8,6,,3,,,,,,,,,3,,,,
+CLASSIC,130,3,Trevor Murphy,,4,5,1,1,2,2,,,,,,1,4,,2,,1
+CLASSIC,163,1,Sara Magrin,1,7,2,4,,1,1,,,,1,,,4,,,,
+GREEK,1,1,Nikolaos Papazarkadas,1,5,3,,,1,,,,,,,,1,,,,
+LATIN,1,2,Erin Lam,2,4,2,,,,,1,,,,,1,4,,,,
+LATIN,1,3,Kathleen Mccarthy,5,3,2,2,,,1,,,,,,,2,1,,,
+COLWRIT,R1A,1,Donnett Flash,,,,3,3,2,2,,,,1,,1,,,,,
+COLWRIT,R1A,2,Caroline Cole,,,1,2,1,,2,1,,,2,1,3,,,,,
+COLWRIT,R1A,3,Jonathan Lang,,,1,2,1,3,3,1,2,,,,1,,,,,
+COLWRIT,R1A,4,Michelle Baptiste,,2,3,1,2,1,1,,,,,,4,,,,,
+COLWRIT,R1A,5,Benjamin Spanbock,,1,1,4,1,4,1,,,,,,1,,,,,
+COLWRIT,R1A,6,Catherine Oakes,,,3,7,3,,,,,,,,1,,,,,
+COLWRIT,R1A,7,Ryan Sloan,,,5,2,6,,,,,1,,,,,,,,
+COLWRIT,R1A,8,Jordan Ruyle,,1,4,2,3,,,1,,1,,,,,,,,
+COLWRIT,R1A,9,Caroline Cole,,1,,,3,4,1,,,,3,,,,,,,
+COLWRIT,R1A,10,Daniel Husman,,1,3,3,1,3,2,,,,,,1,,,,,
+COLWRIT,R1A,11,Carolyn Hill,,1,6,4,,1,,1,,,,,,,,,,
+COLWRIT,R1A,12,Patricia Steenland,,3,2,2,,4,1,,,,2,,,,,,,
+COLWRIT,R1A,13,Michael Larkin,,1,2,4,3,,,,,4,,,,,,,,
+COLWRIT,R1A,14,Chisako Cole,,1,,5,3,4,,,,,,,,,,,,
+COLWRIT,R1A,17,John Levine,,,2,3,4,2,,,,,,,1,,,,,
+COLWRIT,R1A,20,Kimberly Freeman,,1,,1,3,3,1,,1,4,,,,,,,,
+COLWRIT,R1A,22,David Wiese,2,2,5,3,,1,,,,1,,,,,,,,
+COLWRIT,R4B,2,Kimberly Freeman,,7,7,3,,,,,,,,,,,,,,
+COLWRIT,R4B,3,Daniel Husman,,8,5,4,,,,,,,,,,,,,,
+COLWRIT,R4B,5,Jonathan Lang,,2,4,5,1,3,1,,,,,,,,,,,
+COLWRIT,R4B,6,Michelle Baptiste,,8,1,3,1,,,,,,,,1,,,,,
+COLWRIT,R4B,8,Teri Crisp,4,2,5,2,2,,,,,,,,,,,,,1
+COLWRIT,R4B,9,Margi Wald,,7,5,,4,,,,,,,,1,,,,,
+COLWRIT,R4B,10,Michael Larkin,1,6,5,2,1,,,,,,,,,,,,,1
+COLWRIT,R4B,11,Patricia Steenland,,7,3,2,1,1,,1,,,,,,,,,,
+COLWRIT,R4B,12,Linda Jensen Darling,1,8,,4,2,,1,,,,,,,,,,,1
+COLWRIT,R4B,13,Jessica Jacobs,,13,3,,,,,,,,,,,,,,,
+COLWRIT,R4B,14,Jessica Jacobs,,9,5,1,,,,,,,,,,,,,,
+COLWRIT,R4B,17,David Wiese,3,4,2,6,2,,,,,,,,,,,,,
+COLWRIT,R4B,19,Mary Grover,2,6,,3,2,1,,1,,,,,1,,,,,
+COLWRIT,10A,1,Mary Grover,6,6,2,2,1,,,1,,,1,,,,,,,
+COLWRIT,10A,3,Carolyn Hill,,18,1,,,,,,,,,,,1,,,,
+COLWRIT,10A,5,Donnett Flash,,6,9,1,,,,,,,,,,2,1,,,
+COLWRIT,25AC,2,Margi Wald,3,22,,2,,,,,,,,,,3,,,,
+COLWRIT,105,1,Ryan Sloan,,12,1,2,1,,1,,,,,,,3,,,,
+COLWRIT,131,1,Catherine Oakes,,7,8,2,,,,,,,,,,1,,,,1
+COLWRIT,132,1,Ryan Sloan,,13,5,,,,,,,,,,,1,,,,
+COLWRIT,133,1,John Levine,,10,6,,1,,,,,,,,,1,,,,
+COM LIT,R1A,1,Thomas Sliwowski,,3,5,11,14,2,,,,,,,,,,,,
+COM LIT,R1A,2,Victoria Kahn,,1,7,13,6,5,,,,,,,1,,,,,
+COM LIT,R1A,3,Victoria Kahn,,4,1,9,3,,,,,,,,,,,,,
+COM LIT,R1A,4,Wendi Bootes,,6,3,7,6,4,5,2,,,,,,,,,,
+COM LIT,R1A,5,Victoria Kahn,,1,,6,5,2,1,,,,,1,,,,,,
+COM LIT,R1A,6,Molly Bronstein,,2,3,3,3,2,3,1,1,,,,,,,,,
+COM LIT,R1A,7,Tyleen Kelly,,1,4,5,3,2,,,,,,,,,,,,
+COM LIT,R1A,8,Gabriel Page,,2,2,3,5,3,3,,,,,,,,,,,
+COM LIT,R1B,1,Aurelia Cojocaru,,1,5,4,4,3,6,2,,,,,,,,,,
+COM LIT,R1B,2,Paul De Morais,,2,1,1,9,1,,,,,,,1,,,,,
+COM LIT,R1B,3,Victoria Kahn,,2,3,4,2,1,1,3,,,,1,,,,,,
+COM LIT,R1B,4,Victoria Kahn,,2,8,10,10,2,,1,,,,,1,,,,,
+COM LIT,R1B,5,Irina Popescu,,1,3,4,2,3,1,2,,,1,,,,,,,
+COM LIT,R1B,7,Marianne Kaletzky,,4,5,14,7,2,,,,,,,,,,,,
+COM LIT,R1B,8,Victoria Kahn,,2,1,2,5,3,1,1,,,,,,,,,,
+COM LIT,R1B,9,Danny Luzon,,1,3,5,2,2,,,,,,,1,,,,,
+COM LIT,R1B,10,Victoria Kahn,,7,1,14,5,2,1,,,,,,,,,,,1
+COM LIT,R1B,11,Victoria Kahn,,2,2,9,1,,,1,,,,,,,,,,
+COM LIT,R1B,12,Jessica Crewe,,1,3,5,4,1,,1,,,,,1,,,,,1
+COM LIT,R1B,13,Cory Merrill,,1,3,9,3,1,,,,,,,,,,,,
+COM LIT,R1B,14,Johnathan Vaknin,1,3,5,8,10,5,2,,,,,,,,,,,
+COM LIT,R1B,15,Simone Sofia Stirner,,2,2,7,2,1,,,,,,,,,,,,
+COM LIT,20,1,Michael Lucey,,8,14,6,5,1,,,,,1,,,4,,,,
+COM LIT,60AC,1,Francine Masiello,2,12,14,6,4,4,,,1,1,,,,23,,,,1
+COM LIT,100,1,Leslie Kurke,,6,2,4,2,,,,,,,,1,3,,,,
+COM LIT,100,2,Anne Nesbet,1,3,9,2,1,1,,,,,,,,3,,,,
+COM LIT,155,1,Harsha Ram,2,1,4,1,2,,,,,,,,,,,,,
+COM LIT,171,1,Maria Kotzamanidou,,14,7,,1,,,,,,,,,,,,,
+COM LIT,190,1,Judith Butler,,10,4,2,,,,,,,,,,1,,,,
+CMPBIO,98BC,1,Nir Yosef,,,,,,,,,,,,,,22,,,,1
+CMPBIO,198BC,1,Nir Yosef,,,,,,,,,,,,,,19,,1,,
+DEMOG,110,1,Robert Chung,8,10,8,5,15,5,3,2,,,,,1,1,,,,
+DEMOG,C126,1,Jennifer Johnson-Hanks,,10,5,6,4,2,,,,,,,,5,,1,,
+EPS,C20,1,Horst Rademacher,,99,,,43,,,8,,,2,,2,47,,6,,
+EPS,50,1,David Shuster,4,7,13,11,7,6,4,1,1,1,,1,,14,,5,,1
+EPS,80,1,Stephen Andrews,,31,64,17,12,7,1,,,,,,1,139,,5,,
+EPS,C82,1,James Bishop,10,23,25,5,6,2,6,7,3,,,,3,40,,11,,1
+EPS,100A,1,Jill Banfield,2,3,3,8,6,2,1,3,1,,,,,1,,,,1
+EPS,101,1,Nicholas Swanson-hysell,,3,5,4,1,,,,,,,,,,,,,2
+EPS,108,1,Mark Richards,,2,4,4,,4,,,,,,,,1,,,,
+EPS,109,1,Burkhard Militzer,2,7,,4,4,,2,4,1,,,,,5,,1,,
+EPS,111,1,Paul Henshaw,1,2,3,2,,5,6,,,,,,,1,,,,
+EPS,117,1,William Dietrich,,6,4,4,7,4,3,4,,1,1,,2,,1,,,4
+EPS,119,1,Paul Renne,,3,4,3,,,,,,,,,,,,,,
+EPS,C129,1,Dennis Baldocchi,1,5,2,2,1,,,,,,,,,3,,,,
+EPS,150,1,Roland Burgmann,,5,4,5,7,2,,1,1,,,,3,,,,,
+EPS,C181,1,David Romps,3,,2,1,2,,2,,,,,,,1,,,,
+CHINESE,1A,1,Peng Yin,,3,1,2,1,1,,,,1,,,,2,,,,
+CHINESE,1A,3,Chen-hui Tsai,,5,2,3,2,,,,1,,,,2,1,,,,
+CHINESE,1A,4,Xiangjun Feng,,2,1,4,1,,1,,,,,,,1,,1,,1
+CHINESE,1A,5,Damien Donnelly,,5,2,3,1,,,,,,,,1,1,,2,,
+CHINESE,1A,6,Weisi Cai,,3,5,1,,2,,,,,,,,1,,1,,
+CHINESE,1A,7,Chen-hui Tsai,,6,4,2,,1,,1,,,,,,1,,,,
+CHINESE,1A,8,Damien Donnelly,,3,5,4,,,1,,,,,1,,1,,2,,
+CHINESE,1A,9,Li Liu,,7,3,,,,,,,,,,,4,,,,
+CHINESE,1X,1,Li Liu,,8,3,1,1,,,,,,,,,6,,,,
+CHINESE,1X,2,Li Liu,,5,6,3,1,1,,,,,,,,4,,,,
+CHINESE,1Y,1,Weisi Cai,,10,1,4,2,,,,,,,,,2,,3,,
+CHINESE,1Y,2,Hsinyu Lin,,5,3,3,2,1,1,,,,,,,2,,,,
+CHINESE,1Y,3,Hsinyu Lin,,5,4,2,3,1,,,,,,,,1,,,,
+CHINESE,7A,1,Paula Varsano,2,4,4,2,3,1,1,4,2,,,,2,18,,4,,
+CHINESE,10A,1,Xianghua Wu,,3,2,,1,,2,,,,,,,4,1,1,,
+CHINESE,10A,2,Xianghua Wu,,8,4,,3,1,,,,,,,,,1,,,
+CHINESE,10A,3,Xianghua Wu,,6,5,2,,,,,,,,,,4,,,,
+CHINESE,100A,1,Xiangjun Feng,,7,1,3,1,3,,,,,,,,3,1,,,
+CHINESE,100XA,1,Chen-hui Tsai,,6,2,3,1,1,,,,,,,,6,,,,
+CHINESE,100XA,2,Lihua Zhang,,9,5,1,,1,,,,,,,,1,,,,
+CHINESE,100YA,1,Chunhong Xie,,7,,2,1,,,,,,,,,4,,,,
+CHINESE,102,1,I-Hao Li,,9,3,1,,,,,,,,,,1,,,,
+CHINESE,102,2,I-Hao Li,,10,4,2,,,,,,,,,,3,,,,
+CHINESE,110A,1,Brendan Morley,,9,4,1,4,,,1,1,,,3,2,3,1,1,,1
+CHINESE,111,1,I-Hao Li,,8,6,3,,,,,,,,,,,,,,
+CHINESE,130,1,Matthew Wells,5,4,2,1,1,2,1,,,,,,2,7,,1,,1
+CHINESE,153,1,Lanchih Po,,4,2,4,2,3,,,,,,,,10,,,,
+CHINESE,156,1,Andrew Jones,,7,7,,,,,,,,,,,4,,1,,1
+CHINESE,186,1,Mark Csikszentmihalyi,,19,2,3,3,,,2,1,,,,,12,,1,,
+EA LANG,C50,1,John Pickens,,1,5,1,,2,,,1,,,1,,4,,6,,
+EA LANG,114,1,Daniel O'Neill,1,6,3,2,,,,,,,,,,,,,,
+EA LANG,C120,1,Sanjyot Mehendale,,16,3,,,,,,,,,,,,,1,,
+JAPAN,1A,1,Kayoko Imagawa,,4,1,4,2,,,4,1,,,,,2,,2,,
+JAPAN,1A,2,Pedro Bassoe,,8,1,1,,1,,1,1,,,,,6,1,1,,
+JAPAN,1A,3,Yuriko Caltabiano,,12,,,1,,1,,,,,,,2,1,,,
+JAPAN,1A,4,Kayoko Imagawa,,6,4,2,2,3,1,1,,1,,,1,3,,,,
+JAPAN,1A,5,Noriko Knickerbocker,1,12,5,,,,,,,,,,,5,,1,,
+JAPAN,1A,6,Noriko Knickerbocker,1,6,1,3,,1,3,2,,,,,,3,,2,,
+JAPAN,1A,7,Noriko Knickerbocker,,10,3,3,2,,,,,1,,,,4,,,,
+JAPAN,1A,8,Yuriko Caltabiano,1,9,6,1,3,,,,,,,,,,,,,
+JAPAN,1A,9,Yumi Konishi,1,10,1,,,2,,1,,,,,1,3,,1,,
+JAPAN,1A,10,Pedro Bassoe,3,6,1,2,2,3,1,,,,,,,5,,,,
+JAPAN,1A,11,Yumi Konishi,1,9,5,2,1,2,,,,,,,,3,,,,
+JAPAN,1A,12,Noriko Knickerbocker,,7,,3,4,1,2,,,,,,,3,,1,,
+JAPAN,1A,13,Kayoko Imagawa,1,5,1,5,1,2,,,,,,,,3,,,,
+JAPAN,7A,1,John Wallace,2,18,10,3,2,,,,,,,,,11,,,,
+JAPAN,10A,1,Noriko Wallace,,5,3,1,1,1,1,,,,,,,2,,1,,
+JAPAN,10A,2,Maki Takata,,3,2,2,,1,1,,,,,,,6,,3,,
+JAPAN,10A,3,Yasuko Baker,,2,1,3,1,1,,1,,,,,,8,,1,,
+JAPAN,10A,4,Maki Takata,,2,3,3,,4,,,,,,,,3,1,1,,
+JAPAN,10A,5,Maki Takata,,5,3,1,,,1,,,,,,,6,,2,,
+JAPAN,100A,1,Wakae Kambara,,7,6,1,3,1,,1,,1,,,,2,,,,
+JAPAN,100A,2,Wakae Kambara,,10,5,,3,2,2,1,,,,,1,2,1,,,
+JAPAN,103,1,Chika Shibahara,,12,,1,,,,,,,,,,4,1,,,
+JAPAN,120,1,H Horton,2,5,1,2,3,4,,4,2,,,,,1,1,,,
+JAPAN,177,1,John Wallace,,12,10,1,1,,,,,,,,,1,,1,,
+JAPAN,181,1,Daniel O'Neill,2,5,13,3,1,,,,,,,,,2,,1,,
+KOREAN,1A,1,Soojin Lee,1,12,4,,,1,,1,,,,,,2,1,,,
+KOREAN,1A,2,Meehyei Lee,,15,7,1,1,,,,,,,,,,,1,,
+KOREAN,1A,4,Meehyei Lee,4,16,5,,,,,,,,,,,,,,,
+KOREAN,1A,5,Meehyei Lee,1,16,4,,2,,1,,,,,,,1,,,,
+KOREAN,1A,6,Meehyei Lee,,14,6,1,,1,,,,,,,,1,,,,
+KOREAN,1A,7,Jung Yun Choi,4,12,3,3,1,,,,,,,,,2,,,,
+KOREAN,1A,8,Junghee Park,,17,2,1,1,,,,,,,,,,,,,
+KOREAN,1A,9,Junghee Park,3,13,2,1,1,1,,,,,,,,3,,,,
+KOREAN,1A,10,Jung Yun Choi,,13,3,,1,2,,,,,,,,,,,,
+KOREAN,1AX,1,Seung-Eun Chang,,17,5,1,,,,,,,,,,2,,,,
+KOREAN,7A,1,Jinsoo An,,16,1,6,,,,,,,,,,20,,1,,1
+KOREAN,10A,1,Seung-Eun Chang,1,9,2,1,,1,,,,,,,,1,,,,
+KOREAN,10A,2,Seung-Eun Chang,1,6,4,,1,,,,,,,,,4,,,,
+KOREAN,10AX,1,Kijoo Ko,,9,7,3,,,,,,,,,,4,,,,
+KOREAN,100A,1,Minsook Kim,1,13,3,1,3,,,,,,,,,2,1,,,
+KOREAN,100AX,1,Soojin Lee,2,14,5,,,,,,,,,,,4,,,,
+KOREAN,101,1,Junghee Park,1,11,1,1,,,,,,,,,,,,,,
+KOREAN,155,1,Youngmin Kwon,4,11,2,8,2,1,,,,,,,1,,,,,
+KOREAN,157,1,Youngmin Kwon,6,6,7,8,1,,,,,,,,,2,,,,
+KOREAN,188,1,Jinsoo An,,9,9,2,4,,1,,,,,,,1,,,,
+TIBETAN,C114,1,Jann Ronis,,3,4,1,,,,,,,,,,2,,,,1
+ECON,1,1,Martha Olney,10,98,79,123,73,101,46,51,17,,3,,10,32,,7,,
+ECON,C3,1,Peter Berck,1,5,6,2,9,7,3,16,,,,,1,3,,,,1
+ECON,100A,1,Calanit Kamala,11,99,59,70,53,43,31,22,23,,5,,13,8,,5,,3
+ECON,100B,1,Steven Wood,,30,42,71,80,62,45,28,20,,10,,18,10,,19,,5
+ECON,101A,1,Cecile Gaubert,9,31,14,18,15,8,3,5,3,,1,,7,3,,3,,
+ECON,101B,1,Benjamin Schoefer,6,10,11,13,4,3,2,,,,1,,6,2,,1,,
+ECON,C102,1,Larry Karp,2,12,3,10,8,2,,,1,,,,,4,,,,
+ECON,C103,1,Haluk Ergin,2,1,4,5,1,4,1,,1,,,1,,4,,3,,
+ECON,105,1,Joseph Lough,,22,48,12,12,11,1,1,2,,,,7,13,2,4,,
+ECON,C110,1,Shachar Kariv,9,27,38,61,41,11,12,1,,,,,,17,,4,,1
+ECON,115,1,Calanit Kamala,1,30,16,17,10,6,7,5,4,,,,1,11,,4,,1
+ECON,119,1,Raymond Hawkins,3,53,45,36,32,1,,,,,,,3,8,,,,1
+ECON,121,1,Kei Kawai,3,17,20,17,5,12,12,12,4,,1,,,9,,,,1
+ECON,131,1,Danny Yagan,2,14,14,16,14,9,6,2,3,,1,,,17,,1,,
+ECON,136,1,Raymond Hawkins,6,57,43,27,29,10,12,3,1,,1,,1,19,,7,,1
+ECON,140,1,Evgeniya Duzhak,3,24,33,29,51,39,23,37,12,5,5,,2,5,,6,,2
+ECON,141,1,James Powell,4,16,10,14,7,3,3,1,3,,1,,1,,,,,
+ECON,C142,1,David Card,25,11,7,10,,,,,,,,,1,4,,2,,
+ECON,155,1,Joseph Lough,31,31,14,8,3,3,1,,,1,,,3,2,,1,,
+ECON,162,1,Gerard Roland,6,14,34,56,30,19,15,2,1,4,2,2,4,32,,2,,
+ECON,C171,1,Aprajit Mahajan,,33,17,10,13,1,2,3,4,,,,,9,,,,1
+ECON,C181,1,Thibault Fally,13,22,26,11,10,21,10,5,4,,1,,1,4,,,,
+ECON,182,1,Galina Hale,1,12,27,27,13,6,4,2,,,,,2,36,,4,,
+ECON,191,1,Barry Eichengreen,7,5,9,17,7,5,,,1,,,,,2,,,,4
+ECON,196,1,Tal Regev,3,3,4,5,3,3,4,,,,,,,6,,,,
+EDUC,52AC,1,Anthony Mirabelli,,20,10,2,,,1,,,,,,,3,,1,,
+EDUC,98,16,Derek Van Rheenen,,,,,,,,,,,,,,9,,1,,
+EDUC,98,40,Kasra Sotudeh,,,,,,,,,,,,,,14,,2,,
+EDUC,98,43,,,,,,,,,,,,,,,23,,1,,
+EDUC,130,1,Edward Ham,1,21,7,,1,,,1,,,,,1,,,1,,1
+EDUC,131AC,1,Daniel Golub,,17,9,2,,,,,,1,,,,,,,,
+EDUC,140AC,1,Glynda Hull,4,53,24,9,7,1,,1,1,,,,1,,,2,,3
+EDUC,C148,1,Erin Murphy-Graham,,15,8,4,1,1,1,,,,,,,1,2,,,
+EDUC,158,1,P Pearson,12,8,2,,,,,,,,,,,,,,,
+EDUC,186AC,1,Harley Shaiken,12,15,15,7,10,3,1,4,,1,,1,,20,,7,,
+EDUC,188,1,Sahara Baquedano-Lopez,1,33,,1,,,,,,,,,,,,,,
+EDUC,190AC,1,Erin Murphy-Graham,1,25,2,1,1,,,,1,,,,,,,,,
+EDUC,190AC,2,Erin Murphy-Graham,2,15,4,,2,2,1,,,1,,,,,,2,,1
+EDUC,190AC,4,Erin Murphy-Graham,,10,9,6,,,,,,,,,,1,,,,
+EDUC,195B,1,Richard Mccallum,,28,,,,,,,,,,,,,,,,2
+EDUC,197,1,Richard Mccallum,,,,,,,,,,,,,,19,,,,1
+EDUC,197,21,Richard Mccallum,,,,,,,,,,,,,,27,1,,,2
+EDUC,197,25,Richard Mccallum,,,,,,,,,,,,,,11,,1,,
+EDUC,197,48,Glynda Hull,,,,,,,,,,,,,,15,,,,1
+EDUC,197,50,Frank Worrell,,,,,,,,,,,,,,23,,,,2
+EDUC,197,58,Larry Nucci,,,,,,,,,,,,,,25,,2,,
+EDUC,198,1,Ronald Williams,,,,,,,,,,,,,,9,,1,,
+EDUC,198,3,Anthony Mirabelli,,,,,,,,,,,,,,23,,1,,
+EDUC,198,4,Anthony Mirabelli,,,,,,,,,,,,,,18,,1,,
+EDUC,198,5,Anthony Mirabelli,,,,,,,,,,,,,,17,,1,,
+EDUC,198,6,Ronald Williams,,,,,,,,,,,,,,21,,1,,
+EDUC,198,8,Ginelle Perez,,,,,,,,,,,,,,13,1,,,
+EDUC,198,13,Alex De Guia,,,,,,,,,,,,,,10,,1,,
+EDUC,198,27,Anthony Mirabelli,,,,,,,,,,,,,,27,,1,,
+EDUC,198,31,Anthony Mirabelli,,,,,,,,,,,,,,24,,1,,
+EDUC,198,44,Erin Murphy-Graham,,,,,,,,,,,,,,9,1,,,
+COMPSCI,C8,1,Anindita Adhikari,28,27,41,36,25,12,3,1,3,,,,5,36,,7,1,
+COMPSCI,9A,1,Carol Marshall,,,,,,,,,,,,,,6,,1,,4
+COMPSCI,9E,1,Carol Marshall,,,,,,,,,,,,,,13,2,9,,6
+COMPSCI,9F,1,Paul Hilfinger,,,,,,,,,,,,,,12,4,4,1,3
+COMPSCI,9G,1,Carol Marshall,,,,,,,,,,,,,,5,2,1,,3
+COMPSCI,9H,1,Carol Marshall,,,,,,,,,,,,,,10,8,4,,6
+COMPSCI,10,1,Daniel Garcia,26,83,31,16,29,21,5,5,1,,3,,4,43,,14,,6
+COMPSCI,47A,1,John DeNero,,3,3,3,,,,,,,,,,,,1,,
+COMPSCI,61A,1,John DeNero,33,228,276,328,291,94,31,25,17,3,10,,27,119,3,45,,8
+COMPSCI,61B,1,Paul Hilfinger,40,182,66,33,37,20,18,17,14,9,11,9,40,14,3,42,1,4
+COMPSCI,61C,1,Randy Katz,47,63,80,98,75,54,42,32,17,5,3,6,12,8,1,16,,2
+COMPSCI,70,1,Jean Walrand,15,110,85,135,105,59,44,26,9,,,1,51,3,,20,,5
+COMPSCI,88,1,Gerald Friedland,2,2,4,3,3,1,,,,,1,1,1,13,,3,,
+COMPSCI,97,201,Paul Hilfinger,,,,,,,,,,,,,,41,,10,,
+COMPSCI,98,153,John DeNero,,,,,,,,,,,,,,268,,6,,
+COMPSCI,98,52,John DeNero,,,,,,,,,,,,,,69,,6,,1
+COMPSCI,152,1,John Wawrzynek,2,5,4,5,,,3,2,,,,,,1,,1,,
+COMPSCI,160,1,Andrew Carle,2,15,27,25,20,9,2,6,,,,,1,,,1,,
+COMPSCI,161,1,Nicholas Weaver,4,55,44,66,79,39,4,4,2,,1,,1,15,2,3,,3
+COMPSCI,162,1,Anthony Joseph,,67,26,35,71,23,9,15,8,4,1,,,14,,5,,2
+COMPSCI,168,1,Scott Shenker,17,60,55,63,166,26,22,39,17,,,,,10,,2,,1
+COMPSCI,169,1,Armando Fox,5,27,27,18,30,16,8,11,1,,1,,,12,2,2,1,
+COMPSCI,170,1,Christos Papadimitriou,13,128,131,79,76,70,14,16,11,,13,,6,7,3,7,,3
+COMPSCI,176,1,Nir Yosef,2,12,10,6,4,7,4,2,2,,2,,,8,,1,,
+COMPSCI,184,1,James O'Brien,8,9,13,16,7,5,2,3,2,,3,,2,5,,4,,1
+COMPSCI,186,1,Karthikeyan Ramasamy,,64,41,68,61,80,26,27,28,3,10,7,8,3,1,3,,5
+COMPSCI,188,1,Joshua Hug,15,91,97,101,68,62,25,20,5,3,3,1,2,5,2,3,,2
+COMPSCI,189,1,Jitendra Malik,10,37,78,34,42,29,3,1,9,,3,,9,18,,22,,
+COMPSCI,194,8,Daniel Garcia,2,1,3,8,1,1,,,,,,,,,,,,
+COMPSCI,194,15,Kurt Keutzer,1,7,5,9,3,2,1,1,,,,,,8,,,,
+COMPSCI,194,26,Alexei Efros,6,29,40,4,8,,2,3,,,,,,3,,,,
+COMPSCI,195,1,Joshua Hug,,,,,,,,,,,,,,215,,5,,
+COMPSCI,197,1,Paul Hilfinger,,,,,,,,,,,,,,14,,,,1
+COMPSCI,197,201,Paul Hilfinger,,,,,,,,,,,,,,19,,1,,
+COMPSCI,197,204,Randy Katz,,,,,,,,,,,,,,12,,2,,
+COMPSCI,198,1,Daniel Garcia,,,,,,,,,,,,,,61,,16,,
+COMPSCI,198,3,Daniel Garcia,,,,,,,,,,,,,,22,,1,,
+COMPSCI,198,47,Pieter Abbeel,,,,,,,,,,,,,,90,,4,,
+COMPSCI,198,56,Bjorn Hartmann,,,,,,,,,,,,,,90,,11,,
+COMPSCI,198,58,Joshua Hug,,,,,,,,,,,,,,35,,4,,
+COMPSCI,198,65,Jonathan Bachrach,,,,,,,,,,,,,,22,,4,,
+COMPSCI,198,303,Daniel Garcia,,,,,,,,,,,,,,17,,2,,
+COMPSCI,198,642,Xiaodong Song,,,,,,,,,,,,,,31,2,,,
+EECS,149,1,Edward Lee,6,12,5,9,4,2,,,,,,,2,1,2,,,
+EECS,151,1,Borivoje Nikolic,,2,2,2,2,,,,,,,,1,1,,1,,
+EECS,151LB,103,Vighnesh Iyer,,7,,1,,,,,,,,,1,,,2,,
+EL ENG,16A,1,Harrison Rosenberg,33,170,153,132,123,75,20,13,6,,6,,1,3,,2,,4
+EL ENG,16B,1,Edward Wang,10,51,51,35,13,4,8,4,1,,2,,4,2,,,,
+EL ENG,39,1,Jeffrey Bokor,,,,,,,,,,,,,,30,,4,,
+EL ENG,105,1,Ali Niknejad,1,20,,,32,,,6,,,1,,1,,,,,4
+EL ENG,C106A,1,Ruzena Bajcsy,4,17,8,11,6,1,1,2,2,,1,,1,1,,,,
+EL ENG,118,1,Laura Waller,1,3,1,3,1,4,,,,,,,,2,,,,
+EL ENG,120,1,Ronald Fearing,2,22,9,12,14,14,2,3,1,,3,,2,,1,1,,1
+EL ENG,126,1,Avideh Zakhor,3,7,8,6,12,6,4,5,3,2,2,2,,,1,,,
+EL ENG,C128,1,Seth Sanders,,5,7,5,3,3,,,1,,,,,,,,,
+EL ENG,130,1,Ali Javey,1,,5,3,3,4,2,,1,,,,1,1,,,,
+EL ENG,137A,1,Alexandra Von Meier,1,5,7,5,4,4,2,,,,1,,,2,1,,,
+EL ENG,140,1,Rikky Muller,1,1,4,2,,,,,,,,,1,,,1,,
+EL ENG,143,1,Ming-Chiang Wu,3,7,,4,3,2,1,,,,,,,,,,,
+EL ENG,147,1,Kristofer Pister,2,7,3,2,5,,,,,,,,2,,1,,,
+EL ENG,198,15,Kristofer Pister,,,,,,,,,,,,,,10,3,,,
+"ENE, RES",39A,1,John Harte,1,10,3,2,,,,,,,,,,3,,,,
+"ENE, RES",C100,1,Duncan Callaway,,29,14,11,8,4,1,,1,,,,1,29,,4,,
+"ENE, RES",180,1,Jalel Sager,2,8,5,5,2,,1,,,,,,1,,,,,2
+DES INV,10,1,James Pierce,3,15,8,4,3,2,,,,,,,,7,,1,,
+DES INV,15,1,Sara Beckman,,17,32,5,,,,,,,,,,5,,1,,
+DES INV,21,1,Robert Hennigar,,4,15,4,1,,1,,,,,,,1,,,,1
+DES INV,22,1,Christopher Myers,8,5,9,2,2,,1,,,,,,,3,,2,,
+DES INV,190,1,Robert Hennigar,,,6,4,3,,,1,,,,,,1,1,,,
+DES INV,190,3,Khalid Mosalam,,,,,,,,,,,,,,13,1,,,
+DES INV,198,2,Bjorn Hartmann,,,,,,,,,,,,,,119,,2,,
+ENGIN,7,1,Mohammad-reza Alam,5,10,44,33,44,38,28,17,8,,,,10,5,,2,,1
+ENGIN,25,1,George Anwar,2,8,11,50,33,12,19,2,2,,,,,2,,1,,
+ENGIN,26,1,Kourosh Youssefi,,72,17,12,25,,,2,,,,,,3,,,,
+ENGIN,27,1,Sara Mcmains,2,15,15,8,13,26,20,9,11,,1,,2,,,,,
+ENGIN,45,1,Ian Chang-Yi Lin,13,44,,15,38,,7,27,,1,4,,1,3,,,,
+ENGIN,45L,1,Shawn Darnall,3,13,,1,9,,,1,,,1,,,,,,,
+ENGIN,45L,2,Lane Martin,1,11,,1,8,,1,1,,,,,,,,,,
+ENGIN,45L,3,Ruijuan Xu,5,11,,1,4,,1,2,,1,1,,1,,,,,
+ENGIN,45L,4,Lane Martin,,16,,2,4,,,1,,,1,,,,,1,,
+ENGIN,45L,5,Lane Martin,1,13,,2,5,,,,,,1,,,,,,,
+ENGIN,92,1,Matthew Sherburne,,,,,,,,,,,,,,84,,2,,
+ENGIN,98,1,Terry Johnson,,,,,,,,,,,,,,11,,1,,
+ENGIN,98,7,Terry Johnson,,,,,,,,,,,,,,12,,1,,
+ENGIN,98,10,Smita Jain,,,,,,,,,,,,,,17,,2,,
+ENGIN,98,13,Terry Johnson,,,,,,,,,,,,,,7,,3,,
+ENGIN,115,1,Kristin Persson,1,9,9,6,14,10,4,6,5,,1,,1,1,,,,
+ENGIN,120,1,Eric Friedman,2,18,23,18,16,10,2,2,,,1,1,,5,,1,,
+ENGIN,128,1,Dennis Lieu,3,17,11,6,9,2,,,,,1,,,,,,,
+ENGLISH,R1A,1,Jessica Ling,,1,7,9,1,,,,,,,,,,,,,
+ENGLISH,R1A,2,Sarah Johnson,,5,7,2,2,1,2,,,,,,,,,,,
+ENGLISH,R1A,4,Katherine Snyder,1,6,12,1,,,,,,,,,1,,,,,
+ENGLISH,R1A,5,Atti Viragh,,1,4,4,4,1,2,1,,,,,,,,,,
+ENGLISH,R1A,6,Katherine Snyder,,2,4,5,5,2,,,,,,,,,,,,
+ENGLISH,R1A,7,Brandon Callender,,2,3,5,4,2,1,,,,,,,,,,,
+ENGLISH,R1A,8,Katherine Snyder,,1,4,4,1,3,3,,,,,,1,,,,,
+ENGLISH,R1A,9,Katherine Snyder,,1,2,3,7,1,1,,,,1,,,,,,,
+ENGLISH,R1B,1,Katherine Snyder,2,4,4,4,4,1,,,,,,,,,,,,
+ENGLISH,R1B,2,Katherine Snyder,,18,,,,,,,,,,,,,,,,1
+ENGLISH,R1B,3,Katherine Snyder,,3,4,6,2,1,,,1,,,,1,,,,,
+ENGLISH,R1B,4,Katherine Snyder,,5,7,3,1,,,,,,,,1,,,,,
+ENGLISH,R1B,7,Katherine Snyder,,3,5,4,2,2,1,1,,,,,,,,,,
+ENGLISH,R1B,8,Katherine Snyder,1,4,6,4,2,3,,,,,,,,,,,,
+ENGLISH,R1B,10,Ryan Mcwilliams,,5,8,,4,2,,,,,,,,,,,,
+ENGLISH,R1B,12,Diana Wise,,5,2,3,4,3,,,,,,,1,,,,,
+ENGLISH,R1B,13,Daniel Valella,,6,5,4,2,,,,,,,,,,,,,
+ENGLISH,R1B,14,Katherine Mezur,8,3,1,,,1,,,,,,,,,,,,
+ENGLISH,24,1,Mitchell Breitwieser,,,,,,,,,,,,,,10,,1,,1
+ENGLISH,31AC,1,Nadia Ellis,,27,11,6,,,,,,,,,,4,,,,
+ENGLISH,45A,1,Steven Justice,,10,8,15,13,6,5,,,,,1,,4,,1,,2
+ENGLISH,45A,2,Katherine O'Brien O'Keeffe,,1,2,7,21,7,3,2,1,,,,4,3,,,,
+ENGLISH,45B,1,Janet Sorensen,,16,26,21,17,7,,2,,,,,2,,,2,,
+ENGLISH,45B,2,Charles Blanton,,10,14,17,15,6,1,,1,,,,1,,,,,
+ENGLISH,45C,1,Eric Falci,5,24,22,11,21,10,2,1,,,,,,1,,1,,1
+ENGLISH,45C,2,Mark Goble,,2,18,15,10,4,,,,,,,1,6,,,,2
+ENGLISH,C77,1,Robert Hass,,6,18,6,,1,,,,,,,,2,,,,
+ENGLISH,98BC,1,David Landreth,,,,,,,,,,,,,,11,,1,,
+ENGLISH,104,1,Katherine O'Brien O'Keeffe,4,5,4,5,5,4,,,,1,2,,,3,1,,,
+ENGLISH,110,1,Emily Thornbury,2,14,7,11,9,2,,1,1,,1,,2,2,,2,,1
+ENGLISH,117B,1,David Landreth,,8,3,5,12,9,6,3,1,3,1,,1,9,,,,
+ENGLISH,117S,1,Oliver Arnold,,17,26,19,17,6,,1,,,,,,6,,,,1
+ENGLISH,117T,1,David Marno,5,6,8,,,,,,,,,,,2,,,,
+ENGLISH,121,1,Celeste Langan,,6,3,10,4,3,2,,,,,,3,3,,,,
+ENGLISH,125D,1,Donna Jones,,7,7,14,8,4,,,,,,,1,4,,1,,
+ENGLISH,126,1,Joshua Gang,,1,9,11,21,4,,,,,,,,2,,,,
+ENGLISH,131,1,Geoffrey O'Brien,8,7,12,6,5,2,2,1,1,,,,,,,1,,
+ENGLISH,133A,1,Bryan Wagner,,6,15,,,,,,,,,,,,,1,,2
+ENGLISH,134,1,Carolyn Hejinian,8,32,24,13,6,1,,,,,,,1,7,,2,,1
+ENGLISH,138,1,Poulomi Saha,,14,17,2,1,,,,,,1,,,3,,,,
+ENGLISH,141,1,Melanie Chandra,,16,23,5,1,1,,,,,,,,,,1,,
+ENGLISH,143A,1,Vikram Chandra,,12,,,,,,,,,,,,,,1,,
+ENGLISH,143B,1,John Shoptaw,2,6,2,,,,,,,,,,,,,,,
+ENGLISH,143B,2,Mary Szybist,,11,1,,,,,,,,,,,,,,,
+ENGLISH,143N,3,Scott Saul,1,9,2,,,,,,,,,,,,,,,
+ENGLISH,161,1,R Gonzalez,,9,5,6,5,,,,,,,,1,1,,1,,
+ENGLISH,165,1,Kathleen Donegan,8,5,,,,,,,,,,,,,,,,1
+ENGLISH,166,1,Joanna Picciotto,,18,10,6,1,,1,,,,,,1,1,,,,1
+ENGLISH,166,2,Eric Naiman,,4,6,8,5,1,2,,1,,,,,13,,,,3
+ENGLISH,170,1,Emily Thornbury,1,13,10,4,,1,,,,,,,2,,,,,1
+ENGLISH,170,2,Ian Duncan,1,9,7,4,2,,,,,,,,,3,,,,2
+ENGLISH,171,1,Poulomi Saha,,9,3,7,1,,,,,,,,,3,,2,,1
+ENGLISH,171,2,Elizabeth Abel,,4,13,3,5,5,2,1,,,,,1,5,,,,1
+ENGLISH,174,1,Scott Saul,1,4,9,6,4,2,1,1,,,,,,5,,,,1
+ENGLISH,175,1,Georgina Kleege,,15,13,9,10,,,,,,,,,,,,,1
+ENGLISH,180H,1,Vikram Chandra,,5,14,17,8,1,,1,,,,,,3,,,,
+ENGLISH,190,1,John Shoptaw,1,6,4,5,,,,,,,,,1,,,,,
+ENGLISH,190,2,Carolyn Hejinian,3,12,,,,,,,,,,,,,,,,
+ENGLISH,190,3,Samuel Otter,,5,3,2,2,2,,,,,,,1,,,,,2
+ENGLISH,190,4,Mark Goble,,5,4,3,2,,,,,,,,,,,,,3
+ENGLISH,190,5,Julia Bader,1,9,3,2,,,,,,,,,,,,,,7
+ENGLISH,190,7,Ryan Perry,,3,,4,,,,,,,,,,,,,,5
+ENGLISH,190,8,Stephen Best,2,1,,4,,1,1,,,,,,1,,,,,1
+ENGLISH,190,9,Wendy Xin,,4,4,4,2,2,,1,,,,,,,,,,
+ENGLISH,190,10,Jeffrey Blevins,,8,4,2,,,,,,,,,,,,,,1
+ENGLISH,190,11,George Starr,,3,9,3,2,,,,,,,,,,,,,1
+ENGLISH,190,12,George Starr,,4,10,5,,,,,,,,,,,,,,
+ENGLISH,198,3,Eric Falci,,,,,,,,,,,,,,36,,1,,
+ENGLISH,198,6,Steven Justice,,,,,,,,,,,,,,17,,2,,
+ENGLISH,198,8,Celeste Langan,,,,,,,,,,,,,,20,,2,,
+ENGLISH,198BC,5,Adrian Acu,,,,,,,,,,,,,,19,,1,,
+ENGLISH,198BC,7,Margaret Kolb,,,,,,,,,,,,,,19,,1,,
+ENGLISH,198BC,9,Richard Lee,,,,,,,,,,,,,,16,,1,,
+ESPM,2,1,Ronald Amundson,5,30,16,19,10,11,6,1,1,,,,1,15,,1,,
+ESPM,6,1,Ignacio Chapela,,135,9,1,2,1,,,,,,,,18,,,,
+ESPM,C12,1,Garrison Sposito,1,15,33,20,3,2,4,,,,,,,16,,,,
+ESPM,15,1,Matthew Potts,1,31,22,23,31,15,7,9,4,4,1,2,1,47,,2,,1
+ESPM,24,5,Celine Pallud,,,,,,,,,,,,,,9,,1,,
+ESPM,50AC,1,Kurt Spreyer,17,250,32,24,29,9,3,5,1,,,,,76,,,,14
+ESPM,60,1,Alastair Iles,5,14,10,7,10,,2,3,,,,,,1,,,,3
+ESPM,90,1,Ignacio Chapela,,57,,,1,,,,,,,,,,,,,
+ESPM,98,3,Kathryn De Master,,,,,,,,,,,,,,17,,2,,
+ESPM,98,20,Richard Gibson,,,,,,,,,,,,,,34,,1,,
+ESPM,98,21,Richard Gibson,,,,,,,,,,,,,,35,,3,,
+ESPM,98,22,Richard Gibson,,,,,,,,,,,,,,33,,1,,
+ESPM,98BC,1,Erica Rosenblum,,,,,,,,,,,,,,19,,1,,
+ESPM,98BC,2,Erica Rosenblum,,,,,,,,,,,,,,19,,,,1
+ESPM,100,1,Gordon Frankie,7,25,16,4,8,3,,,,,,,2,,,,,4
+ESPM,102B,1,Gregory Biging,6,3,5,3,,2,,1,2,,,,,,,,,1
+ESPM,102BL,1,Gregory Biging,6,2,5,2,,2,,1,2,,,,,,,,,1
+ESPM,C103,1,Timothy Markowitz,,7,6,3,4,3,,1,,,1,,,3,,,,
+ESPM,C107,1,Cynthia Looy,2,7,,3,1,,,,,,,,,,,,,
+ESPM,108A,1,Richard Dodd,3,5,5,6,4,1,1,1,,,,,1,,,1,,
+ESPM,108B,1,Richard Dodd,3,10,14,2,2,4,,1,,,,,,,,,,
+ESPM,118,1,Miguel Altieri,37,15,3,,,,,,,,,,,,,1,,
+ESPM,120,1,Celine Pallud,2,4,3,4,7,3,5,2,,,1,,1,2,1,5,,1
+ESPM,C126,1,Eileen Lacey,,1,1,8,9,4,6,7,1,2,,,,1,,,,
+ESPM,C129,1,Dennis Baldocchi,1,5,2,1,1,,,,,,,,,1,,,,
+ESPM,137,1,Ian Wang,2,10,11,7,4,2,,,1,,,,,2,1,,,
+ESPM,140,1,Patrick O'Grady,3,7,,1,1,,3,,,,,,,,,,,
+ESPM,142,1,Neil Tsutsui,5,7,4,3,3,1,1,,,,,,,3,,1,,
+ESPM,155AC,1,Kathryn De Master,21,136,17,6,4,1,,,,,,,,17,,,,5
+ESPM,161,1,Carolyn Merchant,,78,34,13,6,2,,,,,,,,6,,,,1
+ESPM,162,1,Kenneth Worthy,,94,22,8,5,3,1,1,,,,,4,10,,,,
+ESPM,164,1,Nina Kelly,,7,6,4,3,,,,,,,,,1,,,,1
+ESPM,165,1,Claudia Carr,16,17,7,1,4,,,,,,,,,,,,,5
+ESPM,169,1,Katherine O'Neill,6,27,57,33,5,2,,,,,,,,1,,,,3
+ESPM,173,1,David Perry de Valpine,5,8,11,5,7,6,2,3,1,1,1,,,3,2,2,1,
+ESPM,175A,1,Kurt Spreyer,,9,5,4,,,,,,,,,,,,,,4
+ESPM,175A,2,Patina Mendez,,6,9,1,1,,,,,,,,,,,,,1
+ESPM,175L,2,Patina Mendez,,13,2,2,,,,,,,,,,,,,,2
+ESPM,182,1,Robert York,,19,1,1,,,,,1,,,,,,,,,
+ESPM,185,1,Kevin O'Hara,1,4,,,4,3,,1,,,,,,1,1,,,
+ESPM,C192,1,Michael Yuan,6,28,19,11,14,4,,1,,,,,,1,,2,,
+ESPM,198,4,Patina Mendez,,,,,,,,,,,,,,14,,,,1
+ASAMST,R2A,1,Anna Leong,,4,13,12,1,,,,,,,,,,,,,
+ASAMST,R2A,2,Anna Leong,,6,6,2,1,2,,,,,,,,,,,,
+ASAMST,R2B,1,Anna Leong,,9,10,10,1,,,,,,,,,,,,,
+ASAMST,20AC,1,Harvey Dong,,28,13,8,6,2,,,,,,,,3,,1,,1
+ASAMST,124,1,Catherine Choy,,18,10,,,,,,,,,,1,2,,1,,
+ASAMST,125,1,Khatharya Um,,2,,4,3,4,2,3,1,,,,2,4,,3,,
+ASAMST,128AC,1,Hatem Bazian,48,44,29,7,6,1,1,,,,,,,25,,,,
+ASAMST,131,1,Khatharya Um,,,4,7,6,1,,,,,,,,4,,,,
+ASAMST,138,1,Hannah Michell,20,6,18,5,1,1,,,1,,,,,5,,,,
+ASAMST,141,1,Thomas Fleming,,4,7,3,7,2,,2,,,,,1,7,,1,,
+ASAMST,143AC,1,Winston Tseng,3,54,1,3,,,,,,,,,,2,,,,
+ASAMST,146,1,Lisa Hirai Tsuchitani,2,16,5,2,4,,,1,,,,,,2,,,,1
+ASAMST,172,1,Fae Ng,1,23,1,,,,,,,,,,,,,,,
+ASAMST,198,3,Harvey Dong,,,,,,,,,,,,,,17,1,,,
+ASAMST,198,4,Harvey Dong,,,,,,,,,,,,,,14,,2,,
+CHICANO,R1A,1,Rosalinda Godinez,,12,5,1,1,,,,,1,,,,,,,,
+CHICANO,R1B,1,Raul Coronado,,4,12,4,2,,,,,,,,,,,,,1
+CHICANO,20,1,Raul Coronado,,1,15,6,10,8,3,,1,,,,2,1,,,,
+CHICANO,97,1,Laura Jimenez-Olvera,,,,,,,,,,,,,,14,,1,,
+CHICANO,130,1,Celia Rodriguez,,15,6,10,1,1,1,1,,,,,,,,,,
+CHICANO,135A,1,Raymond Telles,5,27,32,17,8,3,2,1,,,,,,13,,2,,1
+CHICANO,159,1,Pablo Gonzalez,3,26,4,5,4,,,,,,,,,1,,,,
+CHICANO,163,1,Ramon Grosfoguel,3,16,4,1,2,,,,,,,,,3,,,,
+CHICANO,165,1,Ramon Grosfoguel,6,11,3,1,1,,,,,,,,,1,,,,1
+CHICANO,180,1,Celia Rodriguez,6,12,4,1,2,1,,,1,,1,,,,,,,
+CHICANO,180,5,Pablo Gonzalez,4,18,3,1,2,,,,,,1,,,,,,,
+CHICANO,197,2,Raul Coronado,,,,,,,,,,,,,,23,,,,2
+ETH STD,10AC,1,Christian Paiz,11,40,35,6,7,2,,3,,,,,2,10,,2,,
+ETH STD,24,1,Victoria Robinson,12,,,,,,,,,,,,,2,,,,
+ETH STD,101A,1,John Zepeda,4,17,9,9,6,3,1,2,,,1,1,4,,,,,
+ETH STD,130,1,Gregory Choy,1,25,2,4,1,1,,,,,,,,2,,,,
+ETH STD,150,1,Gregory Choy,1,29,,5,2,,,,,,,,,1,,,,
+ETH STD,159AC,1,Harley Shaiken,15,15,14,5,7,6,2,1,3,,1,,,15,,1,,
+ETH STD,175,1,Gregory Choy,,15,8,4,,,,1,1,,,,,,,,,
+ETH STD,180,1,Enrique Lima,,9,2,1,1,1,,,,,,,1,,,,,1
+ETH STD,190,2,Raul Coronado,1,,3,,1,,,3,,1,,,,,,2,,
+ETH STD,190AC,1,Victoria Robinson,4,9,1,3,,,,,,,,,,,,,,2
+ETH STD,197,3,Victoria Robinson,,,,,,,,,,,,,,25,,1,,
+ETH STD,197,9,Shari Huhndorf,,,,,,,,,,,,,,45,,,,3
+ETH STD,198,2,Keith Feldman,,,,,,,,,,,,,,13,,1,,1
+ETH STD,198,6,Victoria Robinson,,,,,,,,,,,,,,36,1,1,,
+NATAMST,R1A,1,Thomas Biolsi,2,12,1,1,1,,,,,,,,,,,,,
+NATAMST,R1B,1,Thomas Biolsi,,4,6,5,3,,,,,,,,,,,,,
+NATAMST,20A,1,Diane Pearson,,18,2,,2,4,,2,,,1,,1,,,1,,
+NATAMST,72,1,Enrique Lima,,23,3,,3,2,1,,,,,,,2,,,,1
+NATAMST,90,1,Diane Pearson,,11,3,1,,2,1,,,,,2,1,3,,1,,
+NATAMST,100,1,Joseph Myers,,3,4,2,1,3,,2,1,,,,,,,,,
+NATAMST,105,1,Enrique Lima,,12,3,1,,,,,,,,,,,,,,1
+NATAMST,149,1,Diane Pearson,,29,1,,,,,1,,,,,,,,,,
+NATAMST,C152,1,Enrique Lima,,7,1,,2,,,,,,,,,2,,,,
+NATAMST,175,1,Jo Ellen Anderson,6,2,4,2,1,,,,,,,,,6,,,,
+XANTHRO,1,1,Gary Richards,3,4,17,8,7,1,2,1,,2,,,1,18,,13,,
+XANTHRO,2AC,1,Kimberly Christensen,23,8,2,2,,1,,,,,,,,1,,1,,
+XANTHRO,2AC,2,Kimberly Christensen,23,2,,1,,,,,,,,,1,2,,1,,
+XASTRON,10,1,Norman Sperling,,10,21,9,4,1,1,,,,,,1,13,,2,,
+XASTRON,10,2,Norman Sperling,,6,11,,,,1,,,,,,,4,,1,,1
+XCLASSI,10A,1,Yasmin Syed,2,33,4,3,,,,,,,,,,5,,1,,
+XCOLWRI,R1A,1,Benjamin Spanbock,,2,3,5,4,1,,,,,,,1,,,,,
+XCOLWRI,R1A,2,Rachel Kotok,,,8,4,1,,,,,3,,,,,,,,
+XCOLWRI,R1A,3,Chisako Cole,,3,4,5,1,3,,,,,,,,,,,,
+XCOLWRI,R1A,4,Mary Grover,,4,2,3,1,,,,,1,,,,,,,,
+XCOMLIT,R1A,1,Karina Palau,,4,3,2,6,,,1,,,,,1,,,,,1
+XCOMLIT,R1B,1,Karina Palau,,6,5,2,3,1,,,,,,,,,,,,
+XEPS,80,1,Scott Hassler,,10,5,9,17,3,5,2,2,,,,1,37,,2,,
+XEPS,80,2,Stephen Andrews,5,15,1,,,,,,,,,,,7,,,,
+XENGLIS,R1A,1,Rondi Gilbert,,1,8,5,2,1,,,,,,,,,,,,
+XENGLIS,R1A,2,Celia Correa,,1,8,1,,3,1,1,,,1,,1,,,,,
+XENGLIS,R1A,3,Margarita Gordon,,5,4,2,3,1,2,,,,,,,,,,,
+XENGLIS,R1A,4,Dorothy Gilbert,,6,7,,3,2,,,,,,,,,,,,
+XENGLIS,R1A,5,Eva Fuchs,,2,8,6,1,1,,,,,,,,,,,,
+XENGLIS,R1A,6,Barbara Wagstaff,,,1,4,7,2,3,,,,,,,,,,,
+XENGLIS,R1A,7,Emily Crossen,,7,5,4,1,1,,,,,,,1,,,,,
+XENGLIS,R1A,8,Margarita Gordon,,6,5,2,1,3,,,,,,,,,,,,
+XENGLIS,R1A,9,Eva Fuchs,,2,4,6,3,1,2,,,,,,,,,,,
+XENGLIS,R1A,10,Sarah Herbold,6,3,3,1,,,1,,1,,,,2,,,,,
+XENGLIS,R1A,11,Celia Correa,,3,3,1,2,2,3,1,,,,,,,,,,
+XENGLIS,R1A,12,Kirsten Schwartz,1,4,6,6,,,,1,,,,,,,,,,
+XENGLIS,R1A,14,Gautam Premnath,,4,3,1,2,2,,1,,,,,2,,,,,
+XENGLIS,R1A,15,Emily Crossen,,4,4,3,3,,,,,,,,,,,,,2
+XENGLIS,R1A,16,Avril Angevine,,3,2,3,3,,3,2,,,,,,,,,,
+XENGLIS,R1A,17,Avril Angevine,,4,4,5,1,,,1,,,,,1,,,,,
+XENGLIS,R1A,18,Srijani Ghosh,5,3,5,3,,,,,,,,,,,,,,
+XENGLIS,R1B,1,Aparajita Nanda,,6,4,5,2,,,,,,,,1,,,,,
+XENGLIS,R1B,2,Aparajita Nanda,,5,5,7,,,,,,,,,,,,,,
+XENGLIS,R1B,3,Carolyn Tipton,,3,4,4,3,,,1,1,,,,,,,,,
+XENGLIS,R1B,5,Cheryl Colopy,,5,5,5,1,,1,,,,,,,,,,,
+XENGLIS,R1B,6,Catherine Hollis,,8,6,3,1,,,,,,,,,,,,,
+XENGLIS,R1B,7,Mary Miller,,1,4,6,3,1,1,,,1,,,,,,,,
+XENGLIS,R1B,8,Catherine Hollis,,6,6,5,1,,,,,,,,,,,,,1
+XENGLIS,R1B,9,Cheryl Colopy,,3,5,4,4,,1,,,,,,,,,,,
+XENGLIS,R1B,12,Benjamin Lempert,,4,8,4,,,,,,,,,,,,,,
+XENGLIS,R1B,13,Mary Miller,,1,2,2,5,2,2,1,,,,,,,,,,
+XENGLIS,R1B,14,Srijani Ghosh,2,6,4,,,,,,,,,,,,,,,
+XENGLIS,R1B,15,Gautam Premnath,,8,5,,,,,,,,,,,,,,,
+XENGLIS,R1B,17,Aparajita Nanda,,5,5,1,4,1,,,,,,,,,,,,
+XENGLIS,31AC,1,Mary Miller,,3,6,6,4,2,1,,,,,,,3,,,,
+XESPM,50AC,1,Kenneth Worthy,,62,27,6,1,1,1,,,,,,,2,,,,
+XESPM,50AC,2,Kenneth Worthy,,34,9,3,3,,,,,,,,1,,,,,
+XESPM,50AC,3,Kurt Spreyer,,31,2,1,1,,,,,,,,,4,,,,
+XASAMST,20A,1,Harvey Dong,,28,19,7,3,2,,1,,,,,,1,,1,,
+XETHSTD,21AC,1,Siri Brown,,35,17,17,18,1,1,,,,,,,9,,,,2
+XETHSTD,21AC,2,Siri Brown,,16,17,5,1,,,,,,1,,,6,,1,,
+XFILM,R1A,1,Emily Carpenter,4,10,1,1,1,,,,,,,,,,,,,
+XFILM,50,1,Emily Carpenter,5,18,4,2,,1,,,,,,,,4,,,,
+XGWS,10,1,Laura Fantone,10,12,4,4,2,,,,,,,,,3,,,,
+XGEOG,30,1,Carolyn Trist,6,21,16,5,3,1,,,,,,,,9,,,,
+XGEOG,30,2,Carolyn Trist,3,13,4,1,,1,,,,,,,,9,,,,1
+XGEOG,50AC,1,Seth Lunine,,4,7,7,3,,2,,,,,,,3,,1,,
+XHISTOR,7B,1,Samantha Gervase,1,23,16,11,5,3,2,,,,,,,1,,,,
+XHISTOR,7B,2,Samantha Gervase,,8,11,2,,2,,,,,,,,1,,1,,
+XHISTAR,R1B,1,Lisa Regan,,5,3,5,2,,,1,,,,,,,,,,
+XHISTAR,11,1,Lisa Regan,,5,3,7,6,4,,,,,,,,5,,1,,
+XMESTU,10,1,Mahmood Monshipouri,,61,22,4,2,,,,,,,,1,6,,,,
+XINTEGB,31,1,Julie Woodruff,1,11,15,16,4,5,2,,,,,1,,5,,1,,
+XINTEGB,31,2,Kathleen La Barbera,,11,12,8,3,2,,,,,,,,,,,,1
+XINTEGB,33,1,Bonnie Rauscher,1,8,5,5,8,3,4,6,2,,2,,,12,,5,,
+XLEGALS,R1B,1,Mary Agnes Hoopes,1,6,7,2,2,,,,,,,,,,,,,
+XLS,1,1,Alix Schwartz,,,,,,,,,,,,,,26,,1,,
+XLINGUI,55AC,1,William Weigel,2,12,17,7,1,2,,,,,,,,7,,1,,
+XLINGUI,55AC,2,William Weigel,,6,11,1,1,,,,,,,,,10,,,,
+XMATH,1A,1,Frederic Bourgoin,24,24,13,11,9,4,5,3,,,6,,,1,,,,
+XMATH,1A,2,Flor Feldman,2,19,7,10,13,2,13,5,7,2,,,3,2,,2,,
+XMATH,1A,3,Flor Feldman,1,14,6,6,8,2,7,4,2,,3,,2,1,,,,
+XMATH,1A,4,Patricia Sholl,7,23,5,1,17,4,,6,1,,5,,3,1,,12,,
+XMATH,1B,1,Derrick Smith,11,19,6,8,5,4,5,3,2,,2,,1,,,,,
+XMATH,1B,2,Frederic Bourgoin,9,5,5,3,5,2,,1,1,,,,1,,,,,
+XMATH,1B,3,Bin Shao,,14,13,3,5,4,,2,1,,,,,,,1,,
+XMATH,16A,1,Arun Sharma,1,9,6,2,13,1,2,4,2,1,4,,2,,,1,,
+XMATH,16A,2,Arun Sharma,2,6,6,2,10,5,1,2,1,,4,,3,2,,,,
+XMATH,16A,3,Arun Sharma,,2,1,1,3,1,,1,1,,1,1,,,,,,
+XMATH,32,1,Derrick Smith,4,7,12,7,8,5,3,3,2,,1,,,3,,5,,
+XMATH,32,2,Daniel Calef,,7,5,2,4,,,1,,,,,,,,,,
+XMCELLB,32,1,James Smiley,5,34,,,8,,,4,,,,,,10,,1,,
+XMCELLB,32,2,James Smiley,10,32,,,3,,,,,,,,,1,,,,
+XMUSIC,27,1,Scott Foglesong,3,19,4,2,5,,,1,,,,,,15,,,,
+XMUSIC,27,2,Scott Foglesong,1,21,4,2,7,,,1,,,,,,10,,2,,
+XMUSIC,27,3,Scott Foglesong,2,7,,,1,,1,,,,,,,9,,3,,
+XPHILOS,2,1,Richard Kim,,10,18,11,5,2,,,,,,,,4,,,,
+XPHILOS,2,2,Richard Kim,,13,18,4,1,2,,,1,,,,,6,,1,,1
+XPHILOS,3,1,Arpy Khatchirian,,2,6,7,2,2,2,,3,,,,,23,,1,,
+XPHILOS,3,2,Arpy Khatchirian,,5,8,5,5,1,,,,,,,,16,,,,
+XPOLSCI,1,2,Wendy Sinek,1,15,10,4,1,2,3,,,,,,,9,,2,,
+XPOLSCI,2,1,Wendy Sinek,1,8,11,9,6,3,3,2,,,1,,1,16,,2,,
+XPSYCH,1,1,Bruce Mangan,6,6,18,7,5,4,1,3,,2,,,2,20,,4,,
+XPSYCH,1,2,Bruce Mangan,6,29,7,10,17,6,2,3,,1,,,,11,,2,,
+XPSYCH,1,3,Christopher Gade,3,20,5,6,5,1,,2,2,,,,,4,,,,
+XRHETOR,R1A,1,Amy Tick,,2,2,3,4,1,1,,,,1,,2,,,,,
+XRHETOR,R1A,2,Karen Borst-Rothe,,4,5,4,4,1,,,,,,,,,,,,
+XRHETOR,R1A,4,Karen Borst-Rothe,,9,2,,3,4,,,,,,,,,,,,
+XRHETOR,R1A,5,Benjamin Lempert,,4,7,3,1,,,,,,,,,,,,,
+XRHETOR,R1B,2,Kirsten Schwartz,1,9,4,2,,,,,,1,,,1,,,,,
+XRHETOR,R1B,3,Benjamin Lempert,,2,6,4,,,,,,,,,,,,,,
+XSOCIOL,3AC,1,Elif KaleLostuvali,,26,24,21,18,4,,,,,,,,5,,,,1
+XSOCIOL,3AC,2,Nora Broege,,18,15,8,8,8,,,,,,,1,4,,,,
+XSOCIOL,3AC,3,Elif KaleLostuvali,,19,8,26,19,4,,,,,,,,4,,,,1
+XSTAT,2,1,Seema Singh Saharan,,36,11,4,2,4,1,1,,,,,,1,,1,,
+XSTAT,2,2,Seema Singh Saharan,,11,7,1,,1,,,,,,,,,,,,
+FILM,R1A,1,Weihong Bao,,15,9,7,5,,,,,,,,,,,,,1
+FILM,R1A,2,Alexandra Bush,2,16,10,5,1,2,,,,,,,2,,,,,
+FILM,R1B,1,Justin Vaccaro,,3,9,11,7,1,,,,,,,,,,,,
+FILM,R1B,2,Jianqing Chen,,2,16,6,5,3,1,2,,,,,,,,,,
+FILM,R1B,3,Weihong Bao,,2,12,7,9,3,,,,,1,,,,,,,
+FILM,20,1,Damon Young,1,21,25,10,8,9,2,1,1,,,,,6,,,,
+FILM,25A,1,Anne Nesbet,1,13,20,10,14,5,2,3,1,,,,1,3,,2,,1
+FILM,108,1,Eileen Jones,,9,4,5,4,3,,,2,,,,2,1,,,,2
+FILM,129,1,Eileen Jones,6,26,12,5,3,,2,,,,,,1,2,,3,,2
+FILM,140,1,Eileen Jones,5,11,1,5,,1,,,,,,,,3,,,,2
+FILM,140,2,Emily Carpenter,1,11,13,,1,1,1,1,,,,,,1,,,,
+FILM,151,1,Mark Sandberg,,6,5,3,1,3,1,,,,,,,1,,,,
+FILM,151,4,Weihong Bao,1,3,5,8,3,1,1,,,,,,,3,,,,
+FILM,180,1,J Kopell,,12,1,1,1,1,,,,,,,,,,,,
+FILM,181,1,J Kopell,,9,,,1,,,,,,,,,,,,,
+FILM,185,1,J Kopell,,11,,1,,,,,,,,,,,,,,
+FRENCH,1,1,Seda Chavdarian,,5,1,1,1,1,,1,,,,,,5,1,,,
+FRENCH,1,2,Ariel Shannon,,3,8,3,,,1,,,,,,,1,,2,,
+FRENCH,1,3,Patrick Lyons,,9,3,1,1,2,,1,,,,,,1,,,,
+FRENCH,1,4,Lauren Dixon,,8,5,1,1,,1,,,,,,,3,,,,
+FRENCH,1,5,Ariel Shannon,,5,2,5,,,1,1,,,,,,5,1,,,
+FRENCH,1,7,Seda Chavdarian,,8,1,1,1,,1,,,,,,,2,1,1,,
+FRENCH,1,8,Seda Chavdarian,,10,4,,1,1,,,,,,,,1,,,,
+FRENCH,1,9,Erica Weems,,2,7,1,3,,,1,,,,,,2,,,,
+FRENCH,1,11,Maya Sidhu,,8,3,2,,,,,,,,,,3,,,,
+FRENCH,R1A,1,Zane Burris,,15,,,,,,,,,,,1,,,,,
+FRENCH,R1A,2,Marion Phillips,,6,5,3,2,,,,,,,,,,,,,1
+FRENCH,R1B,1,Susan Maslan,,2,6,6,3,,,,,,,,,,,,,
+FRENCH,R1B,3,Michelle Koerner,7,8,1,1,,,,,,,,,,,,,,
+FRENCH,R1B,4,Michelle Koerner,9,3,4,1,1,,,,,,,,,,,,,
+FRENCH,2,1,Seda Chavdarian,,,4,1,2,1,,1,,,,,,3,,1,,
+FRENCH,2,2,Seda Chavdarian,1,7,,5,2,,1,,1,,,,,,1,,,
+FRENCH,2,3,Sarah Christofides,1,5,3,,3,,2,1,1,,,,,,1,,,
+FRENCH,2,4,Seda Chavdarian,,8,1,,1,,,1,,,,,,,,,,
+FRENCH,2,5,Seda Chavdarian,,5,4,,,,,,,,,,,2,,,,
+FRENCH,2,6,Seda Chavdarian,,,2,4,1,1,,,1,,,,,1,,1,,
+FRENCH,2,7,Nelly Timmons,,,7,3,2,,,1,,1,,,,2,,,,
+FRENCH,3,1,Simon Rogghe,,5,2,,2,1,,1,,,,,,1,1,,,
+FRENCH,3,2,Rachel Shuh,,6,1,2,2,,,,,,,1,1,1,,1,,
+FRENCH,3,3,Victoria Bergstrom,,3,6,1,1,,,,,,,,,8,,,,
+FRENCH,3,4,Vesna Rodic,,5,5,1,1,,,,,,,,,4,,1,,
+FRENCH,3,5,Vesna Rodic,,2,,2,,2,,,,,,,,8,,5,,
+FRENCH,3,6,Jean-Baptiste Contargyris,,2,3,1,1,1,1,,,,,,,3,,,,
+FRENCH,3,7,Charlotte Bourgoin,,1,5,1,1,,,,,,,,,7,,3,,
+FRENCH,4,2,Vesna Rodic,3,7,,3,1,1,,,,,,,,,,,,
+FRENCH,4,3,Vesna Rodic,2,5,4,2,2,,,,,,,,,,1,,,
+FRENCH,4,5,Vesna Rodic,,4,6,2,,1,,,,,,,,1,,,,
+FRENCH,4,6,Vesna Rodic,,3,3,3,4,,1,,,,,,,,,1,,
+FRENCH,13,1,Victoria Diot,,1,1,2,2,3,,,,,,,,6,,,,
+FRENCH,13,2,Jean-Baptiste Contargyris,,7,4,3,1,,,,,,,,,2,,,,
+FRENCH,14,1,Richard Kern,,1,,3,1,2,,,,,,,,7,,,,
+FRENCH,43B,1,Timothy Hampton,,11,3,8,4,1,,,,,,,2,10,,,,
+FRENCH,102,1,Eglantine Colon,1,6,5,1,1,,,,,,,,,,,,,
+FRENCH,102,3,Susan Maslan,,10,2,2,,,,,,,,,,,1,,,
+FRENCH,121A,1,Eglantine Colon,2,5,3,1,1,,,,,,,,,,,,,
+FRENCH,139,1,Vesna Rodic,,5,5,,,,,,,,,,,,,,,
+FRENCH,140D,1,Suzanne Guerlac,,6,5,2,1,,,,,,,,,4,,,,
+FRENCH,146A,1,Richard Kern,,7,3,1,1,1,2,1,,,,,,1,,,,
+FRENCH,170,1,Damon Young,2,7,3,,,,,,,,,,,,,,,
+GWS,10,1,Barbara Barnes,1,50,25,10,3,2,,,,,,,,12,,,,1
+GWS,40,1,Barbara Barnes,2,13,3,3,8,3,1,1,,,,1,,,,,,
+GWS,50AC,1,Ayse Agis,,60,53,12,9,2,1,1,1,,,,3,37,,4,,2
+GWS,102,1,Paola Bacchetta,10,55,28,3,11,1,,3,,,1,,,14,,,,1
+GWS,126,1,Minh-Ha Trinh Bourdier,3,4,8,2,3,,,,,,,,,3,,,,
+GWS,130AC,1,Laura Nelson,,42,46,5,4,2,1,,,,,,1,15,,,,
+GWS,140,1,Minoo Moallem,1,7,15,5,10,3,,,,,,,1,4,,,,
+GWS,C146A,1,Jacqueline Asher,,11,6,2,7,1,1,2,,,,,,3,,,,
+GWS,195,1,Melinda Chen,,11,3,2,4,1,,2,1,,,,,,,,,1
+LGBT,20AC,1,Jacqueline Asher,,28,32,12,3,2,,1,2,,1,,2,13,,3,,
+LGBT,145,1,Elizabeth Abel,,2,2,1,1,,,,,,1,,1,1,,1,,
+LGBT,C146A,1,Jacqueline Asher,,7,7,5,4,,,,,,,,,1,,2,,
+GEOG,10,1,Jon Kosek,6,110,71,15,33,14,3,7,1,,1,,1,46,,1,,1
+GEOG,40,1,Laurel Larsen,6,16,7,1,6,3,1,2,,,,,,16,,6,,
+GEOG,50AC,1,Seth Lunine,2,11,19,26,12,8,5,,1,,,,1,24,,3,,
+GEOG,C55,1,Sanjyot Mehendale,1,18,1,,,,,,,,,,,3,,,,
+GEOG,80,1,David O'sullivan,1,12,17,9,7,,,1,1,,,,,3,,2,,1
+GEOG,110,1,John Stehlin,6,20,16,19,13,5,,2,,1,2,1,1,4,,,,1
+GEOG,140B,1,Kurt Cuffey,2,4,4,,,,,,,,,,,1,,,,
+GEOG,142,1,John Chiang,7,3,7,5,7,6,3,1,,2,2,,,3,,2,,
+GEOG,147,1,Catherine Halversen,,5,5,7,3,3,2,1,,,,,,,,,,
+GEOG,159AC,1,Harley Shaiken,19,18,14,5,7,6,2,1,1,,,1,2,11,,3,,
+GEOG,170,1,Ann Laudati,,3,,1,6,1,2,1,,,1,,1,5,,1,,
+GEOG,171,1,Norman Miller,4,5,3,1,7,2,2,2,1,,,,,4,,,,
+GEOG,183,1,Alicia Cowart,7,7,6,3,,,,,,,,,,,,,,2
+GEOG,C188,1,John Radke,,3,20,20,15,14,2,,5,,,,1,12,4,4,,
+DUTCH,171AC,1,Jeroen Dewulf,,23,27,10,3,,1,2,,,,,,11,,,,
+GERMAN,1,1,Paul Hoehn,,1,2,1,,1,1,1,,,,1,,5,,1,,1
+GERMAN,1,2,Nikolaus Euba,,5,4,1,1,,,,,,,,,4,2,,,
+GERMAN,1,3,Scott Shell,,8,6,1,1,,,,,,,,1,,,1,,
+GERMAN,1,4,Zainab Hossainzadeh,,4,5,1,1,,1,1,,,,,,4,2,1,,
+GERMAN,1,5,Nikolaus Euba,,,7,5,,,,,,,,,,4,,,,1
+GERMAN,1,6,Nikolaus Euba,,1,5,2,2,1,1,2,,,,,,3,,1,,
+GERMAN,1,7,Julia Reagan,,3,2,,1,4,,,1,,,,,3,1,1,,
+GERMAN,2,1,Nikolaus Euba,1,2,1,,,2,1,,1,,,,,4,1,1,,
+GERMAN,2,2,Nikolaus Euba,,4,2,1,2,,,2,,,,,1,3,,,,
+GERMAN,3,1,Sarah Harris,,1,3,1,1,,,,,,,,,1,3,2,,
+GERMAN,3,2,Kumars Salehi,,6,1,3,,,,,,,,,,2,1,,,
+GERMAN,3,3,Nikolaus Euba,,3,3,1,,,,1,,,,,,2,1,,,
+GERMAN,4,2,Harriett Jernigan,3,2,4,1,,,,,,,,,,,,,,
+GERMAN,R5A,1,Peter Woods,,15,4,1,,,,,1,,,,,,,,,
+GERMAN,R5A,2,Winfried Kudszus,,3,5,8,2,1,,,,,,,,,,,,
+GERMAN,R5A,3,Winfried Kudszus,1,8,7,2,1,,,,,,,,,,,,,
+GERMAN,R5A,4,Cara Tovey,,8,8,,4,,,,,,,,,,,,,
+GERMAN,R5A,5,Winfried Kudszus,1,18,1,,,,,,,,,,,,,,,
+GERMAN,39P,1,Chenxi Tang,1,5,8,4,,,,,,,,,,1,,,,
+GERMAN,98,1,Jeroen Dewulf,,,,,,,,,,,,,,18,,1,,
+GERMAN,100,1,Jeroen Dewulf,3,11,4,1,,,,,,,,,,,,,,
+GERMAN,101,1,Nikolaus Euba,,10,4,1,,,,,,,,,,,2,,,
+GERMAN,102D,1,Harriett Jernigan,4,7,2,,1,,,,,,,,,,,,,
+GERMAN,103,1,Thomas Shannon,1,4,5,3,1,1,,1,,,,,,,,,,
+GERMAN,160B,1,Charlton Payne,3,26,6,,,,,,,,,,,2,,,,1
+HISTORY,R1B,1,Margaret Chowning,,3,2,4,4,1,2,,,,,,,,,,,
+HISTORY,R1B,3,Camilo Lund-montano,,3,2,2,3,3,1,,,,,,,,,,,
+HISTORY,4A,1,Carlos Norena,,17,30,27,13,4,1,3,,,1,,2,12,,2,,
+HISTORY,5,1,Ethan Shagan,,44,34,14,15,3,5,2,,,,,1,21,,1,,
+HISTORY,6A,1,Nicolas Tackett,,10,7,8,2,3,,3,,,,1,,5,,2,,
+HISTORY,7A,1,Mark Peterson,12,53,59,33,21,7,1,4,3,1,1,,4,76,,14,,
+HISTORY,8A,1,Margaret Chowning,,15,11,2,5,1,,,,,,,,5,,,,
+HISTORY,24,1,Tabitha Kanogo,,,,,,,,,,,,,,16,,1,,
+HISTORY,24,3,Waldo Martin,,,,,,,,,,,,,,13,,,,1
+HISTORY,30,1,Rodolfo Alaniz,,10,26,7,6,3,1,1,,,,,1,22,,1,,
+HISTORY,39N,1,Alexander Cook,,7,,,,,,,,,,,,12,,,,
+HISTORY,39R,1,Brian Baumann,2,7,1,1,3,1,,,,,,,2,1,,,,
+HISTORY,98,1,Christine Philliou,,,,,,,,,,,,,,15,,2,,
+HISTORY,98,2,Thomas Dandelet,,,,,,,,,,,,,,17,,1,,
+HISTORY,98,3,Kerwin Klein,,,,,,,,,,,,,,25,,1,,
+HISTORY,100AC,1,Stephanie Jones-Rogers,100,10,11,2,2,,1,,,1,,,,31,,4,,
+HISTORY,100D,1,Kerwin Klein,,3,8,10,1,3,1,1,,1,,,,9,,2,,
+HISTORY,100E,2,Elena Schneider,,15,13,7,7,1,2,1,,1,,,,3,,,,
+HISTORY,100M,1,Christine Philliou,2,8,6,9,5,1,,1,,,,,,4,,2,,1
+HISTORY,100M,2,Aimee Genell,2,14,16,11,,,,,,,,,,4,,,,1
+HISTORY,100U,1,Andrew Barshay,2,15,19,16,22,5,1,,,,,,,6,,,,3
+HISTORY,101,2,Robert Lee,,2,2,4,2,1,,1,,,,,2,,,,,
+HISTORY,101,3,Peter Sahlins,3,3,2,1,1,,,,,,,,,,,,,1
+HISTORY,103B,2,Yuri Slezkine,,5,5,1,2,2,1,,,,,,,,,,,
+HISTORY,103B,3,Thomas Dandelet,,7,,5,,,,,,,,,,,,,,
+HISTORY,103D,1,Stephanie Jones-Rogers,14,3,1,,,,,,,,,,,,,,,1
+HISTORY,103D,2,Brian DeLay,,5,3,,1,1,,,,,,,,,,,,
+HISTORY,103D,3,Robin Einhorn,,4,2,1,1,1,,,,1,,,,,,,,
+HISTORY,103D,5,Daniel Robert,,5,2,2,,2,,,,,,,,,,,,1
+HISTORY,103E,2,Margaret Chowning,1,3,2,,2,1,1,,,,,,1,,,,,
+HISTORY,103U,1,Alexander Cook,,6,3,2,1,,,,,,,,1,,,,,
+HISTORY,105A,1,Randall Souza,1,5,8,12,6,,1,1,,,,,,10,,2,,
+HISTORY,114A,1,Abhishek Kaicker,,7,6,5,1,,,1,,,,,,11,,2,,
+HISTORY,116D,1,Wen-Hsing Yeh,,7,17,8,2,2,6,1,2,,,,1,13,,1,,
+HISTORY,118A,1,Mary Berry,,13,4,9,10,,,3,1,,,,,10,,1,,
+HISTORY,124A,1,Daniel Robert,,23,45,42,28,12,3,2,2,,,,,45,,5,,4
+HISTORY,131B,1,Natalie Mendoza Gutierrez,1,18,36,14,23,19,,4,2,,,,2,19,,2,,
+HISTORY,134A,1,Gabriel Milner,,14,11,7,7,,,1,,,,,1,4,,2,,
+HISTORY,138,1,Rodolfo Alaniz,,2,5,3,6,1,1,,,,1,,1,19,,1,,1
+HISTORY,138T,1,Rodolfo Alaniz,,3,10,2,6,1,,,,,,,,,,,,1
+HISTORY,C139C,1,Waldo Martin,,26,20,12,11,10,,,,,,,2,14,,,,1
+HISTORY,140B,1,Alberto Garcia,3,8,6,10,3,1,1,1,,,,,1,2,,2,,
+HISTORY,149B,1,Maureen Miller,,2,3,1,3,,3,2,,,,,1,1,,1,,
+HISTORY,158C,1,Emmanuel Paul Comte,,3,6,6,6,5,1,1,3,1,,,1,6,,1,,
+HISTORY,162A,1,David Wetzel,25,41,27,2,6,2,,1,,,,,1,19,,3,,1
+HISTORY,167C,1,Elizabeth Wenger,,11,8,11,5,3,1,,,,,,1,6,,2,,
+HISTORY,169A,1,Thomas Dandelet,,22,9,5,1,3,,1,,,,,,4,,,,
+HISTORY,C175B,1,John Efron,,7,5,2,1,1,,,,,,,,5,,,,
+HISTORY,185A,1,Susanna Elm,1,8,6,2,,3,,3,,,,,1,4,,,,
+HISTORY,C187,1,Stefan-Ludwig Hoffmann,6,16,18,11,,,3,,,,,,,5,,,,4
+HISTART,R1B,1,Matthew Culler,,5,5,1,4,2,,,,,,,,,,,,1
+HISTART,R1B,2,Ivy Mills,,9,3,2,2,1,,,,,,,1,,,,,
+HISTART,R1B,3,Ivy Mills,1,9,2,3,1,1,,,,,,,,,,,,
+HISTART,R1B,4,Ivy Mills,,6,9,2,1,,,1,,,,,,,,,,
+HISTART,R1B,5,Ivy Mills,,3,8,3,,1,,,1,,,,,,,,,1
+HISTART,R1B,6,Ivy Mills,2,6,9,2,,,,,,,,,,,,,,
+HISTART,R1B,7,Jon Ryan Soriano,,7,3,4,2,1,,,,,,,,,,,,
+HISTART,R1B,8,Eva Hagberg,,9,6,2,,,,,,,,,1,,,,,
+HISTART,15,1,Ann Matchette,,3,10,4,3,,1,,,,,,,11,,,,
+HISTART,24,1,Darcy Grigsby,,11,,,,,,,,,,,,,,1,,
+HISTART,39G,1,Elizabeth Honig,,9,4,2,,,,,,,,,,1,,,,
+HISTART,62,1,Jennifer Mackenzie,19,10,7,5,2,,,,,,,,,8,,,,1
+HISTART,88,1,Veronica Munoz-Najar Luque,3,33,12,4,1,1,,,,,,,,12,,2,,2
+HISTART,141B,1,Jennifer Stager,1,7,5,2,3,1,,2,,1,,,,6,,,,
+HISTART,180C,1,Darcy Grigsby,1,16,21,5,7,5,3,1,,,,,3,11,,4,,
+HISTART,187AC,1,Katherine Mintie,1,26,10,8,10,1,,,,,,,2,15,,1,,
+HISTART,190A,1,Yi Yi Mon Kyo,2,4,3,9,6,1,3,1,1,,,,,5,,2,,1
+HISTART,190T,1,Whitney Davis,,7,22,5,1,1,,,,,,,,2,,,,
+HISTART,190T,2,Winnie Wong,1,4,6,6,1,,,,,,1,,,3,,,,
+HISTART,192A,1,Gregory Levine,2,7,,,,,1,,,,,,,,,,,
+HISTART,192B,1,Christopher Hallett,3,3,3,1,3,,,,,,,,,,,,,1
+HISTART,192DH,1,Justin Underhill,,9,1,1,1,,,,,,,,,,,,,
+HISTART,192F,1,Darcy Grigsby,2,7,3,1,,,,,,,,,,,,1,,
+HISTART,192T,1,Diliana Angelova,,3,7,3,,1,,,,,,,,1,,,,1
+HISTART,198,1,Christopher Hallett,,,,,,,,,,,,,,9,,1,,
+IND ENG,66,1,Kenneth Goldberg,2,9,3,,,,,,,,,,,,,,,
+IND ENG,95,1,Victoria Howell,,,,,,,,,,,,,,94,1,4,,
+IND ENG,115,1,Kenneth Goldberg,5,24,12,11,4,1,2,1,,,,,,2,,,,
+IND ENG,130,1,Robert Leachman,1,5,2,5,5,7,2,1,,,,,,1,,,,
+IND ENG,150,1,Mariana Olvera-Cravioto,4,14,7,7,1,1,,,,,,,,,1,1,,
+IND ENG,151,1,Anil Asani,4,32,14,7,5,,,,,,,,,,,,,
+IND ENG,160,1,Javad Lavaeiyanesi,14,22,11,11,20,3,2,1,2,3,,,1,1,,1,,1
+IND ENG,162,1,Dorit Hochbaum,5,24,8,9,11,13,3,1,,,,,,3,,1,,
+IND ENG,171,1,Cheng Lu,11,8,41,22,8,,,,,,,,,2,,,,
+IND ENG,172,1,Rhonda Righter,1,21,9,3,24,6,,,,,1,,,1,,,,
+IND ENG,185,1,Christopher Tong,,7,19,1,,,,,,,,,,,,,,
+IND ENG,185,2,Moor Xu,13,4,10,,3,3,,1,,,,,,,,1,,
+IND ENG,186,1,Kenneth Sandy,7,15,9,11,7,2,,,,,,,,5,2,,,
+IND ENG,190A,1,Ikhlaq Sidhu,6,21,3,1,,,,,,,,,,3,,,,
+IND ENG,190C,1,Ikhlaq Sidhu,,14,,,5,,,,,,,,,3,,,,1
+IND ENG,191,1,Naeem Zafar,2,12,8,11,5,2,1,,,,,,,5,,,,1
+IND ENG,192,1,Gigi Wang,2,42,,,1,,,,,,,,,1,,,,
+IND ENG,195,1,Ikhlaq Sidhu,,,,,,,,,,,,,,103,,1,,
+IND ENG,198,5,Rhonda Righter,,,,,,,,,,,,,,24,,1,,
+INFO,C8,1,Anindita Adhikari,14,8,13,19,12,4,3,1,,,,,2,17,,5,,1
+INFO,88A,1,Anna Hoffmann,,12,9,2,,,1,,,,,,2,9,,2,,
+INFO,C167,1,Edwin Lin,2,28,8,1,,,,,,,,,,4,,,,
+INFO,190,2,Sundeep Pattem,,7,4,3,,,,,,,,,,5,,1,,
+INFO,190,3,Andreas Weigend,12,12,5,4,4,,,,,,,,,2,1,,,1
+INTEGBI,C13,1,Eliot Quataert,4,7,8,1,1,1,3,1,,,,,,48,,3,,
+INTEGBI,24,9,Kevin Padian,,3,2,,5,,1,,,,,,,,,,,
+INTEGBI,35AC,1,Leslea Hlusko,,149,63,15,7,6,,1,,,,1,4,47,,,,
+INTEGBI,C82,1,Ivo Duijnstee,10,33,19,5,1,2,1,2,3,,,,1,50,,10,,
+INTEGBI,98,2,Alexander Ehrenberg,,,,,,,,,,,,,,28,,3,,
+INTEGBI,C110L,1,Thomas Bruns,1,4,3,2,,,1,2,3,,,,,1,,,,
+INTEGBI,117,1,Thomas Carlson,9,61,22,35,28,17,6,11,4,,2,,,42,1,6,,1
+INTEGBI,117LF,1,Thomas Carlson,3,12,,,2,2,1,1,,,1,,,1,,,,
+INTEGBI,117LF,2,Caleb Caswell-Levy,3,10,1,5,3,,1,1,1,,,,,5,,,,
+INTEGBI,118,1,Michael Shapira,3,8,2,5,6,3,,1,,1,,1,1,2,,,,
+INTEGBI,123AL,1,George Brooks,1,8,10,13,6,4,2,,1,,,,,2,,,,
+INTEGBI,131,1,Thomas Carlson,17,60,59,56,58,40,11,15,12,,7,1,4,25,1,19,,1
+INTEGBI,131L,1,Shawn Shirazi,,7,8,2,6,1,1,,1,,,,,2,,3,,
+INTEGBI,131L,2,Peter Kloess,1,3,2,4,6,4,,4,2,,,,,1,,4,,
+INTEGBI,131L,3,Thomas Carlson,2,4,1,2,5,3,1,3,1,,,,1,2,,2,,
+INTEGBI,131L,4,Eric Holt,1,4,2,3,5,5,2,3,,,,,,1,,2,,
+INTEGBI,131L,5,Thomas Carlson,,6,4,2,3,1,2,3,1,,1,,,3,1,2,,
+INTEGBI,131L,6,Thomas Carlson,1,2,7,1,6,1,,1,,,1,1,1,2,,,,
+INTEGBI,131L,7,Benjamin Muddiman,,4,5,1,4,2,5,2,1,,,,,4,,1,,
+INTEGBI,131L,8,Diane Jeon,2,4,2,2,6,,2,,,,1,,,2,,1,,
+INTEGBI,131L,9,Sarah Whiteside,,6,7,3,2,1,,1,1,,1,,,5,,,,
+INTEGBI,131L,10,Thomas Carlson,,9,4,2,3,2,1,1,,,,,,2,,1,,1
+INTEGBI,137,1,Tyrone Hayes,2,8,11,3,13,4,,7,3,,2,,1,4,,7,,1
+INTEGBI,139,1,Daniela Kaufer,5,21,10,13,6,4,7,2,3,1,,,1,3,,,,
+INTEGBI,C143A,1,Lance Kriegsfeld,3,10,,3,3,1,6,1,1,,,,,,,,,
+INTEGBI,C144,1,George Bentley,2,11,16,12,23,18,12,9,6,3,1,1,1,3,,1,,1
+INTEGBI,148,1,Robert Full,19,34,4,1,,,,,,,,,,,,,,
+INTEGBI,153,1,Mary Power,3,12,4,5,11,8,4,4,5,,,,,,1,,,1
+INTEGBI,C156,1,Timothy Markowitz,,9,9,9,3,1,,,,,,,,1,,,,
+INTEGBI,157LF,1,Paul Fine,2,11,7,4,1,1,,,,,,,,,,,,
+INTEGBI,158LF,1,Cynthia Looy,2,6,,2,,,,,,,,,,,,,,
+INTEGBI,160,1,Kevin Padian,5,7,7,7,6,6,3,1,2,1,1,,6,4,,1,,1
+INTEGBI,162,1,Ellen Simms,1,3,3,7,5,5,4,3,1,,,,1,1,,1,,
+INTEGBI,164,1,Doris Bachtrog,1,5,4,6,4,3,1,6,1,1,4,,1,4,,3,,
+INTEGBI,173LF,1,Michael Nachman,,13,,,5,,,,,,,,,,1,1,,
+INTEGBI,198,2,Alexander Ehrenberg,,,,,,,,,,,,,,26,,5,,
+INTEGBI,198,4,Dawei Liu,,,,,,,,,,,,,,15,1,,,
+ASIANST,10,1,Crystal Cohen,1,21,31,21,21,5,4,1,,,,,,40,,1,,
+ASIANST,150,1,Keiko Yamanaka,,20,3,2,,,,,,,,,,3,,,,
+ASIANST,150,2,Jack Davey,,1,4,8,2,3,,1,,,,,1,1,,2,,
+ASIANST,198,2,Robert Berring,,,,,,,,,,,,,,14,,2,,
+ASIANST,198,4,Robert Berring,,,,,,,,,,,,,,19,1,1,,
+COG SCI,1B,1,Priya Kalra,7,13,4,6,13,1,2,2,1,,,,,1,,,,
+COG SCI,88,1,Yang Xu,14,4,2,1,,,,,,,,,,1,,,,
+COG SCI,C100,1,Paul Thiem,,51,18,7,3,1,1,,1,1,,,1,,,,,
+COG SCI,C127,1,Richard Ivry,4,12,21,19,26,43,8,17,17,,4,,,9,,3,,
+COG SCI,131,1,Thomas Griffiths,8,37,53,42,44,21,18,17,34,,4,,6,5,,3,,1
+COG SCI,190,1,Yang Xu,7,4,,1,,2,1,,,,,,,,,,,
+COG SCI,198,4,Terrance Regier,,,,,,,,,,,,,,24,,1,,
+DEV STD,150,2,Tiffany Page,,5,2,,1,1,,2,1,,,,,,,,,
+GPP,105,1,Clare Talwalker,,4,4,1,1,3,,,,,,,,,,,,
+GPP,115,1,Fatmir Haskaj,3,81,103,55,24,6,3,1,2,,,,2,31,,5,,
+GPP,196,1,Cecilia Lucas,,3,4,4,4,1,,,,,,,,,,,,
+GPP,196,2,Cecilia Lucas,2,4,4,3,,1,,,,,,,,,,,,
+GPP,196,3,Khalid Kadir,2,4,6,3,1,,1,,,,,,,,,,,
+GPP,196,4,Khalid Kadir,1,5,10,1,1,,,,,,,,,,,,,
+IAS,45,1,Javier Cikota,1,15,10,26,38,25,4,9,5,1,4,,3,6,,1,,
+IAS,102,1,David Beecher,,2,6,4,3,1,,,,,,,,2,,,,1
+IAS,102,2,Bruce Newsome,,3,5,1,5,1,,2,,,,,,1,,,,1
+IAS,H102,1,Stephanie Ballenger,,3,10,1,,,,,,,,,,,,,,
+IAS,107,1,Mario Muzzi,,24,13,15,16,7,6,8,3,2,1,1,7,2,,3,,
+IAS,C118,1,Elisabeth Sadoulet,2,2,2,2,2,1,1,1,1,,1,,,1,,,,
+IAS,C148,1,Erin Murphy-Graham,,15,7,4,1,1,,,,,,,,1,,,,1
+IAS,150,2,Sophi Martin,,5,8,1,,2,,,2,,,,,,3,,,
+IAS,150,5,Bruce Newsome,,1,3,6,4,,,,,,,,,11,,,,
+IAS,150,6,Daniel Zoughbie,2,7,7,1,,,,,,,,,,,,,,
+IAS,150,7,Clare Talwalker,,5,9,4,2,,,,,,,,,1,,,,
+IAS,150,8,Tiffany Page,,3,1,3,4,,,,,,,,,2,,1,,
+IAS,150,9,Clare Talwalker,,6,15,9,3,1,,,,,,,,2,,,,
+IAS,150,10,Sarah Reynolds,2,3,4,4,6,2,,2,,,,,,,,,,1
+IAS,150,11,Bruce Newsome,,1,3,1,2,2,,,,,,,,1,,,,
+IAS,194,1,Stephanie Ballenger,,1,6,4,1,,1,,,,,,,1,,,,
+LATAMST,10,1,Tiffany Page,,7,12,17,9,1,,,1,,,,,5,,,,
+LATAMST,150,1,Clara Nicholls,,18,20,,2,,,,,,,,,1,,,,
+LATAMST,150,2,Stephanie Ballenger,,4,2,1,1,3,1,,,,,,,2,,,,
+M E STU,150,1,Daniel Zoughbie,3,6,7,3,,1,1,,,,,,,,,,,1
+PACS,10,1,Darren Zook,3,45,25,14,37,7,3,7,3,,,,,23,,3,,1
+PACS,100,1,Karenjot Bhangoo Randhawa,,6,15,14,10,1,1,,1,,,,,4,,,,
+PACS,119,1,Manuela Travaglianti,1,3,4,3,1,1,,1,1,,,,,5,,2,,
+PACS,119,2,Tetsushi Ogata,,12,6,2,4,,1,,,,1,,,10,,,,1
+PACS,119,4,Jason Patent,2,18,,1,2,,,,,,,,,4,,,,
+PACS,126,1,Darren Zook,6,26,29,13,19,5,3,2,,,,,,31,,1,,4
+PACS,148AC,1,Sean Burns,,4,4,1,1,,,,,,,,,1,,,,1
+PACS,150,1,Karenjot Bhangoo Randhawa,5,15,7,6,7,2,,,,,,,,4,,,,
+PACS,170,1,Tetsushi Ogata,,19,7,2,1,4,1,,,,,,,4,,,,1
+PACS,190,1,Manuela Travaglianti,,5,2,2,4,3,1,,,,,,,,,,,3
+PACS,190,2,Tetsushi Ogata,,8,9,1,1,,,,,,,,,,,,,1
+POLECON,100,1,Alan Karras,,12,26,16,39,24,15,8,1,,2,1,1,10,,,,
+POLECON,101,1,Khalid Kadir,5,15,36,25,25,20,14,3,2,1,3,,2,3,,,,3
+POLECON,160,1,David Beecher,,1,5,7,14,6,3,,1,,,,1,6,,,,2
+ITALIAN,1,1,Julia Nelsen,1,4,2,2,1,,1,,,,,,,,,,,
+ITALIAN,1,2,Zack Bekowies,1,3,1,2,,,,,,,,,,6,1,,,
+ITALIAN,1,6,Kyle Thomson,,3,2,,2,,1,,,,,,,3,1,,,
+ITALIAN,2,1,Giuliana Perco,1,2,1,2,1,,,,,,,,,1,1,1,,
+ITALIAN,3,1,Mara Mauri Jacobsen,2,5,2,,,,,,,,,,,1,2,,,
+ITALIAN,R5A,1,Stanley Levers,,16,1,,,,,,,,,,,,,,,
+ITALIAN,R5A,2,Stanley Levers,,14,1,1,,,,,,,,,,,,,,1
+ITALIAN,R5B,1,Avy Valladares,,4,4,5,3,,,,,,,,1,,,,,
+ITALIAN,R5B,2,Arthur Lei,,8,7,,,,,,,,,,2,,,,,
+ITALIAN,40,1,Kate Driscoll,14,39,13,14,9,2,2,,,,,,,21,,1,,
+ITALIAN,120,1,Diego Pirillo,8,5,,,,,,,,,,,,1,,,,
+ITALIAN,170,1,Lisa Pieraccini,1,9,5,,,,,,1,,,,,1,,,,
+JEWISH,39O,1,Benjamin Brinner,,8,4,1,,,,,,,,,,,,,,
+JEWISH,120,1,Noam Gil,2,5,3,4,2,3,1,,,,,,,4,,1,,
+JOURN,24,1,Thomas Leonard,,,,,,,,,,,,,,10,,,,1
+JOURN,198,1,Abbie Van Sickle,,,,,,,,,,,,,,11,,1,,
+LD ARCH,12,1,G. Mathias Kondolf,3,27,18,16,23,8,3,5,1,,1,,1,6,,1,,
+LD ARCH,101,1,Jennifer Brooks,,2,7,3,4,1,,1,,1,,,,,,,,
+LD ARCH,103,1,Charles Sullivan,8,8,4,1,,,,1,,,,,,,,,,
+LD ARCH,110,1,Lauren Bergenholtz,9,15,21,12,15,6,,2,,,,,,2,,,,1
+LD ARCH,110L,1,Sophie Taddeo,3,18,,,,,,,,,,,,,,,,
+LD ARCH,110L,2,Sophie Taddeo,2,12,3,,,,,1,,,,,,,,,,
+LD ARCH,111,1,Richard Hindle,1,29,11,5,2,1,,,,,,,,,,,,1
+LD ARCH,120,1,Kelley Lemon,1,7,8,10,8,2,,2,1,1,,,,,,,,1
+LD ARCH,134A,1,Walter Hood,13,8,3,2,,,,,,,,,,,,,,
+LD ARCH,134B,1,Laura Tepper,4,15,10,5,,,1,,1,,,,1,1,,,,
+LD ARCH,135,1,Charles Sullivan,12,10,10,3,2,,,1,,,,,,,,,,
+LD ARCH,C171,1,Louise Mozingo,3,5,2,1,2,2,,2,,,,,,3,,1,,
+LD ARCH,C188,1,John Radke,3,6,9,18,11,10,1,3,2,2,1,,,8,2,3,,3
+LD ARCH,198,1,Charles Sullivan,,,,,,,,,,,,,,24,1,,,
+LD ARCH,198,3,G. Mathias Kondolf,,,,,,,,,,,,,,11,,1,,
+LEGALST,R1B,1,Jonathan Marshall,,1,4,8,5,,,1,,,,,,,,,,
+LEGALST,24,1,Robert Berring,5,17,1,,1,,,,,,,,,2,,,,
+LEGALST,39D,1,Alan Pomerantz,9,1,3,4,2,,,,,,,,2,13,,1,,
+LEGALST,39I,1,Christopher Kutz,1,7,11,2,,,,,,,,,,3,,,,2
+LEGALST,100,1,Jonathan Marshall,3,19,42,17,17,11,4,3,1,5,1,1,4,2,,1,,3
+LEGALST,103,1,Kavitha Iyengar,2,13,16,9,9,5,1,2,1,,,,,1,,1,,1
+LEGALST,109,1,Chase Burton,,16,17,14,21,9,5,3,1,,,,1,6,,,,
+LEGALST,119,1,Kinch Hoekstra,,6,3,6,4,6,5,2,4,,,1,,3,,,,1
+LEGALST,140,1,Alexandra Havrylyshyn,3,6,7,13,15,1,4,2,,,,,2,1,,,,
+LEGALST,145,1,Aniket Kesari,1,10,5,6,20,4,2,2,2,,,,,4,,1,,
+LEGALST,151,1,Maram Mahajna,,16,12,8,7,4,1,1,,,1,,,6,,,,
+LEGALST,161,1,Reid Whitaker,1,10,34,12,14,4,1,,1,,,,,8,,,,2
+LEGALST,163,1,Meredith Spoto,,13,8,9,14,3,2,7,4,,,,,1,,,,1
+LEGALST,170,1,Richard Perry,1,17,17,25,19,10,2,2,,,,,,3,,1,,1
+LEGALST,174,1,Tamar Kricheli Katz,3,2,4,8,10,1,,,,,,,,1,,,,1
+LEGALST,184,1,Justin O'Neill,8,17,4,4,25,2,5,18,3,2,6,1,4,1,,,,1
+LEGALST,190,2,Martin Shapiro,,11,,,,,,,,,,,,,,,,1
+LEGALST,190,3,Dylan Penningroth,1,2,2,4,1,,,,,,,,,,,,,2
+LEGALST,H195A,1,Kathryn Heard,2,7,1,1,,,,,,,,,,,,,,
+LEGALST,198,2,Robert Berring,,,,,,,,,,,,,,18,,1,,
+LINGUIS,1A,1,Sherry Hicks,5,5,4,,2,1,,,,1,,,,,,,,
+LINGUIS,1A,2,Sherry Hicks,5,8,2,,1,2,,,,,,,1,1,,,,
+LINGUIS,R1B,1,Hannah Sande,1,15,2,,1,,,,,,,,,,,,,1
+LINGUIS,R1B,2,Ruth Rouvier,7,6,2,1,1,1,,,,,,,,,,,,
+LINGUIS,5,1,Larry Hyman,9,16,18,7,14,6,2,2,2,,1,,,18,,1,,
+LINGUIS,100,1,Susan Lin,4,52,41,23,36,20,15,10,6,3,2,,1,7,,3,,1
+LINGUIS,106,1,Eve Sweetser,1,9,6,6,8,6,2,2,1,,,,1,4,1,1,,
+LINGUIS,110,1,Keith Johnson,2,18,13,6,23,3,3,6,2,2,2,2,,4,,5,,1
+LINGUIS,128,1,Eve Sweetser,1,6,3,2,2,,,,,,,,1,4,,,,
+LINGUIS,130,1,Andrew Garrett,3,24,5,12,7,9,4,10,4,3,4,,2,1,,,,
+LINGUIS,148,1,Sharon Inkelas,2,6,1,,3,,,,,,,,,1,,,,
+LINGUIS,154,1,Christine Beier,1,8,2,,2,1,,,,1,,,,,,,,
+LINGUIS,170,1,Richard Rhodes,,15,,,,,,,,,,,,1,,,,
+LINGUIS,198,1,Richard Rhodes,,1,,,,,,,,,,,,24,,,,
+MAT SCI,102,1,Daryl Chrzan,3,11,10,8,11,10,8,14,,,1,,2,3,,,,
+MAT SCI,113,1,Robert Ritchie,1,6,9,8,8,7,,1,,,,,,,,,,
+MAT SCI,120,1,Matthew Sherburne,3,11,6,2,1,1,,,,,,,,,,,,
+MAT SCI,123,1,Shuai Lou,2,4,6,5,4,7,1,1,,,,,,,,,,1
+MAT SCI,130,1,Christopher Kumai,1,4,18,13,5,3,5,1,,,1,,1,,,,,
+MATH,1A,1,Derek Hollowood,47,64,18,33,59,36,22,39,4,5,6,,13,3,,10,,3
+MATH,1A,2,Benjamin Filippenko,46,70,22,25,68,43,21,42,1,3,10,3,14,2,,6,,
+MATH,1A,3,Sug Woo Shin,10,24,32,36,24,16,15,20,6,8,4,3,7,7,,12,,1
+MATH,1A,4,Tobias Hartung,6,3,,2,1,,,,1,,,,2,2,,1,,
+MATH,1B,1,Alexander Zorn,14,53,47,13,41,26,17,24,11,1,6,,24,7,,10,,1
+MATH,1B,2,Felix Gotti-Pena,11,41,13,25,52,25,10,39,7,1,8,,3,9,,13,,4
+MATH,10A,1,James Robertson,7,99,7,14,113,15,16,60,5,,4,,5,8,,17,,
+MATH,10A,2,Miquel Crusells Girona,19,44,38,39,41,23,35,22,11,11,2,5,7,,,9,,1
+MATH,16A,1,Sierra Reyburn,8,44,51,44,25,22,24,19,11,5,9,6,6,3,,17,,5
+MATH,16A,2,Nicholas Bhattacharya,26,87,51,30,45,29,12,33,9,1,3,4,6,16,,13,,1
+MATH,16B,1,Zhewei Yao,56,81,66,55,29,30,24,16,13,1,9,,7,6,,9,,2
+MATH,32,1,German Stefanich,3,26,15,12,13,8,7,9,8,4,2,,12,56,,40,,
+MATH,53,1,Edward Frenkel,58,42,88,66,37,22,23,12,26,,31,,34,5,,22,,3
+MATH,53,2,Andrew Hanlon,18,49,60,53,46,27,37,34,13,,8,,25,7,,9,,1
+MATH,54,1,Kai-chieh Chen,48,84,90,89,80,51,53,24,22,,3,,5,13,1,15,,2
+MATH,54,2,Ian Andrei Gleason Freidberg,21,111,72,49,48,41,35,21,2,,13,,38,5,,14,,1
+MATH,54,3,Satyaki Mukherjee,12,85,34,42,78,53,28,25,23,,34,,6,5,1,5,,5
+MATH,H54,1,Paul Vojta,3,5,4,2,3,2,,1,2,1,1,,,1,,3,,
+MATH,55,1,Watson Ladd,8,47,29,16,31,27,23,20,15,12,3,4,13,6,,11,,1
+MATH,98,9,Christopher Policastro,,,,,,,,,,,,,,14,,6,,
+MATH,98,10,Christopher Policastro,,,,,,,,,,,,,,11,,8,,
+MATH,98,11,Michael Wong,,,,,,,,,,,,,,33,,6,,
+MATH,98,12,Michael Wong,,,,,,,,,,,,,,19,,3,,
+MATH,98,13,Michael Wong,,,,,,,,,,,,,,35,,2,,
+MATH,98,15,Michael Wong,,,,,,,,,,,,,,18,,2,,
+MATH,98,16,Michael Wong,,,,,,,,,,,,,,38,,2,,
+MATH,98,17,Michael Wong,,,,,,,,,,,,,,42,,3,,
+MATH,98,18,Michael Wong,,,,,,,,,,,,,,30,,1,,
+MATH,98,19,Michael Wong,,,,,,,,,,,,,,37,,1,,
+MATH,98,20,Michael Wong,,,,,,,,,,,,,,43,,1,,
+MATH,98,22,Michael Wong,,,,,,,,,,,,,,32,,2,,
+MATH,98,23,Michael Wong,,,,,,,,,,,,,,18,,5,,
+MATH,98,25,Michael Wong,,,,,,,,,,,,,,38,,5,,
+MATH,98,26,Michael Wong,,,,,,,,,,,,,,35,,1,,
+MATH,98,27,Michael Wong,,,,,,,,,,,,,,22,,1,,
+MATH,98,28,Michael Wong,,,,,,,,,,,,,,18,,2,,
+MATH,98,29,Michael Wong,,,,,,,,,,,,,,23,,1,,
+MATH,98,30,Michael Wong,,,,,,,,,,,,,,18,,,,1
+MATH,98,31,Michael Wong,,,,,,,,,,,,,,28,,6,,
+MATH,98BC,1,Wing Hei Michael Wan,,,,,,,,,,,,,,18,,1,,
+MATH,98BC,2,Virginia Harrison,,,,,,,,,,,,,,16,,3,,
+MATH,C103,1,Haluk Ergin,2,4,1,1,2,3,2,1,,,2,2,,2,,3,,
+MATH,104,1,Khrystyna Serhiyenko,4,7,1,2,1,4,2,4,3,3,5,6,1,,,,,1
+MATH,104,2,Ludovic Patey,2,8,1,3,4,2,1,4,1,1,1,,,,,1,,1
+MATH,104,3,Alexis Brice Emmanuel Bouthier,4,,3,2,,2,2,4,,,,,5,1,,4,,
+MATH,104,4,Insuk Seo,3,7,2,4,10,1,3,8,3,,,,,,,1,,2
+MATH,104,5,Marina Iliopoulou,8,7,6,1,5,2,1,3,1,,1,1,2,3,,2,,
+MATH,104,6,Michael Pejic,,3,2,2,5,6,2,6,5,,2,,2,1,,,,
+MATH,H104,1,Brent Nelson,4,9,3,1,4,2,,3,1,,2,1,2,,,,,
+MATH,110,1,Doosung Park,15,67,27,33,41,29,29,13,18,10,11,8,22,12,,19,,1
+MATH,H110,1,Alexander Givental,3,1,1,2,3,3,1,2,,,1,1,1,1,,1,,
+MATH,113,1,Clifton Ealy,,7,1,1,5,4,1,2,4,2,3,,4,1,,1,,
+MATH,113,2,Pierre Simon,5,6,2,4,6,2,1,1,3,,,,3,,,4,,
+MATH,113,3,Vivek Shende,2,6,1,5,,3,,2,4,,,,1,1,,3,,3
+MATH,113,4,Dan-Virgil Voiculescu,3,11,7,5,4,6,,2,,,,,1,1,,,,
+MATH,113,5,Ludovic Patey,1,6,2,5,3,2,1,6,,,2,,1,,,,,3
+MATH,113,6,Silvain Rideau,4,5,1,4,3,1,5,2,4,,3,,1,3,,1,,
+MATH,121A,1,Marina Iliopoulou,4,7,4,3,4,,4,,2,,,1,,1,,1,,
+MATH,123,1,Tyler Helmuth,3,,,,,1,2,,2,,1,,4,,,2,,
+MATH,125A,1,Pierre Simon,3,8,5,1,8,4,,5,1,,1,,1,3,,4,,
+MATH,127,1,David Dynerman,,8,1,2,8,2,,7,,,,,,1,1,1,,
+MATH,128A,1,Olga Holtz,15,20,24,23,27,18,20,14,8,10,7,,7,1,,3,,1
+MATH,130,1,James Conway,1,2,3,4,5,1,4,3,,1,,,4,,,1,,
+MATH,141,1,Andrey Smirnov,,9,,2,5,1,,,,,,,1,4,,,,
+MATH,143,1,Martin Helmer,3,13,6,2,5,,,1,,,,,2,,,,,
+MATH,152,1,Kelli Talaska,,2,,2,,3,1,2,,,,,,2,,,,
+MATH,185,1,Andrey Smirnov,2,14,6,1,8,1,1,,,,,,,,2,,,
+MATH,185,2,Ved Datar,2,5,3,2,3,,5,8,,,3,,4,,,1,,
+MATH,185,3,Khoa Nguyen,3,16,1,4,5,3,4,2,,2,,,,,,,,
+MATH,185,4,Hongbin Sun,2,4,6,4,6,6,,7,,,2,,4,,,1,,
+MATH,191,1,Alexander Givental,,28,,,,,,1,,,,,,1,,,,
+MATH,198,1,Thomas Scanlon,,,,,,,,,,,,,,15,,1,,
+MATH,198,2,Kenneth Ribet,,,,,,,,,,,,,,24,,1,,
+MATH,198,3,Kelli Talaska,,,,,,,,,,,,,,38,,1,,
+MATH,198BC,2,Virginia Harrison,,,,,,,,,,,,,,19,,1,,
+MATH,198BC,3,Wing Hei Michael Wan,,,,,,,,,,,,,,16,,1,,
+MATH,198BC,4,Antonio Montalban,,,,,,,,,,,,,,19,,1,,
+MEC ENG,40,1,Michael Frenklach,3,12,6,13,18,10,13,10,6,,2,,4,1,,1,,
+MEC ENG,C85,1,Ayyana Chakravartula,,5,5,7,8,11,3,3,2,,,,2,,,,,
+MEC ENG,C85,2,Shaofan Li,5,21,20,17,9,1,2,,2,2,,,1,,,,,
+MEC ENG,98,1,Alice Agogino,,,,,,,,,,,,,,42,,2,,
+MEC ENG,98,2,Dennis Lieu,,,,,,,,,,,,,,15,,3,,
+MEC ENG,102A,1,Marcel Kristel,7,46,44,6,3,,,,,,,,,,,,,
+MEC ENG,102B,1,Liwei Lin,1,10,7,9,4,1,,3,,,1,,,,1,,,
+MEC ENG,104,1,James Casey,5,16,10,16,15,13,11,7,6,1,,,,,,1,,
+MEC ENG,106,1,Omer Savas,11,9,11,10,11,15,9,7,,,3,,,,1,,,
+MEC ENG,107,1,Lydia Sohn,,61,13,8,,,,,,,,,,,,,,
+MEC ENG,108,1,Grace O'connell,5,16,17,17,23,12,13,6,3,1,2,2,,,1,,,
+MEC ENG,109,1,Christopher Dames,6,16,6,7,29,13,6,8,3,3,1,,1,,,,,2
+MEC ENG,120,1,Mohammad Mofrad,,9,8,10,4,2,1,1,,1,,,,1,,,,
+MEC ENG,130,1,Kourosh Youssefi,,16,11,16,8,7,9,7,1,,,,,,,,,
+MEC ENG,132,1,Gabriel Gomes,,17,22,27,7,11,10,1,6,,,,2,,,,,
+MEC ENG,C134,1,Seth Sanders,1,4,3,4,4,5,1,5,1,,,,1,1,,,,
+MEC ENG,140,1,CARLOS Fernandez-Pello,1,4,1,5,5,4,1,,,,,,,,,,,
+MEC ENG,146,1,Van Carey,,5,7,12,3,1,,,,,,,1,1,,,,
+MEC ENG,163,1,Omer Savas,14,15,4,1,1,,,,,,,,,,,,,
+MEC ENG,175,1,Oliver O'Reilly,5,9,11,9,6,7,6,4,,,,,1,,2,1,,
+MEC ENG,C176,1,Tony Keaveny,3,4,8,4,3,5,2,4,,,,,,,,,,
+MEC ENG,185,1,George Johnson,3,14,8,4,5,4,2,2,2,,1,,1,,1,,,
+MEC ENG,191K,1,Marcel Kristel,,40,2,2,3,,,,,,,,,1,,,,
+MEC ENG,198,51,Alice Agogino,,,,,,,,,,,,,,40,,2,,
+AEROSPC,1A,1,Austin Hirsch,,37,,2,1,,,,,,,,,1,,,,1
+AEROSPC,2A,1,Christopher Carroll,,15,2,1,,,,,,,,,,1,,,,
+MIL AFF,1,1,Stephen Suhr,,24,,,8,,,4,,,,,,7,,,,
+MIL AFF,145A,1,Christopher Carroll,3,8,1,2,1,,,,,,,,,,,,,
+MIL SCI,2,1,Emma Cuevas,4,10,3,3,1,,,,,,,,,,,,,
+MIL SCI,100,1,Daniel Morse,,6,3,3,,,,,1,,,,,,,,,
+MIL SCI,131,1,Christopher Crager,3,4,1,2,,,,,,1,,,,,,,,
+NAV SCI,1,1,Jerrod Devine,11,3,,,,1,,,,,,,,,,,,
+NAV SCI,3,1,Robert Scott,2,10,4,1,,,,,,,,,,,,,,
+MCELLBI,32,1,Robin Ball,2,71,24,27,46,18,22,38,25,,2,,3,26,,14,,3
+MCELLBI,32L,1,Robin Ball,2,94,19,7,6,1,,,,,,,2,1,,1,,
+MCELLBI,55,1,Russell Vance,5,28,14,5,11,9,6,5,6,,1,,2,46,,4,,
+MCELLBI,90A,1,Jack Kirsch,,,,,,,,,,,,,,14,,,,1
+MCELLBI,C100A,1,David Savage,9,36,17,12,36,20,12,11,14,,3,,5,4,,3,,
+MCELLBI,102,1,Richard Calendar,9,31,38,47,39,40,28,36,37,,9,,10,7,,4,,4
+MCELLBI,104,1,Roberto Zoncu,8,28,36,17,36,12,17,27,8,,,,4,3,,1,,
+MCELLBI,110,1,Qiang Zhou,6,7,4,24,19,2,8,9,5,,3,,1,1,,3,,1
+MCELLBI,C110L,1,Andreas Martin,1,10,3,5,3,3,,2,,,,,,1,,,,
+MCELLBI,C112,1,Kathleen Ryan,1,2,6,6,8,3,8,3,2,1,1,2,1,3,,2,,
+MCELLBI,C112L,1,Gordon Pherribo,5,2,2,1,,1,,,,,,,,,,,,
+MCELLBI,118,1,Peter Duesberg,,12,5,1,,,,,,,,,,1,,,,
+MCELLBI,132,1,Lin He,3,14,10,12,11,5,9,7,3,,3,,3,11,,3,,
+MCELLBI,133L,1,Gloria Brar,2,5,5,4,6,1,1,,,,,,,,,,,
+MCELLBI,135A,1,Gary Firestone,5,17,28,45,21,15,3,1,,,,,,2,,,,1
+MCELLBI,136,1,Polina Lishko,5,69,,21,36,30,7,6,4,,5,,2,1,,,,
+MCELLBI,140,1,Fyodor Urnov,3,18,8,4,15,4,2,4,2,,3,,,3,,3,,
+MCELLBI,143,1,Nicole King,1,4,8,,,,,,,,,,,,,1,,
+MCELLBI,150,1,Laurent Coscoy,,33,6,8,13,2,8,3,6,,2,,1,4,,2,,
+MCELLBI,150L,1,William Sha,2,8,3,4,7,4,1,3,,,,,,,,,,
+MCELLBI,160,1,Helen Bateup,6,24,8,17,29,13,5,21,16,,10,,6,6,,6,,
+MCELLBI,163L,1,Stephan Lammel,5,14,8,9,19,10,6,11,2,,1,,1,2,,,,1
+MCELLBI,166,1,Alan Miller,2,9,6,5,1,,4,,,1,,,,1,,2,,
+MCELLBI,198,2,David Presti,,,,,,,,,,,,,,120,,1,,
+MCELLBI,198,3,Raj Aurora,,,,,,,,,,,,,,22,,2,,
+MCELLBI,198,5,Yvette Tran,,,,,,,,,,,,,,42,,2,,
+MCELLBI,198,9,Nicholas Ingolia,,,,,,,,,,,,,,41,,3,,
+MCELLBI,198,11,Nicholas Ingolia,,,,,,,,,,,,,,13,,2,,
+MCELLBI,198,12,Nicholas Ingolia,,,,,,,,,,,,,,14,,1,,
+MUSIC,R1B,1,Margaret Jones,,9,8,,1,,,,,,,,2,,,,,
+MUSIC,20A,1,Matthew Hough,1,2,9,,,1,,1,1,,,1,1,4,,9,,
+MUSIC,20A,2,Rebecca Lomnicky,,11,8,3,,1,,,1,,,,1,5,1,,,
+MUSIC,20A,3,Matthew Hough,15,12,2,1,,1,,,,,,,,,,,,
+MUSIC,20A,4,Matthew Hough,,10,3,3,2,1,,1,,,1,,,1,,,,
+MUSIC,20A,5,Matthew Hough,10,10,1,1,2,,,,,,,,,6,,1,,
+MUSIC,20A,6,Matthew Hough,,19,4,3,1,2,,,,,,,,3,,,,
+MUSIC,20B,1,Matthew Hough,,12,6,4,,1,,1,,,,,,,,,,
+MUSIC,25A,1,Jeremy Wexler,3,12,2,5,,,,,,,,,,4,,,,
+MUSIC,25A,2,Maija Hynninen,,12,6,,,1,,,,,,,,4,,1,,
+MUSIC,27,1,Mary Ann Smart,10,89,93,44,27,11,3,3,,,2,1,1,113,,5,,
+MUSIC,44,1,Candace Johnson,9,10,1,,,1,,,,,,,,3,,,,
+MUSIC,44,2,Candace Johnson,10,14,,,,,,,,,,,,1,,,,
+MUSIC,44,3,Candace Johnson,16,6,,,,,,,,,,,,2,,1,,
+MUSIC,52A,1,Matthew Hough,,4,4,1,1,,,,,,,,,,1,,,
+MUSIC,52A,2,Michael Orland,,6,2,1,2,,,,,,,,,2,1,,,1
+MUSIC,52B,1,Matthew Hough,,5,3,1,,,,,1,,,,,,,,,
+MUSIC,53A,1,David Pereira,1,2,1,3,2,2,1,,,,,,,2,,,,
+MUSIC,53A,2,Jonathan Kulpa,3,1,6,2,1,,,,,,,,,,,1,,
+MUSIC,53B,1,David Pereira,,6,5,4,2,,,,1,,,,,,,,,
+MUSIC,70,1,James Davies,3,14,12,4,6,4,2,1,,,,,1,5,,,,
+MUSIC,108,1,Matthew Schumaker,14,28,15,10,9,1,,1,,,1,,,6,,,,
+MUSIC,109,1,Jeanne Bamberger,5,3,2,,2,1,,,,,,,,1,,,,
+MUSIC,116A,1,Benjamin Goldberg,3,8,1,1,,,,,,,,,,1,1,,,
+MUSIC,128,1,Sean Hallowell,7,31,3,1,2,,,1,,,,,,3,,,,
+MUSIC,128A,1,James Davies,3,8,11,4,1,1,,,,,,,,5,,,,
+MUSIC,131A,1,Inderjit Kaur,,16,9,1,1,,,2,,,,,,3,,,,
+MUSIC,137AC,1,Christina Azahar,15,25,14,5,,,,,,,,1,,7,,,,1
+MUSIC,140,1,Midiyanto Midiyanto,3,21,,,,,,,,,,,,,,,,
+MUSIC,140,3,Midiyanto Midiyanto,9,15,,,,,,,,,,,,,,,,
+MUSIC,141,1,David Milnes,16,59,1,,,,,1,,,,,,,,,,
+MUSIC,143,1,Doniel Wilson,3,11,1,,,,,,,,,,,1,,,,
+MUSIC,143,2,Doniel Wilson,4,8,,,,,,,,,,,,2,,1,,
+MUSIC,144,1,Nikolas Nackley,17,25,,,,,,,,,,,1,1,,,,1
+MUSIC,146B,1,Lisa Gold,7,14,,,,,,,,,,,,1,,,,
+MUSIC,148,1,Cornelius Ladzekpo,12,49,,,,,,,1,,,,,,,1,,
+MUSIC,149,1,Davitt Moroney,,16,,,,,,,,,,,,1,,,,
+MUSIC,150A,1,Maria Tamburrino,3,13,,,,,,,,,,,,,,,,
+MUSIC,150B,1,Nikolas Nackley,5,11,1,,,,,,,,,,,,,,,
+MUSIC,150C,1,James Davies,5,14,4,3,,,,,,,,,,,,,,
+MUSIC,150E,1,Myra Melford,,8,1,,,,,,,,,,,1,,,,
+MUSIC,152A,1,Michael Orland,,5,3,4,1,,,,,,,,,,,,,1
+MUSIC,153A,1,David Pereira,1,,8,1,1,2,,,1,,,,,,,,,
+MUSIC,154A,1,Robert Yamasato,1,2,3,2,2,,,3,1,,,,,1,,1,,
+MUSIC,155,1,Franck Bedrossian,3,4,1,,,,,,,,,,,,,,,2
+MUSIC,157A,1,Franck Bedrossian,2,8,3,,,,,,,,,,,1,,,,
+MUSIC,158A,1,Rama Gottfried,11,3,5,2,1,,,,,,,,,3,,3,,
+MUSIC,158A,2,Rama Gottfried,10,10,2,3,3,1,,,,,,,,5,,2,,1
+MUSIC,161A,1,David Milnes,3,11,2,,,,,,,,,,1,,,,,
+MUSIC,164,1,Myra Melford,,9,1,,,,,,,,,,,,,,,
+MUSIC,170,1,Alice Cotter,1,5,2,2,2,1,1,,,,,,,,,,,
+MUSIC,198,10,Sanjeev Suresh,,,,,,,,,,,,,,18,,1,,
+MUSIC,198BC,2,Andrew Ly,,,,,,,,,,,,,,19,,1,,
+ARABIC,1A,1,Haitham Mohamed,,6,1,1,,,,,,,,,,,,1,,2
+ARABIC,1A,2,Elsa Elmahdy,,6,2,,,,1,,,,,,1,,,,,
+ARABIC,1A,3,Ahmed Khater,1,6,4,1,,,,,,,,,,1,1,2,,
+ARABIC,1A,4,Nawal Laymoun,4,6,1,1,,,,1,,,,,,2,,1,,
+ARABIC,1A,5,Nawal Laymoun,3,7,3,,2,,,1,,,,,,1,,,,
+ARABIC,1A,6,Nawal Laymoun,3,8,4,2,,,,,1,,,,1,,,,,
+ARABIC,1A,7,Mohamed Abdelaal,2,7,2,1,1,,,,,,,,,3,,,,
+ARABIC,20A,1,Haitham Mohamed,1,5,2,1,1,2,,,,,,,,2,,,,
+ARABIC,20A,2,Hatem Bazian,4,2,4,,,,,,,,,,,1,,,,
+ARABIC,20A,3,Elsa Elmahdy,,5,4,2,,,,,,,,,,1,,,,
+ARABIC,100A,1,Haitham Mohamed,1,7,,,,2,,,,,,,,,1,,,3
+ARABIC,108,1,John Hayes,,10,3,2,2,,,,,,,,,1,,,,
+ARABIC,111B,1,Ahmad Diab,,3,6,,1,,,,,,,,,2,,,,
+HEBREW,1A,1,Rutie Adler,,8,1,1,3,1,2,,,,,,,3,1,,,
+NESTUD,R1A,1,Muhammad Faruque,7,12,7,,,,,,,,,,,,,,,
+NESTUD,R1A,2,Carol Redmount,9,8,1,1,,,1,,1,,,,,,,,,
+NESTUD,10,1,John Hayes,,27,3,6,6,,1,3,1,,,,,21,,5,,
+NESTUD,18,1,Carol Redmount,10,64,19,13,16,3,1,2,,,,1,,17,,3,,1
+NESTUD,24,1,Carol Redmount,,16,,,,,,,,,,,,1,,,,
+NESTUD,C26,1,Sanjyot Mehendale,,21,5,1,,,,,,,,,,4,,,,
+NESTUD,39A,1,Ronald Hendel,,9,3,,,2,2,,,,,,2,3,,,,
+NESTUD,102A,1,Jessica Kaiser,3,4,,,,,,,,,,,,6,,1,,
+NESTUD,105A,1,Gil Breger,,12,2,5,,,,,,,,,,5,,,,
+NESTUD,144,1,Hatem Bazian,7,52,8,1,,,,,,,,,1,11,,,,
+PERSIAN,1A,1,Fatemehsadat Mirsharifi,15,4,,1,,,,,,,,,,,1,1,,
+PERSIAN,11A,1,Gholam-reza Ghahramani,3,8,1,,,,,,,,,,,1,,,,
+PERSIAN,20A,1,Fatemehsadat Mirsharifi,7,2,,1,,,,,,,,,,,1,,,
+PERSIAN,100A,1,Shahwali Ahmadi,1,8,1,2,,,,,,,,,,,,,,
+PERSIAN,102A,1,Shahwali Ahmadi,,14,1,,,,,,,,,,,,,,,
+NWMEDIA,190,2,Abigail De Kosnik,,11,,,,,,,,,,,,2,,,,
+NWMEDIA,190,3,Jill Miller,1,15,7,,,,,,,,,,,3,,,,
+NUC ENG,101,1,Lee Bernstein,6,12,13,8,6,4,1,1,2,1,3,,,1,,,,
+NUC ENG,107,1,Kai Vetter,,3,2,,5,3,,1,,,,,,,,,,
+NUC ENG,120,1,Peter Hosemann,,12,6,4,1,,,,,,,,,,,,,
+NUC ENG,161,1,Ralph Berger,1,4,3,1,5,,,1,2,,,,,,,,,
+NUC ENG,180,1,Edward Morse,2,8,1,5,2,,,1,,,,,,,,,,
+NUC ENG,198,1,Rachel Slaybaugh,,,,,,,,,,,,,,22,1,,,
+NUSCTX,10,1,Marc Hellerstein,13,243,59,37,70,17,10,15,2,4,4,,3,173,,10,,
+NUSCTX,20,1,Ruth Schrager,16,1,,,,,,,,,,,,,,,,
+NUSCTX,20,2,Ruth Schrager,15,3,,,,,,,,,,,,,,,,
+NUSCTX,98,2,Gregory Aponte,,,,,,,,,,,,,,11,,2,,
+NUSCTX,103,1,Hei Sul,9,22,26,19,20,11,7,7,5,,3,,1,3,,2,,3
+NUSCTX,108A,1,Rebecca Lee,,32,20,14,19,6,,6,1,1,2,,1,6,,1,,
+NUSCTX,108B,1,Rebecca Lee,1,18,,,,,,,,,,,,,,,,
+NUSCTX,108B,2,Rebecca Lee,3,11,1,,,,,,,,,,,,,,,
+NUSCTX,110,1,Jen Chywan Wang,30,76,,,5,,,1,,,,,,,,1,,
+NUSCTX,161A,1,Mary Lesser,,13,7,4,6,,,1,,,,,,,,,,
+NUSCTX,166,1,Melanie Hubbuck,,26,15,22,11,7,5,1,,,,,,,,,,
+NUSCTX,171,1,Dale Leitman,3,18,1,1,,1,,,,,,,,,,,,
+NUSCTX,190,1,Barry Shane,1,18,,,,,,,,,,,,,,,,
+NUSCTX,192,1,Mikelle McCoin,5,24,1,1,2,,,,,,,,,,,,,
+NUSCTX,198,6,Kristen Rasmussen,,,,,,,,,,,,,,14,,1,,
+BIOLOGY,1A,1,Robert Fischer,4,64,46,55,68,60,61,52,61,3,1,,9,3,,5,,1
+BIOLOGY,1AL,1,Gian Garriga,3,93,73,62,59,53,37,34,31,,9,,3,8,,5,,3
+BIOLOGY,1B,1,David Ackerly,3,26,35,67,72,57,39,31,22,,28,,14,4,,4,,1
+BIOLOGY,1B,2,Brett Boltz,,8,18,18,32,15,17,12,19,,11,,3,,,2,,
+BIOLOGY,1B,3,Bruce Baldwin,1,7,17,23,28,15,18,15,7,,13,,2,1,,2,,
+BIOLOGY,1B,4,Brett Boltz,,,2,2,2,2,3,1,1,,6,,,,,,,
+LANPRO,100A,1,Ellen Rosenfield,,,,,,,,,,,,,,,9,,2,
+PHILOS,2,1,Hans Sluga,3,12,45,33,11,10,1,,1,,,,1,27,,,,
+PHILOS,3,1,Robert Noe,1,21,41,35,22,10,4,2,4,,,,1,13,,5,,1
+PHILOS,6,1,Omar Fakhri,,13,13,5,5,7,1,,1,,2,,1,5,,3,,1
+PHILOS,12A,1,Brian Van Den Broek,27,28,13,10,11,6,2,1,,,,,2,46,,7,,
+PHILOS,18,1,Kwong-loi Shun,,3,11,11,5,2,,,,,,,,16,,,,
+PHILOS,25A,1,Timothy Clarke,,11,36,36,35,33,12,3,1,,,,3,23,,4,,1
+PHILOS,98BC,4,Lara Buchak,,,,,,,,,,,,,,18,,2,,
+PHILOS,100,1,Daniel Warren,,10,18,21,9,5,2,,,,,,,2,,,,3
+PHILOS,104,1,Nicholas Kolodny,,7,14,22,19,7,4,1,2,,,,,6,,,,3
+PHILOS,115,1,Veronique Munoz-Darde,1,6,7,10,10,3,,,1,,2,,,2,,1,,
+PHILOS,125,1,Geoffrey Lee,,6,6,7,16,2,4,1,,,,,,5,1,,,
+PHILOS,135,1,Hannah Ginsborg,,11,14,12,5,5,2,1,,,,,,,,,,
+PHILOS,138,1,John Searle,2,15,20,9,2,1,,,,,,,,5,,,,
+PHILOS,140B,1,Paolo Mancosu,6,5,3,3,3,1,,2,2,,2,1,1,8,,3,,
+PHILOS,155,1,Timothy Crockett,,4,6,6,10,7,3,1,,1,,,1,4,,1,,
+PHILOS,160,1,Anthony Long,,4,5,7,8,5,4,1,,1,,,1,4,,,,2
+PHILOS,176,1,Michael Martin,,4,9,9,6,3,2,1,3,1,,,2,3,,,,2
+PHILOS,178,1,Daniel Warren,,10,7,6,5,5,1,2,,,,,,2,,,,2
+PHILOS,190,1,Timothy Crockett,,5,3,2,,,,,,,,,,,,,,1
+PHILOS,198,1,Nicholas Kolodny,,,,,,,,,,,,,,32,,1,,
+PHILOS,198BC,1,Lara Buchak,,,,,,,,,,,,,,21,,1,,
+PHILOS,198BC,2,Lara Buchak,,,,,,,,,,,,,,18,,1,,
+PHYS ED,1,1,Elmar Stefke,,,,,,,1,,,,,,,9,5,3,,
+PHYS ED,1,2,Elmar Stefke,,,,,1,,,,,,,,,14,2,2,,
+PHYS ED,1,3,Vishnupriya Shah,,13,,,,,,,,,,,,13,,,,
+PHYS ED,1,4,Vishnupriya Shah,,9,,,,,,,,,,,,21,,,,
+PHYS ED,1,5,Jason Britton,,,,,,,,1,,,,,,12,1,2,,
+PHYS ED,1,6,Jason Britton,,1,,,4,,,1,,,,,,6,4,,,
+PHYS ED,1,7,Jason Britton,,1,,,1,,,,,,,,,13,,,,
+PHYS ED,1,8,Susanna Li-Jue,,1,,2,,,,,,,,,,23,3,3,,
+PHYS ED,1,9,Sue Johannessen,,5,,,1,,,,,,,,,13,,1,,
+PHYS ED,1,10,Sue Johannessen,,15,,,,,,1,,,,,,10,,1,,
+PHYS ED,1,11,Dini Wong,,5,,,,1,,,,,,,,15,,1,,
+PHYS ED,1,12,Dini Wong,,1,,1,,1,,,,,,,,20,,,,
+PHYS ED,1,13,Dini Wong,,1,,1,1,,,,,,,,,15,4,1,,
+PHYS ED,1,14,Dini Wong,,,,,,,,,,,,,1,21,1,1,,
+PHYS ED,1,15,Toni Mar,,5,2,,,,,1,,,,,1,22,,5,,
+PHYS ED,1,16,Toni Mar,,4,1,,4,,,,,,,,1,18,,3,,
+PHYS ED,1,17,Dini Wong,,5,,,,,,,1,,,,,20,,3,,
+PHYS ED,1,18,Dini Wong,,3,,1,1,,,,,,,,,22,3,1,,
+PHYS ED,1,19,Dini Wong,,3,,,1,,1,,,,,,,20,1,1,,
+PHYS ED,1,20,Dini Wong,,2,,,,,,,,,,,1,10,2,3,,
+PHYS ED,1,21,Susanna Li-Jue,,5,1,,2,,,,,,,,,11,2,1,,
+PHYS ED,1,22,Jason Britton,,10,,,2,,,,,,,,,11,,,,
+PHYS ED,1,23,Jason Britton,,18,,,1,,,,,,,,,8,,1,,
+PHYS ED,1,24,Jason Britton,,13,,,,,,,,,,,,15,1,,,
+PHYS ED,1,25,Jason Britton,,8,,,1,,,,,,,,,14,,,,
+PHYS ED,1,26,Jason Britton,,10,,,1,,,,,,,,,10,2,,,
+PHYS ED,1,27,Toni Mar,,5,,,3,,,,,,,,1,19,2,3,1,
+PHYS ED,1,28,Toni Mar,,8,,,2,,,,,,,,2,12,,2,,
+PHYS ED,1,29,Toni Mar,,7,3,,5,,,1,,,1,,1,13,1,3,,
+PHYS ED,1,30,Toni Mar,,7,1,2,4,,,,,,1,,,14,2,2,,
+PHYS ED,1,31,Toni Mar,,11,,,2,,,1,,,,,2,13,,6,,
+PHYS ED,1,32,Jason Britton,,12,,,,,,,,,,,,14,2,1,,
+PHYS ED,1,33,Russell Ahn,,5,,1,,1,,,,,,,1,7,,,,
+PHYS ED,1,34,Russell Ahn,,1,,3,1,,1,1,,,,,1,10,,1,1,
+PHYS ED,1,35,Russell Ahn,,3,1,1,3,,,,,,,,2,14,,1,,
+PHYS ED,1,36,Russell Ahn,,3,,,2,,1,,,,,,,7,,1,,
+PHYS ED,1,37,Russell Ahn,,5,,,4,,,,,,,,,12,1,1,,
+PHYS ED,1,38,Russell Ahn,,2,,2,4,,,,,,,,,6,,,,
+PHYS ED,1,39,Russell Ahn,,2,,1,1,,,,,,,,,9,,,,
+PHYS ED,1,40,Russell Ahn,,1,,3,2,,1,,,,,,,13,1,,,
+PHYS ED,1,41,Russell Ahn,,3,,,,,,,,,,,,14,,,,
+PHYS ED,1,42,Russell Ahn,,1,,1,1,,,,,,,,1,13,,,,
+PHYS ED,1,43,Lon Rork,,1,,,1,,,,,,,,,14,,1,,
+PHYS ED,1,44,Richard Morris,2,3,,,,,1,,,,,,,10,4,2,,
+PHYS ED,1,45,Richard Morris,1,2,,,,,,,,,,,,14,3,,,
+PHYS ED,1,46,Lon Rork,,6,3,1,,,,,,,,,,6,,,1,
+PHYS ED,1,47,William Caraway,,,,,1,,,,,,,,2,13,,1,,
+PHYS ED,2,1,Elmar Stefke,,,,,,,,,,,,,,14,2,1,,
+PHYS ED,2,2,Elmar Stefke,,,,,,,,,,,,,,18,2,,2,
+PHYS ED,2,3,Elmar Stefke,,,,,,,,,,,,,,12,1,2,,
+PHYS ED,2,4,Vishnupriya Shah,,8,,,,,,,,,,,,12,5,,,
+PHYS ED,2,5,Susanna Li-Jue,,3,2,2,,,,,,,,,,19,3,,,
+PHYS ED,2,7,Jason Britton,,3,,,1,,,,,,,,,10,2,,,
+PHYS ED,2,8,Toni Mar,,5,,,1,,,1,,,,,,15,6,5,,
+PHYS ED,2,9,Toni Mar,,7,4,2,1,,,,,,,,,16,3,3,,
+PHYS ED,2,10,Toni Mar,,5,6,1,2,,,,,,,,,11,2,4,,
+PHYS ED,2,11,Toni Mar,,4,1,1,,,,,,,,,2,18,6,3,,
+PHYS ED,2,12,Russell Ahn,,3,,1,1,,,,,,,,,9,,,,
+PHYS ED,2,13,Lon Rork,,6,,1,,,,,,,,,,20,1,2,,
+PHYS ED,2,14,Lon Rork,,3,,1,,,,,,,,,,10,3,1,,
+PHYS ED,2,15,Richard Morris,1,9,,1,,,,,,,,,,4,2,3,,
+PHYS ED,2,16,Richard Morris,2,8,,1,,,,,,,,,,11,1,1,,
+PHYS ED,2,17,Lon Rork,,3,,,,,,,,,,,,16,2,1,,
+PHYS ED,2,18,William Caraway,,1,,,,,,,,,,,,16,,,,
+PHYS ED,3,1,Elmar Stefke,,,,,,,,,,,,,,9,1,1,1,
+PHYS ED,3,2,Elmar Stefke,,,,1,1,,,1,,,,,,14,2,1,,
+PHYS ED,3,3,Elmar Stefke,,,,,,,,,,,,,1,13,,,1,
+PHYS ED,3,4,Vishnupriya Shah,,4,,,,,,,,,,,,14,3,,,
+PHYS ED,3,6,Lon Rork,,8,2,1,,,,,,,,,,20,,1,,
+PHYS ED,3,7,Lon Rork,,6,1,,,,,,,,,,,18,2,1,,
+PHYS ED,3,8,Richard Morris,,4,,1,,,1,,,,,,,10,2,2,,
+PHYS ED,3,9,Lon Rork,,5,2,,,,,,,,,,,8,1,,,
+PHYS ED,3,10,Lon Rork,,3,,,,,,,,,,,,10,3,,,
+PHYS ED,3,11,William Caraway,,,,2,,,,,,,,,,13,2,1,,
+PHYS ED,4,1,Elmar Stefke,1,,,,,,,,,,,,,16,4,,,
+PHYS ED,4,2,Elmar Stefke,1,,,,,,,,,,,,,12,1,1,,
+PHYS ED,4,3,Elmar Stefke,,,,,,,,,,,,,,9,,1,,
+PHYS ED,4,4,Lon Rork,,4,1,,1,,,,,,,,,18,,2,,
+PHYS ED,4,5,Richard Morris,,11,,,,,2,,,,,,,6,,,,
+PHYS ED,4,6,Lon Rork,,3,,,,,,1,,,,,,9,1,1,,
+PHYS ED,4,7,William Caraway,,2,,3,1,,,,,,,,,16,3,,,
+PHYS ED,5,1,William Caraway,,1,,1,,,,1,,,,,,13,1,,,
+PHYS ED,11,1,Susanna Li-Jue,,,,,,,,,,,,,,30,,1,,
+PHYS ED,11,2,Susanna Li-Jue,,,,,,,,,,,,,,29,,1,,
+PHYS ED,11,5,Susanna Li-Jue,,,,,,,,,,,,,,39,,3,,
+PHYS ED,11,6,Susanna Li-Jue,,,,,,,,,,,,,,39,,3,,
+PHYS ED,11,7,Susanna Li-Jue,,,,,,,,,,,,,,108,,4,,
+PHYS ED,11,8,Susanna Li-Jue,,,,,,,,,,,,,,108,,4,,
+PHYS ED,11,9,Susanna Li-Jue,,,,,,,,,,,,,,16,,1,,
+PHYS ED,11,10,Susanna Li-Jue,,,,,,,,,,,,,,16,,1,,
+PHYS ED,11,13,Susanna Li-Jue,,,,,,,,,,,,,,23,,1,,
+PHYS ED,11,14,Susanna Li-Jue,,,,,,,,,,,,,,23,,1,,
+PHYS ED,11,19,Susanna Li-Jue,,,,,,,,,,,,,,39,,1,,
+PHYS ED,11,20,Susanna Li-Jue,,,,,,,,,,,,,,38,,1,,
+PHYS ED,11,21,Susanna Li-Jue,,,,,,,,,,,,,,28,,1,,
+PHYS ED,11,22,Susanna Li-Jue,,,,,,,,,,,,,,28,,1,,
+PHYS ED,11,23,Susanna Li-Jue,,,,,,,,,,,,,,363,,11,,
+PHYS ED,11,24,Susanna Li-Jue,,,,,,,,,,,,,,361,,11,,
+PHYS ED,11,25,Susanna Li-Jue,,,,,,,,,,,,,,42,,1,,
+PHYS ED,11,26,Susanna Li-Jue,,,,,,,,,,,,,,42,,1,,
+PHYS ED,12,3,Susanna Li-Jue,,,,,,,,,,,,,,13,,1,,
+PHYS ED,12,4,Susanna Li-Jue,,,,,,,,,,,,,,13,,1,,
+PHYS ED,12,5,Susanna Li-Jue,,,,,,,,,,,,,,38,,2,,
+PHYS ED,12,6,Susanna Li-Jue,,,,,,,,,,,,,,38,,2,,
+PHYS ED,12,13,Susanna Li-Jue,,,,,,,,,,,,,,25,,1,,
+PHYS ED,12,14,Susanna Li-Jue,,,,,,,,,,,,,,25,,1,,
+PHYS ED,12,15,Susanna Li-Jue,,,,,,,,,,,,,,19,,3,,
+PHYS ED,12,16,Susanna Li-Jue,,,,,,,,,,,,,,19,,3,,
+PHYS ED,12,17,Susanna Li-Jue,,,,,,,,,,,,,,16,,1,,
+PHYS ED,12,18,Susanna Li-Jue,,,,,,,,,,,,,,16,,1,,
+PHYS ED,12,23,Susanna Li-Jue,,,,,,,,,,,,,,32,1,,,
+PHYS ED,12,24,Susanna Li-Jue,,,,,,,,,,,,,,32,1,,,
+PHYS ED,12,29,Susanna Li-Jue,,,,,,,,,,,,,,263,1,8,,
+PHYS ED,12,30,Susanna Li-Jue,,,,,,,,,,,,,,263,1,8,,
+PHYS ED,32,1,Sue Johannessen,1,10,12,9,10,,1,5,3,1,4,,2,7,,2,,
+PHYS ED,98,1,Jason Britton,,,,,,,,,,,,,,21,,1,,
+PHYSICS,5A,1,Matt Pyle,7,12,7,14,12,11,4,4,4,,1,,,3,,,,
+PHYSICS,7A,1,Matthias Reinsch,3,9,7,11,11,10,8,6,4,,,,3,,,3,,2
+PHYSICS,7A,2,Zachary Stone,1,24,21,15,25,18,19,9,12,,7,,2,8,,5,,1
+PHYSICS,7A,3,Zachary Stone,2,12,7,17,15,12,6,7,5,,,,4,3,,1,,2
+PHYSICS,7B,1,Robert Birgeneau,14,36,28,18,49,24,,36,,,,,2,1,,3,,
+PHYSICS,7B,2,ALESSANDRA LANZARA,7,20,9,9,21,8,,10,3,,5,,7,,,,,
+PHYSICS,7B,3,Vetri Velan,6,24,24,58,40,5,2,28,4,,7,,4,1,,,,1
+PHYSICS,H7B,1,Irfan Siddiqi,1,3,2,4,10,4,,,1,,,,,,,,,
+PHYSICS,7C,1,William Holzapfel,4,22,4,7,13,6,,5,2,,,,3,,,,,2
+PHYSICS,H7C,1,Andrew Charman,2,10,12,13,6,3,5,4,2,,1,,1,1,,,,
+PHYSICS,8A,1,Achilles Speliotopoulos,20,23,22,40,31,33,30,30,13,,2,,4,5,,5,,2
+PHYSICS,8A,2,Achilles Speliotopoulos,23,29,26,39,41,44,34,28,25,,,,7,5,,4,,3
+PHYSICS,8B,1,Chien-i Chiang,1,15,10,11,16,12,9,15,4,,3,,6,,,,,1
+PHYSICS,8B,2,Chien-i Chiang,7,46,34,34,33,33,28,22,23,,7,,9,,,3,,3
+PHYSICS,77,1,Yury Kolomensky,5,13,4,5,4,,,1,,,1,,,9,,,,
+PHYSICS,89,1,James Analitis,1,8,14,11,6,7,6,1,2,1,2,2,4,8,,1,,1
+PHYSICS,98,2,Robert Jacobsen,,,,,,,,,,,,,,27,,1,,
+PHYSICS,98BC,1,Bernard Sadoulet,,,,,,,,,,,,,,19,,2,,
+PHYSICS,98BC,2,Paul Riggins,,,,,,,,,,,,,,18,,2,,
+PHYSICS,98BC,4,Victoria Xu,,,,,,,,,,,,,,20,,1,,
+PHYSICS,105,1,Edgar Knobloch,2,8,8,8,11,6,2,1,1,,,1,1,,,,,
+PHYSICS,105,2,Matthias Reinsch,2,11,4,6,9,6,2,2,2,,5,,3,,,1,,
+PHYSICS,110A,2,Michael Crommie,2,13,11,8,10,10,3,10,1,,1,,2,1,,,,1
+PHYSICS,110B,1,Joseph Orenstein,,9,,7,1,5,,2,,,,,,1,,,,1
+PHYSICS,111A,1,Alwina Liu,6,21,10,14,11,2,,,,,,,,,,,,
+PHYSICS,111B,1,Hartmut Haeffner,3,19,11,2,3,7,1,,1,,1,,3,,,,,
+PHYSICS,112,1,Dung-Hai Lee,3,7,7,7,3,,,2,1,,,,3,2,,1,,
+PHYSICS,112,2,Zi Qiu,6,14,7,6,13,9,,6,3,,2,,1,,,1,,
+PHYSICS,129,1,Surjeet Rajendran,8,4,9,3,3,2,2,,,1,1,,1,3,,,,
+PHYSICS,137A,1,Austin Hedeman,7,7,4,7,9,8,5,5,2,,1,,4,1,,1,,
+PHYSICS,137A,2,Joel Moore,3,12,2,13,4,6,,4,,,,,1,1,,1,,
+PHYSICS,137A,3,Austin Hedeman,3,12,7,5,10,5,7,4,1,,,,2,,,,,
+PHYSICS,137B,1,Feng Wang,5,1,4,7,9,2,4,2,2,,2,,1,2,,,,
+PHYSICS,137B,2,Holger Mueller,3,6,4,3,4,2,,,,,,,,,,,,
+PHYSICS,141A,1,James Analitis,,6,8,7,5,2,1,,,,2,,2,,,,,1
+PHYSICS,198BC,2,Bernard Sadoulet,,,,,,,,,,,,,,20,,1,,
+PHYSICS,198BC,3,Bernard Sadoulet,,,,,,,,,,,,,,19,,2,,
+PHYSICS,198BC,4,Bernard Sadoulet,,,,,,,,,,,,,,19,,2,,
+PLANTBI,10,1,Brian Staskawicz,,8,13,10,10,2,1,2,1,,,,2,20,,9,,
+PLANTBI,20,1,Brian Staskawicz,,1,,,,,,,,,,,,17,,2,,
+PLANTBI,22,1,Adrien Burch,,21,8,4,4,5,1,2,,,,,,3,,,,
+PLANTBI,C107L,1,Chelsea Specht,,4,1,1,1,2,1,3,,,,,,,,1,,
+PLANTBI,C110L,1,Thomas Bruns,2,2,2,,3,1,2,2,1,,,,,1,,1,,
+PLANTBI,C112,1,Kathleen Ryan,,2,9,5,9,6,5,5,4,,4,,2,,,2,,
+PLANTBI,C112L,1,Kathleen Ryan,8,5,,,,,,,,,,,,,,,,
+PLANTBI,C112L,2,Kathleen Ryan,5,3,,,2,1,,,,,,,,,,,,
+PLANTBI,C116,1,John Coates,,2,1,1,3,3,,6,,,,1,2,1,,1,,
+PLANTBI,135,1,Norman Terry,12,7,9,7,2,2,2,,,,,,1,1,,,,
+PLANTBI,150,1,Peter Quail,2,4,,3,3,4,4,5,2,,1,,1,,,,,2
+PLANTBI,185,1,Steven Ruzin,,3,2,6,7,2,,3,,,,,,,,,,
+POL SCI,1,1,Eric Schickler,6,31,53,46,57,27,11,13,2,4,2,2,4,52,,3,,2
+POL SCI,2,1,Adnan Naseemullah,1,13,6,1,1,,,,,,,,,3,,,,
+POL SCI,3,1,Laura Stoker,15,63,58,42,47,34,18,21,6,4,5,1,9,2,,2,,2
+POL SCI,5,1,Amy Gurowitz,,35,54,72,71,30,9,9,4,2,1,,1,35,,1,,1
+POL SCI,102,1,Michael Dougal,2,9,13,3,14,5,3,3,,,1,,2,,,,,
+POL SCI,106A,1,Geoffrey Upton,,21,15,9,6,1,,4,,,1,,,1,,,,5
+POL SCI,112B,1,Eric Schickler,,19,17,22,20,10,5,5,1,1,,,4,2,,,,1
+POL SCI,114A,1,Sam Stevens,,9,13,14,6,10,1,,,,,,1,,,,,
+POL SCI,123H,1,Jason Klocek,4,50,20,12,7,6,1,3,,,,,1,1,,,,1
+POL SCI,123S,1,Helene Silverberg,,4,13,2,6,8,3,3,1,1,,1,3,1,,1,,1
+POL SCI,124M,1,Michaela Mattes,,21,17,23,18,10,2,3,3,1,2,1,3,4,,1,,1
+POL SCI,125,1,Aila Matanock,,2,21,10,12,3,3,1,1,,,,,1,,,,1
+POL SCI,C135,1,Shachar Kariv,4,7,6,14,4,5,3,3,1,,,,,16,,1,,
+POL SCI,139B,1,Leonid Kil,,,20,10,6,6,3,,,,,,1,1,,2,,
+POL SCI,139D,1,Alison Post,3,9,11,10,10,1,3,1,1,,,,2,1,,,,1
+POL SCI,143A,1,Lowell Dittmer,,10,12,10,7,,1,1,1,,,,,2,,,,
+POL SCI,143B,1,Benjamin Bartlett,,5,12,11,13,6,2,2,,,,,,,,1,,
+POL SCI,143E,1,Sarah Lee,5,10,11,8,8,1,3,1,,,,,,,,1,,
+POL SCI,144,1,Christopher Chambers-Ju,,27,55,46,41,12,4,,,,1,,4,5,,3,,
+POL SCI,149E,1,Aparajita Basu,1,26,36,34,37,16,6,1,,,,,1,2,,,,
+POL SCI,166,1,Rodney Hero,5,14,18,10,17,10,7,5,2,1,2,1,3,,,,,3
+POL SCI,171,1,Anna Duning,2,13,12,9,4,4,4,2,,1,,,,1,,,,
+POL SCI,179,1,Alan Ross,,,,,,,,,,,,,,439,,38,1,1
+POL SCI,181,1,Christopher Ansell,,15,20,20,9,,,,,,,,,,,,,1
+POL SCI,H190A,2,Terri Bimes,,,,,,,,,,,,,,14,,,,1
+POL SCI,191,3,Kevin O'Brien,,4,3,2,1,,,,,,,,,1,,,,3
+POL SCI,191,5,Aila Matanock,,2,6,,1,1,,,,,,,,1,,,,1
+POL SCI,191,6,Gabriel Lenz,2,13,6,,,,,,,,,,,,,,,
+POL SCI,191,7,Paul Pierson,,4,4,4,4,2,,,,,,,,,,,,
+POL SCI,191,9,Pradeep Chhibber,,4,6,2,,,,,,,,,,1,,,,
+POL SCI,C196A,2,Michael Austin,,10,4,1,,,,,,,,,,,,,,
+POL SCI,198,1,Wendy Brown,,,,,,,,,,,,,,17,,1,,
+POL SCI,198,3,Jeremy Saraie,,,,,,,,,,,,,,38,,1,,
+POL SCI,198,5,Darren Zook,,,,,,,,,,,,,,18,,4,,
+PSYCH,1,1,Christopher Gade,48,164,88,60,44,20,16,20,9,3,2,2,3,22,,6,,
+PSYCH,W1,1,Christopher Gade,,10,15,7,15,7,8,13,4,,3,,1,24,1,1,,
+PSYCH,2,1,John Kihlstrom,30,85,35,17,6,4,2,2,4,,,,,20,,2,,
+PSYCH,10,1,Arman Catterson,38,19,12,3,9,4,2,1,2,,1,,5,1,,2,,
+PSYCH,101,1,Arman Catterson,35,35,22,11,13,12,2,2,3,1,1,3,6,4,,2,,
+PSYCH,102,1,Michael Edge,4,14,7,8,3,,,,,,,,,4,1,,,2
+PSYCH,C113,1,Lance Kriegsfeld,1,11,2,3,3,,2,1,5,,,,1,4,,6,,
+PSYCH,C120,1,Paul Thiem,,36,6,5,2,1,,,,1,,,2,2,,,,
+PSYCH,121,1,Lucia Jacobs,8,14,14,6,8,5,4,5,2,,1,,4,2,,,,
+PSYCH,C127,1,Richard Ivry,1,6,12,8,24,15,9,6,6,,,,1,5,,1,,
+PSYCH,128,1,John Kihlstrom,,20,,,,,,,,,,,,1,,,,
+PSYCH,130,1,Sonia Bishop,12,50,11,15,19,7,3,1,,3,1,,,4,,,,
+PSYCH,131,1,Qing Zhou,,32,56,,32,,,5,,,2,,,4,,2,,3
+PSYCH,134,1,Aaron Fisher,2,49,37,19,19,5,5,1,,,,,,1,,,,1
+PSYCH,135,1,Allison Harvey,12,27,32,25,10,6,1,2,1,1,3,,2,7,,3,,1
+PSYCH,140,1,Qian Wang,,24,25,35,23,10,6,8,1,1,2,,1,1,,,,1
+PSYCH,144,1,Melissa Bayne,1,76,38,10,2,,1,,,,,,1,5,,,,
+PSYCH,150,1,Susan Mauskopf,22,79,46,13,6,8,4,4,2,1,3,,2,19,,1,,2
+PSYCH,160,1,Serena Chen,24,38,44,31,42,20,15,10,4,2,1,,3,28,,9,,
+PSYCH,198,2,Stephen Hinshaw,,,,,,,,,,,,,,33,,1,,
+PSYCH,198,7,Thomas Griffiths,,,,,,,,,,,,,,29,1,,,
+PSYCH,198,8,Linda Wilbrecht,,,,,,,,,,,,,,18,,,,1
+PSYCH,198,10,Serena Chen,,,,,,,,,,,,,,21,1,1,,
+PSYCH,198,12,Ozlem Ayduk,,,,,,,,,,,,,,168,,13,,
+PB HLTH,104A,1,Cathy Kodama,,,,,,,,,,,,,,16,,1,,
+PB HLTH,118,1,Lia Fernald,,34,11,,2,,,,,,,,,,,,,
+PB HLTH,142,1,Steve Selvin,7,47,52,17,7,3,4,1,1,,,,,2,,,,
+PB HLTH,142,2,Maureen Lahiff,11,87,80,36,16,10,4,5,,,2,,2,1,,,,4
+PB HLTH,145,1,John Marshall,9,15,4,1,,,,,,,,,,3,1,,,
+PB HLTH,150B,1,Myron Bradman,2,122,34,11,13,2,1,3,,,,,1,,,,,
+PB HLTH,150D,1,Robin Flagg,17,65,66,25,12,6,3,1,2,,,,1,2,,,,1
+PB HLTH,162A,1,Gertrude Buehring,2,56,45,12,30,5,3,1,1,,,,1,3,,1,,
+PB HLTH,162L,1,Kathleen Loretz,1,9,4,2,5,1,1,1,,,,,,,,,,
+PB HLTH,162L,2,Kathleen Loretz,1,9,5,1,4,,1,2,,,,,,,,,,
+PB HLTH,162L,3,Kathleen Loretz,,12,4,,6,1,,1,,,,,,,,,,
+PB HLTH,162L,4,Kathleen Loretz,,7,1,5,10,,,,,,,,,1,,,,
+PB HLTH,181,1,David Potts,48,64,31,14,6,2,1,1,,,,,1,2,,1,,
+PB HLTH,196,1,Jaspal Sandhu,9,26,4,,,,,,,,,,,5,,,,
+PB HLTH,198,1,David Potts,,,,,,,,,,,,,,101,,4,,
+PB HLTH,198,2,Susan Ivey,,,,,,,,,,,,,,19,,1,,
+PB HLTH,198,3,David Potts,,,,,,,,,,,,,,24,,4,,
+PB HLTH,198,6,Kristine Madsen,,,,,,,,,,,,,,50,,,,1
+PB HLTH,198,10,Ndola Prata,,,,,,,,,,,,,,20,,1,,
+PB HLTH,198,11,Lela Bachrach,,,,,,,,,,,,,,12,,,,1
+PB HLTH,198,12,Phuoc Le,,,,,,,,,,,,,,15,,,,1
+PB HLTH,198,31,Cathy Kodama,,,,,,,,,,,,,,23,,1,,
+PUB POL,101,1,Steven Raphael,11,44,12,9,1,12,3,,1,,,,,1,,,,2
+PUB POL,117AC,1,Jane Mauldon,6,34,10,3,1,2,1,,,,,,1,5,,1,,2
+PUB POL,C184,1,Duncan Callaway,,2,3,4,3,,1,,1,,1,,1,5,,2,,
+PUB POL,190,3,Sarumathi Jayaraman,,21,7,1,,,,,,,,,,,,,,1
+PUB POL,190,5,Timothy Dayonot,,10,16,7,,,,,,,,,,3,,,,
+PUB POL,190,7,Alexander Gelber,,24,7,1,,,,,,,,,,1,,,,
+PUB POL,190,11,Sarumathi Jayaraman,10,15,11,7,4,,,,,,1,,,,,,,
+PUB POL,198,1,Jane Mauldon,,,,,,,,,,,,,,20,,1,,
+RHETOR,R1A,1,Yasmina Raiani,4,9,3,1,3,3,2,,,,,,1,,,,,
+RHETOR,R1A,5,Michael McGee,,6,15,8,4,,1,1,,,,,1,,,,,
+RHETOR,R1B,2,Bessie Young,,8,8,6,10,2,,,,,,,1,,,,,
+RHETOR,R1B,5,Kelie Montalvo,2,4,16,5,2,1,,1,,,,,,,,,,
+RHETOR,10,1,Nasser Zakariya,3,36,31,12,10,9,2,1,1,1,,,4,7,,1,,
+RHETOR,24,1,Daniel Melia,,8,,,,,,,,,,,,3,,,,
+RHETOR,103A,1,Dale Carrico,,16,31,31,15,5,,,,,,,1,,,,,
+RHETOR,104,1,Mario Wimmer,1,10,12,4,,1,,,,,,,,2,,,,
+RHETOR,106,1,James Porter,,14,,1,,,1,,,,,,,2,,,,
+RHETOR,109,1,Rebecca Gaydos,,11,3,2,2,,,,,,,,,,,,,
+RHETOR,114,1,David Bates,,4,6,11,5,3,,1,,,,,1,1,,,,1
+RHETOR,118,1,Rebecca Gaydos,,10,4,2,1,,,,,,,,,1,,,,
+RHETOR,123,1,Winnie Wong,,3,4,4,3,1,,,,,,,1,1,,1,,
+RHETOR,131T,1,Eileen Jones,,10,7,2,,1,,,,,,,,2,,,,
+RHETOR,135T,1,Eileen Jones,4,13,5,3,1,1,,,,,,,,,,,,1
+RHETOR,136,1,Winnie Wong,,3,6,7,1,1,1,,1,,,,,1,,1,,
+RHETOR,139,1,Michael Mascuch,,2,10,4,,,,,,,,,,6,,1,,
+RHETOR,150,1,Aaron Wintroub,8,18,15,1,1,,,1,,,,,,,,,,
+RHETOR,152AC,1,Nadesan Permaul,,8,2,6,8,,,2,,,,,1,4,,1,,2
+RHETOR,159B,1,Nancy Weston,2,3,2,4,2,,,1,,,,,,4,,2,,3
+RHETOR,164,1,Samera Esmeir,,5,3,8,6,1,,,,,,,,2,,,,2
+RHETOR,189,1,Marianne Constable,,4,6,3,2,1,,,,,,,,2,,,,
+CELTIC,R1B,1,Dara Hellman,,,4,1,3,3,,,2,,,,3,,,,,
+CELTIC,R1B,2,Thomas Walsh,,11,2,3,,,,1,,,,,1,,,,,
+CELTIC,70,1,Daniel Melia,,1,,1,7,4,4,1,,1,,,1,9,,1,,
+CELTIC,138,1,Thomas Walsh,,8,1,3,1,,,1,,,,,,1,,,,2
+CELTIC,168,1,Annalee Rejhon,1,5,2,2,4,2,1,1,,,,,2,4,,1,,
+DANISH,1A,1,Karen Moller,1,3,3,,,1,,,,,,,,2,,1,,
+SCANDIN,R5A,1,Zachary Blinkinsop,,11,,1,6,,,,,,,,,,,,,
+SCANDIN,R5A,2,Jackson Crawford,4,11,1,1,,,,1,,,,,,,,,,
+SCANDIN,R5B,1,Rosie Taylor,,10,5,2,,,,,,,,,,,,,,
+SCANDIN,R5B,2,Monica Hidalgo,,7,5,4,,,,,,,,,,,,,,
+SCANDIN,R5B,3,Jonas Wellendorf,,9,5,2,1,,,,,,,,,,,,,
+SCANDIN,75,1,Linda Rugg,2,21,7,4,2,,,,,,,,,,,,,
+SCANDIN,100A,1,Karen Moller,,9,,3,,,,,,,,,,,,,,
+SCANDIN,115,1,Mark Sandberg,,4,2,,,,,,,,,,,5,,,,
+SCANDIN,123,1,Jonas Wellendorf,,9,12,2,2,,1,,,,,,1,5,,1,,
+SCANDIN,125,1,Katherine Heslop,1,8,6,,1,,,,,,,,,7,,,,1
+SWEDISH,1A,1,Christian Gullette,,1,3,2,,,,,,,,,,5,,,,
+RUSSIAN,1,1,Megan Barickman,2,5,2,,1,,,1,,1,,,,2,1,1,,
+RUSSIAN,1,2,Kathryn Pribble,2,5,4,,1,,,,,,,,,2,,,,
+RUSSIAN,2,1,Brian Egdorf,,4,4,3,,,,,,,,,,,,,,
+RUSSIAN,3,1,Lisa Little,,6,1,1,1,1,,,,,,,,1,,,,
+RUSSIAN,103A,1,Anna Muza,1,6,,2,,,,,,,,,,3,,,,1
+SLAVIC,R5A,1,Lyubov Golburt,,3,7,4,2,,1,,,,,,,,,,,
+SLAVIC,R5A,2,Lyubov Golburt,,3,3,4,4,3,,,,,,,,,,,,
+SLAVIC,R5A,3,Lyubov Golburt,,5,6,2,2,,1,,,,1,,,,,,,
+SLAVIC,R5B,1,Lyubov Golburt,,5,2,5,4,,,,,,,,,,,,,
+SLAVIC,R5B,2,Thomas Dyne,,11,2,1,1,1,,,,,,,,,,,,
+SLAVIC,R5B,3,Antje Postema,,12,5,,,,,,,,,,,,,,,
+SLAVIC,45,1,Harsha Ram,2,3,6,13,6,1,,,,,,,,7,,1,,
+SLAVIC,100,1,Darya Kavitskaya,2,16,1,,,,,,,,,,,,,,,
+SLAVIC,131,1,Harsha Ram,1,4,4,2,1,,,,,,,,,,,,,
+SLAVIC,134D,1,Irina Paperno,,8,4,2,2,2,,,,,,,,3,,,,
+SLAVIC,134F,1,Eric Naiman,,2,5,5,4,,,,,,,,,4,,,,1
+SLAVIC,147B,1,Ronelle Alexander,3,16,8,2,4,,,,,,,,1,5,,1,,
+SOC WEL,98,3,Gregory Merrill,,,,,,,,,,,,,,19,,3,,
+SOC WEL,98,6,Jennifer Skeem,,,,,,,,,,,,,,30,,2,,
+SOC WEL,98,8,Amanda Reiman,,,,,,,,,,,,,,16,,1,,
+SOC WEL,98BC,1,Rachel Gartner,,,,,,,,,,,,,,15,,2,,
+SOC WEL,110,1,Briana Mcgeough,6,16,6,6,3,1,1,2,4,1,,,2,,,,,
+SOC WEL,114,1,Josue Melendez,12,24,6,4,3,,,,1,,,,,,,,,
+SOC WEL,116,1,Amanda Reiman,8,34,9,,,,,1,,,,,,,,,,
+SOC WEL,197,2,Christina Feliciana,,,,,,,,,,,,,,48,,1,,
+SOC WEL,197,6,Virginia Duplessis,,,,,,,,,,,,,,10,,,,1
+SOC WEL,198,3,Gregory Merrill,,,,,,,,,,,,,,40,,2,,
+SOC WEL,198,5,Adrian Aguilera,,,,,,,,,,,,,,13,,1,,
+SOC WEL,198,6,Jennifer Skeem,,,,,,,,,,,,,,29,,1,,
+SOC WEL,198,8,Amanda Reiman,,,,,,,,,,,,,,45,,1,,
+SOC WEL,198BC,1,Jill Berrick,,,,,,,,,,,,,,18,,1,,
+SOCIOL,1,1,Raka Ray,4,37,88,95,44,24,14,2,1,,2,,2,5,,2,,2
+SOCIOL,R1B,1,John Kaiser,,2,7,6,1,,,,,,,,,,,,,
+SOCIOL,3AC,1,Mary Kelsey,31,122,61,35,19,8,1,5,2,,,,1,17,,,,2
+SOCIOL,5,1,Heather Haveman,2,20,32,41,28,32,14,11,6,5,1,,1,1,,3,,1
+SOCIOL,7,1,Jason Scott,11,11,1,1,3,,1,,1,,,,1,,,1,,2
+SOCIOL,98BC,1,Griselda Cristina Mora-torres,,,,,,,,,,,,,,19,,1,,
+SOCIOL,98BC,2,Griselda Cristina Mora-torres,,,,,,,,,,,,,,17,,1,,
+SOCIOL,98BC,3,Griselda Cristina Mora-torres,,,,,,,,,,,,,,12,,3,,
+SOCIOL,101,1,Dylan Riley,15,44,39,27,33,14,9,9,3,1,2,1,3,2,,1,,
+SOCIOL,103,1,Michael Burawoy,,19,7,3,1,,,,,,,,,,,,,
+SOCIOL,106,1,Felipe Dias,,7,3,1,1,,,,,,,,,2,,,,
+SOCIOL,108,1,Edwin Lin,,16,,1,,,,,,,,,1,1,,1,,1
+SOCIOL,110,1,Linus Huang,36,36,27,21,22,10,6,7,2,3,3,1,5,24,,2,,1
+SOCIOL,111AC,1,Joanna Reed,,33,27,21,26,5,4,3,,,1,,2,29,,3,,
+SOCIOL,113AC,1,Brian Powers,1,13,19,12,1,,,,,,,,2,3,,,,2
+SOCIOL,119S,1,Sylvia Flatt,1,3,,4,2,3,1,1,,,,,,5,,,,1
+SOCIOL,120,1,Neil Fligstein,2,21,29,13,18,10,3,1,1,1,,,3,5,,1,,1
+SOCIOL,121,1,Szonja Ivester,3,25,18,18,18,20,8,7,6,2,,3,5,5,,4,,
+SOCIOL,124,1,Martin Sanchez-Jankowski,,10,9,9,10,2,2,4,,,,,1,4,,1,,
+SOCIOL,C126,1,Jennifer Johnson-Hanks,,7,4,8,2,1,,,,,,,,5,,1,,1
+SOCIOL,127,1,Tiffany Page,,14,26,23,17,10,6,3,,,,,,5,,1,,1
+SOCIOL,130AC,1,Joanna Reed,1,43,31,21,12,10,2,2,,,,,2,11,,6,,1
+SOCIOL,131AC,1,Andrew Barlow,1,13,20,6,,1,,,,,,,,7,,,,
+SOCIOL,135,1,Jill Bakehorn,2,12,24,33,13,2,3,2,,,,,,3,,,,3
+SOCIOL,140,1,Laleh Behbehanian,,48,35,24,9,2,1,,,,,,1,2,,,,4
+SOCIOL,150,1,Brian Powers,,14,48,47,8,,,,,,,,2,2,,1,,7
+SOCIOL,160,1,Jill Bakehorn,,32,41,41,53,18,12,3,,6,1,,3,26,,3,,5
+SOCIOL,166,1,Linus Huang,28,55,49,23,18,9,4,4,,2,,,2,15,,2,,
+SOCIOL,C167,1,Edwin Lin,11,150,45,7,9,3,,2,,,,,1,4,,1,,
+SOCIOL,169,1,Edwin Lin,1,31,10,4,3,3,,1,,,,,3,4,,,,
+SOCIOL,179,1,John Lie,,5,2,2,2,,,,,,,,1,1,,1,,
+SOCIOL,180I,1,Szonja Ivester,5,29,5,8,5,3,1,,2,1,1,,1,4,,,,
+SOCIOL,180P,1,Christoph Hermann,1,5,4,1,5,1,,,2,,2,,,2,,,,
+SOCIOL,189G,1,Szonja Ivester,3,6,5,3,2,3,1,1,,1,,,,,,1,,
+SOCIOL,190,1,Karen Barkey,,3,3,2,1,1,,,,,,1,,,,,,
+SOCIOL,190,2,Neil Fligstein,,11,3,1,,,,,,,,,2,,,1,,
+SOCIOL,190,3,Cihan Tugal,,5,4,3,2,1,,,,,,,,,,,,
+SOCIOL,190,4,Christopher Herring,,4,8,5,1,1,,,,,,,,,,,,1
+SOCIOL,190,5,Michelle Steward,1,13,3,3,,1,2,1,,,,,,,,,,
+SOCIOL,190,6,Charles Eaton,4,4,1,,,,,,,,1,,1,,,,,1
+SOCIOL,193,1,John Kaiser,,1,4,,3,,,,,,,,,,,1,,2
+SOCIOL,198,5,Joanna Reed,,,,,,,,,,,,,,137,,1,,
+SOCIOL,198,6,Linus Huang,,,,,,,,,,,,,,24,,1,,
+SOCIOL,198,17,Mary Kelsey,,,,,,,,,,,,,,26,,1,,
+SOCIOL,198,18,Mary Kelsey,,,,,,,,,,,,,,29,,1,,
+SOCIOL,198BC,1,Griselda Cristina Mora-torres,,,,,,,,,,,,,,19,,2,,
+SOCIOL,198BC,2,Griselda Cristina Mora-torres,,,,,,,,,,,,,,21,,2,,
+SOCIOL,198BC,5,Griselda Cristina Mora-torres,,,,,,,,,,,,,,18,,3,,
+SOCIOL,198BC,6,Griselda Cristina Mora-torres,,,,,,,,,,,,,,18,,1,,
+SOCIOL,198BC,7,Griselda Cristina Mora-torres,,,,,,,,,,,,,,20,,1,,
+SOCIOL,198BC,8,Griselda Cristina Mora-torres,,,,,,,,,,,,,,18,,1,,
+FILIPN,1A,1,Cynthia Agnes Aban,1,13,2,,,,,,,,,,,,,,,
+FILIPN,1A,2,Cynthia Agnes Aban,,12,4,,,,,,,,,,,,,,,
+FILIPN,1A,3,Cynthia Agnes Aban,2,14,2,,,,,,,,,,,1,,,,
+FILIPN,W1X,1,Maria Barrios-Leblanc,14,26,1,,,,,,,,,,,,,,,
+FILIPN,100A,1,Karen Llagas,2,15,1,,,,,,,,,,,1,,,,1
+FILIPN,W100A,1,Maria Barrios-Leblanc,3,3,1,1,,,,,,,,,,,,,,2
+FILIPN,W101A,1,Maria Barrios-Leblanc,9,2,1,,,,,,,,,,,,,,,
+HIN-URD,1A,1,Pranjali Sirasao,1,14,1,,,,,,,,,,,,,,,
+HIN-URD,1A,2,Pranjali Sirasao,,13,,1,1,1,,,,,,,,,1,,,
+HIN-URD,2A,1,Gregory Bruce,1,16,,,1,,,,,,,,,,,,,
+HIN-URD,100A,1,Pranjali Sirasao,,10,3,2,,,,,,,,,,2,,1,,
+MALAY/I,1A,1,Ninik Lunde,4,10,2,,,,,,,,,,,,,,,
+MALAY/I,100A,1,Ninik Lunde,3,12,,,,,,,,,,,,,,,,
+MALAY/I,100A,2,Ninik Lunde,3,11,1,,,,,,,,,,,,,,,
+PUNJABI,1A,1,Upkar Ubhi,2,4,5,2,,,,,,,,,,,,,,
+PUNJABI,100A,1,Upkar Ubhi,1,5,1,1,1,1,,,,,,,,1,,,,
+S ASIAN,1A,1,Alexander Von Rospatt,8,15,7,11,4,2,,2,,,,,,6,,2,,
+S ASIAN,R5A,1,Rebecca Whittington,,7,3,3,4,1,,,,,,,,,,,,
+S ASIAN,R5A,2,Kashi Gomez,1,6,4,2,2,1,1,,,,,,1,,,,,
+S ASIAN,R5A,3,Robert Goldman,,5,2,6,2,2,,,,,,,1,,,,,
+S ASIAN,128,1,Vasudha Paramasivan,,7,4,5,1,,1,1,,,,,,2,,,,
+S ASIAN,140,1,Sohini Pillai,2,40,12,6,,1,1,,,,,,1,4,,1,,
+SEASIAN,10A,1,Penelope Edwards,1,10,13,4,1,,,1,,,,,3,8,,3,,
+SEASIAN,137,1,Jeffrey Hadler,,5,2,2,1,,,,,,,,,5,,,,
+"S,SEASN",R5A,1,Robert Goldman,,19,4,1,,,,,,,,,,,,,,
+"S,SEASN",R5A,2,Robert Goldman,,6,7,5,,,,1,,,,,,,,,,
+"S,SEASN",R5A,3,Robert Goldman,,6,9,1,1,,,,,,,,,,,,,1
+"S,SEASN",24,1,Penelope Edwards,,7,6,,,,,,,,,,,,,,,
+"S,SEASN",C52,1,Robert Sharf,,3,2,2,1,2,1,1,,,,,1,10,,2,,
+"S,SEASN",84,1,Maria Barrios-Leblanc,3,9,,,,,,,,,,,,,,,,
+VIETNMS,1A,1,Hanh Tran,,2,8,1,,,,,,,,,,2,,1,,1
+VIETNMS,1A,2,Hanh Tran,,1,8,3,,,,,,,,,,5,,,,
+VIETNMS,100A,1,Hanh Tran,,6,7,3,,,,,,,,,,1,,,,
+PORTUG,101A,1,Poema Quesado Valente Meyer,1,1,2,1,2,2,1,,,,,,,3,,1,,
+PORTUG,101A,2,Clelia Donovan,1,3,3,,,,,1,,,,,,4,1,,,
+PORTUG,101B,3,Duarte Carvalho Pinheiro,,3,5,,,,,,,,,,,3,,,,
+PORTUG,102,1,Clelia Donovan,1,6,3,,1,,,1,,,,,,2,1,,,
+PORTUG,103,1,Clelia Donovan,1,5,9,2,1,,,,,,,,,,1,,,
+PORTUG,128,1,Candace Slater,,3,6,3,2,,,,,,,,,,,1,,1
+SPANISH,1,2,Diego Arevalo Viveros,,2,3,2,3,2,,2,,,,,,2,1,3,,
+SPANISH,1,3,Alfonso Fierro,,1,1,7,2,,3,1,,1,,,,5,,2,,
+SPANISH,1,4,Miriam Hernandez-rodriguez,,7,2,1,2,2,1,,,,,1,,4,,,,
+SPANISH,1,5,Miriam Hernandez-rodriguez,,4,7,1,2,1,1,,,,,,,6,,1,,
+SPANISH,1,6,Miriam Hernandez-rodriguez,,7,,3,2,2,,1,2,,,,,4,,1,,
+SPANISH,R1A,1,Ignacio Navarrete,,,8,5,3,,,,,,,,,,,,,
+SPANISH,2,1,Elena Olsen,,4,3,2,,1,,,,,2,,,5,,2,1,
+SPANISH,2,2,Elena Olsen,,3,3,4,,1,1,1,,,,,,3,2,6,,
+SPANISH,2,3,Miriam Hernandez-rodriguez,,5,3,2,3,2,,1,1,,1,,,5,,,,
+SPANISH,2,4,Ana Belen Redondo Campillos,,3,6,5,1,2,1,,1,,,,,4,,,,
+SPANISH,2,5,Miriam Hernandez-rodriguez,,6,7,2,2,,,,,,,,,6,,1,,
+SPANISH,3,2,Maria Lilly,,3,3,2,1,1,,,,,,,,7,,,,
+SPANISH,3,3,Donna Southard,,1,1,2,5,1,1,,,,,,,6,,1,,
+SPANISH,3,4,Miriam Hernandez-rodriguez,,1,3,1,2,,3,1,,,,,,8,,,,
+SPANISH,3,5,Miriam Hernandez-rodriguez,,2,2,2,2,1,,,,,,,,3,1,,,
+SPANISH,3,6,Justin Berner,,2,3,,,1,,,,,,,,5,1,,,
+SPANISH,4,1,Yesenia Blanco,,4,2,4,,1,1,1,,,,,,3,,1,,
+SPANISH,4,2,Miriam Hernandez-rodriguez,,4,5,1,1,2,,,,,,,,1,,,,
+SPANISH,4,3,Miriam Hernandez-rodriguez,,2,6,4,4,,,1,,,,,1,1,,,,
+SPANISH,4,4,Miriam Hernandez-rodriguez,,5,2,3,1,,1,,,,1,,,5,,,,
+SPANISH,4,5,Miriam Hernandez-rodriguez,,2,2,2,6,2,,,,,,,,5,,,,
+SPANISH,21,1,Miriam Hernandez-rodriguez,,,5,8,3,1,1,,,,,,,,,,,
+SPANISH,22,1,Felix Trevino,,6,2,7,3,,,,,,,,,1,,,,
+SPANISH,25,1,Francine Masiello,,13,6,,,,,,,,,,,1,,,,
+SPANISH,25,2,Francine Masiello,,3,6,1,2,2,,1,1,,,,,4,,,,
+SPANISH,25,3,Holly Jackson,2,11,2,,2,,,,,,,,,,,,,
+SPANISH,25,4,Maria Gonzalez,8,4,1,2,1,,,1,,,,,,1,,,,
+SPANISH,25,5,Daniel Rodriguez,,7,6,3,2,,1,,,,,,,1,,,,
+SPANISH,100,1,Justin Davidson,1,6,1,4,4,,3,1,2,,,1,,,,,,2
+SPANISH,102A,1,Victoria Robertson,,6,2,3,4,1,,,,,,,,1,,,,
+SPANISH,102A,2,Amelia Barili,4,2,3,2,,,,,,,,,,,,,,
+SPANISH,104A,1,Ivonne Del Valle,5,6,10,2,1,,1,,,,,,,,,,,1
+SPANISH,107A,1,Emilie Bergmann,6,6,4,1,1,,,,,,,,,1,,,,1
+SPANISH,135,1,Natalia Brizuela,3,9,6,3,,,,,,,,,1,2,,,,
+SPANISH,135,2,Ivonne Del Valle,3,9,4,2,1,2,,,,,,,,1,,,,1
+SPANISH,135,3,Emilie Bergmann,4,12,1,1,,1,,,,,,,,1,,,,2
+SPANISH,135,4,Michael Iarocci,,7,4,7,,1,,,,,,,,,,1,,
+SPANISH,135W,1,Natalia Brizuela,1,6,5,,1,,,,,,,,1,1,,,,
+SPANISH,161,1,Stephanie Lain,1,4,3,5,2,1,,1,,,,,,,,,,
+SPANISH,164,1,Justin Davidson,,4,3,2,3,,,,,,,,,,,,,
+SPANISH,198,1,Miriam Hernandez-rodriguez,,,,,,,,,,,,,,29,,3,,
+STAT,2,1,Fletcher Ibser,12,23,22,27,27,26,31,37,29,,3,,9,20,,13,,1
+STAT,C8,1,Anindita Adhikari,18,17,18,27,18,8,11,12,6,,,,6,24,,9,,
+STAT,20,1,Adam Lucas,33,53,22,30,91,21,16,112,23,,13,,11,6,,12,,
+STAT,20,2,Shobhana Murali Stoyanov,9,16,6,15,17,12,18,19,17,,1,,4,4,,7,,1
+STAT,21,1,Shobhana Murali Stoyanov,15,15,12,22,29,15,26,24,23,,3,,8,5,,3,,2
+STAT,88,1,Alexander D'amour,,34,20,7,5,3,1,,,,,,1,4,,3,,
+STAT,131A,1,Adam Lucas,8,24,6,4,23,4,8,18,4,,3,,7,2,,5,,1
+STAT,133,1,Deborah Nolan,4,36,47,32,32,3,9,6,2,,2,,2,13,,5,,
+STAT,133,2,Gaston Sanchez Trujillo,1,41,12,14,25,5,2,6,2,,3,,1,6,1,,,
+STAT,134,1,Nike Sun,7,27,28,17,18,14,6,12,28,,,,15,18,1,6,,3
+STAT,134,2,Hermann Pitters,15,16,14,25,21,22,17,12,10,,,,11,1,,4,,1
+STAT,135,1,Shobhana Murali Stoyanov,8,10,4,8,8,5,6,7,6,,,,1,1,,2,,
+STAT,135,2,Noureddine El Karoui,1,21,14,7,15,12,10,10,1,,,,5,3,1,2,,3
+STAT,150,1,Michael Klass,4,4,4,3,7,3,1,1,1,3,,1,3,2,,1,,2
+STAT,151A,1,Adityanand Guntuboyina,1,8,14,24,14,7,4,3,,,,,,1,,2,,1
+STAT,153,1,Adityanand Guntuboyina,3,6,8,15,4,4,2,4,,,,,3,3,,5,,
+STAT,153,2,David Brillinger,7,7,16,16,5,7,,1,1,,,,1,,,,,2
+STAT,154,1,Nusrat Rabbee,3,16,,7,13,2,4,6,3,1,,,,9,,2,,
+STAT,155,1,Peter Bartlett,2,16,6,,24,8,,5,1,,1,,1,2,,1,,
+STAT,157,1,Steven Evans,,3,1,5,3,,,,,,,,,,,,,
+STAT,159,1,Gaston Sanchez Trujillo,,28,12,4,13,4,1,2,,,,,1,,,,,
+STAT,198,1,Nike Sun,,,,,,,,,,,,,,59,,9,,
+STAT,198,3,James Pitman,,,,,,,,,,,,,,16,,5,,
+STAT,198,4,Nusrat Rabbee,,,,,,,,,,,,,,39,,7,,
+STAT,198,5,David Aldous,,,,,,,,,,,,,,41,,1,,
+STAT,198,6,Shobhana Murali Stoyanov,,,,,,,,,,,,,,47,,6,,
+THEATER,R1A,1,Susan Kwan,,10,7,1,,,,,,,,,,,,,,
+THEATER,R1A,2,Susan Kwan,,3,9,3,1,,,,,,,,1,,,,,
+THEATER,R1A,6,Srijani Ghosh,,6,8,1,,,1,1,,,,,,,,,,
+THEATER,R1A,7,Susan Kwan,,6,5,3,2,2,,,,,,,,,,,,
+THEATER,R1A,8,Srijani Ghosh,,7,5,3,2,,,,,,,,,,,,,
+THEATER,R1A,9,Juan Aldape Munoz,3,9,4,,,1,1,,,,,,,,,,,
+THEATER,R1B,1,Lindsey Summers,,2,4,3,5,2,1,,,,,,,,,,,
+THEATER,R1B,2,Lindsey Summers,,5,6,3,3,,,,,,,,,,,,,
+THEATER,R1B,3,Sima Belmar,,8,4,3,1,1,,,,,,,,,,,,
+THEATER,R1B,4,Thea Gold,,4,6,4,2,,,,1,,,,,,,,,
+THEATER,R1B,5,Sima Belmar,,5,3,4,5,,,,,,,,,,,,,
+THEATER,5,1,Lisa Porter,,8,11,,1,,,1,,,,,,2,1,,,
+THEATER,10,1,Margo Hall-callender,,9,3,1,4,,,,,,,,,1,,,,
+THEATER,10,2,Margo Hall-callender,,12,,,1,1,,1,,,,,,2,,,,
+THEATER,10,3,Scott Wallin,,11,2,2,2,,,,,,1,,,,,,,
+THEATER,10,4,Maureen Tang,5,13,1,,,,,,,,,,,1,,,,
+THEATER,20U,1,Alan Read,1,8,10,7,,2,1,,,,,,,1,,,,
+THEATER,24,1,Dunbar Ogden,,,,,,,,,,,,,,14,,,,1
+THEATER,26,1,Stephanie Sherman,2,20,10,8,12,1,3,2,,,1,1,,1,,,,
+THEATER,40,1,James Graham,2,7,5,,1,,1,,,1,,1,1,,1,,,
+THEATER,40,2,Elizabeth Wymore,2,16,1,,,,,,,,,,,4,,,,
+THEATER,52AC,1,Paige Johnson,,31,26,10,5,4,,1,,,1,,1,36,,,,
+THEATER,60,1,Laxmi Kumaran,23,7,1,,,1,,,,,,,,,,,,
+THEATER,109,2,Lisa Porter,,2,5,6,1,,,1,,,,,,,,,,
+THEATER,111,1,Lura Dolas,,10,2,2,,,,,,,,,,,,,,
+THEATER,119,1,Shannon Steen,2,5,7,1,1,1,,,,,,,,4,,,,2
+THEATER,121,1,Jenefer Johnson,1,4,1,1,1,1,1,3,,,,,,1,,,,
+THEATER,121,2,Francesco Spagnolo,2,10,1,,,,,,,,,,,1,,,,
+THEATER,125,1,Julia Fawcett,,3,9,9,9,,1,1,,,,,,3,,1,,
+THEATER,126,1,Brandi Catanese,,6,4,2,6,2,1,,1,,,,,,,,,1
+THEATER,141,1,Latanya Tigner,,5,4,3,2,4,,1,,,,,,1,,,,
+THEATER,142,1,Katharine Faulkner,,12,1,1,3,,,,,,,,,3,2,1,,
+THEATER,144,1,Katharine Faulkner,,2,11,4,,,,1,,,,,,2,,,,
+THEATER,146A,1,Joe Goode,,12,,2,,,,,,,,,,,,,,
+THEATER,162,1,Peter Glazer,,4,5,3,1,,,,,,,,,,,,,1
+THEATER,173A,1,Carol Smart,,1,2,4,1,1,1,,,,,,,1,,,,
+THEATER,174A,1,Carol Smart,,1,5,8,,1,,1,,,,,,,,,,1
+THEATER,175A,2,John Carpenter,3,8,5,2,,,,,,,,,,,,,,
+THEATER,181,1,Peter Glazer,,18,,,,,,,,,,,,1,,,,
+AMERSTD,10,2,Christine Palmer,,3,7,4,8,15,6,1,1,,,,,7,,1,,
+AMERSTD,101,1,Christine Palmer,,3,14,9,8,10,2,3,5,1,1,2,2,4,,,,
+AMERSTD,101,2,Kathleen Moran,1,9,17,18,20,4,2,1,,,1,,,,,,,1
+AMERSTD,101,3,Mark Brilliant,,2,1,,2,1,,3,,,,,2,,,,,1
+AMERSTD,102,1,Richard Hutson,,7,10,7,5,5,1,,1,,,,2,2,,,,
+AMERSTD,C134,1,Michel Laguerre,,11,4,1,,,,,,,,,,,,,,
+AMERSTD,C152,1,Enrique Lima,,7,,1,1,,,1,,,,,1,1,,1,,
+AMERSTD,C171,1,Louise Mozingo,5,3,,1,4,2,3,1,1,,,,,3,,,,
+AMERSTD,191,1,Kathleen Moran,,,2,4,,2,1,1,,,,1,4,,,,,
+ISF,10,1,Rakesh Bhandari,,9,3,5,1,2,,,,,,,,6,,3,,
+ISF,61,1,Earl Klee,,14,4,7,8,2,8,,5,,,2,,24,,1,,1
+ISF,100A,1,Gary Wren,2,6,,7,10,8,6,9,9,2,1,,9,5,,4,,
+ISF,100F,1,Rakesh Bhandari,1,8,6,4,6,3,1,4,1,,1,,,,,,,
+ISF,189,1,Fang Xu,5,2,12,3,3,3,1,2,1,,,,,,,,,
+ISF,189,3,Shreeharsh Kelkar,,6,8,8,1,1,,,,,,,,,,,,3
+ISF,190,1,Earl Klee,,6,3,9,2,,1,,,,,,,,,,,
+ISF,190,2,Fang Xu,2,2,3,2,2,2,1,1,,,1,,,,,,,2
+ISF,190,3,Shreeharsh Kelkar,,6,1,1,5,4,,,,,,,,,,,,2
+L & S,1,1,Alix Schwartz,,,,,,,,,,,,,,79,,1,,
+L & S,10,1,Alix Schwartz,,,,,,,,,,,,,,49,,2,,
+L & S,20E,1,Kathleen Moran,,12,13,13,15,8,4,2,,,1,,,21,,3,,2
+L & S,C70U,1,Jacob Duncan,11,27,8,9,11,4,1,2,,,,1,1,97,,10,,
+L & S,C70Y,1,Horst Rademacher,,44,,,15,,,6,,,1,,1,22,,1,,
+L & S,88,3,Shishi Luo,,12,,,,,,,,,,,,3,,,,
+L & S,88,4,Dennis Feehan,,12,3,4,,1,,,,,,,,2,,1,,
+L & S,88,5,Leila Wehbe,3,2,,,1,,,,,,,,,3,,1,,
+L & S,126,1,Christine Rosen,1,11,20,2,3,,,,,,,,,8,,,,
+L & S,C140V,1,Stefan-Ludwig Hoffmann,4,18,15,3,8,1,1,,,,,,1,7,1,4,,
+MEDIAST,10,1,Josh Jackson,,45,50,48,42,27,9,7,1,1,2,1,5,7,,2,,
+MEDIAST,102,1,Edward Timke,3,19,89,49,50,22,5,5,1,1,,1,1,2,,1,,1
+MEDIAST,104D,1,Geoffrey King,1,7,22,10,5,,,,,,,,1,2,,1,,
+MEDIAST,130,1,Edward Timke,,5,22,12,9,1,,,,,,,,,,,,
+MEDIAST,140,1,Jean Retzinger,,6,15,31,36,13,6,1,,,,,,3,,,,1
+MEDIAST,165,1,Josh Jackson,,6,5,6,8,,,,,,,,,2,,,,
+MEDIAST,190,1,Richard Jaroslovsky,,4,3,12,5,1,2,3,,,,,,1,,,,
+UGIS,82,1,Allison Krasnow,,11,9,1,,,,,,,,,,1,,,,2
+UGIS,82,3,Marlo Warburton,5,19,,,,,,,,,,,1,2,,,,
+UGIS,82,4,Emily Weiss,1,16,7,1,,2,,,,,,,,,,1,,
+UGIS,98,2,Amani Nuru-Jeter,,,,,,,,,,,,,,111,,2,,
+UGIS,98,4,Gary Firestone,,,,,,,,,,,,,,11,,1,,
+UGIS,110,1,Marsha Saxton,,13,11,6,2,,,1,1,,,,1,10,,1,,
+UGIS,187,1,Mark Spencer,1,15,1,,,,,,,,,,1,,,,,
+UGIS,188,1,Edward Ham,1,12,2,2,1,,,,1,,,,2,,,,,1

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+{% comment %} Base template for Berkeleytime {% endcomment %}
+{% load staticfiles %}
+
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+
+    {% block meta %}
+    <meta name="description" content="Search through 8000+ courses from the UC Berkeley catalog. Grade distributions, enrollment history, and a campus map showing ongoing classes.">
+    <meta name="keywords" content="berkeley, courses, classes, schedule, grades, requirements, breadths, uc, majors, cal, uc berkeley yuxin">
+    {% endblock %}
+    <meta name="author" content="Yuxin Zhu, Noah Gilmore, Ashwin Iyengar, et al." />
+
+    <link rel='shortcut icon' href="{% static 'css/img/berkeleytime_favicon.ico' %}">
+    {% block bootstrap %}{% endblock %}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/reset.css' %}">
+    <link rel='stylesheet' type='text/css' href="{% static 'css/base.css' %}">
+
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400' rel='stylesheet' type='text/css'>
+
+    <script type='text/javascript' src="{% static 'js/jquery.min.js' %}"></script>
+    <!-- <script type='text/javascript' src="{% static 'js/jquery.min.js' %}"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script type='text/javascript' src="{% static 'js/base.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/prototype-extensions.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/bt-utils.js' %}"></script>
+    <script type='text/javascript' src="{% static 'js/bt-ga.js' %}"></script>
+
+    {% block stylesheets %}{% endblock %}
+    {% block scripts %}{% endblock %}
+
+    {% block analytics %}
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            {% if not IS_PRODUCTION %}_gaq.push(["_setDomainName", "none"]);{% endif %}
+            bt_ga.add("UA-35316609-{% if IS_PRODUCTION %}1{% else %}4{% endif %}");
+        </script>
+    {% endblock %}
+
+    <script type='text/javascript' src="{% static 'js/csrf-ajax.js' %}"></script>
+
+    <script type="text/javascript">
+        window.CURRENT_SEMESTER = "{{ CURRENT_SEMESTER }}";
+        window.CURRENT_YEAR = "{{ CURRENT_YEAR }}";
+        window.ONGOING_SEMESTER = "{{ ONGOING_SEMESTER }}";
+        window.ONGOING_YEAR = "{{ ONGOING_YEAR }}";
+
+        //FOR GOOGLE ANALYTICS
+        {% if ad %}
+            window.secretID = "{{ ad.id|escapejs }}"
+        {% endif %}
+    </script>
+</head>
+<body>
+  {% block menu %}
+{% spaceless %}
+{% load name_filters %}
+
+{% if banner|default:False %}
+  <style>
+      #banner {
+          background-color: white;
+          color: #1896d5;
+          width: 100%;
+          padding: 10px 0;
+          text-align: center;
+          vertical-align: middle;
+          font-family: 'Open Sans', sans-serif;
+          letter-spacing: 1px;
+          overflow: hidden;
+      }
+      .header-anchor {
+          color: inherit;
+      }
+      .header-anchor:visited {
+          color: inherit;
+      }
+  </style>
+  <div id="banner"><a href="/scheduler" style="text-decoration: none; color: inherit;" >Build your schedule for the upcoming Fall 2018 semester on the newly released Scheduler!</a></div>
+{% endif %}
+<div id='main-menu'>
+    <ul>
+        <li class="selected">{% if user.is_authenticated %}<a class='tab' href="/accounts/profile">{{ user|first_name|title }}</a>
+        </li>{% else %}<a class='tab' href="/">berkeleytime</a></li>{% endif %}
+        <li><a class='tab' href="/catalog">catalog</a></li>
+        <li><a class='tab' href="/grades">grades</a></li>
+        <li><a class='tab' href="/enrollment">enrollment</a></li>
+        <li><a class='tab' href="/scheduler">scheduler <span style="font-style: italic">beta</span></a></li>
+        <li><a class='tab' href="/about" >about</a></li>
+        <li>{% if user.is_authenticated %}<a class='tab' href="/accounts/logout">logout</a>
+        {% else %}<a class='tab' href="/accounts/google/login/?process=login">login</a>{% endif %}</li>
+    </ul>
+</div>
+
+{% endspaceless %}
+  {% endblock %}
+
+<div id='content'>
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

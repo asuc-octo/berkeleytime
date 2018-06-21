@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load name_filters %}
+
+{% block title %}Profile{% endblock %}
+
+{% block stylesheets %}
+    <link rel='stylesheet' type='text/css' href="{% static 'css/account/profile.css' %}">
+    <link rel="stylesheet" type='text/css' href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css">
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript" src="{% static 'js/account/profile.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+{%spaceless %}
+
+<div id="container">
+    <div class="profile-container">
+        <div class="profile-header-picture" style="background-image: url({{ PICTURE }});">
+        </div>
+
+        <div class="profile-header-text">
+            <div class="profile-name">Welcome, {{ user|full_name }}</div>
+        </div>
+
+        <div class="profile-list-container">
+            <ul id="profile-menu">
+                <li class="profile-item"><a href="/about"><div class="item-container"><i class="icon-home"></i><span>about</span></div></a></li>
+                <li class="profile-item"><a href="/contact"><div class="item-container"><i class="icon-envelope"></i><span>contact</span></div></a></li>
+                <li class="profile-item"><a href="/legal/privacy"><div class="item-container"><i class="icon-user"></i><span>privacy</span></div></a></li>
+                <li class="profile-item"><a href="/accounts/logout"><div class="item-container"><i class="icon-off"></i><span>logout</span></div></a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endspaceless %}
+{% endblock %}

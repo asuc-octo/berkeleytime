@@ -1,0 +1,131 @@
+//Display Name (affiliated building name, if RSF, display name is set as a classroom) -- Abbreviation in Schedule -- Name we have to search on Google Maps
+Recreational Sports Facility -- REC SPRT FAC
+Bancroft Library -- BANCROFT LIB
+Barker Hall -- BARKER
+Barrows Hall -- BARROWS
+Bechtel Engineering Center -- BECHTEL
+// Sibley Auditorium (BECHTEL) -- BECHTEL AUD
+Birge Hall -- BIRGE
+Blum Hall -- BLUM
+Boalt Hall -- BOALT
+Botanical Garden -- BOT GARDEN
+California Hall -- CALIFORNIA
+Calvin Laboratory -- CALVIN LAB
+
+Campbell Hall -- CAMPBELL
+Campbell Annex -- CAMPBELL ANX -- Campbell Hall
+
+Channing Courts (Ellsworth Street) -- CHANNING CTS
+Chavez Student Center -- CHAVEZ
+Cheit Classroom Wing -- CHEIT -- Cheit Hall
+Cory Hall -- CORY
+Davis Hall -- DAVIS
+Doe Library -- DOE LIBRARY
+Donner Laboratory -- DONNER LAB
+Durant Hall -- DURANT
+Durham Studio Theatre -- DURHAM THTRE
+Dwinelle Hall -- DWINELLE
+Dwinelle Hall Annex -- DWINELLE AN
+Eshleman Hall -- ESHLEMAN
+Etcheverry Hall -- ETCHEVERRY
+Evans Hall -- EVANS
+The Faculty Club -- FACULTY CLUB
+Foothill Residential Complex Building 1 -- FOOTHILL 1 -- Foothill Student Housing 1
+Foothill Residential Complex Building 4 -- FOOTHILL 4 -- Foothill Student Housing 4
+David Gardner Stacks (Doe Library) -- GARDNERSTACK -- Doe Library
+Giannini Hall -- GIANNINI
+Giauque Hall -- GIAUQUE
+Gilman Hall -- GILMAN
+Genetic and Plant Biology Building -- GPB -- Genetic and Plant Biology Building
+Goldman School of Public Policy -- GSPP
+Haas School of Business Faculty Wing -- HAAS -- Haas School of Business
+Haas Pavilion -- HAAS PAVIL
+// Handball Courts (RSF) -- HANDBALL CTS -- Recreational Sports Facility
+Hargrove Music Library -- HARGROVE LIB
+Haviland Hall -- HAVILAND
+Hearst Field Annex -- HEARST ANNEX
+// Hearst East Pool -- HEARST EPOOL -- Hearst Gymnasium
+Hearst Gymnasium -- HEARST GYM
+Hearst Memorial Mining Building -- HEARST MIN
+// Hearst Pool -- HEARST POOL -- Hearst Gymnasium
+// Hearst Gym Tennis Courts -- HEARSTGYMCTS -- Hearst Gymnasium
+Hearst Museum of Anthropology -- HEARSTMUSEUM
+Hertz Hall -- HERTZ
+Hesse Hall -- HESSE
+Hildebrand Hall -- HILDEBRAND
+Hilgard Hall -- HILGARD
+International House -- INTN'L HOUSE
+
+Jacobs Hall -- JACOBS -- Jacobs Hall, Berkeley
+
+Clark Kerr Campus Building 1 -- KERR CAMPUS
+Koshland Hall -- KOSHLAND
+Kroeber Hall -- KROEBER
+Latimer Hall -- LATIMER
+LeConte Hall -- LECONTE
+Lewis Hall -- LEWIS
+Lawrence Hall of Science -- LHS
+Life Sciences Building Addition -- LSA
+McCone Hall -- MCCONE
+McEnerney Hall (1750 Arch Street) -- MCENERNEY
+McLaughlin Hall -- MCLAUGHLIN
+California Memorial Stadium -- MEMORIAL STD
+Minor Hall -- MINOR
+Minor Hall Addition -- MINOR ADDITN
+Martin Luther King Student Union -- MLK ST UNION
+Moffitt Undergraduate Library -- MOFFITT -- Moffitt Undergraduate Library
+Morgan Hall -- MORGAN
+Morrison Hall -- MORRISON
+Moses Hall -- MOSES
+Mulford Hall -- MULFORD
+North Gate Hall -- NORTH GATE
+O'Brien Hall -- OBRIEN
+Off Campus -- OFF CAMPUS
+Pacific Film Archive -- PAC FILM ARC
+Pauley Ballroom -- PAULEY
+Plant and Microbial Biology Greenhouse -- PB GREENHOUS
+Pimentel Hall -- PIMENTEL
+Zellerbach Playhouse -- PLAYHOUSE -- Zellerbach Hall
+// Racquetball Courts (RSF) -- RAQBALL CTS -- Recreational Sports Facility
+Richmond Field Station 112 -- RFS 112
+// Field House (RSF) -- RSF FLDHOUSE -- Recreational Sports Facility
+Soda Hall -- SODA
+South Annex -- SOUTH ANNEX
+South Hall -- SOUTH HALL
+// Spieker Aquatics Complex (RSF) -- SPIEKER POOL -- Recreational Sports Facility
+Sproul Hall -- SPROUL
+// Squash Courts (RSF) -- SQUASH CTS -- Recreational Sports Facility
+Stanley Hall -- STANLEY
+East Asian Library -- STARR LIB
+Stephens Hall -- STEPHENS
+Sutardja Dai Hall -- SUTARDJA DAI
+Tan Kah Kee Hall -- TAN
+Tang Center -- TANG CENTER -- 2222 Bancroft Way
+Tolman Hall -- TOLMAN
+UC Berkeley Art Museum -- UCB ART MUSE
+
+Unit I Cheney -- UNIT I CHNY -- 2634 Durant Ave
+Unit I Christian -- UNIT I CHRST -- 2662 Durant Ave
+Unit I Central -- UNIT I CNTRL -- 2650 Durant Avenue
+
+Unit II Central -- UNIT II CNTL -- Unit 2 Residence Halls
+Unit II Towle -- UNIT II TOWL -- Unit 2 Towle
+Unit II Wada -- UNIT II WADA -- Unit 2 Wada
+Unit III Dining -- UNIT III DIN -- 2400 Durant Avenue
+University Hall -- UNIV HALL
+Valley Life Sciences Building -- VALLEY LSB
+Wellman Hall -- WELLMAN
+Wellman Courtyard -- WELLMAN CRT
+Wheeler Hall -- WHEELER
+// Wheeler Auditorium -- WHEELER AUD
+Wurster Hall -- WURSTER
+Zellerbach Hall -- ZELLERBACH
+Li Ka Shing Center -- LI KA SHING
+2224 Piedmont Avenue -- 2224 PIEDMNT
+2240 Piedmont Avenue -- 2240 PIEDMNT
+2401 Bancroft Avenue -- 2401BANCROFT
+2232 Piedmont Avenue -- 2232 PIEDMNT
+2251 College Avenue -- 2251 COLLEGE
+2521 Channing Way -- 2521CHANNING
+Unit I Slottman -- UNIT I SLOTT -- 2650 Durant Avenue
+Kerr Field -- KERR FIELD
