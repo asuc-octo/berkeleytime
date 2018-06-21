@@ -19,7 +19,7 @@ kgb==0.5
 newrelic==1.13.1.31
 Pillow==3.0.0
 prettytable==0.6.1
-psycopg2==2.5.2
+psycopg2==2.7.5
 pylibmc==1.2.3
 python-dateutil==2.3
 python-memcached==1.53
