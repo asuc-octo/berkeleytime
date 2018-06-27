@@ -35,7 +35,15 @@ AUTH_PROFILE_MODULE = 'account.BerkeleytimeUserProfile'
 if IS_LOCALHOST or IS_STAGING:
     ALLOWED_HOSTS = ['*']
 elif IS_PRODUCTION:
-    ALLOWED_HOSTS = [".berkeleytime.com", "berkeleytime-production.herokuapp.com", "berkeleytime.com", "asuc-berkeleytime-production.herokuapp.com"]
+    ALLOWED_HOSTS = [
+        ".berkeleytime.com",
+        "berkeleytime-production.herokuapp.com",
+        "berkeleytime.com",
+        "asuc-berkeleytime-production.herokuapp.com",
+        # berkeleytimeinternal is our DNS alias for the ASUC transfer
+        ".berkeleytimeinternal.com",
+        "berkeleytimeinternal.com",
+    ]
 else:
     # will never happen, but it we configure environment variables wrong
     # then we want to default to no hosts instead of all hosts
