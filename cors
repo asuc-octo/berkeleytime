@@ -4,4 +4,8 @@
         <AllowedOrigin>http://www.berkeleytime.com</AllowedOrigin>
         <AllowedMethod>GET</AllowedMethod>
     </CORSRule>
+    <CORSRule>
+        <AllowedOrigin>https://www.berkeleytimeinternal.com</AllowedOrigin>
+        <AllowedMethod>GET</AllowedMethod>
+    </CORSRule>
 </CORSConfiguration>
