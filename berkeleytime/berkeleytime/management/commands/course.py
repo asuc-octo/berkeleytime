@@ -1,6 +1,4 @@
 """Course management command."""
-from django.conf import settings
-settings.configure()
 
 from django.core.management.base import BaseCommand
 from catalog.job.course import course_job
