@@ -1,5 +1,7 @@
 """Course management command."""
 
+from django.contrib.admin import ModelAdmin, actions # noqa
+
 from django.core.management.base import BaseCommand
 from catalog.job.course import course_job
 
