@@ -14,7 +14,7 @@ TELEBEARS = {
     'phase1_start': datetime.datetime(2018, 10, 1),
     'phase2_start': datetime.datetime(2018, 11, 13),
     'phase1_end': datetime.datetime(2018, 11, 11),
-    'phase2_end': datetime.datetime(2019 1, 6),
+    'phase2_end': datetime.datetime(2019, 1, 6),
     'adj_start': datetime.datetime(2019, 1, 7),
 }
 
