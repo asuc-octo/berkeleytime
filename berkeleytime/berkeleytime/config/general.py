@@ -10,6 +10,7 @@ from semesters import fall2016
 from semesters import spring2017
 from semesters import fall2017
 from semesters import spring2018
+from semesters import fall2018
 from semesters import spring2019
 
 GRADE_POINT = {
