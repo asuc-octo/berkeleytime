@@ -10,6 +10,7 @@ from semesters import fall2016
 from semesters import spring2017
 from semesters import fall2017
 from semesters import spring2018
+from semesters import spring2019
 
 GRADE_POINT = {
     'a1': 4.0, 'a2': 4.0, 'a3': 3.7,
@@ -38,7 +39,8 @@ PAST_SEMESTERS = [
     {'semester': 'fall', 'year': '2016', 'display': 'Fall 2016'},
     {'semester': 'spring', 'year': '2017', 'display': 'Spring 2017'},
     {'semester': 'fall', 'year': '2017', 'display': 'Fall 2017'},
-    {'semester': 'spring', 'year': '2018', 'display': 'Spring 2018'}
+    {'semester': 'spring', 'year': '2018', 'display': 'Spring 2018'},
+    {'semester': 'fall', 'year': '2019', 'display': 'Fall 2018'}
 ]
 
 
@@ -56,6 +58,7 @@ PAST_SEMESTERS_TELEBEARS_JSON = {
     'spring 2017': spring2017.TELEBEARS_JSON,
     'fall 2017': fall2017.TELEBEARS_JSON,
     'spring 2018': spring2018.TELEBEARS_JSON,
+    'fall 2018': fall2018.TELEBEARS_JSON,
 }
 
 PAST_SEMESTERS_TELEBEARS = {
@@ -70,6 +73,7 @@ PAST_SEMESTERS_TELEBEARS = {
     'spring 2017': spring2017.TELEBEARS,
     'fall 2017': fall2017.TELEBEARS,
     'spring 2018': spring2018.TELEBEARS,
+    'fall 2018': fall2018.TELEBEARS,
 }
 
 # Classes with special characters
