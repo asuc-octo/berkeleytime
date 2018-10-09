@@ -10,12 +10,14 @@ from data.lib.grade import get_letter_grades
 from data.lib.grade import gpa_to_letter_grade
 from data.lib.grade import letter_grade_to_field_name
 from data.lib.grade import letter_grade_to_gpa
+from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
 
 
 class CourseStore(object):
-    """Postgres interface for Courses."""
+    """Database/cache interface for Courses."""
+    _courses_with_enrollment_cache_name = "enrollment__courses"
 
     def __init__(self):
         """Construct list of all derived fields."""
@@ -182,5 +184,12 @@ class CourseStore(object):
         course.grade_average = weighted_total / total
         course.letter_average = gpa_to_letter_grade(weighted_total / total)
         course.save()
+
+    def invalidate_courses_with_enrollment_cache(self):
+        """We cache the courses which have enrollment for performance on the
+        enrollment page. Call this method to delete the cache entry and invalidate
+        the cache.
+        """
+        cache.delete(CourseStore._courses_with_enrollment_cache_name)
 
 course_store = CourseStore()
