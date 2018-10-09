@@ -61,6 +61,9 @@ class ScheduleJob(object):
         if semester != 'summer':
             playlist_service.update(category=PlaylistCategory.semester)
 
+        logger.info({
+            'message': 'Invalidating course enrollment cache'
+        })
         # Part of the schedule update process is to mark the courses as having
         # relevant enrollment data (has_enrollment=True) so that we can show
         # them in the dropdown on the enrollment page. Now that we've updated,
