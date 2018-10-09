@@ -3,6 +3,7 @@ import logging
 
 from catalog import models
 from catalog.service.schedule import schedule_service
+from catalog.service.course import course_service
 from mondaine.service.enumeration.category import PlaylistCategory
 from mondaine.service.playlist import playlist_service
 
@@ -59,6 +60,14 @@ class ScheduleJob(object):
         # TODO (Yuxin) No need to update all semesters, only the updated one
         if semester != 'summer':
             playlist_service.update(category=PlaylistCategory.semester)
+
+        # Part of the schedule update process is to mark the courses as having
+        # relevant enrollment data (has_enrollment=True) so that we can show
+        # them in the dropdown on the enrollment page. Now that we've updated,
+        # we have to invalidate the cache since we might have stale data. This
+        # can especially happen if the course job runs after the schedule job,
+        # since the course job resets all courses to has_enrollment=False.
+        course_service.invalidate_courses_with_enrollment_cache()
 
     def _update(self, course_id, semester, year):
         """Attempt to update course_id, but always catch exceptions."""

@@ -31,4 +31,8 @@ class CourseService(object):
         """Return an array of distinct field names."""
         return course_store.distinct_field(field_name)
 
+    def invalidate_courses_with_enrollment_cache(self):
+        """Invalidate the cache we use to store data of courses that have enrollment."""
+        corse_store.invalidate_courses_with_enrollment_cache()
+
 course_service = CourseService()
