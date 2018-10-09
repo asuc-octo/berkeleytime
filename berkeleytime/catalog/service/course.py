@@ -33,6 +33,6 @@ class CourseService(object):
 
     def invalidate_courses_with_enrollment_cache(self):
         """Invalidate the cache we use to store data of courses that have enrollment."""
-        corse_store.invalidate_courses_with_enrollment_cache()
+        course_store.invalidate_courses_with_enrollment_cache()
 
 course_service = CourseService()
