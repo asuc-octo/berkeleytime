@@ -11,7 +11,7 @@ CURRENT_SEMESTER_DISPLAY = 'Spring 2019'
 SIS_TERM_ID = 2192
 
 TELEBEARS = {
-    'phase1_start': datetime.datetime(2018, 10, 1),
+    'phase1_start': datetime.datetime(2018, 10, 15),
     'phase2_start': datetime.datetime(2018, 11, 13),
     'phase1_end': datetime.datetime(2018, 11, 11),
     'phase2_end': datetime.datetime(2019, 1, 6),
