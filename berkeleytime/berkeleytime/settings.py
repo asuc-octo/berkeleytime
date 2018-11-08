@@ -89,19 +89,6 @@ else:
     import dj_database_url
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
-# TODO: We're not using facebook anymore, so we should delete these keys
-if IS_LOCALHOST:
-    FACEBOOK_APP_ID = '147752228709776'
-    FACEBOOK_APP_SECRET = '38d85aed74c822f475bffa30aafbd18a'
-
-if IS_STAGING:
-    FACEBOOK_APP_ID = '316362408473374'
-    FACEBOOK_APP_SECRET = 'c68d12b7a4b8280a2708940104e016c1'
-
-if IS_PRODUCTION:
-    FACEBOOK_APP_ID = '114444782058053'
-    FACEBOOK_APP_SECRET = 'f6ff5458cec23db7ef80c1fb85d0edfd'
-
 STATIC_ROOT = '/static_media/'
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
