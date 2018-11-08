@@ -24,6 +24,9 @@ ADMINS = (
     ("Yuxin Zhu", "zhuyxn@gmail.com"),
     ("Noah Gilmore", "noah.w.gilmore@gmail.com"),
     ("ASUC CTO", "ctochief@asuc.org"),
+    ("ASUC OCTO Berkeleytime Team", "octo.berkeleytime@asuc.org"),
+    ("Scott Lee", "scott.lee.3898@berkeley.edu"),
+    ("Will Wang", "hwang97@berkeley.edu"),
 )
 
 INTERNAL_IPS = ('127.0.0.1',)
