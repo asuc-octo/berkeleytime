@@ -140,13 +140,13 @@ elif IS_PRODUCTION:
     PREPEND_WWW = True
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    AWS_STORAGE_BUCKET_NAME = 'berkeleytime-production-static'
+    AWS_STORAGE_BUCKET_NAME = 'berkeleytime-static-prod'
     AWS_PRELOAD_METADATA = True # necessary to fix manage.py collectstatic command to only upload changed files instead of all file
     AWS_LOCATION = "static_media"
 
-    MEDIA_URL = 'https://berkeleytime-production-static.s3.amazonaws.com/static_media/'
-    STATIC_URL = 'https://berkeleytime-production-static.s3.amazonaws.com/static_media/'
-    ADMIN_MEDIA_PREFIX = 'https://berkeleytime-production-static.s3.amazonaws.com/static_media/admin/'
+    MEDIA_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
+    STATIC_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
+    ADMIN_MEDIA_PREFIX = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/admin/'
 
     EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
     EMAIL_HOST= 'smtp.sendgrid.net'
