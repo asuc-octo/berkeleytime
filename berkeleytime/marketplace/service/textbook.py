@@ -49,6 +49,7 @@ class TextbookService(object):
         :param sis_section_id: str The id of the section to fetch
         :returns: list[entity.textbook.Textbook] Textbooks fetched
         """
+
         bookstore_courses = bookstore_service.fetch_courses(
             department=department,
             term=term
