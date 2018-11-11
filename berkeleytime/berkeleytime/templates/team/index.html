@@ -61,12 +61,15 @@ $(document).ready(function() {
             <div class="col-md-12 mission-container">
                 <div class="mission-header">What We Do</div>
                 <div class="mission-description">The vision of Berkeleytime is to improve the student experience at UC Berkeley through technology. From having an all-inclusive course catalog to an awesome course scheduler, we want to make Cal a little smaller for everyone.</div>
+                <br>
+                <div class="mission-description">Get in tough with us at <a href="mailto:octo.berkeleytime@asuc.org">octo.berkeleytime@asuc.org</a>!</div>
             </div>
         </div>
 
         <!-- People info is localed in templates/team/members.yaml -->
 
         <div class="row" style="text-align: center;">
+        <div class="mission-header">Who We Are</div>
             <div id="team-members" style="width: 92%; margin: 0 auto; min-width: 500px;" >
                 {% for member in members.current %}
                 <div style="display: inline-block; width: 200px;" class="person-container">
@@ -93,12 +96,22 @@ $(document).ready(function() {
                 {% endfor %}
             </div>
         </div>
+        
+        <div class="row" style="text-align: center;">
+            <div class="sub-header">Founders</div>
+                <div class="past-member">
+                    <a href="http://yuxinzhu.com" style="color: black">Yuxin Zhu</a>
+                </div>
+                <div class="past-member">
+                    <a href="http://noahgilmore.com" style="color: black">Noah Gilmore</a>
+                </div>
+            </div>
+        
 
         <div class="row" style="text-align: center;">
-            <div id="past-header">Past Contributors</div>
-            <div id="past-members">                
+            <div class="sub-header">Past Contributors</div>
                 {% for member in members.past %}
-                    <div style="display: inline-block; width: 200px; height: 40px; line-height: 40px;">
+                    <div class="past-member">
                         {% if member.site %}
                             <a href="{{ member.site }}" style="color: black">{{ member.name }}</a>
                         {% else %}
@@ -110,7 +123,7 @@ $(document).ready(function() {
         </div>
         
         <div class="row">
-            <div class="col-md-12 mission-container">
+            <div class="col-md-12 mission-container" style="margin-top: -50px;">
                 <div class="mission-header">Join Berkeleytime</div>
                 <div class="mission-description">Berkeleytime recruits through the
                     <a href="http://asucocto.org" style="color: black; font-weight: 500;">ASUC Office of the CTO</a> 
