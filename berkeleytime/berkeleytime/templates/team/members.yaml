@@ -39,7 +39,7 @@ current:
     image: "images/about/oski.jpg"
   - name: "Anson Tsai"
     role: "Backend Engineering"
-    educ: "???? 2020"
+    educ: "EECS 2020"
     image: "images/about/oski.jpg"
   - name: "Christopher Liu"
     role: "Frontend Engineering"
