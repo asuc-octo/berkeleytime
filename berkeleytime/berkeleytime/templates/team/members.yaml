@@ -55,7 +55,7 @@ current:
     image: "images/about/oski.jpg"
   - name: "Grace Luo"
     role: "Frontend Engineering"
-    educ: "???? 2020"
+    educ: "EECS 2022"
     image: "images/about/oski.jpg"
   - name: "SangBin Cho"
     role: "Backend Engineering"
