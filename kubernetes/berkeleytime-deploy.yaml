@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: berkeleytime-prod
   namespace: berkeleytime
+  labels:
+    appName: berkeleytime-prod
 spec:
   selector:
     matchLabels:
@@ -14,7 +16,7 @@ spec:
         appName: berkeleytime-prod
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "5000"
+        prometheus.io/port: "8000"
     spec:
       containers:
       - name: berkeleytime-prod
@@ -22,6 +24,8 @@ spec:
         image: index.docker.io/berkeleytime/berkeleytime
         command: ["python", "manage.py", "runserver"]
         env:
+        - name: PYTHONUNBUFFERED
+          value: "0"
         - name: GET_HOSTS_FROM
           value: dns
         envFrom:
@@ -38,4 +42,4 @@ spec:
         - secretRef:
             name: sentrydsn
         ports:
-        - containerPort: 5000
+        - containerPort: 8000
