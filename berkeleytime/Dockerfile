@@ -13,5 +13,4 @@ COPY . berkeleytime/
 WORKDIR berkeleytime
 RUN rm -r berkeleytime/static_media/
 RUN pip install -r requirements.txt
-
-ENTRYPOINT ["python", "manage.py", "runserver", "0.0.0.0:5000"]
+ENTRYPOINT ["python", "manage.py", "runserver"]
