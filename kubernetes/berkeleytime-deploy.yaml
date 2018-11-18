@@ -22,7 +22,7 @@ spec:
       - name: berkeleytime-prod
         imagePullPolicy: Always
         image: index.docker.io/berkeleytime/berkeleytime
-        command: ["python", "manage.py", "runserver"]
+        command: ["python", "manage.py", "runserver", "0.0.0.0:5000"]
         env:
         - name: PYTHONUNBUFFERED
           value: "0"
