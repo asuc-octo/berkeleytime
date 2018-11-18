@@ -16,7 +16,7 @@ spec:
         appName: berkeleytime-prod
       annotations:
         prometheus.io/scrape: "true"
-        prometheus.io/port: "8000"
+        prometheus.io/port: "5000"
     spec:
       containers:
       - name: berkeleytime-prod
@@ -42,4 +42,4 @@ spec:
         - secretRef:
             name: sentrydsn
         ports:
-        - containerPort: 8000
+        - containerPort: 5000

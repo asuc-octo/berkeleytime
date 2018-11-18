@@ -11,7 +11,7 @@ spec:
   ports:
   - name: http-bt-port
     port: 8000
-    targetPort: 8000
+    targetPort: 5000
   type: LoadBalancer
   selector:
     appName: berkeleytime-prod
