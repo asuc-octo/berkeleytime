@@ -45,6 +45,7 @@ current:
     role: "Frontend Engineering"
     educ: "Computer Science 2021"
     image: "images/about/chris.jpg"
+    site: "https://www.linkedin.com/in/christopher-d-liu/"
   - name: "Eli Wu"
     role: "ML / Alg"
     educ: "???? 2020"
