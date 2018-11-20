@@ -10,12 +10,18 @@ from config.bookstore import *
 import raven
 from config.semesters.spring2019 import *
 
+# Set up google cloud logging
+import google.cloud.logging
+from pythonjsonlogger import jsonlogger
+log_client = google.cloud.logging.Client()
+log_client.setup_logging()
+
 settings_dir = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
 
-IS_LOCALHOST = not "DATABASE_URL" in os.environ
-IS_STAGING = "IS_STAGING" in os.environ
-IS_PRODUCTION = "IS_PRODUCTION" in os.environ
+IS_LOCALHOST = os.environ["ENVIRONMENT_NAME"] == "LOCALHOST"
+IS_STAGING = os.environ["ENVIRONMENT_NAME"] == "STAGING"
+IS_PRODUCTION = os.environ["ENVIRONMENT_NAME"] == "PRODUCTION"
 
 DEBUG = IS_LOCALHOST
 TEMPLATE_DEBUG = DEBUG
@@ -64,6 +70,7 @@ if IS_PRODUCTION or IS_STAGING:
             }
         }
     }
+
 
 elif IS_LOCALHOST:
     CACHES = {
@@ -114,12 +121,12 @@ elif IS_STAGING:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-    AWS_STORAGE_BUCKET_NAME = 'berkeleytime-static'
+    AWS_STORAGE_BUCKET_NAME = os.environ["S3_BUCKET_NAME"]
     AWS_PRELOAD_METADATA = True # necessary to fix manage.py collectstatic command to only upload changed files instead of all file
     AWS_LOCATION = "static_media"
-    MEDIA_URL = 'https://berkeleytime-static.s3.amazonaws.com/static_media/'
-    STATIC_URL = 'https://berkeleytime-static.s3.amazonaws.com/static_media/'
-    ADMIN_MEDIA_PREFIX = 'https://berkeleytime-static.s3.amazonaws.com/static_media/admin/'
+    MEDIA_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
+    STATIC_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
+    ADMIN_MEDIA_PREFIX = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/admin/'
 
     EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
     EMAIL_HOST= 'smtp.sendgrid.net'
@@ -140,7 +147,7 @@ elif IS_PRODUCTION:
     PREPEND_WWW = True
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    AWS_STORAGE_BUCKET_NAME = 'berkeleytime-static-prod'
+    AWS_STORAGE_BUCKET_NAME = os.environ["S3_BUCKET_NAME"]
     AWS_PRELOAD_METADATA = True # necessary to fix manage.py collectstatic command to only upload changed files instead of all file
     AWS_LOCATION = "static_media"
 
@@ -371,6 +378,10 @@ LOGGING = {
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
+        'json': {
+            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '%(levelname)s %(asctime)s %(message)s',
+        },
     },
     'handlers': {
         'mail_admins': {
@@ -381,13 +392,17 @@ LOGGING = {
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+            'formatter': 'json',
             'stream': sys.stdout,
         },
         'sentry': {
             'level': 'WARN',
             'filters': ['require_debug_false'],
             'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',  # noqa
+        },
+        'stackdriver_logging': {
+            'class': 'google.cloud.logging.handlers.CloudLoggingHandler',
+            'client': log_client
         },
     },
     'root': {
@@ -405,15 +420,17 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+        'django': {
+            'handlers': ['console', 'stackdriver_logging'],
+            'level': 'DEBUG',
             'propagate': True,
         },
-        'django_facebook.models': {
-            'handlers': ['mail_admins', 'console'],
+        'django.request': {
+            'handlers': [
+                'stackdriver_logging',
+                'mail_admins'
+            ],
             'level': 'ERROR',
-            'propagate': True,
         },
         # https://docs.sentry.io/hosted/clients/python/integrations/django/
         'raven': {
@@ -443,6 +460,7 @@ if IS_LOCALHOST or IS_STAGING:
         'debug_toolbar.panels.logging.LoggingPanel',
     )
 
+
 FACEBOOK_LOGIN_DEFAULT_REDIRECT = "/login"
 LOGIN_URL = '/login'
 LOGOUT_URL = '/logout'
@@ -458,7 +476,7 @@ else:
     }
 
 # SSL
-if not IS_LOCALHOST:
+if False:
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_HSTS_SECONDS = 31536000
