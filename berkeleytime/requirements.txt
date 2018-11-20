@@ -28,7 +28,9 @@ redis==2.10.5
 requests[security]==2.9.1
 sqlparse==0.1.19
 python-amazon-product-api==0.2.8
+google-cloud-logging==1.8.0
 lxml==3.8.0
+python-json-logger==0.1.10
 
 Unidecode==0.4.17
 wheel==0.24.0
