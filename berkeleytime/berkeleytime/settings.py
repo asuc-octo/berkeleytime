@@ -97,8 +97,7 @@ else:
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
 STATIC_ROOT = '/static_media/'
-AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+
 
 if IS_LOCALHOST:
     MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'static_media/').replace('\\','/')
@@ -118,15 +117,17 @@ if IS_LOCALHOST:
 
     URL = "localhost:3000"
 elif IS_STAGING:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    # Google Cloud Storage settings
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_LOCATION = 'static_media'
+    GS_BUCKET_NAME = os.environ["GS_BUCKET_NAME"]
+    GS_CREDENTIALS = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
 
-    AWS_STORAGE_BUCKET_NAME = os.environ["S3_BUCKET_NAME"]
-    AWS_PRELOAD_METADATA = True # necessary to fix manage.py collectstatic command to only upload changed files instead of all file
-    AWS_LOCATION = "static_media"
-    MEDIA_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
-    STATIC_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
-    ADMIN_MEDIA_PREFIX = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/admin/'
+    # GCS URL
+    MEDIA_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
+    STATIC_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
+    ADMIN_MEDIA_PREFIX = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media/admin'
 
     EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
     EMAIL_HOST= 'smtp.sendgrid.net'
@@ -138,22 +139,23 @@ elif IS_STAGING:
     DOMAIN_NAME = "berkeleytime.com"
     SITE_ID = 2
 
-    AWS_HEADERS = {
-        'Cache-Control': 'max-age=0',
-    }
-    AWS_QUERYSTRING_AUTH = False
+    # GCS Networking Config
+    GS_DEFAULT_ACL = 'publicRead'
+    GS_CACHE_CONTROL = 'max-age=0'
 
 elif IS_PRODUCTION:
     PREPEND_WWW = True
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    AWS_STORAGE_BUCKET_NAME = os.environ["S3_BUCKET_NAME"]
-    AWS_PRELOAD_METADATA = True # necessary to fix manage.py collectstatic command to only upload changed files instead of all file
-    AWS_LOCATION = "static_media"
 
-    MEDIA_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
-    STATIC_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
-    ADMIN_MEDIA_PREFIX = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/admin/'
+    # Google Cloud Storage settings
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_LOCATION = 'static_media'
+    GS_BUCKET_NAME = os.environ["GS_BUCKET_NAME"]
+    GS_CREDENTIALS = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
+
+    MEDIA_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
+    STATIC_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
+    ADMIN_MEDIA_PREFIX = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media/admin'
 
     EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
     EMAIL_HOST= 'smtp.sendgrid.net'
@@ -165,10 +167,9 @@ elif IS_PRODUCTION:
     DOMAIN_NAME = "berkeleytime.com"
     SITE_ID = 3
 
-    AWS_HEADERS = {
-        'Cache-Control': 'max-age=0',
-    }
-    AWS_QUERYSTRING_AUTH = False
+    # GCS Networking Config
+    GS_DEFAULT_ACL = 'publicRead'
+    GS_CACHE_CONTROL = 'max-age=4500'
 
 if "SIS_COURSE_APP_ID" in os.environ:
     SIS_COURSE_APP_ID = os.environ["SIS_COURSE_APP_ID"]
