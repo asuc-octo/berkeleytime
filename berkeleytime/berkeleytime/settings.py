@@ -97,8 +97,6 @@ else:
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
 STATIC_ROOT = '/static_media/'
-AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 
 
 if IS_LOCALHOST:
@@ -126,11 +124,6 @@ elif IS_STAGING:
     GS_BUCKET_NAME = os.environ["GS_BUCKET_NAME"]
     GS_CREDENTIALS = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
 
-    # TODO Once migration is done, remove this.
-    # AWS_STORAGE_BUCKET_NAME = os.environ["S3_BUCKET_NAME"]
-    # AWS_PRELOAD_METADATA = True # necessary to fix manage.py collectstatic command to only upload changed files instead of all file
-    # AWS_LOCATION = "static_media"
-
     # GCS URL
     MEDIA_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
     STATIC_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
@@ -150,12 +143,6 @@ elif IS_STAGING:
     GS_DEFAULT_ACL = 'publicRead'
     GS_CACHE_CONTROL = 'max-age=0'
 
-    # TODO Once migration is done, remove this.
-    # AWS_HEADERS = {
-    #     'Cache-Control': 'max-age=0',
-    # }
-    # AWS_QUERYSTRING_AUTH = False
-
 elif IS_PRODUCTION:
     PREPEND_WWW = True
 
@@ -165,21 +152,10 @@ elif IS_PRODUCTION:
     GS_LOCATION = 'static_media'
     GS_BUCKET_NAME = os.environ["GS_BUCKET_NAME"]
     GS_CREDENTIALS = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
-    # TODO Remove once migration is done
-    # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    # STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    # AWS_STORAGE_BUCKET_NAME = os.environ["S3_BUCKET_NAME"]
-    # AWS_PRELOAD_METADATA = True # necessary to fix manage.py collectstatic command to only upload changed files instead of all file
-    # AWS_LOCATION = "static_media"
 
     MEDIA_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
     STATIC_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
     ADMIN_MEDIA_PREFIX = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media/admin'
-
-    # TODO Remove once migration is done
-    # MEDIA_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
-    # STATIC_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
-    # ADMIN_MEDIA_PREFIX = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/admin/'
 
     EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
     EMAIL_HOST= 'smtp.sendgrid.net'
@@ -194,11 +170,6 @@ elif IS_PRODUCTION:
     # GCS Networking Config
     GS_DEFAULT_ACL = 'publicRead'
     GS_CACHE_CONTROL = 'max-age=4500'
-    # TODO Remove once migration is done
-    # AWS_HEADERS = {
-    #     'Cache-Control': 'max-age=0',
-    # }
-    # AWS_QUERYSTRING_AUTH = False
 
 if "SIS_COURSE_APP_ID" in os.environ:
     SIS_COURSE_APP_ID = os.environ["SIS_COURSE_APP_ID"]
