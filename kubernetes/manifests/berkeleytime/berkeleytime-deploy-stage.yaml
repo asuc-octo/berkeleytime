@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       labels:
-        appName: berkeleytime-prod
+        appName: berkeleytime-stage
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "5000"
@@ -21,7 +21,7 @@ spec:
       containers:
       - name: berkeleytime-prod
         imagePullPolicy: Always
-        image: index.docker.io/berkeleytime/berkeleytime:stage
+        image: index.docker.io/berkeleytime/berkeleytime:latest
         command: ["python", "manage.py", "runserver", "0.0.0.0:5000"]
         volumeMounts:
         - name: google
@@ -32,6 +32,8 @@ spec:
           value: "0"
         - name: GET_HOSTS_FROM
           value: dns
+        - name: ENVIRONMENT_NAME
+          value: STAGING
         envFrom:
         - configMapRef:
             name: django-configs

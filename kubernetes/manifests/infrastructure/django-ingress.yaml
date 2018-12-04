@@ -8,9 +8,17 @@ metadata:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - http:
+  - host: www.berkeleytime-internal.com
+    http:
       paths:
       - path: /
         backend:
           serviceName: berkeleytime-prod-svc
+          servicePort: 5000
+  - host: staging.berkeleytime-internal.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: berkeleytime-stage-svc
           servicePort: 5000
