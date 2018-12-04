@@ -19,11 +19,13 @@ log_client.setup_logging()
 settings_dir = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
 
-IS_LOCALHOST = os.environ["ENVIRONMENT_NAME"] == "LOCALHOST"
-IS_STAGING = os.environ["ENVIRONMENT_NAME"] == "STAGING"
-IS_PRODUCTION = os.environ["ENVIRONMENT_NAME"] == "PRODUCTION"
+ENV_NAME = os.getenv("ENVIRONMENT_NAME", "")
+IS_LOCALHOST = ENV_NAME == "LOCALHOST"
+IS_STAGING = ENV_NAME == "STAGING"
+IS_PRODUCTION = ENV_NAME == "PRODUCTION"
+assert IS_LOCALHOST or IS_STAGING or IS_PRODUCTION, "ENV not set properly: {}".format(ENV_NAME)
 
-DEBUG = IS_LOCALHOST
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -38,25 +40,20 @@ ADMINS = (
 INTERNAL_IPS = ('127.0.0.1',)
 
 MANAGERS = ADMINS
-# SOCIALACCOUNT_ADAPTER = 'account.socialaccount.SocialAccountAdapter'
 AUTH_PROFILE_MODULE = 'account.BerkeleytimeUserProfile'
 
-if IS_LOCALHOST or IS_STAGING:
+if IS_LOCALHOST:
     ALLOWED_HOSTS = ['*']
+elif IS_STAGING:
+    ALLOWED_HOSTS = [
+        "staging.berkeleytime-internal.com",
+    ]
 elif IS_PRODUCTION:
     ALLOWED_HOSTS = [
-        ".berkeleytime.com",
-        "berkeleytime-production.herokuapp.com",
-        "berkeleytime.com",
-        "asuc-berkeleytime-production.herokuapp.com",
-        # berkeleytimeinternal is our DNS alias for the ASUC transfer
-        ".berkeleytimeinternal.com",
-        "berkeleytimeinternal.com",
+        "berkeleytime-internal.com",
+        "www.berkeleytime-internal.com",
     ]
-else:
-    # will never happen, but it we configure environment variables wrong
-    # then we want to default to no hosts instead of all hosts
-    ALLOWED_HOSTS = []
+
 
 if IS_PRODUCTION or IS_STAGING:
     redis_url = urlparse.urlparse(os.environ.get('REDIS_URL'))
@@ -118,16 +115,13 @@ if IS_LOCALHOST:
     URL = "localhost:3000"
 elif IS_STAGING:
     # Google Cloud Storage settings
-    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    # DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    # STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
     GS_LOCATION = 'static_media'
-    GS_BUCKET_NAME = os.environ["GS_BUCKET_NAME"]
-    GS_CREDENTIALS = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
 
     # GCS URL
-    MEDIA_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
-    STATIC_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
-    ADMIN_MEDIA_PREFIX = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media/admin'
+    STATIC_URL = 'https://storage.googleapis.com/berkeleytime-static-prod/static_media/'
+    ADMIN_MEDIA_PREFIX = 'https://storage.googleapis.com/berkeleytime-static-prod/static_media/admin/'
 
     EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
     EMAIL_HOST= 'smtp.sendgrid.net'
@@ -147,15 +141,12 @@ elif IS_PRODUCTION:
     PREPEND_WWW = True
 
     # Google Cloud Storage settings
-    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-    STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    # DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    # STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
     GS_LOCATION = 'static_media'
-    GS_BUCKET_NAME = os.environ["GS_BUCKET_NAME"]
-    GS_CREDENTIALS = os.environ['GOOGLE_APPLICATION_CREDENTIALS']
 
-    MEDIA_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
-    STATIC_URL = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media'
-    ADMIN_MEDIA_PREFIX = 'https://console.cloud.google.com/storage/browser/berkeleytime-static-prod/static_media/admin'
+    STATIC_URL = 'https://storage.googleapis.com/berkeleytime-static-prod/static_media/'
+    ADMIN_MEDIA_PREFIX = 'https://storage.googleapis.com/berkeleytime-static-prod/static_media/'
 
     EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
     EMAIL_HOST= 'smtp.sendgrid.net'
@@ -171,26 +162,16 @@ elif IS_PRODUCTION:
     GS_DEFAULT_ACL = 'publicRead'
     GS_CACHE_CONTROL = 'max-age=4500'
 
-if "SIS_COURSE_APP_ID" in os.environ:
-    SIS_COURSE_APP_ID = os.environ["SIS_COURSE_APP_ID"]
-    SIS_COURSE_APP_KEY = os.environ["SIS_COURSE_APP_KEY"]
-else:
-    SIS_COURSE_APP_ID = ""
-    SIS_COURSE_APP_KEY = ""
+# Optional ENV Variables
+GS_BUCKET_NAME = os.getenv("GS_BUCKET_NAME", "")
+GS_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
+SIS_COURSE_APP_ID = os.getenv("SIS_COURSE_APP_ID", "")
+SIS_COURSE_APP_KEY = os.getenv("SIS_COURSE_APP_KEY", "")
+SIS_CLASS_APP_ID = os.getenv("SIS_CLASS_APP_ID", "")
+SIS_CLASS_APP_KEY = os.getenv("SIS_CLASS_APP_KEY", "")
+AWS_AFFILIATE_ACCESS_KEY_ID = os.getenv("AWS_AFFILIATE_ACCESS_KEY_ID", "")
+AWS_AFFILIATE_SECRET = os.getenv("AWS_AFFILIATE_SECRET", "")
 
-if "SIS_CLASS_APP_ID" in os.environ:
-    SIS_CLASS_APP_ID = os.environ["SIS_CLASS_APP_ID"]
-    SIS_CLASS_APP_KEY = os.environ["SIS_CLASS_APP_KEY"]
-else:
-    SIS_CLASS_APP_ID = ""
-    SIS_CLASS_APP_KEY = ""
-
-if "AWS_AFFILIATE_ACCESS_KEY_ID" in os.environ:
-    AWS_AFFILIATE_ACCESS_KEY_ID = os.environ["AWS_AFFILIATE_ACCESS_KEY_ID"]
-    AWS_AFFILIATE_SECRET = os.environ["AWS_AFFILIATE_SECRET"]
-else:
-    AWS_AFFILIATE_ACCESS_KEY_ID = ""
-    AWS_AFFILIATE_SECRET = ""
 
 # Please replace with Amazon Affiliate tag
 AMAZON_AFFILIATE_TAG = ''
@@ -264,9 +245,6 @@ if IS_LOCALHOST or IS_STAGING:
     )
 
 ROOT_URLCONF = 'berkeleytime.urls'
-
-# Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'berkeleytime.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
