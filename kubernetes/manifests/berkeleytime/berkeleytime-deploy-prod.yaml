@@ -32,6 +32,8 @@ spec:
           value: "0"
         - name: GET_HOSTS_FROM
           value: dns
+        - name: ENVIRONMENT_NAME
+          value: PRODUCTION
         envFrom:
         - configMapRef:
             name: django-configs
