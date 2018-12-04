@@ -15,6 +15,13 @@ spec:
         backend:
           serviceName: berkeleytime-prod-svc
           servicePort: 5000
+  - host: berkeleytime-internal.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: berkeleytime-prod-svc
+          servicePort: 5000
   - host: staging.berkeleytime-internal.com
     http:
       paths:
