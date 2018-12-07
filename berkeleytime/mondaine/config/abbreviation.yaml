@@ -13,6 +13,7 @@ AGR CHM:
 A,RESEC:
     - "Agricultural and Resource Economics"
     - "Agricultural and Resource Economics and Policy"
+    - "Ag & Resource Econ & Pol"
 
 AMERSTD:
     - "American Studies"
@@ -34,6 +35,7 @@ ARMENI:
 
 AST:
     - "Applied Science and Technology"
+    - "Applied Science & Tech"
 
 ASAMST:
     - "Asian American Studies"
@@ -104,9 +106,11 @@ CHINESE:
 
 CY PLAN:
     - "City and Regional Planning"
+    - "City & Regional Planning"
 
 CIV ENG:
     - "Civil and Environmental Engineering"
+    - "Civil & Environmental Eng"
 
 CLASSIC:
     - "Classics"
@@ -223,11 +227,13 @@ ENV DES:
 ENVECON:
     - "Environmental Economics and Policy"
     - "Environmental Economics"
+    - "Environ Econ & Policy"
 
 ESPM:
     - "Environmental Science, Policy, and Management"
     - "Environmental Science Policy and Management"
     - "Environmental Science, Policy and Management"
+    - "Env Sci, Policy, & Mgmt"
 
 ENV SCI:
     - "Environmental Sciences"
@@ -237,6 +243,7 @@ ETH STD:
 
 ETH GRP:
     - "Ethnic Studies Graduate Group"
+    - "Ethnic Studies Grad Group"
 
 EURA ST:
     - "Eurasian Studies"
@@ -247,10 +254,12 @@ EUST:
 EWMBA:
     - "Evening/Weekend MBA Program"
     - "Evening and Weekend Master's in Business Administration"
+    - "Evening & Weekend MBA"
 
 XMBA:
     - "Executive Master's in Business Administration"
     - "Berkeley/Columbia MBA Program"
+    - "Executive MBA"
 
 FILIPN:
     - "Filipino"
@@ -272,23 +281,28 @@ FRENCH:
 MBA:
     - "Master's in Business Administration"
     - "Full-time Masters in Business Administration"
+    - "Business Admin-MBA"
 
 GMS:
     - "GMS"
     - "Global Metropolitan Studies"
+    - "Global Metro Studies"
 
 GPP:
     - "Global Poverty and Practice"
+    - "Global Poverty & Practice"
     - "GPP"
 
 GSPDP:
     - "Graduate Student Professional Development Program"
     - "GSPDP"
+    - "Grad Professional Dev Pgm"
 
 GWS:
     - "Gender and Women's Studies"
     - "Women's Studies"
     - "Gender & Women's Studies"
+    - "Gender & Womens Studies"
 
 GEOG:
     - "Geography"
@@ -305,6 +319,7 @@ GREEK:
 HMEDSCI:
     - "Health and Medical Sciences"
     - "Health and Medical Sciences Program"
+    - "Health & Medical Sciences"
 
 HEBREW:
     - "Hebrew"
@@ -339,6 +354,7 @@ ILA:
 IND ENG:
     - "Industrial Engineering"
     - "Industrial Engineering and Operations Research"
+    - "Industrial Eng & Ops Rsch"
 
 INFO:
     - "Information"
@@ -353,6 +369,7 @@ ISF:
 
 IAS:
     - "International and Area Studies"
+    - "International & Area Stds"
 
 IRANIAN:
     - "Iranian"
@@ -386,10 +403,12 @@ LGBT:
     - "Lesbian, Gay, Bisexual and Transgender Studies"
     - "Lesbian Gay Bisexual Transgender Studies"
     - "LGBT"
+    - "LGBT Studies"
 
 LD ARCH:
     - "Landscape Architecture"
     - "Landscape Architecture and Environmental Planning"
+    - "Landscape Arch & Env Plan"
 
 LATIN:
     - "Latin"
@@ -397,11 +416,15 @@ LATIN:
 LATAMST:
     - "Latin American Studies"
 
+LAW:
+    - "Law"
+
 LEGALST:
     - "Legal Studies"
 
 L & S:
     - "Letters and Science"
+    - "Letters & Science"
 
 LINGUIS:
     - "Linguistics"
@@ -415,9 +438,11 @@ MALAY/I:
 MFE:
     - "Master's in Financial Engineering"
     - "Masters in Financial Engineering Program"
+    - "Financial Engineering"
 
 MAT SCI:
     - "Materials Science and Engineering"
+    - "Materials Science & Eng"
 
 MATH:
     - "Mathematics"
@@ -443,6 +468,7 @@ MIL SCI:
 
 MCELLBI:
     - "Molecular and Cell Biology"
+    - "Molecular & Cell Biology"
 
 MONGOLN:
     - "Mongolian"
@@ -456,6 +482,7 @@ NEUROSC:
 
 NSE:
     - "Nanoscale Science and Engineering"
+    - "Nanoscale Science & Eng"
 
 NATAMST:
     - "Native American Studies"
@@ -483,6 +510,7 @@ NUSCTX:
     - "Nutritional Sciences and Toxicology"
     - "Nutritional Science"
     - "Nutritional Sciences"
+    - "Nutritional Science & Tox"
 
 OPTOM:
     - "Optometry"
@@ -493,6 +521,7 @@ POLECON:
 
 PACS:
     - "Peace and Conflict Studies"
+    - "Peace & Conflict Studies"
 
 PERSIAN:
     - "Persian"
@@ -500,6 +529,7 @@ PERSIAN:
 PHDBA:
     - "Doctoral Program in Business Administration"
     - "Ph.D. in Business Administration"
+    - "Business Admin-PhD"
 
 PHILOS:
     - "Philosophy"
@@ -512,6 +542,8 @@ PHYSICS:
 
 PLANTBI:
     - "Plant and Microbial Biology"
+    - "Plant & Microbial Biology"
+    - "Plant Biology"
 
 POL SCI:
     - "Political Science"
@@ -569,6 +601,7 @@ SAHS:
 STS:
     - "Science and Technology Studies"
     - "STS"
+    - "Science & Tech Studies"
 
 SANSKR:
     - "Sanskrit"
@@ -578,6 +611,7 @@ SCANDIN:
 
 SCMATHE:
     - "Science and Mathematics Education"
+    - "Science & Math Education"
 
 SEMITIC:
     - "Semitics"
@@ -586,6 +620,7 @@ SLAVIC:
     - "Slavic"
     - "Slavic Languages and Literatures"
     - "Slavic Languages and Literature"
+    - "Slavic Languages & Lit"
 
 SOC WEL:
     - "Social Welfare"
@@ -598,6 +633,7 @@ S ASIAN:
 
 S,SEASN:
     - "South and Southeast Asian Studies"
+    - "South & SE Asian Studies"
 
 SEASIAN:
     - "Southeast Asian"
@@ -627,6 +663,7 @@ THEATER:
     - "Theater, Dance, and Performance Studies"
     - "Theater Dance and Performance Studies"
     - "Dramatic Art"
+    - "Theater Dance & Perf Stds"
 
 TIBETAN:
     - "Tibetan"
@@ -639,9 +676,11 @@ UGBA:
     - "Business Administration"
     - "Undergraduate Program leading to the Bachelor of Science in Busi"
     - "Undergraduate Program leading to the Bachelor of Science in Business"
+    - "Business Admin-Undergrad"
 
 UGIS:
     - "Undergraduate and Interdisciplinary Studies"
+    - "UGIS-UG Interdisc Studies"
 
 VIETNMS:
     - "Vietnamese"
@@ -667,6 +706,7 @@ XART:
 XASAMST:
     - "FPF-Asian American Studies"
     - "Fall Program for Freshmen Asian Amercan Studies"
+    - "FPF-Asian American Stds"
 
 XASTRON:
     - "FPF-Astronomy"
@@ -679,6 +719,7 @@ XCLASSI:
 XCOLWRI:
     - "FPF-College Writing Program"
     - "Fall Program for Freshmen College Writing"
+    - "FPF-College Writing Pgm"
 
 XCOMLIT:
     - "FPF-Comparative Literature"
@@ -690,10 +731,12 @@ XENGLIS:
 XEPS:
     - "FPF-Earth & Planetary Science"
     - "Fall Program for Freshmen Earth & Planetary Sciences"
+    - "FPF-Earth & Planetary Sci"
 
 XESPM:
     - "FPF-Env Sci, Policy, & Mgmt"
     - "Fall Program for Freshmen Environmental Science, Policy and Mang"
+    - "FPF-Env Sci, Pol, & Mgmt"
 
 XETHSTD:
     - "FPF-Ethnic Studies"
@@ -701,6 +744,7 @@ XETHSTD:
 
 XFILM:
     - "FPF-Film & Media"
+    - "FPF-Film"
 
 XGEOG:
     - "FPF-Geography"
@@ -709,6 +753,7 @@ XGEOG:
 XGWS:
     - "FPF-Gender & Womens Studies"
     - "Fall Program for Freshmen Gender and Women's Studies"
+    - "FPF-Gender & Womens Stds"
 
 XHISTAR:
     - "FPF-History of Art"
@@ -717,6 +762,9 @@ XHISTAR:
 XHISTOR:
     - "FPF-History"
     - "Fall Program for Freshmen History"
+
+XIAS:
+    - 'FPF-IAS Teaching Program'
 
 XINTEGB:
     - "FPF-Integrative Biology"
@@ -741,10 +789,10 @@ XMATH:
 XMCELLB:
     - "FPF-Molecular & Cell Biology"
     - "Fall Program for Freshmen Molecular & Cell Biology"
+    - "FPF-Molecular & Cell Bio"
 
 XMESTU:
-    - 'FPF-IAS Teaching Program'
-    - 'Fall Program for Freshmen'
+    - 'FPF-Middle Eastern Stds'
 
 XMUSIC:
     - "FPF-Music"
