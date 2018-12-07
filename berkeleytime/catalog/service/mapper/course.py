@@ -14,7 +14,7 @@ class CourseMapper(EntityMapper):
         try:
             course = {
                 'title': data['title'],
-                'abbreviation': data['subjectArea']['code'],
+                'abbreviation': utils.translate(data['subjectArea']['code']),
                 'course_number': data['catalogNumber']['formatted'],
                 'description': data['description'],
                 'department': self.get_course_department(data),
@@ -22,6 +22,7 @@ class CourseMapper(EntityMapper):
             }
             return Course(course)
         except KeyError as e:
+            print e
             return None
 
     def get_course_department(self, data):
