@@ -8,7 +8,7 @@ from data.service.mapper.grade import grade_mapper
 class GradeReader(object):
     """Grade interface with CSV files."""
 
-    file_path = os.path.join(os.path.dirname(__file__), 'csv/grades/formatted')  # noqa
+    file_path = os.path.join(os.path.dirname(__file__), 'grades/formatted')  # noqa
 
     def read(self, semester, year):
         """Read CSV file and return a generator of entity.Grade."""
