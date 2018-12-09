@@ -5,13 +5,13 @@ var bt_utils = bt_utils || {};
 (function(window, $) {
     "use strict";
 
-bt_utils.gradeList = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F'];
+bt_utils.gradeList = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F', 'P', 'NP'];
 
 bt_utils.gradeToColorTable = {
     "A+": "#A0F06C", "A": "#83F03C", "P": "#83F03C", "A-": "#58E000",
     "B+": "rgb(252, 205, 152)", "B": "rgb(261, 186, 118)", "B-": "#f9aa2d",
     "C+": "#F46E8F", "C": "#F43D6B", "C-": "#E9003A",
-    "D": "#AE2C4C", "F": "#970026", "NP": "#970026", "": "#4F4F4F"
+    "D": "#AE2C4C", "F": "#970026", "NP": "#970026", "": "#4F4F4F", "N/A": "#4F4F4F"
 };
 
 bt_utils.percentToColorList = [

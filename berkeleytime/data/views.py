@@ -21,7 +21,7 @@ from django.core.cache import cache
 STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
                    ("b1", "B+"), ("b2", "B"), ("b3", "B-"),
                    ("c1", "C+"), ("c2", "C"), ("c3", "C-"),
-                   ("d", "D"), ("f", "F")]
+                   ("d", "D"), ("f", "F"), ("p", "P"), ("np", "NP")]
 
 def grade_context():
     cached = cache.get("grade__courses")
@@ -95,6 +95,13 @@ def grade_json(request, grade_ids):
         rtn["section_gpa"] = round(sections.aggregate(Avg("average"))["average__avg"], 3)
         rtn["section_letter"] = calculate_letter_average(rtn["section_gpa"])
         rtn["denominator"] = total
+
+        if rtn["course_letter"] == "":
+            rtn["course_letter"] = "N/A"
+
+        if rtn["section_letter"] == "":
+            rtn["section_letter"] = "N/A"
+
         return render_to_json(rtn)
     except Exception as e:
         print e
