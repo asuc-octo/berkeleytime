@@ -76,7 +76,7 @@ var sectionNumToColor = function (num) {
 //         return [null, 'A'] and 'NP' will return ['P', null]
 var beforeAndAfterGrades = function (grade) {
     if (grade === "P") {
-        return [null, "NP"];
+        return ["NP", null];
     }
     if (grade === "NP") {
         return ["P", null];
@@ -684,21 +684,29 @@ var updateSectionInfo = function (sectionData) {
             courseBox.initCourseBox("overview", $(this).data("id"));
         });
     }
-
+    
     utils.updateHTML("#info #course_averages #course_title", sectionData.title);
     utils.updateHTML("#info #course_averages #course_subtitle", sectionData.subtitle);
-    utils.updateHTML("#info #course_averages #course_average .average-gpa", utils.formatGPA(sectionData.course_gpa));
+    if (sectionData.course_gpa > 0) {
+        utils.updateHTML("#info #course_averages #course_average .average-gpa", utils.formatGPA(sectionData.course_gpa));
+    } else {
+        utils.updateHTML("#info #course_averages #course_average .average-gpa", "");
+    }
+    
     utils.updateHTML("#info #course_averages #course_average .average-letter", sectionData.course_letter);
-    utils.updateHTML("#info #course_averages #course_average .average-text", "Course Avg. GPA: ");
     $("#info #course_averages #course_average").css("background-color", utils.gradeToColor(sectionData.course_letter));
     $("#info .card-link").data("id", sectionData.course_id);
 
     var instructor = sectionData.instructor === "all" ? "All Instructors" : maxifyInstructor(sectionData.instructor);
     var semester = sectionData.semester === "all" ? "All Semesters" : maxifySemester(sectionData.semester);
+    
+    if (sectionData.section_gpa > 0) {
+        utils.updateHTML("#info #section_averages #section_average .average-gpa", utils.formatGPA(sectionData.section_gpa));
+    } else {
+        utils.updateHTML("#info #section_averages #section_average .average-gpa", "");
+    }
 
     utils.updateHTML("#info #section_averages #section_title", instructor + " - " + semester);
-    utils.updateHTML("#info #section_averages #section_average .average-gpa", utils.formatGPA(sectionData.section_gpa));
-    utils.updateHTML("#info #section_averages #section_average .average-letter", sectionData.section_letter);
     utils.updateHTML("#info #section_averages #section_average .average-letter", sectionData.section_letter);
     $("#info #section_averages #section_average").css("background-color", utils.gradeToColor(sectionData.section_letter));
 };
@@ -744,6 +752,7 @@ var smartRemoveSectionInfo = function (id) {
 //            withCSS, whether to change the background-color or not (is it the middle?)
 // SideEffects: updates the grade box corresponding to the selector with the info in gData and letter.
 var updateOneGrade = function (selector, gData, letter, withCSS) {
+    
     utils.updateHTML(selector + " .percentile-high", gData.percentile_high);
     utils.updateHTML(selector + " .percentile-low", gData.percentile_low);
     utils.updateHTML(selector + " .grade", letter);
@@ -819,12 +828,22 @@ var updateGradeInfo = function (g1, g2, g3, letter1, letter2, letter3) {
         clearGrade("#info_1");
     }
 
-    updateOneGrade("#info_2", g2, letter2, true);
-
+    if (g2 !== null) {
+        updateOneGrade("#info_2", g2, letter2, false);
+    } else {
+        clearGrade("#info_2");
+    }
+    
     if (g3 !== null) {
         updateOneGrade("#info_3", g3, letter3, false);
     } else {
         clearGrade("#info_3");
+    }
+    
+    if (letter1 === "P" || letter1 === "NP") {
+        $("#info #in_depth_grades .grade-info:first-child, #info #in_depth_grades .grade-info:last-child").css("color", "black");
+    } else {
+        $("#info #in_depth_grades .grade-info:first-child, #info #in_depth_grades .grade-info:last-child").css("color", "#999");
     }
 };
 
@@ -836,11 +855,17 @@ var updateInfo = function (num, grade) {
     var d = getSectionData(num);
     if (d) {
         updateSectionInfo(d);
-        var otherGrades = beforeAndAfterGrades(grade);
-        var g1 = d[otherGrades[0]] !== undefined ? d[otherGrades[0]] : null,
-            g2 = d[grade],
-            g3 = d[otherGrades[1]] !== undefined ? d[otherGrades[1]] : null;
-        updateGradeInfo(g1, g2, g3, otherGrades[0], grade, otherGrades[1]);
+        
+        if (d["course_letter"] !== "N/A") {
+            var otherGrades = beforeAndAfterGrades(grade);
+            var g1 = d[otherGrades[0]] !== undefined ? d[otherGrades[0]] : null,
+                g2 = d[grade],
+                g3 = d[otherGrades[1]] !== undefined ? d[otherGrades[1]] : null;
+            updateGradeInfo(g1, g2, g3, otherGrades[0], grade, otherGrades[1]);            
+        } else {
+            updateGradeInfo(d["P"], d["NP"], null, "P", "NP", null);
+        }
+        
     } else {
         console.log("*** Error: could not find stored section data for: " + num);
     }
@@ -887,7 +912,7 @@ var addSection = function (sectionData) {
 //              and flags accordingly.
 // Return: The result of the check (T/F)
 grades.checkAlreadyAdded = function (sectionIDs) {
-    if ($("#select_course option:selected").size() === 1 && (grades.sections === undefined || grades.sections.length === 0)) {
+    if (!ndef($("#select_course option:selected").size) && $("#select_course option:selected").size() === 1 && (grades.sections === undefined || grades.sections.length === 0)) {
         $(".select-button").hide();
         $("#select_question_button_3").show();
         return;
@@ -931,6 +956,7 @@ grades.getGradesAndAddSection = function (sectionIDs, barText, callback) {
         return;
     var url = sectionIDs.join("&") + "/";
     $.getJSON("/grades/sections/" + url, function (json) {
+        
         json.sectionIDs = sectionIDs;
         var sectionData = compileSectionData(json, barText);
         addSection(sectionData).attr("data-grades", _.sortBy(sectionIDs, function (i) {return parseInt(i, 10);}).join("&"));
@@ -992,8 +1018,10 @@ var updateGraph = function () {
     // parse data
     var grades = [];
     var yMax = 0;
+    
     for (var i = 0; i < sectionData.length; i++) {
         var section = [];
+        
         for (var j = 0; j < utils.gradeList.length; j++) {
             var newPercent = sectionData[i].data[utils.gradeList[j]].percent/100;
             section.push({"grade": utils.gradeList[j], "percent": newPercent, "id": sectionData[i].id});
@@ -1001,11 +1029,12 @@ var updateGraph = function () {
                 yMax = newPercent;
             }
         }
+        
         grades.push(section);
     }
 
-    // max value is either 100% or 10% higher than the max (if < 100%)
-    yMax = d3.min([1, yMax + 0.1]);
+    // max value is either 102% or 10% higher than the max (if < 100%)
+    yMax = d3.min([1.02, yMax + 0.1]);
 
     // height/width/etc
     var svgWidth = parseInt($("#graph_container").css("width"), 10); // outer width
@@ -1017,8 +1046,8 @@ var updateGraph = function () {
 
     // x scale (scale for the whole chart)
     var x0 = d3.scale.ordinal()
-        .domain(utils.gradeList)
-        .rangeRoundBands([padding, width], 0.1);
+            .domain(utils.gradeList)
+            .rangeRoundBands([padding, width], 0.1);
 
     // x scale (scale for each grade)
     var x1 = d3.scale.ordinal()
