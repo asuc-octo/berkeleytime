@@ -29,13 +29,6 @@ var ndef = function () {
     return false;
 };
 
-var negativeToNA = function(data) {
-    if (data < 0) {
-        return "N/A";
-    }
-    return data
-}
-
 if (ndef(window, $, console, _, d3, utils)) {
     return null;
 }
@@ -444,7 +437,6 @@ grades.getSectionsAndUpdateFields = function (callback) {
     }
 
     $.when($.getJSON("/grades/course_grades/" + courseID + "/", function (json) {
-        console.log(json);
         grades.sections = json;
         grades.populateFieldsFromSections(json);
     })).done(function () {
@@ -693,8 +685,6 @@ var updateSectionInfo = function (sectionData) {
         });
     }
     
-    console.log(sectionData);
-
     utils.updateHTML("#info #course_averages #course_title", sectionData.title);
     utils.updateHTML("#info #course_averages #course_subtitle", sectionData.subtitle);
     if (sectionData.course_gpa > 0) {
@@ -905,7 +895,6 @@ var addSection = function (sectionData) {
         var instructor = sectionData.instructor;
         var semester = sectionData.semester;
         var bgcolor = sectionNumToColor(next);
-        console.log(sectionData);
         storeSectionData(sectionData, next);
         updateSectionInfo(sectionData);
         updateInfo(next, sectionData.section_letter);
@@ -967,7 +956,6 @@ grades.getGradesAndAddSection = function (sectionIDs, barText, callback) {
         return;
     var url = sectionIDs.join("&") + "/";
     $.getJSON("/grades/sections/" + url, function (json) {
-        console.log(json);
         
         json.sectionIDs = sectionIDs;
         var sectionData = compileSectionData(json, barText);
