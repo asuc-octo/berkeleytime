@@ -34,6 +34,11 @@ def grade_context():
         cache.set("grade__courses", rtn, 86400)
     return {"courses": rtn}
 
+def get_or_zero(d, k):
+    if k in d and d[k] is not None:
+        return d[k]
+    return 0
+
 @raise_404_on_error
 def grade_render(request):
     """
@@ -73,12 +78,13 @@ def grade_json(request, grade_ids):
         course = Course.objects.get(id=sections.values_list("course", flat=True)[0])
         total = sections.aggregate(Sum("total"))["total__sum"]
         percentile_ceiling = 0
+        print(sections.aggregate(Sum("p")))
         for grade, display in STANDARD_GRADES:
             grade_entry = {}
             if grade == "d":
-                numerator = sum([sections.aggregate(Sum(d))[d + "__sum"] for d in ("d1", "d2", "d3")])
+                numerator = sum([get_or_zero(sections.aggregate(Sum(d)), d + "__sum") for d in ("d1", "d2", "d3")])
             else:
-                numerator = sections.aggregate(Sum(grade))[grade + "__sum"]
+                numerator = get_or_zero(sections.aggregate(Sum(grade)), grade + "__sum")
             actual_total += numerator
             percent = numerator / total if total != 0 else 0.0
             grade_entry["percent"] = round(percent, 2)
@@ -103,7 +109,7 @@ def grade_json(request, grade_ids):
             rtn["section_letter"] = "N/A"
 
         return render_to_json(rtn)
-    except Exception as e:
+    except NameError as e:
         print e
         return render_to_empty_json()
 
