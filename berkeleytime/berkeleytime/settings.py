@@ -21,8 +21,6 @@ DEBUG = IS_LOCALHOST
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ("Yuxin Zhu", "zhuyxn@gmail.com"),
-    ("Noah Gilmore", "noah.w.gilmore@gmail.com"),
     ("ASUC CTO", "ctochief@asuc.org"),
     ("ASUC OCTO Berkeleytime Team", "octo.berkeleytime@asuc.org"),
     ("Scott Lee", "scott.lee.3898@berkeley.edu"),
