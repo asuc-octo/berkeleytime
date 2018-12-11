@@ -952,9 +952,12 @@ var removeSection = function ($section) {
 // SideEffects: queries the server for the cumulative grade distribution of all of the sections
 //              listed in "sectionIDs". Should be called when a section is added.
 grades.getGradesAndAddSection = function (sectionIDs, barText, callback) {
-    if (sectionIDs.length === 0)
+    if (sectionIDs.length === 0) {
         return;
+    }
+
     var url = sectionIDs.join("&") + "/";
+    
     $.getJSON("/grades/sections/" + url, function (json) {
         
         json.sectionIDs = sectionIDs;

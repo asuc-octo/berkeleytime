@@ -109,7 +109,7 @@ def grade_json(request, grade_ids):
             rtn["section_letter"] = "N/A"
 
         return render_to_json(rtn)
-    except NameError as e:
+    except Exception as e:
         print e
         return render_to_empty_json()
 
