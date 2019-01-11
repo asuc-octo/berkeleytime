@@ -10,6 +10,11 @@ CURRENT_SEMESTER_DISPLAY = 'Spring 2019'
 # SIS API Keys
 SIS_TERM_ID = 2192
 
+INSTRUCTION = {
+    'instruction_start': datetime.datetime(2018, 1, 22, 00, 00),
+    'instruction_end':datetime.datetime(2018, 5, 3, 00, 00)
+}
+
 TELEBEARS = {
     'phase1_start': datetime.datetime(2018, 10, 15),
     'phase2_start': datetime.datetime(2018, 11, 13),

@@ -6,7 +6,7 @@ from rfc3339 import rfc3339
 import datetime
 from dateutil.relativedelta import relativedelta, MO
 from rfc3339 import rfc3339
-from berkeleytime.config.semesters.fall2018 import INSTRUCTION as instruction
+from berkeleytime.config.semesters.spring2019 import INSTRUCTION as instruction
 
 # Return a dictionary of useful information from a list of sections
 # with each containing sections_info and finals_info
