@@ -352,7 +352,7 @@ def export_schedule(request):
     for event in events:
         event = service.events().insert(calendarId='primary', body=event).execute()
 
-        return HttpResponse(status=200)
+    return HttpResponse(status=200)
 
 def parse_sections_ccns(sections_ccns):
     """
