@@ -4,7 +4,7 @@ from rfc3339 import rfc3339
 # from datetime import datetime
 # from datetime import date
 import datetime
-from dateutil.relativedelta import relativedelta, MO
+from dateutil.relativedelta import *
 from rfc3339 import rfc3339
 from berkeleytime.settings import INSTRUCTION as instruction
 
@@ -78,7 +78,7 @@ def section_to_event(section):
         section_dict = get_section_info(section)
 
         days_string = days_num_to_string(section_dict['days'])
-        start_date = rfc3339(instruction["instruction_start"] + relativedelta(weekday=int(section_dict['days'][0])-1))[:11]
+        start_date = rfc3339(instruction["instruction_start"] + get_next_section_weekday(instruction["instruction_start"].weekday(), section_dict['days']))[:11]
         end_date = rfc3339(instruction["instruction_end"], utc=True).replace("-", "").replace(":", "")
 
         summary = '{} {}'.format(section_dict['abbreviation'], section_dict['course_number'])
@@ -132,3 +132,10 @@ def days_num_to_string(days_num):
     for num in days_num:
         day_string += days_dict[num] + ","
     return day_string[:-1]
+
+def get_next_section_weekday(instruction_start, section_days):
+    section_days = [int(x) - 1 for x in section_days]
+    for day in section_days:
+        if day >= instruction_start:
+            return relativedelta(weekday=day)
+    return relativedelta(weekday=section_days[0])
