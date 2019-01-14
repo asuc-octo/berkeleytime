@@ -344,16 +344,20 @@ def delete_schedule(request):
         return HttpResponse(status=400)
 
 def export_schedule(request):
-    service = get_google_cal_service(request)
+    try:
+        service = get_google_cal_service(request)
 
-    parsed_section_ids = parse_section_ids(request)
-    events = map(section_to_event, parsed_section_ids)
+        parsed_section_ids = parse_section_ids(request)
+        events = map(section_to_event, parsed_section_ids)
 
-    for event in events:
-        event = service.events().insert(calendarId='primary', body=event).execute()
+        for event in events:
+            service.events().insert(calendarId='primary', body=event).execute()
 
-    return HttpResponse(status=200)
-
+        return HttpResponse(status=200)
+    except Exception as e:
+        print e
+        return HttpResponse(status=400)
+    
 def parse_sections_ccns(sections_ccns):
     """
     Helper method for parsing section CCNs into section info dictionary
