@@ -9,7 +9,7 @@ every semester.
 Every time the bookstore updates, this file will need to be updated. For more
 info see https://github.com/yuxinzhu/campanile/wiki/New-Semester-Runbook
 """
-from semesters import spring2018 as current_bookstore_semester_settings
+from semesters import spring2019 as current_bookstore_semester_settings
 
 BOOKSTORE_SEMESTER = current_bookstore_semester_settings.CURRENT_SEMESTER
 BOOKSTORE_YEAR = current_bookstore_semester_settings.CURRENT_YEAR
