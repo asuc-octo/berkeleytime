@@ -354,7 +354,6 @@ def export_schedule(request):
 
     return HttpResponse(status=200)
 
-
 def parse_sections_ccns(sections_ccns):
     """
     Helper method for parsing section CCNs into section info dictionary
