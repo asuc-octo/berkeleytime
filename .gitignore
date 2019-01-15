@@ -8,5 +8,5 @@ venv
 .vagrant
 .idea
 vagrant/data/data.tar.gz
-
+build/postgres-data
 .sass-cache/
