@@ -9,6 +9,9 @@ services:
      - ../berkeleytime:/berkeleytime
     environment:
      - "PYTHONUNBUFFERED=1"
+     - "GOOGLE_CLIENT_ID=***REMOVED***"
+     - "GOOGLE_CLIENT_SECRET=***REMOVED***"
+     - "GOOGLE_TOKEN_URI=https://accounts.google.com/o/oauth2/token"
   redis:
     image: "redis:alpine"
   postgres:
