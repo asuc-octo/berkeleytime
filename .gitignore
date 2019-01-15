@@ -10,3 +10,5 @@ venv
 vagrant/data/data.tar.gz
 build/postgres-data
 .sass-cache/
+postgres-data.tar.gz
+bt_main.sql
