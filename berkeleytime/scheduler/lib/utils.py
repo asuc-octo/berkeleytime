@@ -31,8 +31,7 @@ def parse_section_ids(request):
     @return: a list of section ids
     """
     try:
-        input_name = request.POST.keys()[1]
-        passed_schedule = json.loads(request.POST.get(input_name))["sectionInfo"][0]
+        passed_schedule = json.loads(request.POST.get("export_sched_data"))["sectionInfo"][0]
         if type(passed_schedule) is dict:
             passed_schedule = passed_schedule["sections"]
         section_ccns_list = [int(i) for i in passed_schedule]
