@@ -1,0 +1,5 @@
+FROM berkeleytime/base
+MAINTAINER ASUC OCTO octo.berkeleytime@asuc.org
+
+COPY . .
+RUN rm -r berkeleytime/static_media/
