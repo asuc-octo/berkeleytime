@@ -316,32 +316,22 @@ def save_schedule(request):
     :return: we return the JSON of the schedule we save and status code 200 if successful
              else we return an empty string with status code 500
     """
-    try:
-        print "started"
-        parsed_section_ids = parse_section_ids(request)
-        schedule_id = parse_schedule_id(request)
-        schedule_instance = Schedule(user_email=parse_gmail(request), uid=schedule_id)
-        schedule_instance.save()
-        schedule_instance.sections.add(*parsed_section_ids)
+    parsed_section_ids = parse_section_ids(request)
+    schedule_id = parse_schedule_id(request)
+    schedule_instance = Schedule(user_email=parse_gmail(request), uid=schedule_id)
+    schedule_instance.save()
+    schedule_instance.sections.add(*parsed_section_ids)
 
-        schedules_instances = Schedule.objects.filter(user_email=parse_gmail(request))
-        return HttpResponse(status=200)
-    except Exception as e:
-        print e
-        return HttpResponse(status=400)
+    return HttpResponse(status=200)
 
 def delete_schedule(request):
-    try:
-        schedule_id = parse_schedule_id(request)
-        schedules_instances = Schedule.objects.filter(user_email=parse_gmail(request))
-        for schedule in schedules_instances:
-            if schedule.uid == schedule_id:
-                schedule.delete()
-                return HttpResponse(status=200)
-        return HttpResponse(status=400)
-    except Exception as e:
-        print e
-        return HttpResponse(status=400)
+    schedule_id = parse_schedule_id(request)
+    schedules_instances = Schedule.objects.filter(user_email=parse_gmail(request))
+    for schedule in schedules_instances:
+        if schedule.uid == schedule_id:
+            schedule.delete()
+            return HttpResponse(status=200)
+    return HttpResponse(status=400)
 
 def export_schedule(request):
     service = get_google_cal_service(request)
