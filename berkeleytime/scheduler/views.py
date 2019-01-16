@@ -316,7 +316,7 @@ def save_schedule(request):
     :return: we return the JSON of the schedule we save and status code 200 if successful
              else we return an empty string with status code 500
     """
-    parsed_section_ids = parse_section_ids(request)
+    parsed_section_ids = parse_section_ids(request, "save_sched_data")
     schedule_id = parse_schedule_id(request)
     schedule_instance = Schedule(user_email=parse_gmail(request), uid=schedule_id)
     schedule_instance.save()
@@ -336,7 +336,7 @@ def delete_schedule(request):
 def export_schedule(request):
     service = get_google_cal_service(request)
 
-    parsed_section_ids = parse_section_ids(request)
+    parsed_section_ids = parse_section_ids(request, "export_sched_data")
     events = map(section_to_event, parsed_section_ids)
 
     for event in events:
