@@ -53,9 +53,6 @@ current:
   - name: "Sean Meng"
     role: "ML / Alg"
     image: "images/about/oski.jpg"
-  - name: "Seiji Sakiyama"
-    role: "ML / Alg"
-    image: "images/about/oski.jpg"
 
 past:
   - name: "Alan Rosenthal"
