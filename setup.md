@@ -10,7 +10,7 @@ comes with Docker in most cases (such as MacOS).
 
 To run Berkeleytime, make sure this repo is clone. From the top level, first download the development
 Postgres data with `make init`. This will create a folder `build/postgres-data`. Don't try to push it to Github - 
-its a local copy of the production data. 
+its a local copy of the production data. Note: If you recieve the error `make: wget: No such file or directory`, make sure you have `wget` installed.
 
 To boot the services, run `make up`. This will boot 3 containers (redis, postgres, Django). Wait for both
 Postgres and Django to be running before you proceed. Django will say 
