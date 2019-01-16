@@ -22,16 +22,16 @@ def parse_gmail(request):
         return ""
 
 
-def parse_section_ids(request):
+def parse_section_ids(request, key):
     """
     Takes a request and tries to parse a list of Section instances from the db
     using section ccns included in the request, otherwise return an empty list
 
-    @param request: a request
+    @param request: a request, key: the key in the POST dict to extract
     @return: a list of section ids
     """
     try:
-        passed_schedule = json.loads(request.POST.get("export_sched_data"))["sectionInfo"][0]
+        passed_schedule = json.loads(request.POST.get(key))["sectionInfo"][0]
         if type(passed_schedule) is dict:
             passed_schedule = passed_schedule["sections"]
         section_ccns_list = [int(i) for i in passed_schedule]
