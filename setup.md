@@ -1,63 +1,54 @@
 # Setting up Berkeleytime
 
-reclone the repo! the `requirements.txt` has changed.
+## For Local Developers
 
-## Installing Services
-### Mac
-    brew update
-    brew install postgresql
-    brew services start postgresql
-    brew install redis
-    brew services start redis
+This project uses [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/).
+If you don't know what containers are, read this [article](https://medium.freecodecamp.org/demystifying-containers-101-a-deep-dive-into-container-technology-for-beginners-d7b60d8511c1).
+Docker is a container platform and Docker Compose is a a tool for defining and running multi-container 
+Docker applications. Make sure you have both install on your computer before you start. Docker Compose
+comes with Docker in most cases (such as MacOS).
 
-### Linux
-    apt-get update
-    apt-get install postgresql
-    apt-get install redis
+To run Berkeleytime, make sure this repo is clone. From the top level, first download the development
+Postgres data with `make init`. This will create a folder `build/postgres-data`. Don't try to push it to Github - 
+its a local copy of the production data. Note: If you recieve the error `make: wget: No such file or directory`, make sure you have `wget` installed.
 
-### All
-    psql -d postgres -U postgres
-    create database bt_main;
-    \q
-    psql -d bt_main -U postgres
-    create role bt with superuser login;
-    alter role bt password 'yuxinsucks';
-    \q
-    psql bt_main < bt_main.bak
+To boot the services, run `make up`. This will boot 3 containers (redis, postgres, Django). Wait for both
+Postgres and Django to be running before you proceed. Django will say 
 
-## Pip
-    pip install --upgrade pip
-    pip install virtualenv
-    cd berkeleytime-copy
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-
-## Running
-    cd berkeleytime 
-    python manage.py runserver
+    Starting development server at http://0.0.0.0:8000/
     
-## Example
-This is a list of commands I ran to get it working on Ubuntu. The ones you have to run should be similar, minus all the weird `apt-get` calls. 
+And Postgres will say
 
-    sudo apt-get update
-    sudo apt-get install python-pip
-    git clone https://github.com/hantaowang/berkeleytime-copy
-    cd berkeleytime-copy/
-    pip install virtualenv
-    virtualenv venv
-    source venv/bin/activate
-    sudo apt-get install python-dev       build-essential libssl-dev libffi-dev      libxml2-dev libxslt1-dev zlib1g-dev      python-pip
-    sudo apt-get install libjpeg-dev
-    sudo apt-get install libncurses5-dev
-    pip install -r requirements.txt
-    sudo apt-get install redis
-    sudo apt-get install postgresql postgresql-contrib
-    psql -U postgres
-    create database bt_main;
-    create role bt with superuser login;
-    alter role bt password 'yuxinsucks';
-    \q
-    psql bt_main < bt_main.bak
-    cd berkeleytime/
-    python manage.py runserver
+    LOG:  database system is ready to accept connections
+    
+To remove the cluster, **DO NOT USE CONTROL-C** or anything to stop or terminate the docker compose
+process. Instead use `make down` to safely kill the cluster.
+
+If you modify the source code, you will not have to do anything to restart the cluster or services.
+Django will automatically detect a change and restart itself. 
+
+## For Maintainers
+
+The Makefile provides some descriptions of how the commands work together. `make base`, `make prod`, 
+and `make db` are used to build the images and push them to Dockerhub. The local dev image uses the base
+image and them attaches the local copy of the source code as a volume. The prod image packages the local
+copy of the code into the image itself. 
+
+The database image is the most unique. `make db` produces an image that is used solely to set up
+a database to load the dumped SQL data. This SQL data is dumped from the production database using
+`pg_dump` and is saved into the `berkeleytime-dev-db` Google Storage Bucket. To run `make db`, you must
+first create your own dump or download a previous one from the [bucket](https://storage.googleapis.com/berkeleytime-dev-db/bt_main.sql)
+and save it into `build/`.
+ 
+After running `make db`, you must run `docker run berkeleytime/db` to initialize the database. This
+will load the data into the actual database and could take a while. After this finishes, the container
+will be a completed db. However to save the db so that other users do not have to load the dump every time they
+boot a cluster, we will save a copy of the data folder, which backs Postgres. Run
+
+    docker cp XXXX:/var/lib/postgresql/data build/postgres-data
+    tar czf postgres-data.tar.gz build/postgres-data
+
+where `XXXX` is the container ID resulting from the previous `docker run` command. The `tar` command
+will tar up the data directory. Then you can upload it to the same Google bucket. The user will then use
+`make init` to download and untar this directory and save it into `build/` so that Docker Compose can
+use it as a volume for Postgres.

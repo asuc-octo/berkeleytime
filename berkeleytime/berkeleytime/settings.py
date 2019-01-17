@@ -21,13 +21,12 @@ DEBUG = IS_LOCALHOST
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ("ASUC CTO", "ctochief@asuc.org"),
     ("ASUC OCTO Berkeleytime Team", "octo.berkeleytime@asuc.org"),
     ("Scott Lee", "scott.lee.3898@berkeley.edu"),
     ("Will Wang", "hwang97@berkeley.edu"),
 )
 
-INTERNAL_IPS = ('127.0.0.1',)
+INTERNAL_IPS = ('0.0.0.0',)
 
 MANAGERS = ADMINS
 # SOCIALACCOUNT_ADAPTER = 'account.socialaccount.SocialAccountAdapter'
@@ -67,7 +66,7 @@ elif IS_LOCALHOST:
     CACHES = {
         'default': {
             'BACKEND': "redis_cache.RedisCache",
-            'LOCATION': '127.0.0.1:6379',
+            'LOCATION': 'redis:6379',
         }
     }
 
@@ -79,7 +78,7 @@ if IS_LOCALHOST:
             'NAME': 'bt_main',
             'USER': 'bt',
             'PASSWORD': 'yuxinsucks',
-            'HOST': 'localhost',
+            'HOST': 'postgres',
             'PORT': '',
         }
     }
@@ -105,9 +104,8 @@ if IS_LOCALHOST:
     EMAIL_USE_TLS = False
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
     DOMAIN_NAME = "berkeleytime.com"
-    SITE_ID = 1
+    SITE_ID = 3
 
-    URL = "localhost:3000"
 elif IS_STAGING:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
@@ -127,7 +125,7 @@ elif IS_STAGING:
 
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
     DOMAIN_NAME = "berkeleytime.com"
-    SITE_ID = 2
+    SITE_ID = 3
 
     AWS_HEADERS = {
         'Cache-Control': 'max-age=0',
@@ -183,7 +181,7 @@ else:
     AWS_AFFILIATE_SECRET = ""
 
 # Please replace with Amazon Affiliate tag
-AMAZON_AFFILIATE_TAG = ''
+AMAZON_AFFILIATE_TAG = 'berkeleytim06-20'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
