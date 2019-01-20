@@ -49,137 +49,126 @@ def login_to_contiune(request):
 
 
 def select_classes(request):
-    try:
-        if is_get(request):
-            if not request.user.is_authenticated():
-                return render_to_response("scheduler/schedule.html", {
-                "courses": []
-            }, context_instance=RequestContext(request))
-            favorited_course_data = []
-            all_course_data = []
-
-            user = BerkeleytimeUserProfile.objects.get(user=request.user)
-            favorite_playlist, _ = Playlist.objects.get_or_create(
-                user_email=parse_gmail(request),
-                name="Favorites",
-                category="custom"
-            )
-            favorite_courses = favorite_playlist.courses.all()
-            all_courses = Playlist.objects.get(category="semester", name=CURRENT_SEMESTER_DISPLAY).courses.all()
-
-            try:
-                selected_courses = request.session['all_course']
-            except KeyError:
-                selected_courses = []
-
-            # Pass only courses that are available this semester to the frontend
-            # TODO Allow users to select some other semester
-            # TODO instead of hard coding additional fields we should have a singular source of truth somewhere
-            for course in all_courses:
-                #if course is not selected already
-                if str(course.id) not in selected_courses:
-                    course_info_dict = {
-                        'name': str(course),
-                        'course_id': str(course.id)
-                    }
-                    if course in favorite_courses:
-                        # Prefetch additional data for favorite courses
-                        course_info_dict.update({
-                            'units': course.units,
-                            'enrollment_percentage': str(int(course.enrolled_percentage * 100)),
-                            'letter_average': course.letter_average,
-                            'waitlisted': course.waitlisted,
-                        })
-                        favorited_course_data.append(course_info_dict)
-                        # selected_courses.append(str(course.id))
-                    all_course_data.append(course_info_dict)
-
-            # all_course_data = sort_course_dicts(all_course_data)
+    if is_get(request):
+        if not request.user.is_authenticated():
             return render_to_response("scheduler/schedule.html", {
-                "all_courses": all_course_data,
-                "all_courses_json": json.dumps(all_course_data, cls=DjangoJSONEncoder),
-                "courses": favorited_course_data,
-                'selected_courses': json.dumps(selected_courses)
-            }, context_instance=RequestContext(request))
-    except Exception as e:
-        print e
-        raise Http404
+            "courses": []
+        }, context_instance=RequestContext(request))
+        favorited_course_data = []
+        all_course_data = []
+
+        user = BerkeleytimeUserProfile.objects.get(user=request.user)
+        favorite_playlist, _ = Playlist.objects.get_or_create(
+            user_email=parse_gmail(request),
+            name="Favorites",
+            category="custom"
+        )
+        favorite_courses = favorite_playlist.courses.all()
+        all_courses = Playlist.objects.get(category="semester", name=CURRENT_SEMESTER_DISPLAY).courses.all()
+
+        try:
+            selected_courses = request.session['all_course']
+        except KeyError:
+            selected_courses = []
+
+        # Pass only courses that are available this semester to the frontend
+        # TODO Allow users to select some other semester
+        # TODO instead of hard coding additional fields we should have a singular source of truth somewhere
+        for course in all_courses:
+            #if course is not selected already
+            if str(course.id) not in selected_courses:
+                course_info_dict = {
+                    'name': str(course),
+                    'course_id': str(course.id)
+                }
+                if course in favorite_courses:
+                    # Prefetch additional data for favorite courses
+                    course_info_dict.update({
+                        'units': course.units,
+                        'enrollment_percentage': str(int(course.enrolled_percentage * 100)),
+                        'letter_average': course.letter_average,
+                        'waitlisted': course.waitlisted,
+                    })
+                    favorited_course_data.append(course_info_dict)
+                    # selected_courses.append(str(course.id))
+                all_course_data.append(course_info_dict)
+
+        # all_course_data = sort_course_dicts(all_course_data)
+        return render_to_response("scheduler/schedule.html", {
+            "all_courses": all_course_data,
+            "all_courses_json": json.dumps(all_course_data, cls=DjangoJSONEncoder),
+            "courses": favorited_course_data,
+            'selected_courses': json.dumps(selected_courses)
+        }, context_instance=RequestContext(request))
+
 
 def schedule_render(request):
 
-    try:
-        if is_get(request):
-            # Case 1: user is not logged in
-            if not request.user.is_authenticated():
-                return login_to_contiune(request)
-                # return select_classes(request)   # TODO need to discuss what to return for not authenticated user
+    if is_get(request):
+        # Case 1: user is not logged in
+        if not request.user.is_authenticated():
+            return login_to_contiune(request)
+            # return select_classes(request)   # TODO need to discuss what to return for not authenticated user
 
-            # Checks if user is an authorized user and redirects request if not
-            # file = open("./scheduler/authorized_users.txt", "r")
-            # authorized = True #CHANGE THIS BACK
-            # user_email = parse_gmail(request)
-            # for line in file:
-            #     if user_email == line.strip():
-            #         authorized = True
-            #         break
-            # file.close()
-            # authorized = True
-            # if not authorized:
-            #     return under_construction(request)
+        # Checks if user is an authorized user and redirects request if not
+        # file = open("./scheduler/authorized_users.txt", "r")
+        # authorized = True #CHANGE THIS BACK
+        # user_email = parse_gmail(request)
+        # for line in file:
+        #     if user_email == line.strip():
+        #         authorized = True
+        #         break
+        # file.close()
+        # authorized = True
+        # if not authorized:
+        #     return under_construction(request)
 
-            schedules = Schedule.objects.filter(user_email=parse_gmail(request))
+        schedules = Schedule.objects.filter(user_email=parse_gmail(request))
 
-            # Case 2: User logged in but no saved schedules
-            if len(schedules) < 1:
-                return select_classes(request)
+        # Case 2: User logged in but no saved schedules
+        if len(schedules) < 1:
+            return select_classes(request)
 
-            # Case 3: User logged in and has at least one saved schedule:
-            # return all saved schedules
-            saved_section_objects = []
-            wrapped_schedules = []
-            for schedule in schedules:
-                wrapped_schedules.append(ScheduleWrapper.from_schedule(schedule))
-                for section in schedule.sections.all():
-                    saved_section_objects.append(section)
+        # Case 3: User logged in and has at least one saved schedule:
+        # return all saved schedules
+        saved_section_objects = []
+        wrapped_schedules = []
+        for schedule in schedules:
+            wrapped_schedules.append(ScheduleWrapper.from_schedule(schedule))
+            for section in schedule.sections.all():
+                saved_section_objects.append(section)
 
-            all_sections_info_dict = section_objects_to_info_dict(saved_section_objects)
+        all_sections_info_dict = section_objects_to_info_dict(saved_section_objects)
 
-            if DEBUG_RENDER:
-                print section_objects_to_info_dict
-                html = "<html><body> %s </body></html>" % str(section_objects_to_info_dict)
-                return HttpResponse(html)
+        if DEBUG_RENDER:
+            print section_objects_to_info_dict
+            html = "<html><body> %s </body></html>" % str(section_objects_to_info_dict)
+            return HttpResponse(html)
 
-            return render_to_response("scheduler/saved_schedule.html", {
-                    'all_sections': all_sections_info_dict,
-                    'schedules': wrapped_schedules,
-                }, context_instance=RequestContext(request))
+        return render_to_response("scheduler/saved_schedule.html", {
+                'all_sections': all_sections_info_dict,
+                'schedules': wrapped_schedules,
+            }, context_instance=RequestContext(request))
 
-    except Exception as e:
-        print e
-        raise Http404
 
 
 def select_sections_json(request, course_id):
-    try:
-        # TODO: This query seems excessive can probably shrink it down
-        # Get the course in the current semester that has the request course_id
-        course = Playlist.objects.get(
-            category="semester",
-            name=CURRENT_SEMESTER_DISPLAY
-        ).courses.all().get(id=course_id)
-        course_dict = {}
-        course_dict.update({
-            'name': str(course),
-            'units': course.units,
-            'enrollment_percentage': str(int(course.enrolled_percentage*100)),
-            'letter_average': course.letter_average,
-            'waitlisted': course.waitlisted,
-            'course_id': str(course.id)
-        })
-        return render_to_json(course_dict)
-    except Exception as e:
-        print e
-        return render_to_empty_json()
+    # TODO: This query seems excessive can probably shrink it down
+    # Get the course in the current semester that has the request course_id
+    course = Playlist.objects.get(
+        category="semester",
+        name=CURRENT_SEMESTER_DISPLAY
+    ).courses.all().get(id=course_id)
+    course_dict = {}
+    course_dict.update({
+        'name': str(course),
+        'units': course.units,
+        'enrollment_percentage': str(int(course.enrolled_percentage*100)),
+        'letter_average': course.letter_average,
+        'waitlisted': course.waitlisted,
+        'course_id': str(course.id)
+    })
+    return render_to_json(course_dict)
 
 
 def select_sections_params(request):
@@ -254,60 +243,56 @@ def view_schedules_params(request):
 def view_schedules(request):
     # constraints here, refresh on change
     # start/end time, allow conflicts, dead days
-    try:
-        if not request.user.is_authenticated():
-            return schedule_render(request)
-        sections_data = request.session['sections_data']
+    if not request.user.is_authenticated():
+        return schedule_render(request)
+    sections_data = request.session['sections_data']
 
-        # user refreshed, but session has expired
-        if sections_data is None:
-            return redirect('/scheduler/')
-        sections_ccns = sections_data.get('ccns')
-        constraint_bits = sections_data.get('constraintBits')
-        custom_breaks = sections_data.get('breaks')
+    # user refreshed, but session has expired
+    if sections_data is None:
+        return redirect('/scheduler/')
+    sections_ccns = sections_data.get('ccns')
+    constraint_bits = sections_data.get('constraintBits')
+    custom_breaks = sections_data.get('breaks')
 
-        sections_dict = parse_sections_ccns(sections_ccns)
-        sections_dict.update(parse_custom_breaks(custom_breaks))
-        constraints = {}
+    sections_dict = parse_sections_ccns(sections_ccns)
+    sections_dict.update(parse_custom_breaks(custom_breaks))
+    constraints = {}
 
-        # TODO assume the type for time objects passed from frontend is datetime object
-        # TODO (Kelvin): ask Flora what these are for / how constraint bits used
+    # TODO assume the type for time objects passed from frontend is datetime object
+    # TODO (Kelvin): ask Flora what these are for / how constraint bits used
 
-        if "start_time" in constraints:
-            start_time = constraints.start_time
-        else:
-            start_time = datetime(2000, 1, 1, hour=00, minute=00, second=0)
-        if "end_time" in constraints:
-            end_time = constraints.end_time
-        else:
-            # TODO a really large end time for marking no end time
-            end_time = datetime(2200, 1, 1, hour=00, minute=00, second=0)
-        # initial_constraints.append(LimitStartEndTimes(start_time, end_time))
+    if "start_time" in constraints:
+        start_time = constraints.start_time
+    else:
+        start_time = datetime(2000, 1, 1, hour=00, minute=00, second=0)
+    if "end_time" in constraints:
+        end_time = constraints.end_time
+    else:
+        # TODO a really large end time for marking no end time
+        end_time = datetime(2200, 1, 1, hour=00, minute=00, second=0)
+    # initial_constraints.append(LimitStartEndTimes(start_time, end_time))
 
-        parsed_constraint_funcs = parse_constraint_bits(constraint_bits)
+    parsed_constraint_funcs = parse_constraint_bits(constraint_bits)
 
-        # Debug output
-        if DEBUG_VIEW_SCHEDULES:
-            print sections_dict
-            print parsed_constraint_funcs
+    # Debug output
+    if DEBUG_VIEW_SCHEDULES:
+        print sections_dict
+        print parsed_constraint_funcs
 
-        # Make a scheduleCSP object and generate schedules, returns a list of ScheduleWrapper objects
-        schedule_csp = ScheduleCSP(sections_dict, parsed_constraint_funcs[0],
-                                   parsed_constraint_funcs[2], parsed_constraint_funcs[1])
+    # Make a scheduleCSP object and generate schedules, returns a list of ScheduleWrapper objects
+    schedule_csp = ScheduleCSP(sections_dict, parsed_constraint_funcs[0],
+                               parsed_constraint_funcs[2], parsed_constraint_funcs[1])
 
-        # TODO should we remove the amount constraint on generating schedules?
-        generated_schedules = schedule_csp.generate_schedules()
-        sections = [section for section_list in sections_dict.itervalues() for section in section_list]
-        all_sections_info_dict = section_objects_to_info_dict(sections)
+    # TODO should we remove the amount constraint on generating schedules?
+    generated_schedules = schedule_csp.generate_schedules()
+    sections = [section for section_list in sections_dict.itervalues() for section in section_list]
+    all_sections_info_dict = section_objects_to_info_dict(sections)
 
-        return render_to_response("scheduler/view_schedules.html",
-                                  {'all_sections': all_sections_info_dict,
-                                   'schedules': generated_schedules},
-                                   context_instance=RequestContext(request))
+    return render_to_response("scheduler/view_schedules.html",
+                              {'all_sections': all_sections_info_dict,
+                               'schedules': generated_schedules},
+                               context_instance=RequestContext(request))
 
-    except Exception as e:
-        print e
-        raise Http404
 
 def save_schedule(request):
     """
