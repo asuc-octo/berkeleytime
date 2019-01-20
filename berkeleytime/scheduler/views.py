@@ -2,7 +2,7 @@ import json
 import re
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.shortcuts import render_to_response
 from django.shortcuts import redirect
 from django.http import Http404
@@ -345,6 +345,8 @@ def parse_sections_ccns(sections_ccns):
             sections_list.append(section)
         except ObjectDoesNotExist:
             continue
+        except MultipleObjectsReturned:
+            raise Exception("MultipleObjectsReturned! CCN: {}".format(ccn))
 
     # Turn section objects into {section name : [section objects]}
     # e.g. {"cs170-dis": [section_cs170_d1, section_cs170_d2, section_cs170_d3]}
