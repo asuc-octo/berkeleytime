@@ -8,6 +8,7 @@ venv
 .idea
 vagrant/data/data.tar.gz
 build/postgres-data
+build/requirements.txt
 .sass-cache/
 postgres-data.tar.gz
 bt_main.sql

@@ -4,7 +4,9 @@
 # Base has all the dependencies for the Django server installed. It is used as a starting
 # point for the local dev and production environments.
 base:
+	cp requirements.txt build/requirements.txt
 	docker build -t berkeleytime/base -f build/Dockerfile.base build
+	rm build/requirements.txt
 	docker push berkeleytime/base
 
 # The production image builds on top of the base image and packages the source code
