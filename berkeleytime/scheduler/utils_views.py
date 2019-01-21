@@ -68,6 +68,7 @@ def get_section_info(section):
         return section_info_dict
     except AttributeError as e:
         # Attribute error occured, likely due to either start_time, end_time, final_start, or final_end being None
+        print "AttributeError", e
         return {}
 
 # Converts section objects into Google Calendar event data
@@ -76,6 +77,9 @@ def section_to_event(section):
     date_today = rfc3339(datetime.datetime.now())[:11]
 
     section_dict = get_section_info(section)
+
+    if not section_dict:
+        return None
 
     days_string = days_num_to_string(section_dict['days'])
     start_date = rfc3339(instruction["instruction_start"] + get_next_section_weekday(instruction["instruction_start"].weekday(), section_dict['days']))[:11]
