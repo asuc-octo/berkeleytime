@@ -22,9 +22,7 @@ from catalog.models import Course, Section, Playlist
 from account.models import BerkeleytimeUserProfile
 from scheduler.models import Schedule
 
-from berkeleytime.settings import CURRENT_SEMESTER
-from berkeleytime.settings import CURRENT_YEAR
-from berkeleytime.settings import CURRENT_SEMESTER_DISPLAY
+from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR, CURRENT_SEMESTER_DISPLAY
 
 from berkeleytime.utils.requests import render_to_empty_json, render_to_json
 
@@ -341,12 +339,11 @@ def parse_sections_ccns(sections_ccns):
     sections_list = []
     for ccn in sections_ccns:
         try:
-            section = Section.objects.get(ccn=ccn, semester=CURRENT_SEMESTER, year=CURRENT_YEAR)
+            section = Section.objects.filter(ccn=ccn, semester=CURRENT_SEMESTER, year=CURRENT_YEAR)\
+                .order_by("-last_updated")[0]
             sections_list.append(section)
-        except ObjectDoesNotExist:
+        except IndexError:
             continue
-        except MultipleObjectsReturned:
-            raise Exception("MultipleObjectsReturned! CCN: {}".format(ccn))
 
     # Turn section objects into {section name : [section objects]}
     # e.g. {"cs170-dis": [section_cs170_d1, section_cs170_d2, section_cs170_d3]}
