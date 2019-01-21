@@ -84,8 +84,8 @@ def section_to_event(section):
     summary = '{} {}'.format(section_dict['abbreviation'], section_dict['course_number'])
     location = section_dict['location'] or ''
     instructor = section_dict['instructor'] or ''
-    startDateTime = '{}{}:00-07:00'.format(start_date, section_dict['start_time'])
-    endDateTime = '{}{}:00-07:00'.format(start_date, section_dict['end_time'])
+    startDateTime = '{}{}:00'.format(start_date, section_dict['start_time'])
+    endDateTime = '{}{}:00'.format(start_date, section_dict['end_time'])
     recurranceDetails = 'RRULE:FREQ=WEEKLY;BYDAY={};UNTIL={}'.format(days_string, end_date)
 
     event = {
