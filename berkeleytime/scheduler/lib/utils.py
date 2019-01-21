@@ -1,8 +1,7 @@
 from scheduler.models import Schedule
 from catalog.models import Section
 
-from berkeleytime.settings import CURRENT_SEMESTER
-from berkeleytime.settings import CURRENT_YEAR
+from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
 
 import json
 
@@ -30,18 +29,23 @@ def parse_section_ids(request, key):
     @param request: a request, key: the key in the POST dict to extract
     @return: a list of section ids
     """
-    try:
-        passed_schedule = json.loads(request.POST.get(key))["sectionInfo"][0]
-        if type(passed_schedule) is dict:
-            passed_schedule = passed_schedule["sections"]
-        section_ccns_list = [int(i) for i in passed_schedule]
-        return Section.objects.filter(
-            ccn__in=section_ccns_list,
-            semester=CURRENT_SEMESTER,
-            year=CURRENT_YEAR
-        )
-    except (AttributeError, KeyError):
-        return []
+    section_list = []
+    passed_schedule = json.loads(request.POST.get(key))["sectionInfo"][0]
+    if type(passed_schedule) is dict:
+        passed_schedule = passed_schedule["sections"]
+    section_ccns_list = [int(i) for i in passed_schedule]
+
+    sections_list = []
+    for ccn in section_ccns_list:
+        try:
+            section = Section.objects.filter(ccn=ccn, semester=CURRENT_SEMESTER, year=CURRENT_YEAR) \
+                .order_by("-last_updated")[0]
+            sections_list.append(section)
+        except IndexError:
+            continue
+
+    return sections_list
+
 
 def parse_schedule_id(request):
     """

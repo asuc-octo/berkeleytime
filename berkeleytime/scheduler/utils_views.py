@@ -72,49 +72,45 @@ def get_section_info(section):
 
 # Converts section objects into Google Calendar event data
 def section_to_event(section):
-    try:
-        date_today = rfc3339(datetime.datetime.now())[:11]
 
-        section_dict = get_section_info(section)
+    date_today = rfc3339(datetime.datetime.now())[:11]
 
-        days_string = days_num_to_string(section_dict['days'])
-        start_date = rfc3339(instruction["instruction_start"] + get_next_section_weekday(instruction["instruction_start"].weekday(), section_dict['days']))[:11]
-        end_date = rfc3339(instruction["instruction_end"], utc=True).replace("-", "").replace(":", "")
+    section_dict = get_section_info(section)
 
-        summary = '{} {}'.format(section_dict['abbreviation'], section_dict['course_number'])
-        location = section_dict['location'] or ''
-        instructor = section_dict['instructor'] or ''
-        startDateTime = '{}{}:00-07:00'.format(start_date, section_dict['start_time'])
-        endDateTime = '{}{}:00-07:00'.format(start_date, section_dict['end_time'])
-        recurranceDetails = 'RRULE:FREQ=WEEKLY;BYDAY={};UNTIL={}'.format(days_string, end_date)
+    days_string = days_num_to_string(section_dict['days'])
+    start_date = rfc3339(instruction["instruction_start"] + get_next_section_weekday(instruction["instruction_start"].weekday(), section_dict['days']))[:11]
+    end_date = rfc3339(instruction["instruction_end"], utc=True).replace("-", "").replace(":", "")
 
-        event = {
-          'summary': summary,
-          'location': location,
-          'start': {
-            'dateTime': startDateTime,
-            'timeZone': 'America/Los_Angeles',
-          },
-          'end': {
-            'dateTime': endDateTime,
-            'timeZone': 'America/Los_Angeles',
-          },
-          'recurrence': [
-            recurranceDetails
-          ],
-          'reminders': {
-            'useDefault' : False,
-            'overrides' : [
-                {'method': 'popup', 'minutes': 10},
-            ],
-          },
-        }
+    summary = '{} {}'.format(section_dict['abbreviation'], section_dict['course_number'])
+    location = section_dict['location'] or ''
+    instructor = section_dict['instructor'] or ''
+    startDateTime = '{}{}:00-07:00'.format(start_date, section_dict['start_time'])
+    endDateTime = '{}{}:00-07:00'.format(start_date, section_dict['end_time'])
+    recurranceDetails = 'RRULE:FREQ=WEEKLY;BYDAY={};UNTIL={}'.format(days_string, end_date)
 
-        return event
+    event = {
+      'summary': summary,
+      'location': location,
+      'start': {
+        'dateTime': startDateTime,
+        'timeZone': 'America/Los_Angeles',
+      },
+      'end': {
+        'dateTime': endDateTime,
+        'timeZone': 'America/Los_Angeles',
+      },
+      'recurrence': [
+        recurranceDetails
+      ],
+      'reminders': {
+        'useDefault' : False,
+        'overrides' : [
+            {'method': 'popup', 'minutes': 10},
+        ],
+      },
+    }
 
-    except Exception as e:
-        print e
-        print {}
+    return event
 
 # Takes the days string and converts them into a two letter day format
 def days_num_to_string(days_num):

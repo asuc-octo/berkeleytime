@@ -323,7 +323,8 @@ def export_schedule(request):
     events = map(section_to_event, parsed_section_ids)
 
     for event in events:
-        service.events().insert(calendarId='primary', body=event).execute()
+        if event:
+            service.events().insert(calendarId='primary', body=event).execute()
 
     return HttpResponse(status=200)
 
