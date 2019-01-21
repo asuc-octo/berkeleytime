@@ -81,7 +81,7 @@ def section_to_event(section):
     start_date = rfc3339(instruction["instruction_start"] + get_next_section_weekday(instruction["instruction_start"].weekday(), section_dict['days']))[:11]
     end_date = rfc3339(instruction["instruction_end"], utc=True).replace("-", "").replace(":", "")
 
-    summary = '{} {}'.format(section_dict['abbreviation'], section_dict['course_number'])
+    summary = '{} {} {}'.format(section_dict['abbreviation'], section_dict['course_number'], section_dict['type'])
     location = section_dict['location'] or ''
     instructor = section_dict['instructor'] or ''
     startDateTime = '{}{}:00'.format(start_date, section_dict['start_time'])
