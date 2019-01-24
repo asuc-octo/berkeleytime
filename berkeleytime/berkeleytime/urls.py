@@ -10,6 +10,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+
+    # React
+    url(r'^$', 'frontend.views.index'),
+
     # May need to redirect directly to catalog
     # url(r'^$', 'catalog.views.catalog'),
     url(r'^$', 'berkeleytime.views.home_page'),
