@@ -1,0 +1,132 @@
+.filter-selection {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: white;
+    padding: 5px 10px;
+    position: relative;
+    margin-bottom: 20px;
+    min-height: 120px;
+
+    .filter-selection-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        max-width: 70%;
+
+        .filter-selection-heading {
+            margin: 0;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .filter-selection-description {
+            font-size: 12px;
+        }
+
+        .filter-selection-enrollment-data {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            .dataBlock {
+                display: flex;
+                flex-direction: row;
+                justify-content: left;
+                padding-right: 10px;
+
+                i {
+                    width: 10px;
+                }
+
+                .first {
+                    color: #ef5350;
+                }
+
+                .second {
+                    color: #FFF59D;
+                }
+
+                p {
+                    padding-left: 5px;
+                    font-size: 12px;
+                }
+            }
+        }
+    }
+
+    .filter-selection-aside {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-width: 30%;
+
+        .filter-selection-units {
+            display: block;
+            text-align: center;
+
+            h6 {
+                font-family: "Roboto", "Arial", sans-serif !important;
+                font-weight: 400;
+                text-transform: capitalize;
+                margin-bottom: 10px;
+            }
+        }
+
+        .filter-selection-average-grade {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            h5 {
+                font-family: "Roboto", "Arial", sans-serif !important;
+                font-size: 10px;
+                color: grey;
+                margin: 0px;
+            }
+
+            p {
+                font-family: "Roboto", "Arial", sans-serif !important;
+                font-size: 20px;
+                font-weight: bold;
+                margin: 5px;
+            }
+        }
+    }
+
+    .vertical-line {
+        position: absolute;
+        height: 80%;
+        width: 70%;
+        left: 0;
+        border-right: 1px solid #EEEEEE;
+    }
+}
+
+.bt-blue-border {
+    border-left: 5px solid $bt-blue;
+}
+
+.bt-green-border {
+    border-left: 5px solid $bt-green;
+}
+
+.bt-pink-border {
+    border-left: 5px solid $bt-pink;
+}
+
+.bt-yellow-border {
+    border-left: 5px solid $bt-yellow;
+}
+
+.bt-orange-text {
+    color: $bt-indicator-orange;
+}
+
+.bt-green-text {
+    color: $bt-green;
+}
+
+.bt-red-text {
+    color: $bt-indicator-red;
+}
