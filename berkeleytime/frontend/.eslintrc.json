@@ -1,0 +1,7 @@
+{
+    "extends": "airbnb",
+    "rules": {
+      "indent": ["warn", 2],
+      "import/no-unresolved": "off"
+    }
+}
