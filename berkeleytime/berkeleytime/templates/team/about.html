@@ -81,6 +81,7 @@ $(document).ready(function() {
                             <p style="color: black; font-weight: 500;">{{ member.name }}</p>
                         {% endif %}
                     </div>
+                    {% autoescape off %}
                     {% if member.educ %}
                         <div class="position">{{ member.educ }}</div>
                         <div class="position">{{ member.role }}</div>
@@ -88,6 +89,7 @@ $(document).ready(function() {
                         <div class="position">{{ member.role }}</div>
                         <br>
                     {% endif %}
+                    {% endautoescape %}
                 </div>
                 </div>
                 {% endfor %}
