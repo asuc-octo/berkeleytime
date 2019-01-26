@@ -5,8 +5,15 @@ metadata:
   namespace: berkeleytime
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    certmanager.k8s.io/issuer: "letsencrypt-prod"
+    certmanager.k8s.io/acme-challenge-type: http01
 spec:
+  tls:
+  - hosts:
+    - www.berkeleytime-internal.com
+    - berkeleytime-internal.com 
+    - staging.berkeleytime-internal.com
+    secretName: berkeleytime-tls 
   rules:
   - host: www.berkeleytime-internal.com
     http:
