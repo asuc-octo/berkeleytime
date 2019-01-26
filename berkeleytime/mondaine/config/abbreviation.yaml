@@ -824,3 +824,12 @@ XSTAT:
 
 YIDDISH:
     - "Yiddish"
+
+RDEV:
+    - "Real Estate Development"
+    
+DIGHUM:
+    - "Digital Humanities"
+    
+CYBER:
+    - "Information and Cybersecurity"
