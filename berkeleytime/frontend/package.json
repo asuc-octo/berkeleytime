@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "BerkeleyTime",
   "version": "1.0.0",
   "private": true,
   "dependencies": {
@@ -29,25 +29,15 @@
     "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
-    "dev": "webpack -p --mode development ./src/index.js --output ./static/frontend/main.js",
-    "build": "webpack --mode production ./src/index.js --output ./static/frontend/main.js",
+    "build": "npm run build-css && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "@babel/core": "^7.2.2",
-    "@babel/preset-env": "^7.3.1",
-    "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.5",
-    "babel-plugin-transform-class-properties": "^6.24.1",
     "eslint": "^5.8.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-react": "^7.11.1",
-    "file-loader": "^3.0.1",
-    "sass-loader": "^7.1.0",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1"
+    "eslint-plugin-react": "^7.11.1"
   }
 }
