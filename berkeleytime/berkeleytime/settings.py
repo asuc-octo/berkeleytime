@@ -22,7 +22,7 @@ TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
     ("ASUC OCTO Berkeleytime Team", "octo.berkeleytime@asuc.org"),
-    ("Scott Lee", "scott.lee.3898@berkeley.edu"),
+    ("Michael Li", "michael.li@berkeley.edu"),
     ("Will Wang", "hwang97@berkeley.edu"),
 )
 
