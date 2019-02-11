@@ -33,9 +33,7 @@ class ClassCard extends Component {
               {info.title}
             </div>
             <div className="column">
-              <button type="button" onClick={this.remove} className="close">
-                <span>&times;</span>
-              </button>
+              <button type="button" onClick={this.remove} className="delete" />
             </div>
           </div>
         </div>
