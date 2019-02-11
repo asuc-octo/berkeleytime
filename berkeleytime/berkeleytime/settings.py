@@ -293,7 +293,6 @@ INSTALLED_APPS = (
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    'frontend'
 )
 
 ACCOUNT_USERNAME_REQUIRED = False

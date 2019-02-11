@@ -68,7 +68,6 @@ def grade_section_json(request, course_id):
         print e
         return render_to_empty_json()
 
-
 def grade_json(request, grade_ids):
     try:
         actual_total = 0
