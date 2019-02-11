@@ -3,6 +3,7 @@ import { Grid, Row, Col } from 'react-bootstrap';
 
 import FilterSidebar from '../../components/FilterSidebar/FilterSidebar.jsx';
 import FilterResults from '../../components/FilterSidebar/FilterResults.jsx';
+import ClassDescription from '../../components/ClassDescription/ClassDescription.jsx';
 
 function Catalog() {
   return (
@@ -14,6 +15,9 @@ function Catalog() {
           </Col>
           <Col md={3}>
             <FilterResults />
+          </Col>
+          <Col md={6}>
+            <ClassDescription />
           </Col>
         </Row>
       </Grid>
