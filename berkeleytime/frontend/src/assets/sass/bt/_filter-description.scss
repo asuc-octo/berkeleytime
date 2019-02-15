@@ -1,0 +1,89 @@
+.filter-description {
+  display: flex;
+  flex-direction: column;
+
+  padding: 30px;
+
+  .filter-description-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      font-weight: bold;
+      font-size: 24px;
+      border-bottom: 6px solid $bt-blue;
+    }
+
+    margin-bottom: 10px;
+  }
+
+  .filter-description-title {
+    margin-bottom: 20px;
+  }
+
+  .filter-description-stats {
+    display: flex;
+    flex-direction: row;
+
+    .filter-description-stats-avg {
+      display: flex;
+      flex-direction: column;
+
+      p {
+        font-size: 15px;
+      }
+
+      a {
+        font-size: 13px;
+      }
+
+      margin-right: 20px;
+    }
+
+    .filter-description-stats-enroll {
+      display: flex;
+      flex-direction: column;
+
+      p {
+        font-size: 15px;
+      }
+
+      a {
+        font-size: 13px;
+      }
+    }
+
+    margin-bottom: 20px;
+  }
+
+  .filter-description-instructors {
+    margin-bottom: 20px;
+  }
+
+  .filter-description-tabs {
+    .filter-description-tabs-details {
+      display: flex;
+      flex-direction: column;
+
+      h2 {
+        font-weight: 500;
+        margin-bottom: 5px;
+      }
+
+      p:first-of-type {
+        margin-bottom: 15px;
+      }
+    }
+
+    .filter-description-tabs-sections {
+      > table > thead > tr > th {
+        font-size: 16px;
+      }
+      > table > tbody > tr > th {
+        font-weight: normal;
+      }
+    }
+  }
+}
