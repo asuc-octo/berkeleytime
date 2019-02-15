@@ -7,14 +7,13 @@
 }
 
 .card.card-class {
-    height: 125px;
     background-color: #579EFF;
 
     .content {
         padding: 15px 15px 15px 15px;
         background-color: white;
         margin-left: 10px;
-        height: 125px;
+        border-radius: 0 4px 4px 0;
     }
     .classTitle {
         padding-top: 15px;
