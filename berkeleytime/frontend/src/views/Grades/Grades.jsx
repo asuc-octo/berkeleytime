@@ -20,25 +20,36 @@ import {
 } from '../../variables/Variables';
 
 class Grades extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { classCards: Grades.defaultProps.classCards }
+    this.removeClass = this.removeClass.bind(this)
+  }
+
+  removeClass(classNum) {
+    this.setState({ classCards: this.state.classCards.filter(classInfo => classInfo.classNum != classNum) })
+  }
+
   getCurrentDate() {
     let today = new Date();
     return today.toString().slice(4, 15);
   }
 
   render() {
-    const { classCards } = this.props;
+    const { classCards } = this.state;
     return (
       <div className="app-container">
         <ClassSearchBar />
         <div className="columns">
           {classCards.map(item => (
-            <div className="column">
+            <div className="column card-column">
               <ClassCard
                 stripeColor={item.stripeColor}
                 classNum={item.classNum}
                 semester={item.semester}
                 faculty={item.faculty}
                 title={item.title}
+                removeClass={this.removeClass}
               />
             </div>
           ))}
