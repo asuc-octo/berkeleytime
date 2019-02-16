@@ -6,6 +6,7 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import ClassCard from '../../components/ClassCard/ClassCard.jsx';
 import GraphCard from '../../components/GraphCard/GraphCard.jsx';
 import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
+import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
 
 import {
   enrollment,
@@ -23,6 +24,7 @@ class Enrollment extends Component {
     const {classCards} = this.props;
     return (
       <div className="app-container">
+        <ClassSearchBar />
         <div className="columns">
           {classCards.map(item => (
             <div className="column">
