@@ -22,9 +22,9 @@ function PastContributors({ founders, pastContributors }) {
                 ))}
             </div>
             <div className="past-contributors-others container is-fluid">
-                <div className="columns is-multiline is-centered">
+                <div className="columns is-multiline is-centered is-2">
                     {pastContributors.map((member, idx) => (
-                        <div className="column is-one-quarter is-justified has-text-centered">
+                        <div className="column is-one-fifth has-text-centered">
                             <a href={member.link}>{member.name}</a>
                         </div>
                     ))} 
