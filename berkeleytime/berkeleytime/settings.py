@@ -72,13 +72,23 @@ elif IS_LOCALHOST:
 
 if IS_LOCALHOST:
     FACEBOOK_APP = 'local'
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #         'NAME': 'bt_main',
+    #         'USER': 'bt',
+    #         'PASSWORD': 'yuxinsucks',
+    #         'HOST': 'postgres',
+    #         'PORT': '',
+    #     }
+    # }
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'bt_main',
-            'USER': 'bt',
-            'PASSWORD': 'yuxinsucks',
-            'HOST': 'postgres',
+            'NAME': 'd5uobd89i71fs8',
+            'USER': 'u7hgbqfb5rov7s',
+            'PASSWORD': 'p6e2ec5f27433021079f657c6eb96d4bc7eb24bd21c6f053436590b26ae693da9',
+            'HOST': 'ec2-35-175-88-183.compute-1.amazonaws.com',
             'PORT': '',
         }
     }
