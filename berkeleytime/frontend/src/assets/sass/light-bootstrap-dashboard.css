@@ -10287,7 +10287,8 @@ button.deleteBtn {
       display: flex;
       flex-direction: row;
       justify-content: center;
-      flex-wrap: wrap; }
+      flex-wrap: wrap;
+      width: 100%; }
       .past-contributors .past-contributors-content .past-contributors-others a {
         width: 20%;
         min-width: 200px;
