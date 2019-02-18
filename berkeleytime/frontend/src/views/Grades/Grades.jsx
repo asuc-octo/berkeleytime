@@ -13,6 +13,7 @@ import {
 import ClassCard from '../../components/ClassCard/ClassCard.jsx';
 import GraphCard from '../../components/GraphCard/GraphCard.jsx';
 import GradesInfoCard from '../../components/GradesInfoCard/GradesInfoCard.jsx';
+import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
 
 import {
   grades,
@@ -38,6 +39,7 @@ class Grades extends Component {
     const { classCards } = this.state;
     return (
       <div className="app-container">
+        <ClassSearchBar />
         <div className="columns">
           {classCards.map(item => (
             <div className="column card-column">

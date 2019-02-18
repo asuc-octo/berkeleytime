@@ -12,7 +12,7 @@ function PastContributors({ founders, pastContributors }) {
                 {founders.map((founder, idx) => (
                     <div className="founder-card">
                         <div className="founder-pic-container">
-                            <img className="founder-pic" src={founder.image}/>
+                            <img className="founder-pic" src={founder.image}/> 
                         </div>
                         <div className="founder-desc">
                             <a href={founder.link}>{founder.name}</a>
@@ -22,12 +22,12 @@ function PastContributors({ founders, pastContributors }) {
                 ))}
             </div>
             <div className="past-contributors-others container is-fluid">
-                <div className="columns is-multiline is-centered">
+                <div className="columns is-multiline is-centered is-gapless">
                     {pastContributors.map((member, idx) => (
-                        <div className="column is-one-quarter is-justified has-text-centered">
+                        <div className="column is-one-fifth has-text-centered" style={{height: 45, width: 170}}>
                             <a href={member.link}>{member.name}</a>
                         </div>
-                    ))} 
+                ))} 
                     </div>
             </div>
         </div>
