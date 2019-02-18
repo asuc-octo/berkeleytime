@@ -1,26 +1,53 @@
 import React from 'react';
-import { Grid, Row } from 'react-bootstrap';
 
-import Jumbotron from '../../components/Landing/Jumbotron.jsx';
-import MissionSection from '../../components/Landing/MissionSection.jsx';
-import PurposeSection from '../../components/Landing/PurposeSection.jsx';
+import Jumbotron from '../../components/Landing/Jumbotron';
+import WhatWeDo from '../../components/Landing/WhatWeDo';
+import Explore from '../../components/Landing/Explore';
+import Mission from '../../components/Landing/Mission';
 
-function Landing() {
+import explore_snap from '../../assets/img/images/landing/explore_snap.png';
+import grades_snap from '../../assets/img/images/landing/grades_snap.png';
+import enrollment_snap from '../../assets/img/images/landing/enrollment_snap.png';
+
+function Landing(props) {
   return (
-    <div className="app-container">
-      <Grid fluid>
-        <Row>
-          <Jumbotron />
-        </Row>
-        <Row>
-          <PurposeSection />
-        </Row>
-        <Row>
-          <MissionSection />
-        </Row>
-      </Grid>
+    <div className="">
+      <Jumbotron />
+      <WhatWeDo />
+      {Landing.explore.map(item => <Explore {...item} />)}
+      <Mission />
     </div>
   );
 }
+
+Landing.explore = [
+  {
+    title: 'Explore Courses',
+    desc: 'Search through 12000+ courses from the Berkeley catalog. Apply filters for requirements and majors.',
+    action: 'Explore Courses',
+    link: '/catalog',
+    icon: null,
+    img: explore_snap,
+    reverse: false,
+  },
+  {
+    title: 'See Grade Distributions',
+    desc: 'See and compare grade distributions for each course and semester to make the best choice.',
+    action: 'See Grades',
+    link: '/grades',
+    icon: null,
+    img: grades_snap,
+    reverse: true,
+  },
+  {
+    title: 'View Enrollment History',
+    desc: 'View and compare real-time course enrollment trends and history.',
+    action: 'Check Enrollment',
+    link: '/enrollment',
+    icon: null,
+    img: enrollment_snap,
+    reverse: false,
+  },
+];
 
 export default Landing;

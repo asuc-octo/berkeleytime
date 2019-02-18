@@ -22,3 +22,22 @@
     //     }
     // }
 }
+
+.bt-navbar-brand {
+    float: none !important;
+    height: auto !important;
+}
+
+.navbar-end {
+    margin-right: 27px;
+}
+
+.navbar-item {
+    > a {
+        color: #4a4a4a;
+    }
+
+    > a:hover {
+        color: #3273dc;
+    }
+}
