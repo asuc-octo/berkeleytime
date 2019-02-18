@@ -10353,6 +10353,15 @@ button.deleteBtn {
   @media screen and (min-width: 1088px) {
     .landing-explore {
       padding: 50px 75px; } }
+  .landing-explore .landing-explore-icon {
+    width: 100%;
+    margin-bottom: 20px; }
+  .landing-explore .bt-pink {
+    color: #F85386; }
+  .landing-explore .bt-green {
+    color: #18D869; }
+  .landing-explore .bt-blue {
+    color: #579EFF; }
   .landing-explore .landing-explore-desc {
     display: flex;
     flex-direction: column;
@@ -10363,9 +10372,9 @@ button.deleteBtn {
     .landing-explore .landing-explore-desc h3 {
       font-size: 30px;
       font-weight: 400;
-      margin-bottom: 10px; }
+      margin-bottom: 20px; }
     .landing-explore .landing-explore-desc p {
-      margin-bottom: 10px; }
+      margin-bottom: 20px; }
   @media screen and (max-width: 768px) {
     .landing-explore .landing-explore-img-wrapper {
       margin-top: 1.5rem; } }

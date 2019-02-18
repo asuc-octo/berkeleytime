@@ -2,11 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 
-function Explore({ title, desc, action, link, icon, img, reverse }) {
+function Explore({ title, desc, action, link, symbol, color, img, reverse }) {
   if (!reverse) {
     return (
       <div className="level landing-explore">
         <div className="level-left landing-explore-desc has-text-centered">
+          <FontAwesome className={`landing-explore-icon app-icon ${color}`} name={symbol} size="5x" />
           <h3>{title}</h3>
           <p>{desc}</p>
           <Link to={link}>{action} <FontAwesome name="long-arrow-right" /></Link>
@@ -20,6 +21,7 @@ function Explore({ title, desc, action, link, icon, img, reverse }) {
   return (
     <div className="level landing-explore landing-explore-reverse">
       <div className="level-left landing-explore-desc has-text-centered is-hidden-tablet">
+        <FontAwesome className={`landing-explore-icon app-icon ${color}`} name={symbol} size="5x" />
         <h3>{title}</h3>
         <p>{desc}</p>
         <Link to={link}>{action} <FontAwesome name="long-arrow-right" /></Link>
@@ -28,6 +30,7 @@ function Explore({ title, desc, action, link, icon, img, reverse }) {
         <img className="landing-explore-img box-shadow" src={img} alt="explore" />
       </div>
       <div className="level-right landing-explore-desc has-text-centered is-hidden-mobile">
+        <FontAwesome className={`landing-explore-icon app-icon ${color}`} name={symbol} size="5x" />
         <h3>{title}</h3>
         <p>{desc}</p>
         <Link to={link}>{action} <FontAwesome name="long-arrow-right" /></Link>
