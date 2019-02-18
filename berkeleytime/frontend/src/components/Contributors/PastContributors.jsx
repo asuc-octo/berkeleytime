@@ -11,9 +11,6 @@ function PastContributors({ founders, pastContributors }) {
             <div className="past-contributors-founders">
                 {founders.map((founder, idx) => (
                     <div className="founder-card">
-                        <div className="founder-pic-container">
-                            <img className="founder-pic" src={founder.image}/> 
-                        </div>
                         <div className="founder-desc">
                             <a href={founder.link}>{founder.name}</a>
                             <p>Co-Founder</p>
@@ -49,78 +46,72 @@ PastContributors.defaultProps = {
         }
     ],
     pastContributors: [
-        {
-            name: "Arvind Iyengar",
-            link: "",
-        },
-        {
-            name: "Christine Wang",
-            link: "",
-        },
-        {
-            name: "Emily Chen",
-            link: "",
-        },
-        {
-            name: "Eric Huynh",
-            link: "",
-        },
-        {
-            name: "Jennifer Yu",
-            link: "",
-        },
-        {
-            name: "Justin Lu",
-            link: "",
-        },
-        {
-            name: "Kelvin Leong",
-            link: "",
-        },
-        {
-            name: "Kevin Jiang",
-            link: "",
-        },
-        {
-            name: "Kimya Khoshnan",
-            link: "",
-        },
-        {
-            name: "Laura Harker",
-            link: "",
-        },
-        {
-            name: "Mihir Patil",
-            link: "",
-        },
-        {
-            name: "Niraj Amalkanti",
-            link: "",
-        },
-        {
-            name: "Parsa Attari",
-            link: "",
-        },
-        {
-            name: "Ronald Lee",
-            link: "",
-        },
-        {
-            name: "Sanchit Bareja",
-            link: "",
-        },
-        {
-            name: "Sandy Zhang",
-            link: "",
-        },
-        {
-            name: "Santhosh Subramanian",
-            link: "",
-        },
-        {
-            name: "Vaibhav Srikaran",
-            link: "",
-        },
+        { name: "Alan Rosenthal",
+        site: null,
+        }, 
+        { name: "Arvind Iyengar",
+          site: "https://www.linkedin.com/in/iyengararvind/",
+        }, 
+        { name: "Christine Wang",
+          site: "https://www.linkedin.com/in/cwang395/",
+        }, 
+        { name: "Emily Chen",
+          site: null,
+        }, 
+        { name: "Eric Huynh",
+          site: "http://erichuynhing.com",
+        }, 
+        { name: "Flora Xue",
+          site: "https://www.linkedin.com/in/flora-zhenruo-xue/",
+        }, 
+        { name: "Jennifer Yu",
+          site: null,
+        }, 
+        { name: "Justin Lu",
+          site: null,
+        }, 
+        { name: "Katharine Jiang",
+          site: "http://katharinejiang.com",
+        }, 
+        { name: "Kelvin Leong",
+          site: "https://www.linkedin.com/in/kelvinjleong/",
+        }, 
+        { name: "Kevin Jiang",
+          site: "https://github.com/kevjiangba",
+        }, 
+        { name: "Kimya Khoshnan",
+          site: null,
+        }, 
+        { name: "Laura Harker",
+          site: null,
+        }, 
+        { name: "Mihir Patil",
+          site: null,
+        }, 
+        { name: "Niraj Amalkanti",
+          site: null,
+        }, 
+        { name: "Parsa Attari",
+          site: null,
+        }, 
+        { name: "Ronald Lee",
+          site: null,
+        }, 
+        { name: "Sanchit Bareja",
+          site: null,
+        }, 
+        { name: "Sandy Zhang",
+          site: null,
+        }, 
+        { name: "Scott Lee",
+          site: "http://scottjlee.github.io",
+        }, 
+        { name: "Tony Situ",
+          site: "https://www.linkedin.com/in/c2tonyc2/",
+        }, 
+        { name: "Vaibhav Srikaran",
+          site: "https://www.linkedin.com/in/vsrikaran/",
+        }
     ],
 
 };
