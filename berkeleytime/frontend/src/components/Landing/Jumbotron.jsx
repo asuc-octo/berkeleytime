@@ -1,29 +1,25 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-
-import Button from '../../elements/CustomButton/CustomButton';
 import logo from '../../assets/img/images/about/octo.jpg';
 
-class Jumbotron extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <section className="jumbotron">
-        <div className="jumbotron-content">
-          <h1 className="jumbotron-title">BerkeleyTime</h1>
-          <h4 className="jumbotron-subheading">Course discovery, simplified.</h4>
-          <Button className="jumbotron-explore-btn btn-fill" bsStyle="primary">Explore courses now</Button>
-          <Button className="jumbotron-sign-up-btn" bsStyle="primary">Sign Up</Button>
+function Jumbotron() {
+  return (
+    <div className="level landing-jumbo">
+      <div className="level-left has-text-centered">
+        <div className="landing-jumbo-heading">
+          <h1>BerkeleyTime</h1>
+          <p>Course discovery, simplified.</p>
+          <div className="landing-jumbo-buttons">
+            <button type="button" className="button is-info is-rounded">Explore courses now</button>
+            <button type="button" className="button is-rounded has-text-info landing-jumbo-signup">Sign Up</button>
+          </div>
         </div>
-        <div className="jumbotron-image">
-          <img className="jumbotron-img" src={logo} alt="jumbotron" />
-        </div>
-      </section>
-    );
-  }
+      </div>
+      <div className="level-right has-text-centered">
+        <img className="landing-jumbo-img" src={logo} alt="jumbotron" />
+      </div>
+    </div>
+  );
 }
 
 export default Jumbotron;

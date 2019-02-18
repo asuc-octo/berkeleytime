@@ -1466,39 +1466,23 @@ body > .navbar-collapse[data-color="purple"]:after {
   .navbar-toggle.navbar-default .navbar-toggle:focus {
     background-color: transparent; }
 
-.footer {
+.btfooter {
   background-color: #303548;
-  line-height: 20px; }
-  .footer .footer-nav {
+  padding: 40px; }
+  .btfooter .columns .column {
     display: flex;
-    flex-direction: row;
-    margin: 30px 0px; }
-    .footer .footer-nav .footer-col {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      margin-right: 40px; }
-      .footer .footer-nav .footer-col .footer-items {
-        list-style: none; }
-        .footer .footer-nav .footer-col .footer-items li {
-          color: white;
-          font-size: 12px; }
-        .footer .footer-nav .footer-col .footer-items li.first {
-          font-weight: 600;
-          margin-bottom: 10px;
-          font-size: 16px; }
-
-.footer-default {
-  background-color: #F5F5F5; }
-
-.footer:not(.footer-big) nav > ul {
-  font-size: 14px; }
-  .footer:not(.footer-big) nav > ul li {
-    margin-left: 20px;
-    float: left; }
-  .footer:not(.footer-big) nav > ul a {
-    padding: 10px 0px;
-    margin: 10px 10px 10px 0px; }
+    flex-direction: column;
+    color: white; }
+    .btfooter .columns .column :first-child {
+      margin-bottom: 10px; }
+    .btfooter .columns .column > *:not(:first-child):not(:last-child) {
+      margin-bottom: 5px; }
+    .btfooter .columns .column > *:not(:first-child) {
+      font-size: 13px; }
+    .btfooter .columns .column a {
+      color: white; }
+    .btfooter .columns .column a:hover {
+      color: #209cee; }
 
 .dropdown-menu {
   visibility: hidden;
@@ -10127,6 +10111,19 @@ button.deleteBtn {
   width: 100%;
   z-index: 1; }
 
+.bt-navbar-brand {
+  float: none !important;
+  height: auto !important; }
+
+.navbar-end {
+  margin-right: 27px; }
+
+.navbar-item > a {
+  color: #4a4a4a; }
+
+.navbar-item > a:hover {
+  color: #3273dc; }
+
 .contributors {
   display: flex;
   flex-direction: row;
@@ -10296,136 +10293,121 @@ button.deleteBtn {
         font-size: 18px;
         color: #5C5C5C; }
 
-.jumbotron {
+.landing-jumbo {
   background-color: white;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 100px;
-  padding-bottom: 100px;
-  height: 100%; }
-  .jumbotron .jumbotron-content .jumbotron-title {
-    font-weight: bold; }
-  .jumbotron .jumbotron-content .jumbotron-subheading {
-    font-weight: 400;
-    font-family: "Open Sans";
-    margin-bottom: 30px; }
-  .jumbotron .jumbotron-content .jumbotron-explore-btn {
-    margin-right: 15px;
-    border-radius: 20px;
-    font-family: "Open Sans"; }
-  .jumbotron .jumbotron-content .jumbotron-sign-up-btn {
-    border-radius: 20px;
-    font-family: "Open Sans"; }
-  .jumbotron .jumbotron-image {
-    padding-right: 15%; }
-    .jumbotron .jumbotron-image .jumbotron-img {
-      width: 250px;
-      object-fit: scale-down; }
-
-.purpose-section {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 60px;
-  height: 100%; }
-  .purpose-section .purpose-container {
+  margin-top: 50px; }
+  @media screen and (max-width: 1087px) {
+    .landing-jumbo {
+      padding: 50px; } }
+  @media screen and (min-width: 1088px) {
+    .landing-jumbo {
+      padding: 50px 75px; } }
+  .landing-jumbo .landing-jumbo-heading {
+    padding: 100px 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    height: auto;
-    width: 85%;
-    margin: auto; }
-    .purpose-section .purpose-container .purpose-title {
-      text-align: center;
-      font-weight: bold;
-      font-family: "Open Sans"; }
-    .purpose-section .purpose-container .purpose-subheading {
-      text-align: center;
-      font-family: "Open Sans";
-      margin-top: 10px;
-      margin-bottom: 30px; }
-    .purpose-section .purpose-container .app-cards {
+    align-items: baseline; }
+    .landing-jumbo .landing-jumbo-heading h1 {
+      margin: 15px 0;
+      font-size: 64px;
+      font-weight: 500; }
+    .landing-jumbo .landing-jumbo-heading p {
+      margin: 15px 3px;
+      font-size: 18px; }
+    .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons {
+      margin: 20px 0;
       display: flex;
-      flex-direction: row;
-      justify-content: center;
-      margin: 0 20px; }
-      .purpose-section .purpose-container .app-cards .app-card {
-        min-width: 150px;
-        width: 25%;
-        max-width: 400px;
-        display: flex;
-        flex-direction: column;
-        margin: 30px;
-        padding: 25px;
-        align-items: center;
-        border-radius: 15px;
-        box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1); }
-        .purpose-section .purpose-container .app-cards .app-card .app-icon {
-          width: 100%;
-          margin-bottom: 10px; }
-        .purpose-section .purpose-container .app-cards .app-card .app-text {
-          min-height: 150px; }
-          .purpose-section .purpose-container .app-cards .app-card .app-text .app-title {
-            margin: 15px 0;
-            font-family: "Open Sans";
-            font-weight: 500;
-            text-align: center; }
-          .purpose-section .purpose-container .app-cards .app-card .app-text .app-description {
-            font-size: 14px;
-            font-family: "Open Sans";
-            text-align: center;
-            margin-bottom: 10px; }
-        .purpose-section .purpose-container .app-cards .app-card .app-link {
-          font-family: "Open Sans";
-          color: #579EFF; }
+      flex-direction: row; }
+      .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup {
+        margin-left: 20px;
+        border-color: #209cee; }
+  .landing-jumbo .landing-jumbo-img {
+    width: 250px;
+    object-fit: scale-down; }
 
-.bt-pink {
-  color: #F85386; }
+@media screen and (max-width: 1087px) {
+  .landing-whatwedo {
+    padding: 50px; } }
 
-.bt-green {
-  color: #18D869; }
+@media screen and (min-width: 1088px) {
+  .landing-whatwedo {
+    padding: 50px 75px; } }
 
-.bt-blue {
-  color: #579EFF; }
+.landing-whatwedo .landing-whatwedo-whatwedo {
+  font-size: 48px;
+  font-weight: 450;
+  margin-right: 30px; }
 
-.mission-section {
+.landing-whatwedo .landing-whatwedo-message {
+  font-size: 20px; }
+  @media screen and (min-width: 769px), print {
+    .landing-whatwedo .landing-whatwedo-message {
+      max-width: 50%; } }
+
+.landing-explore {
+  margin-bottom: 0 !important;
+  background-color: white; }
+  @media screen and (max-width: 1087px) {
+    .landing-explore {
+      padding: 50px; } }
+  @media screen and (min-width: 1088px) {
+    .landing-explore {
+      padding: 50px 75px; } }
+  .landing-explore .landing-explore-desc {
+    display: flex;
+    flex-direction: column;
+    align-items: center; }
+    @media screen and (min-width: 769px), print {
+      .landing-explore .landing-explore-desc {
+        max-width: 25%; } }
+    .landing-explore .landing-explore-desc h3 {
+      font-size: 30px;
+      font-weight: 400;
+      margin-bottom: 10px; }
+    .landing-explore .landing-explore-desc p {
+      margin-bottom: 10px; }
+  @media screen and (max-width: 768px) {
+    .landing-explore .landing-explore-img-wrapper {
+      margin-top: 1.5rem; } }
+  @media screen and (min-width: 769px), print {
+    .landing-explore .landing-explore-img-wrapper {
+      max-width: 80%; } }
+  .landing-explore .landing-explore-img {
+    max-width: 95%;
+    max-height: 500px;
+    object-fit: scale-down;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
+
+.landing-explore.landing-explore-reverse {
+  background: rgba(203, 203, 210, 0.15); }
+
+@media screen and (max-width: 1087px) {
+  .landing-mission {
+    padding: 50px; } }
+
+@media screen and (min-width: 1088px) {
+  .landing-mission {
+    padding: 50px 75px; } }
+
+.landing-mission .landing-mission-column {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background-color: white;
-  height: 100%; }
-  .mission-section .mission-content {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 80%; }
-    .mission-section .mission-content .info-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      width: 40%;
-      height: 350px;
-      min-width: 400px;
-      max-width: 800px;
-      padding: 30px 50px;
-      box-shadow: none; }
-      .mission-section .mission-content .info-card h2 {
-        text-align: center;
-        font-weight: bold;
-        font-size: 30px;
-        font-family: "Open Sans";
-        margin-top: 0; }
-      .mission-section .mission-content .info-card p {
-        text-align: center;
-        font-size: 18px; }
-      .mission-section .mission-content .info-card a {
-        text-align: center;
-        font-size: 18px; }
+  max-width: 300px; }
+  .landing-mission .landing-mission-column h3 {
+    font-size: 30px;
+    font-weight: 400;
+    margin-bottom: 30px; }
+  .landing-mission .landing-mission-column p {
+    margin-bottom: 30px; }
+
+.temporary-jumbo {
+  margin-top: 100px; }
+  .temporary-jumbo h1 {
+    text-align: center;
+    font-size: 50px;
+    font-weight: 500;
+    margin: 400px 0; }
 
 @media screen and (max-width: 769px) {
   .dashboard-columns {

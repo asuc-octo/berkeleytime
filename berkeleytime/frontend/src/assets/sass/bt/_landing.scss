@@ -1,0 +1,154 @@
+.landing-jumbo {
+    background-color: white;
+    margin-top: 50px;
+
+    @include touch {
+      padding: 50px;
+    }
+    @include desktop {
+      padding: 50px 75px;
+    }
+
+    .landing-jumbo-heading {
+        padding: 100px 0;
+
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+
+        h1 {
+            margin: 15px 0;
+            font-size: 64px;
+            font-weight: 500;
+        }
+
+        p {
+            margin: 15px 3px; //3px better aligns with title
+            font-size: 18px;
+        }
+
+        .landing-jumbo-buttons {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: row;
+
+            .landing-jumbo-signup {
+                margin-left: 20px;
+                border-color: hsl(204, 86%, 53%);
+            }
+        }
+    }
+
+    .landing-jumbo-img {
+        width: 250px;
+        object-fit: scale-down;
+    }
+}
+
+.landing-whatwedo {
+    @include touch {
+        padding: 50px;
+    }
+    @include desktop {
+        padding: 50px 75px;
+    }
+
+    .landing-whatwedo-whatwedo {
+        font-size: 48px;
+        font-weight: 450;
+        margin-right: 30px;
+    }
+
+    .landing-whatwedo-message {
+        @include tablet {
+            max-width: 50%;
+
+        }
+
+        font-size: 20px;
+    }
+}
+
+.landing-explore {
+    margin-bottom: 0 !important;
+
+    @include touch {
+        padding: 50px;
+    }
+    @include desktop {
+        padding: 50px 75px;
+    }
+
+    background-color: white;
+
+    .landing-explore-desc {
+        @include tablet {
+            max-width: 25%;
+        }
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        h3 {
+            font-size: 30px;
+            font-weight: 400;
+
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+    }
+
+    .landing-explore-img-wrapper {
+        @include mobile {
+            margin-top: 1.5rem;
+        }
+
+        @include tablet {
+            max-width: 80%;
+        }
+    }
+
+    .landing-explore-img {
+        max-width: 95%;
+        max-height: 500px;
+        object-fit: scale-down;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+}
+
+.landing-explore.landing-explore-reverse {
+    background: rgba(203,203,210,.15);
+}
+
+.landing-mission {
+    //margin-bottom: 0 !important;
+
+    @include touch {
+        padding: 50px;
+    }
+    @include desktop {
+        padding: 50px 75px;
+    }
+
+    .landing-mission-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        max-width: 300px;
+
+        h3 {
+            font-size: 30px;
+            font-weight: 400;
+            margin-bottom: 30px;
+        }
+
+        p {
+            margin-bottom: 30px;
+        }
+    }
+}
