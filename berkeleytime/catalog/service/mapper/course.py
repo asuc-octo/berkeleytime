@@ -22,7 +22,7 @@ class CourseMapper(EntityMapper):
             }
             return Course(course)
         except KeyError as e:
-            print e
+            print (e, "Solved Nonetype Error for department. Investigate keys for other dictionaries")
             return None
 
     def get_course_department(self, data):
