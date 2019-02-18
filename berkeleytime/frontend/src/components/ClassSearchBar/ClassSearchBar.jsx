@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
+//think about clearing values after add button
 export class ClassSearchBar extends Component {
 
   constructor(props) {
@@ -9,13 +10,13 @@ export class ClassSearchBar extends Component {
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
     this.handleSortSelect = this.handleSortSelect.bind(this);
-    this.handleOptionSelect = this.handleOptionSelect.bind(this);
+    this.handleInstrSemSelect = this.handleInstrSemSelect.bind(this);
     this.handleSectionSelect = this.handleSectionSelect.bind(this);
 
     this.state = {
       classSelected: '',
       sortSelected: '',
-      optionSelected: '',
+      instrSemSelected: '',
       sectionSelected: '',
       instrSems: [],
       sections: [],
@@ -25,18 +26,29 @@ export class ClassSearchBar extends Component {
 
   handleClassSelect(e) {
     this.setState({classSelected: e})
-    if(this.state.sortSelected) {
-        this.setState({isDisabled: false})
+    if(!e) {
+      this.setState({isDisabled: true})
+      this.setState({sortSelected: null})
+      this.setState({instrSemSelected: null})
+      this.setState({sectionSelected: null})
+    }
+    else if(this.state.sortSelected) {
+      this.setState({isDisabled: false})
     } 
   }
 
   handleSortSelect(e) {
     this.setState({sortSelected: e})
-    if(e) {
+    if(!e) {
+      this.setState({ isDisabled: true})
+      this.setState({instrSemSelected: null})
+      this.setState({sectionSelected: null})
+    }
+    else {
       var value = e.value;
       if(value == 'instructor') {
         this.setState({ instrSems: this.props.instructors})
-      } else {
+      } else if(value == 'semester') {
         this.setState({ instrSems: this.props.semesters})
       }
       if(this.state.classSelected) {
@@ -45,8 +57,8 @@ export class ClassSearchBar extends Component {
     }
   }
 
-  handleOptionSelect(e) {
-    this.setState({ optionSelected: e})
+  handleInstrSemSelect(e) {
+    this.setState({ instrSemSelected: e})
   }
 
   handleSectionSelect(e) {
@@ -61,7 +73,7 @@ export class ClassSearchBar extends Component {
         <div className="column is-one-third">
           <Select
               name="class"
-              placeholder="Choose another class to compare..."
+              placeholder="Choose a class..."
               value={this.state.classSelected}
               options={classes}
               onChange={this.handleClassSelect}
@@ -80,9 +92,9 @@ export class ClassSearchBar extends Component {
           <Select
               name="instrSems"
               placeholder="Choose an option"
-              value={this.state.optionSelected}
+              value={this.state.instrSemSelected}
               options={this.state.instrSems}
-              onChange={this.handleOptionSelect}
+              onChange={this.handleInstrSemSelect}
               disabled={this.state.isDisabled ? true : null}
           />
         </div>

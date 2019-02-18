@@ -34,10 +34,15 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "eslint": "^5.8.0",
+    "eslint": "^5.14.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-react": "^7.11.1"
-  }
+  },
+  "description": "To build the React frontend ``` npm run dev ```",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
