@@ -9936,6 +9936,8 @@ button.deleteBtn {
           font-size: 14px;
           font-weight: 300; }
         .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .checkboxGroup {
+          display: flex;
+          flex-direction: column;
           padding-left: 15px; }
           .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .checkboxGroup .checkbox > label {
             font-size: 12px;
