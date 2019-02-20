@@ -244,6 +244,13 @@ class Playlist(models.Model):
         """Return unicode representation of models.Playlist."""
         return u'(Playlist) %s' % self.name
 
+    def as_json(self):
+        return dict(
+            id = self.id,
+            name = self.name,
+            category = self.category
+        )
+
 
 class UpdateLog(models.Model):
     """Update log for debugging."""

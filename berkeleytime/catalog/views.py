@@ -9,6 +9,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles import finders
+from django.core import serializers
 
 from marketplace import views as marketplace_views
 from berkeleytime.utils.requests import raise_404_on_error
@@ -56,7 +57,6 @@ def catalog(request, abbreviation='', course_number=''):
         context_instance=RequestContext(request)
     )
 
-
 def catalog_context(request, abbreviation='', course_number=''):
     """Return the context for the catalog."""
     defaults = Playlist.objects.filter(user=None)
@@ -69,7 +69,7 @@ def catalog_context(request, abbreviation='', course_number=''):
     units = Playlist.objects.filter(category="units").order_by("id")
     level = Playlist.objects.filter(category="level").order_by("id")
     semester = Playlist.objects.filter(category="semester")
-    semester = sorted(semester, key=lambda t: (-int(t.name.split(" ")[1]), t.name.split(" ")[0]))  # noqa
+    # semester = sorted(semester, key=lambda t: (-int(t.name.split(" ")[1]), t.name.split(" ")[0]))  # noqa
     enrollment = Playlist.objects.filter(category="enrollment").order_by("id")
     length = Playlist.objects.filter(category="length").order_by("id")
 
