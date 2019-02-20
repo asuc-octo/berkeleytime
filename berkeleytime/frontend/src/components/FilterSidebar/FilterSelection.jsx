@@ -27,7 +27,7 @@ function FilterSelection({
         </div>
         <div className="filter-selection-average-grade ">
           <h5>Average Grade</h5>
-          <p className={gradeColors[averageGrade.charAt(0)] || 'bt-red-text'}>{averageGrade}</p>
+          <p className={'bt-red-text'}>{averageGrade}</p>
         </div>
       </div>
       <div className="vertical-line" />
