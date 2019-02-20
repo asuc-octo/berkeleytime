@@ -1,22 +1,57 @@
-import React from 'react';
+import React, { Component } from 'react';
+import axios from 'axios';
 import FilterSelection from './FilterSelection.jsx';
 
-function FilterResults({ classesChosen }) {
-  return (
-    <div className="filter-results">
-      <h4>Showing results for:</h4>
-      {classesChosen.map((elem, idx) => (
-        <FilterSelection
-          id={idx}
-          courseAbbreviation={elem.courseAbbreviation}
-          courseTitle={elem.courseTitle}
-          percentageEnrolled={elem.percentageEnrolled}
-          waitlisted={elem.waitlisted}
-          averageGrade={elem.averageGrade}
-        />
-      ))}
-    </div>
-  );
+class FilterResults extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      courses: [],
+    }
+  }
+
+  componentDidMount() {
+    const { activeFilters } = this.props;
+    console.log(activeFilters);
+    axios.get('http://localhost:8000/catalog/filter', {
+      params: {
+        filters: Array.from(activeFilters).join(','),
+      },
+    })
+    .then(res => {
+      console.log(res);
+      this.setState({
+        courses: res.data,
+      })
+    })
+    .catch((err) => {
+      if (err.response) {
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+      }
+      console.log(err.config);
+    });
+  }
+
+  render() {
+    return (
+      <div className="filter-results">
+        <h4>Showing results for:</h4>
+        {this.state.courses.map(course => (
+          <FilterSelection
+            id={course.id}
+            courseAbbreviation={`${course.abbreviation} ${course.course_number}`}
+            courseTitle={course.title}
+            percentageEnrolled={course.enrolled_percentage}
+            waitlisted={course.waitlisted}
+            averageGrade={course.letter_average}
+          />
+        ))}
+      </div>
+    );
+  }
 }
 
 FilterResults.defaultProps = {

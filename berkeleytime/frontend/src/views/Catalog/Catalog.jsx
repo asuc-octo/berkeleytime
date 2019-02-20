@@ -56,17 +56,6 @@ class Catalog extends Component {
       });
   }
 
-  getJSONAndUpdateCourses() {
-    const { filterIDs } = this.state;
-    axios.get('http://localhost:8000/catalog_json', {
-      params: {
-        filters: filterIDs.join(','),
-      },
-    })
-    .then(res => console.log(res));
-  }
-
-
   /**
    *
    * @param {String} searchQuery
@@ -91,12 +80,24 @@ class Catalog extends Component {
     })
   }
 
+  /**
+   *
+   * @param {Array[min, max]} newRange
+   *
+   * Sets the state of the range based on the min and max values
+   */
   unitsRangeHandler(newRange) {
     this.setState({
       unitsRange: newRange
     })
   }
 
+  /**
+   *
+   * @param {String} filterID
+   *
+   * Handler function for adding a filter ID to those that are active
+   */
   addFilterHandler(filterID) {
     filterID = parseInt(filterID);
     this.setState(prevState => ({
@@ -104,6 +105,12 @@ class Catalog extends Component {
     }));
   }
 
+  /**
+   *
+   * @param {String} filterID
+   *
+   * Handler function for removing a filter ID to those that are active
+   */
   removeFilterHandler(filterID) {
     filterID = parseInt(filterID);
     this.setState(prevState => {
@@ -118,7 +125,7 @@ class Catalog extends Component {
    *
    * @param {String} filterID
    *
-   * Handler function for checkbox options in our FilterSidebar component
+   * Handler function for toggling a filter ID
    */
   toggleFilterHandler(filterID) {
     filterID = parseInt(filterID);
@@ -159,6 +166,9 @@ class Catalog extends Component {
     }
   }
 
+  /**
+   * Handler function to reset all filters to the default
+   */
   resetFilterHandler() {
     let newActiveFilters = new Set(this.state.defaultFilters);
     this.setState({
@@ -238,7 +248,11 @@ class Catalog extends Component {
               />
             </Col>
             <Col md={3}>
-              <FilterResults />
+              {this.state && this.state.activeFilters.size &&
+                <FilterResults
+                  activeFilters={this.state.activeFilters}
+                />
+              }
             </Col>
             <Col md={6}>
               <ClassDescription />
