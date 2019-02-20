@@ -32,6 +32,7 @@ urlpatterns = patterns('',
 
     # Catalog
     url(r'^catalog/$', 'catalog.views.catalog'),
+    url(r'^catalog_json/$', 'data.views.catalog_context_json'),
     # legacy for Berkeleytime V1
     url(r'^courses/$', 'catalog.views.catalog'),
     url(r'^catalog/filter/$', 'catalog.views.filter'),
