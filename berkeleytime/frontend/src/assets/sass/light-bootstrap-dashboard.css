@@ -9981,7 +9981,8 @@ button.deleteBtn {
   padding: 5px 10px;
   position: relative;
   margin-bottom: 20px;
-  min-height: 120px; }
+  min-height: 120px;
+  width: 100%; }
   .filter-selection .filter-selection-content {
     display: flex;
     flex-direction: column;
@@ -10122,7 +10123,8 @@ button.deleteBtn {
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table > thead > tr > th {
     font-size: 16px; }
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > th {
-    font-weight: normal; }
+    font-weight: normal;
+    font-size: 12px; }
 
 .navbar {
   position: fixed;
