@@ -72,3 +72,22 @@ class Section(Model):
         """
         days = {"0": "Su", "1": "M", "2": "Tu", "3": "W", "4": "Th", "5": "F", "6": "Sa", "7": "Su"}  # noqa
         return days[self.final_day]
+
+    def as_json(self):
+      return dict(
+        id = self.id,
+        enrolled = self.enrolled,
+        enrolled_max = self.enrolled_max,
+        section_number = self.section_number,
+        kind = self.kind,
+        ccn = self.ccn,
+        start_time = self.start_time and self.start_time.isoformat(),
+        end_time = self.end_time and self.end_time.isoformat(),
+        word_days = self.word_days,
+        location_name = self.location_name,
+        instructor = self.instructor,
+        waitlisted = self.waitlisted,
+        final_day = self.final_day,
+        final_start = self.final_start and self.final_start.isoformat(),
+        final_end = self.final_end and self.final_end.isoformat(),
+      )

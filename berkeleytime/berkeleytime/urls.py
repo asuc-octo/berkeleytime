@@ -33,6 +33,9 @@ urlpatterns = patterns('',
     # Catalog
     url(r'^catalog/$', 'catalog.views.catalog'),
     url(r'^catalog_json/$', 'data.views.catalog_context_json'),
+    url(r'^catalog_json/course/(?P<course_id>\d+)/$', 'catalog.views.course_json'),
+    url(r'^catalog_json/(?P<abbreviation>.*)/(?P<course_number>.*)/$', 'data.views.catalog_context_json'),
+    url(r'^catalog_json/course_box/$', 'catalog.views.course_box_json'),
     # legacy for Berkeleytime V1
     url(r'^courses/$', 'catalog.views.catalog'),
     url(r'^catalog/filter/$', 'catalog.views.filter'),
@@ -40,6 +43,7 @@ urlpatterns = patterns('',
     url(r'^catalog/favorite/$', 'catalog.views.favorite'),
     url(r'^catalog/course_box/$', 'catalog.views.course_box'),
     url(r'^catalog/(?P<abbreviation>.*)/(?P<course_number>.*)/$', 'catalog.views.catalog'),
+
 
     # Grades
     url(r'^grades/$', 'data.views.grade_render'),

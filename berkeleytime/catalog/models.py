@@ -65,6 +65,24 @@ class Course(models.Model):
 
     last_updated = models.DateTimeField(auto_now=True)
 
+    def as_json(self):
+      return dict(
+        id = self.id,
+        title = self.title,
+        abbreviation = self.abbreviation,
+        course_number = self.course_number,
+        department = self.department,
+        description = self.description,
+        enrolled = self.enrolled,
+        enrolled_max = self.enrolled_max,
+        enrolled_percentage = self.enrolled_percentage,
+        waitlisted = self.waitlisted,
+        letter_average = self.letter_average,
+        grade_average = self.grade_average,
+        units = self.display_units,
+        prerequisites = self.prerequisites,
+      )
+
     class Meta:
         """Metaclass for Course model."""
 
@@ -147,6 +165,26 @@ class Section(models.Model):
     waitlisted_max = models.IntegerField(null=True)
 
     textbooks = models.ManyToManyField(Textbook)
+
+    def as_json(self):
+      return dict(
+        id = self.id,
+        enrolled = self.enrolled,
+        enrolled_max = self.enrolled_max,
+        section_number = self.section_number,
+        ccn = self.ccn,
+        kind = self.kind,
+        start_time = self.start_time,
+        end_time = self.end_time,
+        word_days = self.word_days,
+        location_name = self.location_name,
+        instructor = self.instructor,
+        waitlisted = self.waitlisted,
+        final_day = self.final_day,
+        final_word_day = self.final_word_day,
+        final_start = self.final_start,
+        final_end = self.final_end,
+      )
 
     @property
     def info(self):  # noqa
