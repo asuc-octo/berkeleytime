@@ -12,7 +12,7 @@ def get_profile(request):
     return request.user.berkeleytimeuserprofile
 
 def render_to_json(obj):
-    return HttpResponse(json.dumps(obj), content_type="application/javascript")
+    return HttpResponse(json.dumps(obj, default=str), content_type="application/javascript")
 
 def render_to_empty_json():
     return render_to_json({})
