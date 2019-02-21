@@ -7,6 +7,7 @@ import FilterSidebar from '../../components/FilterSidebar/FilterSidebar.jsx';
 import FilterResults from '../../components/FilterSidebar/FilterResults.jsx';
 import ClassDescription from '../../components/ClassDescription/ClassDescription.jsx';
 
+
 class Catalog extends Component {
   constructor(props) {
     super(props);
@@ -30,6 +31,8 @@ class Catalog extends Component {
     this.toggleFilterHandler = this.toggleFilterHandler.bind(this);
     this.selectFilterHandler = this.selectFilterHandler.bind(this);
     this.resetFilterHandler = this.resetFilterHandler.bind(this);
+    this.rangeFilterHandler = this.rangeFilterHandler.bind(this);
+    this.selectCourseHandler = this.selectCourseHandler.bind(this);
   }
 
   /**
@@ -89,6 +92,20 @@ class Catalog extends Component {
   unitsRangeHandler(newRange) {
     this.setState({
       unitsRange: newRange
+    })
+  }
+
+  rangeFilterHandler(addFilterIds, removeFilterIds) {
+    let newActiveFilters = new Set(this.state.activeFilters);
+    for (let filterId of addFilterIds) {
+      newActiveFilters.add(parseInt(filterId));
+    }
+    for (let filterId of removeFilterIds) {
+      newActiveFilters.delete(parseInt(filterId));
+    }
+
+    this.setState({
+      activeFilters: newActiveFilters
     })
   }
 
@@ -179,6 +196,13 @@ class Catalog extends Component {
     })
   }
 
+  selectCourseHandler(course) {
+    console.log(course);
+    this.setState({
+      selectedCourse: course,
+    })
+  }
+
   /**
    *
    * @param {Array} filters
@@ -241,6 +265,7 @@ class Catalog extends Component {
                 sortBy={this.state.sortBy}
                 unitsRange={this.state.unitsRange}
                 addFilter={this.addFilterHandler}
+                rangeFilter={this.rangeFilterHandler}
                 removeFilter={this.removeFilterHandler}
                 toggleFilter={this.toggleFilterHandler}
                 selectFilter={this.selectFilterHandler}
@@ -251,11 +276,16 @@ class Catalog extends Component {
               {this.state && this.state.activeFilters.size &&
                 <FilterResults
                   activeFilters={this.state.activeFilters}
+                  selectCourse={this.selectCourseHandler}
                 />
               }
             </Col>
             <Col md={6}>
-              <ClassDescription />
+              {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
+                <ClassDescription
+                  course={this.state.selectedCourse}
+                />
+              }
             </Col>
           </Row>
         </Grid>

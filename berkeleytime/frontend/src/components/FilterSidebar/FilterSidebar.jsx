@@ -114,15 +114,19 @@ export class FilterSidebar extends Component {
     let lowerBound = range[0];
     let upperBound = range[1];
 
+    let addFilterIds = [];
+    let removeFilterIds = [];
+
     for(let unitsFilter of units) {
       let units = parseFloat(unitsFilter.name.split(" ")[0]);
       if (units >= lowerBound && units <= upperBound) {
-        this.props.addFilter(unitsFilter.id);
+        addFilterIds.push(unitsFilter.id)
       } else {
-        this.props.removeFilter(unitsFilter.id);
+        removeFilterIds.push(unitsFilter.id);
       }
     }
 
+    this.props.rangeFilter(addFilterIds, removeFilterIds);
     this.props.unitsRangeHandler(range);
   }
 
@@ -142,12 +146,20 @@ export class FilterSidebar extends Component {
   }
 
   handleDepartmentSelect(updated) {
-    let updatedFilterID = updated.value;
-    this.props.selectFilter(this.state.department, updatedFilterID);
+    console.log(updated);
+    if(!updated) {
+      this.props.removeFilter(this.state.department);
+      this.setState({
+        department: ''
+      })
+    } else {
+      let updatedFilterID = updated.value;
+      this.props.selectFilter(this.state.department, updatedFilterID);
 
-    this.setState({
-      department: updatedFilterID
-    });
+      this.setState({
+        department: updatedFilterID
+      });
+    }
   }
 
   render() {
