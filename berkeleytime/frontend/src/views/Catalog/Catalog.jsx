@@ -14,7 +14,7 @@ class Catalog extends Component {
 
     this.state = {
       query: '',
-      sortBy: '',
+      sortBy: 'grade_average',
       unitsRange: [0, 5],
       activeFilters: new Set(),
       defaultFilters: new Set(),
@@ -190,7 +190,7 @@ class Catalog extends Component {
     let newActiveFilters = new Set(this.state.defaultFilters);
     this.setState({
       query: '',
-      sortBy: '',
+      sortBy: 'grade_average',
       unitsRange: [0, 5],
       activeFilters: newActiveFilters,
     })
@@ -247,6 +247,12 @@ class Catalog extends Component {
       },
       department: department,
       units: filters.units,
+      sortAttributes: [
+        { value: 'grade_average', label: 'Average Grade' },
+        { value: 'department_name', label: 'Department Name' },
+        { value: 'open_seats', label: 'Open Seats' },
+        { value: 'enrolled_percentage', label: 'Enrolled Percentage' }
+      ],
     })
   }
 
@@ -277,6 +283,8 @@ class Catalog extends Component {
                 <FilterResults
                   activeFilters={this.state.activeFilters}
                   selectCourse={this.selectCourseHandler}
+                  sortBy={this.state.sortBy}
+                  query={this.state.query}
                 />
               }
             </Col>

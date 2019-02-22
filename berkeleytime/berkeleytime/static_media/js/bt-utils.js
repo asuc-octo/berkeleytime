@@ -97,7 +97,7 @@ bt_utils.laymanToAbbreviation = {
     "POLISCI": "POL SCI",
     "PS" : "POL SCI",
     "PUBPOL": "PUB POL",
-    "PP": "PUB POL", 
+    "PP": "PUB POL",
     "PUBLIC POLICY": "PUB POL",
     "PUBAFF": "PUB AFF",
     "PSYCHOLOGY": "PSYCH",

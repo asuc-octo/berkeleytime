@@ -29,13 +29,17 @@ function ClassSections({ sections }) {
           {sections.map(section => {
             let startDate = new Date(section.start_time);
             let endDate = new Date(section.end_time);
-            console.log(startDate);
+            console.log(typeof(startDate));
             console.log(endDate);
             return (
               <tr>
                 <th>{section.kind}</th>
                 <th>{section.ccn}</th>
-                <th>{section.word_days} {formatDate(startDate)} - {formatDate(endDate)}</th>
+                {!isNaN(startDate) && !isNaN(endDate) ? (
+                 <th>{section.word_days} {formatDate(startDate)} - {formatDate(endDate)}</th>
+                ) : (
+                  <th></th>
+                )}
                 <th>{section.location_name}</th>
                 <th>{section.enrolled} / {section.enrolled_max}</th>
                 <th>{section.waitlisted}</th>
