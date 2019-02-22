@@ -5,8 +5,8 @@ import {
   Redirect,
 } from 'react-router-dom';
 
-import Navigation from '../Navigation/index.jsx';
-import Footer from '../Footer/index.jsx';
+import Navigation from '../Navigation/Navigation';
+import Footer from '../Footer/Footer';
 
 import appRoutes from '../../routes/app.js';
 
