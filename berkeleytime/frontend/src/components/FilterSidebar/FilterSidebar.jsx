@@ -93,7 +93,6 @@ export class FilterSidebar extends Component {
 
     this.state = {
       classSearch: '',
-      sortBy: 'average-grades',
       departmentID: '',
       toggleStatus: new Set(),
       collapseLogistics: false,
@@ -163,8 +162,8 @@ export class FilterSidebar extends Component {
   }
 
   render() {
-    const { requirements, logistics, department, units } = this.props.filters;
-    const { sortAttributes, activeFilters } = this.props;
+    const { requirements, logistics, department, units, sortAttributes } = this.props.filters;
+    const { activeFilters } = this.props;
     return (
       <div className="card filter-sidebar">
         <div className="header">
@@ -253,16 +252,6 @@ export class FilterSidebar extends Component {
       </div>
     );
   }
-}
-
-FilterSidebar.defaultProps = {
-    sortAttributes: [
-      { value: 'average-grade', label: 'Average Grade' },
-      { value: 'most-favorited', label: 'Most Favorited' },
-      { value: 'department-name', label: 'Department Name' },
-      { value: 'open-seats', label: 'Open Seats' },
-      { value: 'enrolled-percentage', label: 'Enrolled Percentage' }
-    ],
 }
 
 FilterSidebar.propTypes = {
