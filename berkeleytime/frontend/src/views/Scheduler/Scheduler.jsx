@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 
-import ComingSoon from '../../components/Temporary/ComingSoon.jsx';
+import ComingSoon from '../../components/Temporary/ComingSoon';
 
-class Scheduler extends Component {
-  render() {
-    return (
-      <div className="app-container">
-        <ComingSoon />
-      </div>
-    );
-  }
+
+function Scheduler() {
+  return (
+    <ComingSoon />
+  );
 }
+
 
 export default Scheduler;
