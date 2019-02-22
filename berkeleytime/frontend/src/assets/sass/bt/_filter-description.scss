@@ -78,6 +78,12 @@
     }
 
     .filter-description-tabs-sections {
+      > table {
+        table-layout: fixed;
+      overflow-x: scroll;
+      display: block;
+      }
+
       > table > thead > tr > th {
         font-size: 16px;
       }

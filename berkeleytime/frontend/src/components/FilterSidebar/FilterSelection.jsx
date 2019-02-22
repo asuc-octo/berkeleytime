@@ -5,18 +5,21 @@ class FilterSelection extends Component {
     super(props);
 
     this.clickHandler = this.clickHandler.bind(this);
+    this.getCorrectDisplayColor = this.getCorrectDisplayColor.bind(this);
   }
 
   getFormattedEnrollment(enrollmentConstant) {
     return Math.floor(enrollmentConstant * 100, 100);
   }
 
-  getCorrectDisplayConstant() {
-
-  }
-
-  getCorrectDisplayColor() {
-
+  getCorrectDisplayColor(averageGrade) {
+    if(averageGrade.includes('A')) {
+      return 'bt-green-text';
+    } else if (averageGrade.includes('B')) {
+      return 'bt-orange-text';
+    } else {
+      return 'bt-red-text';
+    }
   }
 
   clickHandler() {
@@ -34,33 +37,34 @@ class FilterSelection extends Component {
       gradeColors, id} = this.props
 
     return (
-        <button className={`filter-selection ${borderColors[id % 4]}`} onClick={this.clickHandler}>
-          <div className="filter-selection-content">
-            <h4 className="filter-selection-heading">{courseAbbreviation} {courseNumber}</h4>
-            <p className="filter-selection-description">{courseTitle}</p>
-            <div className="filter-selection-enrollment-data">
-              <div className="dataBlock">
-                <i className="fa fa-circle first" />
-                <p>{` ${this.getFormattedEnrollment(percentageEnrolled)}% enrolled`}</p>
-              </div>
-              <div className="dataBlock">
-                <i className="fa fa-circle second" />
-                <p>{` ${waitlisted} waitlisted`}</p>
+        <button className="filter-selection-button"onClick={this.clickHandler}>
+          <div className={`filter-selection ${borderColors[id % 4]}`}>
+            <div className="filter-selection-content">
+              <h4 className="filter-selection-heading">{courseAbbreviation} {courseNumber}</h4>
+              <p className="filter-selection-description">{courseTitle}</p>
+              <div className="filter-selection-enrollment-data">
+                <div className="dataBlock">
+                  <i className="fa fa-circle first" />
+                  <p>{` ${this.getFormattedEnrollment(percentageEnrolled)}% enrolled`}</p>
+                </div>
+                <div className="dataBlock">
+                  <i className="fa fa-circle second" />
+                  <p>{` ${waitlisted} waitlisted`}</p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="filter-selection-aside">
-            <div className="filter-selection-units">
-              <h6>{`${units} Units`}</h6>
-            </div>
-            {averageGrade &&
-              <div className="filter-selection-average-grade ">
-                <h5>Average Grade</h5>
-                <p className={'bt-red-text'}>{averageGrade}</p>
+            <div className="filter-selection-aside">
+              <div className="filter-selection-units">
+                <h6>{`${units} Units`}</h6>
               </div>
-            }
+              {averageGrade &&
+                <div className="filter-selection-average-grade">
+                  <h5>Average Grade</h5>
+                  <p className={this.getCorrectDisplayColor(averageGrade)}>{averageGrade}</p>
+                </div>
+              }
+            </div>
           </div>
-          <div className="vertical-line" />
         </button>
     );
   }
