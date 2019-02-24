@@ -1,12 +1,17 @@
 import React, { Component } from 'react';
 
+import axios from 'axios';
+
 import ClassDetails from './ClassDetails.jsx';
 import ClassSections from './ClassSections.jsx';
 
 class ClassDescription extends Component {
   constructor(props) {
     super(props);
-    this.state = { tab: 0 }
+    this.state = {
+      tab: 0,
+      courseData: {},
+    }
     this.details = this.details.bind(this)
     this.sections = this.sections.bind(this)
   }
@@ -19,45 +24,101 @@ class ClassDescription extends Component {
     this.setState({ tab: 1 })
   }
 
+  componentDidMount() {
+    this.updateCourse(this.props.course);
+  }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (Object.keys(this.state.courseData).length == 0) {
+  //     return true;
+  //   } else if (this.state.tab !== nextState.tab) {
+  //     return true;
+  //   }
+
+  //   console.log(this.props);
+  //   console.log(nextProps);
+
+  //   return this.state.courseData.course.id !== nextProps.course.id;
+  // }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(Object.keys(prevState.courseData).length == 0) {
+      this.updateCourse(this.props.course);
+    }
+    else if(this.props.course.id !== prevState.courseData.course.id) {
+      this.updateCourse(this.props.course);
+    }
+  }
+
+  updateCourse(course) {
+    let courseID = course.id;
+    let courseAbbreviation = course.abbreviation;
+    let courseNumber = course.courseNumber;
+    axios.get(`http://localhost:8000/catalog_json/course_box`, {
+      params: {
+        course_id: courseID,
+      }
+    })
+    .then(res => {
+      console.log(res);
+      this.setState({
+        courseData: res.data,
+      })
+    })
+    .catch((err) => {
+      if (err.response) {
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+      }
+      console.log(err.config);
+    });
+  }
+
   render() {
+    const { tab, courseData } = this.state;
     const info = this.props
-    const { tab } = this.state
+    let { course, sections } = courseData;
     return (
-      <div className="card filter-description">
-        <div className="filter-description-header">
-          <h3>{info.courseAbbreviation}</h3>
-          <p>{info.favorites} favorites</p>
-        </div>
-        <p className="filter-description-title">{info.courseTitle}</p>
-        <div className="filter-description-stats">
-          <div className="filter-description-stats-avg">
-            <p>Course Average: {info.averageGrade}</p>
-            <a>See grade distributions</a>
+      <div>
+      {course &&
+        <div className="card filter-description">
+          <div className="filter-description-header">
+            <h3>{course.abbreviation} {course.course_number}</h3>
+            <p>{course.units} Units</p>
           </div>
-          <div className="filter-description-stats-enroll">
-            <p>Enrollment: {info.enrolled}/{info.capacity}</p>
-            <a>See enrollment history</a>
+          <p className="filter-description-title">{course.title}</p>
+          <div className="filter-description-stats">
+            <div className="filter-description-stats-avg">
+              <p>Course Average: {course.letter_average || 'N/A'}</p>
+              <a>See grade distributions</a>
+            </div>
+            <div className="filter-description-stats-enroll">
+              <p>Enrollment: {course.enrolled} / {course.enrolled_max}</p>
+              <a>See enrollment history</a>
+            </div>
+          </div>
+          {/* <p className="filter-description-instructors">Instructor(s): {info.instructors}</p> */}
+          <div className="filter-description-tabs">
+            <div className="tabs">
+              <ul>
+                <li className={tab == 0 ? 'is-active' : ''}><a onClick={this.details}>Course Details</a></li>
+                <li className={tab == 1 ? 'is-active' : ''}><a onClick={this.sections}>Sections</a></li>
+              </ul>
+            </div>
+            {tab == 0 ? (
+              <ClassDetails
+                description={course.description}
+                prerequisites={course.prerequisites}
+              />
+            ) : (
+              <ClassSections
+                sections={sections}
+              />
+            )}
           </div>
         </div>
-        <p className="filter-description-instructors">Instructor(s): {info.instructors}</p>
-        <div className="filter-description-tabs">
-          <div className="tabs">
-            <ul>
-              <li className={tab == 0 && 'is-active'}><a onClick={this.details}>Course Details</a></li>
-              <li className={tab == 1 && 'is-active'}><a onClick={this.sections}>Sections</a></li>
-            </ul>
-          </div>
-          {tab == 0 ? (
-            <ClassDetails
-              details={info.details}
-              prerequisites={info.prerequisites}
-            />
-          ) : (
-            <ClassSections
-              sections={info.sections}
-            />
-          )}
-        </div>
+      }
       </div>
     );
   }
