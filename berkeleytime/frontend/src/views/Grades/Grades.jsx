@@ -27,7 +27,9 @@ class Grades extends Component {
   }
 
   removeClass(classNum) {
-    this.setState({ classCards: this.state.classCards.filter(classInfo => classInfo.classNum != classNum) })
+    this.setState((prevState, props) => ({
+      classCards: prevState.classCards.filter(classInfo => classInfo.classNum !== classNum)
+    }));
   }
 
   getCurrentDate() {
