@@ -1,18 +1,24 @@
-.filter-selection {
+.filter-selection-button {
+  border: 0px;
+  padding: 0px;
+  margin-bottom: 20px;
+  width: 100%;
+
+  .filter-selection {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
     padding: 5px 10px;
     position: relative;
-    margin-bottom: 20px;
     min-height: 120px;
 
     .filter-selection-content {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        max-width: 70%;
+        min-width: 70%;
+        border-right: 1px solid #EEEEEE;
 
         .filter-selection-heading {
             margin: 0;
@@ -23,6 +29,9 @@
 
         .filter-selection-description {
             font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .filter-selection-enrollment-data {
@@ -49,7 +58,7 @@
                 }
 
                 p {
-                    padding-left: 5px;
+                    padding-left: 10px;
                     font-size: 12px;
                 }
             }
@@ -70,7 +79,6 @@
                 font-family: "Roboto", "Arial", sans-serif !important;
                 font-weight: 400;
                 text-transform: capitalize;
-                margin-bottom: 10px;
             }
         }
 
@@ -78,6 +86,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-top: 10px;
+
             h5 {
                 font-family: "Roboto", "Arial", sans-serif !important;
                 font-size: 10px;
@@ -93,14 +103,7 @@
             }
         }
     }
-
-    .vertical-line {
-        position: absolute;
-        height: 80%;
-        width: 70%;
-        left: 0;
-        border-right: 1px solid #EEEEEE;
-    }
+  }
 }
 
 .bt-blue-border {

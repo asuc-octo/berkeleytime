@@ -9923,6 +9923,8 @@ button.deleteBtn {
           font-size: 14px;
           font-weight: 300; }
         .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .checkboxGroup {
+          display: flex;
+          flex-direction: column;
           padding-left: 15px; }
           .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .checkboxGroup .checkbox > label {
             font-size: 12px;
@@ -9958,78 +9960,80 @@ button.deleteBtn {
           color: white;
           font-weight: bold; }
 
-.filter-selection {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: white;
-  padding: 5px 10px;
-  position: relative;
+.filter-selection-button {
+  border: 0px;
+  padding: 0px;
   margin-bottom: 20px;
-  min-height: 120px; }
-  .filter-selection .filter-selection-content {
+  width: 100%; }
+  .filter-selection-button .filter-selection {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
-    max-width: 70%; }
-    .filter-selection .filter-selection-content .filter-selection-heading {
-      margin: 0;
-      font-size: 16px;
-      font-weight: bold;
-      text-transform: uppercase; }
-    .filter-selection .filter-selection-content .filter-selection-description {
-      font-size: 12px; }
-    .filter-selection .filter-selection-content .filter-selection-enrollment-data {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between; }
-      .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock {
-        display: flex;
-        flex-direction: row;
-        justify-content: left;
-        padding-right: 10px; }
-        .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock i {
-          width: 10px; }
-        .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock .first {
-          color: #ef5350; }
-        .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock .second {
-          color: #FFF59D; }
-        .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock p {
-          padding-left: 5px;
-          font-size: 12px; }
-  .filter-selection .filter-selection-aside {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-width: 30%; }
-    .filter-selection .filter-selection-aside .filter-selection-units {
-      display: block;
-      text-align: center; }
-      .filter-selection .filter-selection-aside .filter-selection-units h6 {
-        font-family: "Roboto", "Arial", sans-serif !important;
-        font-weight: 400;
-        text-transform: capitalize;
-        margin-bottom: 10px; }
-    .filter-selection .filter-selection-aside .filter-selection-average-grade {
+    background-color: white;
+    padding: 5px 10px;
+    position: relative;
+    min-height: 120px; }
+    .filter-selection-button .filter-selection .filter-selection-content {
       display: flex;
       flex-direction: column;
-      align-items: center; }
-      .filter-selection .filter-selection-aside .filter-selection-average-grade h5 {
-        font-family: "Roboto", "Arial", sans-serif !important;
-        font-size: 10px;
-        color: grey;
-        margin: 0px; }
-      .filter-selection .filter-selection-aside .filter-selection-average-grade p {
-        font-family: "Roboto", "Arial", sans-serif !important;
-        font-size: 20px;
+      justify-content: space-between;
+      min-width: 70%;
+      border-right: 1px solid #EEEEEE; }
+      .filter-selection-button .filter-selection .filter-selection-content .filter-selection-heading {
+        margin: 0;
+        font-size: 16px;
         font-weight: bold;
-        margin: 5px; }
-  .filter-selection .vertical-line {
-    position: absolute;
-    height: 80%;
-    width: 70%;
-    left: 0;
-    border-right: 1px solid #EEEEEE; }
+        text-transform: uppercase; }
+      .filter-selection-button .filter-selection .filter-selection-content .filter-selection-description {
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; }
+      .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between; }
+        .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock {
+          display: flex;
+          flex-direction: row;
+          justify-content: left;
+          padding-right: 10px; }
+          .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock i {
+            width: 10px; }
+          .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock .first {
+            color: #ef5350; }
+          .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock .second {
+            color: #FFF59D; }
+          .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock p {
+            padding-left: 10px;
+            font-size: 12px; }
+    .filter-selection-button .filter-selection .filter-selection-aside {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 30%; }
+      .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-units {
+        display: block;
+        text-align: center; }
+        .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-units h6 {
+          font-family: "Roboto", "Arial", sans-serif !important;
+          font-weight: 400;
+          text-transform: capitalize; }
+      .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-average-grade {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px; }
+        .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-average-grade h5 {
+          font-family: "Roboto", "Arial", sans-serif !important;
+          font-size: 10px;
+          color: grey;
+          margin: 0px; }
+        .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-average-grade p {
+          font-family: "Roboto", "Arial", sans-serif !important;
+          font-size: 20px;
+          font-weight: bold;
+          margin: 5px; }
 
 .bt-blue-border {
   border-left: 5px solid #579EFF; }
@@ -10053,7 +10057,8 @@ button.deleteBtn {
   color: #FC7676; }
 
 .filter-results {
-  padding: 0; }
+  padding-right: 10px;
+  overflow-y: auto; }
   .filter-results h4 {
     margin: 0;
     margin-bottom: 10px;
@@ -10104,10 +10109,15 @@ button.deleteBtn {
       margin-bottom: 5px; }
     .filter-description .filter-description-tabs .filter-description-tabs-details p:first-of-type {
       margin-bottom: 15px; }
+  .filter-description .filter-description-tabs .filter-description-tabs-sections > table {
+    table-layout: fixed;
+    overflow-x: scroll;
+    display: block; }
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table > thead > tr > th {
     font-size: 16px; }
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > th {
-    font-weight: normal; }
+    font-weight: normal;
+    font-size: 12px; }
 
 .navbar {
   position: fixed;

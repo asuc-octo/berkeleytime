@@ -12,3 +12,4 @@ build/requirements.txt
 .sass-cache/
 postgres-data.tar.gz
 bt_main.sql
+.vscode

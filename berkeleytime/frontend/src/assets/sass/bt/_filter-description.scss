@@ -78,11 +78,18 @@
     }
 
     .filter-description-tabs-sections {
+      > table {
+        table-layout: fixed;
+      overflow-x: scroll;
+      display: block;
+      }
+
       > table > thead > tr > th {
         font-size: 16px;
       }
       > table > tbody > tr > th {
         font-weight: normal;
+        font-size: 12px;
       }
     }
   }
