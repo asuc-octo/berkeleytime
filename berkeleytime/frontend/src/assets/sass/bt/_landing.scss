@@ -40,8 +40,10 @@
     }
 
     .landing-jumbo-img {
-        width: 250px;
+        width: 500px;
         object-fit: scale-down;
+        margin-left: 20px;
+        margin-right: 20px;
     }
 }
 
@@ -159,5 +161,24 @@
         p {
             margin-bottom: 30px;
         }
+    }
+}
+
+.landing-artist-credit {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    padding: 50px;
+
+    font-size: 20px;
+    background-color: white;
+
+    > * {
+        padding: 0 5px;
+    }
+
+    a {
+        transition: 200ms;
     }
 }

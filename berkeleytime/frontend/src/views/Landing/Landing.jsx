@@ -4,18 +4,20 @@ import Jumbotron from '../../components/Landing/Jumbotron';
 import WhatWeDo from '../../components/Landing/WhatWeDo';
 import Explore from '../../components/Landing/Explore';
 import Mission from '../../components/Landing/Mission';
+import ArtistCredit from '../../components/Landing/ArtistCredit';
 
 import explore_snap from '../../assets/img/images/landing/explore_snap.png';
 import grades_snap from '../../assets/img/images/landing/grades_snap.png';
 import enrollment_snap from '../../assets/img/images/landing/enrollment_snap.png';
 
-function Landing(props) {
+function Landing() {
   return (
     <div className="">
       <Jumbotron />
       <WhatWeDo />
       {Landing.explore.map(item => <Explore {...item} />)}
       <Mission />
+      <ArtistCredit />
     </div>
   );
 }

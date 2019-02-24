@@ -1,6 +1,6 @@
 import React from 'react';
 
-import logo from '../../assets/img/images/about/octo.jpg';
+import logo from '../../assets/img/images/landing/berkeleytime.png';
 
 function Jumbotron() {
   return (
@@ -15,7 +15,7 @@ function Jumbotron() {
           </div>
         </div>
       </div>
-      <div className="level-right has-text-centered">
+      <div className="has-text-centered">
         <img className="landing-jumbo-img" src={logo} alt="jumbotron" />
       </div>
     </div>
