@@ -10172,9 +10172,9 @@ button.deleteBtn {
       flex-wrap: wrap;
       justify-content: space-between;
       margin: auto;
-      max-width: 900px; }
+      max-width: 2000px; }
       .contributors .contributors-container .contributor-profiles .contributor-card {
-        height: 300px;
+        height: 250px;
         width: 250px;
         box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
         border-radius: 5px;
@@ -10262,11 +10262,11 @@ button.deleteBtn {
       justify-content: space-between;
       margin: 20px 0; }
       .past-contributors .past-contributors-content .past-contributors-founders .founder-card {
-        height: 250px;
+        height: 100px;
         width: 200px;
         box-shadow: 0 0;
         border-radius: 5px;
-        padding: 20px 0;
+        padding: 10px 0;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
