@@ -10,14 +10,22 @@ from config.bookstore import *
 import raven
 from config.semesters.spring2019 import *
 
+# Set up google cloud logging
+import google.cloud.logging
+from pythonjsonlogger import jsonlogger
+log_client = google.cloud.logging.Client()
+log_client.setup_logging()
+
 settings_dir = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
 
-IS_LOCALHOST = not "DATABASE_URL" in os.environ
-IS_STAGING = "IS_STAGING" in os.environ
-IS_PRODUCTION = "IS_PRODUCTION" in os.environ
+ENV_NAME = os.getenv("ENVIRONMENT_NAME", "")
+IS_LOCALHOST = ENV_NAME == "LOCALHOST"
+IS_STAGING = ENV_NAME == "STAGING"
+IS_PRODUCTION = ENV_NAME == "PRODUCTION"
+assert IS_LOCALHOST or IS_STAGING or IS_PRODUCTION, "ENV not set properly: {}".format(ENV_NAME)
 
-DEBUG = IS_LOCALHOST
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -29,25 +37,20 @@ ADMINS = (
 INTERNAL_IPS = ('0.0.0.0',)
 
 MANAGERS = ADMINS
-# SOCIALACCOUNT_ADAPTER = 'account.socialaccount.SocialAccountAdapter'
 AUTH_PROFILE_MODULE = 'account.BerkeleytimeUserProfile'
 
-if IS_LOCALHOST or IS_STAGING:
+if IS_LOCALHOST:
     ALLOWED_HOSTS = ['*']
+elif IS_STAGING:
+    ALLOWED_HOSTS = [
+        "staging.berkeleytime-internal.com",
+    ]
 elif IS_PRODUCTION:
     ALLOWED_HOSTS = [
-        ".berkeleytime.com",
-        "berkeleytime-production.herokuapp.com",
-        "berkeleytime.com",
-        "asuc-berkeleytime-production.herokuapp.com",
-        # berkeleytimeinternal is our DNS alias for the ASUC transfer
-        ".berkeleytimeinternal.com",
-        "berkeleytimeinternal.com",
+        "berkeleytime-internal.com",
+        "www.berkeleytime-internal.com",
     ]
-else:
-    # will never happen, but it we configure environment variables wrong
-    # then we want to default to no hosts instead of all hosts
-    ALLOWED_HOSTS = []
+
 
 if IS_PRODUCTION or IS_STAGING:
     redis_url = urlparse.urlparse(os.environ.get('REDIS_URL'))
@@ -61,6 +64,7 @@ if IS_PRODUCTION or IS_STAGING:
             }
         }
     }
+
 
 elif IS_LOCALHOST:
     CACHES = {
@@ -87,8 +91,6 @@ else:
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
 STATIC_ROOT = '/static_media/'
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
 
 if IS_LOCALHOST:
     MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'static_media/').replace('\\','/')
@@ -107,15 +109,14 @@ if IS_LOCALHOST:
     SITE_ID = 3
 
 elif IS_STAGING:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+    # Google Cloud Storage settings
+    # DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    # STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_LOCATION = 'static_media'
 
-    AWS_STORAGE_BUCKET_NAME = 'berkeleytime-static'
-    AWS_PRELOAD_METADATA = True # necessary to fix manage.py collectstatic command to only upload changed files instead of all file
-    AWS_LOCATION = "static_media"
-    MEDIA_URL = 'https://berkeleytime-static.s3.amazonaws.com/static_media/'
-    STATIC_URL = 'https://berkeleytime-static.s3.amazonaws.com/static_media/'
-    ADMIN_MEDIA_PREFIX = 'https://berkeleytime-static.s3.amazonaws.com/static_media/admin/'
+    # GCS URL
+    STATIC_URL = 'https://storage.googleapis.com/berkeleytime-static-prod/static_media/'
+    ADMIN_MEDIA_PREFIX = 'https://storage.googleapis.com/berkeleytime-static-prod/static_media/admin/'
 
     EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
     EMAIL_HOST= 'smtp.sendgrid.net'
@@ -127,22 +128,20 @@ elif IS_STAGING:
     DOMAIN_NAME = "berkeleytime.com"
     SITE_ID = 3
 
-    AWS_HEADERS = {
-        'Cache-Control': 'max-age=0',
-    }
-    AWS_QUERYSTRING_AUTH = False
+    # GCS Networking Config
+    GS_DEFAULT_ACL = 'publicRead'
+    GS_CACHE_CONTROL = 'max-age=0'
 
 elif IS_PRODUCTION:
     PREPEND_WWW = True
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-    AWS_STORAGE_BUCKET_NAME = 'berkeleytime-static-prod'
-    AWS_PRELOAD_METADATA = True # necessary to fix manage.py collectstatic command to only upload changed files instead of all file
-    AWS_LOCATION = "static_media"
 
-    MEDIA_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
-    STATIC_URL = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/'
-    ADMIN_MEDIA_PREFIX = 'https://berkeleytime-static-prod.s3.amazonaws.com/static_media/admin/'
+    # Google Cloud Storage settings
+    # DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    # STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_LOCATION = 'static_media'
+
+    STATIC_URL = 'https://storage.googleapis.com/berkeleytime-static-prod/static_media/'
+    ADMIN_MEDIA_PREFIX = 'https://storage.googleapis.com/berkeleytime-static-prod/static_media/'
 
     EMAIL_HOST_USER = os.environ['SENDGRID_USERNAME']
     EMAIL_HOST= 'smtp.sendgrid.net'
@@ -154,31 +153,20 @@ elif IS_PRODUCTION:
     DOMAIN_NAME = "berkeleytime.com"
     SITE_ID = 3
 
-    AWS_HEADERS = {
-        'Cache-Control': 'max-age=0',
-    }
-    AWS_QUERYSTRING_AUTH = False
+    # GCS Networking Config
+    GS_DEFAULT_ACL = 'publicRead'
+    GS_CACHE_CONTROL = 'max-age=4500'
 
-if "SIS_COURSE_APP_ID" in os.environ:
-    SIS_COURSE_APP_ID = os.environ["SIS_COURSE_APP_ID"]
-    SIS_COURSE_APP_KEY = os.environ["SIS_COURSE_APP_KEY"]
-else:
-    SIS_COURSE_APP_ID = ""
-    SIS_COURSE_APP_KEY = ""
+# Optional ENV Variables
+GS_BUCKET_NAME = os.getenv("GS_BUCKET_NAME", "")
+GS_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "")
+SIS_COURSE_APP_ID = os.getenv("SIS_COURSE_APP_ID", "")
+SIS_COURSE_APP_KEY = os.getenv("SIS_COURSE_APP_KEY", "")
+SIS_CLASS_APP_ID = os.getenv("SIS_CLASS_APP_ID", "")
+SIS_CLASS_APP_KEY = os.getenv("SIS_CLASS_APP_KEY", "")
+AWS_AFFILIATE_ACCESS_KEY_ID = os.getenv("AWS_AFFILIATE_ACCESS_KEY_ID", "")
+AWS_AFFILIATE_SECRET = os.getenv("AWS_AFFILIATE_SECRET", "")
 
-if "SIS_CLASS_APP_ID" in os.environ:
-    SIS_CLASS_APP_ID = os.environ["SIS_CLASS_APP_ID"]
-    SIS_CLASS_APP_KEY = os.environ["SIS_CLASS_APP_KEY"]
-else:
-    SIS_CLASS_APP_ID = ""
-    SIS_CLASS_APP_KEY = ""
-
-if "AWS_AFFILIATE_ACCESS_KEY_ID" in os.environ:
-    AWS_AFFILIATE_ACCESS_KEY_ID = os.environ["AWS_AFFILIATE_ACCESS_KEY_ID"]
-    AWS_AFFILIATE_SECRET = os.environ["AWS_AFFILIATE_SECRET"]
-else:
-    AWS_AFFILIATE_ACCESS_KEY_ID = ""
-    AWS_AFFILIATE_SECRET = ""
 
 # Please replace with Amazon Affiliate tag
 AMAZON_AFFILIATE_TAG = 'berkeleytim06-20'
@@ -252,9 +240,6 @@ if IS_LOCALHOST or IS_STAGING:
     )
 
 ROOT_URLCONF = 'berkeleytime.urls'
-
-# Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'berkeleytime.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -367,6 +352,10 @@ LOGGING = {
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
+        'json': {
+            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '%(levelname)s %(asctime)s %(message)s',
+        },
     },
     'handlers': {
         'mail_admins': {
@@ -377,13 +366,17 @@ LOGGING = {
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+            'formatter': 'json',
             'stream': sys.stdout,
         },
         'sentry': {
             'level': 'WARN',
             'filters': ['require_debug_false'],
             'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',  # noqa
+        },
+        'stackdriver_logging': {
+            'class': 'google.cloud.logging.handlers.CloudLoggingHandler',
+            'client': log_client
         },
     },
     'root': {
@@ -401,15 +394,17 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+        'django': {
+            'handlers': ['console', 'stackdriver_logging'],
+            'level': 'DEBUG',
             'propagate': True,
         },
-        'django_facebook.models': {
-            'handlers': ['mail_admins', 'console'],
+        'django.request': {
+            'handlers': [
+                'stackdriver_logging',
+                'mail_admins'
+            ],
             'level': 'ERROR',
-            'propagate': True,
         },
         # https://docs.sentry.io/hosted/clients/python/integrations/django/
         'raven': {
@@ -439,6 +434,7 @@ if IS_LOCALHOST or IS_STAGING:
         'debug_toolbar.panels.logging.LoggingPanel',
     )
 
+
 FACEBOOK_LOGIN_DEFAULT_REDIRECT = "/login"
 LOGIN_URL = '/login'
 LOGOUT_URL = '/logout'
@@ -454,7 +450,7 @@ else:
     }
 
 # SSL
-if not IS_LOCALHOST:
+if False:
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_HSTS_SECONDS = 31536000
