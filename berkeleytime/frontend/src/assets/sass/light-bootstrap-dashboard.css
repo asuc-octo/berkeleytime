@@ -1466,22 +1466,25 @@ body > .navbar-collapse[data-color="purple"]:after {
   .navbar-toggle.navbar-default .navbar-toggle:focus {
     background-color: transparent; }
 
-.btfooter {
+.bt-footer {
   background-color: #303548;
-  padding: 40px; }
-  .btfooter .columns .column {
+  padding: 80px 60px; }
+  .bt-footer .columns .column {
     display: flex;
     flex-direction: column;
     color: white; }
-    .btfooter .columns .column :first-child {
+    .bt-footer .columns .column :first-child {
+      margin-bottom: 15px; }
+    .bt-footer .columns .column > *:not(:first-child):not(:last-child) {
       margin-bottom: 10px; }
-    .btfooter .columns .column > *:not(:first-child):not(:last-child) {
-      margin-bottom: 5px; }
-    .btfooter .columns .column > *:not(:first-child) {
-      font-size: 13px; }
-    .btfooter .columns .column a {
-      color: white; }
-    .btfooter .columns .column a:hover {
+    .bt-footer .columns .column > *:not(:first-child) {
+      font-size: 16px; }
+    .bt-footer .columns .column p {
+      font-size: 18px; }
+    .bt-footer .columns .column a {
+      color: white;
+      transition: 200ms; }
+    .bt-footer .columns .column a:hover {
       color: #209cee; }
 
 .dropdown-menu {
@@ -9803,20 +9806,6 @@ label.panel-block {
   margin-left: 35px;
   margin-right: 35px; }
 
-.card.card-class {
-  background-color: #579EFF; }
-  .card.card-class .content {
-    padding: 15px 15px 15px 15px;
-    background-color: white;
-    margin-left: 10px;
-    border-radius: 0 4px 4px 0; }
-  .card.card-class .classTitle {
-    padding-top: 15px;
-    padding-bottom: 15px; }
-  .card.card-class .classNum {
-    font-weight: bold;
-    font-size: 20px; }
-
 button.deleteBtn {
   border: none;
   padding-top: 45px; }
@@ -10116,14 +10105,31 @@ button.deleteBtn {
     font-weight: normal;
     font-size: 12px; }
 
+.card.card-class {
+  background-color: #579EFF; }
+  .card.card-class .content {
+    padding: 15px 15px 15px 15px;
+    background-color: white;
+    margin-left: 10px;
+    border-radius: 0 4px 4px 0; }
+  .card.card-class .classTitle {
+    padding-top: 15px;
+    padding-bottom: 15px; }
+  .card.card-class .classNum {
+    font-weight: bold;
+    font-size: 20px; }
+
 .navbar {
   position: fixed;
   width: 100%;
   z-index: 1; }
 
-.bt-navbar-brand {
-  float: none !important;
-  height: auto !important; }
+.navbar-brand.bt-navbar-brand {
+  float: none;
+  height: auto;
+  padding: 5px 15px; }
+  .navbar-brand.bt-navbar-brand .bt-navbar-bt {
+    font-size: 30px; }
 
 .navbar-end {
   margin-right: 27px; }
@@ -10333,8 +10339,10 @@ button.deleteBtn {
         margin-left: 20px;
         border-color: #209cee; }
   .landing-jumbo .landing-jumbo-img {
-    width: 250px;
-    object-fit: scale-down; }
+    width: 500px;
+    object-fit: scale-down;
+    margin-left: 20px;
+    margin-right: 20px; }
 
 @media screen and (max-width: 1087px) {
   .landing-whatwedo {
@@ -10421,13 +10429,25 @@ button.deleteBtn {
   .landing-mission .landing-mission-column p {
     margin-bottom: 30px; }
 
+.landing-artist-credit {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 50px;
+  font-size: 20px;
+  background-color: white; }
+  .landing-artist-credit > * {
+    padding: 0 5px; }
+  .landing-artist-credit a {
+    transition: 200ms; }
+
 .temporary-jumbo {
   margin-top: 100px; }
   .temporary-jumbo h1 {
     text-align: center;
     font-size: 50px;
     font-weight: 500;
-    margin: 400px 0; }
+    margin: 50vh 0; }
 
 @media screen and (max-width: 769px) {
   .dashboard-columns {

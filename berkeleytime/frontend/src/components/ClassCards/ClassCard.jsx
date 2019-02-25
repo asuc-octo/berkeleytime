@@ -14,7 +14,8 @@ class ClassCard extends Component {
   }
 
   render() {
-    const info = this.props
+    const info = this.props;
+
     return (
       <div className="card card-class">
         <div className="content">
