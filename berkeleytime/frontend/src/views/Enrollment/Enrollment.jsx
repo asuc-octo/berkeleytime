@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Grid, Row, Col } from 'react-bootstrap';
 
-// import {Card} from '../../components/Card/Card.jsx';
-import ClassCard from '../../components/ClassCard/ClassCard.jsx';
+import ClassCardList from '../../components/ClassCards/ClassCardList';
 import GraphCard from '../../components/GraphCard/GraphCard.jsx';
 import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
@@ -34,23 +33,14 @@ class Enrollment extends Component {
 
   render() {
     const { classCards } = this.state;
+
     return (
       <div className="app-container">
         <ClassSearchBar />
-        <div className="columns">
-          {classCards.map(item => (
-            <div className="column card-column">
-              <ClassCard
-                stripeColor={item.stripeColor}
-                classNum={item.classNum}
-                semester={item.semester}
-                faculty={item.faculty}
-                title={item.title}
-                removeClass={this.removeClass}
-              />
-            </div>
-          ))}
-        </div>
+        <ClassCardList
+          classCards={classCards}
+          removeClass={this.removeClass}
+        />
         <GraphCard
           id="chartHours"
           title="Enrollment"
@@ -85,6 +75,7 @@ class Enrollment extends Component {
     );
   }
 }
+
 Enrollment.defaultProps = {
   classCards: [
     {
