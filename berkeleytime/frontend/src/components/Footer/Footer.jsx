@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 function Footer() {
   return (
-    <footer className="btfooter">
+    <footer className="bt-footer">
       <div className="columns is-mobile">
         <div className="column is-1-fullhd is-2-tablet is-4-mobile">
           <p className="btfooter-column"><b>Get Started</b></p>

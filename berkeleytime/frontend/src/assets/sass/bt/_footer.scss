@@ -1,7 +1,7 @@
-.btfooter {
+.bt-footer {
     background-color: $bt-footer;
 
-    padding: 40px;
+    padding: 80px 60px;
 
     .columns {
         .column {
@@ -11,19 +11,24 @@
             color: white;
 
             :first-child {
-                margin-bottom: 10px;
+                margin-bottom: 15px;
             }
 
             > *:not(:first-child):not(:last-child) {
-                margin-bottom: 5px;
+                margin-bottom: 10px;
             }
 
             > *:not(:first-child) {
-                font-size: 13px;
+                font-size: 16px;
+            }
+
+            p {
+                font-size: 18px;
             }
 
             a {
                 color: white;
+                transition: 200ms;
             }
 
             a:hover {

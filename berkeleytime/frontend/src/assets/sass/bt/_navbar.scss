@@ -23,9 +23,16 @@
     // }
 }
 
-.bt-navbar-brand {
-    float: none !important;
-    height: auto !important;
+.navbar-brand.bt-navbar-brand {
+    //override bootstrap css
+    float: none;
+    height: auto;
+
+    padding: 5px 15px;
+
+    .bt-navbar-bt {
+        font-size: 30px;
+    }
 }
 
 .navbar-end {
