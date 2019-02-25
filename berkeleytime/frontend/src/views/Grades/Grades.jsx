@@ -1,13 +1,5 @@
 import React, { Component } from 'react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
+import axios from 'axios';
 
 import ClassCardList from '../../components/ClassCards/ClassCardList.jsx';
 import GraphCard from '../../components/GraphCard/GraphCard.jsx';
@@ -21,8 +13,20 @@ import {
 class Grades extends Component {
   constructor(props) {
     super(props)
-    this.state = { classCards: Grades.defaultProps.classCards }
+    this.state = { 
+      classCards: Grades.defaultProps.classCards,
+      selectedClass: Grades.defaultProps.selectedClass
+    }
+    this.fetchClassInfo();
+
+    this.addClass = this.addClass.bind(this)
     this.removeClass = this.removeClass.bind(this)
+
+  }
+
+  addClass(classNum) {
+    // add class card
+    // fetch class info
   }
 
   removeClass(classNum) {
@@ -31,56 +35,57 @@ class Grades extends Component {
     }));
   }
 
+  // fetch class info
+  async fetchClassInfo() { 
+    try {
+      this.info = await axios.get('http://localhost:8000/grades/course_grades/1062/')
+      console.log(this.info.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   getCurrentDate() {
     let today = new Date();
     return today.toString().slice(4, 15);
   }
 
   render() {
-    const { classCards } = this.state;
-
     return (
       <div className="app-container">
         <ClassSearchBar />
+
         <ClassCardList
-          classCards={classCards}
+          classCards={this.state.classCards}
           removeClass={this.removeClass}
         />
+
         <GraphCard
           id="chartHours"
           title="Enrollment"
-          semester="Spring 2018"
-          graph={(
-            <BarChart width={600} height={245} data={grades}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <CartesianGrid strokeDasharray="3 3" />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="classA" fill="#579EFF" />
-              <Bar dataKey="classB" fill="#FFFF00" />
-            </BarChart>
-          )}
-          info={(
-            <GradesInfoCard
-              classNum="CS 61A"
-              semester="Spring 2018"
-              faculty="Denero"
-              title="The Structure and Interpretation of Computer Programs"
-              courseAvg="A- (GPA: 3.72)"
-              sectionAvg="A- (GPA: 3.72)"
-              seventeenthName="17th-18th"
-              seventeenthCount="15/3103"
-              seventeenthGrade="C+"
-              seventeenthPercent="0"
-            />
-          )}
+          thisClass={this.state.selectedClass}
         />
+
       </div>
     );
   }
 }
 Grades.defaultProps = {
+  selectedClass: {
+    semester: "Spring 2018",
+    data: grades,
+    datakeys: ['classA', 'classB'],
+    classNum: "CS 61A",
+    semester: "Spring 2018",
+    faculty: "Denero",
+    title: "The Structure and Interpretation of Computer Programs",
+    courseAvg: "A- (GPA: 3.72)",
+    sectionAvg: "A- (GPA: 3.72)",
+    seventeenthName: "17th-18th",
+    seventeenthCount: "15/3103",
+    seventeenthGrade: "C+",
+    seventeenthPercent: "0"
+  }, 
   classCards: [
     {
       stripeColor: '#4EA6FB',
@@ -107,7 +112,7 @@ Grades.defaultProps = {
       faculty: 'n/a',
       title: 'The Language of Painting',
     },
-  ],
+  ]
 };
 
 export default Grades;
