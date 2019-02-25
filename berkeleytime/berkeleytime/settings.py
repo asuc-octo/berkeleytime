@@ -29,15 +29,12 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ("Yuxin Zhu", "zhuyxn@gmail.com"),
-    ("Noah Gilmore", "noah.w.gilmore@gmail.com"),
-    ("ASUC CTO", "ctochief@asuc.org"),
     ("ASUC OCTO Berkeleytime Team", "octo.berkeleytime@asuc.org"),
-    ("Scott Lee", "scott.lee.3898@berkeley.edu"),
+    ("Michael Li", "michael.li@berkeley.edu"),
     ("Will Wang", "hwang97@berkeley.edu"),
 )
 
-INTERNAL_IPS = ('127.0.0.1',)
+INTERNAL_IPS = ('0.0.0.0',)
 
 MANAGERS = ADMINS
 AUTH_PROFILE_MODULE = 'account.BerkeleytimeUserProfile'
@@ -73,7 +70,7 @@ elif IS_LOCALHOST:
     CACHES = {
         'default': {
             'BACKEND': "redis_cache.RedisCache",
-            'LOCATION': '127.0.0.1:6379',
+            'LOCATION': 'redis:6379',
         }
     }
 
@@ -85,7 +82,7 @@ if IS_LOCALHOST:
             'NAME': 'bt_main',
             'USER': 'bt',
             'PASSWORD': 'yuxinsucks',
-            'HOST': 'localhost',
+            'HOST': 'postgres',
             'PORT': '',
         }
     }
@@ -94,7 +91,6 @@ else:
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
 
 STATIC_ROOT = '/static_media/'
-
 
 if IS_LOCALHOST:
     MEDIA_ROOT = os.path.join(os.path.dirname(__file__), 'static_media/').replace('\\','/')
@@ -110,9 +106,8 @@ if IS_LOCALHOST:
     EMAIL_USE_TLS = False
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
     DOMAIN_NAME = "berkeleytime.com"
-    SITE_ID = 1
+    SITE_ID = 3
 
-    URL = "localhost:3000"
 elif IS_STAGING:
     # Google Cloud Storage settings
     # DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
@@ -131,7 +126,7 @@ elif IS_STAGING:
 
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
     DOMAIN_NAME = "berkeleytime.com"
-    SITE_ID = 2
+    SITE_ID = 3
 
     # GCS Networking Config
     GS_DEFAULT_ACL = 'publicRead'
@@ -174,7 +169,7 @@ AWS_AFFILIATE_SECRET = os.getenv("AWS_AFFILIATE_SECRET", "")
 
 
 # Please replace with Amazon Affiliate tag
-AMAZON_AFFILIATE_TAG = ''
+AMAZON_AFFILIATE_TAG = 'berkeleytim06-20'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -282,7 +277,7 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google'
+    'allauth.socialaccount.providers.google',
 )
 
 ACCOUNT_USERNAME_REQUIRED = False

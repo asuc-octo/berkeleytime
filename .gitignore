@@ -2,11 +2,14 @@
 *.DS_Store
 *.log
 venv
-*.db
 *.dump
 *.rdb
 .vagrant
 .idea
 vagrant/data/data.tar.gz
-
+build/postgres-data
+build/requirements.txt
 .sass-cache/
+postgres-data.tar.gz
+bt_main.sql
+.vscode

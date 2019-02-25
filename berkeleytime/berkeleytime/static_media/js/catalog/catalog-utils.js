@@ -425,7 +425,7 @@ var _bindRightColumnEvents = function () {
         if ($(this).data("amazon-affiliate-url")) {
             window.open($(this).data("amazon-affiliate-url"),'_blank');
         }
-        
+
         var isbn = $(this).data("isbn") || null;
         ga.trackEvent("Textbook", "Click", isbn);
     });

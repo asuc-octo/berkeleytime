@@ -1,0 +1,51 @@
+{
+  "name": "BerkeleyTime",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bulma": "^0.7.4",
+    "chartist": "^0.10.1",
+    "chartist-plugin-tooltip": "0.0.11",
+    "font-awesome": "^4.7.0",
+    "node-sass-chokidar": "0.0.3",
+    "npm-run-all": "^4.1.1",
+    "rc-slider": "^8.6.1",
+    "react": "^16.5.2",
+    "react-bootstrap": "^0.31.1",
+    "react-chartist": "^0.13.0",
+    "react-dom": "^16.5.2",
+    "react-fontawesome": "^1.6.1",
+    "react-intl": "^2.4.0",
+    "react-router": "^4.1.2",
+    "react-router-bootstrap": "^0.24.4",
+    "react-router-dom": "^4.1.2",
+    "react-scripts": "1.0.10",
+    "react-select": "^1.2.1",
+    "react-selectable-fast": "^2.2.2",
+    "react-spinners": "^0.5.1",
+    "reactstrap": "^5.0.0-beta.2",
+    "recharts": "^1.0.0-beta.10"
+  },
+  "scripts": {
+    "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",
+    "watch-css": "npm run build-css && node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/ --watch --recursive",
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p watch-css start-js",
+    "build": "npm run build-css && react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-react": "^7.11.1"
+  },
+  "description": "To build the React frontend ``` npm run dev ```",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

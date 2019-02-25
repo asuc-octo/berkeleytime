@@ -261,10 +261,10 @@ $(document).ready(function() {
 	        		} else {
 	        			// Currently on finals schedule, switch to regular schedule
 	        			currList = scheduleList;
-	        			events = currList[scheduleIndex];
+	        			events = currList[scheduleIndex]["schedules"];
              			buttonText = "Finals Schedule";
 	        		}
-              updateScheduleCount(scheduleIndex, currList.length);
+                    updateScheduleCount(scheduleIndex, currList.length);
 	        		rerender();
 	            }
 	        },

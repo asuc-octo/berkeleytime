@@ -1,0 +1,21 @@
+version: '3'
+services:
+  web:
+    image: "berkeleytime/base:latest"
+    command: ["0.0.0.0:8000"]
+    ports:
+     - "8000:8000"
+    volumes:
+     - ../berkeleytime:/berkeleytime
+    environment:
+     - "PYTHONUNBUFFERED=1"
+     - "GOOGLE_CLIENT_ID=***REMOVED***"
+     - "GOOGLE_CLIENT_SECRET=***REMOVED***"
+     - "GOOGLE_TOKEN_URI=https://accounts.google.com/o/oauth2/token"
+  redis:
+    image: "redis:alpine"
+  postgres:
+    image: postgres:11
+    volumes:
+     - ./postgres-data:/var/lib/postgresql/data
+    

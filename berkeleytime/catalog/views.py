@@ -9,6 +9,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles import finders
+from django.core import serializers
 
 from marketplace import views as marketplace_views
 from berkeleytime.utils.requests import raise_404_on_error
@@ -56,7 +57,6 @@ def catalog(request, abbreviation='', course_number=''):
         context_instance=RequestContext(request)
     )
 
-
 def catalog_context(request, abbreviation='', course_number=''):
     """Return the context for the catalog."""
     defaults = Playlist.objects.filter(user=None)
@@ -69,7 +69,7 @@ def catalog_context(request, abbreviation='', course_number=''):
     units = Playlist.objects.filter(category="units").order_by("id")
     level = Playlist.objects.filter(category="level").order_by("id")
     semester = Playlist.objects.filter(category="semester")
-    semester = sorted(semester, key=lambda t: (-int(t.name.split(" ")[1]), t.name.split(" ")[0]))  # noqa
+    # semester = sorted(semester, key=lambda t: (-int(t.name.split(" ")[1]), t.name.split(" ")[0]))  # noqa
     enrollment = Playlist.objects.filter(category="enrollment").order_by("id")
     length = Playlist.objects.filter(category="length").order_by("id")
 
@@ -146,7 +146,7 @@ def courses_to_json(queryset):
     return list(queryset.values(
         "id", "abbreviation", "course_number", "title", "grade_average",
         "letter_average", "enrolled", "enrolled_percentage",
-        "open_seats", "favorite_count"))
+        "open_seats", "favorite_count", "waitlisted", "units", "description"))
 
 
 def union_by_category(category, filter_ids, user=None):
@@ -192,6 +192,40 @@ def course(request, course_id):
     except Exception as e:
         print e
         raise Http404
+
+def course_json(request, course_id):
+    """Render the JSON for a single course given a course_id."""
+    try:
+        course = Course.objects.get(pk=course_id)
+        favorited = False
+        sections = section_service.find_by_course_id(
+            course_id=course, semester=CURRENT_SEMESTER, year=CURRENT_YEAR,
+        )
+
+        if request.user.is_authenticated():
+            user = get_profile(request)
+            favorited = course in Playlist.objects.get(
+                category="custom",
+                name="Favorites",
+                user_email=parse_gmail(request)
+            ).courses.all()
+
+        return render_to_json(
+            {
+                'course': course,
+                'favorited': favorited,
+                'last_enrollment_update': get_last_enrollment_update(sections),
+                'cover_photo': cover_photo(course),
+                'offered': bool(sections),
+                'marketplace': marketplace_views.get_textbook_context(
+                    course, CURRENT_SEMESTER, CURRENT_YEAR,
+                ),
+            },
+
+        )
+    except Exception as e:
+        print e
+        return render_to_empty_json()
 
 
 def get_last_enrollment_update(sections):
@@ -258,6 +292,45 @@ def course_box(request):
     except Exception as e:
         print e
         return render_to_empty_json()
+
+def course_box_json(request):
+    """Render the HTML for a course box."""
+    course = Course.objects.get(id=request.GET.get("course_id"))
+    semester = request.GET.get("semester") if "semester" in request.GET else CURRENT_SEMESTER  # noqa
+    year = request.GET.get("year") if "year" in request.GET else CURRENT_YEAR  # noqa
+    sections = section_service.find_by_course_id(
+        course_id=course.id, semester=semester, year=year,
+    )
+
+    favorited = False
+    if request.user.is_authenticated():
+        user = get_profile(request)
+        favorited = course in Playlist.objects.get(
+            category="custom",
+            name="Favorites",
+            user_email=parse_gmail(request)
+        ).courses.all()
+
+    # show ongoing sections too if not a specific semester/year requested
+    # and current semester/year diferent from ongoing
+    ongoing = "semester" not in request.GET and "year" not in request.GET and (CURRENT_YEAR != ONGOING_YEAR or CURRENT_SEMESTER != ONGOING_SEMESTER)  # noqa
+    ongoing_sections = section_service.find_by_course_id(
+        course_id=course.id, semester=ONGOING_SEMESTER, year=ONGOING_YEAR,
+    )
+
+    return render_to_json({
+        'course': course.as_json(),
+        'sections': map(lambda s: s.as_json(), sections),
+        'favorited': favorited,
+        'requirements': which_requirements(course),
+        'cover_photo': cover_photo(course),
+        'last_enrollment_update': get_last_enrollment_update(sections),
+        'ongoing_sections': ongoing_sections,
+        'ongoing': ongoing,
+        'marketplace': marketplace_views.get_textbook_context(
+            course, CURRENT_SEMESTER, CURRENT_YEAR,
+        )
+    })
 
 
 def which_requirements(course):

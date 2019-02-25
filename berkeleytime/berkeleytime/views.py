@@ -15,7 +15,7 @@ def test(request):
 def about_page(request):
     rc = RequestContext(request)
     rc["members"] = member_data
-    return render_to_response("team/index.html", context_instance=rc)
+    return render_to_response("team/about.html", context_instance=rc)
 
 def home_page(request):
     rc = RequestContext(request)
