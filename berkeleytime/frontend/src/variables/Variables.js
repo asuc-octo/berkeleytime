@@ -693,11 +693,13 @@ var laymanToAbbreviation = {
   "VISSTD": "VIS STD",
 };
 
+var colors = ['#4EA6FB', '#6AE086', '#ED5186', '#F9E152'];
+
 module.exports = {
     style, // For notifications (App container and Notifications view)
     thArray, tdArray, // For tables (TableList view)
     iconsArray, // For icons (Icons view)
     dataPie, legendPie, dataSales, optionsSales, responsiveSales, legendSales, dataBar, optionsBar, responsiveBar, legendBar, // For charts (Dashboard view)
     enrollment, optionsEnrollment, responsiveEnrollment,
-    grades, laymanToAbbreviation
+    grades, laymanToAbbreviation, colors
 };
