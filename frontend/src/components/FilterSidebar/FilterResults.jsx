@@ -104,7 +104,7 @@ class FilterResults extends Component {
       loading: true,
     });
 
-    axios.get('/api/catalog/filter', {
+    axios.get('/api/catalog/filter/', {
       params: {
         filters: filters,
       },

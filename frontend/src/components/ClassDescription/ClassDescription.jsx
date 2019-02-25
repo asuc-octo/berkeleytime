@@ -54,7 +54,7 @@ class ClassDescription extends Component {
     let courseID = course.id;
     let courseAbbreviation = course.abbreviation;
     let courseNumber = course.courseNumber;
-    axios.get(`/api/catalog_json/course_box`, {
+    axios.get(`/api/catalog_json/course_box/`, {
       params: {
         course_id: courseID,
       }
