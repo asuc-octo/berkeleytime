@@ -11,10 +11,10 @@ import raven
 from config.semesters.spring2019 import *
 
 # Set up google cloud logging
-import google.cloud.logging
-from pythonjsonlogger import jsonlogger
-log_client = google.cloud.logging.Client()
-log_client.setup_logging()
+# import google.cloud.logging
+# from pythonjsonlogger import jsonlogger
+# log_client = google.cloud.logging.Client()
+# log_client.setup_logging()
 
 settings_dir = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
@@ -105,7 +105,7 @@ if IS_LOCALHOST:
     EMAIL_HOST_PASSWORD = ""
     EMAIL_USE_TLS = False
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
-    DOMAIN_NAME = "berkeleytime.com"
+    DOMAIN_NAME = "berkeleytime-internal.com"
     SITE_ID = 3
 
 elif IS_STAGING:
@@ -125,7 +125,7 @@ elif IS_STAGING:
     EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
 
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
-    DOMAIN_NAME = "berkeleytime.com"
+    DOMAIN_NAME = "berkeleytime-internal.com"
     SITE_ID = 3
 
     # GCS Networking Config
@@ -150,7 +150,7 @@ elif IS_PRODUCTION:
     EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
 
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
-    DOMAIN_NAME = "berkeleytime.com"
+    DOMAIN_NAME = "berkeleytime-internal.com"
     SITE_ID = 3
 
     # GCS Networking Config
@@ -374,10 +374,10 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',  # noqa
         },
-        'stackdriver_logging': {
-            'class': 'google.cloud.logging.handlers.CloudLoggingHandler',
-            'client': log_client
-        },
+#        'stackdriver_logging': {
+#            'class': 'google.cloud.logging.handlers.CloudLoggingHandler',
+#            'client': log_client
+#        },
     },
     'root': {
         'handlers': ['sentry'],
@@ -395,13 +395,12 @@ LOGGING = {
             'propagate': True,
         },
         'django': {
-            'handlers': ['console', 'stackdriver_logging'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,
         },
         'django.request': {
             'handlers': [
-                'stackdriver_logging',
                 'mail_admins'
             ],
             'level': 'ERROR',

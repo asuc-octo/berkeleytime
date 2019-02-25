@@ -5,6 +5,7 @@ metadata:
   namespace: berkeleytime
   annotations:
     kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     certmanager.k8s.io/issuer: "letsencrypt-prod"
     certmanager.k8s.io/acme-challenge-type: http01
 spec:
@@ -18,17 +19,14 @@ spec:
   - host: www.berkeleytime-internal.com
     http:
       paths:
-      - path: /
+      - path: /api/
         backend:
           serviceName: berkeleytime-prod-svc
           servicePort: 5000
-  - host: berkeleytime-internal.com
-    http:
-      paths:
       - path: /
         backend:
-          serviceName: berkeleytime-prod-svc
-          servicePort: 5000
+          serviceName: frontend-prod-svc
+          servicePort: 3000
   - host: staging.berkeleytime-internal.com
     http:
       paths:
@@ -36,3 +34,10 @@ spec:
         backend:
           serviceName: berkeleytime-stage-svc
           servicePort: 5000
+  - host: jenkins.berkeleytime-internal.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: jenkins-svc
+          servicePort: 9000
