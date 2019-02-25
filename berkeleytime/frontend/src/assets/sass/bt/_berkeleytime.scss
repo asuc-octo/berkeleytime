@@ -1,0 +1,96 @@
+@import 'bulma/bulma';
+
+.app-container {
+    margin-top: 100px;
+    margin-left: 35px;
+    margin-right: 35px;
+}
+
+.card.card-class {
+    background-color: #579EFF;
+
+    .content {
+        padding: 15px 15px 15px 15px;
+        background-color: white;
+        margin-left: 10px;
+        border-radius: 0 4px 4px 0;
+    }
+    .classTitle {
+        padding-top: 15px;
+        padding-bottom: 15px;
+                    }
+    .classNum {
+        font-weight: bold;
+        font-size: 20px;
+    }
+}
+button.deleteBtn {
+    border: none;
+    padding-top: 45px;
+}
+.card.card-graph {
+    box-shadow: none;
+
+    .content {
+        padding: 15px 15px 0px 35px;
+    }
+    .graph {
+        padding: 15px 15px 15px 15px;
+    }
+    .graphTitle {
+        font-weight: bold;
+        font-size: 20px;
+    }
+}
+
+.card.card-info {
+    box-shadow: none;
+
+    .content {
+        padding: 0px 15px 15px 15px;
+    }
+    .classNum {
+        font-weight: bold;
+        font-size: 20px;
+    }
+    .classInfo {
+        color: #8F8F8F;
+    }
+    .classTitle {
+        padding-top: 5px;
+        padding-bottom: 10px;
+    }
+    .classStatType {
+        font-size: 15px;
+    }
+    .class-stats {
+        padding-bottom: 5px;
+    }
+    .classAdjustmentPercent {
+        color: #FFA414;
+        font-size: 15px;
+    }
+    .classStatsName {
+        color: #8F8F8F;
+    }
+    .classAvgs {
+        padding: 0;
+    }
+    .classAvgStats {
+        padding: 0;
+        color: #76FC80;
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 3%;
+    }
+    .classGrade {
+        color: #F85386;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .classPercent {
+        color:gray;
+        font-size: 18px;
+    }
+
+}

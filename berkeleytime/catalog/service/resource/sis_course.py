@@ -17,9 +17,9 @@ class SISCourseResource(object):
         'app_id': settings.SIS_COURSE_APP_ID,
         'app_key': settings.SIS_COURSE_APP_KEY
     }
-    url = 'https://apis.berkeley.edu/sis/v2/courses?status-code=ACTIVE&row-start=%s&row-limit=%s'  # noqa
+    url = 'https://apis.berkeley.edu/sis/v2/courses?row-start=%s&row-limit=%s'  # noqa
 
-    def get(self, start_index=0, limit=20):
+    def get(self, start_index=0, limit=500):
         """Return a generator of courses starting at start_index."""
         while True:
             logger.info({

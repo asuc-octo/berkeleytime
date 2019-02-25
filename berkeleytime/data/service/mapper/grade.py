@@ -17,7 +17,7 @@ class GradeMapper(object):
         grade = {
             'abbreviation': data[0].strip().upper(),
             'course_number': data[1].strip().upper(),
-            'section_number': data[2].strip().upper(),
+            'section_number': str(int(data[3].strip())),
         }
 
         total_samples = self.get_total(data)
@@ -36,7 +36,7 @@ class GradeMapper(object):
         """Get the total number of students who take this class."""
         # Sum all students from [A+, Incomplete) not including Incomplete
         # but including everything else (A+...F, P, NP, Unsatisfactory, etc)
-        return sum([int(x) if x.isdigit() else 0 for x in data[4:21]])
+        return sum([int(x) if x.isdigit() else 0 for x in data[7:]])
 
     def get_letter_grades(self, data):
         """Parse all letter grade values from data (e.g. A+, A, A-)."""
@@ -44,7 +44,7 @@ class GradeMapper(object):
         total_gpa, total_letter_grades = 0, 0
 
         for index, letter in enumerate(get_letter_grades()):
-            value = data[4 + index]
+            value = data[7 + index]
             count = int(value) if value.isdigit() else 0
 
             result[letter_grade_to_field_name(letter)] = count
@@ -63,7 +63,7 @@ class GradeMapper(object):
         """
         # instructor names are delimited by ; and sorted alphabetically
         # randomly take the first one instructor, this might be a monkey
-        instructor = data[3].split(';')[0]
+        instructor = data[5].split(';')[0]
 
         if instructor == '':
             return {'instructor': instructor}
@@ -74,12 +74,12 @@ class GradeMapper(object):
 
     def get_p_np(self, data):
         """Return extra grade fields if they exist (e.g. P, NP, Incomplete)."""
-        if not len(data) > 17:
+        if not len(data) > 20:
             return {}
 
         return {
-            'p': int(data[17]) if data[17].isdigit() else 0,
-            'np': int(data[19]) if data[19].isdigit() else 0,
+            'p': int(data[20]) if data[20].isdigit() else 0,
+            'np': int(data[21]) if data[21].isdigit() else 0,
         }
 
     def get_letter_grade_key(self, letter):

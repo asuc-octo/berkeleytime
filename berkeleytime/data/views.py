@@ -4,8 +4,9 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404
 from django.template import RequestContext
-from catalog.models import Course, Grade, Section, Enrollment
+from catalog.models import Course, Grade, Section, Enrollment, Playlist
 from catalog.utils import calculate_letter_average, sort_course_dicts
+from catalog.views import catalog_context
 from berkeleytime.utils.requests import raise_404_on_error, render_to_empty_json, render_to_json
 
 from berkeleytime.settings import (
@@ -21,7 +22,7 @@ from django.core.cache import cache
 STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
                    ("b1", "B+"), ("b2", "B"), ("b3", "B-"),
                    ("c1", "C+"), ("c2", "C"), ("c3", "C-"),
-                   ("d", "D"), ("f", "F")]
+                   ("d", "D"), ("f", "F"), ("p", "P"), ("np", "NP")]
 
 def grade_context():
     cached = cache.get("grade__courses")
@@ -33,6 +34,11 @@ def grade_context():
         rtn = courses.values("id", "abbreviation", "course_number")
         cache.set("grade__courses", rtn, 86400)
     return {"courses": rtn}
+
+def get_or_zero(d, k):
+    if k in d and d[k] is not None:
+        return d[k]
+    return 0
 
 @raise_404_on_error
 def grade_render(request):
@@ -63,7 +69,6 @@ def grade_section_json(request, course_id):
         print e
         return render_to_empty_json()
 
-
 def grade_json(request, grade_ids):
     try:
         actual_total = 0
@@ -73,12 +78,13 @@ def grade_json(request, grade_ids):
         course = Course.objects.get(id=sections.values_list("course", flat=True)[0])
         total = sections.aggregate(Sum("total"))["total__sum"]
         percentile_ceiling = 0
+        print(sections.aggregate(Sum("p")))
         for grade, display in STANDARD_GRADES:
             grade_entry = {}
             if grade == "d":
-                numerator = sum([sections.aggregate(Sum(d))[d + "__sum"] for d in ("d1", "d2", "d3")])
+                numerator = sum([get_or_zero(sections.aggregate(Sum(d)), d + "__sum") for d in ("d1", "d2", "d3")])
             else:
-                numerator = sections.aggregate(Sum(grade))[grade + "__sum"]
+                numerator = get_or_zero(sections.aggregate(Sum(grade)), grade + "__sum")
             actual_total += numerator
             percent = numerator / total if total != 0 else 0.0
             grade_entry["percent"] = round(percent, 2)
@@ -95,6 +101,13 @@ def grade_json(request, grade_ids):
         rtn["section_gpa"] = round(sections.aggregate(Avg("average"))["average__avg"], 3)
         rtn["section_letter"] = calculate_letter_average(rtn["section_gpa"])
         rtn["denominator"] = total
+
+        if rtn["course_letter"] == "":
+            rtn["course_letter"] = "N/A"
+
+        if rtn["section_letter"] == "":
+            rtn["section_letter"] = "N/A"
+
         return render_to_json(rtn)
     except Exception as e:
         print e
@@ -288,3 +301,14 @@ def enrollment_json(request, section_id):
     except Exception as e:
         print e
         return render_to_empty_json()
+
+def catalog_context_json(request, abbreviation='', course_number=''):
+    """Return JSON for the catalog page."""
+    context = catalog_context(request, abbreviation=abbreviation, course_number=course_number)
+    playlist_type = type(Playlist.objects.all())
+
+    for playlist in context:
+        if type(context[playlist]) == playlist_type:
+            context[playlist] = map(lambda x: x.as_json(), context[playlist])
+
+    return render_to_json(context)

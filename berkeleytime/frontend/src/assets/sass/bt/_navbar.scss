@@ -1,0 +1,43 @@
+.navbar {
+    position: fixed;
+    width: 100%;
+    z-index: 1;
+}
+
+.nav-links {
+    // .nav {
+    //     > .active > a,
+    //     > .active > a:not(.btn):focus {
+    //         background-color: $bt-green;;
+    //         border-radius: 30px;
+    //         color: white !important;
+    //         @include opacity(1);
+    //     }
+    //
+    //     > .active > a:not(.btn):hover {
+    //         background-color: $bt-green;;
+    //         border-radius: 30px;
+    //         color: $dark-gray !important;
+    //         @include opacity(1);
+    //     }
+    // }
+}
+
+.bt-navbar-brand {
+    float: none !important;
+    height: auto !important;
+}
+
+.navbar-end {
+    margin-right: 27px;
+}
+
+.navbar-item {
+    > a {
+        color: #4a4a4a;
+    }
+
+    > a:hover {
+        color: #3273dc;
+    }
+}

@@ -4,9 +4,9 @@ from rfc3339 import rfc3339
 # from datetime import datetime
 # from datetime import date
 import datetime
-from dateutil.relativedelta import relativedelta, MO
+from dateutil.relativedelta import *
 from rfc3339 import rfc3339
-from berkeleytime.config.semesters.fall2018 import INSTRUCTION as instruction
+from berkeleytime.settings import INSTRUCTION as instruction
 
 # Return a dictionary of useful information from a list of sections
 # with each containing sections_info and finals_info
@@ -68,53 +68,53 @@ def get_section_info(section):
         return section_info_dict
     except AttributeError as e:
         # Attribute error occured, likely due to either start_time, end_time, final_start, or final_end being None
+        print "AttributeError", e
         return {}
 
 # Converts section objects into Google Calendar event data
 def section_to_event(section):
-    try:
-        date_today = rfc3339(datetime.datetime.now())[:11]
 
-        section_dict = get_section_info(section)
+    date_today = rfc3339(datetime.datetime.now())[:11]
 
-        days_string = days_num_to_string(section_dict['days'])
-        start_date = rfc3339(instruction["instruction_start"] + relativedelta(weekday=int(section_dict['days'][0])-1))[:11]
-        end_date = rfc3339(instruction["instruction_end"], utc=True).replace("-", "").replace(":", "")
+    section_dict = get_section_info(section)
 
-        summary = '{} {}'.format(section_dict['abbreviation'], section_dict['course_number'])
-        location = section_dict['location'] or ''
-        instructor = section_dict['instructor'] or ''
-        startDateTime = '{}{}:00-07:00'.format(start_date, section_dict['start_time'])
-        endDateTime = '{}{}:00-07:00'.format(start_date, section_dict['end_time'])
-        recurranceDetails = 'RRULE:FREQ=WEEKLY;BYDAY={};UNTIL={}'.format(days_string, end_date)
+    if not section_dict:
+        return None
 
-        event = {
-          'summary': summary,
-          'location': location,
-          'start': {
-            'dateTime': startDateTime,
-            'timeZone': 'America/Los_Angeles',
-          },
-          'end': {
-            'dateTime': endDateTime,
-            'timeZone': 'America/Los_Angeles',
-          },
-          'recurrence': [
-            recurranceDetails
-          ],
-          'reminders': {
-            'useDefault' : False,
-            'overrides' : [
-                {'method': 'popup', 'minutes': 10},
-            ],
-          },
-        }
+    days_string = days_num_to_string(section_dict['days'])
+    start_date = rfc3339(instruction["instruction_start"] + get_next_section_weekday(instruction["instruction_start"].weekday(), section_dict['days']))[:11]
+    end_date = rfc3339(instruction["instruction_end"], utc=True).replace("-", "").replace(":", "")
 
-        return event
+    summary = '{} {} {}'.format(section_dict['abbreviation'], section_dict['course_number'], section_dict['type'])
+    location = section_dict['location'] or ''
+    instructor = section_dict['instructor'] or ''
+    startDateTime = '{}{}:00'.format(start_date, section_dict['start_time'])
+    endDateTime = '{}{}:00'.format(start_date, section_dict['end_time'])
+    recurranceDetails = 'RRULE:FREQ=WEEKLY;BYDAY={};UNTIL={}'.format(days_string, end_date)
 
-    except Exception as e:
-        print e
-        print {}
+    event = {
+      'summary': summary,
+      'location': location,
+      'start': {
+        'dateTime': startDateTime,
+        'timeZone': 'America/Los_Angeles',
+      },
+      'end': {
+        'dateTime': endDateTime,
+        'timeZone': 'America/Los_Angeles',
+      },
+      'recurrence': [
+        recurranceDetails
+      ],
+      'reminders': {
+        'useDefault' : False,
+        'overrides' : [
+            {'method': 'popup', 'minutes': 10},
+        ],
+      },
+    }
+
+    return event
 
 # Takes the days string and converts them into a two letter day format
 def days_num_to_string(days_num):
@@ -132,3 +132,10 @@ def days_num_to_string(days_num):
     for num in days_num:
         day_string += days_dict[num] + ","
     return day_string[:-1]
+
+def get_next_section_weekday(instruction_start, section_days):
+    section_days = [int(x) - 1 for x in section_days]
+    for day in section_days:
+        if day >= instruction_start:
+            return relativedelta(weekday=day)
+    return relativedelta(weekday=section_days[0])
