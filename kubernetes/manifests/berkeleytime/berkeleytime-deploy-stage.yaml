@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: berkeleytime-stage
+  namespace: berkeleytime
+  labels:
+    appName: berkeleytime-stage
+spec:
+  selector:
+    matchLabels:
+      appName: berkeleytime-stage
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        appName: berkeleytime-stage
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5000"
+    spec:
+      containers:
+      - name: berkeleytime-prod
+        imagePullPolicy: Always
+        image: index.docker.io/berkeleytime/berkeleytime:latest
+        command: ["python", "manage.py", "runserver", "0.0.0.0:5000"]
+        volumeMounts:
+        - name: google
+          mountPath: "/etc/google"
+          readOnly: true
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "0"
+        - name: GET_HOSTS_FROM
+          value: dns
+        - name: ENVIRONMENT_NAME
+          value: STAGING
+        envFrom:
+        - configMapRef:
+            name: django-configs
+        - secretRef:
+            name: aws
+        - secretRef:
+            name: google
+        - secretRef:
+            name: sis
+        - secretRef: 
+            name: sendgrid
+        - secretRef:
+            name: sentrydsn
+        ports:
+        - containerPort: 5000
+      volumes:
+      - name: google
+        secret: 
+          secretName: google-2
+          items:
+          - key: google-tokens
+            path: auth.json

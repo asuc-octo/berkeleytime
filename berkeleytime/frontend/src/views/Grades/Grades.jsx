@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-// import { Card } from '../../components/Card/Card.jsx';
-import ClassCard from '../../components/ClassCard/ClassCard.jsx';
+import ClassCardList from '../../components/ClassCards/ClassCardList.jsx';
 import GraphCard from '../../components/GraphCard/GraphCard.jsx';
 import GradesInfoCard from '../../components/GradesInfoCard/GradesInfoCard.jsx';
 import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
@@ -31,10 +30,9 @@ class Grades extends Component {
   }
 
   removeClass(classNum) {
-    this.setState({ 
-      classCards: this.state.classCards.filter(
-        classInfo => classInfo.classNum != classNum) 
-    })
+    this.setState((prevState, props) => ({
+      classCards: prevState.classCards.filter(classInfo => classInfo.classNum !== classNum)
+    }));
   }
 
   // fetch class info
@@ -53,27 +51,14 @@ class Grades extends Component {
   }
 
   render() {
-    //const { classCards } = this.state.classCards;
-
-
     return (
       <div className="app-container">
         <ClassSearchBar />
 
-        <div className="columns">
-          {this.state.classCards.map(item => (
-            <div className="column card-column">
-              <ClassCard
-                stripeColor={item.stripeColor}
-                classNum={item.classNum}
-                semester={item.semester}
-                faculty={item.faculty}
-                title={item.title}
-                removeClass={this.removeClass}
-              />
-            </div>
-          ))}
-        </div>
+        <ClassCardList
+          classCards={this.state.classCards}
+          removeClass={this.removeClass}
+        />
 
         <GraphCard
           id="chartHours"
