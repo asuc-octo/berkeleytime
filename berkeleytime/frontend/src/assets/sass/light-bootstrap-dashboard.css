@@ -9806,20 +9806,6 @@ label.panel-block {
   margin-left: 35px;
   margin-right: 35px; }
 
-.card.card-class {
-  background-color: #579EFF; }
-  .card.card-class .content {
-    padding: 15px 15px 15px 15px;
-    background-color: white;
-    margin-left: 10px;
-    border-radius: 0 4px 4px 0; }
-  .card.card-class .classTitle {
-    padding-top: 15px;
-    padding-bottom: 15px; }
-  .card.card-class .classNum {
-    font-weight: bold;
-    font-size: 20px; }
-
 button.deleteBtn {
   border: none;
   padding-top: 45px; }
@@ -10118,6 +10104,20 @@ button.deleteBtn {
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > th {
     font-weight: normal;
     font-size: 12px; }
+
+.card.card-class {
+  background-color: #579EFF; }
+  .card.card-class .content {
+    padding: 15px 15px 15px 15px;
+    background-color: white;
+    margin-left: 10px;
+    border-radius: 0 4px 4px 0; }
+  .card.card-class .classTitle {
+    padding-top: 15px;
+    padding-bottom: 15px; }
+  .card.card-class .classNum {
+    font-weight: bold;
+    font-size: 20px; }
 
 .navbar {
   position: fixed;
@@ -10447,7 +10447,7 @@ button.deleteBtn {
     text-align: center;
     font-size: 50px;
     font-weight: 500;
-    margin: 400px 0; }
+    margin: 50vh 0; }
 
 @media screen and (max-width: 769px) {
   .dashboard-columns {
