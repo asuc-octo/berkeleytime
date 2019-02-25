@@ -7,8 +7,8 @@ RUN apt-get install -y nodejs npm
 RUN mkdir frontend
 WORKDIR frontend
 
+COPY package.json package.json
+RUN npm install
 COPY . .
-
-RUN npm install .
 
 ENTRYPOINT ["npm", "start"]
