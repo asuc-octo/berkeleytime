@@ -155,6 +155,9 @@ def enrollment_render(request):
     #     .values("section__course__id", "section__course__abbreviation", "section__course__course_number"))
     return render_to_response("data/enrollment.html", enrollment_context(), context_instance=RequestContext(request))
 
+def enrollment_context_json(request):
+    return render_to_json(enrollment_context())
+
 def get_primary(course_id, semester, year):
     try:
         course = Course.objects.get(id = course_id)
