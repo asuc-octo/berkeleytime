@@ -36,7 +36,6 @@ class FilterSelection extends Component {
   }
 
   render() {
-    console.log('rerendered')
     const {courseAbbreviation, courseNumber, courseTitle, percentageEnrolled,
       units, waitlisted, averageGrade, borderColors,
       gradeColors, id} = this.props
