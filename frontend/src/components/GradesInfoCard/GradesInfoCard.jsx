@@ -1,10 +1,7 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-export default function GraphInfoCard({
-    classNum, semester, faculty, title, courseAvg,
-    sectionAvg, seventeenth, seventeenthName, seventeenthCount,
-    seventeenthGrade, seventeenthPercent
+export default function GraphInfoCard({classNum, semester, faculty, title, courseAvg, courseGPA, sectionAvg, sectionGPA, denominator, selectedGrade, betterGrade, worseGrade
   }) {
   return (
     <div className="card card-info">
@@ -28,63 +25,64 @@ export default function GraphInfoCard({
         </Row>
         <Row className="classAvgs">
           <Col xs={6} className="classAvgStats">
-            <div>{courseAvg}</div>
+            <div>{`${courseAvg} (GPA: ${courseGPA})`} </div>
           </Col>
           <Col xs={6} className="classAvgStats">
-            <div>{sectionAvg}</div>
+            <div>{`${sectionAvg} (GPA: ${sectionGPA})`} </div>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={8} className="classAvgs">
+            <div className="classStatsName">{`${betterGrade.percentile_low}th - ${betterGrade.percentile_high}th Percentile`}</div>
+          </Col>
+          <Col xs={4} className="classAvgs">
+            <div className="classCount">{`${betterGrade.numerator}/${denominator}`}</div>
           </Col>
         </Row>
         <Row>
           <Col xs={8} className="classAvgs">
-            {seventeenth}
-            <div className="classStatsName">{`${seventeenthName} Percentile`}</div>
+            <div className="classGrade">{betterGrade.grade_name}</div>
           </Col>
           <Col xs={4} className="classAvgs">
-            <div className="classCount">{seventeenthCount}</div>
+            <div className="classPercent">{`${betterGrade.percent} %`}</div>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={8} className="classAvgs">
+            <div className="classStatsName">{`${selectedGrade.percentile_low}th - ${selectedGrade.percentile_high}th Percentile`}</div>
+          </Col>
+          <Col xs={4} className="classAvgs">
+            <div className="classCount">{`${selectedGrade.numerator}/${denominator}`}</div>
           </Col>
         </Row>
         <Row>
           <Col xs={8} className="classAvgs">
-            <div className="classGrade">{seventeenthGrade}</div>
+            <div className="classGrade">{selectedGrade.grade_name}</div>
           </Col>
           <Col xs={4} className="classAvgs">
-            <div className="classPercent">{`${seventeenthPercent} %`}</div>
+            <div className="classPercent">{`${selectedGrade.percent} %`}</div>
+          </Col>
+        </Row>
+
+        <Row>
+          <Col xs={8} className="classAvgs">
+            <div className="classStatsName">{`${worseGrade.percentile_low}th - ${worseGrade.percentile_high}th Percentile`}</div>
+          </Col>
+          <Col xs={4} className="classAvgs">
+            <div className="classCount">{`${worseGrade.numerator}/${denominator}`}</div>
           </Col>
         </Row>
         <Row>
           <Col xs={8} className="classAvgs">
-            {seventeenth}
-            <div className="classStatsName">{`${seventeenthName} Percentile`}</div>
+            <div className="classGrade">{worseGrade.grade_name}</div>
           </Col>
           <Col xs={4} className="classAvgs">
-            <div className="classCount">{seventeenthCount}</div>
+            <div className="classPercent">{`${worseGrade.percent} %`}</div>
           </Col>
         </Row>
-        <Row>
-          <Col xs={8} className="classAvgs">
-            <div className="classGrade">{seventeenthGrade}</div>
-          </Col>
-          <Col xs={4} className="classAvgs">
-            <div className="classPercent">{`${seventeenthPercent} %`}</div>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={8} className="classAvgs">
-            {seventeenth}
-            <div className="classStatsName">{`${seventeenthName} Percentile`}</div>
-          </Col>
-          <Col xs={4} className="classAvgs">
-            <div className="classCount">{seventeenthCount}</div>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={8} className="classAvgs">
-            <div className="classGrade">{seventeenthGrade}</div>
-          </Col>
-          <Col xs={4} className="classAvgs">
-            <div className="classPercent">{`${seventeenthPercent} %`}</div>
-          </Col>
-        </Row>
+        
       </div>
     </div>
   );
