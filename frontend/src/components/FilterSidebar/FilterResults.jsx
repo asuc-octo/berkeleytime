@@ -6,6 +6,7 @@ import { BarLoader } from 'react-spinners';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
 
+
 class FilterResults extends Component {
   constructor(props) {
     super(props);
@@ -118,12 +119,7 @@ class FilterResults extends Component {
       })
     })
     .catch((err) => {
-      if (err.response) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-      }
-      console.log(err.config);
+      console.log(err);
     });
   }
 
