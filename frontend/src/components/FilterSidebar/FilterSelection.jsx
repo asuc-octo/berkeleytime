@@ -8,6 +8,10 @@ class FilterSelection extends Component {
     this.getCorrectDisplayColor = this.getCorrectDisplayColor.bind(this);
   }
 
+  shouldComponentUpdate(nextProps) {
+    return nextProps.id != this.props.id;
+  }
+
   getFormattedEnrollment(enrollmentConstant) {
     return Math.floor(enrollmentConstant * 100, 100);
   }
@@ -32,6 +36,7 @@ class FilterSelection extends Component {
   }
 
   render() {
+    console.log('rerendered')
     const {courseAbbreviation, courseNumber, courseTitle, percentageEnrolled,
       units, waitlisted, averageGrade, borderColors,
       gradeColors, id} = this.props
