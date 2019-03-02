@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import Button from 'react-bootstrap';
-import Select from 'react-select';
+import Select from 'react-virtualized-select';
 import axios from 'axios';
+
+import 'react-select/dist/react-select.css'
+import 'react-virtualized-select/styles.css'
 
 //think about clearing values after add button
 

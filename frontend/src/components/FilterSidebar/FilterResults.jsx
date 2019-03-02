@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import axios from 'axios';
 import FilterSelection from './FilterSelection.jsx';
+import { FixedSizeList } from 'react-window';
 import { BarLoader } from 'react-spinners';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
@@ -159,9 +160,27 @@ class FilterResults extends Component {
               loading={true}
             />
           ) : (
-            courses
+            <FixedSizeList
+              itemData={courses}
+              height={1000}
+              itemCount={courses.length}
+              itemSize={150}
+              width={"100%"}>
+              {ItemRenderer}
+            </FixedSizeList>
           )
         }
+      </div>
+    );
+  }
+}
+
+class ItemRenderer extends PureComponent {
+  render() {
+    const { index, data, style } = this.props;
+    return (
+      <div style={style}>
+        {data[index]}
       </div>
     );
   }
