@@ -15,9 +15,15 @@ class Grades extends Component {
     super(props)
     this.state = { 
       classCards: Grades.defaultProps.classCards,
-      selectedClass: Grades.defaultProps.selectedClass
+
+      //actual: last course user selected 
+      selectedCourseID: Grades.defaultProps.courseID, 
+
+      // id of sections selected by user
+      sectionIDs: Grades.defaultProps.sectionIDs,
+      sectionData: Grades.defaultProps.sectionData
     }
-    this.fetchClassInfo();
+    this.fetchGrades();
 
     this.addClass = this.addClass.bind(this)
     this.removeClass = this.removeClass.bind(this)
@@ -35,14 +41,48 @@ class Grades extends Component {
     }));
   }
 
-  // fetch class info
-  async fetchClassInfo() { 
-    try {
-      this.info = await axios.get('http://localhost:8000/grades/course_grades/1062/')
-      console.log(this.info.data)
-    } catch (error) {
-      console.error(error)
+  // fetch instructor & semester for search bar
+//   async fetchInstrSem() { 
+//     try {
+//       this.courseInfo = await axios.get('http://localhost:8000/grades/course_grades/' + this.state.selectedCourseID + '/')
+//       console.log(this.courseInfo.data)
+//     } catch (error) {
+//       console.error(error)
+//     }
+//   }
+
+  async fetchGrades() {
+    if (this.state.sectionIDs && this.state.sectionIDs.length > 0) {
+      try {
+        //fetch grades of selectedCourseID
+        grades = await axios.get('http://localhost:8000/grades/sections/' + this.state.selectedCourseID;
+
+        // if multiple sections
+        //grades = await axios.get('http://localhost:8000/grades/sections/' + this.state.sectionIDs.join('&'));
+
+        console.log(grades.data);
+
+        // add metadata like semester & instructor name
+        // get from course search bar
+        // metadata = //response of course_grades
+        /* metadatas.map((metadata) =>
+          if (metadata["grade_id"] == grades["course_id"]) {
+            for (var key in metadata) {
+              grades[key] = metadata[key];
+            }
+            break;
+          } 
+        );*/
+
+        this.setState({
+           sectionData: grades
+           //sectionData: [...this.state.sectionData, grades] 
+         });
+      } catch (error) {
+        console.error(error)
+      }
     }
+
   }
 
   getCurrentDate() {
@@ -62,8 +102,8 @@ class Grades extends Component {
 
         <GraphCard
           id="chartHours"
-          title="Enrollment"
-          thisClass={this.state.selectedClass}
+          title="Grades"
+          classData={this.state.sectionData}
         />
 
       </div>
@@ -71,20 +111,83 @@ class Grades extends Component {
   }
 }
 Grades.defaultProps = {
-  selectedClass: {
-    semester: "Spring 2018",
-    data: grades,
-    datakeys: ['classA', 'classB'],
-    classNum: "CS 61A",
-    semester: "Spring 2018",
-    faculty: "Denero",
-    title: "The Structure and Interpretation of Computer Programs",
-    courseAvg: "A- (GPA: 3.72)",
-    sectionAvg: "A- (GPA: 3.72)",
-    seventeenthName: "17th-18th",
-    seventeenthCount: "15/3103",
-    seventeenthGrade: "C+",
-    seventeenthPercent: "0"
+  courseID: '1062',
+  sectionIDs: ['31265'],
+  sectionData: {
+    "A+": {
+        "percentile_low": 0.89,
+        "percent": 0.11,
+        "percentile_high": 1,
+        "numerator": 351
+    },
+    "A": {
+        "percentile_low": 0.81,
+        "percent": 0.08,
+        "percentile_high": 0.89,
+        "numerator": 258
+    },
+    "A-": {
+        "percentile_low": 0.71,
+        "percent": 0.09,
+        "percentile_high": 0.81,
+        "numerator": 291
+    },
+    "B+": {
+        "percentile_low": 0.55,
+        "percent": 0.17,
+        "percentile_high": 0.71,
+        "numerator": 527
+    },
+    "B": {
+        "percentile_low": 0.38,
+        "percent": 0.17,
+        "percentile_high": 0.55,
+        "numerator": 540
+    },
+    "B-": {
+        "percentile_low": 0.24,
+        "percent": 0.13,
+        "percentile_high": 0.38,
+        "numerator": 424
+    },
+    "C+": {
+        "percentile_low": 0.2,
+        "percent": 0.05,
+        "percentile_high": 0.24,
+        "numerator": 146
+    },
+    "C": {
+        "percentile_low": 0.15,
+        "percent": 0.04,
+        "percentile_high": 0.2,
+        "numerator": 133
+    },
+    "C-": {
+        "percentile_low": 0.12,
+        "percent": 0.04,
+        "percentile_high": 0.15,
+        "numerator": 120
+    },
+    "D": {
+        "percentile_low": 0.04,
+        "percent": 0.07,
+        "percentile_high": 0.12,
+        "numerator": 224
+    },
+    "F": {
+        "percentile_low": 0,
+        "percent": 0.04,
+        "percentile_high": 0.04,
+        "numerator": 139
+    },
+      "course_id": 2321,
+      "course_gpa": 2.841,
+      "course_letter": "B-",
+      "section_letter": "B-",
+      "section_gpa": 2.841,
+      "denominator": 3153,
+      "title": "COMPSCI 61A",
+      "subtitle": "The Structure and Interpretation of Computer Programs",
   }, 
   classCards: [
     {
