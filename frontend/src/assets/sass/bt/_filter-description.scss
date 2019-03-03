@@ -80,8 +80,14 @@
     .filter-description-tabs-sections {
       > table {
         table-layout: fixed;
-      overflow-x: scroll;
-      display: block;
+        overflow-x: scroll;
+        display: block;
+
+        abbr[title] {
+          border-bottom: none !important;
+          cursor: inherit !important;
+          text-decoration: none !important;
+        }
       }
 
       > table > thead > tr > th {

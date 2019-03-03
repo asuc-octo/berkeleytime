@@ -255,7 +255,7 @@ class Catalog extends Component {
     return (
       <div className="app-container">
         <Grid fluid>
-          <Row style={{ height: '1100px' }}>
+          <Row style={{ height: '850px' }}>
             <Col md={3}>
               <FilterSidebar
                 filters={this.buildFiltersObject(this.state.context)}
@@ -273,7 +273,7 @@ class Catalog extends Component {
                 resetFilters={this.resetFilterHandler}
               />
             </Col>
-            <Col md={3} style={{ height: '100%', overflowY: 'auto'}}>
+            <Col md={4} style={{ height: '94%', overflowY: 'auto'}}>
               {this.state && this.state.activeFilters.size &&
                 <FilterResults
                   activeFilters={this.state.activeFilters}
@@ -283,7 +283,7 @@ class Catalog extends Component {
                 />
               }
             </Col>
-            <Col md={6}>
+            <Col md={5}>
               {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
                 <ClassDescription
                   course={this.state.selectedCourse}
