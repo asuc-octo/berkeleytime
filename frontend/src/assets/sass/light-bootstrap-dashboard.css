@@ -9950,7 +9950,10 @@ button.deleteBtn {
   border: 0px;
   padding: 0px;
   margin-bottom: 20px;
-  width: 100%; }
+  width: 93%;
+  outline: none; }
+  .filter-selection-button:hover, .filter-selection-button:focus {
+    width: 100%; }
   .filter-selection-button .filter-selection {
     display: flex;
     flex-direction: row;
@@ -10099,6 +10102,10 @@ button.deleteBtn {
     table-layout: fixed;
     overflow-x: scroll;
     display: block; }
+    .filter-description .filter-description-tabs .filter-description-tabs-sections > table abbr[title] {
+      border-bottom: none !important;
+      cursor: inherit !important;
+      text-decoration: none !important; }
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table > thead > tr > th {
     font-size: 16px; }
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > th {
