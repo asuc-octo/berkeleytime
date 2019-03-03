@@ -50,12 +50,7 @@ class Catalog extends Component {
         });
       })
       .catch((err) => {
-        if (err.response) {
-            console.log(err.response.data);
-            console.log(err.response.status);
-            console.log(err.response.headers);
-        }
-        console.log(err.config);
+        console.log(err);
       });
   }
 
