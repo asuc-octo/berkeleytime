@@ -37,7 +37,7 @@ class FilterSelection extends Component {
       gradeColors, id} = this.props
 
     return (
-        <button className="filter-selection-button"onClick={this.clickHandler}>
+        <button className="filter-selection-button" onClick={this.clickHandler}>
           <div className={`filter-selection ${borderColors[id % 4]}`}>
             <div className="filter-selection-content">
               <h4 className="filter-selection-heading">{courseAbbreviation} {courseNumber}</h4>
