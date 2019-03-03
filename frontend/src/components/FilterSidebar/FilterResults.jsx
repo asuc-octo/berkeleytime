@@ -17,6 +17,8 @@ class FilterResults extends Component {
     this.compareGradeAverage = this.compareGradeAverage.bind(this);
     this.compareDepartmentName = this.compareDepartmentName.bind(this);
     this.getLetterGradeValue = this.getLetterGradeValue.bind(this);
+    this.compareOpenSeats = this.compareOpenSeats.bind(this);
+    this.compareEnrollmentPercentage = this.compareEnrollmentPercentage.bind(this);
     this.courseMatches = this.courseMatches.bind(this);
     this.filterCourses = this.filterCourses.bind(this);
   }
@@ -52,14 +54,24 @@ class FilterResults extends Component {
   }
 
   compareGradeAverage(courseA, courseB) {
-    return this.getLetterGradeValue(courseB.letter_average) - this.getLetterGradeValue(courseA.letter_average) ||
-    this.compareDepartmentName(courseA, courseB);
+    return courseB.grade_average - courseA.grade_average
+      || this.compareDepartmentName(courseA, courseB);
   }
 
   compareDepartmentName(courseA, courseB) {
     let courseATitle = `${courseA.abbreviation} ${courseA.course_number}`;
     let courseBTitle = `${courseB.abbreviation} ${courseB.course_number}`;
     return courseATitle.localeCompare(courseBTitle)
+  }
+
+  compareOpenSeats(courseA, courseB) {
+    return courseB.open_seats - courseA.open_seats
+      || this.compareDepartmentName(courseA, courseB);
+  }
+
+  compareEnrollmentPercentage(courseA, courseB) {
+    return courseA.enrolled_percentage - courseB.enrolled_percentage
+      || this.compareDepartmentName(courseA, courseB);
   }
 
   sortByAttribute(sortAttribute) {
@@ -69,7 +81,9 @@ class FilterResults extends Component {
       case 'department_name':
         return this.compareDepartmentName;
       case 'open_seats':
+        return this.compareOpenSeats;
       case 'enrolled_percentage':
+        return this.compareEnrollmentPercentage;
     }
   }
 

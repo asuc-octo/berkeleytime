@@ -26,6 +26,12 @@
   .filter-description-stats {
     display: flex;
     flex-direction: row;
+    align-items: center;
+
+    img {
+      height: 50px;
+      margin-right: 5px;
+    }
 
     .filter-description-stats-avg {
       display: flex;
@@ -72,16 +78,17 @@
         margin-bottom: 5px;
       }
 
-      p:first-of-type {
+      >:not(:last-child) {
         margin-bottom: 15px;
       }
     }
 
     .filter-description-tabs-sections {
       > table {
+        margin: 0;
+
         table-layout: fixed;
-      overflow-x: scroll;
-      display: block;
+        overflow-x: scroll;
       }
 
       > table > thead > tr > th {

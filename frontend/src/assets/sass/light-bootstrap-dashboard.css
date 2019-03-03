@@ -9956,12 +9956,12 @@ button.deleteBtn {
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
-    padding: 5px 10px;
-    position: relative;
+    padding: 5px 5px 5px 10px;
     min-height: 120px; }
     .filter-selection-button .filter-selection .filter-selection-content {
       display: flex;
       flex-direction: column;
+      align-items: flex-start;
       justify-content: space-between;
       min-width: 70%;
       border-right: 1px solid #EEEEEE; }
@@ -10069,7 +10069,11 @@ button.deleteBtn {
   .filter-description .filter-description-stats {
     display: flex;
     flex-direction: row;
+    align-items: center;
     margin-bottom: 20px; }
+    .filter-description .filter-description-stats img {
+      height: 50px;
+      margin-right: 5px; }
     .filter-description .filter-description-stats .filter-description-stats-avg {
       display: flex;
       flex-direction: column;
@@ -10093,12 +10097,12 @@ button.deleteBtn {
     .filter-description .filter-description-tabs .filter-description-tabs-details h2 {
       font-weight: 500;
       margin-bottom: 5px; }
-    .filter-description .filter-description-tabs .filter-description-tabs-details p:first-of-type {
+    .filter-description .filter-description-tabs .filter-description-tabs-details > :not(:last-child) {
       margin-bottom: 15px; }
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table {
+    margin: 0;
     table-layout: fixed;
-    overflow-x: scroll;
-    display: block; }
+    overflow-x: scroll; }
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table > thead > tr > th {
     font-size: 16px; }
   .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > th {
@@ -10335,6 +10339,8 @@ button.deleteBtn {
       margin: 20px 0;
       display: flex;
       flex-direction: row; }
+      .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-explore a {
+        color: white; }
       .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup {
         margin-left: 20px;
         border-color: #209cee; }
