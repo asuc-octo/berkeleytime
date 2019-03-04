@@ -12,7 +12,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # May need to redirect directly to catalog
     # url(r'^$', 'catalog.views.catalog'),
-    # url(r'^$', 'berkeleytime.views.home_page'),
+    url(r'^$', 'berkeleytime.views.home_page'),
 
     # Developer Admin
     url(r'^admin/', include(admin.site.urls)),
