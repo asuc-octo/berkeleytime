@@ -38,7 +38,7 @@ class Catalog extends Component {
    * Lifecycle method for getting initial data
    */
   componentDidMount() {
-    axios.get('http://localhost:8000/catalog_json')
+    axios.get('/api/catalog_json/')
       .then(res => {
         // console.log(res);
         const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
@@ -253,42 +253,36 @@ class Catalog extends Component {
   render() {
     return (
       <div className="app-container">
-        <div className="columns">
-          <div className="column is-3">
-            <FilterSidebar
-              filters={this.buildFiltersObject(this.state.context)}
-              activeFilters={this.state.activeFilters}
-              searchHandler={this.searchQueryHandler}
-              sortHandler={this.sortHandler}
-              unitsRangeHandler={this.unitsRangeHandler}
-              sortBy={this.state.sortBy}
-              unitsRange={this.state.unitsRange}
-              addFilter={this.addFilterHandler}
-              rangeFilter={this.rangeFilterHandler}
-              removeFilter={this.removeFilterHandler}
-              toggleFilter={this.toggleFilterHandler}
-              selectFilter={this.selectFilterHandler}
-              resetFilters={this.resetFilterHandler}
-            />
-          </div>
-          <div className="column is-3">
-            {this.state && this.state.activeFilters.size &&
-              <FilterResults
+        <Grid fluid>
+          <Row style={{ height: '850px' }}>
+            <Col md={3}>
+              <FilterSidebar
+                filters={this.buildFiltersObject(this.state.context)}
                 activeFilters={this.state.activeFilters}
                 selectCourse={this.selectCourseHandler}
                 sortBy={this.state.sortBy}
                 query={this.state.query}
               />
-            }
-          </div>
-          <div className="column is-6">
-            {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
-              <ClassDescription
-                course={this.state.selectedCourse}
-              />
-            }
-          </div>
-        </div>
+            </Col>
+            <Col md={4} style={{ height: '94%', overflowY: 'auto'}}>
+              {this.state && this.state.activeFilters.size &&
+                <FilterResults
+                  activeFilters={this.state.activeFilters}
+                  selectCourse={this.selectCourseHandler}
+                  sortBy={this.state.sortBy}
+                  query={this.state.query}
+                />
+              }
+            </Col>
+            <Col md={5}>
+              {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
+                <ClassDescription
+                  course={this.state.selectedCourse}
+                />
+              }
+            </Col>
+          </Row>
+        </Grid>
       </div>
     );
   }

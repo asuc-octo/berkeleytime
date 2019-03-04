@@ -91,6 +91,12 @@
         margin: 0;
 
         table-layout: fixed;
+
+        abbr[title] {
+          border-bottom: none !important;
+          cursor: inherit !important;
+          text-decoration: none !important;
+        }
       }
 
       > table > thead > tr > th {
