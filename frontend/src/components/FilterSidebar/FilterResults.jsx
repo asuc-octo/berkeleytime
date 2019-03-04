@@ -125,7 +125,7 @@ class FilterResults extends Component {
       loading: true,
     });
 
-    axios.get('/api/catalog/filter/', {
+    axios.get('http://localhost:8000/catalog/filter/', {
       params: {
         filters: filters,
       },
