@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       appName: berkeleytime-prod
-  replicas: 4
+  replicas: 1
   template:
     metadata:
       labels:

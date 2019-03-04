@@ -38,7 +38,7 @@ class Grades extends Component {
   // fetch class info
   async fetchClassInfo() {
     try {
-      this.info = await axios.get('http://localhost:8000/grades/course_grades/1062/')
+      this.info = await axios.get('/api/grades/course_grades/1062/')
     } catch (error) {
       console.error(error)
     }
