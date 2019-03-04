@@ -52,6 +52,7 @@ urlpatterns = patterns('',
 
     # Enrollment
     url(r'^enrollment/$', 'data.views.enrollment_render'),
+    url(r'^enrollment_json/$', 'data.views.enrollment_context_json'),
     url(r'^enrollment/sections/(?P<course_id>\d+)/$', 'data.views.enrollment_section_render'),
     url(r'^enrollment/aggregate/(?P<course_id>\d+)/(?P<semester>[a-z]+)/(?P<year>\d+)/$', 'data.views.enrollment_aggregate_json'),
     url(r'^enrollment/data/(?P<section_id>\d+)/$', 'data.views.enrollment_json'),
