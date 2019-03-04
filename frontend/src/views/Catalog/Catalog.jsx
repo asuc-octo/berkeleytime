@@ -269,9 +269,17 @@ class Catalog extends Component {
               <FilterSidebar
                 filters={this.buildFiltersObject(this.state.context)}
                 activeFilters={this.state.activeFilters}
-                selectCourse={this.selectCourseHandler}
+                searchHandler={this.searchQueryHandler}
+                sortHandler={this.sortHandler}
+                unitsRangeHandler={this.unitsRangeHandler}
                 sortBy={this.state.sortBy}
-                query={this.state.query}
+                unitsRange={this.state.unitsRange}
+                addFilter={this.addFilterHandler}
+                rangeFilter={this.rangeFilterHandler}
+                removeFilter={this.removeFilterHandler}
+                toggleFilter={this.toggleFilterHandler}
+                selectFilter={this.selectFilterHandler}
+                resetFilters={this.resetFilterHandler}
               />
             </Col>
             <Col md={4} style={{ height: '94%', overflowY: 'auto'}}>
