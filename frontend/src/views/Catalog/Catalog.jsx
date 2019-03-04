@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
 
 import axios from 'axios';
 
@@ -254,44 +253,42 @@ class Catalog extends Component {
   render() {
     return (
       <div className="app-container">
-        <Grid fluid>
-          <Row style={{ height: '1100px' }}>
-            <Col md={3}>
-              <FilterSidebar
-                filters={this.buildFiltersObject(this.state.context)}
+        <div className="columns">
+          <div className="column is-3">
+            <FilterSidebar
+              filters={this.buildFiltersObject(this.state.context)}
+              activeFilters={this.state.activeFilters}
+              searchHandler={this.searchQueryHandler}
+              sortHandler={this.sortHandler}
+              unitsRangeHandler={this.unitsRangeHandler}
+              sortBy={this.state.sortBy}
+              unitsRange={this.state.unitsRange}
+              addFilter={this.addFilterHandler}
+              rangeFilter={this.rangeFilterHandler}
+              removeFilter={this.removeFilterHandler}
+              toggleFilter={this.toggleFilterHandler}
+              selectFilter={this.selectFilterHandler}
+              resetFilters={this.resetFilterHandler}
+            />
+          </div>
+          <div className="column is-3">
+            {this.state && this.state.activeFilters.size &&
+              <FilterResults
                 activeFilters={this.state.activeFilters}
-                searchHandler={this.searchQueryHandler}
-                sortHandler={this.sortHandler}
-                unitsRangeHandler={this.unitsRangeHandler}
+                selectCourse={this.selectCourseHandler}
                 sortBy={this.state.sortBy}
-                unitsRange={this.state.unitsRange}
-                addFilter={this.addFilterHandler}
-                rangeFilter={this.rangeFilterHandler}
-                removeFilter={this.removeFilterHandler}
-                toggleFilter={this.toggleFilterHandler}
-                selectFilter={this.selectFilterHandler}
-                resetFilters={this.resetFilterHandler}
+                query={this.state.query}
               />
-            </Col>
-            <Col md={3} style={{ height: '100%', overflowY: 'auto'}}>
-              {this.state && this.state.activeFilters.size &&
-                <FilterResults
-                  activeFilters={this.state.activeFilters}
-                  selectCourse={this.selectCourseHandler}
-                  sortBy={this.state.sortBy}
-                  query={this.state.query}
-                />
-              }
-            </Col>
-            <Col md={6}>
-              {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
-                <ClassDescription
-                  course={this.state.selectedCourse}
-                />
-              }
-            </Col>
-          </Row>
-        </Grid>
+            }
+          </div>
+          <div className="column is-6">
+            {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
+              <ClassDescription
+                course={this.state.selectedCourse}
+              />
+            }
+          </div>
+        </div>
       </div>
     );
   }

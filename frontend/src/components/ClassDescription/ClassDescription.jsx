@@ -88,7 +88,7 @@ class ClassDescription extends Component {
         <div className="card filter-description">
           <div className="filter-description-header">
             <h3>{course.abbreviation} {course.course_number}</h3>
-            <p>{course.units} Units</p>
+            <p>{`${course.units} Unit${course.units !== '1.0' ? 's' : ''}`.replace(/.0/g, "").replace(/-/g, " - ")}</p>
           </div>
           <p className="filter-description-title">{course.title}</p>
           <div className="filter-description-stats">
