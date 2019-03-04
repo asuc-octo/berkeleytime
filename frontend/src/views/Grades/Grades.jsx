@@ -13,7 +13,7 @@ import {
 class Grades extends Component {
   constructor(props) {
     super(props)
-    this.state = { 
+    this.state = {
       classCards: Grades.defaultProps.classCards,
       selectedClass: Grades.defaultProps.selectedClass
     }
@@ -36,10 +36,9 @@ class Grades extends Component {
   }
 
   // fetch class info
-  async fetchClassInfo() { 
+  async fetchClassInfo() {
     try {
       this.info = await axios.get('/api/grades/course_grades/1062/')
-      console.log(this.info.data)
     } catch (error) {
       console.error(error)
     }
@@ -85,7 +84,7 @@ Grades.defaultProps = {
     seventeenthCount: "15/3103",
     seventeenthGrade: "C+",
     seventeenthPercent: "0"
-  }, 
+  },
   classCards: [
     {
       stripeColor: '#4EA6FB',

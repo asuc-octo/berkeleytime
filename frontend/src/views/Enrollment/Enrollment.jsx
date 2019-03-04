@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Grid, Row, Col } from 'react-bootstrap';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import axios from 'axios';
 
 import ClassCardList from '../../components/ClassCards/ClassCardList';
 import GraphCard from '../../components/GraphCard/GraphCard.jsx';
@@ -16,8 +17,36 @@ import {
 class Enrollment extends Component {
   constructor(props) {
     super(props)
-    this.state = { classCards: Enrollment.defaultProps.classCards }
+    this.state = {
+      classCards: Enrollment.defaultProps.classCards,
+      context: {},
+      selectedCourses: [],
+    }
+
+    this.addClass = this.addClass.bind(this);
     this.removeClass = this.removeClass.bind(this)
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:8000/enrollment_json')
+    .then(res => {
+      console.log(res);
+      this.setState({
+        context: res.data,
+      })
+    })
+    .catch((err) => {
+      if (err.response) {
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+      }
+      console.log(err.config);
+    });
+  }
+
+  addClass(classNum) {
+    console.log(classNum);
   }
 
   removeClass(classNum) {
@@ -32,15 +61,23 @@ class Enrollment extends Component {
   }
 
   render() {
-    const { classCards } = this.state;
+    const { context } = this.state;
+    let courses = context.courses;
 
     return (
       <div className="app-container">
-        <ClassSearchBar />
-        <ClassCardList
-          classCards={classCards}
-          removeClass={this.removeClass}
-        />
+        {courses &&
+          <ClassSearchBar
+            classes={courses}
+            addClass={this.addClass}
+          />
+        }
+        {courses &&
+          <ClassCardList
+            classCards={courses}
+            removeClass={this.removeClass}
+          />
+        }
         <GraphCard
           id="chartHours"
           title="Enrollment"

@@ -8,6 +8,10 @@ class FilterSelection extends Component {
     this.getCorrectDisplayColor = this.getCorrectDisplayColor.bind(this);
   }
 
+  shouldComponentUpdate(nextProps) {
+    return nextProps.id != this.props.id;
+  }
+
   getFormattedEnrollment(enrollmentConstant) {
     return Math.floor(enrollmentConstant * 100, 100);
   }

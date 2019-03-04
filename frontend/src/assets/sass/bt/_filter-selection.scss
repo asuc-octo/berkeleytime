@@ -2,7 +2,13 @@
   border: 0px;
   padding: 0px;
   margin-bottom: 20px;
-  width: 100%;
+  width: 93%;
+  outline: none;
+
+  &:hover,
+  &:focus {
+    width: 100%;
+  }
 
   .filter-selection {
     display: flex;
