@@ -18,7 +18,6 @@ class FilterResults extends Component {
 
     this.compareGradeAverage = this.compareGradeAverage.bind(this);
     this.compareDepartmentName = this.compareDepartmentName.bind(this);
-    this.getLetterGradeValue = this.getLetterGradeValue.bind(this);
     this.compareOpenSeats = this.compareOpenSeats.bind(this);
     this.compareEnrollmentPercentage = this.compareEnrollmentPercentage.bind(this);
     this.courseMatches = this.courseMatches.bind(this);
@@ -39,43 +38,49 @@ class FilterResults extends Component {
     }
   }
 
-  getLetterGradeValue(letterGrade) {
-    if(!letterGrade) {
-      return -1;
-    } else {
-      let letterGradeValues = {
-        'A': 6,
-        'A-': 5,
-        'B+': 4,
-        'B': 3,
-        'B-': 2,
-        'C+': 1,
-      }
-      return letterGradeValues[letterGrade];
-    }
-  }
-
+  /**
+   * Comparator for average gpa, break ties by department name
+   */
   compareGradeAverage(courseA, courseB) {
     return courseB.grade_average - courseA.grade_average
       || this.compareDepartmentName(courseA, courseB);
   }
 
+  /**
+   * Comparator for department name
+   */
   compareDepartmentName(courseA, courseB) {
     let courseATitle = `${courseA.abbreviation} ${courseA.course_number}`;
     let courseBTitle = `${courseB.abbreviation} ${courseB.course_number}`;
     return courseATitle.localeCompare(courseBTitle)
   }
 
+  /**
+   * Comparator for open seats, break ties by department name
+   */
   compareOpenSeats(courseA, courseB) {
     return courseB.open_seats - courseA.open_seats
       || this.compareDepartmentName(courseA, courseB);
   }
 
+  /**
+   * Comparator for enrolled percentage, break ties by department name
+   * If percentage is -1, it is put at the end (greater than all other percents)
+   */
   compareEnrollmentPercentage(courseA, courseB) {
-    return courseA.enrolled_percentage - courseB.enrolled_percentage
-      || this.compareDepartmentName(courseA, courseB);
+    if (courseA.enrolled_percentage != -1 && courseB.enrolled_percentage != -1) {
+      return courseA.enrolled_percentage - courseB.enrolled_percentage
+        || this.compareDepartmentName(courseA, courseB);
+    } else if (courseA.enrolled_percentage == -1 && courseB.enrolled_percentage == -1) {
+      return this.compareDepartmentName(courseA, courseB);
+    } else {
+      return courseB.enrolled_percentage - courseA.enrolled_percentage;
+    }
   }
 
+  /**
+   * Returns comparator based on the sort
+   */
   sortByAttribute(sortAttribute) {
     switch (sortAttribute) {
       case 'grade_average':
@@ -153,6 +158,8 @@ class FilterResults extends Component {
           waitlisted={course.waitlisted}
           averageGrade={course.letter_average}
           units={course.units}
+          openSeats={course.open_seats}
+          sortBy={this.props.sortBy}
           onClick={this.props.selectCourse}
         />
       ));

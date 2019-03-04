@@ -84,11 +84,13 @@
     }
 
     .filter-description-tabs-sections {
+      overflow-x: scroll;
+
       > table {
+        min-width: 500px;
         margin: 0;
 
         table-layout: fixed;
-        overflow-x: scroll;
       }
 
       > table > thead > tr > th {

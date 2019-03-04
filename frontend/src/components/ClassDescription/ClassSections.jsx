@@ -21,8 +21,8 @@ function ClassSections({ sections }) {
             <th><abbr title="What exactly does this stand for?">CCN</abbr></th>
             <th>Time</th>
             <th>Location</th>
-            <th><abbr title="Enrolled">ENR</abbr></th>
-            <th><abbr title="Waitlist">WL</abbr></th>
+            <th>Enrolled</th>
+            <th>Waitlisted</th>
           </tr>
         </thead>
         <tbody>
