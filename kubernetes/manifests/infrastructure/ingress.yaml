@@ -16,6 +16,7 @@ spec:
     - www.berkeleytime-internal.com
     - berkeleytime-internal.com 
     - staging.berkeleytime-internal.com
+    - jenkins.berkeleytime-internal.com
     secretName: berkeleytime-tls 
   rules:
   - host: www.berkeleytime-internal.com
