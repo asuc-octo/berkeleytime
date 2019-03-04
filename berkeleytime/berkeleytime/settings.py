@@ -49,26 +49,27 @@ else:
     # then we want to default to no hosts instead of all hosts
     ALLOWED_HOSTS = []
 
-if IS_PRODUCTION or IS_STAGING:
-    redis_url = urlparse.urlparse(os.environ.get('REDIS_URL'))
-    CACHES = {
-        "default": {
-            "BACKEND": "redis_cache.RedisCache",
-            "LOCATION": "{0}:{1}".format(redis_url.hostname, redis_url.port),
-            "OPTIONS": {
-                "PASSWORD": redis_url.password,
-                "DB": 0,
-            }
-        }
-    }
 
-elif IS_LOCALHOST:
-    CACHES = {
-        'default': {
-            'BACKEND': "redis_cache.RedisCache",
-            'LOCATION': 'redis:6379',
-        }
-    }
+#### kate local only
+# if IS_PRODUCTION or IS_STAGING:
+#     redis_url = urlparse.urlparse(os.environ.get('REDIS_URL'))
+#     CACHES = {
+#         "default": {
+#             "BACKEND": "redis_cache.RedisCache",
+#             "LOCATION": "{0}:{1}".format(redis_url.hostname, redis_url.port),
+#             "OPTIONS": {
+#                 "PASSWORD": redis_url.password,
+#                 "DB": 0,
+#             }
+#         }
+#     }
+# elif IS_LOCALHOST:
+#     CACHES = {
+#         'default': {
+#             'BACKEND': "redis_cache.RedisCache",
+#             'LOCATION': 'redis:6379',
+#         }
+#     }
 
 if IS_LOCALHOST:
     FACEBOOK_APP = 'local'
@@ -78,7 +79,7 @@ if IS_LOCALHOST:
             'NAME': 'bt_main',
             'USER': 'bt',
             'PASSWORD': 'yuxinsucks',
-            'HOST': 'postgres',
+            'HOST': 'localhost', #'postgres', #kate only
             'PORT': '',
         }
     }
