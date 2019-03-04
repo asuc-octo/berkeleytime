@@ -103,7 +103,7 @@ if IS_LOCALHOST:
     EMAIL_HOST_PASSWORD = ""
     EMAIL_USE_TLS = False
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
-    DOMAIN_NAME = "berkeleytime.com"
+    DOMAIN_NAME = "berkeleytime-internal.com"
     SITE_ID = 3
 
 elif IS_STAGING:
@@ -124,7 +124,7 @@ elif IS_STAGING:
     EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
 
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
-    DOMAIN_NAME = "berkeleytime.com"
+    DOMAIN_NAME = "berkeleytime-internal.com"
     SITE_ID = 3
 
     AWS_HEADERS = {
@@ -151,7 +151,7 @@ elif IS_PRODUCTION:
     EMAIL_HOST_PASSWORD = os.environ['SENDGRID_PASSWORD']
 
     DEFAULT_FROM_EMAIL = "admin@berkeleytime.com"
-    DOMAIN_NAME = "berkeleytime.com"
+    DOMAIN_NAME = "berkeleytime-internal.com"
     SITE_ID = 3
 
     AWS_HEADERS = {
@@ -401,13 +401,13 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': True,
         },
-        'django_facebook.models': {
-            'handlers': ['mail_admins', 'console'],
+        'django.request': {
+            'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
         },
