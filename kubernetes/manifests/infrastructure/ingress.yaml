@@ -16,7 +16,9 @@ spec:
     - www.berkeleytime-internal.com
     - berkeleytime-internal.com 
     - staging.berkeleytime-internal.com
-    secretName: berkeleytime-tls 
+    - jenkins.berkeleytime-internal.com
+    - old.berkeleytime-internal.com
+    secretName: berkeleytime-tls
   rules:
   - host: www.berkeleytime-internal.com
     http:
@@ -29,6 +31,13 @@ spec:
         backend:
           serviceName: frontend-prod-svc
           servicePort: 3000
+  - host: old.berkeleytime-internal.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: berkeleytime-prod-svc
+          servicePort: 5000
   - host: staging.berkeleytime-internal.com
     http:
       paths:
