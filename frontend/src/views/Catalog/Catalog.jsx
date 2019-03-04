@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Grid, Row, Col } from 'react-bootstrap';
 
 import axios from 'axios';
 
@@ -38,7 +39,7 @@ class Catalog extends Component {
    * Lifecycle method for getting initial data
    */
   componentDidMount() {
-    axios.get('/api/catalog_json/')
+    axios.get('http://localhost:8000/catalog_json/')
       .then(res => {
         // console.log(res);
         const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
@@ -251,6 +252,15 @@ class Catalog extends Component {
   }
 
   render() {
+    let results = this.state && this.state.activeFilters.size ? (
+      <FilterResults
+        activeFilters={this.state.activeFilters}
+        selectCourse={this.selectCourseHandler}
+        sortBy={this.state.sortBy}
+        query={this.state.query}
+      />
+    ) : <div></div>
+
     return (
       <div className="app-container">
         <Grid fluid>
@@ -265,14 +275,7 @@ class Catalog extends Component {
               />
             </Col>
             <Col md={4} style={{ height: '94%', overflowY: 'auto'}}>
-              {this.state && this.state.activeFilters.size &&
-                <FilterResults
-                  activeFilters={this.state.activeFilters}
-                  selectCourse={this.selectCourseHandler}
-                  sortBy={this.state.sortBy}
-                  query={this.state.query}
-                />
-              }
+              {results}
             </Col>
             <Col md={5}>
               {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
