@@ -1,19 +1,19 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-export default function GraphInfoCard({classNum, semester, faculty, title, courseAvg, courseGPA, sectionAvg, sectionGPA, denominator, selectedGrade, betterGrade, worseGrade
-  }) {
+export default function GraphInfoCard({thisClass, selectedGrade, betterGrade, worseGrade}) {
+
   return (
     <div className="card card-info">
       <div className="content card-info">
         <Row>
-          <div className="classNum">{classNum}</div>
+          <div className="classNum">{thisClass.title}</div>
         </Row>
         <Row>
-          <div className="classInfo">{`${semester} | ${faculty}`}</div>
+          <div className="classInfo">{`${thisClass.semester} | ${thisClass.faculty}`}</div>
         </Row>
         <Row>
-          <div className="classTitle">{title}</div>
+          <div className="classTitle">{thisClass.subtitle}</div>
         </Row>
         <Row className="classAvgs">
           <Col xs={6} className="classAvgs">
@@ -25,10 +25,10 @@ export default function GraphInfoCard({classNum, semester, faculty, title, cours
         </Row>
         <Row className="classAvgs">
           <Col xs={6} className="classAvgStats">
-            <div>{`${courseAvg} (GPA: ${courseGPA})`} </div>
+            <div>{`${thisClass.course_letter} (GPA: ${thisClass.course_gpa})`} </div>
           </Col>
           <Col xs={6} className="classAvgStats">
-            <div>{`${sectionAvg} (GPA: ${sectionGPA})`} </div>
+            <div>{`${thisClass.section_letter} (GPA: ${thisClass.section_gpa})`} </div>
           </Col>
         </Row>
 
@@ -37,7 +37,7 @@ export default function GraphInfoCard({classNum, semester, faculty, title, cours
             <div className="classStatsName">{`${betterGrade.percentile_low}th - ${betterGrade.percentile_high}th Percentile`}</div>
           </Col>
           <Col xs={4} className="classAvgs">
-            <div className="classCount">{`${betterGrade.numerator}/${denominator}`}</div>
+            <div className="classCount">{`${betterGrade.numerator}/${betterGrade.denominator}`}</div>
           </Col>
         </Row>
         <Row>
@@ -54,7 +54,7 @@ export default function GraphInfoCard({classNum, semester, faculty, title, cours
             <div className="classStatsName">{`${selectedGrade.percentile_low}th - ${selectedGrade.percentile_high}th Percentile`}</div>
           </Col>
           <Col xs={4} className="classAvgs">
-            <div className="classCount">{`${selectedGrade.numerator}/${denominator}`}</div>
+            <div className="classCount">{`${selectedGrade.numerator}/${selectedGrade.denominator}`}</div>
           </Col>
         </Row>
         <Row>
@@ -71,7 +71,7 @@ export default function GraphInfoCard({classNum, semester, faculty, title, cours
             <div className="classStatsName">{`${worseGrade.percentile_low}th - ${worseGrade.percentile_high}th Percentile`}</div>
           </Col>
           <Col xs={4} className="classAvgs">
-            <div className="classCount">{`${worseGrade.numerator}/${denominator}`}</div>
+            <div className="classCount">{`${worseGrade.numerator}/${worseGrade.denominator}`}</div>
           </Col>
         </Row>
         <Row>
