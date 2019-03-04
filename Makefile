@@ -5,7 +5,7 @@ backend:
 	docker build -t berkeleytime/berkeleytime -f berkeleytime/Dockerfile berkeleytime
 	docker push berkeleytime/berkeleytime
 	
-frontend
+frontend:
 	docker build -t berkeleytime/frontend -f frontend/Dockerfile frontend
 	docker push berkeleytime/frontend
 
