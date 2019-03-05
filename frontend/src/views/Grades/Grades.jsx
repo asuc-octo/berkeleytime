@@ -6,6 +6,8 @@ import GraphCard from '../../components/GraphCard/GraphCard.jsx';
 import GradesInfoCard from '../../components/GradesInfoCard/GradesInfoCard.jsx';
 import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
 
+import vars from '../../variables/Variables';
+
 class Grades extends Component {
   constructor(props) {
     super(props)
@@ -42,7 +44,7 @@ class Grades extends Component {
     }));
 
     this.setState({
-      newSectionIDs: ["22993","25929","27994","30432","34596","42904","50262","39878","44969","48245","52725","36960","37412","53147","50821","50846","51536"]
+      newSectionIDs: ["44969","48245","52725","36960","37412","53147","50821","50846","51536"]
     });
     this.fetchGrades();
   }
@@ -55,10 +57,20 @@ class Grades extends Component {
 
         const grades = await axios.get('http://localhost:8000/grades/sections/' + sectionIDKey + '/');
 
-        console.log(sectionIDKey);
         // add metadata like semester & instructor name
         // get from course search bar
-        // metadata = //response of course_grades
+        var metadata = grades.data;
+        var gradeName;
+        if (metadata) {
+          for (var i in vars.possibleGrades) {
+            gradeName = vars.possibleGrades[i]
+            metadata[gradeName]["grade_name"] = gradeName;  
+          }
+          metadata["section_id"] = sectionIDKey;
+        }
+
+        console.log(metadata);
+
         /* metadatas.map((metadata) =>
           if (metadata["grade_id"] == grades["course_id"]) {
             for (var key in metadata) {
@@ -68,13 +80,9 @@ class Grades extends Component {
           } 
         );*/
 
-        // dont need all data
-        // const newSectionData = this.state.sectionData;
-        // newSectionData[sectionIDKey] = grades.data;
-
         // just need newest ones
         this.setState({
-           sectionData: grades.data
+           sectionData: metadata
          });
         
       } catch (error) {
@@ -110,8 +118,8 @@ class Grades extends Component {
   }
 }
 Grades.defaultProps = {
-  courseID: '31265',
-  sectionIDs: ['31265'],
+  courseID: '22993',
+  sectionIDs: ['22993'],
   sectionData: {
     "31265":
       {

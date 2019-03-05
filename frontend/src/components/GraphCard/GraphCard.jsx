@@ -17,19 +17,19 @@ import GradesInfoCard from '../../components/GradesInfoCard/GradesInfoCard.jsx';
 class GraphCard extends Component {
   constructor(props) {
     super(props)
-    // data for class selected by user
-    //classData: [] //read-only; passed from parent
-
+    
     this.state = { 
-      // data for all classes selected by user
+      // data for all classes added by user
       // dictionary mapping section_id to grades
       classData: {},
       graphDataKeys: [], //keys for diff class; essentially keys from classData
 
       // bar in graph that user last hovered over
       selectedGrade: {},
-      lastAddedClassID: "",
+      selectedGradeName: "", // name of grade
+      lastSelectedClassID: "",  // id of class last selected
 
+      // data for recharts
       graphData: [
         {name: 'A+'},
         {name: 'A'},
@@ -44,12 +44,12 @@ class GraphCard extends Component {
         {name: 'F'},
         {name: 'NP'},
         {name: 'P'}
-      ]
-    }
+      ],
+    },
+    this.updateHoverGrade = this.updateHoverGrade.bind(this);
   }
 
   componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
     if (this.props.classData !== prevProps.classData) {
       this.morphGraphData(this.props.classData);
     }
@@ -60,56 +60,54 @@ class GraphCard extends Component {
   morphGraphData(newClass) {
     // add newclass to allclassdata
     const newClassData = this.state.classData;
-    const course_id = newClass["course_id"]
-    newClassData[course_id] = newClass;
+    const section_id = newClass["section_id"]
+    newClassData[section_id] = newClass;
 
-    const newGraphData = this.state.graphData;
+    var newGraphData = this.state.graphData;
     
+    // add newclass to graphData
     var i;
     for (i = 0; i < newGraphData.length; i++) {
-      newGraphData[i][course_id] = newClass[newGraphData[i]["name"]]["numerator"];
-
+      newGraphData[i][section_id] = newClass[newGraphData[i]["name"]]["numerator"];
     }
     
     this.setState({
         classData: newClassData,
         graphData: newGraphData,
         graphDataKeys: Object.keys(newClassData),
-        lastAddedClassID: course_id,
-        selectedGrade: newClassData[course_id]["A"]
+        lastSelectedClassID: section_id,
+        selectedGrade: newClassData[section_id]["A"]
       });
   }
 
-
-  updateGradeInfo(e) {
+  //update graphinfocard w the bar that was last hovered
+  updateHoverGrade(e) { 
     console.log(e);
-    console.log(vars.possibleGrades);
-    // reformat into 
-    /*
-    {"grade_name": "F",
-        "percentile_low": 0,
-        "percent": 0.04,
-        "percentile_high": 0.04,
-        "numerator": 139
-    },
+    var selectedClass;
+    const payLoadKeys = Object.keys(e.payload);
+    for (var i in payLoadKeys) {
+      if (e.payload[payLoadKeys[i]] == e.value) {
+        selectedClass = payLoadKeys[i];
+      }
+    }
+    this.setState({
+      selectedGrade: this.state.classData[selectedClass][e.name],
+      lastSelectedClassID: selectedClass,
+      selectedGradeName: e.name
+    });
 
-    */
   }
   
   getNeighborGrade(direction) {
-    return {
-      "grade_name": "F",
-      "percentile_low": 0,
-      "percent": 0.04,
-      "percentile_high": 0.04,
-      "numerator": 139
-    }
+    const gradeIdx = vars.possibleGrades.indexOf(this.state.selectedGradeName);
+    if (direction == "better" && gradeIdx != 0){
+      return this.state.classData[this.state.lastSelectedClassID][vars.possibleGrades[gradeIdx-1]];
+    } else if (direction == "worse" && gradeIdx != vars.possibleGrades.length){
+      return this.state.classData[this.state.lastSelectedClassID][vars.possibleGrades[gradeIdx+1]];
+    } return null;
   }
 
   render () {
-    console.log(this.props);
-    console.log(this.state);
-    console.log(this.state.selectedGrade);
     if (Object.keys(this.props.classData).length == 0 || Object.keys(this.state.classData).length == 0) {
       return (
         <div className="card card-graph">
@@ -135,7 +133,7 @@ class GraphCard extends Component {
               {this.state.graphDataKeys.map((item, index) => (
                 <Bar dataKey={item} 
                 fill={vars.colors[index%vars.colors.length]}
-                onMouseEnter={this.updateGradeInfo}
+                onMouseEnter={this.updateHoverGrade}
                 />
               ))}
 
@@ -145,7 +143,7 @@ class GraphCard extends Component {
 
           <Col sm={4}>
             <GradesInfoCard
-                thisClass={this.state.classData[this.state.lastAddedClassID]}
+                thisClass={this.state.classData[this.state.lastSelectedClassID]}
 
                 selectedGrade = {this.state.selectedGrade}
                 betterGrade = {this.getNeighborGrade("better")}

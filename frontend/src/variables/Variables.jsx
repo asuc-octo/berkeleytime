@@ -606,7 +606,7 @@ var grades = [
   {name: 'F', classA: 0, classB: 2},
 ];
 
-var possibleGrades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F", "P", "NP"];
+var possibleGrades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F", "NP", "P"];
 
 var colors = ['#4EA6FB', '#6AE086', '#ED5186', '#F9E152'];
 
