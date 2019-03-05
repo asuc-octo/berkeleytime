@@ -19,5 +19,5 @@ def about_page(request):
 
 def home_page(request):
     rc = RequestContext(request)
-    rc["banner"] = True
+    rc["banner"] = False
     return render_to_response("about.html", context_instance=rc)
