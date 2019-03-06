@@ -5,6 +5,10 @@ function ClassDetails({
 }) {
   return (
     <div className="filter-description-tabs-details">
+      {!description && !prerequisites &&
+        <div><h1>No Details</h1></div>
+      }
+
       {description &&
         <div className="filter-details-description">
           <h2>Description</h2>

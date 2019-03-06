@@ -22,7 +22,7 @@ function ClassSections({ sections }) {
             <th>Time</th>
             <th>Location</th>
             <th>Enrolled</th>
-            <th>Waitlist</th>
+            <th>Waitlisted</th>
           </tr>
         </thead>
         <tbody>

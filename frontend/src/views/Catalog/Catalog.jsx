@@ -252,6 +252,15 @@ class Catalog extends Component {
   }
 
   render() {
+    let results = this.state && this.state.activeFilters.size ? (
+      <FilterResults
+        activeFilters={this.state.activeFilters}
+        selectCourse={this.selectCourseHandler}
+        sortBy={this.state.sortBy}
+        query={this.state.query}
+      />
+    ) : <div></div>
+
     return (
       <div className="app-container">
         <Grid fluid>
@@ -274,14 +283,7 @@ class Catalog extends Component {
               />
             </Col>
             <Col md={4} style={{ height: '94%', overflowY: 'auto'}}>
-              {this.state && this.state.activeFilters.size &&
-                <FilterResults
-                  activeFilters={this.state.activeFilters}
-                  selectCourse={this.selectCourseHandler}
-                  sortBy={this.state.sortBy}
-                  query={this.state.query}
-                />
-              }
+              {results}
             </Col>
             <Col md={5}>
               {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
