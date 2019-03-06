@@ -18,17 +18,16 @@ class Enrollment extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      classCards: Enrollment.defaultProps.classCards,
       context: {},
       selectedCourses: [],
     }
 
-    this.addClass = this.addClass.bind(this);
-    this.removeClass = this.removeClass.bind(this)
+    this.addCourse = this.addCourse.bind(this);
+    this.removeCourse = this.removeCourse.bind(this)
   }
 
   componentDidMount() {
-    axios.get('http://localhost:8000/enrollment_json')
+    axios.get('/api/enrollment_json/')
     .then(res => {
       console.log(res);
       this.setState({
@@ -45,11 +44,14 @@ class Enrollment extends Component {
     });
   }
 
-  addClass(classNum) {
-    console.log(classNum);
+  addCourse(course) {
+    console.log(course);
+    this.setState(prevState => ({
+      selectedCourses: [...prevState.selectedCourses, course],
+    }));
   }
 
-  removeClass(classNum) {
+  removeCourse(classNum) {
     this.setState((prevState, props) => ({
       classCards: prevState.classCards.filter(classInfo => classInfo.classNum !== classNum)
     }));
@@ -61,21 +63,23 @@ class Enrollment extends Component {
   }
 
   render() {
-    const { context } = this.state;
+    const { context, selectedCourses } = this.state;
     let courses = context.courses;
+
+    console.log(selectedCourses);
 
     return (
       <div className="app-container">
         {courses &&
           <ClassSearchBar
             classes={courses}
-            addClass={this.addClass}
+            addCourse={this.addCourse}
           />
         }
-        {courses &&
+        {selectedCourses.length > 0 &&
           <ClassCardList
-            classCards={courses}
-            removeClass={this.removeClass}
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
           />
         }
         <GraphCard
@@ -112,35 +116,5 @@ class Enrollment extends Component {
     );
   }
 }
-
-Enrollment.defaultProps = {
-  classCards: [
-    {
-      stripeColor:'#4EA6FB',
-      classNum:"CS 61A",
-      semester:"Spring 2018",
-      faculty:"Denero",
-      title:"The Structure and Interpretation of Computer Programs"
-    }, {
-      stripeColor:"#6AE086",
-      classNum:"Math 1A",
-      semester:"Spring 2018",
-      faculty:"n/a",
-      title:"Single Variable Calculus"
-    }, {
-      stripeColor:"#ED5186",
-      classNum:"English 43B",
-      semester:"Spring 2018",
-      faculty:"n/a",
-      title:"Introduction to the Art of Verse"
-    }, {
-      stripeColor:"#F9E152",
-      classNum:"Art 18",
-      semester:"Spring 2018",
-      faculty:"n/a",
-      title:"The Language of Painting"
-    }
-  ]
-};
 
 export default Enrollment;

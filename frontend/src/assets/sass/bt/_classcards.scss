@@ -1,18 +1,33 @@
-.card.card-class {
+.card.class-card {
     background-color: #579EFF;
 
     .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
         padding: 15px 15px 15px 15px;
         background-color: white;
         margin-left: 10px;
         border-radius: 0 4px 4px 0;
-    }
-    .classTitle {
-        padding-top: 15px;
-        padding-bottom: 15px;
-                    }
-    .classNum {
-        font-weight: bold;
-        font-size: 20px;
+        min-height: 100px;
+
+        .class-card-upper {
+            display: flex;
+            justify-content: space-between;
+
+            .courseAbbreviation {
+                font-weight: bold;
+            }
+
+            .classInfo {
+                font-size: 12px;
+            }
+        }
+
+        .class-card-lower {
+            display: flex;
+            justify-content: space-between;
+        }
     }
 }
