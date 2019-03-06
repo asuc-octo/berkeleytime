@@ -212,6 +212,7 @@ def course_json(request, course_id):
 
         return render_to_json(
             {
+                'title': course.title,
                 'course': course,
                 'favorited': favorited,
                 'last_enrollment_update': get_last_enrollment_update(sections),
