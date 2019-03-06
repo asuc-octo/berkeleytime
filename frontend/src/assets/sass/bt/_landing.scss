@@ -32,6 +32,10 @@
             display: flex;
             flex-direction: row;
 
+            .landing-jumbo-explore a {
+                color: white;
+            }
+
             .landing-jumbo-signup {
                 margin-left: 20px;
                 border-color: hsl(204, 86%, 53%);

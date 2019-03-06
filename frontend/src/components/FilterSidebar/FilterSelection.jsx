@@ -5,7 +5,6 @@ class FilterSelection extends Component {
     super(props);
 
     this.clickHandler = this.clickHandler.bind(this);
-    this.getCorrectDisplayColor = this.getCorrectDisplayColor.bind(this);
   }
 
   shouldComponentUpdate(nextProps) {
@@ -16,10 +15,30 @@ class FilterSelection extends Component {
     return Math.floor(enrollmentConstant * 100, 100);
   }
 
-  getCorrectDisplayColor(averageGrade) {
+  getAverageGradeColor(averageGrade) {
     if(averageGrade.includes('A')) {
       return 'bt-green-text';
     } else if (averageGrade.includes('B')) {
+      return 'bt-orange-text';
+    } else {
+      return 'bt-red-text';
+    }
+  }
+
+  getPercentageEnrolledColor(percentageEnrolled) {
+    if (percentageEnrolled <= 0.33) {
+      return 'bt-green-text';
+    } else if (percentageEnrolled <= 0.66) {
+      return 'bt-orange-text';
+    } else {
+      return 'bt-red-text';
+    }
+  }
+
+  getWaitlistedColor(waitlisted) {
+    if (waitlisted <= 25) {
+      return 'bt-green-text';
+    } else if (waitlisted <= 100) {
       return 'bt-orange-text';
     } else {
       return 'bt-red-text';
@@ -38,35 +57,56 @@ class FilterSelection extends Component {
   render() {
     const {courseAbbreviation, courseNumber, courseTitle, percentageEnrolled,
       units, waitlisted, averageGrade, borderColors,
-      gradeColors, id} = this.props
+      gradeColors, openSeats, id} = this.props;
+
+    let asideDetails;
+    if (this.props.sortBy == 'grade_average' || this.props.sortBy == 'department_name'
+          || this.props.sortBy == 'enrolled_percentage') {
+      asideDetails = (
+        <div>
+          {averageGrade &&
+            <div className="filter-selection-average-grade">
+              <h5>Average Grade</h5>
+              <p className={this.getAverageGradeColor(averageGrade)}>{averageGrade}</p>
+            </div>
+          }
+        </div>
+      );
+    } else if (this.props.sortBy == 'open_seats') {
+      asideDetails = (
+        <div>
+          {openSeats &&
+            <div className="filter-selection-open-seats">
+              <h5>Open Seats</h5>
+              <p>{openSeats}</p>
+            </div>
+          }
+        </div>
+      );
+    }
 
     return (
-        <button className="filter-selection-button"onClick={this.clickHandler}>
-          <div className={`filter-selection ${borderColors[id % 4]}`}>
+        <button className="filter-selection-button" onClick={this.clickHandler}>
+          <div className="filter-selection">
             <div className="filter-selection-content">
               <h4 className="filter-selection-heading">{courseAbbreviation} {courseNumber}</h4>
               <p className="filter-selection-description">{courseTitle}</p>
               <div className="filter-selection-enrollment-data">
                 <div className="dataBlock">
-                  <i className="fa fa-circle first" />
-                  <p>{` ${this.getFormattedEnrollment(percentageEnrolled)}% enrolled`}</p>
+                  <i className={`fa fa-circle ${this.getPercentageEnrolledColor(percentageEnrolled)}`} />
+                  <p>{`${this.getFormattedEnrollment(percentageEnrolled)}% enrolled`}</p>
                 </div>
                 <div className="dataBlock">
-                  <i className="fa fa-circle second" />
-                  <p>{` ${waitlisted} waitlisted`}</p>
+                  <i className={`fa fa-circle ${this.getWaitlistedColor(waitlisted)}`} />
+                  <p>{`${waitlisted} waitlisted`}</p>
                 </div>
               </div>
             </div>
             <div className="filter-selection-aside">
               <div className="filter-selection-units">
-                <h6>{`${units} Units`}</h6>
+                <h6>{`${units} Unit${units !== '1.0' ? 's' : ''}`.replace(/.0/g, "").replace(/or/g, "-")}</h6>
               </div>
-              {averageGrade &&
-                <div className="filter-selection-average-grade">
-                  <h5>Average Grade</h5>
-                  <p className={this.getCorrectDisplayColor(averageGrade)}>{averageGrade}</p>
-                </div>
-              }
+              {asideDetails}
             </div>
           </div>
         </button>
