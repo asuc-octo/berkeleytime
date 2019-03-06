@@ -39,7 +39,7 @@ class Catalog extends Component {
    * Lifecycle method for getting initial data
    */
   componentDidMount() {
-    axios.get('http://localhost:8000/catalog_json/')
+    axios.get('/api/catalog_json/')
       .then(res => {
         // console.log(res);
         const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
