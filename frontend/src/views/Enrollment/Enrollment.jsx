@@ -51,9 +51,9 @@ class Enrollment extends Component {
     }));
   }
 
-  removeCourse(classNum) {
-    this.setState((prevState, props) => ({
-      classCards: prevState.classCards.filter(classInfo => classInfo.classNum !== classNum)
+  removeCourse(id) {
+    this.setState(prevState => ({
+      selectedCourses: prevState.selectedCourses.filter(classInfo => classInfo.id !== id)
     }));
   }
 

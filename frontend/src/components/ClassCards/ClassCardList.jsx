@@ -36,6 +36,7 @@ class ClassCardList extends Component {
         let selectedData = selectedCourses[i];
 
         return {
+          id: selectedData.id,
           course: courseData.course,
           title: courseData.title,
           semester: selectedData.semester,
@@ -56,7 +57,7 @@ class ClassCardList extends Component {
 
   render() {
     const { classCards } = this.state;
-    const { removeClass } = this.props;
+    const { removeCourse } = this.props;
 
     return (
       <div className="columns">
@@ -64,11 +65,12 @@ class ClassCardList extends Component {
           classCards.map(item => (
           <div className="column card-column">
             <ClassCard
+              id={item.id}
               course={item.course}
               title={item.title}
               semester={item.semester == 'all' ? 'All Semester' : item.semester }
               faculty={item.instructor == 'all' ? 'All Instructors' : item.instructor}
-              removeClass={removeClass}
+              removeCourse={removeCourse}
             />
           </div>
         ))}
