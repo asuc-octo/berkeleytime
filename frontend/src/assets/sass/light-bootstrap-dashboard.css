@@ -9950,18 +9950,22 @@ button.deleteBtn {
   border: 0px;
   padding: 0px;
   margin-bottom: 20px;
-  width: 93%;
-  outline: none;
-  transition: 200ms; }
-  .filter-selection-button:hover, .filter-selection-button:focus {
-    width: 100%; }
+  width: 93%; }
   .filter-selection-button .filter-selection {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
     padding: 6px 4px 6px 10px;
-    min-height: 130px; }
+    min-height: 130px;
+    outline: none; }
+    .filter-selection-button .filter-selection:hover, .filter-selection-button .filter-selection:focus {
+      color: white;
+      background-color: #579EFF; }
+      .filter-selection-button .filter-selection:hover h6, .filter-selection-button .filter-selection:focus h6 {
+        color: white !important; }
+      .filter-selection-button .filter-selection:hover p, .filter-selection-button .filter-selection:focus p {
+        color: white; }
     .filter-selection-button .filter-selection .filter-selection-content {
       display: flex;
       flex-direction: column;
@@ -10144,7 +10148,8 @@ button.deleteBtn {
   height: auto;
   padding: 5px 15px; }
   .navbar-brand.bt-navbar-brand .bt-navbar-bt {
-    font-size: 30px; }
+    font-size: 20px;
+    font-weight: 500; }
 
 .navbar-end {
   margin-right: 27px; }
