@@ -1,15 +1,14 @@
 .filter-sidebar {
-    -webkit-box-shadow: 0px 0px;
-    box-shadow: 0px 0px;
+    background-color: white;
 
     .header {
-        padding: 20px 30px;
+        padding: 20px 30px 30px 30px;
         padding-bottom: 10px;
 
         .filter-sidebar-header {
             margin: 0 0;
             font-size: 20px;
-            font-weight: 600;
+            font-weight: 500;
         }
     }
 
@@ -36,9 +35,15 @@
                 .filter-sidebar-classSearch {
                     font-family: "FontAwesome", "Roboto", "Helvetica Neue", "Arial", sans-serif;
                     border: 0px;
-                    border-bottom: 1.5px solid $bt-grey;
+                    border-bottom: 0.5px solid $bt-grey;
                     border-radius: 0px;
                     padding-left: 0px;
+                    font-size: 16px;
+
+                    &:focus::-webkit-input-placeholder { color:transparent; }
+                    &:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
+                    &:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
+                    &:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
                 }
 
                 .filter-sidebar-classSearch::placeholder {
@@ -46,21 +51,15 @@
                 }
 
                 .filter-sidebar-sortBy {
-                    width: 100%;
-
                     .Select-control {
                         border: 0px;
-                        border-bottom: 1.5px solid $bt-grey;
+                        border-bottom: 0.5px solid $bt-grey;
                         border-radius: 0px;
                         padding-left: 0px;
                     }
 
                     .Select-value, .Select-placeholder {
                         padding-left: 0px;
-                    }
-
-                    .Select-arrow {
-                        display: None;
                     }
                 }
 
@@ -110,21 +109,15 @@
                 }
 
                 .filter-sidebar-department {
-                    width: 100%;
-
                     .Select-control {
                         border: 0px;
-                        border-bottom: 1.5px solid $bt-grey;
+                        border-bottom: 0.5px solid $bt-grey;
                         border-radius: 0px;
                         padding-left: 0px;
                     }
 
                     .Select-value, .Select-placeholder {
                         padding-left: 0px;
-                    }
-
-                    .Select-arrow {
-                        display: None;
                     }
                 }
 

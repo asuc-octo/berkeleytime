@@ -87,7 +87,7 @@
       overflow-x: scroll;
 
       > table {
-        min-width: 500px;
+        min-width: 480px;
         margin: 0;
 
         table-layout: fixed;
@@ -97,12 +97,21 @@
           cursor: inherit !important;
           text-decoration: none !important;
         }
+
+        .type {
+          width: 18%;
+        }
+
+        .ccn {
+          width: 10%;
+        }
       }
 
       > table > thead > tr > th {
-        font-size: 16px;
+        font-size: 14px;
       }
-      > table > tbody > tr > th {
+
+      > table > tbody > tr > td {
         font-weight: normal;
         font-size: 12px;
       }
