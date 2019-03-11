@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Grid, Row, Col } from 'react-bootstrap';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import axios from 'axios';
 
 import ClassCardList from '../../components/ClassCards/ClassCardList';
@@ -17,7 +19,9 @@ import {
 class Enrollment extends Component {
   constructor(props) {
     super(props)
-    this.state = { 
+    this.state = {
+      context: {},
+      selectedCourses: [],
       classCards: Enrollment.defaultProps.classCards,
       
       allSectionIDs: Enrollment.defaultProps.sectionIDs,
@@ -26,13 +30,39 @@ class Enrollment extends Component {
 
       sectionData: {}
     }
-    this.fetchGrades();
-    this.removeClass = this.removeClass.bind(this)
+
+    this.addCourse = this.addCourse.bind(this);
+    this.removeCourse = this.removeCourse.bind(this)
   }
 
-  removeClass(classNum) {
-    this.setState((prevState, props) => ({
-      classCards: prevState.classCards.filter(classInfo => classInfo.classNum !== classNum)
+  componentDidMount() {
+    axios.get('/api/enrollment_json/')
+    .then(res => {
+      console.log(res);
+      this.setState({
+        context: res.data,
+      })
+    })
+    .catch((err) => {
+      if (err.response) {
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+      }
+      console.log(err.config);
+    });
+  }
+
+  addCourse(course) {
+    console.log(course);
+    this.setState(prevState => ({
+      selectedCourses: [...prevState.selectedCourses, course],
+    }));
+  }
+
+  removeCourse(id) {
+    this.setState(prevState => ({
+      selectedCourses: prevState.selectedCourses.filter(classInfo => classInfo.id !== id)
     }));
   }
 
@@ -81,18 +111,28 @@ class Enrollment extends Component {
         console.error(error)
       }
     }
-
   }
+
   render() {
+    const { context, selectedCourses } = this.state;
+    let courses = context.courses;
+
+    console.log(selectedCourses);
+
     return (
       <div className="app-container">
-        <ClassSearchBar />
-
-        <ClassCardList
-          classCards={this.state.classCards}
-          removeClass={this.removeClass}
-        />
-
+        {courses &&
+          <ClassSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+          />
+        }
+        {selectedCourses.length > 0 &&
+          <ClassCardList
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
+          />
+        }
         <EnrollmentGraphCard
           id="chartHours"
           title="Enrollment"
@@ -104,36 +144,5 @@ class Enrollment extends Component {
   }
 }
 
-Enrollment.defaultProps = {
-  courseID: '22993',
-  sectionIDs: ['22993'],
-  classCards: [
-    {
-      stripeColor:'#4EA6FB',
-      classNum:"CS 61A",
-      semester:"Spring 2018",
-      faculty:"Denero",
-      title:"The Structure and Interpretation of Computer Programs"
-    }, {
-      stripeColor:"#6AE086",
-      classNum:"Math 1A",
-      semester:"Spring 2018",
-      faculty:"n/a",
-      title:"Single Variable Calculus"
-    }, {
-      stripeColor:"#ED5186",
-      classNum:"English 43B",
-      semester:"Spring 2018",
-      faculty:"n/a",
-      title:"Introduction to the Art of Verse"
-    }, {
-      stripeColor:"#F9E152",
-      classNum:"Art 18",
-      semester:"Spring 2018",
-      faculty:"n/a",
-      title:"The Language of Painting"
-    }
-  ]
-};
 
 export default Enrollment;

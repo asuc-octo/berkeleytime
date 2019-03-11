@@ -39,7 +39,7 @@ class Catalog extends Component {
    * Lifecycle method for getting initial data
    */
   componentDidMount() {
-    axios.get('http://localhost:8000/catalog_json')
+    axios.get('/api/catalog_json/')
       .then(res => {
         // console.log(res);
         const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
@@ -50,12 +50,7 @@ class Catalog extends Component {
         });
       })
       .catch((err) => {
-        if (err.response) {
-            console.log(err.response.data);
-            console.log(err.response.status);
-            console.log(err.response.headers);
-        }
-        console.log(err.config);
+        console.log(err);
       });
   }
 
@@ -257,10 +252,19 @@ class Catalog extends Component {
   }
 
   render() {
+    let results = this.state && this.state.activeFilters.size ? (
+      <FilterResults
+        activeFilters={this.state.activeFilters}
+        selectCourse={this.selectCourseHandler}
+        sortBy={this.state.sortBy}
+        query={this.state.query}
+      />
+    ) : <div></div>
+
     return (
       <div className="app-container">
         <Grid fluid>
-          <Row style={{ height: '1100px' }}>
+          <Row style={{ height: '850px' }}>
             <Col md={3}>
               <FilterSidebar
                 filters={this.buildFiltersObject(this.state.context)}
@@ -278,17 +282,10 @@ class Catalog extends Component {
                 resetFilters={this.resetFilterHandler}
               />
             </Col>
-            <Col md={3} style={{ height: '100%', overflowY: 'auto'}}>
-              {this.state && this.state.activeFilters.size &&
-                <FilterResults
-                  activeFilters={this.state.activeFilters}
-                  selectCourse={this.selectCourseHandler}
-                  sortBy={this.state.sortBy}
-                  query={this.state.query}
-                />
-              }
+            <Col md={4} style={{ height: '94%', overflowY: 'auto'}}>
+              {results}
             </Col>
-            <Col md={6}>
+            <Col md={5}>
               {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
                 <ClassDescription
                   course={this.state.selectedCourse}

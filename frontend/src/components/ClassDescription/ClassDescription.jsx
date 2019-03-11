@@ -5,6 +5,9 @@ import axios from 'axios';
 import ClassDetails from './ClassDetails.jsx';
 import ClassSections from './ClassSections.jsx';
 
+import grade_icon from '../../assets/img/images/catalog/grade.svg';
+import enrollment_icon from '../../assets/img/images/catalog/enrollment.svg';
+
 class ClassDescription extends Component {
   constructor(props) {
     super(props);
@@ -54,7 +57,7 @@ class ClassDescription extends Component {
     let courseID = course.id;
     let courseAbbreviation = course.abbreviation;
     let courseNumber = course.courseNumber;
-    axios.get(`http://localhost:8000/catalog_json/course_box`, {
+    axios.get(`/api/catalog_json/course_box/`, {
       params: {
         course_id: courseID,
       }
@@ -85,14 +88,16 @@ class ClassDescription extends Component {
         <div className="card filter-description">
           <div className="filter-description-header">
             <h3>{course.abbreviation} {course.course_number}</h3>
-            <p>{course.units} Units</p>
+            <p>{`${course.units} Unit${course.units !== '1.0' ? 's' : ''}`.replace(/.0/g, "").replace(/-/g, " - ")}</p>
           </div>
           <p className="filter-description-title">{course.title}</p>
           <div className="filter-description-stats">
+            <img src={grade_icon}></img>
             <div className="filter-description-stats-avg">
               <p>Course Average: {course.letter_average || 'N/A'}</p>
               <a>See grade distributions</a>
             </div>
+            <img src={enrollment_icon}></img>
             <div className="filter-description-stats-enroll">
               <p>Enrollment: {course.enrolled} / {course.enrolled_max}</p>
               <a>See enrollment history</a>

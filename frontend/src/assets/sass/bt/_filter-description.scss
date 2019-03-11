@@ -26,6 +26,12 @@
   .filter-description-stats {
     display: flex;
     flex-direction: row;
+    align-items: center;
+
+    img {
+      height: 50px;
+      margin-right: 5px;
+    }
 
     .filter-description-stats-avg {
       display: flex;
@@ -72,16 +78,25 @@
         margin-bottom: 5px;
       }
 
-      p:first-of-type {
+      >:not(:last-child) {
         margin-bottom: 15px;
       }
     }
 
     .filter-description-tabs-sections {
-      > table {
-        table-layout: fixed;
       overflow-x: scroll;
-      display: block;
+
+      > table {
+        min-width: 500px;
+        margin: 0;
+
+        table-layout: fixed;
+
+        abbr[title] {
+          border-bottom: none !important;
+          cursor: inherit !important;
+          text-decoration: none !important;
+        }
       }
 
       > table > thead > tr > th {

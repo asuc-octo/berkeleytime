@@ -2,23 +2,32 @@
   border: 0px;
   padding: 0px;
   margin-bottom: 20px;
-  width: 100%;
+  width: 93%;
+  outline: none;
+
+  &:hover,
+  &:focus {
+    width: 100%;
+  }
+
+  transition: 200ms;
 
   .filter-selection {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
-    padding: 5px 10px;
-    position: relative;
-    min-height: 120px;
+    padding: 6px 4px 6px 10px;
+    min-height: 130px;
 
     .filter-selection-content {
         display: flex;
         flex-direction: column;
+        align-items: flex-start;
         justify-content: space-between;
         min-width: 70%;
         border-right: 1px solid #EEEEEE;
+        padding-right: 3px;
 
         .filter-selection-heading {
             margin: 0;
@@ -28,16 +37,16 @@
         }
 
         .filter-selection-description {
-            font-size: 12px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 13px;
+            text-align: left;
+            margin-bottom: 10px;
         }
 
         .filter-selection-enrollment-data {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            width: 100%;
 
             .dataBlock {
                 display: flex;
@@ -45,20 +54,8 @@
                 justify-content: left;
                 padding-right: 10px;
 
-                i {
-                    width: 10px;
-                }
-
-                .first {
-                    color: #ef5350;
-                }
-
-                .second {
-                    color: #FFF59D;
-                }
-
                 p {
-                    padding-left: 10px;
+                    padding-left: 3px;
                     font-size: 12px;
                 }
             }
@@ -69,7 +66,10 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        align-items: center;
         min-width: 30%;
+        margin-top: 5px;
+        margin-left: 2px;
 
         .filter-selection-units {
             display: block;
@@ -77,29 +77,25 @@
 
             h6 {
                 font-family: "Roboto", "Arial", sans-serif !important;
-                font-weight: 400;
-                text-transform: capitalize;
-            }
-        }
-
-        .filter-selection-average-grade {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 10px;
-
-            h5 {
-                font-family: "Roboto", "Arial", sans-serif !important;
-                font-size: 10px;
+                font-size: 14px;
                 color: grey;
                 margin: 0px;
             }
+        }
+
+        > div {
+            margin-top: 8px;
 
             p {
                 font-family: "Roboto", "Arial", sans-serif !important;
                 font-size: 20px;
                 font-weight: bold;
-                margin: 5px;
+                margin-top: 5px;
+            }
+
+            h5 {
+                font-family: "Roboto", "Arial", sans-serif !important;
+                font-size: 15px;
             }
         }
     }
