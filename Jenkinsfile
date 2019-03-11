@@ -6,8 +6,10 @@ pipeline {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: 'jenkins-temp', credentialsId: 'GitHubAcc')
         dir(path: 'berkeleytime') {
           sh '''version=$(git rev-parse --short HEAD)
-docker build -t berkeleytime/stage:$version -f berkeleytime/Dockerfile berkeleytime
-docker push berkeleytime/stage:$version'''
+'''
+          sh '''docker build -t berkeleytime/stage:$version -f berkeleytime/Dockerfile berkeleytime
+'''
+          sh 'docker push berkeleytime/stage:$version'
         }
 
       }
