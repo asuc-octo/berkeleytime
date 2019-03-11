@@ -10112,19 +10112,27 @@ button.deleteBtn {
       font-weight: normal;
       font-size: 12px; }
 
-.card.card-class {
+.card.class-card {
   background-color: #579EFF; }
-  .card.card-class .content {
+  .card.class-card .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 15px 15px 15px 15px;
     background-color: white;
     margin-left: 10px;
-    border-radius: 0 4px 4px 0; }
-  .card.card-class .classTitle {
-    padding-top: 15px;
-    padding-bottom: 15px; }
-  .card.card-class .classNum {
-    font-weight: bold;
-    font-size: 20px; }
+    border-radius: 0 4px 4px 0;
+    min-height: 100px; }
+    .card.class-card .content .class-card-upper {
+      display: flex;
+      justify-content: space-between; }
+      .card.class-card .content .class-card-upper .courseAbbreviation {
+        font-weight: bold; }
+      .card.class-card .content .class-card-upper .classInfo {
+        font-size: 12px; }
+    .card.class-card .content .class-card-lower {
+      display: flex;
+      justify-content: space-between; }
 
 .navbar {
   position: fixed;

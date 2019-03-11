@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-virtualized-select';
 import axios from 'axios';
+import hash from 'object-hash';
 
 import 'react-select/dist/react-select.css'
 import 'react-virtualized-select/styles.css'
@@ -22,7 +23,6 @@ class ClassSearchBar extends Component {
       selectType: 'instructor',
       selectPrimary: '',
       selectSecondary: '',
-      selectSectionNumber: '',
       sections: [],
     }
 
@@ -33,7 +33,8 @@ class ClassSearchBar extends Component {
     this.buildCoursesOptions = this.buildCoursesOptions.bind(this);
     this.buildPrimaryOptions = this.buildPrimaryOptions.bind(this);
     this.buildSecondaryOptions = this.buildSecondaryOptions.bind(this);
-    this.getSectionIDs = this.getSectionIDs.bind(this);
+    this.getFilteredSections = this.getFilteredSections.bind(this);
+    this.addSelected = this.addSelected.bind(this);
   }
 
   componentDidMount() {
@@ -47,7 +48,7 @@ class ClassSearchBar extends Component {
       selectedClass: updatedClass.value
     })
 
-    axios.get(`http://localhost:8000/grades/course_grades/${updatedClass.value}/`)
+    axios.get(`/api/grades/course_grades/${updatedClass.value}/`)
     .then(res => {
       console.log(res);
       this.setState({
@@ -184,7 +185,7 @@ class ClassSearchBar extends Component {
     return ret;
   }
 
-  getSectionIDs() {
+  getFilteredSections() {
     const { sections, selectType, selectPrimary, selectSecondary, sectionNumber } = this.state;
     let ret;
 
@@ -212,9 +213,21 @@ class ClassSearchBar extends Component {
 
     ret = ret.map(s => s.grade_id);
 
-    console.log(ret);
-
     return ret;
+  }
+
+  addSelected() {
+    const { selectedClass, selectType, selectPrimary, selectSecondary } = this.state;
+    let playlist = {
+      courseID: selectedClass,
+      instructor: selectType == 'instructor' ? selectPrimary : selectSecondary,
+      semester: selectType == 'semester' ? selectPrimary : selectSecondary,
+      sections: this.getFilteredSections(),
+    }
+
+    playlist.id = hash(playlist);
+
+    this.props.addCourse(playlist)
   }
 
   render() {
@@ -272,7 +285,7 @@ class ClassSearchBar extends Component {
         <div className="column is-one-fifth">
           <button
             className="button is-success"
-            onClick={this.getSectionIDs}
+            onClick={this.addSelected}
             disabled={!selectedClass || !(selectPrimary && selectSecondary)}
           >
             Add

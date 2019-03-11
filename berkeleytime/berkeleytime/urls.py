@@ -47,6 +47,7 @@ urlpatterns = patterns('',
 
     # Grades
     url(r'^grades/$', 'data.views.grade_render'),
+    url(r'^grades_json/$', 'data.views.grade_context_json'),
     url(r'^grades/course_grades/(?P<course_id>\d+)/$', 'data.views.grade_section_json'),
     url(r'^grades/sections/(?P<grade_ids>.*)/$', 'data.views.grade_json'),
 

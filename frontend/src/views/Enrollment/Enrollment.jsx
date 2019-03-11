@@ -4,31 +4,38 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
 import axios from 'axios';
 
 import ClassCardList from '../../components/ClassCards/ClassCardList';
-import GraphCard from '../../components/GraphCard/GraphCard.jsx';
+import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard.jsx';
 import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
 
 import {
+  vars,
   enrollment,
   optionsEnrollment,
   responsiveEnrollment
 } from '../../variables/Variables';
 
+
 class Enrollment extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      classCards: Enrollment.defaultProps.classCards,
       context: {},
       selectedCourses: [],
+      
+      allSectionIDs: [],
+
+      newSectionIDs: [],
+
+      sectionData: {}
     }
 
-    this.addClass = this.addClass.bind(this);
-    this.removeClass = this.removeClass.bind(this)
+    this.addCourse = this.addCourse.bind(this);
+    this.removeCourse = this.removeCourse.bind(this)
   }
 
   componentDidMount() {
-    axios.get('http://localhost:8000/enrollment_json')
+    axios.get('/api/enrollment_json/')
     .then(res => {
       console.log(res);
       this.setState({
@@ -45,13 +52,16 @@ class Enrollment extends Component {
     });
   }
 
-  addClass(classNum) {
-    console.log(classNum);
+  addCourse(course) {
+    console.log(course);
+    this.setState(prevState => ({
+      selectedCourses: [...prevState.selectedCourses, course],
+    }));
   }
 
-  removeClass(classNum) {
-    this.setState((prevState, props) => ({
-      classCards: prevState.classCards.filter(classInfo => classInfo.classNum !== classNum)
+  removeCourse(id) {
+    this.setState(prevState => ({
+      selectedCourses: prevState.selectedCourses.filter(classInfo => classInfo.id !== id)
     }));
   }
 
@@ -59,88 +69,79 @@ class Enrollment extends Component {
     var today = new Date();
     return today.toString().slice(4, 15);
   }
+  
+  async fetchGrades() {
+    if (this.state.newSectionIDs && this.state.newSectionIDs.length > 0) {
+      try {
+        
+        const sectionIDKey = this.state.newSectionIDs.join('&');
+
+        const grades = await axios.get('http://localhost:8000/grades/sections/' + sectionIDKey + '/');
+
+        // add metadata like semester & instructor name
+        // get from course search bar
+        var metadata = grades.data;
+        var gradeName;
+        if (metadata) {
+          for (var i in vars.possibleGrades) {
+            gradeName = vars.possibleGrades[i]
+            metadata[gradeName]["grade_name"] = gradeName;  
+          }
+          metadata["section_id"] = sectionIDKey;
+        }
+
+        console.log(metadata);
+
+        /* metadatas.map((metadata) =>
+          if (metadata["grade_id"] == grades["course_id"]) {
+            for (var key in metadata) {
+              grades[key] = metadata[key];
+            }
+            break;
+          } 
+        );*/
+
+        // just need newest ones
+        this.setState({
+           sectionData: metadata
+         });
+        
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
 
   render() {
-    const { context } = this.state;
+    const { context, selectedCourses } = this.state;
     let courses = context.courses;
+
+    console.log(selectedCourses);
 
     return (
       <div className="app-container">
         {courses &&
           <ClassSearchBar
             classes={courses}
-            addClass={this.addClass}
+            addCourse={this.addCourse}
           />
         }
-        {courses &&
+        {selectedCourses.length > 0 &&
           <ClassCardList
-            classCards={courses}
-            removeClass={this.removeClass}
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
           />
         }
-        <GraphCard
+        <EnrollmentGraphCard
           id="chartHours"
           title="Enrollment"
-          semester="Spring 2018"
-          graph={(
-            <LineChart width={600} height={245} data={enrollment}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <CartesianGrid strokeDasharray="3 3" />
-              <Tooltip />
-              <Line type="monotone" dataKey="percent" stroke="#8884d8" activeDot={{ r: 8 }} />
-            </LineChart>
-          )}
-          info={(
-            <EnrollmentInfoCard
-              classNum="CS 61A"
-              semester="Spring 2018"
-              faculty="Denero"
-              title="The Structure and Interpretation of Computer Programs"
-              day="88"
-              adjustmentPercent="44"
-              adjustmentEnrolled="8/18"
-              adjustmentWaitlisted="0"
-              today={this.getCurrentDate()}
-              todayPercent="100"
-              todayEnrolled="12/18"
-              todayWaitlisted="0"
-            />
-          )}
+          classData={this.state.sectionData}
         />
+
       </div>
     );
   }
 }
 
-Enrollment.defaultProps = {
-  classCards: [
-    {
-      stripeColor:'#4EA6FB',
-      classNum:"CS 61A",
-      semester:"Spring 2018",
-      faculty:"Denero",
-      title:"The Structure and Interpretation of Computer Programs"
-    }, {
-      stripeColor:"#6AE086",
-      classNum:"Math 1A",
-      semester:"Spring 2018",
-      faculty:"n/a",
-      title:"Single Variable Calculus"
-    }, {
-      stripeColor:"#ED5186",
-      classNum:"English 43B",
-      semester:"Spring 2018",
-      faculty:"n/a",
-      title:"Introduction to the Art of Verse"
-    }, {
-      stripeColor:"#F9E152",
-      classNum:"Art 18",
-      semester:"Spring 2018",
-      faculty:"n/a",
-      title:"The Language of Painting"
-    }
-  ]
-};
 
 export default Enrollment;

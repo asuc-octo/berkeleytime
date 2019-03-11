@@ -1,46 +1,28 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class ClassCard extends Component {
-  constructor(props) {
-    super(props);
-    this.remove = this.remove.bind(this);
-  }
+function ClassCard (props) {
+  const { id, course, title, semester, faculty, removeCourse } = props;
 
-  remove() {
-    const { removeClass, classNum } = this.props
-    if (removeClass) {
-      removeClass(classNum)
-    }
-  }
-
-  render() {
-    const info = this.props;
-
-    return (
-      <div className="card card-class">
-        <div className="content">
-          <div className="columns">
-            <div className="classNum column">
-              {info.classNum}
-            </div>
-            <div className="classInfo column">
-              {info.semester}
-              <br />
-              {info.faculty}
-            </div>
+  return (
+    <div className="class-card card">
+      <div className="class-card content">
+        <div className="class-card-upper">
+          <div className="class-card courseAbbreviation">
+            {course}
           </div>
-          <div className="columns">
-            <div className="classTitle column is-three-quarters">
-              {info.title}
-            </div>
-            <div className="column">
-              <button type="button" onClick={this.remove} className="delete" />
-            </div>
+          <div className="class-card classInfo">
+            {`${semester} | ${faculty}`}
           </div>
         </div>
+        <div className="class-card-lower">
+          <div className="class-card classTitle">
+            {title}
+          </div>
+          <button type="button" className="delete" onClick={() => removeCourse(id)} />
+        </div>
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default ClassCard;
