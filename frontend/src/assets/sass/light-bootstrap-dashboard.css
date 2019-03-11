@@ -9950,76 +9950,74 @@ button.deleteBtn {
   border: 0px;
   padding: 0px;
   margin-bottom: 20px;
-  width: 100%; }
+  width: 93%;
+  outline: none;
+  transition: 200ms; }
+  .filter-selection-button:hover, .filter-selection-button:focus {
+    width: 100%; }
   .filter-selection-button .filter-selection {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
-    padding: 5px 10px;
-    position: relative;
-    min-height: 120px; }
+    padding: 6px 4px 6px 10px;
+    min-height: 130px; }
     .filter-selection-button .filter-selection .filter-selection-content {
       display: flex;
       flex-direction: column;
+      align-items: flex-start;
       justify-content: space-between;
       min-width: 70%;
-      border-right: 1px solid #EEEEEE; }
+      border-right: 1px solid #EEEEEE;
+      padding-right: 3px; }
       .filter-selection-button .filter-selection .filter-selection-content .filter-selection-heading {
         margin: 0;
         font-size: 16px;
         font-weight: bold;
         text-transform: uppercase; }
       .filter-selection-button .filter-selection .filter-selection-content .filter-selection-description {
-        font-size: 12px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis; }
+        font-size: 13px;
+        text-align: left;
+        margin-bottom: 10px; }
       .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data {
         display: flex;
         flex-direction: row;
-        justify-content: space-between; }
+        flex-wrap: wrap;
+        width: 100%; }
         .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock {
           display: flex;
           flex-direction: row;
           justify-content: left;
           padding-right: 10px; }
-          .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock i {
-            width: 10px; }
-          .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock .first {
-            color: #ef5350; }
-          .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock .second {
-            color: #FFF59D; }
           .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data .dataBlock p {
-            padding-left: 10px;
+            padding-left: 3px;
             font-size: 12px; }
     .filter-selection-button .filter-selection .filter-selection-aside {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      min-width: 30%; }
+      align-items: center;
+      min-width: 30%;
+      margin-top: 5px;
+      margin-left: 2px; }
       .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-units {
         display: block;
         text-align: center; }
         .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-units h6 {
           font-family: "Roboto", "Arial", sans-serif !important;
-          font-weight: 400;
-          text-transform: capitalize; }
-      .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-average-grade {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-top: 10px; }
-        .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-average-grade h5 {
-          font-family: "Roboto", "Arial", sans-serif !important;
-          font-size: 10px;
+          font-size: 14px;
           color: grey;
           margin: 0px; }
-        .filter-selection-button .filter-selection .filter-selection-aside .filter-selection-average-grade p {
+      .filter-selection-button .filter-selection .filter-selection-aside > div {
+        margin-top: 8px; }
+        .filter-selection-button .filter-selection .filter-selection-aside > div p {
           font-family: "Roboto", "Arial", sans-serif !important;
           font-size: 20px;
           font-weight: bold;
-          margin: 5px; }
+          margin-top: 5px; }
+        .filter-selection-button .filter-selection .filter-selection-aside > div h5 {
+          font-family: "Roboto", "Arial", sans-serif !important;
+          font-size: 15px; }
 
 .bt-blue-border {
   border-left: 5px solid #579EFF; }
@@ -10043,7 +10041,6 @@ button.deleteBtn {
   color: #FC7676; }
 
 .filter-results {
-  padding-right: 10px;
   overflow-y: auto; }
   .filter-results h4 {
     margin: 0;
@@ -10069,7 +10066,11 @@ button.deleteBtn {
   .filter-description .filter-description-stats {
     display: flex;
     flex-direction: row;
+    align-items: center;
     margin-bottom: 20px; }
+    .filter-description .filter-description-stats img {
+      height: 50px;
+      margin-right: 5px; }
     .filter-description .filter-description-stats .filter-description-stats-avg {
       display: flex;
       flex-direction: column;
@@ -10093,31 +10094,45 @@ button.deleteBtn {
     .filter-description .filter-description-tabs .filter-description-tabs-details h2 {
       font-weight: 500;
       margin-bottom: 5px; }
-    .filter-description .filter-description-tabs .filter-description-tabs-details p:first-of-type {
+    .filter-description .filter-description-tabs .filter-description-tabs-details > :not(:last-child) {
       margin-bottom: 15px; }
-  .filter-description .filter-description-tabs .filter-description-tabs-sections > table {
-    table-layout: fixed;
-    overflow-x: scroll;
-    display: block; }
-  .filter-description .filter-description-tabs .filter-description-tabs-sections > table > thead > tr > th {
-    font-size: 16px; }
-  .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > th {
-    font-weight: normal;
-    font-size: 12px; }
+  .filter-description .filter-description-tabs .filter-description-tabs-sections {
+    overflow-x: scroll; }
+    .filter-description .filter-description-tabs .filter-description-tabs-sections > table {
+      min-width: 500px;
+      margin: 0;
+      table-layout: fixed; }
+      .filter-description .filter-description-tabs .filter-description-tabs-sections > table abbr[title] {
+        border-bottom: none !important;
+        cursor: inherit !important;
+        text-decoration: none !important; }
+    .filter-description .filter-description-tabs .filter-description-tabs-sections > table > thead > tr > th {
+      font-size: 16px; }
+    .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > th {
+      font-weight: normal;
+      font-size: 12px; }
 
-.card.card-class {
+.card.class-card {
   background-color: #579EFF; }
-  .card.card-class .content {
+  .card.class-card .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: 15px 15px 15px 15px;
     background-color: white;
     margin-left: 10px;
-    border-radius: 0 4px 4px 0; }
-  .card.card-class .classTitle {
-    padding-top: 15px;
-    padding-bottom: 15px; }
-  .card.card-class .classNum {
-    font-weight: bold;
-    font-size: 20px; }
+    border-radius: 0 4px 4px 0;
+    min-height: 100px; }
+    .card.class-card .content .class-card-upper {
+      display: flex;
+      justify-content: space-between; }
+      .card.class-card .content .class-card-upper .courseAbbreviation {
+        font-weight: bold; }
+      .card.class-card .content .class-card-upper .classInfo {
+        font-size: 12px; }
+    .card.class-card .content .class-card-lower {
+      display: flex;
+      justify-content: space-between; }
 
 .navbar {
   position: fixed;
@@ -10335,6 +10350,8 @@ button.deleteBtn {
       margin: 20px 0;
       display: flex;
       flex-direction: row; }
+      .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-explore a {
+        color: white; }
       .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup {
         margin-left: 20px;
         border-color: #209cee; }

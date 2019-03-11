@@ -1,10 +1,8 @@
 version: '3'
 services:
-  web:
-    image: "berkeleytime/base:latest"
+  backend:
+    image: berkeleytime/berkeleytime:latest
     command: ["0.0.0.0:8000"]
-    ports:
-     - "8000:8000"
     volumes:
      - ../berkeleytime:/berkeleytime
     environment:
@@ -12,10 +10,32 @@ services:
      - "GOOGLE_CLIENT_ID=***REMOVED***"
      - "GOOGLE_CLIENT_SECRET=***REMOVED***"
      - "GOOGLE_TOKEN_URI=https://accounts.google.com/o/oauth2/token"
+     - "ENVIRONMENT_NAME=LOCALHOST"
+     - "SIS_CLASS_APP_ID=***REMOVED***"
+     - "SIS_CLASS_APP_KEY=***REMOVED***"
+     - "SIS_COURSE_APP_ID=***REMOVED***"
+     - "SIS_COURSE_APP_KEY=***REMOVED***"
+    depends_on:
+     - redis
+     - postgres
+  frontend:
+    image: berkeleytime/frontend:latest
+    volumes:
+     - ../frontend:/frontend
+     - /frontend/node_modules
   redis:
-    image: "redis:alpine"
+    image: redis:alpine
   postgres:
     image: postgres:11
     volumes:
      - ./postgres-data:/var/lib/postgresql/data
+  nginx:
+    image: nginx
+    volumes:
+     - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+     - "8080:8080"
+    depends_on:
+     - backend
+     - frontend
     

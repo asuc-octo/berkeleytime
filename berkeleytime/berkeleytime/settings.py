@@ -49,37 +49,46 @@ else:
     # then we want to default to no hosts instead of all hosts
     ALLOWED_HOSTS = []
 
+if IS_PRODUCTION or IS_STAGING:
+    redis_url = urlparse.urlparse(os.environ.get('REDIS_URL'))
+    CACHES = {
+        "default": {
+            "BACKEND": "redis_cache.RedisCache",
+            "LOCATION": "{0}:{1}".format(redis_url.hostname, redis_url.port),
+            "OPTIONS": {
+                "PASSWORD": redis_url.password,
+                "DB": 0,
+            }
+        }
+    }
 
-#### kate local only
-# if IS_PRODUCTION or IS_STAGING:
-#     redis_url = urlparse.urlparse(os.environ.get('REDIS_URL'))
-#     CACHES = {
-#         "default": {
-#             "BACKEND": "redis_cache.RedisCache",
-#             "LOCATION": "{0}:{1}".format(redis_url.hostname, redis_url.port),
-#             "OPTIONS": {
-#                 "PASSWORD": redis_url.password,
-#                 "DB": 0,
-#             }
-#         }
-#     }
-# elif IS_LOCALHOST:
-#     CACHES = {
-#         'default': {
-#             'BACKEND': "redis_cache.RedisCache",
-#             'LOCATION': 'redis:6379',
-#         }
-#     }
+elif IS_LOCALHOST:
+    CACHES = {
+        'default': {
+            'BACKEND': "redis_cache.RedisCache",
+            'LOCATION': 'redis:6379',
+        }
+    }
 
 if IS_LOCALHOST:
     FACEBOOK_APP = 'local'
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #         'NAME': 'bt_main',
+    #         'USER': 'bt',
+    #         'PASSWORD': 'yuxinsucks',
+    #         'HOST': 'postgres',
+    #         'PORT': '',
+    #     }
+    # }
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'bt_main',
-            'USER': 'bt',
-            'PASSWORD': 'yuxinsucks',
-            'HOST': 'localhost', #'postgres', #kate only
+            'NAME': 'd5uobd89i71fs8',
+            'USER': 'u7hgbqfb5rov7s',
+            'PASSWORD': 'p6e2ec5f27433021079f657c6eb96d4bc7eb24bd21c6f053436590b26ae693da9',
+            'HOST': 'ec2-35-175-88-183.compute-1.amazonaws.com',
             'PORT': '',
         }
     }
@@ -293,7 +302,7 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.google'
 )
 
 ACCOUNT_USERNAME_REQUIRED = False

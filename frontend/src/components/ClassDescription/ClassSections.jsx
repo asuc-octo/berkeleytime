@@ -18,11 +18,11 @@ function ClassSections({ sections }) {
         <thead>
           <tr>
             <th><abbr title="Lecture/Discussion/Lab">Type</abbr></th>
-            <th><abbr title="What exactly does this stand for?">CCN</abbr></th>
+            <th><abbr title="Course Capture Number">CCN</abbr></th>
             <th>Time</th>
             <th>Location</th>
             <th>Enrolled</th>
-            <th>Waitlist</th>
+            <th>Waitlisted</th>
           </tr>
         </thead>
         <tbody>
