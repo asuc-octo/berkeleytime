@@ -606,6 +606,8 @@ var grades = [
   {name: 'F', classA: 0, classB: 2},
 ];
 
+var possibleGrades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F", "NP", "P"];
+
 var colors = ['#4EA6FB', '#6AE086', '#ED5186', '#F9E152'];
 
 var laymanToAbbreviation = {
@@ -702,7 +704,7 @@ module.exports = {
     dataPie, legendPie, dataSales, optionsSales, responsiveSales, legendSales, dataBar, optionsBar, responsiveBar, legendBar, // For charts (Dashboard view)
     colors,
     enrollment, optionsEnrollment, responsiveEnrollment,
-    grades, laymanToAbbreviation
+    grades, possibleGrades, laymanToAbbreviation
 };
 
 

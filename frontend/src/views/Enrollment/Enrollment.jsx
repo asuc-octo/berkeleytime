@@ -4,15 +4,17 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
 import axios from 'axios';
 
 import ClassCardList from '../../components/ClassCards/ClassCardList';
-import GraphCard from '../../components/GraphCard/GraphCard.jsx';
+import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard.jsx';
 import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
 
 import {
+  vars,
   enrollment,
   optionsEnrollment,
   responsiveEnrollment
 } from '../../variables/Variables';
+
 
 class Enrollment extends Component {
   constructor(props) {
@@ -20,6 +22,13 @@ class Enrollment extends Component {
     this.state = {
       context: {},
       selectedCourses: [],
+      classCards: Enrollment.defaultProps.classCards,
+      
+      allSectionIDs: Enrollment.defaultProps.sectionIDs,
+
+      newSectionIDs: Enrollment.defaultProps.sectionIDs,
+
+      sectionData: {}
     }
 
     this.addCourse = this.addCourse.bind(this);
@@ -61,6 +70,48 @@ class Enrollment extends Component {
     var today = new Date();
     return today.toString().slice(4, 15);
   }
+  
+  async fetchGrades() {
+    if (this.state.newSectionIDs && this.state.newSectionIDs.length > 0) {
+      try {
+        
+        const sectionIDKey = this.state.newSectionIDs.join('&');
+
+        const grades = await axios.get('http://localhost:8000/grades/sections/' + sectionIDKey + '/');
+
+        // add metadata like semester & instructor name
+        // get from course search bar
+        var metadata = grades.data;
+        var gradeName;
+        if (metadata) {
+          for (var i in vars.possibleGrades) {
+            gradeName = vars.possibleGrades[i]
+            metadata[gradeName]["grade_name"] = gradeName;  
+          }
+          metadata["section_id"] = sectionIDKey;
+        }
+
+        console.log(metadata);
+
+        /* metadatas.map((metadata) =>
+          if (metadata["grade_id"] == grades["course_id"]) {
+            for (var key in metadata) {
+              grades[key] = metadata[key];
+            }
+            break;
+          } 
+        );*/
+
+        // just need newest ones
+        this.setState({
+           sectionData: metadata
+         });
+        
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
 
   render() {
     const { context, selectedCourses } = this.state;
@@ -82,39 +133,16 @@ class Enrollment extends Component {
             removeCourse={this.removeCourse}
           />
         }
-        <GraphCard
+        <EnrollmentGraphCard
           id="chartHours"
           title="Enrollment"
-          semester="Spring 2018"
-          graph={(
-            <LineChart width={600} height={245} data={enrollment}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <CartesianGrid strokeDasharray="3 3" />
-              <Tooltip />
-              <Line type="monotone" dataKey="percent" stroke="#8884d8" activeDot={{ r: 8 }} />
-            </LineChart>
-          )}
-          info={(
-            <EnrollmentInfoCard
-              classNum="CS 61A"
-              semester="Spring 2018"
-              faculty="Denero"
-              title="The Structure and Interpretation of Computer Programs"
-              day="88"
-              adjustmentPercent="44"
-              adjustmentEnrolled="8/18"
-              adjustmentWaitlisted="0"
-              today={this.getCurrentDate()}
-              todayPercent="100"
-              todayEnrolled="12/18"
-              todayWaitlisted="0"
-            />
-          )}
+          classData={this.state.sectionData}
         />
+
       </div>
     );
   }
 }
+
 
 export default Enrollment;
