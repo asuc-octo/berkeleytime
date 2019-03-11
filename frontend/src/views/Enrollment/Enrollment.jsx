@@ -22,11 +22,10 @@ class Enrollment extends Component {
     this.state = {
       context: {},
       selectedCourses: [],
-      classCards: Enrollment.defaultProps.classCards,
       
-      allSectionIDs: Enrollment.defaultProps.sectionIDs,
+      allSectionIDs: [],
 
-      newSectionIDs: Enrollment.defaultProps.sectionIDs,
+      newSectionIDs: [],
 
       sectionData: {}
     }

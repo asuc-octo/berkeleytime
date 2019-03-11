@@ -17,10 +17,10 @@ class Grades extends Component {
       selectedCourses: [], //basic metadata from search bar
 
       // all section id displayed on screen so far
-      allSectionIDs: Grades.defaultProps.sectionIDs,
+      allSectionIDs: [],
 
       //newest section id [] selected by user; fetch data & update sectiondata
-      newSectionIDs: Grades.defaultProps.sectionIDs,
+      newSectionIDs: [],
 
       //only the newest grades fetched by user
       sectionData: {} //Grades.defaultProps.sectionData
@@ -54,7 +54,7 @@ class Grades extends Component {
     console.log(course);
     this.setState(prevState => ({
       selectedCourses: [...prevState.selectedCourses, course],
-      newSectionIDs: course[sections]
+      newSectionIDs: course["sections"]
     }));
 
     this.fetchGrades();
@@ -66,7 +66,7 @@ class Grades extends Component {
         
         const sectionIDKey = this.state.newSectionIDs.join('&');
 
-        const grades = await axios.get('http://localhost:8000/grades/sections/' + sectionIDKey + '/');
+        const grades = await axios.get('/api/grades/sections/' + sectionIDKey + '/');
 
         // add metadata like semester & instructor name
         // get from course search bar
@@ -100,6 +100,7 @@ class Grades extends Component {
         console.error(error)
       }
     }
+  }
 
   removeCourse(id) {
     this.setState(prevState => ({
