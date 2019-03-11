@@ -1,5 +1,5 @@
 pipeline {
-	agent any
+	agent {label 'docker'}
 	stages {
 		stage('Build') {
 			steps {
@@ -7,10 +7,9 @@ pipeline {
 				dir(path: 'berkeleytime') {
 					sh '''version=$(git rev-parse --short HEAD)
 '''
-					script {
-	                    def stagingImage = docker.build("berkeleytime/stage:${version}", "-f berkeleytime/Dockerfile", "berkeleytime")
-						stagingImage.push()
-	                }
+	        		sh '''docker build -t berkeleytime/stage:$version -f berkeleytime/Dockerfile berkeleytime
+'''
+	          		sh 'docker push berkeleytime/stage:$version'
 				}
 			}
 		}
