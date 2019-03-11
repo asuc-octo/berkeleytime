@@ -32,6 +32,7 @@ def grade_context():
     else:
         courses = Course.objects.filter(grade__isnull=False).distinct().order_by("abbreviation", "course_number")
         rtn = courses.values("id", "abbreviation", "course_number")
+        rtn = sort_course_dicts(rtn)
         cache.set("grade__courses", rtn, 86400)
     return {"courses": rtn}
 
@@ -49,6 +50,9 @@ def grade_render(request):
     ]
     """
     return render_to_response("data/grades.html", grade_context(), context_instance=RequestContext(request))
+
+def grade_context_json(request):
+    return render_to_json(grade_context())
 
 def grade_section_json(request, course_id):
     """
