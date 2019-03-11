@@ -1,38 +1,42 @@
 .bt-footer {
     background-color: $bt-footer;
 
-    padding: 80px 60px;
+    .bt-footer-container {
+        max-width: 1150px;
+        margin: 0 auto;
+        padding: 40px;
 
-    .columns {
-        .column {
-            display: flex;
-            flex-direction: column;
+        .columns {
+            .column {
+                display: flex;
+                flex-direction: column;
 
-            color: white;
-
-            :first-child {
-                margin-bottom: 15px;
-            }
-
-            > *:not(:first-child):not(:last-child) {
-                margin-bottom: 10px;
-            }
-
-            > *:not(:first-child) {
-                font-size: 16px;
-            }
-
-            p {
-                font-size: 18px;
-            }
-
-            a {
                 color: white;
-                transition: 200ms;
-            }
 
-            a:hover {
-                color: hsl(204, 86%, 53%);
+                :first-child {
+                    margin-bottom: 15px;
+                }
+
+                > *:not(:first-child):not(:last-child) {
+                    margin-bottom: 10px;
+                }
+
+                > *:not(:first-child) {
+                    font-size: 16px;
+                }
+
+                p {
+                    font-size: 18px;
+                }
+
+                a {
+                    color: white;
+                    transition: 200ms;
+                }
+
+                a:hover {
+                    color: hsl(204, 86%, 53%);
+                }
             }
         }
     }
