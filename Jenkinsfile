@@ -7,11 +7,11 @@ pipeline {
         dir(path: 'berkeleytime') {
           sh '''version=$(git rev-parse --short HEAD)
 '''
-          sh '''docker build -t berkeleytime/stage:$version -f berkeleytime/Dockerfile berkeleytime
-'''
-          sh 'docker push berkeleytime/stage:$version'
-        }
-
+          node {
+              checkout scm
+              docker.build("berkeleytime/stage:${version}", "-f berkeleytime/Dockerfile", "berkeleytime")
+              docker.push("berkeleytime/stage:${version}") 
+          }
       }
     }
   }
