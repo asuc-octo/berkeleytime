@@ -6,112 +6,139 @@ import GraphCard from '../../components/GraphCard/GraphCard.jsx';
 import GradesInfoCard from '../../components/GradesInfoCard/GradesInfoCard.jsx';
 import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
 
-import {
-  grades,
-} from '../../variables/Variables';
+import vars from '../../variables/Variables';
 
 class Grades extends Component {
   constructor(props) {
     super(props)
+
     this.state = {
-      classCards: Grades.defaultProps.classCards,
-      selectedClass: Grades.defaultProps.selectedClass
+      context: {},
+      selectedCourses: [], //basic metadata from search bar
+
+      // all section id displayed on screen so far
+      allSectionIDs: [],
+
+      //newest section id [] selected by user; fetch data & update sectiondata
+      newSectionIDs: [],
+
+      //only the newest grades fetched by user
+      sectionData: {} //Grades.defaultProps.sectionData
     }
-    this.fetchClassInfo();
 
-    this.addClass = this.addClass.bind(this)
-    this.removeClass = this.removeClass.bind(this)
+    this.fetchGrades();
 
+    this.addCourse = this.addCourse.bind(this);
+    this.removeCourse = this.removeCourse.bind(this)
   }
 
-  addClass(classNum) {
-    // add class card
-    // fetch class info
+  componentDidMount() {
+    axios.get('/api/grades_json/')
+    .then(res => {
+      console.log(res);
+      this.setState({
+        context: res.data,
+      })
+    })
+    .catch((err) => {
+      if (err.response) {
+          console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+      }
+      console.log(err.config);
+    });
   }
 
-  removeClass(classNum) {
-    this.setState((prevState, props) => ({
-      classCards: prevState.classCards.filter(classInfo => classInfo.classNum !== classNum)
+  addCourse(course) {
+    console.log(course);
+    this.setState(prevState => ({
+      selectedCourses: [...prevState.selectedCourses, course],
+      newSectionIDs: course["sections"]
+    }));
+
+    this.fetchGrades();
+  }
+
+  async fetchGrades() {
+    if (this.state.newSectionIDs && this.state.newSectionIDs.length > 0) {
+      try {
+        
+        const sectionIDKey = this.state.newSectionIDs.join('&');
+
+        const grades = await axios.get('/api/grades/sections/' + sectionIDKey + '/');
+
+        // add metadata like semester & instructor name
+        // get from course search bar
+        var metadata = grades.data;
+        var gradeName;
+        if (metadata) {
+          for (var i in vars.possibleGrades) {
+            gradeName = vars.possibleGrades[i]
+            metadata[gradeName]["grade_name"] = gradeName;  
+          }
+          metadata["section_id"] = sectionIDKey;
+        }
+
+        console.log(metadata);
+
+        /* metadatas.map((metadata) =>
+          if (metadata["grade_id"] == grades["course_id"]) {
+            for (var key in metadata) {
+              grades[key] = metadata[key];
+            }
+            break;
+          } 
+        );*/
+
+        // just need newest ones
+        this.setState({
+           sectionData: metadata
+         });
+        
+      } catch (error) {
+        console.error(error)
+      }
+    }
+  }
+
+  removeCourse(id) {
+    this.setState(prevState => ({
+      selectedCourses: prevState.selectedCourses.filter(classInfo => classInfo.id !== id)
     }));
   }
 
-  // fetch class info
-  async fetchClassInfo() {
-    try {
-      this.info = await axios.get('/api/grades/course_grades/1062/')
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  getCurrentDate() {
-    let today = new Date();
-    return today.toString().slice(4, 15);
-  }
-
   render() {
+    const { context, selectedCourses } = this.state;
+    let courses = context.courses;
+
     return (
       <div className="app-container">
-        <ClassSearchBar />
+        {courses &&
+          <ClassSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+          />
+        }
 
-        <ClassCardList
-          classCards={this.state.classCards}
-          removeClass={this.removeClass}
-        />
+        {selectedCourses.length > 0 &&
+          <ClassCardList
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
+          />
+        }
 
+      {false &&
         <GraphCard
           id="chartHours"
-          title="Enrollment"
-          thisClass={this.state.selectedClass}
+          title="Grades"
+          classData={this.state.sectionData}
         />
+      }
 
       </div>
     );
   }
 }
-Grades.defaultProps = {
-  selectedClass: {
-    semester: "Spring 2018",
-    data: grades,
-    datakeys: ['classA', 'classB'],
-    classNum: "CS 61A",
-    semester: "Spring 2018",
-    faculty: "Denero",
-    title: "The Structure and Interpretation of Computer Programs",
-    courseAvg: "A- (GPA: 3.72)",
-    sectionAvg: "A- (GPA: 3.72)",
-    seventeenthName: "17th-18th",
-    seventeenthCount: "15/3103",
-    seventeenthGrade: "C+",
-    seventeenthPercent: "0"
-  },
-  classCards: [
-    {
-      stripeColor: '#4EA6FB',
-      classNum: 'CS 61A',
-      semester: 'Spring 2018',
-      faculty: 'Denero',
-      title: 'The Structure and Interpretation of Computer Programs',
-    }, {
-      stripeColor: '#6AE086',
-      classNum: 'Math 1A',
-      semester: 'Spring 2018',
-      faculty: 'n/a',
-      title: 'Single Variable Calculus',
-    }, {
-      stripeColor: '#ED5186',
-      classNum: 'English 43B',
-      semester: 'Spring 2018',
-      faculty: 'n/a',
-      title: 'Introduction to the Art of Verse',
-    }, {
-      stripeColor: '#F9E152',
-      classNum: 'Art 18',
-      semester: 'Spring 2018',
-      faculty: 'n/a',
-      title: 'The Language of Painting',
-    },
-  ]
-};
 
 export default Grades;
