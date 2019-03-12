@@ -15,18 +15,7 @@ class Grades extends Component {
     this.state = {
       context: {},
       selectedCourses: [], //basic metadata from search bar
-
-      // all section id displayed on screen so far
-      allSectionIDs: Grades.defaultProps.sectionIDs,
-
-      //newest section id [] selected by user; fetch data & update sectiondata
-      newSectionIDs: Grades.defaultProps.sectionIDs,
-
-      //only the newest grades fetched by user
-      sectionData: {} //Grades.defaultProps.sectionData
     }
-
-    this.fetchGrades();
 
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this)
@@ -41,65 +30,30 @@ class Grades extends Component {
       })
     })
     .catch((err) => {
-      if (err.response) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-      }
-      console.log(err.config);
+      console.log(err);
     });
   }
 
   addCourse(course) {
-    console.log(course);
-    this.setState(prevState => ({
-      selectedCourses: [...prevState.selectedCourses, course],
-      newSectionIDs: course[sections]
-    }));
+    axios.get(`/api/catalog_json/course/${course.courseID}/`)
+      .then(res => {
+        let courseData = res.data;
 
-    this.fetchGrades();
-  }
-
-  async fetchGrades() {
-    if (this.state.newSectionIDs && this.state.newSectionIDs.length > 0) {
-      try {
-        
-        const sectionIDKey = this.state.newSectionIDs.join('&');
-
-        const grades = await axios.get('http://localhost:8000/grades/sections/' + sectionIDKey + '/');
-
-        // add metadata like semester & instructor name
-        // get from course search bar
-        var metadata = grades.data;
-        var gradeName;
-        if (metadata) {
-          for (var i in vars.possibleGrades) {
-            gradeName = vars.possibleGrades[i]
-            metadata[gradeName]["grade_name"] = gradeName;  
-          }
-          metadata["section_id"] = sectionIDKey;
+        let formattedCourse =  {
+          id: course.id,
+          course: courseData.course,
+          title: courseData.title,
+          semester: course.semester,
+          instructor: course.instructor,
+          courseID: course.courseID,
+          sections: course.sections
         }
 
-        console.log(metadata);
-
-        /* metadatas.map((metadata) =>
-          if (metadata["grade_id"] == grades["course_id"]) {
-            for (var key in metadata) {
-              grades[key] = metadata[key];
-            }
-            break;
-          } 
-        );*/
-
-        // just need newest ones
-        this.setState({
-           sectionData: metadata
-         });
-        
-      } catch (error) {
-        console.error(error)
-      }
-    }
+        this.setState(prevState => ({
+          selectedCourses: [...prevState.selectedCourses, formattedCourse],
+        }));
+    })
+  }
 
   removeCourse(id) {
     this.setState(prevState => ({
@@ -127,14 +81,11 @@ class Grades extends Component {
           />
         }
 
-      {false &&
         <GraphCard
           id="chartHours"
           title="Grades"
-          classData={this.state.sectionData}
+          classData={selectedCourses}
         />
-      }
-
       </div>
     );
   }

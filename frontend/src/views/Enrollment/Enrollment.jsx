@@ -23,7 +23,7 @@ class Enrollment extends Component {
       context: {},
       selectedCourses: [],
       classCards: Enrollment.defaultProps.classCards,
-      
+
       allSectionIDs: Enrollment.defaultProps.sectionIDs,
 
       newSectionIDs: Enrollment.defaultProps.sectionIDs,
@@ -70,11 +70,11 @@ class Enrollment extends Component {
     var today = new Date();
     return today.toString().slice(4, 15);
   }
-  
+
   async fetchGrades() {
     if (this.state.newSectionIDs && this.state.newSectionIDs.length > 0) {
       try {
-        
+
         const sectionIDKey = this.state.newSectionIDs.join('&');
 
         const grades = await axios.get('http://localhost:8000/grades/sections/' + sectionIDKey + '/');
@@ -86,7 +86,7 @@ class Enrollment extends Component {
         if (metadata) {
           for (var i in vars.possibleGrades) {
             gradeName = vars.possibleGrades[i]
-            metadata[gradeName]["grade_name"] = gradeName;  
+            metadata[gradeName]["grade_name"] = gradeName;
           }
           metadata["section_id"] = sectionIDKey;
         }
@@ -99,14 +99,14 @@ class Enrollment extends Component {
               grades[key] = metadata[key];
             }
             break;
-          } 
+          }
         );*/
 
         // just need newest ones
         this.setState({
            sectionData: metadata
          });
-        
+
       } catch (error) {
         console.error(error)
       }
@@ -133,11 +133,14 @@ class Enrollment extends Component {
             removeCourse={this.removeCourse}
           />
         }
-        <EnrollmentGraphCard
-          id="chartHours"
-          title="Enrollment"
-          classData={this.state.sectionData}
-        />
+
+        {false &&
+          <EnrollmentGraphCard
+            id="chartHours"
+            title="Enrollment"
+            classData={this.state.sectionData}
+          />
+        }
 
       </div>
     );
