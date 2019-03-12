@@ -5,6 +5,7 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
+import ScrollToTop from './components/Scroll/ScrollToTop.jsx';
 
 import BT from './components/BerkeleyTime/index.jsx';
 
@@ -16,8 +17,10 @@ import './assets/css/pe-icon-7-stroke.css';
 
 ReactDOM.render((
   <BrowserRouter>
-    <Switch>
-      <Route path="/" name="Home" component={BT} />
-    </Switch>
+    <ScrollToTop>
+      <Switch>
+        <Route path="/" name="Home" component={BT} />
+      </Switch>
+    </ScrollToTop>
   </BrowserRouter>
 ), document.getElementById('root'));

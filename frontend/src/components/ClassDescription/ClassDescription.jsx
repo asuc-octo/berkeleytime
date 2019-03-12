@@ -99,7 +99,7 @@ class ClassDescription extends Component {
             </div>
             <img src={enrollment_icon}></img>
             <div className="filter-description-stats-enroll">
-              <p>Enrollment: {course.enrolled} / {course.enrolled_max}</p>
+              <p>Enrollment: {course.enrolled}/{course.enrolled_max}</p>
               <a>See enrollment history</a>
             </div>
           </div>

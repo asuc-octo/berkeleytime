@@ -1,9 +1,29 @@
 .filter-results {
-    overflow-y: auto;
-
     h4 {
         margin: 0;
         margin-bottom: 10px;
         font-size: 16px;
+    }
+
+    .filter-list {
+    }
+}
+
+.filter-list-column {
+    height: 94%;
+    overflow: hidden;
+
+    &:after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        bottom: 0;
+        left: 0;
+        pointer-events: none;
+        background-image: linear-gradient(to bottom,
+                          rgba(245, 245, 245, 0),
+                          rgba(245, 245, 245, 1));
+        width: 100%;
+        height: 4em;
     }
 }
