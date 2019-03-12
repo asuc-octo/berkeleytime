@@ -43,6 +43,8 @@ class Catalog extends Component {
       .then(res => {
         // console.log(res);
         const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
+        console.log("Data:");
+        console.log(res.data);
         this.setState({
           activeFilters: new Set(defaultPlaylists),
           defaultFilters: new Set(defaultPlaylists),
@@ -282,7 +284,7 @@ class Catalog extends Component {
                 resetFilters={this.resetFilterHandler}
               />
             </Col>
-            <Col md={4} style={{ height: '94%', overflowY: 'auto'}}>
+            <Col md={4} className="filter-list-column">
               {results}
             </Col>
             <Col md={5}>

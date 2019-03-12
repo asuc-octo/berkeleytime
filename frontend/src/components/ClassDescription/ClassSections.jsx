@@ -17,12 +17,12 @@ function ClassSections({ sections }) {
       <table className="table">
         <thead>
           <tr>
-            <th><abbr title="Lecture/Discussion/Lab">Type</abbr></th>
-            <th><abbr title="Course Capture Number">CCN</abbr></th>
+            <th className="type"><abbr title="Lecture/Discussion/Lab">Type</abbr></th>
+            <th className="ccn"><abbr title="Course Capture Number">CCN</abbr></th>
             <th>Time</th>
             <th>Location</th>
             <th>Enrolled</th>
-            <th>Waitlisted</th>
+            <th>Waitlist</th>
           </tr>
         </thead>
         <tbody>
@@ -33,16 +33,16 @@ function ClassSections({ sections }) {
             console.log(endDate);
             return (
               <tr>
-                <th>{section.kind}</th>
-                <th>{section.ccn}</th>
+                <td>{section.kind}</td>
+                <td>{section.ccn}</td>
                 {!isNaN(startDate) && !isNaN(endDate) ? (
-                 <th>{section.word_days} {formatDate(startDate)} - {formatDate(endDate)}</th>
+                 <td>{section.word_days} {formatDate(startDate)} - {formatDate(endDate)}</td>
                 ) : (
-                  <th></th>
+                  <td></td>
                 )}
-                <th>{section.location_name}</th>
-                <th>{section.enrolled} / {section.enrolled_max}</th>
-                <th>{section.waitlisted}</th>
+                <td>{section.location_name}</td>
+                <td>{section.enrolled}/{section.enrolled_max}</td>
+                <td>{section.waitlisted}</td>
               </tr>
             )
           })}

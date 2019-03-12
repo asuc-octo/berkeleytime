@@ -14,7 +14,7 @@ class Grades extends Component {
 
     this.state = {
       context: {},
-      selectedCourses: [], //basic metadata from search bar
+      selectedCourses: [],
     }
 
     this.addCourse = this.addCourse.bind(this);

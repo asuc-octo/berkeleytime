@@ -155,7 +155,10 @@ def union_by_category(category, filter_ids, user=None):
     if category == "custom":
         playlists = playlists.filter(user=user)
     intersected = [playlist.courses.all() for playlist in playlists]
-    return reduce(lambda x, y: x | y, intersected)
+    if category in ('university', 'ls', 'engineering', 'haas'):
+        return reduce(lambda x, y: x & y, intersected)
+    else:
+        return reduce(lambda x, y: x | y, intersected)
 
 
 def course(request, course_id):
