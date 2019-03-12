@@ -1,28 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend-prod
+  name: frontend-stage
   namespace: berkeleytime
   labels:
-    appName: frontend-prod
+    appName: frontend-stage
 spec:
   selector:
     matchLabels:
-      appName: frontend-prod
+      appName: frontend-stage
   replicas: 1
   template:
     metadata:
       labels:
-        appName: frontend-prod
+        appName: frontend-stage
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "3000"
     spec:
       containers:
-      - name: frontend-prod
+      - name: frontend-stage
         imagePullPolicy: Always
         image: index.docker.io/berkeleytime/frontend:latest
         command: ["npm", "start"]
-        resources:
-          requests:
-            cpu: 500m
