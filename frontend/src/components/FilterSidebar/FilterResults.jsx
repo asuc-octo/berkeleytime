@@ -125,6 +125,9 @@ class FilterResults extends Component {
       loading: true,
     });
 
+    console.log("filters:");
+    console.log(filters);
+
     axios.get('/api/catalog/filter/', {
       params: {
         filters: filters,
@@ -178,6 +181,7 @@ class FilterResults extends Component {
             />
           ) : (
             <FixedSizeList
+              className="filter-list"
               itemData={courses}
               height={1000}
               itemCount={courses.length}

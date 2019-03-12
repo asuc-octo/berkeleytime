@@ -12,12 +12,11 @@ import enrollment_snap from '../../assets/img/images/landing/enrollment_snap.png
 
 function Landing() {
   return (
-    <div className="">
+    <div className="landing">
       <Jumbotron />
       <WhatWeDo />
       {Landing.explore.map(item => <Explore {...item} />)}
       <Mission />
-      <ArtistCredit />
     </div>
   );
 }
@@ -29,7 +28,6 @@ Landing.explore = [
     action: 'Explore Courses',
     link: '/catalog',
     symbol: 'book',
-    color: 'bt-pink',
     img: explore_snap,
     reverse: false,
   },
@@ -39,7 +37,6 @@ Landing.explore = [
     action: 'See Grades',
     link: '/grades',
     symbol: 'bar-chart',
-    color: 'bt-green',
     img: grades_snap,
     reverse: true,
   },
@@ -49,7 +46,6 @@ Landing.explore = [
     action: 'Check Enrollment',
     link: '/enrollment',
     symbol: 'history',
-    color: 'bt-blue',
     img: enrollment_snap,
     reverse: false,
   },
