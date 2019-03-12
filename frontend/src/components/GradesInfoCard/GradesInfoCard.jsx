@@ -1,25 +1,20 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-export default function GraphInfoCard({thisClass, selectedGrade, betterGrade, worseGrade}) {
-
+export default function GraphInfoCard({course, title, semester, instructor, courseLetter, courseGPA,
+  sectionLetter, sectionGPA, selectedGrade, gradeName, denominator, betterGrade, worseGrade
+}) {
   return (
     <div className="card card-info">
       <div className="content card-info">
         <Row>
-          <div className="classNum">
-            {thisClass.title}
-          </div>
+          <div className="classNum">{course}</div>
         </Row>
         <Row>
-          <div className="classInfo">
-            {`${thisClass.semester} | ${thisClass.faculty}`}
-          </div>
+          <div className="classInfo">{`${semester} | ${instructor}`}</div>
         </Row>
         <Row>
-          <div className="classTitle">
-            {thisClass.subtitle}
-          </div>
+          <div className="classTitle">{title}</div>
         </Row>
 
         <Row className="classAvgs">
@@ -34,26 +29,26 @@ export default function GraphInfoCard({thisClass, selectedGrade, betterGrade, wo
         <Row className="classAvgs">
           <Col xs={6} className="classAvgStats">
             <div>
-              {`${thisClass.course_letter} (GPA: ${thisClass.course_gpa})`}
+              {`${courseLetter} (GPA: ${courseGPA})`}
             </div>
           </Col>
           <Col xs={6} className="classAvgStats">
             <div>
-              {`${thisClass.section_letter} (GPA: ${thisClass.section_gpa})`} 
+              {`${sectionLetter} (GPA: ${sectionGPA})`}
             </div>
           </Col>
         </Row>
 
-        <Row>
+        {/* <Row>
           <Col xs={8} className="classAvgs">
             <div className="classStatsName">
-              {betterGrade !== undefined && betterGrade !== null && 
+              {betterGrade !== undefined && betterGrade !== null &&
                 `${betterGrade.percentile_low*100}th - ${betterGrade.percentile_high*100}th Percentile`}
               </div>
           </Col>
           <Col xs={4} className="classAvgs">
             <div className="classCount">
-              {betterGrade !== undefined && betterGrade !== null && 
+              {betterGrade !== undefined && betterGrade !== null &&
                 `${betterGrade.numerator}/${thisClass.denominator}`}
               </div>
           </Col>
@@ -61,17 +56,17 @@ export default function GraphInfoCard({thisClass, selectedGrade, betterGrade, wo
         <Row>
           <Col xs={8} className="classAvgs">
             <div className="classGrade">
-              {betterGrade !== undefined && betterGrade !== null && 
+              {betterGrade !== undefined && betterGrade !== null &&
                 betterGrade.grade_name}
             </div>
           </Col>
           <Col xs={4} className="classAvgs">
             <div className="classPercent">
-              {betterGrade !== undefined && betterGrade !== null && 
+              {betterGrade !== undefined && betterGrade !== null &&
                 `${betterGrade.percent*100} %`}
             </div>
           </Col>
-        </Row>
+        </Row> */}
 
         <Row>
           <Col xs={8} className="classAvgs">
@@ -83,7 +78,7 @@ export default function GraphInfoCard({thisClass, selectedGrade, betterGrade, wo
           <Col xs={4} className="classAvgs">
             <div className="classCount">
               {selectedGrade !== undefined && selectedGrade !== null &&
-                `${selectedGrade.numerator}/${thisClass.denominator}`}
+                `${selectedGrade.numerator}/${denominator}`}
             </div>
           </Col>
         </Row>
@@ -91,7 +86,7 @@ export default function GraphInfoCard({thisClass, selectedGrade, betterGrade, wo
           <Col xs={8} className="classAvgs">
             <div className="classGrade">
               {selectedGrade !== undefined && selectedGrade !== null &&
-                selectedGrade.grade_name}
+                gradeName}
             </div>
           </Col>
           <Col xs={4} className="classAvgs">
@@ -102,7 +97,7 @@ export default function GraphInfoCard({thisClass, selectedGrade, betterGrade, wo
           </Col>
         </Row>
 
-        <Row>
+        {/* <Row>
           <Col xs={8} className="classAvgs">
             <div className="classStatsName">
               {worseGrade !== undefined && worseGrade !== null &&
@@ -129,8 +124,8 @@ export default function GraphInfoCard({thisClass, selectedGrade, betterGrade, wo
                 `${worseGrade.percent*100} %`}
             </div>
           </Col>
-        </Row>
-        
+        </Row> */}
+
       </div>
     </div>
   );
