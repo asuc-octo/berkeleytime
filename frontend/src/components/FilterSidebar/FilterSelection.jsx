@@ -87,7 +87,7 @@ class FilterSelection extends Component {
 
     return (
         <button className="filter-selection-button" onClick={this.clickHandler}>
-          <div className="filter-selection">
+          <div className="filter-selection" tabIndex={id}>
             <div className="filter-selection-content">
               <h4 className="filter-selection-heading">{courseAbbreviation} {courseNumber}</h4>
               <p className="filter-selection-description">{courseTitle}</p>

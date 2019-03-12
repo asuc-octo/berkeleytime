@@ -3,14 +3,6 @@
   padding: 0px;
   margin-bottom: 20px;
   width: 93%;
-  outline: none;
-
-  &:hover,
-  &:focus {
-    width: 100%;
-  }
-
-  transition: 200ms;
 
   .filter-selection {
     display: flex;
@@ -19,6 +11,16 @@
     background-color: white;
     padding: 6px 4px 6px 10px;
     min-height: 130px;
+    outline: none;
+
+    &:hover,
+    &:focus {
+      color: white;
+      background-color: #579EFF;
+
+      h6 { color: white !important; }
+      p { color: white; }
+    }
 
     .filter-selection-content {
         display: flex;
