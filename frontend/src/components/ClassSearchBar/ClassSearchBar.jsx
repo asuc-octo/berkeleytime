@@ -20,7 +20,7 @@ class ClassSearchBar extends Component {
     this.state = {
       selectedClass: 0,
       courseOptions: [],
-      selectType: 'instructor',
+      selectType: '',
       selectPrimary: '',
       selectSecondary: '',
       sections: [],
@@ -38,17 +38,27 @@ class ClassSearchBar extends Component {
   }
 
   componentDidMount() {
+    const { isEnrollment } = this.props;
     this.setState({
-      courseOptions: this.buildCoursesOptions(this.props.classes)
+      courseOptions: this.buildCoursesOptions(this.props.classes),
+      selectType: isEnrollment ? 'semester' : 'instructor',
     })
   }
 
   handleClassSelect(updatedClass) {
+    const { isEnrollment } = this.props;
     this.setState({
       selectedClass: updatedClass.value
     })
 
-    axios.get(`/api/grades/course_grades/${updatedClass.value}/`)
+    let url;
+    if(isEnrollment) {
+      url = `/api/enrollment/sections/${updatedClass.value}/`
+    } else {
+      url = `/api/grades/course_grades/${updatedClass.value}/`
+    }
+
+    axios.get(url)
     .then(res => {
       console.log(res);
       this.setState({
@@ -101,6 +111,7 @@ class ClassSearchBar extends Component {
   buildPrimaryOptions(sections, selectType) {
     const ret = [];
     const map = new Map();
+    const { isEnrollment } = this.props;
 
     if(selectType == 'instructor') {
       ret.push({ value: 'all', label: "All Instructors" })
@@ -115,7 +126,10 @@ class ClassSearchBar extends Component {
         }
       }
     } else {
-      ret.push({ value: 'all', label: "All Semesters" })
+      if(!isEnrollment) {
+        ret.push({ value: 'all', label: "All Semesters" })
+      }
+
       for(const section of sections) {
         let semester = this.getSectionSemester(section);
         if(!map.has(semester)) {
@@ -132,25 +146,37 @@ class ClassSearchBar extends Component {
   }
 
   buildSecondaryOptions(sections, selectType, selectPrimary) {
+    const { isEnrollment } = this.props;
     const ret = [];
 
     let label = selectType == 'instructor' ? 'All Semesters' : 'All Instructors';
     ret.push({ value: 'all', label: label })
 
     if(selectPrimary == 'all') {
-      const options = [...new Set(sections.map(s => `${this.getSectionSemester(s)} / ${s.section_number}`))]
+      let options;
+      if(selectType == 'instructor') {
+        options = [...new Set(sections.map(s => `${this.getSectionSemester(s)} / ${s.section_number}`))]
         .map(semester => ({
           value: semester.split(' / ')[0],
           label: semester,
           sectionNumber: semester.split(' / ')[1],
         }))
+      } else {
+        options = [...new Set(sections.map(s => `${s.instructor} / ${s.section_number}`))]
+        .map(instructor => ({
+          value: instructor.split(' / ')[0],
+          label: instructor,
+          sectionNumber: instructor.split(' / ')[1],
+        }))
+      }
 
       for(let o of options) {
         ret.push(o);
       }
     } else {
+      let options;
       if(selectType == 'instructor') {
-        const options = sections.filter(section => section.instructor == selectPrimary)
+        options = sections.filter(section => section.instructor == selectPrimary)
           .map(section => {
             let semester = `${this.getSectionSemester(section)} / ${section.section_number}`
 
@@ -160,14 +186,12 @@ class ClassSearchBar extends Component {
               sectionNumber: semester.split(' / ')[1],
             }
           })
-
-        for(let o of options) {
-          ret.push(o);
-        }
       } else {
-        const options = sections.filter(section => this.getSectionSemester(section) == selectPrimary)
+        options = sections.filter(section => this.getSectionSemester(section) == selectPrimary)
           .map(section => {
-            let instructor = `${section.instructor} / ${section.section_number}`
+            section = isEnrollment ? section.sections[0] : section;
+
+            let instructor = `${section.instructor} / ${section.section_number}`;
 
             return {
               value: instructor.split(' / ')[0],
@@ -175,10 +199,10 @@ class ClassSearchBar extends Component {
               sectionNumber: instructor.split(' / ')[1],
             }
           })
+      }
 
-        for(let o of options) {
-          ret.push(o);
-        }
+      for(let o of options) {
+        ret.push(o);
       }
     }
 
@@ -186,6 +210,7 @@ class ClassSearchBar extends Component {
   }
 
   getFilteredSections() {
+    const { isEnrollment } = this.props;
     const { sections, selectType, selectPrimary, selectSecondary, sectionNumber } = this.state;
     let ret;
 
@@ -204,14 +229,21 @@ class ClassSearchBar extends Component {
         return selectPrimary == 'all' ? true : this.getSectionSemester(section) == selectPrimary;
       })
       .filter(section => {
+        section = isEnrollment ? section.sections[0] : section;
         return selectSecondary == 'all' ? true : section.instructor == selectSecondary;
       })
       .filter(section => {
+        section = isEnrollment ? section.sections[0] : section;
         return sectionNumber ? section.section_number == sectionNumber : true;
       })
     }
 
-    ret = ret.map(s => s.grade_id);
+
+    if(isEnrollment) {
+      ret = ret.map(s => s.sections[0].section_id);
+    } else {
+      ret = ret.map(s => s.grade_id);
+    }
 
     return ret;
   }
@@ -232,7 +264,7 @@ class ClassSearchBar extends Component {
 
   render() {
     const { sections, selectType, selectPrimary, selectSecondary, selectedClass, courseOptions } = this.state;
-    const { isSortable } = this.props;
+    const { isEnrollment } = this.props;
     let primaryOptions = this.buildPrimaryOptions(sections, selectType);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectType, selectPrimary);
 
@@ -247,7 +279,7 @@ class ClassSearchBar extends Component {
               onChange={this.handleClassSelect}
           />
         </div>
-        {isSortable &&
+        {!isEnrollment &&
           <div className="column is-one-fifth">
             <Select
                 name="sortBy"
