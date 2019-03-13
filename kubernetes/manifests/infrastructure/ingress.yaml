@@ -41,10 +41,14 @@ spec:
   - host: staging.berkeleytime-internal.com
     http:
       paths:
-      - path: /
+      - path: /api/
         backend:
           serviceName: berkeleytime-stage-svc
           servicePort: 5000
+      - path: /
+        backend:
+          serviceName: frontend-stage-svc
+          servicePort: 3000
   - host: jenkins.berkeleytime-internal.com
     http:
       paths:

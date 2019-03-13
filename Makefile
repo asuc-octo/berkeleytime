@@ -1,3 +1,5 @@
+.PHONY: frontend
+
 # The following commands build the images for various components of the Berkeleytime stack
 # and pushes them to Dockerhub. Make sure you are logged in as the berkeleytime user.
 
