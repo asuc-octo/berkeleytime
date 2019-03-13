@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import axios from 'axios';
 
 import vars from '../../variables/Variables';
 
@@ -17,131 +18,162 @@ import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentIn
 class EnrollmentGraphCard extends Component {
   constructor(props) {
     super(props)
-    
-    this.state = { 
-      // data for all classes added by user
-      // dictionary mapping section_id to grades
-      classData: {},
-      graphDataKeys: [], //keys for diff class; essentially keys from classData
 
-      // point on graph that user last hovered over
-      selectedPoint: {},
-      lastSelectedClassID: "",  // id of class last selected
-
-      // data for recharts
+    this.state = {
+      enrollmentData: [],
       graphData: [],
+      hoveredClass: false,
     },
-    this.updateHoverGrade = this.updateHoverGrade.bind(this);
+
+    this.updateInfoCard = this.updateInfoCard.bind(this);
+  }
+
+  componentDidMount() {
+    this.getEnrollmentData();
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.classData !== prevProps.classData) {
-      this.morphGraphData(this.props.classData);
+    const { classData } = this.props;
+    if (classData !== prevProps.classData) {
+      this.getEnrollmentData();
     }
   }
 
-  // reformat new json response (for 1 class) to rechart format and update state
-  morphGraphData(newClass) {
-    // add newclass to allclassdata
-    const newClassData = this.state.classData;
-    const section_id = newClass["course_id"] + newClass["section_id"];
-    newClassData[section_id] = newClass;
+  getEnrollmentData() {
+    const { classData } = this.props;
+    let promises = [];
 
-    var newGraphData = this.state.graphData;
-    
-    // add newclass to graphData
-    var i;
-    for (i = 0; i < newClass["data"].length; i++) {
-      if (newClass[i]["day"] < 0) {
-        continue;
-      } 
-      if (newGraphData.length < i) {
-        newGraphData.push({
-          day: newClass[i]["day"],
-          section_id: newClass[i]["enrolled"]
-        });    
+    for(let course of classData) {
+      let { instructor, courseID, semester, sections } = course;
+
+      let url;
+      if(instructor === 'all') {
+        let [sem, year] = semester.split(' ');
+        url = `/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
       } else {
-        newGraphData[i][section_id] = newClass[i]["enrolled"];
+        url = `/api/enrollment/data/${sections[0]}/`;
       }
-      
-    } 
-    
-    this.setState({
-        classData: newClassData,
-        graphData: newGraphData,
-        graphDataKeys: Object.keys(newClassData),
-        lastSelectedClassID: section_id,
-        selectedPoint: newClassData[section_id][newGraphData.length-1]
-      });
-  }
 
-  //update graphinfocard w the bar that was last hovered
-  updateHoverGrade(e) { 
-    console.log(e);
-    var selectedClass;
-    const payLoadKeys = Object.keys(e.payload);
-    for (var i in payLoadKeys) {
-      if (e.payload[payLoadKeys[i]] == e.value) {
-        selectedClass = payLoadKeys[i];
-      }
+      promises.push(axios.get(url));
     }
-    this.setState({
-      selectedGrade: this.state.classData[selectedClass][e.name],
-      lastSelectedClassID: selectedClass,
-      selectedGradeName: e.name
-    });
 
+    axios.all(promises).then(data => {
+      let enrollmentData = data.map((res, i) => {
+        let enrollmentData = res.data;
+        enrollmentData['id'] = classData[i].id;
+        return enrollmentData
+      })
+
+      this.setState({
+        enrollmentData: enrollmentData,
+        graphData: this.buildGraphData(enrollmentData),
+      })
+    })
   }
-  
-  getCurrentDate() {
-    let today = new Date();
-    return today.toString().slice(4, 15);
+
+  buildGraphData(enrollmentData) {
+    let days = [...Array(200).keys()]
+    const graphData = days.map(day => {
+      let ret = {
+        name: day,
+      };
+
+      for(let enrollment of enrollmentData) {
+        let validTimes = enrollment.data.filter(time => time.day >= 0);
+        let enrollmentTimes = {};
+        for(let validTime of validTimes) {
+          enrollmentTimes[validTime.day] = validTime;
+        }
+
+        if(day in enrollmentTimes) {
+          ret[enrollment.id] = enrollmentTimes[day].enrolled_percent * 100;
+        }
+      }
+
+      return ret
+    })
+
+    return graphData;
+  }
+
+  // Handler function for updating EnrollmentInfoCard on hover
+  updateInfoCard(lineData) {
+    const { enrollmentData } = this.state;
+    const { classData } = this.props;
+
+    const selectedClassID = lineData.dataKey;
+
+    let selectedCourse = classData.filter(course => selectedClassID == course.id)[0]
+    let selectedEnrollment= enrollmentData.filter(course => selectedClassID == course.id)[0]
+
+    let hoverTotal = {
+      ...selectedCourse,
+      ...selectedEnrollment,
+      hoverDay: lineData.index,
+    }
+
+    this.setState({
+      hoveredClass: hoverTotal,
+    })
   }
 
   render () {
-    if (Object.keys(this.props.classData).length == 0 || Object.keys(this.state.classData).length == 0) {
-      return (
-        <div className="card card-graph">
-          <h1>Select a Class</h1>
-        </div>
-      );
-    }
+    let { graphData, enrollmentData, hoveredClass } = this.state;
+
     return (
       <div className="card card-graph">
-        <Row className="content">
-          <div className="graphTitle">{ this.props.title }</div>
-        </Row>
-        <Row>
-          <Col sm={8}>
+        {
+          enrollmentData.length == 0 ? (
+            <h1>Select a Class</h1>
+          ) : (
             <div className="graph">
-              <LineChart width={600} height={245} data={this.state.graphData}>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <CartesianGrid strokeDasharray="3 3" />
-                <Tooltip />
-                {this.state.graphDataKeys.map((item, index) => (
-                  <Line type="monotone" dataKey={item} 
-                  stroke="#8884d8" activeDot={{ r: 8 }}
-                  onMouseEnter={this.updateHoverGrade}
-                  />
-                ))}                
-              </LineChart>
+              <Row className="content">
+                <div className="graphTitle">{ this.props.title }</div>
+              </Row>
+              <Row>
+                <Col sm={8}>
+                  <div className="graph">
+                    <LineChart width={800} height={400} data={graphData}>
+                      <XAxis
+                        dataKey="name"
+                        tickCount={5} />
+                      <YAxis />
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <Tooltip />
+                        {enrollmentData.map((item, i) => (
+                          <Line
+                            type="monotone"
+                            dataKey={item.id}
+                            stroke={vars.colors[i % vars.colors.length]}
+                            strokeWidth={3}
+                            dot={false}
+                            activeDot={{onMouseOver:this.updateInfoCard}}
+                            connectNulls={true}
+                          />
+                        ))}
+                    </LineChart>
+                  </div>
+                </Col>
+
+                <Col sm={4}>
+                  {hoveredClass &&
+                    <EnrollmentInfoCard
+                        title={hoveredClass.title}
+                        subtitle={hoveredClass.subtitle}
+                        semester={hoveredClass.semester == 'all' ? 'All Semester' : hoveredClass.semester}
+                        instructor={hoveredClass.instructor == 'all' ? 'All Instructors' : hoveredClass.instructor}
+                        selectedPoint={hoveredClass.data.filter(pt => pt.day == hoveredClass.hoverDay)[0]}
+                        todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
+                      />
+                  }
+                </Col>
+              </Row>
             </div>
-          </Col>
-
-          <Col sm={4}>
-            <EnrollmentInfoCard
-                thisClass={this.state.classData[this.state.lastSelectedClassID]}
-
-                selectedPt = {this.state.selectedPt}
-                today={this.getCurrentDate()}
-              />
-          </Col>
-        </Row>
+          )
+        }
       </div>
     );
   }
-
 }
 
 export default EnrollmentGraphCard;

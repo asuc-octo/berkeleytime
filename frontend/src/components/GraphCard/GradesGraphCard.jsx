@@ -13,9 +13,9 @@ import axios from 'axios';
 
 import vars from '../../variables/Variables';
 
-import GradesInfoCard from '../../components/GradesInfoCard/GradesInfoCard.jsx';
+import GradesInfoCard from '../GradesInfoCard/GradesInfoCard.jsx';
 
-class GraphCard extends Component {
+class GradesGraphCard extends Component {
   constructor(props) {
     super(props)
 
@@ -48,9 +48,9 @@ class GraphCard extends Component {
 
     for(let course of classData) {
       let { sections } = course;
-      let apiString = `/api/grades/sections/${sections.join('&')}/`;
+      let url = `/api/grades/sections/${sections.join('&')}/`;
 
-      promises.push(axios.get(apiString));
+      promises.push(axios.get(url));
     }
 
     axios.all(promises).then(data => {
@@ -83,7 +83,7 @@ class GraphCard extends Component {
     return graphData;
   }
 
-  //update graphinfocard w the bar that was last hovered
+  // Handler function for updating GradesInfoCard on hover
   updateInfoCard(barData) {
     console.log(barData);
 
@@ -189,4 +189,4 @@ class GraphCard extends Component {
 
 }
 
-export default GraphCard;
+export default GradesGraphCard;

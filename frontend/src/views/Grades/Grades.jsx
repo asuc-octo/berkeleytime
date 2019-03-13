@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 import ClassCardList from '../../components/ClassCards/ClassCardList.jsx';
-import GraphCard from '../../components/GraphCard/GraphCard.jsx';
+import GradesGraphCard from '../../components/GraphCard/GradesGraphCard.jsx';
 import GradesInfoCard from '../../components/GradesInfoCard/GradesInfoCard.jsx';
 import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
 
@@ -81,7 +81,7 @@ class Grades extends Component {
           />
         }
 
-        <GraphCard
+        <GradesGraphCard
           id="chartHours"
           title="Grades"
           classData={selectedCourses}
