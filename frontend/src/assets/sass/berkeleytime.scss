@@ -40,17 +40,27 @@
 
 // BerkeleyTime
 @import "bt/berkeleytime";
+@import "bt/navbar";
+
+// Catalog
 @import "bt/filter-sidebar";
 @import "bt/filter-selection";
 @import "bt/filter-results";
 @import "bt/filter-description";
+
+// Grades & Enrollment
 @import "bt/classcards";
 
-@import "bt/navbar";
+// Grades
+@import "bt/grades";
+
+// Enrollment
+@import "bt/enrollment";
+
+// Other
 @import "bt/current-contributors";
 @import "bt/past-contributors";
-
 @import "bt/landing";
-@import "bt/temporary";
 
+@import "bt/temporary";
 @import "bt/dashboard";

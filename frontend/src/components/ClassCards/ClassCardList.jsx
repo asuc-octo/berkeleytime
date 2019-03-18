@@ -12,7 +12,7 @@ class ClassCardList extends Component {
     const { selectedCourses, removeCourse } = this.props;
 
     return (
-      <div className="columns">
+      <div className="columns class-card-list">
         {
           selectedCourses.map(item => (
           <div className="column card-column">

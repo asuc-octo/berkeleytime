@@ -46,6 +46,14 @@ class ClassSearchBar extends Component {
   }
 
   handleClassSelect(updatedClass) {
+    if(updatedClass === null) {
+      this.setState({
+        selectedClass: 0,
+      })
+      return;
+    }
+
+
     const { isEnrollment } = this.props;
     this.setState({
       selectedClass: updatedClass.value

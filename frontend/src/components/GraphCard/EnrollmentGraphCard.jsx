@@ -122,55 +122,55 @@ class EnrollmentGraphCard extends Component {
 
     return (
       <div className="card card-graph">
-        {
-          enrollmentData.length == 0 ? (
-            <h1>Select a Class</h1>
-          ) : (
-            <div className="graph">
-              <Row className="content">
-                <div className="graphTitle">{ this.props.title }</div>
-              </Row>
-              <Row>
-                <Col sm={8}>
-                  <div className="graph">
-                    <LineChart width={800} height={400} data={graphData}>
-                      <XAxis
-                        dataKey="name"
-                        tickCount={5} />
-                      <YAxis />
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <Tooltip />
-                        {enrollmentData.map((item, i) => (
-                          <Line
-                            type="monotone"
-                            dataKey={item.id}
-                            stroke={vars.colors[i % vars.colors.length]}
-                            strokeWidth={3}
-                            dot={false}
-                            activeDot={{onMouseOver:this.updateInfoCard}}
-                            connectNulls={true}
-                          />
-                        ))}
-                    </LineChart>
-                  </div>
-                </Col>
+        <div className="enrollment-graph">
+          {
+            enrollmentData.length == 0 ? (
+              <div className="grades-graph-empty">Select a Class</div>
+            ) : (
+              <div className="graph-content">
+                <Row>
+                  <div className="graph-title">{ this.props.title }</div>
+                </Row>
+                <Row>
+                  <Col sm={8}>
+                    <div className="graph">
+                      <LineChart width={800} height={400} data={graphData}>
+                        <XAxis dataKey="name" tickCount={5} />
+                        <YAxis />
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <Tooltip />
+                          {enrollmentData.map((item, i) => (
+                            <Line
+                              type="monotone"
+                              dataKey={item.id}
+                              stroke={vars.colors[i % vars.colors.length]}
+                              strokeWidth={3}
+                              dot={false}
+                              activeDot={{onMouseOver:this.updateInfoCard}}
+                              connectNulls={true}
+                            />
+                          ))}
+                      </LineChart>
+                    </div>
+                  </Col>
 
-                <Col sm={4}>
-                  {hoveredClass &&
-                    <EnrollmentInfoCard
-                        title={hoveredClass.title}
-                        subtitle={hoveredClass.subtitle}
-                        semester={hoveredClass.semester == 'all' ? 'All Semester' : hoveredClass.semester}
-                        instructor={hoveredClass.instructor == 'all' ? 'All Instructors' : hoveredClass.instructor}
-                        selectedPoint={hoveredClass.data.filter(pt => pt.day == hoveredClass.hoverDay)[0]}
-                        todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
-                      />
-                  }
-                </Col>
-              </Row>
-            </div>
-          )
-        }
+                  <Col sm={4}>
+                    {hoveredClass &&
+                      <EnrollmentInfoCard
+                          title={hoveredClass.title}
+                          subtitle={hoveredClass.subtitle}
+                          semester={hoveredClass.semester == 'all' ? 'All Semester' : hoveredClass.semester}
+                          instructor={hoveredClass.instructor == 'all' ? 'All Instructors' : hoveredClass.instructor}
+                          selectedPoint={hoveredClass.data.filter(pt => pt.day == hoveredClass.hoverDay)[0]}
+                          todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
+                        />
+                    }
+                  </Col>
+                </Row>
+              </div>
+            )
+          }
+        </div>
       </div>
     );
   }
