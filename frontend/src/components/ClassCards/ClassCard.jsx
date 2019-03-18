@@ -1,10 +1,10 @@
 import React from 'react';
 
 function ClassCard (props) {
-  const { id, course, title, semester, faculty, removeCourse } = props;
+  const { id, course, title, fill, semester, faculty, removeCourse } = props;
 
   return (
-    <div className="class-card card">
+    <div className="class-card card" style={{backgroundColor: fill}}>
       <div className="class-card content">
         <div className="class-card-upper">
           <div className="class-card courseAbbreviation">
