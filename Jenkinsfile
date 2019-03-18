@@ -1,14 +1,14 @@
 pipeline {
   agent {
     docker {
-      image 'node:6-alpine'
+      image 'tsaianson/dockerjenkinskubectlbase:latest'
     }
 
   }
   stages {
     stage('Build') {
       steps {
-        sh 'npm install'
+        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: 'react-temp', credentialsId: 'GitHubAcc')
       }
     }
   }
