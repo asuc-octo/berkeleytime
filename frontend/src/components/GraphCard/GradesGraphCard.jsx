@@ -1,18 +1,10 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
 import axios from 'axios';
 
 import vars from '../../variables/Variables';
 
+import GradesGraph from '../Graphs/GradesGraph.jsx';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard.jsx';
 
 class GradesGraphCard extends Component {
@@ -140,24 +132,11 @@ class GradesGraphCard extends Component {
                 </Row>
                 <Row>
                   <Col sm={8}>
-                    <div className="graph">
-                      <BarChart width={800} height={400} data={graphData}>
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip />
-                        <Legend />
-
-                      {gradesData.map((item, index) => (
-                        <Bar
-                          dataKey={item.id}
-                          fill={vars.colors[index % vars.colors.length]}
-                          onMouseEnter={this.updateInfoCard}
-                        />
-                      ))}
-
-                      </BarChart>
-                    </div>
+                    <GradesGraph
+                      graphData={graphData}
+                      gradesData={gradesData}
+                      updateInfoCard={this.updateInfoCard}
+                    />
                   </Col>
 
                   <Col sm={4}>

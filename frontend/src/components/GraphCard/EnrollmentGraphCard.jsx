@@ -11,8 +11,7 @@ import {
 } from 'recharts';
 import axios from 'axios';
 
-import vars from '../../variables/Variables';
-
+import EnrollmentGraph from '../Graphs/EnrollmentGraph.jsx';
 import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 
 class EnrollmentGraphCard extends Component {
@@ -133,37 +132,23 @@ class EnrollmentGraphCard extends Component {
                 </Row>
                 <Row>
                   <Col sm={8}>
-                    <div className="graph">
-                      <LineChart width={800} height={400} data={graphData}>
-                        <XAxis dataKey="name" tickCount={5} />
-                        <YAxis />
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip />
-                          {enrollmentData.map((item, i) => (
-                            <Line
-                              type="monotone"
-                              dataKey={item.id}
-                              stroke={vars.colors[i % vars.colors.length]}
-                              strokeWidth={3}
-                              dot={false}
-                              activeDot={{onMouseOver:this.updateInfoCard}}
-                              connectNulls={true}
-                            />
-                          ))}
-                      </LineChart>
-                    </div>
+                    <EnrollmentGraph
+                      graphData={graphData}
+                      enrollmentData={enrollmentData}
+                      updateInfoCard={this.updateInfoCard}
+                    />
                   </Col>
 
                   <Col sm={4}>
                     {hoveredClass &&
                       <EnrollmentInfoCard
-                          title={hoveredClass.title}
-                          subtitle={hoveredClass.subtitle}
-                          semester={hoveredClass.semester == 'all' ? 'All Semester' : hoveredClass.semester}
-                          instructor={hoveredClass.instructor == 'all' ? 'All Instructors' : hoveredClass.instructor}
-                          selectedPoint={hoveredClass.data.filter(pt => pt.day == hoveredClass.hoverDay)[0]}
-                          todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
-                        />
+                        title={hoveredClass.title}
+                        subtitle={hoveredClass.subtitle}
+                        semester={hoveredClass.semester == 'all' ? 'All Semester' : hoveredClass.semester}
+                        instructor={hoveredClass.instructor == 'all' ? 'All Instructors' : hoveredClass.instructor}
+                        selectedPoint={hoveredClass.data.filter(pt => pt.day == hoveredClass.hoverDay)[0]}
+                        todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
+                      />
                     }
                   </Col>
                 </Row>
