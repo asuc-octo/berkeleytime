@@ -1,8 +1,10 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-export default function GraphInfoCard({course, title, semester, instructor, courseLetter, courseGPA,
-  sectionLetter, sectionGPA, selectedGrade, gradeName, denominator, betterGrade, worseGrade
+export default function GradesInfoCard({
+  course, title, semester, instructor, courseLetter,
+  courseGPA, sectionLetter, sectionGPA, selectedGrade,
+  gradeName, denominator, betterGrade, worseGrade
 }) {
   return (
     <div className="card card-info">

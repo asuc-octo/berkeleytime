@@ -1,0 +1,79 @@
+.card.card-graph {
+  box-shadow: none;
+
+  .graph-content {
+      padding: 15px 15px 0px 35px;
+
+      .graph {
+        padding: 15px 15px 15px 15px;
+      }
+      .graph-title {
+          font-weight: bold;
+          font-size: 20px;
+      }
+  }
+}
+
+.card.card-info {
+  box-shadow: none;
+
+  .content {
+      padding: 0px 15px 15px 15px;
+  }
+  .classNum {
+      font-weight: bold;
+      font-size: 20px;
+  }
+  .classInfo {
+      color: #8F8F8F;
+  }
+  .classTitle {
+      padding-top: 5px;
+      padding-bottom: 10px;
+  }
+  .classStatType {
+      font-size: 15px;
+  }
+  .class-stats {
+      padding-bottom: 5px;
+  }
+  .classAdjustmentPercent {
+      color: #FFA414;
+      font-size: 15px;
+  }
+  .classStatsName {
+      color: #8F8F8F;
+  }
+  .classAvgs {
+      padding: 0;
+  }
+  .classAvgStats {
+      padding: 0;
+      color: #76FC80;
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 3%;
+  }
+  .classGrade {
+      color: #F85386;
+      font-size: 18px;
+      font-weight: bold;
+  }
+  .classPercent {
+      color:gray;
+      font-size: 18px;
+  }
+
+}
+
+.class-card {
+  margin-bottom: 0px;
+}
+
+.class-card-list {
+  min-height: 100px;
+}
+
+.grades-graph-empty {
+  min-height: 500px;
+}

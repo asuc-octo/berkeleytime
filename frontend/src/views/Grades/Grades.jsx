@@ -3,7 +3,6 @@ import axios from 'axios';
 
 import ClassCardList from '../../components/ClassCards/ClassCardList.jsx';
 import GradesGraphCard from '../../components/GraphCard/GradesGraphCard.jsx';
-import GradesInfoCard from '../../components/GradesInfoCard/GradesInfoCard.jsx';
 import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
 
 import vars from '../../variables/Variables';
@@ -67,22 +66,30 @@ class Grades extends Component {
 
     return (
       <div className="app-container">
-        {courses &&
-          <ClassSearchBar
-            classes={courses}
-            addCourse={this.addCourse}
-          />
+        {courses ?
+          (
+            <ClassSearchBar
+              classes={courses}
+              addCourse={this.addCourse}
+            />
+          ) : (
+            <div className="class-search-bar"></div>
+          )
         }
 
-        {selectedCourses.length > 0 &&
-          <ClassCardList
-            selectedCourses={selectedCourses}
-            removeCourse={this.removeCourse}
-          />
+        {selectedCourses.length > 0 ?
+          (
+            <ClassCardList
+              selectedCourses={selectedCourses}
+              removeCourse={this.removeCourse}
+            />
+          ) : (
+            <div className="class-card-list"></div>
+          )
         }
 
         <GradesGraphCard
-          id="chartHours"
+          id="gradesGraph"
           title="Grades"
           classData={selectedCourses}
         />

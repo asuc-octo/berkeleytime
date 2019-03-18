@@ -2,7 +2,8 @@ import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
 export default function EnrollmentInfoCard({
-  title, subtitle, semester, instructor, selectedPoint, todayPoint
+  title, subtitle, semester, instructor,
+  selectedPoint, todayPoint,
 }) {
   const today = new Date();
   let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };

@@ -11,7 +11,7 @@ import BT from './components/BerkeleyTime/index.jsx';
 
 import './assets/css/bootstrap.min.css';
 import './assets/css/animate.min.css';
-import './assets/sass/light-bootstrap-dashboard.css';
+import './assets/sass/berkeleytime.css';
 import './assets/css/demo.css';
 import './assets/css/pe-icon-7-stroke.css';
 

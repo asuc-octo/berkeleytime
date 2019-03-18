@@ -9787,56 +9787,27 @@ label.panel-block {
   margin-left: 35px;
   margin-right: 35px; }
 
-button.deleteBtn {
-  border: none;
-  padding-top: 45px; }
+.navbar {
+  position: fixed;
+  width: 100%;
+  z-index: 1; }
 
-.card.card-graph {
-  box-shadow: none; }
-  .card.card-graph .content {
-    padding: 15px 15px 0px 35px; }
-  .card.card-graph .graph {
-    padding: 15px 15px 15px 15px; }
-  .card.card-graph .graphTitle {
-    font-weight: bold;
-    font-size: 20px; }
+.navbar-brand.bt-navbar-brand {
+  float: none;
+  height: auto;
+  padding: 5px 15px; }
+  .navbar-brand.bt-navbar-brand .bt-navbar-bt {
+    font-size: 20px;
+    font-weight: 500; }
 
-.card.card-info {
-  box-shadow: none; }
-  .card.card-info .content {
-    padding: 0px 15px 15px 15px; }
-  .card.card-info .classNum {
-    font-weight: bold;
-    font-size: 20px; }
-  .card.card-info .classInfo {
-    color: #8F8F8F; }
-  .card.card-info .classTitle {
-    padding-top: 5px;
-    padding-bottom: 10px; }
-  .card.card-info .classStatType {
-    font-size: 15px; }
-  .card.card-info .class-stats {
-    padding-bottom: 5px; }
-  .card.card-info .classAdjustmentPercent {
-    color: #FFA414;
-    font-size: 15px; }
-  .card.card-info .classStatsName {
-    color: #8F8F8F; }
-  .card.card-info .classAvgs {
-    padding: 0; }
-  .card.card-info .classAvgStats {
-    padding: 0;
-    color: #76FC80;
-    font-size: 15px;
-    font-weight: bold;
-    margin-bottom: 3%; }
-  .card.card-info .classGrade {
-    color: #F85386;
-    font-size: 18px;
-    font-weight: bold; }
-  .card.card-info .classPercent {
-    color: gray;
-    font-size: 18px; }
+.navbar-end {
+  margin-right: 27px; }
+
+.navbar-item > a {
+  color: #4a4a4a; }
+
+.navbar-item > a:hover {
+  color: #3273dc; }
 
 .filter-sidebar {
   background-color: white; }
@@ -10138,27 +10109,61 @@ button.deleteBtn {
       display: flex;
       justify-content: space-between; }
 
-.navbar {
-  position: fixed;
-  width: 100%;
-  z-index: 1; }
+.card.card-graph {
+  box-shadow: none; }
+  .card.card-graph .graph-content {
+    padding: 15px 15px 0px 35px; }
+    .card.card-graph .graph-content .graph {
+      padding: 15px 15px 15px 15px; }
+    .card.card-graph .graph-content .graph-title {
+      font-weight: bold;
+      font-size: 20px; }
 
-.navbar-brand.bt-navbar-brand {
-  float: none;
-  height: auto;
-  padding: 5px 15px; }
-  .navbar-brand.bt-navbar-brand .bt-navbar-bt {
-    font-size: 20px;
-    font-weight: 500; }
+.card.card-info {
+  box-shadow: none; }
+  .card.card-info .content {
+    padding: 0px 15px 15px 15px; }
+  .card.card-info .classNum {
+    font-weight: bold;
+    font-size: 20px; }
+  .card.card-info .classInfo {
+    color: #8F8F8F; }
+  .card.card-info .classTitle {
+    padding-top: 5px;
+    padding-bottom: 10px; }
+  .card.card-info .classStatType {
+    font-size: 15px; }
+  .card.card-info .class-stats {
+    padding-bottom: 5px; }
+  .card.card-info .classAdjustmentPercent {
+    color: #FFA414;
+    font-size: 15px; }
+  .card.card-info .classStatsName {
+    color: #8F8F8F; }
+  .card.card-info .classAvgs {
+    padding: 0; }
+  .card.card-info .classAvgStats {
+    padding: 0;
+    color: #76FC80;
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 3%; }
+  .card.card-info .classGrade {
+    color: #F85386;
+    font-size: 18px;
+    font-weight: bold; }
+  .card.card-info .classPercent {
+    color: gray;
+    font-size: 18px; }
 
-.navbar-end {
-  margin-right: 27px; }
+.class-card {
+  margin-bottom: 0px; }
 
-.navbar-item > a {
-  color: #4a4a4a; }
+.class-card-list {
+  min-height: 100px; }
 
-.navbar-item > a:hover {
-  color: #3273dc; }
+.grades-graph-empty {
+  min-height: 500px; }
 
 .contributors {
   display: flex;

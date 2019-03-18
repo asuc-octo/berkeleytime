@@ -5,14 +5,6 @@ import ClassCardList from '../../components/ClassCards/ClassCardList';
 import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard.jsx';
 import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
 
-import {
-  vars,
-  enrollment,
-  optionsEnrollment,
-  responsiveEnrollment
-} from '../../variables/Variables';
-
-
 class Enrollment extends Component {
   constructor(props) {
     super(props)
@@ -74,27 +66,34 @@ class Enrollment extends Component {
 
     return (
       <div className="app-container">
-        {courses &&
-          <ClassSearchBar
-            isEnrollment
-            classes={courses}
-            addCourse={this.addCourse}
-          />
-        }
-        {selectedCourses.length > 0 &&
-          <ClassCardList
-            selectedCourses={selectedCourses}
-            removeCourse={this.removeCourse}
-          />
+        {courses ?
+          (
+            <ClassSearchBar
+              isEnrollment
+              classes={courses}
+              addCourse={this.addCourse}
+            />
+          ) : (
+            <div className="class-search-bar"></div>
+          )
         }
 
-        {true &&
-          <EnrollmentGraphCard
-            id="chartHours"
-            title="Enrollment"
-            classData={selectedCourses}
-          />
+        {selectedCourses.length > 0 ?
+          (
+            <ClassCardList
+              selectedCourses={selectedCourses}
+              removeCourse={this.removeCourse}
+            />
+          ) : (
+            <div className="class-card-list"></div>
+          )
         }
+
+        <EnrollmentGraphCard
+          id="gradesGraph"
+          title="Enrollment"
+          classData={selectedCourses}
+        />
 
       </div>
     );
