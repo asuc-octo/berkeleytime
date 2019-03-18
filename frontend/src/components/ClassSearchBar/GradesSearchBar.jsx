@@ -12,7 +12,7 @@ const sortOptions = [
   { value: 'instructor', label: 'By Instructor' },
   { value: 'semester', label: 'By Semester' }
 ];
-class ClassSearchBar extends Component {
+class GradesSearchBar extends Component {
 
   constructor(props) {
     super(props);
@@ -38,10 +38,9 @@ class ClassSearchBar extends Component {
   }
 
   componentDidMount() {
-    const { isEnrollment } = this.props;
     this.setState({
       courseOptions: this.buildCoursesOptions(this.props.classes),
-      selectType: isEnrollment ? 'semester' : 'instructor',
+      selectType: 'instructor',
     })
   }
 
@@ -53,26 +52,19 @@ class ClassSearchBar extends Component {
       return;
     }
 
-
-    const { isEnrollment } = this.props;
     this.setState({
       selectedClass: updatedClass.value
     })
 
-    let url;
-    if(isEnrollment) {
-      url = `/api/enrollment/sections/${updatedClass.value}/`
-    } else {
-      url = `/api/grades/course_grades/${updatedClass.value}/`
-    }
+    let url = `/api/grades/course_grades/${updatedClass.value}/`
 
     axios.get(url)
     .then(res => {
       console.log(res);
       this.setState({
         sections: res.data,
-        selectPrimary: '',
-        selectSecondary: '',
+        selectPrimary: 'all',
+        selectSecondary: 'all',
       })
     })
     .catch((err) => {
@@ -119,7 +111,6 @@ class ClassSearchBar extends Component {
   buildPrimaryOptions(sections, selectType) {
     const ret = [];
     const map = new Map();
-    const { isEnrollment } = this.props;
 
     if(selectType == 'instructor') {
       ret.push({ value: 'all', label: "All Instructors" })
@@ -134,9 +125,7 @@ class ClassSearchBar extends Component {
         }
       }
     } else {
-      if(!isEnrollment) {
-        ret.push({ value: 'all', label: "All Semesters" })
-      }
+      ret.push({ value: 'all', label: "All Semesters" })
 
       for(const section of sections) {
         let semester = this.getSectionSemester(section);
@@ -154,7 +143,6 @@ class ClassSearchBar extends Component {
   }
 
   buildSecondaryOptions(sections, selectType, selectPrimary) {
-    const { isEnrollment } = this.props;
     const ret = [];
 
     let label = selectType == 'instructor' ? 'All Semesters' : 'All Instructors';
@@ -197,8 +185,6 @@ class ClassSearchBar extends Component {
       } else {
         options = sections.filter(section => this.getSectionSemester(section) == selectPrimary)
           .map(section => {
-            section = isEnrollment ? section.sections[0] : section;
-
             let instructor = `${section.instructor} / ${section.section_number}`;
 
             return {
@@ -218,7 +204,6 @@ class ClassSearchBar extends Component {
   }
 
   getFilteredSections() {
-    const { isEnrollment } = this.props;
     const { sections, selectType, selectPrimary, selectSecondary, sectionNumber } = this.state;
     let ret;
 
@@ -237,22 +222,14 @@ class ClassSearchBar extends Component {
         return selectPrimary == 'all' ? true : this.getSectionSemester(section) == selectPrimary;
       })
       .filter(section => {
-        section = isEnrollment ? section.sections[0] : section;
         return selectSecondary == 'all' ? true : section.instructor == selectSecondary;
       })
       .filter(section => {
-        section = isEnrollment ? section.sections[0] : section;
         return sectionNumber ? section.section_number == sectionNumber : true;
       })
     }
 
-
-    if(isEnrollment) {
-      ret = ret.map(s => s.sections[0].section_id);
-    } else {
-      ret = ret.map(s => s.grade_id);
-    }
-
+    ret = ret.map(s => s.grade_id);
     return ret;
   }
 
@@ -272,7 +249,6 @@ class ClassSearchBar extends Component {
 
   render() {
     const { sections, selectType, selectPrimary, selectSecondary, selectedClass, courseOptions } = this.state;
-    const { isEnrollment } = this.props;
     let primaryOptions = this.buildPrimaryOptions(sections, selectType);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectType, selectPrimary);
 
@@ -287,17 +263,15 @@ class ClassSearchBar extends Component {
               onChange={this.handleClassSelect}
           />
         </div>
-        {!isEnrollment &&
-          <div className="column is-one-fifth">
-            <Select
-                name="sortBy"
-                placeholder="Sort by"
-                value={selectType}
-                options={sortOptions}
-                onChange={this.handleSortSelect}
-            />
-          </div>
-        }
+        <div className="column is-one-fifth">
+          <Select
+              name="sortBy"
+              placeholder="Sort by"
+              value={selectType}
+              options={sortOptions}
+              onChange={this.handleSortSelect}
+          />
+        </div>
         <div className="column is-one-fifth">
           <Select
               name="instrSems"
@@ -336,8 +310,4 @@ class ClassSearchBar extends Component {
   }
 }
 
-ClassSearchBar.defaultProps = {
-  isSortable: true,
-}
-
-export default ClassSearchBar;
+export default GradesSearchBar;
