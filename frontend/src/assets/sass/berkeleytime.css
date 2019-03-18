@@ -10087,81 +10087,111 @@ label.panel-block {
       font-weight: normal;
       font-size: 12px; }
 
-.card.class-card .content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 15px 15px 15px 15px;
-  background-color: white;
-  margin-left: 10px;
-  border-radius: 0 4px 4px 0;
-  min-height: 100px; }
-  .card.class-card .content .class-card-upper {
-    display: flex;
-    justify-content: space-between; }
-    .card.class-card .content .class-card-upper .courseAbbreviation {
-      font-weight: bold; }
-    .card.class-card .content .class-card-upper .classInfo {
-      font-size: 12px; }
-  .card.class-card .content .class-card-lower {
-    display: flex;
-    justify-content: space-between; }
+.class-card-list {
+  min-height: 130px; }
+  .class-card-list .card.class-card {
+    margin-bottom: 0px; }
+    .class-card-list .card.class-card .content {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 15px 15px 15px 15px;
+      background-color: white;
+      margin-left: 10px;
+      border-radius: 0 4px 4px 0;
+      min-height: 100px; }
+      .class-card-list .card.class-card .content .class-card-upper {
+        display: flex;
+        justify-content: space-between; }
+        .class-card-list .card.class-card .content .class-card-upper .course-abbreviation {
+          font-weight: bold; }
+        .class-card-list .card.class-card .content .class-card-upper .class-info {
+          font-size: 12px; }
+      .class-card-list .card.class-card .content .class-card-lower {
+        display: flex;
+        justify-content: space-between; }
+        .class-card-list .card.class-card .content .class-card-lower .delete {
+          margin-top: auto; }
 
-.card.card-graph {
+.card.grades-graph-card {
   box-shadow: none; }
-  .card.card-graph .graph-content {
+  .card.grades-graph-card .grades-graph .grades-graph-empty {
+    font-size: 18px;
+    min-height: 500px; }
+  .card.grades-graph-card .grades-graph .graph-content {
     padding: 15px 15px 0px 35px; }
-    .card.card-graph .graph-content .graph {
+    .card.grades-graph-card .grades-graph .graph-content .graph {
       padding: 15px 15px 15px 15px; }
-    .card.card-graph .graph-content .graph-title {
+    .card.grades-graph-card .grades-graph .graph-content .graph-title {
       font-weight: bold;
       font-size: 20px; }
 
-.card.card-info {
+.card.grades-card-info {
   box-shadow: none; }
-  .card.card-info .content {
+  .card.grades-card-info .content {
     padding: 0px 15px 15px 15px; }
-  .card.card-info .classNum {
-    font-weight: bold;
-    font-size: 20px; }
-  .card.card-info .classInfo {
-    color: #8F8F8F; }
-  .card.card-info .classTitle {
-    padding-top: 5px;
-    padding-bottom: 10px; }
-  .card.card-info .classStatType {
-    font-size: 15px; }
-  .card.card-info .class-stats {
-    padding-bottom: 5px; }
-  .card.card-info .classAdjustmentPercent {
-    color: #FFA414;
-    font-size: 15px; }
-  .card.card-info .classStatsName {
-    color: #8F8F8F; }
-  .card.card-info .classAvgs {
-    padding: 0; }
-  .card.card-info .classAvgStats {
-    padding: 0;
-    color: #76FC80;
-    font-size: 15px;
-    font-weight: bold;
-    margin-bottom: 3%; }
-  .card.card-info .classGrade {
-    color: #F85386;
+    .card.grades-card-info .content .class-num {
+      font-weight: bold;
+      font-size: 20px; }
+    .card.grades-card-info .content .class-info {
+      color: #8F8F8F; }
+    .card.grades-card-info .content .class-title {
+      padding-top: 5px;
+      padding-bottom: 10px; }
+    .card.grades-card-info .content .class-avgs {
+      padding: 0; }
+      .card.grades-card-info .content .class-avgs .class-avg-stats {
+        padding: 0;
+        color: #76FC80;
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 3%; }
+      .card.grades-card-info .content .class-avgs .class-stats-name {
+        color: #8F8F8F; }
+      .card.grades-card-info .content .class-avgs .class-grade {
+        color: #F85386;
+        font-size: 18px;
+        font-weight: bold; }
+      .card.grades-card-info .content .class-avgs .class-percent {
+        color: gray;
+        font-size: 18px; }
+
+.card.enrollment-graph-card {
+  box-shadow: none; }
+  .card.enrollment-graph-card .enrollment-graph .enrollment-graph-empty {
     font-size: 18px;
-    font-weight: bold; }
-  .card.card-info .classPercent {
-    color: gray;
-    font-size: 18px; }
+    min-height: 500px; }
+  .card.enrollment-graph-card .enrollment-graph .enrollment-content {
+    padding: 15px 15px 0px 35px; }
+    .card.enrollment-graph-card .enrollment-graph .enrollment-content .graph {
+      padding: 15px 15px 15px 15px; }
+    .card.enrollment-graph-card .enrollment-graph .enrollment-content .graph-title {
+      font-weight: bold;
+      font-size: 20px; }
 
-.class-card {
-  margin-bottom: 0px; }
-
-.class-card-list {
-  min-height: 100px; }
-
-.grades-graph-empty {
-  min-height: 500px; }
+.card.enrollment-card-info {
+  box-shadow: none; }
+  .card.enrollment-card-info .content {
+    padding: 0px 15px 15px 15px; }
+    .card.enrollment-card-info .content .content {
+      padding: 0px 15px 15px 15px; }
+    .card.enrollment-card-info .content .class-num {
+      font-weight: bold;
+      font-size: 20px; }
+    .card.enrollment-card-info .content .class-info {
+      color: #8F8F8F; }
+    .card.enrollment-card-info .content .class-title {
+      padding-top: 5px;
+      padding-bottom: 10px; }
+    .card.enrollment-card-info .content .class-stats {
+      padding-bottom: 5px; }
+    .card.enrollment-card-info .content .class-stat-type {
+      font-size: 15px; }
+    .card.enrollment-card-info .content .class-adjustment-percent {
+      color: #FFA414;
+      font-size: 15px; }
+    .card.enrollment-card-info .content .class-stats-name {
+      color: #8F8F8F; }
 
 .contributors {
   display: flex;

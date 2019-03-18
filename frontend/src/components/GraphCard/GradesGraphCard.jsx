@@ -120,7 +120,7 @@ class GradesGraphCard extends Component {
     let { title } = this.props;
 
     return (
-      <div className="card card-graph">
+      <div className="card grades-graph-card">
         <div className="grades-graph">
           {
             gradesData.length == 0 ? (

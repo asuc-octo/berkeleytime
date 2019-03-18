@@ -1,0 +1,67 @@
+// EnrollmentGraph
+.card.enrollment-graph-card {
+  box-shadow: none;
+
+  .enrollment-graph {
+    .enrollment-graph-empty {
+      font-size: 18px;
+      min-height: 500px;
+    }
+
+    .enrollment-content {
+      padding: 15px 15px 0px 35px;
+
+      .graph {
+        padding: 15px 15px 15px 15px;
+      }
+      .graph-title {
+          font-weight: bold;
+          font-size: 20px;
+      }
+    }
+  }
+}
+
+// GradesInfoCard
+.card.enrollment-card-info {
+  box-shadow: none;
+
+  .content {
+      padding: 0px 15px 15px 15px;
+
+      .content {
+        padding: 0px 15px 15px 15px;
+      }
+
+      .class-num {
+          font-weight: bold;
+          font-size: 20px;
+      }
+
+      .class-info {
+          color: #8F8F8F;
+      }
+
+      .class-title {
+          padding-top: 5px;
+          padding-bottom: 10px;
+      }
+
+      .class-stats {
+          padding-bottom: 5px;
+      }
+
+      .class-stat-type {
+        font-size: 15px;
+      }
+
+      .class-adjustment-percent {
+        color: #FFA414;
+        font-size: 15px;
+      }
+
+      .class-stats-name {
+        color: #8F8F8F;
+      }
+  }
+}
