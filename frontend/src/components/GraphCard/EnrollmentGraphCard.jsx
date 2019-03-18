@@ -120,13 +120,13 @@ class EnrollmentGraphCard extends Component {
     let { graphData, enrollmentData, hoveredClass } = this.state;
 
     return (
-      <div className="card card-graph">
+      <div className="card enrollment-graph-card">
         <div className="enrollment-graph">
           {
             enrollmentData.length == 0 ? (
-              <div className="grades-graph-empty">Select a Class</div>
+              <div className="enrollment-graph-empty">Select a Class</div>
             ) : (
-              <div className="graph-content">
+              <div className="enrollment-content">
                 <Row>
                   <div className="graph-title">{ this.props.title }</div>
                 </Row>
