@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import ClassCardList from '../../components/ClassCards/ClassCardList';
 import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard.jsx';
-import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
+import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar.jsx';
 
 class Enrollment extends Component {
   constructor(props) {
@@ -68,7 +68,7 @@ class Enrollment extends Component {
       <div className="app-container">
         {courses ?
           (
-            <ClassSearchBar
+            <EnrollmentSearchBar
               isEnrollment
               classes={courses}
               addCourse={this.addCourse}

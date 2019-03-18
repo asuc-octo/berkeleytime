@@ -3,14 +3,11 @@ import axios from 'axios';
 
 import ClassCardList from '../../components/ClassCards/ClassCardList.jsx';
 import GradesGraphCard from '../../components/GraphCard/GradesGraphCard.jsx';
-import ClassSearchBar from '../../components/ClassSearchBar/ClassSearchBar.jsx';
-
-import vars from '../../variables/Variables';
+import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar.jsx';
 
 class Grades extends Component {
   constructor(props) {
     super(props)
-
     this.state = {
       context: {},
       selectedCourses: [],
@@ -68,7 +65,7 @@ class Grades extends Component {
       <div className="app-container">
         {courses ?
           (
-            <ClassSearchBar
+            <GradesSearchBar
               classes={courses}
               addCourse={this.addCourse}
             />
