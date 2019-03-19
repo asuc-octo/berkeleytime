@@ -19,7 +19,6 @@ class GradesSearchBar extends Component {
 
     this.state = {
       selectedClass: 0,
-      courseOptions: [],
       selectType: '',
       selectPrimary: '',
       selectSecondary: '',
@@ -40,7 +39,6 @@ class GradesSearchBar extends Component {
 
   componentDidMount() {
     this.setState({
-      courseOptions: this.buildCoursesOptions(this.props.classes),
       selectType: 'instructor',
     })
   }
@@ -91,6 +89,10 @@ class GradesSearchBar extends Component {
   }
 
   buildCoursesOptions(courses) {
+    if(!courses) {
+      return []
+    }
+
     let options = courses.map(course => ({
       value: course.id,
       label: `${course.abbreviation} ${course.course_number}`,
@@ -256,7 +258,8 @@ class GradesSearchBar extends Component {
   }
 
   render() {
-    const { sections, selectType, selectPrimary, selectSecondary, selectedClass, courseOptions } = this.state;
+    const { classes } = this.props;
+    const { sections, selectType, selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections, selectType);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectType, selectPrimary);
 
@@ -267,7 +270,7 @@ class GradesSearchBar extends Component {
               name="selectClass"
               placeholder="Choose a class..."
               value={selectedClass}
-              options={courseOptions}
+              options={this.buildCoursesOptions(classes)}
               onChange={this.handleClassSelect}
           />
         </div>

@@ -9906,7 +9906,7 @@ label.panel-block {
   border: 0px;
   padding: 0px;
   margin-bottom: 20px;
-  width: 93%; }
+  width: 100%; }
   .filter-selection-button .filter-selection {
     display: flex;
     flex-direction: row;

@@ -62,21 +62,13 @@ class Enrollment extends Component {
     const { context, selectedCourses } = this.state;
     let courses = context.courses;
 
-    console.log(selectedCourses);
-
     return (
       <div className="app-container">
-        {courses ?
-          (
-            <EnrollmentSearchBar
-              isEnrollment
-              classes={courses}
-              addCourse={this.addCourse}
-            />
-          ) : (
-            <div className="class-search-bar"></div>
-          )
-        }
+        <EnrollmentSearchBar
+          isEnrollment
+          classes={courses}
+          addCourse={this.addCourse}
+        />
 
         <ClassCardList
           selectedCourses={selectedCourses}
