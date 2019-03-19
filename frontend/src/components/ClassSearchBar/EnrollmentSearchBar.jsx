@@ -170,11 +170,14 @@ class EnrollmentSearchBar extends Component {
     playlist.id = hash(playlist);
 
     this.props.addCourse(playlist)
+    this.reset();
   }
 
   reset() {
     this.setState({
       selectedClass: 0,
+      selectPrimary: '',
+      selectSecondary: '',
     })
   }
 
