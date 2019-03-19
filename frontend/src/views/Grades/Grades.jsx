@@ -63,16 +63,10 @@ class Grades extends Component {
 
     return (
       <div className="app-container">
-        {courses ?
-          (
-            <GradesSearchBar
-              classes={courses}
-              addCourse={this.addCourse}
-            />
-          ) : (
-            <div className="class-search-bar"></div>
-          )
-        }
+        <GradesSearchBar
+          classes={courses}
+          addCourse={this.addCourse}
+        />
 
         <ClassCardList
           selectedCourses={selectedCourses}
