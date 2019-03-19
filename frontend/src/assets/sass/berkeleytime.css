@@ -10087,39 +10087,56 @@ label.panel-block {
       font-weight: normal;
       font-size: 12px; }
 
-.class-card-list {
-  min-height: 130px; }
-  .class-card-list .card.class-card {
-    margin-bottom: 0px; }
-    .class-card-list .card.class-card .content {
+.class-card-list .card.class-card {
+  margin-bottom: 0px; }
+  .class-card-list .card.class-card .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px 15px 15px 15px;
+    background-color: white;
+    margin-left: 10px;
+    border-radius: 0 4px 4px 0;
+    min-height: 100px; }
+    .class-card-list .card.class-card .content .class-card-upper {
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 15px 15px 15px 15px;
-      background-color: white;
-      margin-left: 10px;
-      border-radius: 0 4px 4px 0;
-      min-height: 100px; }
-      .class-card-list .card.class-card .content .class-card-upper {
-        display: flex;
-        justify-content: space-between; }
-        .class-card-list .card.class-card .content .class-card-upper .course-abbreviation {
-          font-weight: bold; }
-        .class-card-list .card.class-card .content .class-card-upper .class-info {
-          font-size: 12px; }
-      .class-card-list .card.class-card .content .class-card-lower {
-        display: flex;
-        justify-content: space-between; }
-        .class-card-list .card.class-card .content .class-card-lower .delete {
-          margin-top: auto; }
+      justify-content: space-between; }
+      .class-card-list .card.class-card .content .class-card-upper .course-abbreviation {
+        font-weight: bold; }
+      .class-card-list .card.class-card .content .class-card-upper .class-info {
+        font-size: 12px; }
+    .class-card-list .card.class-card .content .class-card-lower {
+      display: flex;
+      justify-content: space-between; }
+      .class-card-list .card.class-card .content .class-card-lower .delete {
+        margin-top: auto; }
+
+.graph-empty {
+  height: 100%; }
+  .graph-empty .graph-empty-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%; }
+    .graph-empty .graph-empty-content .graph-empty-image {
+      max-width: 20%; }
+    .graph-empty .graph-empty-content .graph-empty-heading {
+      display: inline-block;
+      font-size: 28px;
+      font-weight: bolder;
+      margin-top: 30px; }
+    .graph-empty .graph-empty-content .graph-empty-subheading {
+      display: inline-block;
+      font-size: 22px;
+      margin-top: 30px;
+      color: #5C5C5C; }
 
 .card.grades-graph-card {
   box-shadow: none; }
-  .card.grades-graph-card .grades-graph .grades-graph-empty {
-    font-size: 18px;
-    min-height: 500px; }
-  .card.grades-graph-card .grades-graph .graph-content {
-    padding: 15px 15px 0px 35px; }
+  .card.grades-graph-card .grades-graph {
+    padding: 15px 15px 0px 35px;
+    height: 500px; }
     .card.grades-graph-card .grades-graph .graph-content .graph {
       padding: 15px 15px 15px 15px; }
     .card.grades-graph-card .grades-graph .graph-content .graph-title {
@@ -10158,11 +10175,9 @@ label.panel-block {
 
 .card.enrollment-graph-card {
   box-shadow: none; }
-  .card.enrollment-graph-card .enrollment-graph .enrollment-graph-empty {
-    font-size: 18px;
-    min-height: 500px; }
-  .card.enrollment-graph-card .enrollment-graph .enrollment-content {
-    padding: 15px 15px 0px 35px; }
+  .card.enrollment-graph-card .enrollment-graph {
+    padding: 15px 15px 0px 35px;
+    height: 500px; }
     .card.enrollment-graph-card .enrollment-graph .enrollment-content .graph {
       padding: 15px 15px 15px 15px; }
     .card.enrollment-graph-card .enrollment-graph .enrollment-content .graph-title {

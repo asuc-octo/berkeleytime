@@ -12,6 +12,7 @@ import {
 import axios from 'axios';
 
 import EnrollmentGraph from '../Graphs/EnrollmentGraph.jsx';
+import GraphEmpty from '../Graphs/GraphEmpty.jsx';
 import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 
 class EnrollmentGraphCard extends Component {
@@ -124,7 +125,7 @@ class EnrollmentGraphCard extends Component {
         <div className="enrollment-graph">
           {
             enrollmentData.length == 0 ? (
-              <div className="enrollment-graph-empty">Select a Class</div>
+              <GraphEmpty pageType='enrollment'/>
             ) : (
               <div className="enrollment-content">
                 <Row>
