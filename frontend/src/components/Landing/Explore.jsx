@@ -5,7 +5,7 @@ import FontAwesome from 'react-fontawesome';
 function Explore({ title, desc, action, link, symbol, img, reverse }) {
   if (!reverse) {
     return (
-      <div className="landing-explore">
+      <div className="landing-explore landing-explore-reverse">
         <div className="level">
           <div className="level-left landing-explore-desc has-text-centered">
             <FontAwesome className={`landing-explore-icon app-icon`} name={symbol} size="5x" />
@@ -21,7 +21,7 @@ function Explore({ title, desc, action, link, symbol, img, reverse }) {
     );
   }
   return (
-    <div className="landing-explore landing-explore-reverse">
+    <div className="landing-explore">
       <div className="level">
         <div className="level-left landing-explore-desc has-text-centered is-hidden-tablet">
           <FontAwesome className={`landing-explore-icon app-icon`} name={symbol} size="5x" />

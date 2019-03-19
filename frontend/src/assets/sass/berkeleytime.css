@@ -9790,7 +9790,8 @@ label.panel-block {
 .navbar {
   position: fixed;
   width: 100%;
-  z-index: 1; }
+  z-index: 1;
+  box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.2); }
 
 .navbar-brand.bt-navbar-brand {
   float: none;
@@ -10396,7 +10397,10 @@ label.panel-block {
 
 .landing .landing-jumbo {
   background-color: white;
-  margin-top: 50px; }
+  min-height: 600px;
+  height: 100vh; }
+  .landing .landing-jumbo .level {
+    height: 100%; }
   .landing .landing-jumbo .landing-jumbo-heading {
     padding: 100px 0;
     display: flex;
@@ -10413,11 +10417,17 @@ label.panel-block {
       margin: 20px 0;
       display: flex;
       flex-direction: row; }
-      .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-explore a {
-        color: white; }
+      .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-explore {
+        background-color: #579EFF;
+        border-color: #579EFF;
+        border-width: 2px; }
+        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-explore a {
+          color: white; }
       .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup {
         margin-left: 20px;
-        border-color: #209cee; }
+        border-color: #579EFF;
+        border-width: 2px;
+        color: #579EFF; }
   .landing .landing-jumbo .landing-jumbo-img {
     width: 500px;
     object-fit: scale-down;
@@ -10437,7 +10447,11 @@ label.panel-block {
 
 .landing .landing-explore {
   margin-bottom: 0 !important;
-  background-color: white; }
+  background-color: white;
+  height: 100vh;
+  min-height: 600px; }
+  .landing .landing-explore .level {
+    height: 100%; }
   .landing .landing-explore .landing-explore-icon {
     width: 100%;
     margin-bottom: 20px; }
@@ -10456,10 +10470,13 @@ label.panel-block {
         max-width: 25%; } }
     .landing .landing-explore .landing-explore-desc h3 {
       font-size: 30px;
-      font-weight: 400;
+      font-weight: bold;
       margin-bottom: 20px; }
     .landing .landing-explore .landing-explore-desc p {
-      margin-bottom: 20px; }
+      margin-bottom: 20px;
+      color: #808080; }
+    .landing .landing-explore .landing-explore-desc a {
+      color: #579EFF; }
   @media screen and (max-width: 768px) {
     .landing .landing-explore .landing-explore-img-wrapper {
       margin-top: 1.5rem; } }
@@ -10475,17 +10492,19 @@ label.panel-block {
 .landing .landing-explore.landing-explore-reverse {
   background: whitesmoke; }
 
-.landing .landing-mission .landing-mission-column {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 300px; }
-  .landing .landing-mission .landing-mission-column h3 {
-    font-size: 30px;
-    font-weight: 400;
-    margin-bottom: 30px; }
-  .landing .landing-mission .landing-mission-column p {
-    margin-bottom: 30px; }
+.landing .landing-mission {
+  background-color: white; }
+  .landing .landing-mission .landing-mission-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 300px; }
+    .landing .landing-mission .landing-mission-column h3 {
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 30px; }
+    .landing .landing-mission .landing-mission-column p {
+      margin-bottom: 30px; }
 
 .landing .landing-artist-credit {
   display: flex;
