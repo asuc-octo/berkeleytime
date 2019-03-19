@@ -117,10 +117,11 @@ class EnrollmentSearchBar extends Component {
     const ret = [];
     ret.push({ value: 'all', label: 'All Instructors' })
 
-    let options;
-    options = sections.filter(section => this.getSectionSemester(section) == selectPrimary)
+    let options = sections.filter(section => this.getSectionSemester(section) == selectPrimary)
       .map(section => {
         section = section.sections[0];
+
+        console.log(section);
 
         let instructor = `${section.instructor} / ${section.section_number}`;
 
@@ -183,8 +184,8 @@ class EnrollmentSearchBar extends Component {
 
   render() {
     const { sections, selectType, selectPrimary, selectSecondary, selectedClass, courseOptions } = this.state;
-    let primaryOptions = this.buildPrimaryOptions(sections, selectType);
-    let secondaryOptions = this.buildSecondaryOptions(sections, selectType, selectPrimary);
+    let primaryOptions = this.buildPrimaryOptions(sections);
+    let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
 
     return (
       <div className="columns">
