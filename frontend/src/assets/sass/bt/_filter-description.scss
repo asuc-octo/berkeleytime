@@ -1,7 +1,8 @@
 .filter-description {
   display: flex;
   flex-direction: column;
-
+  border-radius: 0px;
+  box-shadow: none;
   padding: 30px;
 
   .filter-description-header {
