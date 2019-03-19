@@ -14,6 +14,7 @@ import vars from '../../variables/Variables';
 export default function GradesGraph({
   graphData, gradesData, updateInfoCard
 }) {
+  console.log(gradesData);
   return (
     <div className="graph">
       <BarChart width={800} height={400} data={graphData}>
@@ -25,6 +26,7 @@ export default function GradesGraph({
 
         {gradesData.map((item, i) => (
           <Bar
+            name={`${item.title} / ${item.semester} / ${item.instructor}`}
             dataKey={item.id}
             fill={vars.colors[i % vars.colors.length]}
             onMouseEnter={updateInfoCard}
