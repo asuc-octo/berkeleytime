@@ -12,8 +12,12 @@ function Jumbotron() {
             <h1>BerkeleyTime</h1>
             <p>Course discovery, simplified.</p>
             <div className="landing-jumbo-buttons">
-              <button type="button" className="button is-info is-rounded landing-jumbo-explore"><Link to="/catalog">Explore courses now</Link></button>
-              <button type="button" className="button is-rounded has-text-info landing-jumbo-signup">Sign Up</button>
+              <button type="button" className="button landing-jumbo-explore">
+                <Link to="/catalog">Explore courses now</Link>
+              </button>
+              <button type="button" className="button landing-jumbo-signup">
+                <Link to="/catalog">Sign Up</Link>
+              </button>
             </div>
           </div>
         </div>

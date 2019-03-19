@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Jumbotron from '../../components/Landing/Jumbotron';
-import WhatWeDo from '../../components/Landing/WhatWeDo';
 import Explore from '../../components/Landing/Explore';
 import Mission from '../../components/Landing/Mission';
 import ArtistCredit from '../../components/Landing/ArtistCredit';
@@ -14,7 +13,6 @@ function Landing() {
   return (
     <div className="landing">
       <Jumbotron />
-      <WhatWeDo />
       {Landing.explore.map(item => <Explore {...item} />)}
       <Mission />
     </div>
