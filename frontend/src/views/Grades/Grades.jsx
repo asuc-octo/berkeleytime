@@ -74,16 +74,10 @@ class Grades extends Component {
           )
         }
 
-        {selectedCourses.length > 0 ?
-          (
-            <ClassCardList
-              selectedCourses={selectedCourses}
-              removeCourse={this.removeCourse}
-            />
-          ) : (
-            <div className="class-card-list"></div>
-          )
-        }
+        <ClassCardList
+          selectedCourses={selectedCourses}
+          removeCourse={this.removeCourse}
+        />
 
         <GradesGraphCard
           id="gradesGraph"

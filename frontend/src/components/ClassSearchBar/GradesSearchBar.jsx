@@ -35,6 +35,7 @@ class GradesSearchBar extends Component {
     this.buildSecondaryOptions = this.buildSecondaryOptions.bind(this);
     this.getFilteredSections = this.getFilteredSections.bind(this);
     this.addSelected = this.addSelected.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   componentDidMount() {
@@ -46,9 +47,7 @@ class GradesSearchBar extends Component {
 
   handleClassSelect(updatedClass) {
     if(updatedClass === null) {
-      this.setState({
-        selectedClass: 0,
-      })
+      this.reset();
       return;
     }
 
@@ -245,6 +244,13 @@ class GradesSearchBar extends Component {
     playlist.id = hash(playlist);
 
     this.props.addCourse(playlist)
+    this.reset();
+  }
+
+  reset() {
+    this.setState({
+      selectedClass: 0,
+    })
   }
 
   render() {

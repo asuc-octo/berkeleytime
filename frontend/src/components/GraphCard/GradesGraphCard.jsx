@@ -5,7 +5,9 @@ import axios from 'axios';
 import vars from '../../variables/Variables';
 
 import GradesGraph from '../Graphs/GradesGraph.jsx';
+import GraphEmpty from '../Graphs/GraphEmpty.jsx';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard.jsx';
+
 
 class GradesGraphCard extends Component {
   constructor(props) {
@@ -124,7 +126,7 @@ class GradesGraphCard extends Component {
         <div className="grades-graph">
           {
             gradesData.length == 0 ? (
-              <div className="grades-graph-empty">Select a Class</div>
+              <GraphEmpty pageType='grades'/>
             ) : (
               <div className="graph-content">
                 <Row>
