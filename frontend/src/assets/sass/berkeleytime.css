@@ -10068,7 +10068,9 @@ label.panel-block {
     .filter-description .filter-description-tabs .filter-description-tabs-details > :not(:last-child) {
       margin-bottom: 15px; }
   .filter-description .filter-description-tabs .filter-description-tabs-sections {
-    overflow-x: scroll; }
+    max-height: 500px;
+    overflow-x: scroll;
+    overflow-y: scroll; }
     .filter-description .filter-description-tabs .filter-description-tabs-sections > table {
       min-width: 480px;
       margin: 0;
