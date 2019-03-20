@@ -9790,7 +9790,7 @@ label.panel-block {
 .navbar {
   position: fixed;
   width: 100%;
-  z-index: 1;
+  z-index: 2;
   box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.2); }
 
 .navbar-brand.bt-navbar-brand {
@@ -9808,7 +9808,7 @@ label.panel-block {
   color: #4a4a4a; }
 
 .navbar-item > a:hover {
-  color: #3273dc; }
+  color: #579EFF; }
 
 .filter-sidebar {
   background-color: white; }
@@ -9912,7 +9912,7 @@ label.panel-block {
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
-    padding: 6px 4px 6px 10px;
+    padding: 10px 10px 10px 15px;
     min-height: 130px;
     outline: none; }
     .filter-selection-button .filter-selection:hover, .filter-selection-button .filter-selection:focus {
@@ -9929,7 +9929,7 @@ label.panel-block {
       justify-content: space-between;
       min-width: 70%;
       border-right: 1px solid #EEEEEE;
-      padding-right: 3px; }
+      padding-right: 5px; }
       .filter-selection-button .filter-selection .filter-selection-content .filter-selection-heading {
         margin: 0;
         font-size: 16px;
@@ -10030,43 +10030,52 @@ label.panel-block {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px; }
+    margin-bottom: 20px; }
     .filter-description .filter-description-header h3 {
       font-weight: bold;
-      font-size: 24px;
-      border-bottom: 6px solid #579EFF; }
+      font-size: 24px; }
   .filter-description .filter-description-title {
-    margin-bottom: 20px; }
+    margin-bottom: 10px; }
   .filter-description .filter-description-stats {
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-bottom: 20px; }
-    .filter-description .filter-description-stats img {
-      height: 50px;
-      margin-right: 5px; }
+    padding-bottom: 20px;
+    border-bottom: 1px solid #dbdbdb; }
+    .filter-description .filter-description-stats .filter-description-stats-icon {
+      margin-right: 3px;
+      font-weight: bold; }
     .filter-description .filter-description-stats .filter-description-stats-avg {
       display: flex;
-      flex-direction: column;
       margin-right: 20px; }
       .filter-description .filter-description-stats .filter-description-stats-avg p {
-        font-size: 15px; }
-      .filter-description .filter-description-stats .filter-description-stats-avg a {
-        font-size: 13px; }
+        font-size: 15px;
+        font-weight: bold; }
+        .filter-description .filter-description-stats .filter-description-stats-avg p a {
+          font-size: 13px; }
     .filter-description .filter-description-stats .filter-description-stats-enroll {
-      display: flex;
-      flex-direction: column; }
+      display: flex; }
       .filter-description .filter-description-stats .filter-description-stats-enroll p {
-        font-size: 15px; }
-      .filter-description .filter-description-stats .filter-description-stats-enroll a {
-        font-size: 13px; }
+        font-size: 15px;
+        font-weight: bold; }
+        .filter-description .filter-description-stats .filter-description-stats-enroll p a {
+          font-size: 13px; }
   .filter-description .filter-description-instructors {
     margin-bottom: 20px; }
+  .filter-description .filter-description-tabs .tabs {
+    margin: 1rem 0; }
+  .filter-description .filter-description-tabs .tabs ul {
+    border: 0px; }
+  .filter-description .filter-description-tabs .tabs a {
+    padding: 0.5em 2em 0.5em 0; }
+  .filter-description .filter-description-tabs .tabs .is-active a {
+    color: #4a4a4a;
+    font-weight: bold; }
   .filter-description .filter-description-tabs .filter-description-tabs-details {
     display: flex;
     flex-direction: column; }
     .filter-description .filter-description-tabs .filter-description-tabs-details h2 {
-      font-weight: 500;
+      font-weight: bold;
       margin-bottom: 5px; }
     .filter-description .filter-description-tabs .filter-description-tabs-details > :not(:last-child) {
       margin-bottom: 15px; }

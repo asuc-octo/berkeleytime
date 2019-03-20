@@ -284,10 +284,10 @@ class Catalog extends Component {
                 resetFilters={this.resetFilterHandler}
               />
             </Col>
-            <Col md={4} className="filter-list-column">
+            <Col md={3} className="filter-list-column">
               {results}
             </Col>
-            <Col md={5}>
+            <Col md={6}>
               {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
                 <ClassDescription
                   course={this.state.selectedCourse}

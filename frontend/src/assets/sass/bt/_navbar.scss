@@ -1,7 +1,7 @@
 .navbar {
     position: fixed;
     width: 100%;
-    z-index: 1;
+    z-index: 2;
     box-shadow: 0 2px 5px -2px rgba(0,0,0,.2)
 }
 
@@ -43,10 +43,10 @@
 
 .navbar-item {
     > a {
-        color: #4a4a4a;
+        color: $bt-base;
     }
 
     > a:hover {
-        color: #3273dc;
+        color: $bt-blue;
     }
 }

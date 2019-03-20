@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import FontAwesome from 'react-fontawesome';
 
 import axios from 'axios';
 
 import ClassDetails from './ClassDetails.jsx';
 import ClassSections from './ClassSections.jsx';
 
-import grade_icon from '../../assets/img/images/catalog/grade.svg';
-import enrollment_icon from '../../assets/img/images/catalog/enrollment.svg';
+// import grade_icon from '../../assets/img/images/catalog/grade.svg';
+// import enrollment_icon from '../../assets/img/images/catalog/enrollment.svg';
 
 class ClassDescription extends Component {
   constructor(props) {
@@ -80,8 +82,19 @@ class ClassDescription extends Component {
 
   render() {
     const { tab, courseData } = this.state;
-    const info = this.props
     let { course, sections } = courseData;
+
+    console.log(courseData);
+
+    let gradeTo = {
+      pathname: '/grades',
+      courseID: 111,
+    };
+
+    let enrollmentTo = {
+      pathname: '/enrollment',
+      courseID: 112,
+    }
     return (
       <div>
       {course &&
@@ -92,15 +105,18 @@ class ClassDescription extends Component {
           </div>
           <p className="filter-description-title">{course.title}</p>
           <div className="filter-description-stats">
-            <img src={grade_icon}></img>
+            <FontAwesome className={`filter-description-stats-icon`} name={'bar-chart'}/>
             <div className="filter-description-stats-avg">
-              <p>Course Average: {course.letter_average || 'N/A'}</p>
-              <a>See grade distributions</a>
+              <p>Course Average: {course.letter_average || 'N/A'}
+                &nbsp;(<Link to={gradeTo}>See grade distributions</Link>)
+              </p>
+
             </div>
-            <img src={enrollment_icon}></img>
+            <FontAwesome className={`filter-description-stats-icon`} name={'user-o'}/>
             <div className="filter-description-stats-enroll">
-              <p>Enrollment: {course.enrolled}/{course.enrolled_max}</p>
-              <a>See enrollment history</a>
+              <p>Enrollment: {course.enrolled}/{course.enrolled_max}
+                &nbsp;(<Link to={enrollmentTo}>See enrollment history</Link>)
+              </p>
             </div>
           </div>
           {/* <p className="filter-description-instructors">Instructor(s): {info.instructors}</p> */}
@@ -127,42 +143,6 @@ class ClassDescription extends Component {
       </div>
     );
   }
-}
-
-ClassDescription.defaultProps = {
-  courseAbbreviation: 'CS 61B',
-  courseTitle: 'The Structure and Interpretation of Computer Programs',
-  instructors: 'John Denero, Paul Hilfinger',
-  percentageEnrolled: 60,
-  enrolled: 90,
-  capacity: 150,
-  units: 4,
-  averageGrade: 'B',
-  details: 'yadayadayada',
-  prerequisites: 'yadayadayada',
-  sections: [
-    {
-      type: 'Lecture',
-      ccn: '001',
-      time: 'MWF 2pm-2:59pm',
-      location: 'Wheeler 150',
-      enrolled: 10,
-      capacity: 20,
-      waitlist: 9999,
-      waitlistCapacity: 9999,
-    },
-    {
-      type: 'Lab',
-      ccn: '011',
-      time: 'M 4pm-4:59pm',
-      location: 'Soda 420',
-      enrolled: 10,
-      capacity: 20,
-      waitlist: 1,
-      waitlistCapacity: 2,
-    }
-  ],
-  favorites: 78,
 }
 
 export default ClassDescription;
