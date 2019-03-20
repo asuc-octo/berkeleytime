@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import FontAwesome from 'react-fontawesome';
 
 class FilterSelection extends Component {
   constructor(props) {
@@ -93,11 +94,11 @@ class FilterSelection extends Component {
               <p className="filter-selection-description">{courseTitle}</p>
               <div className="filter-selection-enrollment-data">
                 <div className="dataBlock">
-                  <i className={`fa fa-circle ${this.getPercentageEnrolledColor(percentageEnrolled)}`} />
+                  <FontAwesome className={this.getPercentageEnrolledColor(percentageEnrolled)} name={'circle'} size="xs" />
                   <p>{`${this.getFormattedEnrollment(percentageEnrolled)}% enrolled`}</p>
                 </div>
                 <div className="dataBlock">
-                  <i className={`fa fa-circle ${this.getWaitlistedColor(waitlisted)}`} />
+                  <FontAwesome className={this.getWaitlistedColor(waitlisted)} name={'circle'} size="xs" />
                   <p>{`${waitlisted} waitlisted`}</p>
                 </div>
               </div>
