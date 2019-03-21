@@ -86,7 +86,7 @@ class EnrollmentGraphCard extends Component {
         }
 
         if(day in enrollmentTimes) {
-          ret[enrollment.id] = enrollmentTimes[day].enrolled_percent * 100;
+          ret[enrollment.id] = (enrollmentTimes[day].enrolled_percent * 100).toFixed(1);
         }
       }
 
@@ -119,6 +119,7 @@ class EnrollmentGraphCard extends Component {
 
   render () {
     let { graphData, enrollmentData, hoveredClass } = this.state;
+    let telebears = enrollmentData.length ? enrollmentData[0]['telebears'] : {};
 
     return (
       <div className="card enrollment-graph-card">
@@ -149,6 +150,7 @@ class EnrollmentGraphCard extends Component {
                         instructor={hoveredClass.instructor == 'all' ? 'All Instructors' : hoveredClass.instructor}
                         selectedPoint={hoveredClass.data.filter(pt => pt.day == hoveredClass.hoverDay)[0]}
                         todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
+                        telebears={telebears}
                       />
                     }
                   </Col>

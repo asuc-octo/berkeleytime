@@ -1,13 +1,27 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
+function formatPercentage(num) {
+  return (num * 100).toFixed(1);
+}
+
 export default function EnrollmentInfoCard({
   title, subtitle, semester, instructor,
-  selectedPoint, todayPoint,
+  selectedPoint, todayPoint, telebears,
 }) {
   const today = new Date();
   let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   const todayString = today.toLocaleDateString("en-US", dateOptions);
+
+  let period = "";
+  if(selectedPoint.day < telebears['phase2_start_day']) {
+    period = "Phase I";
+  } else if (selectedPoint.day < telebears['adj_start_day']) {
+    period = "Phase II";
+  } else {
+    period = "Adjustment Period"
+  }
+
   return (
     <div className="card enrollment-card-info">
       <div className="content card-info">
@@ -27,13 +41,13 @@ export default function EnrollmentInfoCard({
 
         <Row className="class-stats">
           <div className="class-stat-type">
-            {`Adjustment Period: Day ${selectedPoint.day}`}
+            {`${period}: Day ${selectedPoint.day}`}
           </div>
           <div className="class-adjustment-percent">
-            {`Enrollment Percent: ${selectedPoint.enrolled_percent}%`}
+            {`Enrollment Percent: ${formatPercentage(selectedPoint.enrolled_percent)}%`}
           </div>
           <div className="class-adjustment-percent">
-            {`Waitlist Percent: ${selectedPoint.waitlisted_percent}%`}
+            {`Waitlist Percent: ${formatPercentage(selectedPoint.waitlisted_percent)}%`}
           </div>
           <Row>
             <Col xs={8}>
@@ -55,7 +69,7 @@ export default function EnrollmentInfoCard({
 
         <Row>
           <div className="class-stat-type">{`Today: ${todayString}`}</div>
-          <div className="class-adjustment-percent">{`${todayPoint.enrolled_percent}%`}</div>
+          <div className="class-adjustment-percent">{`${formatPercentage(todayPoint.enrolled_percent)}%`}</div>
           <Row className="class-adjustment">
             <Col xs={8}>
               <div className="class-stats-name">Currently Enrolled</div>
