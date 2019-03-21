@@ -10049,14 +10049,14 @@ label.panel-block {
       display: flex;
       margin-right: 20px; }
       .filter-description .filter-description-stats .filter-description-stats-avg p {
-        font-size: 15px;
+        font-size: 12px;
         font-weight: bold; }
         .filter-description .filter-description-stats .filter-description-stats-avg p a {
           font-size: 13px; }
     .filter-description .filter-description-stats .filter-description-stats-enroll {
       display: flex; }
       .filter-description .filter-description-stats .filter-description-stats-enroll p {
-        font-size: 15px;
+        font-size: 12px;
         font-weight: bold; }
         .filter-description .filter-description-stats .filter-description-stats-enroll p a {
           font-size: 13px; }
