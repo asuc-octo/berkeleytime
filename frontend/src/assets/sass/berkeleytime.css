@@ -9800,6 +9800,8 @@ label.panel-block {
   .navbar-brand.bt-navbar-brand .bt-navbar-bt {
     font-size: 20px;
     font-weight: 500; }
+    .navbar-brand.bt-navbar-brand .bt-navbar-bt:focus {
+      color: #579EFF; }
 
 .navbar-end {
   margin-right: 27px; }
@@ -10595,10 +10597,12 @@ label.panel-block {
       margin-top: 15px; }
 
 .error {
-  margin-top: 50px;
-  margin-left: 50px; }
+  display: flex;
+  flex-direction: column;
+  justify-content: center; }
   .error .error-heading {
     padding: 100px 0;
+    padding-right: 30px;
     display: flex;
     flex-direction: column;
     align-items: baseline; }
@@ -10612,23 +10616,21 @@ label.panel-block {
       font-weight: 500;
       color: #767676; }
     .error .error-heading p {
-      margin: 8px 3px;
       font-size: 18px;
-      color: #5C5C5C; }
+      color: #5C5C5C;
+      line-height: 35px; }
     .error .error-heading .error-buttons {
-      margin: 20px 0;
+      margin: 50px 0;
       display: flex;
       flex-direction: row; }
       .error .error-heading .error-buttons .error-classes a {
         color: white; }
       .error .error-heading .error-buttons .error-bugs {
         margin-left: 20px;
-        border-color: #5C5C5C;
-        color: #5C5C5C; }
+        border-color: darkgray;
+        color: #828282; }
         .error .error-heading .error-buttons .error-bugs a {
           color: inherit; }
-  .error .error-jumbo-img {
-    width: 500px;
-    object-fit: scale-down;
-    margin-left: 20px;
-    margin-right: 20px; }
+  .error .error-img {
+    height: 350px;
+    object-fit: scale-down; }
