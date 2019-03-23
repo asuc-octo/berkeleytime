@@ -83,6 +83,7 @@
                             color: black;
                             font-weight: 200;
                             text-transform: capitalize;
+                            padding-top: 2.2px;
                         }
 
                         .checkbox input[type="checkbox"]:checked + label::after{
