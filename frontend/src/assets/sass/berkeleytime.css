@@ -10466,8 +10466,35 @@ label.panel-block {
 .landing .landing-explore.landing-explore-reverse {
   background: whitesmoke; }
 
+.landing .landing-sponsors {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: white;
+  padding-top: 60px;
+  padding-bottom: 100px; }
+  .landing .landing-sponsors .landing-sponsors-desc {
+    align-self: center;
+    max-width: 450px; }
+    .landing .landing-sponsors .landing-sponsors-desc h3 {
+      font-size: 30px;
+      font-weight: bold;
+      margin-bottom: 20px; }
+    .landing .landing-sponsors .landing-sponsors-desc p {
+      margin-bottom: 35px;
+      color: #808080; }
+  .landing .landing-sponsors .landing-sponsors-img-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center; }
+    .landing .landing-sponsors .landing-sponsors-img-wrapper .landing-sponsors-img {
+      padding-right: 20px;
+      max-width: 95%;
+      max-height: 100px;
+      object-fit: scale-down; }
+
 .landing .landing-mission {
-  background-color: white; }
+  background-color: whitesmoke; }
   .landing .landing-mission .landing-mission-column {
     display: flex;
     flex-direction: column;
@@ -10565,3 +10592,42 @@ label.panel-block {
           text-transform: none; }
     .dashboard-card .dashboard-container .dashboard-schedule-link {
       margin-top: 15px; }
+
+.error {
+  margin-top: 50px;
+  margin-left: 50px; }
+  .error .error-heading {
+    padding: 100px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: baseline; }
+    .error .error-heading h1 {
+      margin: 15px 0;
+      font-size: 64px;
+      font-weight: 500; }
+    .error .error-heading h2 {
+      margin: 15px 0;
+      font-size: 32px;
+      font-weight: 500;
+      color: #767676; }
+    .error .error-heading p {
+      margin: 8px 3px;
+      font-size: 18px;
+      color: #5C5C5C; }
+    .error .error-heading .error-buttons {
+      margin: 20px 0;
+      display: flex;
+      flex-direction: row; }
+      .error .error-heading .error-buttons .error-classes a {
+        color: white; }
+      .error .error-heading .error-buttons .error-bugs {
+        margin-left: 20px;
+        border-color: #5C5C5C;
+        color: #5C5C5C; }
+        .error .error-heading .error-buttons .error-bugs a {
+          color: inherit; }
+  .error .error-jumbo-img {
+    width: 500px;
+    object-fit: scale-down;
+    margin-left: 20px;
+    margin-right: 20px; }

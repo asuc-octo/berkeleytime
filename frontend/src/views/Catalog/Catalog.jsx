@@ -15,7 +15,7 @@ class Catalog extends Component {
     this.state = {
       query: '',
       sortBy: 'grade_average',
-      unitsRange: [0, 5],
+      unitsRange: [1, 5],
       activeFilters: new Set(),
       defaultFilters: new Set(),
       context: {},
@@ -188,7 +188,7 @@ class Catalog extends Component {
     this.setState({
       query: '',
       sortBy: 'grade_average',
-      unitsRange: [0, 5],
+      unitsRange: [1, 5],
       activeFilters: newActiveFilters,
     })
   }

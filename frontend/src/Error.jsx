@@ -11,8 +11,8 @@ function Error() {
                 <h2>Uh oh.</h2>
                 <p>Looks like the page you were looking for couldn't be found. Here are a couple things you can do.</p>
                 <div className="error-buttons">
-                <button type="button" className="button is-info error-classes"><Link to="/catalog">Back to Classes</Link></button>
-                <button type="button" className="button error-bugs"><a href="https://docs.google.com/forms/d/e/1FAIpQLSdP9GySJRnQmmYFxdoxmcw1Ar_uw-cPXqRdXpJg-Lg2SPksaw/viewform">Report a Bug</a></button>
+                <button type="button" className="button is-info is-rounded error-classes"><Link to="/catalog">Back to Classes</Link></button>
+                <button type="button" className="button is-rounded error-bugs"><a href="https://docs.google.com/forms/d/e/1FAIpQLSdP9GySJRnQmmYFxdoxmcw1Ar_uw-cPXqRdXpJg-Lg2SPksaw/viewform">Report a Bug</a></button>
                 </div>
               </div>
           </div>
