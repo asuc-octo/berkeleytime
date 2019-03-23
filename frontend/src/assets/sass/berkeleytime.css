@@ -9822,7 +9822,7 @@ label.panel-block {
   .filter-sidebar .content {
     padding: 30px;
     padding-top: 0px;
-    padding-bottom: 20px;
+    margin-bottom: 20px;
     font-family: "Roboto", sans-serif; }
     .filter-sidebar .content .side-filter {
       margin-bottom: 0px; }
