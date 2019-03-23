@@ -9876,7 +9876,8 @@ label.panel-block {
             font-size: 12px;
             color: black;
             font-weight: 200;
-            text-transform: capitalize; }
+            text-transform: capitalize;
+            padding-top: 2.2px; }
           .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .checkboxGroup .checkbox input[type="checkbox"]:checked + label::after {
             color: #579EFF; }
         .filter-sidebar .content .side-filter .form-group .filter-sidebar-range-helpBlock {
@@ -9912,7 +9913,7 @@ label.panel-block {
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
-    padding: 10px 10px 10px 15px;
+    padding: 15px 4px 6px 15px;
     min-height: 130px;
     outline: none; }
     .filter-selection-button .filter-selection:hover, .filter-selection-button .filter-selection:focus {
