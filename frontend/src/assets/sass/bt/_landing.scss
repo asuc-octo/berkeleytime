@@ -157,8 +157,48 @@
         background: rgba(245, 245, 245, 1);
     }
 
-    .landing-mission {
+    .landing-sponsors {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
         background-color: white;
+        padding-top: 60px;
+        padding-bottom: 100px;
+
+        .landing-sponsors-desc {
+            align-self: center;
+            max-width: 450px;
+
+            h3 {
+                font-size: 30px;
+                font-weight: bold;
+
+                margin-bottom: 20px;
+            }
+
+            p {
+                margin-bottom: 35px;
+                color: $bt-light-grey;
+            }
+        }
+
+        .landing-sponsors-img-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+            .landing-sponsors-img {
+                padding-right: 20px;
+                max-width: 95%;
+                max-height: 100px;
+                object-fit: scale-down;
+            }
+        }
+    }
+
+    .landing-mission {
+        background-color: rgba(245, 245, 245, 1);
 
         .landing-mission-column {
             display: flex;
