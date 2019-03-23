@@ -1,0 +1,58 @@
+.error {
+    margin-top: 50px;
+    margin-left: 50px;
+
+    .error-heading {
+        padding: 100px 0;
+
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+
+        h1 {
+            margin: 15px 0;
+            font-size: 64px;
+            font-weight: 500;
+        }
+
+        h2 {
+            margin: 15px 0;
+            font-size: 32px;
+            font-weight: 500;
+            color: lighten($bt-grey, 10%);
+        }
+
+        p {
+            margin: 8px 3px;
+            font-size: 18px;
+            color: $bt-grey;
+        }
+
+        .error-buttons {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: row;
+
+            .error-classes a {
+                color: white;
+            }
+
+            .error-bugs {
+                margin-left: 20px;
+                border-color: $bt-grey;
+                color: $bt-grey;
+
+                a {
+                    color: inherit;
+                }
+            }
+        }
+    }
+
+    .error-jumbo-img {
+        width: 500px;
+        object-fit: scale-down;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}

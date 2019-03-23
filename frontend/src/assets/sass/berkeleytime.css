@@ -10225,56 +10225,47 @@ label.panel-block {
 .contributors {
   display: flex;
   flex-direction: row;
-  justify-content: center; }
+  justify-content: center;
+  align-items: center; }
   .contributors .contributors-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 75%; }
+    width: 700px;
+    min-width: 700px;
+    margin-top: 30px; }
     .contributors .contributors-container .contributors-description {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: auto;
-      width: 60%;
-      max-width: 500px;
-      margin-bottom: 10px; }
+      align-self: flex-start; }
       .contributors .contributors-container .contributors-description > h4 {
+        font-size: 25px;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-top: 0px;
-        margin-bottom: 20px; }
+        margin-bottom: 10px; }
       .contributors .contributors-container .contributors-description > p {
         font-size: 14px;
-        text-align: center; }
+        text-align: left;
+        color: #8f8f8f;
+        line-height: 2;
+        margin-bottom: 20px; }
     .contributors .contributors-container .contributor-profiles {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: space-between;
-      margin: auto;
-      max-width: 2000px; }
+      margin-bottom: 20px; }
       .contributors .contributors-container .contributor-profiles .contributor-card {
-        height: 250px;
-        width: 250px;
-        box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-        padding: 20px 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin: 20px; }
+        height: 210px;
+        width: 21%;
+        margin-right: 0px;
+        margin-bottom: 40px; }
         .contributors .contributors-container .contributor-profiles .contributor-card .contributor-pic-container {
           display: flex;
           flex-direction: row;
-          justify-content: center;
-          margin-bottom: 20px; }
+          justify-content: center; }
           .contributors .contributors-container .contributor-profiles .contributor-card .contributor-pic-container .contributor-pic {
-            height: 125px;
-            width: 125px;
+            height: 150px;
+            width: 150px;
             object-fit: cover;
-            border-radius: 99em; }
+            margin-bottom: 10px; }
         .contributors .contributors-container .contributor-profiles .contributor-card .contributor-desc {
           display: flex;
           flex-direction: column;
@@ -10282,42 +10273,16 @@ label.panel-block {
           align-items: center; }
           .contributors .contributors-container .contributor-profiles .contributor-card .contributor-desc .contributor-name {
             font-size: 18px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
+            margin-bottom: 10px;
             font-weight: 500;
-            letter-spacing: 1px;
             color: #616161; }
-          .contributors .contributors-container .contributor-profiles .contributor-card .contributor-desc .contributor-role, .contributors .contributors-container .contributor-profiles .contributor-card .contributor-desc .contributor-major {
-            font-size: 14px;
-            margin: 0; }
+            .contributors .contributors-container .contributor-profiles .contributor-card .contributor-desc .contributor-name:hover {
+              color: #579EFF;
+              text-decoration: underline; }
           .contributors .contributors-container .contributor-profiles .contributor-card .contributor-desc .contributor-role {
-            color: #616161; }
-          .contributors .contributors-container .contributor-profiles .contributor-card .contributor-desc .contributor-major {
-            color: #BDBDBD; }
-          .contributors .contributors-container .contributor-profiles .contributor-card .contributor-desc .contributor-link {
-            font-size: 30px;
-            padding-top: 10px; }
-    .contributors .contributors-container .contributor-join-card {
-      width: 400px;
-      height: 150px;
-      box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
-      border-radius: 5px;
-      padding: 20px 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      margin-top: 30px;
-      margin-bottom: 70px; }
-      .contributors .contributors-container .contributor-join-card h4 {
-        text-align: center;
-        margin: 0px;
-        text-transform: uppercase;
-        font-weight: bold;
-        color: #579EFF;
-        letter-spacing: 1px; }
-      .contributors .contributors-container .contributor-join-card p {
-        padding: 0 30px;
-        text-align: center; }
+            color: #b5b5b5;
+            font-weight: 500;
+            font-size: 14px; }
 
 .past-contributors {
   background-color: white;
