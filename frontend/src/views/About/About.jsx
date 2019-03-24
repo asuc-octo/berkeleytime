@@ -4,13 +4,11 @@ import PastContributors from '../../components/Contributors/PastContributors.jsx
 
 function About() {
   return(
-      <div className="app-container">
-          <div className="columns is-centered">
-              <CurrentContributors></CurrentContributors>
-          </div>
-          <div className="columns is-centered">
-              <PastContributors></PastContributors>
-          </div>
+      <div>
+        <div className="app-container">
+          <CurrentContributors></CurrentContributors>
+         </div>
+          <PastContributors></PastContributors>
       </div>
   );
 }

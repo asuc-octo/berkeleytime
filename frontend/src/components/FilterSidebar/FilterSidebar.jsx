@@ -215,7 +215,7 @@ export class FilterSidebar extends Component {
               </HelpBlock>
               <Range
                 min={0}
-                max={5}
+                max={6}
                 value={this.props.unitsRange}
                 allowCross={false}
                 onChange={this.handleRange}
