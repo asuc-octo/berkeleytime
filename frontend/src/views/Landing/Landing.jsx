@@ -4,6 +4,7 @@ import Jumbotron from '../../components/Landing/Jumbotron';
 import Explore from '../../components/Landing/Explore';
 import Mission from '../../components/Landing/Mission';
 import ArtistCredit from '../../components/Landing/ArtistCredit';
+import Sponsors from '../../components/Landing/Sponsors';
 
 import explore_snap from '../../assets/img/images/landing/explore_snap.png';
 import grades_snap from '../../assets/img/images/landing/grades_snap.png';
@@ -14,6 +15,7 @@ function Landing() {
     <div className="landing">
       <Jumbotron />
       {Landing.explore.map(item => <Explore {...item} />)}
+      <Sponsors />
       <Mission />
     </div>
   );

@@ -34,6 +34,10 @@
     .bt-navbar-bt {
         font-size: 20px;
         font-weight: 500;
+
+        &:focus {
+            color: $bt-blue;
+        }
     }
 }
 
