@@ -1,0 +1,57 @@
+.error {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .error-heading {
+        padding: 100px 0;
+        padding-right: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: baseline;
+
+        h1 {
+            margin: 15px 0;
+            font-size: 64px;
+            font-weight: 500;
+        }
+
+        h2 {
+            margin: 15px 0;
+            font-size: 32px;
+            font-weight: 500;
+            color: lighten($bt-grey, 10%);
+        }
+
+        p {
+            font-size: 18px;
+            color: $bt-grey;
+            line-height: 35px;
+        }
+
+        .error-buttons {
+            margin: 50px 0;
+            display: flex;
+            flex-direction: row;
+
+            .error-classes a {
+                color: white;
+            }
+
+            .error-bugs {
+                margin-left: 20px;
+                border-color: lighten($bt-grey, 30%);
+                color: lighten($bt-grey, 15%);
+
+                a {
+                    color: inherit;
+                }
+            }
+        }
+    }
+
+    .error-img {
+        height: 350px;
+        object-fit: scale-down;
+    }
+}
