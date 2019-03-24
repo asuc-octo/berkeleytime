@@ -280,6 +280,7 @@ class GradesSearchBar extends Component {
               placeholder="Sort by"
               value={selectType}
               options={sortOptions}
+              clearable={false}
               onChange={this.handleSortSelect}
           />
         </div>
