@@ -214,8 +214,8 @@ export class FilterSidebar extends Component {
                 {this.props.unitsRange[0]} {this.props.unitsRange[0] === 1 ? "Unit" : "Units"} - {this.props.unitsRange[1]} {this.props.unitsRange[1] === 1 ? "Unit" : "Units"}
               </HelpBlock>
               <Range
-                min={1}
-                max={5}
+                min={0}
+                max={6}
                 value={this.props.unitsRange}
                 allowCross={false}
                 onChange={this.handleRange}
