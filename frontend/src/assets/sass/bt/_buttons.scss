@@ -79,6 +79,10 @@
     &.btn-icon{
         padding: $padding-base-vertical;
     }
+    
+    > * {
+        pointer-events: none;
+    }
 }
 .btn-lg{
    @include btn-size($padding-large-vertical, $padding-large-horizontal, $font-size-large, $border-radius-large);

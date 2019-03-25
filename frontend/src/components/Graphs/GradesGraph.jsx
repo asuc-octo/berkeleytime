@@ -21,9 +21,10 @@ export default function GradesGraph({
         <XAxis dataKey="name"/>>
         <YAxis type="number" unit="%"/>
         <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip formatter={(value) => `${value}%`}/>
+        <Tooltip 
+            formatter={(value, name, props) => [Math.round(value * 10) / 10 + "%", name]}
+        />
         <Legend align="left" verticalAlign="bottom" height={36}/>
-
         {gradesData.map((item, i) => (
           <Bar
             name={`${item.title} / ${item.semester} / ${item.instructor}`}

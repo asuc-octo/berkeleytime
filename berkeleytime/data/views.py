@@ -318,4 +318,12 @@ def catalog_context_json(request, abbreviation='', course_number=''):
         if type(context[playlist]) == playlist_type:
             context[playlist] = map(lambda x: x.as_json(), context[playlist])
 
+    context['department'].insert(0, {
+        'category': 'department',
+        'name': '-',
+        'id': -1,
+    })
+
+    context['semester'] = sorted(context['semester'], key=lambda x: x['id'], reverse=True)
+
     return render_to_json(context)

@@ -93,7 +93,7 @@ export class FilterSidebar extends Component {
 
     this.state = {
       classSearch: '',
-      departmentID: '',
+      department: '',
       toggleStatus: new Set(),
       collapseLogistics: false,
     }
@@ -145,12 +145,18 @@ export class FilterSidebar extends Component {
   }
 
   handleDepartmentSelect(updated) {
-    console.log(updated);
     if(!updated) {
       this.props.removeFilter(this.state.department);
       this.setState({
         department: ''
       })
+    } else if (updated.value === -1) {
+      if (this.state.department !== '') {
+        this.props.toggleFilter(this.state.department);
+        this.setState({
+          department: ''
+        })
+      }
     } else {
       let updatedFilterID = updated.value;
       this.props.selectFilter(this.state.department, updatedFilterID);

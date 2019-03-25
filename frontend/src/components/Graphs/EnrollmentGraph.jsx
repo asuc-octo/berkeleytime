@@ -27,9 +27,11 @@ export default function EnrollmentGraph({
         <XAxis dataKey="name" interval={19} />>
         <YAxis type="number" unit="%"/>
         <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip formatter={(value) => `${value}%`}/>
+        <Tooltip 
+            formatter={(value) => `${value}%`}
+            labelFormatter={label => "Day " + label}
+        />
         <Legend align="left" verticalAlign="bottom" height={36}/>
-
         {enrollmentData.map((item, i) => (
           <Line
             name={`${item.title} / ${item.section_name}`}
@@ -56,11 +58,6 @@ export default function EnrollmentGraph({
         >
           <Label angle={-90} position='insideLeft' style={labelStyle} offset={10}>Adjustment Start</Label>
         </ReferenceLine>
-        <ReferenceLine
-          y={100}
-          stroke="#FFB74D"
-          strokeWidth={3}
-        />
       </LineChart>
     </div>
   )
