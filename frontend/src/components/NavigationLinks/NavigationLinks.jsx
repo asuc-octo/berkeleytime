@@ -19,9 +19,6 @@ function NavigationLinks() {
       <div className="navbar-item">
         <Link to="/about">About</Link>
       </div>
-      <div className="navbar-item">
-        <Link to="/login">Login</Link>
-      </div>
     </div>
   );
 }

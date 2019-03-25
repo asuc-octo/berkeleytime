@@ -16,7 +16,7 @@ function Jumbotron() {
                 <Link to="/catalog">Explore courses now</Link>
               </button>
               <button type="button" className="button landing-jumbo-signup">
-                <Link to="/catalog">Sign Up</Link>
+                <Link to="/about">About Us</Link>
               </button>
             </div>
           </div>

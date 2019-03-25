@@ -591,6 +591,8 @@ body > .navbar-collapse[data-color="purple"]:after {
   padding: 8px 16px; }
   .btn-simple.btn-icon {
     padding: 8px; }
+  .btn-simple > * {
+    pointer-events: none; }
 
 .btn-lg {
   font-size: 18px;
@@ -10351,6 +10353,7 @@ label.panel-block {
       flex-direction: row;
       justify-content: center;
       flex-wrap: wrap;
+      font-size: 18px;
       width: 100%; }
       .past-contributors .past-contributors-content .past-contributors-others a {
         width: 20%;
@@ -10359,6 +10362,13 @@ label.panel-block {
         text-align: center;
         font-size: 18px;
         color: #5C5C5C; }
+  .past-contributors .graphic-contributors {
+    font-size: 18px;
+    margin-top: 30px;
+    color: #5C5C5C;
+    line-height: 36px; }
+    .past-contributors .graphic-contributors a {
+      color: #5C5C5C; }
 
 @media screen and (max-width: 1087px) {
   .landing > div {
