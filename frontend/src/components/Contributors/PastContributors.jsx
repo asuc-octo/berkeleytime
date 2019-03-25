@@ -30,7 +30,7 @@ function PastContributors({ founders, pastContributors }) {
             <div className="graphic-contributors has-text-centered container is-fluid">
                 Landing page artwork by <a href="http://victorialynwu.design">Victoria Wu</a>
                 <br></br>
-                Detective bear artwork by <a href="http://victorialynwu.design">Someone Else</a>
+                Detective bear artwork by <a href="http://behance.net/lauralim125">Laura Lim</a>
             </div>
         </div>
     </section>
