@@ -18,14 +18,13 @@ export default function GradesGraph({
   return (
     <div className="graph">
       <BarChart width={800} height={400} data={graphData}>
-        <XAxis dataKey="name" />
-        <YAxis unit="%"/>
+        <XAxis dataKey="name"/>>
+        <YAxis type="number" unit="%"/>
         <CartesianGrid strokeDasharray="3 3" />
         <Tooltip 
             formatter={(value, name, props) => [Math.round(value * 10) / 10 + "%", name]}
         />
-        <Legend />
-
+        <Legend align="left" verticalAlign="bottom" height={36}/>
         {gradesData.map((item, i) => (
           <Bar
             name={`${item.title} / ${item.semester} / ${item.instructor}`}

@@ -38,6 +38,11 @@ class GradesSearchBar extends Component {
   }
 
   componentDidMount() {
+    let { fromCatalog } = this.props;
+    if(fromCatalog) {
+      this.handleClassSelect({value: fromCatalog.id})
+    }
+
     this.setState({
       selectType: 'instructor',
     })

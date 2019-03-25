@@ -28,11 +28,10 @@ export default function EnrollmentGraph({
         <YAxis type="number" unit="%"/>
         <CartesianGrid strokeDasharray="3 3" />
         <Tooltip 
-            formatter={(value, name, props) => [value + "%", name]}
+            formatter={(value) => `${value}%`}
             labelFormatter={label => "Day " + label}
         />
-        <Legend align="left" verticalAlign="top" height={36}/>
-
+        <Legend align="left" verticalAlign="bottom" height={36}/>
         {enrollmentData.map((item, i) => (
           <Line
             name={`${item.title} / ${item.section_name}`}
