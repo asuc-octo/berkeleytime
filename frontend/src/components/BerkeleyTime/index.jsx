@@ -10,11 +10,21 @@ import Footer from '../Footer/Footer';
 
 import appRoutes from '../../routes/app.js';
 
+import ReactGA from 'react-ga';
+ReactGA.initialize('UA-35316609-1');
+
+const logPageView = () => {
+    ReactGA.set({ page: window.location.pathname});
+    ReactGA.pageview(window.location.pathname);
+    return null;
+};
+
 function BerkeleyTime({ props }) {
   return (
     <div className="bt">
       <div id="main-panel" className="main-panel">
         <Navigation {...props} />
+          <Route path="/" component={logPageView} />
           <Switch>
             {
               appRoutes.map((prop, key) => {
