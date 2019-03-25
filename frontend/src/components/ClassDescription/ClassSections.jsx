@@ -17,9 +17,10 @@ function ClassSections({ sections }) {
       <table className="table">
         <thead>
           <tr>
-            <th className="type"><abbr title="Lecture/Discussion/Lab">Type</abbr></th>
-            <th className="ccn"><abbr title="Course Capture Number">CCN</abbr></th>
-            <th>Time</th>
+            <th><abbr title="Lecture/Discussion/Lab">Type</abbr></th>
+            <th class="ccn"><abbr title="Course Capture Number">CCN</abbr></th>
+            <th class="type">Instructor</th>
+            <th class="type">Time</th>
             <th>Location</th>
             <th>Enrolled</th>
             <th>Waitlist</th>
@@ -35,6 +36,7 @@ function ClassSections({ sections }) {
               <tr>
                 <td>{section.kind}</td>
                 <td>{section.ccn}</td>
+                <td>{section.instructor}</td>
                 {!isNaN(startDate) && !isNaN(endDate) ? (
                  <td>{section.word_days} {formatDate(startDate)} - {formatDate(endDate)}</td>
                 ) : (
