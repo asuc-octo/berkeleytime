@@ -27,8 +27,8 @@ export default function EnrollmentGraph({
         <XAxis dataKey="name" interval={19} />>
         <YAxis type="number" unit="%"/>
         <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip />
-        <Legend align="left" verticalAlign="top" height={36}/>
+        <Tooltip formatter={(value) => `${value}%`}/>
+        <Legend align="left" verticalAlign="bottom" height={36}/>
 
         {enrollmentData.map((item, i) => (
           <Line
