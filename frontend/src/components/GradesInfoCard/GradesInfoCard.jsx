@@ -1,6 +1,10 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
+function formatPercentage(num) {
+  return (num * 100).toFixed(0);
+}
+
 export default function GradesInfoCard({
   course, title, semester, instructor, courseLetter,
   courseGPA, sectionLetter, sectionGPA, selectedGrade,
@@ -74,7 +78,8 @@ export default function GradesInfoCard({
           <Col xs={8} className="class-avgs">
             <div className="class-stats-name">
               {selectedGrade !== undefined && selectedGrade !== null &&
-                `${selectedGrade.percentile_low*100}th - ${selectedGrade.percentile_high*100}th Percentile`}
+                `${formatPercentage(selectedGrade.percentile_low)}th 
+                - ${formatPercentage(selectedGrade.percentile_high)}th Percentile`}
             </div>
           </Col>
           <Col xs={4} className="class-avgs">
@@ -94,7 +99,7 @@ export default function GradesInfoCard({
           <Col xs={4} className="class-avgs">
             <div className="class-percent">
               {selectedGrade !== undefined && selectedGrade !== null &&
-                `${selectedGrade.percent*100} %`}
+                `${formatPercentage(selectedGrade.percent)}%`}
             </div>
           </Col>
         </Row>
