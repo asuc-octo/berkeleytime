@@ -23,7 +23,7 @@ function Footer() {
           <div className="column is-2-fullhd is-2-tablet is-4-mobile">
             <p className=""><b>About Us</b></p>
             <Link to="/about" className="">About</Link>
-            <Link to="/join" className="">Join Us</Link>
+            <a href="http://asucocto.org/recruitment" className="">Join Us</a>
             <a href="http://asucocto.org/" className="">ASUC OCTO</a>
           </div>
         </div>
