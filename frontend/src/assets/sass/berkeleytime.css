@@ -589,11 +589,11 @@ body > .navbar-collapse[data-color="purple"]:after {
   border: 0;
   font-size: 16px;
   padding: 8px 16px; }
-  .btn-simple > * {
-  pointer-events: none; }
   .btn-simple.btn-icon {
     padding: 8px; }
-  
+  .btn-simple > * {
+    pointer-events: none; }
+
 .btn-lg {
   font-size: 18px;
   border-radius: 6px;
@@ -10360,16 +10360,15 @@ label.panel-block {
         min-width: 200px;
         margin: 10px 15px;
         text-align: center;
+        font-size: 18px;
         color: #5C5C5C; }
-    .past-contributors .graphic-contributors {  
-      flex-wrap: wrap;
-      font-size: 18px;
-      margin-top: 30px;
-      color: #5C5C5C;
-      line-height: 36px; }
-      .past-contributors .graphic-contributors a {
-        color: #5C5C5C;
-      }
+  .past-contributors .graphic-contributors {
+    font-size: 18px;
+    margin-top: 30px;
+    color: #5C5C5C;
+    line-height: 36px; }
+    .past-contributors .graphic-contributors a {
+      color: #5C5C5C; }
 
 @media screen and (max-width: 1087px) {
   .landing > div {
