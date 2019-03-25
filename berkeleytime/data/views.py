@@ -324,4 +324,6 @@ def catalog_context_json(request, abbreviation='', course_number=''):
         'id': -1,
     })
 
+    context['semester'] = sorted(context['semester'], key=lambda x: x['id'], reverse=True)
+
     return render_to_json(context)
