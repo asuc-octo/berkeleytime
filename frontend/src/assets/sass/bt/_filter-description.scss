@@ -1,137 +1,140 @@
-.filter-description {
-  display: flex;
-  flex-direction: column;
-  border-radius: 0px;
-  box-shadow: none;
-  padding: 30px;
-
-  .filter-description-header {
+.filter-description-container {
+  .filter-description {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+    flex-direction: column;
+    border-radius: 0px;
+    box-shadow: none;
+    padding: 30px;
 
-    h3 {
-      font-weight: bold;
-      font-size: 24px;
-    }
-  }
-
-  .filter-description-title {
-    margin-bottom: 10px;
-  }
-
-  .filter-description-stats {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #dbdbdb;
-
-    .filter-description-stats-icon {
-      margin-right: 3px;
-      font-weight: bold;
-    }
-
-    .filter-description-stats-avg {
+    .filter-description-header {
       display: flex;
-      margin-right: 20px;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
 
-      p {
-        font-size: 12px;
+      h3 {
         font-weight: bold;
-
-        a {
-          font-size: 13px;
-        }
+        font-size: 24px;
       }
     }
 
-    .filter-description-stats-enroll {
+    .filter-description-title {
+      margin-bottom: 10px;
+    }
+
+    .filter-description-stats {
       display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #dbdbdb;
 
-      p {
-        font-size: 12px;
+      .filter-description-stats-icon {
+        margin-right: 3px;
         font-weight: bold;
+      }
 
-        a {
-          font-size: 13px;
+      .filter-description-stats-avg {
+        display: flex;
+        margin-right: 20px;
+
+        p {
+          font-size: 12px;
+          font-weight: bold;
+
+          a {
+            font-size: 13px;
+          }
+        }
+      }
+
+      .filter-description-stats-enroll {
+        display: flex;
+
+        p {
+          font-size: 12px;
+          font-weight: bold;
+
+          a {
+            font-size: 13px;
+          }
         }
       }
     }
-  }
 
-  .filter-description-instructors {
-    margin-bottom: 20px;
-  }
-
-  .filter-description-tabs {
-    .tabs {
-      margin: 1rem 0;
+    .filter-description-instructors {
+      margin-bottom: 20px;
     }
 
-    .tabs ul {
-      border: 0px;
-    }
+    .filter-description-tabs {
+      .tabs {
+        margin: 1rem 0;
+      }
 
-    .tabs a {
-      padding: 0.5em 2em 0.5em 0;
-    }
+      .tabs ul {
+        border: 0px;
+      }
 
-    .tabs .is-active a {
-      color: $bt-base;
-      font-weight: bold;
-    }
+      .tabs a {
+        padding: 0.5em 2em 0.5em 0;
+      }
 
-    .filter-description-tabs-details {
-      display: flex;
-      flex-direction: column;
-
-      h2 {
+      .tabs .is-active a {
+        color: $bt-base;
         font-weight: bold;
-        margin-bottom: 5px;
       }
 
-      >:not(:last-child) {
-        margin-bottom: 15px;
-      }
-    }
+      .filter-description-tabs-details {
+        display: flex;
+        flex-direction: column;
 
-    .filter-description-tabs-sections {
-      max-height: 500px;
-      overflow-x: scroll;
-      overflow-y: scroll;
-
-      > table {
-        min-width: 480px;
-        margin: 0;
-
-        table-layout: fixed;
-
-        abbr[title] {
-          border-bottom: none !important;
-          cursor: inherit !important;
-          text-decoration: none !important;
+        h2 {
+          font-weight: bold;
+          margin-bottom: 5px;
         }
 
-        .type {
-          width: 18%;
-        }
-
-        .ccn {
-          width: 10%;
+        >:not(:last-child) {
+          margin-bottom: 15px;
         }
       }
 
-      > table > thead > tr > th {
-        font-size: 14px;
-      }
+      .filter-description-tabs-sections {
+        max-height: 500px;
+        overflow-x: scroll;
+        overflow-y: scroll;
 
-      > table > tbody > tr > td {
-        font-weight: normal;
-        font-size: 12px;
+        > table {
+          min-width: 480px;
+          margin: 0;
+
+          table-layout: fixed;
+
+          abbr[title] {
+            border-bottom: none !important;
+            cursor: inherit !important;
+            text-decoration: none !important;
+          }
+
+          .type {
+            width: 18%;
+          }
+
+          .ccn {
+            width: 10%;
+          }
+        }
+
+        > table > thead > tr > th {
+          font-size: 14px;
+        }
+
+        > table > tbody > tr > td {
+          font-weight: normal;
+          font-size: 12px;
+        }
       }
     }
   }
+
 }

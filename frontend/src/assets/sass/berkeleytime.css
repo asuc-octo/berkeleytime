@@ -10024,85 +10024,85 @@ label.panel-block {
     width: 100%;
     height: 4em; }
 
-.filter-description {
+.filter-description-container .filter-description {
   display: flex;
   flex-direction: column;
   border-radius: 0px;
   box-shadow: none;
   padding: 30px; }
-  .filter-description .filter-description-header {
+  .filter-description-container .filter-description .filter-description-header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px; }
-    .filter-description .filter-description-header h3 {
+    .filter-description-container .filter-description .filter-description-header h3 {
       font-weight: bold;
       font-size: 24px; }
-  .filter-description .filter-description-title {
+  .filter-description-container .filter-description .filter-description-title {
     margin-bottom: 10px; }
-  .filter-description .filter-description-stats {
+  .filter-description-container .filter-description .filter-description-stats {
     display: flex;
     flex-direction: row;
     align-items: center;
     padding-bottom: 20px;
     border-bottom: 1px solid #dbdbdb; }
-    .filter-description .filter-description-stats .filter-description-stats-icon {
+    .filter-description-container .filter-description .filter-description-stats .filter-description-stats-icon {
       margin-right: 3px;
       font-weight: bold; }
-    .filter-description .filter-description-stats .filter-description-stats-avg {
+    .filter-description-container .filter-description .filter-description-stats .filter-description-stats-avg {
       display: flex;
       margin-right: 20px; }
-      .filter-description .filter-description-stats .filter-description-stats-avg p {
+      .filter-description-container .filter-description .filter-description-stats .filter-description-stats-avg p {
         font-size: 12px;
         font-weight: bold; }
-        .filter-description .filter-description-stats .filter-description-stats-avg p a {
+        .filter-description-container .filter-description .filter-description-stats .filter-description-stats-avg p a {
           font-size: 13px; }
-    .filter-description .filter-description-stats .filter-description-stats-enroll {
+    .filter-description-container .filter-description .filter-description-stats .filter-description-stats-enroll {
       display: flex; }
-      .filter-description .filter-description-stats .filter-description-stats-enroll p {
+      .filter-description-container .filter-description .filter-description-stats .filter-description-stats-enroll p {
         font-size: 12px;
         font-weight: bold; }
-        .filter-description .filter-description-stats .filter-description-stats-enroll p a {
+        .filter-description-container .filter-description .filter-description-stats .filter-description-stats-enroll p a {
           font-size: 13px; }
-  .filter-description .filter-description-instructors {
+  .filter-description-container .filter-description .filter-description-instructors {
     margin-bottom: 20px; }
-  .filter-description .filter-description-tabs .tabs {
+  .filter-description-container .filter-description .filter-description-tabs .tabs {
     margin: 1rem 0; }
-  .filter-description .filter-description-tabs .tabs ul {
+  .filter-description-container .filter-description .filter-description-tabs .tabs ul {
     border: 0px; }
-  .filter-description .filter-description-tabs .tabs a {
+  .filter-description-container .filter-description .filter-description-tabs .tabs a {
     padding: 0.5em 2em 0.5em 0; }
-  .filter-description .filter-description-tabs .tabs .is-active a {
+  .filter-description-container .filter-description .filter-description-tabs .tabs .is-active a {
     color: #4a4a4a;
     font-weight: bold; }
-  .filter-description .filter-description-tabs .filter-description-tabs-details {
+  .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-details {
     display: flex;
     flex-direction: column; }
-    .filter-description .filter-description-tabs .filter-description-tabs-details h2 {
+    .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-details h2 {
       font-weight: bold;
       margin-bottom: 5px; }
-    .filter-description .filter-description-tabs .filter-description-tabs-details > :not(:last-child) {
+    .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-details > :not(:last-child) {
       margin-bottom: 15px; }
-  .filter-description .filter-description-tabs .filter-description-tabs-sections {
+  .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections {
     max-height: 500px;
     overflow-x: scroll;
     overflow-y: scroll; }
-    .filter-description .filter-description-tabs .filter-description-tabs-sections > table {
+    .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections > table {
       min-width: 480px;
       margin: 0;
       table-layout: fixed; }
-      .filter-description .filter-description-tabs .filter-description-tabs-sections > table abbr[title] {
+      .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections > table abbr[title] {
         border-bottom: none !important;
         cursor: inherit !important;
         text-decoration: none !important; }
-      .filter-description .filter-description-tabs .filter-description-tabs-sections > table .type {
+      .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections > table .type {
         width: 18%; }
-      .filter-description .filter-description-tabs .filter-description-tabs-sections > table .ccn {
+      .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections > table .ccn {
         width: 10%; }
-    .filter-description .filter-description-tabs .filter-description-tabs-sections > table > thead > tr > th {
+    .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections > table > thead > tr > th {
       font-size: 14px; }
-    .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > td {
+    .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > td {
       font-weight: normal;
       font-size: 12px; }
 
