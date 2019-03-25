@@ -18,7 +18,6 @@ class Grades extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props.location);
     axios.get('/api/grades_json/')
     .then(res => {
       console.log(res);
@@ -60,6 +59,7 @@ class Grades extends Component {
 
   render() {
     const { context, selectedCourses } = this.state;
+    let { location } = this.props
     let courses = context.courses;
 
     return (
@@ -67,6 +67,7 @@ class Grades extends Component {
         <GradesSearchBar
           classes={courses}
           addCourse={this.addCourse}
+          fromCatalog={location.state ? location.state.course : false}
         />
 
         <ClassCardList
