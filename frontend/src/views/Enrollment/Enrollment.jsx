@@ -60,14 +60,15 @@ class Enrollment extends Component {
 
   render() {
     const { context, selectedCourses } = this.state;
+    let { location } = this.props
     let courses = context.courses;
 
     return (
       <div className="app-container">
         <EnrollmentSearchBar
-          isEnrollment
           classes={courses}
           addCourse={this.addCourse}
+          fromCatalog={location.state ? location.state.course : false}
         />
 
         <ClassCardList

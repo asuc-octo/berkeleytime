@@ -75,12 +75,12 @@ class ClassDescription extends Component {
 
     let gradeTo = {
       pathname: '/grades',
-      courseID: 111,
+      state: {course: course},
     };
 
     let enrollmentTo = {
       pathname: '/enrollment',
-      courseID: 112,
+      state: {course: course},
     }
     return (
       <div className="filter-description-container">
