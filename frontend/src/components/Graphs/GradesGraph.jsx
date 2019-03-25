@@ -18,11 +18,11 @@ export default function GradesGraph({
   return (
     <div className="graph">
       <BarChart width={800} height={400} data={graphData}>
-        <XAxis dataKey="name" />
-        <YAxis />
+        <XAxis dataKey="name"/>>
+        <YAxis type="number" unit="%"/>
         <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip />
-        <Legend />
+        <Tooltip formatter={(value) => `${value}%`}/>
+        <Legend align="left" verticalAlign="bottom" height={36}/>
 
         {gradesData.map((item, i) => (
           <Bar

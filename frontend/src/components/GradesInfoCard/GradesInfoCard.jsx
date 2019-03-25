@@ -74,7 +74,7 @@ export default function GradesInfoCard({
           <Col xs={8} className="class-avgs">
             <div className="class-stats-name">
               {selectedGrade !== undefined && selectedGrade !== null &&
-                `${selectedGrade.percentile_low*100}th - ${selectedGrade.percentile_high*100}th Percentile`}
+                `${Math.round(selectedGrade.percentile_low*100)}th - ${Math.round(selectedGrade.percentile_high*100)}th Percentile`}
             </div>
           </Col>
           <Col xs={4} className="class-avgs">
