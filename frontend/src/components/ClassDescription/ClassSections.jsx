@@ -17,13 +17,13 @@ function ClassSections({ sections }) {
       <table className="table">
         <thead>
           <tr>
-            <th><abbr title="Lecture/Discussion/Lab">Type</abbr></th>
-            <th class="ccn"><abbr title="Course Capture Number">CCN</abbr></th>
-            <th class="type">Instructor</th>
-            <th class="type">Time</th>
-            <th>Location</th>
-            <th>Enrolled</th>
-            <th>Waitlist</th>
+            <th style={{width: '75px'}}><abbr title="Lecture/Discussion/Lab">Type</abbr></th>
+            <th style={{width: '50px'}}><abbr title="Course Capture Number">CCN</abbr></th>
+            <th style={{width: '100px'}}>Instructor</th>
+            <th style={{width: '85px'}}>Time</th>
+            <th style={{width: '85px'}}>Location </th>
+            <th style={{width: '75px'}}>Enrolled </th>
+            <th style={{width: '75px'}}>Waitlist </th>
           </tr>
         </thead>
         <tbody>
