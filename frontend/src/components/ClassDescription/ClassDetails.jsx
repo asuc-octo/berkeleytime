@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 
 function ClassDetails({
-  description, prerequisites
+  description, prerequisites, requirements
 }) {
   return (
     <div className="filter-description-tabs-details">
       {!description && !prerequisites &&
-        <div><h1>No Details</h1></div>
+        <div>
+          <h1>No Details</h1>
+        </div>
       }
 
       {description &&
@@ -20,6 +22,17 @@ function ClassDetails({
         <div className="filter-details-prerequisites">
           <h2>Prerequisites</h2>
           <p>{prerequisites}</p>
+        </div>
+      }
+
+      {requirements &&
+        <div className="filter-details-requirements">
+          <h2>Tags</h2>
+          <div className="filter-details-tags">
+            {requirements.map(req => (
+              <div className="filter-details-tag">{req}</div>
+            ))}
+          </div>
         </div>
       }
     </div>

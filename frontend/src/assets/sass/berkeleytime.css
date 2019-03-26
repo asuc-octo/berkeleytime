@@ -10084,6 +10084,21 @@ label.panel-block {
       margin-bottom: 5px; }
     .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-details > :not(:last-child) {
       margin-bottom: 15px; }
+    .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-details .filter-details-requirements {
+      border-top: 1px solid #dbdbdb; }
+      .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-details .filter-details-requirements h2 {
+        margin: 15px 0; }
+      .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-details .filter-details-requirements .filter-details-tags {
+        display: flex;
+        flex-wrap: wrap; }
+        .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-details .filter-details-requirements .filter-details-tags .filter-details-tag {
+          font-size: 12px;
+          padding: 3px 10px;
+          margin: 5px;
+          margin-left: 0px;
+          background-color: #5C5C5C;
+          color: white;
+          border-radius: 3px; }
   .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections {
     max-height: 500px;
     overflow-x: scroll;
@@ -10415,6 +10430,8 @@ label.panel-block {
         border-color: #579EFF;
         border-width: 2px;
         color: #579EFF; }
+        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a, .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a:hover {
+          color: #579EFF; }
   .landing .landing-jumbo .landing-jumbo-img {
     width: 500px;
     object-fit: scale-down;

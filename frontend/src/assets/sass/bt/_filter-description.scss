@@ -97,6 +97,30 @@
         >:not(:last-child) {
           margin-bottom: 15px;
         }
+
+        .filter-details-requirements {
+          border-top: 1px solid #dbdbdb;
+
+          h2 {
+            margin: 15px 0;
+          }
+
+          .filter-details-tags {
+            display: flex;
+            flex-wrap: wrap;
+
+            .filter-details-tag {
+              font-size: 12px;
+              padding: 3px 10px;
+              margin: 5px;
+              margin-left: 0px;
+              background-color: $bt-grey;
+              color: $white;
+              border-radius: 3px;
+            }
+          }
+        }
+
       }
 
       .filter-description-tabs-sections {

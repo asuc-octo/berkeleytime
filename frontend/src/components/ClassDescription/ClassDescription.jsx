@@ -71,7 +71,7 @@ class ClassDescription extends Component {
 
   render() {
     const { tab, courseData } = this.state;
-    let { course, sections } = courseData;
+    let { course, sections, requirements } = courseData;
 
     let gradeTo = {
       pathname: '/grades',
@@ -107,7 +107,6 @@ class ClassDescription extends Component {
                 <p>Course Average: {course.letter_average || 'N/A'}
                   &nbsp;(<Link to={gradeTo}>See grade distributions</Link>)
                 </p>
-
               </div>
               <FontAwesome className={`filter-description-stats-icon`} name={'user-o'}/>
               <div className="filter-description-stats-enroll">
@@ -128,6 +127,7 @@ class ClassDescription extends Component {
                 <ClassDetails
                   description={course.description}
                   prerequisites={course.prerequisites}
+                  requirements={requirements}
                 />
               ) : (
                 <ClassSections
