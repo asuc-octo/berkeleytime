@@ -8,11 +8,8 @@ import {
         Form,
         HelpBlock,
         ButtonToolbar,
-        DropdownButton,
-        MenuItem
       } from 'react-bootstrap';
 import Checkbox from '../../elements/CustomCheckbox/CustomCheckbox';
-import Tooltip from 'rc-tooltip';
 import Slider from 'rc-slider';
 import Select from 'react-select';
 
@@ -22,7 +19,6 @@ import 'react-select/dist/react-select.css';
 
 const { createSliderWithTooltip } = Slider;
 const Range = createSliderWithTooltip(Slider.Range);
-const { Handle } = Slider;
 
 function CheckboxGroup(props) {
   const { options, activeFilters, handler } = props;
@@ -168,7 +164,7 @@ export class FilterSidebar extends Component {
   }
 
   render() {
-    const { requirements, logistics, department, units, sortAttributes } = this.props.filters;
+    const { requirements, logistics, department, sortAttributes } = this.props.filters;
     const { activeFilters } = this.props;
     return (
       <div className="filter-sidebar">
@@ -178,7 +174,6 @@ export class FilterSidebar extends Component {
         <div className="content">
           <Form className="side-filter">
             <FormGroup controlId="classSearch">
-              {/* Finished Updating */}
               <FormControl
                   name="classSearch"
                   type="text"
@@ -188,7 +183,6 @@ export class FilterSidebar extends Component {
                   className="filter-sidebar-classSearch"
               />
 
-              {/* Finished Updating */}
               <ControlLabel className="filter-label">Sort By</ControlLabel>
               <Select
                   name="sortBy"
@@ -202,7 +196,6 @@ export class FilterSidebar extends Component {
                   autoSize={true}
               />
 
-              {/* Finished Updating */}
               <ControlLabel className="filter-label">Requirements</ControlLabel>
               <ButtonToolbar>
                   <ButtonToggleGroup
@@ -239,7 +232,6 @@ export class FilterSidebar extends Component {
                   clearable={false}
               />
 
-              {/* Finish Updating */}
               <ControlLabel className="filter-label">Logistics</ControlLabel>
               <ButtonToolbar>
                 <ButtonToggleGroup
