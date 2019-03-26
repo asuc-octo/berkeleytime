@@ -1466,7 +1466,8 @@ body > .navbar-collapse[data-color="purple"]:after {
         font-size: 18px; }
       .bt-footer .bt-footer-container .columns .column a {
         color: white;
-        transition: 200ms; }
+        transition: 200ms;
+        width: max-content; }
       .bt-footer .bt-footer-container .columns .column a:hover {
         color: #209cee; }
 

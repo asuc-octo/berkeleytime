@@ -3,6 +3,8 @@ import Select from 'react-virtualized-select';
 import axios from 'axios';
 import hash from 'object-hash';
 
+import { laymanToAbbreviation } from '../../variables/Variables';
+
 import 'react-select/dist/react-select.css'
 import 'react-virtualized-select/styles.css'
 
@@ -34,6 +36,7 @@ class GradesSearchBar extends Component {
     this.buildSecondaryOptions = this.buildSecondaryOptions.bind(this);
     this.getFilteredSections = this.getFilteredSections.bind(this);
     this.addSelected = this.addSelected.bind(this);
+    this.filterOptions = this.filterOptions.bind(this);
     this.reset = this.reset.bind(this);
   }
 
@@ -101,6 +104,7 @@ class GradesSearchBar extends Component {
     let options = courses.map(course => ({
       value: course.id,
       label: `${course.abbreviation} ${course.course_number}`,
+      course: course,
     }));
 
     return options;
@@ -254,6 +258,35 @@ class GradesSearchBar extends Component {
     this.reset();
   }
 
+  courseMatches(option, query) {
+    let { course } = option;
+    let courseMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
+    let otherNumber;
+    if (course.course_number.indexOf("C") !== -1) { // if there is a c in the course number
+        otherNumber = course.course_number.substring(1);
+    } else { // if there is not a c in the course number
+        otherNumber = "C" + course.course_number;
+    }
+    var courseFixedForCMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
+    return courseMatches || courseFixedForCMatches;
+  }
+
+  filterCourses(option, query) {
+    if(query.trim() === "") { return true }
+    let querySplit = query.toUpperCase().split(" ");
+    if(querySplit[0] in laymanToAbbreviation) {
+      querySplit[0] = laymanToAbbreviation[querySplit[0]];
+    }
+    query = query.toLowerCase();
+    var pseudoQuery = querySplit.join(" ").toLowerCase();
+    var useOriginalQuery = (querySplit.length === 1 && query !== pseudoQuery);
+    return (useOriginalQuery && this.courseMatches(option, query)) || this.courseMatches(option, pseudoQuery);
+  }
+
+  filterOptions(options, query) {
+    return options.filter(option => this.filterCourses(option, query))
+  }
+
   reset() {
     this.setState({
       selectedClass: 0,
@@ -277,6 +310,7 @@ class GradesSearchBar extends Component {
               value={selectedClass}
               options={this.buildCoursesOptions(classes)}
               onChange={this.handleClassSelect}
+              filterOptions={this.filterOptions}
           />
         </div>
         <div className="column is-one-fifth">

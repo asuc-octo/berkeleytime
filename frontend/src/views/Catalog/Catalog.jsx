@@ -194,7 +194,6 @@ class Catalog extends Component {
   }
 
   selectCourseHandler(course) {
-    console.log(course);
     this.setState({
       selectedCourse: course,
     })
