@@ -326,7 +326,7 @@ def course_box_json(request):
         'course': course.as_json(),
         'sections': map(lambda s: s.as_json(), sections),
         'favorited': favorited,
-        'requirements': [requirement for requirement in which_requirements(course)],
+        'requirements': which_requirements(course),
         'cover_photo': cover_photo(course),
         'last_enrollment_update': get_last_enrollment_update(sections),
         'ongoing_sections': map(lambda s: s.as_json(), ongoing_sections),
@@ -336,10 +336,23 @@ def course_box_json(request):
         )
     })
 
+def semester_to_value(s):
+    """
+    Assigns a number to a section dict (see grade_section_json for format). Is used to
+    sort a list of sections by time.
+    """
+    semester, year = s.split()
+    if semester.lower() == 'spring':
+        sem = 0
+    elif semester.lower() == 'fall':
+        sem = 2
+    else:
+        sem = 1
+    return 3*int(year) + sem
 
 def which_requirements(course):
     """Idk what this is."""
-    playlists = course.playlist_set.filter(category__in=[
+    playlists_1 = course.playlist_set.filter(category__in=[
         'ls',
         'university',
         'engineering',
@@ -347,9 +360,13 @@ def which_requirements(course):
         'haas',
         'department',
         'units',
+    ])
+    playlists_2 = course.playlist_set.filter(category__in=[
         'semester',
     ])
-    return playlists.values_list('name', flat=True)
+    requirements_1 = list(playlists_1.values_list('name', flat=True))
+    requirements_2 = sorted(list(playlists_2.values_list('name', flat=True)), key=semester_to_value, reverse=True)
+    return requirements_1 + requirements_2
 
 
 @login_required
