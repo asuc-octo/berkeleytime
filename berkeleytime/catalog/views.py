@@ -326,10 +326,10 @@ def course_box_json(request):
         'course': course.as_json(),
         'sections': map(lambda s: s.as_json(), sections),
         'favorited': favorited,
-        'requirements': which_requirements(course),
+        'requirements': [requirement for requirement in which_requirements(course)],
         'cover_photo': cover_photo(course),
         'last_enrollment_update': get_last_enrollment_update(sections),
-        'ongoing_sections': ongoing_sections,
+        'ongoing_sections': map(lambda s: s.as_json(), ongoing_sections),
         'ongoing': ongoing,
         'marketplace': marketplace_views.get_textbook_context(
             course, CURRENT_SEMESTER, CURRENT_YEAR,

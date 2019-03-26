@@ -61,6 +61,10 @@
                   border-width: 2px;
                   color: $bt-blue;
 
+                  a, a:hover {
+                    color: $bt-blue;
+                  }
+
                 }
             }
         }
