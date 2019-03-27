@@ -14,9 +14,9 @@ const appRoutes = [
     { path: "/grades", name: "Grades", icon:"", component: Grades },
     { path: "/enrollment", name: "Enrollment", icon:"", component: Enrollment },
     { path: "/about", name: "About", icon: "", component: About},
-	  { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
-	  { path: "/error", name: "Error", icon: "", component: Error },
-
+    { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
+    { path: "/error", name: "Error", icon: "", component: Error },  
+    { name: "404", icon: "", component: Error },  
     { redirect: true, path: '/', to: '/landing', name: 'Home' }
 ];
 
