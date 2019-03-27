@@ -10424,17 +10424,26 @@ label.panel-block {
         background-color: #579EFF;
         border-color: #579EFF;
         border-width: 2px;
-        font-size: 18px; }
+        font-size: 18px;
+        color: white; }
         .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-explore a {
-          color: white; }
+          color: inherit; }
+        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-explore:hover {
+          background-color: white;
+          color: #579EFF;
+          transition: 0.3s; }
       .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup {
         margin-left: 20px;
         border-color: #579EFF;
         border-width: 2px;
         color: #579EFF;
         font-size: 18px; }
-        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a, .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a:hover {
-          color: #579EFF; }
+        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a {
+          color: inherit; }
+        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup:hover {
+          background-color: #579EFF;
+          color: white;
+          transition: 0.3s; }
   .landing .landing-jumbo .landing-jumbo-img {
     width: 500px;
     object-fit: scale-down;
