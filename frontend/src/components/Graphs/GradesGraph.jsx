@@ -14,7 +14,6 @@ import vars from '../../variables/Variables';
 export default function GradesGraph({
   graphData, gradesData, updateInfoCard
 }) {
-  console.log(gradesData);
   return (
     <div className="graph">
       <BarChart width={800} height={400} data={graphData}>

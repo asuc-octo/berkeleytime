@@ -53,7 +53,7 @@ class GradesGraphCard extends Component {
         console.log(classData[i]);
         gradesData['id'] = classData[i].id;
         gradesData['instructor'] = classData[i].instructor == 'all' ? 'All Instructors' : classData[i].instructor;
-        gradesData['semester'] = classData[i].semester == 'all' ? 'All Instructors' : classData[i].semester;
+        gradesData['semester'] = classData[i].semester == 'all' ? 'All Semesters' : classData[i].semester;
         return gradesData
       })
 
