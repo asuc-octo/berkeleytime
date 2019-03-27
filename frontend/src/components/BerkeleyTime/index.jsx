@@ -30,12 +30,13 @@ function BerkeleyTime({ props }) {
               appRoutes.map((prop, key) => {
                 if (prop.redirect) {
                   return (
-                    <Redirect from={prop.path} to={prop.to} key={key} />
+                    <Redirect exact={prop.exact} from={prop.path} to={prop.to} key={key} />
                   );
+                } else {
+                  return (
+                    <Route exact={prop.exact} path={prop.path} component={prop.component} key={key} />
+                  )
                 }
-                return (
-                  <Route path={prop.path} component={prop.component} key={key} />
-                );
               })
             }
           </Switch>
