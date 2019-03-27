@@ -90,8 +90,8 @@ class EnrollmentGraphCard extends Component {
         }
       }
 
-      return ret
-    })
+      return ret;
+    });
 
     return graphData;
   }
@@ -125,7 +125,7 @@ class EnrollmentGraphCard extends Component {
       <div className="card enrollment-graph-card">
         <div className="enrollment-graph">
           {
-            enrollmentData.length == 0 ? (
+            enrollmentData.length === 0 ? (
               <GraphEmpty pageType='enrollment'/>
             ) : (
               <div className="enrollment-content">
@@ -146,9 +146,9 @@ class EnrollmentGraphCard extends Component {
                       <EnrollmentInfoCard
                         title={hoveredClass.title}
                         subtitle={hoveredClass.subtitle}
-                        semester={hoveredClass.semester == 'all' ? 'All Semester' : hoveredClass.semester}
-                        instructor={hoveredClass.instructor == 'all' ? 'All Instructors' : hoveredClass.instructor}
-                        selectedPoint={hoveredClass.data.filter(pt => pt.day == hoveredClass.hoverDay)[0]}
+                        semester={hoveredClass.semester === 'all' ? 'All Semester' : hoveredClass.semester}
+                        instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
+                        selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
                         todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
                         telebears={telebears}
                       />
