@@ -15,9 +15,9 @@ const appRoutes = [
     { path: "/enrollment", name: "Enrollment", icon:"", component: Enrollment },
     { path: "/about", name: "About", icon: "", component: About},
     { path: "/dashboard", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
-    { path: "/error", name: "Error", icon: "", component: Error },  
-    { name: "404", icon: "", component: Error },  
-    { redirect: true, path: '/', to: '/landing', name: 'Home' }
+    { path: "/error", name: "Error", icon: "", component: Error }, 
+    { redirect: true, path: '/', to: '/landing', name: 'Home' },
+    { name: "404", icon: "", component: Error },
 ];
 
 export default appRoutes;
