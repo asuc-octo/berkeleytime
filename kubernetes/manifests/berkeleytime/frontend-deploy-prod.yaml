@@ -22,7 +22,7 @@ spec:
       - name: frontend-prod
         imagePullPolicy: Always
         image: index.docker.io/berkeleytime/frontend:latest
-        command: ["npm", "start"]
+        command: ["npm", "run", "prod"]
         resources:
           requests:
             cpu: 500m
