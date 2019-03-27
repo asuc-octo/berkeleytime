@@ -10097,8 +10097,8 @@ label.panel-block {
           padding: 3px 10px;
           margin: 5px;
           margin-left: 0px;
-          background-color: #5C5C5C;
-          color: white;
+          background-color: #ededed;
+          color: #2f2f2f;
           border-radius: 3px; }
   .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections {
     max-height: 500px;

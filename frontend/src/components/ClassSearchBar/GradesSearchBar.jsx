@@ -296,7 +296,7 @@ class GradesSearchBar extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, isFull } = this.props;
     const { sections, selectType, selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections, selectType);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectType, selectPrimary);
@@ -351,7 +351,7 @@ class GradesSearchBar extends Component {
           <button
             className="button is-success"
             onClick={this.addSelected}
-            disabled={!selectedClass || !(selectPrimary && selectSecondary)}
+            disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
           >
             Add
           </button>

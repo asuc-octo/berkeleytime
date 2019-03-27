@@ -44,7 +44,6 @@ class Grades extends Component {
           courseID: course.courseID,
           sections: course.sections
         }
-
         this.setState(prevState => ({
           selectedCourses: [...prevState.selectedCourses, formattedCourse],
         }));
@@ -68,6 +67,7 @@ class Grades extends Component {
           classes={courses}
           addCourse={this.addCourse}
           fromCatalog={location.state ? location.state.course : false}
+          isFull={selectedCourses.length === 4}
         />
 
         <ClassCardList
