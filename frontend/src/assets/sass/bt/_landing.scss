@@ -50,9 +50,16 @@
                   border-color: $bt-blue;
                   border-width: 2px;
                   font-size: 18px;
+                  color: white;
 
                   a {
-                    color: white;
+                    color: inherit;
+                  }
+
+                  &:hover {
+                    background-color: white;
+                    color: $bt-blue;
+                    transition: 0.3s;
                   }
                 }
 
@@ -63,8 +70,14 @@
                   color: $bt-blue;
                   font-size: 18px;
 
-                  a, a:hover {
-                    color: $bt-blue;
+                  a {
+                    color: inherit;
+                  }
+
+                  &:hover {
+                    background-color: $bt-blue;
+                    color: white;
+                    transition: 0.3s;
                   }
 
                 }
