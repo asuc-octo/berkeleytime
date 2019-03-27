@@ -10102,8 +10102,9 @@ label.panel-block {
           border-radius: 3px; }
   .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections {
     max-height: 500px;
-    overflow-x: scroll;
-    overflow-y: scroll; }
+    margin-top: -10px;
+    overflow-x: auto;
+    overflow-y: auto; }
     .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections > table {
       min-width: 480px;
       margin: 0;
