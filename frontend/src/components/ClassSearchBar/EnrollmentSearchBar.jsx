@@ -227,7 +227,7 @@ class EnrollmentSearchBar extends Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, isFull } = this.props;
     const { sections, selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
@@ -272,7 +272,7 @@ class EnrollmentSearchBar extends Component {
           <button
             className="button is-success"
             onClick={this.addSelected}
-            disabled={!selectedClass || !(selectPrimary && selectSecondary)}
+            disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
           >
             Add
           </button>
