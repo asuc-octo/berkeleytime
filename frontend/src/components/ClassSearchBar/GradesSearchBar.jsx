@@ -42,13 +42,12 @@ class GradesSearchBar extends Component {
 
   componentDidMount() {
     let { fromCatalog } = this.props;
-    if(fromCatalog) {
-      this.handleClassSelect({value: fromCatalog.id})
-    }
-
     this.setState({
       selectType: 'instructor',
-    })
+    });
+    if(fromCatalog) {
+      this.handleClassSelect({value: fromCatalog.id, addSelected: true});
+    }
   }
 
   handleClassSelect(updatedClass) {
@@ -65,12 +64,15 @@ class GradesSearchBar extends Component {
 
     axios.get(url)
     .then(res => {
-      console.log(res);
       this.setState({
         sections: res.data,
         selectPrimary: 'all',
         selectSecondary: 'all',
-      })
+      });
+      if (updatedClass.addSelected) {
+        this.addSelected();
+        this.handleClassSelect({value: updatedClass.value, addSelected: false});
+      }
     })
     .catch((err) => {
       console.log(err);
@@ -247,8 +249,8 @@ class GradesSearchBar extends Component {
     const { selectedClass, selectType, selectPrimary, selectSecondary } = this.state;
     let playlist = {
       courseID: selectedClass,
-      instructor: selectType == 'instructor' ? selectPrimary : selectSecondary,
-      semester: selectType == 'semester' ? selectPrimary : selectSecondary,
+      instructor: selectType === 'instructor' ? selectPrimary : selectSecondary,
+      semester: selectType === 'semester' ? selectPrimary : selectSecondary,
       sections: this.getFilteredSections(),
     }
 

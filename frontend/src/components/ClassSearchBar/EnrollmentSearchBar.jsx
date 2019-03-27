@@ -35,13 +35,12 @@ class EnrollmentSearchBar extends Component {
 
   componentDidMount() {
     let { fromCatalog } = this.props;
-    if(fromCatalog) {
-      this.handleClassSelect({value: fromCatalog.id})
-    }
-
     this.setState({
       selectType: 'semester',
-    })
+    });
+    if(fromCatalog) {
+      this.handleClassSelect({value: fromCatalog.id, addSelected: true});
+    }
   }
 
   handleClassSelect(updatedClass) {
@@ -64,7 +63,11 @@ class EnrollmentSearchBar extends Component {
         sections: sections,
         selectPrimary: this.getSectionSemester(sections[0]),
         selectSecondary: 'all',
-      })
+      });
+      if (updatedClass.addSelected) {
+        this.addSelected();
+        this.handleClassSelect({value: updatedClass.value, addSelected: false});
+      }
     })
     .catch((err) => {
       console.log(err);
