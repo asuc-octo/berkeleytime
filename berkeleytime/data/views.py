@@ -244,6 +244,7 @@ def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, y
                 CORRECTED_TELEBEARS = TELEBEARS
 
             rtn["telebears"] = CORRECTED_TELEBEARS_JSON #THIS NEEDS TO BE FROM THE OTHER SEMESTER, NOT THE CURRENT SEMESTER
+            rtn["telebears"]["semester"] = semester.capitalize() + " " + year
             last_date = sections[0].enrollment_set.all().latest("date_created").date_created
             enrolled_max = Enrollment.objects.filter(section__in = sections, date_created = last_date).aggregate(Sum("enrolled_max"))["enrolled_max__sum"]
             rtn["enrolled_max"] = enrolled_max

@@ -20,7 +20,7 @@ export default function EnrollmentGraph({
   let labelStyle = {
     textAnchor: 'middle',
     fontSize: '12px'
-  }
+  };
   return (
     <div className="graph">
       <LineChart width={800} height={400} data={graphData}>
@@ -49,14 +49,18 @@ export default function EnrollmentGraph({
           stroke="black"
           strokeDasharray="3 3"
         >
-          <Label angle={-90} position='insideLeft' style={labelStyle} offset={10}>Phase II Start</Label>
+          <Label angle={-90} position='insideLeft' style={labelStyle} offset={10}>
+            {"Phase II Start (" + enrollmentData[0]['telebears']['semester'] + ")"}
+          </Label>
         </ReferenceLine>
         <ReferenceLine
           x={enrollmentData[0]['telebears']['adj_start_day']}
           stroke="black"
           strokeDasharray="3 3"
         >
-          <Label angle={-90} position='insideLeft' style={labelStyle} offset={10}>Adjustment Start</Label>
+          <Label angle={-90} position='insideLeft' style={labelStyle} offset={10}>
+            {"Adjustment II Start (" + enrollmentData[0]['telebears']['semester'] + ")"}
+          </Label>
         </ReferenceLine>
       </LineChart>
     </div>
