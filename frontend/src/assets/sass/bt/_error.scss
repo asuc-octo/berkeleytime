@@ -34,17 +34,35 @@
             display: flex;
             flex-direction: row;
 
-            .error-classes a {
+            .error-info {
+                border-color: $bt-blue;
+                background-color: $bt-blue;
                 color: white;
+                transition: 0.3s;
+                
+                a {
+                    color: inherit;
+                }
+                
+                &:hover {
+                    background-color: white;
+                    color: $bt-blue;
+                }
             }
 
             .error-bugs {
                 margin-left: 20px;
-                border-color: lighten($bt-grey, 30%);
-                color: lighten($bt-grey, 15%);
+                border-color: $bt-light-grey;
+                color: $bt-light-grey;
+                transition: 0.3s;
 
                 a {
                     color: inherit;
+                }
+                
+                &:hover {
+                    background-color: $bt-light-grey;
+                    color: white;
                 }
             }
         }
