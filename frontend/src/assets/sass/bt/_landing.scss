@@ -51,6 +51,7 @@
                   border-width: 2px;
                   font-size: 18px;
                   color: white;
+                  transition: 0.3s;
 
                   a {
                     color: inherit;
@@ -59,7 +60,6 @@
                   &:hover {
                     background-color: white;
                     color: $bt-blue;
-                    transition: 0.3s;
                   }
                 }
 
@@ -69,6 +69,7 @@
                   border-width: 2px;
                   color: $bt-blue;
                   font-size: 18px;
+                  transition: 0.3s;
 
                   a {
                     color: inherit;
