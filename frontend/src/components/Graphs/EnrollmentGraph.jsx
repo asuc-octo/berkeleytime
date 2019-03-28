@@ -59,7 +59,7 @@ export default function EnrollmentGraph({
           strokeDasharray="3 3"
         >
           <Label angle={-90} position='insideLeft' style={labelStyle} offset={10}>
-            {"Adjustment II Start (" + enrollmentData[0]['telebears']['semester'] + ")"}
+            {"Adjustment Start (" + enrollmentData[0]['telebears']['semester'] + ")"}
           </Label>
         </ReferenceLine>
       </LineChart>
