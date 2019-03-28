@@ -10409,14 +10409,16 @@ label.panel-block {
     padding: 100px 0;
     display: flex;
     flex-direction: column;
-    align-items: baseline; }
+    align-items: baseline;
+    width: 500px;
+    text-align: left; }
     .landing .landing-jumbo .landing-jumbo-heading h1 {
       margin: 15px 0;
       font-size: 64px;
       font-weight: 500; }
     .landing .landing-jumbo .landing-jumbo-heading p {
       margin: 15px 3px;
-      font-size: 18px; }
+      font-size: 24px; }
     .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons {
       margin: 20px 0;
       display: flex;
@@ -10425,24 +10427,25 @@ label.panel-block {
         background-color: #579EFF;
         border-color: #579EFF;
         border-width: 2px;
-        font-size: 18px;
-        color: white; }
+        font-size: 20px;
+        color: white;
+        transition: 0.3s; }
         .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-explore a {
           color: inherit; }
         .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-explore:hover {
           background-color: white;
-          color: #579EFF;
-          transition: 0.3s; }
+          color: #579EFF; }
       .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup {
         margin-left: 20px;
-        border-color: #579EFF;
+        border-color: #808080;
         border-width: 2px;
-        color: #579EFF;
-        font-size: 18px; }
+        color: #808080;
+        font-size: 20px;
+        transition: 0.3s; }
         .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a {
           color: inherit; }
         .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup:hover {
-          background-color: #579EFF;
+          background-color: #808080;
           color: white;
           transition: 0.3s; }
   .landing .landing-jumbo .landing-jumbo-img {
@@ -10663,14 +10666,26 @@ label.panel-block {
       margin: 50px 0;
       display: flex;
       flex-direction: row; }
-      .error .error-heading .error-buttons .error-classes a {
-        color: white; }
+      .error .error-heading .error-buttons .error-info {
+        border-color: #579EFF;
+        background-color: #579EFF;
+        color: white;
+        transition: 0.3s; }
+        .error .error-heading .error-buttons .error-info a {
+          color: inherit; }
+        .error .error-heading .error-buttons .error-info:hover {
+          background-color: white;
+          color: #579EFF; }
       .error .error-heading .error-buttons .error-bugs {
         margin-left: 20px;
-        border-color: darkgray;
-        color: #828282; }
+        border-color: #808080;
+        color: #808080;
+        transition: 0.3s; }
         .error .error-heading .error-buttons .error-bugs a {
           color: inherit; }
+        .error .error-heading .error-buttons .error-bugs:hover {
+          background-color: #808080;
+          color: white; }
   .error .error-img {
     height: 350px;
     object-fit: scale-down; }
