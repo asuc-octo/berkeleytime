@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-dep
+  namespace: berkeleytime
+  labels:
+    appName: jenkins-dep
+spec:
+  selector:
+    matchLabels:
+      appName: jenkins-dep
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        appName: jenkins-dep
+    spec:
+      containers:
+      - name: jenkins-dep
+        image: tsaianson/dockerjenkinskubectlbase:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DOCKER_HOST
+          value: tcp://localhost:2375
+      - name: dind
+        image: docker:18.09-dind
+        securityContext:
+          privileged: true
+        volumeMounts:
+          - name: dind-storage
+            mountPath: /var/lib/docker
+      volumes:
+        - name: dind-storage
+          emptyDir: {}
