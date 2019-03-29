@@ -1,10 +1,5 @@
 pipeline {
-  agent {
-    docker {
-      image 'tsaianson/dockerjenkinskubectlbase:latest'
-    }
-
-  }
+  agent any
   stages {
     stage('Build') {
       steps {
