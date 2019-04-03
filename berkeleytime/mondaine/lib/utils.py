@@ -77,6 +77,6 @@ def is_department(department_name):
     return department_name.upper() in config.department_to_abbreviation_mapper
 
 def translate(abbreviation):
-    # if abbreviation in translations:
-    #     return translations[abbreviation]
+    if abbreviation in translations:
+        return translations[abbreviation]
     return abbreviation
