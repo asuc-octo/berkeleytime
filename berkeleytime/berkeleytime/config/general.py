@@ -43,7 +43,8 @@ PAST_SEMESTERS = [
     {'semester': 'spring', 'year': '2017', 'display': 'Spring 2017'},
     {'semester': 'fall', 'year': '2017', 'display': 'Fall 2017'},
     {'semester': 'spring', 'year': '2018', 'display': 'Spring 2018'},
-    {'semester': 'fall', 'year': '2018', 'display': 'Fall 2018'}
+    {'semester': 'fall', 'year': '2018', 'display': 'Fall 2018'},
+    {'semester': 'spring', 'year': '2019', 'display': 'Spring 2019'},
 ]
 
 
@@ -63,7 +64,6 @@ PAST_SEMESTERS_TELEBEARS_JSON = {
     'spring 2018': spring2018.TELEBEARS_JSON,
     'fall 2018': fall2018.TELEBEARS_JSON,
     'spring 2019': spring2019.TELEBEARS_JSON,
-    'fall 2019': fall2019.TELEBEARS_JSON,
 }
 
 PAST_SEMESTERS_TELEBEARS = {
@@ -80,7 +80,6 @@ PAST_SEMESTERS_TELEBEARS = {
     'spring 2018': spring2018.TELEBEARS,
     'fall 2018': fall2018.TELEBEARS,
     'spring 2019': spring2018.TELEBEARS,
-    'fall 2019': fall2018.TELEBEARS,
 }
 
 # Classes with special characters
