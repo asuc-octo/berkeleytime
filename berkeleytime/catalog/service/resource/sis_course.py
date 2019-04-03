@@ -49,7 +49,6 @@ class SISCourseResource(object):
         except Exception as e:
             # TODO (Yuxin) Do something here!
             print e
-
             pass
 
     @retry(SISCourseResourceException, tries=3)

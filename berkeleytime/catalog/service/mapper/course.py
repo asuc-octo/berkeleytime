@@ -22,7 +22,7 @@ class CourseMapper(EntityMapper):
             }
             return Course(course)
         except KeyError as e:
-            print e
+            print e, "KeyError in CourseMapper"
             return None
 
     def get_course_department(self, data):
