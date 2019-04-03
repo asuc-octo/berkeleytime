@@ -8,7 +8,7 @@ from config.bookstore import *
 
 # Change every semester to update Catalog!
 import raven
-from config.semesters.spring2019 import *
+from config.semesters.fall2019 import *
 
 settings_dir = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
