@@ -12,7 +12,6 @@ from semesters import fall2017
 from semesters import spring2018
 from semesters import fall2018
 from semesters import spring2019
-from semesters import fall2019
 
 
 GRADE_POINT = {
@@ -79,7 +78,7 @@ PAST_SEMESTERS_TELEBEARS = {
     'fall 2017': fall2017.TELEBEARS,
     'spring 2018': spring2018.TELEBEARS,
     'fall 2018': fall2018.TELEBEARS,
-    'spring 2019': spring2018.TELEBEARS,
+    'spring 2019': spring2019.TELEBEARS,
 }
 
 # Classes with special characters
