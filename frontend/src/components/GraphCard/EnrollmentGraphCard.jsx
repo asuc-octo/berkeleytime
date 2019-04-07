@@ -167,7 +167,7 @@ class EnrollmentGraphCard extends Component {
                       <EnrollmentInfoCard
                         title={hoveredClass.title}
                         subtitle={hoveredClass.subtitle}
-                        semester={hoveredClass.semester === 'all' ? 'All Semester' : hoveredClass.semester}
+                        semester={hoveredClass.semester}
                         instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
                         selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
                         todayPoint={hoveredClass.data[hoveredClass.data.length-1]}

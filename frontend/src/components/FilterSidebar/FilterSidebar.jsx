@@ -181,6 +181,7 @@ export class FilterSidebar extends Component {
                   placeholder="&#xf002;  Search for a class..."
                   onChange={this.handleSearchChange}
                   className="filter-sidebar-classSearch"
+                  autocomplete="off"
               />
 
               <ControlLabel className="filter-label">Sort By</ControlLabel>

@@ -10,7 +10,7 @@ function Jumbotron() {
         <div className="level-left has-text-centered">
           <div className="landing-jumbo-heading">
             <h1>BerkeleyTime</h1>
-            <p>Course discovery, simplified.</p>
+            <p>Course discovery, simplified. Built by students for students.</p>
             <div className="landing-jumbo-buttons">
               <button type="button" className="button landing-jumbo-explore">
                 <Link to="/catalog">Explore courses now</Link>

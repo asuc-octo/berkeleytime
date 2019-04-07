@@ -28,6 +28,8 @@
             display: flex;
             flex-direction: column;
             align-items: baseline;
+            width: 500px;
+            text-align: left;
 
             h1 {
                 margin: 15px 0;
@@ -37,7 +39,7 @@
 
             p {
                 margin: 15px 3px; //3px better aligns with title
-                font-size: 18px;
+                font-size: 24px;
             }
 
             .landing-jumbo-buttons {
@@ -49,8 +51,9 @@
                   background-color: $bt-blue;
                   border-color: $bt-blue;
                   border-width: 2px;
-                  font-size: 18px;
+                  font-size: 20px;
                   color: white;
+                  transition: 0.3s;
 
                   a {
                     color: inherit;
@@ -59,23 +62,23 @@
                   &:hover {
                     background-color: white;
                     color: $bt-blue;
-                    transition: 0.3s;
                   }
                 }
 
                 .landing-jumbo-signup {
                   margin-left: 20px;
-                  border-color: $bt-blue;
+                  border-color: $bt-light-grey;
                   border-width: 2px;
-                  color: $bt-blue;
-                  font-size: 18px;
+                  color: $bt-light-grey;
+                  font-size: 20px;
+                  transition: 0.3s;
 
                   a {
                     color: inherit;
                   }
 
                   &:hover {
-                    background-color: $bt-blue;
+                    background-color: $bt-light-grey;
                     color: white;
                     transition: 0.3s;
                   }
