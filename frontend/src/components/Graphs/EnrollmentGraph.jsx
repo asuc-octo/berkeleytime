@@ -15,7 +15,7 @@ import {
 import vars from '../../variables/Variables';
 
 export default function EnrollmentGraph({
-  graphData, enrollmentData, updateInfoCard
+  graphData, enrollmentData, updateLineHover, updateGraphHover
 }) {
   let labelStyle = {
     textAnchor: 'middle',
@@ -23,11 +23,11 @@ export default function EnrollmentGraph({
   }
   return (
     <div className="graph">
-      <LineChart width={800} height={400} data={graphData}>
+      <LineChart width={800} height={400} data={graphData} onMouseMove={updateGraphHover}>
         <XAxis dataKey="name" interval={19} />>
         <YAxis type="number" unit="%"/>
         <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip 
+        <Tooltip
             formatter={(value) => `${value}%`}
             labelFormatter={label => "Day " + label}
         />
@@ -40,7 +40,7 @@ export default function EnrollmentGraph({
             stroke={vars.colors[i % vars.colors.length]}
             strokeWidth={3}
             dot={false}
-            activeDot={{onMouseOver: updateInfoCard}}
+            activeDot={{onMouseOver: updateLineHover}}
             connectNulls={true}
           />
         ))}

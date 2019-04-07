@@ -20,7 +20,8 @@ class GradesGraphCard extends Component {
       hoveredClass: false,
     },
 
-    this.updateInfoCard = this.updateInfoCard.bind(this);
+    this.updateBarHover = this.updateBarHover.bind(this);
+    this.updateGraphHover = this.updateGraphHover.bind(this);
     this.getGradesData = this.getGradesData.bind(this);
     this.buildGraphData = this.buildGraphData.bind(this);
   }
@@ -80,35 +81,49 @@ class GradesGraphCard extends Component {
     return graphData;
   }
 
+  update(course, grade) {
+    const { gradesData } = this.state;
+    let selectedGrades = gradesData.filter(c => course.id == c.id)[0];
+
+    let hoverTotal = {
+      ...course,
+      ...selectedGrades,
+      hoverGrade: grade,
+    }
+
+    this.setState({
+      hoveredClass: hoverTotal,
+    })
+  }
+
   // Handler function for updating GradesInfoCard on hover
-  updateInfoCard(barData) {
+  updateBarHover(barData) {
     console.log(barData);
 
-    const { gradesData } = this.state;
     const { classData } = this.props;
+    const {payload, name, value} = barData;
 
     let selectedClassID = '';
-    const payload = barData.payload;
     for (let key in payload) {
-      if (payload[key] == barData.value) {
+      if (payload[key] == value) {
         selectedClassID = key;
       }
     }
 
     let selectedCourse = classData.filter(course => selectedClassID == course.id)[0]
-    let selectedGrades = gradesData.filter(course => selectedClassID == course.id)[0]
+    this.update(selectedCourse, name);
+  }
 
-    let hoverTotal = {
-      ...selectedCourse,
-      ...selectedGrades,
-      hoverGrade: barData.name,
+  // Handler function for updating GradesInfoCard on hover with single course
+  updateGraphHover(data) {
+    let {isTooltipActive, activeLabel} = data;
+    const { classData } = this.props;
+
+    if(isTooltipActive && classData.length == 1) {
+      let selectedCourse = classData[0];
+      let grade = activeLabel;
+      this.update(selectedCourse, grade);
     }
-
-    console.log(hoverTotal);
-
-    this.setState({
-      hoveredClass: hoverTotal,
-    })
   }
 
   // getNeighborGrade(direction) {
@@ -140,7 +155,8 @@ class GradesGraphCard extends Component {
                     <GradesGraph
                       graphData={graphData}
                       gradesData={gradesData}
-                      updateInfoCard={this.updateInfoCard}
+                      updateBarHover={this.updateBarHover}
+                      updateGraphHover={this.updateGraphHover}
                     />
                   </Col>
 
