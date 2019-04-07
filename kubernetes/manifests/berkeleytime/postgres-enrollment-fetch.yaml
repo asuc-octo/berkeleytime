@@ -4,7 +4,7 @@ metadata:
   name: data-update
   namespace: berkeleytime
 spec:
-  schedule: "0 2 * * *"
+  schedule: "0 9 * * *"
   jobTemplate:
     spec:
       template:
@@ -15,4 +15,24 @@ spec:
             imagePullPolicy: Always
             command:
             - ./update-data.sh
+            env:
+            - name: PYTHONUNBUFFERED
+              value: "0"
+            - name: GET_HOSTS_FROM
+              value: dns
+            - name: ENVIRONMENT_NAME
+              value: PRODUCTION
+            envFrom:
+            - configMapRef:
+                name: django-configs
+            - secretRef:
+                name: aws
+            - secretRef:
+                name: google
+            - secretRef:
+                name: sis
+            - secretRef: 
+                name: sendgrid
+            - secretRef:
+                name: sentrydsn
           restartPolicy: OnFailure

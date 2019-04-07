@@ -125,8 +125,9 @@
 
       .filter-description-tabs-sections {
         max-height: 500px;
-        overflow-x: scroll;
-        overflow-y: scroll;
+        margin-top: -10px;
+        overflow-x: auto;
+        overflow-y: auto;
 
         > table {
           min-width: 480px;

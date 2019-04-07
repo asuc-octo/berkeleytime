@@ -8,7 +8,7 @@ from config.bookstore import *
 
 # Change every semester to update Catalog!
 import raven
-from config.semesters.spring2019 import *
+from config.semesters.fall2019 import *
 
 # Set up google cloud logging
 # import google.cloud.logging
