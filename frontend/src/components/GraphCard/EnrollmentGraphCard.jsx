@@ -25,7 +25,8 @@ class EnrollmentGraphCard extends Component {
       hoveredClass: false,
     },
 
-    this.updateInfoCard = this.updateInfoCard.bind(this);
+    this.updateLineHover = this.updateLineHover.bind(this);
+    this.updateGraphHover = this.updateGraphHover.bind(this);
   }
 
   componentDidMount() {
@@ -96,25 +97,44 @@ class EnrollmentGraphCard extends Component {
     return graphData;
   }
 
-  // Handler function for updating EnrollmentInfoCard on hover
-  updateInfoCard(lineData) {
+
+  update(course, day) {
     const { enrollmentData } = this.state;
+    let selectedEnrollment= enrollmentData.filter(c => course.id == c.id)[0]
+
+    let valid = selectedEnrollment.data.filter(d => d.day === day).length
+    if(valid) {
+      let hoverTotal = {
+        ...course,
+        ...selectedEnrollment,
+        hoverDay: day,
+      }
+
+      this.setState({
+        hoveredClass: hoverTotal,
+      })
+    }
+  }
+
+  // Handler function for updating EnrollmentInfoCard on hover
+  updateLineHover(lineData) {
+    const { classData } = this.props;
+    const selectedClassID = lineData.dataKey;
+    const day = lineData.index;
+    let selectedCourse = classData.filter(course => selectedClassID == course.id)[0]
+    this.update(selectedCourse, day);
+  }
+
+  // Handler function for updating EnrollmentInfoCard on hover with single course
+  updateGraphHover(data) {
+    let {isTooltipActive, activeLabel} = data;
     const { classData } = this.props;
 
-    const selectedClassID = lineData.dataKey;
-
-    let selectedCourse = classData.filter(course => selectedClassID == course.id)[0]
-    let selectedEnrollment= enrollmentData.filter(course => selectedClassID == course.id)[0]
-
-    let hoverTotal = {
-      ...selectedCourse,
-      ...selectedEnrollment,
-      hoverDay: lineData.index,
+    if(isTooltipActive && classData.length == 1) {
+      let selectedCourse = classData[0];
+      let day = activeLabel;
+      this.update(selectedCourse, day);
     }
-
-    this.setState({
-      hoveredClass: hoverTotal,
-    })
   }
 
   render () {
@@ -137,7 +157,8 @@ class EnrollmentGraphCard extends Component {
                     <EnrollmentGraph
                       graphData={graphData}
                       enrollmentData={enrollmentData}
-                      updateInfoCard={this.updateInfoCard}
+                      updateLineHover={this.updateLineHover}
+                      updateGraphHover={this.updateGraphHover}
                     />
                   </Col>
 

@@ -15,7 +15,9 @@
 
       .class-card-upper {
         display: flex;
+        flex-direction: column;
         justify-content: space-between;
+        margin-bottom: 12px;
 
         .course-abbreviation {
           font-weight: bold;

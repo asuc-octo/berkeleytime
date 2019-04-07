@@ -12,15 +12,15 @@ import {
 import vars from '../../variables/Variables';
 
 export default function GradesGraph({
-  graphData, gradesData, updateInfoCard
+  graphData, gradesData, updateBarHover, updateGraphHover
 }) {
   return (
     <div className="graph">
-      <BarChart width={800} height={400} data={graphData}>
+      <BarChart width={800} height={400} data={graphData} onMouseMove={updateGraphHover}>
         <XAxis dataKey="name"/>>
         <YAxis type="number" unit="%"/>
         <CartesianGrid strokeDasharray="3 3" />
-        <Tooltip 
+        <Tooltip
             formatter={(value, name, props) => [Math.round(value * 10) / 10 + "%", name]}
         />
         <Legend align="left" verticalAlign="bottom" height={36}/>
@@ -29,7 +29,7 @@ export default function GradesGraph({
             name={`${item.title} / ${item.semester} / ${item.instructor}`}
             dataKey={item.id}
             fill={vars.colors[i % vars.colors.length]}
-            onMouseEnter={updateInfoCard}
+            onMouseEnter={updateBarHover}
           />
         ))}
 

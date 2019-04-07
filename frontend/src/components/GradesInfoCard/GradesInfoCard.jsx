@@ -5,6 +5,16 @@ function formatPercentage(num) {
   return (num * 100).toFixed(0);
 }
 
+function getGradeColor(grade) {
+  if(grade.includes('A') || grade ==='P') {
+    return 'bt-green-text';
+  } else if (grade.includes('B')) {
+    return 'bt-orange-text';
+  } else {
+    return 'bt-red-text';
+  }
+}
+
 export default function GradesInfoCard({
   course, title, semester, instructor, courseLetter,
   courseGPA, sectionLetter, sectionGPA, selectedGrade,
@@ -35,12 +45,14 @@ export default function GradesInfoCard({
         <Row className="class-avgs">
           <Col xs={6} className="class-avg-stats">
             <div>
-              {`${courseLetter} (GPA: ${courseGPA})`}
+              <span className={getGradeColor(courseLetter)}>{courseLetter}</span>
+              <span>{` (GPA: ${courseGPA})`}</span>
             </div>
           </Col>
           <Col xs={6} className="class-avg-stats">
             <div>
-              {`${sectionLetter} (GPA: ${sectionGPA})`}
+              <span className={getGradeColor(sectionLetter)}>{sectionLetter}</span>
+              <span>{` (GPA: ${sectionGPA})`}</span>
             </div>
           </Col>
         </Row>
@@ -75,14 +87,14 @@ export default function GradesInfoCard({
         </Row> */}
 
         <Row>
-          <Col xs={8} className="class-avgs">
+          <Col xs={6} className="class-avgs">
             <div className="class-stats-name">
               {selectedGrade !== undefined && selectedGrade !== null &&
-                `${formatPercentage(selectedGrade.percentile_low)}th 
+                `${formatPercentage(selectedGrade.percentile_low)}th
                 - ${formatPercentage(selectedGrade.percentile_high)}th Percentile`}
             </div>
           </Col>
-          <Col xs={4} className="class-avgs">
+          <Col xs={6} className="class-avgs">
             <div className="class-count">
               {selectedGrade !== undefined && selectedGrade !== null &&
                 `${selectedGrade.numerator}/${denominator}`}
@@ -90,13 +102,13 @@ export default function GradesInfoCard({
           </Col>
         </Row>
         <Row>
-          <Col xs={8} className="class-avgs">
-            <div className="class-grade">
+          <Col xs={6} className="class-avgs">
+            <div className={`class-grade ${getGradeColor(gradeName)}`}>
               {selectedGrade !== undefined && selectedGrade !== null &&
                 gradeName}
             </div>
           </Col>
-          <Col xs={4} className="class-avgs">
+          <Col xs={6} className="class-avgs">
             <div className="class-percent">
               {selectedGrade !== undefined && selectedGrade !== null &&
                 `${formatPercentage(selectedGrade.percent)}%`}
