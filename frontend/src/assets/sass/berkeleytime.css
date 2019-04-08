@@ -330,7 +330,8 @@ body > .navbar-collapse[data-color="purple"]:after {
   transition-duration: .2s,.2s;
   -webkit-transition-timing-function: linear,linear;
   transition-timing-function: linear,linear;
-  -webkit-overflow-scrolling: touch; }
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden; }
 
 .btn {
   border-width: 2px;
@@ -1220,44 +1221,6 @@ body > .navbar-collapse[data-color="purple"]:after {
     margin: 5px 0px;
     padding: 15px 15px;
     font-size: 20px; }
-  .navbar .navbar-nav > li > a {
-    padding: 10px 15px;
-    margin: 10px 3px;
-    position: relative; }
-  .navbar .navbar-nav > li > a.btn {
-    margin: 15px 3px;
-    padding: 8px 16px; }
-  .navbar .navbar-nav > li > a.btn-round {
-    margin: 16px 3px; }
-  .navbar .navbar-nav > li > a [class^="fa"] {
-    font-size: 19px;
-    position: relative;
-    line-height: 16px;
-    top: 1px; }
-  .navbar .navbar-nav .notification {
-    position: absolute;
-    background-color: #FB404B;
-    text-align: center;
-    border-radius: 10px;
-    min-width: 18px;
-    padding: 0 5px;
-    height: 18px;
-    font-size: 12px;
-    color: #FFFFFF;
-    font-weight: bold;
-    line-height: 18px;
-    top: 0px;
-    left: 7px; }
-  .navbar .btn {
-    margin: 15px 3px;
-    font-size: 14px; }
-  .navbar .btn-simple {
-    font-size: 16px; }
-  .navbar.fixed {
-    width: calc(100% - $sidebar-width);
-    right: 0;
-    left: auto;
-    border-radius: 0; }
 
 .navbar-nav > li > .dropdown-menu {
   border-radius: 10px;
@@ -9807,7 +9770,7 @@ label.panel-block {
     font-weight: 500;
     transition: 200ms; }
     .navbar-brand.bt-navbar-brand .bt-navbar-bt:focus {
-      color: #579EFF; }
+      color: #4a4a4a; }
 
 .navbar-end {
   margin-right: 27px; }
@@ -9868,8 +9831,6 @@ label.panel-block {
           border-bottom: 0.5px solid #5C5C5C;
           border-radius: 0px;
           padding-left: 0px; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-sortBy .Select-value, .filter-sidebar .content .side-filter .form-group .filter-sidebar-sortBy .Select-placeholder {
-          padding-left: 0px; }
         .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .buttonToggleGroup-button {
           text-align: left;
           color: black;
@@ -9902,8 +9863,6 @@ label.panel-block {
           border: 0px;
           border-bottom: 0.5px solid #5C5C5C;
           border-radius: 0px;
-          padding-left: 0px; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-department .Select-value, .filter-sidebar .content .side-filter .form-group .filter-sidebar-department .Select-placeholder {
           padding-left: 0px; }
         .filter-sidebar .content .side-filter .form-group .filter-resetButton {
           margin-top: 20px;
@@ -10165,6 +10124,9 @@ label.panel-block {
       font-size: 22px;
       margin-top: 30px;
       color: #5C5C5C; }
+
+.grades {
+  height: 100vh; }
 
 .card.grades-graph-card {
   box-shadow: none; }
@@ -10444,11 +10406,21 @@ label.panel-block {
           background-color: #808080;
           color: white;
           transition: 0.3s; }
-  .landing .landing-jumbo .landing-jumbo-img {
-    width: 500px;
-    object-fit: scale-down;
-    margin-left: 20px;
-    margin-right: 20px; }
+        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a {
+          color: #579EFF; }
+        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a:hover {
+          color: #579EFF; }
+  @media screen and (min-width: 769px), print {
+    .landing .landing-jumbo .landing-jumbo-img-container {
+      margin-left: 20px; } }
+  .landing .landing-jumbo .landing-jumbo-img-container .landing-jumbo-img {
+    object-fit: scale-down; }
+    @media screen and (min-width: 769px), print {
+      .landing .landing-jumbo .landing-jumbo-img-container .landing-jumbo-img {
+        width: 500px; } }
+    @media screen and (max-width: 768px) {
+      .landing .landing-jumbo .landing-jumbo-img-container .landing-jumbo-img {
+        width: 400px; } }
 
 .landing .landing-whatwedo .landing-whatwedo-whatwedo {
   font-size: 48px;
@@ -10464,8 +10436,10 @@ label.panel-block {
 .landing .landing-explore {
   margin-bottom: 0 !important;
   background-color: white;
-  height: 100vh;
   min-height: 600px; }
+  @media screen and (min-width: 769px), print {
+    .landing .landing-explore {
+      height: 100vh; } }
   .landing .landing-explore .level {
     height: 100%; }
   .landing .landing-explore .landing-explore-icon {
