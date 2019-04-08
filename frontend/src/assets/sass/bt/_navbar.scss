@@ -35,6 +35,8 @@
         font-size: 20px;
         font-weight: 500;
 
+        transition: 200ms;
+
         &:focus {
             color: $bt-blue;
         }
@@ -48,6 +50,8 @@
 .navbar-item {
     > a {
         color: $bt-base;
+
+        transition: 200ms;
     }
 
     > a:hover {
