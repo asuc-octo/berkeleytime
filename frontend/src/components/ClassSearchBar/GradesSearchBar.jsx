@@ -124,7 +124,7 @@ class GradesSearchBar extends Component {
     const ret = [];
     const map = new Map();
 
-    if(selectType == 'instructor') {
+    if(selectType === 'instructor') {
       ret.push({ value: 'all', label: "All Instructors" })
 
       for(const section of sections) {
@@ -157,12 +157,12 @@ class GradesSearchBar extends Component {
   buildSecondaryOptions(sections, selectType, selectPrimary) {
     const ret = [];
 
-    let label = selectType == 'instructor' ? 'All Semesters' : 'All Instructors';
+    let label = selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
     ret.push({ value: 'all', label: label })
 
-    if(selectPrimary == 'all') {
+    if(selectPrimary === 'all') {
       let options;
-      if(selectType == 'instructor') {
+      if(selectType === 'instructor') {
         options = [...new Set(sections.map(s => `${this.getSectionSemester(s)} / ${s.section_number}`))]
         .map(semester => ({
           value: semester.split(' / ')[0],
@@ -183,8 +183,8 @@ class GradesSearchBar extends Component {
       }
     } else {
       let options;
-      if(selectType == 'instructor') {
-        options = sections.filter(section => section.instructor == selectPrimary)
+      if(selectType === 'instructor') {
+        options = sections.filter(section => section.instructor === selectPrimary)
           .map(section => {
             let semester = `${this.getSectionSemester(section)} / ${section.section_number}`
 
@@ -219,25 +219,25 @@ class GradesSearchBar extends Component {
     const { sections, selectType, selectPrimary, selectSecondary, sectionNumber } = this.state;
     let ret;
 
-    if(selectType == 'instructor') {
+    if(selectType === 'instructor') {
       ret = sections.filter(section => {
-        return selectPrimary == 'all' ? true : section.instructor == selectPrimary;
+        return selectPrimary === 'all' ? true : section.instructor === selectPrimary;
       })
       .filter(section => {
-        return selectSecondary == 'all' ? true : this.getSectionSemester(section) == selectSecondary;
+        return selectSecondary === 'all' ? true : this.getSectionSemester(section) === selectSecondary;
       })
       .filter(section => {
-        return sectionNumber ? section.section_number == sectionNumber : true;
+        return sectionNumber ? section.section_number === sectionNumber : true;
       })
     } else {
       ret = sections.filter(section => {
-        return selectPrimary == 'all' ? true : this.getSectionSemester(section) == selectPrimary;
+        return selectPrimary === 'all' ? true : this.getSectionSemester(section) === selectPrimary;
       })
       .filter(section => {
-        return selectSecondary == 'all' ? true : section.instructor == selectSecondary;
+        return selectSecondary === 'all' ? true : section.instructor === selectSecondary;
       })
       .filter(section => {
-        return sectionNumber ? section.section_number == sectionNumber : true;
+        return sectionNumber ? section.section_number === sectionNumber : true;
       })
     }
 
@@ -305,7 +305,7 @@ class GradesSearchBar extends Component {
 
     return (
       <div className="columns">
-        <div className="column is-one-third">
+        <div className="column is-3">
           <Select
               name="selectClass"
               placeholder="Choose a class..."
@@ -315,7 +315,7 @@ class GradesSearchBar extends Component {
               filterOptions={this.filterOptions}
           />
         </div>
-        <div className="column is-one-fifth">
+        <div className="column is-2">
           <Select
               name="sortBy"
               placeholder="Sort by"
@@ -323,9 +323,11 @@ class GradesSearchBar extends Component {
               options={sortOptions}
               clearable={false}
               onChange={this.handleSortSelect}
+              disabled={!selectedClass}
+              clearable={false}
           />
         </div>
-        <div className="column is-one-fifth">
+        <div className="column is-3">
           <Select
               name="instrSems"
               placeholder="Select an option..."
@@ -337,7 +339,7 @@ class GradesSearchBar extends Component {
               searchable={false}
           />
         </div>
-        <div className="column is-one-fifth">
+        <div className="column is-3">
           <Select
               name="section"
               placeholder="Select an option..."
@@ -349,11 +351,11 @@ class GradesSearchBar extends Component {
               searchable={false}
           />
         </div>
-        <div className="column is-one-fifth">
+        <div className="column is-1">
           <button
             className="button is-success"
             onClick={this.addSelected}
-            disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
+            disabled={!selectedClass || !(selectPrimary && selectSecondary)}
           >
             Add
           </button>
