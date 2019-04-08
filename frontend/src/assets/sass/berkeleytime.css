@@ -330,8 +330,7 @@ body > .navbar-collapse[data-color="purple"]:after {
   transition-duration: .2s,.2s;
   -webkit-transition-timing-function: linear,linear;
   transition-timing-function: linear,linear;
-  -webkit-overflow-scrolling: touch;
-  overflow-x: hidden; }
+  -webkit-overflow-scrolling: touch; }
 
 .btn {
   border-width: 2px;
@@ -9752,7 +9751,6 @@ label.panel-block {
   margin-top: 100px;
   margin-left: 35px;
   margin-right: 35px;
-  min-width: 1350px;
   min-height: 100vh; }
 
 .navbar {
@@ -10105,13 +10103,13 @@ label.panel-block {
         margin-top: auto; }
 
 .graph-empty {
-  height: 100%; }
+  min-height: inherit; }
   .graph-empty .graph-empty-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%; }
+    min-height: inherit; }
     .graph-empty .graph-empty-content .graph-empty-image {
       max-width: 20%; }
     .graph-empty .graph-empty-content .graph-empty-heading {
@@ -10125,14 +10123,11 @@ label.panel-block {
       margin-top: 30px;
       color: #5C5C5C; }
 
-.grades {
-  height: 100vh; }
-
 .card.grades-graph-card {
   box-shadow: none; }
   .card.grades-graph-card .grades-graph {
     padding: 15px 15px 0px 35px;
-    height: 500px; }
+    min-height: 500px; }
     .card.grades-graph-card .grades-graph .graph-content .graph {
       padding: 15px 15px 15px 15px; }
     .card.grades-graph-card .grades-graph .graph-content .graph-title {
@@ -10171,7 +10166,7 @@ label.panel-block {
   box-shadow: none; }
   .card.enrollment-graph-card .enrollment-graph {
     padding: 15px 15px 0px 35px;
-    height: 500px; }
+    min-height: 500px; }
     .card.enrollment-graph-card .enrollment-graph .enrollment-content .graph {
       padding: 15px 15px 15px 15px; }
     .card.enrollment-graph-card .enrollment-graph .enrollment-content .graph-title {

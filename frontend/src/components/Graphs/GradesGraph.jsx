@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  ResponsiveContainer
 } from 'recharts';
 
 import vars from '../../variables/Variables';
@@ -16,6 +17,7 @@ export default function GradesGraph({
 }) {
   return (
     <div className="graph">
+      <ResponsiveContainer width='100%' height={400}>
       <BarChart width={800} height={400} data={graphData} onMouseMove={updateGraphHover}>
         <XAxis dataKey="name"/>>
         <YAxis type="number" unit="%"/>
@@ -34,6 +36,7 @@ export default function GradesGraph({
         ))}
 
       </BarChart>
+      </ResponsiveContainer>
     </div>
   )
 }
