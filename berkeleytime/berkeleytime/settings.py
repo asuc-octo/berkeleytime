@@ -10,12 +10,6 @@ from config.bookstore import *
 import raven
 from config.semesters.fall2019 import *
 
-# Set up google cloud logging
-# import google.cloud.logging
-# from pythonjsonlogger import jsonlogger
-# log_client = google.cloud.logging.Client()
-# log_client.setup_logging()
-
 settings_dir = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
 
@@ -77,6 +71,16 @@ elif IS_LOCALHOST:
 
 if IS_LOCALHOST:
     FACEBOOK_APP = 'local'
+    # DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #         'NAME': 'bt_main',
+    #         'USER': 'bt',
+    #         'PASSWORD': 'yuxinsucks',
+    #         'HOST': 'postgres',
+    #         'PORT': '',
+    #     }
+    # }
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
