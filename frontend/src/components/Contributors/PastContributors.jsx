@@ -23,7 +23,7 @@ function PastContributors({ founders, pastContributors }) {
                 <div className="columns is-multiline is-centered is-gapless">
                     {pastContributors.map((member, idx) => (
                         <div className="column is-one-fifth has-text-centered" style={{height: 45, width: 170}}>
-                            <a href={member.link}>{member.name}</a>
+                            <a href={member.site}>{member.name}</a>
                         </div>
                 ))} 
                     </div>
