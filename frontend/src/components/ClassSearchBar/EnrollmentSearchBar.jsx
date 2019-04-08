@@ -57,7 +57,7 @@ class EnrollmentSearchBar extends Component {
 
     axios.get(url)
     .then(res => {
-      console.log(res);
+      // console.log(res);
       let sections = res.data
       this.setState({
         sections: sections,
@@ -135,7 +135,7 @@ class EnrollmentSearchBar extends Component {
       .map(section => {
         section = section.sections[0];
 
-        console.log(section);
+        // console.log(section);
 
         let instructor = `${section.instructor} / ${section.section_number}`;
 

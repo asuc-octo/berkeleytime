@@ -58,7 +58,7 @@ class ClassDescription extends Component {
       }
     })
     .then(res => {
-      console.log(res);
+      // console.log(res);
       this.setState({
         courseData: res.data,
         loading: false,

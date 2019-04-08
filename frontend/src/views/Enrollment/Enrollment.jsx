@@ -20,7 +20,7 @@ class Enrollment extends Component {
   componentDidMount() {
     axios.get('/api/enrollment_json/')
     .then(res => {
-      console.log(res);
+      // console.log(res);
       this.setState({
         context: res.data,
       })
@@ -31,7 +31,6 @@ class Enrollment extends Component {
   }
 
   addCourse(course) {
-    console.log(course);
     axios.get(`/api/catalog_json/course/${course.courseID}/`)
       .then(res => {
         let courseData = res.data;

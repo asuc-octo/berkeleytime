@@ -43,8 +43,6 @@ class Catalog extends Component {
       .then(res => {
         // console.log(res);
         const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-        console.log("Data:");
-        console.log(res.data);
         this.setState({
           activeFilters: new Set(defaultPlaylists),
           defaultFilters: new Set(defaultPlaylists),

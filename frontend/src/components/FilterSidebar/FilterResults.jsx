@@ -125,16 +125,13 @@ class FilterResults extends Component {
       loading: true,
     });
 
-    console.log("filters:");
-    console.log(filters);
-
     axios.get('/api/catalog/filter/', {
       params: {
         filters: filters,
       },
     })
     .then(res => {
-      console.log(res);
+      // console.log(res);
       this.setState({
         courses: res.data,
         loading: false
