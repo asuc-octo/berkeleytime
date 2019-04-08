@@ -1,12 +1,12 @@
 .graph-empty {
-  height: 100%;
+  min-height: inherit;
 
   .graph-empty-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    min-height: inherit;
 
 
     .graph-empty-image {
