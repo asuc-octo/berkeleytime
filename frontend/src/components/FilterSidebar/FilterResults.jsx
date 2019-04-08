@@ -142,6 +142,30 @@ class FilterResults extends Component {
     });
   }
 
+  onItemsRendered({
+    overscanStartIndex,
+    overscanStopIndex,
+    visibleStartIndex,
+    visibleStopIndex
+  }) {
+    console.log(visibleStopIndex);
+  }
+
+  onScroll({
+    scrollDirection,
+    scrollOffset,
+    scrollUpdateWasRequested
+  }) {
+    // scrollDirection is either "forward" or "backward".
+
+    // scrollOffset is a number.
+
+    // scrollUpdateWasRequested is a boolean.
+    // This value is true if the scroll was caused by scrollTo() or scrollToItem(),
+    // And false if it was the result of a user interaction in the browser.
+    console.log(scrollOffset);
+  }
+
   render() {
     let courses;
     if(!this.state.loading) {
@@ -183,7 +207,9 @@ class FilterResults extends Component {
               height={1000}
               itemCount={courses.length}
               itemSize={150}
-              width={"100%"}>
+              width={"100%"}
+              onItemsRendered={this.onItemsRendered}
+              onScroll={this.onScroll}>
               {ItemRenderer}
             </FixedSizeList>
           )
