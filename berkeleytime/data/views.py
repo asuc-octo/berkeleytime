@@ -95,6 +95,9 @@ def grade_json(request, grade_ids):
         sections = Grade.objects.filter(id__in=grade_ids)
         course = Course.objects.get(id=sections.values_list("course", flat=True)[0])
         total = sections.aggregate(Sum("total"))["total__sum"]
+        percentile_total = total - get_or_zero(sections.aggregate(Sum('p')), "p__sum")
+        percentile_total -= get_or_zero(sections.aggregate(Sum('np')), "np__sum")
+        
         percentile_ceiling = 0
         for grade, display in STANDARD_GRADES:
             grade_entry = {}
@@ -103,11 +106,15 @@ def grade_json(request, grade_ids):
             else:
                 numerator = get_or_zero(sections.aggregate(Sum(grade)), grade + "__sum")
             actual_total += numerator
-            percent = numerator / total if total != 0 else 0.0
+            percent = numerator / percentile_total if percentile_total > 0 else 0.0
             grade_entry["percent"] = round(percent, 2)
             grade_entry["numerator"] = numerator
-            grade_entry["percentile_high"] = abs(round(1.0 - percentile_ceiling, 2))
-            grade_entry["percentile_low"] = abs(round(1.0 - percentile_ceiling - percent, 2))
+            if grade == 'p' or grade == 'np':
+                grade_entry["percentile_high"] = 0
+                grade_entry["percentile_low"] = 0
+            else:
+                grade_entry["percentile_high"] = abs(round(1.0 - percentile_ceiling, 2))
+                grade_entry["percentile_low"] = abs(round(1.0 - percentile_ceiling - percent, 2))
             percentile_ceiling += percent
             rtn[display] = grade_entry
         rtn["course_id"] = course.id
