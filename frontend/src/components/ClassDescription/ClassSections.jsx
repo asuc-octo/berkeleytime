@@ -30,8 +30,8 @@ function ClassSections({ sections }) {
           {sections.map(section => {
             let startDate = new Date(section.start_time);
             let endDate = new Date(section.end_time);
-            console.log(typeof(startDate));
-            console.log(endDate);
+            // console.log(typeof(startDate));
+            // console.log(endDate);
             return (
               <tr>
                 <td>{section.kind}</td>

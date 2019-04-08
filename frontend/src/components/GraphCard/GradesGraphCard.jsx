@@ -51,7 +51,6 @@ class GradesGraphCard extends Component {
     axios.all(promises).then(data => {
       let gradesData = data.map((res, i) => {
         let gradesData = res.data;
-        console.log(classData[i]);
         gradesData['id'] = classData[i].id;
         gradesData['instructor'] = classData[i].instructor == 'all' ? 'All Instructors' : classData[i].instructor;
         gradesData['semester'] = classData[i].semester == 'all' ? 'All Semesters' : classData[i].semester;
@@ -98,8 +97,6 @@ class GradesGraphCard extends Component {
 
   // Handler function for updating GradesInfoCard on hover
   updateBarHover(barData) {
-    console.log(barData);
-
     const { classData } = this.props;
     const {payload, name, value} = barData;
 

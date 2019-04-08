@@ -20,7 +20,7 @@ class Grades extends Component {
   componentDidMount() {
     axios.get('/api/grades_json/')
     .then(res => {
-      console.log(res);
+      // console.log(res);
       this.setState({
         context: res.data,
       })
