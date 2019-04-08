@@ -10420,10 +10420,6 @@ label.panel-block {
           background-color: #808080;
           color: white;
           transition: 0.3s; }
-        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a {
-          color: #579EFF; }
-        .landing .landing-jumbo .landing-jumbo-heading .landing-jumbo-buttons .landing-jumbo-signup a:hover {
-          color: #579EFF; }
   @media screen and (min-width: 769px), print {
     .landing .landing-jumbo .landing-jumbo-img-container {
       margin-left: 20px; } }
