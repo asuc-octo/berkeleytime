@@ -9804,7 +9804,8 @@ label.panel-block {
   padding: 5px 15px; }
   .navbar-brand.bt-navbar-brand .bt-navbar-bt {
     font-size: 20px;
-    font-weight: 500; }
+    font-weight: 500;
+    transition: 200ms; }
     .navbar-brand.bt-navbar-brand .bt-navbar-bt:focus {
       color: #579EFF; }
 
@@ -9812,7 +9813,8 @@ label.panel-block {
   margin-right: 27px; }
 
 .navbar-item > a {
-  color: #4a4a4a; }
+  color: #4a4a4a;
+  transition: 200ms; }
 
 .navbar-item > a:hover {
   color: #579EFF; }
@@ -10018,16 +10020,6 @@ label.panel-block {
 .filter-list-column {
   height: 94%;
   overflow: hidden; }
-  .filter-list-column:after {
-    content: "";
-    position: absolute;
-    z-index: 1;
-    bottom: 0;
-    left: 0;
-    pointer-events: none;
-    background-image: linear-gradient(to bottom, rgba(245, 245, 245, 0), whitesmoke);
-    width: 100%;
-    height: 4em; }
 
 .filter-description-container .filter-description {
   display: flex;
