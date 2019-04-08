@@ -19,7 +19,7 @@ IS_STAGING = ENV_NAME == "STAGING"
 IS_PRODUCTION = ENV_NAME == "PRODUCTION"
 assert IS_LOCALHOST or IS_STAGING or IS_PRODUCTION, "ENV not set properly: {}".format(ENV_NAME)
 
-DEBUG = False
+DEBUG = IS_LOCALHOST
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -71,26 +71,17 @@ elif IS_LOCALHOST:
 
 if IS_LOCALHOST:
     FACEBOOK_APP = 'local'
-    # DATABASES = {
-    #     'default': {
-    #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #         'NAME': 'bt_main',
-    #         'USER': 'bt',
-    #         'PASSWORD': 'yuxinsucks',
-    #         'HOST': 'postgres',
-    #         'PORT': '',
-    #     }
-    # }
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'bt_main',
             'USER': 'bt',
             'PASSWORD': 'yuxinsucks',
-            'HOST': '35.236.65.95',
+            'HOST': 'postgres',
             'PORT': '',
         }
     }
+
 else:
     import dj_database_url
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
