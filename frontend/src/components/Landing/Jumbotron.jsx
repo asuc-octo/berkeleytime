@@ -21,7 +21,7 @@ function Jumbotron() {
             </div>
           </div>
         </div>
-        <div className="has-text-centered">
+        <div className="has-text-centered landing-jumbo-img-container">
           <img className="landing-jumbo-img" src={logo} alt="jumbotron" />
         </div>
       </div>

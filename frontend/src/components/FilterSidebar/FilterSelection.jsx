@@ -9,7 +9,7 @@ class FilterSelection extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.id != this.props.id;
+    return nextProps.id !== this.props.id;
   }
 
   getFormattedEnrollment(enrollmentConstant) {
@@ -61,8 +61,8 @@ class FilterSelection extends Component {
       gradeColors, openSeats, id} = this.props;
 
     let asideDetails;
-    if (this.props.sortBy == 'grade_average' || this.props.sortBy == 'department_name'
-          || this.props.sortBy == 'enrolled_percentage') {
+    if (this.props.sortBy === 'grade_average' || this.props.sortBy === 'department_name'
+          || this.props.sortBy === 'enrolled_percentage') {
       asideDetails = (
         <div>
           {averageGrade &&
@@ -73,7 +73,7 @@ class FilterSelection extends Component {
           }
         </div>
       );
-    } else if (this.props.sortBy == 'open_seats') {
+    } else if (this.props.sortBy === 'open_seats') {
       asideDetails = (
         <div>
           {openSeats &&

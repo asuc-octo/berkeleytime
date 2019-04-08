@@ -99,15 +99,31 @@
                     transition: 0.3s;
                   }
 
+                  a {
+                    color: $bt-blue;
+                  }
+
+                  a:hover {
+                    color: $bt-blue;
+                  }
                 }
             }
         }
 
-        .landing-jumbo-img {
-            width: 500px;
-            object-fit: scale-down;
-            margin-left: 20px;
-            margin-right: 20px;
+        .landing-jumbo-img-container {
+            @include tablet {
+                margin-left: 20px;
+            }
+
+            .landing-jumbo-img {
+                @include tablet {
+                    width: 500px;
+                }
+                @include mobile {
+                    width: 400px;
+                }
+                object-fit: scale-down;
+            }
         }
     }
 
@@ -121,7 +137,6 @@
         .landing-whatwedo-message {
             @include tablet {
                 max-width: 50%;
-
             }
 
             font-size: 20px;
@@ -131,7 +146,9 @@
     .landing-explore {
         margin-bottom: 0 !important;
         background-color: white;
-        height: 100vh;
+        @include tablet {
+            height: 100vh;
+        }
         min-height: 600px;
 
         .level {
