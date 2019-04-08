@@ -135,8 +135,8 @@ controller:
 #    limits:
 #      cpu: 100m
 #      memory: 64Mi
-    requests:
-      cpu: 250m
+#    requests:
+#      cpu: 250m
 
   autoscaling:
     enabled: false
