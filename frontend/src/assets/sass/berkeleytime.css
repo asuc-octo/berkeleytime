@@ -9899,7 +9899,7 @@ label.panel-block {
           border-bottom: 0.5px solid #5C5C5C;
           border-radius: 0px;
           padding-left: 0px; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-department .Select-value, .filter-sidebar .content .side-filter .form-group .filter-sidebar-department .Select-placeholder {
+        .filter-sidebar .content .side-filter .form-group .filter-sidebar-department .Select-value, .filter-sidebar .content .side-filter .form-group .filter-sidebar-department .Select-input, .filter-sidebar .content .side-filter .form-group .filter-sidebar-department .Select-placeholder {
           padding-left: 0px; }
         .filter-sidebar .content .side-filter .form-group .filter-resetButton {
           margin-top: 20px;
@@ -10398,6 +10398,15 @@ label.panel-block {
 .landing .level {
   max-width: 1150px;
   margin: 0 auto; }
+
+.landing .modal {
+  background-color: white;
+  min-height: 600px;
+  height: 100vh; }
+  .landing .modal .modal-content {
+    padding: 30px;
+    text-align: center;
+    font-size: 25px; }
 
 .landing .landing-jumbo {
   background-color: white;

@@ -230,6 +230,7 @@ export class FilterSidebar extends Component {
                   onChange={this.handleDepartmentSelect}
                   className="filter-sidebar-department"
                   searchable
+                  placeholder={"     Select..."}
                   clearable={false}
               />
 
