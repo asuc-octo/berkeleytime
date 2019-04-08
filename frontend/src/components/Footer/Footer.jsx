@@ -15,7 +15,7 @@ function Footer() {
 
           <div className="column is-2-fullhd is-2-tablet is-4-mobile">
             <p className=""><b>Support</b></p>
-            <a href="http://old.berkeleytime-internal.com/" className="">Legacy Site</a>
+            <a href="http://old.berkeleytime.com/" className="">Legacy Site</a>
             <a href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1">Report a Bug</a>
             <a href="mailto:octo.berkeleytime@asuc.org" className="">Contact</a>
           </div>

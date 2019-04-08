@@ -6,6 +6,11 @@ from data.lib.grade import get_letter_grades
 from data.lib.grade import letter_grade_to_gpa
 from data.lib.grade import letter_grade_to_field_name
 
+def convert_section_num(x):
+    str_rep = str(x)
+    while str_rep[0] == "0":
+        str_rep = str_rep[1:]
+    return str_rep
 
 class GradeMapper(object):
     """Mapper for entity.Grade."""
@@ -17,7 +22,7 @@ class GradeMapper(object):
         grade = {
             'abbreviation': data[0].strip().upper(),
             'course_number': data[1].strip().upper(),
-            'section_number': str(int(data[3].strip())),
+            'section_number': convert_section_num(data[3].strip()).upper(),
         }
 
         total_samples = self.get_total(data)

@@ -2,6 +2,7 @@ from __future__ import division
 import re, os, sys, datetime
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from django.shortcuts import render_to_response
+
 from django.http import HttpResponse, Http404
 from django.template import RequestContext
 from catalog.models import Course, Grade, Section, Enrollment, Playlist
@@ -28,7 +29,6 @@ def grade_context():
     cached = cache.get("grade__courses")
     if cached:
         rtn = cached
-        print "Cache Hit in Grades"
     else:
         courses = Course.objects.filter(grade__isnull=False).distinct().order_by("abbreviation", "course_number")
         rtn = courses.values("id", "abbreviation", "course_number")
@@ -95,8 +95,10 @@ def grade_json(request, grade_ids):
         sections = Grade.objects.filter(id__in=grade_ids)
         course = Course.objects.get(id=sections.values_list("course", flat=True)[0])
         total = sections.aggregate(Sum("total"))["total__sum"]
+        percentile_total = total - get_or_zero(sections.aggregate(Sum('p')), "p__sum")
+        percentile_total -= get_or_zero(sections.aggregate(Sum('np')), "np__sum")
+        
         percentile_ceiling = 0
-        print(sections.aggregate(Sum("p")))
         for grade, display in STANDARD_GRADES:
             grade_entry = {}
             if grade == "d":
@@ -104,11 +106,15 @@ def grade_json(request, grade_ids):
             else:
                 numerator = get_or_zero(sections.aggregate(Sum(grade)), grade + "__sum")
             actual_total += numerator
-            percent = numerator / total if total != 0 else 0.0
+            percent = numerator / percentile_total if percentile_total > 0 else 0.0
             grade_entry["percent"] = round(percent, 2)
             grade_entry["numerator"] = numerator
-            grade_entry["percentile_high"] = abs(round(1.0 - percentile_ceiling, 2))
-            grade_entry["percentile_low"] = abs(round(1.0 - percentile_ceiling - percent, 2))
+            if grade == 'p' or grade == 'np':
+                grade_entry["percentile_high"] = 0
+                grade_entry["percentile_low"] = 0
+            else:
+                grade_entry["percentile_high"] = abs(round(1.0 - percentile_ceiling, 2))
+                grade_entry["percentile_low"] = abs(round(1.0 - percentile_ceiling - percent, 2))
             percentile_ceiling += percent
             rtn[display] = grade_entry
         rtn["course_id"] = course.id
@@ -134,7 +140,6 @@ def grade_json(request, grade_ids):
 def enrollment_context():
     cached = cache.get("enrollment__courses")
     if cached:
-        print "Cache Hit in Enrollment"
         rtn = cached
     else:
         # TODO (Yuxin) This query was used prior to 8/3/2016
