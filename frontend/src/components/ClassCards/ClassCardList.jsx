@@ -17,7 +17,7 @@ class ClassCardList extends Component {
       <div className="columns class-card-list">
         {
           selectedCourses.map((item, i) => (
-          <div className="column card-column">
+          <div className="column card-column is-3">
             <ClassCard
               id={item.id}
               course={item.course}

@@ -1705,9 +1705,6 @@ body > .navbar-collapse[data-color="purple"]:after {
   .card-stats .numbers p {
     margin: 0; }
 
-.card-column {
-  max-width: 25%; }
-
 .ct-label {
   fill: rgba(0, 0, 0, 0.4);
   color: rgba(0, 0, 0, 0.4);
