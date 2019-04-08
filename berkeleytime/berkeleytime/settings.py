@@ -83,7 +83,7 @@ if IS_LOCALHOST:
             'NAME': 'bt_main',
             'USER': 'bt',
             'PASSWORD': 'yuxinsucks',
-            'HOST': 'postgres',
+            'HOST': '35.236.65.95',
             'PORT': '',
         }
     }
