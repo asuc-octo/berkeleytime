@@ -43,13 +43,13 @@ if IS_LOCALHOST:
     ALLOWED_HOSTS = ['*']
 elif IS_STAGING:
     ALLOWED_HOSTS = [
-        "staging.berkeleytime-internal.com",
+        "staging.berkeleytime.com",
     ]
 elif IS_PRODUCTION:
     ALLOWED_HOSTS = [
-        "berkeleytime-internal.com",
-        "www.berkeleytime-internal.com",
-        "old.berkeleytime-internal.com",
+        "berkeleytime.com",
+        "www.berkeleytime.com",
+        "old.berkeleytime.com",
     ]
 
 

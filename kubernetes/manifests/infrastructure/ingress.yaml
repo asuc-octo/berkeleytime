@@ -6,13 +6,14 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: "/"
     # nginx.ingress.kubernetes.io/auth-type: basic
     # nginx.ingress.kubernetes.io/auth-secret: basic-auth
-    #   nginx.ingress.kubernetes.io/auth-realm: "Authentication Required!"
+    # nginx.ingress.kubernetes.io/auth-realm: "Authentication Required!"
     certmanager.k8s.io/issuer: "letsencrypt-prod"
     certmanager.k8s.io/acme-challenge-type: http01
+    kubernetes.io/ingress.global-static-ip-name: 35.236.81.248
     nginx.ingress.kubernetes.io/server-snippet: |
       set $mobile_rewrite do_not_perform;
 
@@ -25,26 +26,26 @@ metadata:
         set $mobile_rewrite perform;
       }
       
-      if ($host != old.berkeleytime-internal.com) {
+      if ($host != old.berkeleytime.com) {
         set $mobile_rewrite "${mobile_rewrite}+not_old";
       }
        
       ## redirect to m.example.com ##
       if ($mobile_rewrite = "perform+not_old") {
-        rewrite ^ https://old.berkeleytime-internal.com redirect;
+        rewrite ^ http://old.berkeleytime.com redirect;
         break;
       }
 spec:
   tls:
   - hosts:
-    - www.berkeleytime-internal.com
-    - berkeleytime-internal.com 
-    - staging.berkeleytime-internal.com
-    - jenkins.berkeleytime-internal.com
-    - old.berkeleytime-internal.com
+    - www.berkeleytime.com
+    - berkeleytime.com 
+    - staging.berkeleytime.com
+    - jenkins.berkeleytime.com
+    - old.berkeleytime.com
     secretName: berkeleytime-tls
   rules:
-  - host: www.berkeleytime-internal.com
+  - host: www.berkeleytime.com
     http:
       paths:
       - path: /api/
@@ -55,17 +56,17 @@ spec:
         backend:
           serviceName: frontend-prod-svc
           servicePort: 3000
-  - host: old.berkeleytime-internal.com
+  - host: old.berkeleytime.com
     http:
       paths:
       - path: /
         backend:
           serviceName: berkeleytime-prod-svc
           servicePort: 5000
-  - host: staging.berkeleytime-internal.com
+  - host: staging.berkeleytime.com
     http:
       paths:
-      - path: /api/
+      - path: /api
         backend:
           serviceName: berkeleytime-stage-svc
           servicePort: 5000
@@ -73,7 +74,7 @@ spec:
         backend:
           serviceName: frontend-stage-svc
           servicePort: 3000
-  - host: jenkins.berkeleytime-internal.com
+  - host: jenkins.berkeleytime.com
     http:
       paths:
       - path: /
