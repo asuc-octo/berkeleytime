@@ -71,7 +71,8 @@ class GradesGraphCard extends Component {
       };
 
       for(let grade of gradesData) {
-        ret[grade.id] = grade[letterGrade].percent * 100
+        //ret[grade.id] = grade[letterGrade].percent * 100
+        ret[grade.id] = grade[letterGrade].numerator / grade.denominator * 100;
       }
 
       return ret
@@ -140,7 +141,7 @@ class GradesGraphCard extends Component {
       <div className="card grades-graph-card">
         <div className="grades-graph">
           {
-            gradesData.length == 0 ? (
+            gradesData.length === 0 ? (
               <GraphEmpty pageType='grades'/>
             ) : (
               <div className="graph-content">
@@ -162,8 +163,8 @@ class GradesGraphCard extends Component {
                       <GradesInfoCard
                         course={hoveredClass.course}
                         title={hoveredClass.title}
-                        semester={hoveredClass.semester == 'all' ? 'All Semester' : hoveredClass.semester}
-                        instructor={hoveredClass.instructor == 'all' ? 'All Instructors' : hoveredClass.instructor}
+                        semester={hoveredClass.semester === 'all' ? 'All Semester' : hoveredClass.semester}
+                        instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
                         courseLetter={hoveredClass.course_letter}
                         courseGPA={hoveredClass.course_gpa}
                         sectionLetter={hoveredClass.section_letter}
