@@ -10357,6 +10357,15 @@ label.panel-block {
   max-width: 1150px;
   margin: 0 auto; }
 
+.landing .modal {
+  background-color: white;
+  min-height: 600px;
+  height: 100vh; }
+  .landing .modal .modal-content {
+    padding: 30px;
+    text-align: center;
+    font-size: 25px; }
+
 .landing .landing-jumbo {
   background-color: white;
   min-height: 600px;
