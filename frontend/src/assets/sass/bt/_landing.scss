@@ -13,6 +13,22 @@
         margin: 0 auto;
     }
 
+    .modal {
+        background-color: white;
+        min-height: 600px;
+        height: 100vh;
+
+        .modal-content {
+            padding: 30px;
+            text-align: center;
+            font-size: 25px;
+        }
+
+        .modal-background {
+         
+        }
+    }
+
     .landing-jumbo {
         background-color: white;
         min-height: 600px;
