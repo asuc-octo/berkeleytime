@@ -8,7 +8,7 @@ import { laymanToAbbreviation } from '../../variables/Variables';
 import 'react-select/dist/react-select.css'
 import 'react-virtualized-select/styles.css'
 
-//think about clearing values after add button
+// think about clearing values after add button
 
 const sortOptions = [
   { value: 'instructor', label: 'By Instructor' },

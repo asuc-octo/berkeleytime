@@ -9788,7 +9788,9 @@ label.panel-block {
 .app-container {
   margin-top: 100px;
   margin-left: 35px;
-  margin-right: 35px; }
+  margin-right: 35px;
+  min-width: 1350px;
+  min-height: 100vh; }
 
 .navbar {
   position: fixed;
@@ -9944,7 +9946,9 @@ label.panel-block {
       .filter-selection-button .filter-selection .filter-selection-content .filter-selection-description {
         font-size: 13px;
         text-align: left;
-        margin-bottom: 10px; }
+        margin-bottom: 10px;
+        max-height: 40px;
+        overflow: hidden; }
       .filter-selection-button .filter-selection .filter-selection-content .filter-selection-enrollment-data {
         display: flex;
         flex-direction: row;
@@ -10136,7 +10140,9 @@ label.panel-block {
     min-height: 100px; }
     .class-card-list .card.class-card .content .class-card-upper {
       display: flex;
-      justify-content: space-between; }
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 12px; }
       .class-card-list .card.class-card .content .class-card-upper .course-abbreviation {
         font-weight: bold; }
       .class-card-list .card.class-card .content .class-card-upper .class-info {
@@ -10195,14 +10201,12 @@ label.panel-block {
       padding: 0; }
       .card.grades-card-info .content .class-avgs .class-avg-stats {
         padding: 0;
-        color: #76FC80;
         font-size: 15px;
         font-weight: bold;
         margin-bottom: 3%; }
       .card.grades-card-info .content .class-avgs .class-stats-name {
         color: #8F8F8F; }
       .card.grades-card-info .content .class-avgs .class-grade {
-        color: #F85386;
         font-size: 18px;
         font-weight: bold; }
       .card.grades-card-info .content .class-avgs .class-percent {
