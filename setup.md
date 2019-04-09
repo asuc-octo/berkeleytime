@@ -41,8 +41,9 @@ be loaded into postgres and stored as a `tar` file of the postgres directory.
 
 Once `pg_dump` completes, run `make db`. This commands builds an image and copies `bt_main.sql` into it.
 It also pushes the image, but this step is not necessary. The next goal is to run the image, which will
-automatically run a script `init_db.sh` that loads `bt_main.sql`. After this finishes, the container
-will be a completed db. However to save the db so that other users do not have to load the dump every time they
+automatically run a script `init_db.sh` that loads `bt_main.sql`. After you see that the db is ready
+to accept connections, the container is now ready and will be a completed db. 
+However to save the db so that other users do not have to load the dump every time they
 boot a cluster, we will save a copy of the data folder, which backs Postgres.
 
 The entire list of commands is
@@ -50,6 +51,8 @@ The entire list of commands is
     pg_dump -h <public-ip-of-prod-db> -U bt -d bt_main > build/bt_main.sql
     make db
     docker run berkeleytime/db
+    
+    # In another terminal window, without closing the first window
     docker cp XXXX:/var/lib/postgresql/data build/postgres-data
     tar czf postgres-data.tar.gz build/postgres-data
 
