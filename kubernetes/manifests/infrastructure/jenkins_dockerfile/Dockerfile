@@ -21,4 +21,3 @@ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/s
 apt-get update && \
 apt-get install -y kubectl
 RUN apt-get -y install kubectl
-USER jenkins
