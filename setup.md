@@ -59,6 +59,6 @@ The entire list of commands is
     tar czf postgres-data.tar.gz build/postgres-data
 
 where `XXXX` is the container ID resulting from the previous `docker run` command. The `tar` command
-will tar up the data directory. Then you can upload it to the same Google bucket. The user will then use
-`make init` to download and untar this directory and save it into `build/` so that Docker Compose can
-use it as a volume for Postgres.
+will tar up the data directory. Then you can upload it to the same Google [bucket](https://console.cloud.google.com/storage/browser/berkeleytime-dev-db?project=berkeleytime-218606). 
+The user will then use `make init` to download and untar this directory and save it into `build/` 
+so that Docker Compose can use it as a volume for Postgres.
