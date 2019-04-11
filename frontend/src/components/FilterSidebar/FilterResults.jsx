@@ -204,7 +204,7 @@ class FilterResults extends Component {
             <FixedSizeList
               className="filter-list"
               itemData={courses}
-              height={1000}
+              height={820}
               itemCount={courses.length}
               itemSize={150}
               width={"100%"}
