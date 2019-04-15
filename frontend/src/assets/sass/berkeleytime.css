@@ -9876,7 +9876,7 @@ label.panel-block {
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
-    padding: 15px 4px 6px 15px;
+    padding: 6px 4px 6px 15px;
     min-height: 130px;
     outline: none; }
     .filter-selection-button .filter-selection:hover, .filter-selection-button .filter-selection:focus {
