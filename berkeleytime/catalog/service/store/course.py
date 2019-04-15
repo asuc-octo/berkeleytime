@@ -96,6 +96,7 @@ class CourseStore(object):
             'message': 'Updating/creating course',
             'abbreviation': course.abbreviation,
             'course_number': course.course_number,
+            'title': course.title,
             'created': created,
         })
 

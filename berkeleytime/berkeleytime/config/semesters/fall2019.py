@@ -12,10 +12,10 @@ SIS_TERM_ID = 2198
 
 TELEBEARS = {
     'phase1_start': datetime.datetime(2019, 4, 15),
-    'phase1_end': datetime.datetime(2019, 6, 15), # Estimated
-    'phase2_start': datetime.datetime(2019, 7, 23), # Estimated
-    'phase2_end': datetime.datetime(2019, 8, 12), # Estimated
-    'adj_start': datetime.datetime(2019, 8, 13), # Estimated
+    'phase1_end': datetime.datetime(2019, 6, 21),
+    'phase2_start': datetime.datetime(2019, 7, 29),
+    'phase2_end': datetime.datetime(2019, 8, 18),
+    'adj_start': datetime.datetime(2019, 8, 19),
 }
 
 INSTRUCTION = {

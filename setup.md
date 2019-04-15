@@ -12,7 +12,7 @@ To run Berkeleytime, make sure this repo is clone. From the top level, first dow
 Postgres data with `make init`. This will create a folder `build/postgres-data`. Don't try to push it to Github - 
 its a local copy of the production data. Note: If you recieve the error `make: wget: No such file or directory`, make sure you have `wget` installed.
 
-To boot the services, run `make up`. This will boot 3 containers (redis, postgres, Django). Wait for both
+To boot the services, run `make up`. This will boot 6 containers (redis, postgres, nginx, Django, Node.js). Wait for both
 Postgres and Django to be running before you proceed. Django will say 
 
     Starting development server at http://0.0.0.0:8000/
@@ -20,6 +20,8 @@ Postgres and Django to be running before you proceed. Django will say
 And Postgres will say
 
     LOG:  database system is ready to accept connections
+    
+And the Node server will stop spitting errors.
     
 To remove the cluster, **DO NOT USE CONTROL-C** or anything to stop or terminate the docker compose
 process. Instead use `make down` to safely kill the cluster.

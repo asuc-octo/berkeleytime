@@ -1,19 +1,15 @@
+.PHONY: frontend
+
 # The following commands build the images for various components of the Berkeleytime stack
 # and pushes them to Dockerhub. Make sure you are logged in as the berkeleytime user.
 
-# Base has all the dependencies for the Django server installed. It is used as a starting
-# point for the local dev and production environments.
-base:
-	cp requirements.txt build/requirements.txt
-	docker build -t berkeleytime/base -f build/Dockerfile.base build
-	rm build/requirements.txt
-	docker push berkeleytime/base
-
-# The production image builds on top of the base image and packages the source code
-# into the image.
-prod:
-	docker build -t berkeleytime/berkeleytime -f build/Dockerfile.build berkeleytime
+backend:
+	docker build -t berkeleytime/berkeleytime -f berkeleytime/Dockerfile berkeleytime
 	docker push berkeleytime/berkeleytime
+	
+frontend:
+	docker build -t berkeleytime/frontend -f frontend/Dockerfile frontend
+	docker push berkeleytime/frontend
 
 # The database image is used to create the postgres data directory. It loads a dump of the
 # production data into postgres, and thus creates a data directory. This directory is tarballed
@@ -22,6 +18,22 @@ prod:
 db:
 	docker build -t berkeleytime/db -f build/Dockerfile.db build
 	docker push berkeleytime/db
+
+# The following commands are used to deploy the staging and prodctuon environments
+# TODO: replace with jenkins
+
+deploy-prod:
+	kubectl delete -f kubernetes/manifests/berkeleytime/backend-deploy-prod.yaml
+	kubectl delete -f kubernetes/manifests/berkeleytime/frontend-deploy-prod.yaml
+	kubectl apply -f kubernetes/manifests/berkeleytime/frontend-deploy-prod.yaml
+	kubectl apply -f kubernetes/manifests/berkeleytime/backend-deploy-prod.yaml
+
+deploy-stage:
+	kubectl delete -f kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
+	kubectl delete -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
+	kubectl apply -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
+	kubectl apply -f kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
+
 
 # -----------------------------------------------------------------------------------------------
  

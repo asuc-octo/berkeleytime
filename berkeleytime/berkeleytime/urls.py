@@ -32,6 +32,10 @@ urlpatterns = patterns('',
 
     # Catalog
     url(r'^catalog/$', 'catalog.views.catalog'),
+    url(r'^catalog_json/$', 'data.views.catalog_context_json'),
+    url(r'^catalog_json/course/(?P<course_id>\d+)/$', 'catalog.views.course_json'),
+    url(r'^catalog_json/(?P<abbreviation>.*)/(?P<course_number>.*)/$', 'data.views.catalog_context_json'),
+    url(r'^catalog_json/course_box/$', 'catalog.views.course_box_json'),
     # legacy for Berkeleytime V1
     url(r'^courses/$', 'catalog.views.catalog'),
     url(r'^catalog/filter/$', 'catalog.views.filter'),
@@ -40,17 +44,20 @@ urlpatterns = patterns('',
     url(r'^catalog/course_box/$', 'catalog.views.course_box'),
     url(r'^catalog/(?P<abbreviation>.*)/(?P<course_number>.*)/$', 'catalog.views.catalog'),
 
+
     # Grades
     url(r'^grades/$', 'data.views.grade_render'),
+    url(r'^grades_json/$', 'data.views.grade_context_json'),
     url(r'^grades/course_grades/(?P<course_id>\d+)/$', 'data.views.grade_section_json'),
     url(r'^grades/sections/(?P<grade_ids>.*)/$', 'data.views.grade_json'),
 
     # Enrollment
     url(r'^enrollment/$', 'data.views.enrollment_render'),
+    url(r'^enrollment_json/$', 'data.views.enrollment_context_json'),
     url(r'^enrollment/sections/(?P<course_id>\d+)/$', 'data.views.enrollment_section_render'),
     url(r'^enrollment/aggregate/(?P<course_id>\d+)/(?P<semester>[a-z]+)/(?P<year>\d+)/$', 'data.views.enrollment_aggregate_json'),
     url(r'^enrollment/data/(?P<section_id>\d+)/$', 'data.views.enrollment_json'),
-    (r'^facebook/', include('django_facebook.urls')),
+    # (r'^facebook/', include('django_facebook.urls')),
 
     # Campus
     url(r'^campus/$', 'campus.views.render'),
@@ -64,7 +71,7 @@ urlpatterns = patterns('',
     #Scheduler
     url(r'^scheduler/$', 'scheduler.views.schedule_render'),
     url(r'^scheduler/select_classes/$', 'scheduler.views.select_classes'),
-    # url(r'scheduler/select_sections/$', TemplateView.as_view(template_name="scheduler/select_section.html")),
+    url(r'scheduler/select_sections/$', TemplateView.as_view(template_name="scheduler/select_section.html")),
     url(r'^scheduler/select_sections_params/$', 'scheduler.views.select_sections_params'),
     url(r'^scheduler/select_sections/$', 'scheduler.views.select_sections'),
     url(r'^scheduler/select_sections_json/(?P<course_id>\d+)/$', 'scheduler.views.select_sections_json'),
@@ -73,7 +80,7 @@ urlpatterns = patterns('',
     url(r'^scheduler/save_schedule/$', 'scheduler.views.save_schedule'),
     url(r'^scheduler/delete_schedule/$', 'scheduler.views.delete_schedule'),
     url(r'^scheduler/export_schedule/$', 'scheduler.views.export_schedule'),
-    #url(r'scheduler/view_schedules/$', TemplateView.as_view(template_name="scheduler/view_schedules.html")),
+    url(r'scheduler/view_schedules/$', TemplateView.as_view(template_name="scheduler/view_schedules.html")),
 
     # Direct to Template
     (r'^legal/terms/$', TemplateView.as_view(template_name="legal/terms.html")),
@@ -86,8 +93,8 @@ urlpatterns = patterns('',
     (r'^contact/$', RedirectView.as_view(url='/about')),
 
     # For Testing
-    # (r'^404/$', TemplateView.as_view(template_name="404.html")),
-    # (r'^500/$', TemplateView.as_view(template_name="500.html")),
+    (r'^404/$', TemplateView.as_view(template_name="404.html")),
+    (r'^500/$', TemplateView.as_view(template_name="500.html")),
 
 )
 

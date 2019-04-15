@@ -1,0 +1,129 @@
+.filter-sidebar {
+    background-color: white;
+
+    .header {
+        padding: 20px 30px 30px 30px;
+        padding-bottom: 10px;
+
+        .filter-sidebar-header {
+            margin: 0 0;
+            font-size: 20px;
+            font-weight: 500;
+        }
+    }
+
+    .content {
+        padding: 30px;
+        padding-top: 0px;
+        margin-bottom: 20px;
+        font-family: "Roboto", sans-serif;
+
+        .side-filter {
+            margin-bottom: 0px;
+
+            .form-group {
+                margin-bottom: 0px;
+
+                .filter-label {
+                    font-weight: 400;
+                    color: black;
+                    margin-top: 30px;
+                    margin-bottom: 10px;
+                    font-size: 18px;
+                }
+
+                .filter-sidebar-classSearch {
+                    font-family: "FontAwesome", "Roboto", "Helvetica Neue", "Arial", sans-serif;
+                    border: 0px;
+                    border-bottom: 0.5px solid $bt-grey;
+                    border-radius: 0px;
+                    padding-left: 0px;
+                    font-size: 16px;
+
+                    &:focus::-webkit-input-placeholder { color:transparent; }
+                    &:focus:-moz-placeholder { color:transparent; } /* FF 4-18 */
+                    &:focus::-moz-placeholder { color:transparent; } /* FF 19+ */
+                    &:focus:-ms-input-placeholder { color:transparent; } /* IE 10+ */
+                }
+
+                .filter-sidebar-classSearch::placeholder {
+                    color: $bt-grey;
+                }
+
+                .filter-sidebar-sortBy {
+                    .Select-control {
+                        border: 0px;
+                        border-bottom: 0.5px solid $bt-grey;
+                        border-radius: 0px;
+                        padding-left: 0px;
+                    }
+                }
+
+                .buttonToggleGroup {
+                    .buttonToggleGroup-button {
+                        text-align: left;
+                        color: black;
+                        padding: 5px 10px;
+                        text-decoration: none;
+                        font-size: 14px;
+                        font-weight: 300;
+                    }
+
+                    .checkboxGroup {
+                        display: flex;
+                        flex-direction: column;
+                        padding-left: 15px;
+
+                        .checkbox > label{
+                            font-size: 12px;
+                            color: black;
+                            font-weight: 200;
+                            text-transform: capitalize;
+                            padding-top: 2.2px;
+                        }
+
+                        .checkbox input[type="checkbox"]:checked + label::after{
+                            color: $bt-blue;
+                        }
+                    }
+                }
+
+                .filter-sidebar-range-helpBlock {
+                    color: black;
+                    font-size: 12px;
+                    margin-top: 0px;
+                    font-weight: 300;
+                }
+
+                .filter-sidebar-range-slider {
+                    .rc-slider-track {
+                        background-color: $bt-blue;
+                    }
+
+                    .rc-slider-handle {
+                        border-color: $bt-blue;
+                    }
+                }
+
+                .filter-sidebar-department {
+                    .Select-control {
+                        border: 0px;
+                        border-bottom: 0.5px solid $bt-grey;
+                        border-radius: 0px;
+                        padding-left: 0px;
+                    }
+                }
+
+
+                .filter-resetButton {
+                    margin-top: 20px;
+                    background-color: $bt-blue;
+                    border-color: $bt-blue;
+                    color: white;
+                    font-weight: bold;
+                }
+            }
+        }
+
+    }
+}
