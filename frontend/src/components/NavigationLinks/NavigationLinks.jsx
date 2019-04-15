@@ -14,7 +14,7 @@ function NavigationLinks() {
         <Link to="/enrollment">Enrollment</Link>
       </div>
       <div className="navbar-item">
-        <Link to="/scheduler">Scheduler</Link>
+        <a href="http://old.berkeleytime.com/scheduler">Scheduler</a>
       </div>
       <div className="navbar-item">
         <Link to="/about">About</Link>
