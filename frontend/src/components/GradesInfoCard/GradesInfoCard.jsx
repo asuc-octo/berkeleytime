@@ -44,21 +44,24 @@ function getGradeColor(grade) {
 }
 
 export default function GradesInfoCard({
-  course, title, semester, instructor, courseLetter,
+  course, subtitle, semester, instructor, courseLetter,
   courseGPA, sectionLetter, sectionGPA, selectedGrade,
-  gradeName, denominator, betterGrade, worseGrade
+  gradeName, denominator, betterGrade, worseGrade,
+  hoveredColor
 }) {
   return (
     <div className="card grades-card-info">
       <div className="content card-info">
         <Row>
-          <div className="class-num">{course}</div>
+          <div className="class-num" style={{borderBottom: `5px ${hoveredColor} solid`}}>
+            {course}
+          </div>
         </Row>
         <Row>
           <div className="class-info">{`${semester} | ${instructor}`}</div>
         </Row>
         <Row>
-          <div className="class-title">{title}</div>
+          <div className="class-title">{subtitle}</div>
         </Row>
 
         <Row className="class-avgs">
