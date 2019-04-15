@@ -11,6 +11,8 @@ import {
 } from 'recharts';
 import axios from 'axios';
 
+import vars from '../../variables/Variables';
+
 import EnrollmentGraph from '../Graphs/EnrollmentGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
 import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
@@ -141,6 +143,15 @@ class EnrollmentGraphCard extends Component {
     let { graphData, enrollmentData, hoveredClass } = this.state;
     let telebears = enrollmentData.length ? enrollmentData[0]['telebears'] : {};
 
+    var colorIndex = 0;
+    for (var i = 0; i < enrollmentData.length; i++) {
+      if (enrollmentData[i].id === hoveredClass.id) {
+        colorIndex = i;
+        break;
+      }
+    }
+    let hoveredColor = vars.colors[colorIndex];
+
     return (
       <div className="card enrollment-graph-card">
         <div className="enrollment-graph">
@@ -172,6 +183,7 @@ class EnrollmentGraphCard extends Component {
                         selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
                         todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
                         telebears={telebears}
+                        hoveredColor={hoveredColor}
                       />
                     }
                   </Col>

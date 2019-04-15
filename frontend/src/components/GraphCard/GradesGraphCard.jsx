@@ -8,7 +8,6 @@ import GradesGraph from '../Graphs/GradesGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard.jsx';
 
-
 class GradesGraphCard extends Component {
   constructor(props) {
     super(props)
@@ -137,6 +136,15 @@ class GradesGraphCard extends Component {
     let { graphData, gradesData, hoveredClass } = this.state;
     let { title } = this.props;
 
+    var colorIndex = 0;
+    for (var i = 0; i < gradesData.length; i++) {
+      if (gradesData[i].id === hoveredClass.id) {
+        colorIndex = i;
+        break;
+      }
+    }
+    let hoveredColor = vars.colors[colorIndex];
+
     return (
       <div className="card grades-graph-card">
         <div className="grades-graph">
@@ -162,8 +170,8 @@ class GradesGraphCard extends Component {
                     {hoveredClass &&
                       <GradesInfoCard
                         course={hoveredClass.course}
-                        title={hoveredClass.title}
-                        semester={hoveredClass.semester === 'all' ? 'All Semester' : hoveredClass.semester}
+                        subtitle={hoveredClass.subtitle}
+                        semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
                         instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
                         courseLetter={hoveredClass.course_letter}
                         courseGPA={hoveredClass.course_gpa}
@@ -172,6 +180,7 @@ class GradesGraphCard extends Component {
                         denominator={hoveredClass.denominator}
                         selectedGrade={hoveredClass[hoveredClass.hoverGrade]}
                         gradeName={hoveredClass.hoverGrade}
+                        hoveredColor={hoveredColor}
 
                         // selectedGrade = {this.state.selectedGrade}
                         // betterGrade = {this.getNeighborGrade("better")}

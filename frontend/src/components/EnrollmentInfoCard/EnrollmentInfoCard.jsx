@@ -8,6 +8,7 @@ function formatPercentage(num) {
 export default function EnrollmentInfoCard({
   title, subtitle, semester, instructor,
   selectedPoint, todayPoint, telebears,
+  hoveredColor
 }) {
   const today = new Date();
   let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -26,7 +27,7 @@ export default function EnrollmentInfoCard({
     <div className="card enrollment-card-info">
       <div className="content card-info">
         <Row>
-          <div className="class-num">
+          <div className="class-num" style={{borderBottom: `5px ${hoveredColor} solid`}}>
             {title}
           </div>
         </Row>
