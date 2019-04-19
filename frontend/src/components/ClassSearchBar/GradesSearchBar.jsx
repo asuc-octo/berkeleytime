@@ -53,6 +53,9 @@ class GradesSearchBar extends Component {
   handleClassSelect(updatedClass) {
     if(updatedClass === null) {
       this.reset();
+      this.setState({
+        selectedClass: 0,
+      })
       return;
     }
 
@@ -291,7 +294,6 @@ class GradesSearchBar extends Component {
 
   reset() {
     this.setState({
-      selectedClass: 0,
       selectPrimary: '',
       selectSecondary: '',
     })

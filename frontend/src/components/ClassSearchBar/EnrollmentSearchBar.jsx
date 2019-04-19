@@ -46,6 +46,9 @@ class EnrollmentSearchBar extends Component {
   handleClassSelect(updatedClass) {
     if(updatedClass === null) {
       this.reset();
+      this.setState({
+        selectedClass: 0,
+      })
       return;
     }
 
@@ -220,7 +223,6 @@ class EnrollmentSearchBar extends Component {
 
   reset() {
     this.setState({
-      selectedClass: 0,
       selectPrimary: '',
       selectSecondary: '',
     })
