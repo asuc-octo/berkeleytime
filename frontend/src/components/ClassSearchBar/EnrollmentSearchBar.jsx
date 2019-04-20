@@ -233,6 +233,8 @@ class EnrollmentSearchBar extends Component {
     const { sections, selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
+    let onePrimaryOption = primaryOptions && primaryOptions.length == 2 && selectPrimary;
+    let oneSecondaryOption = secondaryOptions && secondaryOptions.length == 2 && selectSecondary;
 
     return (
       <div className="columns">
@@ -250,7 +252,7 @@ class EnrollmentSearchBar extends Component {
           <Select
               name="instrSems"
               placeholder="Select an option..."
-              value={selectPrimary}
+              value={onePrimaryOption ? primaryOptions[1] : selectPrimary}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
               disabled={!selectedClass}
@@ -262,7 +264,7 @@ class EnrollmentSearchBar extends Component {
           <Select
               name="section"
               placeholder="Select an option..."
-              value={selectSecondary}
+              value={oneSecondaryOption ? secondaryOptions[1] : selectSecondary}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}
               disabled={!selectedClass}
