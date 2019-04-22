@@ -11,8 +11,9 @@ function Sponsors() {
             <p className="has-text-centered">A big shoutout to the folks that help the BerkeleyTime team continue to provide this service free-of-charge to students.</p>
           </div>
           <div className="landing-sponsors-img-wrapper">
-            <img className="landing-sponsors-img" src={asuc_logo} alt="asuc" />
-            <img className="landing-sponsors-img" src={stf_logo} alt="stf" />
+            <a href="https://asuc.org"><img className="landing-sponsors-img" src={asuc_logo} alt="asuc" /></a>
+            <a href="https://techfund.berkeley.edu/home">
+            <img className="landing-sponsors-img" src={stf_logo} alt="stf" /></a>
           </div>
     </div>
   );
