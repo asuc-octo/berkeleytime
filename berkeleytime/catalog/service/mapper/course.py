@@ -1,4 +1,6 @@
 """Course Mapper."""
+import traceback
+
 from catalog.service.mapper import EntityMapper
 from catalog.service.entity.course import Course
 # TODO (*) Move this to /berkeleytime
@@ -22,7 +24,7 @@ class CourseMapper(EntityMapper):
             }
             return Course(course)
         except KeyError as e:
-            print (e, "Solved Nonetype Error for department. Investigate keys for other dictionaries")
+            traceback.print_exc()
             return None
 
     def get_course_department(self, data):
