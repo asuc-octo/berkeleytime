@@ -1,0 +1,16 @@
+{
+    "extends": "airbnb",
+    "rules": {
+      "indent": ["off", 4],
+      "import/no-unresolved": "off",
+      "react/prefer-stateless-function": 0,
+      "class-methods-use-this": "off",
+      "arrow-parens": "off",
+      "react/jsx-index": "off",
+      "prefer-destructuring": "off",
+      "jsx-a11y/href-no-hash": "off",
+      "radix": "off",
+      "eqeqeq": "off",
+      "no-unused-vars": "off"
+    }
+}

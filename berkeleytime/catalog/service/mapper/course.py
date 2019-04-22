@@ -6,7 +6,9 @@ from catalog.service.entity.course import Course
 # TODO (*) Move this to /berkeleytime
 from mondaine.lib import utils
 from catalog.service.exc import SISCourseResourceException
+import logging
 
+logger = logging.getLogger(__name__)
 
 class CourseMapper(EntityMapper):
     """Mapping objects an entity.Course."""

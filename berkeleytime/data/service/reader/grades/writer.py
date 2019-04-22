@@ -5,8 +5,8 @@ from mondaine.lib import utils
 headers = ["Subject", "ClassNum", "CourseID", "Section", "ClassDesc", "Instructor", "Level"]
 grades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "P", "NP"]
 
-semesters = ["Fall", "Spring", "Summer"]
-years = ["2018", "2017", "2016", "2015", "2014", "2013"]
+all_semesters = ["Fall", "Spring", "Summer"]
+all_years = ["2018", "2017", "2016", "2015", "2014", "2013"]
 
 path = "data/service/reader/grades/"
 
@@ -20,18 +20,20 @@ def abbreviate_subject(subject):
             unknown.append(subject)
         return "UNKNOWN"
 
-def translate(skip):
+def translate(skip, semester=None, year=None):
+    semester_todo = [semester] if semester else all_semesters
+    years_todo = [year] if year else all_years
 
-    for s in semesters:
-        for y in years:
+    for s in semester_todo:
+        for y in years_todo:
             couseids = []
-            
+
             try:
                 with open(path + "formatted/" + s.lower() + "_" + y + ".csv", "w") as csvfile:
                     w = csv.writer(csvfile)
                     w.writerow(headers + grades)
                     for standing in ["under", "grad"]:
-    
+
                         courses = clean(read("{}raw/{}{}{}.csv".format(path, s, y, standing)), standing == "grad")
                         for c in courses:
                             couseids.append(c.CourseID)
@@ -44,7 +46,7 @@ def translate(skip):
                             subject = abbreviate_subject(c.Subject)
                             if skip and subject == "UNKNOWN":
                                 continue
-                            w.writerow([subject, c.CourseNum, c.CourseID, 
+                            w.writerow([subject, c.CourseNum, c.CourseID,
                                         c.SectionNum, c.CourseDesc, c.Instructor, standing] + course_grades)
             except IOError:
                 pass

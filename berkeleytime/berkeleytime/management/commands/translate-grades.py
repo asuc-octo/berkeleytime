@@ -14,8 +14,24 @@ class Command(BaseCommand):
             default=False,
             help='Does not write courses that cannot be matched to an existing department',
         ),
+          make_option(
+            '--semester',
+            action='store',
+            dest='semester',
+            default=None,
+            help='Specify a semester',
+        ),
+           make_option(
+            '--year',
+            action='store',
+            dest='year',
+            default=None,
+            help='Specify a year',
+        ),
+
+
     )
 
     def handle(self, *args, **options):
         """Command handler."""
-        translate(options["skip"])
+        translate(options["skip"], options['semester'], options['year'])

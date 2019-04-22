@@ -12,7 +12,7 @@ To run Berkeleytime, make sure this repo is clone. From the top level, first dow
 Postgres data with `make init`. This will create a folder `build/postgres-data`. Don't try to push it to Github - 
 its a local copy of the production data. Note: If you recieve the error `make: wget: No such file or directory`, make sure you have `wget` installed.
 
-To boot the services, run `make up`. This will boot 3 containers (redis, postgres, Django). Wait for both
+To boot the services, run `make up`. This will boot 6 containers (redis, postgres, nginx, Django, Node.js). Wait for both
 Postgres and Django to be running before you proceed. Django will say 
 
     Starting development server at http://0.0.0.0:8000/
@@ -20,6 +20,8 @@ Postgres and Django to be running before you proceed. Django will say
 And Postgres will say
 
     LOG:  database system is ready to accept connections
+    
+And the Node server will stop spitting errors.
     
 To remove the cluster, **DO NOT USE CONTROL-C** or anything to stop or terminate the docker compose
 process. Instead use `make down` to safely kill the cluster.
@@ -36,19 +38,27 @@ copy of the code into the image itself.
 
 The database image is the most unique. `make db` produces an image that is used solely to set up
 a database to load the dumped SQL data. This SQL data is dumped from the production database using
-`pg_dump` and is saved into the `berkeleytime-dev-db` Google Storage Bucket. To run `make db`, you must
-first create your own dump or download a previous one from the [bucket](https://storage.googleapis.com/berkeleytime-dev-db/bt_main.sql)
-and save it into `build/`.
- 
-After running `make db`, you must run `docker run berkeleytime/db` to initialize the database. This
-will load the data into the actual database and could take a while. After this finishes, the container
-will be a completed db. However to save the db so that other users do not have to load the dump every time they
-boot a cluster, we will save a copy of the data folder, which backs Postgres. Run
+`pg_dump` and should be saved as `build/bt_main.sql`. This sql dump is then used by the db build container to
+be loaded into postgres and stored as a `tar` file of the postgres directory.
 
+Once `pg_dump` completes, run `make db`. This commands builds an image and copies `bt_main.sql` into it.
+It also pushes the image, but this step is not necessary. The next goal is to run the image, which will
+automatically run a script `init_db.sh` that loads `bt_main.sql`. After you see that the db is ready
+to accept connections, the container is now ready and will be a completed db. 
+However to save the db so that other users do not have to load the dump every time they
+boot a cluster, we will save a copy of the data folder, which backs Postgres.
+
+The entire list of commands is
+
+    pg_dump -h <public-ip-of-prod-db> -U bt -d bt_main > build/bt_main.sql
+    make db
+    docker run berkeleytime/db
+    
+    # In another terminal window, without closing the first window
     docker cp XXXX:/var/lib/postgresql/data build/postgres-data
     tar czf postgres-data.tar.gz build/postgres-data
 
 where `XXXX` is the container ID resulting from the previous `docker run` command. The `tar` command
-will tar up the data directory. Then you can upload it to the same Google bucket. The user will then use
-`make init` to download and untar this directory and save it into `build/` so that Docker Compose can
-use it as a volume for Postgres.
+will tar up the data directory. Then you can upload it to the same Google [bucket](https://console.cloud.google.com/storage/browser/berkeleytime-dev-db?project=berkeleytime-218606). 
+The user will then use `make init` to download and untar this directory and save it into `build/` 
+so that Docker Compose can use it as a volume for Postgres.

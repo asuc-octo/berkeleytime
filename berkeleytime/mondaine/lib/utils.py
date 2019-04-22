@@ -4,6 +4,10 @@ import re
 from mondaine import config
 from unidecode import unidecode
 
+translations = {
+    "BUS ADM": "UGBA"
+}
+
 
 def clean(target):
     """Clean target string via unidecode."""
@@ -60,14 +64,19 @@ def department_to_abbreviation(department_name):
 
 def abbreviation_to_department(abbreviation):
     """Convert an abbrevation to its corresponding department name."""
-    return config.abbreviation_to_department_mapper[abbreviation]
+    return config.abbreviation_to_department_mapper[translate(abbreviation)]
 
 
 def is_abbreviation(abbreviation):
     """Return True if abbreviation is an abbreviation, else False."""
-    return abbreviation in config.abbreviation_to_department_mapper
+    return translate(abbreviation) in config.abbreviation_to_department_mapper
 
 
 def is_department(department_name):
     """Return True if department_name is a department name, else False."""
     return department_name.upper() in config.department_to_abbreviation_mapper
+
+def translate(abbreviation):
+    if abbreviation in translations:
+        return translations[abbreviation]
+    return abbreviation
