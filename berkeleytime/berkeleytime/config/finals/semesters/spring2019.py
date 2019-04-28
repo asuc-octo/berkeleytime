@@ -46,4 +46,4 @@ def spring_2019_finals_logic(abbreviation, course_number, start_time, is_foreign
         return FINAL_TIMES.get("Thursday7-10PM")
     return None
 
-finals_mapper = FinalTimesMapper(fall_2018_finals_logic)
+finals_mapper = FinalTimesMapper(spring_2019_finals_logic)
