@@ -23,7 +23,7 @@ spec:
           emptyDir: {}
       containers:
       - name: jenkins-dep
-        image: tsaianson/dockerjenkinskubectlbase:latest
+        image: tsaianson/dockerjenkinskubectlgcsdkbase:latest
         ports:
         - containerPort: 8080
         env:
