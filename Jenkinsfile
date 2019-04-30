@@ -33,7 +33,7 @@ docker push berkeleytime/frontendstage:$version'''
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: 'react-temp', credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
-sed -ri "s/image:.*/image:\ index.docker.io\/berkeleytime\/berkeleytimestage:$version/g" kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
+sed -ri "s/image:.*/image: index.docker.io\/berkeleytime\/berkeleytimestage:$version/g" kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
 kubectl get pods'''
       }
     }
@@ -44,7 +44,7 @@ kubectl get pods'''
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: 'react-temp', credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
-sed -ri "s/image:.*/image:\ index.docker.io\/berkeleytime\/frontendstage:$version/g" kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
+sed -ri "s/image:.*/image: index.docker.io\/berkeleytime\/frontendstage:$version/g" kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
 kubectl get pods'''
       }
     }
