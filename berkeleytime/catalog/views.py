@@ -155,7 +155,10 @@ def union_by_category(category, filter_ids, user=None):
     if category == "custom":
         playlists = playlists.filter(user=user)
     intersected = [playlist.courses.all() for playlist in playlists]
-    return reduce(lambda x, y: x | y, intersected)
+    if category in ('university', 'ls', 'engineering', 'haas'):
+        return reduce(lambda x, y: x & y, intersected)
+    else:
+        return reduce(lambda x, y: x | y, intersected)
 
 
 def course(request, course_id):
@@ -326,17 +329,30 @@ def course_box_json(request):
         'requirements': which_requirements(course),
         'cover_photo': cover_photo(course),
         'last_enrollment_update': get_last_enrollment_update(sections),
-        'ongoing_sections': ongoing_sections,
+        'ongoing_sections': map(lambda s: s.as_json(), ongoing_sections),
         'ongoing': ongoing,
         'marketplace': marketplace_views.get_textbook_context(
             course, CURRENT_SEMESTER, CURRENT_YEAR,
         )
     })
 
+def semester_to_value(s):
+    """
+    Assigns a number to a section dict (see grade_section_json for format). Is used to
+    sort a list of sections by time.
+    """
+    semester, year = s.split()
+    if semester.lower() == 'spring':
+        sem = 0
+    elif semester.lower() == 'fall':
+        sem = 2
+    else:
+        sem = 1
+    return 3*int(year) + sem
 
 def which_requirements(course):
     """Idk what this is."""
-    playlists = course.playlist_set.filter(category__in=[
+    playlists_1 = course.playlist_set.filter(category__in=[
         'ls',
         'university',
         'engineering',
@@ -344,9 +360,13 @@ def which_requirements(course):
         'haas',
         'department',
         'units',
+    ])
+    playlists_2 = course.playlist_set.filter(category__in=[
         'semester',
     ])
-    return playlists.values_list('name', flat=True)
+    requirements_1 = list(playlists_1.values_list('name', flat=True))
+    requirements_2 = sorted(list(playlists_2.values_list('name', flat=True)), key=semester_to_value, reverse=True)
+    return requirements_1 + requirements_2
 
 
 @login_required

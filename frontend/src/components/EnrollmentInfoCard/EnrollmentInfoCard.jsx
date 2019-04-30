@@ -1,69 +1,89 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-export default function EnrollmentInfoCard({thisClass, selectedPt, today}) {
+function formatPercentage(num) {
+  return (num * 100).toFixed(1);
+}
+
+export default function EnrollmentInfoCard({
+  title, subtitle, semester, instructor,
+  selectedPoint, todayPoint, telebears,
+}) {
+  const today = new Date();
+  let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  const todayString = today.toLocaleDateString("en-US", dateOptions);
+
+  let period = "";
+  if(selectedPoint.day < telebears['phase2_start_day']) {
+    period = "Phase I";
+  } else if (selectedPoint.day < telebears['adj_start_day']) {
+    period = "Phase II";
+  } else {
+    period = "Adjustment Period"
+  }
+
   return (
-    <div className="card card-info">
+    <div className="card enrollment-card-info">
       <div className="content card-info">
         <Row>
-          <div className="classNum">
-            {thisClass.title}
+          <div className="class-num">
+            {title}
           </div>
         </Row>
         <Row>
-          <div className="classInfo">
-            {`${thisClass.semester} | ${thisClass.faculty}`}
+          <div className="class-info">
+            {`${semester} | ${instructor}`}
           </div>
         </Row>
         <Row>
-          <div className="classTitle">{thisClass.subtitle}</div>
+          <div className="class-title">{subtitle}</div>
         </Row>
 
         <Row className="class-stats">
-          <div className="classStatType">
-            {`Adjustment Period: Day ${selectedPt.day}`}
+          <div className="class-stat-type">
+            {`${period}: Day ${selectedPoint.day}`}
           </div>
-          <div className="classAdjustmentPercent">
-            {`Enrollment Percent: ${selectedPt.enrolled_percent}%`}
+          <div className="class-adjustment-percent">
+            {`Enrollment Percent: ${formatPercentage(selectedPoint.enrolled_percent)}%`}
           </div>
-          <div className="classAdjustmentPercent">
-            {`Waitlist Percent: ${selectedPt.waitlisted_percent}%`}
+          <div className="class-adjustment-percent">
+            {`Waitlist Percent: ${formatPercentage(selectedPoint.waitlisted_percent)}%`}
           </div>
           <Row>
             <Col xs={8}>
-              <div className="classStatsName">Enrolled</div>
+              <div className="class-stats-name">Enrolled</div>
             </Col>
             <Col xs={4}>
-              <div className="classStats">{selectedPt.enrolled}</div>
+              <div className="class-stats">{selectedPoint.enrolled}</div>
             </Col>
           </Row>
           <Row className="class-stats">
             <Col xs={8}>
-              <div className="classStatsName">Waitlisted</div>
+              <div className="class-stats-name">Waitlisted</div>
             </Col>
             <Col xs={4}>
-              <div className="classStats">{selectedPt.waitlisted}</div>
+              <div className="class-stats">{selectedPoint.waitlisted}</div>
             </Col>
           </Row>
         </Row>
 
         <Row>
-          <div className="classStatType">{`Today: ${today}`}</div>
-          <div className="classAdjustmentPercent">{`${thisClass[thisClass.length-1].enrolled_percent}%`}</div>
+          <div className="class-stat-type">{`Today: ${todayString}`}</div>
+          <div className="class-adjustment-percent">{`${formatPercentage(todayPoint.enrolled_percent)}%`}</div>
           <Row className="class-adjustment">
             <Col xs={8}>
-              <div className="classStatsName">Currently Enrolled</div>
+              <div className="class-stats-name">Currently Enrolled</div>
             </Col>
             <Col xs={4}>
-              <div className="classStats">{thisClass[thisClass.length-1].enrolled}</div>
+              <div className="class-stats">{todayPoint.enrolled}</div>
             </Col>
           </Row>
           <Row className="class-adjustment">
             <Col xs={8}>
-              <div className="classStatsName">Currently Waitlisted</div>
+              <div className="class-stats-name">Currently Waitlisted</div>
             </Col>
             <Col xs={4}>
-              <div className="stats-name">{thisClass[thisClass.length-1].waitlisted}</div>
+              <div className="stats-name">{todayPoint.waitlisted}</div>
             </Col>
           </Row>
         </Row>

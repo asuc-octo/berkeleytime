@@ -606,7 +606,7 @@ var grades = [
   {name: 'F', classA: 0, classB: 2},
 ];
 
-var possibleGrades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F", "NP", "P"];
+var possibleGrades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F", "P", "NP"];
 
 var colors = ['#4EA6FB', '#6AE086', '#ED5186', '#F9E152'];
 
@@ -701,7 +701,8 @@ module.exports = {
     style, // For notifications (App container and Notifications view)
     thArray, tdArray, // For tables (TableList view)
     iconsArray, // For icons (Icons view)
-    dataPie, legendPie, dataSales, optionsSales, responsiveSales, legendSales, dataBar, optionsBar, responsiveBar, legendBar, // For charts (Dashboard view)
+    dataPie, legendPie, dataSales, optionsSales, responsiveSales, // For charts (Dashboard view)
+    legendSales, dataBar, optionsBar, responsiveBar, legendBar, // For charts (Dashboard view)
     colors,
     enrollment, optionsEnrollment, responsiveEnrollment,
     grades, possibleGrades, laymanToAbbreviation

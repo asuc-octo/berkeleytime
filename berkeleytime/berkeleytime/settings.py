@@ -8,13 +8,7 @@ from config.bookstore import *
 
 # Change every semester to update Catalog!
 import raven
-from config.semesters.spring2019 import *
-
-# Set up google cloud logging
-# import google.cloud.logging
-# from pythonjsonlogger import jsonlogger
-# log_client = google.cloud.logging.Client()
-# log_client.setup_logging()
+from config.semesters.fall2019 import *
 
 settings_dir = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
@@ -25,7 +19,7 @@ IS_STAGING = ENV_NAME == "STAGING"
 IS_PRODUCTION = ENV_NAME == "PRODUCTION"
 assert IS_LOCALHOST or IS_STAGING or IS_PRODUCTION, "ENV not set properly: {}".format(ENV_NAME)
 
-DEBUG = False
+DEBUG = IS_LOCALHOST
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -43,13 +37,13 @@ if IS_LOCALHOST:
     ALLOWED_HOSTS = ['*']
 elif IS_STAGING:
     ALLOWED_HOSTS = [
-        "staging.berkeleytime-internal.com",
+        "staging.berkeleytime.com",
     ]
 elif IS_PRODUCTION:
     ALLOWED_HOSTS = [
-        "berkeleytime-internal.com",
-        "www.berkeleytime-internal.com",
-        "old.berkeleytime-internal.com",
+        "berkeleytime.com",
+        "www.berkeleytime.com",
+        "old.berkeleytime.com",
     ]
 
 
@@ -87,6 +81,7 @@ if IS_LOCALHOST:
             'PORT': '',
         }
     }
+
 else:
     import dj_database_url
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}

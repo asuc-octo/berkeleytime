@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import FontAwesome from 'react-fontawesome';
 
 class FilterSelection extends Component {
   constructor(props) {
@@ -8,7 +9,7 @@ class FilterSelection extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.id != this.props.id;
+    return nextProps.id !== this.props.id;
   }
 
   getFormattedEnrollment(enrollmentConstant) {
@@ -60,8 +61,8 @@ class FilterSelection extends Component {
       gradeColors, openSeats, id} = this.props;
 
     let asideDetails;
-    if (this.props.sortBy == 'grade_average' || this.props.sortBy == 'department_name'
-          || this.props.sortBy == 'enrolled_percentage') {
+    if (this.props.sortBy === 'grade_average' || this.props.sortBy === 'department_name'
+          || this.props.sortBy === 'enrolled_percentage') {
       asideDetails = (
         <div>
           {averageGrade &&
@@ -72,7 +73,7 @@ class FilterSelection extends Component {
           }
         </div>
       );
-    } else if (this.props.sortBy == 'open_seats') {
+    } else if (this.props.sortBy === 'open_seats') {
       asideDetails = (
         <div>
           {openSeats &&
@@ -87,17 +88,17 @@ class FilterSelection extends Component {
 
     return (
         <button className="filter-selection-button" onClick={this.clickHandler}>
-          <div className="filter-selection">
+          <div className="filter-selection" tabIndex={id}>
             <div className="filter-selection-content">
               <h4 className="filter-selection-heading">{courseAbbreviation} {courseNumber}</h4>
               <p className="filter-selection-description">{courseTitle}</p>
               <div className="filter-selection-enrollment-data">
                 <div className="dataBlock">
-                  <i className={`fa fa-circle ${this.getPercentageEnrolledColor(percentageEnrolled)}`} />
+                  <FontAwesome className={this.getPercentageEnrolledColor(percentageEnrolled)} name={'circle'} size="xs" />
                   <p>{`${this.getFormattedEnrollment(percentageEnrolled)}% enrolled`}</p>
                 </div>
                 <div className="dataBlock">
-                  <i className={`fa fa-circle ${this.getWaitlistedColor(waitlisted)}`} />
+                  <FontAwesome className={this.getWaitlistedColor(waitlisted)} name={'circle'} size="xs" />
                   <p>{`${waitlisted} waitlisted`}</p>
                 </div>
               </div>

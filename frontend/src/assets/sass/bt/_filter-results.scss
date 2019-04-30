@@ -1,9 +1,14 @@
 .filter-results {
-    overflow-y: auto;
-
     h4 {
         margin: 0;
         margin-bottom: 10px;
         font-size: 16px;
     }
+
+    .filter-list {
+    }
+}
+
+.filter-list-column {
+    overflow: hidden;
 }

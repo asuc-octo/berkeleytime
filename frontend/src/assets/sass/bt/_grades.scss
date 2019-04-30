@@ -1,0 +1,120 @@
+// GradesGraph
+.card.grades-graph-card {
+  box-shadow: none;
+
+  .grades-graph {
+    padding: 15px 15px 0px 35px;
+    min-height: 500px;
+
+    .graph-content {
+      .graph {
+        padding: 15px 15px 15px 15px;
+      }
+      .graph-title {
+          font-weight: bold;
+          font-size: 20px;
+      }
+    }
+  }
+}
+
+// GradesInfoCard
+.card.grades-card-info {
+  box-shadow: none;
+
+  .content {
+      padding: 0px 15px 15px 15px;
+
+      .class-num {
+        font-weight: bold;
+        font-size: 20px;
+      }
+
+      .class-info {
+        color: #8F8F8F;
+      }
+
+      .class-title {
+        padding-top: 5px;
+        padding-bottom: 10px;
+      }
+
+      .class-avgs {
+        padding: 0;
+
+        .class-avg-stats {
+          padding: 0;
+          font-size: 15px;
+          font-weight: bold;
+          margin-bottom: 3%;
+        }
+
+        .class-stats-name {
+          color: #8F8F8F;
+        }
+
+        .class-grade {
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        .class-percent {
+          color:gray;
+          font-size: 18px;
+        }
+      }
+  }
+}
+
+
+// .card.card-info {
+//   box-shadow: none;
+
+//   .content {
+//       padding: 0px 15px 15px 15px;
+//   }
+//   .class-num {
+//       font-weight: bold;
+//       font-size: 20px;
+//   }
+//   .class-info {
+//       color: #8F8F8F;
+//   }
+//   .class-title {
+//       padding-top: 5px;
+//       padding-bottom: 10px;
+//   }
+//   .classStatType {
+//       font-size: 15px;
+//   }
+//   .class-stats {
+//       padding-bottom: 5px;
+//   }
+//   .classAdjustmentPercent {
+//       color: #FFA414;
+//       font-size: 15px;
+//   }
+//   .classStatsName {
+//       color: #8F8F8F;
+//   }
+//   .classAvgs {
+//       padding: 0;
+//   }
+//   .classAvgStats {
+//       padding: 0;
+//       color: #76FC80;
+//       font-size: 15px;
+//       font-weight: bold;
+//       margin-bottom: 3%;
+//   }
+//   .classGrade {
+//       color: #F85386;
+//       font-size: 18px;
+//       font-weight: bold;
+//   }
+//   .classPercent {
+//       color:gray;
+//       font-size: 18px;
+//   }
+
+// }

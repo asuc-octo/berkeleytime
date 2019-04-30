@@ -1,3 +1,5 @@
+.PHONY: frontend
+
 # The following commands build the images for various components of the Berkeleytime stack
 # and pushes them to Dockerhub. Make sure you are logged in as the berkeleytime user.
 
@@ -16,6 +18,22 @@ frontend:
 db:
 	docker build -t berkeleytime/db -f build/Dockerfile.db build
 	docker push berkeleytime/db
+
+# The following commands are used to deploy the staging and prodctuon environments
+# TODO: replace with jenkins
+
+deploy-prod:
+	kubectl delete -f kubernetes/manifests/berkeleytime/backend-deploy-prod.yaml
+	kubectl delete -f kubernetes/manifests/berkeleytime/frontend-deploy-prod.yaml
+	kubectl apply -f kubernetes/manifests/berkeleytime/frontend-deploy-prod.yaml
+	kubectl apply -f kubernetes/manifests/berkeleytime/backend-deploy-prod.yaml
+
+deploy-stage:
+	kubectl delete -f kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
+	kubectl delete -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
+	kubectl apply -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
+	kubectl apply -f kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
+
 
 # -----------------------------------------------------------------------------------------------
  
