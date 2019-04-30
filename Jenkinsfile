@@ -35,6 +35,9 @@ docker push berkeleytime/frontendstage:$version'''
         sh '''version=$(git rev-parse --short HEAD)
 sed -ri "s/image:.*/image:\\ index.docker.io\\/berkeleytime\\/berkeleytimestage:$version/g" kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
 cat kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
+kubectl get pods
+kubectl delete -f kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
+kubectl apply -f kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
 kubectl get pods'''
       }
     }
@@ -47,6 +50,9 @@ kubectl get pods'''
         sh '''version=$(git rev-parse --short HEAD)
 sed -ri "s/image:.*/image:\\ index.docker.io\\/berkeleytime\\/frontendstage:$version/g" kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
 cat kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
+kubectl get pods
+kubectl delete -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
+kubectl apply -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
 kubectl get pods'''
       }
     }
