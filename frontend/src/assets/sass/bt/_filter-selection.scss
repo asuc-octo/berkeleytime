@@ -2,23 +2,25 @@
   border: 0px;
   padding: 0px;
   margin-bottom: 20px;
-  width: 93%;
-  outline: none;
-
-  &:hover,
-  &:focus {
-    width: 100%;
-  }
-
-  transition: 200ms;
+  width: 100%;
 
   .filter-selection {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
-    padding: 6px 4px 6px 10px;
+    padding: 15px 4px 6px 15px;
     min-height: 130px;
+    outline: none;
+
+    &:hover,
+    &:focus {
+      color: white;
+      background-color: #579EFF;
+
+      h6 { color: white !important; }
+      p { color: white; }
+    }
 
     .filter-selection-content {
         display: flex;
@@ -27,7 +29,7 @@
         justify-content: space-between;
         min-width: 70%;
         border-right: 1px solid #EEEEEE;
-        padding-right: 3px;
+        padding-right: 5px;
 
         .filter-selection-heading {
             margin: 0;
@@ -40,6 +42,8 @@
             font-size: 13px;
             text-align: left;
             margin-bottom: 10px;
+            max-height: 40px;
+            overflow: hidden;
         }
 
         .filter-selection-enrollment-data {

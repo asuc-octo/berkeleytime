@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
+        Button,
         FormGroup,
         ControlLabel,
         FormControl,
         Form,
         HelpBlock,
         ButtonToolbar,
-        DropdownButton,
-        MenuItem
       } from 'react-bootstrap';
 import Checkbox from '../../elements/CustomCheckbox/CustomCheckbox';
-import Button from '../../elements/CustomButton/CustomButton';
-import Tooltip from 'rc-tooltip';
 import Slider from 'rc-slider';
 import Select from 'react-select';
 
@@ -22,7 +19,6 @@ import 'react-select/dist/react-select.css';
 
 const { createSliderWithTooltip } = Slider;
 const Range = createSliderWithTooltip(Slider.Range);
-const { Handle } = Slider;
 
 function CheckboxGroup(props) {
   const { options, activeFilters, handler } = props;
@@ -93,7 +89,7 @@ export class FilterSidebar extends Component {
 
     this.state = {
       classSearch: '',
-      departmentID: '',
+      department: '',
       toggleStatus: new Set(),
       collapseLogistics: false,
     }
@@ -145,12 +141,18 @@ export class FilterSidebar extends Component {
   }
 
   handleDepartmentSelect(updated) {
-    console.log(updated);
     if(!updated) {
       this.props.removeFilter(this.state.department);
       this.setState({
         department: ''
       })
+    } else if (updated.value === -1) {
+      if (this.state.department !== '') {
+        this.props.toggleFilter(this.state.department);
+        this.setState({
+          department: ''
+        })
+      }
     } else {
       let updatedFilterID = updated.value;
       this.props.selectFilter(this.state.department, updatedFilterID);
@@ -162,17 +164,16 @@ export class FilterSidebar extends Component {
   }
 
   render() {
-    const { requirements, logistics, department, units, sortAttributes } = this.props.filters;
+    const { requirements, logistics, department, sortAttributes } = this.props.filters;
     const { activeFilters } = this.props;
     return (
-      <div className="card filter-sidebar">
+      <div className="filter-sidebar">
         <div className="header">
           <h2 className="filter-sidebar-header">Filters</h2>
         </div>
         <div className="content">
           <Form className="side-filter">
             <FormGroup controlId="classSearch">
-              {/* Finished Updating */}
               <FormControl
                   name="classSearch"
                   type="text"
@@ -180,9 +181,9 @@ export class FilterSidebar extends Component {
                   placeholder="&#xf002;  Search for a class..."
                   onChange={this.handleSearchChange}
                   className="filter-sidebar-classSearch"
+                  autocomplete="off"
               />
 
-              {/* Finished Updating */}
               <ControlLabel className="filter-label">Sort By</ControlLabel>
               <Select
                   name="sortBy"
@@ -196,7 +197,6 @@ export class FilterSidebar extends Component {
                   autoSize={true}
               />
 
-              {/* Finished Updating */}
               <ControlLabel className="filter-label">Requirements</ControlLabel>
               <ButtonToolbar>
                   <ButtonToggleGroup
@@ -210,10 +210,12 @@ export class FilterSidebar extends Component {
 
 
               <ControlLabel className="filter-label">Units</ControlLabel>
-              <HelpBlock className="filter-sidebar-range-helpBlock">0 Units - 5 Units</HelpBlock>
+              <HelpBlock className="filter-sidebar-range-helpBlock">
+                {this.props.unitsRange[0]} {this.props.unitsRange[0] === 1 ? "Unit" : "Units"} - {this.props.unitsRange[1]} {this.props.unitsRange[1] === 1 ? "Unit" : "Units"}
+              </HelpBlock>
               <Range
                 min={0}
-                max={5}
+                max={6}
                 value={this.props.unitsRange}
                 allowCross={false}
                 onChange={this.handleRange}
@@ -228,10 +230,10 @@ export class FilterSidebar extends Component {
                   onChange={this.handleDepartmentSelect}
                   className="filter-sidebar-department"
                   searchable
+                  placeholder={"     Select..."}
                   clearable={false}
               />
 
-              {/* Finish Updating */}
               <ControlLabel className="filter-label">Logistics</ControlLabel>
               <ButtonToolbar>
                 <ButtonToggleGroup
@@ -244,7 +246,7 @@ export class FilterSidebar extends Component {
               </ButtonToolbar>
 
               <div className="button-container">
-                  <Button type="reset" className="filter-resetButton" onClick={this.props.resetFilters}>Reset Filters</Button>
+                  <Button type="reset" block className="filter-resetButton" onClick={this.props.resetFilters}>Reset Filters</Button>
               </div>
             </FormGroup>
           </Form>

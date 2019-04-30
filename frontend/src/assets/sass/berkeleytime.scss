@@ -21,7 +21,6 @@
 // Core CSS
 @import "bt/typography";
 @import "bt/misc";
-@import "bt/side-filter";
 @import "bt/main-panel";
 @import "bt/buttons";
 @import "bt/inputs";
@@ -41,17 +40,29 @@
 
 // BerkeleyTime
 @import "bt/berkeleytime";
+@import "bt/navbar";
+
+// Catalog
 @import "bt/filter-sidebar";
 @import "bt/filter-selection";
 @import "bt/filter-results";
 @import "bt/filter-description";
-@import "bt/classcards";
 
-@import "bt/navbar";
+// Grades & Enrollment
+@import "bt/classcards";
+@import "bt/graph-empty";
+
+// Grades
+@import "bt/grades";
+
+// Enrollment
+@import "bt/enrollment";
+
+// Other
 @import "bt/current-contributors";
 @import "bt/past-contributors";
-
 @import "bt/landing";
-@import "bt/temporary";
 
+@import "bt/temporary";
 @import "bt/dashboard";
+@import "bt/error";

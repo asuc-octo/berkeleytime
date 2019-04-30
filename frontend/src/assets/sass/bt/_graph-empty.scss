@@ -1,0 +1,30 @@
+.graph-empty {
+  min-height: inherit;
+
+  .graph-empty-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: inherit;
+
+
+    .graph-empty-image {
+      max-width: 20%;
+    }
+
+    .graph-empty-heading {
+      display: inline-block;
+      font-size: $font-size-h3;
+      font-weight: bolder;
+      margin-top: 30px;
+    }
+
+    .graph-empty-subheading {
+      display: inline-block;
+      font-size: $font-size-h4;
+      margin-top: 30px;
+      color: $bt-grey;
+    }
+  }
+}

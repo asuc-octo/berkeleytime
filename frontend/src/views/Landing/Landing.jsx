@@ -1,25 +1,32 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import Jumbotron from '../../components/Landing/Jumbotron';
-import WhatWeDo from '../../components/Landing/WhatWeDo';
 import Explore from '../../components/Landing/Explore';
 import Mission from '../../components/Landing/Mission';
-import ArtistCredit from '../../components/Landing/ArtistCredit';
+import Sponsors from '../../components/Landing/Sponsors';
+import Modal from '../../components/Landing/Modal';
 
 import explore_snap from '../../assets/img/images/landing/explore_snap.png';
 import grades_snap from '../../assets/img/images/landing/grades_snap.png';
 import enrollment_snap from '../../assets/img/images/landing/enrollment_snap.png';
 
-function Landing() {
-  return (
-    <div className="">
-      <Jumbotron />
-      <WhatWeDo />
-      {Landing.explore.map(item => <Explore {...item} />)}
-      <Mission />
-      <ArtistCredit />
-    </div>
-  );
+class Landing extends Component {
+    
+    constructor(props){
+      super(props)
+    }
+
+    render() {
+      return (
+        <div className="landing">
+          <Modal />
+          <Jumbotron />
+          {Landing.explore.map(item => <Explore {...item} />)}
+          <Sponsors />
+          <Mission />
+        </div>
+      );
+    }
 }
 
 Landing.explore = [
@@ -29,7 +36,6 @@ Landing.explore = [
     action: 'Explore Courses',
     link: '/catalog',
     symbol: 'book',
-    color: 'bt-pink',
     img: explore_snap,
     reverse: false,
   },
@@ -39,7 +45,6 @@ Landing.explore = [
     action: 'See Grades',
     link: '/grades',
     symbol: 'bar-chart',
-    color: 'bt-green',
     img: grades_snap,
     reverse: true,
   },
@@ -49,7 +54,6 @@ Landing.explore = [
     action: 'Check Enrollment',
     link: '/enrollment',
     symbol: 'history',
-    color: 'bt-blue',
     img: enrollment_snap,
     reverse: false,
   },

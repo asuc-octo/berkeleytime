@@ -15,7 +15,7 @@ class Catalog extends Component {
     this.state = {
       query: '',
       sortBy: 'grade_average',
-      unitsRange: [0, 5],
+      unitsRange: [0, 6],
       activeFilters: new Set(),
       defaultFilters: new Set(),
       context: {},
@@ -186,13 +186,12 @@ class Catalog extends Component {
     this.setState({
       query: '',
       sortBy: 'grade_average',
-      unitsRange: [0, 5],
+      unitsRange: [0, 6],
       activeFilters: newActiveFilters,
     })
   }
 
   selectCourseHandler(course) {
-    console.log(course);
     this.setState({
       selectedCourse: course,
     })
@@ -282,10 +281,10 @@ class Catalog extends Component {
                 resetFilters={this.resetFilterHandler}
               />
             </Col>
-            <Col md={4} style={{ height: '94%', overflowY: 'auto'}}>
+            <Col md={3} className="filter-list-column">
               {results}
             </Col>
-            <Col md={5}>
+            <Col md={6}>
               {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
                 <ClassDescription
                   course={this.state.selectedCourse}

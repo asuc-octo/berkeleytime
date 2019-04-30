@@ -2,6 +2,7 @@ import React from 'react';
 
 import yuxin from '../../assets/img/images/about/yuxin.jpg';
 import noah from '../../assets/img/images/about/noah.jpg';
+import ashwin from '../../assets/img/images/about/ashwin.jpg';
 
 function PastContributors({ founders, pastContributors }) {
   return (
@@ -22,10 +23,15 @@ function PastContributors({ founders, pastContributors }) {
                 <div className="columns is-multiline is-centered is-gapless">
                     {pastContributors.map((member, idx) => (
                         <div className="column is-one-fifth has-text-centered" style={{height: 45, width: 170}}>
-                            <a href={member.link}>{member.name}</a>
+                            <a href={member.site}>{member.name}</a>
                         </div>
                 ))} 
                     </div>
+            </div>
+            <div className="graphic-contributors has-text-centered container is-fluid">
+                Landing page artwork by <a href="http://victorialynwu.design">Victoria Wu</a>
+                <br></br>
+                Detective bear artwork by <a href="http://behance.net/lauralim125">Laura Lim</a>
             </div>
         </div>
     </section>
@@ -37,21 +43,23 @@ PastContributors.defaultProps = {
         {
             name: "Yuxin Zhu",
             image: yuxin,
-            link: "",
+            link: "http://yuxinzhu.com/#/",
         },
         {
             name: "Noah Gilmore",
             image: noah,
-            link: "",
-        }
+            link: "https://noahgilmore.com",
+        },
+        { 
+            name: "Ashwin Iyengar",
+            image: ashwin,
+            link: "https://www.lsgnt-cdt.ac.uk/students/year/2017",
+        }, 
     ],
     pastContributors: [
         { name: "Alan Rosenthal",
-        site: null,
-        }, 
-        { name: "Arvind Iyengar",
-          site: "https://www.linkedin.com/in/iyengararvind/",
-        }, 
+          site: "https://www.linkedin.com/in/alan-rosenthal-37767614a/",
+        },
         { name: "Christine Wang",
           site: "https://www.linkedin.com/in/cwang395/",
         }, 

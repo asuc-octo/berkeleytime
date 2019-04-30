@@ -1,188 +1,293 @@
-.landing-jumbo {
-    background-color: white;
-    margin-top: 50px;
-
-    @include touch {
-      padding: 50px;
+.landing {
+    > div {
+        @include touch {
+            padding: 50px;
+        }
+        @include desktop {
+            padding: 50px;
+        }
     }
-    @include desktop {
-      padding: 50px 75px;
+
+    .level {
+        max-width: 1150px;
+        margin: 0 auto;
     }
 
-    .landing-jumbo-heading {
-        padding: 100px 0;
+    .modal {
+        min-height: 600px;
+        height: 100vh;
 
+        .modal-icon {
+          font-size: 40px;
+        }
+
+        .modal-content {
+            padding: 30px;
+            text-align: center;
+            font-size: 25px;
+            border: 0px;
+            box-shadow: 0 0px 40px rgba(199, 199, 199, 0.5);
+        }
+
+        .modal-background {
+          background-color: rgba(255, 255, 255, 0.82);
+        }
+    }
+
+    .landing-jumbo {
+        background-color: white;
+        min-height: 600px;
+        height: 100vh;
+
+        .level {
+          height: 100%;
+        }
+
+        .landing-jumbo-heading {
+            padding: 100px 0;
+
+            display: flex;
+            flex-direction: column;
+            align-items: baseline;
+            width: 500px;
+            text-align: left;
+
+            h1 {
+                margin: 15px 0;
+                font-size: 64px;
+                font-weight: 500;
+            }
+
+            p {
+                margin: 15px 3px; //3px better aligns with title
+                font-size: 24px;
+            }
+
+            .landing-jumbo-buttons {
+                margin: 20px 0;
+                display: flex;
+                flex-direction: row;
+
+                .landing-jumbo-explore {
+                  background-color: $bt-blue;
+                  border-color: $bt-blue;
+                  border-width: 2px;
+                  font-size: 20px;
+                  color: white;
+                  transition: 0.3s;
+
+                  a {
+                    color: inherit;
+                  }
+
+                  &:hover {
+                    background-color: white;
+                    color: $bt-blue;
+                  }
+                }
+
+                .landing-jumbo-signup {
+                  margin-left: 20px;
+                  border-color: $bt-light-grey;
+                  border-width: 2px;
+                  color: $bt-light-grey;
+                  font-size: 20px;
+                  transition: 0.3s;
+
+                  a {
+                    color: inherit;
+                  }
+
+                  &:hover {
+                    background-color: $bt-light-grey;
+                    color: white;
+                    transition: 0.3s;
+                  }
+                }
+            }
+        }
+
+        .landing-jumbo-img-container {
+            @include tablet {
+                margin-left: 20px;
+            }
+
+            .landing-jumbo-img {
+                @include tablet {
+                    width: 500px;
+                }
+                @include mobile {
+                    width: 400px;
+                }
+                object-fit: scale-down;
+            }
+        }
+    }
+
+    .landing-whatwedo {
+        .landing-whatwedo-whatwedo {
+            font-size: 48px;
+            font-weight: 450;
+            margin-right: 30px;
+        }
+
+        .landing-whatwedo-message {
+            @include tablet {
+                max-width: 50%;
+            }
+
+            font-size: 20px;
+        }
+    }
+
+    .landing-explore {
+        margin-bottom: 0 !important;
+        background-color: white;
+        @include tablet {
+            height: 100vh;
+        }
+        min-height: 600px;
+
+        .level {
+          height: 100%;
+        }
+
+        .landing-explore-icon {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .bt-pink { color: $bt-pink }
+        .bt-green { color: $bt-green }
+        .bt-blue { color: $bt-blue }
+
+        .landing-explore-desc {
+            @include tablet {
+                max-width: 25%;
+            }
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            h3 {
+                font-size: 30px;
+                font-weight: bold;
+
+                margin-bottom: 20px;
+            }
+
+            p {
+                margin-bottom: 20px;
+                color: $bt-light-grey;
+            }
+
+            a {
+                color: $bt-blue;
+            }
+        }
+
+        .landing-explore-img-wrapper {
+            @include mobile {
+                margin-top: 1.5rem;
+            }
+
+            @include tablet {
+                max-width: 75%;
+            }
+        }
+
+        .landing-explore-img {
+            max-width: 95%;
+            max-height: 500px;
+            object-fit: scale-down;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+    }
+
+    .landing-explore.landing-explore-reverse {
+        background: rgba(245, 245, 245, 1);
+    }
+
+    .landing-sponsors {
         display: flex;
         flex-direction: column;
-        align-items: baseline;
+        justify-content: center;
 
-        h1 {
-            margin: 15px 0;
-            font-size: 64px;
-            font-weight: 500;
+        background-color: white;
+        padding-top: 60px;
+        padding-bottom: 100px;
+
+        .landing-sponsors-desc {
+            align-self: center;
+            max-width: 450px;
+
+            h3 {
+                font-size: 30px;
+                font-weight: bold;
+
+                margin-bottom: 20px;
+            }
+
+            p {
+                margin-bottom: 35px;
+                color: $bt-light-grey;
+            }
         }
 
-        p {
-            margin: 15px 3px; //3px better aligns with title
-            font-size: 18px;
-        }
-
-        .landing-jumbo-buttons {
-            margin: 20px 0;
+        .landing-sponsors-img-wrapper {
             display: flex;
             flex-direction: row;
+            justify-content: center;
 
-            .landing-jumbo-explore a {
-                color: white;
-            }
-
-            .landing-jumbo-signup {
-                margin-left: 20px;
-                border-color: hsl(204, 86%, 53%);
+            .landing-sponsors-img {
+                padding-right: 20px;
+                max-width: 95%;
+                max-height: 100px;
+                object-fit: scale-down;
             }
         }
     }
 
-    .landing-jumbo-img {
-        width: 500px;
-        object-fit: scale-down;
-        margin-left: 20px;
-        margin-right: 20px;
-    }
-}
+    .landing-mission {
+        background-color: rgba(245, 245, 245, 1);
 
-.landing-whatwedo {
-    @include touch {
+        .landing-mission-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            max-width: 300px;
+
+            h3 {
+                font-size: 30px;
+                font-weight: bold;
+                margin-bottom: 30px;
+            }
+
+            p {
+                margin-bottom: 30px;
+            }
+        }
+    }
+
+    .landing-artist-credit {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
         padding: 50px;
-    }
-    @include desktop {
-        padding: 50px 75px;
-    }
-
-    .landing-whatwedo-whatwedo {
-        font-size: 48px;
-        font-weight: 450;
-        margin-right: 30px;
-    }
-
-    .landing-whatwedo-message {
-        @include tablet {
-            max-width: 50%;
-
-        }
 
         font-size: 20px;
-    }
-}
+        background-color: white;
 
-.landing-explore {
-    margin-bottom: 0 !important;
-
-    @include touch {
-        padding: 50px;
-    }
-    @include desktop {
-        padding: 50px 75px;
-    }
-
-    background-color: white;
-
-    .landing-explore-icon {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .bt-pink { color: $bt-pink }
-    .bt-green { color: $bt-green }
-    .bt-blue { color: $bt-blue }
-
-    .landing-explore-desc {
-        @include tablet {
-            max-width: 25%;
+        > * {
+            padding: 0 5px;
         }
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        h3 {
-            font-size: 30px;
-            font-weight: 400;
-
-            margin-bottom: 20px;
-        }
-
-        p {
-            margin-bottom: 20px;
+        a {
+            transition: 200ms;
         }
     }
 
-    .landing-explore-img-wrapper {
-        @include mobile {
-            margin-top: 1.5rem;
-        }
-
-        @include tablet {
-            max-width: 80%;
-        }
-    }
-
-    .landing-explore-img {
-        max-width: 95%;
-        max-height: 500px;
-        object-fit: scale-down;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    }
-}
-
-.landing-explore.landing-explore-reverse {
-    background: rgba(203,203,210,.15);
-}
-
-.landing-mission {
-    //margin-bottom: 0 !important;
-
-    @include touch {
-        padding: 50px;
-    }
-    @include desktop {
-        padding: 50px 75px;
-    }
-
-    .landing-mission-column {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        max-width: 300px;
-
-        h3 {
-            font-size: 30px;
-            font-weight: 400;
-            margin-bottom: 30px;
-        }
-
-        p {
-            margin-bottom: 30px;
-        }
-    }
-}
-
-.landing-artist-credit {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-
-    padding: 50px;
-
-    font-size: 20px;
-    background-color: white;
-
-    > * {
-        padding: 0 5px;
-    }
-
-    a {
-        transition: 200ms;
-    }
 }

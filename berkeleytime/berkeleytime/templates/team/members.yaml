@@ -4,7 +4,7 @@ current:
     image: "images/about/leon.png"
   - name: "Will Wang"
     role: "Product Manager<br>Backend Engineering Lead"
-    image: "images/about/will.png"
+    image: "images/about/will.jpg"
     site: "http://www.hantaowang.me"
   - name: "Michael Li"
     role: "Frontend Engineering Lead"
