@@ -19,6 +19,12 @@ spec:
         - name: jenkins-pv-storage
           persistentVolumeClaim:
            claimName: jenkins-pv-claim
+        - name: dockersec-pv-storage
+          persistentVolumeClaim:
+           claimName: dockersec-pv-claim
+        - name: kubectl-pv-storage
+          persistentVolumeClaim:
+           claimName: kubectl-pv-claim
         - name: dind-storage
           emptyDir: {}
       containers:
@@ -32,6 +38,10 @@ spec:
         volumeMounts:
           - mountPath: /var/jenkins_home
             name: jenkins-pv-storage
+          - mountPath: /root/.docker
+            name: dockersec-pv-storage
+          - mountPath: /root/.kube
+            name: kubectl-pv-storage
       - name: dind
         image: docker:18.09-dind
         securityContext:
