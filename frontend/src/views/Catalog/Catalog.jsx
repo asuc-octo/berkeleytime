@@ -33,25 +33,72 @@ class Catalog extends Component {
     this.resetFilterHandler = this.resetFilterHandler.bind(this);
     this.rangeFilterHandler = this.rangeFilterHandler.bind(this);
     this.selectCourseHandler = this.selectCourseHandler.bind(this);
+    this.setDefaultSearch = this.setDefaultSearch.bind(this);
+
+    this.tab = 0;
+    this.defaultSearch = '';
+    this.setDefaultSearch();
+  }
+
+  setDefaultSearch() {
+    const paths = this.props.history.location.pathname.split('/');
+    if (paths.length >= 4) {
+      const abbreviation = paths[2];
+      const classNum = paths[3];
+      this.defaultSearch = `${abbreviation} ${classNum} `;
+    }
   }
 
   /**
    * Lifecycle method for getting initial data
    */
   componentDidMount() {
-    axios.get('/api/catalog_json/')
-      .then(res => {
-        // console.log(res);
+    const paths = this.props.history.location.pathname.split('/');
+    //handler for specific class in URL
+    if (paths.length >= 4) {
+      const abbreviation = paths[2];
+      const classNum = paths[3];
+      const search = `${abbreviation} ${classNum} `;
+      this.searchQueryHandler(search);
+      axios.get(`/api/catalog_json/${abbreviation}/${classNum}/`).then(res => {
         const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
         this.setState({
           activeFilters: new Set(defaultPlaylists),
           defaultFilters: new Set(defaultPlaylists),
           context: res.data
+        }, () => {
+          const courseID = res.data.default_course;
+          axios.get('/api/catalog/filter/', {params: {course_id: courseID}}).then(res => {
+            if (res.data.length > 0) {
+              //tab = 0: details; tab = 1: section
+              var tab = 0;
+              if (paths.length >= 5) {
+                tab = paths[4] === "sections" ? 0 : tab;
+              }
+              this.selectCourseHandler(res.data[0], tab);
+            }
+          }).catch(err => {
+            console.log(err);
+          })
         });
-      })
-      .catch((err) => {
+      }).catch((err) => {
         console.log(err);
       });
+    } else {
+      axios.get('/api/catalog_json/')
+        .then(res => {
+          //console.log(res);
+          const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
+          this.setState({
+            activeFilters: new Set(defaultPlaylists),
+            defaultFilters: new Set(defaultPlaylists),
+            context: res.data
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }
 
   /**
@@ -182,6 +229,8 @@ class Catalog extends Component {
    * Handler function to reset all filters to the default
    */
   resetFilterHandler() {
+    console.log(this.state);
+    this.defaultSearch = '';
     let newActiveFilters = new Set(this.state.defaultFilters);
     this.setState({
       query: '',
@@ -191,7 +240,8 @@ class Catalog extends Component {
     })
   }
 
-  selectCourseHandler(course) {
+  selectCourseHandler(course, tab=0) {
+    this.tab = tab;
     this.setState({
       selectedCourse: course,
     })
@@ -259,6 +309,7 @@ class Catalog extends Component {
         query={this.state.query}
       />
     ) : <div></div>
+    console.log(this.defaultSearch);
 
     return (
       <div className="app-container">
@@ -279,6 +330,7 @@ class Catalog extends Component {
                 toggleFilter={this.toggleFilterHandler}
                 selectFilter={this.selectFilterHandler}
                 resetFilters={this.resetFilterHandler}
+                defaultSearch={this.defaultSearch}
               />
             </Col>
             <Col md={3} className="filter-list-column">
@@ -288,6 +340,7 @@ class Catalog extends Component {
               {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
                 <ClassDescription
                   course={this.state.selectedCourse}
+                  tab={this.tab}
                 />
               }
             </Col>
