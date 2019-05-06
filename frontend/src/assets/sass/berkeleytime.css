@@ -9966,13 +9966,13 @@ label.panel-block {
 .bt-red-text {
   color: #FC7676; }
 
-.filter-results h4 {
-  margin: 0;
-  margin-bottom: 10px;
-  font-size: 16px; }
-
-.filter-list-column {
-  overflow: hidden; }
+.filter-results {
+  width: 100%;
+  min-width: 250px; }
+  .filter-results h4 {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 16px; }
 
 .filter-description-container .filter-description {
   display: flex;
@@ -10071,6 +10071,15 @@ label.panel-block {
     .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-sections > table > tbody > tr > td {
       font-weight: normal;
       font-size: 12px; }
+
+.filter-columns {
+  display: grid;
+  grid-gap: 25px;
+  grid-template-columns: 1fr 1fr 2fr;
+  margin-bottom: 20px; }
+
+.filter-columns:nth-of-type(1) {
+  overflow: hidden; }
 
 .class-card-list .card.class-card {
   margin-bottom: 0px; }
