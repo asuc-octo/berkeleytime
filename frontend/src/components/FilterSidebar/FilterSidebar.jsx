@@ -41,39 +41,62 @@ function CheckboxGroup(props) {
   )
 }
 
-function ButtonToggleGroup(props) {
-    const { checkboxes, activeFilters, toggleStatus, handleToggleDiv, handleCheckbox } = props;
-    return (
-      <div className="buttonToggleGroup">
-        {
-          Object.entries(checkboxes).map((item, i) => {
-            const name = item[0];
-            const title = item[1].title;
-            const options = item[1].options;
-            return (
-              <div key={i}>
-                <ButtonToolbar>
-                  <Button
-                    name={'buttonToggle' + name}
-                    onClick={handleToggleDiv}
-                    bsStyle="link"
-                    className="btn-simple btn-block buttonToggleGroup-button">
-                      {title} <i className="fa fa-angle-down"></i>
-                  </Button>
-                </ButtonToolbar>
-                { toggleStatus.has('buttonToggle' + name) &&
-                  <CheckboxGroup
-                    options={options}
-                    activeFilters={activeFilters}
-                    handler={handleCheckbox}
-                  />
-                }
-              </div>
-            );
-          })
-        }
-      </div>
-    );
+class ButtonToggleGroup extends Component{
+    constructor(props){
+        super(props);
+        console.log(Object.keys(this.props.checkboxes).length);
+        this.state = {
+            active: new Array(Object.keys(this.props.checkboxes).length).fill(false)
+        };
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick(e, i) {
+      console.log(i);
+      const newActives = this.state.active;
+      newActives[i] = !newActives[i];
+
+      this.setState({
+        active: newActives
+      })
+      
+      this.props.handleToggleDiv(e);
+    }
+
+    render() {
+      return (
+        <div className="buttonToggleGroup">
+            {
+              Object.entries(this.props.checkboxes).map((item, i) => {
+                const name = item[0];
+                const title = item[1].title;
+                const options = item[1].options;
+                return (
+                  <div key={i}>
+                    <ButtonToolbar>
+                      <Button
+                        name={'buttonToggle' + name}
+                        onClick={(e) => this.handleClick(e, i)}
+                        bsStyle="link"
+                        className="btn-simple btn-block buttonToggleGroup-button">
+                          {title} 
+                          <i className={"button-icon fa " + (this.state.active[i] ? 'fa-angle-down' : 'fa-angle-right')}></i>
+                      </Button>
+                    </ButtonToolbar>
+                    { this.props.toggleStatus.has('buttonToggle' + name) &&
+                      <CheckboxGroup
+                        options={options}
+                        activeFilters={this.props.activeFilters}
+                        handler={this.props.handleCheckbox}
+                      />
+                    }
+                  </div>
+                );
+              })
+            }
+          </div>
+      );
+    }
 }
 
 export class FilterSidebar extends Component {
@@ -87,8 +110,6 @@ export class FilterSidebar extends Component {
     this.handleSortBySelect = this.handleSortBySelect.bind(this);
     this.handleDepartmentSelect = this.handleDepartmentSelect.bind(this);
     this.handleReset = this.handleReset.bind(this);
-
-    this.classSearchRef = React.createRef();
 
     this.state = {
       department: '',
@@ -136,7 +157,9 @@ export class FilterSidebar extends Component {
     } else {
         this.state.toggleStatus.add(name);
     }
-    this.setState({'toggleStatus': this.state.toggleStatus})
+    this.setState({
+      'toggleStatus': this.state.toggleStatus
+      })
   }
 
   handleCheckbox(e) {
@@ -169,6 +192,7 @@ export class FilterSidebar extends Component {
 
   handleReset(e) {
     this.setState({
+      department: '',
       classSearch: ''
     })
     this.props.resetFilters(e)
@@ -257,7 +281,7 @@ export class FilterSidebar extends Component {
               </ButtonToolbar>
 
               <div className="button-container">
-                  <Button type="reset" block className="filter-resetButton" onClick={this.handleReset}>Reset Filters</Button>
+                <Button type="reset" block className="filter-resetButton" onClick={this.handleReset}>Reset Filters</Button>
               </div>
             </FormGroup>
           </Form>
