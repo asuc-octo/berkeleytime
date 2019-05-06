@@ -1,13 +1,13 @@
 import React from 'react';
 import FontAwesome from 'react-fontawesome';
 
-import leon from "../../assets/img/images/about/leon.png";
+import leon from "../../assets/img/images/about/leon.jpg";
 import will from "../../assets/img/images/about/will.jpg";
 import michael from "../../assets/img/images/about/michael.jpg";
-import jemma from "../../assets/img/images/about/jemma.png";
+import jemma from "../../assets/img/images/about/jemma.jpg";
 import kate from "../../assets/img/images/about/kate.jpg";
 import richard from "../../assets/img/images/about/richard.jpg";
-import anson from "../../assets/img/images/about/anson.png";
+import anson from "../../assets/img/images/about/anson.jpg";
 import chris from "../../assets/img/images/about/chris.jpg";
 import eli from "../../assets/img/images/about/eli.jpg";
 import evelyn from "../../assets/img/images/about/evelyn.jpg";
