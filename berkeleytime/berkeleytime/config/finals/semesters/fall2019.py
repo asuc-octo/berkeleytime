@@ -30,6 +30,20 @@ TR_FINALS = {
 
 # Mapper function for final times
 def fall_2019_finals_logic(abbreviation, course_number, start_time, is_foreign_language, day_string):
+    if abbreviation == 'CHEM' and course_number in ["1A", "1B", "3A", "3B", "4A", "4B"]:
+        return FINAL_TIMES.get("Monday3-6PM")
+    elif abbreviation == 'ECON' and course_number in ['1', '100B']:
+        return FINAL_TIMES.get("Tuesday11:30-2:30PM")
+    elif is_foreign_language:
+        return FINAL_TIMES.get("Wednesday11:30-2:30PM")
+    elif abbreviation == 'ENGLISH' and course_number in ['1A', '1B', 'R1A', 'R1B']:
+        return FINAL_TIMES.get("Friday3-6PM")
+    elif day_string == MWF:
+        return MWF_FINALS.get(start_time)
+    elif day_string == TR:
+        return TR_FINALS.get(start_time)
+    elif is_weekend_class(day_string):
+        return FINAL_TIMES.get("Wednesday3-6PM")
     return None
 
 finals_mapper = FinalTimesMapper(fall_2019_finals_logic)
