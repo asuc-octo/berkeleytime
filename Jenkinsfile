@@ -9,7 +9,7 @@ pipeline {
         changeset "berkeleytime/**"
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: 'master', credentialsId: 'GitHubAcc')
+        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
 docker build -t berkeleytime/berkeleytimestage:$version -f berkeleytime/Dockerfile berkeleytime
 docker push berkeleytime/berkeleytimestage:$version'''
@@ -20,7 +20,7 @@ docker push berkeleytime/berkeleytimestage:$version'''
         changeset "frontend/**"
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: 'master', credentialsId: 'GitHubAcc')
+        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
 docker build -t berkeleytime/frontendstage:$version -f frontend/Dockerfile frontend
 docker push berkeleytime/frontendstage:$version'''
@@ -31,7 +31,7 @@ docker push berkeleytime/frontendstage:$version'''
         changeset "berkeleytime/**"
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: 'master', credentialsId: 'GitHubAcc')
+        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
 sed -ri "s/image:.*/image:\\ index.docker.io\\/berkeleytime\\/berkeleytimestage:$version/g" kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
 cat kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
@@ -46,7 +46,7 @@ kubectl get pods'''
         changeset "frontend/**"
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: 'master', credentialsId: 'GitHubAcc')
+        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
 sed -ri "s/image:.*/image:\\ index.docker.io\\/berkeleytime\\/frontendstage:$version/g" kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
 cat kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
@@ -56,8 +56,5 @@ kubectl apply -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
 kubectl get pods'''
       }
     }
-  }
-  environment {
-    registryCredential = 'DockerHubAcc'
   }
 }
