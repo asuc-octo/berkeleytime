@@ -236,7 +236,7 @@ class Catalog extends Component {
       query: '',
       sortBy: 'grade_average',
       unitsRange: [0, 6],
-      activeFilters: newActiveFilters,
+      activeFilters: newActiveFilters
     })
   }
 
