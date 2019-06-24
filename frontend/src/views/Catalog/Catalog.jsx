@@ -262,9 +262,7 @@ class Catalog extends Component {
 
     return (
       <div className="app-container">
-        <Grid fluid>
-          <Row style={{ height: '850px' }}>
-            <Col md={3}>
+          <div className="filter-columns">
               <FilterSidebar
                 filters={this.buildFiltersObject(this.state.context)}
                 activeFilters={this.state.activeFilters}
@@ -280,19 +278,13 @@ class Catalog extends Component {
                 selectFilter={this.selectFilterHandler}
                 resetFilters={this.resetFilterHandler}
               />
-            </Col>
-            <Col md={3} className="filter-list-column">
-              {results}
-            </Col>
-            <Col md={6}>
-              {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
+            <div> {results} </div>
+            <div> {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
                 <ClassDescription
                   course={this.state.selectedCourse}
                 />
-              }
-            </Col>
-          </Row>
-        </Grid>
+            } </div>
+          </div>
       </div>
     );
   }
