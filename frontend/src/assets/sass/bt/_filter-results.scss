@@ -1,4 +1,6 @@
 .filter-results {
+	width: 100%;
+	min-width: 250px;
     h4 {
         margin: 0;
         margin-bottom: 10px;
@@ -7,8 +9,4 @@
 
     .filter-list {
     }
-}
-
-.filter-list-column {
-    overflow: hidden;
 }
