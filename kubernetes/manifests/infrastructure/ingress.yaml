@@ -43,7 +43,7 @@ spec:
     - staging.berkeleytime.com
     - jenkins.berkeleytime.com
     - old.berkeleytime.com
-    secretName: berkeleytime-tls
+    secretName: berkeleytime-crt
   rules:
   - host: berkeleytime.com
     http:
