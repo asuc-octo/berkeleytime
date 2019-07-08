@@ -1,5 +1,8 @@
 # Lines starting with '#' are comments.
 # Each line is a file pattern followed by one or more owners.
 
-# Leads.
-*       @richard4912 @hantaowang @Skxu3 @michaelli1324
+*              @michaelli1324
+backend/       @hantaowang @rkooo567
+kubernetes/    @hantaowang @rkooo567
+build/         @hantaowang
+frontend/      @chrisdliu @michaelli1324
