@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router';
 import FontAwesome from 'react-fontawesome';
 
 class FilterSelection extends Component {
@@ -52,6 +53,7 @@ class FilterSelection extends Component {
       abbreviation: this.props.courseAbbreviation,
       courseNumber: this.props.courseNumber
     }
+    this.props.history.replace(`/catalog/${course.abbreviation}/${course.courseNumber}/details/`);
     this.props.onClick(course);
   }
 
@@ -123,4 +125,5 @@ FilterSelection.defaultProps = {
   },
 };
 
-export default FilterSelection;
+const FilterSelectionWithRouter = withRouter(FilterSelection);
+export default FilterSelectionWithRouter;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import FontAwesome from 'react-fontawesome';
 import { BarLoader } from 'react-spinners';
 
@@ -14,8 +14,9 @@ import ClassSections from './ClassSections.jsx';
 class ClassDescription extends Component {
   constructor(props) {
     super(props);
+    let { tab } = props;
     this.state = {
-      tab: 0,
+      tab: tab,
       courseData: {},
       loading: true,
     }
@@ -24,10 +25,14 @@ class ClassDescription extends Component {
   }
 
   details() {
+    let course = this.state.courseData.course;
+    this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/`);
     this.setState({ tab: 0 })
   }
 
   sections() {
+    let course = this.state.courseData.course;
+    this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/sections/`);
     this.setState({ tab: 1 })
   }
 
@@ -143,4 +148,4 @@ class ClassDescription extends Component {
   }
 }
 
-export default ClassDescription;
+export default withRouter(ClassDescription);

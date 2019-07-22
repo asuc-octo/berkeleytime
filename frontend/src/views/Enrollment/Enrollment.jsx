@@ -31,6 +31,11 @@ class Enrollment extends Component {
   }
 
   addCourse(course) {
+    for (let selected of this.state.selectedCourses) {
+      if (selected.id === course.id) {
+        return;
+      }
+    }
     axios.get(`/api/catalog_json/course/${course.courseID}/`)
       .then(res => {
         let courseData = res.data;
