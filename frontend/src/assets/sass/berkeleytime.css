@@ -9876,7 +9876,7 @@ label.panel-block {
     flex-direction: row;
     justify-content: space-between;
     background-color: white;
-    padding: 15px 4px 6px 15px;
+    padding: 6px 4px 6px 15px;
     min-height: 130px;
     outline: none; }
     .filter-selection-button .filter-selection:hover, .filter-selection-button .filter-selection:focus {
@@ -10145,8 +10145,10 @@ label.panel-block {
     padding: 0px 15px 15px 15px; }
     .card.grades-card-info .content .class-num {
       font-weight: bold;
-      font-size: 20px; }
+      font-size: 20px;
+      width: fit-content; }
     .card.grades-card-info .content .class-info {
+      margin-top: 5px;
       color: #8F8F8F; }
     .card.grades-card-info .content .class-title {
       padding-top: 5px;
@@ -10186,8 +10188,10 @@ label.panel-block {
       padding: 0px 15px 15px 15px; }
     .card.enrollment-card-info .content .class-num {
       font-weight: bold;
-      font-size: 20px; }
+      font-size: 20px;
+      width: fit-content; }
     .card.enrollment-card-info .content .class-info {
+      margin-top: 5px;
       color: #8F8F8F; }
     .card.enrollment-card-info .content .class-title {
       padding-top: 5px;

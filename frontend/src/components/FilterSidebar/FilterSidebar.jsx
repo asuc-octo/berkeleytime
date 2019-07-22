@@ -109,17 +109,18 @@ export class FilterSidebar extends Component {
     this.handleCheckbox = this.handleCheckbox.bind(this);
     this.handleSortBySelect = this.handleSortBySelect.bind(this);
     this.handleDepartmentSelect = this.handleDepartmentSelect.bind(this);
-    this.handleReset = this.reset.bind(this);
+    this.handleReset = this.handleReset.bind(this);
 
     this.state = {
-      classSearch: '',
       department: '',
       toggleStatus: new Set(),
-      collapseLogistics: false
+      collapseLogistics: false,
+      classSearch: this.props.defaultSearch,
     }
   }
 
   handleSearchChange(e) {
+    this.setState({classSearch: e.target.value})
     this.props.searchHandler(e.target.value);
   }
 
@@ -189,11 +190,12 @@ export class FilterSidebar extends Component {
     }
   }
 
-  reset() {
-    this.props.resetFilters();
+  handleReset(e) {
     this.setState({
-      department: ''
-    });
+      department: '',
+      classSearch: ''
+    })
+    this.props.resetFilters(e)
   }
 
   render() {
@@ -210,11 +212,11 @@ export class FilterSidebar extends Component {
               <FormControl
                   name="classSearch"
                   type="text"
-                  value={this.state.className}
                   placeholder="&#xf002;  Search for a class..."
                   onChange={this.handleSearchChange}
                   className="filter-sidebar-classSearch"
                   autocomplete="off"
+                  value={this.state.classSearch}
               />
 
               <ControlLabel className="filter-label">Sort By</ControlLabel>
@@ -262,7 +264,7 @@ export class FilterSidebar extends Component {
                   value={this.state.department}
                   onChange={this.handleDepartmentSelect}
                   className="filter-sidebar-department"
-                  searchable={false}
+                  searchable={true}
                   placeholder={"Select..."}
                   clearable={false}
               />
@@ -279,8 +281,7 @@ export class FilterSidebar extends Component {
               </ButtonToolbar>
 
               <div className="button-container">
-                  <Button type="reset" block className="filter-resetButton" 
-                    onClick={this.handleReset}>Reset Filters</Button>
+                <Button type="reset" block className="filter-resetButton" onClick={this.handleReset}>Reset Filters</Button>
               </div>
             </FormGroup>
           </Form>
