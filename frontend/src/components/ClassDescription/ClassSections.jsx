@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 function formatDate(date) {
   var hours = date.getUTCHours();
-  var minutes = date.getMinutes();
+  var minutes = date.getUTCMinutes();
   var ampm = hours >= 12 ? 'pm' : 'am';
   hours = hours % 12;
   hours = hours ? hours : 12;
