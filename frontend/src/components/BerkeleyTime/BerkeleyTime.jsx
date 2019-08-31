@@ -11,7 +11,9 @@ import Footer from '../Footer/Footer';
 import appRoutes from '../../routes/app.js';
 
 import ReactGA from 'react-ga';
-ReactGA.initialize('UA-35316609-1');
+
+const gaTrackingID = 'UA-35316609-1'
+ReactGA.initialize(gaTrackingID);
 
 const logPageView = () => {
     ReactGA.set({ page: window.location.pathname});

@@ -1,4 +1,5 @@
 import Landing from '../views/Landing/Landing.jsx';
+import Apply from '../views/Apply/Apply.jsx';
 import Catalog from '../views/Catalog/Catalog.jsx';
 import Scheduler from '../views/Scheduler/Scheduler.jsx';
 import Grades from '../views/Grades/Grades.jsx';
@@ -9,6 +10,7 @@ import Error from '../views/Error/Error.jsx';
 
 const appRoutes = [
     { path: "/landing", name: "Home", icon: "", component: Landing },
+    { path: "/apply", name: "Apply", icon: "", component: Apply },
     { path: "/scheduler", name: "Scheduler", icon: "", component: Scheduler },
     { path: "/catalog", name: "Catalog", icon:"", component: Catalog },
     { path: "/grades", name: "Grades", icon:"", component: Grades },

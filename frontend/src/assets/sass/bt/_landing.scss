@@ -27,6 +27,27 @@
             font-size: 25px;
             border: 0px;
             box-shadow: 0 0px 40px rgba(199, 199, 199, 0.5);
+
+            .button.inverted {
+                transition: 200ms;
+                background-color: #579EFF;
+                border-color: #579EFF;
+                border-width: 2px;
+                color: white;
+
+                &:hover {
+                    background-color: white;
+                    color: #579EFF;
+                }
+            }
+
+            .modal-cta {
+                font-weight: 500;
+            }
+
+            .modal-body {
+                padding: 20px 0;
+            }
         }
 
         .modal-background {

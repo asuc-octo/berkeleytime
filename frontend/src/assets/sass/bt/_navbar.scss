@@ -50,11 +50,23 @@
 .navbar-item {
     > a {
         color: $bt-base;
-
+        font-weight: 500;
         transition: 200ms;
     }
 
     > a:hover {
+        color: $bt-blue;
+    }
+
+    > a.inverted {
+        background-color: #579EFF;
+        border-color: #579EFF;
+        border-width: 2px;
+        color: white;
+    }
+
+    > a.inverted:hover {
+        background-color: white;
         color: $bt-blue;
     }
 }
