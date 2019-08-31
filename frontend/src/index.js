@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 import ScrollToTop from './components/Scroll/ScrollToTop.jsx';
 
-import BT from './components/BerkeleyTime/index.jsx';
+import BT from './components/BerkeleyTime/BerkeleyTime';
 
 import './assets/css/bootstrap.min.css';
 import './assets/css/animate.min.css';

@@ -92,6 +92,7 @@ body > .navbar-collapse{
     position: relative;
     float: right;
     width: 100%;
+    min-height: 100vh;
 
     > .content{
         padding: 30px 15px;

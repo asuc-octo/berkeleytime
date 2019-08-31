@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 class Modal extends React.Component {
 	constructor(props) {
@@ -12,11 +13,11 @@ class Modal extends React.Component {
 	}
 
 	componentDidMount(){
-	  let visited = localStorage["alreadyVisited"];
+	  let visited = sessionStorage["alreadyVisited"];
 	  if(visited) {
 	    this.setState({ modalState: false });
 	  } else {
-	    localStorage["alreadyVisited"] = true;
+	    sessionStorage["alreadyVisited"] = true;
 	    this.setState({ modalState: true});
 	  }
 	}
@@ -40,19 +41,16 @@ class Modal extends React.Component {
 
 				<p className="modal-icon">&#128059;</p>
 
-				<h1><b>Hello from the BerkeleyTime team!</b></h1>
-				<br></br>
+				<h1 className="modal-cta">Hey Bears! We're Hiring!</h1>
 
-				<p>
-          It’s here! We’re proud and excited to present a new design of BerkeleyTime.
-          The BT team has been hard at work over the last few semesters to make BerkeleyTime
-          the very best experience for students like you.  We’re a small team of students
-          that volunteer our time and efforts to maintain, update, and improve the site.
-          Feel free to look around, report any bugs, and give us feedback! We’d love to hear from you.
-        </p>
-				<br></br>
-
-				<p>&#128155; &#128153; Cheers, the BerkeleyTime team</p>
+				<p className="modal-body">
+					BerkeleyTime is currently hiring for the Fall 2019 semester! We're looking for 
+					passionate frontend developers, backend developers, and designers to join us in
+					making course discovery here at Berkeley as simple as can be. 
+					We'd love to see you apply to join our team!
+				</p>
+				
+				<Link to="/apply" className="button inverted">Apply</Link>
 				<br></br>
 			    </div>
 
