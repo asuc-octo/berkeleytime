@@ -19,9 +19,9 @@ function NavigationLinks() {
       <div className="navbar-item">
         <Link to="/about">About</Link>
       </div>
-      <div className="navbar-item">
+      {/* <div className="navbar-item">
         <Link to="/apply" className="button inverted">Apply</Link>
-      </div>
+      </div> */}
     </div>
   );
 }

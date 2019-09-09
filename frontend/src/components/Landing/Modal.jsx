@@ -20,6 +20,8 @@ class Modal extends React.Component {
 	    sessionStorage["alreadyVisited"] = true;
 	    this.setState({ modalState: true});
 	  }
+
+	  this.setState({ modalState: false});
 	}
 
 	toggleModal() {
