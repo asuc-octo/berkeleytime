@@ -1,25 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-        Button,
-        FormGroup,
-        ControlLabel,
-        FormControl,
-        Form,
-        HelpBlock,
-        ButtonToolbar,
-      } from 'react-bootstrap';
-import Checkbox from '../../elements/CustomCheckbox/CustomCheckbox';
 import Slider from 'rc-slider';
 import Select from 'react-select';
 
 import 'font-awesome/css/font-awesome.min.css';
 import 'rc-slider/assets/index.css';
-import 'react-select/dist/react-select.css';
 
 const { createSliderWithTooltip } = Slider;
 const Range = createSliderWithTooltip(Slider.Range);
-
+/*
 function CheckboxGroup(props) {
   const { options, activeFilters, handler } = props;
   return (
@@ -296,6 +285,17 @@ FilterSidebar.propTypes = {
     requirements: PropTypes.object,
     logistics: PropTypes.object,
     department: PropTypes.array
+}
+
+export default FilterSidebar;
+*/
+
+class FilterSidebar extends Component {
+  render() {
+    return (
+      <div />
+    );
+  }
 }
 
 export default FilterSidebar;

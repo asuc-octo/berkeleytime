@@ -19,13 +19,13 @@ import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentIn
 
 class EnrollmentGraphCard extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       enrollmentData: [],
       graphData: [],
       hoveredClass: false,
-    },
+    };
 
     this.updateLineHover = this.updateLineHover.bind(this);
     this.updateGraphHover = this.updateGraphHover.bind(this);

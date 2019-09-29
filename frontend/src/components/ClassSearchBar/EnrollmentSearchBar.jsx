@@ -5,7 +5,6 @@ import hash from 'object-hash';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
 
-import 'react-select/dist/react-select.css'
 import 'react-virtualized-select/styles.css'
 
 class EnrollmentSearchBar extends Component {
