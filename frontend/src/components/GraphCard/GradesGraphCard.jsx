@@ -10,14 +10,14 @@ import GradesInfoCard from '../GradesInfoCard/GradesInfoCard.jsx';
 
 class GradesGraphCard extends Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       gradesData: [],
       graphData: [],
 
       hoveredClass: false,
-    },
+    };
 
     this.updateBarHover = this.updateBarHover.bind(this);
     this.updateGraphHover = this.updateGraphHover.bind(this);
