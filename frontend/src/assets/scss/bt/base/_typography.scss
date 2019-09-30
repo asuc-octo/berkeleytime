@@ -1,0 +1,19 @@
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+td {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-weight: normal;
+}
+
+a:hover {
+  text-decoration: none;
+}

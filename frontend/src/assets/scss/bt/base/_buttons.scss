@@ -1,0 +1,42 @@
+.btn-bt-blue {
+  color: $bt-white;
+  background-color: $bt-blue;
+  border-color: $bt-blue;
+  border-width: 2px;
+
+  transition: 0.3s;
+
+  &:hover {
+    background-color: white;
+    color: $bt-blue;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+.btn-bt-white {
+  color: $bt-light-grey;
+  background-color: $bt-white;
+  border-color: $bt-light-grey;
+  border-width: 2px;
+  
+  transition: 0.3s;
+
+  &:hover {
+    background-color: $bt-light-grey;
+    color: white;
+    transition: 0.3s;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+.btn-bt-lg {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: 0.3rem;
+}

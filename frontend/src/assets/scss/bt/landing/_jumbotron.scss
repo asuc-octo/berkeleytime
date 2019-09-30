@@ -1,0 +1,61 @@
+// jumbotron reserved for bootstrap
+.jumbo {
+  background-color: white;
+  width: 100vw;
+
+  .jumbo-heading {
+    min-height: 600px;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: baseline;
+    text-align: left;
+
+    h1 {
+      margin: 15px 0;
+      font-size: 64px;
+      font-weight: 500;
+    }
+
+    p {
+      margin: 15px 3px; //3px better aligns with title
+      font-size: 24px;
+    }
+
+    .jumbo-heading-buttons {
+      margin: 15px 0;
+
+      a:not(:first-child) {
+        margin-left: 20px;
+      }
+    }
+  }
+
+  .jumbo-img-container {
+    float: right;
+    min-height: 600px;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    @include tablet {
+      margin-left: 20px;
+    }
+
+    .jumbo-img {
+      @include tablet {
+        width: 500px;
+      }
+
+      @include mobile {
+        width: 400px;
+      }
+
+      object-fit: scale-down;
+    }
+  }
+}
