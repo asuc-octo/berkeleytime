@@ -1,10 +1,10 @@
 // bootstrap 4
 @import "../node_modules/bootstrap/scss/bootstrap";
 
-@import "bt/common/variables";
-@import "bt/common/typography";
-@import "bt/common/responsive";
-@import "bt/common/buttons";
+@import "bt/base/variables";
+@import "bt/base/typography";
+@import "bt/base/responsive";
+@import "bt/base/buttons";
 
 @import "bt/berkeleytime";
 @import "bt/navbar";
