@@ -1,18 +1,4 @@
-/*
 .landing {
-    > div {
-        @include touch {
-            padding: 50px;
-        }
-        @include desktop {
-            padding: 50px;
-        }
-    }
-
-    .level {
-        max-width: 1150px;
-        margin: 0 auto;
-    }
 
     .modal {
         min-height: 600px;
@@ -53,112 +39,6 @@
 
         .modal-background {
           background-color: rgba(255, 255, 255, 0.82);
-        }
-    }
-
-    .landing-jumbo {
-        background-color: white;
-        min-height: 600px;
-        height: 100vh;
-
-        .level {
-          height: 100%;
-        }
-
-        .landing-jumbo-heading {
-            padding: 100px 0;
-
-            display: flex;
-            flex-direction: column;
-            align-items: baseline;
-            width: 500px;
-            text-align: left;
-
-            h1 {
-                margin: 15px 0;
-                font-size: 64px;
-                font-weight: 500;
-            }
-
-            p {
-                margin: 15px 3px; //3px better aligns with title
-                font-size: 24px;
-            }
-
-            .landing-jumbo-buttons {
-                margin: 20px 0;
-                display: flex;
-                flex-direction: row;
-
-                .landing-jumbo-explore {
-                  background-color: $bt-blue;
-                  border-color: $bt-blue;
-                  border-width: 2px;
-                  font-size: 20px;
-                  color: white;
-                  transition: 0.3s;
-
-                  a {
-                    color: inherit;
-                  }
-
-                  &:hover {
-                    background-color: white;
-                    color: $bt-blue;
-                  }
-                }
-
-                .landing-jumbo-signup {
-                  margin-left: 20px;
-                  border-color: $bt-light-grey;
-                  border-width: 2px;
-                  color: $bt-light-grey;
-                  font-size: 20px;
-                  transition: 0.3s;
-
-                  a {
-                    color: inherit;
-                  }
-
-                  &:hover {
-                    background-color: $bt-light-grey;
-                    color: white;
-                    transition: 0.3s;
-                  }
-                }
-            }
-        }
-
-        .landing-jumbo-img-container {
-            @include tablet {
-                margin-left: 20px;
-            }
-
-            .landing-jumbo-img {
-                @include tablet {
-                    width: 500px;
-                }
-                @include mobile {
-                    width: 400px;
-                }
-                object-fit: scale-down;
-            }
-        }
-    }
-
-    .landing-whatwedo {
-        .landing-whatwedo-whatwedo {
-            font-size: 48px;
-            font-weight: 450;
-            margin-right: 30px;
-        }
-
-        .landing-whatwedo-message {
-            @include tablet {
-                max-width: 50%;
-            }
-
-            font-size: 20px;
         }
     }
 
@@ -313,4 +193,3 @@
     }
 
 }
-*/
