@@ -5,7 +5,6 @@ import leon from "../../assets/img/images/about/leon.jpg";
 import will from "../../assets/img/images/about/will.jpg";
 import michael from "../../assets/img/images/about/michael.jpg";
 import jemma from "../../assets/img/images/about/jemma.jpg";
-import kate from "../../assets/img/images/about/kate.jpg";
 import richard from "../../assets/img/images/about/richard.jpg";
 import anson from "../../assets/img/images/about/anson.jpg";
 import chris from "../../assets/img/images/about/chris.jpg";
@@ -13,6 +12,11 @@ import eli from "../../assets/img/images/about/eli.jpg";
 import evelyn from "../../assets/img/images/about/evelyn.jpg";
 import grace from "../../assets/img/images/about/grace.jpg";
 import sangbin from "../../assets/img/images/about/sang.jpg";
+import mary from '../../assets/img/images/about/mary.jpg';
+import chloe from '../../assets/img/images/about/chloe.jpeg';
+import izzie from '../../assets/img/images/about/izzie.jpg';
+import janet from '../../assets/img/images/about/janet.jpg';
+import annie from '../../assets/img/images/about/annie.png';
 import oski from "../../assets/img/images/about/oski.jpg";
 
 function CurrentContributors({ contributors }) {
@@ -45,47 +49,47 @@ function CurrentContributors({ contributors }) {
 CurrentContributors.defaultProps = {
   contributors: [
     { name: "Leon Ming",
-      role: "Chief Tech Officer",
+      role: "ASUC CTO",
       image: leon,
       site: "https://leon-ming.com",
     },
+    { name: "Michael Li",
+      role: "Product Manager",
+      image: michael,
+      site: "http://www.michaelli.me",
+    },
     { name: "Will Wang",
-      role: "Project Manager",
+      role: "Advisor",
       image: will,
       site: "http://www.hantaowang.me",
+    },
+    { name: "Richard Liu",
+      role: "Advisor",
+      image: richard,
+      site: "https://www.linkedin.com/in/richard4912",
     },
     { name: "Jemma Kwak",
       role: "Design Lead",
       image: jemma,
       site: "https://jemmakwak.github.io",
     },
-    { name: "Kate Xu",
+    { name: "Christopher Liu",
       role: "Frontend Lead",
-      image: kate,
-      site: "https://www.linkedin.com/in/kate-shijie-xu-666b57110/",
+      image: chris,
+      site: "https://www.linkedin.com/in/christopher-d-liu/",
     },
-    { name: "Michael Li",
-      role: "Frontend Lead",
-      image: michael,
-      site: "http://www.michaelli.me",
-    },
-    { name: "Richard Liu",
-      role: "ML / Algs Lead",
-      image: richard,
-      site: "https://www.linkedin.com/in/richard4912",
+    { name: "Sangbin Cho",
+      role: "Backend Lead",
+      image: sangbin,
+      site: "https://www.linkedin.com/in/sang-cho/",
     },
     { name: "Anson Tsai",
       role: "Backend Engineering",
       image: anson,
       site: "https://www.linkedin.com/in/anson-tsai-83b9a312a/",
     },
-    { name: "Christopher Liu",
-      role: "Frontend Engineering",
-      image: chris,
-      site: "https://www.linkedin.com/in/christopher-d-liu/",
-    },
     { name: "Eli Wu",
-      role: "ML / Alg",
+      role: "Backend Engineering",
       image: eli,
     },
     { name: "Evelyn Li",
@@ -98,10 +102,37 @@ CurrentContributors.defaultProps = {
       image: grace,
       site: "http://graceluo.me",
     },
-    { name: "Sangbin Cho",
+    { name: "Sean Meng",
       role: "Backend Engineering",
-      image: sangbin,
-      site: "https://www.linkedin.com/in/sang-cho/",
+      image: oski,
+    },
+    { name: "Mary Liu",
+      role: "Backend Engineering",
+      image: mary,
+    },
+    { name: "Hannah Yan",
+      role: "Backend Engineering",
+      image: oski,
+    },
+    { name: "Isabella Lau",
+      role: "Backend Engineering",
+      image: izzie,
+    },
+    { name: "Christina Shao",
+      role: "Frontend Engineering",
+      image: oski,
+    },
+    { name: "Chloe Liu",
+      role: "Frontend Engineering",
+      image: chloe,
+    },
+    { name: "Janet Xu",
+      role: "Designer",
+      image: janet,
+    },
+    { name: "Annie Pan",
+      role: "Designer",
+      image: annie,
     },
   ],
 };
