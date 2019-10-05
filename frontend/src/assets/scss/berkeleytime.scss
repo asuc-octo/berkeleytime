@@ -4,20 +4,22 @@
 @import "bt/base/variables";
 @import "bt/base/typography";
 @import "bt/base/responsive";
-@import "bt/base/buttons";
+
+@import "bt/theming/buttons";
+@import "bt/theming/navbar";
 
 @import "bt/berkeleytime";
-@import "bt/navbar";
 @import "bt/footer";
 
 // landing
 @import "bt/landing/jumbotron";
 
+@import "bt/catalog/catalog";
+@import "bt/catalog/filter";
+
 // BerkeleyTime
-@import "bt/navbar";
 @import "bt/footer";
 // Catalog
-@import "bt/filter-sidebar";
 @import "bt/filter-selection";
 @import "bt/filter-results";
 @import "bt/filter-description";

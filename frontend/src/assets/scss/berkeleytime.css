@@ -7029,38 +7029,40 @@ h5,
 h6,
 p,
 a,
+button,
 td {
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
-  font-weight: normal; }
+  font-family: 'DM Sans', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  color: #383838;
+  margin: 0; }
 
 a:hover {
   text-decoration: none; }
 
 .btn-bt-blue {
-  color: #F5F5F5;
+  color: #FFFFFF;
   background-color: #579EFF;
   border-color: #579EFF;
-  border-width: 2px;
+  border-width: 1px;
   transition: 0.3s; }
   .btn-bt-blue:hover {
-    background-color: white;
+    background-color: #FFFFFF;
     color: #579EFF; }
   .btn-bt-blue a {
     color: inherit; }
 
-.btn-bt-white {
-  color: #808080;
-  background-color: #F5F5F5;
-  border-color: #808080;
-  border-width: 2px;
+.btn-bt-blue-inverted {
+  color: #579EFF;
+  background-color: #FFFFFF;
+  border-color: #C7C7C7;
+  border-width: 1px;
   transition: 0.3s; }
-  .btn-bt-white:hover {
-    background-color: #808080;
-    color: white;
-    transition: 0.3s; }
-  .btn-bt-white a {
+  .btn-bt-blue-inverted:hover {
+    color: #FFFFFF;
+    background-color: #579EFF;
+    border-color: #579EFF; }
+  .btn-bt-blue-inverted a {
     color: inherit; }
 
 .btn-bt-lg {
@@ -7068,46 +7070,32 @@ a:hover {
   line-height: 1.5;
   border-radius: 0.3rem; }
 
-.app {
-  background: #F5F5F5; }
-  .app .view {
-    min-height: 100vh; }
+.as-link {
+  background: none !important;
+  border: none;
+  padding: 0 !important; }
 
-.bt-navbar {
+.navbar-bt-white {
   height: 60px;
   z-index: 2;
-  box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.2); }
-  .bt-navbar .bt-navbar-brand {
-    margin-left: 15px;
-    font-size: 20px;
+  box-shadow: 0 1px 5px -1px rgba(0, 0, 0, 0.2); }
+  .navbar-bt-white a {
     font-weight: 500;
-    transition: 200ms;
-    color: #505050; }
-    .bt-navbar .bt-navbar-brand:hover {
+    font-size: 16px;
+    color: #383838;
+    transition: 200ms; }
+    .navbar-bt-white a:hover {
       color: #579EFF; }
-    .bt-navbar .bt-navbar-brand:focus {
-      color: #505050; }
+    .navbar-bt-white a:focus {
+      color: #383838; }
+  .navbar-bt-white .navbar-brand {
+    margin-left: 10px;
+    font-size: 24px; }
 
-.navbar-end {
-  margin-right: 27px; }
-
-.navbar-item > a {
-  color: #505050;
-  font-weight: 500;
-  transition: 200ms; }
-
-.navbar-item > a:hover {
-  color: #579EFF; }
-
-.navbar-item > a.inverted {
-  background-color: #579EFF;
-  border-color: #579EFF;
-  border-width: 2px;
-  color: white; }
-
-.navbar-item > a.inverted:hover {
-  background-color: white;
-  color: #579EFF; }
+.app {
+  background: #FFFFFF; }
+  .app .view {
+    min-height: 100vh; }
 
 .bt-footer {
   background-color: #303548; }
@@ -7135,7 +7123,7 @@ a:hover {
         color: #209cee; }
 
 .jumbo {
-  background-color: white;
+  background-color: #FFFFFF;
   width: 100vw; }
   .jumbo .jumbo-heading {
     min-height: 600px;
@@ -7175,41 +7163,56 @@ a:hover {
         .jumbo .jumbo-img-container .jumbo-img {
           width: 400px; } }
 
-.bt-navbar {
-  height: 60px;
-  z-index: 2;
-  box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.2); }
-  .bt-navbar .bt-navbar-brand {
-    margin-left: 15px;
-    font-size: 20px;
-    font-weight: 500;
-    transition: 200ms;
-    color: #505050; }
-    .bt-navbar .bt-navbar-brand:hover {
+.catalog {
+  min-height: 600px;
+  height: 100vh; }
+  .catalog .catalog-container {
+    padding-top: 60px;
+    height: 100%; }
+    .catalog .catalog-container > div {
+      height: 100%; }
+      .catalog .catalog-container > div > div {
+        height: 100%; }
+
+.filter {
+  height: 100%;
+  padding: 30px 30px 0 30px;
+  border-right: 1px solid #C7C7C7;
+  display: flex;
+  flex-direction: column; }
+  .filter .filter-name {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: baseline; }
+    .filter .filter-name p {
+      font-size: 24px;
+      font-weight: 500px;
+      margin-right: 30px; }
+    .filter .filter-name button {
       color: #579EFF; }
-    .bt-navbar .bt-navbar-brand:focus {
-      color: #505050; }
-
-.navbar-end {
-  margin-right: 27px; }
-
-.navbar-item > a {
-  color: #505050;
-  font-weight: 500;
-  transition: 200ms; }
-
-.navbar-item > a:hover {
-  color: #579EFF; }
-
-.navbar-item > a.inverted {
-  background-color: #579EFF;
-  border-color: #579EFF;
-  border-width: 2px;
-  color: white; }
-
-.navbar-item > a.inverted:hover {
-  background-color: white;
-  color: #579EFF; }
+      .filter .filter-name button:focus {
+        outline: none; }
+  .filter .filter-search {
+    margin-bottom: 30px; }
+    .filter .filter-search input {
+      width: 100%;
+      padding-bottom: 3px;
+      border: 0;
+      border-bottom: 0.5px solid #C7C7C7;
+      color: #535353;
+      font-size: 17px;
+      font-family: 'FontAwesome', 'DM Sans', sans-serif; }
+      .filter .filter-search input:focus {
+        outline: none; }
+  .filter .filter-sort {
+    margin-bottom: 30px; }
+  .filter .filter-requirements {
+    margin-bottom: 30px; }
+  .filter .filter-units {
+    margin-bottom: 30px; }
+  .filter .filter-department {
+    margin-bottom: 30px; }
 
 .bt-footer {
   background-color: #303548; }
@@ -7235,95 +7238,6 @@ a:hover {
         width: max-content; }
       .bt-footer .bt-footer-container .bt-footer-column a:hover {
         color: #209cee; }
-
-.filter-sidebar {
-  background-color: white; }
-  .filter-sidebar .header {
-    padding: 20px 30px 30px 30px;
-    padding-bottom: 10px; }
-    .filter-sidebar .header .filter-sidebar-header {
-      margin: 0 0;
-      font-size: 20px;
-      font-weight: 500; }
-  .filter-sidebar .content {
-    padding: 30px;
-    padding-top: 0px;
-    margin-bottom: 20px;
-    font-family: "Roboto", sans-serif; }
-    .filter-sidebar .content .side-filter {
-      margin-bottom: 0px; }
-      .filter-sidebar .content .side-filter .form-group {
-        margin-bottom: 0px; }
-        .filter-sidebar .content .side-filter .form-group .filter-label {
-          font-weight: 400;
-          color: black;
-          margin-top: 30px;
-          margin-bottom: 10px;
-          font-size: 18px; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-classSearch {
-          font-family: "FontAwesome", "Roboto", "Helvetica Neue", "Arial", sans-serif;
-          border: 0px;
-          border-bottom: 0.5px solid #5C5C5C;
-          border-radius: 0px;
-          padding-left: 0px;
-          font-size: 16px;
-          /* FF 4-18 */
-          /* FF 19+ */
-          /* IE 10+ */ }
-          .filter-sidebar .content .side-filter .form-group .filter-sidebar-classSearch:focus::-webkit-input-placeholder {
-            color: transparent; }
-          .filter-sidebar .content .side-filter .form-group .filter-sidebar-classSearch:focus:-moz-placeholder {
-            color: transparent; }
-          .filter-sidebar .content .side-filter .form-group .filter-sidebar-classSearch:focus::-moz-placeholder {
-            color: transparent; }
-          .filter-sidebar .content .side-filter .form-group .filter-sidebar-classSearch:focus:-ms-input-placeholder {
-            color: transparent; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-classSearch::placeholder {
-          color: #5C5C5C; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-sortBy .Select-control {
-          border: 0px;
-          border-bottom: 0.5px solid #5C5C5C;
-          border-radius: 0px;
-          padding-left: 0px; }
-        .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .buttonToggleGroup-button {
-          text-align: left;
-          color: black;
-          padding: 5px 10px;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 300; }
-        .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .checkboxGroup {
-          display: flex;
-          flex-direction: column;
-          padding-left: 15px; }
-          .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .checkboxGroup .checkbox > label {
-            font-size: 12px;
-            color: black;
-            font-weight: 200;
-            text-transform: capitalize;
-            padding-top: 2.2px; }
-          .filter-sidebar .content .side-filter .form-group .buttonToggleGroup .checkboxGroup .checkbox input[type="checkbox"]:checked + label::after {
-            color: #579EFF; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-range-helpBlock {
-          color: black;
-          font-size: 12px;
-          margin-top: 0px;
-          font-weight: 300; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-range-slider .rc-slider-track {
-          background-color: #579EFF; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-range-slider .rc-slider-handle {
-          border-color: #579EFF; }
-        .filter-sidebar .content .side-filter .form-group .filter-sidebar-department .Select-control {
-          border: 0px;
-          border-bottom: 0.5px solid #5C5C5C;
-          border-radius: 0px;
-          padding-left: 0px; }
-        .filter-sidebar .content .side-filter .form-group .filter-resetButton {
-          margin-top: 20px;
-          background-color: #579EFF;
-          border-color: #579EFF;
-          color: white;
-          font-weight: bold; }
 
 .filter-selection-button {
   border: 0px;
@@ -7483,7 +7397,7 @@ a:hover {
   .filter-description-container .filter-description .filter-description-tabs .tabs a {
     padding: 0.5em 2em 0.5em 0; }
   .filter-description-container .filter-description .filter-description-tabs .tabs .is-active a {
-    color: #505050;
+    color: #383838;
     font-weight: bold; }
   .filter-description-container .filter-description .filter-description-tabs .filter-description-tabs-details {
     display: flex;
@@ -7578,12 +7492,12 @@ a:hover {
       max-width: 20%; }
     .graph-empty .graph-empty-content .graph-empty-heading {
       display: inline-block;
-      font-size: 28px;
+      font-size: 16px;
       font-weight: bolder;
       margin-top: 30px; }
     .graph-empty .graph-empty-content .graph-empty-subheading {
       display: inline-block;
-      font-size: 22px;
+      font-size: 14px;
       margin-top: 30px;
       color: #5C5C5C; }
 
@@ -7953,13 +7867,13 @@ a:hover {
           color: #579EFF; }
       .error .error-heading .error-buttons .error-bugs {
         margin-left: 20px;
-        border-color: #808080;
-        color: #808080;
+        border-color: #A0A0A0;
+        color: #A0A0A0;
         transition: 0.3s; }
         .error .error-heading .error-buttons .error-bugs a {
           color: inherit; }
         .error .error-heading .error-buttons .error-bugs:hover {
-          background-color: #808080;
+          background-color: #A0A0A0;
           color: white; }
   .error .error-img {
     height: 350px;

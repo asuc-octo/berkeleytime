@@ -1,0 +1,19 @@
+.catalog {
+  min-height: 600px;
+  height: 100vh;
+
+  .catalog-container {
+    padding-top: $bt-navbar-height;
+    height: 100%;
+
+    // row
+    > div {
+      height: 100%;
+
+      // columns
+      > div {
+        height: 100%;
+      }
+    }
+  }
+}

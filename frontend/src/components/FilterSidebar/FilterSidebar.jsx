@@ -1,13 +1,87 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Slider from 'rc-slider';
+
 import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
 
 import 'font-awesome/css/font-awesome.min.css';
 import 'rc-slider/assets/index.css';
 
 const { createSliderWithTooltip } = Slider;
 const Range = createSliderWithTooltip(Slider.Range);
+
+const animatedComponents = makeAnimated();
+
+const sortOptions = [
+  { value: 'average_grade', label: 'Sort by: Average Grade' },
+  { value: 'department_name', label: 'Sort by: Dept. Name' },
+  { value: 'open_seats', label: 'Sort by: Open Seats' },
+  { value: 'enrolled_percentage', label: 'Sort by: Enrolled Pct.' },
+];
+
+const sortDefault = sortOptions[0];
+
+function sortSelect() {
+  return (
+    <Select
+      className="filter-sort"
+      options={sortOptions}
+      defaultValue={sortDefault}
+    />
+  );
+}
+
+const unitRangeOptions = [
+  { value: '0.5', label: '0.5 Units' },
+  { value: '1', label: '1 Unit' },
+  { value: '2', label: '2 Units' },
+  { value: '3', label: '3 Units' },
+  { value: '4', label: '4 Units' },
+  { value: '5', label: '5 Units' },
+  { value: '6+', label: '6+ Units' },
+];
+
+const unitRangeDefault = unitRangeOptions;
+
+function unitRangeSelect() {
+  return (
+    <Select
+      closeMenuOnSelect={false}
+      components={animatedComponents}
+      options={unitRangeOptions}
+      defaultValue={unitRangeDefault}
+      isMulti
+      placeholder="Select units..."
+      className="filter-units"
+    />
+  );
+}
+
+const classLevelOptions = [
+  { value: 'lower_division', label: 'Lower Div.' },
+  { value: 'upper_division', label: 'Upper Div.' },
+  { value: 'graduate', label: 'Graduate' },
+  { value: 'seminar', label: 'Seminar' },
+  { value: 'field_study', label: 'Field Study' },
+];
+
+const classLevelDefault = [classLevelOptions[0], classLevelOptions[1], classLevelOptions[2]];
+
+function classLevelSelect() {
+  return (
+    <Select
+      closeMenuOnSelect={false}
+      components={animatedComponents}
+      options={classLevelOptions}
+      defaultValue={classLevelDefault}
+      isMulti
+      placeholder="Select class levels..."
+      className="filter-class-level"
+    />
+  );
+}
+
 /*
 function CheckboxGroup(props) {
   const { options, activeFilters, handler } = props;
@@ -291,9 +365,31 @@ export default FilterSidebar;
 */
 
 class FilterSidebar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   render() {
     return (
-      <div />
+      <div className="filter">
+        <div className="filter-name">
+          <p>Filters</p>
+          <button className="as-link" type="button">Clear</button>
+        </div>
+        <div className="filter-search">
+          <input type="text" placeholder=" &#xf002;  Search for a class..." />
+        </div>
+        { sortSelect() }
+        <Select
+          className="filter-requirements"
+        />
+        { unitRangeSelect() }
+        <Select
+          className="filter-department"
+        />
+        { classLevelSelect() }
+      </div>
     );
   }
 }

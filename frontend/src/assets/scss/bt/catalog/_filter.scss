@@ -1,0 +1,65 @@
+.filter {
+  height: 100%;
+  padding: 30px 30px 0 30px;
+  border-right: 1px solid $bt-border-grey;
+
+  display: flex;
+  flex-direction: column;
+
+  .filter-name {
+    margin-bottom: 30px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+
+    p {
+      font-size: 24px;
+      font-weight: 500px;
+      margin-right: 30px;
+    }
+
+    button {
+      color: $bt-blue;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .filter-search {
+    margin-bottom: 30px;
+
+    input {
+      width: 100%;
+      padding-bottom: 3px;
+      border: 0;
+      border-bottom: .5px solid $bt-border-grey;
+
+      color: $bt-grey-text;
+      font-size: 17px;
+      font-family: 'FontAwesome', 'DM Sans', sans-serif;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .filter-sort {
+    margin-bottom: 30px;
+  }
+
+  .filter-requirements {
+    margin-bottom: 30px;
+  }
+
+  .filter-units {
+    margin-bottom: 30px;
+  }
+
+  .filter-department {
+    margin-bottom: 30px;
+  }
+}
