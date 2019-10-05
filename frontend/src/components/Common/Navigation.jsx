@@ -7,7 +7,7 @@ class Navigation extends PureComponent {
     const links = Navigation.links;
 
     return (
-      <Navbar fixed="top" expand="lg" bg="white" className="bt-navbar">
+      <Navbar fixed="top" expand="lg" bg="white" variant="bt-white" className="bt-navbar">
         <Navbar.Brand as={Link} to="/" className="bt-navbar-brand">BerkeleyTime</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">

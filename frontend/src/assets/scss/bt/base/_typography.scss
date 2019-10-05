@@ -7,11 +7,13 @@ h5,
 h6,
 p,
 a,
+button,
 td {
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  font-family: "Roboto", "Helvetica Neue", Arial, sans-serif;
+  font-family: 'DM Sans', sans-serif;
+  font-style: normal;
   font-weight: normal;
+  color: $bt-base-text;
+  margin: 0;
 }
 
 a:hover {

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 
 import axios from 'axios';
 
-import FilterSidebar from '../../components/FilterSidebar/FilterSidebar.jsx';
-import FilterResults from '../../components/FilterSidebar/FilterResults.jsx';
-import ClassDescription from '../../components/ClassDescription/ClassDescription.jsx';
+import FilterSidebar from '../../components/FilterSidebar/FilterSidebar';
+import FilterResults from '../../components/FilterSidebar/FilterResults';
+import ClassDescription from '../../components/ClassDescription/ClassDescription';
 
 
 class Catalog extends Component {
@@ -13,40 +13,27 @@ class Catalog extends Component {
     super(props);
 
     this.state = {
-      query: '',
-      sortBy: 'grade_average',
-      unitsRange: [0, 6],
-      activeFilters: new Set(),
-      defaultFilters: new Set(),
-      context: {},
+      search: '',                    // current search
+      sortBy: 'grade_average',       // either grade_average, ...
+      unitsRange: [0, 6],            // current unit range
+      activePlaylists: new Set(),    // set of integers
+      defaultPlaylists: new Set(),   // set of integers
+      context: {},                   // entire api data response
       selectedCourse: {},
+      loadedData: false,
     };
 
     this.buildFiltersObject = this.buildFiltersObject.bind(this);
-    this.searchQueryHandler = this.searchQueryHandler.bind(this);
-    this.sortHandler = this.sortHandler.bind(this);
-    this.unitsRangeHandler = this.unitsRangeHandler.bind(this);
     this.addFilterHandler = this.addFilterHandler.bind(this);
     this.removeFilterHandler = this.removeFilterHandler.bind(this);
     this.toggleFilterHandler = this.toggleFilterHandler.bind(this);
     this.selectFilterHandler = this.selectFilterHandler.bind(this);
-    this.resetFilterHandler = this.resetFilterHandler.bind(this);
     this.rangeFilterHandler = this.rangeFilterHandler.bind(this);
     this.selectCourseHandler = this.selectCourseHandler.bind(this);
-    this.setDefaultSearch = this.setDefaultSearch.bind(this);
 
     this.tab = 0;
     this.defaultSearch = '';
     this.setDefaultSearch();
-  }
-
-  setDefaultSearch() {
-    const paths = this.props.history.location.pathname.split('/');
-    if (paths.length >= 4) {
-      const abbreviation = paths[2];
-      const classNum = paths[3];
-      this.defaultSearch = `${abbreviation} ${classNum} `;
-    }
   }
 
   /**
@@ -54,45 +41,51 @@ class Catalog extends Component {
    */
   componentDidMount() {
     const paths = this.props.history.location.pathname.split('/');
-    //handler for specific class in URL
     if (paths.length >= 4) {
+      // if a class is provided in url, then we get from specific endpoint
       const abbreviation = paths[2];
       const classNum = paths[3];
       const search = `${abbreviation} ${classNum} `;
-      this.searchQueryHandler(search);
-      axios.get(`/api/catalog_json/${abbreviation}/${classNum}/`).then(res => {
-        const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-        this.setState({
-          activeFilters: new Set(defaultPlaylists),
-          defaultFilters: new Set(defaultPlaylists),
-          context: res.data
-        }, () => {
-          const courseID = res.data.default_course;
-          axios.get('/api/catalog/filter/', {params: {course_id: courseID}}).then(res => {
-            if (res.data.length > 0) {
-              //tab = 0: details; tab = 1: section
-              var tab = 0;
-              if (paths.length >= 5) {
-                tab = paths[4] === "sections" ? 0 : tab;
-              }
-              this.selectCourseHandler(res.data[0], tab);
-            }
-          }).catch(err => {
-            console.log(err);
-          })
-        });
-      }).catch((err) => {
-        console.log(err);
-      });
-    } else {
-      axios.get('/api/catalog_json/')
+      this.searchHandler(search);
+
+      axios.get(`http://localhost:8080/api/catalog_json/${abbreviation}/${classNum}/`)
         .then(res => {
-          //console.log(res);
+          console.log(res);
+          const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
+
+          this.setState({
+            activePlaylists: new Set(defaultPlaylists),
+            defaultPlaylists: new Set(defaultPlaylists),
+            context: res.data,
+          }, () => {
+            const courseID = res.data.default_course;
+            axios.get('http://localhost:8000/api/catalog/filter/', { params: { course_id: courseID }})
+              .then(res2 => {
+                if (res2.data.length > 0) {
+                  // tab = 0: details; tab = 1: section
+                  let tab = 0;
+                  if (paths.length >= 5) {
+                    tab = paths[4] === 'sections' ? 0 : tab;
+                  }
+                  this.selectCourseHandler(res2.data[0], tab);
+                }
+              }).catch(err => {
+                console.log(err);
+              });
+          });
+        }).catch((err) => {
+          console.log(err);
+        });
+    } else {
+      // no specific class provided, get everything
+      axios.get('http://localhost:8080/api/catalog_json/')
+        .then(res => {
+          console.log(res);
           const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
           this.setState({
-            activeFilters: new Set(defaultPlaylists),
-            defaultFilters: new Set(defaultPlaylists),
-            context: res.data
+            activePlaylists: new Set(defaultPlaylists),
+            defaultPlaylists: new Set(defaultPlaylists),
+            context: res.data,
           });
         })
         .catch((err) => {
@@ -102,57 +95,65 @@ class Catalog extends Component {
   }
 
   /**
-   *
-   * @param {String} searchQuery
-   *
-   * Handler function for search function
+   * Sets the default search based on url path
    */
-  searchQueryHandler(searchQuery) {
-    this.setState({
-      query: searchQuery
-    })
+  setDefaultSearch = () => {
+    const paths = this.props.history.location.pathname.split('/');
+    if (paths.length >= 4) {
+      const abbreviation = paths[2];
+      const classNum = paths[3];
+      this.defaultSearch = `${abbreviation} ${classNum} `;
+    }
   }
 
   /**
+   * @param {String} search
    *
-   * @param {String} sortAttribute
+   * Updates state.search
+   */
+  searchHandler = search => {
+    this.setState({
+      search
+    });
+  }
+
+  /**
+   * @param {String} sortBy
    *
    * Sorts courses based on sortAttribute
    */
-  sortHandler(sortAttribute) {
+  sortHandler = sortBy => {
     this.setState({
-      sortBy: sortAttribute,
+      sortBy
     })
   }
 
   /**
-   *
-   * @param {Array[min, max]} newRange
+   * @param {Array[min, max]} unitsRange
    *
    * Sets the state of the range based on the min and max values
    */
-  unitsRangeHandler(newRange) {
+  unitsRangeHandler = unitsRange => {
     this.setState({
-      unitsRange: newRange
+      unitsRange
     })
   }
 
   rangeFilterHandler(addFilterIds, removeFilterIds) {
-    let newActiveFilters = new Set(this.state.activeFilters);
+    let newActivePlaylists = new Set(this.state.activePlaylists);
     for (let filterId of addFilterIds) {
-      newActiveFilters.add(parseInt(filterId));
+      newActivePlaylists.add(parseInt(filterId));
     }
     for (let filterId of removeFilterIds) {
-      newActiveFilters.delete(parseInt(filterId));
+      newActivePlaylists.delete(parseInt(filterId));
     }
 
     this.setState({
-      activeFilters: newActiveFilters
+      activePlaylists: newActivePlaylists
     })
   }
 
   /**
-   *
    * @param {String} filterID
    *
    * Handler function for adding a filter ID to those that are active
@@ -160,7 +161,7 @@ class Catalog extends Component {
   addFilterHandler(filterID) {
     filterID = parseInt(filterID);
     this.setState(prevState => ({
-      activeFilters: prevState.activeFilters.add(filterID)
+      activePlaylists: prevState.activePlaylists.add(filterID)
     }));
   }
 
@@ -173,9 +174,9 @@ class Catalog extends Component {
   removeFilterHandler(filterID) {
     filterID = parseInt(filterID);
     this.setState(prevState => {
-      prevState.activeFilters.delete(filterID)
+      prevState.activePlaylists.delete(filterID)
       return {
-        activeFilters: prevState.activeFilters
+        activePlaylists: prevState.activePlaylists
       }
     });
   }
@@ -188,18 +189,18 @@ class Catalog extends Component {
    */
   toggleFilterHandler(filterID) {
     filterID = parseInt(filterID);
-    let newActiveFilters;
+    let newActivePlaylists;
     // console.log(filterID);
-    // console.log(this.state.activeFilters)
-    if(this.state.activeFilters.has(filterID)) {
-      newActiveFilters = new Set(this.state.activeFilters);
-      newActiveFilters.delete(filterID);
+    // console.log(this.state.activePlaylists)
+    if(this.state.activePlaylists.has(filterID)) {
+      newActivePlaylists = new Set(this.state.activePlaylists);
+      newActivePlaylists.delete(filterID);
     } else {
-      newActiveFilters = new Set(this.state.activeFilters).add(filterID);
+      newActivePlaylists = new Set(this.state.activePlaylists).add(filterID);
     }
 
     this.setState({
-      activeFilters: newActiveFilters
+      activePlaylists: newActivePlaylists
     });
   }
 
@@ -215,12 +216,12 @@ class Catalog extends Component {
     newFilterID = parseInt(newFilterID);
 
     if (lastFilterID !== newFilterID) {
-      let newActiveFilters = new Set(this.state.activeFilters);
-      newActiveFilters.delete(lastFilterID);
-      newActiveFilters.add(newFilterID);
+      let newActivePlaylists = new Set(this.state.activePlaylists);
+      newActivePlaylists.delete(lastFilterID);
+      newActivePlaylists.add(newFilterID);
 
       this.setState({
-        activeFilters: newActiveFilters
+        activePlaylists: newActivePlaylists
       });
     }
   }
@@ -228,15 +229,15 @@ class Catalog extends Component {
   /**
    * Handler function to reset all filters to the default
    */
-  resetFilterHandler() {
+  resetFilterHandler = () => {
     console.log(this.state);
     this.defaultSearch = '';
-    let newActiveFilters = new Set(this.state.defaultFilters);
+    let newActivePlaylists = new Set(this.state.defaultPlaylists);
     this.setState({
-      query: '',
+      search: '',
       sortBy: 'grade_average',
       unitsRange: [0, 6],
-      activeFilters: newActiveFilters
+      activePlaylists: newActivePlaylists
     })
   }
 
@@ -301,23 +302,53 @@ class Catalog extends Component {
   }
 
   render() {
-    let results = this.state && this.state.activeFilters.size ? (
+    return (
+      <div className="catalog">
+        <div className="catalog-container">
+          <Row>
+            <Col lg={4} xl={3}>
+              <FilterSidebar
+                filters={this.buildFiltersObject(this.state.context)}
+                activeFilters={this.state.activePlaylists}
+                searchHandler={this.searchHandler}
+                sortHandler={this.sortHandler}
+                unitsRangeHandler={this.unitsRangeHandler}
+                sortBy={this.state.sortBy}
+                unitsRange={this.state.unitsRange}
+                addFilter={this.addFilterHandler}
+                rangeFilter={this.rangeFilterHandler}
+                removeFilter={this.removeFilterHandler}
+                toggleFilter={this.toggleFilterHandler}
+                selectFilter={this.selectFilterHandler}
+                resetFilters={this.resetFilterHandler}
+                defaultSearch={this.defaultSearch}
+              />
+            </Col>
+          </Row>
+        </div>
+      </div>
+    )
+  }
+
+  /*
+  render() {
+    let results = this.state && this.state.activePlaylists.size ? (
       <FilterResults
-        activeFilters={this.state.activeFilters}
+        activeFilters={this.state.activePlaylists}
         selectCourse={this.selectCourseHandler}
         sortBy={this.state.sortBy}
-        query={this.state.query}
+        query={this.state.search}
       />
     ) : <div></div>
     console.log(this.defaultSearch);
-
+    
     return (
       <div className="app-container">
           <div className="filter-columns">
               <FilterSidebar
                 filters={this.buildFiltersObject(this.state.context)}
-                activeFilters={this.state.activeFilters}
-                searchHandler={this.searchQueryHandler}
+                activeFilters={this.state.activePlaylists}
+                searchHandler={this.searchHandler}
                 sortHandler={this.sortHandler}
                 unitsRangeHandler={this.unitsRangeHandler}
                 sortBy={this.state.sortBy}
@@ -340,7 +371,7 @@ class Catalog extends Component {
           </div>
       </div>
     );
-  }
+  }*/
 }
 
 export default Catalog;

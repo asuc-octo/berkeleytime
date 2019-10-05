@@ -2,12 +2,12 @@
   color: $bt-white;
   background-color: $bt-blue;
   border-color: $bt-blue;
-  border-width: 2px;
+  border-width: 1px;
 
   transition: 0.3s;
 
   &:hover {
-    background-color: white;
+    background-color: $bt-white;
     color: $bt-blue;
   }
 
@@ -16,18 +16,18 @@
   }
 }
 
-.btn-bt-white {
-  color: $bt-light-grey;
+.btn-bt-blue-inverted {
+  color: $bt-blue;
   background-color: $bt-white;
-  border-color: $bt-light-grey;
-  border-width: 2px;
+  border-color: $bt-border-grey;
+  border-width: 1px;
   
   transition: 0.3s;
 
   &:hover {
-    background-color: $bt-light-grey;
-    color: white;
-    transition: 0.3s;
+    color: $bt-white;
+    background-color: $bt-blue;
+    border-color: $bt-blue;
   }
 
   a {
@@ -39,4 +39,10 @@
   font-size: 1.25rem;
   line-height: 1.5;
   border-radius: 0.3rem;
+}
+
+.as-link {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
 }
