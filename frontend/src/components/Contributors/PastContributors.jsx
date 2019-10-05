@@ -119,6 +119,9 @@ PastContributors.defaultProps = {
         }, 
         { name: "Vaibhav Srikaran",
           site: "https://www.linkedin.com/in/vsrikaran/",
+        },
+        { name: 'Kate Xu',
+          site: 'https://www.linkedin.com/in/kate-shijie-xu-666b57110/'
         }
     ],
 
