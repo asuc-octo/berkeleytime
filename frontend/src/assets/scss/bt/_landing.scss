@@ -50,10 +50,6 @@
         }
         min-height: 600px;
 
-        .level {
-          height: 100%;
-        }
-
         .landing-explore-icon {
             width: 100%;
             margin-bottom: 20px;
@@ -64,13 +60,16 @@
         .bt-blue { color: $bt-blue }
 
         .landing-explore-desc {
+            padding-top: 30vh;
+
             @include tablet {
-                max-width: 25%;
+                max-width: 100%;
             }
 
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
 
             h3 {
                 font-size: 30px;
@@ -90,17 +89,20 @@
         }
 
         .landing-explore-img-wrapper {
+            padding-top: 20vh;
+            padding-left: 50px;
+
             @include mobile {
                 margin-top: 1.5rem;
             }
 
             @include tablet {
-                max-width: 75%;
+                max-width: 100%;
             }
         }
 
         .landing-explore-img {
-            max-width: 95%;
+            max-width: 100%;
             max-height: 500px;
             object-fit: scale-down;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -123,11 +125,11 @@
         .landing-sponsors-desc {
             align-self: center;
             max-width: 450px;
+            text-align: center;
 
             h3 {
                 font-size: 30px;
                 font-weight: bold;
-
                 margin-bottom: 20px;
             }
 
@@ -152,14 +154,20 @@
     }
 
     .landing-mission {
-        background-color: rgba(245, 245, 245, 1);
+        background-color: rgba(245, 245, 245, 1);            
 
         .landing-mission-column {
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
 
-            max-width: 300px;
+            max-width: 50vw;
+
+            padding-top: 50px;
+            padding-bottom: 50px;
+            padding-left: 125px;
+            padding-right: 125px;
 
             h3 {
                 font-size: 30px;
