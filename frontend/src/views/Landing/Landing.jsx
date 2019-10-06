@@ -17,17 +17,14 @@ class Landing extends PureComponent {
         <div className="landing-container">
           <Modal />
           <Jumbotron />
+          {Landing.explore.map(item => <Explore {...item} />)}
+          <Sponsors />
+          <Mission />
         </div>
       </div>
     );
   }
 }
-
-/*
-        {Landing.explore.map(item => <Explore {...item} />)}
-        <Sponsors />
-        <Mission />
-*/
 
 Landing.explore = [
   {
