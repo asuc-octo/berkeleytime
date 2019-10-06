@@ -14,10 +14,10 @@ const Range = createSliderWithTooltip(Slider.Range);
 const animatedComponents = makeAnimated();
 
 const sortOptions = [
-  { value: 'average_grade', label: 'Sort by: Average Grade' },
-  { value: 'department_name', label: 'Sort by: Dept. Name' },
-  { value: 'open_seats', label: 'Sort by: Open Seats' },
-  { value: 'enrolled_percentage', label: 'Sort by: Enrolled Pct.' },
+  { value: 'average_grade', label: 'Average Grade' },
+  { value: 'department_name', label: 'Deptartment Name' },
+  { value: 'open_seats', label: 'Open Seats' },
+  { value: 'enrolled_percentage', label: 'Enrolled Percentage' },
 ];
 
 const sortDefault = sortOptions[0];
@@ -160,7 +160,7 @@ class ButtonToggleGroup extends Component{
           </div>
       );
     }
-}
+}*/
 
 export class FilterSidebar extends Component {
   constructor(props) {
@@ -177,7 +177,6 @@ export class FilterSidebar extends Component {
     this.state = {
       department: '',
       toggleStatus: new Set(),
-      collapseLogistics: false,
       classSearch: this.props.defaultSearch,
     }
   }
@@ -264,6 +263,7 @@ export class FilterSidebar extends Component {
   render() {
     const { requirements, logistics, department, sortAttributes } = this.props.filters;
     const { activeFilters } = this.props;
+    /*
     return (
       <div className="filter-sidebar">
         <div className="header">
@@ -351,26 +351,8 @@ export class FilterSidebar extends Component {
         </div>
       </div>
     );
-  }
-}
+    */
 
-FilterSidebar.propTypes = {
-    sortFilters: PropTypes.array,
-    requirements: PropTypes.object,
-    logistics: PropTypes.object,
-    department: PropTypes.array
-}
-
-export default FilterSidebar;
-*/
-
-class FilterSidebar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
     return (
       <div className="filter">
         <div className="filter-name">

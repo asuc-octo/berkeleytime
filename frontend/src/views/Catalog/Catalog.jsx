@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
+import HashLoader from 'react-spinners/HashLoader';
 
 import axios from 'axios';
 
 import FilterSidebar from '../../components/FilterSidebar/FilterSidebar';
 import FilterResults from '../../components/FilterSidebar/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
+
 
 
 class Catalog extends Component {
@@ -57,6 +59,7 @@ class Catalog extends Component {
             activePlaylists: new Set(defaultPlaylists),
             defaultPlaylists: new Set(defaultPlaylists),
             context: res.data,
+            loadedData: true,
           }, () => {
             const courseID = res.data.default_course;
             axios.get('http://localhost:8000/api/catalog/filter/', { params: { course_id: courseID }})
@@ -86,6 +89,7 @@ class Catalog extends Component {
             activePlaylists: new Set(defaultPlaylists),
             defaultPlaylists: new Set(defaultPlaylists),
             context: res.data,
+            loadedData: true,
           });
         })
         .catch((err) => {
@@ -302,27 +306,40 @@ class Catalog extends Component {
   }
 
   render() {
+    const { loadedData } = this.state;
     return (
       <div className="catalog">
         <div className="catalog-container">
           <Row>
             <Col lg={4} xl={3}>
-              <FilterSidebar
-                filters={this.buildFiltersObject(this.state.context)}
-                activeFilters={this.state.activePlaylists}
-                searchHandler={this.searchHandler}
-                sortHandler={this.sortHandler}
-                unitsRangeHandler={this.unitsRangeHandler}
-                sortBy={this.state.sortBy}
-                unitsRange={this.state.unitsRange}
-                addFilter={this.addFilterHandler}
-                rangeFilter={this.rangeFilterHandler}
-                removeFilter={this.removeFilterHandler}
-                toggleFilter={this.toggleFilterHandler}
-                selectFilter={this.selectFilterHandler}
-                resetFilters={this.resetFilterHandler}
-                defaultSearch={this.defaultSearch}
-              />
+              {
+                loadedData ? 
+                <FilterSidebar
+                  filters={this.buildFiltersObject(this.state.context)}
+                  activeFilters={this.state.activePlaylists}
+                  searchHandler={this.searchHandler}
+                  sortHandler={this.sortHandler}
+                  unitsRangeHandler={this.unitsRangeHandler}
+                  sortBy={this.state.sortBy}
+                  unitsRange={this.state.unitsRange}
+                  addFilter={this.addFilterHandler}
+                  rangeFilter={this.rangeFilterHandler}
+                  removeFilter={this.removeFilterHandler}
+                  toggleFilter={this.toggleFilterHandler}
+                  selectFilter={this.selectFilterHandler}
+                  resetFilters={this.resetFilterHandler}
+                  defaultSearch={this.defaultSearch}
+                /> :
+                <div className="filter">
+                  <div className="filter-loading">
+                    <HashLoader
+                      color="#579EFF"
+                      size="50"
+                      sizeUnit="px"
+                    />
+                  </div>
+                </div>
+              }
             </Col>
           </Row>
         </div>

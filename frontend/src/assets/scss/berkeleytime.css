@@ -7180,6 +7180,12 @@ a:hover {
   border-right: 1px solid #C7C7C7;
   display: flex;
   flex-direction: column; }
+  .filter .filter-loading {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; }
   .filter .filter-name {
     margin-bottom: 30px;
     display: flex;
