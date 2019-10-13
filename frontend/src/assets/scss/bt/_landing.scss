@@ -1,18 +1,4 @@
-/*
 .landing {
-    > div {
-        @include touch {
-            padding: 50px;
-        }
-        @include desktop {
-            padding: 50px;
-        }
-    }
-
-    .level {
-        max-width: 1150px;
-        margin: 0 auto;
-    }
 
     .modal {
         min-height: 600px;
@@ -56,112 +42,6 @@
         }
     }
 
-    .landing-jumbo {
-        background-color: white;
-        min-height: 600px;
-        height: 100vh;
-
-        .level {
-          height: 100%;
-        }
-
-        .landing-jumbo-heading {
-            padding: 100px 0;
-
-            display: flex;
-            flex-direction: column;
-            align-items: baseline;
-            width: 500px;
-            text-align: left;
-
-            h1 {
-                margin: 15px 0;
-                font-size: 64px;
-                font-weight: 500;
-            }
-
-            p {
-                margin: 15px 3px; //3px better aligns with title
-                font-size: 24px;
-            }
-
-            .landing-jumbo-buttons {
-                margin: 20px 0;
-                display: flex;
-                flex-direction: row;
-
-                .landing-jumbo-explore {
-                  background-color: $bt-blue;
-                  border-color: $bt-blue;
-                  border-width: 2px;
-                  font-size: 20px;
-                  color: white;
-                  transition: 0.3s;
-
-                  a {
-                    color: inherit;
-                  }
-
-                  &:hover {
-                    background-color: white;
-                    color: $bt-blue;
-                  }
-                }
-
-                .landing-jumbo-signup {
-                  margin-left: 20px;
-                  border-color: $bt-light-grey;
-                  border-width: 2px;
-                  color: $bt-light-grey;
-                  font-size: 20px;
-                  transition: 0.3s;
-
-                  a {
-                    color: inherit;
-                  }
-
-                  &:hover {
-                    background-color: $bt-light-grey;
-                    color: white;
-                    transition: 0.3s;
-                  }
-                }
-            }
-        }
-
-        .landing-jumbo-img-container {
-            @include tablet {
-                margin-left: 20px;
-            }
-
-            .landing-jumbo-img {
-                @include tablet {
-                    width: 500px;
-                }
-                @include mobile {
-                    width: 400px;
-                }
-                object-fit: scale-down;
-            }
-        }
-    }
-
-    .landing-whatwedo {
-        .landing-whatwedo-whatwedo {
-            font-size: 48px;
-            font-weight: 450;
-            margin-right: 30px;
-        }
-
-        .landing-whatwedo-message {
-            @include tablet {
-                max-width: 50%;
-            }
-
-            font-size: 20px;
-        }
-    }
-
     .landing-explore {
         margin-bottom: 0 !important;
         background-color: white;
@@ -169,10 +49,6 @@
             height: 100vh;
         }
         min-height: 600px;
-
-        .level {
-          height: 100%;
-        }
 
         .landing-explore-icon {
             width: 100%;
@@ -184,13 +60,16 @@
         .bt-blue { color: $bt-blue }
 
         .landing-explore-desc {
+            padding-top: 30vh;
+
             @include tablet {
-                max-width: 25%;
+                max-width: 100%;
             }
 
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
 
             h3 {
                 font-size: 30px;
@@ -210,17 +89,20 @@
         }
 
         .landing-explore-img-wrapper {
+            padding-top: 20vh;
+            padding-left: 50px;
+
             @include mobile {
                 margin-top: 1.5rem;
             }
 
             @include tablet {
-                max-width: 75%;
+                max-width: 100%;
             }
         }
 
         .landing-explore-img {
-            max-width: 95%;
+            max-width: 100%;
             max-height: 500px;
             object-fit: scale-down;
             box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -243,11 +125,11 @@
         .landing-sponsors-desc {
             align-self: center;
             max-width: 450px;
+            text-align: center;
 
             h3 {
                 font-size: 30px;
                 font-weight: bold;
-
                 margin-bottom: 20px;
             }
 
@@ -272,14 +154,20 @@
     }
 
     .landing-mission {
-        background-color: rgba(245, 245, 245, 1);
+        background-color: rgba(245, 245, 245, 1);            
 
         .landing-mission-column {
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
 
-            max-width: 300px;
+            max-width: 50vw;
+
+            padding-top: 50px;
+            padding-bottom: 50px;
+            padding-left: 125px;
+            padding-right: 125px;
 
             h3 {
                 font-size: 30px;
@@ -313,4 +201,3 @@
     }
 
 }
-*/

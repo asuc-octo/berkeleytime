@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 import Jumbotron from '../../components/Landing/Jumbotron';
 import Explore from '../../components/Landing/Explore';
@@ -10,23 +10,20 @@ import explore_snap from '../../assets/img/images/landing/explore_snap.png';
 import grades_snap from '../../assets/img/images/landing/grades_snap.png';
 import enrollment_snap from '../../assets/img/images/landing/enrollment_snap.png';
 
-class Landing extends Component {
-    
-    constructor(props){
-      super(props)
-    }
-
-    render() {
-      return (
-        <div className="landing">
+class Landing extends PureComponent {
+  render() {
+    return (
+      <div className="landing">
+        <div className="landing-container">
           <Modal />
           <Jumbotron />
           {Landing.explore.map(item => <Explore {...item} />)}
           <Sponsors />
           <Mission />
         </div>
-      );
-    }
+      </div>
+    );
+  }
 }
 
 Landing.explore = [
