@@ -68,12 +68,13 @@ class ScheduleResource(object):
         https://api-central.berkeley.edu/api/45/interactive-docs
         """
         formatted_abbreviation = re.compile('[^a-zA-Z]').sub('', abbreviation)
+        url = self.url % (
+            get_sis_term_id(semester, year),
+            formatted_abbreviation,
+            course_number
+        )
+
         try:
-            url = self.url % (
-                get_sis_term_id(semester, year),
-                formatted_abbreviation,
-                course_number
-            )
             response = requests.get(url, headers=self.headers)
             json_response = response.json()
 
