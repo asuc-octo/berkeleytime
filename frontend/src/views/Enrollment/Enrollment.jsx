@@ -68,7 +68,7 @@ class Enrollment extends Component {
     let courses = context.courses;
 
     return (
-      <div className="app-container">
+      <div className="enrollment">
         <EnrollmentSearchBar
           classes={courses}
           addCourse={this.addCourse}

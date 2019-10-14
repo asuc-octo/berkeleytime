@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Select from 'react-virtualized-select';
+import {Row, Col, Button} from 'react-bootstrap';
 import axios from 'axios';
 import hash from 'object-hash';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
 
+import 'react-select/dist/react-select.css'
 import 'react-virtualized-select/styles.css'
 
 // think about clearing values after add button
@@ -307,8 +309,8 @@ class GradesSearchBar extends Component {
     let oneSecondaryOption = secondaryOptions && secondaryOptions.length == 2 && selectSecondary;
 
     return (
-      <div className="columns">
-        <div className="column is-3">
+      <Row style={{marginBottom: 10}}>
+        <Col lg={3}>
           <Select
               name="selectClass"
               placeholder="Choose a class..."
@@ -317,8 +319,8 @@ class GradesSearchBar extends Component {
               onChange={this.handleClassSelect}
               filterOptions={this.filterOptions}
           />
-        </div>
-        <div className="column is-2">
+        </Col>
+        <Col lg={2}>
           <Select
               name="sortBy"
               placeholder="Sort by"
@@ -329,8 +331,8 @@ class GradesSearchBar extends Component {
               disabled={!selectedClass}
               clearable={false}
           />
-        </div>
-        <div className="column is-3">
+        </Col>
+        <Col lg={3}>
           <Select
               name="instrSems"
               placeholder="Select an option..."
@@ -341,8 +343,8 @@ class GradesSearchBar extends Component {
               clearable={false}
               searchable={false}
           />
-        </div>
-        <div className="column is-3">
+        </Col>
+        <Col lg={3}>
           <Select
               name="section"
               placeholder="Select an option..."
@@ -353,17 +355,17 @@ class GradesSearchBar extends Component {
               clearable={false}
               searchable={false}
           />
-        </div>
-        <div className="column is-1">
-          <button
-            className="button is-success"
+        </Col>
+        <Col lg={1}>
+          <Button
+            className="btn-bt-green"
             onClick={this.addSelected}
             disabled={!selectedClass || !(selectPrimary && selectSecondary)}
           >
             Add
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Col>
+      </Row>
     );
   }
 }
