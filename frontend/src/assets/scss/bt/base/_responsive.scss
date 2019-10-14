@@ -1,3 +1,5 @@
+// based on bootstrap 4 breakpoints
+
 // up to 767px
 @mixin mobile {
   @include media-breakpoint-down(sm) {
