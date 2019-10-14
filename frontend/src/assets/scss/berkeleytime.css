@@ -7175,8 +7175,6 @@ a:hover {
         .jumbo .jumbo-img-container .jumbo-img {
           width: 400px; } }
 
-<<<<<<< HEAD
-=======
 .landing .modal {
   min-height: 600px;
   height: 100vh; }
@@ -7315,7 +7313,6 @@ a:hover {
   .landing .landing-artist-credit a {
     transition: 200ms; }
 
->>>>>>> afb18d1ebd00c18fbea54f26475b947b58ceb0dc
 .bt-navbar {
   height: 60px;
   z-index: 2;
@@ -7817,7 +7814,7 @@ a:hover {
     align-items: center;
     width: 700px;
     min-width: 700px;
-    margin-top: 30px; }
+    margin-top: 130px; }
     .contributors .contributors-container .contributors-description {
       align-self: flex-start; }
       .contributors .contributors-container .contributors-description > h4 {
@@ -7867,6 +7864,9 @@ a:hover {
             color: #b5b5b5;
             font-weight: 500;
             font-size: 14px; }
+      .contributors .contributors-container .contributor-profiles .filling-empty-space-childs {
+        width: 140px;
+        height: 0; }
 
 .past-contributors {
   background-color: white;
@@ -7933,8 +7933,16 @@ a:hover {
       justify-content: center;
       flex-wrap: wrap;
       font-size: 18px;
-      width: 100%; }
+      width: 110%;
+      margin-left: 50px; }
       .past-contributors .past-contributors-content .past-contributors-others a {
+        width: 20%;
+        min-width: 200px;
+        margin: 10px 15px;
+        text-align: center;
+        font-size: 18px;
+        color: #5C5C5C; }
+      .past-contributors .past-contributors-content .past-contributors-others span {
         width: 20%;
         min-width: 200px;
         margin: 10px 15px;
