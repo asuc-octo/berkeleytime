@@ -1,4 +1,10 @@
 pipeline {
+  environment {
+    BACKEND_GCR_PATH = "gcr.io/berkeleytime-218606/berkeleytime/berkeleytimestage"
+    FRONTEND_GCR_PATH = "gcr.io/berkeleytime-218606/berkeleytime/frontendstage"
+    BACKEND_DEPLOY_STAGE_FILEPATH = "kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml"
+    FRONTEND_DEPLOY_STAGE_FILEPATH = "kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml"
+  }
   agent any
   triggers {
     pollSCM ('*/5 * * * *')
@@ -11,8 +17,8 @@ pipeline {
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
-docker build -t berkeleytime/berkeleytimestage:$version -f berkeleytime/Dockerfile berkeleytime
-docker push berkeleytime/berkeleytimestage:$version'''
+docker build -t ${BACKEND_GCR_PATH}:$version -f berkeleytime/Dockerfile berkeleytime
+docker push ${BACKEND_GCR_PATH}:$version'''
       }
     }
     stage('Build-Frontend-Stage') {
@@ -22,8 +28,8 @@ docker push berkeleytime/berkeleytimestage:$version'''
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
-docker build -t berkeleytime/frontendstage:$version -f frontend/Dockerfile frontend
-docker push berkeleytime/frontendstage:$version'''
+docker build -t ${FRONTEND_GCR_PATH}:$version -f frontend/Dockerfile frontend
+docker push ${FRONTEND_GCR_PATH}:$version'''
       }
     }
     stage('Deploy-Berkeleytime-Stage') {
@@ -33,11 +39,11 @@ docker push berkeleytime/frontendstage:$version'''
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
-sed -ri "s/image:.*/image:\\ index.docker.io\\/berkeleytime\\/berkeleytimestage:$version/g" kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
-cat kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
+sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimestage:$version/g" $BACKEND_DEPLOY_STAGE_FILEPATH
+cat $BACKEND_DEPLOY_STAGE_FILEPATH
 kubectl get pods
-kubectl delete -f kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
-kubectl apply -f kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
+kubectl delete -f $BACKEND_DEPLOY_STAGE_FILEPATH
+kubectl apply -f $BACKEND_DEPLOY_STAGE_FILEPATH
 kubectl get pods'''
       }
     }
@@ -48,11 +54,11 @@ kubectl get pods'''
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
-sed -ri "s/image:.*/image:\\ index.docker.io\\/berkeleytime\\/frontendstage:$version/g" kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
-cat kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
+sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/frontendstage:$version/g" $FRONTEND_DEPLOY_STAGE_FILEPATH
+cat $FRONTEND_DEPLOY_STAGE_FILEPATH
 kubectl get pods
-kubectl delete -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
-kubectl apply -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
+kubectl delete -f $FRONTEND_DEPLOY_STAGE_FILEPATH
+kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH
 kubectl get pods'''
       }
     }
