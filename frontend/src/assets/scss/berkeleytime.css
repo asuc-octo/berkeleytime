@@ -7736,8 +7736,7 @@ a:hover {
   margin-top: 30px;
   margin-bottom: 30px;
   margin-left: 35px;
-  margin-right: 35px;
-  min-height: 100vh; }
+  margin-right: 35px; }
 
 .card.grades-graph-card {
   box-shadow: none;
@@ -7785,8 +7784,7 @@ a:hover {
   margin-top: 30px;
   margin-bottom: 30px;
   margin-left: 35px;
-  margin-right: 35px;
-  min-height: 100vh; }
+  margin-right: 35px; }
 
 .card.enrollment-graph-card {
   box-shadow: none;
