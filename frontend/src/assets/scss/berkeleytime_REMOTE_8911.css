@@ -7050,11 +7050,6 @@ a:hover {
   .btn-bt-blue a {
     color: inherit; }
 
-.btn-bt-green {
-  background-color: #18D869 !important;
-  border-color: #18D869 !important;
-  border-radius: 0.3rem; }
-
 .btn-bt-white {
   color: #808080;
   background-color: #F5F5F5;
@@ -7077,8 +7072,6 @@ a:hover {
   background: #F5F5F5; }
   .app .view {
     min-height: 100vh; }
-  .app .app-container {
-    padding-top: 60px; }
 
 .bt-navbar {
   height: 60px;
@@ -7732,16 +7725,8 @@ a:hover {
       margin-top: 30px;
       color: #5C5C5C; }
 
-.grades {
-  margin-top: 30px;
-  margin-bottom: 30px;
-  margin-left: 35px;
-  margin-right: 35px;
-  min-height: 100vh; }
-
 .card.grades-graph-card {
-  box-shadow: none;
-  border: none; }
+  box-shadow: none; }
   .card.grades-graph-card .grades-graph {
     padding: 15px 15px 0px 35px;
     min-height: 500px; }
@@ -7781,16 +7766,8 @@ a:hover {
         color: gray;
         font-size: 18px; }
 
-.enrollment {
-  margin-top: 30px;
-  margin-bottom: 30px;
-  margin-left: 35px;
-  margin-right: 35px;
-  min-height: 100vh; }
-
 .card.enrollment-graph-card {
-  box-shadow: none;
-  border: none; }
+  box-shadow: none; }
   .card.enrollment-graph-card .enrollment-graph {
     padding: 15px 15px 0px 35px;
     min-height: 500px; }
