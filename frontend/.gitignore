@@ -3,3 +3,5 @@ node_modules/
 tmpaddon
 
 .DS_Store
+
+src/assets/scss/berkeleytime.css

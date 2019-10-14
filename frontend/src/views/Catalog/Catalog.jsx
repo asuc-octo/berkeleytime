@@ -1,41 +1,45 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
+import { withRouter } from 'react-router';
 import HashLoader from 'react-spinners/HashLoader';
 
 import axios from 'axios';
 
-import FilterSidebar from '../../components/FilterSidebar/FilterSidebar';
-import FilterResults from '../../components/FilterSidebar/FilterResults';
+import Filter from '../../components/Catalog/Filter';
+import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 
-
+/**
+ * catalog_json API
+ * 
+ * each playlist is an integer, representing a list of classes
+ * 
+ * data:
+ *   default_playlists - array of the default playlists
+ *   engineering - array of engineering requirement playlists
+ *   haas - array of haas requirement playlists
+ *   ls - array of l&s requirement playlists
+ *   level - array of class level requirement playlists
+ *   semester - array of semester playlists
+ *   units - array of unit playlists
+ *   university - array of university requirement playlists
+ */
 
 class Catalog extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      defaultSearch: this.getDefaultSearch(), // default search, set if URL contains a specific class
       search: '',                    // current search
-      sortBy: 'grade_average',       // either grade_average, ...
-      unitsRange: [0, 6],            // current unit range
+      tab: 0,                        // class detail tab, either 0 or 1
+      sortBy: 'average_grade',       // either average_grade, ...
       activePlaylists: new Set(),    // set of integers
       defaultPlaylists: new Set(),   // set of integers
-      context: {},                   // entire api data response
+      data: {},                      // api response.data
       selectedCourse: {},
-      loadedData: false,
+      loading: true,             // whether we have receieved playlist data from api
     };
-
-    this.buildFiltersObject = this.buildFiltersObject.bind(this);
-    this.addFilterHandler = this.addFilterHandler.bind(this);
-    this.removeFilterHandler = this.removeFilterHandler.bind(this);
-    this.toggleFilterHandler = this.toggleFilterHandler.bind(this);
-    this.selectFilterHandler = this.selectFilterHandler.bind(this);
-    this.rangeFilterHandler = this.rangeFilterHandler.bind(this);
-    this.selectCourseHandler = this.selectCourseHandler.bind(this);
-
-    this.tab = 0;
-    this.defaultSearch = '';
-    this.setDefaultSearch();
   }
 
   /**
@@ -45,6 +49,7 @@ class Catalog extends Component {
     const paths = this.props.history.location.pathname.split('/');
     if (paths.length >= 4) {
       // if a class is provided in url, then we get from specific endpoint
+      // not sure what difference is between this and regular catalog_json endpoint...
       const abbreviation = paths[2];
       const classNum = paths[3];
       const search = `${abbreviation} ${classNum} `;
@@ -52,17 +57,17 @@ class Catalog extends Component {
 
       axios.get(`http://localhost:8080/api/catalog_json/${abbreviation}/${classNum}/`)
         .then(res => {
-          console.log(res);
+          // console.log(res);
           const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
 
           this.setState({
             activePlaylists: new Set(defaultPlaylists),
             defaultPlaylists: new Set(defaultPlaylists),
-            context: res.data,
-            loadedData: true,
+            data: res.data,
+            loading: false,
           }, () => {
             const courseID = res.data.default_course;
-            axios.get('http://localhost:8000/api/catalog/filter/', { params: { course_id: courseID }})
+            axios.get('http://localhost:8080/api/catalog/filter/', { params: { course_id: courseID }})
               .then(res2 => {
                 if (res2.data.length > 0) {
                   // tab = 0: details; tab = 1: section
@@ -70,7 +75,7 @@ class Catalog extends Component {
                   if (paths.length >= 5) {
                     tab = paths[4] === 'sections' ? 0 : tab;
                   }
-                  this.selectCourseHandler(res2.data[0], tab);
+                  this.selectCourse(res2.data[0], tab);
                 }
               }).catch(err => {
                 console.log(err);
@@ -83,13 +88,12 @@ class Catalog extends Component {
       // no specific class provided, get everything
       axios.get('http://localhost:8080/api/catalog_json/')
         .then(res => {
-          console.log(res);
           const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
           this.setState({
             activePlaylists: new Set(defaultPlaylists),
             defaultPlaylists: new Set(defaultPlaylists),
-            context: res.data,
-            loadedData: true,
+            data: res.data,
+            loading: false,
           });
         })
         .catch((err) => {
@@ -98,15 +102,15 @@ class Catalog extends Component {
     }
   }
 
-  /**
-   * Sets the default search based on url path
-   */
-  setDefaultSearch = () => {
+  // Sets the default search based on url path
+  getDefaultSearch = () => {
     const paths = this.props.history.location.pathname.split('/');
     if (paths.length >= 4) {
       const abbreviation = paths[2];
       const classNum = paths[3];
-      this.defaultSearch = `${abbreviation} ${classNum} `;
+      return `${abbreviation} ${classNum} `;
+    } else {
+      return '';
     }
   }
 
@@ -123,7 +127,6 @@ class Catalog extends Component {
 
   /**
    * @param {String} sortBy
-   *
    * Sorts courses based on sortAttribute
    */
   sortHandler = sortBy => {
@@ -132,203 +135,160 @@ class Catalog extends Component {
     })
   }
 
-  /**
-   * @param {Array[min, max]} unitsRange
-   *
-   * Sets the state of the range based on the min and max values
-   */
-  unitsRangeHandler = unitsRange => {
-    this.setState({
-      unitsRange
-    })
-  }
-
-  rangeFilterHandler(addFilterIds, removeFilterIds) {
+  modifyFilters = (add, remove) => {
     let newActivePlaylists = new Set(this.state.activePlaylists);
-    for (let filterId of addFilterIds) {
-      newActivePlaylists.add(parseInt(filterId));
+    for (let filterId of remove) {
+      newActivePlaylists.delete(filterId);
     }
-    for (let filterId of removeFilterIds) {
-      newActivePlaylists.delete(parseInt(filterId));
+    for (let filterId of add) {
+      newActivePlaylists.add(filterId);
     }
-
     this.setState({
-      activePlaylists: newActivePlaylists
+      activePlaylists: newActivePlaylists,
     })
-  }
-
-  /**
-   * @param {String} filterID
-   *
-   * Handler function for adding a filter ID to those that are active
-   */
-  addFilterHandler(filterID) {
-    filterID = parseInt(filterID);
-    this.setState(prevState => ({
-      activePlaylists: prevState.activePlaylists.add(filterID)
-    }));
-  }
-
-  /**
-   *
-   * @param {String} filterID
-   *
-   * Handler function for removing a filter ID to those that are active
-   */
-  removeFilterHandler(filterID) {
-    filterID = parseInt(filterID);
-    this.setState(prevState => {
-      prevState.activePlaylists.delete(filterID)
-      return {
-        activePlaylists: prevState.activePlaylists
-      }
-    });
-  }
-
-  /**
-   *
-   * @param {String} filterID
-   *
-   * Handler function for toggling a filter ID
-   */
-  toggleFilterHandler(filterID) {
-    filterID = parseInt(filterID);
-    let newActivePlaylists;
-    // console.log(filterID);
-    // console.log(this.state.activePlaylists)
-    if(this.state.activePlaylists.has(filterID)) {
-      newActivePlaylists = new Set(this.state.activePlaylists);
-      newActivePlaylists.delete(filterID);
-    } else {
-      newActivePlaylists = new Set(this.state.activePlaylists).add(filterID);
-    }
-
-    this.setState({
-      activePlaylists: newActivePlaylists
-    });
-  }
-
-  /**
-   *
-   * @param {String} lastFilterID
-   * @param {String} newFilterID
-   *
-   * Handler function for select options in our FilterSidebar component
-   */
-  selectFilterHandler(lastFilterID, newFilterID) {
-    lastFilterID = parseInt(lastFilterID);
-    newFilterID = parseInt(newFilterID);
-
-    if (lastFilterID !== newFilterID) {
-      let newActivePlaylists = new Set(this.state.activePlaylists);
-      newActivePlaylists.delete(lastFilterID);
-      newActivePlaylists.add(newFilterID);
-
-      this.setState({
-        activePlaylists: newActivePlaylists
-      });
-    }
   }
 
   /**
    * Handler function to reset all filters to the default
    */
-  resetFilterHandler = () => {
-    console.log(this.state);
-    this.defaultSearch = '';
+  resetFilters = () => {
     let newActivePlaylists = new Set(this.state.defaultPlaylists);
     this.setState({
+      defaultSearch: '',
       search: '',
       sortBy: 'grade_average',
-      unitsRange: [0, 6],
-      activePlaylists: newActivePlaylists
-    })
+      activePlaylists: newActivePlaylists,
+    });
   }
 
-  selectCourseHandler(course, tab=0) {
-    this.tab = tab;
+  selectCourse = (course, tab=0) => {
+    if (tab === 0) {
+      this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/`);
+    } else {
+      this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/sections/`);
+    }
     this.setState({
       selectedCourse: course,
-    })
+      tab,
+    });
   }
 
   /**
-   *
    * @param {Array} filters
-   * Builds the filters returned by the catalog API into a format that can be processed by our component
+   * Builds the playlists returned by the catalog API into a format that can be processed by the filter
    */
-  buildFiltersObject(filters) {
-    const department = filters.department && filters.department.map(filter => {
-      let modifiedFilter = {};
-      modifiedFilter.value = filter.id;
-      modifiedFilter.label = filter.name;
-      return modifiedFilter;
-    })
+  buildPlaylists = () => {
+    const {
+      university,
+      ls,
+      engineering,
+      haas,
+      units,
+      department,
+      level,
+      semester
+    } = this.state.data;
 
-    return ({
-      requirements: {
-        university: {
-            title: 'University Requirements',
-            options: filters.university,
-        },
-        ls: {
-            title: 'L&S Breadths',
-            options: filters.ls,
-        },
-        engineering: {
-            title: 'College of Engineering',
-            options: filters.engineering,
-        },
-        haas: {
-            title: 'Haas Breadths',
-            options: filters.haas,
-        },
-      },
-      logistics: {
-          classLevel: {
-              title: 'Class Level',
-              options: filters.level,
-          },
-          semesterOffered: {
-              title: 'Semesters Offered',
-              options: filters.semester,
-        },
-      },
-      department: department,
-      units: filters.units,
-      sortAttributes: [
-        { value: 'grade_average', label: 'Average Grade' },
-        { value: 'department_name', label: 'Department Name' },
-        { value: 'open_seats', label: 'Open Seats' },
-        { value: 'enrolled_percentage', label: 'Enrolled Percentage' }
-      ],
-    })
+    var requirements = [];
+
+    requirements.push({
+      label: 'University Requirements',
+      options: university ? university.map(req => {
+        return {
+          value: req.id,
+          label: req.name,
+        };
+      }) : [],
+    });
+
+    requirements.push({
+      label: 'L&S Breadths',
+      options: ls ? ls.map(req => {
+        return {
+          value: req.id,
+          label: req.name,
+        };
+      }) : [],
+    });
+
+    requirements.push({
+      label: 'College of Engineering',
+      options: engineering ? engineering.map(req => {
+        return {
+          value: req.id,
+          label: req.name,
+        };
+      }) : [],
+    });
+
+    requirements.push({
+      label: 'Haas Breadths',
+      options: haas ? haas.map(req => {
+        return {
+          value: req.id,
+          label: req.name,
+        };
+      }) : [],
+    });
+
+    var departmentsPlaylist = department ? department.map(req => {
+      return {
+        value: req.id,
+        label: req.name,
+      };
+    }) : [];
+
+    if (departmentsPlaylist[0].label === '-') {
+      // non-existent department???
+      departmentsPlaylist.splice(0, 1);
+    }
+
+    var unitsPlaylist = units ? units.map(req => {
+      return {
+        value: req.id,
+        label: req.name === '5 Units' ? '5+ Units' : req.name,
+      }
+    }) : [];
+
+    var levelsPlaylist = level ? level.map(req => {
+      return {
+        value: req.id,
+        label: req.name === '5 Units' ? '5+ Units' : req.name,
+      }
+    }) : [];
+
+    var semestersPlaylist = semester ? semester.map(req => {
+      return {
+        value: req.id,
+        label: req.name === '5 Units' ? '5+ Units' : req.name,
+      }
+    }) : [];
+
+    return {
+      requirements,
+      departmentsPlaylist,
+      unitsPlaylist,
+      levelsPlaylist,
+      semestersPlaylist,
+    }
   }
 
   render() {
-    const { loadedData } = this.state;
+    const { loading, defaultSearch, selectedCourse, tab } = this.state;
     return (
       <div className="catalog">
         <div className="catalog-container">
           <Row>
-            <Col lg={4} xl={3}>
+            <Col lg={4} xl={3} className="filter-column">
               {
-                loadedData ? 
-                <FilterSidebar
-                  filters={this.buildFiltersObject(this.state.context)}
-                  activeFilters={this.state.activePlaylists}
+                !loading ? 
+                <Filter
+                  playlists={this.buildPlaylists()}
+                  defaultSearch={defaultSearch}
                   searchHandler={this.searchHandler}
                   sortHandler={this.sortHandler}
-                  unitsRangeHandler={this.unitsRangeHandler}
-                  sortBy={this.state.sortBy}
-                  unitsRange={this.state.unitsRange}
-                  addFilter={this.addFilterHandler}
-                  rangeFilter={this.rangeFilterHandler}
-                  removeFilter={this.removeFilterHandler}
-                  toggleFilter={this.toggleFilterHandler}
-                  selectFilter={this.selectFilterHandler}
-                  resetFilters={this.resetFilterHandler}
-                  defaultSearch={this.defaultSearch}
+                  modifyFilters={this.modifyFilters}
+                  resetFilters={this.resetFilters}
                 /> :
                 <div className="filter">
                   <div className="filter-loading">
@@ -341,6 +301,22 @@ class Catalog extends Component {
                 </div>
               }
             </Col>
+            <Col lg={3} xl={3} className="filter-results-column">
+              <FilterResults
+                activePlaylists={this.state.activePlaylists}
+                selectCourse={this.selectCourse}
+                selectedCourse={selectedCourse}
+                sortBy={this.state.sortBy}
+                query={this.state.search}
+              />
+            </Col>
+            <Col lg xl className="catalog-description-column">
+              <ClassDescription
+                course={selectedCourse}
+                tab={tab}
+                selectCourse={this.selectCourse}
+              />
+            </Col>
           </Row>
         </div>
       </div>
@@ -350,20 +326,14 @@ class Catalog extends Component {
   /*
   render() {
     let results = this.state && this.state.activePlaylists.size ? (
-      <FilterResults
-        activeFilters={this.state.activePlaylists}
-        selectCourse={this.selectCourseHandler}
-        sortBy={this.state.sortBy}
-        query={this.state.search}
-      />
+      
     ) : <div></div>
-    console.log(this.defaultSearch);
     
     return (
       <div className="app-container">
           <div className="filter-columns">
               <FilterSidebar
-                filters={this.buildFiltersObject(this.state.context)}
+                filters={this.buildFiltersObject(this.state.data)}
                 activeFilters={this.state.activePlaylists}
                 searchHandler={this.searchHandler}
                 sortHandler={this.sortHandler}
@@ -391,4 +361,4 @@ class Catalog extends Component {
   }*/
 }
 
-export default Catalog;
+export default withRouter(Catalog);

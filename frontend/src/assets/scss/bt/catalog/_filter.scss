@@ -1,7 +1,7 @@
 .filter {
   height: 100%;
-  padding: 30px 30px 0 30px;
-  border-right: 1px solid $bt-border-grey;
+  padding: 30px;
+  overflow: scroll;
 
   display: flex;
   flex-direction: column;
@@ -9,7 +9,6 @@
   .filter-loading {
     height: 100%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
@@ -55,19 +54,15 @@
     }
   }
 
-  .filter-sort {
-    margin-bottom: 30px;
-  }
+  .filter-sort, .filter-requirements, .filter-units,
+  .filter-department, .filter-class-level, .filter-semesters {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
 
-  .filter-requirements {
-    margin-bottom: 30px;
-  }
-
-  .filter-units {
-    margin-bottom: 30px;
-  }
-
-  .filter-department {
-    margin-bottom: 30px;
+    > p {
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
   }
 }
