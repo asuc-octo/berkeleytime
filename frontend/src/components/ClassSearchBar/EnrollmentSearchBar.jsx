@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-virtualized-select';
+import {Row, Col, Button} from 'react-bootstrap';
 import axios from 'axios';
 import hash from 'object-hash';
 
@@ -236,8 +237,8 @@ class EnrollmentSearchBar extends Component {
     let oneSecondaryOption = secondaryOptions && secondaryOptions.length == 2 && selectSecondary;
 
     return (
-      <div className="columns">
-        <div className="column is-one-third">
+      <Row style={{marginBottom: 10}}>
+        <Col lg={5}>
           <Select
               name="selectClass"
               placeholder="Choose a class..."
@@ -246,8 +247,8 @@ class EnrollmentSearchBar extends Component {
               onChange={this.handleClassSelect}
               filterOptions={this.filterOptions}
           />
-        </div>
-        <div className="column is-one-fifth">
+        </Col>
+        <Col lg={3}>
           <Select
               name="instrSems"
               placeholder="Select an option..."
@@ -258,8 +259,8 @@ class EnrollmentSearchBar extends Component {
               clearable={false}
               searchable={false}
           />
-        </div>
-        <div className="column is-one-fifth">
+        </Col>
+        <Col lg={3}>
           <Select
               name="section"
               placeholder="Select an option..."
@@ -270,17 +271,17 @@ class EnrollmentSearchBar extends Component {
               clearable={false}
               searchable={false}
           />
-        </div>
-        <div className="column is-one-fifth">
-          <button
-            className="button is-success"
+        </Col>
+        <Col lg={1}>
+          <Button
+            className="btn-bt-green"
             onClick={this.addSelected}
             disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
           >
             Add
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Col>
+      </Row>
     );
   }
 }

@@ -1,6 +1,15 @@
+.enrollment{
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: 35px;
+  margin-right: 35px;
+  min-height: 100vh;
+}
+
 // EnrollmentGraph
 .card.enrollment-graph-card {
   box-shadow: none;
+  border: none;
 
   .enrollment-graph {
     padding: 15px 15px 0px 35px;

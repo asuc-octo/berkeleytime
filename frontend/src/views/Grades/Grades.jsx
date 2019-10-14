@@ -67,7 +67,7 @@ class Grades extends Component {
     let courses = context.courses;
 
     return (
-      <div className="app-container grades">
+      <div className="grades">
         <GradesSearchBar
           classes={courses}
           addCourse={this.addCourse}
