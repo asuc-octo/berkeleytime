@@ -1,5 +1,5 @@
 """Configurations for Spring 2020."""
-# from berkeleytime.config.finals.semesters.spring2020 import * # noqa
+from berkeleytime.config.finals.semesters.spring2020 import * # noqa
 
 import datetime
 
