@@ -43,7 +43,7 @@ spec:
             name: google
         - secretRef:
             name: sis
-        - secretRef: 
+        - secretRef:
             name: sendgrid
         - secretRef:
             name: sentrydsn
@@ -51,7 +51,7 @@ spec:
         - containerPort: 5000
       volumes:
       - name: google
-        secret: 
+        secret:
           secretName: google-2
           items:
           - key: google-tokens
