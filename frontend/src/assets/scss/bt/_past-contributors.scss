@@ -81,7 +81,8 @@
             justify-content: center;
             flex-wrap: wrap;
             font-size: 18px;
-            width: 100%;
+            width: 110%;
+            margin-left: 50px;
 
             a {
                 width: 20%;
@@ -91,9 +92,19 @@
                 font-size: 18px;
                 color: $bt-grey;
             }
+
+            span {
+                width: 20%;
+                min-width: 200px;
+                margin: 10px 15px;
+                text-align: center;
+                font-size: 18px;
+                color: $bt-grey;
+            }
+
         }
     }
-    
+
     .graphic-contributors {
         font-size: 18px;
         margin-top: 30px;
