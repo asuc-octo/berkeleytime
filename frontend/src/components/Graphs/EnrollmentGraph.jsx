@@ -26,8 +26,8 @@ export default function EnrollmentGraph({
     <div className="graph">
       <ResponsiveContainer width='100%' height={400}>
       <LineChart width={800} height={400} data={graphData} onMouseMove={updateGraphHover}>
-        <XAxis dataKey="name" interval={19} />>
-        <YAxis type="number" unit="%"/>
+        <XAxis dataKey="name" interval={19} />
+        <YAxis type="number" unit="%" domain={[0, 100]} />
         <CartesianGrid strokeDasharray="3 3" />
         <Tooltip
             formatter={(value) => `${value}%`}
