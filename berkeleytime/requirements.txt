@@ -72,3 +72,6 @@ google-api-python-client==1.6.5
 # RFC3339 Time Format
 rfc3339==6.0
 
+# Python postgres client library. We need this because psycopg2 is not
+# supporting python 2 anymore. It requires us to download binary instead.`
+psycopg2-binary==2.8.4
