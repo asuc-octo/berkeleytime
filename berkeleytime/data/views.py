@@ -3,12 +3,11 @@ import re, os, sys, datetime
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from django.shortcuts import render_to_response
 
-from django.http import HttpResponse, Http404
 from django.template import RequestContext
 from catalog.models import Course, Grade, Section, Enrollment, Playlist
 from catalog.utils import calculate_letter_average, sort_course_dicts
 from catalog.views import catalog_context
-from berkeleytime.utils.requests import raise_404_on_error, render_to_empty_json, render_to_json
+from berkeleytime.utils.requests import raise_404_on_error, render_to_empty_json, render_to_json, render_to_empty_json_with_status_code
 
 from berkeleytime.settings import (
     TELEBEARS_JSON, TELEBEARS, CURRENT_SEMESTER, CURRENT_YEAR, PAST_SEMESTERS,
@@ -65,7 +64,8 @@ def section_to_value(s):
         sem = 2
     else:
         sem = 1
-    return 3*int(s['year']) + sem + int(s['section_number']) * 0.01
+
+    return 3*int(s['year']) + sem + int(s['section_number'], 16) * 0.01
 
 def grade_section_json(request, course_id):
     """
@@ -85,7 +85,7 @@ def grade_section_json(request, course_id):
         return render_to_json(sections)
     except Exception as e:
         print e
-        return render_to_empty_json()
+        return render_to_empty_json_with_status_code(500)
 
 def grade_json(request, grade_ids):
     try:
