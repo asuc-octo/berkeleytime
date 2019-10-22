@@ -12,7 +12,7 @@ pipeline {
   stages {
     stage('Build-Berkeleytime-Stage') {
       when {
-        changeset "berkeleytime/**",
+        changeset "berkeleytime/**"
         branch "master"
       }
       steps {
@@ -24,7 +24,7 @@ docker push ${BACKEND_GCR_PATH}:$version'''
     }
     stage('Build-Frontend-Stage') {
       when {
-        changeset "frontend/**",
+        changeset "frontend/**"
         branch "master"
       }
       steps {
@@ -36,7 +36,7 @@ docker push ${FRONTEND_GCR_PATH}:$version'''
     }
     stage('Deploy-Berkeleytime-Stage') {
       when {
-        changeset "berkeleytime/**",
+        changeset "berkeleytime/**"
         branch "master"
       }
       steps {
@@ -52,7 +52,7 @@ kubectl get pods'''
     }
     stage('Deploy-Frontend-Stage') {
       when {
-        changeset "frontend/**",
+        changeset "frontend/**"
         branch "master"
       }
       steps {
