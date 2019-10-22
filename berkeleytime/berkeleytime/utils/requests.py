@@ -17,6 +17,9 @@ def render_to_json(obj):
 def render_to_empty_json():
     return render_to_json({})
 
+def render_to_empty_json_with_status_code(status):
+    return HttpResponse(json.dumps({}, default=str), content_type="application/javascript", status=status)
+
 def render_error_to_json(error):
     return render_to_json({"error": str(error)})
 
