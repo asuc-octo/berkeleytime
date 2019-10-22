@@ -6,7 +6,7 @@ headers = ["Subject", "ClassNum", "CourseID", "Section", "ClassDesc", "Instructo
 grades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F", "P", "NP"]
 
 all_semesters = ["Fall", "Spring", "Summer"]
-all_years = ["2018", "2017", "2016", "2015", "2014", "2013"]
+all_years = ["2019", "2018", "2017", "2016", "2015", "2014", "2013"]
 
 path = "data/service/reader/grades/"
 
