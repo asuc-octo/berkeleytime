@@ -67,6 +67,9 @@ class GradesSearchBar extends Component {
 
     axios.get(url)
     .then(res => {
+      if (!res || Object.keys(res).length === 0) {
+        return;
+      }
       this.setState({
         sections: res.data,
         selectPrimary: 'all',

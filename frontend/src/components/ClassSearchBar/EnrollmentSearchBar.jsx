@@ -61,6 +61,9 @@ class EnrollmentSearchBar extends Component {
     axios.get(url)
     .then(res => {
       // console.log(res);
+      if (!res || Object.keys(res).length === 0) {
+        return;
+      }
       let sections = res.data
       this.setState({
         sections: sections,
