@@ -48,7 +48,7 @@ class ButtonToggleGroup extends Component{
       this.setState({
         active: newActives
       })
-      
+
       this.props.handleToggleDiv(e);
     }
 
@@ -68,7 +68,7 @@ class ButtonToggleGroup extends Component{
                         onClick={(e) => this.handleClick(e, i)}
                         bsStyle="link"
                         className="btn-simple btn-block buttonToggleGroup-button">
-                          {title} 
+                          {title}
                           <i className={"button-icon fa " + (this.state.active[i] ? 'fa-angle-down' : 'fa-angle-right')}></i>
                       </Button>
                     </ButtonToolbar>

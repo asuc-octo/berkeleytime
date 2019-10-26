@@ -1,0 +1,24 @@
+.bt-navbar {
+  //height: $bt-navbar-height;
+  box-shadow: 0 1px 5px -1px rgba(0, 0, 0, .2);
+
+  .navbar-brand, .navbar-nav .nav-link {
+    font-weight: 500;
+    font-size: 16px;
+    color: $bt-base-text;
+    transition: 200ms;
+
+    &:hover {
+      color: $bt-blue;
+    }
+
+    &:focus {
+      color: $bt-base-text;
+    }
+  }
+
+  .navbar-brand {
+    margin-left: 10px;
+    font-size: 23px;
+  }
+}

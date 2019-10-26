@@ -1,30 +1,28 @@
-$bt-white:                 #F5F5F5;
-$bt-light-grey:            #808080;
+$bt-white:                 #FFFFFF;
+$bt-off-white:             #F8F8F8;
+$bt-border-grey:           #C7C7C7;
+$bt-light-grey:            #A0A0A0;
 $bt-grey:                  #5C5C5C;
-$bt-black:                 #2E2E2E;
+$bt-black:                 #000000;
 
 $bt-footer:                #303548;
 
-$bt-pink:                  #F85386;
-$bt-yellow:                #FFFF00;
 $bt-blue:                  #579EFF;
 $bt-green:                 #18D869;
+$bt-pink:                  #F85386;
+$bt-yellow:                #FFFF00;
 
 $bt-indicator-red:         #FC7676;
+$bt-indicator-squash:      #DE5F18;
 $bt-indicator-orange:      #FFA414;
+$bt-indicator-yellow:      #ECD71C;
+$bt-indicator-green:       #76FC80;
 
-// text base
-$bt-base:                  #505050 !default;
-
-
+// text colors
+$bt-white-text:            #FFFFFF;
+$bt-light-text:            #8A8A8A;
+$bt-grey-text:             #535353;
+$bt-base-text:             #383838;
 
 // navbar
 $bt-navbar-height: 60px;
-
-
-$font-size-h1:                 52px !default;
-$font-size-h2:                 36px !default;
-$font-size-h3:                 28px !default;
-$font-size-h4:                 22px !default;
-$font-size-h5:                 16px !default;
-$font-size-h6:                 14px !default;

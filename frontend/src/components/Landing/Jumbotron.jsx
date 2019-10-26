@@ -21,7 +21,7 @@ function Jumbotron() {
               <p>Course discovery, simplified. Built by students for students.</p>
               <ButtonToolbar className="jumbo-heading-buttons">
                 <Button variant="bt-blue" size="bt-lg" as={Link} to="/catalog">Explore courses now</Button>
-                <Button variant="bt-white" size="bt-lg" as={Link} to="/about">About Us</Button>
+                <Button variant="bt-blue-inverted" size="bt-lg" as={Link} to="/about">About Us</Button>
               </ButtonToolbar>
             </div>
           </Col>
