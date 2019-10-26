@@ -1,0 +1,74 @@
+.filter-card {
+  padding: 5px 15px;
+
+  .filter-card-container {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    padding: 8px 10px;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &:hover {
+      background-color: $bt-off-white;
+    }
+
+    .filter-card-info {
+      max-width: 87%;
+      padding-right: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      h6 {
+        font-size: 20px;
+        font-weight: 600;
+      }
+      
+      p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: $bt-light-text;
+        font-size: 15px;
+      }
+
+      .filter-card-info-desc {
+        padding-bottom: 10px;
+      }
+
+      .filter-card-info-stats {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+
+    .filter-card-sort {
+      margin-bottom: 11px;
+      flex-basis: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .filter-card-sort.filter-card-grade {
+      h6 {
+        font-size: 18px;
+        font-weight: 600;
+      }
+    }
+    
+    .filter-card-sort.filter-card-open-seats {
+      h6 {
+        font-size: 18px;
+        font-weight: 500;
+      }
+    }
+  }
+  
+  .filter-card-container.selected {
+    background-color: $bt-off-white;
+  }
+}

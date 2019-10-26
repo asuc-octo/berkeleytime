@@ -1,0 +1,41 @@
+.bt-footer {
+  background-color: $bt-footer;
+
+  .bt-footer-container {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 40px;
+
+    .bt-footer-column {
+      display: flex;
+      flex-direction: column;
+
+      :first-child {
+        margin-bottom: 15px;
+      }
+
+      > *:not(:first-child):not(:last-child) {
+        margin-bottom: 10px;
+      }
+
+      > *:not(:first-child) {
+        font-size: 16px;
+      }
+
+      p {
+        font-size: 18px;
+        color: $bt-white-text;
+      }
+
+      a {
+        color: $bt-white-text;
+        transition: 200ms;
+        width: max-content;
+      }
+
+      a:hover {
+        color: hsl(204, 86%, 53%);
+      }
+    }
+  }
+}
