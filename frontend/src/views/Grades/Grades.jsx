@@ -12,7 +12,6 @@ class Grades extends Component {
       context: {},
       selectedCourses: [],
     }
-
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this)
   }
@@ -31,6 +30,10 @@ class Grades extends Component {
   }
 
   addCourse(course) {
+    if(this.state.selectedCourses.length >= 4){
+      this.state.selectedCourses.length = 4;
+      return;
+    }
     for (let selected of this.state.selectedCourses) {
       if (selected.id === course.id) {
         return;
@@ -72,7 +75,6 @@ class Grades extends Component {
           classes={courses}
           addCourse={this.addCourse}
           fromCatalog={location.state ? location.state.course : false}
-          isFull={selectedCourses.length === 4}
         />
 
         <ClassCardList
