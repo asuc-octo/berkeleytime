@@ -9,7 +9,7 @@ import Filter from '../../components/Catalog/Filter';
 import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 
-import { modify } from '../../redux/actions';
+import { modify, fetchLists, modifySelected } from '../../redux/actions';
 import { connect } from "react-redux";
 
 
@@ -36,83 +36,86 @@ class Catalog extends Component {
     this.state = {
       defaultSearch: this.getDefaultSearch(), // default search, set if URL contains a specific class
       search: '',                    // current search
-      tab: 0,                        // class detail tab, either 0 or 1
+      // tab: 0,                        // class detail tab, either 0 or 1
       sortBy: 'average_grade',       // either average_grade, ...
       // activePlaylists: new Set(),    // set of integers
       // defaultPlaylists: new Set(),   // set of integers
       // data: {},                      // api response.data
-      selectedCourse: {},
+      // selectedCourse: {},
       // loading: true,             // whether we have receieved playlist data from api
     };
   }
 
   // get the initial state in redux store//
   componentWillMount() {
-
+    const { fetchLists, data, activePlaylists} = this.props;
+    const paths = this.props.history.location.pathname.split('/');
+    // dispatch(fetchLists(paths));
+    // console.log(activePlaylists);
+    fetchLists(paths);
   }
 
   /**
    * Lifecycle method for getting initial data
    */
   componentDidMount() {
-    const { modify } = this.props;
-    const paths = this.props.history.location.pathname.split('/');
-    console.log(history);
-    if (paths.length >= 4) {
-      // if a class is provided in url, then we get from specific endpoint
-      // not sure what difference is between this and regular catalog_json endpoint...
-      const abbreviation = paths[2];
-      const classNum = paths[3];
-      const search = `${abbreviation} ${classNum} `;
-      this.searchHandler(search);
 
-      axios.get(`http://localhost:8080/api/catalog_json/${abbreviation}/${classNum}/`)
-        .then(res => {
-          // console.log(res);
-          const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-          modify(new Set(defaultPlaylists), new Set(defaultPlaylists));
-          this.setState({
-            // activePlaylists: new Set(defaultPlaylists),
-            // defaultPlaylists: new Set(defaultPlaylists),
-            // data: res.data,
-            // loading: false,
-          }, () => {
-            const courseID = res.data.default_course;
-            axios.get('http://localhost:8080/api/catalog/filter/', { params: { course_id: courseID }})
-              .then(res2 => {
-                if (res2.data.length > 0) {
-                  // tab = 0: details; tab = 1: section
-                  let tab = 0;
-                  if (paths.length >= 5) {
-                    tab = paths[4] === 'sections' ? 0 : tab;
-                  }
-                  this.selectCourse(res2.data[0], tab);
-                }
-              }).catch(err => {
-                console.log(err);
-              });
-          });
-        }).catch((err) => {
-          console.log(err);
-        });
-    } else {
-      // no specific class provided, get everything
-      axios.get('http://localhost:8080/api/catalog_json/')
-        .then(res => {
-          // debugger
-          const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-          modify(new Set(defaultPlaylists), new Set(defaultPlaylists));
-          this.setState({
-            // activePlaylists: new Set(defaultPlaylists),
-            // defaultPlaylists: new Set(defaultPlaylists),
-            data: res.data,
-            loading: false,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    // const paths = this.props.history.location.pathname.split('/');
+    // if (paths.length >= 4) {
+    //   // if a class is provided in url, then we get from specific endpoint
+    //   // not sure what difference is between this and regular catalog_json endpoint...
+    //   const abbreviation = paths[2];
+    //   const classNum = paths[3];
+    //   const search = `${abbreviation} ${classNum} `;
+    //   this.searchHandler(search);
+    //
+    //   axios.get(`http://localhost:8080/api/catalog_json/${abbreviation}/${classNum}/`)
+    //     .then(res => {
+    //       // console.log(res);
+    //       const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
+    //       modify(new Set(defaultPlaylists), new Set(defaultPlaylists));
+    //       this.setState({
+    //         // activePlaylists: new Set(defaultPlaylists),
+    //         // defaultPlaylists: new Set(defaultPlaylists),
+    //         // data: res.data,
+    //         // loading: false,
+    //       }, () => {
+    //         const courseID = res.data.default_course;
+    //         axios.get('http://localhost:8080/api/catalog/filter/', { params: { course_id: courseID }})
+    //           .then(res2 => {
+    //             if (res2.data.length > 0) {
+    //               // tab = 0: details; tab = 1: section
+    //               let tab = 0;
+    //               if (paths.length >= 5) {
+    //                 tab = paths[4] === 'sections' ? 0 : tab;
+    //               }
+    //               this.selectCourse(res2.data[0], tab);
+    //             }
+    //           }).catch(err => {
+    //             console.log(err);
+    //           });
+    //       });
+    //     }).catch((err) => {
+    //       console.log(err);
+    //     });
+    // } else {
+    //   // no specific class provided, get everything
+    //   axios.get('http://localhost:8080/api/catalog_json/')
+    //     .then(res => {
+    //       // debugger
+    //       const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
+    //       modify(new Set(defaultPlaylists), new Set(defaultPlaylists));
+    //       this.setState({
+    //         // activePlaylists: new Set(defaultPlaylists),
+    //         // defaultPlaylists: new Set(defaultPlaylists),
+    //         data: res.data,
+    //         loading: false,
+    //       });
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // }
   }
 
   // Sets the default search based on url path
@@ -158,9 +161,6 @@ class Catalog extends Component {
       newActivePlaylists.add(filterId);
     }
     modify(newActivePlaylists, defaultPlaylists);
-    // this.setState({
-    //   activePlaylists: newActivePlaylists,
-    // })
   }
 
   /**
@@ -179,15 +179,17 @@ class Catalog extends Component {
   }
 
   selectCourse = (course, tab=0) => {
+    const { modifySelected } = this.props;
     if (tab === 0) {
       this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/`);
     } else {
       this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/sections/`);
     }
-    this.setState({
-      selectedCourse: course,
-      tab,
-    });
+    // this.setState({
+    //   selectedCourse: course,
+    //   tab,
+    // });
+    modifySelected(course, tab);
   }
 
   /**
@@ -204,7 +206,7 @@ class Catalog extends Component {
       department,
       level,
       semester
-    } = this.state.data;
+    } = this.props.data;
 
     var requirements = [];
 
@@ -291,9 +293,8 @@ class Catalog extends Component {
   }
 
   render() {
-    const { loading, defaultSearch, selectedCourse, tab } = this.state;
-    const { activePlaylists } = this.props;
-    console.log(activePlaylists);
+    const { defaultSearch } = this.state;
+    const { activePlaylists, loading, selectedCourse, tab } = this.props;
     return (
       <div className="catalog">
         <div className="catalog-container">
@@ -383,16 +384,22 @@ class Catalog extends Component {
 const mapDispatchToProps = dispatch => {
   // debugger
   return {
+    dispatch,
     modify: (activePlaylists, defaultPlaylists) => dispatch(modify(activePlaylists, defaultPlaylists)),
+    fetchLists: (paths) => dispatch(fetchLists(paths)),
+    modifySelected: (data, tab) => dispatch(modifySelected(data, tab)),
   }
 }
 
 const mapStateToProps = state => {
-  const { activePlaylists, defaultPlaylists } = state;
-  console.log(activePlaylists);
+  const { activePlaylists, defaultPlaylists, data, loading, selectCourse, tab } = state.catalog;
   return {
     activePlaylists: activePlaylists,
-    defaultPlaylists: defaultPlaylists
+    defaultPlaylists: defaultPlaylists,
+    data: data,
+    loading: loading,
+    selectedCourse: selectCourse,
+    tab: tab
   };
 };
 

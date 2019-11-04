@@ -1,1 +1,6 @@
 export const MODIFY_LIST = "MODIFY_LIST";
+export const RECEIVE_LIST = "GET_LIST";
+export const MODIFY_SELECTED = "MODIFY_SELECTED";
+export const FILTER = "FILTER";
+export const START_REQUEST = "START_REQUEST";
+export const UPDATE_COURSE_DATA = "UPDATE_COURSE_DATA";

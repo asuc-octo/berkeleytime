@@ -7,14 +7,17 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import FilterCard from './FilterCard';
 import { laymanToAbbreviation } from '../../variables/Variables';
 
+import { getFilterResults, filter, makeRequest } from '../../redux/actions';
+import { connect } from "react-redux";
+
 
 class FilterResults extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      courses: [],
-      loading: true,
+      // courses: [],
+      // loading: true,
     };
   }
 
@@ -32,29 +35,36 @@ class FilterResults extends Component {
   }
 
   updateCourses() {
+    const { getFilterResults, makeRequest, filter } = this.props;
     if (this.props.activePlaylists.size === 0) {
-      this.setState({
-        courses: [],
-      });
+      // this.setState({
+      //   courses: [],
+      // });
+      filter([]);
       return;
     }
-    this.setState({
-      loading: true,
-    }, () => {
-      let filters = Array.from(this.props.activePlaylists).join(',');
-      axios.get('http://localhost:8080/api/catalog/filter/', {
-        params: {
-          filters,
-        },
-      }).then(res => {
-        this.setState({
-          courses: res.data,
-          loading: false,
-        });
-      }).catch((err) => {
-        console.log(err);
-      });
-    });
+
+    let filters = Array.from(this.props.activePlaylists).join(',');
+    makeRequest();
+    getFilterResults(filters);
+    // this.setState({
+    //   loading: true,
+    // }, () => {
+    //   let filters = Array.from(this.props.activePlaylists).join(',');
+
+      // axios.get('http://localhost:8080/api/catalog/filter/', {
+      //   params: {
+      //     filters,
+      //   },
+      // }).then(res => {
+      //   this.setState({
+      //     courses: res.data,
+      //     loading: false,
+      //   });
+      // }).catch((err) => {
+      //   console.log(err);
+      // });
+    // });
   }
 
   /**
@@ -142,7 +152,7 @@ class FilterResults extends Component {
     const { sortBy } = this.props;
     var courses;
     if(!this.state.loading) {
-      courses = this.state.courses
+      courses = this.props.courses
         .sort(FilterResults.sortByAttribute(sortBy))
         .filter(this.filter);
     } else {
@@ -186,4 +196,25 @@ class FilterResults extends Component {
   }
 }
 
-export default FilterResults;
+
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    getFilterResults: (filter) => dispatch(getFilterResults(filter)),
+    makeRequest: () => dispatch(makeRequest()),
+    filter: (data) => dispatch(filter(data))
+  }
+}
+
+const mapStateToProps = state => {
+  const { loading, courses } = state.filter;
+  return {
+    loading,
+    courses
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FilterResults);

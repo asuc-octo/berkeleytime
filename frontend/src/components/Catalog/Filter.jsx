@@ -75,6 +75,7 @@ export class FilterSidebar extends Component {
   }
 
   requirementHandler = requirements => {
+    debugger
     var add = new Set();
     var remove = new Set();
     for (const req of requirements) {
@@ -114,7 +115,7 @@ export class FilterSidebar extends Component {
     var add = new Set();
     var remove = new Set();
     if (department !== null) {
-      add.add(department.value);      
+      add.add(department.value);
     }
     for (const req of this.departmentOptions) {
       if (!add.has(req.value)) {

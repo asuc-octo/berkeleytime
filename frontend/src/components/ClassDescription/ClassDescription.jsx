@@ -8,6 +8,9 @@ import axios from 'axios';
 import ClassDetails from './ClassDetails';
 import ClassSections from './ClassSections';
 
+import { updateCourses, getCourseData, makeRequest } from '../../redux/actions';
+import { connect } from "react-redux";
+
 function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
@@ -42,10 +45,10 @@ class ClassDescription extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      courseData: {},
-      loading: true,
-    };
+    // this.state = {
+    //   courseData: {},
+    //   loading: true,
+    // };
   }
 
   details = () => {
@@ -76,36 +79,41 @@ class ClassDescription extends Component {
   }
 
   updateCourseData() {
-    const { course } = this.props;
+    const { course, getCourseData, makeRequest, updateCourses } = this.props;
 
     if (isEmpty(course)) {
-      this.setState({
-        courseData: {},
-        loading: false,
-      });
+      updateCourses({});
+      // this.setState({
+      //   courseData: {},
+      //   loading: false,
+      // });
       return;
     }
 
-    this.setState({ loading: true }, () => {
-      axios.get(`http://localhost:8080/api/catalog_json/course_box/`, {
-        params: {
-          course_id: course.id,
-        }
-      }).then(res => {
-        console.log(res);
-        this.setState({
-          courseData: res.data,
-          loading: false,
-        });
-      }).catch((err) => {
-        console.log(err)
-      });
-    });
+    makeRequest();
+    getCourseData(course.id);
+
+    // this.setState({ loading: true }, () => {
+    //   axios.get(`http://localhost:8080/api/catalog_json/course_box/`, {
+    //     params: {
+    //       course_id: course.id,
+    //     }
+    //   }).then(res => {
+    //     console.log(res);
+    //     this.setState({
+    //       courseData: res.data,
+    //       loading: false,
+    //     });
+    //   }).catch((err) => {
+    //     console.log(err)
+    //   });
+    // });
   }
 
   render() {
-    const { courseData } = this.state;
+    const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
+    console.log(courseData);
 
     const toGrades = {
       pathname: '/grades',
@@ -117,7 +125,7 @@ class ClassDescription extends Component {
       state: { course: course },
     }
 
-    if (this.state.loading) {
+    if (loading) {
       return (
         <div className="catalog-description-container">
           <div className="loading">
@@ -244,4 +252,25 @@ class ClassDescription extends Component {
   }
 }
 
-export default withRouter(ClassDescription);
+
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    getCourseData: (id) => dispatch(getCourseData(id)),
+    makeRequest: () => dispatch(makeRequest()),
+    updateCourses: (data) => dispatch(updateCourses(data))
+  }
+}
+
+const mapStateToProps = state => {
+  const { loading, courseData } = state.classDescription;
+  return {
+    loading,
+    courseData
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(ClassDescription));
