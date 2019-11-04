@@ -47,6 +47,7 @@ PAST_SEMESTERS = [
     {'semester': 'spring', 'year': '2018', 'display': 'Spring 2018'},
     {'semester': 'fall', 'year': '2018', 'display': 'Fall 2018'},
     {'semester': 'spring', 'year': '2019', 'display': 'Spring 2019'},
+    {'semester': 'fall', 'year': '2019', 'display': 'Fall 2019'},
 ]
 
 
