@@ -137,23 +137,23 @@ class EnrollmentSearchBar extends Component {
     const ret = [];
     ret.push({ value: 'all', label: 'All Instructors' })
 
-    let options = sections.filter(section => this.getSectionSemester(section) === selectPrimary)
-      .map(section => {
-        section = section.sections[0];
-
-        // console.log(section);
-
-        let instructor = `${section.instructor} / ${section.section_number}`;
-
-        return {
-          value: instructor.split(' / ')[0],
-          label: instructor,
-          sectionNumber: instructor.split(' / ')[1],
-        }
-      })
+    let options = sections.filter(semester => this.getSectionSemester(semester) === selectPrimary)
+        .map(semester => {
+        let sections = semester.sections.map(section => {
+          let instructor = `${section.instructor} / ${section.section_number}`;
+          return {
+            value: instructor.split(' / ')[0],
+            label: instructor,
+            sectionNumber: instructor.split(' / ')[1],
+          };
+        });
+        return sections;
+      });
 
     for(let o of options) {
-      ret.push(o);
+      for (let s of o) {
+        ret.push(s);
+      }
     }
 
     return ret;
