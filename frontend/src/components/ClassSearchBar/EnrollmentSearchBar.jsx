@@ -161,20 +161,25 @@ class EnrollmentSearchBar extends Component {
 
   getFilteredSections() {
     const { sections, selectPrimary, selectSecondary, sectionNumber } = this.state;
-    let ret;
+    let ret = [];
 
-    ret = sections.filter(section => {
+    let selectedPrimaries = sections.filter(section => {
       return this.getSectionSemester(section) === selectPrimary;
-    })
-    .filter(section => {
-      section = section.sections[0];
+    });
+    
+    for (let p of selectedPrimaries) {
+        for (let s of p.sections) {
+            ret.push(s);
+        }
+    }
+    
+    ret = ret.filter(section => {
       return selectSecondary === 'all' ? true : section.instructor === selectSecondary;
     })
     .filter(section => {
-      section = section.sections[0];
       return sectionNumber ? section.section_number === sectionNumber : true;
     })
-    .map(s => s.sections[0].section_id);
+    .map(s => s.section_id);
 
     return ret;
   }
