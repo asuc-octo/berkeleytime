@@ -31,6 +31,10 @@ class Enrollment extends Component {
   }
 
   addCourse(course) {
+    if(this.state.selectedCourses.length >= 4){
+      this.state.selectedCourses.length = 4;
+      return;
+    }
     for (let selected of this.state.selectedCourses) {
       if (selected.id === course.id) {
         return;
@@ -73,7 +77,6 @@ class Enrollment extends Component {
           classes={courses}
           addCourse={this.addCourse}
           fromCatalog={location.state ? location.state.course : false}
-          isFull={selectedCourses.length === 6}
         />
 
         <ClassCardList
