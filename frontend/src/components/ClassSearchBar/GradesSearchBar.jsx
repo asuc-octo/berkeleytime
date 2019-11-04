@@ -331,7 +331,6 @@ class GradesSearchBar extends Component {
               clearable={false}
               onChange={this.handleSortSelect}
               disabled={!selectedClass}
-              clearable={false}
           />
         </div>
         <div className="column is-3">
@@ -343,7 +342,6 @@ class GradesSearchBar extends Component {
               onChange={this.handlePrimarySelect}
               disabled={!selectedClass}
               clearable={false}
-              searchable={false}
           />
         </div>
         <div className="column is-3">
@@ -355,7 +353,6 @@ class GradesSearchBar extends Component {
               onChange={this.handleSecondarySelect}
               disabled={!selectedClass}
               clearable={false}
-              searchable={false}
           />
         </div>
         <div className="column is-1">

@@ -265,7 +265,6 @@ class EnrollmentSearchBar extends Component {
               onChange={this.handlePrimarySelect}
               disabled={!selectedClass}
               clearable={false}
-              searchable={false}
           />
         </div>
         <div className="column is-one-fifth">
@@ -277,7 +276,6 @@ class EnrollmentSearchBar extends Component {
               onChange={this.handleSecondarySelect}
               disabled={!selectedClass}
               clearable={false}
-              searchable={false}
           />
         </div>
         <div className="column is-one-fifth">
