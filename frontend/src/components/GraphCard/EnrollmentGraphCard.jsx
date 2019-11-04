@@ -75,7 +75,7 @@ class EnrollmentGraphCard extends Component {
   }
 
   buildGraphData(enrollmentData) {
-    let days = [...Array(200).keys()]
+    let days = [...Array(200).keys()];
     const graphData = days.map(day => {
       let ret = {
         name: day,
@@ -89,7 +89,7 @@ class EnrollmentGraphCard extends Component {
         }
 
         if(day in enrollmentTimes) {
-          ret[enrollment.id] = (enrollmentTimes[day].enrolled_percent * 100).toFixed(1);
+          ret[enrollment.id] = parseFloat((enrollmentTimes[day].enrolled_percent * 100).toFixed(1));
         }
       }
 
