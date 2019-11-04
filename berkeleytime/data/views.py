@@ -53,7 +53,7 @@ def grade_render(request):
 def grade_context_json(request):
     return render_to_json(grade_context())
 
-def section_to_value(s):
+def year_and_semester_to_value(s):
     """
     Assigns a number to a section dict (see grade_section_json for format). Is used to
     sort a list of sections by time.
@@ -64,8 +64,7 @@ def section_to_value(s):
         sem = 2
     else:
         sem = 1
-
-    return 3*int(s['year']) + sem + int(s['section_number'], 16) * 0.01
+    return 3*int(s['year']) + sem
 
 def grade_section_json(request, course_id):
     """
@@ -81,7 +80,10 @@ def grade_section_json(request, course_id):
                 "grade_id": entry.id,
             } for entry in Grade.objects.filter(course__id=int(course_id), total__gte = 1)
         ]
-        sections = sorted(sections, key=section_to_value, reverse=True)
+        sections = sorted(sections,
+                          key=lambda section: (year_and_semester_to_value(section),
+                                               section['section_number']),
+                          reverse=True)
         return render_to_json(sections)
     except Exception as e:
         print e
