@@ -322,43 +322,6 @@ class Catalog extends Component {
       </div>
     )
   }
-
-  /*
-  render() {
-    let results = this.state && this.state.activePlaylists.size ? (
-      
-    ) : <div></div>
-    
-    return (
-      <div className="app-container">
-          <div className="filter-columns">
-              <FilterSidebar
-                filters={this.buildFiltersObject(this.state.data)}
-                activeFilters={this.state.activePlaylists}
-                searchHandler={this.searchHandler}
-                sortHandler={this.sortHandler}
-                unitsRangeHandler={this.unitsRangeHandler}
-                sortBy={this.state.sortBy}
-                unitsRange={this.state.unitsRange}
-                addFilter={this.addFilterHandler}
-                rangeFilter={this.rangeFilterHandler}
-                removeFilter={this.removeFilterHandler}
-                toggleFilter={this.toggleFilterHandler}
-                selectFilter={this.selectFilterHandler}
-                resetFilters={this.resetFilterHandler}
-                defaultSearch={this.defaultSearch}
-              />
-            <div> {results} </div>
-            <div> {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
-                <ClassDescription
-                  course={this.state.selectedCourse}
-                  tab={this.tab}
-                />
-            } </div>
-          </div>
-      </div>
-    );
-  }*/
 }
 
 export default withRouter(Catalog);
