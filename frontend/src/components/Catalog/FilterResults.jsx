@@ -15,10 +15,6 @@ class FilterResults extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      // courses: [],
-      // loading: true,
-    };
   }
 
   componentDidMount() {
@@ -37,9 +33,6 @@ class FilterResults extends Component {
   updateCourses() {
     const { getFilterResults, makeRequest, filter } = this.props;
     if (this.props.activePlaylists.size === 0) {
-      // this.setState({
-      //   courses: [],
-      // });
       filter([]);
       return;
     }
@@ -47,24 +40,6 @@ class FilterResults extends Component {
     let filters = Array.from(this.props.activePlaylists).join(',');
     makeRequest();
     getFilterResults(filters);
-    // this.setState({
-    //   loading: true,
-    // }, () => {
-    //   let filters = Array.from(this.props.activePlaylists).join(',');
-
-      // axios.get('http://localhost:8080/api/catalog/filter/', {
-      //   params: {
-      //     filters,
-      //   },
-      // }).then(res => {
-      //   this.setState({
-      //     courses: res.data,
-      //     loading: false,
-      //   });
-      // }).catch((err) => {
-      //   console.log(err);
-      // });
-    // });
   }
 
   /**
@@ -149,9 +124,9 @@ class FilterResults extends Component {
   }
 
   render() {
-    const { sortBy } = this.props;
+    const { sortBy, loading } = this.props;
     var courses;
-    if(!this.state.loading) {
+    if(!loading) {
       courses = this.props.courses
         .sort(FilterResults.sortByAttribute(sortBy))
         .filter(this.filter);
@@ -168,7 +143,7 @@ class FilterResults extends Component {
     return (
       <div className="filter-results">
         {
-          this.state.loading
+          loading
             ? (
               <div className="filter-results-loading">
                 <HashLoader color="#579EFF" size="50" sizeUnit="px" />

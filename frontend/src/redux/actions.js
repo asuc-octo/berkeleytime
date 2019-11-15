@@ -4,6 +4,7 @@ import { RECEIVE_LIST } from "./actionTypes";
 import { MODIFY_SELECTED } from "./actionTypes";
 import { FILTER } from "./actionTypes";
 import { START_REQUEST } from "./actionTypes";
+import { START_REQUEST_DESCRIPTION } from "./actionTypes";
 import { UPDATE_COURSE_DATA } from "./actionTypes";
 
 
@@ -40,6 +41,10 @@ export const filter = (data) => ({
 
 export const makeRequest = () => ({
   type: START_REQUEST,
+});
+
+export const makeRequestDescription = () => ({
+  type: START_REQUEST_DESCRIPTION,
 });
 
 export const updateCourses = (data) => ({
