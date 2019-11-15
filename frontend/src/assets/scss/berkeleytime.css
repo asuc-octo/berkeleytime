@@ -7473,8 +7473,13 @@ a:hover {
       color: #535353;
       font-weight: 500;
       margin-top: 10px; }
-    .catalog-description-container .catalog-description table {
+    .catalog-description-container .catalog-description .table-container {
+      flex: 1;
       overflow-y: auto; }
+      .catalog-description-container .catalog-description .table-container table {
+        max-width: 100%;
+        max-height: 100%;
+        margin-bottom: 0; }
 
 .class-card-list .card.class-card {
   margin-bottom: 0px; }

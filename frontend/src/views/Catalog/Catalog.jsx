@@ -46,76 +46,14 @@ class Catalog extends Component {
     };
   }
 
-  // get the initial state in redux store//
-  componentWillMount() {
-    const { fetchLists, data, activePlaylists} = this.props;
-    const paths = this.props.history.location.pathname.split('/');
-    // dispatch(fetchLists(paths));
-    // console.log(activePlaylists);
-    fetchLists(paths);
-  }
-
   /**
    * Lifecycle method for getting initial data
    */
-  componentDidMount() {
-
-    // const paths = this.props.history.location.pathname.split('/');
-    // if (paths.length >= 4) {
-    //   // if a class is provided in url, then we get from specific endpoint
-    //   // not sure what difference is between this and regular catalog_json endpoint...
-    //   const abbreviation = paths[2];
-    //   const classNum = paths[3];
-    //   const search = `${abbreviation} ${classNum} `;
-    //   this.searchHandler(search);
-    //
-    //   axios.get(`http://localhost:8080/api/catalog_json/${abbreviation}/${classNum}/`)
-    //     .then(res => {
-    //       // console.log(res);
-    //       const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-    //       modify(new Set(defaultPlaylists), new Set(defaultPlaylists));
-    //       this.setState({
-    //         // activePlaylists: new Set(defaultPlaylists),
-    //         // defaultPlaylists: new Set(defaultPlaylists),
-    //         // data: res.data,
-    //         // loading: false,
-    //       }, () => {
-    //         const courseID = res.data.default_course;
-    //         axios.get('http://localhost:8080/api/catalog/filter/', { params: { course_id: courseID }})
-    //           .then(res2 => {
-    //             if (res2.data.length > 0) {
-    //               // tab = 0: details; tab = 1: section
-    //               let tab = 0;
-    //               if (paths.length >= 5) {
-    //                 tab = paths[4] === 'sections' ? 0 : tab;
-    //               }
-    //               this.selectCourse(res2.data[0], tab);
-    //             }
-    //           }).catch(err => {
-    //             console.log(err);
-    //           });
-    //       });
-    //     }).catch((err) => {
-    //       console.log(err);
-    //     });
-    // } else {
-    //   // no specific class provided, get everything
-    //   axios.get('http://localhost:8080/api/catalog_json/')
-    //     .then(res => {
-    //       // debugger
-    //       const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-    //       modify(new Set(defaultPlaylists), new Set(defaultPlaylists));
-    //       this.setState({
-    //         // activePlaylists: new Set(defaultPlaylists),
-    //         // defaultPlaylists: new Set(defaultPlaylists),
-    //         data: res.data,
-    //         loading: false,
-    //       });
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     });
-    // }
+  componentWillMount() {
+    const { fetchLists, data, activePlaylists} = this.props;
+    const paths = this.props.history.location.pathname.split('/');
+    // console.log(activePlaylists);
+    fetchLists(paths);
   }
 
   // Sets the default search based on url path
@@ -152,8 +90,8 @@ class Catalog extends Component {
   }
 
   modifyFilters = (add, remove) => {
-    const { modify, defaultPlaylists } = this.props;
-    let newActivePlaylists = new Set(this.state.activePlaylists);
+    const { modify, defaultPlaylists, activePlaylists } = this.props;
+    let newActivePlaylists = new Set(activePlaylists);
     for (let filterId of remove) {
       newActivePlaylists.delete(filterId);
     }
@@ -342,47 +280,9 @@ class Catalog extends Component {
       </div>
     )
   }
-
-  /*
-  render() {
-    let results = this.state && this.state.activePlaylists.size ? (
-
-    ) : <div></div>
-
-    return (
-      <div className="app-container">
-          <div className="filter-columns">
-              <FilterSidebar
-                filters={this.buildFiltersObject(this.state.data)}
-                activeFilters={this.state.activePlaylists}
-                searchHandler={this.searchHandler}
-                sortHandler={this.sortHandler}
-                unitsRangeHandler={this.unitsRangeHandler}
-                sortBy={this.state.sortBy}
-                unitsRange={this.state.unitsRange}
-                addFilter={this.addFilterHandler}
-                rangeFilter={this.rangeFilterHandler}
-                removeFilter={this.removeFilterHandler}
-                toggleFilter={this.toggleFilterHandler}
-                selectFilter={this.selectFilterHandler}
-                resetFilters={this.resetFilterHandler}
-                defaultSearch={this.defaultSearch}
-              />
-            <div> {results} </div>
-            <div> {this.state && Object.entries(this.state.selectedCourse).length !== 0 &&
-                <ClassDescription
-                  course={this.state.selectedCourse}
-                  tab={this.tab}
-                />
-            } </div>
-          </div>
-      </div>
-    );
-  }*/
 }
 
 const mapDispatchToProps = dispatch => {
-  // debugger
   return {
     dispatch,
     modify: (activePlaylists, defaultPlaylists) => dispatch(modify(activePlaylists, defaultPlaylists)),

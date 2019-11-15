@@ -1,15 +1,15 @@
-import { START_REQUEST } from "../actionTypes";
+import { START_REQUEST_DESCRIPTION } from "../actionTypes";
 import { UPDATE_COURSE_DATA } from "../actionTypes";
 
 
 const initialState = {
-  loading: true,
+  loading: false,
   courseData: []
 };
 
-export default function filter(state = initialState, action) {
+export default function classDescription(state = initialState, action) {
   switch (action.type) {
-    case START_REQUEST: {
+    case START_REQUEST_DESCRIPTION: {
       return Object.assign({}, state, {
         loading: true
       })
