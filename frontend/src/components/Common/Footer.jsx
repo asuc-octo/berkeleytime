@@ -7,7 +7,7 @@ function Footer() {
     <footer className="bt-footer">
       <Container className="bt-footer-container">
         <Row>
-          {/* <Col lg={2}></Col> */}
+          <Col lg={2}></Col>  {/* Helps center the entire footer */}
           <Col xs={4} sm={4} md={3} lg={2} className="bt-footer-column">
             <p><b>Get Started</b></p>
             <Link to="/catalog" className="">Courses</Link>
