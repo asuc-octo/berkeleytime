@@ -1,0 +1,80 @@
+.releases {
+    background-color: $bt-white;
+    width: 100vw;
+
+    margin-top: 150px;
+    margin-bottom: 100px;
+
+    .releases-heading {
+        h2 {
+            font-weight: bold;
+            font-size: 40px;
+            line-height: 52px;
+            text-align: center;
+            color: $bt-base-text;
+        }
+
+        h3 {
+            font-weight: 500;
+            font-size: 24px;
+            line-height: 150%;
+            text-align: center;
+            color: $bt-light-text;
+            
+            margin-top: 14px;
+        }
+
+        .releases-heading-button{
+            justify-content: center;
+
+            margin-top: 26px;
+            margin-bottom: 74px;
+        }
+    }
+
+    .releases-log {
+        margin-bottom: 48px;
+
+        .releases-log-date {
+            h3 {
+                font-weight: 500;
+                font-size: 24px;
+                line-height: 150%;
+                color: $bt-light-text;
+
+                margin-bottom: 18px;
+            }
+        }
+
+        .releases-log-list {
+            h2 {
+                font-weight: bold;
+                font-size: 20px;
+                line-height: 150%;
+                color: $bt-grey-text;
+
+                margin-bottom: 12px;
+            }
+
+            ul {
+                font-weight: normal;
+                font-size: 20px;
+                line-height: 150%;
+                color: $bt-grey-text;
+
+                padding-left: 0px;
+                margin-bottom: 34px;
+
+                list-style: none;
+                list-style-position: inside;
+            }
+
+            li:before {
+                content: "· ";
+                font-size: 40px;
+                position: relative;
+                top: 7px;
+            }
+        }
+    }
+}
