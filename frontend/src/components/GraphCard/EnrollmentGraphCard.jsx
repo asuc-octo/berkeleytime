@@ -52,9 +52,9 @@ class EnrollmentGraphCard extends Component {
       let url;
       if(instructor === 'all') {
         let [sem, year] = semester.split(' ');
-        url = `/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
+        url = `http://localhost:8080/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
       } else {
-        url = `/api/enrollment/data/${sections[0]}/`;
+        url = `http://localhost:8080/api/enrollment/data/${sections[0]}/`;
       }
 
       promises.push(axios.get(url));

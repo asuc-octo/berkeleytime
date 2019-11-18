@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
-import Select from 'react-virtualized-select';
+import Select from 'react-select-virtualized';
 import {Row, Col, Button} from 'react-bootstrap';
 import axios from 'axios';
 import hash from 'object-hash';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
-
-import 'react-select/dist/react-select.css'
-import 'react-virtualized-select/styles.css'
 
 // think about clearing values after add button
 
@@ -64,7 +61,7 @@ class GradesSearchBar extends Component {
       selectedClass: updatedClass.value
     })
 
-    let url = `/api/grades/course_grades/${updatedClass.value}/`
+    let url = `http://localhost:8080/api/grades/course_grades/${updatedClass.value}/`
 
     axios.get(url)
     .then(res => {
