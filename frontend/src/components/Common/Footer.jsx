@@ -13,7 +13,7 @@ function Footer() {
             <Link to="/catalog" className="">Courses</Link>
             <Link to="/grades" className="">Grades</Link>
             <Link to="/enrollment" className="">Enrollment</Link>
-            <Row><Col lg={6}><Link to="/landing" className="">Releases</Link></Col>
+            <Row><Col lg={6}><Link to="/releases" className="">Releases</Link></Col>
                  <Col lg={2}><div className="new-box"><p>New</p></div></Col>
             </Row>
           </Col>
