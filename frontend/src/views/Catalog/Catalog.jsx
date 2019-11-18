@@ -106,13 +106,12 @@ class Catalog extends Component {
    */
   resetFilters = () => {
     const { modify, defaultPlaylists } = this.props;
-    let newActivePlaylists = new Set(this.state.defaultPlaylists);
+    let newActivePlaylists = new Set(defaultPlaylists);
     modify(newActivePlaylists, defaultPlaylists);
     this.setState({
       defaultSearch: '',
       search: '',
-      sortBy: 'grade_average',
-      // activePlaylists: newActivePlaylists,
+      sortBy: 'average_grade',
     });
   }
 
