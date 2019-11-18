@@ -14,9 +14,6 @@ function NavigationLinks() {
         <Link to="/enrollment">Enrollment</Link>
       </div>
       <div className="navbar-item">
-        <Link to="/scheduler">Scheduler</Link>
-      </div>
-      <div className="navbar-item">
         <Link to="/about">About</Link>
       </div>
       {/* <div className="navbar-item">
