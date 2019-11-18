@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import Select from 'react-virtualized-select';
+import Select from 'react-select-virtualized';
 import {Row, Col, Button} from 'react-bootstrap';
 import axios from 'axios';
 import hash from 'object-hash';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
 
-import 'react-virtualized-select/styles.css'
+// import 'react-virtualized-select/styles.css'
 
 class EnrollmentSearchBar extends Component {
 
@@ -56,7 +56,7 @@ class EnrollmentSearchBar extends Component {
       selectedClass: updatedClass.value
     })
 
-    let url = `/api/enrollment/sections/${updatedClass.value}/`
+    let url = `http://localhost:8080/api/enrollment/sections/${updatedClass.value}/`
 
     axios.get(url)
     .then(res => {
