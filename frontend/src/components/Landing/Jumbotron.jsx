@@ -15,17 +15,17 @@ function Jumbotron() {
     <div className="jumbo">
       <Container className="jumbo-container">
         <Row>
-          <Col lg={5}>
+          <Col xs={6} sm={6} md={5} lg={5}>
             <div className="jumbo-heading">
               <h1>BerkeleyTime</h1>
-              <p>Course discovery, simplified. Built by students for students.</p>
+              <p>Course discovery, simplified. <br /> Built by students for students.</p>
               <ButtonToolbar className="jumbo-heading-buttons">
-                <Button variant="bt-blue" size="bt-lg" as={Link} to="/catalog">Explore courses now</Button>
+                <Button variant="bt-blue" size="bt-lg" as={Link} to="/catalog">Explore courses</Button>
                 <Button variant="bt-blue-inverted" size="bt-lg" as={Link} to="/about">About Us</Button>
               </ButtonToolbar>
             </div>
           </Col>
-          <Col lg={7}>
+          <Col xs={6} sm={6} md={7} lg={7}>
             <div className="jumbo-img-container">
               <img className="jumbo-img" src={logo} alt="jumbotron" />
             </div>
