@@ -42,7 +42,7 @@ class GradesGraphCard extends Component {
 
     for(let course of classData) {
       let { sections } = course;
-      let url = `/api/grades/sections/${sections.join('&')}/`;
+      let url = `http://localhost:8080/api/grades/sections/${sections.join('&')}/`;
 
       promises.push(axios.get(url));
     }
