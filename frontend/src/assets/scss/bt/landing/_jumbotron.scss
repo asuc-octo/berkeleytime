@@ -17,18 +17,32 @@
       margin: 15px 0;
       font-size: 64px;
       font-weight: 500;
+
+      @include touch{
+        font-size: 32px;
+      }
     }
 
     p {
       margin: 15px 3px; //3px better aligns with title
       font-size: 24px;
+
+      @include touch{
+        font-size: 20px;
+      }
     }
 
     .jumbo-heading-buttons {
       margin: 15px 0;
 
-      a:not(:first-child) {
-        margin-left: 20px;
+      @include touch{
+        flex-direction: column;
+      }
+
+      @include desktop{
+        a:not(:first-child) {
+          margin-left: 20px;
+        }
       }
     }
   }
@@ -47,12 +61,17 @@
     }
 
     .jumbo-img {
-      @include tablet {
+
+      @include desktop {
         width: 500px;
       }
 
+      @include touch {
+        width: 300px;
+      }
+
       @include mobile {
-        width: 400px;
+        width: 200px;
       }
 
       object-fit: scale-down;
