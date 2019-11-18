@@ -8,6 +8,7 @@ import Grades from '../views/Grades/Grades';
 import Enrollment from '../views/Enrollment/Enrollment';
 import About from '../views/About/About';
 import Dashboard from '../views/Dashboard/Dashboard';
+import Login from '../views/Login/Login';
 import Error from '../views/Error/Error';
 
 // name should be unique, used as react key
@@ -22,6 +23,7 @@ const routes = [
   { path: '/enrollment', name: 'Enrollment', component: Enrollment },
   { path: '/about',      name: 'About',      component: About },
   { path: '/dashboard',  name: 'Dashboard',  component: Dashboard },
+  { path: '/login',      name: 'Login',      component: Login },
   { path: '/error',      name: 'Error',      component: Error },
   { /* no path */        name: '404',        component: Error },
 ];

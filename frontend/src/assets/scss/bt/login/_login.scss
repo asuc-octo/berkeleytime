@@ -1,0 +1,17 @@
+.login-container {
+  min-height: 300px;
+  height: 100vh;
+
+  .login {
+    padding-top: $bt-navbar-height;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .g-signin2 {
+
+    }
+  }
+}
