@@ -9,9 +9,10 @@
     .bt-footer-column {
       display: flex;
       flex-direction: column;
+      margin: 25px;
 
       :first-child {
-        margin-bottom: 15px;
+        margin-bottom: 20px;
       }
 
       > *:not(:first-child):not(:last-child) {
@@ -19,22 +20,44 @@
       }
 
       > *:not(:first-child) {
-        font-size: 16px;
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 150%;
       }
 
       p {
-        font-size: 18px;
-        color: $bt-white-text;
+        font-size: 20px;
+        color: $bt-base-text;
       }
 
       a {
-        color: $bt-white-text;
+        color: $bt-light-text;
         transition: 200ms;
         width: max-content;
       }
 
       a:hover {
         color: hsl(204, 86%, 53%);
+      }
+
+      .new-box {
+        width: 47px;
+        height: 23px;
+        background: #2F80ED;
+        border-radius: 3px;
+        margin-left: 5px;
+        margin-top: 2px;
+
+        p {
+          color: #FFFFFF;
+          font-weight: 500;
+          font-size: 16px;
+          line-height: 150%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+        }
       }
     }
   }

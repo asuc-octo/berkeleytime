@@ -77,8 +77,10 @@ export class FilterSidebar extends Component {
   requirementHandler = requirements => {
     var add = new Set();
     var remove = new Set();
-    for (const req of requirements) {
-      add.add(req.value);
+    if (requirements !== null) {
+      for (const req of requirements) {
+        add.add(req.value);
+      }
     }
     for (const section of this.requirementsOptions) {
       for (const req of section.options) {
