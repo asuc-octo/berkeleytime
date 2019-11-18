@@ -21,8 +21,8 @@ pipeline {
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''version=$(git rev-parse --short HEAD)
-docker build -t ${BACKEND_GCR_PATH}:$version -f berkeleytime/Dockerfile berkeleytime
-docker push ${BACKEND_GCR_PATH}:$version'''
+        docker build -t ${BACKEND_GCR_PATH}:$version -f berkeleytime/Dockerfile berkeleytime
+        docker push ${BACKEND_GCR_PATH}:$version'''
       }
     }
     stage('Build-Frontend-Stage') {
@@ -112,5 +112,7 @@ echo "Updating enrollment data fetch cron job with latest image"
 kubectl get pods
 kubectl delete -f $DATA_FETCH_FILEPATH
 kubectl apply -f $DATA_FETCH_FILEPATH'''
+      }
+    }
   }
 }
