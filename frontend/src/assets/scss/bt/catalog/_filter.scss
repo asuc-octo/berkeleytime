@@ -1,0 +1,68 @@
+.filter {
+  height: 100%;
+  padding: 30px;
+  overflow: scroll;
+
+  display: flex;
+  flex-direction: column;
+
+  .filter-loading {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .filter-name {
+    margin-bottom: 30px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+
+    p {
+      font-size: 24px;
+      font-weight: 500px;
+      margin-right: 30px;
+    }
+
+    button {
+      color: $bt-blue;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .filter-search {
+    margin-bottom: 30px;
+
+    input {
+      width: 100%;
+      padding-bottom: 3px;
+      border: 0;
+      border-bottom: .5px solid $bt-border-grey;
+
+      color: $bt-grey-text;
+      font-size: 17px;
+      font-family: 'FontAwesome', 'DM Sans', sans-serif;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .filter-sort, .filter-requirements, .filter-units,
+  .filter-department, .filter-class-level, .filter-semesters {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+
+    > p {
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
+  }
+}
