@@ -112,5 +112,6 @@ echo "Updating enrollment data fetch cron job with latest image"
 kubectl get pods
 kubectl delete -f $DATA_FETCH_FILEPATH
 kubectl apply -f $DATA_FETCH_FILEPATH'''
+      }
   }
 }
