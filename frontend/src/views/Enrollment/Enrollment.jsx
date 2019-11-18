@@ -18,7 +18,7 @@ class Enrollment extends Component {
   }
 
   componentDidMount() {
-    axios.get('/api/enrollment_json/')
+    axios.get('http://localhost:8080/api/enrollment_json/')
     .then(res => {
       // console.log(res);
       this.setState({
@@ -36,7 +36,7 @@ class Enrollment extends Component {
         return;
       }
     }
-    axios.get(`/api/catalog_json/course/${course.courseID}/`)
+    axios.get(`http://localhost:8080/api/catalog_json/course/${course.courseID}/`)
       .then(res => {
         let courseData = res.data;
 
@@ -68,7 +68,7 @@ class Enrollment extends Component {
     let courses = context.courses;
 
     return (
-      <div className="app-container">
+      <div className="enrollment">
         <EnrollmentSearchBar
           classes={courses}
           addCourse={this.addCourse}
