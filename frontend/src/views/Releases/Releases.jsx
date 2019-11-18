@@ -42,13 +42,21 @@ class Releases extends Component {
 Releases.logs = [
   {
     date: 'September 5th, 2019',
-    whatsNew: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"],
-    fixes: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."]
+    whatsNew: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", 
+               "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+               "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"],
+    fixes: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+            "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."]
   },
   {
     date: 'September 5th, 2019',
-    whatsNew: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"],
-    fixes: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.", "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."]
+    whatsNew: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+               "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+               "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"],
+    fixes: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+            "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."]
   },
 ];
 
