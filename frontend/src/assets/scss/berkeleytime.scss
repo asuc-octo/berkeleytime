@@ -1,28 +1,31 @@
 // bootstrap 4
 @import "../node_modules/bootstrap/scss/bootstrap";
 
+// base & themes
 @import "bt/base/variables";
 @import "bt/base/typography";
 @import "bt/base/responsive";
-@import "bt/base/buttons";
+@import "bt/theming/buttons";
+@import "bt/theming/navbar";
+@import "bt/theming/grades_color";
+@import "bt/theming/enrollment_color";
 
 @import "bt/berkeleytime";
-@import "bt/navbar";
-@import "bt/footer";
+
+// common
+@import "bt/common/footer";
 
 // landing
 @import "bt/landing/jumbotron";
 @import "bt/landing";
 
-// BerkeleyTime
-@import "bt/navbar";
-@import "bt/footer";
-// Catalog
-@import "bt/filter-sidebar";
-@import "bt/filter-selection";
-@import "bt/filter-results";
-@import "bt/filter-description";
-@import "bt/filter-columns";
+// catalog
+@import "bt/catalog/catalog";
+@import "bt/catalog/filter";
+@import "bt/catalog/results";
+@import "bt/catalog/card";
+@import "bt/catalog/description";
+
 // Grades & Enrollment
 @import "bt/classcards";
 @import "bt/graph-empty";
@@ -30,6 +33,8 @@
 @import "bt/grades";
 // Enrollment
 @import "bt/enrollment";
+// Releases
+@import "bt/releases";
 // Other
 @import "bt/current-contributors";
 @import "bt/past-contributors";
