@@ -50,7 +50,7 @@
         min-height: 600px;
         height: 100vh;
 
-        @include mobile {
+        @include touch {
             min-height: 900px;
         }
         
@@ -87,12 +87,12 @@
             }
 
             @include touch{
-                padding-top: 10vh;
+                padding-top: 20vh;
             }
         }
 
         .landing-explore-img-wrapper {
-            padding-top: 20vh;
+            padding-top: 10vh;
             padding-left: 50px;
             @include touch{
                 padding-left: 0px;
