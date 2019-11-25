@@ -13,4 +13,5 @@ build/requirements.txt
 postgres-data.tar.gz
 bt_main.sql
 .vscode
+package-lock.json
 node_modules/
