@@ -69,7 +69,7 @@ elif IS_LOCALHOST:
         }
     }
 
-if IS_LOCALHOST:
+if IS_LOCALHOST and 'DATABASE_URL' not in os.environ:
     FACEBOOK_APP = 'local'
     DATABASES = {
         'default': {

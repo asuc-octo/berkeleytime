@@ -11,13 +11,14 @@ services:
      - "GOOGLE_CLIENT_SECRET=***REMOVED***"
      - "GOOGLE_TOKEN_URI=https://accounts.google.com/o/oauth2/token"
      - "ENVIRONMENT_NAME=LOCALHOST"
+     - "DATABASE_URL=postgres://bt_read:yuxinsucks@35.236.65.95:5432/bt_main"
      - "SIS_CLASS_APP_ID=***REMOVED***"
      - "SIS_CLASS_APP_KEY=***REMOVED***"
      - "SIS_COURSE_APP_ID=***REMOVED***"
      - "SIS_COURSE_APP_KEY=***REMOVED***"
     depends_on:
      - redis
-     - postgres
+#     - postgres
   frontend:
     image: berkeleytime/frontend:latest
     volumes:
@@ -25,10 +26,11 @@ services:
      - /frontend/node_modules
   redis:
     image: redis:alpine
-  postgres:
-    image: postgres:11
-    volumes:
-     - ./postgres-data:/var/lib/postgresql/data
+# no longer uses the local postgres database
+#  postgres:
+#    image: postgres:11
+#    volumes:
+#     - ./postgres-data:/var/lib/postgresql/data
   nginx:
     image: nginx
     volumes:
