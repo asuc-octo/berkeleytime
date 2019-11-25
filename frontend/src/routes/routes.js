@@ -8,6 +8,7 @@ import Grades from '../views/Grades/Grades';
 import Enrollment from '../views/Enrollment/Enrollment';
 import About from '../views/About/About';
 import Dashboard from '../views/Dashboard/Dashboard';
+import Login from '../views/Login/Login';
 import Releases from '../views/Releases/Releases';
 import Error from '../views/Error/Error';
 
@@ -23,7 +24,8 @@ const routes = [
   { path: '/enrollment', name: 'Enrollment', component: Enrollment },
   { path: '/about',      name: 'About',      component: About },
   { path: '/dashboard',  name: 'Dashboard',  component: Dashboard },
-  { path: '/releases', name: 'Releases', component: Releases },
+  { path: '/login',      name: 'Login',      component: Login },
+  { path: '/releases',   name: 'Releases',   component: Releases },
   { path: '/error',      name: 'Error',      component: Error },
   { /* no path */        name: '404',        component: Error },
 ];
