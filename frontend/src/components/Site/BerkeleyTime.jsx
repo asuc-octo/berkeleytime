@@ -20,22 +20,24 @@ class BerkeleyTime extends PureComponent {
     return (
       <div className="app">
         <Navigation />
-        <Route path="/" component={logPageView} />
-        <Switch>
-          {
-            routes.map(route => {
-              if (route.redirect) {
-                return (
-                  <Redirect exact={route.exact} from={route.path} to={route.to} key={route.name} />
-                );
-              } else {
-                return (
-                  <Route exact={route.exact} path={route.path} component={route.component} key={route.name} />
-                );
-              }
-            })
-          }
-        </Switch>
+        <div className="app-container">
+          <Route path="/" component={logPageView} />
+          <Switch>
+            {
+              routes.map(route => {
+                if (route.redirect) {
+                  return (
+                    <Redirect exact={route.exact} from={route.path} to={route.to} key={route.name} />
+                  );
+                } else {
+                 return (
+                    <Route exact={route.exact} path={route.path} component={route.component} key={route.name} />
+                  );
+               }
+              })
+            }
+          </Switch>
+        </div>
         <Footer />
       </div>
     );
