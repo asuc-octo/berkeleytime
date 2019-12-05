@@ -71,7 +71,6 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
     }
     stage('Deploy-Frontend-Production') {
       when {
-        changeset "frontend/**"
         branch "production"
       }
       steps {
@@ -86,7 +85,6 @@ kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
     }
     stage('Deploy-Backend-Production') {
       when {
-        changeset "berkeleytime/**"
         branch "production"
       }
       steps {
