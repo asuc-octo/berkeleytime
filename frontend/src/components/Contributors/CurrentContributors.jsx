@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 
 
 import leon_1 from '../../assets/img/images/about/compressed/Leon_1.jpg';
+import leon_2 from '../../assets/img/images/about/compressed/Leon_2.jpg';
 import michael_1 from '../../assets/img/images/about/compressed/Michael_1.jpg';
 import michael_2 from '../../assets/img/images/about/compressed/Michael_2.jpg';
 import will_1 from '../../assets/img/images/about/compressed/Will_1.jpg';
@@ -82,8 +83,9 @@ CurrentContributors.defaultProps = {
         name: 'Leon Ming',
         role: 'ASUC CTO',
         site: 'https://leon-ming.com',
-        silly: false,
+        silly: true,
         img_1: leon_1,
+        img_2: leon_2,
       },
       {
         name: 'Michael Li',
