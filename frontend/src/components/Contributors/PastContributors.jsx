@@ -1,8 +1,8 @@
 import React from 'react';
 
-import yuxin from '../../assets/img/images/about/yuxin.jpg';
-import noah from '../../assets/img/images/about/noah.jpg';
-import ashwin from '../../assets/img/images/about/ashwin.jpg';
+import yuxin from '../../assets/img/images/about/alumni/yuxin.jpg';
+import noah from '../../assets/img/images/about/alumni/noah.jpg';
+import ashwin from '../../assets/img/images/about/alumni/ashwin.jpg';
 
 function PastContributors({ founders, pastContributors }) {
   return (
