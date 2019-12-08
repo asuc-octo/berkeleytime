@@ -1,5 +1,4 @@
 import React, { Component, PureComponent } from 'react';
-import axios from 'axios';
 import HashLoader from 'react-spinners/HashLoader';
 import { FixedSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -185,7 +184,7 @@ const mapStateToProps = state => {
   const { loading, courses } = state.filter;
   return {
     loading,
-    courses
+    courses,
   };
 };
 
