@@ -7,27 +7,26 @@ import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar.jsx
 
 class Grades extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       context: {},
       selectedCourses: [],
-    }
-
+    };
     this.addCourse = this.addCourse.bind(this);
-    this.removeCourse = this.removeCourse.bind(this)
+    this.removeCourse = this.removeCourse.bind(this);
   }
 
   componentDidMount() {
     axios.get('/api/grades_json/')
-    .then(res => {
+      .then(res => {
       // console.log(res);
-      this.setState({
-        context: res.data,
+        this.setState({
+          context: res.data,
+        });
       })
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   addCourse(course) {
@@ -39,7 +38,6 @@ class Grades extends Component {
     axios.get(`/api/catalog_json/course/${course.courseID}/`)
       .then(res => {
         let courseData = res.data;
-
         let formattedCourse =  {
           id: course.id,
           course: courseData.course,

@@ -36,7 +36,6 @@ class Catalog extends Component {
     this.state = {
       defaultSearch: this.getDefaultSearch(), // default search, set if URL contains a specific class
       search: '',                    // current search
-      // tab: 0,                        // class detail tab, either 0 or 1
       sortBy: 'average_grade',       // either average_grade, ...
       // activePlaylists: new Set(),    // set of integers
       // defaultPlaylists: new Set(),   // set of integers
@@ -122,11 +121,7 @@ class Catalog extends Component {
     } else {
       this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/sections/`);
     }
-    // this.setState({
-    //   selectedCourse: course,
-    //   tab,
-    // });
-    modifySelected(course, tab);
+    modifySelected(course);
   }
 
   /**
@@ -231,7 +226,7 @@ class Catalog extends Component {
 
   render() {
     const { defaultSearch } = this.state;
-    const { activePlaylists, loading, selectedCourse, tab } = this.props;
+    const { activePlaylists, loading, selectedCourse } = this.props;
     return (
       <div className="catalog">
         <div className="catalog-container">
@@ -270,7 +265,6 @@ class Catalog extends Component {
             <Col lg xl className="catalog-description-column">
               <ClassDescription
                 course={selectedCourse}
-                tab={tab}
                 selectCourse={this.selectCourse}
               />
             </Col>
@@ -286,19 +280,18 @@ const mapDispatchToProps = dispatch => {
     dispatch,
     modify: (activePlaylists, defaultPlaylists) => dispatch(modify(activePlaylists, defaultPlaylists)),
     fetchLists: (paths) => dispatch(fetchLists(paths)),
-    modifySelected: (data, tab) => dispatch(modifySelected(data, tab)),
+    modifySelected: (data) => dispatch(modifySelected(data)),
   }
 }
 
 const mapStateToProps = state => {
-  const { activePlaylists, defaultPlaylists, data, loading, selectCourse, tab } = state.catalog;
+  const { activePlaylists, defaultPlaylists, data, loading, selectCourse } = state.catalog;
   return {
     activePlaylists: activePlaylists,
     defaultPlaylists: defaultPlaylists,
     data: data,
     loading: loading,
     selectedCourse: selectCourse,
-    tab: tab
   };
 };
 
