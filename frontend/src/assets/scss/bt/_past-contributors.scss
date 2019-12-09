@@ -6,6 +6,10 @@
     padding: 40px 0px;
     width: 100%;
 
+    @include mobile {
+        width: 375px !important;
+    }
+
     .past-contributors-content {
         display: flex;
         flex-direction: column;
@@ -13,12 +17,21 @@
         min-width: 600px;
         max-width: 900px;
 
+        @include mobile {
+            width: 375px !important;
+            min-width: 375px;
+        }
+
         h4 {
             text-transform: uppercase;
             margin: 0 0;
             font-weight: bold;
             margin-bottom: 10px;
             letter-spacing: 1px;
+
+            @include mobile {
+                font-size: 18px;
+            }
         }
 
         .past-contributors-founders {
@@ -27,6 +40,10 @@
             justify-content: space-between;
 
             margin: 20px 0;
+
+            @include mobile {
+                width: 375px;
+            }
 
             .founder-card {
                 height: 100px;
@@ -83,6 +100,12 @@
             font-size: 18px;
             width: 110%;
             margin-left: 50px;
+
+            @include mobile {
+                width: 375px;
+                margin-left: 0px;
+                padding-left: 40px;
+            }
 
             a {
                 width: 20%;
