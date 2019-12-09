@@ -61,6 +61,9 @@ class EnrollmentSearchBar extends Component {
     axios.get(url)
     .then(res => {
       // console.log(res);
+      if (!res || Object.keys(res).length === 0) {
+        return;
+      }
       let sections = res.data
       this.setState({
         sections: sections,
@@ -134,23 +137,23 @@ class EnrollmentSearchBar extends Component {
     const ret = [];
     ret.push({ value: 'all', label: 'All Instructors' })
 
-    let options = sections.filter(section => this.getSectionSemester(section) === selectPrimary)
-      .map(section => {
-        section = section.sections[0];
-
-        // console.log(section);
-
-        let instructor = `${section.instructor} / ${section.section_number}`;
-
-        return {
-          value: instructor.split(' / ')[0],
-          label: instructor,
-          sectionNumber: instructor.split(' / ')[1],
-        }
-      })
+    let options = sections.filter(semester => this.getSectionSemester(semester) === selectPrimary)
+        .map(semester => {
+        let sections = semester.sections.map(section => {
+          let instructor = `${section.instructor} / ${section.section_number}`;
+          return {
+            value: instructor.split(' / ')[0],
+            label: instructor,
+            sectionNumber: instructor.split(' / ')[1],
+          };
+        });
+        return sections;
+      });
 
     for(let o of options) {
-      ret.push(o);
+      for (let s of o) {
+        ret.push(s);
+      }
     }
 
     return ret;
@@ -158,20 +161,25 @@ class EnrollmentSearchBar extends Component {
 
   getFilteredSections() {
     const { sections, selectPrimary, selectSecondary, sectionNumber } = this.state;
-    let ret;
+    let ret = [];
 
-    ret = sections.filter(section => {
+    let selectedPrimaries = sections.filter(section => {
       return this.getSectionSemester(section) === selectPrimary;
-    })
-    .filter(section => {
-      section = section.sections[0];
+    });
+    
+    for (let p of selectedPrimaries) {
+        for (let s of p.sections) {
+            ret.push(s);
+        }
+    }
+    
+    ret = ret.filter(section => {
       return selectSecondary === 'all' ? true : section.instructor === selectSecondary;
     })
     .filter(section => {
-      section = section.sections[0];
       return sectionNumber ? section.section_number === sectionNumber : true;
     })
-    .map(s => s.sections[0].section_id);
+    .map(s => s.section_id);
 
     return ret;
   }
@@ -257,7 +265,6 @@ class EnrollmentSearchBar extends Component {
               onChange={this.handlePrimarySelect}
               disabled={!selectedClass}
               clearable={false}
-              searchable={false}
           />
         </div>
         <div className="column is-one-fifth">
@@ -269,7 +276,6 @@ class EnrollmentSearchBar extends Component {
               onChange={this.handleSecondarySelect}
               disabled={!selectedClass}
               clearable={false}
-              searchable={false}
           />
         </div>
         <div className="column is-one-fifth">

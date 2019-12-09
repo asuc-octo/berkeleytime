@@ -26,8 +26,8 @@ export default function EnrollmentGraph({
     <div className="graph">
       <ResponsiveContainer width='100%' height={400}>
       <LineChart width={800} height={400} data={graphData} onMouseMove={updateGraphHover}>
-        <XAxis dataKey="name" interval={19} />>
-        <YAxis type="number" unit="%"/>
+        <XAxis dataKey="name" interval={19} />
+        <YAxis type="number" unit="%" domain={[0, 'dataMax']} />
         <CartesianGrid strokeDasharray="3 3" />
         <Tooltip
             formatter={(value) => `${value}%`}
@@ -43,7 +43,7 @@ export default function EnrollmentGraph({
             strokeWidth={3}
             dot={false}
             activeDot={{onMouseOver: updateLineHover}}
-            connectNulls={true}
+            connectNulls
           />
         ))}
         <ReferenceLine

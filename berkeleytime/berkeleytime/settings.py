@@ -8,7 +8,7 @@ from config.bookstore import *
 
 # Change every semester to update Catalog!
 import raven
-from config.semesters.fall2019 import *
+from config.semesters.spring2020 import *
 
 settings_dir = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
@@ -25,7 +25,6 @@ TEMPLATE_DEBUG = DEBUG
 ADMINS = (
     ("ASUC OCTO Berkeleytime Team", "octo.berkeleytime@asuc.org"),
     ("Michael Li", "michael.li@berkeley.edu"),
-    ("Will Wang", "hwang97@berkeley.edu"),
 )
 
 INTERNAL_IPS = ('0.0.0.0',)
