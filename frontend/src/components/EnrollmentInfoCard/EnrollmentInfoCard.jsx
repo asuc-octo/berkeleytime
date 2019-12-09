@@ -2,7 +2,10 @@ import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 
 function formatPercentage(num) {
-  return (num * 100).toFixed(1);
+  if (num === -1) {
+    return "N/A"
+  }
+  return (num * 100).toFixed(1).toString() + "%";
 }
 
 export default function EnrollmentInfoCard({
@@ -45,17 +48,17 @@ export default function EnrollmentInfoCard({
             {`${period}: Day ${selectedPoint.day}`}
           </div>
           <div className="class-adjustment-percent">
-            {`Enrollment Percent: ${formatPercentage(selectedPoint.enrolled_percent)}%`}
+            {`Enrollment Percent: ${formatPercentage(selectedPoint.enrolled_percent)}`}
           </div>
           <div className="class-adjustment-percent">
-            {`Waitlist Percent: ${formatPercentage(selectedPoint.waitlisted_percent)}%`}
+            {`Waitlist Percent: ${formatPercentage(selectedPoint.waitlisted_percent)}`}
           </div>
           <Row>
             <Col xs={8}>
               <div className="class-stats-name">Enrolled</div>
             </Col>
             <Col xs={4}>
-              <div className="class-stats">{selectedPoint.enrolled}</div>
+              <div className="class-stats">{selectedPoint.enrolled}/{selectedPoint.enrolled_max}</div>
             </Col>
           </Row>
           <Row className="class-stats">
@@ -63,7 +66,7 @@ export default function EnrollmentInfoCard({
               <div className="class-stats-name">Waitlisted</div>
             </Col>
             <Col xs={4}>
-              <div className="class-stats">{selectedPoint.waitlisted}</div>
+              <div className="class-stats">{selectedPoint.waitlisted}/{selectedPoint.waitlisted_max}</div>
             </Col>
           </Row>
         </Row>

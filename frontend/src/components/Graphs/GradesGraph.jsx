@@ -19,8 +19,8 @@ export default function GradesGraph({
     <div className="graph">
       <ResponsiveContainer width='100%' height={400}>
       <BarChart width={800} height={400} data={graphData} onMouseMove={updateGraphHover}>
-        <XAxis dataKey="name"/>>
-        <YAxis type="number" unit="%"/>
+        <XAxis dataKey="name"/>
+        <YAxis type="number" unit="%" domain={[0, 'auto']} />
         <CartesianGrid strokeDasharray="3 3" />
         <Tooltip
             formatter={(value, name, props) => [Math.round(value * 10) / 10 + "%", name]}

@@ -6,7 +6,7 @@ semester that we have catalog data for.
 This is to change the campus page"""
 
 # to change the ongoing semester (used to display sections in campus), change the location of the import below
-from semesters import fall2018 as currently_in_session
+from semesters import fall2019 as currently_in_session
 
 ONGOING_SEMESTER = currently_in_session.CURRENT_SEMESTER
 ONGOING_YEAR = currently_in_session.CURRENT_YEAR

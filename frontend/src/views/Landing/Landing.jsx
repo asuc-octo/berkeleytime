@@ -4,7 +4,7 @@ import Jumbotron from '../../components/Landing/Jumbotron';
 import Explore from '../../components/Landing/Explore';
 import Mission from '../../components/Landing/Mission';
 import Sponsors from '../../components/Landing/Sponsors';
-import Modal from '../../components/Landing/Modal';
+// import Modal from '../../components/Landing/Modal';
 
 import explore_snap from '../../assets/img/images/landing/explore_snap.png';
 import grades_snap from '../../assets/img/images/landing/grades_snap.png';
@@ -19,7 +19,6 @@ class Landing extends Component {
     render() {
       return (
         <div className="landing">
-          <Modal />
           <Jumbotron />
           {Landing.explore.map(item => <Explore {...item} />)}
           <Sponsors />
