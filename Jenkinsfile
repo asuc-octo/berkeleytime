@@ -74,7 +74,7 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
     stage('Build-Berkeleytime-Prod') {
       when {
         changeset "berkeleytime/**"
-        branch "master"
+        branch "production"
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -86,7 +86,7 @@ docker push ${BACKEND_PROD_GCR_PATH}:$version'''
     stage('Build-Frontend-Prod') {
       when {
         changeset "frontend/**"
-        branch "master"
+        branch "production"
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
