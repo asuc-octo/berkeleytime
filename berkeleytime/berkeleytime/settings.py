@@ -25,7 +25,6 @@ TEMPLATE_DEBUG = DEBUG
 ADMINS = (
     ("ASUC OCTO Berkeleytime Team", "octo.berkeleytime@asuc.org"),
     ("Michael Li", "michael.li@berkeley.edu"),
-    ("Will Wang", "hwang97@berkeley.edu"),
 )
 
 INTERNAL_IPS = ('0.0.0.0',)
