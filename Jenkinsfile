@@ -17,7 +17,7 @@ pipeline {
   stages {
     stage('Build-Berkeleytime-Stage') {
       when {
-        changeset "berkeleytime/**"
+        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)/**)", comparator: "REGEXP" 
         branch "master"
       }
       steps {
@@ -29,7 +29,7 @@ docker push ${BACKEND_STAGE_GCR_PATH}:$version'''
     }
     stage('Build-Frontend-Stage') {
       when {
-        changeset "frontend/**"
+        changeset pattern: "(Jenkinsfile|(kubernetes|frontend)/**)", comparator: "REGEXP" 
         branch "master"
       }
       steps {
@@ -41,7 +41,7 @@ docker push ${FRONTEND_STAGE_GCR_PATH}:$version'''
     }
     stage('Deploy-Berkeleytime-Stage') {
       when {
-        changeset "berkeleytime/**"
+        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)/**)", comparator: "REGEXP" 
         branch "master"
       }
       steps {
@@ -57,7 +57,7 @@ kubectl apply -f $BACKEND_DEPLOY_STAGE_FILEPATH'''
     }
     stage('Deploy-Frontend-Stage') {
       when {
-        changeset "frontend/**"
+        changeset pattern: "(Jenkinsfile|(kubernetes|frontend)\/.*)", comparator: "REGEXP" 
         branch "master"
       }
       steps {
@@ -73,7 +73,7 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
     }
     stage('Build-Berkeleytime-Prod') {
       when {
-        changeset "berkeleytime/**"
+        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)\/.*)", comparator: "REGEXP" 
         branch "production"
       }
       steps {
@@ -85,7 +85,7 @@ docker push ${BACKEND_PROD_GCR_PATH}:$version'''
     }
     stage('Build-Frontend-Prod') {
       when {
-        changeset "frontend/**"
+        changeset pattern: "(Jenkinsfile|(kubernetes|frontend)\/.*)", comparator: "REGEXP" 
         branch "production"
       }
       steps {
@@ -97,7 +97,7 @@ docker push ${FRONTEND_PROD_GCR_PATH}:$version'''
     }
     stage('Deploy-Frontend-Production') {
       when {
-        changeset "frontend/**"
+        changeset pattern: "(Jenkinsfile|(kubernetes|frontend)\/.*)", comparator: "REGEXP" 
         branch "production"
       }
       steps {
@@ -112,7 +112,7 @@ kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
     }
     stage('Deploy-Backend-Production') {
       when {
-        changeset "berkeleytime/**"
+        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)\/.*)", comparator: "REGEXP" 
         branch "production"
       }
       steps {
@@ -127,7 +127,7 @@ kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
     }
     stage('Update-Data-Fetch-Image-Version') {
       when {
-        changeset "berkeleytime/**"
+        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)\/.*)", comparator: "REGEXP" 
         branch "production"
       }
       steps {
