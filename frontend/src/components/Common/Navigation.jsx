@@ -42,6 +42,10 @@ Navigation.links = [
     to: '/about',
     text: 'About',
   },
+  {
+    to: '/login',
+    text: 'Login',
+  },
 ];
 
 export default Navigation;

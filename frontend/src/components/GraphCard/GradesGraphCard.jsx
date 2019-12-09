@@ -8,21 +8,20 @@ import GradesGraph from '../Graphs/GradesGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard.jsx';
 
+import { fetchGradeData } from '../../redux/actions';
+import { connect } from "react-redux";
+
 class GradesGraphCard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      gradesData: [],
-      graphData: [],
-
       hoveredClass: false,
     };
 
     this.updateBarHover = this.updateBarHover.bind(this);
     this.updateGraphHover = this.updateGraphHover.bind(this);
     this.getGradesData = this.getGradesData.bind(this);
-    this.buildGraphData = this.buildGraphData.bind(this);
   }
 
   componentDidMount() {
@@ -37,51 +36,12 @@ class GradesGraphCard extends Component {
   }
 
   getGradesData() {
-    const { classData } = this.props;
-    let promises = [];
-
-    for(let course of classData) {
-      let { sections } = course;
-      let url = `/api/grades/sections/${sections.join('&')}/`;
-
-      promises.push(axios.get(url));
-    }
-
-    axios.all(promises).then(data => {
-      let gradesData = data.map((res, i) => {
-        let gradesData = res.data;
-        gradesData['id'] = classData[i].id;
-        gradesData['instructor'] = classData[i].instructor == 'all' ? 'All Instructors' : classData[i].instructor;
-        gradesData['semester'] = classData[i].semester == 'all' ? 'All Semesters' : classData[i].semester;
-        return gradesData
-      })
-
-      this.setState({
-        gradesData: gradesData,
-        graphData: this.buildGraphData(gradesData),
-      })
-    })
-  }
-
-  buildGraphData(gradesData) {
-    const graphData = vars.possibleGrades.map(letterGrade => {
-      let ret = {
-        name: letterGrade,
-      };
-
-      for(let grade of gradesData) {
-        //ret[grade.id] = grade[letterGrade].percent * 100
-        ret[grade.id] = grade[letterGrade].numerator / grade.denominator * 100;
-      }
-
-      return ret
-    })
-
-    return graphData;
+    const { classData, fetchGradeData } = this.props;
+    fetchGradeData(classData);
   }
 
   update(course, grade) {
-    const { gradesData } = this.state;
+    const { gradesData } = this.props;
     let selectedGrades = gradesData.filter(c => course.id == c.id)[0];
 
     let hoverTotal = {
@@ -123,17 +83,9 @@ class GradesGraphCard extends Component {
     }
   }
 
-  // getNeighborGrade(direction) {
-  //   const gradeIdx = vars.possibleGrades.indexOf(this.state.selectedGradeName);
-  //   if (direction == "better" && gradeIdx != 0){
-  //     return this.state.classData[this.state.lastSelectedClassID][vars.possibleGrades[gradeIdx-1]];
-  //   } else if (direction == "worse" && gradeIdx != vars.possibleGrades.length){
-  //     return this.state.classData[this.state.lastSelectedClassID][vars.possibleGrades[gradeIdx+1]];
-  //   } return null;
-  // }
-
   render () {
-    let { graphData, gradesData, hoveredClass } = this.state;
+    let { hoveredClass } = this.state;
+    const { graphData, gradesData } = this.props;
     let { title } = this.props;
 
     var colorIndex = 0;
@@ -199,4 +151,23 @@ class GradesGraphCard extends Component {
 
 }
 
-export default GradesGraphCard;
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    fetchGradeData: (classData) => dispatch(fetchGradeData(classData)),
+  }
+}
+
+const mapStateToProps = state => {
+  const { gradesData, graphData } = state.grade;
+  return {
+    gradesData,
+    graphData
+  };
+};
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GradesGraphCard);

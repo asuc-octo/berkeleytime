@@ -5,11 +5,14 @@ import ClassCardList from '../../components/ClassCards/ClassCardList';
 import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard.jsx';
 import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar.jsx';
 
+import { fetchEnrollContext, fetchEnrollClass } from '../../redux/actions';
+import { connect } from "react-redux";
+
 class Enrollment extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      context: {},
+      // context: {},
       selectedCourses: [],
     }
 
@@ -18,42 +21,55 @@ class Enrollment extends Component {
   }
 
   componentDidMount() {
-    axios.get('/api/enrollment_json/')
-    .then(res => {
-      // console.log(res);
+    const { fetchEnrollContext, context } = this.props;
+    fetchEnrollContext();
+    // axios.get('http://localhost:8080/api/enrollment_json/')
+    // .then(res => {
+    //   // console.log(res);
+    //   this.setState({
+    //     context: res.data,
+    //   })
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedCourses != this.state.selectedCourses) {
       this.setState({
-        context: res.data,
+        selectedCourses: nextProps.selectedCourses
       })
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    }
   }
 
   addCourse(course) {
-    for (let selected of this.state.selectedCourses) {
+    const { fetchGradeClass } = this.props;
+    const { selectedCourses } = this.state;
+    for (let selected of selectedCourses) {
       if (selected.id === course.id) {
         return;
       }
     }
-    axios.get(`/api/catalog_json/course/${course.courseID}/`)
-      .then(res => {
-        let courseData = res.data;
-
-        let formattedCourse =  {
-          id: course.id,
-          course: courseData.course,
-          title: courseData.title,
-          semester: course.semester,
-          instructor: course.instructor,
-          courseID: course.courseID,
-          sections: course.sections
-        }
-
-        this.setState(prevState => ({
-          selectedCourses: [...prevState.selectedCourses, formattedCourse],
-        }));
-    })
+    // axios.get(`http://localhost:8080/api/catalog_json/course/${course.courseID}/`)
+    //   .then(res => {
+    //     let courseData = res.data;
+    //
+    //     let formattedCourse =  {
+    //       id: course.id,
+    //       course: courseData.course,
+    //       title: courseData.title,
+    //       semester: course.semester,
+    //       instructor: course.instructor,
+    //       courseID: course.courseID,
+    //       sections: course.sections
+    //     }
+    //
+    //     this.setState(prevState => ({
+    //       selectedCourses: [...prevState.selectedCourses, formattedCourse],
+    //     }));
+    // })
+    fetchEnrollClass(course);
   }
 
   removeCourse(id) {
@@ -63,12 +79,13 @@ class Enrollment extends Component {
   }
 
   render() {
-    const { context, selectedCourses } = this.state;
+    const { context } = this.props;
+    const { selectedCourses } = this.state;
     let { location } = this.props
     let courses = context.courses;
 
     return (
-      <div className="app-container">
+      <div className="enrollment">
         <EnrollmentSearchBar
           classes={courses}
           addCourse={this.addCourse}
@@ -92,5 +109,23 @@ class Enrollment extends Component {
   }
 }
 
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    fetchEnrollContext: () => dispatch(fetchEnrollContext()),
+    fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course))
+  }
+}
 
-export default Enrollment;
+const mapStateToProps = state => {
+  const { context, selectedCourses } = state.enrollment;
+  return {
+    context,
+    selectedCourses
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Enrollment);

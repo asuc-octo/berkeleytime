@@ -19,6 +19,9 @@
 @import "bt/landing/jumbotron";
 @import "bt/landing";
 
+// login
+@import "bt/login/login";
+
 // catalog
 @import "bt/catalog/catalog";
 @import "bt/catalog/filter";
@@ -33,6 +36,8 @@
 @import "bt/grades";
 // Enrollment
 @import "bt/enrollment";
+// Releases
+@import "bt/releases";
 // Other
 @import "bt/current-contributors";
 @import "bt/past-contributors";
