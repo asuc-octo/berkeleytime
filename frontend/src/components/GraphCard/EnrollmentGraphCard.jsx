@@ -47,6 +47,7 @@ class EnrollmentGraphCard extends Component {
 
   getEnrollmentData() {
     const { classData, fetchEnrollData } = this.props;
+    debugger
     fetchEnrollData(classData);
   }
 
