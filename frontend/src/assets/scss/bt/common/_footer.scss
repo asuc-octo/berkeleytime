@@ -6,6 +6,10 @@
     margin: 0 auto;
     padding: 40px;
 
+    @include mobile {
+      padding: 0px;
+    }
+
     .bt-footer-column {
       display: flex;
       flex-direction: column;
