@@ -19,7 +19,7 @@ function PastContributors({ founders, pastContributors }) {
             </div>
           ))}
         </div>
-        <div className="past-contributors-others container">
+        <div className="past-contributors-others">
           <div className="row">
             {pastContributors.map((member) => (
               <div className="column" style={{ height: 45, width: 170 }}>
