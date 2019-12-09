@@ -248,11 +248,10 @@ export function fetchGradeData(classData) {
 }
 
 export function fetchGradeSelected(updatedClass) {
-  let url = `http://localhost:8080/api/grades/course_grades/${updatedClass.value}/`
+  let url = `http://localhost:8080/api/grades/course_grades/${updatedClass.value}/`;
   return dispatch => axios.get(url)
     .then(
       res => {
-        console.log(res);
         dispatch(updatedGradeSelected(res.data));
       // if (updatedClass.addSelected) {
       //   this.addSelected();
@@ -325,13 +324,12 @@ export function fetchEnrollSelected(updatedClass) {
   return dispatch => axios.get(url)
     .then(
       res => {
-        console.log(res);
         dispatch(updatedEnrollSelected(res.data));
-        // if (updatedClass.addSelected) {
-        //   this.addSelected();
-        //   this.handleClassSelect({value: updatedClass.value, addSelected: false});
-        // }
+      // if (updatedClass.addSelected) {
+      //   this.addSelected();
+      //   this.handleClassSelect({value: updatedClass.value, addSelected: false});
+      // }
       },
-     error => console.log('An error occurred.', error),
-  )
+      error => console.log('An error occurred.', error),
+    );
 }

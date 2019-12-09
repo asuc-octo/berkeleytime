@@ -59,6 +59,7 @@ class EnrollmentSearchBar extends Component {
   }
 
   handleClassSelect(updatedClass) {
+    const { fetchEnrollSelected } = this.props;
     if(updatedClass === null) {
       this.reset();
       this.setState({
@@ -70,7 +71,7 @@ class EnrollmentSearchBar extends Component {
     this.setState({
       selectedClass: updatedClass.value
     })
-    debugger
+
     fetchEnrollSelected(updatedClass);
 
     // let url = `http://localhost:8080/api/enrollment/sections/${updatedClass.value}/`
@@ -196,6 +197,7 @@ class EnrollmentSearchBar extends Component {
 
   addSelected() {
     const { selectedClass, selectType, selectPrimary, selectSecondary } = this.state;
+    debugger
     let playlist = {
       courseID: selectedClass,
       instructor: selectType === 'instructor' ? selectPrimary : selectSecondary,
