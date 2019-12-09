@@ -7338,7 +7338,9 @@ a:hover {
       margin: 15px 0; }
       @media (max-width: 991.98px) {
         .jumbo .jumbo-heading .jumbo-heading-buttons {
-          flex-direction: column; } }
+          flex-direction: column; }
+          .jumbo .jumbo-heading .jumbo-heading-buttons .btn-bt-blue {
+            margin-bottom: 7px; } }
       @media (min-width: 992px) {
         .jumbo .jumbo-heading .jumbo-heading-buttons a:not(:first-child) {
           margin-left: 20px; } }
@@ -7364,142 +7366,142 @@ a:hover {
         .jumbo .jumbo-img-container .jumbo-img {
           width: 200px; } }
 
-.landing .modal {
-  min-height: 600px;
-  height: 100vh; }
-  .landing .modal .modal-icon {
-    font-size: 40px; }
-  .landing .modal .modal-content {
-    padding: 30px;
-    text-align: center;
-    font-size: 25px;
-    border: 0px;
-    box-shadow: 0 0px 40px rgba(199, 199, 199, 0.5); }
-    .landing .modal .modal-content .button.inverted {
-      transition: 200ms;
-      background-color: #579EFF;
-      border-color: #579EFF;
-      border-width: 2px;
-      color: white; }
-      .landing .modal .modal-content .button.inverted:hover {
-        background-color: white;
+.landing {
+  overflow-x: hidden;
+  width: 100%; }
+  .landing .modal {
+    min-height: 600px;
+    height: 100vh; }
+    .landing .modal .modal-icon {
+      font-size: 40px; }
+    .landing .modal .modal-content {
+      padding: 30px;
+      text-align: center;
+      font-size: 25px;
+      border: 0px;
+      box-shadow: 0 0px 40px rgba(199, 199, 199, 0.5); }
+      .landing .modal .modal-content .button.inverted {
+        transition: 200ms;
+        background-color: #579EFF;
+        border-color: #579EFF;
+        border-width: 2px;
+        color: white; }
+        .landing .modal .modal-content .button.inverted:hover {
+          background-color: white;
+          color: #579EFF; }
+      .landing .modal .modal-content .modal-cta {
+        font-weight: 500; }
+      .landing .modal .modal-content .modal-body {
+        padding: 20px 0; }
+    .landing .modal .modal-background {
+      background-color: rgba(255, 255, 255, 0.82); }
+  .landing .landing-explore {
+    margin-bottom: 0 !important;
+    background-color: white;
+    min-height: 600px;
+    height: 100vh; }
+    @media (max-width: 991.98px) {
+      .landing .landing-explore {
+        min-height: 900px; } }
+    .landing .landing-explore .landing-explore-icon {
+      width: 100%;
+      margin-bottom: 20px; }
+    .landing .landing-explore .bt-pink {
+      color: #F85386; }
+    .landing .landing-explore .bt-green {
+      color: #18D869; }
+    .landing .landing-explore .bt-blue {
+      color: #579EFF; }
+    .landing .landing-explore .landing-explore-desc {
+      padding-top: 30vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center; }
+      .landing .landing-explore .landing-explore-desc h3 {
+        font-size: 30px;
+        font-weight: bold;
+        margin-bottom: 20px; }
+      .landing .landing-explore .landing-explore-desc p {
+        margin-bottom: 20px;
+        color: #A0A0A0; }
+      .landing .landing-explore .landing-explore-desc a {
         color: #579EFF; }
-    .landing .modal .modal-content .modal-cta {
-      font-weight: 500; }
-    .landing .modal .modal-content .modal-body {
-      padding: 20px 0; }
-  .landing .modal .modal-background {
-    background-color: rgba(255, 255, 255, 0.82); }
-
-.landing .landing-explore {
-  margin-bottom: 0 !important;
-  background-color: white;
-  min-height: 600px; }
-  @media (min-width: 768px) {
-    .landing .landing-explore {
-      height: 100vh; } }
-  .landing .landing-explore .landing-explore-icon {
-    width: 100%;
-    margin-bottom: 20px; }
-  .landing .landing-explore .bt-pink {
-    color: #F85386; }
-  .landing .landing-explore .bt-green {
-    color: #18D869; }
-  .landing .landing-explore .bt-blue {
-    color: #579EFF; }
-  .landing .landing-explore .landing-explore-desc {
-    padding-top: 30vh;
+      @media (max-width: 991.98px) {
+        .landing .landing-explore .landing-explore-desc {
+          padding-top: 20vh; } }
+    .landing .landing-explore .landing-explore-img-wrapper {
+      padding-top: 10vh;
+      padding-left: 50px; }
+      @media (max-width: 991.98px) {
+        .landing .landing-explore .landing-explore-img-wrapper {
+          padding-left: 0px; } }
+    .landing .landing-explore .landing-explore-img {
+      max-width: 100%;
+      max-height: 500px;
+      object-fit: scale-down;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
+  .landing .landing-explore.landing-explore-reverse {
+    background: whitesmoke; }
+  .landing .landing-sponsors {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center; }
-    @media (min-width: 768px) {
-      .landing .landing-explore .landing-explore-desc {
-        max-width: 100%; } }
-    .landing .landing-explore .landing-explore-desc h3 {
-      font-size: 30px;
-      font-weight: bold;
-      margin-bottom: 20px; }
-    .landing .landing-explore .landing-explore-desc p {
-      margin-bottom: 20px;
-      color: #A0A0A0; }
-    .landing .landing-explore .landing-explore-desc a {
-      color: #579EFF; }
-  .landing .landing-explore .landing-explore-img-wrapper {
-    padding-top: 20vh;
-    padding-left: 50px; }
-    @media (max-width: 575.98px) {
-      .landing .landing-explore .landing-explore-img-wrapper {
-        margin-top: 1.5rem; } }
-    @media (min-width: 768px) {
-      .landing .landing-explore .landing-explore-img-wrapper {
-        max-width: 100%; } }
-  .landing .landing-explore .landing-explore-img {
-    max-width: 100%;
-    max-height: 500px;
-    object-fit: scale-down;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); }
-
-.landing .landing-explore.landing-explore-reverse {
-  background: whitesmoke; }
-
-.landing .landing-sponsors {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-color: white;
-  padding-top: 60px;
-  padding-bottom: 100px; }
-  .landing .landing-sponsors .landing-sponsors-desc {
-    align-self: center;
-    max-width: 450px;
-    text-align: center; }
-    .landing .landing-sponsors .landing-sponsors-desc h3 {
-      font-size: 30px;
-      font-weight: bold;
-      margin-bottom: 20px; }
-    .landing .landing-sponsors .landing-sponsors-desc p {
-      margin-bottom: 35px;
-      color: #A0A0A0; }
-  .landing .landing-sponsors .landing-sponsors-img-wrapper {
+    justify-content: center;
+    background-color: white;
+    padding-top: 60px;
+    padding-bottom: 100px; }
+    .landing .landing-sponsors .landing-sponsors-desc {
+      align-self: center;
+      max-width: 450px;
+      text-align: center; }
+      .landing .landing-sponsors .landing-sponsors-desc h3 {
+        font-size: 30px;
+        font-weight: bold;
+        margin-bottom: 20px; }
+      .landing .landing-sponsors .landing-sponsors-desc p {
+        margin-bottom: 35px;
+        color: #A0A0A0; }
+    .landing .landing-sponsors .landing-sponsors-img-wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: center; }
+      .landing .landing-sponsors .landing-sponsors-img-wrapper .landing-sponsors-img {
+        padding-right: 20px;
+        max-width: 95%;
+        max-height: 100px;
+        object-fit: scale-down; }
+  .landing .landing-mission {
+    background-color: whitesmoke; }
+    .landing .landing-mission .landing-mission-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 50vw;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      padding-left: 125px;
+      padding-right: 125px; }
+      @media (max-width: 991.98px) {
+        .landing .landing-mission .landing-mission-column {
+          padding-left: 0px;
+          padding-right: 0px; } }
+      .landing .landing-mission .landing-mission-column h3 {
+        font-weight: bold;
+        margin-bottom: 30px; }
+      .landing .landing-mission .landing-mission-column p {
+        margin-bottom: 30px; }
+  .landing .landing-artist-credit {
     display: flex;
     flex-direction: row;
-    justify-content: center; }
-    .landing .landing-sponsors .landing-sponsors-img-wrapper .landing-sponsors-img {
-      padding-right: 20px;
-      max-width: 95%;
-      max-height: 100px;
-      object-fit: scale-down; }
-
-.landing .landing-mission {
-  background-color: whitesmoke; }
-  .landing .landing-mission .landing-mission-column {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    max-width: 50vw;
-    padding-top: 50px;
-    padding-bottom: 50px;
-    padding-left: 125px;
-    padding-right: 125px; }
-    .landing .landing-mission .landing-mission-column h3 {
-      font-weight: bold;
-      margin-bottom: 30px; }
-    .landing .landing-mission .landing-mission-column p {
-      margin-bottom: 30px; }
-
-.landing .landing-artist-credit {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding: 50px;
-  font-size: 20px;
-  background-color: white; }
-  .landing .landing-artist-credit > * {
-    padding: 0 5px; }
-  .landing .landing-artist-credit a {
-    transition: 200ms; }
+    justify-content: center;
+    padding: 50px;
+    font-size: 20px;
+    background-color: white; }
+    .landing .landing-artist-credit > * {
+      padding: 0 5px; }
+    .landing .landing-artist-credit a {
+      transition: 200ms; }
 
 .login-container {
   min-height: 300px;
@@ -7861,8 +7863,7 @@ a:hover {
 .contributors {
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: center; }
+  justify-content: center; }
   .contributors .contributors-container {
     display: flex;
     flex-direction: column;
@@ -7870,8 +7871,16 @@ a:hover {
     width: 700px;
     min-width: 700px;
     margin-top: 130px; }
+    @media (max-width: 575.98px) {
+      .contributors .contributors-container {
+        width: 375px;
+        min-width: 375px;
+        margin-top: 10px; } }
     .contributors .contributors-container .contributors-description {
       align-self: flex-start; }
+      @media (max-width: 575.98px) {
+        .contributors .contributors-container .contributors-description {
+          margin-left: 20px; } }
       .contributors .contributors-container .contributors-description > h4 {
         font-size: 25px;
         font-weight: 600;
@@ -7893,6 +7902,9 @@ a:hover {
         width: 21%;
         margin-right: 0px;
         margin-bottom: 40px; }
+        @media (max-width: 575.98px) {
+          .contributors .contributors-container .contributor-profiles .contributor-card {
+            width: 49%; } }
         .contributors .contributors-container .contributor-profiles .contributor-card .contributor-pic-container {
           display: flex;
           flex-direction: row;
@@ -7930,23 +7942,36 @@ a:hover {
   justify-content: center;
   padding: 40px 0px;
   width: 100%; }
+  @media (max-width: 575.98px) {
+    .past-contributors {
+      width: 375px !important; } }
   .past-contributors .past-contributors-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     min-width: 600px;
     max-width: 900px; }
+    @media (max-width: 575.98px) {
+      .past-contributors .past-contributors-content {
+        width: 375px !important;
+        min-width: 375px; } }
     .past-contributors .past-contributors-content h4 {
       text-transform: uppercase;
       margin: 0 0;
       font-weight: bold;
       margin-bottom: 10px;
       letter-spacing: 1px; }
+      @media (max-width: 575.98px) {
+        .past-contributors .past-contributors-content h4 {
+          font-size: 18px; } }
     .past-contributors .past-contributors-content .past-contributors-founders {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       margin: 20px 0; }
+      @media (max-width: 575.98px) {
+        .past-contributors .past-contributors-content .past-contributors-founders {
+          width: 375px; } }
       .past-contributors .past-contributors-content .past-contributors-founders .founder-card {
         height: 100px;
         width: 200px;
@@ -7990,6 +8015,11 @@ a:hover {
       font-size: 18px;
       width: 110%;
       margin-left: 50px; }
+      @media (max-width: 575.98px) {
+        .past-contributors .past-contributors-content .past-contributors-others {
+          width: 375px;
+          margin-left: 0px;
+          padding-left: 40px; } }
       .past-contributors .past-contributors-content .past-contributors-others a {
         width: 20%;
         min-width: 200px;
