@@ -2,7 +2,7 @@
 
 // up to 767px
 @mixin mobile {
-  @include media-breakpoint-down(sm) {
+  @include media-breakpoint-down(xs) {
     @content;
   }
 }

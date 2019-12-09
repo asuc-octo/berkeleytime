@@ -2,6 +2,8 @@ import axios from 'axios';
 import {
   MODIFY_LIST, RECEIVE_LIST, MODIFY_SELECTED, FILTER,
   START_REQUEST, START_REQUEST_DESCRIPTION, UPDATE_COURSE_DATA,
+  UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, UPDATE_GRADE_DATA, UPDATE_GRADE_SELECTED,
+  UPDATE_ENROLL_CONTEXT, ENROLL_ADD_COURSE, UPDATE_ENROLL_DATA, UPDATE_ENROLL_SELECTED,
 } from './actionTypes';
 
 // function to update the active playlist
@@ -55,6 +57,66 @@ export const updateCourses = (data) => ({
   },
 });
 
+// update grade list
+export const updateGradeContext = (data) => ({
+  type: UPDATE_GRADE_CONTEXT,
+  payload: {
+    data
+  },
+})
+
+// add displayed course to the grade page
+export const gradeAddCourse = (formattedCourse) => ({
+  type: GRADE_ADD_COURSE,
+  payload: {
+    formattedCourse
+  }
+})
+
+export const updateGradeData = (gradesData) => ({
+  type: UPDATE_GRADE_DATA,
+  payload: {
+    gradesData
+  }
+})
+
+export const updatedGradeSelected = (data) => ({
+  type: UPDATE_GRADE_SELECTED,
+  payload: {
+    data
+  }
+})
+
+// update enroll list
+export const updateEnrollContext = (data) => ({
+  type: UPDATE_ENROLL_CONTEXT,
+  payload: {
+    data
+  },
+})
+
+// add displayed course to the grade page
+export const enrollAddCourse = (formattedCourse) => ({
+  type: ENROLL_ADD_COURSE,
+  payload: {
+    formattedCourse
+  }
+})
+
+export const updateEnrollData = (enrollmentData) => ({
+  type: UPDATE_ENROLL_DATA,
+  payload: {
+    enrollmentData
+  }
+})
+
+export const updatedEnrollSelected = (sections) => ({
+  type: UPDATE_ENROLL_SELECTED,
+  payload: {
+    sections
+  }
+})
+
 // get information for the class displayed in the class description component
 export function getCourseData(id) {
   return dispatch => axios.get('http://localhost:8080/api/catalog_json/course_box/', {
@@ -82,6 +144,7 @@ export function getFilterResults(filters) {
     error => console.log('An error occurred.', error),
   );
 }
+
 
 // get the course list
 export function fetchLists(paths) {
@@ -129,4 +192,146 @@ export function fetchLists(paths) {
         );
     }
   };
+}
+
+export function fetchGradeContext() {
+  return dispatch => axios.get('http://localhost:8080/api/grades_json/')
+    .then(
+      res => {
+        dispatch(updateGradeContext(res.data));
+      },
+      error => console.log('An error occurred.', error),
+    );
+}
+
+export function fetchGradeClass(course) {
+  return dispatch => axios.get(`http://localhost:8080/api/catalog_json/course/${course.courseID}/`)
+    .then(
+      res => {
+        let courseData = res.data;
+        let formattedCourse =  {
+          id: course.id,
+          course: courseData.course,
+          title: courseData.title,
+          semester: course.semester,
+          instructor: course.instructor,
+          courseID: course.courseID,
+          sections: course.sections
+        }
+        dispatch(gradeAddCourse(formattedCourse))
+      },
+      error => console.log('An error occurred.', error),
+    )
+}
+
+export function fetchGradeData(classData) {
+  let promises = [];
+  for(let course of classData) {
+    let { sections } = course;
+    let url = `http://localhost:8080/api/grades/sections/${sections.join('&')}/`;
+    promises.push(axios.get(url));
+  }
+  return dispatch => axios.all(promises)
+    .then(
+      data => {
+        let gradesData = data.map((res, i) => {
+          let gradesData = res.data;
+          gradesData['id'] = classData[i].id;
+          gradesData['instructor'] = classData[i].instructor == 'all' ? 'All Instructors' : classData[i].instructor;
+          gradesData['semester'] = classData[i].semester == 'all' ? 'All Semesters' : classData[i].semester;
+          return gradesData
+        });
+        dispatch(updateGradeData(gradesData));
+      },
+      error => console.log('An error occurred.', error),
+  );
+}
+
+export function fetchGradeSelected(updatedClass) {
+  let url = `http://localhost:8080/api/grades/course_grades/${updatedClass.value}/`
+  return dispatch => axios.get(url)
+    .then(
+      res => {
+        console.log(res);
+        dispatch(updatedGradeSelected(res.data));
+      // if (updatedClass.addSelected) {
+      //   this.addSelected();
+      //   this.handleClassSelect({value: updatedClass.value, addSelected: false});
+      // }
+      },
+      error => console.log('An error occurred.', error),
+    );
+}
+
+export function fetchEnrollContext() {
+  return dispatch => axios.get('http://localhost:8080/api/enrollment_json/')
+    .then(
+      res => {
+        dispatch(updateEnrollContext(res.data));
+      },
+      error => console.log('An error occurred.', error),
+    );
+}
+
+export function fetchEnrollClass(course) {
+  return dispatch => axios.get(`http://localhost:8080/api/catalog_json/course/${course.courseID}/`)
+    .then(
+      res => {
+        let courseData = res.data;
+        let formattedCourse =  {
+          id: course.id,
+          course: courseData.course,
+          title: courseData.title,
+          semester: course.semester,
+          instructor: course.instructor,
+          courseID: course.courseID,
+          sections: course.sections
+        }
+        dispatch(enrollAddCourse(formattedCourse))
+      },
+      error => console.log('An error occurred.', error),
+    )
+}
+
+export function fetchEnrollData(classData) {
+  let promises = [];
+  for(let course of classData) {
+    let { instructor, courseID, semester, sections } = course;
+    let url;
+    if(instructor === 'all') {
+      let [sem, year] = semester.split(' ');
+      url = `http://localhost:8080/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
+    } else {
+      url = `http://localhost:8080/api/enrollment/data/${sections[0]}/`;
+    }
+    promises.push(axios.get(url));
+  }
+  return dispatch => axios.all(promises)
+    .then(
+      data => {
+        let enrollmentData = data.map((res, i) => {
+          let enrollmentData = res.data;
+          enrollmentData['id'] = classData[i].id;
+          return enrollmentData
+      })
+      dispatch(updateEnrollData(enrollmentData));
+    },
+    error => console.log('An error occurred.', error),
+  )
+}
+
+export function fetchEnrollSelected(updatedClass) {
+  let url = `http://localhost:8080/api/enrollment/sections/${updatedClass.value}/`;
+  return dispatch => axios.get(url)
+    .then(
+      res => {
+        console.log(res);
+        dispatch(updatedEnrollSelected(res.data));
+        // if (updatedClass.addSelected) {
+        //   this.addSelected();
+        //   this.handleClassSelect({value: updatedClass.value, addSelected: false});
+        // }
+      },
+     error => console.log('An error occurred.', error),
+  )
 }

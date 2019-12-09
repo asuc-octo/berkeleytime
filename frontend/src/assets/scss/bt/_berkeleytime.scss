@@ -5,5 +5,9 @@
   .view {
     min-height: 100vh;
   }
+
+  .app-container{
+    padding-top: $bt-navbar-height;
+  }
 }
   
