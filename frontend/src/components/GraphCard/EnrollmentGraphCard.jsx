@@ -17,13 +17,16 @@ import EnrollmentGraph from '../Graphs/EnrollmentGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
 import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 
+import { fetchEnrollData } from '../../redux/actions';
+import { connect } from "react-redux";
+
 class EnrollmentGraphCard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      enrollmentData: [],
-      graphData: [],
+      // enrollmentData: [],
+      // graphData: [],
       hoveredClass: false,
     };
 
@@ -43,65 +46,39 @@ class EnrollmentGraphCard extends Component {
   }
 
   getEnrollmentData() {
-    const { classData } = this.props;
-    let promises = [];
-
-    for(let course of classData) {
-      let { instructor, courseID, semester, sections } = course;
-
-      let url;
-      if(instructor === 'all') {
-        let [sem, year] = semester.split(' ');
-        url = `http://localhost:8080/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
-      } else {
-        url = `http://localhost:8080/api/enrollment/data/${sections[0]}/`;
-      }
-
-      promises.push(axios.get(url));
-    }
-
-    axios.all(promises).then(data => {
-      let enrollmentData = data.map((res, i) => {
-        let enrollmentData = res.data;
-        enrollmentData['id'] = classData[i].id;
-        return enrollmentData
-      })
-
-      this.setState({
-        enrollmentData: enrollmentData,
-        graphData: this.buildGraphData(enrollmentData),
-      })
-    })
+    const { classData, fetchEnrollData } = this.props;
+    debugger
+    fetchEnrollData(classData);
   }
 
-  buildGraphData(enrollmentData) {
-    let days = [...Array(200).keys()]
-    const graphData = days.map(day => {
-      let ret = {
-        name: day,
-      };
-
-      for(let enrollment of enrollmentData) {
-        let validTimes = enrollment.data.filter(time => time.day >= 0);
-        let enrollmentTimes = {};
-        for(let validTime of validTimes) {
-          enrollmentTimes[validTime.day] = validTime;
-        }
-
-        if(day in enrollmentTimes) {
-          ret[enrollment.id] = (enrollmentTimes[day].enrolled_percent * 100).toFixed(1);
-        }
-      }
-
-      return ret;
-    });
-
-    return graphData;
-  }
+  // buildGraphData(enrollmentData) {
+  //   let days = [...Array(200).keys()]
+  //   const graphData = days.map(day => {
+  //     let ret = {
+  //       name: day,
+  //     };
+  //
+  //     for(let enrollment of enrollmentData) {
+  //       let validTimes = enrollment.data.filter(time => time.day >= 0);
+  //       let enrollmentTimes = {};
+  //       for(let validTime of validTimes) {
+  //         enrollmentTimes[validTime.day] = validTime;
+  //       }
+  //
+  //       if(day in enrollmentTimes) {
+  //         ret[enrollment.id] = (enrollmentTimes[day].enrolled_percent * 100).toFixed(1);
+  //       }
+  //     }
+  //
+  //     return ret;
+  //   });
+  //
+  //   return graphData;
+  // }
 
 
   update(course, day) {
-    const { enrollmentData } = this.state;
+    const { enrollmentData } = this.props;
     let selectedEnrollment= enrollmentData.filter(c => course.id == c.id)[0]
 
     let valid = selectedEnrollment.data.filter(d => d.day === day).length
@@ -140,7 +117,8 @@ class EnrollmentGraphCard extends Component {
   }
 
   render () {
-    let { graphData, enrollmentData, hoveredClass } = this.state;
+    let { hoveredClass } = this.state;
+    let { graphData, enrollmentData } = this.props;
     let telebears = enrollmentData.length ? enrollmentData[0]['telebears'] : {};
 
     var colorIndex = 0;
@@ -197,4 +175,23 @@ class EnrollmentGraphCard extends Component {
   }
 }
 
-export default EnrollmentGraphCard;
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    fetchEnrollData: (classData) => dispatch(fetchEnrollData(classData)),
+  }
+}
+
+const mapStateToProps = state => {
+  const { enrollmentData, graphData } = state.enrollment;
+  return {
+    enrollmentData,
+    graphData
+  };
+};
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EnrollmentGraphCard);

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import ClassCard from './ClassCard';
-import axios from 'axios';
 
 import vars from '../../variables/Variables';
 
