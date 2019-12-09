@@ -18,7 +18,7 @@
       font-size: 64px;
       font-weight: 500;
 
-      @include touch{
+      @include touch {
         font-size: 32px;
       }
     }
