@@ -148,7 +148,7 @@ class EnrollmentSearchBar extends Component {
           return {
             value: instructor,
             label: instructor,
-            sectionNumber: instructor.split(' / ')[1],
+            sectionNumber: instructor.split(' / ')[1].trim(),
           };
         });
         return sections;
@@ -180,8 +180,8 @@ class EnrollmentSearchBar extends Component {
       if (selectSecondary === 'all') {
         return true;
       }
-      let selectedInstr = selectSecondary.split(' / ')[0];
-      let selectedSec = selectSecondary.split(' / ')[1];
+      let selectedInstr = selectSecondary.split(' / ')[0].trim();
+      let selectedSec = selectSecondary.split(' / ')[1].trim();
       if (selectedInstr === "None") {
         return section.section_number === selectedSec;
       }
