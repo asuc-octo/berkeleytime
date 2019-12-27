@@ -330,7 +330,7 @@ def enrollment_json(request, section_id):
         rtn["section_id"] = section.id
         rtn["title"] = course.abbreviation + " " + course.course_number
         rtn["subtitle"] = course.title
-        if section.instructor == "":
+        if section.instructor == "" or section.instructor is None:
             section.instructor = "No Instructor Assigned"
         rtn["section_name"] = section.instructor + " - " + section.section_number
 
