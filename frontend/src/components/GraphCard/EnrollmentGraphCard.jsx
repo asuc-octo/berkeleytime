@@ -48,7 +48,6 @@ class EnrollmentGraphCard extends Component {
 
     for(let course of classData) {
       let { instructor, courseID, semester, sections } = course;
-
       let url;
       if(instructor === 'all') {
         let [sem, year] = semester.split(' ');
