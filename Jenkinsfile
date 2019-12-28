@@ -17,8 +17,12 @@ pipeline {
   stages {
     stage('Build-Berkeleytime-Stage') {
       when {
-        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)/**)", comparator: "REGEXP" 
         branch "master"
+        anyOf {
+            changeset "berkeleytime/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -29,8 +33,12 @@ docker push ${BACKEND_STAGE_GCR_PATH}:$version'''
     }
     stage('Build-Frontend-Stage') {
       when {
-        changeset pattern: "(Jenkinsfile|(kubernetes|frontend)/**)", comparator: "REGEXP" 
         branch "master"
+        anyOf {
+            changeset "frontend/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -41,8 +49,12 @@ docker push ${FRONTEND_STAGE_GCR_PATH}:$version'''
     }
     stage('Deploy-Berkeleytime-Stage') {
       when {
-        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)/**)", comparator: "REGEXP" 
         branch "master"
+        anyOf {
+            changeset "berkeleytime/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -57,8 +69,12 @@ kubectl apply -f $BACKEND_DEPLOY_STAGE_FILEPATH'''
     }
     stage('Deploy-Frontend-Stage') {
       when {
-        changeset pattern: "(Jenkinsfile|(kubernetes|frontend)\/.*)", comparator: "REGEXP" 
         branch "master"
+        anyOf {
+            changeset "frontend/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -73,8 +89,12 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
     }
     stage('Build-Berkeleytime-Prod') {
       when {
-        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)\/.*)", comparator: "REGEXP" 
         branch "production"
+        anyOf {
+            changeset "berkeleytime/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -85,8 +105,12 @@ docker push ${BACKEND_PROD_GCR_PATH}:$version'''
     }
     stage('Build-Frontend-Prod') {
       when {
-        changeset pattern: "(Jenkinsfile|(kubernetes|frontend)\/.*)", comparator: "REGEXP" 
         branch "production"
+        anyOf {
+            changeset "frontend/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -97,8 +121,12 @@ docker push ${FRONTEND_PROD_GCR_PATH}:$version'''
     }
     stage('Deploy-Frontend-Production') {
       when {
-        changeset pattern: "(Jenkinsfile|(kubernetes|frontend)\/.*)", comparator: "REGEXP" 
         branch "production"
+        anyOf {
+            changeset "frontend/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -112,8 +140,12 @@ kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
     }
     stage('Deploy-Backend-Production') {
       when {
-        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)\/.*)", comparator: "REGEXP" 
         branch "production"
+        anyOf {
+            changeset "berkeleytime/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -127,8 +159,12 @@ kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
     }
     stage('Update-Data-Fetch-Image-Version') {
       when {
-        changeset pattern: "(Jenkinsfile|(kubernetes|berkeleytime)\/.*)", comparator: "REGEXP" 
         branch "production"
+        anyOf {
+            changeset "berkeleytime/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
