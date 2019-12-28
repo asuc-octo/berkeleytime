@@ -140,11 +140,15 @@ class EnrollmentSearchBar extends Component {
     let options = sections.filter(semester => this.getSectionSemester(semester) === selectPrimary)
         .map(semester => {
         let sections = semester.sections.map(section => {
-          let instructor = `${section.instructor} / ${section.section_number}`;
+          let selectedInstr = section.instructor;
+          if (selectedInstr === null) {
+            selectedInstr = "None";
+          }
+          let instructor = `${selectedInstr} / ${section.section_number}`;
           return {
-            value: instructor.split(' / ')[0],
+            value: instructor,
             label: instructor,
-            sectionNumber: instructor.split(' / ')[1],
+            sectionNumber: instructor.split(' / ')[1].trim(),
           };
         });
         return sections;
@@ -155,7 +159,6 @@ class EnrollmentSearchBar extends Component {
         ret.push(s);
       }
     }
-
     return ret;
   }
 
@@ -174,7 +177,15 @@ class EnrollmentSearchBar extends Component {
     }
     
     ret = ret.filter(section => {
-      return selectSecondary === 'all' ? true : section.instructor === selectSecondary;
+      if (selectSecondary === 'all') {
+        return true;
+      }
+      let selectedInstr = selectSecondary.split(' / ')[0].trim();
+      let selectedSec = selectSecondary.split(' / ')[1].trim();
+      if (selectedInstr === "None") {
+        return section.section_number === selectedSec;
+      }
+      return section.instructor === selectedInstr && section.section_number === selectedSec;
     })
     .filter(section => {
       return sectionNumber ? section.section_number === sectionNumber : true;
