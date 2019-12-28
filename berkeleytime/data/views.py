@@ -85,7 +85,7 @@ def grade_section_json(request, course_id):
                 "grade_id": entry.id,
             } for entry in Grade.objects.filter(course__id=int(course_id), total__gte = 1)
         ]
-        sections = sorted(sections, key=section_to_value, reverse=True)
+        sections = sorted(sections, key=year_and_semester_to_value, reverse=True)
         cache.set("grade_section_json " + str(course_id), sections, CACHE_DAY_TIMEOUT)
         return render_to_json(sections)
     except Exception as e:
