@@ -48,7 +48,7 @@ class SISCourseResource(object):
             return [x for x in (course_mapper.map(c) for c in sis_courses) if x is not None]
         except Exception as e:
             # TODO (Yuxin) Do something here!
-            print e
+            print "Error mapping courses", e
             pass
 
     @retry(SISCourseResourceException, tries=3)
