@@ -73,7 +73,7 @@ export default function EnrollmentInfoCard({
 
         <Row>
           <div className="class-stat-type">{`Today: ${todayString}`}</div>
-          <div className="class-adjustment-percent">{`${formatPercentage(todayPoint.enrolled_percent)}%`}</div>
+          <div className="class-adjustment-percent">{`${formatPercentage(todayPoint.enrolled_percent)}`}</div>
           <Row className="class-adjustment">
             <Col xs={8}>
               <div className="class-stats-name">Currently Enrolled</div>
