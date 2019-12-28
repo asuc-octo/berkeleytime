@@ -17,7 +17,7 @@ from django.db.models import Avg, Sum
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-ENROLLMENT_CACHE_TIMEOUT = 3600
+ENROLLMENT_CACHE_TIMEOUT = 900
 CACHE_DAY_TIMEOUT = 86400
 
 STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
