@@ -24,7 +24,7 @@ function Footer() {
             <p className=""><b>About Us</b></p>
             <Link to="/about" className="">About</Link>
             <a href="http://asucocto.org/recruitment" className="">Join Us</a>
-            <a href="http://asucocto.org/" className="">ASUC OCTO</a>
+            <a href="https://octo.asuc.org" className="">ASUC OCTO</a>
           </div>
         </div>
       </div>
