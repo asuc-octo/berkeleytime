@@ -167,6 +167,7 @@
         background-color: white;
         @include tablet {
             height: 100vh;
+            max-height: 700px;
         }
         min-height: 600px;
 
