@@ -18,6 +18,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 ENROLLMENT_CACHE_TIMEOUT = 3600
+CACHE_DAY_TIMEOUT = 86400
 
 STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
                    ("b1", "B+"), ("b2", "B"), ("b3", "B-"),
@@ -32,7 +33,7 @@ def grade_context():
         courses = Course.objects.filter(grade__isnull=False).distinct().order_by("abbreviation", "course_number")
         rtn = courses.values("id", "abbreviation", "course_number")
         rtn = sort_course_dicts(rtn)
-        cache.set("grade__courses", rtn, 86400)
+        cache.set("grade__courses", rtn, CACHE_DAY_TIMEOUT)
     return {"courses": rtn}
 
 def get_or_zero(d, k):
@@ -71,6 +72,10 @@ def grade_section_json(request, course_id):
     {"instructor": "Shewchuk", "semester": "spring", "year": 2012, "section_number": "003", "grade_id": 1533}
     """
     try:
+        cached = cache.get("grade_section_json " + str(course_id))
+        if cached:
+            print("Cache Hit in grade_section_json course_id " + course_id)
+            return render_to_json(cached)
         sections = [
             {
                 "instructor": entry.instructor,
@@ -80,10 +85,8 @@ def grade_section_json(request, course_id):
                 "grade_id": entry.id,
             } for entry in Grade.objects.filter(course__id=int(course_id), total__gte = 1)
         ]
-        sections = sorted(sections,
-                          key=lambda section: (year_and_semester_to_value(section),
-                                               section['section_number']),
-                          reverse=True)
+        sections = sorted(sections, key=section_to_value, reverse=True)
+        cache.set("grade_section_json " + str(course_id), sections, CACHE_DAY_TIMEOUT)
         return render_to_json(sections)
     except Exception as e:
         print e
@@ -91,6 +94,10 @@ def grade_section_json(request, course_id):
 
 def grade_json(request, grade_ids):
     try:
+        cached = cache.get("grade_json " + str(grade_ids))
+        if cached:
+            print("Cache Hit in grade_json " + grade_ids)
+            return render_to_json(cached)
         actual_total = 0
         rtn = {}
         grade_ids = grade_ids.split("&")
@@ -134,6 +141,7 @@ def grade_json(request, grade_ids):
         if rtn["section_letter"] == "":
             rtn["section_letter"] = "N/A"
 
+        cache.set("grade_json" + str(grade_ids), rtn, CACHE_DAY_TIMEOUT)
         return render_to_json(rtn)
     except Exception as e:
         print e
@@ -164,7 +172,7 @@ def enrollment_context():
         rtn = sort_course_dicts(rtn)
 
 
-        cache.set("enrollment__courses", rtn, 86400)
+        cache.set("enrollment__courses", rtn, ENROLLMENT_CACHE_TIMEOUT)
     return {"courses": rtn, "telebears": TELEBEARS_JSON}
 
 @raise_404_on_error
