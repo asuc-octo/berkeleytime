@@ -99,9 +99,9 @@ class GradesSearchBar extends Component {
   }
 
   handleSecondarySelect(secondary) {
-    this.setState({ 
-      selectSecondary: secondary ? secondary.value: '',
-    })
+    this.setState({
+      selectSecondary: secondary ? secondary.value : '',
+    });
   }
 
   buildCoursesOptions(courses) {
@@ -171,16 +171,16 @@ class GradesSearchBar extends Component {
       if(selectType === 'instructor') {
         options = [...new Set(sections.map(s => `${this.getSectionSemester(s)} / ${s.section_number}`))]
         .map(semester => ({
-          value: semester.split(' / ')[0],
+          value: semester,
           label: semester,
-          sectionNumber: semester.split(' / ')[1],
+          sectionNumber: semester.split(' / ')[1].trim(),
         }))
       } else {
         options = [...new Set(sections.map(s => `${s.instructor} / ${s.section_number}`))]
         .map(instructor => ({
-          value: instructor.split(' / ')[0],
+          value: instructor,
           label: instructor,
-          sectionNumber: instructor.split(' / ')[1],
+          sectionNumber: instructor.split(' / ')[1].trim(),
         }))
       }
 
@@ -195,9 +195,9 @@ class GradesSearchBar extends Component {
             let semester = `${this.getSectionSemester(section)} / ${section.section_number}`
 
             return {
-              value: semester.split(' / ')[0],
+              value: semester,
               label: semester,
-              sectionNumber: semester.split(' / ')[1],
+              sectionNumber: semester.split(' / ')[1].trim(),
             }
           })
       } else {
@@ -206,9 +206,9 @@ class GradesSearchBar extends Component {
             let instructor = `${section.instructor} / ${section.section_number}`;
 
             return {
-              value: instructor.split(' / ')[0],
+              value: instructor,
               label: instructor,
-              sectionNumber: instructor.split(' / ')[1],
+              sectionNumber: instructor.split(' / ')[1].trim(),
             }
           })
       }
@@ -222,29 +222,34 @@ class GradesSearchBar extends Component {
   }
 
   getFilteredSections() {
-    const { sections, selectType, selectPrimary, selectSecondary, sectionNumber } = this.state;
+    const { sections, selectType, selectPrimary, selectSecondary } = this.state;
     let ret;
-
     if(selectType === 'instructor') {
       ret = sections.filter(section => {
         return selectPrimary === 'all' ? true : section.instructor === selectPrimary;
       })
       .filter(section => {
-        return selectSecondary === 'all' ? true : this.getSectionSemester(section) === selectSecondary;
-      })
-      .filter(section => {
-        return sectionNumber ? section.section_number === sectionNumber : true;
-      })
+        return selectSecondary === 'all' ? true : this.getSectionSemester(section) === selectSecondary.split("/")[0].trim();
+      });
+      if (selectSecondary !== 'all') {
+        let sectionNumber = selectSecondary.split("/")[1].trim();
+        ret = ret.filter(section => {
+          return section.section_number === sectionNumber;
+        })
+      }
     } else {
       ret = sections.filter(section => {
         return selectPrimary === 'all' ? true : this.getSectionSemester(section) === selectPrimary;
       })
       .filter(section => {
-        return selectSecondary === 'all' ? true : section.instructor === selectSecondary;
-      })
-      .filter(section => {
-        return sectionNumber ? section.section_number === sectionNumber : true;
-      })
+        return selectSecondary === 'all' ? true : section.instructor === selectSecondary.split("/")[0].trim();
+      });
+      if (selectSecondary !== 'all') {
+        let sectionNumber = selectSecondary.split("/")[1];
+        ret = ret.filter(section => {
+          return section.section_number === sectionNumber;
+        })
+      }
     }
 
     ret = ret.map(s => s.grade_id);

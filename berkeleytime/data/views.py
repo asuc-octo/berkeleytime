@@ -330,7 +330,7 @@ def enrollment_json(request, section_id):
         rtn["section_id"] = section.id
         rtn["title"] = course.abbreviation + " " + course.course_number
         rtn["subtitle"] = course.title
-        if section.instructor == "":
+        if section.instructor == "" or section.instructor is None:
             section.instructor = "No Instructor Assigned"
         rtn["section_name"] = section.instructor + " - " + section.section_number
 
@@ -367,8 +367,8 @@ def enrollment_json(request, section_id):
             curr_d["waitlisted_max"] = curr_waitlisted_max
             curr_d["day"] = (d.date_created - CORRECTED_TELEBEARS["phase1_start"]).days + 1
             curr_d["date"] = (d.date_created).strftime("%m/%d/%Y-%H:%M:%S")
-            curr_d["enrolled_percent"] = round(d.enrolled / enrolled_max, 3)
-            curr_d["waitlisted_percent"] = round(d.waitlisted / curr_waitlisted_max, 3)
+            curr_d["enrolled_percent"] = round(d.enrolled / enrolled_max, 3) if enrolled_max else -1
+            curr_d["waitlisted_percent"] = round(d.waitlisted / curr_waitlisted_max, 3) if curr_waitlisted_max else -1
             rtn["data"].append(curr_d)
 
 
@@ -379,8 +379,8 @@ def enrollment_json(request, section_id):
             waitlisted_max = new_section["waitlisted_max"]
             rtn["data"][-1]["enrolled"] = last_enrolled
             rtn["data"][-1]["waitlisted"] = last_waitlisted
-            rtn["data"][-1]["enrolled_percent"] = round(last_enrolled / enrolled_max, 3)
-            rtn["data"][-1]["waitlisted_percent"] = round(last_waitlisted / waitlisted_max, 3)
+            rtn["data"][-1]["enrolled_percent"] = round(last_enrolled / enrolled_max, 3) if enrolled_max else -1
+            rtn["data"][-1]["waitlisted_percent"] = round(last_waitlisted / waitlisted_max, 3) if waitlisted_max else -1
         rtn["instructor"] = section.instructor
         enrolled_outliers = [d["enrolled_percent"] for d in rtn["data"] if d["enrolled_percent"] >= 1.0]
         rtn["enrolled_percent_max"] = max(enrolled_outliers) * 1.10 if enrolled_outliers  else 1.10
