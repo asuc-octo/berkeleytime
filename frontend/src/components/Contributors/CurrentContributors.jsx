@@ -63,7 +63,7 @@ class CurrentContributors extends PureComponent {
                     </div>
                     <div className="contributor-desc">
                       {member.site ? (
-                          <a href={member.site}><h5 className="contributor-name">{member.name}</h5></a>
+                          <a href={member.site}><h5 className="contributor-name contributor-site">{member.name}</h5></a>
                       ) : (
                           <h5 className="contributor-name">{member.name}</h5>
                       )}
