@@ -269,6 +269,7 @@ def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, y
                     course_id=course_id,
                     abbreviation=course.abbreviation,
                     course_number=course.course_number,
+                    log=True,
                 )
                 new_sections = [x.enrollment._initial for x in schedules if x.section._initial["is_primary"]]
 
@@ -356,6 +357,7 @@ def enrollment_json(request, section_id):
                 course_id=course.id,
                 abbreviation=course.abbreviation,
                 course_number=course.course_number,
+                log=True,
             )
             new_section = [x.enrollment._initial for x in schedules
                            if x.section._initial["is_primary"] and x.section['ccn'] == section.ccn][0]

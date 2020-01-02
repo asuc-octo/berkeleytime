@@ -27,7 +27,7 @@ class ScheduleResource(object):
     url = 'https://apis.berkeley.edu/sis/v1/classes/sections?term-id=%s&subject-area-code=%s&catalog-number=%s&page-size=400'  # noqa
     #https://apis.berkeley.edu/uat/sis/v1/classes/sections?term-id=2182&subject-area-code=ENGLISH'  # noqa
 
-    def get(self, semester, year, course_id, abbreviation, course_number): # noqa
+    def get(self, semester, year, course_id, abbreviation, course_number, log=False): # noqa
         """Fetch entity.Sections for a given abbreviation and course_number.
 
         TODO(noah): Passing in all this crap is gross, let's make it a
@@ -48,6 +48,13 @@ class ScheduleResource(object):
                 'course_number': str(course_number),
             })
             return []
+        elif log:
+            logger.info({
+                'message': 'Queried SIS for the sections for course',
+                'course_id': int(course_id),
+                'abbreviation': str(abbreviation),
+                'course_number': str(course_number),
+            })
 
         # Include this data with every entity.Section
         extras = {
