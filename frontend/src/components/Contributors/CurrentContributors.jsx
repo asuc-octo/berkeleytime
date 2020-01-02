@@ -62,7 +62,11 @@ class CurrentContributors extends PureComponent {
                       <img className="contributor-pic-silly" src={member.silly ? member.img_2 : member.img_1} alt={member.name} />
                     </div>
                     <div className="contributor-desc">
-                      <a href={member.site}><h5 className="contributor-name">{member.name}</h5></a>
+                      {member.site ? (
+                          <a href={member.site}><h5 className="contributor-name">{member.name}</h5></a>
+                      ) : (
+                          <h5 className="contributor-name">{member.name}</h5>
+                      )}
                       <p className="contributor-role">{member.role}</p>
                     </div>
                   </div>
