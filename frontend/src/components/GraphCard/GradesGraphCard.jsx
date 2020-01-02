@@ -7,6 +7,7 @@ import vars from '../../variables/Variables';
 import GradesGraph from '../Graphs/GradesGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard.jsx';
+import { BarLoader } from 'react-spinners';
 
 class GradesGraphCard extends Component {
   constructor(props) {
@@ -15,8 +16,8 @@ class GradesGraphCard extends Component {
     this.state = {
       gradesData: [],
       graphData: [],
-
       hoveredClass: false,
+      loading: false,
     },
 
     this.updateBarHover = this.updateBarHover.bind(this);
@@ -40,6 +41,12 @@ class GradesGraphCard extends Component {
     const { classData } = this.props;
     let promises = [];
 
+    if (this.state.gradesData.length === 0) {
+      this.setState({
+        loading: true,
+      })
+    }
+
     for(let course of classData) {
       let { sections } = course;
       let url = `/api/grades/sections/${sections.join('&')}/`;
@@ -59,6 +66,7 @@ class GradesGraphCard extends Component {
       this.setState({
         gradesData: gradesData,
         graphData: this.buildGraphData(gradesData),
+        loading: false,
       })
     })
   }
@@ -133,7 +141,7 @@ class GradesGraphCard extends Component {
   // }
 
   render () {
-    let { graphData, gradesData, hoveredClass } = this.state;
+    let { graphData, gradesData, hoveredClass, loading } = this.state;
     let { title } = this.props;
 
     var colorIndex = 0;
@@ -149,47 +157,56 @@ class GradesGraphCard extends Component {
       <div className="card grades-graph-card">
         <div className="grades-graph">
           {
-            gradesData.length === 0 ? (
-              <GraphEmpty pageType='grades'/>
+            loading ? (
+              <BarLoader
+                sizeUnit={"px"}
+                size={150}
+                color={'#123abc'}
+                loading={true}
+              />
             ) : (
-              <div className="graph-content">
-                <Row>
-                  <div className="graph-title">{ title }</div>
-                </Row>
-                <Row>
-                  <Col sm={8}>
-                    <GradesGraph
-                      graphData={graphData}
-                      gradesData={gradesData}
-                      updateBarHover={this.updateBarHover}
-                      updateGraphHover={this.updateGraphHover}
-                    />
-                  </Col>
-
-                  <Col sm={4}>
-                    {hoveredClass &&
-                      <GradesInfoCard
-                        course={hoveredClass.course}
-                        subtitle={hoveredClass.subtitle}
-                        semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
-                        instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
-                        courseLetter={hoveredClass.course_letter}
-                        courseGPA={hoveredClass.course_gpa}
-                        sectionLetter={hoveredClass.section_letter}
-                        sectionGPA={hoveredClass.section_gpa}
-                        denominator={hoveredClass.denominator}
-                        selectedGrade={hoveredClass[hoveredClass.hoverGrade]}
-                        gradeName={hoveredClass.hoverGrade}
-                        hoveredColor={hoveredColor}
-
-                        // selectedGrade = {this.state.selectedGrade}
-                        // betterGrade = {this.getNeighborGrade("better")}
-                        // worseGrade = {this.getNeighborGrade("worse")}
+              gradesData.length === 0 ? (
+                <GraphEmpty pageType='grades'/>
+              ) : (
+                <div className="graph-content">
+                  <Row>
+                    <div className="graph-title">{ title }</div>
+                  </Row>
+                  <Row>
+                    <Col sm={8}>
+                      <GradesGraph
+                        graphData={graphData}
+                        gradesData={gradesData}
+                        updateBarHover={this.updateBarHover}
+                        updateGraphHover={this.updateGraphHover}
                       />
-                    }
-                  </Col>
-                </Row>
-              </div>
+                    </Col>
+
+                    <Col sm={4}>
+                      {hoveredClass &&
+                        <GradesInfoCard
+                          course={hoveredClass.course}
+                          subtitle={hoveredClass.subtitle}
+                          semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
+                          instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
+                          courseLetter={hoveredClass.course_letter}
+                          courseGPA={hoveredClass.course_gpa}
+                          sectionLetter={hoveredClass.section_letter}
+                          sectionGPA={hoveredClass.section_gpa}
+                          denominator={hoveredClass.denominator}
+                          selectedGrade={hoveredClass[hoveredClass.hoverGrade]}
+                          gradeName={hoveredClass.hoverGrade}
+                          hoveredColor={hoveredColor}
+
+                          // selectedGrade = {this.state.selectedGrade}
+                          // betterGrade = {this.getNeighborGrade("better")}
+                          // worseGrade = {this.getNeighborGrade("worse")}
+                        />
+                      }
+                    </Col>
+                  </Row>
+                </div>
+              )
             )
           }
         </div>
