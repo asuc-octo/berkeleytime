@@ -53,7 +53,7 @@ PastContributors.defaultProps = {
         { 
             name: "Ashwin Iyengar",
             image: ashwin,
-            link: "https://www.lsgnt-cdt.ac.uk/students/year/2017",
+            link: "https://nms.kcl.ac.uk/ashwin.iyengar/ ",
         }, 
     ],
     pastContributors: [
