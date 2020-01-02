@@ -60,7 +60,9 @@ class GradesSearchBar extends Component {
     }
 
     this.setState({
-      selectedClass: updatedClass.value
+      selectedClass: updatedClass.value,
+      selectPrimary: '',
+      selectSecondary: '',
     })
 
     let url = `/api/grades/course_grades/${updatedClass.value}/`
