@@ -53,7 +53,9 @@ class EnrollmentSearchBar extends Component {
     }
 
     this.setState({
-      selectedClass: updatedClass.value
+      selectedClass: updatedClass.value,
+      selectPrimary: '',
+      selectSecondary: '',
     })
 
     let url = `/api/enrollment/sections/${updatedClass.value}/`
