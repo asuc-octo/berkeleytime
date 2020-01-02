@@ -16,6 +16,7 @@ import vars from '../../variables/Variables';
 import EnrollmentGraph from '../Graphs/EnrollmentGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
 import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
+import { BarLoader } from 'react-spinners';
 
 class EnrollmentGraphCard extends Component {
   constructor(props) {
@@ -25,6 +26,7 @@ class EnrollmentGraphCard extends Component {
       enrollmentData: [],
       graphData: [],
       hoveredClass: false,
+      loading: false,
     },
 
     this.updateLineHover = this.updateLineHover.bind(this);
@@ -45,6 +47,12 @@ class EnrollmentGraphCard extends Component {
   getEnrollmentData() {
     const { classData } = this.props;
     let promises = [];
+
+    if (this.state.enrollmentData.length === 0) {
+      this.setState({
+        loading: true,
+      })
+    }
 
     for(let course of classData) {
       let { instructor, courseID, semester, sections } = course;
@@ -69,6 +77,7 @@ class EnrollmentGraphCard extends Component {
       this.setState({
         enrollmentData: enrollmentData,
         graphData: this.buildGraphData(enrollmentData),
+        loading: false,
       })
     })
   }
@@ -139,7 +148,7 @@ class EnrollmentGraphCard extends Component {
   }
 
   render () {
-    let { graphData, enrollmentData, hoveredClass } = this.state;
+    let { graphData, enrollmentData, hoveredClass, loading } = this.state;
     let telebears = enrollmentData.length ? enrollmentData[0]['telebears'] : {};
 
     var colorIndex = 0;
@@ -155,39 +164,48 @@ class EnrollmentGraphCard extends Component {
       <div className="card enrollment-graph-card">
         <div className="enrollment-graph">
           {
-            enrollmentData.length === 0 ? (
-              <GraphEmpty pageType='enrollment'/>
+            loading ? (
+              <BarLoader
+                sizeUnit={"px"}
+                size={150}
+                color={'#123abc'}
+                loading={true}
+              />
             ) : (
-              <div className="enrollment-content">
-                <Row>
-                  <div className="graph-title">{ this.props.title }</div>
-                </Row>
-                <Row>
-                  <Col sm={8}>
-                    <EnrollmentGraph
-                      graphData={graphData}
-                      enrollmentData={enrollmentData}
-                      updateLineHover={this.updateLineHover}
-                      updateGraphHover={this.updateGraphHover}
-                    />
-                  </Col>
-
-                  <Col sm={4}>
-                    {hoveredClass &&
-                      <EnrollmentInfoCard
-                        title={hoveredClass.title}
-                        subtitle={hoveredClass.subtitle}
-                        semester={hoveredClass.semester}
-                        instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
-                        selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
-                        todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
-                        telebears={telebears}
-                        hoveredColor={hoveredColor}
+              enrollmentData.length === 0 ? (
+                <GraphEmpty pageType='enrollment'/>
+              ) : (
+                <div className="enrollment-content">
+                  <Row>
+                    <div className="graph-title">{ this.props.title }</div>
+                  </Row>
+                  <Row>
+                    <Col sm={8}>
+                      <EnrollmentGraph
+                        graphData={graphData}
+                        enrollmentData={enrollmentData}
+                        updateLineHover={this.updateLineHover}
+                        updateGraphHover={this.updateGraphHover}
                       />
-                    }
-                  </Col>
-                </Row>
-              </div>
+                    </Col>
+
+                    <Col sm={4}>
+                      {hoveredClass &&
+                        <EnrollmentInfoCard
+                          title={hoveredClass.title}
+                          subtitle={hoveredClass.subtitle}
+                          semester={hoveredClass.semester}
+                          instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
+                          selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
+                          todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
+                          telebears={telebears}
+                          hoveredColor={hoveredColor}
+                        />
+                      }
+                    </Col>
+                  </Row>
+                </div>
+              )
             )
           }
         </div>
