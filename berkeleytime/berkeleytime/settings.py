@@ -219,6 +219,7 @@ else:
     MIDDLEWARE_CLASSES = ()
 
 MIDDLEWARE_CLASSES += (
+    'berkeleytime.utils.corsmiddleware.CORSMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
