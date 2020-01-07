@@ -8,7 +8,7 @@ function formatPercentage(num) {
 export default function EnrollmentInfoCard({
   title, subtitle, semester, instructor,
   selectedPoint, todayPoint, telebears,
-  hoveredColor
+  hoveredColor, enrolledMax
 }) {
   const today = new Date();
   let dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -40,33 +40,39 @@ export default function EnrollmentInfoCard({
           <div className="class-title">{subtitle}</div>
         </Row>
 
-        <Row className="class-stats">
-          <div className="class-stat-type">
-            {`${period}: Day ${selectedPoint.day}`}
-          </div>
-          <div className="class-adjustment-percent">
-            {`Enrollment Percent: ${formatPercentage(selectedPoint.enrolled_percent)}%`}
-          </div>
-          <div className="class-adjustment-percent">
-            {`Waitlist Percent: ${formatPercentage(selectedPoint.waitlisted_percent)}%`}
-          </div>
+        <div className="class-stats">
           <Row>
-            <Col xs={8}>
+            <div className="class-stat-type">
+              {`${period}: Day ${selectedPoint.day}`}
+            </div>
+          </Row>
+          <Row>
+            <div className="class-adjustment-percent">
+              {`Enrollment Percent: ${formatPercentage(selectedPoint.enrolled_percent)}%`}
+            </div>
+          </Row>
+          <Row>
+            <div className="class-adjustment-percent">
+              {`Waitlist Percent: ${formatPercentage(selectedPoint.waitlisted_percent)}%`}
+            </div>
+          </Row>
+          <Row>
+            <Col xs={8} className="class-stats-left-col">
               <div className="class-stats-name">Enrolled</div>
             </Col>
             <Col xs={4}>
-              <div className="class-stats">{selectedPoint.enrolled}</div>
+              <div className="class-stats">{selectedPoint.enrolled}/{enrolledMax}</div>
             </Col>
           </Row>
           <Row className="class-stats">
-            <Col xs={8}>
+            <Col xs={8} className="class-stats-left-col">
               <div className="class-stats-name">Waitlisted</div>
             </Col>
             <Col xs={4}>
               <div className="class-stats">{selectedPoint.waitlisted}</div>
             </Col>
           </Row>
-        </Row>
+        </div>
 
         <Row>
           <div className="class-stat-type">{`Today: ${todayString}`}</div>

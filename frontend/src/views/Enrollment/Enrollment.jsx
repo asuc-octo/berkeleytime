@@ -36,7 +36,7 @@ class Enrollment extends Component {
         return;
       }
     }
-    axios.get(`http://localhost:8080/api/catalog_json/course/${course.courseID}/`)
+    axios.get(`http://localhost:8080/api/catalog_json/course/${course.courseID.course.id}/`)
       .then(res => {
         let courseData = res.data;
 
