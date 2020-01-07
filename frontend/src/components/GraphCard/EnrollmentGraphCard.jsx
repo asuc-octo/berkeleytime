@@ -52,7 +52,7 @@ class EnrollmentGraphCard extends Component {
       let url;
       if(instructor === 'all') {
         let [sem, year] = semester.split(' ');
-        url = `http://localhost:8080/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
+        url = `http://localhost:8080/api/enrollment/aggregate/${courseID.course.id}/${sem.toLowerCase()}/${year}/`;
       } else {
         url = `http://localhost:8080/api/enrollment/data/${sections[0]}/`;
       }
@@ -184,6 +184,7 @@ class EnrollmentGraphCard extends Component {
                         todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
                         telebears={telebears}
                         hoveredColor={hoveredColor}
+                        enrolledMax={hoveredClass.enrolled_max}
                       />
                     }
                   </Col>
