@@ -33,6 +33,7 @@ HARD_CODED = [
     ("ECON", ['1', '100B'], FINAL_TIMES.get("Monday3-6PM")),
     ("ECON", ["140"], FINAL_TIMES.get("Wednesday8-11AM")),
     ("UGBA", ["101B"], FINAL_TIMES.get("Monday3-6PM")),
+    ("ENGLISH", ['1A', '1B', 'R1A', 'R1B'], FINAL_TIMES.get("Friday3-6PM")),
 ]
 
 # Mapper function for final times
