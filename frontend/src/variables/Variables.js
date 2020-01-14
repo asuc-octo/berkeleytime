@@ -681,6 +681,7 @@ var laymanToAbbreviation = {
   "PMB": "PLANTBI",
   "POLSCI": "POL SCI",
   "POLISCI": "POL SCI",
+  "POLI SCI": "POL SCI",
   "PS" : "POL SCI",
   "PUBPOL": "PUB POL",
   "PP": "PUB POL",
