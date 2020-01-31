@@ -6,6 +6,9 @@ import hash from 'object-hash';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
 
+import { fetchGradeSelected } from '../../redux/actions';
+import { connect } from "react-redux";
+
 // think about clearing values after add button
 
 const sortOptions = [
@@ -20,9 +23,8 @@ class GradesSearchBar extends Component {
     this.state = {
       selectedClass: 0,
       selectType: '',
-      selectPrimary: '',
-      selectSecondary: '',
-      sections: [],
+      selectPrimary: this.props.selectPrimary,
+      selectSecondary: this.props.selectSecondary,
     }
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
@@ -48,7 +50,21 @@ class GradesSearchBar extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectPrimary != this.state.selectPrimary) {
+      this.setState({
+        selectPrimary: nextProps.selectPrimary
+      });
+    }
+    if (nextProps.selectSecondary != this.state.selectSecondary) {
+      this.setState({
+        selectSecondary: nextProps.selectSecondary
+      });
+    }
+  }
+
   handleClassSelect(updatedClass) {
+    const { fetchGradeSelected } = this.props;
     if(updatedClass === null) {
       this.reset();
       this.setState({
@@ -61,23 +77,26 @@ class GradesSearchBar extends Component {
       selectedClass: updatedClass.value
     })
 
-    let url = `http://localhost:8080/api/grades/course_grades/${updatedClass.value}/`
+    fetchGradeSelected(updatedClass);
 
-    axios.get(url)
-    .then(res => {
-      this.setState({
-        sections: res.data,
-        selectPrimary: 'all',
-        selectSecondary: 'all',
-      });
-      if (updatedClass.addSelected) {
-        this.addSelected();
-        this.handleClassSelect({value: updatedClass.value, addSelected: false});
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    //
+    // let url = `http://localhost:8080/api/grades/course_grades/${updatedClass.value}/`
+    //
+    // axios.get(url)
+    // .then(res => {
+    //   this.setState({
+    //     sections: res.data,
+    //     selectPrimary: 'all',
+    //     selectSecondary: 'all',
+    //   });
+    //   if (updatedClass.addSelected) {
+    //     this.addSelected();
+    //     this.handleClassSelect({value: updatedClass.value, addSelected: false});
+    //   }
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
   }
 
   handleSortSelect(sortBy) {
@@ -94,7 +113,7 @@ class GradesSearchBar extends Component {
   }
 
   handleSecondarySelect(secondary) {
-    this.setState({ 
+    this.setState({
       selectSecondary: secondary ? secondary.value: '',
     })
   }
@@ -217,7 +236,8 @@ class GradesSearchBar extends Component {
   }
 
   getFilteredSections() {
-    const { sections, selectType, selectPrimary, selectSecondary, sectionNumber } = this.state;
+    const { selectType, sectionNumber, selectPrimary, selectSecondary } = this.state;
+    const { sections } = this.props;
     let ret;
 
     if(selectType === 'instructor') {
@@ -247,7 +267,7 @@ class GradesSearchBar extends Component {
   }
 
   addSelected() {
-    const { selectedClass, selectType, selectPrimary, selectSecondary } = this.state;
+    const { selectedClass, selectType, selectPrimary, selectSecondary  } = this.state;
     let playlist = {
       courseID: selectedClass,
       instructor: selectType === 'instructor' ? selectPrimary : selectSecondary,
@@ -299,7 +319,8 @@ class GradesSearchBar extends Component {
 
   render() {
     const { classes, isFull } = this.props;
-    const { sections, selectType, selectPrimary, selectSecondary, selectedClass } = this.state;
+    const { selectType, selectPrimary, selectSecondary, selectedClass } = this.state;
+    const { sections } = this.props;
     let primaryOptions = this.buildPrimaryOptions(sections, selectType);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectType, selectPrimary);
     let onePrimaryOption = primaryOptions && primaryOptions.length == 2 && selectPrimary;
@@ -311,7 +332,7 @@ class GradesSearchBar extends Component {
           <Select
               name="selectClass"
               placeholder="Choose a class..."
-              value={selectedClass}
+              // value={selectedClass}
               options={this.buildCoursesOptions(classes)}
               onChange={this.handleClassSelect}
               filterOptions={this.filterOptions}
@@ -321,7 +342,7 @@ class GradesSearchBar extends Component {
           <Select
               name="sortBy"
               placeholder="Sort by"
-              value={selectType}
+              // value={selectType}
               options={sortOptions}
               clearable={false}
               onChange={this.handleSortSelect}
@@ -333,7 +354,7 @@ class GradesSearchBar extends Component {
           <Select
               name="instrSems"
               placeholder="Select an option..."
-              value={onePrimaryOption ? primaryOptions[1] : selectPrimary}
+              // value={onePrimaryOption ? primaryOptions[1] : selectPrimary}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
               disabled={!selectedClass}
@@ -345,7 +366,7 @@ class GradesSearchBar extends Component {
           <Select
               name="section"
               placeholder="Select an option..."
-              value={oneSecondaryOption ? secondaryOptions[1] : selectSecondary}
+              // value={oneSecondaryOption ? secondaryOptions[1] : selectSecondary}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}
               disabled={!selectedClass}
@@ -367,4 +388,24 @@ class GradesSearchBar extends Component {
   }
 }
 
-export default GradesSearchBar;
+
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    fetchGradeSelected: (updatedClass) => dispatch(fetchGradeSelected(updatedClass))
+  }
+}
+
+const mapStateToProps = state => {
+  const { sections, selectPrimary, selectSecondary } = state.grade;
+  return {
+    sections,
+    selectPrimary,
+    selectSecondary,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(GradesSearchBar);
