@@ -57,43 +57,43 @@ export default function EnrollmentInfoCard({
             </div>
           </Row>
           <Row>
-            <Col xs={8} className="class-stats-left-col">
+            <Col xs={5} className="class-stats-left-col">
               <div className="class-stats-name">Enrolled</div>
             </Col>
-            <Col xs={4}>
+            <Col xs={7}>
               <div className="class-stats">{selectedPoint.enrolled}/{enrolledMax}</div>
             </Col>
           </Row>
           <Row className="class-stats">
-            <Col xs={8} className="class-stats-left-col">
+            <Col xs={5} className="class-stats-left-col">
               <div className="class-stats-name">Waitlisted</div>
             </Col>
-            <Col xs={4}>
+            <Col xs={7}>
               <div className="class-stats">{selectedPoint.waitlisted}</div>
             </Col>
           </Row>
         </div>
 
-        <Row>
-          <div className="class-stat-type">{`Today: ${todayString}`}</div>
-          <div className="class-adjustment-percent">{`${formatPercentage(todayPoint.enrolled_percent)}%`}</div>
+        <div>
+          <Row><div className="class-stat-type">{`Today: ${todayString}`}</div></Row>
+          <Row><div className="class-adjustment-percent">{`${formatPercentage(todayPoint.enrolled_percent)}%`}</div></Row>
           <Row className="class-adjustment">
-            <Col xs={8}>
+            <Col xs={5} className="class-stats-left-col">
               <div className="class-stats-name">Currently Enrolled</div>
             </Col>
-            <Col xs={4}>
+            <Col xs={7}>
               <div className="class-stats">{todayPoint.enrolled}</div>
             </Col>
           </Row>
           <Row className="class-adjustment">
-            <Col xs={8}>
+            <Col xs={5} className="class-stats-left-col">
               <div className="class-stats-name">Currently Waitlisted</div>
             </Col>
-            <Col xs={4}>
+            <Col xs={7}>
               <div className="stats-name">{todayPoint.waitlisted}</div>
             </Col>
           </Row>
-        </Row>
+        </div>
       </div>
     </div>
   );

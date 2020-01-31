@@ -73,7 +73,7 @@ class Enrollment extends Component {
           classes={courses}
           addCourse={this.addCourse}
           fromCatalog={location.state ? location.state.course : false}
-          isFull={selectedCourses.length === 6}
+          isFull={selectedCourses.length === 4}
         />
 
         <ClassCardList
