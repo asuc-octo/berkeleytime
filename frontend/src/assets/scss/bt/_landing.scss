@@ -1,4 +1,6 @@
 .landing {
+    overflow-x: hidden;
+    width: 100%;
 
     .modal {
         min-height: 600px;
@@ -45,11 +47,13 @@
     .landing-explore {
         margin-bottom: 0 !important;
         background-color: white;
-        @include tablet {
-            height: 100vh;
-        }
         min-height: 600px;
+        height: 100vh;
 
+        @include touch {
+            min-height: 900px;
+        }
+        
         .landing-explore-icon {
             width: 100%;
             margin-bottom: 20px;
@@ -61,11 +65,6 @@
 
         .landing-explore-desc {
             padding-top: 30vh;
-
-            @include tablet {
-                max-width: 100%;
-            }
-
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -86,18 +85,17 @@
             a {
                 color: $bt-blue;
             }
+
+            @include touch{
+                padding-top: 20vh;
+            }
         }
 
         .landing-explore-img-wrapper {
-            padding-top: 20vh;
+            padding-top: 10vh;
             padding-left: 50px;
-
-            @include mobile {
-                margin-top: 1.5rem;
-            }
-
-            @include tablet {
-                max-width: 100%;
+            @include touch{
+                padding-left: 0px;
             }
         }
 
@@ -168,6 +166,11 @@
             padding-bottom: 50px;
             padding-left: 125px;
             padding-right: 125px;
+
+            @include touch{
+                padding-left: 0px;
+                padding-right: 0px;
+            }
 
             h3 {
                 font-weight: bold;

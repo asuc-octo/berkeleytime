@@ -8,6 +8,9 @@ import axios from 'axios';
 import ClassDetails from './ClassDetails';
 import ClassSections from './ClassSections';
 
+import { updateCourses, getCourseData, makeRequestDescription } from '../../redux/actions';
+import { connect } from "react-redux";
+
 function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
@@ -42,10 +45,6 @@ class ClassDescription extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      courseData: {},
-      loading: true,
-    };
   }
 
   details = () => {
@@ -76,36 +75,20 @@ class ClassDescription extends Component {
   }
 
   updateCourseData() {
-    const { course } = this.props;
-
+    const { course, getCourseData, makeRequestDescription, updateCourses } = this.props;
     if (isEmpty(course)) {
-      this.setState({
-        courseData: {},
-        loading: false,
-      });
+      updateCourses({});
       return;
     }
 
-    this.setState({ loading: true }, () => {
-      axios.get(`http://localhost:8080/api/catalog_json/course_box/`, {
-        params: {
-          course_id: course.id,
-        }
-      }).then(res => {
-        console.log(res);
-        this.setState({
-          courseData: res.data,
-          loading: false,
-        });
-      }).catch((err) => {
-        console.log(err)
-      });
-    });
+    makeRequestDescription();
+    getCourseData(course.id);
   }
 
   render() {
-    const { courseData } = this.state;
+    const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
+
 
     const toGrades = {
       pathname: '/grades',
@@ -117,7 +100,7 @@ class ClassDescription extends Component {
       state: { course: course },
     }
 
-    if (this.state.loading) {
+    if (loading) {
       return (
         <div className="catalog-description-container">
           <div className="loading">
@@ -184,64 +167,28 @@ class ClassDescription extends Component {
         </div>
       );
     }
-    /*return (
-      <div className="filter-description-container">
-      {this.state.loading ? (
-        <div className="filter-description-loading">
-            <BarLoader
-            sizeUnit={"px"}
-            size={150}
-            color={'#123abc'}
-            loading={true}
-          />
-       </div>
-      ) : (
-        Object.entries(course).length !== 0 &&
-          <div className="card filter-description">
-            <div className="filter-description-header">
-              <h3>{course.abbreviation} {course.course_number}</h3>
-              <p>{`${course.units} Unit${course.units !== '1.0' ? 's' : ''}`.replace(/.0/g, "").replace(/-/g, " - ")}</p>
-            </div>
-            <p className="filter-description-title">{course.title}</p>
-            <div className="filter-description-stats">
-              <FontAwesome className={`filter-description-stats-icon`} name={'bar-chart'}/>
-              <div className="filter-description-stats-avg">
-                <p>Course Average: {course.letter_average || 'N/A'}
-                  &nbsp;(<Link to={gradeTo}>See grade distributions</Link>)
-                </p>
-              </div>
-              <FontAwesome className={`filter-description-stats-icon`} name={'user-o'}/>
-              <div className="filter-description-stats-enroll">
-                <p>Enrollment: {course.enrolled}/{course.enrolled_max}
-                  &nbsp;(<Link to={enrollmentTo}>See enrollment history</Link>)
-                </p>
-              </div>
-            </div>
-            <div className="filter-description-tabs">
-              <div className="tabs">
-                <ul>
-                  <li className={tab == 0 ? 'is-active' : ''}><a onClick={this.details}>Course Details</a></li>
-                  <li className={tab == 1 ? 'is-active' : ''}><a onClick={this.sections}>Sections</a></li>
-                </ul>
-              </div>
-              {tab == 0 ? (
-                <ClassDetails
-                  description={course.description}
-                  prerequisites={course.prerequisites}
-                  requirements={requirements}
-                />
-              ) : (
-                <ClassSections
-                  sections={sections}
-                />
-              )}
-            </div>
-          </div>
-      )
-      }
-      </div>
-    );*/
   }
 }
 
-export default withRouter(ClassDescription);
+
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    getCourseData: (id) => dispatch(getCourseData(id)),
+    makeRequestDescription: () => dispatch(makeRequestDescription()),
+    updateCourses: (data) => dispatch(updateCourses(data))
+  }
+}
+
+const mapStateToProps = state => {
+  const { loading, courseData } = state.classDescription;
+  return {
+    loading,
+    courseData
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(ClassDescription));

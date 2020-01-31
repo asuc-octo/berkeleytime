@@ -98,8 +98,10 @@ export class FilterSidebar extends Component {
   unitsRangeHandler = unitsRange => {
     var add = new Set();
     var remove = new Set();
-    for (const req of unitsRange) {
-      add.add(req.value);
+    if (unitsRange !== null) {
+      for (const req of unitsRange) {
+        add.add(req.value);
+      }
     }
     for (const req of this.unitsRangeOptions) {
       if (!add.has(req.value)) {
@@ -116,7 +118,7 @@ export class FilterSidebar extends Component {
     var add = new Set();
     var remove = new Set();
     if (department !== null) {
-      add.add(department.value);      
+      add.add(department.value);
     }
     for (const req of this.departmentOptions) {
       if (!add.has(req.value)) {
@@ -132,8 +134,10 @@ export class FilterSidebar extends Component {
   classLevelHandler = classLevels => {
     var add = new Set();
     var remove = new Set();
-    for (const req of classLevels) {
-      add.add(req.value);
+    if (classLevels !== null) {
+      for (const req of classLevels) {
+        add.add(req.value);
+      }
     }
     for (const req of this.classLevelOptions) {
       if (!add.has(req.value)) {
@@ -149,8 +153,10 @@ export class FilterSidebar extends Component {
   semesterHandler = semesters => {
     var add = new Set();
     var remove = new Set();
-    for (const req of semesters) {
-      add.add(req.value);
+    if (semesters !== null) {
+      for (const req of semesters) {
+        add.add(req.value);
+      }
     }
     for (const req of this.semesterOptions) {
       if (!add.has(req.value)) {

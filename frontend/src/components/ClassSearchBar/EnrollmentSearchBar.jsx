@@ -7,6 +7,8 @@ import hash from 'object-hash';
 import { laymanToAbbreviation } from '../../variables/Variables';
 
 // import 'react-virtualized-select/styles.css'
+import { fetchEnrollSelected } from '../../redux/actions';
+import { connect } from "react-redux";
 
 class EnrollmentSearchBar extends Component {
 
@@ -16,9 +18,9 @@ class EnrollmentSearchBar extends Component {
     this.state = {
       selectedClass: 0,
       selectType: '',
-      selectPrimary: '',
-      selectSecondary: '',
-      sections: [],
+      selectPrimary: this.props.selectPrimary,
+      selectSecondary: this.props.selectSecondary,
+      // sections: [],
     }
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
@@ -43,7 +45,21 @@ class EnrollmentSearchBar extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectPrimary != this.state.selectPrimary) {
+      this.setState({
+        selectPrimary: nextProps.selectPrimary
+      });
+    }
+    if (nextProps.selectSecondary != this.state.selectSecondary) {
+      this.setState({
+        selectSecondary: nextProps.selectSecondary
+      });
+    }
+  }
+
   handleClassSelect(updatedClass) {
+    const { fetchEnrollSelected } = this.props;
     if(updatedClass === null) {
       this.reset();
       this.setState({
@@ -56,25 +72,27 @@ class EnrollmentSearchBar extends Component {
       selectedClass: updatedClass
     });
 
-    let url = `http://localhost:8080/api/enrollment/sections/${updatedClass.value}/`
+    fetchEnrollSelected(updatedClass);
 
-    axios.get(url)
-    .then(res => {
-      // console.log(res);
-      let sections = res.data
-      this.setState({
-        sections: sections,
-        selectPrimary: this.buildPrimaryOptions(sections)[0],
-        selectSecondary: { value: 'all', label: 'All Instructors' },
-      });
-      if (updatedClass.addSelected) {
-        this.addSelected();
-        this.handleClassSelect({value: updatedClass.value, addSelected: false});
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    // let url = `http://localhost:8080/api/enrollment/sections/${updatedClass.value}/`
+    //
+    // axios.get(url)
+    // .then(res => {
+    //   // console.log(res);
+    //   let sections = res.data
+    //   this.setState({
+    //     sections: sections,
+    //     selectPrimary: this.getSectionSemester(sections[0]),
+    //     selectSecondary: 'all',
+    //   });
+    //   if (updatedClass.addSelected) {
+    //     this.addSelected();
+    //     this.handleClassSelect({value: updatedClass.value, addSelected: false});
+    //   }
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
   }
 
   handlePrimarySelect(primary) {
@@ -153,7 +171,8 @@ class EnrollmentSearchBar extends Component {
   }
 
   getFilteredSections() {
-    const { sections, selectPrimary, selectSecondary, sectionNumber } = this.state;
+    const { selectPrimary, selectSecondary, sectionNumber } = this.state;
+    const { sections } = this.props;
     let ret;
     ret = sections.filter(section => {
       return this.getSectionSemester(section) === selectPrimary.value;
@@ -170,6 +189,7 @@ class EnrollmentSearchBar extends Component {
 
   addSelected() {
     const { selectedClass, selectType, selectPrimary, selectSecondary } = this.state;
+    debugger
     let playlist = {
       courseID: selectedClass,
       instructor: selectType === 'instructor' ? selectPrimary.value : selectSecondary.value,
@@ -221,8 +241,8 @@ class EnrollmentSearchBar extends Component {
   }
 
   render() {
-    const { classes, isFull } = this.props;
-    const { sections, selectPrimary, selectSecondary, selectedClass } = this.state;
+    const { classes, isFull, sections } = this.props;
+    const { selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary.value);
     let onePrimaryOption = primaryOptions && primaryOptions.length == 2 && selectPrimary;
@@ -234,7 +254,7 @@ class EnrollmentSearchBar extends Component {
           <Select
               name="selectClass"
               placeholder="Choose a class..."
-              value={selectedClass}
+              // value={selectedClass}
               options={this.buildCoursesOptions(classes)}
               onChange={this.handleClassSelect}
               filterOptions={this.filterOptions}
@@ -244,7 +264,7 @@ class EnrollmentSearchBar extends Component {
           <Select
               name="instrSems"
               placeholder="Select an option..."
-              value={onePrimaryOption ? primaryOptions[1] : selectPrimary}
+              // value={onePrimaryOption ? primaryOptions[1] : selectPrimary}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
               disabled={!selectedClass}
@@ -256,7 +276,7 @@ class EnrollmentSearchBar extends Component {
           <Select
               name="section"
               placeholder="Select an option..."
-              value={oneSecondaryOption ? secondaryOptions[1] : selectSecondary}
+              // value={oneSecondaryOption ? secondaryOptions[1] : selectSecondary}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}
               disabled={!selectedClass}
@@ -278,4 +298,23 @@ class EnrollmentSearchBar extends Component {
   }
 }
 
-export default EnrollmentSearchBar;
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    fetchEnrollSelected: (updatedClass) => dispatch(fetchEnrollSelected(updatedClass))
+  }
+}
+
+const mapStateToProps = state => {
+  const { sections, selectPrimary, selectSecondary } = state.enrollment;
+  return {
+    sections,
+    selectPrimary,
+    selectSecondary,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EnrollmentSearchBar);
