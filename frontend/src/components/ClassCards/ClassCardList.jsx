@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {Row, Col} from 'react-bootstrap';
 
 import ClassCard from './ClassCard';
-import axios from 'axios';
 
 import vars from '../../variables/Variables';
 

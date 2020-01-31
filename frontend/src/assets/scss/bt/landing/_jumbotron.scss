@@ -37,6 +37,10 @@
 
       @include touch{
         flex-direction: column;
+
+        .btn-bt-blue {
+          margin-bottom: 7px;
+        }
       }
 
       @include desktop{
