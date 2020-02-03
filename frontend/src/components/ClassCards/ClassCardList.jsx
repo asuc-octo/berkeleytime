@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Row, Col} from 'react-bootstrap';
 
 import ClassCard from './ClassCard';
 
@@ -13,10 +14,10 @@ class ClassCardList extends Component {
     const { selectedCourses, removeCourse } = this.props;
 
     return (
-      <div className="columns class-card-list">
+      <Row className="class-card-list justify-content-start">
         {
           selectedCourses.map((item, i) => (
-          <div className="column card-column is-3">
+          <Col lg={3} className="card-column">
             <ClassCard
               id={item.id}
               course={item.course}
@@ -26,9 +27,9 @@ class ClassCardList extends Component {
               faculty={item.instructor == 'all' ? 'All Instructors' : item.instructor}
               removeCourse={removeCourse}
             />
-          </div>
+          </Col>
         ))}
-      </div>
+      </Row>
     );
   }
 
