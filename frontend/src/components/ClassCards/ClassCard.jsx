@@ -18,7 +18,7 @@ function ClassCard (props) {
           <div className="class-card class-title">
             {title}
           </div>
-          <button type="button" className="delete" onClick={() => removeCourse(id)} />
+          <div className="delete" onClick={() => removeCourse(id)}>Remove</div>
         </div>
       </div>
     </div>
