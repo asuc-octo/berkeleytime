@@ -85,7 +85,7 @@ class Enrollment extends Component {
     let courses = context.courses;
 
     return (
-      <div className="enrollment">
+      <div className="enrollment viewport-app">
         <EnrollmentSearchBar
           classes={courses}
           addCourse={this.addCourse}

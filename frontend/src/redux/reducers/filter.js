@@ -1,4 +1,5 @@
 import { FILTER, START_REQUEST } from '../actionTypes';
+
 const initialState = {
   loading: true,
   courses: [],
@@ -7,16 +8,15 @@ const initialState = {
 export default function filter(state = initialState, action) {
   switch (action.type) {
   case START_REQUEST: {
-    return Object.assign({}, state, {
-        loading: true
-      });
-    }
+    return { ...state, loading: true };
+  }
   case FILTER: {
     const { data } = action.payload;
-    return Object.assign({}, state, {
+    return {
+      ...state,
       courses: data,
       loading: false,
-    });
+    };
   }
   default:
     return state;

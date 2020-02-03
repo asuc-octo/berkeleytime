@@ -1,15 +1,13 @@
 import React from 'react';
-import CurrentContributors from '../../components/Contributors/CurrentContributors.jsx';
-import PastContributors from '../../components/Contributors/PastContributors.jsx';
+import CurrentContributors from '../../components/Contributors/CurrentContributors';
+import PastContributors from '../../components/Contributors/PastContributors';
 
 function About() {
-  return(
-      <div>
-        <div className="app-container">
-          <CurrentContributors></CurrentContributors>
-         </div>
-          <PastContributors></PastContributors>
-      </div>
+  return (
+    <div>
+      <CurrentContributors />
+      <PastContributors />
+    </div>
   );
 }
 

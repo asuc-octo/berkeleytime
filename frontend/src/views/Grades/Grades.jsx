@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 
-import ClassCardList from '../../components/ClassCards/ClassCardList.jsx';
-import GradesGraphCard from '../../components/GraphCard/GradesGraphCard.jsx';
-import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar.jsx';
+import { connect } from 'react-redux';
+import ClassCardList from '../../components/ClassCards/ClassCardList';
+import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
+import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
 import { fetchGradeContext, fetchGradeClass } from '../../redux/actions';
-import { connect } from "react-redux";
 
 class Grades extends Component {
   constructor(props) {
     super(props);
     this.state = {
       // context: {},
-      selectedCourses: this.props.selectedCourses
+      selectedCourses: this.props.selectedCourses,
     };
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
@@ -56,7 +56,7 @@ class Grades extends Component {
     let courses = context.courses;
 
     return (
-      <div className="grades">
+      <div className="grades viewport-app">
         <GradesSearchBar
           classes={courses}
           addCourse={this.addCourse}
