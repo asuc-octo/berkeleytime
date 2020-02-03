@@ -162,6 +162,7 @@ class EnrollmentGraphCard extends Component {
                         todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
                         telebears={telebears}
                         hoveredColor={hoveredColor}
+                        enrolledMax={hoveredClass.enrolled_max}
                       />
                     }
                   </Col>

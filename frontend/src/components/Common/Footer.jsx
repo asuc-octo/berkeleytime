@@ -29,7 +29,7 @@ function Footer() {
             <Link to="/about" className="">Team</Link>
             <a href="http://asucocto.org/" className="">Office of the CTO</a>
             <a href="http://asucocto.org/recruitment" className="">Join Us</a>
-            <a href="" className="">Facebook</a>
+            <a href="https://www.facebook.com/berkeleytime/" className="">Facebook</a>
           </Col>
         </Row>
       </Container>
