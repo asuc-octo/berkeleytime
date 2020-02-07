@@ -114,7 +114,7 @@ class GradesSearchBar extends Component {
 
   handleSecondarySelect(secondary) {
     this.setState({
-      selectSecondary: secondary ? secondary.value: '',
+      selectSecondary: secondary ? secondary.value : '',
     })
   }
 
@@ -276,7 +276,6 @@ class GradesSearchBar extends Component {
     }
 
     playlist.id = hash(playlist);
-
     this.props.addCourse(playlist)
     this.reset();
   }
@@ -326,6 +325,33 @@ class GradesSearchBar extends Component {
     let onePrimaryOption = primaryOptions && primaryOptions.length == 2 && selectPrimary;
     let oneSecondaryOption = secondaryOptions && secondaryOptions.length == 2 && selectSecondary;
 
+
+    let primaryOption = { value: selectPrimary, label: selectPrimary };
+    let secondaryOption = { value: selectSecondary, label: selectSecondary };
+
+    if (selectType == 'instructor') {
+      if (selectPrimary == 'all') {
+        primaryOption = { value: 'all', label: "All Instructors" };
+      }
+      if (selectSecondary == 'all') {
+        secondaryOption = { value: 'all', label: "All Semesters" };
+      }
+    } else {
+      if (selectPrimary == 'all') {
+        primaryOption = { value: 'all', label: "All Semesters" };
+      }
+      if (selectSecondary == 'all') {
+        secondaryOption = { value: 'all', label: "All Instructors" };
+      }
+    }
+
+    if (selectPrimary == '') {
+      primaryOption = '';
+    }
+    if (selectSecondary == '') {
+      secondaryOption = '';
+    }
+
     return (
       <Row style={{marginBottom: 10}}>
         <Col lg={3}>
@@ -354,7 +380,7 @@ class GradesSearchBar extends Component {
           <Select
               name="instrSems"
               placeholder="Select an option..."
-              // value={onePrimaryOption ? primaryOptions[1] : selectPrimary}
+              value={onePrimaryOption ? primaryOptions[1] : primaryOption}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
               disabled={!selectedClass}
@@ -366,7 +392,7 @@ class GradesSearchBar extends Component {
           <Select
               name="section"
               placeholder="Select an option..."
-              // value={oneSecondaryOption ? secondaryOptions[1] : selectSecondary}
+              value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}
               disabled={!selectedClass}
