@@ -1,6 +1,10 @@
 .landing {
     overflow-x: hidden;
     width: 100%;
+    
+    @include touch {
+        height: 50vh;
+    }
 
     .modal {
         min-height: 600px;
