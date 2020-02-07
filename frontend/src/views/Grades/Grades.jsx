@@ -5,7 +5,7 @@ import ClassCardList from '../../components/ClassCards/ClassCardList';
 import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
 import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
-import { fetchGradeContext, fetchGradeClass } from '../../redux/actions';
+import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse } from '../../redux/actions';
 
 class Grades extends Component {
   constructor(props) {
@@ -25,16 +25,17 @@ class Grades extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selectedCourses != this.state.selectedCourses) {
+      console.log(nextProps.selectedCourses);
       this.setState({
-        selectedCourses: nextProps.selectedCourses
-      })
+        selectedCourses: nextProps.selectedCourses,
+      });
     }
   }
 
   addCourse(course) {
     const { fetchGradeClass } = this.props;
     const { selectedCourses } = this.state;
-    for (let selected of selectedCourses) {
+    for (const selected of selectedCourses) {
       if (selected.id === course.id) {
         return;
       }
@@ -43,16 +44,15 @@ class Grades extends Component {
   }
 
   removeCourse(id) {
-    this.setState(prevState => ({
-      selectedCourses: prevState.selectedCourses.filter(classInfo => classInfo.id !== id)
-    }));
+    const { gradeRemoveCourse } = this.props;
+    gradeRemoveCourse(id);
   }
 
   render() {
     const { context } = this.props;
     const { selectedCourses } = this.state;
-    let { location } = this.props;
-    let courses = context.courses;
+    const { location } = this.props;
+    const courses = context.courses;
 
     return (
       <div className="viewport-app">
@@ -80,24 +80,23 @@ class Grades extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    dispatch,
-    fetchGradeContext: () => dispatch(fetchGradeContext()),
-    fetchGradeClass: (course) => dispatch(fetchGradeClass(course))
-  }
-}
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  fetchGradeContext: () => dispatch(fetchGradeContext()),
+  fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
+  gradeRemoveCourse: (id) => dispatch(gradeRemoveCourse(id)),
+});
 
 const mapStateToProps = state => {
   const { context, selectedCourses } = state.grade;
   return {
     context,
-    selectedCourses
+    selectedCourses,
   };
 };
 
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Grades);
