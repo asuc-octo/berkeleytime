@@ -4,7 +4,7 @@ import makeAnimated from 'react-select/animated';
 
 const animatedComponents = makeAnimated();
 
-export class FilterSidebar extends Component {
+export class FilterMobile extends Component {
   constructor(props) {
     super(props);
 
@@ -43,24 +43,9 @@ export class FilterSidebar extends Component {
       department: this.departmentDefault,
       classLevels: this.classLevelDefault,
       semesters: this.semesterDefault,
-      isMobile: false
     };
 
     this.searchInput = React.createRef(); // reference to <input>
-    this.updateScreensize = this.updateScreensize.bind(this);
-  }
-
-  componentDidMount() {
-    this.updateScreensize();
-    window.addEventListener("resize", this.updateScreensize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateScreensize);
-  }
-
-  updateScreensize() {
-    this.setState({ isMobile: window.innerWidth < 768 });
   }
 
   resetFilters = () => {
@@ -192,7 +177,7 @@ export class FilterSidebar extends Component {
   }
 
   render() {
-    const { sort, unitsRange, requirements, department, classLevels, semesters, isMobile } = this.state;
+    const { sort, unitsRange, requirements, department, classLevels, semesters } = this.state;
 
     return (
       <div id="filter" className="filter">
@@ -209,80 +194,10 @@ export class FilterSidebar extends Component {
             defaultValue={this.props.defaultSearch}
           />
         </div>
-        <div className="filter-sort">
-          <p>Sort by</p>
-          <Select
-            options={this.sortOptions}
-            isSearchable={false}
-            onChange={this.sortHandler}
-            value={sort}
-          />
-        </div>
-        <div className="filter-requirements">
-          <p>Requirements</p>
-          <Select
-            isMulti
-            closeMenuOnSelect={false}
-            isSearchable={false}
-            options={this.requirementsOptions}
-            onChange={this.requirementHandler}
-            value={requirements}
-            placeholder="Select requirements..."
-          />
-        </div>
-        <div className="filter-units">
-          <p>Units</p>
-          <Select
-            closeMenuOnSelect={false}
-            components={animatedComponents}
-            options={this.unitsRangeOptions}
-            isMulti
-            placeholder="Specify units..."
-            isSearchable={false}
-            onChange={this.unitsRangeHandler}
-            value={unitsRange}
-          />
-        </div>
-        <div className="filter-department">
-          <p>Department</p>
-          <Select
-            isClearable
-            options={this.departmentOptions}
-            onChange={this.departmentHandler}
-            value={department}
-            placeholder="Choose a department..."
-          />
-        </div>
-        <div className="filter-class-level">
-          <p>Class Level</p>
-          <Select
-            closeMenuOnSelect={false}
-            components={animatedComponents}
-            options={this.classLevelOptions}
-            isSearchable={false}
-            isMulti
-            placeholder="Select class levels..."
-            value={classLevels}
-            onChange={this.classLevelHandler}
-          />
-        </div>
-        <div className="filter-semesters">
-          <p>Semesters</p>
-          <Select
-            closeMenuOnSelect={false}
-            isMulti
-            isSearchable={false}
-            options={this.semesterOptions}
-            onChange={this.semesterHandler}
-            value={semesters}
-            placeholder="Select semesters..."
-            onMenuOpen={this.semesterOpen}
-          />
-        </div>
         <div id="filter-end"></div>
       </div>
     );
   }
 }
 
-export default FilterSidebar;
+export default FilterMobile;

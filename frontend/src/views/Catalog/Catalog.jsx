@@ -6,6 +6,7 @@ import HashLoader from 'react-spinners/HashLoader';
 import axios from 'axios';
 
 import Filter from '../../components/Catalog/Filter';
+import FilterMobile from '../../components/Catalog/FilterMobile';
 import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 
@@ -231,17 +232,17 @@ class Catalog extends Component {
       <div className="catalog">
         <div className="catalog-container">
           <Row>
-            <Col lg={4} xl={3} className="filter-column">
+            <Col xs={0} sm={3} md={3} lg={4} xl={3} className="filter-column">
               {
                 !loading ?
-                <Filter
-                  playlists={this.buildPlaylists()}
-                  defaultSearch={defaultSearch}
-                  searchHandler={this.searchHandler}
-                  sortHandler={this.sortHandler}
-                  modifyFilters={this.modifyFilters}
-                  resetFilters={this.resetFilters}
-                /> :
+                   <Filter
+                    playlists={this.buildPlaylists()}
+                    defaultSearch={defaultSearch}
+                    searchHandler={this.searchHandler}
+                    sortHandler={this.sortHandler}
+                    modifyFilters={this.modifyFilters}
+                    resetFilters={this.resetFilters}
+                  /> :
                 <div className="filter">
                   <div className="filter-loading">
                     <HashLoader
@@ -253,7 +254,7 @@ class Catalog extends Component {
                 </div>
               }
             </Col>
-            <Col lg={3} xl={3} className="filter-results-column">
+            <Col xs={12} sm={3} md={3} lg={4} xl={3} className="filter-results-column">
               <FilterResults
                 activePlaylists={activePlaylists ? activePlaylists : []}
                 selectCourse={this.selectCourse}
@@ -262,7 +263,7 @@ class Catalog extends Component {
                 query={this.state.search}
               />
             </Col>
-            <Col lg xl className="catalog-description-column">
+            <Col xs={0} sm={6} md={6} lg={4} xl={6} className="catalog-description-column">
               <ClassDescription
                 course={selectedCourse}
                 selectCourse={this.selectCourse}
