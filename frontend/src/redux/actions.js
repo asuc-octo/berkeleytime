@@ -2,8 +2,9 @@ import axios from 'axios';
 import {
   MODIFY_LIST, RECEIVE_LIST, MODIFY_SELECTED, FILTER,
   START_REQUEST, START_REQUEST_DESCRIPTION, UPDATE_COURSE_DATA,
-  UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, UPDATE_GRADE_DATA, UPDATE_GRADE_SELECTED,
-  UPDATE_ENROLL_CONTEXT, ENROLL_ADD_COURSE, UPDATE_ENROLL_DATA, UPDATE_ENROLL_SELECTED,
+  UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, GRADE_REMOVE_COURSE,
+  UPDATE_GRADE_DATA, UPDATE_GRADE_SELECTED, UPDATE_ENROLL_CONTEXT,
+  ENROLL_ADD_COURSE, ENROLL_REMOVE_COURSE, UPDATE_ENROLL_DATA, UPDATE_ENROLL_SELECTED,
 } from './actionTypes';
 
 // function to update the active playlist
@@ -73,6 +74,13 @@ export const gradeAddCourse = (formattedCourse) => ({
   },
 });
 
+export const gradeRemoveCourse = (id) => ({
+  type: GRADE_REMOVE_COURSE,
+  payload: {
+    id,
+  },
+});
+
 export const updateGradeData = (gradesData) => ({
   type: UPDATE_GRADE_DATA,
   payload: {
@@ -95,11 +103,18 @@ export const updateEnrollContext = (data) => ({
   },
 });
 
-// add displayed course to the grade page
+// add displayed course to the enroll page
 export const enrollAddCourse = (formattedCourse) => ({
   type: ENROLL_ADD_COURSE,
   payload: {
     formattedCourse,
+  },
+});
+
+export const enrollRemoveCourse = (id) => ({
+  type: ENROLL_REMOVE_COURSE,
+  payload: {
+    id,
   },
 });
 
@@ -299,6 +314,7 @@ export function fetchEnrollData(classData) {
       instructor, courseID, semester, sections,
     } = course;
     let url;
+    console.log(course);
     if (instructor === 'all') {
       const [sem, year] = semester.split(' ');
       url = `http://localhost:8080/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;

@@ -1,8 +1,7 @@
 import {
   UPDATE_ENROLL_CONTEXT, ENROLL_ADD_COURSE, UPDATE_ENROLL_DATA,
-  UPDATE_ENROLL_SELECTED,
+  UPDATE_ENROLL_SELECTED, ENROLL_REMOVE_COURSE,
 } from '../actionTypes';
-import vars from '../../variables/Variables';
 
 const initialState = {
   context: {},
@@ -23,6 +22,11 @@ export default function enrollment(state = initialState, action) {
   case ENROLL_ADD_COURSE: {
     const { formattedCourse } = action.payload;
     return { ...state, selectedCourses: [...state.selectedCourses, formattedCourse] };
+  }
+  case ENROLL_REMOVE_COURSE: {
+    const { id } = action.payload;
+    const updatedCourses = state.selectedCourses.filter(classInfo => classInfo.id !== id);
+    return { ...state, selectedCourses: updatedCourses };
   }
   case UPDATE_ENROLL_DATA: {
     const { enrollmentData } = action.payload;
