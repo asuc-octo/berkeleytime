@@ -60,7 +60,7 @@ export class FilterSidebar extends Component {
   }
 
   updateScreensize() {
-    this.setState({ isMobile: window.innerWidth < 768 });
+    this.setState({ isMobile: window.innerWidth <= 576 });
   }
 
   resetFilters = () => {
@@ -195,6 +195,7 @@ export class FilterSidebar extends Component {
     const { sort, unitsRange, requirements, department, classLevels, semesters, isMobile } = this.state;
 
     return (
+      !isMobile ? 
       <div id="filter" className="filter">
         <div className="filter-name">
           <p>Filters</p>
@@ -280,7 +281,23 @@ export class FilterSidebar extends Component {
           />
         </div>
         <div id="filter-end"></div>
-      </div>
+      </div> :
+
+      <div id="filter" className="filter">
+        <div className="filter-name">
+          <p>Filters</p>
+          <button className="as-link" type="button" onClick={this.resetFilters}>Reset</button>
+        </div>
+        <div className="filter-search">
+          <input
+            ref={this.searchInput}
+            onChange={this.searchHandler}
+            type="text"
+            placeholder=" &#xf002;  Search for a class..."
+            defaultValue={this.props.defaultSearch}
+          />
+        </div>
+       </div>
     );
   }
 }

@@ -232,7 +232,7 @@ class Catalog extends Component {
       <div className="catalog">
         <div className="catalog-container">
           <Row>
-            <Col xs={0} sm={3} md={3} lg={4} xl={3} className="filter-column">
+            <Col xs={12} sm={3} md={3} lg={4} xl={3} className="filter-column">
               {
                 !loading ?
                    <Filter
