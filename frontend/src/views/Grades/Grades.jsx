@@ -5,7 +5,7 @@ import ClassCardList from '../../components/ClassCards/ClassCardList.jsx';
 import GradesGraphCard from '../../components/GraphCard/GradesGraphCard.jsx';
 import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar.jsx';
 
-import { fetchGradeContext, fetchGradeClass } from '../../redux/actions';
+import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse } from '../../redux/actions';
 import { connect } from "react-redux";
 
 class Grades extends Component {
@@ -26,6 +26,7 @@ class Grades extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selectedCourses != this.state.selectedCourses) {
+      console.log(nextProps.selectedCourses);
       this.setState({
         selectedCourses: nextProps.selectedCourses
       })
@@ -44,9 +45,8 @@ class Grades extends Component {
   }
 
   removeCourse(id) {
-    this.setState(prevState => ({
-      selectedCourses: prevState.selectedCourses.filter(classInfo => classInfo.id !== id)
-    }));
+    const { gradeRemoveCourse } = this.props;
+    gradeRemoveCourse(id);
   }
 
   render() {
@@ -83,7 +83,8 @@ const mapDispatchToProps = dispatch => {
   return {
     dispatch,
     fetchGradeContext: () => dispatch(fetchGradeContext()),
-    fetchGradeClass: (course) => dispatch(fetchGradeClass(course))
+    fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
+    gradeRemoveCourse: (id) => dispatch(gradeRemoveCourse(id))
   }
 }
 

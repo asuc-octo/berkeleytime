@@ -16,6 +16,7 @@
 
     .enrollment-content {
       .graph {
+        height: 400px;
         padding: 15px 15px 15px 15px;
       }
       .graph-title {
@@ -26,9 +27,10 @@
   }
 }
 
-// GradesInfoCard
+// EnrollmentInfoCard
 .card.enrollment-card-info {
   box-shadow: none;
+  border: none;
 
   .content {
       padding: 0px 15px 15px 15px;
@@ -64,6 +66,10 @@
       .class-adjustment-percent {
         color: #FFA414;
         font-size: 15px;
+      }
+
+      .class-stats-left-col {
+        padding-left: 0px;
       }
 
       .class-stats-name {
