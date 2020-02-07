@@ -1,6 +1,11 @@
 .class-card-list {
+  .card-column {
+    margin-right: -1vw;
+  }
+
   .card.class-card {
     margin-bottom: 0px;
+    width: 22vw;
 
     .content {
       display: flex;
@@ -34,6 +39,13 @@
 
         .delete {
           margin-top: auto;
+          color: $bt-indicator-red;
+          font-size: 12px;
+          cursor: pointer;
+
+          &:hover {
+            color: $bt-light-grey;
+          }
         }
       }
     }

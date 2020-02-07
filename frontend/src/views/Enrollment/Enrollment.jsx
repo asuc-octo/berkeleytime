@@ -5,7 +5,7 @@ import ClassCardList from '../../components/ClassCards/ClassCardList';
 import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard.jsx';
 import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar.jsx';
 
-import { fetchEnrollContext, fetchEnrollClass } from '../../redux/actions';
+import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse } from '../../redux/actions';
 import { connect } from "react-redux";
 
 class Enrollment extends Component {
@@ -13,7 +13,7 @@ class Enrollment extends Component {
     super(props)
     this.state = {
       // context: {},
-      selectedCourses: [],
+      selectedCourses: this.props.selectedCourses
     }
 
     this.addCourse = this.addCourse.bind(this);
@@ -23,16 +23,6 @@ class Enrollment extends Component {
   componentDidMount() {
     const { fetchEnrollContext, context } = this.props;
     fetchEnrollContext();
-    // axios.get('http://localhost:8080/api/enrollment_json/')
-    // .then(res => {
-    //   // console.log(res);
-    //   this.setState({
-    //     context: res.data,
-    //   })
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    // });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -44,38 +34,19 @@ class Enrollment extends Component {
   }
 
   addCourse(course) {
-    const { fetchGradeClass } = this.props;
+    const { fetchEnrollClass } = this.props;
     const { selectedCourses } = this.state;
     for (let selected of selectedCourses) {
       if (selected.id === course.id) {
         return;
       }
     }
-    // axios.get(`http://localhost:8080/api/catalog_json/course/${course.courseID}/`)
-    //   .then(res => {
-    //     let courseData = res.data;
-    //
-    //     let formattedCourse =  {
-    //       id: course.id,
-    //       course: courseData.course,
-    //       title: courseData.title,
-    //       semester: course.semester,
-    //       instructor: course.instructor,
-    //       courseID: course.courseID,
-    //       sections: course.sections
-    //     }
-    //
-    //     this.setState(prevState => ({
-    //       selectedCourses: [...prevState.selectedCourses, formattedCourse],
-    //     }));
-    // })
     fetchEnrollClass(course);
   }
 
   removeCourse(id) {
-    this.setState(prevState => ({
-      selectedCourses: prevState.selectedCourses.filter(classInfo => classInfo.id !== id)
-    }));
+    const { enrollRemoveCourse } = this.props;
+    enrollRemoveCourse(id);
   }
 
   render() {
@@ -90,7 +61,7 @@ class Enrollment extends Component {
           classes={courses}
           addCourse={this.addCourse}
           fromCatalog={location.state ? location.state.course : false}
-          isFull={selectedCourses.length === 6}
+          isFull={selectedCourses.length === 4}
         />
 
         <ClassCardList
@@ -113,7 +84,8 @@ const mapDispatchToProps = dispatch => {
   return {
     dispatch,
     fetchEnrollContext: () => dispatch(fetchEnrollContext()),
-    fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course))
+    fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course)),
+    enrollRemoveCourse: (id) => dispatch(enrollRemoveCourse(id))
   }
 }
 
