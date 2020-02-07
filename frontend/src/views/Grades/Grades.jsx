@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
 import { connect } from 'react-redux';
 import ClassCardList from '../../components/ClassCards/ClassCardList';
@@ -20,7 +19,7 @@ class Grades extends Component {
   }
 
   componentDidMount() {
-    const { fetchGradeContext, context } = this.props;
+    const { fetchGradeContext } = this.props;
     fetchGradeContext();
   }
 
@@ -52,28 +51,30 @@ class Grades extends Component {
   render() {
     const { context } = this.props;
     const { selectedCourses } = this.state;
-    let { location } = this.props
+    let { location } = this.props;
     let courses = context.courses;
 
     return (
-      <div className="grades viewport-app">
-        <GradesSearchBar
-          classes={courses}
-          addCourse={this.addCourse}
-          fromCatalog={location.state ? location.state.course : false}
-          isFull={selectedCourses.length === 4}
-        />
+      <div className="viewport-app">
+        <div className="grades">
+          <GradesSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+            fromCatalog={location.state ? location.state.course : false}
+            isFull={selectedCourses.length === 4}
+          />
 
-        <ClassCardList
-          selectedCourses={selectedCourses}
-          removeCourse={this.removeCourse}
-        />
+          <ClassCardList
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
+          />
 
-        <GradesGraphCard
-          id="gradesGraph"
-          title="Grades"
-          classData={selectedCourses}
-        />
+          <GradesGraphCard
+            id="gradesGraph"
+            title="Grades"
+            classData={selectedCourses}
+          />
+        </div>
       </div>
     );
   }
