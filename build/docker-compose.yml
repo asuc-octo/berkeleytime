@@ -1,7 +1,9 @@
 version: '3'
 services:
   backend:
-    image: berkeleytime/berkeleytime:latest
+    image: berkeleytime/berkeleytime
+    build:
+      context: ../berkeleytime
     command: ["0.0.0.0:8000"]
     volumes:
      - ../berkeleytime:/berkeleytime
@@ -18,19 +20,15 @@ services:
      - "SIS_COURSE_APP_KEY=***REMOVED***"
     depends_on:
      - redis
-#     - postgres
   frontend:
-    image: berkeleytime/frontend:latest
+    image: berkeleytime/frontend
+    build:
+      context: ../frontend
     volumes:
      - ../frontend:/frontend
      - /frontend/node_modules
   redis:
     image: redis:alpine
-# no longer uses the local postgres database
-#  postgres:
-#    image: postgres:11
-#    volumes:
-#     - ./postgres-data:/var/lib/postgresql/data
   nginx:
     image: nginx
     volumes:
