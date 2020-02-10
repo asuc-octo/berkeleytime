@@ -188,7 +188,7 @@ class GradesSearchBar extends Component {
             const semester = `${this.getSectionSemester(section)} / ${section.section_number}`;
 
             return {
-              value: semester.split(' / ')[0],
+              value: semester,
               label: semester,
               sectionNumber: semester.split(' / ')[1],
             };
@@ -199,7 +199,7 @@ class GradesSearchBar extends Component {
             const instructor = `${section.instructor} / ${section.section_number}`;
 
             return {
-              value: instructor.split(' / ')[0],
+              value: instructor,
               label: instructor,
               sectionNumber: instructor.split(' / ')[1],
             };

@@ -11,7 +11,7 @@ metadata:
     # nginx.ingress.kubernetes.io/auth-type: basic
     # nginx.ingress.kubernetes.io/auth-secret: basic-auth
     # nginx.ingress.kubernetes.io/auth-realm: "Authentication Required!"
-    certmanager.k8s.io/issuer: "letsencrypt-prod"
+    certmanager.k8s.io/issuer: "letsencrypt-staging"
     certmanager.k8s.io/acme-challenge-type: http01
     kubernetes.io/ingress.global-static-ip-name: 35.236.81.248
     nginx.ingress.kubernetes.io/server-snippet: |

@@ -1,7 +1,8 @@
 version: '3'
 services:
   backend:
-    image: berkeleytime/berkeleytime:latest
+    build:
+      context: ../berkeleytime
     command: ["0.0.0.0:8000"]
     volumes:
      - ../berkeleytime:/berkeleytime
@@ -11,24 +12,21 @@ services:
      - "GOOGLE_CLIENT_SECRET=***REMOVED***"
      - "GOOGLE_TOKEN_URI=https://accounts.google.com/o/oauth2/token"
      - "ENVIRONMENT_NAME=LOCALHOST"
+     - "DATABASE_URL=postgres://bt_read:yuxinsucks@35.236.65.95:5432/bt_main"
      - "SIS_CLASS_APP_ID=***REMOVED***"
      - "SIS_CLASS_APP_KEY=***REMOVED***"
      - "SIS_COURSE_APP_ID=***REMOVED***"
      - "SIS_COURSE_APP_KEY=***REMOVED***"
     depends_on:
      - redis
-     - postgres
   frontend:
-    image: berkeleytime/frontend:latest
+    build:
+      context: ../frontend
     volumes:
      - ../frontend:/frontend
      - /frontend/node_modules
   redis:
     image: redis:alpine
-  postgres:
-    image: postgres:11
-    volumes:
-     - ./postgres-data:/var/lib/postgresql/data
   nginx:
     image: nginx
     volumes:
@@ -38,4 +36,39 @@ services:
     depends_on:
      - backend
      - frontend
-    
+  search:
+    build: ../search
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/code
+    environment:
+      FLASK_ENV: development
+    depends_on:
+      - elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
+    container_name: elasticsearch
+    ports:
+      - '9200:9200'
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name=docker-cluster
+      - node.name=elasticsearch
+      - bootstrap.memory_lock=true
+      - discovery.seed_hosts=elasticsearch
+      - cluster.initial_master_nodes=elasticsearch
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: curl --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+volumes:
+  es_data:
+    driver: local

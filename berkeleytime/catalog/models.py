@@ -44,9 +44,7 @@ class Course(models.Model):
     primary_kind = models.CharField(max_length=20, null=True, blank=True)
     favorite_count = models.IntegerField(default=0)
 
-    # Do not override this field!
-    # https://github.com/yuxinzhu/campanile/issues/195
-    prerequisites = models.CharField(max_length=1024, null=True, blank=True)
+    prerequisites = models.TextField(null=True, blank=True)
 
     # Do not ever change manually set these fields!
     # They are duplicated here by grade_store to optimize queries
