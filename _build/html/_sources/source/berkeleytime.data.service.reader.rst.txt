@@ -1,0 +1,29 @@
+berkeleytime.data.service.reader package
+========================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   berkeleytime.data.service.reader.grades
+
+Submodules
+----------
+
+berkeleytime.data.service.reader.grade module
+---------------------------------------------
+
+.. automodule:: berkeleytime.data.service.reader.grade
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.data.service.reader
+   :members:
+   :undoc-members:
+   :show-inheritance:

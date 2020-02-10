@@ -1,0 +1,320 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Campus &#8212; berkeleytime  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Catalog" href="../catalog/catalog.html" />
+    <link rel="prev" title="Utils" href="../berkeleytime/utils/utils.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="campus">
+<h1>Campus<a class="headerlink" href="#campus" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="building-names-py">
+<h2>building_names.py<a class="headerlink" href="#building-names-py" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="models-py">
+<h2>models.py<a class="headerlink" href="#models-py" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="campus.models.Room">
+<em class="property">class </em><code class="descclassname">campus.models.</code><code class="descname">Room</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.models.Room" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a classroom on the UC Berkeley campus (ie. 1 Pimental Hall (PIMENTEL))</p>
+<dl class="exception">
+<dt id="campus.models.Room.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#campus.models.Room.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="exception">
+<dt id="campus.models.Room.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#campus.models.Room.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="searchtools-py">
+<h2>searchtools.py<a class="headerlink" href="#searchtools-py" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="campus.searchtools.partial_match">
+<code class="descclassname">campus.searchtools.</code><code class="descname">partial_match</code><span class="sig-paren">(</span><em>features</em>, <em>keywords</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.partial_match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the feature in features (a list of keywords) that is fuzzily matched by
+elements in the string keywords, based on the following examples:</p>
+<p>features = [“Dwinelle Hall”, “Dwinelle Hall Annex”]
+keywords = [“Dwinelle”, “Hall”]
+&gt;&gt;&gt; partial_match(features, keywords)
+“Dwinelle Hall”</p>
+<p>if __any__ keyword in keywords does not appear in an element in features, the element
+in features is immediately disqualified from being matched</p>
+<p>keywords = [“Evans”, “Hall”]
+&gt;&gt;&gt; partial_match(features, keywords)
+None (matching_indices returns empty set for “Evans”, and the score for
+each feature is reduced to None)</p>
+<p>keywords = [“Hall”]
+&gt;&gt;&gt; partial_match(features, keywords)
+None (queries with a single keyword and multiple results return None)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="campus.searchtools.update_feature">
+<code class="descclassname">campus.searchtools.</code><code class="descname">update_feature</code><span class="sig-paren">(</span><em>features_table</em>, <em>key</em>, <em>round_score</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.update_feature" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.searchtools.matching_indices">
+<code class="descclassname">campus.searchtools.</code><code class="descname">matching_indices</code><span class="sig-paren">(</span><em>keyword_arr</em>, <em>target</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.matching_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of indices of keyword_arr, a list of list of keywords, which contains
+target as an element in each respective list of keywords</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="campus.searchtools.parse_digits">
+<code class="descclassname">campus.searchtools.</code><code class="descname">parse_digits</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.parse_digits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if string contains a number, False otherwise</p>
+</dd></dl>
+
+</div>
+<div class="section" id="views-py">
+<h2>views.py<a class="headerlink" href="#views-py" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="campus.views.render">
+<code class="descclassname">campus.views.</code><code class="descname">render</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.render" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.building">
+<code class="descclassname">campus.views.</code><code class="descname">building</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.building" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.buildings">
+<code class="descclassname">campus.views.</code><code class="descname">buildings</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.buildings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.state">
+<code class="descclassname">campus.views.</code><code class="descname">state</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.building_state">
+<code class="descclassname">campus.views.</code><code class="descname">building_state</code><span class="sig-paren">(</span><em>building</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.building_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.room_state">
+<code class="descclassname">campus.views.</code><code class="descname">room_state</code><span class="sig-paren">(</span><em>room</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.room_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.section_state">
+<code class="descclassname">campus.views.</code><code class="descname">section_state</code><span class="sig-paren">(</span><em>sections</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.section_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.room_sections">
+<code class="descclassname">campus.views.</code><code class="descname">room_sections</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.room_sections" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.string_to_state">
+<code class="descclassname">campus.views.</code><code class="descname">string_to_state</code><span class="sig-paren">(</span><em>dt_string</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.string_to_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts a string representation of a datetime object to a campus state representation
+of the following format:</p>
+<p>(datetime(1900, 1, 1, time), &lt;day_of_theweek&gt;)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="campus.views.datetime_to_state">
+<code class="descclassname">campus.views.</code><code class="descname">datetime_to_state</code><span class="sig-paren">(</span><em>dt</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.datetime_to_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts a python datetime object to a campus state representation of the following format:
+(datetime(1900, 1, 1, time), &lt;day_of_theweek&gt;)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="campus.views.ongoing">
+<code class="descclassname">campus.views.</code><code class="descname">ongoing</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.ongoing" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.ongoing_section">
+<code class="descclassname">campus.views.</code><code class="descname">ongoing_section</code><span class="sig-paren">(</span><em>room</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.ongoing_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>given Room parameter, room, returns the first ongoing section object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="campus.views.search">
+<code class="descclassname">campus.views.</code><code class="descname">search</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.parse_search">
+<code class="descclassname">campus.views.</code><code class="descname">parse_search</code><span class="sig-paren">(</span><em>query</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.parse_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>parses string query (ie. 155 Dwinelle) and returns a dictionary of the following format:
+{building_id: &lt;id&gt;, room_id: &lt;id or None&gt;}, may also return the following strings:</p>
+<p>“multiple results”: the query needs to be more specific
+“no results”: no building or room was found based on the query
+“no rooms found”: a building was found, but no room matched the query</p>
+<p>the function works with the following heuristics:</p>
+<p>a) if the first or last element contains numeric characters, split the query
+into room and building names, query each separately. If a building is found, query room
+name in the building, if not, query the building name as a custom room name</p>
+<p>b) otherwise, query as a building name, if no results are found, query as a custom
+room name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="campus.views.course_number_search">
+<code class="descclassname">campus.views.</code><code class="descname">course_number_search</code><span class="sig-paren">(</span><em>course_number</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.course_number_search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.course_search">
+<code class="descclassname">campus.views.</code><code class="descname">course_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.course_search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.department_search">
+<code class="descclassname">campus.views.</code><code class="descname">department_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.department_search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.room_search">
+<code class="descclassname">campus.views.</code><code class="descname">room_search</code><span class="sig-paren">(</span><em>room_name</em>, <em>buildings</em>, <em>only_one=False</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.room_search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.custom_room_search">
+<code class="descclassname">campus.views.</code><code class="descname">custom_room_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>only_one=False</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.custom_room_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a QuerySet of rooms which match the keywords, if only_one, returns a single room</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="campus.views.building_search">
+<code class="descclassname">campus.views.</code><code class="descname">building_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>only_one=False</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.building_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a QuerySet of buildings which match the keywords, if only_one, returns a single Building</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">berkeleytime</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../berkeleytime.html">BerkeleyTime</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../account/account.html">Account</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../berkeleytime/berkeleytime.html">BerkeleyTime</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Campus</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#building-names-py">building_names.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#models-py">models.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#searchtools-py">searchtools.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#views-py">views.py</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../catalog/catalog.html">Catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/data.html">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../marketplace/marketplace.html">Marketplace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mondaine/mondaine.html">Mondaine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scheduler/scheduler.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../berkeleytime.html#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../build/build.html">Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../frontend/frontend.html">Frontend</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../berkeleytime.html">BerkeleyTime</a><ul>
+      <li>Previous: <a href="../berkeleytime/utils/utils.html" title="previous chapter">Utils</a></li>
+      <li>Next: <a href="../catalog/catalog.html" title="next chapter">Catalog</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, izzie.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../_sources/berkeleytime/campus/campus.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

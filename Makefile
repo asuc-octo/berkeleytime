@@ -6,7 +6,7 @@
 backend:
 	docker build -t berkeleytime/berkeleytime -f berkeleytime/Dockerfile berkeleytime
 	docker push berkeleytime/berkeleytime
-	
+
 frontend:
 	docker build -t berkeleytime/frontend -f frontend/Dockerfile frontend
 	docker push berkeleytime/frontend
@@ -34,15 +34,34 @@ deploy-stage:
 	kubectl apply -f kubernetes/manifests/berkeleytime/frontend-deploy-stage.yaml
 	kubectl apply -f kubernetes/manifests/berkeleytime/backend-deploy-stage.yaml
 
+# Minimal makefile for Sphinx documentation
+
+SPHINXOPTS    ?=
+SPHINXBUILD   ?= sphinx-build
+SOURCEDIR     = .
+BUILDDIR      = _build
+
+# Put it first so that "make" without argument is like "make help".
+help:
+	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+.PHONY: help Makefile
+
+# Catch-all target: route all unknown targets to Sphinx using the new
+# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
+%: Makefile
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+
 
 # -----------------------------------------------------------------------------------------------
- 
+
 # The following commands control the docker compose component of the stack.
 
 # Up brings the cluster up by booting a redis, postgres, and server.
 up:
 	docker-compose -f build/docker-compose.yml up
-	
+
 # Down removes the existing cluster. Make sure you kill your cluster with down!
 down:
 	docker-compose -f build/docker-compose.yml down
@@ -52,4 +71,3 @@ init:
 	wget https://storage.googleapis.com/berkeleytime-dev-db/postgres-data.tar.gz
 	tar -zxvf postgres-data.tar.gz
 	rm postgres-data.tar.gz
-	

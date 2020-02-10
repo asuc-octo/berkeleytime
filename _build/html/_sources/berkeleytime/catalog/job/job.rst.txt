@@ -1,0 +1,18 @@
+Job
+*************
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Contents:
+
+
+course.py
+###############
+.. autoclass:: job.course.CourseJob
+   :members:
+
+
+schedule.py
+###############
+.. autoclass:: job.schedule.ScheduleJob
+   :members:

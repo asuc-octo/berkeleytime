@@ -1,0 +1,38 @@
+berkeleytime.berkeleytime.config.finals package
+===============================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   berkeleytime.berkeleytime.config.finals.semesters
+   berkeleytime.berkeleytime.config.finals.utils
+
+Submodules
+----------
+
+berkeleytime.berkeleytime.config.finals.finals module
+-----------------------------------------------------
+
+.. automodule:: berkeleytime.berkeleytime.config.finals.finals
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.berkeleytime.config.finals.finals\_general module
+--------------------------------------------------------------
+
+.. automodule:: berkeleytime.berkeleytime.config.finals.finals_general
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.berkeleytime.config.finals
+   :members:
+   :undoc-members:
+   :show-inheritance:

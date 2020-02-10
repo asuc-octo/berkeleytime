@@ -1,0 +1,38 @@
+berkeleytime.data package
+=========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   berkeleytime.data.lib
+   berkeleytime.data.service
+
+Submodules
+----------
+
+berkeleytime.data.models module
+-------------------------------
+
+.. automodule:: berkeleytime.data.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.data.views module
+------------------------------
+
+.. automodule:: berkeleytime.data.views
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.data
+   :members:
+   :undoc-members:
+   :show-inheritance:

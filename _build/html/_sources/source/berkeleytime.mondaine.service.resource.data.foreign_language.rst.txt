@@ -1,0 +1,10 @@
+berkeleytime.mondaine.service.resource.data.foreign\_language package
+=====================================================================
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.mondaine.service.resource.data.foreign_language
+   :members:
+   :undoc-members:
+   :show-inheritance:

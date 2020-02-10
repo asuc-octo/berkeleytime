@@ -1,0 +1,22 @@
+berkeleytime.berkeleytime.config.finals.utils package
+=====================================================
+
+Submodules
+----------
+
+berkeleytime.berkeleytime.config.finals.utils.finals\_utils module
+------------------------------------------------------------------
+
+.. automodule:: berkeleytime.berkeleytime.config.finals.utils.finals_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.berkeleytime.config.finals.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

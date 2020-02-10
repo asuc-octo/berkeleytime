@@ -1,0 +1,78 @@
+berkeleytime.scheduler package
+==============================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   berkeleytime.scheduler.lib
+   berkeleytime.scheduler.migrations
+
+Submodules
+----------
+
+berkeleytime.scheduler.admin module
+-----------------------------------
+
+.. automodule:: berkeleytime.scheduler.admin
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.scheduler.apps module
+----------------------------------
+
+.. automodule:: berkeleytime.scheduler.apps
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.scheduler.constraint\_func module
+----------------------------------------------
+
+.. automodule:: berkeleytime.scheduler.constraint_func
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.scheduler.models module
+------------------------------------
+
+.. automodule:: berkeleytime.scheduler.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.scheduler.tests module
+-----------------------------------
+
+.. automodule:: berkeleytime.scheduler.tests
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.scheduler.utils\_views module
+------------------------------------------
+
+.. automodule:: berkeleytime.scheduler.utils_views
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.scheduler.views module
+-----------------------------------
+
+.. automodule:: berkeleytime.scheduler.views
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.scheduler
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,30 @@
+berkeleytime.catalog.service.resource package
+=============================================
+
+Submodules
+----------
+
+berkeleytime.catalog.service.resource.schedule module
+-----------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.resource.schedule
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.resource.sis\_course module
+--------------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.resource.sis_course
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.catalog.service.resource
+   :members:
+   :undoc-members:
+   :show-inheritance:

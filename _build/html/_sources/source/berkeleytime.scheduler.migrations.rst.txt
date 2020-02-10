@@ -1,0 +1,46 @@
+berkeleytime.scheduler.migrations package
+=========================================
+
+Submodules
+----------
+
+berkeleytime.scheduler.migrations.0001\_initial module
+------------------------------------------------------
+
+.. automodule:: berkeleytime.scheduler.migrations.0001_initial
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.scheduler.migrations.0002\_auto\_\_del\_constraints\_\_del\_field\_schedule\_accounts\_\_add\_field\_schedule module
+---------------------------------------------------------------------------------------------------------------------------------
+
+.. automodule:: berkeleytime.scheduler.migrations.0002_auto__del_constraints__del_field_schedule_accounts__add_field_schedule
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.scheduler.migrations.0003\_auto\_\_del\_field\_schedule\_user\_profile\_\_add\_field\_schedule\_user\_email module
+-------------------------------------------------------------------------------------------------------------------------------
+
+.. automodule:: berkeleytime.scheduler.migrations.0003_auto__del_field_schedule_user_profile__add_field_schedule_user_email
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.scheduler.migrations.0004\_auto\_\_add\_field\_schedule\_uid module
+--------------------------------------------------------------------------------
+
+.. automodule:: berkeleytime.scheduler.migrations.0004_auto__add_field_schedule_uid
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.scheduler.migrations
+   :members:
+   :undoc-members:
+   :show-inheritance:

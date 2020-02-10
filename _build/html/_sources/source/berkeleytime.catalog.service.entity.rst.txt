@@ -1,0 +1,54 @@
+berkeleytime.catalog.service.entity package
+===========================================
+
+Submodules
+----------
+
+berkeleytime.catalog.service.entity.course module
+-------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.entity.course
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.entity.enrollment module
+-----------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.entity.enrollment
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.entity.grade module
+------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.entity.grade
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.entity.schedule module
+---------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.entity.schedule
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.entity.section module
+--------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.entity.section
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.catalog.service.entity
+   :members:
+   :undoc-members:
+   :show-inheritance:

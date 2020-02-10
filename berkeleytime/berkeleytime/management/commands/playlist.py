@@ -34,3 +34,4 @@ class Command(BaseCommand):
 
         else:
             playlist_service.update(playlists[args[0]])
+            

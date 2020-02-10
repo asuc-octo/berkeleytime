@@ -1,0 +1,38 @@
+berkeleytime.mondaine.lib package
+=================================
+
+Submodules
+----------
+
+berkeleytime.mondaine.lib.exceptions module
+-------------------------------------------
+
+.. automodule:: berkeleytime.mondaine.lib.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.mondaine.lib.formulas module
+-----------------------------------------
+
+.. automodule:: berkeleytime.mondaine.lib.formulas
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.mondaine.lib.utils module
+--------------------------------------
+
+.. automodule:: berkeleytime.mondaine.lib.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.mondaine.lib
+   :members:
+   :undoc-members:
+   :show-inheritance:

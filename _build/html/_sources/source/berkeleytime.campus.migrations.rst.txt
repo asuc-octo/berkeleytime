@@ -1,0 +1,54 @@
+berkeleytime.campus.migrations package
+======================================
+
+Submodules
+----------
+
+berkeleytime.campus.migrations.0001\_initial module
+---------------------------------------------------
+
+.. automodule:: berkeleytime.campus.migrations.0001_initial
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.campus.migrations.0002\_auto\_\_del\_classroom\_\_del\_place module
+--------------------------------------------------------------------------------
+
+.. automodule:: berkeleytime.campus.migrations.0002_auto__del_classroom__del_place
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.campus.migrations.0003\_auto\_\_add\_building\_\_add\_room module
+------------------------------------------------------------------------------
+
+.. automodule:: berkeleytime.campus.migrations.0003_auto__add_building__add_room
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.campus.migrations.0004\_auto\_\_chg\_field\_building\_abbreviation\_\_chg\_field\_building\_name\_\_del\_fi module
+-------------------------------------------------------------------------------------------------------------------------------
+
+.. automodule:: berkeleytime.campus.migrations.0004_auto__chg_field_building_abbreviation__chg_field_building_name__del_fi
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.campus.migrations.0005\_auto\_\_add\_field\_room\_name module
+--------------------------------------------------------------------------
+
+.. automodule:: berkeleytime.campus.migrations.0005_auto__add_field_room_name
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.campus.migrations
+   :members:
+   :undoc-members:
+   :show-inheritance:

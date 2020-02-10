@@ -1,0 +1,38 @@
+berkeleytime.data.service.reader.grades package
+===============================================
+
+Submodules
+----------
+
+berkeleytime.data.service.reader.grades.courses module
+------------------------------------------------------
+
+.. automodule:: berkeleytime.data.service.reader.grades.courses
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.data.service.reader.grades.reader module
+-----------------------------------------------------
+
+.. automodule:: berkeleytime.data.service.reader.grades.reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.data.service.reader.grades.writer module
+-----------------------------------------------------
+
+.. automodule:: berkeleytime.data.service.reader.grades.writer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.data.service.reader.grades
+   :members:
+   :undoc-members:
+   :show-inheritance:

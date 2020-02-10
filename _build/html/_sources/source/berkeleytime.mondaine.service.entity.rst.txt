@@ -1,0 +1,22 @@
+berkeleytime.mondaine.service.entity package
+============================================
+
+Submodules
+----------
+
+berkeleytime.mondaine.service.entity.playlist module
+----------------------------------------------------
+
+.. automodule:: berkeleytime.mondaine.service.entity.playlist
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.mondaine.service.entity
+   :members:
+   :undoc-members:
+   :show-inheritance:

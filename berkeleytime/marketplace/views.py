@@ -7,14 +7,21 @@ def _get_textbook_context(course_id, semester, year):
     """Get all textbooks corresponding for a single semester.
 
     :param int course_id:
+
     :param str semester:
+
     :param str year:
+
     :returns [
         {
             display_text: Spring 2017 (Denero),
+
             textbooks: list<entity.Textbook>,
+
         }
+
     ]
+
     """
     primary_sections = section_service.find_by_course_id(
         course_id, semester, year, is_primary=True
@@ -41,9 +48,11 @@ def _get_recommended_textbook_context(textbook_context_by_section):
 
     :param list<list<entity.Textbook>> textbooks_by_section:
         List of list of textbooks grouped by section
+
     :returns <entity.Textbook>
 
     Find a textbook that is listed for every section, return the max $
+
     """
     id_to_textbook, textbook_ids_by_section = {}, []
 
@@ -71,10 +80,14 @@ def get_textbook_context(course_id, semester, year):
     :returns {
         recommended_textbook: {
             <entity.Textbook>
+
         }
+
         textbook_context_by_section: {
             Lecture 001 (Denero): [<entity.Textbook>]
+
         }
+
     }
     """
     recommended_display_text = 'Recommended for %s %s' % (semester.title(), year.title())  # noqa
