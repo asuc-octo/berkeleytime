@@ -49,9 +49,8 @@ class Grades extends Component {
   }
 
   render() {
-    const { context } = this.props;
+    const { context, location } = this.props;
     const { selectedCourses } = this.state;
-    const { location } = this.props;
     const courses = context.courses;
 
     return (

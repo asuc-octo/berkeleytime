@@ -1,23 +1,22 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
+import { connect } from 'react-redux';
 import ClassCardList from '../../components/ClassCards/ClassCardList';
-import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard.jsx';
-import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar.jsx';
+import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard';
+import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar';
 
 import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse } from '../../redux/actions';
-import { connect } from "react-redux";
 
 class Enrollment extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       // context: {},
-      selectedCourses: this.props.selectedCourses
-    }
+      selectedCourses: this.props.selectedCourses,
+    };
 
     this.addCourse = this.addCourse.bind(this);
-    this.removeCourse = this.removeCourse.bind(this)
+    this.removeCourse = this.removeCourse.bind(this);
   }
 
   componentDidMount() {
@@ -28,15 +27,15 @@ class Enrollment extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.selectedCourses != this.state.selectedCourses) {
       this.setState({
-        selectedCourses: nextProps.selectedCourses
-      })
+        selectedCourses: nextProps.selectedCourses,
+      });
     }
   }
 
   addCourse(course) {
     const { fetchEnrollClass } = this.props;
     const { selectedCourses } = this.state;
-    for (let selected of selectedCourses) {
+    for (const selected of selectedCourses) {
       if (selected.id === course.id) {
         return;
       }
@@ -52,8 +51,8 @@ class Enrollment extends Component {
   render() {
     const { context } = this.props;
     const { selectedCourses } = this.state;
-    let { location } = this.props
-    let courses = context.courses;
+    const { location } = this.props;
+    const courses = context.courses;
 
     return (
       <div className="enrollment viewport-app">
@@ -80,24 +79,22 @@ class Enrollment extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    dispatch,
-    fetchEnrollContext: () => dispatch(fetchEnrollContext()),
-    fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course)),
-    enrollRemoveCourse: (id) => dispatch(enrollRemoveCourse(id))
-  }
-}
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  fetchEnrollContext: () => dispatch(fetchEnrollContext()),
+  fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course)),
+  enrollRemoveCourse: (id) => dispatch(enrollRemoveCourse(id)),
+});
 
 const mapStateToProps = state => {
   const { context, selectedCourses } = state.enrollment;
   return {
     context,
-    selectedCourses
+    selectedCourses,
   };
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(Enrollment);
