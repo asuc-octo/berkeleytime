@@ -1,7 +1,6 @@
 version: '3'
 services:
   backend:
-    image: berkeleytime/berkeleytime
     build:
       context: ../berkeleytime
     command: ["0.0.0.0:8000"]
@@ -21,7 +20,6 @@ services:
     depends_on:
      - redis
   frontend:
-    image: berkeleytime/frontend
     build:
       context: ../frontend
     volumes:
