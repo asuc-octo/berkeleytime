@@ -1,0 +1,61 @@
+berkeleytime.mondaine.service.resource package
+==============================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   berkeleytime.mondaine.service.resource.data
+
+Submodules
+----------
+
+berkeleytime.mondaine.service.resource.american\_cultures module
+----------------------------------------------------------------
+
+.. automodule:: berkeleytime.mondaine.service.resource.american_cultures
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.mondaine.service.resource.foreign\_language module
+---------------------------------------------------------------
+
+.. automodule:: berkeleytime.mondaine.service.resource.foreign_language
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.mondaine.service.resource.ls module
+------------------------------------------------
+
+.. automodule:: berkeleytime.mondaine.service.resource.ls
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.mondaine.service.resource.reading module
+-----------------------------------------------------
+
+.. automodule:: berkeleytime.mondaine.service.resource.reading
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.mondaine.service.resource.universal\_csv module
+------------------------------------------------------------
+
+.. automodule:: berkeleytime.mondaine.service.resource.universal_csv
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.mondaine.service.resource
+   :members:
+   :undoc-members:
+   :show-inheritance:

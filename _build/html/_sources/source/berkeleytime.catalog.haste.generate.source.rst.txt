@@ -1,0 +1,10 @@
+berkeleytime.catalog.haste.generate.source package
+==================================================
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.catalog.haste.generate.source
+   :members:
+   :undoc-members:
+   :show-inheritance:

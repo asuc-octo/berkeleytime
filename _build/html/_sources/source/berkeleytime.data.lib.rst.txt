@@ -1,0 +1,22 @@
+berkeleytime.data.lib package
+=============================
+
+Submodules
+----------
+
+berkeleytime.data.lib.grade module
+----------------------------------
+
+.. automodule:: berkeleytime.data.lib.grade
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.data.lib
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,14 @@
+Generate
+*************
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Contents:
+
+
+location.py
+###############
+.. autofunction:: generate.location.main
+.. autofunction:: generate.location.get_rooms
+.. autofunction:: generate.location.get_buildings
+.. autofunction:: generate.location.get_custom_rooms

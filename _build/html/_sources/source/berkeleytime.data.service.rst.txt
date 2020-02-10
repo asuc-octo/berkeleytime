@@ -1,0 +1,32 @@
+berkeleytime.data.service package
+=================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+   berkeleytime.data.service.entity
+   berkeleytime.data.service.mapper
+   berkeleytime.data.service.reader
+   berkeleytime.data.service.store
+
+Submodules
+----------
+
+berkeleytime.data.service.grade module
+--------------------------------------
+
+.. automodule:: berkeleytime.data.service.grade
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.data.service
+   :members:
+   :undoc-members:
+   :show-inheritance:

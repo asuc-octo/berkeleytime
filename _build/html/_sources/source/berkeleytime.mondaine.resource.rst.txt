@@ -1,0 +1,10 @@
+berkeleytime.mondaine.resource package
+======================================
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.mondaine.resource
+   :members:
+   :undoc-members:
+   :show-inheritance:

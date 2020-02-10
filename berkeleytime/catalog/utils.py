@@ -52,7 +52,9 @@ def sort_course_dicts(courses):
 
     @courses: iterable object containing dictionaries representing courses.
             Each course must have a course_number and abbreviation key
+
     @return: returns a new list containing the given courses, in naturally sorted order.
+
     """
     detailed_courses = [{
         "course": course,

@@ -1,0 +1,22 @@
+berkeleytime.marketplace.job package
+====================================
+
+Submodules
+----------
+
+berkeleytime.marketplace.job.textbook module
+--------------------------------------------
+
+.. automodule:: berkeleytime.marketplace.job.textbook
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.marketplace.job
+   :members:
+   :undoc-members:
+   :show-inheritance:

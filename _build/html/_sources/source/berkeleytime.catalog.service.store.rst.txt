@@ -1,0 +1,46 @@
+berkeleytime.catalog.service.store package
+==========================================
+
+Submodules
+----------
+
+berkeleytime.catalog.service.store.course module
+------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.store.course
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.store.enrollment module
+----------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.store.enrollment
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.store.section module
+-------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.store.section
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.store.utils module
+-----------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.store.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.catalog.service.store
+   :members:
+   :undoc-members:
+   :show-inheritance:

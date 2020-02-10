@@ -1,0 +1,38 @@
+berkeleytime.marketplace.service.store package
+==============================================
+
+Submodules
+----------
+
+berkeleytime.marketplace.service.store.amazon\_promotions module
+----------------------------------------------------------------
+
+.. automodule:: berkeleytime.marketplace.service.store.amazon_promotions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.marketplace.service.store.promotion module
+-------------------------------------------------------
+
+.. automodule:: berkeleytime.marketplace.service.store.promotion
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.marketplace.service.store.textbook module
+------------------------------------------------------
+
+.. automodule:: berkeleytime.marketplace.service.store.textbook
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.marketplace.service.store
+   :members:
+   :undoc-members:
+   :show-inheritance:

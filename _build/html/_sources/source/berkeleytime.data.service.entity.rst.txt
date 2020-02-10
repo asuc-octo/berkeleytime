@@ -1,0 +1,22 @@
+berkeleytime.data.service.entity package
+========================================
+
+Submodules
+----------
+
+berkeleytime.data.service.entity.grade module
+---------------------------------------------
+
+.. automodule:: berkeleytime.data.service.entity.grade
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.data.service.entity
+   :members:
+   :undoc-members:
+   :show-inheritance:

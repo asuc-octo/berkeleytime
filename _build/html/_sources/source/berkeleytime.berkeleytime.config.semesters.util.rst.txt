@@ -1,0 +1,22 @@
+berkeleytime.berkeleytime.config.semesters.util package
+=======================================================
+
+Submodules
+----------
+
+berkeleytime.berkeleytime.config.semesters.util.term module
+-----------------------------------------------------------
+
+.. automodule:: berkeleytime.berkeleytime.config.semesters.util.term
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.berkeleytime.config.semesters.util
+   :members:
+   :undoc-members:
+   :show-inheritance:

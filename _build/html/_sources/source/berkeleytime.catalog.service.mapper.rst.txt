@@ -1,0 +1,38 @@
+berkeleytime.catalog.service.mapper package
+===========================================
+
+Submodules
+----------
+
+berkeleytime.catalog.service.mapper.course module
+-------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.mapper.course
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.mapper.grade module
+------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.mapper.grade
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+berkeleytime.catalog.service.mapper.schedule module
+---------------------------------------------------
+
+.. automodule:: berkeleytime.catalog.service.mapper.schedule
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: berkeleytime.catalog.service.mapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
