@@ -1,24 +1,24 @@
 from __future__ import division
 import re, os, sys, datetime
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-from django.shortcuts import render_to_response
 
-from django.http import HttpResponse, Http404
-from django.template import RequestContext
 from catalog.models import Course, Grade, Section, Enrollment, Playlist
+from catalog.service.resource.schedule import schedule_resource
+from catalog.service.course import course_service
 from catalog.utils import calculate_letter_average, sort_course_dicts
 from catalog.views import catalog_context
-from berkeleytime.utils.requests import raise_404_on_error, render_to_empty_json, render_to_json
-
+from berkeleytime.utils.requests import raise_404_on_error, render_to_empty_json, render_to_json, render_to_empty_json_with_status_code
 from berkeleytime.settings import (
     TELEBEARS_JSON, TELEBEARS, CURRENT_SEMESTER, CURRENT_YEAR, PAST_SEMESTERS,
     PAST_SEMESTERS_TELEBEARS_JSON, PAST_SEMESTERS_TELEBEARS, TELEBEARS_ALREADY_STARTED)
 
-from django.db.models import Avg, Sum
-
-import urllib2, ssl
-from bs4 import BeautifulSoup
 from django.core.cache import cache
+from django.db.models import Avg, Sum
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
+ENROLLMENT_CACHE_TIMEOUT = 900
+CACHE_DAY_TIMEOUT = 86400
 
 STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
                    ("b1", "B+"), ("b2", "B"), ("b3", "B-"),
@@ -33,7 +33,7 @@ def grade_context():
         courses = Course.objects.filter(grade__isnull=False).distinct().order_by("abbreviation", "course_number")
         rtn = courses.values("id", "abbreviation", "course_number")
         rtn = sort_course_dicts(rtn)
-        cache.set("grade__courses", rtn, 86400)
+        cache.set("grade__courses", rtn, CACHE_DAY_TIMEOUT)
     return {"courses": rtn}
 
 def get_or_zero(d, k):
@@ -54,7 +54,7 @@ def grade_render(request):
 def grade_context_json(request):
     return render_to_json(grade_context())
 
-def section_to_value(s):
+def year_and_semester_to_value(s):
     """
     Assigns a number to a section dict (see grade_section_json for format). Is used to
     sort a list of sections by time.
@@ -65,13 +65,17 @@ def section_to_value(s):
         sem = 2
     else:
         sem = 1
-    return 3*int(s['year']) + sem + int(s['section_number']) * 0.01
+    return 3*int(s['year']) + sem
 
 def grade_section_json(request, course_id):
     """
     {"instructor": "Shewchuk", "semester": "spring", "year": 2012, "section_number": "003", "grade_id": 1533}
     """
     try:
+        cached = cache.get("grade_section_json " + str(course_id))
+        if cached:
+            print("Cache Hit in grade_section_json course_id " + course_id)
+            return render_to_json(cached)
         sections = [
             {
                 "instructor": entry.instructor,
@@ -81,14 +85,19 @@ def grade_section_json(request, course_id):
                 "grade_id": entry.id,
             } for entry in Grade.objects.filter(course__id=int(course_id), total__gte = 1)
         ]
-        sections = sorted(sections, key=section_to_value, reverse=True)
+        sections = sorted(sections, key=year_and_semester_to_value, reverse=True)
+        cache.set("grade_section_json " + str(course_id), sections, CACHE_DAY_TIMEOUT)
         return render_to_json(sections)
     except Exception as e:
         print e
-        return render_to_empty_json()
+        return render_to_empty_json_with_status_code(500)
 
 def grade_json(request, grade_ids):
     try:
+        cached = cache.get("grade_json " + str(grade_ids))
+        if cached:
+            print("Cache Hit in grade_json " + grade_ids)
+            return render_to_json(cached)
         actual_total = 0
         rtn = {}
         grade_ids = grade_ids.split("&")
@@ -132,6 +141,7 @@ def grade_json(request, grade_ids):
         if rtn["section_letter"] == "":
             rtn["section_letter"] = "N/A"
 
+        cache.set("grade_json" + str(grade_ids), rtn, CACHE_DAY_TIMEOUT)
         return render_to_json(rtn)
     except Exception as e:
         print e
@@ -162,7 +172,7 @@ def enrollment_context():
         rtn = sort_course_dicts(rtn)
 
 
-        cache.set("enrollment__courses", rtn, 86400)
+        cache.set("enrollment__courses", rtn, ENROLLMENT_CACHE_TIMEOUT)
     return {"courses": rtn, "telebears": TELEBEARS_JSON}
 
 @raise_404_on_error
@@ -230,6 +240,11 @@ def enrollment_section_render(request, course_id):
 
 def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, year = CURRENT_YEAR):
     try:
+        cached = cache.get("enrollment_aggregate_json " + str(course_id) + semester + str(year))
+        if cached:
+            print('Cache Hit in enrollment_aggregate_json with course_id  ' + course_id + ' semester ' + semester
+                  + ' year ' + year)
+            return render_to_json(cached)
         rtn = {}
         course = Course.objects.get(id = course_id)
         all_sections = course.section_set.all().filter(semester = semester, year = year, disabled = False)
@@ -241,18 +256,30 @@ def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, y
             rtn["subtitle"] = course.title
             rtn["section_name"] = "All Sections"
 
+            new_sections = None
             if semester != CURRENT_SEMESTER or year != CURRENT_YEAR:
                 CORRECTED_TELEBEARS_JSON = PAST_SEMESTERS_TELEBEARS_JSON[semester + " " + year]
                 CORRECTED_TELEBEARS = PAST_SEMESTERS_TELEBEARS[semester + " " + year]
             else:
                 CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
                 CORRECTED_TELEBEARS = TELEBEARS
+                schedules = schedule_resource.get(
+                    semester=semester,
+                    year=year,
+                    course_id=course_id,
+                    abbreviation=course.abbreviation,
+                    course_number=course.course_number,
+                    log=True,
+                )
+                new_sections = [x.enrollment._initial for x in schedules if x.section._initial["is_primary"]]
 
             rtn["telebears"] = CORRECTED_TELEBEARS_JSON #THIS NEEDS TO BE FROM THE OTHER SEMESTER, NOT THE CURRENT SEMESTER
             rtn["telebears"]["semester"] = semester.capitalize() + " " + year
             last_date = sections[0].enrollment_set.all().latest("date_created").date_created
             enrolled_max = Enrollment.objects.filter(section__in = sections, date_created = last_date).aggregate(Sum("enrolled_max"))["enrolled_max__sum"]
+            waitlisted_max = Enrollment.objects.filter(section__in = sections, date_created = last_date).aggregate(Sum("waitlisted_max"))["waitlisted_max__sum"]
             rtn["enrolled_max"] = enrolled_max
+            rtn["waitlisted_max"] = enrolled_max
             dates = {d: [0, 0] for d in sections[0].enrollment_set.all().values_list("date_created", flat = True)}
             for s in sections:
                 enrollment = s.enrollment_set.filter(date_created__gte=CORRECTED_TELEBEARS["phase1_start"]).order_by("date_created")
@@ -261,30 +288,50 @@ def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, y
                         dates[d][0] += enrolled
                         dates[d][1] += waitlisted
 
-            rtn["data"] = [
-                {
-                    "enrolled": d[1][0],
-                    "waitlisted": d[1][1],
-                    "day": (d[0] - CORRECTED_TELEBEARS["phase1_start"]).days + 1,
-                    "date": (d[0]).strftime("%m/%d/%Y-%H:%M:%S"),
-                    "enrolled_percent": round(d[1][0]/enrolled_max, 3),
-                    "waitlisted_percent": round(d[1][1]/enrolled_max, 3)
-                } for d in sorted(dates.items(), key = lambda x: x[0])
-            ]
+            rtn['data'] = []
+            for d in sorted(dates.items(), key=lambda date_enrollment_data_pair: date_enrollment_data_pair[0]):
+                curr_d = {}
+                curr_d["enrolled"] = d[1][0]
+                curr_d["waitlisted"] = d[1][1]
+                curr_d["day"] = (d[0] - CORRECTED_TELEBEARS["phase1_start"]).days + 1
+                curr_d["date"] = (d[0]).strftime("%m/%d/%Y-%H:%M:%S")
+                curr_d["enrolled_max"] = enrolled_max
+                curr_waitlisted_max = Enrollment.objects.filter(section__in=sections, date_created=d[0]).aggregate(Sum("waitlisted_max"))["waitlisted_max__sum"]
+                curr_d["waitlisted_max"] = curr_waitlisted_max
+                curr_d["enrolled_percent"] = round(d[1][0] / enrolled_max, 3) if enrolled_max else -1
+                curr_d["waitlisted_percent"] = round(d[1][1] / enrolled_max, 3) if curr_waitlisted_max else -1
+                rtn["data"].append(curr_d)
+
+            if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
+                last_enrolled = sum([s["enrolled"] for s in new_sections])
+                last_waitlisted = sum([s["waitlisted"] for s in new_sections])
+                enrolled_max = sum([s["enrolled_max"] for s in new_sections])
+                waitlisted_max = sum([s["waitlisted_max"] for s in new_sections])
+                rtn["data"][-1]["enrolled"] = last_enrolled
+                rtn["data"][-1]["waitlisted"] = last_waitlisted
+                rtn["data"][-1]["enrolled_percent"] = round(last_enrolled / enrolled_max, 3) if enrolled_max else -1
+                rtn["data"][-1]["waitlisted_percent"] = round(last_waitlisted / waitlisted_max, 3) if waitlisted_max else -1
             enrolled_outliers = [d["enrolled_percent"] for d in rtn["data"] if d["enrolled_percent"] >= 1.0]
             rtn["enrolled_percent_max"] = max(enrolled_outliers) * 1.10 if enrolled_outliers  else 1.10
             waitlisted_outliers = [d["waitlisted_percent"] for d in rtn["data"] if d["waitlisted_percent"] >= 1.0]
             rtn["waitlisted_percent_max"] = max(waitlisted_outliers) * 1.10 if waitlisted_outliers else 1.10
             rtn["enrolled_scale_max"] = int(rtn["enrolled_percent_max"] * rtn["enrolled_max"])
-            rtn["waitlisted_scale_max"] = int(rtn["waitlisted_percent_max"] * rtn["enrolled_max"])
+            rtn["waitlisted_scale_max"] = int(rtn["waitlisted_percent_max"] * rtn["waitlisted_max"])
 
-        return render_to_json(rtn)
+            cache.set("enrollment_aggregate_json " + str(course_id) + semester + str(year), rtn, ENROLLMENT_CACHE_TIMEOUT)
+            rtn = render_to_json(rtn)
+
+        return rtn
     except Exception as e:
         print e
         return render_to_empty_json()
 
 def enrollment_json(request, section_id):
     try:
+        cached = cache.get("enrollment_json" + str(section_id))
+        if cached:
+            print("Cache Hit in enrollment_json with section_id " + section_id)
+            return render_to_json(cached)
         rtn = {}
         section = Section.objects.get(id=section_id)
         course = section.course
@@ -292,7 +339,7 @@ def enrollment_json(request, section_id):
         rtn["section_id"] = section.id
         rtn["title"] = course.abbreviation + " " + course.course_number
         rtn["subtitle"] = course.title
-        if section.instructor == "":
+        if section.instructor == "" or section.instructor is None:
             section.instructor = "No Instructor Assigned"
         rtn["section_name"] = section.instructor + " - " + section.section_number
 
@@ -304,18 +351,46 @@ def enrollment_json(request, section_id):
         else:
             CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
             CORRECTED_TELEBEARS = TELEBEARS
+            schedules = schedule_resource.get(
+                semester=semester,
+                year=year,
+                course_id=course.id,
+                abbreviation=course.abbreviation,
+                course_number=course.course_number,
+                log=True,
+            )
+            new_section = [x.enrollment._initial for x in schedules
+                           if x.section._initial["is_primary"] and x.section['ccn'] == section.ccn][0]
 
         rtn["telebears"] = CORRECTED_TELEBEARS_JSON
-        now = section.enrollment_set.all().latest("date_created")
-        rtn["enrolled_max"] = now.enrolled_max
-        rtn["data"] = [{
-                "enrolled": d.enrolled,
-                "waitlisted": d.waitlisted,
-                "day": (d.date_created - CORRECTED_TELEBEARS["phase1_start"]).days + 1,
-                "date": (d.date_created).strftime("%m/%d/%Y-%H:%M:%S"),
-                "enrolled_percent": round(d.enrolled/rtn["enrolled_max"], 3),
-                "waitlisted_percent": round(d.waitlisted/rtn["enrolled_max"], 3)
-            } for d in section.enrollment_set.all().filter(date_created__gte=CORRECTED_TELEBEARS["phase1_start"]).order_by("date_created")]
+        enrolled_max = section.enrollment_set.all().latest("date_created").enrolled_max
+        rtn["enrolled_max"] = enrolled_max
+        rtn["waitlisted_max"] = enrolled_max
+
+        rtn["data"] = []
+        for d in section.enrollment_set.all().filter(date_created__gte=CORRECTED_TELEBEARS["phase1_start"]).order_by("date_created"):
+            curr_d = {}
+            curr_d["enrolled"] = d.enrolled
+            curr_d["waitlisted"] = d.waitlisted
+            curr_d["enrolled_max"] = enrolled_max
+            curr_waitlisted_max = section.enrollment_set.all().latest("date_created").waitlisted_max
+            curr_d["waitlisted_max"] = curr_waitlisted_max
+            curr_d["day"] = (d.date_created - CORRECTED_TELEBEARS["phase1_start"]).days + 1
+            curr_d["date"] = (d.date_created).strftime("%m/%d/%Y-%H:%M:%S")
+            curr_d["enrolled_percent"] = round(d.enrolled / enrolled_max, 3) if enrolled_max else -1
+            curr_d["waitlisted_percent"] = round(d.waitlisted / curr_waitlisted_max, 3) if curr_waitlisted_max else -1
+            rtn["data"].append(curr_d)
+
+
+        if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
+            last_enrolled = new_section["enrolled"]
+            last_waitlisted = new_section["waitlisted"]
+            enrolled_max = new_section["enrolled_max"]
+            waitlisted_max = new_section["waitlisted_max"]
+            rtn["data"][-1]["enrolled"] = last_enrolled
+            rtn["data"][-1]["waitlisted"] = last_waitlisted
+            rtn["data"][-1]["enrolled_percent"] = round(last_enrolled / enrolled_max, 3) if enrolled_max else -1
+            rtn["data"][-1]["waitlisted_percent"] = round(last_waitlisted / waitlisted_max, 3) if waitlisted_max else -1
         rtn["instructor"] = section.instructor
         enrolled_outliers = [d["enrolled_percent"] for d in rtn["data"] if d["enrolled_percent"] >= 1.0]
         rtn["enrolled_percent_max"] = max(enrolled_outliers) * 1.10 if enrolled_outliers  else 1.10
@@ -324,7 +399,10 @@ def enrollment_json(request, section_id):
         rtn["enrolled_scale_max"] = int(rtn["enrolled_percent_max"] * rtn["enrolled_max"])
         rtn["waitlisted_scale_max"] = int(rtn["waitlisted_percent_max"] * rtn["enrolled_max"])
 
-        return render_to_json(rtn)
+        cache.set("enrollment_json" + str(section_id), rtn, ENROLLMENT_CACHE_TIMEOUT)
+        rtn = render_to_json(rtn)
+
+        return rtn
     except Exception as e:
         print e
         return render_to_empty_json()

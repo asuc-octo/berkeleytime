@@ -24,6 +24,9 @@ class CourseMapper(EntityMapper):
                 'department': self.get_course_department(data),
                 'units': self.get_units(data),
             }
+            if "preparation" in data:
+                if "requiredText" in data["preparation"] and len(data["preparation"]["requiredText"]):
+                    course["prerequisites"] = data["preparation"]["requiredText"]
             return Course(course)
         except KeyError as e:
             traceback.print_exc()

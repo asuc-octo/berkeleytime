@@ -39,18 +39,33 @@
             }
         }
 
-        .contributor-profiles {
+        .contributor-row {
             display: flex;
             flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            justify-content: flex-start;
+        }
 
-            .contributor-card {
-                height: 210px;
-                width: 21%;
-                margin-right: 0px;
-                margin-bottom: 40px;
+        .contributor-card {
+            height: 250px;
+            width: 150px;
+            margin-bottom: 25px;
+            
+            &:not(:last-child) {
+                margin-right: 25px;
+            }
+
+            .contributor-pic-container {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                height: 200px;
+
+                .contributor-pic, .contributor-pic-silly {
+                    position: absolute;
+                    height: 190px;
+                    width: 150px;
+                    object-fit: cover;
+                }
 
                 @include mobile {
                     width: 49%;
@@ -61,37 +76,34 @@
                     flex-direction: row;
                     justify-content: center;
 
-                    .contributor-pic {
-                        height: 150px;
-                        width: 150px;
-                        object-fit: cover;
-                        margin-bottom: 10px;
+                    &:hover {
+                        opacity: 0;
                     }
                 }
+            }
 
-                .contributor-desc {
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
+            .contributor-desc {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
 
-                    .contributor-name {
-                        font-size: 18px;
-                        margin-bottom: 10px;
-                        font-weight: 500;
-                        color: #616161;
+                .contributor-name {
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                    font-weight: 500;
+                    color: #616161;
+                }
 
-                        &:hover {
-                            color: $bt-blue;
-                            text-decoration: underline;
-                        }
-                    }
+                .contributor-site:hover {
+                        color: $bt-blue;
+                        text-decoration: underline;
+                }
 
-                    .contributor-role {
-                        color: lighten($bt-grey, 35%);
-                        font-weight: 500;
-                        font-size: 14px;
-                    }
+                .contributor-role {
+                    color: lighten($bt-grey, 35%);
+                    font-weight: 500;
+                    font-size: 14px;
                 }
             }
             .filling-empty-space-childs {

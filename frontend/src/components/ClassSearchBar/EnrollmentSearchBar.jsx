@@ -166,7 +166,6 @@ class EnrollmentSearchBar extends Component {
         sectionNumber: instructor.split(' / ')[1],
       } );
     }
-
     return ret;
   }
 
@@ -283,7 +282,6 @@ class EnrollmentSearchBar extends Component {
               onChange={this.handlePrimarySelect}
               disabled={!selectedClass}
               clearable={false}
-              searchable={false}
           />
         </Col>
         <Col lg={3}>
@@ -295,7 +293,6 @@ class EnrollmentSearchBar extends Component {
               onChange={this.handleSecondarySelect}
               disabled={!selectedClass}
               clearable={false}
-              searchable={false}
           />
         </Col>
         <Col lg={1}>

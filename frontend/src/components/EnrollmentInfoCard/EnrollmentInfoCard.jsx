@@ -2,7 +2,10 @@ import React, { PureComponent } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
 function formatPercentage(num) {
-  return (num * 100).toFixed(1);
+  if (num === -1) {
+    return "N/A"
+  }
+  return (num * 100).toFixed(1).toString() + "%";
 }
 
 class EnrollmentInfoCard extends PureComponent {
