@@ -23,8 +23,8 @@ services:
     build:
       context: ../frontend
     volumes:
-     - ../frontend:/frontend
-     - /frontend/node_modules
+      - ../frontend:/frontend
+      - /frontend/node_modules
   redis:
     image: redis:alpine
   nginx:
