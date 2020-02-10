@@ -134,7 +134,7 @@ export const updatedEnrollSelected = (sections) => ({
 
 // get information for the class displayed in the class description component
 export function getCourseData(id) {
-  return dispatch => axios.get('http://localhost:8080/api/catalog_json/course_box/', {
+  return dispatch => axios.get('https://berkeleytime.com/api/catalog_json/course_box/', {
     params: {
       course_id: id,
     },
@@ -148,7 +148,7 @@ export function getCourseData(id) {
 
 // get the courses after applying the filters
 export function getFilterResults(filters) {
-  return dispatch => axios.get('http://localhost:8080/api/catalog/filter/', {
+  return dispatch => axios.get('https://berkeleytime.com/api/catalog/filter/', {
     params: {
       filters,
     },
@@ -168,7 +168,7 @@ export function fetchLists(paths) {
   return dispatch => {
     let tmp = {};
     if (paths.length >= 4) {
-      return axios.get(`http://localhost:8080/api/catalog_json/${abbreviation}/${classNum}/`)
+      return axios.get(`https://berkeleytime.com/api/catalog_json/${abbreviation}/${classNum}/`)
         .then(
           res => {
             tmp = res;
@@ -181,7 +181,7 @@ export function fetchLists(paths) {
         )
         .then(() => {
           const courseID = tmp.data.default_course;
-          axios.get('http://localhost:8080/api/catalog/filter/', { params: { course_id: courseID } })
+          axios.get('https://berkeleytime.com/api/catalog/filter/', { params: { course_id: courseID } })
             .then(
               res2 => {
                 if (res2.data.length > 0) {
@@ -196,7 +196,7 @@ export function fetchLists(paths) {
             );
         });
     } else {
-      return axios.get('http://localhost:8080/api/catalog_json/')
+      return axios.get('https://berkeleytime.com/api/catalog_json/')
         .then(
           res => {
             const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
@@ -210,7 +210,7 @@ export function fetchLists(paths) {
 }
 
 export function fetchGradeContext() {
-  return dispatch => axios.get('http://localhost:8080/api/grades_json/')
+  return dispatch => axios.get('https://berkeleytime.com/api/grades_json/')
     .then(
       res => {
         dispatch(updateGradeContext(res.data));
@@ -220,7 +220,7 @@ export function fetchGradeContext() {
 }
 
 export function fetchGradeClass(course) {
-  return dispatch => axios.get(`http://localhost:8080/api/catalog_json/course/${course.courseID}/`)
+  return dispatch => axios.get(`https://berkeleytime.com/api/catalog_json/course/${course.courseID}/`)
     .then(
       res => {
         const courseData = res.data;
@@ -243,7 +243,7 @@ export function fetchGradeData(classData) {
   const promises = [];
   for (const course of classData) {
     const { sections } = course;
-    const url = `http://localhost:8080/api/grades/sections/${sections.join('&')}/`;
+    const url = `https://berkeleytime.com/api/grades/sections/${sections.join('&')}/`;
     promises.push(axios.get(url));
   }
   return dispatch => axios.all(promises)
@@ -263,7 +263,7 @@ export function fetchGradeData(classData) {
 }
 
 export function fetchGradeSelected(updatedClass) {
-  const url = `http://localhost:8080/api/grades/course_grades/${updatedClass.value}/`;
+  const url = `https://berkeleytime.com/api/grades/course_grades/${updatedClass.value}/`;
   return dispatch => axios.get(url)
     .then(
       res => {
@@ -278,7 +278,7 @@ export function fetchGradeSelected(updatedClass) {
 }
 
 export function fetchEnrollContext() {
-  return dispatch => axios.get('http://localhost:8080/api/enrollment_json/')
+  return dispatch => axios.get('https://berkeleytime.com/api/enrollment_json/')
     .then(
       res => {
         dispatch(updateEnrollContext(res.data));
@@ -288,7 +288,7 @@ export function fetchEnrollContext() {
 }
 
 export function fetchEnrollClass(course) {
-  return dispatch => axios.get(`http://localhost:8080/api/catalog_json/course/${course.courseID}/`)
+  return dispatch => axios.get(`https://berkeleytime.com/api/catalog_json/course/${course.courseID}/`)
     .then(
       res => {
         const courseData = res.data;
@@ -317,9 +317,9 @@ export function fetchEnrollData(classData) {
     console.log(course);
     if (instructor === 'all') {
       const [sem, year] = semester.split(' ');
-      url = `http://localhost:8080/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
+      url = `https://berkeleytime.com/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
     } else {
-      url = `http://localhost:8080/api/enrollment/data/${sections[0]}/`;
+      url = `https://berkeleytime.com/api/enrollment/data/${sections[0]}/`;
     }
     promises.push(axios.get(url));
   }
@@ -338,7 +338,7 @@ export function fetchEnrollData(classData) {
 }
 
 export function fetchEnrollSelected(updatedClass) {
-  const url = `http://localhost:8080/api/enrollment/sections/${updatedClass.value}/`;
+  const url = `https://berkeleytime.com/api/enrollment/sections/${updatedClass.value}/`;
   return dispatch => axios.get(url)
     .then(
       res => {
