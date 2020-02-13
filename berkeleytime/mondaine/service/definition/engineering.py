@@ -25,14 +25,14 @@ class EngineeringDefinition(ConstraintDefinition):
         - Course number must not be 97, 98, 99, or above 196
 
     Overrides:
-        - BIO ENG 100, COMPSCI C79, ENGIN 125, ENGIN 157AC, ENGIN 185, or MEC ENG 191K.
+        - BIO ENG 100, COMPSCI C79, ENGIN 125, ENGIN 157AC, ENGIN 185, MEC ENG 191K.
     """
 
     def __init__(self, definitions, *args, **kwargs):
         """Initialize.
 
         :param definitions: List of L&S breadth definitions (see ls.py)
-                            and foreign language courses (foreign_language.py)
+                            and foreign language courses (see foreign_language.py)
         """
         super(EngineeringDefinition, self).__init__(*args, **kwargs)
         self.constraints = [
