@@ -8,7 +8,7 @@ from mondaine.service.definition.constraint import ConstraintDefinition
 class EngineeringDefinition(ConstraintDefinition):
     """A Definition for CoE Humanities and Social Sciences.
 
-    In order to satisfy this definition, course must satisfy all:
+    In order to satisfy this definition, a course must:
 
     1) Satisfy one of the following LSBreadthDefinitions:
         - Arts and Literature
@@ -16,6 +16,8 @@ class EngineeringDefinition(ConstraintDefinition):
         - International Studies
         - Philosophy and Values
         - Social and Behavioral Science
+    OR
+    2) Be on an list of foreign language courses approved by the CoE.
 
     Constraints:
         - Course must be at least three units
@@ -23,14 +25,14 @@ class EngineeringDefinition(ConstraintDefinition):
         - Course number must not be 97, 98, 99, or above 196
 
     Overrides:
-        - BioE 100, CS C79, Engin 125, Engin 157AC and ME 191AC or 191K
-
+        - BIO ENG 100, COMPSCI C79, ENGIN 125, ENGIN 157AC, ENGIN 185, or MEC ENG 191K.
     """
 
     def __init__(self, definitions, *args, **kwargs):
         """Initialize.
 
-        :param definitions: List of L&S breadth definitions (see breadth.py)
+        :param definitions: List of L&S breadth definitions (see ls.py)
+                            and foreign language courses (foreign_language.py)
         """
         super(EngineeringDefinition, self).__init__(*args, **kwargs)
         self.constraints = [
@@ -48,7 +50,7 @@ class EngineeringDefinition(ConstraintDefinition):
                 "COMPSCI C79",
                 "ENGIN 125",
                 "ENGIN 157AC",
-                "MEC ENG 191AC",
+                "ENGIN 185",
                 "MEC ENG 191K",
             ])
         ]
