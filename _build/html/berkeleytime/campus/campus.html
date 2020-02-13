@@ -38,30 +38,187 @@
 <h1>Campus<a class="headerlink" href="#campus" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<div class="section" id="building-names-py">
-<h2>building_names.py<a class="headerlink" href="#building-names-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-campus.building_names">
+<span id="building-names-py"></span><h2>building_names.py<a class="headerlink" href="#module-campus.building_names" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="models-py">
-<h2>models.py<a class="headerlink" href="#models-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-campus.models">
+<span id="models-py"></span><h2>models.py<a class="headerlink" href="#module-campus.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="campus.models.Building">
+<em class="property">class </em><code class="descclassname">campus.models.</code><code class="descname">Building</code><span class="sig-paren">(</span><em>id</em>, <em>name</em>, <em>abbreviation</em>, <em>latitude</em>, <em>longitude</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.models.Building" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<dl class="exception">
+<dt id="campus.models.Building.DoesNotExist">
+<em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#campus.models.Building.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="campus.models.Building.MultipleObjectsReturned">
+<em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#campus.models.Building.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Building.abbreviation">
+<code class="descname">abbreviation</code><a class="headerlink" href="#campus.models.Building.abbreviation" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Building.id">
+<code class="descname">id</code><a class="headerlink" href="#campus.models.Building.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Building.latitude">
+<code class="descname">latitude</code><a class="headerlink" href="#campus.models.Building.latitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Building.longitude">
+<code class="descname">longitude</code><a class="headerlink" href="#campus.models.Building.longitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Building.name">
+<code class="descname">name</code><a class="headerlink" href="#campus.models.Building.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Building.objects">
+<code class="descname">objects</code><em class="property"> = &lt;django.db.models.manager.Manager object&gt;</em><a class="headerlink" href="#campus.models.Building.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Building.room_set">
+<code class="descname">room_set</code><a class="headerlink" href="#campus.models.Building.room_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="campus.models.Room">
 <em class="property">class </em><code class="descclassname">campus.models.</code><code class="descname">Room</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.models.Room" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a classroom on the UC Berkeley campus (ie. 1 Pimental Hall (PIMENTEL))</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<p>Represents a classroom on the UC Berkeley campus (ie. 1 Pimental Hall (PIMENTEL))</p>
 <dl class="exception">
 <dt id="campus.models.Room.DoesNotExist">
 <em class="property">exception </em><code class="descname">DoesNotExist</code><a class="headerlink" href="#campus.models.Room.DoesNotExist" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
 
 <dl class="exception">
 <dt id="campus.models.Room.MultipleObjectsReturned">
 <em class="property">exception </em><code class="descname">MultipleObjectsReturned</code><a class="headerlink" href="#campus.models.Room.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Room.abbreviation">
+<code class="descname">abbreviation</code><a class="headerlink" href="#campus.models.Room.abbreviation" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Room.building">
+<code class="descname">building</code><a class="headerlink" href="#campus.models.Room.building" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Room.building_id">
+<code class="descname">building_id</code><a class="headerlink" href="#campus.models.Room.building_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Room.id">
+<code class="descname">id</code><a class="headerlink" href="#campus.models.Room.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Room.name">
+<code class="descname">name</code><a class="headerlink" href="#campus.models.Room.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Room.objects">
+<code class="descname">objects</code><em class="property"> = &lt;django.db.models.manager.Manager object&gt;</em><a class="headerlink" href="#campus.models.Room.objects" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Room.seats">
+<code class="descname">seats</code><a class="headerlink" href="#campus.models.Room.seats" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="campus.models.Room.section_set">
+<code class="descname">section_set</code><a class="headerlink" href="#campus.models.Room.section_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
 
 </dd></dl>
 
 </div>
-<div class="section" id="searchtools-py">
-<h2>searchtools.py<a class="headerlink" href="#searchtools-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-campus.searchtools">
+<span id="searchtools-py"></span><h2>searchtools.py<a class="headerlink" href="#module-campus.searchtools" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="campus.searchtools.matching_indices">
+<code class="descclassname">campus.searchtools.</code><code class="descname">matching_indices</code><span class="sig-paren">(</span><em>keyword_arr</em>, <em>target</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.matching_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of indices of keyword_arr, a list of list of keywords, which contains
+target as an element in each respective list of keywords</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="campus.searchtools.parse_digits">
+<code class="descclassname">campus.searchtools.</code><code class="descname">parse_digits</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.parse_digits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if string contains a number, False otherwise</p>
+</dd></dl>
+
 <dl class="function">
 <dt id="campus.searchtools.partial_match">
 <code class="descclassname">campus.searchtools.</code><code class="descname">partial_match</code><span class="sig-paren">(</span><em>features</em>, <em>keywords</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.partial_match" title="Permalink to this definition">¶</a></dt>
@@ -87,41 +244,14 @@ None (queries with a single keyword and multiple results return None)</p>
 <code class="descclassname">campus.searchtools.</code><code class="descname">update_feature</code><span class="sig-paren">(</span><em>features_table</em>, <em>key</em>, <em>round_score</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.update_feature" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="campus.searchtools.matching_indices">
-<code class="descclassname">campus.searchtools.</code><code class="descname">matching_indices</code><span class="sig-paren">(</span><em>keyword_arr</em>, <em>target</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.matching_indices" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a set of indices of keyword_arr, a list of list of keywords, which contains
-target as an element in each respective list of keywords</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="campus.searchtools.parse_digits">
-<code class="descclassname">campus.searchtools.</code><code class="descname">parse_digits</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.searchtools.parse_digits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns True if string contains a number, False otherwise</p>
-</dd></dl>
-
 </div>
-<div class="section" id="views-py">
-<h2>views.py<a class="headerlink" href="#views-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-campus.views">
+<span id="views-py"></span><h2>views.py<a class="headerlink" href="#module-campus.views" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="campus.views.render">
-<code class="descclassname">campus.views.</code><code class="descname">render</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.render" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="campus.views.building">
-<code class="descclassname">campus.views.</code><code class="descname">building</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.building" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="campus.views.buildings">
-<code class="descclassname">campus.views.</code><code class="descname">buildings</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.buildings" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="campus.views.state">
-<code class="descclassname">campus.views.</code><code class="descname">state</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.state" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="campus.views.building_search">
+<code class="descclassname">campus.views.</code><code class="descname">building_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>only_one=False</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.building_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a QuerySet of buildings which match the keywords, if only_one, returns a single Building</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="campus.views.building_state">
@@ -129,26 +259,19 @@ target as an element in each respective list of keywords</p>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="campus.views.room_state">
-<code class="descclassname">campus.views.</code><code class="descname">room_state</code><span class="sig-paren">(</span><em>room</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.room_state" title="Permalink to this definition">¶</a></dt>
+<dt id="campus.views.course_number_search">
+<code class="descclassname">campus.views.</code><code class="descname">course_number_search</code><span class="sig-paren">(</span><em>course_number</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.course_number_search" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="campus.views.section_state">
-<code class="descclassname">campus.views.</code><code class="descname">section_state</code><span class="sig-paren">(</span><em>sections</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.section_state" title="Permalink to this definition">¶</a></dt>
+<dt id="campus.views.course_search">
+<code class="descclassname">campus.views.</code><code class="descname">course_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.course_search" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="campus.views.room_sections">
-<code class="descclassname">campus.views.</code><code class="descname">room_sections</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.room_sections" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="campus.views.string_to_state">
-<code class="descclassname">campus.views.</code><code class="descname">string_to_state</code><span class="sig-paren">(</span><em>dt_string</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.string_to_state" title="Permalink to this definition">¶</a></dt>
-<dd><p>converts a string representation of a datetime object to a campus state representation
-of the following format:</p>
-<p>(datetime(1900, 1, 1, time), &lt;day_of_theweek&gt;)</p>
+<dt id="campus.views.custom_room_search">
+<code class="descclassname">campus.views.</code><code class="descname">custom_room_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>only_one=False</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.custom_room_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns a QuerySet of rooms which match the keywords, if only_one, returns a single room</p>
 </dd></dl>
 
 <dl class="function">
@@ -159,8 +282,8 @@ of the following format:</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="campus.views.ongoing">
-<code class="descclassname">campus.views.</code><code class="descname">ongoing</code><span class="sig-paren">(</span><em>request</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.ongoing" title="Permalink to this definition">¶</a></dt>
+<dt id="campus.views.department_search">
+<code class="descclassname">campus.views.</code><code class="descname">department_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.department_search" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -168,11 +291,6 @@ of the following format:</p>
 <code class="descclassname">campus.views.</code><code class="descname">ongoing_section</code><span class="sig-paren">(</span><em>room</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.ongoing_section" title="Permalink to this definition">¶</a></dt>
 <dd><p>given Room parameter, room, returns the first ongoing section object</p>
 </dd></dl>
-
-<dl class="function">
-<dt id="campus.views.search">
-<code class="descclassname">campus.views.</code><code class="descname">search</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.search" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="function">
 <dt id="campus.views.parse_search">
@@ -191,35 +309,31 @@ room name</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="campus.views.course_number_search">
-<code class="descclassname">campus.views.</code><code class="descname">course_number_search</code><span class="sig-paren">(</span><em>course_number</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.course_number_search" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="campus.views.course_search">
-<code class="descclassname">campus.views.</code><code class="descname">course_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.course_search" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="campus.views.department_search">
-<code class="descclassname">campus.views.</code><code class="descname">department_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.department_search" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
 <dt id="campus.views.room_search">
 <code class="descclassname">campus.views.</code><code class="descname">room_search</code><span class="sig-paren">(</span><em>room_name</em>, <em>buildings</em>, <em>only_one=False</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.room_search" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="campus.views.custom_room_search">
-<code class="descclassname">campus.views.</code><code class="descname">custom_room_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>only_one=False</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.custom_room_search" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns a QuerySet of rooms which match the keywords, if only_one, returns a single room</p>
-</dd></dl>
+<dt id="campus.views.room_state">
+<code class="descclassname">campus.views.</code><code class="descname">room_state</code><span class="sig-paren">(</span><em>room</em>, <em>state</em>, <em>day</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.room_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="function">
-<dt id="campus.views.building_search">
-<code class="descclassname">campus.views.</code><code class="descname">building_search</code><span class="sig-paren">(</span><em>keywords</em>, <em>only_one=False</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.building_search" title="Permalink to this definition">¶</a></dt>
-<dd><p>returns a QuerySet of buildings which match the keywords, if only_one, returns a single Building</p>
+<dt id="campus.views.search">
+<code class="descclassname">campus.views.</code><code class="descname">search</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.search" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.section_state">
+<code class="descclassname">campus.views.</code><code class="descname">section_state</code><span class="sig-paren">(</span><em>sections</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.section_state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="campus.views.string_to_state">
+<code class="descclassname">campus.views.</code><code class="descname">string_to_state</code><span class="sig-paren">(</span><em>dt_string</em><span class="sig-paren">)</span><a class="headerlink" href="#campus.views.string_to_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>converts a string representation of a datetime object to a campus state representation
+of the following format:</p>
+<p>(datetime(1900, 1, 1, time), &lt;day_of_theweek&gt;)</p>
 </dd></dl>
 
 </div>
@@ -248,10 +362,10 @@ room name</p>
 <li class="toctree-l2"><a class="reference internal" href="../account/account.html">Account</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../berkeleytime/berkeleytime.html">BerkeleyTime</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Campus</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#building-names-py">building_names.py</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#models-py">models.py</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#searchtools-py">searchtools.py</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#views-py">views.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-campus.building_names">building_names.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-campus.models">models.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-campus.searchtools">searchtools.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-campus.views">views.py</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../catalog/catalog.html">Catalog</a></li>

@@ -15,17 +15,23 @@ admin.py
 
 models.py
 ###############
-.. autoclass:: marketplace.models.Textbook
+.. automodule:: marketplace.models
    :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 tests.py
 ###############
+.. automodule:: marketplace.tests
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 views.py
 ###############
-.. autofunction:: marketplace.views._get_textbook_context
-.. autofunction:: marketplace.views._get_recommended_textbook_context
-.. autofunction:: marketplace.views.get_textbook_context
-.. autofunction:: marketplace.views.get_promotion_context
+.. automodule:: marketplace.views
+   :members:
+   :undoc-members:
+   :show-inheritance:

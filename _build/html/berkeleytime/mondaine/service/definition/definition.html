@@ -1,0 +1,306 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Definition &#8212; berkeleytime  documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Entity" href="../entity/entity.html" />
+    <link rel="prev" title="Service" href="../service.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="definition">
+<h1>Definition<a class="headerlink" href="#definition" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="module-mondaine.service.definition.constraint">
+<span id="constraint-py"></span><h2>constraint.py<a class="headerlink" href="#module-mondaine.service.definition.constraint" title="Permalink to this headline">¶</a></h2>
+<p>Constraint definition.</p>
+<dl class="class">
+<dt id="mondaine.service.definition.constraint.ConstraintDefinition">
+<em class="property">class </em><code class="descclassname">mondaine.service.definition.constraint.</code><code class="descname">ConstraintDefinition</code><span class="sig-paren">(</span><em>constraints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.constraint.ConstraintDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">mondaine.service.definition.Definition</span></code></p>
+<p>A definition that is satisfied iff all its constraints are satisfied.</p>
+<dl class="method">
+<dt id="mondaine.service.definition.constraint.ConstraintDefinition.satisfies">
+<code class="descname">satisfies</code><span class="sig-paren">(</span><em>course</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.constraint.ConstraintDefinition.satisfies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if all of the constraint functions are satisfied.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mondaine.service.definition.engineering">
+<span id="engineering-py"></span><h2>engineering.py<a class="headerlink" href="#module-mondaine.service.definition.engineering" title="Permalink to this headline">¶</a></h2>
+<p>Engineering humanities and social sciences definition.</p>
+<dl class="class">
+<dt id="mondaine.service.definition.engineering.EngineeringDefinition">
+<em class="property">class </em><code class="descclassname">mondaine.service.definition.engineering.</code><code class="descname">EngineeringDefinition</code><span class="sig-paren">(</span><em>definitions</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.engineering.EngineeringDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mondaine.service.definition.constraint.ConstraintDefinition" title="mondaine.service.definition.constraint.ConstraintDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">mondaine.service.definition.constraint.ConstraintDefinition</span></code></a></p>
+<p>A Definition for CoE Humanities and Social Sciences.</p>
+<p>In order to satisfy this definition, course must satisfy all:</p>
+<ol class="arabic simple">
+<li><dl class="first docutils">
+<dt>Satisfy one of the following LSBreadthDefinitions:</dt>
+<dd><ul class="first last">
+<li>Arts and Literature</li>
+<li>Historical Studies</li>
+<li>International Studies</li>
+<li>Philosophy and Values</li>
+<li>Social and Behavioral Science</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+<dl class="docutils">
+<dt>Constraints:</dt>
+<dd><ul class="first last simple">
+<li>Course must be at least three units</li>
+<li>Course must not be in Engineering</li>
+<li>Course number must not be 97, 98, 99, or above 196</li>
+</ul>
+</dd>
+<dt>Overrides:</dt>
+<dd><ul class="first last simple">
+<li>BioE 100, CS C79, Engin 125, Engin 157AC and ME 191AC or 191K</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="mondaine.service.definition.engineering.EngineeringDefinition.satisfies">
+<code class="descname">satisfies</code><span class="sig-paren">(</span><em>course</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.engineering.EngineeringDefinition.satisfies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the given Course object satisfies this definition.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mondaine.service.definition.haas">
+<span id="haas-py"></span><h2>haas.py<a class="headerlink" href="#module-mondaine.service.definition.haas" title="Permalink to this headline">¶</a></h2>
+<p>Definition for Hass breadth.</p>
+<dl class="class">
+<dt id="mondaine.service.definition.haas.HaasBreadthDefinition">
+<em class="property">class </em><code class="descclassname">mondaine.service.definition.haas.</code><code class="descname">HaasBreadthDefinition</code><span class="sig-paren">(</span><em>ls_definition</em>, <em>excluded_definitions=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.haas.HaasBreadthDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mondaine.service.definition.constraint.ConstraintDefinition" title="mondaine.service.definition.constraint.ConstraintDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">mondaine.service.definition.constraint.ConstraintDefinition</span></code></a></p>
+<p>A definition for one Haas breadth requirement.</p>
+<p>To satisfy this definition, course must satisfy all:</p>
+<ol class="arabic simple">
+<li>Must satisfy the corresponding LS breadth definition</li>
+</ol>
+<dl class="docutils">
+<dt>Constraints:</dt>
+<dd><ol class="first last arabic simple">
+<li>Course must be at least three units</li>
+<li>Must not be a business course</li>
+<li>Econ 1/2/3/100{A|B}/101{A|B}, IAS 106/107 prohibited</li>
+<li>Course cannot satisfy R1A/R1B</li>
+</ol>
+</dd>
+</dl>
+<p>Note: Haas breadths map 1-1 with L&amp;S breadths.</p>
+<dl class="method">
+<dt id="mondaine.service.definition.haas.HaasBreadthDefinition.satisfies">
+<code class="descname">satisfies</code><span class="sig-paren">(</span><em>course</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.haas.HaasBreadthDefinition.satisfies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return whether the given course satisfies this requirement.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-mondaine.service.definition.ls">
+<span id="ls-py"></span><h2>ls.py<a class="headerlink" href="#module-mondaine.service.definition.ls" title="Permalink to this headline">¶</a></h2>
+<p>Definition for an L&amp;S breadth requirement.</p>
+<dl class="class">
+<dt id="mondaine.service.definition.ls.LSBreadthDefinition">
+<em class="property">class </em><code class="descclassname">mondaine.service.definition.ls.</code><code class="descname">LSBreadthDefinition</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.ls.LSBreadthDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mondaine.service.definition.mapper.MapperDefinition" title="mondaine.service.definition.mapper.MapperDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">mondaine.service.definition.mapper.MapperDefinition</span></code></a></p>
+<p>Definition for a College of Letters and Sciences breadth.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="mondaine.service.definition.ls.SBSLSBreadthDefinition">
+<em class="property">class </em><code class="descclassname">mondaine.service.definition.ls.</code><code class="descname">SBSLSBreadthDefinition</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.ls.SBSLSBreadthDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mondaine.service.definition.mapper.MapperDefinition" title="mondaine.service.definition.mapper.MapperDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">mondaine.service.definition.mapper.MapperDefinition</span></code></a></p>
+<p>Societal and Behavioral sciences definition for L&amp;S.</p>
+<p>Ethnic Studies and Letters and Science classes are hardcoded, since classes
+noted as “C 126” (with a space) break the regular parser.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mondaine.service.definition.mapper">
+<span id="mapper-py"></span><h2>mapper.py<a class="headerlink" href="#module-mondaine.service.definition.mapper" title="Permalink to this headline">¶</a></h2>
+<p>MapperDefinition.</p>
+<dl class="class">
+<dt id="mondaine.service.definition.mapper.MapperDefinition">
+<em class="property">class </em><code class="descclassname">mondaine.service.definition.mapper.</code><code class="descname">MapperDefinition</code><span class="sig-paren">(</span><em>mapper=None</em>, <em>overrides=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.mapper.MapperDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mondaine.service.definition.constraint.ConstraintDefinition" title="mondaine.service.definition.constraint.ConstraintDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">mondaine.service.definition.constraint.ConstraintDefinition</span></code></a></p>
+<p>A general Definition mapping course.abbreviation : DepartmentDefinition.</p>
+<p>In order to satisfy this definition, course must either:</p>
+<ol class="arabic simple">
+<li>Satisfy at least one function in self.overrides</li>
+</ol>
+<p>OR</p>
+<p>2) Satisfy every function in self.constraints, and the course number
+must be allowed and not excluded in self.mapper</p>
+<p>Constraints:
+- Course must be at least three units</p>
+<dl class="method">
+<dt id="mondaine.service.definition.mapper.MapperDefinition.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>abbreviation</em>, <em>allowed=None</em>, <em>excluded=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.mapper.MapperDefinition.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add an abbreviation and corresponding allowable/excluded course_numbers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="mondaine.service.definition.mapper.MapperDefinition.satisfies">
+<code class="descname">satisfies</code><span class="sig-paren">(</span><em>course</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.definition.mapper.MapperDefinition.satisfies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the given Course object satisfies this definition.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">berkeleytime</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../../berkeleytime.html">BerkeleyTime</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../account/account.html">Account</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../berkeleytime/berkeleytime.html">BerkeleyTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../campus/campus.html">Campus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../catalog/catalog.html">Catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data.html">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../marketplace/marketplace.html">Marketplace</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../mondaine.html">Mondaine</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../define/define.html">Define</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../lib/lib.html">Lib</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../service.html">Service</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Definition</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#module-mondaine.service.definition.constraint">constraint.py</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-mondaine.service.definition.engineering">engineering.py</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-mondaine.service.definition.haas">haas.py</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-mondaine.service.definition.ls">ls.py</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-mondaine.service.definition.mapper">mapper.py</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../entity/entity.html">Entity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#department-py">department.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#engineering-py">engineering.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#haas-py">haas.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#level-py">level.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#ls-py">ls.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#playlist-py">playlist.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#reading-py">reading.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#semester-py">semester.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#units-py">units.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../service.html#university-py">university.py</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../scheduler/scheduler.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../berkeleytime.html#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../build/build.html">Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../frontend/frontend.html">Frontend</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../berkeleytime.html">BerkeleyTime</a><ul>
+  <li><a href="../../mondaine.html">Mondaine</a><ul>
+  <li><a href="../service.html">Service</a><ul>
+      <li>Previous: <a href="../service.html" title="previous chapter">Service</a></li>
+      <li>Next: <a href="../entity/entity.html" title="next chapter">Entity</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, izzie.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../../_sources/berkeleytime/mondaine/service/definition/definition.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

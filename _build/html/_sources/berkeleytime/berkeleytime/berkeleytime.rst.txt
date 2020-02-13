@@ -17,10 +17,10 @@ Contains BerkeleyTime endpoints.
 
 views.py
 #####################
-.. autofunction:: berkeleytime.views.test
-.. autofunction:: berkeleytime.views.about_page
-.. autofunction:: berkeleytime.views.home_page
-
+.. automodule:: berkeleytime.views
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Indices and tables
 ==================

@@ -16,8 +16,8 @@
     <script type="text/javascript" src="../../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Service" href="../service/service.html" />
-    <link rel="prev" title="Generate" href="../haste/generate/generate.html" />
+    <link rel="next" title="Data" href="../../data/data.html" />
+    <link rel="prev" title="Haste" href="../haste/haste.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
@@ -38,11 +38,55 @@
 <h1>Job<a class="headerlink" href="#job" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<div class="section" id="course-py">
-<h2>course.py<a class="headerlink" href="#course-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-catalog.job.course">
+<span id="course-py"></span><h2>course.py<a class="headerlink" href="#module-catalog.job.course" title="Permalink to this headline">¶</a></h2>
+<p>Course Job.</p>
+<dl class="class">
+<dt id="catalog.job.course.CourseJob">
+<em class="property">class </em><code class="descclassname">catalog.job.course.</code><code class="descname">CourseJob</code><a class="headerlink" href="#catalog.job.course.CourseJob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Potentially asynchronous jobs for updating courses.</p>
+<dl class="method">
+<dt id="catalog.job.course.CourseJob.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>start_index=0</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.job.course.CourseJob.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update courses starting at an SIS API start index.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
-<div class="section" id="schedule-py">
-<h2>schedule.py<a class="headerlink" href="#schedule-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-catalog.job.schedule">
+<span id="schedule-py"></span><h2>schedule.py<a class="headerlink" href="#module-catalog.job.schedule" title="Permalink to this headline">¶</a></h2>
+<p>Schedule Job.</p>
+<dl class="class">
+<dt id="catalog.job.schedule.ScheduleJob">
+<em class="property">class </em><code class="descclassname">catalog.job.schedule.</code><code class="descname">ScheduleJob</code><a class="headerlink" href="#catalog.job.schedule.ScheduleJob" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Potentially asynchronous jobs for updating the schedule.</p>
+<dl class="method">
+<dt id="catalog.job.schedule.ScheduleJob.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>semester</em>, <em>year</em>, <em>abbreviation=None</em>, <em>course_number=None</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.job.schedule.ScheduleJob.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update all sections for a particular course or all applicable courses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>semester</strong> – str The semester to update for (fall, spring, summer)</li>
+<li><strong>year</strong> – str The year to update for (e.g. ‘2017’)</li>
+<li><strong>abbreviation</strong> – str Course appreviation, e.g. COMPSCI. If
+abbreviation and course_number are both omitted, all courses will =
+have their sections updated.</li>
+<li><strong>course_number</strong> – str Course number, e.g. 61A</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -72,11 +116,10 @@
 <li class="toctree-l2 current"><a class="reference internal" href="../catalog.html">Catalog</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="../haste/haste.html">Haste</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Job</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#course-py">course.py</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#schedule-py">schedule.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-catalog.job.course">course.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-catalog.job.schedule">schedule.py</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../service/service.html">Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../catalog.html#admin-py">admin.py</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../catalog.html#models-py">models.py</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../catalog.html#utils-py">utils.py</a></li>
@@ -100,8 +143,8 @@
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../berkeleytime.html">BerkeleyTime</a><ul>
   <li><a href="../catalog.html">Catalog</a><ul>
-      <li>Previous: <a href="../haste/generate/generate.html" title="previous chapter">Generate</a></li>
-      <li>Next: <a href="../service/service.html" title="next chapter">Service</a></li>
+      <li>Previous: <a href="../haste/haste.html" title="previous chapter">Haste</a></li>
+      <li>Next: <a href="../../data/data.html" title="next chapter">Data</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
