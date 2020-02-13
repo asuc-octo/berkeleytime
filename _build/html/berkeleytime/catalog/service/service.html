@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Data" href="../../data/data.html" />
-    <link rel="prev" title="Catalog" href="../catalog.html" />
+    <link rel="prev" title="Job" href="../job/job.html" />
    
   <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
   
@@ -38,9 +38,233 @@
 <h1>Service<a class="headerlink" href="#service" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-<p>Hello</p>
-<div class="section" id="section-py">
-<h2>section.py<a class="headerlink" href="#section-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-catalog.service.course">
+<span id="course-py"></span><h2>course.py<a class="headerlink" href="#module-catalog.service.course" title="Permalink to this headline">¶</a></h2>
+<p>Course Service.</p>
+<dl class="class">
+<dt id="catalog.service.course.CourseService">
+<em class="property">class </em><code class="descclassname">catalog.service.course.</code><code class="descname">CourseService</code><a class="headerlink" href="#catalog.service.course.CourseService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Application logic for courses.</p>
+<dl class="method">
+<dt id="catalog.service.course.CourseService.distinct_field">
+<code class="descname">distinct_field</code><span class="sig-paren">(</span><em>field_name</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.course.CourseService.distinct_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an array of distinct field names.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.course.CourseService.find">
+<code class="descname">find</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.course.CourseService.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of courses that fit a certain criteria.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.course.CourseService.find_ids_by_semester">
+<code class="descname">find_ids_by_semester</code><span class="sig-paren">(</span><em>semester</em>, <em>year</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.course.CourseService.find_ids_by_semester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of course ids offered in semester, year.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.course.CourseService.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>id</em>, <em>abbreviation=None</em>, <em>course_number=None</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.course.CourseService.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a course entity given a id OR abbreviation, course_number.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.course.CourseService.invalidate_courses_with_enrollment_cache">
+<code class="descname">invalidate_courses_with_enrollment_cache</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.course.CourseService.invalidate_courses_with_enrollment_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invalidate the cache we use to store data of courses that have enrollment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.course.CourseService.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>start_index=0</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.course.CourseService.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update courses starting from an SIS index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.course.CourseService.update_or_create">
+<code class="descname">update_or_create</code><span class="sig-paren">(</span><em>course</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.course.CourseService.update_or_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update or create a single entity.Course.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalog.service.enrollment">
+<span id="enrollment-py"></span><h2>enrollment.py<a class="headerlink" href="#module-catalog.service.enrollment" title="Permalink to this headline">¶</a></h2>
+<p>Enrollment Service.</p>
+<dl class="class">
+<dt id="catalog.service.enrollment.EnrollmentService">
+<em class="property">class </em><code class="descclassname">catalog.service.enrollment.</code><code class="descname">EnrollmentService</code><a class="headerlink" href="#catalog.service.enrollment.EnrollmentService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Application logic for enrollment information.</p>
+<dl class="method">
+<dt id="catalog.service.enrollment.EnrollmentService.get_latest">
+<code class="descname">get_latest</code><span class="sig-paren">(</span><em>section_id</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.enrollment.EnrollmentService.get_latest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the latest enrollment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.enrollment.EnrollmentService.update_or_create">
+<code class="descname">update_or_create</code><span class="sig-paren">(</span><em>section_id</em>, <em>enrollment</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.enrollment.EnrollmentService.update_or_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update/Create enrollment information.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalog.service.exc">
+<span id="exc-py"></span><h2>exc.py<a class="headerlink" href="#module-catalog.service.exc" title="Permalink to this headline">¶</a></h2>
+<p>List of exceptions generated by Catalog service.</p>
+<dl class="exception">
+<dt id="catalog.service.exc.CourseServiceException">
+<em class="property">exception </em><code class="descclassname">catalog.service.exc.</code><code class="descname">CourseServiceException</code><a class="headerlink" href="#catalog.service.exc.CourseServiceException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<p>Generic Course Service Exception.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="catalog.service.exc.SISCourseResource404Exception">
+<em class="property">exception </em><code class="descclassname">catalog.service.exc.</code><code class="descname">SISCourseResource404Exception</code><a class="headerlink" href="#catalog.service.exc.SISCourseResource404Exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalog.service.exc.SISCourseResourceException" title="catalog.service.exc.SISCourseResourceException"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalog.service.exc.SISCourseResourceException</span></code></a></p>
+<p>Exception for 404 response from SIS Course endpoint.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="catalog.service.exc.SISCourseResourceException">
+<em class="property">exception </em><code class="descclassname">catalog.service.exc.</code><code class="descname">SISCourseResourceException</code><a class="headerlink" href="#catalog.service.exc.SISCourseResourceException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalog.service.exc.CourseServiceException" title="catalog.service.exc.CourseServiceException"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalog.service.exc.CourseServiceException</span></code></a></p>
+<p>Exception for invalid response from SIS Course endpoint.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="catalog.service.exc.ScheduleMapperException">
+<em class="property">exception </em><code class="descclassname">catalog.service.exc.</code><code class="descname">ScheduleMapperException</code><a class="headerlink" href="#catalog.service.exc.ScheduleMapperException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalog.service.exc.ScheduleServiceException" title="catalog.service.exc.ScheduleServiceException"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalog.service.exc.ScheduleServiceException</span></code></a></p>
+<p>Exception for logic issue while mapping to entity.Schedule.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="catalog.service.exc.ScheduleResourceException">
+<em class="property">exception </em><code class="descclassname">catalog.service.exc.</code><code class="descname">ScheduleResourceException</code><a class="headerlink" href="#catalog.service.exc.ScheduleResourceException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalog.service.exc.ScheduleServiceException" title="catalog.service.exc.ScheduleServiceException"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalog.service.exc.ScheduleServiceException</span></code></a></p>
+<p>Exception for invalid response from SIS Schedule endpoint.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="catalog.service.exc.ScheduleServiceException">
+<em class="property">exception </em><code class="descclassname">catalog.service.exc.</code><code class="descname">ScheduleServiceException</code><a class="headerlink" href="#catalog.service.exc.ScheduleServiceException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<p>Generic Schedule Service Exception.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="catalog.service.exc.ScheduleValidationException">
+<em class="property">exception </em><code class="descclassname">catalog.service.exc.</code><code class="descname">ScheduleValidationException</code><a class="headerlink" href="#catalog.service.exc.ScheduleValidationException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalog.service.exc.ScheduleServiceException" title="catalog.service.exc.ScheduleServiceException"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalog.service.exc.ScheduleServiceException</span></code></a></p>
+<p>Exception for invalid SIS Schedule schema.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalog.service.schedule">
+<span id="schedule-py"></span><h2>schedule.py<a class="headerlink" href="#module-catalog.service.schedule" title="Permalink to this headline">¶</a></h2>
+<p>Schedule Service.</p>
+<dl class="class">
+<dt id="catalog.service.schedule.ScheduleService">
+<em class="property">class </em><code class="descclassname">catalog.service.schedule.</code><code class="descname">ScheduleService</code><a class="headerlink" href="#catalog.service.schedule.ScheduleService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Schedule Service.</p>
+<dl class="method">
+<dt id="catalog.service.schedule.ScheduleService.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>course_id</em>, <em>semester</em>, <em>year</em>, <em>should_record_enrollment</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.schedule.ScheduleService.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update all the sections for a single course.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalog.service.section">
+<span id="section-py"></span><h2>section.py<a class="headerlink" href="#module-catalog.service.section" title="Permalink to this headline">¶</a></h2>
+<p>Section Service.</p>
+<dl class="class">
+<dt id="catalog.service.section.SectionService">
+<em class="property">class </em><code class="descclassname">catalog.service.section.</code><code class="descname">SectionService</code><a class="headerlink" href="#catalog.service.section.SectionService" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Application logic for Section.</p>
+<dl class="method">
+<dt id="catalog.service.section.SectionService.exists">
+<code class="descname">exists</code><span class="sig-paren">(</span><em>semester</em>, <em>year</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.section.SectionService.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a semester, year, return True if there sections exist.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.section.SectionService.find">
+<code class="descname">find</code><span class="sig-paren">(</span><em>semester</em>, <em>year</em>, <em>abbreviation=None</em>, <em>course_number=None</em>, <em>section_number=None</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.section.SectionService.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given some parameters, return a list of matching entity.Section.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.section.SectionService.find_abbreviations">
+<code class="descname">find_abbreviations</code><span class="sig-paren">(</span><em>semester</em>, <em>year</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.section.SectionService.find_abbreviations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all existing abbreviations in a given semester/year.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.section.SectionService.find_by_course_id">
+<code class="descname">find_by_course_id</code><span class="sig-paren">(</span><em>course_id</em>, <em>semester=None</em>, <em>year=None</em>, <em>is_primary=None</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.section.SectionService.find_by_course_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a (course_id, semester, year) find all sections that match.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.section.SectionService.find_textbooks_by_section_id">
+<code class="descname">find_textbooks_by_section_id</code><span class="sig-paren">(</span><em>section_id</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.section.SectionService.find_textbooks_by_section_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the textbooks for a single section.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section_id</strong> (<em>int</em>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns &lt;list&lt;entity.Textbook&gt;&gt;:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.section.SectionService.set_textbooks">
+<code class="descname">set_textbooks</code><span class="sig-paren">(</span><em>sis_section_id</em>, <em>semester</em>, <em>year</em>, <em>textbook_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.section.SectionService.set_textbooks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a series of textbooks for a single course.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sis_section_id</strong> (<em>str</em>) – The section id from SIS of the section to
+set.</li>
+<li><strong>semester</strong> (<em>str</em>) – Semester to set for. Necessary since section
+SIS section id is not necessarily unique across semesters/years.</li>
+<li><strong>year</strong> (<em>str</em>) – Year to set for. Necessary since section SIS section
+id is not necessarily unique across semesters/years.</li>
+<li><strong>textbook_ids</strong> (<em>list&lt;int&gt;</em>) – List of berkeleytime ids of textbooks
+to set.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalog.service.section.SectionService.update_or_create">
+<code class="descname">update_or_create</code><span class="sig-paren">(</span><em>section</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.service.section.SectionService.update_or_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update or create a single section.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 </div>
 
@@ -68,8 +292,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../../berkeleytime/berkeleytime.html">BerkeleyTime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../campus/campus.html">Campus</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../catalog.html">Catalog</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../haste/haste.html">Haste</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../job/job.html">Job</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Service</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#section-py">section.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-catalog.service.course">course.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-catalog.service.enrollment">enrollment.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-catalog.service.exc">exc.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-catalog.service.schedule">schedule.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-catalog.service.section">section.py</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../catalog.html#admin-py">admin.py</a></li>
@@ -95,7 +325,7 @@
   <li><a href="../../../index.html">Documentation overview</a><ul>
   <li><a href="../../berkeleytime.html">BerkeleyTime</a><ul>
   <li><a href="../catalog.html">Catalog</a><ul>
-      <li>Previous: <a href="../catalog.html" title="previous chapter">Catalog</a></li>
+      <li>Previous: <a href="../job/job.html" title="previous chapter">Job</a></li>
       <li>Next: <a href="../../data/data.html" title="next chapter">Data</a></li>
   </ul></li>
   </ul></li>

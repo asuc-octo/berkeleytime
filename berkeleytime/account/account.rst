@@ -7,55 +7,50 @@ Account
 
 context_processors.py
 #####################
-
 .. comment::
- autofunction:: account.context_processors.facebook_info
- autofunction:: account.context_processors.semester_info
- autofunction:: account.context_processors.domain_name
- autofunction:: account.context_processors.is_production
+ automodule:: account.context_processors
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 forms.py
 #####################
-
-.. autoclass:: account.forms.BerkeleytimeUserCreationForm
-   :members: save, clean_email, clean_password2
-
-.. autoclass:: account.forms.BerkeleytimePasswordChangeForm
-
-.. autoclass:: account.forms.SetBerkeleytimePasswordForm
-
-.. autoclass:: account.forms.SetBerkeleytimePasswordForm
+.. automodule:: account.forms
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 models.py
 #####################
-
-.. autoclass:: account.models.BerkeleytimeUserProfile
-
-.. autofunction:: account.models.create_facebook_profile
-.. autofunction:: account.models.user_post_delete
-.. autofunction:: account.models.user_post_save
+.. automodule:: account.models
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 socialaccount.py
 #####################
-
-.. comment:: autoclass:: account.socialaccount.SocialAccountAdapter
-   :members: pre_social_login
+.. comment::
+ automodule:: account.socialaccount
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 utils.py
 #####################
-
 .. comment::
- autofunction:: account.utils.generic_name
- autofunction:: account.utils.has_facebook
- autofunction:: account.utils.check_user_authentication
- autofunction:: account.utils.get_google_cal_service
- autofunction:: account.utils.generic_info
+ automodule:: account.utils
+  :members:
+  :undoc-members:
+  :show-inheritance:
 
 
 views.py
 #####################
-.. autofunction:: account.views.render_profile
+.. automodule:: account.views
+   :members:
+   :undoc-members:
+   :show-inheritance:

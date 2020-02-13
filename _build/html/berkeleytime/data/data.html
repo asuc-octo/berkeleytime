@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Marketplace" href="../marketplace/marketplace.html" />
-    <link rel="prev" title="Catalog" href="../catalog/catalog.html" />
+    <link rel="prev" title="Service" href="../catalog/service/service.html" />
    
   <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
   
@@ -43,85 +43,6 @@
 </div>
 <div class="section" id="views-py">
 <h2>views.py<a class="headerlink" href="#views-py" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="data.views.grade_context">
-<code class="descclassname">data.views.</code><code class="descname">grade_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data.views.grade_context" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.get_or_zero">
-<code class="descclassname">data.views.</code><code class="descname">get_or_zero</code><span class="sig-paren">(</span><em>d</em>, <em>k</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.get_or_zero" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.grade_render">
-<code class="descclassname">data.views.</code><code class="descname">grade_render</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.grade_render" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.grade_context_json">
-<code class="descclassname">data.views.</code><code class="descname">grade_context_json</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.grade_context_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.year_and_semester_to_value">
-<code class="descclassname">data.views.</code><code class="descname">year_and_semester_to_value</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.year_and_semester_to_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Assigns a number to a section dict (see grade_section_json for format). Is used to
-sort a list of sections by time.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="data.views.grade_section_json">
-<code class="descclassname">data.views.</code><code class="descname">grade_section_json</code><span class="sig-paren">(</span><em>request</em>, <em>course_id</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.grade_section_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>{“instructor”: “Shewchuk”, “semester”: “spring”, “year”: 2012, “section_number”: “003”, “grade_id”: 1533}</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="data.views.grade_json">
-<code class="descclassname">data.views.</code><code class="descname">grade_json</code><span class="sig-paren">(</span><em>request</em>, <em>grade_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.grade_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.enrollment_context">
-<code class="descclassname">data.views.</code><code class="descname">enrollment_context</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#data.views.enrollment_context" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.enrollment_render">
-<code class="descclassname">data.views.</code><code class="descname">enrollment_render</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.enrollment_render" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.enrollment_context_json">
-<code class="descclassname">data.views.</code><code class="descname">enrollment_context_json</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.enrollment_context_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.get_primary">
-<code class="descclassname">data.views.</code><code class="descname">get_primary</code><span class="sig-paren">(</span><em>course_id</em>, <em>semester</em>, <em>year</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.get_primary" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.enrollment_section_render">
-<code class="descclassname">data.views.</code><code class="descname">enrollment_section_render</code><span class="sig-paren">(</span><em>request</em>, <em>course_id</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.enrollment_section_render" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.enrollment_aggregate_json">
-<code class="descclassname">data.views.</code><code class="descname">enrollment_aggregate_json</code><span class="sig-paren">(</span><em>request</em>, <em>course_id</em>, <em>semester='spring'</em>, <em>year='2020'</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.enrollment_aggregate_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.enrollment_json">
-<code class="descclassname">data.views.</code><code class="descname">enrollment_json</code><span class="sig-paren">(</span><em>request</em>, <em>section_id</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.enrollment_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="data.views.catalog_context_json">
-<code class="descclassname">data.views.</code><code class="descname">catalog_context_json</code><span class="sig-paren">(</span><em>request</em>, <em>abbreviation=''</em>, <em>course_number=''</em><span class="sig-paren">)</span><a class="headerlink" href="#data.views.catalog_context_json" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return JSON for the catalog page.</p>
-</dd></dl>
-
 </div>
 </div>
 
@@ -169,7 +90,7 @@ sort a list of sections by time.</p>
 <ul>
   <li><a href="../../index.html">Documentation overview</a><ul>
   <li><a href="../berkeleytime.html">BerkeleyTime</a><ul>
-      <li>Previous: <a href="../catalog/catalog.html" title="previous chapter">Catalog</a></li>
+      <li>Previous: <a href="../catalog/service/service.html" title="previous chapter">Service</a></li>
       <li>Next: <a href="../marketplace/marketplace.html" title="next chapter">Marketplace</a></li>
   </ul></li>
   </ul></li>

@@ -41,21 +41,21 @@
 <div class="section" id="common-py">
 <h2>common.py<a class="headerlink" href="#common-py" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="corsmiddleware-py">
-<h2>corsmiddleware.py<a class="headerlink" href="#corsmiddleware-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-berkeleytime.utils.corsmiddleware">
+<span id="corsmiddleware-py"></span><h2>corsmiddleware.py<a class="headerlink" href="#module-berkeleytime.utils.corsmiddleware" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="berkeleytime.utils.corsmiddleware.CORSMiddleware">
 <em class="property">class </em><code class="descclassname">berkeleytime.utils.corsmiddleware.</code><code class="descname">CORSMiddleware</code><a class="headerlink" href="#berkeleytime.utils.corsmiddleware.CORSMiddleware" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="berkeleytime.utils.corsmiddleware.CORSMiddleware.process_response">
+<code class="descname">process_response</code><span class="sig-paren">(</span><em>request</em>, <em>response</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.corsmiddleware.CORSMiddleware.process_response" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
 
 </div>
-<div class="section" id="requests-py">
-<h2>requests.py<a class="headerlink" href="#requests-py" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="berkeleytime.utils.requests.success_json">
-<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">success_json</code><span class="sig-paren">(</span><em>options={}</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.success_json" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<div class="section" id="module-berkeleytime.utils.requests">
+<span id="requests-py"></span><h2>requests.py<a class="headerlink" href="#module-berkeleytime.utils.requests" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="berkeleytime.utils.requests.failure_json">
 <code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">failure_json</code><span class="sig-paren">(</span><em>error_text</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.failure_json" title="Permalink to this definition">¶</a></dt>
@@ -67,8 +67,18 @@
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="berkeleytime.utils.requests.render_to_json">
-<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">render_to_json</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.render_to_json" title="Permalink to this definition">¶</a></dt>
+<dt id="berkeleytime.utils.requests.raise_404_if_not_get">
+<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">raise_404_if_not_get</code><span class="sig-paren">(</span><em>fn</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.raise_404_if_not_get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="berkeleytime.utils.requests.raise_404_on_error">
+<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">raise_404_on_error</code><span class="sig-paren">(</span><em>fn</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.raise_404_on_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="berkeleytime.utils.requests.render_error_to_json">
+<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">render_error_to_json</code><span class="sig-paren">(</span><em>error</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.render_error_to_json" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -82,82 +92,184 @@
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="berkeleytime.utils.requests.render_error_to_json">
-<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">render_error_to_json</code><span class="sig-paren">(</span><em>error</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.render_error_to_json" title="Permalink to this definition">¶</a></dt>
+<dt id="berkeleytime.utils.requests.render_to_json">
+<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">render_to_json</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.render_to_json" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="berkeleytime.utils.requests.raise_404_on_error">
-<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">raise_404_on_error</code><span class="sig-paren">(</span><em>fn</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.raise_404_on_error" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="berkeleytime.utils.requests.raise_404_if_not_get">
-<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">raise_404_if_not_get</code><span class="sig-paren">(</span><em>fn</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.raise_404_if_not_get" title="Permalink to this definition">¶</a></dt>
+<dt id="berkeleytime.utils.requests.success_json">
+<code class="descclassname">berkeleytime.utils.requests.</code><code class="descname">success_json</code><span class="sig-paren">(</span><em>options={}</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.requests.success_json" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
-<div class="section" id="tests-py">
-<h2>tests.py<a class="headerlink" href="#tests-py" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-berkeleytime.utils.tests">
+<span id="tests-py"></span><h2>tests.py<a class="headerlink" href="#module-berkeleytime.utils.tests" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="berkeleytime.utils.tests.ValidatorTest">
 <em class="property">class </em><code class="descclassname">berkeleytime.utils.tests.</code><code class="descname">ValidatorTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.tests.ValidatorTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">unittest.case.TestCase</span></code></p>
+<dl class="method">
+<dt id="berkeleytime.utils.tests.ValidatorTest.test_email_validator">
+<code class="descname">test_email_validator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.tests.ValidatorTest.test_email_validator" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</div>
-<div class="section" id="validators-py">
-<h2>validators.py<a class="headerlink" href="#validators-py" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="berkeleytime.utils.validators.ValidationError">
-<em class="property">class </em><code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">ValidationError</code><a class="headerlink" href="#berkeleytime.utils.validators.ValidationError" title="Permalink to this definition">¶</a></dt>
-<dd><p>ValidationError will be thrown when a string does not validate.</p>
+<dl class="method">
+<dt id="berkeleytime.utils.tests.ValidatorTest.test_full_validation">
+<code class="descname">test_full_validation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.tests.ValidatorTest.test_full_validation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="berkeleytime.utils.tests.ValidatorTest.test_int_validator">
+<code class="descname">test_int_validator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.tests.ValidatorTest.test_int_validator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="berkeleytime.utils.tests.ValidatorTest.test_one_of_validator">
+<code class="descname">test_one_of_validator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.tests.ValidatorTest.test_one_of_validator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="berkeleytime.utils.tests.ValidatorTest.test_required_validator">
+<code class="descname">test_required_validator</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.tests.ValidatorTest.test_required_validator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
+</div>
+<div class="section" id="module-berkeleytime.utils.validators">
+<span id="validators-py"></span><h2>validators.py<a class="headerlink" href="#module-berkeleytime.utils.validators" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="berkeleytime.utils.validators.AbstractValidator">
 <em class="property">class </em><code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">AbstractValidator</code><span class="sig-paren">(</span><em>_</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.AbstractValidator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Should have the following fields:
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Should have the following fields:
 regex: the regular expression to check the input against
 key: a string to denote this validator (e.g. ‘email’)
 message: a message to be displayed on error</p>
 <p>Should implement the following methods:
 validate: throws ValidationError if validation does not succeed
 get_message: get the error message to de displayed on failure</p>
-</dd></dl>
+<dl class="method">
+<dt id="berkeleytime.utils.validators.AbstractValidator.get_message">
+<code class="descname">get_message</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.AbstractValidator.get_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="class">
-<dt id="berkeleytime.utils.validators.RequiredValidator">
-<em class="property">class </em><code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">RequiredValidator</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.RequiredValidator" title="Permalink to this definition">¶</a></dt>
-<dd><p>The provided value should have a not none value.</p>
+<dl class="classmethod">
+<dt id="berkeleytime.utils.validators.AbstractValidator.get_validator_dict">
+<em class="property">classmethod </em><code class="descname">get_validator_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.AbstractValidator.get_validator_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="berkeleytime.utils.validators.AbstractValidator.message">
+<code class="descname">message</code><em class="property"> = 'An invalid value was detected.'</em><a class="headerlink" href="#berkeleytime.utils.validators.AbstractValidator.message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="berkeleytime.utils.validators.AbstractValidator.raise_error">
+<code class="descname">raise_error</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.AbstractValidator.raise_error" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="berkeleytime.utils.validators.AbstractValidator.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.AbstractValidator.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="berkeleytime.utils.validators.EmailValidator">
 <em class="property">class </em><code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">EmailValidator</code><span class="sig-paren">(</span><em>_</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.EmailValidator" title="Permalink to this definition">¶</a></dt>
-<dd><p>The provided value should be a berkeley.edu email address.</p>
-</dd></dl>
+<dd><p>Bases: <a class="reference internal" href="#berkeleytime.utils.validators.AbstractValidator" title="berkeleytime.utils.validators.AbstractValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">berkeleytime.utils.validators.AbstractValidator</span></code></a></p>
+<p>The provided value should be a berkeley.edu email address.</p>
+<dl class="attribute">
+<dt id="berkeleytime.utils.validators.EmailValidator.key">
+<code class="descname">key</code><em class="property"> = 'email'</em><a class="headerlink" href="#berkeleytime.utils.validators.EmailValidator.key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="class">
-<dt id="berkeleytime.utils.validators.OneOfValidator">
-<em class="property">class </em><code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">OneOfValidator</code><span class="sig-paren">(</span><em>lst</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.OneOfValidator" title="Permalink to this definition">¶</a></dt>
-<dd><p>The provided value should be one of those in a given list.</p>
+<dl class="attribute">
+<dt id="berkeleytime.utils.validators.EmailValidator.message">
+<code class="descname">message</code><em class="property"> = 'Please enter a valid berkeley.edu email address.'</em><a class="headerlink" href="#berkeleytime.utils.validators.EmailValidator.message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="berkeleytime.utils.validators.EmailValidator.regex">
+<code class="descname">regex</code><em class="property"> = &lt;_sre.SRE_Pattern object&gt;</em><a class="headerlink" href="#berkeleytime.utils.validators.EmailValidator.regex" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="berkeleytime.utils.validators.NonnegativeIntegerValidator">
 <em class="property">class </em><code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">NonnegativeIntegerValidator</code><span class="sig-paren">(</span><em>_</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.NonnegativeIntegerValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#berkeleytime.utils.validators.AbstractValidator" title="berkeleytime.utils.validators.AbstractValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">berkeleytime.utils.validators.AbstractValidator</span></code></a></p>
+<dl class="attribute">
+<dt id="berkeleytime.utils.validators.NonnegativeIntegerValidator.key">
+<code class="descname">key</code><em class="property"> = 'integer'</em><a class="headerlink" href="#berkeleytime.utils.validators.NonnegativeIntegerValidator.key" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="function">
-<dt id="berkeleytime.utils.validators.validate_on_key_value">
-<code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">validate_on_key_value</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>to_validate</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.validate_on_key_value" title="Permalink to this definition">¶</a></dt>
+<dl class="attribute">
+<dt id="berkeleytime.utils.validators.NonnegativeIntegerValidator.regex">
+<code class="descname">regex</code><em class="property"> = &lt;_sre.SRE_Pattern object&gt;</em><a class="headerlink" href="#berkeleytime.utils.validators.NonnegativeIntegerValidator.regex" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="berkeleytime.utils.validators.OneOfValidator">
+<em class="property">class </em><code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">OneOfValidator</code><span class="sig-paren">(</span><em>lst</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.OneOfValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#berkeleytime.utils.validators.AbstractValidator" title="berkeleytime.utils.validators.AbstractValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">berkeleytime.utils.validators.AbstractValidator</span></code></a></p>
+<p>The provided value should be one of those in a given list.</p>
+<dl class="attribute">
+<dt id="berkeleytime.utils.validators.OneOfValidator.key">
+<code class="descname">key</code><em class="property"> = 'one_of'</em><a class="headerlink" href="#berkeleytime.utils.validators.OneOfValidator.key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="berkeleytime.utils.validators.OneOfValidator.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.OneOfValidator.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="berkeleytime.utils.validators.RequiredValidator">
+<em class="property">class </em><code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">RequiredValidator</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.RequiredValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#berkeleytime.utils.validators.AbstractValidator" title="berkeleytime.utils.validators.AbstractValidator"><code class="xref py py-class docutils literal notranslate"><span class="pre">berkeleytime.utils.validators.AbstractValidator</span></code></a></p>
+<p>The provided value should have a not none value.</p>
+<dl class="method">
+<dt id="berkeleytime.utils.validators.RequiredValidator.get_message">
+<code class="descname">get_message</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.RequiredValidator.get_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="berkeleytime.utils.validators.RequiredValidator.key">
+<code class="descname">key</code><em class="property"> = 'required'</em><a class="headerlink" href="#berkeleytime.utils.validators.RequiredValidator.key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="berkeleytime.utils.validators.RequiredValidator.validate">
+<code class="descname">validate</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.RequiredValidator.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="berkeleytime.utils.validators.ValidationError">
+<em class="property">exception </em><code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">ValidationError</code><a class="headerlink" href="#berkeleytime.utils.validators.ValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<p>ValidationError will be thrown when a string does not validate.</p>
+</dd></dl>
 
 <dl class="function">
 <dt id="berkeleytime.utils.validators.validate">
 <code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">validate</code><span class="sig-paren">(</span><em>value</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Validate the input based on specified parameters.</p>
 </dd></dl>
+
+<dl class="function">
+<dt id="berkeleytime.utils.validators.validate_on_key_value">
+<code class="descclassname">berkeleytime.utils.validators.</code><code class="descname">validate_on_key_value</code><span class="sig-paren">(</span><em>key</em>, <em>value</em>, <em>to_validate</em><span class="sig-paren">)</span><a class="headerlink" href="#berkeleytime.utils.validators.validate_on_key_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 </div>
@@ -186,15 +298,15 @@ get_message: get the error message to de displayed on failure</p>
 <li class="toctree-l2 current"><a class="reference internal" href="../berkeleytime.html">BerkeleyTime</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">Utils</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#common-py">common.py</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#corsmiddleware-py">corsmiddleware.py</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#requests-py">requests.py</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#tests-py">tests.py</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#validators-py">validators.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-berkeleytime.utils.corsmiddleware">corsmiddleware.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-berkeleytime.utils.requests">requests.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-berkeleytime.utils.tests">tests.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-berkeleytime.utils.validators">validators.py</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../berkeleytime.html#settings-py">settings.py</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../berkeleytime.html#urls-py">urls.py</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../berkeleytime.html#views-py">views.py</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../berkeleytime.html#module-berkeleytime.views">views.py</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../campus/campus.html">Campus</a></li>

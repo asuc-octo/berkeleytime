@@ -1,0 +1,314 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Lib &#8212; berkeleytime  documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Service" href="../service/service.html" />
+    <link rel="prev" title="Define" href="../define/define.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="lib">
+<h1>Lib<a class="headerlink" href="#lib" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-mondaine.lib.exceptions">
+<span id="exceptions-py"></span><h2>exceptions.py<a class="headerlink" href="#module-mondaine.lib.exceptions" title="Permalink to this headline">¶</a></h2>
+<p>Exceptions mondaine might throw.</p>
+<dl class="exception">
+<dt id="mondaine.lib.exceptions.DefinitionException">
+<em class="property">exception </em><code class="descclassname">mondaine.lib.exceptions.</code><code class="descname">DefinitionException</code><a class="headerlink" href="#mondaine.lib.exceptions.DefinitionException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mondaine.lib.exceptions.MondaineException" title="mondaine.lib.exceptions.MondaineException"><code class="xref py py-class docutils literal notranslate"><span class="pre">mondaine.lib.exceptions.MondaineException</span></code></a></p>
+<p>Exception relating to a Mondaine Definition.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mondaine.lib.exceptions.MondaineException">
+<em class="property">exception </em><code class="descclassname">mondaine.lib.exceptions.</code><code class="descname">MondaineException</code><a class="headerlink" href="#mondaine.lib.exceptions.MondaineException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">exceptions.Exception</span></code></p>
+<p>General exception from Mondaine.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="mondaine.lib.exceptions.ResourceException">
+<em class="property">exception </em><code class="descclassname">mondaine.lib.exceptions.</code><code class="descname">ResourceException</code><a class="headerlink" href="#mondaine.lib.exceptions.ResourceException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#mondaine.lib.exceptions.MondaineException" title="mondaine.lib.exceptions.MondaineException"><code class="xref py py-class docutils literal notranslate"><span class="pre">mondaine.lib.exceptions.MondaineException</span></code></a></p>
+<p>Exception relating to grabbing a resourse from the internet.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mondaine.lib.formulas">
+<span id="formulas-py"></span><h2>formulas.py<a class="headerlink" href="#module-mondaine.lib.formulas" title="Permalink to this headline">¶</a></h2>
+<p>Collection of utility functions that return constraints.</p>
+<p>A constraint is a function that takes a course-like object (Django course model
+or mondaine Course object) and return True if the course satisfies the
+constraint.</p>
+<dl class="function">
+<dt id="mondaine.lib.formulas.abbreviation_in">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">abbreviation_in</code><span class="sig-paren">(</span><em>abbreviations</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.abbreviation_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constrain the course to given abbreviations.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.course_id_in">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_id_in</code><span class="sig-paren">(</span><em>course_ids</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.course_id_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constraint returns True iff course.id is in course_ids.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.course_in">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_in</code><span class="sig-paren">(</span><em>courses</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.course_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constraint the course to a given list of courses.</p>
+<p>List of courses is represented as “{abbreviation} {course_number}”
+e.g. course_in([“COMPSCI 61A”, “BIO 1A”])</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.course_integer_in">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_integer_in</code><span class="sig-paren">(</span><em>course_integers</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.course_integer_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constrain the numeric portion of course.course_number is in course_integers.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.course_integer_lte_n">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_integer_lte_n</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.course_integer_lte_n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constrain the numeric portion of course.course_number to be &lt;= n.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.course_integer_not_in">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_integer_not_in</code><span class="sig-paren">(</span><em>course_integers</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.course_integer_not_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constrain the numeric portion of course.course_number is not in course_integers.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.course_not_in">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_not_in</code><span class="sig-paren">(</span><em>courses</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.course_not_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constraint returns True if “{abbreviation} {course_number}” not in the given list.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.exactly_n_units">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">exactly_n_units</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.exactly_n_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constrain the course to exactly n units.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.gte_n_units">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">gte_n_units</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.gte_n_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constrain the course to &gt;= n units.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.not_in_abbreviations">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">not_in_abbreviations</code><span class="sig-paren">(</span><em>abbreviations</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.not_in_abbreviations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constraint returns True only if the course is not in any of the given department abbreviations.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="mondaine.lib.formulas.not_in_definitions">
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">not_in_definitions</code><span class="sig-paren">(</span><em>definitions</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.lib.formulas.not_in_definitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True only if ALL of the definitions are NOT satisfied by the course.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-mondaine.lib.formulas">
+<span id="utils-py"></span><h2>utils.py<a class="headerlink" href="#module-mondaine.lib.formulas" title="Permalink to this headline">¶</a></h2>
+<p>Collection of utility functions that return constraints.</p>
+<p>A constraint is a function that takes a course-like object (Django course model
+or mondaine Course object) and return True if the course satisfies the
+constraint.</p>
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">abbreviation_in</code><span class="sig-paren">(</span><em>abbreviations</em><span class="sig-paren">)</span></dt>
+<dd><p>Constrain the course to given abbreviations.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_id_in</code><span class="sig-paren">(</span><em>course_ids</em><span class="sig-paren">)</span></dt>
+<dd><p>Constraint returns True iff course.id is in course_ids.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_in</code><span class="sig-paren">(</span><em>courses</em><span class="sig-paren">)</span></dt>
+<dd><p>Constraint the course to a given list of courses.</p>
+<p>List of courses is represented as “{abbreviation} {course_number}”
+e.g. course_in([“COMPSCI 61A”, “BIO 1A”])</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_integer_in</code><span class="sig-paren">(</span><em>course_integers</em><span class="sig-paren">)</span></dt>
+<dd><p>Constrain the numeric portion of course.course_number is in course_integers.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_integer_lte_n</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span></dt>
+<dd><p>Constrain the numeric portion of course.course_number to be &lt;= n.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_integer_not_in</code><span class="sig-paren">(</span><em>course_integers</em><span class="sig-paren">)</span></dt>
+<dd><p>Constrain the numeric portion of course.course_number is not in course_integers.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">course_not_in</code><span class="sig-paren">(</span><em>courses</em><span class="sig-paren">)</span></dt>
+<dd><p>Constraint returns True if “{abbreviation} {course_number}” not in the given list.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">exactly_n_units</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span></dt>
+<dd><p>Constrain the course to exactly n units.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">gte_n_units</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span></dt>
+<dd><p>Constrain the course to &gt;= n units.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">not_in_abbreviations</code><span class="sig-paren">(</span><em>abbreviations</em><span class="sig-paren">)</span></dt>
+<dd><p>Constraint returns True only if the course is not in any of the given department abbreviations.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">mondaine.lib.formulas.</code><code class="descname">not_in_definitions</code><span class="sig-paren">(</span><em>definitions</em><span class="sig-paren">)</span></dt>
+<dd><p>Return True only if ALL of the definitions are NOT satisfied by the course.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">berkeleytime</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../berkeleytime.html">BerkeleyTime</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../account/account.html">Account</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../berkeleytime/berkeleytime.html">BerkeleyTime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../campus/campus.html">Campus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../catalog/catalog.html">Catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/data.html">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../marketplace/marketplace.html">Marketplace</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../mondaine.html">Mondaine</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../define/define.html">Define</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Lib</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-mondaine.lib.exceptions">exceptions.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mondaine.lib.formulas">formulas.py</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-mondaine.lib.formulas">utils.py</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../service/service.html">Service</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../scheduler/scheduler.html">Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../berkeleytime.html#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build/build.html">Build</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../frontend/frontend.html">Frontend</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../berkeleytime.html">BerkeleyTime</a><ul>
+  <li><a href="../mondaine.html">Mondaine</a><ul>
+      <li>Previous: <a href="../define/define.html" title="previous chapter">Define</a></li>
+      <li>Next: <a href="../service/service.html" title="next chapter">Service</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, izzie.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../../../_sources/berkeleytime/mondaine/lib/lib.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
