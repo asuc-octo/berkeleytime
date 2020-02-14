@@ -1,11 +1,11 @@
 .bt-footer {
   background-color: $bt-footer;
-  border-top: 1px solid #E4E4E4;
+  border-top: 1px solid $bt-border-grey;
 
   .bt-footer-container {
     max-width: 1150px;
     margin: 0 auto;
-    padding: 40px;
+    padding: 40px 30px;
 
     @include mobile {
       padding: 0px;
@@ -14,7 +14,6 @@
     .bt-footer-column {
       display: flex;
       flex-direction: column;
-      margin: 25px;
 
       :first-child {
         margin-bottom: 20px;
@@ -25,7 +24,7 @@
       }
 
       > *:not(:first-child) {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 500;
         line-height: 150%;
       }
@@ -50,19 +49,13 @@
         height: 23px;
         background: #2F80ED;
         border-radius: 3px;
-        margin-left: 5px;
-        margin-top: 2px;
+        margin-left: 8px;
+        padding: 1px 3px;
 
-        p {
-          color: #FFFFFF;
-          font-weight: 500;
-          font-size: 16px;
-          line-height: 150%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-        }
+        color: #FFFFFF;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 150%;
       }
     }
   }

@@ -2,13 +2,17 @@
 @import "../node_modules/bootstrap/scss/bootstrap";
 
 // base & themes
-@import "bt/base/variables";
-@import "bt/base/typography";
 @import "bt/base/responsive";
+@import "bt/base/variables";
+
+@import "bt/theming/colors";
 @import "bt/theming/buttons";
 @import "bt/theming/navbar";
 @import "bt/theming/grades_color";
 @import "bt/theming/enrollment_color";
+
+@import "bt/base/typography";
+
 
 @import "bt/berkeleytime";
 
@@ -17,7 +21,7 @@
 
 // landing
 @import "bt/landing/jumbotron";
-@import "bt/landing";
+@import "bt/landing/landing";
 
 // login
 @import "bt/login/login";
@@ -34,6 +38,8 @@
 @import "bt/graph-empty";
 // Grades
 @import "bt/grades";
+@import "bt/grades/graph";
+@import "bt/shared/grades_enrollment_info";
 // Enrollment
 @import "bt/enrollment";
 // Releases

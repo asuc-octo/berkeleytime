@@ -19,6 +19,7 @@ class Course(Model):
     course_number = StringType(required=True)
     units = StringType()  # no guarantees here
     description = StringType(required=True)
+    prerequisites = StringType()  # optional
 
     # Denormalized fields, never manually set these fields EVER
     # https://github.com/yuxinzhu/campanile/wiki/Denormalized-Fields
