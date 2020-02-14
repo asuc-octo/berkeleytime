@@ -28,15 +28,15 @@ class GradesGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { classData } = this.props;
-    if (classData !== prevProps.classData) {
+    const { selectedCourses } = this.props;
+    if (selectedCourses !== prevProps.selectedCourses) {
       this.getGradesData();
     }
   }
 
   getGradesData() {
-    const { classData, fetchGradeData } = this.props;
-    fetchGradeData(classData);
+    const { selectedCourses, fetchGradeData } = this.props;
+    fetchGradeData(selectedCourses);
   }
 
   update(course, grade) {
@@ -56,7 +56,7 @@ class GradesGraphCard extends Component {
 
   // Handler function for updating GradesInfoCard on hover
   updateBarHover(barData) {
-    const { classData } = this.props;
+    const { selectedCourses } = this.props;
     const { payload, name, value } = barData;
 
     let selectedClassID = '';
@@ -66,17 +66,17 @@ class GradesGraphCard extends Component {
       }
     }
 
-    const selectedCourse = classData.filter(course => selectedClassID == course.id)[0];
+    const selectedCourse = selectedCourses.filter(course => selectedClassID == course.id)[0];
     this.update(selectedCourse, name);
   }
 
   // Handler function for updating GradesInfoCard on hover with single course
   updateGraphHover(data) {
     const { isTooltipActive, activeLabel } = data;
-    const { classData } = this.props;
+    const { selectedCourses } = this.props;
 
-    if (isTooltipActive && classData.length == 1) {
-      const selectedCourse = classData[0];
+    if (isTooltipActive && selectedCourses.length == 1) {
+      const selectedCourse = selectedCourses[0];
       const grade = activeLabel;
       this.update(selectedCourse, grade);
     }
@@ -142,14 +142,15 @@ class GradesGraphCard extends Component {
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
-  fetchGradeData: (classData) => dispatch(fetchGradeData(classData)),
+  fetchGradeData: (selectedCourses) => dispatch(fetchGradeData(selectedCourses)),
 });
 
 const mapStateToProps = state => {
-  const { gradesData, graphData } = state.grade;
+  const { gradesData, graphData, selectedCourses } = state.grade;
   return {
     gradesData,
     graphData,
+    selectedCourses
   };
 };
 

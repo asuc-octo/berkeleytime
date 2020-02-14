@@ -17,10 +17,8 @@ class EnrollmentSearchBar extends Component {
 
     this.state = {
       selectedClass: 0,
-      // selectType: '',
       selectPrimary: this.props.selectPrimary,
       selectSecondary: this.props.selectSecondary,
-      // sections: [],
     }
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
@@ -37,9 +35,6 @@ class EnrollmentSearchBar extends Component {
 
   componentDidMount() {
     let { fromCatalog } = this.props;
-    // this.setState({
-    //   selectType: 'semester',
-    // });
     if(fromCatalog) {
       this.handleClassSelect({value: fromCatalog.id, addSelected: true});
     }

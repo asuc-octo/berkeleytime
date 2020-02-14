@@ -5,7 +5,7 @@ import ClassCardList from '../../components/ClassCards/ClassCardList';
 import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
 import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
-import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse } from '../../redux/actions';
+import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset } from '../../redux/actions';
 
 class Grades extends Component {
   constructor(props) {
@@ -18,6 +18,10 @@ class Grades extends Component {
     this.removeCourse = this.removeCourse.bind(this);
   }
 
+  componentWillMount() {
+    this.props.gradeReset();
+  }
+
   componentDidMount() {
     const { fetchGradeContext } = this.props;
     fetchGradeContext();
@@ -25,7 +29,6 @@ class Grades extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.selectedCourses != this.state.selectedCourses) {
-      console.log(nextProps.selectedCourses);
       this.setState({
         selectedCourses: nextProps.selectedCourses,
       });
@@ -52,6 +55,7 @@ class Grades extends Component {
     const { context, location } = this.props;
     const { selectedCourses } = this.state;
     const courses = context.courses;
+    console.log(selectedCourses);
 
     return (
       <div className="viewport-app">
@@ -71,7 +75,6 @@ class Grades extends Component {
           <GradesGraphCard
             id="gradesGraph"
             title="Grades"
-            classData={selectedCourses}
           />
         </div>
       </div>
@@ -84,6 +87,7 @@ const mapDispatchToProps = dispatch => ({
   fetchGradeContext: () => dispatch(fetchGradeContext()),
   fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
   gradeRemoveCourse: (id) => dispatch(gradeRemoveCourse(id)),
+  gradeReset: () => dispatch(gradeReset())
 });
 
 const mapStateToProps = state => {

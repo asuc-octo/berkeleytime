@@ -15,8 +15,6 @@ class EnrollmentGraphCard extends Component {
     super(props);
 
     this.state = {
-      // enrollmentData: [],
-      // graphData: [],
       hoveredClass: false,
     };
 
@@ -29,16 +27,16 @@ class EnrollmentGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { classData } = this.props;
-    if (classData !== prevProps.classData) {
+    const { selectedCourses } = this.props;
+    if (selectedCourses !== prevProps.selectedCourses) {
       this.getEnrollmentData();
     }
   }
 
   getEnrollmentData() {
-    const { classData, fetchEnrollData } = this.props;
+    const { selectedCourses, fetchEnrollData } = this.props;
 
-    fetchEnrollData(classData);
+    fetchEnrollData(selectedCourses);
   }
 
   // buildGraphData(enrollmentData) {
@@ -87,20 +85,20 @@ class EnrollmentGraphCard extends Component {
 
   // Handler function for updating EnrollmentInfoCard on hover
   updateLineHover(lineData) {
-    const { classData } = this.props;
+    const { selectedCourses } = this.props;
     const selectedClassID = lineData.dataKey;
     const day = lineData.index;
-    const selectedCourse = classData.filter(course => selectedClassID == course.id)[0];
+    const selectedCourse = selectedCourses.filter(course => selectedClassID == course.id)[0];
     this.update(selectedCourse, day);
   }
 
   // Handler function for updating EnrollmentInfoCard on hover with single course
   updateGraphHover(data) {
     const { isTooltipActive, activeLabel } = data;
-    const { classData } = this.props;
+    const { selectedCourses } = this.props;
 
-    if (isTooltipActive && classData.length == 1) {
-      const selectedCourse = classData[0];
+    if (isTooltipActive && selectedCourses.length == 1) {
+      const selectedCourse = selectedCourses[0];
       const day = activeLabel;
       this.update(selectedCourse, day);
     }
@@ -165,14 +163,15 @@ class EnrollmentGraphCard extends Component {
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
-  fetchEnrollData: (classData) => dispatch(fetchEnrollData(classData)),
+  fetchEnrollData: (selectedCourses) => dispatch(fetchEnrollData(selectedCourses)),
 });
 
 const mapStateToProps = state => {
-  const { enrollmentData, graphData } = state.enrollment;
+  const { enrollmentData, graphData, selectedCourses } = state.enrollment;
   return {
     enrollmentData,
     graphData,
+    selectedCourses
   };
 };
 

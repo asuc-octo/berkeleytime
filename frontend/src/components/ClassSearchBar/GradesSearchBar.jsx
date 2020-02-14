@@ -20,7 +20,7 @@ class GradesSearchBar extends Component {
 
     this.state = {
       selectedClass: 0,
-      selectType: '',
+      selectType: 'instructor',
       selectPrimary: props.selectPrimary,
       selectSecondary: props.selectSecondary,
     };
@@ -325,6 +325,7 @@ class GradesSearchBar extends Component {
       secondaryOption = '';
     }
 
+
     return (
       <Container fluid className="grades-search-bar">
         <Row style={{ marginBottom: 10 }}>
@@ -340,6 +341,7 @@ class GradesSearchBar extends Component {
           <Col lg={2}>
             <Select
               name="sortBy"
+              value={selectType == 'instructor' ? sortOptions[0] : sortOptions[1]}
               placeholder="Sort by"
               options={sortOptions}
               clearable={false}

@@ -2,8 +2,8 @@ import axios from 'axios';
 import {
   MODIFY_LIST, RECEIVE_LIST, MODIFY_SELECTED, FILTER,
   START_REQUEST, START_REQUEST_DESCRIPTION, UPDATE_COURSE_DATA,
-  UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, GRADE_REMOVE_COURSE,
-  UPDATE_GRADE_DATA, UPDATE_GRADE_SELECTED, UPDATE_ENROLL_CONTEXT,
+  UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, GRADE_REMOVE_COURSE, GRADE_RESET,
+  UPDATE_GRADE_DATA, UPDATE_GRADE_SELECTED, UPDATE_ENROLL_CONTEXT, ENROLL_RESET,
   ENROLL_ADD_COURSE, ENROLL_REMOVE_COURSE, UPDATE_ENROLL_DATA, UPDATE_ENROLL_SELECTED,
 } from './actionTypes';
 
@@ -66,6 +66,10 @@ export const updateGradeContext = (data) => ({
   },
 });
 
+export const gradeReset = () => ({
+  type: GRADE_RESET
+})
+
 // add displayed course to the grade page
 export const gradeAddCourse = (formattedCourse) => ({
   type: GRADE_ADD_COURSE,
@@ -102,6 +106,10 @@ export const updateEnrollContext = (data) => ({
     data,
   },
 });
+
+export const enrollReset = () => ({
+  type: ENROLL_RESET
+})
 
 // add displayed course to the enroll page
 export const enrollAddCourse = (formattedCourse) => ({
@@ -242,6 +250,7 @@ export function fetchGradeClass(course) {
 export function fetchGradeData(classData) {
   const promises = [];
   for (const course of classData) {
+    console.log(course);
     const { sections } = course;
     const url = `https://berkeleytime.com/api/grades/sections/${sections.join('&')}/`;
     promises.push(axios.get(url));
