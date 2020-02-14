@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import Modal from "react-bootstrap/Modal";
+import FilterModal from './FilterModal';
 
 const animatedComponents = makeAnimated();
 
@@ -43,7 +45,8 @@ export class FilterSidebar extends Component {
       department: this.departmentDefault,
       classLevels: this.classLevelDefault,
       semesters: this.semesterDefault,
-      isMobile: false
+      isMobile: false,
+      showFilters: false
     };
 
     this.searchInput = React.createRef(); // reference to <input>
@@ -297,6 +300,12 @@ export class FilterSidebar extends Component {
             defaultValue={this.props.defaultSearch}
           />
         </div>
+        <a class="btn btn-bt-blue btn-bt-lg" onClick={() => {this.setState({ showFilters: true })}}>More Filters</a>
+        <Modal show={this.state.showFilters}>
+          <FilterModal 
+            playlists={this.props.playlists}
+          />
+        </Modal>
        </div>
     );
   }

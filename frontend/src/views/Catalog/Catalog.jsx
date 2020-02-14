@@ -6,7 +6,6 @@ import HashLoader from 'react-spinners/HashLoader';
 import axios from 'axios';
 
 import Filter from '../../components/Catalog/Filter';
-import FilterMobile from '../../components/Catalog/FilterMobile';
 import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 
