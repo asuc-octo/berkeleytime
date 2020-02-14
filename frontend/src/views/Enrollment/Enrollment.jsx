@@ -5,7 +5,7 @@ import ClassCardList from '../../components/ClassCards/ClassCardList';
 import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard';
 import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar';
 
-import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse } from '../../redux/actions';
+import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse, enrollReset } from '../../redux/actions';
 
 class Enrollment extends Component {
   constructor(props) {
@@ -17,6 +17,10 @@ class Enrollment extends Component {
 
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
+  }
+
+  componentWillMount() {
+    this.props.enrollReset();
   }
 
   componentDidMount() {
@@ -71,7 +75,6 @@ class Enrollment extends Component {
         <EnrollmentGraphCard
           id="gradesGraph"
           title="Enrollment"
-          classData={selectedCourses}
         />
 
       </div>
@@ -84,6 +87,7 @@ const mapDispatchToProps = dispatch => ({
   fetchEnrollContext: () => dispatch(fetchEnrollContext()),
   fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course)),
   enrollRemoveCourse: (id) => dispatch(enrollRemoveCourse(id)),
+  enrollReset: () => dispatch(enrollReset())
 });
 
 const mapStateToProps = state => {

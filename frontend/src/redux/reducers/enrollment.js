@@ -1,6 +1,6 @@
 import {
   UPDATE_ENROLL_CONTEXT, ENROLL_ADD_COURSE, UPDATE_ENROLL_DATA,
-  UPDATE_ENROLL_SELECTED, ENROLL_REMOVE_COURSE,
+  UPDATE_ENROLL_SELECTED, ENROLL_REMOVE_COURSE, ENROLL_RESET
 } from '../actionTypes';
 
 const initialState = {
@@ -15,6 +15,9 @@ const initialState = {
 
 export default function enrollment(state = initialState, action) {
   switch (action.type) {
+  case ENROLL_RESET: {
+    return initialState;
+  }
   case UPDATE_ENROLL_CONTEXT: {
     const { data } = action.payload;
     return { ...state, context: data };

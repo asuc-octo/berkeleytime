@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
 
 class Navigation extends PureComponent {
+
+  
   render() {
     const links = Navigation.links;
 

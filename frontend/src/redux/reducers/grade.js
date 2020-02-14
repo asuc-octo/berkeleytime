@@ -1,6 +1,6 @@
 import {
   UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, UPDATE_GRADE_DATA,
-  UPDATE_GRADE_SELECTED, GRADE_REMOVE_COURSE,
+  UPDATE_GRADE_SELECTED, GRADE_REMOVE_COURSE, GRADE_RESET
 } from '../actionTypes';
 import vars from '../../variables/Variables';
 
@@ -17,6 +17,9 @@ const initialState = {
 
 export default function grade(state = initialState, action) {
   switch (action.type) {
+  case GRADE_RESET: {
+    return initialState;
+  }
   case UPDATE_GRADE_CONTEXT: {
     const { data } = action.payload;
     return { ...state, context: data };
