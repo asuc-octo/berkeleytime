@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'react-bootstrap';
-import axios from 'axios';
+import { Container, Row, Col } from 'react-bootstrap';
 
+import { connect } from 'react-redux';
 import vars from '../../variables/Variables';
 
-import GradesGraph from '../Graphs/GradesGraph.jsx';
-import GraphEmpty from '../Graphs/GraphEmpty.jsx';
-import GradesInfoCard from '../GradesInfoCard/GradesInfoCard.jsx';
+import GradesGraph from '../Graphs/GradesGraph';
+import GraphEmpty from '../Graphs/GraphEmpty';
+import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 
 import { fetchGradeData } from '../../redux/actions';
-import { connect } from "react-redux";
 
 class GradesGraphCard extends Component {
   constructor(props) {
@@ -29,97 +28,93 @@ class GradesGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { classData } = this.props;
-    if (classData !== prevProps.classData) {
+    const { selectedCourses } = this.props;
+    if (selectedCourses !== prevProps.selectedCourses) {
       this.getGradesData();
     }
   }
 
   getGradesData() {
-    const { classData, fetchGradeData } = this.props;
-    fetchGradeData(classData);
+    const { selectedCourses, fetchGradeData } = this.props;
+    fetchGradeData(selectedCourses);
   }
 
   update(course, grade) {
     const { gradesData } = this.props;
-    let selectedGrades = gradesData.filter(c => course.id == c.id)[0];
+    const selectedGrades = gradesData.filter(c => course.id == c.id)[0];
 
-    let hoverTotal = {
+    const hoverTotal = {
       ...course,
       ...selectedGrades,
       hoverGrade: grade,
-    }
+    };
 
     this.setState({
       hoveredClass: hoverTotal,
-    })
+    });
   }
 
   // Handler function for updating GradesInfoCard on hover
   updateBarHover(barData) {
-    const { classData } = this.props;
-    const {payload, name, value} = barData;
+    const { selectedCourses } = this.props;
+    const { payload, name, value } = barData;
 
     let selectedClassID = '';
-    for (let key in payload) {
+    for (const key in payload) {
       if (payload[key] == value) {
         selectedClassID = key;
       }
     }
 
-    let selectedCourse = classData.filter(course => selectedClassID == course.id)[0]
+    const selectedCourse = selectedCourses.filter(course => selectedClassID == course.id)[0];
     this.update(selectedCourse, name);
   }
 
   // Handler function for updating GradesInfoCard on hover with single course
   updateGraphHover(data) {
-    let {isTooltipActive, activeLabel} = data;
-    const { classData } = this.props;
+    const { isTooltipActive, activeLabel } = data;
+    const { selectedCourses } = this.props;
 
-    if(isTooltipActive && classData.length == 1) {
-      let selectedCourse = classData[0];
-      let grade = activeLabel;
+    if (isTooltipActive && selectedCourses.length == 1) {
+      const selectedCourse = selectedCourses[0];
+      const grade = activeLabel;
       this.update(selectedCourse, grade);
     }
   }
 
-  render () {
-    let { hoveredClass } = this.state;
+  render() {
+    const { hoveredClass } = this.state;
     const { graphData, gradesData } = this.props;
-    let { title } = this.props;
 
-    var colorIndex = 0;
-    for (var i = 0; i < gradesData.length; i++) {
+    let colorIndex = 0;
+    for (let i = 0; i < gradesData.length; i++) {
       if (gradesData[i].id === hoveredClass.id) {
         colorIndex = i;
         break;
       }
     }
-    let hoveredColor = vars.colors[colorIndex];
+    const hoveredColor = vars.colors[colorIndex];
 
     return (
-      <div className="card grades-graph-card">
-        <div className="grades-graph">
-          {
-            gradesData.length === 0 ? (
-              <GraphEmpty pageType='grades'/>
-            ) : (
-              <div className="graph-content">
-                <Row>
-                  <div className="graph-title">{ title }</div>
-                </Row>
-                <Row>
-                  <Col sm={8}>
-                    <GradesGraph
-                      graphData={graphData}
-                      gradesData={gradesData}
-                      updateBarHover={this.updateBarHover}
-                      updateGraphHover={this.updateGraphHover}
-                    />
-                  </Col>
+      <div className="grades-graph">
+        {
+          gradesData.length === 0 ? (
+            <GraphEmpty pageType="grades" />
+          ) : (
+            <Container fluid>
+              <Row>
+                <Col lg={8}>
+                  <GradesGraph
+                    graphData={graphData}
+                    gradesData={gradesData}
+                    updateBarHover={this.updateBarHover}
+                    updateGraphHover={this.updateGraphHover}
+                  />
+                </Col>
 
-                  <Col sm={4}>
-                    {hoveredClass &&
+                <Col lg={4}>
+                  {hoveredClass
+                    && (
                       <GradesInfoCard
                         course={hoveredClass.course}
                         subtitle={hoveredClass.subtitle}
@@ -130,44 +125,37 @@ class GradesGraphCard extends Component {
                         sectionLetter={hoveredClass.section_letter}
                         sectionGPA={hoveredClass.section_gpa}
                         denominator={hoveredClass.denominator}
-                        selectedGrade={hoveredClass[hoveredClass.hoverGrade]}
-                        gradeName={hoveredClass.hoverGrade}
-                        hoveredColor={hoveredColor}
-
-                        // selectedGrade = {this.state.selectedGrade}
-                        // betterGrade = {this.getNeighborGrade("better")}
-                        // worseGrade = {this.getNeighborGrade("worse")}
+                        selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
+                        selectedGrade={hoveredClass.hoverGrade}
+                        color={hoveredColor}
                       />
-                    }
-                  </Col>
-                </Row>
-              </div>
-            )
-          }
-        </div>
+                    )}
+                </Col>
+              </Row>
+            </Container>
+          )
+        }
       </div>
     );
   }
-
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    dispatch,
-    fetchGradeData: (classData) => dispatch(fetchGradeData(classData)),
-  }
-}
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  fetchGradeData: (selectedCourses) => dispatch(fetchGradeData(selectedCourses)),
+});
 
 const mapStateToProps = state => {
-  const { gradesData, graphData } = state.grade;
+  const { gradesData, graphData, selectedCourses } = state.grade;
   return {
     gradesData,
-    graphData
+    graphData,
+    selectedCourses
   };
 };
 
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(GradesGraphCard);

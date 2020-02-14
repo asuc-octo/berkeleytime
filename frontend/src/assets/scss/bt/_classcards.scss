@@ -1,54 +1,73 @@
 .class-card-list {
-  .card-column {
-    margin-right: -1vw;
-  }
+  margin-bottom: 10px;
+  height: 150px;
 
-  .card.class-card {
-    margin-bottom: 0px;
-    width: 22vw;
+  .class-card-column {
+    padding-left: 5px;
+    padding-right: 5px;
 
-    .content {
+    .class-card {
+      border: 1px solid $border-color;
+      border-radius: 5px;
+      padding: 15px;
+      height: 130px;
+  
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-
-      padding: 15px 15px 15px 15px;
-      background-color: white;
-      margin-left: 10px;
-      border-radius: 0 4px 4px 0;
-      min-height: 100px;
-
-      .class-card-upper {
+  
+      .class-card-header {
         display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        margin-bottom: 12px;
-
-        .course-abbreviation {
-          font-weight: bold;
+        flex-direction: row;
+        align-items: center;
+  
+        .class-card-square {
+          width: 16px;
+          height: 16px;
+          border-radius: 3px;
+          margin-right: 8px;
+          margin-bottom: 4px;
         }
-
-        .class-info {
-          font-size: 12px;
+  
+        .class-card-course {
+          margin-right: auto !important;
+          font-weight: bold;
+          color: $bt-base-text;
+          font-size: 18px;
+        }
+  
+        .class-card-remove {
+          color: $bt-indicator-red;
+          cursor: pointer;
         }
       }
-
-      .class-card-lower {
-        display: flex;
-        justify-content: space-between;
-
-        .delete {
-          margin-top: auto;
-          color: $bt-indicator-red;
-          font-size: 12px;
-          cursor: pointer;
-
-          &:hover {
-            color: $bt-light-grey;
-          }
-        }
+  
+      .class-card-title, .class-card-options {
+        color: $bt-grey-text;
+      }
+  
+      /* magic to truncate at 2 lines lol */ 
+      .class-card-title {
+        font-size: 16px;
+  
+        /* hide text if it more than N lines  */
+        overflow: hidden;
+        /* for set '...' in absolute position */
+        position: relative; 
+        /* use this value to count block height */
+        line-height: 1.2em;
+        /* max-height = line-height (1.2) * lines max number (3) */
+        max-height: 2.4em; 
+        /* fix problem when last visible word doesn't adjoin right side  */
+        text-align: left;  
+        /* place for '...' */
+        margin-right: -1em;
+        padding-right: 1em;
+      }
+  
+      .class-card-options {
+        font-size: 15px;
       }
     }
   }
-
 }
