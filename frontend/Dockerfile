@@ -8,14 +8,11 @@ RUN apt-get update && \
   node --version && \
   npm --version
 
-RUN mkdir frontend
-WORKDIR frontend
+RUN mkdir /frontend
+WORKDIR /frontend
 
-RUN pwd
-
-COPY package.json package.json
+COPY . /frontend
 RUN npm install
-COPY . .
 
 RUN npm run build
 
