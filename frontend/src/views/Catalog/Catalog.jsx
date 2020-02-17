@@ -252,19 +252,19 @@ class Catalog extends Component {
               </div>
             }
           </Col>
-          <Col lg={3} xl={3} className="filter-results-column">
-            <FilterResults
-              activePlaylists={activePlaylists ? activePlaylists : []}
-              selectCourse={this.selectCourse}
-              selectedCourse={selectedCourse}
-              sortBy={this.state.sortBy}
-              query={this.state.search}
-            />
-          </Col>
-          <Col lg xl className="catalog-description-column">
+          <Col xs={12} sm={3} md={3} lg={4} xl={3} className="filter-results-column">
+              <FilterResults
+                activePlaylists={activePlaylists ? activePlaylists : []}
+                selectCourse={this.selectCourse}
+                selectedCourse={selectedCourse}
+                sortBy={this.state.sortBy}
+                query={this.state.search}
+              />
+            </Col>
+          <Col xs={0} sm={6} md={6} lg={4} xl={6} className="catalog-description-column">
             <ClassDescription
               course={selectedCourse}
-              selectCourse={this.selectCourse}
+                selectCourse={this.selectCourse}
             />
           </Col>
         </Row>
