@@ -1,3 +1,5 @@
+
+
 .contributors {
     display: flex;
     flex-direction: row;
@@ -65,6 +67,15 @@
                     height: 190px;
                     width: 150px;
                     object-fit: cover;
+                }
+
+                .contributor-pic {
+                    z-index: 1;
+                    transition: 50ms;
+
+                    &:hover {
+                        opacity: 0;
+                    }
                 }
 
                 @include mobile {

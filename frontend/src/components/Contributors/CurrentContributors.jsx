@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-
+import { Container, Row, Col } from 'react-bootstrap';
 
 import leon_1 from '../../assets/img/images/about/compressed/Leon_1.jpg';
 import leon_2 from '../../assets/img/images/about/compressed/Leon_2.jpg';
@@ -7,8 +7,6 @@ import michael_1 from '../../assets/img/images/about/compressed/Michael_1.jpg';
 import michael_2 from '../../assets/img/images/about/compressed/Michael_2.jpg';
 import will_1 from '../../assets/img/images/about/compressed/Will_1.jpg';
 import will_2 from '../../assets/img/images/about/compressed/Will_2.jpg';
-import richard_1 from '../../assets/img/images/about/compressed/Richard_1.jpg';
-import richard_2 from '../../assets/img/images/about/compressed/Richard_2.jpg';
 import jemma_1 from '../../assets/img/images/about/compressed/Jemma_1.jpg';
 import jemma_2 from '../../assets/img/images/about/compressed/Jemma_2.jpg';
 import chris_1 from '../../assets/img/images/about/compressed/Chris_1.jpg';
@@ -18,12 +16,8 @@ import sangbin_2 from '../../assets/img/images/about/compressed/Sangbin_2.jpg';
 import anson_1 from '../../assets/img/images/about/compressed/Anson_1.jpg';
 import anson_2 from '../../assets/img/images/about/compressed/Anson_2.jpg';
 import eli_1 from '../../assets/img/images/about/compressed/Eli_1.jpg';
-import evelyn_1 from '../../assets/img/images/about/compressed/Evelyn_1.jpg';
-import evelyn_2 from '../../assets/img/images/about/compressed/Evelyn_2.jpg';
 import grace_1 from '../../assets/img/images/about/compressed/Grace_1.jpg';
 import grace_2 from '../../assets/img/images/about/compressed/Grace_2.jpg';
-import mary_1 from '../../assets/img/images/about/compressed/Mary_1.jpg';
-import mary_2 from '../../assets/img/images/about/compressed/Mary_2.jpg';
 import hannah_1 from '../../assets/img/images/about/compressed/Hannah_1.jpg';
 import hannah_2 from '../../assets/img/images/about/compressed/Hannah_2.jpg';
 import chloe_1 from '../../assets/img/images/about/compressed/Chloe_1.jpg';
@@ -40,40 +34,34 @@ import annie_1 from '../../assets/img/images/about/compressed/Annie_1.jpg';
 import annie_2 from '../../assets/img/images/about/compressed/Annie_2.jpg';
 
 
-import oski from '../../assets/img/images/oski.jpg';
-
 class CurrentContributors extends PureComponent {
   render() {
     return (
-      <section className="contributors">
-        <div className="contributors-container">
-          <div className="contributors-description">
-            <h4>Meet our Team</h4>
-            <p>We are a group of dedicated Berkeley students committed to making Berkeley a little smaller for everyone.</p>
-          </div>
-  
-          <div className="contributor-profiles">
-            {this.props.contributors.map(row => (
-              <div className="contributor-row">
-                {row.map(member => (
+      <section className="current-contributors">
+        <h6>The BerkeleyTime Team</h6>
+        <p>We are a group of dedicated Berkeley students committed to making Berkeley a little smaller for everyone.</p>
+
+        <div className="members">
+          {this.props.contributors.map(row => (
+            <Row>
+              {row.map(member => (
+                <Col xs={6} lg={3}>
                   <div className="contributor-card">
-                    <div className="contributor-pic-container">
-                      <img className="contributor-pic" src={member.img_1} alt={member.name} />
-                      <img className="contributor-pic-silly" src={member.silly ? member.img_2 : member.img_1} alt={member.name} />
+                    <div className="headshot">
+                      <img className="serious" src={member.img_1} alt={member.name} />
+                      <img src={member.silly ? member.img_2 : member.img_1} alt={member.name} />
                     </div>
-                    <div className="contributor-desc">
-                      {member.site ? (
-                          <a href={member.site}><h5 className="contributor-name contributor-site">{member.name}</h5></a>
-                      ) : (
-                          <h5 className="contributor-name">{member.name}</h5>
-                      )}
-                      <p className="contributor-role">{member.role}</p>
-                    </div>
+                    {member.site ? (
+                      <div className="name">{ member.name }</div>
+                    ) : (
+                      <div className="name">{ member.name }</div>
+                    )}
+                    <div className="role">{ member.role }</div>
                   </div>
-                ))}
-              </div>
-            ))}
-          </div>
+                </Col>
+              ))}
+            </Row>
+          ))}
         </div>
       </section>
     );
@@ -108,16 +96,6 @@ CurrentContributors.defaultProps = {
         img_2: will_2,
       },
       {
-        name: 'Richard Liu',
-        role: 'Advisor',
-        site: 'https://www.linkedin.com/in/richard4912',
-        silly: true,
-        img_1: richard_1,
-        img_2: richard_2,
-      },
-    ],
-    [
-      {
         name: 'Jemma Kwak',
         role: 'Design Lead',
         site: 'https://jemmakwak.github.io',
@@ -125,6 +103,8 @@ CurrentContributors.defaultProps = {
         img_1: jemma_1,
         img_2: jemma_2,
       },
+    ],
+    [
       {
         name: 'Christopher Liu',
         role: 'Frontend Lead',
@@ -149,22 +129,14 @@ CurrentContributors.defaultProps = {
         img_1: anson_1,
         img_2: anson_2,
       },
-    ],
-    [
       {
         name: 'Eli Wu',
         role: 'Backend Engineering',
         silly: false,
         img_1: eli_1,
       },
-      {
-        name: 'Evelyn Li',
-        role: 'Backend Engineering',
-        site: 'https://www.linkedin.com/in/yunqil/',
-        silly: true,
-        img_1: evelyn_1,
-        img_2: evelyn_2,
-      },
+    ],
+    [
       {
         name: 'Grace Luo',
         role: 'Frontend Engineering',
@@ -180,15 +152,6 @@ CurrentContributors.defaultProps = {
         img_1: sean_1,
         img_2: sean_2,
       },
-    ],
-    [
-      {
-        name: 'Mary Liu',
-        role: 'Backend Engineering',
-        silly: true,
-        img_1: mary_1,
-        img_2: mary_2,
-      },
       {
         name: 'Hannah Yan',
         role: 'Backend Engineering',
@@ -203,6 +166,8 @@ CurrentContributors.defaultProps = {
         img_1: izzie_1,
         img_2: izzie_2,
       },
+    ],
+    [
       {
         name: 'Christina Shao',
         role: 'Frontend Engineering',
@@ -210,8 +175,6 @@ CurrentContributors.defaultProps = {
         img_1: christina_1,
         img_2: christina_2,
       },
-    ],
-    [
       {
         name: 'Chloe Liu',
         role: 'Frontend Engineering',
@@ -233,7 +196,7 @@ CurrentContributors.defaultProps = {
         img_1: annie_1,
         img_2: annie_2,
       },
-    ]
+    ],
   ],
 };
 

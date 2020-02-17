@@ -4,7 +4,7 @@ import PastContributors from '../../components/Contributors/PastContributors';
 
 function About() {
   return (
-    <div>
+    <div className="about">
       <CurrentContributors />
       <PastContributors />
     </div>
