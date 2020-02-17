@@ -1,0 +1,84 @@
+.current-contributors {
+  margin-top: 50px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  > h6 {
+    @include not-mobile {
+      font-size: 36px;
+    }
+
+    @include mobile {
+      font-size: 30px;
+    }
+
+    font-weight: bold;
+    color: $bt-base-text;
+    
+    margin: 0 10px 10px;
+  }
+
+  > p {
+    font-size: 16px;
+    color: $bt-grey-text;
+    text-align: center;
+    margin: 0 10px 50px;
+  }
+
+  .members {
+    @include desktop {
+      width: 850px;
+    }
+
+    @include touch {
+      width: 340px;
+    }
+
+    .contributor-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      height: 280px;
+      margin-bottom: 30px;
+
+      .headshot {
+        width: 170px;
+
+        img {
+          height: 220px;
+          width: 170px;
+          position: absolute;
+          object-fit: cover;
+          border-radius: 3px;
+        }
+
+        .serious {
+          z-index: 1;
+          transition: 50ms;
+
+          &:hover {
+            opacity: 0;
+          }
+        }
+
+        margin-bottom: 230px;
+      }
+
+      .name, .role {
+        color: $bt-grey-text;
+      }
+
+      .name {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .role {
+        font-size: 14px;
+      }
+    }
+  }
+}
