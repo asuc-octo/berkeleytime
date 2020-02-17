@@ -7,7 +7,13 @@
   }
 }
 
-// between 576px and 991
+@mixin not-mobile {
+  @include media-breakpoint-up(xs) {
+    @content;
+  }
+}
+
+// between 768px and 991
 @mixin tablet {
   @include media-breakpoint-between(sm, md) {
     @content;
