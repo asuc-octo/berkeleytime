@@ -11,9 +11,10 @@ RUN apt-get update && \
 RUN mkdir /frontend
 WORKDIR /frontend
 
-COPY . /frontend
+COPY package.json package.json
 RUN npm install
 
+COPY . /frontend
 RUN npm run build
 
 ENTRYPOINT ["npm", "start"]
