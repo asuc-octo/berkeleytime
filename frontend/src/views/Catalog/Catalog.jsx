@@ -60,7 +60,7 @@ class Catalog extends Component {
       const classNum = paths[3];
       const search = `${abbreviation} ${classNum} `;
       this.searchQueryHandler(search);
-      axios.get(`/api/catalog_json/${abbreviation}/${classNum}/`).then(res => {
+      axios.get(`/api/catalog/catalog_json/filters/${abbreviation}/${classNum}/`).then(res => {
         const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
         this.setState({
           activeFilters: new Set(defaultPlaylists),
@@ -85,7 +85,7 @@ class Catalog extends Component {
         console.log(err);
       });
     } else {
-      axios.get('/api/catalog_json/')
+      axios.get('/api/catalog/catalog_json/filters/')
         .then(res => {
           //console.log(res);
           const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
