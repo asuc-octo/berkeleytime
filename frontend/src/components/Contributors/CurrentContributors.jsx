@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
 
 import leon_1 from '../../assets/img/images/about/compressed/Leon_1.jpg';
 import leon_2 from '../../assets/img/images/about/compressed/Leon_2.jpg';
@@ -38,31 +39,30 @@ class CurrentContributors extends PureComponent {
   render() {
     return (
       <section className="current-contributors">
-        <h6>The BerkeleyTime Team</h6>
-        <p>We are a group of dedicated Berkeley students committed to making Berkeley a little smaller for everyone.</p>
-
-        <div className="members">
-          {this.props.contributors.map(row => (
-            <Row>
-              {row.map(member => (
-                <Col xs={6} lg={3}>
-                  <div className="contributor-card">
-                    <div className="headshot">
-                      <img className="serious" src={member.img_1} alt={member.name} />
-                      <img src={member.silly ? member.img_2 : member.img_1} alt={member.name} />
-                    </div>
-                    {member.site ? (
-                      <div className="name">{ member.name }</div>
-                    ) : (
-                      <div className="name">{ member.name }</div>
-                    )}
-                    <div className="role">{ member.role }</div>
+        {this.props.contributors.map(row => (
+          <Row>
+            {row.map(member => (
+              <Col xs={6} lg={3}>
+                <div className="contributor-card">
+                  <div className="headshot">
+                    <img className="serious" src={member.img_1} alt={member.name} />
+                    <img src={member.silly ? member.img_2 : member.img_1} alt={member.name} />
                   </div>
-                </Col>
-              ))}
-            </Row>
-          ))}
-        </div>
+                  {member.site ? (
+                    <a className="name" href={member.site}>
+                      { member.name }
+                      &nbsp;
+                      <FontAwesome name="link" />
+                    </a>
+                  ) : (
+                    <div className="name">{ member.name }</div>
+                  )}
+                  <div className="role">{ member.role }</div>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        ))}
       </section>
     );
   }
