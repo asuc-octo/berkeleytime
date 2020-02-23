@@ -39,6 +39,7 @@ class CurrentContributors extends PureComponent {
   render() {
     return (
       <section className="current-contributors">
+        <h5>Current Team</h5>
         {this.props.contributors.map(row => (
           <Row>
             {row.map(member => (
