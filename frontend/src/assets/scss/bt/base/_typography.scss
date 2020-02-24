@@ -1,0 +1,28 @@
+//@import "responsive";
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+button,
+td {
+  font-family: 'DM Sans', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  color: $bt-base-text;
+  margin: 0;
+
+  /*@include desktop {
+  	font-size: 30px;
+  }*/
+}
+
+a:hover {
+  text-decoration: none;
+}
+

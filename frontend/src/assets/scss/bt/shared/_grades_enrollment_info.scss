@@ -1,0 +1,53 @@
+.grades-info, .enrollment-info {
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    margin-bottom: 5px;
+
+    .square {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      margin-right: 8px;
+      margin-bottom: 4px;
+    }
+
+    .course {
+      font-weight: bold;
+      color: $bt-base-text;
+      font-size: 18px;
+    }
+  }
+
+  .title, .info {
+    font-size: 16px;
+    color: $bt-grey-text;
+  }
+
+  .title {
+    margin-bottom: 5px;
+  }
+
+  .info {
+    margin-bottom: 30px;
+  }
+
+  h6 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  span {
+    margin-right: 5px;
+  }
+
+  .course-average, .section-average, .percentile {
+    margin-bottom: 10px;
+  }
+}

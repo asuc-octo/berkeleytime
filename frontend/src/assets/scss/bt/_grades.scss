@@ -1,0 +1,82 @@
+.grades {
+  height: 100%;
+  padding: 30px;
+
+  display: flex;
+  flex-direction: column;
+
+  .grades-search-bar {
+    margin-bottom: 10px;
+
+    > div > div {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+  }
+}
+
+// GradesGraph
+.grades-graph-card {
+  box-shadow: none;
+  border: none;
+
+    .graph-content {
+      .graph {
+        padding: 15px 15px 15px 15px;
+      }
+      .graph-title {
+          font-weight: bold;
+          font-size: 20px;
+      }
+    }
+}
+
+// GradesInfoCard
+.grades-card-info {
+  box-shadow: none;
+
+  .content {
+      padding: 0px 15px 15px 15px;
+
+      .class-num {
+        font-weight: bold;
+        font-size: 20px;
+        width: fit-content;
+      }
+
+      .class-info {
+        margin-top: 5px;
+        color: #8F8F8F;
+      }
+
+      .class-title {
+        padding-top: 5px;
+        padding-bottom: 10px;
+      }
+
+      .class-avgs {
+        padding: 0;
+
+        .class-avg-stats {
+          padding: 0;
+          font-size: 15px;
+          font-weight: bold;
+          margin-bottom: 3%;
+        }
+
+        .class-stats-name {
+          color: #8F8F8F;
+        }
+
+        .class-grade {
+          font-size: 18px;
+          font-weight: bold;
+        }
+
+        .class-percent {
+          color:gray;
+          font-size: 18px;
+        }
+      }
+  }
+}
