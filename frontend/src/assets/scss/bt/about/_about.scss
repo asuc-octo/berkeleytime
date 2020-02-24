@@ -1,7 +1,58 @@
 .about {
-  margin-top: $bt-navbar-height;
+  margin-top: $bt-navbar-height + 50px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  .title {
+    > h5 {
+      @include not-mobile {
+        font-size: 36px;
+      }
+
+      @include mobile {
+        font-size: 30px;
+      }
+
+      font-weight: bold;
+      color: $bt-base-text;
+      
+      margin: 0 10px 10px;
+    }
+
+    > p {
+      font-size: 16px;
+      color: $bt-grey-text;
+      text-align: center;
+      margin: 0 10px 40px;
+    }
+  }
+
+  .about-us {
+    > h5 {
+      font-size: 20px;
+
+      font-weight: bold;
+      color: $bt-base-text;
+      text-align: center;
+      
+      margin: 0 10px 10px;
+    }
+
+    > p {
+      font-size: 16px;
+      color: $bt-grey-text;
+      text-align: center;
+      margin: 0 10px 30px;
+
+      @include not-mobile {
+        width: 400px;
+      }
+
+      @include mobile {
+        width: 350px;
+      }
+    }
+  }
 }
