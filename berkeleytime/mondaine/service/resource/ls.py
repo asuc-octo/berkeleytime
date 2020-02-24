@@ -19,7 +19,7 @@ class LSResource(object):
         LSPlaylistName.social_and_behavior_sciences: 'social_behavioral_sciences',  # noqa
     }
 
-    semesters = ["spring_2017"]
+    semesters = ["spring_2020"]
 
     def get(self, playlist_name):
         """Take a playlist name and return a single breadth definition."""
