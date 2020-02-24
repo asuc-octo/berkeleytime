@@ -4,7 +4,7 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 
 export class FilterModal extends Component {
   render() {
-    const { requirements } = this.props.playlists;
+    const { requirements, departmentsPlaylist, unitsPlaylist, levelsPlaylist, semestersPlaylist} = this.props.playlists;
     const { activeFilters } = this.props;
     return (
       <div className="filter">
@@ -13,6 +13,10 @@ export class FilterModal extends Component {
             <p>Filters</p>
           </div>
           <ReactMultiSelectCheckboxes options={requirements} placeholderButtonLabel={"University Requirements"}/>
+          <ReactMultiSelectCheckboxes options={departmentsPlaylist} placeholderButtonLabel={"Departments"}/>
+          <ReactMultiSelectCheckboxes options={unitsPlaylist} placeholderButtonLabel={"Units"}/>
+          <ReactMultiSelectCheckboxes options={levelsPlaylist} placeholderButtonLabel={"Levels"}/>
+          <ReactMultiSelectCheckboxes options={semestersPlaylist} placeholderButtonLabel={"Semesters"}/>
         </div>
       </div>
     );
