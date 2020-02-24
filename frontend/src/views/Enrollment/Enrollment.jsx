@@ -59,24 +59,25 @@ class Enrollment extends Component {
     const courses = context.courses;
 
     return (
-      <div className="enrollment viewport-app">
-        <EnrollmentSearchBar
-          classes={courses}
-          addCourse={this.addCourse}
-          fromCatalog={location.state ? location.state.course : false}
-          isFull={selectedCourses.length === 4}
-        />
+      <div className="viewport-app">
+        <div className="enrollment">
+          <EnrollmentSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+            fromCatalog={location.state ? location.state.course : false}
+            isFull={selectedCourses.length === 4}
+          />
 
-        <ClassCardList
-          selectedCourses={selectedCourses}
-          removeCourse={this.removeCourse}
-        />
+          <ClassCardList
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
+          />
 
-        <EnrollmentGraphCard
-          id="gradesGraph"
-          title="Enrollment"
-        />
-
+          <EnrollmentGraphCard
+            id="gradesGraph"
+            title="Enrollment"
+          />
+        </div>
       </div>
     );
   }
