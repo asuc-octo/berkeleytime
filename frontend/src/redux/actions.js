@@ -111,10 +111,11 @@ export const enrollAddCourse = (formattedCourse) => ({
   }
 })
 
-export const enrollRemoveCourse = (id) => ({
+export const enrollRemoveCourse = (id, color) => ({
   type: ENROLL_REMOVE_COURSE,
   payload: {
-    id
+    id,
+    color
   }
 })
 
@@ -299,7 +300,8 @@ export function fetchEnrollClass(course) {
           semester: course.semester,
           instructor: course.instructor,
           courseID: course.courseID,
-          sections: course.sections
+          sections: course.sections,
+          colorId: course.colorId
         }
         dispatch(enrollAddCourse(formattedCourse))
       },
@@ -327,6 +329,7 @@ export function fetchEnrollData(classData) {
         let enrollmentData = data.map((res, i) => {
           let enrollmentData = res.data;
           enrollmentData['id'] = classData[i].id;
+          enrollmentData['colorId'] = classData[i].colorId;
           return enrollmentData
       })
       dispatch(updateEnrollData(enrollmentData));

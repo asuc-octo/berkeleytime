@@ -47,7 +47,6 @@ class EnrollmentGraphCard extends Component {
 
   getEnrollmentData() {
     const { classData, fetchEnrollData } = this.props;
-
     fetchEnrollData(classData);
   }
 
@@ -124,7 +123,7 @@ class EnrollmentGraphCard extends Component {
     var colorIndex = 0;
     for (var i = 0; i < enrollmentData.length; i++) {
       if (enrollmentData[i].id === hoveredClass.id) {
-        colorIndex = i;
+        colorIndex = enrollmentData[i].colorId;
         break;
       }
     }

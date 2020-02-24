@@ -26,6 +26,7 @@ class ClassCardList extends Component {
               semester={item.semester == 'all' ? 'All Semester' : item.semester }
               faculty={item.instructor == 'all' ? 'All Instructors' : item.instructor}
               removeCourse={removeCourse}
+              colorId={item.colorId}
             />
           </Col>
         ))}
