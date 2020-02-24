@@ -6,6 +6,10 @@
   display: flex;
   flex-direction: column;
 
+  .filter-modal {
+    min-height: 500px;
+  }
+
   .filter-loading {
     height: 100%;
     display: flex;
