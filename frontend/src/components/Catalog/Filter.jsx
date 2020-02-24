@@ -4,6 +4,8 @@ import makeAnimated from 'react-select/animated';
 import Modal from "react-bootstrap/Modal";
 import FilterModal from './FilterModal';
 
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+
 const animatedComponents = makeAnimated();
 
 export class FilterSidebar extends Component {
@@ -287,10 +289,6 @@ export class FilterSidebar extends Component {
       </div> :
 
       <div id="filter" className="filter">
-        <div className="filter-name">
-          <p>Filters</p>
-          <button className="as-link" type="button" onClick={this.resetFilters}>Reset</button>
-        </div>
         <div className="filter-search">
           <input
             ref={this.searchInput}
@@ -300,12 +298,20 @@ export class FilterSidebar extends Component {
             defaultValue={this.props.defaultSearch}
           />
         </div>
-        <a class="btn btn-bt-blue btn-bt-lg" onClick={() => {this.setState({ showFilters: true })}}>More Filters</a>
-        <Modal show={this.state.showFilters}>
-          <FilterModal 
-            playlists={this.props.playlists}
+      
+        <div className="filter-scroll">
+          <Select
+            options={this.sortOptions}
+            isSearchable={false}
+            onChange={this.sortHandler}
+            value={sort}
+            placeholder="Sort By"
           />
-        </Modal>
+          <ReactMultiSelectCheckboxes options={this.requirementsOptions} placeholderButtonLabel={"University Requirements"}/>
+          <ReactMultiSelectCheckboxes options={this.departmentOptions} placeholderButtonLabel={"Departments"}/>
+          <ReactMultiSelectCheckboxes options={this.unitsRangeOptions} placeholderButtonLabel={"Units"}/>
+          <ReactMultiSelectCheckboxes options={this.classLevelOptions} placeholderButtonLabel={"Levels"}/>
+        </div>
        </div>
     );
   }
