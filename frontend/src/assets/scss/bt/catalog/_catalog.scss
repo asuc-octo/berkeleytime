@@ -8,6 +8,14 @@
     // columns
     > div {
       height: 100%;
+
+      @include mobile {
+        height: 25%;
+      }
+
+      @include between-mobile {
+        height: 25%;
+      }
     }
   }
 

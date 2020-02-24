@@ -230,7 +230,7 @@ class Catalog extends Component {
     return (
       <div className="catalog viewport-app">
         <Row>
-          <Col lg={4} xl={3} className="filter-column">
+          <Col xs={12} sm={12} md={4} lg={4} xl={3} className="filter-column">
             {
               !loading ?
               <Filter
@@ -252,19 +252,19 @@ class Catalog extends Component {
               </div>
             }
           </Col>
-          <Col lg={3} xl={3} className="filter-results-column">
-            <FilterResults
-              activePlaylists={activePlaylists ? activePlaylists : []}
-              selectCourse={this.selectCourse}
-              selectedCourse={selectedCourse}
-              sortBy={this.state.sortBy}
-              query={this.state.search}
-            />
-          </Col>
-          <Col lg xl className="catalog-description-column">
+          <Col xs={12} sm={12} md={4} lg={4} xl={3} className="filter-results-column">
+              <FilterResults
+                activePlaylists={activePlaylists ? activePlaylists : []}
+                selectCourse={this.selectCourse}
+                selectedCourse={selectedCourse}
+                sortBy={this.state.sortBy}
+                query={this.state.search}
+              />
+            </Col>
+          <Col xs={12} sm={12} md={4} lg={4} xl={6} className="catalog-description-column">
             <ClassDescription
               course={selectedCourse}
-              selectCourse={this.selectCourse}
+                selectCourse={this.selectCourse}
             />
           </Col>
         </Row>
