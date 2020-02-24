@@ -198,7 +198,7 @@ class EnrollmentSearchBar extends Component {
     }
 
     playlist.id = hash(playlist);
-    console.log(playlist);
+    // console.log(playlist);
     this.props.addCourse(playlist)
     this.reset();
   }

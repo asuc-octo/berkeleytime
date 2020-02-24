@@ -10,6 +10,7 @@ const initialState = {
   sections: [],
   selectPrimary: '',
   selectSecondary: '',
+  usedColorIds: []
 };
 
 export default function enrollment(state = initialState, action) {
@@ -24,17 +25,19 @@ export default function enrollment(state = initialState, action) {
     const { formattedCourse } = action.payload;
     return Object.assign({}, state, {
       selectedCourses: [...state.selectedCourses, formattedCourse],
+      usedColorIds: [...state.usedColorIds, formattedCourse.colorId]
     });
   }
   case ENROLL_REMOVE_COURSE: {
-    const { id } = action.payload;
-    let updatedCourses = state.selectedCourses.filter(classInfo => classInfo.id !== id)
+    const { id, color } = action.payload;
+    let updatedCourses = state.selectedCourses.filter(classInfo => classInfo.id !== id);
+    let updatedColors = state.usedColorIds.filter(c => c.colorId !== color);
     return Object.assign({}, state, {
       selectedCourses: updatedCourses,
+      usedColorIds: updatedColors
     });
   }
   case UPDATE_ENROLL_DATA: {
-
     const { enrollmentData } = action.payload;
     let days = [...Array(200).keys()]
     const graphData = days.map(day => {
