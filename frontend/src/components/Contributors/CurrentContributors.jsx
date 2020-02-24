@@ -93,8 +93,8 @@ CurrentContributors.defaultProps = {
         role: 'Advisor',
         site: 'http://www.hantaowang.me',
         silly: true,
-        img_1: will_1,
-        img_2: will_2,
+        img_1: will_2,
+        img_2: will_1,
       },
       {
         name: 'Jemma Kwak',
