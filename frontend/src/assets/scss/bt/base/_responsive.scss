@@ -1,6 +1,6 @@
 // based on bootstrap 4 breakpoints
 
-// up to 767px
+// up to 576px
 @mixin mobile {
   @include media-breakpoint-down(xs) {
     @content;
@@ -9,6 +9,13 @@
 
 @mixin not-mobile {
   @include media-breakpoint-up(xs) {
+    @content;
+  }
+}
+
+// between 576 and 768
+@mixin between-mobile {
+  @include media-breakpoint-between(xs, sm) {
     @content;
   }
 }
