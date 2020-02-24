@@ -18,9 +18,8 @@ class ForeignLanguageResource():
     def handler(self, url):
         html = urllib2.urlopen(url).read()
         bs = BeautifulSoup(html)
-        tables = bs.findall('table')
-
-        self.get_table_classes(tables[0])
+        tables = bs.find_all('table')
+        self.map_def_classes(tables[0])
 
     def get_table_classes(self, table):
         """Return a list of classes from a table."""
@@ -37,8 +36,6 @@ class ForeignLanguageResource():
             abbreviation = " ".join(splitted[:-1])
             course_number = splitted[-1]
             definition.add(abbreviation, allowed=[course_number])
-            print("added:", abbreviation)
-
         return definition
 
 foreign_language_resource = ForeignLanguageResource()
