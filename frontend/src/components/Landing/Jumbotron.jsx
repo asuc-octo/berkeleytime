@@ -8,7 +8,7 @@ import {
   Button,
 } from 'react-bootstrap';
 
-import logo from '../../assets/img/images/landing/berkeleytime.png';
+import logo from '../../assets/img/images/landing/berkeleytime.gif';
 
 function Jumbotron() {
   return (
