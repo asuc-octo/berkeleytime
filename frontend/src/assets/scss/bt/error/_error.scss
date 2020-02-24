@@ -1,0 +1,37 @@
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    > h1 {
+      margin-bottom: 20px;
+    }
+
+    > h3 {
+      color: $bt-light-text;
+      margin-bottom: 20px;
+    }
+
+    > p {
+      color: $bt-light-text;
+      margin-bottom: 20px;
+    }
+  }
+
+  .img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    > img {
+      width: 100%;
+    }
+
+    margin-bottom: 20px;
+  }
+}
