@@ -8,6 +8,7 @@
     padding: 40px 30px;
 
     @include mobile {
+      max-width: 300px;
       padding: 0px;
     }
 
@@ -27,11 +28,19 @@
         font-size: 18px;
         font-weight: 500;
         line-height: 150%;
+
+        @include mobile {
+          font-size: 14px;
+        }
       }
 
       p {
         font-size: 20px;
         color: $bt-base-text;
+
+        @include mobile {
+          font-size: 14px;
+        }
       }
 
       a {
@@ -56,6 +65,12 @@
         font-weight: 500;
         font-size: 16px;
         line-height: 150%;
+
+        @include mobile {
+          width: 20px;
+          height: 10px;
+          font-size: 10px;
+        }
       }
     }
   }
