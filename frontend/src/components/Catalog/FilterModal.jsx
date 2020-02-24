@@ -8,13 +8,11 @@ export class FilterModal extends Component {
     const { activeFilters } = this.props;
     return (
       <div className="filter">
-        <a>Filters</a>
         <div className="filter-modal">
           <div className="filter-name">
             <p>Filters</p>
           </div>
-          <ReactMultiSelectCheckboxes options={requirements} placeholderButtonLabel={"University Requirements"}
-          getDropdownButtonLabel={"University Requirements"}/>
+          <ReactMultiSelectCheckboxes options={requirements} placeholderButtonLabel={"University Requirements"}/>
         </div>
       </div>
     );
