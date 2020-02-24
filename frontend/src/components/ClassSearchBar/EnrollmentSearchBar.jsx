@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Select from 'react-select-virtualized';
-import {Row, Col, Button} from 'react-bootstrap';
-import axios from 'axios';
+import {
+  Container, Row, Col, Button,
+} from 'react-bootstrap';
 import hash from 'object-hash';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
@@ -257,49 +258,51 @@ class EnrollmentSearchBar extends Component {
     }
 
     return (
-      <Row style={{marginBottom: 10}}>
-        <Col lg={5}>
-          <Select
-              name="selectClass"
-              placeholder="Choose a class..."
-              // value={selectedClass}
-              options={this.buildCoursesOptions(classes)}
-              onChange={this.handleClassSelect}
-              filterOptions={this.filterOptions}
-          />
-        </Col>
-        <Col lg={3}>
-          <Select
-              name="instrSems"
-              placeholder="Select an option..."
-              value={onePrimaryOption ? primaryOptions[1] : primaryOption}
-              options={primaryOptions}
-              onChange={this.handlePrimarySelect}
-              disabled={!selectedClass}
-              clearable={false}
-          />
-        </Col>
-        <Col lg={3}>
-          <Select
-              name="section"
-              placeholder="Select an option..."
-              value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
-              options={secondaryOptions}
-              onChange={this.handleSecondarySelect}
-              disabled={!selectedClass}
-              clearable={false}
-          />
-        </Col>
-        <Col lg={1}>
-          <Button
-            className="btn-bt-green"
-            onClick={this.addSelected}
-            disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
-          >
-            Add
-          </Button>
-        </Col>
-      </Row>
+      <Container fluid className="enrollment-search-bar">
+        <Row style={{marginBottom: 10}}>
+          <Col lg={5}>
+            <Select
+                name="selectClass"
+                placeholder="Choose a class..."
+                // value={selectedClass}
+                options={this.buildCoursesOptions(classes)}
+                onChange={this.handleClassSelect}
+                filterOptions={this.filterOptions}
+            />
+          </Col>
+          <Col lg={3}>
+            <Select
+                name="instrSems"
+                placeholder="Select an option..."
+                value={onePrimaryOption ? primaryOptions[1] : primaryOption}
+                options={primaryOptions}
+                onChange={this.handlePrimarySelect}
+                disabled={!selectedClass}
+                clearable={false}
+            />
+          </Col>
+          <Col lg={3}>
+            <Select
+                name="section"
+                placeholder="Select an option..."
+                value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
+                options={secondaryOptions}
+                onChange={this.handleSecondarySelect}
+                disabled={!selectedClass}
+                clearable={false}
+            />
+          </Col>
+          <Col lg={1}>
+            <Button
+              className="btn-bt-green"
+              onClick={this.addSelected}
+              disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
+            >
+              Add
+            </Button>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }

@@ -50,7 +50,6 @@
 
 @import "bt/temporary";
 @import "bt/dashboard";
-@import "bt/error";
 
 
 
@@ -58,3 +57,7 @@
 @import "bt/about/about";
 @import "bt/about/current";
 @import "bt/about/past";
+
+
+// Error page
+@import "bt/error/error";
