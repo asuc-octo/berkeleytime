@@ -23,6 +23,7 @@ class LSResource(object):
 
     def get(self, playlist_name):
         """Take a playlist name and return a single breadth definition."""
+        breadth_def = None
         for semester in self.semesters:
             filename = '%s/%s/%s.csv' % ('data/ls/processed', semester, self.csvs.get(playlist_name))
             breadth_def = universal_csv.handler(filename)
