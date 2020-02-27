@@ -1,24 +1,31 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+import Modal from "react-bootstrap/Modal";
 
 export class FilterModal extends Component {
+  constructor(props) {
+    super(props);
+      this.state = {
+        showModal: this.props.showFilters
+      }
+  }
+
+  hideModal = () => {
+    this.setState({showModal: false})
+  };
+
   render() {
-    const { requirements, departmentsPlaylist, unitsPlaylist, levelsPlaylist, semestersPlaylist} = this.props.playlists;
-    const { activeFilters } = this.props;
     return (
-      <div className="filter">
-        <div className="filter-modal">
-          <div className="filter-name">
-            <p>Filters</p>
+      <Modal show={this.props.showFilters}>
+        <div className="filter">
+          <div className="filter-modal">
+            <ReactMultiSelectCheckboxes options={this.props.options} placeholderButtonLabel={"Hi"}/>
+            <button className="btn-bt-primary-inverted" onClick={this.hideModal}> 
+            Cancel </button>
           </div>
-          <ReactMultiSelectCheckboxes options={requirements} placeholderButtonLabel={"University Requirements"}/>
-          <ReactMultiSelectCheckboxes options={departmentsPlaylist} placeholderButtonLabel={"Departments"}/>
-          <ReactMultiSelectCheckboxes options={unitsPlaylist} placeholderButtonLabel={"Units"}/>
-          <ReactMultiSelectCheckboxes options={levelsPlaylist} placeholderButtonLabel={"Levels"}/>
-          <ReactMultiSelectCheckboxes options={semestersPlaylist} placeholderButtonLabel={"Semesters"}/>
         </div>
-      </div>
+      </Modal>
     );
   }
 }
