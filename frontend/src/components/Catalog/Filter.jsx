@@ -204,6 +204,13 @@ export class FilterSidebar extends Component {
     })
   }
 
+  hideModal = () => {
+    this.setState({
+      showFilters: false,
+      modalOptions: null
+    })
+  };
+
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters, isMobile } = this.state;
 
@@ -331,6 +338,7 @@ export class FilterSidebar extends Component {
         <FilterModal 
           options={this.state.modalOptions}
           showFilters={this.state.showFilters}
+          hideModal={this.hideModal}
         />
         </div>
        </div>
