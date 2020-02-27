@@ -74,6 +74,14 @@
   border-radius: 0.3rem;
 }
 
+.btn-bt-border {
+  height: 35px;
+  background-color: $bt-white;
+  font-size: 16px;
+  border-radius: 0.2rem;
+  border-color: rgba(var($bt-border-grey), 0.1);
+}
+
 .as-link {
   background: none !important;
   border: none;

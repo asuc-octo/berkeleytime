@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import Modal from "react-bootstrap/Modal";
 import FilterModal from './FilterModal';
 
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
@@ -48,7 +47,8 @@ export class FilterSidebar extends Component {
       classLevels: this.classLevelDefault,
       semesters: this.semesterDefault,
       isMobile: false,
-      showFilters: false
+      showFilters: false,
+      modalOptions: null,
     };
 
     this.searchInput = React.createRef(); // reference to <input>
@@ -196,6 +196,14 @@ export class FilterSidebar extends Component {
     }, 50);
   }
 
+  //show the mobile modals
+  showModal = (options) => {
+    this.setState({ 
+      showFilters: true,
+      modalOptions: options
+    })
+  }
+
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters, isMobile } = this.state;
 
@@ -307,10 +315,23 @@ export class FilterSidebar extends Component {
             value={sort}
             placeholder="Sort By"
           />
-          <ReactMultiSelectCheckboxes options={this.requirementsOptions} placeholderButtonLabel={"University Requirements"}/>
-          <ReactMultiSelectCheckboxes options={this.departmentOptions} placeholderButtonLabel={"Departments"}/>
-          <ReactMultiSelectCheckboxes options={this.unitsRangeOptions} placeholderButtonLabel={"Units"}/>
-          <ReactMultiSelectCheckboxes options={this.classLevelOptions} placeholderButtonLabel={"Levels"}/>
+        <button className="btn-bt-border" 
+          onClick={() => this.showModal(this.requirementsOptions)}> 
+          Requirements </button>
+        <button className="btn-bt-border" 
+          onClick={() => this.showModal(this.unitsRangeOptions)}> 
+          Units </button>
+        <button className="btn-bt-border" 
+          onClick={() => this.showModal(this.departmentOptions)}> 
+            Department </button>
+        <button className="btn-bt-border" 
+          onClick={() => this.showModal(this.classLevelOptions)}> 
+          Class Level </button>
+        
+        <FilterModal 
+          options={this.state.modalOptions}
+          showFilters={this.state.showFilters}
+        />
         </div>
        </div>
     );
