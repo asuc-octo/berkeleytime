@@ -4,7 +4,8 @@
   color: $bt-white;
   background-color: $bt-primary;
   border-color: $bt-primary;
-  border-width: 2px;
+  border-width: 1px;
+  border-radius: 4px;
 
   transition: 0.3s;
 
@@ -23,6 +24,7 @@
   background-color: $bt-white;
   border-color: $bt-border-grey;
   border-width: 1px;
+  border-radius: 4px;
   
   transition: 0.3s;
 
