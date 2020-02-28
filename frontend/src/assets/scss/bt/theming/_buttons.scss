@@ -22,7 +22,7 @@
   color: $bt-primary;
   background-color: $bt-white;
   border-color: $bt-border-grey;
-  border-width: 2px;
+  border-width: 1px;
   
   transition: 0.3s;
 
@@ -78,8 +78,9 @@
   height: 35px;
   background-color: $bt-white;
   font-size: 16px;
-  border-radius: 0.2rem;
-  border-color: rgba(var($bt-border-grey), 0.1);
+  border: 0.5px solid #C7C7C7;
+  box-sizing: border-box;
+  border-radius: 4px;
 }
 
 .as-link {
