@@ -49,6 +49,7 @@ export class FilterSidebar extends Component {
       isMobile: false,
       showFilters: false,
       modalOptions: null,
+      checkboxHandler: null,
     };
 
     this.searchInput = React.createRef(); // reference to <input>
@@ -197,17 +198,19 @@ export class FilterSidebar extends Component {
   }
 
   //show the mobile modals
-  showModal = (options) => {
+  showModal = (options, handler) => {
     this.setState({ 
       showFilters: true,
-      modalOptions: options
+      modalOptions: options,
+      checkboxHandler: handler
     })
   }
 
   hideModal = () => {
     this.setState({
       showFilters: false,
-      modalOptions: null
+      modalOptions: null,
+      checkboxHandler: null
     })
   };
 
@@ -323,22 +326,23 @@ export class FilterSidebar extends Component {
             placeholder="Sort By"
           />
         <button className="btn-bt-border" 
-          onClick={() => this.showModal(this.requirementsOptions)}> 
+          onClick={() => this.showModal(this.requirementsOptions, this.requirementsHandler)}> 
           Requirements </button>
         <button className="btn-bt-border" 
-          onClick={() => this.showModal(this.unitsRangeOptions)}> 
+          onClick={() => this.showModal(this.unitsRangeOptions, this.unitsRangeHandler)}> 
           Units </button>
         <button className="btn-bt-border" 
-          onClick={() => this.showModal(this.departmentOptions)}> 
+          onClick={() => this.showModal(this.departmentOptions, this.departmentHandler)}> 
             Department </button>
         <button className="btn-bt-border" 
-          onClick={() => this.showModal(this.classLevelOptions)}> 
+          onClick={() => this.showModal(this.classLevelOptions, this.classLevelHandler)}> 
           Class Level </button>
         
         <FilterModal 
           options={this.state.modalOptions}
           showFilters={this.state.showFilters}
           hideModal={this.hideModal}
+          handleCheckbox={this.state.checkboxHandler}
         />
         </div>
        </div>
