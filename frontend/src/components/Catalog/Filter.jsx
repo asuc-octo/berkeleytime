@@ -48,7 +48,7 @@ export class FilterSidebar extends Component {
       semesters: this.semesterDefault,
       isMobile: false,
       showFilters: false,
-      modalOptions: null,
+      modalOptions: [],
       checkboxHandler: null,
     };
 
@@ -204,12 +204,13 @@ export class FilterSidebar extends Component {
       modalOptions: options,
       checkboxHandler: handler
     })
+    this.forceUpdate()
   }
 
   hideModal = () => {
     this.setState({
       showFilters: false,
-      modalOptions: null,
+      modalOptions: [],
       checkboxHandler: null
     })
   };
