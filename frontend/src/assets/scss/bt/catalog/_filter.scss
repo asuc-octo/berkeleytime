@@ -16,19 +16,6 @@
     }
   }
 
-  .filter-modal {
-    max-height: 60vh;
-    overflow-y: scroll;
-
-    .filter-modal-label {
-      width: 80vw;
-      height: 6vh;
-      padding: 1vh 3vw;
-      background-color: $bt-off-white;
-      font-weight: bold;
-    }
-  }
-
   .filter-loading {
     height: 100%;
     display: flex;
@@ -86,6 +73,35 @@
     > p {
       margin-bottom: 5px;
       font-size: 18px;
+    }
+  }
+}
+
+.filter-modal {
+  .filter-form {
+    padding: 30px;
+    max-height: 60vh;
+    overflow-y: scroll;
+
+    .filter-form-label {
+      width: 80vw;
+      height: 6vh;
+      padding: 1vh 3vw;
+      background-color: $bt-off-white;
+      font-weight: bold;
+    }
+  }
+  .filter-button-bar {
+    border-top: 2px solid $bt-off-white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 13vh;
+
+    button {
+      margin-right:10px;
+      width: 35vw;
+      height: 6vh;
     }
   }
 }
