@@ -19,6 +19,14 @@
   .filter-modal {
     max-height: 60vh;
     overflow-y: scroll;
+
+    .filter-modal-label {
+      width: 80vw;
+      height: 6vh;
+      padding: 1vh 3vw;
+      background-color: $bt-off-white;
+      font-weight: bold;
+    }
   }
 
   .filter-loading {

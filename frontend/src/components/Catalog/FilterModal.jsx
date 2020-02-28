@@ -9,7 +9,7 @@ function CheckboxGroup(props) {
     <Form>
       {props.nestedOptions.map(item => (
           <div>
-            <Form.Label>{item.label}</Form.Label>
+            <div className="filter-modal-label">{item.label}</div>
             {Object.values(item.options).map(option => (
               <Form.Check
                 type="checkbox"
