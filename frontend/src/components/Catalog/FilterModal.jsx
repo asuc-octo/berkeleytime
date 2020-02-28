@@ -18,15 +18,17 @@ function CheckboxGroup(props) {
               <Form.Check
                 type="checkbox"
                 id={option.value}
+                name={option.label}
                 label={option.label}
-                onClick={props.handler}
+                onClick={props.handler.bind(this)}
               />
               )) : 
               <Form.Check
                 type="checkbox"
                 id={item.value}
+                name={item.label}
                 label={item.label}
-                onClick={props.handler}
+                onClick={props.handler.bind(this)}
               />}
           </div>
       ))}
@@ -35,7 +37,7 @@ function CheckboxGroup(props) {
 }
 
 export class FilterModal extends Component {
-  
+
   render() {
     return (
       <Modal show={this.props.showFilters}>
@@ -43,13 +45,13 @@ export class FilterModal extends Component {
             <div className="filter-form">
               <CheckboxGroup
                 nestedOptions={this.props.options}
-                handler={this.props.handleCheckbox}
+                handler={this.props.storeSelection}
               />
             </div>
             <div className="filter-button-bar">
               <button className="btn-bt-primary-inverted" onClick={this.props.hideModal}> 
               Cancel </button>
-              <button className="btn-bt-primary" onClick={this.props.hideModal}> 
+              <button className="btn-bt-primary" onClick={this.props.saveModal}> 
               Save </button>
             </div>
           </div>
