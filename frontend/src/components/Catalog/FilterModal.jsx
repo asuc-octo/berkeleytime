@@ -4,58 +4,37 @@ import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {Modal, Form} from "react-bootstrap";
 
 function CheckboxGroup(props) {
-  const { nestedOptions, handler } = props;
+  console.log(props.nestedOptions)
   return (
-    nestedOptions ?
     <Form>
-      {
-        nestedOptions.map(item => {
-          Object.values(item.options).map(option =>
+      {props.nestedOptions.map(item => (
+          <div>
+            <Form.Label>{item.label}</Form.Label>
+            {Object.values(item.options).map(option => (
               <Form.Check
                 type="checkbox"
                 id={option.value}
                 label={option.label}
-                onClick={handler}
+                onClick={props.handler}
               />
-            )
-          })
-      }
-    </Form> :
-    null
+              ))}
+          </div>
+      ))}
+    </Form>
   )
 }
 
 export class FilterModal extends Component {
+  
   render() {
-  if(this.props.options){
-  this.props.options.map(item => {
-   console.log(Object.values(item.label))
-  })
-  }
     return (
       <Modal show={this.props.showFilters}>
         <div className="filter">
           <div className="filter-modal">
-            <ReactMultiSelectCheckboxes options={this.props.options} 
-            placeholderButtonLabel={"Hi"}/>
             <CheckboxGroup
               nestedOptions={this.props.options}
               handler={this.props.handleCheckbox}
             />
-            <Form>
-            {
-              this.props.options.map(item => {
-                Object.values(item.options).map(option =>
-                  <Form.Check
-                    type="checkbox"
-                    id={option.value}
-                    label={option.label}
-                    onClick={handler}
-                  />
-                )
-              })
-            }
-           </Form> 
             <button className="btn-bt-primary-inverted" onClick={this.props.hideModal}> 
             Cancel </button>
           </div>
