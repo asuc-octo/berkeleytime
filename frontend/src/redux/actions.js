@@ -250,7 +250,6 @@ export function fetchGradeClass(course) {
 export function fetchGradeData(classData) {
   const promises = [];
   for (const course of classData) {
-    console.log(course);
     const { sections } = course;
     const url = `https://berkeleytime.com/api/grades/sections/${sections.join('&')}/`;
     promises.push(axios.get(url));
