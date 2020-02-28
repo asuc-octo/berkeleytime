@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import FilterModal from './FilterModal';
+import cloneDeep from 'lodash/cloneDeep';
 
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 
@@ -48,8 +49,9 @@ export class FilterSidebar extends Component {
       semesters: this.semesterDefault,
       isMobile: false,
       showFilters: false,
+      modalType: "",
       modalOptions: [],
-      checkboxHandler: null,
+      modalSelection: [],
     };
 
     this.searchInput = React.createRef(); // reference to <input>
@@ -198,26 +200,66 @@ export class FilterSidebar extends Component {
   }
 
   //show the mobile modals
-  showModal = (options, handler) => {
+  showModal = (type, selection, options) => {
     this.setState({ 
+      modalType: type,
+      modalSelection: cloneDeep(selection),
       showFilters: true,
-      modalOptions: options,
-      checkboxHandler: handler
+      modalOptions: options
     })
-    this.forceUpdate()
   }
 
   hideModal = () => {
     this.setState({
+      modalType: "",
       showFilters: false,
       modalOptions: [],
-      checkboxHandler: null
     })
   };
+
+  saveModal = () => {
+    //set the relevant state
+    console.log(this.state.requirements)
+    switch(this.state.modalType) {
+      case "requirements":
+        this.requirementHandler(this.state.requirements)
+        break;
+      case "unitsRange":
+        this.unitsRangeHandler(this.state.unitsRange)
+        break;
+      case "department":
+        this.departmentHandler(this.state.department)
+        break;
+      default:
+        this.classLevelHandler(this.state.classLevels)
+        break;
+    }
+    this.hideModal()
+  };
+
+  storeSelection = (e) => {
+    const val = e.target.id;
+    const option = e.target.name;
+    switch(this.state.modalType) {
+      case "requirements":
+        this.setState({requirements: this.state.requirements.concat({value: val, label: option})})
+        break;
+      case "unitsRange":
+        this.setState({unitsRange: this.state.unitsRange.concat({value: val, label: option})})
+        break;
+      case "department":
+        this.setState({department: this.state.department.concat({value: val, label: option})})
+        break;
+      default:
+        this.setState({classLevels: this.state.classLevels.concat({value: val, label: option})})
+        break;
+    }
+  }; 
 
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters, isMobile } = this.state;
 
+    console.log(this.state.requirements)
     return (
       !isMobile ? 
       <div id="filter" className="filter">
@@ -327,23 +369,24 @@ export class FilterSidebar extends Component {
             placeholder="Sort By"
           />
         <button className="btn-bt-border" 
-          onClick={() => this.showModal(this.requirementsOptions, this.requirementsHandler)}> 
+          onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}> 
           Requirements </button>
         <button className="btn-bt-border" 
-          onClick={() => this.showModal(this.unitsRangeOptions, this.unitsRangeHandler)}> 
+          onClick={() => this.showModal("unitsRange", unitsRange, this.unitsRangeOptions)}> 
           Units </button>
         <button className="btn-bt-border" 
-          onClick={() => this.showModal(this.departmentOptions, this.departmentHandler)}> 
+          onClick={() => this.showModal("department", department, this.departmentOptions)}> 
             Department </button>
         <button className="btn-bt-border" 
-          onClick={() => this.showModal(this.classLevelOptions, this.classLevelHandler)}> 
+          onClick={() => this.showModal("classLevels", classLevels, this.classLevelOptions)}> 
           Class Level </button>
         
         <FilterModal 
           options={this.state.modalOptions}
           showFilters={this.state.showFilters}
           hideModal={this.hideModal}
-          handleCheckbox={this.state.checkboxHandler}
+          saveModal={this.saveModal}
+          storeSelection={this.storeSelection}
         />
         </div>
        </div>
