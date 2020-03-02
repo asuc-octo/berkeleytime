@@ -180,7 +180,6 @@ export function fetchLists(paths) {
         .then(
           res => {
             tmp = res;
-            console.log(res);
             const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
             dispatch(modify(new Set(defaultPlaylists), new Set(defaultPlaylists)));
             dispatch(receiveList(res.data));
@@ -322,7 +321,6 @@ export function fetchEnrollData(classData) {
       instructor, courseID, semester, sections,
     } = course;
     let url;
-    console.log(course);
     if (instructor === 'all') {
       const [sem, year] = semester.split(' ');
       url = `https://berkeleytime.com/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
