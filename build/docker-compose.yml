@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   backend:
     build:
@@ -22,8 +22,10 @@ services:
   frontend:
     build:
       context: ../frontend
+      target: base
     volumes:
       - ../frontend/src:/frontend/src
+    command: "npm start"
   redis:
     image: redis:alpine
   nginx:
