@@ -95,7 +95,7 @@ class GradesGraphCard extends Component {
         break;
       }
     }
-    let hoveredColor = vars.colors[colorIndex];
+    let hoveredColor = vars.colors[hoveredClass.colorId];
 
     return (
       <div className="card grades-graph-card">

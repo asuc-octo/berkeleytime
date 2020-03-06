@@ -74,10 +74,11 @@ export const gradeAddCourse = (formattedCourse) => ({
   }
 })
 
-export const gradeRemoveCourse = (id) => ({
+export const gradeRemoveCourse = (id, color) => ({
   type: GRADE_REMOVE_COURSE,
   payload: {
-    id
+    id,
+    color
   }
 })
 
@@ -232,7 +233,8 @@ export function fetchGradeClass(course) {
           semester: course.semester,
           instructor: course.instructor,
           courseID: course.courseID,
-          sections: course.sections
+          sections: course.sections,
+          colorId: course.colorId
         }
         dispatch(gradeAddCourse(formattedCourse))
       },
@@ -255,6 +257,7 @@ export function fetchGradeData(classData) {
           gradesData['id'] = classData[i].id;
           gradesData['instructor'] = classData[i].instructor == 'all' ? 'All Instructors' : classData[i].instructor;
           gradesData['semester'] = classData[i].semester == 'all' ? 'All Semesters' : classData[i].semester;
+          gradesData['colorId'] = classData[i].colorId;
           return gradesData
         });
         dispatch(updateGradeData(gradesData));
@@ -314,7 +317,6 @@ export function fetchEnrollData(classData) {
   for(let course of classData) {
     let { instructor, courseID, semester, sections } = course;
     let url;
-    console.log(course);
     if(instructor === 'all') {
       let [sem, year] = semester.split(' ');
       url = `http://localhost:8080/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;

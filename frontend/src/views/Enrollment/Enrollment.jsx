@@ -23,7 +23,7 @@ class Enrollment extends Component {
   }
 
   componentDidMount() {
-    const { fetchEnrollContext, context } = this.props;
+    const { fetchEnrollContext } = this.props;
     this.fillFromUrl();
     fetchEnrollContext();
   }
@@ -111,7 +111,8 @@ class Enrollment extends Component {
   }
 
   render() {
-    const { context, selectedCourses, location } = this.props;
+    const { context, selectedCourses } = this.props;
+    let { location } = this.props;
     let courses = context.courses;
 
     return (
