@@ -203,7 +203,6 @@ export class FilterSidebar extends Component {
   showModal = (type, selection, options) => {
     this.setState({ 
       modalType: type,
-      modalSelection: cloneDeep(selection),
       showFilters: true,
       modalOptions: options
     })
