@@ -4,7 +4,7 @@ import { Navbar, Nav } from 'react-bootstrap';
 
 class Navigation extends PureComponent {
 
-  
+
   render() {
     const links = Navigation.links;
 
@@ -43,6 +43,10 @@ Navigation.links = [
   {
     to: '/about',
     text: 'About',
+  },
+  {
+    to: '/faq',
+    text: 'FAQ',
   },
   {
     to: '/login',
