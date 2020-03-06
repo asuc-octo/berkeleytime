@@ -127,6 +127,7 @@ class FilterResults extends Component {
     const { sortBy, loading } = this.props;
     var courses;
     if(!loading) {
+      console.log(this.props)
       courses = this.props.courses
         .sort(FilterResults.sortByAttribute(sortBy))
         .filter(this.filter);

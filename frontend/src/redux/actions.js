@@ -156,7 +156,7 @@ export function getCourseData(id) {
 
 // get the courses after applying the filters
 export function getFilterResults(filters) {
-  return dispatch => axios.get('https://berkeleytime.com/api/catalog/filter/', {
+  return dispatch => axios.get('https://berkeleytime.com/api/catalog_json/filter/', {
     params: {
       filters,
     },
@@ -175,6 +175,7 @@ export function fetchLists(paths) {
   const classNum = paths[3];
   return dispatch => {
     let tmp = {};
+    console.log(paths);
     if (paths.length >= 4) {
       return axios.get(`https://berkeleytime.com/api/catalog_json/${abbreviation}/${classNum}/`)
         .then(
@@ -189,7 +190,7 @@ export function fetchLists(paths) {
         )
         .then(() => {
           const courseID = tmp.data.default_course;
-          axios.get('https://berkeleytime.com/api/catalog/filter/', { params: { course_id: courseID } })
+          axios.get('https://berkeleytime.com/api/catalog_json/filter/', { params: { course_id: courseID } })
             .then(
               res2 => {
                 if (res2.data.length > 0) {
@@ -207,6 +208,7 @@ export function fetchLists(paths) {
       return axios.get('https://berkeleytime.com/api/catalog_json/')
         .then(
           res => {
+            console.log(res)
             const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
             dispatch(modify(new Set(defaultPlaylists), new Set(defaultPlaylists)));
             dispatch(receiveList(res.data));
