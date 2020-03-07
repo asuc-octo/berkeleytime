@@ -13,7 +13,7 @@ import { connect } from "react-redux";
 class Grades extends Component {
   constructor(props) {
     super(props);
-    
+
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
     this.fillFromUrl = this.fillFromUrl.bind(this);
@@ -49,7 +49,7 @@ class Grades extends Component {
               if (instructor == 'all') {
                 res.data.map((item, i) => sections[i] = item.grade_id);
               } else {
-                let matches = res.data.filter(item => instructor == this.toUrlForm(item.grade_id.toString()));
+                let matches = res.data.filter(item => instructor == this.toUrlForm(item.instructor));
                 matches.map((item, i) => sections[i] = item.grade_id);
                 instructor = matches[0].instructor;
               }
@@ -84,7 +84,7 @@ class Grades extends Component {
     let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(course.semester)}-${instructor}`;
     let url = history.location.pathname;
     if (url && !url.includes(courseUrl)) {
-      url += (url == '/grades') ? '/': '';
+      url += (url == '/grades') ? '/' : '';
       url += (url == '/grades/') ? '' : '&';
       url += courseUrl;
       history.replace(url);
@@ -92,8 +92,7 @@ class Grades extends Component {
   }
 
   addCourse(course) {
-    const { fetchGradeClass } = this.props;
-    const { selectedCourses } = this.props;
+    const { fetchGradeClass, selectedCourses, usedColorIds } = this.props;
     for (let selected of selectedCourses) {
       let courseMatch = selected.courseID.toString() === course.courseID.toString();
       let instructorMatch = selected.instructor === course.instructor;
@@ -106,7 +105,7 @@ class Grades extends Component {
 
     let newColorId = "";
     for (let i = 0; i < 4; i++) {
-      if (!this.props.usedColorIds.includes(i.toString())) {
+      if (!usedColorIds.includes(i.toString())) {
         newColorId = i.toString();
         break;
       }

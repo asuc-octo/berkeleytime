@@ -36,15 +36,31 @@ class Enrollment extends Component {
       for (const c of courseUrls) {
         let cUrl = c.split('-');
         let semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + " " + cUrl[3];
-        let formattedCourse = {
-          courseID: cUrl[1],
-          instructor: cUrl[4],
-          semester: semester,
-          sections: [cUrl[4]]
-        };
-        formattedCourse.id = hash(formattedCourse);
-        formattedCourse.colorId = cUrl[0];
-        fetchEnrollClass(formattedCourse);
+        axios.get(`http://localhost:8080/api/enrollment/sections/${cUrl[1]}/`)
+          .then(
+            res => {
+              let sections = [cUrl[4]];
+              let instructor = 'all';
+              let match = [];
+              if (cUrl[4] == 'all') {
+                match = res.data.filter(item => cUrl[2] == item.semester.toLowerCase() && cUrl[3] == item.year)[0];
+                sections = match.sections.map(item => item.section_id);
+              } else {
+                match = res.data.map(item => item.sections.filter(item => item.section_id.toString() == cUrl[4]));
+                instructor = match.filter(item => item.length != 0)[0][0].instructor;
+              }
+              let formattedCourse = {
+                courseID: cUrl[1],
+                instructor: instructor,
+                semester: semester,
+                sections: sections
+              };
+              formattedCourse.id = hash(formattedCourse);
+              formattedCourse.colorId = cUrl[0];
+              fetchEnrollClass(formattedCourse);
+            },
+            error => console.log('An error occurred.', error),
+          );        
       }
     }
   }
@@ -72,7 +88,7 @@ class Enrollment extends Component {
       let courseMatch = selected.courseID.toString() === course.courseID.toString();
       let instructorMatch = selected.instructor === course.instructor;
       let semesterMatch = selected.semester === course.semester;
-      let sectionMatch = (selected.instructor === 'all') ? course.instructor === 'all' : selected.sections[0] === course.sections[0]
+      let sectionMatch = (selected.instructor === 'all') ? course.instructor === 'all' : selected.sections[0].toString() === course.sections[0].toString();
       if (courseMatch && instructorMatch && semesterMatch && sectionMatch) {
         return;
       }
