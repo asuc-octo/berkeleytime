@@ -30,38 +30,46 @@ class Enrollment extends Component {
 
   fillFromUrl() {
     const { fetchEnrollClass, history } = this.props;
-    let url = history.location.pathname;
-    if (url && url != '/enrollment/' && url != '/enrollment') {
-      let courseUrls = url.split('/')[2].split('&');
-      for (const c of courseUrls) {
-        let cUrl = c.split('-');
-        let semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + " " + cUrl[3];
-        axios.get(`http://localhost:8080/api/enrollment/sections/${cUrl[1]}/`)
-          .then(
-            res => {
-              let sections = [cUrl[4]];
-              let instructor = 'all';
-              let match = [];
-              if (cUrl[4] == 'all') {
-                match = res.data.filter(item => cUrl[2] == item.semester.toLowerCase() && cUrl[3] == item.year)[0];
-                sections = match.sections.map(item => item.section_id);
-              } else {
-                match = res.data.map(item => item.sections.filter(item => item.section_id.toString() == cUrl[4]));
-                instructor = match.filter(item => item.length != 0)[0][0].instructor;
-              }
-              let formattedCourse = {
-                courseID: cUrl[1],
-                instructor: instructor,
-                semester: semester,
-                sections: sections
-              };
-              formattedCourse.id = hash(formattedCourse);
-              formattedCourse.colorId = cUrl[0];
-              fetchEnrollClass(formattedCourse);
-            },
-            error => console.log('An error occurred.', error),
-          );        
+    try {
+      let url = history.location.pathname;
+      if (url && url != '/enrollment/' && url != '/enrollment') {
+        let courseUrls = url.split('/')[2].split('&');
+        for (const c of courseUrls) {
+          let cUrl = c.split('-');
+          let semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + " " + cUrl[3];
+          axios.get(`http://localhost:8080/api/enrollment/sections/${cUrl[1]}/`)
+            .then(
+              res => {
+                try {
+                  let sections = [cUrl[4]];
+                  let instructor = 'all';
+                  let match = [];
+                  if (cUrl[4] == 'all') {
+                    match = res.data.filter(item => cUrl[2] == item.semester.toLowerCase() && cUrl[3] == item.year)[0];
+                    sections = match.sections.map(item => item.section_id);
+                  } else {
+                    match = res.data.map(item => item.sections.filter(item => item.section_id.toString() == cUrl[4]));
+                    instructor = match.filter(item => item.length != 0)[0][0].instructor;
+                  }
+                  let formattedCourse = {
+                    courseID: cUrl[1],
+                    instructor: instructor,
+                    semester: semester,
+                    sections: sections
+                  };
+                  formattedCourse.id = hash(formattedCourse);
+                  formattedCourse.colorId = cUrl[0];
+                  fetchEnrollClass(formattedCourse);
+                } catch (err) {
+                  history.push('/error');
+                }
+              },
+              error => console.log('An error occurred.', error),
+            );
+        }
       }
+    } catch (err) {
+      history.push('/error');
     }
   }
 
@@ -75,10 +83,10 @@ class Enrollment extends Component {
     let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(course.semester)}-${instructor}`;
     let url = history.location.pathname;
     if (url && !url.includes(courseUrl)) {
-      url += (url == '/enrollment') ? '/': '';
+      url += (url == '/enrollment') ? '/' : '';
       url += (url == '/enrollment/') ? '' : '&';
       url += courseUrl;
-      history.replace(url);
+      history.push(url);
     }
   }
 
@@ -117,7 +125,7 @@ class Enrollment extends Component {
       let instructor = c.instructor == 'all' ? 'all' : c.sections[0];
       url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${instructor}`;
     }
-    history.replace(url);
+    history.push(url);
   }
 
   removeCourse(id, color) {
