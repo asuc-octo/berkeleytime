@@ -30,47 +30,55 @@ class Grades extends Component {
 
   fillFromUrl() {
     const { fetchGradeClass, history } = this.props;
-    let url = history.location.pathname;
-    if (url && url != '/grades/' && url != '/grades') {
-      let courseUrls = url.split('/')[2].split('&');
-      for (const c of courseUrls) {
-        let cUrl = c.split('-');
-        let semester = cUrl[2];
-        let instructor = cUrl.slice(3).join('-');
-        if (cUrl[2] !== 'all') {
-          semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + " " + cUrl[3];
-          instructor = cUrl.slice(4).join('-');
+    try {
+      let url = history.location.pathname;
+      if (url && url != '/grades/' && url != '/grades') {
+        let courseUrls = url.split('/')[2].split('&');
+        for (const c of courseUrls) {
+          let cUrl = c.split('-');
+          let semester = cUrl[2];
+          let instructor = cUrl.slice(3).join('-');
+          if (cUrl[2] !== 'all') {
+            semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + " " + cUrl[3];
+            instructor = cUrl.slice(4).join('-');
+          }
+          let sections = [];
+          let url = `http://localhost:8080/api/grades/course_grades/${cUrl[1]}/`;
+          axios.get(url)
+            .then(
+              res => {
+                try {
+                  if (instructor == 'all') {
+                    res.data.map((item, i) => sections[i] = item.grade_id);
+                  } else {
+                    let matches = res.data.filter(item => instructor == this.toUrlForm(item.instructor));
+                    matches.map((item, i) => sections[i] = item.grade_id);
+                    instructor = matches[0].instructor;
+                  }
+                  if (semester != 'all') {
+                    let matches = res.data.filter(item => semester == item.semester[0].toUpperCase() + item.semester.substring(1) + ' ' + item.year);
+                    let allSems = matches.map(item => item.grade_id);
+                    sections = sections.filter(item => allSems.includes(item));
+                  }
+                  let formattedCourse = {
+                    courseID: cUrl[1],
+                    instructor: instructor,
+                    semester: semester,
+                    sections: sections
+                  };
+                  formattedCourse.id = hash(formattedCourse);
+                  formattedCourse.colorId = cUrl[0];
+                  fetchGradeClass(formattedCourse);
+                } catch (err) {
+                  history.push('/error');
+                }
+              },
+              error => console.log('An error occurred.', error),
+            );
         }
-        let sections = [];
-        let url = `http://localhost:8080/api/grades/course_grades/${cUrl[1]}/`;
-        axios.get(url)
-          .then(
-            res => {
-              if (instructor == 'all') {
-                res.data.map((item, i) => sections[i] = item.grade_id);
-              } else {
-                let matches = res.data.filter(item => instructor == this.toUrlForm(item.instructor));
-                matches.map((item, i) => sections[i] = item.grade_id);
-                instructor = matches[0].instructor;
-              }
-              if (semester != 'all') {
-                let matches = res.data.filter(item => semester == item.semester[0].toUpperCase() + item.semester.substring(1) + ' ' + item.year);
-                let allSems = matches.map(item => item.grade_id);
-                sections = sections.filter(item => allSems.includes(item));
-              }
-              let formattedCourse = {
-                courseID: cUrl[1],
-                instructor: instructor,
-                semester: semester,
-                sections: sections
-              };
-              formattedCourse.id = hash(formattedCourse);
-              formattedCourse.colorId = cUrl[0];
-              fetchGradeClass(formattedCourse);
-            },
-            error => console.log('An error occurred.', error),
-          );
       }
+    } catch (err) {
+      history.push('/error');
     }
   }
 
@@ -87,7 +95,7 @@ class Grades extends Component {
       url += (url == '/grades') ? '/' : '';
       url += (url == '/grades/') ? '' : '&';
       url += courseUrl;
-      history.replace(url);
+      history.push(url);
     }
   }
 
@@ -126,7 +134,7 @@ class Grades extends Component {
       let instructor = c.instructor == 'all' ? 'all' : c.sections[0];
       url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${instructor}`;
     }
-    history.replace(url);
+    history.push(url);
   }
 
   removeCourse(id, color) {
