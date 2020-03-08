@@ -1,38 +1,36 @@
 .current-contributors {
-  margin-top: 30px;
 
+  // width's chosen so column widths are exactly 150px, kinda jank but whatever
   @include desktop {
-    width: 850px;
+    width: 690px;
+  }
+  @include touch {
+    width: 330px;
   }
 
-  @include touch {
-    width: 350px;
-  }
+  margin-bottom: 30px;
 
   > h5 {
     margin-bottom: 30px;
-    font-size: 20px;
+    font-size: 26px;
     font-weight: bold;
-
-    @include desktop {
-      padding-left: 15px;
-    }
   }
 
   .contributor-card {
     display: flex;
     flex-direction: column;
-    align-items: center;
-
-    height: 210px;
+    align-items: flex-start;
     margin-bottom: 30px;
 
+    // use px to enforce aspect ratio i guess
     .headshot {
-      width: 160px;
+      width: 150px;
+      height: 160px;
 
       img {
-        height: 160px;
-        width: 160px;
+        width: 150px;
+        height: 150px;
+
         position: absolute;
         object-fit: cover;
         object-position: 50% 20%;
@@ -47,21 +45,31 @@
           opacity: 0;
         }
       }
-
-      margin-bottom: 170px;
-    }
-
-    .name, .role {
-      color: $bt-grey-text;
     }
 
     .name {
-      font-size: 16px;
-      font-weight: bold;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+
+      width: 100%;
+      margin-bottom: 3px;
+
+      > p {
+        font-weight: bold;
+        color: $bt-grey-text;
+      }
+
+      > a > img {
+        width: 20px;
+        height: 20px;
+      }
     }
 
     .role {
       font-size: 14px;
+      color: $bt-grey-text
     }
   }
 }
