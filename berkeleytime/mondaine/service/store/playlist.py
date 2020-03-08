@@ -12,10 +12,18 @@ class PlaylistStore(object):
 
     def get_or_create(self, playlist):
         """Get or create a single playlist."""
-        entry, created = models.Playlist.objects.get_or_create(
-            name=playlist.name,
-            defaults=playlist.flatten()
-        )
+        if playlist.semester and playlist.year:
+            entry, created = models.Playlist.objects.get_or_create(
+                name=playlist.name,
+                semester=playlist.semester,
+                year=playlist.year,
+                defaults=playlist.flatten()
+            )
+        else:
+            entry, created = models.Playlist.objects.get_or_create(
+                name=playlist.name,
+                defaults=playlist.flatten()
+            )
 
         if not created:
             for key, value in playlist.flatten().items():

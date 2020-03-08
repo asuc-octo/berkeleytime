@@ -13,5 +13,7 @@ class Playlist(Model):
 
     name = StringType(required=True)
     category = StringType(required=True)
+    semester = StringType(required=False)
+    year = StringType(required=False)
 
     # We intentionally do not store courses since that is a M2M table

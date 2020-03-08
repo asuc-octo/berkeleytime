@@ -34,13 +34,6 @@ LETTER_GRADE = {
 }
 
 PAST_SEMESTERS = [
-    {'semester': 'spring', 'year': '2013', 'display': 'Spring 2013'},
-    {'semester': 'fall', 'year': '2013', 'display': 'Fall 2013'},
-    {'semester': 'spring', 'year': '2014', 'display': 'Spring 2014'},
-    {'semester': 'fall', 'year': '2014', 'display': 'Fall 2014'},
-    {'semester': 'spring', 'year': '2015', 'display': 'Spring 2015'},
-    {'semester': 'fall', 'year': '2015', 'display': 'Fall 2015'},
-    {'semester': 'spring', 'year': '2016', 'display': 'Spring 2016'},
     {'semester': 'fall', 'year': '2016', 'display': 'Fall 2016'},
     {'semester': 'spring', 'year': '2017', 'display': 'Spring 2017'},
     {'semester': 'fall', 'year': '2017', 'display': 'Fall 2017'},
