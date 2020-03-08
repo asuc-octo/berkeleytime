@@ -2,12 +2,19 @@
 import universal_csv
 import os
 
+from berkeleytime.settings import CURRENT_SEMESTER
+from berkeleytime.settings import CURRENT_YEAR
+from berkeleytime.settings import PAST_SEMESTERS
+
 from mondaine.service.enumeration.ls import LSPlaylistName
 
 PROCESSED_CSVS = os.path.join(os.path.dirname(__file__), 'data/ls/processed')  # noqa
 
 class LSResource(object):
-    """Resource for a Letters and Sciences breadth requirement page."""
+    """
+    Resource for a Letters and Sciences breadth requirement page.
+    Includes data for current and past semesters.
+    """
 
     csvs = {
         LSPlaylistName.arts_and_literature: 'arts_literature',  # noqa
@@ -19,15 +26,22 @@ class LSResource(object):
         LSPlaylistName.social_and_behavior_sciences: 'social_behavioral_sciences',  # noqa
     }
 
-    semesters = ["spring_2020"]
-
     def get(self, playlist_name):
-        """Take a playlist name and return a single breadth definition."""
-        breadth_def = None
-        for semester in self.semesters:
-            filename = '%s/%s/%s.csv' % ('data/ls/processed', semester, self.csvs.get(playlist_name))
-            breadth_def = universal_csv.handler(filename)
-        #TODO: Merge breadth_defs for different semesters
-        return breadth_def
+        """
+        Take a playlist name and returns a list of (semester, year, definition) tuples.
+        """
+        semester_data = (
+            PAST_SEMESTERS + [{'semester': CURRENT_SEMESTER, 'year': CURRENT_YEAR}]  # noqa
+        )
+        breadth_defs = list()
+        for data in semester_data:
+            semester, year = data['semester'], data['year']
+            filename = '%s/%s/%s.csv' % ('data/ls/processed', semester + '_' + year, self.csvs.get(playlist_name))
+            definition = universal_csv.handler(filename)
+            if definition:
+                breadth_defs.append((semester.capitalize(), year, definition))
+            else:
+                print("filename does not exist:", filename)
+        return breadth_defs
 
 ls_resource = LSResource()

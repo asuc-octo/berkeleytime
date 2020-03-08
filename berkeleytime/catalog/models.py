@@ -274,6 +274,9 @@ class Playlist(models.Model):
 
     category = models.CharField(max_length=255, default='custom')
     name = models.CharField(max_length=255)
+    semester = models.CharField(max_length=50, default=CURRENT_SEMESTER)
+    year = models.CharField(max_length=4, default=CURRENT_YEAR)
+
     courses = models.ManyToManyField(Course)
 
     def __unicode__(self):
@@ -282,9 +285,11 @@ class Playlist(models.Model):
 
     def as_json(self):
         return dict(
-            id = self.id,
-            name = self.name,
-            category = self.category
+            id=self.id,
+            name=self.name,
+            category=self.category,
+            semester=self.semester,
+            year=self.year
         )
 
 
