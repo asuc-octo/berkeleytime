@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 services:
   backend:
     build:
@@ -12,7 +12,7 @@ services:
      - "GOOGLE_CLIENT_SECRET=***REMOVED***"
      - "GOOGLE_TOKEN_URI=https://accounts.google.com/o/oauth2/token"
      - "ENVIRONMENT_NAME=LOCALHOST"
-     - "DATABASE_URL=postgres://bt_read:yuxinsucks@35.236.65.95:5432/bt_main"
+     - "DATABASE_URL=postgres://bt_read:yuxinsucks@35.235.101.6/bt_main"
      - "SIS_CLASS_APP_ID=***REMOVED***"
      - "SIS_CLASS_APP_KEY=***REMOVED***"
      - "SIS_COURSE_APP_ID=***REMOVED***"
@@ -22,9 +22,10 @@ services:
   frontend:
     build:
       context: ../frontend
+      target: base
     volumes:
-     - ../frontend:/frontend
-     - /frontend/node_modules
+      - ../frontend/src:/frontend/src
+    command: "npm start"
   redis:
     image: redis:alpine
   nginx:

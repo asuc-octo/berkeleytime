@@ -1,0 +1,81 @@
+
+// bootstrap button theming
+.btn-bt-primary {
+  color: $bt-white;
+  background-color: $bt-primary;
+  border-color: $bt-primary;
+  border-width: 2px;
+
+  transition: 0.3s;
+
+  &:hover {
+    background-color: $bt-white;
+    color: $bt-primary;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+.btn-bt-primary-inverted {
+  color: $bt-primary;
+  background-color: $bt-white;
+  border-color: $bt-border-grey;
+  border-width: 2px;
+  
+  transition: 0.3s;
+
+  &:hover {
+    color: $bt-white;
+    background-color: $bt-primary;
+    border-color: $bt-primary;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+.btn-bt-red-inverted {
+  color: $bt-indicator-red;
+  background-color: $bt-white;
+  border-color: $bt-border-grey;
+  border-width: 2px;
+  padding: 10px 20px;
+  
+  transition: 0.3s;
+
+  &:hover {
+    color: $bt-white;
+    background-color: $bt-indicator-red;
+    border-color: $bt-indicator-red;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
+.btn-bt-lg {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: 0.3rem;
+  
+  @include mobile {
+    font-size: 1rem;
+  }
+}
+
+.btn-bt-md {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 26px;
+  border-radius: 0.3rem;
+}
+
+.as-link {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+}

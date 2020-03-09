@@ -1,0 +1,503 @@
+swagger: "2.0"
+info:
+  description: " The Berkeleytime API is an open resource for student developers at Berkeley to have access to the
+  same data that backs berkeleytime.com, for the purpose of supporting student created applications. Please use this
+  free resource fairly by not unnecessarily spamming the API and crediting Berekelytime as the source. We do not
+  provide guarantees about the correctness of the data, but we do try to maintain it to the best of our abilities."
+  version: "1.0.0"
+  title: "Berkeleytime API"
+  contact:
+    email: "octo.berkeleytime@asuc.org"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "berkeleytime.com"
+basePath: "/api"
+tags:
+- name: "catalog"
+  description: "Basic information of all courses in our catalog"
+- name: "grades"
+  description: "Access all previous course grades in our database"
+- name: "enrollment"
+  description: "Query previous enrollment details"
+schemes:
+- "https"
+paths:
+  /catalog/catalog_json/:
+    get:
+      tags:
+      - "catalog"
+      summary: "View all courses we have information for"
+      description: ""
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Course_json"
+  /catalog/catalog_json/course_box/:
+    get:
+      tags:
+      - "catalog"
+      summary: "Finds a specific course via course id"
+      description: "Returns general information about the course specified, including the title, description, semesters offered, etc."
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "course_id"
+        in: "query"
+        description: "The course id of the course that needs to be fetched. Course ids can be found using the catalog/catalog_json endpoint."
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Course_box"
+  /grades/grades_json/:
+    get:
+      tags:
+      - "grades"
+      summary: "View all courses that we have grade information for"
+      description: ""
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Course_json"
+  /grades/course_grades/{course_id}/:
+    get:
+      tags:
+      - "grades"
+      summary: "Find grades_ids for the specified course"
+      description: "Returns information on which sections of which semesters we have grades data on a course. These sections are uniquely identified by a grades_id field."
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "course_id"
+        in: "path"
+        description: "The course id of the course that needs to be fetched. Course ids can be found using the grades/grades_json endpoint."
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Course_grades"
+  /grades/sections/<grades_id_1>&<grades_id_2>/:
+    get:
+      tags:
+      - "grades"
+      summary: "Find grade information of specified courses"
+      description: "Returns aggregated grade information on sections identified by grades_id_1 and grades_id_2, but not limited to just two sections."
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "grades_id_#"
+        in: "path"
+        description: "The grades id of the course grades that needs to be fetched. Grade ids can be found using the grades/course_grades endpoint."
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Semester_grades"
+  /enrollment/enrollment_json/:
+    get:
+      tags:
+      - "enrollment"
+      summary: "View all courses that we have enrollment information for"
+      description: ""
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Course_json"
+  /enrollment/aggregate/<course_id>/<semester>/<year>/:
+    get:
+      tags:
+      - "enrollment"
+      summary: "Place an order for a pet"
+      description: ""
+      operationId: "placeOrder"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "course_id"
+        in: "path"
+        description: "The course id of the course enrollment that needs to be fetched. Course ids can be found using the enrollment/enrollment_json endpoint."
+        required: true
+        type: "string"
+      - name: "semester"
+        in: "path"
+        description: "Specifies which semester to query the enrollment information from"
+        required: true
+        type: "string"
+      - name: "year"
+        in: "path"
+        description: "Specifies which year to query the enrollment information from"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Course_enrollment"
+definitions:
+  Course_json:
+    type: "object"
+    properties:
+      courses:
+        type: "array"
+        items:
+          $ref: "#/definitions/Course_short"
+  Course_box:
+    type: "object"
+    properties:
+      course:
+        $ref: "#/definitions/Course"
+      last_enrollment_update:
+        type: "string"
+        example: "2020-01-01 00:00:00"
+      requirements:
+        type: "array"
+        items:
+          type: "string"
+        example: ["Computer Science", "4 Units", "Quantitative Reasoning", "Spring 2020"]
+      favorited:
+        type: "boolean"
+        default: false
+      ongoing:
+        type: "boolean"
+        default: true
+      cover_photo:
+        type: "string"
+        example: "GENERIC"
+      sections:
+        type: "array"
+        items:
+          $ref: "#/definitions/Section"
+      ongoing_sections:
+        type: "array"
+        items:
+          $ref: "#/definitions/Section"
+  Course_grades:
+    type: "array"
+    items:
+      $ref: "#/definitions/Semester_grades"
+  Course_enrollment:
+    type: "object"
+    properties:
+      course_id:
+        type: "integer"
+        example: 2337
+      title:
+        type: "string"
+        example: "COMPSCI 162"
+      subtitle:
+        type: "string"
+        example: "Operating Systems and System Programming"
+      section_id:
+        type: "string"
+        example: "all"
+      section_name:
+        type: "string"
+        example: "All Sections"
+      enrolled_max:
+        type: "integer"
+        example: 300
+      enrolled_scale_max:
+        type: "integer"
+        example: 545
+      enrolled_percent_max:
+        type: "number"
+        format: "float"
+        example: 1.8183000000000002
+      waitlisted_max:
+        type: "integer"
+        example: 300
+      waitlisted_scale_max:
+        type: "integer"
+        example: 330
+      waitlisted_percent_max:
+        type: "number"
+        format: "float"
+        example: 1.1
+      data:
+        type: "array"
+        items:
+          $ref: "#/definitions/Enrollment_data"
+      telebears:
+        $ref: "#/definitions/Enrollment_details"
+  Course:
+    type: "object"
+    properties:
+      units:
+        type: "string"
+        example: "4.0"
+      description:
+        type: "string"
+        example: "Basic concepts of operating system"
+      title:
+        type: "string"
+        example: "Operating Systems and System Programming"
+      prerequisits:
+        type: "string"
+        example: "COMPSCI 61B, COMPSCI 61C, and COMPSCI 70."
+      abbreviation:
+        type: "string"
+        example: "COMPSCI"
+      enrolled_percentage:
+        type: "number"
+        format: "float"
+        example: 1.0
+      department:
+        type: "string"
+        example: "Computer Science"
+      enrolled_max:
+        type: "integer"
+        example: 400
+      waitlisted:
+        type: "integer"
+        example: 0
+      enrolled:
+        type: "integer"
+        example: 400
+      grade_average:
+        type: "number"
+        format: "float"
+        example: 3.18664596273292
+      course_number:
+        type: "string"
+        example: "162"
+      id:
+        type: "integer"
+        example: 2337
+      letter_average:
+        type: "string"
+        example: "B+"
+  Course_short:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 2337
+      course_number:
+        type: "string"
+        example: "162"
+      abbreviation:
+        type: "string"
+        example: "COMPSCI"
+  Section:
+    type: "object"
+    properties:
+      cnn:
+        type: "string"
+        example: "28300"
+      section_number:
+        type: "string"
+        example: "001"
+      kind:
+        type: "string"
+        example: "Lecture"
+      instructor:
+        type: "string"
+        example: "KUBIATOWICZ J"
+      location_name:
+        type: "string"
+        example: "Valley Life Sciences 2050"
+      word_days:
+        type: "string"
+        example: "TuTh"
+      start_time:
+        type: "string"
+        example: "1900-01-01T17:00:00"
+      end_time:
+        type: "string"
+        example: "1900-01-01T18:29:00"
+      enrolled:
+        type: "integer"
+        example: 400
+      enrolled_max:
+        type: "integer"
+        example: 400
+      waitlisted:
+        type: "integer" 
+        example: 0
+      final_day:
+        type: "string"
+        example: "5"
+      final_start:
+        type: "string"
+        example: "1900-01-01T11:30:00"
+      final_end:
+        type: "string"
+        example: "1900-01-01T14:30:00"
+      id:
+        type: "integer"
+        example: 289041
+  Semester_grades:
+    type: "object"
+    properties:
+      semester:
+        type: "string"
+        example: "fall"
+      instructor:
+        type: "string"
+        example: "CULLER, D"
+      year:
+        type: "string"
+        example: "2019"
+      section_number:
+        type: "string"
+        example: "1"
+      grade_id:
+        type: "integer"
+        example: 407490
+  Grade_data:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        example: "COMPSCI 162"
+      subtitle:
+        type: "string"
+        example: "Operating Systems and System Programming"
+      course_id:
+        type: "integer"
+        example: 2337
+      course_letter:
+        type: "string"
+        example: "B+"
+      course_gpa:
+        type: "number"
+        format: "float"
+        example: 3.187
+      section_letter:
+        type: "string"
+        example: "B+"
+      section_gpa:
+        type: "number"
+        format: "float"
+        example: 3.365
+      denomintor:
+        type: "integer"
+        example: 464
+      A+:
+        $ref: "#/definitions/Grade_bin"
+      A:
+        $ref: "#/definitions/Grade_bin"
+      A-:
+        $ref: "#/definitions/Grade_bin"
+      B+:
+        $ref: "#/definitions/Grade_bin"
+      B:
+        $ref: "#/definitions/Grade_bin"
+      B-:
+        $ref: "#/definitions/Grade_bin"
+      C+:
+        $ref: "#/definitions/Grade_bin"
+      C:
+        $ref: "#/definitions/Grade_bin"
+      C-:
+        $ref: "#/definitions/Grade_bin"
+      D:
+        $ref: "#/definitions/Grade_bin"
+      F:
+        $ref: "#/definitions/Grade_bin"
+      P:
+        $ref: "#/definitions/Grade_bin"
+      NP:
+        $ref: "#/definitions/Grade_bin"
+  Grade_bin:
+    type: "object"
+    properties:
+      numerator:
+        type: "integer"
+        example: 103
+      percent:
+        type: "number"
+        format: "float"
+        example: 0.24
+      percentile_low:
+        type: "number"
+        format: "float"
+        example: 0.72
+      percentile_high:
+        type: "number"
+        format: "float"
+        example: 0.96
+  Enrollment_data:
+    type: "object"
+    properties:
+      date:
+        type: "string"
+        example: "10/13/2019-00:00:00"
+      day:
+        type: "integer"
+        example: 182
+      enrolled:
+        type: "integer"
+        example: 487
+      enrolled_max:
+        type: "integer"
+        example: 300
+      enrolled_percent:
+        type: "number"
+        format: "float"
+        example: 1.623
+      waitlisted:
+        type: "integer"
+        example: 0
+      waitlisted_max:
+        type: "integer"
+        example: 92
+      waitlisted_percent:
+        type: "number"
+        format: "float"
+        example: 0.0
+  Enrollment_details:
+    type: "object"
+    properties:
+      semester:
+        type: "string"
+        example: "Fall 2019"
+      phase1_start_date:
+        type: "string"
+        example: "10/16/2017-00:00:00"
+      phase1_start_day:
+        type: "integer"
+        example: 1
+      phase1_end_date:
+        type: "integer"
+        example: 68
+      phase2_start_date:
+        type: "string"
+        example: "10/16/2017-00:00:00"
+      phase2_start_day:
+        type: "integer"
+        example: 106
+      phase2_end_date:
+        type: "integer"
+        example: 126
+      adj_start_date:
+        type: "string"
+        example: "10/16/2017-00:00:00"
+      adj_start_day:
+        type: "integer"
+        example: 127

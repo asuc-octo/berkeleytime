@@ -1,0 +1,99 @@
+
+/*
+.dashboard-columns {
+    @media screen and (max-width: $tablet) {
+      justify-content: center;
+    }
+}
+
+.dashboard-card {
+    height: auto;
+    width: 350px;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .dashboard-container {
+        margin: 20px 30px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .dashboard-profile-pic-container {
+            height: 200px;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+
+            .dashboard-profile-pic {
+                height: 125px;
+                width: 125px;
+                object-fit: cover;
+                border-radius: 99em;
+            }
+
+            .dashboard-profile-name {
+                font-size: 24px;
+                text-transform: uppercase;
+                font-weight: 500;
+                letter-spacing: 1px;
+                color: #616161;
+            }
+        }
+
+        .dashboard-profile-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .dashboard-profile-info-section {
+                margin-top: 10px;
+
+                h4 {
+                    color: #616161;
+                }
+
+                p {
+                    color: #AFAFAF;
+                }
+            }
+        }
+
+        .dashboard-card-title {
+            font-size: 20px;
+            color: #616161;
+        }
+
+        .dashboard-schedule-list {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-top: 20px;
+
+            h5 {
+                color: #AFAFAF;
+                margin-bottom: 5px;
+            }
+
+            p {
+                margin-top: 10px;
+                color: #616161;
+                text-transform: uppercase;
+
+                span {
+                    float: right;
+                    color: #AFAFAF;
+                    text-transform: none;
+                }
+            }
+        }
+
+        .dashboard-schedule-link {
+            margin-top: 15px;
+        }
+    }
+}
+*/

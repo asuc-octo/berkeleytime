@@ -1,95 +1,103 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 
-import ClassCardList from '../../components/ClassCards/ClassCardList.jsx';
-import GradesGraphCard from '../../components/GraphCard/GradesGraphCard.jsx';
-import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar.jsx';
+import { connect } from 'react-redux';
+import ClassCardList from '../../components/ClassCards/ClassCardList';
+import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
+import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
+
+import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset } from '../../redux/actions';
 
 class Grades extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      context: {},
-      selectedCourses: [],
-    }
+      // context: {},
+      selectedCourses: this.props.selectedCourses,
+    };
     this.addCourse = this.addCourse.bind(this);
-    this.removeCourse = this.removeCourse.bind(this)
+    this.removeCourse = this.removeCourse.bind(this);
+  }
+
+  componentWillMount() {
+    this.props.gradeReset();
   }
 
   componentDidMount() {
-    axios.get('/api/grades/grades_json/')
-    .then(res => {
-      // console.log(res);
+    const { fetchGradeContext } = this.props;
+    fetchGradeContext();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedCourses != this.state.selectedCourses) {
       this.setState({
-        context: res.data,
-      })
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+        selectedCourses: nextProps.selectedCourses,
+      });
+    }
   }
 
   addCourse(course) {
-    if(this.state.selectedCourses.length >= 4){
-      this.state.selectedCourses.length = 4;
-      return;
-    }
-    for (let selected of this.state.selectedCourses) {
+    const { fetchGradeClass } = this.props;
+    const { selectedCourses } = this.state;
+    for (const selected of selectedCourses) {
       if (selected.id === course.id) {
         return;
       }
     }
-    axios.get(`/api/catalog/catalog_json/course/${course.courseID}/`)
-      .then(res => {
-        let courseData = res.data;
-
-        let formattedCourse =  {
-          id: course.id,
-          course: courseData.course,
-          title: courseData.title,
-          semester: course.semester,
-          instructor: course.instructor,
-          courseID: course.courseID,
-          sections: course.sections
-        }
-        this.setState(prevState => ({
-          selectedCourses: [...prevState.selectedCourses, formattedCourse],
-        }));
-    })
+    fetchGradeClass(course);
   }
 
   removeCourse(id) {
-    this.setState(prevState => ({
-      selectedCourses: prevState.selectedCourses.filter(classInfo => classInfo.id !== id)
-    }));
+    const { gradeRemoveCourse } = this.props;
+    gradeRemoveCourse(id);
   }
 
   render() {
-    const { context, selectedCourses } = this.state;
-    let { location } = this.props
-    let courses = context.courses;
-
+    const { context, location } = this.props;
+    const { selectedCourses } = this.state;
+    const courses = context.courses;
     return (
-      <div className="app-container grades">
-        <GradesSearchBar
-          classes={courses}
-          addCourse={this.addCourse}
-          fromCatalog={location.state ? location.state.course : false}
-        />
+      <div className="viewport-app">
+        <div className="grades">
+          <GradesSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+            fromCatalog={location.state ? location.state.course : false}
+            isFull={selectedCourses.length === 4}
+          />
 
-        <ClassCardList
-          selectedCourses={selectedCourses}
-          removeCourse={this.removeCourse}
-        />
+          <ClassCardList
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
+          />
 
-        <GradesGraphCard
-          id="gradesGraph"
-          title="Grades"
-          classData={selectedCourses}
-        />
+          <GradesGraphCard
+            id="gradesGraph"
+            title="Grades"
+          />
+        </div>
       </div>
     );
   }
 }
 
-export default Grades;
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  fetchGradeContext: () => dispatch(fetchGradeContext()),
+  fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
+  gradeRemoveCourse: (id) => dispatch(gradeRemoveCourse(id)),
+  gradeReset: () => dispatch(gradeReset())
+});
+
+const mapStateToProps = state => {
+  const { context, selectedCourses } = state.grade;
+  return {
+    context,
+    selectedCourses,
+  };
+};
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Grades);

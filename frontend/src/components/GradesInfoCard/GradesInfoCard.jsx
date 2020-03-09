@@ -1,5 +1,4 @@
-import React from 'react';
-import { Row, Col } from 'react-bootstrap';
+import React, { PureComponent } from 'react';
 
 /** Accepts a percentile between 0 and 1, converts it to a string. */
 function percentileToString(percentile) {
@@ -9,173 +8,77 @@ function percentileToString(percentile) {
   if (percentile === 0) {
     return '0th';
   }
-  var str = `${percentile}`.padEnd(4, '0').slice(2);
+  const str = `${percentile}`.padEnd(4, '0').slice(2);
   if (str[0] === '0') {
     if (str[1] === '1') {
-      return str[1] + 'th';
+      return `${str[1]}st`;
     } else if (str[1] === '2') {
-      return str[1] + 'nd';
+      return `${str[1]}nd`;
     } else if (str[1] === '3') {
-      return str[1] + 'rd';
+      return `${str[1]}rd`;
     } else {
-      return str[1] + 'th';
+      return `${str[1]}th`;
     }
+  } else if (str[1] === '1' && str[0] !== '1') {
+    return `${str}st`;
+  } else if (str[1] === '2' && str[0] !== '1') {
+    return `${str}nd`;
+  } else if (str[1] === '3' && str[0] !== '1') {
+    return `${str}rd`;
   } else {
-    if (str[1] === '1' && str[0] !== '1') {
-      return str + 'th';
-    } else if (str[1] === '2' && str[0] !== '1') {
-      return str + 'nd';
-    } else if (str[1] === '3' && str[0] !== '1') {
-      return str + 'rd';
-    } else {
-      return str + 'th';
-    }
+    return `${str}th`;
   }
 }
 
 function getGradeColor(grade) {
-  if(grade.includes('A') || grade ==='P') {
-    return 'bt-green-text';
+  if (grade.includes('A') || grade === 'P') {
+    return 'bt-indicator-green';
   } else if (grade.includes('B')) {
-    return 'bt-orange-text';
+    return 'bt-indicator-orange';
   } else {
-    return 'bt-red-text';
+    return 'bt-indicator-red';
   }
 }
 
-export default function GradesInfoCard({
-  course, subtitle, semester, instructor, courseLetter,
-  courseGPA, sectionLetter, sectionGPA, selectedGrade,
-  gradeName, denominator, betterGrade, worseGrade,
-  hoveredColor
-}) {
-  return (
-    <div className="card grades-card-info">
-      <div className="content card-info">
-        <Row>
-          <div className="class-num" style={{borderBottom: `5px ${hoveredColor} solid`}}>
-            {course}
+class GradesInfoCard extends PureComponent {
+  render() {
+    const {
+      course, subtitle, semester, instructor,
+      courseLetter, courseGPA, sectionLetter,
+      sectionGPA, selectedPercentiles, selectedGrade,
+      denominator, betterGrade, worseGrade, color,
+    } = this.props;
+    return (
+      <div className="grades-info">
+        <div className="header">
+          <div className="square" style={{ backgroundColor: color }} />
+          <div className="course">{ course }</div>
+        </div>
+        <div className="title">{ subtitle }</div>
+        <div className="info">{ `${semester} • ${instructor}` }</div>
+        <h6>Course Average</h6>
+        <div className="course-average">
+          <span className={getGradeColor(courseLetter)}>{ courseLetter }</span>
+          ({ courseGPA })
+        </div>
+        <h6>Section Average</h6>
+        <div className="section-average">
+          <span className={getGradeColor(sectionLetter)}>{ sectionLetter }</span>
+          ({ sectionGPA })
+        </div>
+        {selectedPercentiles !== undefined && selectedPercentiles !== null && selectedPercentiles.numerator !== 0 && (
+          <div>
+            <h6>
+              {`${percentileToString(selectedPercentiles.percentile_low)}-${percentileToString(selectedPercentiles.percentile_high)} Percentile`}
+            </h6>
+            <div className="percentile">
+              <span className={getGradeColor(selectedGrade)}>{ selectedGrade }</span>
+            </div>
           </div>
-        </Row>
-        <Row>
-          <div className="class-info">{`${semester} | ${instructor}`}</div>
-        </Row>
-        <Row>
-          <div className="class-title">{subtitle}</div>
-        </Row>
-
-        <Row className="class-avgs">
-          <Col xs={6} className="class-avgs">
-            <div className="class-course-avg">Course Average</div>
-          </Col>
-          <Col xs={6} className="class-avgs">
-            <div className="class-section-avg">Section Average</div>
-          </Col>
-        </Row>
-
-        <Row className="class-avgs">
-          <Col xs={6} className="class-avg-stats">
-            <div>
-              <span className={getGradeColor(courseLetter)}>{courseLetter}</span>
-              <span>{` (GPA: ${courseGPA})`}</span>
-            </div>
-          </Col>
-          <Col xs={6} className="class-avg-stats">
-            <div>
-              <span className={getGradeColor(sectionLetter)}>{sectionLetter}</span>
-              <span>{` (GPA: ${sectionGPA})`}</span>
-            </div>
-          </Col>
-        </Row>
-
-        {/* <Row>
-          <Col xs={8} className="class-avgs">
-            <div className="class-stats-name">
-              {betterGrade !== undefined && betterGrade !== null &&
-                `${betterGrade.percentile_low*100}th - ${betterGrade.percentile_high*100}th Percentile`}
-              </div>
-          </Col>
-          <Col xs={4} className="class-avgs">
-            <div className="class-count">
-              {betterGrade !== undefined && betterGrade !== null &&
-                `${betterGrade.numerator}/${thisClass.denominator}`}
-              </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={8} className="class-avgs">
-            <div className="class-grade">
-              {betterGrade !== undefined && betterGrade !== null &&
-                betterGrade.grade_name}
-            </div>
-          </Col>
-          <Col xs={4} className="class-avgs">
-            <div className="class-percent">
-              {betterGrade !== undefined && betterGrade !== null &&
-                `${betterGrade.percent*100} %`}
-            </div>
-          </Col>
-        </Row> */}
-
-        <Row>
-          <Col xs={6} className="class-avgs">
-            <div className="class-stats-name">
-              {selectedGrade !== undefined && selectedGrade !== null &&
-                `${percentileToString(selectedGrade.percentile_low)} - ${percentileToString(selectedGrade.percentile_high)} Percentile`}
-            </div>
-          </Col>
-          <Col xs={6} className="class-avgs">
-            <div className="class-count">
-              {selectedGrade !== undefined && selectedGrade !== null &&
-                `${selectedGrade.numerator}/${denominator}`}
-            </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={6} className="class-avgs">
-            <div className={`class-grade ${getGradeColor(gradeName)}`}>
-              {selectedGrade !== undefined && selectedGrade !== null &&
-                gradeName}
-            </div>
-          </Col>
-          <Col xs={6} className="class-avgs">
-            <div className="class-percent">
-              {selectedGrade !== undefined && selectedGrade !== null &&
-                `${Number.parseFloat(selectedGrade.numerator/denominator * 100).toFixed(2)} %`}
-            </div>
-          </Col>
-        </Row>
-
-        {/* <Row>
-          <Col xs={8} className="class-avgs">
-            <div className="class-stats-name">
-              {worseGrade !== undefined && worseGrade !== null &&
-                `${worseGrade.percentile_low*100}th - ${worseGrade.percentile_high*100}th Percentile`}
-            </div>
-          </Col>
-          <Col xs={4} className="class-avgs">
-            <div className="class-count">
-              {worseGrade !== undefined && worseGrade !== null &&
-                `${worseGrade.numerator}/${thisClass.denominator}`}
-            </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={8} className="class-avgs">
-            <div className="class-grade">
-              {worseGrade !== undefined && worseGrade !== null &&
-                worseGrade.grade_name}
-            </div>
-          </Col>
-          <Col xs={4} className="class-avgs">
-            <div className="class-percent">
-              {worseGrade !== undefined && worseGrade !== null &&
-                `${worseGrade.percent*100} %`}
-            </div>
-          </Col>
-        </Row> */}
-
+        )}
       </div>
-    </div>
-  );
+    );
+  }
 }
+
+export default GradesInfoCard;
