@@ -8,7 +8,7 @@ import {
   Button,
 } from 'react-bootstrap';
 
-import { ReactComponent as Logo} from './landing_main.svg';
+import { ReactComponent as Logo} from '../../assets/img/images/landing/landing_main.svg';
 
 function Jumbotron() {
   return (
