@@ -20,7 +20,7 @@ class ReadingResource(object):
         """Return [R1A definition, R1B definition]."""
         html = urllib2.urlopen(url).read()
         bs = BeautifulSoup(html)
-        tables = bs.findAll('table')
+        tables = bs.find_all('table')
 
         r1a_table = tables[0]
         r1b_table = tables[1]
@@ -50,6 +50,7 @@ class ReadingResource(object):
             splitted = rc.split()
             abbreviation = " ".join(splitted[:-1])
             course_number = splitted[-1]
+            print(abbreviation, course_number)
             definition.add(abbreviation, allowed=[course_number])
 
         return definition
