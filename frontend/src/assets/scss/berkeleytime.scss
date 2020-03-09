@@ -44,9 +44,6 @@
 @import "bt/enrollment";
 // Releases
 @import "bt/releases";
-// Other
-@import "bt/current-contributors";
-@import "bt/past-contributors";
 
 @import "bt/temporary";
 @import "bt/dashboard";
@@ -58,6 +55,8 @@
 @import "bt/about/current";
 @import "bt/about/past";
 
+// Apidocs
+@import "bt/apidocs/apidocs";
 
 // Error page
 @import "bt/error/error";

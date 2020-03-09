@@ -13,7 +13,7 @@
         height: 25%;
       }
 
-      @include between-mobile {
+      @include tablet {
         height: 25%;
       }
     }
