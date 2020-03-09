@@ -55,8 +55,6 @@ class Grades extends Component {
     const { context, location } = this.props;
     const { selectedCourses } = this.state;
     const courses = context.courses;
-    console.log(selectedCourses);
-
     return (
       <div className="viewport-app">
         <div className="grades">

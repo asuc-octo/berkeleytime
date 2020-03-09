@@ -180,7 +180,6 @@ export function fetchLists(paths) {
         .then(
           res => {
             tmp = res;
-            console.log(res);
             const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
             dispatch(modify(new Set(defaultPlaylists), new Set(defaultPlaylists)));
             dispatch(receiveList(res.data));
@@ -250,7 +249,6 @@ export function fetchGradeClass(course) {
 export function fetchGradeData(classData) {
   const promises = [];
   for (const course of classData) {
-    console.log(course);
     const { sections } = course;
     const url = `/api/grades/sections/${sections.join('&')}/`;
     promises.push(axios.get(url));
@@ -323,7 +321,6 @@ export function fetchEnrollData(classData) {
       instructor, courseID, semester, sections,
     } = course;
     let url;
-    console.log(course);
     if (instructor === 'all') {
       const [sem, year] = semester.split(' ');
       url = `/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;

@@ -1,58 +1,185 @@
 .about {
-  margin-top: $bt-navbar-height + 50px;
+  margin-top: $bt-navbar-height;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 
   .title {
-    > h5 {
-      @include not-mobile {
-        font-size: 36px;
-      }
+    font-weight: bold;
+    color: $bt-base-text;
+    margin: 50px 10px 30px;
 
-      @include mobile {
-        font-size: 30px;
-      }
-
-      font-weight: bold;
-      color: $bt-base-text;
-      
-      margin: 0 10px 10px;
+    @include not-mobile {
+      font-size: 36px;
     }
 
-    > p {
-      font-size: 16px;
-      color: $bt-grey-text;
-      text-align: center;
-      margin: 0 10px 40px;
+    @include mobile {
+      font-size: 30px;
     }
+  }
+
+  .teampic {
+    width: 100vw;
+    object-fit: cover;
+
+    @include desktop {
+      height: 30vw;
+      object-position: 50% 40%;
+    }
+
+    @include tablet {
+      height: 40vw;
+      object-position: 50% 60%;
+    }
+
+    @include mobile {
+      height: 70vw;
+    }
+
+    margin-bottom: 30px;
   }
 
   .about-us {
     > h5 {
-      font-size: 20px;
+      margin-bottom: 10px;
+      text-align: center;
 
       font-weight: bold;
       color: $bt-base-text;
-      text-align: center;
-      
-      margin: 0 10px 10px;
-    }
-
-    > p {
-      font-size: 16px;
-      color: $bt-grey-text;
-      text-align: center;
-      margin: 0 10px 30px;
 
       @include not-mobile {
-        width: 400px;
+        font-size: 24px;
       }
 
       @include mobile {
-        width: 350px;
+        font-size: 20px;
       }
     }
+
+    > p {
+      margin: 0 20px 30px;
+      text-align: center;
+
+      font-size: 16px;
+      color: $bt-grey-text;
+
+      @include not-mobile {
+        width: 450px;
+      }
+
+      @include mobile {
+        width: 330px;
+      }
+    }
+  }
+
+  .values {
+    @include desktop {
+      width: 900px;
+    }
+
+    @include touch {
+      width: 300px;
+    }
+
+    > h5 {
+      margin-bottom: 30px;
+      text-align: center;
+
+      font-weight: bold;
+      color: $bt-base-text;
+
+      @include not-mobile {
+        font-size: 24px;
+      }
+
+      @include mobile {
+        font-size: 20px;
+      }
+    }
+
+    .value {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      margin-bottom: 30px;
+
+      > img {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 20px;
+      }
+
+      > h6 {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      > p {
+        text-align: center;
+        width: 95%;
+      }
+    }
+  }
+
+  .group {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: 50px;
+    
+    > img {
+      @include desktop {
+        height: 400px;
+      }
+
+      @include tablet {
+        height: 300px;
+      }
+
+      @include mobile {
+        height: 250px;
+      }
+    }
+
+    @include desktop {
+      > img {
+        padding: 0 10px;
+      }
+  
+      :first-child {
+        padding-left: 20px;
+      }
+  
+      :last-child {
+        padding-right: 20px;
+      }
+    }
+
+    @include touch {
+      > img {
+        padding: 0 5px;
+      }
+  
+      :first-child {
+        padding-left: 10px;
+      }
+  
+      :last-child {
+        padding-right: 10px;
+      }
+    }
+
+    // remove scroll bar
+    overflow-x: scroll;
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .group::-webkit-scrollbar { /* Safari and Chrome */
+    display: none;
   }
 }

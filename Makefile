@@ -8,7 +8,7 @@ build:
 
 # Up brings the cluster up by booting a redis, postgres, and server.
 up:
-	docker-compose -f build/docker-compose.yml up
+	docker-compose -f build/docker-compose.yml up --build
 	
 # Down removes the existing cluster. Make sure you kill your cluster with down!
 down:
