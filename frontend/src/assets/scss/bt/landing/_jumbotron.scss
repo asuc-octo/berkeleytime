@@ -68,9 +68,17 @@
     .jumbo-img {
       @keyframes bobble {
         from {
-          transform: translateY(-20);
+          transform: translateY(-20px);
         } to {
           transform: translateY(90px);
+        }
+      }
+
+      @keyframes everything-bobble {
+        from {
+          transform: translateY(-3px);
+        } to {
+          transform: translateY(3px);
         }
       }
 
@@ -84,6 +92,10 @@
 
       #right-float {
         animation: bobble 6s linear alternate infinite;  
+      }
+
+      #everything {
+        animation: everything-bobble 2s linear alternate infinite;  
       }
 
       max-width: 100%;
