@@ -1,4 +1,4 @@
-.PHONY: frontend
+.PHONY: build up down
 
 # The following commands control the docker compose component of the stack.
 

@@ -25,6 +25,7 @@ function Footer() {
             <a href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1">Report a Bug</a>
             <a href="mailto:octo.berkeleytime@asuc.org" className="">Contact</a>
             <a href="http://old.berkeleytime.com/" className="">Legacy</a>
+            <Link to="/apidocs" className="">API Docs<span className="new-box">New</span></Link>
             <a href="" className="">Privacy Policy</a>
           </Col>
           <Col xs={4} sm={4} md={4} lg={2} className="bt-footer-column">
