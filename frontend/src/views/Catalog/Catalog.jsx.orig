@@ -228,9 +228,8 @@ class Catalog extends Component {
     const { defaultSearch } = this.state;
     const { activePlaylists, loading, selectedCourse } = this.props;
     return (
+      <div className="catalog viewport-app">
 <<<<<<< HEAD
-      <div className="catalog">
-        <div className="catalog-container">
           <Row>
             <Col xs={12} sm={3} md={3} lg={4} xl={3} className="filter-column">
               {
@@ -255,26 +254,9 @@ class Catalog extends Component {
               }
             </Col>
             <Col xs={12} sm={3} md={3} lg={4} xl={3} className="filter-results-column">
-              <FilterResults
-                activePlaylists={activePlaylists ? activePlaylists : []}
-                selectCourse={this.selectCourse}
-                selectedCourse={selectedCourse}
-                sortBy={this.state.sortBy}
-                query={this.state.search}
-              />
-            </Col>
-            <Col xs={0} sm={6} md={6} lg={4} xl={6} className="catalog-description-column">
-              <ClassDescription
-                course={selectedCourse}
-                selectCourse={this.selectCourse}
-              />
-            </Col>
-          </Row>
-        </div>
 =======
-      <div className="catalog viewport-app">
         <Row>
-          <Col lg={4} xl={3} className="filter-column">
+          <Col xs={12} sm={12} md={4} lg={4} xl={3} className="filter-column">
             {
               !loading ?
               <Filter
@@ -296,23 +278,33 @@ class Catalog extends Component {
               </div>
             }
           </Col>
-          <Col lg={3} xl={3} className="filter-results-column">
-            <FilterResults
-              activePlaylists={activePlaylists ? activePlaylists : []}
-              selectCourse={this.selectCourse}
-              selectedCourse={selectedCourse}
-              sortBy={this.state.sortBy}
-              query={this.state.search}
-            />
-          </Col>
-          <Col lg xl className="catalog-description-column">
+          <Col xs={12} sm={12} md={4} lg={4} xl={3} className="filter-results-column">
+>>>>>>> 659ce6fa87b3980bdbfa02b6675b72031c8cac4b
+              <FilterResults
+                activePlaylists={activePlaylists ? activePlaylists : []}
+                selectCourse={this.selectCourse}
+                selectedCourse={selectedCourse}
+                sortBy={this.state.sortBy}
+                query={this.state.search}
+              />
+            </Col>
+<<<<<<< HEAD
+            <Col xs={0} sm={6} md={6} lg={4} xl={6} className="catalog-description-column">
+              <ClassDescription
+                course={selectedCourse}
+                selectCourse={this.selectCourse}
+              />
+            </Col>
+          </Row>
+=======
+          <Col xs={12} sm={12} md={4} lg={4} xl={6} className="catalog-description-column">
             <ClassDescription
               course={selectedCourse}
-              selectCourse={this.selectCourse}
+                selectCourse={this.selectCourse}
             />
           </Col>
         </Row>
->>>>>>> 49176ce21ae2df031361eade65e01705a693f3ea
+>>>>>>> 659ce6fa87b3980bdbfa02b6675b72031c8cac4b
       </div>
     )
   }

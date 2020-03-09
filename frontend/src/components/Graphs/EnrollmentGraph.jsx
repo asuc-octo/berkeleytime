@@ -27,7 +27,7 @@ export default function EnrollmentGraph({
       <ResponsiveContainer width="100%" height={500}>
         <LineChart data={graphData} onMouseMove={updateGraphHover}>
           <XAxis dataKey="name" interval={19} />
-          <YAxis type="number" unit="%" />
+          <YAxis type="number" unit="%" domain={[0, 100]}/>
           <Tooltip
             formatter={(value) => `${value}%`}
             labelFormatter={label => `Day ${label}`}

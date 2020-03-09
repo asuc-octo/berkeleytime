@@ -5,13 +5,14 @@
   // row
   > div {
     height: 100%;
+    overflow-y: scroll;
 
     // columns
     > div {
       height: 100%;
 
       @include mobile{
-        height: 25%;
+        height: 20%;
       }
 
       // columns
@@ -23,6 +24,7 @@
     .filter-column {
       border-right: 1px solid $bt-border-grey;
       padding-right: 0; // override bootstrap padding
+      position: relative;
     }
 
     .filter-results-column {
