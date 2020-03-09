@@ -218,7 +218,6 @@ export class FilterSidebar extends Component {
 
   saveModal = () => {
     //set the relevant state
-    console.log(this.state.requirements)
     switch(this.state.modalType) {
       case "requirements":
         this.requirementHandler(this.state.requirements)
@@ -258,7 +257,6 @@ export class FilterSidebar extends Component {
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters, isMobile } = this.state;
 
-    console.log(this.state.requirements)
     return (
       !isMobile ? 
       <div id="filter" className="filter">

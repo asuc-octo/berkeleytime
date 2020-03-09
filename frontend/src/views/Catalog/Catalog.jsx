@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import Filter from '../../components/Catalog/Filter';
 import FilterResults from '../../components/Catalog/FilterResults';
+import FilterResultsModal from '../../components/Catalog/ClassDescriptionModal';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 
 import { modify, fetchLists, modifySelected } from '../../redux/actions';
@@ -42,7 +43,11 @@ class Catalog extends Component {
       // data: {},                      // api response.data
       // selectedCourse: {},
       // loading: true,             // whether we have receieved playlist data from api
+      isModal: false,                //whether to open filter result as modal
+      showDescription: true,
     };
+
+    this.updateScreensize = this.updateScreensize.bind(this);
   }
 
   /**
@@ -224,8 +229,12 @@ class Catalog extends Component {
     }
   }
 
+  updateScreensize() {
+    this.setState({ isMobile: window.innerWidth <= 576 });
+  }
+
   render() {
-    const { defaultSearch } = this.state;
+    const { defaultSearch, isMobile } = this.state;
     const { activePlaylists, loading, selectedCourse } = this.props;
     return (
       <div className="catalog viewport-app">
@@ -261,12 +270,19 @@ class Catalog extends Component {
                 query={this.state.search}
               />
             </Col>
+            !isMobile ? 
             <Col xs={0} sm={6} md={6} lg={4} xl={6} className="catalog-description-column">
               <ClassDescription
                 course={selectedCourse}
                 selectCourse={this.selectCourse}
               />
-            </Col>
+            </Col> :
+            <ClassDescriptionModal 
+              course={selectedCourse}
+              selectCourse={this.selectCourse}
+              showFilters={this.state.showDescription}
+            />
+
           </Row>
       </div>
     )
