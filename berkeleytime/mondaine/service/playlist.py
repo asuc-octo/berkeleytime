@@ -44,7 +44,7 @@ class PlaylistService(object):
         service.update()
 
     def refresh_current_semester(self, category=None):
-        """Fetch and cache the playlist courses from SIS for the current semester."""
+        """Fetch the playlist courses from SIS for the current semester, overwriting the cache."""
         if category:
             self._refresh_current_semester(category)
             return
