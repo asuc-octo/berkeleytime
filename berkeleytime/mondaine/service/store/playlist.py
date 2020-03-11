@@ -37,16 +37,25 @@ class PlaylistStore(object):
         # plalist = models.Playlist.get(id=playlist_id)
         pass
 
-    def replace_course_ids(self, playlist_id, course_ids):
+    @staticmethod
+    def replace_course_ids(playlist_id, course_ids):
         """Replace a single playlist's existing courses."""
         playlist = models.Playlist.objects.get(id=playlist_id)
         playlist.courses = course_ids
         logger.info({
             'message': 'Playlist course ids replaced',
             'name': playlist.name,
+            'semester': playlist.semester,
+            'year': playlist.year,
             'id': playlist_id,
             'courses': len(course_ids),
         })
         playlist.save()
+
+    @staticmethod
+    def delete_playlists_in_category(category):
+        """Clean up playlists in the given category."""
+        models.Playlist.objects.filter(category=category).delete()
+
 
 playlist_store = PlaylistStore()

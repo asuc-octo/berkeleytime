@@ -370,6 +370,7 @@ def universal_requirements(course):
     ])
     requirements_1 = list(playlists_1.values_list('name', flat=True))
     requirements_2 = sorted(list(playlists_2.values_list('name', flat=True)), key=semester_to_value, reverse=True)
+    print("Universal: " + str(requirements_1 + requirements_2))
     return requirements_1 + requirements_2
 
 
@@ -382,8 +383,10 @@ def semester_requirements(course):
     requirements = list(playlists.values_list('semester', 'year', 'name'))
     sem_to_reqs = dict()
     for semester, year, name in requirements:
-        sem_to_reqs.setdefault(str(semester + ' ' + year), list()).append(name)
-    return [{'semester': sem, 'requirements': reqs} for sem, reqs in sem_to_reqs.items()]
+        sem_to_reqs.setdefault(semester.capitalize() + ' ' + year, list()).append(name)
+    retval = [{'semester': sem, 'requirements': reqs} for sem, reqs in sem_to_reqs.items()]
+    print("Semester requirements: " + str(retval))
+    return retval
 
 
 @login_required
