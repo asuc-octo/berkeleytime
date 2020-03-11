@@ -24,7 +24,7 @@ class MapperDefinition(ConstraintDefinition):
     def __init__(self, mapper=None, overrides=None, *args, **kwargs):
         """Initialize.
 
-        :param overrides: List of functions taking acourse-like entity; course
+        :param overrides: List of functions taking a course-like entity; course
             automatically satisfies definition if any function in overrides
             returns True
         :param mapper: Dictionary mapping abbreviation to allowed/excluded
@@ -89,6 +89,13 @@ class MapperDefinition(ConstraintDefinition):
                 course.course_number in allowed and
                 course.course_number not in excluded
             )
+
+    def get_all_allowed_courses_set(self):
+        all_allowed = set()
+        for abbreviation in self.mapper.keys():
+            for course_num in self.mapper[abbreviation]["allowed"]:
+                all_allowed.add((abbreviation, course_num))
+        return all_allowed
 
     def __str__(self):
         """Return string representation."""

@@ -34,6 +34,23 @@ LETTER_GRADE = {
 }
 
 PAST_SEMESTERS = [
+    {'semester': 'spring', 'year': '2013', 'display': 'Spring 2013'},
+    {'semester': 'fall', 'year': '2013', 'display': 'Fall 2013'},
+    {'semester': 'spring', 'year': '2014', 'display': 'Spring 2014'},
+    {'semester': 'fall', 'year': '2014', 'display': 'Fall 2014'},
+    {'semester': 'spring', 'year': '2015', 'display': 'Spring 2015'},
+    {'semester': 'fall', 'year': '2015', 'display': 'Fall 2015'},
+    {'semester': 'spring', 'year': '2016', 'display': 'Spring 2016'},
+    {'semester': 'fall', 'year': '2016', 'display': 'Fall 2016'},
+    {'semester': 'spring', 'year': '2017', 'display': 'Spring 2017'},
+    {'semester': 'fall', 'year': '2017', 'display': 'Fall 2017'},
+    {'semester': 'spring', 'year': '2018', 'display': 'Spring 2018'},
+    {'semester': 'fall', 'year': '2018', 'display': 'Fall 2018'},
+    {'semester': 'spring', 'year': '2019', 'display': 'Spring 2019'},
+    {'semester': 'fall', 'year': '2019', 'display': 'Fall 2019'},
+]
+
+PAST_SEMESTERS_SIS = [
     {'semester': 'fall', 'year': '2016', 'display': 'Fall 2016'},
     {'semester': 'spring', 'year': '2017', 'display': 'Spring 2017'},
     {'semester': 'fall', 'year': '2017', 'display': 'Fall 2017'},
@@ -93,7 +110,7 @@ SPECIAL_CHARACTER_ABBREVIATIONS = {
     "COMLIT": "COM LIT",
     "EALANG": "EA LANG",
     "ELENG": "EL ENG",
-    "ENERES": "ENE, RES",
+    "ENERES": "ENE,RES",
     "ETHSTD": "ETH STD",
     "DEVSTD": "DEV STD",
     "MESTU": "M E STU",
@@ -106,6 +123,7 @@ SPECIAL_CHARACTER_ABBREVIATIONS = {
     "MILSCI": "MIL SCI",
     "NAVSCI": "NAV SCI",
     "NESTD": "NE STD",
+    "NESTUD": "NE STUD",
     "NUCENG": "NUC ENG",
     "PHYSED": "PHYS ED",
     "POLSCI": "POL SCI",
