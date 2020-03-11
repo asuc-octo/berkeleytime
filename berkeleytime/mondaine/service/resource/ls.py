@@ -44,7 +44,7 @@ class LSResource(object):
         We get our data from SIS. However, since fetching and processing is very slow, we cache our fetched data in
         csv format and prefer to use the cached csv's if they exist instead of fetching from SIS.
         Args:
-            playlist_name (LSPlaylistName enum): name of the playlist
+            playlist_name (str): name of the playlist
         Returns:
             breadth_defs: list of (semester, year, definition). Returns all courses that satisfy the given breadth in
                           each past and current semester.
