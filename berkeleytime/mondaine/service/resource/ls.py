@@ -108,8 +108,6 @@ class LSResource(object):
         Args:
             semester (str): the semester to look up
             year (str): the year to look up
-            breadths (iterable(str)): Iterable of breadths to process.
-                e.g. ["Arts and Literature", "Physical Sciences"]
         Returns:
             breadth_to_def (dict): Dictionary mapping of breadth name to definition.
         """
