@@ -36,7 +36,7 @@ spec:
           value: STAGING
         envFrom:
         - configMapRef:
-            name: django-configs
+            name: django-configs-staging
         - secretRef:
             name: aws
         - secretRef:
