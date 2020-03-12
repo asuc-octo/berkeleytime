@@ -57,19 +57,21 @@ def catalog(request, abbreviation='', course_number=''):
         context_instance=RequestContext(request)
     )
 
+
 def catalog_filters(request, abbreviation='', course_number=''):
     """Return the context for the catalog."""
     defaults = Playlist.objects.filter(user=None)
+    # By Semester
     haas = defaults.filter(category="haas")
-    ls = defaults.filter(category="ls")
+    ls = defaults.filter(category="ls", semester=CURRENT_SEMESTER, year=CURRENT_YEAR).order_by("name")
     university = defaults.filter(category="university").order_by("id")
     engineering = defaults.filter(category="engineering").order_by("id")
-    chemistry = defaults.filter(category="chemistry").order_by("id")
+    # Universal
     department = defaults.filter(category="department").order_by("name")
     units = Playlist.objects.filter(category="units").order_by("id")
     level = Playlist.objects.filter(category="level").order_by("id")
     semester = Playlist.objects.filter(category="semester")
-    # semester = sorted(semester, key=lambda t: (-int(t.name.split(" ")[1]), t.name.split(" ")[0]))  # noqa
+    chemistry = defaults.filter(category="chemistry").order_by("id")  # deprecated?
     enrollment = Playlist.objects.filter(category="enrollment").order_by("id")
     length = Playlist.objects.filter(category="length").order_by("id")
 
@@ -255,7 +257,10 @@ def get_last_enrollment_update(sections):
 
 
 def course_box(request):
-    """Render the HTML for a course box."""
+    """
+    DEPRECATED
+    Render the HTML for a course box.
+    """
     try:
         course = Course.objects.get(id=request.GET.get("course_id"))
         semester = request.GET.get("semester") if "semester" in request.GET else CURRENT_SEMESTER  # noqa
@@ -284,7 +289,7 @@ def course_box(request):
             'course': course,
             'sections': sections,
             'favorited': favorited,
-            'requirements': which_requirements(course),
+            'requirements': universal_requirements(course),
             'cover_photo': cover_photo(course),
             'last_enrollment_update': get_last_enrollment_update(sections),
             'ongoing_sections': ongoing_sections,
@@ -296,6 +301,7 @@ def course_box(request):
     except Exception as e:
         print e
         return render_to_empty_json()
+
 
 def course_box_json(request):
     """Render the HTML for a course box."""
@@ -326,7 +332,8 @@ def course_box_json(request):
         'course': course.as_json(),
         'sections': map(lambda s: s.as_json(), sections),
         'favorited': favorited,
-        'requirements': which_requirements(course),
+        'universal_requirements': universal_requirements(course),
+        'requirements_by_semester': semester_requirements(course),
         'cover_photo': cover_photo(course),
         'last_enrollment_update': get_last_enrollment_update(sections),
         'ongoing_sections': map(lambda s: s.as_json(), ongoing_sections),
@@ -335,6 +342,7 @@ def course_box_json(request):
             course, CURRENT_SEMESTER, CURRENT_YEAR,
         )
     })
+
 
 def semester_to_value(s):
     """
@@ -350,15 +358,11 @@ def semester_to_value(s):
         sem = 1
     return 3*int(year) + sem
 
-def which_requirements(course):
-    """Idk what this is."""
+
+def universal_requirements(course):
     playlists_1 = course.playlist_set.filter(category__in=[
-        'ls',
-        'university',
-        'engineering',
-        'chemistry',
-        'haas',
         'department',
+        'university',
         'units',
     ])
     playlists_2 = course.playlist_set.filter(category__in=[
@@ -366,7 +370,23 @@ def which_requirements(course):
     ])
     requirements_1 = list(playlists_1.values_list('name', flat=True))
     requirements_2 = sorted(list(playlists_2.values_list('name', flat=True)), key=semester_to_value, reverse=True)
+    print("Universal: " + str(requirements_1 + requirements_2))
     return requirements_1 + requirements_2
+
+
+def semester_requirements(course):
+    playlists = course.playlist_set.filter(category__in=[
+        'ls',
+        'engineering',
+        'haas',
+    ])
+    requirements = list(playlists.values_list('semester', 'year', 'name'))
+    sem_to_reqs = dict()
+    for semester, year, name in requirements:
+        sem_to_reqs.setdefault(semester.capitalize() + ' ' + year, list()).append(name)
+    retval = [{'semester': sem, 'requirements': reqs} for sem, reqs in sem_to_reqs.items()]
+    print("Semester requirements: " + str(retval))
+    return retval
 
 
 @login_required
