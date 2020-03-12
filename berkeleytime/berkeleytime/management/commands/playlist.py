@@ -27,7 +27,7 @@ playlists = {
 
 
 class Command(BaseCommand):
-    """python manage.py playlist [category] [--force_fetch]"""
+    """python manage.py playlist [category] [--refresh] [--clean]"""
 
     option_list = BaseCommand.option_list + (
         make_option(
