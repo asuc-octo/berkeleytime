@@ -63,7 +63,7 @@ def catalog_filters(request, abbreviation='', course_number=''):
     defaults = Playlist.objects.filter(user=None)
     # By Semester
     haas = defaults.filter(category="haas")
-    ls = defaults.filter(category="ls", semester=CURRENT_SEMESTER.capitalize(), year=CURRENT_YEAR)
+    ls = defaults.filter(category="ls", semester=CURRENT_SEMESTER, year=CURRENT_YEAR).order_by("name")
     university = defaults.filter(category="university").order_by("id")
     engineering = defaults.filter(category="engineering").order_by("id")
     # Universal
