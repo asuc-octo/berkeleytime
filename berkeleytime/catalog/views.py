@@ -51,14 +51,14 @@ def catalog(request, abbreviation='', course_number=''):
     """Return HTML for the base catalog page."""
     return render_to_response(
         'catalog/catalog.html',
-        catalog_context(
+        catalog_filters(
             request, abbreviation=abbreviation, course_number=course_number
         ),
         context_instance=RequestContext(request)
     )
 
 
-def catalog_context(request, abbreviation='', course_number=''):
+def catalog_filters(request, abbreviation='', course_number=''):
     """Return the context for the catalog."""
     defaults = Playlist.objects.filter(user=None)
     # By Semester

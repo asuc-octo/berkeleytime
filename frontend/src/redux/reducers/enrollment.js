@@ -10,7 +10,7 @@ const initialState = {
   graphData: [],
   sections: [],
   selectPrimary: '',
-  selectSecondary: '',
+  selectSecondary: { value: 'all', label: 'All Instructors' },
 };
 
 export default function enrollment(state = initialState, action) {
@@ -64,7 +64,7 @@ export default function enrollment(state = initialState, action) {
       ...state,
       sections,
       selectPrimary: `${str} ${sections[0].year}`,
-      selectSecondary: 'all',
+      selectSecondary: { value: 'all', label: 'All Instructors' },
     };
   }
   default:
