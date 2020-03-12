@@ -117,7 +117,7 @@ paths:
       tags:
       - "grades"
       summary: "Find grade information of specified courses"
-      description: "Returns aggregated grade information on sections identified by grades_id_2 and grades_id_2, but not limited to just two sections. Section IDs are delimited by '&'."
+      description: "Returns aggregated grade information on sections identified by grades_id_2 and grades_id_2, but not limited to just two sections. Section grade IDs are delimited by '&' and must be from the same course."
       operationId: ""
       produces:
       - "application/json"
