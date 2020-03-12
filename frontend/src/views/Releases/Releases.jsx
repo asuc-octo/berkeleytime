@@ -5,11 +5,27 @@ import {
   Col,
   ButtonToolbar
 } from 'react-bootstrap';
+import yaml from 'js-yaml';
 
 import Log from '../../components/Releases/Log';
 
 class Releases extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      releases: [],
+    };
+  }
+
+  componentDidMount() {
+    fetch("/releases.yaml")
+      .then(result => result.text())
+      .then(data => this.setState({ releases: yaml.load(data).releases }));
+  }
+
   render() {
+    const { releases } = this.state;
     return (
       <div className="releases">
         <Container>
@@ -29,7 +45,7 @@ class Releases extends Component {
           <Row>
             <Col lg={2}></Col>
             <Col lg={8}>
-              {Releases.logs.map(item => <Log {...item} />)}
+              {releases.map(item => <Log {...item} />)}
             </Col>
             <Col lg={2}></Col>
           </Row>
@@ -38,26 +54,5 @@ class Releases extends Component {
     );
   }
 }
-
-Releases.logs = [
-  {
-    date: 'September 5th, 2019',
-    whatsNew: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor", 
-               "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-               "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"],
-    fixes: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
-            "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."]
-  },
-  {
-    date: 'September 5th, 2019',
-    whatsNew: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
-               "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-               "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore"],
-    fixes: ["Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
-            "Incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."]
-  },
-];
 
 export default Releases;
