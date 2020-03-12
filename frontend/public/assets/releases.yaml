@@ -7,4 +7,4 @@ releases:
     - Adding courses to Grades and Enrollments will now generate unique URLs, which you can share with others to reproduce your search.
     - Support for our old legacy site is officially deprecated. You can still visit it at <a href="old.berkeleytime.com">old.berkeleytime.com</a>, but features may be broken.
     fixes:
-    - Cross listed courses now has better support. 
+    - Cross listed courses now has better support.
