@@ -92,7 +92,7 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Course_grades"
-  /grades/sections/{grades_id}:
+  /grades/sections/{grades_id}/:
     get:
       tags:
       - "grades"
@@ -112,7 +112,7 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Semester_grades"
-  /grades/sections/{grades_id_1}&{grades_id_2}:
+  /grades/sections/{grades_id_1}&{grades_id_2}/:
     get:
       tags:
       - "grades"
