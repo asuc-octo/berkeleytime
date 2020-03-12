@@ -19,7 +19,7 @@ class Releases extends Component {
   }
 
   componentDidMount() {
-    fetch("/releases.yaml")
+    fetch("/assets/releases.yaml")
       .then(result => result.text())
       .then(data => this.setState({ releases: yaml.load(data).releases }));
   }

@@ -6,7 +6,7 @@ function Api() {
 
     return (
         <div className="apidocs">
-            <SwaggerUI url="/swagger.yaml" docExpansion="list" />
+            <SwaggerUI url="/assets/swagger.yaml" docExpansion="list" />
         </div>
     )
 }
