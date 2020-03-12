@@ -3,7 +3,7 @@ releases:
     whatsNew:
     - We are rolling out an updated User Interface, which is available on both web and mobile!
     - Our backend API is open sourced! Head over to our <a href="/apidocs">API Documentation</a> to check it out.
-    - This new release page will be updated with notes of new featuers and updates.
+    - This new releases page will be updated with notes of new featuers and updates.
     - Adding courses to Grades and Enrollments will now generate unique URLs, which you can share with others to reproduce your search.
     - Support for our old legacy site is officially deprecated. You can still visit it at <a href="old.berkeleytime.com">old.berkeleytime.com</a>, but features may be broken.
     fixes:
