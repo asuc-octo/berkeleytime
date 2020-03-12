@@ -111,7 +111,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Semester_grades"
+            $ref: "#/definitions/Grade_data"
   /grades/sections/{grades_id_1}&{grades_id_2}/:
     get:
       tags:
@@ -136,7 +136,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Semester_grades"
+            $ref: "#/definitions/Grade_data"
   /enrollment/enrollment_json/:
     get:
       tags:
