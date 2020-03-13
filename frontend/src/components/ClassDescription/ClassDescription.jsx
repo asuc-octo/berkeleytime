@@ -3,13 +3,18 @@ import { withRouter, Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import { HashLoader } from 'react-spinners';
 
-import axios from 'axios';
-
-import ClassDetails from './ClassDetails';
-import ClassSections from './ClassSections';
+import people from '../../assets/svg/catalog/people.svg';
+import chart from '../../assets/svg/catalog/chart.svg';
+import book from '../../assets/svg/catalog/book.svg';
 
 import { updateCourses, getCourseData, makeRequestDescription } from '../../redux/actions';
 import { connect } from "react-redux";
+
+import {
+  applyIndicatorPercent,
+  applyIndicatorGrade,
+  formatUnits
+} from '../../utils/utils';
 
 function isEmpty(obj) {
   return Object.keys(obj).length === 0;
@@ -117,11 +122,20 @@ class ClassDescription extends Component {
             <h3>{course.abbreviation} {course.course_number}</h3>
             <h6>{course.title}</h6>
             <div className="stats">
-              <p className={ClassDescription.colorEnrollment(course.enrolled_percentage)}>
-                {ClassDescription.formatEnrollmentPercentage(course.enrolled_percentage)}
-              </p>
-              &nbsp;<p>•</p>&nbsp;
-              <p>{course.waitlisted} waitlisted</p>
+              <div className="statline">
+                <img src={people} />
+                Enrolled:
+                {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)}
+              </div>
+              <div className="statline">
+                <img src={chart} />
+                Average Grade:
+                {applyIndicatorGrade(course.letter_average, course.letter_average)}
+              </div>
+              <div className="statline">
+                <img src={book} />
+                {formatUnits(course.units)}
+              </div>
             </div>
             <p className="description">
               {course.description}
@@ -192,3 +206,14 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(withRouter(ClassDescription));
+
+/*
+
+            <div className="stats">
+              <p className={ClassDescription.colorEnrollment(course.enrolled_percentage)}>
+                {ClassDescription.formatEnrollmentPercentage(course.enrolled_percentage)}
+              </p>
+              &nbsp;<p>•</p>&nbsp;
+              <p>{course.waitlisted} waitlisted</p>
+            </div>
+*/
