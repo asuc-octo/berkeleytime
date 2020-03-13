@@ -20,8 +20,8 @@ function Mission() {
           <Col xs={6} s={6} md={6} lg={6}>
             <div>
               <h3>Our Mission</h3>
-              <p className="has-text-centered">Berkeleytime is an official organization under the 
-              <a href="http://asucocto.org/"> ASUC Office of the Chief Technology Officer. </a>
+              <p className="has-text-centered landing-mission-link">Berkeleytime is an official organization under the 
+              <a href="http://octo.asuc.org/"> ASUC Office of the Chief Technology Officer. </a>
               We are dedicated to designing free, accessible software for students.</p>
               <Button variant="bt-primary-inverted btn-bt-md" size="bt-lg" as={Link} to="/about">About our Team</Button>
             </div>
