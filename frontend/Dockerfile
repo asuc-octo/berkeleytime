@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:18.04 AS base
 MAINTAINER ASUC OCTO octo.berkeleytime@asuc.org
 
 RUN apt-get update && \
@@ -15,6 +15,8 @@ COPY package.json package.json
 RUN npm install
 
 COPY . /frontend
+
+FROM base
 RUN npm run build
 
 ENTRYPOINT ["npm", "start"]

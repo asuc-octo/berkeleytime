@@ -1,3 +1,5 @@
+from optparse import make_option
+
 """Playlist management command."""
 
 # This import is a hack since with Django 1.6 there's an odd circular import
@@ -11,7 +13,6 @@ from django.core.management.base import BaseCommand
 from mondaine.service.playlist import playlist_service
 from mondaine.service.enumeration.category import PlaylistCategory
 
-
 playlists = {
     "ls": PlaylistCategory.ls,
     "reading": PlaylistCategory.reading,
@@ -24,13 +25,37 @@ playlists = {
     "semester": PlaylistCategory.semester,
 }
 
+
 class Command(BaseCommand):
-    """python manage.py playlist."""
+    """python manage.py playlist [category] [--refresh] [--clean]"""
+
+    option_list = BaseCommand.option_list + (
+        make_option(
+            '--refresh',
+            action='store_true',
+            dest='refresh',
+            default=False,
+            help='Force fetch the current semester data from SIS'),
+        make_option(
+            '--clean',
+            action='store_true',
+            dest='clean',
+            default=False,
+            help='Clean up potential playlist orphans by deleting all playlists before recreating them.'),
+        )
 
     def handle(self, *args, **options):
         """Command handler."""
         if len(args) == 0:
+            if options['clean']:
+                playlist_service.clean()
+            if options['refresh']:
+                playlist_service.refresh_current_semester()
             playlist_service.update()
-
         else:
-            playlist_service.update(playlists[args[0]])
+            category = playlists[args[0]]
+            if options['clean']:
+                playlist_service.clean(category)
+            if options['refresh']:
+                playlist_service.refresh_current_semester(category)
+            playlist_service.update(category)
