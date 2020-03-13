@@ -66,6 +66,38 @@
     }
 
     .jumbo-img {
+      @keyframes bobble {
+        from {
+          transform: translateY(-20px);
+        } to {
+          transform: translateY(90px);
+        }
+      }
+
+      @keyframes everything-bobble {
+        from {
+          transform: translateY(-3px);
+        } to {
+          transform: translateY(3px);
+        }
+      }
+
+      #left-float {
+        animation: bobble 4s linear alternate infinite;  
+      }
+
+      #middle-float {
+        animation: bobble 5s linear alternate infinite;  
+      }
+
+      #right-float {
+        animation: bobble 6s linear alternate infinite;  
+      }
+
+      #everything {
+        animation: everything-bobble 2s linear alternate infinite;  
+      }
+
       max-width: 100%;
 
       @include desktop {
