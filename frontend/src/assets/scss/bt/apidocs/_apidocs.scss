@@ -6,4 +6,8 @@
   align-items: center;
 
   max-width: 800px;
+
+  .swagger-ui .info hgroup.main a {
+    display: none
+  }
 }

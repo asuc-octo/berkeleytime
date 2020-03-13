@@ -32,10 +32,11 @@ urlpatterns = patterns('',
 
     # Catalog
     url(r'^catalog/$', 'catalog.views.catalog'),
-    url(r'^catalog_json/$', 'data.views.catalog_context_json'),
-    url(r'^catalog_json/course/(?P<course_id>\d+)/$', 'catalog.views.course_json'),
-    url(r'^catalog_json/(?P<abbreviation>.*)/(?P<course_number>.*)/$', 'data.views.catalog_context_json'),
-    url(r'^catalog_json/course_box/$', 'catalog.views.course_box_json'),
+    url(r'^catalog/catalog_json/$', 'data.views.catalog_context_json'), # Thinking of keeping catalog_context_json for public api
+    url(r'^catalog/catalog_json/filters/$', 'data.views.catalog_filters_json'),
+    url(r'^catalog/catalog_json/course/(?P<course_id>\d+)/$', 'catalog.views.course_json'),
+    url(r'^catalog/catalog_json/filters/(?P<abbreviation>.*)/(?P<course_number>.*)/$', 'data.views.catalog_filters_json'),
+    url(r'^catalog/catalog_json/course_box/$', 'catalog.views.course_box_json'),
     # legacy for Berkeleytime V1
     url(r'^courses/$', 'catalog.views.catalog'),
     url(r'^catalog/filter/$', 'catalog.views.filter'),
@@ -47,13 +48,13 @@ urlpatterns = patterns('',
 
     # Grades
     url(r'^grades/$', 'data.views.grade_render'),
-    url(r'^grades_json/$', 'data.views.grade_context_json'),
+    url(r'^grades/grades_json/$', 'data.views.grade_context_json'),
     url(r'^grades/course_grades/(?P<course_id>\d+)/$', 'data.views.grade_section_json'),
     url(r'^grades/sections/(?P<grade_ids>.*)/$', 'data.views.grade_json'),
 
     # Enrollment
     url(r'^enrollment/$', 'data.views.enrollment_render'),
-    url(r'^enrollment_json/$', 'data.views.enrollment_context_json'),
+    url(r'^enrollment/enrollment_json/$', 'data.views.enrollment_context_json'),
     url(r'^enrollment/sections/(?P<course_id>\d+)/$', 'data.views.enrollment_section_render'),
     url(r'^enrollment/aggregate/(?P<course_id>\d+)/(?P<semester>[a-z]+)/(?P<year>\d+)/$', 'data.views.enrollment_aggregate_json'),
     url(r'^enrollment/data/(?P<section_id>\d+)/$', 'data.views.enrollment_json'),
