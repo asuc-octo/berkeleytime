@@ -22,22 +22,3 @@ function ClassCard(props) {
 }
 
 export default ClassCard;
-
-/*
-<div className="class-card content">
-  <div className="class-card-upper">
-    <div className="class-card course-abbreviation">
-      {course}
-    </div>
-    <div className="class-card class-info">
-      {`${semester} | ${faculty}`}
-    </div>
-  </div>
-  <div className="class-card-lower">
-    <div className="class-card class-title">
-      {title}
-    </div>
-    <div className="delete" onClick={() => removeCourse(id)}>Remove</div>
-  </div>
-</div>
-*/
