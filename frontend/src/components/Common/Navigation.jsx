@@ -10,7 +10,7 @@ class Navigation extends PureComponent {
 
     return (
       <Navbar fixed="top" expand="lg" bg="white" className="bt-navbar">
-        <Navbar.Brand as={Link} to="/">BerkeleyTime</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/">Berkeleytime</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto" />

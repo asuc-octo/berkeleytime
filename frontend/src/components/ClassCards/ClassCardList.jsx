@@ -18,7 +18,7 @@ class ClassCardList extends PureComponent {
                 course={item.course}
                 title={item.title}
                 fill={vars.colors[i]}
-                semester={item.semester === 'all' ? 'All Semester' : item.semester}
+                semester={item.semester === 'all' ? 'All Semesters' : item.semester}
                 faculty={item.instructor === 'all' ? 'All Instructors' : item.instructor}
                 removeCourse={removeCourse}
               />
