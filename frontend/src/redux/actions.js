@@ -5,6 +5,7 @@ import {
   UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, GRADE_REMOVE_COURSE, GRADE_RESET,
   UPDATE_GRADE_DATA, UPDATE_GRADE_SELECTED, UPDATE_ENROLL_CONTEXT, ENROLL_RESET,
   ENROLL_ADD_COURSE, ENROLL_REMOVE_COURSE, UPDATE_ENROLL_DATA, UPDATE_ENROLL_SELECTED,
+  OPEN_BANNER, CLOSE_BANNER,
 } from './actionTypes';
 
 // function to update the active playlist
@@ -109,7 +110,7 @@ export const updateEnrollContext = (data) => ({
 
 export const enrollReset = () => ({
   type: ENROLL_RESET
-})
+});
 
 // add displayed course to the enroll page
 export const enrollAddCourse = (formattedCourse) => ({
@@ -357,3 +358,11 @@ export function fetchEnrollSelected(updatedClass) {
       error => console.log('An error occurred.', error),
     );
 }
+
+export const openBanner = () => ({
+  type: OPEN_BANNER,
+});
+
+export const closeBanner = () => ({
+  type: CLOSE_BANNER,
+});

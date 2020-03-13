@@ -206,14 +206,3 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 )(withRouter(ClassDescription));
-
-/*
-
-            <div className="stats">
-              <p className={ClassDescription.colorEnrollment(course.enrolled_percentage)}>
-                {ClassDescription.formatEnrollmentPercentage(course.enrolled_percentage)}
-              </p>
-              &nbsp;<p>•</p>&nbsp;
-              <p>{course.waitlisted} waitlisted</p>
-            </div>
-*/
