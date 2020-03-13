@@ -90,8 +90,10 @@
       object-fit: scale-down;
     }
     
-    a {
-      color: $bt-blue;
+    .landing-mission-link {
+      a {
+        color: $bt-blue !important;
+      }
     }
   }
 
