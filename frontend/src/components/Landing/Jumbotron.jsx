@@ -8,7 +8,11 @@ import {
   Button,
 } from 'react-bootstrap';
 
+<<<<<<< HEAD
 import logo from '../../assets/img/images/landing/berkeleytime.gif';
+=======
+import { ReactComponent as Logo} from '../../assets/img/images/landing/landing_main.svg';
+>>>>>>> ce04602085186564e6af2680d4a25053ff24fa90
 
 function Jumbotron() {
   return (
@@ -27,13 +31,14 @@ function Jumbotron() {
           </Col>
           <Col xs={6} sm={6} md={7} lg={7}>
             <div className="jumbo-img-container">
-              <img className="jumbo-img" src={logo} alt="jumbotron" />
+              <div className="jumbo-img">
+                <Logo />
+              </div>
             </div>
           </Col>
         </Row>
       </Container>
     </div>
-
   );
 }
 
