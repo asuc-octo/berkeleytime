@@ -5,7 +5,7 @@
   .bt-footer-container {
     max-width: 1150px;
     margin: 0 auto;
-    padding: 40px 30px;
+    padding: 40px 40px 30px 30px;
 
     .bt-footer-column {
       display: flex;
@@ -26,11 +26,12 @@
       }
 
       p {
-        font-size: 20px;
+        font-size: 18px;
         color: $bt-base-text;
       }
 
       a {
+        font-size: 18px;
         color: $bt-light-text;
         transition: 200ms;
         width: max-content;

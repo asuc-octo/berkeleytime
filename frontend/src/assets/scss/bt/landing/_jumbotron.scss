@@ -15,8 +15,8 @@
 
     h1 {
       margin-bottom: 10px;
-      font-size: 64px;
-      font-weight: 500;
+      font-size: 36px;
+      font-weight: 850;
 
       @include touch{
         font-size: 32px;
@@ -25,8 +25,8 @@
 
     p {
       margin: 0 3px 10px; //3px better aligns with title
-      font-size: 24px;
-      color: $bt-light-text;
+      font-size: 20px;
+      color: $bt-grey-text;
 
       @include touch{
         font-size: 20px;
