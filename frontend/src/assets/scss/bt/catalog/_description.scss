@@ -32,7 +32,23 @@
 
     .stats {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
+
+      .statline {
+        display: flex;
+        flex-direction: row;
+
+        > img {
+          width: 14px;
+          margin-right: 8px;
+        }
+
+        color: $bt-light-text;
+
+        > p {
+          margin-left: 5px;
+        }
+      }
     }
 
     .description {
