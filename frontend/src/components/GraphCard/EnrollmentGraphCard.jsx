@@ -1,32 +1,20 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
-import axios from 'axios';
 
+import { connect } from 'react-redux';
 import vars from '../../variables/Variables';
 
 import EnrollmentGraph from '../Graphs/EnrollmentGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
-import EnrollmentInfoCard from '../../components/EnrollmentInfoCard/EnrollmentInfoCard.jsx';
+import EnrollmentInfoCard from '../EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 
 import { fetchEnrollData } from '../../redux/actions';
-import { connect } from "react-redux";
 
 class EnrollmentGraphCard extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      // enrollmentData: [],
-      // graphData: [],
       hoveredClass: false,
     };
 
@@ -39,15 +27,15 @@ class EnrollmentGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { classData } = this.props;
-    if (classData !== prevProps.classData) {
+    const { selectedCourses } = this.props;
+    if (selectedCourses !== prevProps.selectedCourses) {
       this.getEnrollmentData();
     }
   }
 
   getEnrollmentData() {
-    const { classData, fetchEnrollData } = this.props;
-    fetchEnrollData(classData);
+    const { selectedCourses, fetchEnrollData } = this.props;
+    fetchEnrollData(selectedCourses);
   }
 
   // buildGraphData(enrollmentData) {
@@ -78,68 +66,56 @@ class EnrollmentGraphCard extends Component {
 
   update(course, day) {
     const { enrollmentData } = this.props;
-    let selectedEnrollment= enrollmentData.filter(c => course.id == c.id)[0]
+    const selectedEnrollment = enrollmentData.filter(c => course.id == c.id)[0];
 
-    let valid = selectedEnrollment.data.filter(d => d.day === day).length
-    if(valid) {
-      let hoverTotal = {
+    const valid = selectedEnrollment.data.filter(d => d.day === day).length;
+    if (valid) {
+      const hoverTotal = {
         ...course,
         ...selectedEnrollment,
         hoverDay: day,
-      }
+      };
 
       this.setState({
         hoveredClass: hoverTotal,
-      })
+      });
     }
   }
 
   // Handler function for updating EnrollmentInfoCard on hover
   updateLineHover(lineData) {
-    const { classData } = this.props;
+    const { selectedCourses } = this.props;
     const selectedClassID = lineData.dataKey;
     const day = lineData.index;
-    let selectedCourse = classData.filter(course => selectedClassID == course.id)[0]
+    const selectedCourse = selectedCourses.filter(course => selectedClassID == course.id)[0];
     this.update(selectedCourse, day);
   }
 
   // Handler function for updating EnrollmentInfoCard on hover with single course
   updateGraphHover(data) {
-    let {isTooltipActive, activeLabel} = data;
-    const { classData } = this.props;
+    const { isTooltipActive, activeLabel } = data;
+    const { selectedCourses } = this.props;
 
-    if(isTooltipActive && classData.length == 1) {
-      let selectedCourse = classData[0];
-      let day = activeLabel;
+    if (isTooltipActive && selectedCourses.length == 1) {
+      const selectedCourse = selectedCourses[0];
+      const day = activeLabel;
       this.update(selectedCourse, day);
     }
   }
 
-  render () {
-    let { hoveredClass } = this.state;
-    let { graphData, enrollmentData } = this.props;
-    let telebears = enrollmentData.length ? enrollmentData[0]['telebears'] : {};
-
-    var colorIndex = 0;
-    for (var i = 0; i < enrollmentData.length; i++) {
-      if (enrollmentData[i].id === hoveredClass.id) {
-        colorIndex = enrollmentData[i].colorId;
-        break;
-      }
-    }
-    let hoveredColor = vars.colors[colorIndex];
+  render() {
+    const { hoveredClass } = this.state;
+    const { graphData, enrollmentData, selectedCourses } = this.props;
+    const telebears = enrollmentData.length ? enrollmentData[0].telebears : {};
 
     return (
-      <div className="card enrollment-graph-card">
+      <div className="enrollment-graph-card">
         <div className="enrollment-graph">
           {
-            enrollmentData.length === 0 ? (
-              <GraphEmpty pageType='enrollment'/>
+            enrollmentData.length === 0 || selectedCourses.length === 0 ? (
+              <GraphEmpty pageType="enrollment" />
             ) : (
               <div className="enrollment-content">
-                <Row>
-                  <div className="graph-title">{ this.props.title }</div>
-                </Row>
                 <Row>
                   <Col sm={8}>
                     <EnrollmentGraph
@@ -151,19 +127,19 @@ class EnrollmentGraphCard extends Component {
                   </Col>
 
                   <Col sm={4}>
-                    {hoveredClass &&
+                    {hoveredClass && (
                       <EnrollmentInfoCard
                         title={hoveredClass.title}
                         subtitle={hoveredClass.subtitle}
                         semester={hoveredClass.semester}
                         instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
                         selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
-                        todayPoint={hoveredClass.data[hoveredClass.data.length-1]}
+                        todayPoint={hoveredClass.data[hoveredClass.data.length - 1]}
                         telebears={telebears}
-                        hoveredColor={hoveredColor}
+                        color={vars.colors[hoveredClass.colorId]}
                         enrolledMax={hoveredClass.enrolled_max}
                       />
-                    }
+                    )}
                   </Col>
                 </Row>
               </div>
@@ -175,23 +151,22 @@ class EnrollmentGraphCard extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    dispatch,
-    fetchEnrollData: (classData) => dispatch(fetchEnrollData(classData)),
-  }
-}
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  fetchEnrollData: (selectedCourses) => dispatch(fetchEnrollData(selectedCourses)),
+});
 
 const mapStateToProps = state => {
-  const { enrollmentData, graphData } = state.enrollment;
+  const { enrollmentData, graphData, selectedCourses } = state.enrollment;
   return {
     enrollmentData,
-    graphData
+    graphData,
+    selectedCourses
   };
 };
 
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(EnrollmentGraphCard);

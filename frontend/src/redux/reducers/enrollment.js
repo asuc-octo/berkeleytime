@@ -1,6 +1,7 @@
-import { UPDATE_ENROLL_CONTEXT, ENROLL_ADD_COURSE, UPDATE_ENROLL_DATA,
-  UPDATE_ENROLL_SELECTED, ENROLL_REMOVE_COURSE } from '../actionTypes';
-import vars from '../../variables/Variables';
+import {
+  UPDATE_ENROLL_CONTEXT, ENROLL_ADD_COURSE, UPDATE_ENROLL_DATA,
+  UPDATE_ENROLL_SELECTED, ENROLL_REMOVE_COURSE, ENROLL_RESET
+} from '../actionTypes';
 
 const initialState = {
   context: {},
@@ -15,11 +16,12 @@ const initialState = {
 
 export default function enrollment(state = initialState, action) {
   switch (action.type) {
+  case ENROLL_RESET: {
+    return initialState;
+  }
   case UPDATE_ENROLL_CONTEXT: {
     const { data } = action.payload;
-    return Object.assign({}, state, {
-      context: data
-    });
+    return { ...state, context: data };
   }
   case ENROLL_ADD_COURSE: {
     const { formattedCourse } = action.payload;
@@ -31,7 +33,7 @@ export default function enrollment(state = initialState, action) {
   case ENROLL_REMOVE_COURSE: {
     const { id, color } = action.payload;
     let updatedCourses = state.selectedCourses.filter(classInfo => classInfo.id !== id);
-    let updatedColors = state.usedColorIds.filter(c => c.colorId !== color);
+    let updatedColors = state.usedColorIds.filter(c => c !== color);
     return Object.assign({}, state, {
       selectedCourses: updatedCourses,
       usedColorIds: updatedColors
@@ -39,37 +41,39 @@ export default function enrollment(state = initialState, action) {
   }
   case UPDATE_ENROLL_DATA: {
     const { enrollmentData } = action.payload;
-    let days = [...Array(200).keys()]
+    const days = [...Array(200).keys()];
     const graphData = days.map(day => {
-      let ret = {
+      const ret = {
         name: day,
       };
-      for (let enrollment of enrollmentData) {
-        let validTimes = enrollment.data.filter(time => time.day >= 0);
-        let enrollmentTimes = {};
-        for(let validTime of validTimes) {
+      for (const enrollment of enrollmentData) {
+        const validTimes = enrollment.data.filter(time => time.day >= 0);
+        const enrollmentTimes = {};
+        for (const validTime of validTimes) {
           enrollmentTimes[validTime.day] = validTime;
         }
 
-        if(day in enrollmentTimes) {
+        if (day in enrollmentTimes) {
           ret[enrollment.id] = (enrollmentTimes[day].enrolled_percent * 100).toFixed(1);
         }
       }
       return ret;
     });
-    return Object.assign({}, state, {
-      enrollmentData: enrollmentData,
-      graphData: graphData,
-    });
+    return {
+      ...state,
+      enrollmentData,
+      graphData,
+    };
   }
   case UPDATE_ENROLL_SELECTED: {
     const { sections } = action.payload;
-    let str = sections[0].semester.charAt(0).toUpperCase() + sections[0].semester.slice(1);
-    return Object.assign({}, state, {
+    const str = sections[0].semester.charAt(0).toUpperCase() + sections[0].semester.slice(1);
+    return {
+      ...state,
       sections,
       selectPrimary: `${str} ${sections[0].year}`,
-      selectSecondary: 'all',
-    });
+      selectSecondary: { value: 'all', label: 'All Instructors' },
+    };
   }
   default:
     return state;

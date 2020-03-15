@@ -228,32 +228,31 @@ class Catalog extends Component {
     const { defaultSearch } = this.state;
     const { activePlaylists, loading, selectedCourse } = this.props;
     return (
-      <div className="catalog">
-        <div className="catalog-container">
-          <Row>
-            <Col lg={4} xl={3} className="filter-column">
-              {
-                !loading ?
-                <Filter
-                  playlists={this.buildPlaylists()}
-                  defaultSearch={defaultSearch}
-                  searchHandler={this.searchHandler}
-                  sortHandler={this.sortHandler}
-                  modifyFilters={this.modifyFilters}
-                  resetFilters={this.resetFilters}
-                /> :
-                <div className="filter">
-                  <div className="filter-loading">
-                    <HashLoader
-                      color="#579EFF"
-                      size="50"
-                      sizeUnit="px"
-                    />
-                  </div>
+      <div className="catalog viewport-app">
+        <Row>
+          <Col xs={12} sm={12} md={4} lg={4} xl={3} className="filter-column">
+            {
+              !loading ?
+              <Filter
+                playlists={this.buildPlaylists()}
+                defaultSearch={defaultSearch}
+                searchHandler={this.searchHandler}
+                sortHandler={this.sortHandler}
+                modifyFilters={this.modifyFilters}
+                resetFilters={this.resetFilters}
+              /> :
+              <div className="filter">
+                <div className="filter-loading">
+                  <HashLoader
+                    color="#579EFF"
+                    size="50"
+                    sizeUnit="px"
+                  />
                 </div>
-              }
-            </Col>
-            <Col lg={3} xl={3} className="filter-results-column">
+              </div>
+            }
+          </Col>
+          <Col xs={12} sm={12} md={4} lg={4} xl={3} className="filter-results-column">
               <FilterResults
                 activePlaylists={activePlaylists ? activePlaylists : []}
                 selectCourse={this.selectCourse}
@@ -262,14 +261,13 @@ class Catalog extends Component {
                 query={this.state.search}
               />
             </Col>
-            <Col lg xl className="catalog-description-column">
-              <ClassDescription
-                course={selectedCourse}
+          <Col xs={12} sm={12} md={4} lg={4} xl={6} className="catalog-description-column">
+            <ClassDescription
+              course={selectedCourse}
                 selectCourse={this.selectCourse}
-              />
-            </Col>
-          </Row>
-        </div>
+            />
+          </Col>
+        </Row>
       </div>
     )
   }

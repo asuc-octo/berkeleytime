@@ -1,29 +1,23 @@
 import React from 'react';
+import { Col } from 'react-bootstrap';
 
-import vars from '../../variables/Variables';
-
-function ClassCard (props) {
-  const { id, course, title, fill, semester, faculty, removeCourse, colorId } = props;
+function ClassCard(props) {
+  const {
+    id, course, title, fill, semester, faculty, removeCourse, colorId
+  } = props;
 
   return (
-    <div className="class-card card" style={{backgroundColor: vars.colors[colorId]}}>
-      <div className="class-card content">
-        <div className="class-card-upper">
-          <div className="class-card course-abbreviation">
-            {course}
-          </div>
-          <div className="class-card class-info">
-            {`${semester} | ${faculty}`}
-          </div>
+    <Col lg={3} xl={3} className="class-card-column">
+      <div className="class-card">
+        <div className="class-card-header">
+          <div className="class-card-square" style={{ backgroundColor: fill }} />
+          <div className="class-card-course">{ course }</div>
+          <div className="class-card-remove" onClick={() => removeCourse(id, colorId)}>Remove</div>
         </div>
-        <div className="class-card-lower">
-          <div className="class-card class-title">
-            {title}
-          </div>
-          <div className="delete" onClick={() => removeCourse(id, colorId)}>Remove</div>
-        </div>
+        <div className="class-card-title">{ title }</div>
+        <div className="class-card-options">{ `${semester} • ${faculty}` }</div>
       </div>
-    </div>
+    </Col>
   );
 }
 

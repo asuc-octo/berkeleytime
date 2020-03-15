@@ -1,14 +1,16 @@
-.btn-bt-blue {
+
+// bootstrap button theming
+.btn-bt-primary {
   color: $bt-white;
-  background-color: $bt-blue;
-  border-color: $bt-blue;
+  background-color: $bt-primary;
+  border-color: $bt-primary;
   border-width: 2px;
 
   transition: 0.3s;
 
   &:hover {
     background-color: $bt-white;
-    color: $bt-blue;
+    color: $bt-primary;
   }
 
   a {
@@ -16,8 +18,8 @@
   }
 }
 
-.btn-bt-blue-inverted {
-  color: $bt-blue;
+.btn-bt-primary-inverted {
+  color: $bt-primary;
   background-color: $bt-white;
   border-color: $bt-border-grey;
   border-width: 2px;
@@ -26,8 +28,8 @@
 
   &:hover {
     color: $bt-white;
-    background-color: $bt-blue;
-    border-color: $bt-blue;
+    background-color: $bt-primary;
+    border-color: $bt-primary;
   }
 
   a {

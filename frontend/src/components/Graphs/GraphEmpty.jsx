@@ -1,13 +1,13 @@
 import React from 'react';
-import emptyImage from "../../assets/img/images/empty-graph.png";
+import emptyImage from '../../assets/img/images/empty-graph.png';
 
 class GraphEmpty extends React.PureComponent {
   render() {
-    const {pageType} = this.props;
+    const { pageType } = this.props;
     return (
       <div className="graph-empty">
         <div className="graph-empty-content">
-          <img className="graph-empty-image" src={emptyImage}/>
+          <img className="graph-empty-image" src={emptyImage} alt="bear art" />
           <h3 className="graph-empty-heading">
             You have not added any classes!
           </h3>
@@ -16,7 +16,7 @@ class GraphEmpty extends React.PureComponent {
           </h4>
         </div>
       </div>
-    )
+    );
   }
 }
 

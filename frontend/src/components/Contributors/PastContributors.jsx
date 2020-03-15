@@ -1,61 +1,85 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
+import { Row, Col } from 'react-bootstrap';
 
-import yuxin from '../../assets/img/images/about/yuxin.jpg';
-import noah from '../../assets/img/images/about/noah.jpg';
-import ashwin from '../../assets/img/images/about/ashwin.jpg';
+import web from '../../assets/svg/about/web.svg';
 
-function PastContributors({ founders, pastContributors }) {
-  return (
-    <section className="past-contributors">
-      <div className="past-contributors-content">
-        <h4>Individuals that made it happen</h4>
-        <div className="past-contributors-founders">
-          {founders.map((founder) => (
-            <div className="founder-card">
-              <div className="founder-desc">
-                <a href={founder.link}>{founder.name}</a>
-                <p>Co-Founder</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="past-contributors-others">
-          <div className="row">
-            {pastContributors.map((member) => (
-              <div className="column" style={{ height: 45, width: 170 }}>
-                {member.site ? <a href={member.site}>{member.name}</a>
-                  : <span>{member.name}</span>}
-              </div>
+class PastContributors extends PureComponent {
+  render() {
+    const { sections } = this.props;
+
+    return (
+      <div className="past-contributors">
+        <h5>Alumni</h5>
+        {sections.map(section => (
+          <div className="section">
+            <h6>{ section.name }</h6>
+            {section.rows.map(row => (
+              <Row>
+                {row.map(member => (
+                  <Col xs={6} lg={3} className="contributor-card">
+                    <div className="name">
+                      <p>{ member.name }</p>
+                      { member.site ? (
+                        <a href={member.site}><img src={web} /></a>
+                      ) : null}
+                    </div>
+                    <div className="role">{ member.role }</div>
+                  </Col>
+                ))}
+              </Row>
             ))}
           </div>
-        </div>
-        <div className="graphic-contributors">
-                Landing page artwork by <a href="http://victorialynwu.design">Victoria Wu</a>
-          <br />
-                Detective bear artwork by <a href="http://behance.net/lauralim125">Laura Lim</a>
-        </div>
+        ))}
       </div>
-    </section>
-  );
+    );
+  }
 }
 
 PastContributors.defaultProps = {
-  founders: [
+  sections: [
     {
-      name: 'Yuxin Zhu',
-      image: yuxin,
-      link: 'http://yuxinzhu.com/#/',
+      name: 'Class of 2019',
+      rows: [
+        [
+          {
+            name: 'Evelyn Li',
+            role: 'Backend Engineer',
+          },
+          {
+            name: 'Richard Liu',
+            role: 'Backend Engineer',
+          },
+          {
+            name: 'Mary Liu',
+            role: 'Backend Engineer',
+          },
+          {
+            name: 'Kate Xu',
+            role: 'Frontend Lead',
+            site: 'https://www.linkedin.com/in/kate-shijie-xu-666b57110',
+          }
+        ],
+      ]
     },
     {
-      name: 'Noah Gilmore',
-      image: noah,
-      link: 'https://noahgilmore.com',
-    },
-    {
-      name: 'Ashwin Iyengar',
-      image: ashwin,
-      link: 'https://www.lsgnt-cdt.ac.uk/students/year/2017',
-    },
+      name: 'Founders',
+      rows: [
+        [
+          {
+            name: 'Yuxin Zhu',
+            site: 'http://yuxinzhu.com/',
+          },
+          {
+            name: 'Noah Gilmore',
+            site: 'https://noahgilmore.com',
+          },
+          {
+            name: 'Ashwin Iyengar',
+            site: 'https://nms.kcl.ac.uk/ashwin.iyengar/',
+          }
+        ]
+      ]
+    }
   ],
   pastContributors: [
     {
@@ -147,7 +171,6 @@ PastContributors.defaultProps = {
       site: 'https://www.linkedin.com/in/vsrikaran/',
     },
   ],
-
 };
 
 export default PastContributors;

@@ -3,17 +3,16 @@ import axios from 'axios';
 import { withRouter } from 'react-router';
 import hash from 'object-hash';
 
-import ClassCardList from '../../components/ClassCards/ClassCardList.jsx';
-import GradesGraphCard from '../../components/GraphCard/GradesGraphCard.jsx';
-import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar.jsx';
+import { connect } from 'react-redux';
+import ClassCardList from '../../components/ClassCards/ClassCardList';
+import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
+import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
-import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse } from '../../redux/actions';
-import { connect } from "react-redux";
+import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset } from '../../redux/actions';
 
 class Grades extends Component {
   constructor(props) {
     super(props);
-
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
     this.fillFromUrl = this.fillFromUrl.bind(this);
@@ -22,17 +21,23 @@ class Grades extends Component {
     this.toUrlForm = this.toUrlForm.bind(this);
   }
 
+  componentWillMount() {
+    this.props.gradeReset();
+  }
+
   componentDidMount() {
     const { fetchGradeContext } = this.props;
-    this.fillFromUrl();
     fetchGradeContext();
+    this.fillFromUrl();
   }
 
   fillFromUrl() {
-    const { fetchGradeClass, history } = this.props;
+    const { fetchGradeClass, gradeReset, history } = this.props;
     try {
       let url = history.location.pathname;
-      if (url && url != '/grades/' && url != '/grades') {
+      if (url && (url == '/grades/' || url == '/grades')) {
+        gradeReset();
+      } else if (url) {
         let courseUrls = url.split('/')[2].split('&');
         for (const c of courseUrls) {
           let cUrl = c.split('-');
@@ -43,8 +48,8 @@ class Grades extends Component {
             instructor = cUrl.slice(4).join('-');
           }
           let sections = [];
-          let url = `http://localhost:8080/api/grades/course_grades/${cUrl[1]}/`;
-          axios.get(url)
+          let u = `/api/grades/course_grades/${cUrl[1]}/`;
+          axios.get(u)
             .then(
               res => {
                 try {
@@ -149,37 +154,37 @@ class Grades extends Component {
     let courses = context.courses;
 
     return (
-      <div className="grades">
-        <GradesSearchBar
-          classes={courses}
-          addCourse={this.addCourse}
-          fromCatalog={location.state ? location.state.course : false}
-          isFull={selectedCourses.length === 4}
-        />
+      <div className="viewport-app">
+        <div className="grades">
+          <GradesSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+            fromCatalog={location.state ? location.state.course : false}
+            isFull={selectedCourses.length === 4}
+          />
 
-        <ClassCardList
-          selectedCourses={selectedCourses}
-          removeCourse={this.removeCourse}
-        />
+          <ClassCardList
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
+          />
 
-        <GradesGraphCard
-          id="gradesGraph"
-          title="Grades"
-          classData={selectedCourses}
-        />
+          <GradesGraphCard
+            id="gradesGraph"
+            title="Grades"
+          />
+        </div>
       </div>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    dispatch,
-    fetchGradeContext: () => dispatch(fetchGradeContext()),
-    fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
-    gradeRemoveCourse: (id) => dispatch(gradeRemoveCourse(id))
-  }
-}
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  fetchGradeContext: () => dispatch(fetchGradeContext()),
+  fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
+  gradeRemoveCourse: (id, color) => dispatch(gradeRemoveCourse(id, color)),
+  gradeReset: () => dispatch(gradeReset())
+});
 
 const mapStateToProps = state => {
   const { context, selectedCourses, usedColorIds, sections } = state.grade;
