@@ -8,16 +8,15 @@ const initialState = {
 export default function classDescription(state = initialState, action) {
   switch (action.type) {
   case START_REQUEST_DESCRIPTION: {
-    return Object.assign({}, state, {
-      loading: true,
-    });
+    return { ...state, loading: true };
   }
   case UPDATE_COURSE_DATA: {
     const { data } = action.payload;
-    return Object.assign({}, state, {
+    return {
+      ...state,
       courseData: data,
       loading: false,
-    });
+    };
   }
   default:
     return state;

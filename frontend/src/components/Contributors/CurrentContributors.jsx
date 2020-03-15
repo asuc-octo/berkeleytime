@@ -1,172 +1,208 @@
-import React from 'react';
-import FontAwesome from 'react-fontawesome';
+import React, { PureComponent } from 'react';
+import { Row, Col } from 'react-bootstrap';
 
-import leon from '../../assets/img/images/about/leon.jpg';
-import will from '../../assets/img/images/about/will.jpg';
-import michael from '../../assets/img/images/about/michael.jpg';
-import jemma from '../../assets/img/images/about/jemma.jpg';
-import richard from '../../assets/img/images/about/richard.jpg';
-import anson from '../../assets/img/images/about/anson.jpg';
-import chris from '../../assets/img/images/about/chris.jpg';
-import eli from '../../assets/img/images/about/eli.jpg';
-import evelyn from '../../assets/img/images/about/evelyn.jpg';
-import grace from '../../assets/img/images/about/grace.jpg';
-import sangbin from '../../assets/img/images/about/sang.jpg';
-import oski from '../../assets/img/images/about/oski.jpg';
-import izzie from '../../assets/img/images/about/izzie.jpg';
-import mary from '../../assets/img/images/about/mary.jpg';
-import chloe from '../../assets/img/images/about/chloe.jpeg';
-import janet from '../../assets/img/images/about/janet.jpg';
-import annie from '../../assets/img/images/about/annie.png';
-import hannah from '../../assets/img/images/about/hannah.jpeg';
-import sean from '../../assets/img/images/about/sean.jpeg';
-import christina from '../../assets/img/images/about/christina.png';
+import web from '../../assets/svg/about/web.svg';
 
-// contributors.propTypes = {}
+import leon_1 from '../../assets/img/images/about/compressed/Leon_1.jpg';
+import leon_2 from '../../assets/img/images/about/compressed/Leon_2.jpg';
+import michael_1 from '../../assets/img/images/about/compressed/Michael_1.jpg';
+import michael_2 from '../../assets/img/images/about/compressed/Michael_2.jpg';
+import will_1 from '../../assets/img/images/about/compressed/Will_1.jpg';
+import will_2 from '../../assets/img/images/about/compressed/Will_2.jpg';
+import jemma_1 from '../../assets/img/images/about/compressed/Jemma_1.jpg';
+import jemma_2 from '../../assets/img/images/about/compressed/Jemma_2.jpg';
+import chris_1 from '../../assets/img/images/about/compressed/Chris_1.jpg';
+import chris_2 from '../../assets/img/images/about/compressed/Chris_2.jpg';
+import sangbin_1 from '../../assets/img/images/about/compressed/Sangbin_1.jpg';
+import sangbin_2 from '../../assets/img/images/about/compressed/Sangbin_2.jpg';
+import anson_1 from '../../assets/img/images/about/compressed/Anson_1.jpg';
+import anson_2 from '../../assets/img/images/about/compressed/Anson_2.jpg';
+import eli_1 from '../../assets/img/images/about/compressed/Eli_1.jpg';
+import grace_1 from '../../assets/img/images/about/compressed/Grace_1.jpg';
+import grace_2 from '../../assets/img/images/about/compressed/Grace_2.jpg';
+import hannah_1 from '../../assets/img/images/about/compressed/Hannah_1.jpg';
+import hannah_2 from '../../assets/img/images/about/compressed/Hannah_2.jpg';
+import chloe_1 from '../../assets/img/images/about/compressed/Chloe_1.jpg';
+import chloe_2 from '../../assets/img/images/about/compressed/Chloe_2.jpg';
+import christina_1 from '../../assets/img/images/about/compressed/Christina_1.jpg';
+import christina_2 from '../../assets/img/images/about/compressed/Christina_2.jpg';
+import sean_1 from '../../assets/img/images/about/compressed/Sean_1.jpg';
+import sean_2 from '../../assets/img/images/about/compressed/Sean_2.jpg';
+import izzie_1 from '../../assets/img/images/about/compressed/Izzie_1.jpg';
+import izzie_2 from '../../assets/img/images/about/compressed/Izzie_2.jpg';
+import janet_1 from '../../assets/img/images/about/compressed/Janet_1.jpg';
+import janet_2 from '../../assets/img/images/about/compressed/Janet_2.jpg';
+import annie_1 from '../../assets/img/images/about/compressed/Annie_1.jpg';
+import annie_2 from '../../assets/img/images/about/compressed/Annie_2.jpg';
 
-function CurrentContributors({ contributors }) {
-  return (
-    <section className="contributors">
-      <div className="contributors-container">
-        <div className="contributors-description">
-          <h4>Meet our Team</h4>
-          <p>We are a group of dedicated Berkeley students committed to making Berkeley a little smaller for everyone.</p>
-        </div>
 
-        <div className="contributor-profiles">
-          {contributors.map((member) => (
-            <div className="contributor-card">
-              <div className="contributor-pic-container">
-                <img className="contributor-pic" src={member.image} alt="" />
-              </div>
-              <div className="contributor-desc">
-                <a href={member.site}><h5 className="contributor-name">{member.name}</h5></a>
-                <p className="contributor-role">{member.role}</p>
-              </div>
-            </div>
-          ))}
-          <div className="filling-empty-space-childs" />
-        </div>
+class CurrentContributors extends PureComponent {
+  render() {
+    let { contributors } = this.props;
+
+    return (
+      <div className="current-contributors">
+        <h5>Current Team</h5>
+        {contributors.map(row => (
+          <Row>
+            {row.map(member => (
+              <Col xs={6} lg={3} className="contributor-card">
+                <div className="headshot">
+                  <img className="serious" src={member.img_1} alt={member.name} />
+                  <img src={member.silly ? member.img_2 : member.img_1} alt={member.name} />
+                </div>
+                <div className="name">
+                  <p>{ member.name }</p>
+                  { member.site ? (
+                    <a href={member.site}><img src={web} /></a>
+                  ) : null}
+                </div>
+                <div className="role">{ member.role }</div>
+              </Col>
+            ))}
+          </Row>
+        ))}
       </div>
-    </section>
-  );
+    );
+  }
 }
 
 CurrentContributors.defaultProps = {
   contributors: [
-    {
-      name: 'Leon Ming',
-      role: 'Chief Tech Officer',
-      image: leon,
-      site: 'https://leon-ming.com',
-    },
-    {
-      name: 'Michael Li',
-      role: 'Project Manager',
-      image: michael,
-      site: 'http://www.hantaowang.me',
-    },
-    {
-      name: 'Will Wang',
-      role: 'Advisor',
-      image: will,
-      site: 'http://www.hantaowang.me',
-    },
-    {
-      name: 'Jemma Kwak',
-      role: 'Design Lead',
-      image: jemma,
-      site: 'https://jemmakwak.github.io',
-    },
-    {
-      name: 'Richard Liu',
-      role: 'Advisor',
-      image: richard,
-      site: 'https://www.linkedin.com/in/richard4912',
-    },
-    {
-      name: 'Anson Tsai',
-      role: 'Backend Engineer',
-      image: anson,
-      site: 'https://www.linkedin.com/in/anson-tsai-83b9a312a/',
-    },
-    {
-      name: 'Christopher Liu',
-      role: 'Frontend Lead',
-      image: chris,
-      site: 'https://www.linkedin.com/in/christopher-d-liu/',
-    },
-    {
-      name: 'Eli Wu',
-      role: 'Backend Engineer',
-      image: eli,
-    },
-    {
-      name: 'Evelyn Li',
-      role: 'Backend Engineer',
-      image: evelyn,
-      site: 'https://www.linkedin.com/in/yunqil/',
-    },
-    {
-      name: 'Grace Luo',
-      role: 'Frontend Engineer',
-      image: grace,
-      site: 'http://graceluo.me',
-    },
-    {
-      name: 'SangBin Cho',
-      role: 'Backend Engineer',
-      image: sangbin,
-      site: 'https://www.linkedin.com/in/sang-cho/',
-    },
-    {
-      name: 'Sean Meng',
-      role: 'Backend Engineer',
-      image: sean,
-      site: 'https://www.linkedin.com/in/sean-meng-berkeley/',
-    },
-    {
-      name: 'Mary Liu',
-      role: 'Backend Engineer',
-      image: mary,
-      site: 'https://www.linkedin.com/in/mary-liu-805068148/',
-    },
-    {
-      name: 'Hannah Yan',
-      role: 'Backend Engineer',
-      image: hannah,
-      site: 'https://www.linkedin.com/in/yanhannah/',
-    },
-    {
-      name: 'Izzie Lau',
-      role: 'Backend Engineer',
-      image: izzie,
-      site: 'https://www.linkedin.com/in/xisabellalau/',
-    },
-    {
-      name: 'Chloe Liu',
-      role: 'Frontend Engineer',
-      image: chloe,
-      site: 'https://www.linkedin.com/in/ruochen99/',
-    },
-    {
-      name: 'Christina Shao',
-      role: 'Frontend Engineer',
-      image: christina,
-      site: 'https://www.linkedin.com/in/christina-shao/',
-    },
-    {
-      name: 'Janet Xu',
-      role: 'Designer',
-      image: janet,
-      site: 'https://www.linkedin.com/in/janet-xu/',
-    },
-    {
-      name: 'Annie Pan',
-      role: 'Designer',
-      image: annie,
-      site: 'https://www.linkedin.com/in/anniexpan/',
-    },
+    [
+      {
+        name: 'Leon Ming',
+        role: 'ASUC CTO',
+        site: 'https://leon-ming.com',
+        silly: true,
+        img_1: leon_1,
+        img_2: leon_2,
+      },
+      {
+        name: 'Michael Li',
+        role: 'Product Manager',
+        site: 'http://www.michaelli.me',
+        silly: true,
+        img_1: michael_1,
+        img_2: michael_2,
+      },
+      {
+        name: 'Will Wang',
+        role: 'Advisor',
+        site: 'http://www.hantaowang.me',
+        silly: true,
+        img_1: will_2,
+        img_2: will_1,
+      },
+      {
+        name: 'Jemma Kwak',
+        role: 'Design Lead',
+        site: 'https://jemmakwak.github.io',
+        silly: true,
+        img_1: jemma_1,
+        img_2: jemma_2,
+      },
+    ],
+    [
+      {
+        name: 'Christopher Liu',
+        role: 'Frontend Lead',
+        site: 'https://chrisdliu.github.io',
+        silly: true,
+        img_1: chris_1,
+        img_2: chris_2,
+      },
+      {
+        name: 'Sangbin Cho',
+        role: 'Backend Lead',
+        site: 'https://www.linkedin.com/in/sang-cho/',
+        silly: true,
+        img_1: sangbin_1,
+        img_2: sangbin_2,
+      },
+      {
+        name: 'Anson Tsai',
+        role: 'Backend Engineering',
+        site: 'https://www.linkedin.com/in/anson-tsai-83b9a312a/',
+        silly: true,
+        img_1: anson_1,
+        img_2: anson_2,
+      },
+      {
+        name: 'Eli Wu',
+        role: 'Backend Engineering',
+        silly: false,
+        img_1: eli_1,
+      },
+    ],
+    [
+      {
+        name: 'Grace Luo',
+        role: 'Frontend Engineering',
+        site: 'https://www.linkedin.com/in/g-luo',
+        silly: true,
+        img_1: grace_1,
+        img_2: grace_2,
+      },
+      {
+        name: 'Sean Meng',
+        role: 'Backend Engineering',
+        site: 'https://www.linkedin.com/in/sean-meng-berkeley',
+        silly: true,
+        img_1: sean_1,
+        img_2: sean_2,
+      },
+      {
+        name: 'Hannah Yan',
+        role: 'Backend Engineering',
+        site: 'https://www.linkedin.com/in/yanhannah',
+        silly: true,
+        img_1: hannah_1,
+        img_2: hannah_2,
+      },
+      {
+        name: 'Isabella Lau',
+        role: 'Backend Engineering',
+        site: 'https://www.linkedin.com/in/xisabellalau',
+        silly: true,
+        img_1: izzie_1,
+        img_2: izzie_2,
+      },
+    ],
+    [
+      {
+        name: 'Christina Shao',
+        role: 'Frontend Engineering',
+        site: 'https://www.linkedin.com/in/christina-shao',
+        silly: true,
+        img_1: christina_1,
+        img_2: christina_2,
+      },
+      {
+        name: 'Chloe Liu',
+        role: 'Frontend Engineering',
+        site: 'https://www.linkedin.com/in/ruochen99',
+        silly: true,
+        img_1: chloe_1,
+        img_2: chloe_2,
+      },
+      {
+        name: 'Janet Xu',
+        role: 'Designer',
+        site: 'https://janetxu.com',
+        silly: true,
+        img_1: janet_1,
+        img_2: janet_2,
+      },
+      {
+        name: 'Annie Pan',
+        role: 'Designer',
+        site: 'https://anniexpan.com',
+        silly: true,
+        img_1: annie_1,
+        img_2: annie_2,
+      },
+    ],
   ],
 };
 

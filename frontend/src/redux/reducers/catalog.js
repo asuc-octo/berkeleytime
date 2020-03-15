@@ -14,24 +14,27 @@ export default function catalog(state = initialState, action) {
   switch (action.type) {
   case MODIFY_LIST: {
     const { activePlaylists, defaultPlaylists } = action.payload;
-    return Object.assign({}, state, {
+    return {
+      ...state,
       activePlaylists,
       defaultPlaylists,
-    });
+    };
   }
   case RECEIVE_LIST: {
     const { data } = action.payload;
-    return Object.assign({}, state, {
+    return {
+      ...state,
       data,
       loading: false,
-    });
+    };
   }
   case MODIFY_SELECTED: {
     const { data, tab } = action.payload;
-    return Object.assign({}, state, {
+    return {
+      ...state,
       selectCourse: data,
       tab,
-    });
+    };
   }
   default:
     return state;

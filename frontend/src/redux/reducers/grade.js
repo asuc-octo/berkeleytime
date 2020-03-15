@@ -1,5 +1,7 @@
-import { UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, UPDATE_GRADE_DATA,
-  UPDATE_GRADE_SELECTED, GRADE_REMOVE_COURSE } from '../actionTypes';
+import {
+  UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, UPDATE_GRADE_DATA,
+  UPDATE_GRADE_SELECTED, GRADE_REMOVE_COURSE, GRADE_RESET
+} from '../actionTypes';
 import vars from '../../variables/Variables';
 
 const initialState = {
@@ -16,11 +18,12 @@ const initialState = {
 
 export default function grade(state = initialState, action) {
   switch (action.type) {
+  case GRADE_RESET: {
+    return initialState;
+  }
   case UPDATE_GRADE_CONTEXT: {
     const { data } = action.payload;
-    return Object.assign({}, state, {
-      context: data
-    });
+    return { ...state, context: data };
   }
   case GRADE_ADD_COURSE: {
     const { formattedCourse } = action.payload;
@@ -32,7 +35,7 @@ export default function grade(state = initialState, action) {
   case GRADE_REMOVE_COURSE: {
     const { id, color } = action.payload;
     let updatedCourses = state.selectedCourses.filter(classInfo => classInfo.id !== id)
-    let updatedColors = state.usedColorIds.filter(c => c.colorId !== color);
+    let updatedColors = state.usedColorIds.filter(c => c !== color);
     return Object.assign({}, state, {
       selectedCourses: updatedCourses,
       usedColorIds: updatedColors
@@ -41,26 +44,28 @@ export default function grade(state = initialState, action) {
   case UPDATE_GRADE_DATA: {
     const { gradesData } = action.payload;
     const graphData = vars.possibleGrades.map(letterGrade => {
-      let ret = {
+      const ret = {
         name: letterGrade,
       };
-      for (let grade of gradesData) {
+      for (const grade of gradesData) {
         ret[grade.id] = grade[letterGrade].numerator / grade.denominator * 100;
       }
-      return ret
+      return ret;
     });
-    return Object.assign({}, state, {
+    return {
+      ...state,
       gradesData,
-      graphData: graphData
-    });
+      graphData,
+    };
   }
   case UPDATE_GRADE_SELECTED: {
     const { data } = action.payload;
-    return Object.assign({}, state, {
+    return {
+      ...state,
       sections: data,
       selectPrimary: 'all',
       selectSecondary: 'all',
-    });
+    };
   }
   default:
     return state;

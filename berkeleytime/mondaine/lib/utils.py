@@ -5,7 +5,8 @@ from mondaine import config
 from unidecode import unidecode
 
 translations = {
-    "BUS ADM": "UGBA"
+    "BUS ADM": "UGBA",
+    "SSEASN": "S,SEASN"
 }
 
 

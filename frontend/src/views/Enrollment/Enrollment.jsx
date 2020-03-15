@@ -3,12 +3,12 @@ import axios from 'axios';
 import { withRouter } from 'react-router';
 import hash from 'object-hash';
 
+import { connect } from 'react-redux';
 import ClassCardList from '../../components/ClassCards/ClassCardList';
-import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard.jsx';
-import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar.jsx';
+import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard';
+import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar';
 
-import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse } from '../../redux/actions';
-import { connect } from "react-redux";
+import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse, enrollReset, updateEnrollData } from '../../redux/actions';
 
 class Enrollment extends Component {
   constructor(props) {
@@ -24,20 +24,23 @@ class Enrollment extends Component {
 
   componentDidMount() {
     const { fetchEnrollContext } = this.props;
-    this.fillFromUrl();
     fetchEnrollContext();
+    this.fillFromUrl();
   }
 
   fillFromUrl() {
-    const { fetchEnrollClass, history } = this.props;
+    const { fetchEnrollClass, enrollReset, history } = this.props;
     try {
       let url = history.location.pathname;
-      if (url && url != '/enrollment/' && url != '/enrollment') {
+      if (url && (url == '/enrollment/' || url == '/enrollment')) {
+        enrollReset();
+      } else if (url) {
         let courseUrls = url.split('/')[2].split('&');
         for (const c of courseUrls) {
           let cUrl = c.split('-');
           let semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + " " + cUrl[3];
-          axios.get(`http://localhost:8080/api/enrollment/sections/${cUrl[1]}/`)
+          let u = `/api/enrollment/sections/${cUrl[1]}/`;
+          axios.get(u)
             .then(
               res => {
                 try {
@@ -140,38 +143,38 @@ class Enrollment extends Component {
     let courses = context.courses;
 
     return (
-      <div className="enrollment">
-        <EnrollmentSearchBar
-          classes={courses}
-          addCourse={this.addCourse}
-          fromCatalog={location.state ? location.state.course : false}
-          isFull={selectedCourses.length === 4}
-        />
+      <div className="viewport-app">
+        <div className="enrollment">
+          <EnrollmentSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+            fromCatalog={location.state ? location.state.course : false}
+            isFull={selectedCourses.length === 4}
+          />
 
-        <ClassCardList
-          selectedCourses={selectedCourses}
-          removeCourse={this.removeCourse}
-        />
+          <ClassCardList
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
+          />
 
-        <EnrollmentGraphCard
-          id="gradesGraph"
-          title="Enrollment"
-          classData={selectedCourses}
-        />
-
+          <EnrollmentGraphCard
+            id="gradesGraph"
+            title="Enrollment"
+          />
+        </div>
       </div>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    dispatch,
-    fetchEnrollContext: () => dispatch(fetchEnrollContext()),
-    fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course)),
-    enrollRemoveCourse: (id) => dispatch(enrollRemoveCourse(id))
-  }
-}
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  fetchEnrollContext: () => dispatch(fetchEnrollContext()),
+  fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course)),
+  enrollRemoveCourse: (id, color) => dispatch(enrollRemoveCourse(id, color)),
+  enrollReset: () => dispatch(enrollReset()),
+  updateEnrollData: (enrollmentData) => dispatch(updateEnrollData(enrollmentData))
+});
 
 const mapStateToProps = state => {
   const { context, selectedCourses, usedColorIds } = state.enrollment;
