@@ -1,0 +1,41 @@
+.banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: $banner-height;
+
+  background-color: $bt-off-white;
+
+  .content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    > * {
+      margin: 0 10px;
+    }
+  }
+
+  > img {
+    position: fixed;
+    width: 18px;
+    height: 18px;
+
+    top: ($banner-height - 18px) / 2;
+    right: 20px;
+  }
+}
+
+.banner-closed {
+  display: none !important;
+}
+
+.bt-navbar-dropped {
+  top: $banner-height;
+}

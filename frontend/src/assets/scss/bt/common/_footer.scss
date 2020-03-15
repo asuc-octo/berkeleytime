@@ -5,7 +5,7 @@
   .bt-footer-container {
     max-width: 1150px;
     margin: 0 auto;
-    padding: 40px 30px;
+    padding: 40px 40px 30px 30px;
 
     @include mobile {
       max-width: 300px;
@@ -44,6 +44,7 @@
       }
 
       a {
+        font-size: 18px;
         color: $bt-light-text;
         transition: 200ms;
         width: max-content;

@@ -11,29 +11,31 @@
     > div {
       height: 100%;
 
-      @include mobile{
-        height: 20%;
+      @include mobile {
+        height: 25%;
       }
 
-      // columns
-      > div {
-        height: 100%;
+      @include tablet {
+        height: 25%;
       }
     }
+  }
+
+  .row {
+    margin: 0; // override bootstrap padding
 
     .filter-column {
       border-right: 1px solid $bt-border-grey;
-      padding-right: 0; // override bootstrap padding
-      position: relative;
+      padding: 0; // override bootstrap padding
     }
-
+  
     .filter-results-column {
       border-right: 1px solid $bt-border-grey;
       padding: 0; // override bootstrap padding
     }
-
+  
     .catalog-description-column {
-      padding-left: 0; // override bootstrap padding
+      padding: 0; // override bootstrap padding
     }
   }
 }
