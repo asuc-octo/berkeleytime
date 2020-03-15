@@ -19,7 +19,7 @@ class ForeignLanguageResource():
         html = urllib2.urlopen(url).read()
         bs = BeautifulSoup(html)
         tables = bs.find_all('table')
-        self.map_def_classes(tables[0])
+        return self.map_def_classes(tables[0])
 
     def get_table_classes(self, table):
         """Return a list of classes from a table."""

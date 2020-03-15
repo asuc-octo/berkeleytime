@@ -11,7 +11,6 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "berkeleytime.com"
 basePath: "/api"
 tags:
 - name: "catalog"
@@ -93,17 +92,17 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Course_grades"
-  /grades/sections/<grades_id_1>&<grades_id_2>/:
+  /grades/sections/{grades_id}/:
     get:
       tags:
       - "grades"
       summary: "Find grade information of specified courses"
-      description: "Returns aggregated grade information on sections identified by grades_id_1 and grades_id_2, but not limited to just two sections."
+      description: "Returns grade information on the section identified by grades_id."
       operationId: ""
       produces:
       - "application/json"
       parameters:
-      - name: "grades_id_#"
+      - name: "grades_id"
         in: "path"
         description: "The grades id of the course grades that needs to be fetched. Grade ids can be found using the grades/course_grades endpoint."
         required: true
@@ -112,7 +111,32 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Semester_grades"
+            $ref: "#/definitions/Grade_data"
+  /grades/sections/{grades_id_1}&{grades_id_2}/:
+    get:
+      tags:
+      - "grades"
+      summary: "Find grade information of specified courses"
+      description: "Returns aggregated grade information on sections identified by grades_id_2 and grades_id_2, but not limited to just two sections. Section grade IDs are delimited by '&' and must be from the same course."
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters:
+      - name: "grades_id_1"
+        in: "path"
+        description: "The grades id of the course grades that needs to be fetched. Grade ids can be found using the grades/course_grades endpoint."
+        required: true
+        type: "integer"
+      - name: "grades_id_2"
+        in: "path"
+        description: "The grades id of the course grades that needs to be fetched. Grade ids can be found using the grades/course_grades endpoint."
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Grade_data"
   /enrollment/enrollment_json/:
     get:
       tags:
@@ -128,7 +152,7 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/Course_json"
-  /enrollment/aggregate/<course_id>/<semester>/<year>/:
+  /enrollment/aggregate/{course_id}/{semester}/{year}/:
     get:
       tags:
       - "enrollment"

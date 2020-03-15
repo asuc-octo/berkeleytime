@@ -15,8 +15,8 @@
 
     h1 {
       margin-bottom: 10px;
-      font-size: 64px;
-      font-weight: 500;
+      font-size: 36px;
+      font-weight: 850;
 
       @include touch{
         font-size: 32px;
@@ -25,8 +25,8 @@
 
     p {
       margin: 0 3px 10px; //3px better aligns with title
-      font-size: 24px;
-      color: $bt-light-text;
+      font-size: 20px;
+      color: $bt-grey-text;
 
       @include touch{
         font-size: 20px;
@@ -66,6 +66,38 @@
     }
 
     .jumbo-img {
+      @keyframes bobble {
+        from {
+          transform: translateY(-20px);
+        } to {
+          transform: translateY(90px);
+        }
+      }
+
+      @keyframes everything-bobble {
+        from {
+          transform: translateY(-3px);
+        } to {
+          transform: translateY(3px);
+        }
+      }
+
+      #left-float {
+        animation: bobble 4s linear alternate infinite;  
+      }
+
+      #middle-float {
+        animation: bobble 5s linear alternate infinite;  
+      }
+
+      #right-float {
+        animation: bobble 6s linear alternate infinite;  
+      }
+
+      #everything {
+        animation: everything-bobble 2s linear alternate infinite;  
+      }
+
       max-width: 100%;
 
       @include desktop {

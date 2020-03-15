@@ -104,7 +104,7 @@
       flex-direction: column;
       align-items: center;
 
-      margin-bottom: 30px;
+      margin-bottom: 50px;
 
       > img {
         width: 80px;
@@ -136,11 +136,7 @@
         height: 400px;
       }
 
-      @include tablet {
-        height: 300px;
-      }
-
-      @include mobile {
+      @include touch {
         height: 250px;
       }
     }
@@ -151,11 +147,11 @@
       }
   
       :first-child {
-        padding-left: 20px;
+        padding-left: 40px;
       }
   
       :last-child {
-        padding-right: 20px;
+        padding-right: 40px;
       }
     }
 
@@ -165,11 +161,11 @@
       }
   
       :first-child {
-        padding-left: 10px;
+        padding-left: 20px;
       }
   
       :last-child {
-        padding-right: 10px;
+        padding-right: 20px;
       }
     }
 

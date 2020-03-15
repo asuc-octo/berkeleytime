@@ -1,16 +1,16 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
 
 class Navigation extends PureComponent {
-
-  
   render() {
     const links = Navigation.links;
+    const { banner } = this.props;
 
     return (
-      <Navbar fixed="top" expand="lg" bg="white" className="bt-navbar">
-        <Navbar.Brand as={Link} to="/">BerkeleyTime</Navbar.Brand>
+      <Navbar fixed="top" expand="lg" bg="white" className={`bt-navbar ${banner ? 'bt-navbar-dropped' : ''}`}>
+        <Navbar.Brand as={Link} to="/">Berkeleytime</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto" />
@@ -50,4 +50,11 @@ Navigation.links = [
   },
 ];
 
-export default Navigation;
+const mapStateToProps = state => {
+  const { banner } = state.banner;
+  return {
+    banner,
+  }
+}
+
+export default connect(mapStateToProps)(Navigation);

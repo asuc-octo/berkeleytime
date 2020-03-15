@@ -50,7 +50,6 @@ class ReadingResource(object):
             splitted = rc.split()
             abbreviation = " ".join(splitted[:-1])
             course_number = splitted[-1]
-            print(abbreviation, course_number)
             definition.add(abbreviation, allowed=[course_number])
 
         return definition
