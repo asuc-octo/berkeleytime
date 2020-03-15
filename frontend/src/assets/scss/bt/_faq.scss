@@ -32,3 +32,41 @@
         }
     }
 }
+
+.faq-question-card {
+  .faq-question {
+    cursor: pointer;
+    border-bottom: 1px solid #ECECEC;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    width: 105%;
+    font-weight: bold;
+    color: $bt-base-text;
+    .faq-question-text {
+      font-size: 16px;
+      line-height: 150%;
+      padding-left: 0px;
+
+      .faq-question-icon {
+        position: absolute;
+        right: 0px;
+        font-size: 25px;
+        color: $bt-blue;
+      }
+    }
+
+  }
+
+  .faq-answer {
+    .example-collapse-text {
+      font-size: 16px;
+      line-height: 180%;
+      margin-bottom: 30px;
+      color: $bt-light-text;
+      .link {
+        color: $bt-blue;
+      }
+    }
+  }
+
+}
