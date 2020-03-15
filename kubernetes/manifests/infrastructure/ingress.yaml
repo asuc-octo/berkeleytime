@@ -77,7 +77,7 @@ spec:
   - host: staging.berkeleytime.com
     http:
       paths:
-      - path: /api
+      - path: /api/
         backend:
           serviceName: berkeleytime-stage-svc
           servicePort: 5000

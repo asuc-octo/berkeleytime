@@ -5,6 +5,7 @@ import {
   UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, GRADE_REMOVE_COURSE, GRADE_RESET,
   UPDATE_GRADE_DATA, UPDATE_GRADE_SELECTED, UPDATE_ENROLL_CONTEXT, ENROLL_RESET,
   ENROLL_ADD_COURSE, ENROLL_REMOVE_COURSE, UPDATE_ENROLL_DATA, UPDATE_ENROLL_SELECTED,
+  OPEN_BANNER, CLOSE_BANNER,
 } from './actionTypes';
 
 // function to update the active playlist
@@ -110,7 +111,7 @@ export const updateEnrollContext = (data) => ({
 
 export const enrollReset = () => ({
   type: ENROLL_RESET
-})
+});
 
 // add displayed course to the enroll page
 export const enrollAddCourse = (formattedCourse) => ({
@@ -144,7 +145,7 @@ export const updatedEnrollSelected = (sections) => ({
 
 // get information for the class displayed in the class description component
 export function getCourseData(id) {
-  return dispatch => axios.get('/api/catalog_json/course_box/', {
+  return dispatch => axios.get('/api/catalog/catalog_json/course_box/', {
     params: {
       course_id: id,
     },
@@ -178,7 +179,7 @@ export function fetchLists(paths) {
   return dispatch => {
     let tmp = {};
     if (paths.length >= 4) {
-      return axios.get(`/api/catalog_json/${abbreviation}/${classNum}/`)
+      return axios.get(`/api/catalog/catalog_json/filters/${abbreviation}/${classNum}/`)
         .then(
           res => {
             tmp = res;
@@ -205,7 +206,7 @@ export function fetchLists(paths) {
             );
         });
     } else {
-      return axios.get('/api/catalog_json/')
+      return axios.get('/api/catalog/catalog_json/filters/')
         .then(
           res => {
             const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
@@ -219,7 +220,7 @@ export function fetchLists(paths) {
 }
 
 export function fetchGradeContext() {
-  return dispatch => axios.get('/api/grades_json/')
+  return dispatch => axios.get('/api/grades/grades_json/')
     .then(
       res => {
         dispatch(updateGradeContext(res.data));
@@ -229,7 +230,7 @@ export function fetchGradeContext() {
 }
 
 export function fetchGradeClass(course) {
-  return dispatch => axios.get(`/api/catalog_json/course/${course.courseID}/`)
+  return dispatch => axios.get(`/api/catalog/catalog_json/course/${course.courseID}/`)
     .then(
       res => {
         const courseData = res.data;
@@ -289,7 +290,7 @@ export function fetchGradeSelected(updatedClass) {
 }
 
 export function fetchEnrollContext() {
-  return dispatch => axios.get('/api/enrollment_json/')
+  return dispatch => axios.get('/api/enrollment/enrollment_json/')
     .then(
       res => {
         dispatch(updateEnrollContext(res.data));
@@ -299,7 +300,7 @@ export function fetchEnrollContext() {
 }
 
 export function fetchEnrollClass(course) {
-  return dispatch => axios.get(`/api/catalog_json/course/${course.courseID}/`)
+  return dispatch => axios.get(`/api/catalog/catalog_json/course/${course.courseID}/`)
     .then(
       res => {
         const courseData = res.data;
@@ -363,3 +364,11 @@ export function fetchEnrollSelected(updatedClass) {
       error => console.log('An error occurred.', error),
     );
 }
+
+export const openBanner = () => ({
+  type: OPEN_BANNER,
+});
+
+export const closeBanner = () => ({
+  type: CLOSE_BANNER,
+});
