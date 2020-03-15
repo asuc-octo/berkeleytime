@@ -23,7 +23,7 @@
   background-color: $bt-white;
   border-color: $bt-border-grey;
   border-width: 2px;
-  
+
   transition: 0.3s;
 
   &:hover {
@@ -43,7 +43,7 @@
   border-color: $bt-border-grey;
   border-width: 2px;
   padding: 10px 20px;
-  
+
   transition: 0.3s;
 
   &:hover {
@@ -57,11 +57,31 @@
   }
 }
 
+.btn-bt-blue-inverted {
+  color: $bt-indicator-blue;
+  background-color: $bt-white;
+  border-color: $bt-border-grey;
+  border-width: 2px;
+  padding: 10px 20px;
+
+  transition: 0.3s;
+
+  &:hover {
+    color: $bt-white;
+    background-color: $bt-indicator-blue;
+    border-color: $bt-indicator-blue;
+  }
+
+  a {
+    color: inherit;
+  }
+}
+
 .btn-bt-lg {
   font-size: 1.25rem;
   line-height: 1.5;
   border-radius: 0.3rem;
-  
+
   @include mobile {
     font-size: 1rem;
   }
