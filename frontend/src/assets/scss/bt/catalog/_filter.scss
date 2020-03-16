@@ -3,23 +3,36 @@
   padding: 30px;
   overflow: scroll;
 
+  @include mobile {
+    overflow: visible;
+  }
+
   display: flex;
   flex-direction: column;
 
   .filter-scroll {
     display: flex;
     flex-direction: row;
+    position: relative;
+    overflow-y: visible;
 
+    //React select dropdown
     .css-2b097c-container {
       width: 180px;
       position: absolute;
+
+      .css-yk16xz-control {
+        border: 0.5px solid $bt-light-border-grey;
+      }
     }
 
-    .filter-scroll-btn {
-      margin-right: 5px !important;
+    .filter-scroll-btn-container {
+      margin-left: 190px;
+      display: flex;
 
-      :first-child {
-        margin-left: 200px;
+      .filter-scroll-btn {
+        position: relative;
+        margin-right: 10px !important
       }
     }
   }

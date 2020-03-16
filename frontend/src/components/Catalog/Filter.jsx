@@ -365,26 +365,27 @@ export class FilterSidebar extends Component {
             value={sort}
             placeholder="Sort By"
           />
-        <button className="btn-bt-border filter-scroll-btn" 
-          onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}> 
-          Requirements </button>
-        <button className="btn-bt-border filter-scroll-btn" 
-          onClick={() => this.showModal("unitsRange", unitsRange, this.unitsRangeOptions)}> 
-          Units </button>
-        <button className="btn-bt-border filter-scroll-btn" 
-          onClick={() => this.showModal("department", department, this.departmentOptions)}> 
+        <div className="filter-scroll-btn-container">  
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}> 
+            Requirements </button>
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("unitsRange", unitsRange, this.unitsRangeOptions)}> 
+            Units </button>
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("department", department, this.departmentOptions)}> 
             Department </button>
-        <button className="btn-bt-border filter-scroll-btn" 
-          onClick={() => this.showModal("classLevels", classLevels, this.classLevelOptions)}> 
-          Class Level </button>
-        
-        <FilterModal 
-          options={this.state.modalOptions}
-          showFilters={this.state.showFilters}
-          hideModal={this.hideModal}
-          saveModal={this.saveModal}
-          storeSelection={this.storeSelection}
-        />
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("classLevels", classLevels, this.classLevelOptions)}> 
+            ClassLevel </button>
+        </div>
+          <FilterModal 
+            options={this.state.modalOptions}
+            showFilters={this.state.showFilters}
+            hideModal={this.hideModal}
+            saveModal={this.saveModal}
+            storeSelection={this.storeSelection}
+          />
         </div>
        </div>
     );
