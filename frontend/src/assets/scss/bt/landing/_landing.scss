@@ -1,209 +1,127 @@
 .landing {
-    overflow-x: hidden;
-    width: 100%;
+  overflow-x: hidden;
+  width: 100%;
+
+  .modal {
+    min-height: 600px;
+    height: 100vh;
     
-    @include touch {
-        height: 50vh;
+    .modal-icon {
+      font-size: 40px;
     }
-
-    .modal {
-        min-height: 600px;
-        height: 100vh;
-
-        .modal-icon {
-          font-size: 40px;
-        }
-
-        .modal-content {
-            padding: 30px;
-            text-align: center;
-            font-size: 25px;
-            border: 0px;
-            box-shadow: 0 0px 40px rgba(199, 199, 199, 0.5);
-
-            .button.inverted {
-                transition: 200ms;
-                background-color: #579EFF;
-                border-color: #579EFF;
-                border-width: 2px;
-                color: white;
-
-                &:hover {
-                    background-color: white;
-                    color: #579EFF;
-                }
-            }
-
-            .modal-cta {
-                font-weight: 500;
-            }
-
-            .modal-body {
-                padding: 20px 0;
-            }
-        }
-
-        .modal-background {
-          background-color: rgba(255, 255, 255, 0.82);
-        }
-    }
-
-    .landing-explore {
-        margin-bottom: 0 !important;
-        background-color: white;
-        min-height: 600px;
-        height: 100vh;
-
-        @include touch {
-            min-height: 900px;
-        }
+    
+    .modal-content {
+      padding: 30px;
+      text-align: center;
+      font-size: 25px;
+      border: 0px;
+      box-shadow: 0 0px 40px rgba(199, 199, 199, 0.5);
+      
+      .button.inverted {
+        transition: 200ms;
+        background-color: #579EFF;
+        border-color: #579EFF;
+        border-width: 2px;
+        color: white;
         
-        .landing-explore-icon {
-            width: 100%;
-            margin-bottom: 20px;
+        &:hover {
+          background-color: white;
+          color: #579EFF;
         }
+      }
+      
+      .modal-cta {
+        font-weight: 500;
+      }
+      
+      .modal-body {
+        padding: 20px 0;
+      }
+    }
+    
+    .modal-background {
+      background-color: rgba(255, 255, 255, 0.82);
+    }
+  }
+  
+  h3 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+      
+  p {
+    margin-bottom: 35px;
+    color: $bt-grey-text;
+  }
 
-        .bt-pink { color: $bt-pink }
-        .bt-green { color: $bt-green }
-        .bt-blue { color: $bt-blue }
+  .landing-explore { 
+    text-align: center;
+    padding-bottom: 20vh;
 
-        .landing-explore-desc {
-            padding-top: 30vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+    .landing-explore-content {
+      padding-left: 8px;
+      padding-right: 8px;
 
-            h3 {
-                font-size: 30px;
-                font-weight: bold;
-
-                margin-bottom: 20px;
-            }
-
-            p {
-                margin-bottom: 20px;
-                color: $bt-light-grey;
-            }
-
-            a {
-                color: $bt-blue;
-            }
-
-            @include touch{
-                padding-top: 20vh;
-            }
-        }
-
-        .landing-explore-img-wrapper {
-            padding-top: 10vh;
-            padding-left: 50px;
-            @include touch{
-                padding-left: 0px;
-            }
-        }
-
-        .landing-explore-img {
-            max-width: 100%;
-            max-height: 500px;
-            object-fit: scale-down;
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        }
+      .landing-explore-img {
+        max-height: 70px;
+        object-fit: scale-down;
+      }
     }
 
-    .landing-explore.landing-explore-reverse {
-        background: rgba(245, 245, 245, 1);
+    h3 {
+      padding-top: 30px;
+      font-size: 18px;
     }
 
-    .landing-sponsors {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-
-        background-color: white;
-        padding-top: 60px;
-        padding-bottom: 100px;
-
-        .landing-sponsors-desc {
-            align-self: center;
-            max-width: 450px;
-            text-align: center;
-
-            h3 {
-                font-size: 30px;
-                font-weight: bold;
-                margin-bottom: 20px;
-            }
-
-            p {
-                margin-bottom: 35px;
-                color: $bt-light-grey;
-            }
-        }
-
-        .landing-sponsors-img-wrapper {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-
-            .landing-sponsors-img {
-                padding-right: 20px;
-                max-width: 95%;
-                max-height: 100px;
-                object-fit: scale-down;
-            }
-        }
+    a {
+      font-size: 16px;
+      font-weight: bold;
+      color: $bt-blue;
     }
+  }
 
-    .landing-mission {
-        background-color: rgba(245, 245, 245, 1);            
+  .landing-mission {  
+    padding-bottom: 20vh;
 
-        .landing-mission-column {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-
-            max-width: 50vw;
-
-            padding-top: 50px;
-            padding-bottom: 50px;
-            padding-left: 125px;
-            padding-right: 125px;
-
-            @include touch{
-                padding-left: 0px;
-                padding-right: 0px;
-            }
-
-            h3 {
-                font-weight: bold;
-                margin-bottom: 30px;
-            }
-
-            p {
-                margin-bottom: 30px;
-            }
-        }
+    .landing-mission-img {
+      padding-right: 20px;
+      max-width: 95%;
+      object-fit: scale-down;
     }
-
-    .landing-artist-credit {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-
-        padding: 50px;
-
-        font-size: 20px;
-        background-color: white;
-
-        > * {
-            padding: 0 5px;
-        }
-
-        a {
-            transition: 200ms;
-        }
+    
+    .landing-mission-link {
+      a {
+        color: $bt-blue !important;
+      }
     }
+  }
 
+  .landing-sponsors {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    background-color: white;
+    padding-bottom: 25vh;
+    
+    .landing-sponsors-desc {
+      align-self: center;
+      max-width: 450px;
+      text-align: center;
+    }
+    
+    .landing-sponsors-img-wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      
+      .landing-sponsors-img {
+        padding-right: 20px;
+        max-width: 95%;
+        max-height: 100px;
+        object-fit: scale-down;
+      }
+    }
+  }
 }

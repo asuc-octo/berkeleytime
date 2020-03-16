@@ -7,7 +7,7 @@ import axios from 'axios';
 
 import Filter from '../../components/Catalog/Filter';
 import FilterResults from '../../components/Catalog/FilterResults';
-import FilterResultsModal from '../../components/Catalog/ClassDescriptionModal';
+import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 
 import { modify, fetchLists, modifySelected } from '../../redux/actions';
@@ -43,11 +43,23 @@ class Catalog extends Component {
       // data: {},                      // api response.data
       // selectedCourse: {},
       // loading: true,             // whether we have receieved playlist data from api
-      isModal: false,                //whether to open filter result as modal
-      showDescription: true,
+      isMobile: false,                //whether to open filter result as modal
+      showDescription: false,
     };
 
     this.updateScreensize = this.updateScreensize.bind(this);
+  }
+
+  /**
+   * Checks if user is on mobile view
+   */
+  componentDidMount() {
+    this.updateScreensize();
+    window.addEventListener("resize", this.updateScreensize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateScreensize);
   }
 
   /**
@@ -121,6 +133,7 @@ class Catalog extends Component {
 
   selectCourse = (course, tab=0) => {
     const { modifySelected } = this.props;
+    this.setState({showDescription: true}); //show modal if on mobile
     if (tab === 0) {
       this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/`);
     } else {
@@ -233,9 +246,14 @@ class Catalog extends Component {
     this.setState({ isMobile: window.innerWidth <= 576 });
   }
 
+  hideModal = () => {
+    this.setState({ showDescription: false})
+  };
+
   render() {
-    const { defaultSearch, isMobile } = this.state;
+    const { defaultSearch, isMobile, showDescription } = this.state;
     const { activePlaylists, loading, selectedCourse } = this.props;
+    console.log(selectedCourse)
     return (
       <div className="catalog viewport-app">
           <Row>
@@ -270,19 +288,21 @@ class Catalog extends Component {
                 query={this.state.search}
               />
             </Col>
-            !isMobile ? 
             <Col xs={0} sm={6} md={6} lg={4} xl={6} className="catalog-description-column">
-              <ClassDescription
-                course={selectedCourse}
-                selectCourse={this.selectCourse}
-              />
-            </Col> :
-            <ClassDescriptionModal 
-              course={selectedCourse}
-              selectCourse={this.selectCourse}
-              showFilters={this.state.showDescription}
-            />
-
+              {
+                !isMobile ? 
+                  <ClassDescription
+                  course={selectedCourse}
+                  selectCourse={this.selectCourse}
+                /> :
+                <ClassDescriptionModal 
+                  course={selectedCourse}
+                  selectCourse={this.selectCourse}
+                  show={showDescription}
+                  hideModal={this.hideModal}
+                />
+              }
+            </Col> 
           </Row>
       </div>
     )

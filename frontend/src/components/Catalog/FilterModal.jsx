@@ -14,11 +14,7 @@ function CheckboxGroup(props) {
             null}
 
             {item.options != null ?
-<<<<<<< HEAD
-            Object.values(item.options).map(option => (
-=======
-      s      Object.values(item.options).map(option => (
->>>>>>> ce04602085186564e6af2680d4a25053ff24fa90
+              Object.values(item.options).map(option => (
               <div className="custom-checkbox">
                 <Form.Check
                   type="checkbox"

@@ -78,9 +78,10 @@
 }
 
 .filter-modal {
+
   .filter-form {
     padding: 30px;
-    max-height: 60vh;
+    max-height: 50vh;
     overflow-y: scroll;
 
     .filter-form-label {
@@ -92,12 +93,12 @@
     }
   }
   .filter-button-bar {
+    height: 20vh;
     border-top: 2px solid $bt-off-white;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 13vh;
-
+    padding-top: 2vh;
+  
     button {
       margin-right:10px;
       width: 35vw;
