@@ -357,6 +357,7 @@ export class FilterSidebar extends Component {
           />
         </div>
       
+        <div className="filter-visible">
         <div className="filter-scroll">
           <Select
             options={this.sortOptions}
@@ -377,7 +378,7 @@ export class FilterSidebar extends Component {
             Department </button>
           <button className="btn-bt-border filter-scroll-btn" 
             onClick={() => this.showModal("classLevels", classLevels, this.classLevelOptions)}> 
-            ClassLevel </button>
+            Class&nbsp;Level </button>
         </div>
           <FilterModal 
             options={this.state.modalOptions}
@@ -386,6 +387,7 @@ export class FilterSidebar extends Component {
             saveModal={this.saveModal}
             storeSelection={this.storeSelection}
           />
+        </div>
         </div>
        </div>
     );
