@@ -7,17 +7,13 @@
     height: 100%;
     overflow-y: scroll;
 
+    @include mobile {
+      max-height: 80vh;
+    }
+
     // columns
     > div {
       height: 100%;
-
-      @include mobile {
-        height: 25%;
-      }
-
-      @include tablet {
-        height: 25%;
-      }
     }
   }
 
@@ -27,6 +23,10 @@
     .filter-column {
       border-right: 1px solid $bt-border-grey;
       padding: 0; // override bootstrap padding
+
+      @include mobile {
+        max-height: 180px;
+      }
     }
   
     .filter-results-column {
