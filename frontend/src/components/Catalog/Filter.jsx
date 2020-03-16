@@ -365,16 +365,16 @@ export class FilterSidebar extends Component {
             value={sort}
             placeholder="Sort By"
           />
-        <button className="btn-bt-border" 
+        <button className="btn-bt-border filter-scroll-btn" 
           onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}> 
           Requirements </button>
-        <button className="btn-bt-border" 
+        <button className="btn-bt-border filter-scroll-btn" 
           onClick={() => this.showModal("unitsRange", unitsRange, this.unitsRangeOptions)}> 
           Units </button>
-        <button className="btn-bt-border" 
+        <button className="btn-bt-border filter-scroll-btn" 
           onClick={() => this.showModal("department", department, this.departmentOptions)}> 
             Department </button>
-        <button className="btn-bt-border" 
+        <button className="btn-bt-border filter-scroll-btn" 
           onClick={() => this.showModal("classLevels", classLevels, this.classLevelOptions)}> 
           Class Level </button>
         
