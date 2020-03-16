@@ -84,21 +84,12 @@ class GradesGraphCard extends Component {
 
   render() {
     const { hoveredClass } = this.state;
-    const { graphData, gradesData } = this.props;
-
-    let colorIndex = 0;
-    for (let i = 0; i < gradesData.length; i++) {
-      if (gradesData[i].id === hoveredClass.id) {
-        colorIndex = i;
-        break;
-      }
-    }
-    const hoveredColor = vars.colors[colorIndex];
+    const { graphData, gradesData, selectedCourses } = this.props;
 
     return (
       <div className="grades-graph">
         {
-          gradesData.length === 0 ? (
+          gradesData.length === 0 || selectedCourses.length === 0 ? (
             <GraphEmpty pageType="grades" />
           ) : (
             <Container fluid>
@@ -127,7 +118,7 @@ class GradesGraphCard extends Component {
                         denominator={hoveredClass.denominator}
                         selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
                         selectedGrade={hoveredClass.hoverGrade}
-                        color={hoveredColor}
+                        color={vars.colors[hoveredClass.colorId]}
                       />
                     )}
                 </Col>

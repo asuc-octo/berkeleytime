@@ -79,12 +79,13 @@ export const gradeAddCourse = (formattedCourse) => ({
   },
 });
 
-export const gradeRemoveCourse = (id) => ({
+export const gradeRemoveCourse = (id, color) => ({
   type: GRADE_REMOVE_COURSE,
   payload: {
     id,
-  },
-});
+    color
+  }
+})
 
 export const updateGradeData = (gradesData) => ({
   type: UPDATE_GRADE_DATA,
@@ -120,12 +121,13 @@ export const enrollAddCourse = (formattedCourse) => ({
   },
 });
 
-export const enrollRemoveCourse = (id) => ({
+export const enrollRemoveCourse = (id, color) => ({
   type: ENROLL_REMOVE_COURSE,
   payload: {
     id,
-  },
-});
+    color
+  }
+})
 
 export const updateEnrollData = (enrollmentData) => ({
   type: UPDATE_ENROLL_DATA,
@@ -240,8 +242,9 @@ export function fetchGradeClass(course) {
           instructor: course.instructor,
           courseID: course.courseID,
           sections: course.sections,
-        };
-        dispatch(gradeAddCourse(formattedCourse));
+          colorId: course.colorId
+        }
+        dispatch(gradeAddCourse(formattedCourse))
       },
       error => console.log('An error occurred.', error),
     );
@@ -257,12 +260,13 @@ export function fetchGradeData(classData) {
   return dispatch => axios.all(promises)
     .then(
       data => {
-        const gradesData = data.map((res, i) => {
-          const gradesData = res.data;
-          gradesData.id = classData[i].id;
-          gradesData.instructor = classData[i].instructor == 'all' ? 'All Instructors' : classData[i].instructor;
-          gradesData.semester = classData[i].semester == 'all' ? 'All Semesters' : classData[i].semester;
-          return gradesData;
+        let gradesData = data.map((res, i) => {
+          let gradesData = res.data;
+          gradesData['id'] = classData[i].id;
+          gradesData['instructor'] = classData[i].instructor == 'all' ? 'All Instructors' : classData[i].instructor;
+          gradesData['semester'] = classData[i].semester == 'all' ? 'All Semesters' : classData[i].semester;
+          gradesData['colorId'] = classData[i].colorId;
+          return gradesData
         });
         dispatch(updateGradeData(gradesData));
       },
@@ -308,8 +312,9 @@ export function fetchEnrollClass(course) {
           instructor: course.instructor,
           courseID: course.courseID,
           sections: course.sections,
-        };
-        dispatch(enrollAddCourse(formattedCourse));
+          colorId: course.colorId
+        }
+        dispatch(enrollAddCourse(formattedCourse))
       },
       error => console.log('An error occurred.', error),
     );
@@ -333,15 +338,16 @@ export function fetchEnrollData(classData) {
   return dispatch => axios.all(promises)
     .then(
       data => {
-        const enrollmentData = data.map((res, i) => {
-          const enrollmentData = res.data;
-          enrollmentData.id = classData[i].id;
-          return enrollmentData;
-        });
-        dispatch(updateEnrollData(enrollmentData));
-      },
-      error => console.log('An error occurred.', error),
-    );
+        let enrollmentData = data.map((res, i) => {
+          let enrollmentData = res.data;
+          enrollmentData['id'] = classData[i].id;
+          enrollmentData['colorId'] = classData[i].colorId;
+          return enrollmentData
+      })
+      dispatch(updateEnrollData(enrollmentData));
+    },
+    error => console.log('An error occurred.', error),
+  )
 }
 
 export function fetchEnrollSelected(updatedClass) {
