@@ -10,16 +10,21 @@
   display: flex;
   flex-direction: column;
 
+  .filter-visible {
+    overflow-y: visible;
+  }
+
   .filter-scroll {
     display: flex;
     flex-direction: row;
     position: relative;
-    overflow-y: visible;
+    overflow-x: scroll;
 
     //React select dropdown
     .css-2b097c-container {
       width: 180px;
       position: absolute;
+      overflow-y: visible;
 
       .css-yk16xz-control {
         border: 0.5px solid $bt-light-border-grey;
@@ -32,7 +37,8 @@
 
       .filter-scroll-btn {
         position: relative;
-        margin-right: 10px !important
+        margin-right: 10px !important;
+        height: 38px;
       }
     }
   }
