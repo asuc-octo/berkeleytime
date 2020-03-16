@@ -37,7 +37,7 @@ export default function EnrollmentGraph({
               name={`${item.title} / ${item.section_name}`}
               type="monotone"
               dataKey={item.id}
-              stroke={vars.colors[i % vars.colors.length]}
+              stroke={vars.colors[item.colorId]}
               strokeWidth={3}
               dot={false}
               activeDot={{ onMouseOver: updateLineHover }}

@@ -27,7 +27,7 @@ export default function GradesGraph({
           <Bar
             name={`${item.title} / ${item.semester} / ${item.instructor}`}
             dataKey={item.id}
-            fill={vars.colors[i % vars.colors.length]}
+            fill={vars.colors[item.colorId]}
             onMouseEnter={updateBarHover}
           />
         ))}
