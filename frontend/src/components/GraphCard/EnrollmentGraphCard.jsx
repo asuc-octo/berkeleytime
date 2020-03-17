@@ -126,6 +126,7 @@ class EnrollmentGraphCard extends Component {
               <GraphEmpty pageType="enrollment" />
             ) : (
               <div className="enrollment-content">
+                {!isMobile ?
                 <Row>
                   <Col lg={8}>
                     <EnrollmentGraph
@@ -135,7 +136,6 @@ class EnrollmentGraphCard extends Component {
                       updateGraphHover={this.updateGraphHover}
                     />
                   </Col>
-                {!isMobile ?
                   <Col lg={4}>
                     {hoveredClass && (
                       <EnrollmentInfoCard
@@ -150,8 +150,15 @@ class EnrollmentGraphCard extends Component {
                         enrolledMax={hoveredClass.enrolled_max}
                       />
                     )}
-                  </Col> : null }
-                </Row>
+                  </Col> 
+                </Row> : 
+                <EnrollmentGraph
+                  graphData={graphData}
+                  enrollmentData={enrollmentData}
+                  updateLineHover={this.updateLineHover}
+                  updateGraphHover={this.updateGraphHover}
+                />
+                }
               </div>
             )
           }
