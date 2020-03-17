@@ -13,26 +13,48 @@ import {
 import vars from '../../variables/Variables';
 
 export default function GradesGraph({
-  graphData, gradesData, updateBarHover, updateGraphHover,
+  graphData, gradesData, updateBarHover, updateGraphHover, isMobile
 }) {
-  return (
-    <ResponsiveContainer width="100%" height={500}>
-      <BarChart data={graphData} onMouseMove={updateGraphHover}>
-        <XAxis dataKey="name" />
-        <YAxis type="number" unit="%" />
-        <Tooltip
-          formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-        />
-        {gradesData.map((item, i) => (
-          <Bar
-            name={`${item.title} / ${item.semester} / ${item.instructor}`}
-            dataKey={item.id}
-            fill={vars.colors[i % vars.colors.length]}
-            onMouseEnter={updateBarHover}
-          />
-        ))}
 
-      </BarChart>
-    </ResponsiveContainer>
+  return (
+      <div>
+      {!isMobile ?
+        <ResponsiveContainer width="100%" height={500}>
+        <BarChart data={graphData} onMouseMove={updateGraphHover}>
+          <XAxis dataKey="name" />
+          <YAxis type="number" unit="%" />
+          <Tooltip
+            formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+          />
+          {gradesData.map((item, i) => (
+            <Bar
+              name={`${item.title} / ${item.semester} / ${item.instructor}`}
+              dataKey={item.id}
+              fill={vars.colors[i % vars.colors.length]}
+              onMouseEnter={updateBarHover}
+            />
+          ))}
+        </BarChart> 
+        </ResponsiveContainer> :
+        <ResponsiveContainer width="100%" height={500}>
+        <BarChart data={graphData} onMouseMove={updateGraphHover} layout="vertical">
+          <XAxis type="number" unit="%" />
+          <YAxis dataKey="name" type="category" />
+          <Tooltip
+            formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+          />
+          {gradesData.map((item, i) => (
+            <Bar
+              name={`${item.title} / ${item.semester} / ${item.instructor}`}
+              dataKey={item.id}
+              fill={vars.colors[i % vars.colors.length]}
+              onMouseEnter={updateBarHover}
+            />
+          ))}
+        </BarChart>
+      </ResponsiveContainer>
+      }
+      </div>
+    
   );
 }

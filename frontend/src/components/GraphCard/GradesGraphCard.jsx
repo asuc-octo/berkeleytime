@@ -86,6 +86,8 @@ class GradesGraphCard extends Component {
     const { hoveredClass } = this.state;
     const { graphData, gradesData } = this.props;
 
+    console.log(graphData);
+    
     let colorIndex = 0;
     for (let i = 0; i < gradesData.length; i++) {
       if (gradesData[i].id === hoveredClass.id) {
@@ -103,15 +105,18 @@ class GradesGraphCard extends Component {
           ) : (
             <Container fluid>
               <Row>
+
                 <Col lg={8}>
                   <GradesGraph
                     graphData={graphData}
                     gradesData={gradesData}
                     updateBarHover={this.updateBarHover}
                     updateGraphHover={this.updateGraphHover}
+                    isMobile={this.props.isMobile}
                   />
                 </Col>
 
+                {!this.props.isMobile ?
                 <Col lg={4}>
                   {hoveredClass
                     && (
@@ -130,7 +135,7 @@ class GradesGraphCard extends Component {
                         color={hoveredColor}
                       />
                     )}
-                </Col>
+                </Col> : null}
               </Row>
             </Container>
           )

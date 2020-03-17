@@ -13,18 +13,28 @@ class Grades extends Component {
     this.state = {
       // context: {},
       selectedCourses: this.props.selectedCourses,
+      isMobile: false,
     };
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
+    this.updateScreensize = this.updateScreensize.bind(this);
+  }
+
+  componentDidMount() {
+    const { fetchGradeContext } = this.props;
+    fetchGradeContext();
+
+    //check is user is on mobile
+    this.updateScreensize();
+    window.addEventListener("resize", this.updateScreensize);
   }
 
   componentWillMount() {
     this.props.gradeReset();
   }
 
-  componentDidMount() {
-    const { fetchGradeContext } = this.props;
-    fetchGradeContext();
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateScreensize);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,12 +61,17 @@ class Grades extends Component {
     gradeRemoveCourse(id);
   }
 
+  updateScreensize() {
+    this.setState({ isMobile: window.innerWidth <= 576 });
+  }
+
   render() {
     const { context, location } = this.props;
-    const { selectedCourses } = this.state;
+    const { selectedCourses, isMobile } = this.state;
     const courses = context.courses;
     return (
       <div className="viewport-app">
+        { !isMobile ?
         <div className="grades">
           <GradesSearchBar
             classes={courses}
@@ -68,13 +83,36 @@ class Grades extends Component {
           <ClassCardList
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
+            isMobile={isMobile}
           />
 
           <GradesGraphCard
             id="gradesGraph"
             title="Grades"
+            isMobile={isMobile}
           />
-        </div>
+        </div> :
+          <div className="grades">
+          <ClassCardList
+            selectedCourses={selectedCourses}
+            removeCourse={this.removeCourse}
+          />
+
+          <GradesGraphCard
+            id="gradesGraph"
+            title="Grades"
+            isMobile={isMobile}
+          />
+
+          <GradesSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+            fromCatalog={location.state ? location.state.course : false}
+            isFull={selectedCourses.length === 4}
+            isMobile={isMobile}
+          />
+        </div> 
+        }  
       </div>
     );
   }

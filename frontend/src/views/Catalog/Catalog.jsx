@@ -267,6 +267,7 @@ class Catalog extends Component {
                     sortHandler={this.sortHandler}
                     modifyFilters={this.modifyFilters}
                     resetFilters={this.resetFilters}
+                    isMobile={isMobile}
                   /> :
                 <div className="filter">
                   <div className="filter-loading">
