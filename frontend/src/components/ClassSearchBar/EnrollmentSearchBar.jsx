@@ -217,7 +217,7 @@ class EnrollmentSearchBar extends Component {
   }
 
   render() {
-    const { classes, isFull, sections } = this.props;
+    const { classes, isFull, sections, isMobile } = this.props;
     const { selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
@@ -238,6 +238,8 @@ class EnrollmentSearchBar extends Component {
       secondaryOption = '';
     }
 
+    console.log(isMobile);
+
     return (
       <Container fluid className="enrollment-search-bar">
         <Row style={{marginBottom: 10}}>
@@ -251,10 +253,10 @@ class EnrollmentSearchBar extends Component {
                 filterOptions={this.filterOptions}
             />
           </Col>
-          <Col lg={3}>
+          <Col xs={6} sm={6} lg={3}>
             <Select
                 name="instrSems"
-                placeholder="Select an option..."
+                placeholder={!isMobile ? "Select an option...": "Select..."}
                 value={onePrimaryOption ? primaryOptions[1] : primaryOption}
                 options={primaryOptions}
                 onChange={this.handlePrimarySelect}
@@ -262,10 +264,10 @@ class EnrollmentSearchBar extends Component {
                 clearable={false}
             />
           </Col>
-          <Col lg={3}>
+          <Col xs={6} sm={6} lg={3}>
             <Select
                 name="section"
-                placeholder="Select an option..."
+                placeholder={!isMobile ? "Select an option...": "Select..."}
                 value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
                 options={secondaryOptions}
                 onChange={this.handleSecondarySelect}
