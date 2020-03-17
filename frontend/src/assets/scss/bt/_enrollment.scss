@@ -30,6 +30,7 @@
   border: none;
 
   .enrollment-graph {
+    overflow-x: scroll !important;
     padding: 15px 15px 0px 35px;
     min-height: 500px;
 

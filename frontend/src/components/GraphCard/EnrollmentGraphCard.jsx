@@ -127,7 +127,7 @@ class EnrollmentGraphCard extends Component {
             ) : (
               <div className="enrollment-content">
                 <Row>
-                  <Col sm={8}>
+                  <Col lg={8}>
                     <EnrollmentGraph
                       graphData={graphData}
                       enrollmentData={enrollmentData}
@@ -136,7 +136,7 @@ class EnrollmentGraphCard extends Component {
                     />
                   </Col>
                 {!isMobile ?
-                  <Col sm={4}>
+                  <Col lg={4}>
                     {hoveredClass && (
                       <EnrollmentInfoCard
                         title={hoveredClass.title}

@@ -374,7 +374,7 @@ class GradesSearchBar extends Component {
               searchable={false}
             />
           </Col>
-          <Col lg={1}>
+          <Col xs={12} sm={12}  lg={1}>
             <Button
               onClick={this.addSelected}
               disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}

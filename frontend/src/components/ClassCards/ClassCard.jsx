@@ -8,7 +8,6 @@ function ClassCard(props) {
   } = props;
   
   return (
-    <div>
     <Col lg={3} xl={3} className="class-card-column">
       <div className="class-card">
         <div className="class-card-header">
@@ -20,23 +19,6 @@ function ClassCard(props) {
         <div className="class-card-options">{ `${semester} • ${faculty}` }</div>
       </div>
     </Col>
-
-    {isMobile ?
-    <GradesInfoCard
-      course={hoveredClass.course}
-      subtitle={hoveredClass.subtitle}
-      semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
-      instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
-      courseLetter={hoveredClass.course_letter}
-      courseGPA={hoveredClass.course_gpa}
-      sectionLetter={hoveredClass.section_letter}
-      sectionGPA={hoveredClass.section_gpa}
-      denominator={hoveredClass.denominator}
-      electedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
-      selectedGrade={hoveredClass.hoverGrade}
-      color={hoveredColor}
-    /> : null}
-    </div>
   );
 }
 
