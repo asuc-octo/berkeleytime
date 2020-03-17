@@ -63,6 +63,10 @@
       padding-left: 8px;
       padding-right: 8px;
 
+      @include mobile {
+        margin-top: 20px;
+      }
+
       .landing-explore-img {
         max-height: 70px;
         object-fit: scale-down;
@@ -83,11 +87,20 @@
 
   .landing-mission {  
     padding-bottom: 20vh;
+    padding-left: 20px;
+    padding-right: 20px;
 
     .landing-mission-img {
       padding-right: 20px;
       max-width: 95%;
       object-fit: scale-down;
+
+      @include mobile {
+        padding-right: 0px;
+        padding-bottom: 20px;
+        display: block;
+        margin: 0 auto;
+      }
     }
     
     .landing-mission-link {
@@ -104,6 +117,8 @@
     
     background-color: white;
     padding-bottom: 25vh;
+    padding-left: 20px;
+    padding-right: 20px;
     
     .landing-sponsors-desc {
       align-self: center;

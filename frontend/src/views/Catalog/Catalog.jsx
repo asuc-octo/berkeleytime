@@ -243,7 +243,7 @@ class Catalog extends Component {
   }
 
   updateScreensize() {
-    this.setState({ isMobile: window.innerWidth <= 576 });
+    this.setState({ isMobile: window.innerWidth <= 768 });
   }
 
   hideModal = () => {
