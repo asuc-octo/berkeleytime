@@ -6,6 +6,10 @@
   flex-direction: column;
   overflow-y: scroll;
 
+  @include mobile {
+    padding: 10px;
+  }
+
   .grades-search-bar {
     margin-bottom: 10px;
 

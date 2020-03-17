@@ -6,6 +6,10 @@
   flex-direction: column;
   overflow-y: scroll;
 
+  @include mobile {
+    padding: 10px;
+  }
+
   .enrollment-search-bar {
     margin-bottom: 10px;
 
@@ -25,16 +29,26 @@
 }
 
 // EnrollmentGraph
-.card.enrollment-graph-card {
+.enrollment-graph-card {
   box-shadow: none;
   border: none;
 
   .enrollment-graph {
-    overflow-x: scroll !important;
     padding: 15px 15px 0px 35px;
     min-height: 500px;
 
+    @include mobile {
+      overflow-x: scroll;
+    }
+
     .enrollment-content {
+
+      @include mobile {
+        width: 500px;
+        //ResponsiveContainer already sets height to 500px
+        min-height: 510px; 
+      }
+
       .graph {
         height: 400px;
         padding: 15px 15px 15px 15px;
