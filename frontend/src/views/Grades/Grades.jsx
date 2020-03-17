@@ -71,14 +71,14 @@ class Grades extends Component {
     const courses = context.courses;
     return (
       <div className="viewport-app">
-        { !isMobile ?
         <div className="grades">
+          { !isMobile ?
           <GradesSearchBar
             classes={courses}
             addCourse={this.addCourse}
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
-          />
+          /> : null }
 
           <ClassCardList
             selectedCourses={selectedCourses}
@@ -91,28 +91,16 @@ class Grades extends Component {
             title="Grades"
             isMobile={isMobile}
           />
-        </div> :
-          <div className="grades">
-          <ClassCardList
-            selectedCourses={selectedCourses}
-            removeCourse={this.removeCourse}
-          />
 
-          <GradesGraphCard
-            id="gradesGraph"
-            title="Grades"
-            isMobile={isMobile}
-          />
-
+          { isMobile ?
           <GradesSearchBar
             classes={courses}
             addCourse={this.addCourse}
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
             isMobile={isMobile}
-          />
+          /> : null }
         </div> 
-        }  
       </div>
     );
   }

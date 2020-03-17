@@ -106,7 +106,7 @@ class EnrollmentGraphCard extends Component {
 
   render() {
     const { hoveredClass } = this.state;
-    const { graphData, enrollmentData } = this.props;
+    const { graphData, enrollmentData, isMobile } = this.props;
     const telebears = enrollmentData.length ? enrollmentData[0].telebears : {};
 
     let colorIndex = 0;
@@ -135,7 +135,7 @@ class EnrollmentGraphCard extends Component {
                       updateGraphHover={this.updateGraphHover}
                     />
                   </Col>
-
+                {!isMobile ?
                   <Col sm={4}>
                     {hoveredClass && (
                       <EnrollmentInfoCard
@@ -150,7 +150,7 @@ class EnrollmentGraphCard extends Component {
                         enrolledMax={hoveredClass.enrolled_max}
                       />
                     )}
-                  </Col>
+                  </Col> : null }
                 </Row>
               </div>
             )

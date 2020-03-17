@@ -13,19 +13,29 @@ class Enrollment extends Component {
     this.state = {
       // context: {},
       selectedCourses: this.props.selectedCourses,
+      isMobile: false,
     };
 
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
+    this.updateScreensize = this.updateScreensize.bind(this);
   }
 
   componentWillMount() {
     this.props.enrollReset();
   }
 
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateScreensize);
+  }
+
   componentDidMount() {
     const { fetchEnrollContext, context } = this.props;
     fetchEnrollContext();
+
+    //check is user is on mobile
+    this.updateScreensize();
+    window.addEventListener("resize", this.updateScreensize);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,21 +62,27 @@ class Enrollment extends Component {
     enrollRemoveCourse(id);
   }
 
+  updateScreensize() {
+    this.setState({ isMobile: window.innerWidth <= 576 });
+  }
+
   render() {
     const { context } = this.props;
-    const { selectedCourses } = this.state;
+    const { selectedCourses, isMobile } = this.state;
     const { location } = this.props;
     const courses = context.courses;
 
     return (
       <div className="viewport-app">
         <div className="enrollment">
+          { !isMobile ?
           <EnrollmentSearchBar
             classes={courses}
             addCourse={this.addCourse}
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
-          />
+            isMobile={isMobile}
+          /> : null }
 
           <ClassCardList
             selectedCourses={selectedCourses}
@@ -76,7 +92,17 @@ class Enrollment extends Component {
           <EnrollmentGraphCard
             id="gradesGraph"
             title="Enrollment"
+            isMobile={isMobile}
           />
+
+          { isMobile ?
+          <EnrollmentSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+            fromCatalog={location.state ? location.state.course : false}
+            isFull={selectedCourses.length === 4}
+            isMobile={isMobile}
+          /> : null }
         </div>
       </div>
     );
