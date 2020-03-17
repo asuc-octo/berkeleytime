@@ -47,7 +47,6 @@ export class FilterSidebar extends Component {
       department: this.departmentDefault,
       classLevels: this.classLevelDefault,
       semesters: this.semesterDefault,
-      isMobile: false,
       showFilters: false,
       modalType: "",
       modalOptions: [],
@@ -55,20 +54,6 @@ export class FilterSidebar extends Component {
     };
 
     this.searchInput = React.createRef(); // reference to <input>
-    this.updateScreensize = this.updateScreensize.bind(this);
-  }
-
-  componentDidMount() {
-    this.updateScreensize();
-    window.addEventListener("resize", this.updateScreensize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateScreensize);
-  }
-
-  updateScreensize() {
-    this.setState({ isMobile: window.innerWidth <= 576 });
   }
 
   resetFilters = () => {
@@ -255,10 +240,10 @@ export class FilterSidebar extends Component {
   }; 
 
   render() {
-    const { sort, unitsRange, requirements, department, classLevels, semesters, isMobile } = this.state;
+    const { sort, unitsRange, requirements, department, classLevels, semesters } = this.state;
 
     return (
-      !isMobile ? 
+      !this.props.isMobile ? 
       <div id="filter" className="filter">
         <div className="filter-name">
           <p>Filters</p>
