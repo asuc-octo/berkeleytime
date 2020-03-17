@@ -14,10 +14,10 @@ function Mission() {
     <div className="landing-mission">
       <Container>
         <Row>
-          <Col xs={6} s={6} md={6} lg={6}>
+          <Col xs={12} s={12} md={6} lg={6}>
             <img src={doe} className="landing-mission-img" />
           </Col>
-          <Col xs={6} s={6} md={6} lg={6}>
+          <Col xs={12} s={12} md={6} lg={6}>
             <div>
               <h3>Our Mission</h3>
               <p className="has-text-centered landing-mission-link">Berkeleytime is an official organization under the 

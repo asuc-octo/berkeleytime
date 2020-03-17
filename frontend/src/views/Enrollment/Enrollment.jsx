@@ -63,7 +63,7 @@ class Enrollment extends Component {
   }
 
   updateScreensize() {
-    this.setState({ isMobile: window.innerWidth <= 576 });
+    this.setState({ isMobile: window.innerWidth <= 768 });
   }
 
   render() {

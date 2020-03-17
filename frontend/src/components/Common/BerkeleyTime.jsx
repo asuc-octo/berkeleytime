@@ -22,7 +22,6 @@ const logPageView = () => {
 class BerkeleyTime extends PureComponent {
   constructor(props) {
     super(props);
-
     this.props.dispatch(openBanner());
   }
 
