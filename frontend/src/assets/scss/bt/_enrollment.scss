@@ -38,6 +38,8 @@
     min-height: 500px;
 
     @include mobile {
+      padding: 0px 10px 0px 10px;
+      text-align: center;
       overflow-x: scroll;
     }
 
