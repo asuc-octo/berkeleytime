@@ -3,7 +3,7 @@ import { Col } from 'react-bootstrap';
 
 function ClassCard(props) {
   const {
-    id, course, title, fill, semester, faculty, removeCourse,
+    id, course, title, fill, semester, faculty, removeCourse, colorId
   } = props;
 
   return (
@@ -12,7 +12,7 @@ function ClassCard(props) {
         <div className="class-card-header">
           <div className="class-card-square" style={{ backgroundColor: fill }} />
           <div className="class-card-course">{ course }</div>
-          <div className="class-card-remove" onClick={() => removeCourse(id)}>Remove</div>
+          <div className="class-card-remove" onClick={() => removeCourse(id, colorId)}>Remove</div>
         </div>
         <div className="class-card-title">{ title }</div>
         <div className="class-card-options">{ `${semester} • ${faculty}` }</div>
@@ -22,22 +22,3 @@ function ClassCard(props) {
 }
 
 export default ClassCard;
-
-/*
-<div className="class-card content">
-  <div className="class-card-upper">
-    <div className="class-card course-abbreviation">
-      {course}
-    </div>
-    <div className="class-card class-info">
-      {`${semester} | ${faculty}`}
-    </div>
-  </div>
-  <div className="class-card-lower">
-    <div className="class-card class-title">
-      {title}
-    </div>
-    <div className="delete" onClick={() => removeCourse(id)}>Remove</div>
-  </div>
-</div>
-*/

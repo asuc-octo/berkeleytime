@@ -22,7 +22,7 @@
   color: $bt-primary;
   background-color: $bt-white;
   border-color: $bt-border-grey;
-  border-width: 2px;
+  border-width: 1px;
   
   transition: 0.3s;
 
@@ -58,7 +58,7 @@
 }
 
 .btn-bt-lg {
-  font-size: 1.25rem;
+  font-size: 18px;
   line-height: 1.5;
   border-radius: 0.3rem;
   
@@ -69,7 +69,7 @@
 
 .btn-bt-md {
   font-weight: 500;
-  font-size: 20px;
+  font-size: 16px;
   line-height: 26px;
   border-radius: 0.3rem;
 }

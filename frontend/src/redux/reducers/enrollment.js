@@ -10,7 +10,8 @@ const initialState = {
   graphData: [],
   sections: [],
   selectPrimary: '',
-  selectSecondary: { value: 'all', label: 'All Instructors' },
+  selectSecondary: '',
+  usedColorIds: []
 };
 
 export default function enrollment(state = initialState, action) {
@@ -24,12 +25,19 @@ export default function enrollment(state = initialState, action) {
   }
   case ENROLL_ADD_COURSE: {
     const { formattedCourse } = action.payload;
-    return { ...state, selectedCourses: [...state.selectedCourses, formattedCourse] };
+    return Object.assign({}, state, {
+      selectedCourses: [...state.selectedCourses, formattedCourse],
+      usedColorIds: [...state.usedColorIds, formattedCourse.colorId]
+    });
   }
   case ENROLL_REMOVE_COURSE: {
-    const { id } = action.payload;
-    const updatedCourses = state.selectedCourses.filter(classInfo => classInfo.id !== id);
-    return { ...state, selectedCourses: updatedCourses };
+    const { id, color } = action.payload;
+    let updatedCourses = state.selectedCourses.filter(classInfo => classInfo.id !== id);
+    let updatedColors = state.usedColorIds.filter(c => c !== color);
+    return Object.assign({}, state, {
+      selectedCourses: updatedCourses,
+      usedColorIds: updatedColors
+    });
   }
   case UPDATE_ENROLL_DATA: {
     const { enrollmentData } = action.payload;
