@@ -6,46 +6,37 @@ import {
   Row,
   Col,
 } from 'react-bootstrap';
+import course from '../../assets/img/images/landing/course-vector.png';
+import grade from '../../assets/img/images/landing/grade-vector.png';
+import enrollment from '../../assets/img/images/landing/enrollment-vector.png';
 
-function Explore({ title, desc, action, link, symbol, img, reverse }) {
-  if (!reverse) {
-    return (
-      <div className="landing-explore landing-explore-reverse">
-        <Container>
-          <Row>
-            <Col lg={3}>
-              <div className="landing-explore-desc">
-                <FontAwesome className={`landing-explore-icon app-icon`} name={symbol} size="5x" />
-                <h3>{title}</h3>
-                <p>{desc}</p>
-                <Link to={link}>{action} <FontAwesome name="long-arrow-right" /></Link>
-              </div>
-            </Col>
-            <Col lg={9}>
-              <div className="landing-explore-img-wrapper">
-                <img className="landing-explore-img box-shadow" src={img} alt="explore" />
-              </div>
-            </Col>
-          </Row>
-        </Container>
-      </div>
-    );
-  }
+function Explore() {
   return (
     <div className="landing-explore">
       <Container>
         <Row>
-          <Col lg={9}>
-            <div className="landing-explore-img-wrapper">
-              <img className="landing-explore-img box-shadow" src={img} alt="explore" />
+          <Col xs={4} s={4} md={4} lg={4}>
+            <div className="landing-explore-content">
+              <img src={course} className="landing-explore-img" />
+              <h3>Course Catalog</h3>
+              <p className="has-text-centered">Search through 12,000+ courses at Berkeley. Apply filters for requirements and courses.</p>
+              <Link to="/catalog" className="">Browse Courses</Link>
             </div>
           </Col>
-          <Col lg={3}>
-            <div className="landing-explore-desc">
-              <FontAwesome className={`landing-explore-icon app-icon`} name={symbol} size="5x" />
-              <h3>{title}</h3>
-              <p>{desc}</p>
-              <Link to={link}>{action} <FontAwesome name="long-arrow-right" /></Link>
+          <Col xs={4} s={4} md={4} lg={4}>
+            <div className="landing-explore-content">
+              <img src={grade} className="landing-explore-img" />
+              <h3>Grade Distributions</h3>
+              <p className="has-text-centered">View and compare grade distributions for each course and semester to make the best choice.</p>
+              <Link to="/grades" className="">View Grades</Link>
+            </div>
+          </Col>
+          <Col xs={4} s={4} md={4} lg={4}>
+            <div className="landing-explore-content">
+              <img src={enrollment} className="landing-explore-img" />
+              <h3>Enrollment History</h3>
+              <p className="has-text-centered">See and compare accurate, real-time course enrollment trends and history.</p>
+              <Link to="/enrollment" className="">Track Enrollment</Link>
             </div>
           </Col>
         </Row>
