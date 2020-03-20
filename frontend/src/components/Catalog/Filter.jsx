@@ -231,7 +231,7 @@ export class FilterSidebar extends Component {
         this.setState({unitsRange: this.state.unitsRange.concat({value: val, label: option})})
         break;
       case "department":
-        this.setState({department: this.state.department.concat({value: val, label: option})})
+        this.setState({department: {value: val, label: option}})
         break;
       default:
         this.setState({classLevels: this.state.classLevels.concat({value: val, label: option})})
@@ -241,6 +241,8 @@ export class FilterSidebar extends Component {
 
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters } = this.state;
+
+    console.log(classLevels);
 
     return (
       !this.props.isMobile ? 
