@@ -37,6 +37,17 @@
   }
 }
 
+.btn-bt-banner {
+  color: $bt-primary;
+  background-color: $bt-off-white;
+  border-color: $bt-border-grey;
+  border-width: 1px;
+
+  &:hover {
+    color: $bt-primary;
+  }
+}
+
 .btn-bt-red-inverted {
   color: $bt-indicator-red;
   background-color: $bt-white;
