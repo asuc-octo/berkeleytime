@@ -14,15 +14,18 @@
     text-align: left;
 
     h1 {
-      margin-bottom: 10px;
+      margin-bottom: 15px;
       font-size: 36px;
-      font-weight: 850;
+      color: $bt-base-text;
+      text-shadow: 1px 0 $bt-base-text;
+      letter-spacing: 1px;
+      font-weight: bold;
 
       @include touch{
         font-size: 32px;
       }
     }
-
+    
     p {
       margin: 0 3px 10px; //3px better aligns with title
       font-size: 20px;

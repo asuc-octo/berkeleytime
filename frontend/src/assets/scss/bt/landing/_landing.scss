@@ -46,7 +46,6 @@
   
   h3 {
     font-size: 30px;
-    font-weight: bold;
     margin-bottom: 20px;
   }
       
@@ -72,13 +71,21 @@
     h3 {
       padding-top: 30px;
       font-size: 18px;
-      font-weight: bold;
+      color: $bt-base-text;
+      text-shadow: 1px 0 $bt-base-text;
+      letter-spacing: 1px;
     }
 
     a {
       font-size: 16px;
       font-weight: bold;
       color: $bt-blue;
+      text-shadow: 0.1px 0 $bt-blue;
+      letter-spacing: 1px;
+    }
+
+    p {
+      margin-bottom: 10px;
     }
   }
 
