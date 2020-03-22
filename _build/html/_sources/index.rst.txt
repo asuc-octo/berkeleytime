@@ -12,11 +12,3 @@ Welcome to berkeleytime's documentation!
    berkeleytime/berkeleytime
    build/build
    frontend/frontend
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
