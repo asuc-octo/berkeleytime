@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
-import Select from 'react-virtualized-select';
-import axios from 'axios';
+import Select from 'react-select-virtualized';
+import {
+  Container, Row, Col, Button,
+} from 'react-bootstrap';
 import hash from 'object-hash';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
 
-import 'react-select/dist/react-select.css'
-import 'react-virtualized-select/styles.css'
+// import 'react-virtualized-select/styles.css'
+import { fetchEnrollSelected } from '../../redux/actions';
+import { connect } from "react-redux";
 
 class EnrollmentSearchBar extends Component {
 
@@ -15,10 +18,8 @@ class EnrollmentSearchBar extends Component {
 
     this.state = {
       selectedClass: 0,
-      selectType: '',
-      selectPrimary: '',
-      selectSecondary: '',
-      sections: [],
+      selectPrimary: this.props.selectPrimary,
+      selectSecondary: this.props.selectSecondary,
     }
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
@@ -35,15 +36,26 @@ class EnrollmentSearchBar extends Component {
 
   componentDidMount() {
     let { fromCatalog } = this.props;
-    this.setState({
-      selectType: 'semester',
-    });
     if(fromCatalog) {
       this.handleClassSelect({value: fromCatalog.id, addSelected: true});
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectPrimary != this.state.selectPrimary) {
+      this.setState({
+        selectPrimary: nextProps.selectPrimary
+      });
+    }
+    if (nextProps.selectSecondary != this.state.selectSecondary) {
+      this.setState({
+        selectSecondary: nextProps.selectSecondary
+      });
+    }
+  }
+
   handleClassSelect(updatedClass) {
+    const { fetchEnrollSelected } = this.props;
     if(updatedClass === null) {
       this.reset();
       this.setState({
@@ -53,46 +65,23 @@ class EnrollmentSearchBar extends Component {
     }
 
     this.setState({
-      selectedClass: updatedClass.value,
-      selectPrimary: '',
-      selectSecondary: '',
-    })
-
-    let url = `/api/enrollment/sections/${updatedClass.value}/`
-
-    axios.get(url)
-    .then(res => {
-      // console.log(res);
-      if (!res || Object.keys(res).length === 0) {
-        return;
-      }
-      let sections = res.data
-      this.setState({
-        sections: sections,
-        selectPrimary: this.getSectionSemester(sections[0]),
-        selectSecondary: 'all',
-      });
-      if (updatedClass.addSelected) {
-        this.addSelected();
-        this.handleClassSelect({value: updatedClass.value, addSelected: false});
-      }
-    })
-    .catch((err) => {
-      console.log(err);
+      selectedClass: updatedClass.value
     });
+
+    fetchEnrollSelected(updatedClass);
   }
 
   handlePrimarySelect(primary) {
     this.setState({
       selectPrimary: primary ? primary.value : '',
-      selectSecondary: 'all',
-    })
+      selectSecondary: primary ? { value: 'all', label: 'All Instructors' } : '',
+    });
   }
 
   handleSecondarySelect(secondary) {
     this.setState({
-      selectSecondary: secondary ? secondary.value: '',
-    })
+      selectSecondary: secondary ? secondary : { value: 'all', label: 'All Instructors' },
+    });
   }
 
   buildCoursesOptions(courses) {
@@ -135,79 +124,55 @@ class EnrollmentSearchBar extends Component {
     return ret;
   }
 
-  buildSecondaryOptions(sections, selectPrimary) {
+  buildSecondaryOptions(semesters, selectPrimary) {
+    if (semesters.length === 0 || selectPrimary === undefined || selectPrimary === '') {
+      return [];
+    }
+
     const ret = [];
-    ret.push({ value: 'all', label: 'All Instructors' })
+    ret.push({ value: 'all', label: 'All Instructors' });
+    let sections = semesters.filter(semester => this.getSectionSemester(semester) === selectPrimary)[0].sections;
 
-    let options = sections.filter(semester => this.getSectionSemester(semester) === selectPrimary)
-        .map(semester => {
-        let sections = semester.sections.map(section => {
-          let selectedInstr = section.instructor;
-          if (selectedInstr === null) {
-            selectedInstr = "None";
-          }
-          let instructor = `${selectedInstr} / ${section.section_number}`;
-          return {
-            value: instructor,
-            label: instructor,
-            sectionNumber: instructor.split(' / ')[1].trim(),
-          };
-        });
-        return sections;
-      });
+    for (var section of sections) {
+      let instructor = `${section.instructor} / ${section.section_number}`;
 
-    for(let o of options) {
-      for (let s of o) {
-        ret.push(s);
-      }
+      ret.push( {
+        value: instructor,
+        label: instructor,
+        sectionNumber: instructor.split(' / ')[1],
+        sectionId: section.section_id
+      } );
     }
     return ret;
   }
 
   getFilteredSections() {
-    const { sections, selectPrimary, selectSecondary, sectionNumber } = this.state;
-    let ret = [];
-
-    let selectedPrimaries = sections.filter(section => {
+    const { selectPrimary, selectSecondary, sectionNumber } = this.state;
+    const { sections } = this.props;
+    let ret;
+    ret = sections.filter(section => {
       return this.getSectionSemester(section) === selectPrimary;
-    });
-    
-    for (let p of selectedPrimaries) {
-        for (let s of p.sections) {
-            ret.push(s);
-        }
-    }
-    
-    ret = ret.filter(section => {
-      if (selectSecondary === 'all') {
-        return true;
-      }
-      let selectedInstr = selectSecondary.split(' / ')[0].trim();
-      let selectedSec = selectSecondary.split(' / ')[1].trim();
-      if (selectedInstr === "None") {
-        return section.section_number === selectedSec;
-      }
-      return section.instructor === selectedInstr && section.section_number === selectedSec;
+    })[0].sections
+    .filter(section => {
+      return selectSecondary.value === 'all' ? true : section.instructor === selectSecondary.value.split(' / ')[0];
     })
     .filter(section => {
       return sectionNumber ? section.section_number === sectionNumber : true;
     })
     .map(s => s.section_id);
-
     return ret;
   }
 
   addSelected() {
-    const { selectedClass, selectType, selectPrimary, selectSecondary } = this.state;
+    const { selectedClass, selectPrimary, selectSecondary } = this.state;
     let playlist = {
       courseID: selectedClass,
-      instructor: selectType === 'instructor' ? selectPrimary : selectSecondary,
-      semester: selectType === 'semester' ? selectPrimary : selectSecondary,
-      sections: this.getFilteredSections(),
+      instructor: selectSecondary.value == 'all' ? 'all' : selectSecondary.value,
+      semester: selectPrimary,
+      sections: selectSecondary.sectionId ? [selectSecondary.sectionId] : this.getFilteredSections()
     }
 
     playlist.id = hash(playlist);
-
     this.props.addCourse(playlist)
     this.reset();
   }
@@ -245,64 +210,99 @@ class EnrollmentSearchBar extends Component {
   reset() {
     this.setState({
       selectPrimary: '',
-      selectSecondary: '',
+      selectSecondary: { value: 'all', label: 'All Instructors' },
     })
   }
 
   render() {
-    const { classes, isFull } = this.props;
-    const { sections, selectPrimary, selectSecondary, selectedClass } = this.state;
+    const { classes, isFull, sections } = this.props;
+    const { selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
     let onePrimaryOption = primaryOptions && primaryOptions.length == 2 && selectPrimary;
-    let oneSecondaryOption = secondaryOptions && secondaryOptions.length == 2 && selectSecondary;
+    let oneSecondaryOption = secondaryOptions && secondaryOptions.length == 2 && selectSecondary.value;
+
+    let primaryOption = { value: selectPrimary, label: selectPrimary };
+    let secondaryOption = selectSecondary;
+
+    if (selectSecondary === 'all') {
+      secondaryOption = { value: 'all', label: "All Instructors" };
+    }
+
+    if (selectPrimary === '') {
+      primaryOption = '';
+    }
+    if (selectSecondary === '') {
+      secondaryOption = '';
+    }
 
     return (
-      <div className="columns">
-        <div className="column is-one-third">
-          <Select
-              name="selectClass"
-              placeholder="Choose a class..."
-              value={selectedClass}
-              options={this.buildCoursesOptions(classes)}
-              onChange={this.handleClassSelect}
-              filterOptions={this.filterOptions}
-          />
-        </div>
-        <div className="column is-one-fifth">
-          <Select
-              name="instrSems"
-              placeholder="Select an option..."
-              value={onePrimaryOption ? primaryOptions[1] : selectPrimary}
-              options={primaryOptions}
-              onChange={this.handlePrimarySelect}
-              disabled={!selectedClass}
-              clearable={false}
-          />
-        </div>
-        <div className="column is-one-fifth">
-          <Select
-              name="section"
-              placeholder="Select an option..."
-              value={oneSecondaryOption ? secondaryOptions[1] : selectSecondary}
-              options={secondaryOptions}
-              onChange={this.handleSecondarySelect}
-              disabled={!selectedClass}
-              clearable={false}
-          />
-        </div>
-        <div className="column is-one-fifth">
-          <button
-            className="button is-success"
-            onClick={this.addSelected}
-            disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
-          >
-            Add
-          </button>
-        </div>
-      </div>
+      <Container fluid className="enrollment-search-bar">
+        <Row style={{marginBottom: 10}}>
+          <Col lg={5}>
+            <Select
+                name="selectClass"
+                placeholder="Choose a class..."
+                // value={selectedClass}
+                options={this.buildCoursesOptions(classes)}
+                onChange={this.handleClassSelect}
+                filterOptions={this.filterOptions}
+            />
+          </Col>
+          <Col lg={3}>
+            <Select
+                name="instrSems"
+                placeholder="Select an option..."
+                value={onePrimaryOption ? primaryOptions[1] : primaryOption}
+                options={primaryOptions}
+                onChange={this.handlePrimarySelect}
+                disabled={!selectedClass}
+                clearable={false}
+            />
+          </Col>
+          <Col lg={3}>
+            <Select
+                name="section"
+                placeholder="Select an option..."
+                value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
+                options={secondaryOptions}
+                onChange={this.handleSecondarySelect}
+                disabled={!selectedClass}
+                clearable={false}
+            />
+          </Col>
+          <Col lg={1}>
+            <Button
+              className="btn-bt-green"
+              onClick={this.addSelected}
+              disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
+            >
+              Add
+            </Button>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
 
-export default EnrollmentSearchBar;
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    fetchEnrollSelected: (updatedClass) => dispatch(fetchEnrollSelected(updatedClass))
+  }
+}
+
+const mapStateToProps = state => {
+  const { sections, selectPrimary, selectSecondary } = state.enrollment;
+  return {
+    sections,
+    selectPrimary,
+    selectSecondary,
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EnrollmentSearchBar);

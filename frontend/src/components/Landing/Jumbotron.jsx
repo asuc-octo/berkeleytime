@@ -1,30 +1,39 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import {
+  Container,
+  Row,
+  Col,
+  ButtonToolbar,
+  Button,
+} from 'react-bootstrap';
 
-import logo from '../../assets/img/images/landing/berkeleytime.png';
+import { ReactComponent as Logo} from '../../assets/img/images/landing/landing_main.svg';
 
 function Jumbotron() {
   return (
-    <div className="landing-jumbo">
-      <div className="level">
-        <div className="level-left has-text-centered">
-          <div className="landing-jumbo-heading">
-            <h1>BerkeleyTime</h1>
-            <p>Course discovery, simplified. Built by students for students.</p>
-            <div className="landing-jumbo-buttons">
-              <button type="button" className="button landing-jumbo-explore">
-                <Link to="/catalog">Explore courses now</Link>
-              </button>
-              <button type="button" className="button landing-jumbo-signup">
-                <Link to="/about">About Us</Link>
-              </button>
+    <div className="jumbo">
+      <Container>
+        <Row>
+          <Col xs={6} sm={6} md={5} lg={5}>
+            <div className="jumbo-heading">
+              <h1>Berkeley’s online course discovery platform.</h1>
+              <p>Berkeleytime is a platform built, maintained, and run by students, just like you. We work hard to simplify and improve the course discovery experience.</p>
+              <ButtonToolbar className="jumbo-heading-buttons">
+                <Button variant="bt-primary" size="bt-lg" as={Link} to="/catalog">Explore courses</Button>
+                <Button variant="bt-primary-inverted" size="bt-lg" as={Link} to="/about">About Us</Button>
+              </ButtonToolbar>
             </div>
-          </div>
-        </div>
-        <div className="has-text-centered landing-jumbo-img-container">
-          <img className="landing-jumbo-img" src={logo} alt="jumbotron" />
-        </div>
-      </div>
+          </Col>
+          <Col xs={6} sm={6} md={7} lg={7}>
+            <div className="jumbo-img-container">
+              <div className="jumbo-img">
+                <Logo />
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 }

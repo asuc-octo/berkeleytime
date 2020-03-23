@@ -1,26 +1,21 @@
+/* eslint-disable react/jsx-filename-extension */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {
-  BrowserRouter,
-  Route,
-  Switch,
-} from 'react-router-dom';
-import ScrollToTop from './components/Scroll/ScrollToTop.jsx';
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import ScrollToTop from './components/Scroll/ScrollToTop';
+import BerkeleyTime from './components/Common/BerkeleyTime';
+import store from './redux/store';
 
-import BT from './components/BerkeleyTime/BerkeleyTime';
-
-import './assets/css/bootstrap.min.css';
-import './assets/css/animate.min.css';
-import './assets/sass/berkeleytime.css';
-import './assets/css/demo.css';
-import './assets/css/pe-icon-7-stroke.css';
+import './assets/scss/berkeleytime.css';
 
 ReactDOM.render((
-  <BrowserRouter>
-    <ScrollToTop>
-      <Switch>
-        <Route path="/" name="Home" component={BT} />
-      </Switch>
-    </ScrollToTop>
-  </BrowserRouter>
+  <Provider store={store}>
+    <BrowserRouter>
+      <ScrollToTop>
+        <BerkeleyTime />
+      </ScrollToTop>
+    </BrowserRouter>
+  </Provider>
 ), document.getElementById('root'));

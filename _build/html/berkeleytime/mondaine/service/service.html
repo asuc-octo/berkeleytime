@@ -159,10 +159,22 @@ will exclude things like seminars.</p>
 <em class="property">class </em><code class="descclassname">mondaine.service.ls.</code><code class="descname">LSService</code><a class="headerlink" href="#mondaine.service.ls.LSService" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>LS Service.</p>
-<dl class="method">
+<dl class="staticmethod">
 <dt id="mondaine.service.ls.LSService.define">
-<code class="descname">define</code><span class="sig-paren">(</span><em>playlist_name</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.ls.LSService.define" title="Permalink to this definition">¶</a></dt>
-<dd><p>Take a enum.PlaylistName and return the corresponding definition.</p>
+<em class="property">static </em><code class="descname">define</code><span class="sig-paren">(</span><em>playlist_name</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.ls.LSService.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a enum.PlaylistName and return the corresponding definitions.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="mondaine.service.ls.LSService.delete_all">
+<em class="property">static </em><code class="descname">delete_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.ls.LSService.delete_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete all playlists in the LS category.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="mondaine.service.ls.LSService.refresh_current_semester">
+<em class="property">static </em><code class="descname">refresh_current_semester</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.ls.LSService.refresh_current_semester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refresh the most recent LS breadth courses from SIS.</p>
 </dd></dl>
 
 <dl class="method">
@@ -183,10 +195,32 @@ will exclude things like seminars.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Playlist Service.</p>
 <dl class="method">
+<dt id="mondaine.service.playlist.PlaylistService.clean">
+<code class="descname">clean</code><span class="sig-paren">(</span><em>category=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.playlist.PlaylistService.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean up potential playlist orphans by deleting all playlists before recreating them.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mondaine.service.playlist.PlaylistService.cleanable_services">
+<code class="descname">cleanable_services</code><em class="property"> = ['ls']</em><a class="headerlink" href="#mondaine.service.playlist.PlaylistService.cleanable_services" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="mondaine.service.playlist.PlaylistService.find">
 <code class="descname">find</code><span class="sig-paren">(</span><em>category</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.playlist.PlaylistService.find" title="Permalink to this definition">¶</a></dt>
 <dd><p>Find all playlists matching a enum.PlaylistCategory.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="mondaine.service.playlist.PlaylistService.refresh_current_semester">
+<code class="descname">refresh_current_semester</code><span class="sig-paren">(</span><em>category=None</em><span class="sig-paren">)</span><a class="headerlink" href="#mondaine.service.playlist.PlaylistService.refresh_current_semester" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetch the playlist courses from SIS for the current semester, overwriting the cache.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="mondaine.service.playlist.PlaylistService.refreshable_services">
+<code class="descname">refreshable_services</code><em class="property"> = ['ls']</em><a class="headerlink" href="#mondaine.service.playlist.PlaylistService.refreshable_services" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="mondaine.service.playlist.PlaylistService.services">
@@ -350,7 +384,6 @@ now.</p>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../scheduler/scheduler.html">Scheduler</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../berkeleytime.html#indices-and-tables">Indices and tables</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../build/build.html">Build</a></li>

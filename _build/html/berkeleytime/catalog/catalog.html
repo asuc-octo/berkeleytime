@@ -724,6 +724,13 @@ object the first time, the query is executed.</p>
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="catalog.models.Playlist.semester">
+<code class="descname">semester</code><a class="headerlink" href="#catalog.models.Playlist.semester" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="catalog.models.Playlist.user">
 <code class="descname">user</code><a class="headerlink" href="#catalog.models.Playlist.user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Accessor to the related object on the forward side of a many-to-one or
@@ -746,6 +753,13 @@ object the first time, the query is executed.</p>
 <dl class="attribute">
 <dt id="catalog.models.Playlist.user_id">
 <code class="descname">user_id</code><a class="headerlink" href="#catalog.models.Playlist.user_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalog.models.Playlist.year">
+<code class="descname">year</code><a class="headerlink" href="#catalog.models.Playlist.year" title="Permalink to this definition">¶</a></dt>
 <dd><p>A wrapper for a deferred-loading field. When the value is read from this
 object the first time, the query is executed.</p>
 </dd></dl>
@@ -1263,8 +1277,8 @@ object the first time, the query is executed.</p>
 <span id="views-py"></span><h2>views.py<a class="headerlink" href="#module-catalog.views" title="Permalink to this headline">¶</a></h2>
 <p>Catalog Views.</p>
 <dl class="function">
-<dt id="catalog.views.catalog_context">
-<code class="descclassname">catalog.views.</code><code class="descname">catalog_context</code><span class="sig-paren">(</span><em>request</em>, <em>abbreviation=''</em>, <em>course_number=''</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.views.catalog_context" title="Permalink to this definition">¶</a></dt>
+<dt id="catalog.views.catalog_filters">
+<code class="descclassname">catalog.views.</code><code class="descname">catalog_filters</code><span class="sig-paren">(</span><em>request</em>, <em>abbreviation=''</em>, <em>course_number=''</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.views.catalog_filters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the context for the catalog.</p>
 </dd></dl>
 
@@ -1277,7 +1291,8 @@ object the first time, the query is executed.</p>
 <dl class="function">
 <dt id="catalog.views.course_box">
 <code class="descclassname">catalog.views.</code><code class="descname">course_box</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.views.course_box" title="Permalink to this definition">¶</a></dt>
-<dd><p>Render the HTML for a course box.</p>
+<dd><p>DEPRECATED
+Render the HTML for a course box.</p>
 </dd></dl>
 
 <dl class="function">
@@ -1323,6 +1338,11 @@ object the first time, the query is executed.</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="catalog.views.semester_requirements">
+<code class="descclassname">catalog.views.</code><code class="descname">semester_requirements</code><span class="sig-paren">(</span><em>course</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.views.semester_requirements" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="catalog.views.semester_to_value">
 <code class="descclassname">catalog.views.</code><code class="descname">semester_to_value</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.views.semester_to_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assigns a number to a section dict (see grade_section_json for format). Is used to
@@ -1342,10 +1362,9 @@ sort a list of sections by time.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalog.views.which_requirements">
-<code class="descclassname">catalog.views.</code><code class="descname">which_requirements</code><span class="sig-paren">(</span><em>course</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.views.which_requirements" title="Permalink to this definition">¶</a></dt>
-<dd><p>Idk what this is.</p>
-</dd></dl>
+<dt id="catalog.views.universal_requirements">
+<code class="descclassname">catalog.views.</code><code class="descname">universal_requirements</code><span class="sig-paren">(</span><em>course</em><span class="sig-paren">)</span><a class="headerlink" href="#catalog.views.universal_requirements" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 </div>

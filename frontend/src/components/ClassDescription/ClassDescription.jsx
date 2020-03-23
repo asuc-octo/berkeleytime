@@ -1,151 +1,208 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import FontAwesome from 'react-fontawesome';
-import { BarLoader } from 'react-spinners';
+import { Table } from 'react-bootstrap';
+import { HashLoader } from 'react-spinners';
 
-import axios from 'axios';
+import people from '../../assets/svg/catalog/people.svg';
+import chart from '../../assets/svg/catalog/chart.svg';
+import book from '../../assets/svg/catalog/book.svg';
 
-import ClassDetails from './ClassDetails.jsx';
-import ClassSections from './ClassSections.jsx';
+import { updateCourses, getCourseData, makeRequestDescription } from '../../redux/actions';
+import { connect } from "react-redux";
 
-// import grade_icon from '../../assets/img/images/catalog/grade.svg';
-// import enrollment_icon from '../../assets/img/images/catalog/enrollment.svg';
+import {
+  applyIndicatorPercent,
+  applyIndicatorGrade,
+  formatUnits
+} from '../../utils/utils';
+
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
 
 class ClassDescription extends Component {
+  static formatEnrollmentPercentage(percentage) {
+    return `${Math.floor(percentage * 100, 100)}% enrolled`;
+  }
+
+  static colorEnrollment(percentage) {
+    const pct = Math.floor(percentage * 100, 100);
+    if (pct < 33) {
+      return 'enrollment-first-third';
+    } else if (pct < 67) {
+      return 'enrollment-second-third';
+    } else {
+      return 'enrollment-last-third';
+    }
+  }
+
+  static formatDate(date) {
+    var hours = date.getUTCHours();
+    var minutes = date.getUTCMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
+
   constructor(props) {
     super(props);
-    let { tab } = props;
-    this.state = {
-      tab: tab,
-      courseData: {},
-      loading: true,
-    }
-    this.details = this.details.bind(this)
-    this.sections = this.sections.bind(this)
+
   }
 
-  details() {
-    let course = this.state.courseData.course;
-    this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/`);
-    this.setState({ tab: 0 })
+  details = () => {
+    this.props.selectCourse(this.props.course, 0);
   }
 
-  sections() {
-    let course = this.state.courseData.course;
-    this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/sections/`);
-    this.setState({ tab: 1 })
+  sections = () => {
+    this.props.selectCourse(this.props.course, 1);
   }
 
   componentDidMount() {
-    this.updateCourse(this.props.course);
+    this.updateCourseData();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if(this.state.loading) {
-      return
-    }
-
-    if(Object.keys(prevState.courseData).length == 0) {
-      this.updateCourse(this.props.course);
-    }
-    else if(this.props.course.id !== this.state.courseData.course.id) {
-      this.updateCourse(this.props.course);
-    }
-  }
-
-  updateCourse(course) {
-    let courseID = course.id;
-    this.setState({loading: true});
-
-    axios.get(`/api/catalog_json/course_box/`, {
-      params: {
-        course_id: courseID,
+  /**
+   * Updates course data if course changes
+   */
+  componentDidUpdate(prevProps) {
+    if (isEmpty(prevProps.course)) {
+      if (!isEmpty(this.props.course)) {
+        this.updateCourseData();
       }
-    })
-    .then(res => {
-      // console.log(res);
-      this.setState({
-        courseData: res.data,
-        loading: false,
-      })
-    })
-    .catch((err) => {
-      console.log(err)
-    });
+    } else if (!isEmpty(this.props.course) && prevProps.course.id !== this.props.course.id) {
+      this.updateCourseData();
+    } else if (isEmpty(this.props.course)) {
+      this.updateCourseData();
+    }
+  }
+
+  updateCourseData() {
+    const { course, getCourseData, makeRequestDescription, updateCourses } = this.props;
+    if (isEmpty(course)) {
+      updateCourses({});
+      return;
+    }
+
+    makeRequestDescription();
+    getCourseData(course.id);
   }
 
   render() {
-    const { tab, courseData } = this.state;
-    let { course, sections, requirements } = courseData;
+    const { courseData, loading } = this.props;
+    const { course, sections, requirements } = courseData;
 
-    let gradeTo = {
+
+    const toGrades = {
       pathname: '/grades',
-      state: {course: course},
+      state: { course: course },
     };
 
-    let enrollmentTo = {
+    const toEnrollment = {
       pathname: '/enrollment',
-      state: {course: course},
+      state: { course: course },
     }
-    return (
-      <div className="filter-description-container">
-      {this.state.loading ? (
-        <div className="filter-description-loading">
-            <BarLoader
-            sizeUnit={"px"}
-            size={150}
-            color={'#123abc'}
-            loading={true}
-          />
-       </div>
-      ) : (
-        Object.entries(course).length !== 0 &&
-          <div className="card filter-description">
-            <div className="filter-description-header">
-              <h3>{course.abbreviation} {course.course_number}</h3>
-              <p>{`${course.units} Unit${course.units !== '1.0' ? 's' : ''}`.replace(/.0/g, "").replace(/-/g, " - ")}</p>
+
+    if (loading) {
+      return (
+        <div className="catalog-description-container">
+          <div className="loading">
+            <HashLoader color="#579EFF" size="50" sizeUnit="px" />
+          </div>
+        </div>
+      );
+    } else if (isEmpty(courseData)) {
+      return null;
+    } else {
+      return (
+        <div className="catalog-description-container">
+          <div className="catalog-description">
+            <h3>{course.abbreviation} {course.course_number}</h3>
+            <h6>{course.title}</h6>
+            <div className="stats">
+              <div className="statline">
+                <img src={people} />
+                Enrolled:
+                {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)}
+              </div>
+              <div className="statline">
+                <img src={chart} />
+                Average Grade:
+                {applyIndicatorGrade(course.letter_average, course.letter_average)}
+              </div>
+              <div className="statline">
+                <img src={book} />
+                {formatUnits(course.units)}
+              </div>
             </div>
-            <p className="filter-description-title">{course.title}</p>
-            <div className="filter-description-stats">
-              <FontAwesome className={`filter-description-stats-icon`} name={'bar-chart'}/>
-              <div className="filter-description-stats-avg">
-                <p>Course Average: {course.letter_average || 'N/A'}
-                  &nbsp;(<Link to={gradeTo}>See grade distributions</Link>)
-                </p>
-              </div>
-              <FontAwesome className={`filter-description-stats-icon`} name={'user-o'}/>
-              <div className="filter-description-stats-enroll">
-                <p>Enrollment: {course.enrolled}/{course.enrolled_max}
-                  &nbsp;(<Link to={enrollmentTo}>See enrollment history</Link>)
-                </p>
-              </div>
-            </div>
-            {/* <p className="filter-description-instructors">Instructor(s): {info.instructors}</p> */}
-            <div className="filter-description-tabs">
-              <div className="tabs">
-                <ul>
-                  <li className={tab == 0 ? 'is-active' : ''}><a onClick={this.details}>Course Details</a></li>
-                  <li className={tab == 1 ? 'is-active' : ''}><a onClick={this.sections}>Sections</a></li>
-                </ul>
-              </div>
-              {tab == 0 ? (
-                <ClassDetails
-                  description={course.description}
-                  prerequisites={course.prerequisites}
-                  requirements={requirements}
-                />
-              ) : (
-                <ClassSections
-                  sections={sections}
-                />
-              )}
+            <p className="description">
+              {course.description}
+            </p>
+            <h5>Class Times</h5>
+            <div className="table-container">
+              <Table className="table">
+                <thead>
+                  <tr>
+                    <th style={{width: '75px'}}><abbr title="Lecture/Discussion/Lab">Type</abbr></th>
+                    <th style={{width: '50px'}}><abbr title="Course Capture Number">CCN</abbr></th>
+                    <th style={{width: '100px'}}>Instructor</th>
+                    <th style={{width: '85px'}}>Time</th>
+                    <th style={{width: '85px'}}>Location </th>
+                    <th style={{width: '75px'}}>Enrolled </th>
+                    <th style={{width: '75px'}}>Waitlist </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sections.map(section => {
+                    let startDate = new Date(section.start_time + "Z");
+                    let endDate = new Date(section.end_time + "Z");
+                    return (
+                      <tr>
+                        <td>{section.kind}</td>
+                        <td>{section.ccn}</td>
+                        <td>{section.instructor}</td>
+                        {!isNaN(startDate) && !isNaN(endDate) ? (
+                        <td>{section.word_days} {ClassDescription.formatDate(startDate)} - {ClassDescription.formatDate(endDate)}</td>
+                        ) : (
+                          <td></td>
+                        )}
+                        <td>{section.location_name}</td>
+                        <td>{section.enrolled}/{section.enrolled_max}</td>
+                        <td>{section.waitlisted}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </Table>
             </div>
           </div>
-      )
-      }
-      </div>
-    );
+        </div>
+      );
+    }
   }
 }
 
-export default withRouter(ClassDescription);
+
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    getCourseData: (id) => dispatch(getCourseData(id)),
+    makeRequestDescription: () => dispatch(makeRequestDescription()),
+    updateCourses: (data) => dispatch(updateCourses(data))
+  }
+}
+
+const mapStateToProps = state => {
+  const { loading, courseData } = state.classDescription;
+  return {
+    loading,
+    courseData
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(ClassDescription));

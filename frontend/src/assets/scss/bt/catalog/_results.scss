@@ -1,0 +1,11 @@
+.filter-results {
+  height: 100%;
+  padding-top: 20px;
+
+  .filter-results-loading {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
