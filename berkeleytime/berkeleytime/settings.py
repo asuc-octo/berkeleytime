@@ -13,7 +13,7 @@ from config.semesters.spring2020 import *
 settings_dir = os.path.dirname(__file__)
 PROJECT_ROOT = os.path.abspath(os.path.dirname(settings_dir))
 
-ENV_NAME = os.getenv("ENVIRONMENT_NAME", "")
+ENV_NAME = os.getenv("ENVIRONMENT_NAME", "LOCALHOST")
 IS_LOCALHOST = ENV_NAME == "LOCALHOST"
 IS_STAGING = ENV_NAME == "STAGING"
 IS_PRODUCTION = ENV_NAME == "PRODUCTION"
@@ -245,6 +245,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'berkeleytime',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -257,22 +258,21 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'djangosecure',
     'catalog',
-    'berkeleytime',
     'scheduler',
-    'south',
+    #'south',
     'marketplace',
-    'django_facebook',
     'account',
+    'django_facebook',
     'data',
     'campus',
     'gunicorn',
     'storages',
     'collectfast',
     'raven.contrib.django.raven_compat',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    #'allauth',
+    #'allauth.account',
+    #'allauth.socialaccount',
+    #'allauth.socialaccount.providers.google',
 )
 
 ACCOUNT_USERNAME_REQUIRED = False
@@ -301,7 +301,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 if IS_LOCALHOST or IS_STAGING:
     INSTALLED_APPS += (
-        'debug_toolbar',
+        #'debug_toolbar',
     )
 
 # copied from teh django-facebook docs page
@@ -464,6 +464,10 @@ TEMPLATES = [
 
                 # `allauth` needs this from django
                 'django.template.context_processors.request',
+
+                # allauth specific context processors
+                "allauth.account.context_processors.account",
+                "allauth.socialaccount.context_processors.socialaccount",
             ],
         },
     },

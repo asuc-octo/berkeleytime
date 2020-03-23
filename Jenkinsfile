@@ -157,6 +157,19 @@ kubectl delete -f $BACKEND_DEPLOY_PROD_FILEPATH
 kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
       }
     }
+    stage('Build-Sphinx-Docs') {
+      when {
+        branch "master"
+        anyOf {
+            changeset "berkeleytime/**"
+            changeset "frontend/**"
+        }
+      }
+      steps {
+        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        sh "sphinx-build -M help . /var/jenkins_home/userContent/sphinx"
+      }
+    }
     stage('Update-Data-Fetch-Image-Version') {
       when {
         branch "production"
