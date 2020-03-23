@@ -35,7 +35,6 @@ class EnrollmentGraphCard extends Component {
 
   getEnrollmentData() {
     const { selectedCourses, fetchEnrollData } = this.props;
-
     fetchEnrollData(selectedCourses);
   }
 
@@ -106,23 +105,14 @@ class EnrollmentGraphCard extends Component {
 
   render() {
     const { hoveredClass } = this.state;
-    const { graphData, enrollmentData, isMobile } = this.props;
+    const { graphData, enrollmentData, selectedCourses, isMobile } = this.props;
     const telebears = enrollmentData.length ? enrollmentData[0].telebears : {};
-
-    let colorIndex = 0;
-    for (let i = 0; i < enrollmentData.length; i++) {
-      if (enrollmentData[i].id === hoveredClass.id) {
-        colorIndex = i;
-        break;
-      }
-    }
-    const hoveredColor = vars.colors[colorIndex];
 
     return (
       <div className="enrollment-graph-card">
         <div className="enrollment-graph">
           {
-            enrollmentData.length === 0 ? (
+            enrollmentData.length === 0 || selectedCourses.length === 0 ? (
               <GraphEmpty pageType="enrollment" />
             ) : (
               <div className="enrollment-content">
@@ -146,7 +136,7 @@ class EnrollmentGraphCard extends Component {
                         selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
                         todayPoint={hoveredClass.data[hoveredClass.data.length - 1]}
                         telebears={telebears}
-                        color={hoveredColor}
+                        color={vars.colors[hoveredClass.colorId]}
                         enrolledMax={hoveredClass.enrolled_max}
                       />
                     )}
