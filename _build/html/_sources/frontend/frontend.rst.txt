@@ -1,5 +1,0 @@
-Frontend
-*********
-
-.. toctree::
-   :caption: Contents:
