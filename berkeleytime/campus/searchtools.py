@@ -2,7 +2,7 @@ import datetime, re
 
 def partial_match(features, keywords):
     """
-    returns the feature in features (a list of keywords) that is fuzzily matched by
+    Returns the feature in features (a list of keywords) that is fuzzily matched by
     elements in the string keywords, based on the following examples:
 
     features = ["Dwinelle Hall", "Dwinelle Hall Annex"]
@@ -53,7 +53,7 @@ def update_feature(features_table, key, round_score):
 
 def matching_indices(keyword_arr, target):
     """
-    returns a set of indices of keyword_arr, a list of list of keywords, which contains
+    Returns a set of indices of keyword_arr, a list of list of keywords, which contains
     target as an element in each respective list of keywords
 
     """
@@ -65,7 +65,7 @@ def matching_indices(keyword_arr, target):
 
 def parse_digits(string):
     """
-    returns True if string contains a number, False otherwise
+    Returns True if string contains a number, False otherwise
 
     """
     return re.findall(r"[0-9]+", string)

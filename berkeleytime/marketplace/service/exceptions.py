@@ -53,7 +53,6 @@ class BookstoreResourceException(BookstoreServiceException):
         """String representation."""
         return '{} url: {}'.format(self.message, self.url)
 
-
 class BookstoreTermNotFoundException(BookstoreServiceException):
     """Indicates that a given term was not found in the bookstore."""
 
