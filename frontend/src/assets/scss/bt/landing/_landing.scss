@@ -47,6 +47,9 @@
   h3 {
     font-size: 30px;
     margin-bottom: 20px;
+    color: $bt-base-text;
+    text-shadow: 1px 0 $bt-base-text;
+    letter-spacing: 1px;
   }
       
   p {
@@ -71,9 +74,6 @@
     h3 {
       padding-top: 30px;
       font-size: 18px;
-      color: $bt-base-text;
-      text-shadow: 1px 0 $bt-base-text;
-      letter-spacing: 1px;
     }
 
     a {
@@ -103,6 +103,10 @@
         color: $bt-blue !important;
       }
     }
+
+    .landing-mission-desc {
+      max-width: 350px;
+    }
   }
 
   .landing-sponsors {
@@ -115,7 +119,7 @@
     
     .landing-sponsors-desc {
       align-self: center;
-      max-width: 450px;
+      max-width: 350px;
       text-align: center;
     }
     
