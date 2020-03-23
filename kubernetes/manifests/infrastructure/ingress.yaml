@@ -29,9 +29,13 @@ metadata:
       if ($host != old.berkeleytime.com) {
         set $mobile_rewrite "${mobile_rewrite}+not_old";
       }
+
+      if ($host != staging.berkeleytime.com) {
+        set $mobile_rewrite "${mobile_rewrite}+not_staging";
+      }
        
       ## redirect to m.example.com ##
-      if ($mobile_rewrite = "perform+not_old") {
+      if ($mobile_rewrite = "perform+not_old+not_staging") {
         rewrite ^ http://old.berkeleytime.com redirect;
         break;
       }
