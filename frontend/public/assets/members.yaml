@@ -65,3 +65,14 @@ past:
           role: Fullstack Engineer
         - name: Sandy Zhang
           role: Fullstack Engineer
+  - name: Founders
+    rows:
+      - - name: Yuxin Zhu
+          role: Co-Founder
+          site: http://yuxinzhu.com/#
+        - name: Noah Gilmore
+          role: Co-Founder
+          site: https://noahgilmore.com
+        - name: Aswhin Iyengar
+          role: Co-Founder
+          site: https://nms.kcl.ac.uk/ashwin.iyengar
