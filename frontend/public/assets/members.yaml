@@ -36,17 +36,32 @@ past:
   - name: Class of 2017 and Before
     rows:
       - - name: Christine Wang
+          role: Fullstack Engineer
         - name: Emily Chen
+          role: Fullstack Engineer
         - name: Eric Huynh
+          role: Fullstack Engineer
         - name: Jennifer Yu
+          role: Fullstack Engineer
       - - name: Justin Lu
+          role: Fullstack Engineer
         - name: Kelvin Leong
+          role: Fullstack Engineer
         - name: Kevin Jiang
+          role: Fullstack Engineer
         - name: Kimya Khoshnan
+          role: Fullstack Engineer
       - - name: Laura Harker
+          role: Fullstack Engineer
         - name: Mihir Patil
+          role: Fullstack Engineer
         - name: Niraj Amalkanti
+          role: Fullstack Engineer
         - name: Parsa Attari
+          role: Fullstack Engineer
       - - name: Ronald Lee
+          role: Fullstack Engineer
         - name: Sanchit Bareja
+          role: Fullstack Engineer
         - name: Sandy Zhang
+          role: Fullstack Engineer
