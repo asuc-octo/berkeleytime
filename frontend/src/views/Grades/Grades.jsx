@@ -78,7 +78,14 @@ class Grades extends Component {
             addCourse={this.addCourse}
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
-          /> : null }
+          /> : 
+          <GradesSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+            fromCatalog={location.state ? location.state.course : false}
+            isFull={selectedCourses.length === 4}
+            isMobile={isMobile}
+          /> }
 
           <ClassCardList
             selectedCourses={selectedCourses}
@@ -91,15 +98,6 @@ class Grades extends Component {
             title="Grades"
             isMobile={isMobile}
           />
-
-          { isMobile ?
-          <GradesSearchBar
-            classes={courses}
-            addCourse={this.addCourse}
-            fromCatalog={location.state ? location.state.course : false}
-            isFull={selectedCourses.length === 4}
-            isMobile={isMobile}
-          /> : null }
         </div> 
       </div>
     );
