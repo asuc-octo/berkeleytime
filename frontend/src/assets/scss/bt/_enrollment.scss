@@ -1,0 +1,89 @@
+.enrollment{
+  height: 100%;
+  padding: 30px;
+
+  display: flex;
+  flex-direction: column;
+
+  .enrollment-search-bar {
+    margin-bottom: 10px;
+
+    > div > div {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+  }
+}
+
+// EnrollmentGraph
+.card.enrollment-graph-card {
+  box-shadow: none;
+  border: none;
+
+  .enrollment-graph {
+    padding: 15px 15px 0px 35px;
+    min-height: 500px;
+
+    .enrollment-content {
+      .graph {
+        height: 400px;
+        padding: 15px 15px 15px 15px;
+      }
+      .graph-title {
+          font-weight: bold;
+          font-size: 20px;
+      }
+    }
+  }
+}
+
+// EnrollmentInfoCard
+.card.enrollment-card-info {
+  box-shadow: none;
+  border: none;
+
+  .content {
+      padding: 0px 15px 15px 15px;
+
+      .content {
+        padding: 0px 15px 15px 15px;
+      }
+
+      .class-num {
+          font-weight: bold;
+          font-size: 20px;
+          width: fit-content;
+      }
+
+      .class-info {
+          margin-top: 5px;
+          color: #8F8F8F;
+      }
+
+      .class-title {
+          padding-top: 5px;
+          padding-bottom: 10px;
+      }
+
+      .class-stats {
+          padding-bottom: 5px;
+      }
+
+      .class-stat-type {
+        font-size: 15px;
+      }
+
+      .class-adjustment-percent {
+        color: #FFA414;
+        font-size: 15px;
+      }
+
+      .class-stats-left-col {
+        padding-left: 0px;
+      }
+
+      .class-stats-name {
+        color: #8F8F8F;
+      }
+  }
+}

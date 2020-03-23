@@ -1,0 +1,127 @@
+.landing {
+  overflow-x: hidden;
+  width: 100%;
+
+  .modal {
+    min-height: 600px;
+    height: 100vh;
+    
+    .modal-icon {
+      font-size: 40px;
+    }
+    
+    .modal-content {
+      padding: 30px;
+      text-align: center;
+      font-size: 25px;
+      border: 0px;
+      box-shadow: 0 0px 40px rgba(199, 199, 199, 0.5);
+      
+      .button.inverted {
+        transition: 200ms;
+        background-color: #579EFF;
+        border-color: #579EFF;
+        border-width: 2px;
+        color: white;
+        
+        &:hover {
+          background-color: white;
+          color: #579EFF;
+        }
+      }
+      
+      .modal-cta {
+        font-weight: 500;
+      }
+      
+      .modal-body {
+        padding: 20px 0;
+      }
+    }
+    
+    .modal-background {
+      background-color: rgba(255, 255, 255, 0.82);
+    }
+  }
+  
+  h3 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+      
+  p {
+    margin-bottom: 35px;
+    color: $bt-grey-text;
+  }
+
+  .landing-explore { 
+    text-align: center;
+    padding-bottom: 20vh;
+
+    .landing-explore-content {
+      padding-left: 8px;
+      padding-right: 8px;
+
+      .landing-explore-img {
+        max-height: 70px;
+        object-fit: scale-down;
+      }
+    }
+
+    h3 {
+      padding-top: 30px;
+      font-size: 18px;
+    }
+
+    a {
+      font-size: 16px;
+      font-weight: bold;
+      color: $bt-blue;
+    }
+  }
+
+  .landing-mission {  
+    padding-bottom: 20vh;
+
+    .landing-mission-img {
+      padding-right: 20px;
+      max-width: 95%;
+      object-fit: scale-down;
+    }
+    
+    .landing-mission-link {
+      a {
+        color: $bt-blue !important;
+      }
+    }
+  }
+
+  .landing-sponsors {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    background-color: white;
+    padding-bottom: 25vh;
+    
+    .landing-sponsors-desc {
+      align-self: center;
+      max-width: 450px;
+      text-align: center;
+    }
+    
+    .landing-sponsors-img-wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      
+      .landing-sponsors-img {
+        padding-right: 20px;
+        max-width: 95%;
+        max-height: 100px;
+        object-fit: scale-down;
+      }
+    }
+  }
+}

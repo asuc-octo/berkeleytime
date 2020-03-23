@@ -1,16 +1,24 @@
 {
-    "extends": "airbnb",
-    "rules": {
-      "indent": ["off", 4],
-      "import/no-unresolved": "off",
-      "react/prefer-stateless-function": 0,
-      "class-methods-use-this": "off",
-      "arrow-parens": "off",
-      "react/jsx-index": "off",
-      "prefer-destructuring": "off",
-      "jsx-a11y/href-no-hash": "off",
-      "radix": "off",
-      "eqeqeq": "off",
-      "no-unused-vars": "off"
-    }
+  "extends": "airbnb",
+  "rules": {
+    "arrow-parens": "off",
+    "camelcase": "off",
+    "import/no-unresolved": [2, { "ignore": [ "\\.jpg$" ]}],    
+    "indent": ["error", 2],
+    "max-len": "off",
+    "no-console": "off",
+    "no-else-return": "off",
+    "no-param-reassign": "off",
+    "no-restricted-syntax": "off",
+    "prefer-destructuring": "off",
+    "radix": "off",
+    "react/destructuring-assignment": "off",
+    "jsx-a11y/href-no-hash": [0],
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-index": "off"
+  },
+  "env": {
+    "browser": true
+  }
 }

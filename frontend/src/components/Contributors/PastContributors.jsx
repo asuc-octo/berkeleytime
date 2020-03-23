@@ -1,134 +1,55 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
+import { Row, Col } from 'react-bootstrap';
 
-import yuxin from '../../assets/img/images/about/alumni/yuxin.jpg';
-import noah from '../../assets/img/images/about/alumni/noah.jpg';
-import ashwin from '../../assets/img/images/about/alumni/ashwin.jpg';
+import web from '../../assets/svg/about/web.svg';
+import yaml from 'js-yaml';
 
-function PastContributors({ founders, pastContributors }) {
-  return (
-    <section className="past-contributors">
-        <div className="past-contributors-content">
-            <h4>Individuals that made it happen</h4>
-            <div className="past-contributors-founders">
-                {founders.map((founder, idx) => (
-                    <div className="founder-card">
-                        <div className="founder-desc">
-                            <a href={founder.link}>{founder.name}</a>
-                            <p>Co-Founder</p>
-                        </div>
+class PastContributors extends PureComponent {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      sections: [],
+    };
+  }
+
+  componentDidMount() {
+    fetch("/assets/members.yaml")
+      .then(members => members.text())
+      .then(data => this.setState({ sections: yaml.load(data).past }));
+  }
+
+  render() {
+    const { sections } = this.state;
+    console.log(sections);
+    return (
+      <div className="past-contributors">
+        <h5>Alumni</h5>
+        {sections.map(section => (
+          <div className="section">
+            <h6>{ section.name }</h6>
+            {section.rows.map(row => (
+              <Row>
+                {row.map(member => (
+                  <Col xs={6} lg={3} className="contributor-card">
+                    <div className="name">
+                      <p>{ member.name }</p>
+                      { member.site ? (
+                        <a href={member.site}><img src={web} /></a>
+                      ) : null }
                     </div>
+                      { member.role ? (
+                        <div className="role">{member.role}</div>
+                      ) : null }
+                  </Col>
                 ))}
-            </div>
-            <div className="past-contributors-others container is-fluid">
-                <div className="columns is-multiline is-centered is-gapless">
-                    {pastContributors.map((member, idx) => (
-                        <div className="column is-one-fifth has-text-centered" style={{height: 45, width: 170}}>
-                            {member.site ? (
-                                <a href={member.site}>{member.name}</a>
-                            ) : (
-                                member.name
-                            )}
-                        </div>
-                ))} 
-                    </div>
-            </div>
-            <div className="graphic-contributors has-text-centered container is-fluid">
-                Landing page artwork by <a href="http://victorialynwu.design">Victoria Wu</a>
-                <br></br>
-                Detective bear artwork by <a href="http://behance.net/lauralim125">Laura Lim</a>
-            </div>
-        </div>
-    </section>
-);
+              </Row>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
 }
-
-PastContributors.defaultProps = {
-    founders: [
-        {
-            name: "Yuxin Zhu",
-            image: yuxin,
-            link: "http://yuxinzhu.com/#/",
-        },
-        {
-            name: "Noah Gilmore",
-            image: noah,
-            link: "https://noahgilmore.com",
-        },
-        { 
-            name: "Ashwin Iyengar",
-            image: ashwin,
-            link: "https://nms.kcl.ac.uk/ashwin.iyengar/ ",
-        }, 
-    ],
-    pastContributors: [
-        { name: "Alan Rosenthal",
-          site: "https://www.linkedin.com/in/alan-rosenthal-37767614a/",
-        },
-        { name: "Christine Wang",
-          site: "https://www.linkedin.com/in/cwang395/",
-        }, 
-        { name: "Emily Chen",
-          site: null,
-        }, 
-        { name: "Eric Huynh",
-          site: "http://erichuynhing.com",
-        }, 
-        { name: "Flora Xue",
-          site: "https://www.linkedin.com/in/flora-zhenruo-xue/",
-        }, 
-        { name: "Jennifer Yu",
-          site: null,
-        }, 
-        { name: "Justin Lu",
-          site: null,
-        }, 
-        { name: "Katharine Jiang",
-          site: "http://katharinejiang.com",
-        }, 
-        { name: "Kelvin Leong",
-          site: "https://www.linkedin.com/in/kelvinjleong/",
-        }, 
-        { name: "Kevin Jiang",
-          site: "https://github.com/kevjiangba",
-        }, 
-        { name: "Kimya Khoshnan",
-          site: null,
-        }, 
-        { name: "Laura Harker",
-          site: null,
-        }, 
-        { name: "Mihir Patil",
-          site: null,
-        }, 
-        { name: "Niraj Amalkanti",
-          site: null,
-        }, 
-        { name: "Parsa Attari",
-          site: null,
-        }, 
-        { name: "Ronald Lee",
-          site: null,
-        }, 
-        { name: "Sanchit Bareja",
-          site: null,
-        }, 
-        { name: "Sandy Zhang",
-          site: null,
-        }, 
-        { name: "Scott Lee",
-          site: "http://scottjlee.github.io",
-        }, 
-        { name: "Tony Situ",
-          site: "https://www.linkedin.com/in/c2tonyc2/",
-        }, 
-        { name: "Vaibhav Srikaran",
-          site: "https://www.linkedin.com/in/vsrikaran/",
-        },
-        { name: 'Kate Xu',
-          site: 'https://www.linkedin.com/in/kate-shijie-xu-666b57110/'
-        }
-    ],
-
-};
 
 export default PastContributors;
