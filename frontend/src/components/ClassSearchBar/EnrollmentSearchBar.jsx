@@ -79,7 +79,6 @@ class EnrollmentSearchBar extends Component {
   }
 
   handleSecondarySelect(secondary) {
-    // console.log(secondary);
     this.setState({
       selectSecondary: secondary ? secondary : { value: 'all', label: 'All Instructors' },
     });
@@ -174,7 +173,6 @@ class EnrollmentSearchBar extends Component {
     }
 
     playlist.id = hash(playlist);
-
     this.props.addCourse(playlist)
     this.reset();
   }

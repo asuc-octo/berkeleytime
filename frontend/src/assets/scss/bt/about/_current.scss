@@ -42,7 +42,7 @@
       }
 
       .serious {
-        z-index: 1;
+        z-index: $z-index-serious;
         transition: 50ms;
 
         &:hover {
