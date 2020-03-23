@@ -162,12 +162,18 @@ kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
         branch "master"
         anyOf {
             changeset "berkeleytime/**"
-            changeset "frontend/**"
+            changeset "Jenkinsfile"
         }
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh "sphinx-build -M help . /var/jenkins_home/userContent/sphinx"
+        sh '''version=$(git rev-parse --short HEAD)
+containerID=$(docker run -d -e ENVIRONMENT_NAME=LOCALHOST --entrypoint sleep ${BACKEND_STAGE_GCR_PATH}:$version 1000)
+docker cp /var/jenkins_home/workspace/berkeleytime_master $containerID:/bt
+docker exec $containerID sphinx-build -b html /bt /sphinxout
+rm -rf /var/jenkins_home/userContent/sphinx
+docker cp $containerID:/sphinxout /var/jenkins_home/userContent/sphinx
+docker kill $containerID'''
       }
     }
     stage('Update-Data-Fetch-Image-Version') {

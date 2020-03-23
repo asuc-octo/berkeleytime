@@ -12,11 +12,9 @@
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../berkeleytime/berkeleytime'))
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'berkeleytime.settings')
 import django
-django.setup()
+sys.path.insert(0, os.path.abspath('berkeleytime'))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "berkeleytime.settings")
 
 # -- Project information -----------------------------------------------------
 
