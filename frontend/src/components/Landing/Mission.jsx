@@ -18,7 +18,7 @@ function Mission() {
             <img src={doe} className="landing-mission-img" />
           </Col>
           <Col xs={6} s={6} md={6} lg={6}>
-            <div>
+            <div className="landing-mission-desc">
               <h3>Our Mission</h3>
               <p className="has-text-centered landing-mission-link">Berkeleytime is an official organization under the 
               <a href="http://octo.asuc.org/"> ASUC Office of the Chief Technology Officer. </a>
