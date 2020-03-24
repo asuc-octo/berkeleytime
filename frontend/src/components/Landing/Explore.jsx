@@ -35,7 +35,7 @@ function Explore() {
             <div className="landing-explore-content">
               <img src={enrollment} className="landing-explore-img" />
               <h3>Enrollment History</h3>
-              <p className="has-text-centered">See and compare accurate, real-time course enrollment trends and history.</p>
+              <p className="has-text-centered">See and compare accurate, real-time course enrollment trends <br></br> and history.</p>
               <Link to="/enrollment" className="">Track Enrollment</Link>
             </div>
           </Col>
