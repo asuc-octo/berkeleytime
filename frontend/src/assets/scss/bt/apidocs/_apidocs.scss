@@ -1,5 +1,6 @@
 .apidocs {
-  margin: $bt-navbar-height auto 30px auto;
+  margin: 0 auto 30px auto;
+  padding-top: $bt-navbar-height;
 
   display: flex;
   flex-direction: column;
