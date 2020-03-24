@@ -22,4 +22,4 @@ spec:
       - name: frontend-stage
         imagePullPolicy: Always
         image: index.docker.io/berkeleytime/frontend:latest
-        command: ["npm", "start"]
+        command: ["npm", "run", "prod"]
