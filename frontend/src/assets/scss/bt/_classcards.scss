@@ -3,7 +3,11 @@
   height: 150px;
 
   @include mobile {
-    height: auto;
+     > div {
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: scroll;
+    }
   }
 
   .class-card-column {
