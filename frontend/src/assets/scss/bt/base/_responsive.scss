@@ -24,7 +24,7 @@
 // mobile & tablet
 // up to 992px
 @mixin touch {
-  @include media-breakpoint-between(xs, md) {
+  @include media-breakpoint-down(md) {
     @content;
   }
 }
