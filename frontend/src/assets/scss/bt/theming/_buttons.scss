@@ -10,8 +10,9 @@
   transition: 0.3s;
 
   &:hover {
-    background-color: $bt-white;
-    color: $bt-primary;
+    //background-color: $bt-white;
+    color: $bt-white;
+    cursor: pointer;
   }
 
   a {
@@ -29,9 +30,11 @@
   transition: 0.3s;
 
   &:hover {
-    color: $bt-white;
-    background-color: $bt-primary;
-    border-color: $bt-primary;
+    //color: $bt-white;
+    //background-color: $bt-primary;
+    //border-color: $bt-primary;
+    color: $bt-primary;
+    cursor: pointer;
   }
 
   a {

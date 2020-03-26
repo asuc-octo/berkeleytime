@@ -29,7 +29,7 @@ function Jumbotron({ isMobile }) {
               <h1>Berkeley’s online course discovery platform.</h1>
               <p>Berkeleytime is a platform built, maintained, and run by students, just like you. We work hard to simplify and improve the course discovery experience.</p>
               <ButtonToolbar className="jumbo-heading-buttons">
-                <Button variant="bt-primary" size="bt-lg" as={Link} to="/catalog">Explore courses</Button>
+                <Button variant="bt-primary" size="bt-lg" as={Link} to="/catalog">Explore Courses</Button>
                 <Button variant="bt-primary-inverted" size="bt-lg" as={Link} to="/about">About Us</Button>
               </ButtonToolbar>
             </div>

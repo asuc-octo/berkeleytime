@@ -2,8 +2,10 @@ from allauth.account.models import EmailAddress
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
-    
-    def pre_social_login(self, request, sociallogin): 
+    """
+    For authentication using a social account.
+    """
+    def pre_social_login(self, request, sociallogin):
         """
         Invoked just after a user successfully authenticates via a
         social provider, but before the login is actually processed
