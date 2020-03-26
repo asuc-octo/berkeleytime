@@ -169,7 +169,14 @@ class Enrollment extends Component {
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
             isMobile={isMobile}
-          /> : null }
+          /> : 
+          <EnrollmentSearchBar
+            classes={courses}
+            addCourse={this.addCourse}
+            fromCatalog={location.state ? location.state.course : false}
+            isFull={selectedCourses.length === 4}
+            isMobile={isMobile}
+          /> }
 
           <ClassCardList
             selectedCourses={selectedCourses}
@@ -181,15 +188,6 @@ class Enrollment extends Component {
             title="Enrollment"
             isMobile={isMobile}
           />
-
-          { isMobile ?
-          <EnrollmentSearchBar
-            classes={courses}
-            addCourse={this.addCourse}
-            fromCatalog={location.state ? location.state.course : false}
-            isFull={selectedCourses.length === 4}
-            isMobile={isMobile}
-          /> : null }
         </div>
       </div>
     );
