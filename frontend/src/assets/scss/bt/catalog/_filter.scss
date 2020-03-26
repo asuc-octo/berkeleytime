@@ -1,5 +1,4 @@
 .filter {
-  height: 100%;
   padding: 30px;
   overflow: scroll;
 
@@ -10,36 +9,21 @@
   display: flex;
   flex-direction: column;
 
-  .filter-visible {
-    overflow-y: visible;
-  }
-
   .filter-scroll {
     display: flex;
     flex-direction: row;
     position: relative;
     overflow-x: scroll;
 
-    //React select dropdown
-    .css-2b097c-container {
-      width: 180px;
-      position: absolute;
-      overflow-y: visible;
-
-      .css-yk16xz-control {
-        border: 0.5px solid $bt-light-border-grey;
-      }
+    .filter-scroll-btn {
+      position: relative;
+      margin-right: 10px !important;
+      height: auto;
+      padding: 9px 12px 9px 12px;
     }
 
-    .filter-scroll-btn-container {
-      margin-left: 190px;
-      display: flex;
-
-      .filter-scroll-btn {
-        position: relative;
-        margin-right: 10px !important;
-        height: 38px;
-      }
+    .blue-text {
+      color: $bt-blue;
     }
   }
 

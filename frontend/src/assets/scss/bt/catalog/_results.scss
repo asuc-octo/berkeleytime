@@ -1,6 +1,9 @@
 .filter-results {
   height: 100%;
-  padding-top: 20px;
+
+  @include mobile {
+  	padding: 15px;
+  }
 
   .filter-results-loading {
     height: 100%;
