@@ -26,12 +26,15 @@ spec:
           emptyDir: {}
       containers:
       - name: jenkins-dep
-        image: tsaianson/dockerjenkinskubectlgcsdkbase:latest
+        image: hantaowang/btjenkins:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
         - name: DOCKER_HOST
           value: tcp://localhost:2375
+        - name: JAVA_OPTS
+          value: -Dhudson.model.DirectoryBrowserSupport.CSP=
         volumeMounts:
           - mountPath: /var/jenkins_home
             name: jenkins-pv-storage
