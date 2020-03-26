@@ -1,9 +1,0 @@
-Searching 195 files for "react-multiselect-checkbox"
-
-/Users/graceluo/repo/berkeleytime/frontend/src/components/ClassDescription/ClassDescriptionModal.jsx:
-    1  import React, { Component } from 'react';
-    2  import PropTypes from 'prop-types';
-    4  import {Modal, Form} from "react-bootstrap";
-    5  import ClassDescription from './ClassDescription';
-
-1 match in 1 file
