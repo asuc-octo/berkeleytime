@@ -202,6 +202,9 @@ export class FilterSidebar extends Component {
   saveModal = () => {
     //set the relevant state
     switch(this.state.modalType) {
+      case "sortBy":
+        this.sortHandler(this.state.sort)
+        break;
       case "requirements":
         this.requirementHandler(this.state.requirements)
         break;
@@ -222,6 +225,9 @@ export class FilterSidebar extends Component {
     const val = e.target.id;
     const option = e.target.name;
     switch(this.state.modalType) {
+      case "requirements":
+        this.setState({sort: option})
+        break;
       case "requirements":
         this.setState({requirements: this.state.requirements.concat({value: val, label: option})})
         break;
@@ -342,16 +348,13 @@ export class FilterSidebar extends Component {
           />
         </div>
       
-        <div className="filter-visible">
-        <div className="filter-scroll">
-          <Select
-            options={this.sortOptions}
-            isSearchable={false}
-            onChange={this.sortHandler}
-            value={sort}
-            placeholder="Sort By"
-          />
-        <div className="filter-scroll-btn-container">  
+        <div className="filter-scroll"> 
+          <button className="btn-bt-border filter-scroll-btn blue-text" 
+            onClick={this.resetFilters}> 
+            Reset </button>
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("sortBy", sort, this.sortOptions)}> 
+            Sort&nbsp;By </button>
           <button className="btn-bt-border filter-scroll-btn" 
             onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}> 
             Requirements </button>
@@ -372,8 +375,6 @@ export class FilterSidebar extends Component {
             saveModal={this.saveModal}
             storeSelection={this.storeSelection}
           />
-        </div>
-        </div>
        </div>
     );
   }
