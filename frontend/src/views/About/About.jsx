@@ -36,7 +36,7 @@ class About extends PureComponent {
           <h5>Our Values</h5>
           <Row>
             {values.map(value => (
-              <Col xs={12} lg={4} className="value">
+              <Col xs={12} s={12} md={4} lg={4} className="value">
                 <img src={value.svg} />
                 <h6>{ value.name }</h6>
                 <p>{ value.desc }</p>
