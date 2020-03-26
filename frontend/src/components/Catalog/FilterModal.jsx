@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {Modal, Form} from "react-bootstrap";
 
 function CheckboxGroup(props) {

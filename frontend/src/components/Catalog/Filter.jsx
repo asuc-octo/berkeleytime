@@ -4,8 +4,6 @@ import makeAnimated from 'react-select/animated';
 import FilterModal from './FilterModal';
 import cloneDeep from 'lodash/cloneDeep';
 
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-
 const animatedComponents = makeAnimated();
 
 export class FilterSidebar extends Component {
