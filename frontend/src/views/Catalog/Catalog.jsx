@@ -7,7 +7,6 @@ import axios from 'axios';
 
 import Filter from '../../components/Catalog/Filter';
 import FilterResults from '../../components/Catalog/FilterResults';
-import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 
 import { modify, fetchLists, modifySelected } from '../../redux/actions';

@@ -162,21 +162,13 @@ class Enrollment extends Component {
     return (
       <div className="viewport-app">
         <div className="enrollment">
-          { !isMobile ?
           <EnrollmentSearchBar
             classes={courses}
             addCourse={this.addCourse}
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
             isMobile={isMobile}
-          /> : 
-          <EnrollmentSearchBar
-            classes={courses}
-            addCourse={this.addCourse}
-            fromCatalog={location.state ? location.state.course : false}
-            isFull={selectedCourses.length === 4}
-            isMobile={isMobile}
-          /> }
+          /> 
 
           <ClassCardList
             selectedCourses={selectedCourses}
