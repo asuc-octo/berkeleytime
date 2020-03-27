@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import FilterModal from './FilterModal';
-import cloneDeep from 'lodash/cloneDeep';
 
 const animatedComponents = makeAnimated();
 
@@ -335,8 +334,8 @@ export class FilterSidebar extends Component {
           />
         </div>
         <div id="filter-end"></div>
-      </div> :
-
+      </div> 
+      :
       <div id="filter" className="filter">
         <div className="filter-search">
           <input
