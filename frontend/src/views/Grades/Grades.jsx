@@ -41,11 +41,16 @@ class Grades extends Component {
         let courseUrls = url.split('/')[2].split('&');
         for (const c of courseUrls) {
           let cUrl = c.split('-');
-          let semester = cUrl[2];
-          let instructor = cUrl.slice(3).join('-');
-          if (cUrl[2] !== 'all') {
-            semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + " " + cUrl[3];
-            instructor = cUrl.slice(4).join('-');
+          let semester, instructor;
+          if (cUrl[2] === 'all') {
+            semester = cUrl[2];
+            instructor = cUrl.slice(3).join('-');
+          } else if (cUrl[4] === '_') {
+            semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + ' ' + cUrl[3] + ' / ' + cUrl[5];
+            instructor = cUrl.slice(6).join('-').replace('_', '/');
+          } else {
+            semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + ' ' + cUrl[3];
+            instructor = cUrl.slice(4).join('-').replace('_', '/');
           }
           let sections = [];
           let u = `/api/grades/course_grades/${cUrl[1]}/`;
@@ -53,15 +58,25 @@ class Grades extends Component {
             .then(
               res => {
                 try {
-                  if (instructor == 'all') {
+                  if (instructor === 'all') {
                     res.data.map((item, i) => sections[i] = item.grade_id);
                   } else {
-                    let matches = res.data.filter(item => instructor == this.toUrlForm(item.instructor));
+                    let matches = [];
+                    if (instructor.includes('/')) {
+                      matches = res.data.filter(item => instructor == this.toUrlForm(item.instructor) + '-/-' + item.section_number);
+                    } else {
+                      matches = res.data.filter(item => instructor == this.toUrlForm(item.instructor));
+                    }
                     matches.map((item, i) => sections[i] = item.grade_id);
                     instructor = matches[0].instructor;
                   }
-                  if (semester != 'all') {
-                    let matches = res.data.filter(item => semester == item.semester[0].toUpperCase() + item.semester.substring(1) + ' ' + item.year);
+                  if (semester !== 'all') {
+                    let matches = [];
+                    if (semester.split(' ').length > 2) {
+                      matches = res.data.filter(item => semester == item.semester[0].toUpperCase() + item.semester.substring(1) + ' ' + item.year + ' / ' + item.section_number);
+                    } else {
+                      matches = res.data.filter(item => semester == item.semester[0].toUpperCase() + item.semester.substring(1) + ' ' + item.year);
+                    }
                     let allSems = matches.map(item => item.grade_id);
                     sections = sections.filter(item => allSems.includes(item));
                   }
@@ -88,6 +103,7 @@ class Grades extends Component {
   }
 
   toUrlForm(s) {
+    s = s.replace('/', '_');
     return s.toLowerCase().split(" ").join('-');
   }
 
@@ -136,8 +152,7 @@ class Grades extends Component {
     for (let i = 0; i < updatedCourses.length; i++) {
       let c = updatedCourses[i];
       if (i != 0) url += '&';
-      let instructor = c.instructor == 'all' ? 'all' : c.sections[0];
-      url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${instructor}`;
+      url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${this.toUrlForm(c.instructor)}`;
     }
     history.push(url);
   }

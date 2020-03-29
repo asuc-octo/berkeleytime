@@ -219,16 +219,22 @@ class GradesSearchBar extends Component {
       selectType, sectionNumber, selectPrimary, selectSecondary,
     } = this.state;
     const { sections } = this.props;
+    let semester = selectSecondary;
+    let number = -1;
+    if (selectSecondary.split(' ').length > 2) {
+      semester = selectSecondary.split(' ').slice(0, 2).join(' ');
+      number = selectSecondary.split(' ')[3];
+    }
     let ret;
 
     if (selectType === 'instructor') {
       ret = sections.filter(section => (selectPrimary === 'all' ? true : section.instructor === selectPrimary))
-        .filter(section => (selectSecondary === 'all' ? true : this.getSectionSemester(section) === selectSecondary))
-        .filter(section => (sectionNumber ? section.section_number === sectionNumber : true));
+        .filter(section => (semester === 'all' ? true : this.getSectionSemester(section) === semester))
+        .filter(section => (number !== -1 ? section.section_number === number : true));
     } else {
       ret = sections.filter(section => (selectPrimary === 'all' ? true : this.getSectionSemester(section) === selectPrimary))
-        .filter(section => (selectSecondary === 'all' ? true : section.instructor === selectSecondary))
-        .filter(section => (sectionNumber ? section.section_number === sectionNumber : true));
+        .filter(section => (semester === 'all' ? true : section.instructor === semester))
+        .filter(section => (number !== -1 ? section.section_number === number : true));
     }
 
     ret = ret.map(s => s.grade_id);
