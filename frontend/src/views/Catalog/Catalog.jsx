@@ -289,19 +289,10 @@ class Catalog extends Component {
               />
             </Col>
             <Col md={6} lg={4} xl={6} className="catalog-description-column">
-              {
-                !isMobile ? 
-                  <ClassDescription
-                  course={selectedCourse}
-                  selectCourse={this.selectCourse}
-                /> :
-                <ClassDescriptionModal 
-                  course={selectedCourse}
-                  selectCourse={this.selectCourse}
-                  show={showDescription}
-                  hideModal={this.hideModal}
-                />
-              }
+              <ClassDescription
+                course={selectedCourse}
+                selectCourse={this.selectCourse}
+              /> 
             </Col> 
           </Row>
       </div>

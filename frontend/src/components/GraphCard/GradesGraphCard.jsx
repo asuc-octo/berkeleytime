@@ -123,6 +123,9 @@ class GradesGraphCard extends Component {
                     gradesData={gradesData}
                     updateBarHover={this.updateBarHover}
                     updateGraphHover={this.updateGraphHover}
+                    selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
+                    denominator={hoveredClass.denominator}
+                    color={vars.colors[hoveredClass.colorId]}
                     isMobile={this.props.isMobile}
                   />
                 </Col>
