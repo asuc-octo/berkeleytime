@@ -4,4 +4,17 @@
     	padding: 0px 10px 0px 10px;
     	text-align: center;
   	}
+
+  	.grades-tooltip {
+  		background: white;
+  		outline: 2px solid $bt-border-grey;
+  		text-align: left;
+  		padding: 12px 12px 12px 12px;
+
+  		h6 {
+  			margin-bottom: 5px;
+      		font-weight: bold;
+  		}
+  	}
 }
+
