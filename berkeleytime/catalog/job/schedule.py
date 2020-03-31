@@ -6,9 +6,13 @@ from catalog.service.schedule import schedule_service
 from catalog.service.course import course_service
 from mondaine.service.enumeration.category import PlaylistCategory
 from mondaine.service.playlist import playlist_service
+from berkeleytime.utils.common import AtomicInteger, BColors
+
+from multiprocessing.pool import ThreadPool, cpu_count
+import time
 
 logger = logging.getLogger(__name__)
-
+NUM_THREADS = min(2 * cpu_count(), 16)
 
 class ScheduleJob(object):
     """Potentially asynchronous jobs for updating the schedule."""
@@ -47,15 +51,23 @@ class ScheduleJob(object):
         else:
             course_ids = models.Course.objects.all().values_list('id', flat=True)  # noqa
 
-        # TODO (*) Fan this out into N asynchronous jobs
-        # TODO (Yuxin) Add proper circuit breaker logic
-        for index, course_id in enumerate(course_ids):
-            print 'Updating course {} of {}'.format(index, len(course_ids))
+        i = AtomicInteger()
+
+        def update_wrapper(course_id):
+            i.inc()
             self._update(
                 course_id=course_id,
                 semester=semester,
                 year=year,
             )
+
+        print BColors.OKGREEN + 'Starting job with {} workers.'.format(NUM_THREADS) + BColors.ENDC
+        p = ThreadPool(NUM_THREADS)
+        result = p.map_async(update_wrapper, course_ids)
+
+        while not result.ready():
+            print BColors.OKGREEN + 'Updating course {} of {}'.format(i.value(), len(course_ids)) + BColors.ENDC
+            time.sleep(5)
 
         # TODO (Yuxin) No need to update all semesters, only the updated one
         if semester != 'summer':
