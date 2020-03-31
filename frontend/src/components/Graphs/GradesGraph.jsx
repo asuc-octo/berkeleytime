@@ -14,6 +14,7 @@ import {
 } from '../../utils/utils';
 
 import vars from '../../variables/Variables';
+import click from '../../assets/img/images/click.png';
 
 const MobileTooltip = props => {
   const {active, payload, label } = props;
@@ -44,8 +45,8 @@ const PercentageLabel = props => {
       <text 
         x={x} 
         y={y} 
-        dx={13}
-        dy={-10}
+        dy={11}
+        fontSize={10}
         textAnchor="middle">{percentage}
       </text>
     );
@@ -75,10 +76,10 @@ export default function GradesGraph({
           ))}
         </BarChart> 
         </ResponsiveContainer> :
-        <ResponsiveContainer width={500} height={500}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover} layout="horizontal">
-          <XAxis dataKey="name" />
-          <YAxis type="number" unit="%" />
+        <ResponsiveContainer width="100%" height={1500}>
+        <BarChart data={graphData} onMouseMove={updateGraphHover} layout="vertical">
+          <XAxis type="number" unit="%" />
+          <YAxis dataKey="name" type="category"/>
           <Tooltip
             content={
               <MobileTooltip 
@@ -97,6 +98,12 @@ export default function GradesGraph({
               label={<PercentageLabel />}
             />
           ))}
+          <Legend 
+            horizontalAlign="left" 
+            layout="vertical" 
+            wrapperStyle={{left: 25}}
+            iconType="circle"
+          />
         </BarChart>
       </ResponsiveContainer>
       }
