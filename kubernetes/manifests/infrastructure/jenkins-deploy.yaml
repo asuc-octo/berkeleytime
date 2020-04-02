@@ -1,3 +1,51 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1beta1
+metadata:
+  name: jenkins-storage
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+  zone: us-west2-a
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: jenkins-pv-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: jenkins-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 32Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: rdir-pv-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: jenkins-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-svc
+spec:
+  ports:
+  - name: http-jenkins-port
+    port: 9000
+    targetPort: 8080
+  type: ClusterIP
+  selector:
+    appName: jenkins-dep
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
