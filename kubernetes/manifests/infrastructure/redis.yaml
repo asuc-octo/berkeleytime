@@ -1,7 +1,5 @@
-#master:
-#  resources:
-#    requests:
-#      cpu: 250m
+master:
+  resources: {}
 
 password: Gobears123
 
