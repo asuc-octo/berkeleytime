@@ -1,0 +1,14 @@
+# WARNING: DO NOT DELETE
+# This SC is separate from es-deploy because the persistent volume
+# backing ElasticSearch will be deleted if this SC is deleted. If
+# es-deploy is accidentally removed, the PVC and PV will remain as long
+# as this object is not removed as well. There is no good reason to delete
+# this.
+kind: StorageClass
+apiVersion: storage.k8s.io/v1beta1
+metadata:
+  name: es-storage
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+  zone: us-west2-a
