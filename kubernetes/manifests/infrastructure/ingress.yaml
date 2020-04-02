@@ -96,3 +96,10 @@ spec:
         backend:
           serviceName: jenkins-svc
           servicePort: 9000
+  - host: kibana.berkeleytime.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kibana
+          servicePort: 5601
