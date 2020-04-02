@@ -6,7 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: "/"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/server-snippet: |
       set $mobile_rewrite do_not_perform;
@@ -47,7 +47,7 @@ spec:
   - host: berkeleytime.com
     http:
       paths:
-      - path: /api/
+      - path: /api(/|$)(.*)
         backend:
           serviceName: berkeleytime-prod-svc
           servicePort: 5000
@@ -58,7 +58,7 @@ spec:
   - host: www.berkeleytime.com
     http:
       paths:
-      - path: /api/
+      - path: /api(/|$)(.*)
         backend:
           serviceName: berkeleytime-prod-svc
           servicePort: 5000
@@ -76,7 +76,7 @@ spec:
   - host: staging.berkeleytime.com
     http:
       paths:
-      - path: /api/
+      - path: /api(/|$)(.*)
         backend:
           serviceName: berkeleytime-stage-svc
           servicePort: 5000
