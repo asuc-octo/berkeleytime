@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jenkins-dep
-  namespace: berkeleytime
+  namespace: default
   labels:
     appName: jenkins-dep
 spec:
