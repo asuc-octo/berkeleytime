@@ -11,7 +11,7 @@ class GradesInfoCard extends PureComponent {
       course, subtitle, semester, instructor,
       courseLetter, courseGPA, sectionLetter,
       sectionGPA, selectedPercentiles, selectedGrade,
-      denominator, betterGrade, worseGrade, color,
+      denominator, betterGrade, worseGrade, color
     } = this.props;
     return (
       <div className="grades-info">

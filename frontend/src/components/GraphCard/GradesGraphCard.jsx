@@ -88,7 +88,6 @@ class GradesGraphCard extends Component {
   render() {
     const { hoveredClass } = this.state;
     const { graphData, gradesData, selectedCourses, isMobile } = this.props;
-    console.log(selectedCourses)
 
     return (
       <div className="grades-graph">
