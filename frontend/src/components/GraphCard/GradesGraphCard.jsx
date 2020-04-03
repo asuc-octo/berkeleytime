@@ -98,7 +98,7 @@ class GradesGraphCard extends Component {
             <Container fluid>
               <Row>
 
-                {this.props.isMobile ?
+                {/*this.props.isMobile ?
                 <Col lg={4}>
                   <GradesInfoCardMobile
                     course={hoveredClass.course}
@@ -114,7 +114,7 @@ class GradesGraphCard extends Component {
                     selectedGrade={hoveredClass.hoverGrade}
                     color={vars.colors[hoveredClass.colorId]}
                   />
-                </Col> : null}
+                </Col> : null*/}
 
                 <Col lg={8}>
                   <GradesGraph
