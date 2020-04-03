@@ -7,5 +7,5 @@ import enrollment from './enrollment';
 import banner from './banner';
 
 export default combineReducers({
-  catalog, filter, classDescription, grade, enrollment, banner,
+  catalog, filter, classDescription, grade, enrollment, banner
 });
