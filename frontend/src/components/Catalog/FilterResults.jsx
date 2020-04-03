@@ -10,6 +10,7 @@ import { getFilterResults, filter, makeRequest } from '../../redux/actions';
 import { connect } from "react-redux";
 
 
+//todo: fix filter save
 class FilterResults extends Component {
   constructor(props) {
     super(props);

@@ -15,7 +15,7 @@ function Explore() {
     <div className="landing-explore">
       <Container>
         <Row>
-          <Col xs={4} s={4} md={4} lg={4}>
+          <Col xs={12} s={12} md={4} lg={4}>
             <div className="landing-explore-content">
               <img src={course} className="landing-explore-img" />
               <h3>Course Catalog</h3>
@@ -23,7 +23,7 @@ function Explore() {
               <Link to="/catalog" className="">Browse Courses</Link>
             </div>
           </Col>
-          <Col xs={4} s={4} md={4} lg={4}>
+          <Col xs={12} s={12} md={4} lg={4}>
             <div className="landing-explore-content">
               <img src={grade} className="landing-explore-img" />
               <h3>Grade Distributions</h3>
@@ -31,11 +31,11 @@ function Explore() {
               <Link to="/grades" className="">View Grades</Link>
             </div>
           </Col>
-          <Col xs={4} s={4} md={4} lg={4}>
+          <Col xs={12} s={12} md={4} lg={4}>
             <div className="landing-explore-content">
               <img src={enrollment} className="landing-explore-img" />
               <h3>Enrollment History</h3>
-              <p className="has-text-centered">See and compare accurate, real-time course enrollment trends <br></br> and history.</p>
+              <p className="has-text-centered">See and compare accurate, real-time course enrollment trends and history.</p>
               <Link to="/enrollment" className="">Track Enrollment</Link>
             </div>
           </Col>

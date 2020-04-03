@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import FilterModal from './FilterModal';
 
 const animatedComponents = makeAnimated();
 
@@ -43,6 +44,10 @@ export class FilterSidebar extends Component {
       department: this.departmentDefault,
       classLevels: this.classLevelDefault,
       semesters: this.semesterDefault,
+      showFilters: false,
+      modalType: "",
+      modalOptions: [],
+      modalSelection: [],
     };
 
     this.searchInput = React.createRef(); // reference to <input>
@@ -176,10 +181,74 @@ export class FilterSidebar extends Component {
     }, 50);
   }
 
+  //show the mobile modals
+  showModal = (type, selection, options) => {
+    this.setState({ 
+      modalType: type,
+      showFilters: true,
+      modalOptions: options
+    })
+  }
+
+  hideModal = () => {
+    this.setState({
+      modalType: "",
+      showFilters: false,
+      modalOptions: [],
+    })
+  };
+
+  saveModal = () => {
+    //set the relevant state
+    switch(this.state.modalType) {
+      case "sortBy":
+        this.sortHandler(this.state.sort)
+        break;
+      case "requirements":
+        this.requirementHandler(this.state.requirements)
+        break;
+      case "unitsRange":
+        this.unitsRangeHandler(this.state.unitsRange)
+        break;
+      case "department":
+        this.departmentHandler(this.state.department)
+        break;
+      default:
+        this.classLevelHandler(this.state.classLevels)
+        break;
+    }
+    this.hideModal()
+  };
+
+  storeSelection = (e) => {
+    const val = e.target.id;
+    const option = e.target.name;
+    switch(this.state.modalType) {
+      case "requirements":
+        this.setState({sort: option})
+        break;
+      case "requirements":
+        this.setState({requirements: this.state.requirements.concat({value: val, label: option})})
+        break;
+      case "unitsRange":
+        this.setState({unitsRange: this.state.unitsRange.concat({value: val, label: option})})
+        break;
+      case "department":
+        this.setState({department: {value: val, label: option}})
+        break;
+      default:
+        this.setState({classLevels: this.state.classLevels.concat({value: val, label: option})})
+        break;
+    }
+  }; 
+
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters } = this.state;
 
+    console.log(classLevels);
+
     return (
+      !this.props.isMobile ? 
       <div id="filter" className="filter">
         <div className="filter-name">
           <p>Filters</p>
@@ -265,7 +334,47 @@ export class FilterSidebar extends Component {
           />
         </div>
         <div id="filter-end"></div>
-      </div>
+      </div> 
+      :
+      <div id="filter" className="filter">
+        <div className="filter-search">
+          <input
+            ref={this.searchInput}
+            onChange={this.searchHandler}
+            type="text"
+            placeholder=" &#xf002;  Search for a class..."
+            defaultValue={this.props.defaultSearch}
+          />
+        </div>
+      
+        <div className="filter-scroll"> 
+          <button className="btn-bt-border filter-scroll-btn blue-text" 
+            onClick={this.resetFilters}> 
+            Reset </button>
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("sortBy", sort, this.sortOptions)}> 
+            Sort&nbsp;By </button>
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}> 
+            Requirements </button>
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("unitsRange", unitsRange, this.unitsRangeOptions)}> 
+            Units </button>
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("department", department, this.departmentOptions)}> 
+            Department </button>
+          <button className="btn-bt-border filter-scroll-btn" 
+            onClick={() => this.showModal("classLevels", classLevels, this.classLevelOptions)}> 
+            Class&nbsp;Level </button>
+        </div>
+          <FilterModal 
+            options={this.state.modalOptions}
+            showFilters={this.state.showFilters}
+            hideModal={this.hideModal}
+            saveModal={this.saveModal}
+            storeSelection={this.storeSelection}
+          />
+       </div>
     );
   }
 }

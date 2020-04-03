@@ -6,6 +6,10 @@
     height: 100%;
     border-radius: 8px;
     padding: 8px 10px;
+
+    @include mobile {
+      border: 0.5px solid $bt-light-border-grey;
+    }
     
     display: flex;
     flex-direction: row;
