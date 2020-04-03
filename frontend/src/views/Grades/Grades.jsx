@@ -192,7 +192,6 @@ class Grades extends Component {
           <ClassCardList
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
-            hoveredClass={sharedHoveredClass}
             isMobile={isMobile}
           />
 
