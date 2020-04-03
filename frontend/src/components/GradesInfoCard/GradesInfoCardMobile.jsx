@@ -16,9 +16,11 @@ class GradesInfoCardMobile extends PureComponent {
       		denominator, betterGrade, worseGrade, color,
     	} = this.props;
 
+      console.log(betterGrade);
+
     	return (
     		<GradesInfoCard
-            	course={course ? course : "NO CLASS ADDED"}
+            	course={this.checkNullState(course ? course : "NO CLASS ADDED")}
             	subtitle={this.checkNullState(subtitle)}
             	semester={this.checkNullState(semester === 'all' ? 'All Semesters' : semester)}
             	instructor={this.checkNullState(instructor === 'all' ? 'All Instructors' : 	instructor)}

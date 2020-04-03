@@ -20,7 +20,7 @@ const MobileTooltip = props => {
   const {active, payload, label } = props;
   if (active) {
     const denominator = props.denominator;
-    const numerator = denominator * (props.payload[0].value / 100);
+    const numerator = Math.round(denominator * (props.payload[0].value / 100));
     let percentile = props.selectedPercentiles;
     let percentileLow = percentile ? percentileToString(percentile.percentile_low) : 0;
     let percentileHigh = percentile ? percentileToString(percentile.percentile_high): 0;
