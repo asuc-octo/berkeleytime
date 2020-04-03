@@ -12,22 +12,38 @@ import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset, fetc
 class Grades extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      // context: {},
+      selectedCourses: this.props.selectedCourses,
+      sharedHoveredClass: false,
+      isMobile: false,
+    };
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
     this.fillFromUrl = this.fillFromUrl.bind(this);
     this.addToUrl = this.addToUrl.bind(this);
     this.refillUrl = this.refillUrl.bind(this);
     this.toUrlForm = this.toUrlForm.bind(this);
-  }
-
-  componentWillMount() {
-    this.props.gradeReset();
+    this.updateScreensize = this.updateScreensize.bind(this);
+    this.updateSharedHoveredClass = this.updateSharedHoveredClass.bind(this);
   }
 
   componentDidMount() {
     const { fetchGradeContext } = this.props;
     fetchGradeContext();
     this.fillFromUrl();
+
+    //check is user is on mobile
+    this.updateScreensize();
+    window.addEventListener("resize", this.updateScreensize);
+  }
+
+  componentWillMount() {
+    this.props.gradeReset();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateScreensize);
   }
 
   fillFromUrl() {
@@ -101,9 +117,18 @@ class Grades extends Component {
     gradeRemoveCourse(id, color);
   }
 
+  updateSharedHoveredClass(val) {
+    this.setState({sharedHoveredClass: val});
+  }
+
+  updateScreensize() {
+    this.setState({ isMobile: window.innerWidth <= 768 });
+  }
+
   render() {
     const { context, selectedCourses } = this.props;
-    let { location } = this.props
+    let { location } = this.props;
+    const { sharedHoveredClass, isMobile } = this.state;
     let courses = context.courses;
 
     return (
@@ -114,18 +139,22 @@ class Grades extends Component {
             addCourse={this.addCourse}
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
+            isMobile={isMobile}
           />
 
           <ClassCardList
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
+            isMobile={isMobile}
           />
 
           <GradesGraphCard
             id="gradesGraph"
             title="Grades"
+            updateSharedHoveredClass={this.updateSharedHoveredClass}
+            isMobile={isMobile}
           />
-        </div>
+        </div> 
       </div>
     );
   }

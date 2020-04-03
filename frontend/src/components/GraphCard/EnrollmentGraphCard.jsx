@@ -105,7 +105,7 @@ class EnrollmentGraphCard extends Component {
 
   render() {
     const { hoveredClass } = this.state;
-    const { graphData, enrollmentData, selectedCourses } = this.props;
+    const { graphData, enrollmentData, selectedCourses, isMobile } = this.props;
     const telebears = enrollmentData.length ? enrollmentData[0].telebears : {};
 
     return (
@@ -116,8 +116,9 @@ class EnrollmentGraphCard extends Component {
               <GraphEmpty pageType="enrollment" />
             ) : (
               <div className="enrollment-content">
+                {!isMobile ?
                 <Row>
-                  <Col sm={8}>
+                  <Col lg={8}>
                     <EnrollmentGraph
                       graphData={graphData}
                       enrollmentData={enrollmentData}
@@ -125,8 +126,7 @@ class EnrollmentGraphCard extends Component {
                       updateGraphHover={this.updateGraphHover}
                     />
                   </Col>
-
-                  <Col sm={4}>
+                  <Col lg={4}>
                     {hoveredClass && (
                       <EnrollmentInfoCard
                         title={hoveredClass.title}
@@ -140,8 +140,15 @@ class EnrollmentGraphCard extends Component {
                         enrolledMax={hoveredClass.enrolled_max}
                       />
                     )}
-                  </Col>
-                </Row>
+                  </Col> 
+                </Row> : 
+                <EnrollmentGraph
+                  graphData={graphData}
+                  enrollmentData={enrollmentData}
+                  updateLineHover={this.updateLineHover}
+                  updateGraphHover={this.updateGraphHover}
+                />
+                }
               </div>
             )
           }

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-stage
-  namespace: berkeleytime
+  namespace: default
   labels:
     appName: frontend-stage
 spec:
@@ -22,4 +22,4 @@ spec:
       - name: frontend-stage
         imagePullPolicy: Always
         image: index.docker.io/berkeleytime/frontend:latest
-        command: ["npm", "start"]
+        command: ["npm", "run", "prod"]

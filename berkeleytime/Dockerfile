@@ -1,9 +1,10 @@
 FROM ubuntu:18.04
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
-RUN apt-get install -y python2.7 python-pip build-essential libssl-dev \ 
-		       libffi-dev libxml2-dev libxslt1-dev zlib1g-dev \ 
-		       libjpeg-dev libncurses5-dev
+RUN apt-get install -y python2.7 python-pip build-essential libssl-dev \
+		       libffi-dev libxml2-dev libxslt1-dev zlib1g-dev \
+		       libjpeg-dev libncurses5-dev python-sphinx
 RUN pip install --upgrade pip
 
 RUN mkdir berkeleytime

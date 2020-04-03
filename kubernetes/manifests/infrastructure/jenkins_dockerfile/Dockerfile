@@ -21,6 +21,7 @@ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/s
 apt-get update && \
 apt-get install -y kubectl
 RUN apt-get -y install kubectl
+RUN apt-get -y install python-sphinx
 RUN curl https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz > /tmp/google-cloud-sdk.tar.gz
 RUN mkdir -p /usr/local/gcloud \
   && tar -C /usr/local/gcloud -xvf /tmp/google-cloud-sdk.tar.gz \

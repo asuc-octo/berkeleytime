@@ -8,6 +8,9 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.hashers import UNUSABLE_PASSWORD_PREFIX, identify_hasher
 
 class BerkeleytimeUserCreationForm(UserCreationForm):
+    """
+    UserCreationForm for a BerkeleyTime user.
+    """
     error_messages = {
         'duplicate_username': ("This username has already been taken."),
         'password_mismatch': ("The two password fields didn't match."),

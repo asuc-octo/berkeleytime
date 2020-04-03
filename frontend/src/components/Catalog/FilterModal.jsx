@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 import {Modal, Form} from "react-bootstrap";
 
 function CheckboxGroup(props) {
@@ -14,7 +13,7 @@ function CheckboxGroup(props) {
             null}
 
             {item.options != null ?
-      s      Object.values(item.options).map(option => (
+              Object.values(item.options).map(option => (
               <div className="custom-checkbox">
                 <Form.Check
                   type="checkbox"
