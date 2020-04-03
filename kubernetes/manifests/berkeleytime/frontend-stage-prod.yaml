@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend-prod
-  namespace: berkeleytime
+  namespace: default
   labels:
     appName: frontend-prod
 spec:

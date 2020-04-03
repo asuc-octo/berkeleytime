@@ -131,7 +131,7 @@ controller:
 
   minAvailable: 1
 
-  resources:
+  resources: {}
 #    limits:
 #      cpu: 100m
 #      memory: 64Mi
