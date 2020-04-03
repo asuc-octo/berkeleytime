@@ -2,7 +2,7 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: data-update
-  namespace: berkeleytime
+  namespace: default
 spec:
   schedule: "0 9 * * *"
   jobTemplate:
