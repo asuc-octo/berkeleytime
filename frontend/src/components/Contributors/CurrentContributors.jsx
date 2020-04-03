@@ -46,7 +46,7 @@ class CurrentContributors extends PureComponent {
         {contributors.map(row => (
           <Row>
             {row.map(member => (
-              <Col xs={6} lg={3} className="contributor-card">
+              <Col xs={6} s={6} md={3} lg={3} className="contributor-card">
                 <div className="headshot">
                   <img className="serious" src={member.img_1} alt={member.name} />
                   <img src={member.silly ? member.img_2 : member.img_1} alt={member.name} />

@@ -1,0 +1,5 @@
+Haste
+*************
+
+.. toctree::
+   :caption: Contents:

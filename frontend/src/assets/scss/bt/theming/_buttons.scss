@@ -4,13 +4,15 @@
   color: $bt-white;
   background-color: $bt-primary;
   border-color: $bt-primary;
-  border-width: 2px;
+  border-width: 1px;
+  border-radius: 4px;
 
   transition: 0.3s;
 
   &:hover {
-    background-color: $bt-white;
-    color: $bt-primary;
+    //background-color: $bt-white;
+    color: $bt-white;
+    cursor: pointer;
   }
 
   a {
@@ -23,17 +25,31 @@
   background-color: $bt-white;
   border-color: $bt-border-grey;
   border-width: 1px;
+  border-radius: 4px;
   
   transition: 0.3s;
 
   &:hover {
-    color: $bt-white;
-    background-color: $bt-primary;
-    border-color: $bt-primary;
+    //color: $bt-white;
+    //background-color: $bt-primary;
+    //border-color: $bt-primary;
+    color: $bt-primary;
+    cursor: pointer;
   }
 
   a {
     color: inherit;
+  }
+}
+
+.btn-bt-banner {
+  color: $bt-primary;
+  background-color: $bt-off-white;
+  border-color: $bt-border-grey;
+  border-width: 1px;
+
+  &:hover {
+    color: $bt-primary;
   }
 }
 
@@ -72,6 +88,15 @@
   font-size: 16px;
   line-height: 26px;
   border-radius: 0.3rem;
+}
+
+.btn-bt-border {
+  height: 35px;
+  background-color: $bt-white;
+  font-size: 16px;
+  border: 0.5px solid $bt-light-border-grey;
+  box-sizing: border-box;
+  border-radius: 4px;
 }
 
 .as-link {

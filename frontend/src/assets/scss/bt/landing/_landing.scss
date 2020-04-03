@@ -46,8 +46,10 @@
   
   h3 {
     font-size: 30px;
-    font-weight: bold;
     margin-bottom: 20px;
+    color: $bt-base-text;
+    text-shadow: 1px 0 $bt-base-text;
+    letter-spacing: 1px;
   }
       
   p {
@@ -60,8 +62,12 @@
     padding-bottom: 20vh;
 
     .landing-explore-content {
-      padding-left: 8px;
-      padding-right: 8px;
+      padding-left: 45px;
+      padding-right: 45px;
+
+      @include mobile {
+        margin-top: 20px;
+      }
 
       .landing-explore-img {
         max-height: 70px;
@@ -78,22 +84,41 @@
       font-size: 16px;
       font-weight: bold;
       color: $bt-blue;
+      text-shadow: 0.1px 0 $bt-blue;
+      letter-spacing: 1px;
+    }
+
+    p {
+      margin-bottom: 10px;
     }
   }
 
   .landing-mission {  
     padding-bottom: 20vh;
+    padding-left: 20px;
+    padding-right: 20px;
 
     .landing-mission-img {
       padding-right: 20px;
       max-width: 95%;
       object-fit: scale-down;
+
+      @include mobile {
+        padding-right: 0px;
+        padding-bottom: 20px;
+        display: block;
+        margin: 0 auto;
+      }
     }
     
     .landing-mission-link {
       a {
         color: $bt-blue !important;
       }
+    }
+
+    .landing-mission-desc {
+      max-width: 350px;
     }
   }
 
@@ -104,10 +129,12 @@
     
     background-color: white;
     padding-bottom: 25vh;
+    padding-left: 20px;
+    padding-right: 20px;
     
     .landing-sponsors-desc {
       align-self: center;
-      max-width: 450px;
+      max-width: 350px;
       text-align: center;
     }
     

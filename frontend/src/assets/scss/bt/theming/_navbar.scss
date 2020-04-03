@@ -1,5 +1,5 @@
 .bt-navbar {
-  box-shadow: 0 1px 5px -1px rgba(0, 0, 0, .2);
+  border-bottom: 1px solid $bt-border-grey;
 
   .navbar-brand, .navbar-nav .nav-link {
     font-weight: 500;
@@ -17,6 +17,6 @@
   }
 
   .navbar-brand {
-    font-size: 20px;
+    font-size: 18px;
   }
 }

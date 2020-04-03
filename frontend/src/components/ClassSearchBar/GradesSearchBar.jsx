@@ -294,7 +294,7 @@ class GradesSearchBar extends Component {
   }
 
   render() {
-    const { classes, isFull } = this.props;
+    const { classes, isFull, isMobile } = this.props;
     const {
       selectType, selectPrimary, selectSecondary, selectedClass,
     } = this.state;
@@ -344,6 +344,7 @@ class GradesSearchBar extends Component {
               filterOptions={this.filterOptions}
             />
           </Col>
+          {!isMobile ?
           <Col lg={2}>
             <Select
               name="sortBy"
@@ -354,11 +355,11 @@ class GradesSearchBar extends Component {
               onChange={this.handleSortSelect}
               disabled={!selectedClass}
             />
-          </Col>
-          <Col lg={3}>
+          </Col> : null }
+          <Col xs={6} sm={6} lg={3}>
             <Select
               name="instrSems"
-              placeholder="Select an option..."
+              placeholder={!isMobile ? "Select an option...": "Select..."}
               value={onePrimaryOption ? primaryOptions[1] : primaryOption}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
@@ -367,10 +368,10 @@ class GradesSearchBar extends Component {
               searchable={false}
             />
           </Col>
-          <Col lg={3}>
+          <Col xs={6} sm={6} lg={3}>
             <Select
               name="section"
-              placeholder="Select an option..."
+              placeholder={!isMobile ? "Select an option...": "Select..."}
               value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}
@@ -379,7 +380,7 @@ class GradesSearchBar extends Component {
               searchable={false}
             />
           </Col>
-          <Col lg={1}>
+          <Col xs={12} sm={12}  lg={1}>
             <Button
               onClick={this.addSelected}
               disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}

@@ -3,10 +3,11 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1;
+  z-index: $z-index-banner;
   height: $banner-height;
 
   background-color: $bt-off-white;
+  border-bottom: 1px solid $bt-border-grey;
 
   .content {
     display: flex;
@@ -24,11 +25,12 @@
 
   > img {
     position: fixed;
-    width: 18px;
-    height: 18px;
+    width: 12px;
+    height: 12px;
 
-    top: ($banner-height - 18px) / 2;
+    top: ($banner-height - 12px) / 2;
     right: 20px;
+    cursor: pointer;
   }
 }
 

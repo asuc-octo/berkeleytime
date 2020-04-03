@@ -7,6 +7,7 @@ import vars from '../../variables/Variables';
 import GradesGraph from '../Graphs/GradesGraph';
 import GraphEmpty from '../Graphs/GraphEmpty';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
+import GradesInfoCardMobile from '../GradesInfoCard/GradesInfoCardMobile';
 
 import { fetchGradeData } from '../../redux/actions';
 
@@ -52,6 +53,8 @@ class GradesGraphCard extends Component {
     this.setState({
       hoveredClass: hoverTotal,
     });
+
+    this.props.updateSharedHoveredClass(hoverTotal);
   }
 
   // Handler function for updating GradesInfoCard on hover
@@ -84,7 +87,7 @@ class GradesGraphCard extends Component {
 
   render() {
     const { hoveredClass } = this.state;
-    const { graphData, gradesData, selectedCourses } = this.props;
+    const { graphData, gradesData, selectedCourses, isMobile } = this.props;
 
     return (
       <div className="grades-graph">
@@ -94,15 +97,39 @@ class GradesGraphCard extends Component {
           ) : (
             <Container fluid>
               <Row>
+
+                {/*this.props.isMobile ?
+                <Col lg={4}>
+                  <GradesInfoCardMobile
+                    course={hoveredClass.course}
+                    subtitle={hoveredClass.subtitle}
+                    semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
+                    instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
+                    courseLetter={hoveredClass.course_letter}
+                    courseGPA={hoveredClass.course_gpa}
+                    sectionLetter={hoveredClass.section_letter}
+                    sectionGPA={hoveredClass.section_gpa}
+                    denominator={hoveredClass.denominator}
+                    selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
+                    selectedGrade={hoveredClass.hoverGrade}
+                    color={vars.colors[hoveredClass.colorId]}
+                  />
+                </Col> : null*/}
+
                 <Col lg={8}>
                   <GradesGraph
                     graphData={graphData}
                     gradesData={gradesData}
                     updateBarHover={this.updateBarHover}
                     updateGraphHover={this.updateGraphHover}
+                    selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
+                    denominator={hoveredClass.denominator}
+                    color={vars.colors[hoveredClass.colorId]}
+                    isMobile={this.props.isMobile}
                   />
                 </Col>
 
+                {!this.props.isMobile ?
                 <Col lg={4}>
                   {hoveredClass
                     && (
@@ -121,7 +148,7 @@ class GradesGraphCard extends Component {
                         color={vars.colors[hoveredClass.colorId]}
                       />
                     )}
-                </Col>
+                </Col> : null}
               </Row>
             </Container>
           )

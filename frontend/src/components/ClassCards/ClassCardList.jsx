@@ -2,11 +2,12 @@ import React, { PureComponent } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
 import ClassCard from './ClassCard';
+import ClassCardMobile from './ClassCardMobile';
 import vars from '../../variables/Variables';
 
 class ClassCardList extends PureComponent {
   render() {
-    const { selectedCourses, removeCourse } = this.props;
+    const { selectedCourses, removeCourse, isMobile } = this.props
 
     return (
       <Container fluid className="class-card-list">
@@ -22,7 +23,7 @@ class ClassCardList extends PureComponent {
                 faculty={item.instructor === 'all' ? 'All Instructors' : item.instructor}
                 removeCourse={removeCourse}
                 colorId={item.colorId}
-              />
+              /> 
             ))
           }
         </Row>
