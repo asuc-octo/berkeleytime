@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import { withRouter } from 'react-router';
 import hash from 'object-hash';
 
@@ -8,7 +7,7 @@ import ClassCardList from '../../components/ClassCards/ClassCardList';
 import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard';
 import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar';
 
-import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse, enrollReset, updateEnrollData } from '../../redux/actions';
+import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse, enrollReset, updateEnrollData, fetchEnrollFromUrl } from '../../redux/actions';
 
 class Enrollment extends Component {
   constructor(props) {
@@ -29,47 +28,13 @@ class Enrollment extends Component {
   }
 
   fillFromUrl() {
-    const { fetchEnrollClass, enrollReset, history } = this.props;
+    const { enrollReset, fetchEnrollFromUrl, history } = this.props;
     try {
       let url = history.location.pathname;
       if (url && (url == '/enrollment/' || url == '/enrollment')) {
         enrollReset();
       } else if (url) {
-        let courseUrls = url.split('/')[2].split('&');
-        for (const c of courseUrls) {
-          let cUrl = c.split('-');
-          let semester = cUrl[2].charAt(0).toUpperCase() + cUrl[2].substring(1) + " " + cUrl[3];
-          let u = `/api/enrollment/sections/${cUrl[1]}/`;
-          axios.get(u)
-            .then(
-              res => {
-                try {
-                  let sections = [cUrl[4]];
-                  let instructor = 'all';
-                  let match = [];
-                  if (cUrl[4] == 'all') {
-                    match = res.data.filter(item => cUrl[2] == item.semester.toLowerCase() && cUrl[3] == item.year)[0];
-                    sections = match.sections.map(item => item.section_id);
-                  } else {
-                    match = res.data.map(item => item.sections.filter(item => item.section_id.toString() == cUrl[4]));
-                    instructor = match.filter(item => item.length != 0)[0][0].instructor;
-                  }
-                  let formattedCourse = {
-                    courseID: cUrl[1],
-                    instructor: instructor,
-                    semester: semester,
-                    sections: sections
-                  };
-                  formattedCourse.id = hash(formattedCourse);
-                  formattedCourse.colorId = cUrl[0];
-                  fetchEnrollClass(formattedCourse);
-                } catch (err) {
-                  history.push('/error');
-                }
-              },
-              error => console.log('An error occurred.', error),
-            );
-        }
+        fetchEnrollFromUrl(url, history);
       }
     } catch (err) {
       history.push('/error');
@@ -96,11 +61,7 @@ class Enrollment extends Component {
   addCourse(course) {
     const { fetchEnrollClass, selectedCourses, usedColorIds } = this.props;
     for (let selected of selectedCourses) {
-      let courseMatch = selected.courseID.toString() === course.courseID.toString();
-      let instructorMatch = selected.instructor === course.instructor;
-      let semesterMatch = selected.semester === course.semester;
-      let sectionMatch = (selected.instructor === 'all') ? course.instructor === 'all' : selected.sections[0].toString() === course.sections[0].toString();
-      if (courseMatch && instructorMatch && semesterMatch && sectionMatch) {
+      if (selected.id === course.id) {
         return;
       }
     }
@@ -173,7 +134,8 @@ const mapDispatchToProps = dispatch => ({
   fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course)),
   enrollRemoveCourse: (id, color) => dispatch(enrollRemoveCourse(id, color)),
   enrollReset: () => dispatch(enrollReset()),
-  updateEnrollData: (enrollmentData) => dispatch(updateEnrollData(enrollmentData))
+  updateEnrollData: (enrollmentData) => dispatch(updateEnrollData(enrollmentData)),
+  fetchEnrollFromUrl: (url, history) => dispatch(fetchEnrollFromUrl(url, history))
 });
 
 const mapStateToProps = state => {
