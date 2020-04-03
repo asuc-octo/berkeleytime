@@ -9,10 +9,7 @@
     font-weight: bold;
     color: $bt-base-text;
     margin: 50px 10px 30px;
-
-    @include not-mobile {
-      font-size: 36px;
-    }
+    font-size: 36px;
 
     @include mobile {
       font-size: 30px;
@@ -47,10 +44,7 @@
 
       font-weight: bold;
       color: $bt-base-text;
-
-      @include not-mobile {
-        font-size: 24px;
-      }
+      font-size: 24px;
 
       @include mobile {
         font-size: 20px;
@@ -63,10 +57,7 @@
 
       font-size: 16px;
       color: $bt-grey-text;
-
-      @include not-mobile {
-        width: 450px;
-      }
+      width: 450px;
 
       @include mobile {
         width: 330px;
@@ -79,7 +70,7 @@
       width: 900px;
     }
 
-    @include touch {
+    @include mobile {
       width: 300px;
     }
 
@@ -89,10 +80,7 @@
 
       font-weight: bold;
       color: $bt-base-text;
-
-      @include not-mobile {
-        font-size: 24px;
-      }
+      font-size: 24px;
 
       @include mobile {
         font-size: 20px;

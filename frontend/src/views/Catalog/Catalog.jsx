@@ -42,7 +42,23 @@ class Catalog extends Component {
       // data: {},                      // api response.data
       // selectedCourse: {},
       // loading: true,             // whether we have receieved playlist data from api
+      isMobile: false,                //whether to open filter result as modal
+      showDescription: false,
     };
+
+    this.updateScreensize = this.updateScreensize.bind(this);
+  }
+
+  /**
+   * Checks if user is on mobile view
+   */
+  componentDidMount() {
+    this.updateScreensize();
+    window.addEventListener("resize", this.updateScreensize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateScreensize);
   }
 
   /**
@@ -116,6 +132,7 @@ class Catalog extends Component {
 
   selectCourse = (course, tab=0) => {
     const { modifySelected } = this.props;
+    this.setState({showDescription: true}); //show modal if on mobile
     if (tab === 0) {
       this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/`);
     } else {
@@ -224,35 +241,45 @@ class Catalog extends Component {
     }
   }
 
+  updateScreensize() {
+    this.setState({ isMobile: window.innerWidth <= 768 });
+  }
+
+  hideModal = () => {
+    this.setState({ showDescription: false})
+  };
+
   render() {
-    const { defaultSearch } = this.state;
+    const { defaultSearch, isMobile, showDescription } = this.state;
     const { activePlaylists, loading, selectedCourse } = this.props;
+    console.log(selectedCourse)
     return (
       <div className="catalog viewport-app">
-        <Row>
-          <Col xs={12} sm={12} md={4} lg={4} xl={3} className="filter-column">
-            {
-              !loading ?
-              <Filter
-                playlists={this.buildPlaylists()}
-                defaultSearch={defaultSearch}
-                searchHandler={this.searchHandler}
-                sortHandler={this.sortHandler}
-                modifyFilters={this.modifyFilters}
-                resetFilters={this.resetFilters}
-              /> :
-              <div className="filter">
-                <div className="filter-loading">
-                  <HashLoader
-                    color="#579EFF"
-                    size="50"
-                    sizeUnit="px"
-                  />
+          <Row>
+            <Col md={3} lg={4} xl={3} className="filter-column">
+              {
+                !loading ?
+                   <Filter
+                    playlists={this.buildPlaylists()}
+                    defaultSearch={defaultSearch}
+                    searchHandler={this.searchHandler}
+                    sortHandler={this.sortHandler}
+                    modifyFilters={this.modifyFilters}
+                    resetFilters={this.resetFilters}
+                    isMobile={isMobile}
+                  /> :
+                <div className="filter">
+                  <div className="filter-loading">
+                    <HashLoader
+                      color="#579EFF"
+                      size="50"
+                      sizeUnit="px"
+                    />
+                  </div>
                 </div>
-              </div>
-            }
-          </Col>
-          <Col xs={12} sm={12} md={4} lg={4} xl={3} className="filter-results-column">
+              }
+            </Col>
+            <Col md={3} lg={4} xl={3} className="filter-results-column">
               <FilterResults
                 activePlaylists={activePlaylists ? activePlaylists : []}
                 selectCourse={this.selectCourse}
@@ -261,13 +288,13 @@ class Catalog extends Component {
                 query={this.state.search}
               />
             </Col>
-          <Col xs={12} sm={12} md={4} lg={4} xl={6} className="catalog-description-column">
-            <ClassDescription
-              course={selectedCourse}
+            <Col md={6} lg={4} xl={6} className="catalog-description-column">
+              <ClassDescription
+                course={selectedCourse}
                 selectCourse={this.selectCourse}
-            />
-          </Col>
-        </Row>
+              /> 
+            </Col> 
+          </Row>
       </div>
     )
   }

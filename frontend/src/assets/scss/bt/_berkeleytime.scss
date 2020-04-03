@@ -1,6 +1,7 @@
 // wrapper for all of bt
 .app-container {
   background: $bt-white;
+  width : auto;
 
   // a viewport app sits under the navbar and takes up as much vertical space as the viewport
   // and has a minimum height of 600px (including navbar)

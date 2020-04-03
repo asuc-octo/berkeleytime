@@ -10,9 +10,8 @@
   transition: 0.3s;
 
   &:hover {
-    //background-color: $bt-white;
-    color: $bt-white;
-    cursor: pointer;
+    background-color: $bt-white;
+    color: $bt-primary;
   }
 
   a {
@@ -25,31 +24,21 @@
   background-color: $bt-white;
   border-color: $bt-border-grey;
   border-width: 1px;
+<<<<<<< HEAD
   border-radius: 4px;
+=======
+>>>>>>> 1353bb3bf7e23e41538296bec818de577b1ad638
   
   transition: 0.3s;
 
   &:hover {
-    //color: $bt-white;
-    //background-color: $bt-primary;
-    //border-color: $bt-primary;
-    color: $bt-primary;
-    cursor: pointer;
+    color: $bt-white;
+    background-color: $bt-primary;
+    border-color: $bt-primary;
   }
 
   a {
     color: inherit;
-  }
-}
-
-.btn-bt-banner {
-  color: $bt-primary;
-  background-color: $bt-off-white;
-  border-color: $bt-border-grey;
-  border-width: 1px;
-
-  &:hover {
-    color: $bt-primary;
   }
 }
 
@@ -94,7 +83,7 @@
   height: 35px;
   background-color: $bt-white;
   font-size: 16px;
-  border: 0.5px solid $bt-light-border-grey;
+  border: 0.5px solid #C7C7C7;
   box-sizing: border-box;
   border-radius: 4px;
 }
