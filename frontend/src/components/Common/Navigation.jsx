@@ -48,10 +48,10 @@ Navigation.links = [
     to: '/faq',
     text: 'FAQ',
   },
-  {
-    to: '/login',
-    text: 'Login',
-  },
+  // {
+  //   to: '/login',
+  //   text: 'Login',
+  // },
 ];
 
 export default Navigation;
