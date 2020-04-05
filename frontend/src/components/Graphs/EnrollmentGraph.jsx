@@ -16,7 +16,7 @@ import {
 import vars from '../../variables/Variables';
 
 export default function EnrollmentGraph({
-  graphData, enrollmentData, updateLineHover, updateGraphHover,
+  graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile,
 }) {
   const labelStyle = {
     textAnchor: 'middle',
@@ -44,6 +44,16 @@ export default function EnrollmentGraph({
               connectNulls
             />
           ))}
+
+          {isMobile ?
+            <Legend 
+              horizontalAlign="left" 
+              layout="vertical" 
+              iconType="circle"
+            /> :
+            null
+          }
+
           <ReferenceLine
             x={enrollmentData[0].telebears.phase2_start_day}
             stroke="black"
