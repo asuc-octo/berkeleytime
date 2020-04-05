@@ -236,8 +236,6 @@ class EnrollmentSearchBar extends Component {
       secondaryOption = '';
     }
 
-    console.log(isMobile);
-
     return (
       <Container fluid className="enrollment-search-bar">
         <Row style={{marginBottom: 10}}>

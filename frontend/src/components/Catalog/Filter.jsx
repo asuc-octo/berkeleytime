@@ -245,8 +245,6 @@ export class FilterSidebar extends Component {
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters } = this.state;
 
-    console.log(classLevels);
-
     return (
       !this.props.isMobile ? 
       <div id="filter" className="filter">

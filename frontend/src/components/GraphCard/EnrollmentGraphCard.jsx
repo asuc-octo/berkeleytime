@@ -147,6 +147,7 @@ class EnrollmentGraphCard extends Component {
                   enrollmentData={enrollmentData}
                   updateLineHover={this.updateLineHover}
                   updateGraphHover={this.updateGraphHover}
+                  isMobile={isMobile}
                 />
                 }
               </div>
