@@ -7,6 +7,12 @@
     min-height: 600px;
     height: 100vh;
 
+    @include mobile {
+      min-height: auto;
+      height: auto;
+      padding: 50px 20px 100px 20px;
+    }
+
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -14,22 +20,25 @@
     text-align: left;
 
     h1 {
-      margin-bottom: 10px;
-      font-size: 64px;
-      font-weight: 500;
+      margin-bottom: 15px;
+      font-size: 36px;
+      color: $bt-base-text;
+      text-shadow: 1px 0 $bt-base-text;
+      letter-spacing: 1px;
+      font-weight: bold;
 
-      @include touch{
-        font-size: 32px;
+      @include touch {
+        font-size: 24px;
       }
     }
-
+    
     p {
       margin: 0 3px 10px; //3px better aligns with title
-      font-size: 24px;
-      color: $bt-light-text;
+      font-size: 20px;
+      color: $bt-grey-text;
 
       @include touch{
-        font-size: 20px;
+        font-size: 16px;
       }
     }
 
@@ -37,10 +46,13 @@
       margin: 15px 0;
 
       @include touch{
-        flex-direction: column;
+
+        .btn-bt-lg {
+          font-size: 16px;
+        } 
 
         .btn-bt-primary {
-          margin-bottom: 7px;
+          margin-right: 7px;
         }
       }
 
@@ -61,23 +73,50 @@
     justify-content: center;
     align-items: center;
 
-    @include tablet {
-      margin-left: 20px;
+    @include mobile {
+      height: auto;
+      min-height: auto;
     }
 
     .jumbo-img {
       max-width: 100%;
+      width: 500px;
 
-      @include desktop {
-        width: 500px;
+      @keyframes bobble {
+        from {
+          transform: translateY(-20px);
+        } to {
+          transform: translateY(90px);
+        }
       }
 
-      @include touch {
-        width: 300px;
+      @keyframes everything-bobble {
+        from {
+          transform: translateY(-3px);
+        } to {
+          transform: translateY(3px);
+        }
+      }
+
+      #left-float {
+        animation: bobble 4s linear alternate infinite;  
+      }
+
+      #middle-float {
+        animation: bobble 5s linear alternate infinite;  
+      }
+
+      #right-float {
+        animation: bobble 6s linear alternate infinite;  
+      }
+
+      #everything {
+        animation: everything-bobble 2s linear alternate infinite;  
       }
 
       @include mobile {
-        width: 200px;
+        padding: 150px 20px 0px 20px;
+        width: 450px;
       }
 
       object-fit: scale-down;

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router';
+import hash from 'object-hash';
 
 import { connect } from 'react-redux';
 import ClassCardList from '../../components/ClassCards/ClassCardList';
 import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
 import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
-import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset } from '../../redux/actions';
+import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset, fetchGradeFromUrl } from '../../redux/actions';
 
 class Grades extends Component {
   constructor(props) {
@@ -13,48 +15,122 @@ class Grades extends Component {
     this.state = {
       // context: {},
       selectedCourses: this.props.selectedCourses,
+      sharedHoveredClass: false,
+      isMobile: false,
     };
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
+    this.fillFromUrl = this.fillFromUrl.bind(this);
+    this.addToUrl = this.addToUrl.bind(this);
+    this.refillUrl = this.refillUrl.bind(this);
+    this.toUrlForm = this.toUrlForm.bind(this);
+    this.updateScreensize = this.updateScreensize.bind(this);
+    this.updateSharedHoveredClass = this.updateSharedHoveredClass.bind(this);
+  }
+
+  componentDidMount() {
+    const { fetchGradeContext } = this.props;
+    fetchGradeContext();
+    this.fillFromUrl();
+
+    //check is user is on mobile
+    this.updateScreensize();
+    window.addEventListener("resize", this.updateScreensize);
   }
 
   componentWillMount() {
     this.props.gradeReset();
   }
 
-  componentDidMount() {
-    const { fetchGradeContext } = this.props;
-    fetchGradeContext();
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateScreensize);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedCourses != this.state.selectedCourses) {
-      this.setState({
-        selectedCourses: nextProps.selectedCourses,
-      });
+  fillFromUrl() {
+    const { gradeReset, fetchGradeFromUrl, history } = this.props;
+    try {
+      let url = history.location.pathname;
+      if (url && (url == '/grades/' || url == '/grades')) {
+        gradeReset();
+      } else if (url) {
+        fetchGradeFromUrl(url, history);
+      }
+    } catch (err) {
+      history.push('/error');
+    }
+  }
+
+  toUrlForm(s) {
+    s = s.replace('/', '_');
+    return s.toLowerCase().split(" ").join('-');
+  }
+
+  addToUrl(course) {
+    const { history } = this.props;
+    let instructor = this.toUrlForm(course.instructor);
+    let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(course.semester)}-${instructor}`;
+    let url = history.location.pathname;
+    if (url && !url.includes(courseUrl)) {
+      url += (url == '/grades') ? '/' : '';
+      url += (url == '/grades/') ? '' : '&';
+      url += courseUrl;
+      history.push(url);
     }
   }
 
   addCourse(course) {
-    const { fetchGradeClass } = this.props;
-    const { selectedCourses } = this.state;
-    for (const selected of selectedCourses) {
+    const { fetchGradeClass, selectedCourses, usedColorIds } = this.props;
+    for (let selected of selectedCourses) {
       if (selected.id === course.id) {
         return;
       }
     }
+
+    let newColorId = "";
+    for (let i = 0; i < 4; i++) {
+      if (!usedColorIds.includes(i.toString())) {
+        newColorId = i.toString();
+        break;
+      }
+    }
+    course.colorId = newColorId;
+
+    this.addToUrl(course);
     fetchGradeClass(course);
   }
 
-  removeCourse(id) {
+  refillUrl(id) {
+    const { selectedCourses, history } = this.props;
+    let updatedCourses = selectedCourses.filter(classInfo => classInfo.id !== id);
+    let url = '/grades/';
+    for (let i = 0; i < updatedCourses.length; i++) {
+      let c = updatedCourses[i];
+      if (i != 0) url += '&';
+      url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${this.toUrlForm(c.instructor)}`;
+    }
+    history.push(url);
+  }
+
+  removeCourse(id, color) {
     const { gradeRemoveCourse } = this.props;
-    gradeRemoveCourse(id);
+    this.refillUrl(id);
+    gradeRemoveCourse(id, color);
+  }
+
+  updateSharedHoveredClass(val) {
+    this.setState({sharedHoveredClass: val});
+  }
+
+  updateScreensize() {
+    this.setState({ isMobile: window.innerWidth <= 768 });
   }
 
   render() {
-    const { context, location } = this.props;
-    const { selectedCourses } = this.state;
-    const courses = context.courses;
+    const { context, selectedCourses } = this.props;
+    let { location } = this.props;
+    const { sharedHoveredClass, isMobile } = this.state;
+    let courses = context.courses;
+
     return (
       <div className="viewport-app">
         <div className="grades">
@@ -63,18 +139,22 @@ class Grades extends Component {
             addCourse={this.addCourse}
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
+            isMobile={isMobile}
           />
 
           <ClassCardList
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
+            isMobile={isMobile}
           />
 
           <GradesGraphCard
             id="gradesGraph"
             title="Grades"
+            updateSharedHoveredClass={this.updateSharedHoveredClass}
+            isMobile={isMobile}
           />
-        </div>
+        </div> 
       </div>
     );
   }
@@ -84,20 +164,23 @@ const mapDispatchToProps = dispatch => ({
   dispatch,
   fetchGradeContext: () => dispatch(fetchGradeContext()),
   fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
-  gradeRemoveCourse: (id) => dispatch(gradeRemoveCourse(id)),
-  gradeReset: () => dispatch(gradeReset())
+  gradeRemoveCourse: (id, color) => dispatch(gradeRemoveCourse(id, color)),
+  gradeReset: () => dispatch(gradeReset()),
+  fetchGradeFromUrl: (url, history) => dispatch(fetchGradeFromUrl(url, history))
 });
 
 const mapStateToProps = state => {
-  const { context, selectedCourses } = state.grade;
+  const { context, selectedCourses, usedColorIds, sections } = state.grade;
   return {
     context,
     selectedCourses,
+    usedColorIds,
+    sections
   };
 };
 
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
-)(Grades);
+  mapDispatchToProps
+)(withRouter(Grades));

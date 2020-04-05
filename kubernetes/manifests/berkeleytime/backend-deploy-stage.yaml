@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: berkeleytime-stage
-  namespace: berkeleytime
+  namespace: default
   labels:
     appName: berkeleytime-stage
 spec:
@@ -36,7 +36,7 @@ spec:
           value: STAGING
         envFrom:
         - configMapRef:
-            name: django-configs
+            name: django-configs-staging
         - secretRef:
             name: aws
         - secretRef:

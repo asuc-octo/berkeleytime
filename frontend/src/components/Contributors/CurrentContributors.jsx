@@ -1,5 +1,7 @@
 import React, { PureComponent } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+
+import web from '../../assets/svg/about/web.svg';
 
 import leon_1 from '../../assets/img/images/about/compressed/Leon_1.jpg';
 import leon_2 from '../../assets/img/images/about/compressed/Leon_2.jpg';
@@ -36,34 +38,31 @@ import annie_2 from '../../assets/img/images/about/compressed/Annie_2.jpg';
 
 class CurrentContributors extends PureComponent {
   render() {
-    return (
-      <section className="current-contributors">
-        <h6>The BerkeleyTime Team</h6>
-        <p>We are a group of dedicated Berkeley students committed to making Berkeley a little smaller for everyone.</p>
+    let { contributors } = this.props;
 
-        <div className="members">
-          {this.props.contributors.map(row => (
-            <Row>
-              {row.map(member => (
-                <Col xs={6} lg={3}>
-                  <div className="contributor-card">
-                    <div className="headshot">
-                      <img className="serious" src={member.img_1} alt={member.name} />
-                      <img src={member.silly ? member.img_2 : member.img_1} alt={member.name} />
-                    </div>
-                    {member.site ? (
-                      <div className="name">{ member.name }</div>
-                    ) : (
-                      <div className="name">{ member.name }</div>
-                    )}
-                    <div className="role">{ member.role }</div>
-                  </div>
-                </Col>
-              ))}
-            </Row>
-          ))}
-        </div>
-      </section>
+    return (
+      <div className="current-contributors">
+        <h5>Current Team</h5>
+        {contributors.map(row => (
+          <Row>
+            {row.map(member => (
+              <Col xs={6} s={6} md={3} lg={3} className="contributor-card">
+                <div className="headshot">
+                  <img className="serious" src={member.img_1} alt={member.name} />
+                  <img src={member.silly ? member.img_2 : member.img_1} alt={member.name} />
+                </div>
+                <div className="name">
+                  <p>{ member.name }</p>
+                  { member.site ? (
+                    <a href={member.site}><img src={web} /></a>
+                  ) : null}
+                </div>
+                <div className="role">{ member.role }</div>
+              </Col>
+            ))}
+          </Row>
+        ))}
+      </div>
     );
   }
 }
@@ -92,8 +91,8 @@ CurrentContributors.defaultProps = {
         role: 'Advisor',
         site: 'http://www.hantaowang.me',
         silly: true,
-        img_1: will_1,
-        img_2: will_2,
+        img_1: will_2,
+        img_2: will_1,
       },
       {
         name: 'Jemma Kwak',
@@ -108,7 +107,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Christopher Liu',
         role: 'Frontend Lead',
-        site: 'https://www.linkedin.com/in/christopher-d-liu/',
+        site: 'https://chrisdliu.github.io',
         silly: true,
         img_1: chris_1,
         img_2: chris_2,
@@ -140,7 +139,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Grace Luo',
         role: 'Frontend Engineering',
-        site: 'http://graceluo.me',
+        site: 'https://www.linkedin.com/in/g-luo',
         silly: true,
         img_1: grace_1,
         img_2: grace_2,
@@ -148,6 +147,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Sean Meng',
         role: 'Backend Engineering',
+        site: 'https://www.linkedin.com/in/sean-meng-berkeley',
         silly: true,
         img_1: sean_1,
         img_2: sean_2,
@@ -155,6 +155,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Hannah Yan',
         role: 'Backend Engineering',
+        site: 'https://www.linkedin.com/in/yanhannah',
         silly: true,
         img_1: hannah_1,
         img_2: hannah_2,
@@ -162,6 +163,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Isabella Lau',
         role: 'Backend Engineering',
+        site: 'https://www.linkedin.com/in/xisabellalau',
         silly: true,
         img_1: izzie_1,
         img_2: izzie_2,
@@ -171,6 +173,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Christina Shao',
         role: 'Frontend Engineering',
+        site: 'https://www.linkedin.com/in/christina-shao',
         silly: true,
         img_1: christina_1,
         img_2: christina_2,
@@ -178,6 +181,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Chloe Liu',
         role: 'Frontend Engineering',
+        site: 'https://www.linkedin.com/in/ruochen99',
         silly: true,
         img_1: chloe_1,
         img_2: chloe_2,
@@ -185,6 +189,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Janet Xu',
         role: 'Designer',
+        site: 'https://janetxu.com',
         silly: true,
         img_1: janet_1,
         img_2: janet_2,
@@ -192,6 +197,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Annie Pan',
         role: 'Designer',
+        site: 'https://anniexpan.com',
         silly: true,
         img_1: annie_1,
         img_2: annie_2,

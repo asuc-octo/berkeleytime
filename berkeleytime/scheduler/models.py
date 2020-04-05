@@ -7,6 +7,9 @@ import csv
 # Create your models here.
 
 class Schedule(models.Model):
+    """
+    Model of schedule.
+    """
     # bind a schedule to a user_email
     # max length of an email field is 254 characters
     # to be complaint with RFCs 3696 and 5321

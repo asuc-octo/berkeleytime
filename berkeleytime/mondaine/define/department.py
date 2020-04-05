@@ -1,7 +1,11 @@
 """Functions for defining filters for departments."""
-from mondaine.entity.definition import ConstraintDefinition
+from mondaine.service.definition.constraint import ConstraintDefinition
 from catalog.models import Course
+"""
+Deprecated define_course_list as mondaine.define.utils directory no longer exists.
+
 from mondaine.define.utils import define_course_list
+"""
 from mondaine.lib import formulas, utils
 
 
@@ -17,6 +21,9 @@ def define_departments():
         if utils.is_abbreviation(department):
             department = utils.abbreviation_to_department(department)
         if department:
+            """
+            Deprecated define_course_list as mondaine.define.utils directory no longer exists.
+
             define_course_list(
                 category="department",
                 playlist_name=department,
@@ -24,3 +31,4 @@ def define_departments():
                     constraints=[formulas.abbreviation_in([abbreviation])]
                 )
             )
+            """

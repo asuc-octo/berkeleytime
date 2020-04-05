@@ -1,33 +1,35 @@
 // based on bootstrap 4 breakpoints
 
-// up to 767px
+// up to 768px
 @mixin mobile {
-  @include media-breakpoint-down(xs) {
+  @include media-breakpoint-between(xs, sm) {
     @content;
   }
 }
 
+// greater than 576px
 @mixin not-mobile {
-  @include media-breakpoint-up(xs) {
+  @include media-breakpoint-up(sm) {
     @content;
   }
 }
 
-// between 768px and 991
+// between 768px and 992px
 @mixin tablet {
-  @include media-breakpoint-up(md) {
+  @include media-breakpoint-between(sm, md) {
     @content;
   }
 }
 
-// up to 991px
+// mobile & tablet
+// up to 992px
 @mixin touch {
   @include media-breakpoint-down(md) {
     @content;
   }
 }
 
-// from 992px
+// greater than 992px
 @mixin desktop {
   @include media-breakpoint-up(lg) {
     @content;
