@@ -11,7 +11,7 @@ const initialState = {
   sections: [],
   selectPrimary: '',
   selectSecondary: '',
-  usedColorIds: []
+  usedColorIds: [],
 };
 
 export default function enrollment(state = initialState, action) {
@@ -25,19 +25,21 @@ export default function enrollment(state = initialState, action) {
   }
   case ENROLL_ADD_COURSE: {
     const { formattedCourse } = action.payload;
-    return Object.assign({}, state, {
+    return {
+      ...state,
       selectedCourses: [...state.selectedCourses, formattedCourse],
       usedColorIds: [...state.usedColorIds, formattedCourse.colorId]
-    });
+    };
   }
   case ENROLL_REMOVE_COURSE: {
     const { id, color } = action.payload;
-    let updatedCourses = state.selectedCourses.filter(classInfo => classInfo.id !== id);
-    let updatedColors = state.usedColorIds.filter(c => c !== color);
-    return Object.assign({}, state, {
+    const updatedCourses = state.selectedCourses.filter(classInfo => classInfo.id !== id);
+    const updatedColors = state.usedColorIds.filter(c => c !== color);
+    return {
+      ...state,
       selectedCourses: updatedCourses,
-      usedColorIds: updatedColors
-    });
+      usedColorIds: updatedColors,
+    };
   }
   case UPDATE_ENROLL_DATA: {
     const { enrollmentData } = action.payload;
@@ -67,6 +69,14 @@ export default function enrollment(state = initialState, action) {
   }
   case UPDATE_ENROLL_SELECTED: {
     const { sections } = action.payload;
+    if (sections.length === 0) {
+      return {
+        ...state,
+        sections,
+        selectPrimary: '',
+        selectSecondary: '',
+      };
+    }
     const str = sections[0].semester.charAt(0).toUpperCase() + sections[0].semester.slice(1);
     return {
       ...state,

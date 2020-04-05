@@ -424,9 +424,9 @@ export function fetchEnrollClass(course) {
           instructor: course.instructor,
           courseID: course.courseID,
           sections: course.sections,
-          colorId: course.colorId
-        }
-        dispatch(enrollAddCourse(formattedCourse))
+          colorId: course.colorId,
+        };
+        dispatch(enrollAddCourse(formattedCourse));
       },
       error => console.log('An error occurred.', error),
     );
