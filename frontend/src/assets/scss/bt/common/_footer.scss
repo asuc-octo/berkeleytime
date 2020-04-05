@@ -5,7 +5,12 @@
   .bt-footer-container {
     max-width: 1150px;
     margin: 0 auto;
-    padding: 40px 30px;
+    padding: 40px 40px 30px 30px;
+
+    @include mobile {
+      max-width: 300px;
+      padding: 40px 0px 30px 0px;
+    }
 
     .bt-footer-column {
       display: flex;
@@ -23,14 +28,23 @@
         font-size: 18px;
         font-weight: 500;
         line-height: 150%;
+
+        @include mobile {
+          font-size: 14px;
+        }
       }
 
       p {
-        font-size: 20px;
+        font-size: 18px;
         color: $bt-base-text;
+
+        @include mobile {
+          font-size: 14px;
+        }
       }
 
       a {
+        font-size: 18px;
         color: $bt-light-text;
         transition: 200ms;
         width: max-content;
@@ -52,6 +66,12 @@
         font-weight: 500;
         font-size: 16px;
         line-height: 150%;
+
+        @include mobile {
+          width: 20px;
+          height: 10px;
+          font-size: 10px;
+        }
       }
     }
   }

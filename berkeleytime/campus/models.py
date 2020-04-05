@@ -52,8 +52,8 @@ class Building(models.Model):
 
 class Room(models.Model):
     """
-    represents a classroom on the UC Berkeley campus (ie. 1 Pimental Hall (PIMENTEL))
-
+    Represents a classroom on the UC Berkeley campus (ie. 1 Pimental Hall (PIMENTEL))
+    
     """
     building = models.ForeignKey(Building)
     name = models.CharField(max_length=200, null=True, blank=True)
@@ -78,4 +78,3 @@ class Room(models.Model):
     #     if not self.name:
     #         return self.building.abbreviation
     #     return "%s %s" % (self.name, self.building.abbreviation)
-

@@ -1,0 +1,78 @@
+past:
+  - name: Class of 2019
+    rows:
+      - - name: Evelyn Li
+          role: Backend Engineer
+          site: https://www.linkedin.com/in/yunqil
+        - name: Richard Liu
+          role: Advisor
+          site: https://www.linkedin.com/in/richard4912
+        - name: Mary Liu
+          role: Backend Engineer
+          site: https://www.linkedin.com/in/mary-y-liu
+        - name: Kate Xu
+          role: Frontend Lead
+          site: https://www.linkedin.com/in/kate-shijie-xu-666b57110
+      - - name: Scott Lee
+          role: Frontend Lead / PM
+          site: http://scottjlee.github.io
+  - name: Class of 2018
+    rows:
+      - - name: Tony Situ
+          role: Backend Lead
+          site: https://www.linkedin.com/in/c2tonyc2
+        - name: Vaibhav Srikaran
+          role: Product Manager
+          site: https://www.linkedin.com/in/vsrikaran
+        - name: Katharine Jiang
+          role: Frontend Engineer
+          site: http://katharinejiang.com
+        - name: Flora Xue
+          role: Frontend Engineer
+          site: https://www.linkedin.com/in/flora-zhenruo-xue
+      - - name: Alan Rosenthal
+          role: Backend Engineer
+          site: https://www.linkedin.com/in/alan-rosenthal-37767614a
+  - name: Class of 2017 and Before
+    rows:
+      - - name: Christine Wang
+          role: Fullstack Engineer
+        - name: Emily Chen
+          role: Fullstack Engineer
+        - name: Eric Huynh
+          role: Fullstack Engineer
+        - name: Jennifer Yu
+          role: Fullstack Engineer
+      - - name: Justin Lu
+          role: Fullstack Engineer
+        - name: Kelvin Leong
+          role: Fullstack Engineer
+        - name: Kevin Jiang
+          role: Fullstack Engineer
+        - name: Kimya Khoshnan
+          role: Fullstack Engineer
+      - - name: Laura Harker
+          role: Fullstack Engineer
+        - name: Mihir Patil
+          role: Fullstack Engineer
+        - name: Niraj Amalkanti
+          role: Fullstack Engineer
+        - name: Parsa Attari
+          role: Fullstack Engineer
+      - - name: Ronald Lee
+          role: Fullstack Engineer
+        - name: Sanchit Bareja
+          role: Fullstack Engineer
+        - name: Sandy Zhang
+          role: Fullstack Engineer
+  - name: Founders
+    rows:
+      - - name: Yuxin Zhu
+          role: Co-Founder
+          site: http://yuxinzhu.com/#
+        - name: Noah Gilmore
+          role: Co-Founder
+          site: https://noahgilmore.com
+        - name: Aswhin Iyengar
+          role: Co-Founder
+          site: https://nms.kcl.ac.uk/ashwin.iyengar

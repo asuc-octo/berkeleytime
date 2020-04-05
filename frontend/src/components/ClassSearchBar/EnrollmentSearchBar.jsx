@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import Select from 'react-select-virtualized';
-import {Row, Col, Button} from 'react-bootstrap';
-import axios from 'axios';
+import {
+  Container, Row, Col, Button,
+} from 'react-bootstrap';
 import hash from 'object-hash';
 
 import { laymanToAbbreviation } from '../../variables/Variables';
@@ -78,7 +79,6 @@ class EnrollmentSearchBar extends Component {
   }
 
   handleSecondarySelect(secondary) {
-    // console.log(secondary);
     this.setState({
       selectSecondary: secondary ? secondary : { value: 'all', label: 'All Instructors' },
     });
@@ -173,7 +173,6 @@ class EnrollmentSearchBar extends Component {
     }
 
     playlist.id = hash(playlist);
-
     this.props.addCourse(playlist)
     this.reset();
   }
@@ -216,7 +215,7 @@ class EnrollmentSearchBar extends Component {
   }
 
   render() {
-    const { classes, isFull, sections } = this.props;
+    const { classes, isFull, sections, isMobile } = this.props;
     const { selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
@@ -237,50 +236,54 @@ class EnrollmentSearchBar extends Component {
       secondaryOption = '';
     }
 
+    console.log(isMobile);
+
     return (
-      <Row style={{marginBottom: 10}}>
-        <Col lg={5}>
-          <Select
-              name="selectClass"
-              placeholder="Choose a class..."
-              // value={selectedClass}
-              options={this.buildCoursesOptions(classes)}
-              onChange={this.handleClassSelect}
-              filterOptions={this.filterOptions}
-          />
-        </Col>
-        <Col lg={3}>
-          <Select
-              name="instrSems"
-              placeholder="Select an option..."
-              value={onePrimaryOption ? primaryOptions[1] : primaryOption}
-              options={primaryOptions}
-              onChange={this.handlePrimarySelect}
-              disabled={!selectedClass}
-              clearable={false}
-          />
-        </Col>
-        <Col lg={3}>
-          <Select
-              name="section"
-              placeholder="Select an option..."
-              value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
-              options={secondaryOptions}
-              onChange={this.handleSecondarySelect}
-              disabled={!selectedClass}
-              clearable={false}
-          />
-        </Col>
-        <Col lg={1}>
-          <Button
-            className="btn-bt-green"
-            onClick={this.addSelected}
-            disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
-          >
-            Add
-          </Button>
-        </Col>
-      </Row>
+      <Container fluid className="enrollment-search-bar">
+        <Row style={{marginBottom: 10}}>
+          <Col lg={5}>
+            <Select
+                name="selectClass"
+                placeholder="Choose a class..."
+                // value={selectedClass}
+                options={this.buildCoursesOptions(classes)}
+                onChange={this.handleClassSelect}
+                filterOptions={this.filterOptions}
+            />
+          </Col>
+          <Col xs={6} sm={6} lg={3}>
+            <Select
+                name="instrSems"
+                placeholder={!isMobile ? "Select an option...": "Select..."}
+                value={onePrimaryOption ? primaryOptions[1] : primaryOption}
+                options={primaryOptions}
+                onChange={this.handlePrimarySelect}
+                isDisabled={!selectedClass}
+                isClearable={false}
+            />
+          </Col>
+          <Col xs={6} sm={6} lg={3}>
+            <Select
+                name="section"
+                placeholder={!isMobile ? "Select an option...": "Select..."}
+                value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
+                options={secondaryOptions}
+                onChange={this.handleSecondarySelect}
+                isDisabled={!selectedClass}
+                isClearable={false}
+            />
+          </Col>
+          <Col lg={1}>
+            <Button
+              className="btn-bt-green"
+              onClick={this.addSelected}
+              disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
+            >
+              Add
+            </Button>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }

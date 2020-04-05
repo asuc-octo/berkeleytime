@@ -12,6 +12,7 @@ export default function filter(state = initialState, action) {
   }
   case FILTER: {
     const { data } = action.payload;
+    console.log(data);
     return {
       ...state,
       courses: data,

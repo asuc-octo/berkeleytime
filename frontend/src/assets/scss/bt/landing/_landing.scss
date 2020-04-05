@@ -1,7 +1,7 @@
 .landing {
   overflow-x: hidden;
   width: 100%;
-  
+
   .modal {
     min-height: 600px;
     height: 100vh;
@@ -44,97 +44,98 @@
     }
   }
   
-  .landing-explore {
-    margin-bottom: 0 !important;
-    background-color: white;
-    min-height: 600px;
-    height: 100vh;
-    
-    @include touch {
-      min-height: 900px;
-    }
-    
-    .landing-explore-icon {
-      width: 100%;
-      margin-bottom: 20px;
-    }
-    
-    .bt-pink { color: $bt-pink }
-    .bt-green { color: $bt-green }
-    .bt-blue { color: $bt-blue }
-    
-    .landing-explore-desc {
-      padding-top: 30vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+  h3 {
+    font-size: 30px;
+    margin-bottom: 20px;
+    color: $bt-base-text;
+    text-shadow: 1px 0 $bt-base-text;
+    letter-spacing: 1px;
+  }
       
-      h3 {
-        font-size: 30px;
-        font-weight: bold;
-        
-        margin-bottom: 20px;
+  p {
+    margin-bottom: 35px;
+    color: $bt-grey-text;
+  }
+
+  .landing-explore { 
+    text-align: center;
+    padding-bottom: 20vh;
+
+    .landing-explore-content {
+      padding-left: 45px;
+      padding-right: 45px;
+
+      @include mobile {
+        margin-top: 20px;
       }
-      
-      p {
-        margin-bottom: 20px;
-        color: $bt-light-grey;
-      }
-      
-      a {
-        color: $bt-blue;
-      }
-      
-      @include touch{
-        padding-top: 20vh;
+
+      .landing-explore-img {
+        max-height: 70px;
+        object-fit: scale-down;
       }
     }
-    
-    .landing-explore-img-wrapper {
-      padding-top: 10vh;
-      padding-left: 50px;
-      @include touch{
-        padding-left: 0px;
-      }
+
+    h3 {
+      padding-top: 30px;
+      font-size: 18px;
     }
-    
-    .landing-explore-img {
-      max-width: 100%;
-      max-height: 500px;
+
+    a {
+      font-size: 16px;
+      font-weight: bold;
+      color: $bt-blue;
+      text-shadow: 0.1px 0 $bt-blue;
+      letter-spacing: 1px;
+    }
+
+    p {
+      margin-bottom: 10px;
+    }
+  }
+
+  .landing-mission {  
+    padding-bottom: 20vh;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    .landing-mission-img {
+      padding-right: 20px;
+      max-width: 95%;
       object-fit: scale-down;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+      @include mobile {
+        padding-right: 0px;
+        padding-bottom: 20px;
+        display: block;
+        margin: 0 auto;
+      }
+    }
+    
+    .landing-mission-link {
+      a {
+        color: $bt-blue !important;
+      }
+    }
+
+    .landing-mission-desc {
+      max-width: 350px;
     }
   }
-  
-  .landing-explore.landing-explore-reverse {
-    background: $bt-off-white;
-  }
-  
+
   .landing-sponsors {
     display: flex;
     flex-direction: column;
     justify-content: center;
     
     background-color: white;
-    padding-top: 60px;
-    padding-bottom: 100px;
+    padding-bottom: 25vh;
+    padding-left: 20px;
+    padding-right: 20px;
     
     .landing-sponsors-desc {
       align-self: center;
-      max-width: 450px;
+      max-width: 350px;
       text-align: center;
-      
-      h3 {
-        font-size: 30px;
-        font-weight: bold;
-        margin-bottom: 20px;
-      }
-      
-      p {
-        margin-bottom: 35px;
-        color: $bt-light-grey;
-      }
     }
     
     .landing-sponsors-img-wrapper {
@@ -150,56 +151,4 @@
       }
     }
   }
-  
-  .landing-mission {
-    background-color: rgba(245, 245, 245, 1);            
-    
-    .landing-mission-column {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      
-      max-width: 50vw;
-      
-      padding-top: 50px;
-      padding-bottom: 50px;
-      padding-left: 125px;
-      padding-right: 125px;
-      
-      @include touch{
-        padding-left: 0px;
-        padding-right: 0px;
-      }
-      
-      h3 {
-        font-weight: bold;
-        margin-bottom: 30px;
-      }
-      
-      p {
-        margin-bottom: 30px;
-      }
-    }
-  }
-  
-  .landing-artist-credit {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    
-    padding: 50px;
-    
-    font-size: 20px;
-    background-color: white;
-    
-    > * {
-      padding: 0 5px;
-    }
-    
-    a {
-      transition: 200ms;
-    }
-  }
-  
 }

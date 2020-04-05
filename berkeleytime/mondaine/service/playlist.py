@@ -26,6 +26,9 @@ class PlaylistService(object):
         PlaylistCategory.semester: semester_service,
     }
 
+    refreshable_services = [PlaylistCategory.ls]
+    cleanable_services = [PlaylistCategory.ls]
+
     def update(self, category=None):
         """Update all playlist categories."""
         if category:
@@ -40,9 +43,36 @@ class PlaylistService(object):
         service = self.services[category]
         service.update()
 
+    def refresh_current_semester(self, category=None):
+        """Fetch the playlist courses from SIS for the current semester, overwriting the cache."""
+        if category:
+            self._refresh_current_semester(category)
+            return
+
+        for category in self.refreshable_services:
+            self._refresh_current_semester(category)
+
+    def _refresh_current_semester(self, category):
+        service = self.services[category]
+        service.refresh_current_semester()
+
+    def clean(self, category=None):
+        """Clean up potential playlist orphans by deleting all playlists before recreating them."""
+        if category:
+            self._clean(category)
+            return
+
+        for category in self.cleanable_services:
+            self._clean(category)
+
+    def _clean(self, category):
+        service = self.services[category]
+        service.delete_all()
+
     def find(self, category):
         """Find all playlists matching a enum.PlaylistCategory."""
         service = self.services[category]
         service.find()
+
 
 playlist_service = PlaylistService()

@@ -4,13 +4,30 @@
 
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
+
+  @include mobile {
+    padding: 10px;
+  }
 
   .grades-search-bar {
     margin-bottom: 10px;
 
-    > div > div {
-      padding-left: 5px;
-      padding-right: 5px;
+    // row
+    > div {
+      // columns
+      > div {
+        padding-left: 5px;
+        padding-right: 5px;
+
+        @include mobile {
+          padding-top: 10px;
+
+          .btn {
+            width: 100%;
+          }
+        }
+      }
     }
   }
 }

@@ -2,7 +2,7 @@
     background-color: $bt-white;
     width: 100vw;
 
-    margin-top: 150px;
+    padding-top: 150px;
     margin-bottom: 100px;
 
     .releases-heading {
@@ -74,6 +74,10 @@
                 font-size: 40px;
                 position: relative;
                 top: 7px;
+            }
+
+            a {
+                color: $bt-blue;
             }
         }
     }

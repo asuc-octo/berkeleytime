@@ -1,10 +1,31 @@
 .filter {
-  height: 100%;
   padding: 30px;
   overflow: scroll;
 
+  @include mobile {
+    overflow: visible;
+  }
+
   display: flex;
   flex-direction: column;
+
+  .filter-scroll {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    overflow-x: scroll;
+
+    .filter-scroll-btn {
+      position: relative;
+      margin-right: 10px !important;
+      height: auto;
+      padding: 9px 12px 9px 12px;
+    }
+
+    .blue-text {
+      color: $bt-blue;
+    }
+  }
 
   .filter-loading {
     height: 100%;
@@ -50,6 +71,10 @@
 
       &:focus {
         outline: none;
+
+        &::placeholder {
+          color: transparent;
+        }
       }
     }
   }
@@ -63,6 +88,36 @@
     > p {
       margin-bottom: 5px;
       font-size: 18px;
+    }
+  }
+}
+
+.filter-modal {
+
+  .filter-form {
+    padding: 30px;
+    max-height: 50vh;
+    overflow-y: scroll;
+
+    .filter-form-label {
+      width: 80vw;
+      height: 40px;
+      padding: 1vh 3vw;
+      background-color: $bt-off-white;
+      font-weight: bold;
+    }
+  }
+  .filter-button-bar {
+    height: 20vh;
+    border-top: 2px solid $bt-off-white;
+    display: flex;
+    justify-content: center;
+    padding-top: 2vh;
+  
+    button {
+      margin-right:10px;
+      width: 35vw;
+      height: 6vh;
     }
   }
 }

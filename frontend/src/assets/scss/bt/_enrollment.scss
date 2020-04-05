@@ -1,12 +1,35 @@
 .enrollment{
-  margin-top: 30px;
-  margin-bottom: 30px;
-  margin-left: 35px;
-  margin-right: 35px;
+  height: 100%;
+  padding: 30px;
+
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+
+  @include mobile {
+    padding: 10px;
+  }
+
+  .enrollment-search-bar {
+    margin-bottom: 10px;
+
+    > div > div {
+      padding-left: 5px;
+      padding-right: 5px;
+
+      @include mobile {
+        padding-top: 10px;
+
+        .btn {
+          width: 100%;
+        }
+      }
+    }
+  }
 }
 
 // EnrollmentGraph
-.card.enrollment-graph-card {
+.enrollment-graph-card {
   box-shadow: none;
   border: none;
 
@@ -14,7 +37,20 @@
     padding: 15px 15px 0px 35px;
     min-height: 500px;
 
+    @include mobile {
+      padding: 0px 10px 0px 10px;
+      text-align: center;
+      overflow-x: scroll;
+    }
+
     .enrollment-content {
+
+      @include mobile {
+        width: 500px;
+        //ResponsiveContainer already sets height to 500px
+        min-height: 510px; 
+      }
+
       .graph {
         height: 400px;
         padding: 15px 15px 15px 15px;
