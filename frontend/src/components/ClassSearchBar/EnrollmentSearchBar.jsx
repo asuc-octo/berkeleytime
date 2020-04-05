@@ -258,8 +258,8 @@ class EnrollmentSearchBar extends Component {
                 value={onePrimaryOption ? primaryOptions[1] : primaryOption}
                 options={primaryOptions}
                 onChange={this.handlePrimarySelect}
-                disabled={!selectedClass}
-                clearable={false}
+                isDisabled={!selectedClass}
+                isClearable={false}
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
@@ -269,8 +269,8 @@ class EnrollmentSearchBar extends Component {
                 value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
                 options={secondaryOptions}
                 onChange={this.handleSecondarySelect}
-                disabled={!selectedClass}
-                clearable={false}
+                isDisabled={!selectedClass}
+                isClearable={false}
             />
           </Col>
           <Col lg={1}>

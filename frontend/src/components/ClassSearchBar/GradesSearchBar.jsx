@@ -351,9 +351,9 @@ class GradesSearchBar extends Component {
               value={selectType == 'instructor' ? sortOptions[0] : sortOptions[1]}
               placeholder="Sort by"
               options={sortOptions}
-              clearable={false}
+              isClearable={false}
               onChange={this.handleSortSelect}
-              disabled={!selectedClass}
+              isDisabled={!selectedClass}
             />
           </Col> : null }
           <Col xs={6} sm={6} lg={3}>
@@ -363,8 +363,8 @@ class GradesSearchBar extends Component {
               value={onePrimaryOption ? primaryOptions[1] : primaryOption}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
-              disabled={!selectedClass}
-              clearable={false}
+              isDisabled={!selectedClass}
+              isClearable={false}
               searchable={false}
             />
           </Col>
@@ -375,12 +375,12 @@ class GradesSearchBar extends Component {
               value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}
-              disabled={!selectedClass}
-              clearable={false}
+              isDisabled={!selectedClass}
+              isClearable={false}
               searchable={false}
             />
           </Col>
-          <Col xs={12} sm={12}  lg={1}>
+          <Col xs={12} sm={12} lg={1}>
             <Button
               onClick={this.addSelected}
               disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
