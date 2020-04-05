@@ -8,6 +8,7 @@ import axios from 'axios';
 import Filter from '../../components/Catalog/Filter';
 import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
+import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
 
 import { modify, fetchLists, modifySelected } from '../../redux/actions';
 import { connect } from "react-redux";
@@ -289,10 +290,19 @@ class Catalog extends Component {
               />
             </Col>
             <Col md={6} lg={4} xl={6} className="catalog-description-column">
-              <ClassDescription
-                course={selectedCourse}
-                selectCourse={this.selectCourse}
-              /> 
+              {
+                !isMobile ? 
+                  <ClassDescription
+                  course={selectedCourse}
+                  selectCourse={this.selectCourse}
+                /> :
+                <ClassDescriptionModal 
+                  course={selectedCourse}
+                  selectCourse={this.selectCourse}
+                  show={showDescription}
+                  hideModal={this.hideModal}
+                />
+              }
             </Col> 
           </Row>
       </div>
