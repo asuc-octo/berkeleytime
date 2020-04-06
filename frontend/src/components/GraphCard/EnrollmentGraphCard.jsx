@@ -36,6 +36,12 @@ class EnrollmentGraphCard extends Component {
   getEnrollmentData() {
     const { selectedCourses, fetchEnrollData } = this.props;
     fetchEnrollData(selectedCourses);
+
+    const { enrollmentData } = this.props;
+    console.log(enrollmentData);
+    //const course_letter = gradesData.map((course) => course.course_letter)
+    //const course_gpa = gradesData.map((course) => course.course_gpa)
+    //this.props.updateClassCardEnrollment(course_letter, course_gpa, section_letter, section_gpa);
   }
 
   // buildGraphData(enrollmentData) {

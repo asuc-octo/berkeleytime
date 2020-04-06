@@ -7,7 +7,7 @@ import vars from '../../variables/Variables';
 class ClassCardList extends PureComponent {
 
   render() {
-    const { selectedCourses, removeCourse, courseLetter, courseGPA, sectionLetter, sectionGPA, isMobile } = this.props
+    const { selectedCourses, removeCourse, additionalInfo, type, isMobile } = this.props
 
     return (
       <Container fluid className="class-card-list">
@@ -23,10 +23,8 @@ class ClassCardList extends PureComponent {
                 faculty={item.instructor === 'all' ? 'All Instructors' : item.instructor}
                 removeCourse={removeCourse}
                 colorId={item.colorId}
-                courseLetter={courseLetter[i]}
-                courseGPA={courseGPA[i]}
-                sectionLetter={sectionLetter[i]}
-                sectionGPA={sectionGPA[i]}
+                additionalInfo={additionalInfo[i]}
+                type={type}
                 isMobile={isMobile}
               /> 
             ))

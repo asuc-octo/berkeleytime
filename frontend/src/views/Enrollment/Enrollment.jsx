@@ -24,6 +24,7 @@ class Enrollment extends Component {
     this.addToUrl = this.addToUrl.bind(this);
     this.refillUrl = this.refillUrl.bind(this);
     this.toUrlForm = this.toUrlForm.bind(this);
+    this.updateClassCardEnrollment = this.updateClassCardEnrollment.bind(this);
   }
 
   componentWillUnmount() {
@@ -153,6 +154,10 @@ class Enrollment extends Component {
     this.setState({ isMobile: window.innerWidth <= 768 });
   }
 
+  updateClassCardEnrollment(course_letter, course_gpa, section_letter, section_gpa) {
+  }
+
+
   render() {
     const { context, selectedCourses } = this.props;
     let { location } = this.props;
@@ -170,14 +175,15 @@ class Enrollment extends Component {
             isMobile={isMobile}
           /> 
 
-          <ClassCardList
+          {/*<ClassCardList
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
-          />
+          />*/}
 
           <EnrollmentGraphCard
             id="gradesGraph"
             title="Enrollment"
+            updateClassCardEnrollment={this.updateClassCardEnrollment}
             isMobile={isMobile}
           />
         </div>
