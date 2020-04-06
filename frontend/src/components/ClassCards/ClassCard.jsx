@@ -5,8 +5,10 @@ import ClassCardMobile from './ClassCardMobile';
 
 function ClassCard(props) {
   const {
-    id, course, title, fill, semester, faculty, removeCourse, colorId, courseLetter, courseGPA, sectionLetter, sectionGPA, isMobile,
+    id, course, title, fill, semester, faculty, removeCourse, colorId, additionalInfo, type, isMobile,
   } = props;
+
+  console.log(additionalInfo);
 
   return (
     <Col xs={12} sm={12} lg={3} xl={3} className="class-card-column">
@@ -19,12 +21,10 @@ function ClassCard(props) {
         <div className="class-card-title">{ title }</div>
         <div className="class-card-options">{ `${semester} • ${faculty}` }</div>
 
-        { isMobile ?
+        {isMobile ?
           <ClassCardMobile
-            courseLetter={courseLetter}
-            courseGPA={courseGPA}
-            sectionLetter={sectionLetter}
-            sectionGPA={sectionGPA}
+            additionalInfo={additionalInfo}
+            type={type}
           /> 
           :
           null

@@ -39,7 +39,7 @@ class GradesGraphCard extends Component {
     const course_gpa = gradesData.map((course) => course.course_gpa)
     const section_letter = gradesData.map((course) => course.section_letter)
     const section_gpa = gradesData.map((course) => course.section_gpa)
-    this.props.updateClassCardAvg(course_letter, course_gpa, section_letter, section_gpa);
+    this.props.updateClassCardGrade(course_letter, course_gpa, section_letter, section_gpa);
   }
 
   getGradesData() {

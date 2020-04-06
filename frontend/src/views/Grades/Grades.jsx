@@ -17,10 +17,7 @@ class Grades extends Component {
       // context: {},
       selectedCourses: this.props.selectedCourses,
       isMobile: false,
-      courseLetter: [],
-      courseGPA: [],
-      sectionLetter: [],
-      sectionGPA: [],
+      additionalInfo: [],
     };
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
@@ -29,7 +26,7 @@ class Grades extends Component {
     this.refillUrl = this.refillUrl.bind(this);
     this.toUrlForm = this.toUrlForm.bind(this);
     this.updateScreensize = this.updateScreensize.bind(this);
-    this.updateClassCardAvg = this.updateClassCardAvg.bind(this);
+    this.updateClassCardGrade = this.updateClassCardGrade.bind(this);
   }
 
   componentDidMount() {
@@ -171,19 +168,19 @@ class Grades extends Component {
     this.setState({ isMobile: window.innerWidth <= 768 });
   }
 
-  updateClassCardAvg(course_letter, course_gpa, section_letter, section_gpa) {
-    this.setState({ 
-      courseLetter: course_letter,
-      courseGPA: course_gpa,
-      sectionLetter: section_letter,
-      sectionGPA: section_gpa,
-    })
+  updateClassCardGrade(course_letter, course_gpa, section_letter, section_gpa) {
+
+    var info=[]
+    for(var i=0; i<course_letter.length; i++) {
+      info.push([course_letter[i], course_gpa[i], section_letter[i], section_gpa[i]])
+    }
+    this.setState({ additionalInfo: info })
   }
 
   render() {
     const { context, selectedCourses } = this.props;
     let { location } = this.props;
-    const { courseLetter, courseGPA, sectionLetter, sectionGPA, isMobile } = this.state;
+    const { additionalInfo, isMobile } = this.state;
     let courses = context.courses;
 
     return (
@@ -200,17 +197,15 @@ class Grades extends Component {
           <ClassCardList
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
+            additionalInfo={additionalInfo}
+            type="grades"
             isMobile={isMobile}
-            courseLetter={courseLetter}
-            courseGPA={courseGPA}
-            sectionLetter={sectionLetter}
-            sectionGPA={sectionGPA}
           />
 
           <GradesGraphCard
             id="gradesGraph"
             title="Grades"
-            updateClassCardAvg={this.updateClassCardAvg}
+            updateClassCardGrade={this.updateClassCardGrade}
             isMobile={isMobile}
           />
         </div> 
