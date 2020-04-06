@@ -48,6 +48,15 @@
         > p {
           margin-left: 5px;
         }
+
+        .statlink {
+          color: $bt-blue;
+
+          &:hover {
+            color: $bt-light-text;
+            cursor: pointer;
+          }
+        }
       }
     }
 

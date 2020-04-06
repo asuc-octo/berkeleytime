@@ -90,10 +90,21 @@ class ClassDescription extends Component {
     getCourseData(course.id);
   }
 
+  goToEnrollment(courseData) {
+    const { history } = this.props;
+    let url = `/enrollment/0-${courseData.course.id}-fall-2019-all`;
+    history.push(url);
+  }
+
+  goToGrades(courseData) {
+    const { history } = this.props;
+    let url = `/grades/0-${courseData.course.id}-all-all`;
+    history.push(url);
+  }
+
   render() {
     const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
-
 
     const toGrades = {
       pathname: '/grades',
@@ -126,11 +137,13 @@ class ClassDescription extends Component {
                 <img src={people} />
                 Enrolled:
                 {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)}
+                <div className="statlink" onClick={() => this.goToEnrollment(courseData)}>&nbsp; Enrollment History &#8594;</div>
               </div>
               <div className="statline">
                 <img src={chart} />
                 Average Grade:
                 {applyIndicatorGrade(course.letter_average, course.letter_average)}
+                <div className="statlink" onClick={() => this.goToGrades(courseData)}>&nbsp; Grade Distributions &#8594;</div>
               </div>
               <div className="statline">
                 <img src={book} />
