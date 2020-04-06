@@ -5,9 +5,21 @@ import ClassCard from './ClassCard';
 import ClassCardMobile from './ClassCardMobile';
 import vars from '../../variables/Variables';
 
-class ClassCardList extends PureComponent {
+import { connect } from 'react-redux';
+import { fetchGradeData } from '../../redux/actions';
+
+class ClassCardList extends Component {
+  
+  getAvg(){
+    const { selectedCourses, fetchGradeData } = this.props;
+    fetchGradeData(selectedCourses);
+    console.log(gradesData);
+  }
+
   render() {
     const { selectedCourses, removeCourse, isMobile } = this.props
+
+    this.getAvg();
 
     return (
       <Container fluid className="class-card-list">
@@ -32,5 +44,20 @@ class ClassCardList extends PureComponent {
   }
 }
 
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  fetchGradeData: (selectedCourses) => dispatch(fetchGradeData(selectedCourses)),
+});
 
-export default ClassCardList;
+const mapStateToProps = state => {
+  const { gradesData } = state.grade;
+  return {
+    gradesData
+  };
+};
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ClassCardList);

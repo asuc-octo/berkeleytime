@@ -13,6 +13,7 @@ class GradesInfoCard extends PureComponent {
       sectionGPA, selectedPercentiles, selectedGrade,
       denominator, betterGrade, worseGrade, color
     } = this.props;
+
     return (
       <div className="grades-info">
         <div className="header">
