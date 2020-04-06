@@ -2,24 +2,12 @@ import React, { PureComponent } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
 import ClassCard from './ClassCard';
-import ClassCardMobile from './ClassCardMobile';
 import vars from '../../variables/Variables';
 
-import { connect } from 'react-redux';
-import { fetchGradeData } from '../../redux/actions';
-
-class ClassCardList extends Component {
-  
-  getAvg(){
-    const { selectedCourses, fetchGradeData } = this.props;
-    fetchGradeData(selectedCourses);
-    console.log(gradesData);
-  }
+class ClassCardList extends PureComponent {
 
   render() {
-    const { selectedCourses, removeCourse, isMobile } = this.props
-
-    this.getAvg();
+    const { selectedCourses, removeCourse, courseLetter, courseGPA, sectionLetter, sectionGPA, isMobile } = this.props
 
     return (
       <Container fluid className="class-card-list">
@@ -35,6 +23,11 @@ class ClassCardList extends Component {
                 faculty={item.instructor === 'all' ? 'All Instructors' : item.instructor}
                 removeCourse={removeCourse}
                 colorId={item.colorId}
+                courseLetter={courseLetter[i]}
+                courseGPA={courseGPA[i]}
+                sectionLetter={sectionLetter[i]}
+                sectionGPA={sectionGPA[i]}
+                isMobile={isMobile}
               /> 
             ))
           }
@@ -44,20 +37,4 @@ class ClassCardList extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  dispatch,
-  fetchGradeData: (selectedCourses) => dispatch(fetchGradeData(selectedCourses)),
-});
-
-const mapStateToProps = state => {
-  const { gradesData } = state.grade;
-  return {
-    gradesData
-  };
-};
-
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(ClassCardList);
+export default ClassCardList;

@@ -16,8 +16,11 @@ class Grades extends Component {
     this.state = {
       // context: {},
       selectedCourses: this.props.selectedCourses,
-      sharedHoveredClass: false,
       isMobile: false,
+      courseLetter: [],
+      courseGPA: [],
+      sectionLetter: [],
+      sectionGPA: [],
     };
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
@@ -26,7 +29,7 @@ class Grades extends Component {
     this.refillUrl = this.refillUrl.bind(this);
     this.toUrlForm = this.toUrlForm.bind(this);
     this.updateScreensize = this.updateScreensize.bind(this);
-    this.updateSharedHoveredClass = this.updateSharedHoveredClass.bind(this);
+    this.updateClassCardAvg = this.updateClassCardAvg.bind(this);
   }
 
   componentDidMount() {
@@ -164,18 +167,23 @@ class Grades extends Component {
     gradeRemoveCourse(id, color);
   }
 
-  updateSharedHoveredClass(val) {
-    this.setState({sharedHoveredClass: val});
-  }
-
   updateScreensize() {
     this.setState({ isMobile: window.innerWidth <= 768 });
+  }
+
+  updateClassCardAvg(course_letter, course_gpa, section_letter, section_gpa) {
+    this.setState({ 
+      courseLetter: course_letter,
+      courseGPA: course_gpa,
+      sectionLetter: section_letter,
+      sectionGPA: section_gpa,
+    })
   }
 
   render() {
     const { context, selectedCourses } = this.props;
     let { location } = this.props;
-    const { sharedHoveredClass, isMobile } = this.state;
+    const { courseLetter, courseGPA, sectionLetter, sectionGPA, isMobile } = this.state;
     let courses = context.courses;
 
     return (
@@ -193,12 +201,16 @@ class Grades extends Component {
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
             isMobile={isMobile}
+            courseLetter={courseLetter}
+            courseGPA={courseGPA}
+            sectionLetter={sectionLetter}
+            sectionGPA={sectionGPA}
           />
 
           <GradesGraphCard
             id="gradesGraph"
             title="Grades"
-            updateSharedHoveredClass={this.updateSharedHoveredClass}
+            updateClassCardAvg={this.updateClassCardAvg}
             isMobile={isMobile}
           />
         </div> 
