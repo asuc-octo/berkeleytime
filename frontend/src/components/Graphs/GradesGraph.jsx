@@ -39,14 +39,14 @@ const MobileTooltip = props => {
 
 const PercentageLabel = props => {
     //todo: change text color
-    const {x, y, value} = props
+    const {x, y, width, value} = props
     let percentage = value == 0 ? "": (value < 1 ? "<1%" : Math.round(value) + "%");
     return (
       <text 
-        x={x} 
+        x={x + width} 
         y={y} 
-        dx={11}
-        dy={-11}
+        dx={20}
+        dy={15}
         fontSize={12}
         textAnchor="middle">{percentage}
       </text>
@@ -61,7 +61,7 @@ export default function GradesGraph({
       <div>
       {!isMobile ?
         <ResponsiveContainer width="100%" height={500}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover}>
+        <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -50, bottom: 0 }} >
           <XAxis dataKey="name" />
           <YAxis type="number" unit="%" />
           <Tooltip
@@ -77,10 +77,10 @@ export default function GradesGraph({
           ))}
         </BarChart> 
         </ResponsiveContainer> :
-        <ResponsiveContainer width={500} height={500}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover}>
-          <XAxis dataKey="name" />
-          <YAxis type="number" unit="%" />
+        <ResponsiveContainer width="100%" height={2000}>
+        <BarChart data={graphData} onMouseMove={updateGraphHover} layout="vertical">
+          <XAxis type="number" unit="%" />
+          <YAxis dataKey="name" type="category" />
           <Tooltip
             content={
               <MobileTooltip 
@@ -97,6 +97,7 @@ export default function GradesGraph({
               fill={vars.colors[item.colorId]}
               onMouseEnter={updateBarHover}
               label={<PercentageLabel />}
+              barSize={30}
             />
           ))}
           <Legend 
