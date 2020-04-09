@@ -23,7 +23,8 @@ class QuestionCard extends Component {
     return (
       <div className="faq-question-card">
             <div className="faq-question" onClick={() => this.toggle(!open)}>
-                <div className="faq-question-text">{question}
+                <div className="faq-question-text">
+                  {question}
                   <span className="faq-question-icon" > {open ? "-" : "+"} </span>
                 </div>
 

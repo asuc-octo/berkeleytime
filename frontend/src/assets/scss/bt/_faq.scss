@@ -45,11 +45,18 @@
     .faq-question-text {
       font-size: 16px;
       line-height: 150%;
-      padding-left: 0px;
+
+       @include mobile {
+         padding-right: 50px;
+       }
 
       .faq-question-icon {
         position: absolute;
         right: 0px;
+        @include mobile {
+          right: 10px;
+        }
+
         font-size: 25px;
         color: $bt-blue;
       }
