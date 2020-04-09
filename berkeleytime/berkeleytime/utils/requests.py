@@ -5,8 +5,9 @@ def success_json(options={}):
     options.update({"success": True})
     return render_to_json(options)
 
-def failure_json(error_text):
-    return render_to_json({"success": False, "error": error_text})
+def failure_json(error, code=400):
+    message = {"success": False, "error": str(error)}
+    return HttpResponse(json.dumps(message, default=str), content_type="application/json", status=code)
 
 def get_profile(request):
     return request.user.berkeleytimeuserprofile
