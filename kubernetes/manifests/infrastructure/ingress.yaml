@@ -47,7 +47,7 @@ spec:
   - host: berkeleytime.com
     http:
       paths:
-      - path: /api
+      - path: /api/
         backend:
           serviceName: berkeleytime-prod-svc
           servicePort: 5000
@@ -58,7 +58,7 @@ spec:
   - host: www.berkeleytime.com
     http:
       paths:
-      - path: /api
+      - path: /api/
         backend:
           serviceName: berkeleytime-prod-svc
           servicePort: 5000
@@ -76,7 +76,7 @@ spec:
   - host: staging.berkeleytime.com
     http:
       paths:
-      - path: /api
+      - path: /api/
         backend:
           serviceName: berkeleytime-stage-svc
           servicePort: 5000
