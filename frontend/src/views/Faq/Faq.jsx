@@ -62,8 +62,8 @@ Faq.questions = [
   {
     question: 'When are grades/classes/enrollment data released?',
     answer: <p>All of our data is made available to our users as soon as it is published by the school. For class information,
-      this typically occurs 2 weeks before the start of Phase I. Grades data is typically published 6 weeks into the start of
-      the following semester. Enrollment data is refreshed continuously as students enroll and drop classes.</p>
+      this typically occurs 2 weeks before the start of Phase I. Grades data is typically published 2-3 months after the end of
+      the semester. Enrollment data is refreshed continuously as students enroll and drop classes.</p>
   },
   {
     question: 'Is anyone actively working on Berkeleytime?',
