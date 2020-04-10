@@ -305,43 +305,50 @@ def course_box(request):
 
 def course_box_json(request):
     """Render the HTML for a course box."""
-    course = Course.objects.get(id=request.GET.get("course_id"))
-    semester = request.GET.get("semester") if "semester" in request.GET else CURRENT_SEMESTER  # noqa
-    year = request.GET.get("year") if "year" in request.GET else CURRENT_YEAR  # noqa
-    sections = section_service.find_by_course_id(
-        course_id=course.id, semester=semester, year=year,
-    )
+    try:
+        course = Course.objects.get(id=request.GET.get("course_id"))
 
-    favorited = False
-    if request.user.is_authenticated():
-        user = get_profile(request)
-        favorited = course in Playlist.objects.get(
-            category="custom",
-            name="Favorites",
-            user_email=parse_gmail(request)
-        ).courses.all()
-
-    # show ongoing sections too if not a specific semester/year requested
-    # and current semester/year diferent from ongoing
-    ongoing = "semester" not in request.GET and "year" not in request.GET and (CURRENT_YEAR != ONGOING_YEAR or CURRENT_SEMESTER != ONGOING_SEMESTER)  # noqa
-    ongoing_sections = section_service.find_by_course_id(
-        course_id=course.id, semester=ONGOING_SEMESTER, year=ONGOING_YEAR,
-    )
-
-    return render_to_json({
-        'course': course.as_json(),
-        'sections': map(lambda s: s.as_json(), sections),
-        'favorited': favorited,
-        'universal_requirements': universal_requirements(course),
-        'requirements_by_semester': semester_requirements(course),
-        'cover_photo': cover_photo(course),
-        'last_enrollment_update': get_last_enrollment_update(sections),
-        'ongoing_sections': map(lambda s: s.as_json(), ongoing_sections),
-        'ongoing': ongoing,
-        'marketplace': marketplace_views.get_textbook_context(
-            course, CURRENT_SEMESTER, CURRENT_YEAR,
+        semester = request.GET.get("semester") if "semester" in request.GET else CURRENT_SEMESTER  # noqa
+        year = request.GET.get("year") if "year" in request.GET else CURRENT_YEAR  # noqa
+        sections = section_service.find_by_course_id(
+            course_id=course.id, semester=semester, year=year,
         )
-    })
+
+        favorited = False
+        if request.user.is_authenticated():
+            user = get_profile(request)
+            favorited = course in Playlist.objects.get(
+                category="custom",
+                name="Favorites",
+                user_email=parse_gmail(request)
+            ).courses.all()
+
+        # show ongoing sections too if not a specific semester/year requested
+        # and current semester/year diferent from ongoing
+        ongoing = "semester" not in request.GET and "year" not in request.GET and (CURRENT_YEAR != ONGOING_YEAR or CURRENT_SEMESTER != ONGOING_SEMESTER)  # noqa
+        ongoing_sections = section_service.find_by_course_id(
+            course_id=course.id, semester=ONGOING_SEMESTER, year=ONGOING_YEAR,
+        )
+
+        return render_to_json({
+            'course': course.as_json(),
+            'sections': map(lambda s: s.as_json(), sections),
+            'favorited': favorited,
+            'universal_requirements': universal_requirements(course),
+            'requirements_by_semester': semester_requirements(course),
+            'cover_photo': cover_photo(course),
+            'last_enrollment_update': get_last_enrollment_update(sections),
+            'ongoing_sections': map(lambda s: s.as_json(), ongoing_sections),
+            'ongoing': ongoing,
+            'marketplace': marketplace_views.get_textbook_context(
+                course, CURRENT_SEMESTER, CURRENT_YEAR,
+            )
+        })
+
+    except Exception as e:
+        print e
+        return render_to_empty_json()
+
 
 
 def semester_to_value(s):

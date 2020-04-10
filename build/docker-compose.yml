@@ -25,7 +25,9 @@ services:
       target: base
     volumes:
       - ../frontend/src:/frontend/src
-    command: "npm start"
+      - ../frontend/public:/frontend/public
+    command: ["npm", "start"]
+    stdin_open: true # https://github.com/facebook/create-react-app/issues/8688
   redis:
     image: redis:alpine
   nginx:
