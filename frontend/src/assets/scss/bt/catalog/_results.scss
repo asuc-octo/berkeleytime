@@ -1,5 +1,9 @@
 .filter-results {
   height: 100%;
+  
+  @include desktop {
+    padding-top: 20px;
+  }
 
   @include mobile {
   	padding: 15px;

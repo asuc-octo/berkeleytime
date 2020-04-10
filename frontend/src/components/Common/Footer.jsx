@@ -26,7 +26,7 @@ function Footer() {
             <a href="mailto:octo.berkeleytime@asuc.org" className="">Contact</a>
             <a href="http://old.berkeleytime.com/" className="">Legacy</a>
             <Link to="/apidocs" className="">API Docs<span className="new-box">New</span></Link>
-            <a href="" className="">Privacy Policy</a>
+            <Link to="/faq" className="">FAQ<span className="new-box">New</span></Link>
           </Col>
           <Col xs={4} sm={4} md={4} lg={2} className="bt-footer-column">
             <p className=""><b>About</b></p>

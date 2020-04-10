@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
 
 class Navigation extends PureComponent {
+
   render() {
     const links = Navigation.links;
     const { banner } = this.props;
@@ -45,9 +46,13 @@ Navigation.links = [
     text: 'About',
   },
   {
-    to: '/login',
-    text: 'Login',
+    to: '/faq',
+    text: 'FAQ',
   },
+  // {
+  //   to: '/login',
+  //   text: 'Login',
+  // },
 ];
 
 const mapStateToProps = state => {
