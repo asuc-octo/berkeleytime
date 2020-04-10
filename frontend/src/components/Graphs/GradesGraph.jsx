@@ -57,6 +57,8 @@ export default function GradesGraph({
   graphData, gradesData, updateBarHover, updateGraphHover, selectedPercentiles, denominator, color, isMobile
 }) {
 
+  let numClasses = gradesData.length;
+
   return (
       <div>
       {!isMobile ?
@@ -77,8 +79,21 @@ export default function GradesGraph({
           ))}
         </BarChart> 
         </ResponsiveContainer> :
-        <ResponsiveContainer width="100%" height={2000}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover} layout="vertical">
+        <ResponsiveContainer width="100%" height={numClasses*750} >
+        <BarChart 
+          data={graphData} 
+          onMouseMove={updateGraphHover}
+          layout="vertical"
+          barSize={30}
+          margin={{top: 65, left: -32, bottom: 50}}
+        >
+
+          <text  
+            y={30} 
+            textAnchor="top" 
+            dominantBaseline="left"
+            fontSize={18}> Grade Distribution 
+          </text> 
           <XAxis type="number" unit="%" />
           <YAxis dataKey="name" type="category" />
           <Tooltip
@@ -97,7 +112,6 @@ export default function GradesGraph({
               fill={vars.colors[item.colorId]}
               onMouseEnter={updateBarHover}
               label={<PercentageLabel />}
-              barSize={30}
             />
           ))}
           <Legend 

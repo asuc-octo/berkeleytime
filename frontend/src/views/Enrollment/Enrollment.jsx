@@ -23,6 +23,7 @@ class Enrollment extends Component {
     this.addToUrl = this.addToUrl.bind(this);
     this.refillUrl = this.refillUrl.bind(this);
     this.toUrlForm = this.toUrlForm.bind(this);
+    this.updateScreensize = this.updateScreensize.bind(this);
     this.updateClassCardEnrollment = this.updateClassCardEnrollment.bind(this);
   }
 
