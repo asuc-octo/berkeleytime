@@ -77,7 +77,8 @@ Faq.questions = [
   },
   {
     question: 'Berkeleytime stopped working. Now what?',
-    answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting a bug report.</p>
+    answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting
+      a <a href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1">bug report</a>.</p>
   },
   {
     question: 'Can I access your API for a project I’m working on?',
