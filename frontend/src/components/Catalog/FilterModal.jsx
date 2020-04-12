@@ -23,7 +23,7 @@ function CheckboxGroup(props) {
                   onClick={props.handler.bind(this)}
                 />
               </div>
-              )) : 
+              )) :
               <div className="custom-checkbox">
                 <Form.Check
                   type="checkbox"
@@ -39,7 +39,7 @@ function CheckboxGroup(props) {
   )
 }
 
-export class FilterModal extends Component {
+export class FilterModal extends Component { 
 
   render() {
     return (
@@ -52,9 +52,9 @@ export class FilterModal extends Component {
               />
             </div>
             <div className="filter-button-bar">
-              <button className="btn-bt-primary-inverted" onClick={this.props.hideModal}> 
+              <button className="btn-bt-primary-inverted" onClick={this.props.hideModal}>
               Cancel </button>
-              <button className="btn-bt-primary" onClick={this.props.saveModal}> 
+              <button className="btn-bt-primary" onClick={this.props.saveModal}>
               Save </button>
             </div>
           </div>
