@@ -245,6 +245,8 @@ export class FilterSidebar extends Component {
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters } = this.state;
 
+<<<<<<< HEAD
+=======
     const customStyles = {
       clearIndicator:  base => ({
         ...base,
@@ -258,6 +260,7 @@ export class FilterSidebar extends Component {
 
     console.log(classLevels);
 
+>>>>>>> 9bfcdc4a5ad1e77049fb903bde29db3550487ebc
     return (
       !this.props.isMobile ? 
       <div id="filter" className="filter">

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
-import HashLoader from 'react-spinners/HashLoader';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 import axios from 'axios';
 
@@ -271,9 +271,9 @@ class Catalog extends Component {
                   /> :
                 <div className="filter">
                   <div className="filter-loading">
-                    <HashLoader
+                    <BeatLoader
                       color="#579EFF"
-                      size="50"
+                      size="15"
                       sizeUnit="px"
                     />
                   </div>

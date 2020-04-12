@@ -1,5 +1,5 @@
 import React, { Component, PureComponent } from 'react';
-import HashLoader from 'react-spinners/HashLoader';
+import BeatLoader from 'react-spinners/BeatLoader';
 import { FixedSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -146,7 +146,7 @@ class FilterResults extends Component {
           loading
             ? (
               <div className="filter-results-loading">
-                <HashLoader color="#579EFF" size="50" sizeUnit="px" />
+                <BeatLoader color="#579EFF" size="15" sizeUnit="px" />
               </div>
             )
             : (
