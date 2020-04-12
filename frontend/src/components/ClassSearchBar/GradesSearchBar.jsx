@@ -331,6 +331,13 @@ class GradesSearchBar extends Component {
       secondaryOption = '';
     }
 
+    const customStyles = {
+      clearIndicator: (provided, state) => ({
+        ...provided,
+        marginRight: 0,
+        paddingRight: 0,
+      }),
+    };
 
     return (
       <Container fluid className="grades-search-bar">
@@ -342,6 +349,10 @@ class GradesSearchBar extends Component {
               options={this.buildCoursesOptions(classes)}
               onChange={this.handleClassSelect}
               filterOptions={this.filterOptions}
+              components={{
+                IndicatorSeparator: () => null
+              }}
+              styles={customStyles}
             />
           </Col>
           {!isMobile ?
@@ -354,6 +365,10 @@ class GradesSearchBar extends Component {
               isClearable={false}
               onChange={this.handleSortSelect}
               isDisabled={!selectedClass}
+              components={{
+                IndicatorSeparator: () => null
+              }}
+              styles={customStyles}
             />
           </Col> : null }
           <Col xs={6} sm={6} lg={3}>
@@ -366,6 +381,10 @@ class GradesSearchBar extends Component {
               isDisabled={!selectedClass}
               isClearable={false}
               searchable={false}
+              components={{
+                IndicatorSeparator: () => null
+              }}
+              styles={customStyles}
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
@@ -378,6 +397,10 @@ class GradesSearchBar extends Component {
               isDisabled={!selectedClass}
               isClearable={false}
               searchable={false}
+              components={{
+                IndicatorSeparator: () => null
+              }}
+              styles={customStyles}
             />
           </Col>
           <Col xs={12} sm={12} lg={1}>

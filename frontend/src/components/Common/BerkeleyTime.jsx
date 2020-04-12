@@ -28,7 +28,7 @@ class BerkeleyTime extends PureComponent {
   }
 
   render() {
-    const bannerText = 'Wow, banner text!';
+    const bannerText = 'We have a new announcement! Here is a longer description of the main text and more details about the whole thing.';
     const { banner } = this.props;
 
     return (
