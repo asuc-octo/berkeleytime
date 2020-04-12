@@ -25,15 +25,15 @@
       padding: 0; // override bootstrap padding
 
       @include mobile {
-        max-height: 150px;
+        max-height: 128px;
       }
     }
-  
+
     .filter-results-column {
       border-right: 1px solid $bt-border-grey;
       padding: 0; // override bootstrap padding
     }
-  
+
     .catalog-description-column {
       padding: 0; // override bootstrap padding
     }
