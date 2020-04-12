@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
-import { HashLoader } from 'react-spinners';
+import { BeatLoader } from 'react-spinners';
 
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
@@ -109,7 +109,7 @@ class ClassDescription extends Component {
       return (
         <div className="catalog-description-container">
           <div className="loading">
-            <HashLoader color="#579EFF" size="50" sizeUnit="px" />
+            <BeatLoader color="#579EFF" size="15" sizeUnit="px" />
           </div>
         </div>
       );
@@ -160,17 +160,17 @@ class ClassDescription extends Component {
                     let endDate = new Date(section.end_time + "Z");
                     return (
                       <tr>
-                        <td>{section.kind}</td>
-                        <td>{section.ccn}</td>
-                        <td>{section.instructor}</td>
+                        <td style={{width: '75px'}}>{section.kind}</td>
+                        <td style={{width: '50px'}}>{section.ccn}</td>
+                        <td style={{width: '100px'}}>{section.instructor}</td>
                         {!isNaN(startDate) && !isNaN(endDate) ? (
-                        <td>{section.word_days} {ClassDescription.formatDate(startDate)} - {ClassDescription.formatDate(endDate)}</td>
+                        <td style={{width: '85px'}}>{section.word_days} {ClassDescription.formatDate(startDate)} - {ClassDescription.formatDate(endDate)}</td>
                         ) : (
-                          <td></td>
+                          <td style={{width: '85px'}}></td>
                         )}
-                        <td>{section.location_name}</td>
-                        <td>{section.enrolled}/{section.enrolled_max}</td>
-                        <td>{section.waitlisted}</td>
+                        <td style={{width: '85px'}}>{section.location_name}</td>
+                        <td style={{width: '75px'}}>{section.enrolled}/{section.enrolled_max}</td>
+                        <td style={{width: '75px'}}>{section.waitlisted}</td>
                       </tr>
                     )
                   })}
