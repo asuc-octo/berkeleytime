@@ -2,26 +2,26 @@
     background-color: $bt-white;
     width: 100vw;
 
-    margin-top: 150px;
+    margin-top: 80px;
     margin-bottom: 100px;
 
     .faq-heading {
+
         h2 {
             font-weight: bold;
-            font-size: 40px;
-            line-height: 52px;
+            font-size: 28px;
+            // line-height: 52px;
+            margin-top: 32px;
             text-align: center;
             color: $bt-base-text;
         }
 
         h3 {
-            font-weight: 500;
-            font-size: 24px;
+            font-size: 20px;
             line-height: 150%;
             text-align: center;
             color: $bt-light-text;
-
-            margin-top: 14px;
+            margin-top: 8px;
         }
 
         .faq-heading-button{
