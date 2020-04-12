@@ -5,7 +5,7 @@
   .bt-footer-container {
     max-width: 1150px;
     margin: 0 auto;
-    padding: 40px 40px 30px 30px;
+    padding: 40px 80px 30px 30px;
 
     @include mobile {
       max-width: 300px;
@@ -26,7 +26,6 @@
 
       > *:not(:first-child) {
         font-size: 18px;
-        font-weight: 500;
         line-height: 150%;
 
         @include mobile {
@@ -45,7 +44,7 @@
 
       a {
         font-size: 18px;
-        color: $bt-light-text;
+        color: $bt-light-grey;
         transition: 200ms;
         width: max-content;
       }
@@ -55,15 +54,13 @@
       }
 
       .new-box {
-        width: 47px;
-        height: 23px;
+        width: 48px;
+        height: 24px;
         background: #2F80ED;
         border-radius: 3px;
         margin-left: 8px;
-        padding: 1px 3px;
-
+        padding: 2px 6px;
         color: #FFFFFF;
-        font-weight: 500;
         font-size: 16px;
         line-height: 150%;
 

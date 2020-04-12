@@ -31,7 +31,7 @@ function Footer() {
           <Col xs={4} sm={4} md={4} lg={2} className="bt-footer-column">
             <p className=""><b>About</b></p>
             <Link to="/about" className="">Team</Link>
-            <a href="http://octo.asuc.org/" className="">OCTO</a>
+            <a href="http://octo.asuc.org/" className="">Office of the CTO</a>
             <a href="https://octo.asuc.org/apply" className="">Join Us</a>
             <a href="https://www.facebook.com/berkeleytime/" className="">Facebook</a>
           </Col>
