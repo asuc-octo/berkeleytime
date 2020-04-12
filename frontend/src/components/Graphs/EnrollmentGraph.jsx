@@ -25,7 +25,18 @@ export default function EnrollmentGraph({
   return (
     <div className="graph">
       <ResponsiveContainer width="100%" height={500}>
-        <LineChart data={graphData} onMouseMove={updateGraphHover}>
+        <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{top: isMobile ? 100 : 0}}>
+
+          {isMobile ?
+            <text  
+              y={30} 
+              textAnchor="top" 
+              dominantBaseline="left"
+              fontSize={18}> Enrollment
+            </text> :
+            null
+          }
+
           <XAxis dataKey="name" interval={19} />
           <YAxis type="number" unit="%" domain={[0, 100]}/>
           <Tooltip

@@ -99,6 +99,21 @@
     max-height: 50vh;
     overflow-y: scroll;
 
+    input[type='checkbox'] {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      content: '';
+      visibility: visible;
+      -webkit-appearance: unset !important;
+      border: 0.5px solid #C7C7C7;
+    }
+
+    input[type='checkbox']:checked:after {
+      background-image: url('../img/images/catalog/checked.png');
+    }
+
     .filter-form-label {
       width: 80vw;
       height: 40px;
