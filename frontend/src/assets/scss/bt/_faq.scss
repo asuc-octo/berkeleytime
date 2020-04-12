@@ -1,7 +1,6 @@
 .faq {
     background-color: $bt-white;
     width: 100vw;
-
     margin-top: 80px;
     margin-bottom: 100px;
 
@@ -10,7 +9,6 @@
         h2 {
             font-weight: bold;
             font-size: 28px;
-            // line-height: 52px;
             margin-top: 32px;
             text-align: center;
             color: $bt-base-text;
@@ -26,9 +24,8 @@
 
         .faq-heading-button{
             justify-content: center;
-
-            margin-top: 26px;
-            margin-bottom: 74px;
+            margin-top: 20px;
+            margin-bottom: 64px;
         }
     }
 }
