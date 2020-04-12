@@ -46,11 +46,11 @@ class About extends PureComponent {
         </div>
         <div className="group">
           <img src={janet_jemma} />
+          <img src={christina_janet} />
           <img src={michaels} />
-          <img src={retreat} />
           <img src={will} />
           <img src={jemma} />
-          <img src={christina_janet} />
+          <img src={retreat} />
         </div>
         <CurrentContributors />
         <PastContributors />
