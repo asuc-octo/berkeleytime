@@ -48,7 +48,7 @@
       @include mobile {
         width: 500px;
         //ResponsiveContainer already sets height to 500px
-        min-height: 510px; 
+        min-height: 510px;
       }
 
       .graph {
@@ -64,9 +64,9 @@
 }
 
 // EnrollmentInfoCard
-.card.enrollment-card-info {
-  box-shadow: none;
-  border: none;
+// .card.enrollment-card-info {
+//   box-shadow: none;
+//   border: none;
 
   .content {
       padding: 0px 15px 15px 15px;
@@ -112,4 +112,4 @@
         color: #8F8F8F;
       }
   }
-}
+// }
