@@ -1,6 +1,7 @@
 .filter {
   padding: 30px;
   overflow: scroll;
+  height: 100%;
 
   @include mobile {
     overflow: visible;
