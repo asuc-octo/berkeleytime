@@ -27,9 +27,12 @@ class EnrollmentGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { selectedCourses } = this.props;
+    const { selectedCourses, enrollmentData } = this.props;
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getEnrollmentData();
+    }
+    if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0 && selectedCourses.length == 1) {
+      this.update(selectedCourses[0], 0)
     }
   }
 
@@ -109,7 +112,7 @@ class EnrollmentGraphCard extends Component {
     const telebears = enrollmentData.length ? enrollmentData[0].telebears : {};
 
     return (
-      <div className="enrollment-graph-card">
+
         <div className="enrollment-graph">
           {
             enrollmentData.length === 0 || selectedCourses.length === 0 ? (
@@ -138,10 +141,11 @@ class EnrollmentGraphCard extends Component {
                         telebears={telebears}
                         color={vars.colors[hoveredClass.colorId]}
                         enrolledMax={hoveredClass.enrolled_max}
+                        waitlistedMax={hoveredClass.waitlisted_max}
                       />
                     )}
-                  </Col> 
-                </Row> : 
+                  </Col>
+                </Row> :
                 <EnrollmentGraph
                   graphData={graphData}
                   enrollmentData={enrollmentData}
@@ -153,7 +157,6 @@ class EnrollmentGraphCard extends Component {
             )
           }
         </div>
-      </div>
     );
   }
 }
