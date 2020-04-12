@@ -149,8 +149,8 @@ def check_yaml_response(yaml_path, responses):
 	# Uploading to Google Sheets
 	return sheet_add_next_entry(loaded_yaml["info"]["googlesheet_link"], sheet_responses)
 
-# Deletes all files accessible by service account. Commented out due to dangerous operation
-# Used to remove testing files
+# # Deletes all files accessible by service account. Commented out due to dangerous operation
+# # Used to remove testing files
 # def delete_all_files():
 # 	files = drive.files().list(q="mimeType='text/plain'",
 # 	                           spaces='drive',
@@ -165,8 +165,8 @@ def check_yaml_response(yaml_path, responses):
 # 	                           pageToken=None).execute().get('files', [])
 # 	print(files)
 
-# Testing Code
-file_bytes = bytearray(open("GoogleAPITestFiles/file2.txt", "rb").read())
-test_responses = [("unique_name", "TestSurvey0"), ("short", "Q1"), ("short", "Q2"),
-	("short", "Q3"), ("short", "Q4"), ("file", ("file2.txt", file_bytes))]
-check_yaml_response("GoogleAPITestFiles/testyaml.yaml", test_responses)
+# # Testing Code
+# file_bytes = bytearray(open("GoogleAPITestFiles/file2.txt", "rb").read())
+# test_responses = [("unique_name", "TestSurvey0"), ("short", "Q1"), ("short", "Q2"),
+# 	("short", "Q3"), ("short", "Q4"), ("file", ("file2.txt", file_bytes))]
+# check_yaml_response("GoogleAPITestFiles/testyaml.yaml", test_responses)
