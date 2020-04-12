@@ -289,7 +289,7 @@ def course_box(request):
             'course': course,
             'sections': sections,
             'favorited': favorited,
-            'requirements': universal_requirements(course),
+            'requirements': all_requirements(course),
             'cover_photo': cover_photo(course),
             'last_enrollment_update': get_last_enrollment_update(sections),
             'ongoing_sections': ongoing_sections,
@@ -334,8 +334,9 @@ def course_box_json(request):
             'course': course.as_json(),
             'sections': map(lambda s: s.as_json(), sections),
             'favorited': favorited,
-            'universal_requirements': universal_requirements(course),
-            'requirements_by_semester': semester_requirements(course),
+            'requirements': all_requirements(course),  # Backwards-compatible
+            # 'universal_requirements': universal_requirements(course),  # Enable when ready
+            # 'requirements_by_semester': semester_requirements(course),  # Enable when ready
             'cover_photo': cover_photo(course),
             'last_enrollment_update': get_last_enrollment_update(sections),
             'ongoing_sections': map(lambda s: s.as_json(), ongoing_sections),
@@ -365,6 +366,31 @@ def semester_to_value(s):
         sem = 1
     return 3*int(year) + sem
 
+# Backwards-compatible function. Use this until universal_requirements and semester_requirements are ready.
+def all_requirements(course):
+    playlists_1 = course.playlist_set.filter(category__in=[
+        'department',
+        'university',
+        'units',
+        'engineering',
+        'haas',
+    ])
+    playlists_2 = course.playlist_set.filter(category__in=[
+        'semester',
+    ])
+    playlists_3 = course.playlist_set.filter(category__in=['ls'])
+
+    requirements_base = list(playlists_1.values_list('name', flat=True))
+    requirements_semester = sorted(list(playlists_2.values_list('name', flat=True)), key=semester_to_value, reverse=True)
+
+    requirements_ls = []
+    ls_reqs_unprocessed = list(playlists_3.values_list('semester', 'year', 'name'))
+    for semester, year, name in ls_reqs_unprocessed:
+        if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
+            requirements_ls.append(name)
+
+    print(requirements_ls + requirements_base + requirements_semester)
+    return requirements_ls + requirements_base + requirements_semester
 
 def universal_requirements(course):
     playlists_1 = course.playlist_set.filter(category__in=[
@@ -384,8 +410,8 @@ def universal_requirements(course):
 def semester_requirements(course):
     playlists = course.playlist_set.filter(category__in=[
         'ls',
-        'engineering',
-        'haas',
+        # 'engineering',
+        # 'haas',
     ])
     requirements = list(playlists.values_list('semester', 'year', 'name'))
     sem_to_reqs = dict()

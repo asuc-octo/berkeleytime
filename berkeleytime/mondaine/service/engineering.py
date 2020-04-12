@@ -10,6 +10,8 @@ from mondaine.service.store.playlist import playlist_store
 from mondaine.service.resource.ls import ls_resource
 from mondaine.service.resource.foreign_language import foreign_language_resource  # noqa
 
+from berkeleytime.settings import CURRENT_SEMESTER
+from berkeleytime.settings import CURRENT_YEAR
 
 class EngineeringService(AbstractPlaylistService):
     """Engineering Service."""
@@ -30,7 +32,10 @@ class EngineeringService(AbstractPlaylistService):
         courses = course_service.find()
 
         for ls_playlist_name in self.required_ls_playlist_names:
-            definitions.append(ls_resource.get(ls_playlist_name))
+            # Hacky workaround. Will be fixed later to include every past semester.
+            for semester, year, ls_definition in ls_resource.get(ls_playlist_name):
+                if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
+                    definitions.append(ls_definition)
 
         definition = EngineeringDefinition(definitions=definitions)
 
