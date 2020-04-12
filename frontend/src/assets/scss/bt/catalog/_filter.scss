@@ -2,6 +2,10 @@
   padding: 30px;
   overflow: scroll;
 
+  @include desktop {
+     height: 100%;
+  }
+
   @include mobile {
     overflow: visible;
   }

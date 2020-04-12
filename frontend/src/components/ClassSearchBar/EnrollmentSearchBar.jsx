@@ -238,6 +238,14 @@ class EnrollmentSearchBar extends Component {
 
     console.log(isMobile);
 
+    const customStyles = {
+      clearIndicator: (provided, state) => ({
+        ...provided,
+        marginRight: 0,
+        paddingRight: 0,
+      }),
+    };
+
     return (
       <Container fluid className="enrollment-search-bar">
         <Row style={{marginBottom: 10}}>
@@ -249,6 +257,10 @@ class EnrollmentSearchBar extends Component {
                 options={this.buildCoursesOptions(classes)}
                 onChange={this.handleClassSelect}
                 filterOptions={this.filterOptions}
+                components={{
+                  IndicatorSeparator: () => null
+                }}
+                styles={customStyles}
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
@@ -260,6 +272,10 @@ class EnrollmentSearchBar extends Component {
                 onChange={this.handlePrimarySelect}
                 isDisabled={!selectedClass}
                 isClearable={false}
+                components={{
+                  IndicatorSeparator: () => null
+                }}
+                styles={customStyles}
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
@@ -271,6 +287,10 @@ class EnrollmentSearchBar extends Component {
                 onChange={this.handleSecondarySelect}
                 isDisabled={!selectedClass}
                 isClearable={false}
+                components={{
+                  IndicatorSeparator: () => null
+                }}
+                styles={customStyles}
             />
           </Col>
           <Col lg={1}>
