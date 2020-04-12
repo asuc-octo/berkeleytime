@@ -108,12 +108,11 @@
     }
   }
   .filter-button-bar {
-    height: 20vh;
     border-top: 2px solid $bt-off-white;
     display: flex;
     justify-content: center;
-    padding-top: 2vh;
-  
+    padding: 20px 0;
+
     button {
       margin-right:10px;
       width: 35vw;
