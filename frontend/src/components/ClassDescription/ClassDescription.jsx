@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
-import { HashLoader } from 'react-spinners';
+import { BeatLoader } from 'react-spinners';
 
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
@@ -109,7 +109,7 @@ class ClassDescription extends Component {
       return (
         <div className="catalog-description-container">
           <div className="loading">
-            <HashLoader color="#579EFF" size="50" sizeUnit="px" />
+            <BeatLoader color="#579EFF" size="15" sizeUnit="px" />
           </div>
         </div>
       );
