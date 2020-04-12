@@ -1,34 +1,30 @@
 .releases {
     background-color: $bt-white;
     width: 100vw;
-
-    padding-top: 150px;
+    margin-top: 80px;
     margin-bottom: 100px;
 
     .releases-heading {
         h2 {
-            font-weight: bold;
-            font-size: 40px;
-            line-height: 52px;
-            text-align: center;
-            color: $bt-base-text;
+          font-weight: bold;
+          font-size: 28px;
+          margin-top: 32px;
+          text-align: center;
+          color: $bt-base-text;
         }
 
         h3 {
-            font-weight: 500;
-            font-size: 24px;
+            font-size: 20px;
             line-height: 150%;
             text-align: center;
             color: $bt-light-text;
-            
-            margin-top: 14px;
+            margin-top: 18px;
         }
 
         .releases-heading-button{
             justify-content: center;
-
-            margin-top: 26px;
-            margin-bottom: 74px;
+            margin-top: 20px;
+            margin-bottom: 64px;
         }
     }
 
@@ -37,11 +33,10 @@
 
         .releases-log-date {
             h3 {
-                font-weight: 500;
-                font-size: 24px;
+                font-weight: bold;
+                font-size: 20px;
                 line-height: 150%;
                 color: $bt-light-text;
-
                 margin-bottom: 18px;
             }
         }
@@ -49,35 +44,28 @@
         .releases-log-list {
             h2 {
                 font-weight: bold;
-                font-size: 20px;
+                font-size: 16px;
                 line-height: 150%;
                 color: $bt-grey-text;
-
                 margin-bottom: 12px;
             }
 
             ul {
-                font-weight: normal;
-                font-size: 20px;
+                font-size: 16px;
                 line-height: 150%;
                 color: $bt-grey-text;
-
                 padding-left: 0px;
                 margin-bottom: 34px;
-
-                list-style: none;
-                list-style-position: inside;
+                list-style-position: outside;
+                margin-left: 28px;
             }
 
-            li:before {
-                content: "· ";
-                font-size: 40px;
-                position: relative;
-                top: 7px;
+            li {
+              margin: 8pt 0;
             }
 
             a {
-                color: $bt-blue;
+                color: $bt-primary;
             }
         }
     }

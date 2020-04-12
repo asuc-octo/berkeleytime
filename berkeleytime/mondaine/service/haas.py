@@ -11,6 +11,9 @@ from mondaine.service.store.playlist import playlist_store
 from mondaine.service.resource.ls import ls_resource
 from mondaine.service.resource.reading import reading_resource
 
+from berkeleytime.settings import CURRENT_SEMESTER
+from berkeleytime.settings import CURRENT_YEAR
+
 
 class HaasService(AbstractPlaylistService):
     """Haas Service."""
@@ -24,7 +27,12 @@ class HaasService(AbstractPlaylistService):
             # Enum34 trickery to get the LSPlaylistName with the same key
             key = playlist_name.name
             ls_playlist_name = getattr(LSPlaylistName, key)
-            ls_definition = ls_resource.get(playlist_name=ls_playlist_name)
+            ls_definition = None
+            for semester, year, ls_def in ls_resource.get(playlist_name=ls_playlist_name):
+                # Hacky workaround. Will be fixed later to include every past semester.
+                if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
+                    ls_definition = ls_def
+                    break
 
             # Construct Haas definition from combination of LS/Reading
             # definitions #defin-ception
