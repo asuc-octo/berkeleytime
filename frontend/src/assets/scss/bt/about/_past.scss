@@ -30,27 +30,33 @@
       flex-direction: column;
       align-items: flex-start;
       margin-bottom: 30px;
-  
+
       .name {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-  
+
         width: 100%;
         margin-bottom: 3px;
-  
+
         > p {
           font-weight: bold;
           color: $bt-grey-text;
         }
-  
+
         > a > img {
-          width: 20px;
-          height: 20px;
+          width: 18px;
+          height: 18px;
+          opacity: .75;
+          transition: .5s;
+
+          &:hover {
+            opacity: 1;
+          }
         }
       }
-  
+
       .role {
         font-size: 14px;
         color: $bt-grey-text

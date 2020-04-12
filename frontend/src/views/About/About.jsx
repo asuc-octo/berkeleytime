@@ -45,12 +45,12 @@ class About extends PureComponent {
           </Row>
         </div>
         <div className="group">
-          <img src={michaels} />
-          <img src={retreat} />
           <img src={janet_jemma} />
+          <img src={christina_janet} />
+          <img src={michaels} />
           <img src={will} />
           <img src={jemma} />
-          <img src={christina_janet} />
+          <img src={retreat} />
         </div>
         <CurrentContributors />
         <PastContributors />

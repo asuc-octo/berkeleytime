@@ -66,14 +66,22 @@
       }
 
       > a > img {
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
+        opacity: .75;
+
+        &:hover {
+          opacity: 1;
+        }
+
       }
+
+
     }
 
     .role {
       font-size: 14px;
-      color: $bt-grey-text
+      color: $bt-light-text;
     }
   }
 }

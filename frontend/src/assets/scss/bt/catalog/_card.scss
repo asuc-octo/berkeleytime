@@ -10,13 +10,14 @@
     @include mobile {
       border: 0.5px solid $bt-light-border-grey;
     }
-    
+
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 
     &:hover {
       background-color: $bt-off-white;
+      cursor: pointer;
     }
 
     .filter-card-info {
@@ -27,16 +28,16 @@
       justify-content: space-between;
 
       h6 {
-        font-size: 20px;
-        font-weight: 600;
+        font-size: 16px;
+        font-weight: bold;
       }
-      
+
       p {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         color: $bt-light-text;
-        font-size: 15px;
+        font-size: 14px;
       }
 
       .filter-card-info-desc {
@@ -50,7 +51,7 @@
     }
 
     .filter-card-sort {
-      margin-bottom: 11px;
+      margin-bottom: 10px;
       flex-basis: 40px;
       display: flex;
       justify-content: center;
@@ -59,11 +60,11 @@
 
     .filter-card-sort.filter-card-grade {
       h6 {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 600;
       }
     }
-    
+
     .filter-card-sort.filter-card-open-seats {
       h6 {
         font-size: 18px;
@@ -71,7 +72,7 @@
       }
     }
   }
-  
+
   .filter-card-container.selected {
     background-color: $bt-off-white;
   }
