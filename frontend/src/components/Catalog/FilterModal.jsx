@@ -16,6 +16,7 @@ function CheckboxGroup(props) {
               Object.values(item.options).map(option => (
               <div className="custom-checkbox">
                 <Form.Check
+                  custom
                   type="checkbox"
                   id={option.value}
                   name={option.label}
@@ -26,6 +27,7 @@ function CheckboxGroup(props) {
               )) :
               <div className="custom-checkbox">
                 <Form.Check
+                  custom
                   type="checkbox"
                   id={item.value}
                   name={item.label}

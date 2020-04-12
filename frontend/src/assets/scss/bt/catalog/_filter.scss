@@ -104,11 +104,12 @@
       height: 40px;
       padding: 1vh 3vw;
       background-color: $bt-off-white;
-      font-weight: bold;
+      font-weight: 500;
+      border-radius: 4px;
     }
   }
   .filter-button-bar {
-    border-top: 2px solid $bt-off-white;
+    border-top: 2px solid $bt-light-border-grey;
     display: flex;
     justify-content: center;
     padding: 20px 0;
