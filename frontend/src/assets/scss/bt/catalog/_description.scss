@@ -31,9 +31,12 @@
     }
 
     .stats {
+      display: flex;
+      flex-direction: column;
 
       .statline {
-        height: 25px;
+        display: flex;
+        flex-direction: row;
 
         > img {
           width: 14px;
@@ -42,9 +45,8 @@
 
         color: $bt-light-text;
 
-        p {
+        > p {
           margin-left: 5px;
-          display: inline;
         }
       }
     }
@@ -61,34 +63,13 @@
 
     .table-container {
       flex: 1;
-      overflow-y: visible;
-      overflow-x: scroll;
-      margin-bottom: 30px;
+      overflow-y: auto;
 
       table {
-        table-layout: fixed;
-        width: 100%;
-        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        margin-bottom: 0;
       }
-
-      table tbody {
-        display:block;
-        height:100%;
-        overflow-y:scroll;
-      }
-
-      table thead{
-        display:table;
-        width:98.7%;
-        table-layout:fixed;
-      }
-
-      table tbody tr {
-        display:table;
-        width:100%;
-        table-layout:fixed;
-      }
-
     }
     
   }

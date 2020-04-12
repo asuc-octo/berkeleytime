@@ -160,17 +160,17 @@ class ClassDescription extends Component {
                     let endDate = new Date(section.end_time + "Z");
                     return (
                       <tr>
-                        <td style={{width: '75px'}}>{section.kind}</td>
-                        <td style={{width: '50px'}}>{section.ccn}</td>
-                        <td style={{width: '100px'}}>{section.instructor}</td>
+                        <td>{section.kind}</td>
+                        <td>{section.ccn}</td>
+                        <td>{section.instructor}</td>
                         {!isNaN(startDate) && !isNaN(endDate) ? (
-                        <td style={{width: '85px'}}>{section.word_days} {ClassDescription.formatDate(startDate)} - {ClassDescription.formatDate(endDate)}</td>
+                        <td>{section.word_days} {ClassDescription.formatDate(startDate)} - {ClassDescription.formatDate(endDate)}</td>
                         ) : (
-                          <td style={{width: '85px'}}></td>
+                          <td></td>
                         )}
-                        <td style={{width: '85px'}}>{section.location_name}</td>
-                        <td style={{width: '75px'}}>{section.enrolled}/{section.enrolled_max}</td>
-                        <td style={{width: '75px'}}>{section.waitlisted}</td>
+                        <td>{section.location_name}</td>
+                        <td>{section.enrolled}/{section.enrolled_max}</td>
+                        <td>{section.waitlisted}</td>
                       </tr>
                     )
                   })}
