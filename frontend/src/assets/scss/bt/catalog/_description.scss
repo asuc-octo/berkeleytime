@@ -50,11 +50,12 @@
         }
 
         .statlink {
-          color: $bt-blue;
-
           &:hover {
-            color: $bt-light-text;
             cursor: pointer;
+          }
+          
+          img {
+            vertical-align: sub;
           }
         }
       }
