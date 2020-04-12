@@ -6,6 +6,9 @@ import { HashLoader } from 'react-spinners';
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
 import book from '../../assets/svg/catalog/book.svg';
+import launch from '../../assets/svg/catalog/launch.svg';
+
+import vars from '../../variables/Variables';
 
 import { updateCourses, getCourseData, makeRequestDescription } from '../../redux/actions';
 import { connect } from "react-redux";
@@ -105,14 +108,15 @@ class ClassDescription extends Component {
   render() {
     const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
+    const { semester, year } = vars.currentSemester;
 
     const toGrades = {
-      pathname: '/grades',
+      pathname: course != null ? `/grades/0-${course.id}-all-all` : `/grades`,
       state: { course: course },
     };
 
     const toEnrollment = {
-      pathname: '/enrollment',
+      pathname: course != null ? `/enrollment/0-${course.id}-${semester}-${year}-all` : `/enrollment`,
       state: { course: course },
     }
 
@@ -136,14 +140,14 @@ class ClassDescription extends Component {
               <div className="statline">
                 <img src={people} />
                 Enrolled:
-                {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)}
-                <div className="statlink" onClick={() => this.goToEnrollment(courseData)}>&nbsp; Enrollment History &#8594;</div>
+                {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)} &nbsp;
+                <a href={toEnrollment.pathname} target="_blank" className="statlink"><img src={launch} /></a>
               </div>
               <div className="statline">
                 <img src={chart} />
                 Average Grade:
-                {applyIndicatorGrade(course.letter_average, course.letter_average)}
-                <div className="statlink" onClick={() => this.goToGrades(courseData)}>&nbsp; Grade Distributions &#8594;</div>
+                {applyIndicatorGrade(course.letter_average, course.letter_average)} &nbsp;
+                <a href={toGrades.pathname} target="_blank" className="statlink"><img src={launch} /></a>
               </div>
               <div className="statline">
                 <img src={book} />
