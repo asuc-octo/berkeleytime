@@ -14,18 +14,20 @@ function CheckboxGroup(props) {
 
             {item.options != null ?
               Object.values(item.options).map(option => (
-              <div className="custom-checkbox">
+              <div>
                 <Form.Check
+                  className="custom-checkbox"
                   type="checkbox"
                   id={option.value}
                   name={option.label}
                   label={option.label}
                   onClick={props.handler.bind(this)}
-                />
+                /> 
               </div>
               )) : 
-              <div className="custom-checkbox">
+              <div>
                 <Form.Check
+                  className="custom-checkbox"
                   type="checkbox"
                   id={item.value}
                   name={item.label}
