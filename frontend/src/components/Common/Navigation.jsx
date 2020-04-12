@@ -5,20 +5,39 @@ import { Navbar, Nav } from 'react-bootstrap';
 
 class Navigation extends PureComponent {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      open: false
+    };
+    this.toggle = this.toggle.bind(this);
+  }
+
+  toggle(open) {
+    this.setState({
+      open: open
+    })
+  }
+
   render() {
     const links = Navigation.links;
     const { banner } = this.props;
+    const { open } = this.state;
 
     return (
-      <Navbar fixed="top" expand="lg" bg="white" className={`bt-navbar ${banner ? 'bt-navbar-dropped' : ''}`}>
+      <Navbar fixed="top" expand="lg" bg="white"
+              className={`bt-navbar ${banner ? 'bt-navbar-dropped' : ''}`} expanded={open} >
         <Navbar.Brand as={Link} to="/">Berkeleytime</Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => this.toggle(true)} />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto" />
           <Nav>
             {
               links.map(link => (
-                <Nav.Link as={Link} to={link.to} key={link.text}>{link.text}</Nav.Link>
+                <Nav.Link as={Link} to={link.to} key={link.text}
+                    onClick={() => this.toggle(false)} >
+                  {link.text}
+                </Nav.Link>
               ))
             }
           </Nav>
