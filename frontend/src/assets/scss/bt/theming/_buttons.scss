@@ -10,7 +10,6 @@
   transition: 0.3s;
 
   &:hover {
-    //background-color: $bt-white;
     color: $bt-white;
     cursor: pointer;
   }
@@ -63,9 +62,9 @@
   transition: 0.3s;
 
   &:hover {
-    color: $bt-white;
-    background-color: $bt-indicator-red;
-    border-color: $bt-indicator-red;
+    color: $bt-indicator-red;
+    background-color: $bt-white;
+    border-color: $bt-border-grey;
   }
 
   a {
@@ -83,9 +82,9 @@
   transition: 0.3s;
 
   &:hover {
-    color: $bt-white;
-    background-color: $bt-indicator-blue;
-    border-color: $bt-indicator-blue;
+    color: $bt-indicator-blue;
+    background-color: $bt-white;
+    border-color:$bt-border-grey;
   }
 
   a {

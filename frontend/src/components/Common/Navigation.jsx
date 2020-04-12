@@ -50,7 +50,7 @@ class Navigation extends PureComponent {
 Navigation.links = [
   {
     to: '/catalog',
-    text: 'Catalog',
+    text: 'Courses',
   },
   {
     to: '/grades',
