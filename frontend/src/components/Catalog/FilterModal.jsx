@@ -39,11 +39,11 @@ function CheckboxGroup(props) {
   )
 }
 
-export class FilterModal extends Component { 
+export class FilterModal extends Component {
 
   render() {
     return (
-      <Modal show={this.props.showFilters}>
+      <Modal show={this.props.showFilters} onHide={this.props.hideModal}>
           <div className="filter-modal">
             <div className="filter-form">
               <CheckboxGroup

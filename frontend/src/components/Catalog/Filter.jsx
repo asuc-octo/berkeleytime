@@ -183,7 +183,7 @@ export class FilterSidebar extends Component {
 
   //show the mobile modals
   showModal = (type, selection, options) => {
-    this.setState({ 
+    this.setState({
       modalType: type,
       showFilters: true,
       modalOptions: options
@@ -240,7 +240,7 @@ export class FilterSidebar extends Component {
         this.setState({classLevels: this.state.classLevels.concat({value: val, label: option})})
         break;
     }
-  }; 
+  };
 
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters } = this.state;
@@ -248,7 +248,7 @@ export class FilterSidebar extends Component {
     console.log(classLevels);
 
     return (
-      !this.props.isMobile ? 
+      !this.props.isMobile ?
       <div id="filter" className="filter">
         <div className="filter-name">
           <p>Filters</p>
@@ -334,7 +334,7 @@ export class FilterSidebar extends Component {
           />
         </div>
         <div id="filter-end"></div>
-      </div> 
+      </div>
       :
       <div id="filter" className="filter">
         <div className="filter-search">
@@ -346,28 +346,28 @@ export class FilterSidebar extends Component {
             defaultValue={this.props.defaultSearch}
           />
         </div>
-      
-        <div className="filter-scroll"> 
-          <button className="btn-bt-border filter-scroll-btn blue-text" 
-            onClick={this.resetFilters}> 
+
+        <div className="filter-scroll">
+          <button className="btn-bt-border filter-scroll-btn blue-text"
+            onClick={this.resetFilters}>
             Reset </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("sortBy", sort, this.sortOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("sortBy", sort, this.sortOptions)}>
             Sort&nbsp;By </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}>
             Requirements </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("unitsRange", unitsRange, this.unitsRangeOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("unitsRange", unitsRange, this.unitsRangeOptions)}>
             Units </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("department", department, this.departmentOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("department", department, this.departmentOptions)}>
             Department </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("classLevels", classLevels, this.classLevelOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("classLevels", classLevels, this.classLevelOptions)}>
             Class&nbsp;Level </button>
         </div>
-          <FilterModal 
+          <FilterModal
             options={this.state.modalOptions}
             showFilters={this.state.showFilters}
             hideModal={this.hideModal}
