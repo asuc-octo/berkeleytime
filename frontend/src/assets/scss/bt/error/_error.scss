@@ -10,16 +10,20 @@
 
     > h1 {
       margin-bottom: 20px;
+      font-weight: bold;
+      font-size: 60px;
     }
 
     > h3 {
       color: $bt-light-text;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      font-weight: bold;
     }
 
     > p {
       color: $bt-light-text;
       margin-bottom: 20px;
+      font-size: 20px;
     }
   }
 
@@ -34,4 +38,9 @@
 
     margin-bottom: 20px;
   }
+}
+
+.app-container .viewport-app {
+  height: 50vh;
+  min-height: 600px;
 }
