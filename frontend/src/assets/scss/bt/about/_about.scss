@@ -1,6 +1,11 @@
 .about {
   padding-top: $bt-navbar-height;
 
+  .nav-link {
+    background-color: #e1e1e16b;
+  }
+
+
   display: flex;
   flex-direction: column;
   align-items: center;
