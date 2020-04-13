@@ -15,7 +15,6 @@ class Grades extends Component {
     this.state = {
       // context: {},
       selectedCourses: this.props.selectedCourses,
-      isMobile: false,
       additionalInfo: [],
     };
     this.addCourse = this.addCourse.bind(this);
@@ -24,7 +23,6 @@ class Grades extends Component {
     this.addToUrl = this.addToUrl.bind(this);
     this.refillUrl = this.refillUrl.bind(this);
     this.toUrlForm = this.toUrlForm.bind(this);
-    this.updateScreensize = this.updateScreensize.bind(this);
     this.updateClassCardGrade = this.updateClassCardGrade.bind(this);
   }
 
@@ -32,18 +30,10 @@ class Grades extends Component {
     const { fetchGradeContext } = this.props;
     fetchGradeContext();
     this.fillFromUrl();
-
-    //check is user is on mobile
-    this.updateScreensize();
-    window.addEventListener("resize", this.updateScreensize);
   }
 
   componentWillMount() {
     this.props.gradeReset();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateScreensize);
   }
 
   fillFromUrl() {
@@ -117,10 +107,6 @@ class Grades extends Component {
     gradeRemoveCourse(id, color);
   }
 
-  updateScreensize() {
-    this.setState({ isMobile: window.innerWidth <= 768 });
-  }
-
   updateClassCardGrade(course_letter, course_gpa, section_letter, section_gpa) {
 
     var info=[]
@@ -131,9 +117,9 @@ class Grades extends Component {
   }
 
   render() {
-    const { context, selectedCourses } = this.props;
+    const { context, selectedCourses, isMobile } = this.props;
     let { location } = this.props;
-    const { additionalInfo, isMobile } = this.state;
+    const { additionalInfo } = this.state;
     let courses = context.courses;
 
     return (
@@ -178,11 +164,13 @@ const mapDispatchToProps = dispatch => ({
 
 const mapStateToProps = state => {
   const { context, selectedCourses, usedColorIds, sections } = state.grade;
+  const { isMobile } = state.isMobile;
   return {
     context,
     selectedCourses,
     usedColorIds,
-    sections
+    sections,
+    isMobile,
   };
 };
 
