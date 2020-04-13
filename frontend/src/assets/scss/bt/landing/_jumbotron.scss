@@ -31,7 +31,7 @@
         font-size: 24px;
       }
     }
-    
+
     p {
       margin: 0 3px 10px; //3px better aligns with title
       font-size: 20px;
@@ -49,7 +49,7 @@
 
         .btn-bt-lg {
           font-size: 16px;
-        } 
+        }
 
         .btn-bt-primary {
           margin-right: 7px;
@@ -86,7 +86,7 @@
         from {
           transform: translateY(-20px);
         } to {
-          transform: translateY(90px);
+          transform: translateY(20px);
         }
       }
 
@@ -99,19 +99,19 @@
       }
 
       #left-float {
-        animation: bobble 4s linear alternate infinite;  
+        animation: bobble 2s ease-in-out alternate infinite;
       }
 
       #middle-float {
-        animation: bobble 5s linear alternate infinite;  
+        animation: bobble 3s ease-in-out alternate infinite;
       }
 
       #right-float {
-        animation: bobble 6s linear alternate infinite;  
+        animation: bobble 4s ease-in-out alternate infinite;
       }
 
       #everything {
-        animation: everything-bobble 2s linear alternate infinite;  
+        animation: everything-bobble 2s ease-in-out alternate infinite;
       }
 
       @include mobile {
