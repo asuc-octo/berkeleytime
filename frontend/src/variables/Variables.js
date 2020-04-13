@@ -698,11 +698,6 @@ var laymanToAbbreviation = {
   "VISSTD": "VIS STD",
 };
 
-var currentSemester = {
-  semester: 'fall',
-  year: '2019'
-};
-
 module.exports = {
     style, // For notifications (App container and Notifications view)
     thArray, tdArray, // For tables (TableList view)
@@ -711,7 +706,7 @@ module.exports = {
     legendSales, dataBar, optionsBar, responsiveBar, legendBar, // For charts (Dashboard view)
     colors,
     enrollment, optionsEnrollment, responsiveEnrollment,
-    grades, possibleGrades, laymanToAbbreviation, currentSemester
+    grades, possibleGrades, laymanToAbbreviation
 };
 
 
