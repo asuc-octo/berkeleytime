@@ -1,3 +1,12 @@
+.viewport-app-404 {
+  height: 60vh;
+  min-height: 600px;
+
+  @include mobile {
+    height: 120vh;
+  }
+}
+
 .error {
   display: flex;
   justify-content: center;
@@ -38,9 +47,4 @@
 
     margin-bottom: 20px;
   }
-}
-
-.app-container .viewport-app {
-  height: 50vh;
-  min-height: 600px;
 }
