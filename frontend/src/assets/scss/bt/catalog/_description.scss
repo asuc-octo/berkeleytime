@@ -61,6 +61,27 @@
       }
     }
 
+    .pill-container {
+      display: flex;
+      overflow-x: auto;
+      margin-right: 10px;
+
+      .pill {
+        margin: 0px 10px 8px 0px;
+        padding: 8px 16px;
+        white-space: nowrap;
+        border: 1px solid $bt-border-grey;
+        border-radius: 50vh;
+        text-align: center;
+        color: $bt-blue;
+        font-size: 16px;
+  
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
     .description {
       color: $bt-grey-text;
     }
