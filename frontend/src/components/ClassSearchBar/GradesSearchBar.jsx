@@ -408,7 +408,7 @@ class GradesSearchBar extends Component {
               onClick={this.addSelected}
               disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
             >
-              Add
+              Add Class
             </Button>
           </Col>
         </Row>
