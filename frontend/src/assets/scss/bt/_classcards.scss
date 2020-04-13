@@ -47,6 +47,16 @@
         .class-card-remove {
           color: $bt-indicator-red;
           cursor: pointer;
+          opacity: .5;
+          padding: 2px;
+          transition: .5s;
+          border-radius: 4px;
+
+          &:hover {
+            opacity: 1;
+            background: rgba(224,185,185,.4);
+          }
+
         }
       }
 
