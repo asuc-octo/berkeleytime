@@ -42,9 +42,9 @@ const PercentageLabel = props => {
     const {x, y, value} = props
     let percentage = value == 0 ? "": (value < 1 ? "<1%" : Math.round(value) + "%");
     return (
-      <text 
-        x={x} 
-        y={y} 
+      <text
+        x={x}
+        y={y}
         dx={11}
         dy={-11}
         fontSize={12}
@@ -60,7 +60,7 @@ export default function GradesGraph({
   return (
       <div>
       {!isMobile ?
-        <ResponsiveContainer width="100%" height={500}>
+        <ResponsiveContainer width="90%" height={440}>
         <BarChart data={graphData} onMouseMove={updateGraphHover}>
           <XAxis dataKey="name" />
           <YAxis type="number" unit="%" />
@@ -75,7 +75,7 @@ export default function GradesGraph({
               onMouseEnter={updateBarHover}
             />
           ))}
-        </BarChart> 
+        </BarChart>
         </ResponsiveContainer> :
         <ResponsiveContainer width={500} height={500}>
         <BarChart data={graphData} onMouseMove={updateGraphHover}>
@@ -83,7 +83,7 @@ export default function GradesGraph({
           <YAxis type="number" unit="%" />
           <Tooltip
             content={
-              <MobileTooltip 
+              <MobileTooltip
                 selectedPercentiles={selectedPercentiles}
                 color={color}
                 denominator={denominator}
@@ -99,15 +99,15 @@ export default function GradesGraph({
               label={<PercentageLabel />}
             />
           ))}
-          <Legend 
-            horizontalAlign="left" 
-            layout="vertical" 
+          <Legend
+            horizontalAlign="left"
+            layout="vertical"
             iconType="circle"
           />
         </BarChart>
       </ResponsiveContainer>
       }
       </div>
-    
+
   );
 }
