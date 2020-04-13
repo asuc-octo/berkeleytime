@@ -119,10 +119,10 @@ class Enrollment extends Component {
             isMobile={isMobile}
           /> 
 
-          {/*<ClassCardList
+          <ClassCardList
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
-          />*/}
+          />
 
           <EnrollmentGraphCard
             id="gradesGraph"

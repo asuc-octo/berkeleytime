@@ -23,7 +23,7 @@ class ClassCardList extends PureComponent {
                 faculty={item.instructor === 'all' ? 'All Instructors' : item.instructor}
                 removeCourse={removeCourse}
                 colorId={item.colorId}
-                additionalInfo={additionalInfo[i]}
+                additionalInfo={additionalInfo ? additionalInfo[i] : 0s}
                 type={type}
                 isMobile={isMobile}
               /> 
