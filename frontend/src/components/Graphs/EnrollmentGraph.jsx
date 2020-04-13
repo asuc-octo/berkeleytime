@@ -24,7 +24,7 @@ export default function EnrollmentGraph({
   };
   return (
     <div className="graph">
-      <ResponsiveContainer width="100%" height={500}>
+      <ResponsiveContainer width="90%" height={440}>
         <LineChart data={graphData} onMouseMove={updateGraphHover}>
           <XAxis dataKey="name" interval={19} />
           <YAxis type="number" unit="%" domain={[0, 100]}/>
@@ -44,26 +44,28 @@ export default function EnrollmentGraph({
               connectNulls
             />
           ))}
-          <ReferenceLine
-            x={enrollmentData[0].telebears.phase2_start_day}
-            stroke="black"
-            strokeDasharray="3 3"
-          >
-            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-              {`Phase II Start (${enrollmentData[0].telebears.semester})`}
-            </Label>
-          </ReferenceLine>
-          <ReferenceLine
-            x={enrollmentData[0].telebears.adj_start_day}
-            stroke="black"
-            strokeDasharray="3 3"
-          >
-            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-              {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
-            </Label>
-          </ReferenceLine>
+
         </LineChart>
       </ResponsiveContainer>
     </div>
   );
 }
+
+// <ReferenceLine
+//   x={enrollmentData[0].telebears.phase2_start_day}
+//   stroke="black"
+//   strokeDasharray="3 3"
+// >
+//   <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+//     {`Phase II Start (${enrollmentData[0].telebears.semester})`}
+//   </Label>
+// </ReferenceLine>
+// <ReferenceLine
+//   x={enrollmentData[0].telebears.adj_start_day}
+//   stroke="black"
+//   strokeDasharray="3 3"
+// >
+//   <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+//     {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
+//   </Label>
+// </ReferenceLine>

@@ -17,6 +17,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 
 
 class GraphEmpty extends React.PureComponent {
+
   render() {
     const { pageType } = this.props;
     const gradesData = [{}];
@@ -27,12 +28,16 @@ class GraphEmpty extends React.PureComponent {
     const graphData_enroll = [{name: "0"}, {name: "20"}, {name: "40"}, {name: "60"},
     {name: "80"}, {name: "100"}, {name: "120"}, {name: "140"}, {name: "160"}, {name: "180"}]
 
+    const today = new Date();
+    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    const todayString = today.toLocaleDateString('en-US', dateOptions);
+
     return (
       <div className="graph-empty">
       <Container fluid>
         <Row>
           <Col lg={8}>
-            <ResponsiveContainer width="100%" height={500}>
+            <ResponsiveContainer width="90%" height={440}>
             <BarChart data={pageType == "enrollment" ? graphData_enroll : graphData_grade}>
               <XAxis dataKey="name" />
               <YAxis type="number" unit="%" domain={[0, 100]}/>
@@ -59,7 +64,8 @@ class GraphEmpty extends React.PureComponent {
               </div>
               <div className="title">No Class Name Data</div>
               <div className="info">No Semester or Instructor Data</div>
-              {pageType == "enrollment" ? null :
+              {pageType == "enrollment" ?
+                null :
                 <div>
                 <h6>Course Average</h6>
                 <div className="course-average">

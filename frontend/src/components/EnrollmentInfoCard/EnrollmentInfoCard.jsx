@@ -38,7 +38,7 @@ class EnrollmentInfoCard extends PureComponent {
     let daysAfterPeriodStarts = 0;
     if (selectedPoint.day < telebears.phase2_start_day) {
       period = 'Phase I';
-      daysAfterPeriodStarts = Math.max(selectedPoint.day - telebears.phase1_start_day, 0);
+      daysAfterPeriodStarts = selectedPoint.day - telebears.phase1_start_day;
     } else if (selectedPoint.day < telebears.adj_start_day) {
       period = 'Phase II';
       daysAfterPeriodStarts = selectedPoint.day - telebears.phase2_start_day;
@@ -57,102 +57,17 @@ class EnrollmentInfoCard extends PureComponent {
         <div className="info">{ `${semester} • ${instructor}` }</div>
 
         <div className="stat-section">
-          <div className="date">{`Today: ${todayString}`}</div>
-          <div className="enrolled-stat">
-            Enrolled: {applyIndicatorColor(todayPoint.enrolled, enrolledMax, todayPoint.enrolled_percent)}
-          </div>
-          <div className="waitlisted-stat">
-            Waitlisted: {applyIndicatorColor(todayPoint.waitlisted, waitlistedMax, todayPoint.waitlisted_percent)}
-          </div>
-        </div>
-
-        <div className="stat-section">
           <div className="date">{daysAfterPeriodStarts} Days After {period}</div>
           <div className="enrolled-stat">
-            Enrolled: {applyIndicatorColor(selectedPoint.enrolled, enrolledMax, selectedPoint.enrolled_percent)}
+            <span className="text">Enrolled:</span> {applyIndicatorColor(selectedPoint.enrolled, enrolledMax, selectedPoint.enrolled_percent)}
           </div>
           <div className="waitlisted-stat">
-            Waitlisted: {applyIndicatorColor(selectedPoint.waitlisted, waitlistedMax, selectedPoint.waitlisted_percent)}
+            <span className="text">Waitlisted:</span> {applyIndicatorColor(selectedPoint.waitlisted, waitlistedMax, selectedPoint.waitlisted_percent)}
           </div>
         </div>
 
       </div>
     );
-
-    // return (
-    //   <div className="card enrollment-card-info">
-    //     <div className="content card-info">
-    //       <Row>
-    //         <div className="class-num" style={{ borderBottom: `5px ${color} solid` }}>
-    //           {title}
-    //         </div>
-    //       </Row>
-    //       <Row>
-    //         <div className="class-info">
-    //           {`${semester} | ${instructor}`}
-    //         </div>
-    //       </Row>
-    //       <Row>
-    //         <div className="class-title">{subtitle}</div>
-    //       </Row>
-    //
-    //       <div className="class-stats">
-    //         <Row>
-    //           <div className="class-stat-type">
-    //             {`${period}: Day ${selectedPoint.day}`}
-    //           </div>
-    //         </Row>
-    //         <Row>
-    //           <div className="class-adjustment-percent">
-    //             {`Enrollment Percent: ${formatPercentage(selectedPoint.enrolled_percent)}%`}
-    //           </div>
-    //         </Row>
-    //         <Row>
-    //           <div className="class-adjustment-percent">
-    //             {`Waitlist Percent: ${formatPercentage(selectedPoint.waitlisted_percent)}%`}
-    //           </div>
-    //         </Row>
-    //         <Row>
-    //           <Col xs={5} className="class-stats-left-col">
-    //             <div className="class-stats-name">Enrolled</div>
-    //           </Col>
-    //           <Col xs={7}>
-    //             <div className="class-stats">{selectedPoint.enrolled}/{enrolledMax}</div>
-    //           </Col>
-    //         </Row>
-    //         <Row className="class-stats">
-    //           <Col xs={5} className="class-stats-left-col">
-    //             <div className="class-stats-name">Waitlisted</div>
-    //           </Col>
-    //           <Col xs={7}>
-    //             <div className="class-stats">{selectedPoint.waitlisted}</div>
-    //           </Col>
-    //         </Row>
-    //       </div>
-    //
-    //       <div>
-            // <Row><div className="class-stat-type">{`Today: ${todayString}`}</div></Row>
-            // <Row><div className="class-adjustment-percent">{`${formatPercentage(todayPoint.enrolled_percent)}%`}</div></Row>
-            // <Row className="class-adjustment">
-            //   <Col xs={5} className="class-stats-left-col">
-            //     <div className="class-stats-name">Currently Enrolled</div>
-            //   </Col>
-            //   <Col xs={7}>
-            //     <div className="class-stats">{todayPoint.enrolled}</div>
-            //   </Col>
-            // </Row>
-            // <Row className="class-adjustment">
-            //   <Col xs={5} className="class-stats-left-col">
-            //     <div className="class-stats-name">Currently Waitlisted</div>
-            //   </Col>
-            //   <Col xs={7}>
-            //     <div className="stats-name">{todayPoint.waitlisted}</div>
-            //   </Col>
-            // </Row>
-    //       </div>
-    //     </div>
-    //   </div>
-    // );
   }
 }
 

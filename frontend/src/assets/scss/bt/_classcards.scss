@@ -1,6 +1,6 @@
 .class-card-list {
-  margin-bottom: 10px;
-  height: 150px;
+  margin-bottom: 40px;
+  height: 130px;
 
   @include mobile {
      > div {
@@ -17,18 +17,18 @@
     .class-card {
       border: 1px solid $border-color;
       border-radius: 5px;
-      padding: 15px;
-      height: 130px;
-  
+      padding: 12px;
+      height: 120px;
+
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-  
+
       .class-card-header {
         display: flex;
         flex-direction: row;
         align-items: center;
-  
+
         .class-card-square {
           width: 16px;
           height: 16px;
@@ -36,43 +36,43 @@
           margin-right: 8px;
           margin-bottom: 4px;
         }
-  
+
         .class-card-course {
           margin-right: auto !important;
           font-weight: bold;
           color: $bt-base-text;
-          font-size: 18px;
+          font-size: 16px;
         }
-  
+
         .class-card-remove {
           color: $bt-indicator-red;
           cursor: pointer;
         }
       }
-  
+
       .class-card-title, .class-card-options {
         color: $bt-grey-text;
       }
-  
-      /* magic to truncate at 2 lines lol */ 
+
+      /* magic to truncate at 2 lines lol */
       .class-card-title {
-        font-size: 16px;
-  
+        font-size: 14px;
+
         /* hide text if it more than N lines  */
         overflow: hidden;
         /* for set '...' in absolute position */
-        position: relative; 
+        position: relative;
         /* use this value to count block height */
         line-height: 1.2em;
         /* max-height = line-height (1.2) * lines max number (3) */
-        max-height: 2.4em; 
+        max-height: 2.4em;
         /* fix problem when last visible word doesn't adjoin right side  */
-        text-align: left;  
+        text-align: left;
         /* place for '...' */
         margin-right: -1em;
         padding-right: 1em;
       }
-  
+
       .class-card-options {
         font-size: 15px;
       }
