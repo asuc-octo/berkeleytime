@@ -12,10 +12,10 @@ export class FilterSidebar extends Component {
     const { playlists } = this.props;
 
     this.sortOptions = [
-      { value: 'average_grade', label: 'Average Grade' },
-      { value: 'department_name', label: 'Department Name' },
-      { value: 'open_seats', label: 'Open Seats' },
-      { value: 'enrolled_percentage', label: 'Enrolled Percentage' },
+      { value: 'average_grade', label: 'Sort By: Average Grade' },
+      { value: 'department_name', label: 'Sort By: Department Name' },
+      { value: 'open_seats', label: 'Sort By: Open Seats' },
+      { value: 'enrolled_percentage', label: 'Sort By: Enrolled Percentage' },
     ];
     this.sortDefault = this.sortOptions[0]
     this.requirementsOptions = playlists.requirements;
@@ -264,7 +264,7 @@ export class FilterSidebar extends Component {
           />
         </div>
         <div className="filter-sort">
-          <p>Sort by</p>
+          
           <Select
             options={this.sortOptions}
             isSearchable={false}
