@@ -145,17 +145,23 @@
 .filter-modal {
 
   .filter-form {
-    padding: 30px;
+    padding: 20px 28px;
     max-height: 50vh;
     overflow-y: scroll;
 
     .filter-form-label {
       width: 80vw;
       height: 40px;
+      margin: 2vh 0;
       padding: 1vh 3vw;
       background-color: $bt-off-white;
       font-weight: 500;
       border-radius: 4px;
+    }
+
+    .custom-control {
+      min-height: 1.75rem;
+      padding-left: 2rem;
     }
   }
   .filter-button-bar {
