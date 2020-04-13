@@ -93,6 +93,10 @@
 
     //override dropdown stylings
 
+    .css-1wa3eu0-placeholder::placeholder {
+      color: $bt-light-border-grey;
+    }
+
     .css-1okebmr-indicatorSeparator {
       display: none;
     }
@@ -129,7 +133,7 @@
     .css-1rhbuit-multiValue {
       background-color: #f3f3f3;
       border-radius: 4px;
-      padding: 4px 6px;
+      padding: 2px 6px;
     }
   }
 }
