@@ -1,4 +1,9 @@
 .enrollment{
+
+  .css-yk16xz-control:hover {
+    cursor: pointer;
+  }
+
   height: 100%;
   padding: 30px;
 
@@ -48,7 +53,7 @@
       @include mobile {
         width: 500px;
         //ResponsiveContainer already sets height to 500px
-        min-height: 510px; 
+        min-height: 510px;
       }
 
       .graph {
@@ -111,5 +116,9 @@
       .class-stats-name {
         color: #8F8F8F;
       }
+  }
+
+  .css-yk16xz-control:hover {
+    cursor: pointer;
   }
 }
