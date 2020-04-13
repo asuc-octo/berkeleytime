@@ -8,8 +8,6 @@ import chart from '../../assets/svg/catalog/chart.svg';
 import book from '../../assets/svg/catalog/book.svg';
 import launch from '../../assets/svg/catalog/launch.svg';
 
-import vars from '../../variables/Variables';
-
 import { updateCourses, getCourseData, makeRequestDescription, setRequirements, setUnits, setDepartment, setLevel, setSemester } from '../../redux/actions';
 import { connect } from "react-redux";
 
@@ -150,7 +148,18 @@ class ClassDescription extends Component {
   render() {
     const { courseData, loading } = this.props;
     const { course, sections, universal_requirements } = courseData;
-    const { semester, year } = vars.currentSemester;
+
+    var pills = [];
+    if (universal_requirements != null) {
+      let allSemesters = universal_requirements.filter(item => item.includes("Spring") || item.includes("Fall"));
+      var semesterUrl = allSemesters.length > 0 ? allSemesters[0].toLowerCase().split(' ').join('-') : null;
+      let latestSemesters = allSemesters.slice(0, 4);
+
+      let units = universal_requirements.filter(item => item.includes("Unit"));
+      var otherFilters = universal_requirements.filter(item => !item.includes("Spring") && !item.includes("Fall") && !item.includes("Unit"));
+      
+      pills = otherFilters.concat(units).concat(latestSemesters);
+    }
 
     const toGrades = {
       pathname: course != null ? `/grades/0-${course.id}-all-all` : `/grades`,
@@ -158,7 +167,7 @@ class ClassDescription extends Component {
     };
 
     const toEnrollment = {
-      pathname: course != null ? `/enrollment/0-${course.id}-${semester}-${year}-all` : `/enrollment`,
+      pathname: (course != null && semesterUrl != null) ? `/enrollment/0-${course.id}-${semesterUrl}-all` : `/enrollment`,
       state: { course: course },
     }
 
@@ -197,7 +206,7 @@ class ClassDescription extends Component {
               </div>
             </div>
             <div className="pill-container">
-              {universal_requirements.map(req => <div className="pill" onClick={() => this.pillFilter(req)}>{req}</div>)}
+              {pills.map(req => <div className="pill" onClick={() => this.pillFilter(req)}>{req}</div>)}
             </div>
             <p className="description">
               {course.description}
