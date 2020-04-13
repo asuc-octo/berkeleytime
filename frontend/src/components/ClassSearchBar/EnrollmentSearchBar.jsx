@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Select from 'react-select-virtualized';
 import {
-  Container, Row, Col, Button,
+  Container, Row, Col, Button
 } from 'react-bootstrap';
 import hash from 'object-hash';
 
@@ -247,7 +247,7 @@ class EnrollmentSearchBar extends Component {
     return (
       <Container fluid className="enrollment-search-bar">
         <Row style={{marginBottom: 10}}>
-          <Col lg={5}>
+          <Col lg={4}>
             <Select
                 name="selectClass"
                 placeholder="Choose a class..."
@@ -291,13 +291,13 @@ class EnrollmentSearchBar extends Component {
                 styles={customStyles}
             />
           </Col>
-          <Col lg={1}>
+          <Col lg={2}>
             <Button
               className="btn-bt-green"
               onClick={this.addSelected}
               disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
             >
-              Add
+              Add Class
             </Button>
           </Col>
         </Row>

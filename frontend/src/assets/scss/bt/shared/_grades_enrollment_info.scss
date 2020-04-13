@@ -43,6 +43,21 @@
     margin-bottom: 5px;
   }
 
+  .stat-section {
+    .date {
+      font-weight: bold;
+      padding-bottom: 5px;
+    }
+    .text {
+      padding-right: 8px;
+    }
+    .waitlisted-stat {
+      margin-top: 5px;
+      margin-bottom: 20px;
+    }
+
+  }
+
   span {
     margin-right: 5px;
   }

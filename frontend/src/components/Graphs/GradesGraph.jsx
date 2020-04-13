@@ -77,7 +77,7 @@ export default function GradesGraph({
               onMouseEnter={updateBarHover}
             />
           ))}
-        </BarChart> 
+        </BarChart>
         </ResponsiveContainer> :
         <ResponsiveContainer width="100%" height={numClasses*750} >
         <BarChart 
@@ -98,7 +98,7 @@ export default function GradesGraph({
           <YAxis dataKey="name" type="category" />
           <Tooltip
             content={
-              <MobileTooltip 
+              <MobileTooltip
                 selectedPercentiles={selectedPercentiles}
                 color={color}
                 denominator={denominator}
@@ -114,15 +114,15 @@ export default function GradesGraph({
               label={<PercentageLabel />}
             />
           ))}
-          <Legend 
-            horizontalAlign="left" 
-            layout="vertical" 
+          <Legend
+            horizontalAlign="left"
+            layout="vertical"
             iconType="circle"
           />
         </BarChart>
       </ResponsiveContainer>
       }
       </div>
-    
+
   );
 }

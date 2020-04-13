@@ -29,11 +29,11 @@ class GradesGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { selectedCourses } = this.props;
+    const { selectedCourses, gradesData } = this.props;
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getGradesData();
     }
-
+    
     const { gradesData } = this.props;
     const course_letter = gradesData.map((course) => course.course_letter)
     const course_gpa = gradesData.map((course) => course.course_gpa)
@@ -93,6 +93,7 @@ class GradesGraphCard extends Component {
   render() {
     const { hoveredClass } = this.state;
     const { graphData, gradesData, selectedCourses, isMobile } = this.props;
+
 
     return (
       <div className="grades-graph">
