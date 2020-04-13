@@ -1,7 +1,10 @@
 past:
   - name: Class of 2019
     rows:
-      - - name: Evelyn Li
+      - - name: Sangbin Cho
+          role: Backend Lead
+          site: https://www.linkedin.com/in/sang-cho/
+        - name: Evelyn Li
           role: Backend Engineer
           site: https://www.linkedin.com/in/yunqil
         - name: Richard Liu

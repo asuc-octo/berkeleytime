@@ -24,7 +24,6 @@
       @include mobile {
         height: 180px;
       }
-  
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -50,8 +49,16 @@
         }
 
         .class-card-remove {
-          color: $bt-indicator-red;
           cursor: pointer;
+          opacity: .5;
+          padding: 2px;
+          transition: .5s;
+          border-radius: 4px;
+        }
+
+        .class-card-remove:hover {
+          opacity: 1;
+          background: #e0b9b966;
         }
       }
 
@@ -61,7 +68,7 @@
 
       /* magic to truncate at 2 lines lol */
       .class-card-title {
-        font-size: 14px;
+        font-size: 16px;
 
         /* hide text if it more than N lines  */
         overflow: hidden;

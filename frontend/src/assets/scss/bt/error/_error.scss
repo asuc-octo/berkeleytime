@@ -1,3 +1,12 @@
+.viewport-app-404 {
+  height: 60vh;
+  min-height: 600px;
+
+  @include mobile {
+    height: 120vh;
+  }
+}
+
 .error {
   display: flex;
   justify-content: center;
@@ -10,16 +19,20 @@
 
     > h1 {
       margin-bottom: 20px;
+      font-weight: bold;
+      font-size: 60px;
     }
 
     > h3 {
       color: $bt-light-text;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      font-weight: bold;
     }
 
     > p {
       color: $bt-light-text;
       margin-bottom: 20px;
+      font-size: 20px;
     }
   }
 
