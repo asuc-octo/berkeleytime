@@ -38,13 +38,14 @@
   }
 
   .about-us {
+
     > h5 {
-      margin-bottom: 20px;
+      margin: 80px auto 12px auto;
       text-align: center;
 
       font-weight: bold;
       color: $bt-base-text;
-      font-size: 28px;
+      font-size: 36px;
 
       @include mobile {
         font-size: 20px;
@@ -58,6 +59,7 @@
       font-size: 16px;
       color: $bt-grey-text;
       width: 450px;
+      line-height: 1.5;
 
       @include mobile {
         width: 330px;
@@ -67,7 +69,7 @@
 
   .values {
 
-    margin-bottom: 50px;
+    margin-bottom: 80px;
 
     @include desktop {
       width: 900px;
@@ -121,6 +123,7 @@
     flex-direction: row;
     width: 100%;
     margin-bottom: 50px;
+    padding-left: 120px;
 
     > img {
       @include desktop {
