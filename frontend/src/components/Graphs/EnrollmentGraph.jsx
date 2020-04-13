@@ -42,7 +42,7 @@ function getYTickRange(limit) {
 }
 
 export default function EnrollmentGraph({
-  graphData, enrollmentData, updateLineHover, updateGraphHover,
+  graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile,
 }) {
   const labelStyle = {
     textAnchor: 'middle',
@@ -50,8 +50,19 @@ export default function EnrollmentGraph({
   };
   return (
     <div className="graph">
-      <ResponsiveContainer width="90%" height={440}>
-        <LineChart data={graphData} onMouseMove={updateGraphHover}>
+      <ResponsiveContainer width="100%" height={500}>
+        <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{top: isMobile ? 100 : 0}}>
+
+          {isMobile ?
+            <text  
+              y={30} 
+              textAnchor="top" 
+              dominantBaseline="left"
+              fontSize={18}> Enrollment
+            </text> :
+            null
+          }
+          
           <XAxis dataKey="name" interval={19} />
           <YAxis type="number" unit="%"
                  domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
@@ -73,6 +84,33 @@ export default function EnrollmentGraph({
             />
           ))}
 
+          {isMobile ?
+            <Legend 
+              horizontalAlign="left" 
+              layout="vertical" 
+              iconType="circle"
+            /> :
+            null
+          }
+
+          <ReferenceLine
+            x={enrollmentData[0].telebears.phase2_start_day}
+            stroke="black"
+            strokeDasharray="3 3"
+          >
+            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+              {`Phase II Start (${enrollmentData[0].telebears.semester})`}
+            </Label>
+          </ReferenceLine>
+          <ReferenceLine
+            x={enrollmentData[0].telebears.adj_start_day}
+            stroke="black"
+            strokeDasharray="3 3"
+          >
+            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+              {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
+            </Label>
+          </ReferenceLine>
         </LineChart>
       </ResponsiveContainer>
     </div>

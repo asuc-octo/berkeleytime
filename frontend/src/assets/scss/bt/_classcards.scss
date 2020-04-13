@@ -3,6 +3,7 @@
   height: 130px;
 
   @include mobile {
+    height: 200px;
      > div {
       display: flex;
       flex-wrap: nowrap;
@@ -20,6 +21,10 @@
       padding: 12px;
       height: 120px;
 
+      @include mobile {
+        height: 180px;
+      }
+  
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -75,6 +80,16 @@
 
       .class-card-options {
         font-size: 15px;
+      }
+
+      .class-card-mobile {
+        padding-top: 20px;
+        display: flex;
+        flex-direction: row;
+
+        .class-card-mobile-column {
+          margin-right: 30px;
+        }
       }
     }
   }

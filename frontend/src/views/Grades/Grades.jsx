@@ -15,8 +15,7 @@ class Grades extends Component {
     this.state = {
       // context: {},
       selectedCourses: this.props.selectedCourses,
-      sharedHoveredClass: false,
-      isMobile: false,
+      additionalInfo: [],
     };
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
@@ -24,26 +23,17 @@ class Grades extends Component {
     this.addToUrl = this.addToUrl.bind(this);
     this.refillUrl = this.refillUrl.bind(this);
     this.toUrlForm = this.toUrlForm.bind(this);
-    this.updateScreensize = this.updateScreensize.bind(this);
-    this.updateSharedHoveredClass = this.updateSharedHoveredClass.bind(this);
+    this.updateClassCardGrade = this.updateClassCardGrade.bind(this);
   }
 
   componentDidMount() {
     const { fetchGradeContext } = this.props;
     fetchGradeContext();
     this.fillFromUrl();
-
-    //check is user is on mobile
-    this.updateScreensize();
-    window.addEventListener("resize", this.updateScreensize);
   }
 
   componentWillMount() {
     this.props.gradeReset();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateScreensize);
   }
 
   fillFromUrl() {
@@ -117,18 +107,19 @@ class Grades extends Component {
     gradeRemoveCourse(id, color);
   }
 
-  updateSharedHoveredClass(val) {
-    this.setState({sharedHoveredClass: val});
-  }
+  updateClassCardGrade(course_letter, course_gpa, section_letter, section_gpa) {
 
-  updateScreensize() {
-    this.setState({ isMobile: window.innerWidth <= 768 });
+    var info=[]
+    for(var i=0; i<course_letter.length; i++) {
+      info.push([course_letter[i], course_gpa[i], section_letter[i], section_gpa[i]])
+    }
+    this.setState({ additionalInfo: info })
   }
 
   render() {
-    const { context, selectedCourses } = this.props;
+    const { context, selectedCourses, isMobile } = this.props;
     let { location } = this.props;
-    const { sharedHoveredClass, isMobile } = this.state;
+    const { additionalInfo } = this.state;
     let courses = context.courses;
 
     return (
@@ -145,13 +136,15 @@ class Grades extends Component {
           <ClassCardList
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
+            additionalInfo={additionalInfo}
+            type="grades"
             isMobile={isMobile}
           />
 
           <GradesGraphCard
             id="gradesGraph"
             title="Grades"
-            updateSharedHoveredClass={this.updateSharedHoveredClass}
+            updateClassCardGrade={this.updateClassCardGrade}
             isMobile={isMobile}
           />
         </div> 
@@ -171,11 +164,13 @@ const mapDispatchToProps = dispatch => ({
 
 const mapStateToProps = state => {
   const { context, selectedCourses, usedColorIds, sections } = state.grade;
+  const { isMobile } = state.isMobile;
   return {
     context,
     selectedCourses,
     usedColorIds,
-    sections
+    sections,
+    isMobile,
   };
 };
 

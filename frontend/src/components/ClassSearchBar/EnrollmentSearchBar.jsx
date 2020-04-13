@@ -236,8 +236,6 @@ class EnrollmentSearchBar extends Component {
       secondaryOption = '';
     }
 
-    console.log(isMobile);
-
     const customStyles = {
       clearIndicator: (provided, state) => ({
         ...provided,
