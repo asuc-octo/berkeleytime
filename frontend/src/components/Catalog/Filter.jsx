@@ -245,7 +245,16 @@ export class FilterSidebar extends Component {
   render() {
     const { sort, unitsRange, requirements, department, classLevels, semesters } = this.state;
 
-    console.log(classLevels);
+    const customStyles = {
+      clearIndicator:  base => ({
+        ...base,
+        paddingRight: 0,
+
+        '&:hover': {
+          color: 'red'
+        }
+      })
+    };
 
     return (
       !this.props.isMobile ?
@@ -270,6 +279,10 @@ export class FilterSidebar extends Component {
             isSearchable={false}
             onChange={this.sortHandler}
             value={sort}
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div className="filter-requirements">
@@ -282,19 +295,27 @@ export class FilterSidebar extends Component {
             onChange={this.requirementHandler}
             value={requirements}
             placeholder="Select requirements..."
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div className="filter-units">
           <p>Units</p>
           <Select
             closeMenuOnSelect={false}
-            components={animatedComponents}
+            components={{
+              animatedComponents,
+              IndicatorSeparator: () => null
+            }}
             options={this.unitsRangeOptions}
             isMulti
             placeholder="Specify units..."
             isSearchable={false}
             onChange={this.unitsRangeHandler}
             value={unitsRange}
+            styles={customStyles}
           />
         </div>
         <div className="filter-department">
@@ -305,6 +326,10 @@ export class FilterSidebar extends Component {
             onChange={this.departmentHandler}
             value={department}
             placeholder="Choose a department..."
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div className="filter-class-level">
@@ -318,6 +343,10 @@ export class FilterSidebar extends Component {
             placeholder="Select class levels..."
             value={classLevels}
             onChange={this.classLevelHandler}
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div className="filter-semesters">
@@ -331,6 +360,10 @@ export class FilterSidebar extends Component {
             value={semesters}
             placeholder="Select semesters..."
             onMenuOpen={this.semesterOpen}
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div id="filter-end"></div>
@@ -373,6 +406,7 @@ export class FilterSidebar extends Component {
             hideModal={this.hideModal}
             saveModal={this.saveModal}
             storeSelection={this.storeSelection}
+            displayRadio={this.state.modalType == "sortBy"}
           />
        </div>
     );
