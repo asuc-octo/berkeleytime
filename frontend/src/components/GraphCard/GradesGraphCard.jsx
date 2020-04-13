@@ -29,16 +29,16 @@ class GradesGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { selectedCourses, gradesData } = this.props;
+    const { selectedCourses } = this.props;
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getGradesData();
     }
     
     const { gradesData } = this.props;
-    const course_letter = gradesData.map((course) => course.course_letter)
-    const course_gpa = gradesData.map((course) => course.course_gpa)
-    const section_letter = gradesData.map((course) => course.section_letter)
-    const section_gpa = gradesData.map((course) => course.section_gpa)
+    const course_letter = gradesData.map((course) => course.course_letter);
+    const course_gpa = gradesData.map((course) => course.course_gpa);
+    const section_letter = gradesData.map((course) => course.section_letter);
+    const section_gpa = gradesData.map((course) => course.section_gpa);
     this.props.updateClassCardGrade(course_letter, course_gpa, section_letter, section_gpa);
   }
 
