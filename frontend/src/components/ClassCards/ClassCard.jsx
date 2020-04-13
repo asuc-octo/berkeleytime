@@ -8,8 +8,6 @@ function ClassCard(props) {
     id, course, title, fill, semester, faculty, removeCourse, colorId, additionalInfo, type, isMobile,
   } = props;
 
-  console.log(additionalInfo);
-
   return (
     <Col xs={12} sm={12} lg={3} xl={3} className="class-card-column">
       <div className="class-card">

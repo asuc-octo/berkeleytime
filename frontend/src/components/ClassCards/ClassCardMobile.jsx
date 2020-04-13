@@ -13,7 +13,6 @@ function ClassCardMobile(props) {
   }
 
   if (type === "grades") {
-    console.log(additionalInfo);
     const courseLetter = additionalInfo ? additionalInfo[0] : null;
     const courseGPA = additionalInfo ? additionalInfo[1] : null;
     const sectionLetter = additionalInfo ? additionalInfo[2] : null;

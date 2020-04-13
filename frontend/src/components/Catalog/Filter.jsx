@@ -256,8 +256,6 @@ export class FilterSidebar extends Component {
       })
     };
 
-    console.log(classLevels);
-
     return (
       !this.props.isMobile ? 
       <div id="filter" className="filter">
@@ -408,6 +406,7 @@ export class FilterSidebar extends Component {
             hideModal={this.hideModal}
             saveModal={this.saveModal}
             storeSelection={this.storeSelection}
+            displayRadio={this.state.modalType == "sortBy"}
           />
        </div>
     );
