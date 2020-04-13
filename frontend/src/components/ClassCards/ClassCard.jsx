@@ -1,9 +1,11 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
 
+import ClassCardMobile from './ClassCardMobile';
+
 function ClassCard(props) {
   const {
-    id, course, title, fill, semester, faculty, removeCourse, colorId
+    id, course, title, fill, semester, faculty, removeCourse, colorId, additionalInfo, type, isMobile,
   } = props;
 
   return (
@@ -16,7 +18,17 @@ function ClassCard(props) {
         </div>
         <div className="class-card-title">{ title }</div>
         <div className="class-card-options">{ `${semester} • ${faculty}` }</div>
-      </div>
+
+        {isMobile ?
+          <ClassCardMobile
+            additionalInfo={additionalInfo}
+            type={type}
+          /> 
+          :
+          null
+        }
+
+      </div> 
     </Col>
   );
 }

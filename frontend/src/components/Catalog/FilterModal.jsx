@@ -3,36 +3,42 @@ import PropTypes from 'prop-types';
 import {Modal, Form} from "react-bootstrap";
 
 function CheckboxGroup(props) {
+  
+  const { displayRadio } = props;
+  const formType = displayRadio ? "radio" : "checkbox";
 
   return (
     <Form>
       {props.nestedOptions.map(item => (
           <div>
             {item.options != null ?
-            <div className="filter-form-label">{item.label}</div> :
-            null}
+              <div className="filter-form-label">{item.label}</div> 
+              :
+              null
+            }
 
             {item.options != null ?
               Object.values(item.options).map(option => (
-              <div className="custom-checkbox">
+              <div>
                 <Form.Check
-                  type="checkbox"
+                  type={formType}
                   id={option.value}
                   name={option.label}
                   label={option.label}
                   onClick={props.handler.bind(this)}
-                />
+                /> 
               </div>
               )) : 
-              <div className="custom-checkbox">
+              <div>
                 <Form.Check
-                  type="checkbox"
+                  type={formType}
                   id={item.value}
                   name={item.label}
                   label={item.label}
                   onClick={props.handler.bind(this)}
                />
-              </div>}
+              </div>
+            }
           </div>
       ))}
     </Form>
@@ -42,6 +48,7 @@ function CheckboxGroup(props) {
 export class FilterModal extends Component {
 
   render() {
+
     return (
       <Modal show={this.props.showFilters}>
           <div className="filter-modal">
@@ -49,6 +56,7 @@ export class FilterModal extends Component {
               <CheckboxGroup
                 nestedOptions={this.props.options}
                 handler={this.props.storeSelection}
+                displayRadio={this.props.displayRadio}
               />
             </div>
             <div className="filter-button-bar">

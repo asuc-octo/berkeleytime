@@ -13,31 +13,19 @@ class Enrollment extends Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      isMobile: false,
-    };
-
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
     this.fillFromUrl = this.fillFromUrl.bind(this);
     this.addToUrl = this.addToUrl.bind(this);
     this.refillUrl = this.refillUrl.bind(this);
     this.toUrlForm = this.toUrlForm.bind(this);
-    this.updateScreensize = this.updateScreensize.bind(this);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateScreensize);
+    this.updateClassCardEnrollment = this.updateClassCardEnrollment.bind(this);
   }
 
   componentDidMount() {
     const { fetchEnrollContext } = this.props;
     fetchEnrollContext();
     this.fillFromUrl();
-
-    //check is user is on mobile
-    this.updateScreensize();
-    window.addEventListener("resize", this.updateScreensize);
   }
 
   fillFromUrl() {
@@ -111,14 +99,13 @@ class Enrollment extends Component {
     enrollRemoveCourse(id, color);
   }
 
-  updateScreensize() {
-    this.setState({ isMobile: window.innerWidth <= 768 });
+  updateClassCardEnrollment(course_letter, course_gpa, section_letter, section_gpa) {
   }
 
+
   render() {
-    const { context, selectedCourses } = this.props;
+    const { context, selectedCourses, isMobile } = this.props;
     let { location } = this.props;
-    const { isMobile } = this.state;
     let courses = context.courses;
 
     return (
@@ -140,6 +127,7 @@ class Enrollment extends Component {
           <EnrollmentGraphCard
             id="gradesGraph"
             title="Enrollment"
+            updateClassCardEnrollment={this.updateClassCardEnrollment}
             isMobile={isMobile}
           />
         </div>
@@ -160,10 +148,13 @@ const mapDispatchToProps = dispatch => ({
 
 const mapStateToProps = state => {
   const { context, selectedCourses, usedColorIds } = state.enrollment;
+  const { isMobile } = state.isMobile;
+
   return {
     context,
     selectedCourses,
-    usedColorIds
+    usedColorIds,
+    isMobile,
   };
 };
 

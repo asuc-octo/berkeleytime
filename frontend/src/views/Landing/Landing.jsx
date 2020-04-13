@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { connect } from 'react-redux';
 
 import Jumbotron from '../../components/Landing/Jumbotron';
 import Explore from '../../components/Landing/Explore';
@@ -8,32 +9,9 @@ import Sponsors from '../../components/Landing/Sponsors';
 
 class Landing extends PureComponent {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isMobile: false,                
-    };
-    this.updateScreensize = this.updateScreensize.bind(this);
-  }
-
-  /**
-   * Checks if user is on mobile view
-   */
-  componentDidMount() {
-    this.updateScreensize();
-    window.addEventListener("resize", this.updateScreensize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateScreensize);
-  }
-
-  updateScreensize() {
-    this.setState({ isMobile: window.innerWidth <= 768 });
-  }
-
   render() {
-    const { isMobile } = this.state;
+    const { isMobile } = this.props;
+
     return (
       <div className="landing">
         <div className="landing-container">
@@ -49,4 +27,11 @@ class Landing extends PureComponent {
   }
 }
 
-export default Landing;
+const mapStateToProps = state => {
+  const { isMobile } = state.isMobile;
+  return {
+    isMobile,
+  }
+}
+
+export default connect(mapStateToProps)(Landing);
