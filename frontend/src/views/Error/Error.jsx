@@ -5,7 +5,7 @@ import empty_graph from '../../assets/img/images/empty-graph.png';
 
 function Error() {
   return (
-    <div className="error viewport-app">
+    <div className="error viewport-app-404">
       <Container>
         <Row>
           <Col md={{span: 5, order: 2}} lg={4}
