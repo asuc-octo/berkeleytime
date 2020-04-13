@@ -25,7 +25,7 @@
       }
 
       > *:not(:first-child) {
-        font-size: 18px;
+        font-size: 16px;
         line-height: 150%;
 
         @include mobile {
@@ -34,7 +34,7 @@
       }
 
       p {
-        font-size: 18px;
+        font-size: 16px;
         color: $bt-base-text;
 
         @include mobile {
@@ -43,14 +43,14 @@
       }
 
       a {
-        font-size: 18px;
+        font-size: 16px;
         color: $bt-light-grey;
         transition: 200ms;
         width: max-content;
       }
 
       a:hover {
-        color: hsl(204, 86%, 53%);
+        color: $bt-grey;
       }
 
       .new-box {
@@ -61,7 +61,7 @@
         margin-left: 8px;
         padding: 2px 6px;
         color: #FFFFFF;
-        font-size: 16px;
+        font-size: 12px;
         line-height: 150%;
 
         @include mobile {

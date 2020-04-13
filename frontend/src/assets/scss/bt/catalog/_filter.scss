@@ -8,6 +8,7 @@
 
   @include mobile {
     overflow: visible;
+    padding: 20px 28px;
   }
 
   display: flex;
@@ -46,7 +47,7 @@
     align-items: baseline;
 
     p {
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 500px;
       margin-right: 30px;
     }
@@ -67,17 +68,17 @@
       width: 100%;
       padding-bottom: 3px;
       border: 0;
-      border-bottom: .5px solid $bt-border-grey;
-
-      color: $bt-grey-text;
-      font-size: 17px;
+      border-bottom: .5px solid $bt-light-border-grey;
+      color: $bt-base-text;
+      font-size: 16px;
       font-family: 'FontAwesome', 'Inter', sans-serif;
 
       &:focus {
         outline: none;
+        color: $bt-base-text;
 
         &::placeholder {
-          color: transparent;
+          color: $bt-light-border-grey;
         }
       }
     }
@@ -90,8 +91,53 @@
     flex-direction: column;
 
     > p {
-      margin-bottom: 5px;
-      font-size: 18px;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    //override dropdown stylings
+
+    .css-1wa3eu0-placeholder::placeholder {
+      color: $bt-light-border-grey;
+    }
+
+    .css-1okebmr-indicatorSeparator {
+      display: none;
+    }
+
+    .css-1wa3eu0-placeholder, .css-1uccc91-singleValue , .css-12jo7m5, .css-12jo7m5, .css-26l3qy-menu {
+      font-size: 14px;
+    }
+
+    .css-yk16xz-control::after, .css-1pahdxg-control::after {
+      border: solid 1.5px blue;
+      background-color: blue;
+    }
+
+    .css-xb97g8 {
+      color: $bt-border-grey;
+      transition: .5s;
+    }
+
+    .css-xb97g8:hover {
+      color: #7e7e7e;
+    }
+
+    .css-xb97g8:hover {
+      background-color: #ffbdad00;
+      color: hsl(0, 0%, 67%);
+    }
+
+    .css-yk16xz-control:hover, .css-xb97g8:hover, .css-xb97g8:hover {
+      cursor: pointer;
+    }
+
+
+
+    .css-1rhbuit-multiValue {
+      background-color: #f3f3f3;
+      border-radius: 4px;
+      padding: 2px 6px;
     }
   }
 }
@@ -108,16 +154,16 @@
       height: 40px;
       padding: 1vh 3vw;
       background-color: $bt-off-white;
-      font-weight: bold;
+      font-weight: 500;
+      border-radius: 4px;
     }
   }
   .filter-button-bar {
-    height: 20vh;
-    border-top: 2px solid $bt-off-white;
+    border-top: 2px solid $bt-light-border-grey;
     display: flex;
     justify-content: center;
-    padding-top: 2vh;
-  
+    padding: 20px 0;
+
     button {
       margin-right:10px;
       width: 35vw;

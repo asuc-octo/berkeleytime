@@ -5,45 +5,45 @@
   .modal {
     min-height: 600px;
     height: 100vh;
-    
+
     .modal-icon {
       font-size: 40px;
     }
-    
+
     .modal-content {
       padding: 30px;
       text-align: center;
       font-size: 25px;
       border: 0px;
       box-shadow: 0 0px 40px rgba(199, 199, 199, 0.5);
-      
+
       .button.inverted {
         transition: 200ms;
         background-color: #579EFF;
         border-color: #579EFF;
         border-width: 2px;
         color: white;
-        
+
         &:hover {
           background-color: white;
           color: #579EFF;
         }
       }
-      
+
       .modal-cta {
-        font-weight: 500;
+        font-weight: bold;
       }
-      
+
       .modal-body {
         padding: 20px 0;
       }
     }
-    
+
     .modal-background {
       background-color: rgba(255, 255, 255, 0.82);
     }
   }
-  
+
   h3 {
     font-size: 30px;
     margin-bottom: 20px;
@@ -51,13 +51,13 @@
     text-shadow: 1px 0 $bt-base-text;
     letter-spacing: 1px;
   }
-      
+
   p {
     margin-bottom: 35px;
     color: $bt-grey-text;
   }
 
-  .landing-explore { 
+  .landing-explore {
     text-align: center;
     padding-bottom: 20vh;
 
@@ -93,7 +93,7 @@
     }
   }
 
-  .landing-mission {  
+  .landing-mission {
     padding-bottom: 20vh;
     padding-left: 20px;
     padding-right: 20px;
@@ -110,7 +110,7 @@
         margin: 0 auto;
       }
     }
-    
+
     .landing-mission-link {
       a {
         color: $bt-blue !important;
@@ -126,23 +126,23 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    
+
     background-color: white;
     padding-bottom: 25vh;
     padding-left: 20px;
     padding-right: 20px;
-    
+
     .landing-sponsors-desc {
       align-self: center;
       max-width: 350px;
       text-align: center;
     }
-    
+
     .landing-sponsors-img-wrapper {
       display: flex;
       flex-direction: row;
       justify-content: center;
-      
+
       .landing-sponsors-img {
         padding-right: 20px;
         max-width: 95%;
