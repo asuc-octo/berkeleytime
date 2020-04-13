@@ -3,6 +3,9 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import FilterModal from './FilterModal';
 
+import { setRequirements, setUnits, setDepartment, setLevel, setSemester } from '../../redux/actions';
+import { connect } from "react-redux";
+
 const animatedComponents = makeAnimated();
 
 export class FilterSidebar extends Component {
@@ -39,11 +42,6 @@ export class FilterSidebar extends Component {
     this.state = {
       search: this.props.defaultSearch,
       sort: this.sortDefault,
-      requirements: this.requirementsDefault,
-      unitsRange: this.unitsRangeDefault,
-      department: this.departmentDefault,
-      classLevels: this.classLevelDefault,
-      semesters: this.semesterDefault,
       showFilters: false,
       modalType: "",
       modalOptions: [],
@@ -53,16 +51,21 @@ export class FilterSidebar extends Component {
     this.searchInput = React.createRef(); // reference to <input>
   }
 
+  componentDidMount() {
+    this.resetFilters();
+  }
+
   resetFilters = () => {
+    const { setRequirements, setUnits, setDepartment, setLevel, setSemester } = this.props;
     this.searchInput.current.value = '';
+    setRequirements(this.requirementsDefault);
+    setUnits(this.unitsRangeDefault);
+    setDepartment(this.departmentDefault);
+    setLevel(this.classLevelDefault);
+    setSemester([this.semesterDefault]);
     this.setState({
       search: '',
       sort: this.sortDefault,
-      requirements: this.requirementsDefault,
-      unitsRange: this.unitsRangeDefault,
-      department: null,
-      classLevels: this.classLevelDefault,
-      semesters: this.semesterDefault,
     }, () => {
       this.props.resetFilters();
     });
@@ -80,6 +83,7 @@ export class FilterSidebar extends Component {
   }
 
   requirementHandler = requirements => {
+    const { setRequirements } = this.props;
     var add = new Set();
     var remove = new Set();
     if (requirements !== null) {
@@ -95,12 +99,11 @@ export class FilterSidebar extends Component {
       }
     }
     this.props.modifyFilters(add, remove);
-    this.setState({
-      requirements,
-    });
+    setRequirements(requirements);
   }
 
   unitsRangeHandler = unitsRange => {
+    const { setUnits } = this.props;
     var add = new Set();
     var remove = new Set();
     if (unitsRange !== null) {
@@ -114,12 +117,11 @@ export class FilterSidebar extends Component {
       }
     }
     this.props.modifyFilters(add, remove);
-    this.setState({
-      unitsRange,
-    });
+    setUnits(unitsRange);
   }
 
   departmentHandler = department => {
+    const { setDepartment } = this.props;
     var add = new Set();
     var remove = new Set();
     if (department !== null) {
@@ -131,12 +133,11 @@ export class FilterSidebar extends Component {
       }
     }
     this.props.modifyFilters(add, remove);
-    this.setState({
-      department,
-    });
+    setDepartment(department);
   }
 
   classLevelHandler = classLevels => {
+    const { setLevel } = this.props;
     var add = new Set();
     var remove = new Set();
     if (classLevels !== null) {
@@ -150,12 +151,11 @@ export class FilterSidebar extends Component {
       }
     }
     this.props.modifyFilters(add, remove);
-    this.setState({
-      classLevels,
-    })
+    setLevel(classLevels);
   }
 
   semesterHandler = semesters => {
+    const { setSemester } = this.props;
     var add = new Set();
     var remove = new Set();
     if (semesters !== null) {
@@ -169,9 +169,7 @@ export class FilterSidebar extends Component {
       }
     }
     this.props.modifyFilters(add, remove);
-    this.setState({
-      semesters,
-    });
+    setSemester(semesters);
   }
 
   // scroll filter down a little bit when opening semester select
@@ -205,47 +203,47 @@ export class FilterSidebar extends Component {
         this.sortHandler(this.state.sort)
         break;
       case "requirements":
-        this.requirementHandler(this.state.requirements)
+        this.requirementHandler(this.props.requirements)
         break;
       case "unitsRange":
-        this.unitsRangeHandler(this.state.unitsRange)
+        this.unitsRangeHandler(this.props.units)
         break;
       case "department":
-        this.departmentHandler(this.state.department)
+        this.departmentHandler(this.props.department)
         break;
       default:
-        this.classLevelHandler(this.state.classLevels)
+        this.classLevelHandler(this.props.level)
         break;
     }
     this.hideModal()
   };
 
   storeSelection = (e) => {
+    const { setRequirements, setUnits, setDepartment, setLevel } = this.props;
     const val = e.target.id;
     const option = e.target.name;
     switch(this.state.modalType) {
-      case "requirements":
+      case "sortBy":
         this.setState({sort: option})
         break;
       case "requirements":
-        this.setState({requirements: this.state.requirements.concat({value: val, label: option})})
+        setRequirements(this.props.requirements.concat({value: val, label: option}));
         break;
       case "unitsRange":
-        this.setState({unitsRange: this.state.unitsRange.concat({value: val, label: option})})
+        setUnits(this.props.units.concat({value: val, label: option}));
         break;
       case "department":
-        this.setState({department: {value: val, label: option}})
+        setDepartment({value: val, label: option});
         break;
       default:
-        this.setState({classLevels: this.state.classLevels.concat({value: val, label: option})})
+        setLevel(this.props.level.concat({value: val, label: option}));
         break;
     }
   }; 
 
   render() {
-    const { sort, unitsRange, requirements, department, classLevels, semesters } = this.state;
-
-    console.log(classLevels);
+    const { units, requirements, department, level, semester } = this.props;
+    const { sort } = this.state;
 
     return (
       !this.props.isMobile ? 
@@ -294,7 +292,7 @@ export class FilterSidebar extends Component {
             placeholder="Specify units..."
             isSearchable={false}
             onChange={this.unitsRangeHandler}
-            value={unitsRange}
+            value={units}
           />
         </div>
         <div className="filter-department">
@@ -316,7 +314,7 @@ export class FilterSidebar extends Component {
             isSearchable={false}
             isMulti
             placeholder="Select class levels..."
-            value={classLevels}
+            value={level}
             onChange={this.classLevelHandler}
           />
         </div>
@@ -328,7 +326,7 @@ export class FilterSidebar extends Component {
             isSearchable={false}
             options={this.semesterOptions}
             onChange={this.semesterHandler}
-            value={semesters}
+            value={semester}
             placeholder="Select semesters..."
             onMenuOpen={this.semesterOpen}
           />
@@ -358,13 +356,13 @@ export class FilterSidebar extends Component {
             onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}> 
             Requirements </button>
           <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("unitsRange", unitsRange, this.unitsRangeOptions)}> 
+            onClick={() => this.showModal("unitsRange", units, this.unitsRangeOptions)}> 
             Units </button>
           <button className="btn-bt-border filter-scroll-btn" 
             onClick={() => this.showModal("department", department, this.departmentOptions)}> 
             Department </button>
           <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("classLevels", classLevels, this.classLevelOptions)}> 
+            onClick={() => this.showModal("classLevels", level, this.classLevelOptions)}> 
             Class&nbsp;Level </button>
         </div>
           <FilterModal 
@@ -379,4 +377,29 @@ export class FilterSidebar extends Component {
   }
 }
 
-export default FilterSidebar;
+const mapDispatchToProps = dispatch => {
+  return {
+    dispatch,
+    setRequirements: (data) => dispatch(setRequirements(data)),
+    setUnits: (data) => dispatch(setUnits(data)),
+    setDepartment: (data) => dispatch(setDepartment(data)),
+    setLevel: (data) => dispatch(setLevel(data)),
+    setSemester: (data) => dispatch(setSemester(data))
+  }
+}
+
+const mapStateToProps = state => {
+  const { requirements, units, department, level, semester } = state.filter;
+  return {
+    requirements,
+    units,
+    department,
+    level,
+    semester
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(FilterSidebar);

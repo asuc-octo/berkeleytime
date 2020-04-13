@@ -10,7 +10,7 @@ import launch from '../../assets/svg/catalog/launch.svg';
 
 import vars from '../../variables/Variables';
 
-import { updateCourses, getCourseData, makeRequestDescription } from '../../redux/actions';
+import { updateCourses, getCourseData, makeRequestDescription, setRequirements, setUnits, setDepartment, setLevel, setSemester } from '../../redux/actions';
 import { connect } from "react-redux";
 
 import {
@@ -105,9 +105,51 @@ class ClassDescription extends Component {
     history.push(url);
   }
 
+  pillFilter(req) {
+    const { filterMap, modifyFilters, setRequirements, setUnits, setDepartment, setLevel, setSemester } = this.props;
+    const { requirements, units, department, level, semester } = this.props;
+    if (filterMap === null || filterMap[req] === null) {
+      return;
+    }
+    var formattedFilter = {
+      value: filterMap[req].id,
+      label: req
+    };
+    const newFilters = list => {
+      if (list == null) {
+        return [formattedFilter];
+      }
+      let isDuplicate = list.some(item => item.value == formattedFilter.value);
+      if (isDuplicate) {
+        return list;
+      }
+      return [...list, formattedFilter];
+    }
+    switch (filterMap[req].type) {
+      case 'requirements':
+        setRequirements(newFilters(requirements));
+        break;
+      case 'department':
+        setDepartment(formattedFilter);
+        break;
+      case 'units':
+        setUnits(newFilters(units));
+        break;
+      case 'level':
+        setLevel(newFilters(level));
+        break;
+      case 'semester':
+        setSemester(newFilters(semester));
+        break;
+      default:
+        return;
+    }
+    modifyFilters(new Set([formattedFilter.value]), new Set());
+  }
+
   render() {
     const { courseData, loading } = this.props;
-    const { course, sections, requirements } = courseData;
+    const { course, sections, universal_requirements } = courseData;
     const { semester, year } = vars.currentSemester;
 
     const toGrades = {
@@ -153,6 +195,9 @@ class ClassDescription extends Component {
                 <img src={book} />
                 {formatUnits(course.units)}
               </div>
+            </div>
+            <div className="pill-container">
+              {universal_requirements.map(req => <div className="pill" onClick={() => this.pillFilter(req)}>{req}</div>)}
             </div>
             <p className="description">
               {course.description}
@@ -207,15 +252,23 @@ const mapDispatchToProps = dispatch => {
     dispatch,
     getCourseData: (id) => dispatch(getCourseData(id)),
     makeRequestDescription: () => dispatch(makeRequestDescription()),
-    updateCourses: (data) => dispatch(updateCourses(data))
+    updateCourses: (data) => dispatch(updateCourses(data)),
+    setRequirements: (data) => dispatch(setRequirements(data)),
+    setUnits: (data) => dispatch(setUnits(data)),
+    setDepartment: (data) => dispatch(setDepartment(data)),
+    setLevel: (data) => dispatch(setLevel(data)),
+    setSemester: (data) => dispatch(setSemester(data))
   }
 }
 
 const mapStateToProps = state => {
-  const { loading, courseData } = state.classDescription;
+  const { loading, courseData, filterMap } = state.classDescription;
+  const { requirements, units, department, level, semester } = state.filter;
   return {
     loading,
-    courseData
+    courseData,
+    filterMap,
+    requirements, units, department, level, semester
   };
 };
 
