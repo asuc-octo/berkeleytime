@@ -15,6 +15,32 @@ import {
 
 import vars from '../../variables/Variables';
 
+function getLargestEnrollment(graphData) {
+    let max_percentage = -1;
+    graphData.map(item => {
+      Object.keys(item).forEach(function(key) {
+        if (key !== 'name') {
+          if (parseFloat(item[key]) > max_percentage) {
+            max_percentage = parseFloat(item[key]);
+          }
+        }
+      });
+    });
+    return max_percentage;
+}
+
+function getYTickRange(limit) {
+    let step = 25;
+    if (limit <= 100) {
+      limit = 100;
+    }
+    let arr = Array.from(new Array(Math.floor(limit / step)), (x,i) => step * (i + 1));
+    if (limit % step > 0) {
+        arr.push(step * (Math.floor(limit / step) + 1));
+    }
+    return arr;
+}
+
 export default function EnrollmentGraph({
   graphData, enrollmentData, updateLineHover, updateGraphHover,
 }) {
@@ -27,7 +53,9 @@ export default function EnrollmentGraph({
       <ResponsiveContainer width="90%" height={440}>
         <LineChart data={graphData} onMouseMove={updateGraphHover}>
           <XAxis dataKey="name" interval={19} />
-          <YAxis type="number" unit="%" domain={[0, 100]}/>
+          <YAxis type="number" unit="%"
+                 domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
+                 ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}/>
           <Tooltip
             formatter={(value) => `${value}%`}
             labelFormatter={label => `Day ${label}`}
