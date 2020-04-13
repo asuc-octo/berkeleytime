@@ -21,7 +21,7 @@
     margin: 0; // override bootstrap padding
 
     .filter-column {
-      border-right: 1px solid $bt-border-grey;
+      border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
 
       @include mobile {
@@ -30,7 +30,7 @@
     }
 
     .filter-results-column {
-      border-right: 1px solid $bt-border-grey;
+      border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
     }
 
