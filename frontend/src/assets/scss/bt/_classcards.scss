@@ -1,8 +1,9 @@
 .class-card-list {
-  margin-bottom: 10px;
-  height: 150px;
+  margin-bottom: 40px;
+  height: 130px;
 
   @include mobile {
+    height: 200px;
      > div {
       display: flex;
       flex-wrap: nowrap;
@@ -17,9 +18,12 @@
     .class-card {
       border: 1px solid $border-color;
       border-radius: 5px;
-      padding: 15px;
-      height: 130px;
+      padding: 12px;
+      height: 120px;
 
+      @include mobile {
+        height: 180px;
+      }
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -41,7 +45,7 @@
           margin-right: auto !important;
           font-weight: bold;
           color: $bt-base-text;
-          font-size: 18px;
+          font-size: 16px;
         }
 
         .class-card-remove {
@@ -83,6 +87,16 @@
 
       .class-card-options {
         font-size: 15px;
+      }
+
+      .class-card-mobile {
+        padding-top: 20px;
+        display: flex;
+        flex-direction: row;
+
+        .class-card-mobile-column {
+          margin-right: 30px;
+        }
       }
     }
   }

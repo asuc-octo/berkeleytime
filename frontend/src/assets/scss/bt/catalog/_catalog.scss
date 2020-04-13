@@ -36,6 +36,10 @@
 
     .catalog-description-column {
       padding: 0; // override bootstrap padding
+
+      @include mobile {
+        height: 0px;
+      }
     }
   }
 }

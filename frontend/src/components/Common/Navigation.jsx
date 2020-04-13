@@ -28,7 +28,7 @@ class Navigation extends PureComponent {
       <Navbar fixed="top" expand="lg" bg="white"
               className={`bt-navbar ${banner ? 'bt-navbar-dropped' : ''}`} expanded={open} >
         <Navbar.Brand as={Link} to="/">Berkeleytime</Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => this.toggle(true)} />
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => this.toggle(!open)} />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto" />
           <Nav>

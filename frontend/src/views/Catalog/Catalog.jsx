@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
-import HashLoader from 'react-spinners/HashLoader';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 import axios from 'axios';
 
 import Filter from '../../components/Catalog/Filter';
 import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
+import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
 
 import { modify, fetchLists, modifySelected } from '../../redux/actions';
 import { connect } from "react-redux";
@@ -42,23 +43,8 @@ class Catalog extends Component {
       // data: {},                      // api response.data
       // selectedCourse: {},
       // loading: true,             // whether we have receieved playlist data from api
-      isMobile: false,                //whether to open filter result as modal
       showDescription: false,
     };
-
-    this.updateScreensize = this.updateScreensize.bind(this);
-  }
-
-  /**
-   * Checks if user is on mobile view
-   */
-  componentDidMount() {
-    this.updateScreensize();
-    window.addEventListener("resize", this.updateScreensize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateScreensize);
   }
 
   /**
@@ -241,18 +227,16 @@ class Catalog extends Component {
     }
   }
 
-  updateScreensize() {
-    this.setState({ isMobile: window.innerWidth <= 768 });
-  }
-
   hideModal = () => {
     this.setState({ showDescription: false})
   };
 
   render() {
-    const { defaultSearch, isMobile, showDescription } = this.state;
-    const { activePlaylists, loading, selectedCourse } = this.props;
-    console.log(selectedCourse)
+    const { defaultSearch, showDescription } = this.state;
+    const { activePlaylists, loading, selectedCourse, isMobile } = this.props;
+
+    console.log(isMobile);
+    
     return (
       <div className="catalog viewport-app">
           <Row>
@@ -270,9 +254,9 @@ class Catalog extends Component {
                   /> :
                 <div className="filter">
                   <div className="filter-loading">
-                    <HashLoader
+                    <BeatLoader
                       color="#579EFF"
-                      size="50"
+                      size="15"
                       sizeUnit="px"
                     />
                   </div>
@@ -288,11 +272,20 @@ class Catalog extends Component {
                 query={this.state.search}
               />
             </Col>
-            <Col md={6} lg={4} xl={6} className="catalog-description-column">
-              <ClassDescription
-                course={selectedCourse}
-                selectCourse={this.selectCourse}
-              /> 
+            <Col xs={0} sm={0} md={6} lg={4} xl={6} className="catalog-description-column">
+              {
+                !isMobile ? 
+                  <ClassDescription
+                  course={selectedCourse}
+                  selectCourse={this.selectCourse}
+                /> :
+                <ClassDescriptionModal 
+                  course={selectedCourse}
+                  selectCourse={this.selectCourse}
+                  show={showDescription}
+                  hideModal={this.hideModal}
+                />
+              }
             </Col> 
           </Row>
       </div>
@@ -311,12 +304,15 @@ const mapDispatchToProps = dispatch => {
 
 const mapStateToProps = state => {
   const { activePlaylists, defaultPlaylists, data, loading, selectCourse } = state.catalog;
+  const { isMobile } = state.isMobile;
+
   return {
     activePlaylists: activePlaylists,
     defaultPlaylists: defaultPlaylists,
     data: data,
     loading: loading,
     selectedCourse: selectCourse,
+    isMobile: isMobile,
   };
 };
 
