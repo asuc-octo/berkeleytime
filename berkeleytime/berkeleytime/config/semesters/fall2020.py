@@ -12,15 +12,15 @@ SIS_TERM_ID = 2208
 
 TELEBEARS = {
     'phase1_start': datetime.datetime(2020, 4, 13),
-    'phase1_end': datetime.datetime(2019, 6, 12),
-    'phase2_start': datetime.datetime(2019, 7, 20),
-    'phase2_end': datetime.datetime(2019, 8, 16),
-    'adj_start': datetime.datetime(2019, 8, 17),
+    'phase1_end': datetime.datetime(2020, 6, 12),
+    'phase2_start': datetime.datetime(2020, 7, 20),
+    'phase2_end': datetime.datetime(2020, 8, 16),
+    'adj_start': datetime.datetime(2020, 8, 17),
 }
 
 INSTRUCTION = {
-    'instruction_start': datetime.datetime(2019, 8, 16, 00, 00),
-    'instruction_end':datetime.datetime(2019, 12, 11, 00, 00)
+    'instruction_start': datetime.datetime(2020, 8, 16, 00, 00),
+    'instruction_end':datetime.datetime(2020, 12, 11, 00, 00)
 }
 
 # Please don't edit anything below this line unless you know what you are doing

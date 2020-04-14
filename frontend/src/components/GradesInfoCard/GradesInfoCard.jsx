@@ -13,6 +13,7 @@ class GradesInfoCard extends PureComponent {
       sectionGPA, selectedPercentiles, selectedGrade,
       denominator, betterGrade, worseGrade, color
     } = this.props;
+
     return (
       <div className="grades-info">
         <div className="header">
@@ -31,7 +32,7 @@ class GradesInfoCard extends PureComponent {
           <span className={getGradeColor(sectionLetter)}>{ sectionLetter }</span>
           ({ sectionGPA })
         </div>
-        {selectedPercentiles !== undefined && selectedPercentiles !== null && selectedPercentiles.numerator !== 0 && (
+        {selectedGrade !== undefined && selectedGrade !== null && selectedPercentiles !== undefined && selectedPercentiles !== null && selectedPercentiles.numerator !== 0 && (
           <div>
             <h6>
               {`${percentileToString(selectedPercentiles.percentile_low)}-${percentileToString(selectedPercentiles.percentile_high)} Percentile`}

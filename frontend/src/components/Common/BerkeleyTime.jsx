@@ -8,7 +8,7 @@ import Navigation from './Navigation';
 import Footer from './Footer';
 import routes from '../../routes/routes';
 
-import { openBanner } from '../../redux/actions';
+import { openBanner, showMobile, hideMobile } from '../../redux/actions';
 
 const gaTrackingID = 'UA-35316609-1';
 ReactGA.initialize(gaTrackingID);
@@ -25,10 +25,33 @@ class BerkeleyTime extends PureComponent {
 
     // comment out to not display banner
     this.props.dispatch(openBanner());
+    this.updateScreensize = this.updateScreensize.bind(this);
+  }
+
+   /**
+   * Checks if user is on mobile view
+   */
+  componentDidMount() {
+    this.updateScreensize();
+    window.addEventListener("resize", this.updateScreensize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateScreensize);
+  }
+
+  updateScreensize() {
+    const { dispatch } = this.props;
+    if (window.innerWidth <= 768) {
+      dispatch(showMobile());
+    }
+    else {
+      dispatch(hideMobile());
+    }
   }
 
   render() {
-    const bannerText = 'Wow, banner text!';
+    const bannerText = 'We have a new announcement! Here is a longer description of the main text and more details about the whole thing.';
     const { banner } = this.props;
 
     return (

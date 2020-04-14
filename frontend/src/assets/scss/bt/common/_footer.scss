@@ -1,15 +1,15 @@
 .bt-footer {
   background-color: $bt-footer;
-  border-top: 1px solid $bt-border-grey;
+  border-top: 1.5px solid $bt-light-border-grey;
 
   .bt-footer-container {
     max-width: 1150px;
     margin: 0 auto;
-    padding: 40px 40px 30px 30px;
+    padding: 60px 80px 120px 30px;
 
     @include mobile {
-      max-width: 300px;
-      padding: 40px 0px 30px 0px;
+      max-width: 420px;
+      padding: 40px 0 40px;
     }
 
     .bt-footer-column {
@@ -25,8 +25,7 @@
       }
 
       > *:not(:first-child) {
-        font-size: 18px;
-        font-weight: 500;
+        font-size: 16px;
         line-height: 150%;
 
         @include mobile {
@@ -35,7 +34,7 @@
       }
 
       p {
-        font-size: 18px;
+        font-size: 16px;
         color: $bt-base-text;
 
         @include mobile {
@@ -44,28 +43,34 @@
       }
 
       a {
-        font-size: 18px;
-        color: $bt-light-text;
+        font-size: 16px;
+        color: $bt-light-grey;
         transition: 200ms;
         width: max-content;
+
+        &:hover {
+          cursor: default;
+        }
+
       }
 
-      a:hover {
-        color: hsl(204, 86%, 53%);
+      .footer-link:hover {
+        // color: $bt-grey;
+        text-decoration: underline;
+        cursor: pointer;
       }
 
       .new-box {
-        width: 47px;
-        height: 23px;
+        width: 48px;
+        height: 24px;
         background: #2F80ED;
         border-radius: 3px;
         margin-left: 8px;
-        padding: 1px 3px;
-
+        padding: 2px 6px;
         color: #FFFFFF;
-        font-weight: 500;
-        font-size: 16px;
+        font-size: 12px;
         line-height: 150%;
+
 
         @include mobile {
           width: 20px;

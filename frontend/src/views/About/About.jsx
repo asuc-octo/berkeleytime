@@ -11,6 +11,7 @@ import janet_jemma from '../../assets/img/images/about/group/janet_jemma.jpg';
 import will from '../../assets/img/images/about/group/will.jpg';
 import jemma from '../../assets/img/images/about/group/jemma.jpg';
 import christina_janet from '../../assets/img/images/about/group/christina_janet.jpg';
+import retreat_silly from '../../assets/img/images/about/group/retreat_silly.png';
 
 import growth from '../../assets/svg/about/growth.svg';
 import curiosity from '../../assets/svg/about/curiosity.svg';
@@ -22,8 +23,6 @@ class About extends PureComponent {
 
     return (
       <div className="about">
-        <h5 className="title">The Berkeleytime Team</h5>
-        <img src={doe} className="teampic" />
         <div className="about-us">
           <h5>About Our Team</h5>
           <p>
@@ -31,6 +30,16 @@ class About extends PureComponent {
             simplifying the course discovery experience. We actively build, improve
             and maintain Berkeleytime.
           </p>
+        </div>
+        <div className="group">
+          <img src={doe} />
+          <img src={retreat_silly} />
+          <img src={janet_jemma} />
+          <img src={retreat} />
+          <img src={christina_janet} />
+          <img src={michaels} />
+          <img src={will} />
+          <img src={jemma} />
         </div>
         <div className="values">
           <h5>Our Values</h5>
@@ -44,14 +53,7 @@ class About extends PureComponent {
             ))}
           </Row>
         </div>
-        <div className="group">
-          <img src={michaels} />
-          <img src={retreat} />
-          <img src={janet_jemma} />
-          <img src={will} />
-          <img src={jemma} />
-          <img src={christina_janet} />
-        </div>
+
         <CurrentContributors />
         <PastContributors />
       </div>

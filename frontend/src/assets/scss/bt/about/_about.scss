@@ -1,6 +1,11 @@
 .about {
   padding-top: $bt-navbar-height;
 
+  .nav-link {
+    background-color: #e1e1e16b;
+  }
+
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -9,7 +14,7 @@
     font-weight: bold;
     color: $bt-base-text;
     margin: 50px 10px 30px;
-    font-size: 36px;
+    font-size: 28px;
 
     @include mobile {
       font-size: 30px;
@@ -21,7 +26,7 @@
     object-fit: cover;
 
     @include desktop {
-      height: 30vw;
+      height: 35vw;
       object-position: 50% 40%;
     }
 
@@ -34,17 +39,18 @@
       height: 70vw;
     }
 
-    margin-bottom: 70px;
+    margin-bottom: 40px;
   }
 
   .about-us {
+
     > h5 {
-      margin-bottom: 20px;
+      margin: 80px auto 12px auto;
       text-align: center;
 
       font-weight: bold;
       color: $bt-base-text;
-      font-size: 24px;
+      font-size: 36px;
 
       @include mobile {
         font-size: 20px;
@@ -58,6 +64,7 @@
       font-size: 16px;
       color: $bt-grey-text;
       width: 450px;
+      line-height: 1.5;
 
       @include mobile {
         width: 330px;
@@ -67,7 +74,7 @@
 
   .values {
 
-    margin-bottom: 50px;
+    margin-bottom: 80px;
 
     @include desktop {
       width: 900px;
@@ -121,7 +128,8 @@
     flex-direction: row;
     width: 100%;
     margin-bottom: 50px;
-    
+    padding-left: 40px;
+
     > img {
       @include desktop {
         height: 400px;
@@ -136,11 +144,11 @@
       > img {
         padding: 0 10px;
       }
-  
+
       :first-child {
         padding-left: 40px;
       }
-  
+
       :last-child {
         padding-right: 40px;
       }
@@ -150,11 +158,11 @@
       > img {
         padding: 0 5px;
       }
-  
+
       :first-child {
         padding-left: 20px;
       }
-  
+
       :last-child {
         padding-right: 20px;
       }

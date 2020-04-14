@@ -21,21 +21,25 @@
     margin: 0; // override bootstrap padding
 
     .filter-column {
-      border-right: 1px solid $bt-border-grey;
+      border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
 
       @include mobile {
-        max-height: 150px;
+        max-height: 128px;
       }
     }
-  
+
     .filter-results-column {
-      border-right: 1px solid $bt-border-grey;
+      border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
     }
-  
+
     .catalog-description-column {
       padding: 0; // override bootstrap padding
+
+      @include mobile {
+        height: 0px;
+      }
     }
   }
 }

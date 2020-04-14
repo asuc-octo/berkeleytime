@@ -15,10 +15,10 @@ export class FilterSidebar extends Component {
     const { playlists } = this.props;
 
     this.sortOptions = [
-      { value: 'average_grade', label: 'Average Grade' },
-      { value: 'department_name', label: 'Department Name' },
-      { value: 'open_seats', label: 'Open Seats' },
-      { value: 'enrolled_percentage', label: 'Enrolled Percentage' },
+      { value: 'average_grade', label: 'Sort By: Average Grade' },
+      { value: 'department_name', label: 'Sort By: Department Name' },
+      { value: 'open_seats', label: 'Sort By: Open Seats' },
+      { value: 'enrolled_percentage', label: 'Sort By: Enrolled Percentage' },
     ];
     this.sortDefault = this.sortOptions[0]
     this.requirementsOptions = playlists.requirements;
@@ -181,7 +181,7 @@ export class FilterSidebar extends Component {
 
   //show the mobile modals
   showModal = (type, selection, options) => {
-    this.setState({ 
+    this.setState({
       modalType: type,
       showFilters: true,
       modalOptions: options
@@ -239,14 +239,25 @@ export class FilterSidebar extends Component {
         setLevel(this.props.level.concat({value: val, label: option}));
         break;
     }
-  }; 
+  };
 
   render() {
     const { units, requirements, department, level, semester } = this.props;
     const { sort } = this.state;
 
+    const customStyles = {
+      clearIndicator:  base => ({
+        ...base,
+        paddingRight: 0,
+
+        '&:hover': {
+          color: 'red'
+        }
+      })
+    };
+
     return (
-      !this.props.isMobile ? 
+      !this.props.isMobile ?
       <div id="filter" className="filter">
         <div className="filter-name">
           <p>Filters</p>
@@ -262,12 +273,16 @@ export class FilterSidebar extends Component {
           />
         </div>
         <div className="filter-sort">
-          <p>Sort by</p>
+          
           <Select
             options={this.sortOptions}
             isSearchable={false}
             onChange={this.sortHandler}
             value={sort}
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div className="filter-requirements">
@@ -280,19 +295,27 @@ export class FilterSidebar extends Component {
             onChange={this.requirementHandler}
             value={requirements}
             placeholder="Select requirements..."
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div className="filter-units">
           <p>Units</p>
           <Select
             closeMenuOnSelect={false}
-            components={animatedComponents}
+            components={{
+              animatedComponents,
+              IndicatorSeparator: () => null
+            }}
             options={this.unitsRangeOptions}
             isMulti
             placeholder="Specify units..."
             isSearchable={false}
             onChange={this.unitsRangeHandler}
             value={units}
+            styles={customStyles}
           />
         </div>
         <div className="filter-department">
@@ -303,6 +326,10 @@ export class FilterSidebar extends Component {
             onChange={this.departmentHandler}
             value={department}
             placeholder="Choose a department..."
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div className="filter-class-level">
@@ -316,6 +343,10 @@ export class FilterSidebar extends Component {
             placeholder="Select class levels..."
             value={level}
             onChange={this.classLevelHandler}
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div className="filter-semesters">
@@ -329,10 +360,14 @@ export class FilterSidebar extends Component {
             value={semester}
             placeholder="Select semesters..."
             onMenuOpen={this.semesterOpen}
+            components={{
+              IndicatorSeparator: () => null
+            }}
+            styles={customStyles}
           />
         </div>
         <div id="filter-end"></div>
-      </div> 
+      </div>
       :
       <div id="filter" className="filter">
         <div className="filter-search">
@@ -344,33 +379,34 @@ export class FilterSidebar extends Component {
             defaultValue={this.props.defaultSearch}
           />
         </div>
-      
-        <div className="filter-scroll"> 
-          <button className="btn-bt-border filter-scroll-btn blue-text" 
-            onClick={this.resetFilters}> 
+
+        <div className="filter-scroll">
+          <button className="btn-bt-border filter-scroll-btn blue-text"
+            onClick={this.resetFilters}>
             Reset </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("sortBy", sort, this.sortOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("sortBy", sort, this.sortOptions)}>
             Sort&nbsp;By </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}>
             Requirements </button>
           <button className="btn-bt-border filter-scroll-btn" 
             onClick={() => this.showModal("unitsRange", units, this.unitsRangeOptions)}> 
             Units </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("department", department, this.departmentOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("department", department, this.departmentOptions)}>
             Department </button>
           <button className="btn-bt-border filter-scroll-btn" 
             onClick={() => this.showModal("classLevels", level, this.classLevelOptions)}> 
             Class&nbsp;Level </button>
         </div>
-          <FilterModal 
+          <FilterModal
             options={this.state.modalOptions}
             showFilters={this.state.showFilters}
             hideModal={this.hideModal}
             saveModal={this.saveModal}
             storeSelection={this.storeSelection}
+            displayRadio={this.state.modalType == "sortBy"}
           />
        </div>
     );
