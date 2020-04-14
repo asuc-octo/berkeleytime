@@ -48,6 +48,7 @@ PAST_SEMESTERS = [
     {'semester': 'fall', 'year': '2018', 'display': 'Fall 2018'},
     {'semester': 'spring', 'year': '2019', 'display': 'Spring 2019'},
     {'semester': 'fall', 'year': '2019', 'display': 'Fall 2019'},
+    {'semester': 'spring', 'year': '2020', 'display': 'Spring 2020'},
 ]
 
 PAST_SEMESTERS_SIS = [
@@ -58,6 +59,7 @@ PAST_SEMESTERS_SIS = [
     {'semester': 'fall', 'year': '2018', 'display': 'Fall 2018'},
     {'semester': 'spring', 'year': '2019', 'display': 'Spring 2019'},
     {'semester': 'fall', 'year': '2019', 'display': 'Fall 2019'},
+    {'semester': 'spring', 'year': '2020', 'display': 'Spring 2020'},
 ]
 
 
