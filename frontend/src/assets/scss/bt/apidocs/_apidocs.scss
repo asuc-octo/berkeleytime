@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
 
-  max-width: 860px;
+  max-width: 900px;
 
   .swagger-ui div, section.models.is-open h4,   {
     font-family: Inter;
@@ -26,7 +26,7 @@
         font-weight: bold;
 
         small{
-          display: none;
+          //display: none;
           padding: 0px;
         }
 
@@ -120,6 +120,7 @@
         border: 1px solid #000;
         border-radius: 4px;
         box-shadow: none;
+        padding-right: 15px;
 
         .opblock-section-header {
 
@@ -177,6 +178,7 @@
             margin-left: 8px;
             font-size: 14px;
             font-family: Inter;
+            text-align: right;
         }
     }
 
