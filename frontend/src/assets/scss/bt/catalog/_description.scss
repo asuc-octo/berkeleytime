@@ -67,6 +67,10 @@
       overflow-x: auto;
       margin-right: 10px;
 
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      
       .pill {
         margin: 0px 10px 8px 0px;
         padding: 8px 16px;

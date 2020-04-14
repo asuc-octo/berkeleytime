@@ -205,9 +205,9 @@ class ClassDescription extends Component {
                 {formatUnits(course.units)}
               </div>
             </div>
-            <div className="pill-container">
+            <section className="pill-container">
               {pills.map(req => <div className="pill" onClick={() => this.pillFilter(req)}>{req}</div>)}
-            </div>
+            </section>
             <p className="description">
               {course.description}
             </p>
