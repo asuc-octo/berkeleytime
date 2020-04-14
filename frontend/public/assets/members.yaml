@@ -13,10 +13,10 @@ past:
         - name: Mary Liu
           role: Backend Engineer
           site: https://www.linkedin.com/in/mary-y-liu
-        - name: Kate Xu
+      - - name: Kate Xu
           role: Frontend Lead
           site: https://www.linkedin.com/in/kate-shijie-xu-666b57110
-      - - name: Scott Lee
+        - name: Scott Lee
           role: Frontend Lead / PM
           site: http://scottjlee.github.io
   - name: Class of 2018
