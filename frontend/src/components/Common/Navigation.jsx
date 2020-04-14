@@ -34,7 +34,7 @@ class Navigation extends PureComponent {
           <Nav>
             {
               links.map(link => (
-                <Nav.Link className={link.text} as={Link} to={link.to} key={link.text}
+                <Nav.Link as={Link} to={link.to} key={link.text}
                     onClick={() => this.toggle(false)} >
                   {link.text}
                 </Nav.Link>
