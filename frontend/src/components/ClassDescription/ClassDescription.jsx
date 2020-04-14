@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
-import { HashLoader } from 'react-spinners';
+import { BeatLoader } from 'react-spinners';
 
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
@@ -147,16 +147,16 @@ class ClassDescription extends Component {
 
   render() {
     const { courseData, loading } = this.props;
-    const { course, sections, universal_requirements } = courseData;
+    const { course, sections, requirements } = courseData;
 
     var pills = [];
-    if (universal_requirements != null) {
-      let allSemesters = universal_requirements.filter(item => item.includes("Spring") || item.includes("Fall"));
+    if (requirements != null) {
+      let allSemesters = requirements.filter(item => item.includes("Spring") || item.includes("Fall"));
       var semesterUrl = allSemesters.length > 0 ? allSemesters[0].toLowerCase().split(' ').join('-') : null;
       let latestSemesters = allSemesters.slice(0, 4);
 
-      let units = universal_requirements.filter(item => item.includes("Unit"));
-      var otherFilters = universal_requirements.filter(item => !item.includes("Spring") && !item.includes("Fall") && !item.includes("Unit"));
+      let units = requirements.filter(item => item.includes("Unit"));
+      var otherFilters = requirements.filter(item => !item.includes("Spring") && !item.includes("Fall") && !item.includes("Unit"));
       
       pills = otherFilters.concat(units).concat(latestSemesters);
     }
@@ -175,7 +175,7 @@ class ClassDescription extends Component {
       return (
         <div className="catalog-description-container">
           <div className="loading">
-            <HashLoader color="#579EFF" size="50" sizeUnit="px" />
+            <BeatLoader color="#579EFF" size="15" sizeUnit="px" />
           </div>
         </div>
       );
@@ -216,13 +216,13 @@ class ClassDescription extends Component {
               <Table className="table">
                 <thead>
                   <tr>
-                    <th style={{width: '75px'}}><abbr title="Lecture/Discussion/Lab">Type</abbr></th>
-                    <th style={{width: '50px'}}><abbr title="Course Capture Number">CCN</abbr></th>
+                    <th style={{width: '75px'}}>Type</th>
+                    <th style={{width: '50px'}}>CCN</th>
                     <th style={{width: '100px'}}>Instructor</th>
                     <th style={{width: '85px'}}>Time</th>
-                    <th style={{width: '85px'}}>Location </th>
-                    <th style={{width: '75px'}}>Enrolled </th>
-                    <th style={{width: '75px'}}>Waitlist </th>
+                    <th style={{width: '85px'}}>Location</th>
+                    <th style={{width: '75px'}}>Enrolled</th>
+                    <th style={{width: '75px'}}>Waitlist</th>
                   </tr>
                 </thead>
                 <tbody>

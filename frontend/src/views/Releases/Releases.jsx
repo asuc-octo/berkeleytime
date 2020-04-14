@@ -30,8 +30,8 @@ class Releases extends Component {
       <div className="releases">
         <Container>
           <Row>
-            <Col lg={2}></Col>
-            <Col lg={8}>
+            <Col lg={3}></Col>
+            <Col lg={6}>
               <div className="releases-heading">
                 <h2>Berkeleytime Releases</h2>
                 <h3>Keep up-to-date with our releases and bug fixes.</h3>
@@ -40,14 +40,14 @@ class Releases extends Component {
                 </ButtonToolbar>
               </div>
             </Col>
-            <Col lg={2}></Col>
+            <Col lg={3}></Col>
           </Row>
           <Row>
-            <Col lg={2}></Col>
-            <Col lg={8}>
+            <Col lg={3}></Col>
+            <Col lg={6}>
               {releases.map(item => <Log {...item} />)}
             </Col>
-            <Col lg={2}></Col>
+            <Col lg={3}></Col>
           </Row>
         </Container>
       </div>

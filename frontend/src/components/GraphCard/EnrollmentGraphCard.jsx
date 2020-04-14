@@ -27,15 +27,23 @@ class EnrollmentGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { selectedCourses } = this.props;
+    const { selectedCourses, enrollmentData } = this.props;
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getEnrollmentData();
+    }
+    if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0 && selectedCourses.length == 1) {
+      this.update(selectedCourses[0], 0)
     }
   }
 
   getEnrollmentData() {
     const { selectedCourses, fetchEnrollData } = this.props;
     fetchEnrollData(selectedCourses);
+
+    const { enrollmentData } = this.props;
+    //const course_letter = gradesData.map((course) => course.course_letter)
+    //const course_gpa = gradesData.map((course) => course.course_gpa)
+    //this.props.updateClassCardEnrollment(course_letter, course_gpa, section_letter, section_gpa);
   }
 
   // buildGraphData(enrollmentData) {
@@ -68,7 +76,7 @@ class EnrollmentGraphCard extends Component {
     const { enrollmentData } = this.props;
     const selectedEnrollment = enrollmentData.filter(c => course.id == c.id)[0];
 
-    const valid = selectedEnrollment.data.filter(d => d.day === day).length;
+    const valid = selectedEnrollment && selectedEnrollment.data.filter(d => d.day === day).length;
     if (valid) {
       const hoverTotal = {
         ...course,
@@ -108,8 +116,23 @@ class EnrollmentGraphCard extends Component {
     const { graphData, enrollmentData, selectedCourses, isMobile } = this.props;
     const telebears = enrollmentData.length ? enrollmentData[0].telebears : {};
 
+    let selectedPoint= hoveredClass && hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]
+
+    let period = '';
+    let daysAfterPeriodStarts = 0;
+    if (selectedPoint.day < telebears.phase2_start_day) {
+      period = 'Phase I';
+      daysAfterPeriodStarts = selectedPoint.day - telebears.phase1_start_day;
+    } else if (selectedPoint.day < telebears.adj_start_day) {
+      period = 'Phase II';
+      daysAfterPeriodStarts = selectedPoint.day - telebears.phase2_start_day;
+    } else {
+      period = 'Adjustment Period';
+      daysAfterPeriodStarts = selectedPoint.day - telebears.adj_start_day;
+    }
+
     return (
-      <div className="enrollment-graph-card">
+
         <div className="enrollment-graph">
           {
             enrollmentData.length === 0 || selectedCourses.length === 0 ? (
@@ -125,6 +148,7 @@ class EnrollmentGraphCard extends Component {
                       updateLineHover={this.updateLineHover}
                       updateGraphHover={this.updateGraphHover}
                     />
+                    <div style={{'padding-left': "60px"}}>{daysAfterPeriodStarts} Days After {period}</div>
                   </Col>
                   <Col lg={4}>
                     {hoveredClass && (
@@ -138,22 +162,23 @@ class EnrollmentGraphCard extends Component {
                         telebears={telebears}
                         color={vars.colors[hoveredClass.colorId]}
                         enrolledMax={hoveredClass.enrolled_max}
+                        waitlistedMax={hoveredClass.waitlisted_max}
                       />
                     )}
-                  </Col> 
-                </Row> : 
+                  </Col>
+                </Row> :
                 <EnrollmentGraph
                   graphData={graphData}
                   enrollmentData={enrollmentData}
                   updateLineHover={this.updateLineHover}
                   updateGraphHover={this.updateGraphHover}
+                  isMobile={isMobile}
                 />
                 }
               </div>
             )
           }
         </div>
-      </div>
     );
   }
 }

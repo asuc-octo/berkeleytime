@@ -1,40 +1,48 @@
 import React from 'react';
 import { Col } from 'react-bootstrap';
+
 import {
-  percentileToString,
   getGradeColor
 } from '../../utils/utils';
 
 function ClassCardMobile(props) {
-  const {
-    id, course, title, fill, semester, faculty, courseLetter, courseGPA, sectionLetter, sectionGPA, removeCourse, colorId, hoveredClass
-  } = props;
+  const { additionalInfo, type } = props;
 
-  console.log(course);
+  const nullCheck = (e) => {
+    return e !== undefined && e !== null;
+  }
 
-  return (
-    <Col xs={12} sm={12} lg={3} xl={3} className="class-card-column">
-      <div className="class-card">
-        <div className="class-card-header">
-          <div className="class-card-square" style={{ backgroundColor: fill }} />
-          <div className="class-card-course">{ course }</div>
-          <div className="class-card-remove" onClick={() => removeCourse(id, colorId)}>Remove</div>
+  if (type === "grades") {
+    const courseLetter = additionalInfo ? additionalInfo[0] : null;
+    const courseGPA = additionalInfo ? additionalInfo[1] : null;
+    const sectionLetter = additionalInfo ? additionalInfo[2] : null;
+    const sectionGPA = additionalInfo ? additionalInfo[3] : null;
+
+    return (
+      <div className="class-card-mobile">
+        <div className="class-card-mobile-column">
+          <h6>Course Average</h6>
+          {nullCheck(courseLetter) ? 
+            <div>
+              <span className={getGradeColor(courseLetter)}>{courseLetter}</span>
+              (GPA: {courseGPA})
+            </div>
+          :
+          "--"}
         </div>
-        <div className="class-card-title">{ title }</div>
-        <div className="class-card-options">{ `${semester} • ${faculty}` }</div>
-        <h6>Course Average</h6>
-        <div className="course-average">
-          <span>{ courseLetter }</span>
-          ({ courseGPA })
+        <div className="class-card-mobile-column">
+          <h6>Section Average</h6>
+          {nullCheck(sectionLetter) ? 
+            <div>
+              <span className={getGradeColor(sectionLetter)}>{sectionLetter}</span>
+              (GPA: {sectionGPA})
+            </div>
+            :
+            "--"}
         </div>
-        <h6>Section Average</h6>
-        <div className="section-average">
-          <span>{ sectionLetter }</span>
-          ({ sectionGPA })
-        </div>
-      </div>
-    </Col>
-  );
+      </div> 
+    );
+  }
 }
 
 export default ClassCardMobile;

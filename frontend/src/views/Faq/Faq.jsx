@@ -15,15 +15,15 @@ class Faq extends Component {
 
   constructor(props) {
     super(props);
-
   }
+
   render() {
     return (
       <div className="faq">
         <Container>
           <Row>
-            <Col lg={2}></Col>
-            <Col lg={8}>
+            <Col lg={3}></Col>
+            <Col md={6}>
               <div className="faq-heading">
                 <h2>Frequently Asked Questions</h2>
                 <h3>Answering your most commonly asked questions.</h3>
@@ -32,14 +32,14 @@ class Faq extends Component {
                 </ButtonToolbar>
               </div>
             </Col>
-            <Col lg={2}></Col>
+            <Col lg={3}></Col>
           </Row>
           <Row>
-            <Col lg={2}></Col>
-            <Col lg={8}>
+            <Col lg={3}></Col>
+            <Col md={6}>
               {Faq.questions.map(item => <QuestionCard question={item.question} answer={item.answer} />)}
             </Col>
-            <Col lg={2}></Col>
+            <Col lg={3}></Col>
           </Row>
         </Container>
       </div>
@@ -50,8 +50,8 @@ class Faq extends Component {
 Faq.questions = [
   {
     question: 'Where does Berkeleytime get its data? Is it accurate?',
-    answer: <p>BerkeleyTime sources our historic course data directly from Berkeley <a className="link" href="https://sis.berkeley.edu/">
-      Student Information System</a>'s Course and Enrollment APIs. We source grade data
+    answer: <p>BerkeleyTime sources our historic course and enrollment data directly from Berkeley <a className="link" href="https://sis.berkeley.edu/">
+      Student Information System</a>'s Course and Class APIs. We source grade data
       from <a className="link" href="https://calanswers.berkeley.edu/">CalAnswers</a>.</p>
   },
   {
@@ -67,8 +67,9 @@ Faq.questions = [
   },
   {
     question: 'Is anyone actively working on Berkeleytime?',
-    answer: <p>We’re here! Our team here at UC Berkeley is continually working to deliver you all the best experience in
-      selecting the courses you need to exceed. You can learn more about us <a className="link" href="/about">here</a>.</p>
+    answer: <p>Yes, we're a student-run organization here on campus under the <a className="link" href="https://octo.asuc.org//">
+      ASUC Office of the CTO</a>. Our team is continually working to maintain and improve the site. You can learn more about
+      us <a className="link" href="/about">here</a>!</p>
   },
   {
     question: 'How do I apply to join the team?',
@@ -77,12 +78,13 @@ Faq.questions = [
   },
   {
     question: 'Berkeleytime stopped working. Now what?',
-    answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting a bug report.</p>
+    answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting
+      a <a className="link" href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1">bug report</a>.</p>
   },
   {
     question: 'Can I access your API for a project I’m working on?',
     answer: <p>Yes! Our backend API is open and available for anyone to use. You can read the
-      documentation <a className="link" href="/apidocs">here</a></p>
+      documentation <a className="link" href="/apidocs">here</a>.</p>
   },
   {
     question: 'How do I give the Berkeleytime team feedback?',

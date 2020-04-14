@@ -29,3 +29,6 @@ export const ENROLL_RESET = 'ENROLL_RESET';
 
 export const OPEN_BANNER = 'OPEN_BANNER';
 export const CLOSE_BANNER = 'CLOSE_BANNER';
+
+export const SHOW_MOBILE = 'SHOW_MOBILE';
+export const HIDE_MOBILE = 'HIDE_MOBILE';

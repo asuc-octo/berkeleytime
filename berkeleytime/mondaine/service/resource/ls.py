@@ -53,7 +53,7 @@ class LSResource(object):
         breadth_defs = list()
         for data in self.semester_data:
             semester, year = data['semester'], data['year']
-            filename = '%s/%s/%s.csv' % ('data/ls/sis_cache', semester + '_' + year, self.csvs.get(playlist_name))
+            filename = '%s/%s/%s.csv' % ('data/ls/sis_cache', semester + '_' + year, self.csvs.get(str(playlist_name)))
             print "Found cached data: " + filename
             definition = universal_csv.handler(filename)
             if definition:
