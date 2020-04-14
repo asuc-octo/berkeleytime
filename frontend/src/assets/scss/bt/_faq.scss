@@ -1,8 +1,11 @@
 .faq {
-    background-color: $bt-white;
-    width: 100vw;
-    margin-top: 80px;
-    margin-bottom: 100px;
+    margin: 0 auto 30px auto;
+    padding-top: $bt-navbar-height;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
 
     .faq-heading {
 
