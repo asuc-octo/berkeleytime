@@ -28,7 +28,10 @@ class Faq extends Component {
                 <h2>Frequently Asked Questions</h2>
                 <h3>Answering your most commonly asked questions.</h3>
                 <ButtonToolbar className="faq-heading-button">
-                  <a className="btn btn-bt-blue-inverted btn-bt-md" role="button" href = "mailto: octo.berkeley@asuc.org">Contact Us</a>
+                <a href = "mailto: octo.berkeley@asuc.org">
+                  <button className="btn btn-bt-blue-inverted btn-bt-md" role="button" >Contact Us</button>
+                </a>
+
                 </ButtonToolbar>
               </div>
             </Col>
