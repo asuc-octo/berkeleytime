@@ -38,11 +38,11 @@ class Releases extends Component {
                 <ButtonToolbar className="releases-heading-button">
 
                   <a href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1" role="button">
-                    <button className="btn btn-bt-red-inverted btn-bt-md">
-                      Report a Bug
+                    <button className="btn btn-bt-blue-inverted btn-bt-md">
+                      Give Feedback
                     </button>
                   </a>
-                  
+
                 </ButtonToolbar>
               </div>
             </Col>
