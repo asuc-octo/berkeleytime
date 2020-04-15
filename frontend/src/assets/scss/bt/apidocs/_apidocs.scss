@@ -26,8 +26,24 @@
         font-weight: bold;
 
         small{
-          //display: none;
-          padding: 0px;
+          display: none;
+          padding: 2px;
+          font-size: 10px;
+          display: inline-block;
+          margin: 0 0 0 5px;
+          vertical-align: none;
+          background: none;
+          top: 0;
+          vertical-align: 0;
+
+          pre {
+            margin: 0 4px;
+            padding: 2px;
+            font-family: Inter;
+            border-radius: 10px;
+            background: #c3c3c3;
+            color: #fff;
+          }
         }
 
       }
@@ -107,6 +123,9 @@
 
     .opblock-tag-section {
         margin: 24px 0;
+        &:hover {
+          cursor: default;
+        }
     }
 
     .opblock.opblock-get {
@@ -168,6 +187,8 @@
             background: #fff;
             font-family: Inter;
             color: #3b4151;
+            text-shadow: none;
+            transition: .2s;
 
             &:hover {
               background-color: #9eb3ff2b;
@@ -450,6 +471,7 @@
 
     h4.opblock-tag:hover {
       background: rgba(0,0,0,0);
+      cursor: default;
     }
 
     section.models {
@@ -465,6 +487,18 @@
           background: none;
         }
 
+      }
+    }
+
+    .link:link, .swagger-ui .link:visited {
+      transition: none;
+    }
+
+    .info a {
+      font-size: 14px;
+      color: $bt-primary;
+      &:hover {
+        text-decoration: underline;
       }
     }
 

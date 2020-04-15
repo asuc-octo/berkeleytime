@@ -7,6 +7,8 @@ import ClassCardList from '../../components/ClassCards/ClassCardList';
 import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard';
 import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar';
 
+import info from '../../assets/img/images/graphs/info.svg';
+
 import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse, enrollReset, updateEnrollData, fetchEnrollFromUrl } from '../../redux/actions';
 
 class Enrollment extends Component {
@@ -117,7 +119,7 @@ class Enrollment extends Component {
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
             isMobile={isMobile}
-          /> 
+          />
 
           <ClassCardList
             selectedCourses={selectedCourses}
@@ -130,6 +132,12 @@ class Enrollment extends Component {
             updateClassCardEnrollment={this.updateClassCardEnrollment}
             isMobile={isMobile}
           />
+
+          <div className="disclaimer">
+            <img src={info} className="info" />
+              <p>We source our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System's</a> Course and Class APIs.</p>
+          </div>
+
         </div>
       </div>
     );
