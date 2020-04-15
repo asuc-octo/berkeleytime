@@ -152,6 +152,21 @@ paths:
           description: "successful operation"
           schema:
             $ref: "#/definitions/course_json"
+  /api/enrollment/sections/{course_id}/:
+    get:
+      tags:
+      - "enrollment"
+      summary: "Find all semesters this course was offered."
+      description: ""
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/enrollment_sections"
   /api/enrollment/aggregate/{course_id}/{semester}/{year}/:
     get:
       tags:
@@ -169,12 +184,12 @@ paths:
         type: "string"
       - name: "semester"
         in: "path"
-        description: "Specifies which semester to query the enrollment information from"
+        description: "Specifies which semester to query the enrollment information from (ex: fall)."
         required: true
         type: "string"
       - name: "year"
         in: "path"
-        description: "Specifies which year to query the enrollment information from"
+        description: "Specifies which year to query the enrollment information from (ex: 2020)."
         required: true
         type: "string"
       responses:
@@ -223,7 +238,7 @@ definitions:
   course_grades:
     type: "array"
     items:
-      $ref: "#/definitions/semester_grades"
+      $ref: "#/definitions/section_grades"
   course_enrollment:
     type: "object"
     properties:
@@ -267,7 +282,7 @@ definitions:
         items:
           $ref: "#/definitions/enrollment_data"
       telebears:
-        $ref: "#/definitions/enrollment_details"
+        $ref: "#/definitions/enrollment_telebears"
   course:
     type: "object"
     properties:
@@ -375,7 +390,7 @@ definitions:
       id:
         type: "integer"
         example: 289041
-  semester_grades:
+  section_grades:
     type: "object"
     properties:
       semester:
@@ -466,6 +481,35 @@ definitions:
         type: "number"
         format: "float"
         example: 0.96
+  enrollment_sections:
+    type: "array"
+    items:
+      $ref: "#/definitions/enrollment_semester"
+  enrollment_semester:
+    type: "object"
+    properties:
+      semester:
+        type: "string"
+        example: "fall"
+      year:
+        type: "string"
+        example: "2019"
+      sections:
+        type: "array"
+        items:
+          $ref: "#/definitions/enrollment_short"
+  enrollment_short:
+    type: "object"
+    properties:
+      instructor:
+        type: "string"
+        example: "CULLER D"
+      section_number:
+        type: "string"
+        example: "001"
+      section_id:
+        type: "integer"
+        example: 222612
   enrollment_data:
     type: "object"
     properties:
@@ -495,7 +539,7 @@ definitions:
         type: "number"
         format: "float"
         example: 0.0
-  enrollment_details:
+  enrollment_telebears:
     type: "object"
     properties:
       semester:
