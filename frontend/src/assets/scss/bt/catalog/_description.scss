@@ -56,9 +56,10 @@
     }
 
     h5 {
-      color: $bt-grey-text;
-      font-weight: 500;
+      color: $bt-base-text;
+      font-weight: 700;
       margin-top: 10px;
+      font-size: 18px;
     }
 
     .table-container {
@@ -71,11 +72,28 @@
         margin-bottom: 0;
         color: $bt-base-text;
         font-weight: normal;
+
+        thead {
+          th {
+            font-weight: 700;
+            border-top: none;
+            border-bottom: none;
+            padding: 0.75rem 0.75rem 0.75rem 0;
+            position: sticky;
+            background: white;
+            top: 0;
+          }
+        }
+
+        td {
+          font-weight: 400;
+          padding: 0.75rem 0.75rem 0.75rem 0;
+        }
       }
 
-      td {
-        
-      }
+
+
+
     }
 
   }
