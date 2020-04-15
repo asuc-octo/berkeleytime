@@ -17,6 +17,7 @@ export class ClassDescriptionModal extends Component {
             <ClassDescription
               course={this.props.course}
               selectCourse={this.props.selectCourse}
+              modifyFilters={this.props.modifyFilters}
             />
         </div>
       </Modal>
