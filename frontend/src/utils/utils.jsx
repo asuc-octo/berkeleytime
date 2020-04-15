@@ -82,6 +82,44 @@ function getGradeColor(grade) {
   }
 }
 
+function getEnrollmentDay(selectedPoint, telebears) {
+  let period = '';
+  let daysAfterPeriodStarts = 0;
+  if (selectedPoint.day < telebears.phase2_start_day) {
+    period = 'Phase I';
+    daysAfterPeriodStarts = selectedPoint.day - telebears.phase1_start_day;
+  } else if (selectedPoint.day < telebears.adj_start_day) {
+    period = 'Phase II';
+    daysAfterPeriodStarts = selectedPoint.day - telebears.phase2_start_day;
+  } else {
+    period = 'Adjustment Period';
+    daysAfterPeriodStarts = selectedPoint.day - telebears.adj_start_day;
+  }
+  return { period, daysAfterPeriodStarts };
+}
+
+function formatPercentage(num) {
+  if (num === -1) {
+    return "N/A"
+  }
+  return (num * 100).toFixed(1).toString() + "%";
+}
+
+function applyIndicatorEnrollment(enrolled, enrolledMax, percentage) {
+  let theme;
+  if (percentage < 0.34) {
+    theme = 'bt-indicator-green';
+  } else if (percentage < 0.67) {
+    theme = 'bt-indicator-orange';
+  } else {
+    theme = 'bt-indicator-red';
+  }
+
+  return (
+    <span className={theme} > {enrolled}/{enrolledMax} ({`${formatPercentage(percentage)}`})</span>
+  );
+}
+
 
 export {
   applyIndicatorPercent,
@@ -89,4 +127,6 @@ export {
   formatUnits,
   percentileToString,
   getGradeColor,
+  getEnrollmentDay,
+  applyIndicatorEnrollment,
 };
