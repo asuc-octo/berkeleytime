@@ -1,8 +1,9 @@
-import { START_REQUEST_DESCRIPTION, UPDATE_COURSE_DATA } from '../actionTypes';
+import { START_REQUEST_DESCRIPTION, UPDATE_COURSE_DATA, FILTER_MAP } from '../actionTypes';
 
 const initialState = {
   loading: false,
   courseData: [],
+  filterMap: {}
 };
 
 export default function classDescription(state = initialState, action) {
@@ -16,6 +17,13 @@ export default function classDescription(state = initialState, action) {
       ...state,
       courseData: data,
       loading: false,
+    };
+  }
+  case FILTER_MAP: {
+    const { data } = action.payload;
+    return {
+      ...state,
+      filterMap: data
     };
   }
   default:
