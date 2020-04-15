@@ -34,16 +34,18 @@ class EnrollmentGraphCard extends Component {
     if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0 && selectedCourses.length == 1) {
       this.update(selectedCourses[0], 0)
     }
+
+    const latest_point = enrollmentData.map((course) => course.data[course.data.length - 1]);
+    const telebears = enrollmentData.map((course) => course.telebears);
+    const enrolled_info = latest_point.map((course) => [course.enrolled, course.enrolled_max, course.enrolled_percent]);
+    const waitlisted_info = latest_point.map((course) => [course.waitlisted, course.waitlisted_max, course.waitlisted_percent]);
+
+    this.props.updateClassCardEnrollment(latest_point, telebears, enrolled_info, waitlisted_info);
   }
 
   getEnrollmentData() {
     const { selectedCourses, fetchEnrollData } = this.props;
     fetchEnrollData(selectedCourses);
-
-    const { enrollmentData } = this.props;
-    //const course_letter = gradesData.map((course) => course.course_letter)
-    //const course_gpa = gradesData.map((course) => course.course_gpa)
-    //this.props.updateClassCardEnrollment(course_letter, course_gpa, section_letter, section_gpa);
   }
 
   // buildGraphData(enrollmentData) {
