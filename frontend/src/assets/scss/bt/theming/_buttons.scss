@@ -7,11 +7,12 @@
   border-width: 1px;
   border-radius: 4px;
 
-  transition: 0.3s;
+  transition: 0.2s;
 
   &:hover {
     color: $bt-white;
     cursor: pointer;
+    background-color: $bt-primary-background;
   }
 
   a {
@@ -24,14 +25,12 @@
   background-color: $bt-white;
   border-color: $bt-border-grey;
 
-  border-width: 1px;
+  border-width: 1.5px;
   border-radius: 4px;
-  transition: 0.3s;
+  transition: 0.2s;
 
   &:hover {
-    //color: $bt-white;
-    //background-color: $bt-primary;
-    //border-color: $bt-primary;
+    background-color: $bt-button-background;
     color: $bt-primary;
     cursor: pointer;
   }
@@ -45,10 +44,11 @@
   color: $bt-primary;
   background-color: $bt-off-white;
   border-color: $bt-border-grey;
-  border-width: 1px;
+  border-width: 1.5px;
 
   &:hover {
     color: $bt-primary;
+    background-color: $bt-button-background;
   }
 }
 
@@ -63,7 +63,7 @@
 
   &:hover {
     color: $bt-indicator-red;
-    background-color: $bt-white;
+    background-color: $bt-button-background;
     border-color: $bt-border-grey;
   }
 
@@ -83,7 +83,7 @@
 
   &:hover {
     color: $bt-indicator-blue;
-    background-color: $bt-white;
+    background-color: $bt-button-background;
     border-color:$bt-border-grey;
   }
 
@@ -122,4 +122,8 @@
   background: none !important;
   border: none;
   padding: 0 !important;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
 }

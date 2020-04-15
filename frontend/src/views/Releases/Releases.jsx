@@ -36,7 +36,13 @@ class Releases extends Component {
                 <h2>Berkeleytime Releases</h2>
                 <h3>Keep up-to-date with our releases and bug fixes.</h3>
                 <ButtonToolbar className="releases-heading-button">
-                  <a className="btn btn-bt-red-inverted btn-bt-md" href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1" role="button">Report a Bug</a>
+
+                  <a href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1" role="button">
+                    <button className="btn btn-bt-red-inverted btn-bt-md">
+                      Report a Bug
+                    </button>
+                  </a>
+                  
                 </ButtonToolbar>
               </div>
             </Col>
