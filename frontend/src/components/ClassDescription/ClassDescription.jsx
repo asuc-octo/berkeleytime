@@ -6,8 +6,9 @@ import { BeatLoader } from 'react-spinners';
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
 import book from '../../assets/svg/catalog/book.svg';
+import launch from '../../assets/svg/catalog/launch.svg';
 
-import { updateCourses, getCourseData, makeRequestDescription } from '../../redux/actions';
+import { updateCourses, getCourseData, makeRequestDescription, setRequirements, setUnits, setDepartment, setLevel, setSemester } from '../../redux/actions';
 import { connect } from "react-redux";
 
 import {
@@ -90,18 +91,83 @@ class ClassDescription extends Component {
     getCourseData(course.id);
   }
 
+  goToEnrollment(courseData) {
+    const { history } = this.props;
+    let url = `/enrollment/0-${courseData.course.id}-fall-2019-all`;
+    history.push(url);
+  }
+
+  goToGrades(courseData) {
+    const { history } = this.props;
+    let url = `/grades/0-${courseData.course.id}-all-all`;
+    history.push(url);
+  }
+
+  pillFilter(req) {
+    const { filterMap, modifyFilters, setRequirements, setUnits, setDepartment, setLevel, setSemester } = this.props;
+    const { requirements, units, department, level, semester } = this.props;
+    if (filterMap === null || filterMap[req] === null) {
+      return;
+    }
+    var formattedFilter = {
+      value: filterMap[req].id,
+      label: req
+    };
+    const newFilters = list => {
+      if (list == null) {
+        return [formattedFilter];
+      }
+      let isDuplicate = list.some(item => item.value == formattedFilter.value);
+      if (isDuplicate) {
+        return list;
+      }
+      return [...list, formattedFilter];
+    }
+    switch (filterMap[req].type) {
+      case 'requirements':
+        setRequirements(newFilters(requirements));
+        break;
+      case 'department':
+        setDepartment(formattedFilter);
+        break;
+      case 'units':
+        setUnits(newFilters(units));
+        break;
+      case 'level':
+        setLevel(newFilters(level));
+        break;
+      case 'semester':
+        setSemester(newFilters(semester));
+        break;
+      default:
+        return;
+    }
+    modifyFilters(new Set([formattedFilter.value]), new Set());
+  }
+
   render() {
     const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
 
+    var pills = [];
+    if (requirements != null) {
+      let allSemesters = requirements.filter(item => item.includes("Spring") || item.includes("Fall"));
+      var semesterUrl = allSemesters.length > 0 ? allSemesters[0].toLowerCase().split(' ').join('-') : null;
+      let latestSemesters = allSemesters.slice(0, 4);
+
+      let units = requirements.filter(item => item.includes("Unit"));
+      var otherFilters = requirements.filter(item => !item.includes("Spring") && !item.includes("Fall") && !item.includes("Unit"));
+      
+      pills = otherFilters.concat(units).concat(latestSemesters);
+    }
 
     const toGrades = {
-      pathname: '/grades',
+      pathname: course != null ? `/grades/0-${course.id}-all-all` : `/grades`,
       state: { course: course },
     };
 
     const toEnrollment = {
-      pathname: '/enrollment',
+      pathname: (course != null && semesterUrl != null) ? `/enrollment/0-${course.id}-${semesterUrl}-all` : `/enrollment`,
       state: { course: course },
     }
 
@@ -125,18 +191,23 @@ class ClassDescription extends Component {
               <div className="statline">
                 <img src={people} />
                 Enrolled:
-                {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)}
+                {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)} &nbsp;
+                <a href={toEnrollment.pathname} target="_blank" className="statlink"><img src={launch} /></a>
               </div>
               <div className="statline">
                 <img src={chart} />
                 Average Grade:
-                {applyIndicatorGrade(course.letter_average, course.letter_average)}
+                {applyIndicatorGrade(course.letter_average, course.letter_average)} &nbsp;
+                <a href={toGrades.pathname} target="_blank" className="statlink"><img src={launch} /></a>
               </div>
               <div className="statline">
                 <img src={book} />
                 {formatUnits(course.units)}
               </div>
             </div>
+            <section className="pill-container">
+              {pills.map(req => <div className="pill" onClick={() => this.pillFilter(req)}>{req}</div>)}
+            </section>
             <p className="description">
               {course.description}
             </p>
@@ -190,15 +261,23 @@ const mapDispatchToProps = dispatch => {
     dispatch,
     getCourseData: (id) => dispatch(getCourseData(id)),
     makeRequestDescription: () => dispatch(makeRequestDescription()),
-    updateCourses: (data) => dispatch(updateCourses(data))
+    updateCourses: (data) => dispatch(updateCourses(data)),
+    setRequirements: (data) => dispatch(setRequirements(data)),
+    setUnits: (data) => dispatch(setUnits(data)),
+    setDepartment: (data) => dispatch(setDepartment(data)),
+    setLevel: (data) => dispatch(setLevel(data)),
+    setSemester: (data) => dispatch(setSemester(data))
   }
 }
 
 const mapStateToProps = state => {
-  const { loading, courseData } = state.classDescription;
+  const { loading, courseData, filterMap } = state.classDescription;
+  const { requirements, units, department, level, semester } = state.filter;
   return {
     loading,
-    courseData
+    courseData,
+    filterMap,
+    requirements, units, department, level, semester
   };
 };
 

@@ -10,7 +10,7 @@ import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
 
-import { modify, fetchLists, modifySelected } from '../../redux/actions';
+import { modify, fetchLists, modifySelected, setFilterMap } from '../../redux/actions';
 import { connect } from "react-redux";
 
 
@@ -142,12 +142,15 @@ class Catalog extends Component {
       level,
       semester
     } = this.props.data;
+    const { setFilterMap } = this.props;
+    var filterMap = {};
 
     var requirements = [];
 
     requirements.push({
       label: 'University Requirements',
       options: university ? university.map(req => {
+        filterMap[req.name] = { id: req.id, type: 'requirements' };
         return {
           value: req.id,
           label: req.name,
@@ -158,6 +161,7 @@ class Catalog extends Component {
     requirements.push({
       label: 'L&S Breadths',
       options: ls ? ls.map(req => {
+        filterMap[req.name] = { id: req.id, type: 'requirements' };
         return {
           value: req.id,
           label: req.name,
@@ -168,6 +172,7 @@ class Catalog extends Component {
     requirements.push({
       label: 'College of Engineering',
       options: engineering ? engineering.map(req => {
+        filterMap[req.name] = { id: req.id, type: 'requirements' };
         return {
           value: req.id,
           label: req.name,
@@ -178,6 +183,7 @@ class Catalog extends Component {
     requirements.push({
       label: 'Haas Breadths',
       options: haas ? haas.map(req => {
+        filterMap[req.name] = { id: req.id, type: 'requirements' };
         return {
           value: req.id,
           label: req.name,
@@ -186,6 +192,7 @@ class Catalog extends Component {
     });
 
     var departmentsPlaylist = department ? department.map(req => {
+      filterMap[req.name] = { id: req.id, type: 'department' };
       return {
         value: req.id,
         label: req.name,
@@ -198,6 +205,7 @@ class Catalog extends Component {
     }
 
     var unitsPlaylist = units ? units.map(req => {
+      filterMap[req.name] = { id: req.id, type: 'units' };
       return {
         value: req.id,
         label: req.name === '5 Units' ? '5+ Units' : req.name,
@@ -205,6 +213,7 @@ class Catalog extends Component {
     }) : [];
 
     var levelsPlaylist = level ? level.map(req => {
+      filterMap[req.name] = { id: req.id, type: 'level' };
       return {
         value: req.id,
         label: req.name === '5 Units' ? '5+ Units' : req.name,
@@ -212,12 +221,14 @@ class Catalog extends Component {
     }) : [];
 
     var semestersPlaylist = semester ? semester.map(req => {
+      filterMap[req.name] = { id: req.id, type: 'semester' };
       return {
         value: req.id,
         label: req.name === '5 Units' ? '5+ Units' : req.name,
       }
     }) : [];
 
+    setFilterMap(filterMap);
     return {
       requirements,
       departmentsPlaylist,
@@ -278,12 +289,14 @@ class Catalog extends Component {
                   <ClassDescription
                   course={selectedCourse}
                   selectCourse={this.selectCourse}
+                  modifyFilters={this.modifyFilters}
                 /> :
                 <ClassDescriptionModal 
                   course={selectedCourse}
                   selectCourse={this.selectCourse}
                   show={showDescription}
                   hideModal={this.hideModal}
+                  modifyFilters={this.modifyFilters}
                 />
               }
             </Col> 
@@ -299,6 +312,7 @@ const mapDispatchToProps = dispatch => {
     modify: (activePlaylists, defaultPlaylists) => dispatch(modify(activePlaylists, defaultPlaylists)),
     fetchLists: (paths) => dispatch(fetchLists(paths)),
     modifySelected: (data) => dispatch(modifySelected(data)),
+    setFilterMap: (data) => dispatch(setFilterMap(data))
   }
 }
 

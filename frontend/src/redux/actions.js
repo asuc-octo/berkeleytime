@@ -3,6 +3,7 @@ import hash from 'object-hash';
 import {
   MODIFY_LIST, RECEIVE_LIST, MODIFY_SELECTED, FILTER,
   START_REQUEST, START_REQUEST_DESCRIPTION, UPDATE_COURSE_DATA,
+  FILTER_MAP, REQUIREMENTS, UNITS, DEPARTMENT, LEVEL, SEMESTER,
   UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, GRADE_REMOVE_COURSE, GRADE_RESET,
   UPDATE_GRADE_DATA, UPDATE_GRADE_SELECTED, UPDATE_ENROLL_CONTEXT, ENROLL_RESET,
   ENROLL_ADD_COURSE, ENROLL_REMOVE_COURSE, UPDATE_ENROLL_DATA, UPDATE_ENROLL_SELECTED,
@@ -58,6 +59,48 @@ export const updateCourses = (data) => ({
   payload: {
     data,
   },
+});
+
+export const setFilterMap = (data) => ({
+  type: FILTER_MAP,
+  payload: {
+    data,
+  },
+});
+
+export const setRequirements = (data) => ({
+  type: REQUIREMENTS,
+  payload: {
+    data,
+  }
+});
+
+export const setUnits = (data) => ({
+  type: UNITS,
+  payload: {
+    data,
+  }
+});
+
+export const setDepartment = (data) => ({
+  type: DEPARTMENT,
+  payload: {
+    data,
+  }
+});
+
+export const setLevel = (data) => ({
+  type: LEVEL,
+  payload: {
+    data,
+  }
+});
+
+export const setSemester = (data) => ({
+  type: SEMESTER,
+  payload: {
+    data,
+  }
 });
 
 // update grade list
