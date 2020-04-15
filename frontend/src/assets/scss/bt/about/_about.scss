@@ -132,6 +132,10 @@
     margin-bottom: 60px;
     padding-left: 40px;
 
+    @include mobile {
+        padding-left: 10px;
+    }
+
     > img {
       @include desktop {
         height: 400px;
