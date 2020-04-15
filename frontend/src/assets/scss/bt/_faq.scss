@@ -37,13 +37,13 @@
   .faq-question {
     cursor: pointer;
     border-bottom: 1px solid #ECECEC;
-    padding-bottom: 8px;
+    padding-bottom: 12px;
     margin-bottom: 12px;
     width: 105%;
     font-weight: bold;
     color: $bt-base-text;
     .faq-question-text {
-      font-size: 16px;
+      font-size: 14px;
       line-height: 150%;
 
        @include mobile {
@@ -66,7 +66,7 @@
 
   .faq-answer {
     .example-collapse-text {
-      font-size: 16px;
+      font-size: 14px;
       line-height: 180%;
       margin-bottom: 30px;
       color: $bt-light-text;
