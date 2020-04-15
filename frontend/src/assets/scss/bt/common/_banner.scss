@@ -9,6 +9,14 @@
   background-color: $bt-off-white;
   border-bottom: 1px solid $bt-light-border-grey;
 
+  @include mobile {
+    height: fit-content;
+    padding: 12px 2px;
+    button {
+      float: right;
+    }
+  }
+
   .content {
     display: flex;
     flex-direction: row;
@@ -20,6 +28,11 @@
 
     > * {
       margin: 0 10px;
+    }
+
+    @include mobile {
+      display: block;
+      padding: 10px;
     }
   }
 
@@ -39,4 +52,7 @@
 
 .bt-navbar-dropped {
   top: $banner-height;
+  @include mobile {
+      top: 120px;
+  }
 }

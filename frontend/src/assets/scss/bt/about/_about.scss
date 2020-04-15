@@ -1,5 +1,6 @@
 .about {
   padding-top: $bt-navbar-height;
+  margin: 32px auto 30px auto;
 
   .nav-link {
     background-color: #e1e1e16b;
@@ -13,8 +14,7 @@
   .title {
     font-weight: bold;
     color: $bt-base-text;
-    margin: 50px 10px 30px;
-    font-size: 28px;
+    font-size: 24px;
 
     @include mobile {
       font-size: 30px;
@@ -45,12 +45,12 @@
   .about-us {
 
     > h5 {
-      margin: 80px auto 12px auto;
+      margin-top: 28px;
       text-align: center;
 
       font-weight: bold;
       color: $bt-base-text;
-      font-size: 36px;
+      font-size: 24px;
 
       @include mobile {
         font-size: 20px;
@@ -58,13 +58,13 @@
     }
 
     > p {
-      margin: 0 20px 70px;
+      margin-top: 12px;
+      margin-bottom: 60px;
       text-align: center;
-
       font-size: 16px;
-      color: $bt-grey-text;
-      width: 450px;
-      line-height: 1.5;
+      line-height: 1.75;
+      color: #8A8A8A;
+      width: 600px;
 
       @include mobile {
         width: 330px;
@@ -85,7 +85,7 @@
     }
 
     > h5 {
-      margin-bottom: 30px;
+      margin-bottom: 60px;
       text-align: center;
 
       font-weight: bold;
@@ -119,6 +119,8 @@
       > p {
         text-align: center;
         width: 95%;
+        line-height: 1.75;
+        color: #8a8a8a;
       }
     }
   }
@@ -127,7 +129,7 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-bottom: 50px;
+    margin-bottom: 60px;
     padding-left: 40px;
 
     > img {
