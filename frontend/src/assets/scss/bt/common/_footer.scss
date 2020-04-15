@@ -8,8 +8,9 @@
     padding: 40px 80px 40px 40px;
 
     @include mobile {
-      max-width: 420px;
-      padding: 40px 0 40px;
+      max-width: 300px;
+      padding: 20px 0px 40px 0px;
+      margin: 12px 10px 10px 10px;
     }
 
     .bt-footer-column {
