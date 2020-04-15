@@ -36,9 +36,8 @@
         .releases-log-date {
             h3 {
                 font-weight: bold;
-                font-size: 20px;
+                font-size: 18px;
                 line-height: 150%;
-                color: $bt-light-text;
                 margin-bottom: 18px;
             }
         }
@@ -48,7 +47,6 @@
                 font-weight: bold;
                 font-size: 16px;
                 line-height: 150%;
-                color: $bt-grey-text;
                 margin-bottom: 12px;
             }
 
@@ -57,7 +55,7 @@
                 line-height: 150%;
                 color: $bt-grey-text;
                 padding-left: 0px;
-                margin-bottom: 34px;
+                margin-bottom: 16px;
                 list-style-position: outside;
                 margin-left: 28px;
             }
@@ -68,7 +66,10 @@
 
             a {
                 color: $bt-primary;
-                text-decoration: underline;
+                text-decoration: none;
+                &:hover {
+                  text-decoration: underline;
+                }
             }
         }
     }
