@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, ButtonToolbar } from 'react-bootstrap';
 
 import CurrentContributors from '../../components/Contributors/CurrentContributors';
 import PastContributors from '../../components/Contributors/PastContributors';
@@ -31,6 +31,13 @@ class About extends PureComponent {
             and maintain Berkeleytime.
           </p>
         </div>
+        <ButtonToolbar className="releases-heading-button">
+          <a href="/join" role="button">
+            <button className="btn btn-bt-blue-inverted btn-bt-md">
+              Join Team
+            </button>
+          </a>
+        </ButtonToolbar>
         <div className="group">
           <img src={doe} />
           <img src={retreat_silly} />
@@ -66,17 +73,17 @@ About.defaultProps = {
     {
       svg: growth,
       name: "Growth",
-      desc: "We're passionate about the personal and professional growth of our members. You'll grow your skills as you tackle challenging design and engineering problems.",
+      desc: "You’ll grow your technical skills as you tackle real challenging design and engineering problems.",
     },
     {
       svg: curiosity,
       name: "Curiosity",
-      desc: "We value team members that are curious about solving difficult problems. We aren't afraid to fail and seek out innovative solutions indepedently.",
+      desc: "We value team members that are curious about solving difficult problems and seek out solutions independently.",
     },
     {
       svg: passion,
       name: "Passion",
-      desc: "Berkeleytime is a living, breathing product that is continuing to evolve. Genuine commitment and dedication to the product is critical to moving Berkeleytime forward.",
+      desc: "Genuine commitment and dedication are critical to moving the Berkeleytime product forward.",
     }
   ],
 }
