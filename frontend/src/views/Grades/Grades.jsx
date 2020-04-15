@@ -7,6 +7,8 @@ import ClassCardList from '../../components/ClassCards/ClassCardList';
 import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
 import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
+import info from '../../assets/img/images/graphs/info.svg';
+
 import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset, fetchGradeFromUrl } from '../../redux/actions';
 
 class Grades extends Component {
@@ -147,7 +149,14 @@ class Grades extends Component {
             updateClassCardGrade={this.updateClassCardGrade}
             isMobile={isMobile}
           />
-        </div> 
+
+
+          <div className="disclaimer">
+            <img src={info} className="info" />
+            <p>We source our course grade data from Berkeley's official <a href="https://calanswers.berkeley.edu/">CalAnswers</a> database.</p>
+          </div>
+
+        </div>
       </div>
     );
   }
