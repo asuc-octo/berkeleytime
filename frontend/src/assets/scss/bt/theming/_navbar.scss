@@ -1,4 +1,20 @@
 .bt-navbar {
+
+  @include mobile {
+    .navbar-light .navbar-toggler {
+      border: none;
+    }
+
+    button.navbar-toggler.collapsed {
+      border: none;
+    }
+
+    nav.bt-navbar.bt-navbar-dropped.navbar.navbar-expand-lg.navbar-light.bg-white.fixed-top {
+      top: 120px;
+    }
+
+  }
+
   border-bottom: 1.5px solid $bt-light-border-grey;
 
   .navbar-brand, .navbar-nav .nav-link {
@@ -20,5 +36,10 @@
     font-size: 18px;
     font-weight: bold;
     padding: .5rem 10px;
+
+    @include mobile {
+      padding: 0;
+    }
+
   }
 }
