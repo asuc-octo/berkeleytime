@@ -1,4 +1,14 @@
 .grades-graph {
+	margin-top: 20px;
+		g.recharts-layer.recharts-cartesian-axis.recharts-xAxis.xAxis, g.recharts-layer.recharts-cartesian-axis.recharts-yAxis.yAxis {
+			opacity: .5;
+		}
+
+		.recharts-default-tooltip {
+	    border-radius: 4px;
+	    border: 1px solid rgb(225, 225, 225);
+	}
+
 	@include mobile {
     	min-height: 500px;
     	padding: 0px 10px 0px 10px;
@@ -17,4 +27,3 @@
   		}
   	}
 }
-

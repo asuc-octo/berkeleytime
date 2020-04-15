@@ -54,15 +54,15 @@ export default function EnrollmentGraph({
         <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{top: isMobile ? 100 : 0}}>
 
           {isMobile ?
-            <text  
-              y={30} 
-              textAnchor="top" 
+            <text
+              y={30}
+              textAnchor="top"
               dominantBaseline="left"
               fontSize={18}> Enrollment
             </text> :
             null
           }
-          
+
           <XAxis dataKey="name" interval={19} />
           <YAxis type="number" unit="%"
                  domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
@@ -73,7 +73,7 @@ export default function EnrollmentGraph({
           />
           {enrollmentData.map((item, i) => (
             <Line
-              name={`${item.title} / ${item.section_name}`}
+              name={`${item.title} • ${item.section_name}`}
               type="monotone"
               dataKey={item.id}
               stroke={vars.colors[item.colorId]}
@@ -85,9 +85,9 @@ export default function EnrollmentGraph({
           ))}
 
           {isMobile ?
-            <Legend 
-              horizontalAlign="left" 
-              layout="vertical" 
+            <Legend
+              horizontalAlign="left"
+              layout="vertical"
               iconType="circle"
             /> :
             null
