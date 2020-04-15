@@ -42,9 +42,9 @@ const PercentageLabel = props => {
     const {x, y, width, value} = props
     let percentage = value == 0 ? "": (value < 1 ? "<1%" : Math.round(value) + "%");
     return (
-      <text 
-        x={x + width} 
-        y={y} 
+      <text
+        x={x + width}
+        y={y}
         dx={20}
         dy={15}
         fontSize={12}
@@ -68,32 +68,34 @@ export default function GradesGraph({
           <YAxis type="number" unit="%" />
           <Tooltip
             formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+            cursor={{fill: '#EAEAEA'}}
           />
           {gradesData.map((item, i) => (
             <Bar
-              name={`${item.title} / ${item.semester} / ${item.instructor}`}
+              name={`${item.title} • ${item.semester} • ${item.instructor}`}
               dataKey={item.id}
               fill={vars.colors[item.colorId]}
               onMouseEnter={updateBarHover}
+              radius={[4, 4, 0, 0]}
             />
           ))}
         </BarChart>
         </ResponsiveContainer> :
         <ResponsiveContainer width="100%" height={numClasses*750} >
-        <BarChart 
-          data={graphData} 
+        <BarChart
+          data={graphData}
           onMouseMove={updateGraphHover}
           layout="vertical"
           barSize={30}
           margin={{top: 65, left: -32, bottom: 50}}
         >
 
-          <text  
-            y={30} 
-            textAnchor="top" 
+          <text
+            y={30}
+            textAnchor="top"
             dominantBaseline="left"
-            fontSize={18}> Grade Distribution 
-          </text> 
+            fontSize={18}> Grade Distribution
+          </text>
           <XAxis type="number" unit="%" />
           <YAxis dataKey="name" type="category" />
           <Tooltip
@@ -107,7 +109,7 @@ export default function GradesGraph({
           />
           {gradesData.map((item, i) => (
             <Bar
-              name={`${item.title} / ${item.semester} / ${item.instructor}`}
+              name={`${item.title} • ${item.semester} • ${item.instructor}`}
               dataKey={item.id}
               fill={vars.colors[item.colorId]}
               onMouseEnter={updateBarHover}
