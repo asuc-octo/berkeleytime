@@ -48,8 +48,6 @@
     font-size: 30px;
     margin-bottom: 20px;
     color: $bt-base-text;
-    text-shadow: 1px 0 $bt-base-text;
-    letter-spacing: 1px;
   }
 
   p {
@@ -81,11 +79,22 @@
     }
 
     a {
+      padding: 4px 12px;
+      border-radius: 4px;
+
+      display: block;
+      width: fit-content;
+      transition: .5s;
       font-size: 16px;
+      white-space: nowrap;
+      line-break: auto;
       font-weight: bold;
       color: $bt-blue;
-      text-shadow: 0.1px 0 $bt-blue;
-      letter-spacing: 1px;
+      margin: 0 auto;
+
+      &:hover {
+        background: $bt-button-background;
+      }
     }
 
     p {
@@ -114,6 +123,9 @@
     .landing-mission-link {
       a {
         color: $bt-blue !important;
+        &:hover {
+          text-decoration: underline !important;
+        }
       }
     }
 
