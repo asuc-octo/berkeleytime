@@ -44,7 +44,7 @@
   color: $bt-primary;
   background-color: $bt-white;
   border-color: $bt-border-grey;
-  border-width: 1.5px;
+  border-width: 1px;
 
   &:hover {
     color: $bt-primary;
@@ -105,7 +105,7 @@
 .btn-bt-md {
   font-weight: 500;
   font-size: 16px;
-  line-height: 26px;
+  line-height: 1;
   border-radius: 0.3rem;
 }
 
