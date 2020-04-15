@@ -4,6 +4,8 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 from apiclient.http import MediaFileUpload, MediaInMemoryUpload
 from yaml import load, dump, CLoader as Loader, CDumper as Dumper
+from datetime import datetime
+from threading import Lock
 
 import gspread
 import os
@@ -14,7 +16,7 @@ sheets_scope = ['https://spreadsheets.google.com/feeds',
          'https://www.googleapis.com/auth/drive']
 drive_scope = ['https://www.googleapis.com/auth/drive.readonly.metadata', 
 							 'https://www.googleapis.com/auth/drive.file']
-cred_json = 'berkeleytime-218606-a12f6f74f37f.json'
+google_sheet_lock = Lock()
 
 # Reads in a YAML file and checks if it is properly formed
 # Returns YAML file in dictionary form
@@ -46,7 +48,8 @@ def upload_file(folder_name, file_name, file_blob):
 	# FOLDER_NAME is the name of the folder to upload the file to
 	# FILE_BLOB is the file blob to upload
 
-	credentials = ServiceAccountCredentials.from_json_keyfile_name(cred_json, drive_scope)
+	credentials = ServiceAccountCredentials.from_json_keyfile_name(
+		os.environ["GOOGLE_APPLICATION_CREDENTIALS"], drive_scope)
 	drive = discovery.build('drive', 'v3', credentials=credentials)
 
 	folders = drive.files().list(q="mimeType='application/vnd.google-apps.folder'",
@@ -56,11 +59,31 @@ def upload_file(folder_name, file_name, file_blob):
 
 	# Finding folder id of requested folder (unassigned if not found)
 	folder_id = 'none'
+	# Other variables needed to check if folder creation is needed
+	base_folder_id = 'none'
+	unassigned_bool = False
 	for f in folders:
-		if f['name'] == folder_name or (folder_id == 'none' and f['name'] == 'unassigned'):
+		if f['name'] == folder_name:
 			folder_id = f['id']
+		elif folder_id == 'none' and f['name'] == 'unassigned':
+			folder_id = f['id']
+			unassigned_bool = True
 
-	file_metadata = {'name': file_name, 'parents': [folder_id]}
+		if (f['name'] == ""):
+			base_folder_id = f['id']
+
+	# If the given folder is NOT "" or None AND was unassigned, we will create the folder
+	# We will not create a folder if the given name is nothing
+	if ((not folder_name == "") or (not folder_name)) and unassigned_bool:
+		file_metadata = {'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder',
+			'parents': [base_folder_id]}
+		folder = drive.files().create(body=file_metadata, fields='id').execute()
+		folder_id = folder.get('id')
+
+
+	file_front, file_ext = os.path.splitext(file_name)
+	file_metadata = {'name': file_front + "_" + datetime.utcnow().strftime("%Y.%m.%d.%H.%M.%S") + \
+		file_ext, 'parents': [folder_id]}
 	media = MediaInMemoryUpload(file_blob)
 	file = drive.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
@@ -76,8 +99,12 @@ def sheet_add_next_entry(doc_url, responses):
 		return
 
 	# Raises some error, need to find
-	credentials = ServiceAccountCredentials.from_json_keyfile_name(cred_json, sheets_scope)
+	credentials = ServiceAccountCredentials.from_json_keyfile_name(
+		os.environ["GOOGLE_APPLICATION_CREDENTIALS"], sheets_scope)
 	gc = gspread.authorize(credentials)
+
+	# Need to acquire lock (ensure that only one instance is modifying the sheet at a time)
+	google_sheet_lock.acquire()
 
 	# Raises a gspread.SpreadsheetNotFound if no spreadsheet is found
 	try:
@@ -92,6 +119,8 @@ def sheet_add_next_entry(doc_url, responses):
 
 	for count, response in enumerate(responses):
 		sheet.update_cell(j, 1 + count, response)
+
+	google_sheet_lock.release()
 
 	return True
 
@@ -164,9 +193,3 @@ def check_yaml_response(yaml_path, responses):
 # 	                           fields='nextPageToken, files(id, name)',
 # 	                           pageToken=None).execute().get('files', [])
 # 	print(files)
-
-# # Testing Code
-# file_bytes = bytearray(open("GoogleAPITestFiles/file2.txt", "rb").read())
-# test_responses = [("unique_name", "TestSurvey0"), ("short", "Q1"), ("short", "Q2"),
-# 	("short", "Q3"), ("short", "Q4"), ("file", ("file2.txt", file_bytes))]
-# check_yaml_response("GoogleAPITestFiles/testyaml.yaml", test_responses)
