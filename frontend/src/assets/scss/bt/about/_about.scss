@@ -109,6 +109,8 @@
       }
     }
 
+    }
+
     .value {
       padding: 2%;
       border-radius: 4px;
@@ -119,6 +121,7 @@
       margin-bottom: 40px;
       margin-left: 3%;
       margin-right: 3%;
+
 
       > img {
         width: 40px;
@@ -139,7 +142,7 @@
         color: #8a8a8a;
       }
     }
-  }
+
 
   .group {
     display: flex;
@@ -198,5 +201,19 @@
 
   .group::-webkit-scrollbar { /* Safari and Chrome */
     display: none;
+  }
+
+  .value.col-lg-4.col-md-4.col-12 {
+    @include mobile {
+      text-align: center;
+      margin: 16px auto;
+      padding: 4%;
+      max-width: 95%;
+      display: block;
+    }
+  }
+
+  .value.col-lg-4.col-md-4.col-12 {
+        flex: none;
   }
 }
