@@ -69,7 +69,7 @@ def upload_file(folder_name, file_name, file_blob):
 			folder_id = f['id']
 			unassigned_bool = True
 
-		if (f['name'] == ""):
+		if (f['name'] == "InternalSubmissionForm"):
 			base_folder_id = f['id']
 
 	# If the given folder is NOT "" or None AND was unassigned, we will create the folder
