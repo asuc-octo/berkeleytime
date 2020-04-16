@@ -5,43 +5,35 @@ import {
   Container,
   Row,
   Col,
+  Button,
 } from 'react-bootstrap';
-import course from '../../assets/img/images/landing/course-vector.png';
-import grade from '../../assets/img/images/landing/grade-vector.png';
-import enrollment from '../../assets/img/images/landing/enrollment-vector.png';
+import course from '../../assets/img/images/landing/courses.svg';
+import grade from '../../assets/img/images/landing/grades.svg';
+import history from '../../assets/img/images/landing/history.svg';
 
 function Explore() {
   return (
-    <div className="landing-explore">
-      <Container>
-        <Row>
-          <Col xs={12} s={12} md={4} lg={4}>
-            <div className="landing-explore-content">
-              <img src={course} className="landing-explore-img" />
-              <h3>Course Catalog</h3>
-              <p className="has-text-centered">Search through 12,000+ courses at Berkeley. Apply filters for requirements and courses.</p>
-              <Link to="/catalog" className="">Browse Courses</Link>
-            </div>
-          </Col>
-          <Col xs={12} s={12} md={4} lg={4}>
-            <div className="landing-explore-content">
-              <img src={grade} className="landing-explore-img" />
-              <h3>Grade Distributions</h3>
-              <p className="has-text-centered">View and compare grade distributions for each course and semester to make the best choice.</p>
-              <Link to="/grades" className="">View Grades</Link>
-            </div>
-          </Col>
-          <Col xs={12} s={12} md={4} lg={4}>
-            <div className="landing-explore-content">
-              <img src={enrollment} className="landing-explore-img" />
-              <h3>Enrollment History</h3>
-              <p className="has-text-centered">See and compare accurate, real-time course enrollment trends and history.</p>
-              <Link to="/enrollment" className="">Track Enrollment</Link>
-            </div>
-          </Col>
-        </Row>
-      </Container>
-    </div>
+
+  <div className="landing-explore">
+    <h5>Our Features</h5>
+    <Row>
+        <Col xs={12} s={12} md={4} lg={4} className="feature">
+          <img src={course} />
+          <h6>Course Catalog</h6>
+          <p>Search through 12,000+ courses at Berkeley. Apply filters for requirements.</p>
+        </Col>
+        <Col xs={12} s={12} md={4} lg={4} className="feature">
+          <img src={grade} />
+          <h6>Grade Distributions</h6>
+          <p>View and compare grade distributions for each course and semester.</p>
+        </Col>
+        <Col xs={12} s={12} md={4} lg={4} className="feature">
+          <img src={history} />
+          <h6>Enrollment History</h6>
+          <p>Compare and track accurate, real-time course enrollment trends and history.</p>
+        </Col>
+    </Row>
+  </div>
   );
 }
 

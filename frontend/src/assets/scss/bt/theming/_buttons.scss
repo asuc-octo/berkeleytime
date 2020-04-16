@@ -57,9 +57,8 @@
   background-color: $bt-white;
   border-color: $bt-border-grey;
   border-width: 2px;
-  padding: 10px 20px;
 
-  transition: 0.3s;
+  transition: 0.2s;
 
   &:hover {
     color: $bt-indicator-red;
@@ -77,9 +76,8 @@
   background-color: $bt-white;
   border-color: $bt-border-grey;
   border-width: 2px;
-  padding: 10px 20px;
 
-  transition: 0.3s;
+  transition: 0.2s;
 
   &:hover {
     color: $bt-indicator-blue;
@@ -105,7 +103,7 @@
 .btn-bt-md {
   font-weight: 500;
   font-size: 16px;
-  line-height: 1;
+  line-height: 2;
   border-radius: 0.3rem;
 }
 
