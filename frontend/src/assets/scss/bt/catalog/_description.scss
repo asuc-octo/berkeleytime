@@ -121,6 +121,13 @@
         color: $bt-base-text;
         font-weight: normal;
 
+        tr {
+          transition: .2s;
+          &:hover {
+            background-color: #d4d4d442;
+          }
+        }
+
         thead {
           th {
             font-weight: 700;
@@ -129,8 +136,10 @@
             padding: 0.75rem 0.75rem 0.75rem 0;
             position: sticky;
             background: white;
+            transition: .2s;
             top: 0;
           }
+
         }
 
         td {
@@ -138,9 +147,6 @@
           padding: 0.75rem 0.75rem 0.75rem 0;
         }
       }
-
-
-
 
     }
 
