@@ -37,7 +37,7 @@ class GraphEmpty extends React.PureComponent {
       <Container fluid>
         <Row>
           <Col lg={8}>
-            <ResponsiveContainer width="90%" height={440}>
+            <ResponsiveContainer width="90%" height={400}>
             <BarChart data={pageType == "enrollment" ? graphData_enroll : graphData_grade}>
               <XAxis dataKey="name" />
               <YAxis type="number" unit="%" domain={[0, 100]}/>

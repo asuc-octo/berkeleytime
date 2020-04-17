@@ -24,7 +24,7 @@ export default function EnrollmentGraph({
   };
   return (
     <div className="graph">
-      <ResponsiveContainer width="90%" height={440}>
+      <ResponsiveContainer width="90%" height={400}>
         <LineChart data={graphData} onMouseMove={updateGraphHover}>
           <XAxis dataKey="name" interval={19} />
           <YAxis type="number" unit="%" domain={[0, 100]}/>

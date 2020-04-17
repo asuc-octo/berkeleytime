@@ -8,6 +8,7 @@ import GradesGraph from '../Graphs/GradesGraph';
 import GraphEmpty from '../Graphs/GraphEmpty';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 import GradesInfoCardMobile from '../GradesInfoCard/GradesInfoCardMobile';
+import infoImage from '../../assets/img/images/info.png';
 
 import { fetchGradeData } from '../../redux/actions';
 
@@ -131,6 +132,9 @@ class GradesGraphCard extends Component {
                     color={vars.colors[hoveredClass.colorId]}
                     isMobile={this.props.isMobile}
                   />
+                  <div className="info">
+                    <img className="info-icon" src={infoImage} alt="info icon" />
+                  </div>
                 </Col>
 
                 {!this.props.isMobile ?
