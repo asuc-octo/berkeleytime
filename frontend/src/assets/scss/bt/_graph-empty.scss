@@ -3,9 +3,6 @@
 
 
   .graph-empty-content {
-    position: absolute;
-    top: 500px;
-    left: -450px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -14,15 +11,14 @@
 
 
     .graph-empty-image {
-      max-width: 3%;
-      filter: contrast(350%);
+      max-width: 9%;
     }
 
     .graph-empty-heading {
       color: $bt-border-grey;
       display: inline-block;
       font-size: 16px;
-      font-weight: bolder;
+      font-weight: 500;
       margin-top: 15px;
     }
 
@@ -31,7 +27,7 @@
   .grades-info {
     display: flex;
     flex-direction: column;
-
+    
     .date {
       font-weight: bold;
     }
