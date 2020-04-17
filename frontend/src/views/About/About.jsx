@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, ButtonToolbar } from 'react-bootstrap';
 
 import CurrentContributors from '../../components/Contributors/CurrentContributors';
 import PastContributors from '../../components/Contributors/PastContributors';
@@ -11,6 +11,7 @@ import janet_jemma from '../../assets/img/images/about/group/janet_jemma.jpg';
 import will from '../../assets/img/images/about/group/will.jpg';
 import jemma from '../../assets/img/images/about/group/jemma.jpg';
 import christina_janet from '../../assets/img/images/about/group/christina_janet.jpg';
+import retreat_silly from '../../assets/img/images/about/group/retreat_silly.png';
 
 import growth from '../../assets/svg/about/growth.svg';
 import curiosity from '../../assets/svg/about/curiosity.svg';
@@ -22,8 +23,6 @@ class About extends PureComponent {
 
     return (
       <div className="about">
-        <h5 className="title">The Berkeleytime Team</h5>
-        <img src={doe} className="teampic" />
         <div className="about-us">
           <h5>About Our Team</h5>
           <p>
@@ -31,6 +30,23 @@ class About extends PureComponent {
             simplifying the course discovery experience. We actively build, improve
             and maintain Berkeleytime.
           </p>
+        </div>
+        <ButtonToolbar className="releases-heading-button">
+          <a href="/join" role="button">
+            <button className="btn btn-bt-blue-inverted btn-bt-md">
+              Join Team
+            </button>
+          </a>
+        </ButtonToolbar>
+        <div className="group">
+          <img src={doe} />
+          <img src={retreat_silly} />
+          <img src={janet_jemma} />
+          <img src={retreat} />
+          <img src={christina_janet} />
+          <img src={michaels} />
+          <img src={will} />
+          <img src={jemma} />
         </div>
         <div className="values">
           <h5>Our Values</h5>
@@ -44,14 +60,7 @@ class About extends PureComponent {
             ))}
           </Row>
         </div>
-        <div className="group">
-          <img src={janet_jemma} />
-          <img src={christina_janet} />
-          <img src={michaels} />
-          <img src={will} />
-          <img src={jemma} />
-          <img src={retreat} />
-        </div>
+
         <CurrentContributors />
         <PastContributors />
       </div>
@@ -64,17 +73,17 @@ About.defaultProps = {
     {
       svg: growth,
       name: "Growth",
-      desc: "We're passionate about the personal and professional growth of our members. You'll grow your skills as you tackle challenging design and engineering problems.",
+      desc: "You’ll grow your technical skills as you tackle real challenging design and engineering problems.",
     },
     {
       svg: curiosity,
       name: "Curiosity",
-      desc: "We value team members that are curious about solving difficult problems. We aren't afraid to fail and seek out innovative solutions indepedently.",
+      desc: "We value team members that are curious about solving difficult problems and seek out solutions independently.",
     },
     {
       svg: passion,
       name: "Passion",
-      desc: "Berkeleytime is a living, breathing product that is continuing to evolve. Genuine commitment and dedication to the product is critical to moving Berkeleytime forward.",
+      desc: "Genuine commitment and dedication are critical to moving the Berkeleytime product forward.",
     }
   ],
 }

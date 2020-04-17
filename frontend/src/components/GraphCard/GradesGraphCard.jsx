@@ -22,7 +22,7 @@ class GradesGraphCard extends Component {
 
     this.updateBarHover = this.updateBarHover.bind(this);
     this.updateGraphHover = this.updateGraphHover.bind(this);
-    this.getGradesData = this.getGradesData.bind(this);
+    
   }
 
   componentDidMount() {
@@ -30,13 +30,17 @@ class GradesGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { selectedCourses, gradesData } = this.props;
+    const { selectedCourses } = this.props;
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getGradesData();
     }
-    if (gradesData !== prevProps.gradesData && gradesData.length > 0) {
-      this.update(selectedCourses[0], null)
-    }
+    
+    const { gradesData } = this.props;
+    const course_letter = gradesData.map((course) => course.course_letter);
+    const course_gpa = gradesData.map((course) => course.course_gpa);
+    const section_letter = gradesData.map((course) => course.section_letter);
+    const section_gpa = gradesData.map((course) => course.section_gpa);
+    this.props.updateClassCardGrade(course_letter, course_gpa, section_letter, section_gpa);
   }
 
   getGradesData() {
@@ -57,8 +61,6 @@ class GradesGraphCard extends Component {
     this.setState({
       hoveredClass: hoverTotal,
     });
-
-    this.props.updateSharedHoveredClass(hoverTotal);
   }
 
   // Handler function for updating GradesInfoCard on hover
@@ -103,7 +105,7 @@ class GradesGraphCard extends Component {
             <Container fluid>
               <Row>
 
-                {/*this.props.isMobile ?
+                {/*hoveredClass && isMobile ?
                 <Col lg={4}>
                   <GradesInfoCardMobile
                     course={hoveredClass.course}
@@ -137,7 +139,7 @@ class GradesGraphCard extends Component {
                   </div>
                 </Col>
 
-                {!this.props.isMobile ?
+                {!isMobile ?
                 <Col lg={4}>
                   {hoveredClass
                     && (

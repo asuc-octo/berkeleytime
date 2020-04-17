@@ -6,6 +6,13 @@ export const START_REQUEST = 'START_REQUEST';
 export const START_REQUEST_DESCRIPTION = 'START_REQUEST_DESCRIPTION';
 export const UPDATE_COURSE_DATA = 'UPDATE_COURSE_DATA';
 
+export const FILTER_MAP = 'FILTER_MAP';
+export const REQUIREMENTS = 'REQUIREMENTS';
+export const UNITS = 'UNITS';
+export const DEPARTMENT = 'DEPARTMENT';
+export const LEVEL = 'LEVEL';
+export const SEMESTER = 'SEMESTER';
+
 export const UPDATE_GRADE_CONTEXT = 'UPDATE_GRADE_CONTEXT';
 export const GRADE_ADD_COURSE = 'GRADE_ADD_COURSE';
 export const GRADE_REMOVE_COURSE = 'GRADE_REMOVE_COURSE';
@@ -22,3 +29,6 @@ export const ENROLL_RESET = 'ENROLL_RESET';
 
 export const OPEN_BANNER = 'OPEN_BANNER';
 export const CLOSE_BANNER = 'CLOSE_BANNER';
+
+export const SHOW_MOBILE = 'SHOW_MOBILE';
+export const HIDE_MOBILE = 'HIDE_MOBILE';

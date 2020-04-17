@@ -5,59 +5,75 @@
   .modal {
     min-height: 600px;
     height: 100vh;
-    
+
     .modal-icon {
       font-size: 40px;
     }
-    
+
     .modal-content {
       padding: 30px;
       text-align: center;
       font-size: 25px;
       border: 0px;
       box-shadow: 0 0px 40px rgba(199, 199, 199, 0.5);
-      
+
       .button.inverted {
         transition: 200ms;
         background-color: #579EFF;
         border-color: #579EFF;
         border-width: 2px;
         color: white;
-        
+
         &:hover {
           background-color: white;
           color: #579EFF;
         }
       }
-      
+
       .modal-cta {
-        font-weight: 500;
+        font-weight: bold;
       }
-      
+
       .modal-body {
         padding: 20px 0;
       }
     }
-    
+
     .modal-background {
       background-color: rgba(255, 255, 255, 0.82);
     }
   }
-  
+
   h3 {
     font-size: 30px;
     margin-bottom: 20px;
     color: $bt-base-text;
-    text-shadow: 1px 0 $bt-base-text;
-    letter-spacing: 1px;
   }
-      
+
   p {
     margin-bottom: 35px;
     color: $bt-grey-text;
   }
 
-  .landing-explore { 
+  .landing-explore {
+      width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      padding-bottom: 120px;
+
+    @include mobile {
+      width: 300px;
+    }
+
+     h5 {
+      margin-top: 28px;
+      text-align: center;
+      font-weight: bold;
+      color: bt-base-text;
+      font-size: 24px;
+      margin-bottom: 60px;
+    }
+
     text-align: center;
     padding-bottom: 20vh;
 
@@ -80,20 +96,12 @@
       font-size: 18px;
     }
 
-    a {
-      font-size: 16px;
-      font-weight: bold;
-      color: $bt-blue;
-      text-shadow: 0.1px 0 $bt-blue;
-      letter-spacing: 1px;
-    }
-
     p {
       margin-bottom: 10px;
     }
   }
 
-  .landing-mission {  
+  .landing-mission {
     padding-bottom: 20vh;
     padding-left: 20px;
     padding-right: 20px;
@@ -110,10 +118,13 @@
         margin: 0 auto;
       }
     }
-    
+
     .landing-mission-link {
       a {
         color: $bt-blue !important;
+        &:hover {
+          text-decoration: underline !important;
+        }
       }
     }
 
@@ -126,23 +137,23 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    
+
     background-color: white;
     padding-bottom: 25vh;
     padding-left: 20px;
     padding-right: 20px;
-    
+
     .landing-sponsors-desc {
       align-self: center;
       max-width: 350px;
       text-align: center;
     }
-    
+
     .landing-sponsors-img-wrapper {
       display: flex;
       flex-direction: row;
       justify-content: center;
-      
+
       .landing-sponsors-img {
         padding-right: 20px;
         max-width: 95%;
@@ -151,4 +162,67 @@
       }
     }
   }
+
+  .feature {
+    @include mobile {
+      display: block;
+      .values {
+        max-width: 95%;
+      }
+      .value {
+        text-align: center;
+        margin: 0 auto;
+        padding: 4%;
+      }
+    }
+    padding: 20px 10px;
+    //border-radius: 4px;
+    //border: solid 2px  #6d6a7238;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    //margin-bottom: 10px;
+    margin-left: 3%;
+    margin-right: 3%;
+
+    > img {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 20px;
+    }
+
+    > h6 {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    > p {
+      text-align: center;
+      width: 95%;
+      line-height: 1.75;
+      color: #8a8a8a;
+    }
+  }
+
+  .col-lg-4 {
+      flex: 0 0 27%;
+      max-width: 27%;
+  }
+
+  .feature.col-lg-4.col-md-4.col-12 {
+    @include mobile {
+      text-align: center;
+      margin: 16px auto;
+      padding: 4%;
+      max-width: 95%;
+      display: block;
+    }
+  }
+
+  .feature.col-lg-4.col-md-4.col-12 {
+        flex: none;
+  }
+
+
 }

@@ -173,7 +173,7 @@ def enrollment_context():
 
 
         cache.set("enrollment__courses", rtn, ENROLLMENT_CACHE_TIMEOUT)
-    return {"courses": rtn, "telebears": TELEBEARS_JSON}
+    return {"courses": rtn}
 
 @raise_404_on_error
 def enrollment_render(request):

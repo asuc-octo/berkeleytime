@@ -8,8 +8,9 @@ import axios from 'axios';
 import Filter from '../../components/Catalog/Filter';
 import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
+import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
 
-import { modify, fetchLists, modifySelected } from '../../redux/actions';
+import { modify, fetchLists, modifySelected, setFilterMap } from '../../redux/actions';
 import { connect } from "react-redux";
 
 
@@ -42,23 +43,8 @@ class Catalog extends Component {
       // data: {},                      // api response.data
       // selectedCourse: {},
       // loading: true,             // whether we have receieved playlist data from api
-      isMobile: false,                //whether to open filter result as modal
       showDescription: false,
     };
-
-    this.updateScreensize = this.updateScreensize.bind(this);
-  }
-
-  /**
-   * Checks if user is on mobile view
-   */
-  componentDidMount() {
-    this.updateScreensize();
-    window.addEventListener("resize", this.updateScreensize);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateScreensize);
   }
 
   /**
@@ -156,12 +142,15 @@ class Catalog extends Component {
       level,
       semester
     } = this.props.data;
+    const { setFilterMap } = this.props;
+    var filterMap = {};
 
     var requirements = [];
 
     requirements.push({
       label: 'University Requirements',
       options: university ? university.map(req => {
+        filterMap[req.name] = { id: req.id, type: 'requirements' };
         return {
           value: req.id,
           label: req.name,
@@ -172,6 +161,7 @@ class Catalog extends Component {
     requirements.push({
       label: 'L&S Breadths',
       options: ls ? ls.map(req => {
+        filterMap[req.name] = { id: req.id, type: 'requirements' };
         return {
           value: req.id,
           label: req.name,
@@ -182,6 +172,7 @@ class Catalog extends Component {
     requirements.push({
       label: 'College of Engineering',
       options: engineering ? engineering.map(req => {
+        filterMap[req.name] = { id: req.id, type: 'requirements' };
         return {
           value: req.id,
           label: req.name,
@@ -192,6 +183,7 @@ class Catalog extends Component {
     requirements.push({
       label: 'Haas Breadths',
       options: haas ? haas.map(req => {
+        filterMap[req.name] = { id: req.id, type: 'requirements' };
         return {
           value: req.id,
           label: req.name,
@@ -200,6 +192,7 @@ class Catalog extends Component {
     });
 
     var departmentsPlaylist = department ? department.map(req => {
+      filterMap[req.name] = { id: req.id, type: 'department' };
       return {
         value: req.id,
         label: req.name,
@@ -212,6 +205,7 @@ class Catalog extends Component {
     }
 
     var unitsPlaylist = units ? units.map(req => {
+      filterMap[req.name] = { id: req.id, type: 'units' };
       return {
         value: req.id,
         label: req.name === '5 Units' ? '5+ Units' : req.name,
@@ -219,6 +213,7 @@ class Catalog extends Component {
     }) : [];
 
     var levelsPlaylist = level ? level.map(req => {
+      filterMap[req.name] = { id: req.id, type: 'level' };
       return {
         value: req.id,
         label: req.name === '5 Units' ? '5+ Units' : req.name,
@@ -226,12 +221,14 @@ class Catalog extends Component {
     }) : [];
 
     var semestersPlaylist = semester ? semester.map(req => {
+      filterMap[req.name] = { id: req.id, type: 'semester' };
       return {
         value: req.id,
         label: req.name === '5 Units' ? '5+ Units' : req.name,
       }
     }) : [];
 
+    setFilterMap(filterMap);
     return {
       requirements,
       departmentsPlaylist,
@@ -241,18 +238,16 @@ class Catalog extends Component {
     }
   }
 
-  updateScreensize() {
-    this.setState({ isMobile: window.innerWidth <= 768 });
-  }
-
   hideModal = () => {
     this.setState({ showDescription: false})
   };
 
   render() {
-    const { defaultSearch, isMobile, showDescription } = this.state;
-    const { activePlaylists, loading, selectedCourse } = this.props;
-    console.log(selectedCourse)
+    const { defaultSearch, showDescription } = this.state;
+    const { activePlaylists, loading, selectedCourse, isMobile } = this.props;
+
+    console.log(isMobile);
+    
     return (
       <div className="catalog viewport-app">
           <Row>
@@ -288,11 +283,22 @@ class Catalog extends Component {
                 query={this.state.search}
               />
             </Col>
-            <Col md={6} lg={4} xl={6} className="catalog-description-column">
-              <ClassDescription
-                course={selectedCourse}
-                selectCourse={this.selectCourse}
-              /> 
+            <Col xs={0} sm={0} md={6} lg={4} xl={6} className="catalog-description-column">
+              {
+                !isMobile ? 
+                  <ClassDescription
+                  course={selectedCourse}
+                  selectCourse={this.selectCourse}
+                  modifyFilters={this.modifyFilters}
+                /> :
+                <ClassDescriptionModal 
+                  course={selectedCourse}
+                  selectCourse={this.selectCourse}
+                  show={showDescription}
+                  hideModal={this.hideModal}
+                  modifyFilters={this.modifyFilters}
+                />
+              }
             </Col> 
           </Row>
       </div>
@@ -306,17 +312,21 @@ const mapDispatchToProps = dispatch => {
     modify: (activePlaylists, defaultPlaylists) => dispatch(modify(activePlaylists, defaultPlaylists)),
     fetchLists: (paths) => dispatch(fetchLists(paths)),
     modifySelected: (data) => dispatch(modifySelected(data)),
+    setFilterMap: (data) => dispatch(setFilterMap(data))
   }
 }
 
 const mapStateToProps = state => {
   const { activePlaylists, defaultPlaylists, data, loading, selectCourse } = state.catalog;
+  const { isMobile } = state.isMobile;
+
   return {
     activePlaylists: activePlaylists,
     defaultPlaylists: defaultPlaylists,
     data: data,
     loading: loading,
     selectedCourse: selectCourse,
+    isMobile: isMobile,
   };
 };
 

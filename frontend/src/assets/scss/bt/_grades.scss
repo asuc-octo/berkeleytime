@@ -1,4 +1,32 @@
 .grades {
+
+  .btn-primary:disabled {
+      cursor: default;
+  }
+
+  .css-yk16xz-control:hover {
+    cursor: pointer;
+  }
+
+  .disclaimer {
+    padding-left: 15px;
+
+    p {
+      display: inline;
+      margin-left: 8px;
+      color: $bt-light-grey;
+      font-size: 14px;
+
+      a {
+        color: $bt-primary;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
   height: 100%;
   padding: 30px;
 
@@ -11,7 +39,7 @@
   }
 
   .grades-search-bar {
-    margin-bottom: 10px;
+    margin-bottom: 0;
 
     // row
     > div {

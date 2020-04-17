@@ -5,7 +5,7 @@ import empty_graph from '../../assets/img/images/empty-graph.png';
 
 function Error() {
   return (
-    <div className="error viewport-app">
+    <div className="error viewport-app-404">
       <Container>
         <Row>
           <Col md={{span: 5, order: 2}} lg={4}
@@ -14,15 +14,13 @@ function Error() {
           </Col>
           <Col md={{span: 5, offset: 1, order: 1}} lg={6} className="content">
             <h1>404</h1>
-            <h3>Uh oh.</h3>
+            <h3>Uh oh. Looks like the page you're looking for doesn't exist.</h3>
             <p>
-              Looks like the page you were looking for couldn't be found.
-              <br />
-              Here's a couple of things you can do.
+              Here are a couple of things you can do.
             </p>
             <ButtonToolbar>
               <ButtonGroup className="mr-3 mb-2">
-                <Button variant="bt-primary" size="bt-lg" as={Link} to="/catalog">Back to Catalog</Button>
+                <Button variant="bt-primary" size="bt-lg" as={Link} to="/catalog">Back to Courses</Button>
               </ButtonGroup>
               <ButtonGroup className="mb-2">
                 <Button variant="bt-primary-inverted" size="bt-lg" href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1">Report a Bug</Button>

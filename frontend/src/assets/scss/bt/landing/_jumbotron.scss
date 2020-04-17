@@ -20,21 +20,19 @@
     text-align: left;
 
     h1 {
-      margin-bottom: 15px;
-      font-size: 36px;
+      margin-bottom: 16px;
+      font-size: 28px;
       color: $bt-base-text;
-      text-shadow: 1px 0 $bt-base-text;
-      letter-spacing: 1px;
       font-weight: bold;
 
       @include touch {
         font-size: 24px;
       }
     }
-    
+
     p {
       margin: 0 3px 10px; //3px better aligns with title
-      font-size: 20px;
+      font-size: 18px;
       color: $bt-grey-text;
 
       @include touch{
@@ -49,7 +47,7 @@
 
         .btn-bt-lg {
           font-size: 16px;
-        } 
+        }
 
         .btn-bt-primary {
           margin-right: 7px;
@@ -66,7 +64,7 @@
 
   .jumbo-img-container {
     width: 100%;
-    height: 100vh;
+    height: calc(100vh + 20px);
     min-height: $viewport-min-height;
 
     display: flex;
@@ -82,36 +80,52 @@
       max-width: 100%;
       width: 500px;
 
-      @keyframes bobble {
+      @keyframes upDown {
         from {
-          transform: translateY(-20px);
+          transform: translateY(-8px);
         } to {
-          transform: translateY(90px);
+          transform: translateY(8px);
         }
       }
 
-      @keyframes everything-bobble {
+      @keyframes upDownShort {
         from {
-          transform: translateY(-3px);
+          transform: translateY(-2px);
         } to {
-          transform: translateY(3px);
+          transform: translateY(2px);
+        }
+      }
+
+      @keyframes upDownAll {
+        from {
+          transform: translateY(-4px);
+        } to {
+          transform: translateY(4x);
         }
       }
 
       #left-float {
-        animation: bobble 4s linear alternate infinite;  
+        animation: upDown 2s ease alternate infinite;
       }
 
       #middle-float {
-        animation: bobble 5s linear alternate infinite;  
+        animation: upDown 3s ease alternate infinite;
       }
 
       #right-float {
-        animation: bobble 6s linear alternate infinite;  
+        animation: upDown 2s ease alternate infinite;
       }
 
       #everything {
-        animation: everything-bobble 2s linear alternate infinite;  
+        animation: upDownAll 2.5s ease alternate infinite;
+      }
+
+      #campanile, #hearst-building, #evans, #doe-library, #hearst-pond  {
+        animation: upDownAll 2.5s ease alternate infinite;
+      }
+
+      #treee, #treee-2, #other-bush, #ball-bush, #tre {
+        animation: upDownAll 2.5s ease alternate infinite;
       }
 
       @include mobile {
