@@ -15,8 +15,8 @@ class Faq extends Component {
 
   constructor(props) {
     super(props);
-
   }
+
   render() {
     return (
       <div className="faq">
@@ -28,7 +28,10 @@ class Faq extends Component {
                 <h2>Frequently Asked Questions</h2>
                 <h3>Answering your most commonly asked questions.</h3>
                 <ButtonToolbar className="faq-heading-button">
-                  <a className="btn btn-bt-blue-inverted btn-bt-md" role="button" href = "mailto: octo.berkeley@asuc.org">Contact Us</a>
+                <a href = "mailto: octo.berkeley@asuc.org">
+                  <button className="btn btn-bt-blue-inverted btn-bt-md" role="button" >Contact Us</button>
+                </a>
+
                 </ButtonToolbar>
               </div>
             </Col>
@@ -50,8 +53,8 @@ class Faq extends Component {
 Faq.questions = [
   {
     question: 'Where does Berkeleytime get its data? Is it accurate?',
-    answer: <p>BerkeleyTime sources our historic course data directly from Berkeley <a className="link" href="https://sis.berkeley.edu/">
-      Student Information System</a>'s Course and Enrollment APIs. We source grade data
+    answer: <p>BerkeleyTime sources our historic course and enrollment data directly from Berkeley <a className="link" href="https://sis.berkeley.edu/">
+      Student Information System</a>'s Course and Class APIs. We source grade data
       from <a className="link" href="https://calanswers.berkeley.edu/">CalAnswers</a>.</p>
   },
   {
@@ -67,7 +70,9 @@ Faq.questions = [
   },
   {
     question: 'Is anyone actively working on Berkeleytime?',
-    answer: <p>Yes, we're a student-run organization here on campus under the <a className="link" href="https://octo.asuc.org//">ASUC Office of the CTO</a>. Our team is continually working to maintain and improve the site. You can learn more about us <a className="link" href="/about">here</a>!</p>
+    answer: <p>Yes, we're a student-run organization here on campus under the <a className="link" href="https://octo.asuc.org//">
+      ASUC Office of the CTO</a>. Our team is continually working to maintain and improve the site. You can learn more about
+      us <a className="link" href="/about">here</a>!</p>
   },
   {
     question: 'How do I apply to join the team?',

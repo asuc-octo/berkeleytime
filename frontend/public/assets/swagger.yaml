@@ -4,14 +4,14 @@ info:
   same data that backs berkeleytime.com, for the purpose of supporting student created applications. Please use this
   free resource fairly by not unnecessarily spamming the API and crediting Berekelytime as the source. We do not
   provide guarantees about the correctness of the data, but we do try to maintain it to the best of our abilities."
-  version: "1.0.0"
+  version: "v0.1"
   title: "Berkeleytime API"
   contact:
     email: "octo.berkeleytime@asuc.org"
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-basePath: "/api"
+basePath: "/"
 tags:
 - name: "catalog"
   description: "Basic information of all courses in our catalog"
@@ -22,7 +22,7 @@ tags:
 schemes:
 - "https"
 paths:
-  /catalog/catalog_json/:
+  /api/catalog/catalog_json/:
     get:
       tags:
       - "catalog"
@@ -36,8 +36,8 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Course_json"
-  /catalog/catalog_json/course_box/:
+            $ref: "#/definitions/course_json"
+  /api/catalog/catalog_json/course_box/:
     get:
       tags:
       - "catalog"
@@ -56,8 +56,8 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Course_box"
-  /grades/grades_json/:
+            $ref: "#/definitions/course_box"
+  /api/grades/grades_json/:
     get:
       tags:
       - "grades"
@@ -71,8 +71,8 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Course_json"
-  /grades/course_grades/{course_id}/:
+            $ref: "#/definitions/course_json"
+  /api/grades/course_grades/{course_id}/:
     get:
       tags:
       - "grades"
@@ -91,8 +91,8 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Course_grades"
-  /grades/sections/{grades_id}/:
+            $ref: "#/definitions/course_grades"
+  /api/grades/sections/{grades_id}/:
     get:
       tags:
       - "grades"
@@ -111,8 +111,8 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Grade_data"
-  /grades/sections/{grades_id_1}&{grades_id_2}/:
+            $ref: "#/definitions/grade_data"
+  /api/grades/sections/{grades_id_1}&{grades_id_2}/:
     get:
       tags:
       - "grades"
@@ -136,8 +136,8 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Grade_data"
-  /enrollment/enrollment_json/:
+            $ref: "#/definitions/grade_data"
+  /api/enrollment/enrollment_json/:
     get:
       tags:
       - "enrollment"
@@ -151,12 +151,27 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Course_json"
-  /enrollment/aggregate/{course_id}/{semester}/{year}/:
+            $ref: "#/definitions/course_json"
+  /api/enrollment/sections/{course_id}/:
     get:
       tags:
       - "enrollment"
-      summary: "Place an order for a pet"
+      summary: "Find all semesters this course was offered."
+      description: ""
+      operationId: ""
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/enrollment_sections"
+  /api/enrollment/aggregate/{course_id}/{semester}/{year}/:
+    get:
+      tags:
+      - "enrollment"
+      summary: "Find enrollment for a specific offering."
       description: ""
       operationId: "placeOrder"
       produces:
@@ -169,32 +184,32 @@ paths:
         type: "string"
       - name: "semester"
         in: "path"
-        description: "Specifies which semester to query the enrollment information from"
+        description: "Specifies which semester to query the enrollment information from (ex: fall)."
         required: true
         type: "string"
       - name: "year"
         in: "path"
-        description: "Specifies which year to query the enrollment information from"
+        description: "Specifies which year to query the enrollment information from (ex: 2020)."
         required: true
         type: "string"
       responses:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/Course_enrollment"
+            $ref: "#/definitions/course_enrollment"
 definitions:
-  Course_json:
+  course_json:
     type: "object"
     properties:
       courses:
         type: "array"
         items:
-          $ref: "#/definitions/Course_short"
-  Course_box:
+          $ref: "#/definitions/course_short"
+  course_box:
     type: "object"
     properties:
       course:
-        $ref: "#/definitions/Course"
+        $ref: "#/definitions/course"
       last_enrollment_update:
         type: "string"
         example: "2020-01-01 00:00:00"
@@ -215,16 +230,16 @@ definitions:
       sections:
         type: "array"
         items:
-          $ref: "#/definitions/Section"
+          $ref: "#/definitions/section"
       ongoing_sections:
         type: "array"
         items:
-          $ref: "#/definitions/Section"
-  Course_grades:
+          $ref: "#/definitions/section"
+  course_grades:
     type: "array"
     items:
-      $ref: "#/definitions/Semester_grades"
-  Course_enrollment:
+      $ref: "#/definitions/section_grades"
+  course_enrollment:
     type: "object"
     properties:
       course_id:
@@ -265,10 +280,10 @@ definitions:
       data:
         type: "array"
         items:
-          $ref: "#/definitions/Enrollment_data"
+          $ref: "#/definitions/enrollment_data"
       telebears:
-        $ref: "#/definitions/Enrollment_details"
-  Course:
+        $ref: "#/definitions/enrollment_telebears"
+  course:
     type: "object"
     properties:
       units:
@@ -315,7 +330,7 @@ definitions:
       letter_average:
         type: "string"
         example: "B+"
-  Course_short:
+  course_short:
     type: "object"
     properties:
       id:
@@ -327,7 +342,7 @@ definitions:
       abbreviation:
         type: "string"
         example: "COMPSCI"
-  Section:
+  section:
     type: "object"
     properties:
       cnn:
@@ -375,7 +390,7 @@ definitions:
       id:
         type: "integer"
         example: 289041
-  Semester_grades:
+  section_grades:
     type: "object"
     properties:
       semester:
@@ -393,7 +408,7 @@ definitions:
       grade_id:
         type: "integer"
         example: 407490
-  Grade_data:
+  grade_data:
     type: "object"
     properties:
       title:
@@ -423,32 +438,32 @@ definitions:
         type: "integer"
         example: 464
       A+:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       A:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       A-:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       B+:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       B:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       B-:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       C+:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       C:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       C-:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       D:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       F:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       P:
-        $ref: "#/definitions/Grade_bin"
+        $ref: "#/definitions/grade_bin"
       NP:
-        $ref: "#/definitions/Grade_bin"
-  Grade_bin:
+        $ref: "#/definitions/grade_bin"
+  grade_bin:
     type: "object"
     properties:
       numerator:
@@ -466,7 +481,36 @@ definitions:
         type: "number"
         format: "float"
         example: 0.96
-  Enrollment_data:
+  enrollment_sections:
+    type: "array"
+    items:
+      $ref: "#/definitions/enrollment_semester"
+  enrollment_semester:
+    type: "object"
+    properties:
+      semester:
+        type: "string"
+        example: "fall"
+      year:
+        type: "string"
+        example: "2019"
+      sections:
+        type: "array"
+        items:
+          $ref: "#/definitions/enrollment_short"
+  enrollment_short:
+    type: "object"
+    properties:
+      instructor:
+        type: "string"
+        example: "CULLER D"
+      section_number:
+        type: "string"
+        example: "001"
+      section_id:
+        type: "integer"
+        example: 222612
+  enrollment_data:
     type: "object"
     properties:
       date:
@@ -495,7 +539,7 @@ definitions:
         type: "number"
         format: "float"
         example: 0.0
-  Enrollment_details:
+  enrollment_telebears:
     type: "object"
     properties:
       semester:

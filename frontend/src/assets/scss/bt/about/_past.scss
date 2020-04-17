@@ -46,20 +46,21 @@
         }
 
         > a > img {
-          width: 18px;
-          height: 18px;
-          opacity: .75;
+          width: 22px;
+          height: 22px;
+          padding: 2px;
           transition: .5s;
+          border-radius: 4px;
 
           &:hover {
-            opacity: 1;
+            background-color: $bt-button-background;
           }
         }
       }
 
       .role {
         font-size: 14px;
-        color: $bt-grey-text
+        color: $bt-light-text;
       }
     }
   }

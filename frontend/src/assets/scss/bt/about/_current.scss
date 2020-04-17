@@ -43,7 +43,7 @@
 
       .serious {
         z-index: $z-index-serious;
-        transition: 50ms;
+        transition: .2s;
 
         &:hover {
           opacity: 0;
@@ -66,12 +66,14 @@
       }
 
       > a > img {
-        width: 18px;
-        height: 18px;
-        opacity: .75;
+        width: 22px;
+        height: 22px;
+        padding: 2px;
+        transition: .2s;
+        border-radius: 4px;
 
         &:hover {
-          opacity: 1;
+          background-color: $bt-button-background;
         }
 
       }

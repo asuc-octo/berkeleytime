@@ -39,14 +39,14 @@ const MobileTooltip = props => {
 
 const PercentageLabel = props => {
     //todo: change text color
-    const {x, y, value} = props
+    const {x, y, width, value} = props
     let percentage = value == 0 ? "": (value < 1 ? "<1%" : Math.round(value) + "%");
     return (
       <text
-        x={x}
+        x={x + width}
         y={y}
-        dx={11}
-        dy={-11}
+        dx={20}
+        dy={15}
         fontSize={12}
         textAnchor="middle">{percentage}
       </text>
@@ -57,30 +57,47 @@ export default function GradesGraph({
   graphData, gradesData, updateBarHover, updateGraphHover, selectedPercentiles, denominator, color, isMobile
 }) {
 
+  let numClasses = gradesData.length;
+
   return (
       <div>
       {!isMobile ?
-        <ResponsiveContainer width="90%" height={400}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover}>
+        <ResponsiveContainer width="100%" height={500}>
+        <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -50, bottom: 0 }} >
           <XAxis dataKey="name" />
           <YAxis type="number" unit="%" />
           <Tooltip
             formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+            cursor={{fill: '#EAEAEA'}}
           />
           {gradesData.map((item, i) => (
             <Bar
-              name={`${item.title} / ${item.semester} / ${item.instructor}`}
+              name={`${item.title} • ${item.semester} • ${item.instructor}`}
               dataKey={item.id}
               fill={vars.colors[item.colorId]}
               onMouseEnter={updateBarHover}
+              radius={[4, 4, 0, 0]}
             />
           ))}
         </BarChart>
         </ResponsiveContainer> :
-        <ResponsiveContainer width={500} height={500}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover}>
-          <XAxis dataKey="name" />
-          <YAxis type="number" unit="%" />
+        <ResponsiveContainer width="100%" height={numClasses*750} >
+        <BarChart
+          data={graphData}
+          onMouseMove={updateGraphHover}
+          layout="vertical"
+          barSize={30}
+          margin={{top: 65, left: -32, bottom: 50}}
+        >
+
+          <text
+            y={30}
+            textAnchor="top"
+            dominantBaseline="left"
+            fontSize={18}> Grade Distribution
+          </text>
+          <XAxis type="number" unit="%" />
+          <YAxis dataKey="name" type="category" />
           <Tooltip
             content={
               <MobileTooltip
@@ -92,7 +109,7 @@ export default function GradesGraph({
           />
           {gradesData.map((item, i) => (
             <Bar
-              name={`${item.title} / ${item.semester} / ${item.instructor}`}
+              name={`${item.title} • ${item.semester} • ${item.instructor}`}
               dataKey={item.id}
               fill={vars.colors[item.colorId]}
               onMouseEnter={updateBarHover}

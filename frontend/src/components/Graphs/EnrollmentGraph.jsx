@@ -15,8 +15,34 @@ import {
 
 import vars from '../../variables/Variables';
 
+function getLargestEnrollment(graphData) {
+    let max_percentage = -1;
+    graphData.map(item => {
+      Object.keys(item).forEach(function(key) {
+        if (key !== 'name') {
+          if (parseFloat(item[key]) > max_percentage) {
+            max_percentage = parseFloat(item[key]);
+          }
+        }
+      });
+    });
+    return max_percentage;
+}
+
+function getYTickRange(limit) {
+    let step = 25;
+    if (limit <= 100) {
+      limit = 100;
+    }
+    let arr = Array.from(new Array(Math.floor(limit / step)), (x,i) => step * (i + 1));
+    if (limit % step > 0) {
+        arr.push(step * (Math.floor(limit / step) + 1));
+    }
+    return arr;
+}
+
 export default function EnrollmentGraph({
-  graphData, enrollmentData, updateLineHover, updateGraphHover,
+  graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile,
 }) {
   const labelStyle = {
     textAnchor: 'middle',
@@ -24,17 +50,30 @@ export default function EnrollmentGraph({
   };
   return (
     <div className="graph">
-      <ResponsiveContainer width="90%" height={400}>
-        <LineChart data={graphData} onMouseMove={updateGraphHover}>
+      <ResponsiveContainer width="100%" height={500}>
+        <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{top: isMobile ? 100 : 0}}>
+
+          {isMobile ?
+            <text
+              y={30}
+              textAnchor="top"
+              dominantBaseline="left"
+              fontSize={18}> Enrollment
+            </text> :
+            null
+          }
+
           <XAxis dataKey="name" interval={19} />
-          <YAxis type="number" unit="%" domain={[0, 100]}/>
+          <YAxis type="number" unit="%"
+                 domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
+                 ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}/>
           <Tooltip
             formatter={(value) => `${value}%`}
             labelFormatter={label => `Day ${label}`}
           />
           {enrollmentData.map((item, i) => (
             <Line
-              name={`${item.title} / ${item.section_name}`}
+              name={`${item.title} • ${item.section_name}`}
               type="monotone"
               dataKey={item.id}
               stroke={vars.colors[item.colorId]}
@@ -45,6 +84,33 @@ export default function EnrollmentGraph({
             />
           ))}
 
+          {isMobile ?
+            <Legend
+              horizontalAlign="left"
+              layout="vertical"
+              iconType="circle"
+            /> :
+            null
+          }
+
+          <ReferenceLine
+            x={enrollmentData[0].telebears.phase2_start_day}
+            stroke="black"
+            strokeDasharray="3 3"
+          >
+            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+              {`Phase II Start (${enrollmentData[0].telebears.semester})`}
+            </Label>
+          </ReferenceLine>
+          <ReferenceLine
+            x={enrollmentData[0].telebears.adj_start_day}
+            stroke="black"
+            strokeDasharray="3 3"
+          >
+            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+              {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
+            </Label>
+          </ReferenceLine>
         </LineChart>
       </ResponsiveContainer>
     </div>

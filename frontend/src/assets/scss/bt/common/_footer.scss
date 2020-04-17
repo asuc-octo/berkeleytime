@@ -5,11 +5,12 @@
   .bt-footer-container {
     max-width: 1150px;
     margin: 0 auto;
-    padding: 40px 80px 30px 30px;
+    padding: 40px 80px 40px 40px;
 
     @include mobile {
       max-width: 300px;
-      padding: 40px 0px 30px 0px;
+      padding: 20px 0px 40px 0px;
+      margin: 12px 10px 10px 10px;
     }
 
     .bt-footer-column {
@@ -25,7 +26,7 @@
       }
 
       > *:not(:first-child) {
-        font-size: 18px;
+        font-size: 16px;
         line-height: 150%;
 
         @include mobile {
@@ -34,7 +35,7 @@
       }
 
       p {
-        font-size: 18px;
+        font-size: 16px;
         color: $bt-base-text;
 
         @include mobile {
@@ -43,14 +44,21 @@
       }
 
       a {
-        font-size: 18px;
+        font-size: 16px;
         color: $bt-light-grey;
         transition: 200ms;
         width: max-content;
+
+        &:hover {
+          cursor: default;
+        }
+
       }
 
-      a:hover {
-        color: hsl(204, 86%, 53%);
+      .footer-link:hover {
+        // color: $bt-grey;
+        text-decoration: underline;
+        cursor: pointer;
       }
 
       .new-box {
@@ -59,10 +67,11 @@
         background: #2F80ED;
         border-radius: 3px;
         margin-left: 8px;
-        padding: 2px 6px;
+        padding: 2px 4px;
         color: #FFFFFF;
-        font-size: 16px;
+        font-size: 12px;
         line-height: 150%;
+
 
         @include mobile {
           width: 20px;
