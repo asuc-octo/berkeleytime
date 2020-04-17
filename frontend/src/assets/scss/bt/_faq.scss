@@ -1,25 +1,28 @@
 .faq {
-    background-color: $bt-white;
-    width: 100vw;
-    margin-top: 80px;
-    margin-bottom: 100px;
+    margin: 24px auto 30px auto;
+    padding-top: $bt-navbar-height;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
 
     .faq-heading {
 
         h2 {
             font-weight: bold;
-            font-size: 28px;
+            font-size: 24px;
             margin-top: 32px;
             text-align: center;
             color: $bt-base-text;
         }
 
         h3 {
-            font-size: 20px;
+            font-size: 16px;
             line-height: 150%;
             text-align: center;
             color: $bt-light-text;
-            margin-top: 8px;
+            margin-top: 18px;
         }
 
         .faq-heading-button{
@@ -34,13 +37,13 @@
   .faq-question {
     cursor: pointer;
     border-bottom: 1px solid #ECECEC;
-    padding-bottom: 8px;
+    padding-bottom: 12px;
     margin-bottom: 12px;
     width: 105%;
     font-weight: bold;
     color: $bt-base-text;
     .faq-question-text {
-      font-size: 16px;
+      font-size: 14px;
       line-height: 150%;
 
        @include mobile {
@@ -63,12 +66,20 @@
 
   .faq-answer {
     .example-collapse-text {
-      font-size: 16px;
+      font-size: 14px;
       line-height: 180%;
       margin-bottom: 30px;
       color: $bt-light-text;
       .link {
         color: $bt-primary;
+      }
+    }
+
+    a {
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
       }
     }
   }

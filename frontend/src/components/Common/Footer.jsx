@@ -32,7 +32,7 @@ function Footer() {
             <p className=""><b>About</b></p>
             <Link to="/about" className=""><span className="footer-link">Team</span></Link>
             <a href="http://octo.asuc.org/" className=""><span className="footer-link">Office of the CTO</span></a>
-            <a href="https://octo.asuc.org/apply" className=""><span className="footer-link">Join Us</span></a>
+            <a href="/join" className=""><span className="footer-link">Join Us</span></a>
             <a href="https://www.facebook.com/berkeleytime/" className=""><span className="footer-link">Facebook</span></a>
           </Col>
         </Row>

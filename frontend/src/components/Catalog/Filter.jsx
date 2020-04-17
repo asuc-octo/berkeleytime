@@ -261,7 +261,7 @@ export class FilterSidebar extends Component {
       <div id="filter" className="filter">
         <div className="filter-name">
           <p>Filters</p>
-          <button className="as-link" type="button" onClick={this.resetFilters}>Reset</button>
+          <button type="button" onClick={this.resetFilters}>Reset</button>
         </div>
         <div className="filter-search">
           <input
@@ -273,7 +273,7 @@ export class FilterSidebar extends Component {
           />
         </div>
         <div className="filter-sort">
-          
+
           <Select
             options={this.sortOptions}
             isSearchable={false}

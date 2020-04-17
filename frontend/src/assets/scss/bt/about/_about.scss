@@ -1,5 +1,13 @@
 .about {
   padding-top: $bt-navbar-height;
+  margin: 32px auto 30px auto;
+
+
+      .releases-heading-button{
+          justify-content: center;
+          margin-top: 20px;
+          margin-bottom: 64px;
+        }
 
   .nav-link {
     background-color: #e1e1e16b;
@@ -13,8 +21,7 @@
   .title {
     font-weight: bold;
     color: $bt-base-text;
-    margin: 50px 10px 30px;
-    font-size: 28px;
+    font-size: 24px;
 
     @include mobile {
       font-size: 30px;
@@ -45,12 +52,12 @@
   .about-us {
 
     > h5 {
-      margin: 80px auto 12px auto;
+      margin-top: 28px;
       text-align: center;
 
       font-weight: bold;
       color: $bt-base-text;
-      font-size: 36px;
+      font-size: 24px;
 
       @include mobile {
         font-size: 20px;
@@ -58,13 +65,13 @@
     }
 
     > p {
-      margin: 0 20px 70px;
+      margin-top: 12px;
+      // margin-bottom: 60px;
       text-align: center;
-
       font-size: 16px;
-      color: $bt-grey-text;
-      width: 450px;
-      line-height: 1.5;
+      line-height: 1.75;
+      color: #8A8A8A;
+      width: 600px;
 
       @include mobile {
         width: 330px;
@@ -73,6 +80,11 @@
   }
 
   .values {
+
+    .col-lg-4 {
+        flex: 0 0 27%;
+        max-width: 27%;
+    }
 
     margin-bottom: 80px;
 
@@ -85,7 +97,7 @@
     }
 
     > h5 {
-      margin-bottom: 30px;
+      margin-bottom: 60px;
       text-align: center;
 
       font-weight: bold;
@@ -97,38 +109,51 @@
       }
     }
 
+    }
+
     .value {
+      padding: 2%;
+      border-radius: 4px;
+      border: solid 2px  #6d6a7238;
       display: flex;
       flex-direction: column;
       align-items: center;
-
       margin-bottom: 40px;
+      margin-left: 3%;
+      margin-right: 3%;
+
 
       > img {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         margin-bottom: 20px;
       }
 
       > h6 {
         font-size: 18px;
         font-weight: bold;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
       }
 
       > p {
         text-align: center;
         width: 95%;
+        line-height: 1.75;
+        color: #8a8a8a;
       }
     }
-  }
+
 
   .group {
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-bottom: 50px;
+    margin-bottom: 60px;
     padding-left: 40px;
+
+    @include mobile {
+        padding-left: 10px;
+    }
 
     > img {
       @include desktop {
@@ -176,5 +201,19 @@
 
   .group::-webkit-scrollbar { /* Safari and Chrome */
     display: none;
+  }
+
+  .value.col-lg-4.col-md-4.col-12 {
+    @include mobile {
+      text-align: center;
+      margin: 16px auto;
+      padding: 4%;
+      max-width: 95%;
+      display: block;
+    }
+  }
+
+  .value.col-lg-4.col-md-4.col-12 {
+        flex: none;
   }
 }
