@@ -21,21 +21,19 @@ function CheckboxGroup(props) {
               Object.values(item.options).map(option => (
               <div>
                 <Form.Check
-                  custom
-                  type="checkbox"
+                  type={formType}
                   id={option.value}
-                  name={option.label}
+                  name="modalFormGroup"
                   label={option.label}
                   onClick={props.handler.bind(this)}
                 /> 
               </div>
-              )) :
-              <div className="custom-checkbox">
+              )) : 
+              <div>
                 <Form.Check
-                  custom
-                  type="checkbox"
+                  type={formType}
                   id={item.value}
-                  name={item.label}
+                  name="modalFormGroup"
                   label={item.label}
                   onClick={props.handler.bind(this)}
                />
@@ -52,7 +50,7 @@ export class FilterModal extends Component {
   render() {
 
     return (
-      <Modal show={this.props.showFilters} onHide={this.props.hideModal}>
+      <Modal show={this.props.showFilters}>
           <div className="filter-modal">
             <div className="filter-form">
               <CheckboxGroup
@@ -62,9 +60,9 @@ export class FilterModal extends Component {
               />
             </div>
             <div className="filter-button-bar">
-              <button className="btn-bt-primary-inverted" onClick={this.props.hideModal}>
+              <button className="btn-bt-primary-inverted" onClick={this.props.hideModal}> 
               Cancel </button>
-              <button className="btn-bt-primary" onClick={this.props.saveModal}>
+              <button className="btn-bt-primary" onClick={this.props.saveModal}> 
               Save </button>
             </div>
           </div>
