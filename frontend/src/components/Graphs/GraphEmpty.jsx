@@ -14,8 +14,7 @@ import vars from '../../variables/Variables';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 import { Container, Row, Col } from 'react-bootstrap';
 
-const EmptyLabel = props =>{
-      console.log("hi")
+const EmptyLabel = props => {
       return (
         <div className="graph-empty-content">
           <img className="graph-empty-image" src={emptyImage} alt="empty state" />
@@ -46,7 +45,7 @@ class GraphEmpty extends React.PureComponent {
       <div className="graph-empty">
       <Container fluid>
         <Row>
-          <Col xs={{order:2}} s={{order:2}} md={{order:1}} lg={{span:8, order:1}}>
+          <Col xs={{span:12, order:2}} s={{span:12, order:2}} md={{order:1}} lg={{span:8, order:1}}>
             <ResponsiveContainer width="90%" height={440}>
             <BarChart data={pageType == "enrollment" ? graphData_enroll : graphData_grade}>
               <Label position="center" />
@@ -69,7 +68,7 @@ class GraphEmpty extends React.PureComponent {
             </ResponsiveContainer>
           </Col>
 
-          <Col xs={{order:1}} s={{order:1}} md={{order:2}} lg={{span:4, order:2}}>
+          <Col xs={{span:12, order:1}} s={{span:12, order:1}} md={{order:2}} lg={{span:4, order:2}}>
             <div className="grades-info">
               <div className="header">
                 <div className="square" />

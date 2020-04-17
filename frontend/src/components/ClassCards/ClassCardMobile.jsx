@@ -52,17 +52,17 @@ function ClassCardMobile(props) {
     const enrollment_info = additionalInfo ? additionalInfo[2] : null;
     const waitlisted_info = additionalInfo ? additionalInfo[3] : null;
 
-    let period = "--";
-    let daysAfterPeriodStarts = "--";
+    let date_info = []
     if(latest_point != null && telebears != null) {
-      let { period, daysAfterPeriodStarts } = getEnrollmentDay(latest_point, telebears); 
+      console.log("hi")
+      date_info = getEnrollmentDay(latest_point, telebears); 
     }
 
     return (
       <div className="class-card-mobile">
         <div className="class-card-mobile-column">
           <h6>
-            { period }:{ daysAfterPeriodStarts }  
+            {date_info ? date_info['period'] + ": " + date_info['daysAfterPeriodStarts'] : "--"}
           </h6>
           <h6>Enrollment Percent:
             {nullCheck(enrollment_info) ? applyIndicatorEnrollment.apply(null, enrollment_info) : "--"}
