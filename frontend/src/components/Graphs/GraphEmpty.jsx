@@ -1,6 +1,6 @@
 import React from 'react';
 // import emptyImage from '../../assets/img/images/empty-graph.png';
-import emptyImage from '../../assets/img/images/empty-sign.jpg';
+import emptyImage from '../../assets/img/images/empty-sign.png';
 import {
   BarChart,
   Bar,
@@ -8,13 +8,23 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  Label,
 } from 'recharts';
 import vars from '../../variables/Variables';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 import { Container, Row, Col } from 'react-bootstrap';
 
-
-
+const EmptyLabel = props =>{
+      console.log("hi")
+      return (
+        <div className="graph-empty-content">
+          <img className="graph-empty-image" src={emptyImage} alt="empty state" />
+          <h3 className="graph-empty-heading" align="center">
+          You have not added any <br /> classes yet.
+          </h3>
+      </div>
+      );
+    };
 
 class GraphEmpty extends React.PureComponent {
 
@@ -36,14 +46,17 @@ class GraphEmpty extends React.PureComponent {
       <div className="graph-empty">
       <Container fluid>
         <Row>
-          <Col lg={8}>
+          <Col xs={{order:2}} s={{order:2}} md={{order:1}} lg={{span:8, order:1}}>
             <ResponsiveContainer width="90%" height={440}>
             <BarChart data={pageType == "enrollment" ? graphData_enroll : graphData_grade}>
+              <Label position="center" />
               <XAxis dataKey="name" />
               <YAxis type="number" unit="%" domain={[0, 100]}/>
               <Tooltip
                 cursor={{fill: '#fff'}}
-                formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+                content={<EmptyLabel />}
+                position={{ x: 50, y: 150 }}
+                wrapperStyle={{visibility: 'visible'}}
               />
               {gradesData.map((item, i) => (
                 <Bar
@@ -56,7 +69,7 @@ class GraphEmpty extends React.PureComponent {
             </ResponsiveContainer>
           </Col>
 
-          <Col lg={4}>
+          <Col xs={{order:1}} s={{order:1}} md={{order:2}} lg={{span:4, order:2}}>
             <div className="grades-info">
               <div className="header">
                 <div className="square" />
@@ -83,15 +96,7 @@ class GraphEmpty extends React.PureComponent {
         </Row>
 
       </Container>
-
-        <div className="graph-empty-content">
-          <img className="graph-empty-image" src={emptyImage} alt="empty state" />
-          <h3 className="graph-empty-heading" align="center">
-            You have not added any <br /> classes yet.
-          </h3>
-        </div>
-
-      </div>
+    </div>
     );
   }
 }
