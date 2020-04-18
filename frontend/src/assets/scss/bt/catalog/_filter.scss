@@ -77,8 +77,7 @@
     input {
       width: 100%;
       padding-bottom: 3px;
-      border: 0;
-      border-bottom: .5px solid $bt-light-border-grey;
+      border: solid 1px $bt-light-border-grey;
       color: $bt-base-text;
       font-size: 16px;
       font-family: 'FontAwesome', 'Inter', sans-serif;
@@ -86,11 +85,11 @@
 
       &:focus {
         outline: none;
-        color: $bt-base-text;
+        color: $bt-light-grey;
       }
 
       &::placeholder {
-        color: $bt-light-border-grey;
+        color: $bt-light-grey;
       }
     }
   }
