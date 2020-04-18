@@ -11,6 +11,7 @@ import will_1 from '../../assets/img/images/about/compressed/Will_1.jpg';
 import will_2 from '../../assets/img/images/about/compressed/Will_2.jpg';
 import jemma_1 from '../../assets/img/images/about/compressed/Jemma_1.jpg';
 import jemma_2 from '../../assets/img/images/about/compressed/Jemma_2.jpg';
+import jemma_3 from '../../assets/img/images/about/compressed/Jemma_3.jpg';
 import chris_1 from '../../assets/img/images/about/compressed/Chris_1.jpg';
 import chris_2 from '../../assets/img/images/about/compressed/Chris_2.jpg';
 import sangbin_1 from '../../assets/img/images/about/compressed/Sangbin_1.jpg';
@@ -100,7 +101,7 @@ CurrentContributors.defaultProps = {
         site: 'https://jemmakwak.me',
         silly: true,
         img_1: jemma_1,
-        img_2: jemma_2,
+        img_2: jemma_3,
       },
     ],
     [
