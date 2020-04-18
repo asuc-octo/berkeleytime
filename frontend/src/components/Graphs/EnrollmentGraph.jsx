@@ -49,8 +49,8 @@ export default function EnrollmentGraph({
     fontSize: '12px',
   };
   return (
-    <div className="graph">
-      <ResponsiveContainer width="100%" height={500}>
+    <div >
+      <ResponsiveContainer width="100%" height={400}>
         <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{top: isMobile ? 100 : 0}}>
 
           {isMobile ?

@@ -148,8 +148,10 @@ class EnrollmentGraphCard extends Component {
                       updateLineHover={this.updateLineHover}
                       updateGraphHover={this.updateGraphHover}
                     />
-                    <div style={{'padding-left': "60px"}}>{daysAfterPeriodStarts} Days After {period}</div>
+                    <div className="xlabel">Days After Phase 1</div>
                   </Col>
+
+
                   <Col lg={4}>
                     {hoveredClass && (
                       <EnrollmentInfoCard
@@ -182,6 +184,7 @@ class EnrollmentGraphCard extends Component {
     );
   }
 }
+
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
