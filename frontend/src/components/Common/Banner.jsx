@@ -15,7 +15,9 @@ class Banner extends PureComponent {
       <div className={`banner ${visible ? '' : 'banner-closed'}`}>
         <div className="content">
           <p>{ text }</p>
+          <a href = "/releases">
           <Button variant="bt-banner" size="sm">Learn More</Button>
+          </a>
         </div>
         <img src={close} onClick={() => dispatch(closeBanner())}/>
       </div>

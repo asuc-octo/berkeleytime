@@ -131,6 +131,8 @@ CurrentContributors.defaultProps = {
       {
         name: 'Eli Wu',
         role: 'Backend Engineer',
+        site:
+        'https://www.linkedin.com/in/eli-w-8b192ba0/',
         silly: false,
         img_1: eli_1,
       },
@@ -163,7 +165,7 @@ CurrentContributors.defaultProps = {
       {
         name: 'Janet Xu',
         role: 'Product Designer',
-        site: 'https://janetxu.com',
+        site: 'https://www.linkedin.com/in/janet-xu/',
         silly: true,
         img_1: janet_1,
         img_2: janet_2,

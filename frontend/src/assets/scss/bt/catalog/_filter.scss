@@ -73,6 +73,7 @@
   .filter-search {
     margin-bottom: 30px;
 
+
     input {
       width: 100%;
       padding-bottom: 3px;
@@ -86,10 +87,10 @@
       &:focus {
         outline: none;
         color: $bt-base-text;
+      }
 
-        &::placeholder {
-          color: $bt-light-border-grey;
-        }
+      &::placeholder {
+        color: $bt-light-border-grey;
       }
     }
   }
