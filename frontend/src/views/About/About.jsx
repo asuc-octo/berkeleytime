@@ -39,8 +39,8 @@ class About extends PureComponent {
           </a>
         </ButtonToolbar>
         <div className="group">
-          <img src={doe} />
           <img src={retreat_silly} />
+          <img src={doe} />
           <img src={janet_jemma} />
           <img src={retreat} />
           <img src={christina_janet} />
