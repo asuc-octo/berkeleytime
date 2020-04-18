@@ -38,11 +38,18 @@
 
   > img {
     position: fixed;
-    width: 12px;
-    height: 12px;
-    top: ($banner-height - 12px) / 2;
+    transition: .5s;
+    width: 24px;
+    height: 24px;
+    top: 18px;
     right: 32px;
     cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+
+    &:hover {
+      background: #ececec;
+    }
 
     @include mobile {
       top: 2vh;
