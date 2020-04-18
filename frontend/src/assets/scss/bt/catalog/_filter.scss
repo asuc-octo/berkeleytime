@@ -48,7 +48,7 @@
 
     p {
       font-size: 20px;
-      font-weight: 500px;
+      font-weight: 600;
       margin-right: 30px;
     }
 
@@ -107,6 +107,14 @@
 
     //override dropdown stylings
 
+    .css-10r6hld-indicatorContainer, .css-hu2rzu-indicatorContainer {
+      color: $bt-light-border-grey;
+      transition: .5s;
+      &:hover {
+        color: #ababab;
+      }
+    }
+
     .css-1wa3eu0-placeholder::placeholder {
       color: $bt-light-border-grey;
     }
@@ -146,7 +154,7 @@
 
     .css-1rhbuit-multiValue {
       background-color: #f3f3f3;
-      border-radius: 4px;
+      border-radius: 16px;
       padding: 2px 6px;
     }
   }
