@@ -1,25 +1,19 @@
 .graph-empty {
-  min-height: inherit;
-
+  // min-height: inherit;
+  height: 420px;
 
   .graph-empty-content {
-    position: absolute;
-    top: 500px;
-    left: -450px;
+    position: relative;
+    bottom: 300px;
+    right: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: inherit;
 
-
-    .graph-empty-image {
-      max-width: 3%;
-      filter: contrast(350%);
-    }
-
     .graph-empty-heading {
-      color: $bt-border-grey;
+      color: $bt-light-text;
       display: inline-block;
       font-size: 16px;
       font-weight: bolder;

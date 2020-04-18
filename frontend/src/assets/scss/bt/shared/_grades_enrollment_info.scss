@@ -1,6 +1,21 @@
+
+
+
 .grades-info, .enrollment-info {
   display: flex;
   flex-direction: column;
+
+  .info-icon {
+    padding-left: 5px;
+    width: 6%;
+  }
+
+  .info-text {
+    line-height: 1.6;
+    color: $bt-grey-text;
+    font-weight: lighter;
+  }
+
 
   .header {
     display: flex;

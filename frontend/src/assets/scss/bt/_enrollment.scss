@@ -1,5 +1,6 @@
 .enrollment{
 
+
   .btn-primary:disabled {
       cursor: default;
   }
@@ -13,8 +14,11 @@
   }
 
   .disclaimer {
-
-    padding: 20px 40px;
+    .info {
+      width: 1.4%;
+    }
+    padding-left: 50px;
+    padding-top: 5px;
 
     p {
       display: inline;
@@ -67,40 +71,55 @@
 }
 
 // EnrollmentGraph
-.enrollment-graph-card {
-  box-shadow: none;
-  border: none;
 
-  .enrollment-graph {
-    margin-top: 20px;
-    padding: 15px 15px 0px 35px;
-    min-height: 500px;
+.enrollment-graph {
+  margin-top: 20px;
 
-    @include mobile {
-      padding: 0px 10px 0px 10px;
-      text-align: center;
-      overflow-x: scroll;
-    }
+  .enrollment-content {
+    .xlabel {
+      padding-left: 60px;
+      font-weight: bold;
+      color: $bt-light-text;
 
-    .enrollment-content {
-
-      @include mobile {
-        width: 500px;
-        //ResponsiveContainer already sets height to 500px
-        min-height: 510px;
-      }
-
-      .graph {
-        height: 400px;
-        padding: 15px 15px 15px 15px;
-      }
-      .graph-title {
-          font-weight: bold;
-          font-size: 20px;
-      }
     }
   }
 }
+
+
+// .enrollment-graph-card {
+//   box-shadow: none;
+//   border: none;
+//
+//   .enrollment-graph {
+//     margin-top: 20px;
+//     padding: 15px 15px 0px 35px;
+//     min-height: 500px;
+//
+//     @include mobile {
+//       padding: 0px 10px 0px 10px;
+//       text-align: center;
+//       overflow-x: scroll;
+//     }
+//
+//     .enrollment-content {
+//
+//       @include mobile {
+//         width: 500px;
+//         //ResponsiveContainer already sets height to 500px
+//         min-height: 510px;
+//       }
+//
+//       .graph {
+//         height: 400px;
+//         padding: 15px 15px 15px 15px;
+//       }
+//       .graph-title {
+//           font-weight: bold;
+//           font-size: 20px;
+//       }
+//     }
+//   }
+// }
 
 // EnrollmentInfoCard
 .card.enrollment-card-info {

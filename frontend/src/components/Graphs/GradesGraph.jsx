@@ -62,8 +62,8 @@ export default function GradesGraph({
   return (
       <div>
       {!isMobile ?
-        <ResponsiveContainer width="100%" height={500}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -50, bottom: 0 }} >
+        <ResponsiveContainer width="100%" height={420}>
+        <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }} >
           <XAxis dataKey="name" />
           <YAxis type="number" unit="%" />
           <Tooltip
