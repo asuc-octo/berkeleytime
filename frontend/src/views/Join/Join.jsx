@@ -8,21 +8,14 @@ class Join extends PureComponent {
     const { values } = this.props;
 
     return (
-      <div className="about">
-        <div className="about-us">
+      <div className="join">
+        <div className="join-us">
           <h5>Join our Team!</h5>
           <p>
             We're a small group of student volunteers at UC Berkeley, dedicated to
             simplifying the course discovery experience. We actively build, improve
             and maintain Berkeleytime.
           </p>
-        </div>
-        <div className="group">
-          <img src={doe} />
-        </div>
-        <div className="values">
-          <h5>Our Values</h5>
-
         </div>
       </div>
     );

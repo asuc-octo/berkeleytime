@@ -1,11 +1,27 @@
 .grades {
 
+  .css-1myhgat-indicatorContainer {
+    color: $bt-light-border-grey;
+    transition: .5s;
+    &:hover {
+      color: #ababab;
+    }
+  }
+
   .btn-primary:disabled {
       cursor: default;
   }
 
   .css-yk16xz-control:hover {
     cursor: pointer;
+  }
+
+  .css-10r6hld-indicatorContainer, .css-hu2rzu-indicatorContainer {
+    color: $bt-light-border-grey;
+    transition: .5s;
+    &:hover {
+      color: #ababab;
+    }
   }
 
   .disclaimer {
