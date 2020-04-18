@@ -51,7 +51,7 @@ class BerkeleyTime extends PureComponent {
   }
 
   render() {
-    const bannerText = 'We have a new announcement! Here is a longer description of the main text and more details about the whole thing.';
+    const bannerText = 'We just pushed a huge redesign and added new pages! ✨';
     const { banner } = this.props;
 
     return (
