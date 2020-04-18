@@ -8,7 +8,6 @@ import GradesGraph from '../Graphs/GradesGraph';
 import GraphEmpty from '../Graphs/GraphEmpty';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 import GradesInfoCardMobile from '../GradesInfoCard/GradesInfoCardMobile';
-import infoImage from '../../assets/img/images/info.png';
 
 import { fetchGradeData } from '../../redux/actions';
 
@@ -22,7 +21,7 @@ class GradesGraphCard extends Component {
 
     this.updateBarHover = this.updateBarHover.bind(this);
     this.updateGraphHover = this.updateGraphHover.bind(this);
-    
+
   }
 
   componentDidMount() {
@@ -30,12 +29,14 @@ class GradesGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { selectedCourses } = this.props;
+    const { selectedCourses, gradesData } = this.props;
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getGradesData();
     }
-    
-    const { gradesData } = this.props;
+    if (gradesData !== prevProps.gradesData && gradesData.length > 0 && selectedCourses.length == 1) {
+      this.update(selectedCourses[0], 0)
+    }
+
     const course_letter = gradesData.map((course) => course.course_letter);
     const course_gpa = gradesData.map((course) => course.course_gpa);
     const section_letter = gradesData.map((course) => course.section_letter);
@@ -65,6 +66,7 @@ class GradesGraphCard extends Component {
 
   // Handler function for updating GradesInfoCard on hover
   updateBarHover(barData) {
+
     const { selectedCourses } = this.props;
     const { payload, name, value } = barData;
 
@@ -94,7 +96,6 @@ class GradesGraphCard extends Component {
   render() {
     const { hoveredClass } = this.state;
     const { graphData, gradesData, selectedCourses, isMobile } = this.props;
-
 
     return (
       <div className="grades-graph">
@@ -134,11 +135,7 @@ class GradesGraphCard extends Component {
                     color={vars.colors[hoveredClass.colorId]}
                     isMobile={this.props.isMobile}
                   />
-                  <div className="info">
-                    <img className="info-icon" src={infoImage} alt="info icon" />
-                  </div>
                 </Col>
-
                 {!isMobile ?
                 <Col lg={4}>
                   {hoveredClass
