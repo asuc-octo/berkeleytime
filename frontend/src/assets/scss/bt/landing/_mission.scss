@@ -1,0 +1,36 @@
+.landing-mission {
+  margin-bottom: 150px;
+  @include touch {
+    margin: 50px 0 50px;
+  }
+
+  img {
+    width: 100%;
+    object-fit: scale-down;
+
+    @include mobile {
+      padding-right: 0px;
+      padding-bottom: 20px;
+      display: block;
+      margin: 0 auto;
+    }
+  }
+
+  .mission {
+    max-width: 300px;
+
+    @include xs-sm {
+      margin-top: 40px;
+    }
+
+    h3 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+  }
+}

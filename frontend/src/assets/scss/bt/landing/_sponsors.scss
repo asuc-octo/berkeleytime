@@ -1,0 +1,36 @@
+.landing-sponsors {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+  margin-bottom: 150px;
+  
+  .desc {
+    width: 350px;
+    text-align: center;
+
+    h3 {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    p {
+      margin-bottom: 30px;
+    }
+  }
+  
+  .sponsors {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    
+    img {
+      padding: 10px;
+      max-height: 120px;
+      object-fit: scale-down;
+    }
+  }
+}

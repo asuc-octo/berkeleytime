@@ -1,55 +1,25 @@
+/// This file includes additional variants and sizes for Bootstrap buttons.
+/// https://react-bootstrap.github.io/getting-started/theming/
 
-// bootstrap button theming
-.btn-bt-primary {
-  color: $bt-white;
-  background-color: $bt-primary;
-  border-color: $bt-primary;
-  border-width: 1px;
-  border-radius: 4px;
-
-  transition: 0.2s;
+@mixin bt-variant($color, $background, $border, $hover) {
+  color: $color;
+  background-color: $background;
+  border-color: $border;
+  transition: background-color 0.2s;
 
   &:hover {
-    color: $bt-white;
+    color: $color;
+    background-color: $hover;
     cursor: pointer;
-    background-color: $bt-primary-background;
   }
+}
 
-  a {
-    color: inherit;
-  }
+.btn-bt-primary {
+  @include bt-variant($bt-white, $bt-primary, $bt-primary, $bt-primary-background);
 }
 
 .btn-bt-primary-inverted {
-  color: $bt-primary;
-  background-color: $bt-white;
-  border-color: $bt-border-grey;
-
-  border-width: 1.5px;
-  border-radius: 4px;
-  transition: 0.2s;
-
-  &:hover {
-    background-color: $bt-button-background;
-    color: $bt-primary;
-    cursor: pointer;
-  }
-
-  a {
-    color: inherit;
-  }
-}
-
-.btn-bt-banner {
-  color: $bt-primary;
-  background-color: $bt-white;
-  border-color: $bt-border-grey;
-  border-width: 1px;
-
-  &:hover {
-    color: $bt-primary;
-    background-color: $bt-button-background;
-  }
+  @include bt-variant($bt-primary, $bt-white, $bt-border-grey, $bt-button-background);
 }
 
 .btn-bt-red-inverted {
@@ -101,9 +71,9 @@
 }
 
 .btn-bt-md {
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 2;
+  font-size: 18px;
+  line-height: 1.5;
+  border-width: 2px;
   border-radius: 0.3rem;
 }
 

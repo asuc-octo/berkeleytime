@@ -1,15 +1,10 @@
 .bt-navbar {
-
-  @include mobile {
-    top: 22vh;
+  @include touch {
     .navbar-light .navbar-toggler {
       border: none;
     }
 
-    button.navbar-toggler.collapsed {
-      border: none;
-    }
-    button.navbar-toggler {
+    button.navbar-toggler, button.navbar-toggler.collapsed {
       border: none;
     }
   }
@@ -21,15 +16,12 @@
     font-size: 16px;
     color: $bt-base-text;
     transition: 200ms;
-    margin: 0 4px;
-    transition: .2s;
     border-radius: 6px;
 
     &:hover {
       background-color: $bt-button-background;
       color: $bt-primary;
     }
-
   }
 
   .navbar-brand {
@@ -37,9 +29,12 @@
     font-weight: 700;
     padding: .5rem 10px;
 
-    @include mobile {
+    @include touch {
       padding: 0;
     }
-
   }
+}
+
+.bt-navbar-banner {
+  position: absolute;
 }
