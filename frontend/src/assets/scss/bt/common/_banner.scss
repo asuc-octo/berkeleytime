@@ -7,7 +7,7 @@
   height: $banner-height;
   padding: 2px 0;
   background-color: $bt-off-white;
-  border-bottom: 1px solid $bt-light-border-grey;
+  // border-bottom: 1px solid $bt-light-border-grey;
 
   @include mobile {
     height: 22vh;
@@ -23,6 +23,7 @@
     justify-content: center;
     align-items: center;
     font-size: 14px;
+    font-weight: 500;
     width: 100%;
     height: 100%;
 
