@@ -11,20 +11,20 @@ function CheckboxGroup(props) {
     <Form>
       {props.nestedOptions.map(item => (
           <div>
-            {item.options !== null ?
+            {item.options != null ?
               <div className="filter-form-label">{item.label}</div> 
               :
               null
             }
 
-            {item.options !== null ?
+            {item.options != null ?
               Object.values(item.options).map(option => (
               <div>
                 <Form.Check
                   custom
-                  type="checkbox"
+                  type={formType}
                   id={option.value}
-                  name={option.label}
+                  name="modal-form"
                   label={option.label}
                   onClick={props.handler.bind(this)}
                 /> 
@@ -33,9 +33,9 @@ function CheckboxGroup(props) {
               <div className="custom-checkbox">
                 <Form.Check
                   custom
-                  type="checkbox"
+                  type={formType}
                   id={item.value}
-                  name={item.label}
+                  name="modal-form"
                   label={item.label}
                   onClick={props.handler.bind(this)}
                />
