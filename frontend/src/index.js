@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import ScrollToTop from './components/Scroll/ScrollToTop';
-import Berkeleytime from './components/Common/Berkeleytime';
+import Berkeleytime from './Berkeleytime';
 import store from './redux/store';
 
 import './assets/scss/berkeleytime.css';
