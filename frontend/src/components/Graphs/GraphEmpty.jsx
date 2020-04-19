@@ -1,6 +1,9 @@
 import React from 'react';
-// import emptyImage from '../../assets/img/images/empty-graph.png';
+import ReactTooltip from "react-tooltip";
+
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
+import info from '../../assets/img/images/graphs/info.svg';
+
 import {
   BarChart,
   Bar,
@@ -12,8 +15,6 @@ import {
 import vars from '../../variables/Variables';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 import { Container, Row, Col } from 'react-bootstrap';
-
-
 
 
 class GraphEmpty extends React.PureComponent {
@@ -32,13 +33,16 @@ class GraphEmpty extends React.PureComponent {
     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     const todayString = today.toLocaleDateString('en-US', dateOptions);
 
+    var courseAvgText = '<span class="info-text"}>Course average refers to the average of all <br />sections available across all instructors.</span>';
+    var sectionAvgText = '<span class="info-text"}>Section average refers to the average of all sections that <br />have been filtered for using the specified options.</span>';
+
     return (
       <div className="graph-empty">
       <Container fluid>
         <Row>
           <Col lg={8}>
-            <ResponsiveContainer width="100%" height={420}>
-            <BarChart data={pageType === "enrollment" ? graphData_enroll : graphData_grade} margin={{ top: 0, right: 0, left: -15, bottom: 0 }}>
+            <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={pageType == "enrollment" ? graphData_enroll : graphData_grade} margin={{ top: 0, right: 0, left: -15, bottom: 0 }}>
               <XAxis dataKey="name" />
               <YAxis type="number" unit="%" domain={[0, 100]}/>
               <Tooltip
@@ -50,6 +54,13 @@ class GraphEmpty extends React.PureComponent {
               ))}
             </BarChart>
             </ResponsiveContainer>
+            
+            <div className="graph-empty-content">
+              <img className="graph-empty-image" src={emptyImage} alt="empty state" />
+              <h3 className="graph-empty-heading" align="center">
+                You have not added any <br /> classes yet.
+              </h3>
+            </div>
           </Col>
 
           <Col lg={4}>
@@ -63,11 +74,23 @@ class GraphEmpty extends React.PureComponent {
               {pageType === "enrollment" ?
                 null :
                 <div>
-                <h6>Course Average</h6>
+                <h6>Course Average
+                  <span data-tip={courseAvgText} data-for="courseAvg">
+                    <img src={info} className="info-icon"/>
+                  </span>
+                  <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4"
+                      arrowColor="#FFFFFF"/>
+                </h6>
                 <div className="course-average">
                   <span>No Data</span>
                 </div>
-                <h6>Section Average</h6>
+                <h6>Section Average
+                  <span data-tip={sectionAvgText} data-for="sectionAvg">
+                    <img src={info} className="info-icon"/>
+                  </span>
+                  <ReactTooltip id='sectionAvg' type='light' html={true} border={true} borderColor="#C4C4C4"
+                      arrowColor="#FFFFFF"/>
+                </h6>
                 <div className="section-average">
                   <span>No Data</span>
                 </div>
@@ -79,13 +102,6 @@ class GraphEmpty extends React.PureComponent {
         </Row>
 
       </Container>
-
-        <div className="graph-empty-content">
-          <img className="graph-empty-image" src={emptyImage} alt="empty state" />
-          <h3 className="graph-empty-heading" align="center">
-            You have not added any <br /> classes yet.
-          </h3>
-        </div>
 
       </div>
     );
