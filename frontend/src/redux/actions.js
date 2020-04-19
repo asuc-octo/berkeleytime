@@ -307,8 +307,8 @@ export function fetchGradeData(classData) {
         let gradesData = data.map((res, i) => {
           let gradesData = res.data;
           gradesData['id'] = classData[i].id;
-          gradesData['instructor'] = classData[i].instructor == 'all' ? 'All Instructors' : classData[i].instructor;
-          gradesData['semester'] = classData[i].semester == 'all' ? 'All Semesters' : classData[i].semester;
+          gradesData['instructor'] = classData[i].instructor === 'all' ? 'All Instructors' : classData[i].instructor;
+          gradesData['semester'] = classData[i].semester === 'all' ? 'All Semesters' : classData[i].semester;
           gradesData['colorId'] = classData[i].colorId;
           return gradesData
         });
@@ -376,11 +376,11 @@ export function fetchGradeFromUrl(url, history) {
             } else {
               let matches = [];
               if (instructor.includes('/')) {
-                matches = res.data.filter(item => instructor == (toUrlForm(item.instructor) + '-/-' + item.section_number));
+                matches = res.data.filter(item => instructor === (toUrlForm(item.instructor) + '-/-' + item.section_number));
                 matches.map((item, i) => sections[i] = item.grade_id);
                 instructor = matches[0].instructor + ' / ' + matches[0].section_number;
               } else {
-                matches = res.data.filter(item => instructor == toUrlForm(item.instructor));
+                matches = res.data.filter(item => instructor === toUrlForm(item.instructor));
                 matches.map((item, i) => sections[i] = item.grade_id);
                 instructor = matches[0].instructor;
               }
@@ -388,9 +388,9 @@ export function fetchGradeFromUrl(url, history) {
             if (semester !== 'all') {
               let matches = [];
               if (semester.split(' ').length > 2) {
-                matches = res.data.filter(item => semester == (capitalize(item.semester) + ' ' + item.year + ' / ' + item.section_number));
+                matches = res.data.filter(item => semester === (capitalize(item.semester) + ' ' + item.year + ' / ' + item.section_number));
               } else {
-                matches = res.data.filter(item => semester == (capitalize(item.semester) + ' ' + item.year));
+                matches = res.data.filter(item => semester === (capitalize(item.semester) + ' ' + item.year));
               }
               let allSems = matches.map(item => item.grade_id);
               sections = sections.filter(item => allSems.includes(item));
@@ -545,16 +545,16 @@ export function fetchEnrollFromUrl(url, history) {
         courses = data.map((res, i) => {
           try {
             let semester = urlData[i].semester;
-            let section = urlData[i].section == 'all' ? urlData[i].section : parseInt(urlData[i].section);
+            let section = urlData[i].section === 'all' ? urlData[i].section : parseInt(urlData[i].section);
             let sections = [section];
             let instructor = 'all';
             let match = [];
-            if (section == 'all') {
-              match = res.data.filter(item => semester == (capitalize(item.semester) + ' ' + item.year))[0];
+            if (section === 'all') {
+              match = res.data.filter(item => semester === (capitalize(item.semester) + ' ' + item.year))[0];
               sections = match.sections.map(item => item.section_id);
             } else {
               match = res.data.map(item => item.sections.filter(item => item.section_id == section));
-              match = match.filter(item => item.length != 0);
+              match = match.filter(item => item.length !== 0);
               instructor = match[0][0].instructor + ' / ' + match[0][0].section_number;
             }
             let formattedCourse = {

@@ -11,13 +11,13 @@ function CheckboxGroup(props) {
     <Form>
       {props.nestedOptions.map(item => (
           <div>
-            {item.options != null ?
+            {item.options !== null ?
               <div className="filter-form-label">{item.label}</div> 
               :
               null
             }
 
-            {item.options != null ?
+            {item.options !== null ?
               Object.values(item.options).map(option => (
               <div>
                 <Form.Check

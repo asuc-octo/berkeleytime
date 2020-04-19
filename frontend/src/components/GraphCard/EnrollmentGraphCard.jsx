@@ -31,7 +31,7 @@ class EnrollmentGraphCard extends Component {
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getEnrollmentData();
     }
-    if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0 && selectedCourses.length == 1) {
+    if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0 && selectedCourses.length === 1) {
       this.update(selectedCourses[0], 0)
     }
   }
@@ -74,7 +74,7 @@ class EnrollmentGraphCard extends Component {
 
   update(course, day) {
     const { enrollmentData } = this.props;
-    const selectedEnrollment = enrollmentData.filter(c => course.id == c.id)[0];
+    const selectedEnrollment = enrollmentData.filter(c => course.id === c.id)[0];
 
     const valid = selectedEnrollment && selectedEnrollment.data.filter(d => d.day === day).length;
     if (valid) {
@@ -95,7 +95,7 @@ class EnrollmentGraphCard extends Component {
     const { selectedCourses } = this.props;
     const selectedClassID = lineData.dataKey;
     const day = lineData.index;
-    const selectedCourse = selectedCourses.filter(course => selectedClassID == course.id)[0];
+    const selectedCourse = selectedCourses.filter(course => selectedClassID === course.id)[0];
     this.update(selectedCourse, day);
   }
 
@@ -104,7 +104,7 @@ class EnrollmentGraphCard extends Component {
     const { isTooltipActive, activeLabel } = data;
     const { selectedCourses } = this.props;
 
-    if (isTooltipActive && selectedCourses.length == 1) {
+    if (isTooltipActive && selectedCourses.length === 1) {
       const selectedCourse = selectedCourses[0];
       const day = activeLabel;
       this.update(selectedCourse, day);

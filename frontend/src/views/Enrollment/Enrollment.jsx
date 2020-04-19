@@ -34,7 +34,7 @@ class Enrollment extends Component {
     const { enrollReset, fetchEnrollFromUrl, history } = this.props;
     try {
       let url = history.location.pathname;
-      if (url && (url == '/enrollment/' || url == '/enrollment')) {
+      if (url && (url === '/enrollment/' || url === '/enrollment')) {
         enrollReset();
       } else if (url) {
         fetchEnrollFromUrl(url, history);
@@ -50,12 +50,12 @@ class Enrollment extends Component {
 
   addToUrl(course) {
     const { history } = this.props;
-    let instructor = course.instructor == 'all' ? 'all' : course.sections[0];
+    let instructor = course.instructor === 'all' ? 'all' : course.sections[0];
     let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(course.semester)}-${instructor}`;
     let url = history.location.pathname;
     if (url && !url.includes(courseUrl)) {
-      url += (url == '/enrollment') ? '/' : '';
-      url += (url == '/enrollment/') ? '' : '&';
+      url += (url === '/enrollment') ? '/' : '';
+      url += (url === '/enrollment/') ? '' : '&';
       url += courseUrl;
       history.push(url);
     }
@@ -88,8 +88,8 @@ class Enrollment extends Component {
     let url = '/enrollment/';
     for (let i = 0; i < updatedCourses.length; i++) {
       let c = updatedCourses[i];
-      if (i != 0) url += '&';
-      let instructor = c.instructor == 'all' ? 'all' : c.sections[0];
+      if (i !== 0) url += '&';
+      let instructor = c.instructor === 'all' ? 'all' : c.sections[0];
       url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${instructor}`;
     }
     history.push(url);

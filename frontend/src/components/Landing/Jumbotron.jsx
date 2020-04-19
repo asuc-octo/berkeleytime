@@ -8,41 +8,28 @@ import {
   Button,
 } from 'react-bootstrap';
 
-import { ReactComponent as Logo } from '../../assets/img/images/landing/landing_main.svg';
+import { ReactComponent as Logo } from '../../assets/svg/landing/main.svg';
 
-function Jumbotron({ isMobile }) {
+function Jumbotron() {
   return (
-    <div className="jumbo">
+    <div className="landing-jumbo">
       <Container>
         <Row>
-          {isMobile ?
-          <Col xs={12} sm={12} md={7} lg={7}>
-            <div className="jumbo-img-container">
-              <div className="jumbo-img">
-                <Logo />
-              </div>
-            </div>
-          </Col> : null
-          }
-          <Col xs={12} sm={12} md={5} lg={5}>
-            <div className="jumbo-heading">
+          <Col xs={{ span: 12, order: 3 }} md={{ span: 5, order: 1 }}>
+            <div className="heading">
               <h1>Berkeley’s online course discovery platform.</h1>
               <p>Berkeleytime is a platform built, maintained, and run by students, just like you. We work hard to simplify and improve the course discovery experience.</p>
-              <ButtonToolbar className="jumbo-heading-buttons">
+              <ButtonToolbar className="heading-buttons">
                 <Button variant="bt-primary" size="bt-md" as={Link} to="/catalog">Explore Courses</Button>
                 <Button variant="bt-primary-inverted" size="bt-md" as={Link} to="/about">About Us</Button>
               </ButtonToolbar>
             </div>
           </Col>
-          {!isMobile ?
-          <Col xs={12} sm={12} md={7} lg={7}>
-            <div className="jumbo-img-container">
-              <div className="jumbo-img">
-                <Logo />
-              </div>
+          <Col xs={{ span: 12, order: 2 }} md={7}>
+            <div className="animation-container">
+              <Logo />
             </div>
-          </Col> : null
-          }
+          </Col>
         </Row>
       </Container>
     </div>
