@@ -5,24 +5,43 @@
   .bt-footer-container {
     max-width: 1150px;
     margin: 0 auto;
-    padding: 40px 80px 40px 40px;
+    padding: 40px 80px 48px 40px;
 
     @include mobile {
-      max-width: 300px;
+      max-width: 330px;
       padding: 20px 0px 40px 0px;
-      margin: 12px 10px 10px 10px;
+      margin-left: 5%;
+
+      .col-4 {
+        flex: 0 0 33%;
+        max-width: 33%;
+      }
     }
+
+    @include desktop {
+      .col-lg-2 {
+          flex: 0 0 20%;
+          max-width: 20%;
+      }
+
+      .offset-lg-3 {
+        margin-left: 25%;
+      }
+
+    }
+
+
 
     .bt-footer-column {
       display: flex;
       flex-direction: column;
 
       :first-child {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
       }
 
       > *:not(:first-child):not(:last-child) {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
 
       > *:not(:first-child) {
@@ -35,12 +54,11 @@
       }
 
       p {
-        font-size: 16px;
-        color: $bt-base-text;
-
-        @include mobile {
-          font-size: 14px;
-        }
+        font-size: 14px;
+        color: $bt-grey;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        font-weight: 600;
       }
 
       a {
@@ -56,7 +74,6 @@
       }
 
       .footer-link:hover {
-        // color: $bt-grey;
         text-decoration: underline;
         cursor: pointer;
       }
@@ -69,7 +86,7 @@
         margin-left: 8px;
         padding: 2px 4px;
         color: #FFFFFF;
-        font-size: 12px;
+        font-size: 10px;
         line-height: 150%;
 
 
@@ -80,5 +97,7 @@
         }
       }
     }
+
+
   }
 }
