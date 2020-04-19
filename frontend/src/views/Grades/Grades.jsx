@@ -42,7 +42,7 @@ class Grades extends Component {
     const { gradeReset, fetchGradeFromUrl, history } = this.props;
     try {
       let url = history.location.pathname;
-      if (url && (url == '/grades/' || url == '/grades')) {
+      if (url && (url === '/grades/' || url === '/grades')) {
         gradeReset();
       } else if (url) {
         fetchGradeFromUrl(url, history);
@@ -63,8 +63,8 @@ class Grades extends Component {
     let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(course.semester)}-${instructor}`;
     let url = history.location.pathname;
     if (url && !url.includes(courseUrl)) {
-      url += (url == '/grades') ? '/' : '';
-      url += (url == '/grades/') ? '' : '&';
+      url += (url === '/grades') ? '/' : '';
+      url += (url === '/grades/') ? '' : '&';
       url += courseUrl;
       history.push(url);
     }
@@ -97,7 +97,7 @@ class Grades extends Component {
     let url = '/grades/';
     for (let i = 0; i < updatedCourses.length; i++) {
       let c = updatedCourses[i];
-      if (i != 0) url += '&';
+      if (i !== 0) url += '&';
       url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${this.toUrlForm(c.instructor)}`;
     }
     history.push(url);

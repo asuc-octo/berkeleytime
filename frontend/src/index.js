@@ -4,8 +4,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
+
 import ScrollToTop from './components/Scroll/ScrollToTop';
-import BerkeleyTime from './components/Common/BerkeleyTime';
+import Berkeleytime from './Berkeleytime';
 import store from './redux/store';
 
 import './assets/scss/berkeleytime.css';
@@ -14,7 +15,7 @@ ReactDOM.render((
   <Provider store={store}>
     <BrowserRouter>
       <ScrollToTop>
-        <BerkeleyTime />
+        <Berkeleytime />
       </ScrollToTop>
     </BrowserRouter>
   </Provider>
