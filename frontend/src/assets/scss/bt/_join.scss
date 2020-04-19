@@ -7,6 +7,20 @@
           justify-content: center;
           margin-top: 20px;
           margin-bottom: 64px;
+
+          input {
+            overflow: visible;
+            margin-right: 10px;
+            border: solid 1px #cfcfcf;
+            text-indent: 10px;
+            color: $bt-base-text;
+            border-radius: 4px;
+            width: 280px;
+
+            &::placeholder{
+              color: $bt-light-grey;
+            }
+          }
         }
 
   .nav-link {
@@ -75,6 +89,22 @@
 
       @include mobile {
         width: 330px;
+      }
+    }
+
+    .releases-heading-button.btn-toolbar {
+      > input {
+        overflow: visible;
+        margin-right: 10px;
+        border: solid 1px #cfcfcf;
+        text-indent: 10px;
+        color: $bt-base-text;
+        border-radius: 4px;
+        width: 280px;
+
+        &::placeholder{
+          color: $bt-light-grey;
+        }
       }
     }
   }
@@ -216,4 +246,5 @@
   .value.col-lg-4.col-md-4.col-12 {
         flex: none;
   }
+
 }
