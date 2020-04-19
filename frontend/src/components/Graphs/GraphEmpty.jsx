@@ -1,10 +1,5 @@
 import React from 'react';
-// import emptyImage from '../../assets/img/images/empty-graph.png';
-<<<<<<< HEAD
-import emptyImage from '../../assets/img/images/empty-sign.png';
-=======
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
->>>>>>> 3faa8dc1073dfb880c8d7973d8b44642a968c865
 import {
   BarChart,
   Bar,
@@ -49,16 +44,9 @@ class GraphEmpty extends React.PureComponent {
       <div className="graph-empty">
       <Container fluid>
         <Row>
-<<<<<<< HEAD
           <Col xs={{span:12, order:2}} s={{span:12, order:2}} md={{order:1}} lg={{span:8, order:1}}>
-            <ResponsiveContainer width="90%" height={440}>
-            <BarChart data={pageType == "enrollment" ? graphData_enroll : graphData_grade}>
-              <Label position="center" />
-=======
-          <Col lg={8}>
             <ResponsiveContainer width="100%" height={420}>
             <BarChart data={pageType === "enrollment" ? graphData_enroll : graphData_grade} margin={{ top: 0, right: 0, left: -15, bottom: 0 }}>
->>>>>>> 3faa8dc1073dfb880c8d7973d8b44642a968c865
               <XAxis dataKey="name" />
               <YAxis type="number" unit="%" domain={[0, 100]}/>
               <Tooltip
