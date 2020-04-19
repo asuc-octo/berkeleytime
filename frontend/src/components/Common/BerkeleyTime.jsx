@@ -9,6 +9,7 @@ import Navigation from './Navigation';
 import Footer from './Footer';
 import routes from '../../routes/routes';
 
+// eslint-disable-next-line no-unused-vars
 import { openBanner, showMobile, hideMobile } from '../../redux/actions';
 
 const gaTrackingID = 'UA-35316609-1';
@@ -25,7 +26,7 @@ class Berkeleytime extends Component {
     super(props);
 
     // comment out to not display banner
-    this.props.dispatch(openBanner());
+    // this.props.dispatch(openBanner());
     this.updateScreensize = this.updateScreensize.bind(this);
   }
 

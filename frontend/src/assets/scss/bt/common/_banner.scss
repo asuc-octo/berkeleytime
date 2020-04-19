@@ -33,6 +33,10 @@
 
     button {
       min-width: 95px;
+
+      @include xs {
+        min-width: 55px;
+      }
     }
   }
 

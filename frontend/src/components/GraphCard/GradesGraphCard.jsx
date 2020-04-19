@@ -33,7 +33,7 @@ class GradesGraphCard extends Component {
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getGradesData();
     }
-    if (gradesData !== prevProps.gradesData && gradesData.length > 0 && selectedCourses.length == 1) {
+    if (gradesData !== prevProps.gradesData && gradesData.length > 0 && selectedCourses.length === 1) {
       this.update(selectedCourses[0], 0)
     }
 
@@ -51,7 +51,7 @@ class GradesGraphCard extends Component {
 
   update(course, grade) {
     const { gradesData } = this.props;
-    const selectedGrades = gradesData.filter(c => course.id == c.id)[0];
+    const selectedGrades = gradesData.filter(c => course.id === c.id)[0];
 
     const hoverTotal = {
       ...course,
@@ -72,12 +72,12 @@ class GradesGraphCard extends Component {
 
     let selectedClassID = '';
     for (const key in payload) {
-      if (payload[key] == value) {
+      if (payload[key] === value) {
         selectedClassID = key;
       }
     }
 
-    const selectedCourse = selectedCourses.filter(course => selectedClassID == course.id)[0];
+    const selectedCourse = selectedCourses.filter(course => selectedClassID === course.id)[0];
     this.update(selectedCourse, name);
   }
 
@@ -86,7 +86,7 @@ class GradesGraphCard extends Component {
     const { isTooltipActive, activeLabel } = data;
     const { selectedCourses } = this.props;
 
-    if (isTooltipActive && selectedCourses.length == 1) {
+    if (isTooltipActive && selectedCourses.length === 1) {
       const selectedCourse = selectedCourses[0];
       const grade = activeLabel;
       this.update(selectedCourse, grade);

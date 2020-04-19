@@ -17,7 +17,7 @@ class Banner extends PureComponent {
           <p>{ text }</p>
           <Button variant="bt-primary-inverted" size="sm">Learn More</Button>
         </div>
-        <img src={close} onClick={() => dispatch(closeBanner())}/>
+        <img src={close} alt="close" onClick={() => dispatch(closeBanner())}/>
       </div>
     ) : null;
   }

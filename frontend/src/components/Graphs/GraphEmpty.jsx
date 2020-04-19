@@ -38,7 +38,7 @@ class GraphEmpty extends React.PureComponent {
         <Row>
           <Col lg={8}>
             <ResponsiveContainer width="100%" height={420}>
-            <BarChart data={pageType == "enrollment" ? graphData_enroll : graphData_grade} margin={{ top: 0, right: 0, left: -15, bottom: 0 }}>
+            <BarChart data={pageType === "enrollment" ? graphData_enroll : graphData_grade} margin={{ top: 0, right: 0, left: -15, bottom: 0 }}>
               <XAxis dataKey="name" />
               <YAxis type="number" unit="%" domain={[0, 100]}/>
               <Tooltip
@@ -60,7 +60,7 @@ class GraphEmpty extends React.PureComponent {
               </div>
               <div className="title">No Class Name Data</div>
               <div className="info">No Semester or Instructor Data</div>
-              {pageType == "enrollment" ?
+              {pageType === "enrollment" ?
                 null :
                 <div>
                 <h6>Course Average</h6>

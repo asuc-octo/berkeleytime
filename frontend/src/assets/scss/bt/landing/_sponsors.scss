@@ -5,6 +5,9 @@
   align-items: center;
   
   margin-bottom: 150px;
+  @include touch {
+    margin-bottom: 100px;
+  }
   
   .desc {
     width: 350px;
