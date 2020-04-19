@@ -2,6 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 
+function New() {
+  return (
+    <span className="new-box">New</span>
+  );
+}
+
 function Footer() {
   return (
     <footer className="bt-footer">

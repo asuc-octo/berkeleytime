@@ -44,13 +44,9 @@
         margin-bottom: 8px;
       }
 
-      > *:not(:first-child) {
-        font-size: 16px;
-        line-height: 150%;
-
-        @include mobile {
-          font-size: 14px;
-        }
+      font-size: 16px;
+      @include mobile {
+        font-size: 14px;
       }
 
       p {
@@ -62,13 +58,13 @@
       }
 
       a {
-        font-size: 16px;
         color: $bt-light-grey;
         transition: 200ms;
         width: max-content;
 
-        &:hover {
-          cursor: default;
+        > :first-child:hover {
+          text-decoration: underline;
+          cursor: pointer;
         }
 
       }
@@ -81,7 +77,8 @@
       .new-box {
         width: 48px;
         height: 24px;
-        background: #2F80ED;
+        font-size: 12px;
+        background-color: $bt-blue;
         border-radius: 3px;
         margin-left: 8px;
         padding: 2px 4px;

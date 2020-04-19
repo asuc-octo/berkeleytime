@@ -25,7 +25,11 @@
   }
 
   .disclaimer {
-    padding-left: 15px;
+    .info {
+      width: 1.4%;
+    }
+    padding-left: 50px;
+    padding-top: 5px;
 
     p {
       display: inline;

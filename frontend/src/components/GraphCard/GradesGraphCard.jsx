@@ -21,7 +21,7 @@ class GradesGraphCard extends Component {
 
     this.updateBarHover = this.updateBarHover.bind(this);
     this.updateGraphHover = this.updateGraphHover.bind(this);
-    
+
   }
 
   componentDidMount() {
@@ -29,12 +29,14 @@ class GradesGraphCard extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { selectedCourses } = this.props;
+    const { selectedCourses, gradesData } = this.props;
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getGradesData();
     }
-    
-    const { gradesData } = this.props;
+    if (gradesData !== prevProps.gradesData && gradesData.length > 0 && selectedCourses.length === 1) {
+      this.update(selectedCourses[0], 0)
+    }
+
     const course_letter = gradesData.map((course) => course.course_letter);
     const course_gpa = gradesData.map((course) => course.course_gpa);
     const section_letter = gradesData.map((course) => course.section_letter);
@@ -49,7 +51,7 @@ class GradesGraphCard extends Component {
 
   update(course, grade) {
     const { gradesData } = this.props;
-    const selectedGrades = gradesData.filter(c => course.id == c.id)[0];
+    const selectedGrades = gradesData.filter(c => course.id === c.id)[0];
 
     const hoverTotal = {
       ...course,
@@ -64,17 +66,18 @@ class GradesGraphCard extends Component {
 
   // Handler function for updating GradesInfoCard on hover
   updateBarHover(barData) {
+
     const { selectedCourses } = this.props;
     const { payload, name, value } = barData;
 
     let selectedClassID = '';
     for (const key in payload) {
-      if (payload[key] == value) {
+      if (payload[key] === value) {
         selectedClassID = key;
       }
     }
 
-    const selectedCourse = selectedCourses.filter(course => selectedClassID == course.id)[0];
+    const selectedCourse = selectedCourses.filter(course => selectedClassID === course.id)[0];
     this.update(selectedCourse, name);
   }
 
@@ -83,7 +86,7 @@ class GradesGraphCard extends Component {
     const { isTooltipActive, activeLabel } = data;
     const { selectedCourses } = this.props;
 
-    if (isTooltipActive && selectedCourses.length == 1) {
+    if (isTooltipActive && selectedCourses.length === 1) {
       const selectedCourse = selectedCourses[0];
       const grade = activeLabel;
       this.update(selectedCourse, grade);
@@ -93,7 +96,6 @@ class GradesGraphCard extends Component {
   render() {
     const { hoveredClass } = this.state;
     const { graphData, gradesData, selectedCourses, isMobile } = this.props;
-
 
     return (
       <div className="grades-graph">
@@ -134,7 +136,6 @@ class GradesGraphCard extends Component {
                     isMobile={this.props.isMobile}
                   />
                 </Col>
-
                 {!isMobile ?
                 <Col lg={4}>
                   {hoveredClass
