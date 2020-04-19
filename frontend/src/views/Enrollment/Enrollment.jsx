@@ -132,7 +132,7 @@ class Enrollment extends Component {
             updateClassCardEnrollment={this.updateClassCardEnrollment}
             isMobile={isMobile}
           />
-
+          <div className="xlabel">Days After Phase 1</div>
           <div className="disclaimer">
             <img src={info} className="info" />
               <p>We source our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System's</a> Course and Class APIs.</p>

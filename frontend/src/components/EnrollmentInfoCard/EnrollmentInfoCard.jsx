@@ -38,7 +38,7 @@ class EnrollmentInfoCard extends PureComponent {
     let daysAfterPeriodStarts = 0;
     if (selectedPoint.day < telebears.phase2_start_day) {
       period = 'Phase I';
-      daysAfterPeriodStarts = selectedPoint.day - telebears.phase1_start_day;
+      daysAfterPeriodStarts = selectedPoint.day;
     } else if (selectedPoint.day < telebears.adj_start_day) {
       period = 'Phase II';
       daysAfterPeriodStarts = selectedPoint.day - telebears.phase2_start_day;

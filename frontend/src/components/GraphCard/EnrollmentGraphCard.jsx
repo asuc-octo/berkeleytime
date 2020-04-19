@@ -148,7 +148,6 @@ class EnrollmentGraphCard extends Component {
                       updateLineHover={this.updateLineHover}
                       updateGraphHover={this.updateGraphHover}
                     />
-                    <div className="xlabel">Days After Phase 1</div>
                   </Col>
 
 
