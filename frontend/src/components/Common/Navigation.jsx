@@ -13,8 +13,13 @@ class Navigation extends Component {
     this.toggle = this.toggle.bind(this);
   }
 
+  /**
+   * Toggles collapsable navbar only when navbar collapses (under 992px)
+   */
   toggle() {
-    this.setState(prevState => ({ open: !prevState.open }));
+    if (window.innerWidth < 992) {
+      this.setState(prevState => ({ open: !prevState.open }));
+    }
   }
 
   render() {
@@ -31,7 +36,7 @@ class Navigation extends Component {
         expanded={open}
       >
         <Navbar.Brand as={Link} to="/">Berkeleytime</Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => this.toggle(!open)} />
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={this.toggle} />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto" />
           <Nav>
