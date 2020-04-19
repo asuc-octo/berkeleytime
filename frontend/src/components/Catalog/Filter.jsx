@@ -406,7 +406,7 @@ export class FilterSidebar extends Component {
             hideModal={this.hideModal}
             saveModal={this.saveModal}
             storeSelection={this.storeSelection}
-            displayRadio={this.state.modalType == "sortBy"}
+            displayRadio={this.state.modalType === "sortBy"}
           />
        </div>
     );

@@ -3,22 +3,20 @@
   height: 420px;
 
   .graph-empty-content {
+    position: relative;
+    bottom: 300px;
+    right: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: inherit;
 
-
-    .graph-empty-image {
-      max-width: 9%;
-    }
-
     .graph-empty-heading {
       color: $bt-light-text;
       display: inline-block;
       font-size: 16px;
-      font-weight: 500;
+      font-weight: bolder;
       margin-top: 15px;
     }
 
@@ -27,7 +25,7 @@
   .grades-info {
     display: flex;
     flex-direction: column;
-    
+
     .date {
       font-weight: bold;
     }

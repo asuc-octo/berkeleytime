@@ -1,5 +1,14 @@
+/**
+ * A bunch of utility functions
+ */
+
 import React from 'react';
 
+/**
+ * 
+ * @param {*} text 
+ * @param {*} percentage 
+ */
 function applyIndicatorPercent(text, percentage) {
   let theme;
   if (percentage < 0.34) {
@@ -17,11 +26,11 @@ function applyIndicatorPercent(text, percentage) {
 
 function applyIndicatorGrade(text, grade) {
   let theme;
-  if (grade[0] == 'A') {
+  if (grade[0] === 'A') {
     theme = 'bt-indicator-green';
-  } else if (grade[0] == 'B') {
+  } else if (grade[0] === 'B') {
     theme = 'bt-indicator-yellow';
-  } else if (grade[0] == 'C') {
+  } else if (grade[0] === 'C') {
     theme = 'bt-indicator-orange';
   } else {
     theme = 'bt-indicator-red';
@@ -34,7 +43,7 @@ function applyIndicatorGrade(text, grade) {
 
 /**
  * Formats units string by removing space and '.0' decimals
- * 
+ *
  * ex:  "4.0" -> "4 Units"
  *      "2.0 - 12.0" -> "2-12 Units"
  */
@@ -127,6 +136,10 @@ export {
   formatUnits,
   percentileToString,
   getGradeColor,
+<<<<<<< HEAD
   getEnrollmentDay,
   applyIndicatorEnrollment,
 };
+=======
+};
+>>>>>>> 3faa8dc1073dfb880c8d7973d8b44642a968c865

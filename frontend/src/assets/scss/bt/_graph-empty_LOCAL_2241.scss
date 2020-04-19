@@ -1,6 +1,6 @@
 .graph-empty {
-  // min-height: inherit;
-  height: 420px;
+  min-height: inherit;
+
 
   .graph-empty-content {
     display: flex;
@@ -15,7 +15,7 @@
     }
 
     .graph-empty-heading {
-      color: $bt-light-text;
+      color: $bt-border-grey;
       display: inline-block;
       font-size: 16px;
       font-weight: 500;

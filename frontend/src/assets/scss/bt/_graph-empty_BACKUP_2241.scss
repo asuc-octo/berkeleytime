@@ -3,17 +3,26 @@
   height: 420px;
 
   .graph-empty-content {
+<<<<<<< HEAD
+=======
+    position: relative;
+    bottom: 300px;
+    right: 200px;
+>>>>>>> 3faa8dc1073dfb880c8d7973d8b44642a968c865
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: inherit;
 
+<<<<<<< HEAD
 
     .graph-empty-image {
       max-width: 9%;
     }
 
+=======
+>>>>>>> 3faa8dc1073dfb880c8d7973d8b44642a968c865
     .graph-empty-heading {
       color: $bt-light-text;
       display: inline-block;

@@ -29,7 +29,7 @@ const routes = [
   { path: '/releases',   name: 'Releases',   component: Releases },
   { path: '/faq',        name: 'Faq',        component: Faq },
   { path: '/apidocs',    name: 'Api Docs',   component: ApiDocs },
-  { path: '/join',    name: 'Join',   component: Join },
+  { path: '/join',       name: 'Join',       component: Join },
   { path: '/error',      name: 'Error',      component: Error },
   { /* no path */        name: '404',        component: Error },
 ];
