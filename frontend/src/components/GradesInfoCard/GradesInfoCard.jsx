@@ -20,8 +20,8 @@ class GradesInfoCard extends PureComponent {
     } = this.props;
 
 
-    var courseAvgText = '<span class="info-text"}>The Course Average of a class is <br /> calculated by adding all <br /> historical grades together and <br /> dividing by number of etc.</span>';
-
+    var courseAvgText = '<span class="info-text"}>Course average refers to the average of all <br />sections available across all instructors.</span>';
+    var sectionAvgText = '<span class="info-text"}>Section average refers to the average of all sections that <br />have been filtered for using the specified options.</span>';
 
     return (
       <div className="grades-info">
@@ -43,10 +43,10 @@ class GradesInfoCard extends PureComponent {
           ({ courseGPA })
         </div>
         <h6>Section Average
-          <span data-tip={courseAvgText} data-for="courseAvg">
+          <span data-tip={sectionAvgText} data-for="sectionAvg">
             <img src={info} className="info-icon"/>
           </span>
-          <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4"
+          <ReactTooltip id='sectionAvg' type='light' html={true} border={true} borderColor="#C4C4C4"
               arrowColor="#FFFFFF"/>
         </h6>
         <div className="section-average">
