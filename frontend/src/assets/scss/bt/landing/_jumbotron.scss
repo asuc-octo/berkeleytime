@@ -1,16 +1,36 @@
-// jumbotron reserved for bootstrap
-.jumbo {
+.landing-jumbo {
   background-color: $bt-white;
   width: 100vw;
+  height: 100vh;
+  min-height: $viewport-min-height;
 
-  .jumbo-heading {
+  @include mobile {
     min-height: 600px;
-    height: 100vh;
+  }
+
+  .container, .container > .row {
+    height: 100%;
+  }
+
+  @include mobile {
+    /// when collapsed the animation will have 60% height
+    /// and the heading will have 40% height
+    .container > .row {
+      >:first-child {
+        height: 40%;
+      }
+
+      >:last-child {
+        height: 60%;
+      }
+    }
+  }
+
+  .heading {
+    height: 100%;
 
     @include mobile {
-      min-height: auto;
-      height: auto;
-      padding: 50px 20px 100px 20px;
+      padding: 20px;
     }
 
     display: flex;
@@ -20,120 +40,127 @@
     text-align: left;
 
     h1 {
-      margin-bottom: 16px;
+      margin-bottom: 15px;
       font-size: 28px;
-      color: $bt-base-text;
       font-weight: bold;
+      color: $bt-base-text;
 
-      @include touch {
+      @include sm-md {
         font-size: 24px;
+      }
+
+      @include xs {
+        font-size: 20px;
+        margin-bottom: 10px;
       }
     }
 
     p {
-      margin: 0 3px 10px; //3px better aligns with title
+      margin-bottom: 20px;
       font-size: 18px;
       color: $bt-grey-text;
 
-      @include touch{
+      @include sm-md {
         font-size: 16px;
+      }
+
+      @include xs {
+        font-size: 14px;
+        margin-bottom: 15px;
       }
     }
 
-    .jumbo-heading-buttons {
-      margin: 15px 0;
-
-      @include touch{
-
-        .btn-bt-lg {
+    .heading-buttons {
+      a {
+        @include sm-md {
           font-size: 16px;
         }
 
-        .btn-bt-primary {
-          margin-right: 7px;
+        @include xs {
+          font-size: 14px;
         }
       }
 
-      @include desktop{
-        a:not(:first-child) {
-          margin-left: 20px;
+      a:first-child {
+        margin-right: 15px;
+
+        @include touch {
+          margin-right: 7px;
         }
       }
     }
   }
 
-  .jumbo-img-container {
+  .animation-container {
     width: 100%;
-    height: calc(100vh + 20px);
-    min-height: $viewport-min-height;
+    height: 100%;
+
+    @include mobile {
+      padding-top: 100px;
+    }
 
     display: flex;
     justify-content: center;
     align-items: center;
 
-    @include mobile {
-      height: auto;
-      min-height: auto;
-    }
-
-    .jumbo-img {
+    svg {
       max-width: 100%;
       width: 500px;
-
-      @keyframes upDown {
-        from {
-          transform: translateY(-8px);
-        } to {
-          transform: translateY(8px);
-        }
-      }
-
-      @keyframes upDownShort {
-        from {
-          transform: translateY(-2px);
-        } to {
-          transform: translateY(2px);
-        }
-      }
-
-      @keyframes upDownAll {
-        from {
-          transform: translateY(-4px);
-        } to {
-          transform: translateY(4x);
-        }
-      }
-
-      #left-float {
-        animation: upDown 2s ease alternate infinite;
-      }
-
-      #middle-float {
-        animation: upDown 3s ease alternate infinite;
-      }
-
-      #right-float {
-        animation: upDown 2s ease alternate infinite;
-      }
-
-      #everything {
-        animation: upDownAll 2.5s ease alternate infinite;
-      }
-
-      #campanile, #hearst-building, #evans, #doe-library, #hearst-pond  {
-        animation: upDownAll 2.5s ease alternate infinite;
-      }
-
-      #treee, #treee-2, #other-bush, #ball-bush, #tre {
-        animation: upDownAll 2.5s ease alternate infinite;
-      }
+      object-fit: scale-down;
 
       @include mobile {
-        padding: 150px 20px 0px 20px;
-        width: 450px;
+        width: auto;
+        height: 100%;
+        max-width: 80%;
       }
+    }
 
-      object-fit: scale-down;
+    @keyframes upDown {
+      from {
+        transform: translateY(-8px);
+      } to {
+        transform: translateY(8px);
+      }
+    }
+
+    @keyframes upDownShort {
+      from {
+        transform: translateY(-2px);
+      } to {
+        transform: translateY(2px);
+      }
+    }
+
+    @keyframes upDownAll {
+      from {
+        transform: translateY(-4px);
+      } to {
+        transform: translateY(4x);
+      }
+    }
+
+    #left-float {
+      animation: upDown 2s ease alternate infinite;
+    }
+
+    #middle-float {
+      animation: upDown 3s ease alternate infinite;
+    }
+
+    #right-float {
+      animation: upDown 2s ease alternate infinite;
+    }
+
+    #everything {
+      animation: upDownAll 2.5s ease alternate infinite;
+    }
+
+    #campanile, #hearst-building, #evans, #doe-library, #hearst-pond  {
+      animation: upDownAll 2.5s ease alternate infinite;
+    }
+
+    #treee, #treee-2, #other-bush, #ball-bush, #tre {
+      animation: upDownAll 2.5s ease alternate infinite;
     }
   }
 }

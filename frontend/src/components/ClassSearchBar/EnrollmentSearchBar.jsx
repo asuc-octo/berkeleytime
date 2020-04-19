@@ -42,12 +42,12 @@ class EnrollmentSearchBar extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.selectPrimary != this.state.selectPrimary) {
+    if (nextProps.selectPrimary !== this.state.selectPrimary) {
       this.setState({
         selectPrimary: nextProps.selectPrimary
       });
     }
-    if (nextProps.selectSecondary != this.state.selectSecondary) {
+    if (nextProps.selectSecondary !== this.state.selectSecondary) {
       this.setState({
         selectSecondary: nextProps.selectSecondary
       });
@@ -167,7 +167,7 @@ class EnrollmentSearchBar extends Component {
     const { selectedClass, selectPrimary, selectSecondary } = this.state;
     let playlist = {
       courseID: selectedClass,
-      instructor: selectSecondary.value == 'all' ? 'all' : selectSecondary.value,
+      instructor: selectSecondary.value === 'all' ? 'all' : selectSecondary.value,
       semester: selectPrimary,
       sections: selectSecondary.sectionId ? [selectSecondary.sectionId] : this.getFilteredSections()
     }
@@ -219,8 +219,8 @@ class EnrollmentSearchBar extends Component {
     const { selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
-    let onePrimaryOption = primaryOptions && primaryOptions.length == 2 && selectPrimary;
-    let oneSecondaryOption = secondaryOptions && secondaryOptions.length == 2 && selectSecondary.value;
+    let onePrimaryOption = primaryOptions && primaryOptions.length === 2 && selectPrimary;
+    let oneSecondaryOption = secondaryOptions && secondaryOptions.length === 2 && selectSecondary.value;
 
     let primaryOption = { value: selectPrimary, label: selectPrimary };
     let secondaryOption = selectSecondary;
