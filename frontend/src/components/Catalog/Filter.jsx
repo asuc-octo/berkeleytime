@@ -390,14 +390,14 @@ export class FilterSidebar extends Component {
           <button className="btn-bt-border filter-scroll-btn"
             onClick={() => this.showModal("requirements", requirements, this.requirementsOptions)}>
             Requirements </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("unitsRange", units, this.unitsRangeOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("unitsRange", units, this.unitsRangeOptions)}>
             Units </button>
           <button className="btn-bt-border filter-scroll-btn"
             onClick={() => this.showModal("department", department, this.departmentOptions)}>
             Department </button>
-          <button className="btn-bt-border filter-scroll-btn" 
-            onClick={() => this.showModal("classLevels", level, this.classLevelOptions)}> 
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("classLevels", level, this.classLevelOptions)}>
             Class&nbsp;Level </button>
         </div>
           <FilterModal
