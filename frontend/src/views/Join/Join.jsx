@@ -24,7 +24,7 @@ class Join extends PureComponent {
             </button>
           </a>
         </ButtonToolbar>
-        <img className="join-pic" src={janet_jemma} />
+        <img className="join-pic" src={retreat_silly} />
 
       </div>
 
