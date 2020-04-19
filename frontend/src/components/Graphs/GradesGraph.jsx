@@ -40,7 +40,7 @@ const MobileTooltip = props => {
 const PercentageLabel = props => {
     //todo: change text color
     const {x, y, width, value} = props
-    let percentage = value == 0 ? "": (value < 1 ? "<1%" : Math.round(value) + "%");
+    let percentage = value === 0 ? "": (value < 1 ? "<1%" : Math.round(value) + "%");
     return (
       <text
         x={x + width}

@@ -71,7 +71,7 @@ class GraphEmpty extends React.PureComponent {
               </div>
               <div className="title">No Class Name Data</div>
               <div className="info">No Semester or Instructor Data</div>
-              {pageType == "enrollment" ?
+              {pageType === "enrollment" ?
                 null :
                 <div>
                 <h6>Course Average
