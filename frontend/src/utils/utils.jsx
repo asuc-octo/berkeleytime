@@ -136,10 +136,6 @@ export {
   formatUnits,
   percentileToString,
   getGradeColor,
-<<<<<<< HEAD
   getEnrollmentDay,
   applyIndicatorEnrollment,
 };
-=======
-};
->>>>>>> 3faa8dc1073dfb880c8d7973d8b44642a968c865
