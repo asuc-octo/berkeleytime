@@ -4,13 +4,13 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
 
-import Banner from './Banner';
-import Navigation from './Navigation';
-import Footer from './Footer';
-import routes from '../../routes/routes';
+import Banner from './components/Common/Banner';
+import Navigation from './components/Common/Navigation';
+import Footer from './components/Common/Footer';
+import routes from './routes/routes';
 
 // eslint-disable-next-line no-unused-vars
-import { openBanner, showMobile, hideMobile } from '../../redux/actions';
+import { openBanner, showMobile, hideMobile } from './redux/actions';
 
 const gaTrackingID = 'UA-35316609-1';
 ReactGA.initialize(gaTrackingID);
