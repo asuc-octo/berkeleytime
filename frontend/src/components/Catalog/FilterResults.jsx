@@ -72,10 +72,10 @@ class FilterResults extends Component {
    * If percentage is -1, it is put at the end (greater than all other percents)
    */
   compareEnrollmentPercentage(courseA, courseB) {
-    if (courseA.enrolled_percentage != -1 && courseB.enrolled_percentage != -1) {
+    if (courseA.enrolled_percentage !== -1 && courseB.enrolled_percentage !== -1) {
       return courseA.enrolled_percentage - courseB.enrolled_percentage
         || FilterResults.compareDepartmentName(courseA, courseB);
-    } else if (courseA.enrolled_percentage == -1 && courseB.enrolled_percentage == -1) {
+    } else if (courseA.enrolled_percentage === -1 && courseB.enrolled_percentage === -1) {
       return FilterResults.compareDepartmentName(courseA, courseB);
     } else {
       return courseB.enrolled_percentage - courseA.enrolled_percentage;

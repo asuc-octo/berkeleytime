@@ -1,14 +1,16 @@
-import React, { PureComponent } from 'react';
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Route, Switch, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
 
-import Banner from './Banner';
-import Navigation from './Navigation';
-import Footer from './Footer';
-import routes from '../../routes/routes';
+import Banner from './components/Common/Banner';
+import Navigation from './components/Common/Navigation';
+import Footer from './components/Common/Footer';
+import routes from './routes/routes';
 
-import { openBanner, showMobile, hideMobile } from '../../redux/actions';
+// eslint-disable-next-line no-unused-vars
+import { openBanner, showMobile, hideMobile } from './redux/actions';
 
 const gaTrackingID = 'UA-35316609-1';
 ReactGA.initialize(gaTrackingID);
@@ -19,33 +21,32 @@ const logPageView = () => {
   return null;
 };
 
-class BerkeleyTime extends PureComponent {
+class Berkeleytime extends Component {
   constructor(props) {
     super(props);
 
     // comment out to not display banner
-    this.props.dispatch(openBanner());
+    // this.props.dispatch(openBanner());
     this.updateScreensize = this.updateScreensize.bind(this);
   }
 
-   /**
+  /**
    * Checks if user is on mobile view
    */
   componentDidMount() {
     this.updateScreensize();
-    window.addEventListener("resize", this.updateScreensize);
+    window.addEventListener('resize', this.updateScreensize);
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.updateScreensize);
+    window.removeEventListener('resize', this.updateScreensize);
   }
 
   updateScreensize() {
     const { dispatch } = this.props;
     if (window.innerWidth <= 768) {
       dispatch(showMobile());
-    }
-    else {
+    } else {
       dispatch(hideMobile());
     }
   }
@@ -55,11 +56,11 @@ class BerkeleyTime extends PureComponent {
     const { banner } = this.props;
 
     return (
-      <div className="app-container">
-        <Banner text={bannerText} />
-        <Navigation />
-        <Route path="/" component={logPageView} />
-        <div className={`${banner ? 'banner-visible' : ''}`}>
+      <div>
+        <Banner />
+        <div className="app-container">
+          <Navigation />
+          <Route path="/" component={logPageView} />
           <Switch>
             {
               routes.map(route => {
@@ -75,18 +76,15 @@ class BerkeleyTime extends PureComponent {
               })
             }
           </Switch>
+          <Footer />
         </div>
-        <Footer />
       </div>
     );
   }
 }
 
-const mapStateToProps = state => {
-  const { banner } = state.banner;
-  return {
-    banner,
-  }
-}
+Berkeleytime.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+};
 
-export default connect(mapStateToProps)(BerkeleyTime);
+export default connect()(Berkeleytime);

@@ -4,14 +4,13 @@
 // base & themes
 @import "bt/base/responsive";
 @import "bt/base/variables";
-
 @import "bt/theming/colors";
+@import "bt/base/typography";
 @import "bt/theming/buttons";
 @import "bt/theming/navbar";
 @import "bt/theming/grades_color";
 @import "bt/theming/enrollment_color";
 
-@import "bt/base/typography";
 
 
 @import "bt/berkeleytime";
@@ -23,6 +22,8 @@
 // landing
 @import "bt/landing/jumbotron";
 @import "bt/landing/landing";
+@import "bt/landing/mission";
+@import "bt/landing/sponsors";
 
 // login
 @import "bt/login/login";

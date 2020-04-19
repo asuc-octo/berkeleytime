@@ -114,10 +114,10 @@ class ClassDescription extends Component {
       label: req
     };
     const newFilters = list => {
-      if (list == null) {
+      if (list === null) {
         return [formattedFilter];
       }
-      let isDuplicate = list.some(item => item.value == formattedFilter.value);
+      let isDuplicate = list.some(item => item.value === formattedFilter.value);
       if (isDuplicate) {
         return list;
       }
@@ -149,8 +149,12 @@ class ClassDescription extends Component {
     const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
 
+    if (isEmpty(courseData)) {
+      return null;
+    } 
+
     var pills = [];
-    if (requirements != null) {
+    if (requirements !== null) {
       let allSemesters = requirements.filter(item => item.includes("Spring") || item.includes("Fall"));
       var semesterUrl = allSemesters.length > 0 ? allSemesters[0].toLowerCase().split(' ').join('-') : null;
       let latestSemesters = allSemesters.slice(0, 4);
@@ -162,12 +166,12 @@ class ClassDescription extends Component {
     }
 
     const toGrades = {
-      pathname: course != null ? `/grades/0-${course.id}-all-all` : `/grades`,
+      pathname: course !== null ? `/grades/0-${course.id}-all-all` : `/grades`,
       state: { course: course },
     };
 
     const toEnrollment = {
-      pathname: (course != null && semesterUrl != null) ? `/enrollment/0-${course.id}-${semesterUrl}-all` : `/enrollment`,
+      pathname: (course !== null && semesterUrl !== null) ? `/enrollment/0-${course.id}-${semesterUrl}-all` : `/enrollment`,
       state: { course: course },
     }
 
@@ -179,8 +183,6 @@ class ClassDescription extends Component {
           </div>
         </div>
       );
-    } else if (isEmpty(courseData)) {
-      return null;
     } else {
       return (
         <div className="catalog-description-container">

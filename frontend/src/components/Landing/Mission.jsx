@@ -1,5 +1,4 @@
 import React from 'react';
-import FontAwesome from 'react-fontawesome';
 import { Link } from 'react-router-dom';
 import {
   Container,
@@ -14,16 +13,17 @@ function Mission() {
     <div className="landing-mission">
       <Container>
         <Row>
-          <Col xs={12} s={12} md={6} lg={6}>
-            <img src={doe} className="landing-mission-img" />
+          <Col xs={12} md={7}>
+            <img src={doe} alt="group pic" />
           </Col>
-          <Col xs={12} s={12} md={6} lg={6}>
-            <div className="landing-mission-desc">
+          <Col xs={12} md={5} xl={{ span: 4, offset: 1 }}>
+            <div className="mission">
               <h3>Our Mission</h3>
-              <p className="has-text-centered landing-mission-link">Berkeleytime is an official organization under the 
-              <a href="http://octo.asuc.org/"> ASUC Office of the Chief Technology Officer. </a>
-              We are dedicated to designing free, accessible software for students.</p>
-              <Button variant="bt-primary-inverted btn-bt-md" size="bt-lg" as={Link} to="/about">About our Team</Button>
+              <p>Berkeleytime is an official organization under the
+                <a href="http://octo.asuc.org/"> ASUC Office of the Chief Technology Officer.</a>{' '}
+                We are dedicated to designing free, accessible software for students.
+              </p>
+              <Button variant="bt-primary-inverted" size="bt-md" as={Link} to="/about">About our Team</Button>
             </div>
           </Col>
         </Row>
