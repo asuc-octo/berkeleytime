@@ -71,26 +71,36 @@
   }
 
   .filter-search {
-    margin-bottom: 30px;
+    margin-bottom: 16px;
 
+    @include mobile {
+      margin-bottom: 16px;
+    }
 
     input {
       width: 100%;
-      padding-bottom: 3px;
-      border: solid 1px $bt-light-border-grey;
+      padding: 6px;
+      border: solid 1px $bt-border-grey;
       color: $bt-base-text;
-      font-size: 16px;
+      font-size: 14px;
       font-family: 'FontAwesome', 'Inter', sans-serif;
       transition: .5s;
-
-      &:focus {
-        outline: none;
-        color: $bt-light-grey;
-      }
+      border-radius: 4px;
+      text-indent: 6px;
 
       &::placeholder {
-        color: $bt-light-grey;
+        color: $bt-border-grey;
+        text-indent: 6px;
       }
+
+      &:focus {
+        color: $bt-base-text;
+
+        &::placeholder {
+          color: $bt-light-grey;
+        }
+      }
+
     }
   }
 
@@ -101,18 +111,21 @@
     flex-direction: column;
 
     > p {
-      margin-bottom: 6px;
+      margin-bottom: 10px;
       font-size: 14px;
+      font-weight:600;
     }
 
     //override dropdown stylings
 
-    .css-10r6hld-indicatorContainer, .css-hu2rzu-indicatorContainer {
-      color: $bt-light-border-grey;
+    .css-10r6hld-indicatorContainer:hover {
+      color: $bt-border-grey;
       transition: .5s;
-      &:hover {
-        color: #ababab;
-      }
+    }
+
+    .css-10r6hld-indicatorContainer:hover {
+      color: $bt-border-grey;
+      transition: .5s;
     }
 
     .css-1wa3eu0-placeholder::placeholder {
