@@ -25,8 +25,13 @@ class Berkeleytime extends Component {
   constructor(props) {
     super(props);
 
-    // comment out to not display banner
-    // this.props.dispatch(openBanner());
+    const key = 'apr2020_staging_test';
+    if (!localStorage[key]) {
+      localStorage[key] = true;
+      const { dispatch } = this.props;
+      dispatch(openBanner());
+    }
+
     this.updateScreensize = this.updateScreensize.bind(this);
   }
 

@@ -7,6 +7,7 @@ from catalog.service.resource.schedule import schedule_resource
 from catalog.service.course import course_service
 from catalog.utils import calculate_letter_average, sort_course_dicts
 from catalog.views import catalog_filters
+from data.lib.grade import add_up_grades
 from berkeleytime.utils.requests import raise_404_on_error, render_to_empty_json, render_to_json, render_to_empty_json_with_status_code
 from berkeleytime.settings import (
     TELEBEARS_JSON, TELEBEARS, CURRENT_SEMESTER, CURRENT_YEAR, PAST_SEMESTERS,
@@ -131,7 +132,8 @@ def grade_json(request, grade_ids):
         rtn["subtitle"] = course.title
         rtn["course_gpa"] = round(course.grade_average, 3)
         rtn["course_letter"] = course.letter_average
-        rtn["section_gpa"] = round(sections.aggregate(Avg("average"))["average__avg"], 3)
+        weighted_letter_grade_counter, total = add_up_grades(sections)
+        rtn["section_gpa"] = round(float(sum(weighted_letter_grade_counter.values())) / total, 3)
         rtn["section_letter"] = calculate_letter_average(rtn["section_gpa"])
         rtn["denominator"] = total
 

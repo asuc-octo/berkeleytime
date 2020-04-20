@@ -1,5 +1,11 @@
 .graph-empty {
   // min-height: inherit;
+<<<<<<< HEAD
+  display: flex;
+  justify-content: center;
+
+  .graph-empty-content {
+=======
   height: 400px;
   .col-lg-8 {
     height: 400px;
@@ -8,6 +14,7 @@
   .graph-empty-content {
     position: relative;
     bottom: 300px;
+>>>>>>> 61ae12f72b51e390152e2d10204c9f8f64e7b9ae
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -32,6 +39,9 @@
   .grades-info {
     display: flex;
     flex-direction: column;
+<<<<<<< HEAD
+    
+=======
 
     .info-icon {
       padding-left: 5px;
@@ -44,6 +54,7 @@
       font-weight: lighter;
     }
 
+>>>>>>> 61ae12f72b51e390152e2d10204c9f8f64e7b9ae
     .date {
       font-weight: bold;
     }

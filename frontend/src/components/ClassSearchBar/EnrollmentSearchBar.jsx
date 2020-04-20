@@ -134,7 +134,7 @@ class EnrollmentSearchBar extends Component {
     let sections = semesters.filter(semester => this.getSectionSemester(semester) === selectPrimary)[0].sections;
 
     for (var section of sections) {
-      let instructor = `${section.instructor} / ${section.section_number}`;
+      let instructor = `${section.instructor == null ? "None" : section.instructor} / ${section.section_number}`;
 
       ret.push( {
         value: instructor,
