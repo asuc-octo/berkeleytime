@@ -16,7 +16,7 @@ questions:
     required: True
     placeholder: "This is placeholder text"
   - title: "Test Q3"
-    description: "This is an example description."
+    # Description is optional
     type: "multiple_choice"
     choices:
       - "Choice A"
