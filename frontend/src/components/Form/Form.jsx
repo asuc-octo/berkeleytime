@@ -61,10 +61,11 @@ class BTForm extends Component {
   }
 
   createFile(question) {
+    console.log("is this being called?");
     return (
       <Form.File
         label={ question.placeholder }
-        custom={ true }
+        custom
       />
     )
   }
@@ -88,11 +89,11 @@ class BTForm extends Component {
         <Form>
           {form.questions.map(item =>
             <Form.Group>
-              <Form.Label>
+              <Form.Label className={item.required ? "required" : ""}>
                 {item.title}
               </Form.Label>
               { item.description ? (
-                <p> { item.description } </p>
+                <p className="descriptor"> { item.description } </p>
               ) : null }
               { this.createQuestion(item) }
             </Form.Group>

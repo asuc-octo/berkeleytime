@@ -3,7 +3,10 @@ from googleapiclient import discovery
 from httplib2 import Http
 from oauth2client import file, client, tools
 from apiclient.http import MediaFileUpload, MediaInMemoryUpload
-from yaml import load, dump, CLoader as Loader, CDumper as Dumper
+try:
+    from yaml import load, dump, CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import load, dump, Loader, Dumper
 from datetime import datetime
 
 import gspread
