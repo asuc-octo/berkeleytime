@@ -149,6 +149,8 @@ class ClassDescription extends Component {
     const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
 
+    console.log(courseData);
+
     if (isEmpty(courseData)) {
       return null;
     } 
