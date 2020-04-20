@@ -147,7 +147,6 @@ class EnrollmentGraphCard extends Component {
                       updateGraphHover={this.updateGraphHover}
                       graphEmpty={graphEmpty}
                     />
-                    <div className="xlabel">Days After Phase 1</div>
                   </Col>
 
                   { graphEmpty ? 

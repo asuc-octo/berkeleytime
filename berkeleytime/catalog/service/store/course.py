@@ -10,6 +10,7 @@ from data.lib.grade import get_letter_grades
 from data.lib.grade import gpa_to_letter_grade
 from data.lib.grade import letter_grade_to_field_name
 from data.lib.grade import letter_grade_to_gpa
+from data.lib.grade import add_up_grades
 from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
@@ -165,17 +166,7 @@ class CourseStore(object):
             return
 
         # Counter for letter grades weighted by their GPA value (e.g. 100 * B+ 3.3)  # noqa
-        weighted_letter_grade_counter = {lg: 0 for lg in get_letter_grades()}
-        total = 0
-
-        # Sum up all letter grades across all models.Grade
-        for grade in grades:
-            for letter_grade in weighted_letter_grade_counter.keys():
-                field_name = letter_grade_to_field_name(letter_grade)
-                count = getattr(grade, field_name)
-                total += count
-
-                weighted_letter_grade_counter[letter_grade] += count * letter_grade_to_gpa(letter_grade)  # noqa
+        weighted_letter_grade_counter, total = add_up_grades(grades)
 
         if not total:
             return

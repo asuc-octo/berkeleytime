@@ -1,0 +1,60 @@
+import React, { PureComponent } from 'react';
+import { Row, Col } from 'react-bootstrap';
+
+import {
+  getEnrollmentDay,
+  applyIndicatorEnrollment
+} from '../../utils/utils';
+
+class EnrollmentInfoCard extends PureComponent {
+  render() {
+    const {title, subtitle, semester, instructor,
+      selectedPoint, todayPoint, telebears,
+      color, enrolledMax, waitlistedMax} = this.props;
+
+    const today = new Date();
+    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    const todayString = today.toLocaleDateString('en-US', dateOptions);
+
+<<<<<<< HEAD
+    let { period, daysAfterPeriodStarts } = getEnrollmentDay(selectedPoint, telebears); 
+=======
+    let period = '';
+    let daysAfterPeriodStarts = 0;
+    if (selectedPoint.day < telebears.phase2_start_day) {
+      period = 'Phase I';
+      daysAfterPeriodStarts = selectedPoint.day;
+    } else if (selectedPoint.day < telebears.adj_start_day) {
+      period = 'Phase II';
+      daysAfterPeriodStarts = selectedPoint.day - telebears.phase2_start_day;
+    } else {
+      period = 'Adjustment Period';
+      daysAfterPeriodStarts = selectedPoint.day - telebears.adj_start_day;
+    }
+>>>>>>> 61ae12f72b51e390152e2d10204c9f8f64e7b9ae
+
+    return (
+      <div className="enrollment-info">
+        <div className="header">
+          <div className="square" style={{ backgroundColor: color }} />
+          <div className="course">{ title }</div>
+        </div>
+        <div className="title">{ subtitle }</div>
+        <div className="info">{ `${semester} • ${instructor}` }</div>
+
+        <div className="stat-section">
+          <div className="date">{daysAfterPeriodStarts} Days After {period}</div>
+          <div className="enrolled-stat">
+            <span className="text">Enrolled:</span> {applyIndicatorEnrollment(selectedPoint.enrolled, enrolledMax, selectedPoint.enrolled_percent)}
+          </div>
+          <div className="waitlisted-stat">
+            <span className="text">Waitlisted:</span> {applyIndicatorEnrollment(selectedPoint.waitlisted, waitlistedMax, selectedPoint.waitlisted_percent)}
+          </div>
+        </div>
+
+      </div>
+    );
+  }
+}
+
+export default EnrollmentInfoCard;
