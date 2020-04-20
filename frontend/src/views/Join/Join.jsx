@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Row, Col, ButtonToolbar } from 'react-bootstrap';
-import retreat_silly from '../../assets/img/images/about/group/retreat_silly.png';
-import janet_jemma from '../../assets/img/images/about/group/janet_jemma.jpg';
 
+import doe from '../../assets/img/images/about/group/doe.jpg';
 
 class Join extends PureComponent {
   render() {
@@ -24,7 +23,7 @@ class Join extends PureComponent {
             </button>
           </a>
         </ButtonToolbar>
-        <img className="join-pic" src={retreat_silly} />
+        <img className="join-pic" src={doe} />
 
       </div>
 
