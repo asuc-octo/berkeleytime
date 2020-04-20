@@ -84,7 +84,8 @@ urlpatterns = patterns('',
     url(r'scheduler/view_schedules/$', TemplateView.as_view(template_name="scheduler/view_schedules.html")),
 
     # Forms
-    url(r'^forms/config/(?P<config_name>[\w\d]+)/', 'forms.views.get_config'),
+    url(r'^forms/config/(?P<config_name>[\w\d]+)/$', 'forms.views.get_config'),
+    url(r'^forms/submit/(?P<config_name>[\w\d]+)/(?P<form_response>[^\/]+)/$', 'forms.views.record_response')
 
     # Direct to Template
     (r'^legal/terms/$', TemplateView.as_view(template_name="legal/terms.html")),
