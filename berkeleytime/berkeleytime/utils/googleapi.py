@@ -5,18 +5,18 @@ from oauth2client import file, client, tools
 from apiclient.http import MediaFileUpload, MediaInMemoryUpload
 from yaml import load, dump, CLoader as Loader, CDumper as Dumper
 from datetime import datetime
-from threading import Lock
 
 import gspread
 import os
 import sys
+import redlock
 
 # Global Variables
 sheets_scope = ['https://spreadsheets.google.com/feeds',
          'https://www.googleapis.com/auth/drive']
 drive_scope = ['https://www.googleapis.com/auth/drive.readonly.metadata', 
 							 'https://www.googleapis.com/auth/drive.file']
-google_sheet_lock = Lock()
+dlm = redlock.Redlock([{"host": "localhost", "port": 6379, "db": 0}, ])
 
 # Reads in a YAML file and checks if it is properly formed
 # Returns YAML file in dictionary form
@@ -104,7 +104,7 @@ def sheet_add_next_entry(doc_url, responses):
 	gc = gspread.authorize(credentials)
 
 	# Need to acquire lock (ensure that only one instance is modifying the sheet at a time)
-	google_sheet_lock.acquire()
+	my_lock = dlm.lock("google_spreadsheet",2000)
 
 	# Raises a gspread.SpreadsheetNotFound if no spreadsheet is found
 	try:
@@ -120,7 +120,7 @@ def sheet_add_next_entry(doc_url, responses):
 	for count, response in enumerate(responses):
 		sheet.update_cell(j, 1 + count, response)
 
-	google_sheet_lock.release()
+	dlm.unlock(my_lock)
 
 	return True
 
