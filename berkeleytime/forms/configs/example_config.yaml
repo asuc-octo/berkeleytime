@@ -4,21 +4,37 @@ info:
   description: "For Testing Use"
   googlesheet_link: "https://docs.google.com/spreadsheets/d/1WEy7XNrndAqOeQ6YHcQzUEuuqrp07xL-DpXf9Hs9m8A/edit#gid=0"
   drive_folder_name: "InitialTests"
-sections:
-  - "Test Section"
 questions:
   - title: "Test Q1"
-    section: "Test Section"
+    description: "This is an example description."
     type: "short"
+    required: True
+    placeholder: "This is placeholder text"
   - title: "Test Q2"
-    section: "Test Section"
-    type: "short"
+    description: "This is an example description."
+    type: "long"
+    required: True
+    placeholder: "This is placeholder text"
   - title: "Test Q3"
-    section: "Test Section"
-    type: "short"
+    description: "This is an example description."
+    type: "multiple_choice"
+    choices:
+      - "Choice A"
+      - "Choice B"
+      - "Choice C"
+    required: False
+    placeholder: "This is placeholder text"
   - title: "Test Q4"
-    section: "Test Section"
-    type: "short"
+    description: "This is an example description."
+    type: "multiple_select"
+    choices:
+      - "Choice A"
+      - "Choice B"
+      - "Choice C"
+    required: False
+    # Placeholder is optional
   - title: "Test Q5"
-    section: "Test Section"
+    description: "This is an example description."
     type: "file"
+    # Required is optional
+    # Placeholder is optional
