@@ -1,5 +1,12 @@
 .enrollment{
 
+  .css-1myhgat-indicatorContainer {
+    color: $bt-light-border-grey;
+    transition: .5s;
+    &:hover {
+      color: #ababab;
+    }
+  }
 
   .btn-primary:disabled {
       cursor: default;

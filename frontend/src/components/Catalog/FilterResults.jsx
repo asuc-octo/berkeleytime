@@ -157,7 +157,7 @@ class FilterResults extends Component {
                     width={width}
                     itemData={data}
                     itemCount={data.courses.length}
-                    itemSize={120}
+                    itemSize={110}
                     itemKey={(index, data) => data.courses[index].id}
                   >
                     {FilterCard}
