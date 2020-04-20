@@ -117,6 +117,7 @@ class EnrollmentGraphCard extends Component {
     const { hoveredClass } = this.state;
     const { graphData, enrollmentData, selectedCourses, isMobile } = this.props;
     const telebears = enrollmentData.length ? enrollmentData[0].telebears : {};
+    const graphEmpty = enrollmentData.length === 0 || selectedCourses.length === 0;
 
     let selectedPoint= hoveredClass && hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]
 
@@ -136,24 +137,28 @@ class EnrollmentGraphCard extends Component {
     return (
 
         <div className="enrollment-graph">
-          {
-            enrollmentData.length === 0 || selectedCourses.length === 0 ? (
-              <GraphEmpty pageType="enrollment" />
-            ) : (
               <div className="enrollment-content">
-                {!isMobile ?
                 <Row>
-                  <Col lg={8}>
+                  <Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
                     <EnrollmentGraph
                       graphData={graphData}
                       enrollmentData={enrollmentData}
                       updateLineHover={this.updateLineHover}
                       updateGraphHover={this.updateGraphHover}
+                      graphEmpty={graphEmpty}
                     />
                     <div className="xlabel">Days After Phase 1</div>
                   </Col>
 
+                  { graphEmpty ? 
+                    <Col xs={{span: 12, order:1}} sm={{span: 12, order:1}} md={{span: 4, order:2}} lg={{span: 4, order:2}}>
+                      <GraphEmpty pageType="enrollment" />
+                    </Col>
+                    :
+                    null
+                  }
 
+                  { !isMobile && !graphEmpty ?
                   <Col lg={4}>
                     {hoveredClass && (
                       <EnrollmentInfoCard
@@ -169,19 +174,12 @@ class EnrollmentGraphCard extends Component {
                         waitlistedMax={hoveredClass.waitlisted_max}
                       />
                     )}
-                  </Col>
-                </Row> :
-                <EnrollmentGraph
-                  graphData={graphData}
-                  enrollmentData={enrollmentData}
-                  updateLineHover={this.updateLineHover}
-                  updateGraphHover={this.updateGraphHover}
-                  isMobile={isMobile}
-                />
-                }
+                  </Col> 
+                  :
+                  null
+                  }
+                </Row> 
               </div>
-            )
-          }
         </div>
     );
   }
