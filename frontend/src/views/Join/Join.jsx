@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, ButtonToolbar } from 'react-bootstrap';
+import retreat_silly from '../../assets/img/images/about/group/retreat_silly.png';
+import janet_jemma from '../../assets/img/images/about/group/janet_jemma.jpg';
 
-import doe from '../../assets/img/images/about/group/doe.jpg';
 
 class Join extends PureComponent {
   render() {
@@ -10,21 +11,23 @@ class Join extends PureComponent {
     return (
       <div className="about">
         <div className="about-us">
-          <h5>Join our Team!</h5>
+          <h5>Join the BT Team! &#9996; </h5>
           <p>
-            We're a small group of student volunteers at UC Berkeley, dedicated to
-            simplifying the course discovery experience. We actively build, improve
-            and maintain Berkeleytime.
+            We'll be recruiting for new team members in the fall! Sign up to hear about recruitment updates.
           </p>
         </div>
-        <div className="group">
-          <img src={doe} />
-        </div>
-        <div className="values">
-          <h5>Our Values</h5>
+        <ButtonToolbar className="releases-heading-button join">
+        <input placeholder="Your email address"></input>
+          <a href="/join" role="button">
+            <button className="btn btn-bt-primary btn-bt-sm">
+              Sign up for Updates
+            </button>
+          </a>
+        </ButtonToolbar>
+        <img className="join-pic" src={retreat_silly} />
 
-        </div>
       </div>
+
     );
   }
 }

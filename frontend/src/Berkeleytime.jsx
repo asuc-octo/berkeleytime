@@ -57,6 +57,9 @@ class Berkeleytime extends Component {
   }
 
   render() {
+    const bannerText = 'We just pushed a huge redesign and added new pages! ✨';
+    const { banner } = this.props;
+
     return (
       <div>
         <Banner />

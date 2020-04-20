@@ -43,7 +43,7 @@
     font-weight: bold;
     color: $bt-base-text;
     .faq-question-text {
-      font-size: 14px;
+      font-size: 16x;
       line-height: 150%;
 
        @include mobile {
@@ -66,7 +66,7 @@
 
   .faq-answer {
     .example-collapse-text {
-      font-size: 14px;
+      font-size: 16px;
       line-height: 180%;
       margin-bottom: 30px;
       color: $bt-light-text;
