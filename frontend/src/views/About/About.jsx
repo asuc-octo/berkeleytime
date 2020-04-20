@@ -12,6 +12,7 @@ import will from '../../assets/img/images/about/group/will.jpg';
 import jemma from '../../assets/img/images/about/group/jemma.jpg';
 import christina_janet from '../../assets/img/images/about/group/christina_janet.jpg';
 import retreat_silly from '../../assets/img/images/about/group/retreat_silly.png';
+import zoom from '../../assets/img/images/about/group/zoom.png';
 
 import growth from '../../assets/svg/about/growth.svg';
 import curiosity from '../../assets/svg/about/curiosity.svg';
@@ -40,6 +41,7 @@ class About extends PureComponent {
         </ButtonToolbar>
         <div className="group">
           <img src={retreat_silly} />
+          <img src={zoom} />
           <img src={doe} />
           <img src={janet_jemma} />
           <img src={retreat} />
