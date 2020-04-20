@@ -24,14 +24,14 @@ function Footer() {
             <Link to="/catalog" className=""><span className="footer-link">Courses</span></Link>
             <Link to="/grades" className=""><span className="footer-link">Grades</span></Link>
             <Link to="/enrollment" className=""><span className="footer-link">Enrollment</span></Link>
-            <Link to="/releases" className=""><span className="footer-link">Releases</span><span className="new-box">New</span></Link>
+            <Link to="/apidocs" className=""><span className="footer-link">API Docs</span><span className="new-box">New</span></Link>
           </Col>
           <Col xs={4} sm={4} md={4} lg={2} className="bt-footer-column">
             <p>Support</p>
             <a href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1"><span className="footer-link">Report a Bug</span></a>
             <a href="mailto:octo.berkeleytime@asuc.org" className=""><span className="footer-link">Contact</span></a>
             <a href="http://old.berkeleytime.com/" className=""><span className="footer-link">Legacy</span></a>
-            <Link to="/apidocs" className=""><span className="footer-link">API Docs</span><span className="new-box">New</span></Link>
+            <Link to="/releases" className=""><span className="footer-link">Releases</span><span className="new-box">New</span></Link>
             <Link to="/faq" className=""><span className="footer-link">FAQ</span><span className="new-box">New</span></Link>
           </Col>
           <Col xs={4} sm={4} md={4} lg={2} className="bt-footer-column">
