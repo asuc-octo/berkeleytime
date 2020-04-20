@@ -12,6 +12,7 @@ import Releases from '../views/Releases/Releases';
 import Faq from '../views/Faq/Faq';
 import ApiDocs from '../views/Api/Api';
 import Join from '../views/Join/Join';
+import Apply from '../views/Apply/Apply';
 import Error from '../views/Error/Error';
 
 // name should be unique, used as react key
@@ -30,6 +31,7 @@ const routes = [
   { path: '/faq',        name: 'Faq',        component: Faq },
   { path: '/apidocs',    name: 'Api Docs',   component: ApiDocs },
   { path: '/join',       name: 'Join',       component: Join },
+  { path: '/apply',       name: 'Apply',       component: Apply },
   { path: '/error',      name: 'Error',      component: Error },
   { /* no path */        name: '404',        component: Error },
 ];
