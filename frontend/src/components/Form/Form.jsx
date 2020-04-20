@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, ButtonToolbar, Form } from 'react-bootstrap';
+import { Row, Col, ButtonToolbar, Form, Button } from 'react-bootstrap';
 
 class BTForm extends Component {
 
@@ -7,7 +7,10 @@ class BTForm extends Component {
     super(props);
     this.state = {
       form: null,
+      responses: {}
     };
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -15,6 +18,23 @@ class BTForm extends Component {
     fetch("/api/forms/config/" + name + "/")
       .then(result => result.json())
       .then(data => this.setState({ form: data }));
+  }
+
+  handleInputChange(event) {
+    const target = event.target;
+
+    this.setState(prevState => ({
+      ...prevState,
+      responses: {
+        ...prevState.responses,
+        [target.name]: target.value,
+      }
+    }))
+  }
+
+  handleSubmit(event) {
+    console.log(this.state);
+    event.preventDefault();
   }
 
   createQuestion(question) {
@@ -27,13 +47,19 @@ class BTForm extends Component {
     } else if (question.type === "file") {
       return this.createFile(question);
     } else {
-      return <div></div>;
+      return null;
     }
   }
 
   createLong(question) {
     return (
-      <Form.Control placeholder={ question.placeholder } as="textarea" rows="3" />
+      <Form.Control
+          name={ question.unique_name }
+          placeholder={ question.placeholder }
+          as="textarea" rows="3"
+          onChange={ this.handleInputChange }
+          value={ this.state.responses[question.unique_name] }
+      />
     )
   }
 
@@ -46,22 +72,39 @@ class BTForm extends Component {
     }
 
     return (
-      <Form.Control type={ qType } placeholder={ question.placeholder } />
+      <Form.Control
+          name={ question.unique_name }
+          type={ qType }
+          placeholder={ question.placeholder }
+          onChange={ this.handleInputChange }
+          value={ this.state.responses[question.unique_name] }
+      />
     )
   }
 
   createMutlipleChoice(question) {
     return (
-      <Form.Control as="select">
+      <Form.Control
+          name={ question.unique_name }
+          as="select"
+          onChange={this.handleInputChange}
+          value={this.state.responses[question.unique_name]}
+          placeholder={ question.placeholder }
+          custom
+      >
+        {question.placeholder ? (
+            <option value="" style={{color: "grey"}} selected disabled>
+              { question.placeholder }
+            </option>
+        ): null }
         {question.choices.map(item =>
-          <option>{ item }</option>
+          <option value={ item }>{ item }</option>
         )}
       </Form.Control>
     )
   }
 
   createFile(question) {
-    console.log("is this being called?");
     return (
       <Form.File
         label={ question.placeholder }
@@ -74,7 +117,7 @@ class BTForm extends Component {
     const { form } = this.state;
 
     if (form === null) {
-      return <div></div>;
+      return null;
     }
 
     return (
@@ -86,7 +129,7 @@ class BTForm extends Component {
           </p>
         </div>
 
-        <Form>
+        <Form onSubmit={ this.handleSubmit }>
           {form.questions.map(item =>
             <Form.Group>
               <Form.Label className={item.required ? "required" : ""}>
@@ -98,13 +141,11 @@ class BTForm extends Component {
               { this.createQuestion(item) }
             </Form.Group>
            )}
-        </Form>
 
-        <ButtonToolbar className="releases-heading-button join">
-          <button className="btn btn-bt-primary btn-bt-sm">
+         <Button variant="primary" type="submit" className="btn btn-bt-primary btn-bt-sm">
             Submit
-          </button>
-        </ButtonToolbar>
+          </Button>
+        </Form>
 
       </div>
     );
