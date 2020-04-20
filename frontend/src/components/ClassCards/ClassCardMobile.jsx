@@ -2,7 +2,9 @@ import React from 'react';
 import { Col } from 'react-bootstrap';
 
 import {
-  getGradeColor
+  getGradeColor,
+  getEnrollmentDay,
+  applyIndicatorEnrollment,
 } from '../../utils/utils';
 
 function ClassCardMobile(props) {
@@ -42,6 +44,36 @@ function ClassCardMobile(props) {
         </div>
       </div> 
     );
+  }
+
+  else {
+    const latest_point = additionalInfo ? additionalInfo[0] : null;
+    const telebears = additionalInfo ? additionalInfo[1] : null;
+    const enrollment_info = additionalInfo ? additionalInfo[2] : null;
+    const waitlisted_info = additionalInfo ? additionalInfo[3] : null;
+
+    let date_info = []
+    if(latest_point != null && telebears != null) {
+      console.log("hi")
+      date_info = getEnrollmentDay(latest_point, telebears); 
+    }
+
+    return (
+      <div className="class-card-mobile">
+        <div className="class-card-mobile-column">
+          <h6>
+            {date_info ? date_info['period'] + ": " + date_info['daysAfterPeriodStarts'] : "--"}
+          </h6>
+          <h6>Enrollment Percent:
+            {nullCheck(enrollment_info) ? applyIndicatorEnrollment.apply(null, enrollment_info) : "--"}
+          </h6> 
+          <h6>Waitlist Percent:
+            {nullCheck(waitlisted_info) ? applyIndicatorEnrollment.apply(null, waitlisted_info) : "--"}
+          </h6> 
+        </div> 
+      </div> 
+    );
+
   }
 }
 

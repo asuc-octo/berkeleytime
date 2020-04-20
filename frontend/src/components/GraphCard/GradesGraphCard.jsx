@@ -96,35 +96,13 @@ class GradesGraphCard extends Component {
   render() {
     const { hoveredClass } = this.state;
     const { graphData, gradesData, selectedCourses, isMobile } = this.props;
+    const graphEmpty = gradesData.length === 0 || selectedCourses.length === 0;
 
     return (
       <div className="grades-graph">
-        {
-          gradesData.length === 0 || selectedCourses.length === 0 ? (
-            <GraphEmpty pageType="grades" />
-          ) : (
-            <Container fluid>
+        <Container fluid>
               <Row>
-
-                {/*hoveredClass && isMobile ?
-                <Col lg={4}>
-                  <GradesInfoCardMobile
-                    course={hoveredClass.course}
-                    subtitle={hoveredClass.subtitle}
-                    semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
-                    instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
-                    courseLetter={hoveredClass.course_letter}
-                    courseGPA={hoveredClass.course_gpa}
-                    sectionLetter={hoveredClass.section_letter}
-                    sectionGPA={hoveredClass.section_gpa}
-                    denominator={hoveredClass.denominator}
-                    selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
-                    selectedGrade={hoveredClass.hoverGrade}
-                    color={vars.colors[hoveredClass.colorId]}
-                  />
-                </Col> : null*/}
-
-                <Col lg={8}>
+                <Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
                   <GradesGraph
                     graphData={graphData}
                     gradesData={gradesData}
@@ -134,9 +112,17 @@ class GradesGraphCard extends Component {
                     denominator={hoveredClass.denominator}
                     color={vars.colors[hoveredClass.colorId]}
                     isMobile={this.props.isMobile}
+                    graphEmpty={graphEmpty}
                   />
                 </Col>
-                {!isMobile ?
+                { graphEmpty ? 
+                  <Col xs={{span: 12, order:1}} sm={{span: 12, order:1}} md={{span: 4, order:2}} lg={{span: 4, order:2}}>
+                    <GraphEmpty pageType="grades" />
+                  </Col>
+                  :
+                  null
+                }
+                { !isMobile && !graphEmpty ?
                 <Col lg={4}>
                   {hoveredClass
                     && (
@@ -155,11 +141,12 @@ class GradesGraphCard extends Component {
                         color={vars.colors[hoveredClass.colorId]}
                       />
                     )}
-                </Col> : null}
+                </Col> 
+                : 
+                null
+              }
               </Row>
             </Container>
-          )
-        }
       </div>
     );
   }
