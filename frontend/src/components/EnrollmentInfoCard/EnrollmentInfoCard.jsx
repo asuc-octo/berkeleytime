@@ -1,28 +1,10 @@
 import React, { PureComponent } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-
-function formatPercentage(num) {
-  if (num === -1) {
-    return "N/A"
-  }
-  return (num * 100).toFixed(1).toString() + "%";
-}
-
-function applyIndicatorColor(enrolled, enrolledMax, percentage) {
-  let theme;
-  if (percentage < 0.34) {
-    theme = 'bt-indicator-green';
-  } else if (percentage < 0.67) {
-    theme = 'bt-indicator-orange';
-  } else {
-    theme = 'bt-indicator-red';
-  }
-
-  return (
-    <span className={theme} > {enrolled}/{enrolledMax} ({`${formatPercentage(percentage)}`})</span>
-  );
-}
+import {
+  getEnrollmentDay,
+  applyIndicatorEnrollment
+} from '../../utils/utils';
 
 class EnrollmentInfoCard extends PureComponent {
   render() {
@@ -34,18 +16,7 @@ class EnrollmentInfoCard extends PureComponent {
     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     const todayString = today.toLocaleDateString('en-US', dateOptions);
 
-    let period = '';
-    let daysAfterPeriodStarts = 0;
-    if (selectedPoint.day < telebears.phase2_start_day) {
-      period = 'Phase I';
-      daysAfterPeriodStarts = selectedPoint.day;
-    } else if (selectedPoint.day < telebears.adj_start_day) {
-      period = 'Phase II';
-      daysAfterPeriodStarts = selectedPoint.day - telebears.phase2_start_day;
-    } else {
-      period = 'Adjustment Period';
-      daysAfterPeriodStarts = selectedPoint.day - telebears.adj_start_day;
-    }
+    let { period, daysAfterPeriodStarts } = getEnrollmentDay(selectedPoint, telebears); 
 
     return (
       <div className="enrollment-info">
@@ -59,10 +30,10 @@ class EnrollmentInfoCard extends PureComponent {
         <div className="stat-section">
           <div className="date">{daysAfterPeriodStarts} Days After {period}</div>
           <div className="enrolled-stat">
-            <span className="text">Enrolled:</span> {applyIndicatorColor(selectedPoint.enrolled, enrolledMax, selectedPoint.enrolled_percent)}
+            <span className="text">Enrolled:</span> {applyIndicatorEnrollment(selectedPoint.enrolled, enrolledMax, selectedPoint.enrolled_percent)}
           </div>
           <div className="waitlisted-stat">
-            <span className="text">Waitlisted:</span> {applyIndicatorColor(selectedPoint.waitlisted, waitlistedMax, selectedPoint.waitlisted_percent)}
+            <span className="text">Waitlisted:</span> {applyIndicatorEnrollment(selectedPoint.waitlisted, waitlistedMax, selectedPoint.waitlisted_percent)}
           </div>
         </div>
 
