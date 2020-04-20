@@ -12,11 +12,11 @@ from yaml import load, dump, CLoader as Loader, CDumper as Dumper
 def get_config(request, config_name):
 # YAML_PATH is the filepath to the yaml file
 	try:
-		file = open(yaml_path + ".yaml")
+		file = open(config_name + ".yaml")
 		loaded_yaml = load(file, Loader=Loader)
 		return render_to_json(loaded_yaml)
 	except FileNotFoundError:
-		print("Error when trying to read file:", yaml_path, "ERROR: FileNoteFoundError")
+		print("Error when trying to read file:", config_name + ".yaml", "ERROR: FileNoteFoundError")
 	except:
-		print("Unexpected error within check_yaml_format. Raised error:")
+		print("Unexpected error within get_config. Raised error:")
 		raise
