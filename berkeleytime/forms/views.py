@@ -1,18 +1,39 @@
 from berkeleytime.utils.requests import render_to_json
+from django.core.cache import cache
 
 from googleapi import check_yaml_response
-try:
-    from yaml import load, dump, CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import load, dump, Loader, Dumper
+from yaml import load, dump
+
+CACHE_DAY_TIMEOUT = 86400
+
 
 # Returns YAML file (in JSON format) with name
 def get_config(request, config_name):
-
+	cached = cache.get("form_" + config_name)
+	if False:
+		return cached
 	try:
 		with open("forms/configs/{}.yaml".format(config_name), "r") as f:
-			loaded_yaml = load(f, Loader=Loader)
-		return render_to_json(loaded_yaml)
+			loaded_yaml = load(f.read())
+
+		form_config = {
+			"info": {
+				"unique_name": loaded_yaml["info"]["unique_name"],
+				"public_name": loaded_yaml["info"]["public_name"],
+				"description": loaded_yaml["info"]["description"]
+			},
+			"questions": []
+		}
+
+		for index, question in enumerate(loaded_yaml["questions"]):
+			question.update({
+				"unique_name": "Question{}".format(index)
+			})
+			form_config["questions"].append(question)
+
+		rtn = render_to_json(loaded_yaml)
+		cache.set("form_" + config_name, rtn, CACHE_DAY_TIMEOUT)
+		return rtn
 	except FileNotFoundError:
 		print("Error when trying to read file:", config_name + ".yaml", "ERROR: FileNoteFoundError")
 	except Exception:

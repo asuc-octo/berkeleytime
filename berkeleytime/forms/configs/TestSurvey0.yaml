@@ -38,5 +38,5 @@ questions:
     description: "This is an example description."
     placeholder: "The placeholder is required for files."
     type: "file"
-    # Required is optional
+    # Required is optional, default is False
     # Placeholder is optional
