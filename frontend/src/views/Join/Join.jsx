@@ -10,7 +10,7 @@ class Join extends PureComponent {
     return (
       <div className="about">
         <div className="about-us">
-          <h5>Join the BT Team! &#9996; </h5>
+          <h5>Join the BT Team! &#x270C; </h5>
           <p>
             We'll be recruiting for new team members in the fall! Sign up to hear about recruitment updates.
           </p>
