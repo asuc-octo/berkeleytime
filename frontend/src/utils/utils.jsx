@@ -5,18 +5,16 @@
 import React from 'react';
 
 /**
- * 
- * @param {*} text 
- * @param {*} percentage 
+ * Returns a paragraph tag styled with color with respect to percentage
+ * @param {string} text text in the paragraph tag
+ * @param {number} percentage percentage from 0.0 to 1.0
  */
 function applyIndicatorPercent(text, percentage) {
-  let theme;
+  let theme = 'bt-indicator-red';
   if (percentage < 0.34) {
     theme = 'bt-indicator-green';
   } else if (percentage < 0.67) {
     theme = 'bt-indicator-orange';
-  } else {
-    theme = 'bt-indicator-red';
   }
 
   return (
@@ -24,16 +22,25 @@ function applyIndicatorPercent(text, percentage) {
   );
 }
 
+/**
+ * Returns a paragraph tag styled with color with respect to grade
+ * @param {string} text text in the paragraph tag
+ * @param {string | null} grade grade, either as a string (ex. "B+") or null
+ */
 function applyIndicatorGrade(text, grade) {
-  let theme;
+  if (grade === null) {
+    return (
+      <p>N/A</p>
+    );
+  }
+
+  let theme = 'bt-indicator-red';
   if (grade[0] === 'A') {
     theme = 'bt-indicator-green';
   } else if (grade[0] === 'B') {
     theme = 'bt-indicator-yellow';
   } else if (grade[0] === 'C') {
     theme = 'bt-indicator-orange';
-  } else {
-    theme = 'bt-indicator-red';
   }
 
   return (
