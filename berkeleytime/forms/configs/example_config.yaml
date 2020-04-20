@@ -1,5 +1,6 @@
 info:
   unique_name: "TestSurvey0"
+  # Unique_name must only consist of numbers and letters
   public_name: "TestSurvey"
   description: "For Testing Use"
   googlesheet_link: "https://docs.google.com/spreadsheets/d/1WEy7XNrndAqOeQ6YHcQzUEuuqrp07xL-DpXf9Hs9m8A/edit#gid=0"
