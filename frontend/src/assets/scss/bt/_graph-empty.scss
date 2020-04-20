@@ -1,6 +1,7 @@
 .graph-empty {
   // min-height: inherit;
-  height: 420px;
+  display: flex;
+  justify-content: center;
 
   .graph-empty-content {
     display: flex;

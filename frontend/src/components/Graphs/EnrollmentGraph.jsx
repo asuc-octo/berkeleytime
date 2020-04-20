@@ -14,6 +14,20 @@ import {
 } from 'recharts';
 
 import vars from '../../variables/Variables';
+import emptyImage from '../../assets/img/images/graphs/empty.svg';
+
+const EmptyLabel = props => {
+  return (
+    <div className="graph-empty">
+      <div className="graph-empty-content">
+        <img className="graph-empty-image" src={emptyImage} alt="empty state" />
+        <h3 className="graph-empty-heading" align="center">
+          You have not added any <br /> classes yet.
+        </h3>
+      </div>
+    </div>
+  );
+};
 
 function getLargestEnrollment(graphData) {
     let max_percentage = -1;
@@ -42,7 +56,7 @@ function getYTickRange(limit) {
 }
 
 export default function EnrollmentGraph({
-  graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile,
+  graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile, graphEmpty
 }) {
   const labelStyle = {
     textAnchor: 'middle',
@@ -59,7 +73,8 @@ export default function EnrollmentGraph({
               textAnchor="top"
               dominantBaseline="left"
               fontSize={18}> Enrollment
-            </text> :
+            </text> 
+            :
             null
           }
 
@@ -67,10 +82,19 @@ export default function EnrollmentGraph({
           <YAxis type="number" unit="%"
                  domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
                  ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}/>
-          <Tooltip
-            formatter={(value) => `${value}%`}
-            labelFormatter={label => `Day ${label}`}
-          />
+          { !graphEmpty ?
+            <Tooltip
+              formatter={(value) => `${value}%`}
+              labelFormatter={label => `Day ${label}`}
+            /> :
+            <Tooltip
+              cursor={{fill: '#fff'}}
+              content={<EmptyLabel />}
+              position={{ x: 150, y: 150 }}
+              wrapperStyle={{visibility: 'visible'}}
+            />
+          }
+
           {enrollmentData.map((item, i) => (
             <Line
               name={`${item.title} • ${item.section_name}`}
@@ -92,25 +116,30 @@ export default function EnrollmentGraph({
             /> :
             null
           }
-
-          <ReferenceLine
-            x={enrollmentData[0].telebears.phase2_start_day}
-            stroke="black"
-            strokeDasharray="3 3"
-          >
-            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-              {`Phase II Start (${enrollmentData[0].telebears.semester})`}
-            </Label>
-          </ReferenceLine>
-          <ReferenceLine
-            x={enrollmentData[0].telebears.adj_start_day}
-            stroke="black"
-            strokeDasharray="3 3"
-          >
-            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-              {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
-            </Label>
-          </ReferenceLine>
+          { !graphEmpty ?
+          <div>
+            <ReferenceLine
+              x={enrollmentData[0].telebears.phase2_start_day}
+              stroke="black"
+              strokeDasharray="3 3"
+            >
+              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                {`Phase II Start (${enrollmentData[0].telebears.semester})`}
+              </Label>
+            </ReferenceLine>
+            <ReferenceLine
+              x={enrollmentData[0].telebears.adj_start_day}
+              stroke="black"
+              strokeDasharray="3 3"
+            >
+              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
+              </Label>
+            </ReferenceLine>
+          </div>
+          :
+          null
+        }
         </LineChart>
       </ResponsiveContainer>
     </div>
