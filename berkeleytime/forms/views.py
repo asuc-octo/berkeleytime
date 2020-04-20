@@ -1,27 +1,44 @@
-from __future__ import division
-import re, os, sys, datetime
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
+from berkeleytime.utils.requests import render_to_json
 from django.core.cache import cache
-from django.db.models import Avg, Sum
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 
-from googleapi import *
-from yaml import load, dump, CLoader as Loader, CDumper as Dumper
+from googleapi import check_yaml_response
+from yaml import load, dump
+
+CACHE_DAY_TIMEOUT = 86400
+
 
 # Returns YAML file (in JSON format) with name
 def get_config(request, config_name):
-# YAML_PATH is the filepath to the yaml file
+	cached = cache.get("form_" + config_name)
+	if False:
+		return cached
 	try:
-		file = open(config_name + ".yaml")
-		loaded_yaml = load(file, Loader=Loader)
-		return render_to_json(loaded_yaml)
+		with open("forms/configs/{}.yaml".format(config_name), "r") as f:
+			loaded_yaml = load(f.read())
+
+		form_config = {
+			"info": {
+				"unique_name": loaded_yaml["info"]["unique_name"],
+				"public_name": loaded_yaml["info"]["public_name"],
+				"description": loaded_yaml["info"]["description"]
+			},
+			"questions": []
+		}
+
+		for index, question in enumerate(loaded_yaml["questions"]):
+			question.update({
+				"unique_name": "Question{}".format(index)
+			})
+			form_config["questions"].append(question)
+
+		rtn = render_to_json(loaded_yaml)
+		cache.set("form_" + config_name, rtn, CACHE_DAY_TIMEOUT)
+		return rtn
 	except FileNotFoundError:
 		print("Error when trying to read file:", config_name + ".yaml", "ERROR: FileNoteFoundError")
-	except:
+	except Exception:
 		print("Unexpected error within get_config. Raised error:")
-		raise
+
 
 # Calls on the function that uploads response to google drive
 # Form_response would be (<example>,<blah>),(<example1>,<blah1>),...
