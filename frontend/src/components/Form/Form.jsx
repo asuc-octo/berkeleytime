@@ -54,7 +54,7 @@ class BTForm extends Component {
     return (
       <Form.Control as="select">
         {question.choices.map(item =>
-          <option>item</option>
+          <option>{ item }</option>
         )}
       </Form.Control>
     )
