@@ -38,5 +38,6 @@ questions:
     description: "This is an example description."
     placeholder: "The placeholder is required for files."
     type: "file"
+    accept: ".gif,.jpg,.jpeg,.png" # Option, skip if accept any
     # Required is optional, default is False
     # Placeholder is optional
