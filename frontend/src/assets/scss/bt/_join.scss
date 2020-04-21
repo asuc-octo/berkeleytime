@@ -20,6 +20,11 @@
             &::placeholder{
               color: $bt-light-grey;
             }
+
+            &:focus::placeholder {
+              color: $bt-light-border-grey;
+            }
+            
           }
         }
 
