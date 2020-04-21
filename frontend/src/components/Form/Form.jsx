@@ -10,6 +10,7 @@ class BTForm extends Component {
       responses: {}
     };
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -37,33 +38,62 @@ class BTForm extends Component {
     event.preventDefault();
   }
 
-  createQuestion(question) {
+  handleCheck(event) {
+    const target = event.target;
+    const { responses } = this.state;
+    if (responses[target.name]
+        ? !responses[target.name].includes(target.id)
+        : true
+    ) {
+      this.setState({
+        responses: {
+          ...responses,
+          [target.name]: responses[target.name]
+            ? responses[target.name].concat([target.id])
+            : [target.id],
+        }
+      })
+    } else {
+      this.setState({
+        responses: {
+          ...responses,
+          [target.name]: responses[target.name]
+            ? responses[target.name].filter(item => item !== target.id)
+            : [],
+        }
+      })
+    }
+  }
+
+  createQuestion(question, responses) {
     if (question.type === "short") {
-      return this.createShort(question);
+      return this.createShort(question, responses);
     } else if (question.type === "long") {
-      return this.createLong(question);
+      return this.createLong(question, responses);
     } else if (question.type === "multiple_choice") {
-      return this.createMutlipleChoice(question);
+      return this.createMutlipleChoice(question, responses);
     } else if (question.type === "file") {
-      return this.createFile(question);
+      return this.createFile(question, responses);
+    } else if (question.type === "multiple_select") {
+      return this.createMultipleSelect(question, responses);
     } else {
       return null;
     }
   }
 
-  createLong(question) {
+  createLong(question, responses) {
     return (
       <Form.Control
           name={ question.unique_name }
           placeholder={ question.placeholder }
           as="textarea" rows="3"
           onChange={ this.handleInputChange }
-          value={ this.state.responses[question.unique_name] }
+          value={ responses[question.unique_name] }
       />
     )
   }
 
-  createShort(question) {
+  createShort(question, responses) {
     let qType;
     if (question.html_type) {
       qType = question.type;
@@ -77,18 +107,18 @@ class BTForm extends Component {
           type={ qType }
           placeholder={ question.placeholder }
           onChange={ this.handleInputChange }
-          value={ this.state.responses[question.unique_name] }
+          value={ responses[question.unique_name] }
       />
     )
   }
 
-  createMutlipleChoice(question) {
+  createMutlipleChoice(question, responses) {
     return (
       <Form.Control
           name={ question.unique_name }
           as="select"
           onChange={this.handleInputChange}
-          value={this.state.responses[question.unique_name]}
+          value={responses[question.unique_name]}
           placeholder={ question.placeholder }
           custom
       >
@@ -104,17 +134,41 @@ class BTForm extends Component {
     )
   }
 
-  createFile(question) {
+  createMultipleSelect(question, responses) {
+
+    return (
+        <div>
+        { question.choices.map(item =>
+            <Form.Check
+            custom
+            type="checkbox"
+            id={ item }
+            name={ question.unique_name }
+            checked={ responses[question.unique_name]
+                    ? responses[question.unique_name].includes(item)
+                    : false }
+            onChange={this.handleCheck}
+            label={item}
+          />
+        )}
+        </div>
+    )
+  }
+
+  createFile(question, responses) {
+
     return (
       <Form.File
         label={ question.placeholder }
+        accept={ question.accept ? question.accept : ""}
+        multilple
         custom
       />
     )
   }
 
   render() {
-    const { form } = this.state;
+    const { form, responses } = this.state;
 
     if (form === null) {
       return null;
@@ -138,13 +192,14 @@ class BTForm extends Component {
               { item.description ? (
                 <p className="descriptor"> { item.description } </p>
               ) : null }
-              { this.createQuestion(item) }
+              { this.createQuestion(item, responses) }
             </Form.Group>
            )}
 
          <Button variant="primary" type="submit" className="btn btn-bt-primary btn-bt-sm">
             Submit
           </Button>
+          
         </Form>
 
       </div>
