@@ -7,7 +7,8 @@ class BTForm extends Component {
     super(props);
     this.state = {
       form: null,
-      responses: {}
+      responses: {},
+      validated: false,
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
@@ -47,10 +48,15 @@ class BTForm extends Component {
 
   handleSubmit(event) {
     const { form, responses } = this.state;
+    const target = event.currentTarget;
     event.preventDefault();
-    if (this.validateRequired(form, responses) && this.validateLength(form, responses) && this.validateFormat(form, responses)) {
-      alert("success");
-    }
+    // if (this.validateRequired(form, responses) && this.validateLength(form, responses) && this.validateFormat(form, responses)) {
+    //   alert("success");
+    // }
+    target.checkValidity();
+    this.setState({
+      validated: true
+    })
   }
 
   handleCheck(event) {
@@ -164,6 +170,7 @@ class BTForm extends Component {
           as="textarea" rows="3"
           onChange={ this.handleInputChange }
           value={ responses[question.unique_name] }
+          required={ question.required }
       />
     )
   }
@@ -183,6 +190,7 @@ class BTForm extends Component {
           placeholder={ question.placeholder }
           onChange={ this.handleInputChange }
           value={ responses[question.unique_name] }
+          required={ question.required }
       />
     )
   }
@@ -195,6 +203,7 @@ class BTForm extends Component {
           onChange={this.handleInputChange}
           value={responses[question.unique_name]}
           placeholder={ question.placeholder }
+          required={ question.required }
           custom
       >
         {question.placeholder ? (
@@ -223,6 +232,7 @@ class BTForm extends Component {
                     ? responses[question.unique_name].includes(item)
                     : false }
             onChange={this.handleCheck}
+            required={ question.required }
             label={item}
           />
         )}
@@ -250,6 +260,7 @@ class BTForm extends Component {
           accept={ question.accept ? question.accept : ""}
           ref={ responses[question.unique_name] }
           onChange = { this.handleFileUpload }
+          required={ question.required }
           multiple
           custom
         />
@@ -258,7 +269,7 @@ class BTForm extends Component {
   }
 
   render() {
-    const { form, responses } = this.state;
+    const { form, responses, validated } = this.state;
 
     if (form === null) {
       return null;
@@ -273,7 +284,7 @@ class BTForm extends Component {
           </p>
         </div>
 
-        <Form onSubmit={ this.handleSubmit }>
+        <Form noValidate validated={validated} onSubmit={ this.handleSubmit }>
           {form.questions.map(item =>
             <Form.Group>
               <Form.Label className={item.required ? "required" : ""}>
@@ -283,6 +294,7 @@ class BTForm extends Component {
                 <p className="descriptor"> { item.description } </p>
               ) : null }
               { this.createQuestion(item, responses) }
+              <Form.Control.Feedback type="invalid">This question is required</Form.Control.Feedback>
             </Form.Group>
            )}
 
