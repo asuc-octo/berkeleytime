@@ -7,16 +7,29 @@ info:
   drive_folder_name: "InitialTests"
 questions:
   - title: "Test Q1"
-    description: "This is an example description."
-    type: "short"
+    description: "Enter an email."
     required: True
+    type: "short"
     placeholder: "This is placeholder text"
+    format: "email" # Optional format check for short and long questions: [email, number, date (MM/DD/YYYY)]
   - title: "Test Q2"
-    description: "This is an example description."
+    description: "Enter an number."
+    type: "short"
+    placeholder: "This is placeholder text"
+    format: "number"
+  - title: "Test Q3"
+    description: "Enter a MM/DD/YYYY date."
+    type: "short"
+    placeholder: "This is placeholder text"
+    format: "date"
+  - title: "Test Q4"
+    description: "Enter between 2 and 5 characters, inclusive."
     type: "long"
     required: True
+    min: 2 # Optional inclusive min char count (short and long only)
+    max: 5 # Optional inclusive max char count (short and long only)
     placeholder: "This is placeholder text"
-  - title: "Test Q3"
+  - title: "Test Q5"
     # Description is optional
     type: "multiple_choice"
     choices:
@@ -25,7 +38,7 @@ questions:
       - "Choice C"
     required: False
     placeholder: "This is placeholder text"
-  - title: "Test Q4"
+  - title: "Test Q6"
     description: "This is an example description."
     type: "multiple_select"
     choices:
@@ -34,8 +47,8 @@ questions:
       - "Choice C"
     required: False
     # Placeholder is optional
-  - title: "Test Q5"
-    description: "This is an example description."
+  - title: "Test Q7"
+    description: "Upload any number of images"
     placeholder: "The placeholder is required for files."
     type: "file"
     accept: ".gif,.jpg,.jpeg,.png" # Option, skip if accept any
