@@ -10,7 +10,7 @@ CACHE_DAY_TIMEOUT = 86400
 # Returns YAML file (in JSON format) with name
 def get_config(request, config_name):
 	cached = cache.get("form_" + config_name)
-	if False:
+	if False: # IMPORTANT! Turn off caching for now
 		return cached
 	try:
 		with open("forms/configs/{}.yaml".format(config_name), "r") as f:
@@ -27,7 +27,7 @@ def get_config(request, config_name):
 
 		for index, question in enumerate(loaded_yaml["questions"]):
 			question.update({
-				"unique_name": "Question{}".format(index)
+				"unique_name": "Question {}".format(index + 1)
 			})
 			form_config["questions"].append(question)
 

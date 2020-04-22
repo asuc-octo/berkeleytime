@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, ButtonToolbar, Form, Button } from 'react-bootstrap';
+import { Row, FormFile, ListGroup, Form, Button } from 'react-bootstrap';
 
 class BTForm extends Component {
 
@@ -12,13 +12,25 @@ class BTForm extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleFileUpload = this.handleFileUpload.bind(this);
   }
 
   componentDidMount() {
     const { name } = this.props;
     fetch("/api/forms/config/" + name + "/")
       .then(result => result.json())
-      .then(data => this.setState({ form: data }));
+      .then(data => this.setState({ form: data }, function() {
+        const { form } = this.state;
+        let responses = {};
+        form.questions.map(function(question) {
+          if (question.type === "file") {
+            responses[question.unique_name] = React.createRef();
+          }
+        });
+        this.setState({
+          responses: responses
+        })
+      }));
   }
 
   handleInputChange(event) {
@@ -34,8 +46,11 @@ class BTForm extends Component {
   }
 
   handleSubmit(event) {
-    console.log(this.state);
+    const { form, responses } = this.state;
     event.preventDefault();
+    if (this.validateRequired(form, responses) && this.validateLength(form, responses) && this.validateFormat(form, responses)) {
+      alert("success");
+    }
   }
 
   handleCheck(event) {
@@ -63,6 +78,66 @@ class BTForm extends Component {
         }
       })
     }
+  }
+
+  handleFileUpload(event) {
+    event.preventDefault();
+    this.forceUpdate();
+  }
+
+  validateRequired(form, responses) {
+    for (let question of form.questions) {
+      if (question.required && !responses[question.unique_name]) {
+        alert("Please complete " + question.unique_name + ".");
+        return false;
+      }
+    }
+    return true;
+  }
+
+  validateLength(form, responses) {
+    for (let question of form.questions) {
+      if (question.min) {
+        if (!responses[question.unique_name] || responses[question.unique_name].length < question.min) {
+          alert(question.unique_name + " requires at least " + question.min + " characters.");
+          return false;
+        }
+      }
+      if (question.max) {
+        if (responses[question.unique_name].length > question.max) {
+          alert(question.unique_name + " has a limit of at most " + question.max + " characters.");
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  validateFormat(form, responses) {
+    for (let question of form.questions) {
+      if (question.format && responses[question.unique_name]) {
+        if (question.format === 'email') {
+          var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          if (!re.test(responses[question.unique_name].toLowerCase())){
+             alert(question.unique_name + " requires an email.");
+             return false;
+          }
+        } else if (question.format === 'number') {
+          var re = /^\d+$/;
+          if (!re.test(responses[question.unique_name].toLowerCase())){
+             alert(question.unique_name + " requires an number.");
+             return false;
+          }
+        } else if (question.format === 'date') {
+          var re = /^(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/((19|20)[0-9][0-9])$/;
+          if (!re.test(responses[question.unique_name].toLowerCase())){
+             alert(question.unique_name + " requires an date in the format MM/DD/YYYY.");
+             return false;
+          }
+        }
+      }
+    }
+    return true;
   }
 
   createQuestion(question, responses) {
@@ -157,13 +232,28 @@ class BTForm extends Component {
 
   createFile(question, responses) {
 
+    let fileList = [];
+    if (responses[question.unique_name] && responses[question.unique_name].current && responses[question.unique_name].current.files) {
+      for (var i = 0; i < responses[question.unique_name].current.files.length; i++) {
+        fileList.push(responses[question.unique_name].current.files[i].name);
+      }
+    }
+
+
     return (
-      <Form.File
-        label={ question.placeholder }
-        accept={ question.accept ? question.accept : ""}
-        multilple
-        custom
-      />
+      <div>
+        <Form.File
+          label={ fileList.length === 0
+            ? question.placeholder
+            : fileList.join(", ")
+          }
+          accept={ question.accept ? question.accept : ""}
+          ref={ responses[question.unique_name] }
+          onChange = { this.handleFileUpload }
+          multiple
+          custom
+        />
+      </div>
     )
   }
 
