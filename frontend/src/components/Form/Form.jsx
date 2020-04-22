@@ -49,7 +49,7 @@ class BTForm extends Component {
         ...prevState.responses,
         [target.name]: target.value,
       },
-      validation: validation,
+        validation: prevState.validated ? validation : {},
     }))
   }
 
@@ -62,7 +62,8 @@ class BTForm extends Component {
       alert('success');
     }
     this.setState({
-      validation: validation
+      validation: validation,
+      validated: true,
     })
   }
 
@@ -87,7 +88,7 @@ class BTForm extends Component {
             ? responses[target.name].concat([target.id])
             : [target.id],
         },
-        validation: validation,
+        validation: prevState.validated ? validation : {},
       }))
     } else {
       this.setState(prevState => ({
@@ -97,7 +98,7 @@ class BTForm extends Component {
             ? responses[target.name].filter(item => item !== target.id)
             : [],
         },
-        validation: validation,
+        validation: prevState.validated ? validation : {},
       }))
     }
   }
@@ -317,7 +318,7 @@ class BTForm extends Component {
   }
 
   render() {
-    const { form, responses, validation } = this.state;
+    const { form, responses, validated, validation } = this.state;
 
     if (form === null) {
       return null;
