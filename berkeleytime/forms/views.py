@@ -1,5 +1,7 @@
 from berkeleytime.utils.requests import render_to_json
+from catalog.utils import is_post
 from django.core.cache import cache
+from django.http import Http404
 
 from googleapi import check_yaml_response
 from yaml import load, dump
@@ -41,6 +43,13 @@ def get_config(request, config_name):
 
 
 # Calls on the function that uploads response to google drive
-# Form_response would be (<example>,<blah>),(<example1>,<blah1>),...
-def record_response(request, config_name, form_response):
-	check_yaml_response(config_name + ".yaml", list(ast.literal_eval(form_response)))
+def record_response(request):
+	try:
+		if is_post(request):
+			form_response = request.POST
+			check_yaml_response("configs/" + form_response["Config"] + ".yaml", form_response)
+		else:
+			raise Http404
+	except Exception as e:
+    print e
+	
