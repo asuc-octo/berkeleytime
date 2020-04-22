@@ -3,12 +3,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  
+
   margin-bottom: 150px;
   @include touch {
     margin-bottom: 100px;
   }
-  
+
   .desc {
     width: 350px;
     text-align: center;
@@ -23,16 +23,16 @@
       margin-bottom: 30px;
     }
   }
-  
+
   .sponsors {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: center;
-    
+
     img {
       padding: 10px;
-      max-height: 120px;
+      max-height: 140px;
       object-fit: scale-down;
     }
   }

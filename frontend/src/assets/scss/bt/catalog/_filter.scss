@@ -88,17 +88,12 @@
       border-radius: 4px;
       text-indent: 6px;
 
-      &::placeholder {
-        color: $bt-border-grey;
-        text-indent: 6px;
+      &::placeholder{
+        color: $bt-light-grey;
       }
 
-      &:focus {
-        color: $bt-base-text;
-
-        &::placeholder {
-          color: $bt-light-grey;
-        }
+      &:focus::placeholder {
+        color: $bt-light-border-grey;
       }
 
     }
