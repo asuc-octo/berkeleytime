@@ -47,13 +47,13 @@ elif IS_PRODUCTION:
 
 
 if IS_PRODUCTION or IS_STAGING:
-    redis_url = urlparse.urlparse(os.environ.get('REDIS_URL'))
+    REDIS = urlparse.urlparse(os.environ.get('REDIS_URL'))
     CACHES = {
         "default": {
             "BACKEND": "redis_cache.RedisCache",
-            "LOCATION": "{0}:{1}".format(redis_url.hostname, redis_url.port),
+            "LOCATION": "{0}:{1}".format(REDIS.hostname, REDIS.port),
             "OPTIONS": {
-                "PASSWORD": redis_url.password,
+                "PASSWORD": REDIS.password,
                 "DB": 0,
             }
         }
@@ -64,7 +64,7 @@ elif IS_LOCALHOST:
     CACHES = {
         'default': {
             'BACKEND': "redis_cache.RedisCache",
-            'LOCATION': 'redis:6379',
+            'LOCATION': 'localhost:6379',
         }
     }
 
@@ -222,7 +222,7 @@ MIDDLEWARE_CLASSES += (
     'berkeleytime.utils.corsmiddleware.CORSMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:

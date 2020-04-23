@@ -2,9 +2,10 @@ from berkeleytime.utils.requests import render_to_json
 from catalog.utils import is_post
 from django.core.cache import cache
 from django.http import Http404
-
-from googleapi import check_yaml_response
+import json
+from googleapi import check_yaml_response, check_yaml_format, upload_file
 from yaml import load, dump
+import traceback
 
 # Returns YAML file (in JSON format) with name
 def get_config(request, config_name):
@@ -28,20 +29,59 @@ def get_config(request, config_name):
 			form_config["questions"].append(question)
 
 		return render_to_json(loaded_yaml)
-	except FileNotFoundError:
-		print("Error when trying to read file:", config_name + ".yaml", "ERROR: FileNoteFoundError")
-	except Exception:
-		print("Unexpected error within get_config. Raised error:")
+	except (OSError, IOError):
+		print("Error when trying to read file: {}".format("forms/configs/{}.yaml".format(config_name)))
+		return False
+	except Exception as e:
+		print("Unexpected error within get_config. Raised error: " + str(e))
+		return False
 
 
 # Calls on the function that uploads response to google drive
 def record_response(request):
 	try:
 		if is_post(request):
-			form_response = request.POST
-			check_yaml_response("configs/" + form_response["Config"] + ".yaml", form_response)
+			form_response = json.loads(request.body)
+			return render_to_json({
+				'success': check_yaml_response("forms/configs/{}.yaml".format(form_response["Config"]), json.loads(request.body))
+			})
 		else:
 			raise Http404
 	except Exception as e:
 		print e
-	
+		print traceback.print_exc()
+		return render_to_json({
+				'success': False,
+				'error': str(e),
+			})
+
+
+def upload_file_view(request, config_name, file_name):
+	try:
+		if is_post(request):
+			print("is post")
+			file_blob = request.body
+			loaded_yaml = check_yaml_format("forms/configs/{}.yaml".format(config_name))
+			print(loaded_yaml)
+			if "drive_folder_name" in loaded_yaml["info"]:
+				drive_folder_name = loaded_yaml["info"]["drive_folder_name"]
+			else:
+				return render_to_json({
+					'success': False,
+					'error': 'No folder of that name exists.'
+				})
+			print(drive_folder_name, file_name, len(file_blob), file_blob[0:10])
+			file_link = upload_file(drive_folder_name, file_name, file_blob)
+			return render_to_json({
+				'success': True,
+				'link': file_link,
+			})
+		else:
+			raise Http404
+	except Exception as e:
+		print e
+		print traceback.print_exc()
+		return render_to_json({
+			'success': False,
+			'error': str(e),
+		})
