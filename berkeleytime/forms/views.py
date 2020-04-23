@@ -4,14 +4,8 @@ from django.core.cache import cache
 from googleapi import check_yaml_response
 from yaml import load, dump
 
-CACHE_DAY_TIMEOUT = 86400
-
-
 # Returns YAML file (in JSON format) with name
 def get_config(request, config_name):
-	cached = cache.get("form_" + config_name)
-	if False: # IMPORTANT! Turn off caching for now
-		return cached
 	try:
 		with open("forms/configs/{}.yaml".format(config_name), "r") as f:
 			loaded_yaml = load(f.read())
@@ -31,9 +25,7 @@ def get_config(request, config_name):
 			})
 			form_config["questions"].append(question)
 
-		rtn = render_to_json(loaded_yaml)
-		cache.set("form_" + config_name, rtn, CACHE_DAY_TIMEOUT)
-		return rtn
+		return render_to_json(loaded_yaml)
 	except FileNotFoundError:
 		print("Error when trying to read file:", config_name + ".yaml", "ERROR: FileNoteFoundError")
 	except Exception:
