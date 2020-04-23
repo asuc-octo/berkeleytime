@@ -48,7 +48,7 @@ questions:
     required: False
     # Placeholder is optional
   - title: "Test Q7"
-    description: "Upload any number of images"
+    description: "Upload any number of images. (Max 10 MB per file)"
     placeholder: "The placeholder is required for files."
     type: "file"
     accept: ".gif,.jpg,.jpeg,.png" # Option, skip if accept any
