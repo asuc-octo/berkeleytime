@@ -13,6 +13,7 @@ from datetime import datetime
 
 import gspread
 import os
+import pytz
 import time
 import redlock
 import urlparse
@@ -118,7 +119,8 @@ def upload_file(folder_name, file_name, file_blob):
 
 
 	file_front, file_ext = os.path.splitext(file_name)
-	file_metadata = {'name': file_front + "_" + datetime.utcnow().strftime("%Y.%m.%d.%H.%M.%S") + \
+	file_metadata = {'name': file_front + "_" + \
+		datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S") + \
 		file_ext, 'parents': [folder_id]}
 	media = MediaInMemoryUpload(file_blob)
 	file = drive.files().create(body=file_metadata, media_body=media, fields='id').execute()
@@ -187,6 +189,7 @@ def check_yaml_response(config_name, responses):
 		return False
 
 	sheet_responses = []
+	sheet_responses.append(datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S"))
 	question_mapping = get_yaml_questions(loaded_yaml)
 	for q_numb in range(0, len(loaded_yaml["questions"])):
 		question_id = "Question " + str(q_numb + 1)
@@ -197,8 +200,8 @@ def check_yaml_response(config_name, responses):
 			sheet_responses.append("N/A")
 
 	# Sanity check that we have enough responses
-	if not (len(sheet_responses) == len(loaded_yaml["questions"])):
-		print("Malformed responses. # of collected responses:", len(sheet_responses), \
+	if not ((len(sheet_responses) - 1) == len(loaded_yaml["questions"])):
+		print("Malformed responses. # of collected responses:", len(sheet_responses) - 1, \
 			"# of questions:", len(loaded_yaml["questions"]))
 		return False
 
