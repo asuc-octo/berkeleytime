@@ -275,12 +275,22 @@ class BTForm extends Component {
     for (let question of form.questions) {
       if (question.min && responses[question.unique_name]) {
         if (!responses[question.unique_name] || responses[question.unique_name].length < question.min) {
-          this.setValidation(question, "Input must be at least " + question.min + " characters.", false, validation);
+          let message = "Input must be at least " + question.min + " characters. Currently " + responses[question.unique_name].length  +" character";
+          if (responses[question.unique_name].length !== 1) {
+            message += "s";
+          }
+          message += ".";
+          this.setValidation(question, message, false, validation);
         }
       }
       if (question.max && responses[question.unique_name]) {
         if (responses[question.unique_name].length > question.max) {
-          this.setValidation(question, "Input must be at most " + question.max + " characters.", false, validation);
+          let message = "Input must be at most " + question.min + " characters. Currently " + responses[question.unique_name].length  +" character";
+          if (responses[question.unique_name].length !== 1) {
+            message += "s";
+          }
+          message += ".";
+          this.setValidation(question, message, false, validation);
         }
       }
     }

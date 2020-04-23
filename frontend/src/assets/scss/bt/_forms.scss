@@ -36,7 +36,7 @@
     padding: 6px;
     display: block;
     margin: 0px 0 28px 0;
-    transition: .5s;
+    //transition: .5s; This somehow messes up the (!) validator - the size changes during the transition
     background-color: white;
 
     &::placeholder{
