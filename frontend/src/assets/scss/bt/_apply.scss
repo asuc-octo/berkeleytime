@@ -75,11 +75,14 @@
     }
 
     .was-validated .custom-file-input:valid ~ .custom-file-label, .custom-file-input.is-valid ~ .custom-file-label {
-      border-color: blue;
+      border-color: $bt-blue;
     }
 
-    .was-validated .custom-checkbox .custom-control-input:checked ~ .custom-control-label::after {
-
+    .uploaded-file-remove {
+      position: absolute;
+      right: 0;
+      margin-right: 20px;
+      padding-bottom: 3px;
     }
 
     .form-control:focus {
