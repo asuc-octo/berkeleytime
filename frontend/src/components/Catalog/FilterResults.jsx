@@ -4,7 +4,7 @@ import { FixedSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import FilterCard from './FilterCard';
-import { laymanToAbbreviation } from '../../variables/Variables';
+import { laymanToAbbreviation, abbreviationToLayman } from '../../variables/Variables';
 
 import { getFilterResults, filter, makeRequest } from '../../redux/actions';
 import { connect } from "react-redux";
@@ -14,7 +14,6 @@ import { connect } from "react-redux";
 class FilterResults extends Component {
   constructor(props) {
     super(props);
-
   }
 
   componentDidMount() {
@@ -99,7 +98,11 @@ class FilterResults extends Component {
   }
 
   filter = course => {
-    let { query } = this.props;
+    let {query} = this.props;
+    return FilterResults.filterCourses(course, query);
+  }
+
+  static filterCourses(course, query) {
     if(query.trim() === "") { return true }
     let querySplit = query.toUpperCase().split(" ");
     if(querySplit[0] in laymanToAbbreviation) {
@@ -112,15 +115,18 @@ class FilterResults extends Component {
   }
 
   static matches(course, query) {
-    let courseMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
+    let abbreviationStr = '';
+    if (abbreviationToLayman[course.abbreviation]) {
+      abbreviationStr = abbreviationToLayman[course.abbreviation].join(" ");
+    };
     let otherNumber;
     if (course.course_number.indexOf("C") !== -1) { // if there is a c in the course number
         otherNumber = course.course_number.substring(1);
     } else { // if there is not a c in the course number
         otherNumber = "C" + course.course_number;
     }
-    var courseFixedForCMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    return courseMatches || courseFixedForCMatches;
+    let courseMatches = (`${course.abbreviation} ${abbreviationStr} ${course.course_number} ${otherNumber} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
+    return courseMatches;
   }
 
   render() {
