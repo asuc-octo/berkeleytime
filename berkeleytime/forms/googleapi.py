@@ -48,10 +48,8 @@ def check_yaml_format(yaml_path):
 def get_yaml_questions(loaded_yaml):
 	question_mapping = {}
 	questions = loaded_yaml["questions"]
-	index = 1
-	for question in questions:
-		question_mapping["Question "+str(index)] = question["type"]
-		index += 1
+	for count,question in enumerate(questions,1):
+		question_mapping["Question "+str(count)] = question["type"]
 	return question_mapping
 
 
