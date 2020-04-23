@@ -10,7 +10,7 @@ class BTForm extends Component {
       responses: {},
       validated: false,
       validation: {},
-      filesUploaded: {},
+      submitting: false,
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -64,13 +64,53 @@ class BTForm extends Component {
     const target = event.currentTarget;
     let validation = {};
     event.preventDefault();
-    if (this.validateAll(form, responses, validation)) {
-      alert('success');
-    }
+    let validationSuccess = this.validateAll(form, responses, validation);
     this.setState({
       validation: validation,
       validated: true,
-    })
+    });
+    if (validationSuccess) {
+      this.postResponses(form, responses);
+    }
+  }
+
+  postResponses(form, responses) {
+    let submission = {};
+    for (let question of form.questions) {
+      if (responses[question.unique_name]) {
+        if (question.type === 'file') {
+          if (responses[question.unique_name].files.length > 0) {
+            submission[question.unique_name] = [];
+            for (let file of responses[question.unique_name].files) {
+              if (!responses[question.unique_name][file.name]) {
+                alert("Files not finished uploading!");
+                return
+              }
+              submission[question.unique_name].push(responses[question.unique_name][file.name])
+            }
+            submission[question.unique_name] = submission[question.unique_name].join("\n")
+          }
+        } else if (question.type === 'multiple_select') {
+          submission[question.unique_name] = responses[question.unique_name].join("\n");
+        } else {
+          submission[question.unique_name] = responses[question.unique_name];
+        }
+      }
+    }
+    submission["Config"] = form.info.unique_name;
+    console.log(submission);
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submission)
+    };
+    this.setState({
+      submitting: true,
+    });
+    fetch('/api/forms/submit/', requestOptions)
+        .then(response => response.json())
+        .then(data => data['success'] ? alert('success: true') : alert('success: false; error: ' + data['error']))
+        .then(() => this.setState({submitting: false}))
   }
 
   handleCheck(event) {
@@ -133,17 +173,24 @@ class BTForm extends Component {
       let reader = new FileReader();
       const file = target.files[i];
       reader.onload = (event) => {
-        this.setState(prevState => ({
-          filesUploaded: {
-            ...prevState.filesUploaded,
-            [target.name]: {
-              ...prevState.filesUploaded[target.name] ? {...prevState.filesUploaded[target.name]} : {...{}},
-              [file.name]: event.target.result,
+        const requestOptions = {
+          method: 'POST',
+          body: event.target.result
+        };
+        fetch('/api/forms/upload/' + form.info.unique_name + "/" + file.name + "/", requestOptions)
+          .then(response => response.json())
+          .then(data => this.setState(prevState => ({
+            ...prevState,
+            responses: {
+              ...prevState.responses,
+              [target.name]: {
+                ...prevState.responses[target.name],
+                [file.name]: data["success"] ? data["link"] : "error"
+              }
             }
-          }
-        }))
-      };
-      reader.readAsBinaryString(file);
+          })))
+        };
+      reader.readAsArrayBuffer(file);
     }
 
     this.setState(prevState => ({
@@ -160,7 +207,7 @@ class BTForm extends Component {
   }
 
   removeFile(question, removedFile) {
-    const { form, responses, filesUploaded } = this.state;
+    const { form, responses } = this.state;
     const files = responses[question].files.filter(file => file.name !== removedFile);
     let validation = {};
     this.validateAll(form, {
@@ -171,11 +218,13 @@ class BTForm extends Component {
           }
         }, validation);
     this.setState(prevState => ({
+        ...prevState,
         responses: {
           ...prevState.responses,
           [question]: {
             ...prevState.responses[question],
-            files: files
+            files: files,
+            [removedFile]: "removed",
           }
         },
         validation: prevState.validated ? validation : {},
@@ -375,9 +424,22 @@ class BTForm extends Component {
     let valid = validation[question.unique_name] ? validation[question.unique_name].valid : false;
     let invalid = validation[question.unique_name] ? !validation[question.unique_name].valid : false;
     let fileList = [];
+    let fileStatus = {};
     if (responses[question.unique_name] && responses[question.unique_name].files) {
       for (var i = 0; i < responses[question.unique_name].files.length; i++) {
-        fileList.push(responses[question.unique_name].files[i].name);
+        let fileName = responses[question.unique_name].files[i].name;
+        fileList.push(fileName);
+        if (responses[question.unique_name][fileName]) {
+          if (responses[question.unique_name][fileName] === 'error') {
+            fileStatus[fileName] = "(error)";
+          } else if (responses[question.unique_name][fileName] === 'removed') {
+            fileStatus[fileName] = "(uploading)";
+          } else {
+            fileStatus[fileName] = "loaded";
+          }
+        } else {
+          fileStatus[fileName] = "(uploading)";
+        }
       }
     }
     return (
@@ -396,7 +458,7 @@ class BTForm extends Component {
         />
         <ListGroup>
           { fileList.map(file =>
-              <ListGroup.Item>{ file }
+              <ListGroup.Item>{ file } { fileStatus[file] === 'loaded' ? null : fileStatus[file]}
               <span className="uploaded-file-remove"
                 onClick={ ()=> { this.removeFile(question.unique_name, file) }}
               >
@@ -413,7 +475,8 @@ class BTForm extends Component {
   }
 
   render() {
-    const { form, responses, filesUploaded, validation } = this.state;
+    const { form, responses, validation, submitting } = this.state;
+    console.log(submitting);
 
     if (form === null) {
       return null;
@@ -447,7 +510,7 @@ class BTForm extends Component {
             </Form.Group>
            )}
 
-         <Button variant="primary" type="submit" className="btn btn-bt-primary btn-bt-sm">
+         <Button variant="primary" type="submit" className="btn btn-bt-primary btn-bt-sm" disabled={submitting}>
             Submit
           </Button>
           
