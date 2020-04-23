@@ -45,6 +45,14 @@ def check_yaml_format(yaml_path):
 		print("Unexpected error within check_yaml_format. Raised error:")
 		raise
 
+def get_yaml_questions(loaded_yaml):
+	question_mapping = {}
+	questions = loaded_yaml["questions"]
+	for count,question in enumerate(questions,1):
+		question_mapping["Question "+str(count)] = question["type"]
+	return question_mapping
+
+
 # Uploads FILE_BLOB to folder called FOLDER_NAME
 # Returns the webViewLink of uploaded file
 def upload_file(folder_name, file_name, file_blob):
@@ -142,14 +150,14 @@ def check_yaml_response(yaml_path, responses):
 		return False
 
 	# Sanity check if responses is correctly formed (with name tuple first)
-	if not responses[0][0] == "unique_name":
-		print("Responses does not contain the unique_name tuple.")
+	if "Config" not in responses:
+		print("Responses does not contain the Config key.")
+		return False
 
 	# Sanity check if correct YAML is being used
-	if not loaded_yaml["info"]["unique_name"] == responses[0][1] or \
-		not len(responses) - 1 == len(loaded_yaml["questions"]):
+	if not loaded_yaml["info"]["unique_name"] == responses["Config"]:
 		print("Incorrect YAML configuration:", loaded_yaml["info"]["unique_name"], \
-			"for responses:", loaded_yaml["info"]["unique_name"], "or malformed responses")
+			"for responses:", loaded_yaml["info"]["unique_name"])
 		return False
 
 	# Uploading files first to retrieve drive URLs
@@ -159,18 +167,26 @@ def check_yaml_response(yaml_path, responses):
 		drive_folder_name = ""
 
 	sheet_responses = []
-	for resp_type,response in responses:
-		if resp_type == "unique_name":
-			pass
-		elif resp_type == "file":
-			if type(response) is tuple:
-				file_link = upload_file(drive_folder_name, response[0], response[1])
-				sheet_responses.append(file_link)
+	question_mapping = get_yaml_questions(loaded_yaml)
+	for q_numb in range(0, len(loaded_yaml["questions"])):
+		question_id = "Question " + str(q_numb + 1)
+		if question_id in responses:
+			response = responses[question_id]
+			question_type = question_mapping[question_id]
+			if question_type == "file":
+				if type(response) is list:
+					file_links = ""
+					for file_name, file_blob in response:
+						file_link = upload_file(drive_folder_name, file_name, file_blob)
+						file_links += file_link + ",  "
+					sheet_responses.append(file_links)
+				else:
+					print("Response for file upload is malformed")
+					return False
 			else:
-				print("Response for file upload is malformed")
-				return False
+				sheet_responses.append(response)
 		else:
-			sheet_responses.append(response)
+			sheet_responses.append("N/A")
 
 	# Sanity check that we have enough responses
 	if not (len(sheet_responses) == len(loaded_yaml["questions"])):
