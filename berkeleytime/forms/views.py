@@ -3,15 +3,14 @@ from catalog.utils import is_post
 from django.core.cache import cache
 from django.http import Http404
 import json
-from googleapi import check_yaml_response, check_yaml_format, upload_file
+from googleapi import check_yaml_response, check_yaml_format, upload_file, CACHED_CONFIGS
 from yaml import load, dump
 import traceback
 
 # Returns YAML file (in JSON format) with name
 def get_config(request, config_name):
 	try:
-		with open("forms/configs/{}.yaml".format(config_name), "r") as f:
-			loaded_yaml = load(f.read())
+		loaded_yaml = CACHED_CONFIGS[config_name]
 
 		form_config = {
 			"info": {
@@ -43,7 +42,7 @@ def record_response(request):
 		if is_post(request):
 			form_response = json.loads(request.body)
 			return render_to_json({
-				'success': check_yaml_response("forms/configs/{}.yaml".format(form_response["Config"]), json.loads(request.body))
+				'success': check_yaml_response(form_response["Config"], json.loads(request.body))
 			})
 		else:
 			raise Http404
@@ -59,10 +58,8 @@ def record_response(request):
 def upload_file_view(request, config_name, file_name):
 	try:
 		if is_post(request):
-			print("is post")
 			file_blob = request.body
-			loaded_yaml = check_yaml_format("forms/configs/{}.yaml".format(config_name))
-			print(loaded_yaml)
+			loaded_yaml = check_yaml_format(config_name)
 			if "drive_folder_name" in loaded_yaml["info"]:
 				drive_folder_name = loaded_yaml["info"]["drive_folder_name"]
 			else:
@@ -70,7 +67,6 @@ def upload_file_view(request, config_name, file_name):
 					'success': False,
 					'error': 'No folder of that name exists.'
 				})
-			print(drive_folder_name, file_name, len(file_blob), file_blob[0:10])
 			file_link = upload_file(drive_folder_name, file_name, file_blob)
 			return render_to_json({
 				'success': True,

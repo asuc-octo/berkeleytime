@@ -483,8 +483,8 @@ class BTForm extends Component {
     }
 
     return (
-      <div className="application">
-        <div className="application-header">
+      <div className="bt-form">
+        <div className="bt-form-header">
           <h5> { form.info.public_name } </h5>
           <p>
             { form.info.description }

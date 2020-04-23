@@ -28,6 +28,7 @@ elif IS_STAGING or IS_PRODUCTION:
 	dlm = redlock.Redlock([{"host": REDIS.hostname, "port": REDIS.port, 'password': REDIS.password},])
 
 CACHED_SHEETS = {}
+CACHED_CONFIGS = {}
 
 # Raises some error, need to find
 credentials = ServiceAccountCredentials.from_json_keyfile_name(
@@ -37,6 +38,7 @@ gc = gspread.authorize(credentials)
 for config in os.listdir('forms/configs'):
 	f = open("forms/configs/{}".format(config))
 	loaded_yaml = load(f, Loader=Loader)
+	CACHED_CONFIGS[config.replace(".yaml", "")] = loaded_yaml
 	if "googlesheet_link" in loaded_yaml["info"]:
 		doc_url = loaded_yaml["info"]["googlesheet_link"]
 		sheet = gc.open_by_url(doc_url).sheet1
@@ -45,11 +47,10 @@ for config in os.listdir('forms/configs'):
 
 # Reads in a YAML file and checks if it is properly formed
 # Returns YAML file in dictionary form
-def check_yaml_format(yaml_path):
+def check_yaml_format(config_name):
 	# YAML_PATH is the filepath to the yaml file
 	try:
-		f = open(yaml_path)
-		loaded_yaml = load(f, Loader=Loader)
+		loaded_yaml = CACHED_CONFIGS[config_name]
 		# REQUIRED FIELDS:
 		# info field with googlesheet_link
 		if "info" not in loaded_yaml or "googlesheet_link" not in loaded_yaml["info"]:
@@ -163,12 +164,12 @@ def sheet_add_next_entry(doc_url, responses):
 # Checks if RESPONSES matches the YAML configuration
 # Uploads the response to GoogleDrive
 # Returns True if successful, False otherwise
-def check_yaml_response(yaml_path, responses):
+def check_yaml_response(config_name, responses):
 	# YAML_PATH is the filepath to the yaml file
 	# RESPONSES is a list of the responses [(type, response)], where the first
 	# tuple (index 0) HAS to be ("unique_name", <unique_name>).
 
-	loaded_yaml = check_yaml_format(yaml_path)
+	loaded_yaml = check_yaml_format(config_name)
 	if not loaded_yaml:
 		print("Failed to read yaml configuration file:", yaml_path)
 		print("Aborting.")
