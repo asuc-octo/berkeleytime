@@ -40,11 +40,11 @@
 @import "bt/classcards";
 @import "bt/graph-empty";
 // Grades
-@import "bt/grades";
+@import "bt/grades/grades";
 @import "bt/grades/graph";
 @import "bt/shared/grades_enrollment_info";
 // Enrollment
-@import "bt/enrollment";
+@import "bt/enrollment/enrollment";
 // Releases
 @import "bt/releases";
 
@@ -67,6 +67,7 @@
 
 // Apply
 @import "bt/apply";
+@import "bt/forms";
 
 // Error page
 @import "bt/error/error";
