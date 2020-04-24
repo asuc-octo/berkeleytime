@@ -48,7 +48,7 @@
 
     p {
       font-size: 20px;
-      font-weight: 500px;
+      font-weight: 600;
       margin-right: 30px;
     }
 
@@ -71,26 +71,31 @@
   }
 
   .filter-search {
-    margin-bottom: 30px;
+    margin-bottom: 16px;
+
+    @include mobile {
+      margin-bottom: 16px;
+    }
 
     input {
       width: 100%;
-      padding-bottom: 3px;
-      border: 0;
-      border-bottom: .5px solid $bt-light-border-grey;
+      padding: 6px;
+      border: solid 1px $bt-border-grey;
       color: $bt-base-text;
-      font-size: 16px;
+      font-size: 14px;
       font-family: 'FontAwesome', 'Inter', sans-serif;
       transition: .5s;
+      border-radius: 4px;
+      text-indent: 6px;
 
-      &:focus {
-        outline: none;
-        color: $bt-base-text;
-
-        &::placeholder {
-          color: $bt-light-border-grey;
-        }
+      &::placeholder{
+        color: $bt-light-grey;
       }
+
+      &:focus::placeholder {
+        color: $bt-light-border-grey;
+      }
+
     }
   }
 
@@ -101,11 +106,22 @@
     flex-direction: column;
 
     > p {
-      margin-bottom: 6px;
+      margin-bottom: 10px;
       font-size: 14px;
+      font-weight:600;
     }
 
     //override dropdown stylings
+
+    .css-10r6hld-indicatorContainer:hover {
+      color: $bt-border-grey;
+      transition: .5s;
+    }
+
+    .css-10r6hld-indicatorContainer:hover {
+      color: $bt-border-grey;
+      transition: .5s;
+    }
 
     .css-1wa3eu0-placeholder::placeholder {
       color: $bt-light-border-grey;
@@ -146,7 +162,7 @@
 
     .css-1rhbuit-multiValue {
       background-color: #f3f3f3;
-      border-radius: 4px;
+      border-radius: 16px;
       padding: 2px 6px;
     }
   }

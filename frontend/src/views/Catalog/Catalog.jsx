@@ -245,8 +245,6 @@ class Catalog extends Component {
   render() {
     const { defaultSearch, showDescription } = this.state;
     const { activePlaylists, loading, selectedCourse, isMobile } = this.props;
-
-    console.log(isMobile);
     
     return (
       <div className="catalog viewport-app">

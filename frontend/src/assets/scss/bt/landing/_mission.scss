@@ -46,6 +46,10 @@
 
       a {
         color: $bt-blue;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }

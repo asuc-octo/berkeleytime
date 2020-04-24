@@ -1,0 +1,56 @@
+info:
+  unique_name: "TestSurvey0"
+  # Unique_name must only consist of numbers and letters
+  public_name: "TestSurvey"
+  description: "For Testing Use"
+  googlesheet_link: "https://docs.google.com/spreadsheets/d/1WEy7XNrndAqOeQ6YHcQzUEuuqrp07xL-DpXf9Hs9m8A/edit#gid=0"
+  drive_folder_name: "InitialTests"
+questions:
+  - title: "Test Q1"
+    description: "Enter an email."
+    required: True
+    type: "short"
+    placeholder: "This is placeholder text"
+    format: "email" # Optional format check for short and long questions: [email, number, date (MM/DD/YYYY)]
+  - title: "Test Q2"
+    description: "Enter an number."
+    type: "short"
+    placeholder: "This is placeholder text"
+    format: "number"
+  - title: "Test Q3"
+    description: "Enter a MM/DD/YYYY date."
+    type: "short"
+    placeholder: "This is placeholder text"
+    format: "date"
+  - title: "Test Q4"
+    description: "Enter between 2 and 5 characters, inclusive."
+    type: "long"
+    required: True
+    min: 2 # Optional inclusive min char count (short and long only)
+    max: 5 # Optional inclusive max char count (short and long only)
+    placeholder: "This is placeholder text"
+  - title: "Test Q5"
+    # Description is optional
+    type: "multiple_choice"
+    choices:
+      - "Choice A"
+      - "Choice B"
+      - "Choice C"
+    required: False
+    placeholder: "This is placeholder text"
+  - title: "Test Q6"
+    description: "This is an example description."
+    type: "multiple_select"
+    choices:
+      - "Choice A"
+      - "Choice B"
+      - "Choice C"
+    required: False
+    # Placeholder is optional
+  - title: "Test Q7"
+    description: "Upload any number of images. (Max 10 MB per file)"
+    placeholder: "The placeholder is required for files."
+    type: "file"
+    accept: ".gif,.jpg,.jpeg,.png" # Option, skip if accept any
+    # Required is optional, default is False
+    # Placeholder is optional

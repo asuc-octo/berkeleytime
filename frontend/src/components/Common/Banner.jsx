@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import { closeBanner } from '../../redux/actions';
 import close from '../../assets/svg/common/close.svg';
@@ -15,7 +16,7 @@ class Banner extends PureComponent {
       <div className="banner">
         <div className="content">
           <p>{ text }</p>
-          <Button variant="bt-primary-inverted" size="sm">Learn More</Button>
+           <Button as={Link} to={"/releases"}></Button>
         </div>
         <img src={close} alt="close" onClick={() => dispatch(closeBanner())}/>
       </div>

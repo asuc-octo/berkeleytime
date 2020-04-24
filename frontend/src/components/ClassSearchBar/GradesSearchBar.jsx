@@ -6,7 +6,7 @@ import {
 import hash from 'object-hash';
 
 import { connect } from 'react-redux';
-import { laymanToAbbreviation } from '../../variables/Variables';
+import FilterResults from '../Catalog/FilterResults';
 
 import { fetchGradeSelected } from '../../redux/actions';
 
@@ -257,33 +257,8 @@ class GradesSearchBar extends Component {
     this.reset();
   }
 
-  courseMatches(option, query) {
-    const { course } = option;
-    const courseMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    let otherNumber;
-    if (course.course_number.indexOf('C') !== -1) { // if there is a c in the course number
-      otherNumber = course.course_number.substring(1);
-    } else { // if there is not a c in the course number
-      otherNumber = `C${course.course_number}`;
-    }
-    const courseFixedForCMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    return courseMatches || courseFixedForCMatches;
-  }
-
-  filterCourses(option, query) {
-    if (query.trim() === '') { return true; }
-    const querySplit = query.toUpperCase().split(' ');
-    if (querySplit[0] in laymanToAbbreviation) {
-      querySplit[0] = laymanToAbbreviation[querySplit[0]];
-    }
-    query = query.toLowerCase();
-    const pseudoQuery = querySplit.join(' ').toLowerCase();
-    const useOriginalQuery = (querySplit.length === 1 && query !== pseudoQuery);
-    return (useOriginalQuery && this.courseMatches(option, query)) || this.courseMatches(option, pseudoQuery);
-  }
-
-  filterOptions(options, query) {
-    return options.filter(option => this.filterCourses(option, query));
+  filterOptions(option, query) {
+    return FilterResults.filterCourses(option.course, query);
   }
 
   reset() {
@@ -348,7 +323,7 @@ class GradesSearchBar extends Component {
               placeholder="Choose a class..."
               options={this.buildCoursesOptions(classes)}
               onChange={this.handleClassSelect}
-              filterOptions={this.filterOptions}
+              filterOption={this.filterOptions}
               components={{
                 IndicatorSeparator: () => null
               }}
