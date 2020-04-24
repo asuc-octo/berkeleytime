@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Radium from 'radium';
 import { withRouter, Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import { BeatLoader } from 'react-spinners';
@@ -7,6 +8,12 @@ import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
 import book from '../../assets/svg/catalog/book.svg';
 import launch from '../../assets/svg/catalog/launch.svg';
+
+import denero from '../../assets/img/eggs/denero.png';
+import hug from '../../assets/img/eggs/hug.png';
+import hilf from '../../assets/img/eggs/hilf.png';
+import sahai from '../../assets/img/eggs/sahai.png';
+import scott from '../../assets/img/eggs/scott.png';
 
 import { updateCourses, getCourseData, makeRequestDescription, setRequirements, setUnits, setDepartment, setLevel, setSemester } from '../../redux/actions';
 import { connect } from "react-redux";
@@ -20,6 +27,14 @@ import {
 function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
+
+const easterEggImages = {
+  "DENERO J": denero,
+  "HUG J": hug,
+  "SAHAI A": sahai,
+  "HILFINGER P": hilf,
+  "SHENKER S": scott,
+};
 
 class ClassDescription extends Component {
   static formatEnrollmentPercentage(percentage) {
@@ -145,6 +160,21 @@ class ClassDescription extends Component {
     modifyFilters(new Set([formattedFilter.value]), new Set());
   }
 
+  findInstructor(instr) {
+    if (instr === null) return;
+    for (let egg in easterEggImages) {
+      if (instr.indexOf(egg) !== -1) {
+        console.log(egg);
+        return {
+          ':hover': {
+            cursor: `url(${easterEggImages[egg]}), auto`,
+          }
+        }
+      }
+    }
+    return {};
+  }
+
   render() {
     const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
@@ -232,7 +262,7 @@ class ClassDescription extends Component {
                     let startDate = new Date(section.start_time + "Z");
                     let endDate = new Date(section.end_time + "Z");
                     return (
-                      <tr>
+                      <tr style={this.findInstructor(section.instructor)}>
                         <td>{section.kind}</td>
                         <td>{section.ccn}</td>
                         <td>{section.instructor}</td>
@@ -257,6 +287,7 @@ class ClassDescription extends Component {
   }
 }
 
+ClassDescription = Radium(ClassDescription);
 
 const mapDispatchToProps = dispatch => {
   return {
