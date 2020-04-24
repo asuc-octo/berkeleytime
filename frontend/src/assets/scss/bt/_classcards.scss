@@ -1,5 +1,6 @@
 .class-card-list {
   margin-bottom: 10px;
+  min-height: 130px;
 
   @include mobile {
      > div {
@@ -7,6 +8,7 @@
       flex-wrap: nowrap;
       overflow-x: scroll;
     }
+    min-height: 0px;
   }
 
   .class-card-column {

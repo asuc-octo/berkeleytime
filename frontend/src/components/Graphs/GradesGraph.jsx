@@ -90,7 +90,7 @@ export default function GradesGraph({
             <Tooltip
               cursor={{fill: '#fff'}}
               content={<EmptyLabel />}
-              position={{ x: 150, y: 150 }}
+              position={{ x: 150, y: 450 }}
               wrapperStyle={{visibility: 'visible'}}
             />
           }
@@ -138,7 +138,7 @@ export default function GradesGraph({
               <Tooltip
                 cursor={{fill: '#fff'}}
                 content={<EmptyLabel />}
-                position={{ x: 80, y: 250 }}
+                position={{ x: 80, y: 500 }}
                 wrapperStyle={{visibility: 'visible'}}
               />
           }
