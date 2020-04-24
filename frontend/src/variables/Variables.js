@@ -698,13 +698,11 @@ var laymanToAbbreviation = {
   "VISSTD": "VIS STD",
 };
 
-var abbreviationToLayman = {};
-Object.keys(laymanToAbbreviation).forEach(function(key) {
-    if (!abbreviationToLayman[laymanToAbbreviation[key]]) {
-        abbreviationToLayman[laymanToAbbreviation[key]] = [];
-    }
-    abbreviationToLayman[laymanToAbbreviation[key]].push(key);
-});
+var laymanSplit = {};
+for (let key in laymanToAbbreviation) {
+    laymanSplit[key] = key.split(" ");
+};
+
 
 module.exports = {
     style, // For notifications (App container and Notifications view)
@@ -714,5 +712,5 @@ module.exports = {
     legendSales, dataBar, optionsBar, responsiveBar, legendBar, // For charts (Dashboard view)
     colors,
     enrollment, optionsEnrollment, responsiveEnrollment,
-    grades, possibleGrades, laymanToAbbreviation, abbreviationToLayman
+    grades, possibleGrades, laymanToAbbreviation, laymanSplit
 };

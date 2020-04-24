@@ -20,7 +20,9 @@ class EnrollmentSearchBar extends Component {
       selectedClass: 0,
       selectPrimary: this.props.selectPrimary,
       selectSecondary: this.props.selectSecondary,
-    }
+    };
+
+    this.queryCache = {};
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
     this.handlePrimarySelect = this.handlePrimarySelect.bind(this);
@@ -177,7 +179,7 @@ class EnrollmentSearchBar extends Component {
   }
 
   filterOptions(option, query) {
-    return FilterResults.filterCourses(option.course, query);
+    return FilterResults.filterCourses(option.course, query, this.queryCache);
   }
 
   reset() {
