@@ -57,7 +57,7 @@ class Navigation extends Component {
 Navigation.links = [
   {
     to: '/catalog',
-    text: 'Courses',
+    text: 'Catalog',
   },
   {
     to: '/grades',

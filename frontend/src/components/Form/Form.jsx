@@ -30,7 +30,6 @@ class BTForm extends Component {
         form.questions.map(function(question) {
           if (question.type === "file") {
             responses[question.unique_name] = {
-              ref: React.createRef(),
               files: [],
             };
           }
@@ -390,11 +389,12 @@ class BTForm extends Component {
           placeholder={ question.placeholder }
           required={ question.required }
           custom
-          isInvalid={invalid}
-          isValid={valid}
+          isInvalid={ invalid }
+          isValid={ valid }
+          defaultValue={ '_DEFAULT_' }
       >
         {question.placeholder ? (
-            <option value="" style={{color: "grey"}} selected disabled>
+            <option value="_DEFAULT_" style={{color: "grey"}} disabled>
               { question.placeholder }
             </option>
         ): null }
@@ -458,7 +458,6 @@ class BTForm extends Component {
           label={ question.placeholder }
           name={ question.unique_name }
           accept={ question.accept ? question.accept : ""}
-          ref={ responses[question.unique_name] }
           onChange = { this.handleFileUpload }
           required={ question.required }
           isInvalid={invalid}
@@ -486,7 +485,6 @@ class BTForm extends Component {
 
   render() {
     const { form, responses, validation, submitting } = this.state;
-    console.log(submitting);
 
     if (form === null) {
       return null;
