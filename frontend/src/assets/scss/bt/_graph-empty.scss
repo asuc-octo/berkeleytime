@@ -1,9 +1,6 @@
 .graph-empty {
   // min-height: inherit;
-  height: 400px;
-  .col-lg-8 {
-    height: 400px;
-  }
+  max-height: 0px;
 
   .graph-empty-content {
     position: relative;
