@@ -8,3 +8,6 @@ releases:
     - Support for our old legacy site is now officially deprecated. You can still visit it at <a href="https://old.berkeleytime.com">old.berkeleytime.com</a>, but some features may be broken and we won't be maintaining it moving forward.
     fixes:
     - Adding courses to Grades and Enrollment pages now accurately generate unique URLs, which you can share with friends to reproduce your search.
+    - Fixed an issue where the course average in Grades was not being calculated correctly.
+    - Enrollment statistics are now updated every 15 minutes.
+    - Course search is improved with better support laymen's abbreviations.

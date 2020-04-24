@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Container,
   Row,
@@ -72,7 +73,7 @@ Faq.questions = [
     question: 'Is anyone actively working on Berkeleytime?',
     answer: <p>Yes, we're a student-run organization here on campus under the <a className="link" href="https://octo.asuc.org//">
       ASUC Office of the CTO</a>. Our team meets weekly to maintain and improve the site. You can learn more about
-      us <a className="link" href="/about">here</a>!</p>
+      us <Link to="/about" className="link">here</Link>!</p>
   },
   {
     question: 'How do I apply to join the team?',
@@ -81,7 +82,7 @@ Faq.questions = [
   {
     question: 'Berkeleytime is down/I found a bug!',
     answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting
-      a <a className="link" href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1">bug report</a>, and one of our on-call engineers will try to get to it as soon as possible.</p>
+      a <Link to="/bugs" className="link">bug report</Link>, and one of our on-call engineers will try to get to it as soon as possible.</p>
   },
   {
     question: 'Can I access your API for a project I’m working on?',
@@ -90,7 +91,7 @@ Faq.questions = [
   },
   {
     question: 'How do I give feedback about the product?',
-    answer: <p>Feel free to fill out our <a className="link" href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1">feedback form</a>. You can also email us at <a className="link" href = "mailto: octo.berkeley@asuc.org">octo.berkeley@asuc.org</a>, and we'll respond as soon as we can.  </p>
+    answer: <p>Feel free to fill out our <Link to="/bugs" className="link">feedback form</Link>. You can also email us at <a className="link" href = "mailto: octo.berkeley@asuc.org">octo.berkeley@asuc.org</a>, and we'll respond as soon as we can.  </p>
   },
 ];
 
