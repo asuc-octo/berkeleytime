@@ -123,7 +123,7 @@ class GradesGraphCard extends Component {
                   null
                 }
                 { !isMobile && !graphEmpty ?
-                <Col lg={4}>
+                <Col md={{span: 4, order:2}} lg={{span: 4, order:2}}>
                   {hoveredClass
                     && (
                       <GradesInfoCard
