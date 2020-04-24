@@ -394,12 +394,12 @@ class BTForm extends Component {
           defaultValue={ '_DEFAULT_' }
       >
         {question.placeholder ? (
-            <option key="_DEFAULT_" value="_DEFAULT_" style={{color: "grey"}} disabled>
+            <option value="_DEFAULT_" style={{color: "grey"}} disabled>
               { question.placeholder }
             </option>
         ): null }
         {question.choices.map(item =>
-          <option key={ item } value={ item }>{ item }</option>
+          <option value={ item }>{ item }</option>
         )}
       </Form.Control>
     )
@@ -415,7 +415,6 @@ class BTForm extends Component {
             custom
             type="checkbox"
             id={ item }
-            key={item }
             name={ question.unique_name }
             checked={ responses[question.unique_name]
                     ? responses[question.unique_name].includes(item)
@@ -468,7 +467,7 @@ class BTForm extends Component {
         />
         <ListGroup>
           { fileList.map(file =>
-              <ListGroup.Item key={ file } >{ file } { fileStatus[file] === 'loaded' ? null : fileStatus[file]}
+              <ListGroup.Item>{ file } { fileStatus[file] === 'loaded' ? null : fileStatus[file]}
               <span className="uploaded-file-remove"
                 onClick={ ()=> { this.removeFile(question.unique_name, file) }}
               >
@@ -502,7 +501,7 @@ class BTForm extends Component {
 
         <Form noValidate onSubmit={ this.handleSubmit }>
           {form.questions.map(item =>
-            <Form.Group key={ item.unique_name }>
+            <Form.Group>
               <Form.Label className={item.required ? "required" : ""}>
                 {item.title}
               </Form.Label>
