@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Label,
 } from 'recharts';
 import {
   percentileToString
@@ -82,18 +83,11 @@ export default function GradesGraph({
           { !graphEmpty ? 
             <YAxis type="number" unit="%" /> : <YAxis type="number" unit="%" domain={[0, 100]}/>
           }
-          { !graphEmpty ? 
-            <Tooltip
-              formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-              cursor={{fill: '#EAEAEA'}}
-            /> :
-            <Tooltip
-              cursor={{fill: '#fff'}}
-              content={<EmptyLabel />}
-              position={{ x: 150, y: 150 }}
-              wrapperStyle={{visibility: 'visible'}}
-            />
-          }
+
+          <Tooltip
+            formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+            cursor={{fill: '#EAEAEA'}}
+          />
 
           {gradesData.map((item, i) => (
             <Bar
@@ -125,23 +119,15 @@ export default function GradesGraph({
             <XAxis type="number" unit="%" /> : <XAxis type="number" unit="%" domain={[0, 100]}/>
           }
           <YAxis dataKey="name" type="category" />
-          { !graphEmpty ?
-            <Tooltip
-              content={
-                <MobileTooltip
-                  selectedPercentiles={selectedPercentiles}
-                  color={color}
-                  denominator={denominator}
-                /> 
-              }
-            /> :
-              <Tooltip
-                cursor={{fill: '#fff'}}
-                content={<EmptyLabel />}
-                position={{ x: 80, y: 250 }}
-                wrapperStyle={{visibility: 'visible'}}
-              />
-          }
+          <Tooltip
+            content={
+              <MobileTooltip
+                selectedPercentiles={selectedPercentiles}
+                color={color}
+                denominator={denominator}
+              /> 
+            }
+          /> 
           {gradesData.map((item, i) => (
             <Bar
               name={`${item.title} • ${item.semester} • ${item.instructor}`}
@@ -159,6 +145,13 @@ export default function GradesGraph({
         </BarChart>
       </ResponsiveContainer>
       }
+
+      { graphEmpty ?
+        <EmptyLabel />
+        :
+        null
+      }
+      
       </div>
 
   );

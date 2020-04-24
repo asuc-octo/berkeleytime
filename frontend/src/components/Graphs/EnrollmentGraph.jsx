@@ -82,18 +82,10 @@ export default function EnrollmentGraph({
           <YAxis type="number" unit="%"
                  domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
                  ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}/>
-          { !graphEmpty ?
-            <Tooltip
-              formatter={(value) => `${value}%`}
-              labelFormatter={label => `Day ${label}`}
-            /> :
-            <Tooltip
-              cursor={{fill: '#fff'}}
-              content={<EmptyLabel />}
-              position={{ x: 150, y: 150 }}
-              wrapperStyle={{visibility: 'visible'}}
-            />
-          }
+          <Tooltip
+            formatter={(value) => `${value}%`}
+            labelFormatter={label => `Day ${label}`}
+          />
 
           {enrollmentData.map((item, i) => (
             <Line
@@ -142,6 +134,13 @@ export default function EnrollmentGraph({
         }
         </LineChart>
       </ResponsiveContainer>
+
+      { graphEmpty ? 
+        <EmptyLabel /> 
+        :
+        null
+      }
+
     </div>
   );
 }
