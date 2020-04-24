@@ -6,4 +6,6 @@ spec:
   limits:
   - default:
       memory: 3Gi
+    defaultRequest:
+      memory: 0
     type: Container

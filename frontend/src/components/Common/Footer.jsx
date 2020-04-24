@@ -22,7 +22,7 @@ function Footer() {
             className="bt-footer-column"
           >
             <p>Get Started</p>
-            <Link to="/catalog" className=""><span className="footer-link">Courses</span></Link>
+            <Link to="/catalog" className=""><span className="footer-link">Catalog</span></Link>
             <Link to="/grades" className=""><span className="footer-link">Grades</span></Link>
             <Link to="/enrollment" className=""><span className="footer-link">Enrollment</span></Link>
             <Link to="/apidocs" className=""><span className="footer-link">API Docs</span><span className="new-box">New</span></Link>
