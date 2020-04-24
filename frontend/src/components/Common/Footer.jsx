@@ -29,7 +29,7 @@ function Footer() {
           </Col>
           <Col xs={4} sm={4} md={4} lg={2} className="bt-footer-column">
             <p>Support</p>
-            <a href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1"><span className="footer-link">Report a Bug</span></a>
+            <Link to="/bugs"><span className="footer-link">Report a Bug</span></Link>
             <a href="mailto:octo.berkeleytime@asuc.org" className=""><span className="footer-link">Contact</span></a>
             <a href="http://old.berkeleytime.com/" className=""><span className="footer-link">Legacy</span></a>
             <Link to="/releases" className=""><span className="footer-link">Releases</span><span className="new-box">New</span></Link>
