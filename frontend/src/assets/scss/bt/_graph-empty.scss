@@ -1,8 +1,8 @@
 .graph-empty {
   // min-height: inherit;
-  max-height: 0px;
-
+  
   .graph-empty-content {
+    height: 0px;
     position: relative;
     bottom: 300px;
     display: flex;
