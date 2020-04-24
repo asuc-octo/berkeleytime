@@ -30,7 +30,7 @@ function Explore() {
         <Col xs={12} s={12} md={4} lg={4} className="feature">
           <img src={history} />
           <h6>Enrollment History</h6>
-          <p>Compare and track accurate, real-time course enrollment trends and history.</p>
+          <p>Track accurate, real-time course enrollment trends and history.</p>
         </Col>
     </Row>
   </div>

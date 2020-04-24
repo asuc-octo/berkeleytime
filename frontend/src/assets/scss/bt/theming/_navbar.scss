@@ -1,4 +1,15 @@
 .bt-navbar {
+
+  @include mobile {
+    .navbar-light .navbar-toggler {
+      border: none;
+    }
+
+    button.navbar-toggler.collapsed {
+      border: none;
+    }
+
+  }
   @include touch {
     button.navbar-toggler, button.navbar-toggler.collapsed {
       border: none;
@@ -17,6 +28,10 @@
     &:hover {
       background-color: $bt-button-background;
       color: $bt-primary;
+      @include mobile {
+        background: none;
+        color: $bt-base-text;
+      }
     }
   }
 

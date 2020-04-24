@@ -1,11 +1,23 @@
-import React, { Component } from 'react';
-import { ClipLoader } from 'react-spinners';
+import React, { PureComponent } from 'react';
+import { Row, Col, ButtonToolbar, Form } from 'react-bootstrap';
+import retreat_silly from '../../assets/img/images/about/group/retreat_silly.png';
+import janet_jemma from '../../assets/img/images/about/group/janet_jemma.jpg';
+import BTForm from '../../components/Form/Form.jsx';
 
-class Apply extends Component {
-    constructor(props){
-        super(props);
-        window.location.href = 'https://www.notion.so/Join-BerkeleyTime-89d627ef9d354821845a5a450f218b36';
-    }
+class Apply extends PureComponent {
+  render() {
+    const { values } = this.props;
+
+    return (
+      <div className="apply">
+
+        <BTForm name="TestSurvey0" />
+
+      </div>
+
+    );
+  }
 }
+
 
 export default Apply;

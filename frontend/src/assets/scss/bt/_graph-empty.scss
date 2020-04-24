@@ -14,11 +14,16 @@
     align-items: center;
     min-height: inherit;
 
+
+    .graph-empty-image {
+      max-width: 9%;
+    }
+
     .graph-empty-heading {
       color: $bt-light-text;
       display: inline-block;
       font-size: 16px;
-      font-weight: bolder;
+      font-weight: 500;
       margin-top: 15px;
     }
 

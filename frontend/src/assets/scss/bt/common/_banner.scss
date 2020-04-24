@@ -2,9 +2,9 @@
   width: 100vw;
   min-height: $banner-height;
   z-index: $z-index-banner;
-  
+
   background-color: $bt-off-white;
-  border-bottom: 1px solid $bt-light-border-grey;
+  // border-bottom: 1px solid $bt-light-border-grey;
 
   display: flex;
   flex-direction: row;
@@ -19,6 +19,7 @@
     justify-content: center;
     align-items: center;
     font-size: 14px;
+    font-weight: 600;
     width: 100%;
     min-height: $banner-height;
     padding: 10px 5px;
@@ -40,11 +41,25 @@
     }
   }
 
-  img {
-    margin: 0 20px 0 5px;
-    width: 12px;
-    height: 12px;
+  > img {
+    position: fixed;
+    transition: .5s;
+    width: 24px;
+    height: 24px;
+    top: 18px;
+    right: 32px;
     cursor: pointer;
+    padding: 6px;
+    border-radius: 4px;
+
+    &:hover {
+      background: #ececec;
+    }
+
+    @include mobile {
+      top: 2vh;
+      right: 2vw;
+    }
   }
 }
 

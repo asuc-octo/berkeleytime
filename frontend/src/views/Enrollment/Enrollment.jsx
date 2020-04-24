@@ -13,7 +13,11 @@ import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse, enrollReset, 
 
 class Enrollment extends Component {
   constructor(props) {
-    super(props)
+    super(props);
+
+    this.state = {
+      additionalInfo: [],
+    };
 
     this.addCourse = this.addCourse.bind(this);
     this.removeCourse = this.removeCourse.bind(this);
@@ -101,11 +105,17 @@ class Enrollment extends Component {
     enrollRemoveCourse(id, color);
   }
 
-  updateClassCardEnrollment(course_letter, course_gpa, section_letter, section_gpa) {
+  updateClassCardEnrollment(latest_point, telebears, enrolled_info, waitlisted_info) {
+    var info=[]
+    for(var i=0; i<latest_point.length; i++) {
+      info.push([latest_point[i], telebears[i], enrolled_info[i], waitlisted_info[i]])
+    }
+    this.setState({ additionalInfo: info })
   }
 
 
   render() {
+    const { additionalInfo } = this.state;
     const { context, selectedCourses, isMobile } = this.props;
     let { location } = this.props;
     let courses = context.courses;
@@ -124,6 +134,9 @@ class Enrollment extends Component {
           <ClassCardList
             selectedCourses={selectedCourses}
             removeCourse={this.removeCourse}
+            additionalInfo={additionalInfo}
+            type="enrollment"
+            isMobile={isMobile}
           />
 
           <EnrollmentGraphCard
