@@ -703,7 +703,6 @@ for (let key in laymanToAbbreviation) {
     laymanSplit[key] = key.split(" ");
 };
 
-
 module.exports = {
     style, // For notifications (App container and Notifications view)
     thArray, tdArray, // For tables (TableList view)
