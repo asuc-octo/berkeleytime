@@ -9,6 +9,7 @@ function New() {
 }
 
 function Footer() {
+
   return (
     <footer className="bt-footer">
       <Container className="bt-footer-container">
@@ -37,7 +38,7 @@ function Footer() {
           <Col xs={4} sm={4} md={4} lg={2} className="bt-footer-column">
             <p className="">About</p>
             <Link to="/about" className=""><span className="footer-link">Team</span></Link>
-            <a href="/join" className=""><span className="footer-link">Join Us</span></a>
+            <Link to="/join" className=""><span className="footer-link">Join Us</span></Link>
             <a href="http://octo.asuc.org/" className=""><span className="footer-link">Office of the CTO</span></a>
             <a href="https://www.facebook.com/berkeleytime/" className=""><span className="footer-link">Facebook</span></a>
           </Col>
