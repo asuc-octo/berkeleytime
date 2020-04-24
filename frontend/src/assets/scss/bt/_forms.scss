@@ -77,6 +77,10 @@
     padding-bottom: 3px;
   }
 
+  .uploaded-file-remove:hover {
+    cursor: pointer;
+  }
+
   .form-control:focus {
     box-shadow: 0 0 8px $bt-blue;
   }
