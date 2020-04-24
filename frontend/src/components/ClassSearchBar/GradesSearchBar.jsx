@@ -25,6 +25,8 @@ class GradesSearchBar extends Component {
       selectSecondary: props.selectSecondary,
     };
 
+    this.queryCache = {};
+
     this.handleClassSelect = this.handleClassSelect.bind(this);
     this.handleSortSelect = this.handleSortSelect.bind(this);
     this.handlePrimarySelect = this.handlePrimarySelect.bind(this);
@@ -258,7 +260,7 @@ class GradesSearchBar extends Component {
   }
 
   filterOptions(option, query) {
-    return FilterResults.filterCourses(option.course, query);
+    return FilterResults.filterCourses(option.course, query, this.queryCache);
   }
 
   reset() {
