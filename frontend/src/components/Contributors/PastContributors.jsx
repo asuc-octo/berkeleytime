@@ -21,7 +21,6 @@ class PastContributors extends PureComponent {
 
   render() {
     const { sections } = this.state;
-    console.log(sections);
     return (
       <div className="past-contributors">
         <h5>Alumni</h5>
