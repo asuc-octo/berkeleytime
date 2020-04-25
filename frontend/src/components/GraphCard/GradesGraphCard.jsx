@@ -103,6 +103,9 @@ class GradesGraphCard extends Component {
         <Container fluid>
               <Row>
                 <Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
+                  {isMobile && 
+                    (<div className="grades-mobile-heading"> Grade Distribution </div>)
+                  }
                   <GradesGraph
                     graphData={graphData}
                     gradesData={gradesData}

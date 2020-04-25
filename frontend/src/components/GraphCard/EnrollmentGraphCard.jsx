@@ -141,7 +141,7 @@ class EnrollmentGraphCard extends Component {
                 <Row>
                   <Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
                     {isMobile && 
-                      <div className="enrollment-mobile-heading"> Enrollment </div>
+                      (<div className="enrollment-mobile-heading"> Enrollment </div>)
                     }
                     <EnrollmentGraph
                       graphData={graphData}
