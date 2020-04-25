@@ -63,25 +63,16 @@ export default function EnrollmentGraph({
     fontSize: '12px',
   };
   return (
-    <div >
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{top: isMobile ? 100 : 0}}>
-
-          {isMobile ?
-            <text
-              y={30}
-              textAnchor="top"
-              dominantBaseline="left"
-              fontSize={18}> Enrollment
-            </text> 
-            :
-            null
-          }
+    <div>
+      <ResponsiveContainer width={isMobile ? 500 : "100%"} height={400}>
+        <LineChart data={graphData} onMouseMove={updateGraphHover}>
 
           <XAxis dataKey="name" interval={19} />
           <YAxis type="number" unit="%"
-                 domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
-                 ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}/>
+              domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
+              ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}
+          />
+
           <Tooltip
             formatter={(value) => `${value}%`}
             labelFormatter={label => `Day ${label}`}
@@ -100,14 +91,6 @@ export default function EnrollmentGraph({
             />
           ))}
 
-          {isMobile ?
-            <Legend
-              horizontalAlign="left"
-              layout="vertical"
-              iconType="circle"
-            /> :
-            null
-          }
           { !graphEmpty ?
           <div>
             <ReferenceLine
@@ -132,6 +115,18 @@ export default function EnrollmentGraph({
           :
           null
         }
+
+        {isMobile ?
+          <Legend
+            height={10}
+            horizontalAlign="left"
+            layout="vertical"
+            iconType="circle"
+          />
+          :
+          null
+        }    
+
         </LineChart>
       </ResponsiveContainer>
 

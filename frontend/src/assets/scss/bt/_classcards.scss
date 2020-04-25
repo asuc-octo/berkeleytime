@@ -3,6 +3,8 @@
   min-height: 130px;
 
   @include mobile {
+    min-height: auto;
+
      > div {
       display: flex;
       flex-wrap: nowrap;
@@ -14,6 +16,15 @@
     padding-left: 5px;
     padding-right: 5px;
     margin: 10px 0;
+
+    .class-card-mobile {
+      display: flex;
+
+      .class-card-mobile-column {
+        padding-right: 15px;
+        flex-direction: row;
+      }
+    }
 
     .class-card {
       border: 1px solid $border-color;

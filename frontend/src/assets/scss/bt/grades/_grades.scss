@@ -1,5 +1,15 @@
 .grades {
 
+  height: 100%;
+  padding: 30px;
+
+  display: flex;
+  flex-direction: column;
+
+  @include mobile {
+    padding: 10px;
+  }
+
   .css-1myhgat-indicatorContainer {
     color: $bt-light-border-grey;
     transition: .5s;
@@ -50,17 +60,6 @@
         }
       }
     }
-  }
-
-  height: 100%;
-  padding: 30px;
-
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-
-  @include mobile {
-    padding: 10px;
   }
 
   .grades-search-bar {
