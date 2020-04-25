@@ -4,7 +4,7 @@ import ReactTooltip from "react-tooltip";
 
 import {
   percentileToString,
-  getGradeColor
+  getGradeColor,
 } from '../../utils/utils';
 import info from '../../assets/img/images/graphs/info.svg';
 
@@ -39,7 +39,7 @@ class GradesInfoCard extends PureComponent {
               arrowColor="#FFFFFF"/>
         </h6>
         <div className="course-average">
-          <span className={getGradeColor(courseLetter)}>{ courseLetter }</span>
+          <span className={courseLetter ? getGradeColor(courseLetter) : ""}>{ courseLetter }</span>
           ({ courseGPA })
         </div>
         <h6>Section Average
@@ -50,7 +50,7 @@ class GradesInfoCard extends PureComponent {
               arrowColor="#FFFFFF"/>
         </h6>
         <div className="section-average">
-          <span className={getGradeColor(sectionLetter)}>{ sectionLetter }</span>
+          <span className={sectionLetter ? getGradeColor(sectionLetter) : ""}>{ sectionLetter }</span>
           ({ sectionGPA })
         </div>
         {selectedGrade !== undefined && selectedGrade !== null && selectedPercentiles !== undefined && selectedPercentiles !== null && (
@@ -63,15 +63,8 @@ class GradesInfoCard extends PureComponent {
               <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4"
                   arrowColor="#FFFFFF"/>
             </h6>
-            <div className="percentile">
-              <span className={getGradeColor(selectedGrade)}>{ selectedGrade }</span>
-            </div>
-            <div className="number">
-              <h6>{selectedPercentiles.numerator}/{denominator}</h6>
-              <div>
-                <span>{Math.round(selectedPercentiles.numerator/denominator * 1000) / 10}%</span>
-              </div>
-            </div>
+              <span className={selectedGrade ? getGradeColor(selectedGrade) : ""}>{ selectedGrade }</span>
+              ({selectedPercentiles.numerator}/{denominator}, {Math.round(selectedPercentiles.numerator/denominator * 1000) / 10}%)
           </div>
         )}
       </div>
