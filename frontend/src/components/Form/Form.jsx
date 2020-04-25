@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, FormFile, ListGroup, Form, Button } from 'react-bootstrap';
+import { ListGroup, Form, Button } from 'react-bootstrap';
 
 class BTForm extends Component {
 
@@ -11,6 +11,7 @@ class BTForm extends Component {
       validated: false,
       validation: {},
       submitting: false,
+      submitted: false,
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -70,6 +71,8 @@ class BTForm extends Component {
     });
     if (validationSuccess) {
       this.postResponses(form, responses);
+    } else {
+      window.scrollTo({'top': 0, 'left': 0, 'behavior': 'smooth'})
     }
   }
 
@@ -97,7 +100,6 @@ class BTForm extends Component {
       }
     }
     submission["Config"] = form.info.unique_name;
-    console.log(submission);
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -108,24 +110,24 @@ class BTForm extends Component {
     });
     fetch('/api/forms/submit/', requestOptions)
         .then(response => response.json())
-        .then(data => data['success'] ? alert('success: true') : alert('success: false; error: ' + data['error']))
-        .then(() => this.setState({submitting: false}))
+        .then(data => !data['success'] ? alert('There was an internal error with your submission. Please contact octo.berkeleytime@asuc.org. Error: ' + data['error']) : null)
+        .then(() => this.setState({submitting: false, submitted: true}))
   }
 
   handleCheck(event) {
     const target = event.target;
     const { form, responses } = this.state;
     let validation = {};
-    this.validateAll(form, {
+    if (responses[target.name]
+        ? !responses[target.name].includes(target.id)
+        : true
+    ) {
+      this.validateAll(form, {
           ...responses,
           [target.name]: responses[target.name]
             ? responses[target.name].concat([target.id])
             : [target.id],
         }, validation);
-    if (responses[target.name]
-        ? !responses[target.name].includes(target.id)
-        : true
-    ) {
       this.setState(prevState => ({
         responses: {
           ...prevState.responses,
@@ -136,6 +138,12 @@ class BTForm extends Component {
         validation: prevState.validated ? validation : {},
       }))
     } else {
+      this.validateAll(form, {
+          ...responses,
+          [target.name]: responses[target.name]
+            ? responses[target.name].filter(item => item !== target.id)
+            : [target.id],
+        }, validation);
       this.setState(prevState => ({
         responses: {
           ...prevState.responses,
@@ -257,14 +265,14 @@ class BTForm extends Component {
     for (let question of form.questions) {
       if (question.required) {
         if (question.type === "file" && responses[question.unique_name].files.length === 0) {
-          this.setValidation(question, "This question is required", false, validation);
+          this.setValidation(question, "This question is required.", false, validation);
         } else if (question.type === "multiple_select") {
           if (!responses[question.unique_name] || responses[question.unique_name].length === 0) {
-            this.setValidation(question, "This question is required", false, validation);
+            this.setValidation(question, "This question is required.", false, validation);
           }
         }
         else if (!responses[question.unique_name] || responses[question.unique_name].length === 0) {
-          this.setValidation(question, "This question is required", false, validation);
+          this.setValidation(question, "This question is required.", false, validation);
         }
       }
     }
@@ -484,24 +492,33 @@ class BTForm extends Component {
   }
 
   render() {
-    const { form, responses, validation, submitting } = this.state;
+    const { form, responses, validation, submitting, submitted } = this.state;
 
     if (form === null) {
       return null;
     }
 
+    if (submitted) {
+      return (
+        <div className="bt-form">
+          <div className="bt-form-header">
+            <h5>{ form.info.public_name }</h5>
+            <p>Thank you for submitting the form. We have received your response.</p>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="bt-form">
         <div className="bt-form-header">
-          <h5> { form.info.public_name } </h5>
-          <p>
-            { form.info.description }
-          </p>
+          <h5>{ form.info.public_name } </h5>
+          <p>{ form.info.description }</p>
         </div>
 
         <Form noValidate onSubmit={ this.handleSubmit }>
           {form.questions.map(item =>
-            <Form.Group>
+            <Form.Group className={ "bt-question" }>
               <Form.Label className={item.required ? "required" : ""}>
                 {item.title}
               </Form.Label>
