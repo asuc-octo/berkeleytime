@@ -266,7 +266,11 @@ class ClassDescription extends Component {
               <div className="statline">
                 <img src={people} />
                 Enrolled:
-                {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)} &nbsp;
+                {course.enrolled !== -1
+                    ? applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)
+                    : " N/A "
+                }
+                &nbsp;
                 <a href={toEnrollment.pathname} target="_blank" className="statlink"><img src={launch} /></a>
               </div>
               <div className="statline">
