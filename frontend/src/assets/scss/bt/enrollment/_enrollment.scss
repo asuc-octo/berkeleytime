@@ -10,6 +10,12 @@
     padding: 10px;
   }
 
+  .enrollment-mobile-heading {
+    margin: 30px 0px 30px 20px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
   .css-1myhgat-indicatorContainer {
     color: $bt-light-border-grey;
     transition: .5s;
@@ -20,11 +26,6 @@
 
   .btn-primary:disabled {
       cursor: default;
-  }
-
-  .enrollment-mobile-heading {
-    padding: 20px 20px 0px 0px;
-    
   }
 
   .graph {
@@ -96,6 +97,7 @@
 
   @include mobile {
     overflow-x: scroll;
+    margin: 0px 10px 0px 10px;
 
     .recharts-legend-wrapper {
       left: 65px !important;

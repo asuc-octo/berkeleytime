@@ -107,15 +107,8 @@ export default function GradesGraph({
           onMouseMove={updateGraphHover}
           layout="vertical"
           barSize={30}
-          margin={{top: 65, left: -30, bottom: 50}}
+          margin={{left: -30, bottom: 50}}
         >
-
-          <text
-            y={30}
-            textAnchor="top"
-            dominantBaseline="left"
-            fontSize={18}> Grade Distribution
-          </text>
 
           { !graphEmpty ? 
             <XAxis type="number" unit="%" /> : <XAxis type="number" unit="%" domain={[0, 100]}/>
