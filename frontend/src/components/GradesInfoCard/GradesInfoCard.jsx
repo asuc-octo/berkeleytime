@@ -22,6 +22,7 @@ class GradesInfoCard extends PureComponent {
 
     var courseAvgText = '<span class="info-text"}>Course average refers to the average of all <br />sections available across all instructors.</span>';
     var sectionAvgText = '<span class="info-text"}>Section average refers to the average of all sections that <br />have been filtered for using the specified options.</span>';
+    var percentileText = '<span class="info-text"}>Detailed information about the percentile range of students <br />who received the corresponding grade, along with the exact number<br /> and percent of students out of the total.</span>';
 
     return (
       <div className="grades-info">
@@ -57,10 +58,10 @@ class GradesInfoCard extends PureComponent {
           <div>
             <h6>
               {`${percentileToString(selectedPercentiles.percentile_low)}-${percentileToString(selectedPercentiles.percentile_high)} Percentile`}
-              <span data-tip={courseAvgText} data-for="courseAvg">
+              <span data-tip={percentileText} data-for="percentileInfo">
                 <img src={info} className="info-icon"/>
               </span>
-              <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4"
+              <ReactTooltip id='percentileInfo' type='light' html={true} border={true} borderColor="#C4C4C4"
                   arrowColor="#FFFFFF"/>
             </h6>
               <span className={selectedGrade ? getGradeColor(selectedGrade) : ""}>{ selectedGrade }</span>
