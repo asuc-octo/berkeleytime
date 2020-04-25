@@ -87,6 +87,15 @@
     right: 0;
     margin-right: 20px;
     padding-bottom: 3px;
+    cursor: pointer;
+    opacity: .5;
+    transition: .5s;
+    border-radius: 4px;
+
+    &:hover {
+      opacity: 1;
+      background: rgba(224,185,185,.4);
+    }
   }
 
   .uploaded-file-remove:hover {
