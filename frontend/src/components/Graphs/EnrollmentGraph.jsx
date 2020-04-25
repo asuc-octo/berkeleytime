@@ -91,49 +91,43 @@ export default function EnrollmentGraph({
             />
           ))}
 
-          { !graphEmpty ?
-          <div>
-            <ReferenceLine
-              x={enrollmentData[0].telebears.phase2_start_day}
-              stroke="black"
-              strokeDasharray="3 3"
-            >
-              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                {`Phase II Start (${enrollmentData[0].telebears.semester})`}
-              </Label>
-            </ReferenceLine>
-            <ReferenceLine
-              x={enrollmentData[0].telebears.adj_start_day}
-              stroke="black"
-              strokeDasharray="3 3"
-            >
-              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
-              </Label>
-            </ReferenceLine>
+          { !graphEmpty &&
+            <div>
+              <ReferenceLine
+                x={enrollmentData[0].telebears.phase2_start_day}
+                stroke="black"
+                strokeDasharray="3 3"
+              >
+                <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                  {`Phase II Start (${enrollmentData[0].telebears.semester})`}
+                </Label>
+              </ReferenceLine>
+              <ReferenceLine
+                x={enrollmentData[0].telebears.adj_start_day}
+                stroke="black"
+                strokeDasharray="3 3"
+              >
+                <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                  {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
+                </Label>
+              </ReferenceLine>
           </div>
-          :
-          null
         }
 
-        {isMobile ?
+        {isMobile &&
           <Legend
             height={10}
             horizontalAlign="left"
             layout="vertical"
             iconType="circle"
           />
-          :
-          null
         }    
 
         </LineChart>
       </ResponsiveContainer>
 
-      { graphEmpty ? 
+      { graphEmpty &&
         <EmptyLabel /> 
-        :
-        null
       }
 
     </div>
