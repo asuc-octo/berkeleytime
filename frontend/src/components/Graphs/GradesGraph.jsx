@@ -35,11 +35,12 @@ const MobileTooltip = props => {
   const {active, payload, label } = props;
   if (active) {
     const denominator = props.denominator;
-    const numerator = Math.round(denominator * (props.payload[0].value / 100));
+    const info = payload[0];
+    const numerator = info ? Math.round(denominator * (info.value / 100)) : 0;
     let percentile = props.selectedPercentiles;
     let percentileLow = percentile ? percentileToString(percentile.percentile_low) : 0;
     let percentileHigh = percentile ? percentileToString(percentile.percentile_high): 0;
-    let courseName = payload[0].name.split('/')[0];
+    let courseName = info ? info.name.split('/')[0] : "";
     return (
       <div className="grades-graph-tooltip">
         <h6> Grade: {label} </h6>

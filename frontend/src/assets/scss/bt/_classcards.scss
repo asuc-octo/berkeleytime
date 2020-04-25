@@ -1,6 +1,6 @@
 .class-card-list {
   margin-bottom: 10px;
-  min-height: 130px;
+  min-height: 180px;
 
   @include mobile {
     min-height: auto;
@@ -31,6 +31,10 @@
       border-radius: 5px;
       padding: 15px;
       height: 130px;
+
+      @include mobile {
+        height: 180px;
+      }
 
       display: flex;
       flex-direction: column;
