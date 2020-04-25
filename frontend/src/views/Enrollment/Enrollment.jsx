@@ -145,10 +145,8 @@ class Enrollment extends Component {
             updateClassCardEnrollment={this.updateClassCardEnrollment}
             isMobile={isMobile}
           />
-          {!isMobile ?
+          {!isMobile &&
             <div className="xlabel">Days After Phase 1</div>
-            :
-            null
           }
           <div className="disclaimer">
             <img src={info} className="info" />

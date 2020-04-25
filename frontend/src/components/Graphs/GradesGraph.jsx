@@ -116,6 +116,7 @@ export default function GradesGraph({
             dominantBaseline="left"
             fontSize={18}> Grade Distribution
           </text>
+
           { !graphEmpty ? 
             <XAxis type="number" unit="%" /> : <XAxis type="number" unit="%" domain={[0, 100]}/>
           }
@@ -147,10 +148,8 @@ export default function GradesGraph({
       </ResponsiveContainer>
       }
 
-      { graphEmpty ?
+      { graphEmpty &&
         <EmptyLabel />
-        :
-        null
       }
       
       </div>
