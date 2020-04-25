@@ -140,9 +140,7 @@ def sheet_add_next_entry(doc_url, responses):
 	# Need to acquire lock (ensure that only one instance is modifying the sheet at a time)
 	my_lock = False
 	for _ in range(5):
-		print("acquiring")
 		my_lock = dlm.lock("google_spreadsheet_" + str(hash(doc_url)), 2000)
-		print(my_lock)
 		if my_lock:
 			break
 		else:

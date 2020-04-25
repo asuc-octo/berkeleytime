@@ -92,7 +92,7 @@ class BTForm extends Component {
             }
             submission[question.unique_name] = submission[question.unique_name].join("\n")
           }
-        } else if (question.type === 'multiple_select') {
+        } else if (question.type === 'multiple_select' && responses[question.unique_name].length > 0) {
           submission[question.unique_name] = responses[question.unique_name].join("\n");
         } else {
           submission[question.unique_name] = responses[question.unique_name];
@@ -110,8 +110,12 @@ class BTForm extends Component {
     });
     fetch('/api/forms/submit/', requestOptions)
         .then(response => response.json())
-        .then(data => !data['success'] ? alert('There was an internal error with your submission. Please contact octo.berkeleytime@asuc.org. Error: ' + data['error']) : null)
-        .then(() => this.setState({submitting: false, submitted: true}))
+        .then(data => !data['success']
+            ? alert('There was an internal error with your submission. Please contact octo.berkeleytime@asuc.org. Error: ' + data['error'])
+            : this.setState({
+                submitted: true,
+              })
+        ).then(() => this.setState({submitting: false}))
   }
 
   handleCheck(event) {
