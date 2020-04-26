@@ -16,7 +16,7 @@ class EnrollmentInfoCard extends PureComponent {
     const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     const todayString = today.toLocaleDateString('en-US', dateOptions);
 
-    let { period, daysAfterPeriodStarts } = getEnrollmentDay(selectedPoint, telebears); 
+    let { period, daysAfterPeriodStarts } = getEnrollmentDay(selectedPoint, telebears);
 
     return (
       <div className="enrollment-info">

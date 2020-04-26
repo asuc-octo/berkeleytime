@@ -73,7 +73,7 @@ export default function EnrollmentGraph({
               textAnchor="top"
               dominantBaseline="left"
               fontSize={18}> Enrollment
-            </text> 
+            </text>
             :
             null
           }
@@ -108,35 +108,29 @@ export default function EnrollmentGraph({
             /> :
             null
           }
-          { !graphEmpty ?
-          <div>
-            <ReferenceLine
-              x={enrollmentData[0].telebears.phase2_start_day}
-              stroke="black"
-              strokeDasharray="3 3"
-            >
-              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                {`Phase II Start (${enrollmentData[0].telebears.semester})`}
-              </Label>
-            </ReferenceLine>
-            <ReferenceLine
-              x={enrollmentData[0].telebears.adj_start_day}
-              stroke="black"
-              strokeDasharray="3 3"
-            >
-              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
-              </Label>
-            </ReferenceLine>
-          </div>
-          :
-          null
-        }
+          <ReferenceLine
+            x={enrollmentData[0].telebears.phase2_start_day}
+            stroke="black"
+            strokeDasharray="3 3"
+          >
+            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+              {`Phase II Start (${enrollmentData[0].telebears.semester})`}
+            </Label>
+          </ReferenceLine>
+          <ReferenceLine
+            x={enrollmentData[0].telebears.adj_start_day}
+            stroke="black"
+            strokeDasharray="3 3"
+          >
+            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+              {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
+            </Label>
+          </ReferenceLine>
         </LineChart>
       </ResponsiveContainer>
 
-      { graphEmpty ? 
-        <EmptyLabel /> 
+      { graphEmpty ?
+        <EmptyLabel />
         :
         null
       }
