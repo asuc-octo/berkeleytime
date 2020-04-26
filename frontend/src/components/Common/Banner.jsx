@@ -10,7 +10,7 @@ import close from '../../assets/svg/common/close.svg';
 class Banner extends PureComponent {
   render() {
     const { visible, dispatch } = this.props;
-    const text = 'We have a new announcement! Here is a longer description of the main text and more details about the whole thing.';
+    const text = 'We just pushed a huge redesign and added new pages! ✨';
 
     return visible ? (
       <div className="banner">
