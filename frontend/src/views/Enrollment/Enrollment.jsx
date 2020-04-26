@@ -61,7 +61,7 @@ class Enrollment extends Component {
       url += (url === '/enrollment') ? '/' : '';
       url += (url === '/enrollment/') ? '' : '&';
       url += courseUrl;
-      history.push(url);
+      history.replace(url);
     }
   }
 
@@ -96,7 +96,7 @@ class Enrollment extends Component {
       let instructor = c.instructor === 'all' ? 'all' : c.sections[0];
       url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${instructor}`;
     }
-    history.push(url);
+    history.replace(url);
   }
 
   removeCourse(id, color) {
