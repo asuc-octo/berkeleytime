@@ -42,23 +42,16 @@
   }
 
   > img {
-    position: fixed;
-    transition: .5s;
+    margin: 0 15px 0 5px;
+    padding: 6px;
     width: 24px;
     height: 24px;
-    top: 18px;
-    right: 32px;
-    cursor: pointer;
-    padding: 6px;
     border-radius: 4px;
+    transition: background-color .5s;
+    cursor: pointer;
 
     &:hover {
-      background: #ececec;
-    }
-
-    @include mobile {
-      top: 2vh;
-      right: 2vw;
+      background-color: #ececec;
     }
   }
 }
