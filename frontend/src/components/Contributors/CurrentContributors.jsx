@@ -14,8 +14,6 @@ import jemma_2 from '../../assets/img/images/about/compressed/Jemma_2.jpg';
 import jemma_3 from '../../assets/img/images/about/compressed/Jemma_3.jpg';
 import chris_1 from '../../assets/img/images/about/compressed/Chris_1.jpg';
 import chris_2 from '../../assets/img/images/about/compressed/Chris_2.jpg';
-import sangbin_1 from '../../assets/img/images/about/compressed/Sangbin_1.jpg';
-import sangbin_2 from '../../assets/img/images/about/compressed/Sangbin_2.jpg';
 import anson_1 from '../../assets/img/images/about/compressed/Anson_1.jpg';
 import anson_2 from '../../assets/img/images/about/compressed/Anson_2.jpg';
 import eli_1 from '../../assets/img/images/about/compressed/Eli_1.jpg';
@@ -47,7 +45,7 @@ class CurrentContributors extends PureComponent {
         {contributors.map(row => (
           <Row>
             {row.map(member => (
-              <Col xs={6} s={6} md={3} lg={3} className="contributor-card">
+              <Col xs={6} md={3} className="contributor-card">
                 <div className="headshot">
                   <img className="serious" src={member.img_1} alt={member.name} />
                   <img src={member.silly ? member.img_2 : member.img_1} alt={member.name} />
@@ -55,7 +53,7 @@ class CurrentContributors extends PureComponent {
                 <div className="name">
                   <p>{ member.name }</p>
                   { member.site ? (
-                    <a href={member.site}><img src={web} /></a>
+                    <a href={member.site}><img src={web} alt="website" /></a>
                   ) : null}
                 </div>
                 <div className="role">{ member.role }</div>
