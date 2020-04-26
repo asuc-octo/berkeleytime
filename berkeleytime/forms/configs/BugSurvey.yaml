@@ -1,11 +1,10 @@
 info:
   unique_name: "BugSurvey"
-  # Unique_name must only consist of numbers and letters
   public_name: Berkeleytime Feedback
   description: |-
     We're super appreciative of student feedback! Feel free to give any feedback to us via this form, whether it's a bug, feature request, or general site feedback.
 
-    If you're reporting a bug, please enter your email in case we need to contact you to help replicate the issue. Thanks so much for your help!  "
+    If you're reporting a bug, please enter your email in case we need to contact you to help replicate the issue. Thanks so much for your help!
   googlesheet_link: "https://docs.google.com/spreadsheets/d/1uQve26eg5slxDYLHaR3toeMoSOu9k7Zb7OjD7IgPIAY/edit"
   drive_folder_name: "BugUploads"
 questions:
@@ -60,7 +59,7 @@ questions:
       - "Android"
     required: False
     placeholder: "Choose an option"
-  - title: "What class is having the issue? (BIO 1A, CS 61A etc.)"
+  - title: "What class is having the issue?"
     type: "short"
     placeholder: "MUSIC 26AC"
   - title: "If you can, upload a screen shot of the bug."
