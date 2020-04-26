@@ -10,10 +10,6 @@
 
   margin-bottom: 30px;
 
-  h5, h6, p {
-    -webkit-font-smoothing: antialiased;
-  }
-
   > h5 {
     margin-bottom: 30px;
     font-size: 26px;
@@ -61,7 +57,7 @@
       margin-bottom: 3px;
 
       > p {
-        font-weight: bold;
+        font-weight: 600;
         color: $bt-grey-text;
       }
 
@@ -75,10 +71,7 @@
         &:hover {
           background-color: $bt-button-background;
         }
-
       }
-
-
     }
 
     .role {
