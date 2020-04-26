@@ -10,11 +10,6 @@
 	    border: 1px solid rgb(225, 225, 225);
 	}
 
-	@include mobile {
-    	padding: 0px 10px 0px 10px;
-    	text-align: center;
-  	}
-
   	.grades-graph-tooltip {
 			opacity: 1 !important;
   		background: white;
