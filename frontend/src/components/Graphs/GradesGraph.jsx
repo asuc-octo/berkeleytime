@@ -79,22 +79,11 @@ export default function GradesGraph({
         <ResponsiveContainer width="100%" height={400}>
         <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }} >
           <XAxis dataKey="name" />
-          { !graphEmpty ? 
-            <YAxis type="number" unit="%" /> : <YAxis type="number" unit="%" domain={[0, 100]}/>
-          }
-          { !graphEmpty ? 
-            <Tooltip
-              formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-              cursor={{fill: '#EAEAEA'}}
-            /> :
-            <Tooltip
-              cursor={{fill: '#fff'}}
-              content={<EmptyLabel />}
-              position={{ x: 150, y: 150 }}
-              wrapperStyle={{visibility: 'visible'}}
-            />
-          }
-
+          <YAxis type="number" unit="%" />
+          <Tooltip
+            formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+            cursor={{fill: '#EAEAEA'}}
+          />
           {gradesData.map((item, i) => (
             <Bar
               name={`${item.title} • ${item.semester} • ${item.instructor}`}
@@ -121,7 +110,7 @@ export default function GradesGraph({
             dominantBaseline="left"
             fontSize={18}> Grade Distribution
           </text>
-          { !graphEmpty ? 
+          { !graphEmpty ?
             <XAxis type="number" unit="%" /> : <XAxis type="number" unit="%" domain={[0, 100]}/>
           }
           <YAxis dataKey="name" type="category" />
@@ -132,7 +121,7 @@ export default function GradesGraph({
                   selectedPercentiles={selectedPercentiles}
                   color={color}
                   denominator={denominator}
-                /> 
+                />
               }
             /> :
               <Tooltip
