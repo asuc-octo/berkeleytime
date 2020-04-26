@@ -32,6 +32,7 @@ class EnrollmentSearchBar extends Component {
     this.buildSecondaryOptions = this.buildSecondaryOptions.bind(this);
     this.getFilteredSections = this.getFilteredSections.bind(this);
     this.addSelected = this.addSelected.bind(this);
+    this.filterOptions = this.filterOptions.bind(this);
     this.reset = this.reset.bind(this);
   }
 
