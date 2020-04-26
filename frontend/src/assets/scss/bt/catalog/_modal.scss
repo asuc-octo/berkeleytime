@@ -3,8 +3,10 @@
 	display: flex !important;
 
 	.link-btn {
-		padding: 30px 0px 0px 30px;
+		margin: 30px 0px 0px 30px;
 		color: $bt-blue !important;
+		background: none;
+		border: none;
 	}
 
 	.modal-dialog {
@@ -27,6 +29,7 @@
 
 		.full {
   			height: 100vh !important;
+  			padding-top: 80px;
   		}
 	}
 }

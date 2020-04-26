@@ -26,7 +26,7 @@ function Footer() {
           <h6>About</h6>
           <Link to="/about"><span className="footer-link">Team</span></Link>
           <Link to="/join"><span className="footer-link">Join Us</span></Link>
-          <a href="https://octo.asuc.org/"><span className="footer-link">Office of the CTO</span></a>
+          <a href="https://octo.asuc.org/"><span className="footer-link">OCTO</span></a>
           <a href="https://www.facebook.com/berkeleytime/"><span className="footer-link">Facebook</span></a>
         </div>
       </div>
