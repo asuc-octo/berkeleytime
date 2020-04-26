@@ -20,6 +20,8 @@ td {
   color: $bt-base-text;
   margin: 0;
 
+  // -webkit-font-smoothing: antialiased;
+
   /*@include desktop {
   	font-size: 30px;
   }*/

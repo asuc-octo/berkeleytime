@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, ButtonToolbar } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { Row, Col, Button } from 'react-bootstrap';
 
 import CurrentContributors from '../../components/Contributors/CurrentContributors';
 import PastContributors from '../../components/Contributors/PastContributors';
@@ -27,18 +28,12 @@ class About extends PureComponent {
         <div className="about-us">
           <h5>About Our Team</h5>
           <p>
-            We're a small group of student volunteers at UC Berkeley, dedicated to
+            We&apos;re a small group of student volunteers at UC Berkeley, dedicated to
             simplifying the course discovery experience. We actively build, improve
             and maintain Berkeleytime.
           </p>
+          <Button variant="bt-primary-inverted" size="bt-md" as={Link} to="/join">Join Team</Button>
         </div>
-        <ButtonToolbar className="releases-heading-button">
-          <a href="/join" role="button">
-            <button className="btn btn-bt-blue-inverted btn-bt-md">
-              Join Team
-            </button>
-          </a>
-        </ButtonToolbar>
         <div className="group">
           <img src={retreat_silly} />
           <img src={zoom} />
@@ -54,10 +49,14 @@ class About extends PureComponent {
           <h5>Our Values</h5>
           <Row>
             {values.map(value => (
-              <Col xs={12} s={12} md={4} lg={4} className="value">
-                <img src={value.svg} />
-                <h6>{ value.name }</h6>
-                <p>{ value.desc }</p>
+              <Col xs={12} md={4} className="value-col">
+                <div className="value">
+                  <div className="value-content">
+                    <img src={value.svg} alt="value" />
+                    <h6>{ value.name }</h6>
+                    <p>{ value.desc }</p>
+                  </div>
+                </div>
               </Col>
             ))}
           </Row>
@@ -74,20 +73,20 @@ About.defaultProps = {
   values: [
     {
       svg: growth,
-      name: "Growth",
-      desc: "You’ll grow your technical skills as you tackle real challenging design and engineering problems.",
+      name: 'Growth',
+      desc: 'You’ll grow your technical skills as you tackle real challenging design and engineering problems.',
     },
     {
       svg: curiosity,
-      name: "Curiosity",
-      desc: "We value team members that are curious about solving difficult problems and seek out solutions independently.",
+      name: 'Curiosity',
+      desc: 'We value team members that are curious about solving difficult problems and seek out solutions independently.',
     },
     {
       svg: passion,
-      name: "Passion",
-      desc: "Genuine commitment and dedication are critical to moving the Berkeleytime product forward.",
-    }
+      name: 'Passion',
+      desc: 'Genuine commitment and dedication are critical to moving the Berkeleytime product forward.',
+    },
   ],
-}
+};
 
 export default About;
