@@ -32,7 +32,7 @@ class EnrollmentGraphCard extends Component {
       this.getEnrollmentData();
     }
     if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0 && selectedCourses.length === 1) {
-      this.update(selectedCourses[0], 1)
+      this.update(selectedCourses[0], 0)
     }
 
     const latest_point = enrollmentData.map((course) => course.data[course.data.length - 1]);
@@ -77,8 +77,8 @@ class EnrollmentGraphCard extends Component {
   update(course, day) {
     const { enrollmentData } = this.props;
     const selectedEnrollment = enrollmentData.filter(c => course.id === c.id)[0];
-    const valid = selectedEnrollment && selectedEnrollment.data.filter(d => d.day === day).length;
 
+    const valid = selectedEnrollment && selectedEnrollment.data.filter(d => d.day === day).length;
     if (valid) {
       const hoverTotal = {
         ...course,
@@ -121,48 +121,64 @@ class EnrollmentGraphCard extends Component {
 
     let selectedPoint= hoveredClass && hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]
 
+    let period = '';
+    let daysAfterPeriodStarts = 0;
+    if (selectedPoint.day < telebears.phase2_start_day) {
+      period = 'Phase I';
+      daysAfterPeriodStarts = selectedPoint.day - telebears.phase1_start_day;
+    } else if (selectedPoint.day < telebears.adj_start_day) {
+      period = 'Phase II';
+      daysAfterPeriodStarts = selectedPoint.day - telebears.phase2_start_day;
+    } else {
+      period = 'Adjustment Period';
+      daysAfterPeriodStarts = selectedPoint.day - telebears.adj_start_day;
+    }
+
     return (
 
         <div className="enrollment-graph">
-            {enrollmentData.length === 0 || selectedCourses.length === 0 ? (
-              <GraphEmpty pageType="enrollment" />
-              ) :
               <div className="enrollment-content">
                 <Row>
                   <Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
+                    {isMobile &&
+                      (<div className="enrollment-mobile-heading"> Enrollment </div>)
+                    }
                     <EnrollmentGraph
                       graphData={graphData}
                       enrollmentData={enrollmentData}
                       updateLineHover={this.updateLineHover}
                       updateGraphHover={this.updateGraphHover}
                       graphEmpty={graphEmpty}
+                      isMobile={isMobile}
                     />
                   </Col>
 
-                  { !isMobile && !graphEmpty ?
-                  <Col md={{span: 4, order:2}} lg={{span: 4, order:2}}>
-                    {hoveredClass && (
-                      <EnrollmentInfoCard
-                        title={hoveredClass.title}
-                        subtitle={hoveredClass.subtitle}
-                        semester={hoveredClass.semester}
-                        instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
-                        selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
-                        todayPoint={hoveredClass.data[hoveredClass.data.length - 1]}
-                        telebears={telebears}
-                        color={vars.colors[hoveredClass.colorId]}
-                        enrolledMax={hoveredClass.enrolled_max}
-                        waitlistedMax={hoveredClass.waitlisted_max}
-                      />
-                    )}
-                  </Col>
-                  :
-                  null
+                  { graphEmpty &&
+                    <Col xs={{span: 12, order:1}} sm={{span: 12, order:1}} md={{span: 4, order:2}} lg={{span: 4, order:2}}>
+                      <GraphEmpty pageType="enrollment" />
+                    </Col>
+                  }
+
+                  { !isMobile && !graphEmpty &&
+                    <Col md={{span: 4, order:2}} lg={{span: 4, order:2}}>
+                      {hoveredClass && (
+                        <EnrollmentInfoCard
+                          title={hoveredClass.title}
+                          subtitle={hoveredClass.subtitle}
+                          semester={hoveredClass.semester}
+                          instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
+                          selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
+                          todayPoint={hoveredClass.data[hoveredClass.data.length - 1]}
+                          telebears={telebears}
+                          color={vars.colors[hoveredClass.colorId]}
+                          enrolledMax={hoveredClass.enrolled_max}
+                          waitlistedMax={hoveredClass.waitlisted_max}
+                        />
+                      )}
+                    </Col>
                   }
                 </Row>
               </div>
-            }
-
         </div>
     );
   }

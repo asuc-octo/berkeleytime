@@ -100,10 +100,12 @@ class GradesGraphCard extends Component {
 
     return (
       <div className="grades-graph">
-        { graphEmpty ? <GraphEmpty pageType="grades" /> :
         <Container fluid>
               <Row>
                 <Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
+                  {isMobile &&
+                    (<div className="grades-mobile-heading"> Grade Distribution </div>)
+                  }
                   <GradesGraph
                     graphData={graphData}
                     gradesData={gradesData}
@@ -116,17 +118,16 @@ class GradesGraphCard extends Component {
                     graphEmpty={graphEmpty}
                   />
                 </Col>
-                { graphEmpty ?
+
+                { graphEmpty &&
                   <Col xs={{span: 12, order:1}} sm={{span: 12, order:1}} md={{span: 4, order:2}} lg={{span: 4, order:2}}>
                     <GraphEmpty pageType="grades" />
                   </Col>
-                  :
-                  null
                 }
-                { !isMobile && !graphEmpty ?
-                <Col md={{span: 4, order:2}} lg={{span: 4, order:2}}>
-                  {hoveredClass
-                    && (
+
+                { !isMobile && !graphEmpty &&
+                  <Col md={{span: 4, order:2}} lg={{span: 4, order:2}}>
+                    {hoveredClass && (
                       <GradesInfoCard
                         course={hoveredClass.course}
                         subtitle={hoveredClass.subtitle}
@@ -142,15 +143,10 @@ class GradesGraphCard extends Component {
                         color={vars.colors[hoveredClass.colorId]}
                       />
                     )}
-                </Col>
-                :
-                null
+                  </Col>
               }
               </Row>
             </Container>
-
-          }
-
       </div>
     );
   }

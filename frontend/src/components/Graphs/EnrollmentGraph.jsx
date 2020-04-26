@@ -55,6 +55,7 @@ function getYTickRange(limit) {
     return arr;
 }
 
+
 export default function EnrollmentGraph({
   graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile, graphEmpty
 }) {
@@ -63,25 +64,16 @@ export default function EnrollmentGraph({
     fontSize: '12px',
   };
   return (
-    <div >
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{top: isMobile ? 100 : 0}}>
-
-          {isMobile ?
-            <text
-              y={30}
-              textAnchor="top"
-              dominantBaseline="left"
-              fontSize={18}> Enrollment
-            </text>
-            :
-            null
-          }
+    <div>
+      <ResponsiveContainer width={isMobile ? 500 : "100%"} height={400}>
+        <LineChart data={graphData} onMouseMove={updateGraphHover}>
 
           <XAxis dataKey="name" interval={19} />
           <YAxis type="number" unit="%"
-                 domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
-                 ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}/>
+              domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
+              ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}
+          />
+
           <Tooltip
             formatter={(value) => `${value}%`}
             labelFormatter={label => `Day ${label}`}
@@ -99,40 +91,45 @@ export default function EnrollmentGraph({
               connectNulls
             />
           ))}
-
-          {isMobile ?
-            <Legend
-              horizontalAlign="left"
-              layout="vertical"
-              iconType="circle"
-            /> :
-            null
+          {!graphEmpty &&
+            <div>
+            <ReferenceLine
+              x={enrollmentData[0].telebears.phase2_start_day}
+              stroke="black"
+              strokeDasharray="3 3"
+            >
+              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                {`Phase II Start (${enrollmentData[0].telebears.semester})`}
+              </Label>
+            </ReferenceLine>
+            <ReferenceLine
+              x={enrollmentData[0].telebears.adj_start_day}
+              stroke="black"
+              strokeDasharray="3 3"
+            >
+              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
+              </Label>
+            </ReferenceLine>
+            </div>
           }
-          <ReferenceLine
-            x={enrollmentData[0].telebears.phase2_start_day}
-            stroke="black"
-            strokeDasharray="3 3"
-          >
-            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-              {`Phase II Start (${enrollmentData[0].telebears.semester})`}
-            </Label>
-          </ReferenceLine>
-          <ReferenceLine
-            x={enrollmentData[0].telebears.adj_start_day}
-            stroke="black"
-            strokeDasharray="3 3"
-          >
-            <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-              {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
-            </Label>
-          </ReferenceLine>
+
+
+
+        {isMobile &&
+          <Legend
+            height={10}
+            horizontalAlign="left"
+            layout="vertical"
+            iconType="circle"
+          />
+        }
+
         </LineChart>
       </ResponsiveContainer>
 
-      { graphEmpty ?
+      { graphEmpty &&
         <EmptyLabel />
-        :
-        null
       }
 
     </div>

@@ -1,6 +1,10 @@
 .graph-empty {
   // min-height: inherit;
-  
+
+  .opaque {
+    opacity: 1 !important;
+  }
+
   .graph-empty-content {
     height: 0px;
     position: relative;
@@ -23,12 +27,18 @@
       font-weight: 500;
       margin-top: 15px;
     }
-
   }
 
   .grades-info {
     display: flex;
     flex-direction: column;
+
+    @include mobile {
+      text-align: left;
+      border: 1px solid $bt-border-grey;
+      border-radius: 8px;
+      padding: 20px 20px 20px 20px;
+    }
 
     .info-icon {
       padding-left: 5px;
