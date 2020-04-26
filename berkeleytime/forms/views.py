@@ -6,6 +6,7 @@ import json
 from googleapi import check_yaml_response, check_yaml_format, upload_file, CACHED_CONFIGS
 from yaml import load, dump
 import traceback
+from hooks import auto_issue
 
 # Returns YAML file (in JSON format) with name
 def get_config(request, config_name):
@@ -41,6 +42,9 @@ def record_response(request):
 	try:
 		if is_post(request):
 			form_response = json.loads(request.body)
+			# hard coded
+			if form_response["Config"] == "BugSurvey":
+				auto_issue(form_response)
 			return render_to_json({
 				'success': check_yaml_response(form_response["Config"], json.loads(request.body))
 			})

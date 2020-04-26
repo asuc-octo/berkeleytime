@@ -47,7 +47,6 @@
     width: 100%;
     padding: 6px;
     display: block;
-    margin: 0px 0 28px 0;
     //transition: .5s; This somehow messes up the (!) validator - the size changes during the transition
     background-color: white;
 
@@ -58,6 +57,10 @@
     &:focus::placeholder {
       color: $bt-light-border-grey;
     }
+  }
+
+  .bt-question {
+    margin: 0px 0 32px 0;
   }
 
   .was-validated .form-control:valid, .form-control.is-valid {
@@ -87,6 +90,15 @@
     right: 0;
     margin-right: 20px;
     padding-bottom: 3px;
+    cursor: pointer;
+    opacity: .5;
+    transition: .5s;
+    border-radius: 4px;
+
+    &:hover {
+      opacity: 1;
+      background: rgba(224,185,185,.4);
+    }
   }
 
   .uploaded-file-remove:hover {
@@ -95,6 +107,10 @@
 
   .form-control:focus {
     box-shadow: 0 0 8px $bt-blue;
+  }
+
+  .invalid-feedback {
+    margin-top: 8px;
   }
 
   textarea {
