@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Label,
 } from 'recharts';
 import {
   percentileToString
@@ -79,11 +80,15 @@ export default function GradesGraph({
         <ResponsiveContainer width="100%" height={400}>
         <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }} >
           <XAxis dataKey="name" />
-          <YAxis type="number" unit="%" />
+          { !graphEmpty ?
+            <YAxis type="number" unit="%" /> : <YAxis type="number" unit="%" domain={[0, 100]}/>
+          }
+
           <Tooltip
             formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
             cursor={{fill: '#EAEAEA'}}
           />
+
           {gradesData.map((item, i) => (
             <Bar
               name={`${item.title} • ${item.semester} • ${item.instructor}`}
@@ -148,6 +153,13 @@ export default function GradesGraph({
         </BarChart>
       </ResponsiveContainer>
       }
+
+      { graphEmpty ?
+        <EmptyLabel />
+        :
+        null
+      }
+
       </div>
 
   );

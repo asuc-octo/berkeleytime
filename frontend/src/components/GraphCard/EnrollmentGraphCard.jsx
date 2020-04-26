@@ -153,7 +153,7 @@ class EnrollmentGraphCard extends Component {
                   </Col>
 
                   { !isMobile && !graphEmpty ?
-                  <Col lg={{span: 8, order:2}}>
+                  <Col md={{span: 4, order:2}} lg={{span: 4, order:2}}>
                     {hoveredClass && (
                       <EnrollmentInfoCard
                         title={hoveredClass.title}
