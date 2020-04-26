@@ -66,7 +66,7 @@ class Grades extends Component {
       url += (url === '/grades') ? '/' : '';
       url += (url === '/grades/') ? '' : '&';
       url += courseUrl;
-      history.push(url);
+      history.replace(url);
     }
   }
 
@@ -100,7 +100,7 @@ class Grades extends Component {
       if (i !== 0) url += '&';
       url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${this.toUrlForm(c.instructor)}`;
     }
-    history.push(url);
+    history.replace(url);
   }
 
   removeCourse(id, color) {
