@@ -1,5 +1,6 @@
 .class-card-list {
   margin-bottom: 10px;
+  min-height: 150px;
 
   @include mobile {
      > div {

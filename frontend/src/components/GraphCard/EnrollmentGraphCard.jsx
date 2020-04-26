@@ -137,6 +137,9 @@ class EnrollmentGraphCard extends Component {
     return (
 
         <div className="enrollment-graph">
+            {enrollmentData.length === 0 || selectedCourses.length === 0 ? (
+              <GraphEmpty pageType="enrollment" />
+              ) :
               <div className="enrollment-content">
                 <Row>
                   <Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
@@ -149,16 +152,8 @@ class EnrollmentGraphCard extends Component {
                     />
                   </Col>
 
-                  { graphEmpty ? 
-                    <Col xs={{span: 12, order:1}} sm={{span: 12, order:1}} md={{span: 4, order:2}} lg={{span: 4, order:2}}>
-                      <GraphEmpty pageType="enrollment" />
-                    </Col>
-                    :
-                    null
-                  }
-
                   { !isMobile && !graphEmpty ?
-                  <Col lg={4}>
+                  <Col lg={{span: 8, order:2}}>
                     {hoveredClass && (
                       <EnrollmentInfoCard
                         title={hoveredClass.title}
@@ -173,12 +168,14 @@ class EnrollmentGraphCard extends Component {
                         waitlistedMax={hoveredClass.waitlisted_max}
                       />
                     )}
-                  </Col> 
+                  </Col>
                   :
                   null
                   }
-                </Row> 
+                </Row>
               </div>
+            }
+
         </div>
     );
   }
