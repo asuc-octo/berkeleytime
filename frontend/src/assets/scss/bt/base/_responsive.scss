@@ -1,8 +1,8 @@
 /// This file contains responsive mixins based on Bootstrap 4 breakpoints.
 
-/// up to 768px, or xs + sm
+/// up to 992px, or xs + md
 @mixin mobile {
-  @include media-breakpoint-between(xs, sm) {
+  @include media-breakpoint-between(xs, md) {
     @content;
   }
 }
