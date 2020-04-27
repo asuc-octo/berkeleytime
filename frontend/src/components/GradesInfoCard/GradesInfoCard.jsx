@@ -61,8 +61,14 @@ class GradesInfoCard extends PureComponent {
               <span data-tip={percentileText} data-for="percentileInfo">
                 <img src={info} className="info-icon"/>
               </span>
-              <ReactTooltip id='percentileInfo' type='light' html={true} border={true} borderColor="#C4C4C4"
-                  arrowColor="#FFFFFF"/>
+              <ReactTooltip 
+                id='percentileInfo' 
+                type='light' 
+                html={true} 
+                border={true} 
+                borderColor="#C4C4C4"
+                arrowColor="#FFFFFF"
+                />
             </h6>
               <span className={selectedGrade ? getGradeColor(selectedGrade) : ""}>{ selectedGrade }</span>
               ({selectedPercentiles.numerator}/{denominator}, {Math.round(selectedPercentiles.numerator/denominator * 1000) / 10}%)
