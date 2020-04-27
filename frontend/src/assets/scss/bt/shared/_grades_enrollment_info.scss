@@ -9,8 +9,12 @@
     padding-left: 5px;
     width: 20px;
   }
+  .opaque {
+    opacity: 1 !important;
+  }
 
   .info-text {
+    opacity: 1 !important;
     line-height: 1.6;
     color: $bt-grey-text;
     font-weight: lighter;

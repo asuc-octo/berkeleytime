@@ -1,7 +1,6 @@
 .class-card-list {
   margin-bottom: 10px;
-  //min-height: 180px;
-  min-height: 130px;
+  min-height: 150px;
 
   @include mobile {
     min-height: auto;
