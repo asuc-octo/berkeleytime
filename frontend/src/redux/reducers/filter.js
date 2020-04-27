@@ -1,4 +1,6 @@
-import { FILTER, START_REQUEST, REQUIREMENTS, UNITS, DEPARTMENT, LEVEL, SEMESTER } from '../actionTypes';
+import {
+  FILTER, START_REQUEST, REQUIREMENTS, UNITS, DEPARTMENT, LEVEL, SEMESTER
+} from '../actionTypes';
 
 const initialState = {
   loading: true,
@@ -7,7 +9,7 @@ const initialState = {
   units: [],
   department: null,
   level: [],
-  semester: []
+  semester: [],
 };
 
 export default function filter(state = initialState, action) {
@@ -28,35 +30,35 @@ export default function filter(state = initialState, action) {
     return {
       ...state,
       requirements: data,
-    }
+    };
   }
   case UNITS: {
     const { data } = action.payload;
     return {
       ...state,
       units: data,
-    }
+    };
   }
   case DEPARTMENT: {
     const { data } = action.payload;
     return {
       ...state,
       department: data,
-    }
+    };
   }
   case LEVEL: {
     const { data } = action.payload;
     return {
       ...state,
       level: data,
-    }
+    };
   }
   case SEMESTER: {
     const { data } = action.payload;
     return {
       ...state,
       semester: data,
-    }
+    };
   }
   default:
     return state;

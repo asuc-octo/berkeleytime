@@ -1,6 +1,12 @@
-export const MODIFY_LIST = 'MODIFY_LIST';
-export const RECEIVE_LIST = 'RECEIVE_LIST';
-export const MODIFY_SELECTED = 'MODIFY_SELECTED';
+// CATALOG
+// modify the active playlists
+export const MODIFY_ACTIVE_PLAYLISTS = 'MODIFY_ACTIVE_PLAYLISTS';
+// receive initial filter data
+export const RECEIVE_FILTER_DATA = 'RECEIVE_FILTER_DATA';
+// modify currently selected class
+export const MODIFY_SELECTED_COURSE = 'MODIFY_SELECTED_COURSE';
+
+// FILTER
 export const FILTER = 'FILTER';
 export const START_REQUEST = 'START_REQUEST';
 export const START_REQUEST_DESCRIPTION = 'START_REQUEST_DESCRIPTION';
@@ -27,8 +33,10 @@ export const UPDATE_ENROLL_DATA = 'UPDATE_ENROLL_DATA';
 export const UPDATE_ENROLL_SELECTED = 'UPDATE_ENROLL_SELECTED';
 export const ENROLL_RESET = 'ENROLL_RESET';
 
+// BANNER
 export const OPEN_BANNER = 'OPEN_BANNER';
 export const CLOSE_BANNER = 'CLOSE_BANNER';
 
+// ISMOBILE
 export const SHOW_MOBILE = 'SHOW_MOBILE';
 export const HIDE_MOBILE = 'HIDE_MOBILE';
