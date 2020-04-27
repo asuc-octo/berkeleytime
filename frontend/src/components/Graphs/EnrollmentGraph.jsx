@@ -55,6 +55,7 @@ function getYTickRange(limit) {
     return arr;
 }
 
+
 export default function EnrollmentGraph({
   graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile, graphEmpty
 }) {
@@ -76,9 +77,10 @@ export default function EnrollmentGraph({
           <Tooltip
             formatter={(value) => `${value}%`}
             labelFormatter={label => `Day ${label}`}
+            cursor={graphEmpty ? false : true}
           />
 
-          {enrollmentData.map((item, i) => (
+          {!graphEmpty && enrollmentData.map((item, i) => (
             <Line
               name={`${item.title} • ${item.section_name}`}
               type="monotone"
@@ -90,29 +92,28 @@ export default function EnrollmentGraph({
               connectNulls
             />
           ))}
-
-          { !graphEmpty &&
-            <div>
-              <ReferenceLine
-                x={enrollmentData[0].telebears.phase2_start_day}
-                stroke="black"
-                strokeDasharray="3 3"
-              >
-                <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                  {`Phase II Start (${enrollmentData[0].telebears.semester})`}
-                </Label>
-              </ReferenceLine>
-              <ReferenceLine
-                x={enrollmentData[0].telebears.adj_start_day}
-                stroke="black"
-                strokeDasharray="3 3"
-              >
-                <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                  {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
-                </Label>
-              </ReferenceLine>
-          </div>
-        }
+          {!graphEmpty &&
+            <ReferenceLine
+              x={enrollmentData[0].telebears.phase2_start_day}
+              stroke="black"
+              strokeDasharray="3 3"
+            >
+              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                {`Phase II Start (${enrollmentData[0].telebears.semester})`}
+              </Label>
+            </ReferenceLine>
+          }
+          {!graphEmpty &&
+            <ReferenceLine
+              x={enrollmentData[0].telebears.adj_start_day}
+              stroke="black"
+              strokeDasharray="3 3"
+            >
+              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
+              </Label>
+            </ReferenceLine>
+          }
 
         {isMobile &&
           <Legend
@@ -121,13 +122,13 @@ export default function EnrollmentGraph({
             layout="vertical"
             iconType="circle"
           />
-        }    
+        }
 
         </LineChart>
       </ResponsiveContainer>
 
       { graphEmpty &&
-        <EmptyLabel /> 
+        <EmptyLabel />
       }
 
     </div>

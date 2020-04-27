@@ -1,10 +1,14 @@
 .graph-empty {
   // min-height: inherit;
-  
+
+  .opaque {
+    opacity: 1 !important;
+  }
+
   .graph-empty-content {
     height: 0px;
     position: relative;
-    bottom: 300px;
+    bottom: 250px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -13,7 +17,7 @@
 
 
     .graph-empty-image {
-      max-width: 9%;
+      max-width: 7%;
     }
 
     .graph-empty-heading {
