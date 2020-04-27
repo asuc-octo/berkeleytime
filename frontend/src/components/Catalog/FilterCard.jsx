@@ -92,9 +92,10 @@ class FilterCard extends PureComponent {
             <div className="filter-card-info-stats">
               { enrolled_percentage === -1
                 ? null
-                : <p className={FilterCard.colorEnrollment(enrolled_percentage)}>{FilterCard.formatEnrollmentPercentage(enrolled_percentage)} &nbsp;•&nbsp;</p>
+                : <p className={FilterCard.colorEnrollment(enrolled_percentage)}>{FilterCard.formatEnrollmentPercentage(enrolled_percentage)}</p>
               }
-              <p>{FilterCard.formatUnits(units)}</p>
+              
+              <p>&nbsp;•&nbsp;{FilterCard.formatUnits(units)}</p>
             </div>
           </div>
           { sort }
