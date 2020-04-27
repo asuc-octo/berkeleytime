@@ -79,18 +79,18 @@ export default function GradesGraph({
       <div>
       {!isMobile ?
         <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }} >
+        <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -10, bottom: 0 }} >
           <XAxis dataKey="name" />
-          { !graphEmpty ? 
+          { !graphEmpty ?
             <YAxis type="number" unit="%" /> : <YAxis type="number" unit="%" domain={[0, 100]}/>
           }
 
           <Tooltip
             formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-            cursor={{fill: '#EAEAEA'}}
+            cursor={graphEmpty ? {fill: '#fff'} : {fill: '#EAEAEA'}}
           />
 
-          {gradesData.map((item, i) => (
+          {!graphEmpty && gradesData.map((item, i) => (
             <Bar
               name={`${item.title} • ${item.semester} • ${item.instructor}`}
               dataKey={item.id}
@@ -110,19 +110,27 @@ export default function GradesGraph({
           margin={{left: -30, bottom: 50}}
         >
 
-          { !graphEmpty ? 
+          { !graphEmpty ?
             <XAxis type="number" unit="%" /> : <XAxis type="number" unit="%" domain={[0, 100]}/>
           }
           <YAxis dataKey="name" type="category" />
-          <Tooltip
-            content={
-              <MobileTooltip
-                selectedPercentiles={selectedPercentiles}
-                color={color}
-                denominator={denominator}
-              /> 
-            }
-          /> 
+          { !graphEmpty ?
+            <Tooltip
+              content={
+                <MobileTooltip
+                  selectedPercentiles={selectedPercentiles}
+                  color={color}
+                  denominator={denominator}
+                />
+              }
+            /> :
+              <Tooltip
+                cursor={{fill: '#fff'}}
+                content={<EmptyLabel />}
+                position={{ x: 80, y: 250 }}
+                wrapperStyle={{visibility: 'visible'}}
+              />
+          }
           {gradesData.map((item, i) => (
             <Bar
               name={`${item.title} • ${item.semester} • ${item.instructor}`}
@@ -144,7 +152,7 @@ export default function GradesGraph({
       { graphEmpty &&
         <EmptyLabel />
       }
-      
+
       </div>
 
   );

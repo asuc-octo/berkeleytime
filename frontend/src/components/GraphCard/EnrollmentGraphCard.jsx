@@ -32,7 +32,7 @@ class EnrollmentGraphCard extends Component {
       this.getEnrollmentData();
     }
     if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0 && selectedCourses.length === 1) {
-      this.update(selectedCourses[0], 0)
+      this.update(enrollmentData[0], 1)
     }
 
     const latest_point = enrollmentData.map((course) => course.data[course.data.length - 1]);
@@ -140,7 +140,7 @@ class EnrollmentGraphCard extends Component {
               <div className="enrollment-content">
                 <Row>
                   <Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
-                    {isMobile && 
+                    {isMobile &&
                       (<div className="enrollment-mobile-heading"> Enrollment </div>)
                     }
                     <EnrollmentGraph
@@ -153,7 +153,7 @@ class EnrollmentGraphCard extends Component {
                     />
                   </Col>
 
-                  { graphEmpty && 
+                  { graphEmpty &&
                     <Col xs={{span: 12, order:1}} sm={{span: 12, order:1}} md={{span: 4, order:2}} lg={{span: 4, order:2}}>
                       <GraphEmpty pageType="enrollment" />
                     </Col>
@@ -175,9 +175,9 @@ class EnrollmentGraphCard extends Component {
                           waitlistedMax={hoveredClass.waitlisted_max}
                         />
                       )}
-                    </Col> 
+                    </Col>
                   }
-                </Row> 
+                </Row>
               </div>
         </div>
     );

@@ -36,7 +36,7 @@ class GradesInfoCard extends PureComponent {
           <span data-tip={courseAvgText} data-for="courseAvg">
             <img src={info} className="info-icon"/>
           </span>
-          <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4"
+          <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
               arrowColor="#FFFFFF"/>
         </h6>
         <div className="course-average">
@@ -47,7 +47,7 @@ class GradesInfoCard extends PureComponent {
           <span data-tip={sectionAvgText} data-for="sectionAvg">
             <img src={info} className="info-icon"/>
           </span>
-          <ReactTooltip id='sectionAvg' type='light' html={true} border={true} borderColor="#C4C4C4"
+          <ReactTooltip id='sectionAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
               arrowColor="#FFFFFF"/>
         </h6>
         <div className="section-average">
@@ -61,7 +61,7 @@ class GradesInfoCard extends PureComponent {
               <span data-tip={percentileText} data-for="percentileInfo">
                 <img src={info} className="info-icon"/>
               </span>
-              <ReactTooltip id='percentileInfo' type='light' html={true} border={true} borderColor="#C4C4C4"
+              <ReactTooltip id='percentileInfo' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
                   arrowColor="#FFFFFF"/>
             </h6>
               <span className={selectedGrade ? getGradeColor(selectedGrade) : ""}>{ selectedGrade }</span>
