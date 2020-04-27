@@ -77,9 +77,10 @@ export default function EnrollmentGraph({
           <Tooltip
             formatter={(value) => `${value}%`}
             labelFormatter={label => `Day ${label}`}
+            cursor={graphEmpty ? false : true}
           />
 
-          {enrollmentData.map((item, i) => (
+          {!graphEmpty && enrollmentData.map((item, i) => (
             <Line
               name={`${item.title} • ${item.section_name}`}
               type="monotone"
@@ -92,7 +93,6 @@ export default function EnrollmentGraph({
             />
           ))}
           {!graphEmpty &&
-            <div>
             <ReferenceLine
               x={enrollmentData[0].telebears.phase2_start_day}
               stroke="black"
@@ -102,6 +102,8 @@ export default function EnrollmentGraph({
                 {`Phase II Start (${enrollmentData[0].telebears.semester})`}
               </Label>
             </ReferenceLine>
+          }
+          {!graphEmpty &&
             <ReferenceLine
               x={enrollmentData[0].telebears.adj_start_day}
               stroke="black"
@@ -111,10 +113,7 @@ export default function EnrollmentGraph({
                 {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
               </Label>
             </ReferenceLine>
-            </div>
           }
-
-
 
         {isMobile &&
           <Legend

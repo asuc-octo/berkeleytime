@@ -32,7 +32,7 @@ class EnrollmentGraphCard extends Component {
       this.getEnrollmentData();
     }
     if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0 && selectedCourses.length === 1) {
-      this.update(selectedCourses[0], 0)
+      this.update(enrollmentData[0], 1)
     }
 
     const latest_point = enrollmentData.map((course) => course.data[course.data.length - 1]);
