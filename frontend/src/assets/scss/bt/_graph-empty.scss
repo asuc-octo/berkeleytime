@@ -35,14 +35,14 @@
 
     @include mobile {
       text-align: left;
-      border: 1px solid $bt-border-grey;
+      //border: 1px solid $bt-border-grey;
       border-radius: 8px;
       padding: 20px 20px 20px 20px;
     }
 
     .info-icon {
       padding-left: 5px;
-      width: 6%;
+      width: 20px;
     }
 
     .info-text {

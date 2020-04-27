@@ -33,7 +33,7 @@ const EmptyLabel = props => {
 
 const MobileTooltip = props => {
   const {active, payload, label } = props;
-  if (active) {
+  if (active && payload) {
     const denominator = props.denominator;
     const info = payload[0];
     const numerator = info ? Math.round(denominator * (info.value / 100)) : 0;
