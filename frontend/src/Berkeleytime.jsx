@@ -32,13 +32,13 @@ class Berkeleytime extends Component {
       dispatch(openBanner());
     }
 
-    this.updateScreensize = this.updateScreensize.bind(this);
+    //this.updateScreensize = this.updateScreensize.bind(this);
   }
 
   /**
    * Checks if user is on mobile view
    */
-  componentDidMount() {
+  /*componentDidMount() {
     this.updateScreensize();
     window.addEventListener('resize', this.updateScreensize);
   }
@@ -54,7 +54,7 @@ class Berkeleytime extends Component {
     } else {
       dispatch(hideMobile());
     }
-  }
+  }*/
 
   easterEgg() {
     console.log(`%c

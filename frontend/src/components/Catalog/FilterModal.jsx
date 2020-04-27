@@ -4,12 +4,27 @@ import {Modal, Form} from "react-bootstrap";
 
 function CheckboxGroup(props) {
   
-  const { displayRadio } = props;
+  const { nestedOptions, handler, defaultSelection, displayRadio } = props;
   const formType = displayRadio ? "radio" : "checkbox";
+
+  const isDefault = (item) => {
+    let checked = false;
+    if(defaultSelection){
+      if(Object.values(defaultSelection).includes(item)) {
+        checked = true;
+      }
+      for (var i = 0; i < defaultSelection.length; i++) {
+        if(Object.values(defaultSelection[i]).includes(item)){
+          checked = true;
+        }
+      }
+    }
+    return checked;
+  }
 
   return (
     <Form>
-      {props.nestedOptions.map(item => (
+      {nestedOptions.map(item => (
           <div>
             {item.options != null &&
               <div className="filter-form-label">{item.label}</div> 
@@ -24,18 +39,20 @@ function CheckboxGroup(props) {
                   id={option.value}
                   name="modal-form"
                   label={option.label}
-                  onClick={props.handler.bind(this)}
+                  onClick={handler.bind(this)}
+                  defaultChecked={isDefault(option.value)}
                 /> 
               </div>
               )) :
-              <div className="custom-checkbox">
+              <div>
                 <Form.Check
                   custom
                   type={formType}
                   id={item.value}
                   name="modal-form"
                   label={item.label}
-                  onClick={props.handler.bind(this)}
+                  onClick={handler.bind(this)}
+                  defaultChecked={isDefault(item.value)}
                />
               </div>
             }
@@ -56,6 +73,7 @@ export class FilterModal extends Component {
               <CheckboxGroup
                 nestedOptions={this.props.options}
                 handler={this.props.storeSelection}
+                defaultSelection={this.props.defaultSelection}
                 displayRadio={this.props.displayRadio}
               />
             </div>
