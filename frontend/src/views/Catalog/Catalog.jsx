@@ -1,82 +1,54 @@
 import React, { Component } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
 import BeatLoader from 'react-spinners/BeatLoader';
-
-import axios from 'axios';
 
 import Filter from '../../components/Catalog/Filter';
 import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
 
-import { modify, fetchLists, modifySelected, setFilterMap } from '../../redux/actions';
-import { connect } from "react-redux";
+import { setFilterMap } from '../../redux/actions';
+import { modifyActivePlaylists, modifySelected, fetchPlaylists } from '../../redux/actions/catalog';
 
-
-/**
- * catalog_json API
- *
- * each playlist is an integer, representing a list of classes
- *
- * data:
- *   default_playlists - array of the default playlists
- *   engineering - array of engineering requirement playlists
- *   haas - array of haas requirement playlists
- *   ls - array of l&s requirement playlists
- *   level - array of class level requirement playlists
- *   semester - array of semester playlists
- *   units - array of unit playlists
- *   university - array of university requirement playlists
- */
 
 class Catalog extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      defaultSearch: this.getDefaultSearch(), // default search, set if URL contains a specific class
-      search: '',                    // current search
-      sortBy: 'average_grade',       // either average_grade, ...
-      // activePlaylists: new Set(),    // set of integers
-      // defaultPlaylists: new Set(),   // set of integers
-      // data: {},                      // api response.data
-      // selectedCourse: {},
-      // loading: true,             // whether we have receieved playlist data from api
+      search: '', // current search
+      sortBy: 'average_grade', // either average_grade, ...
       showDescription: false,
     };
+
+    this.searchHandler = this.searchHandler.bind(this);
+    this.sortHandler = this.sortHandler.bind(this);
+    this.modifyFilters = this.modifyFilters.bind(this);
+    this.resetFilters = this.resetFilters.bind(this);
+    this.selectCourse = this.selectCourse.bind(this);
+    this.buildPlaylists = this.buildPlaylists.bind(this);
+    this.hideModal = this.hideModal.bind(this);
   }
 
   /**
-   * Lifecycle method for getting initial data
+   * Fetches initial filter data and sets selected class if url matches
    */
-  componentWillMount() {
-    const { fetchLists, data, activePlaylists} = this.props;
+  componentDidMount() {
+    const { fetchPlaylists } = this.props;
     const paths = this.props.history.location.pathname.split('/');
     // console.log(activePlaylists);
-    fetchLists(paths);
-  }
-
-  // Sets the default search based on url path
-  getDefaultSearch = () => {
-    const paths = this.props.history.location.pathname.split('/');
-    if (paths.length >= 4) {
-      const abbreviation = paths[2];
-      const classNum = paths[3];
-      return `${abbreviation} ${classNum} `;
-    } else {
-      return '';
-    }
+    fetchPlaylists(paths);
   }
 
   /**
    * @param {String} search
-   *
    * Updates state.search
    */
-  searchHandler = search => {
+  searchHandler(search) {
     this.setState({
-      search
+      search,
     });
   }
 
@@ -84,54 +56,59 @@ class Catalog extends Component {
    * @param {String} sortBy
    * Sorts courses based on sortAttribute
    */
-  sortHandler = sortBy => {
+  sortHandler(sortBy) {
     this.setState({
-      sortBy
-    })
+      sortBy,
+    });
   }
 
-  modifyFilters = (add, remove) => {
-    const { modify, defaultPlaylists, activePlaylists } = this.props;
-    let newActivePlaylists = new Set(activePlaylists);
-    for (let filterId of remove) {
-      newActivePlaylists.delete(filterId);
+  /**
+   * Adds and removes playlists from the active playlists
+   */
+  modifyFilters(add, remove) {
+    const { modifyActivePlaylists, activePlaylists } = this.props;
+    const newActivePlaylists = new Set(activePlaylists);
+    for (const playlist of remove) {
+      newActivePlaylists.delete(playlist);
     }
-    for (let filterId of add) {
-      newActivePlaylists.add(filterId);
+    for (const playlist of add) {
+      newActivePlaylists.add(playlist);
     }
-    modify(newActivePlaylists, defaultPlaylists);
+    modifyActivePlaylists(newActivePlaylists);
   }
 
   /**
    * Handler function to reset all filters to the default
    */
-  resetFilters = () => {
-    const { modify, defaultPlaylists } = this.props;
-    let newActivePlaylists = new Set(defaultPlaylists);
-    modify(newActivePlaylists, defaultPlaylists);
+  resetFilters() {
+    const { modifyActivePlaylists, defaultPlaylists } = this.props;
+    const newActivePlaylists = new Set(defaultPlaylists);
+    modifyActivePlaylists(newActivePlaylists);
     this.setState({
-      defaultSearch: '',
       search: '',
       sortBy: 'average_grade',
     });
   }
 
-  selectCourse = (course, tab=0) => {
+  /**
+   * Sets the selected course and updates the url
+   */
+  selectCourse(course) {
     const { modifySelected } = this.props;
-    this.setState({showDescription: true}); //show modal if on mobile
-    if (tab === 0) {
-      this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/`);
-    } else {
-      this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/sections/`);
-    }
+    this.setState({ showDescription: true }); //show modal if on mobile
+    this.props.history.replace(`/catalog/${course.abbreviation}/${course.course_number}/`);
     modifySelected(course);
   }
 
   /**
+   * Builds the playlists returned by the catalog API into objects
+   * that can be passed to by react-select. Each dropdown takes an options
+   * list of { value: ..., label: ... } objects. The requirements dropdown
+   * takes a list of { label: ..., options: ... } since each option is
+   * categorized under a section.  This returns the options lists for each filter dropdown.
    * @param {Array} filters
-   * Builds the playlists returned by the catalog API into a format that can be processed by the filter
    */
-  buildPlaylists = () => {
+  buildPlaylists() {
     const {
       university,
       ls,
@@ -142,10 +119,10 @@ class Catalog extends Component {
       level,
       semester
     } = this.props.data;
-    const { setFilterMap } = this.props;
-    var filterMap = {};
 
-    var requirements = [];
+    const { setFilterMap } = this.props;
+    const filterMap = {};
+    const requirements = [];
 
     requirements.push({
       label: 'University Requirements',
@@ -200,7 +177,7 @@ class Catalog extends Component {
     }) : [];
 
     if (departmentsPlaylist[0].label === '-') {
-      // non-existent department???
+      // remove non-existent department???
       departmentsPlaylist.splice(0, 1);
     }
 
@@ -216,7 +193,7 @@ class Catalog extends Component {
       filterMap[req.name] = { id: req.id, type: 'level' };
       return {
         value: req.id,
-        label: req.name === '5 Units' ? '5+ Units' : req.name,
+        label: req.name,
       }
     }) : [];
 
@@ -224,43 +201,44 @@ class Catalog extends Component {
       filterMap[req.name] = { id: req.id, type: 'semester' };
       return {
         value: req.id,
-        label: req.name === '5 Units' ? '5+ Units' : req.name,
+        label: req.name,
       }
     }) : [];
 
     setFilterMap(filterMap);
+
     return {
       requirements,
       departmentsPlaylist,
       unitsPlaylist,
       levelsPlaylist,
       semestersPlaylist,
-    }
+    };
   }
 
-  hideModal = () => {
-    this.setState({ showDescription: false})
-  };
+  hideModal() {
+    this.setState({ showDescription: false });
+  }
 
   render() {
-    const { defaultSearch, showDescription } = this.state;
+    const { showDescription } = this.state;
     const { activePlaylists, loading, selectedCourse, isMobile } = this.props;
-    
+
     return (
       <div className="catalog viewport-app">
-          <Row>
-            <Col md={3} lg={4} xl={3} className="filter-column">
-              {
-                !loading ?
-                   <Filter
-                    playlists={this.buildPlaylists()}
-                    defaultSearch={defaultSearch}
-                    searchHandler={this.searchHandler}
-                    sortHandler={this.sortHandler}
-                    modifyFilters={this.modifyFilters}
-                    resetFilters={this.resetFilters}
-                    isMobile={isMobile}
-                  /> :
+        <Row noGutters>
+          <Col md={3} lg={4} xl={3} className="filter-column">
+            {
+              !loading ? (
+                <Filter
+                  playlists={this.buildPlaylists()}
+                  searchHandler={this.searchHandler}
+                  sortHandler={this.sortHandler}
+                  modifyFilters={this.modifyFilters}
+                  resetFilters={this.resetFilters}
+                  isMobile={isMobile}
+                />
+              ) : (
                 <div className="filter">
                   <div className="filter-loading">
                     <BeatLoader
@@ -270,65 +248,68 @@ class Catalog extends Component {
                     />
                   </div>
                 </div>
-              }
-            </Col>
-            <Col md={3} lg={4} xl={3} className="filter-results-column">
-              <FilterResults
-                activePlaylists={activePlaylists ? activePlaylists : []}
-                selectCourse={this.selectCourse}
-                selectedCourse={selectedCourse}
-                sortBy={this.state.sortBy}
-                query={this.state.search}
-              />
-            </Col>
-            <Col xs={0} sm={0} md={6} lg={4} xl={6} className="catalog-description-column">
-              {
-                !isMobile ? 
-                  <ClassDescription
+              )
+            }
+          </Col>
+          <Col md={3} lg={4} xl={3} className="filter-results-column">
+            <FilterResults
+              activePlaylists={activePlaylists ? activePlaylists : []}
+              selectCourse={this.selectCourse}
+              selectedCourse={selectedCourse}
+              sortBy={this.state.sortBy}
+              query={this.state.search}
+            />
+          </Col>
+          <Col xs={0} md={6} lg={4} xl={6} className="catalog-description-column">
+            {
+              !isMobile ? (
+                <ClassDescription
                   course={selectedCourse}
                   selectCourse={this.selectCourse}
                   modifyFilters={this.modifyFilters}
-                /> :
-                <ClassDescriptionModal 
+                />
+              ) : (
+                <ClassDescriptionModal
                   course={selectedCourse}
                   selectCourse={this.selectCourse}
                   show={showDescription}
                   hideModal={this.hideModal}
                   modifyFilters={this.modifyFilters}
                 />
-              }
-            </Col> 
-          </Row>
+              )
+            }
+          </Col>
+        </Row>
       </div>
-    )
+    );
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    dispatch,
-    modify: (activePlaylists, defaultPlaylists) => dispatch(modify(activePlaylists, defaultPlaylists)),
-    fetchLists: (paths) => dispatch(fetchLists(paths)),
-    modifySelected: (data) => dispatch(modifySelected(data)),
-    setFilterMap: (data) => dispatch(setFilterMap(data))
-  }
-}
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+  modifyActivePlaylists: activePlaylists => dispatch(modifyActivePlaylists(activePlaylists)),
+  fetchPlaylists: (paths) => dispatch(fetchPlaylists(paths)),
+  modifySelected: (data) => dispatch(modifySelected(data)),
+  setFilterMap: (data) => dispatch(setFilterMap(data)),
+});
 
 const mapStateToProps = state => {
-  const { activePlaylists, defaultPlaylists, data, loading, selectCourse } = state.catalog;
+  const {
+    activePlaylists, defaultPlaylists, data, loading, selectedCourse,
+  } = state.catalog;
   const { isMobile } = state.isMobile;
 
   return {
-    activePlaylists: activePlaylists,
-    defaultPlaylists: defaultPlaylists,
-    data: data,
-    loading: loading,
-    selectedCourse: selectCourse,
-    isMobile: isMobile,
+    activePlaylists,
+    defaultPlaylists,
+    data,
+    loading,
+    selectedCourse,
+    isMobile,
   };
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(withRouter(Catalog));
