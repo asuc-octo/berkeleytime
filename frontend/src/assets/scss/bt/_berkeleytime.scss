@@ -18,6 +18,10 @@
       height: auto;
     }
 
+     @include tablet {
+      height: auto;
+    }
+
   }
 
   .banner-visible {
