@@ -67,7 +67,9 @@ class EnrollmentSearchBar extends Component {
     }
 
     this.setState({
-      selectedClass: updatedClass.value
+      selectedClass: updatedClass.value,
+      selectPrimary: '',
+      selectSecondary: '',
     });
 
     fetchEnrollSelected(updatedClass);
