@@ -69,6 +69,8 @@ class GradesSearchBar extends Component {
       this.reset();
       this.setState({
         selectedClass: 0,
+        selectPrimary: '',
+        selectSecondary: '',
       });
       return;
     }
