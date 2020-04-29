@@ -31,6 +31,10 @@ def auto_github_issue(response, hook_config):
     requests.post(ghURL+ghToken, json=payload)
 
 
+def auto_email(response, hook_config):
+    pass
+
+
 HOOKS = [auto_github_issue]
 
 HOOKS_MAP = {f.__name__ : f for f in HOOKS}

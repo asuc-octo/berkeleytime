@@ -1,6 +1,7 @@
 import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from googleapiclient.discovery import build
 
 from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
 try:
@@ -27,6 +28,8 @@ CACHED_CONFIGS = {}
 # Raises some error, need to find
 credentials = ServiceAccountCredentials.from_json_keyfile_name(os.environ["GOOGLE_APPLICATION_CREDENTIALS"], sheets_scope)
 gc = gspread.authorize(credentials)
+GMAIL_SERVICE = build('gmail', 'v1', credentials=credentials)
+DRIVE_SERVICE = build('drive', 'v3', credentials=credentials)
 
 for config in os.listdir('forms/configs'):
     if config == "__init__.py":

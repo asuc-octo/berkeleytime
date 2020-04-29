@@ -1,5 +1,5 @@
-from googleapiclient import discovery
 from apiclient.http import MediaFileUpload, MediaInMemoryUpload
+from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import os
 import time
@@ -7,7 +7,7 @@ import redlock
 import urlparse
 
 from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
-from utils import get_config_dict, CACHED_SHEETS
+from utils import get_config_dict, CACHED_SHEETS, DRIVE_SERVICE
 
 if IS_LOCALHOST:
 	dlm = redlock.Redlock([{"host": 'redis', "port": 6379}, ])
@@ -47,11 +47,7 @@ def upload_file(folder_name, file_name, file_blob):
 	# FOLDER_NAME is the name of the folder to upload the file to
 	# FILE_BLOB is the file blob to upload
 
-	credentials = ServiceAccountCredentials.from_json_keyfile_name(
-		os.environ["GOOGLE_APPLICATION_CREDENTIALS"], drive_scope)
-	drive = discovery.build('drive', 'v3', credentials=credentials)
-
-	folders = drive.files().list(q="mimeType='application/vnd.google-apps.folder'",
+	folders = DRIVE_SERVICE.files().list(q="mimeType='application/vnd.google-apps.folder'",
 	                           spaces='drive',
 	                           fields='nextPageToken, files(id, name)',
 	                           pageToken=None).execute().get('files', [])
@@ -84,9 +80,18 @@ def upload_file(folder_name, file_name, file_blob):
 	file_metadata = {'name': file_front + "_" + datetime.utcnow().strftime("%Y.%m.%d.%H.%M.%S") + \
 		file_ext, 'parents': [folder_id]}
 	media = MediaInMemoryUpload(file_blob)
-	file = drive.files().create(body=file_metadata, media_body=media, fields='id').execute()
+	file = DRIVE_SERVICE.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
-	return drive.files().get(fileId=file["id"], fields='webViewLink').execute()["webViewLink"]
+	DRIVE_SERVICE.permissions().create(
+		fileId=file.get('id'),
+		body={
+			'type': 'anyone',
+			'role': 'reader',
+		},
+		fields='id',
+	).execute()
+
+	return DRIVE_SERVICE.files().get(fileId=file["id"], fields='webViewLink').execute()["webViewLink"]
 
 
 # Appends RESPONSES to a google sheet specified by doc_url
