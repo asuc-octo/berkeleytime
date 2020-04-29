@@ -5,7 +5,7 @@ import {
 } from 'react-bootstrap';
 import hash from 'object-hash';
 
-import { laymanToAbbreviation } from '../../variables/Variables';
+import FilterResults from '../Catalog/FilterResults';
 
 // import 'react-virtualized-select/styles.css'
 import { fetchEnrollSelected } from '../../redux/actions';
@@ -20,7 +20,9 @@ class EnrollmentSearchBar extends Component {
       selectedClass: 0,
       selectPrimary: this.props.selectPrimary,
       selectSecondary: this.props.selectSecondary,
-    }
+    };
+
+    this.queryCache = {};
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
     this.handlePrimarySelect = this.handlePrimarySelect.bind(this);
@@ -65,7 +67,9 @@ class EnrollmentSearchBar extends Component {
     }
 
     this.setState({
-      selectedClass: updatedClass.value
+      selectedClass: updatedClass.value,
+      selectPrimary: '',
+      selectSecondary: '',
     });
 
     fetchEnrollSelected(updatedClass);
@@ -130,12 +134,14 @@ class EnrollmentSearchBar extends Component {
     }
 
     const ret = [];
-    ret.push({ value: 'all', label: 'All Instructors' });
+
     let sections = semesters.filter(semester => this.getSectionSemester(semester) === selectPrimary)[0].sections;
+    if (sections.length > 1) {
+      ret.push({ value: 'all', label: 'All Instructors' });
+    }
 
     for (var section of sections) {
-      let instructor = `${section.instructor == null ? "None" : section.instructor} / ${section.section_number}`;
-
+      let instructor = `${(section.instructor == null || section.instructor == "")? "None" : section.instructor} / ${section.section_number}`;
       ret.push( {
         value: instructor,
         label: instructor,
@@ -165,11 +171,30 @@ class EnrollmentSearchBar extends Component {
 
   addSelected() {
     const { selectedClass, selectPrimary, selectSecondary } = this.state;
+    const { sections } = this.props;
+    let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
+    let instructor = "";
+    let sectionId = [];
+    if (secondaryOptions.length === 1) {
+      instructor = secondaryOptions[0].value;
+      sectionId = [secondaryOptions[0].sectionId]
+    } else {
+      if (selectSecondary.value === 'all') {
+        instructor = 'all';
+      } else {
+        instructor = selectSecondary.value
+      }
+      if (selectSecondary.sectionId) {
+        sectionId = [selectSecondary.sectionId]
+      } else {
+        sectionId = this.getFilteredSections()
+      }
+    }
     let playlist = {
       courseID: selectedClass,
-      instructor: selectSecondary.value === 'all' ? 'all' : selectSecondary.value,
+      instructor: instructor,
       semester: selectPrimary,
-      sections: selectSecondary.sectionId ? [selectSecondary.sectionId] : this.getFilteredSections()
+      sections: sectionId
     }
 
     playlist.id = hash(playlist);
@@ -177,40 +202,14 @@ class EnrollmentSearchBar extends Component {
     this.reset();
   }
 
-  courseMatches(option, query) {
-    let { course } = option;
-    let courseMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    let otherNumber;
-    if (course.course_number.indexOf("C") !== -1) { // if there is a c in the course number
-        otherNumber = course.course_number.substring(1);
-    } else { // if there is not a c in the course number
-        otherNumber = "C" + course.course_number;
-    }
-    var courseFixedForCMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    return courseMatches || courseFixedForCMatches;
+  filterOptions(option, query) {
+    return FilterResults.filterCourses(option.course, query, this.queryCache);
   }
-
-  filterCourses(option, query) {
-    if(query.trim() === "") { return true }
-    let querySplit = query.toUpperCase().split(" ");
-    if(querySplit[0] in laymanToAbbreviation) {
-      querySplit[0] = laymanToAbbreviation[querySplit[0]];
-    }
-    query = query.toLowerCase();
-    var pseudoQuery = querySplit.join(" ").toLowerCase();
-    var useOriginalQuery = (querySplit.length === 1 && query !== pseudoQuery);
-    return (useOriginalQuery && this.courseMatches(option, query)) || this.courseMatches(option, pseudoQuery);
-  }
-
-  filterOptions(options, query) {
-    return options.filter(option => this.filterCourses(option, query))
-  }
-
 
   reset() {
     this.setState({
       selectPrimary: '',
-      selectSecondary: { value: 'all', label: 'All Instructors' },
+      selectSecondary: '',
     })
   }
 
@@ -220,7 +219,7 @@ class EnrollmentSearchBar extends Component {
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
     let onePrimaryOption = primaryOptions && primaryOptions.length === 2 && selectPrimary;
-    let oneSecondaryOption = secondaryOptions && secondaryOptions.length === 2 && selectSecondary.value;
+    let oneSecondaryOption = secondaryOptions && secondaryOptions.length ===  1 && selectSecondary.value;
 
     let primaryOption = { value: selectPrimary, label: selectPrimary };
     let secondaryOption = selectSecondary;
@@ -254,7 +253,7 @@ class EnrollmentSearchBar extends Component {
                 // value={selectedClass}
                 options={this.buildCoursesOptions(classes)}
                 onChange={this.handleClassSelect}
-                filterOptions={this.filterOptions}
+                filterOption={this.filterOptions}
                 components={{
                   IndicatorSeparator: () => null
                 }}
@@ -265,7 +264,7 @@ class EnrollmentSearchBar extends Component {
             <Select
                 name="instrSems"
                 placeholder={!isMobile ? "Select an option...": "Select..."}
-                value={onePrimaryOption ? primaryOptions[1] : primaryOption}
+                value={onePrimaryOption ? primaryOptions[0] : primaryOption}
                 options={primaryOptions}
                 onChange={this.handlePrimarySelect}
                 isDisabled={!selectedClass}
@@ -280,7 +279,7 @@ class EnrollmentSearchBar extends Component {
             <Select
                 name="section"
                 placeholder={!isMobile ? "Select an option...": "Select..."}
-                value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
+                value={oneSecondaryOption ? secondaryOptions[0] : secondaryOption}
                 options={secondaryOptions}
                 onChange={this.handleSecondarySelect}
                 isDisabled={!selectedClass}

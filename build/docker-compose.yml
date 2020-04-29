@@ -6,6 +6,7 @@ services:
     command: ["0.0.0.0:8000"]
     volumes:
      - ../berkeleytime:/berkeleytime
+     - ./google-sa.json:/google-sa.json
     environment:
      - "PYTHONUNBUFFERED=1"
      - "GOOGLE_CLIENT_ID=***REMOVED***"
@@ -17,6 +18,7 @@ services:
      - "SIS_CLASS_APP_KEY=***REMOVED***"
      - "SIS_COURSE_APP_ID=***REMOVED***"
      - "SIS_COURSE_APP_KEY=***REMOVED***"
+     - "GOOGLE_APPLICATION_CREDENTIALS=/google-sa.json"
     depends_on:
      - redis
   frontend:

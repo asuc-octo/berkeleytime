@@ -63,8 +63,8 @@ export default function grade(state = initialState, action) {
     return {
       ...state,
       sections: data,
-      selectPrimary: 'all',
-      selectSecondary: 'all',
+      selectPrimary: '',
+      selectSecondary: '',
     };
   }
   default:

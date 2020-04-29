@@ -85,7 +85,8 @@ urlpatterns = patterns('',
 
     # Forms
     url(r'^forms/config/(?P<config_name>[\w\d]+)/$', 'forms.views.get_config'),
-    url(r'^forms/submit/(?P<config_name>[\w\d]+)/(?P<form_response>[^\/]+)/$', 'forms.views.record_response'),
+    url(r'^forms/submit/$', 'forms.views.record_response'),
+    url(r'^forms/upload/(?P<config_name>[\w\d]+)/(?P<file_name>.+)/$', 'forms.views.upload_file_view'),
 
     # Direct to Template
     (r'^legal/terms/$', TemplateView.as_view(template_name="legal/terms.html")),
