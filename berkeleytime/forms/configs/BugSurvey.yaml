@@ -9,7 +9,7 @@ info:
   drive_folder_name: "BugUploads"
   hooks:
     - name: auto_github_issue
-      title: Question 2
+      question: Question 2
 questions:
   - title: "Email Address"
     description: "If you like, you can let us know your email in case we have follow ups."
