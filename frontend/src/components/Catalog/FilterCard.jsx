@@ -10,7 +10,7 @@ class FilterCard extends PureComponent {
   }
 
   static colorEnrollment(percentage) {
-    const pct = Math.floor(percentage * 100, 100);
+    const pct = percentage * 100;
     if (pct < 33) {
       return 'enrollment-first-third';
     } else if (pct < 67) {
@@ -90,9 +90,12 @@ class FilterCard extends PureComponent {
             <h6>{`${abbreviation} ${course_number}`}</h6>
             <p className="filter-card-info-desc">{title}</p>
             <div className="filter-card-info-stats">
-              <p className={FilterCard.colorEnrollment(enrolled_percentage)}>{FilterCard.formatEnrollmentPercentage(enrolled_percentage)}</p>
-              &nbsp;<p>•</p>&nbsp;
-              <p>{FilterCard.formatUnits(units)}</p>
+              { enrolled_percentage === -1
+                ? null
+                : <p className={FilterCard.colorEnrollment(enrolled_percentage)}>{FilterCard.formatEnrollmentPercentage(enrolled_percentage)}</p>
+              }
+              
+              <p>&nbsp;•&nbsp;{FilterCard.formatUnits(units)}</p>
             </div>
           </div>
           { sort }

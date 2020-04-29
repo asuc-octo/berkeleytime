@@ -1,3 +1,5 @@
+from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
+
 from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient import discovery
 from httplib2 import Http
@@ -11,23 +13,44 @@ from datetime import datetime
 
 import gspread
 import os
-import sys
+import time
 import redlock
+import urlparse
 
 # Global Variables
-sheets_scope = ['https://spreadsheets.google.com/feeds',
-         'https://www.googleapis.com/auth/drive']
-drive_scope = ['https://www.googleapis.com/auth/drive.readonly.metadata', 
-							 'https://www.googleapis.com/auth/drive.file']
-dlm = redlock.Redlock([{"host": "localhost", "port": 6379, "db": 0}, ])
+sheets_scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+drive_scope = ['https://www.googleapis.com/auth/drive.readonly.metadata', 'https://www.googleapis.com/auth/drive.file']
+
+if IS_LOCALHOST:
+	dlm = redlock.Redlock([{"host": 'redis', "port": 6379}, ])
+elif IS_STAGING or IS_PRODUCTION:
+	REDIS = urlparse.urlparse(os.environ.get('REDIS_URL'))
+	dlm = redlock.Redlock([{"host": REDIS.hostname, "port": REDIS.port, 'password': REDIS.password},])
+
+CACHED_SHEETS = {}
+CACHED_CONFIGS = {}
+
+# Raises some error, need to find
+credentials = ServiceAccountCredentials.from_json_keyfile_name(
+	os.environ["GOOGLE_APPLICATION_CREDENTIALS"], sheets_scope)
+gc = gspread.authorize(credentials)
+
+for config in os.listdir('forms/configs'):
+	f = open("forms/configs/{}".format(config))
+	loaded_yaml = load(f, Loader=Loader)
+	CACHED_CONFIGS[config.replace(".yaml", "")] = loaded_yaml
+	if "googlesheet_link" in loaded_yaml["info"]:
+		doc_url = loaded_yaml["info"]["googlesheet_link"]
+		sheet = gc.open_by_url(doc_url).sheet1
+		if sheet:
+			CACHED_SHEETS[doc_url] = gc.open_by_url(doc_url).sheet1
 
 # Reads in a YAML file and checks if it is properly formed
 # Returns YAML file in dictionary form
-def check_yaml_format(yaml_path):
+def check_yaml_format(config_name):
 	# YAML_PATH is the filepath to the yaml file
 	try:
-		file = open(yaml_path)
-		loaded_yaml = load(file, Loader=Loader)
+		loaded_yaml = CACHED_CONFIGS[config_name]
 		# REQUIRED FIELDS:
 		# info field with googlesheet_link
 		if "info" not in loaded_yaml or "googlesheet_link" not in loaded_yaml["info"]:
@@ -39,11 +62,21 @@ def check_yaml_format(yaml_path):
 			print("The 'questions' field is malformed (missing or does not contain a list).")
 			return None
 		return loaded_yaml
-	except FileNotFoundError:
-		print("Error when trying to read file:", yaml_path, "ERROR: FileNoteFoundError")
-	except:
-		print("Unexpected error within check_yaml_format. Raised error:")
-		raise
+	except (OSError, IOError):
+		print("Error when trying to read file: {}".format(yaml_path))
+		return None
+	except Exception as e:
+		print("Unexpected error within check_yaml_format. Raised error: " + e)
+		return None
+
+
+def get_yaml_questions(loaded_yaml):
+	question_mapping = {}
+	questions = loaded_yaml["questions"]
+	for count, question in enumerate(questions,1):
+		question_mapping["Question "+str(count)] = question["type"]
+	return question_mapping
+
 
 # Uploads FILE_BLOB to folder called FOLDER_NAME
 # Returns the webViewLink of uploaded file
@@ -92,85 +125,74 @@ def upload_file(folder_name, file_name, file_blob):
 
 	return drive.files().get(fileId=file["id"], fields='webViewLink').execute()["webViewLink"]
 
+
 # Appends RESPONSES to a google sheet specified by doc_url
 def sheet_add_next_entry(doc_url, responses):
 	# DOC_URL is the url of the google sheet
 	# RESPONSES is a list of strings
 
 	if (type(doc_url) is not str):
-		print("doc_url is not a string") # TODO replace with proper error
-		return
+		raise Exception("doc_url is not a string") # TODO replace with proper error
 
-	# Raises some error, need to find
-	credentials = ServiceAccountCredentials.from_json_keyfile_name(
-		os.environ["GOOGLE_APPLICATION_CREDENTIALS"], sheets_scope)
-	gc = gspread.authorize(credentials)
+	if doc_url not in CACHED_SHEETS:
+		raise Exception("Error opening spreadsheet")
 
 	# Need to acquire lock (ensure that only one instance is modifying the sheet at a time)
-	my_lock = dlm.lock("google_spreadsheet",2000)
+	my_lock = False
+	for _ in range(5):
+		my_lock = dlm.lock("google_spreadsheet_" + str(hash(doc_url)), 2000)
+		if my_lock:
+			break
+		else:
+			time.sleep(0.2)
+	if not my_lock:
+		raise Exception("failed to acquire lock")
 
-	# Raises a gspread.SpreadsheetNotFound if no spreadsheet is found
-	try:
-		sheet = gc.open_by_url(doc_url).sheet1
-	except:
-		print("Error opening spreadsheet")
-		raise
-
-	j = 1
-	while (sheet.cell(j, 1).value):
-		j += 1
-
-	for count, response in enumerate(responses):
-		sheet.update_cell(j, 1 + count, response)
+	sheet = CACHED_SHEETS[doc_url]
+	col1 = sheet.col_values(1)
+	next_row = len(col1) + 1
+	cell_list = sheet.range('A{}:{}{}'.format(next_row, chr(ord('A') + len(responses) - 1), next_row))
+	for index, response in enumerate(responses):
+		cell_list[index].value = response
+	sheet.update_cells(cell_list)
 
 	dlm.unlock(my_lock)
-
 	return True
 
 # Checks if RESPONSES matches the YAML configuration
 # Uploads the response to GoogleDrive
 # Returns True if successful, False otherwise
-def check_yaml_response(yaml_path, responses):
+def check_yaml_response(config_name, responses):
 	# YAML_PATH is the filepath to the yaml file
 	# RESPONSES is a list of the responses [(type, response)], where the first
 	# tuple (index 0) HAS to be ("unique_name", <unique_name>).
 
-	loaded_yaml = check_yaml_format(yaml_path)
+	loaded_yaml = check_yaml_format(config_name)
 	if not loaded_yaml:
 		print("Failed to read yaml configuration file:", yaml_path)
 		print("Aborting.")
 		return False
 
 	# Sanity check if responses is correctly formed (with name tuple first)
-	if not responses[0][0] == "unique_name":
-		print("Responses does not contain the unique_name tuple.")
-
-	# Sanity check if correct YAML is being used
-	if not loaded_yaml["info"]["unique_name"] == responses[0][1] or \
-		not len(responses) - 1 == len(loaded_yaml["questions"]):
-		print("Incorrect YAML configuration:", loaded_yaml["info"]["unique_name"], \
-			"for responses:", loaded_yaml["info"]["unique_name"], "or malformed responses")
+	if "Config" not in responses:
+		print("Responses does not contain the Config key.")
 		return False
 
-	# Uploading files first to retrieve drive URLs
-	if "drive_folder_name" in loaded_yaml["info"]:
-		drive_folder_name = loaded_yaml["info"]["drive_folder_name"]
-	else:
-		drive_folder_name = ""
+	# Sanity check if correct YAML is being used
+	if not loaded_yaml["info"]["unique_name"] == responses["Config"]:
+		print("Incorrect YAML configuration:", loaded_yaml["info"]["unique_name"], \
+			"for responses:", loaded_yaml["info"]["unique_name"])
+		return False
 
 	sheet_responses = []
-	for resp_type,response in responses:
-		if resp_type == "unique_name":
-			pass
-		elif resp_type == "file":
-			if type(response) is tuple:
-				file_link = upload_file(drive_folder_name, response[0], response[1])
-				sheet_responses.append(file_link)
-			else:
-				print("Response for file upload is malformed")
-				return False
-		else:
+	question_mapping = get_yaml_questions(loaded_yaml)
+	for q_numb in range(0, len(loaded_yaml["questions"])):
+		question_id = "Question " + str(q_numb + 1)
+		if question_id in responses:
+			response = responses[question_id]
 			sheet_responses.append(response)
+		else:
+			sheet_responses.append("N/A")
 
 	# Sanity check that we have enough responses
 	if not (len(sheet_responses) == len(loaded_yaml["questions"])):

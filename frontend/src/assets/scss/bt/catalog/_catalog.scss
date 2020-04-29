@@ -1,4 +1,7 @@
 .catalog {
+  
+  //hide mobile views
+  min-width: 992px;
   min-height: 600px;
   height: 100vh;
 
@@ -24,9 +27,9 @@
       border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
 
-      @include mobile {
+      /*@include mobile {
         max-height: 128px;
-      }
+      }*/
     }
 
     .filter-results-column {

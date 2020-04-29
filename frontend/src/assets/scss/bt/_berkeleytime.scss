@@ -13,6 +13,15 @@
     padding-top: $bt-navbar-height;
     height: 100vh;
     min-height: $viewport-min-height;
+
+    @include mobile {
+      height: auto;
+    }
+
+     @include tablet {
+      height: auto;
+    }
+
   }
 
   .banner-visible {

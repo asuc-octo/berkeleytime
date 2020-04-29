@@ -6,7 +6,7 @@ import {
 import hash from 'object-hash';
 
 import { connect } from 'react-redux';
-import { laymanToAbbreviation } from '../../variables/Variables';
+import FilterResults from '../Catalog/FilterResults';
 
 import { fetchGradeSelected } from '../../redux/actions';
 
@@ -24,6 +24,8 @@ class GradesSearchBar extends Component {
       selectPrimary: props.selectPrimary,
       selectSecondary: props.selectSecondary,
     };
+
+    this.queryCache = {};
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
     this.handleSortSelect = this.handleSortSelect.bind(this);
@@ -67,6 +69,8 @@ class GradesSearchBar extends Component {
       this.reset();
       this.setState({
         selectedClass: 0,
+        selectPrimary: '',
+        selectSecondary: '',
       });
       return;
     }
@@ -81,13 +85,18 @@ class GradesSearchBar extends Component {
   handleSortSelect(sortBy) {
     this.setState({
       selectType: sortBy.value,
+      selectPrimary: '',
+      selectSecondary: ''
     });
   }
 
   handlePrimarySelect(primary) {
+    const { sections } = this.props;
+    const { selectType } = this.state;
+    const secondaryOptions = this.buildSecondaryOptions(sections, selectType, primary.value);
     this.setState({
       selectPrimary: primary ? primary.value : '',
-      selectSecondary: 'all',
+      selectSecondary: secondaryOptions.length === 1 ? secondaryOptions[0].value : 'all'
     });
   }
 
@@ -101,7 +110,6 @@ class GradesSearchBar extends Component {
     if (!courses) {
       return [];
     }
-
     const options = courses.map(course => ({
       value: course.id,
       label: `${course.abbreviation} ${course.course_number}`,
@@ -124,8 +132,9 @@ class GradesSearchBar extends Component {
     const map = new Map();
 
     if (selectType === 'instructor') {
-      ret.push({ value: 'all', label: 'All Instructors' });
-
+      if (sections.length > 1) {
+        ret.push({ value: 'all', label: 'All Instructors' });
+      }
       for (const section of sections) {
         if (!map.has(section.instructor)) {
           map.set(section.instructor, true);
@@ -136,8 +145,9 @@ class GradesSearchBar extends Component {
         }
       }
     } else {
-      ret.push({ value: 'all', label: 'All Semesters' });
-
+      if (sections.length > 1) {
+        ret.push({ value: 'all', label: 'All Semesters' });
+      }
       for (const section of sections) {
         const semester = this.getSectionSemester(section);
         if (!map.has(semester)) {
@@ -156,9 +166,6 @@ class GradesSearchBar extends Component {
   buildSecondaryOptions(sections, selectType, selectPrimary) {
     const ret = [];
 
-    const label = selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
-    ret.push({ value: 'all', label });
-
     if (selectPrimary === 'all') {
       let options;
       if (selectType === 'instructor') {
@@ -175,6 +182,11 @@ class GradesSearchBar extends Component {
             label: instructor,
             sectionNumber: instructor.split(' / ')[1],
           }));
+      }
+
+      if (options.length > 1) {
+        const label = selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
+        ret.push({ value: 'all', label });
       }
 
       for (const o of options) {
@@ -197,13 +209,17 @@ class GradesSearchBar extends Component {
         options = sections.filter(section => this.getSectionSemester(section) === selectPrimary)
           .map(section => {
             const instructor = `${section.instructor} / ${section.section_number}`;
-
             return {
               value: instructor,
               label: instructor,
               sectionNumber: instructor.split(' / ')[1],
             };
           });
+      }
+
+      if (options.length > 1) {
+        const label = selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
+        ret.push({ value: 'all', label });
       }
 
       for (const o of options) {
@@ -245,6 +261,7 @@ class GradesSearchBar extends Component {
     const {
       selectedClass, selectType, selectPrimary, selectSecondary,
     } = this.state;
+
     const playlist = {
       courseID: selectedClass,
       instructor: selectType === 'instructor' ? selectPrimary : selectSecondary,
@@ -257,33 +274,8 @@ class GradesSearchBar extends Component {
     this.reset();
   }
 
-  courseMatches(option, query) {
-    const { course } = option;
-    const courseMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    let otherNumber;
-    if (course.course_number.indexOf('C') !== -1) { // if there is a c in the course number
-      otherNumber = course.course_number.substring(1);
-    } else { // if there is not a c in the course number
-      otherNumber = `C${course.course_number}`;
-    }
-    const courseFixedForCMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    return courseMatches || courseFixedForCMatches;
-  }
-
-  filterCourses(option, query) {
-    if (query.trim() === '') { return true; }
-    const querySplit = query.toUpperCase().split(' ');
-    if (querySplit[0] in laymanToAbbreviation) {
-      querySplit[0] = laymanToAbbreviation[querySplit[0]];
-    }
-    query = query.toLowerCase();
-    const pseudoQuery = querySplit.join(' ').toLowerCase();
-    const useOriginalQuery = (querySplit.length === 1 && query !== pseudoQuery);
-    return (useOriginalQuery && this.courseMatches(option, query)) || this.courseMatches(option, pseudoQuery);
-  }
-
-  filterOptions(options, query) {
-    return options.filter(option => this.filterCourses(option, query));
+  filterOptions(option, query) {
+    return FilterResults.filterCourses(option.course, query, this.queryCache);
   }
 
   reset() {
@@ -301,8 +293,8 @@ class GradesSearchBar extends Component {
     const { sections } = this.props;
     const primaryOptions = this.buildPrimaryOptions(sections, selectType);
     const secondaryOptions = this.buildSecondaryOptions(sections, selectType, selectPrimary);
-    const onePrimaryOption = primaryOptions && primaryOptions.length === 2 && selectPrimary;
-    const oneSecondaryOption = secondaryOptions && secondaryOptions.length === 2 && selectSecondary;
+    const onePrimaryOption = primaryOptions && primaryOptions.length === 1 && selectPrimary;
+    const oneSecondaryOption = secondaryOptions && secondaryOptions.length === 1 && selectSecondary;
 
 
     let primaryOption = { value: selectPrimary, label: selectPrimary };
@@ -348,7 +340,7 @@ class GradesSearchBar extends Component {
               placeholder="Choose a class..."
               options={this.buildCoursesOptions(classes)}
               onChange={this.handleClassSelect}
-              filterOptions={this.filterOptions}
+              filterOption={this.filterOptions}
               components={{
                 IndicatorSeparator: () => null
               }}
@@ -375,7 +367,7 @@ class GradesSearchBar extends Component {
             <Select
               name="instrSems"
               placeholder={!isMobile ? "Select an option...": "Select..."}
-              value={onePrimaryOption ? primaryOptions[1] : primaryOption}
+              value={onePrimaryOption ? primaryOptions[0] : primaryOption}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
               isDisabled={!selectedClass}
@@ -391,7 +383,7 @@ class GradesSearchBar extends Component {
             <Select
               name="section"
               placeholder={!isMobile ? "Select an option...": "Select..."}
-              value={oneSecondaryOption ? secondaryOptions[1] : secondaryOption}
+              value={oneSecondaryOption ? secondaryOptions[0] : secondaryOption}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}
               isDisabled={!selectedClass}

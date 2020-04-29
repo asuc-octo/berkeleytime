@@ -22,6 +22,7 @@
 // landing
 @import "bt/landing/jumbotron";
 @import "bt/landing/landing";
+@import "bt/landing/explore";
 @import "bt/landing/mission";
 @import "bt/landing/sponsors";
 
@@ -40,11 +41,11 @@
 @import "bt/classcards";
 @import "bt/graph-empty";
 // Grades
-@import "bt/grades";
+@import "bt/grades/grades";
 @import "bt/grades/graph";
 @import "bt/shared/grades_enrollment_info";
 // Enrollment
-@import "bt/enrollment";
+@import "bt/enrollment/enrollment";
 // Releases
 @import "bt/releases";
 
@@ -69,7 +70,7 @@
 @import "bt/apidocs/apidocs";
 
 // Apply
-@import "bt/apply";
+@import "bt/forms";
 
 // Error page
 @import "bt/error/error";

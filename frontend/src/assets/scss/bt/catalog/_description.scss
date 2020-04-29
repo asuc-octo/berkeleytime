@@ -102,6 +102,31 @@
 
     .description {
       color: $bt-grey-text;
+
+      span {
+        color: $bt-blue;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .prereqs {
+      h6 {
+        margin-bottom: 10px;
+        color: $bt-grey-text;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+
+      span {
+        color: $bt-blue;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
     }
 
     h5 {

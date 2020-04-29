@@ -10,15 +10,15 @@ import close from '../../assets/svg/common/close.svg';
 class Banner extends PureComponent {
   render() {
     const { visible, dispatch } = this.props;
-    const text = 'We have a new announcement! Here is a longer description of the main text and more details about the whole thing.';
+    const text = 'We just pushed a huge redesign and added new pages! ✨';
 
     return visible ? (
       <div className="banner">
         <div className="content">
           <p>{ text }</p>
-           <Button as={Link} to={"/releases"}></Button>
+          <Button variant="bt-primary" size="sm" as={Link} to="/releases">Learn More</Button>
         </div>
-        <img src={close} alt="close" onClick={() => dispatch(closeBanner())}/>
+        <img src={close} alt="close" onClick={() => dispatch(closeBanner())} />
       </div>
     ) : null;
   }

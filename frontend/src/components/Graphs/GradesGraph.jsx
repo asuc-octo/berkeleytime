@@ -8,6 +8,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Label,
 } from 'recharts';
 import {
   percentileToString
@@ -32,13 +33,14 @@ const EmptyLabel = props => {
 
 const MobileTooltip = props => {
   const {active, payload, label } = props;
-  if (active) {
+  if (active && payload) {
     const denominator = props.denominator;
-    const numerator = Math.round(denominator * (props.payload[0].value / 100));
+    const info = payload[0];
+    const numerator = info ? Math.round(denominator * (info.value / 100)) : 0;
     let percentile = props.selectedPercentiles;
     let percentileLow = percentile ? percentileToString(percentile.percentile_low) : 0;
     let percentileHigh = percentile ? percentileToString(percentile.percentile_high): 0;
-    let courseName = payload[0].name.split('/')[0];
+    let courseName = info ? info.name.split('/')[0] : "";
     return (
       <div className="grades-graph-tooltip">
         <h6> Grade: {label} </h6>
@@ -77,25 +79,18 @@ export default function GradesGraph({
       <div>
       {!isMobile ?
         <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }} >
+        <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -10, bottom: 0 }} >
           <XAxis dataKey="name" />
-          { !graphEmpty ? 
+          { !graphEmpty ?
             <YAxis type="number" unit="%" /> : <YAxis type="number" unit="%" domain={[0, 100]}/>
           }
-          { !graphEmpty ? 
-            <Tooltip
-              formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-              cursor={{fill: '#EAEAEA'}}
-            /> :
-            <Tooltip
-              cursor={{fill: '#fff'}}
-              content={<EmptyLabel />}
-              position={{ x: 150, y: 150 }}
-              wrapperStyle={{visibility: 'visible'}}
-            />
-          }
 
-          {gradesData.map((item, i) => (
+          <Tooltip
+            formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+            cursor={graphEmpty ? {fill: '#fff'} : {fill: '#EAEAEA'}}
+          />
+
+          {!graphEmpty && gradesData.map((item, i) => (
             <Bar
               name={`${item.title} • ${item.semester} • ${item.instructor}`}
               dataKey={item.id}
@@ -112,16 +107,10 @@ export default function GradesGraph({
           onMouseMove={updateGraphHover}
           layout="vertical"
           barSize={30}
-          margin={{top: 65, left: -30, bottom: 50}}
+          margin={{left: -30, bottom: 50}}
         >
 
-          <text
-            y={30}
-            textAnchor="top"
-            dominantBaseline="left"
-            fontSize={18}> Grade Distribution
-          </text>
-          { !graphEmpty ? 
+          { !graphEmpty ?
             <XAxis type="number" unit="%" /> : <XAxis type="number" unit="%" domain={[0, 100]}/>
           }
           <YAxis dataKey="name" type="category" />
@@ -132,7 +121,7 @@ export default function GradesGraph({
                   selectedPercentiles={selectedPercentiles}
                   color={color}
                   denominator={denominator}
-                /> 
+                />
               }
             /> :
               <Tooltip
@@ -159,6 +148,11 @@ export default function GradesGraph({
         </BarChart>
       </ResponsiveContainer>
       }
+
+      { graphEmpty &&
+        <EmptyLabel />
+      }
+
       </div>
 
   );
