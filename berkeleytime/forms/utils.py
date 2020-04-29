@@ -24,7 +24,6 @@ def get_yaml_questions(loaded_yaml):
 scopes = [
     'https://spreadsheets.google.com/feeds',
     'https://www.googleapis.com/auth/drive'
-    'https://www.googleapis.com/auth/gmail'
 ]
 
 CACHED_SHEETS = {}
