@@ -64,6 +64,10 @@ Faq.questions = [
     answer: <p>We typically recruit engineers and designers at the start of every fall semester; keep an eye out on our website and our <a href="https://www.facebook.com/berkeleytime/">Facebook page</a> for updates.</p>,
   },
   {
+    question: 'I want to help user test new features!',
+    answer: <p>We love to hear it! You can sign up to get user testing opportunities <a href="/usertesting">here</a>.</p>,
+  },
+  {
     question: 'Berkeleytime is down/I found a bug!',
     answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting a <Link to="/bugs">bug report</Link>, and one of our on-call engineers will try to get to it as soon as possible.</p>,
   },
