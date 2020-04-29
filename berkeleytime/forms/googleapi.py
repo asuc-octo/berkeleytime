@@ -1,25 +1,13 @@
-from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
-
-from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient import discovery
-from httplib2 import Http
-from oauth2client import file, client, tools
 from apiclient.http import MediaFileUpload, MediaInMemoryUpload
-try:
-    from yaml import load, dump, CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import load, dump, Loader, Dumper
 from datetime import datetime
-
-import gspread
 import os
 import time
 import redlock
 import urlparse
 
-# Global Variables
-sheets_scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-drive_scope = ['https://www.googleapis.com/auth/drive.readonly.metadata', 'https://www.googleapis.com/auth/drive.file']
+from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
+from utils import get_config_dict, CACHED_SHEETS
 
 if IS_LOCALHOST:
 	dlm = redlock.Redlock([{"host": 'redis', "port": 6379}, ])
@@ -27,30 +15,13 @@ elif IS_STAGING or IS_PRODUCTION:
 	REDIS = urlparse.urlparse(os.environ.get('REDIS_URL'))
 	dlm = redlock.Redlock([{"host": REDIS.hostname, "port": REDIS.port, 'password': REDIS.password},])
 
-CACHED_SHEETS = {}
-CACHED_CONFIGS = {}
-
-# Raises some error, need to find
-credentials = ServiceAccountCredentials.from_json_keyfile_name(
-	os.environ["GOOGLE_APPLICATION_CREDENTIALS"], sheets_scope)
-gc = gspread.authorize(credentials)
-
-for config in os.listdir('forms/configs'):
-	f = open("forms/configs/{}".format(config))
-	loaded_yaml = load(f, Loader=Loader)
-	CACHED_CONFIGS[config.replace(".yaml", "")] = loaded_yaml
-	if "googlesheet_link" in loaded_yaml["info"]:
-		doc_url = loaded_yaml["info"]["googlesheet_link"]
-		sheet = gc.open_by_url(doc_url).sheet1
-		if sheet:
-			CACHED_SHEETS[doc_url] = gc.open_by_url(doc_url).sheet1
 
 # Reads in a YAML file and checks if it is properly formed
 # Returns YAML file in dictionary form
 def check_yaml_format(config_name):
 	# YAML_PATH is the filepath to the yaml file
 	try:
-		loaded_yaml = CACHED_CONFIGS[config_name]
+		loaded_yaml = get_config_dict(config_name)
 		# REQUIRED FIELDS:
 		# info field with googlesheet_link
 		if "info" not in loaded_yaml or "googlesheet_link" not in loaded_yaml["info"]:
@@ -68,14 +39,6 @@ def check_yaml_format(config_name):
 	except Exception as e:
 		print("Unexpected error within check_yaml_format. Raised error: " + e)
 		return None
-
-
-def get_yaml_questions(loaded_yaml):
-	question_mapping = {}
-	questions = loaded_yaml["questions"]
-	for count, question in enumerate(questions,1):
-		question_mapping["Question "+str(count)] = question["type"]
-	return question_mapping
 
 
 # Uploads FILE_BLOB to folder called FOLDER_NAME
@@ -185,7 +148,6 @@ def check_yaml_response(config_name, responses):
 		return False
 
 	sheet_responses = []
-	question_mapping = get_yaml_questions(loaded_yaml)
 	for q_numb in range(0, len(loaded_yaml["questions"])):
 		question_id = "Question " + str(q_numb + 1)
 		if question_id in responses:
