@@ -14,6 +14,7 @@ import ApiDocs from '../views/Api/Api';
 import Join from '../views/Join/Join';
 import TestForm from '../views/Forms/TestForm';
 import BugsForm from '../views/Forms/BugsForm';
+import UserTestingForm from '../views/Forms/UserTestingForm';
 import Error from '../views/Error/Error';
 
 // name should be unique, used as react key
@@ -34,6 +35,7 @@ const routes = [
   { path: '/join',       name: 'Join',          component: Join },
   { path: '/testform',   name: 'Test Form',     component: TestForm },
   { path: '/bugs',       name: 'Report a Bug',  component: BugsForm },
+  { path: '/usertesting',name: 'User Testing',  component: UserTestingForm },
   { path: '/error',      name: 'Error',         component: Error },
   { /* no path */        name: '404',           component: Error },
 ];
