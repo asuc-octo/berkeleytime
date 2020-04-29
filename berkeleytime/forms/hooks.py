@@ -1,6 +1,6 @@
 import requests
 
-from utils import get_config_dict
+from utils import get_config_dict, send_message
 
 
 def create_formatted_message(response):
@@ -24,7 +24,7 @@ def auto_github_issue(response, hook_config):
     ghURL = "https://api.github.com/repos/asuc-octo/berkeleytime/issues?access_token="
 
     payload = {
-        "title": response[hook_config["title"]] if hook_config["title"] in response else hook_config["title"],
+        "title": response[hook_config["question"]] if hook_config["question"] in response else hook_config["title"],
         "body": create_formatted_message(response)
     }
 
@@ -32,10 +32,15 @@ def auto_github_issue(response, hook_config):
 
 
 def auto_email(response, hook_config):
-    pass
+    send_message(hook_config["to"], hook_config["subject"], create_formatted_message(response))
 
 
-HOOKS = [auto_github_issue]
+def auto_confirm(response, hook_config):
+    to = response[hook_config["question"]]
+    send_message(to, hook_config["subject"], create_formatted_message(response))
+
+
+HOOKS = [auto_github_issue, auto_email, auto_confirm]
 
 HOOKS_MAP = {f.__name__ : f for f in HOOKS}
 

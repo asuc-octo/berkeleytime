@@ -1,5 +1,4 @@
 from apiclient.http import MediaFileUpload, MediaInMemoryUpload
-from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 import os
 import time
@@ -77,10 +76,15 @@ def upload_file(folder_name, file_name, file_blob):
 
 
 	file_front, file_ext = os.path.splitext(file_name)
-	file_metadata = {'name': file_front + "_" + datetime.utcnow().strftime("%Y.%m.%d.%H.%M.%S") + \
-		file_ext, 'parents': [folder_id]}
-	media = MediaInMemoryUpload(file_blob)
-	file = DRIVE_SERVICE.files().create(body=file_metadata, media_body=media, fields='id').execute()
+
+	file = DRIVE_SERVICE.files().create(
+		body={
+			'name': file_front + "_" + datetime.utcnow().strftime("%Y.%m.%d.%H.%M.%S") + file_ext,
+			'parents': [folder_id]
+		},
+		media_body=MediaInMemoryUpload(file_blob),
+		fields='id'
+	).execute()
 
 	DRIVE_SERVICE.permissions().create(
 		fileId=file.get('id'),

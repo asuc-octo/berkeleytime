@@ -1,7 +1,9 @@
 import os
 import gspread
+import base64
 from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.discovery import build
+from email.mime.text import MIMEText
 
 from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
 try:
@@ -19,14 +21,17 @@ def get_yaml_questions(loaded_yaml):
 
 
 # Global Variables
-sheets_scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-drive_scope = ['https://www.googleapis.com/auth/drive.readonly.metadata', 'https://www.googleapis.com/auth/drive.file']
+scopes = [
+    'https://spreadsheets.google.com/feeds',
+    'https://www.googleapis.com/auth/drive'
+    'https://www.googleapis.com/auth/gmail'
+]
 
 CACHED_SHEETS = {}
 CACHED_CONFIGS = {}
 
 # Raises some error, need to find
-credentials = ServiceAccountCredentials.from_json_keyfile_name(os.environ["GOOGLE_APPLICATION_CREDENTIALS"], sheets_scope)
+credentials = ServiceAccountCredentials.from_json_keyfile_name(os.environ["GOOGLE_APPLICATION_CREDENTIALS"], scopes)
 gc = gspread.authorize(credentials)
 GMAIL_SERVICE = build('gmail', 'v1', credentials=credentials)
 DRIVE_SERVICE = build('drive', 'v3', credentials=credentials)
@@ -49,3 +54,29 @@ def get_config_dict(config):
         return CACHED_CONFIGS[config]
     elif IS_LOCALHOST:
         return load(open("forms/configs/{}.yaml".format(config)), Loader=Loader)
+
+
+def send_message(service, user_id, message):
+    try:
+        message = service.users().messages().send(userId=user_id, body=message).execute()
+        return message
+    except Exception as error:
+        print 'An error occurred: %s' % error
+
+
+def send_message(to, subject, message_text):
+    sender = "octo.berkeleytime@asuc.org"
+    message = MIMEText(message_text)
+    if isinstance(to, list):
+        message['to'] = to = ", ".join(to)
+    else:
+        message['to'] = to
+    message['from'] = sender
+    message['subject'] = subject
+    toSend = {'raw': base64.urlsafe_b64encode(message.as_string())}
+
+    try:
+        message = GMAIL_SERVICE.users().messages().send(userId="octo.berkeleytime@asuc.org", body=toSend).execute()
+        return message
+    except Exception as error:
+        print 'An error occurred: %s' % error
