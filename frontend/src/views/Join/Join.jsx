@@ -11,6 +11,7 @@ class Join extends PureComponent {
       validated: false,
       validationSuccess: false,
       email: "",
+      submitting: false,
       submissionSuccess: false,
     };
 
@@ -38,11 +39,16 @@ class Join extends PureComponent {
           "Question 1": email,
         })
       };
-      fetch('/api/forms/submit/', requestOptions).then(
+      this.setState({
+        submitting: true,
+      }, () => {
+        fetch('/api/forms/submit/', requestOptions).then(
           () => this.setState({
+              submitting: false,
               submissionSuccess: true,
           })
-      )
+        )
+      });
     } else {
         this.setState({
             validated: true,
@@ -57,7 +63,7 @@ class Join extends PureComponent {
   }
 
   render() {
-    const { validated, validationSuccess, submissionSuccess } = this.state;
+    const { validated, validationSuccess, submitting, submissionSuccess } = this.state;
     return (
       <div className="join">
         <div className="join-us">
@@ -68,7 +74,7 @@ class Join extends PureComponent {
         </div>
         <ButtonToolbar className="releases-heading-button join">
           <input placeholder="Your email address" type="text" id="mailInput" onChange={this.handleInputChange}></input>
-          <button className="btn btn-bt-primary btn-bt-sm" onClick={this.submit}>
+          <button disabled={submitting || submissionSuccess} className="btn btn-bt-primary btn-bt-sm" onClick={this.submit}>
             Sign up for Updates
           </button>
         </ButtonToolbar>
