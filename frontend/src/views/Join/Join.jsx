@@ -65,16 +65,16 @@ class Join extends PureComponent {
   render() {
     const { validated, validationSuccess, submitting, submissionSuccess } = this.state;
     return (
-      <div className="about">
-        <div className="about-us">
+      <div className="join">
+        <div className="join-us">
           <h5>Join the BT Team! &#x270C; </h5>
           <p>
             We'll be recruiting for new team members in the fall! Sign up to hear about recruitment updates.
           </p>
         </div>
-        <ButtonToolbar className="releases-heading-button join" style={{marginBottom: 0}}>
-          <input placeholder="Your email address" type="text" id="mailInput" onChange={this.handleInputChange} style={{height: "40px", marginBottom: "15px"}}></input>
-          <button disabled={submitting || submissionSuccess} className="btn btn-bt-primary btn-bt-sm" onClick={this.submit} style={{height: "40px", marginBottom: "15px"}}>
+        <ButtonToolbar className="releases-heading-button join">
+          <input placeholder="Your email address" type="text" id="mailInput" onChange={this.handleInputChange}></input>
+          <button disabled={submitting || submissionSuccess} className="btn btn-bt-primary btn-bt-sm" onClick={this.submit}>
             Sign up for Updates
           </button>
         </ButtonToolbar>
@@ -86,7 +86,7 @@ class Join extends PureComponent {
           ? (<p style={{color: "#8A8A8A"}}>We got your email! You will get an update when we start our recruitment.</p>)
           : null
         }
-        <img className="join-pic" src={doe} style={{marginTop: "18px"}}/>
+        <img className="join-pic" src={doe}/>
 
       </div>
 
