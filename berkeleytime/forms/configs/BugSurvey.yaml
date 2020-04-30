@@ -47,6 +47,7 @@ questions:
       - "FAQ"
       - "API Docs"
       - "Forms"
+      - "Other (describe below)"
   - title: "What browser/system is this happening on?"
     description: "Please let us know if this is happening on multiple browsers/systems"
     type: "multiple_select"
