@@ -1,6 +1,7 @@
 from apiclient.http import MediaFileUpload, MediaInMemoryUpload
 from datetime import datetime
 import os
+import pytz
 import time
 import redlock
 import urlparse
@@ -74,12 +75,11 @@ def upload_file(folder_name, file_name, file_blob):
 		folder = drive.files().create(body=file_metadata, fields='id').execute()
 		folder_id = folder.get('id')
 
-
 	file_front, file_ext = os.path.splitext(file_name)
-
+  upload_time = datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S")
 	file = DRIVE_SERVICE.files().create(
 		body={
-			'name': file_front + "_" + datetime.utcnow().strftime("%Y.%m.%d.%H.%M.%S") + file_ext,
+			'name': file_front + "_" + upload_time + file_ext,
 			'parents': [folder_id]
 		},
 		media_body=MediaInMemoryUpload(file_blob),
@@ -157,6 +157,8 @@ def check_yaml_response(config_name, responses):
 		return False
 
 	sheet_responses = []
+	sheet_responses.append(datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S"))
+	question_mapping = get_yaml_questions(loaded_yaml)
 	for q_numb in range(0, len(loaded_yaml["questions"])):
 		question_id = "Question " + str(q_numb + 1)
 		if question_id in responses:
@@ -166,8 +168,8 @@ def check_yaml_response(config_name, responses):
 			sheet_responses.append("N/A")
 
 	# Sanity check that we have enough responses
-	if not (len(sheet_responses) == len(loaded_yaml["questions"])):
-		print("Malformed responses. # of collected responses:", len(sheet_responses), \
+	if not ((len(sheet_responses) - 1) == len(loaded_yaml["questions"])):
+		print("Malformed responses. # of collected responses:", len(sheet_responses) - 1, \
 			"# of questions:", len(loaded_yaml["questions"]))
 		return False
 
