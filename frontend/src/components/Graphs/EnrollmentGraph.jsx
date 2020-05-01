@@ -55,6 +55,7 @@ function getYTickRange(limit) {
     return arr;
 }
 
+
 export default function EnrollmentGraph({
   graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile, graphEmpty
 }) {
@@ -63,39 +64,23 @@ export default function EnrollmentGraph({
     fontSize: '12px',
   };
   return (
-    <div >
-      <ResponsiveContainer width="100%" height={400}>
-        <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{top: isMobile ? 100 : 0}}>
-
-          {isMobile ?
-            <text
-              y={30}
-              textAnchor="top"
-              dominantBaseline="left"
-              fontSize={18}> Enrollment
-            </text> 
-            :
-            null
-          }
+    <div>
+      <ResponsiveContainer width={isMobile ? 500 : "100%"} height={400}>
+        <LineChart data={graphData} onMouseMove={updateGraphHover}>
 
           <XAxis dataKey="name" interval={19} />
           <YAxis type="number" unit="%"
-                 domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
-                 ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}/>
-          { !graphEmpty ?
-            <Tooltip
-              formatter={(value) => `${value}%`}
-              labelFormatter={label => `Day ${label}`}
-            /> :
-            <Tooltip
-              cursor={{fill: '#fff'}}
-              content={<EmptyLabel />}
-              position={{ x: 150, y: 150 }}
-              wrapperStyle={{visibility: 'visible'}}
-            />
-          }
+              domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
+              ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}
+          />
 
-          {enrollmentData.map((item, i) => (
+          <Tooltip
+            formatter={(value) => `${value}%`}
+            labelFormatter={label => `Day ${label}`}
+            cursor={graphEmpty ? false : true}
+          />
+
+          {!graphEmpty && enrollmentData.map((item, i) => (
             <Line
               name={`${item.title} • ${item.section_name}`}
               type="monotone"
@@ -107,17 +92,7 @@ export default function EnrollmentGraph({
               connectNulls
             />
           ))}
-
-          {isMobile ?
-            <Legend
-              horizontalAlign="left"
-              layout="vertical"
-              iconType="circle"
-            /> :
-            null
-          }
-          { !graphEmpty ?
-          <div>
+          {!graphEmpty &&
             <ReferenceLine
               x={enrollmentData[0].telebears.phase2_start_day}
               stroke="black"
@@ -127,6 +102,8 @@ export default function EnrollmentGraph({
                 {`Phase II Start (${enrollmentData[0].telebears.semester})`}
               </Label>
             </ReferenceLine>
+          }
+          {!graphEmpty &&
             <ReferenceLine
               x={enrollmentData[0].telebears.adj_start_day}
               stroke="black"
@@ -136,12 +113,24 @@ export default function EnrollmentGraph({
                 {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
               </Label>
             </ReferenceLine>
-          </div>
-          :
-          null
+          }
+
+        {isMobile &&
+          <Legend
+            height={10}
+            horizontalAlign="left"
+            layout="vertical"
+            iconType="circle"
+          />
         }
+
         </LineChart>
       </ResponsiveContainer>
+
+      { graphEmpty &&
+        <EmptyLabel />
+      }
+
     </div>
   );
 }

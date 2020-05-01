@@ -46,6 +46,7 @@ export class FilterSidebar extends Component {
       modalType: "",
       modalOptions: [],
       modalSelection: [],
+      modalDefault: "",
     };
 
     this.searchInput = React.createRef(); // reference to <input>
@@ -184,7 +185,8 @@ export class FilterSidebar extends Component {
     this.setState({
       modalType: type,
       showFilters: true,
-      modalOptions: options
+      modalOptions: options,
+      modalDefault: selection,
     })
   }
 
@@ -211,6 +213,9 @@ export class FilterSidebar extends Component {
       case "department":
         this.departmentHandler(this.props.department)
         break;
+      case "semesters":
+        this.semesterHandler(this.props.semester)
+        break;
       default:
         this.classLevelHandler(this.props.level)
         break;
@@ -218,25 +223,31 @@ export class FilterSidebar extends Component {
     this.hideModal()
   };
 
+  /*
+    Stores selection by the option id without retrieving the label (for mobile).
+    This method modifies state variables differently than on desktop; rather than formatting as {value: val, option: opt} it simply saves {value: val}.
+  */
   storeSelection = (e) => {
-    const { setRequirements, setUnits, setDepartment, setLevel } = this.props;
+    const { setRequirements, setUnits, setDepartment, setSemester, setLevel } = this.props;
     const val = e.target.id;
-    const option = e.target.name;
     switch(this.state.modalType) {
       case "sortBy":
-        this.setState({sort: option})
+        this.setState({sort: {value: val}})
         break;
       case "requirements":
-        setRequirements(this.props.requirements.concat({value: val, label: option}));
+        setRequirements(this.props.requirements.concat({value: val}));
         break;
       case "unitsRange":
-        setUnits(this.props.units.concat({value: val, label: option}));
+        setUnits(this.props.units.concat({value: val}));
         break;
       case "department":
-        setDepartment({value: val, label: option});
+        setDepartment({value: val});
+        break;
+      case "semesters":
+        setSemester(this.props.semester.concat({value: val}));
         break;
       default:
-        setLevel(this.props.level.concat({value: val, label: option}));
+        setLevel(this.props.level.concat({value: val}));
         break;
     }
   };
@@ -399,14 +410,18 @@ export class FilterSidebar extends Component {
           <button className="btn-bt-border filter-scroll-btn"
             onClick={() => this.showModal("classLevels", level, this.classLevelOptions)}>
             Class&nbsp;Level </button>
+          <button className="btn-bt-border filter-scroll-btn"
+            onClick={() => this.showModal("semesters", semester, this.semesterOptions)}>
+            Semesters </button>
         </div>
           <FilterModal
             options={this.state.modalOptions}
+            defaultSelection={this.state.modalDefault}
             showFilters={this.state.showFilters}
             hideModal={this.hideModal}
             saveModal={this.saveModal}
             storeSelection={this.storeSelection}
-            displayRadio={this.state.modalType === "sortBy"}
+            displayRadio={this.state.modalType === "sortBy" || this.state.modalType === "department"}
           />
        </div>
     );

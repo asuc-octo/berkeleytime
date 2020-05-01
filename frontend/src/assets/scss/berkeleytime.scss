@@ -22,6 +22,7 @@
 // landing
 @import "bt/landing/jumbotron";
 @import "bt/landing/landing";
+@import "bt/landing/explore";
 @import "bt/landing/mission";
 @import "bt/landing/sponsors";
 
@@ -62,11 +63,13 @@
 @import "bt/about/current";
 @import "bt/about/past";
 
+// Join page
+@import "bt/join";
+
 // Apidocs
 @import "bt/apidocs/apidocs";
 
 // Apply
-@import "bt/apply";
 @import "bt/forms";
 
 // Error page

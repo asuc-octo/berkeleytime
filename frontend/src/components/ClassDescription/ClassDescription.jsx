@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Radium from 'radium';
 import { withRouter, Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import { BeatLoader } from 'react-spinners';
@@ -7,6 +8,12 @@ import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
 import book from '../../assets/svg/catalog/book.svg';
 import launch from '../../assets/svg/catalog/launch.svg';
+
+import denero from '../../assets/img/eggs/denero.png';
+import hug from '../../assets/img/eggs/hug.png';
+import hilf from '../../assets/img/eggs/hilf.png';
+import sahai from '../../assets/img/eggs/sahai.png';
+import scott from '../../assets/img/eggs/scott.png';
 
 import { updateCourses, getCourseData, makeRequestDescription, setRequirements, setUnits, setDepartment, setLevel, setSemester } from '../../redux/actions';
 import { connect } from "react-redux";
@@ -20,6 +27,14 @@ import {
 function isEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
+
+const easterEggImages = {
+  "DENERO J": denero,
+  "HUG J": hug,
+  "SAHAI A": sahai,
+  "HILFINGER P": hilf,
+  "SHENKER S": scott,
+};
 
 class ClassDescription extends Component {
   static formatEnrollmentPercentage(percentage) {
@@ -51,6 +66,9 @@ class ClassDescription extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      readMore: false,
+    }
   }
 
   details = () => {
@@ -82,6 +100,7 @@ class ClassDescription extends Component {
 
   updateCourseData() {
     const { course, getCourseData, makeRequestDescription, updateCourses } = this.props;
+    this.setReadMore(false);
     if (isEmpty(course)) {
       updateCourses({});
       return;
@@ -145,6 +164,27 @@ class ClassDescription extends Component {
     modifyFilters(new Set([formattedFilter.value]), new Set());
   }
 
+  setReadMore(state) {
+    this.setState({
+      readMore: state,
+    });
+  }
+
+  findInstructor(instr) {
+    if (instr === null) return;
+    for (let egg in easterEggImages) {
+      if (instr.indexOf(egg) !== -1) {
+        console.log(egg);
+        return {
+          ':hover': {
+            cursor: `url(${easterEggImages[egg]}), auto`,
+          }
+        }
+      }
+    }
+    return {};
+  }
+
   render() {
     const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
@@ -184,6 +224,39 @@ class ClassDescription extends Component {
         </div>
       );
     } else {
+      const charsPerRow = 80;
+      const moreOffset = 15;
+      var description = course.description;
+      var prereqs = '';
+      var moreDesc;
+      var morePrereq;
+      if (this.state.readMore) {
+        // expand
+        if (course.prerequisites) {
+          prereqs = course.prerequisites;
+          morePrereq = false;
+        } else {
+          moreDesc = false;
+        }
+      } else {
+        // collapse
+        let descRows = Math.round(course.description.length / charsPerRow);
+        if (descRows > 3 || (descRows == 3 && course.prerequisites)) {
+          description = description.slice(0, 3*charsPerRow - moreOffset) + '...';
+          moreDesc = true;
+        }
+        if (descRows < 3 && course.prerequisites) {
+          prereqs = course.prerequisites;
+          if (descRows >= 1 && prereqs.length > charsPerRow) {
+            prereqs = prereqs.slice(0, charsPerRow - moreOffset) + '...';
+            morePrereq = true;
+          } else if (descRows == 0 && prereqs.length > 2*charsPerRow) {
+            prereqs = prereqs.slice(0, 2*charsPerRow - moreOffset) + '...';
+            morePrereq = true;
+          }
+        }
+      }
+
       return (
         <div className="catalog-description-container">
           <div className="catalog-description">
@@ -193,7 +266,11 @@ class ClassDescription extends Component {
               <div className="statline">
                 <img src={people} />
                 Enrolled:
-                {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)} &nbsp;
+                {course.enrolled !== -1
+                    ? applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)
+                    : " N/A "
+                }
+                &nbsp;
                 <a href={toEnrollment.pathname} target="_blank" className="statlink"><img src={launch} /></a>
               </div>
               <div className="statline">
@@ -210,9 +287,21 @@ class ClassDescription extends Component {
             <section className="pill-container">
               {pills.map(req => <div className="pill" onClick={() => this.pillFilter(req)}>{req}</div>)}
             </section>
-            <p className="description">
-              {course.description}
-            </p>
+            {description.length > 0 ?
+              <p className="description">
+                {description}
+                {moreDesc != null ? (<span onClick={() => this.setReadMore(moreDesc)}> {moreDesc ? ' read more' : ' less'}</span>) : ''}
+              </p> : ''
+            }
+            {prereqs.length > 0 ?
+              <div className="prereqs">
+                <h6>Prerequisites</h6>
+                <p>
+                  {prereqs}
+                  {morePrereq != null ? (<span onClick={() => this.setReadMore(morePrereq)}> {morePrereq ? ' read more' : ' less'}</span>) : ''}
+                </p>
+              </div> : ''
+            }
             <h5>Class Times</h5>
             <div className="table-container">
               <Table className="table">
@@ -232,7 +321,7 @@ class ClassDescription extends Component {
                     let startDate = new Date(section.start_time + "Z");
                     let endDate = new Date(section.end_time + "Z");
                     return (
-                      <tr>
+                      <tr style={this.findInstructor(section.instructor)}>
                         <td>{section.kind}</td>
                         <td>{section.ccn}</td>
                         <td>{section.instructor}</td>
@@ -257,6 +346,7 @@ class ClassDescription extends Component {
   }
 }
 
+ClassDescription = Radium(ClassDescription);
 
 const mapDispatchToProps = dispatch => {
   return {

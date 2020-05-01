@@ -4,7 +4,7 @@ import { FixedSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import FilterCard from './FilterCard';
-import { laymanToAbbreviation, abbreviationToLayman } from '../../variables/Variables';
+import { laymanToAbbreviation, laymanSplit } from '../../variables/Variables';
 
 import { getFilterResults, filter, makeRequest } from '../../redux/actions';
 import { connect } from "react-redux";
@@ -14,6 +14,7 @@ import { connect } from "react-redux";
 class FilterResults extends Component {
   constructor(props) {
     super(props);
+    this.cache = {};
   }
 
   componentDidMount() {
@@ -70,7 +71,7 @@ class FilterResults extends Component {
    * Comparator for enrolled percentage, break ties by department name
    * If percentage is -1, it is put at the end (greater than all other percents)
    */
-  compareEnrollmentPercentage(courseA, courseB) {
+  static compareEnrollmentPercentage(courseA, courseB) {
     if (courseA.enrolled_percentage !== -1 && courseB.enrolled_percentage !== -1) {
       return courseA.enrolled_percentage - courseB.enrolled_percentage
         || FilterResults.compareDepartmentName(courseA, courseB);
@@ -99,34 +100,55 @@ class FilterResults extends Component {
 
   filter = course => {
     let {query} = this.props;
-    return FilterResults.filterCourses(course, query);
+    return FilterResults.filterCourses(course, query, this.cache);
   }
 
-  static filterCourses(course, query) {
+  static filterCourses(course, query, cache) {
     if(query.trim() === "") { return true }
-    let querySplit = query.toUpperCase().split(" ");
-    if(querySplit[0] in laymanToAbbreviation) {
-      querySplit[0] = laymanToAbbreviation[querySplit[0]];
+    let pseudoQuery = query.toUpperCase();
+    if (cache[query]) {
+      pseudoQuery = cache[query];
+    } else {
+      let querySplit = query.toUpperCase().split(" ");
+      let longestPrefix = "";
+      for (let prefix in laymanSplit) {
+        if (this.arrPrefixMatch(querySplit, laymanSplit[prefix]) && prefix.length > longestPrefix.length) {
+          longestPrefix = prefix;
+        }
+      }
+      if (longestPrefix.length > 0 && pseudoQuery.startsWith(longestPrefix)) {
+        pseudoQuery = pseudoQuery.replace(longestPrefix, laymanToAbbreviation[longestPrefix]);
+      }
+      query = query.toLowerCase();
+      pseudoQuery = pseudoQuery.toLowerCase();
+      cache[query] = pseudoQuery;
     }
-    query = query.toLowerCase();
-    var pseudoQuery = querySplit.join(" ").toLowerCase();
-    var useOriginalQuery = (querySplit.length === 1 && query !== pseudoQuery);
-    return (useOriginalQuery && FilterResults.matches(course, query)) || FilterResults.matches(course, pseudoQuery);
+
+    return FilterResults.matches(course, query) || (query !== pseudoQuery && FilterResults.matches(course, pseudoQuery));
+  }
+
+  static arrPrefixMatch(arr, prefix) {
+    if (arr.length < prefix.length) {
+      return false;
+    }
+    for (let i = 0; i < prefix.length; i++) {
+      if (arr[i] !== prefix[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   static matches(course, query) {
-    let abbreviationStr = '';
-    if (abbreviationToLayman[course.abbreviation]) {
-      abbreviationStr = abbreviationToLayman[course.abbreviation].join(" ");
-    };
+    let courseMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
     let otherNumber;
     if (course.course_number.indexOf("C") !== -1) { // if there is a c in the course number
         otherNumber = course.course_number.substring(1);
     } else { // if there is not a c in the course number
         otherNumber = "C" + course.course_number;
     }
-    let courseMatches = (`${course.abbreviation} ${abbreviationStr} ${course.course_number} ${otherNumber} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    return courseMatches;
+    var courseFixedForCMatches = (`${course.abbreviation} ${otherNumber} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
+    return courseMatches || courseFixedForCMatches;
   }
 
   render() {

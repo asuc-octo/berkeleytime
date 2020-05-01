@@ -61,7 +61,7 @@ class Enrollment extends Component {
       url += (url === '/enrollment') ? '/' : '';
       url += (url === '/enrollment/') ? '' : '&';
       url += courseUrl;
-      history.push(url);
+      history.replace(url);
     }
   }
 
@@ -96,7 +96,7 @@ class Enrollment extends Component {
       let instructor = c.instructor === 'all' ? 'all' : c.sections[0];
       url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${instructor}`;
     }
-    history.push(url);
+    history.replace(url);
   }
 
   removeCourse(id, color) {
@@ -145,7 +145,9 @@ class Enrollment extends Component {
             updateClassCardEnrollment={this.updateClassCardEnrollment}
             isMobile={isMobile}
           />
-          <div className="xlabel">Days After Phase 1</div>
+          {!isMobile &&
+            <div className="xlabel">Days After Phase 1</div>
+          }
           <div className="disclaimer">
             <img src={info} className="info" />
               <p>We source our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System's</a> Course and Class APIs.</p>

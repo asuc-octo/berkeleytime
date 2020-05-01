@@ -12,7 +12,9 @@ import Releases from '../views/Releases/Releases';
 import Faq from '../views/Faq/Faq';
 import ApiDocs from '../views/Api/Api';
 import Join from '../views/Join/Join';
-import Apply from '../views/Apply/Apply';
+import TestForm from '../views/Forms/TestForm';
+import BugsForm from '../views/Forms/BugsForm';
+import UserTestingForm from '../views/Forms/UserTestingForm';
 import Error from '../views/Error/Error';
 
 // name should be unique, used as react key
@@ -20,20 +22,22 @@ const routes = [
   // redirect
   { path: '/', name: 'RedirectHome', redirect: true, exact: true, to: '/landing' },
 
-  { path: '/landing',    name: 'Home',       component: Landing },
-  { path: '/catalog',    name: 'Catalog',    component: Catalog },
-  { path: '/grades',     name: 'Grades',     component: Grades },
-  { path: '/enrollment', name: 'Enrollment', component: Enrollment },
-  { path: '/about',      name: 'About',      component: About },
-  { path: '/dashboard',  name: 'Dashboard',  component: Dashboard },
-  { path: '/login',      name: 'Login',      component: Login },
-  { path: '/releases',   name: 'Releases',   component: Releases },
-  { path: '/faq',        name: 'Faq',        component: Faq },
-  { path: '/apidocs',    name: 'Api Docs',   component: ApiDocs },
-  { path: '/join',       name: 'Join',       component: Join },
-  { path: '/apply',       name: 'Apply',       component: Apply },
-  { path: '/error',      name: 'Error',      component: Error },
-  { /* no path */        name: '404',        component: Error },
+  { path: '/landing',    name: 'Home',          component: Landing },
+  { path: '/catalog',    name: 'Catalog',       component: Catalog },
+  { path: '/grades',     name: 'Grades',        component: Grades },
+  { path: '/enrollment', name: 'Enrollment',    component: Enrollment },
+  { path: '/about',      name: 'About',         component: About },
+  { path: '/dashboard',  name: 'Dashboard',     component: Dashboard },
+  { path: '/login',      name: 'Login',         component: Login },
+  { path: '/releases',   name: 'Releases',      component: Releases },
+  { path: '/faq',        name: 'Faq',           component: Faq },
+  { path: '/apidocs',    name: 'Api Docs',      component: ApiDocs },
+  { path: '/join',       name: 'Join',          component: Join },
+  { path: '/testform',   name: 'Test Form',     component: TestForm },
+  { path: '/bugs',       name: 'Report a Bug',  component: BugsForm },
+  { path: '/usertesting',name: 'User Testing',  component: UserTestingForm },
+  { path: '/error',      name: 'Error',         component: Error },
+  { /* no path */        name: '404',           component: Error },
 ];
 
 export default routes;
