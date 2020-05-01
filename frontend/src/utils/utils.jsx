@@ -89,7 +89,9 @@ function percentileToString(percentile) {
 }
 
 function getGradeColor(grade) {
-  if (grade.includes('A') || grade === 'P') {
+  if (grade === undefined) {
+    return '';
+  } else if (grade.includes('A') || grade === 'P') {
     return 'bt-indicator-green';
   } else if (grade.includes('B')) {
     return 'bt-indicator-orange';
