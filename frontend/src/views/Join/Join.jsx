@@ -77,15 +77,16 @@ class Join extends PureComponent {
           <button disabled={submitting || submissionSuccess} className="btn btn-bt-primary btn-bt-sm" onClick={this.submit}>
             Sign up for Updates
           </button>
+          { validated && !validationSuccess
+            ? (<p style={{color: "#FC7676"}}>Please enter a valid email.</p>)
+            : null
+          }
+          { submissionSuccess
+            ? (<p style={{color: "#18D869"}}>We got your email! You will get an update when we start our recruitment.</p>)
+            : null
+          }
         </ButtonToolbar>
-        { validated && !validationSuccess
-          ? (<p style={{color: "red"}}>Please enter a valid email.</p>)
-          : null
-        }
-        { submissionSuccess
-          ? (<p style={{color: "#8A8A8A"}}>We got your email! You will get an update when we start our recruitment.</p>)
-          : null
-        }
+
         <img className="join-pic" src={doe}/>
 
       </div>
