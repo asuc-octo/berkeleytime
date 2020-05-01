@@ -33,6 +33,7 @@ class EnrollmentGraphCard extends Component {
 
     }
     if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0) {
+      console.log(enrollmentData);
       this.update(selectedCourses[0], 1)
     }
 

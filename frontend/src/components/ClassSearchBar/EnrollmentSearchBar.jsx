@@ -216,7 +216,7 @@ class EnrollmentSearchBar extends Component {
     const { selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
-    let onePrimaryOption = primaryOptions && primaryOptions.length === 2 && selectPrimary;
+    let onePrimaryOption = primaryOptions && primaryOptions.length === 1 && selectPrimary;
     let oneSecondaryOption = secondaryOptions && secondaryOptions.length ===  1 && selectSecondary.value;
 
     let primaryOption = { value: selectPrimary, label: selectPrimary };
@@ -240,6 +240,8 @@ class EnrollmentSearchBar extends Component {
         paddingRight: 0,
       }),
     };
+
+    console.log(primaryOption);
 
     return (
       <Container fluid className="enrollment-search-bar">
