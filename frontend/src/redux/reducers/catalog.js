@@ -2,7 +2,10 @@
  * Contains data of initial API call for filter data and playlist info
  */
 
-import { MODIFY_ACTIVE_PLAYLISTS, RECEIVE_FILTER_DATA, MODIFY_SELECTED_COURSE } from '../actionTypes';
+import {
+  MODIFY_ACTIVE_PLAYLISTS, RECEIVE_FILTER_DATA,
+  MODIFY_SELECTED_COURSE, SET_DEFAULT_PLAYLISTS,
+} from '../actionTypes';
 
 
 const initialState = {
@@ -15,6 +18,13 @@ const initialState = {
 
 export default function catalog(state = initialState, action) {
   switch (action.type) {
+  case SET_DEFAULT_PLAYLISTS: {
+    const { defaultPlaylists } = action.payload;
+    return {
+      ...state,
+      defaultPlaylists,
+    };
+  }
   case MODIFY_ACTIVE_PLAYLISTS: {
     const { activePlaylists } = action.payload;
     return {
