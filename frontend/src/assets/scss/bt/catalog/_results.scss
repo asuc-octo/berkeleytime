@@ -1,7 +1,7 @@
 .filter-results {
   height: 100%;
 
-  @include mobile {
+  /*@include mobile {
     height: 90vh;
     //height: 70vh;
 
@@ -10,7 +10,7 @@
       width: 0px;
       background: transparent;
     }
-  }
+  }*/
 
   @include desktop {
     padding-top: 20px;
