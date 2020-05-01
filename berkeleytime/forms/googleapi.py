@@ -76,7 +76,7 @@ def upload_file(folder_name, file_name, file_blob):
 		folder_id = folder.get('id')
 
 	file_front, file_ext = os.path.splitext(file_name)
-  upload_time = datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S")
+  	upload_time = datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S")
 	file = DRIVE_SERVICE.files().create(
 		body={
 			'name': file_front + "_" + upload_time + file_ext,
