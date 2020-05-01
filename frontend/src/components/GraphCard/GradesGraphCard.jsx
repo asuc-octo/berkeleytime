@@ -51,17 +51,18 @@ class GradesGraphCard extends Component {
 
   update(course, grade) {
     const { gradesData } = this.props;
-    const selectedGrades = gradesData.filter(c => course.id === c.id)[0];
+    if (course && gradesData && gradesData.length > 0) {
+      const selectedGrades = gradesData.filter(c => course.id === c.id)[0];
+      const hoverTotal = {
+        ...course,
+        ...selectedGrades,
+        hoverGrade: grade,
+      };
 
-    const hoverTotal = {
-      ...course,
-      ...selectedGrades,
-      hoverGrade: grade,
-    };
-
-    this.setState({
-      hoveredClass: hoverTotal,
-    });
+      this.setState({
+        hoveredClass: hoverTotal,
+      });
+    }
   }
 
   // Handler function for updating GradesInfoCard on hover
