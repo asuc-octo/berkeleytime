@@ -76,7 +76,7 @@ export default function EnrollmentGraph({
 
           <Tooltip
             formatter={(value) => `${value}%`}
-            labelFormatter={label => `Day ${label}`}
+            labelFormatter={label => `Day ${label - 1}`}
             cursor={graphEmpty ? false : true}
           />
 
