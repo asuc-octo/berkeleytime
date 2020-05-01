@@ -57,7 +57,7 @@ function getYTickRange(limit) {
 
 
 export default function EnrollmentGraph({
-  graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile, graphEmpty
+  graphData, enrollmentData, updateLineHover, updateGraphHover, isMobile, graphEmpty, selectedCourses
 }) {
   const labelStyle = {
     textAnchor: 'middle',
@@ -66,7 +66,7 @@ export default function EnrollmentGraph({
   return (
     <div>
       <ResponsiveContainer width={isMobile ? 500 : "100%"} height={400}>
-        <LineChart data={graphData} onMouseMove={updateGraphHover}>
+        <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }}>
 
           <XAxis dataKey="name" interval={19} />
           <YAxis type="number" unit="%"
@@ -99,7 +99,7 @@ export default function EnrollmentGraph({
               strokeDasharray="3 3"
             >
               <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                {`Phase II Start (${enrollmentData[0].telebears.semester})`}
+                {`Phase II Start (${selectedCourses[0].semester})`}
               </Label>
             </ReferenceLine>
           }
@@ -110,7 +110,7 @@ export default function EnrollmentGraph({
               strokeDasharray="3 3"
             >
               <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
+                {`Adjustment Start (${selectedCourses[0].semester})`}
               </Label>
             </ReferenceLine>
           }
