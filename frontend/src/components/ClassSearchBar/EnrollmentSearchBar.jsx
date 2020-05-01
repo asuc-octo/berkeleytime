@@ -241,8 +241,6 @@ class EnrollmentSearchBar extends Component {
       }),
     };
 
-    console.log(primaryOption);
-
     return (
       <Container fluid className="enrollment-search-bar">
         <Row style={{marginBottom: 10}}>
