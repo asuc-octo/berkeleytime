@@ -9,6 +9,7 @@ pipeline {
     BACKEND_DEPLOY_PROD_FILEPATH = "kubernetes/manifests/berkeleytime/backend-deploy-prod.yaml"
     FRONTEND_DEPLOY_PROD_FILEPATH = "kubernetes/manifests/berkeleytime/frontend-deploy-prod.yaml"
     DATA_FETCH_FILEPATH = "kubernetes/manifests/berkeleytime/postgres-enrollment-fetch.yaml"
+    GITHUB_URL = "https://github.com/asuc-octo/berkeleytime"
   }
   agent any
   triggers {
@@ -25,7 +26,7 @@ pipeline {
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh 'gcloud builds submit berkeleytime --tag ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT}'
       }
     }
@@ -39,7 +40,7 @@ pipeline {
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh 'gcloud builds submit frontend --tag ${FRONTEND_STAGE_GCR_PATH}:${GIT_COMMIT}'
       }
     }
@@ -53,7 +54,7 @@ pipeline {
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimestage:${GIT_COMMIT}/g" $BACKEND_DEPLOY_STAGE_FILEPATH
 cat $BACKEND_DEPLOY_STAGE_FILEPATH
 echo "Applying latest backend image to staging"
@@ -72,7 +73,7 @@ kubectl apply -f $BACKEND_DEPLOY_STAGE_FILEPATH'''
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/frontendstage:${GIT_COMMIT}/g" $FRONTEND_DEPLOY_STAGE_FILEPATH
 cat $FRONTEND_DEPLOY_STAGE_FILEPATH
 echo "Applying latest frontend image to staging"
@@ -91,7 +92,7 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh 'gcloud builds submit berkeleytime --tag ${BACKEND_PROD_GCR_PATH}:${GIT_COMMIT}'
       }
     }
@@ -105,7 +106,7 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh 'gcloud builds submit frontend --tag ${FRONTEND_PROD_GCR_PATH}:${GIT_COMMIT}'
       }
     }
@@ -119,7 +120,7 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/frontendprod:${GIT_COMMIT}/g" $FRONTEND_DEPLOY_PROD_FILEPATH
 echo "Applying latest frontend image to production"
 kubectl get pods
@@ -137,7 +138,7 @@ kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimeprod:${GIT_COMMIT}/g" $BACKEND_DEPLOY_PROD_FILEPATH
 echo "Applying latest backend image to production"
 kubectl get pods
@@ -154,7 +155,7 @@ kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''containerID=$(docker run -d -e ENVIRONMENT_NAME=LOCALHOST --entrypoint sleep ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT} 1000)
 docker cp /var/jenkins_home/workspace/berkeleytime_master $containerID:/bt
 docker exec $containerID sphinx-build -b html /bt /sphinxout
@@ -173,7 +174,7 @@ docker kill $containerID'''
         }
       }
       steps {
-        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimeprod:${GIT_COMMIT}/g" $DATA_FETCH_FILEPATH
 echo "Updating enrollment data fetch cron job with latest image"
 kubectl get pods
