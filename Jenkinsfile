@@ -41,7 +41,8 @@ pipeline {
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh 'gcloud builds submit frontend --tag ${FRONTEND_STAGE_GCR_PATH}:${GIT_COMMIT}'
+        sh '''docker build -t ${FRONTEND_STAGE_GCR_PATH}:$version -f frontend/Dockerfile frontend
+        docker push ${FRONTEND_STAGE_GCR_PATH}:${GIT_COMMIT}'''
       }
     }
     stage('Deploy-Berkeleytime-Stage') {
