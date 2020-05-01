@@ -195,5 +195,34 @@ kubectl delete -f $DATA_FETCH_FILEPATH
 kubectl apply -f $DATA_FETCH_FILEPATH'''
       }
     }
+    stage('SetVariable') {
+      when {
+        branch "JenkinsGoogleAPITweaks"
+        anyOf {
+            changeset "berkeleytime/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
+      }
+      steps {
+        git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+        env.backend_version = sh(script: '$(git rev-parse --short HEAD)', returnStdout: true).trim()
+        env.frontend_version = sh(script: 'bloop', returnStdout: true).trim()
+      }
+    }
+    stage('ReadVariable') {
+      when {
+        branch "JenkinsGoogleAPITweaks"
+        anyOf {
+            changeset "berkeleytime/**"
+            changeset "kubernetes/**"
+            changeset "Jenkinsfile"
+        }
+      }
+      steps {
+        echo "${env.backend_version}"
+        echo "${env.frontend_version}"
+      }
+    }
   }
 }
