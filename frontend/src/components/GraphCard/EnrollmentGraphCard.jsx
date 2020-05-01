@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
 import vars from '../../variables/Variables';
@@ -30,9 +30,10 @@ class EnrollmentGraphCard extends Component {
     const { selectedCourses, enrollmentData } = this.props;
     if (selectedCourses !== prevProps.selectedCourses) {
       this.getEnrollmentData();
+
     }
-    if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0 && selectedCourses.length === 1) {
-      this.update(enrollmentData[0], 1)
+    if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0) {
+      this.update(selectedCourses[0], 1)
     }
 
     const latest_point = enrollmentData.map((course) => course.data[course.data.length - 1]);
@@ -76,19 +77,19 @@ class EnrollmentGraphCard extends Component {
 
   update(course, day) {
     const { enrollmentData } = this.props;
-    const selectedEnrollment = enrollmentData.filter(c => course.id === c.id)[0];
-
-    const valid = selectedEnrollment && selectedEnrollment.data.filter(d => d.day === day).length;
-    if (valid) {
-      const hoverTotal = {
-        ...course,
-        ...selectedEnrollment,
-        hoverDay: day,
-      };
-
-      this.setState({
-        hoveredClass: hoverTotal,
-      });
+    if (course && enrollmentData && enrollmentData.length > 0) {
+      const selectedEnrollment = enrollmentData.filter(c => course.id === c.id)[0];
+      const valid = selectedEnrollment && selectedEnrollment.data.filter(d => d.day === day).length;
+      if (valid) {
+        const hoverTotal = {
+          ...course,
+          ...selectedEnrollment,
+          hoverDay: day,
+        };
+        this.setState({
+          hoveredClass: hoverTotal,
+        });
+      }
     }
   }
 
@@ -137,7 +138,7 @@ class EnrollmentGraphCard extends Component {
     return (
 
         <div className="enrollment-graph">
-              <div className="enrollment-content">
+              <Container fluid>
                 <Row>
                   <Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
                     {isMobile &&
@@ -146,6 +147,7 @@ class EnrollmentGraphCard extends Component {
                     <EnrollmentGraph
                       graphData={graphData}
                       enrollmentData={enrollmentData}
+                      selectedCourses={selectedCourses}
                       updateLineHover={this.updateLineHover}
                       updateGraphHover={this.updateGraphHover}
                       graphEmpty={graphEmpty}
@@ -178,7 +180,7 @@ class EnrollmentGraphCard extends Component {
                     </Col>
                   }
                 </Row>
-              </div>
+              </Container>
         </div>
     );
   }
