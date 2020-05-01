@@ -389,7 +389,6 @@ def all_requirements(course):
         if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
             requirements_ls.append(name)
 
-    print(requirements_ls + requirements_base + requirements_semester)
     return requirements_ls + requirements_base + requirements_semester
 
 def universal_requirements(course):
@@ -403,7 +402,6 @@ def universal_requirements(course):
     ])
     requirements_1 = list(playlists_1.values_list('name', flat=True))
     requirements_2 = sorted(list(playlists_2.values_list('name', flat=True)), key=semester_to_value, reverse=True)
-    print("Universal: " + str(requirements_1 + requirements_2))
     return requirements_1 + requirements_2
 
 
@@ -418,7 +416,6 @@ def semester_requirements(course):
     for semester, year, name in requirements:
         sem_to_reqs.setdefault(semester.capitalize() + ' ' + year, list()).append(name)
     retval = [{'semester': sem, 'requirements': reqs} for sem, reqs in sem_to_reqs.items()]
-    print("Semester requirements: " + str(retval))
     return retval
 
 

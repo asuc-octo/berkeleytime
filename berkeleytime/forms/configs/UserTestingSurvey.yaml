@@ -16,7 +16,7 @@ questions:
     format: "email"
   - title: "Agreement"
     required: True
-    type: "multiple_choice"
+    type: "multiple_select"
     choices:
       - "I agree to receive emails from Berkeleytime solely about user testing opportunities."
     required: True
