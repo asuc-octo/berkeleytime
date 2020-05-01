@@ -207,8 +207,8 @@ kubectl apply -f $DATA_FETCH_FILEPATH'''
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
         script {
-          env.backend_version = sh(script: '$(git rev-parse --short HEAD)', returnStdout: true).trim()
-          env.frontend_version = sh(script: 'bloop', returnStdout: true).trim()
+          env.backend_version = sh('$(git rev-parse --short HEAD)', returnStdout: true).trim()
+          env.frontend_version = sh('echo "bloop"', returnStdout: true).trim()
         }
       }
     }
