@@ -41,7 +41,7 @@ pipeline {
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''docker build -t ${FRONTEND_STAGE_GCR_PATH}:$version -f frontend/Dockerfile frontend
+        sh '''docker build -t ${FRONTEND_STAGE_GCR_PATH}:${GIT_COMMIT} -f frontend/Dockerfile frontend
         docker push ${FRONTEND_STAGE_GCR_PATH}:${GIT_COMMIT}'''
       }
     }
