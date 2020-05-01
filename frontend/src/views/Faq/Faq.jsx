@@ -6,7 +6,7 @@ import {
   Col,
 } from 'react-bootstrap';
 
-import QuestionCard from '../../components/FAQ/QuestionCard';
+import QuestionCard from '../../components/Faq/QuestionCard';
 
 
 class Faq extends PureComponent {
