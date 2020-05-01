@@ -122,19 +122,6 @@ class EnrollmentGraphCard extends Component {
 
     let selectedPoint= hoveredClass && hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]
 
-    let period = '';
-    let daysAfterPeriodStarts = 0;
-    if (selectedPoint.day < telebears.phase2_start_day) {
-      period = 'Phase I';
-      daysAfterPeriodStarts = selectedPoint.day - telebears.phase1_start_day;
-    } else if (selectedPoint.day < telebears.adj_start_day) {
-      period = 'Phase II';
-      daysAfterPeriodStarts = selectedPoint.day - telebears.phase2_start_day;
-    } else {
-      period = 'Adjustment Period';
-      daysAfterPeriodStarts = selectedPoint.day - telebears.adj_start_day;
-    }
-
     return (
 
         <div className="enrollment-graph">
