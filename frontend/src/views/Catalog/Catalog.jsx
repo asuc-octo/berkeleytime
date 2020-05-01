@@ -260,7 +260,7 @@ class Catalog extends Component {
               query={this.state.search}
             />
           </Col>
-          <Col xs={0} md={6} lg={4} xl={6} className="catalog-description-column">
+          <Col md={6} lg={4} xl={6} className="catalog-description-column">
             {
               !isMobile ? (
                 <ClassDescription
