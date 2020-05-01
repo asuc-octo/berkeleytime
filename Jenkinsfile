@@ -26,8 +26,7 @@ pipeline {
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''docker build -t ${BACKEND_STAGE_GCR_PATH}:${env.GIT_COMMIT} -f berkeleytime/Dockerfile berkeleytime
-docker push ${BACKEND_STAGE_GCR_PATH}:${env.GIT_COMMIT}'''
+        sh 'gcloud builds submit berkeleytime --tag ${BACKEND_STAGE_GCR_PATH}:${env.GIT_COMMIT}'
       }
     }
     stage('Build-Frontend-Stage') {
@@ -41,8 +40,7 @@ docker push ${BACKEND_STAGE_GCR_PATH}:${env.GIT_COMMIT}'''
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''docker build -t ${FRONTEND_STAGE_GCR_PATH}:${env.GIT_COMMIT} -f frontend/Dockerfile frontend
-docker push ${FRONTEND_STAGE_GCR_PATH}:${env.GIT_COMMIT}'''
+        sh 'gcloud builds submit frontend --tag ${FRONTEND_STAGE_GCR_PATH}:${env.GIT_COMMIT}'
       }
     }
     stage('Deploy-Berkeleytime-Stage') {
@@ -94,8 +92,7 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''docker build -t ${BACKEND_PROD_GCR_PATH}:${env.GIT_COMMIT} -f berkeleytime/Dockerfile berkeleytime
-docker push ${BACKEND_PROD_GCR_PATH}:${env.GIT_COMMIT}'''
+        sh 'gcloud builds submit berkeleytime --tag ${BACKEND_PROD_GCR_PATH}:${env.GIT_COMMIT}'
       }
     }
     stage('Build-Frontend-Prod') {
@@ -109,8 +106,7 @@ docker push ${BACKEND_PROD_GCR_PATH}:${env.GIT_COMMIT}'''
       }
       steps {
         git(url: 'https://github.com/asuc-octo/berkeleytime', branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''docker build -t ${FRONTEND_PROD_GCR_PATH}:${env.GIT_COMMIT} -f frontend/Dockerfile frontend
-docker push ${FRONTEND_PROD_GCR_PATH}:${env.GIT_COMMIT}'''
+        sh 'gcloud builds submit frontend --tag ${FRONTEND_PROD_GCR_PATH}:${env.GIT_COMMIT}'
       }
     }
     stage('Deploy-Frontend-Production') {
