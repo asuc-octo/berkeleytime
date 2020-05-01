@@ -1,4 +1,26 @@
-.enrollment{
+.enrollment {
+
+  //hide mobile views
+  min-width: 992px;
+  height: 100%;
+  padding: 30px;
+
+  display: flex;
+  flex-direction: column;
+
+  @include mobile {
+    padding: 10px;
+  }
+
+  .enrollment-mobile-heading {
+    margin: 30px 0px 30px 20px;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .recharts-surface {
+    height: 410px;
+  }
 
   .css-1myhgat-indicatorContainer {
     color: $bt-light-border-grey;
@@ -57,16 +79,6 @@
     border-radius: 4px;
     border: 1px solid rgb(225, 225, 225);
 }
-  height: 100%;
-  padding: 30px;
-
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-
-  @include mobile {
-    padding: 10px;
-  }
 
   .enrollment-search-bar {
     > div > div {
@@ -89,10 +101,25 @@
 .enrollment-graph {
   margin-top: 20px;
 
+  @include mobile {
+    overflow-x: scroll;
+    margin: 0px 10px 0px 10px;
+
+    .recharts-legend-wrapper {
+      left: 65px !important;
+    }
+  }
+
   .enrollment-content {
 
   }
 }
+
+  // hide scrollbars
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
 
 
 // .enrollment-graph-card {

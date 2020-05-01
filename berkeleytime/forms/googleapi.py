@@ -1,26 +1,13 @@
-from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
-
-from oauth2client.service_account import ServiceAccountCredentials
-from googleapiclient import discovery
-from httplib2 import Http
-from oauth2client import file, client, tools
 from apiclient.http import MediaFileUpload, MediaInMemoryUpload
-try:
-    from yaml import load, dump, CLoader as Loader, CDumper as Dumper
-except ImportError:
-    from yaml import load, dump, Loader, Dumper
 from datetime import datetime
-
-import gspread
 import os
 import pytz
 import time
 import redlock
 import urlparse
 
-# Global Variables
-sheets_scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-drive_scope = ['https://www.googleapis.com/auth/drive.readonly.metadata', 'https://www.googleapis.com/auth/drive.file']
+from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
+from utils import get_config_dict, CACHED_SHEETS, DRIVE_SERVICE
 
 if IS_LOCALHOST:
 	dlm = redlock.Redlock([{"host": 'redis', "port": 6379}, ])
@@ -28,30 +15,13 @@ elif IS_STAGING or IS_PRODUCTION:
 	REDIS = urlparse.urlparse(os.environ.get('REDIS_URL'))
 	dlm = redlock.Redlock([{"host": REDIS.hostname, "port": REDIS.port, 'password': REDIS.password},])
 
-CACHED_SHEETS = {}
-CACHED_CONFIGS = {}
-
-# Raises some error, need to find
-credentials = ServiceAccountCredentials.from_json_keyfile_name(
-	os.environ["GOOGLE_APPLICATION_CREDENTIALS"], sheets_scope)
-gc = gspread.authorize(credentials)
-
-for config in os.listdir('forms/configs'):
-	f = open("forms/configs/{}".format(config))
-	loaded_yaml = load(f, Loader=Loader)
-	CACHED_CONFIGS[config.replace(".yaml", "")] = loaded_yaml
-	if "googlesheet_link" in loaded_yaml["info"]:
-		doc_url = loaded_yaml["info"]["googlesheet_link"]
-		sheet = gc.open_by_url(doc_url).sheet1
-		if sheet:
-			CACHED_SHEETS[doc_url] = gc.open_by_url(doc_url).sheet1
 
 # Reads in a YAML file and checks if it is properly formed
 # Returns YAML file in dictionary form
 def check_yaml_format(config_name):
 	# YAML_PATH is the filepath to the yaml file
 	try:
-		loaded_yaml = CACHED_CONFIGS[config_name]
+		loaded_yaml = get_config_dict(config_name)
 		# REQUIRED FIELDS:
 		# info field with googlesheet_link
 		if "info" not in loaded_yaml or "googlesheet_link" not in loaded_yaml["info"]:
@@ -71,25 +41,13 @@ def check_yaml_format(config_name):
 		return None
 
 
-def get_yaml_questions(loaded_yaml):
-	question_mapping = {}
-	questions = loaded_yaml["questions"]
-	for count, question in enumerate(questions,1):
-		question_mapping["Question "+str(count)] = question["type"]
-	return question_mapping
-
-
 # Uploads FILE_BLOB to folder called FOLDER_NAME
 # Returns the webViewLink of uploaded file
 def upload_file(folder_name, file_name, file_blob):
 	# FOLDER_NAME is the name of the folder to upload the file to
 	# FILE_BLOB is the file blob to upload
 
-	credentials = ServiceAccountCredentials.from_json_keyfile_name(
-		os.environ["GOOGLE_APPLICATION_CREDENTIALS"], drive_scope)
-	drive = discovery.build('drive', 'v3', credentials=credentials)
-
-	folders = drive.files().list(q="mimeType='application/vnd.google-apps.folder'",
+	folders = DRIVE_SERVICE.files().list(q="mimeType='application/vnd.google-apps.folder'",
 	                           spaces='drive',
 	                           fields='nextPageToken, files(id, name)',
 	                           pageToken=None).execute().get('files', [])
@@ -117,15 +75,27 @@ def upload_file(folder_name, file_name, file_blob):
 		folder = drive.files().create(body=file_metadata, fields='id').execute()
 		folder_id = folder.get('id')
 
-
 	file_front, file_ext = os.path.splitext(file_name)
-	file_metadata = {'name': file_front + "_" + \
-		datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S") + \
-		file_ext, 'parents': [folder_id]}
-	media = MediaInMemoryUpload(file_blob)
-	file = drive.files().create(body=file_metadata, media_body=media, fields='id').execute()
+  upload_time = datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S")
+	file = DRIVE_SERVICE.files().create(
+		body={
+			'name': file_front + "_" + upload_time + file_ext,
+			'parents': [folder_id]
+		},
+		media_body=MediaInMemoryUpload(file_blob),
+		fields='id'
+	).execute()
 
-	return drive.files().get(fileId=file["id"], fields='webViewLink').execute()["webViewLink"]
+	DRIVE_SERVICE.permissions().create(
+		fileId=file.get('id'),
+		body={
+			'type': 'anyone',
+			'role': 'reader',
+		},
+		fields='id',
+	).execute()
+
+	return DRIVE_SERVICE.files().get(fileId=file["id"], fields='webViewLink').execute()["webViewLink"]
 
 
 # Appends RESPONSES to a google sheet specified by doc_url
@@ -142,9 +112,7 @@ def sheet_add_next_entry(doc_url, responses):
 	# Need to acquire lock (ensure that only one instance is modifying the sheet at a time)
 	my_lock = False
 	for _ in range(5):
-		print("acquiring")
 		my_lock = dlm.lock("google_spreadsheet_" + str(hash(doc_url)), 2000)
-		print(my_lock)
 		if my_lock:
 			break
 		else:

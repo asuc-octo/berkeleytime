@@ -12,9 +12,10 @@ from catalog.service.mapper.schedule import schedule_mapper
 from catalog.service.validator.schedule import schedule_validator
 
 from catalog.models import Section
+from django.core.cache import cache
 
 logger = logging.getLogger(__name__)
-
+ENROLLMENT_CACHE_TIMEOUT = 900
 
 class ScheduleResource(object):
     """Interface with SIS endpoint for schedule information."""
@@ -33,29 +34,6 @@ class ScheduleResource(object):
         TODO(noah): Passing in all this crap is gross, let's make it a
             configuration object.
         """
-        response = self._request(
-            semester=semester,
-            year=year,
-            abbreviation=abbreviation,
-            course_number=course_number,
-        )
-
-        if not response:
-            logger.info({
-                'message': 'SIS could not find sections for course',
-                'course_id': int(course_id),
-                'abbreviation': str(abbreviation),
-                'course_number': str(course_number),
-            })
-            return []
-        elif log:
-            logger.info({
-                'message': 'Queried SIS for the sections for course',
-                'course_id': int(course_id),
-                'abbreviation': str(abbreviation),
-                'course_number': str(course_number),
-            })
-
         # Include this data with every entity.Section
         extras = {
             'course_id': course_id,
@@ -65,7 +43,35 @@ class ScheduleResource(object):
             'year': year,
         }
 
-        sections = response['apiResponse']['response']['classSections']
+        sections = cache.get("schedule_resource {} {} {} {}".format(semester, year, abbreviation, course_number))
+        if sections:
+            print("cache hit in schedule_resource")
+        else:
+            response = self._request(
+                semester=semester,
+                year=year,
+                abbreviation=abbreviation,
+                course_number=course_number,
+            )
+
+            if not response:
+                logger.info({
+                    'message': 'SIS could not find sections for course',
+                    'course_id': int(course_id),
+                    'abbreviation': str(abbreviation),
+                    'course_number': str(course_number),
+                })
+                return []
+            elif log:
+                logger.info({
+                    'message': 'Queried SIS for the sections for course',
+                    'course_id': int(course_id),
+                    'abbreviation': str(abbreviation),
+                    'course_number': str(course_number),
+                })
+
+            sections = response['apiResponse']['response']['classSections']
+            cache.set("schedule_resource {} {} {} {}".format(semester, year, abbreviation, course_number), sections, ENROLLMENT_CACHE_TIMEOUT)
         return self.process_sections(sections, extras=extras)  # noqa
 
     @retry(ScheduleResourceException, tries=3)

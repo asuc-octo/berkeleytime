@@ -1,7 +1,7 @@
 import axios from 'axios';
 import hash from 'object-hash';
 import {
-  MODIFY_LIST, RECEIVE_LIST, MODIFY_SELECTED, FILTER,
+  FILTER,
   START_REQUEST, START_REQUEST_DESCRIPTION, UPDATE_COURSE_DATA,
   FILTER_MAP, REQUIREMENTS, UNITS, DEPARTMENT, LEVEL, SEMESTER,
   UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, GRADE_REMOVE_COURSE, GRADE_RESET,
@@ -9,31 +9,6 @@ import {
   ENROLL_ADD_COURSE, ENROLL_REMOVE_COURSE, UPDATE_ENROLL_DATA, UPDATE_ENROLL_SELECTED,
   OPEN_BANNER, CLOSE_BANNER, SHOW_MOBILE, HIDE_MOBILE,
 } from './actionTypes';
-
-// function to update the active playlist
-export const modify = (newActivePlaylists, defaultPlaylists) => ({
-  type: MODIFY_LIST,
-  payload: {
-    activePlaylists: newActivePlaylists,
-    defaultPlaylists,
-  },
-});
-
-// function to update the selected course (the course displayed on the right)
-export const modifySelected = (data) => ({
-  type: MODIFY_SELECTED,
-  payload: {
-    data,
-  },
-});
-
-// receive data from the api call
-export const receiveList = (data) => ({
-  type: RECEIVE_LIST,
-  payload: {
-    data,
-  },
-});
 
 // function to update the courses when the filters are changed
 export const filter = (data) => ({
@@ -72,35 +47,35 @@ export const setRequirements = (data) => ({
   type: REQUIREMENTS,
   payload: {
     data,
-  }
+  },
 });
 
 export const setUnits = (data) => ({
   type: UNITS,
   payload: {
     data,
-  }
+  },
 });
 
 export const setDepartment = (data) => ({
   type: DEPARTMENT,
   payload: {
     data,
-  }
+  },
 });
 
 export const setLevel = (data) => ({
   type: LEVEL,
   payload: {
     data,
-  }
+  },
 });
 
 export const setSemester = (data) => ({
   type: SEMESTER,
   payload: {
     data,
-  }
+  },
 });
 
 // update grade list
@@ -112,8 +87,8 @@ export const updateGradeContext = (data) => ({
 });
 
 export const gradeReset = () => ({
-  type: GRADE_RESET
-})
+  type: GRADE_RESET,
+});
 
 // add displayed course to the grade page
 export const gradeAddCourse = (formattedCourse) => ({
@@ -127,9 +102,9 @@ export const gradeRemoveCourse = (id, color) => ({
   type: GRADE_REMOVE_COURSE,
   payload: {
     id,
-    color
-  }
-})
+    color,
+  },
+});
 
 export const updateGradeData = (gradesData) => ({
   type: UPDATE_GRADE_DATA,
@@ -154,7 +129,7 @@ export const updateEnrollContext = (data) => ({
 });
 
 export const enrollReset = () => ({
-  type: ENROLL_RESET
+  type: ENROLL_RESET,
 });
 
 // add displayed course to the enroll page
@@ -169,9 +144,9 @@ export const enrollRemoveCourse = (id, color) => ({
   type: ENROLL_REMOVE_COURSE,
   payload: {
     id,
-    color
-  }
-})
+    color,
+  },
+});
 
 export const updateEnrollData = (enrollmentData) => ({
   type: UPDATE_ENROLL_DATA,
@@ -215,54 +190,6 @@ export function getFilterResults(filters) {
   );
 }
 
-
-// get the course list
-export function fetchLists(paths) {
-  const abbreviation = paths[2];
-  const classNum = paths[3];
-  return dispatch => {
-    let tmp = {};
-    if (paths.length >= 4) {
-      return axios.get(`/api/catalog/catalog_json/filters/${abbreviation}/${classNum}/`)
-        .then(
-          res => {
-            tmp = res;
-            const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-            dispatch(modify(new Set(defaultPlaylists), new Set(defaultPlaylists)));
-            dispatch(receiveList(res.data));
-          },
-          error => console.log('An error occurred.', error),
-        )
-        .then(() => {
-          const courseID = tmp.data.default_course;
-          axios.get('/api/catalog/filter/', { params: { course_id: courseID } })
-            .then(
-              res2 => {
-                if (res2.data.length > 0) {
-                  let tab = 0;
-                  if (paths.length >= 5) {
-                    tab = paths[4] === 'sections' ? 0 : tab;
-                  }
-                  dispatch(modifySelected(res2.data[0], tab));
-                }
-              },
-              error => console.log('An error occurred.', error),
-            );
-        });
-    } else {
-      return axios.get('/api/catalog/catalog_json/filters/')
-        .then(
-          res => {
-            const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-            dispatch(modify(new Set(defaultPlaylists), new Set(defaultPlaylists)));
-            dispatch(receiveList(res.data));
-          },
-          error => console.log('An error occurred.', error),
-        );
-    }
-  };
-}
-
 export function fetchGradeContext() {
   return dispatch => axios.get('/api/grades/grades_json/')
     .then(
@@ -286,9 +213,9 @@ export function fetchGradeClass(course) {
           instructor: course.instructor,
           courseID: course.courseID,
           sections: course.sections,
-          colorId: course.colorId
-        }
-        dispatch(gradeAddCourse(formattedCourse))
+          colorId: course.colorId,
+        };
+        dispatch(gradeAddCourse(formattedCourse));
       },
       error => console.log('An error occurred.', error),
     );

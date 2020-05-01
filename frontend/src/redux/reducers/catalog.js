@@ -1,26 +1,28 @@
-import { MODIFY_LIST, RECEIVE_LIST, MODIFY_SELECTED } from '../actionTypes';
+/**
+ * Contains data of initial API call for filter data and playlist info
+ */
+
+import { MODIFY_ACTIVE_PLAYLISTS, RECEIVE_FILTER_DATA, MODIFY_SELECTED_COURSE } from '../actionTypes';
 
 
 const initialState = {
-  data: {},
-  activePlaylists: new Set(), // set of integers
-  defaultPlaylists: new Set(), // set of integers
-  loading: true,
-  selectCourse: {},
-  tab: 0,
+  data: {}, // data from initial API call to /api/catalog/catalog_json/filters/
+  activePlaylists: new Set(), // set of active playlists (integers)
+  defaultPlaylists: new Set(), // set of default playlists (integers)
+  loading: true, // initially true, set to false when data is received
+  selectedCourse: {}, // currently selected course, has format 'course_box' from API models
 };
 
 export default function catalog(state = initialState, action) {
   switch (action.type) {
-  case MODIFY_LIST: {
-    const { activePlaylists, defaultPlaylists } = action.payload;
+  case MODIFY_ACTIVE_PLAYLISTS: {
+    const { activePlaylists } = action.payload;
     return {
       ...state,
       activePlaylists,
-      defaultPlaylists,
     };
   }
-  case RECEIVE_LIST: {
+  case RECEIVE_FILTER_DATA: {
     const { data } = action.payload;
     return {
       ...state,
@@ -28,12 +30,11 @@ export default function catalog(state = initialState, action) {
       loading: false,
     };
   }
-  case MODIFY_SELECTED: {
-    const { data, tab } = action.payload;
+  case MODIFY_SELECTED_COURSE: {
+    const { selectedCourse } = action.payload;
     return {
       ...state,
-      selectCourse: data,
-      tab,
+      selectedCourse,
     };
   }
   default:

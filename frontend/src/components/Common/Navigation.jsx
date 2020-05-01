@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
+import { withRouter } from 'react-router';
 
 class Navigation extends Component {
   constructor(props) {
@@ -41,11 +42,13 @@ class Navigation extends Component {
           <Nav className="mr-auto" />
           <Nav>
             {
-              links.map(link => (
-                <Nav.Link as={Link} to={link.to} key={link.text} onClick={this.toggle}>
+              links.map(link => {
+                let currUrl = this.props.history.location.pathname;
+                let to = currUrl.includes(link.to) ? currUrl : link.to;
+                return (<Nav.Link as={Link} to={to} key={link.text} onClick={this.toggle}>
                   {link.text}
-                </Nav.Link>
-              ))
+                </Nav.Link>)
+              })
             }
           </Nav>
         </Navbar.Collapse>
@@ -57,7 +60,7 @@ class Navigation extends Component {
 Navigation.links = [
   {
     to: '/catalog',
-    text: 'Courses',
+    text: 'Catalog',
   },
   {
     to: '/grades',
@@ -92,4 +95,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(Navigation);
+export default connect(mapStateToProps)(withRouter(Navigation));

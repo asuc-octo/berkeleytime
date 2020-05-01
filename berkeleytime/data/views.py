@@ -1,7 +1,7 @@
 from __future__ import division
 import re, os, sys, datetime
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
+import traceback
 from catalog.models import Course, Grade, Section, Enrollment, Playlist
 from catalog.service.resource.schedule import schedule_resource
 from catalog.service.course import course_service
@@ -18,13 +18,18 @@ from django.db.models import Avg, Sum
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
+from threading import Thread
+
 ENROLLMENT_CACHE_TIMEOUT = 900
 CACHE_DAY_TIMEOUT = 86400
+NUM_PREFETCH_THREADS = 3
+
 
 STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
                    ("b1", "B+"), ("b2", "B"), ("b3", "B-"),
                    ("c1", "C+"), ("c2", "C"), ("c3", "C-"),
                    ("d", "D"), ("f", "F"), ("p", "P"), ("np", "NP")]
+
 
 def grade_context():
     cached = cache.get("grade__courses")
@@ -193,20 +198,31 @@ def enrollment_render(request):
 def enrollment_context_json(request):
     return render_to_json(enrollment_context())
 
-def get_primary(course_id, semester, year):
+def get_primary(course_id, semester, year, context_cache=None):
     try:
-        course = Course.objects.get(id = course_id)
-        all_sections = course.section_set.all().filter(semester = semester, year = year, disabled = False)
-        sections = all_sections.filter(is_primary = True).order_by("rank")
+        if context_cache and course_id in context_cache:
+            all_sections = context_cache[course_id]
+        else:
+            course = Course.objects.get(id = course_id)
+            all_sections = course.section_set.all()
+            context_cache[course_id] = all_sections
+        sections = all_sections.filter(semester = semester, year = year, disabled = False, is_primary = True).order_by("rank").prefetch_related('enrollment_set')
         return sections
     except Exception as e:
         print e
         return []
 
+
 def enrollment_section_render(request, course_id):
     try:
+        cached = cache.get("enrollment_section_render " + course_id)
+        if cached:
+            print('Cache Hit in enrollment_section_render with course_id ' + course_id)
+            prefetch(course_id)
+            return render_to_json(cached)
         rtn = []
-        sections = get_primary(course_id, CURRENT_SEMESTER, CURRENT_YEAR)
+        context_cache = {}
+        sections = get_primary(course_id, CURRENT_SEMESTER, CURRENT_YEAR, context_cache)
         # DONT INCLUDE CURRENT SEMESTER IF NOT YET TELEBEARS
         if sections and TELEBEARS_ALREADY_STARTED:
             current = {"semester": CURRENT_SEMESTER, "year": CURRENT_YEAR, "sections": []}
@@ -223,7 +239,7 @@ def enrollment_section_render(request, course_id):
         ordered_past_semesters = PAST_SEMESTERS[:]
         ordered_past_semesters.reverse()
         for s in ordered_past_semesters:
-            past_sections = get_primary(course_id, s["semester"], s["year"])
+            past_sections = get_primary(course_id, s["semester"], s["year"], context_cache)
             if past_sections:
                 current = {"semester": s["semester"], "year": s["year"], "sections": []}
                 for s in past_sections:
@@ -235,6 +251,8 @@ def enrollment_section_render(request, course_id):
                         current["sections"].append(temp)
                 if current["sections"]:
                     rtn.append(current)
+        cache.set("enrollment_section_render " + str(course_id), rtn, CACHE_DAY_TIMEOUT)
+        prefetch(course_id)
         return render_to_json(rtn)
     except Exception as e:
         print e
@@ -327,6 +345,12 @@ def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, y
     except Exception as e:
         print e
         return render_to_empty_json()
+
+
+def prefetch(course_id):
+    t1 = Thread(target=enrollment_aggregate_json, args=[None, course_id])
+    t1.start()
+
 
 def enrollment_json(request, section_id):
     try:

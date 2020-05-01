@@ -1,16 +1,18 @@
-from berkeleytime.utils.requests import render_to_json
-from catalog.utils import is_post
-from django.core.cache import cache
-from django.http import Http404
 import json
-from googleapi import check_yaml_response, check_yaml_format, upload_file, CACHED_CONFIGS
-from yaml import load, dump
 import traceback
+
+from catalog.utils import is_post
+from django.http import Http404
+
+from hooks import dispatch_hooks
+from berkeleytime.utils.requests import render_to_json
+from googleapi import check_yaml_response, check_yaml_format, upload_file
+from utils import get_config_dict
 
 # Returns YAML file (in JSON format) with name
 def get_config(request, config_name):
 	try:
-		loaded_yaml = CACHED_CONFIGS[config_name]
+		loaded_yaml = get_config_dict(config_name)
 
 		form_config = {
 			"info": {
@@ -41,6 +43,8 @@ def record_response(request):
 	try:
 		if is_post(request):
 			form_response = json.loads(request.body)
+			# hard coded
+			dispatch_hooks(form_response)
 			return render_to_json({
 				'success': check_yaml_response(form_response["Config"], json.loads(request.body))
 			})

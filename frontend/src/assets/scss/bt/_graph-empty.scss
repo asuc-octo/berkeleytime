@@ -1,13 +1,14 @@
 .graph-empty {
   // min-height: inherit;
-  height: 400px;
-  .col-lg-8 {
-    height: 400px;
+
+  .opaque {
+    opacity: 1 !important;
   }
 
   .graph-empty-content {
+    height: 0px;
     position: relative;
-    bottom: 300px;
+    bottom: 250px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -16,7 +17,7 @@
 
 
     .graph-empty-image {
-      max-width: 9%;
+      max-width: 7%;
     }
 
     .graph-empty-heading {
@@ -26,16 +27,22 @@
       font-weight: 500;
       margin-top: 15px;
     }
-
   }
 
   .grades-info {
     display: flex;
     flex-direction: column;
 
+    @include mobile {
+      text-align: left;
+      //border: 1px solid $bt-border-grey;
+      border-radius: 8px;
+      padding: 20px 20px 20px 20px;
+    }
+
     .info-icon {
       padding-left: 5px;
-      width: 6%;
+      width: 20px;
     }
 
     .info-text {

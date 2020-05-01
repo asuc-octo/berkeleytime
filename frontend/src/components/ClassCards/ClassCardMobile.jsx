@@ -54,7 +54,6 @@ function ClassCardMobile(props) {
 
     let date_info = []
     if(latest_point != null && telebears != null) {
-      console.log("hi")
       date_info = getEnrollmentDay(latest_point, telebears); 
     }
 
