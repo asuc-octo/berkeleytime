@@ -23,7 +23,7 @@ function Error() {
                 <Button variant="bt-primary" size="bt-lg" as={Link} to="/catalog">Back to Courses</Button>
               </ButtonGroup>
               <ButtonGroup className="mb-2">
-                <Button variant="bt-primary-inverted" size="bt-lg" href="https://goo.gl/forms/HDQ10XBDHJ0aCjhf1">Report a Bug</Button>
+                <Button variant="bt-primary-inverted" size="bt-lg" href="/bugs">Report a Bug</Button>
               </ButtonGroup>
             </ButtonToolbar>
           </Col>

@@ -511,10 +511,10 @@ class BTForm extends Component {
 
     if (submitted) {
       return (
-        <div className="bt-form">
+        <div className="bt-form submitted">
           <div className="bt-form-header">
             <h5>{ form.info.public_name }</h5>
-            <p>Thank you for submitting the form. We have received your response.</p>
+            <p>Thank you for submitting this form! We have received your response and will get back to you as soon as we can.</p>
           </div>
         </div>
       )
@@ -549,7 +549,7 @@ class BTForm extends Component {
          <Button variant="primary" type="submit" className="btn btn-bt-primary btn-bt-sm" disabled={submitting}>
             Submit
           </Button>
-          
+
         </Form>
 
       </div>

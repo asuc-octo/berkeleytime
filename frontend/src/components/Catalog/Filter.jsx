@@ -18,7 +18,7 @@ export class FilterSidebar extends Component {
       { value: 'average_grade', label: 'Sort By: Average Grade' },
       { value: 'department_name', label: 'Sort By: Department Name' },
       { value: 'open_seats', label: 'Sort By: Open Seats' },
-      { value: 'enrolled_percentage', label: 'Sort By: Enrolled Percentage' },
+      { value: 'enrolled_percentage', label: 'Sort By: Percent Enrolled' },
     ];
     this.sortDefault = this.sortOptions[0]
     this.requirementsOptions = playlists.requirements;
