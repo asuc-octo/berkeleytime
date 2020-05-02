@@ -60,7 +60,6 @@ pipeline {
 cat $BACKEND_DEPLOY_STAGE_FILEPATH
 echo "Applying latest backend image to staging"
 kubectl get pods
-kubectl delete -f $BACKEND_DEPLOY_STAGE_FILEPATH
 kubectl apply -f $BACKEND_DEPLOY_STAGE_FILEPATH'''
       }
     }
@@ -79,7 +78,6 @@ kubectl apply -f $BACKEND_DEPLOY_STAGE_FILEPATH'''
 cat $FRONTEND_DEPLOY_STAGE_FILEPATH
 echo "Applying latest frontend image to staging"
 kubectl get pods
-kubectl delete -f $FRONTEND_DEPLOY_STAGE_FILEPATH
 kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
       }
     }
@@ -125,7 +123,6 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
         sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/frontendprod:${GIT_COMMIT}/g" $FRONTEND_DEPLOY_PROD_FILEPATH
 echo "Applying latest frontend image to production"
 kubectl get pods
-kubectl delete -f $FRONTEND_DEPLOY_PROD_FILEPATH
 kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
       }
     }
@@ -143,7 +140,6 @@ kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
         sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimeprod:${GIT_COMMIT}/g" $BACKEND_DEPLOY_PROD_FILEPATH
 echo "Applying latest backend image to production"
 kubectl get pods
-kubectl delete -f $BACKEND_DEPLOY_PROD_FILEPATH
 kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
       }
     }
