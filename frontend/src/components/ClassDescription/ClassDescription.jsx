@@ -191,7 +191,7 @@ class ClassDescription extends Component {
 
     if (isEmpty(courseData)) {
       return null;
-    } 
+    }
 
     var pills = [];
     if (requirements !== null) {
@@ -201,7 +201,7 @@ class ClassDescription extends Component {
 
       let units = requirements.filter(item => item.includes("Unit"));
       var otherFilters = requirements.filter(item => !item.includes("Spring") && !item.includes("Fall") && !item.includes("Unit"));
-      
+
       pills = otherFilters.concat(units).concat(latestSemesters);
     }
 
@@ -290,7 +290,7 @@ class ClassDescription extends Component {
             {description.length > 0 ?
               <p className="description">
                 {description}
-                {moreDesc != null ? (<span onClick={() => this.setReadMore(moreDesc)}> {moreDesc ? ' read more' : ' less'}</span>) : ''}
+                {moreDesc != null ? (<span onClick={() => this.setReadMore(moreDesc)}> {moreDesc ? ' See more' : ' See less'}</span>) : ''}
               </p> : ''
             }
             {prereqs.length > 0 ?
@@ -298,7 +298,7 @@ class ClassDescription extends Component {
                 <h6>Prerequisites</h6>
                 <p>
                   {prereqs}
-                  {morePrereq != null ? (<span onClick={() => this.setReadMore(morePrereq)}> {morePrereq ? ' read more' : ' less'}</span>) : ''}
+                  {morePrereq != null ? (<span onClick={() => this.setReadMore(morePrereq)}> {morePrereq ? ' See more' : ' See less'}</span>) : ''}
                 </p>
               </div> : ''
             }

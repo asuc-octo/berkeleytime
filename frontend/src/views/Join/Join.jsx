@@ -79,11 +79,11 @@ class Join extends PureComponent {
           </button>
         </ButtonToolbar>
         { validated && !validationSuccess
-          ? (<p style={{color: "red"}}>Please enter a valid email.</p>)
+          ? (<p style={{color: "#FC7676"}}>Please enter a valid email.</p>)
           : null
         }
         { submissionSuccess
-          ? (<p style={{color: "#8A8A8A"}}>We got your email! You will get an update when we start our recruitment.</p>)
+          ? (<p style={{color: "#18D869"}}>We got your email! You will get an update when we start our recruitment.</p>)
           : null
         }
         <img className="join-pic" src={doe}/>

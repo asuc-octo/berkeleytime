@@ -94,7 +94,7 @@ class FilterCard extends PureComponent {
                 ? null
                 : <p className={FilterCard.colorEnrollment(enrolled_percentage)}>{FilterCard.formatEnrollmentPercentage(enrolled_percentage)}</p>
               }
-              
+
               <p>&nbsp;•&nbsp;{FilterCard.formatUnits(units)}</p>
             </div>
           </div>

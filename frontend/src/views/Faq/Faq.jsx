@@ -42,6 +42,10 @@ Faq.questions = [
     answer: <p>We source all our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System</a>&apos;s Course and Class APIs. We source grade data from <a className="link" href="https://calanswers.berkeley.edu/">CalAnswers</a>. Let us know if anything seems off!</p>,
   },
   {
+    question: 'Why does an enrollment chart show more than 100% students enrolled?',
+    answer: <p>This is not a bug; throughout the semester, professors or department admins may choose to expand the class to accommodate more students, which exceeds the original enrollment cap. Hence, commonly expanded classes may show above 100% enrollment as students add and remove the class from their schedules. </p>,
+  },
+  {
     question: 'How can I contact the Berkeleytime team?',
     answer: <p>Any questions or concerns that you have can be directed to <a href="mailto: octo.berkeley@asuc.org">octo.berkeley@asuc.org</a>.</p>,
   },
@@ -61,7 +65,7 @@ Faq.questions = [
   },
   {
     question: 'How do I apply to join the team?',
-    answer: <p>We typically recruit engineers and designers at the start of every fall semester; keep an eye out on our website and our <a href="https://www.facebook.com/berkeleytime/">Facebook page</a> for updates.</p>,
+    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up for recruitment updates <a href="/join">here</a>. Keep an eye out on our website and our <a href="https://www.facebook.com/berkeleytime/">Facebook page</a> for updates.</p>,
   },
   {
     question: 'I want to help user test new features!',
