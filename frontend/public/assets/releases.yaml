@@ -10,4 +10,4 @@ releases:
     - Adding courses to Grades and Enrollment pages now accurately generate unique URLs, which you can share with friends to reproduce your search.
     - Fixed an issue where the course average in Grades was not being calculated correctly.
     - Enrollment statistics are now updated every 15 minutes.
-    - Course search is improved with better support for laymen's abbreviations.
+    - Course search is improved with better support for abbreviations for class names.

@@ -6,6 +6,10 @@
   align-items: center;
 }
 
+.submitted {
+  height: 80vh;
+}
+
 .bt-form {
 
   justify-content: center;
@@ -32,7 +36,7 @@
 
   p.descriptor {
     color: $bt-grey-text;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 1.5;
     margin-bottom: 8px;
   }
