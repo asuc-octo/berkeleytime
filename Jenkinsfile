@@ -15,6 +15,7 @@ pipeline {
   triggers {
     pollSCM ('*/5 * * * *')
   }
+  // Can be parallelized for efficiency, but complexity may not be required for our simple builds
   stages {
     stage('Build-Berkeleytime-Stage') {
       when {
