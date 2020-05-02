@@ -19,7 +19,10 @@ def create_formatted_message(response):
 
 
 def auto_github_issue(response, hook_config):
-
+    """
+    This hook posts a github issue after a response is received. It titles the issue with
+    either hook_config["title"] or the response submitted to the question hook_config["question"].
+    """
     ghToken = "***REMOVED***"
     ghURL = "https://api.github.com/repos/asuc-octo/berkeleytime/issues?access_token="
 
@@ -32,10 +35,19 @@ def auto_github_issue(response, hook_config):
 
 
 def auto_email(response, hook_config):
+    """
+    This hook sends an email to one or a list of people whenever a response is filled out.
+    NOT COMPLETE. DO NOT USE.
+    """
     send_message(hook_config["to"], hook_config["subject"], create_formatted_message(response))
 
 
 def auto_confirm(response, hook_config):
+    """
+    This hook sends an email to the responder. It uses the email located at the question
+    hook_config["question"].
+    NOT COMPLETE. DO NOT USE.
+    """
     to = response[hook_config["question"]]
     send_message(to, hook_config["subject"], create_formatted_message(response))
 
@@ -46,6 +58,9 @@ HOOKS_MAP = {f.__name__ : f for f in HOOKS}
 
 
 def dispatch_hooks(response):
+    """
+    For a given response, looks up and triggers all hooks associated with that form.
+    """
     config = get_config_dict(response["Config"])
     if "hooks" not in config["info"]:
         return

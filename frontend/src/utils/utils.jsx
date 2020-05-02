@@ -89,7 +89,9 @@ function percentileToString(percentile) {
 }
 
 function getGradeColor(grade) {
-  if (grade.includes('A') || grade === 'P') {
+  if (grade === undefined) {
+    return '';
+  } else if (grade.includes('A') || grade === 'P') {
     return 'bt-indicator-green';
   } else if (grade.includes('B')) {
     return 'bt-indicator-orange';
@@ -103,7 +105,7 @@ function getEnrollmentDay(selectedPoint, telebears) {
   let daysAfterPeriodStarts = 0;
   if (selectedPoint.day < telebears.phase2_start_day) {
     period = 'Phase I';
-    daysAfterPeriodStarts = selectedPoint.day - telebears.phase1_start_day + 1;
+    daysAfterPeriodStarts = selectedPoint.day - telebears.phase1_start_day;
   } else if (selectedPoint.day < telebears.adj_start_day) {
     period = 'Phase II';
     daysAfterPeriodStarts = selectedPoint.day - telebears.phase2_start_day;

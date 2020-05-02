@@ -10,9 +10,9 @@
     height: 100%;
     overflow-y: scroll;
 
-    @include mobile {
+    /*@include mobile {
       max-height: 95vh;
-    }
+    }*/
 
     // columns
     > div {
@@ -35,6 +35,7 @@
     .filter-results-column {
       border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
+      height: 95vh;
     }
 
     .catalog-description-column {

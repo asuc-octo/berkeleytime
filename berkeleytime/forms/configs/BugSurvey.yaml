@@ -24,9 +24,9 @@ questions:
       - Feedback for Developers
       - Wrong Information
       - Search is Not Working
-      - Class is Missing from Catalog or Incorrect
-      - Enrollment Data is Not Appearing
-      - Grades Data is Not Appearing
+      - Class is Missing or Incorrect
+      - Data is Not Appearing
+      - A Feature is Not Working
       - Site Crashes / Doesn't Respond
       - Visual Bug with Site
       - Other (Describe Below)
@@ -47,6 +47,7 @@ questions:
       - "FAQ"
       - "API Docs"
       - "Forms"
+      - "Other (describe below)"
   - title: "What browser/system is this happening on?"
     description: "Please let us know if this is happening on multiple browsers/systems"
     type: "multiple_select"
