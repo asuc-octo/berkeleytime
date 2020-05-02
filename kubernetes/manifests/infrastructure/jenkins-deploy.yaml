@@ -47,7 +47,7 @@ spec:
         - name: DOCKER_HOST
           value: tcp://localhost:2375
         - name: JAVA_OPTS
-          value: -Dhudson.model.DirectoryBrowserSupport.CSP=
+          value: -Dhudson.model.DirectoryBrowserSupport.CSP= -Dorg.apache.commons.jelly.tags.fmt.timeZone=America/Los_Angeles
         volumeMounts:
           - mountPath: /var/jenkins_home
             name: jenkins-pv-storage

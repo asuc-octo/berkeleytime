@@ -1,8 +1,8 @@
 releases:
-  - date: April 20, 2020
+  - date: May 3, 2020
     whatsNew:
-    - We're rolling out an updated UI, which is now available on both web (and soon on mobile)!
-    - Our backend API is officially open-sourced! Head over to our <a href="/apidocs">API Documentation</a> to check it out.
+    - We're rolling out an updated UI, which is now available on both web (and soon on mobile)! 
+    - Our backend API is officially open-sourced in version v0.1! Head over to our <a href="/apidocs">API Documentation</a> to check it out.
     - This releases page will be updated with notes of new features, bug fixes, and class enrollment/grades updates.
     - Our new  <a href="/faq">FAQ page</a>  answers some common questions we've gotten over the past few semesters. Feel free to send us more questions if you've got them!
     - Support for our old legacy site is now officially deprecated. You can still visit it at <a href="https://old.berkeleytime.com">old.berkeleytime.com</a>, but some features may be broken and we won't be maintaining it moving forward.

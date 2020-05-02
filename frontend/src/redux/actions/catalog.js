@@ -1,7 +1,14 @@
 import axios from 'axios';
 import {
-  MODIFY_ACTIVE_PLAYLISTS, RECEIVE_FILTER_DATA, MODIFY_SELECTED_COURSE,
+  MODIFY_ACTIVE_PLAYLISTS, RECEIVE_FILTER_DATA, MODIFY_SELECTED_COURSE, SET_DEFAULT_PLAYLISTS,
 } from '../actionTypes';
+
+export const setDefaultPlaylists = defaultPlaylists => ({
+  type: SET_DEFAULT_PLAYLISTS,
+  payload: {
+    defaultPlaylists,
+  },
+});
 
 /**
  * Function to update the active playlist
@@ -46,7 +53,8 @@ export function fetchPlaylists(paths) {
         .then(
           res => {
             const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-            dispatch(modifyActivePlaylists(new Set(defaultPlaylists), new Set(defaultPlaylists)));
+            dispatch(setDefaultPlaylists(new Set(defaultPlaylists)));
+            dispatch(modifyActivePlaylists(new Set(defaultPlaylists)));
             dispatch(receiveFilterData(res.data));
             return res;
           },
@@ -71,7 +79,8 @@ export function fetchPlaylists(paths) {
         .then(
           res => {
             const defaultPlaylists = res.data.default_playlists.split(',').map(str => parseInt(str));
-            dispatch(modifyActivePlaylists(new Set(defaultPlaylists), new Set(defaultPlaylists)));
+            dispatch(setDefaultPlaylists(new Set(defaultPlaylists)));
+            dispatch(modifyActivePlaylists(new Set(defaultPlaylists)));
             dispatch(receiveFilterData(res.data));
           },
           console.error,

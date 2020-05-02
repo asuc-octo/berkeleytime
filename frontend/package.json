@@ -42,7 +42,7 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "rsuite": "^4.3.4",
-    "swagger-ui-react": "^3.25.0"
+    "swagger-ui-react": "3.25.0"
   },
   "scripts": {
     "build-css": "node-sass-chokidar --include-path ./src --include-path ./node_modules src/ -o src/",

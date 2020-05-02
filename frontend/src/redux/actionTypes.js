@@ -1,4 +1,6 @@
 // CATALOG
+// set default playlists
+export const SET_DEFAULT_PLAYLISTS = 'SET_DEFAULT_PLAYLISTS';
 // modify the active playlists
 export const MODIFY_ACTIVE_PLAYLISTS = 'MODIFY_ACTIVE_PLAYLISTS';
 // receive initial filter data

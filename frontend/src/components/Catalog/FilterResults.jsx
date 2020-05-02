@@ -71,7 +71,7 @@ class FilterResults extends Component {
    * Comparator for enrolled percentage, break ties by department name
    * If percentage is -1, it is put at the end (greater than all other percents)
    */
-  compareEnrollmentPercentage(courseA, courseB) {
+  static compareEnrollmentPercentage(courseA, courseB) {
     if (courseA.enrolled_percentage !== -1 && courseB.enrolled_percentage !== -1) {
       return courseA.enrolled_percentage - courseB.enrolled_percentage
         || FilterResults.compareDepartmentName(courseA, courseB);
