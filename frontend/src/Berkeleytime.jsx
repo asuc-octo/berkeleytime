@@ -25,7 +25,7 @@ class Berkeleytime extends Component {
   constructor(props) {
     super(props);
 
-    const key = 'apr2020_staging_test';
+    const key = 'bt-release-may-2020';
     if (!localStorage[key]) {
       localStorage[key] = true;
       const { dispatch } = this.props;
@@ -74,7 +74,7 @@ class Berkeleytime extends Component {
                  !...:!TVBBBRPFT||||||||||!!^^""'   ||||
                  !.......:!?|||||!!^^""'            ||||
                  !.........||||                     ||||
-                 !.........||||  ##                 ||||
+                 !.........||||  $                  ||||
                  !.........||||                     ||||
                  !.........||||                     ||||
                  !.........||||                     ||||
