@@ -16,134 +16,142 @@ pipeline {
     pollSCM ('*/5 * * * *')
   }
   stages {
-    stage('Build-Berkeleytime-Stage') {
-      when {
-        branch "master"
-        anyOf {
-            changeset "berkeleytime/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
+    stage('Build') {
+      parallel {
+        stage('Build-Berkeleytime-Stage') {
+          when {
+            branch "master"
+            anyOf {
+              changeset "berkeleytime/**"
+              changeset "kubernetes/**"
+              changeset "Jenkinsfile"
+            }
+          }
+          steps {
+            git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+            sh 'gcloud builds submit berkeleytime --tag ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT}'
+          }
         }
-      }
-      steps {
-        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh 'gcloud builds submit berkeleytime --tag ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT}'
+        stage('Build-Frontend-Stage') {
+          when {
+            branch "master"
+            anyOf {
+              changeset "frontend/**"
+              changeset "kubernetes/**"
+              changeset "Jenkinsfile"
+            }
+          }
+          steps {
+            git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+             sh 'gcloud builds submit frontend --tag ${FRONTEND_STAGE_GCR_PATH}:${GIT_COMMIT}'
+          }
+        }
+        stage('Build-Berkeleytime-Prod') {
+          when {
+            branch "production"
+            anyOf {
+              changeset "berkeleytime/**"
+              changeset "kubernetes/**"
+              changeset "Jenkinsfile"
+            }
+          }
+          steps {
+            git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+            sh 'gcloud builds submit berkeleytime --tag ${BACKEND_PROD_GCR_PATH}:${GIT_COMMIT}'
+          }
+        }
+        stage('Build-Frontend-Prod') {
+          when {
+            branch "production"
+            anyOf {
+                changeset "frontend/**"
+                changeset "kubernetes/**"
+                changeset "Jenkinsfile"
+            }
+          }
+          steps {
+            git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+            sh 'gcloud builds submit frontend --tag ${FRONTEND_PROD_GCR_PATH}:${GIT_COMMIT}'
+          }
+        }
       }
     }
-    stage('Build-Frontend-Stage') {
-      when {
-        branch "master"
-        anyOf {
-            changeset "frontend/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
-        }
-      }
-      steps {
-        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh 'gcloud builds submit frontend --tag ${FRONTEND_STAGE_GCR_PATH}:${GIT_COMMIT}'
-      }
-    }
-    stage('Deploy-Berkeleytime-Stage') {
-      when {
-        branch "master"
-        anyOf {
-            changeset "berkeleytime/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
-        }
-      }
-      steps {
-        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimestage:${GIT_COMMIT}/g" $BACKEND_DEPLOY_STAGE_FILEPATH
+    stage('Deploy') {
+      parallel {
+        stage('Deploy-Berkeleytime-Stage') {
+          when {
+            branch "master"
+            anyOf {
+                changeset "berkeleytime/**"
+                changeset "kubernetes/**"
+                changeset "Jenkinsfile"
+            }
+          }
+          steps {
+            git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+            sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimestage:${GIT_COMMIT}/g" $BACKEND_DEPLOY_STAGE_FILEPATH
 cat $BACKEND_DEPLOY_STAGE_FILEPATH
 echo "Applying latest backend image to staging"
 kubectl get pods
 kubectl delete -f $BACKEND_DEPLOY_STAGE_FILEPATH
 kubectl apply -f $BACKEND_DEPLOY_STAGE_FILEPATH'''
-      }
-    }
-    stage('Deploy-Frontend-Stage') {
-      when {
-        branch "master"
-        anyOf {
-            changeset "frontend/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
+          }
         }
-      }
-      steps {
-        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/frontendstage:${GIT_COMMIT}/g" $FRONTEND_DEPLOY_STAGE_FILEPATH
+        stage('Deploy-Frontend-Stage') {
+          when {
+            branch "master"
+            anyOf {
+                changeset "frontend/**"
+                changeset "kubernetes/**"
+                changeset "Jenkinsfile"
+            }
+          }
+          steps {
+            git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+            sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/frontendstage:${GIT_COMMIT}/g" $FRONTEND_DEPLOY_STAGE_FILEPATH
 cat $FRONTEND_DEPLOY_STAGE_FILEPATH
 echo "Applying latest frontend image to staging"
 kubectl get pods
 kubectl delete -f $FRONTEND_DEPLOY_STAGE_FILEPATH
 kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
-      }
-    }
-    stage('Build-Berkeleytime-Prod') {
-      when {
-        branch "production"
-        anyOf {
-            changeset "berkeleytime/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
+          }
         }
-      }
-      steps {
-        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh 'gcloud builds submit berkeleytime --tag ${BACKEND_PROD_GCR_PATH}:${GIT_COMMIT}'
-      }
-    }
-    stage('Build-Frontend-Prod') {
-      when {
-        branch "production"
-        anyOf {
-            changeset "frontend/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
-        }
-      }
-      steps {
-        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh 'gcloud builds submit frontend --tag ${FRONTEND_PROD_GCR_PATH}:${GIT_COMMIT}'
-      }
-    }
-    stage('Deploy-Frontend-Production') {
-      when {
-        branch "production"
-        anyOf {
-            changeset "frontend/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
-        }
-      }
-      steps {
-        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/frontendprod:${GIT_COMMIT}/g" $FRONTEND_DEPLOY_PROD_FILEPATH
+        stage('Deploy-Frontend-Production') {
+          when {
+            branch "production"
+            anyOf {
+                changeset "frontend/**"
+                changeset "kubernetes/**"
+                changeset "Jenkinsfile"
+            }
+          }
+          steps {
+            git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+            sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/frontendprod:${GIT_COMMIT}/g" $FRONTEND_DEPLOY_PROD_FILEPATH
 echo "Applying latest frontend image to production"
 kubectl get pods
 kubectl delete -f $FRONTEND_DEPLOY_PROD_FILEPATH
 kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
-      }
-    }
-    stage('Deploy-Backend-Production') {
-      when {
-        branch "production"
-        anyOf {
-            changeset "berkeleytime/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
+          }
         }
-      }
-      steps {
-        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimeprod:${GIT_COMMIT}/g" $BACKEND_DEPLOY_PROD_FILEPATH
+        stage('Deploy-Backend-Production') {
+          when {
+            branch "production"
+            anyOf {
+                changeset "berkeleytime/**"
+                changeset "kubernetes/**"
+                changeset "Jenkinsfile"
+            }
+          }
+          steps {
+            git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+            sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimeprod:${GIT_COMMIT}/g" $BACKEND_DEPLOY_PROD_FILEPATH
 echo "Applying latest backend image to production"
 kubectl get pods
 kubectl delete -f $BACKEND_DEPLOY_PROD_FILEPATH
 kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
+          }
+        }
       }
     }
     stage('Build-Sphinx-Docs') {
