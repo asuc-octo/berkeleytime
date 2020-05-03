@@ -617,6 +617,7 @@ var laymanToAbbreviation = {
   "NUTRISCI": "NUSCTX",
   "BIOE": "BIO ENG",
   "BIO E": "BIO ENG",
+  "BIO P": "BIO PHY",
   "BIOENG": "BIO ENG",
   "BIO": "BIOLOGY",
   "CIVE": "CIV ENG",
