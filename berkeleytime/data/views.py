@@ -114,6 +114,7 @@ def grade_json(request, grade_ids):
         percentile_total -= get_or_zero(sections.aggregate(Sum('np')), "np__sum")
         
         percentile_ceiling = 0
+        total_unweighted = 0
         for grade, display in STANDARD_GRADES:
             grade_entry = {}
             if grade == "d":
@@ -127,6 +128,7 @@ def grade_json(request, grade_ids):
             if grade == 'p' or grade == 'np':
                 grade_entry["percentile_high"] = 0
                 grade_entry["percentile_low"] = 0
+                total_unweighted += numerator
             else:
                 grade_entry["percentile_high"] = abs(round(1.0 - percentile_ceiling, 2))
                 grade_entry["percentile_low"] = abs(round(1.0 - percentile_ceiling - percent, 2))
@@ -138,9 +140,13 @@ def grade_json(request, grade_ids):
         rtn["course_gpa"] = round(course.grade_average, 3)
         rtn["course_letter"] = course.letter_average
         weighted_letter_grade_counter, total = add_up_grades(sections)
-        rtn["section_gpa"] = round(float(sum(weighted_letter_grade_counter.values())) / total, 3)
-        rtn["section_letter"] = calculate_letter_average(rtn["section_gpa"])
-        rtn["denominator"] = total
+        if total == 0:
+            rtn["section_gpa"] = -1
+            rtn["section_letter"] = "N/A"
+        else:
+            rtn["section_gpa"] = round(float(sum(weighted_letter_grade_counter.values())) / total, 3)
+            rtn["section_letter"] = calculate_letter_average(rtn["section_gpa"])
+        rtn["denominator"] = total + total_unweighted
 
         if rtn["course_letter"] == "":
             rtn["course_letter"] = "N/A"
