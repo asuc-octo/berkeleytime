@@ -1,19 +1,15 @@
 .join {
   padding-top: $bt-navbar-height;
-  margin: 32px auto 30px auto;
+  margin: 0 auto 30px auto;
   display: flex;
   flex-direction: column;
   align-items: center;
 
-
-
   .releases-heading-button{
       justify-content: center;
-      margin: 0 0px 12px 0px;
+      margin: 20px 0px 12px 0px;
       flex-direction: row;
       padding-top: 0px;
-
-
 
       input {
         overflow: visible;
@@ -48,7 +44,7 @@
   .join-us {
 
     > h5 {
-      margin-top: 28px;
+      margin-top: 50px;
       text-align: center;
 
       font-weight: bold;
