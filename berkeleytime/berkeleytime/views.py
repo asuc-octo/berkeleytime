@@ -1,12 +1,16 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from settings import PROJECT_ROOT
-import yaml, os
+import os
+try:
+    from yaml import load, dump, CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import load, dump, Loader, Dumper
 
 members_path = os.path.join(PROJECT_ROOT, 'berkeleytime/templates/team/members.yaml')
 
 with open(members_path, 'r') as stream:
-    member_data = yaml.load(stream)
+    member_data = load(stream, Loader=Loader)
 member_data['past'] = sorted(member_data['past'], key=lambda x: x['name'])
 
 def test(request):

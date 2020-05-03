@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ListGroup, Form, Button } from 'react-bootstrap';
+import BeatLoader from 'react-spinners/BeatLoader';
 
 class BTForm extends Component {
 
@@ -36,7 +37,7 @@ class BTForm extends Component {
           }
         });
         this.setState({
-          responses: responses
+          responses: responses,
         })
       }));
   }
@@ -499,7 +500,13 @@ class BTForm extends Component {
     const { form, responses, validation, submitting, submitted } = this.state;
 
     if (form === null) {
-      return null;
+      return (
+        <BeatLoader
+          color="#579EFF"
+          size="15"
+          sizeUnit="px"
+        />
+      );
     }
 
     if (submitted) {
