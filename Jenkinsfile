@@ -84,11 +84,6 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
     stage('Build-Berkeleytime-Prod') {
       when {
         branch "production"
-        anyOf {
-            changeset "berkeleytime/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
-        }
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -98,11 +93,6 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
     stage('Build-Frontend-Prod') {
       when {
         branch "production"
-        anyOf {
-            changeset "frontend/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
-        }
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -112,11 +102,6 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
     stage('Deploy-Frontend-Production') {
       when {
         branch "production"
-        anyOf {
-            changeset "frontend/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
-        }
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
@@ -129,11 +114,6 @@ kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
     stage('Deploy-Backend-Production') {
       when {
         branch "production"
-        anyOf {
-            changeset "berkeleytime/**"
-            changeset "kubernetes/**"
-            changeset "Jenkinsfile"
-        }
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
