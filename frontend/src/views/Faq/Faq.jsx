@@ -61,15 +61,15 @@ Faq.questions = [
   },
   {
     question: 'Is anyone actively working on Berkeleytime?',
-    answer: <p>Yes, we&apos;re a student-run organization here on campus under the <a href="https://octo.asuc.org//">ASUC Office of the CTO</a>. Our team meets weekly to maintain and improve the site. You can learn more about us <Link to="/about">here</Link>!</p>,
+    answer: <p>Yes, we&apos;re a student-run organization on campus under the <a href="https://octo.asuc.org//">ASUC Office of the CTO</a>. Our team meets weekly to maintain and improve the site. You can learn more about us <Link to="/about">here</Link>!</p>,
   },
   {
     question: 'How do I apply to join the team?',
-    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up for recruitment updates <a href="/join">here</a>. Keep an eye out on our website and our <a href="https://www.facebook.com/berkeleytime/">Facebook page</a> for updates.</p>,
+    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up for <a href="/join">recruitment updates</a>. Also, keep an eye out on our <a href="https://www.facebook.com/berkeleytime/">Facebook page</a> for recruitment events.</p>,
   },
   {
     question: 'I want to help user test new features!',
-    answer: <p>We love to hear it! You can sign up to get user testing opportunities <a href="/usertesting">here</a>.</p>,
+    answer: <p>We love to hear it! You can sign up to receive <a href="/usertesting">user testing opportunity updates</a>.</p>,
   },
   {
     question: 'Berkeleytime is down/I found a bug!',
@@ -77,7 +77,7 @@ Faq.questions = [
   },
   {
     question: 'Can I access your API for a project I’m working on?',
-    answer: <p>Yes! Our backend API is officially open and available for anyone to use. You can read the documentation <a href="/apidocs">here</a>.</p>,
+    answer: <p>Yes! Our <a href="/apidocs">backend API</a> is officially open and available for anyone to use.</p>,
   },
   {
     question: 'How do I give feedback about the product?',
