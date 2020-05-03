@@ -39,11 +39,16 @@ class Faq extends PureComponent {
 Faq.questions = [
   {
     question: 'Where does Berkeleytime get its data? Is it accurate?',
-    answer: <p>We source all our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System</a>&apos;s Course and Class APIs. We source grade data from <a className="link" href="https://calanswers.berkeley.edu/">CalAnswers</a>. Let us know if anything seems off!</p>,
+    answer: <p>We source all our historic course and enrollment data directly from Berkeley
+      <a href="https://sis.berkeley.edu/">Student Information System</a>&apos;s Course and Class APIs. We source grade
+      data from <a className="link" href="https://calanswers.berkeley.edu/">CalAnswers</a>. Let us know if anything seems off!</p>,
   },
   {
     question: 'Why does an enrollment chart show more than 100% students enrolled?',
-    answer: <p>This is not a bug; throughout the semester, professors or department admins may choose to expand the class to accommodate more students, which exceeds the original enrollment cap. Hence, commonly expanded classes may show above 100% enrollment as students add and remove the class from their schedules. </p>,
+    answer: <p>This is not a bug; the percent enrolled graph compares the number of students enrolled at a given time to the current
+      enrollment cap of the class. Throughout the semester, professors or department admins may choose to decrease the class
+      size below the number of students enrolled to limit further enrollment. Hence, some classes may show over 100%
+      enrollment at certain points in the enrollment timeline. </p>,
   },
   {
     question: 'How can I contact the Berkeleytime team?',
@@ -61,11 +66,15 @@ Faq.questions = [
   },
   {
     question: 'Is anyone actively working on Berkeleytime?',
-    answer: <p>Yes, we&apos;re a student-run organization on campus under the <a href="https://octo.asuc.org//">ASUC Office of the CTO</a>. Our team meets weekly to maintain and improve the site. You can learn more about us <Link to="/about">here</Link>!</p>,
+    answer: <p>Yes, we&apos;re a student-run organization on campus under the <a href="https://octo.asuc.org//">ASUC
+      Office of the CTO</a>. Our team meets weekly to maintain and improve the site. You can learn more about us
+      <Link to="/about">here</Link>!</p>,
   },
   {
     question: 'How do I apply to join the team?',
-    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up for <a href="/join">recruitment updates</a>. Also, keep an eye out on our <a href="https://www.facebook.com/berkeleytime/">Facebook page</a> for recruitment events.</p>,
+    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up for
+      <a href="/join">recruitment updates</a>. Also, keep an eye out on our <a href="https://www.facebook.com/berkeleytime/">
+        Facebook page</a> for recruitment events.</p>,
   },
   {
     question: 'I want to help user test new features!',
@@ -73,7 +82,8 @@ Faq.questions = [
   },
   {
     question: 'Berkeleytime is down/I found a bug!',
-    answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting a <Link to="/bugs">bug report</Link>, and one of our on-call engineers will try to get to it as soon as possible.</p>,
+    answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting a <Link to="/bugs">
+      bug report</Link>, and one of our on-call engineers will try to get to it as soon as possible.</p>,
   },
   {
     question: 'Can I access your API for a project I’m working on?',
@@ -81,7 +91,8 @@ Faq.questions = [
   },
   {
     question: 'How do I give feedback about the product?',
-    answer: <p>Feel free to fill out our <Link to="/bugs" className="link">feedback form</Link>. You can also email us at <a href="mailto: octo.berkeley@asuc.org">octo.berkeley@asuc.org</a>, and we&apos;ll respond as soon as we can.</p>,
+    answer: <p>Feel free to fill out our <Link to="/bugs" className="link">feedback form</Link>. You can also email us
+      at <a href="mailto: octo.berkeley@asuc.org">octo.berkeley@asuc.org</a>, and we&apos;ll respond as soon as we can.</p>,
   },
 ];
 
