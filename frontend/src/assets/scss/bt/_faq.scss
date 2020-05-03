@@ -45,7 +45,7 @@
       p {
         font-weight: 600;
       }
-      
+
       span {
         width: 24px;
         margin-left: 12px;
@@ -55,38 +55,39 @@
         font-weight: 600;
         color: $bt-primary;
       }
-      
+
       .faq-question-text {
         line-height: 150%;
-  
+
          @include mobile {
            padding-right: 50px;
          }
-  
+
         .faq-question-icon {
           position: absolute;
           right: 0px;
           @include mobile {
             right: 10px;
           }
-  
+
           font-size: 25px;
           color: $bt-primary;
         }
       }
     }
-  
+
     .faq-answer {
       padding-top: 10px;
 
       .collapse-text {
         line-height: 180%;
+        margin-bottom: 20px;
       }
-  
+
       a {
         color: $bt-primary;
         text-decoration: none;
-  
+
         &:hover {
           text-decoration: underline;
         }
