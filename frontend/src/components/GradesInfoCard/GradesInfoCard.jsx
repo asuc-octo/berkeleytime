@@ -41,7 +41,7 @@ class GradesInfoCard extends PureComponent {
         </h6>
         <div className="course-average">
           <span className={courseLetter ? getGradeColor(courseLetter) : ""}>{ courseLetter }</span>
-          ({ courseGPA })
+         { courseGPA !== -1 ? ({ courseGPA }) : null }
         </div>
         <h6>Section Average
           <span data-tip={sectionAvgText} data-for="sectionAvg">
@@ -52,7 +52,7 @@ class GradesInfoCard extends PureComponent {
         </h6>
         <div className="section-average">
           <span className={sectionLetter ? getGradeColor(sectionLetter) : ""}>{ sectionLetter }</span>
-          ({ sectionGPA })
+          { sectionGPA !== -1 ? ({ sectionGPA }) : null }
         </div>
         {selectedGrade !== undefined && selectedGrade !== null && selectedPercentiles !== undefined && selectedPercentiles !== null && (
           <div>
