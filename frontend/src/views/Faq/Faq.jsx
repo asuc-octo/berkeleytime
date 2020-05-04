@@ -39,9 +39,9 @@ class Faq extends PureComponent {
 Faq.questions = [
   {
     question: 'Where does Berkeleytime get its data? Is it accurate?',
-    answer: <p>We source all our historic course and enrollment data directly from Berkeley
-      <a href="https://sis.berkeley.edu/">Student Information System</a>&apos;s Course and Class APIs. We source grade
-      data from <a className="link" href="https://calanswers.berkeley.edu/">CalAnswers</a>. Let us know if anything seems off!</p>,
+    answer: <p>We source all our historic course and enrollment data directly from
+      Berkeley's <a href="https://sis.berkeley.edu/">Student Information System</a>&apos;s Course and Class APIs. We source grade
+      data from <a href="https://calanswers.berkeley.edu/">CalAnswers</a>. Let us know if anything seems off!</p>,
   },
   {
     question: 'Why does an enrollment chart show more than 100% students enrolled?',
@@ -67,27 +67,27 @@ Faq.questions = [
   {
     question: 'Is anyone actively working on Berkeleytime?',
     answer: <p>Yes, we&apos;re a student-run organization on campus under the <a href="https://octo.asuc.org//">ASUC
-      Office of the CTO</a>. Our team meets weekly to maintain and improve the site. You can learn more about us
-      <Link to="/about">here</Link>!</p>,
+      Office of the CTO</a>. Our team meets weekly to maintain and improve the site. You can learn more about
+      us <Link to="/about">here</Link>!</p>,
   },
   {
     question: 'How do I apply to join the team?',
-    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up for
-      <a href="/join">recruitment updates</a>. Also, keep an eye out on our <a href="https://www.facebook.com/berkeleytime/">
+    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up
+      for <Link to="/join">recruitment updates</Link>. Also, keep an eye out on our <a href="https://www.facebook.com/berkeleytime/">
         Facebook page</a> for recruitment events.</p>,
   },
   {
     question: 'I want to help user test new features!',
-    answer: <p>We love to hear it! You can sign up to receive <a href="/usertesting">user testing opportunity updates</a>.</p>,
+    answer: <p>We love to hear it! You can sign up to receive <Link to="/usertesting">user testing opportunity updates</Link>.</p>,
   },
   {
     question: 'Berkeleytime is down/I found a bug!',
-    answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting a <Link to="/bugs">
+    answer: <p>Remain calm! If you find an issue with the site or data, please let us know by submitting a <Link to="/bugs" className="link">
       bug report</Link>, and one of our on-call engineers will try to get to it as soon as possible.</p>,
   },
   {
     question: 'Can I access your API for a project I’m working on?',
-    answer: <p>Yes! Our <a href="/apidocs">backend API</a> is officially open and available for anyone to use.</p>,
+    answer: <p>Yes! Our <Link to="/apidocs">backend API</Link> is officially open and available for anyone to use.</p>,
   },
   {
     question: 'How do I give feedback about the product?',
