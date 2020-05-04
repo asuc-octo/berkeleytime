@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Jumbotron from '../../components/Landing/Jumbotron';
 import Explore from '../../components/Landing/Explore';
 import Mission from '../../components/Landing/Mission';
-import Sponsors from '../../components/Landing/Sponsors';
+import Blurbs from '../../components/Landing/Blurbs';
 // import Modal from '../../components/Landing/Modal';
 
 class Landing extends PureComponent {
@@ -20,7 +20,7 @@ class Landing extends PureComponent {
           />
           <Explore />
           <Mission />
-          <Sponsors />
+          <Blurbs />
         </div>
       </div>
     );
