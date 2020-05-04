@@ -12,14 +12,6 @@ except ImportError:
     from yaml import load, dump, Loader, Dumper
 
 
-def get_yaml_questions(loaded_yaml):
-    question_mapping = {}
-    questions = loaded_yaml["questions"]
-    for count, question in enumerate(questions,1):
-        question_mapping["Question "+str(count)] = question["type"]
-    return question_mapping
-
-
 # Global Variables
 scopes = [
     'https://spreadsheets.google.com/feeds',

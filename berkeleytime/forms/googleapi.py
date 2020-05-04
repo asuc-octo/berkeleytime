@@ -158,7 +158,6 @@ def check_yaml_response(config_name, responses):
 
 	sheet_responses = []
 	sheet_responses.append(datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S"))
-	question_mapping = get_yaml_questions(loaded_yaml)
 	for q_numb in range(0, len(loaded_yaml["questions"])):
 		question_id = "Question " + str(q_numb + 1)
 		if question_id in responses:
