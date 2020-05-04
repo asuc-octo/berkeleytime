@@ -174,7 +174,6 @@ class ClassDescription extends Component {
     if (instr === null) return;
     for (let egg in easterEggImages) {
       if (instr.indexOf(egg) !== -1) {
-        console.log(egg);
         return {
           ':hover': {
             cursor: `url(${easterEggImages[egg]}), auto`,
