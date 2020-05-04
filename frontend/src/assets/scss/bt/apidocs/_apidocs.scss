@@ -265,12 +265,26 @@
         border: none;
     }
 
-    .responses-inner h4, .swagger-ui .responses-inner h5 {
+    .highlight-code {
+      margin-bottom: 28px;
+    }
+
+    .responses-inner {
+      h4 {
         font-size: 14px;
-        margin: 24px 0 12px 0;
+        margin: 24px 0px 12px 0px;
         font-family: Inter;
         color: #3b4151;
         font-weight: 600;
+      }
+
+      h5 {
+        font-size: 14px;
+        margin: 10px 0px 10px;
+        font-family: Inter;
+        color: #3b4151;
+        font-weight: 600;
+      }
     }
 
     h4.opblock-title {
@@ -293,7 +307,7 @@
     }
 
     a.tablinks  {
-      font-size: 16px;
+      font-size: 14px;
     }
 
     table thead tr td {
@@ -499,6 +513,18 @@
       color: $bt-primary;
       &:hover {
         text-decoration: underline;
+      }
+    }
+
+    .download-contents {
+      padding: 4px 2px;
+      width: 90px;
+      background: #656b80;
+      transition: .2s;
+      
+      &:hover {
+        background: #868eaa;
+
       }
     }
 
