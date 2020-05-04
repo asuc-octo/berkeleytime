@@ -139,6 +139,8 @@
     .table-container {
       flex: 1;
       overflow-y: auto;
+      right: .75rem;
+      position: relative;
 
       table {
         max-width: 100%;
@@ -146,8 +148,6 @@
         margin-bottom: 0;
         color: $bt-base-text;
         font-weight: normal;
-        right: .75rem;
-        position: relative;
 
         tr {
           transition: .2s;
