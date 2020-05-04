@@ -146,6 +146,8 @@
         margin-bottom: 0;
         color: $bt-base-text;
         font-weight: normal;
+        right: .75rem;
+        position: relative;
 
         tr {
           transition: .2s;
@@ -159,7 +161,7 @@
             font-weight: 700;
             border-top: none;
             border-bottom: none;
-            padding: 0.75rem 0.75rem 0.75rem 0;
+            padding: 0.75rem;
             position: sticky;
             background: white;
             transition: .2s;
@@ -170,7 +172,7 @@
 
         td {
           font-weight: 400;
-          padding: 0.75rem 0.75rem 0.75rem 0;
+          padding: 0.75rem;
         }
       }
 
