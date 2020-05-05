@@ -4,6 +4,10 @@ info:
   description: |-
     Our design team runs user testing sessions when we're developing new features. We love watching students interact with our prototypes because it helps us gain a deeper understanding of how we can improve the product. If you sign up, we will send you opportunities to participate in our user testing sessions!
   googlesheet_link: "https://docs.google.com/spreadsheets/d/1ib7GfR0XQLB2H9OYW1z1UcCPGxkd4pUIG7q8EC2wYhw/edit#gid=0"
+  hooks:
+    - name: auto_notice
+      subject: "Someone signed up for BT User Testing!"
+      to: ygk@berkeley.edu
 questions:
   - title: "Full Name"
     required: True
