@@ -5,6 +5,14 @@ info:
   description: "For Testing Use"
   googlesheet_link: "https://docs.google.com/spreadsheets/d/1WEy7XNrndAqOeQ6YHcQzUEuuqrp07xL-DpXf9Hs9m8A/edit#gid=0"
   drive_folder_name: "InitialTests"
+  hooks:
+    - name: auto_confirm
+      question: "Question 1"
+      subject: "An example confirmation email"
+      body: "We received the following from you:"
+    - name: auto_notice
+      subject: "An example notice email"
+      to: octo.berkeleytime@asuc.org
 questions:
   - title: "Test Q1"
     description: "Enter an email."

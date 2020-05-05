@@ -501,11 +501,13 @@ class BTForm extends Component {
 
     if (form === null) {
       return (
-        <BeatLoader
-          color="#579EFF"
-          size="15"
-          sizeUnit="px"
-        />
+        <div className="form-loader">
+          <BeatLoader
+            color="#579EFF"
+            size="15"
+            sizeUnit="px"
+          />
+        </div>
       );
     }
 
