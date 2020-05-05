@@ -3,7 +3,7 @@ import requests
 from utils import get_config_dict, send_message
 
 
-def create_formatted_message(response):
+def create_formatted_message(response, breaks='\n'):
     config = get_config_dict(response["Config"])
 
     question_mapping = {}
@@ -13,9 +13,9 @@ def create_formatted_message(response):
     items = []
     for question in config["questions"]:
         if question_mapping[question["title"]] in response:
-            items.append("<strong>{}</strong>\n{}".format(question["title"], response[question_mapping[question["title"]]]))
+            items.append("<strong>{}</strong>{}{}".format(question["title"], breaks, response[question_mapping[question["title"]]]))
 
-    return "\n\n".join(items)
+    return "{}{}".format(breaks, breaks).join(items)
 
 
 def auto_github_issue(response, hook_config):
@@ -34,25 +34,28 @@ def auto_github_issue(response, hook_config):
     requests.post(ghURL+ghToken, json=payload)
 
 
-def auto_email(response, hook_config):
+def auto_notice(response, hook_config):
     """
     This hook sends an email to one or a list of people whenever a response is filled out.
-    NOT COMPLETE. DO NOT USE.
     """
-    send_message(hook_config["to"], hook_config["subject"], create_formatted_message(response))
+    msg = create_formatted_message(response, breaks="<br>")
+    msg = "The form {} received a new response".format(response["Config"]) + "<br><br>" + msg
+    send_message(hook_config["to"], hook_config["subject"], msg)
 
 
 def auto_confirm(response, hook_config):
     """
     This hook sends an email to the responder. It uses the email located at the question
-    hook_config["question"].
-    NOT COMPLETE. DO NOT USE.
+    hook_config["question"] and has an option intro message hook_config["body"]
     """
     to = response[hook_config["question"]]
-    send_message(to, hook_config["subject"], create_formatted_message(response))
+    msg = create_formatted_message(response, breaks="<br>")
+    if "body" in hook_config:
+        msg = hook_config["body"] + "<br><br>" + msg
+    send_message(to, hook_config["subject"], msg)
 
 
-HOOKS = [auto_github_issue, auto_email, auto_confirm]
+HOOKS = [auto_github_issue, auto_notice, auto_confirm]
 
 HOOKS_MAP = {f.__name__ : f for f in HOOKS}
 

@@ -4,6 +4,7 @@ import base64
 from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.discovery import build
 from email.mime.text import MIMEText
+from smtplib import SMTP
 
 from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
 try:
@@ -24,7 +25,9 @@ CACHED_CONFIGS = {}
 # Raises some error, need to find
 credentials = ServiceAccountCredentials.from_json_keyfile_name(os.environ["GOOGLE_APPLICATION_CREDENTIALS"], scopes)
 gc = gspread.authorize(credentials)
-GMAIL_SERVICE = build('gmail', 'v1', credentials=credentials)
+GMAIL_SERVICE = SMTP('smtp.gmail.com', port=587)
+GMAIL_SERVICE.starttls()
+GMAIL_SERVICE.login(os.environ["GOOGLE_EMAIL"], os.environ["GOOGLE_PASS"])
 DRIVE_SERVICE = build('drive', 'v3', credentials=credentials)
 
 for config in os.listdir('forms/configs'):
@@ -47,27 +50,19 @@ def get_config_dict(config):
         return load(open("forms/configs/{}.yaml".format(config)), Loader=Loader)
 
 
-def send_message(service, user_id, message):
-    try:
-        message = service.users().messages().send(userId=user_id, body=message).execute()
-        return message
-    except Exception as error:
-        print 'An error occurred: %s' % error
-
-
 def send_message(to, subject, message_text):
     sender = "octo.berkeleytime@asuc.org"
-    message = MIMEText(message_text)
+    message = MIMEText(message_text, 'html')
     if isinstance(to, list):
-        message['to'] = to = ", ".join(to)
+        message['to'] = ", ".join(to)
     else:
         message['to'] = to
+    print("Sending an email to " + message['to'])
     message['from'] = sender
     message['subject'] = subject
-    toSend = {'raw': base64.urlsafe_b64encode(message.as_string())}
 
     try:
-        message = GMAIL_SERVICE.users().messages().send(userId="octo.berkeleytime@asuc.org", body=toSend).execute()
+        message = GMAIL_SERVICE.sendmail("octo.berkeleytime@asuc.org", message['to'], message.as_string())
         return message
     except Exception as error:
         print 'An error occurred: %s' % error
