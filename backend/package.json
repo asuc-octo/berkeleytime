@@ -35,6 +35,7 @@
     "graphql": "^15.0.0",
     "helmet": "^3.22.0",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^1.0.0-rc.1"
+    "type-graphql": "^1.0.0-rc.1",
+    "typedi": "^0.8.0"
   }
 }
