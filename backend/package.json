@@ -1,0 +1,40 @@
+{
+  "name": "ts-graphql-starter",
+  "version": "1.0.0",
+  "description": "A GraphQL API starter using NodeJS, TypeScript and Apollo Server",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
+    "build": "rimraf ./build && tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rieranthony/ts-graphql-starter.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rieranthony/ts-graphql-starter/issues"
+  },
+  "homepage": "https://github.com/Rieranthony/ts-graphql-starter#readme",
+  "devDependencies": {
+    "@types/helmet": "0.0.46",
+    "@types/node": "^13.13.5",
+    "rimraf": "^3.0.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.8.3"
+  },
+  "dependencies": {
+    "apollo-server-express": "^2.13.0",
+    "body-parser": "^1.19.0",
+    "class-validator": "^0.12.2",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "graphql": "^15.0.0",
+    "helmet": "^3.22.0",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.0.0-rc.1"
+  }
+}
