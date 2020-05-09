@@ -1,4 +1,4 @@
-    import React from 'react';
+import React from 'react';
 import asuc_logo from '../../assets/img/images/landing/asuc_logo.png';
 import stf_logo from '../../assets/img/images/landing/stf_logo.jpeg';
 
