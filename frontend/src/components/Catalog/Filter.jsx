@@ -29,13 +29,6 @@ export class FilterSidebar extends Component {
     this.departmentDefault = null;
     this.classLevelOptions = playlists.levelsPlaylist;
     this.classLevelDefault = [];
-    for (const classLevel of this.classLevelOptions) {
-      if (classLevel.label === 'Lower Division' ||
-          classLevel.label === 'Upper Division' ||
-          classLevel.label === 'Graduate') {
-        this.classLevelDefault.push(classLevel);
-      }
-    }
     this.semesterOptions = playlists.semestersPlaylist;
     this.semesterDefault = playlists.semestersPlaylist[0];
 
