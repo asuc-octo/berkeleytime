@@ -1,4 +1,5 @@
-import { Todo, NewTodoInput } from "../../entities";
+import { Todo } from "../../entities";
+import { NewTodoInput } from "./input";
 
 export default class TodoService {
   public async getById(id: string): Promise<Todo> {

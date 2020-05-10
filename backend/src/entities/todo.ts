@@ -1,5 +1,5 @@
-import { ObjectType, Field, ID, Int, InputType } from "type-graphql";
-import { MaxLength, MinLength } from "class-validator";
+import { ObjectType, Field, ID } from "type-graphql";
+
 // You can add here your ORM declaration (TypeORM, TypeGoose...)
 
 @ObjectType()
@@ -15,12 +15,4 @@ export class Todo {
 
   @Field()
   isDone: boolean;
-}
-
-@InputType()
-export class NewTodoInput {
-  @Field()
-  @MaxLength(300)
-  @MinLength(1)
-  content: string;
 }

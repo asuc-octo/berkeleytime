@@ -1,8 +1,9 @@
 import { Resolver, Arg, Query, Mutation } from "type-graphql";
 import { Service } from "typedi";
 
-import { Todo, NewTodoInput } from "../../entities";
+import { Todo } from "../../entities";
 import TodoService from "./service";
+import { NewTodoInput } from "./input";
 
 @Service()
 @Resolver((of) => Todo)
