@@ -1,0 +1,24 @@
+version: "3"
+services:
+  # MongoDB container
+  database:
+    image: "mongo:latest"
+    container_name: "mongo-db-database"
+    environment:
+      - MONGO_INITDB_DATABASE=mongo-test-db
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    ports:
+      - "27017-27019:27017-27019"
+    volumes:
+      - ./data/mongo-db-volume:/data/db
+    restart: always
+  # Redis container
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis_data:/data
+    entrypoint: redis-server --appendonly yes
+    restart: always
