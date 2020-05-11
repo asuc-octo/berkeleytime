@@ -1,12 +1,26 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+// Safely get the environment variable in the process
+const env = (name: string): string => {
+  const value = process.env[name];
+
+  if (!value) {
+    throw new Error(`Missing: process.env['${name}'].`);
+  }
+
+  return value;
+};
+
 export interface Config {
   port: number;
   graphqlPath: string;
+  isDev: boolean;
 }
 
+// All your secrets, keys go here
 export const config: Config = {
-  port: process.env.PORT ? +process.env.PORT : 3000,
-  graphqlPath: process.env.GRAPHQL_PATH || "/graphql",
+  port: +env("PORT"),
+  graphqlPath: env("GRAPHQL_PATH"),
+  isDev: env("NODE_ENV") === "development",
 };

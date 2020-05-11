@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
-    "build": "rimraf ./build && tsc"
+    "build": "rimraf ./build && tsc",
+    "start": "npm run build && node ./build/index.js"
   },
   "repository": {
     "type": "git",

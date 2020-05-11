@@ -1,6 +1,6 @@
 # ts-graphql-starter
 
-A GraphQL API starter using NodeJS, TypeScript and Apollo Server
+This repo aimed to be used as a starter kit for your next GraphQL api project.
 
 ## Folder structure
 
@@ -33,3 +33,24 @@ A GraphQL API starter using NodeJS, TypeScript and Apollo Server
 │           ├── resolver.ts    # GraphQL revolver
 │           └── service.ts     # Business logic of your app
 ```
+
+## How to use
+
+- Duplicate the `.env.example` file and rename it `.env`
+- Run `npm install`
+
+#### Start server for development
+
+- Run `npm run start:dev`
+
+#### Build and start server for production
+
+- Run `npm start`
+
+#### Build
+
+- Run `npm build`
+
+#### GraphQL Playground
+
+- `http://localhost:5000/graphql`
