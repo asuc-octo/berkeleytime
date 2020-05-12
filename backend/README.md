@@ -1,6 +1,16 @@
 # ts-graphql-starter
 
-This repo aimed to be used as a starter kit for your next GraphQL api project.
+This repo aimed to be used as a starter kit for your next GraphQL api project. The structure as been heavily inspired by the SOLID principle, you can read more about it here: https://dev.to/santypk4/bulletproof-node-js-project-architecture-4epf
+
+Recommendations and pull requests are always welcome to improve this starter kit!
+
+#### Technologies used
+
+- NodeJS and TypeScript
+- GraphQL with Apollo Server and Type GraphQL
+- MongoDB Database integrated with Mongoose/TypeGoose
+- Jest for testing
+- Docker (Not mandatory)
 
 ## Folder structure
 
@@ -39,6 +49,15 @@ This repo aimed to be used as a starter kit for your next GraphQL api project.
 - Duplicate the `.env.example` file and rename it `.env`
 - Run `npm install`
 
+#### Start mongoDB with docker-compose
+
+- Make sure you have docker installed on your machine
+- Run `docker-compose up`
+
+This will spin a mongoDB instance locally, you can also add in the future other stuff like redis, elastic search ...
+
+- Run `docker-compose down` to remove the running containers
+
 #### Start server for development
 
 - Run `npm run start:dev`
@@ -47,10 +66,12 @@ This repo aimed to be used as a starter kit for your next GraphQL api project.
 
 - Run `npm start`
 
-#### Build
+#### Run integration tests
 
-- Run `npm build`
+Integration tests are done with Jest, Apollo Server Testing and MongoDB Memory Server. This way every test are testing our entire logic with every graphQL request, from our resolvers to our models!
 
-#### GraphQL Playground
+- Run 'npm test'
+
+#### Access to the GraphQL Playground (Dev only)
 
 - `http://localhost:5000/graphql`
