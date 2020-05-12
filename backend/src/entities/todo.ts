@@ -1,18 +1,23 @@
 import { ObjectType, Field, ID } from "type-graphql";
-
-// You can add here your ORM declaration (TypeORM, TypeGoose...)
+import { prop } from "@typegoose/typegoose";
+import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
 @ObjectType()
-export class Todo {
-  @Field((type) => ID)
-  id: string;
+export class Todo extends TimeStamps {
+  @Field(() => ID)
+  _id: string;
 
-  @Field()
-  content: string;
-
-  @Field()
+  @Field(() => Date)
   createdAt: Date;
 
+  @Field(() => Date)
+  updatedAt: Date;
+
+  @prop()
   @Field()
-  isDone: boolean;
+  content!: string;
+
+  @prop({ default: false })
+  @Field()
+  isDone!: boolean;
 }

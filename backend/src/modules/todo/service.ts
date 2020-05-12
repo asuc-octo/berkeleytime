@@ -1,22 +1,24 @@
+import { Service } from "typedi";
+
+import TodoModel from "./model";
 import { Todo } from "../../entities";
 import { NewTodoInput } from "./input";
 
+@Service() // Dependencies injection
 export default class TodoService {
-  public async getById(id: string): Promise<Todo> {
-    return {
-      id,
-      isDone: false,
-      content: "test",
-      createdAt: new Date(),
-    };
+  constructor(private readonly todoModel: TodoModel) {}
+
+  public async getById(_id: string): Promise<Todo | null> {
+    return this.todoModel.getById(_id);
   }
 
   public async addTodo(data: NewTodoInput): Promise<Todo> {
-    return {
-      id: "test",
-      content: data.content,
-      createdAt: new Date(),
-      isDone: false,
-    };
+    const newTodo = await this.todoModel.create(data);
+
+    // Business logic goes here
+    // Example:
+    // Trigger push notification, analytics, ...
+
+    return newTodo;
   }
 }

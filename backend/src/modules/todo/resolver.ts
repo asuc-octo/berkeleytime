@@ -5,7 +5,11 @@ import { Todo } from "../../entities";
 import TodoService from "./service";
 import { NewTodoInput } from "./input";
 
-@Service()
+/*
+  IMPORTANT: Your business logic must be in the service!
+*/
+
+@Service() // Dependencies injection
 @Resolver((of) => Todo)
 export default class TodoResolver {
   constructor(private readonly todoService: TodoService) {}
