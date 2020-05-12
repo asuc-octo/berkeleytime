@@ -2,7 +2,7 @@
 
 This repo aimed to be used as a starter kit for your next GraphQL api project. The structure as been heavily inspired by the SOLID principle, you can read more about it here: https://dev.to/santypk4/bulletproof-node-js-project-architecture-4epf
 
-Recommendations and pull requests are always welcome to improve this starter kit!
+> Recommendations and pull requests are always welcome to improve this starter kit!
 
 #### Technologies used
 
@@ -52,11 +52,11 @@ Recommendations and pull requests are always welcome to improve this starter kit
 #### Start mongoDB with docker-compose
 
 - Make sure you have docker installed on your machine
-- Run `docker-compose up`
-
-This will spin a mongoDB instance locally, you can also add in the future other stuff like redis, elastic search ...
-
+- Run `docker-compose up` to start the containers
 - Run `docker-compose down` to remove the running containers
+
+> This will spin up a mongoDB instance locally, you can also add in the future other stuff like redis, elastic search ...
+> If using docker doesn't appeal you, feel free to install mondoDB manually or to use a service like mongoDB Atlas instead.
 
 #### Start server for development
 
@@ -68,9 +68,9 @@ This will spin a mongoDB instance locally, you can also add in the future other 
 
 #### Run integration tests
 
-Integration tests are done with Jest, Apollo Server Testing and MongoDB Memory Server. This way every test are testing our entire logic with every graphQL request, from our resolvers to our models!
-
 - Run 'npm test'
+
+> Integration tests are done with Jest, Apollo Server Testing and MongoDB Memory Server. This way every test are testing our entire logic with every graphQL request, from our resolvers to our models!
 
 #### Access to the GraphQL Playground (Dev only)
 
