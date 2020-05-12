@@ -1,6 +1,6 @@
 # ts-graphql-starter
 
-This repo aimed to be used as a starter kit for your next GraphQL api project. The structure as been heavily inspired by the SOLID principle, you can read more about it here: https://dev.to/santypk4/bulletproof-node-js-project-architecture-4epf
+This repo is aiming to be used as a starter kit for your next GraphQL api project. The structure as been heavily inspired by the SOLID principle, you can read more about it here: https://dev.to/santypk4/bulletproof-node-js-project-architecture-4epf
 
 > Recommendations and pull requests are always welcome to improve this starter kit!
 
