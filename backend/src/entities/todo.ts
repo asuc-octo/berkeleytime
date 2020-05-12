@@ -1,11 +1,12 @@
 import { ObjectType, Field, ID } from "type-graphql";
 import { prop } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
+import { ObjectId } from "mongodb";
 
 @ObjectType()
 export class Todo extends TimeStamps {
-  @Field(() => ID)
-  _id: string;
+  @Field()
+  readonly _id: ObjectId;
 
   @Field(() => Date)
   createdAt: Date;

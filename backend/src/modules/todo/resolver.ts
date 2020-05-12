@@ -1,5 +1,6 @@
-import { Resolver, Arg, Query, Mutation } from "type-graphql";
+import { Resolver, Arg, Query, Mutation, ID } from "type-graphql";
 import { Service } from "typedi";
+import { ObjectId } from "mongodb";
 
 import { Todo } from "../../entities";
 import TodoService from "./service";
@@ -15,15 +16,17 @@ export default class TodoResolver {
   constructor(private readonly todoService: TodoService) {}
 
   @Query((returns) => Todo)
-  async get(@Arg("id") id: string) {
+  async getTodo(@Arg("id") id: ObjectId) {
     const todo = await this.todoService.getById(id);
 
     return todo;
   }
 
   @Mutation((returns) => Todo)
-  async addTodo(@Arg("newTodoData") newTodoData: NewTodoInput): Promise<Todo> {
-    const todo = await this.todoService.addTodo(newTodoData);
+  async createTodo(
+    @Arg("createTodoData") createTodoData: NewTodoInput
+  ): Promise<Todo> {
+    const todo = await this.todoService.addTodo(createTodoData);
     return todo;
   }
 }

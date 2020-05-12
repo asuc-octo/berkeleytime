@@ -6,7 +6,9 @@
   "scripts": {
     "start:dev": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
     "build": "rimraf ./build && tsc",
-    "start": "npm run build && node ./build/index.js"
+    "start": "npm run build && node ./build/index.js",
+    "test": "jest --watch",
+    "coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -20,9 +22,14 @@
   },
   "homepage": "https://github.com/Rieranthony/ts-graphql-starter#readme",
   "devDependencies": {
+    "@shelf/jest-mongodb": "^1.1.5",
     "@types/helmet": "0.0.46",
+    "@types/jest": "^25.2.1",
     "@types/node": "^13.13.5",
+    "apollo-server-testing": "^2.13.1",
+    "jest": "^26.0.1",
     "rimraf": "^3.0.2",
+    "ts-jest": "^25.5.1",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
   },

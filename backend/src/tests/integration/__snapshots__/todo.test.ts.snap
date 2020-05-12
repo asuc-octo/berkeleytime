@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Todo should create a todo 1`] = `
+Object {
+  "data": Object {
+    "createTodo": Object {
+      "content": "Test todo.",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
+
+exports[`Todo should get a todo 1`] = `
+Object {
+  "data": Object {
+    "getTodo": Object {
+      "content": "todo 1",
+    },
+  },
+  "errors": undefined,
+  "extensions": undefined,
+  "http": Object {
+    "headers": Headers {
+      Symbol(map): Object {},
+    },
+  },
+}
+`;
