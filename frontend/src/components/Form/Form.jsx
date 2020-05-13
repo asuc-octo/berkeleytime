@@ -115,7 +115,9 @@ class BTForm extends Component {
             ? alert('There was an internal error with your submission. Please contact octo.berkeleytime@asuc.org. Error: ' + data['error'])
             : this.setState({
                 submitted: true,
-              })
+              }, () => {
+                window.scroll({top: 0, left: 0, behavior: 'smooth' })
+            })
         ).then(() => this.setState({submitting: false}))
   }
 
