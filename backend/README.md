@@ -22,6 +22,8 @@ This repo is aiming to be used as a starter kit for your next GraphQL api projec
 │   ├── bootstrap              # Bootstrapping and loading of the API dependencies (Express, Apollo, Database, ...)
 │   ├── entities               # Used to generate typing, schemas and ORM models
 │   ├── modules                # Business logic of the app divided by domain (eg: User, Post, Todo)
+│   ├── tests                  # Where all our testing strategy lives
+│   ├── utils                  # Collection of utils function that we use in the project
 │   ├── config.ts              # Config of the app, sourced by environment variables
 │   └── index.ts               # Entry point of the API
 │
