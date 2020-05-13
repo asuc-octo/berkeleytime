@@ -32,7 +32,7 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "^3.4.1",
     "react-select": "^3.1.0",
-    "react-select-virtualized": "^2.5.3",
+    "react-select-virtualized": "2.5.0",
     "react-spinners": "^0.6.1",
     "react-tooltip": "^4.2.3",
     "react-virtualized": "^9.21.2",

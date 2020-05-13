@@ -93,13 +93,12 @@ class EnrollmentSearchBar extends Component {
       return []
     }
 
-    let options = courses.map(course => ({
+    return courses.map(course => ({
       value: course.id,
       label: `${course.abbreviation} ${course.course_number}`,
       course: course,
     }));
 
-    return options;
   }
 
   capitalize(str) {
