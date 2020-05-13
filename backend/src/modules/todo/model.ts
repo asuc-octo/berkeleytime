@@ -16,8 +16,6 @@ export default class TodoModel {
   async create(data: NewTodoInput): Promise<Todo> {
     const todo = new TodoMongooseModel(data);
 
-    console.log("todo", todo);
-
     return todo.save();
   }
 }

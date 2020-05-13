@@ -27,6 +27,10 @@ This repo is aiming to be used as a starter kit for your next GraphQL api projec
 │   ├── config.ts              # Config of the app, sourced by environment variables
 │   └── index.ts               # Entry point of the API
 │
+├── jest-mongodb-config.js     # Optional if you don't use MongoDB!
+├── jest.config.js             # Jest configuration
+├── docker-compose.yml         # Docker compose configuration (Optional !)
+├── .env.example               # Example of what your .env file should look like
 ├── .gitignore                 # Standard gitignore file
 ├── package.json               # Node module dependencies
 ├── README.md                  # Simple readme file
