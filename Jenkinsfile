@@ -179,5 +179,13 @@ kubectl delete -f $DATA_FETCH_FILEPATH
 kubectl apply -f $DATA_FETCH_FILEPATH'''
       }
     }
+    stage('Clean-Up-Evicted-Pods') {
+      when {
+        branch "master"
+      }
+      steps {
+        sh '''kubectl get pods | grep Evicted | awk '{print $1}' | xargs kubectl delete pod'''
+      }
+    }
   }
 }
