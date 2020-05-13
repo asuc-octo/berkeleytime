@@ -297,7 +297,7 @@ def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, y
                     course_number=course.course_number,
                     log=True,
                 )
-                new_sections = [x.enrollment._initial for x in schedules if x.section._initial["is_primary"]]
+                new_sections = [x.enrollment._initial for x in schedules if x.section._initial["is_primary"] and not x.section._initial["disabled"]]
 
             rtn["telebears"] = CORRECTED_TELEBEARS_JSON #THIS NEEDS TO BE FROM THE OTHER SEMESTER, NOT THE CURRENT SEMESTER
             rtn["telebears"]["semester"] = semester.capitalize() + " " + year
@@ -305,7 +305,7 @@ def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, y
             enrolled_max = Enrollment.objects.filter(section__in = sections, date_created = last_date).aggregate(Sum("enrolled_max"))["enrolled_max__sum"]
             waitlisted_max = Enrollment.objects.filter(section__in = sections, date_created = last_date).aggregate(Sum("waitlisted_max"))["waitlisted_max__sum"]
             rtn["enrolled_max"] = enrolled_max
-            rtn["waitlisted_max"] = enrolled_max
+            rtn["waitlisted_max"] = waitlisted_max
             dates = {d: [0, 0] for d in sections[0].enrollment_set.all().values_list("date_created", flat = True)}
             for s in sections:
                 enrollment = s.enrollment_set.filter(date_created__gte=CORRECTED_TELEBEARS["phase1_start"]).order_by("date_created")
@@ -321,11 +321,12 @@ def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, y
                 curr_d["waitlisted"] = d[1][1]
                 curr_d["day"] = (d[0] - CORRECTED_TELEBEARS["phase1_start"]).days + 1
                 curr_d["date"] = (d[0]).strftime("%m/%d/%Y-%H:%M:%S")
-                curr_d["enrolled_max"] = enrolled_max
+                curr_enrolled_max = Enrollment.objects.filter(section__in = sections, date_created=d[0]).aggregate(Sum("enrolled_max"))["enrolled_max__sum"]
+                curr_d["enrolled_max"] = curr_enrolled_max
                 curr_waitlisted_max = Enrollment.objects.filter(section__in=sections, date_created=d[0]).aggregate(Sum("waitlisted_max"))["waitlisted_max__sum"]
                 curr_d["waitlisted_max"] = curr_waitlisted_max
-                curr_d["enrolled_percent"] = round(d[1][0] / enrolled_max, 3) if enrolled_max else -1
-                curr_d["waitlisted_percent"] = round(d[1][1] / enrolled_max, 3) if curr_waitlisted_max else -1
+                curr_d["enrolled_percent"] = round(d[1][0] / curr_enrolled_max, 3) if curr_enrolled_max else -1
+                curr_d["waitlisted_percent"] = round(d[1][1] / curr_waitlisted_max, 3) if curr_waitlisted_max else -1
                 rtn["data"].append(curr_d)
 
             if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
@@ -337,6 +338,11 @@ def enrollment_aggregate_json(request, course_id, semester = CURRENT_SEMESTER, y
                 rtn["data"][-1]["waitlisted"] = last_waitlisted
                 rtn["data"][-1]["enrolled_percent"] = round(last_enrolled / enrolled_max, 3) if enrolled_max else -1
                 rtn["data"][-1]["waitlisted_percent"] = round(last_waitlisted / waitlisted_max, 3) if waitlisted_max else -1
+                rtn["data"][-1]["enrolled_max"] = enrolled_max
+                rtn["data"][-1]["waitlisted_max"] = waitlisted_max
+                rtn["enrolled_max"] = enrolled_max
+                rtn["waitlisted_max"] = waitlisted_max
+
             enrolled_outliers = [d["enrolled_percent"] for d in rtn["data"] if d["enrolled_percent"] >= 1.0]
             rtn["enrolled_percent_max"] = max(enrolled_outliers) * 1.10 if enrolled_outliers  else 1.10
             waitlisted_outliers = [d["waitlisted_percent"] for d in rtn["data"] if d["waitlisted_percent"] >= 1.0]
@@ -391,8 +397,7 @@ def enrollment_json(request, section_id):
                 course_number=course.course_number,
                 log=True,
             )
-            new_section = [x.enrollment._initial for x in schedules
-                           if x.section._initial["is_primary"] and x.section['ccn'] == section.ccn][0]
+            new_section = [x.enrollment._initial for x in schedules and x.section['ccn'] == section.ccn][0]
 
         rtn["telebears"] = CORRECTED_TELEBEARS_JSON
         enrolled_max = section.enrollment_set.all().latest("date_created").enrolled_max
