@@ -184,7 +184,7 @@ kubectl apply -f $DATA_FETCH_FILEPATH'''
         branch "master"
       }
       steps {
-        sh '''kubectl get pods | grep Evicted | awk '{print $1}' | xargs kubectl delete pod'''
+        sh '''kubectl get pods | grep Evicted | awk '{print $1}' | xargs kubectl delete pod || true'''
       }
     }
   }
