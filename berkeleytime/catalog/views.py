@@ -87,9 +87,7 @@ def catalog_filters(request, abbreviation='', course_number=''):
             user_email=parse_gmail(request)
         )
     default_course = ""
-    playlist_ids = Playlist.objects.filter(
-        name__in=["Lower Division", "Upper Division", "Graduate", CURRENT_SEMESTER_DISPLAY]  # noqa
-    ).values_list("id", flat=True)
+    playlist_ids = Playlist.objects.filter(name__in=[CURRENT_SEMESTER_DISPLAY]).values_list("id", flat=True)
 
     default_playlists = ",".join(map(str, playlist_ids))
     course = Course.objects.filter(
