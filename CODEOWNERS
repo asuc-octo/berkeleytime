@@ -2,9 +2,9 @@
 # Each line is a file pattern followed by one or more owners.
 # The last matching lines takes the most precendence. 
 
-*               @michaelli1324
-berkeleytime/   @hantaowang @rkooo567
-kubernetes/     @hantaowang @rkooo567
+*               @g-luo
+berkeleytime/   @hantaowang @LEON-MING
+kubernetes/     @hantaowang @LEON-MING
 build/          @hantaowang @tsaianson
-frontend/       @chrisdliu @michaelli1324
-Jenkinsfile     @tsaianson
+frontend/       @chrisdliu @g-luo @michaelli1324
+Jenkinsfile     @hantaowang @tsaianson
