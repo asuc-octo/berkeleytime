@@ -397,7 +397,7 @@ def enrollment_json(request, section_id):
                 course_number=course.course_number,
                 log=True,
             )
-            new_section = [x.enrollment._initial for x in schedules and x.section['ccn'] == section.ccn][0]
+            new_section = [x.enrollment._initial for x in schedules if x.section['ccn'] == section.ccn][0]
 
         rtn["telebears"] = CORRECTED_TELEBEARS_JSON
         enrolled_max = section.enrollment_set.all().latest("date_created").enrolled_max
