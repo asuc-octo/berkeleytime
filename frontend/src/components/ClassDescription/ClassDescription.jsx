@@ -14,6 +14,8 @@ import hug from '../../assets/img/eggs/hug.png';
 import hilf from '../../assets/img/eggs/hilf.png';
 import sahai from '../../assets/img/eggs/sahai.png';
 import scott from '../../assets/img/eggs/scott.png';
+import kubi from '../../assets/img/eggs/kubi.png';
+import garcia from '../../assets/img/eggs/garcia.png';
 
 import { updateCourses, getCourseData, makeRequestDescription, setRequirements, setUnits, setDepartment, setLevel, setSemester } from '../../redux/actions';
 import { connect } from "react-redux";
@@ -34,6 +36,8 @@ const easterEggImages = {
   "SAHAI A": sahai,
   "HILFINGER P": hilf,
   "SHENKER S": scott,
+  'KUBIATOWICZ J': kubi,
+  'GARCIA D': garcia,
 };
 
 class ClassDescription extends Component {
