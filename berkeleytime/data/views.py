@@ -401,8 +401,9 @@ def enrollment_json(request, section_id):
 
         rtn["telebears"] = CORRECTED_TELEBEARS_JSON
         enrolled_max = section.enrollment_set.all().latest("date_created").enrolled_max
+        waitlisted_max = section.enrollment_set.all().latest("date_created").waitlisted_max
         rtn["enrolled_max"] = enrolled_max
-        rtn["waitlisted_max"] = enrolled_max
+        rtn["waitlisted_max"] = waitlisted_max
 
         rtn["data"] = []
         for d in section.enrollment_set.all().filter(date_created__gte=CORRECTED_TELEBEARS["phase1_start"]).order_by("date_created"):
@@ -428,6 +429,11 @@ def enrollment_json(request, section_id):
             rtn["data"][-1]["waitlisted"] = last_waitlisted
             rtn["data"][-1]["enrolled_percent"] = round(last_enrolled / enrolled_max, 3) if enrolled_max else -1
             rtn["data"][-1]["waitlisted_percent"] = round(last_waitlisted / waitlisted_max, 3) if waitlisted_max else -1
+            rtn["data"][-1]["enrolled_max"] = enrolled_max
+            rtn["data"][-1]["waitlisted_max"] = waitlisted_max
+            rtn["enrolled_max"] = enrolled_max
+            rtn["waitlisted_max"] = waitlisted_max
+
         rtn["instructor"] = section.instructor
         enrolled_outliers = [d["enrolled_percent"] for d in rtn["data"] if d["enrolled_percent"] >= 1.0]
         rtn["enrolled_percent_max"] = max(enrolled_outliers) * 1.10 if enrolled_outliers  else 1.10
