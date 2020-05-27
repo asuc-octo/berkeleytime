@@ -4,7 +4,7 @@ info:
   same data that backs berkeleytime.com, for the purpose of supporting student created applications. Please use this
   free resource fairly by not unnecessarily spamming the API and crediting Berekelytime as the source. We do not
   provide guarantees about the correctness of the data, but we do try to maintain it to the best of our abilities."
-  version: "v0.1"
+  version: "v0.2"
   title: "Berkeleytime API"
   contact:
     email: "octo.berkeleytime@asuc.org"
@@ -31,7 +31,14 @@ paths:
       operationId: ""
       produces:
       - "application/json"
-      parameters: []
+      parameters:
+        - name: "form"
+          in: "query"
+          description: "If set to 'long', returns the title of each course as well."
+          required: false
+          type: "string"
+          enum:
+            - long
       responses:
         200:
           description: "successful operation"
@@ -66,7 +73,14 @@ paths:
       operationId: ""
       produces:
       - "application/json"
-      parameters: []
+      parameters:
+        - name: "form"
+          in: "query"
+          description: "If set to 'long', returns the title of each course as well."
+          required: false
+          type: "string"
+          enum:
+            - long
       responses:
         200:
           description: "successful operation"
@@ -146,7 +160,14 @@ paths:
       operationId: ""
       produces:
       - "application/json"
-      parameters: []
+      parameters:
+        - name: "form"
+          in: "query"
+          description: "If set to 'long', returns the title of each course as well."
+          required: false
+          type: "string"
+          enum:
+            - long
       responses:
         200:
           description: "successful operation"
@@ -161,7 +182,12 @@ paths:
       operationId: ""
       produces:
       - "application/json"
-      parameters: []
+      parameters:
+        - name: "course_id"
+          in: "path"
+          description: "The course id of the course enrollment that needs to be fetched. Course ids can be found using the enrollment/enrollment_json endpoint."
+          required: true
+          type: "string"
       responses:
         200:
           description: "successful operation"
@@ -342,6 +368,9 @@ definitions:
       abbreviation:
         type: "string"
         example: "COMPSCI"
+      title:
+        type: "string"
+        example: "Operating Systems and System Programming"
   section:
     type: "object"
     properties:
