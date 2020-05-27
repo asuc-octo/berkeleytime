@@ -31,15 +31,21 @@ STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
                    ("d", "D"), ("f", "F"), ("p", "P"), ("np", "NP")]
 
 
-def grade_context():
-    cached = cache.get("grade__courses")
+def grade_context(long_form=False):
+    cache_key = "grade__courses"
+    if long_form:
+        cache_key = "grade__courses__long"
+    cached = cache.get(cache_key)
     if cached:
         rtn = cached
     else:
         courses = Course.objects.filter(grade__isnull=False).distinct().order_by("abbreviation", "course_number")
-        rtn = courses.values("id", "abbreviation", "course_number")
+        if long_form:
+            rtn = courses.values("id", "abbreviation", "course_number", "title")
+        else:
+            rtn = courses.values("id", "abbreviation", "course_number")
         rtn = sort_course_dicts(rtn)
-        cache.set("grade__courses", rtn, CACHE_DAY_TIMEOUT)
+        cache.set(cache_key, rtn, CACHE_DAY_TIMEOUT)
     return {"courses": rtn}
 
 def get_or_zero(d, k):
@@ -58,7 +64,7 @@ def grade_render(request):
     return render_to_response("data/grades.html", grade_context(), context_instance=RequestContext(request))
 
 def grade_context_json(request):
-    return render_to_json(grade_context())
+    return render_to_json(grade_context(long_form=request.GET.get('form', 'short') == "long"))
 
 def year_and_semester_to_value(s):
     """
@@ -160,8 +166,11 @@ def grade_json(request, grade_ids):
         print e
         return render_to_empty_json()
 
-def enrollment_context():
-    cached = cache.get("enrollment__courses")
+def enrollment_context(long_form=False):
+    cache_key = "enrollment__courses"
+    if long_form:
+        cache_key = "enrollment__courses__long"
+    cached = cache.get(cache_key)
     if cached:
         rtn = cached
     else:
@@ -181,11 +190,14 @@ def enrollment_context():
 
         # The following query is less exact and returns lots of Courses with no
         # enrollment objects
-        rtn = Course.objects.filter(has_enrollment=True).values('id', 'abbreviation', 'course_number')
+        courses = Course.objects.filter(has_enrollment=True).distinct().order_by("abbreviation", "course_number")
+        if long_form:
+            rtn = courses.values("id", "abbreviation", "course_number", "title")
+        else:
+            rtn = courses.values("id", "abbreviation", "course_number")
         rtn = sort_course_dicts(rtn)
 
-
-        cache.set("enrollment__courses", rtn, ENROLLMENT_CACHE_TIMEOUT)
+        cache.set(cache_key, rtn, ENROLLMENT_CACHE_TIMEOUT)
     return {"courses": rtn}
 
 @raise_404_on_error
@@ -202,7 +214,7 @@ def enrollment_render(request):
     return render_to_response("data/enrollment.html", enrollment_context(), context_instance=RequestContext(request))
 
 def enrollment_context_json(request):
-    return render_to_json(enrollment_context())
+    return render_to_json(enrollment_context(long_form=request.GET.get('form', 'short') == "long"))
 
 def get_primary(course_id, semester, year, context_cache=None):
     try:
@@ -451,14 +463,21 @@ def enrollment_json(request, section_id):
         return render_to_empty_json()
 
 def catalog_context_json(request, abbreviation='', course_number=''):
-    cached = cache.get("all__courses")
+    long_form = request.GET.get('form', 'short') == "long"
+    cache_key = "all__courses"
+    if long_form:
+        cache_key = "all__courses__long"
+    cached = cache.get(cache_key)
     if cached:
         rtn = cached
     else:
         courses = Course.objects.distinct().order_by("abbreviation", "course_number")
-        rtn = courses.values("id", "abbreviation", "course_number")
+        if long_form:
+            rtn = courses.values("id", "abbreviation", "course_number", "title")
+        else:
+            rtn = courses.values("id", "abbreviation", "course_number")
         rtn = sort_course_dicts(rtn)
-        cache.set("all__courses", rtn, CACHE_DAY_TIMEOUT)
+        cache.set(cache_key, rtn, CACHE_DAY_TIMEOUT)
     return render_to_json({"courses": rtn})
 
 def catalog_filters_json(request, abbreviation='', course_number=''):
