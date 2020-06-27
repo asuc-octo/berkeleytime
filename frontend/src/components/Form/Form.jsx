@@ -112,14 +112,19 @@ class BTForm extends Component {
     });
     fetch('/api/forms/submit/', requestOptions)
         .then(response => response.json())
-        .then(data => !data['success']
-            ? alert('There was an internal error with your submission. Please contact octo.berkeleytime@asuc.org. Error: ' + data['error'])
-            : this.setState({
+        .then((data) => {
+          if (data["expired"]) {
+            alert('This form has closed. Sorry!');
+          } else if (!data["success"]) {
+            alert('There was an internal error with your submission. Please contact octo.berkeleytime@asuc.org. Error: ' + data['error']);
+          } else {
+            this.setState({
                 submitted: true,
               }, () => {
                 window.scroll({top: 0, left: 0, behavior: 'smooth' })
             })
-        ).then(() => this.setState({submitting: false}))
+          }
+        }).then(() => this.setState({submitting: false}))
   }
 
   handleCheck(event) {
@@ -514,12 +519,23 @@ class BTForm extends Component {
       );
     }
 
+    if (form.expired) {
+      return (
+        <div className="bt-form submitted">
+          <div className="bt-form-header">
+            <h5>{ form.info.public_name }</h5>
+            <p className="submitted-text">Sorry, this form is now closed.</p>
+          </div>
+        </div>
+      )
+    }
+
     if (submitted) {
       return (
         <div className="bt-form submitted">
           <div className="bt-form-header">
             <h5>{ form.info.public_name }</h5>
-            <p>Thank you for submitting this form! We have received your response and will get back to you as soon as we can.</p>
+            <p className="submitted-text">Thank you for submitting this form! We have received your response and will get back to you as soon as we can.</p>
           </div>
         </div>
       )
