@@ -186,6 +186,13 @@
       a {
         color: $bt-primary;
       }
+
+      code {
+        background-color: rgb(239, 240, 241);
+        display: block;
+        margin: 0;
+        padding: 5px 10px;
+      }
     }
   }
 
