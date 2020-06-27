@@ -71,6 +71,10 @@ Navigation.links = [
     text: 'Enrollment',
   },
   {
+    to: '/join',
+    text: 'Join',
+  },
+  {
     to: '/about',
     text: 'About',
   },
