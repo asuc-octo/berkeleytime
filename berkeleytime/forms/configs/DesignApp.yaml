@@ -1,0 +1,113 @@
+info:
+  unique_name: "DesignApp"
+  public_name: Fall 2020 Product Designer Application
+  description: |-
+    We're a small group of student volunteers at UC Berkeley, dedicated to simplifying the course discovery experience.
+    We're looking to grow our team to continue to innovate, improve, and maintain the site. Find out more about our team
+    and our roles [here](/join).
+
+    1. **We are continuing to innovate BerkeleyTime to reflect the needs of Berkeley students.** This means that we are
+    actively working on features that go beyond what currently exists within our product.
+    2. **BerkeleyTime is growing our design team.** We want to improve our design on all fronts, and this will be the
+    first time our team has a fully-fledged design team.
+    3. **Our team truly values and prioritizes design as a driving, innovating force of BT.** We have an incredibly
+    talented team of engineers who are enthusiastic about bringing designs to life.
+
+    #### What You'll Do
+
+    1. Collaborate with design and engineering teams to cook up new, exciting features.
+    2. Organize and execute user research studies.
+    3. Support current design lead on existing projects.
+
+    #### You'll be a fit for this role if...
+
+    - You're interested in improving online student experiences.
+    - You're experienced in design tools like Figma, Adobe XD, Sketch, and Illustrator.
+    - You consider yourself a design generalist; you know how to work across the spectrum of design, including user
+      research, visual design, and prototyping in both web and mobile mediums.
+    - You've collaborated with engineers to deliver on real-life projects.
+    - You've got a keen eye for details and visual design.
+    - You're excited to work within constraints.
+    - You have a drive for manifesting ideas into real-life projects.
+
+    #### Application Timeline
+
+    - Sept 1st - Zoom Infosession
+    - Sept 7th - Applications due
+    - Sept 9th - Design challenge prompt released
+    - Sept 16th - Design challenge due
+    - Sept 23rd - Interviews
+
+  googlesheet_link: "https://docs.google.com/spreadsheets/d/1qxw97YJKaRlLAoeGZ6kD4y8tAEXFbvxM4iYp5abv5dc/edit"
+  drive_folder_name: "DesignResumes"
+questions:
+  - title: "Email Address"
+    type: "short"
+    placeholder: "example@berkeley.edu"
+    format: "email"
+    required: True
+  - title: "Full Name"
+    type: "short"
+    placeholder: "Jennifer Aniston"
+    required: True
+  - title: "Current Year"
+    type: "multiple_choice"
+    placeholder: "Choose an option"
+    required: True
+    choices:
+      - Freshman
+      - Sophomore
+      - Junior
+      - Senior
+      - Super Senior
+      - Graduate Student
+  - title: "Resume"
+    description: "PDF Only"
+    placeholder: "Upload a File"
+    type: "file"
+    accept: ".pdf"
+    required: True
+  - title: "GitHub Link"
+    type: "short"
+    placeholder: "github.com/..."
+  - title: "Portfolio/Personal Website"
+    type: "short"
+    placeholder: "myportfolio.me/..."
+  - title: "LinkedIn Link"
+    type: "short"
+    placeholder: "linkedin.com/in/..."
+  - title: "Any other socials you’d like us to see!"
+    type: "short"
+    placeholder: "twitter.com/..."
+  - title: "Technical Experience and Familiarity"
+    description: "Check the tools that you are proficient at using"
+    type: "multiple_select"
+    required: True
+    choices:
+      - Figma
+      - Sketch
+      - Illustrator
+      - Adobe XD
+      - Any graphic design tool
+  - title: "Why are you interested in working for Berkeleytime?"
+    type: "long"
+    required: True
+  - title: "What do you hope to get out of your experience?"
+    type: "long"
+    required: True
+  - title: "What ideas do you have for contributing to Berkeleytime?"
+    type: "long"
+    required: True
+  - title: "Please list class you are taking and your other commitments for this semester. "
+    type: "long"
+    required: True
+  - title: "Describe your web design or web development experience, if any."
+    type: "long"
+    required: True
+  - title: "I am able to meet weekly on Sundays 4-6pm"
+    type: "multiple_choice"
+    placeholder: "Choose an option"
+    required: True
+    choices:
+      - "Yes"
+      - "No"
