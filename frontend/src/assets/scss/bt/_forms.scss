@@ -187,11 +187,17 @@
         color: $bt-primary;
       }
 
-      code {
+      pre {
         background-color: rgb(239, 240, 241);
         display: block;
-        margin: 0;
         padding: 5px 10px;
+      }
+
+      code {
+        background-color: rgb(239, 240, 241);
+        display: inline-block;
+        padding: 0 5px;
+        color: black;
       }
     }
   }
