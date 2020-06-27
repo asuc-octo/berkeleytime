@@ -74,8 +74,7 @@ class Join extends PureComponent {
         <div className="join-us">
           <h5>Join the BT Team! &#x270C; </h5>
           <p>
-            We are currently recruiting new members for various positions in the Berkeleytime team. Check out the positions and our recruiting timeline below.
-            If you have any questions, reach out to
+            We'll be recruiting for new team members in the fall! Sign up to hear about recruitment updates.
           </p>
         </div>
         <ButtonToolbar className="releases-heading-button join">
@@ -102,7 +101,7 @@ class Join extends PureComponent {
           <h5>Join the BT Team! &#x270C; </h5>
           <p>
             We are currently recruiting new members for various positions in the Berkeleytime team. Check out the positions below. Each application has additional information about the role,
-            requirements, and position specific application timeline.
+            requirements, and position specific application timeline. If you feel interested in multiple positions, please submit a separate application for each role.
           </p>
         </div>
         <Row className="position-card-row">
@@ -124,7 +123,7 @@ class Join extends PureComponent {
             position="Product Designer"
             emoji="🎨"
             description="Product designers define Berkeleytime's design system and work closely with engineers to create new features and user flows."
-            link="/join"
+            link="/apply/design"
           />
           <PositionCard
             position="Infrastructure Engineer"
