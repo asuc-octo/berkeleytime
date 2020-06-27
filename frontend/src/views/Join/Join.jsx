@@ -1,7 +1,10 @@
 import React, { PureComponent } from 'react';
-import { Form, ButtonToolbar } from 'react-bootstrap';
+import { Row, ButtonToolbar } from 'react-bootstrap';
+import PositionCard from '../../components/Recruiting/Position';
 
 import doe from '../../assets/img/images/about/group/doe.jpg';
+
+const IS_RECRUITING = true;
 
 class Join extends PureComponent {
 
@@ -64,12 +67,15 @@ class Join extends PureComponent {
 
   render() {
     const { validated, validationSuccess, submitting, submissionSuccess } = this.state;
-    return (
+
+    if (!IS_RECRUITING) {
+     return (
       <div className="join">
         <div className="join-us">
           <h5>Join the BT Team! &#x270C; </h5>
           <p>
-            We'll be recruiting for new team members in the fall! Sign up to hear about recruitment updates.
+            We are currently recruiting new members for various positions in the Berkeleytime team. Check out the positions and our recruiting timeline below.
+            If you have any questions, reach out to
           </p>
         </div>
         <ButtonToolbar className="releases-heading-button join">
@@ -87,10 +93,51 @@ class Join extends PureComponent {
           : null
         }
         <img className="join-pic" src={doe}/>
-
       </div>
+      );
+    } else {
+      return (
+        <div className="join">
+        <div className="join-us">
+          <h5>Join the BT Team! &#x270C; </h5>
+          <p>
+            We are currently recruiting new members for various positions in the Berkeleytime team. Check out the positions below. Each application has additional information about the role,
+            requirements, and position specific application timeline.
+          </p>
+        </div>
+        <Row className="position-card-row">
+          <PositionCard
+            position="Backend Engineer"
+            emoji="💻"
+            description="Backend engineers build on Berkeleytime's core systems and APIs. Projects include scheduling, API enhancements, user profiles, authentication, and more."
+            link="/join"
+          />
+          <PositionCard
+            position="Frontend Engineer"
+            emoji="🖼️"
+            description="Our frontend engineers work on creating our React based frontend. Projects include the user login flow, scheduler, mobile view, and more."
+            link="/join"
+          />
+        </Row>
+        <Row className="position-card-row">
+          <PositionCard
+            position="Product Designer"
+            emoji="🎨"
+            description="Product designers define Berkeleytime's design system and work closely with engineers to create new features and user flows."
+            link="/join"
+          />
+          <PositionCard
+            position="Infrastructure Engineer"
+            emoji="🏗️"
+            description="Work with a production Kubernetes cluster to manage deployment, automate builds, and build out our complex service oriented infrastructure."
+            link="/join"
+          />
+        </Row>
+      </div>
+      )
+    }
 
-    );
+
   }
 }
 

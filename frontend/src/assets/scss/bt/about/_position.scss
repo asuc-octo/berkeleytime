@@ -1,0 +1,79 @@
+
+.position-card-row {
+  width: 800px;
+
+  @include mobile {
+    width: 90%;
+  }
+}
+
+.position-card-column {
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 20px 0;
+
+  .position-card-mobile {
+    display: flex;
+
+    .position-card-mobile-column {
+      padding-right: 15px;
+      flex-direction: row;
+    }
+  }
+
+  .position-card {
+    border: 1px solid $border-color;
+    border-radius: 5px;
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+
+    .position-card-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .position-card-course {
+        margin-right: auto !important;
+        font-weight: bold;
+        color: $bt-base-text;
+        font-size: 18px;
+      }
+    }
+
+    .position-card-title, .position-card-options {
+      color: $bt-grey-text;
+    }
+
+    /* magic to truncate at 2 lines lol */
+    .position-card-title {
+      font-size: 16px;
+      line-height: 1.75;
+      color: #8A8A8A;
+
+      /* for set '...' in absolute position */
+      position: relative;
+      /* fix problem when last visible word doesn't adjoin right side  */
+      text-align: left;
+      /* place for '...' */
+      margin-right: -1em;
+      padding-right: 1em;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+
+    .position-card-row {
+      font-size: 16px;
+      text-align: right;
+      padding-right: 10px;
+      width: 100%;
+    }
+
+    .position-card-link {
+      color: $bt-primary;
+    }
+
+  }
+}
