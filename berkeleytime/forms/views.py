@@ -3,10 +3,13 @@ import traceback
 
 from catalog.utils import is_post
 from django.http import Http404
+from datetime import datetime
+import pytz
+from dateutil.parser import parse
 
 from hooks import dispatch_hooks
 from berkeleytime.utils.requests import render_to_json
-from googleapi import check_yaml_response, check_yaml_format, upload_file
+from googleapi import check_yaml_response, check_yaml_format, upload_file, ExpiredException
 from utils import get_config_dict
 
 # Returns YAML file (in JSON format) with name
@@ -22,6 +25,13 @@ def get_config(request, config_name):
 			},
 			"questions": []
 		}
+
+		if "close_on" in loaded_yaml["info"]:
+			now = datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific'))
+			due = parse(loaded_yaml["info"]["close_on"])
+			print(now, due)
+			if now > due:
+				loaded_yaml["expired"] = True
 
 		for index, question in enumerate(loaded_yaml["questions"]):
 			question.update({
@@ -43,13 +53,19 @@ def record_response(request):
 	try:
 		if is_post(request):
 			form_response = json.loads(request.body)
-			# hard coded
+			success = check_yaml_response(form_response["Config"], json.loads(request.body))
 			dispatch_hooks(form_response)
 			return render_to_json({
-				'success': check_yaml_response(form_response["Config"], json.loads(request.body))
+				'success': success
 			})
 		else:
 			raise Http404
+	except ExpiredException as e:
+		return render_to_json({
+				'success': False,
+				'expired': True,
+				'error': str(e),
+			})
 	except Exception as e:
 		print e
 		print traceback.print_exc()

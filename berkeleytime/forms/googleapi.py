@@ -5,6 +5,7 @@ import pytz
 import time
 import redlock
 import urlparse
+from dateutil.parser import parse
 
 from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
 from utils import get_config_dict, CACHED_SHEETS, DRIVE_SERVICE
@@ -15,6 +16,9 @@ elif IS_STAGING or IS_PRODUCTION:
 	REDIS = urlparse.urlparse(os.environ.get('REDIS_URL'))
 	dlm = redlock.Redlock([{"host": REDIS.hostname, "port": REDIS.port, 'password': REDIS.password},])
 
+
+class ExpiredException(Exception):
+	pass
 
 # Reads in a YAML file and checks if it is properly formed
 # Returns YAML file in dictionary form
@@ -155,6 +159,13 @@ def check_yaml_response(config_name, responses):
 		print("Incorrect YAML configuration:", loaded_yaml["info"]["unique_name"], \
 			"for responses:", loaded_yaml["info"]["unique_name"])
 		return False
+
+	if "close_on" in loaded_yaml["info"]:
+		now = datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific'))
+		due = parse(loaded_yaml["info"]["close_on"])
+		print(now, due)
+		if now > due:
+			raise ExpiredException("The form has now expired.")
 
 	sheet_responses = []
 	sheet_responses.append(datetime.now(tz=pytz.utc).astimezone(pytz.timezone('US/Pacific')).strftime("%Y.%m.%d %H.%M.%S"))

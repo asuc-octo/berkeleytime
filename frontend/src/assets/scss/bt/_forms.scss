@@ -37,14 +37,7 @@
     }
   }
 
-  p {
-    color: $bt-grey-text;
-    font-size: 14px;
-    line-height: 1.5;
-    margin-bottom: 8px;
-  }
-
-   .markdown {
+  p.descriptor {
     color: $bt-grey-text;
     font-size: 14px;
     line-height: 1.5;
@@ -142,6 +135,13 @@
       @include mobile {
         font-size: 20px;
       }
+    }
+
+    .submitted-text {
+      margin-top: 15px;
+      line-height: 1.75;
+      font-size: 16px;
+      color: #8A8A8A;
     }
 
     .markdown {
