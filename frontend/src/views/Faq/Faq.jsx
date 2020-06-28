@@ -19,7 +19,7 @@ class Faq extends PureComponent {
               <div className="faq-heading">
                 <h2>Frequently Asked Questions</h2>
                 <h3>Answering your most commonly asked questions.</h3>
-                <a className="btn btn-bt-primary-inverted btn-bt-md" href="mailto: octo.berkeley@asuc.org">
+                <a className="btn btn-bt-primary-inverted btn-bt-md" href="mailto: octo.berkeleytime@asuc.org">
                   Contact Us
                 </a>
               </div>
@@ -52,7 +52,7 @@ Faq.questions = [
   },
   {
     question: 'How can I contact the Berkeleytime team?',
-    answer: <p>Any questions or concerns that you have can be directed to <a href="mailto: octo.berkeley@asuc.org">octo.berkeley@asuc.org</a>.</p>,
+    answer: <p>Any questions or concerns that you have can be directed to <a href="mailto: octo.berkeleytime@asuc.org">octo.berkeleytime@asuc.org</a>.</p>,
   },
   {
     question: 'When are grades/classes/enrollment data released?',
@@ -92,7 +92,7 @@ Faq.questions = [
   {
     question: 'How do I give feedback about the product?',
     answer: <p>Feel free to fill out our <Link to="/bugs" className="link">feedback form</Link>. You can also email us
-      at <a href="mailto: octo.berkeley@asuc.org">octo.berkeley@asuc.org</a>, and we&apos;ll respond as soon as we can.</p>,
+      at <a href="mailto: octo.berkeleytime@asuc.org">octo.berkeleytime@asuc.org</a>, and we&apos;ll respond as soon as we can.</p>,
   },
 ];
 
