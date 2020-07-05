@@ -152,6 +152,7 @@ class Section(models.Model):
     standard_location = models.ForeignKey(Room, blank=True, null=True, on_delete=models.SET_NULL)  # noqa
     suffix = models.CharField(max_length=5, null=True, blank=True)
     units = models.CharField(max_length=50, null=True, blank=True)
+    instruction_mode = models.CharField(max_length=128, null=True, blank=True)
 
     is_primary = models.BooleanField(default=False)
 
