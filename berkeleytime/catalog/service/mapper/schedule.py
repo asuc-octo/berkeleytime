@@ -37,6 +37,11 @@ class ScheduleMapper(object):
             enrollment = self.get_enrollment_entity(data=data)
             location = self.get_location_entity(data=data)
 
+            # Update with instruction mode, if it exists
+            kwargs.update({
+                'instruction_mode': data['instructionMode']['description'] if 'instructionMode' in data else None,
+            })
+
             kwargs.update(enrollment.flatten())
             kwargs.update({
                 'location_name': location.name if location else None,

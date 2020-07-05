@@ -40,6 +40,10 @@ class ScheduleValidator(object):
             'association': {
                 'primary': bool,
             },
+            Optional('instructionMode'): {
+                'code': unicode,
+                'description': unicode,
+            },
             Optional('meetings'): [
                 {
                     'meetsMonday': bool,

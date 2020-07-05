@@ -51,6 +51,8 @@ class Section(Model):
     final_start = DateTimeType()
     final_end = DateTimeType()
 
+    instruction_mode = StringType()
+
     @property
     def word_days(self):
         """TODO (Yuxin) This should be deprecated."""
