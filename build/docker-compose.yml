@@ -43,16 +43,6 @@ services:
     depends_on:
      - backend
      - frontend
-  search:
-    build: ../search
-    ports:
-      - "5000:5000"
-    volumes:
-      - .:/code
-    environment:
-      FLASK_ENV: development
-    depends_on:
-      - elasticsearch
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
     ports:
