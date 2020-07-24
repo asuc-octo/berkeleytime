@@ -100,10 +100,14 @@ class SectionStore(object):
 
     def _exclude_derived_fields(self, section):
         """Map entity.Section to dict and exclude all derived fields."""
-        return {
+        d = {
             # k: v for (k, v) in section.flatten().items() if k not in models.Section._derived_enrollment_fields  # noqa
             k: v for (k, v) in section.flatten().items() # noqa
         }
+        d.update({
+            k: section[k] for k in ['start_time', 'end_time', 'final_start', 'final_end'] #noqa
+        })
+        return d
 
     # This is not threadsafe!
     def update_or_create(self, section):
