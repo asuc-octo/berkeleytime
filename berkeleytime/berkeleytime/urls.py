@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     url(r'^accounts/signup/$', 'django.views.defaults.page_not_found'),
     url(r'^accounts/password/$', 'django.views.defaults.page_not_found'),
 
-                       # TODO (Yuxin)
+    # TODO (Yuxin)
     url(r'^exception/$', 'catalog.views.test'),
 
     # Catalog
@@ -69,7 +69,7 @@ urlpatterns = patterns('',
     url(r'^campus/rooms/sections/$', 'campus.views.room_sections'),
     url(r'^campus/ongoing/$', 'campus.views.ongoing'),
 
-    #Scheduler
+    # Scheduler
     url(r'^scheduler/$', 'scheduler.views.schedule_render'),
     url(r'^scheduler/select_classes/$', 'scheduler.views.select_classes'),
     url(r'scheduler/select_sections/$', TemplateView.as_view(template_name="scheduler/select_section.html")),
