@@ -275,7 +275,11 @@ class GradesSearchBar extends Component {
   }
 
   filterOptions(option, query) {
-    return FilterResults.filterCourses(option.course, query, this.queryCache);
+    // Super non deterministic error where sometimes option.data or option.data.course
+    // refers to the course dict???
+    // https://github.com/asuc-octo/berkeleytime/issues/294
+    const course = option.course ? option.course : option.data.course;
+    return FilterResults.filterCourses(course, query, this.queryCache);
   }
 
   reset() {
