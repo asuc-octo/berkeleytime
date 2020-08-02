@@ -89,16 +89,16 @@ class EnrollmentSearchBar extends Component {
   }
 
   buildCoursesOptions(courses) {
-    if(!courses) {
-      return []
+    if (!courses) {
+      return [];
     }
-
-    return courses.map(course => ({
+    const options = courses.map(course => ({
       value: course.id,
       label: `${course.abbreviation} ${course.course_number}`,
-      course: course,
+      course,
     }));
 
+    return options;
   }
 
   capitalize(str) {
@@ -202,7 +202,11 @@ class EnrollmentSearchBar extends Component {
   }
 
   filterOptions(option, query) {
-    return FilterResults.filterCourses(option.course, query, this.queryCache);
+    // Super non deterministic error where sometimes option.data or option.data.course
+    // refers to the course dict???
+    // https://github.com/asuc-octo/berkeleytime/issues/294
+    const course = option.course ? option.course : option.data.course;
+    return FilterResults.filterCourses(course, query, this.queryCache);
   }
 
   reset() {
