@@ -104,9 +104,9 @@ class SectionStore(object):
             # k: v for (k, v) in section.flatten().items() if k not in models.Section._derived_enrollment_fields  # noqa
             k: v for (k, v) in section.flatten().items() # noqa
         }
-        d.update({
-            k: section[k] for k in ['start_time', 'end_time', 'final_start', 'final_end'] #noqa
-        })
+        for k in ['start_time', 'end_time', 'final_start', 'final_end']:
+            if k not in section:
+                section[k] = None
         return d
 
     # This is not threadsafe!
