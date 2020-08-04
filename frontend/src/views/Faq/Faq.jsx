@@ -93,7 +93,10 @@ Faq.questions = [
     question: 'How do I give feedback about the product?',
     answer: <p>Feel free to fill out our <Link to="/bugs" className="link">feedback form</Link>. You can also email us
       at <a href="mailto: octo.berkeleytime@asuc.org">octo.berkeleytime@asuc.org</a>, and we&apos;ll respond as soon as we can.</p>,
-  },
+  },{
+    question: 'Can Berkeleytime add a feature to review/rate professors and courses?',
+    answer: <p>We appreciate the feature request! The BT team has discussed this at length, and, unfortunately, we are not able to offer any such review or rating system at the current time. This is because we work closely with the Berkeley Academic Senate. Also as a part of the ASUC, we cannot officially incorporate or endorse opinions we either don’t moderate or are not our own.</p>
+  }
 ];
 
 
