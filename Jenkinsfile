@@ -163,7 +163,7 @@ docker kill $containerID'''
     }
     stage('Update-Data-Fetch-Image-Version') {
       when {
-        branch "production"
+        branch "master"
         anyOf {
             changeset "berkeleytime/**"
             changeset "kubernetes/**"
