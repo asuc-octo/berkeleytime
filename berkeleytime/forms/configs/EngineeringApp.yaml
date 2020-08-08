@@ -1,10 +1,11 @@
 info:
-  unique_name: "DesignApp"
-  public_name: 2020-21 Design + Marketing Application
+  unique_name: "EngineeringApp"
+  public_name: 2020-21 Engineering Application
   description: |-
-    Apply to be a product designer or marketing associate in OCTO.  
-  googlesheet_link: "https://docs.google.com/spreadsheets/d/1qxw97YJKaRlLAoeGZ6kD4y8tAEXFbvxM4iYp5abv5dc/edit"
-  drive_folder_name: "DesignResumes"
+    Apply to be a mobile, frontend, or backend engineer in OCTO. 
+
+  googlesheet_link: "https://docs.google.com/spreadsheets/d/1EJrToZsA5Ny-QUcBKjHCERpcP2ER51L3uaXGzdPnS3M/edit"
+  drive_folder_name: "EngineeringResumes"
 questions:
   - title: "Email Address"
     type: "short"
@@ -48,14 +49,18 @@ questions:
     required: True
     gap: False
     choices:
-      - Product Designer
-      - Marketing Associate
+      - Frontend Engineer
+      - Backend Engineer
+      - iOS Engineer
+      - Android Engineer
       - N/A
   - placeholder: "2nd choice"
     type: "multiple_choice"
     choices:
-      - Product Designer
-      - Marketing Associate
+      - Frontend Engineer
+      - Backend Engineer
+      - iOS Engineer
+      - Android Engineer
       - N/A
   - title: "Which teams are you applying for?"
     placeholder: "1st choice"
@@ -66,6 +71,7 @@ questions:
       - Berkeleytime
       - Beehive
       - Berkeley Mobile
+      - API Team
       - N/A
   - placeholder: "2nd choice"
     type: "multiple_choice"
@@ -74,22 +80,33 @@ questions:
       - Berkeleytime
       - Beehive
       - Berkeley Mobile
+      - API Team
       - N/A
   - placeholder: "3rd choice"
+    type: "multiple_choice"
+    gap: False
+    choices:
+      - Berkeleytime
+      - Beehive
+      - Berkeley Mobile
+      - API Team
+      - N/A
+  - placeholder: "4th choice"
     type: "multiple_choice"
     choices:
       - Berkeleytime
       - Beehive
       - Berkeley Mobile
+      - API Team
       - N/A
   - title: "Resume"
     description: 
-      "PDF Only. Please omit or hide your name and high school and name the pdf Design_Resume."
+      "PDF Only. Please omit or hide your name and high school and name the pdf Engineering_Resume."
     placeholder: "Upload a File"
     type: "file"
     accept: ".pdf"
     required: True
-  - title: "My name and high school is not visible on my resume, and the pdf is named Design_Resume."
+  - title: "My name and high school is not visible on my resume, and the pdf is named Engineering_Resume."
     type: "multiple_select"
     required: True
     choices:
@@ -98,21 +115,9 @@ questions:
     type: "short"
     placeholder: "github.com/..."
   - title: "Portfolio/Personal Website"
-    description: "This is highly encouraged and a huge component of our selection process. Feel free to put a Google Drive link or any medium that displays your work."
     type: "short"
     placeholder: "myportfolio.me/..."
-  - title: "Technical Experience and Familiarity"
-    description: "Check the tools that you are proficient at using"
-    type: "multiple_select"
-    required: True
-    choices:
-      - Figma
-      - Sketch
-      - Illustrator
-      - Adobe XD
-      - Any graphic design tool
-  - title: "Brainstorm one new feature of an OCTO product. How would you validate that students would use it and how would you design it?"
+  - title: "What is your biggest technical strength and how can it be used to improve an OCTO product?"
     description: "Max 100 words."
     type: "long"
     required: True
-  
