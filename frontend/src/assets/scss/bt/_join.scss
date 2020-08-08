@@ -43,6 +43,10 @@
 
   .join-us {
 
+    .join-link, a {
+      color: $bt-blue;
+    }
+
     > h5 {
       margin-top: 50px;
       text-align: center;

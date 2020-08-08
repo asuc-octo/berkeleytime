@@ -266,10 +266,10 @@ class BTForm extends Component {
     this.validateRequired(form, responses, validation);
     this.validateLength(form, responses, validation);
     this.validateFormat(form, responses, validation);
-    return this.setRemaingValid(form, validation);
+    return this.setRemainingValid(form, validation);
   }
 
-  setRemaingValid(form, validation) {
+  setRemainingValid(form, validation) {
     return form.questions.map(question => this.setValidation(question, "", true, validation))
         .every(item => item === true);
   }
@@ -347,7 +347,7 @@ class BTForm extends Component {
     } else if (question.type === "long") {
       return this.createLong(question, responses, validation);
     } else if (question.type === "multiple_choice") {
-      return this.createMutlipleChoice(question, responses, validation);
+      return this.createMultipleChoice(question, responses, validation);
     } else if (question.type === "file") {
       return this.createFile(question, responses, validation);
     } else if (question.type === "multiple_select") {
@@ -398,7 +398,7 @@ class BTForm extends Component {
     )
   }
 
-  createMutlipleChoice(question, responses, validation) {
+  createMultipleChoice(question, responses, validation) {
     let valid = validation[question.unique_name] ? validation[question.unique_name].valid : false;
     let invalid = validation[question.unique_name] ? !validation[question.unique_name].valid : false;
     return (
@@ -550,7 +550,7 @@ class BTForm extends Component {
 
         <Form noValidate onSubmit={ this.handleSubmit }>
           {form.questions.map(item =>
-            <Form.Group className={ "bt-question" }>
+            <Form.Group className={"bt-question" + (item.gap === false ? " no-gap" : "")}>
               <Form.Label className={item.required ? "required" : ""}>
                 {item.title}
               </Form.Label>

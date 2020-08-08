@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
 import { Row, ButtonToolbar } from 'react-bootstrap';
 import PositionCard from '../../components/Recruiting/Position';
+import { Link } from 'react-router-dom';
 
 import doe from '../../assets/img/images/about/group/doe.jpg';
 
 const IS_RECRUITING = true;
 
-class Join extends PureComponent {
+class Apply extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -98,38 +99,24 @@ class Join extends PureComponent {
       return (
         <div className="join">
         <div className="join-us">
-          <h5>Join the BT Team! &#x270C; </h5>
+          <h5>Join OCTO! &#x270C; </h5>
           <p>
-            We are currently recruiting new members for various positions in the Berkeleytime team. Check out the positions below. Each application has additional information about the role,
-            requirements, and position specific application timeline. If you feel interested in multiple positions, please submit a separate application for each role.
+            OCTO is the organization that runs Berkeleytime, Berkeley Mobile, and Beehive. You can learn more about our projects <a href="https://octo.asuc.org/projects.html" target="_blank">here</a> and each role <Link className="join-link" to="/apply/positions">here</Link>. 
+            If you feel interested in both role types, please submit a separate application for each. <b>All members will have the option of attending team meetings and working remotely for the entire 2020-21 school year.</b> We may hold in-person events in Spring 2021 depending on the situation.
           </p>
         </div>
         <Row className="position-card-row">
           <PositionCard
-            position="Backend Engineer"
+            position="Engineering Roles"
             emoji="💻"
-            description="Backend engineers build on Berkeleytime's core systems and APIs. Projects include scheduling, API enhancements, user profiles, authentication, and more."
-            link="/join"
+            description="We are hiring for mobile, backend + infrastructure, and frontend engineers. Our engineers build our product infrastructure, interfaces that users interact with, etc."
+            link="/apply/engineering"
           />
           <PositionCard
-            position="Frontend Engineer"
-            emoji="🖼️"
-            description="Our frontend engineers work on creating our React based frontend. Projects include the user login flow, scheduler, mobile view, and more."
-            link="/join"
-          />
-        </Row>
-        <Row className="position-card-row">
-          <PositionCard
-            position="Product Designer"
+            position="Design + Marketing Roles"
             emoji="🎨"
-            description="Product designers define Berkeleytime's design system and work closely with engineers to create new features and user flows."
-            link="/positions/design"
-          />
-          <PositionCard
-            position="Infrastructure Engineer"
-            emoji="🏗️"
-            description="Work with a production Kubernetes cluster to manage deployment, automate builds, and build out our complex service oriented infrastructure."
-            link="/join"
+            description="Product designers and marketing associates research the needs of UC Berkeley students, design new features, and encourage adoption of our products."
+            link="/apply/design"
           />
         </Row>
       </div>
@@ -141,4 +128,4 @@ class Join extends PureComponent {
 }
 
 
-export default Join;
+export default Apply;
