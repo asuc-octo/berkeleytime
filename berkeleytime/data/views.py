@@ -21,7 +21,7 @@ from django.template import RequestContext
 from threading import Thread
 
 ENROLLMENT_CACHE_TIMEOUT = 900
-CACHE_DAY_TIMEOUT = 86400
+CACHE_TIMEOUT = 900
 NUM_PREFETCH_THREADS = 3
 
 
@@ -45,7 +45,7 @@ def grade_context(long_form=False):
         else:
             rtn = courses.values("id", "abbreviation", "course_number")
         rtn = sort_course_dicts(rtn)
-        cache.set(cache_key, rtn, CACHE_DAY_TIMEOUT)
+        cache.set(cache_key, rtn, CACHE_TIMEOUT)
     return {"courses": rtn}
 
 def get_or_zero(d, k):
@@ -98,7 +98,7 @@ def grade_section_json(request, course_id):
             } for entry in Grade.objects.filter(course__id=int(course_id), total__gte = 1)
         ]
         sections = sorted(sections, key=year_and_semester_to_value, reverse=True)
-        cache.set("grade_section_json " + str(course_id), sections, CACHE_DAY_TIMEOUT)
+        cache.set("grade_section_json " + str(course_id), sections, CACHE_TIMEOUT)
         return render_to_json(sections)
     except Exception as e:
         print e
@@ -160,7 +160,7 @@ def grade_json(request, grade_ids):
         if rtn["section_letter"] == "":
             rtn["section_letter"] = "N/A"
 
-        cache.set("grade_json" + str(grade_ids), rtn, CACHE_DAY_TIMEOUT)
+        cache.set("grade_json" + str(grade_ids), rtn, CACHE_TIMEOUT)
         return render_to_json(rtn)
     except Exception as e:
         print e
@@ -269,7 +269,7 @@ def enrollment_section_render(request, course_id):
                         current["sections"].append(temp)
                 if current["sections"]:
                     rtn.append(current)
-        cache.set("enrollment_section_render " + str(course_id), rtn, CACHE_DAY_TIMEOUT)
+        cache.set("enrollment_section_render " + str(course_id), rtn, CACHE_TIMEOUT)
         prefetch(course_id)
         return render_to_json(rtn)
     except Exception as e:
@@ -477,7 +477,7 @@ def catalog_context_json(request, abbreviation='', course_number=''):
         else:
             rtn = courses.values("id", "abbreviation", "course_number")
         rtn = sort_course_dicts(rtn)
-        cache.set(cache_key, rtn, CACHE_DAY_TIMEOUT)
+        cache.set(cache_key, rtn, CACHE_TIMEOUT)
     return render_to_json({"courses": rtn})
 
 def catalog_filters_json(request, abbreviation='', course_number=''):
