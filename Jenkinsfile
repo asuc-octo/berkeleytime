@@ -9,6 +9,7 @@ pipeline {
     BACKEND_DEPLOY_PROD_FILEPATH = "kubernetes/manifests/berkeleytime/backend-deploy-prod.yaml"
     FRONTEND_DEPLOY_PROD_FILEPATH = "kubernetes/manifests/berkeleytime/frontend-deploy-prod.yaml"
     DATA_FETCH_FILEPATH = "kubernetes/manifests/berkeleytime/postgres-enrollment-fetch.yaml"
+    LIMITRANGE_FILEPATH = "kubernetes/manifests/infrastructure/limitrange.yaml"
     GITHUB_URL = "https://github.com/asuc-octo/berkeleytime"
   }
   agent any
@@ -179,12 +180,13 @@ kubectl delete -f $DATA_FETCH_FILEPATH
 kubectl apply -f $DATA_FETCH_FILEPATH'''
       }
     }
-    stage('Clean-Up-Evicted-Pods') {
+    stage('k8s Clean Up Tasks') {
       when {
         branch "master"
       }
       steps {
-        sh '''kubectl get pods | grep Evicted | awk '{print $1}' | xargs kubectl delete pod || true'''
+        sh '''kubectl get pods | grep Evicted | awk '{print $1}' | xargs kubectl delete pod || true
+kubectl apply -f $LIMITRANGE_FILEPATH'''
       }
     }
   }
