@@ -123,7 +123,7 @@ class Join extends PureComponent {
             position="Product Designer"
             emoji="🎨"
             description="Product designers define Berkeleytime's design system and work closely with engineers to create new features and user flows."
-            link="/apply/design"
+            link="/positions/design"
           />
           <PositionCard
             position="Infrastructure Engineer"
