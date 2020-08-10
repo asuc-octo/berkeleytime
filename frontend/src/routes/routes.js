@@ -17,6 +17,7 @@ import BugsForm from '../views/Forms/BugsForm';
 import DesignApp from '../views/Forms/DesignApp';
 import UserTestingForm from '../views/Forms/UserTestingForm';
 import Error from '../views/Error/Error';
+import {DesignPosition} from '../views/Join/DescriptionPages';
 
 // name should be unique, used as react key
 const routes = [
@@ -37,6 +38,7 @@ const routes = [
   { path: '/testform',   name: 'Test Form',     component: TestForm },
   { path: '/bugs',       name: 'Report a Bug',  component: BugsForm },
   { path: '/apply/design', name: 'Apply - Design', component: DesignApp },
+  { path: '/positions/design', name: 'Apply - Design',  component: DesignPosition },
   { path: '/usertesting',name: 'User Testing',  component: UserTestingForm },
   { path: '/error',      name: 'Error',         component: Error },
   { /* no path */        name: '404',           component: Error },
