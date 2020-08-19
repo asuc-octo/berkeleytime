@@ -35,14 +35,6 @@ questions:
     type: "short"
     placeholder: "Insert x club, research, or job"
     required: True
-  - title: "I am able to meet weekly on Sundays 4-6pm"
-    description: "This is a hard requirement to join Berkeleytime. If you are not available you will not be considered for this team."
-    type: "multiple_choice"
-    placeholder: "Choose an option"
-    required: True
-    choices:
-      - "Yes"
-      - "No"
   - title: "Which positions are you applying for?"
     placeholder: "1st choice"
     type: "multiple_choice"
@@ -51,6 +43,7 @@ questions:
     choices:
       - Frontend Engineer
       - Backend Engineer
+      - Infrastructure Engineer
       - iOS Engineer
       - Android Engineer
       - N/A
@@ -59,6 +52,7 @@ questions:
     choices:
       - Frontend Engineer
       - Backend Engineer
+      - Infrastructure Engineer
       - iOS Engineer
       - Android Engineer
       - N/A
@@ -101,23 +95,27 @@ questions:
       - N/A
   - title: "Resume"
     description: 
-      "PDF Only. Please omit or hide your name and high school and name the pdf Engineering_Resume."
+      "PDF Only."
     placeholder: "Upload a File"
     type: "file"
     accept: ".pdf"
     required: True
-  - title: "My name and high school is not visible on my resume, and the pdf is named Engineering_Resume."
-    type: "multiple_select"
-    required: True
-    choices:
-      - "Yes"
   - title: "GitHub Link"
     type: "short"
     placeholder: "github.com/..."
   - title: "Portfolio/Personal Website"
     type: "short"
     placeholder: "myportfolio.me/..."
-  - title: "What is your biggest technical strength and how can it be used to improve an OCTO product?"
-    description: "Max 100 words."
+  - title: "Berkeleytime applicants: I am able to meet weekly on Sundays 4-6PM PST"
+    description: "This is a hard requirement to join Berkeleytime. If you are not available you will not be considered for this team."
+    type: "multiple_choice"
+    required: True
+    placeholder: "Choose an option"
+    choices:
+      - "Yes"
+      - "No"
+      - "Not applying to Berkeleytime"
+  - title: "Propose a new product that OCTO can build to solve student needs. Why do students need this product, and why don't existing products meet this need?"
+    description: "Max 200 words."
     type: "long"
     required: True
