@@ -29,7 +29,11 @@ metadata:
         set $mobile_rewrite "${mobile_rewrite}+not_staging";
       }
 
-      ## redirect to m.example.com ##
+      if ($uri ~ /api/) {
+        set $mobile_rewrite "${mobile_rewrite}+api";
+      }
+
+      ## redirect to m.example.com
       if ($mobile_rewrite = "perform+not_old+not_staging") {
         rewrite ^ http://old.berkeleytime.com redirect;
         break;
