@@ -138,7 +138,7 @@ kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimestage:${GIT_COMMIT}/g" $BACKEND_DEPLOY_PROD_FILEPATH
+        sh '''sed -ri "s/image:.*/image:\\ gcr.io\\/berkeleytime-218606\\/berkeleytime\\/berkeleytimeprod:${GIT_COMMIT}/g" $BACKEND_DEPLOY_PROD_FILEPATH
 echo "Applying latest backend image to production"
 kubectl get pods
 kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
@@ -164,7 +164,7 @@ docker kill $containerID'''
     }
     stage('Update-Data-Fetch-Image-Version') {
       when {
-        branch "master"
+        branch "production"
         anyOf {
             changeset "berkeleytime/**"
             changeset "kubernetes/**"
