@@ -1,4 +1,13 @@
 releases:
+  - date: Aug 23, 2020
+    whatsNew:
+    - We are opening our Fall 2020 applications! Come see waht roles we have open and join the OCTO team on the <a href="/apply">apply</a> page.
+    - Our backend API can now be accessed from mobile devices, and the *_json queries now have a long option.
+    fixes:
+    - Fixed a bug where many courses for which we have enrollment data do not show up.
+    - Fixed a bug where enrollment and some course data were not updating.
+    - Fixed a bug where typing in the course search bar caused the screen to go completely white.
+    - Added visible scrollbars to some scrollable elements. (You can still turn them off using your OS settings.)
   - date: May 3, 2020
     whatsNew:
     - We're rolling out an updated UI, which is now available on both web (and soon on mobile)! 
