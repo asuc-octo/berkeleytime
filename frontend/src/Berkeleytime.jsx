@@ -25,7 +25,7 @@ class Berkeleytime extends Component {
   constructor(props) {
     super(props);
 
-    const key = 'bt-release-may-2020';
+    const key = 'bt-apps-open-update';
     if (!localStorage[key]) {
       localStorage[key] = true;
       const { dispatch } = this.props;
