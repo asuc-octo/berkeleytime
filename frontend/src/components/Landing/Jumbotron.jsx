@@ -21,7 +21,7 @@ function Jumbotron() {
               <p>Berkeleytime is a platform built, maintained, and run by students, just like you. We work hard to simplify and improve the course discovery experience.</p>
               <ButtonToolbar className="heading-buttons">
                 <Button variant="bt-primary" size="bt-md" as={Link} to="/catalog">Explore Courses</Button>
-                <Button variant="bt-primary-inverted" size="bt-md" as={Link} to="/about">About Us</Button>
+                <Button variant="bt-primary-inverted" size="bt-md" as={Link} to="/apply">Join Our Team</Button>
               </ButtonToolbar>
             </div>
           </Col>
