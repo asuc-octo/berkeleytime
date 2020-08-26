@@ -145,7 +145,7 @@ def check_yaml_response(config_name, responses):
 
 	loaded_yaml = check_yaml_format(config_name)
 	if not loaded_yaml:
-		print("Failed to read yaml configuration file:", yaml_path)
+		print("Failed to read yaml configuration file:", config_name)
 		print("Aborting.")
 		return False
 

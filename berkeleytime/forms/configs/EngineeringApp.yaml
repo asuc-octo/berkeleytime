@@ -2,8 +2,7 @@ info:
   unique_name: "EngineeringApp"
   public_name: 2020-21 Engineering Application
   description: |-
-    Apply to be a mobile, frontend, or backend engineer in OCTO. 
-
+    Apply to be a mobile, frontend, or backend engineer in OCTO.
   googlesheet_link: "https://docs.google.com/spreadsheets/d/1EJrToZsA5Ny-QUcBKjHCERpcP2ER51L3uaXGzdPnS3M/edit"
   drive_folder_name: "EngineeringResumes"
 questions:
