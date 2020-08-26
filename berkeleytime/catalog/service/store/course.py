@@ -103,6 +103,7 @@ class CourseStore(object):
 
         if not created:
             for field, value in self._exclude_derived_fields(course).items():
+                print(entry, field, value)
                 utils.set_field(entry, field, value)
             entry.save()
 
