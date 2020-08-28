@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Route, Switch, Redirect, MatchedRoute } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
 
@@ -18,27 +18,13 @@ ReactGA.initialize(gaTrackingID);
 const logPageView = () => {
   ReactGA.set({ page: window.location.pathname });
   ReactGA.pageview(window.location.pathname);
-  return null;
 };
 
 class Berkeleytime extends Component {
-  constructor(props) {
-    super(props);
-
-    const key = 'bt-apps-open-update';
-    if (!localStorage[key]) {
-      localStorage[key] = true;
-      const { dispatch } = this.props;
-      dispatch(openBanner());
-    }
-
-    //this.updateScreensize = this.updateScreensize.bind(this);
-  }
-
   /**
    * Checks if user is on mobile view
    */
-  /*componentDidMount() {
+  /* componentDidMount() {
     this.updateScreensize();
     window.addEventListener('resize', this.updateScreensize);
   }
@@ -54,9 +40,10 @@ class Berkeleytime extends Component {
     } else {
       dispatch(hideMobile());
     }
-  }*/
+  } */
 
-  easterEgg() {
+  static easterEgg() {
+    // eslint-disable-next-line no-console
     console.log(`%c
       Hey there! Checking out how Berkeleytime works? We are a group of student developers
       here at UC Berkeley. We build this site using the latest tech - React, Django, Kubernetes,
@@ -79,7 +66,7 @@ class Berkeleytime extends Component {
                  !.........||||                     ||||
                  !.........||||                     ||||
                  !.........||||                     ||||
-                 \`.........||||                    ,||||
+                 \`........||||                    ,||||
                   .;.......||||               _.-!!|||||
            .,uodWBBBBb.....||||       _.-!!|||||||||!:'
         !YBBBBBBBBBBBBBBb..!|||:..-!!|||||||!iof68BBBBBb....
@@ -98,38 +85,51 @@ class Berkeleytime extends Component {
                           \`!988888888899fT|!^"'
                             \`!9899fT|!^"'
                               \`!^"'
-   `, "font-family:monospace");
+   `, 'font-family:monospace');
+  }
+
+  constructor(props) {
+    super(props);
+
+    const key = 'bt-apps-open-update';
+    if (!localStorage[key]) {
+      localStorage[key] = true;
+      const { dispatch } = this.props;
+      dispatch(openBanner());
+    }
+
+    // this.updateScreensize = this.updateScreensize.bind(this);
   }
 
   render() {
     // Provide a plain version of OCTO Application for embedding
     // Delete all instances of MatchedRoute to remove this feature
-    const MatchedRoute = window.location.pathname.includes("/embed");
+    const MatchedRoute = window.location.pathname.includes('/embed');
     return (
-        <div>
-          { this.easterEgg() }
-          <Banner />
-          <div className="app-container">
-            {!MatchedRoute && <Navigation />}
-            <Route path="/" component={logPageView} />
-            <Switch>
-              {
-                routes.map(route => {
-                  if (route.redirect) {
-                    return (
-                      <Redirect exact={route.exact} from={route.path} to={route.to} key={route.name} />
-                    );
-                  } else {
-                    return (
-                      <Route exact={route.exact} path={route.path} component={route.component} key={route.name} />
-                    );
-                  }
-                })
-              }
-            </Switch>
-            {!MatchedRoute && <Footer />}
-          </div>
+      <div>
+        { this.easterEgg() }
+        <Banner />
+        <div className="app-container">
+          {!MatchedRoute && <Navigation />}
+          <Route path="/" component={logPageView} />
+          <Switch>
+            {
+              routes.map(route => {
+                if (route.redirect) {
+                  return (
+                    <Redirect exact={route.exact} from={route.path} to={route.to} key={route.name} />
+                  );
+                } else {
+                  return (
+                    <Route exact={route.exact} path={route.path} component={route.component} key={route.name} />
+                  );
+                }
+              })
+            }
+          </Switch>
+          {!MatchedRoute && <Footer />}
         </div>
+      </div>
     );
   }
 }
