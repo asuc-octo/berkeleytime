@@ -5,6 +5,7 @@ info:
     Apply to be a product designer or marketing associate in OCTO.
   googlesheet_link: "https://docs.google.com/spreadsheets/d/1qxw97YJKaRlLAoeGZ6kD4y8tAEXFbvxM4iYp5abv5dc/edit"
   drive_folder_name: "DesignResumes"
+  close_on: "2020-09-05 23:59:59 -0700"
 questions:
   - title: "Email Address"
     type: "short"
