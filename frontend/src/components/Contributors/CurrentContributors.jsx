@@ -153,14 +153,6 @@ CurrentContributors.defaultProps = {
         img_1: izzie_1,
         img_2: izzie_2,
       },
-      {
-        name: 'Sean Meng',
-        role: 'Backend Engineer',
-        site: 'https://www.linkedin.com/in/sean-meng-berkeley',
-        silly: true,
-        img_1: sean_1,
-        img_2: sean_2,
-      },
     ],
   ],
 };
