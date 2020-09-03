@@ -1,8 +1,9 @@
 /// This file contains responsive mixins based on Bootstrap 4 breakpoints.
+/// https://getbootstrap.com/docs/4.0/layout/overview/#responsive-breakpoints
 
 /// up to 768px, or xs + sm
 @mixin mobile {
-  @include media-breakpoint-between(xs, sm) {
+  @include media-breakpoint-down(sm) {
     @content;
   }
 }
@@ -14,7 +15,7 @@
   }
 }
 
-/// up to 576px
+/// up to 576px, or xs
 @mixin xs {
   @include media-breakpoint-down(xs) {
     @content;
@@ -38,14 +39,14 @@
 
 // greater than 992px, or lg + xl
 @mixin desktop {
-  @include media-breakpoint-up(lg) {
+  @include media-breakpoint-up(md) {
     @content;
   }
 }
 
 // greater than 1200px, or xl
 @mixin widescreen {
-  @include media-breakpoint-up(xl) {
+  @include media-breakpoint-up(lg) {
     @content;
   }
 }
