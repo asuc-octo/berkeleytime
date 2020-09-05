@@ -1,11 +1,9 @@
-/* eslint-disable react/jsx-filename-extension */
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
-import ScrollToTop from './components/Scroll/ScrollToTop';
+import ScrollToTop from './components/Common/ScrollToTop';
 import Berkeleytime from './Berkeleytime';
 import store from './redux/store';
 
