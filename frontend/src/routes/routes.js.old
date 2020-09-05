@@ -18,7 +18,7 @@ import DesignApp from '../views/Forms/DesignApp';
 import EngineeringApp from '../views/Forms/EngineeringApp';
 import UserTestingForm from '../views/Forms/UserTestingForm';
 import Error from '../views/Error/Error';
-import {Positions} from '../views/Apply/DescriptionPages';
+import { Positions } from '../views/Apply/DescriptionPages';
 
 // name should be unique, used as react key
 const routes = [
@@ -38,11 +38,11 @@ const routes = [
   { path: '/testform',          name: 'Test Form',            component: TestForm },
   { path: '/bugs',              name: 'Report a Bug',         component: BugsForm },
   { path: '/usertesting',       name: 'User Testing',         component: UserTestingForm },
-  { path: '/apply',             name: 'Apply',                component: Apply, exact: true },
+  { path: '/apply',             name: 'Apply',                component: Apply,          exact: true },
   { path: '/apply/engineering', name: 'Apply - Engineering',  component: EngineeringApp, exact: true },
-  { path: '/apply/design',      name: 'Apply - Design',       component: DesignApp, exact: true },
-  { path: '/apply/positions',   name: 'Apply - Positions',    component: Positions, exact: true },
-  { path: '/apply/embed',       name: 'Apply - Embed',        component: Apply, },
+  { path: '/apply/design',      name: 'Apply - Design',       component: DesignApp,      exact: true },
+  { path: '/apply/positions',   name: 'Apply - Positions',    component: Positions,      exact: true },
+  { path: '/apply/embed',       name: 'Apply - Embed',        component: Apply },
   { path: '/error',             name: 'Error',                component: Error },
   { /* no path */               name: '404',                  component: Error },
 ];
