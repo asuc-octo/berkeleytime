@@ -32,7 +32,7 @@ class About extends PureComponent {
             simplifying the course discovery experience. We actively build, improve
             and maintain Berkeleytime.
           </p>
-          <Button variant="bt-primary-inverted" size="bt-md" as={Link} to="/join">Join Team</Button>
+          <Button variant="bt-primary-inverted" size="bt-md" as={Link} to="/apply">Join Our Team</Button>
         </div>
         <div className="group">
           <img src={retreat_silly} />

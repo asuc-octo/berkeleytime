@@ -1,4 +1,21 @@
 past:
+  - name: Class of 2020
+    rows:
+      - - name: Will Wang
+          role: Backend Lead / PM
+          site: http://www.hantaowang.me
+        - name: Jemma Kwak
+          role: Design Lead
+          site: https://jemmakwak.me
+        - name: Anson Tsai
+          role: Backend Engineer
+          site: https://www.linkedin.com/in/anson-tsai-83b9a312a/
+        - name: Eli Wu
+          role: Backend Engineer
+          site: https://www.linkedin.com/in/eli-w-8b192ba0/
+        - name: Sean Meng
+          role: Backend Engineer
+          site: https://www.linkedin.com/in/sean-meng-berkeley
   - name: Class of 2019
     rows:
       - - name: Sangbin Cho

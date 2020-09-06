@@ -1,7 +1,7 @@
 releases:
   - date: Aug 23, 2020
     whatsNew:
-    - We are opening our Fall 2020 applications! Come see waht roles we have open and join the OCTO team on the <a href="/apply">apply</a> page.
+    - We are opening our Fall 2020 applications! Come see what roles we have open and join the OCTO team on the <a href="/apply">apply</a> page.
     - Our backend API can now be accessed from mobile devices, and the *_json queries now have a long option.
     fixes:
     - Fixed a bug where many courses for which we have enrollment data do not show up.
