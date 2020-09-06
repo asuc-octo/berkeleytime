@@ -6,7 +6,7 @@ import Mission from 'components/Landing/Mission'
 import Blurbs from 'components/Landing/Blurbs'
 
 const Landing: FC = () => (
-  <div className="landing">
+  <div>
     <Jumbotron />
     <Explore />
     <Mission />
