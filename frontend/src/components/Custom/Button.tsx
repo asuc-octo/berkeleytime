@@ -9,6 +9,7 @@ const Button: FC<Props> = (props) => {
         className={props.className}
         bsPrefix='bt-btn'
         variant={props.variant ?? 'primary'}
+        size={props.size}
         as={Link}
         to={props.link_to}
       >
@@ -21,6 +22,7 @@ const Button: FC<Props> = (props) => {
         className={props.className}
         bsPrefix='bt-btn'
         variant={props.variant ?? 'primary'}
+        size={props.size}
       >
         {props.children}
       </BootstrapButton>
@@ -33,6 +35,7 @@ const Button: FC<Props> = (props) => {
 export interface Props {
   className?: string
   variant?: 'primary' | 'inverted'
+  size?: 'sm'
   link_to?: string
 }
 

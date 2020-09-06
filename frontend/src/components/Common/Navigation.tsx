@@ -105,7 +105,6 @@ const Navigation: FC<Props> = (props) => {
   );
 }
 
-
 interface ReduxState {
   banner: boolean
 }
