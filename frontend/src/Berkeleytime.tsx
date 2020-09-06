@@ -64,6 +64,8 @@ function easterEgg() {
  `, 'font-family:monospace')
 }
 
+interface Props extends ReduxProps {}
+
 class Berkeleytime extends Component<Props> {
   constructor(props: Props) {
     super(props)
@@ -77,16 +79,17 @@ class Berkeleytime extends Component<Props> {
     }
 
     // Clear storage if not storing anything
-    // localStorage.clear()
+    /* localStorage.clear() */
   }
 
   render() {
     // Provide a plain version of OCTO Application for embedding
-    // Delete all instances of MatchedRoute to remove this feature
-    const embeded = window.location.pathname.includes('/embed');
+    // Delete all instances of [embeded] to remove this feature
+    const embeded = window.location.pathname.includes('/embed')
+
     return (
       <>
-        <Banner />
+        {!embeded && <Banner />}
         <Route path="/" component={LogPageView} />
         <div className="app-container">
           {!embeded && <Navigation />}
@@ -94,7 +97,7 @@ class Berkeleytime extends Component<Props> {
           {!embeded && <Footer />}
         </div>
       </>
-    );
+    )
   }
 }
 
@@ -105,7 +108,5 @@ const mapDispatch = {
 const connector = connect(null, mapDispatch)
 
 type ReduxProps = ConnectedProps<typeof connector>
-
-interface Props extends ReduxProps {}
 
 export default connector(Berkeleytime)
