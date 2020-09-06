@@ -8,6 +8,12 @@
   @include font-size-responsive(16px);
 }
 
+.bt-btn-sm {
+  @extend .btn-sm;
+
+  @include font-size-responsive(14px);
+}
+
 @mixin bt-variant($color, $background, $border, $hover) {
   color: $color;
   background-color: $background;

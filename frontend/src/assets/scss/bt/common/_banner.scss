@@ -1,10 +1,7 @@
 .banner {
-  width: 100vw;
   min-height: $banner-height;
-  z-index: $z-index-banner;
 
   background-color: $bt-off-white;
-  // border-bottom: 1px solid $bt-light-border-grey;
 
   display: flex;
   flex-direction: row;
@@ -19,7 +16,6 @@
     justify-content: center;
     align-items: center;
     font-size: 14px;
-    font-weight: 600;
     width: 100%;
     min-height: $banner-height;
     padding: 10px 5px;
@@ -31,14 +27,6 @@
     p {
       text-align: center;
     }
-
-    button {
-      min-width: 95px;
-
-      @include xs {
-        min-width: 55px;
-      }
-    }
   }
 
   > img {
@@ -47,11 +35,11 @@
     width: 24px;
     height: 24px;
     border-radius: 4px;
-    transition: background-color .5s;
+    transition: background-color .2s;
     cursor: pointer;
 
     &:hover {
-      background-color: #ececec;
+      background-color: $bt-light-border-grey;
     }
   }
 }
