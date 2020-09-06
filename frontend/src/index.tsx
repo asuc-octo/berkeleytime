@@ -12,9 +12,8 @@ import './assets/scss/berkeleytime.css';
 ReactDOM.render((
   <Provider store={store}>
     <BrowserRouter>
-      <ScrollToTop>
-        <Berkeleytime />
-      </ScrollToTop>
+      <ScrollToTop />
+      <Berkeleytime />
     </BrowserRouter>
   </Provider>
 ), document.getElementById('root'));

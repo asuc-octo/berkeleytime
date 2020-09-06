@@ -20,11 +20,11 @@ import UserTestingForm from './views/Forms/UserTestingForm';
 import Error from './views/Error/Error';
 import { Positions } from './views/Apply/DescriptionPages';
 
-const routes: Array<RouteProps & { nonexact?: boolean }> = [
+const routes: Array<RouteProps> = [
   { path: '/landing',           component: Landing         },
-  { path: '/catalog',           component: Catalog,        nonexact: true },
-  { path: '/grades',            component: Grades,         nonexact: true },
-  { path: '/enrollment',        component: Enrollment,     nonexact: true },
+  { path: '/catalog',           component: Catalog,        exact: false },
+  { path: '/grades',            component: Grades,         exact: false },
+  { path: '/enrollment',        component: Enrollment,     exact: false },
   { path: '/about',             component: About           },
   { path: '/dashboard',         component: Dashboard       },
   { path: '/login',             component: Login           },
@@ -50,7 +50,7 @@ const Routes: React.FC = () => (
         <Route
           path={route.path}
           component={route.component}
-          exact={!route.nonexact} // force exact=true unless specified false
+          exact={route.exact ?? true} // force exact=true unless specified false
           sensitive 
         />
       ))

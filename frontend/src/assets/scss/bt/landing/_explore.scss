@@ -1,45 +1,30 @@
 .landing-explore {
-  margin: 30px auto 120px;
-  @include mobile {
-    margin: 30px auto;
-  }
-  text-align: center;
-
   max-width: 900px;
+
   @include mobile {
     width: 300px;
   }
 
-  h5 {
-    font-weight: bold;
-    font-size: 24px;
-    margin-bottom: 60px;
-  }
+  margin: 25px auto $landing-section-gap;
+  @extend .px-3;
+
+  text-align: center;
 
   .feature {
     display: flex;
     flex-direction: column;
     align-items: center;
 
-    margin-bottom: 60px;
+    @extend .mb-5;
   
-    > img {
+    img {
       width: 60px;
       height: 60px;
-      margin-bottom: 20px;
       object-fit: scale-down;
     }
   
-    > h6 {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-  
-    > p {
-      text-align: center;
+    p {
       width: 95%;
-      line-height: 1.75;
       color: #8a8a8a;
     }
   }
