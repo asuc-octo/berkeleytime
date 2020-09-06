@@ -2,8 +2,8 @@ import React, { FC } from 'react'
 
 import { H3, P } from 'bt/custom'
 
-import asuc_logo from '../../assets/img/images/landing/asuc_logo.png'
-import stf_logo from '../../assets/img/images/landing/stf_logo.jpeg'
+import asuc_logo from '../../assets/img/landing/asuc_logo.png'
+import stf_logo from '../../assets/img/landing/stf_logo.jpeg'
 
 const Blurbs: FC = () => (
   <>
