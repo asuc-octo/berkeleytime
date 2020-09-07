@@ -15,7 +15,6 @@ ReactGA.initialize(gaTrackingID)
 const LogPageView: FC = () => {
   ReactGA.set({ page: window.location.pathname })
   ReactGA.pageview(window.location.pathname)
-  console.log("page view")
   return null
 }
 
