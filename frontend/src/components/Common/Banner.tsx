@@ -12,8 +12,6 @@ interface Props extends ReduxProps {}
 const Banner: FC<Props> = (props) => {
   const text = 'We are hiring for the 2020-21 school year! ✨';
 
-  console.log(props.banner)
-
   return props.banner ? (
     <div className="banner">
       <div className="content">
