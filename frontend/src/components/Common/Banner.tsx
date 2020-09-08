@@ -16,7 +16,7 @@ const Banner: FC<Props> = (props) => {
     <div className="banner">
       <div className="content">
         <p>{text}</p>
-        <Button size="sm" link_to="/apply">Apply</Button>
+        <Button size="sm" href={{as_link: "/apply"}}>Apply</Button>
       </div>
       <img src={close} alt="close" onClick={props.closeBanner} />
     </div>

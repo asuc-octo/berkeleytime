@@ -1,39 +1,17 @@
 .faq {
-  padding-bottom: 100px;
-  min-height: 100vh;
   padding-top: $bt-navbar-height;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  margin-bottom: 100px;
 
   .faq-heading {
     text-align: center;
-    margin-top: 50px;
-    margin-bottom: 50px;
-
-    h2 {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-
-    h3 {
-      font-size: 16px;
-      line-height: 150%;
-      color: $bt-light-text;
-      margin-bottom: 20px;
-    }
   }
 
-  .faq-question-card {
-    margin-bottom: 5px;
+  .faq-row {
+    width: 100%;
+    margin-top: 10px;
+    border-bottom: 1px solid $bt-light-border-grey;
 
     .faq-question {
-      padding-bottom: 5px;
-      border-bottom: 1px solid $bt-light-border-grey;
-      width: 100%;
-
       cursor: pointer;
 
       display: flex;
@@ -41,55 +19,31 @@
       justify-content: space-between;
       align-items: center;
 
-      p {
-        font-weight: 600;
-      }
-
       span {
         width: 24px;
         margin-left: 12px;
 
         text-align: center;
         font-size: 24px;
-        font-weight: 600;
+        font-weight: 500;
         color: $bt-primary;
-      }
 
-      .faq-question-text {
-        line-height: 150%;
-
-         @include mobile {
-           padding-right: 50px;
-         }
-
-        .faq-question-icon {
-          position: absolute;
-          right: 0px;
-          @include mobile {
-            right: 10px;
-          }
-
-          font-size: 25px;
-          color: $bt-primary;
-        }
+        -webkit-user-select: none;  /* Chrome all / Safari all */
+        -moz-user-select: none;     /* Firefox all */
+        -ms-user-select: none;      /* IE 10+ */
       }
     }
 
     .faq-answer {
-      padding-top: 10px;
+      padding-top: 2px;
+      padding-bottom: 10px;
 
       .collapse-text {
-        line-height: 180%;
-        margin-bottom: 20px;
+        line-height: 1.75;
       }
 
       a {
         color: $bt-primary;
-        text-decoration: none;
-
-        &:hover {
-          text-decoration: underline;
-        }
       }
     }
   }

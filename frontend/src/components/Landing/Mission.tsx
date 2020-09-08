@@ -19,7 +19,7 @@ const Mission: FC = () => (
               <a href="http://octo.asuc.org/"> ASUC Office of the Chief Technology Officer.</a>{' '}
               We are dedicated to designing free, accessible software for students.
             </P>
-            <Button variant="inverted" link_to="/about">About our Team</Button>
+            <Button variant="inverted" href={{as_link: "/about"}}>About our Team</Button>
           </div>
         </Col>
       </Row>

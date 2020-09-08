@@ -20,10 +20,10 @@ const Jumbotron: FC = () => (
             <P className="mb-3">Berkeleytime is a platform built, maintained, and run by students, just like you. We work hard to simplify and improve the course discovery experience.</P>
             <ButtonToolbar>
               <ButtonGroup className="mr-2">
-                <Button link_to="/catalog">Explore Courses</Button>
+                <Button href={{as_link: "/catalog"}}>Explore Courses</Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button variant="inverted" link_to="/about">About Us</Button>
+                <Button variant="inverted" href={{as_link: "/about"}}>About Us</Button>
               </ButtonGroup>
             </ButtonToolbar>
           </div>
