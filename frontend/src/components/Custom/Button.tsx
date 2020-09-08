@@ -3,7 +3,7 @@ import { Button as BootstrapButton } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
 const Button: FC<Props> = (props) => {
-  if (props.link_to) {
+  if (typeof props.href === 'object') {
     return (
       <BootstrapButton
         className={props.className}
@@ -11,7 +11,7 @@ const Button: FC<Props> = (props) => {
         variant={props.variant ?? 'primary'}
         size={props.size}
         as={Link}
-        to={props.link_to}
+        to={props.href.as_link}
       >
         {props.children}
       </BootstrapButton>
@@ -23,20 +23,19 @@ const Button: FC<Props> = (props) => {
         bsPrefix='bt-btn'
         variant={props.variant ?? 'primary'}
         size={props.size}
+        href={props.href}
       >
         {props.children}
       </BootstrapButton>
     )
   }
-
-  
 }
 
 export interface Props {
   className?: string
   variant?: 'primary' | 'inverted'
   size?: 'sm'
-  link_to?: string
+  href?: string | { as_link: string }
 }
 
 export default Button
