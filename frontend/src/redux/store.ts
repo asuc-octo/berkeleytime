@@ -6,13 +6,12 @@ import filter from './reducers/filter';
 import classDescription from './reducers/classDescription';
 import grade from './reducers/grade';
 import enrollment from './reducers/enrollment';
-import isMobile from './reducers/isMobile';
 
 import { commonReducer } from './common/reducer'
 // import { enrollmentReducer } from './enrollment/reducer';
 
 const reducer = combineReducers({
-  catalog, filter, classDescription, grade, isMobile, enrollment,
+  catalog, filter, classDescription, grade, enrollment,
   
   common: commonReducer,
   // enrollment: enrollmentReducer,
