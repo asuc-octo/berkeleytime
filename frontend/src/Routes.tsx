@@ -1,15 +1,15 @@
 import React from 'react';
 import { Switch, Route, RouteProps, Redirect } from 'react-router-dom'
 
-import Landing from './views/Landing/Landing';
+import Landing from './views/Landing';
 import Catalog from './views/Catalog/Catalog';
 import Grades from './views/Grades/Grades';
 import Enrollment from './views/Enrollment/Enrollment';
-import About from './views/About/About';
+import About from './views/About';
 import Dashboard from './views/Dashboard/Dashboard';
 import Login from './views/Login/Login';
 import Releases from './views/Releases/Releases';
-import Faq from './views/Faq/Faq';
+import Faq from './views/Faq';
 import ApiDocs from './views/Api/Api';
 import Apply from './views/Apply/Apply';
 import TestForm from './views/Forms/TestForm';
