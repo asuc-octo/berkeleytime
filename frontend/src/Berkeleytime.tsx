@@ -7,8 +7,11 @@ import Navigation from './components/Common/Navigation'
 import Footer from './components/Common/Footer'
 import Routes from './Routes'
 
+import { openBanner, enterMobile, exitMobile } from './redux/common/actions'
+
 // google analytics
 import ReactGA from 'react-ga'
+import { ReduxState } from 'redux/store'
 const gaTrackingID = 'UA-35316609-1'
 ReactGA.initialize(gaTrackingID)
 
@@ -63,7 +66,7 @@ function easterEgg() {
  `, 'font-family:monospace')
 }
 
-interface Props extends ReduxProps {}
+interface Props extends PropsFromRedux {}
 
 class Berkeleytime extends Component<Props> {
   constructor(props: Props) {
@@ -71,14 +74,32 @@ class Berkeleytime extends Component<Props> {
 
     easterEgg()
 
-    const key = 'bt-apps-open-update'
-    if (localStorage.getItem(key) === null) {
-      localStorage.setItem(key, key)
-      props.openBanner()
-    }
+    // const key = 'bt-apps-open-update'
+    // if (localStorage.getItem(key) === null) {
+    //   localStorage.setItem(key, key)
+    //   props.openBanner()
+    // }
 
     // Clear storage if not storing anything
-    /* localStorage.clear() */
+    localStorage.clear()
+
+    this.checkMobile()
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.checkMobile)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.checkMobile)
+  }
+
+  checkMobile = () => {
+    if (window.innerWidth <= 992 && !this.props.mobile) {
+      this.props.enterMobile()
+    } else if (window.innerWidth > 992 && this.props.mobile) {
+      this.props.exitMobile()
+    }
   }
 
   render() {
@@ -90,7 +111,7 @@ class Berkeleytime extends Component<Props> {
       <>
         {!embeded && <Banner />}
         <Route path="/" component={LogPageView} />
-        <div className="app-container">
+        <div className="app">
           {!embeded && <Navigation />}
           <Routes />
           {!embeded && <Footer />}
@@ -100,12 +121,18 @@ class Berkeleytime extends Component<Props> {
   }
 }
 
+const mapState = (state: ReduxState) => ({
+  mobile: state.common.mobile
+})
+
 const mapDispatch = {
-  openBanner: () => ({ type: 'OPEN_BANNER' })
+  openBanner,
+  enterMobile,
+  exitMobile
 }
 
-const connector = connect(null, mapDispatch)
+const connector = connect(mapState, mapDispatch)
 
-type ReduxProps = ConnectedProps<typeof connector>
+type PropsFromRedux = ConnectedProps<typeof connector>
 
 export default connector(Berkeleytime)

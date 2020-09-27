@@ -3,22 +3,22 @@ import { Row, Col } from 'react-bootstrap';
 
 import { H3, P, Button } from 'bt/custom'
 
-import CurrentContributors from '../../components/Contributors/CurrentContributors';
-import PastContributors from '../../components/Contributors/PastContributors';
+import CurrentContributors from '../components/About/CurrentContributors';
+import PastContributors from '../components/About/PastContributors';
 
-import doe from '../../assets/img/images/about/group/doe.jpg'
-import michaels from '../../assets/img/images/about/group/michaels.jpg'
-import retreat from '../../assets/img/images/about/group/retreat.jpg'
-import janet_jemma from '../../assets/img/images/about/group/janet_jemma.jpg'
-import will from '../../assets/img/images/about/group/will.jpg'
-import jemma from '../../assets/img/images/about/group/jemma.jpg'
-import christina_janet from '../../assets/img/images/about/group/christina_janet.jpg'
-import retreat_silly from '../../assets/img/images/about/group/retreat_silly.png'
-import zoom from '../../assets/img/images/about/group/zoom.png'
+import doe from 'assets/img/about/group/doe.jpg'
+import michaels from 'assets/img/about/group/michaels.jpg'
+import retreat from 'assets/img/about/group/retreat.jpg'
+import janet_jemma from 'assets/img/about/group/janet_jemma.jpg'
+import will from 'assets/img/about/group/will.jpg'
+import jemma from 'assets/img/about/group/jemma.jpg'
+import christina_janet from 'assets/img/about/group/christina_janet.jpg'
+import retreat_silly from 'assets/img/about/group/retreat_silly.png'
+import zoom from 'assets/img/about/group/zoom.png'
 
-import growth from '../../assets/svg/about/growth.svg'
-import curiosity from '../../assets/svg/about/curiosity.svg'
-import passion from '../../assets/svg/about/passion.svg'
+import growth from 'assets/svg/about/growth.svg'
+import curiosity from 'assets/svg/about/curiosity.svg'
+import passion from 'assets/svg/about/passion.svg'
 
 const values = [
   {

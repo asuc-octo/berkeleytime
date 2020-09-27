@@ -5,26 +5,26 @@ import { H3 } from 'bt/custom'
 
 import { ReactComponent as Web } from '../../assets/svg/about/web.svg';
 
-import leon_1 from '../../assets/img/images/about/compressed/Leon_1.jpg';
-import leon_2 from '../../assets/img/images/about/compressed/Leon_2.jpg';
-import michael_1 from '../../assets/img/images/about/compressed/Michael_1.jpg';
-import michael_2 from '../../assets/img/images/about/compressed/Michael_2.jpg';
-import chris_1 from '../../assets/img/images/about/compressed/Chris_1.jpg';
-import chris_2 from '../../assets/img/images/about/compressed/Chris_2.jpg';
-import grace_1 from '../../assets/img/images/about/compressed/Grace_1.jpg';
-import grace_2 from '../../assets/img/images/about/compressed/Grace_2.jpg';
-import hannah_1 from '../../assets/img/images/about/compressed/Hannah_1.jpg';
-import hannah_2 from '../../assets/img/images/about/compressed/Hannah_2.jpg';
-import chloe_1 from '../../assets/img/images/about/compressed/Chloe_1.jpg';
-import chloe_2 from '../../assets/img/images/about/compressed/Chloe_2.jpg';
-import christina_1 from '../../assets/img/images/about/compressed/Christina_1.jpg';
-import christina_2 from '../../assets/img/images/about/compressed/Christina_2.jpg';
-import izzie_1 from '../../assets/img/images/about/compressed/Izzie_1.jpg';
-import izzie_2 from '../../assets/img/images/about/compressed/Izzie_2.jpg';
-import janet_1 from '../../assets/img/images/about/compressed/Janet_1.jpg';
-import janet_2 from '../../assets/img/images/about/compressed/Janet_2.jpg';
-import annie_1 from '../../assets/img/images/about/compressed/Annie_1.jpg';
-import annie_2 from '../../assets/img/images/about/compressed/Annie_2.jpg';
+import leon_1 from 'assets/img/about/compressed/Leon_1.jpg';
+import leon_2 from 'assets/img/about/compressed/Leon_2.jpg';
+import michael_1 from 'assets/img/about/compressed/Michael_1.jpg';
+import michael_2 from 'assets/img/about/compressed/Michael_2.jpg';
+import chris_1 from 'assets/img/about/compressed/Chris_1.jpg';
+import chris_2 from 'assets/img/about/compressed/Chris_2.jpg';
+import grace_1 from 'assets/img/about/compressed/Grace_1.jpg';
+import grace_2 from 'assets/img/about/compressed/Grace_2.jpg';
+import hannah_1 from 'assets/img/about/compressed/Hannah_1.jpg';
+import hannah_2 from 'assets/img/about/compressed/Hannah_2.jpg';
+import chloe_1 from 'assets/img/about/compressed/Chloe_1.jpg';
+import chloe_2 from 'assets/img/about/compressed/Chloe_2.jpg';
+import christina_1 from 'assets/img/about/compressed/Christina_1.jpg';
+import christina_2 from 'assets/img/about/compressed/Christina_2.jpg';
+import izzie_1 from 'assets/img/about/compressed/Izzie_1.jpg';
+import izzie_2 from 'assets/img/about/compressed/Izzie_2.jpg';
+import janet_1 from 'assets/img/about/compressed/Janet_1.jpg';
+import janet_2 from 'assets/img/about/compressed/Janet_2.jpg';
+import annie_1 from 'assets/img/about/compressed/Annie_1.jpg';
+import annie_2 from 'assets/img/about/compressed/Annie_2.jpg';
 
 const contributors = [
   [

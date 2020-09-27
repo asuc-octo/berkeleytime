@@ -56,3 +56,37 @@
     @content;
   }
 }
+
+// responsively scales down $size for mobile and tablet views
+@mixin responsive($property, $size) {
+  @include desktop {
+    #{$property}: $size;
+  }
+
+  @if $size <= 20px {
+    @include tablet { #{$property}: $size - 1px; }
+    @include mobile { #{$property}: $size - 2px; }
+  } @else if $size <= 21px {
+    @include tablet { #{$property}: $size - 2px; }
+    @include mobile { #{$property}: $size - 3px; }
+  } @else if $size <= 30px {
+    @include tablet { #{$property}: $size - 2px; }
+    @include mobile { #{$property}: $size - 4px; }
+  } @else if $size <= 31px {
+    @include tablet { #{$property}: $size - 3px; }
+    @include mobile { #{$property}: $size - 5px; }
+  } @else {
+    @include tablet { #{$property}: $size - 3px; }
+    @include mobile { #{$property}: $size - 6px; }
+  }
+}
+
+@mixin desktop-and-touch($property, $desktop-size, $touch-size) {
+  @include desktop {
+    #{$property}: $desktop-size;
+  }
+
+  @include touch {
+    #{$property}: $touch-size;
+  }
+}

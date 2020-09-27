@@ -24,13 +24,13 @@ td {
 }
 
 a {
+  color: $bt-blue;
   transition: color 0.2s;
 
   &:hover {
     text-decoration: none;
   }
 }
-
 
 // responsively scale font sizes
 @mixin font-size-responsive($size) {
