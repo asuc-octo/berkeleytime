@@ -1,20 +1,19 @@
 // This file contains some variables used throughout the stylesheets.
 
-// approx height of the bootstrap navbar
+// exact height of the bootstrap navbar
 $bt-navbar-height: 58px;
 
-$banner-height: 60px;
+// height of the banner
+$banner-height: $bt-navbar-height;
 
-// minimum supported desktop viewport height
+// minimum supported desktop height for app that fits to viewport
 $viewport-min-height: 800px;
 
-// minimum supported mobile viewport hiehgt
-$mobile-viewport-min-height: 600px;
+// minimum supported mobile height for app to
+$touch-viewport-min-height: 600px;
 
 // variables for z indexes
 $z-index-serious: 1;
-
-
 
 // landing
 $landing-section-gap: 150px;

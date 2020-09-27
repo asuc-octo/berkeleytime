@@ -3,7 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 
 import { H3, P, Button } from 'bt/custom'
 
-import doe from '../../assets/img/images/about/group/doe.jpg';
+import doe from 'assets/img/about/group/doe.jpg';
 
 const Mission: FC = () => (
   <div className="landing-mission">

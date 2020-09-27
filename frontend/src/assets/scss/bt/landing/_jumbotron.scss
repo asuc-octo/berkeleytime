@@ -3,7 +3,7 @@
   min-height: $viewport-min-height;
 
   @include touch {
-    min-height: $mobile-viewport-min-height;
+    min-height: $touch-viewport-min-height;
   }
 
   .container, .container > .row {

@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom'
 import { Navbar, Nav } from 'react-bootstrap'
 import { connect, ConnectedProps } from 'react-redux'
 
-interface Props extends ReduxProps {}
+import { ReduxState } from '../../redux/store'
+
+interface Props extends PropsFromRedux {}
 
 const Navigation: FC<Props> = (props) => {
   const [links, setLinks] = useState(
@@ -105,16 +107,12 @@ const Navigation: FC<Props> = (props) => {
   );
 }
 
-interface ReduxState {
-  banner: boolean
-}
-
 const mapState = (state: ReduxState) => ({
-  banner: state.banner
+  banner: state.common.banner
 })
 
 const connector = connect(mapState)
 
-type ReduxProps = ConnectedProps<typeof connector>
+type PropsFromRedux = ConnectedProps<typeof connector>
 
 export default connector(Navigation)

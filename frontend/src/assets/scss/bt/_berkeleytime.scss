@@ -1,5 +1,5 @@
 // wrapper for bt app (excluding banner)
-.app-container {
+.app {
   background-color: $bt-white;
 
   // we change navbar's position to absolute when the banner is open
@@ -21,6 +21,20 @@
     @include tablet {
       height: auto;
     }
+  }
+
+  .fit-to-viewport {
+    height: 100vh;
+    min-height: $viewport-min-height;
+
+    @include touch {
+      height: auto;
+      min-height: $touch-viewport-min-height;
+    }
+  }
+
+  .under-navbar {
+    padding-top: $bt-navbar-height;
   }
 
   .banner-visible {

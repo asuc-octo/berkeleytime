@@ -1,13 +1,14 @@
-import React, { FC } from 'react';
-import { Link } from 'react-router-dom';
-import { connect, ConnectedProps } from 'react-redux';
+import React, { FC } from 'react'
+import { connect, ConnectedProps } from 'react-redux'
 
-import { P, Button } from 'bt/custom'
+import { Button } from 'bt/custom'
 
-import { closeBanner } from '../../redux/actions';
-import close from '../../assets/svg/common/close.svg';
+import { ReduxState } from '../../redux/store'
+import { closeBanner } from '../../redux/common/actions'
 
-interface Props extends ReduxProps {}
+import close from '../../assets/svg/common/close.svg'
+
+interface Props extends PropsFromRedux {}
 
 const Banner: FC<Props> = (props) => {
   const text = 'We are hiring for the 2020-21 school year! ✨';
@@ -23,14 +24,8 @@ const Banner: FC<Props> = (props) => {
   ) : null;
 }
 
-interface ReduxState {
-  banner: {
-    banner: boolean
-  }
-}
-
 const mapState = (state: ReduxState) => ({
-  banner: state.banner.banner
+  banner: state.common.banner
 })
 
 const mapDispatch = {
@@ -39,7 +34,7 @@ const mapDispatch = {
 
 const connector = connect(mapState, mapDispatch)
 
-type ReduxProps = ConnectedProps<typeof connector>
+type PropsFromRedux = ConnectedProps<typeof connector>
 
 export default connector(Banner)
 
