@@ -11,7 +11,6 @@
 @import "bt/theming/grades_color";
 @import "bt/theming/enrollment_color";
 
-
 @import "bt/berkeleytime";
 
 // common
@@ -24,9 +23,6 @@
 @import "bt/landing/mission";
 @import "bt/landing/blurbs";
 
-// login
-@import "bt/login/login";
-
 // catalog
 @import "bt/catalog/catalog";
 @import "bt/catalog/filter";
@@ -38,12 +34,15 @@
 // Grades & Enrollment
 @import "bt/classcards";
 @import "bt/graph-empty";
+
 // Grades
 @import "bt/grades/grades";
 @import "bt/grades/graph";
 @import "bt/shared/grades_enrollment_info";
+
 // Enrollment
 @import "bt/enrollment/enrollment";
+
 // Releases
 @import "bt/releases";
 
@@ -71,3 +70,8 @@
 
 // Error page
 @import "bt/error/error";
+
+
+
+// login
+@import "bt/login/login";
