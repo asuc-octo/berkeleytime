@@ -4,17 +4,19 @@ import { FixedSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import FilterCard from './FilterCard';
-import { laymanToAbbreviation, laymanSplit } from '../../variables/Variables';
+import { laymanToAbbreviation } from '../../variables/Variables';
 
 import { getFilterResults, filter, makeRequest } from '../../redux/actions';
 import { connect } from "react-redux";
 
+import { search } from "fast-fuzzy";
 
-//todo: fix filter save
+/**
+ * Component for course list
+ */
 class FilterResults extends Component {
   constructor(props) {
     super(props);
-    this.cache = {};
   }
 
   componentDidMount() {
@@ -49,6 +51,15 @@ class FilterResults extends Component {
     let courseATitle = `${courseA.abbreviation} ${courseA.course_number}`;
     let courseBTitle = `${courseB.abbreviation} ${courseB.course_number}`;
     return courseATitle.localeCompare(courseBTitle);
+  }
+
+  /**
+   * Compares courses by relevance. "Relevance" is only a term relevant to
+   * searching so this defaults to "average grade" when not being
+   * search-filtered.
+   */
+  static compareRelevance(courseA, courseB) {
+    return FilterResults.compareAverageGrade(courseA, courseB);
   }
 
   /**
@@ -87,6 +98,8 @@ class FilterResults extends Component {
    */
   static sortByAttribute(sortAttribute) {
     switch (sortAttribute) {
+      case 'relevance':
+        return FilterResults.compareRelevance;
       case 'average_grade':
         return FilterResults.compareAverageGrade;
       case 'department_name':
@@ -98,75 +111,80 @@ class FilterResults extends Component {
     }
   }
 
-  filter = course => {
-    let {query} = this.props;
-    return FilterResults.filterCourses(course, query, this.cache);
+  /**
+   * Takes the search query and returns a list of matching items sorted by
+   * text-distance.
+   */
+  calculateQueryResults() {
+    let { courses, query } = this.props;
+    return search(query, courses, { keySelector: FilterResults.searchKeyForCourse })
   }
 
-  static filterCourses(course, query, cache) {
-    if(query.trim() === "") { return true }
-    let pseudoQuery = query.toUpperCase();
-    if (cache[query]) {
-      pseudoQuery = cache[query];
-    } else {
-      let querySplit = query.toUpperCase().split(" ");
-      let longestPrefix = "";
-      for (let prefix in laymanSplit) {
-        if (this.arrPrefixMatch(querySplit, laymanSplit[prefix]) && prefix.length > longestPrefix.length) {
-          longestPrefix = prefix;
-        }
-      }
-      if (longestPrefix.length > 0 && pseudoQuery.startsWith(longestPrefix)) {
-        pseudoQuery = pseudoQuery.replace(longestPrefix, laymanToAbbreviation[longestPrefix]);
-      }
-      query = query.toLowerCase();
-      pseudoQuery = pseudoQuery.toLowerCase();
-      cache[query] = pseudoQuery;
-    }
-
-    return FilterResults.matches(course, query) || (query !== pseudoQuery && FilterResults.matches(course, pseudoQuery));
+  /**
+   * Determines if a search query has been entered.
+   */
+  hasSearchQuery() {
+    return this.props.query.trim() !== "";
   }
 
-  static arrPrefixMatch(arr, prefix) {
-    if (arr.length < prefix.length) {
-      return false;
-    }
-    for (let i = 0; i < prefix.length; i++) {
-      if (arr[i] !== prefix[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
+  /**
+   * Generates a 'search string' for a course.
+   */
+  static searchKeyForCourse(course) {
+    const searchComponents = [
+      course.abbreviation,
+      course.course_number,
+      course.title,
+      course.department
+    ];
 
-  static matches(course, query) {
-    let courseMatches = (`${course.abbreviation} ${course.course_number} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    let otherNumber;
-    if (course.course_number.indexOf("C") !== -1) { // if there is a c in the course number
-        otherNumber = course.course_number.substring(1);
+    // Have a version of course number with 'C' and without 'C'
+    if (course.course_number.indexOf("C") !== -1) {
+      searchComponents.push(course.course_number.substring(1));
     } else { // if there is not a c in the course number
-        otherNumber = "C" + course.course_number;
+      searchComponents.push("C" + course.course_number);
     }
-    var courseFixedForCMatches = (`${course.abbreviation} ${otherNumber} ${course.title} ${course.department}`).toLowerCase().indexOf(query) !== -1;
-    return courseMatches || courseFixedForCMatches;
+
+    return searchComponents.join(";");
+
+    // Apply the 'layman' abbrs (compsci => cs) to allow for abbrs to get higher
+    // search ranking.
+    for (const [shortAbbr, longAbbr] of laymanToAbbreviation) {
+      course.abbreviation
+    }
   }
 
   render() {
-    const { sortBy, loading } = this.props;
-    var courses;
-    if(!loading) {
-      courses = this.props.courses
-        .sort(FilterResults.sortByAttribute(sortBy))
-        .filter(this.filter);
+    const {
+      courses: unfilteredCourses,
+      query,
+      sortBy,
+      loading
+    } = this.props;
+
+    let courses = unfilteredCourses;
+    if (!loading) {
+      // If we're using a "Relevance" search *and* there's a search query, we'll
+      // use the search text-distance as the sorting metric.
+      if (this.hasSearchQuery()) {
+        courses = this.calculateQueryResults();
+      }
+
+      if (sortBy !== 'relevance') {
+        courses = courses
+          .sort(FilterResults.sortByAttribute(sortBy));
+      }
+
     } else {
       courses = <div></div>
     }
+
     let data = {
       courses,
       sortBy,
       selectCourse: this.props.selectCourse,
       selectedCourseId: this.props.selectedCourse.id,
-    }
+    };
 
     return (
       <div className="filter-results">
