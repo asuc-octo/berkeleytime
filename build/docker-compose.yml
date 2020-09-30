@@ -2,10 +2,10 @@ version: '3.7'
 services:
   backend:
     build:
-      context: ../berkeleytime
+      context: ../backend
     command: ["0.0.0.0:8000"]
     volumes:
-     - ../berkeleytime:/berkeleytime
+     - ../backend:/backend
      - ./google-sa.json:/google-sa.json
     environment:
      - "PYTHONUNBUFFERED=1"
