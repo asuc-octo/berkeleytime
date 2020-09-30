@@ -168,7 +168,7 @@ class Catalog extends Component {
       }) : [],
     });
 
-    var departmentsPlaylist = department ? department.map(req => {
+    const departmentsPlaylist = department ? department.map(req => {
       filterMap[req.name] = { id: req.id, type: 'department' };
       return {
         value: req.id,
@@ -181,31 +181,31 @@ class Catalog extends Component {
       departmentsPlaylist.splice(0, 1);
     }
 
-    var unitsPlaylist = units ? units.map(req => {
+    const unitsPlaylist = units ? units.map(req => {
       filterMap[req.name] = { id: req.id, type: 'units' };
       return {
         value: req.id,
         label: req.name === '5 Units' ? '5+ Units' : req.name,
-      }
+      };
     }) : [];
 
-    var levelsPlaylist = level ? level.map(req => {
+    const levelsPlaylist = level ? level.map(req => {
       filterMap[req.name] = { id: req.id, type: 'level' };
       return {
         value: req.id,
         label: req.name,
-      }
+      };
     }) : [];
 
-    var semestersPlaylist = semester ? semester.map(req => {
+    const semestersPlaylist = semester ? semester.map(req => {
       filterMap[req.name] = { id: req.id, type: 'semester' };
       return {
         value: req.id,
         label: req.name,
-      }
+      };
     }) : [];
 
-    setFilterMap(filterMap);
+    // setFilterMap(filterMap);
 
     return {
       requirements,
