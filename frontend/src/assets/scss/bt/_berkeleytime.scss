@@ -21,6 +21,13 @@
 
     min-height: $viewport-min-height;
 
+    > div {
+      // Effective height: 100%
+      align-items: stretch;
+      // Effective width: 100%
+      flex: 1;
+    }
+
     @include mobile {
       height: auto;
     }
