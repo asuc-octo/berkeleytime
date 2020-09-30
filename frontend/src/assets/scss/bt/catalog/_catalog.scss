@@ -4,23 +4,6 @@
   min-width: 992px;
   min-height: 600px;
 
-  // row
-  > .row {
-    // Effective height: 100%
-    align-items: stretch;
-    // Effective width: 100%
-    flex: 1;
-
-    /*@include mobile {
-      max-height: 95vh;
-    }*/
-
-    // columns
-    // > div {
-    //   height: 100%;
-    // }
-  }
-
   .row {
     margin: 0; // override bootstrap padding
 
