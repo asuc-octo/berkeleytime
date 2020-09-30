@@ -5,17 +5,18 @@
   min-height: 600px;
 
   // row
-  > div {
+  > .row {
     height: 100%;
+    align-items: stretch;
 
     /*@include mobile {
       max-height: 95vh;
     }*/
 
     // columns
-    > div {
-      height: 100%;
-    }
+    // > div {
+    //   height: 100%;
+    // }
   }
 
   .row {
