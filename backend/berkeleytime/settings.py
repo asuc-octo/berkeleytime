@@ -15,6 +15,7 @@ See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 from pathlib import Path
 import os
 from urllib.parse import urlparse
+from berkeleytime.config.semesters.fall2020 import CURRENT_SEMESTER, CURRENT_YEAR
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
