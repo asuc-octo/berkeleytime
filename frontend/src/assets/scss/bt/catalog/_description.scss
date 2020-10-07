@@ -150,10 +150,12 @@
     }
 
     .table-container {
-      flex: 1;
-      overflow-y: auto;
+      // flex: 1;
       right: .75rem;
       position: relative;
+
+      // overflow-y: auto;
+      // min-height: 300px;
 
       table {
         max-width: 100%;
