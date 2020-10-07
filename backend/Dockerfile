@@ -2,7 +2,7 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
-RUN apt-get install -y python3.8 python3-pip build-essential 
+RUN apt-get install -y python3.8 python3-pip build-essential
 RUN pip3 install --upgrade pip
 
 RUN mkdir /backend
