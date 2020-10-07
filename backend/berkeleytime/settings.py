@@ -113,6 +113,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'berkeleytime',
     'user',
+    'rest_framework'
 ]
 
 # Middlewares
@@ -154,6 +155,16 @@ SIS_COURSE_APP_ID = os.getenv('SIS_COURSE_APP_ID')
 SIS_COURSE_APP_KEY = os.getenv('SIS_COURSE_APP_KEY')
 SIS_CLASS_APP_ID = os.getenv('SIS_CLASS_APP_ID')
 SIS_CLASS_APP_KEY = os.getenv('SIS_CLASS_APP_KEY')
+
+# REST Framework
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 # Password validation - we intend to use Google sign-in, but we may add in-house auth in the future
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
