@@ -13,7 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path, re_path
+from django.contrib import admin
+from django.urls import path, re_path, include
+from berkeleytime.router import router
 
 import catalog.views
 import enrollment.views
@@ -22,6 +24,11 @@ import grades.views
 
 # Note: We will begin to deprecate the endpoints seen here in favor of using Django REST Framework.
 urlpatterns = [
+    path('admin/', admin.site.urls),
+
+    path('api-auth/', include('rest_framework.urls')),
+    path('', include(router.urls))
+
     # Catalog
     ## List all courses with catalog data
     path('catalog/catalog_json/', catalog.views.catalog_context_json),
