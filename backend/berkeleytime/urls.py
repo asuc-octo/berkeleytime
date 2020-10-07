@@ -14,11 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
+from berkeleytime.router import router
 
 urlpatterns = [
     # Probably don't need this right now
     path('admin/', admin.site.urls),
+    
+    path('api-auth/', include('rest_framework.urls')),
+    path('', include(router.urls))
     
     # Need to add these endpoints back later
 
