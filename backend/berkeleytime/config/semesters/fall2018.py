@@ -20,7 +20,7 @@ TELEBEARS = {
 
 INSTRUCTION = {
     'instruction_start': datetime.datetime(2018, 8, 22, 00, 00),
-    'instruction_end':datetime.datetime(2018, 12, 07, 00, 00)
+    'instruction_end':datetime.datetime(2018, 12, 7, 00, 00)
 }
 
 # Please don't edit anything below this line unless you know what you are doing

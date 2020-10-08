@@ -38,4 +38,4 @@ class Grade(models.Model):
 
     def __str__(self):
         """Return unicode representation of models.Grade."""
-        return u'%s (%s)' % (self.average, self.letter_average)
+        return f'{self.average} ({self.letter_average})'
