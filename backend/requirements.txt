@@ -1,3 +1,10 @@
 Django==3.1.1
 psycopg2-binary==2.8.6
 django-redis-cache==2.1.1
+python-dateutil
+pyyaml
+google-api-python-client
+google-auth
+gspread
+redlock-py
+retry

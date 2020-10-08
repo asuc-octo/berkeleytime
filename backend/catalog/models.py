@@ -160,16 +160,15 @@ class Section(models.Model):
         section_number = self.section_number,
         ccn = self.ccn,
         kind = self.kind,
-        start_time = self.start_time,
-        end_time = self.end_time,
-        word_days = self.word_days,
+        start_time = self.start_time.isoformat() if self.start_time else '',
+        end_time = self.end_time.isoformat() if self.end_time else '',
+        word_days = self.word_days if self.days else '',
         location_name = self.location_name,
         instructor = self.instructor,
         waitlisted = self.waitlisted,
         final_day = self.final_day,
-        final_word_day = self.final_word_day,
-        final_start = self.final_start,
-        final_end = self.final_end,
+        final_start = self.final_start.isoformat() if self.final_start else '',
+        final_end = self.final_end.isoformat() if self.final_end else '',
       )
 
     @property
