@@ -55,6 +55,7 @@ class CompareClasses extends Component{
     }
     render(){
         return (
+            <>
             <Row>
                 <Col xs={3}>
                     <div className="card card-class"></div>
@@ -92,6 +93,7 @@ class CompareClasses extends Component{
                     </Row>
                 </div>
             </div>
+            </>
         );
     }
 }

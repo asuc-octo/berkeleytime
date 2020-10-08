@@ -3,22 +3,6 @@
   //hide mobile views
   min-width: 992px;
   min-height: 600px;
-  height: 100vh;
-
-  // row
-  > div {
-    height: 100%;
-    overflow-y: scroll;
-
-    /*@include mobile {
-      max-height: 95vh;
-    }*/
-
-    // columns
-    > div {
-      height: 100%;
-    }
-  }
 
   .row {
     margin: 0; // override bootstrap padding
@@ -26,7 +10,6 @@
     .filter-column {
       border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
-      height: 100vh;
 
       /*@include mobile {
         max-height: 128px;
@@ -36,7 +19,6 @@
     .filter-results-column {
       border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
-      height: 100vh;
     }
 
     .catalog-description-column {

@@ -11,8 +11,22 @@
   // and has a minimum height of 800px (including navbar)
   .viewport-app {
     padding-top: $bt-navbar-height;
-    height: 100vh;
+
+    // The reason for this, but WebKit (Chrome + Safari) won't allow child
+    // element's height: 100% to work if the parent has a min-height but the
+    // height is *not* an absolute size.
+    // (see https://bugs.webkit.org/show_bug.cgi?id=26559)
+    display: flex;
+    align-items: stretch;
+
     min-height: $viewport-min-height;
+
+    > div {
+      // Effective height: 100%
+      align-items: stretch;
+      // Effective width: 100%
+      flex: 1;
+    }
 
     @include mobile {
       height: auto;
