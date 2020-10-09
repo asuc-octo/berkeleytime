@@ -3,7 +3,7 @@ services:
   backend:
     build:
       context: ../backend
-    command: python manage.py runserver 0.0.0.0:8000
+    command: ["0.0.0.0:8000"]
     ports:
       - "8000:8000"  # for dev purposes
     volumes:
@@ -15,7 +15,7 @@ services:
      - "GOOGLE_CLIENT_SECRET=***REMOVED***"
      - "GOOGLE_TOKEN_URI=https://accounts.google.com/o/oauth2/token"
      - "ENVIRONMENT_NAME=LOCALHOST"
-     - "DATABASE_URL=***REMOVED***"
+     - "DATABASE_URL=postgres://bt:yuxinsucks@postgres/bt_main"
      - "SIS_CLASS_APP_ID=***REMOVED***"
      - "SIS_CLASS_APP_KEY=***REMOVED***"
      - "SIS_COURSE_APP_ID=***REMOVED***"
@@ -25,6 +25,7 @@ services:
      - "GOOGLE_PASS=***REMOVED***"
     depends_on:
      - redis
+     - postgres
   frontend:
     build:
       context: ../frontend
@@ -36,6 +37,17 @@ services:
     stdin_open: true # https://github.com/facebook/create-react-app/issues/8688
   redis:
     image: redis:alpine
+  postgres:
+    image: postgres:latest
+    volumes:
+      - ./bt_main.dump:/bt_main.dump
+      - ./init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_DB=bt_main"
+      - "POSTGRES_PASSWORD=smxutest"
   nginx:
     image: nginx
     volumes:
