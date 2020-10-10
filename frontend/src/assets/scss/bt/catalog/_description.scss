@@ -1,5 +1,18 @@
 .catalog-description-container {
-  height: 100%;
+  // We don't want the description container to
+  // make the description column giant, so we make
+  // it absolute to take it out of the layout flow.
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  // (Generally) it shouldn't need to scroll but
+  // just in case there's some weird description
+  // with giant words. This prevents things from
+  // getting cut
+  overflow: auto;
 
   .loading {
     height: 100%;
@@ -75,6 +88,7 @@
 
     .pill-container {
       display: flex;
+      flex: 0 0 auto; // Prevents the flexbox from shrinking the pills
       overflow-x: auto;
       margin-right: 10px;
 
@@ -137,10 +151,12 @@
     }
 
     .table-container {
-      flex: 1;
-      overflow-y: auto;
+      // flex: 1;
       right: .75rem;
       position: relative;
+
+      // overflow-y: auto;
+      // min-height: 300px;
 
       table {
         max-width: 100%;
