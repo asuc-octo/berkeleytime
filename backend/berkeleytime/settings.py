@@ -12,9 +12,12 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
 
+from datetime import date
 from pathlib import Path
 import os
+import datetime
 from urllib.parse import urlparse
+
 from berkeleytime.config.semesters.fall2020 import *
 from berkeleytime.config.general import *
 
@@ -163,14 +166,21 @@ SIS_COURSE_APP_KEY = os.getenv('SIS_COURSE_APP_KEY')
 SIS_CLASS_APP_ID = os.getenv('SIS_CLASS_APP_ID')
 SIS_CLASS_APP_KEY = os.getenv('SIS_CLASS_APP_KEY')
 
-# REST Framework
-
+# Django REST Framework
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+}
+
+## JWT
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1)
 }
 
 # Password validation - we intend to use Google sign-in, but we may add in-house auth in the future
