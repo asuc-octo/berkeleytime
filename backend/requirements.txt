@@ -2,6 +2,7 @@ Django==3.1.1
 psycopg2-binary==2.8.6
 django-redis-cache==2.1.1
 djangorestframework==3.12.1
+djangorestframework-jwt-1.11.0
 python-dateutil
 pyyaml
 google-api-python-client
