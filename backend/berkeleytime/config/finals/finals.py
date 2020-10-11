@@ -1,6 +1,6 @@
 from berkeleytime.config.finals.utils.finals_utils import *
 
-class FinalTimesMapper(object):
+class FinalTimesMapper():
     """
     Maps class information to a finals time
     """

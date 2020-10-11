@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
+
 import catalog.views
-import grades.views
 import enrollment.views
 import forms.views
+import grades.views
 
 # Note: We will begin to deprecate the endpoints seen here in favor of using Django REST Framework.
 urlpatterns = [
