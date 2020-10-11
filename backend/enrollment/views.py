@@ -15,8 +15,10 @@ from berkeleytime.settings import (
 )
 from catalog.models import Course, Section
 from catalog.utils import sort_course_dicts
+from enrollment.service import enrollment_service
 
 CACHE_TIMEOUT = 900
+
 
 # /enrollment/enrollment_json/
 def enrollment_context(long_form=False):
@@ -122,7 +124,6 @@ def enrollment_section_render(request, course_id):
         return render_to_empty_json()
 
 
-
 # /enrollment/aggregate/
 def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, year=CURRENT_YEAR):
     try:
@@ -149,7 +150,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
             else:
                 CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
                 CORRECTED_TELEBEARS = TELEBEARS
-                schedules = schedule_resource.get(
+                schedules = enrollment_service.get_live_enrollment(
                     semester=semester,
                     year=year,
                     course_id=course_id,
@@ -245,7 +246,7 @@ def enrollment_json(request, section_id):
         else:
             CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
             CORRECTED_TELEBEARS = TELEBEARS
-            schedules = schedule_resource.get(
+            schedules = enrollment_service.get_live_enrollment(
                 semester=semester,
                 year=year,
                 course_id=course.id,

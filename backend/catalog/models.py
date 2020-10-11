@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Course(models.Model):
-    """A single course (e.g. COMP SCI 61A)."""
+    '''A single course (e.g. COMP SCI 61A).'''
 
     class Meta:
         db_table = 'catalog_course'
@@ -30,8 +30,8 @@ class Course(models.Model):
     grading = models.CharField(max_length=1024, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     previously = models.CharField(max_length=1024, null=True, blank=True)
-    final_exam_status = models.CharField(max_length=1024, null=True, blank=True)  # noqa
-    credit_restrictions = models.CharField(max_length=1024, null=True, blank=True)  # noqa
+    final_exam_status = models.CharField(max_length=1024, null=True, blank=True)
+    credit_restrictions = models.CharField(max_length=1024, null=True, blank=True)
 
     primary_kind = models.CharField(max_length=20, null=True, blank=True)
     favorite_count = models.IntegerField(default=0)
@@ -74,12 +74,12 @@ class Course(models.Model):
       )
 
     def __str__(self):
-        """Return unicode representation of models.Course."""
+        '''Return unicode representation of models.Course.'''
         return self.abbreviation + ' ' + self.course_number
 
     @property
     def display_units(self):
-        """Unit string for display in the third column."""
+        '''Unit string for display in the third column.'''
         separator = None
         if '-' in self.units:
             separator = '-'
@@ -98,7 +98,7 @@ class Course(models.Model):
 
 
 class Section(models.Model):
-    """A single section (COMPSCI 61A Discussion 101 Fall 2016)."""
+    '''A single section (COMPSCI 61A Discussion 101 Fall 2016).'''
 
     class Meta:
         db_table = 'catalog_section'
@@ -134,8 +134,7 @@ class Section(models.Model):
     # rank: this is the order the section appears on the schedule.berkeley.edu
     rank = models.IntegerField(null=True)
 
-    # noqa
-    related = models.ManyToManyField("self")
+    related = models.ManyToManyField('self')
     restrictions = models.TextField(null=True)
     section_number = models.CharField(max_length=20, null=True, blank=True)
 
@@ -172,27 +171,20 @@ class Section(models.Model):
       )
 
     @property
-    def info(self):  # noqa
-        """TODO (Yuxin) This should be deprecated. This seems like its used in campus"""  # noqa
-        course = self.abbreviation + " " + self.course_number
-        section = "(" + self.kind + " " + self.section_number + ")"
-        return (course + " " + section + " " + self.instructor).strip()
-
-    @property
     def word_days(self):
-        word = ""
+        word = ''
         # Right now both 0 and 7 map to Su. 0 is now the canonical number representing Sunday in the database
         # 7 is included for backwards compatibility
-        days = {"0": "Su", "1": "M", "2": "Tu", "3": "W", "4": "Th", "5": "F", "6": "Sa", "7": "Su"}  # noqa
+        days = {'0': 'Su', '1': 'M', '2': 'Tu', '3': 'W', '4': 'Th', '5': 'F', '6': 'Sa', '7': 'Su'}
         for integer in self.days:
             word += days[integer]
         return word
 
     @property
     def final_word_day(self):
-        days = {"0": "Su", "1": "M", "2": "Tu", "3": "W", "4": "Th", "5": "F", "6": "Sa", "7": "Su"}  # noqa
+        days = {'0': 'Su', '1': 'M', '2': 'Tu', '3': 'W', '4': 'Th', '5': 'F', '6': 'Sa', '7': 'Su'}
         return days[self.final_day]
 
     def __str__(self):
-        """Return unicode representation of models.Section."""
+        '''Return str representation of Section model.'''
         return self.abbreviation + self.course_number + '-' + self.kind

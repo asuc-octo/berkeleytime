@@ -51,7 +51,7 @@ FOREIGN_LANGUAGES = {
     'TURKISH': ['100A', '100B', '10A', '1A', '1B'],
     'VIETNMS': ['100A', '100B', '101A', '101B', '1A', '1B'],
     'YIDDISH': ['101'],
-} # noqa
+}
 
 # Standard final times for every semester
 FINAL_TIMES = {
