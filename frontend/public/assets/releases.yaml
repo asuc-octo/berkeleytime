@@ -1,4 +1,11 @@
 releases:
+  - date: Oct 11, 2020
+    whatsNew:
+    - We released Spring 2021 course information! You can now search for courses on our <a href="/catalog">catalog</a>.
+    fixes:
+    - Fixed a bug in our enrollment scraper so that all courses we have enrollment data for are listed. 
+    - Fixed a bug where certain catalog pages like COMPSCI 61B caused the screen to go completely white.
+    - Fixed scrolling behavior on catalog so it's friendly for smaller screen sizes and more intuitive for users.
   - date: Aug 23, 2020
     whatsNew:
     - We are opening our Fall 2020 applications! Come see what roles we have open and join the OCTO team on the <a href="/apply">apply</a> page.

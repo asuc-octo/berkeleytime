@@ -15,6 +15,7 @@ from semesters import spring2019
 from semesters import fall2019
 from semesters import spring2020
 from semesters import fall2020
+from semesters import spring2021
 
 
 GRADE_POINT = {
@@ -49,6 +50,7 @@ PAST_SEMESTERS = [
     {'semester': 'spring', 'year': '2019', 'display': 'Spring 2019'},
     {'semester': 'fall', 'year': '2019', 'display': 'Fall 2019'},
     {'semester': 'spring', 'year': '2020', 'display': 'Spring 2020'},
+    {'semester': 'fall', 'year': '2020', 'display': 'Fall 2020'},
 ]
 
 PAST_SEMESTERS_SIS = [
@@ -60,6 +62,7 @@ PAST_SEMESTERS_SIS = [
     {'semester': 'spring', 'year': '2019', 'display': 'Spring 2019'},
     {'semester': 'fall', 'year': '2019', 'display': 'Fall 2019'},
     {'semester': 'spring', 'year': '2020', 'display': 'Spring 2020'},
+    {'semester': 'fall', 'year': '2020', 'display': 'Fall 2020'},
 ]
 
 
@@ -82,6 +85,7 @@ PAST_SEMESTERS_TELEBEARS_JSON = {
     'fall 2019': fall2019.TELEBEARS_JSON,
     'spring 2020': spring2020.TELEBEARS_JSON,
     'fall 2020': fall2020.TELEBEARS_JSON,
+    'spring 2021': spring2021.TELEBEARS_JSON,
 }
 
 PAST_SEMESTERS_TELEBEARS = {
@@ -101,6 +105,7 @@ PAST_SEMESTERS_TELEBEARS = {
     'fall 2019': fall2019.TELEBEARS,
     'spring 2020': spring2020.TELEBEARS,
     'fall 2020': fall2020.TELEBEARS,
+    'spring 2021': spring2021.TELEBEARS,
 }
 
 # Classes with special characters

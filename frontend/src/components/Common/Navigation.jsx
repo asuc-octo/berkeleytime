@@ -78,10 +78,6 @@ Navigation.links = [
     to: '/faq',
     text: 'FAQ',
   },
-  {
-    to: '/apply',
-    text: 'Apply',
-  },
   // {
   //   to: '/login',
   //   text: 'Login',
