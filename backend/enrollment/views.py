@@ -2,12 +2,14 @@ from threading import Thread
 import traceback
 
 from django.core.cache import cache
+from django.db.models import Sum
 
 from berkeleytime.utils import render_to_json, render_to_empty_json
 from berkeleytime.settings import (
     CURRENT_SEMESTER,
     CURRENT_YEAR,
     PAST_SEMESTERS,
+    PAST_SEMESTERS_TELEBEARS,
     PAST_SEMESTERS_TELEBEARS_JSON,
     TELEBEARS_JSON,
     TELEBEARS,
@@ -15,6 +17,7 @@ from berkeleytime.settings import (
 )
 from catalog.models import Course, Section
 from catalog.utils import sort_course_dicts
+from enrollment.models import Enrollment
 from enrollment.service import enrollment_service
 
 CACHE_TIMEOUT = 900
@@ -150,7 +153,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
             else:
                 CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
                 CORRECTED_TELEBEARS = TELEBEARS
-                schedules = enrollment_service.get_live_enrollment(
+                latest_enrollments, latest_sections = enrollment_service.get_live_enrollment(
                     semester=semester,
                     year=year,
                     course_id=course_id,
@@ -158,7 +161,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
                     course_number=course.course_number,
                     log=True,
                 )
-                new_sections = [x.enrollment._initial for x in schedules if x.section._initial['is_primary'] and not x.section._initial['disabled']]
+                new_sections = [enroll for enroll, sect in zip(latest_enrollments, latest_sections) if sect.is_primary and not sect.disabled]
 
             rtn['telebears'] = CORRECTED_TELEBEARS_JSON #THIS NEEDS TO BE FROM THE OTHER SEMESTER, NOT THE CURRENT SEMESTER
             rtn['telebears']['semester'] = semester.capitalize() + ' ' + year
@@ -246,7 +249,7 @@ def enrollment_json(request, section_id):
         else:
             CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
             CORRECTED_TELEBEARS = TELEBEARS
-            schedules = enrollment_service.get_live_enrollment(
+            latest_enrollments, latest_sections = enrollment_service.get_live_enrollment(
                 semester=semester,
                 year=year,
                 course_id=course.id,
@@ -254,7 +257,7 @@ def enrollment_json(request, section_id):
                 course_number=course.course_number,
                 log=True,
             )
-            new_section = [x.enrollment._initial for x in schedules if x.section['ccn'] == section.ccn][0]
+            new_section = [enroll for enroll, sect in zip(latest_enrollments, latest_sections) if sect.ccn == section.ccn][0]
 
         rtn['telebears'] = CORRECTED_TELEBEARS_JSON
         enrolled_max = section.enrollment_set.all().latest('date_created').enrolled_max

@@ -1,6 +1,7 @@
 '''Enrollment Service.'''
 
 from catalog.resource.sis_class import sis_class_resource
+from catalog.mapper.section import section_mapper
 from enrollment.mapper import enrollment_mapper
 
 
@@ -18,8 +19,9 @@ class EnrollmentService(object):
                 course_number=course_number,
                 log=True,
             )
-        enrollments = [enrollment_mapper.map(sect_enroll) for sect_enroll in response]
-        sections = []
+        sections = [section_mapper.map(sect) for sect in response]
+        enrollments = [enrollment_mapper.map(sect) for i, sect in enumerate(response)]
+        return enrollments, sections
 
 
 enrollment_service = EnrollmentService()
