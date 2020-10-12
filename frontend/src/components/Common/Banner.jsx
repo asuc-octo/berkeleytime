@@ -10,13 +10,13 @@ import close from '../../assets/svg/common/close.svg';
 class Banner extends PureComponent {
   render() {
     const { visible, dispatch } = this.props;
-    const text = 'We are hiring for the 2020-21 school year! ✨';
+    const text = "We've updated our site with Spring 2021 courses 📚";
 
     return visible ? (
       <div className="banner">
         <div className="content">
           <p>{ text }</p>
-          <Button variant="bt-primary" size="sm" as={Link} to="/apply">Apply</Button>
+          <Button variant="bt-primary-inverted" size="sm" as={Link} to="/catalog">Go to catalog</Button>
         </div>
         <img src={close} alt="close" onClick={() => dispatch(closeBanner())} />
       </div>
