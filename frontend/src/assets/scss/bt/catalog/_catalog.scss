@@ -23,6 +23,7 @@
 
     .catalog-description-column {
       padding: 0; // override bootstrap padding
+      position: relative; // Allows positioning of content
 
       @include mobile {
         height: 0px;
