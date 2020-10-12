@@ -6,7 +6,7 @@
 import { OPEN_BANNER, CLOSE_BANNER } from '../actionTypes';
 
 const initialState = {
-  banner: false,
+  banner: true,
 };
 
 export default function banner(state = initialState, action) {
