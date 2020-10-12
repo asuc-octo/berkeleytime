@@ -1,4 +1,4 @@
-"""Configurations for Fall 2020."""
+'''Configurations for Spring 2021.'''
 from berkeleytime.config.finals.semesters.spring2021 import *
 
 import datetime
