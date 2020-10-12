@@ -25,7 +25,6 @@ function Footer() {
         <div className="bt-footer-column">
           <h6>About</h6>
           <Link to="/about"><span className="footer-link">Team</span></Link>
-          <Link to="/apply"><span className="footer-link">Apply</span><New /></Link>
           <a href="https://octo.asuc.org/"><span className="footer-link">OCTO</span></a>
           <a href="https://www.facebook.com/berkeleytime/"><span className="footer-link">Facebook</span></a>
         </div>

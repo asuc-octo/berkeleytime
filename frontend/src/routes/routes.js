@@ -11,14 +11,14 @@ import Login from '../views/Login/Login';
 import Releases from '../views/Releases/Releases';
 import Faq from '../views/Faq/Faq';
 import ApiDocs from '../views/Api/Api';
-import Apply from '../views/Apply/Apply';
 import TestForm from '../views/Forms/TestForm';
 import BugsForm from '../views/Forms/BugsForm';
-import DesignApp from '../views/Forms/DesignApp';
-import EngineeringApp from '../views/Forms/EngineeringApp';
 import UserTestingForm from '../views/Forms/UserTestingForm';
 import Error from '../views/Error/Error';
-import {Positions} from '../views/Apply/DescriptionPages';
+import Apply from '../views/Apply/Apply';
+//import DesignApp from '../views/Forms/DesignApp';
+//import EngineeringApp from '../views/Forms/EngineeringApp';
+//import {Positions} from '../views/Apply/DescriptionPages';
 
 // name should be unique, used as react key
 const routes = [
@@ -39,10 +39,10 @@ const routes = [
   { path: '/bugs',              name: 'Report a Bug',         component: BugsForm },
   { path: '/usertesting',       name: 'User Testing',         component: UserTestingForm },
   { path: '/apply',             name: 'Apply',                component: Apply, exact: true },
-  { path: '/apply/engineering', name: 'Apply - Engineering',  component: EngineeringApp, exact: true },
-  { path: '/apply/design',      name: 'Apply - Design',       component: DesignApp, exact: true },
-  { path: '/apply/positions',   name: 'Apply - Positions',    component: Positions, exact: true },
-  { path: '/apply/embed',       name: 'Apply - Embed',        component: Apply, },
+  //{ path: '/apply/engineering', name: 'Apply - Engineering',  component: EngineeringApp, exact: true },
+  //{ path: '/apply/design',      name: 'Apply - Design',       component: DesignApp, exact: true },
+  //{ path: '/apply/positions',   name: 'Apply - Positions',    component: Positions, exact: true },
+  //{ path: '/apply/embed',       name: 'Apply - Embed',        component: Apply, },
   { path: '/error',             name: 'Error',                component: Error },
   { /* no path */               name: '404',                  component: Error },
 ];

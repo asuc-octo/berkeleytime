@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Route, Switch, Redirect, MatchedRoute } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ReactGA from 'react-ga';
 
@@ -102,15 +102,12 @@ class Berkeleytime extends Component {
   }
 
   render() {
-    // Provide a plain version of OCTO Application for embedding
-    // Delete all instances of MatchedRoute to remove this feature
-    const MatchedRoute = window.location.pathname.includes("/embed");
     return (
         <div>
           { this.easterEgg() }
           <Banner />
           <div className="app-container">
-            {!MatchedRoute && <Navigation />}
+            <Navigation />
             <Route path="/" component={logPageView} />
             <Switch>
               {
@@ -127,7 +124,7 @@ class Berkeleytime extends Component {
                 })
               }
             </Switch>
-            {!MatchedRoute && <Footer />}
+            <Footer />
           </div>
         </div>
     );
