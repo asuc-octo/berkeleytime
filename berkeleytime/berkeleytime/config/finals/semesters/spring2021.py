@@ -2,6 +2,8 @@ from berkeleytime.config.finals.finals import *
 from berkeleytime.config.finals.finals_general import FINAL_TIMES
 
 # CHANGE THESE DICTIONARIES SEMESTER TO SEMESTER AND TRIPLE CHECK THAT THEY ARE RIGHT
+# Source: https://registrar.berkeley.edu/scheduling/academic-scheduling/final-exam-guide-schedules
+
 MWF_FINALS = {
     datetime.time(8, 0): FINAL_TIMES["Monday8-11AM"],
     datetime.time(9, 0): FINAL_TIMES["Monday7-10PM"],
@@ -37,7 +39,7 @@ HARD_CODED = [
 ]
 
 # Mapper function for final times
-def fall_2020_finals_logic(abbreviation, course_number, start_time, is_foreign_language, day_string):
+def spring_2021_finals_logic(abbreviation, course_number, start_time, is_foreign_language, day_string):
     for dept, numbers, time in HARD_CODED:
         if dept == abbreviation and course_number in numbers:
             return time
@@ -51,4 +53,4 @@ def fall_2020_finals_logic(abbreviation, course_number, start_time, is_foreign_l
         return FINAL_TIMES.get("Thursday7-10PM")
     return None
 
-finals_mapper = FinalTimesMapper(fall_2020_finals_logic)
+finals_mapper = FinalTimesMapper(spring_2021_finals_logic)
