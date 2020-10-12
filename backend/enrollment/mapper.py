@@ -7,12 +7,11 @@ from berkeleytime.settings import finals_mapper
 from enrollment.models import Enrollment
 
 logger = logging.getLogger(__name__)
-DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 class EnrollmentMapper():
     '''Map SIS Class API response data to an Enrollment object.'''
 
-    def map(self, data, extras=None):
+    def map(self, data, extras={}):
         try:
             enrollment_data = data['enrollmentStatus']
 
@@ -27,6 +26,8 @@ class EnrollmentMapper():
                 'waitlisted_max': enrollment_data['maxWaitlist'],
                 'date_created': midnight,
             }
+            kwargs.update(extras)
+
             return Enrollment(**kwargs)
         except:
             logger.exception({
