@@ -19,8 +19,15 @@ class EnrollmentService(object):
                 course_number=course_number,
                 log=True,
             )
-        sections = [section_mapper.map(sect) for sect in response]
-        enrollments = [enrollment_mapper.map(sect) for i, sect in enumerate(response)]
+        extras = {
+            'course_id': int(course_id),
+            'abbreviation': abbreviation,
+            'course_number': course_number,
+            'semester': semester,
+            'year': year,
+        }
+        sections = [section_mapper.map(sect, extras=extras) for sect in response]
+        enrollments = [enrollment_mapper.map(sect) for sect in response]
         return enrollments, sections
 
 

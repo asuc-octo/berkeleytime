@@ -194,10 +194,10 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
                 rtn['data'].append(curr_d)
 
             if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
-                last_enrolled = sum([s['enrolled'] for s in new_sections])
-                last_waitlisted = sum([s['waitlisted'] for s in new_sections])
-                enrolled_max = sum([s['enrolled_max'] for s in new_sections])
-                waitlisted_max = sum([s['waitlisted_max'] for s in new_sections])
+                last_enrolled = sum([s.enrolled for s in new_sections])
+                last_waitlisted = sum([s.waitlisted for s in new_sections])
+                enrolled_max = sum([s.enrolled_max for s in new_sections])
+                waitlisted_max = sum([s.waitlisted_max for s in new_sections])
                 rtn['data'][-1]['enrolled'] = last_enrolled
                 rtn['data'][-1]['waitlisted'] = last_waitlisted
                 rtn['data'][-1]['enrolled_percent'] = round(last_enrolled / enrolled_max, 3) if enrolled_max else -1
@@ -281,10 +281,10 @@ def enrollment_json(request, section_id):
 
 
         if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
-            last_enrolled = new_section['enrolled']
-            last_waitlisted = new_section['waitlisted']
-            enrolled_max = new_section['enrolled_max']
-            waitlisted_max = new_section['waitlisted_max']
+            last_enrolled = new_section.enrolled
+            last_waitlisted = new_section.waitlisted
+            enrolled_max = new_section.enrolled_max
+            waitlisted_max = new_section.waitlisted_max
             rtn['data'][-1]['enrolled'] = last_enrolled
             rtn['data'][-1]['waitlisted'] = last_waitlisted
             rtn['data'][-1]['enrolled_percent'] = round(last_enrolled / enrolled_max, 3) if enrolled_max else -1
