@@ -1,12 +1,14 @@
 '''Schedule Mapper.'''
 
 import arrow
+import logging
 
 from berkeleytime.settings import finals_mapper
 from catalog.models import Section
 
 DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+logger = logging.getLogger(__name__)
 
 class SectionMapper(object):
     '''Map SIS Class API response data to a Section object.'''
@@ -16,7 +18,7 @@ class SectionMapper(object):
             kwargs = {
                 'course_title': data['class']['course']['title'],
                 'section_number': data['number'],
-                'ccn': data['id'],
+                'ccn': str(data['id']),
                 'kind': data['component']['description'],
             }
             kwargs.update(self.get_is_primary(data=data))
@@ -24,6 +26,7 @@ class SectionMapper(object):
             kwargs.update(self.get_finals(kwargs, extras))
             kwargs.update(self.get_instructor(data=data))
             kwargs.update(self.get_status(data=data))
+            kwargs.update(self.get_location_name(data=data))
             kwargs.update({
                 'instruction_mode': data.get('instructionMode', {}).get('description')
             })
@@ -35,10 +38,10 @@ class SectionMapper(object):
 
             return Section(**kwargs)
         except Exception as e:
-            raise ScheduleMapperException({
-                'message': 'Unknown exception while mapping to entity.Schedule',
-                'exception': e,
+            logger.exception({
+                'message': 'Unknown exception while mapping Class API response to Section object'
             })
+            raise
 
     def get_enrollment_entity(self, data):
         '''Take data and return a single entity.Enrollment.'''
@@ -112,18 +115,6 @@ class SectionMapper(object):
                 }
         return {}
 
-    def get_location_entity(self, data):
-        '''Take section data and return a single entity.Location.'''
-        meeting = self._get_meeting(data)
-        location = meeting and meeting.get('location')
-
-        if not (location and location.get('description')):
-            return
-
-        return Room({
-            'name': location['description'],
-        })
-
     def get_instructor(self, data):
         '''Get the instructor from the first meeting of a single section.'''
         meeting = self._get_meeting(data=data)
@@ -165,5 +156,14 @@ class SectionMapper(object):
     def get_status(self, data):
         '''Get whether a section is disabled.'''
         return {'disabled': not bool(data['printInScheduleOfClasses'])}
+
+    def get_location_name(self, data):
+        '''Get name of location.'''
+        meeting = self._get_meeting(data)
+        location = meeting.get('location') if meeting else None
+        return {
+            'location_name': location.get('description') if location else None
+        }
+
 
 section_mapper = SectionMapper()
