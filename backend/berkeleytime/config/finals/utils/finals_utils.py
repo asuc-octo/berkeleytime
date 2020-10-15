@@ -9,9 +9,7 @@ TR_DAYS = ['2', '4']
 WEEKEND_DAYS = ['6', '0'] # Saturday and Sunday respectively
 
 def day_normalize(day_string):
-    """
-    Matches day strings from database to how the final parser likes it
-    """
+    """Matches day strings from database to how the final parser likes it"""
     for day in MWF_DAYS: # If a class is offered on M, W, F, MW, MF, or WF, it will fall into the same start times as MWF.
         if day in day_string:
             return MWF
@@ -22,8 +20,7 @@ def day_normalize(day_string):
 
 
 def is_foreign_language(abbreviation, number):
-    """
-    Is the given class a foreign language?
+    """Is the given class a foreign language?
 
     Looks at the dictionary in berkeley > config > finals > finals.py
     """
@@ -32,18 +29,14 @@ def is_foreign_language(abbreviation, number):
     return False
 
 def trunc_time(start_time):
-    """
-    Truncates to the lowest hour and any class after 5 is now 5
-    """
+    """Truncates to the lowest hour and any class after 5 is now 5"""
     hour = start_time.hour
     if hour >= 17:
         hour = 17
     return datetime.time(hour, 0)
 
 def is_weekend_class(day_string):
-    """
-    Is the given class on a Saturday or Sunday?
-    """
+    """Is the given class on a Saturday or Sunday?"""
     for day in WEEKEND_DAYS:
         if day in day_string:
             return True

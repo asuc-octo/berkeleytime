@@ -1,4 +1,4 @@
-'''SIS Schedule Resource.'''
+"""SIS Schedule Resource."""
 import logging
 import re
 import requests
@@ -12,10 +12,8 @@ from berkeleytime.config.semesters.util.term import get_sis_term_id
 logger = logging.getLogger(__name__)
 CACHE_TIMEOUT = 900
 
-class SISClassResource():
-    '''
-    Interface with SIS Class API.
-    '''
+class SISClassResource:
+    """Interface with SIS Class API."""
 
     headers = {
         'Accept': 'application/json',
@@ -26,45 +24,46 @@ class SISClassResource():
     url = 'https://apis.berkeley.edu/sis/v1/classes/sections?term-id=%s&subject-area-code=%s&catalog-number=%s&page-size=400'
 
     def get(self, semester, year, course_id, abbreviation, course_number, log=False):
-        '''
-        Fetch (cached) SIS Class API response.
-        '''
+        """Fetch (cached) SIS Class API response."""
         response = cache.get('class_resource {} {} {} {}'.format(semester, year, abbreviation, course_number))
         if response:
             logger.info('Cache hit in class resource')
-        else:
-            response = self._request(
-                semester=semester,
-                year=year,
-                abbreviation=abbreviation,
-                course_number=course_number,
-            )
+            return response
 
-            log_info = {
-                    'course_id': course_id,
-                    'abbreviation': abbreviation,
-                    'course_number': course_number,
-                    'year': year,
-                    'semester': semester
-                }
-            if not response:
-                log_info['message'] = 'SIS could not find sections for course'
-                logger.info(log_info)
-                self._disable_sections(semester, year, abbreviation, course_number)
-                return
-            elif log:
-                log_info['message'] = 'Queried SIS for the sections for course'
-                logger.info(log_info)
+        response = self._request(
+            semester=semester,
+            year=year,
+            abbreviation=abbreviation,
+            course_number=course_number,
+        )
 
-            cache.set('class_resource {} {} {} {}'.format(semester, year, abbreviation, course_number), response, CACHE_TIMEOUT)
+        log_info = {
+            'course_id': course_id,
+            'abbreviation': abbreviation,
+            'course_number': course_number,
+            'year': year,
+            'semester': semester
+        }
+
+        if not response:
+            log_info['message'] = 'SIS could not find sections for course'
+            logger.info(log_info)
+            return []
+
+        if log:
+            log_info['message'] = 'Queried SIS for the sections for course'
+            logger.info(log_info)
+
+        cache.set('class_resource {} {} {} {}'.format(semester, year, abbreviation, course_number), response, CACHE_TIMEOUT)
+
         return response
 
     @retry(tries=3)
     def _request(self, semester, year, abbreviation, course_number):
-        '''
-        Fetch SIS Class API response.
+        """Fetch SIS Class API response.
+
         Docs: https://api-central.berkeley.edu/api/45/interactive-docs
-        '''
+        """
         stripped_abbreviation = re.compile('[^a-zA-Z]').sub('', abbreviation)
         url = self.url % (
             get_sis_term_id(semester, year),
@@ -82,7 +81,7 @@ class SISClassResource():
                 'status_code': response.status_code,
                 'url': url
             })
-            raise
+            return []
         except:
             logger.exception({
                 'message': 'Unable to reach SIS Course API',
@@ -90,29 +89,5 @@ class SISClassResource():
             })
             raise
 
-    def _disable_sections(self, semester, year, abbreviation, course_number):
-        '''
-        If we get a 404 error, check if we have sections for that class and disable all of them.
-        '''
-
-        sections = Section.objects.filter(
-            semester=semester,
-            year=year,
-            abbreviation=abbreviation,
-            course_number=course_number,
-            disabled=False,
-        )
-        if len(sections) > 0:
-            for enabled_section in sections:
-                enabled_section.disabled = True
-                enabled_section.save()
-
-            logger.info({
-                'message': f'SIS returned 404 and found enabled sections. Disabled {len(sections)} sections',
-                'semester': semester,
-                'year': year,
-                'abbreviation': abbreviation,
-                'course_number': course_number,
-            })
 
 sis_class_resource = SISClassResource()

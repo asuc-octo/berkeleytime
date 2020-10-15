@@ -1,4 +1,4 @@
-'''Enrollment Mapper.'''
+"""Enrollment Mapper."""
 
 import logging
 import datetime
@@ -8,8 +8,8 @@ from enrollment.models import Enrollment
 
 logger = logging.getLogger(__name__)
 
-class EnrollmentMapper():
-    '''Map SIS Class API response data to an Enrollment object.'''
+class EnrollmentMapper:
+    """Map SIS Class API response data to a dict."""
 
     def map(self, data, extras={}):
         try:
@@ -19,16 +19,16 @@ class EnrollmentMapper():
                 datetime.datetime.now().date(),
                 datetime.time(0)
             )
-            kwargs = {
+            enrollment_dict = {
                 'enrolled_max': enrollment_data['maxEnroll'],
                 'enrolled': enrollment_data['enrolledCount'],
                 'waitlisted': enrollment_data['waitlistedCount'],
                 'waitlisted_max': enrollment_data['maxWaitlist'],
                 'date_created': midnight,
             }
-            kwargs.update(extras)
+            enrollment_dict.update(extras)
 
-            return Enrollment(**kwargs)
+            return enrollment_dict
         except:
             logger.exception({
                 'message': 'Error while mapping data to Enrollment object',

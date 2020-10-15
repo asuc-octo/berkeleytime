@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Course(models.Model):
-    '''A single course (e.g. COMP SCI 61A).'''
+    """A single course (e.g. COMP SCI 61A)."""
 
     class Meta:
         db_table = 'catalog_course'
@@ -74,12 +74,12 @@ class Course(models.Model):
       )
 
     def __str__(self):
-        '''Return unicode representation of models.Course.'''
+        """Return unicode representation of models.Course."""
         return self.abbreviation + ' ' + self.course_number
 
     @property
     def display_units(self):
-        '''Unit string for display in the third column.'''
+        """Unit string for display in the third column."""
         separator = None
         if '-' in self.units:
             separator = '-'
@@ -98,7 +98,7 @@ class Course(models.Model):
 
 
 class Section(models.Model):
-    '''A single section (COMPSCI 61A Discussion 101 Fall 2016).'''
+    """A single section (COMPSCI 61A Discussion 101 Fall 2016)."""
 
     class Meta:
         db_table = 'catalog_section'
@@ -186,5 +186,5 @@ class Section(models.Model):
         return days[self.final_day]
 
     def __str__(self):
-        '''Return str representation of Section model.'''
+        """Return str representation of Section model."""
         return self.abbreviation + self.course_number + '-' + self.kind

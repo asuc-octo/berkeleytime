@@ -1,4 +1,4 @@
-'''Schedule Mapper.'''
+"""Schedule Mapper."""
 
 import arrow
 import logging
@@ -10,41 +10,41 @@ DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Fri
 
 logger = logging.getLogger(__name__)
 
-class SectionMapper(object):
-    '''Map SIS Class API response data to a Section object.'''
+class SectionMapper:
+    """Map SIS Class API response data to a dict."""
 
     def map(self, data, extras={}):
         try:
-            kwargs = {
+            section_dict = {
                 'course_title': data['class']['course']['title'],
                 'section_number': data['number'],
                 'ccn': str(data['id']),
                 'kind': data['component']['description'],
             }
-            kwargs.update(self.get_is_primary(data=data))
-            kwargs.update(self.get_datetime(data=data))
-            kwargs.update(self.get_finals(kwargs, extras))
-            kwargs.update(self.get_instructor(data=data))
-            kwargs.update(self.get_status(data=data))
-            kwargs.update(self.get_location_name(data=data))
-            kwargs.update({
+            section_dict.update(self.get_is_primary(data=data))
+            section_dict.update(self.get_datetime(data=data))
+            section_dict.update(self.get_finals(section_dict, extras))
+            section_dict.update(self.get_instructor(data=data))
+            section_dict.update(self.get_status(data=data))
+            section_dict.update(self.get_location_name(data=data))
+            section_dict.update({
                 'instruction_mode': data.get('instructionMode', {}).get('description')
             })
-            kwargs.update(extras)
+            section_dict.update(extras)
 
             # Include enrollment stats for optimization
-            enrollment = self.get_enrollment_entity(data=data)
-            kwargs.update(enrollment)
+            enrollment = self.get_enrollment(data=data)
+            section_dict.update(enrollment)
 
-            return Section(**kwargs)
+            return section_dict
         except Exception as e:
             logger.exception({
                 'message': 'Unknown exception while mapping Class API response to Section object'
             })
             raise
 
-    def get_enrollment_entity(self, data):
-        '''Take data and return a single entity.Enrollment.'''
+    def get_enrollment(self, data):
+        """Get enrollment data."""
         enrollment = data['enrollmentStatus']
         kwargs = {
             'enrolled_max': enrollment['maxEnroll'],
@@ -55,7 +55,7 @@ class SectionMapper(object):
         return kwargs
 
     def get_is_primary(self, data):
-        '''Get primary/secondary for a single section.'''
+        """Get primary/secondary for a single section."""
         is_primary = data['association']['primary']
 
         return {
@@ -66,13 +66,13 @@ class SectionMapper(object):
         }
 
     def _get_meeting(self, data):
-        '''Get meeting information for a single section.'''
+        """Get meeting information for a single section."""
         # TODO (*) Schema does not currently support multiple meetings
         meeting = data['meetings'][0] if data.get('meetings') else None
         return meeting
 
     def get_datetime(self, data):
-        '''Get date/time for a single section.'''
+        """Get date/time for a single section."""
         meeting, days = self._get_meeting(data=data), str()
         if not meeting:
             return dict()
@@ -95,7 +95,7 @@ class SectionMapper(object):
         }
 
     def get_finals(self, kwargs, extras):
-        '''Get final day/time for a primary section.'''
+        """Get final day/time for a primary section."""
         if kwargs['is_primary']:
             data = {}
             data.update(kwargs)
@@ -116,7 +116,7 @@ class SectionMapper(object):
         return {}
 
     def get_instructor(self, data):
-        '''Get the instructor from the first meeting of a single section.'''
+        """Get the instructor from the first meeting of a single section."""
         meeting = self._get_meeting(data=data)
         if not meeting:
             return dict()
@@ -150,15 +150,15 @@ class SectionMapper(object):
         }
 
     def _format_name(self, name):
-        '''Take a name object from a single section and formats it.'''
+        """Take a name object from a single section and formats it."""
         return (name['familyName'] + ' ' + name['givenName'][0]).upper()
 
     def get_status(self, data):
-        '''Get whether a section is disabled.'''
+        """Get whether a section is disabled."""
         return {'disabled': not bool(data['printInScheduleOfClasses'])}
 
     def get_location_name(self, data):
-        '''Get name of location.'''
+        """Get name of location."""
         meeting = self._get_meeting(data)
         location = meeting.get('location') if meeting else None
         return {

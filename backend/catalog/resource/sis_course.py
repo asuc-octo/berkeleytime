@@ -1,4 +1,4 @@
-'''SIS Course Resourcen#12585.'''
+"""SIS Course Resourcen#12585."""
 import logging
 import requests
 from retry import retry
@@ -7,8 +7,8 @@ from berkeleytime import settings
 
 logger = logging.getLogger(__name__)
 
-class SISCourseResource():
-    '''Resource for SIS Course API.'''
+class SISCourseResource:
+    """Resource for SIS Course API."""
 
     headers = {
         'Accept': 'application/json',
@@ -18,7 +18,7 @@ class SISCourseResource():
     url = 'https://apis.berkeley.edu/sis/v2/courses?row-start=%s&row-limit=%s&status-code=ACTIVE'
 
     def get(self, start_index=0, limit=500):
-        '''Return a generator of response chunks starting at start_index.'''
+        """Return a generator of response chunks starting at start_index."""
         while True:
             logger.info({
                 'message': 'Querying SIS Course API',
@@ -33,10 +33,10 @@ class SISCourseResource():
 
     @retry(tries=3)
     def _request(self, index, limit):
-        '''
-        Fetch SIS Course API response.
+        """Fetch SIS Course API response.
+
         Docs: https://api-central.berkeley.edu/api/46/interactive-docs
-        '''
+        """
         url = self.url % (index, limit)
         try:
             response = requests.get(url, headers=self.headers)
