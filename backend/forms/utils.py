@@ -38,11 +38,11 @@ for config in os.listdir('forms/configs'):
     f = open('forms/configs/{}'.format(config))
     loaded_yaml = load(f, Loader=Loader)
     CACHED_CONFIGS[config.replace('.yaml', '')] = loaded_yaml
-    if 'googlesheet_link' in loaded_yaml['info']:
-        doc_url = loaded_yaml['info']['googlesheet_link']
-        sheet = gc.open_by_url(doc_url).sheet1
-        if sheet:
-            CACHED_SHEETS[doc_url] = sheet
+    # if 'googlesheet_link' in loaded_yaml['info']:
+    #     doc_url = loaded_yaml['info']['googlesheet_link']
+    #     sheet = gc.open_by_url(doc_url).sheet1
+    #     if sheet:
+    #         CACHED_SHEETS[doc_url] = sheet
 
 
 def get_config_dict(config):

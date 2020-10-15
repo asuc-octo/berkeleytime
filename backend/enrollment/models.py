@@ -4,7 +4,7 @@ import datetime
 
 
 class Enrollment(models.Model):
-    '''A single enrollment data point for a single section.'''
+    """A single enrollment data point for a single section."""
 
     class Meta:
         db_table = 'catalog_enrollment'

@@ -1,0 +1,862 @@
+AEROSPC:
+    - "Aerospace Studies"
+
+AFRICAM:
+    - "African American Studies"
+
+AFRKANS:
+    - "Afrikaans"
+
+AGR CHM:
+    - "Agricultural and Environmental Chemistry"
+
+A,RESEC:
+    - "Agricultural and Resource Economics"
+    - "Agricultural and Resource Economics and Policy"
+    - "Ag & Resource Econ & Pol"
+
+AMERSTD:
+    - "American Studies"
+
+AHMA:
+    - "Ancient History and Mediterranean Archaeology"
+
+ANTHRO:
+    - "Anthropology"
+
+ARABIC:
+    - "Arabic"
+
+ARCH:
+    - "Architecture"
+
+ARMENI:
+    - "Armenian"
+
+AST:
+    - "Applied Science and Technology"
+    - "Applied Science & Tech"
+
+ASAMST:
+    - "Asian American Studies"
+    - "Asian American Studies Program"
+    - "Asian American and Asian Diaspora Studies"
+
+ASIANST:
+    - "Asian Studies"
+
+ASTRON:
+    - "Astronomy"
+
+BANGLA:
+    - "Bengali"
+
+BEHS:
+    - "Biomed and Environ Health Sciences"
+
+BIBLIOG:
+    - "Bibliography"
+
+BIO ENG:
+    - "Bioengineering"
+
+BIOLOGY:
+    - "Biology"
+
+BIOPHY:
+    - "Biophysics"
+
+BOSCRSR:
+    - "Bosnian, Croatian, Serbian"
+    - "Bosnian/Croatian/Serbian"
+    - "BOSCRSR"
+
+BUDDSTD:
+    - "Buddhist Studies"
+
+BULGARI:
+    - "Bulgarian"
+
+BURMESE:
+    - "Burmese"
+
+CMPBIO:
+    - "Computational Biology"
+
+CATALAN:
+    - "Catalan"
+
+CELTIC:
+    - "Celtic Studies"
+
+CHM ENG:
+    - "Chemical and Biomolecular Engineering"
+    - "Chemical Engineering"
+    - "Biochemistry"
+
+CHEM:
+    - "Chemistry"
+
+CHICANO:
+    - "Chicano Studies"
+    - "Chicano Studies Program"
+
+CHINESE:
+    - "Chinese"
+
+CY PLAN:
+    - "City and Regional Planning"
+    - "City & Regional Planning"
+
+CYBER:
+    - "Information and Cybersecurity"
+
+CIV ENG:
+    - "Civil and Environmental Engineering"
+    - "Civil & Environmental Eng"
+
+CLASSIC:
+    - "Classics"
+
+COG SCI:
+    - "Cognitive Science"
+
+COLWRIT:
+    - "College Writing Program"
+    - "College Writing Programs"
+    - "College Writing"
+
+COMPBIO:
+    - "Comparative Biochemistry"
+
+COM LIT:
+    - "Comparative Literature"
+
+COMPSCI:
+    - "Computer Science"
+
+CRIT TH:
+    - "Critical Theory"
+    - "Critical Theory Graduate Group"
+
+CRWRIT:
+    - "Creative Writing"
+
+CZECH:
+    - "Czech"
+
+CUNEIF:
+    - "Cuneiform"
+
+DANISH:
+    - "Danish"
+
+DATA:
+    - "Data Science, Undergraduate"
+
+DATASCI:
+    - "Data Science"
+
+DIGHUM:
+    - "Digital Humanities"
+
+DEVP:
+    - "Development Practice"
+    - "DEVP"
+
+DES INV:
+    - "Design Innovation"
+
+DEV ENG:
+    - "Development Engineering"
+
+DEMOG:
+    - "Demography"
+
+DEV STD:
+    - "Development Studies"
+
+DUTCH:
+    - "Dutch"
+    - "Dutch Studies"
+
+EPS:
+    - "Earth and Planetary Science"
+    - "Earth & Planetary Science"
+
+EA LANG:
+    - "East Asian Languages and Cultures"
+    - "East Asian Languages"
+
+ALTAIC:
+    - "East Asian Languages and Cultures (ALTAIC)"
+
+EAEURST:
+    - "East European Studies"
+
+ECON:
+    - "Economics"
+
+EDUC:
+    - "Education"
+
+EDUC-AE:
+    - "Educational Administration"
+
+EDUC-LL:
+    - "Education in Language and Literacy"
+
+EDUCSPE:
+    - "Special Education"
+
+EGYPT:
+    - "Egyptian"
+
+EECS:
+    - "Electrical Engineering and Computer Sciences"
+    - "Electrical Engin And Computer Sci"
+    - "Electrical Eng & Computer Sci"
+
+EL ENG:
+    - "Electrical Engineering"
+
+ENE,RES:
+    - "Energy and Resources Group"
+    - "Energy and Resources"
+
+ENGIN:
+    - "Engineering"
+
+ENGLISH:
+    - "English"
+
+ENV DES:
+    - "Environmental Design"
+
+ENVECON:
+    - "Environmental Economics and Policy"
+    - "Environmental Economics"
+    - "Environ Econ & Policy"
+
+ESPM:
+    - "Environmental Science, Policy, and Management"
+    - "Environmental Science Policy and Management"
+    - "Environmental Science, Policy and Management"
+    - "Env Sci, Policy, & Mgmt"
+
+ENV SCI:
+    - "Environmental Sciences"
+
+ETH STD:
+    - "Ethnic Studies"
+
+ETH GRP:
+    - "Ethnic Studies Graduate Group"
+    - "Ethnic Studies Grad Group"
+
+EURA ST:
+    - "Eurasian Studies"
+
+EUST:
+    - "European Studies"
+
+EWMBA:
+    - "Evening/Weekend MBA Program"
+    - "Evening and Weekend Master's in Business Administration"
+    - "Evening & Weekend MBA"
+
+XMBA:
+    - "Executive Master's in Business Administration"
+    - "Berkeley/Columbia MBA Program"
+    - "Executive MBA"
+
+FILIPN:
+    - "Filipino"
+
+FILM:
+    - "Film Studies"
+    - "Film and Media"
+    - "Film"
+
+FINNISH:
+    - "Finnish"
+
+FOLKLOR:
+    - "Folklore"
+
+FRENCH:
+    - "French"
+
+MBA:
+    - "Master's in Business Administration"
+    - "Full-time Masters in Business Administration"
+    - "Business Admin-MBA"
+
+GMS:
+    - "GMS"
+    - "Global Metropolitan Studies"
+    - "Global Metro Studies"
+
+GPP:
+    - "Global Poverty and Practice"
+    - "Global Poverty & Practice"
+    - "GPP"
+
+GSPDP:
+    - "Graduate Student Professional Development Program"
+    - "GSPDP"
+    - "Grad Professional Dev Pgm"
+
+GWS:
+    - "Gender and Women's Studies"
+    - "Women's Studies"
+    - "Gender & Women's Studies"
+    - "Gender & Womens Studies"
+
+GEOG:
+    - "Geography"
+
+GERMAN:
+    - "German"
+
+GLOBAL:
+    - "Global Studies"
+
+GREEK:
+    - "Greek"
+
+HMEDSCI:
+    - "Health and Medical Sciences"
+    - "Health and Medical Sciences Program"
+    - "Health & Medical Sciences"
+
+HEBREW:
+    - "Hebrew"
+
+HINDI:
+    - "Hindi"
+
+HIN-URD:
+    - "Hindi-Urdu"
+
+HISTORY:
+    - "History"
+
+HISTART:
+    - "History of Art"
+    - "Art History of"
+    - "Art History"
+
+HUM:
+    - "Arts and Humanities"
+    - "Arts & Humanities"
+
+HUM BIO:
+    - "Human Biodynamics"
+
+HUNGARI:
+    - "Hungarian"
+
+ICELAND:
+    - "Icelandic"
+
+IDS:
+    - "Interdepartmental Studies"
+
+ILA:
+    - "Indigenous Languages of the Americas"
+    - "ILA"
+
+IND ENG:
+    - "Industrial Engineering"
+    - "Industrial Engineering and Operations Research"
+    - "Industrial Eng & Ops Rsch"
+
+INDONES:
+    - "Indonesian"
+
+INFO:
+    - "Information"
+    - "School of Information"
+
+INTEGBI:
+    - "Integrative Biology"
+
+ISF:
+    - "Interdisciplinary Studies"
+    - "Interdisciplinary Studies Field Major"
+
+IAS:
+    - "International and Area Studies"
+    - "International & Area Stds"
+
+IRANIAN:
+    - "Iranian"
+
+ITALIAN:
+    - "Italian Studies"
+    - "Italian"
+
+JEWISH:
+    - "Jewish Studies"
+    - "Jewish"
+
+JAPAN:
+    - "Japanese"
+
+JOURN:
+    - "Journalism"
+
+KHMER:
+    - "Khmer"
+
+KOREAN:
+    - "Korean"
+
+LAN PRO:
+    - "Language Proficiency Program"
+    - "LAN PRO"
+
+LGBT:
+    - "Lesbian, Gay, Bisexual, and Transgender Studies"
+    - "Lesbian, Gay, Bisexual and Transgender Studies"
+    - "Lesbian Gay Bisexual Transgender Studies"
+    - "LGBT"
+    - "LGBT Studies"
+
+LD ARCH:
+    - "Landscape Architecture"
+    - "Landscape Architecture and Environmental Planning"
+    - "Landscape Arch & Env Plan"
+
+LATIN:
+    - "Latin"
+
+LATAMST:
+    - "Latin American Studies"
+
+LAW:
+    - "Law"
+
+LEGALST:
+    - "Legal Studies"
+
+L & S:
+    - "Letters and Science"
+    - "Letters & Science"
+
+LINGUIS:
+    - "Linguistics"
+
+LINFOST:
+    - "Library and Information Studies"
+
+MALAY/I:
+    - "Malay/Indonesian"
+
+MFE:
+    - "Master's in Financial Engineering"
+    - "Masters in Financial Engineering Program"
+    - "Financial Engineering"
+
+MAT SCI:
+    - "Materials Science and Engineering"
+    - "Materials Science & Eng"
+
+MATH:
+    - "Mathematics"
+
+MEC ENG:
+    - "Mechanical Engineering"
+
+MEDIAST:
+    - "Media Studies"
+    - "Mass Communications"
+
+MED ST:
+    - "Medieval Studies"
+
+M E STU:
+    - "Middle Eastern Studies"
+
+MIL AFF:
+    - "Military Affairs"
+
+MIL SCI:
+    - "Military Science"
+
+MCELLBI:
+    - "Molecular and Cell Biology"
+    - "Molecular & Cell Biology"
+
+MONGOLN:
+    - "Mongolian"
+
+MUSIC:
+    - "Music"
+
+NEUROSC:
+    - "Neuroscience"
+    - "NEUROSC"
+
+NSE:
+    - "Nanoscale Science and Engineering"
+    - "Nanoscale Science & Eng"
+
+NATAMST:
+    - "Native American Studies"
+
+NAT RES:
+    - "Natural Resources"
+
+NAV SCI:
+    - "Naval Science"
+
+NE STUD:
+    - "Near Eastern Studies"
+
+NORWEGN:
+    - "Norwegian"
+
+NWMEDIA:
+    - "New Media"
+
+NUC ENG:
+    - "Nuclear Engineering"
+
+NUSCTX:
+    - "Nutritional Science and Toxicology"
+    - "Nutritional Sciences and Toxicology"
+    - "Nutritional Science"
+    - "Nutritional Sciences"
+    - "Nutritional Science & Tox"
+
+OPTOM:
+    - "Optometry"
+
+POLECON:
+    - "Political Economy"
+    - "POLECON"
+
+PACS:
+    - "Peace and Conflict Studies"
+    - "Peace & Conflict Studies"
+
+PERSIAN:
+    - "Persian"
+
+PHDBA:
+    - "Doctoral Program in Business Administration"
+    - "Ph.D. in Business Administration"
+    - "Business Admin-PhD"
+
+PHILOS:
+    - "Philosophy"
+
+PHYS ED:
+    - "Physical Education"
+
+PHYSICS:
+    - "Physics"
+
+PLANTBI:
+    - "Plant and Microbial Biology"
+    - "Plant & Microbial Biology"
+    - "Plant Biology"
+
+POL SCI:
+    - "Political Science"
+
+PORTUG:
+    - "Portuguese"
+
+ART:
+    - "Practice of Art"
+    - "Art Practice of"
+    - "Art Practice"
+
+PSYCH:
+    - "Psychology"
+
+PB HLTH:
+    - "Public Health"
+
+PUB POL:
+    - "Public Policy"
+
+PUB AFF:
+    - "Public Policy & Affairs"
+    - "PUBLIC AFFAIRS"
+
+POLISH:
+    - "Polish"
+
+PUNJABI:
+    - "Punjabi"
+
+# Things like "UCEAP COURSEWORK" and "OR PSEUDO COURSE" are referenced by the bookstore
+# but don't have entries anywhere else.
+PSEUDO:
+    - "Pseudocourse"
+
+RDEV:
+    - "Real Estate Development"
+
+RELIGST:
+    - "Religious Studies"
+
+RHETOR:
+    - "Rhetoric"
+
+ROM PHL:
+    - "Romance Philology"
+
+ROMANI:
+    - "Romanian"
+
+RUSSIAN:
+    - "Russian"
+
+SAHS:
+    - "Social and Admin Health Sciences"
+
+STS:
+    - "Science and Technology Studies"
+    - "STS"
+    - "Science & Tech Studies"
+
+SANSKR:
+    - "Sanskrit"
+
+SCANDIN:
+    - "Scandinavian"
+
+SCMATHE:
+    - "Science and Mathematics Education"
+    - "Science & Math Education"
+
+SEMITIC:
+    - "Semitics"
+
+SLAVIC:
+    - "Slavic"
+    - "Slavic Languages and Literatures"
+    - "Slavic Languages and Literature"
+    - "Slavic Languages & Lit"
+
+SOC WEL:
+    - "Social Welfare"
+
+SOCIOL:
+    - "Sociology"
+
+SASIAN:
+    - "South Asian Studies"
+
+S ASIAN:
+    - "South Asian"
+
+S,SEASN:
+    - "South and Southeast Asian Studies"
+    - "South & SE Asian Studies"
+
+SEASIAN:
+    - "Southeast Asian"
+
+SPANISH:
+    - "Spanish"
+
+SWEDISH:
+    - "Swedish"
+
+STAT:
+    - "Statistics"
+
+TAGALG:
+    - "Tagalog"
+
+TAMIL:
+    - "Tamil"
+
+TELUGU:
+    - "Telugu"
+
+THAI:
+    - "Thai"
+
+THEATER:
+    - "Theater, Dance, and Performance Studies"
+    - "Theater Dance and Performance Studies"
+    - "Dramatic Art"
+    - "Theater Dance & Perf Stds"
+
+TIBETAN:
+    - "Tibetan"
+
+TURKISH:
+    - "Turkish"
+
+UGBA:
+    - "Undergraduate Business Administration"
+    - "Business Administration"
+    - "Undergraduate Program leading to the Bachelor of Science in Busi"
+    - "Undergraduate Program leading to the Bachelor of Science in Business"
+    - "Business Admin-Undergrad"
+
+UGIS:
+    - "Undergraduate and Interdisciplinary Studies"
+    - "UGIS-UG Interdisc Studies"
+
+URDU:
+    - "Urdu"
+
+VIETNMS:
+    - "Vietnamese"
+
+VIS SCI:
+    - "Vision Science"
+
+VIS STD:
+    - "Visual Studies"
+
+XAFRICA:
+    - "FPF-African American Studies"
+    - "UCB EXT FPF-African American Studies"
+
+XANTHRO:
+    - "FPF-Anthropology"
+    - "Fall Program for Freshmen Anthropology"
+
+XART:
+    - "FPF-Art Practice"
+    - "FPF-Art"
+
+XASAMST:
+    - "FPF-Asian American Studies"
+    - "Fall Program for Freshmen Asian Amercan Studies"
+    - "FPF-Asian American Stds"
+
+XASTRON:
+    - "FPF-Astronomy"
+    - "Fall Program for Freshmen Astronomy"
+
+XCHEM:
+    - "FPF-Chemistry"
+    - "Fall Program for Freshmen Chemistry"
+
+XCLASSI:
+    - "FPF-Classics"
+    - "Fall Program for Freshmen Classics"
+
+XCOLWRI:
+    - "FPF-College Writing Program"
+    - "Fall Program for Freshmen College Writing"
+    - "FPF-College Writing Pgm"
+
+XCOMLIT:
+    - "FPF-Comparative Literature"
+
+XENGLIS:
+    - "FPF-English"
+    - "Fall Program for Freshmen English"
+
+XEPS:
+    - "FPF-Earth & Planetary Science"
+    - "Fall Program for Freshmen Earth & Planetary Sciences"
+    - "FPF-Earth & Planetary Sci"
+
+XESPM:
+    - "FPF-Env Sci, Policy, & Mgmt"
+    - "Fall Program for Freshmen Environmental Science, Policy and Mang"
+    - "FPF-Env Sci, Pol, & Mgmt"
+
+XETHSTD:
+    - "FPF-Ethnic Studies"
+    - "Fall Program for Freshmen Ethnic Studies"
+
+XFILM:
+    - "FPF-Film & Media"
+    - "FPF-Film"
+
+XGEOG:
+    - "FPF-Geography"
+    - "Fall Program for Freshmen Geography"
+
+XGLOBAL:
+    - "FPF-Global Studies"
+    - "Fall Program for Freshmen Global Studies"
+
+XGWS:
+    - "FPF-Gender & Womens Studies"
+    - "Fall Program for Freshmen Gender and Women's Studies"
+    - "FPF-Gender & Womens Stds"
+
+XHISTAR:
+    - "FPF-History of Art"
+    - "Fall Program for Freshmen History of Art"
+
+XHISTOR:
+    - "FPF-History"
+    - "Fall Program for Freshmen History"
+
+XIAS:
+    - 'FPF-IAS Teaching Program'
+
+XINTEGB:
+    - "FPF-Integrative Biology"
+    - "Fall Program for Freshmen Integrative Biology"
+
+XLEGALS:
+    - "FPF-Legal Studies"
+    - "Fall Program for Freshmen Legal Studies"
+
+XLINGUI:
+    - "FPF-Linguistics"
+    - "Fall Program for Freshmen Linguistics"
+
+XL&S:
+    - "FPF-Letters & Science"
+    - "UCB Extension FPF - Letters and Science"
+
+XMATH:
+    - "FPF-Mathematics"
+    - "Fall Program for Freshmen Mathematics"
+
+XMCELLB:
+    - "FPF-Molecular & Cell Biology"
+    - "Fall Program for Freshmen Molecular & Cell Biology"
+    - "FPF-Molecular & Cell Bio"
+
+XMESTU:
+    - 'FPF-Middle Eastern Stds'
+
+XMUSIC:
+    - "FPF-Music"
+    - "Fall Program for Freshmen Music"
+
+XPHILOS:
+    - "FPF-Philosophy"
+    - "Fall Program for Freshmen Philosophy"
+
+XPOLSCI:
+    - "FPF-Political Science"
+    - "Fall Program for Freshmen Political Science"
+
+XPSYCH:
+    - "FPF-Psychology"
+    - "Fall Program for Freshmen Psychology"
+
+XRHETOR:
+    - "FPF-Rhetoric"
+    - "Fall Program for Freshmen Rhetoric"
+
+XSOCIOL:
+    - "FPF-Sociology"
+    - "Fall Program for Freshmen Sociology"
+
+XSTAT:
+    - "FPF-Statistics"
+    - "Fall Program for Freshmen Statistics"
+
+YIDDISH:
+    - "Yiddish"

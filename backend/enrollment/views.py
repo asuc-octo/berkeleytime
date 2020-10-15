@@ -153,7 +153,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
             else:
                 CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
                 CORRECTED_TELEBEARS = TELEBEARS
-                latest_enrollments, latest_sections = enrollment_service.get_live_enrollment(
+                new_sections = enrollment_service.get_live_enrollment(
                     semester=semester,
                     year=year,
                     course_id=course_id,
@@ -161,7 +161,6 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
                     course_number=course.course_number,
                     log=True,
                 )
-                new_sections = [enroll for enroll, sect in zip(latest_enrollments, latest_sections) if sect.is_primary and not sect.disabled]
 
             rtn['telebears'] = CORRECTED_TELEBEARS_JSON #THIS NEEDS TO BE FROM THE OTHER SEMESTER, NOT THE CURRENT SEMESTER
             rtn['telebears']['semester'] = semester.capitalize() + ' ' + year
@@ -194,10 +193,10 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
                 rtn['data'].append(curr_d)
 
             if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
-                last_enrolled = sum([s.enrolled for s in new_sections])
-                last_waitlisted = sum([s.waitlisted for s in new_sections])
-                enrolled_max = sum([s.enrolled_max for s in new_sections])
-                waitlisted_max = sum([s.waitlisted_max for s in new_sections])
+                last_enrolled = sum([s['enrolled'] for s in new_sections])
+                last_waitlisted = sum([s['waitlisted'] for s in new_sections])
+                enrolled_max = sum([s['enrolled_max'] for s in new_sections])
+                waitlisted_max = sum([s['waitlisted_max'] for s in new_sections])
                 rtn['data'][-1]['enrolled'] = last_enrolled
                 rtn['data'][-1]['waitlisted'] = last_waitlisted
                 rtn['data'][-1]['enrolled_percent'] = round(last_enrolled / enrolled_max, 3) if enrolled_max else -1
@@ -249,15 +248,15 @@ def enrollment_json(request, section_id):
         else:
             CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
             CORRECTED_TELEBEARS = TELEBEARS
-            latest_enrollments, latest_sections = enrollment_service.get_live_enrollment(
+            new_section = enrollment_service.get_live_enrollment(
                 semester=semester,
                 year=year,
                 course_id=course.id,
                 abbreviation=course.abbreviation,
                 course_number=course.course_number,
+                ccn=section.ccn,
                 log=True,
-            )
-            new_section = [enroll for enroll, sect in zip(latest_enrollments, latest_sections) if sect.ccn == section.ccn][0]
+            )[0]
 
         rtn['telebears'] = CORRECTED_TELEBEARS_JSON
         enrolled_max = section.enrollment_set.all().latest('date_created').enrolled_max
@@ -281,10 +280,10 @@ def enrollment_json(request, section_id):
 
 
         if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
-            last_enrolled = new_section.enrolled
-            last_waitlisted = new_section.waitlisted
-            enrolled_max = new_section.enrolled_max
-            waitlisted_max = new_section.waitlisted_max
+            last_enrolled = new_section['enrolled']
+            last_waitlisted = new_section['waitlisted']
+            enrolled_max = new_section['enrolled_max']
+            waitlisted_max = new_section['waitlisted_max']
             rtn['data'][-1]['enrolled'] = last_enrolled
             rtn['data'][-1]['waitlisted'] = last_waitlisted
             rtn['data'][-1]['enrolled_percent'] = round(last_enrolled / enrolled_max, 3) if enrolled_max else -1
