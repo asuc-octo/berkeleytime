@@ -1,8 +1,7 @@
-"""Definition for Hass breadth."""
-from playlist import config
-
-from playlist.service.definition.constraint import ConstraintDefinition
-from playlist.lib import formulas
+"""Definition for Haas breadth."""
+from playlist.utils.definition.constraint import ConstraintDefinition
+from playlist.utils.config import config_dict
+from playlist.utils import formulas
 
 
 class HaasBreadthDefinition(ConstraintDefinition):
@@ -39,7 +38,7 @@ class HaasBreadthDefinition(ConstraintDefinition):
 
         self.constraints = [
             formulas.gte_n_units(n=3),
-            formulas.not_in_abbreviations(config.get('haas.abbreviations')),
+            formulas.not_in_abbreviations(config_dict.get('haas.abbreviations')),
             formulas.course_not_in([
                 'ECON 1', 'ECON 2', 'ECON 3', 'ECON 100A', 'ECON 100B',
                 'ECON 101A', 'ECON 101B', 'IAS 106', 'IAS 106'

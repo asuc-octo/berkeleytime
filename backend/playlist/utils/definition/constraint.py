@@ -1,5 +1,5 @@
 """Constraint definition."""
-from playlist.service.definition import Definition
+from playlist.utils.definition.definition import Definition
 
 
 class ConstraintDefinition(Definition):

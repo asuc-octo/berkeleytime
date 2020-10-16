@@ -1,9 +1,8 @@
 """Letters and Science Playlist Service."""
-from catalog.service import course_service
 from playlist.enums import PlaylistCategory, LSPlaylistName
 from playlist.models import Playlist
 from playlist.resource import ls_resource
-from playlist.service import AbstractPlaylistService
+from playlist.service.abstract import AbstractPlaylistService
 
 
 class LSService(AbstractPlaylistService):

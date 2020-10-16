@@ -1,10 +1,10 @@
 """Foreign Language resource."""
+from urllib.request import urlopen
 
-import urllib2
 from bs4 import BeautifulSoup
 
-from playlist.lib import utils
-from playlist.service.definition.mapper import MapperDefinition
+from playlist.utils import utils
+from playlist.utils.definition import MapperDefinition
 
 class ForeignLanguageResource:
     """Resource for foreign language classes that fulfill HSS requirements."""
@@ -16,7 +16,7 @@ class ForeignLanguageResource:
         return self.handler(url=self.url)
 
     def handler(self, url):
-        html = urllib2.urlopen(url).read()
+        html = urlopen(url).read()
         bs = BeautifulSoup(html)
         tables = bs.find_all('table')
         return self.map_def_classes(tables[0])

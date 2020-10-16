@@ -7,7 +7,7 @@ constraint.
 
 import re
 
-from playlist.lib import utils
+from playlist.utils import utils
 
 
 def gte_n_units(n):

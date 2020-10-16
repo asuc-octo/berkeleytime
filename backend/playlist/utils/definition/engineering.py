@@ -1,8 +1,7 @@
 """Engineering humanities and social sciences definition."""
-from playlist import config
-
-from playlist.lib import formulas
-from playlist.service.definition.constraint import ConstraintDefinition
+from playlist.utils.config import config_dict
+from playlist.utils import formulas
+from playlist.utils.definition.constraint import ConstraintDefinition
 
 
 class EngineeringDefinition(ConstraintDefinition):
@@ -38,7 +37,7 @@ class EngineeringDefinition(ConstraintDefinition):
         self.constraints = [
             formulas.gte_n_units(n=3),
             formulas.not_in_abbreviations(
-                config.get("engineering.abbreviations")
+                config_dict.get("engineering.abbreviations")
             ),
             self._not_in_course_numbers(["97", "98", "99"]),
             self._not_in_course_numbers(["197", "198", "199"]),

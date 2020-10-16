@@ -9,3 +9,4 @@ gspread
 redlock-py
 retry
 arrow
+beautifulsoup4

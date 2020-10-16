@@ -7,8 +7,8 @@ from playlist.enums import (
 )
 from playlist.models import Playlist
 from playlist.resource import ls_resource, reading_resource
-from playlist.service import AbstractPlaylistService
-from playlist.service.definition.haas import HaasBreadthDefinition
+from playlist.service.abstract import AbstractPlaylistService
+from playlist.utils.definition import HaasBreadthDefinition
 
 
 class HaasService(AbstractPlaylistService):
@@ -19,7 +19,7 @@ class HaasService(AbstractPlaylistService):
         reading_definitions = reading_resource.get()
 
         for playlist_entry in HaasPlaylistName:
-            ls_playlist_entry = LSPlaylistName, playlist_entry.name)
+            ls_playlist_entry = LSPlaylistName[playlist_entry.name]
             ls_definition = None
             for semester, year, ls_def in ls_resource.get(playlist_name=ls_playlist_entry):
                 if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
