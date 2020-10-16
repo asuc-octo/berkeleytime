@@ -3,8 +3,8 @@ from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
 from playlist.enums import PlaylistCategory, LSPlaylistName
 from playlist.models import Playlist
 from playlist.resource import ls_resource, foreign_language_resource
-from playlist.service import AbstractPlaylistService
-from playlist.service.definition.engineering import EngineeringDefinition
+from playlist.service.abstract import AbstractPlaylistService
+from playlist.utils.definition import EngineeringDefinition
 
 
 class EngineeringService(AbstractPlaylistService):

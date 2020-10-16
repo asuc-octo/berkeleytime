@@ -1,9 +1,9 @@
 """Unit Playlist Service."""
 from playlist.enums import PlaylistCategory
 from playlist.models import Playlist
-from playlist.service import AbstractPlaylistService
-from playlist.service.definition.constraint import ConstraintDefinition
-from playlist.lib import formulas
+from playlist.service.abstract import AbstractPlaylistService
+from playlist.utils import formulas
+from playlist.utils.definition import ConstraintDefinition
 
 
 class UnitService(AbstractPlaylistService):

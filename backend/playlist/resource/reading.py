@@ -1,10 +1,10 @@
 """playlist resources for reading/composition."""
+from urllib.request import urlopen
 
-import urllib2
 from bs4 import BeautifulSoup
 
-from playlist.lib import utils
-from playlist.service.definition.mapper import MapperDefinition
+from playlist.utils import utils
+from playlist.utils.definition import MapperDefinition
 
 
 class ReadingResource(object):

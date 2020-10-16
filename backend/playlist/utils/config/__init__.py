@@ -24,7 +24,7 @@ class ConfigDict:
 basepath = os.path.dirname(__file__)
 config_path = os.path.abspath(os.path.join(basepath, "base.yaml"))
 with open(config_path) as f:
-    config = ConfigDict(yaml.safe_load(f))
+    config_dict = ConfigDict(yaml.safe_load(f))
 
 abbreviation_path = os.path.abspath(
     os.path.join(basepath, "abbreviation.yaml"))

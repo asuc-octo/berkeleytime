@@ -2,9 +2,9 @@
 from catalog.models import Course
 from playlist.enums import PlaylistCategory
 from playlist.models import Playlist
-from playlist.service import AbstractPlaylistService
-from playlist.service.definition.constraint import ConstraintDefinition
-from playlist.lib import formulas, utils
+from playlist.service.abstract import AbstractPlaylistService
+from playlist.utils.definition import ConstraintDefinition
+from playlist.utils import formulas, utils
 
 
 class DepartmentService(AbstractPlaylistService):

@@ -1,16 +1,14 @@
 """Playlist Service."""
-from playlist.service import (
-    department_service,
-    engineering_service,
-    haas_service,
-    level_service,
-    ls_service,
-    reading_service,
-    semester_service,
-    units_service,
-    university_service,
-)
 from playlist.enums import PlaylistCategory
+from playlist.service.department import department_service
+from playlist.service.engineering import engineering_service
+from playlist.service.haas import haas_service
+from playlist.service.level import level_service
+from playlist.service.ls import ls_service
+from playlist.service.reading import reading_service
+from playlist.service.semester import semester_service
+from playlist.service.units import units_service
+from playlist.service.university import university_service
 
 
 class PlaylistService:

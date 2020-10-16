@@ -1,11 +1,10 @@
 """University Playlist Service."""
-from catalog.service import course_service
 from playlist.enums import PlaylistCategory, UniversityPlaylistName
-from playlist.lib import formulas
+from playlist.models import Playlist
 from playlist.resource import american_cultures_resource
-from playlist.service import AbstractPlaylistService
-from playlist.service.definition.constraint import ConstraintDefinition
-from playlist.service.definition.mapper import MapperDefinition
+from playlist.service.abstract import AbstractPlaylistService
+from playlist.utils import formulas
+from playlist.utils.definition import ConstraintDefinition, MapperDefinition
 
 
 class UniversityService(AbstractPlaylistService):

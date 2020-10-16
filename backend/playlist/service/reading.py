@@ -2,7 +2,7 @@
 from playlist.enums import PlaylistCategory, ReadingPlaylistName
 from playlist.models import Playlist
 from playlist.resource import reading_resource
-from playlist.service import AbstractPlaylistService
+from playlist.service.abstract import AbstractPlaylistService
 
 
 class ReadingService(AbstractPlaylistService):

@@ -7,7 +7,7 @@ from berkeleytime.settings import (
 from catalog.models import Section
 from playlist.enums import PlaylistCategory
 from playlist.models import Playlist
-from playlist.service import AbstractPlaylistService
+from playlist.service.abstract import AbstractPlaylistService
 
 
 class SemesterService(AbstractPlaylistService):

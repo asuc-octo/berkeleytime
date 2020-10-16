@@ -1,7 +1,7 @@
 """MapperDefinition."""
 import pprint
 
-from playlist.service.definition.constraint import ConstraintDefinition
+from playlist.utils.definition.constraint import ConstraintDefinition
 
 
 class MapperDefinition(ConstraintDefinition):

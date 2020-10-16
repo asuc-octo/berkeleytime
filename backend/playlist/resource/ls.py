@@ -1,16 +1,19 @@
 """Resource definitions for L&S breadth pages."""
 import requests
+import csv
 import os
-import universal_csv
 
-from berkeleytime.settings import SIS_CLASS_APP_ID
-from berkeleytime.settings import SIS_CLASS_APP_KEY
-from berkeleytime.settings import CURRENT_SEMESTER
-from berkeleytime.settings import CURRENT_YEAR
-from berkeleytime.settings import PAST_SEMESTERS_SIS
+from berkeleytime.settings import (
+    SIS_CLASS_APP_ID,
+    SIS_CLASS_APP_KEY,
+    CURRENT_SEMESTER,
+    CURRENT_YEAR,
+    PAST_SEMESTERS_SIS,
+)
 from berkeleytime.config.semesters.util.term import get_sis_term_id
 from berkeleytime.config.general import SPECIAL_CHARACTER_ABBREVIATIONS
-from playlist.service.enumeration.ls import LSPlaylistName
+from playlist.enums import LSPlaylistName
+from playlist.utils.definition import MapperDefinition
 
 
 class LSResource(object):
@@ -53,9 +56,9 @@ class LSResource(object):
         for data in self.semester_data:
             semester, year = data['semester'], data['year']
             filename = self.csvs.get(str(playlist_name))
-            filepath = f'data/ls/sis_cache/{semester}_{year}/{filename}.csv'
+            filepath = f'cached_data/ls/{semester}_{year}/{filename}.csv'
             print("Found cached data: " + filepath)
-            definition = universal_csv.handler(filepath)
+            definition = self.handler(filepath)
             if definition:
                 breadth_defs.append((semester, year, definition))
             else:
@@ -79,7 +82,7 @@ class LSResource(object):
             for playlist_name in self.breadths:
                 semester = data['semester']
                 year = data['year']
-                rel_path = '%s/%s/%s.csv' % ('data/ls/sis_cache', semester + '_' + year, self.csvs.get(playlist_name))
+                rel_path = '%s/%s/%s.csv' % ('cached_data/ls', semester + '_' + year, self.csvs.get(playlist_name))
                 csv_path = os.path.join(os.path.dirname(__file__), rel_path)
                 if not os.path.exists(csv_path):
                     breadth_to_courses = self._get_sis(semester, year)
@@ -90,12 +93,12 @@ class LSResource(object):
         """
         Write the processed breadth-to-course mapping in CSV files for a given semester.
         """
-        rel_path = '%s/%s' % ('data/ls/sis_cache', semester + '_' + year)
+        rel_path = '%s/%s' % ('cached_data/ls', semester + '_' + year)
         dir_path = os.path.join(os.path.dirname(__file__), rel_path)
         if not os.path.exists(dir_path):
             os.mkdir(dir_path)
         for breadth, courses in breadth_to_courses.items():
-            rel_path = '%s/%s/%s.csv' % ('data/ls/sis_cache', semester + '_' + year, self.csvs.get(breadth))
+            rel_path = '%s/%s/%s.csv' % ('cached_data/ls', semester + '_' + year, self.csvs.get(breadth))
             csv_path = os.path.join(os.path.dirname(__file__), rel_path)
             f = open(csv_path, "w")
             for course in courses:
@@ -165,10 +168,42 @@ class LSResource(object):
                             breadth_to_courses[breadth_abbrv].add(course_abbrv + "," + course_number)
         return True
 
+    def handler(self, csv_rel_path):
+        csv_path = os.path.join(os.path.dirname(__file__), csv_rel_path)
+        if not os.path.exists(csv_path):
+            return None
+        csv_file = open(csv_path, 'rb')
+
+        definition = MapperDefinition()
+
+        # Iterate through each department, create a DepartmentDefinition
+        # and add it to the final definition
+        curr_csv = csv.reader(csv_file)
+        dept_to_course_num = dict()
+        for line in curr_csv:
+            abbreviation, course_number = None, None
+            if len(line) == 2:
+                abbreviation = line[0]
+                course_number = line[1]
+            elif len(line) == 3:
+                abbreviation = (line[0] + "," + line[1]).replace("\"", "")
+                course_number = line[2]
+            if abbreviation is not None and course_number is not None:
+                dept_to_course_num.setdefault(abbreviation, set()).add(course_number)
+
+        for abbreviation, course_numbers in dept_to_course_num.items():
+            definition.add(
+                abbreviation=_normalize_abbreviation(abbreviation),  # abbreviation as a string
+                allowed=list(course_numbers)  # list of course_numbers
+            )
+        return definition
+
+
     @staticmethod
     def _normalize_abbreviation(abbreviation):
         """Return the abbreviation with special characters (if it has them)"""
         return SPECIAL_CHARACTER_ABBREVIATIONS.get(abbreviation, abbreviation)
+
 
     @staticmethod
     def _abbreviate_breadth_name(breadth_name):

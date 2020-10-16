@@ -1,6 +1,5 @@
 """Abstract Playlist Service."""
 from catalog.models import Course
-from playlist.models import Playlist
 
 
 class AbstractPlaylistService:
