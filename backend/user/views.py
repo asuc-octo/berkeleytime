@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import action
@@ -20,6 +20,15 @@ class BerkeleytimeUserViewSet(viewsets.ViewSet):
         serializer = BerkeleytimeUserSerializer(request.user.berkeleytimeuser, many=False)
         return Response(serializer.data)
 
+    def partial_update(self, request, pk=None):
+        user = request.user.berkeleytimeuser
+        serializer = BerkeleytimeUserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.validated_data)
+        else:
+            return Response({'error': 'Invalid data'}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def login(self, request):
         # google's token shoudl be included in request.data
@@ -31,9 +40,9 @@ class BerkeleytimeUserViewSet(viewsets.ViewSet):
             new_user = False
         except User.DoesNotExist:
             # user doesn't exist, register
-            user = None
             new_user = True
-            pass
+            serializer = BerkeleytimeUser(request.data)
+            user = serializer.save()
 
         # generate jwt token
         jwt_payload = jwt_payload_handler(user)
