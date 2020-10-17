@@ -4,14 +4,18 @@
 
   .login {
     padding-top: $bt-navbar-height;
-    height: 100%;
+    height: 50%;
 
     display: flex;
     justify-content: center;
     align-items: center;
+  }
 
-    .g-signin2 {
+  .logout {
+    padding-top: $bt-navbar-height;
 
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }

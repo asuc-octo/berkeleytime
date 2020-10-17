@@ -1,14 +1,14 @@
-// wrapper for all of bt
-.app-container {
+// wrapper for bt app (excluding banner)
+.app {
   background-color: $bt-white;
-  width: 100vw;
 
   // we change navbar's position to absolute when the banner is open
   // so the container needs to be positioned relatively
   position: relative;
 
   // a viewport app sits under the navbar and takes up as much vertical space as the viewport
-  // and has a minimum height of 800px (including navbar)
+  // and has a minimum height of 800px (including navbar). viewport apps include catalog,
+  // grades, and enrollment
   .viewport-app {
     padding-top: $bt-navbar-height;
 
@@ -32,10 +32,23 @@
       height: auto;
     }
 
-     @include tablet {
+    @include tablet {
       height: auto;
     }
+  }
 
+  .fit-to-viewport {
+    height: 100vh;
+    min-height: $viewport-min-height;
+
+    @include touch {
+      height: auto;
+      min-height: $touch-viewport-min-height;
+    }
+  }
+
+  .under-navbar {
+    padding-top: $bt-navbar-height;
   }
 
   .banner-visible {

@@ -3,7 +3,7 @@ import { Row, ButtonToolbar } from 'react-bootstrap';
 import PositionCard from '../../components/Recruiting/Position';
 import { Link } from 'react-router-dom';
 
-import doe from '../../assets/img/images/about/group/doe.jpg';
+import doe from 'assets/img/about/group/doe.jpg';
 
 const IS_RECRUITING = true;
 
