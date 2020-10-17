@@ -32,7 +32,7 @@ class Login extends PureComponent {
 
   static postUserLogin(response) {
     const tokenId = response.tokenId;
-    axios.post(`/user/login/`,
+    axios.post(`/api/user/login/`,
       {
         tokenId: tokenId
       }
