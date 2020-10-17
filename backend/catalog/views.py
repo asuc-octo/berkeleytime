@@ -197,7 +197,7 @@ def courses_to_json(queryset):
     return list(queryset.values(
         "id", "abbreviation", "course_number", "title", "grade_average",
         "letter_average", "enrolled", "enrolled_percentage",
-        "open_seats", "favorite_count", "waitlisted", "units", "description"))
+        "open_seats", "waitlisted", "units", "description"))
 
 def union_by_category(category, filter_ids, user=None):
     """TODO (ASUC) Write docstring."""

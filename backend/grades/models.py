@@ -6,12 +6,11 @@ class Grade(models.Model):
     """Represents a distribution of grades for a given Course."""
 
     class Meta:
-        db_table = 'catalog_grade'
+        db_table = 'grade'
 
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     semester = models.CharField(max_length=50)
     year = models.CharField(max_length=4)
-    department = models.CharField(max_length=200)
     abbreviation = models.CharField(max_length=50)
     course_number = models.CharField(max_length=100)
     section_number = models.CharField(max_length=100)
@@ -34,7 +33,7 @@ class Grade(models.Model):
     np = models.IntegerField(null=True)
     incomplete = models.IntegerField(null=True)
     average = models.FloatField()
-    letter_average = models.CharField(max_length=2, default='')
+    letter_average = models.CharField(max_length=2)
 
     def __str__(self):
         """Return unicode representation of models.Grade."""
