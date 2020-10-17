@@ -4,29 +4,14 @@
   justify-content: center;
   align-items: center;
 
-  margin-bottom: 130px;
-  @include touch {
-    margin-bottom: 100px;
-  }
+  margin-bottom: $landing-section-gap;
 
   .desc {
     text-align: center;
+    width: 450px;
 
-    h3 {
-      font-size: 28px;
-      font-weight: bold;
+    @include touch {
       width: 300px;
-      margin: 0 auto 20px auto;
-      line-height: 1.5;
-    }
-
-    p {
-      margin: 0 auto 30px auto;
-      width: 450px;
-    }
-
-    .sponsor-desc {
-      width: 400px;
     }
   }
 
@@ -37,9 +22,13 @@
     justify-content: center;
 
     img {
+      height: 150px;
       padding: 10px;
-      max-height: 140px;
       object-fit: scale-down;
+
+      @include touch {
+        height: 100px;
+      }
     }
   }
 }

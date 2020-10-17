@@ -297,7 +297,7 @@ const mapStateToProps = state => {
   const {
     activePlaylists, defaultPlaylists, data, loading, selectedCourse,
   } = state.catalog;
-  const { isMobile } = state.isMobile;
+  const { mobile } = state.common;
 
   return {
     activePlaylists,
@@ -305,7 +305,7 @@ const mapStateToProps = state => {
     data,
     loading,
     selectedCourse,
-    isMobile,
+    isMobile: mobile,
   };
 };
 
