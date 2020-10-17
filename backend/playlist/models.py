@@ -6,7 +6,7 @@ class Playlist(models.Model):
     """A collection of courses."""
 
     class Meta:
-        db_table = 'catalog_playlist'
+        db_table = 'playlist'
 
     category = models.CharField(max_length=255, default='custom')
     name = models.CharField(max_length=255)

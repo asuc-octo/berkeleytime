@@ -39,9 +39,9 @@ urlpatterns = [
     # Grades
     ## List courses with grade data
     path('grades/grades_json/', grades.views.grade_context_json),
-    ## List sections after course has been selected
+    ## List grades after course has been selected
     re_path(r'^grades/course_grades/(?P<course_id>\d+)/$', grades.views.grade_section_json),
-    ## Get grade data for given sections
+    ## Get grade data for given grades
     re_path(r'^grades/sections/(?P<grade_ids>.*)/$', grades.views.grade_json),
 
     # Enrollment

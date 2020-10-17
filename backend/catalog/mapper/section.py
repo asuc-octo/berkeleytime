@@ -27,14 +27,11 @@ class SectionMapper:
             section_dict.update(self.get_instructor(data=data))
             section_dict.update(self.get_status(data=data))
             section_dict.update(self.get_location_name(data=data))
-            section_dict.update({
-                'instruction_mode': data.get('instructionMode', {}).get('description')
-            })
+            section_dict.update(self.get_instruction_mode(data=data))
             section_dict.update(extras)
 
             # Include enrollment stats for optimization
-            enrollment = self.get_enrollment(data=data)
-            section_dict.update(enrollment)
+            section_dict.update(self.get_enrollment(data=data))
 
             return section_dict
         except Exception as e:
@@ -59,10 +56,7 @@ class SectionMapper:
         is_primary = data['association']['primary']
 
         return {
-            # TODO (Yuxin) get rid of this in database
-            'suffix': 'P' if is_primary else 'S',
-            'is_primary': is_primary is True,  # you can never be too sure
-            'rank': 0 if is_primary else 1,
+            'is_primary': is_primary is True,
         }
 
     def _get_meeting(self, data):
@@ -163,6 +157,12 @@ class SectionMapper:
         location = meeting.get('location') if meeting else None
         return {
             'location_name': location.get('description') if location else None
+        }
+
+    def get_instruction_mode(self, data):
+        """Get instruction mode."""
+        return {
+            'instruction_mode': data.get('instructionMode', {}).get('description')
         }
 
 

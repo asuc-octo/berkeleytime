@@ -7,7 +7,7 @@ class Enrollment(models.Model):
     """A single enrollment data point for a single section."""
 
     class Meta:
-        db_table = 'catalog_enrollment'
+        db_table = 'enrollment'
         unique_together = ('section', 'date_created',)
 
     section = models.ForeignKey(Section, on_delete=models.CASCADE)

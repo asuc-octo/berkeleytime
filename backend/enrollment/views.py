@@ -75,7 +75,7 @@ def get_primary(course_id, semester, year, context_cache=None):
             course = Course.objects.get(id = course_id)
             all_sections = course.section_set.all()
             context_cache[course_id] = all_sections
-        sections = all_sections.filter(semester = semester, year = year, disabled = False, is_primary = True).order_by('rank').prefetch_related('enrollment_set')
+        sections = all_sections.filter(semester = semester, year = year, disabled = False, is_primary = True).prefetch_related('enrollment_set')
         return sections
     except Exception as e:
         traceback.print_exc()
@@ -138,7 +138,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
         rtn = {}
         course = Course.objects.get(id = course_id)
         all_sections = course.section_set.all().filter(semester = semester, year = year, disabled = False)
-        sections = all_sections.filter(is_primary = True ).order_by('rank')
+        sections = all_sections.filter(is_primary = True )
         if sections:
             rtn['course_id'] = course.id
             rtn['section_id'] = 'all'
