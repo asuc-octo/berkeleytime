@@ -4,7 +4,7 @@ from enum import Enum
 class PrintableEnum(Enum):
     """Abstract class."""
 
-    def __repr__(self):
+    def __str__(self):
         return self.value
 
 
