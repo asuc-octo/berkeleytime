@@ -99,6 +99,6 @@ class MapperDefinition(ConstraintDefinition):
         """Return string representation."""
         str_res = ''
         for abbrev in self.mapper:
-            str_res += f"{abbrev} allowed: {str(self.mapper[abbrev]['allowed'])}\n"
-            str_res += f"{abbrev} excluded: {str(self.mapper[abbrev]['excluded'])}\n"
+            str_res += f"{abbrev} allowed: {self.mapper[abbrev]['allowed']}\n"
+            str_res += f"{abbrev} excluded: {self.mapper[abbrev]['excluded']}\n"
         return str_res

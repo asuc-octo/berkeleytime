@@ -1,6 +1,10 @@
 """Abstract Playlist Service."""
+import logging
+
 from catalog.models import Course
 
+
+logger = logging.getLogger(__name__)
 
 class AbstractPlaylistService:
     """Abstract Playlist Category Service."""
@@ -16,7 +20,7 @@ class AbstractPlaylistService:
 
     def replace_course_ids(self, playlist, course_ids):
         """Replace a playlist's existing courses."""
-        playlist.courses = course_ids
+        playlist.courses.set(course_ids)
         playlist.save()
         logger.info({
             'message': 'Playlist updated',

@@ -17,7 +17,7 @@ class ForeignLanguageResource:
 
     def handler(self, url):
         html = urlopen(url).read()
-        bs = BeautifulSoup(html)
+        bs = BeautifulSoup(html, 'html.parser')
         tables = bs.find_all('table')
         return self.map_def_classes(tables[0])
 

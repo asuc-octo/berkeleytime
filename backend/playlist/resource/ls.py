@@ -1,7 +1,8 @@
 """Resource definitions for L&S breadth pages."""
-import requests
 import csv
+import requests
 import os
+from collections import defaultdict
 
 from berkeleytime.settings import (
     SIS_CLASS_APP_ID,
@@ -169,33 +170,32 @@ class LSResource(object):
         return True
 
     def handler(self, csv_rel_path):
+        definition = MapperDefinition()
+
         csv_path = os.path.join(os.path.dirname(__file__), csv_rel_path)
         if not os.path.exists(csv_path):
             return None
-        csv_file = open(csv_path, 'rb')
 
-        definition = MapperDefinition()
+        with open(csv_path, 'r') as csv_file:
+            curr_csv = csv.reader(csv_file)
+            dept_to_course_num = defaultdict(set)
+            for line in curr_csv:
+                abbreviation, course_number = None, None
+                if len(line) == 2:
+                    abbreviation = line[0]
+                    course_number = line[1]
+                elif len(line) == 3:
+                    abbreviation = (line[0] + "," + line[1]).replace("\"", "")
+                    course_number = line[2]
+                if abbreviation and course_number:
+                    dept_to_course_num[abbreviation].add(course_number)
 
-        # Iterate through each department, create a DepartmentDefinition
-        # and add it to the final definition
-        curr_csv = csv.reader(csv_file)
-        dept_to_course_num = dict()
-        for line in curr_csv:
-            abbreviation, course_number = None, None
-            if len(line) == 2:
-                abbreviation = line[0]
-                course_number = line[1]
-            elif len(line) == 3:
-                abbreviation = (line[0] + "," + line[1]).replace("\"", "")
-                course_number = line[2]
-            if abbreviation is not None and course_number is not None:
-                dept_to_course_num.setdefault(abbreviation, set()).add(course_number)
+            for abbreviation, course_numbers in dept_to_course_num.items():
+                definition.add(
+                    abbreviation=self._normalize_abbreviation(abbreviation),
+                    allowed=list(course_numbers)
+                )
 
-        for abbreviation, course_numbers in dept_to_course_num.items():
-            definition.add(
-                abbreviation=_normalize_abbreviation(abbreviation),  # abbreviation as a string
-                allowed=list(course_numbers)  # list of course_numbers
-            )
         return definition
 
 

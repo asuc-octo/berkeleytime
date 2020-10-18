@@ -8,60 +8,96 @@ from playlist.utils.definition import ConstraintDefinition, MapperDefinition
 
 
 class UniversityService(AbstractPlaylistService):
-    """University Service."""
+    """University Service.
+
+    Requirements are sourced from:
+    http://guide.berkeley.edu/undergraduate/education/#earningyourdegreetext
+    """
 
     american_history_definition = ConstraintDefinition(
         constraints=[formulas.course_in(
-            [
-                'HISTORY 7A', 'HISTORY 7B', 'HISTORY 130B',
-                'HISTORY 131A', 'HISTORY 131B', 'HISTORY N131B',
-                'HISTORY 138'
-            ]
+            set([
+                'HISTORY 7A',
+                'HISTORY 7B',
+                'HISTORY 125A',
+                'HISTORY 125B',
+                'HISTORY 128AC',
+                'HISTORY 130',
+                'HISTORY 131B',
+                'HISTORY 132C',
+                'HISTORY 133A',
+                'HISTORY 133B',
+                'HISTORY 135B',
+                'HISTORY 137AC',
+                'HISTORY 138',
+                'HISTORY 138T',
+            ])
         )]
     )
     american_institutions_definition = ConstraintDefinition(
         constraints=[formulas.course_in(
-            ['POL SCI 1', 'POL SCI 1AC', 'POL SCI 108A']
+            set([
+                'POL SCI 1',
+                'POL SCI N1AC',
+                'HISTORY 137AC',
+            ])
         )]
     )
 
     quantitative_reasoning_definition = MapperDefinition(
         constraints=[
             formulas.gte_n_units(n=3),
-            formulas.abbreviation_in(['MATH', 'STAT', 'COMPSCI'])
         ],
         mapper={
             'COMPSCI': {
-                'excluded': set([
-                    '15', '24', '39', '49', '84', '96',
-                    '98', '103', '160', '199'])
+                'allowed': set([
+                    'C8',
+                    '10',
+                    'W10',
+                    '61A',
+                    '61B',
+                    '61C',
+                    '70',
+                ])
+            },
+            'INFO': {
+                'allowed': set(['C8'])
             },
             'MATH': {
-                'excluded': set(['24', '39', '98', '198', '199'])
+                'allowed': set([
+                    '1A',
+                    '1B',
+                    '10A',
+                    '10B',
+                    '16A',
+                    '16B',
+                    '32',
+                    'N32',
+                    '53',
+                    'H53',
+                    'W53',
+                    '54',
+                    'H54',
+                    '55',
+                    '74',
+                ])
             },
             'STAT': {
-                'excluded': set(['24', '39', '98', '99', '195', '198', '199'])
+                'allowed': set([
+                    '2',
+                    'C8',
+                    '20',
+                    '21',
+                    'W21',
+                ])
             }
         }
     )
 
-    """
-    Note: the definition of college writing is pretty vague and is
-    different based on where you look. From
-    http://admission.universityofcalifornia.edu/counselors/graduation-requirements/writing/
-    it says 'Complete an appropriate English course at UC with a grade of C
-    or better.' This is just a hardcoded list of college writing courses for
-    now.
-    """
     college_writing_definition = MapperDefinition(
         mapper={
             'COLWRIT': {
-                'allowed': set([
-                    '1', 'R1A', 'R1A FFP', 'R4A', 'R4B', '10A',
-                    '10B', '25AC', '50AC', '99', '105', '108',
-                    '110', '121', '130', '150AC', '151', '152',
-                    '180', 'W180', '199', '300', '300P', '301',
-                    'N2'])
+                'allowed': set(['R1A'])
             }
         }
     )
