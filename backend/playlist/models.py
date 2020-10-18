@@ -15,9 +15,9 @@ class Playlist(models.Model):
 
     courses = models.ManyToManyField(Course)
 
-    def __str__(self):
-        """Return str representation of models.Playlist."""
-        return f'(Playlist) {self.name}'
+    def __repr__(self):
+        """Return str representation of Playlist model."""
+        return f'Playlist(name={self.name})'
 
     def as_json(self):
         return dict(

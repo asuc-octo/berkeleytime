@@ -1,5 +1,4 @@
 """MapperDefinition."""
-import pprint
 
 from playlist.utils.definition.constraint import ConstraintDefinition
 
@@ -96,6 +95,10 @@ class MapperDefinition(ConstraintDefinition):
                 all_allowed.add((abbreviation, course_num))
         return all_allowed
 
-    def __str__(self):
+    def __repr__(self):
         """Return string representation."""
-        return pprint.pformat(self.mapper)
+        str_res = ''
+        for abbrev in self.mapper:
+            str_res += f"{abbrev} allowed: {str(self.mapper[abbrev]['allowed'])}\n"
+            str_res += f"{abbrev} excluded: {str(self.mapper[abbrev]['excluded'])}\n"
+        return str_res

@@ -58,9 +58,9 @@ class Course(models.Model):
         waitlisted = self.waitlisted,
       )
 
-    def __str__(self):
-        """Return str representation of models.Course."""
-        return f'{self.abbreviation} {self.course_number}'
+    def __repr__(self):
+        """Return str representation of Course model."""
+        return f'Course(abbrev={self.abbreviation}, course_number={self.course_number})'
 
     @property
     def display_units(self):
@@ -167,6 +167,8 @@ class Section(models.Model):
         days = {'0': 'Su', '1': 'M', '2': 'Tu', '3': 'W', '4': 'Th', '5': 'F', '6': 'Sa', '7': 'Su'}
         return days[self.final_day] if self.final_day else ''
 
-    def __str__(self):
+    def __repr__(self):
         """Return str representation of Section model."""
-        return f'{self.abbreviation}{self.course_number}-{self.kind}'
+        return f'Section(abbrev={self.abbreviation}, course_number={self.course_number}, ' \
+               + f'semester={self.semester}, year={self.year}, ' \
+               + f'kind={self.kind}, section_number={self.section_number})'
