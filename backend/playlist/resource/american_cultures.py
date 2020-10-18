@@ -44,8 +44,8 @@ class AmericanCulturesResource:
 
 
     def parse_abbrev(self, dept):
-        dept_name_raw = re.split('[—\(–]', dept.find('span').text)[0]
-        dept_name = re.sub('\"', '', dept_name_raw).strip()
+        dept_name_raw = re.split('[\—(\–]', dept.find('span').text)[0]
+        dept_name = re.sub('[\"\'’]', '', dept_name_raw).strip()
         return utils.department_to_abbreviation(dept_name)
 
 
