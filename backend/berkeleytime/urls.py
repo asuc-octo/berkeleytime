@@ -60,28 +60,4 @@ urlpatterns = [
     re_path(r'^forms/upload/(?P<config_name>[\w\d]+)/(?P<file_name>.+)/$', forms.views.upload_file_view),
 ]
 
-# Leon's proposed API (should wrap this in DRF if possible):
-# Theoretically, this should be much cleaner and more logical than what we have
-
-# urlpatterns = [
-    # /catalog/?filters=id1,id2&basic=
-        # use query params to pass filter IDs and specific basic/detailed
-        # basic=True means just return the barebones, needed for some features
-    # /catalog/:course_id/?basic=
-        # basic means the same as above
-
-    # /playlists/
-
-    # /grades/courses/
-    # /grades/courses/:course_id/sections/
-    # /grades/:section_ids/
-
-    # /enrollment/courses/
-    # /enrollment/courses/:course_id/sections/
-    # /enrollment/:section_ids/
-
-    # /forms/config/:config_name/
-    # /forms/upload/:config_name/:file_name
-    # /forms/submit/
-
-# ]
+# Leon's proposed API V3: https://www.notion.so/Backend-V3-f8969e7fde3348c1a74c0e2aaab5edb2
