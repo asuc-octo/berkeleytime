@@ -37,8 +37,8 @@ const questions = [
   {
     question: 'Why does an enrollment chart show more than 100% students enrolled?',
     answer: <P>This is not a bug; the percent enrolled graph compares the number of students enrolled at a given time to the current
-      enrollment cap of the class. Throughout the semester, professors or department admins may choose to decrease the class
-      size below the number of students enrolled to limit further enrollment. Hence, some classes may show over 100%
+    enrollment cap of the class. Throughout the semester, professors or department admins may choose to decrease the class
+    size below the number of students enrolled to limit further enrollment. Hence, some classes may show over 100%
       enrollment at certain points in the enrollment timeline. </P>,
   },
   {
@@ -63,7 +63,7 @@ const questions = [
   },
   {
     question: 'How do I apply to join the team?',
-    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up for <Link to="/join">recruitment updates</Link>. Also, keep an eye out on our <a href="https://facebook.com/berkeleytime/"> Facebook page</a> for recruitment events.</p>
+    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up for <Link to="/join">recruitment updates</Link>. Also, keep an eye out on our <a href="https://www.facebook.com/berkeleytime/"> Facebook page</a> for recruitment events.</p>
   },
   {
     question: 'I want to help user test new features!',
@@ -82,7 +82,7 @@ const questions = [
     question: 'How do I give feedback about the product?',
     answer: <P>Feel free to fill out our <Link to="/bugs" className="link">feedback form</Link>. You can also email us
       at <a href="mailto: octo.berkeleytime@asuc.org">octo.berkeleytime@asuc.org</a>, and we&apos;ll respond as soon as we can.</P>,
-  },{
+  }, {
     question: 'Can Berkeleytime add a feature to review/rate professors and courses?',
     answer: <P>We appreciate the feature request! The BT team has discussed this at length, and, unfortunately, we are not able to offer any such review or rating system at the current time. This is because we work closely with the Berkeley Academic Senate. Also as a part of the ASUC, we cannot officially incorporate or endorse opinions we either don’t moderate or are not our own.</P>
   }

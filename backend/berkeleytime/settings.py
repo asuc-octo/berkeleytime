@@ -15,7 +15,6 @@ See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 import datetime
 import os
 import sys
-from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
 

@@ -58,5 +58,4 @@ class SISCourseResource:
             })
             raise
 
-
 sis_course_resource = SISCourseResource()
