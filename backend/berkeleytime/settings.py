@@ -11,14 +11,18 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
-
-from datetime import date
 from pathlib import Path
 import os
 import datetime
 from urllib.parse import urlparse
 
 from berkeleytime.config.semesters.fall2020 import *
+import os
+import sys
+from pathlib import Path
+from urllib.parse import urlparse
+
+from berkeleytime.config.semesters.spring2021 import *
 from berkeleytime.config.general import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -110,7 +114,7 @@ else:
 
 # Apps
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -140,25 +144,61 @@ MIDDLEWARE = [
 # Root URLconf file
 ROOT_URLCONF = 'berkeleytime.urls'
 
-# List of template engines (maybe unnecessary?)
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
 # WSGI app object to use with runserver
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+        'json': {
+            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '%(levelname)s %(asctime)s %(message)s',
+        },
+    },
+    'handlers': {
+        'mail_admins': {
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+            'stream': sys.stdout,
+        },
+    },
+    'root': {
+        'handlers': ['mail_admins'],
+        'level': 'ERROR',
+    },
+    'loggers': {
+        'catalog': {
+            'handlers': ['console'],
+            'level': 'INFO'
+        },
+        'enrollment': {
+            'handlers': ['console'],
+            'level': 'INFO'
+        },
+        'playlist': {
+            'handlers': ['console'],
+            'level': 'INFO'
+        },
+    }
+}
+
 
 # Course/Class API credentials
 SIS_COURSE_APP_ID = os.getenv('SIS_COURSE_APP_ID')
@@ -211,6 +251,6 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 STATIC_URL = '/static/'

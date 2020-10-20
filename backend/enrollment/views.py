@@ -2,12 +2,14 @@ from threading import Thread
 import traceback
 
 from django.core.cache import cache
+from django.db.models import Sum
 
 from berkeleytime.utils import render_to_json, render_to_empty_json
 from berkeleytime.settings import (
     CURRENT_SEMESTER,
     CURRENT_YEAR,
     PAST_SEMESTERS,
+    PAST_SEMESTERS_TELEBEARS,
     PAST_SEMESTERS_TELEBEARS_JSON,
     TELEBEARS_JSON,
     TELEBEARS,
@@ -15,8 +17,11 @@ from berkeleytime.settings import (
 )
 from catalog.models import Course, Section
 from catalog.utils import sort_course_dicts
+from enrollment.models import Enrollment
+from enrollment.service import enrollment_service
 
 CACHE_TIMEOUT = 900
+
 
 # /enrollment/enrollment_json/
 def enrollment_context(long_form=False):
@@ -70,7 +75,7 @@ def get_primary(course_id, semester, year, context_cache=None):
             course = Course.objects.get(id = course_id)
             all_sections = course.section_set.all()
             context_cache[course_id] = all_sections
-        sections = all_sections.filter(semester = semester, year = year, disabled = False, is_primary = True).order_by('rank').prefetch_related('enrollment_set')
+        sections = all_sections.filter(semester = semester, year = year, disabled = False, is_primary = True).prefetch_related('enrollment_set')
         return sections
     except Exception as e:
         traceback.print_exc()
@@ -122,7 +127,6 @@ def enrollment_section_render(request, course_id):
         return render_to_empty_json()
 
 
-
 # /enrollment/aggregate/
 def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, year=CURRENT_YEAR):
     try:
@@ -134,7 +138,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
         rtn = {}
         course = Course.objects.get(id = course_id)
         all_sections = course.section_set.all().filter(semester = semester, year = year, disabled = False)
-        sections = all_sections.filter(is_primary = True ).order_by('rank')
+        sections = all_sections.filter(is_primary = True )
         if sections:
             rtn['course_id'] = course.id
             rtn['section_id'] = 'all'
@@ -149,7 +153,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
             else:
                 CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
                 CORRECTED_TELEBEARS = TELEBEARS
-                schedules = schedule_resource.get(
+                new_sections = enrollment_service.get_live_enrollment(
                     semester=semester,
                     year=year,
                     course_id=course_id,
@@ -157,7 +161,6 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
                     course_number=course.course_number,
                     log=True,
                 )
-                new_sections = [x.enrollment._initial for x in schedules if x.section._initial['is_primary'] and not x.section._initial['disabled']]
 
             rtn['telebears'] = CORRECTED_TELEBEARS_JSON #THIS NEEDS TO BE FROM THE OTHER SEMESTER, NOT THE CURRENT SEMESTER
             rtn['telebears']['semester'] = semester.capitalize() + ' ' + year
@@ -245,15 +248,15 @@ def enrollment_json(request, section_id):
         else:
             CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
             CORRECTED_TELEBEARS = TELEBEARS
-            schedules = schedule_resource.get(
+            new_section = enrollment_service.get_live_enrollment(
                 semester=semester,
                 year=year,
                 course_id=course.id,
                 abbreviation=course.abbreviation,
                 course_number=course.course_number,
+                ccn=section.ccn,
                 log=True,
-            )
-            new_section = [x.enrollment._initial for x in schedules if x.section['ccn'] == section.ccn][0]
+            )[0]
 
         rtn['telebears'] = CORRECTED_TELEBEARS_JSON
         enrolled_max = section.enrollment_set.all().latest('date_created').enrolled_max

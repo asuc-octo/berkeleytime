@@ -1,9 +1,7 @@
 from berkeleytime.config.finals.utils.finals_utils import *
 
-class FinalTimesMapper(object):
-    """
-    Maps class information to a finals time
-    """
+class FinalTimesMapper:
+    """Maps class information to a finals time"""
     def __init__(self, generate_function):
         self._generate_finals_time = generate_function
 
