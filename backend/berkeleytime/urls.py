@@ -18,13 +18,13 @@ from django.urls import path, re_path, include
 from rest_framework_jwt.views import refresh_jwt_token
 from berkeleytime.router import router
 import catalog.views
-import grades.views
 import enrollment.views
 import forms.views
+import grades.views
 
 # Note: We will begin to deprecate the endpoints seen here in favor of using Django REST Framework.
 urlpatterns = [
-    # Probably don't need this right now
+    # Easier debugging for user models
     path('admin/', admin.site.urls),
     
     path('api-token-refresh/', refresh_jwt_token),
@@ -47,9 +47,9 @@ urlpatterns = [
     # Grades
     ## List courses with grade data
     path('grades/grades_json/', grades.views.grade_context_json),
-    ## List sections after course has been selected
+    ## List grades after course has been selected
     re_path(r'^grades/course_grades/(?P<course_id>\d+)/$', grades.views.grade_section_json),
-    ## Get grade data for given sections
+    ## Get grade data for given grades
     re_path(r'^grades/sections/(?P<grade_ids>.*)/$', grades.views.grade_json),
 
     # Enrollment
@@ -68,28 +68,4 @@ urlpatterns = [
     re_path(r'^forms/upload/(?P<config_name>[\w\d]+)/(?P<file_name>.+)/$', forms.views.upload_file_view),
 ]
 
-# Leon's proposed API (should wrap this in DRF if possible):
-# Theoretically, this should be much cleaner and more logical than what we have
-
-# urlpatterns = [
-    # /catalog/?filters=id1,id2&basic=
-        # use query params to pass filter IDs and specific basic/detailed
-        # basic=True means just return the barebones, needed for some features
-    # /catalog/:course_id/?basic=
-        # basic means the same as above
-
-    # /playlists/
-
-    # /grades/courses/
-    # /grades/courses/:course_id/sections/
-    # /grades/:section_ids/
-
-    # /enrollment/courses/
-    # /enrollment/courses/:course_id/sections/
-    # /enrollment/:section_ids/
-
-    # /forms/config/:config_name/
-    # /forms/upload/:config_name/:file_name
-    # /forms/submit/
-
-# ]
+# Leon's proposed API V3: https://www.notion.so/Backend-V3-f8969e7fde3348c1a74c0e2aaab5edb2

@@ -70,7 +70,7 @@ def add_up_grades(grades):
            in the combined sections
         2) the total number of grades in the combined sections
     """
-    # Counter for letter grades weighted by their GPA value (e.g. 100 * B+ 3.3)  # noqa
+    # Counter for letter grades weighted by their GPA value (e.g. 100 * B+ 3.3)
     weighted_letter_grade_counter = {lg: 0 for lg in get_letter_grades()}
     total = 0
 
@@ -81,7 +81,7 @@ def add_up_grades(grades):
             count = getattr(grade, field_name)
             total += count
 
-            weighted_letter_grade_counter[letter_grade] += count * letter_grade_to_gpa(letter_grade)  # noqa
+            weighted_letter_grade_counter[letter_grade] += count * letter_grade_to_gpa(letter_grade)
 
     return weighted_letter_grade_counter, total
 

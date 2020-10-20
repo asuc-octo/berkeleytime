@@ -45,7 +45,6 @@ urlpatterns = patterns('',
     url(r'^catalog/course_box/$', 'catalog.views.course_box'),
     url(r'^catalog/(?P<abbreviation>.*)/(?P<course_number>.*)/$', 'catalog.views.catalog'),
 
-
     # Grades
     url(r'^grades/$', 'data.views.grade_render'),
     url(r'^grades/grades_json/$', 'data.views.grade_context_json'),

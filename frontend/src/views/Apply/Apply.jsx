@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import doe from 'assets/img/about/group/doe.jpg';
 
-const IS_RECRUITING = true;
+const IS_RECRUITING = false;
 
 class Apply extends PureComponent {
 
