@@ -125,7 +125,9 @@ class FilterResults extends Component {
           search(query, `${course.title}`.toLowerCase(), 0.3, 0.05)
         ),
       ])
-      .filter(([_, distance]) => distance >= 0);
+      .filter(([_, distance]) => distance >= 0)
+      .sort((a, b) => a[1] - b[1])
+      .map(([course]) => course);
 
     return results;
   }
