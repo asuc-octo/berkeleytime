@@ -8,7 +8,7 @@ import { laymanToAbbreviation } from '../../variables/Variables';
 
 import { getFilterResults, filter, makeRequest } from '../../redux/actions';
 import { connect } from "react-redux";
-import { search } from 'utils/search';
+import { combineQueries, filterToThreshold, normalizeSearchTerm, search } from 'utils/search';
 
 /**
  * Component for course list
@@ -115,19 +115,18 @@ class FilterResults extends Component {
    * text-distance.
    */
   calculateQueryResults() {
-    let { courses, query } = this.props;
-    const MAX_DISTANCE = 0;
+    let { courses, query: rawQuery } = this.props;
+    const query = normalizeSearchTerm(rawQuery);
     const results = courses
-      .map(
-        (course) =>
-          [
-            course,
-            search(query, FilterResults.searchKeyForCourse(course), MAX_DISTANCE)
-          ])
-      .filter(
-        ([course, distance]) => distance >= 0)
-      .sort((a, b) => a[1] - b[1])
-      .map(([course]) => course);
+      .map((course) => [
+        course,
+        combineQueries(
+          search(query, FilterResults.getFullCourseCode(course), 1),
+          search(query, `${course.title}`.toLowerCase(), 0.3, 0.05)
+        ),
+      ])
+      .filter(([_, distance]) => distance >= 0);
+
     return results;
   }
 
@@ -141,28 +140,13 @@ class FilterResults extends Component {
   /**
    * Generates a 'search string' for a course.
    */
-  static searchKeyForCourse(course) {
+  static getFullCourseCode(course) {
     const searchComponents = [
       course.abbreviation,
-      course.course_number,
-      // course.title,
-      // course.department
+      course.course_number
     ];
 
-    // Have a version of course number with 'C' and without 'C'
-    if (course.course_number.indexOf("C") !== -1) {
-      searchComponents.push(course.course_number.substring(1));
-    } else { // if there is not a c in the course number
-      searchComponents.push("C" + course.course_number);
-    }
-
     return searchComponents.join(" ").toLowerCase();
-
-    // Apply the 'layman' abbrs (compsci => cs) to allow for abbrs to get higher
-    // search ranking.
-    for (const [shortAbbr, longAbbr] of laymanToAbbreviation) {
-      course.abbreviation
-    }
   }
 
   render() {

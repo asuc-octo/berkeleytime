@@ -1,12 +1,22 @@
+const DEFAULT_NON_ADJACENT_PENALTY: number = 0.05;
+
 /**
- * Performs a searched clamped to distance MAX_DISTANCE. Returns
+ * Performs a searched clamped to maxTypos. Returns
  * a negative number if not a match, else a positive number 
- * representing the distance.
+ * representing the 'distance'. Do note that the distance is not
+ * the same as the number of typos.
+ * 
+ * Make sure your query and targetString are the same case. This
+ * doesn't handle normalization etc.
+ * 
+ * This is like a fuzzy search but works better for abbrevations
+ * by penalizing ommisions at a much lower rate than transpositions
  */
 export function search(
     query: string,
     targetString: string,
-    maxDistance: number = 0
+    maxTypos: number = 0,
+    nonAdjacentPenalty: number = DEFAULT_NON_ADJACENT_PENALTY
 ): number {
     // TODO: memo this function.
 
@@ -30,18 +40,71 @@ export function search(
         
         while (j < hlen) {
             if (targetString.charCodeAt(j++) === nch) {
+                penalty += (j - start - 1) * nonAdjacentPenalty;
                 continue outer;
             }
         }
 
         // This point is reached if the character isn't found.
-        if (penalty < maxDistance) {
+        if (penalty < maxTypos) {
           j = start;
-          penalty++;
+          penalty += 1;
         } else {
           return -1;
         }
     }
     
-    return 0;
+    return penalty;
+}
+
+/**
+ * Combines two search queries and returns the best result
+ */
+export function combineQueries(query1: number, query2: number): number {
+    if (query1 < 0 || query2 < 0) {
+        return Math.max(query1, query2);
+    }
+
+    return Math.min(query1, query2);
+}
+
+/**
+ * Takes data and returns values to be bound by
+ * threshold. 
+ */
+export function filterToThreshold(
+    rawData: [object, number][],
+    threshold: number = 100
+): object[] {
+    if (rawData.length === 0) {
+        return [];
+    }
+
+    // Sort the data for easier processing
+    const data = rawData.sort((a, b) => a[1] - b[1]);
+
+    const [firstResult, firstMetric] = data.shift()!;
+
+    const results = [firstResult];
+    let prevMetric = firstMetric;
+
+    while (data.length > 0) {
+        const [value, metric] = data.shift()!;
+        if (metric <= prevMetric
+            || results.length < threshold) {
+            results.push(value);
+            prevMetric = metric;
+        } else {
+            break;
+        }
+    }
+
+    return results;
+}
+
+/**
+ * Normalizes a string for seraching
+ */
+export function normalizeSearchTerm(value: string) {
+    return value.trim().toLowerCase();
 }
