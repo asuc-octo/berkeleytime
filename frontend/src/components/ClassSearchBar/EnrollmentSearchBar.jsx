@@ -6,6 +6,7 @@ import {
 import hash from 'object-hash';
 
 import FilterResults from '../Catalog/FilterResults';
+import { search } from '../../utils/search';
 
 // import 'react-virtualized-select/styles.css'
 import { fetchEnrollSelected } from '../../redux/actions';
@@ -202,11 +203,10 @@ class EnrollmentSearchBar extends Component {
   }
 
   filterOptions(option, query) {
+    return search(query, option.lowercaseLabel, 0) >= 0;
     // Super non deterministic error where sometimes option.data or option.data.course
     // refers to the course dict???
     // https://github.com/asuc-octo/berkeleytime/issues/294
-    const course = option.course ? option.course : option.data.course;
-    return FilterResults.filterCourses(course, query, this.queryCache);
   }
 
   reset() {

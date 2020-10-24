@@ -8,8 +8,7 @@ import { laymanToAbbreviation } from '../../variables/Variables';
 
 import { getFilterResults, filter, makeRequest } from '../../redux/actions';
 import { connect } from "react-redux";
-
-import { search } from "fast-fuzzy";
+import { search } from 'utils/search';
 
 /**
  * Component for course list
@@ -117,7 +116,19 @@ class FilterResults extends Component {
    */
   calculateQueryResults() {
     let { courses, query } = this.props;
-    return search(query, courses, { keySelector: FilterResults.searchKeyForCourse })
+    const MAX_DISTANCE = 0;
+    const results = courses
+      .map(
+        (course) =>
+          [
+            course,
+            search(query, FilterResults.searchKeyForCourse(course), MAX_DISTANCE)
+          ])
+      .filter(
+        ([course, distance]) => distance >= 0)
+      .sort((a, b) => a[1] - b[1])
+      .map(([course]) => course);
+    return results;
   }
 
   /**
@@ -134,8 +145,8 @@ class FilterResults extends Component {
     const searchComponents = [
       course.abbreviation,
       course.course_number,
-      course.title,
-      course.department
+      // course.title,
+      // course.department
     ];
 
     // Have a version of course number with 'C' and without 'C'
@@ -145,7 +156,7 @@ class FilterResults extends Component {
       searchComponents.push("C" + course.course_number);
     }
 
-    return searchComponents.join(";");
+    return searchComponents.join(" ").toLowerCase();
 
     // Apply the 'layman' abbrs (compsci => cs) to allow for abbrs to get higher
     // search ranking.
