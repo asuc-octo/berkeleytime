@@ -19,7 +19,7 @@ class Catalog extends Component {
 
     this.state = {
       search: '', // current search
-      sortBy: 'average_grade', // either average_grade, ...
+      sortBy: 'relevance', // either average_grade, ...
       showDescription: false,
     };
 
@@ -86,7 +86,7 @@ class Catalog extends Component {
     modifyActivePlaylists(newActivePlaylists);
     this.setState({
       search: '',
-      sortBy: 'average_grade',
+      sortBy: 'relevance',
     });
   }
 
