@@ -13,7 +13,7 @@ See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
 from pathlib import Path
 import os
-import datetime
+from datetime import timedelta
 from urllib.parse import urlparse
 
 from berkeleytime.config.semesters.fall2020 import *
@@ -127,7 +127,7 @@ INSTALLED_APPS = [
     'playlist',
     'forms',
     'user',
-    'rest_framework',
+    'graphene_django',
 ]
 
 # Middlewares
@@ -223,21 +223,24 @@ SIS_COURSE_APP_KEY = os.getenv('SIS_COURSE_APP_KEY')
 SIS_CLASS_APP_ID = os.getenv('SIS_CLASS_APP_ID')
 SIS_CLASS_APP_KEY = os.getenv('SIS_CLASS_APP_KEY')
 
-# Django REST Framework
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    ),
+# Graphene Config
+GRAPHENE = {
+    'SCHEMA': 'berkeleytime.schema.schema', # Where your Graphene schema lives
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
 }
 
-## JWT
-JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1)
+# Graphene jwt
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+]
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_EXPIRATION_DELTA': timedelta(days=1),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+    'JWT_HIDE_TOKEN_FIELDS': True  # if we want to prevent sending the token back in response
 }
 
 # Password validation - we intend to use Google sign-in, but we may add in-house auth in the future

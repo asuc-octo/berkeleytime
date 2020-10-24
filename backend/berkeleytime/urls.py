@@ -14,9 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path, include
-from rest_framework_jwt.views import refresh_jwt_token
-from berkeleytime.router import router
+from django.urls import path, re_path
+from graphene_django.views import GraphQLView
+from graphql_jwt.decorators import jwt_cookie
 import catalog.views
 import enrollment.views
 import forms.views
@@ -27,8 +27,7 @@ urlpatterns = [
     # Easier debugging for user models
     path('admin/', admin.site.urls),
     
-    path('api-token-refresh/', refresh_jwt_token),
-    path('', include(router.urls)),
+    path('graphql', jwt_cookie(GraphQLView.as_view(graphiql=True))),
     
     # Catalog
     ## List all courses with catalog data
