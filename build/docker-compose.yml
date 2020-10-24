@@ -4,8 +4,6 @@ services:
     build:
       context: ../backend
     command: ["0.0.0.0:8000"]
-    ports:
-      - "8000:8000"  # for dev purposes
     volumes:
      - ../backend:/backend
      - ./google-sa.json:/google-sa.json
@@ -26,7 +24,6 @@ services:
      - "GOOGLE_PASS=***REMOVED***"
     depends_on:
      - redis
-     - postgres
   frontend:
     build:
       context: ../frontend
@@ -38,17 +35,6 @@ services:
     stdin_open: true # https://github.com/facebook/create-react-app/issues/8688
   redis:
     image: redis:alpine
-  postgres:
-    image: postgres:latest
-    volumes:
-      - ./bt_main.dump:/bt_main.dump
-      - ./init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
-      - ./postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    environment:
-      - "POSTGRES_DB=bt_main"
-      - "POSTGRES_PASSWORD=smxutest"
   nginx:
     image: nginx
     volumes:
