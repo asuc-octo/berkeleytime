@@ -25,7 +25,7 @@ class ForeignLanguageResource():
         """Return a list of classes from a table."""
         return [
             utils.clean(row.find('a').get('title'))
-            for row in table.find('tbody').findAll('tr')
+            for row in table.find('tbody').findAll('tr') if row.find('a')
         ]
 
     def map_def_classes(self, table):

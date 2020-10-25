@@ -349,7 +349,7 @@ class ClassDescription extends Component {
   }
 }
 
-ClassDescription = Radium(ClassDescription);
+// ClassDescription = Radium(ClassDescription);
 
 const mapDispatchToProps = dispatch => {
   return {
