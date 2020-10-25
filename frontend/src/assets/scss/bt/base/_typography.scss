@@ -20,7 +20,8 @@ td {
   color: $bt-base-text;
   margin: 0;
 
-  // -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -32,7 +33,7 @@ a {
   }
 }
 
-// responsively scale font sizes
+// responsively scale font sizes (replace with $responsive)
 @mixin font-size-responsive($size) {
   font-size: $size;
 
@@ -67,5 +68,9 @@ a {
 }
 
 .bt-bold {
+  font-weight: 600;
+}
+
+.bt-light-bold {
   font-weight: 500;
 }
