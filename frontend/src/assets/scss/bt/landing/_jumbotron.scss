@@ -57,6 +57,9 @@
   }
 
   .animation-container {
+    display: flex;
+    flex-direction: column;
+
     width: 100%;
     height: 100%;
 
@@ -122,6 +125,12 @@
       #treee, #treee-2, #other-bush, #ball-bush, #tre {
         animation: updownshort 2.5s ease alternate infinite;
       }
+    }
+
+    .credit {
+      color: $bt-light-text;
+
+      @include font-size-responsive(14px);
     }
   }
 }

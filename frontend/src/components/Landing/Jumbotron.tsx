@@ -31,6 +31,7 @@ const Jumbotron: FC = () => (
         <Col xs={{ span: 12, order: 2 }} lg={{ span: 7, order: 2 }}>
           <div className="animation-container">
             <Logo />
+            <p className="credit">© Janet Xu</p>
           </div>
         </Col>
       </Row>

@@ -1,5 +1,4 @@
-import React, { Component, FC } from 'react'
-import { Route } from 'react-router-dom'
+import React, { Component } from 'react'
 import { connect, ConnectedProps } from 'react-redux'
 
 import Banner from './components/Common/Banner'
@@ -8,18 +7,7 @@ import Footer from './components/Common/Footer'
 import Routes from './Routes'
 
 import { openBanner, enterMobile, exitMobile } from './redux/common/actions'
-
-// google analytics
-import ReactGA from 'react-ga'
 import { ReduxState } from 'redux/store'
-const gaTrackingID = 'UA-35316609-1'
-ReactGA.initialize(gaTrackingID)
-
-const LogPageView: FC = () => {
-  ReactGA.set({ page: window.location.pathname })
-  ReactGA.pageview(window.location.pathname)
-  return null
-}
 
 function easterEgg() {
   console.log(`%c
@@ -44,7 +32,7 @@ function easterEgg() {
                !.........||||                     ||||
                !.........||||                     ||||
                !.........||||                     ||||
-               \`........||||                    ,||||
+                \`........||||                    ,||||
                 .;.......||||               _.-!!|||||
          .,uodWBBBBb.....||||       _.-!!|||||||||!:'
       !YBBBBBBBBBBBBBBb..!|||:..-!!|||||||!iof68BBBBBb....
@@ -74,14 +62,14 @@ class Berkeleytime extends Component<Props> {
 
     easterEgg()
 
-    // const key = 'bt-apps-open-update'
-    // if (localStorage.getItem(key) === null) {
-    //   localStorage.setItem(key, key)
-    //   props.openBanner()
-    // }
+    const key = 'bt-spring-2021-catalog'
+    if (localStorage.getItem(key) === null) {
+      localStorage.setItem(key, key)
+      props.openBanner()
+    }
 
-    // Clear storage if not storing anything
-    localStorage.clear()
+    /* Clear storage if not storing anything */
+    // localStorage.clear()
 
     this.checkMobile()
   }
@@ -110,7 +98,6 @@ class Berkeleytime extends Component<Props> {
     return (
       <>
         {!embeded && <Banner />}
-        <Route path="/" component={LogPageView} />
         <div className="app">
           {!embeded && <Navigation />}
           <Routes />
