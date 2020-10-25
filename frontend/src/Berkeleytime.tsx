@@ -103,9 +103,9 @@ class Berkeleytime extends Component<Props> {
   }
 
   render() {
-    // Provide a plain version of OCTO Application for embedding
-    // Delete all instances of [embeded] to remove this feature
-    const embeded = window.location.pathname.includes('/embed')
+    /* Provide a plain version of OCTO Application for embedding */
+    // const embeded = window.location.pathname.includes('/embed')
+    const embeded = false
 
     return (
       <>
