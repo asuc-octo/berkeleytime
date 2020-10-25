@@ -32,7 +32,7 @@ class Grade(models.Model):
     graded_total = models.IntegerField()
     p = models.IntegerField(null=True)
     np = models.IntegerField(null=True)
-    average = models.FloatField(default=0.0)
+    average = models.FloatField(default=-1.0)
 
     def __repr__(self):
         """Return representation of Grade model."""
