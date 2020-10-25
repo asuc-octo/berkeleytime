@@ -10,6 +10,7 @@ from berkeleytime import settings
 from berkeleytime.config.semesters.util.term import get_sis_term_id
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 CACHE_TIMEOUT = 900
 
 class SISClassResource:

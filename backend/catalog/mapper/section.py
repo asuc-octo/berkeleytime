@@ -9,6 +9,7 @@ from catalog.models import Section
 DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class SectionMapper:
     """Map SIS Class API response data to a dict."""

@@ -49,8 +49,8 @@ def letter_grade_to_gpa(letter_grade):
 
 def letter_grade_to_field_name(letter_grade):
     """Take a letter grade (e.g. A+) and convert it to field name (e.g. a3)."""
-    if letter_grade == 'F':
-        return 'f'
+    if letter_grade in ['F', 'P', 'NP']:
+        return letter_grade.lower()
 
     # Maps A+ to a3, A to a2, A- to a1, and so on
     if len(letter_grade) == 2:

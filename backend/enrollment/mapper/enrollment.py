@@ -7,6 +7,7 @@ from berkeleytime.settings import finals_mapper
 from enrollment.models import Enrollment
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class EnrollmentMapper:
     """Map SIS Class API response data to a dict."""

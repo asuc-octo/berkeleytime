@@ -166,33 +166,36 @@ LOGGING = {
         'mail_admins': {
             'class': 'django.utils.log.AdminEmailHandler',
             'filters': ['require_debug_false'],
+            'level': 'ERROR',
         },
-        'console': {
+        'stdout': {
             'class': 'logging.StreamHandler',
             'formatter': 'json',
+            'level': 'INFO',
             'stream': sys.stdout,
         },
+        'stderr': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+            'level': 'ERROR',
+            'stream': sys.stderr,
+        }
     },
     'root': {
         'handlers': ['mail_admins'],
-        'level': 'ERROR',
     },
     'loggers': {
         'catalog': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
         },
         'enrollment': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
         },
         'grades': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
         },
         'playlist': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
         },
     }
 }

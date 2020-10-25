@@ -12,6 +12,7 @@ from enrollment.service import enrollment_service
 
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 NUM_THREADS = min(2 * os.cpu_count(), 16)
 
 
