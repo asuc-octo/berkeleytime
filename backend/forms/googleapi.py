@@ -72,9 +72,9 @@ def upload_file(folder_name, file_name, file_blob):
         if (f['name'] == 'InternalSubmissionForm'):
             base_folder_id = f['id']
 
-    # If the given folder is NOT '' or None AND was unassigned, we will create the folder
+    # If the given folder is not empty AND was unassigned, we will create the folder
     # We will not create a folder if the given name is nothing
-    if ((not folder_name == '') or (not folder_name)) and unassigned_bool:
+    if folder_name and unassigned_bool:
         file_metadata = {'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder',
             'parents': [base_folder_id]}
         folder = drive.files().create(body=file_metadata, fields='id').execute()

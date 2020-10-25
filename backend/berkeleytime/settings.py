@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
 
-from pathlib import Path
 import os
+import sys
+from pathlib import Path
 from urllib.parse import urlparse
+
 from berkeleytime.config.semesters.spring2021 import *
 from berkeleytime.config.general import *
 
@@ -138,6 +140,59 @@ ROOT_URLCONF = 'berkeleytime.urls'
 
 # WSGI app object to use with runserver
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+        'json': {
+            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
+            'format': '%(levelname)s %(asctime)s %(message)s',
+        },
+    },
+    'handlers': {
+        'mail_admins': {
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false'],
+        },
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+            'stream': sys.stdout,
+        },
+    },
+    'root': {
+        'handlers': ['mail_admins'],
+        'level': 'ERROR',
+    },
+    'loggers': {
+        'catalog': {
+            'handlers': ['console'],
+            'level': 'INFO'
+        },
+        'enrollment': {
+            'handlers': ['console'],
+            'level': 'INFO'
+        },
+        'playlist': {
+            'handlers': ['console'],
+            'level': 'INFO'
+        },
+    }
+}
+
 
 # Course/Class API credentials
 SIS_COURSE_APP_ID = os.getenv('SIS_COURSE_APP_ID')
