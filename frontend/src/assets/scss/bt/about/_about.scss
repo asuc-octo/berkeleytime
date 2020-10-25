@@ -1,93 +1,24 @@
 .about {
   padding-top: $bt-navbar-height;
 
-  .releases-heading-button {
-      justify-content: center;
-      margin-top: 20px;
-      margin-bottom: 64px;
-
-      .join {
-          margin-bottom: 0;
-      }
-
-      input {
-        overflow: visible;
-        margin-right: 10px;
-        border: solid 1px #cfcfcf;
-        text-indent: 10px;
-        color: $bt-base-text;
-        border-radius: 4px;
-        width: 280px;
-
-        &::placeholder{
-          color: $bt-light-grey;
-        }
-
-
-      }
-
-    }
-
-  .join-pic {
-    width: 800px;
-    margin-bottom: 28px;
-    @include mobile {
-      width: 95%;
-    }
-  }
-
-  .nav-link {
-    background-color: #e1e1e16b;
-  }
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  .title {
-    font-weight: bold;
-    color: $bt-base-text;
-    font-size: 24px;
-
-    @include mobile {
-      font-size: 30px;
-    }
-  }
-
-  .about-us {
-    margin: 50px 0;
+  .about-our-team {
     text-align: center;
 
-    > h5 {
-      margin-bottom: 15px;
-      font-weight: bold;
-      font-size: 24px;
-
-      @include mobile {
-        font-size: 20px;
-      }
-    }
-
-    > p {
-      margin-bottom: 15px;
-      font-size: 16px;
+    p {
+      color: $bt-light-text;
       line-height: 1.75;
-      color: #8A8A8A;
-      width: 600px;
+      width: 500px;
 
       @include mobile {
-        width: 330px;
+        width: 300px;
       }
     }
-
-
   }
 
   .group {
     display: flex;
     flex-direction: row;
     width: 100%;
-    margin-bottom: 60px;
 
     > img {
       @include desktop {
@@ -137,6 +68,7 @@
     scrollbar-width: none; /* Firefox */
   }
 
+  // remove scroll bar
   .group::-webkit-scrollbar { /* Safari and Chrome */
     display: none;
   }
@@ -200,6 +132,56 @@
           }
         }
       }
+    }
+  }
+
+
+
+
+  // should move somewhere else???
+  .releases-heading-button {
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 64px;
+
+    input {
+      overflow: visible;
+      margin-right: 10px;
+      border: solid 1px #cfcfcf;
+      text-indent: 10px;
+      color: $bt-base-text;
+      border-radius: 4px;
+      width: 280px;
+
+      &::placeholder{
+        color: $bt-light-grey;
+      }
+    }
+  }
+
+  .join-pic {
+    width: 800px;
+    margin-bottom: 28px;
+    @include mobile {
+      width: 95%;
+    }
+  }
+
+  .nav-link {
+    background-color: #e1e1e16b;
+  }
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .title {
+    font-weight: bold;
+    color: $bt-base-text;
+    font-size: 24px;
+
+    @include mobile {
+      font-size: 30px;
     }
   }
 }
