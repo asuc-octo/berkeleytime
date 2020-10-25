@@ -35,6 +35,8 @@ class Grade(models.Model):
     average = models.FloatField()
     letter_average = models.CharField(max_length=2)
 
-    def __str__(self):
-        """Return unicode representation of models.Grade."""
-        return f'{self.average} ({self.letter_average})'
+    def __repr__(self):
+        """Return str representation of Grade model."""
+        return f'Grade(abbrev={self.abbreviation}, course_number={self.course_number}, ' \
+               + f'section_number={self.section_number}, semester={self.semester}, ' \
+               + f'year={self.year}, average={self.average})'

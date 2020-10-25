@@ -18,10 +18,10 @@ class HaasService(AbstractPlaylistService):
         """Update playlists fulfilling a Haas breadth requirement."""
         reading_definitions = reading_resource.get()
 
-        for playlist_entry in HaasPlaylistName:
-            ls_playlist_entry = LSPlaylistName[playlist_entry.name]
+        for playlist_name in HaasPlaylistName:
+            ls_playlist_name = LSPlaylistName[playlist_name.name]
             ls_definition = None
-            for semester, year, ls_def in ls_resource.get(playlist_name=ls_playlist_entry):
+            for semester, year, ls_def in ls_resource.get(playlist_name=ls_playlist_name):
                 if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
                     ls_definition = ls_def
                     break

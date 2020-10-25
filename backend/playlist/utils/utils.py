@@ -30,20 +30,9 @@ def department_to_abbreviation(department_name):
 
 def abbreviation_to_department(abbreviation):
     """Convert an abbrevation to its corresponding department name."""
-    return config_dict.abbreviation_to_department_mapper.get(translate(abbreviation))
-
-
-def is_abbreviation(abbreviation):
-    """Return True if abbreviation is an abbreviation, else False."""
-    return translate(abbreviation) in config_dict.abbreviation_to_department_mapper
+    return config_dict.abbreviation_to_department_mapper.get(abbreviation)
 
 
 def is_department(department_name):
     """Return True if department_name is a department name, else False."""
     return department_name.upper() in config_dict.department_to_abbreviation_mapper
-
-
-def translate(abbreviation):
-    if abbreviation in translations:
-        return translations[abbreviation]
-    return abbreviation

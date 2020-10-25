@@ -1,4 +1,5 @@
 """Letters and Science Playlist Service."""
+from catalog.models import Course
 from playlist.enums import PlaylistCategory, LSPlaylistName
 from playlist.models import Playlist
 from playlist.resource import ls_resource
@@ -11,7 +12,7 @@ class LSService(AbstractPlaylistService):
     def update(self):
         """Update corresponding playlists."""
         for playlist_name in LSPlaylistName:
-            definitions = LSService.define(playlist_name)
+            definitions = ls_resource.get(playlist_name)
             for semester, year, definition in definitions:
                 playlist, created = Playlist.objects.get_or_create(
                     name=str(playlist_name),
@@ -26,11 +27,11 @@ class LSService(AbstractPlaylistService):
         """Refresh the most recent LS breadth courses from SIS."""
         ls_resource.refresh_current_semester()
 
-    def _update(self, playlist, definition, courses):
+    def _update(self, playlist, definition):
         """Take a single playlist and definition and update it."""
         course_ids = []
         added_courses = set()
-        for course in courses:
+        for course in Course.objects.all():
             if definition.satisfies(course):
                 course_ids.append(course.id)
                 added_courses.add((course.abbreviation, course.course_number))
@@ -56,11 +57,6 @@ class LSService(AbstractPlaylistService):
             print("Indexed extra courses into playlist: ")
             for course in missing_from_expected:
                 print(course[0] + " " + course[1])
-
-    @staticmethod
-    def define(playlist_name):
-        """Take a enum.PlaylistName and return the corresponding definitions."""
-        return ls_resource.get(playlist_name=str(playlist_name))
 
 
 ls_service = LSService()
