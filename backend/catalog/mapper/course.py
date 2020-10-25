@@ -27,7 +27,7 @@ class CourseMapper:
                 'description': data['description'],
                 'department': self.get_course_department(data),
                 'units': self.get_units(data),
-                'crossListing': data['crossListing']['courses'] if data['crossListing'] else [],
+                'cross_listing': ', '.join(data['crossListing']['courses']) if data['crossListing'] else [],
             }
             if "preparation" in data:
                 if "requiredText" in data["preparation"] and len(data["preparation"]["requiredText"]):
