@@ -26,4 +26,4 @@ class Command(BaseCommand):
             print("Must pass either no arguments or semester + year")
             return
 
-        grade_service.update(semester, year)
+        grade_service.update(semester=semester, year=year)

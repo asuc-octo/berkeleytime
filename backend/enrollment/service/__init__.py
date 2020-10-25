@@ -1,1 +1,1 @@
-from .enrollment import *
+from .enrollment import enrollment_service

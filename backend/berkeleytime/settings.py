@@ -186,6 +186,10 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'INFO'
         },
+        'grades': {
+            'handlers': ['console'],
+            'level': 'INFO'
+        },
         'playlist': {
             'handlers': ['console'],
             'level': 'INFO'

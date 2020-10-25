@@ -28,12 +28,10 @@ class Grade(models.Model):
     d2 = models.IntegerField()
     d3 = models.IntegerField()
     f = models.IntegerField()
-    total = models.IntegerField()
+    graded_total = models.IntegerField()
     p = models.IntegerField(null=True)
     np = models.IntegerField(null=True)
-    incomplete = models.IntegerField(null=True)
     average = models.FloatField()
-    letter_average = models.CharField(max_length=2)
 
     def __repr__(self):
         """Return str representation of Grade model."""
