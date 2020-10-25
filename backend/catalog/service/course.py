@@ -36,22 +36,6 @@ class CourseService:
             k: v for (k, v) in course.flatten().items() if k not in self.__derived_fields  # noqa
         }
     
-    def _set_field(self, entry, field, value):
-        """Take a django.db.models.Models and sets entry.field to value, but does not save."""  # noqa
-        if not isinstance(entry, models.Model):
-            raise ValueError({
-                'message': 'Argument must be type of models.Model',
-                'entry': entry,
-                'type': type(entry),
-            })
-
-        previous_value = getattr(entry, field)
-        if previous_value == value:
-            return
-
-        setattr(entry, field, value)
-
-
     def update_or_create(self, course):
         """Update/create a single Course."""
         entry, created = Course.objects.get_or_create(
@@ -70,8 +54,7 @@ class CourseService:
 
         if not created:
             for field, value in self._exclude_derived_fields(course).items():
-                print(entry, field, value)
-                self._set_field(entry, field, value)
+                setattr(entry, field, value)
             entry.save()
 
         return entry
@@ -139,7 +122,7 @@ class CourseService:
             course = Course.objects.get(id=course_id)
             for field in Course._derived_enrollment_fields:
                 default = Course._meta.get_field(field).get_default()
-                self._set_field(course, field, default)
+                setattr(course, field, default)
             return
 
         def sum_fields(sections, field_name):
@@ -149,31 +132,32 @@ class CourseService:
             return rtn
 
         # Get the some of each value over all primary sections
-        summary = {
-            'enrolled': sum_fields(primary_sections, 'enrolled'),
-            'enrolled_max': sum_fields(primary_sections, 'enrolled_max'),
-            'waitlisted': sum_fields(primary_sections, 'waitlisted'),
-        }
+        enrolled = sum_fields(primary_sections, 'enrolled')
+        enrolled_max = sum_fields(primary_sections, 'enrolled_max')
+
         # Exit if enrolled_max is -1 (no data)
         # OR enrolled is -1 (no data), it's ok if enrolled is 0
-        if summary['enrolled_max'] == -1 or summary['enrolled'] == -1:
+        if enrolled_max == -1 or enrolled == -1:
             return
 
+        course = Course.objects.get(id=course_id)
+
+        course.enrolled = enrolled
+        course.enrolled_max = enrolled_max
+        course.waitlisted = sum_fields(primary_sections, 'waitlisted')
+
         # Do not want to divide by 0!
-        if summary['enrolled_max'] != 0:
-            summary['enrolled_percentage'] = float(summary['enrolled']) / float(summary['enrolled_max'])
-            if summary['enrolled_percentage'] > 1:
-                summary['enrolled_percentage'] = 1.0
+        if course.enrolled_max != 0:
+            course.enrolled_percentage = float(course.enrolled) / float(course.enrolled_max)
+            if course.enrolled_percentage > 1:
+                course.enrolled_percentage = 1.0
         else:
             # Default percentage if enrolled_max is -1, most likely bug in the API
             # This will ensure that the front won't populate the field
-            summary['enrolled_percentage'] = -1
+            course.enrolled_percentage = -1
 
         # Take the max in case SIS fucks up and returns negative numbers
-        summary['open_seats'] = max(summary['enrolled_max'] - summary['enrolled'], 0)
-        course = Course.objects.get(id=course_id)
-        for field in summary:
-            self._set_field(course, field, summary[field])
+        course.open_seats = max(course.enrolled_max - course.enrolled, 0)
         course.save()
 
     def update_derived_grade_fields(self, course_id):
