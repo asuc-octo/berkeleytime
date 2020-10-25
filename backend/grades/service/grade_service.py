@@ -58,7 +58,7 @@ class GradeService:
             f'{semester}_{year}_grad.csv', extras={'Level': 'grad'}
         )
 
-        formatted_path = os.path.join(os.path.dirname(grades.resource.__file__), f'formatted/{semester}_{year}_test.csv')
+        formatted_path = os.path.join(os.path.dirname(grades.resource.__file__), f'formatted/{semester}_{year}.csv')
         with open(formatted_path, 'w') as formatted_csv_file:
             writer = csv.DictWriter(
                 formatted_csv_file,
