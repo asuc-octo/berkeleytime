@@ -5,7 +5,7 @@ import os
 import nameparser
 
 import grades.resource
-from grades.utils import letter_grade_to_field_name
+from grades.utils import letter_grade_to_field_name, letter_grade_to_gpa
 from playlist.utils import utils
 
 class FormattedGradeMapper:
@@ -32,7 +32,7 @@ class FormattedGradeMapper:
         return {
             'abbreviation': row['Abbreviation'],
             'course_number': row['CourseNum'],
-            'section_number': row['SectionNum'],
+            'section_number': row['SectionNum'].lstrip('0'),
         }
 
 
@@ -42,10 +42,13 @@ class FormattedGradeMapper:
         instructor_names_formatted = []
         for name in instructor_names:
             formatted_name = nameparser.HumanName(name)
-            instructor_names_string.append(f'{formatted_name.last.upper()}, {formatted_name.first.upper()[0]}')
+            if not (formatted_name.first and formatted_name.last):
+                continue
+            instructor_names_formatted.append(f'{formatted_name.last.upper()}, {formatted_name.first.upper()[0]}')
 
         return {
-            'instructor': ('; ').join(instructor_names_formatted)
+            'instructor': instructor_names_formatted[0] if instructor_names_formatted else '',
+            'instructors': ('; ').join(instructor_names_formatted)
         }
 
 
@@ -53,13 +56,13 @@ class FormattedGradeMapper:
         result = {}
         total_gpa, total_letter_grades = 0, 0
 
-        for key, value in row:
+        for key, value in row.items():
             # If column is not a grade, continue
             if len(key) > 2:
                 continue
 
             value = int(value)
-            result[key] = value
+            result[letter_grade_to_field_name(key)] = value
 
             if key not in ['P', 'NP']:
                 total_gpa += float(value * letter_grade_to_gpa(key))

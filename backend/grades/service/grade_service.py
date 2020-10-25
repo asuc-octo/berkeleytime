@@ -10,6 +10,7 @@ from grades.models import Grade
 
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class GradeService:
     """Application logic for grade data."""
@@ -92,7 +93,7 @@ class GradeService:
 
         for s in semesters:
             for y in years:
-                grades = self._update_one(s, y)
+                self._update_one(s, y)
 
 
     def _update_one(self, semester, year):
@@ -104,16 +105,25 @@ class GradeService:
             course = Course.objects.filter(
                 abbreviation=grade_dict['abbreviation'],
                 course_number=grade_dict['course_number'],
-            )
-            grade_dict['course_id'] = course.id
-            # self.update_or_create_from_dict(self, grade_dict)
-            print(grade_dict)
+            ).first()
 
-            # TODO: Add grade summary fields to course object
+            if course:
+                grade_dict['course_id'] = course.id
+                grade_obj, updated = self.update_or_create_from_dict(grade_dict)
+                # TODO: Add grade summary fields to course object
+                logger.info({
+                    'message': 'Updated grade record',
+                    'grade': grade_obj,
+                })
+            else:
+                logger.error({
+                    'message': 'Course not found while updating grades',
+                    'grade_dict': grade_dict,
+                })
 
 
     def update_or_create_from_dict(self, grade_dict):
-        Grade.objects.update_or_create(
+        return Grade.objects.update_or_create(
             course_id=grade_dict['course_id'],
             semester=grade_dict['semester'],
             year=grade_dict['year'],

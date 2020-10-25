@@ -15,6 +15,7 @@ class Grade(models.Model):
     course_number = models.CharField(max_length=100)
     section_number = models.CharField(max_length=100)
     instructor = models.CharField(max_length=200)
+    instructors = models.TextField()
     a1 = models.IntegerField()
     a2 = models.IntegerField()
     a3 = models.IntegerField()
@@ -31,10 +32,13 @@ class Grade(models.Model):
     graded_total = models.IntegerField()
     p = models.IntegerField(null=True)
     np = models.IntegerField(null=True)
-    average = models.FloatField()
+    average = models.FloatField(default=0.0)
 
     def __repr__(self):
-        """Return str representation of Grade model."""
+        """Return representation of Grade model."""
         return f'Grade(abbrev={self.abbreviation}, course_number={self.course_number}, ' \
-               + f'section_number={self.section_number}, semester={self.semester}, ' \
-               + f'year={self.year}, average={self.average})'
+               f'section_number={self.section_number}, semester={self.semester}, ' \
+               f'year={self.year}, average={self.average})'
+
+    def __str__(self):
+        return self.__repr__()

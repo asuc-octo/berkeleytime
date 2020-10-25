@@ -6,6 +6,7 @@ from retry import retry
 from berkeleytime import settings
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class SISCourseResource:
     """Resource for SIS Course API."""

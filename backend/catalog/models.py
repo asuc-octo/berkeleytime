@@ -59,8 +59,11 @@ class Course(models.Model):
       )
 
     def __repr__(self):
-        """Return str representation of Course model."""
+        """Return representation of Course model."""
         return f'Course(abbrev={self.abbreviation}, course_number={self.course_number})'
+
+    def __str__(self):
+        return self.__repr__()
 
     @property
     def display_units(self):
@@ -168,7 +171,10 @@ class Section(models.Model):
         return days[self.final_day] if self.final_day else ''
 
     def __repr__(self):
-        """Return str representation of Section model."""
+        """Return representation of Section model."""
         return f'Section(abbrev={self.abbreviation}, course_number={self.course_number}, ' \
-               + f'semester={self.semester}, year={self.year}, ' \
-               + f'kind={self.kind}, section_number={self.section_number})'
+               f'semester={self.semester}, year={self.year}, ' \
+               f'kind={self.kind}, section_number={self.section_number})'
+
+    def __str__(self):
+        return self.__repr__()
