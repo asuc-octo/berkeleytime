@@ -11,6 +11,7 @@ gspread
 # Other
 arrow
 beautifulsoup4
+nameparser
 python-dateutil
 python-json-logger
 pyyaml
