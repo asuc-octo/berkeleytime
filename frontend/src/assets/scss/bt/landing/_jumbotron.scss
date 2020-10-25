@@ -129,8 +129,11 @@
 
     .credit {
       color: $bt-light-text;
-
       @include font-size-responsive(14px);
+
+      @include desktop {
+        margin-top: 5px;
+      }
     }
   }
 }
