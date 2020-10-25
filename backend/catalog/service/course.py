@@ -78,7 +78,7 @@ class CourseService:
                     course_number=course_number
                 )
             return entry
-        except models.Course.DoesNotExist:
+        except Course.DoesNotExist:
             logger.warning({
                 'message': 'Course not found',
                 'id': id,
