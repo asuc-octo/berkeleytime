@@ -48,7 +48,7 @@ def enrollment_context(long_form=False):
 
         # The following query is less exact and returns lots of Courses with no
         # enrollment objects
-        courses = Course.objects.filter(has_enrollment=True).distinct().order_by('abbreviation', 'course_number')
+        courses = Course.objects.all().order_by('abbreviation', 'course_number')
         if long_form:
             rtn = courses.values('id', 'abbreviation', 'course_number', 'title')
         else:
