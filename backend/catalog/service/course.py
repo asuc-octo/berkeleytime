@@ -21,29 +21,37 @@ class CourseService:
         """Update courses starting from an SIS index."""
         unknown_departments = set()
         for course_response in sis_course_resource.get(page_number, page_size):
-            course_dict = course_mapper.map(course_response, unknown_departments=unknown_departments)
+            course_dict = course_mapper.map(
+                course_response,
+                unknown_departments=unknown_departments
+            )
 
-            try:
-                course_obj, created = Course.objects.update_or_create(
-                    abbreviation=course_dict['abbreviation'],
-                    course_number=course_dict['course_number'],
-                    defaults=course_dict,
-                )
-                if created:
-                    logger.info({
-                        'message': 'Created new course object',
-                        'course': course_obj,
-                    })
-            except:
-                logger.exception({
-                    'message': 'Exception encountered while updating/creating course',
-                    'course_dict': course_dict,
-                })
+            self.update_or_create_from_dict(course_dict)
 
         if unknown_departments:
             logger.info({
                 'message': 'Found unknown departments/abbreviations',
                 'unknown': unknown_departments,
+            })
+
+
+    def update_or_create_from_dict(self, course_dict):
+        try:
+            course_obj, created = Course.objects.update_or_create(
+                abbreviation=course_dict['abbreviation'],
+                course_number=course_dict['course_number'],
+                defaults=course_dict,
+            )
+            logger.info({
+                'message': 'Updated/created new course object',
+                'course': course_obj,
+                'created': created,
+            })
+            return course_obj, created
+        except:
+            logger.exception({
+                'message': 'Exception encountered while updating/creating course',
+                'course_dict': course_dict,
             })
 
 
