@@ -20,6 +20,7 @@ AMERSTD:
 
 AHMA:
     - "Ancient History and Mediterranean Archaeology"
+    - "Ancient History and Med. Arch."
     - "Anc Hist & Medit Archae"
 
 ANTHRO:
@@ -93,6 +94,7 @@ CELTIC:
 
 CHM ENG:
     - "Chemical and Biomolecular Engineering"
+    - "Chemical & Biomolecular Engineering"
     - "Chemical Engineering"
     - "Biochemistry"
 
@@ -199,6 +201,9 @@ EAEURST:
 ECON:
     - "Economics"
 
+EDSTEM:
+    - "CalTeach"
+
 EDUC:
     - "Education"
 
@@ -245,6 +250,7 @@ ESPM:
     - "Environmental Science Policy and Management"
     - "Environmental Science, Policy and Management"
     - "Env Sci, Policy, & Mgmt"
+    - "Environ Sci, Policy, and Management"
 
 ENV SCI:
     - "Environmental Sciences"
@@ -265,11 +271,13 @@ EUST:
 EWMBA:
     - "Evening/Weekend MBA Program"
     - "Evening and Weekend Master's in Business Administration"
+    - "Eve/Wknd Masters in Bus. Adm."
     - "Evening & Weekend MBA"
 
 XMBA:
     - "Executive Master's in Business Administration"
     - "Berkeley/Columbia MBA Program"
+    - "Masters in Bus. Adm. for Executives"
     - "Executive MBA"
 
 FILIPN:
@@ -292,6 +300,7 @@ FRENCH:
 MBA:
     - "Master's in Business Administration"
     - "Full-time Masters in Business Administration"
+    - "Masters in Business Administration"
     - "Business Admin-MBA"
 
 GMS:
@@ -306,6 +315,7 @@ GPP:
 
 GSPDP:
     - "Graduate Student Professional Development Program"
+    - "Grad Student Prof Development Pgm"
     - "GSPDP"
     - "Grad Professional Dev Pgm"
 
@@ -367,11 +377,13 @@ IDS:
 
 ILA:
     - "Indigenous Languages of the Americas"
+    - "Indigenous Languages of Americas"
     - "ILA"
 
 IND ENG:
     - "Industrial Engineering"
     - "Industrial Engineering and Operations Research"
+    - "Industrial Engin and Oper Research"
     - "Industrial Eng & Ops Rsch"
 
 INDONES:
@@ -387,6 +399,7 @@ INTEGBI:
 ISF:
     - "Interdisciplinary Studies"
     - "Interdisciplinary Studies Field Major"
+    - "Interdisciplinary Studies Field Maj"
 
 IAS:
     - "International and Area Studies"
@@ -424,6 +437,7 @@ LGBT:
     - "Lesbian, Gay, Bisexual, and Transgender Studies"
     - "Lesbian, Gay, Bisexual and Transgender Studies"
     - "Lesbian Gay Bisexual Transgender Studies"
+    - "Lesbian Gay Bisexual Transgender St"
     - "LGBT"
     - "LGBT Studies"
 
@@ -459,6 +473,7 @@ MALAY/I:
 
 MFE:
     - "Master's in Financial Engineering"
+    - "Masters in Financial Engineering"
     - "Masters in Financial Engineering Program"
     - "Financial Engineering"
 
@@ -604,6 +619,7 @@ PSEUDO:
 
 RDEV:
     - "Real Estate Development"
+    - "Real Estate Development + Design"
 
 RELIGST:
     - "Religious Studies"
@@ -690,6 +706,7 @@ THAI:
 THEATER:
     - "Theater, Dance, and Performance Studies"
     - "Theater Dance and Performance Studies"
+    - "Theater, Dance, and Performance St"
     - "Dramatic Art"
     - "Theater Dance & Perf Stds"
 
@@ -705,9 +722,11 @@ UGBA:
     - "Undergraduate Program leading to the Bachelor of Science in Busi"
     - "Undergraduate Program leading to the Bachelor of Science in Business"
     - "Business Admin-Undergrad"
+    - "Undergrad. Business Administration"
 
 UGIS:
     - "Undergraduate and Interdisciplinary Studies"
+    - "Undergrad Interdisciplinary Studies"
     - "UGIS-UG Interdisc Studies"
 
 URDU:
@@ -725,82 +744,104 @@ VIS STD:
 XAFRICA:
     - "FPF-African American Studies"
     - "UCB EXT FPF-African American Studies"
+    - "UCB EXT FPF- African American Studies"
+
+XAMRSTD:
+    - "UCB EXT FPF-American Studies"
 
 XANTHRO:
     - "FPF-Anthropology"
     - "Fall Program for Freshmen Anthropology"
+    - "UCB EXT FPF-Anthropology"
 
 XART:
     - "FPF-Art Practice"
     - "FPF-Art"
+    - "UCB EXT FPF-Art"
 
 XASAMST:
     - "FPF-Asian American Studies"
     - "Fall Program for Freshmen Asian Amercan Studies"
     - "FPF-Asian American Stds"
+    - "UCB EXT FPF-Asian American Studies"
 
 XASTRON:
     - "FPF-Astronomy"
     - "Fall Program for Freshmen Astronomy"
+    - "UCB EXT FPF-Astronomy"
 
 XCHEM:
     - "FPF-Chemistry"
     - "Fall Program for Freshmen Chemistry"
+    - "UCB EXT FPF-Chemistry"
 
 XCLASSI:
     - "FPF-Classics"
     - "Fall Program for Freshmen Classics"
+    - "UCB EXT FPF-Classics"
 
 XCOLWRI:
     - "FPF-College Writing Program"
     - "Fall Program for Freshmen College Writing"
     - "FPF-College Writing Pgm"
+    - "UCB EXT FPF-College Writing Program"
 
 XCOMLIT:
     - "FPF-Comparative Literature"
+    - "UCB EXT FPF-Comparative Literature"
 
 XENGLIS:
     - "FPF-English"
     - "Fall Program for Freshmen English"
+    - "UCB EXT FPF-English"
 
 XEPS:
     - "FPF-Earth & Planetary Science"
     - "Fall Program for Freshmen Earth & Planetary Sciences"
     - "FPF-Earth & Planetary Sci"
+    - "UCB EXT FPF-Earth and Planetary Sci"
 
 XESPM:
     - "FPF-Env Sci, Policy, & Mgmt"
     - "Fall Program for Freshmen Environmental Science, Policy and Mang"
     - "FPF-Env Sci, Pol, & Mgmt"
+    - "UCB EXT FPF-Env, Sci, Policy & Mgmt"
 
 XETHSTD:
     - "FPF-Ethnic Studies"
     - "Fall Program for Freshmen Ethnic Studies"
+    - "UCB EXT FPF-Ethnic Studies"
 
 XFILM:
     - "FPF-Film & Media"
     - "FPF-Film"
+    - "UCB EXT FPF-Film"
 
 XGEOG:
     - "FPF-Geography"
     - "Fall Program for Freshmen Geography"
+    - "UCB EXT FPF-Geography"
 
 XGLOBAL:
     - "FPF-Global Studies"
     - "Fall Program for Freshmen Global Studies"
+    - "UCB EXT FPF-Global Studies"
 
 XGWS:
     - "FPF-Gender & Womens Studies"
     - "Fall Program for Freshmen Gender and Women's Studies"
     - "FPF-Gender & Womens Stds"
+    - "UCB EXT FPF-Gender&Women's Studies"
 
 XHISTAR:
     - "FPF-History of Art"
     - "Fall Program for Freshmen History of Art"
+    - "UCB EXT FPF-History of Art"
 
 XHISTOR:
     - "FPF-History"
     - "Fall Program for Freshmen History"
+    - "UCB EXT FPF-History"
 
 XIAS:
     - 'FPF-IAS Teaching Program'
@@ -808,27 +849,33 @@ XIAS:
 XINTEGB:
     - "FPF-Integrative Biology"
     - "Fall Program for Freshmen Integrative Biology"
+    - "UCB EXT FPF-Integrative Biology"
 
 XLEGALS:
     - "FPF-Legal Studies"
     - "Fall Program for Freshmen Legal Studies"
+    - "UCB EXT FPF-Legal Studies"
 
 XLINGUI:
     - "FPF-Linguistics"
     - "Fall Program for Freshmen Linguistics"
+    - "UCB EXT FPF-Linguistics"
 
 XL&S:
     - "FPF-Letters & Science"
     - "UCB Extension FPF - Letters and Science"
+    - "UCB EXT FPF-Letters and Science"
 
 XMATH:
     - "FPF-Mathematics"
     - "Fall Program for Freshmen Mathematics"
+    - "UCB EXT FPF-Mathematics"
 
 XMCELLB:
     - "FPF-Molecular & Cell Biology"
     - "Fall Program for Freshmen Molecular & Cell Biology"
     - "FPF-Molecular & Cell Bio"
+    - "UCB EXT FPF-Molecular & Cell Bio"
 
 XMESTU:
     - 'FPF-Middle Eastern Stds'
@@ -836,30 +883,40 @@ XMESTU:
 XMUSIC:
     - "FPF-Music"
     - "Fall Program for Freshmen Music"
+    - "UCB EXT FPF-Music"
 
 XPHILOS:
     - "FPF-Philosophy"
     - "Fall Program for Freshmen Philosophy"
+    - "UCB EXT FPF-Philosophy"
 
 XPOLSCI:
     - "FPF-Political Science"
     - "Fall Program for Freshmen Political Science"
+    - "UCB EXT FPF-Political Science"
 
 XPSYCH:
     - "FPF-Psychology"
     - "Fall Program for Freshmen Psychology"
+    - "UCB EXT FPF-Psychology"
 
 XRHETOR:
     - "FPF-Rhetoric"
     - "Fall Program for Freshmen Rhetoric"
+    - "UCB EXT FPF-Rhetoric"
+
+XSEASIA:
+    - "UCB EXT FPF-Southeast Asian"
 
 XSOCIOL:
     - "FPF-Sociology"
     - "Fall Program for Freshmen Sociology"
+    - "UCB EXT FPF-Sociology"
 
 XSTAT:
     - "FPF-Statistics"
     - "Fall Program for Freshmen Statistics"
+    - "UCB EXT FPF-Statistics"
 
 YIDDISH:
     - "Yiddish"
