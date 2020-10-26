@@ -109,7 +109,7 @@ class GradeService:
 
             if course:
                 grade_dict['course_id'] = course.id
-                grade_obj, updated = self.update_or_create_from_dict(grade_dict)
+                grade_obj, created = self.update_or_create_from_dict(grade_dict)
                 # TODO: Add grade summary fields to course object
                 logger.info({
                     'message': 'Updated grade record',

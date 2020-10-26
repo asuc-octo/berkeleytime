@@ -6,6 +6,7 @@ import logging
 from berkeleytime.settings import finals_mapper
 from catalog.models import Section
 
+
 DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 logger = logging.getLogger(__name__)
@@ -35,11 +36,10 @@ class SectionMapper:
             section_dict.update(self.get_enrollment(data=data))
 
             return section_dict
-        except Exception as e:
+        except Exception:
             logger.exception({
                 'message': 'Unknown exception while mapping Class API response to Section object'
             })
-            raise
 
     def get_enrollment(self, data):
         """Get enrollment data."""

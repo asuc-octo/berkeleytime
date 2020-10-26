@@ -11,5 +11,23 @@ from catalog.service import course_service
 class Command(BaseCommand):
     """python manage.py course."""
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--page-number',
+            action='store',
+            default=0,
+            help="Page number for paged course update",
+        )
+        parser.add_argument(
+            '--page-size',
+            action='store',
+            default=100,
+            help="Number of courses per page",
+        )
+
+
     def handle(self, *args, **options):
-        course_service.update(start_index=0)
+        course_service.update(
+            page_number=options['page_number'],
+            page_size=options['page_size']
+        )

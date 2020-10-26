@@ -3,114 +3,54 @@
 import logging
 
 from django.core.cache import cache
-from django.db import models
-from attrdict import AttrDict
 
-from catalog.resource.sis_course import sis_course_resource
+from catalog.mapper import course_mapper
+from catalog.resource import sis_course_resource
 from catalog.models import Course, Section
 from grades.models import Grade
 from grades.utils import add_up_grades, gpa_to_letter_grade
-from catalog.mapper import course_mapper
+
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class CourseService:
     _courses_with_enrollment_cache_name = "enrollment__courses"
 
-    def __init__(self):
-        """Construct list of all derived fields."""
-        self.__derived_fields = (
-            Course._derived_grade_fields +
-            Course._derived_enrollment_fields +
-            Course._derived_playlist_fields
-        )
-
-    def update(self, start_index=0):
+    def update(self, page_number=0, page_size=100):
         """Update courses starting from an SIS index."""
-        for course in sis_course_resource.get(start_index):
-            self.update_or_create(course)
+        unknown_departments = set()
+        for course_response in sis_course_resource.get(page_number, page_size):
+            course_dict = course_mapper.map(course_response, unknown_departments=unknown_departments)
 
-    def _exclude_derived_fields(self, course):
-        """Map Course to dict and exclude all derived fields."""
-        return {
-            k: v for (k, v) in course.flatten().items() if k not in self.__derived_fields  # noqa
-        }
-    
-    def update_or_create(self, course):
-        """Update/create a single Course."""
-        entry, created = Course.objects.get_or_create(
-            abbreviation=course.abbreviation,
-            course_number=course.course_number,
-            defaults=self._exclude_derived_fields(course),
-        )
-
-        logger.info({
-            'message': 'Updating/creating course',
-            'abbreviation': course.abbreviation,
-            'course_number': course.course_number,
-            'title': course.title,
-            'created': created,
-        })
-
-        if not created:
-            for field, value in self._exclude_derived_fields(course).items():
-                setattr(entry, field, value)
-            entry.save()
-
-        return entry
-
-    def get(self, id, abbreviation=None, course_number=None):
-        """Return a Course given a id OR abbreviation, course_number."""
-        if (id is None) and (None in (abbreviation, course_number,)):
-            raise ValueError({
-                'message': 'Must specify either id or abbreviation, course_number',  # noqa
-                'id': id,
-                'abbreviation': abbreviation,
-                'course_number': course_number,
-            })
-        
-        try:
-            if id:
-                entry = Course.objects.get(id=id)
-            else:
-                entry = Course.objects.get(
-                    abbreviation=abbreviation,
-                    course_number=course_number
+            try:
+                course_obj, created = Course.objects.update_or_create(
+                    abbreviation=course_dict['abbreviation'],
+                    course_number=course_dict['course_number'],
+                    defaults=course_dict,
                 )
-            return entry
-        except Course.DoesNotExist:
-            logger.warning({
-                'message': 'Course not found',
-                'id': id,
-                'abbreviation': abbreviation,
-                'course_number': course_number,
+                if created:
+                    logger.info({
+                        'message': 'Created new course object',
+                        'course': course_obj,
+                    })
+            except:
+                logger.exception({
+                    'message': 'Exception encountered while updating/creating course',
+                    'course_dict': course_dict,
+                })
+
+        if unknown_departments:
+            logger.info({
+                'message': 'Found unknown departments/abbreviations',
+                'unknown': unknown_departments,
             })
-            return None
 
-    def find(self):
-        """Return all courses that fit a certain criteria."""
-        return Course.objects.all()
-
-    def find_ids_by_semester(self, semester, year):
-        """Return all course ids that are offered for semester, year."""
-        return (
-            Section.objects.filter(
-                semester=semester, year=year, disabled=False
-            )
-            .values_list('course_id', flat=True)
-            .distinct()
-        )
-    
-    def distinct_field(self, field_name):
-        """Return an array of distinct field names."""
-        return (
-            Course.objects.values_list(field_name, flat=True)
-            .distinct()
-        )
 
     def invalidate_courses_with_enrollment_cache(self):
         """Invalidate the cache we use to store data of courses that have enrollment."""
         cache.delete(self._courses_with_enrollment_cache_name)
+
 
     def update_derived_enrollment_fields(self, course_id, semester, year):
         """Update enrollment summary fields with the latest enrollment."""
@@ -160,6 +100,7 @@ class CourseService:
         course.open_seats = max(course.enrolled_max - course.enrolled, 0)
         course.save()
 
+
     def update_derived_grade_fields(self, course_id):
         """Take a course_id and recalculate its derived grade fields."""
         grades = Grade.objects.filter(course_id=course_id)
@@ -177,5 +118,6 @@ class CourseService:
         course.grade_average = weighted_total / total
         course.letter_average = gpa_to_letter_grade(weighted_total / total)
         course.save()
+
 
 course_service = CourseService()

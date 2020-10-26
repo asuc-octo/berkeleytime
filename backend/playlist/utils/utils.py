@@ -4,12 +4,6 @@ import re
 from playlist.utils.config import config_dict
 
 
-translations = {
-    "BUS ADM": "UGBA",
-    "SSEASN": "S,SEASN"
-}
-
-
 def clean(target):
     """Clean target string."""
     return str(target).replace('*', '').strip()
