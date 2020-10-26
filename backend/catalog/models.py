@@ -38,8 +38,6 @@ class Course(models.Model):
     waitlisted = models.IntegerField(default=-1)
     open_seats = models.IntegerField(default=-1)
 
-    cross_listing = models.CharField(max_length=1024)
-
     last_updated = models.DateTimeField(auto_now=True)
 
     def as_json(self):
@@ -58,7 +56,6 @@ class Course(models.Model):
         enrolled_max = self.enrolled_max,
         enrolled_percentage = self.enrolled_percentage,
         waitlisted = self.waitlisted,
-        cross_listing = self.cross_listing,
       )
 
     def __repr__(self):
