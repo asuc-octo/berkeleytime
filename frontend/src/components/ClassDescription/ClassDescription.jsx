@@ -288,7 +288,7 @@ class ClassDescription extends Component {
               </div>
             </div>
             <section className="pill-container">
-              {pills.map(req => <div className="pill" onClick={() => this.pillFilter(req)}>{req}</div>)}
+              {pills.map(req => <div className="pill" key={req} onClick={() => this.pillFilter(req)}>{req}</div>)}
             </section>
             {description.length > 0 ?
               <p className="description">
@@ -324,7 +324,7 @@ class ClassDescription extends Component {
                     let startDate = new Date(section.start_time + "Z");
                     let endDate = new Date(section.end_time + "Z");
                     return (
-                      <tr style={this.findInstructor(section.instructor)}>
+                      <tr key={section.ccn} style={this.findInstructor(section.instructor)}>
                         <td>{section.kind}</td>
                         <td>{section.ccn}</td>
                         <td>{section.instructor}</td>

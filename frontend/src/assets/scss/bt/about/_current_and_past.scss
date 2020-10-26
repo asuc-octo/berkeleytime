@@ -1,0 +1,76 @@
+.current-contributors, .past-contributors {
+  // width's chosen so column widths are exactly 150px, kinda jank but whatever
+  @include desktop {
+    width: 690px;
+  }
+  @include mobile {
+    width: 330px;
+  }
+
+  .contributor-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 25px;
+
+    // use width/height to enforce aspect ratio i guess
+    .headshot {
+      width: 150px;
+      height: 150px;
+
+      margin-bottom: 10px;
+
+      img {
+        width: 150px;
+        height: 150px;
+
+        position: absolute;
+        object-fit: cover;
+        object-position: 50% 20%;
+        border-radius: 3px;
+      }
+
+      .serious {
+        z-index: $z-index-serious;
+        transition: .2s;
+
+        &:hover {
+          opacity: 0;
+        }
+      }
+    }
+
+    .name {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+
+      width: 100%;
+      margin-bottom: 3px;
+
+      p {
+        // font-weight: 500;
+        color: $bt-grey-text;
+      }
+
+      svg {
+        width: 22px;
+        height: 21px;
+        padding: 2px;
+        transition: .2s;
+        border-radius: 4px;
+        margin-bottom: 2px;
+
+        &:hover {
+          background-color: $bt-button-background;
+        }
+      }
+    }
+
+    .role {
+      font-size: 14px;
+      color: $bt-light-text;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-.PHONY: build up down
+.PHONY: build up down frontend backend
 
 # The following commands control the docker compose component of the stack.
 
@@ -13,3 +13,9 @@ up:
 # Down removes the existing cluster. Make sure you kill your cluster with down!
 down:
 	docker-compose -f build/docker-compose.yml down
+
+frontend:
+	docker-compose -f build/docker-compose.yml up frontend
+
+backend:
+	docker-compose -f build/docker-compose.yml up backend redis nginx

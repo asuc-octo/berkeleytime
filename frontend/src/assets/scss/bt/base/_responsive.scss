@@ -1,27 +1,34 @@
-/// This file contains responsive mixins based on Bootstrap 4 breakpoints.
+// This file contains responsive mixins based on Bootstrap 4 breakpoints.
+// https://getbootstrap.com/docs/4.0/layout/overview/#responsive-breakpoints
 
-/// up to 768px, or xs + sm
+// xs: 0-576    (mobile) (touch)
+// sm: 576-768  (mobile) (touch)
+// md: 768-992  (tablet) (touch)
+// lg: 992-1200 (desktop)
+// xl: 1200+    (widescreen) (desktop)
+
+// up to 768px, or xs + sm
 @mixin mobile {
-  @include media-breakpoint-between(xs, sm) {
+  @include media-breakpoint-down(sm) {
     @content;
   }
 }
 
-/// between 768px and 992px, or md
+// between 768px and 992px, or md
 @mixin tablet {
   @include media-breakpoint-only(md) {
     @content;
   }
 }
 
-/// up to 576px
+// up to 576px, or xs
 @mixin xs {
   @include media-breakpoint-down(xs) {
     @content;
   }
 }
 
-/// between 576px and 992px
+// between 576px and 992px
 @mixin sm-md {
   @include media-breakpoint-between(sm, md) {
     @content;
@@ -47,5 +54,16 @@
 @mixin widescreen {
   @include media-breakpoint-up(xl) {
     @content;
+  }
+}
+
+// have property take on 2 different values depending on the view
+@mixin desktop-and-touch($property, $desktop, $touch) {
+  @include desktop {
+    #{$property}: $desktop;
+  }
+
+  @include touch {
+    #{$property}: $touch;
   }
 }
