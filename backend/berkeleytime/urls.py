@@ -23,7 +23,7 @@ import enrollment.views
 import forms.views
 import grades.views
 
-# Note: We will begin to deprecate the endpoints seen here in favor of using Django REST Framework.
+# Note: We will begin to deprecate the endpoints seen here in favor of using GraphQL.
 urlpatterns = [
     path('admin/', admin.site.urls),
 
