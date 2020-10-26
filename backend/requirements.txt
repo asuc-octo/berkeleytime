@@ -2,6 +2,8 @@
 Django==3.1.1
 psycopg2-binary==2.8.6
 django-redis-cache==2.1.1
+djangorestframework==3.12.1
+djangorestframework-jwt==1.11.0
 
 # Google APIs
 google-api-python-client
@@ -17,4 +19,3 @@ python-json-logger
 pyyaml
 redlock-py
 retry
-unidecode

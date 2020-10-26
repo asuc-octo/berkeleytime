@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
-
 import os
 import sys
 from pathlib import Path
+from datetime import timedelta
 from urllib.parse import urlparse
 
 from berkeleytime.config.semesters.spring2021 import *
@@ -116,12 +116,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'berkeleytime',
-    'user',
     'catalog',
     'enrollment',
     'grades',
     'playlist',
     'forms',
+    'user',
+    'graphene_django',
 ]
 
 # Middlewares
@@ -200,12 +201,48 @@ LOGGING = {
     }
 }
 
+# List of template engines (we need this for admin panel)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    }
+]
 
 # Course/Class API credentials
 SIS_COURSE_APP_ID = os.getenv('SIS_COURSE_APP_ID')
 SIS_COURSE_APP_KEY = os.getenv('SIS_COURSE_APP_KEY')
 SIS_CLASS_APP_ID = os.getenv('SIS_CLASS_APP_ID')
 SIS_CLASS_APP_KEY = os.getenv('SIS_CLASS_APP_KEY')
+
+# Graphene Config
+GRAPHENE = {
+    'SCHEMA': 'berkeleytime.schema.schema', # Where your Graphene schema lives
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
+}
+
+# Graphene jwt
+AUTHENTICATION_BACKENDS = [
+    'graphql_jwt.backends.JSONWebTokenBackend',
+]
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_EXPIRATION_DELTA': timedelta(days=1),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+    'JWT_HIDE_TOKEN_FIELDS': True  # if we want to prevent sending the token back in response
+}
 
 # Password validation - we intend to use Google sign-in, but we may add in-house auth in the future
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
