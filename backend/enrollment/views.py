@@ -32,22 +32,6 @@ def enrollment_context(long_form=False):
     if cached:
         rtn = cached
     else:
-        # TODO (Yuxin) This query was used prior to 8/3/2016
-        # This tries to only return courses with correspoding Enrollment objects
-        # but this was crashing the site since the Enrollment table is > 10^7 rows
-
-        # courses = (Section.objects.filter(disabled=False, enrollment__isnull=False)
-        #     .prefetch_related('course')
-        #     .distinct('course')
-        #     .values('course__id', 'course__course_number', 'course__abbreviation'))
-        # rtn = [{
-        #     'abbreviation': course['course__abbreviation'],
-        #     'id': course['course__id'],
-        #     'course_number': course['course__course_number']
-        # } for course in courses]
-
-        # The following query is less exact and returns lots of Courses with no
-        # enrollment objects
         courses = Course.objects.all().order_by('abbreviation', 'course_number')
         if long_form:
             rtn = courses.values('id', 'abbreviation', 'course_number', 'title')

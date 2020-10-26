@@ -65,7 +65,7 @@ def grade_section_json(request, course_id):
                 'year': entry.year,
                 'section_number': entry.section_number,
                 'grade_id': entry.id,
-            } for entry in Grade.objects.filter(course__id=int(course_id), graded_total__gte=1)
+            } for entry in Grade.objects.filter(course__id=int(course_id))
         ]
         sections = sorted(sections, key=year_and_semester_to_value, reverse=True)
         cache.set('grade_section_json ' + str(course_id), sections, CACHE_TIMEOUT)
@@ -92,9 +92,7 @@ def grade_json(request, grade_ids):
         grade_ids = grade_ids.split('&')
         sections = Grade.objects.filter(id__in=grade_ids)
         course = Course.objects.get(id=sections.values_list('course', flat=True)[0])
-        total = sections.aggregate(Sum('graded_total'))['graded_total__sum']
-        percentile_total = total - sections.aggregate(Sum('p')).get('p__sum', 0)
-        percentile_total -= sections.aggregate(Sum('np')).get('np__sum', 0)
+        percentile_total = sections.aggregate(Sum('graded_total'))['graded_total__sum']
 
         percentile_ceiling = 0
         total_unweighted = 0
