@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.urls import path, re_path
 
+from django.contrib import admin
 from graphene_django.views import GraphQLView
 from graphql_jwt.decorators import jwt_cookie
 
@@ -23,7 +24,7 @@ import enrollment.views
 import forms.views
 import grades.views
 
-# Note: We will begin to deprecate the endpoints seen here in favor of using Django REST Framework.
+# Note: We will begin to deprecate the endpoints seen here in favor of using GraphQL.
 urlpatterns = [
     # Easier debugging for user models
     path('admin/', admin.site.urls),
