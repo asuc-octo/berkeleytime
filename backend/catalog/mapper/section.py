@@ -63,7 +63,7 @@ class SectionMapper:
     def _get_meeting(self, data):
         """Get meeting information for a single section."""
         # TODO (*) Schema does not currently support multiple meetings
-        meeting = data['meetings'][0] if data.get('meetings') else None
+        meeting = data['meetings'][0] if data.get('meetings') else {}
         return meeting
 
     def get_datetime(self, data):
@@ -155,9 +155,9 @@ class SectionMapper:
     def get_location_name(self, data):
         """Get name of location."""
         meeting = self._get_meeting(data)
-        location = meeting.get('location') if meeting else None
+        location = meeting.get('location', {}).get('description', '')
         return {
-            'location_name': location.get('description') if location else None
+            'location_name': location,
         }
 
     def get_instruction_mode(self, data):

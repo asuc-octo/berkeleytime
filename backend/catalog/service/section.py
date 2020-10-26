@@ -8,6 +8,7 @@ from berkeleytime.utils import AtomicInteger, BColors
 from catalog.mapper import section_mapper
 from catalog.models import Course, Section
 from catalog.resource import sis_class_resource
+from enrollment.mapper import enrollment_mapper
 from enrollment.service import enrollment_service
 
 
@@ -50,13 +51,9 @@ class SectionService:
         result = p.map_async(update_wrapper, courses)
 
         # Log progress of updates
-        logger.info({
-            'message': BColors.OKGREEN + f'Starting job with {NUM_THREADS} workers.' + BColors.ENDC
-        })
+        print(BColors.OKGREEN + f'Starting job with {NUM_THREADS} workers.' + BColors.ENDC)
         while not result.ready():
-            logger.info({
-                'message': BColors.OKGREEN + f'Updating course {i.value()} of {len(course_ids)}.' + BColors.ENDC
-            })
+            print(BColors.OKGREEN + f'Updating course {i.value() + 1} of {len(courses)}.' + BColors.ENDC)
             time.sleep(5)
 
         # Clear the cache to ensure an updated dropdown of courses with enrollment data
@@ -77,15 +74,9 @@ class SectionService:
             course_id=course.id,
             abbreviation=course.abbreviation,
             course_number=course.course_number,
-            log=True,
         )
 
-        # Get list of existing section IDs
-        existing_section_ids = set(Course.objects.filter(
-            course_id=course.id,
-            semester=semester,
-            year=year
-        ).values_list('id', flat=True))
+        updated_section_ids = set()
 
         # Map response to Section and Enrollment objects and persist to database
         section_extras = {
@@ -97,32 +88,57 @@ class SectionService:
         }
         for sect in response:
             section_dict = section_mapper.map(sect, extras=section_extras)
-            sect, created = self.update_or_create_from_dict(section_dict)
+            section, created = self.update_or_create_from_dict(section_dict)
             if semester != 'summer' and section.is_primary and not section.disabled:
-                enrollment_dict = enrollment_mapper.map(sect, extras={'section_id': sect.id})
+                enrollment_dict = enrollment_mapper.map(sect, extras={'section_id': section.id})
                 enrollment_service.update_or_create_from_dict(enrollment_dict)
 
-            existing_section_ids.remove(section.id)
+            updated_section_ids.add(section.id)
+
+        if len(updated_section_ids) > 0:
+            logger.info({
+                'message': 'Updated sections for course',
+                'course': course,
+                'sections updated': len(updated_section_ids),
+            })
 
         # Disable existing section if data not found in response
-        sections_to_disable = Section.objects.filter(id__in=existing_section_ids)
+        sections_to_disable = Section.objects.filter(
+            course_id=course.id,
+            semester=semester,
+            year=year,
+        ).exclude(id__in=updated_section_ids)
         for section in sections_to_disable:
-            section.disabled = True
-            section.save()
-            logger.info({
-                'message': 'Disabling section not in API response.',
-                'section_id': section.id
-            })
+            if not section.disabled:
+                section.disabled = True
+                # section.save()
+                logger.info({
+                    'message': 'Disabling section not in API response.',
+                    'section': section,
+                })
 
 
     def update_or_create_from_dict(self, section_dict):
-        return Section.objects.update_or_create(
-            course_id=section_dict['course_id'],
-            semester=section_dict['semester'],
-            year=section_dict['year'],
-            section_number=section_dict['section_number'],
-            kind=section_dict['kind'],
-            defaults=section_dict,
-        )
+        try:
+            section_obj, created = Section.objects.update_or_create(
+                course_id=section_dict['course_id'],
+                semester=section_dict['semester'],
+                year=section_dict['year'],
+                section_number=section_dict['section_number'],
+                kind=section_dict['kind'],
+                defaults=section_dict,
+            )
+            logger.info({
+                'message': 'Created/updated section object',
+                'section': section_obj,
+                'created': created,
+            })
+            return section_obj, created
+        except:
+            logger.exception({
+                'message': 'Exception encountered while updating/creating section',
+                'section_dict': section_dict,
+            })
+
 
 section_service = SectionService()
