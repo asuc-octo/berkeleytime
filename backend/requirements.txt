@@ -17,3 +17,4 @@ python-json-logger
 pyyaml
 redlock-py
 retry
+unidecode

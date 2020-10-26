@@ -18,7 +18,8 @@ def clean(target):
 def is_float(target):
     """Return True if str target is float-like."""
     try:
-        return bool(float(target))
+        float(target)
+        return True
     except Exception:
         return False
 
