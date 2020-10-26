@@ -171,13 +171,13 @@ const mapDispatchToProps = dispatch => ({
 
 const mapStateToProps = state => {
   const { context, selectedCourses, usedColorIds } = state.enrollment;
-  const { isMobile } = state.isMobile;
+  const { mobile } = state.common;
 
   return {
     context,
     selectedCourses,
     usedColorIds,
-    isMobile,
+    isMobile: mobile,
   };
 };
 

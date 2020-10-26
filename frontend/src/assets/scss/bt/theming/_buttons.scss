@@ -1,11 +1,23 @@
-/// This file includes additional variants and sizes for Bootstrap buttons.
-/// https://react-bootstrap.github.io/getting-started/theming/
+// This file includes additional variants and sizes for Bootstrap buttons.
+// https://react-bootstrap.github.io/getting-started/theming/
+
+// custom BsPrefix for buttons
+.bt-btn {
+  @extend .btn;
+
+  @include font-size-responsive(16px);
+}
+
+.bt-btn-sm {
+  @extend .btn-sm;
+
+  @include font-size-responsive(14px);
+}
 
 @mixin bt-variant($color, $background, $border, $hover) {
   color: $color;
   background-color: $background;
   border-color: $border;
-  transition: background-color 0.2s;
 
   &:hover {
     color: $color;
@@ -14,11 +26,11 @@
   }
 }
 
-.btn-bt-primary {
+.bt-btn-primary {
   @include bt-variant($bt-white, $bt-primary, $bt-primary, $bt-primary-background);
 }
 
-.btn-bt-primary-inverted {
+.bt-btn-inverted {
   @include bt-variant($bt-primary, $bt-white, $bt-border-grey, $bt-button-background);
 }
 

@@ -1,45 +1,33 @@
-.bt-navbar {
+nav {
   border-bottom: 1.5px solid $bt-light-border-grey;
 
   .navbar-brand {
-    font-size: 18px;
-    font-weight: 700;
-    padding: 8px 10px;
+    padding: 4px 8px; // just enough top down padding to not increase navbar height
 
     @include touch {
       padding: 0;
     }
   }
 
-  .navbar-nav .nav-link {
-    font-weight: 500;
-    font-size: 16px;
-    color: $bt-base-text;
+  .nav-link {
+    color: $bt-base-text !important;
   }
+  
+  // don't change color on hover when collapsed
+  @include desktop {
+    .navbar-brand, .navbar-nav .nav-link {
+      transition: 0.2s;
+      border-radius: 6px;
 
-  .navbar-brand, .navbar-nav .nav-link {
-    transition: 0.2s;
-    border-radius: 6px;
+      &:hover {
+        background-color: $bt-button-background;
+        color: $bt-primary !important;
 
-    &:hover {
-      background-color: $bt-button-background;
-      color: $bt-primary;
-
-      @include touch {
-        background: none;
-        color: $bt-base-text;
+        @include touch {
+          background: none;
+          color: $bt-base-text;
+        }
       }
     }
   }
-
-  .navbar-toggler {
-    border: none;
-  }
-}
-
-/// when the banner is open, the navbar will be positioned
-/// at the top of the app-container instead of fixed to the
-/// top of the viewport
-.bt-navbar-banner {
-  position: absolute;
 }
