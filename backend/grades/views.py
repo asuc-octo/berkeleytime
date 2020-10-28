@@ -8,7 +8,7 @@ from berkeleytime.utils import render_to_json, render_to_empty_json, render_to_e
 from catalog.models import Course
 from catalog.utils import sort_course_dicts
 from grades.models import Grade
-from grades.utils import add_up_grades, calculate_letter_average
+from grades.utils import add_up_grades, gpa_to_letter_grade
 
 
 CACHE_TIMEOUT = 900
@@ -126,7 +126,7 @@ def grade_json(request, grade_ids):
             rtn['section_letter'] = 'N/A'
         else:
             rtn['section_gpa'] = round(float(sum(weighted_letter_grade_counter.values())) / total, 3)
-            rtn['section_letter'] = calculate_letter_average(rtn['section_gpa'])
+            rtn['section_letter'] = gpa_to_letter_grade(rtn['section_gpa'])
         rtn['denominator'] = total + total_unweighted
 
         if rtn['course_letter'] == '':
