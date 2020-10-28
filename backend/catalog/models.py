@@ -90,6 +90,10 @@ class Section(models.Model):
 
     class Meta:
         db_table = 'section'
+        indexes = [
+            models.Index(fields=['disabled']),
+            models.Index(fields=['is_primary']),
+        ]
 
     _derived_enrollment_fields = (
         'enrolled', 'enrolled_max', 'waitlisted', 'waitlisted_max',
