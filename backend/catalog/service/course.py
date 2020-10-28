@@ -69,8 +69,8 @@ class CourseService:
         if not primary_sections:
             course = Course.objects.get(id=course_id)
             for field in Course._derived_enrollment_fields:
-                default = Course._meta.get_field(field).get_default()
-                setattr(course, field, default)
+                setattr(course, field, Course._meta.get_field(field).get_default())
+            course.save()
             return
 
         def sum_fields(sections, field_name):
