@@ -111,7 +111,7 @@ class SectionService:
         for section in sections_to_disable:
             if not section.disabled:
                 section.disabled = True
-                # section.save()
+                section.save()
                 logger.info({
                     'message': 'Disabling section not in API response.',
                     'section': section,
