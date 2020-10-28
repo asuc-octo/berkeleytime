@@ -8,6 +8,7 @@ from berkeleytime.utils import AtomicInteger, BColors
 from catalog.mapper import section_mapper
 from catalog.models import Course, Section
 from catalog.resource import sis_class_resource
+from catalog.service import course_service
 from enrollment.mapper import enrollment_mapper
 from enrollment.service import enrollment_service
 
@@ -116,6 +117,9 @@ class SectionService:
                     'message': 'Disabling section not in API response.',
                     'section': section,
                 })
+
+        # Update derived enrollment fields in course object
+        course_service._update_derived_enrollment_fields(course)
 
 
     def update_or_create_from_dict(self, section_dict):

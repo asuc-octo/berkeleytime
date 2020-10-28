@@ -91,6 +91,8 @@ class Section(models.Model):
     class Meta:
         db_table = 'section'
         indexes = [
+            models.Index(fields=['abbreviation', 'course_number']),
+            models.Index(fields=['kind']),
             models.Index(fields=['disabled']),
             models.Index(fields=['is_primary']),
         ]
