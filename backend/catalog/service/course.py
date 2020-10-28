@@ -3,7 +3,12 @@
 import logging
 
 from django.core.cache import cache
+from django.db.models import Sum
 
+from berkeleytime.settings import (
+    CURRENT_SEMESTER,
+    CURRENT_YEAR,
+)
 from catalog.mapper import course_mapper
 from catalog.resource import sis_course_resource
 from catalog.models import Course, Section
@@ -27,6 +32,9 @@ class CourseService:
             )
 
             self.update_or_create_from_dict(course_dict)
+
+            # Update derived grade fields
+            self._update_derived_grade_fields(course)
 
         if unknown_departments:
             logger.info({
@@ -55,77 +63,60 @@ class CourseService:
             })
 
 
-    def invalidate_courses_with_enrollment_cache(self):
-        """Invalidate the cache we use to store data of courses that have enrollment."""
-        cache.delete(self._courses_with_enrollment_cache_name)
+    def _update_derived_grade_fields(self, course):
+        """Take a course object and recalculate its derived grade fields."""
+        grades = Grade.objects.filter(course=course)
+        weighted_letter_grade_counter, total = add_up_grades(grades)
+
+        if total == 0:
+            return
+
+        weighted_total = float(sum(weighted_letter_grade_counter.values()))
+        course.grade_average = weighted_total / total
+        course.letter_average = gpa_to_letter_grade(course.grade_average)
+        course.save()
 
 
-    def update_derived_enrollment_fields(self, course_id, semester, year):
+    def _update_derived_enrollment_fields(self, course):
         """Update enrollment summary fields with the latest enrollment."""
         primary_sections = Section.objects.filter(
-            course_id=course_id, semester=semester, year=year, is_primary=True, disabled=False
+            course=course, semester=CURRENT_SEMESTER, year=CURRENT_YEAR,
+            is_primary=True, disabled=False,
         )
 
-        if not primary_sections:
-            course = Course.objects.get(id=course_id)
+        # If no active primary sections exist, reset enrollment fields to default (-1)
+        if not primary_sections.exists():
             for field in Course._derived_enrollment_fields:
                 setattr(course, field, Course._meta.get_field(field).get_default())
             course.save()
             return
 
-        def sum_fields(sections, field_name):
-            """Sum over section.field_name iff section.field is not None."""
-            values = [getattr(s, field_name) for s in sections if getattr(s, field_name) is not None]  # noqa
-            rtn = sum(values) if values else -1  # -1 means no data
-            return rtn
+        aggregates = primary_sections.filter(
+            enrolled__gte=0, enrolled_max__gte=0, waitlisted__gte=0,
+        ).aggregate(
+            Sum('enrolled'), Sum('enrolled_max'), Sum('waitlisted'),
+        )
 
-        # Get the some of each value over all primary sections
-        enrolled = sum_fields(primary_sections, 'enrolled')
-        enrolled_max = sum_fields(primary_sections, 'enrolled_max')
+        course.enrolled = aggregates['enrolled__sum']
+        course.enrolled_max = aggregates['enrolled_max__sum']
+        course.waitlisted = aggregates['waitlisted__sum']
 
-        # Exit if enrolled_max is -1 (no data)
-        # OR enrolled is -1 (no data), it's ok if enrolled is 0
-        if enrolled_max == -1 or enrolled == -1:
+        if course.enrolled_max == -1 or course.enrolled == -1:
             return
 
-        course = Course.objects.get(id=course_id)
-
-        course.enrolled = enrolled
-        course.enrolled_max = enrolled_max
-        course.waitlisted = sum_fields(primary_sections, 'waitlisted')
-
-        # Do not want to divide by 0!
         if course.enrolled_max != 0:
-            course.enrolled_percentage = float(course.enrolled) / float(course.enrolled_max)
-            if course.enrolled_percentage > 1:
-                course.enrolled_percentage = 1.0
+            course.enrolled_percentage = min(float(course.enrolled) / float(course.enrolled_max), 1)
         else:
-            # Default percentage if enrolled_max is -1, most likely bug in the API
-            # This will ensure that the front won't populate the field
             course.enrolled_percentage = -1
 
-        # Take the max in case SIS fucks up and returns negative numbers
         course.open_seats = max(course.enrolled_max - course.enrolled, 0)
+
         course.save()
 
 
-    def update_derived_grade_fields(self, course_id):
-        """Take a course_id and recalculate its derived grade fields."""
-        grades = Grade.objects.filter(course_id=course_id)
-        if not grades:
-            return
-
-        # Counter for letter grades weighted by their GPA value (e.g. 100 * B+ 3.3)  # noqa
-        weighted_letter_grade_counter, total = add_up_grades(grades)
-
-        if not total:
-            return
-
-        weighted_total = float(sum(weighted_letter_grade_counter.values()))
-        course = Course.objects.get(pk=course_id)
-        course.grade_average = weighted_total / total
-        course.letter_average = gpa_to_letter_grade(weighted_total / total)
-        course.save()
+    # def invalidate_courses_with_enrollment_cache(self):
+    #     """Invalidate the cache we use to store data of courses that have enrollment."""
+    #     cache.delete(self._courses_with_enrollment_cache_name)
 
 
 course_service = CourseService()
