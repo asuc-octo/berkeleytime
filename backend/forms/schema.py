@@ -18,10 +18,10 @@ class FormConfigType(graphene.ObjectType):
     field = JSONString()
 
 class Query(graphene.ObjectType):
-    form_config = graphene.Field(EnrollmentType)
+    form_config = graphene.Field(FormConfigType)
 
     def resolve_form_config(self, info, **kwargs):
         return ""
 
 # class Mutation(graphene.ObjectType):
-#     field = 
+#     field =
