@@ -9,7 +9,8 @@ from user.schema import Query as UserQuery
 from user.schema import Mutation as UserMutation
 
 class Query(
-    UserQuery
+    CatalogQuery, EnrollmentQuery, FormsQuery,
+    GradesQuery, PlaylistQuery, UserQuery
 ):
     pass
 
