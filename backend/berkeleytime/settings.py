@@ -226,7 +226,7 @@ SIS_CLASS_APP_KEY = os.getenv('SIS_CLASS_APP_KEY')
 
 # Graphene Config
 GRAPHENE = {
-    'SCHEMA': 'berkeleytime.schema.schema', # Where your Graphene schema lives
+    'SCHEMA': 'berkeleytime.schema.schema',
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
