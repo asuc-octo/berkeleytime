@@ -1,26 +1,18 @@
 import graphene
+from graphene import Node
 from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
 from graphql import GraphQLError
 
 from grades.models import Grade
 
-# ## List grades
-
-# **GET /grades/?course_id={course_id}**
-
-# ## Retrieve grades
-
-# **GET /grades/:grade_ids/?include_aggregate={True, False}**
-
-# Set *include_aggregate*=True to include aggregate
 
 class GradeType(DjangoObjectType):
     class Meta:
         model = Grade
-        fields = "__all__"
+        filter_fields = '__all__'
+        interfaces = (Node, )
 
 class Query(graphene.ObjectType):
-    grade = graphene.Field(GradeType)
-
-    def resolve_grade(self, info, **kwargs):
-        return Grade.objects.all()
+    all_grades = DjangoFilterConnectionField(GradeType)
+    grade = Node.Field(GradeType)
