@@ -105,7 +105,7 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
 
         # find user in current db based on email
         try:
-            btuser = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+            btuser = User.objects.get(email=idinfo['email']).berkeleytimeuser
             new_user = False
         except User.DoesNotExist:
             # user doesn't exist
