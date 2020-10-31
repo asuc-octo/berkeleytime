@@ -11,7 +11,7 @@ class UserSerializer(serializers.Serializer):
     email = serializers.EmailField()
     first_name = serializers.CharField(max_length=150)
     last_name = serializers.CharField(max_length=150)
-    username = serializers.CharField(max_length=150)
+    username = serializers.CharField(max_length=1500, required=False)
 
 class BerkeleytimeUserSerializer(serializers.ModelSerializer):
     user = UserSerializer()
