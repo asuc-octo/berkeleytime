@@ -11,15 +11,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
-from pathlib import Path
-import os
-from datetime import timedelta
-from urllib.parse import urlparse
-
-from berkeleytime.config.semesters.fall2020 import *
 import os
 import sys
 from pathlib import Path
+from datetime import timedelta
 from urllib.parse import urlparse
 
 from berkeleytime.config.semesters.spring2021 import *
@@ -144,23 +139,6 @@ MIDDLEWARE = [
 # Root URLconf file
 ROOT_URLCONF = 'berkeleytime.urls'
 
-# List of template engines (we need this for admin panel)
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    }
-]
-
 # WSGI app object to use with runserver
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
 
@@ -189,33 +167,56 @@ LOGGING = {
         'mail_admins': {
             'class': 'django.utils.log.AdminEmailHandler',
             'filters': ['require_debug_false'],
+            'level': 'ERROR',
         },
-        'console': {
+        'stdout': {
             'class': 'logging.StreamHandler',
             'formatter': 'json',
+            'level': 'INFO',
             'stream': sys.stdout,
         },
+        'stderr': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+            'level': 'ERROR',
+            'stream': sys.stderr,
+        }
     },
     'root': {
         'handlers': ['mail_admins'],
-        'level': 'ERROR',
     },
     'loggers': {
         'catalog': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
         },
         'enrollment': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
+        },
+        'grades': {
+            'handlers': ['stdout', 'stderr'],
         },
         'playlist': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
         },
     }
 }
 
+# List of template engines (we need this for admin panel)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    }
+]
 
 # Course/Class API credentials
 SIS_COURSE_APP_ID = os.getenv('SIS_COURSE_APP_ID')
@@ -225,7 +226,7 @@ SIS_CLASS_APP_KEY = os.getenv('SIS_CLASS_APP_KEY')
 
 # Graphene Config
 GRAPHENE = {
-    'SCHEMA': 'berkeleytime.schema.schema', # Where your Graphene schema lives
+    'SCHEMA': 'berkeleytime.schema.schema',
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],

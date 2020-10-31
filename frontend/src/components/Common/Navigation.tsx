@@ -79,6 +79,7 @@ const Navigation: FC<Props> = (props) => {
               if (link.nav_to !== '') {
                 return (
                   <Nav.Link
+                    key={link.text}
                     as={Link}
                     to={link.nav_to}
                     className="bt-bold"
@@ -92,6 +93,7 @@ const Navigation: FC<Props> = (props) => {
               } else {
                 return (
                   <Nav.Link
+                    key={"currentPage"}
                     className="bt-bold"
                     eventKey={(index + 1).toString()}
                   >

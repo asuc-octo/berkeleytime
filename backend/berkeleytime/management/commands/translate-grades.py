@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         grade_service.translate(
-            options['skip-broken'],
-            options['semester'],
-            options['year']
+            semester=options['semester'],
+            year=options['year'],
+            skip_broken=options['skip_broken']
         )

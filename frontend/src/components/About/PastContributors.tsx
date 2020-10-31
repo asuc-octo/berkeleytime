@@ -37,7 +37,7 @@ const PastContributors: FC = () => {
               {row.map(member => (
                 <Col xs={6} md={3} className="contributor-card">
                   <div className="name">
-                    <p>{ member.name }</p>
+                    <p className="bt-light-bold">{ member.name }</p>
                     { member.site ? (
                       <a href={member.site}><Web /></a>
                     ) : null }

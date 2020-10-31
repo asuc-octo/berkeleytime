@@ -14,11 +14,11 @@ import ApiDocs from './views/Api/Api';
 import Apply from './views/Apply/Apply';
 import TestForm from './views/Forms/TestForm';
 import BugsForm from './views/Forms/BugsForm';
-import DesignApp from './views/Forms/DesignApp';
-import EngineeringApp from './views/Forms/EngineeringApp';
+// import DesignApp from './views/Forms/DesignApp';
+// import EngineeringApp from './views/Forms/EngineeringApp';
+// import { Positions } from './views/Apply/DescriptionPages';
 import UserTestingForm from './views/Forms/UserTestingForm';
 import Error from './views/Error/Error';
-import { Positions } from './views/Apply/DescriptionPages';
 
 const routes: Array<RouteProps> = [
   { path: '/landing',           component: Landing         },
@@ -35,10 +35,10 @@ const routes: Array<RouteProps> = [
   { path: '/bugs',              component: BugsForm        },
   { path: '/usertesting',       component: UserTestingForm },
   { path: '/apply',             component: Apply           },
-  { path: '/apply/positions',   component: Positions       },
-  { path: '/apply/engineering', component: EngineeringApp  },
-  { path: '/apply/design',      component: DesignApp       },
-  { path: '/apply/embed',       component: Apply           },
+  // { path: '/apply/positions',   component: Positions       },
+  // { path: '/apply/engineering', component: EngineeringApp  },
+  // { path: '/apply/design',      component: DesignApp       },
+  // { path: '/apply/embed',       component: Apply           },
   { path: '/error',             component: Error           },
 ]
 
@@ -48,10 +48,11 @@ const Routes: React.FC = () => (
     {
       routes.map(route => (
         <Route
+          key={route.path}
           path={route.path}
           component={route.component}
           exact={route.exact ?? true} // force exact=true unless specified false
-          sensitive 
+          sensitive
         />
       ))
     }

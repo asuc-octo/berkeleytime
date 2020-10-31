@@ -10,6 +10,7 @@ from berkeleytime import settings
 from berkeleytime.config.semesters.util.term import get_sis_term_id
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 CACHE_TIMEOUT = 900
 
 class SISClassResource:
@@ -37,23 +38,6 @@ class SISClassResource:
             course_number=course_number,
         )
 
-        log_info = {
-            'course_id': course_id,
-            'abbreviation': abbreviation,
-            'course_number': course_number,
-            'year': year,
-            'semester': semester
-        }
-
-        if not response:
-            log_info['message'] = 'SIS could not find sections for course'
-            logger.info(log_info)
-            return []
-
-        if log:
-            log_info['message'] = 'Queried SIS for the sections for course'
-            logger.info(log_info)
-
         cache.set('class_resource {} {} {} {}'.format(semester, year, abbreviation, course_number), response, CACHE_TIMEOUT)
 
         return response
@@ -76,7 +60,7 @@ class SISClassResource:
             assert response.status_code in [200, 201]
             return response.json()['apiResponse']['response']['classSections']
         except AssertionError:
-            logger.exception({
+            logger.debug({
                 'message': 'SIS Course API did not return valid data',
                 'status_code': response.status_code,
                 'url': url
