@@ -19,6 +19,7 @@ import BugsForm from './views/Forms/BugsForm';
 // import { Positions } from './views/Apply/DescriptionPages';
 import UserTestingForm from './views/Forms/UserTestingForm';
 import Error from './views/Error/Error';
+import Profile from './views/Profile/Profile';
 
 const routes: Array<RouteProps> = [
   { path: '/landing',           component: Landing         },
@@ -35,6 +36,7 @@ const routes: Array<RouteProps> = [
   { path: '/bugs',              component: BugsForm        },
   { path: '/usertesting',       component: UserTestingForm },
   { path: '/apply',             component: Apply           },
+  { path: '/profile',           component: Profile         },
   // { path: '/apply/positions',   component: Positions       },
   // { path: '/apply/engineering', component: EngineeringApp  },
   // { path: '/apply/design',      component: DesignApp       },
