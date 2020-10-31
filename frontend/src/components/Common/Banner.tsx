@@ -11,13 +11,13 @@ import close from '../../assets/svg/common/close.svg'
 interface Props extends PropsFromRedux {}
 
 const Banner: FC<Props> = (props) => {
-  const text = 'We are hiring for the 2020-21 school year! ✨';
+  const text = 'We\'ve updated our site with Spring 2021 courses 📚';
 
   return props.banner ? (
     <div className="banner">
       <div className="content">
         <p>{text}</p>
-        <Button size="sm" href={{as_link: "/apply"}}>Apply</Button>
+        <Button size="sm" href={{as_link: "/catalog"}}>Go to catalog</Button>
       </div>
       <img src={close} alt="close" onClick={props.closeBanner} />
     </div>

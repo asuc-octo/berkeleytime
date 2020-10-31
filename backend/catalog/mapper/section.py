@@ -6,9 +6,11 @@ import logging
 from berkeleytime.settings import finals_mapper
 from catalog.models import Section
 
+
 DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class SectionMapper:
     """Map SIS Class API response data to a dict."""
@@ -34,11 +36,10 @@ class SectionMapper:
             section_dict.update(self.get_enrollment(data=data))
 
             return section_dict
-        except Exception as e:
+        except Exception:
             logger.exception({
                 'message': 'Unknown exception while mapping Class API response to Section object'
             })
-            raise
 
     def get_enrollment(self, data):
         """Get enrollment data."""
@@ -62,7 +63,7 @@ class SectionMapper:
     def _get_meeting(self, data):
         """Get meeting information for a single section."""
         # TODO (*) Schema does not currently support multiple meetings
-        meeting = data['meetings'][0] if data.get('meetings') else None
+        meeting = data['meetings'][0] if data.get('meetings') else {}
         return meeting
 
     def get_datetime(self, data):
@@ -154,9 +155,9 @@ class SectionMapper:
     def get_location_name(self, data):
         """Get name of location."""
         meeting = self._get_meeting(data)
-        location = meeting.get('location') if meeting else None
+        location = meeting.get('location', {}).get('description', '')
         return {
-            'location_name': location.get('description') if location else None
+            'location_name': location,
         }
 
     def get_instruction_mode(self, data):

@@ -17,18 +17,19 @@ from django.contrib import admin
 from django.urls import path, re_path
 from graphene_django.views import GraphQLView
 from graphql_jwt.decorators import jwt_cookie
+
 import catalog.views
 import enrollment.views
 import forms.views
 import grades.views
 
-# Note: We will begin to deprecate the endpoints seen here in favor of using Django REST Framework.
+# Note: We will begin to deprecate the endpoints seen here in favor of using GraphQL.
 urlpatterns = [
     # Easier debugging for user models
     path('admin/', admin.site.urls),
-    
+
     path('graphql', jwt_cookie(GraphQLView.as_view(graphiql=True))),
-    
+
     # Catalog
     ## List all courses with catalog data
     path('catalog/catalog_json/', catalog.views.catalog_context_json),
@@ -66,5 +67,3 @@ urlpatterns = [
     path('forms/submit/', forms.views.record_response),
     re_path(r'^forms/upload/(?P<config_name>[\w\d]+)/(?P<file_name>.+)/$', forms.views.upload_file_view),
 ]
-
-# Leon's proposed API V3: https://www.notion.so/Backend-V3-f8969e7fde3348c1a74c0e2aaab5edb2

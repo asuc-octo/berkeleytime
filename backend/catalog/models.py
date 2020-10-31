@@ -59,8 +59,11 @@ class Course(models.Model):
       )
 
     def __repr__(self):
-        """Return str representation of Course model."""
+        """Return representation of Course model."""
         return f'Course(abbrev={self.abbreviation}, course_number={self.course_number})'
+
+    def __str__(self):
+        return self.__repr__()
 
     @property
     def display_units(self):
@@ -87,6 +90,12 @@ class Section(models.Model):
 
     class Meta:
         db_table = 'section'
+        indexes = [
+            models.Index(fields=['abbreviation', 'course_number']),
+            models.Index(fields=['kind']),
+            models.Index(fields=['disabled']),
+            models.Index(fields=['is_primary']),
+        ]
 
     _derived_enrollment_fields = (
         'enrolled', 'enrolled_max', 'waitlisted', 'waitlisted_max',
@@ -168,7 +177,10 @@ class Section(models.Model):
         return days[self.final_day] if self.final_day else ''
 
     def __repr__(self):
-        """Return str representation of Section model."""
+        """Return representation of Section model."""
         return f'Section(abbrev={self.abbreviation}, course_number={self.course_number}, ' \
-               + f'semester={self.semester}, year={self.year}, ' \
-               + f'kind={self.kind}, section_number={self.section_number})'
+               f'semester={self.semester}, year={self.year}, ' \
+               f'kind={self.kind}, section_number={self.section_number})'
+
+    def __str__(self):
+        return self.__repr__()

@@ -32,23 +32,7 @@ def enrollment_context(long_form=False):
     if cached:
         rtn = cached
     else:
-        # TODO (Yuxin) This query was used prior to 8/3/2016
-        # This tries to only return courses with correspoding Enrollment objects
-        # but this was crashing the site since the Enrollment table is > 10^7 rows
-
-        # courses = (Section.objects.filter(disabled=False, enrollment__isnull=False)
-        #     .prefetch_related('course')
-        #     .distinct('course')
-        #     .values('course__id', 'course__course_number', 'course__abbreviation'))
-        # rtn = [{
-        #     'abbreviation': course['course__abbreviation'],
-        #     'id': course['course__id'],
-        #     'course_number': course['course__course_number']
-        # } for course in courses]
-
-        # The following query is less exact and returns lots of Courses with no
-        # enrollment objects
-        courses = Course.objects.filter(has_enrollment=True).distinct().order_by('abbreviation', 'course_number')
+        courses = Course.objects.all().order_by('abbreviation', 'course_number')
         if long_form:
             rtn = courses.values('id', 'abbreviation', 'course_number', 'title')
         else:
@@ -64,22 +48,7 @@ def enrollment_context_json(request):
 
 # /enrollment/sections/
 def prefetch(course_id):
-    t1 = Thread(target=enrollment_aggregate_json, args=[None, course_id])
-    t1.start()
-
-def get_primary(course_id, semester, year, context_cache=None):
-    try:
-        if context_cache and course_id in context_cache:
-            all_sections = context_cache[course_id]
-        else:
-            course = Course.objects.get(id = course_id)
-            all_sections = course.section_set.all()
-            context_cache[course_id] = all_sections
-        sections = all_sections.filter(semester = semester, year = year, disabled = False, is_primary = True).prefetch_related('enrollment_set')
-        return sections
-    except Exception as e:
-        traceback.print_exc()
-        return []
+    Thread(target=enrollment_aggregate_json, args=[None, course_id]).start()
 
 def enrollment_section_render(request, course_id):
     try:
@@ -88,37 +57,38 @@ def enrollment_section_render(request, course_id):
             print('Cache Hit in enrollment_section_render with course_id ' + course_id)
             prefetch(course_id)
             return render_to_json(cached)
-        rtn = []
-        context_cache = {}
-        sections = get_primary(course_id, CURRENT_SEMESTER, CURRENT_YEAR, context_cache)
-        # Only include current semester if enrollment period has started
-        if sections and TELEBEARS_ALREADY_STARTED:
-            current = {'semester': CURRENT_SEMESTER, 'year': CURRENT_YEAR, 'sections': []}
-            for s in sections:
-                if s.enrollment_set.all():
-                    temp = {}
-                    temp['section_number'] = s.section_number
-                    temp['section_id'] = s.id
-                    temp['instructor'] = s.instructor
-                    current['sections'].append(temp)
-            if current['sections']:
-                rtn.append(current)
-        # REFACTOR THIS
-        ordered_past_semesters = PAST_SEMESTERS[:]
-        ordered_past_semesters.reverse()
-        for s in ordered_past_semesters:
-            past_sections = get_primary(course_id, s['semester'], s['year'], context_cache)
-            if past_sections:
-                current = {'semester': s['semester'], 'year': s['year'], 'sections': []}
-                for s in past_sections:
-                    if s.enrollment_set.all():
-                        temp = {}
-                        temp['section_number'] = s.section_number
-                        temp['section_id'] = s.id
-                        temp['instructor'] = s.instructor
-                        current['sections'].append(temp)
-                if current['sections']:
-                    rtn.append(current)
+        semesters = {}
+        if TELEBEARS_ALREADY_STARTED:
+            semesters[(CURRENT_SEMESTER, CURRENT_YEAR)] = 0
+        for sem in reversed(PAST_SEMESTERS):
+            semesters[(sem['semester'], sem['year'])] = len(semesters)
+
+        all_sections = Section.objects.filter(
+            course_id=course_id,
+            disabled=False,
+            is_primary=True,
+        )
+
+        sem_to_sections = {}
+        for sect in all_sections:
+            if sect.enrolled is None or (sect.semester, sect.year) not in semesters:
+                continue
+
+            if (sect.semester, sect.year) not in sem_to_sections:
+                sem_to_sections[(sect.semester, sect.year)] = {
+                    'semester': sect.semester, 'year': sect.year, 'sections': []
+                }
+
+            sem_to_sections[(sect.semester, sect.year)]['sections'].append(
+                {
+                    'section_number': sect.section_number,
+                    'section_id': sect.id,
+                    'instructor': sect.instructor,
+                }
+            )
+
+        rtn = sorted(sem_to_sections.values(), key=lambda sect: semesters[(sect['semester'], sect['year'])])
+
         cache.set('enrollment_section_render ' + str(course_id), rtn, CACHE_TIMEOUT)
         prefetch(course_id)
         return render_to_json(rtn)

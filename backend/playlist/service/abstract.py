@@ -5,6 +5,7 @@ from catalog.models import Course
 
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class AbstractPlaylistService:
     """Abstract Playlist Category Service."""
