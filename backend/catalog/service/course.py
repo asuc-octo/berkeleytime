@@ -31,7 +31,7 @@ class CourseService:
                 unknown_departments=unknown_departments
             )
 
-            self.update_or_create_from_dict(course_dict)
+            course, created = self.update_or_create_from_dict(course_dict)
 
             # Update derived grade fields
             self._update_derived_grade_fields(course)
