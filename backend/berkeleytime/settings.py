@@ -234,6 +234,7 @@ GRAPHENE = {
 
 # Graphene jwt
 AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # for admin panel
     'graphql_jwt.backends.JSONWebTokenBackend',
 ]
 

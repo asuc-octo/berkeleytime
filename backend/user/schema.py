@@ -15,6 +15,7 @@ from graphql_jwt.refresh_token.shortcuts import create_refresh_token, refresh_to
 # Django models
 from django.contrib.auth.models import User
 from user.models import BerkeleytimeUser, create_user
+from catalog.schema import CourseType
 
 
 # Object Types
@@ -23,6 +24,12 @@ class UserType(DjangoObjectType):
         model = User
 
 class BerkeleytimeUserType(DjangoObjectType):
+    saved_classes = graphene.List(CourseType)
+
+    @graphene.resolve_only_args
+    def resolve_saved_classes(self):
+        return self.saved_classes.all()
+        
     class Meta:
         model = BerkeleytimeUser
 
@@ -130,9 +137,10 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
 class Query(graphene.ObjectType):
     user = graphene.Field(BerkeleytimeUserType)
 
-    @login_required
+    # @login_required
     def resolve_user(self, info):
-        return info.context.user.berkeleytimeuser
+        # return info.context.user.berkeleytimeuser
+        return User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
 
 class Mutation(graphene.ObjectType):
     login = ObtainJSONWebToken.Field()
