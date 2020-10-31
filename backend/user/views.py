@@ -78,7 +78,7 @@ class BerkeleytimeUserViewSet(viewsets.ViewSet):
 
         # find user in current db based on email
         try:
-            user = User.objects.get(email='smxu@berkeley.edu')
+            user = User.objects.get(email=idinfo['email'])
             new_user = False
         except User.DoesNotExist:
             # user doesn't exist, register
