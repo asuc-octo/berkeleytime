@@ -6,7 +6,7 @@ class Resource extends PureComponent {
 
     return (
       <div className="profile-row">
-        <a className="resource-link" href={link} target="_blank" rel="noopener noreferrer">
+        <a href={link} target="_blank" rel="noopener noreferrer">
           <p style={{color:color}}>{text}</p>
         </a>
       </div>

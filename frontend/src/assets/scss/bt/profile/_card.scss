@@ -1,0 +1,82 @@
+.profile-card {
+    padding: 5px 15px;
+  
+    .profile-card-container {
+      width: 340px;
+      height: 100%;
+      border-radius: 8px;
+      padding: 8px 10px;
+
+      border: 1.5px solid #E5E5E5;
+  
+      @include mobile {
+        border: 0.5px solid $bt-light-border-grey;
+      }
+  
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+  
+      &:hover {
+        background-color: $bt-off-white;
+        cursor: pointer;
+      }
+  
+      .profile-card-info {
+        max-width: 87%;
+        padding-right: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+  
+        h6 {
+          font-size: 16px;
+          font-weight: bold;
+        }
+  
+        p {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          color: $bt-light-text;
+          font-size: 14px;
+        }
+  
+        .profile-card-info-desc {
+          // padding-bottom: 10px;
+        }
+  
+        .profile-card-info-stats {
+          display: flex;
+          flex-direction: row;
+        }
+      }
+  
+      .profile-card-sort {
+        margin-bottom: 10px;
+        flex-basis: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+  
+      .profile-card-sort.profile-card-grade {
+        h6 {
+          font-size: 16px;
+          font-weight: 600;
+        }
+      }
+  
+      .profile-card-sort.profile-card-open-seats {
+        h6 {
+          font-size: 18px;
+          font-weight: 500;
+        }
+      }
+    }
+  
+    .profile-card-container.selected {
+      background-color: $bt-off-white;
+    }
+  }
+  
