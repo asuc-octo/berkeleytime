@@ -17,6 +17,7 @@ class CourseMapper:
                 'title': data['title'],
                 'course_number': data['catalogNumber']['formatted'],
                 'description': data['description'],
+                'cross_listing': data['crossListing']['courses'],
             }
             course_dict.update(self.get_abbreviation_and_department(data, unknown_departments))
             course_dict.update(self.get_units(data))
