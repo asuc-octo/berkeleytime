@@ -54,7 +54,7 @@ class SectionService:
         # Log progress of updates
         print(BColors.OKGREEN + f'Starting job with {NUM_THREADS} workers.' + BColors.ENDC)
         while not result.ready():
-            print(BColors.OKGREEN + f'Updating course {i.value() + 1} of {len(courses)}.' + BColors.ENDC)
+            print(BColors.OKGREEN + f'Updating course {i.value()} of {len(courses)}.' + BColors.ENDC)
             time.sleep(5)
 
         # Clear the cache to ensure an updated dropdown of courses with enrollment data

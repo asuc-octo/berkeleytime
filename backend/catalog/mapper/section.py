@@ -83,10 +83,17 @@ class SectionMapper:
         start_time = meeting['startTime']
         end_time = meeting['endTime']
 
+        if '00:00:00' in start_time or '00:00:00' in end_time:
+            start_time_utc = None
+            end_time_utc = None
+        else:
+            start_time_utc = arrow.get(f'1900-01-01 {start_time}').replace(tzinfo='US/Pacific').datetime
+            end_time_utc = arrow.get(f'1900-01-01 {end_time}').replace(tzinfo='US/Pacific').datetime
+
         return {
             'days': days,
-            'start_time': arrow.get('1900-01-01 %s' % start_time).datetime if '00:00:00' not in start_time else None,
-            'end_time': arrow.get('1900-01-01 %s' % end_time).datetime if '00:00:00' not in end_time else None,
+            'start_time': start_time_utc,
+            'end_time': end_time_utc,
         }
 
     def get_finals(self, kwargs, extras):
@@ -101,12 +108,8 @@ class SectionMapper:
             if finals_info is not None:
                 return {
                     'final_day': finals_info[0],
-                    'final_start': arrow.get(
-                        '1900-01-01 %s' % finals_info[1]
-                    ).datetime,
-                    'final_end': arrow.get(
-                        '1900-01-01 %s' % finals_info[2]
-                    ).datetime
+                    'final_start': arrow.get(f'1900-01-01 {finals_info[1]}').replace(tzinfo='US/Pacific').datetime,
+                    'final_end': arrow.get(f'1900-01-01 {finals_info[2]}').replace(tzinfo='US/Pacific').datetime,
                 }
         return {}
 
