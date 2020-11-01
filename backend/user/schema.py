@@ -33,7 +33,38 @@ class BerkeleytimeUserType(DjangoObjectType):
     class Meta:
         model = BerkeleytimeUser
 
+class UpdateUser(graphene.Mutation):
+    class Arguments:
+        major = graphene.String(required=False)
+        email_class_update = graphene.Boolean(required=False)
+        email_grade_update = graphene.Boolean(required=False)
+        email_enrollment_opening = graphene.Boolean(required=False)
+        email_berkeleytime_update = graphene.Boolean(required=False)
 
+    # output
+    user = graphene.Field(BerkeleytimeUserType)
+
+    # avaliable fields
+    _user_fields = (
+        'major',
+        'email_class_update',
+        'email_grade_update',
+        'email_enrollment_opening',
+        'email_berkeleytime_update'
+        )
+
+    # testing for now
+    # @login_required
+    def mutate(self, info, **kwargs):
+        user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+        # user = info.context.user.berkeleytimeuser
+
+        # update user info
+        for key in kwargs:
+            if key in UpdateUser._user_fields:
+                setattr(user, key, kwargs[key])
+        user.save()
+        return UpdateUser(user=user)
 # JWT
 def on_token_auth_resolve(context, user, payload):
     """ Append JWT payload (not really needed tbh) and token to graphql
@@ -143,6 +174,7 @@ class Query(graphene.ObjectType):
         return User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
 
 class Mutation(graphene.ObjectType):
+    update_user = UpdateUser.Field()
     login = ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
