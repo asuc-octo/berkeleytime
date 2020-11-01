@@ -17,12 +17,8 @@ def is_float(target):
     except Exception:
         return False
 
-
 def department_to_abbreviation(department_name):
     """Convert a department name to its corresponding abbreviation."""
-    return config_dict.department_to_abbreviation_mapper.get(department_name.upper())
-
-
 def abbreviation_to_department(abbreviation):
     """Convert an abbrevation to its corresponding department name."""
     return config_dict.abbreviation_to_department_mapper.get(abbreviation)

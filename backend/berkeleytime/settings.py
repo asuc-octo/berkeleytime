@@ -117,13 +117,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'berkeleytime',
-    'user',
     'catalog',
     'enrollment',
     'grades',
     'playlist',
     'forms',
-    'rest_framework'
+    'user',
+    'rest_framework',
 ]
 
 # Middlewares
