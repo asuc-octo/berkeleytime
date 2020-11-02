@@ -9,10 +9,6 @@
 
       border: 1.5px solid #E5E5E5;
   
-      @include mobile {
-        border: 0.5px solid $bt-light-border-grey;
-      }
-  
       display: flex;
       flex-direction: row;
       justify-content: space-between;
