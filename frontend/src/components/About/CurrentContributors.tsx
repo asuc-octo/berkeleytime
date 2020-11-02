@@ -118,7 +118,7 @@ const CurrentContributors: FC = () => (
               <img src={member.silly_img} alt={member.name} />
             </div>
             <div className="name">
-              <p>{ member.name }</p>
+              <p className="bt-light-bold">{ member.name }</p>
               { member.site ? (
                 <a href={member.site}><Web /></a>
               ) : null }

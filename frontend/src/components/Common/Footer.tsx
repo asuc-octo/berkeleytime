@@ -26,7 +26,6 @@ const Footer: FC = () => (
         <Col xs={12} sm={4} lg={2} className="footer-col mb-5">
           <h6 className="bt-bold mb-3">About Us</h6>
           <Link to="/about" className="mb-2">Our Team</Link>
-          {/* <Link to="/apply" className="mb-2">Apply <New /></Link> */}
           <a href="https://octo.asuc.org" className="mb-2">ASUC OCTO</a>
           <a href="https://facebook.com/berkeleytime">Facebook</a>
         </Col>

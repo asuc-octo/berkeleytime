@@ -6,9 +6,10 @@
   // so the container needs to be positioned relatively
   position: relative;
 
-  // a viewport app sits under the navbar and takes up as much vertical space as the viewport
-  // and has a minimum height of 800px (including navbar). viewport apps include catalog,
-  // grades, and enrollment
+  // A viewport app sits under the navbar and takes up as much vertical space as the viewport
+  // and has a minimum height of 800px (including navbar). Viewport apps include catalog,
+  // grades, and enrollment. When smaller than desktop, we no longer attempt to match the
+  // height of the viewport b/c we change to mobile view.
   .viewport-app {
     padding-top: $bt-navbar-height;
 
@@ -28,11 +29,7 @@
       flex: 1;
     }
 
-    @include mobile {
-      height: auto;
-    }
-
-    @include tablet {
+    @include touch {
       height: auto;
     }
   }
@@ -49,9 +46,5 @@
 
   .under-navbar {
     padding-top: $bt-navbar-height;
-  }
-
-  .banner-visible {
-    margin-top: $banner-height;
   }
 }
