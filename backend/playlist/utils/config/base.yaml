@@ -1,0 +1,22 @@
+haas:
+    abbreviations:
+        - "UGBA"
+        - "EWMBA"
+        - "XMBA"
+        - "MBA"
+        - "PHDBA"
+
+engineering:
+    abbreviations:
+        - "BIO ENG"
+        - "CHM ENG"
+        - "CIV ENG"
+        - "DEV ENG"
+        - "EECS"
+        - "EL ENG"
+        - "ENGIN"
+        - "IND ENG"
+        - "MAT SCI"
+        - "MEC ENG"
+        - "NSE"
+        - "NUC ENG"
