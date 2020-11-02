@@ -10,10 +10,10 @@ class SupportSubview extends PureComponent {
         <h2>Resources</h2>
 
         {/* Information has been hardcoded for testing purposes only */}
-        <Resource color="#2F80ED" text="Contact Us" link="https://berkeleytime.com"/>
-        <Resource color="#2F80ED" text="Give us feedback" link="https://berkeleytime.com" />
-        <Resource color="#2F80ED" text="Report a bug" link="https://berkeleytime.com" />
-        <Resource color="#DE5F18" text="Delete Account" link="https://berkeleytime.com"/>
+        <Resource text="Contact Us" link="https://berkeleytime.com"/>
+        <Resource text="Give us feedback" link="https://berkeleytime.com" />
+        <Resource text="Report a bug" link="https://berkeleytime.com" />
+        <Resource text="Delete Account" link="https://berkeleytime.com"/>
       </div>
     );
   }
