@@ -7,7 +7,6 @@ import Grades from './views/Grades/Grades';
 import Enrollment from './views/Enrollment/Enrollment';
 import About from './views/About';
 import Dashboard from './views/Dashboard/Dashboard';
-import Login from './views/Login/Login';
 import Releases from './views/Releases/Releases';
 import Faq from './views/Faq';
 import ApiDocs from './views/Api/Api';
@@ -28,7 +27,6 @@ const routes: Array<RouteProps> = [
   { path: '/enrollment',        component: Enrollment,     exact: false },
   { path: '/about',             component: About           },
   { path: '/dashboard',         component: Dashboard       },
-  { path: '/login',             component: Login           },
   { path: '/releases',          component: Releases        },
   { path: '/faq',               component: Faq             },
   { path: '/apidocs',           component: ApiDocs         },

@@ -3,7 +3,9 @@ import {
   Container,
   Row,
   Col,
-} from 'react-bootstrap'
+} from 'react-bootstrap';
+import { withRouter } from 'react-router';
+import { connect } from 'react-redux';
 
 import account from "../../assets/svg/profile/account.svg";
 import accountSelected from "../../assets/svg/profile/account_selected.svg";
@@ -28,6 +30,8 @@ class Profile extends PureComponent {
   }
 
   render() {
+    // console.log(this.props.userProfile)
+
     let tabIndex = this.state.tabIndex;
     let accountImg = tabIndex == 0 ? accountSelected : account;
     let notifImg = tabIndex == 1 ? notifSelected : notif;
@@ -58,4 +62,19 @@ class Profile extends PureComponent {
   }
 }
 
-export default Profile;
+const mapDispatchToProps = dispatch => ({
+  dispatch
+});
+
+const mapStateToProps = state => {
+  const { userProfile } = state.authReducer;
+
+  return {
+    userProfile
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRouter(Profile));
