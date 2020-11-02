@@ -1,11 +1,11 @@
 // This file contains responsive mixins based on Bootstrap 4 breakpoints.
 // https://getbootstrap.com/docs/4.0/layout/overview/#responsive-breakpoints
 
-// xs: 0-576
-// sm: 576-768
-// md: 768-992
-// lg: 992-1200
-// xl: 1200+
+// xs: 0-576    (mobile) (touch)
+// sm: 576-768  (mobile) (touch)
+// md: 768-992  (tablet) (touch)
+// lg: 992-1200 (desktop)
+// xl: 1200+    (widescreen) (desktop)
 
 // up to 768px, or xs + sm
 @mixin mobile {
@@ -57,36 +57,13 @@
   }
 }
 
-// responsively scales down $size for mobile and tablet views
-@mixin responsive($property, $size) {
+// have property take on 2 different values depending on the view
+@mixin desktop-and-touch($property, $desktop, $touch) {
   @include desktop {
-    #{$property}: $size;
-  }
-
-  @if $size <= 20px {
-    @include tablet { #{$property}: $size - 1px; }
-    @include mobile { #{$property}: $size - 2px; }
-  } @else if $size <= 21px {
-    @include tablet { #{$property}: $size - 2px; }
-    @include mobile { #{$property}: $size - 3px; }
-  } @else if $size <= 30px {
-    @include tablet { #{$property}: $size - 2px; }
-    @include mobile { #{$property}: $size - 4px; }
-  } @else if $size <= 31px {
-    @include tablet { #{$property}: $size - 3px; }
-    @include mobile { #{$property}: $size - 5px; }
-  } @else {
-    @include tablet { #{$property}: $size - 3px; }
-    @include mobile { #{$property}: $size - 6px; }
-  }
-}
-
-@mixin desktop-and-touch($property, $desktop-size, $touch-size) {
-  @include desktop {
-    #{$property}: $desktop-size;
+    #{$property}: $desktop;
   }
 
   @include touch {
-    #{$property}: $touch-size;
+    #{$property}: $touch;
   }
 }

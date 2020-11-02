@@ -1,20 +1,11 @@
 import React, { FC } from 'react'
+import TextProps, { getClassNames } from './TextProps'
 
-const P: FC<Props> = (props) => {
-  let classNames = [props.className ?? '', 'bt-p']
-  
-  if (props.bold) {
-    classNames.push('bt-bold')
-  }
-
+const P: FC<TextProps> = (props) => {
   return (
-    <p className={classNames.join(' ')}>{props.children}</p>
+    <p className={getClassNames('bt-p', props)}>{props.children}</p>
   )
 }
 
-export interface Props {
-  className?: string
-  bold?: boolean
-}
-
+export type { TextProps as Props }
 export default P

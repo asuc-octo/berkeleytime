@@ -1,20 +1,11 @@
 import React, { FC } from 'react'
+import TextProps, { getClassNames } from './TextProps'
 
-const H6: FC<Props> = (props) => {
-  let classNames = [props.className ?? '', 'bt-h6']
-  
-  if (props.bold) {
-    classNames.push('bt-bold')
-  }
-
+const H6: FC<TextProps> = (props) => {
   return (
-    <h6 className={classNames.join(' ')}>{props.children}</h6>
+    <h6 className={getClassNames('bt-h6', props)}>{props.children}</h6>
   )
 }
 
-export interface Props {
-  className?: string
-  bold?: boolean
-}
-
+export type { TextProps as Props }
 export default H6

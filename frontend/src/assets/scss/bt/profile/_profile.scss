@@ -1,0 +1,49 @@
+.profile-container {
+    min-height: 300px;
+    height: 100vh;
+
+    #account {
+        margin-top: 30vh;
+    }
+
+    #account, #notif, #support {
+        margin-bottom: 12px;
+        width: 13vw;
+        height: 45px;
+        border-radius: 4px;
+        color: $bt-light-text;
+
+        img {
+            height: 24px;
+            outline-color: $bt-light-text;
+            margin-left: 15px;
+            margin-top: 10px;
+        }
+
+        span {
+            margin-left: 5px;
+            display: inline-block;
+            vertical-align: bottom;
+            line-height: normal;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        &.selected {
+            color: $bt-primary;
+            background: #F8F8F8;
+        }
+
+        &:hover {
+            background: #F8F8F8;
+            cursor: pointer;
+        }
+    }
+
+    #notif img {
+        margin-left: 17px;
+    }
+    #notif span {
+        margin-left: 7px;
+    }
+}
