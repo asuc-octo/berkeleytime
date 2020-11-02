@@ -8,7 +8,7 @@ import LogPageView from 'components/Common/LogPageView'
 import Berkeleytime from 'Berkeleytime'
 import store from './redux/store'
 
-import 'assets/scss/berkeleytime.css';
+import 'assets/scss/berkeleytime.scss';
 
 ReactDOM.render((
   <Provider store={store}>
