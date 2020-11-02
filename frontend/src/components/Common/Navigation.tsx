@@ -24,6 +24,10 @@ const Navigation: FC<Props> = (props) => {
         text: 'Enrollment',
       },
       {
+        to: '/scheduler',
+        text: 'Scheduler'
+      },
+      {
         to: '/about',
         text: 'About',
       },

@@ -1,0 +1,16 @@
+.course-selector {
+    padding: 32px;
+    box-sizing: border-box;
+
+    h2 {
+        font-weight: 700;
+        font-size: 20px;
+        margin-bottom: 1em;
+    }
+
+    p {
+        color: $bt-light-text;
+        font-size: 16px;
+        margin: 1em 0;
+    }
+}
