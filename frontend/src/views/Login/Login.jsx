@@ -1,9 +1,16 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
+import { withRouter } from 'react-router';
 import GoogleLogin, { GoogleLogout } from 'react-google-login';
 import axios from 'axios';
 
-class Login extends PureComponent {
-  static onSignIn(response) {
+class Login extends Component {
+  constructor(props) {
+    super(props);
+
+    this.onSignIn = this.onSignIn.bind(this);
+  }
+
+  onSignIn(response) {
     /*
     Response Format:
     {
@@ -19,25 +26,14 @@ class Login extends PureComponent {
       }
     }
     */
-    console.log(response);
-
-    // probably not needed anymore since users automatically limited to same org
-    if (response.profileObj.email.split('@')[1] !== 'berkeley.edu') {
-      alert("Please use your UC Berkeley email");
-      return;
-    }
-
-    Login.postUserLogin(response);
-  }
-
-  static postUserLogin(response) {
+    const { history } = this.props;
     const tokenId = response.tokenId;
     axios.post(`/api/user/login/`,
       {
         tokenId: tokenId
       }
     ).then(res => {
-        // handle response
+        history.push('/profile');
         console.log(res);
       },
       error => console.log('An error occurred.', error),
@@ -50,10 +46,11 @@ class Login extends PureComponent {
         <div className="login">
           <GoogleLogin
             clientId="***REMOVED***"
-            onSuccess={Login.onSignIn}
+            onSuccess={this.onSignIn}
             onFailure={error => alert('Sign-in failed with ' + JSON.stringify(error))}
             cookiePolicy="single_host_origin"
             scope="https://www.googleapis.com/auth/calendar"
+            hostedDomain="berkeley.edu"
           />
         </div>
         <div className="logout">
@@ -62,6 +59,7 @@ class Login extends PureComponent {
             buttonText="Sign out"
             onLogoutSuccess={() => console.log('Sign out success')}
             scope="https://www.googleapis.com/auth/calendar"
+            hostedDomain="berkeley.edu"
           />
         </div>
       </div>
@@ -69,4 +67,4 @@ class Login extends PureComponent {
   }
 }
 
-export default Login;
+export default withRouter(Login);
