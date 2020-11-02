@@ -29,7 +29,7 @@ pipeline {
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh 'gcloud builds submit berkeleytime --tag ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT} --project berkeleytime-218606'
+        sh 'gcloud builds submit backend --tag ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT} --project berkeleytime-218606'
       }
     }
     stage('Build-Frontend-Stage') {
@@ -93,7 +93,7 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh 'gcloud builds submit berkeleytime --tag ${BACKEND_PROD_GCR_PATH}:${GIT_COMMIT} --project berkeleytime-218606'
+        sh 'gcloud builds submit backend --tag ${BACKEND_PROD_GCR_PATH}:${GIT_COMMIT} --project berkeleytime-218606'
       }
     }
     stage('Build-Frontend-Prod') {
