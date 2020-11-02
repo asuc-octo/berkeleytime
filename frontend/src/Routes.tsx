@@ -12,6 +12,7 @@ import Releases from './views/Releases/Releases';
 import Faq from './views/Faq';
 import ApiDocs from './views/Api/Api';
 import Apply from './views/Apply/Apply';
+import Scheduler from './views/Scheduler/Scheduler';
 import TestForm from './views/Forms/TestForm';
 import BugsForm from './views/Forms/BugsForm';
 // import DesignApp from './views/Forms/DesignApp';
@@ -35,6 +36,7 @@ const routes: Array<RouteProps> = [
   { path: '/bugs',              component: BugsForm        },
   { path: '/usertesting',       component: UserTestingForm },
   { path: '/apply',             component: Apply           },
+  { path: '/scheduler',             component: Scheduler           },
   // { path: '/apply/positions',   component: Positions       },
   // { path: '/apply/engineering', component: EngineeringApp  },
   // { path: '/apply/design',      component: DesignApp       },
