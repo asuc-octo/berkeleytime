@@ -50,10 +50,11 @@ const Routes: React.FC = () => (
     {
       routes.map(route => (
         <Route
+          key={route.path}
           path={route.path}
           component={route.component}
           exact={route.exact ?? true} // force exact=true unless specified false
-          sensitive 
+          sensitive
         />
       ))
     }
