@@ -68,7 +68,8 @@ def grade_section_json(request, course_id):
                 'instructor': entry.instructor,
                 'semester': entry.semester,
                 'year': entry.year,
-                'section_number': entry.section_number,
+                'section_number': entry.section_number + # adds course info if cross listed, temporary measure
+                    (entry.course.id != course_id and f' ({entry.course.abbreviation} {entry.course.course_number})'),
                 'grade_id': entry.id,
             } for entry in entries
         ]

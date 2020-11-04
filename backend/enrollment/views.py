@@ -82,7 +82,8 @@ def enrollment_section_render(request, course_id):
             sem_to_sections[(sect.semester, sect.year)]['sections'].append(
                 {
                     'section_number': sect.section_number,
-                    'section_id': sect.id,
+                    'section_id': sect.id + # adds course info if cross listed, temporary measure
+                        (sect.course.id != course_id and f' ({sect.course.abbreviation} {sect.course.course_number})'),
                     'instructor': sect.instructor,
                 }
             )
