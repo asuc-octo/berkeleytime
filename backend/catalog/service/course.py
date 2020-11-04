@@ -26,19 +26,17 @@ class CourseService:
     def update(self, page_number=0, page_size=100):
         """Update courses starting from an SIS index."""
         unknown_departments = set()
-        course_dicts = []
+        courses = []
         for course_response in sis_course_resource.get(page_number, page_size):
-            course_dicts.append(
-                course_mapper.map(
-                    course_response,
-                    unknown_departments=unknown_departments
-                )
+            course_dict = course_mapper.map(
+                course_response,
+                unknown_departments=unknown_departments
             )
 
-        for c in course_dicts:
-            self.update_or_create_from_dict(c)
+            course, created = self.update_or_create_from_dict(course_dict)
+            courses.append(course)
 
-        for c in course_dicts:
+        for c in courses:
             # Update derived grade fields. 
             # Done strictly after updating course info for cross listed grades
             self._update_derived_grade_fields(c)
