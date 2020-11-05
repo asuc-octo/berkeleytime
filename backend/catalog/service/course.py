@@ -37,7 +37,7 @@ class CourseService:
             courses.append(course)
 
         for c in courses:
-            # Update derived grade fields. 
+            # Update derived grade fields.
             # Done strictly after updating course info for cross listed grades
             self._update_derived_grade_fields(c)
 
@@ -50,16 +50,17 @@ class CourseService:
 
     def update_or_create_from_dict(self, course_dict):
         try:
-            course_dict = {
-                **course_dict,
-                'cross_listing': self._course_names_to_objects(course_dict['cross_listing'])
-            }
+            cross_listing_courses = self._course_names_to_objects(course_dict['cross_listing'])
+            del course_dict['cross_listing']
 
             course_obj, created = Course.objects.update_or_create(
                 abbreviation=course_dict['abbreviation'],
                 course_number=course_dict['course_number'],
                 defaults=course_dict,
             )
+            course_obj.cross_listing.set(cross_listing_courses)
+            course_obj.save()
+
             logger.info({
                 'message': 'Updated/created new course object',
                 'course': course_obj,
@@ -71,7 +72,7 @@ class CourseService:
                 'message': 'Exception encountered while updating/creating course',
                 'course_dict': course_dict,
             })
-            
+
 
     def _course_names_to_objects(self, names):
         """Used for converting cross listed courses to their objects for the ManyToManyField"""
@@ -79,16 +80,16 @@ class CourseService:
         for n in names:
             try:
                 abbreviation, course_number = n.rsplit(' ', 1)
-                course = Course.object.get(abbreviation=abbreviation, course_number=course_number)
+                course = Course.objects.get(abbreviation=abbreviation, course_number=course_number)
                 courses_list.append(course)
 
             # likely just not created yet, and when that course is created, it can just add its
             # cross listed courses and it will be added to this one because the field is symmetrical
             except Course.DoesNotExist:
-                pass 
+                pass
 
             except Exception as e:
-                logger.exception({
+                logger.warn({
                 'message': 'Exception encountered while finding course from name',
                 'course_name': n,
                 'exception': e,
@@ -98,7 +99,9 @@ class CourseService:
 
     def _update_derived_grade_fields(self, course):
         """Take a course object and recalculate its derived grade fields."""
-        grades = Grade.objects.filter(Q(course=course) | Q(course__cross_listing=course))
+        grades = Grade.objects.filter(
+            Q(course=course) | Q(course__cross_listing=course)
+        ).distinct('course_id', 'semester', 'year', 'section_number')
         weighted_letter_grade_counter, total = add_up_grades(grades)
 
         if total == 0:
@@ -114,11 +117,11 @@ class CourseService:
         """Update enrollment summary fields with the latest enrollment."""
         primary_sections = Section.objects.filter(
             Q(course=course) | Q(course__cross_listing=course),
-            semester=CURRENT_SEMESTER, 
+            semester=CURRENT_SEMESTER,
             year=CURRENT_YEAR,
-            is_primary=True, 
+            is_primary=True,
             disabled=False,
-        )
+        ).distinct('course_id', 'semester', 'year', 'section_number')
 
         # If no active primary sections exist, reset enrollment fields to default (-1)
         if not primary_sections.exists():

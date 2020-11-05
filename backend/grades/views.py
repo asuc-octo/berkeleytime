@@ -54,14 +54,14 @@ def grade_section_json(request, course_id):
     {'instructor': 'Shewchuk', 'semester': 'spring', 'year': 2012, 'section_number': '003', 'grade_id': 1533}
     """
     try:
-        cached = cache.get('grade_section_json_new ' + str(course_id))
-        if cached:
-            print('Cache Hit in grade_section_json course_id ' + course_id)
-            return render_to_json(cached)
+        cached = cache.get('grade_section_json_new ' + course_id)
+        # if cached:
+        #     print('Cache Hit in grade_section_json course_id ' + course_id)
+        #     return render_to_json(cached)
 
         entries = Grade.objects.filter(
             Q(course__id=int(course_id)) | Q(course__cross_listing__id=int(course_id))
-        )
+        ).distinct('course_id', 'semester', 'year', 'section_number')
 
         sections = [
             {
@@ -69,7 +69,7 @@ def grade_section_json(request, course_id):
                 'semester': entry.semester,
                 'year': entry.year,
                 'section_number': entry.section_number + # adds course info if cross listed, temporary measure
-                    (entry.course.id != course_id and f' ({entry.course.abbreviation} {entry.course.course_number})'),
+                    (f' ({entry.course.abbreviation} {entry.course.course_number})' if str(entry.course.id) != course_id else ''),
                 'grade_id': entry.id,
             } for entry in entries
         ]
