@@ -2,7 +2,7 @@ from threading import Thread
 import traceback
 
 from django.core.cache import cache
-from django.db.models import Sum
+from django.db.models import Sum, Q
 
 from berkeleytime.utils import render_to_json, render_to_empty_json
 from berkeleytime.settings import (
@@ -64,7 +64,7 @@ def enrollment_section_render(request, course_id):
             semesters[(sem['semester'], sem['year'])] = len(semesters)
 
         all_sections = Section.objects.filter(
-            course_id=course_id,
+            Q(course__id=course_id) | Q(course__cross_listing__id=course_id),
             disabled=False,
             is_primary=True,
         )
@@ -82,7 +82,8 @@ def enrollment_section_render(request, course_id):
             sem_to_sections[(sect.semester, sect.year)]['sections'].append(
                 {
                     'section_number': sect.section_number,
-                    'section_id': sect.id,
+                    'section_id': sect.id + # adds course info if cross listed, temporary measure
+                        (sect.course.id != course_id and f' ({sect.course.abbreviation} {sect.course.course_number})'),
                     'instructor': sect.instructor,
                 }
             )
@@ -107,7 +108,12 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
             return render_to_json(cached)
         rtn = {}
         course = Course.objects.get(id = course_id)
-        all_sections = course.section_set.all().filter(semester = semester, year = year, disabled = False)
+        all_sections =  Section.objects.filter(
+            Q(course__id=course_id) | Q(course__cross_listing__id=course_id),
+            semester=semester, 
+            year=year, 
+            disabled=False
+        )
         sections = all_sections.filter(is_primary = True )
         if sections:
             rtn['course_id'] = course.id
