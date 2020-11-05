@@ -53,10 +53,10 @@ def prefetch(course_id):
 def enrollment_section_render(request, course_id):
     try:
         cached = cache.get('enrollment_section_render_new ' + course_id)
-        if cached:
-            print('Cache Hit in enrollment_section_render with course_id ' + course_id)
-            prefetch(course_id)
-            return render_to_json(cached)
+        # if cached:
+        #     print('Cache Hit in enrollment_section_render with course_id ' + course_id)
+        #     prefetch(course_id)
+        #     return render_to_json(cached)
         semesters = {}
         if TELEBEARS_ALREADY_STARTED:
             semesters[(CURRENT_SEMESTER, CURRENT_YEAR)] = 0
@@ -67,7 +67,7 @@ def enrollment_section_render(request, course_id):
             Q(course__id=course_id) | Q(course__cross_listing__id=course_id),
             disabled=False,
             is_primary=True,
-        )
+        ).distinct('course_id', 'semester', 'year', 'section_number')
 
         sem_to_sections = {}
         for sect in all_sections:
@@ -81,9 +81,9 @@ def enrollment_section_render(request, course_id):
 
             sem_to_sections[(sect.semester, sect.year)]['sections'].append(
                 {
-                    'section_number': sect.section_number,
-                    'section_id': sect.id + # adds course info if cross listed, temporary measure
-                        (sect.course.id != course_id and f' ({sect.course.abbreviation} {sect.course.course_number})'),
+                    'section_id': sect.id,
+                    'section_number': sect.section_number + # adds course info if cross listed, temporary measure
+                        (f' ({sect.course.abbreviation} {sect.course.course_number})' if str(sect.course.id) != course_id else ''),
                     'instructor': sect.instructor,
                 }
             )
@@ -102,19 +102,19 @@ def enrollment_section_render(request, course_id):
 def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, year=CURRENT_YEAR):
     try:
         cached = cache.get('enrollment_aggregate_json_new ' + str(course_id) + semester + str(year))
-        if cached:
-            print('Cache Hit in enrollment_aggregate_json with course_id  ' + course_id + ' semester ' + semester
-                  + ' year ' + year)
-            return render_to_json(cached)
+        # if cached:
+        #     print('Cache Hit in enrollment_aggregate_json with course_id  ' + course_id + ' semester ' + semester
+        #           + ' year ' + year)
+        #     return render_to_json(cached)
         rtn = {}
         course = Course.objects.get(id = course_id)
-        all_sections =  Section.objects.filter(
+        sections =  Section.objects.filter(
             Q(course__id=course_id) | Q(course__cross_listing__id=course_id),
-            semester=semester, 
-            year=year, 
-            disabled=False
-        )
-        sections = all_sections.filter(is_primary = True )
+            semester=semester,
+            year=year,
+            disabled=False,
+            is_primary=True,
+        ).distinct('course_id', 'semester', 'year', 'section_number')
         if sections:
             rtn['course_id'] = course.id
             rtn['section_id'] = 'all'
