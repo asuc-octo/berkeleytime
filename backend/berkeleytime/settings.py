@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
 
-import datetime
 import os
 import sys
 from pathlib import Path
+from datetime import timedelta
 from urllib.parse import urlparse
 
 from berkeleytime.config.general import *
@@ -123,7 +123,7 @@ INSTALLED_APPS = [
     'playlist',
     'forms',
     'user',
-    'rest_framework',
+    'graphene_django',
 ]
 
 # Middlewares
@@ -139,23 +139,6 @@ MIDDLEWARE = [
 
 # Root URLconf file
 ROOT_URLCONF = 'berkeleytime.urls'
-
-# List of template engines (we need this for admin panel)
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    }
-]
 
 # WSGI app object to use with runserver
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
@@ -219,6 +202,22 @@ LOGGING = {
     }
 }
 
+# List of template engines (we need this for admin panel)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    }
+]
 
 # Course/Class API credentials
 SIS_COURSE_APP_ID = os.getenv('SIS_COURSE_APP_ID')
@@ -226,21 +225,25 @@ SIS_COURSE_APP_KEY = os.getenv('SIS_COURSE_APP_KEY')
 SIS_CLASS_APP_ID = os.getenv('SIS_CLASS_APP_ID')
 SIS_CLASS_APP_KEY = os.getenv('SIS_CLASS_APP_KEY')
 
-# Django REST Framework
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    ),
+# Graphene Config
+GRAPHENE = {
+    'SCHEMA': 'berkeleytime.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
 }
 
-## JWT
-JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1)
+# Graphene jwt
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # for admin panel
+    'graphql_jwt.backends.JSONWebTokenBackend',
+]
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_EXPIRATION_DELTA': timedelta(days=1),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+    'JWT_HIDE_TOKEN_FIELDS': True  # if we want to prevent sending the token back in response
 }
 
 # Password validation - we intend to use Google sign-in, but we may add in-house auth in the future
