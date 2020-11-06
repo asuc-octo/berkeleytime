@@ -55,11 +55,10 @@ class UpdateUser(graphene.Mutation):
         'email_berkeleytime_update'
         )
 
-    # testing for now
-    # @login_required
+    @login_required
     def mutate(self, info, **kwargs):
-        user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
-        # user = info.context.user.berkeleytimeuser
+        # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+        user = info.context.user.berkeleytimeuser
         
         # update user info
         for key in kwargs:
@@ -75,10 +74,10 @@ class SaveClass(graphene.Mutation):
     # output
     user = graphene.Field(BerkeleytimeUserType)
 
-    # @login_required
+    @login_required
     def mutate(self, info, class_id):
-        user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
-        # user = info.context.user.berkeleytimeuser
+        # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+        user = info.context.user.berkeleytimeuser
         try:
             save_class = Course.objects.get(pk=from_global_id(class_id)[1])
             user.saved_classes.add(save_class)
@@ -93,10 +92,10 @@ class RemoveClass(graphene.Mutation):
     # output
     user = graphene.Field(BerkeleytimeUserType)
 
-    # @login_required
+    @login_required
     def mutate(self, info, class_id):
-        user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
-        # user = info.context.user.berkeleytimeuser
+        # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+        user = info.context.user.berkeleytimeuser
         user.saved_classes.remove(from_global_id(class_id)[1])
         return UpdateUser(user=user)
 
@@ -203,11 +202,11 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
 class Query(graphene.ObjectType):
     user = graphene.Field(BerkeleytimeUserType)
 
-    # @login_required
+    @login_required
     def resolve_user(self, info):
-        # return info.context.user.berkeleytimeuser
+        return info.context.user.berkeleytimeuser
         # testing:
-        return User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+        # return User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
 
 class Mutation(graphene.ObjectType):
     update_user = UpdateUser.Field()
