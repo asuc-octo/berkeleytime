@@ -75,14 +75,6 @@ class ClassDescription extends Component {
     }
   }
 
-  details = () => {
-    this.props.selectCourse(this.props.course, 0);
-  }
-
-  sections = () => {
-    this.props.selectCourse(this.props.course, 1);
-  }
-
   componentDidMount() {
     this.updateCourseData();
   }
