@@ -2,13 +2,13 @@ const DEFAULT_NON_ADJACENT_PENALTY: number = 0.05;
 
 /**
  * Performs a searched clamped to maxTypos. Returns
- * a negative number if not a match, else a positive number 
+ * a negative number if not a match, else a positive number
  * representing the 'distance'. Do note that the distance is not
  * the same as the number of typos.
- * 
+ *
  * Make sure your query and targetString are the same case. This
  * doesn't handle normalization etc.
- * 
+ *
  * This is like a fuzzy search but works better for abbrevations
  * by penalizing ommisions at a much lower rate than transpositions
  */
@@ -22,22 +22,22 @@ export function search(
 
     let hlen = targetString.length;
     let nlen = query.length;
-    
+
     // If the query is longer than the target string, it can never match
     if (nlen >= hlen) {
         if (nlen === hlen && query === targetString) {
             return 0;
         }
-        
+
         return -1;
     }
-    
+
     let penalty = 0;
 
     outer: for (let i = 0, j = 0; i < nlen; i++) {
         let nch = query.charCodeAt(i);
         let start = j;
-        
+
         while (j < hlen) {
             if (targetString.charCodeAt(j++) === nch) {
                 penalty += (j - start - 1) * nonAdjacentPenalty;
@@ -53,7 +53,7 @@ export function search(
           return -1;
         }
     }
-    
+
     return penalty;
 }
 
@@ -66,40 +66,6 @@ export function combineQueries(query1: number, query2: number): number {
     }
 
     return Math.min(query1, query2);
-}
-
-/**
- * Takes data and returns values to be bound by
- * threshold. 
- */
-export function filterToThreshold(
-    rawData: [object, number][],
-    threshold: number = 100
-): object[] {
-    if (rawData.length === 0) {
-        return [];
-    }
-
-    // Sort the data for easier processing
-    const data = rawData.sort((a, b) => a[1] - b[1]);
-
-    const [firstResult, firstMetric] = data.shift()!;
-
-    const results = [firstResult];
-    let prevMetric = firstMetric;
-
-    while (data.length > 0) {
-        const [value, metric] = data.shift()!;
-        if (metric <= prevMetric
-            || results.length < threshold) {
-            results.push(value);
-            prevMetric = metric;
-        } else {
-            break;
-        }
-    }
-
-    return results;
 }
 
 /**
