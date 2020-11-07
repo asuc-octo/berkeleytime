@@ -1,7 +1,7 @@
 *.pyc
 *.DS_Store
 *.log
-venv
+venv*
 *.dump
 *.rdb
 .vagrant

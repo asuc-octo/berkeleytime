@@ -69,40 +69,6 @@ export function combineQueries(query1: number, query2: number): number {
 }
 
 /**
- * Takes data and returns values to be bound by
- * threshold. 
- */
-export function filterToThreshold(
-    rawData: [object, number][],
-    threshold: number = 100
-): object[] {
-    if (rawData.length === 0) {
-        return [];
-    }
-
-    // Sort the data for easier processing
-    const data = rawData.sort((a, b) => a[1] - b[1]);
-
-    const [firstResult, firstMetric] = data.shift()!;
-
-    const results = [firstResult];
-    let prevMetric = firstMetric;
-
-    while (data.length > 0) {
-        const [value, metric] = data.shift()!;
-        if (metric <= prevMetric
-            || results.length < threshold) {
-            results.push(value);
-            prevMetric = metric;
-        } else {
-            break;
-        }
-    }
-
-    return results;
-}
-
-/**
  * Normalizes a string for seraching
  */
 export function normalizeSearchTerm(value: string) {

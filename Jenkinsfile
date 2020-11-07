@@ -29,7 +29,7 @@ pipeline {
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh 'gcloud builds submit berkeleytime --tag ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT} --project berkeleytime-218606'
+        sh 'gcloud builds submit backend --tag ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT} --project berkeleytime-218606'
       }
     }
     stage('Build-Frontend-Stage') {
@@ -93,7 +93,7 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
       }
       steps {
         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh 'gcloud builds submit berkeleytime --tag ${BACKEND_PROD_GCR_PATH}:${GIT_COMMIT} --project berkeleytime-218606'
+        sh 'gcloud builds submit backend --tag ${BACKEND_PROD_GCR_PATH}:${GIT_COMMIT} --project berkeleytime-218606'
       }
     }
     stage('Build-Frontend-Prod') {
@@ -144,24 +144,24 @@ kubectl get pods
 kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
       }
     }
-    stage('Build-Sphinx-Docs') {
-      when {
-        branch "master"
-        anyOf {
-            changeset "berkeleytime/**"
-            changeset "Jenkinsfile"
-        }
-      }
-      steps {
-        git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
-        sh '''containerID=$(docker run -d -e ENVIRONMENT_NAME=LOCALHOST --entrypoint sleep ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT} 1000)
-docker cp /var/jenkins_home/workspace/berkeleytime_master $containerID:/bt
-docker exec $containerID sphinx-build -b html /bt /sphinxout
-rm -rf /var/jenkins_home/userContent/sphinx
-docker cp $containerID:/sphinxout /var/jenkins_home/userContent/sphinx
-docker kill $containerID'''
-      }
-    }
+//     stage('Build-Sphinx-Docs') {
+//       when {
+//         branch "master"
+//         anyOf {
+//             changeset "berkeleytime/**"
+//             changeset "Jenkinsfile"
+//         }
+//       }
+//       steps {
+//         git(url: env.GITHUB_URL, branch: env.BRANCH_NAME, credentialsId: 'GitHubAcc')
+//         sh '''containerID=$(docker run -d -e ENVIRONMENT_NAME=LOCALHOST --entrypoint sleep ${BACKEND_STAGE_GCR_PATH}:${GIT_COMMIT} 1000)
+// docker cp /var/jenkins_home/workspace/berkeleytime_master $containerID:/bt
+// docker exec $containerID sphinx-build -b html /bt /sphinxout
+// rm -rf /var/jenkins_home/userContent/sphinx
+// docker cp $containerID:/sphinxout /var/jenkins_home/userContent/sphinx
+// docker kill $containerID'''
+//       }
+//     }
     stage('Update-Data-Fetch-Image-Version') {
       when {
         branch "production"

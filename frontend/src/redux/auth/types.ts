@@ -1,7 +1,7 @@
 import { Action } from 'redux'
 
 /**
- * {     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InNteHUiLCJleHAiOjE2MDIyOTM1NzcsImVtYWlsIjoic214dUBiZXJrZWxleS5lZHUifQ.IFzeQQ452xAI4dtzdoQDNqv54RBP_ZgdB-yJbDtKLvA",     "new_user": false,     "user": {         "id": 1,         "user": {             "email": "smxu@berkeley.edu",             "first_name": "Shuming",             "last_name": "Xu"         },         "major": "Computer something",         "email_class_update": false,         "email_grade_update": false,         "email_enrollment_opening": false,         "email_berkeleytime_update": false,         "saved_classes": []     } }
+ * {    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InNteHUiLCJleHAiOjE2MDIyOTM1NzcsImVtYWlsIjoic214dUBiZXJrZWxleS5lZHUifQ.IFzeQQ452xAI4dtzdoQDNqv54RBP_ZgdB-yJbDtKLvA",    "new_user": false,    "user": {        "id": 1,        "user": {            "email": "smxu@berkeley.edu",            "first_name": "Shuming",            "last_name": "Xu"        },        "major": "Computer something",        "email_class_update": false,        "email_grade_update": false,        "email_enrollment_opening": false,        "email_berkeleytime_update": false,        "saved_classes": []    }}
  */
 
 export interface UserProfile {
@@ -16,7 +16,7 @@ export interface UserProfile {
 
 export interface AuthState {
   loading: boolean;
-  userProfile: UserProfile;
+  userProfile?: UserProfile;
   isLoggedIn: boolean;
 }
 
