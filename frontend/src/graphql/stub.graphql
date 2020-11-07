@@ -1,0 +1,14 @@
+# Ignore this file. This is just here to prevent errors
+query Stub {
+	allPlaylists {
+		edges {
+			node {
+				id,
+				name,
+				category,
+				semester,
+				year,
+			}
+		}
+	}
+}
