@@ -11,8 +11,8 @@ import { sortByAttribute, CourseSortAttribute } from 'utils/courses/sorting';
 
 type FilterResultsProps = {
   activePlaylists: string[]
-  selectCourse: (course: CourseType) => void,
-  selectedCourse: CourseType
+  selectCourse?: (course: CourseType) => void,
+  selectedCourse: CourseType | null
   sortBy: CourseSortAttribute
   query: string
 };
@@ -28,11 +28,12 @@ const FilterResults = ({
   query: rawQuery
 }: FilterResultsProps) => {
 
-  const { data, loading } = useGetCoursesForFilter({
-    variables: {
-      playlists: activePlaylists
-    }
-  });
+  // const { data, loading } = useGetCoursesForFilter({
+  //   variables: {
+  //     playlists: activePlaylists
+  //   }
+  // });
+  const { data, loading } = { data: [], loading: true };
 
   const courses: CourseType[] = data.something;
 

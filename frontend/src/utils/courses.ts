@@ -1,5 +1,6 @@
 import { PlaylistType } from "graphql/graphql";
 
+type FilterablePlaylist = Pick<PlaylistType, 'category' | 'id' | 'name'>;
 type FilterParameter = {
     value: string;
     label: string;
@@ -21,7 +22,7 @@ type Filters = {
  * category.
  */
 export function getCategoryFromPlaylists(
-    playlists: PlaylistType[],
+    playlists: FilterablePlaylist[],
     parameter: string,
     process: (label: string) => string = s => s
 ): FilterParameter[] {
@@ -40,7 +41,7 @@ export function getCategoryFromPlaylists(
  * takes a list of { label: ..., options: ... } since each option is
  * categorized under a section.  This returns the options lists for each filter dropdown.
  */
-export function playlistsToFilters(data: PlaylistType[]): Filters {
+export function playlistsToFilters(data: FilterablePlaylist[]): Filters {
     const requirements = [];
 
     requirements.push({

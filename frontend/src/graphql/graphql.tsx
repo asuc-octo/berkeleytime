@@ -3,7 +3,7 @@ import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 /** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
+export interface Scalars {
   ID: string;
   String: string;
   Boolean: boolean;
@@ -28,9 +28,9 @@ export type Scalars = {
    * schema (one of the key benefits of GraphQL).
    */
   JSONString: any;
-};
+}
 
-export type BerkeleytimeUserType = {
+export interface BerkeleytimeUserType {
   __typename?: 'BerkeleytimeUserType';
   id: Scalars['ID'];
   user: UserType;
@@ -40,10 +40,10 @@ export type BerkeleytimeUserType = {
   emailGradeUpdate: Scalars['Boolean'];
   emailEnrollmentOpening: Scalars['Boolean'];
   emailBerkeleytimeUpdate: Scalars['Boolean'];
-};
+}
 
 
-export type BerkeleytimeUserTypeSavedClassesArgs = {
+export interface BerkeleytimeUserTypeSavedClassesArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -64,9 +64,9 @@ export type BerkeleytimeUserTypeSavedClassesArgs = {
   waitlisted?: Maybe<Scalars['Int']>;
   openSeats?: Maybe<Scalars['Int']>;
   lastUpdated?: Maybe<Scalars['DateTime']>;
-};
+}
 
-export type CourseType = Node & {
+export interface CourseType extends Node {
   __typename?: 'CourseType';
   /** The ID of the object. */
   id: Scalars['ID'];
@@ -90,10 +90,10 @@ export type CourseType = Node & {
   gradeSet: GradeTypeConnection;
   playlistSet: PlaylistTypeConnection;
   berkeleytimeuserSet: Array<BerkeleytimeUserType>;
-};
+}
 
 
-export type CourseTypeSectionSetArgs = {
+export interface CourseTypeSectionSetArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -123,10 +123,10 @@ export type CourseTypeSectionSetArgs = {
   enrolledMax?: Maybe<Scalars['Int']>;
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
-};
+}
 
 
-export type CourseTypeGradeSetArgs = {
+export interface CourseTypeGradeSetArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -156,10 +156,10 @@ export type CourseTypeGradeSetArgs = {
   p?: Maybe<Scalars['Int']>;
   np?: Maybe<Scalars['Int']>;
   average?: Maybe<Scalars['Float']>;
-};
+}
 
 
-export type CourseTypePlaylistSetArgs = {
+export interface CourseTypePlaylistSetArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -169,27 +169,27 @@ export type CourseTypePlaylistSetArgs = {
   semester?: Maybe<Scalars['String']>;
   year?: Maybe<Scalars['String']>;
   courses?: Maybe<Array<Maybe<Scalars['ID']>>>;
-};
+}
 
-export type CourseTypeConnection = {
+export interface CourseTypeConnection {
   __typename?: 'CourseTypeConnection';
   /** Pagination data for this connection. */
   pageInfo: PageInfo;
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<CourseTypeEdge>>;
-};
+}
 
 /** A Relay edge containing a `CourseType` and its cursor. */
-export type CourseTypeEdge = {
+export interface CourseTypeEdge {
   __typename?: 'CourseTypeEdge';
   /** The item at the end of the edge */
   node?: Maybe<CourseType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
-};
+}
 
 
-export type EnrollmentType = Node & {
+export interface EnrollmentType extends Node {
   __typename?: 'EnrollmentType';
   /** The ID of the object. */
   id: Scalars['ID'];
@@ -199,32 +199,32 @@ export type EnrollmentType = Node & {
   enrolledMax?: Maybe<Scalars['Int']>;
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
-};
+}
 
-export type EnrollmentTypeConnection = {
+export interface EnrollmentTypeConnection {
   __typename?: 'EnrollmentTypeConnection';
   /** Pagination data for this connection. */
   pageInfo: PageInfo;
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<EnrollmentTypeEdge>>;
-};
+}
 
 /** A Relay edge containing a `EnrollmentType` and its cursor. */
-export type EnrollmentTypeEdge = {
+export interface EnrollmentTypeEdge {
   __typename?: 'EnrollmentTypeEdge';
   /** The item at the end of the edge */
   node?: Maybe<EnrollmentType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
-};
+}
 
-export type FormConfigType = {
+export interface FormConfigType {
   __typename?: 'FormConfigType';
   field?: Maybe<Scalars['JSONString']>;
-};
+}
 
 
-export type GradeType = Node & {
+export interface GradeType extends Node {
   __typename?: 'GradeType';
   /** The ID of the object. */
   id: Scalars['ID'];
@@ -253,66 +253,66 @@ export type GradeType = Node & {
   p?: Maybe<Scalars['Int']>;
   np?: Maybe<Scalars['Int']>;
   average: Scalars['Float'];
-};
+}
 
-export type GradeTypeConnection = {
+export interface GradeTypeConnection {
   __typename?: 'GradeTypeConnection';
   /** Pagination data for this connection. */
   pageInfo: PageInfo;
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<GradeTypeEdge>>;
-};
+}
 
 /** A Relay edge containing a `GradeType` and its cursor. */
-export type GradeTypeEdge = {
+export interface GradeTypeEdge {
   __typename?: 'GradeTypeEdge';
   /** The item at the end of the edge */
   node?: Maybe<GradeType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
-};
+}
 
 
-export type Mutation = {
+export interface Mutation {
   __typename?: 'Mutation';
   /** Login mutation using graphql_jwt  */
   login?: Maybe<ObtainJsonWebToken>;
   verifyToken?: Maybe<Verify>;
   refreshToken?: Maybe<Refresh>;
-};
+}
 
 
-export type MutationLoginArgs = {
+export interface MutationLoginArgs {
   tokenId?: Maybe<Scalars['String']>;
-};
+}
 
 
-export type MutationVerifyTokenArgs = {
+export interface MutationVerifyTokenArgs {
   token?: Maybe<Scalars['String']>;
-};
+}
 
 
-export type MutationRefreshTokenArgs = {
+export interface MutationRefreshTokenArgs {
   token?: Maybe<Scalars['String']>;
-};
+}
 
 /** An object with an ID */
-export type Node = {
+export interface Node {
   /** The ID of the object. */
   id: Scalars['ID'];
-};
+}
 
 /** Login mutation using graphql_jwt  */
-export type ObtainJsonWebToken = {
+export interface ObtainJsonWebToken {
   __typename?: 'ObtainJSONWebToken';
   payload: Scalars['GenericScalar'];
   refreshExpiresIn: Scalars['Int'];
   user?: Maybe<BerkeleytimeUserType>;
   newUser?: Maybe<Scalars['Boolean']>;
-};
+}
 
 /** The Relay compliant `PageInfo` type, containing data necessary to paginate this connection. */
-export type PageInfo = {
+export interface PageInfo {
   __typename?: 'PageInfo';
   /** When paginating forwards, are there more items? */
   hasNextPage: Scalars['Boolean'];
@@ -322,9 +322,9 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['String']>;
   /** When paginating forwards, the cursor to continue. */
   endCursor?: Maybe<Scalars['String']>;
-};
+}
 
-export type PlaylistType = Node & {
+export interface PlaylistType extends Node {
   __typename?: 'PlaylistType';
   /** The ID of the object. */
   id: Scalars['ID'];
@@ -333,10 +333,10 @@ export type PlaylistType = Node & {
   semester: Scalars['String'];
   year: Scalars['String'];
   courses: CourseTypeConnection;
-};
+}
 
 
-export type PlaylistTypeCoursesArgs = {
+export interface PlaylistTypeCoursesArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -357,26 +357,26 @@ export type PlaylistTypeCoursesArgs = {
   waitlisted?: Maybe<Scalars['Int']>;
   openSeats?: Maybe<Scalars['Int']>;
   lastUpdated?: Maybe<Scalars['DateTime']>;
-};
+}
 
-export type PlaylistTypeConnection = {
+export interface PlaylistTypeConnection {
   __typename?: 'PlaylistTypeConnection';
   /** Pagination data for this connection. */
   pageInfo: PageInfo;
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<PlaylistTypeEdge>>;
-};
+}
 
 /** A Relay edge containing a `PlaylistType` and its cursor. */
-export type PlaylistTypeEdge = {
+export interface PlaylistTypeEdge {
   __typename?: 'PlaylistTypeEdge';
   /** The item at the end of the edge */
   node?: Maybe<PlaylistType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
-};
+}
 
-export type Query = {
+export interface Query {
   __typename?: 'Query';
   user?: Maybe<BerkeleytimeUserType>;
   allPlaylists?: Maybe<PlaylistTypeConnection>;
@@ -395,10 +395,10 @@ export type Query = {
   /** The ID of the object */
   section?: Maybe<SectionType>;
   allSections?: Maybe<SectionTypeConnection>;
-};
+}
 
 
-export type QueryAllPlaylistsArgs = {
+export interface QueryAllPlaylistsArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -408,15 +408,15 @@ export type QueryAllPlaylistsArgs = {
   semester?: Maybe<Scalars['String']>;
   year?: Maybe<Scalars['String']>;
   courses?: Maybe<Array<Maybe<Scalars['ID']>>>;
-};
+}
 
 
-export type QueryPlaylistArgs = {
+export interface QueryPlaylistArgs {
   id: Scalars['ID'];
-};
+}
 
 
-export type QueryAllGradesArgs = {
+export interface QueryAllGradesArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -446,15 +446,15 @@ export type QueryAllGradesArgs = {
   p?: Maybe<Scalars['Int']>;
   np?: Maybe<Scalars['Int']>;
   average?: Maybe<Scalars['Float']>;
-};
+}
 
 
-export type QueryGradeArgs = {
+export interface QueryGradeArgs {
   id: Scalars['ID'];
-};
+}
 
 
-export type QueryAllEnrollmentsArgs = {
+export interface QueryAllEnrollmentsArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -465,20 +465,20 @@ export type QueryAllEnrollmentsArgs = {
   enrolledMax?: Maybe<Scalars['Int']>;
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
-};
+}
 
 
-export type QueryEnrollmentArgs = {
+export interface QueryEnrollmentArgs {
   id: Scalars['ID'];
-};
+}
 
 
-export type QueryCourseArgs = {
+export interface QueryCourseArgs {
   id: Scalars['ID'];
-};
+}
 
 
-export type QueryAllCoursesArgs = {
+export interface QueryAllCoursesArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -499,15 +499,15 @@ export type QueryAllCoursesArgs = {
   waitlisted?: Maybe<Scalars['Int']>;
   openSeats?: Maybe<Scalars['Int']>;
   lastUpdated?: Maybe<Scalars['DateTime']>;
-};
+}
 
 
-export type QuerySectionArgs = {
+export interface QuerySectionArgs {
   id: Scalars['ID'];
-};
+}
 
 
-export type QueryAllSectionsArgs = {
+export interface QueryAllSectionsArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -537,15 +537,15 @@ export type QueryAllSectionsArgs = {
   enrolledMax?: Maybe<Scalars['Int']>;
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
-};
+}
 
-export type Refresh = {
+export interface Refresh {
   __typename?: 'Refresh';
   payload: Scalars['GenericScalar'];
   refreshExpiresIn: Scalars['Int'];
-};
+}
 
-export type SectionType = Node & {
+export interface SectionType extends Node {
   __typename?: 'SectionType';
   /** The ID of the object. */
   id: Scalars['ID'];
@@ -575,10 +575,10 @@ export type SectionType = Node & {
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
   enrollmentSet: EnrollmentTypeConnection;
-};
+}
 
 
-export type SectionTypeEnrollmentSetArgs = {
+export interface SectionTypeEnrollmentSetArgs {
   before?: Maybe<Scalars['String']>;
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
@@ -589,26 +589,26 @@ export type SectionTypeEnrollmentSetArgs = {
   enrolledMax?: Maybe<Scalars['Int']>;
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
-};
+}
 
-export type SectionTypeConnection = {
+export interface SectionTypeConnection {
   __typename?: 'SectionTypeConnection';
   /** Pagination data for this connection. */
   pageInfo: PageInfo;
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<SectionTypeEdge>>;
-};
+}
 
 /** A Relay edge containing a `SectionType` and its cursor. */
-export type SectionTypeEdge = {
+export interface SectionTypeEdge {
   __typename?: 'SectionTypeEdge';
   /** The item at the end of the edge */
   node?: Maybe<SectionType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
-};
+}
 
-export type UserType = {
+export interface UserType {
   __typename?: 'UserType';
   id: Scalars['ID'];
   password: Scalars['String'];
@@ -626,12 +626,12 @@ export type UserType = {
   isActive: Scalars['Boolean'];
   dateJoined: Scalars['DateTime'];
   berkeleytimeuser?: Maybe<BerkeleytimeUserType>;
-};
+}
 
-export type Verify = {
+export interface Verify {
   __typename?: 'Verify';
   payload: Scalars['GenericScalar'];
-};
+}
 
 export type GetFiltersQueryVariables = Exact<{ [key: string]: never; }>;
 

@@ -11,18 +11,20 @@ import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
 
-import { useGetFiltersQuery } from '../../graphql/graphql';
+import { CourseType, useGetFiltersQuery } from '../../graphql/graphql';
 import { playlistsToFilters } from '../../utils/courses';
+import { ReduxState } from 'redux/store';
+import { CourseSortAttribute } from 'utils/courses/sorting';
 
 
 const Catalog = () => {
-  const isMobile = useSelector(state => state.common.isMobile);
+  const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
   const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState("relevance");
+  const [sortBy, setSortBy] = useState<CourseSortAttribute>("relevance");
   const [showDescription, setShowDescription] = useState(false); // The course modal on mobile
-  const [activePlaylists, setActivePlaylists] = useState([]); // The active filters
-  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [activePlaylists, setActivePlaylists] = useState<string[]>([]); // The active filters
+  const [selectedCourse, setSelectedCourse] = useState<CourseType | null>(null);
 
   const history = useHistory();
   const location = useLocation();
@@ -41,7 +43,7 @@ const Catalog = () => {
   /**
    * Adds and removes playlists from the active playlists
    */
-  function modifyFilters(add, remove) {
+  function modifyFilters(add: string[], remove: string[]) {
     setActivePlaylists(currentPlaylists =>
       difference(union(currentPlaylists, add), remove));
   }
@@ -50,7 +52,7 @@ const Catalog = () => {
    * Handler function to reset all filters to the default
    */
   function resetFilters() {
-    modifyActivePlaylists([]);
+    setActivePlaylists([]);
     setSearch("");
     setSortBy("relevance");
   }
@@ -58,13 +60,13 @@ const Catalog = () => {
   /**
    * Sets the selected course and updates the url
    */
-  function selectCourse(course) {
+  function selectCourse(course: CourseType) {
     setShowDescription(true); //show modal if on mobile
-    history.replace(`/catalog/${course.abbreviation}/${course.course_number}/`);
+    history.replace(`/catalog/${course.abbreviation}/${course.courseNumber}/`);
     setSelectedCourse(course);
   }
 
-  const allPlaylists = data?.allPlaylists.edges.map(edge => edge.node);
+  const allPlaylists = data?.allPlaylists?.edges.map(edge => edge!.node!);
   const filters = allPlaylists && playlistsToFilters(allPlaylists);
 
   return (
@@ -75,8 +77,8 @@ const Catalog = () => {
             !loading ? (
               <Filter
                 playlists={filters}
-                searchHandler={query => setSearch(query)}
-                sortHandler={sort => setSortBy(sort)}
+                searchHandler={(query: string) => setSearch(query)}
+                sortHandler={(sort: CourseSortAttribute) => setSortBy(sort)}
                 modifyFilters={modifyFilters}
                 resetFilters={resetFilters}
                 isMobile={isMobile}
@@ -86,7 +88,7 @@ const Catalog = () => {
                 <div className="filter-loading">
                   <BeatLoader
                     color="#579EFF"
-                    size="15"
+                    size={15}
                     sizeUnit="px"
                   />
                 </div>
@@ -108,13 +110,11 @@ const Catalog = () => {
             !isMobile ? (
               <ClassDescription
                 course={selectedCourse}
-                selectCourse={selectCourse}
                 modifyFilters={modifyFilters}
               />
             ) : (
               <ClassDescriptionModal
                 course={selectedCourse}
-                selectCourse={selectCourse}
                 show={showDescription}
                 hideModal={() => setShowDescription(false)}
                 modifyFilters={modifyFilters}
