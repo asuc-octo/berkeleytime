@@ -26,3 +26,25 @@
 
     height: 50px;
 }
+
+.profile-title{
+    display:flex;
+    position:relative;
+    align-items: center;
+}
+
+.edit-button{
+    background-color: Transparent;
+    border: none;
+    margin-top: 12px;
+    margin-left: 6px;
+}
+
+.edit-button:focus{
+    outline: none;
+    box-shadow: none;
+}
+
+.edit-pencil{
+    height:24px;
+}
