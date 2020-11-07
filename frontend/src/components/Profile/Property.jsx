@@ -40,7 +40,7 @@ class Property extends PureComponent {
             components={{
               IndicatorSeparator: () => null
             }}
-            style={style}
+            styles={style}
           />
         </div>;
         break;
