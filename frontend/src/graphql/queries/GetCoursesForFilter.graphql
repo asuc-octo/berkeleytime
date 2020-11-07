@@ -1,0 +1,13 @@
+query GetCoursesForFilter($playlists: [String]) {
+    coursesByPlaylists(playlist_ids: $playlists) {
+        edges {
+            node {
+                id
+                abbreviation
+                courseNumber
+                units
+                openSeats
+            }
+        }
+    }
+}
