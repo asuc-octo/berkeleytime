@@ -1,0 +1,11 @@
+overwrite: true
+schema: ./schema.graphql
+documents:
+  # - "src/**/!(*.d).{ts,tsx}" # Scans for inline GraphQL queries.
+  - "src/**/*.graphql"
+generates:
+  src/graphql/graphql.tsx:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
