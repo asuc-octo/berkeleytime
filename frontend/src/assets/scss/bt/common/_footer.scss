@@ -2,32 +2,34 @@ footer {
   background-color: $bt-footer;
   border-top: 1.5px solid $bt-light-border-grey;
 
-  .footer-col {
+  .footer-col-container {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
 
-    @include xs {
-      align-items: center;
-    }
-
-    h6 {
-      color: $bt-grey;
-      text-transform: uppercase;
-    }
-
-    a {
-      color: $bt-light-grey;
-
-      &:hover {
-        color: $bt-blue;
+    .footer-col {
+      display: flex;
+      flex-direction: column;
+  
+      h6 {
+        color: $bt-grey;
+        text-transform: uppercase;
       }
-
-      .footer-new {
-        font-size: 14px;
-        color: $bt-white !important;
-        background-color: $bt-blue;
-        padding: 2px 4px;
-        border-radius: 6px;
+  
+      a {
+        color: $bt-light-grey;
+  
+        &:hover {
+          color: $bt-blue;
+        }
+  
+        .footer-new {
+          @include font-size-responsive(14px);
+  
+          color: $bt-white !important;
+          background-color: $bt-blue;
+          padding: 2px 4px;
+          border-radius: 6px;
+        }
       }
     }
   }
