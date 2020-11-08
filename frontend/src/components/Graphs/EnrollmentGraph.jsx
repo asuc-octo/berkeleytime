@@ -65,72 +65,74 @@ export default function EnrollmentGraph({
   };
   return (
     <div>
-      <ResponsiveContainer width={isMobile ? 500 : "100%"} height={400}>
-        <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }}>
+      <div className="enrollment-recharts-container">
+        <ResponsiveContainer width={isMobile ? 500 : "100%"} height={400}>
+          <LineChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }}>
 
-          <XAxis dataKey="name" interval={19} />
-          <YAxis type="number" unit="%"
-              domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
-              ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}
-          />
-
-          <Tooltip
-            formatter={(value) => `${value}%`}
-            labelFormatter={label => `Day ${label - 1}`}
-            cursor={graphEmpty ? false : true}
-          />
-
-          {!graphEmpty && enrollmentData.map((item, i) => (
-            <Line
-              name={`${item.title} • ${item.section_name}`}
-              type="monotone"
-              dataKey={item.id}
-              stroke={vars.colors[item.colorId]}
-              strokeWidth={3}
-              dot={false}
-              activeDot={{ onMouseOver: updateLineHover }}
-              connectNulls
+            <XAxis dataKey="name" interval={19} />
+            <YAxis type="number" unit="%"
+                domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
+                ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}
             />
-          ))}
-          {!graphEmpty &&
-            <ReferenceLine
-              x={enrollmentData[0].telebears.phase2_start_day}
-              stroke="black"
-              strokeDasharray="3 3"
-            >
-              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                {`Phase II Start (${selectedCourses[0].semester})`}
-              </Label>
-            </ReferenceLine>
-          }
-          {!graphEmpty &&
-            <ReferenceLine
-              x={enrollmentData[0].telebears.adj_start_day}
-              stroke="black"
-              strokeDasharray="3 3"
-            >
-              <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-                {`Adjustment Start (${selectedCourses[0].semester})`}
-              </Label>
-            </ReferenceLine>
+
+            <Tooltip
+              formatter={(value) => `${value}%`}
+              labelFormatter={label => `Day ${label - 1}`}
+              cursor={graphEmpty ? false : true}
+            />
+
+            {!graphEmpty && enrollmentData.map((item, i) => (
+              <Line
+                name={`${item.title} • ${item.section_name}`}
+                type="monotone"
+                dataKey={item.id}
+                stroke={vars.colors[item.colorId]}
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ onMouseOver: updateLineHover }}
+                connectNulls
+              />
+            ))}
+            {!graphEmpty &&
+              <ReferenceLine
+                x={enrollmentData[0].telebears.phase2_start_day}
+                stroke="black"
+                strokeDasharray="3 3"
+              >
+                <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                  {`Phase II Start (${selectedCourses[0].semester})`}
+                </Label>
+              </ReferenceLine>
+            }
+            {!graphEmpty &&
+              <ReferenceLine
+                x={enrollmentData[0].telebears.adj_start_day}
+                stroke="black"
+                strokeDasharray="3 3"
+              >
+                <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+                  {`Adjustment Start (${selectedCourses[0].semester})`}
+                </Label>
+              </ReferenceLine>
+            }
+
+          {isMobile &&
+            <Legend
+              height={10}
+              horizontalAlign="left"
+              layout="vertical"
+              iconType="circle"
+            />
           }
 
-        {isMobile &&
-          <Legend
-            height={10}
-            horizontalAlign="left"
-            layout="vertical"
-            iconType="circle"
-          />
-        }
-
-        </LineChart>
-      </ResponsiveContainer>
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
 
       { graphEmpty &&
         <EmptyLabel />
       }
-
+      
     </div>
   );
 }

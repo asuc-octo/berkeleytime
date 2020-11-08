@@ -35,16 +35,15 @@ const MobileTooltip = props => {
   const {active, payload, label } = props;
   if (active && payload) {
     const denominator = props.denominator;
-    const info = payload[0];
-    const numerator = info ? Math.round(denominator * (info.value / 100)) : 0;
-    let percentile = props.selectedPercentiles;
-    let percentileLow = percentile ? percentileToString(percentile.percentile_low) : 0;
-    let percentileHigh = percentile ? percentileToString(percentile.percentile_high): 0;
-    let courseName = info ? info.name.split('/')[0] : "";
+    const percentile = props.selectedPercentiles;
+    const numerator = percentile ? props.selectedPercentiles.numerator : 0;
+    const percentileLow = percentile ? percentileToString(percentile.percentile_low) : 0;
+    const percentileHigh = percentile ? percentileToString(percentile.percentile_high): 0;
+
     return (
       <div className="grades-graph-tooltip">
         <h6> Grade: {label} </h6>
-        <p style={{ color: props.color }}> {courseName} </p>
+        <p style={{ color: props.color }}> {props.course} • {props.semester} • {props.instructor}</p>
         <p> {percentileLow} - {percentileHigh} percentile </p>
         <p>{numerator}/{denominator}</p>
       </div>
@@ -56,7 +55,7 @@ const MobileTooltip = props => {
 const PercentageLabel = props => {
     //todo: change text color
     const {x, y, width, value} = props
-    let percentage = value === 0 ? "": (value < 1 ? "<1%" : Math.round(value) + "%");
+    let percentage = value === 0 ? "": (value < 1 ? "<1%" : Math.round(value * 10) / 10 + "%");
     return (
       <text
         x={x + width}
@@ -70,83 +69,81 @@ const PercentageLabel = props => {
   };
 
 export default function GradesGraph({
-  graphData, gradesData, updateBarHover, updateGraphHover, selectedPercentiles, denominator, color, isMobile, graphEmpty,
+  graphData, gradesData, updateBarHover, updateGraphHover, course, semester, instructor, selectedPercentiles, denominator, color, isMobile, graphEmpty,
 }) {
 
   let numClasses = gradesData.length;
 
   return (
       <div>
-      {!isMobile ?
+      {!isMobile ? (
         <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }} >
-          <XAxis dataKey="name" />
-          { !graphEmpty ?
-            <YAxis type="number" unit="%" /> : <YAxis type="number" unit="%" domain={[0, 100]}/>
-          }
+          <BarChart data={graphData} onMouseMove={updateGraphHover} margin={{ top: 0, right: 0, left: -15, bottom: 0 }} >
+            <XAxis dataKey="name" />
+            { !graphEmpty ?
+              <YAxis type="number" unit="%" /> : <YAxis type="number" unit="%" domain={[0, 100]}/>
+            }
 
-          <Tooltip
-            formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-            cursor={graphEmpty ? {fill: '#fff'} : {fill: '#EAEAEA'}}
-          />
-
-          {!graphEmpty && gradesData.map((item, i) => (
-            <Bar
-              name={`${item.title} • ${item.semester} • ${item.instructor}`}
-              dataKey={item.id}
-              fill={vars.colors[item.colorId]}
-              onMouseEnter={updateBarHover}
-              radius={[4, 4, 0, 0]}
-            />
-          ))}
-        </BarChart>
-        </ResponsiveContainer> :
-        <ResponsiveContainer width="100%" height={!graphEmpty ? numClasses*750 : 600} >
-        <BarChart
-          data={graphData}
-          onMouseMove={updateGraphHover}
-          layout="vertical"
-          barSize={30}
-          margin={{left: -30, bottom: 50}}
-        >
-
-          { !graphEmpty ?
-            <XAxis type="number" unit="%" /> : <XAxis type="number" unit="%" domain={[0, 100]}/>
-          }
-          <YAxis dataKey="name" type="category" />
-          { !graphEmpty ?
             <Tooltip
-              content={
-                <MobileTooltip
-                  selectedPercentiles={selectedPercentiles}
-                  color={color}
-                  denominator={denominator}
-                />
-              }
-            /> :
-              <Tooltip
-                cursor={{fill: '#fff'}}
-                content={<EmptyLabel />}
-                position={{ x: 80, y: 250 }}
-                wrapperStyle={{visibility: 'visible'}}
-              />
-          }
-          {gradesData.map((item, i) => (
-            <Bar
-              name={`${item.title} • ${item.semester} • ${item.instructor}`}
-              dataKey={item.id}
-              fill={vars.colors[item.colorId]}
-              onMouseEnter={updateBarHover}
-              label={<PercentageLabel />}
+              formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+              cursor={graphEmpty ? {fill: '#fff'} : {fill: '#EAEAEA'}}
             />
-          ))}
-          <Legend
-            horizontalAlign="left"
+
+            {!graphEmpty && gradesData.map((item, i) => (
+              <Bar
+                name={`${item.title} • ${item.semester} • ${item.instructor}`}
+                dataKey={item.id}
+                fill={vars.colors[item.colorId]}
+                onMouseEnter={updateBarHover}
+                radius={[4, 4, 0, 0]}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <ResponsiveContainer width="95%" height={!graphEmpty ? numClasses*500 : 600} >
+          <BarChart
+            data={graphData}
+            onMouseMove={updateGraphHover}
             layout="vertical"
-            iconType="circle"
-          />
-        </BarChart>
-      </ResponsiveContainer>
+            barSize={30}
+            margin={{left: -30, bottom: 50}}
+          >
+            { !graphEmpty ?
+              <XAxis type="number" unit="%" /> : <XAxis type="number" unit="%" domain={[0, 100]}/>
+            }
+            <YAxis dataKey="name" type="category" />
+            { !graphEmpty ?
+              <Tooltip
+                content={
+                  <MobileTooltip
+                    course={course}
+                    semester={semester}
+                    instructor={instructor}
+                    selectedPercentiles={selectedPercentiles}
+                    color={color}
+                    denominator={denominator}
+                  />
+                }
+              /> : null
+            }
+            {gradesData.map((item, i) => (
+              <Bar
+                name={`${item.title} • ${item.semester} • ${item.instructor}`}
+                dataKey={item.id}
+                fill={vars.colors[item.colorId]}
+                onMouseEnter={updateBarHover}
+                label={<PercentageLabel />}
+              />
+            ))}
+            <Legend
+              horizontalAlign="left"
+              layout="vertical"
+              iconType="circle"
+            />
+          </BarChart>
+        </ResponsiveContainer>
+       )
       }
 
       { graphEmpty &&
