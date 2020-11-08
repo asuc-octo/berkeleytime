@@ -1,0 +1,7 @@
+fragment Filter on PlaylistType {
+  id
+  name
+  category
+  semester
+  year
+}

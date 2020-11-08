@@ -11,8 +11,8 @@ import FilterResults from '../../components/Catalog/FilterResults';
 import ClassDescription from '../../components/ClassDescription/ClassDescription';
 import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
 
-import { CourseType, useGetFiltersQuery } from '../../graphql/graphql';
-import { playlistsToFilters } from '../../utils/courses';
+import { CourseOverviewFragment, CourseType, useGetFiltersQuery } from '../../graphql/graphql';
+import { playlistsToFilters } from '../../utils/playlist';
 import { ReduxState } from 'redux/store';
 import { CourseSortAttribute } from 'utils/courses/sorting';
 
@@ -24,7 +24,7 @@ const Catalog = () => {
   const [sortBy, setSortBy] = useState<CourseSortAttribute>("relevance");
   const [showDescription, setShowDescription] = useState(false); // The course modal on mobile
   const [activePlaylists, setActivePlaylists] = useState<string[]>([]); // The active filters
-  const [selectedCourse, setSelectedCourse] = useState<CourseType | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<CourseOverviewFragment | null>(null); // Selected course ID
 
   const history = useHistory();
   const location = useLocation();
@@ -60,7 +60,7 @@ const Catalog = () => {
   /**
    * Sets the selected course and updates the url
    */
-  function selectCourse(course: CourseType) {
+  function selectCourse(course: CourseOverviewFragment) {
     setShowDescription(true); //show modal if on mobile
     history.replace(`/catalog/${course.abbreviation}/${course.courseNumber}/`);
     setSelectedCourse(course);
@@ -107,18 +107,20 @@ const Catalog = () => {
         </Col>
         <Col md={6} lg={4} xl={6} className="catalog-description-column">
           {
-            !isMobile ? (
-              <ClassDescription
-                course={selectedCourse}
-                modifyFilters={modifyFilters}
-              />
-            ) : (
-              <ClassDescriptionModal
-                course={selectedCourse}
-                show={showDescription}
-                hideModal={() => setShowDescription(false)}
-                modifyFilters={modifyFilters}
-              />
+            selectedCourse !== null && (
+              !isMobile ? (
+                <ClassDescription
+                  courseId={selectedCourse.id}
+                  modifyFilters={modifyFilters}
+                />
+              ) : (
+                <ClassDescriptionModal
+                  course={selectedCourse}
+                  show={showDescription}
+                  hideModal={() => setShowDescription(false)}
+                  modifyFilters={modifyFilters}
+                />
+              )
             )
           }
         </Col>

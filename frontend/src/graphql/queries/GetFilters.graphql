@@ -2,11 +2,7 @@ query GetFilters {
   allPlaylists {
     edges {
       node {
-        id
-        name
-        category
-        semester
-        year
+        ...Filter
       }
     }
   }

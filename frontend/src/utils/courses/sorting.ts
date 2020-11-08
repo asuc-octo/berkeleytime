@@ -1,4 +1,4 @@
-import { CourseType } from "graphql/graphql";
+import { CourseOverviewFragment } from "graphql/graphql";
 
 export type CourseSortAttribute =
     | "relevance"
@@ -7,7 +7,8 @@ export type CourseSortAttribute =
     | "open_seats"
     | "enrolled_percentage";
 
-type CourseComparator = (courseA: CourseType, courseB: CourseType) => number;
+export type SortableCourse = CourseOverviewFragment;
+type CourseComparator = (courseA: SortableCourse, courseB: SortableCourse) => number;
 
 
 /**
@@ -25,7 +26,7 @@ export const compareDepartmentName: CourseComparator = (courseA, courseB) => {
  * search-filtered.
  */
 export const compareRelevance: CourseComparator = (courseA, courseB) => {
-    return compareAverageGrade(courseA, courseB);
+    return 0;
 }
 
 /**
@@ -43,7 +44,7 @@ export const compareAverageGrade: CourseComparator = (courseA, courseB) => {
  */
 export const compareOpenSeats: CourseComparator = (courseA, courseB) => {
     return (
-        courseB.openSeats - courseA.openSeats ||
+        courseB.openSeats! - courseA.openSeats! ||
         compareDepartmentName(courseA, courseB)
     );
 }
@@ -58,7 +59,7 @@ export const compareEnrollmentPercentage: CourseComparator = (courseA, courseB) 
         courseB.enrolledPercentage !== -1
     ) {
         return (
-            courseA.enrolledPercentage - courseB.enrolledPercentage ||
+            courseA.enrolledPercentage! - courseB.enrolledPercentage! ||
             compareDepartmentName(courseA, courseB)
         );
     } else if (
@@ -67,7 +68,7 @@ export const compareEnrollmentPercentage: CourseComparator = (courseA, courseB) 
     ) {
         return compareDepartmentName(courseA, courseB);
     } else {
-        return courseB.enrolledPercentage - courseA.enrolledPercentage;
+        return courseB.enrolledPercentage! - courseA.enrolledPercentage!;
     }
 }
 

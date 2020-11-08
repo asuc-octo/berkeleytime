@@ -1,13 +1,15 @@
-import { CourseType } from "graphql/graphql";
+import { CourseOverviewFragment, CourseType } from "graphql/graphql";
 import { combineQueries, normalizeSearchTerm, search } from "utils/search";
+
+export type SearchableCourse = CourseOverviewFragment;
 
 /**
  * Applies search query over list of courses
  */
-export function searchCourses(courses: CourseType[], rawQuery: string): CourseType[] {
+export function searchCourses(courses: SearchableCourse[], rawQuery: string): SearchableCourse[] {
     const query = normalizeSearchTerm(rawQuery);
     const results = courses
-      .map<[CourseType, number]>((course) => [
+      .map<[SearchableCourse, number]>((course) => [
         course,
         combineQueries(
           search(query, getFullCourseCode(course), 1),
@@ -24,7 +26,7 @@ export function searchCourses(courses: CourseType[], rawQuery: string): CourseTy
 /**
  * Course object to a fully-descriptive course search string.
  */
-export function getFullCourseCode(course: CourseType): string {
+export function getFullCourseCode(course: SearchableCourse): string {
     const searchComponents = [course.abbreviation, course.courseNumber];
     return searchComponents.join(" ").toLowerCase();
 }

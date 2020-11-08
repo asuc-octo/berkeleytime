@@ -168,6 +168,7 @@
           transition: .2s;
           &:hover {
             background-color: #d4d4d442;
+            cursor: var(--section-cursor) auto;
           }
         }
 
