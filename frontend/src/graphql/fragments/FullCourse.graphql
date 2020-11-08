@@ -1,0 +1,49 @@
+fragment FullCourse on CourseType {
+  title
+  units
+  waitlisted
+  openSeats
+  letterAverage
+  lastUpdated
+  id
+  hasEnrollment
+  gradeAverage
+  enrolledPercentage
+  enrolledMax
+  courseNumber
+  department
+  description
+  enrolled
+  abbreviation
+  prerequisites
+
+  playlistSet {
+    edges {
+      node {
+        category
+        id
+        name
+        semester
+        year
+      }
+    }
+  }
+
+  sectionSet {
+    edges {
+      node {
+        ccn
+        kind
+        instructor
+        startTime
+        endTime
+        enrolled
+        enrolledMax
+        locationName
+        waitlisted
+        waitlistedMax
+        days
+      }
+    }
+  }
+}

@@ -5,14 +5,14 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 
 import FilterCard from './FilterCard';
 
-import { CourseType, useGetCoursesForFilter } from '../../graphql/graphql';
-import { searchCourses } from 'utils/courses/search';
+import { CourseOverviewFragment, CourseType, useGetCoursesForFilterQuery } from '../../graphql/graphql';
+import { searchCourses, SearchableCourse } from 'utils/courses/search';
 import { sortByAttribute, CourseSortAttribute } from 'utils/courses/sorting';
 
 type FilterResultsProps = {
   activePlaylists: string[]
-  selectCourse?: (course: CourseType) => void,
-  selectedCourse: CourseType | null
+  selectCourse?: (course: CourseOverviewFragment) => void,
+  selectedCourse: CourseOverviewFragment | null
   sortBy: CourseSortAttribute
   query: string
 };
@@ -28,26 +28,24 @@ const FilterResults = ({
   query: rawQuery
 }: FilterResultsProps) => {
 
-  // const { data, loading } = useGetCoursesForFilter({
-  //   variables: {
-  //     playlists: activePlaylists
-  //   }
-  // });
-  const { data, loading } = { data: [], loading: true };
+  const { data, loading } = useGetCoursesForFilterQuery({
+    variables: {
+      // playlists: activePlaylists
+    }
+  });
 
-  const courses: CourseType[] = data.something;
 
-  let sortedCourses: CourseType[] = [];
+  let sortedCourses: CourseOverviewFragment[] = [];
   if (!loading) {
+    const courses = data!.allCourses!.edges.map(edge => edge!.node!);
+
     // If we're using a "Relevance" search *and* there's a search query, we'll
     // use the search text-distance as the sorting metric.
     const hasQuery = rawQuery.trim() !== "";
     if (hasQuery) {
       // TODO: consider memoizing if this is slow.
       sortedCourses = searchCourses(courses, rawQuery);
-    }
-
-    if (sortBy !== 'relevance') {
+    } else {
       sortedCourses = courses.sort(sortByAttribute(sortBy));
     }
   }
@@ -56,7 +54,7 @@ const FilterResults = ({
     courses: sortedCourses,
     sortBy,
     selectCourse: selectCourse,
-    selectedCourseId: selectedCourse?.id,
+    selectedCourse
   };
 
   return (
@@ -75,9 +73,9 @@ const FilterResults = ({
                   height={height}
                   width={width}
                   itemData={courseCardProps}
-                  itemCount={courses.length}
+                  itemCount={sortedCourses.length}
                   itemSize={110}
-                  itemKey={(index) => courses[index].id}
+                  itemKey={(index) => sortedCourses[index].id}
                 >
                   {FilterCard}
                 </FixedSizeList>

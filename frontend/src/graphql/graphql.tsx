@@ -633,6 +633,70 @@ export interface Verify {
   payload: Scalars['GenericScalar'];
 }
 
+export type CourseOverviewFragment = (
+  { __typename?: 'CourseType' }
+  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'units'>
+);
+
+export type FilterFragment = (
+  { __typename?: 'PlaylistType' }
+  & Pick<PlaylistType, 'id' | 'name' | 'category' | 'semester' | 'year'>
+);
+
+export type FullCourseFragment = (
+  { __typename?: 'CourseType' }
+  & Pick<CourseType, 'title' | 'units' | 'waitlisted' | 'openSeats' | 'letterAverage' | 'lastUpdated' | 'id' | 'hasEnrollment' | 'gradeAverage' | 'enrolledPercentage' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'enrolled' | 'abbreviation' | 'prerequisites'>
+  & { playlistSet: (
+    { __typename?: 'PlaylistTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'PlaylistTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'PlaylistType' }
+        & Pick<PlaylistType, 'category' | 'id' | 'name' | 'semester' | 'year'>
+      )> }
+    )>> }
+  ), sectionSet: (
+    { __typename?: 'SectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionType' }
+        & Pick<SectionType, 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days'>
+      )> }
+    )>> }
+  ) }
+);
+
+export type GetCourseForIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetCourseForIdQuery = (
+  { __typename?: 'Query' }
+  & { course?: Maybe<(
+    { __typename?: 'CourseType' }
+    & FullCourseFragment
+  )> }
+);
+
+export type GetCoursesForFilterQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCoursesForFilterQuery = (
+  { __typename?: 'Query' }
+  & { allCourses?: Maybe<(
+    { __typename?: 'CourseTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'CourseTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'CourseType' }
+        & CourseOverviewFragment
+      )> }
+    )>> }
+  )> }
+);
+
 export type GetFiltersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -644,7 +708,7 @@ export type GetFiltersQuery = (
       { __typename?: 'PlaylistTypeEdge' }
       & { node?: Maybe<(
         { __typename?: 'PlaylistType' }
-        & Pick<PlaylistType, 'id' | 'name' | 'category' | 'semester' | 'year'>
+        & FilterFragment
       )> }
     )>> }
   )> }
@@ -667,22 +731,157 @@ export type StubQuery = (
   )> }
 );
 
-
-export const GetFiltersDocument = gql`
-    query GetFilters {
-  allPlaylists {
+export const CourseOverviewFragmentDoc = gql`
+    fragment CourseOverview on CourseType {
+  id
+  abbreviation
+  courseNumber
+  title
+  gradeAverage
+  letterAverage
+  openSeats
+  enrolledPercentage
+  units
+}
+    `;
+export const FilterFragmentDoc = gql`
+    fragment Filter on PlaylistType {
+  id
+  name
+  category
+  semester
+  year
+}
+    `;
+export const FullCourseFragmentDoc = gql`
+    fragment FullCourse on CourseType {
+  title
+  units
+  waitlisted
+  openSeats
+  letterAverage
+  lastUpdated
+  id
+  hasEnrollment
+  gradeAverage
+  enrolledPercentage
+  enrolledMax
+  courseNumber
+  department
+  description
+  enrolled
+  abbreviation
+  prerequisites
+  playlistSet {
     edges {
       node {
+        category
         id
         name
-        category
         semester
         year
       }
     }
   }
+  sectionSet {
+    edges {
+      node {
+        ccn
+        kind
+        instructor
+        startTime
+        endTime
+        enrolled
+        enrolledMax
+        locationName
+        waitlisted
+        waitlistedMax
+        days
+      }
+    }
+  }
 }
     `;
+export const GetCourseForIdDocument = gql`
+    query GetCourseForId($id: ID!) {
+  course(id: $id) {
+    ...FullCourse
+  }
+}
+    ${FullCourseFragmentDoc}`;
+
+/**
+ * __useGetCourseForIdQuery__
+ *
+ * To run a query within a React component, call `useGetCourseForIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCourseForIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCourseForIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetCourseForIdQuery(baseOptions: Apollo.QueryHookOptions<GetCourseForIdQuery, GetCourseForIdQueryVariables>) {
+        return Apollo.useQuery<GetCourseForIdQuery, GetCourseForIdQueryVariables>(GetCourseForIdDocument, baseOptions);
+      }
+export function useGetCourseForIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCourseForIdQuery, GetCourseForIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetCourseForIdQuery, GetCourseForIdQueryVariables>(GetCourseForIdDocument, baseOptions);
+        }
+export type GetCourseForIdQueryHookResult = ReturnType<typeof useGetCourseForIdQuery>;
+export type GetCourseForIdLazyQueryHookResult = ReturnType<typeof useGetCourseForIdLazyQuery>;
+export type GetCourseForIdQueryResult = Apollo.QueryResult<GetCourseForIdQuery, GetCourseForIdQueryVariables>;
+export const GetCoursesForFilterDocument = gql`
+    query GetCoursesForFilter {
+  allCourses {
+    edges {
+      node {
+        ...CourseOverview
+      }
+    }
+  }
+}
+    ${CourseOverviewFragmentDoc}`;
+
+/**
+ * __useGetCoursesForFilterQuery__
+ *
+ * To run a query within a React component, call `useGetCoursesForFilterQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCoursesForFilterQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCoursesForFilterQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCoursesForFilterQuery(baseOptions?: Apollo.QueryHookOptions<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>) {
+        return Apollo.useQuery<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>(GetCoursesForFilterDocument, baseOptions);
+      }
+export function useGetCoursesForFilterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>) {
+          return Apollo.useLazyQuery<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>(GetCoursesForFilterDocument, baseOptions);
+        }
+export type GetCoursesForFilterQueryHookResult = ReturnType<typeof useGetCoursesForFilterQuery>;
+export type GetCoursesForFilterLazyQueryHookResult = ReturnType<typeof useGetCoursesForFilterLazyQuery>;
+export type GetCoursesForFilterQueryResult = Apollo.QueryResult<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>;
+export const GetFiltersDocument = gql`
+    query GetFilters {
+  allPlaylists {
+    edges {
+      node {
+        ...Filter
+      }
+    }
+  }
+}
+    ${FilterFragmentDoc}`;
 
 /**
  * __useGetFiltersQuery__

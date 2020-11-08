@@ -1,11 +1,11 @@
 import React from 'react';
 import { Modal } from "react-bootstrap";
 import ClassDescription from './ClassDescription';
-import { CourseType } from 'graphql/graphql';
+import { CourseOverviewFragment } from 'graphql/graphql';
 
 type ClassDescriptionModalProps = {
   show: boolean
-  course: CourseType | null
+  course: CourseOverviewFragment | null
   hideModal: () => void
   modifyFilters: (add: string[], remove: string[]) => void
 };
