@@ -58,8 +58,14 @@ class CourseService:
                 course_number=course_dict['course_number'],
                 defaults=course_dict,
             )
-            course_obj.cross_listing.set(cross_listing_courses)
-            course_obj.save()
+
+            cross_listing_courses.append(course_obj)
+            for cross_course in cross_listing_courses:
+                cross_course.cross_listing = []
+                for other_course in cross_listing_courses:
+                    if other_course.id != cross_course.id:
+                        cross_course.cross_listing.add(other_course)
+                cross_course.save()
 
             logger.info({
                 'message': 'Updated/created new course object',
