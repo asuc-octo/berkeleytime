@@ -4,8 +4,10 @@ import {
   Row,
   Col,
 } from 'react-bootstrap';
-import { withRouter } from 'react-router';
-import { connect } from 'react-redux';
+
+import AccountSubview from '../../components/Profile/AccountSubview';
+import NotificationsSubview from '../../components/Profile/NotificationsSubview';
+import SupportSubview from '../../components/Profile/SupportSubview';
 
 import account from "../../assets/svg/profile/account.svg";
 import accountSelected from "../../assets/svg/profile/account_selected.svg";
@@ -55,6 +57,9 @@ class Profile extends PureComponent {
                 <span>Support</span>
               </div>
             </Col>
+            <Col lg={10} className="subview-container">
+              {tabIndex == 0 ? <AccountSubview/> : tabIndex == 1 ? <NotificationsSubview/> : <SupportSubview/>}
+            </Col>
           </Row>
         </Container>
       </div>
@@ -62,19 +67,4 @@ class Profile extends PureComponent {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  dispatch
-});
-
-const mapStateToProps = state => {
-  const { userProfile } = state.authReducer;
-
-  return {
-    userProfile
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(Profile));
+export default Profile;

@@ -22,7 +22,6 @@ class LoginButton extends Component {
         tokenId: tokenId
       }
     ).then(res => {
-        history.push('/profile');
         const data = res.data;
         let profileInfo = {
           token: data.token,
@@ -31,6 +30,7 @@ class LoginButton extends Component {
           lastName: data.user.user.last_name
         }
         logIn(profileInfo);
+        history.push('/profile');
       },
       error => console.log('An error occurred.', error),
     );
