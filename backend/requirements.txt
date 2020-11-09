@@ -4,8 +4,6 @@ psycopg2-binary==2.8.6
 django-redis-cache==2.1.1
 djangorestframework==3.12.1
 djangorestframework-jwt==1.11.0
-python-dateutil
-pyyaml
 
 # Google APIs
 google-api-python-client
@@ -15,8 +13,10 @@ gspread
 # Other
 arrow
 beautifulsoup4
+nameparser
 python-dateutil
 python-json-logger
 pyyaml
 redlock-py
 retry
+unidecode

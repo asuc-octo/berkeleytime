@@ -31,7 +31,7 @@ class Command(BaseCommand):
             help="Abbreviation for which to update sections (e.g. COMPSCI)",
         )
         parser.add_argument(
-            '--course_number',
+            '--course-number',
             action='store',
             help="Course number for which to update sections (e.g. 61A)",
         )

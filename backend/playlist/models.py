@@ -15,10 +15,6 @@ class Playlist(models.Model):
 
     courses = models.ManyToManyField(Course)
 
-    def __repr__(self):
-        """Return str representation of Playlist model."""
-        return f'Playlist(name={self.name})'
-
     def as_json(self):
         return dict(
             id=self.id,
@@ -27,3 +23,10 @@ class Playlist(models.Model):
             semester=self.semester,
             year=self.year
         )
+
+    def __repr__(self):
+        """Return str representation of Playlist model."""
+        return f'Playlist(name={self.name})'
+
+    def __str__(self):
+        return self.__repr__()

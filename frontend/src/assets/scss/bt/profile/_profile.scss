@@ -40,37 +40,59 @@
     #notif span {
         margin-left: 7px;
     }
+}
 
-    .subview-container {
-        padding: 45px 0px 0px 45px;
+.subview-container {
+    padding: 45px 0px 0px 45px;
 
-        .profile-subview{
-            max-width: 700px;
-            margin-top: 100px; 
-            margin-left: 30px;
-            margin-right: 30px;
-        
-            h1{
-                font-weight: bold;
-                font-size: 40px;
-                margin-bottom: 40px;
-            }
-        
-            h2{
-                font-weight: bold;
-                font-size: 32px;
-                margin-top: 30px;
-                margin-bottom: 20px;
-            }
+    .profile-subview{
+        max-width: 700px;
+        margin-top: 100px; 
+        margin-left: 30px;
+        margin-right: 30px;
+    
+        h1{
+            font-weight: bold;
+            font-size: 40px;
+            margin-bottom: 40px;
         }
-        
+    
+        h2{
+            font-weight: bold;
+            font-size: 32px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+    
         .profile-row{
             display: flex;
             position: relative;
             align-items: center;
             border-bottom: 1.5px solid #ECECEC;
-        
             height: 50px;
+        }
+        
+        .profile-title{
+            display:flex;
+            position:relative;
+            align-items: center;
+            
+            .edit-button{
+                background-color: Transparent;
+                border: none;
+                margin-top: 12px;
+                margin-left: 6px;
+            }
+            
+            .edit-button:focus{
+                outline: none;
+                box-shadow: none;
+            }
+            
+            .edit-pencil{
+                height:24px;
+            }
+            
         }
     }
 }

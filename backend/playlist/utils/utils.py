@@ -4,12 +4,6 @@ import re
 from playlist.utils.config import config_dict
 
 
-translations = {
-    "BUS ADM": "UGBA",
-    "SSEASN": "S,SEASN"
-}
-
-
 def clean(target):
     """Clean target string."""
     return str(target).replace('*', '').strip()
@@ -18,10 +12,10 @@ def clean(target):
 def is_float(target):
     """Return True if str target is float-like."""
     try:
-        return bool(float(target))
+        float(target)
+        return True
     except Exception:
         return False
-
 
 def department_to_abbreviation(department_name):
     """Convert a department name to its corresponding abbreviation."""

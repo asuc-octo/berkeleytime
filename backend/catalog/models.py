@@ -1,5 +1,7 @@
 from django.db import models
 
+import arrow
+
 
 class Course(models.Model):
     """A single course (e.g. COMP SCI 61A)."""
@@ -59,8 +61,11 @@ class Course(models.Model):
       )
 
     def __repr__(self):
-        """Return str representation of Course model."""
+        """Return representation of Course model."""
         return f'Course(abbrev={self.abbreviation}, course_number={self.course_number})'
+
+    def __str__(self):
+        return self.__repr__()
 
     @property
     def display_units(self):
@@ -87,6 +92,12 @@ class Section(models.Model):
 
     class Meta:
         db_table = 'section'
+        indexes = [
+            models.Index(fields=['abbreviation', 'course_number']),
+            models.Index(fields=['kind']),
+            models.Index(fields=['disabled']),
+            models.Index(fields=['is_primary']),
+        ]
 
     _derived_enrollment_fields = (
         'enrolled', 'enrolled_max', 'waitlisted', 'waitlisted_max',
@@ -138,12 +149,12 @@ class Section(models.Model):
         kind = self.kind,
 
         word_days = self.word_days if self.days else '',
-        start_time = self.start_time.isoformat() if self.start_time else '',
-        end_time = self.end_time.isoformat() if self.end_time else '',
+        start_time = self.format_time(self.start_time),
+        end_time = self.format_time(self.end_time),
 
         final_day = self.final_word_day,
-        final_start = self.final_start.isoformat() if self.final_start else '',
-        final_end = self.final_end.isoformat() if self.final_end else '',
+        final_start = self.format_time(self.final_start),
+        final_end = self.format_time(self.final_end),
 
         instructor = self.instructor,
         location_name = self.location_name,
@@ -167,8 +178,17 @@ class Section(models.Model):
         days = {'0': 'Su', '1': 'M', '2': 'Tu', '3': 'W', '4': 'Th', '5': 'F', '6': 'Sa', '7': 'Su'}
         return days[self.final_day] if self.final_day else ''
 
+    def format_time(self, dt):
+        if not dt:
+            return ''
+
+        return arrow.get(dt).to(tz='US/Pacific').naive.isoformat()
+
     def __repr__(self):
-        """Return str representation of Section model."""
+        """Return representation of Section model."""
         return f'Section(abbrev={self.abbreviation}, course_number={self.course_number}, ' \
-               + f'semester={self.semester}, year={self.year}, ' \
-               + f'kind={self.kind}, section_number={self.section_number})'
+               f'semester={self.semester}, year={self.year}, ' \
+               f'kind={self.kind}, section_number={self.section_number})'
+
+    def __str__(self):
+        return self.__repr__()

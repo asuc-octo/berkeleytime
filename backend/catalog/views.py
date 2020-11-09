@@ -19,9 +19,9 @@ def catalog_context_json(request, abbreviation='', course_number=''):
     """Return JSON of all courses"""
 
     long_form = request.GET.get('form', 'short') == 'long'
-    cache_key = 'all__courses'
+    cache_key = 'all__courses_new'
     if long_form:
-        cache_key = 'all__courses__long'
+        cache_key = 'all__courses__long_new'
     cached = cache.get(cache_key)
     if cached:
         rtn = cached
@@ -53,10 +53,9 @@ def catalog_filters(request, abbreviation='', course_number=''):
     playlist_ids = Playlist.objects.filter(name__in=[CURRENT_SEMESTER_DISPLAY]).values_list('id', flat=True)
     default_playlists = ','.join(map(str, playlist_ids))
 
-    if Course.objects.filter(abbreviation=abbreviation, course_number=course_number):
-        default_course = course[0].id
-    else:
-        default_course = ''
+    default_course = Course.objects.filter(
+        abbreviation=abbreviation, course_number=course_number).first()
+    default_course_id = default_course.id if default_course else ''
 
     rtn = {
         'haas': haas,
@@ -68,7 +67,7 @@ def catalog_filters(request, abbreviation='', course_number=''):
         'level': level,
         'semester': semester,
         'default_playlists': default_playlists,
-        'default_course': default_course,
+        'default_course': default_course_id,
     }
     return rtn
 
@@ -117,7 +116,7 @@ def course_json(request, course_id):
         return render_to_json(
             {
                 'title': course.title,
-                'course': course,
+                'course': f'{course.abbreviation} {course.course_number}',
                 'last_enrollment_update': get_last_enrollment_update(sections),
                 'offered': bool(sections),
             },

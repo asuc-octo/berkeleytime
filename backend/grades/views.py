@@ -8,16 +8,16 @@ from berkeleytime.utils import render_to_json, render_to_empty_json, render_to_e
 from catalog.models import Course
 from catalog.utils import sort_course_dicts
 from grades.models import Grade
-from grades.utils import add_up_grades, calculate_letter_average
+from grades.utils import add_up_grades, gpa_to_letter_grade
 
 
 CACHE_TIMEOUT = 900
 
 # /grades/grades_json/
 def grade_context(long_form=False):
-    cache_key = 'grade__courses'
+    cache_key = 'grade__courses_new'
     if long_form:
-        cache_key = 'grade__courses__long'
+        cache_key = 'grade__courses__long_new'
     cached = cache.get(cache_key)
     if cached:
         rtn = cached
@@ -54,7 +54,7 @@ def grade_section_json(request, course_id):
     {'instructor': 'Shewchuk', 'semester': 'spring', 'year': 2012, 'section_number': '003', 'grade_id': 1533}
     """
     try:
-        cached = cache.get('grade_section_json ' + str(course_id))
+        cached = cache.get('grade_section_json_new ' + str(course_id))
         if cached:
             print('Cache Hit in grade_section_json course_id ' + course_id)
             return render_to_json(cached)
@@ -65,10 +65,10 @@ def grade_section_json(request, course_id):
                 'year': entry.year,
                 'section_number': entry.section_number,
                 'grade_id': entry.id,
-            } for entry in Grade.objects.filter(course__id=int(course_id), total__gte = 1)
+            } for entry in Grade.objects.filter(course__id=int(course_id))
         ]
         sections = sorted(sections, key=year_and_semester_to_value, reverse=True)
-        cache.set('grade_section_json ' + str(course_id), sections, CACHE_TIMEOUT)
+        cache.set('grade_section_json_new ' + str(course_id), sections, CACHE_TIMEOUT)
         return render_to_json(sections)
     except Exception as e:
         traceback.print_exc()
@@ -83,7 +83,7 @@ STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
 
 def grade_json(request, grade_ids):
     try:
-        cached = cache.get('grade_json ' + str(grade_ids))
+        cached = cache.get('grade_json_new ' + str(grade_ids))
         if cached:
             print('Cache Hit in grade_json ' + grade_ids)
             return render_to_json(cached)
@@ -92,10 +92,8 @@ def grade_json(request, grade_ids):
         grade_ids = grade_ids.split('&')
         sections = Grade.objects.filter(id__in=grade_ids)
         course = Course.objects.get(id=sections.values_list('course', flat=True)[0])
-        total = sections.aggregate(Sum('total'))['total__sum']
-        percentile_total = total - sections.aggregate(Sum('p')).get('p__sum', 0)
-        percentile_total -= sections.aggregate(Sum('np')).get('np__sum', 0)
-        
+        percentile_total = sections.aggregate(Sum('graded_total'))['graded_total__sum']
+
         percentile_ceiling = 0
         total_unweighted = 0
         for grade, display in STANDARD_GRADES:
@@ -128,7 +126,7 @@ def grade_json(request, grade_ids):
             rtn['section_letter'] = 'N/A'
         else:
             rtn['section_gpa'] = round(float(sum(weighted_letter_grade_counter.values())) / total, 3)
-            rtn['section_letter'] = calculate_letter_average(rtn['section_gpa'])
+            rtn['section_letter'] = gpa_to_letter_grade(rtn['section_gpa'])
         rtn['denominator'] = total + total_unweighted
 
         if rtn['course_letter'] == '':
@@ -137,7 +135,7 @@ def grade_json(request, grade_ids):
         if rtn['section_letter'] == '':
             rtn['section_letter'] = 'N/A'
 
-        cache.set('grade_json' + str(grade_ids), rtn, CACHE_TIMEOUT)
+        cache.set('grade_json_new ' + str(grade_ids), rtn, CACHE_TIMEOUT)
         return render_to_json(rtn)
     except Exception as e:
         traceback.print_exc()
