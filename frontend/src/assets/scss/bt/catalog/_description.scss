@@ -8,6 +8,10 @@
   bottom: 0;
   right: 0;
 
+  @include mobile {
+    position: relative;
+  }
+
   // (Generally) it shouldn't need to scroll but
   // just in case there's some weird description
   // with giant words. This prevents things from
