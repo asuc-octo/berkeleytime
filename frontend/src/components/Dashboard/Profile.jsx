@@ -1,6 +1,6 @@
 import React from 'react';
 
-import jemma from 'assets/img/about/2020-21/michael_1.png';
+import jemma from 'assets/img/about/2020-21/michael_1.jpg';
 
 function Profile({ profile }) {
   return (
