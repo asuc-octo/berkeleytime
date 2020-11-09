@@ -11,19 +11,15 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
-from pathlib import Path
-import os
-import datetime
-from urllib.parse import urlparse
 
-from berkeleytime.config.semesters.fall2020 import *
+import datetime
 import os
 import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
-from berkeleytime.config.semesters.spring2021 import *
 from berkeleytime.config.general import *
+from berkeleytime.config.semesters.spring2021 import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -189,29 +185,36 @@ LOGGING = {
         'mail_admins': {
             'class': 'django.utils.log.AdminEmailHandler',
             'filters': ['require_debug_false'],
+            'level': 'ERROR',
         },
-        'console': {
+        'stdout': {
             'class': 'logging.StreamHandler',
             'formatter': 'json',
+            'level': 'INFO',
             'stream': sys.stdout,
         },
+        'stderr': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+            'level': 'ERROR',
+            'stream': sys.stderr,
+        }
     },
     'root': {
         'handlers': ['mail_admins'],
-        'level': 'ERROR',
     },
     'loggers': {
         'catalog': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
         },
         'enrollment': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
+        },
+        'grades': {
+            'handlers': ['stdout', 'stderr'],
         },
         'playlist': {
-            'handlers': ['console'],
-            'level': 'INFO'
+            'handlers': ['stdout', 'stderr'],
         },
     }
 }
@@ -262,7 +265,7 @@ JWT_AUTH = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 

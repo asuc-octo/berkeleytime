@@ -6,9 +6,11 @@ import logging
 from berkeleytime.settings import finals_mapper
 from catalog.models import Section
 
+
 DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class SectionMapper:
     """Map SIS Class API response data to a dict."""
@@ -34,11 +36,10 @@ class SectionMapper:
             section_dict.update(self.get_enrollment(data=data))
 
             return section_dict
-        except Exception as e:
+        except Exception:
             logger.exception({
                 'message': 'Unknown exception while mapping Class API response to Section object'
             })
-            raise
 
     def get_enrollment(self, data):
         """Get enrollment data."""
@@ -62,7 +63,7 @@ class SectionMapper:
     def _get_meeting(self, data):
         """Get meeting information for a single section."""
         # TODO (*) Schema does not currently support multiple meetings
-        meeting = data['meetings'][0] if data.get('meetings') else None
+        meeting = data['meetings'][0] if data.get('meetings') else {}
         return meeting
 
     def get_datetime(self, data):
@@ -82,10 +83,17 @@ class SectionMapper:
         start_time = meeting['startTime']
         end_time = meeting['endTime']
 
+        if '00:00:00' in start_time or '00:00:00' in end_time:
+            start_time_utc = None
+            end_time_utc = None
+        else:
+            start_time_utc = arrow.get(f'1900-01-01 {start_time}').replace(tzinfo='US/Pacific').datetime
+            end_time_utc = arrow.get(f'1900-01-01 {end_time}').replace(tzinfo='US/Pacific').datetime
+
         return {
             'days': days,
-            'start_time': arrow.get('1900-01-01 %s' % start_time).datetime if '00:00:00' not in start_time else None,
-            'end_time': arrow.get('1900-01-01 %s' % end_time).datetime if '00:00:00' not in end_time else None,
+            'start_time': start_time_utc,
+            'end_time': end_time_utc,
         }
 
     def get_finals(self, kwargs, extras):
@@ -100,12 +108,8 @@ class SectionMapper:
             if finals_info is not None:
                 return {
                     'final_day': finals_info[0],
-                    'final_start': arrow.get(
-                        '1900-01-01 %s' % finals_info[1]
-                    ).datetime,
-                    'final_end': arrow.get(
-                        '1900-01-01 %s' % finals_info[2]
-                    ).datetime
+                    'final_start': arrow.get(f'1900-01-01 {finals_info[1]}').replace(tzinfo='US/Pacific').datetime,
+                    'final_end': arrow.get(f'1900-01-01 {finals_info[2]}').replace(tzinfo='US/Pacific').datetime,
                 }
         return {}
 
@@ -154,9 +158,9 @@ class SectionMapper:
     def get_location_name(self, data):
         """Get name of location."""
         meeting = self._get_meeting(data)
-        location = meeting.get('location') if meeting else None
+        location = meeting.get('location', {}).get('description', '')
         return {
-            'location_name': location.get('description') if location else None
+            'location_name': location,
         }
 
     def get_instruction_mode(self, data):

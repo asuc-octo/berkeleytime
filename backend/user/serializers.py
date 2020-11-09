@@ -24,7 +24,7 @@ class BerkeleytimeUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BerkeleytimeUser
         exclude = ('saved_classes',)
-        # excluded for now, will be added back when we add a course serializer  
+        # excluded for now, will be added back when we add a course serializer
 
     def create(self, validated_data):
         # create django user
@@ -35,7 +35,7 @@ class BerkeleytimeUserSerializer(serializers.ModelSerializer):
             username = validated_data['user']['email'].replace('@berkeley.edu', '')
         )
         user.save()
-        
+
         # create berkeleytimeuser
         btUser = BerkeleytimeUser.objects.create(
             user = user,

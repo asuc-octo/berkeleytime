@@ -74,7 +74,7 @@ class BerkeleytimeUserViewSet(viewsets.ViewSet):
         """
         # verify berkeley email
         if 'hd' not in idinfo or idinfo['hd'] != 'berkeley.edu':
-            return Response({'error': 'Not berkeley.edu account'}, status=status.HTTP_401_UNAUTHORIZED) 
+            return Response({'error': 'Not berkeley.edu account'}, status=status.HTTP_401_UNAUTHORIZED)
 
         # find user in current db based on email
         try:
@@ -94,7 +94,7 @@ class BerkeleytimeUserViewSet(viewsets.ViewSet):
                 }
             )
             if not serializer.is_valid(raise_exception=True):
-                return Response({'error': 'Invalid data from Google account'}, status=status.HTTP_400_BAD_REQUEST) 
+                return Response({'error': 'Invalid data from Google account'}, status=status.HTTP_400_BAD_REQUEST)
             user = serializer.save().user
 
         # generate jwt token
