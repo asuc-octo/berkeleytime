@@ -33,8 +33,8 @@ import shuming_1 from 'assets/img/about/2020-21/shuming_1.png';
 import shuming_2 from 'assets/img/about/2020-21/shuming_2.png';
 import vihan_1 from 'assets/img/about/2020-21/vihan_1.png';
 import vihan_2 from 'assets/img/about/2020-21/vihan_1.png';
-import michael_1 from 'assets/img/about/compressed/Michael_1.jpg';
-import michael_2 from 'assets/img/about/compressed/Michael_2.jpg';
+import michael_1 from 'assets/img/about/2020-21/michael_1.png';
+import michael_2 from 'assets/img/about/2020-21/michael_2.jpg';
 
 
 const contributors = [
