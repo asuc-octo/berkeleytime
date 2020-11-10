@@ -1,5 +1,6 @@
 from functools import reduce
 
+import arrow
 import django_filters
 import graphene
 from graphene_django import DjangoObjectType
@@ -16,8 +17,31 @@ class CourseType(DjangoObjectType):
         filter_fields = '__all__'
         interfaces = (graphene.Node, )
 
+    units = graphene.String()
+
+    def resolve_units(self, info):
+        """Format units in a readable way."""
+        if '-' in self.units:
+            separator = '-'
+        elif 'or' in self.units:
+            separator = 'or'
+        else:
+            return self.units
+        try:
+            first, second = list(map(
+                lambda u: int(float(u.strip())),
+                self.units.split(separator)
+            ))
+            return f'{first}-{second}'
+        except ValueError:
+            return self.units
+
 
 class CourseFilter(django_filters.FilterSet):
+    class Meta:
+        model = Course
+        fields = '__all__'
+
     has_grades = django_filters.BooleanFilter(method='filter_has_grades')
     # overrides Course.has_enrollment. TODO: Remove Course.has_enrollment soon
     has_enrollment = django_filters.BooleanFilter(method='filter_has_enrollment')
@@ -42,16 +66,32 @@ class CourseFilter(django_filters.FilterSet):
                 all_reduce.append(reduce(lambda x, y: x | y, intersected))
         return reduce(lambda x, y: x & y, all_reduce).distinct()
 
-    class Meta:
-        model = Course
-        fields = '__all__'
-
 
 class SectionType(DjangoObjectType):
     class Meta:
         model = Section
         filter_fields = '__all__'
         interfaces = (graphene.Node, )
+
+    word_days = graphene.String()
+    start_time = graphene.DateTime()
+    end_time = graphene.DateTime()
+
+    def resolve_word_days(self, info):
+        days = {'0': 'Su', '1': 'M', '2': 'Tu', '3': 'W', '4': 'Th', '5': 'F', '6': 'Sa', '7': 'Su'}
+        return ''.join([days[i] for i in self.days])
+
+    def resolve_start_time(self, info):
+        return SectionType.format_time(self.start_time)
+
+    def resolve_end_time(self, info):
+        return SectionType.format_time(self.end_time)
+
+    @staticmethod
+    def format_time(dt):
+        if not dt:
+            return ''
+        return arrow.get(dt).to(tz='US/Pacific').naive
 
     @property
     def qs(self):
