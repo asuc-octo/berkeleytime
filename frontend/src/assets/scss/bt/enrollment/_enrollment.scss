@@ -64,6 +64,11 @@
     padding-left: 55px;
     padding-top: 5px;
 
+    @include mobile {
+      padding: 0px 10px 20px 10px;
+      text-align: center;
+    }
+
     p {
       display: inline;
       margin-left: 5px;
