@@ -11,7 +11,7 @@ class PlaylistType(DjangoObjectType):
     class Meta:
         model = Playlist
         filter_fields = '__all__'
-        interfaces = (Node,)
+        use_connection = True
 
     @classmethod
     def get_queryset(cls, queryset, info):

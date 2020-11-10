@@ -11,7 +11,7 @@ class GradeType(DjangoObjectType):
     class Meta:
         model = Grade
         filter_fields = '__all__'
-        interfaces = (Node, )
+        use_connection = True
 
 class Query(graphene.ObjectType):
     all_grades = DjangoFilterConnectionField(GradeType)

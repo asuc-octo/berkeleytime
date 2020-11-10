@@ -1,7 +1,6 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphql import GraphQLError
-from graphql_relay.node.node import from_global_id
 
 # Google Auth
 from google.oauth2 import id_token
@@ -79,7 +78,7 @@ class SaveClass(graphene.Mutation):
         # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
         user = info.context.user.berkeleytimeuser
         try:
-            save_class = Course.objects.get(pk=from_global_id(class_id)[1])
+            save_class = Course.objects.get(pk=class_id)
             user.saved_classes.add(save_class)
         except Course.DoesNotExist:
             return GraphQLError('Invalid Class ID')
@@ -96,7 +95,7 @@ class RemoveClass(graphene.Mutation):
     def mutate(self, info, class_id):
         # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
         user = info.context.user.berkeleytimeuser
-        user.saved_classes.remove(from_global_id(class_id)[1])
+        user.saved_classes.remove(class_id)
         return UpdateUser(user=user)
 
 # JWT
