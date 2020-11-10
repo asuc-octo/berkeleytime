@@ -10,7 +10,7 @@ class EnrollmentType(DjangoObjectType):
     class Meta:
         model = Enrollment
         filter_fields = '__all__'
-        interfaces = (graphene.Node, )
+        use_connection = True
 
 class Query(graphene.ObjectType):
     all_enrollments = DjangoFilterConnectionField(EnrollmentType)
