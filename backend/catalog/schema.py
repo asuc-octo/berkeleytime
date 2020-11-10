@@ -4,6 +4,7 @@ import django_filters
 import graphene
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
+from graphql_relay.node.node import from_global_id
 
 from catalog.models import Course, Section
 from playlist.models import Playlist
@@ -13,7 +14,7 @@ class CourseType(DjangoObjectType):
     class Meta:
         model = Course
         filter_fields = '__all__'
-        use_connection = True
+        interfaces = (graphene.Node, )
 
 
 class CourseFilter(django_filters.FilterSet):
@@ -29,10 +30,11 @@ class CourseFilter(django_filters.FilterSet):
         return queryset.exclude(section__isnull=value)
 
     def filter_in_playlists(self, queryset, name, value):
-        categories = Playlist.objects.filter(id__in=value).distinct('category').values_list('category', flat=True)
+        playlist_ids = list(map(lambda global_id: from_global_id(global_id)[1], value))
+        categories = Playlist.objects.filter(id__in=playlist_ids).distinct('category').values_list('category', flat=True)
         all_reduce = [queryset]
         for category in categories:
-            playlists = Playlist.objects.filter(id__in=value, category=category)
+            playlists = Playlist.objects.filter(id__in=playlist_ids, category=category)
             intersected = [playlist.courses.all() for playlist in playlists]
             if category in ('university', 'ls', 'engineering', 'haas'):
                 all_reduce.append(reduce(lambda x, y: x & y, intersected))
@@ -49,7 +51,7 @@ class SectionType(DjangoObjectType):
     class Meta:
         model = Section
         filter_fields = '__all__'
-        use_connection = True
+        interfaces = (graphene.Node, )
 
     @property
     def qs(self):
