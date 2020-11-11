@@ -53,10 +53,10 @@ def prefetch(course_id):
 def enrollment_section_render(request, course_id):
     try:
         cached = cache.get('enrollment_section_render_new ' + course_id)
-        # if cached:
-        #     print('Cache Hit in enrollment_section_render with course_id ' + course_id)
-        #     prefetch(course_id)
-        #     return render_to_json(cached)
+        if cached:
+            print('Cache Hit in enrollment_section_render with course_id ' + course_id)
+            prefetch(course_id)
+            return render_to_json(cached)
         semesters = {}
         if TELEBEARS_ALREADY_STARTED:
             semesters[(CURRENT_SEMESTER, CURRENT_YEAR)] = 0
@@ -102,10 +102,10 @@ def enrollment_section_render(request, course_id):
 def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, year=CURRENT_YEAR):
     try:
         cached = cache.get('enrollment_aggregate_json_new ' + str(course_id) + semester + str(year))
-        # if cached:
-        #     print('Cache Hit in enrollment_aggregate_json with course_id  ' + course_id + ' semester ' + semester
-        #           + ' year ' + year)
-        #     return render_to_json(cached)
+        if cached:
+            print('Cache Hit in enrollment_aggregate_json with course_id  ' + course_id + ' semester ' + semester
+                  + ' year ' + year)
+            return render_to_json(cached)
         rtn = {}
         course = Course.objects.get(id = course_id)
         sections =  Section.objects.filter(

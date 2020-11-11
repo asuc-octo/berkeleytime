@@ -55,9 +55,9 @@ def grade_section_json(request, course_id):
     """
     try:
         cached = cache.get('grade_section_json_new ' + course_id)
-        # if cached:
-        #     print('Cache Hit in grade_section_json course_id ' + course_id)
-        #     return render_to_json(cached)
+        if cached:
+            print('Cache Hit in grade_section_json course_id ' + course_id)
+            return render_to_json(cached)
 
         entries = Grade.objects.filter(
             Q(course__id=int(course_id)) | Q(course__cross_listing__id=int(course_id))
