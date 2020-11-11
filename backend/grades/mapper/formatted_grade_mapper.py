@@ -42,9 +42,8 @@ class FormattedGradeMapper:
         instructor_names_formatted = []
         for name in instructor_names:
             formatted_name = nameparser.HumanName(name)
-            if not (formatted_name.first and formatted_name.last):
-                continue
-            instructor_names_formatted.append(f'{formatted_name.last.upper()}, {formatted_name.first.upper()[0]}')
+            if formatted_name.first and formatted_name.last:
+                instructor_names_formatted.append(f'{formatted_name.last.upper()}, {formatted_name.first.upper()[0]}')
 
         return {
             'instructor': instructor_names_formatted[0] if instructor_names_formatted else '',
