@@ -316,6 +316,18 @@
       font-family: Inter;
     }
 
+    @include mobile {
+      table,
+      tr,
+      td {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+    }
+
     td.parameters-col_description p {
       font-size: 14px;
       line-height: 1.5;

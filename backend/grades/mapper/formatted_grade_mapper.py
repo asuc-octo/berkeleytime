@@ -48,7 +48,7 @@ class FormattedGradeMapper:
 
         return {
             'instructor': instructor_names_formatted[0] if instructor_names_formatted else '',
-            'instructors': ('; ').join(instructor_names_formatted)
+            'instructors': instructor_names_formatted,
         }
 
 

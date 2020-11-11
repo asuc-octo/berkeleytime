@@ -112,6 +112,9 @@ class GradesGraphCard extends Component {
                     gradesData={gradesData}
                     updateBarHover={this.updateBarHover}
                     updateGraphHover={this.updateGraphHover}
+                    course={hoveredClass.course}
+                    semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
+                    instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
                     selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
                     denominator={hoveredClass.denominator}
                     color={vars.colors[hoveredClass.colorId]}

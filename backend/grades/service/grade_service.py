@@ -21,23 +21,14 @@ class GradeService:
     ]
 
     def translate(self, semester=None, year=None, skip_broken=False):
-        semesters = set()
-        years = set()
         unknown = set()
 
         if semester and year:
-            semesters.add(semester)
-            years.add(year)
+            self._translate_one(semester, year, skip_broken, unknown)
         else:
             for filename in os.listdir(os.path.join(os.path.dirname(grades.resource.__file__), 'raw/')):
                 semester, year, grad = filename.split('_')
-                semesters.add(semester)
-                years.add(year)
-
-        for s in semesters:
-            for y in years:
-                self._translate_one(s, y, skip_broken, unknown)
-
+                self._translate_one(semester, year, skip_broken, unknown)
 
         if len(unknown) > 0 and not skip_broken:
             print(
@@ -78,21 +69,12 @@ class GradeService:
 
 
     def update(self, semester=None, year=None):
-        semesters = set()
-        years = set()
-
         if semester and year:
-            semesters.add(semester)
-            years.add(year)
+            self._update_one(semester, year)
         else:
             for filename in os.listdir(os.path.join(os.path.dirname(grades.resource.__file__), 'formatted/')):
                 filename = filename.split('.')[0]
                 semester, year = filename.split('_')
-                semesters.add(semester)
-                years.add(year)
-
-        for s in semesters:
-            for y in years:
                 self._update_one(s, y)
 
 
@@ -110,7 +92,6 @@ class GradeService:
             if course:
                 grade_dict['course_id'] = course.id
                 grade_obj, created = self.update_or_create_from_dict(grade_dict)
-                # TODO: Add grade summary fields to course object
                 logger.info({
                     'message': 'Updated grade record',
                     'grade': grade_obj,
