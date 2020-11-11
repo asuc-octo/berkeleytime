@@ -72,6 +72,12 @@
 @import "bt/error/error";
 
 
-
 // login
 @import "bt/login/login";
+
+// Profile
+@import "bt/profile/profile";
+@import "bt/profile/notifications";
+@import "bt/profile/account";
+@import "bt/profile/card";
+@import "bt/profile/support";
