@@ -4,11 +4,11 @@ export default interface TextProps {
 }
 
 export function getClassNames(base: string, props: TextProps) {
-  let boldClassName = ''
-  if (props.bold === true) boldClassName = 'bt-bold'
-  else if (props.bold === 'light') boldClassName = 'bt-light-bold'
+  let bold = ''
+  if (props.bold === true) bold = 'bt-bold'
+  else if (props.bold === 'light') bold = 'bt-light-bold'
 
   return (
-    [base, boldClassName, props.className ?? ''].join(' ')
+    [base, bold, props.className ?? ''].join(' ')
   )
 }
