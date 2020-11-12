@@ -161,6 +161,10 @@
       // overflow-y: auto;
       // min-height: 300px;
 
+      @include mobile {
+        overflow-y: scroll;
+      }
+
       table {
         max-width: 100%;
         max-height: 100%;

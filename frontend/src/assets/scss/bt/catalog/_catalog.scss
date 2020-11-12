@@ -3,10 +3,12 @@
   min-height: 600px;
   height: 100vh;
 
-  //row
-  > div {
-    height: 100%;
-    overflow-y: scroll;
+  @include mobile {
+    //row
+    > div {
+      height: 100%;
+      overflow-y: scroll;
+    }
   }
 
   .row {
