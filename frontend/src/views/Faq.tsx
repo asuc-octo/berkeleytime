@@ -63,7 +63,7 @@ const questions = [
   },
   {
     question: 'How do I apply to join the team?',
-    answer: <P>We typically recruit engineers and designers at the start of every fall semester. You can sign up for <Link to="/join">recruitment updates</Link>. Also, keep an eye out on our <a href="https://www.facebook.com/berkeleytime/"> Facebook page</a> for recruitment events.</P>
+    answer: <p>We typically recruit engineers and designers at the start of every fall semester. You can sign up for <Link to="/join">recruitment updates</Link>. Also, keep an eye out on our <a href="https://facebook.com/berkeleytime/"> Facebook page</a> for recruitment events.</p>
   },
   {
     question: 'I want to help user test new features!',
