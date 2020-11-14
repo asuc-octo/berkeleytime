@@ -15,6 +15,12 @@
       - name: Sean Meng
         role: Backend Engineer
         site: https://www.linkedin.com/in/sean-meng-berkeley
+      - name: Isabella Lau
+        role: Backend Engineer
+        site: https://www.linkedin.com/in/xisabellalau/
+      - name: Chloe Liu
+        role: Frontend Engineer
+        site: https://www.linkedin.com/in/ruochen99/
 - name: Class of 2019
   rows:
     - - name: Sangbin Cho
