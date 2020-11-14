@@ -1,7 +1,8 @@
 import React from 'react';
-import { Container, Row, Col, ButtonToolbar, ButtonGroup, Button, } from 'react-bootstrap';
+import { Container, Row, Col, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import empty_graph from '../../assets/img/images/empty-graph.png';
+import { Button } from 'bt/custom'
 
 function Error() {
   return (
@@ -20,10 +21,10 @@ function Error() {
             </p>
             <ButtonToolbar>
               <ButtonGroup className="mr-3 mb-2">
-                <Button variant="bt-primary" size="bt-lg" as={Link} to="/catalog">Back to Courses</Button>
+                <Button className="bt-btn-primary" size="bt-lg" href="/catalog">Back to Courses</Button>
               </ButtonGroup>
               <ButtonGroup className="mb-2">
-                <Button variant="bt-primary-inverted" size="bt-lg" href="/bugs">Report a Bug</Button>
+                <Button className="bt-btn-inverted" size="bt-lg" href="/bugs">Report a Bug</Button>
               </ButtonGroup>
             </ButtonToolbar>
           </Col>

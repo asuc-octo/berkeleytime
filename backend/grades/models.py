@@ -1,4 +1,6 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
+
 from catalog.models import Course
 
 
@@ -15,7 +17,7 @@ class Grade(models.Model):
     course_number = models.CharField(max_length=100)
     section_number = models.CharField(max_length=100)
     instructor = models.CharField(max_length=200)
-    instructors = models.TextField()
+    instructors = ArrayField(models.TextField(), default=list)
     a1 = models.IntegerField()
     a2 = models.IntegerField()
     a3 = models.IntegerField()

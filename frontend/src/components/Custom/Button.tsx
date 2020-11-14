@@ -1,15 +1,19 @@
 import React, { FC } from 'react'
-import { Button as BootstrapButton } from 'react-bootstrap'
+import { Button as BootstrapButton, ButtonProps as BootstrapProps } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
 const Button: FC<Props> = (props) => {
+  const bootstrapProps: BootstrapProps = {
+    bsPrefix: 'bt-btn',
+    className: props.className,
+    size: props.size,
+    variant: props.variant ?? 'primary'
+  }
+
   if (typeof props.href === 'object') {
     return (
       <BootstrapButton
-        className={props.className}
-        bsPrefix='bt-btn'
-        variant={props.variant ?? 'primary'}
-        size={props.size}
+        {...bootstrapProps}
         as={Link}
         to={props.href.as_link}
       >
@@ -18,13 +22,7 @@ const Button: FC<Props> = (props) => {
     )
   } else {
     return (
-      <BootstrapButton
-        className={props.className}
-        bsPrefix='bt-btn'
-        variant={props.variant ?? 'primary'}
-        size={props.size}
-        href={props.href}
-      >
+      <BootstrapButton {...bootstrapProps} href={props.href}>
         {props.children}
       </BootstrapButton>
     )

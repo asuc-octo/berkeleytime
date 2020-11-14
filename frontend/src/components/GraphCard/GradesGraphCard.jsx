@@ -87,7 +87,8 @@ class GradesGraphCard extends Component {
     const { isTooltipActive, activeLabel } = data;
     const { selectedCourses } = this.props;
 
-    if (isTooltipActive && selectedCourses.length === 1) {
+    // Update the selected course if no bar is clicked if in mobile
+    if (isTooltipActive && (selectedCourses.length === 1 || this.props.isMobile)) {
       const selectedCourse = selectedCourses[0];
       const grade = activeLabel;
       this.update(selectedCourse, grade);
@@ -112,6 +113,9 @@ class GradesGraphCard extends Component {
                     gradesData={gradesData}
                     updateBarHover={this.updateBarHover}
                     updateGraphHover={this.updateGraphHover}
+                    course={hoveredClass.course}
+                    semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
+                    instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
                     selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
                     denominator={hoveredClass.denominator}
                     color={vars.colors[hoveredClass.colorId]}
