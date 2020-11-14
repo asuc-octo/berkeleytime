@@ -1,6 +1,7 @@
 import graphene
 from graphene_django import DjangoObjectType
 from graphql import GraphQLError
+from graphql_relay.node.node import from_global_id
 
 # Google Auth
 from google.oauth2 import id_token
@@ -15,6 +16,8 @@ from graphql_jwt.refresh_token.shortcuts import create_refresh_token, refresh_to
 # Django models
 from django.contrib.auth.models import User
 from user.models import BerkeleytimeUser, create_user
+from catalog.schema import CourseType
+from catalog.models import Course
 
 
 # Object Types
@@ -23,9 +26,78 @@ class UserType(DjangoObjectType):
         model = User
 
 class BerkeleytimeUserType(DjangoObjectType):
+    saved_classes = graphene.List(CourseType)
+
+    @graphene.resolve_only_args
+    def resolve_saved_classes(self):
+        return self.saved_classes.all()
+
     class Meta:
         model = BerkeleytimeUser
 
+class UpdateUser(graphene.Mutation):
+    class Arguments:
+        major = graphene.String(required=False)
+        email_class_update = graphene.Boolean(required=False)
+        email_grade_update = graphene.Boolean(required=False)
+        email_enrollment_opening = graphene.Boolean(required=False)
+        email_berkeleytime_update = graphene.Boolean(required=False)
+
+    # output
+    user = graphene.Field(BerkeleytimeUserType)
+
+    # avaliable fields
+    _user_fields = (
+        'major',
+        'email_class_update',
+        'email_grade_update',
+        'email_enrollment_opening',
+        'email_berkeleytime_update'
+        )
+
+    @login_required
+    def mutate(self, info, **kwargs):
+        # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+        user = info.context.user.berkeleytimeuser
+
+        # update user info
+        for key in kwargs:
+            if key in UpdateUser._user_fields:
+                setattr(user, key, kwargs[key])
+        user.save()
+        return UpdateUser(user=user)
+
+class SaveClass(graphene.Mutation):
+    class Arguments:
+        class_id = graphene.ID()
+
+    # output
+    user = graphene.Field(BerkeleytimeUserType)
+
+    @login_required
+    def mutate(self, info, class_id):
+        # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+        user = info.context.user.berkeleytimeuser
+        try:
+            save_class = Course.objects.get(pk=from_global_id(class_id)[1])
+            user.saved_classes.add(save_class)
+        except Course.DoesNotExist:
+            return GraphQLError('Invalid Class ID')
+        return UpdateUser(user=user)
+
+class RemoveClass(graphene.Mutation):
+    class Arguments:
+        class_id = graphene.ID()
+
+    # output
+    user = graphene.Field(BerkeleytimeUserType)
+
+    @login_required
+    def mutate(self, info, class_id):
+        # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+        user = info.context.user.berkeleytimeuser
+        user.saved_classes.remove(from_global_id(class_id)[1])
+        return UpdateUser(user=user)
 
 # JWT
 def on_token_auth_resolve(context, user, payload):
@@ -72,7 +144,7 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
     @refresh_expiration
     def resolve(cls, root, info, token_id):
         info.context._jwt_token_auth = True
-        
+
         # verify google auth
         try:
             idinfo = id_token.verify_oauth2_token(token_id, requests.Request())
@@ -101,11 +173,11 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
         """
         # verify berkeley email
         if 'hd' not in idinfo or idinfo['hd'] != 'berkeley.edu':
-            return GraphQLError('Not berkeley.edu account') 
+            return GraphQLError('Not berkeley.edu account')
 
         # find user in current db based on email
         try:
-            btuser = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
+            btuser = User.objects.get(email=idinfo['email']).berkeleytimeuser
             new_user = False
         except User.DoesNotExist:
             # user doesn't exist
@@ -133,8 +205,13 @@ class Query(graphene.ObjectType):
     @login_required
     def resolve_user(self, info):
         return info.context.user.berkeleytimeuser
+        # testing:
+        # return User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
 
 class Mutation(graphene.ObjectType):
+    update_user = UpdateUser.Field()
+    save_class = SaveClass.Field()
+    remove_class = RemoveClass.Field()
     login = ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()

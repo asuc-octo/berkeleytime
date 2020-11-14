@@ -19,9 +19,9 @@ def catalog_context_json(request, abbreviation='', course_number=''):
     """Return JSON of all courses"""
 
     long_form = request.GET.get('form', 'short') == 'long'
-    cache_key = 'all__courses'
+    cache_key = 'all__courses_new'
     if long_form:
-        cache_key = 'all__courses__long'
+        cache_key = 'all__courses__long_new'
     cached = cache.get(cache_key)
     if cached:
         rtn = cached

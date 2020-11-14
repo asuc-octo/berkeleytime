@@ -26,7 +26,7 @@ class SISClassResource:
 
     def get(self, semester, year, course_id, abbreviation, course_number, log=False):
         """Fetch (cached) SIS Class API response."""
-        response = cache.get('class_resource {} {} {} {}'.format(semester, year, abbreviation, course_number))
+        response = cache.get('class_resource {} {} {} {} new'.format(semester, year, abbreviation, course_number))
         if response:
             logger.info('Cache hit in class resource')
             return response
@@ -38,7 +38,7 @@ class SISClassResource:
             course_number=course_number,
         )
 
-        cache.set('class_resource {} {} {} {}'.format(semester, year, abbreviation, course_number), response, CACHE_TIMEOUT)
+        cache.set('class_resource {} {} {} {} new'.format(semester, year, abbreviation, course_number), response, CACHE_TIMEOUT)
 
         return response
 

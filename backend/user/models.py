@@ -29,7 +29,7 @@ def create_user(data):
         username = user_data['email'].replace('@berkeley.edu', '')
     )
     user.save()
-    
+
     # create berkeleytimeuser
     btUser = BerkeleytimeUser.objects.create(
         user = user,
