@@ -32,7 +32,7 @@ class RawGradeMapper:
             section_grade_dict.update(extras)
 
         return (
-            [grade for grade in section_grades.values() if self._is_large_enough(grade)], unknown_departments
+            [grade for grade in sorted(section_grades.values(), key=lambda course: course['Abbreviation'] + course['CourseNum']) if self._is_large_enough(grade)], unknown_departments
         )
 
 

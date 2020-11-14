@@ -57,7 +57,8 @@
           margin-right: auto !important;
           font-weight: bold;
           color: $bt-base-text;
-          font-size: 18px;
+          //font-size: 18px;
+          @include font-size-responsive-larger(18px);
         }
 
         .class-card-remove {
@@ -82,7 +83,8 @@
 
       /* magic to truncate at 2 lines lol */
       .class-card-title {
-        font-size: 16px;
+        //font-size: 16px;
+        @include font-size-responsive-larger(16px);
 
         /* hide text if it more than N lines  */
         overflow: hidden;
@@ -100,7 +102,8 @@
       }
 
       .class-card-options {
-        font-size: 15px;
+        //font-size: 15px;
+        @include font-size-responsive-larger(15px);
       }
     }
   }
