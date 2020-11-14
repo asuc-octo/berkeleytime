@@ -16,10 +16,9 @@ const LoginButton = () => {
     });
   }
 
-  // If there's already a user
+  // If the login was successful. TODO: handle error states in a nicer way.
   if (!!data?.login?.user) {
-    console.log(data);
-    // return <Redirect to="/profile" />
+    return <Redirect to="/profile" />
   }
 
   // TODO: potentially add loading state for this button?

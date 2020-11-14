@@ -28,7 +28,6 @@ const AccountSubview = ({
       <h1>Your Account</h1>
       <h2>Personal Information</h2>
 
-      {/* Information has been hardcoded for testing purposes only */}
       <Property options={options} attribute="Full Name" value={`${user.firstName} ${user.lastName}`} />
       <Property options={options} attribute="bConnected Email" value={user.email} />
       <Property options={options} attribute="Major(s)" value={user.email} />
@@ -38,7 +37,6 @@ const AccountSubview = ({
         <button className="edit-button"><img className="edit-pencil" src={EditPencil} alt="Edit Classes"/></button>
       </div>
 
-      {/* Information has been hardcoded for testing purposes only */}
       {userProfile.savedClasses?.map(course => (
         <ProfileCard
           key={course?.id!}
