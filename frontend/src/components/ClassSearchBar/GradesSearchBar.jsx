@@ -6,7 +6,6 @@ import {
 import hash from 'object-hash';
 
 import { connect } from 'react-redux';
-import FilterResults from '../Catalog/FilterResults';
 
 import { fetchGradeSelected } from '../../redux/actions';
 import { search } from 'utils/search';
