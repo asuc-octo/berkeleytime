@@ -1,7 +1,0 @@
-fragment User on UserType {
-  id
-  firstName
-  lastName
-  email
-  username
-}

@@ -78,7 +78,7 @@ const Navigation: FC<Props> = (props) => {
           {
             links.map((link, index) => {
               if (link.nav_to === '/login') {
-                return (<LoginButton/>);
+                return (<LoginButton key="login"/>);
               }
               // return empty nav link if we are on the page referenced by the nav link
               if (link.nav_to !== '') {
