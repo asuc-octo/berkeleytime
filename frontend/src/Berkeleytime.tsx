@@ -83,9 +83,9 @@ class Berkeleytime extends Component<Props> {
   }
 
   checkMobile = () => {
-    if (window.innerWidth <= 992 && !this.props.mobile) {
+    if (window.innerWidth <= 768 && !this.props.mobile) {
       this.props.enterMobile()
-    } else if (window.innerWidth > 992 && this.props.mobile) {
+    } else if (window.innerWidth > 768 && this.props.mobile) {
       this.props.exitMobile()
     }
   }

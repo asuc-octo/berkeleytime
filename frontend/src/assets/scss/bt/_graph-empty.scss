@@ -8,7 +8,7 @@
   .graph-empty-content {
     height: 0px;
     position: relative;
-    bottom: 250px;
+    @include responsive(bottom, 250px, 300px);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -23,7 +23,8 @@
     .graph-empty-heading {
       color: $bt-light-text;
       display: inline-block;
-      font-size: 16px;
+      //font-size: 16px;
+      @include font-size-responsive-larger(16px);
       font-weight: 500;
       margin-top: 15px;
     }
@@ -74,12 +75,14 @@
       .course {
         font-weight: bold;
         color: $bt-base-text;
-        font-size: 18px;
+        //font-size: 18px;
+        @include font-size-responsive-larger(18px);
       }
     }
 
     .title, .info {
-      font-size: 16px;
+      //font-size: 16px;
+      @include font-size-responsive-larger(16px);
       color: $bt-border-grey;
     }
 
@@ -89,12 +92,6 @@
 
     .info {
       margin-bottom: 30px;
-    }
-
-    h6 {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 5px;
     }
 
     span {

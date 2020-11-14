@@ -1,12 +1,15 @@
 .grades-graph {
 	margin-top: 20px;
+	max-width: 100vw;
 
 		g.recharts-layer.recharts-cartesian-axis.recharts-xAxis.xAxis, g.recharts-layer.recharts-cartesian-axis.recharts-yAxis.yAxis {
 			opacity: .5;
 		}
 
 		.recharts-surface {
-	    height: 410px;
+	    @include desktop {
+				height: 410px;
+			}
 	  }
 
 		.recharts-default-tooltip {

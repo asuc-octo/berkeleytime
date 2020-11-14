@@ -25,9 +25,9 @@ CACHE_TIMEOUT = 900
 
 # /enrollment/enrollment_json/
 def enrollment_context(long_form=False):
-    cache_key = 'enrollment__courses'
+    cache_key = 'enrollment__courses_new'
     if long_form:
-        cache_key = 'enrollment__courses__long'
+        cache_key = 'enrollment__courses__long_new'
     cached = cache.get(cache_key)
     if cached:
         rtn = cached
@@ -52,7 +52,7 @@ def prefetch(course_id):
 
 def enrollment_section_render(request, course_id):
     try:
-        cached = cache.get('enrollment_section_render ' + course_id)
+        cached = cache.get('enrollment_section_render_new ' + course_id)
         if cached:
             print('Cache Hit in enrollment_section_render with course_id ' + course_id)
             prefetch(course_id)
@@ -89,7 +89,7 @@ def enrollment_section_render(request, course_id):
 
         rtn = sorted(sem_to_sections.values(), key=lambda sect: semesters[(sect['semester'], sect['year'])])
 
-        cache.set('enrollment_section_render ' + str(course_id), rtn, CACHE_TIMEOUT)
+        cache.set('enrollment_section_render_new ' + str(course_id), rtn, CACHE_TIMEOUT)
         prefetch(course_id)
         return render_to_json(rtn)
     except Exception as e:
@@ -100,7 +100,7 @@ def enrollment_section_render(request, course_id):
 # /enrollment/aggregate/
 def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, year=CURRENT_YEAR):
     try:
-        cached = cache.get('enrollment_aggregate_json ' + str(course_id) + semester + str(year))
+        cached = cache.get('enrollment_aggregate_json_new ' + str(course_id) + semester + str(year))
         if cached:
             print('Cache Hit in enrollment_aggregate_json with course_id  ' + course_id + ' semester ' + semester
                   + ' year ' + year)
@@ -183,7 +183,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
             rtn['enrolled_scale_max'] = int(rtn['enrolled_percent_max'] * rtn['enrolled_max'])
             rtn['waitlisted_scale_max'] = int(rtn['waitlisted_percent_max'] * rtn['waitlisted_max'])
 
-            cache.set('enrollment_aggregate_json ' + str(course_id) + semester + str(year), rtn, CACHE_TIMEOUT)
+            cache.set('enrollment_aggregate_json_new ' + str(course_id) + semester + str(year), rtn, CACHE_TIMEOUT)
             rtn = render_to_json(rtn)
 
         return rtn
@@ -195,7 +195,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
 # /enrollment/data/
 def enrollment_json(request, section_id):
     try:
-        cached = cache.get('enrollment_json' + str(section_id))
+        cached = cache.get('enrollment_json_new' + str(section_id))
         if cached:
             print('Cache Hit in enrollment_json with section_id ' + section_id)
             return render_to_json(cached)
@@ -271,7 +271,7 @@ def enrollment_json(request, section_id):
         rtn['enrolled_scale_max'] = int(rtn['enrolled_percent_max'] * rtn['enrolled_max'])
         rtn['waitlisted_scale_max'] = int(rtn['waitlisted_percent_max'] * rtn['enrolled_max'])
 
-        cache.set('enrollment_json' + str(section_id), rtn, CACHE_TIMEOUT)
+        cache.set('enrollment_json_new' + str(section_id), rtn, CACHE_TIMEOUT)
         rtn = render_to_json(rtn)
 
         return rtn
