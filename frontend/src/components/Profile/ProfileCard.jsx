@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import { formatUnits, formatPercentage, applyIndicatorPercent, applyIndicatorGrade } from '../../utils/utils'
+import Trash from '../../assets/svg/profile/trash.svg';
 
 class ProfileCard extends PureComponent {
 
@@ -11,6 +12,7 @@ class ProfileCard extends PureComponent {
       letter_average,
       enrolled_percentage,
       units,
+      removable,
     } = this.props;
 
     return (
@@ -31,6 +33,11 @@ class ProfileCard extends PureComponent {
           <div className="profile-card-sort profile-card-grade">
             {applyIndicatorGrade(letter_average,letter_average)}
           </div>
+          {removable && 
+            <div className="profile-card-remove">
+              <img src={Trash}/>
+            </div>
+          }
         </div>
       </div>
     );
