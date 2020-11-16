@@ -6,6 +6,8 @@ import { connect, ConnectedProps } from 'react-redux'
 
 import { ReduxState } from '../../redux/store'
 
+import LoginButton from '../Login/LoginButton'
+
 interface Props extends PropsFromRedux {}
 
 const Navigation: FC<Props> = (props) => {
@@ -75,6 +77,9 @@ const Navigation: FC<Props> = (props) => {
         <Nav>
           {
             links.map((link, index) => {
+              if (link.nav_to === '/login') {
+                return (<LoginButton key="login"/>);
+              }
               // return empty nav link if we are on the page referenced by the nav link
               if (link.nav_to !== '') {
                 return (

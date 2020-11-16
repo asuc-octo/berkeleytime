@@ -35,35 +35,11 @@ export interface BerkeleytimeUserType {
   id: Scalars['ID'];
   user: UserType;
   major: Scalars['String'];
-  savedClasses: CourseTypeConnection;
+  savedClasses?: Maybe<Array<Maybe<CourseType>>>;
   emailClassUpdate: Scalars['Boolean'];
   emailGradeUpdate: Scalars['Boolean'];
   emailEnrollmentOpening: Scalars['Boolean'];
   emailBerkeleytimeUpdate: Scalars['Boolean'];
-}
-
-
-export interface BerkeleytimeUserTypeSavedClassesArgs {
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  department?: Maybe<Scalars['String']>;
-  abbreviation?: Maybe<Scalars['String']>;
-  courseNumber?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  units?: Maybe<Scalars['String']>;
-  prerequisites?: Maybe<Scalars['String']>;
-  gradeAverage?: Maybe<Scalars['Float']>;
-  letterAverage?: Maybe<Scalars['String']>;
-  hasEnrollment?: Maybe<Scalars['Boolean']>;
-  enrolled?: Maybe<Scalars['Int']>;
-  enrolledMax?: Maybe<Scalars['Int']>;
-  enrolledPercentage?: Maybe<Scalars['Float']>;
-  waitlisted?: Maybe<Scalars['Int']>;
-  openSeats?: Maybe<Scalars['Int']>;
-  lastUpdated?: Maybe<Scalars['DateTime']>;
 }
 
 export interface CourseType extends Node {
@@ -75,7 +51,7 @@ export interface CourseType extends Node {
   abbreviation: Scalars['String'];
   courseNumber: Scalars['String'];
   description: Scalars['String'];
-  units: Scalars['String'];
+  units?: Maybe<Scalars['String']>;
   prerequisites: Scalars['String'];
   gradeAverage?: Maybe<Scalars['Float']>;
   letterAverage: Scalars['String'];
@@ -131,31 +107,6 @@ export interface CourseTypeGradeSetArgs {
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
-  course?: Maybe<Scalars['ID']>;
-  semester?: Maybe<Scalars['String']>;
-  year?: Maybe<Scalars['String']>;
-  abbreviation?: Maybe<Scalars['String']>;
-  courseNumber?: Maybe<Scalars['String']>;
-  sectionNumber?: Maybe<Scalars['String']>;
-  instructor?: Maybe<Scalars['String']>;
-  instructors?: Maybe<Scalars['String']>;
-  a1?: Maybe<Scalars['Int']>;
-  a2?: Maybe<Scalars['Int']>;
-  a3?: Maybe<Scalars['Int']>;
-  b1?: Maybe<Scalars['Int']>;
-  b2?: Maybe<Scalars['Int']>;
-  b3?: Maybe<Scalars['Int']>;
-  c1?: Maybe<Scalars['Int']>;
-  c2?: Maybe<Scalars['Int']>;
-  c3?: Maybe<Scalars['Int']>;
-  d1?: Maybe<Scalars['Int']>;
-  d2?: Maybe<Scalars['Int']>;
-  d3?: Maybe<Scalars['Int']>;
-  f?: Maybe<Scalars['Int']>;
-  gradedTotal?: Maybe<Scalars['Int']>;
-  p?: Maybe<Scalars['Int']>;
-  np?: Maybe<Scalars['Int']>;
-  average?: Maybe<Scalars['Float']>;
 }
 
 
@@ -235,7 +186,7 @@ export interface GradeType extends Node {
   courseNumber: Scalars['String'];
   sectionNumber: Scalars['String'];
   instructor: Scalars['String'];
-  instructors: Scalars['String'];
+  instructors: Array<Scalars['String']>;
   a1: Scalars['Int'];
   a2: Scalars['Int'];
   a3: Scalars['Int'];
@@ -275,10 +226,32 @@ export interface GradeTypeEdge {
 
 export interface Mutation {
   __typename?: 'Mutation';
+  updateUser?: Maybe<UpdateUser>;
+  saveClass?: Maybe<SaveClass>;
+  removeClass?: Maybe<RemoveClass>;
   /** Login mutation using graphql_jwt  */
   login?: Maybe<ObtainJsonWebToken>;
   verifyToken?: Maybe<Verify>;
   refreshToken?: Maybe<Refresh>;
+}
+
+
+export interface MutationUpdateUserArgs {
+  emailBerkeleytimeUpdate?: Maybe<Scalars['Boolean']>;
+  emailClassUpdate?: Maybe<Scalars['Boolean']>;
+  emailEnrollmentOpening?: Maybe<Scalars['Boolean']>;
+  emailGradeUpdate?: Maybe<Scalars['Boolean']>;
+  major?: Maybe<Scalars['String']>;
+}
+
+
+export interface MutationSaveClassArgs {
+  classId?: Maybe<Scalars['ID']>;
+}
+
+
+export interface MutationRemoveClassArgs {
+  classId?: Maybe<Scalars['ID']>;
 }
 
 
@@ -428,7 +401,6 @@ export interface QueryAllGradesArgs {
   courseNumber?: Maybe<Scalars['String']>;
   sectionNumber?: Maybe<Scalars['String']>;
   instructor?: Maybe<Scalars['String']>;
-  instructors?: Maybe<Scalars['String']>;
   a1?: Maybe<Scalars['Int']>;
   a2?: Maybe<Scalars['Int']>;
   a3?: Maybe<Scalars['Int']>;
@@ -499,6 +471,8 @@ export interface QueryAllCoursesArgs {
   waitlisted?: Maybe<Scalars['Int']>;
   openSeats?: Maybe<Scalars['Int']>;
   lastUpdated?: Maybe<Scalars['DateTime']>;
+  hasGrades?: Maybe<Scalars['Boolean']>;
+  inPlaylists?: Maybe<Scalars['String']>;
 }
 
 
@@ -545,6 +519,16 @@ export interface Refresh {
   refreshExpiresIn: Scalars['Int'];
 }
 
+export interface RemoveClass {
+  __typename?: 'RemoveClass';
+  user?: Maybe<BerkeleytimeUserType>;
+}
+
+export interface SaveClass {
+  __typename?: 'SaveClass';
+  user?: Maybe<BerkeleytimeUserType>;
+}
+
 export interface SectionType extends Node {
   __typename?: 'SectionType';
   /** The ID of the object. */
@@ -575,6 +559,7 @@ export interface SectionType extends Node {
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
   enrollmentSet: EnrollmentTypeConnection;
+  wordDays?: Maybe<Scalars['String']>;
 }
 
 
@@ -608,6 +593,11 @@ export interface SectionTypeEdge {
   cursor: Scalars['String'];
 }
 
+export interface UpdateUser {
+  __typename?: 'UpdateUser';
+  user?: Maybe<BerkeleytimeUserType>;
+}
+
 export interface UserType {
   __typename?: 'UserType';
   id: Scalars['ID'];
@@ -638,62 +628,32 @@ export type CourseOverviewFragment = (
   & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'units'>
 );
 
-export type FilterFragment = (
-  { __typename?: 'PlaylistType' }
-  & Pick<PlaylistType, 'id' | 'name' | 'category' | 'semester' | 'year'>
+export type UserProfileFragment = (
+  { __typename?: 'BerkeleytimeUserType' }
+  & Pick<BerkeleytimeUserType, 'id' | 'major' | 'emailClassUpdate' | 'emailGradeUpdate' | 'emailEnrollmentOpening' | 'emailBerkeleytimeUpdate'>
+  & { user: (
+    { __typename?: 'UserType' }
+    & Pick<UserType, 'id' | 'username' | 'firstName' | 'lastName' | 'email'>
+  ), savedClasses?: Maybe<Array<Maybe<(
+    { __typename?: 'CourseType' }
+    & CourseOverviewFragment
+  )>>> }
 );
 
-export type FullCourseFragment = (
-  { __typename?: 'CourseType' }
-  & Pick<CourseType, 'title' | 'units' | 'waitlisted' | 'openSeats' | 'letterAverage' | 'lastUpdated' | 'id' | 'hasEnrollment' | 'gradeAverage' | 'enrolledPercentage' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'enrolled' | 'abbreviation' | 'prerequisites'>
-  & { playlistSet: (
-    { __typename?: 'PlaylistTypeConnection' }
-    & { edges: Array<Maybe<(
-      { __typename?: 'PlaylistTypeEdge' }
-      & { node?: Maybe<(
-        { __typename?: 'PlaylistType' }
-        & Pick<PlaylistType, 'category' | 'id' | 'name' | 'semester' | 'year'>
-      )> }
-    )>> }
-  ), sectionSet: (
-    { __typename?: 'SectionTypeConnection' }
-    & { edges: Array<Maybe<(
-      { __typename?: 'SectionTypeEdge' }
-      & { node?: Maybe<(
-        { __typename?: 'SectionType' }
-        & Pick<SectionType, 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days'>
-      )> }
-    )>> }
-  ) }
-);
-
-export type GetCourseForIdQueryVariables = Exact<{
-  id: Scalars['ID'];
+export type LoginMutationVariables = Exact<{
+  token: Scalars['String'];
 }>;
 
 
-export type GetCourseForIdQuery = (
-  { __typename?: 'Query' }
-  & { course?: Maybe<(
-    { __typename?: 'CourseType' }
-    & FullCourseFragment
-  )> }
-);
-
-export type GetCoursesForFilterQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetCoursesForFilterQuery = (
-  { __typename?: 'Query' }
-  & { allCourses?: Maybe<(
-    { __typename?: 'CourseTypeConnection' }
-    & { edges: Array<Maybe<(
-      { __typename?: 'CourseTypeEdge' }
-      & { node?: Maybe<(
-        { __typename?: 'CourseType' }
-        & CourseOverviewFragment
-      )> }
-    )>> }
+export type LoginMutation = (
+  { __typename?: 'Mutation' }
+  & { login?: Maybe<(
+    { __typename?: 'ObtainJSONWebToken' }
+    & Pick<ObtainJsonWebToken, 'newUser' | 'refreshExpiresIn' | 'payload'>
+    & { user?: Maybe<(
+      { __typename?: 'BerkeleytimeUserType' }
+      & UserProfileFragment
+    )> }
   )> }
 );
 
@@ -708,28 +668,27 @@ export type GetFiltersQuery = (
       { __typename?: 'PlaylistTypeEdge' }
       & { node?: Maybe<(
         { __typename?: 'PlaylistType' }
-        & FilterFragment
+        & Pick<PlaylistType, 'id' | 'name' | 'category' | 'semester' | 'year'>
       )> }
     )>> }
+  )> }
+);
+
+export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'BerkeleytimeUserType' }
+    & UserProfileFragment
   )> }
 );
 
 export type StubQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StubQuery = (
-  { __typename?: 'Query' }
-  & { allPlaylists?: Maybe<(
-    { __typename?: 'PlaylistTypeConnection' }
-    & { edges: Array<Maybe<(
-      { __typename?: 'PlaylistTypeEdge' }
-      & { node?: Maybe<(
-        { __typename?: 'PlaylistType' }
-        & Pick<PlaylistType, 'id' | 'name' | 'category' | 'semester' | 'year'>
-      )> }
-    )>> }
-  )> }
-);
+export type StubQuery = { __typename: 'Query' };
 
 export const CourseOverviewFragmentDoc = gql`
     fragment CourseOverview on CourseType {
@@ -744,144 +703,78 @@ export const CourseOverviewFragmentDoc = gql`
   units
 }
     `;
-export const FilterFragmentDoc = gql`
-    fragment Filter on PlaylistType {
+export const UserProfileFragmentDoc = gql`
+    fragment UserProfile on BerkeleytimeUserType {
   id
-  name
-  category
-  semester
-  year
-}
-    `;
-export const FullCourseFragmentDoc = gql`
-    fragment FullCourse on CourseType {
-  title
-  units
-  waitlisted
-  openSeats
-  letterAverage
-  lastUpdated
-  id
-  hasEnrollment
-  gradeAverage
-  enrolledPercentage
-  enrolledMax
-  courseNumber
-  department
-  description
-  enrolled
-  abbreviation
-  prerequisites
-  playlistSet {
-    edges {
-      node {
-        category
-        id
-        name
-        semester
-        year
-      }
-    }
+  major
+  user {
+    id
+    username
+    firstName
+    lastName
+    email
   }
-  sectionSet {
-    edges {
-      node {
-        ccn
-        kind
-        instructor
-        startTime
-        endTime
-        enrolled
-        enrolledMax
-        locationName
-        waitlisted
-        waitlistedMax
-        days
-      }
-    }
-  }
-}
-    `;
-export const GetCourseForIdDocument = gql`
-    query GetCourseForId($id: ID!) {
-  course(id: $id) {
-    ...FullCourse
-  }
-}
-    ${FullCourseFragmentDoc}`;
-
-/**
- * __useGetCourseForIdQuery__
- *
- * To run a query within a React component, call `useGetCourseForIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCourseForIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCourseForIdQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useGetCourseForIdQuery(baseOptions: Apollo.QueryHookOptions<GetCourseForIdQuery, GetCourseForIdQueryVariables>) {
-        return Apollo.useQuery<GetCourseForIdQuery, GetCourseForIdQueryVariables>(GetCourseForIdDocument, baseOptions);
-      }
-export function useGetCourseForIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCourseForIdQuery, GetCourseForIdQueryVariables>) {
-          return Apollo.useLazyQuery<GetCourseForIdQuery, GetCourseForIdQueryVariables>(GetCourseForIdDocument, baseOptions);
-        }
-export type GetCourseForIdQueryHookResult = ReturnType<typeof useGetCourseForIdQuery>;
-export type GetCourseForIdLazyQueryHookResult = ReturnType<typeof useGetCourseForIdLazyQuery>;
-export type GetCourseForIdQueryResult = Apollo.QueryResult<GetCourseForIdQuery, GetCourseForIdQueryVariables>;
-export const GetCoursesForFilterDocument = gql`
-    query GetCoursesForFilter {
-  allCourses {
-    edges {
-      node {
-        ...CourseOverview
-      }
-    }
+  emailClassUpdate
+  emailGradeUpdate
+  emailEnrollmentOpening
+  emailBerkeleytimeUpdate
+  savedClasses {
+    ...CourseOverview
   }
 }
     ${CourseOverviewFragmentDoc}`;
+export const LoginDocument = gql`
+    mutation Login($token: String!) {
+  login(tokenId: $token) {
+    newUser
+    refreshExpiresIn
+    payload
+    user {
+      ...UserProfile
+    }
+  }
+}
+    ${UserProfileFragmentDoc}`;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
- * __useGetCoursesForFilterQuery__
+ * __useLoginMutation__
  *
- * To run a query within a React component, call `useGetCoursesForFilterQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCoursesForFilterQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const { data, loading, error } = useGetCoursesForFilterQuery({
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
  *   variables: {
+ *      token: // value for 'token'
  *   },
  * });
  */
-export function useGetCoursesForFilterQuery(baseOptions?: Apollo.QueryHookOptions<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>) {
-        return Apollo.useQuery<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>(GetCoursesForFilterDocument, baseOptions);
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, baseOptions);
       }
-export function useGetCoursesForFilterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>) {
-          return Apollo.useLazyQuery<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>(GetCoursesForFilterDocument, baseOptions);
-        }
-export type GetCoursesForFilterQueryHookResult = ReturnType<typeof useGetCoursesForFilterQuery>;
-export type GetCoursesForFilterLazyQueryHookResult = ReturnType<typeof useGetCoursesForFilterLazyQuery>;
-export type GetCoursesForFilterQueryResult = Apollo.QueryResult<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>;
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const GetFiltersDocument = gql`
     query GetFilters {
   allPlaylists {
     edges {
       node {
-        ...Filter
+        id
+        name
+        category
+        semester
+        year
       }
     }
   }
 }
-    ${FilterFragmentDoc}`;
+    `;
 
 /**
  * __useGetFiltersQuery__
@@ -907,19 +800,41 @@ export function useGetFiltersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetFiltersQueryHookResult = ReturnType<typeof useGetFiltersQuery>;
 export type GetFiltersLazyQueryHookResult = ReturnType<typeof useGetFiltersLazyQuery>;
 export type GetFiltersQueryResult = Apollo.QueryResult<GetFiltersQuery, GetFiltersQueryVariables>;
+export const GetUserDocument = gql`
+    query GetUser {
+  user {
+    ...UserProfile
+  }
+}
+    ${UserProfileFragmentDoc}`;
+
+/**
+ * __useGetUserQuery__
+ *
+ * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserQuery(baseOptions?: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, baseOptions);
+      }
+export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, baseOptions);
+        }
+export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
+export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
+export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
 export const StubDocument = gql`
     query Stub {
-  allPlaylists {
-    edges {
-      node {
-        id
-        name
-        category
-        semester
-        year
-      }
-    }
-  }
+  __typename
 }
     `;
 
