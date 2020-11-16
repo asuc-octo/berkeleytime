@@ -1,10 +1,9 @@
 # Lines starting with '#' are comments.
 # Each line is a file pattern followed by one or more owners.
-# The last matching lines takes the most precendence. 
+# The last matching lines takes the most precendence.
 
 *               @g-luo
-berkeleytime/   @hantaowang @LEON-MING
-kubernetes/     @hantaowang @LEON-MING
-build/          @hantaowang @tsaianson
+backend/        @LEON-MING
+kubernetes/     @LEON-MING
+build/          @LEON-MING
 frontend/       @chrisdliu @g-luo @michaelli1324
-Jenkinsfile     @hantaowang @tsaianson
