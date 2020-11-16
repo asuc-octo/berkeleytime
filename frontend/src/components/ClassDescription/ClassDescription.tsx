@@ -40,7 +40,7 @@ function findInstructor(instr: string | null): CSSProperties {
   for (let egg in easterEggImages) {
     if (instr.indexOf(egg) !== -1) {
       return {
-        '--section-cursor': `url(${easterEggImages[egg]})`
+        '--section-cursor': `url(${easterEggImages[egg]})`,
       } as CSSProperties;
     }
   }
@@ -48,20 +48,20 @@ function findInstructor(instr: string | null): CSSProperties {
 }
 
 type ClassDescriptionProps = {
-  courseId: string
-  modifyFilters: (add: string[], remove: string[]) => void
+  courseId: string;
+  modifyFilters: (add: string[], remove: string[]) => void;
 };
 
 const ClassDescription = ({
   courseId,
-  modifyFilters
+  modifyFilters,
 }: ClassDescriptionProps) => {
   const [readMore, setReadMore] = useState<boolean | null>(false);
 
   const result = useGetCourseForIdQuery({
     variables: {
-      id: courseId
-    }
+      id: courseId,
+    },
   });
 
   const { data, loading } = result;
@@ -77,11 +77,12 @@ const ClassDescription = ({
   }
 
   const course = data?.course!;
-  const playlists = course.playlistSet.edges.map(e => e?.node!);
-  const sections = course.sectionSet.edges.map(e => e?.node!);
+  const playlists = course.playlistSet.edges.map((e) => e?.node!);
+  const sections = course.sectionSet.edges.map((e) => e?.node!);
 
   const latestSemester = getLatestSemester(playlists);
-  const semesterUrl = latestSemester && `${latestSemester.semester}-${latestSemester.year}`;
+  const semesterUrl =
+    latestSemester && `${latestSemester.semester}-${latestSemester.year}`;
 
   const pills = stableSortPlaylists(playlists, 4);
 
@@ -119,8 +120,7 @@ const ClassDescription = ({
     // collapse
     let descRows = Math.round(course.description.length / charsPerRow);
     if (descRows > 3 || (descRows == 3 && course.prerequisites)) {
-      description =
-        description.slice(0, 3 * charsPerRow - moreOffset) + '...';
+      description = description.slice(0, 3 * charsPerRow - moreOffset) + '...';
       moreDesc = true;
     }
     if (descRows < 3 && course.prerequisites) {
@@ -146,37 +146,47 @@ const ClassDescription = ({
         <div className="stats">
           <div className="statline">
             <img src={people} />
-            Enrolled:
-            {course.enrolled !== -1
-              ? applyIndicatorPercent(
+            Enrolled: &nbsp;
+            {course.enrolled !== -1 ? (
+              <div className="statline-div">
+                {applyIndicatorPercent(
                   `${course.enrolled}/${course.enrolledMax}`,
                   course.enrolledPercentage
-                )
-              : ' N/A '}
-            &nbsp;
-            <a
-              href={toEnrollment.pathname}
-              target="_blank"
-              className="statlink"
-            >
-              <img src={launch} />
-            </a>
+                )}
+                &nbsp;
+                <a
+                  href={toEnrollment.pathname}
+                  target="_blank"
+                  className="statlink"
+                >
+                  <img src={launch} />
+                </a>
+              </div>
+            ) : (
+              ' N/A '
+            )}
           </div>
           <div className="statline">
             <img src={chart} />
-            Average Grade:
-            {applyIndicatorGrade(
-              course.letterAverage,
-              course.letterAverage
-            )}{' '}
-            &nbsp;
-            <a
-              href={toGrades.pathname}
-              target="_blank"
-              className="statlink"
-            >
-              <img src={launch} />
-            </a>
+            Average Grade: &nbsp;
+            {course.gradeAverage !== -1 ? (
+              <div className="statline-div">
+                {applyIndicatorGrade(
+                  course.letterAverage,
+                  course.letterAverage
+                )}{' '}
+                &nbsp;
+                <a
+                  href={toGrades.pathname}
+                  target="_blank"
+                  className="statlink"
+                >
+                  <img src={launch} />
+                </a>
+              </div>
+            ) : (
+              ' N/A '
+            )}
           </div>
           <div className="statline">
             <img src={book} />
@@ -247,7 +257,8 @@ const ClassDescription = ({
                     <td>{section.instructor}</td>
                     {!isNaN(+startDate) && !isNaN(+endDate) ? (
                       <td>
-                        {section.days} {formatTime(startDate)} - {formatTime(endDate)}
+                        {section.days} {formatTime(startDate)} -{' '}
+                        {formatTime(endDate)}
                       </td>
                     ) : (
                       <td></td>
@@ -266,7 +277,7 @@ const ClassDescription = ({
       </div>
     </div>
   );
-}
+};
 
 // ClassDescription = Radium(ClassDescription);
 export default ClassDescription;

@@ -139,7 +139,7 @@ const contributors = [
     {
       name: 'Austin George',
       role: 'Frontend Engineer',
-      site: 'https://www.linkedin.com/in/ruochen99',
+      site: '',
       img: austin_1,
       silly_img: austin_2,
     },
