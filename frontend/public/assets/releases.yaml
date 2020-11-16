@@ -1,4 +1,15 @@
 releases:
+  - date: Nov 15, 2020
+    whatsNew:
+    - We have released mobile views! You can now browse our site on your phone and tablet.
+    - We've added improved search to our <a href="/catalog">catalog</a>. You can now search for courses by their names. 
+      We've added a Sort By - Relevance query to give you courses that are most similar to your query 
+      (try searching "Economics" in catalog).
+    - We've revamped our backend so that we now display more complete grades and enrollment data.
+    fixes:
+    - Modified enrollment search to display all courses we have data for. 
+      Previously, we were only displaying courses that would be offered in the coming semester.
+    - Fixed L&S requirement filters, which were temporarily broken due to a SIS API issue.
   - date: Oct 11, 2020
     whatsNew:
     - We released Spring 2021 course information! You can now search for courses on our <a href="/catalog">catalog</a>.
