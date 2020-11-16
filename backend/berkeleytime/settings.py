@@ -53,7 +53,6 @@ elif IS_PRODUCTION:
     ALLOWED_HOSTS = [
         'berkeleytime.com',
         'www.berkeleytime.com',
-        'old.berkeleytime.com',
     ]
 
 # Database
