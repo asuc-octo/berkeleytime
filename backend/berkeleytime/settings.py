@@ -231,6 +231,7 @@ GRAPHENE = {
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
+    'RELAY_CONNECTION_MAX_LIMIT': 100000,
 }
 
 # Graphene jwt
