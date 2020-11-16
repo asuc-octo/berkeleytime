@@ -137,8 +137,9 @@ export default function GradesGraph({
               />
             ))}
             <Legend
-              horizontalAlign="left"
+              wrapperStyle={{ paddingTop: 20, paddingLeft: 10, paddingRight: 10, paddingBottom: 10 }}
               layout="vertical"
+              iconSize="10"
               iconType="circle"
             />
           </BarChart>

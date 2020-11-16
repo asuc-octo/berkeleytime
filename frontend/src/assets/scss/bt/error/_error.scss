@@ -20,19 +20,20 @@
     > h1 {
       margin-bottom: 20px;
       font-weight: bold;
-      font-size: 60px;
+      @include font-size-responsive(60px);
     }
 
     > h3 {
       color: $bt-light-text;
       margin-bottom: 24px;
       font-weight: bold;
+      @include font-size-responsive(26px);
     }
 
     > p {
       color: $bt-light-text;
       margin-bottom: 20px;
-      font-size: 20px;
+      @include font-size-responsive(16px);
     }
   }
 

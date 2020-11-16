@@ -87,7 +87,8 @@ class GradesGraphCard extends Component {
     const { isTooltipActive, activeLabel } = data;
     const { selectedCourses } = this.props;
 
-    if (isTooltipActive && selectedCourses.length === 1) {
+    // Update the selected course if no bar is clicked if in mobile
+    if (isTooltipActive && (selectedCourses.length === 1 || this.props.isMobile)) {
       const selectedCourse = selectedCourses[0];
       const grade = activeLabel;
       this.update(selectedCourse, grade);
