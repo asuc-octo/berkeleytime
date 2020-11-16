@@ -51,6 +51,7 @@ a {
 
 @mixin font-size-responsive-larger($size) {
   @include mobile { font-size: $size - 2px; }
+  font-size: $size;
 }
 
 .bt-h3 {
