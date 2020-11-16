@@ -13,7 +13,7 @@ services:
      - "GOOGLE_CLIENT_SECRET=***REMOVED***"
      - "GOOGLE_TOKEN_URI=https://accounts.google.com/o/oauth2/token"
      - "ENVIRONMENT_NAME=LOCALHOST"
-     - "DATABASE_URL=postgres://bt:yuxinsucks@34.94.155.47:5432/bt_main"
+     - "DATABASE_URL=postgres://bt:yuxinsucks@34.94.155.47:5432/bt_prod"
      - "SIS_CLASS_APP_ID=***REMOVED***"
      - "SIS_CLASS_APP_KEY=***REMOVED***"
      - "SIS_COURSE_APP_ID=***REMOVED***"
