@@ -56,15 +56,15 @@ class CourseFilter(django_filters.FilterSet):
     def filter_in_playlists(self, queryset, name, value):
         playlist_ids = list(map(lambda global_id: from_global_id(global_id)[1], value))
         categories = Playlist.objects.filter(id__in=playlist_ids).distinct('category').values_list('category', flat=True)
-        all_reduce = [queryset]
+        all_reduce = queryset
         for category in categories:
             playlists = Playlist.objects.filter(id__in=playlist_ids, category=category)
             intersected = [playlist.courses.all() for playlist in playlists]
             if category in ('university', 'ls', 'engineering', 'haas'):
-                all_reduce.append(reduce(lambda x, y: x & y, intersected))
+                all_reduce &= all_reduce & reduce(lambda x, y: x & y, intersected)
             else:
-                all_reduce.append(reduce(lambda x, y: x | y, intersected))
-        return reduce(lambda x, y: x & y, all_reduce).distinct()
+                all_reduce &= all_reduce & reduce(lambda x, y: x | y, intersected)
+        return all_reduce
 
 
 class SectionType(DjangoObjectType):

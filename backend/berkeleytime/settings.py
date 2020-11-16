@@ -53,7 +53,6 @@ elif IS_PRODUCTION:
     ALLOWED_HOSTS = [
         'berkeleytime.com',
         'www.berkeleytime.com',
-        'old.berkeleytime.com',
     ]
 
 # Database
@@ -231,6 +230,7 @@ GRAPHENE = {
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
+    'RELAY_CONNECTION_MAX_LIMIT': 100000,
 }
 
 # Graphene jwt

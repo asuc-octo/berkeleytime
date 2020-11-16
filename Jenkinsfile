@@ -86,7 +86,7 @@ kubectl apply -f $FRONTEND_DEPLOY_STAGE_FILEPATH'''
       when {
         branch "production"
         anyOf {
-            changeset "berkeleytime/**"
+            changeset "backend/**"
             changeset "kubernetes/**"
             changeset "Jenkinsfile"
         }
@@ -131,7 +131,7 @@ kubectl apply -f $FRONTEND_DEPLOY_PROD_FILEPATH'''
       when {
         branch "production"
         anyOf {
-            changeset "berkeleytime/**"
+            changeset "backend/**"
             changeset "kubernetes/**"
             changeset "Jenkinsfile"
         }
@@ -166,7 +166,7 @@ kubectl apply -f $BACKEND_DEPLOY_PROD_FILEPATH'''
       when {
         branch "production"
         anyOf {
-            changeset "berkeleytime/**"
+            changeset "backend/**"
             changeset "kubernetes/**"
             changeset "Jenkinsfile"
         }

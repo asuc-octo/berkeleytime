@@ -37,10 +37,10 @@ const Navigation: FC<Props> = (props) => {
       //   to: '/apply',
       //   text: 'Apply',
       // },
-      {
-        to: '/login',
-        text: 'Login',
-      },
+      // {
+      //  to: '/login',
+      //  text: 'Login',
+      // },
     ].map(link => ({
       to: link.to,
       text: link.text,

@@ -1,6 +1,6 @@
-import { CourseOverviewFragment } from "graphql/graphql";
-import React, { CSSProperties, memo, PureComponent, ReactNode } from "react";
-import { CourseSortAttribute } from "utils/courses/sorting";
+import { CourseOverviewFragment } from 'graphql/graphql';
+import React, { CSSProperties, memo, PureComponent, ReactNode } from 'react';
+import { CourseSortAttribute } from 'utils/courses/sorting';
 
 // TODO: consider importing utils after latest changes merged into master.
 function formatEnrollmentPercentage(percentage: number): string {
@@ -8,27 +8,27 @@ function formatEnrollmentPercentage(percentage: number): string {
 }
 
 function formatUnits(units: string): string {
-  return `${units} Unit${units === "1.0" || units === "1" ? "" : "s"}`
-    .replace(/.0/g, "")
-    .replace(/ - /, "-")
-    .replace(/ or /g, "-");
+  return `${units} Unit${units === '1.0' || units === '1' ? '' : 's'}`
+    .replace(/.0/g, '')
+    .replace(/ - /, '-')
+    .replace(/ or /g, '-');
 }
 
 function colorEnrollment(percentage: number): string {
   const pct = percentage * 100;
   if (pct < 33) {
-    return "enrollment-first-third";
+    return 'enrollment-first-third';
   } else if (pct < 67) {
-    return "enrollment-second-third";
+    return 'enrollment-second-third';
   } else {
-    return "enrollment-last-third";
+    return 'enrollment-last-third';
   }
 }
 
 function colorGrade(grade: string): string {
-  if (grade === "") {
-    console.error("colorGrade: no grade provided!");
-    return "";
+  if (grade === '') {
+    console.error('colorGrade: no grade provided!');
+    return '';
   }
   return `grade-${grade[0]}`;
 }
@@ -77,16 +77,16 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
 
   let sort;
   switch (sortBy) {
-    case "department_name":
-    case "enrolled_percentage":
-    case "average_grade":
+    case 'department_name':
+    case 'enrolled_percentage':
+    case 'average_grade':
       if (letterAverage !== null) {
         sort = gradeSort(letterAverage);
       } else {
         sort = null;
       }
       break;
-    case "open_seats":
+    case 'open_seats':
       sort = openSeatsSort(openSeats);
       break;
     default:
@@ -96,17 +96,23 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
   const isSelectedCourse = id !== null && selectedCourse?.id === id;
 
   return (
-    <div style={style} className="filter-card" onClick={() => data.selectCourse(course)}>
+    <div
+      style={style}
+      className="filter-card"
+      onClick={() => data.selectCourse(course)}
+    >
       <div
         className={`filter-card-container ${
-          isSelectedCourse ? "selected" : ""
+          isSelectedCourse ? 'selected' : ''
         }`}
       >
         <div className="filter-card-info">
           <h6>{`${abbreviation} ${courseNumber}`}</h6>
           <p className="filter-card-info-desc">{title}</p>
           <div className="filter-card-info-stats">
-            {enrolledPercentage === -1 ? null : (
+            {enrolledPercentage === -1 ? (
+              <p> N/A </p>
+            ) : (
               <p className={colorEnrollment(enrolledPercentage)}>
                 {formatEnrollmentPercentage(enrolledPercentage)}
               </p>
