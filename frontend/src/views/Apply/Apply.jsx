@@ -80,7 +80,7 @@ class Apply extends PureComponent {
         </div>
         <ButtonToolbar className="releases-heading-button join">
           <input placeholder="Your email address" type="text" id="mailInput" onChange={this.handleInputChange}></input>
-          <button disabled={submitting || submissionSuccess} className="btn btn-bt-primary btn-bt-sm" onClick={this.submit}>
+          <button disabled={submitting || submissionSuccess} className="btn bt-btn-primary btn-bt-sm" onClick={this.submit}>
             Sign up for Updates
           </button>
         </ButtonToolbar>
