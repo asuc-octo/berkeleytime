@@ -22,7 +22,7 @@ pipeline {
       when {
         branch "master"
         anyOf {
-            changeset "berkeleytime/**"
+            changeset "backend/**"
             changeset "kubernetes/**"
             changeset "Jenkinsfile"
         }
@@ -50,7 +50,7 @@ pipeline {
       when {
         branch "master"
         anyOf {
-            changeset "berkeleytime/**"
+            changeset "backend/**"
             changeset "kubernetes/**"
             changeset "Jenkinsfile"
         }
