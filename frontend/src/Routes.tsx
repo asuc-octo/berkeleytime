@@ -27,7 +27,7 @@ const routes: Array<RouteProps> = [
   { path: '/enrollment',        component: Enrollment,     exact: false },
   { path: '/about',             component: About           },
   { path: '/dashboard',         component: Dashboard       },
-  { path: '/login',             component: Login           },
+  // { path: '/login',             component: Login           },
   { path: '/releases',          component: Releases        },
   { path: '/faq',               component: Faq             },
   { path: '/apidocs',           component: ApiDocs         },
