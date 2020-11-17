@@ -9,7 +9,7 @@ function ClassCard(props) {
   } = props;
 
   return (
-    <Col xs={11} lg={3} xl={3} className="class-card-column">
+    <Col md={4} lg={3} xl={3} className="class-card-column">
       <div className="class-card">
         <div className="class-card-header">
           <div className="class-card-square" style={{ backgroundColor: fill }} />
