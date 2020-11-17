@@ -3,7 +3,7 @@ import { Row, ButtonToolbar } from 'react-bootstrap';
 import PositionCard from '../../components/Recruiting/Position';
 import { Link } from 'react-router-dom';
 
-import doe from '../../assets/img/images/about/group/doe.jpg';
+import doe from 'assets/img/about/group/doe.jpg';
 
 const IS_RECRUITING = false;
 
@@ -80,7 +80,7 @@ class Apply extends PureComponent {
         </div>
         <ButtonToolbar className="releases-heading-button join">
           <input placeholder="Your email address" type="text" id="mailInput" onChange={this.handleInputChange}></input>
-          <button disabled={submitting || submissionSuccess} className="btn btn-bt-primary btn-bt-sm" onClick={this.submit}>
+          <button disabled={submitting || submissionSuccess} className="btn bt-btn-primary btn-bt-sm" onClick={this.submit}>
             Sign up for Updates
           </button>
         </ButtonToolbar>

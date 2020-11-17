@@ -1,0 +1,76 @@
+info:
+  unique_name: "BugSurvey"
+  public_name: Berkeleytime Feedback
+  description: |-
+    We're super appreciative of student feedback! Feel free to give any feedback to us via this form, whether it's a bug, feature request, or general site feedback.
+
+    If you're reporting a bug, please enter your email in case we need to contact you to help replicate the issue. Thanks so much for your help!
+  googlesheet_link: "https://docs.google.com/spreadsheets/d/1uQve26eg5slxDYLHaR3toeMoSOu9k7Zb7OjD7IgPIAY/edit"
+  drive_folder_name: "BugUploads"
+  hooks:
+    - name: auto_github_issue
+      question: Question 2
+questions:
+  - title: "Email Address"
+    description: "If you like, you can let us know your email in case we have follow ups."
+    type: "short"
+    placeholder: "bspears@berkeley.edu"
+    format: "email"
+  - title: "What kind of bug is it?"
+    type: "multiple_choice"
+    placeholder: "Choose an option"
+    required: True
+    choices:
+      - Feedback for Developers
+      - Wrong Information
+      - Search is Not Working
+      - Class is Missing or Incorrect
+      - Data is Not Appearing
+      - A Feature is Not Working
+      - Site Crashes / Doesn't Respond
+      - Visual Bug with Site
+      - Other (Describe Below)
+  - title: "Please briefly describe the bug / feedback"
+    description: "Telling us how you found the bug will help us reproduce and solve it."
+    required: True
+    type: "long"
+    placeholder: "Oops!... I did it again..."
+  - title: "Which page is the problem on?"
+    required: True
+    type: "multiple_select"
+    choices:
+      - "Landing"
+      - "Catalog"
+      - "Grades"
+      - "Enrollment"
+      - "About"
+      - "FAQ"
+      - "API Docs"
+      - "Forms"
+      - "Other (describe below)"
+  - title: "What browser/system is this happening on?"
+    description: "Please let us know if this is happening on multiple browsers/systems"
+    type: "multiple_select"
+    choices:
+      - "Chrome"
+      - "Safari"
+      - "Firefox"
+      - "Internet Explorer / Edge"
+      - "MacOS"
+      - "Windows"
+      - "Linux"
+      - "iPhone"
+      - "Android"
+    required: False
+    placeholder: "Choose an option"
+  - title: "What class is having the issue?"
+    type: "short"
+    placeholder: "MUSIC 26AC"
+  - title: "If you can, upload a screen shot of the bug."
+    description: "Upload any number of files. (Max 10 MB per file)"
+    placeholder: "Upload a File"
+    type: "file"
+  - title: "Additional Comments"
+    description: "If there is anything else you would like to tell us, leave it here!"
+    type: "long"
+    placeholder: "Gimme More"

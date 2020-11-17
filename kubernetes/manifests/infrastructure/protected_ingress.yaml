@@ -19,7 +19,6 @@ spec:
     - staging.berkeleytime.com
     - jenkins.berkeleytime.com
     - kibana.berkeleytime.com
-    - old.berkeleytime.com
     secretName: letsencrypt-bt
   rules:
   - host: kibana.berkeleytime.com

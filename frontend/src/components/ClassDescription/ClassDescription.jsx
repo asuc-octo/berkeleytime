@@ -268,19 +268,28 @@ class ClassDescription extends Component {
             <div className="stats">
               <div className="statline">
                 <img src={people} />
-                Enrolled:
+                Enrolled: &nbsp;
                 {course.enrolled !== -1
-                    ? applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)
+                    ? 
+                    <div className="statline-div">
+                      {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)}
+                      &nbsp;
+                      <a href={toEnrollment.pathname} target="_blank" className="statlink"><img src={launch} /></a>
+                    </div>
                     : " N/A "
                 }
-                &nbsp;
-                <a href={toEnrollment.pathname} target="_blank" className="statlink"><img src={launch} /></a>
               </div>
               <div className="statline">
                 <img src={chart} />
-                Average Grade:
-                {applyIndicatorGrade(course.letter_average, course.letter_average)} &nbsp;
-                <a href={toGrades.pathname} target="_blank" className="statlink"><img src={launch} /></a>
+                Average Grade: &nbsp;
+                {course.grade_average !== -1
+                    ? 
+                  <div className="statline-div">
+                    {applyIndicatorGrade(course.letter_average, course.letter_average)} &nbsp;
+                    <a href={toGrades.pathname} target="_blank" className="statlink"><img src={launch} /></a>
+                  </div>
+                  : " N/A "
+                }
               </div>
               <div className="statline">
                 <img src={book} />
@@ -288,7 +297,7 @@ class ClassDescription extends Component {
               </div>
             </div>
             <section className="pill-container">
-              {pills.map(req => <div className="pill" onClick={() => this.pillFilter(req)}>{req}</div>)}
+              {pills.map(req => <div className="pill" key={req} onClick={() => this.pillFilter(req)}>{req}</div>)}
             </section>
             {description.length > 0 ?
               <p className="description">
@@ -324,7 +333,7 @@ class ClassDescription extends Component {
                     let startDate = new Date(section.start_time + "Z");
                     let endDate = new Date(section.end_time + "Z");
                     return (
-                      <tr style={this.findInstructor(section.instructor)}>
+                      <tr key={section.ccn} style={this.findInstructor(section.instructor)}>
                         <td>{section.kind}</td>
                         <td>{section.ccn}</td>
                         <td>{section.instructor}</td>

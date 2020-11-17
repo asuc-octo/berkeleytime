@@ -1,6 +1,6 @@
-/// This file contains some default styling for all text tags.
+// This file contains some default styling for all text tags.
 
-/// import font from google
+// import font from google
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 body,
@@ -20,13 +20,60 @@ td {
   color: $bt-base-text;
   margin: 0;
 
-  // -webkit-font-smoothing: antialiased;
-
-  /*@include desktop {
-  	font-size: 30px;
-  }*/
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-a:hover {
-  text-decoration: none;
+a {
+  color: $bt-blue;
+  transition: color 0.2s;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+// responsively scale font sizes (replace with $responsive)
+@mixin font-size-responsive($size) {
+  font-size: $size;
+
+  @if $size <= 24px {
+    @include tablet { font-size: $size - 2px; }
+    @include mobile { font-size: $size - 4px; }
+  } @else if $size <= 25px {
+    @include tablet { font-size: $size - 3px; }
+    @include mobile { font-size: $size - 5px; }
+  } @else {
+    @include tablet { font-size: $size - 3px; }
+    @include mobile { font-size: $size - 6px; }
+  }
+}
+
+@mixin font-size-responsive-larger($size) {
+  @include mobile { font-size: $size - 2px; }
+  font-size: $size;
+}
+
+.bt-h3 {
+  @include font-size-responsive(26px);
+}
+
+.bt-h6 {
+  @include font-size-responsive(18px);
+}
+
+.bt-p {
+  @include font-size-responsive(16px);
+}
+
+.bt-a {
+  @include font-size-responsive(16px);
+}
+
+.bt-bold {
+  font-weight: 600;
+}
+
+.bt-light-bold {
+  font-weight: 500;
 }

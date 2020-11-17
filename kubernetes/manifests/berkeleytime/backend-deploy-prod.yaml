@@ -22,7 +22,7 @@ spec:
       - name: berkeleytime-prod
         imagePullPolicy: Always
         image: index.docker.io/berkeleytime/berkeleytime:latest
-        command: ["python", "manage.py", "runserver", "0.0.0.0:5000"]
+        command: ["python3", "manage.py", "runserver", "0.0.0.0:5000"]
         volumeMounts:
         - name: google
           mountPath: "/etc/google"
@@ -43,7 +43,7 @@ spec:
             name: google
         - secretRef:
             name: sis
-        - secretRef: 
+        - secretRef:
             name: sendgrid
         - secretRef:
             name: sentrydsn
@@ -54,7 +54,7 @@ spec:
 #            cpu: 500m
       volumes:
       - name: google
-        secret: 
+        secret:
           secretName: google-2
           items:
           - key: google-tokens

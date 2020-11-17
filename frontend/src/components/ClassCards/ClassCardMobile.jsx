@@ -23,9 +23,9 @@ function ClassCardMobile(props) {
     return (
       <div className="class-card-mobile">
         <div className="class-card-mobile-column">
-          <h6>Course Average</h6>
+          <div class="bt-h6">Course Average</div>
           {nullCheck(courseLetter) ? 
-            <div>
+            <div class="bt-h6">
               <span className={getGradeColor(courseLetter)}>{courseLetter}</span>
               (GPA: {courseGPA})
             </div>
@@ -33,9 +33,9 @@ function ClassCardMobile(props) {
           "--"}
         </div>
         <div className="class-card-mobile-column">
-          <h6>Section Average</h6>
+          <div class="bt-h6">Section Average</div>
           {nullCheck(sectionLetter) ? 
-            <div>
+            <div class="bt-h6">
               <span className={getGradeColor(sectionLetter)}>{sectionLetter}</span>
               (GPA: {sectionGPA})
             </div>
@@ -60,15 +60,15 @@ function ClassCardMobile(props) {
     return (
       <div className="class-card-mobile">
         <div className="class-card-mobile-column">
-          <h6>
+          <div class="bt-h6">
             {date_info ? date_info['period'] + ": " + date_info['daysAfterPeriodStarts'] : "--"}
-          </h6>
-          <h6>Enrollment Percent:
+          </div>
+          <div class="bt-h6">Enrollment Percent:
             {nullCheck(enrollment_info) ? applyIndicatorEnrollment.apply(null, enrollment_info) : "--"}
-          </h6> 
-          <h6>Waitlist Percent:
+          </div> 
+          <div class="bt-h6">Waitlist Percent:
             {nullCheck(waitlisted_info) ? applyIndicatorEnrollment.apply(null, waitlisted_info) : "--"}
-          </h6> 
+          </div> 
         </div> 
       </div> 
     );
