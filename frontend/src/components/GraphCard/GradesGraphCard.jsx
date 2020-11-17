@@ -17,6 +17,7 @@ class GradesGraphCard extends Component {
 
     this.state = {
       hoveredClass: false,
+      updateMobileHover: true,
     };
 
     this.updateBarHover = this.updateBarHover.bind(this);
@@ -80,6 +81,8 @@ class GradesGraphCard extends Component {
 
     const selectedCourse = selectedCourses.filter(course => selectedClassID === course.id)[0];
     this.update(selectedCourse, name);
+
+    this.setState({updateMobileHover: false});
   }
 
   // Handler function for updating GradesInfoCard on hover with single course
@@ -87,12 +90,17 @@ class GradesGraphCard extends Component {
     const { isTooltipActive, activeLabel } = data;
     const { selectedCourses } = this.props;
 
+    const noBarMobile = this.state.updateMobileHover && this.props.isMobile;
+
     // Update the selected course if no bar is clicked if in mobile
-    if (isTooltipActive && (selectedCourses.length === 1 || this.props.isMobile)) {
+    if (isTooltipActive && (selectedCourses.length === 1 || noBarMobile)) {
       const selectedCourse = selectedCourses[0];
       const grade = activeLabel;
       this.update(selectedCourse, grade);
     }
+
+    // Update mobile hover records if there actually is a bar (then we only want updateBarHover to run)
+    this.setState({updateMobileHover: true});
   }
 
   render() {
