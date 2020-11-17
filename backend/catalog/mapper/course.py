@@ -29,6 +29,7 @@ class CourseMapper:
             logger.exception({
                 'message': 'Exception while mapping Course API response to Course dict'
             })
+            return {}
 
 
     def get_abbreviation_and_department(self, data, unknown_departments=None):

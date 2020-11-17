@@ -90,7 +90,7 @@ class SectionService:
         for sect in response:
             section_dict = section_mapper.map(sect, extras=section_extras)
             section, created = self.update_or_create_from_dict(section_dict)
-            if semester != 'summer' and section.is_primary and not section.disabled:
+            if semester != 'summer' and section and section.is_primary and not section.disabled:
                 enrollment_dict = enrollment_mapper.map(sect, extras={'section_id': section.id})
                 enrollment_service.update_or_create_from_dict(enrollment_dict)
 
@@ -143,6 +143,7 @@ class SectionService:
                 'message': 'Exception encountered while updating/creating section',
                 'section_dict': section_dict,
             })
+            return None, False
 
 
 section_service = SectionService()

@@ -61,6 +61,7 @@ class CourseService:
                 'message': 'Exception encountered while updating/creating course',
                 'course_dict': course_dict,
             })
+            return None, False
 
 
     def _update_derived_grade_fields(self, course):

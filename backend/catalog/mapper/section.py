@@ -40,6 +40,7 @@ class SectionMapper:
             logger.exception({
                 'message': 'Unknown exception while mapping Class API response to Section object'
             })
+            return {}
 
     def get_enrollment(self, data):
         """Get enrollment data."""
