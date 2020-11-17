@@ -71,7 +71,7 @@ class SISClassResource:
                 'message': 'Unable to reach SIS Course API',
                 'url': url
             })
-            raise
+            return []
 
 
 sis_class_resource = SISClassResource()
