@@ -1,0 +1,286 @@
+# Rules appear in /opt/rules
+# Config appears in /opt/config
+# Create index pattern in Kibana first, Advanced option "Custom index pattern ID"
+
+# [Elastalert] Enable alert only in specific hour range
+# https://marchal.tech/blog/2019/08/27/elastalert-enable-alert-only-in-specific-hour-range/
+
+# Template from
+# https://github.com/jertel/elastalert-docker/blob/d0c017e5af2145b69511f7e6764b60e2c27166ee/chart/elastalert/values.yaml
+# Other examples:
+# https://github.com/oneoneonepig/elastalert-chart/blob/master/values.yaml
+# number of replicas to run
+replicaCount: 1
+
+# number of helm release revisions to retain
+# revisionHistoryLimit: 5
+
+# Default internal between alert checks against the elasticsearch datasource, in minutes
+# runIntervalMins: 1
+
+# Default rule buffer duration, in minutes
+# bufferTimeMins: 15
+
+# Amount of time to retry and deliver failed alerts (1440 minutes per day)
+# alertRetryLimitMins: 2880
+
+# Default time before realerting, in minutes
+# realertIntervalMins: ""
+
+# For ES 5: The name of the index which stores elastalert's statuses, typically elastalert_status
+# For ES 6: The prefix of the names of indices which store elastalert's statuses, typicaly elastalert
+#
+# See https://github.com/Yelp/elastalert/commit/c250100b7be07c68a53789569a86f87193ec37f4 for more details about this differentiation.
+#
+# writebackIndex: elastalert
+
+# image:
+# docker image
+# repository: jertel/elastalert-docker
+# docker image tag
+# tag: 0.2.4
+# pullPolicy: IfNotPresent
+
+resources: {}
+
+# Annotations to be added to pods
+# podAnnotations: {}
+
+elasticsearch:
+  # elasticsearch endpoint e.g. (svc.namespace||svc)
+  host: bt-elasticsearch-primary
+  # elasticsearch port
+  port: 9200
+  # # whether or not to connect to es_host using TLS
+  # useSsl: "False"
+  # # Username if authenticating to ES with basic auth
+  # username: ""
+  # # Password if authenticating to ES with basic auth
+  # password: ""
+  # # Specifies an existing secret to be used for the ES username/password
+  # credentialsSecret: general-secrets
+  # # The key in elasticsearch.credentialsSecret that stores the ES password
+  # credentialsSecretUsernameKey: USERNAME_ELASTICSEARCH_USER_ELASTIC
+  # # The key in elasticsearch.credentialsSecret that stores the ES username
+  # credentialsSecretPasswordKey: PASSWORD_ELASTICSEARCH_USER_ELASTIC
+  # # whether or not to verify TLS certificates
+  # verifyCerts: "True"
+  # # Enable certificate based authentication
+  # # path to a PEM certificate to use as the client certificate
+  # # clientCert: "/certs/client.pem"
+  # # path to a private key file to use as the client key
+  # # clientKey: "/certs/client-key.pem"
+  # # path to a CA cert bundle to use to verify SSL connections
+  # # caCerts: "/certs/ca.pem"
+  # # # certs volumes, required to mount ssl certificates when elasticsearch has tls enabled
+  # # certsVolumes:
+  # #   - name: es-certs
+  # #     secret:
+  # #       defaultMode: 420
+  # #       secretName: es-certs
+  # # # mount certs volumes, required to mount ssl certificates when elasticsearch has tls enabled
+  # # certsVolumeMounts:
+  # #   - name: es-certs
+  # #     mountPath: /certs
+  # #     readOnly: true
+
+# Optional env variables for the pod
+# optEnv: []
+
+extraConfigOptions:
+  # slack_webhook_url: https://hooks.slack.com/services/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 # berkeleytime-integrations channel
+  # slack_webhook_url: https://hooks.slack.com/services/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 # berkeleytime channel
+  # # Options to propagate to all rules, e.g. a common slack_webhook_url or kibana_url
+  # # Please note at the time of implementing this value, it will not work for required_locals
+  # # Which MUST be set at the rule level, these are: ['alert', 'type', 'name', 'index']
+  # generate_kibana_link: true
+  # kibana_url: https://ocf.berkeleytime.com/kibana/
+  # slack_webhook_url: dummy
+# To load Elastalert's config via secret, uncomment the line below
+# secretConfigName: elastalert-config-secret
+
+# Example of a secret config
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: elastalert-config-secret
+#type: Opaque
+#stringData:
+#   elastalert_config: |-
+#     rules_folder: /opt/rules
+#     scan_subdirectories: false
+#     run_every:
+#       minutes: 1
+#     buffer_time:
+#       minutes: 15
+#     es_host: elasticsearch
+#     es_port: 9200
+#     writeback_index: elastalert
+#     use_ssl: False
+#     verify_certs: True
+#     alert_time_limit:
+#       minutes: 2880
+#     slack_webhook_url: https://hooks.slack.com/services/xxxx
+#     slack_channel_override: '#alerts'
+
+# To load Elastalert's rules via secret, uncomment the line below
+#secretRulesName: elastalert-rules-secret
+
+# Additionally, you must specificy which rules to load from the secret
+#secretRulesList: [ "rule_1", "rule_2" ]
+
+# Example of secret rules
+
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: elastalert-rules-secret
+#  namespace: elastic-system
+#type: Opaque
+#stringData:
+#   rule_1: |-
+#     name: Rule 1
+#     type: frequency
+#     index: index1-*
+#     num_events: 3
+#     timeframe:
+#       minutes: 1
+#     alert:
+#     - "slack"
+#   rule_2: |-
+#     name: Rule 2
+#     type: frequency
+#     index: index2-*
+#     num_events: 5
+#     timeframe:
+#       minutes: 10
+#     alert:
+#     - "slack"
+
+# Command and args override for container e.g. (https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/)
+# command: ["YOUR_CUSTOM_COMMAND"]
+# args: ["YOUR", "CUSTOM", "ARGS"]
+# filter:
+# - range: # https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html#range-query-time-zone
+#     "@timestamp":
+#       time_zone: America/Los_Angeles
+#       gte: now/d+6h
+#       lte: now/d+2h
+# rule configurations e.g. (http://elastalert.readthedocs.io/en/latest/)
+# :muscle: *SSH:* `gcloud compute ssh --zone us-west2-a root@{1} -- "docker logs {4}"
+rules:
+  PostgreSQL: |-
+    name: PostgreSQL
+    type: any
+    index: k8s-*
+    filter:
+      - term:
+          kubernetes.labels.app_kubernetes_io/component: postgresql
+      - term:
+          stream: stderr
+    alert:
+      - slack
+    alert_text_type: alert_text_only
+    alert_text_args:
+      - _id
+      - kubernetes.node.name
+      - kubernetes.pod.name
+      - message
+      - container.id
+    alert_text: |-
+      :bear: <https://ocf.berkeleytime.com/kibana/app/kibana#/doc/k8s-index-pattern-id/k8s-*/logs?id={0}|Log Link URL>
+      :upside_down_face: *Node:* <https://console.cloud.google.com/compute/instancesDetail/zones/us-west2-a/instances/{1}?project=berkeleytime-218606&authuser=octo.berkeleytime@asuc.org|{1}>
+      :cry: *Container:* {2}
+      :no_good::skin-tone-2: *Error:* {3}
+    generate_kibana_discover_url: true
+    kibana_discover_url: true
+    kibana_discover_app_url: https://ocf.berkeleytime.com/kibana/app/discover#
+    kibana_discover_version: '7.3'
+    kibana_discover_columns:
+      - kubernetes.pod.name
+      - message
+    kibana_discover_index_pattern_id: k8s-index-pattern-id
+    slack_attach_kibana_discover_url: true
+    slack_kibana_discover_title: "Kibana Log Stream"
+    slack_username_override: Oski
+    slack_icon_url_override: https://i.imgur.com/5TI5N3Q.png
+    slack_title: ":point_right::skin-tone-2::point_left::skin-tone-2:🥺 PostgreSQL"
+    slack_webhook_url: https://hooks.slack.com/services/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 # berkeleytime-integrations channel`
+
+# deadman_slack: |-
+#   ---
+#   name: Deadman Switch Slack
+#   type: frequency
+#   index: containers-*
+#   num_events: 3
+#   timeframe:
+#     minutes: 3
+#   filter:
+#   - term:
+#       message: "deadmanslack"
+#   alert:
+#   - "slack"
+#   slack:
+#   slack_webhook_url: dummy
+# deadman_pagerduty: |-
+#   ---
+#   name: Deadman Switch PagerDuty
+#   type: frequency
+#   index: containers-*
+#   num_events: 3
+#   timeframe:
+#     minutes: 3
+#   filter:
+#   - term:
+#       message: "deadmanpd"
+#   alert:
+#   - "pagerduty"
+#   pagerduty:
+#   pagerduty_service_key: dummy
+#   pagerduty_client_name: Elastalert Deadman Switch
+
+# serviceAccount:
+#   # Specifies whether a service account should be created
+#   create: true
+#   # Annotations to add to the service account
+#   annotations: {}
+#   # The name of the service account to use.
+#   # If not set and create is true, a name is generated using the fullname template
+#   name:
+
+# Enable pod security policy
+# https://kubernetes.io/docs/concepts/policy/pod-security-policy/
+# podSecurityPolicy:
+#   create: false
+
+# Support using node selectors and tolerations
+# nodeSelector:
+#   "node-role.kubernetes.io/infra_worker": "true"
+# nodeSelector: {}
+
+# Specify node affinity or anti-affinity specifications
+# affinity: {}
+
+# tolerations:
+#   - key: "node_role"
+#     operator: "Equal"
+#     value: "infra_worker"
+#     effect: "NoSchedule"
+# tolerations: []
+
+# extraVolumes:
+#   []
+# - name: smtp-auth
+#   secret:
+#     secretName: elastalert-smtp-auth
+#     items:
+#       - key: smtp_auth.yaml
+#         path: smtp_auth.yaml
+#         mode: 0400
+
+# extraVolumeMounts:
+#   []
+# - name: smtp-auth
+#   mountPath: /opt/config-smtp/smtp_auth.yaml
+#   subPath: smtp_auth.yaml
+#   readOnly: true

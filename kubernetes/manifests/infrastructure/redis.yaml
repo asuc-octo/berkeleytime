@@ -1,7 +1,0 @@
-master:
-  resources: {}
-
-password: Gobears123
-
-cluster:
-  enabled: false
