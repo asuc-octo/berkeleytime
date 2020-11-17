@@ -33,6 +33,8 @@ stages:
     - kubectl delete secret docker-registry-gcr || true
     - kubectl create secret docker-registry docker-registry-gcr --docker-server=gcr.io --docker-username=_json_key --docker-email=$SECRET_DOCKER_REGISTRY_GCR_EMAIL --docker-password="$(cat $SECRET_DOCKER_REGISTRY_GCR_PASSWORD_JSON_FILE)"
     - kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
+    - kubectl delete secret ingress-nginx-bt-protected-routes || true
+    - kubectl create secret generic ingress-nginx-bt-protected-routes --from-file=$SECRET_INGRESS_NGINX_BT_PROTECTED_ROUTES
 
 build-backend:
   extends: .before_script_build_template
