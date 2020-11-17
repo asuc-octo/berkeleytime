@@ -22,7 +22,7 @@ spec:
       - name: berkeleytime-prod
         imagePullPolicy: Always
         image: index.docker.io/berkeleytime/berkeleytime:latest
-        command: ["python", "manage.py", "runserver", "0.0.0.0:5000"]
+        command: ["python3", "manage.py", "runserver", "0.0.0.0:5000"]
         volumeMounts:
         - name: google
           mountPath: "/etc/google"

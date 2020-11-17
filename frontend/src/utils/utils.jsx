@@ -146,5 +146,6 @@ export {
   percentileToString,
   getGradeColor,
   getEnrollmentDay,
+  formatPercentage,
   applyIndicatorEnrollment,
 };

@@ -1,24 +1,15 @@
 .landing-mission {
-  margin-bottom: 150px;
-  @include touch {
-    margin-bottom: 100px;
-  }
+  margin-bottom: $landing-section-gap;
 
   img {
     width: 100%;
     object-fit: scale-down;
-
-    @include xs {
-      padding-right: 0px;
-      padding-bottom: 20px;
-      display: block;
-      margin: 0 auto;
-    }
   }
 
   .mission {
     width: 100%;
     height: 100%;
+    @extend .py-4;
 
     display: flex;
     flex-direction: column;
@@ -27,30 +18,10 @@
 
     @include mobile {
       align-items: center;
-      padding-top: 20px;
-    }
-
-    h3 {
-      font-size: 28px;
-      font-weight: bold;
-      margin-bottom: 15px;
     }
 
     p {
-      margin-bottom: 15px;
       max-width: 300px;
-
-      @include mobile {
-        text-align: center;
-      }
-
-      a {
-        color: $bt-blue;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
     }
   }
 }

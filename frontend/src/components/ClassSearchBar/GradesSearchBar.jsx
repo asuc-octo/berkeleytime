@@ -6,9 +6,9 @@ import {
 import hash from 'object-hash';
 
 import { connect } from 'react-redux';
-import FilterResults from '../Catalog/FilterResults';
 
 import { fetchGradeSelected } from '../../redux/actions';
+import { search } from 'utils/search';
 
 const sortOptions = [
   { value: 'instructor', label: 'By Instructor' },
@@ -275,11 +275,10 @@ class GradesSearchBar extends Component {
   }
 
   filterOptions(option, query) {
+    return search(query, option.lowercaseLabel, 0) >= 0;
     // Super non deterministic error where sometimes option.data or option.data.course
     // refers to the course dict???
     // https://github.com/asuc-octo/berkeleytime/issues/294
-    const course = option.course ? option.course : option.data.course;
-    return FilterResults.filterCourses(course, query, this.queryCache);
   }
 
   reset() {

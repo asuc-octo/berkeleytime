@@ -1,0 +1,101 @@
+"""Course Mapper."""
+
+import logging
+
+from playlist.utils import utils
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+class CourseMapper:
+    """Map SIS Course API response data to a dict."""
+
+    def map(self, data, extras={}, unknown_departments=None):
+        try:
+            course_dict = {
+                'title': data['title'],
+                'course_number': data['catalogNumber']['formatted'],
+                'description': data['description'],
+            }
+            course_dict.update(self.get_abbreviation_and_department(data, unknown_departments))
+            course_dict.update(self.get_units(data))
+            course_dict.update(self.get_prerequisites(data))
+            course_dict.update(extras)
+
+            return course_dict
+
+        except Exception:
+            logger.exception({
+                'message': 'Exception while mapping Course API response to Course dict'
+            })
+            return {}
+
+
+    def get_abbreviation_and_department(self, data, unknown_departments=None):
+        """Return abbreviation and department, preferably our canonical version.
+
+        First, try to get the canonical abbreviation from the response's
+        department. If successful, also try to get the canonical department
+        from the canonical abbreviation.
+
+        If unsuccessful, try to get the canonical department from the
+        response's abbreviation. If successful, also try to get the
+        canonical abbreviation from the canonical department.
+
+        If unsuccessful, use the raw abbreviation and department.
+        """
+        raw_department = data['subjectArea']['description']
+        raw_abbreviation = data['subjectArea']['code']
+
+        abbreviation = utils.department_to_abbreviation(raw_department)
+        department = utils.abbreviation_to_department(raw_abbreviation)
+
+        if abbreviation:
+            department = utils.abbreviation_to_department(abbreviation)
+        elif department:
+            abbreviation = utils.department_to_abbreviation(department)
+        else:
+            abbreviation, department = raw_abbreviation, raw_department
+            unknown_departments.add((abbreviation, department))
+
+        return {
+            'abbreviation': abbreviation,
+            'department': department,
+        }
+
+
+    def get_units(self, data):
+        """Cast unit value to string, otherwise return None."""
+        units = ''
+        if 'credit' in data:
+            if data['credit']['type'] == 'fixed':
+                units = float(data['credit']['value']['fixed'].get('units'))
+            elif data['credit']['type'] == 'range':
+                minUnits = data['credit']['value']['range'].get('minUnits')
+                maxUnits = data['credit']['value']['range'].get('maxUnits')
+                units = str(float(minUnits)) + ' - ' + str(float(maxUnits))
+            elif data['credit']['type'] == 'discrete':
+                units = ' or '.join([str(float(units)) for units in data['credit']['value']['discrete'].get('units')])
+            else:
+                logger.warning({
+                    'message': 'Incorrect credit type: ' + data['credit']['type']
+                })
+
+        return {
+            'units': units,
+        }
+
+
+    def get_prerequisites(self, data):
+        """If a course has prerequisites, save them as a string."""
+        prereqs = ''
+        if 'preparation' in data and 'requiredText' in data['preparation']:
+            prereqs = data['preparation']['requiredText']
+
+        return {
+            'prerequisites': prereqs,
+        }
+
+
+course_mapper = CourseMapper()
