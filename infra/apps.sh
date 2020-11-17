@@ -14,7 +14,7 @@ helm repo update
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Helm <
 
 # > Ingress >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-helm install ingress-nginx ingress-nginx/ingress-nginx --version 3.8.0 --namespace ingress-nginx --create-namespace -f /berkeleytime/helm/ingress-nginx.yaml
+helm install ingress-nginx ingress-nginx/ingress-nginx --version 3.8.0 --namespace ingress-nginx --create-namespace -f helm/ingress-nginx.yaml
 helm install cert-manager jetstack/cert-manager --version v1.0.4 --namespace cert-manager --create-namespace --set installCRDs=true
 gsutil cp gs://berkeleytime-218606/secrets/credentials-clouddns-dns01-solver-svc-acct.json - | kubectl create secret generic clouddns-dns01-solver-svc-acct --from-file credentials-clouddns-dns01-solver-svc-acct.json=/dev/stdin --namespace cert-manager
 until kubectl apply -f /berkeleytime/k8s/default/certificate.yaml && kubectl apply -f /berkeleytime/k8s/cert-manager/clusterissuer.yaml; do sleep 1; done;
@@ -35,20 +35,20 @@ kubectl apply -f /berkeleytime/k8s/rook-ceph/setup --recursive;
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< rook-ceph <
 
 # > Monitoring >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-helm install bt-elasticsearch elastic/elasticsearch --version 7.9.3 -f /berkeleytime/helm/elasticsearch.yaml
-helm install bt-logstash elastic/logstash -f /berkeleytime/helm/logstash.yaml --version 7.9.3
-helm install bt-kibana elastic/kibana --version 7.9.3 -f /berkeleytime/helm/kibana.yaml
-helm install bt-metricbeat elastic/metricbeat --version 7.9.3 -f /berkeleytime/helm/metricbeat.yaml
-helm install bt-filebeat elastic/filebeat -f /berkeleytime/helm/filebeat.yaml --version 7.9.3
-helm install bt-elastalert codesim/elastalert --version 1.8.1 -f /berkeleytime/helm/elastalert.yaml
+helm install bt-elasticsearch elastic/elasticsearch --version 7.9.3 -f helm/elasticsearch.yaml
+helm install bt-logstash elastic/logstash -f helm/logstash.yaml --version 7.9.3
+helm install bt-kibana elastic/kibana --version 7.9.3 -f helm/kibana.yaml
+helm install bt-metricbeat elastic/metricbeat --version 7.9.3 -f helm/metricbeat.yaml
+helm install bt-filebeat elastic/filebeat -f helm/filebeat.yaml --version 7.9.3
+helm install bt-elastalert codesim/elastalert --version 1.8.1 -f helm/elastalert.yaml
 helm install kubernetes-metrics-server bitnami/metrics-server --version bitnami/metrics-server --version 4.5.2
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Databases <
 
 # > Application DB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-helm install bt-psql-staging bitnami/postgresql-ha -f /berkeleytime/helm/postgres.yaml --version 5.2.4
-helm install bt-psql-prod bitnami/postgresql-ha -f /berkeleytime/helm/postgres.yaml --version 5.2.4
-helm install bt-redis-staging bitnami/redis -f /berkeleytime/helm/redis.yaml --version 11.3.4
-helm install bt-redis-prod bitnami/redis -f /berkeleytime/helm/redis.yaml --version 11.3.4
+helm install bt-psql-staging bitnami/postgresql-ha -f helm/postgres.yaml --version 5.2.4
+helm install bt-psql-prod bitnami/postgresql-ha -f helm/postgres.yaml --version 5.2.4
+helm install bt-redis-staging bitnami/redis -f helm/redis.yaml --version 11.3.4
+helm install bt-redis-prod bitnami/redis -f helm/redis.yaml --version 11.3.4
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Application DB <
 
 # > Backup >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -64,5 +64,5 @@ kubectl create secret generic general-secrets --from-env-file=.env
 
 # > Regular k8s apps >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 kubectl apply -f /berkeleytime/k8s/default
-helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/helm/gitlab-runner.yaml --version 0.22.0
+helm install bt-gitlab-runner gitlab/gitlab-runner -f helm/gitlab-runner.yaml --version 0.22.0
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Regular k8s apps <
