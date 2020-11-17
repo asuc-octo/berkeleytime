@@ -39,11 +39,11 @@ spec:
                 name: sendgrid
             - secretRef:
                 name: sentrydsn
+          volumes:
+          - name: google
+            secret:
+              secretName: google-2
+              items:
+              - key: google-tokens
+                path: auth.json
           restartPolicy: OnFailure
-        volumes:
-        - name: google
-          secret:
-            secretName: google-2
-            items:
-            - key: google-tokens
-              path: auth.json
