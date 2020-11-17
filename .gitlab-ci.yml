@@ -43,7 +43,7 @@ build-backend:
         gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
         gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_BACKEND}:latest --project $PROJECT_ID
       else
-        echo "Already exists: ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}"
+        echo "Docker image of this commit already exists: ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}"
       fi
   only:
     - master
