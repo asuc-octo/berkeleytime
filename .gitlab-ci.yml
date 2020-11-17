@@ -1,0 +1,90 @@
+variables:
+  FILEPATH_DEPLOY_BACKEND: infra/k8s/default/bt-backend.yaml
+  FILEPATH_DEPLOY_FRONTEND: infra/k8s/default/bt-frontend.yaml
+  FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND: backend
+  FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND: frontend
+  GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/backend
+  GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/frontend
+  PROJECT_ID: berkeleytime-218606
+
+image: ubuntu:20.04
+stages:
+  - build
+  - deploy
+
+.before_script_build_template:
+  before_script:
+    - apt update
+    - apt install -y curl apt-transport-https ca-certificates gnupg
+    - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+    - echo "deb https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list
+    - apt update
+    - apt install -y google-cloud-sdk
+    - gcloud auth activate-service-account --key-file $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON
+
+.before_script_deploy_template:
+  before_script:
+    - apt update
+    - apt install -y curl gettext apt-transport-https ca-certificates gnupg
+    - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+    - echo "deb http://apt.kubernetes.io/ kubernetes-xenial-unstable main" > /etc/apt/sources.list.d/kubernetes.list
+    - apt update
+    - apt install -y kubeadm
+    - kubectl delete secret docker-registry-gcr || true
+    - kubectl create secret docker-registry docker-registry-gcr --docker-server=gcr.io --docker-username=_json_key --docker-email=$SECRET_DOCKER_REGISTRY_GCR_EMAIL --docker-password="$(cat $SECRET_DOCKER_REGISTRY_GCR_PASSWORD_JSON_FILE)"
+    - kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
+
+build-backend:
+  extends: .before_script_build_template
+  stage: build
+  script:
+    - >
+      if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+        gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_BACKEND}:latest --project $PROJECT_ID
+      else
+        echo "Already exists: ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}"
+      fi
+  only:
+    - master
+
+build-frontend:
+  extends: .before_script_build_template
+  stage: build
+  script:
+    - >
+      if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+        gcloud container images add-tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_FRONTEND}:latest --project $PROJECT_ID
+      else
+        echo "Already exists: ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA}"
+      fi
+  only:
+    - master
+
+deploy-staging:
+  extends: .before_script_deploy_template
+  stage: deploy
+  environment:
+    name: staging
+  script:
+    - SECRET_GOOGLE_SERVICE_ACCOUNT_JSON=$(cat $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON)
+    - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl --kubeconfig $SECRET_KUBERNETES_CREDENTIALS apply -f -
+    - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl --kubeconfig $SECRET_KUBERNETES_CREDENTIALS apply -f -
+  only:
+    - master
+
+deploy-prod:
+  extends: .before_script_deploy_template
+  stage: deploy
+  environment:
+    name: prod
+  script:
+    - SECRET_GOOGLE_SERVICE_ACCOUNT_JSON=$(cat $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON)
+    - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl --kubeconfig $SECRET_KUBERNETES_CREDENTIALS apply -f -
+    - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl --kubeconfig $SECRET_KUBERNETES_CREDENTIALS apply -f -
+  when: manual
+  only:
+    - master
+
+

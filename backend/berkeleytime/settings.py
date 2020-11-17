@@ -26,8 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENV_NAME = os.getenv('ENVIRONMENT_NAME')
 IS_LOCALHOST = ENV_NAME == 'LOCALHOST'
-IS_STAGING = ENV_NAME == 'STAGING'
-IS_PRODUCTION = ENV_NAME == 'PRODUCTION'
+IS_STAGING = ENV_NAME == 'staging'
+IS_PRODUCTION = ENV_NAME == 'prod'
 assert IS_LOCALHOST or IS_STAGING or IS_PRODUCTION, f'ENV not set properly: {ENV_NAME}'
 
 
@@ -45,14 +45,11 @@ DEBUG = IS_LOCALHOST
 # Allowed hosts
 if IS_LOCALHOST:
     ALLOWED_HOSTS = ['*']
-elif IS_STAGING:
+elif IS_STAGING or IS_PRODUCTION:
     ALLOWED_HOSTS = [
-        'staging.berkeleytime.com',
-    ]
-elif IS_PRODUCTION:
-    ALLOWED_HOSTS = [
-        'berkeleytime.com',
-        'www.berkeleytime.com',
+        '.berkeleytime.com',
+        'ocf.berkeleytime.com',
+        '.ocf.berkeleytime.com'
     ]
 
 # Database

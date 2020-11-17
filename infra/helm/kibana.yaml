@@ -1,0 +1,90 @@
+kibanaConfig:
+  kibana.yml: |
+    server:
+      basePath: /kibana
+      rewriteBasePath: true
+    telemetry:
+      enabled: false
+    xpack:
+      security:
+        enabled: true
+      encryptedSavedObjects:
+        encryptionKey: ${ENCRYPTION_KEY_KIBANA}
+elasticsearchHosts: http://bt-elasticsearch-primary:9200
+healthCheckPath: /kibana/api/status
+replicas: 1
+lifecycle:
+  postStart:
+    exec:
+      command:
+        - /bin/sh
+        - -c
+        - >
+          KIBANA_URL=http://localhost:5601/kibana;
+          INDEX_PATTERN_ID=k8s-index-pattern-id;
+          INDEX_PATTERN="k8s-*";
+          ELASTICSEARCH_URL=http://bt-elasticsearch-primary:9200;
+          sleep 20; while [ "$(curl -s -o /dev/null -w '%{http_code}\n' $KIBANA_URL/app/kibana)" != "200" ]; do sleep 1; done;
+          curl -X POST -H "Content-Type: application/json" -H "kbn-xsrf: anything" "$KIBANA_URL/api/saved_objects/index-pattern/$INDEX_PATTERN_ID" -d "{\"attributes\":{\"title\":\"$INDEX_PATTERN\",\"timeFieldName\":\"@timestamp\"}}" || true;
+          curl "$KIBANA_URL/api/kibana/settings" -H "content-type: application/json" -H "kbn-xsrf: anything" --data-binary "{\"changes\":{\"defaultIndex\":\"$INDEX_PATTERN_ID\"}}" || true;
+          curl -X PUT "$ELASTICSEARCH_URL/_ilm/policy/datastream_policy?pretty" -H 'Content-Type: application/json' -d'
+          {
+            "policy": {
+              "phases": {
+                "hot": {
+                  "actions": {
+                    "rollover": {
+                      "max_size": "500MB",
+                      "max_age": "3d"
+                    }
+                  }
+                },
+                "delete": {
+                  "min_age": "30s",
+                  "actions": {
+                    "delete": {}
+                  }
+                }
+              }
+            }
+          }
+          ';
+          curl -X PUT "$ELASTICSEARCH_URL/_index_template/datastream_template?pretty" -H 'Content-Type: application/json' -d'
+          {
+            "index_patterns": ["k8s-*"],
+            "data_stream": {},
+            "template": {
+              "settings": {
+                "number_of_shards": 1,
+                "number_of_replicas": 1,
+                "index.lifecycle.name": "datastream_policy",
+                "index.lifecycle.rollover_alias": "k8s"
+              }
+            }
+          }
+          ';
+
+extraEnvs:
+  - name: ENCRYPTION_KEY_KIBANA
+    valueFrom:
+      secretKeyRef:
+        name: general-secrets
+        key: ENCRYPTION_KEY_KIBANA
+#   - name: ELASTICSEARCH_USERNAME
+#     valueFrom:
+#       secretKeyRef:
+#         name: general-secrets
+#         key: USERNAME_ELASTICSEARCH_USER_KIBANA_SYSTEM
+#   - name: ELASTICSEARCH_PASSWORD
+#     valueFrom:
+#       secretKeyRef:
+#         name: general-secrets
+#         key: PASSWORD_ELASTICSEARCH_USER_KIBANA_SYSTEM
+#
+# resources:
+#   requests:
+#     cpu: "200m" # Default: 1000m
+#     memory: "1G" # Default: 2Gi
+#   limits:
+#     cpu: "200m" # Default: 1000m
+#     memory: "1G" # Default: 2Gi
