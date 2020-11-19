@@ -51,11 +51,11 @@ class SISCourseResource:
                 'page_number': page_number,
                 'page_size': page_size,
             })
-            return []
+            raise
         except:
             logger.exception({
                 'message': 'Unable to reach SIS Course API'
             })
-            return []
+            raise
 
 sis_course_resource = SISCourseResource()

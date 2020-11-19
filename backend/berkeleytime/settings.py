@@ -43,14 +43,7 @@ ADMINS = MANAGERS = (
 DEBUG = IS_LOCALHOST
 
 # Allowed hosts
-if IS_LOCALHOST:
-    ALLOWED_HOSTS = ['*']
-elif IS_STAGING or IS_PRODUCTION:
-    ALLOWED_HOSTS = [
-        '.berkeleytime.com',
-        'ocf.berkeleytime.com',
-        '.ocf.berkeleytime.com'
-    ]
+ALLOWED_HOSTS = ['*'] # Wildcard '*' allow is not a security issue because back-end API only receives requests via private Kubernetes traffic, and '*' allows for dynamic nested subdomains such as staging.ocf.berkeleytime.com
 
 # Database
 pg_instance = urlparse(os.getenv('DATABASE_URL'))
