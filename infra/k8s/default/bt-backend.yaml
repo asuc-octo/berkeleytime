@@ -34,7 +34,7 @@ metadata:
   name: bt-backend-$CI_ENVIRONMENT_NAME
   namespace: default
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       component: bt-backend-$CI_ENVIRONMENT_NAME
@@ -61,7 +61,7 @@ spec:
                 name: bt-backend-config-$CI_ENVIRONMENT_NAME
             - secretRef:
                 name: bt-backend-secrets-$CI_ENVIRONMENT_NAME
-          image: $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA
+          image: $GCR_PATH_BACKEND:latest
           imagePullPolicy: Always
           name: bt-backend-$CI_ENVIRONMENT_NAME
           ports:
@@ -87,6 +87,8 @@ metadata:
   name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
   namespace: default
 spec:
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
       template:
@@ -109,14 +111,13 @@ spec:
                     name: bt-backend-config-$CI_ENVIRONMENT_NAME
                 - secretRef:
                     name: bt-backend-secrets-$CI_ENVIRONMENT_NAME
-              image: $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA
+              image: $GCR_PATH_BACKEND:latest
               imagePullPolicy: Always
               name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
               volumeMounts:
                 - mountPath: /etc/google
                   name: bt-backend-secrets-volume
                   readOnly: true
-          restartPolicy: OnFailure
           volumes:
             - name: bt-backend-secrets-volume
               secret:
