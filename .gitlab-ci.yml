@@ -6,7 +6,7 @@ variables:
   FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND: frontend
   GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/bt-backend
   GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/bt-frontend
-
+  PROJECT_ID: berkeleytime-218606
 stages:
   - build
   - deploy-staging
@@ -33,8 +33,8 @@ build-backend:
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
-        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}
-        gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_BACKEND}:latest
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+        gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_BACKEND}:latest --project $PROJECT_ID
       else
         echo "Docker image of this commit already exists: ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}"
       fi
@@ -45,8 +45,8 @@ build-frontend:
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
-        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA}
-        gcloud container images add-tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_FRONTEND}:latest
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+        gcloud container images add-tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_FRONTEND}:latest --project $PROJECT_ID
       else
         echo "Docker image of this commit already exists: ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA}"
       fi
