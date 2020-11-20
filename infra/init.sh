@@ -5,8 +5,11 @@
 kubectl create ns cert-manager || true
 gsutil cp gs://berkeleytime-218606/secrets/credentials-clouddns-dns01-solver-svc-acct.json - | kubectl create secret generic clouddns-dns01-solver-svc-acct --from-file credentials-clouddns-dns01-solver-svc-acct.json=/dev/stdin --namespace cert-manager
 gsutil cp gs://berkeleytime-218606/secrets/docker-registry-gcr.yaml - | kubectl apply -f -
+gsutil cp gs://berkeleytime-218606/secrets/helm-bt-gitlab-runner.env - | kubectl create secret generic bt-gitlab-runner --from-env-file /dev/stdin
 gsutil cp gs://berkeleytime-218606/secrets/kubernetes-general-secrets.env - | kubectl create secret generic general-secrets --from-env-file /dev/stdin
-gsutil cp gs://berkeleytime-218606/secrets/helm-bt-gitlab-runner.env - | kubectl create secret generic helm-bt-gitlab-runner --from-env-file /dev/stdin
+gsutil cp gs://berkeleytime-218606/secrets/kubernetes-ingress-nginx-bt-protected-routes - | kubectl create secret generic ingress-nginx-bt-protected-routes --from-file SECRET_INGRESS_NGINX_BT_PROTECTED_ROUTES=/dev/stdin
+gsutil cp gs://berkeleytime-218606/secrets/kubernetes-docker-registry-gcr.json - | kubectl create secret docker-registry docker-registry-gcr --docker-server gcr.io --docker-username _json_key --docker-email jenkins-gcr-creds@berkeleytime-218606.iam.gserviceaccount.com --docker-password "$(cat /dev/stdin)"
+kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Import secrets <
 
 # > Helm >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -52,8 +55,13 @@ helm install bt-elastalert codesim/elastalert --version 1.8.1 -f /berkeleytime/i
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Databases <
 
 # > Application DB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-helm install bt-redis-staging bitnami/redis -f /berkeleytime/infra/helm/redis.yaml --version 11.3.4
-helm install bt-redis-prod bitnami/redis -f /berkeleytime/infra/helm/redis.yaml --version 11.3.4
+for CI_ENVIRONMENT_NAME in "staging" "prod"
+do
+  export CI_ENVIRONMENT_NAME=$CI_ENVIRONMENT_NAME
+  gsutil cp gs://berkeleytime-218606/secrets/helm-bt-psql-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-psql-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
+  envsubst < /berkeleytime/infra/helm/postgres.yaml | helm install bt-psql-$CI_ENVIRONMENT_NAME bitnami/postgresql-ha --version 5.2.4 -f -
+  helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis -f /berkeleytime/infra/helm/redis.yaml --version 11.3.4
+done
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Application DB <
 
 # > Backup >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
