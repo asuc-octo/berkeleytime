@@ -7,20 +7,17 @@ variables:
   GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/bt-backend
   GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/bt-frontend
   PROJECT_ID: berkeleytime-218606
+
 stages:
   - build
   - deploy-staging
   - deploy-prod
 
-.before_script_build_template:
-  only:
-    - master
+.before_build_script:
   before_script:
     - gcloud auth activate-service-account --key-file $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON
 
-.before_script_deploy_template:
-  only:
-    - master
+.before_deploy_script:
   before_script:
     - SECRET_GOOGLE_SERVICE_ACCOUNT_JSON=$(cat $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON) # We put credentials into a variable that goes to /etc/google/auth.json in back-end container
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl --kubeconfig $SECRET_KUBERNETES_CREDENTIALS apply -f -
@@ -28,8 +25,13 @@ stages:
     - kubectl rollout restart deployment bt-backend-$CI_ENVIRONMENT_NAME bt-frontend-$CI_ENVIRONMENT_NAME
 
 build-backend:
-  extends: .before_script_build_template
   stage: build
+  extends: .before_build_script
+  only:
+    refs:
+      - master
+    changes:
+      - backend/**/*
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
@@ -40,8 +42,13 @@ build-backend:
       fi
 
 build-frontend:
-  extends: .before_script_build_template
   stage: build
+  extends: .before_build_script
+  only:
+    refs:
+      - master
+    changes:
+      - frontend/**/*
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
@@ -52,16 +59,16 @@ build-frontend:
       fi
 
 deploy-staging:
-  extends: .before_script_deploy_template
   stage: deploy-staging
+  extends: .before_deploy_script
   environment:
     name: staging
   script:
     - echo deployed bt-${CI_ENVIRONMENT_NAME}
 
 deploy-prod:
-  extends: .before_script_deploy_template
   stage: deploy-prod
+  extends: .before_deploy_script
   environment:
     name: prod
   when: manual

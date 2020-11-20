@@ -1,3 +1,4 @@
+# Template: https://github.com/elastic/helm-charts/blob/480a19413024cab7f9ea96e2d40078bc2247ce2d/kibana/values.yaml
 kibanaConfig:
   kibana.yml: |
     server:
@@ -34,8 +35,8 @@ lifecycle:
                 "hot": {
                   "actions": {
                     "rollover": {
-                      "max_size": "500MB",
-                      "max_age": "3d"
+                      "max_size": "2GB",
+                      "max_age": "7d"
                     }
                   }
                 },
