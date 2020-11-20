@@ -11,7 +11,8 @@ variables:
 
 stages:
   - build
-  - deploy
+  - deploy-staging
+  - deploy-prod
 
 .before_script_build_template:
   only:
@@ -58,7 +59,7 @@ build-frontend:
 
 deploy-staging:
   extends: .before_script_deploy_template
-  stage: deploy
+  stage: deploy-staging
   environment:
     name: staging
   script:
@@ -66,7 +67,7 @@ deploy-staging:
 
 deploy-prod:
   extends: .before_script_deploy_template
-  stage: deploy
+  stage: deploy-prod
   environment:
     name: prod
   when: manual
