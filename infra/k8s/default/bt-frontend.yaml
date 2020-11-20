@@ -23,7 +23,7 @@ metadata:
   name: bt-frontend-$CI_ENVIRONMENT_NAME
   namespace: default
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       appName: bt-frontend-$CI_ENVIRONMENT_NAME
@@ -37,6 +37,6 @@ spec:
             - npm
             - run
             - prod
-          image: $GCR_PATH_FRONTEND:$CI_COMMIT_SHORT_SHA
+          image: $GCR_PATH_FRONTEND:latest
           imagePullPolicy: Always
           name: bt-frontend-$CI_ENVIRONMENT_NAME

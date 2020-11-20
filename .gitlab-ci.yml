@@ -30,8 +30,10 @@ stages:
     - kubectl create secret generic bt-psql-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin < $SECRET_HELM_BT_PSQL_PASSWORD_SECRET_FILE
     - kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
     - envsubst < $FILEPATH_HELM_POSTGRES | helm install bt-psql-$CI_ENVIRONMENT_NAME bitnami/postgresql-ha --version 5.2.4 -f - || true
+    - SECRET_GOOGLE_SERVICE_ACCOUNT_JSON=$(cat $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON) # We put credentials into a variable that goes to /etc/google/auth.json in back-end container
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl --kubeconfig $SECRET_KUBERNETES_CREDENTIALS apply -f -
     - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl --kubeconfig $SECRET_KUBERNETES_CREDENTIALS apply -f -
+    - kubectl rollout restart deployment bt-backend-$CI_ENVIRONMENT_NAME bt-frontend-$CI_ENVIRONMENT_NAME
 
 build-backend:
   extends: .before_script_build_template
