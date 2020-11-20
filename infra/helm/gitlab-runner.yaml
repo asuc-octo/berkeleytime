@@ -23,4 +23,4 @@ runners:
         protected: true
 
   ## The name of the secret containing runner-token and runner-registration-token
-  secret: gitlab-runner
+  secret: bt-gitlab-runner

@@ -3,7 +3,7 @@
 global:
   postgresql:
     username: bt
-    database: bt_main
+    database: bt
     repmgrUsername: repmgr
     repmgrDatabase: repmgr
     existingSecret: bt-psql-${CI_ENVIRONMENT_NAME}

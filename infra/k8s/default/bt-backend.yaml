@@ -118,6 +118,7 @@ spec:
                 - mountPath: /etc/google
                   name: bt-backend-secrets-volume
                   readOnly: true
+          restartPolicy: OnFailure
           volumes:
             - name: bt-backend-secrets-volume
               secret:

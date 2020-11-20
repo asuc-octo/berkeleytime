@@ -2,12 +2,10 @@ image: gcr.io/berkeleytime-218606/gitlab-runner:latest # infra/docker/gitlab-run
 variables:
   FILEPATH_DEPLOY_BACKEND: infra/k8s/default/bt-backend.yaml
   FILEPATH_DEPLOY_FRONTEND: infra/k8s/default/bt-frontend.yaml
-  FILEPATH_HELM_POSTGRES: infra/helm/postgres.yaml
   FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND: backend
   FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND: frontend
-  GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/backend
-  GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/frontend
-  PROJECT_ID: berkeleytime-218606
+  GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/bt-backend
+  GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/bt-frontend
 
 stages:
   - build
@@ -16,20 +14,14 @@ stages:
 
 .before_script_build_template:
   only:
-    - master
+    - infra
   before_script:
     - gcloud auth activate-service-account --key-file $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON
 
 .before_script_deploy_template:
   only:
-    - master
+    - infra
   before_script:
-    - kubectl delete secret docker-registry-gcr ingress-nginx-bt-protected-routes bt-psql-$CI_ENVIRONMENT_NAME || true
-    - kubectl create secret docker-registry docker-registry-gcr --docker-server=gcr.io --docker-username=_json_key --docker-email=$SECRET_DOCKER_REGISTRY_GCR_EMAIL --docker-password="$(cat $SECRET_DOCKER_REGISTRY_GCR_PASSWORD_JSON_FILE)"
-    - kubectl create secret generic ingress-nginx-bt-protected-routes --from-file=$SECRET_INGRESS_NGINX_BT_PROTECTED_ROUTES
-    - kubectl create secret generic bt-psql-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin < $SECRET_HELM_BT_PSQL_PASSWORD_SECRET_FILE
-    - kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
-    - envsubst < $FILEPATH_HELM_POSTGRES | helm install bt-psql-$CI_ENVIRONMENT_NAME bitnami/postgresql-ha --version 5.2.4 -f - || true
     - SECRET_GOOGLE_SERVICE_ACCOUNT_JSON=$(cat $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON) # We put credentials into a variable that goes to /etc/google/auth.json in back-end container
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl --kubeconfig $SECRET_KUBERNETES_CREDENTIALS apply -f -
     - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl --kubeconfig $SECRET_KUBERNETES_CREDENTIALS apply -f -
@@ -41,8 +33,8 @@ build-backend:
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
-        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
-        gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_BACKEND}:latest --project $PROJECT_ID
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}
+        gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_BACKEND}:latest
       else
         echo "Docker image of this commit already exists: ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}"
       fi
@@ -53,8 +45,8 @@ build-frontend:
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
-        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
-        gcloud container images add-tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_FRONTEND}:latest --project $PROJECT_ID
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA}
+        gcloud container images add-tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_FRONTEND}:latest
       else
         echo "Docker image of this commit already exists: ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA}"
       fi
@@ -65,7 +57,7 @@ deploy-staging:
   environment:
     name: staging
   script:
-    - echo deployed ${CI_ENVIRONMENT_NAME}
+    - echo deployed bt-${CI_ENVIRONMENT_NAME}
 
 deploy-prod:
   extends: .before_script_deploy_template
@@ -74,4 +66,4 @@ deploy-prod:
     name: prod
   when: manual
   script:
-    - echo deployed ${CI_ENVIRONMENT_NAME}
+    - echo deployed bt-${CI_ENVIRONMENT_NAME}
