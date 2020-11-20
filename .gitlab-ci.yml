@@ -15,13 +15,13 @@ stages:
 
 .before_script_build_template:
   only:
-    - infra
+    - master
   before_script:
     - gcloud auth activate-service-account --key-file $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON
 
 .before_script_deploy_template:
   only:
-    - infra
+    - master
   before_script:
     - kubectl delete secret docker-registry-gcr ingress-nginx-bt-protected-routes bt-psql-$CI_ENVIRONMENT_NAME || true
     - kubectl create secret docker-registry docker-registry-gcr --docker-server=gcr.io --docker-username=_json_key --docker-email=$SECRET_DOCKER_REGISTRY_GCR_EMAIL --docker-password="$(cat $SECRET_DOCKER_REGISTRY_GCR_PASSWORD_JSON_FILE)"
