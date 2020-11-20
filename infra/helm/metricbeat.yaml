@@ -97,7 +97,6 @@ daemonset:
             hosts: ["${ELASTICSEARCH_HOSTS}"]
 replicas: 1
 deployment:
-  # For environment variables in bt-metricbeat-metricbeat-metrics-6bfb9dc7fb-t9cpn
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
       value: http://bt-elasticsearch-primary:9200
