@@ -34,7 +34,7 @@ metadata:
   name: bt-backend-$CI_ENVIRONMENT_NAME
   namespace: default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       component: bt-backend-$CI_ENVIRONMENT_NAME
