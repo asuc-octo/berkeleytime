@@ -35,7 +35,7 @@ lifecycle:
                 "hot": {
                   "actions": {
                     "rollover": {
-                      "max_size": "2GB",
+                      "max_size": "15GB",
                       "max_age": "7d"
                     }
                   }
