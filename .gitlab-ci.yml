@@ -8,6 +8,7 @@ variables:
   GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/bt-frontend
   PROJECT_ID: berkeleytime-218606
   MONITORED_BRANCH: ocf
+  CI_COMMIT_BEFORE_SHA_SHORT: ${CI_COMMIT_BEFORE_SHA}
 
 stages:
   - build
@@ -44,14 +45,16 @@ build-backend:
 tag-backend:
   stage: build
   extends: .gcloud_config
-  only:
-    refs:
-      - ${MONITORED_BRANCH}
   except:
     changes:
-      - frontend/**/*
+      - backend/**/*
   script:
-    - gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_BEFORE_SHA:0:8} ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+    - >
+      if [ -n "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_BEFORE_SHA_SHORT")" ]; then
+        gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_BEFORE_SHA_SHORT} ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+      else
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+      fi
 
 build-frontend:
   stage: build
@@ -72,14 +75,16 @@ build-frontend:
 tag-frontend:
   stage: build
   extends: .gcloud_config
-  only:
-    refs:
-      - ${MONITORED_BRANCH}
   except:
     changes:
       - frontend/**/*
   script:
-    - gcloud container images add-tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_BEFORE_SHA:0:8} ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+    - >
+      if [ -n "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_BEFORE_SHA_SHORT")" ]; then
+        gcloud container images add-tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_BEFORE_SHA_SHORT} ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+      else
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+      fi
 
 deploy-staging:
   stage: deploy-staging
