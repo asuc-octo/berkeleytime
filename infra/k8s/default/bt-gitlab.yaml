@@ -155,10 +155,16 @@ spec:
                 secretKeyRef:
                   name: general-secrets
                   key: PASSWORD_BT_GITLAB_GITLAB_ROOT_PASSWORD
-            - name: AWS_SES_SMTP_USERNAME
-              value: NOT_IN_USE
-            - name: AWS_SES_SMTP_PASSWORD
-              value: NOT_IN_USE
+            - name: GITLAB_SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: general-secrets
+                  key: USERNAME_BT_GITLAB_SENDGRID
+            - name: GITLAB_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: general-secrets
+                  key: PASSWORD_BT_GITLAB_SENDGRID
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 alertmanager['enable'] = false
@@ -237,38 +243,38 @@ spec:
                 sidekiq['listen_address'] = "localhost"
                 sidekiq['listen_port'] = 8082
 
-                # Optimizing Git Push
-                puma['worker_processes'] = 4
-                puma['min_threads'] = 4
-                puma['max_threads'] = 8
-                puma['per_worker_max_memory_mb'] = 2000
+                # Optimizing Git Push with low resources
+                # puma['worker_processes'] = 4
+                # puma['min_threads'] = 4
+                # puma['max_threads'] = 8
+                # puma['per_worker_max_memory_mb'] = 2000
 
                 # Email Settings
                 gitlab_ci['gitlab_ci_email_from'] = 'noreply@ocf.berkeleytime.com'
-                gitlab_ci['smtp_address'] = "email-smtp.us-west-2.amazonaws.com"
+                gitlab_ci['smtp_address'] = "smtp.sendgrid.net"
                 gitlab_ci['smtp_authentication'] = "login"
-                gitlab_ci['smtp_domain'] = "ocf.berkeleytime.com"
+                gitlab_ci['smtp_domain'] = "smtp.sendgrid.net"
                 gitlab_ci['smtp_enable_starttls_auto'] = true
                 gitlab_ci['smtp_enable'] = true
-                gitlab_ci['smtp_password'] = ENV['AWS_SES_SMTP_PASSWORD']
+                gitlab_ci['smtp_password'] = ENV['GITLAB_SMTP_PASSWORD']
                 gitlab_ci['smtp_port'] = 587
                 gitlab_ci['smtp_tls'] = false
-                gitlab_ci['smtp_user_name'] = "noreply@ocf.berkeleytime.com"
-                gitlab_rails['gitlab_email_display_name'] = 'GitLab'
+                gitlab_ci['smtp_user_name'] = ENV['GITLAB_SMTP_USERNAME']
+                gitlab_rails['gitlab_email_display_name'] = 'Berkeleytime GitLab'
                 gitlab_rails['gitlab_email_enabled'] = true
                 gitlab_rails['gitlab_email_from'] = 'noreply@ocf.berkeleytime.com'
                 gitlab_rails['gitlab_email_reply_to'] = 'noreply@ocf.berkeleytime.com'
-                gitlab_rails['smtp_address'] = "email-smtp.us-west-2.amazonaws.com"
+                gitlab_rails['smtp_address'] = "smtp.sendgrid.net"
                 gitlab_rails['smtp_authentication'] = "login"
-                gitlab_rails['smtp_domain'] = "ocf.berkeleytime.com"
+                gitlab_rails['smtp_domain'] = "smtp.sendgrid.net"
                 gitlab_rails['smtp_enable_starttls_auto'] = true
                 gitlab_rails['smtp_enable'] = true
                 gitlab_rails['smtp_force_ssl'] = false
-                gitlab_rails['smtp_password'] = ENV['AWS_SES_SMTP_PASSWORD']
+                gitlab_rails['smtp_password'] = ENV['GITLAB_SMTP_PASSWORD']
                 gitlab_rails['smtp_port'] = 587
                 gitlab_rails['smtp_ssl'] = false
                 gitlab_rails['smtp_tls'] = false
-                gitlab_rails['smtp_user_name'] = ENV['AWS_SES_SMTP_USERNAME']
+                gitlab_rails['smtp_user_name'] = ENV['GITLAB_SMTP_USERNAME']
 
                 # Docker registry
                 # registry_external_url 'url'
