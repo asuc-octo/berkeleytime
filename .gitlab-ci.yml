@@ -71,5 +71,4 @@ deploy-prod:
   when: manual
   script:
     - echo deployed bt-${CI_ENVIRONMENT_NAME}
-  rules:
-    - allow_failure: false
+  allow_failure: false
