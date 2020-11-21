@@ -31,7 +31,7 @@ build-backend:
   extends: .gcloud_config
   only:
     refs:
-      - ${MONITORED_BRANCH}
+      - $MONITORED_BRANCH
     changes:
       - backend/**/*
   script:
@@ -61,7 +61,7 @@ build-frontend:
   extends: .gcloud_config
   only:
     refs:
-      - ${MONITORED_BRANCH}
+      - $MONITORED_BRANCH
     changes:
       - frontend/**/*
   script:
