@@ -5,7 +5,7 @@ runners:
     [[runners]]
       [runners.kubernetes]
         image = "ubuntu:20.04"
-        privileged = true
+        privileged = false
         image_pull_secrets = ["docker-registry-gcr"]
         pull_policy = "always"
         protected = true
