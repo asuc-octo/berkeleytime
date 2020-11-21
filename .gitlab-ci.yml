@@ -1,5 +1,6 @@
 image: gcr.io/berkeleytime-218606/gitlab-runner:latest # infra/docker/gitlab-runner/Dockerfile
 variables:
+  CI_COMMIT_BEFORE_SHA_SHORT: ${CI_COMMIT_BEFORE_SHA}
   FILEPATH_DEPLOY_BACKEND: infra/k8s/default/bt-backend.yaml
   FILEPATH_DEPLOY_FRONTEND: infra/k8s/default/bt-frontend.yaml
   FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND: backend
@@ -7,8 +8,6 @@ variables:
   GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/bt-backend
   GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/bt-frontend
   PROJECT_ID: berkeleytime-218606
-  MONITORED_BRANCH: ocf
-  CI_COMMIT_BEFORE_SHA_SHORT: ${CI_COMMIT_BEFORE_SHA}
 
 stages:
   - build
@@ -31,7 +30,7 @@ build-backend:
   extends: .before_build
   only:
     refs:
-      - $MONITORED_BRANCH
+      - ocf
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
@@ -46,7 +45,7 @@ build-frontend:
   extends: .before_build
   only:
     refs:
-      - $MONITORED_BRANCH
+      - ocf
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
