@@ -18,7 +18,7 @@ const tee = async (...args) => {
 
 const upload = async (serviceName) => {
   const SNAPSHOT_NAME = `${serviceName}-snapshot`;
-  const SNAPSHOT_PATH = `/berkeleytime/k8s/snapshots/${SNAPSHOT_NAME}.yaml`;
+  const SNAPSHOT_PATH = `/berkeleytime/infra/k8s/snapshots/${SNAPSHOT_NAME}.yaml`;
   try {
     await tee(`kubectl delete volumeSnapshot/${SNAPSHOT_NAME}`);
   } catch (error) {

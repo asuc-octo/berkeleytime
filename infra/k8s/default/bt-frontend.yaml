@@ -37,6 +37,6 @@ spec:
             - npm
             - run
             - prod
-          image: $GCR_PATH_FRONTEND:latest
+          image: $GCR_PATH_FRONTEND:$CI_COMMIT_SHORT_SHA
           imagePullPolicy: Always
           name: bt-frontend-$CI_ENVIRONMENT_NAME

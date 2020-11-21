@@ -122,8 +122,6 @@ spec:
                   - -c
                   - >
                     update-permissions;
-          securityContext:
-            privileged: true
           volumeMounts:
             - name: bt-gitlab
               mountPath: /etc/gitlab
@@ -159,12 +157,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: general-secrets
-                  key: USERNAME_BT_GITLAB_SENDGRID
+                  key: USERNAME_BT_GITLAB_SENDGRID_SMTP
             - name: GITLAB_SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: general-secrets
-                  key: PASSWORD_BT_GITLAB_SENDGRID
+                  key: PASSWORD_BT_GITLAB_SENDGRID_SMTP
             - name: GITLAB_OMNIBUS_CONFIG
               value: |
                 alertmanager['enable'] = false

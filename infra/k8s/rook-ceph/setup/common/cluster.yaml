@@ -13,7 +13,7 @@ spec:
   dataDirHostPath: /var/lib/rook
   mon:
     allowMultiplePerNode: false
-    count: 3
+    count: 1
   crashCollector:
     disable: true
   resources:
@@ -38,15 +38,15 @@ spec:
     #   limits:
     #     cpu: "200m"
     #     memory: "1000M"
-    osd:
-      # Hard, explicit control of OSD resources absolutely necessary
-      # As for the above resources, answer not obvious yet
-      requests:
-        cpu: "200m"
-        memory: "2G"
-      limits:
-        cpu: "200m"
-        memory: "2G"
+    # osd:
+    #   # Hard, explicit control of OSD resources absolutely necessary
+    #   # As for the above resources, answer not obvious yet
+    #   requests:
+    #     cpu: "200m"
+    #     memory: "2G"
+    #   limits:
+    #     cpu: "200m"
+    #     memory: "2G"
   storage:
     useAllNodes: true
     useAllDevices: true
