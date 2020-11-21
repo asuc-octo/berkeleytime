@@ -40,6 +40,16 @@ spec:
                 name: bt-gitlab
                 port:
                   number: 80
+    - host: staging.berkeleytime.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-frontend-svc-staging
+                port:
+                  number: 3000
     - host: staging.ocf.berkeleytime.com
       http:
         paths:
@@ -75,6 +85,16 @@ spec:
             backend:
               service:
                 name: bt-backend-svc-prod
+                port:
+                  number: 5000
+    - host: staging.berkeleytime.com
+      http:
+        paths:
+          - path: /api/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-backend-svc-staging
                 port:
                   number: 5000
     - host: staging.ocf.berkeleytime.com
