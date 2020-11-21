@@ -21,8 +21,8 @@ stages:
 .before_deploy_script:
   before_script:
     - SECRET_GOOGLE_SERVICE_ACCOUNT_JSON=$(cat $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON) # We put credentials into a variable that goes to /etc/google/auth.json in back-end container
-    - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl replace --force -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
-    - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl replace --force -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
 
 build-backend:
   stage: build
