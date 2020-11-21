@@ -7,29 +7,30 @@ variables:
   GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/bt-backend
   GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/bt-frontend
   PROJECT_ID: berkeleytime-218606
+  MONITORED_BRANCH: ocf
 
 stages:
   - build
   - deploy-staging
   - deploy-prod
 
-.before_build_script:
+.gcloud_config:
+  stage: build
   before_script:
     - gcloud config set builds/use_kaniko True
     - gcloud auth activate-service-account --key-file $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON
 
-.before_deploy_script:
+.before_deploy:
   before_script:
     - SECRET_GOOGLE_SERVICE_ACCOUNT_JSON=$(cat $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON) # We put credentials into a variable that goes to /etc/google/auth.json in back-end container
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
 
 build-backend:
-  stage: build
-  extends: .before_build_script
+  extends: .gcloud_config
   only:
     refs:
-      - ocf
+      - ${MONITORED_BRANCH}
     changes:
       - backend/**/*
   script:
@@ -40,13 +41,19 @@ build-backend:
       else
         echo "Docker image of this commit already exists: ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}"
       fi
+tag-backend:
+  extends: .gcloud_config
+  except:
+    changes:
+      - frontend/**/*
+  script:
+    - gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_BEFORE_SHA:0:8} ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
 
 build-frontend:
-  stage: build
-  extends: .before_build_script
+  extends: .gcloud_config
   only:
     refs:
-      - ocf
+      - ${MONITORED_BRANCH}
     changes:
       - frontend/**/*
   script:
@@ -57,10 +64,17 @@ build-frontend:
       else
         echo "Docker image of this commit already exists: ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA}"
       fi
+tag-frontend:
+  extends: .gcloud_config
+  except:
+    changes:
+      - frontend/**/*
+  script:
+    - gcloud container images add-tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_BEFORE_SHA:0:8} ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
 
 deploy-staging:
   stage: deploy-staging
-  extends: .before_deploy_script
+  extends: .before_deploy
   environment:
     name: staging
   script:
@@ -68,7 +82,7 @@ deploy-staging:
 
 deploy-prod:
   stage: deploy-prod
-  extends: .before_deploy_script
+  extends: .before_deploy
   environment:
     name: prod
   when: manual
