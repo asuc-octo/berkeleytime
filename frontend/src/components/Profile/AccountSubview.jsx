@@ -8,10 +8,21 @@ import EditPencil from '../../assets/svg/profile/edit.svg';
 class AccountSubview extends PureComponent {
   constructor(props) {
     super(props);
+
+    this.state = {
+      removable: false,
+    }
+  }
+
+  toggleRemovable = () => {
+    this.setState(state => ({
+      removable: !state.removable
+    }));
   }
 
   render() {
     const { userProfile } = this.props;
+    const { removable } = this.state;
 
     //Information has been hardcoded for testing purposes only
     const options = [
@@ -33,11 +44,13 @@ class AccountSubview extends PureComponent {
         
         <div className="profile-title">
           <h2>Saved Classes</h2>
-          <button className="edit-button"><img className="edit-pencil" src={EditPencil} alt="Edit Classes"/></button>
+          <button className="edit-button" onClick={this.toggleRemovable}>
+            <img className="edit-pencil" src={EditPencil} alt="Edit Classes"/>
+          </button>
         </div>
 
         {/* Information has been hardcoded for testing purposes only */}
-        <ProfileCard abbreviation="ASAMST" course_number="143AC" title="Asian American Health" letter_average="A" enrolled_percentage=".5" units="3"/>
+        <ProfileCard removable={removable} abbreviation="ASAMST" course_number="143AC" title="Asian American Health" letter_average="A" enrolled_percentage=".5" units="3"/>
         
         <p className="see-all-classes">See all classes</p>
       </div>

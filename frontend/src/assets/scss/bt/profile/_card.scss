@@ -2,7 +2,7 @@
     padding: 5px 15px;
   
     .profile-card-container {
-      width: 340px;
+      width: 300px;
       height: 100%;
       border-radius: 8px;
       padding: 8px 10px;
@@ -12,11 +12,7 @@
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-  
-      &:hover {
-        background-color: $bt-off-white;
-        cursor: pointer;
-      }
+      position: relative;
   
       .profile-card-info {
         max-width: 87%;
@@ -50,7 +46,7 @@
   
       .profile-card-sort {
         margin-bottom: 10px;
-        flex-basis: 40px;
+        flex-basis: 70px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -67,6 +63,23 @@
         h6 {
           font-size: 18px;
           font-weight: 500;
+        }
+      }
+
+      .profile-card-remove{
+        position: absolute;
+        top: 5px;
+        right: 10px;
+        color: $bt-indicator-red;
+        cursor: pointer;
+        opacity: .5;
+        padding: 2px;
+        transition: .5s;
+        border-radius: 4px;
+
+        &:hover {
+          opacity: 1;
+          background: rgba(224,185,185,.4);
         }
       }
     }
