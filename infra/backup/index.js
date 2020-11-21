@@ -56,5 +56,6 @@ const upload = async (serviceName) => {
   );
 };
 upload("bt-psql-prod");
+upload("bt-psql-staging");
 upload("bt-gitlab");
 upload("bt-elasticsearch");
