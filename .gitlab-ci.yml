@@ -16,9 +16,6 @@ stages:
   - deploy-prod
 
 .before_build:
-  only:
-    refs:
-      - $MONITORED_BRANCH
   before_script:
     - gcloud config set builds/use_kaniko True
     - gcloud auth activate-service-account --key-file $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON
@@ -32,6 +29,9 @@ stages:
 build-backend:
   stage: build
   extends: .before_build
+  only:
+    refs:
+      - $MONITORED_BRANCH
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
@@ -44,6 +44,9 @@ build-backend:
 build-frontend:
   stage: build
   extends: .before_build
+  only:
+    refs:
+      - $MONITORED_BRANCH
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
