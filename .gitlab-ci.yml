@@ -29,7 +29,7 @@ build-backend:
   extends: .before_build_script
   only:
     refs:
-      - master
+      - ocf
     changes:
       - backend/**/*
   script:
@@ -46,7 +46,7 @@ build-frontend:
   extends: .before_build_script
   only:
     refs:
-      - master
+      - ocf
     changes:
       - frontend/**/*
   script:
