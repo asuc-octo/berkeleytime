@@ -1,26 +1,12 @@
 # Template from: https://gitlab.com/gitlab-org/charts/gitlab-runner/blob/master/values.yaml
 gitlabUrl: http://bt-gitlab:80/git
-rbac:
-  create: true # default: false
-  clusterWideAccess: true # Default: false
-  podSecurityPolicy:
-    enabled: false
-    resourceNames:
-      - gitlab-runner
-metrics:
-  enabled: true
-
-## Configuration for the Pods that that the runner launches for each new job
-## https://gitlab.com/gitlab-org/charts/gitlab-runner/-/issues/222
 runners:
   config: |
     [[runners]]
       [runners.kubernetes]
         image = "ubuntu:20.04"
-        privileged = false
+        privileged = true
         image_pull_secrets = ["docker-registry-gcr"]
-        pull_policy = always
-        protected: true
-
-  ## The name of the secret containing runner-token and runner-registration-token
+        pull_policy = "always"
+        protected = true
   secret: bt-gitlab-runner
