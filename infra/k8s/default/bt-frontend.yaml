@@ -23,7 +23,7 @@ metadata:
   name: bt-frontend-$CI_ENVIRONMENT_NAME
   namespace: default
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       appName: bt-frontend-$CI_ENVIRONMENT_NAME
