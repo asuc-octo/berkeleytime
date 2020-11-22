@@ -22,7 +22,7 @@ import {
 } from '../../utils/playlists/playlist';
 import { ReduxState } from 'redux/store';
 import { CourseSortAttribute } from 'utils/courses/sorting';
-import { extractSemesters, getLatestSemester, Semester } from 'utils/playlists/semesters';
+import { extractSemesters, getLatestSemester, Semester, semesterToString } from 'utils/playlists/semesters';
 
 type CourseById = {
   kind: 'id';
@@ -93,16 +93,18 @@ const Catalog = () => {
   const filters = playlistsToFilters(allPlaylists);
 
   // Get the selected semester OR the latest semester
-  const currentSemester = allPlaylists && getLatestSemester(allPlaylists);
-  const selectedSemester: Semester =
-    extractSemesters(activePlaylists, allPlaylists)[0] || currentSemester;
+  const latestSemester = getLatestSemester(allPlaylists);
+  const selectedSemester = extractSemesters(activePlaylists, allPlaylists)[0];
+  const activeSemester = selectedSemester || latestSemester;
 
   // Add the initial semester as the initial playlist.
   useEffect(() => {
-    if (currentSemester?.id) {
-      modifyFilters(new Set([currentSemester.id]));
+    // If there is a semester, and the user hasn't selected a semester, we'll
+    // add the semester as a filter.
+    if (latestSemester?.playlistId && !selectedSemester) {
+      modifyFilters(new Set([latestSemester.playlistId]));
     }
-  }, [currentSemester?.id]);
+  }, [latestSemester, selectedSemester]);
 
   return (
     <div className="catalog viewport-app">
@@ -139,14 +141,16 @@ const Catalog = () => {
             (!isMobile ? (
               <ClassDescription
                 courseId={selectedCourse.id}
+                semester={activeSemester}
                 modifyFilters={modifyFilters}
               />
             ) : (
               <ClassDescriptionModal
-                course={selectedCourse}
+                courseId={selectedCourse.id}
+                semester={activeSemester}
+                modifyFilters={modifyFilters}
                 show={showDescription}
                 hideModal={() => setShowDescription(false)}
-                modifyFilters={modifyFilters}
               />
             ))}
         </Col>
