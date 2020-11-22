@@ -15,6 +15,10 @@ spec:
             imagePullPolicy: Always
             command:
             - ./update-data.sh
+            volumeMounts:
+            - name: google
+              mountPath: "/etc/google"
+              readOnly: true
             env:
             - name: PYTHONUNBUFFERED
               value: "0"
@@ -35,4 +39,11 @@ spec:
                 name: sendgrid
             - secretRef:
                 name: sentrydsn
+          volumes:
+          - name: google
+            secret:
+              secretName: google-2
+              items:
+              - key: google-tokens
+                path: auth.json
           restartPolicy: OnFailure
