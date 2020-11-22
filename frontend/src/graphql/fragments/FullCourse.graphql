@@ -28,22 +28,4 @@ fragment FullCourse on CourseType {
       }
     }
   }
-
-  sectionSet {
-    edges {
-      node {
-        ccn
-        kind
-        instructor
-        startTime
-        endTime
-        enrolled
-        enrolledMax
-        locationName
-        waitlisted
-        waitlistedMax
-        days
-      }
-    }
-  }
 }

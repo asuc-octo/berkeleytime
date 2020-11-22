@@ -1,0 +1,13 @@
+fragment Section on SectionType {
+  ccn
+  kind
+  instructor
+  startTime
+  endTime
+  enrolled
+  enrolledMax
+  locationName
+  waitlisted
+  waitlistedMax
+  days
+}

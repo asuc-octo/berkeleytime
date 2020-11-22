@@ -11,6 +11,7 @@ import {
   PlaylistDescription,
 } from '../../utils/playlists/playlist';
 import {
+  filterTypeIsClearable,
   filterTypeIsMulti,
   filterTypeIsSearchable,
   filterTypeToPlaceholder,
@@ -141,7 +142,7 @@ const FilterSidebar = ({
         <div className="filter-option" key={option.type}>
           <p>{filterTypeToString(option.type)}</p>
           <BTSelect
-            isClearable
+            isClearable={filterTypeIsClearable(option.type)}
             isMulti={filterTypeIsMulti(option.type)}
             closeMenuOnSelect={!filterTypeIsMulti(option.type)}
             isSearchable={filterTypeIsSearchable(option.type)}

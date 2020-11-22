@@ -1,5 +1,12 @@
-query GetCourseForId($id: ID!) {
+query GetCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {
     ...FullCourse
+    sectionSet(year: $year, semester: $semester) {
+      edges {
+        node {
+          ...Section
+        }
+      }
+    }
   }
 }
