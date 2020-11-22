@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import without from 'lodash/without';
 import { Button, Modal, Form } from 'react-bootstrap';
-import { FilterParameter, PlaylistDescription } from 'utils/playlist';
+import { FilterParameter, PlaylistDescription } from 'utils/playlists/playlist';
 
 type CheckboxGroupProps = {
   nestedOptions: PlaylistDescription;

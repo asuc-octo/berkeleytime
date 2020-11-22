@@ -1,4 +1,5 @@
-import { FilterFragment } from '../graphql/graphql';
+import { FilterFragment } from '../../graphql/graphql';
+import { FilterType } from './filterTypes';
 
 export type FilterablePlaylist = FilterFragment;
 export type FilterParameter = {
@@ -11,15 +12,18 @@ export type CategorizedFilterParameter = {
   options: FilterParameter[];
 };
 
-export type Filters = {
-  requirements: CategorizedFilterParameter[];
-  departmentsPlaylist: FilterParameter[];
-  unitsPlaylist: FilterParameter[];
-  levelsPlaylist: FilterParameter[];
-  semestersPlaylist: FilterParameter[];
+export type Filter = {
+  type: FilterType;
+  isMulti: boolean;
+  options: PlaylistDescription;
 };
 
-export type PlaylistDescription = (FilterParameter | CategorizedFilterParameter)[];
+export type Filters = Filter[];
+
+export type PlaylistDescription = (
+  | FilterParameter
+  | CategorizedFilterParameter
+)[];
 
 export type ParameterChange = [add: Set<string>, remove: Set<string>];
 
@@ -58,7 +62,9 @@ export function stableSortPlaylists(
     .sort((a, b) => playlistToTimeComparable(b) - playlistToTimeComparable(a))
     .slice(0, maxSemesters);
 
-  const unitPlaylists = playlists.filter((p) => p.category === 'units');
+  const unitPlaylists = playlists
+    .filter((p) => p.category === 'units')
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const otherPlaylists = playlists
     .filter((p) => !['units', 'semester'].includes(p.category))
@@ -102,59 +108,67 @@ export function getCategoryFromPlaylists(
  * that can be passed to by react-select. Each dropdown takes an options
  * list of { value: ..., label: ... } objects. The requirements dropdown
  * takes a list of { label: ..., options: ... } since each option is
- * categorized under a section.  This returns the options lists for each filter dropdown.
+ * categorized under a section.  This returns the options lists for each filter
+ * dropdown. This returns values in a deterministic, defined order
  */
 export function playlistsToFilters(rawData: FilterablePlaylist[]): Filters {
   const data = stableSortPlaylists(rawData);
-  const requirements = [];
+  const requirements = [
+    {
+      label: 'University Requirements',
+      options: getCategoryFromPlaylists(data, 'university'),
+    },
+    {
+      label: 'L&S Breadths',
+      options: getCategoryFromPlaylists(data, 'ls'),
+    },
+    {
+      label: 'College of Engineering',
+      options: getCategoryFromPlaylists(data, 'engineering'),
+    },
+    {
+      label: 'Haas Breadths',
+      options: getCategoryFromPlaylists(data, 'haas'),
+    },
+  ];
 
-  requirements.push({
-    label: 'University Requirements',
-    options: getCategoryFromPlaylists(data, 'university'),
-  });
-
-  requirements.push({
-    label: 'L&S Breadths',
-    options: getCategoryFromPlaylists(data, 'ls'),
-  });
-
-  requirements.push({
-    label: 'College of Engineering',
-    options: getCategoryFromPlaylists(data, 'engineering'),
-  });
-
-  requirements.push({
-    label: 'Haas Breadths',
-    options: getCategoryFromPlaylists(data, 'haas'),
-  });
-
-  const departmentsPlaylist = getCategoryFromPlaylists(data, 'department');
-  if (departmentsPlaylist[0].label === '-') {
-    // remove non-existent department???
-    departmentsPlaylist.splice(0, 1);
-  }
-
-  const unitsPlaylist = getCategoryFromPlaylists(data, 'units', (label) =>
-    label === '5 Units' ? '5+ Units' : label
-  );
-
-  const levelsPlaylist = getCategoryFromPlaylists(data, 'level');
-
-  const semestersPlaylist = getCategoryFromPlaylists(data, 'semester');
-
-  return {
-    requirements,
-    departmentsPlaylist,
-    unitsPlaylist,
-    levelsPlaylist,
-    semestersPlaylist,
-  };
+  return [
+    {
+      type: 'requirements',
+      isMulti: true,
+      options: requirements,
+    },
+    {
+      type: 'units',
+      isMulti: true,
+      options: getCategoryFromPlaylists(data, 'units', (label) =>
+        label === '5 Units' ? '5+ Units' : label
+      ),
+    },
+    {
+      type: 'department',
+      isMulti: false,
+      options: getCategoryFromPlaylists(data, 'department'),
+    },
+    {
+      type: 'level',
+      isMulti: true,
+      options: getCategoryFromPlaylists(data, 'level'),
+    },
+    {
+      type: 'semesters',
+      isMulti: false,
+      options: getCategoryFromPlaylists(data, 'semester'),
+    },
+  ];
 }
 
 /**
  * Gets the relevant matching filters
  */
-export function getPlaylistEntries(playlist: PlaylistDescription): FilterParameter[] {
+export function getPlaylistEntries(
+  playlist: PlaylistDescription
+): FilterParameter[] {
   if (playlist.length === 0) {
     return [];
   }
@@ -171,9 +185,12 @@ export function getPlaylistEntries(playlist: PlaylistDescription): FilterParamet
 /**
  * Gets the values that overlap a playlist.
  */
-export function getOverlappingValues(values: string[], playlist: PlaylistDescription): FilterParameter[] {
+export function getOverlappingValues(
+  values: string[],
+  playlist: PlaylistDescription
+): FilterParameter[] {
   const allValues = getPlaylistEntries(playlist);
-  const overlap = allValues.filter(opt => values.includes(opt.value));
+  const overlap = allValues.filter((opt) => values.includes(opt.value));
   return overlap;
 }
 
@@ -188,7 +205,7 @@ export function getChanges(
   const remove = new Set<string>();
 
   for (const selected of selectedParameters) {
-      add.add(selected.value);
+    add.add(selected.value);
   }
 
   const allParameterValues = getPlaylistEntries(allParameters);

@@ -15,9 +15,25 @@ import {
   CourseOverviewFragment,
   useGetFiltersQuery,
 } from '../../graphql/graphql';
-import { getLatestSemester, playlistsToFilters } from '../../utils/playlist';
+import { getLatestSemester, playlistsToFilters } from '../../utils/playlists/playlist';
 import { ReduxState } from 'redux/store';
 import { CourseSortAttribute } from 'utils/courses/sorting';
+
+type CourseById = {
+  kind: 'id'
+  id: string;
+};
+
+type CourseByName = {
+  kind: 'id';
+};
+
+type SelectedCourse = CourseOverviewFragment | null;
+type SelectedSemester = {
+  playlistId: string;
+  year: string;
+  semester: string;
+} | null;
 
 const Catalog = () => {
   const isMobile = useSelector((state: ReduxState) => state.common.mobile);
@@ -26,6 +42,7 @@ const Catalog = () => {
   const [sortBy, setSortBy] = useState<CourseSortAttribute>('relevance');
   const [showDescription, setShowDescription] = useState(false); // The course modal on mobile
   const [activePlaylists, setActivePlaylists] = useState<string[]>([]); // The active filters
+  const [selectedSemester, setSelectedSemester] = useState<SelectedSemester>();
   const [
     selectedCourse,
     setSelectedCourse,

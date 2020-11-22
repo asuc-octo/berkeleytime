@@ -24,6 +24,7 @@
       margin-right: 10px !important;
       height: auto;
       padding: 9px 12px 9px 12px;
+      white-space: nowrap;
     }
 
     .blue-text {
@@ -103,7 +104,8 @@
   }
 
   .filter-sort, .filter-requirements, .filter-units,
-  .filter-department, .filter-class-level, .filter-semesters {
+  .filter-department, .filter-class-level, .filter-semesters,
+  .filter-option {
     margin-bottom: 12px;
     display: flex;
     flex-direction: column;
