@@ -5,16 +5,20 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 
 import FilterCard from './FilterCard';
 
-import { CourseOverviewFragment, CourseType, useGetCoursesForFilterQuery } from '../../graphql/graphql';
+import {
+  CourseOverviewFragment,
+  CourseType,
+  useGetCoursesForFilterQuery,
+} from '../../graphql/graphql';
 import { searchCourses, SearchableCourse } from 'utils/courses/search';
 import { sortByAttribute, CourseSortAttribute } from 'utils/courses/sorting';
 
 type FilterResultsProps = {
-  activePlaylists: string[]
-  selectCourse?: (course: CourseOverviewFragment) => void,
-  selectedCourse: CourseOverviewFragment | null
-  sortBy: CourseSortAttribute
-  query: string
+  activePlaylists: string[];
+  selectCourse?: (course: CourseOverviewFragment) => void;
+  selectedCourse: CourseOverviewFragment | null;
+  sortBy: CourseSortAttribute;
+  query: string;
 };
 
 /**
@@ -25,23 +29,23 @@ const FilterResults = ({
   selectCourse,
   selectedCourse,
   sortBy,
-  query: rawQuery
+  query: rawQuery,
 }: FilterResultsProps) => {
-
-  const { data, loading } = useGetCoursesForFilterQuery({
+  const { data, loading, error } = useGetCoursesForFilterQuery({
     variables: {
-      // playlists: activePlaylists
-    }
+      playlists: activePlaylists.join(",")
+    },
+    // We will not show results unless there's at least 1 filter selected.
+    skip: activePlaylists.length === 0
   });
 
-
   let sortedCourses: CourseOverviewFragment[] = [];
-  if (!loading) {
-    const courses = data!.allCourses!.edges.map(edge => edge!.node!);
+  if (data) {
+    const courses = data!.allCourses!.edges.map((edge) => edge!.node!);
 
     // If we're using a "Relevance" search *and* there's a search query, we'll
     // use the search text-distance as the sorting metric.
-    const hasQuery = rawQuery.trim() !== "";
+    const hasQuery = rawQuery.trim() !== '';
     if (hasQuery) {
       // TODO: consider memoizing if this is slow.
       sortedCourses = searchCourses(courses, rawQuery);
@@ -54,37 +58,38 @@ const FilterResults = ({
     courses: sortedCourses,
     sortBy,
     selectCourse: selectCourse,
-    selectedCourse
+    selectedCourse,
   };
 
   return (
     <div className="filter-results">
-      {
-        loading
-          ? (
-            <div className="filter-results-loading">
-              <BeatLoader color="#579EFF" size={15} sizeUnit="px" />
-            </div>
-          )
-          : (
-            <AutoSizer>
-              {({ height, width }) => (
-                <FixedSizeList
-                  height={height}
-                  width={width}
-                  itemData={courseCardProps}
-                  itemCount={sortedCourses.length}
-                  itemSize={110}
-                  itemKey={(index) => sortedCourses[index].id}
-                >
-                  {FilterCard}
-                </FixedSizeList>
-              )}
-            </AutoSizer>
-          )
-      }
+      {error ? (
+        console.log(error),
+        <div className="filter-results-loading">
+          <div>A critical error occured.</div>
+        </div>
+      ) : loading ? (
+        <div className="filter-results-loading">
+          <BeatLoader color="#579EFF" size={15} sizeUnit="px" />
+        </div>
+      ) : (
+        <AutoSizer>
+          {({ height, width }) => (
+            <FixedSizeList
+              height={height}
+              width={width}
+              itemData={courseCardProps}
+              itemCount={sortedCourses.length}
+              itemSize={110}
+              itemKey={(index) => sortedCourses[index].id}
+            >
+              {FilterCard}
+            </FixedSizeList>
+          )}
+        </AutoSizer>
+      )}
     </div>
   );
-}
+};
 
 export default FilterResults;

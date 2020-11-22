@@ -27,7 +27,7 @@ function colorEnrollment(percentage: number): string {
 
 function colorGrade(grade: string): string {
   if (grade === '') {
-    console.error('colorGrade: no grade provided!');
+    // console.error('colorGrade: no grade provided!');
     return '';
   }
   return `grade-${grade[0]}`;

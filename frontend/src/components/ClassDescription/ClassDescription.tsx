@@ -49,7 +49,7 @@ function findInstructor(instr: string | null): CSSProperties {
 
 type ClassDescriptionProps = {
   courseId: string;
-  modifyFilters: (add: string[], remove: string[]) => void;
+  modifyFilters: (add: Set<string>, remove: Set<string>) => void;
 };
 
 const ClassDescription = ({
@@ -198,7 +198,7 @@ const ClassDescription = ({
             <div
               className="pill"
               key={req.id}
-              onClick={() => modifyFilters([req.id], [])}
+              onClick={() => modifyFilters(new Set([req.id]), new Set())}
             >
               {req.name}
             </div>

@@ -7,7 +7,7 @@ type ClassDescriptionModalProps = {
   show: boolean
   course: CourseOverviewFragment | null
   hideModal: () => void
-  modifyFilters: (add: string[], remove: string[]) => void
+  modifyFilters: (add: Set<string>, remove: Set<string>) => void
 };
 
 const ClassDescriptionModal = ({
