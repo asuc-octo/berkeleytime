@@ -23,7 +23,7 @@ import {
 } from '../../utils/utils';
 import { useGetCourseForIdQuery } from '../../graphql/graphql';
 import { formatTime } from 'utils/date';
-import { getLatestSemester, stableSortPlaylists } from 'utils/playlist';
+import { getLatestSemester, stableSortPlaylists } from 'utils/playlists/playlist';
 
 const easterEggImages: { [key: string]: string } = {
   'DENERO J': denero,
@@ -58,20 +58,24 @@ const ClassDescription = ({
 }: ClassDescriptionProps) => {
   const [readMore, setReadMore] = useState<boolean | null>(false);
 
-  const result = useGetCourseForIdQuery({
+  const { data, loading, error } = useGetCourseForIdQuery({
     variables: {
       id: courseId,
     },
   });
 
-  const { data, loading } = result;
-
-  if (loading) {
+  if (!data) {
     return (
       <div className="catalog-description-container">
-        <div className="loading">
-          <BeatLoader color="#579EFF" size={15} sizeUnit="px" />
-        </div>
+        {error ? (
+          <div className="loading">
+            A critical error occured loading the data.
+          </div>
+        ) : loading && (
+          <div className="loading">
+            <BeatLoader color="#579EFF" size={15} sizeUnit="px" />
+          </div>
+        )}
       </div>
     );
   }

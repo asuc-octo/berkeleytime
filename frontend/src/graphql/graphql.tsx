@@ -625,24 +625,24 @@ export interface Verify {
 
 export type CourseOverviewFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'units'>
 );
 
 export type FilterFragment = (
   { __typename?: 'PlaylistType' }
-  & Pick<PlaylistType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<PlaylistType, 'id' | 'name' | 'category' | 'semester' | 'year'>
 );
 
 export type FullCourseFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<CourseType, 'title' | 'units' | 'waitlisted' | 'openSeats' | 'letterAverage' | 'lastUpdated' | 'id' | 'hasEnrollment' | 'gradeAverage' | 'enrolledPercentage' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'enrolled' | 'abbreviation' | 'prerequisites'>
   & { playlistSet: (
     { __typename?: 'PlaylistTypeConnection' }
     & { edges: Array<Maybe<(
       { __typename?: 'PlaylistTypeEdge' }
       & { node?: Maybe<(
         { __typename?: 'PlaylistType' }
-        & Pick<PlaylistType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+        & Pick<PlaylistType, 'category' | 'id' | 'name' | 'semester' | 'year'>
       )> }
     )>> }
   ), sectionSet: (
@@ -651,7 +651,7 @@ export type FullCourseFragment = (
       { __typename?: 'SectionTypeEdge' }
       & { node?: Maybe<(
         { __typename?: 'SectionType' }
-        & Pick<SectionType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+        & Pick<SectionType, 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days'>
       )> }
     )>> }
   ) }
@@ -659,10 +659,10 @@ export type FullCourseFragment = (
 
 export type UserProfileFragment = (
   { __typename?: 'BerkeleytimeUserType' }
-  & Pick<BerkeleytimeUserType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+  & Pick<BerkeleytimeUserType, 'id' | 'major' | 'emailClassUpdate' | 'emailGradeUpdate' | 'emailEnrollmentOpening' | 'emailBerkeleytimeUpdate'>
   & { user: (
     { __typename?: 'UserType' }
-    & Pick<UserType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
+    & Pick<UserType, 'id' | 'username' | 'firstName' | 'lastName' | 'email'>
   ), savedClasses?: Maybe<Array<Maybe<(
     { __typename?: 'CourseType' }
     & CourseOverviewFragment
@@ -678,7 +678,7 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login?: Maybe<(
     { __typename?: 'ObtainJSONWebToken' }
-    & Pick<ObtainJsonWebToken, '[object Object]' | '[object Object]' | '[object Object]'>
+    & Pick<ObtainJsonWebToken, 'newUser' | 'refreshExpiresIn' | 'payload'>
     & { user?: Maybe<(
       { __typename?: 'BerkeleytimeUserType' }
       & UserProfileFragment
