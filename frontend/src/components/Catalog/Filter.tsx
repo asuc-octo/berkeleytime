@@ -11,6 +11,7 @@ import {
   PlaylistDescription,
 } from '../../utils/playlists/playlist';
 import {
+  filterTypeIsMulti,
   filterTypeIsSearchable,
   filterTypeToPlaceholder,
   filterTypeToString,
@@ -141,8 +142,8 @@ const FilterSidebar = ({
           <p>{filterTypeToString(option.type)}</p>
           <BTSelect
             isClearable
-            isMulti={option.isMulti}
-            closeMenuOnSelect={!option.isMulti}
+            isMulti={filterTypeIsMulti(option.type)}
+            closeMenuOnSelect={!filterTypeIsMulti(option.type)}
             isSearchable={filterTypeIsSearchable(option.type)}
             options={option.options as GroupedOptionsType<FilterParameter>}
             onChange={filterHandler(option.options)}
@@ -193,7 +194,7 @@ const FilterSidebar = ({
                 selected: getOverlappingValues(activeFilters, option.options),
                 options: option.options,
                 handler: filterHandler(option.options),
-                isMulti: option.isMulti,
+                isMulti: filterTypeIsMulti(option.type),
               })
             }
           >
