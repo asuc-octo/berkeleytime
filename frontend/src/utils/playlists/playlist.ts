@@ -12,18 +12,18 @@ export type CategorizedFilterParameter = {
   options: FilterParameter[];
 };
 
-export type Filter = {
-  type: FilterType;
-  isMulti: boolean;
-  options: PlaylistDescription;
-};
-
-export type Filters = Filter[];
-
 export type PlaylistDescription = (
   | FilterParameter
   | CategorizedFilterParameter
 )[];
+
+
+export type Filter = {
+  type: FilterType;
+  options: PlaylistDescription;
+};
+
+export type Filters = Filter[];
 
 export type ParameterChange = [add: Set<string>, remove: Set<string>];
 
@@ -135,29 +135,24 @@ export function playlistsToFilters(rawData: FilterablePlaylist[]): Filters {
   return [
     {
       type: 'requirements',
-      isMulti: true,
       options: requirements,
     },
     {
       type: 'units',
-      isMulti: true,
       options: getCategoryFromPlaylists(data, 'units', (label) =>
         label === '5 Units' ? '5+ Units' : label
       ),
     },
     {
       type: 'department',
-      isMulti: false,
       options: getCategoryFromPlaylists(data, 'department'),
     },
     {
       type: 'level',
-      isMulti: true,
       options: getCategoryFromPlaylists(data, 'level'),
     },
     {
       type: 'semesters',
-      isMulti: false,
       options: getCategoryFromPlaylists(data, 'semester'),
     },
   ];
