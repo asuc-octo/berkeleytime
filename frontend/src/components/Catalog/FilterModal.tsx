@@ -108,7 +108,7 @@ const FilterModal = ({
   }
 
   return (
-    <Modal show={showFilters} onHide={hideModal}>
+    <Modal show={showFilters} onHide={hideModal} className="bt-filter-modal">
       <div className="filter-modal">
         <div className="filter-form">
           <CheckboxGroup

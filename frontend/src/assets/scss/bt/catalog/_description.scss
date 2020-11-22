@@ -179,7 +179,7 @@
 
       > div {
         display: inline-block;
-        padding: 0 15px;
+        padding: 0 calc(30px - 0.75rem);
       }
 
       .table-empty {
