@@ -645,16 +645,12 @@ export type FullCourseFragment = (
         & Pick<PlaylistType, 'category' | 'id' | 'name' | 'semester' | 'year'>
       )> }
     )>> }
-  ), sectionSet: (
-    { __typename?: 'SectionTypeConnection' }
-    & { edges: Array<Maybe<(
-      { __typename?: 'SectionTypeEdge' }
-      & { node?: Maybe<(
-        { __typename?: 'SectionType' }
-        & Pick<SectionType, 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days'>
-      )> }
-    )>> }
   ) }
+);
+
+export type SectionFragment = (
+  { __typename?: 'SectionType' }
+  & Pick<SectionType, 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days'>
 );
 
 export type UserProfileFragment = (
@@ -688,6 +684,8 @@ export type LoginMutation = (
 
 export type GetCourseForIdQueryVariables = Exact<{
   id: Scalars['ID'];
+  year?: Maybe<Scalars['String']>;
+  semester?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -695,6 +693,16 @@ export type GetCourseForIdQuery = (
   { __typename?: 'Query' }
   & { course?: Maybe<(
     { __typename?: 'CourseType' }
+    & { sectionSet: (
+      { __typename?: 'SectionTypeConnection' }
+      & { edges: Array<Maybe<(
+        { __typename?: 'SectionTypeEdge' }
+        & { node?: Maybe<(
+          { __typename?: 'SectionType' }
+          & SectionFragment
+        )> }
+      )>> }
+    ) }
     & FullCourseFragment
   )> }
 );
@@ -790,23 +798,21 @@ export const FullCourseFragmentDoc = gql`
       }
     }
   }
-  sectionSet {
-    edges {
-      node {
-        ccn
-        kind
-        instructor
-        startTime
-        endTime
-        enrolled
-        enrolledMax
-        locationName
-        waitlisted
-        waitlistedMax
-        days
-      }
-    }
-  }
+}
+    `;
+export const SectionFragmentDoc = gql`
+    fragment Section on SectionType {
+  ccn
+  kind
+  instructor
+  startTime
+  endTime
+  enrolled
+  enrolledMax
+  locationName
+  waitlisted
+  waitlistedMax
+  days
 }
     `;
 export const CourseOverviewFragmentDoc = gql`
@@ -880,12 +886,20 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const GetCourseForIdDocument = gql`
-    query GetCourseForId($id: ID!) {
+    query GetCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {
     ...FullCourse
+    sectionSet(year: $year, semester: $semester) {
+      edges {
+        node {
+          ...Section
+        }
+      }
+    }
   }
 }
-    ${FullCourseFragmentDoc}`;
+    ${FullCourseFragmentDoc}
+${SectionFragmentDoc}`;
 
 /**
  * __useGetCourseForIdQuery__
@@ -900,6 +914,8 @@ export const GetCourseForIdDocument = gql`
  * const { data, loading, error } = useGetCourseForIdQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      year: // value for 'year'
+ *      semester: // value for 'semester'
  *   },
  * });
  */

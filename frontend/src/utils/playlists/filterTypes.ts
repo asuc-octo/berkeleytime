@@ -42,7 +42,19 @@ export function filterTypeIsMulti(filterType: FilterType): boolean {
   switch (filterType) {
     case 'semesters':
     case 'department':
+      return false;
+    default:
       return true;
+  }
+}
+
+/**
+ * Gets if the filter type should support clearing.
+ */
+export function filterTypeIsClearable(filterType: FilterType): boolean {
+  switch (filterType) {
+    case 'semesters':
+      return false;
     default:
       return true;
   }

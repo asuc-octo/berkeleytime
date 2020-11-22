@@ -15,12 +15,17 @@ import {
   CourseOverviewFragment,
   useGetFiltersQuery,
 } from '../../graphql/graphql';
-import { getLatestSemester, playlistsToFilters } from '../../utils/playlists/playlist';
+import {
+  getCategoryFromPlaylists,
+  getOverlappingValues,
+  playlistsToFilters,
+} from '../../utils/playlists/playlist';
 import { ReduxState } from 'redux/store';
 import { CourseSortAttribute } from 'utils/courses/sorting';
+import { extractSemesters, getLatestSemester, Semester } from 'utils/playlists/semesters';
 
 type CourseById = {
-  kind: 'id'
+  kind: 'id';
   id: string;
 };
 
@@ -42,7 +47,6 @@ const Catalog = () => {
   const [sortBy, setSortBy] = useState<CourseSortAttribute>('relevance');
   const [showDescription, setShowDescription] = useState(false); // The course modal on mobile
   const [activePlaylists, setActivePlaylists] = useState<string[]>([]); // The active filters
-  const [selectedSemester, setSelectedSemester] = useState<SelectedSemester>();
   const [
     selectedCourse,
     setSelectedCourse,
@@ -82,20 +86,23 @@ const Catalog = () => {
   }
 
   // Get flat list of all playlists (aka filters)
-  const allPlaylists = data?.allPlaylists?.edges.map((edge) => edge!.node!);
+  const allPlaylists =
+    data?.allPlaylists?.edges.map((edge) => edge!.node!) || [];
 
   // Convert list of filter into semantic hierarchy
-  const filters = allPlaylists && playlistsToFilters(allPlaylists);
+  const filters = playlistsToFilters(allPlaylists);
 
-  // Get latest semester ID.
-  const currentSemester = allPlaylists && getLatestSemester(allPlaylists)?.id;
+  // Get the selected semester OR the latest semester
+  const currentSemester = allPlaylists && getLatestSemester(allPlaylists);
+  const selectedSemester: Semester =
+    extractSemesters(activePlaylists, allPlaylists)[0] || currentSemester;
 
   // Add the initial semester as the initial playlist.
   useEffect(() => {
-    if (currentSemester) {
-      modifyFilters(new Set([currentSemester]));
+    if (currentSemester?.id) {
+      modifyFilters(new Set([currentSemester.id]));
     }
-  }, [currentSemester]);
+  }, [currentSemester?.id]);
 
   return (
     <div className="catalog viewport-app">

@@ -74,19 +74,6 @@ export function stableSortPlaylists(
 }
 
 /**
- * Gets the latest semester from a list of playlists.
- */
-export function getLatestSemester(
-  playlists: FilterablePlaylist[]
-): FilterablePlaylist | null {
-  const semesterPlaylists = playlists
-    .filter((p) => p.category === 'semester')
-    .sort((a, b) => playlistToTimeComparable(b) - playlistToTimeComparable(a));
-
-  return semesterPlaylists[0] || null;
-}
-
-/**
  * Converts a list of playlists and extracts all playlists of a specific
  * category.
  */

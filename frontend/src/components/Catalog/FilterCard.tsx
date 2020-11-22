@@ -1,6 +1,8 @@
 import { CourseOverviewFragment } from 'graphql/graphql';
 import React, { CSSProperties, memo, PureComponent, ReactNode } from 'react';
 import { CourseSortAttribute } from 'utils/courses/sorting';
+import { ReactComponent as BookmarkSaved } from '../../assets/svg/catalog/bookmark-saved.svg';
+import { ReactComponent as BookmarkUnsaved } from '../../assets/svg/catalog/bookmark-unsaved.svg';
 
 // TODO: consider importing utils after latest changes merged into master.
 function formatEnrollmentPercentage(percentage: number): string {
@@ -60,7 +62,11 @@ type FilterCardProps = {
   style: CSSProperties;
 };
 
-const FilterCard = ({ style, data, index }: FilterCardProps) => {
+const FilterCard = ({
+  style,
+  data,
+  index
+}: FilterCardProps) => {
   const course = data.courses[index];
 
   const { sortBy, selectedCourse } = data;

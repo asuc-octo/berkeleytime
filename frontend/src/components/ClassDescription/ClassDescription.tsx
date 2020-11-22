@@ -23,37 +23,42 @@ import {
 } from '../../utils/utils';
 import { useGetCourseForIdQuery } from '../../graphql/graphql';
 import { formatTime } from 'utils/date';
-import { getLatestSemester, stableSortPlaylists } from 'utils/playlists/playlist';
+import { stableSortPlaylists } from 'utils/playlists/playlist';
+import { getLatestSemester, Semester } from 'utils/playlists/semesters';
 
-const easterEggImages: { [key: string]: string } = {
-  'DENERO J': denero,
-  'HUG J': hug,
-  'SAHAI A': sahai,
-  'HILFINGER P': hilf,
-  'SHENKER S': scott,
-  'KUBIATOWICZ J': kubi,
-  'GARCIA D': garcia,
-};
+const easterEggImages = new Map<string, string>([
+  ['DENERO J', denero],
+  ['HUG J', hug],
+  ['SAHAI A', sahai],
+  ['HILFINGER P', hilf],
+  ['SHENKER S', scott],
+  ['KUBIATOWICZ J', kubi],
+  ['GARCIA D', garcia]
+]);
 
 function findInstructor(instr: string | null): CSSProperties {
   if (instr === null) return {};
-  for (let egg in easterEggImages) {
-    if (instr.indexOf(egg) !== -1) {
+
+  for (const [name, eggUrl] of easterEggImages) {
+    if (instr.includes(name)) {
       return {
-        '--section-cursor': `url(${easterEggImages[egg]})`,
+        '--section-cursor': `url(${eggUrl})`,
       } as CSSProperties;
     }
   }
+
   return {};
 }
 
 type ClassDescriptionProps = {
   courseId: string;
+  semester?: Semester;
   modifyFilters: (add: Set<string>, remove: Set<string>) => void;
 };
 
 const ClassDescription = ({
   courseId,
+  semester,
   modifyFilters,
 }: ClassDescriptionProps) => {
   const [readMore, setReadMore] = useState<boolean | null>(false);
@@ -61,6 +66,8 @@ const ClassDescription = ({
   const { data, loading, error } = useGetCourseForIdQuery({
     variables: {
       id: courseId,
+      year: semester?.year,
+      semester: semester?.semester
     },
   });
 
@@ -80,7 +87,7 @@ const ClassDescription = ({
     );
   }
 
-  const course = data?.course!;
+  const course = data.course!;
   const playlists = course.playlistSet.edges.map((e) => e?.node!);
   const sections = course.sectionSet.edges.map((e) => e?.node!);
 
@@ -112,6 +119,8 @@ const ClassDescription = ({
   let moreDesc: boolean | null = null;
   let morePrereq: boolean | null = null;
 
+  // No idea how this works, but this is what
+  // handles the 'Read More' functionality.
   if (readMore) {
     // expand
     if (course.prerequisites) {
