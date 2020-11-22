@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
 import BeatLoader from 'react-spinners/BeatLoader';
 import union from 'lodash/union';
@@ -16,29 +16,15 @@ import {
   useGetFiltersQuery,
 } from '../../graphql/graphql';
 import {
-  getCategoryFromPlaylists,
-  getOverlappingValues,
+  FilterablePlaylist,
   playlistsToFilters,
 } from '../../utils/playlists/playlist';
 import { ReduxState } from 'redux/store';
 import { CourseSortAttribute } from 'utils/courses/sorting';
-import { extractSemesters, getLatestSemester, Semester, semesterToString } from 'utils/playlists/semesters';
-
-type CourseById = {
-  kind: 'id';
-  id: string;
-};
-
-type CourseByName = {
-  kind: 'id';
-};
-
-type SelectedCourse = CourseOverviewFragment | null;
-type SelectedSemester = {
-  playlistId: string;
-  year: string;
-  semester: string;
-} | null;
+import {
+  extractSemesters,
+  getLatestSemester,
+} from 'utils/playlists/semesters';
 
 const Catalog = () => {
   const isMobile = useSelector((state: ReduxState) => state.common.mobile);
@@ -46,26 +32,29 @@ const Catalog = () => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<CourseSortAttribute>('relevance');
   const [showDescription, setShowDescription] = useState(false); // The course modal on mobile
+  const [allPlaylists, setAllPlaylists] = useState<FilterablePlaylist[]>([]);
   const [activePlaylists, setActivePlaylists] = useState<string[]>([]); // The active filters
+
   const [
     selectedCourse,
     setSelectedCourse,
-  ] = useState<CourseOverviewFragment | null>(null); // Selected course ID
+  ] = useState<string | null>(null); // Selected course ID
+
+  const { loading, error } = useGetFiltersQuery({
+    onCompleted: (data) => {
+      const allPlaylists = data.allPlaylists?.edges.map((edge) => edge!.node!)!;
+      const latestSemester = getLatestSemester(allPlaylists);
+      setAllPlaylists(allPlaylists);
+
+      // Set the initial playlist
+      setActivePlaylists([latestSemester?.playlistId!]);
+    },
+  });
 
   const history = useHistory();
-  // const location = useLocation();
-
-  const { data, loading, error } = useGetFiltersQuery();
-
-  /**
-   * Fetches initial filter data and sets selected class if url matches
-   * TODO: not sure what this behavior should be
-   */
-  // useEffect(() => {
-  //   // Get the course from the URL
-  //   const paths = location.pathname.split('/');
-  //   setActivePlaylists(paths);
-  // }, [location.pathname]);
+  const match = useRouteMatch<{ abbreviation: string; courseNumber: string }>(
+    '/catalog/:abbrevation/:courseNumber'
+  );
 
   /**
    * Adds and removes playlists from the active playlists
@@ -82,29 +71,18 @@ const Catalog = () => {
   function selectCourse(course: CourseOverviewFragment) {
     setShowDescription(true); //show modal if on mobile
     history.replace(`/catalog/${course.abbreviation}/${course.courseNumber}/`);
-    setSelectedCourse(course);
+    setSelectedCourse(course.id);
   }
-
-  // Get flat list of all playlists (aka filters)
-  const allPlaylists =
-    data?.allPlaylists?.edges.map((edge) => edge!.node!) || [];
 
   // Convert list of filter into semantic hierarchy
   const filters = playlistsToFilters(allPlaylists);
 
   // Get the selected semester OR the latest semester
-  const latestSemester = getLatestSemester(allPlaylists);
-  const selectedSemester = extractSemesters(activePlaylists, allPlaylists)[0];
-  const activeSemester = selectedSemester || latestSemester;
+  const activeSemester = extractSemesters(activePlaylists, allPlaylists)[0];
 
-  // Add the initial semester as the initial playlist.
-  useEffect(() => {
-    // If there is a semester, and the user hasn't selected a semester, we'll
-    // add the semester as a filter.
-    if (latestSemester?.playlistId && !selectedSemester) {
-      modifyFilters(new Set([latestSemester.playlistId]));
-    }
-  }, [latestSemester, selectedSemester]);
+  // If the user has selected a course, show that. Otherwise, show the course
+  // from the URL
+  const activeCourseId = selectedCourse;
 
   return (
     <div className="catalog viewport-app">
@@ -131,22 +109,22 @@ const Catalog = () => {
           <FilterResults
             activePlaylists={activePlaylists}
             selectCourse={selectCourse}
-            selectedCourse={selectedCourse}
+            selectedCourseId={activeCourseId}
             sortBy={sortBy}
             query={search}
           />
         </Col>
-        <Col md={6} lg={4} xl={6} className="catalog-description-column">
+        <Col md={6} lg={4} xl={6} className="catalog-description-column" key={activeCourseId}>
           {selectedCourse !== null &&
             (!isMobile ? (
               <ClassDescription
-                courseId={selectedCourse.id}
+                courseId={activeCourseId!}
                 semester={activeSemester}
                 modifyFilters={modifyFilters}
               />
             ) : (
               <ClassDescriptionModal
-                courseId={selectedCourse.id}
+                courseId={activeCourseId!}
                 semester={activeSemester}
                 modifyFilters={modifyFilters}
                 show={showDescription}

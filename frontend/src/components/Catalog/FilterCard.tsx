@@ -56,7 +56,7 @@ type FilterCardProps = {
     courses: CourseOverviewFragment[];
     selectCourse: (course: CourseOverviewFragment) => void;
     sortBy: CourseSortAttribute;
-    selectedCourse: CourseOverviewFragment | null;
+    selectedCourseId: string | null;
   };
   index: number;
   style: CSSProperties;
@@ -69,7 +69,7 @@ const FilterCard = ({
 }: FilterCardProps) => {
   const course = data.courses[index];
 
-  const { sortBy, selectedCourse } = data;
+  const { sortBy, selectedCourseId } = data;
   const {
     abbreviation,
     courseNumber,
@@ -99,7 +99,7 @@ const FilterCard = ({
       sort = null;
   }
 
-  const isSelectedCourse = id !== null && selectedCourse?.id === id;
+  const isSelectedCourse = id !== null && selectedCourseId === id;
 
   return (
     <div

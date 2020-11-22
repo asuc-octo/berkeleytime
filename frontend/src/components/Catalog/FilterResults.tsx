@@ -16,7 +16,7 @@ import { sortByAttribute, CourseSortAttribute } from 'utils/courses/sorting';
 type FilterResultsProps = {
   activePlaylists: string[];
   selectCourse?: (course: CourseOverviewFragment) => void;
-  selectedCourse: CourseOverviewFragment | null;
+  selectedCourseId: string | null;
   sortBy: CourseSortAttribute;
   query: string;
 };
@@ -27,7 +27,7 @@ type FilterResultsProps = {
 const FilterResults = ({
   activePlaylists,
   selectCourse,
-  selectedCourse,
+  selectedCourseId,
   sortBy,
   query: rawQuery,
 }: FilterResultsProps) => {
@@ -59,7 +59,7 @@ const FilterResults = ({
     courses: sortedCourses,
     sortBy,
     selectCourse: selectCourse,
-    selectedCourse,
+    selectedCourseId,
   };
 
   return (
