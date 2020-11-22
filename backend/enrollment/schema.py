@@ -24,6 +24,15 @@ class EnrollmentType(DjangoObjectType):
         filter_fields = '__all__'
         interfaces = (Node, )
 
+    enrolled_percent = graphene.Float()
+    waitlisted_percent = graphene.Float()
+
+    def resolve_enrolled_percent(parent, info):
+        return round(parent.enrolled / parent.enrolled_max, 3) if parent.enrolled_max else -1
+
+    def resolve_waitlisted_percent(parent, info):
+        return round(parent.waitlisted / parent.waitlisted_max, 3) if parent.waitlisted_max else -1
+
 class EnrollmentData(graphene.ObjectType):
     """ Proxy for enrollment object """
     day = graphene.Int()
