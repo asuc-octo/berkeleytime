@@ -625,24 +625,24 @@ export interface Verify {
 
 export type CourseOverviewFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'units'>
+  & Pick<CourseType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
 );
 
 export type FilterFragment = (
   { __typename?: 'PlaylistType' }
-  & Pick<PlaylistType, 'id' | 'name' | 'category' | 'semester' | 'year'>
+  & Pick<PlaylistType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
 );
 
 export type FullCourseFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, 'title' | 'units' | 'waitlisted' | 'openSeats' | 'letterAverage' | 'lastUpdated' | 'id' | 'hasEnrollment' | 'gradeAverage' | 'enrolledPercentage' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'enrolled' | 'abbreviation' | 'prerequisites'>
+  & Pick<CourseType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
   & { playlistSet: (
     { __typename?: 'PlaylistTypeConnection' }
     & { edges: Array<Maybe<(
       { __typename?: 'PlaylistTypeEdge' }
       & { node?: Maybe<(
         { __typename?: 'PlaylistType' }
-        & Pick<PlaylistType, 'category' | 'id' | 'name' | 'semester' | 'year'>
+        & Pick<PlaylistType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
       )> }
     )>> }
   ), sectionSet: (
@@ -651,7 +651,7 @@ export type FullCourseFragment = (
       { __typename?: 'SectionTypeEdge' }
       & { node?: Maybe<(
         { __typename?: 'SectionType' }
-        & Pick<SectionType, 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days'>
+        & Pick<SectionType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
       )> }
     )>> }
   ) }
@@ -659,10 +659,10 @@ export type FullCourseFragment = (
 
 export type UserProfileFragment = (
   { __typename?: 'BerkeleytimeUserType' }
-  & Pick<BerkeleytimeUserType, 'id' | 'major' | 'emailClassUpdate' | 'emailGradeUpdate' | 'emailEnrollmentOpening' | 'emailBerkeleytimeUpdate'>
+  & Pick<BerkeleytimeUserType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
   & { user: (
     { __typename?: 'UserType' }
-    & Pick<UserType, 'id' | 'username' | 'firstName' | 'lastName' | 'email'>
+    & Pick<UserType, '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]' | '[object Object]'>
   ), savedClasses?: Maybe<Array<Maybe<(
     { __typename?: 'CourseType' }
     & CourseOverviewFragment
@@ -678,7 +678,7 @@ export type LoginMutation = (
   { __typename?: 'Mutation' }
   & { login?: Maybe<(
     { __typename?: 'ObtainJSONWebToken' }
-    & Pick<ObtainJsonWebToken, 'newUser' | 'refreshExpiresIn' | 'payload'>
+    & Pick<ObtainJsonWebToken, '[object Object]' | '[object Object]' | '[object Object]'>
     & { user?: Maybe<(
       { __typename?: 'BerkeleytimeUserType' }
       & UserProfileFragment
@@ -699,7 +699,9 @@ export type GetCourseForIdQuery = (
   )> }
 );
 
-export type GetCoursesForFilterQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetCoursesForFilterQueryVariables = Exact<{
+  playlists: Scalars['String'];
+}>;
 
 
 export type GetCoursesForFilterQuery = (
@@ -911,8 +913,8 @@ export type GetCourseForIdQueryHookResult = ReturnType<typeof useGetCourseForIdQ
 export type GetCourseForIdLazyQueryHookResult = ReturnType<typeof useGetCourseForIdLazyQuery>;
 export type GetCourseForIdQueryResult = Apollo.QueryResult<GetCourseForIdQuery, GetCourseForIdQueryVariables>;
 export const GetCoursesForFilterDocument = gql`
-    query GetCoursesForFilter {
-  allCourses {
+    query GetCoursesForFilter($playlists: String!) {
+  allCourses(inPlaylists: $playlists) {
     edges {
       node {
         ...CourseOverview
@@ -934,10 +936,11 @@ export const GetCoursesForFilterDocument = gql`
  * @example
  * const { data, loading, error } = useGetCoursesForFilterQuery({
  *   variables: {
+ *      playlists: // value for 'playlists'
  *   },
  * });
  */
-export function useGetCoursesForFilterQuery(baseOptions?: Apollo.QueryHookOptions<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>) {
+export function useGetCoursesForFilterQuery(baseOptions: Apollo.QueryHookOptions<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>) {
         return Apollo.useQuery<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>(GetCoursesForFilterDocument, baseOptions);
       }
 export function useGetCoursesForFilterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCoursesForFilterQuery, GetCoursesForFilterQueryVariables>) {
