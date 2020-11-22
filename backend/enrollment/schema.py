@@ -10,6 +10,11 @@ from enrollment.models import Enrollment
 from catalog.models import Course
 from catalog.schema import CourseType, SectionType
 
+# telebears stuff
+from berkeleytime.settings import (
+    TELEBEARS, CURRENT_SEMESTER, CURRENT_YEAR, PAST_SEMESTERS_TELEBEARS
+)
+
 
 class EnrollmentType(DjangoObjectType):
     class Meta:
@@ -18,12 +23,20 @@ class EnrollmentType(DjangoObjectType):
         interfaces = (Node, )
 
 class EnrollmentData(graphene.ObjectType):
+    """ Proxy for enrollment object """
     date_created = graphene.Date()
     enrolled = graphene.Int()
     enrolled_max = graphene.Int()
 
+class TelebearData(graphene.ObjectType):
+    phase1_start = graphene.Date()
+    phase1_end = graphene.Date()
+    phase2_start = graphene.Date()
+    phase2_end = graphene.Date()
+    adj_start = graphene.Date()
 
 class EnrollmentInfo(graphene.ObjectType):
+    """ Aggregate enrollment """
     course = graphene.Field(CourseType)
     section = graphene.Field(SectionType)
     aggregate = graphene.Boolean()
@@ -34,6 +47,7 @@ class EnrollmentInfo(graphene.ObjectType):
     waitlisted_max = graphene.Int()
     waitlisted_percent_max = graphene.Float()
     waitlisted_scale_max = graphene.Int()
+    telebears = graphene.Field(TelebearData)
 
 
 class Query(graphene.ObjectType):
@@ -47,6 +61,8 @@ class Query(graphene.ObjectType):
     )
 
     def resolve_aggregated_enrollment_by_semester(root, info, course_id, semester, year):
+        current_term = semester == CURRENT_SEMESTER and year == CURRENT_YEAR
+
         course = Course.objects.get(pk = from_global_id(course_id)[1])
         sections = course.section_set.all().filter(semester = semester, year = year, disabled = False, is_primary = True)
 
@@ -59,11 +75,18 @@ class Query(graphene.ObjectType):
 
         enrolled_max = models[-1].enrolled_max
 
+        # telebears
+        if current_term:
+            telebears = TelebearData(**TELEBEARS)
+        else:
+            telebears = TelebearData(**PAST_SEMESTERS_TELEBEARS.get(f'{semester} {year}', {}))
+
         return EnrollmentInfo(
             course = course,
             aggregate = True,
             data = models,
-            enrolled_max = enrolled_max
+            enrolled_max = enrolled_max,
+            telebears = telebears
         )
 
         # stuff from the original implementation:
