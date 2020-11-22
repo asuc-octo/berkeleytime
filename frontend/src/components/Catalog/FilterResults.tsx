@@ -31,12 +31,13 @@ const FilterResults = ({
   sortBy,
   query: rawQuery,
 }: FilterResultsProps) => {
+  const showEmptyState = activePlaylists.length === 0;
   const { data, loading, error } = useGetCoursesForFilterQuery({
     variables: {
       playlists: activePlaylists.join(",")
     },
     // We will not show results unless there's at least 1 filter selected.
-    skip: activePlaylists.length === 0
+    skip: showEmptyState
   });
 
   let sortedCourses: CourseOverviewFragment[] = [];
@@ -71,6 +72,10 @@ const FilterResults = ({
       ) : loading ? (
         <div className="filter-results-loading">
           <BeatLoader color="#579EFF" size={15} sizeUnit="px" />
+        </div>
+      ) : sortedCourses.length === 0 && !showEmptyState ? (
+        <div className="filter-results-loading">
+          <div className="filter-results-empty">There are no courses matching your filters.</div>
         </div>
       ) : (
         <AutoSizer>

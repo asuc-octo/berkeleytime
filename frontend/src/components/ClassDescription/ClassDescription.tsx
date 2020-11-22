@@ -1,6 +1,5 @@
 import React, { CSSProperties, useState } from 'react';
 // import Radium from 'radium';
-import { Table } from 'react-bootstrap';
 import { BeatLoader } from 'react-spinners';
 
 import people from '../../assets/svg/catalog/people.svg';
@@ -8,47 +7,15 @@ import chart from '../../assets/svg/catalog/chart.svg';
 import book from '../../assets/svg/catalog/book.svg';
 import launch from '../../assets/svg/catalog/launch.svg';
 
-import denero from '../../assets/img/eggs/denero.png';
-import hug from '../../assets/img/eggs/hug.png';
-import hilf from '../../assets/img/eggs/hilf.png';
-import sahai from '../../assets/img/eggs/sahai.png';
-import scott from '../../assets/img/eggs/scott.png';
-import kubi from '../../assets/img/eggs/kubi.png';
-import garcia from '../../assets/img/eggs/garcia.png';
-
 import {
   applyIndicatorPercent,
   applyIndicatorGrade,
   formatUnits,
 } from '../../utils/utils';
 import { useGetCourseForIdQuery } from '../../graphql/graphql';
-import { formatTime } from 'utils/date';
 import { stableSortPlaylists } from 'utils/playlists/playlist';
 import { getLatestSemester, Semester } from 'utils/playlists/semesters';
-
-const easterEggImages = new Map<string, string>([
-  ['DENERO J', denero],
-  ['HUG J', hug],
-  ['SAHAI A', sahai],
-  ['HILFINGER P', hilf],
-  ['SHENKER S', scott],
-  ['KUBIATOWICZ J', kubi],
-  ['GARCIA D', garcia]
-]);
-
-function findInstructor(instr: string | null): CSSProperties {
-  if (instr === null) return {};
-
-  for (const [name, eggUrl] of easterEggImages) {
-    if (instr.includes(name)) {
-      return {
-        '--section-cursor': `url(${eggUrl})`,
-      } as CSSProperties;
-    }
-  }
-
-  return {};
-}
+import SectionTable from './SectionTable';
 
 type ClassDescriptionProps = {
   courseId: string;
@@ -67,7 +34,7 @@ const ClassDescription = ({
     variables: {
       id: courseId,
       year: semester?.year,
-      semester: semester?.semester
+      semester: semester?.semester,
     },
   });
 
@@ -78,10 +45,12 @@ const ClassDescription = ({
           <div className="loading">
             A critical error occured loading the data.
           </div>
-        ) : loading && (
-          <div className="loading">
-            <BeatLoader color="#579EFF" size={15} sizeUnit="px" />
-          </div>
+        ) : (
+          loading && (
+            <div className="loading">
+              <BeatLoader color="#579EFF" size={15} sizeUnit="px" />
+            </div>
+          )
         )}
       </div>
     );
@@ -152,84 +121,90 @@ const ClassDescription = ({
   return (
     <div className="catalog-description-container">
       <div className="catalog-description">
-        <h3>
-          {course.abbreviation} {course.courseNumber}
-        </h3>
-        <h6>{course.title}</h6>
-        <div className="stats">
-          <div className="statline">
-            <img src={people} />
-            Enrolled: &nbsp;
-            {course.enrolled !== -1 ? (
-              <div className="statline-div">
-                {applyIndicatorPercent(
-                  `${course.enrolled}/${course.enrolledMax}`,
-                  course.enrolledPercentage
-                )}
-                &nbsp;
-                <a
-                  href={toEnrollment.pathname}
-                  target="_blank"
-                  className="statlink"
-                >
-                  <img src={launch} />
-                </a>
-              </div>
-            ) : (
-              ' N/A '
-            )}
-          </div>
-          <div className="statline">
-            <img src={chart} />
-            Average Grade: &nbsp;
-            {course.gradeAverage !== -1 ? (
-              <div className="statline-div">
-                {applyIndicatorGrade(
-                  course.letterAverage,
-                  course.letterAverage
-                )}{' '}
-                &nbsp;
-                <a
-                  href={toGrades.pathname}
-                  target="_blank"
-                  className="statlink"
-                >
-                  <img src={launch} />
-                </a>
-              </div>
-            ) : (
-              ' N/A '
-            )}
-          </div>
-          <div className="statline">
-            <img src={book} />
-            {formatUnits(course.units)}
-          </div>
-        </div>
-        <section className="pill-container">
-          {pills.map((req) => (
-            <div
-              className="pill"
-              key={req.id}
-              onClick={() => modifyFilters(new Set([req.id]), new Set())}
-            >
-              {req.name}
+        <section>
+          <h3>
+            {course.abbreviation} {course.courseNumber}
+          </h3>
+          <h6>{course.title}</h6>
+          <div className="stats">
+            <div className="statline">
+              <img src={people} />
+              Enrolled: &nbsp;
+              {course.enrolled !== -1 ? (
+                <div className="statline-div">
+                  {applyIndicatorPercent(
+                    `${course.enrolled}/${course.enrolledMax}`,
+                    course.enrolledPercentage
+                  )}
+                  &nbsp;
+                  <a
+                    href={toEnrollment.pathname}
+                    target="_blank"
+                    className="statlink"
+                  >
+                    <img src={launch} />
+                  </a>
+                </div>
+              ) : (
+                ' N/A '
+              )}
             </div>
-          ))}
+            <div className="statline">
+              <img src={chart} />
+              Average Grade: &nbsp;
+              {course.gradeAverage !== -1 ? (
+                <div className="statline-div">
+                  {applyIndicatorGrade(
+                    course.letterAverage,
+                    course.letterAverage
+                  )}{' '}
+                  &nbsp;
+                  <a
+                    href={toGrades.pathname}
+                    target="_blank"
+                    className="statlink"
+                  >
+                    <img src={launch} />
+                  </a>
+                </div>
+              ) : (
+                ' N/A '
+              )}
+            </div>
+            <div className="statline">
+              <img src={book} />
+              {formatUnits(course.units)}
+            </div>
+          </div>
+        </section>
+        <section className="pill-container description-section">
+          <div>
+            {pills.map((req) => (
+              <div
+                className="pill"
+                key={req.id}
+                onClick={() => modifyFilters(new Set([req.id]), new Set())}
+              >
+                {req.name}
+              </div>
+            ))}
+          </div>
         </section>
         {description.length > 0 && (
-          <p className="description">
-            {description}
-            {moreDesc != null && (
-              <span onClick={() => setReadMore(moreDesc)}>
-                {' '}
-                {moreDesc ? ' See more' : ' See less'}
-              </span>
-            )}
-          </p>
+          <section>
+            <p className="description">
+              {description}
+              {moreDesc != null && (
+                <span onClick={() => setReadMore(moreDesc)}>
+                  {' '}
+                  {moreDesc ? ' See more' : ' See less'}
+                </span>
+              )}
+            </p>
+          </section>
         )}
         {prereqs.length > 0 && (
-          <div className="prereqs">
+          <section className="prereqs">
             <h6>Prerequisites</h6>
             <p>
               {prereqs}
@@ -240,53 +215,22 @@ const ClassDescription = ({
                 </span>
               )}
             </p>
-          </div>
+          </section>
         )}
-        <h5>Class Times</h5>
-        <div className="table-container">
-          <Table className="table">
-            <thead>
-              <tr>
-                <th style={{ width: '75px' }}>Type</th>
-                <th style={{ width: '50px' }}>CCN</th>
-                <th style={{ width: '100px' }}>Instructor</th>
-                <th style={{ width: '85px' }}>Time</th>
-                <th style={{ width: '85px' }}>Location</th>
-                <th style={{ width: '75px' }}>Enrolled</th>
-                <th style={{ width: '75px' }}>Waitlist</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sections.map((section) => {
-                const startDate = new Date(section.startTime + 'Z');
-                const endDate = new Date(section.endTime + 'Z');
-                return (
-                  <tr
-                    key={section.ccn}
-                    style={findInstructor(section.instructor)}
-                  >
-                    <td>{section.kind}</td>
-                    <td>{section.ccn}</td>
-                    <td>{section.instructor}</td>
-                    {!isNaN(+startDate) && !isNaN(+endDate) ? (
-                      <td>
-                        {section.days} {formatTime(startDate)} -{' '}
-                        {formatTime(endDate)}
-                      </td>
-                    ) : (
-                      <td></td>
-                    )}
-                    <td>{section.locationName}</td>
-                    <td>
-                      {section.enrolled}/{section.enrolledMax}
-                    </td>
-                    <td>{section.waitlisted}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        </div>
+        <section>
+          <h5>Class Times</h5>
+        </section>
+        <section className="table-container description-section">
+          <div>
+            {sections.length === 0 ? (
+              <div className="table-empty">
+                This class has no sections for the selected semester.
+              </div>
+            ) : (
+              <SectionTable sections={sections} />
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );
