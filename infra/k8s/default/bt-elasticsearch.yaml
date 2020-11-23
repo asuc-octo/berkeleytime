@@ -1,0 +1,109 @@
+# https://www.deepnetwork.com/blog/2020/03/13/password-protected-efk-stack-on-k8s.html
+kind: Service
+apiVersion: v1
+metadata:
+  name: bt-elasticsearch-primary
+  namespace: default
+  labels:
+    component: bt-elasticsearch
+spec:
+  type: ClusterIP
+  selector:
+    component: bt-elasticsearch
+  ports:
+    - port: 9200
+      name: rest
+    - port: 9300
+      name: inter-node
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bt-elasticsearch-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20G
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: bt-elasticsearch
+  name: bt-elasticsearch
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: bt-elasticsearch
+  template:
+    metadata:
+      labels:
+        component: bt-elasticsearch
+    spec:
+      volumes:
+        - name: bt-elasticsearch-config
+          configMap:
+            name: bt-elasticsearch-config
+        - name: bt-elasticsearch-pvc
+          persistentVolumeClaim:
+            claimName: bt-elasticsearch-pvc
+      containers:
+        - name: bt-elasticsearch
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+          ports:
+            - containerPort: 9200
+              name: rest
+              protocol: TCP
+            - containerPort: 9300
+              name: inter-node
+              protocol: TCP
+          volumeMounts:
+            - name: bt-elasticsearch-config
+              mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+              subPath: elasticsearch.yml
+            - name: bt-elasticsearch-pvc
+              mountPath: /usr/share/elasticsearch/data
+          # env:
+          #   - name: ELASTICSEARCH_USERNAME
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: general-secrets
+          #         key: ELASTICSEARCH_USERNAME
+          #   - name: ELASTICSEARCH_USERNAME
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: general-secrets
+          #         key: ELASTICSEARCH_USERNAME
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bt-elasticsearch-config
+  labels:
+    component: bt-elasticsearch
+data:
+  elasticsearch.yml: |
+    cluster.name: bt-elasticsearch
+    node.name: bt-elasticsearch
+    path.data: /usr/share/elasticsearch/data
+    http:
+      host: 0.0.0.0
+      port: 9200
+    bootstrap.memory_lock: true
+    discovery.type: single-node
+    transport.host: 127.0.0.1
+    xpack.license.self_generated.type: basic
+    # Enable xpack.security which is provided in basic subscription
+    xpack.security.enabled: false
+    # Disable unused xpack features
+    xpack.monitoring.enabled: false
+    xpack.graph.enabled: false
+    xpack.watcher.enabled: false
+    xpack.ml.enabled: false

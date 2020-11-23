@@ -26,12 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENV_NAME = os.getenv('ENVIRONMENT_NAME')
 IS_LOCALHOST = ENV_NAME == 'LOCALHOST'
-IS_STAGING = ENV_NAME == 'STAGING'
-IS_PRODUCTION = ENV_NAME == 'PRODUCTION'
+IS_STAGING = ENV_NAME == 'staging'
+IS_PRODUCTION = ENV_NAME == 'prod'
 assert IS_LOCALHOST or IS_STAGING or IS_PRODUCTION, f'ENV not set properly: {ENV_NAME}'
 
 
-SECRET_KEY = '***REMOVED***'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # Admins/managers receive 500s and 404s
 ADMINS = MANAGERS = (
@@ -40,20 +40,10 @@ ADMINS = MANAGERS = (
 )
 
 # Debug - show tracebacks in browser
-DEBUG = IS_LOCALHOST
+DEBUG = True
 
 # Allowed hosts
-if IS_LOCALHOST:
-    ALLOWED_HOSTS = ['*']
-elif IS_STAGING:
-    ALLOWED_HOSTS = [
-        'staging.berkeleytime.com',
-    ]
-elif IS_PRODUCTION:
-    ALLOWED_HOSTS = [
-        'berkeleytime.com',
-        'www.berkeleytime.com',
-    ]
+ALLOWED_HOSTS = ['*'] # Wildcard '*' allow is not a security issue because back-end is closed to private Kubernetes traffic
 
 # Database
 pg_instance = urlparse(os.getenv('DATABASE_URL'))
@@ -151,54 +141,15 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         },
     },
-    'formatters': {
-        'verbose': {
-            'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-        'json': {
-            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-            'format': '%(levelname)s %(asctime)s %(message)s',
-        },
-    },
     'handlers': {
-        'mail_admins': {
-            'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false'],
-            'level': 'ERROR',
-        },
-        'stdout': {
+        'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'json',
-            'level': 'INFO',
-            'stream': sys.stdout,
         },
-        'stderr': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'json',
-            'level': 'ERROR',
-            'stream': sys.stderr,
-        }
     },
     'root': {
-        'handlers': ['mail_admins'],
+        'handlers': ['console'],
+        'level': 'INFO',
     },
-    'loggers': {
-        'catalog': {
-            'handlers': ['stdout', 'stderr'],
-        },
-        'enrollment': {
-            'handlers': ['stdout', 'stderr'],
-        },
-        'grades': {
-            'handlers': ['stdout', 'stderr'],
-        },
-        'playlist': {
-            'handlers': ['stdout', 'stderr'],
-        },
-    }
 }
 
 # List of template engines (we need this for admin panel)
@@ -277,3 +228,5 @@ USE_L10N = True
 USE_TZ = False
 
 STATIC_URL = '/static/'
+
+

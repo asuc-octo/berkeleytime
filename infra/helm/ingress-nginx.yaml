@@ -1,0 +1,11 @@
+controller:
+  config:
+    hsts: "false"
+  hostNetwork: true
+  service:
+    type: ClusterIP
+  kind: DaemonSet
+tcp:
+  2222: default/bt-gitlab:2222
+  5432: default/bt-psql-staging-postgresql-ha-pgpool:5432
+resources: {}
