@@ -21,6 +21,7 @@ services:
      - "GOOGLE_APPLICATION_CREDENTIALS=/google-sa.json"
      - "GOOGLE_EMAIL=octo.berkeleytime@asuc.org"
      - "GOOGLE_PASS=***REMOVED***"
+     - "DJANGO_SECRET_KEY=***REMOVED***"
     depends_on:
      - redis
   frontend:
