@@ -30,7 +30,7 @@ gc = gspread.authorize(credentials)
 GMAIL_SERVICE = SMTP('smtp.gmail.com', port=587)
 GMAIL_SERVICE.starttls()
 GMAIL_SERVICE.login(os.environ['GOOGLE_EMAIL'], os.environ['GOOGLE_PASS'])
-DRIVE_SERVICE = build('drive', 'v3', credentials=credentials)
+DRIVE_SERVICE = build('drive', 'v3', credentials=credentials, cache_discovery=False)
 
 for config in os.listdir('forms/configs'):
     if config == '__init__.py':
