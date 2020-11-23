@@ -10,4 +10,5 @@ fragment Section on SectionType {
   waitlisted
   waitlistedMax
   days
+  wordDays
 }

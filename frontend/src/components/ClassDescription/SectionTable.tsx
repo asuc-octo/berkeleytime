@@ -1,7 +1,7 @@
 import { SectionFragment } from 'graphql/graphql';
 import React, { CSSProperties } from 'react';
 import { Table } from 'react-bootstrap';
-import { formatTime } from 'utils/date';
+import { daysToString, formatTime } from 'utils/date';
 
 import denero from '../../assets/img/eggs/denero.png';
 import hug from '../../assets/img/eggs/hug.png';
@@ -27,7 +27,7 @@ function findInstructor(instr: string | null): CSSProperties {
   for (const [name, eggUrl] of easterEggImages) {
     if (instr.includes(name)) {
       return {
-        '--section-cursor': `url(${eggUrl})`,
+        '--section-cursor': `url("${eggUrl}")`,
       } as CSSProperties;
     }
   }
@@ -47,7 +47,7 @@ const SectionTable = ({ sections }: Props) => {
           <th style={{ width: '75px' }}>Type</th>
           <th style={{ width: '50px' }}>CCN</th>
           <th style={{ width: '100px' }}>Instructor</th>
-          <th style={{ width: '85px' }}>Time</th>
+          <th style={{ width: '130px' }}>Time</th>
           <th style={{ width: '85px' }}>Location</th>
           <th style={{ width: '75px' }}>Enrolled</th>
           <th style={{ width: '75px' }}>Waitlist</th>
@@ -64,7 +64,7 @@ const SectionTable = ({ sections }: Props) => {
               <td>{section.instructor}</td>
               {!isNaN(+startDate) && !isNaN(+endDate) ? (
                 <td>
-                  {section.days} {formatTime(startDate)} - {formatTime(endDate)}
+                  {section.wordDays} {formatTime(startDate)} - {formatTime(endDate)}
                 </td>
               ) : (
                 <td></td>
