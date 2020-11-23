@@ -57,6 +57,7 @@ type FilterCardProps = {
     selectCourse: (course: CourseOverviewFragment) => void;
     sortBy: CourseSortAttribute;
     selectedCourseId: string | null;
+    saved: boolean;
   };
   index: number;
   style: CSSProperties;
@@ -69,7 +70,11 @@ const FilterCard = ({
 }: FilterCardProps) => {
   const course = data.courses[index];
 
-  const { sortBy, selectedCourseId } = data;
+  const {
+    sortBy,
+    selectedCourseId,
+    saved
+  } = data;
   const {
     abbreviation,
     courseNumber,
@@ -78,7 +83,7 @@ const FilterCard = ({
     enrolledPercentage,
     openSeats,
     units,
-    id,
+    id
   } = course;
 
   let sort;
@@ -124,10 +129,13 @@ const FilterCard = ({
               </p>
             )}
 
-            <p>&nbsp;•&nbsp;{formatUnits(units)}</p>
+            <p>&nbsp;•&nbsp;{units ? formatUnits(units) : 'N/A'}</p>
           </div>
         </div>
         {sort}
+        <div className="filter-card-save">
+            {saved ? <BookmarkSaved /> : <BookmarkUnsaved />}
+        </div>
       </div>
     </div>
   );
