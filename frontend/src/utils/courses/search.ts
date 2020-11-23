@@ -30,3 +30,10 @@ export function getFullCourseCode(course: SearchableCourse): string {
     const searchComponents = [course.abbreviation, course.courseNumber];
     return searchComponents.join(" ").toLowerCase();
 }
+
+/**
+ * Fitler option for react-select
+ */
+export function courseFilterOption({ label }: { label: string }, query: string) {
+  return search(query, normalizeSearchTerm(label), 0) >= 0;
+}

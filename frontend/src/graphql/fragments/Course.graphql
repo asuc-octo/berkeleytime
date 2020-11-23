@@ -1,4 +1,4 @@
-fragment FullCourse on CourseType {
+fragment Course on CourseType {
   title
   units
   waitlisted
@@ -25,6 +25,14 @@ fragment FullCourse on CourseType {
         name
         semester
         year
+      }
+    }
+  }
+
+  sectionSet(year: $year, semester: $semester) {
+    edges {
+      node {
+        ...Section
       }
     }
   }
