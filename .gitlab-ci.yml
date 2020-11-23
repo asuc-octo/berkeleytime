@@ -30,7 +30,7 @@ build-backend:
   extends: .before_build
   only:
     refs:
-      - ocf
+      - master
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
@@ -45,7 +45,7 @@ build-frontend:
   extends: .before_build
   only:
     refs:
-      - ocf
+      - master
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
