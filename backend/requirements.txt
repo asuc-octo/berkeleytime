@@ -8,6 +8,7 @@ django-graphql-jwt==0.3.1
 
 # Google APIs
 google-api-python-client
+oauth2client
 google-auth
 gspread
 
