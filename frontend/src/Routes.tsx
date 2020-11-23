@@ -19,6 +19,7 @@ import BugsForm from './views/Forms/BugsForm';
 import UserTestingForm from './views/Forms/UserTestingForm';
 import Error from './views/Error/Error';
 import Profile from './views/Profile/Profile';
+import { PrivacyPolicy, TermsOfService } from './views/Policies';
 
 const routes: Array<RouteProps> = [
   { path: '/landing',           component: Landing         },
@@ -41,6 +42,8 @@ const routes: Array<RouteProps> = [
   // { path: '/apply/design',      component: DesignApp       },
   // { path: '/apply/embed',       component: Apply           },
   { path: '/error',             component: Error           },
+  { path: '/legal/privacy',    component: PrivacyPolicy      },
+  { path: '/legal/terms',      component: TermsOfService     },
 ]
 
 const Routes: React.FC = () => (

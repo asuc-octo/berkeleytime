@@ -26,7 +26,7 @@ const Footer: FC = () => (
               <A href={{ as_link: "/bugs" }} className="mb-2">Report a Bug</A>
               <A href="mailto:octo.berkeleytime@asuc.org" className="mb-2">Contact Us</A>
               <A href={{ as_link: "/releases" }} className="mb-2">Releases <New /></A>
-              <A href={{ as_link: "/faq" }}>FAQ <New /></A>
+              <A href={{ as_link: "/faq" }} className="mb-2">FAQ <New /></A>
             </div>
           </div>
         </Col>
@@ -36,7 +36,9 @@ const Footer: FC = () => (
               <H6 className="bt-bold mb-3">About Us</H6>
               <A href={{ as_link: "/about" }} className="mb-2">Our Team</A>
               <A href="https://octo.asuc.org" className="mb-2">ASUC OCTO</A>
-              <A href="https://facebook.com/berkeleytime">Facebook</A>
+              <A href="https://facebook.com/berkeleytime" className="mb-2">Facebook</A>
+              <A href={{ as_link: "/legal/privacy" }} className="mb-2">Privacy Policy</A>
+              <A href={{ as_link: "/legal/terms" }} className="mb-2">Terms of Service</A>
             </div>
           </div>
         </Col>
