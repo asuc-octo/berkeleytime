@@ -242,10 +242,10 @@ spec:
                 sidekiq['listen_port'] = 8082
 
                 # Optimizing Git Push with low resources
-                # puma['worker_processes'] = 4
-                # puma['min_threads'] = 4
-                # puma['max_threads'] = 8
-                # puma['per_worker_max_memory_mb'] = 2000
+                puma['worker_processes'] = 2
+                puma['min_threads'] = 1
+                puma['max_threads'] = 1
+                puma['per_worker_max_memory_mb'] = 4000
 
                 # Email Settings
                 gitlab_ci['gitlab_ci_email_from'] = 'noreply@ocf.berkeleytime.com'
