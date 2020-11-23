@@ -37,32 +37,21 @@ logstashPipeline:
       else {
         mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][namespace]}-%{+yyyy.MM.dd}" } }
       }
-      if [event][module] == "nginx" {
-        if [fileset][name] == "access" {
-          grok {
-            match => { "message" => ["%{IPORHOST:[nginx][access][remote_ip]} - %{DATA:[nginx][access][user_name]} \[%{HTTPDATE:[nginx][access][time]}\] \"%{WORD:[nginx][access][method]} %{DATA:[nginx][access][url]} HTTP/%{NUMBER:[nginx][access][http_version]}\" %{NUMBER:[nginx][access][response_code]} %{NUMBER:[nginx][access][body_sent][bytes]} \"%{DATA:[nginx][access][referrer]}\" \"%{DATA:[nginx][access][agent]}\""] }
-            remove_field => "message"
-          }
-          mutate {
-            add_field => { "read_timestamp" => "%{@timestamp}" }
-          }
-          date {
-            match => [ "[nginx][access][time]", "dd/MMM/YYYY:H:m:s Z" ]
-            remove_field => "[nginx][access][time]"
-          }
-          useragent {
-            source => "[nginx][access][agent]"
-            target => "[nginx][access][user_agent]"
-            remove_field => "[nginx][access][agent]"
-          }
-          geoip {
-            source => "[nginx][access][remote_ip]"
-            target => "[nginx][access][geoip]"
-          }
+      if [kubernetes][namespace] == "ingress-nginx" {
+        grok {
+          match => { "message" => "%{IPORHOST:[nginx][client_ip]} - .* \[%{HTTPDATE:[nginx][access_time]}\] \"%{WORD:[nginx][http_method]} %{DATA:[nginx][access_url]} HTTP/%{NUMBER:[nginx][http_version]}\" %{NUMBER:[nginx][http_response_code]} %{NUMBER:[nginx][http_body_bytes_sent]} \"%{DATA:[nginx][access_referrer]}\" \"%{DATA:[nginx][user_agent]}\"" }
+          remove_field => "message"
         }
+        geoip {
+        # http://idcsec.com/2019/08/17/grafana可视化ingress-nginx日志日志分析，logstash配置/
+        # https://knner.wang/2019/12/15/adding-filebeat-and-logstash-to-collect-and-processing-logs-in-kubernetes.html
+          source => "[client_ip]"
+          target => "[geoip]"
+        } # https://stackoverflow.com/questions/36631754/elasticsearch-default-mapping-nested-fields
       }
     }
     output {
+      # stdout { codec => rubydebug }
       elasticsearch {
         hosts => "http://bt-elasticsearch-primary:9200"
         manage_template => false

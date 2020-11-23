@@ -32,7 +32,53 @@ filebeatConfig:
               type: container
               paths:
                 - /var/log/containers/*${data.kubernetes.container.id}.log
+            templates:
+              # https://gist.github.com/jaganthoutam/34c02a5f19c47a49dcea7b85b9b3667a#file-filebeat-with-pipeline-yaml
+              - condition: # router log formats
+                  or:
+                    - equals:
+                        kubernetes.container.name: controller
+                config:
+                  - type: docker
+                    containers.ids:
+                      - "${data.kubernetes.container.id}"
+                    pipeline: nginx-ingress
+              - condition: # Exclude pods/namespace listed here
+                  or:
+                    - equals:
+                        kubernetes.namespace: kube-system
+                config:
+                  - type: docker
+                    containers.ids:
+                      - "${data.kubernetes.container.id}"
+                    exclude_files: ['.*$']
+              - condition:
+                  or:
+                    - equals:
+                        kubernetes.namespace: default
+                    - equals:
+                        kubernetes.namespace: ingress-nginx
+                config:
+                  - type: docker
+                    containers.ids:
+                      - "${data.kubernetes.container.id}"
+                    exclude_lines: ['healthcheck'] # this is optional
+                    json.message_key: message
+                    json.overwrite_keys: true
+                    json.keys_under_root: true
+                    json.add_error_key: false
+                    json.ignore_decoding_error: true
+                    fields_under_root: true
+                    multiline.pattern: '^{'
+                    multiline.negate: true
+                    multiline.match: after
+                    encoding: utf-8
+                    close_inactive: 5m
 tolerations:
   - key: node-role.kubernetes.io/master
     operator: Exists
     effect: NoSchedule
+podAnnotations:
+  co.elastic.logs/module: nginx
+  co.elastic.logs/fileset.stdout: access
+  co.elastic.logs/fileset.stderr: error
