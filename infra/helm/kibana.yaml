@@ -52,17 +52,33 @@ lifecycle:
           ';
           curl -X PUT "$ELASTICSEARCH_URL/_index_template/datastream_template?pretty" -H 'Content-Type: application/json' -d'
           {
-            "index_patterns": ["k8s-*"],
-            "data_stream": {},
-            "template": {
-              "settings": {
-                "number_of_shards": 1,
-                "number_of_replicas": 1,
-                "index.lifecycle.name": "datastream_policy",
-                "index.lifecycle.rollover_alias": "k8s"
+            "index_patterns":[
+              "k8s-*"
+            ],
+            "data_stream":{
+            },
+            "template":{
+              "settings":{
+                "number_of_shards":1,
+                "number_of_replicas":0,
+                "index.lifecycle.name":"datastream_policy",
+                "index.lifecycle.rollover_alias":"k8s"
+              },
+              "mappings":{
+                "dynamic_templates":[
+                  {
+                    "geoip":{
+                      "path_match":"geoip.location",
+                      "mapping":{
+                        "type":"geo_point"
+                      }
+                    }
+                  }
+                ]
               }
             }
           }
+          '
           ';
 
 extraEnvs:
@@ -89,3 +105,4 @@ extraEnvs:
 #   limits:
 #     cpu: "200m" # Default: 1000m
 #     memory: "1G" # Default: 2Gi
+
