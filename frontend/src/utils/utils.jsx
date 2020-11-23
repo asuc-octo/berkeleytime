@@ -134,7 +134,7 @@ function applyIndicatorEnrollment(enrolled, enrolledMax, percentage) {
   }
 
   return (
-    <span className={theme} > {enrolled}/{enrolledMax} ({`${formatPercentage(percentage)}`})</span>
+    <span className={theme}> {enrolled}/{enrolledMax} ({`${formatPercentage(percentage)}`})</span>
   );
 }
 

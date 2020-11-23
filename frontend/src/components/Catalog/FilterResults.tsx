@@ -7,10 +7,9 @@ import FilterCard from './FilterCard';
 
 import {
   CourseOverviewFragment,
-  CourseType,
   useGetCoursesForFilterQuery,
 } from '../../graphql/graphql';
-import { searchCourses, SearchableCourse } from 'utils/courses/search';
+import { searchCourses } from 'utils/courses/search';
 import { sortByAttribute, CourseSortAttribute } from 'utils/courses/sorting';
 
 type FilterResultsProps = {
