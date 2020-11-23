@@ -91,7 +91,16 @@
             }
 
             .edit-pencil{
-                height:24px;
+                height:30px;
+                border-radius: 15px;
+                padding: 2px 2px 2px 2px;
+
+                &:hover{
+                    transition: 0.3s;
+                    background: #fafafa;
+                    transition: 0.3s;
+                    filter: brightness(95%);
+                }
             }
 
         }

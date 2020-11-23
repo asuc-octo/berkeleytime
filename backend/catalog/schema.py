@@ -90,7 +90,7 @@ class SectionType(DjangoObjectType):
     @staticmethod
     def format_time(dt):
         if not dt:
-            return ''
+            return None
         return arrow.get(dt).to(tz='US/Pacific').naive
 
     @property

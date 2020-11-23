@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { PureComponent, useState } from 'react';
 import { connect } from 'react-redux';
 
 import Property from './Property';
@@ -13,6 +13,8 @@ type Props = {
 const AccountSubview = ({
   userProfile
 }: Props) => {
+  const [removable, setRemovable] = useState<boolean>(false);
+
   //Information has been hardcoded for testing purposes only
   const options = [
     { value: "Psychology", label: "Psychology" },
@@ -34,11 +36,14 @@ const AccountSubview = ({
 
       <div className="profile-title">
         <h2>Saved Classes</h2>
-        <button className="edit-button"><img className="edit-pencil" src={EditPencil} alt="Edit Classes"/></button>
+        <button className="edit-button" onClick={() => setRemovable(v => !v)}>
+          <img className="edit-pencil" src={EditPencil} alt="Edit Classes"/>
+        </button>
       </div>
 
       {userProfile.savedClasses?.map(course => (
         <ProfileCard
+          removable={removable}
           key={course?.id!}
           course={course!}
         />
