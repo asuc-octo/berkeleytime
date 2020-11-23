@@ -43,6 +43,13 @@
 // Enrollment
 @import "bt/enrollment/enrollment";
 
+// Scheduler
+@import "bt/scheduler/course-selector";
+@import "bt/scheduler/course-calendar";
+@import "bt/scheduler/course-card";
+@import "bt/scheduler/callout";
+@import "bt/scheduler/scheduler";
+
 // Releases
 @import "bt/releases";
 
