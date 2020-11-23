@@ -1,4 +1,22 @@
 # Template: https://github.com/elastic/helm-charts/blob/480a19413024cab7f9ea96e2d40078bc2247ce2d/kibana/values.yaml
+# Must manually create scripted field with ip+device, input in Kibana
+# Scripted field: nginx.ip_user_agent
+# [ doc['nginx.client_ip.keyword']+''+doc['nginx.user_agent.keyword'] ]
+# Also in Dev Tools:
+# GET /k8s-ingress-nginx-*/_search?pretty=true
+# {
+#   "size": 55,
+#   "aggs": {
+#     "ip_agent": {
+#       "composite": {
+#         "sources": [
+#           { "ip": { "terms": { "field": "nginx.client_ip.keyword" } } },
+#           { "agent": { "terms": { "field": "nginx.user_agent.keyword" } } }
+#         ]
+#       }
+#     }
+#   }
+# }
 kibanaConfig:
   kibana.yml: |
     server:
@@ -22,10 +40,11 @@ lifecycle:
         - -c
         - >
           KIBANA_URL=http://localhost:5601/kibana;
-          INDEX_PATTERN_ID=k8s-index-pattern-id;
-          INDEX_PATTERN="k8s-*";
           ELASTICSEARCH_URL=http://bt-elasticsearch-primary:9200;
           sleep 20; while [ "$(curl -s -o /dev/null -w '%{http_code}\n' $KIBANA_URL/app/kibana)" != "200" ]; do sleep 1; done;
+
+          INDEX_PATTERN_ID=k8s-index-pattern-id;
+          INDEX_PATTERN="k8s-*";
           curl -X POST -H "Content-Type: application/json" -H "kbn-xsrf: anything" "$KIBANA_URL/api/saved_objects/index-pattern/$INDEX_PATTERN_ID" -d "{\"attributes\":{\"title\":\"$INDEX_PATTERN\",\"timeFieldName\":\"@timestamp\"}}" || true;
           curl "$KIBANA_URL/api/kibana/settings" -H "content-type: application/json" -H "kbn-xsrf: anything" --data-binary "{\"changes\":{\"defaultIndex\":\"$INDEX_PATTERN_ID\"}}" || true;
           curl -X PUT "$ELASTICSEARCH_URL/_ilm/policy/datastream_policy?pretty" -H 'Content-Type: application/json' -d'
@@ -50,7 +69,7 @@ lifecycle:
             }
           }
           ';
-          curl -X PUT "$ELASTICSEARCH_URL/_index_template/datastream_template?pretty" -H 'Content-Type: application/json' -d'
+          curl -X PUT "$ELASTICSEARCH_URL/_index_template/datastream_k8s-template?pretty" -H 'Content-Type: application/json' -d'
           {
             "index_patterns":[
               "k8s-*"
@@ -63,6 +82,32 @@ lifecycle:
                 "number_of_replicas":0,
                 "index.lifecycle.name":"datastream_policy",
                 "index.lifecycle.rollover_alias":"k8s"
+              },
+              "mappings":{
+                "dynamic_templates":[
+                ]
+              }
+            }
+          }
+          ';
+
+          INDEX_PATTERN_ID=k8s-ingress-nginx-index-pattern-id;
+          INDEX_PATTERN="k8s-ingress-nginx-*";
+          curl -X POST -H "Content-Type: application/json" -H "kbn-xsrf: anything" "$KIBANA_URL/api/saved_objects/index-pattern/$INDEX_PATTERN_ID" -d "{\"attributes\":{\"title\":\"$INDEX_PATTERN\",\"timeFieldName\":\"@timestamp\"}}" || true;
+          curl -X PUT "$ELASTICSEARCH_URL/_index_template/datastream_k8s-ingress-nginx-template?pretty" -H 'Content-Type: application/json' -d'
+          {
+            "priority": 100,
+            "index_patterns":[
+              "k8s-ingress-nginx-*"
+            ],
+            "data_stream":{
+            },
+            "template":{
+              "settings":{
+                "number_of_shards":1,
+                "number_of_replicas":0,
+                "index.lifecycle.name":"datastream_policy",
+                "index.lifecycle.rollover_alias":"k8s-ingress-nginx"
               },
               "mappings":{
                 "dynamic_templates":[
@@ -104,4 +149,3 @@ extraEnvs:
 #   limits:
 #     cpu: "200m" # Default: 1000m
 #     memory: "1G" # Default: 2Gi
-
