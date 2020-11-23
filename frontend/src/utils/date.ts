@@ -1,7 +1,11 @@
 /**
  * Formats a time to 12-hour w/ AM PM
  */
-export function formatTime(date: Date): string {
+export function formatTime(date: Date | string): string {
+  if (typeof date === 'string') {
+    date = new Date(date + 'Z');
+  }
+
   let hours = date.getUTCHours();
   let minutes = date.getUTCMinutes().toString().padStart(2, '0');
   let ampm = hours >= 12 ? 'pm' : 'am';

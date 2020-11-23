@@ -46,7 +46,7 @@ export function playlistToTimeComparable(playlist: FilterablePlaylist): number {
     const [semester, year] = playlist.name.toLowerCase().split(' ');
     return +year + SEMESTER_TYPE_TO_OFFSET[semester];
   } else {
-    return +playlist.year + SEMESTER_TYPE_TO_OFFSET[playlist.semester]!;
+    return 0;
   }
 }
 

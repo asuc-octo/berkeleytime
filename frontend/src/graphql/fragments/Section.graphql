@@ -1,4 +1,5 @@
 fragment Section on SectionType {
+  id
   ccn
   kind
   instructor

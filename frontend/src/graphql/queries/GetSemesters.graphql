@@ -1,0 +1,9 @@
+query GetSemesters {
+  allPlaylists(category: "semester") {
+    edges {
+      node {
+        ...Filter
+      }
+    }
+  }
+}

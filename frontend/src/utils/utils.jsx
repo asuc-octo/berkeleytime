@@ -5,6 +5,19 @@
 import React from 'react';
 
 /**
+ * Gets indicator class for a color.
+ */
+export function getIndicatorPercent(percentage) {
+  let theme = 'bt-indicator-red';
+  if (percentage < 0.34) {
+    theme = 'bt-indicator-green';
+  } else if (percentage < 0.67) {
+    theme = 'bt-indicator-orange';
+  }
+  return theme;
+}
+
+/**
  * Returns a paragraph tag styled with color with respect to percentage
  * @param {string} text text in the paragraph tag
  * @param {number} percentage percentage from 0.0 to 1.0
@@ -18,7 +31,7 @@ function applyIndicatorPercent(text, percentage) {
   }
 
   return (
-    <p className={theme}>{ text }</p>
+    <span className={theme}>{ text }</span>
   );
 }
 

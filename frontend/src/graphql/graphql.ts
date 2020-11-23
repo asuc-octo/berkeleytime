@@ -624,17 +624,7 @@ export interface Verify {
   payload: Scalars['GenericScalar'];
 }
 
-export type CourseOverviewFragment = (
-  { __typename?: 'CourseType' }
-  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'units'>
-);
-
-export type FilterFragment = (
-  { __typename?: 'PlaylistType' }
-  & Pick<PlaylistType, 'id' | 'name' | 'category' | 'semester' | 'year'>
-);
-
-export type FullCourseFragment = (
+export type CourseFragment = (
   { __typename?: 'CourseType' }
   & Pick<CourseType, 'title' | 'units' | 'waitlisted' | 'openSeats' | 'letterAverage' | 'lastUpdated' | 'id' | 'hasEnrollment' | 'gradeAverage' | 'enrolledPercentage' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'enrolled' | 'abbreviation' | 'prerequisites'>
   & { playlistSet: (
@@ -646,12 +636,31 @@ export type FullCourseFragment = (
         & Pick<PlaylistType, 'category' | 'id' | 'name' | 'semester' | 'year'>
       )> }
     )>> }
+  ), sectionSet: (
+    { __typename?: 'SectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionType' }
+        & SectionFragment
+      )> }
+    )>> }
   ) }
+);
+
+export type CourseOverviewFragment = (
+  { __typename?: 'CourseType' }
+  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'units'>
+);
+
+export type FilterFragment = (
+  { __typename?: 'PlaylistType' }
+  & Pick<PlaylistType, 'id' | 'name' | 'category'>
 );
 
 export type SectionFragment = (
   { __typename?: 'SectionType' }
-  & Pick<SectionType, 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays'>
+  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays'>
 );
 
 export type UserProfileFragment = (
@@ -694,17 +703,7 @@ export type GetCourseForIdQuery = (
   { __typename?: 'Query' }
   & { course?: Maybe<(
     { __typename?: 'CourseType' }
-    & { sectionSet: (
-      { __typename?: 'SectionTypeConnection' }
-      & { edges: Array<Maybe<(
-        { __typename?: 'SectionTypeEdge' }
-        & { node?: Maybe<(
-          { __typename?: 'SectionType' }
-          & SectionFragment
-        )> }
-      )>> }
-    ) }
-    & FullCourseFragment
+    & CourseFragment
   )> }
 );
 
@@ -744,6 +743,23 @@ export type GetFiltersQuery = (
   )> }
 );
 
+export type GetSemestersQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetSemestersQuery = (
+  { __typename?: 'Query' }
+  & { allPlaylists?: Maybe<(
+    { __typename?: 'PlaylistTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'PlaylistTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'PlaylistType' }
+        & FilterFragment
+      )> }
+    )>> }
+  )> }
+);
+
 export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -760,17 +776,25 @@ export type StubQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type StubQuery = { __typename: 'Query' };
 
-export const FilterFragmentDoc = gql`
-    fragment Filter on PlaylistType {
+export const SectionFragmentDoc = gql`
+    fragment Section on SectionType {
   id
-  name
-  category
-  semester
-  year
+  ccn
+  kind
+  instructor
+  startTime
+  endTime
+  enrolled
+  enrolledMax
+  locationName
+  waitlisted
+  waitlistedMax
+  days
+  wordDays
 }
     `;
-export const FullCourseFragmentDoc = gql`
-    fragment FullCourse on CourseType {
+export const CourseFragmentDoc = gql`
+    fragment Course on CourseType {
   title
   units
   waitlisted
@@ -799,22 +823,20 @@ export const FullCourseFragmentDoc = gql`
       }
     }
   }
+  sectionSet(year: $year, semester: $semester) {
+    edges {
+      node {
+        ...Section
+      }
+    }
+  }
 }
-    `;
-export const SectionFragmentDoc = gql`
-    fragment Section on SectionType {
-  ccn
-  kind
-  instructor
-  startTime
-  endTime
-  enrolled
-  enrolledMax
-  locationName
-  waitlisted
-  waitlistedMax
-  days
-  wordDays
+    ${SectionFragmentDoc}`;
+export const FilterFragmentDoc = gql`
+    fragment Filter on PlaylistType {
+  id
+  name
+  category
 }
     `;
 export const CourseOverviewFragmentDoc = gql`
@@ -890,18 +912,10 @@ export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, Log
 export const GetCourseForIdDocument = gql`
     query GetCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {
-    ...FullCourse
-    sectionSet(year: $year, semester: $semester) {
-      edges {
-        node {
-          ...Section
-        }
-      }
-    }
+    ...Course
   }
 }
-    ${FullCourseFragmentDoc}
-${SectionFragmentDoc}`;
+    ${CourseFragmentDoc}`;
 
 /**
  * __useGetCourseForIdQuery__
@@ -1003,6 +1017,42 @@ export function useGetFiltersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetFiltersQueryHookResult = ReturnType<typeof useGetFiltersQuery>;
 export type GetFiltersLazyQueryHookResult = ReturnType<typeof useGetFiltersLazyQuery>;
 export type GetFiltersQueryResult = Apollo.QueryResult<GetFiltersQuery, GetFiltersQueryVariables>;
+export const GetSemestersDocument = gql`
+    query GetSemesters {
+  allPlaylists(category: "semester") {
+    edges {
+      node {
+        ...Filter
+      }
+    }
+  }
+}
+    ${FilterFragmentDoc}`;
+
+/**
+ * __useGetSemestersQuery__
+ *
+ * To run a query within a React component, call `useGetSemestersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSemestersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSemestersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetSemestersQuery(baseOptions?: Apollo.QueryHookOptions<GetSemestersQuery, GetSemestersQueryVariables>) {
+        return Apollo.useQuery<GetSemestersQuery, GetSemestersQueryVariables>(GetSemestersDocument, baseOptions);
+      }
+export function useGetSemestersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSemestersQuery, GetSemestersQueryVariables>) {
+          return Apollo.useLazyQuery<GetSemestersQuery, GetSemestersQueryVariables>(GetSemestersDocument, baseOptions);
+        }
+export type GetSemestersQueryHookResult = ReturnType<typeof useGetSemestersQuery>;
+export type GetSemestersLazyQueryHookResult = ReturnType<typeof useGetSemestersLazyQuery>;
+export type GetSemestersQueryResult = Apollo.QueryResult<GetSemestersQuery, GetSemestersQueryVariables>;
 export const GetUserDocument = gql`
     query GetUser {
   user {
