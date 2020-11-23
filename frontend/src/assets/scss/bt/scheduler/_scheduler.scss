@@ -1,0 +1,11 @@
+.scheduler {
+    > .row > .col {
+        box-sizing: border-box;
+        height: 100%;
+    }
+
+    // Force auto-sizing
+    &.scheduler {
+        min-height: 0;
+    }
+}
