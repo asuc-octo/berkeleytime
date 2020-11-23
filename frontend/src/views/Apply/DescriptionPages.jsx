@@ -7,6 +7,7 @@ export function Positions(props) {
         title={"OCTO's 2020-21 Positions"}
         bodyURL={"/assets/positions.md"}
         link={'/apply'}
+        linkName={'Go to Application'}
     />
   );
 }
