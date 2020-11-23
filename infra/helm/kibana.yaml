@@ -55,7 +55,7 @@ lifecycle:
                   "actions": {
                     "rollover": {
                       "max_size": "15GB",
-                      "max_age": "7d"
+                      "max_age": "1M"
                     }
                   }
                 },
