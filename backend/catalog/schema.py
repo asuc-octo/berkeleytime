@@ -46,6 +46,7 @@ class CourseFilter(django_filters.FilterSet):
     # overrides Course.has_enrollment. TODO: Remove Course.has_enrollment soon
     has_enrollment = django_filters.BooleanFilter(method='filter_has_enrollment')
     in_playlists = django_filters.BaseInFilter(method='filter_in_playlists')
+    id_in = django_filters.BaseInFilter(method='filter_id_in')
 
     def filter_has_grades(self, queryset, name, value):
         return queryset.exclude(grade__isnull=value)
@@ -65,6 +66,10 @@ class CourseFilter(django_filters.FilterSet):
             else:
                 all_reduce &= all_reduce & reduce(lambda x, y: x | y, intersected)
         return all_reduce
+
+    def filter_id_in(self, queryset, name, value):
+        course_ids = list(map(lambda global_id: from_global_id(global_id)[1], value))
+        return queryset.filter(id__in=course_ids)
 
 
 class SectionType(DjangoObjectType):
