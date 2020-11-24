@@ -72,7 +72,7 @@ spec:
     - host: berkeleytime.com
       http:
         paths:
-          - path: /api/?(.*)
+          - path: /api/(.*)
             pathType: Prefix
             backend:
               service:
@@ -82,7 +82,7 @@ spec:
     - host: staging.berkeleytime.com
       http:
         paths:
-          - path: /api/?(.*)
+          - path: /api/(.*)
             pathType: Prefix
             backend:
               service:

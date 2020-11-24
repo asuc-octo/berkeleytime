@@ -40,7 +40,7 @@ ADMINS = MANAGERS = (
 )
 
 # Debug - show tracebacks in browser
-DEBUG = True
+DEBUG = IS_LOCALHOST
 
 # Allowed hosts
 ALLOWED_HOSTS = ['*'] # Wildcard '*' allow is not a security issue because back-end is closed to private Kubernetes traffic
