@@ -6,9 +6,9 @@ import React, { ChangeEvent, CSSProperties, ReactNode } from 'react';
 import { Form } from 'react-bootstrap';
 
 import { formatTime } from 'utils/date';
-import { Schedule } from 'utils/scheduler/scheduler';
-import { formatLocation } from 'utils/sections/section';
-import { sortSections } from 'utils/sections/sort';
+import { hasSectionById, Schedule } from 'utils/scheduler/scheduler';
+import { formatLocation, formatSectionTime } from 'utils/sections/section';
+import { groupSections } from 'utils/sections/sort';
 import {
   applyIndicatorPercent,
   formatUnits,
@@ -23,8 +23,6 @@ type SectionProps = {
   course: CourseFragment;
   sections: SectionFragment[];
   isFirst?: boolean;
-  schedule: Schedule;
-  setSchedule: (schedule: Schedule) => void;
 };
 
 const CourseCardSection = ({
@@ -69,15 +67,9 @@ const CourseCardSection = ({
             (section.enrolled ?? null) !== null &&
             (section.enrolledMax ?? null) !== null;
 
-          const hasTime = section.startTime && section.endTime;
-
           const labelComponents = [
             section.wordDays,
-            hasTime
-              ? `${formatTime(section.startTime)} - ${formatTime(
-                  section.endTime
-                )}`
-              : `no time`,
+            formatSectionTime(section),
             section.locationName && formatLocation(section.locationName),
             hasEnrollmentData &&
               `${section.enrolled}/${section.enrolledMax} enrolled`,
@@ -107,25 +99,33 @@ const CourseCardSection = ({
           function setChecked(event: ChangeEvent<HTMLInputElement>) {
             let newSchedule: Schedule = {
               ...schedule,
-              sectionIds: schedule.sectionIds.filter(s => s !== section.id)
+              sections: schedule.sections.filter(s => s.id !== section.id)
             };
-            console.log('checking', event.target.checked)
 
+            // If it's not checked, then we'll check it
             if (event.target.checked) {
-              newSchedule.sectionIds.push(section.id);
+              newSchedule.sections.push({
+                ...section,
+                courseId: course.id
+              });
             }
 
             setSchedule(newSchedule);
           }
 
+          const checked = hasSectionById(schedule, section.id);
           return (
             <div key={section.id}>
               <Form.Check
                 custom
                 type="checkbox"
-                checked={schedule.sectionIds.includes(section.id)}
+                style={{
+                  opacity: section.disabled ? 0.5 : undefined
+                }}
+                checked={checked}
                 onChange={setChecked}
                 label={sectionLabel}
+                id={`${section.id}-check`}
                 name={`${section.id}-check`}
               />
             </div>
@@ -141,10 +141,10 @@ type Props = {
   color: string;
 };
 
-const CourseCard = ({ course, color, schedule, setSchedule }: Props) => {
+const CourseCard = ({ course, color }: Props) => {
   const sections = course.sectionSet.edges.map((e) => e?.node!);
 
-  const items = sortSections(sections);
+  const items = groupSections(sections);
 
   return (
     <div

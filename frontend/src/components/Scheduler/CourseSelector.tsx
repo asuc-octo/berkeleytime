@@ -1,11 +1,16 @@
 import BTSelect from 'components/Custom/Select';
 import { CourseOverviewFragment } from 'graphql/graphql';
-import React, { Dispatch, useMemo, useState } from 'react';
+import React, { Dispatch, SetStateAction, useMemo } from 'react';
 import { courseToName } from 'utils/courses/course';
 import { courseFilterOption } from 'utils/courses/search';
-import { compareDepartmentName, SortableCourse } from 'utils/courses/sorting';
+import { compareDepartmentName } from 'utils/courses/sorting';
 import { Semester } from 'utils/playlists/semesters';
-import { Schedule } from 'utils/scheduler/scheduler';
+import {
+  hasCourseById,
+  removeCourse,
+  Schedule,
+  SchedulerCourseType,
+} from 'utils/scheduler/scheduler';
 import Callout from './Callout';
 import SchedulerCourse from './Selector/SchedulerCourse';
 import { ScheduleContext } from './ScheduleContext';
@@ -22,7 +27,7 @@ type Props = {
   allCourses: CourseType[];
   semester: Semester;
   schedule: Schedule;
-  setSchedule: Dispatch<Schedule>;
+  setSchedule: Dispatch<SetStateAction<Schedule>>;
 };
 
 const CourseSelector = ({
@@ -44,18 +49,15 @@ const CourseSelector = ({
     [allCourses]
   );
 
-  function addCourse(courseId: string) {
+  function addCourse(course: SchedulerCourseType) {
     setSchedule({
       ...schedule,
-      courseIds: [courseId, ...schedule.courseIds]
+      courses: [course, ...schedule.courses],
     });
   }
 
-  function removeCourse(courseId: string) {
-    setSchedule({
-      ...schedule,
-      courseIds: schedule.courseIds.filter((c) => c !== courseId),
-    });
+  function trashCourse(courseId: string) {
+    setSchedule(removeCourse(schedule, courseId));
   }
 
   return (
@@ -67,10 +69,10 @@ const CourseSelector = ({
         name="selectClass"
         placeholder="Choose a class..."
         options={sortedCourses.filter(
-          (course) => !schedule.courseIds.includes(course.value)
+          (course) => !hasCourseById(schedule, course.value)
         )}
         filterOption={courseFilterOption}
-        onChange={(c) => c && addCourse((c as CourseOptionType).course.id)}
+        onChange={(c) => c && addCourse((c as CourseOptionType).course)}
       />
       <p>Choose the sections to build your schedule.</p>
       <Callout
@@ -83,13 +85,13 @@ const CourseSelector = ({
       />
       <div>
         <ScheduleContext.Provider value={{ schedule, setSchedule }}>
-          {schedule.courseIds.map((courseId) => (
+          {schedule.courses.map((course) => (
             <SchedulerCourse
-              key={courseId}
-              courseId={courseId}
-              partialCourse={allCourses.find((c) => c.id === courseId)}
+              key={course.id}
+              courseId={course.id}
+              partialCourse={course}
               semester={semester}
-              didRemove={() => removeCourse(courseId)}
+              didRemove={() => trashCourse(course.id)}
             />
           ))}
         </ScheduleContext.Provider>

@@ -660,7 +660,7 @@ export type FilterFragment = (
 
 export type SectionFragment = (
   { __typename?: 'SectionType' }
-  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays'>
+  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled'>
 );
 
 export type UserProfileFragment = (
@@ -791,6 +791,7 @@ export const SectionFragmentDoc = gql`
   waitlistedMax
   days
   wordDays
+  disabled
 }
     `;
 export const CourseFragmentDoc = gql`
