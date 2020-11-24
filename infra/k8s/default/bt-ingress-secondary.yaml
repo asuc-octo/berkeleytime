@@ -58,7 +58,7 @@ spec:
     - host: ocf.berkeleytime.com
       http:
         paths:
-          - path: /api/?(.*)
+          - path: /api/(.*)
             pathType: Prefix
             backend:
               service:
@@ -68,7 +68,7 @@ spec:
     - host: staging.ocf.berkeleytime.com
       http:
         paths:
-          - path: /api/?(.*)
+          - path: /api/(.*)
             pathType: Prefix
             backend:
               service:
