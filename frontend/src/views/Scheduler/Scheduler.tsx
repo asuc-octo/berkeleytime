@@ -66,7 +66,8 @@ const Scheduler = () => {
           <CourseSelector
             allCourses={allCourses}
             semester={latestSemester!}
-
+            schedule={schedule}
+            setSchedule={setSchedule}
           />
         </Col>
         <Col>

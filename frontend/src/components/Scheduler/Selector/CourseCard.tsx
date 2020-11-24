@@ -2,10 +2,11 @@ import {
   CourseFragment,
   SectionFragment,
 } from 'graphql/graphql';
-import React, { CSSProperties, ReactNode } from 'react';
+import React, { ChangeEvent, CSSProperties, ReactNode } from 'react';
 import { Form } from 'react-bootstrap';
 
 import { formatTime } from 'utils/date';
+import { Schedule } from 'utils/scheduler/scheduler';
 import { formatLocation } from 'utils/sections/section';
 import { sortSections } from 'utils/sections/sort';
 import {
@@ -13,14 +14,17 @@ import {
   formatUnits,
   getIndicatorPercent,
 } from 'utils/utils';
+import { useScheduleContext } from '../ScheduleContext';
 
 const MAX_SECTIONS_BEFORE_SCROLL: number = 8;
-const SCROLL_SECTION_HEIGHT: string = '300px';
+const SCROLL_SECTION_HEIGHT: string = '280px';
 
 type SectionProps = {
   course: CourseFragment;
   sections: SectionFragment[];
   isFirst?: boolean;
+  schedule: Schedule;
+  setSchedule: (schedule: Schedule) => void;
 };
 
 const CourseCardSection = ({
@@ -37,6 +41,7 @@ const CourseCardSection = ({
       : 'Enrollment N/A';
 
   const units = formatUnits(course.units);
+  const { schedule, setSchedule } = useScheduleContext();
 
   const shouldScroll = sections.length > MAX_SECTIONS_BEFORE_SCROLL;
   return (
@@ -91,7 +96,7 @@ const CourseCardSection = ({
                   style={{
                     background: getIndicatorPercent(
                       section.enrolled! / section.enrolledMax!
-                    )
+                    ),
                   }}
                 />
               )}
@@ -99,10 +104,27 @@ const CourseCardSection = ({
             </span>
           );
 
+          function setChecked(event: ChangeEvent<HTMLInputElement>) {
+            let newSchedule: Schedule = {
+              ...schedule,
+              sectionIds: schedule.sectionIds.filter(s => s !== section.id)
+            };
+            console.log('checking', event.target.checked)
+
+            if (event.target.checked) {
+              newSchedule.sectionIds.push(section.id);
+            }
+
+            setSchedule(newSchedule);
+          }
+
           return (
             <div key={section.id}>
               <Form.Check
                 custom
+                type="checkbox"
+                checked={schedule.sectionIds.includes(section.id)}
+                onChange={setChecked}
                 label={sectionLabel}
                 name={`${section.id}-check`}
               />
@@ -119,7 +141,7 @@ type Props = {
   color: string;
 };
 
-const CourseCard = ({ course, color }: Props) => {
+const CourseCard = ({ course, color, schedule, setSchedule }: Props) => {
   const sections = course.sectionSet.edges.map((e) => e?.node!);
 
   const items = sortSections(sections);

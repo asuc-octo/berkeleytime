@@ -9,23 +9,44 @@ import { Semester } from 'utils/playlists/semesters';
 
 import { ReactComponent as Trash } from '../../../assets/svg/common/trash.svg';
 import CourseCard from './CourseCard';
+import { useScheduleContext } from '../ScheduleContext';
 
 type Props = {
-  course: CourseOverviewFragment;
+  courseId: string;
+
+  /**
+   * If you have (some) course info. Passing this
+   * parameter will show the info you have so the
+   * user seems something while waiting for the
+   * whole component to load
+   */
+  partialCourse?: CourseOverviewFragment;
+
   semester: Semester;
+
+  /**
+   * If not passed, no delete button is shown.
+   */
   didRemove?: () => void;
 };
 
-const SchedulerCourse = ({ course, semester, didRemove }: Props) => {
+const SchedulerCourse = ({
+  courseId,
+  partialCourse,
+  semester,
+  didRemove,
+}: Props) => {
   const { data, loading, error } = useGetCourseForIdQuery({
     variables: {
-      id: course.id,
+      id: courseId,
       year: semester.year,
       semester: semester.semester,
     },
   });
 
-  const color = courseToColor(course);
+  const { schedule, setSchedule } = useScheduleContext();
+
+  const color = courseToColor(courseId);
 
   return (
     <div className="scheduler-course">
@@ -34,7 +55,9 @@ const SchedulerCourse = ({ course, semester, didRemove }: Props) => {
           className="scheduler-course-square"
           style={{ backgroundColor: color }}
         />
-        <div className="scheduler-course-course">{courseToName(course)}</div>
+        <div className="scheduler-course-course">
+          {partialCourse ? courseToName(partialCourse) : 'Loading...'}
+        </div>
         {didRemove && (
           <div className="scheduler-course-remove" onClick={didRemove}>
             <Trash />
@@ -43,10 +66,19 @@ const SchedulerCourse = ({ course, semester, didRemove }: Props) => {
       </div>
       {!data ? (
         <div className="scheduler-status">
-          {loading ? <BTLoader /> : "A critical error occured loading this course's data."}
+          {loading ? (
+            <BTLoader />
+          ) : (
+            "A critical error occured loading this course's data."
+          )}
         </div>
       ) : (
-        <CourseCard course={data.course!} color={color} />
+        <CourseCard
+          course={data.course!}
+          color={color}
+          schedule={schedule}
+          setSchedule={setSchedule}
+        />
       )}
     </div>
   );
