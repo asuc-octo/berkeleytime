@@ -135,6 +135,7 @@ const FilterSidebar = ({
           isClearable={false}
           options={SORT_OPTIONS}
           isSearchable={false}
+          isVirtual={false}
           onChange={(e) => setSort((e as SortOption).value)}
           value={SORT_OPTIONS.find((o) => o.value === sort)}
         />
