@@ -1,12 +1,12 @@
-import { ApolloClient, createHttpLink } from "@apollo/client";
+import { ApolloClient, HttpLink } from "@apollo/client";
 import { cache } from "./cache";
 
-const httpLink = createHttpLink({
-    uri: '/api/graphql'
-})
+const link = new HttpLink({
+  uri: '/api/graphql',
+});
 
 const client = new ApolloClient({
-    link: httpLink,
+    link: link,
     cache: cache
 });
 

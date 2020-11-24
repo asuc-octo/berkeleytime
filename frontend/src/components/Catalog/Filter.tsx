@@ -132,6 +132,7 @@ const FilterSidebar = ({
       </div>
       <div className="filter-sort">
         <BTSelect
+          isClearable={false}
           options={SORT_OPTIONS}
           isSearchable={false}
           onChange={(e) => setSort((e as SortOption).value)}

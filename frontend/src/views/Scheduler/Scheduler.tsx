@@ -1,28 +1,22 @@
 import React, { useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import CourseSelector from 'components/Scheduler/CourseSelector';
-import CourseCalendar from 'components/Scheduler/CourseCalendar';
+import CourseCalendar from 'components/Scheduler/Calendar/CourseCalendar';
 
-import { getLatestSemester, Semester } from 'utils/playlists/semesters';
+import { Semester } from 'utils/playlists/semesters';
 import {
   useGetCoursesForFilterQuery,
-  useGetSemestersQuery,
 } from '../../graphql/graphql';
-import { BeatLoader } from 'react-spinners';
 import BTLoader from 'components/Custom/Loader';
+import useLatestSemester from 'graphql/hooks/latestSemester';
+import { Schedule } from 'utils/scheduler/scheduler';
 
 const Scheduler = () => {
-  const [latestSemester, setLatestSemester] = useState<Semester | null>(null);
-
   const {
+    semester: latestSemester,
     loading: semesterLoading,
     error: semesterError,
-  } = useGetSemestersQuery({
-    onCompleted: (data) => {
-      const allPlaylists = data.allPlaylists?.edges.map((edge) => edge!.node!)!;
-      setLatestSemester(getLatestSemester(allPlaylists));
-    },
-  });
+  } = useLatestSemester();
 
   const {
     data,
@@ -33,6 +27,11 @@ const Scheduler = () => {
       playlists: latestSemester?.playlistId!,
     },
     skip: !latestSemester?.playlistId,
+  });
+
+  const [schedule, setSchedule] = useState<Schedule>({
+    courseIds: [],
+    sectionIds: []
   });
 
   const loading = semesterLoading || coursesLoading;
@@ -64,7 +63,11 @@ const Scheduler = () => {
     <div className="scheduler viewport-app">
       <Row noGutters>
         <Col md={4} lg={4} xl={4}>
-          <CourseSelector allCourses={allCourses} semester={latestSemester!} />
+          <CourseSelector
+            allCourses={allCourses}
+            semester={latestSemester!}
+
+          />
         </Col>
         <Col>
           <CourseCalendar

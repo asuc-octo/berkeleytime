@@ -2,11 +2,12 @@ import BTSelect from 'components/Custom/Select';
 import { CourseOverviewFragment } from 'graphql/graphql';
 import React, { useMemo, useState } from 'react';
 import { courseToName } from 'utils/courses/course';
-import { courseFilterOption, SearchableCourse } from 'utils/courses/search';
+import { courseFilterOption } from 'utils/courses/search';
 import { compareDepartmentName, SortableCourse } from 'utils/courses/sorting';
 import { Semester } from 'utils/playlists/semesters';
+import { Schedule } from 'utils/scheduler/scheduler';
 import Callout from './Callout';
-import SchedulerCourse from './SchedulerCourse';
+import SchedulerCourse from './Selector/SchedulerCourse';
 
 type CourseType = CourseOverviewFragment;
 
@@ -19,11 +20,15 @@ type CourseOptionType = {
 type Props = {
   allCourses: CourseType[];
   semester: Semester;
+  schedule: Schedule;
+  setSchedule: (schedule: Schedule) => void;
 };
 
 const CourseSelector = ({
   allCourses,
-  semester
+  semester,
+  schedule,
+  setSchedule
 }: Props) => {
   // Sort courses
   const sortedCourses: CourseOptionType[] = useMemo(
@@ -41,11 +46,17 @@ const CourseSelector = ({
   const [selectedCourses, setSelectedCourses] = useState<CourseType[]>([]);
 
   function addCourse(course: SortableCourse) {
-    setSelectedCourses((oldCourses) => [course, ...oldCourses]);
+    setSchedule({
+      ...schedule,
+      courseIds: [course.id, ...schedule.courseIds]
+    });
   }
 
   function removeCourse(course: SortableCourse) {
-    setSelectedCourses((oldCourses) => oldCourses.filter(c => c !== course));
+    setSchedule({
+      ...schedule,
+      courseIds: schedule.courseIds.filter(c => c !== course),
+    });
   }
 
   return (
@@ -56,7 +67,9 @@ const CourseSelector = ({
         value={null}
         name="selectClass"
         placeholder="Choose a class..."
-        options={sortedCourses}
+        options={sortedCourses.filter((course) =>
+          !schedule.courseIds.includes(course.value)
+        )}
         filterOption={courseFilterOption}
         onChange={(c) => c && addCourse((c as CourseOptionType).course)}
       />

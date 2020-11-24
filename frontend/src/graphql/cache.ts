@@ -1,8 +1,9 @@
 import { InMemoryCache, makeVar } from "@apollo/client";
+import { persistCacheSync } from 'apollo3-cache-persist';
 
 const isLoggedIn = makeVar<boolean>(false);
 
-export const cache = new InMemoryCache({
+const cache = new InMemoryCache({
   typePolicies: {
     Query: {
       fields: {
@@ -15,3 +16,10 @@ export const cache = new InMemoryCache({
     }
   }
 });
+
+persistCacheSync({
+  cache,
+  storage: window.localStorage,
+});
+
+export { cache };
