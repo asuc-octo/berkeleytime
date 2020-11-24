@@ -26,10 +26,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENV_NAME = os.getenv('ENVIRONMENT_NAME')
 IS_LOCALHOST = ENV_NAME == 'LOCALHOST'
-IS_STAGING = ENV_NAME == 'staging'
-IS_PRODUCTION = ENV_NAME == 'prod'
-assert IS_LOCALHOST or IS_STAGING or IS_PRODUCTION, f'ENV not set properly: {ENV_NAME}'
-
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
@@ -59,7 +55,14 @@ DATABASES = {
 }
 
 # Cache
-if IS_PRODUCTION or IS_STAGING:
+if IS_LOCALHOST:
+    CACHES = {
+        'default': {
+            'BACKEND': 'redis_cache.RedisCache',
+            'LOCATION': 'redis:6379',
+        }
+    }
+else:
     redis_instance = urlparse(os.getenv('REDIS_URL'))
     CACHES = {
         'default': {
@@ -69,13 +72,6 @@ if IS_PRODUCTION or IS_STAGING:
                 'PASSWORD': redis_instance.password,
                 'DB': 0,
             }
-        }
-    }
-elif IS_LOCALHOST:
-    CACHES = {
-        'default': {
-            'BACKEND': 'redis_cache.RedisCache',
-            'LOCATION': 'redis:6379',
         }
     }
 

@@ -8,12 +8,12 @@ import redlock
 from dateutil.parser import parse
 from googleapiclient.http import MediaFileUpload, MediaInMemoryUpload
 
-from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
+from berkeleytime.settings import IS_LOCALHOST
 from forms.utils import get_config_dict, CACHED_SHEETS, DRIVE_SERVICE
 
 if IS_LOCALHOST:
     dlm = redlock.Redlock([{'host': 'redis', 'port': 6379},])
-elif IS_STAGING or IS_PRODUCTION:
+else:
     REDIS = urlparse(os.environ.get('REDIS_URL'))
     dlm = redlock.Redlock([{'host': REDIS.hostname, 'port': REDIS.port, 'password': REDIS.password},])
 
