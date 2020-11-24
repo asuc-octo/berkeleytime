@@ -22,3 +22,5 @@ Staging and production both build from the master branch. As such, please use th
 - \<feature branch name\>: finalize features here then merge to master when done
 - **master: please only merge when your feature is complete and ready to be deployed**
 - production: this branch is now deprecated and is no longer linked to our production site
+
+To deploy to production, go into GitLab and click on the “deploy to production” button after staging.berkeleytime.com. Prod deployments can be rolled back by redeploying old commits of master branch. You can also view live versions of pull requests at \<branch name\>.berkeleytime.com.
