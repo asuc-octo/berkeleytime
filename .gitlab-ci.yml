@@ -58,6 +58,9 @@ build-frontend:
 deploy-staging:
   stage: deploy-staging
   extends: .before_deploy
+  only:
+    refs:
+      - master
   environment:
     name: staging
   script:
@@ -66,6 +69,9 @@ deploy-staging:
 deploy-prod:
   stage: deploy-prod
   extends: .before_deploy
+  only:
+    refs:
+      - master
   environment:
     name: prod
   when: manual
