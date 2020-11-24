@@ -1,18 +1,19 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, ReactElement } from 'react';
 import CalendarCard, { Props as CalendarCardProps } from './CalendarCard';
 import { range } from 'utils/range';
-import { dayToString, timeToHourString } from 'utils/time';
+import { dayToLongName, timeToHourString } from 'utils/date';
 
 type CourseCalendarProps = {
   days?: number[];
   startTime?: number;
   endTime?: number;
-  cards: (CalendarCardProps & {
+  cards: {
     key?: string | number;
     day: number;
     startTime: number;
     endTime: number;
-  })[];
+    card: ReactElement<CalendarCardProps>
+  }[];
 };
 
 const CELL_HEIGHT = 60;
@@ -55,7 +56,7 @@ const CourseCalendar = ({
               key={dayIndex}
               className="course-calendar__day course-calendar__header"
             >
-              <span>{dayToString(dayIndex)}</span>
+              <span>{dayToLongName(dayIndex)}</span>
             </div>
           ))}
         </div>
@@ -74,11 +75,11 @@ const CourseCalendar = ({
               <div>
                 {cardsByDay[dayIndex].map((card) => (
                   <div
-                    key={card.key || `${card.title}${card.description}`}
+                    key={card.key}
                     className="course-card__positioner"
                     style={calculateCellStyle(startTime, card)}
                   >
-                    <CalendarCard {...card} />
+                    {card.card}
                   </div>
                 ))}
               </div>

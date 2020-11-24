@@ -1,5 +1,4 @@
 import React, { CSSProperties, useState } from 'react';
-// import Radium from 'radium';
 import { BeatLoader } from 'react-spinners';
 
 import people from '../../assets/svg/catalog/people.svg';
@@ -236,5 +235,4 @@ const ClassDescription = ({
   );
 };
 
-// ClassDescription = Radium(ClassDescription);
 export default ClassDescription;

@@ -8,13 +8,15 @@ import React from 'react';
  * Gets indicator class for a color.
  */
 export function getIndicatorPercent(percentage) {
-  let theme = 'bt-indicator-red';
-  if (percentage < 0.34) {
-    theme = 'bt-indicator-green';
-  } else if (percentage < 0.67) {
-    theme = 'bt-indicator-orange';
+  if (percentage >= 0.99999) {
+    return '#FC7676'; // red
+  } else if (percentage > 0.65) {
+    return '#FFA414'; // orange
+  } else if (percentage > 0.3) {
+    return '#D3BC3B'; // yellow
+  } else {
+    return '#18DE83'; // green
   }
-  return theme;
 }
 
 /**

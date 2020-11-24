@@ -1,4 +1,11 @@
 /**
+ * Converts time string to date
+ */
+export function stringToTime(time: string): Date {
+  return new Date(`${time}Z`);
+}
+
+/**
  * Formats a time to 12-hour w/ AM PM
  */
 export function formatTime(date: Date | string): string {
@@ -13,7 +20,7 @@ export function formatTime(date: Date | string): string {
   hours = hours % 12;
   hours = hours || 12;
 
-  let strTime = hours + ':' + minutes + ' ' + ampm;
+  let strTime = hours + ':' + minutes + ampm;
 
   return strTime;
 }
@@ -24,11 +31,14 @@ export function formatTime(date: Date | string): string {
  * @example
  * `12` -> `MTu`
  */
-export function daysToString(days: string): string {
+export function daysToString(
+  days: string,
+  convertor: (day: number) => string = dayToShortName
+): string {
   return days
     .trim()
     .split('')
-    .map((day) => dayToString(+day))
+    .map((day) => convertor(+day))
     .join('');
 }
 
@@ -38,7 +48,7 @@ export function daysToString(days: string): string {
  * `1` -> `M`
  * `2` -> `Tu`
  */
-export function dayToString(day: number): string {
+export function dayToShortName(day: number): string {
   switch (day) {
     case 7:
     case 0:
@@ -57,5 +67,35 @@ export function dayToString(day: number): string {
       return 'Sat';
     default:
       return `${day}`;
+  }
+}
+
+const DAY_NAMES = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
+/**
+ * Converts numerical day of the week to day. e.g. 0 => Sunday.
+ */
+export function dayToLongName(day: number): string {
+  return DAY_NAMES[day];
+}
+
+/**
+ * Converts a 'time' e.g. 13 into a time "1 PM"
+ */
+export function timeToHourString(time: number): string {
+  const floorModTime = ((time % 24) + 24) % 24;
+
+  if (time <= 12) {
+    return `${floorModTime}am`;
+  } else {
+    return `${floorModTime % 12}pm`;
   }
 }

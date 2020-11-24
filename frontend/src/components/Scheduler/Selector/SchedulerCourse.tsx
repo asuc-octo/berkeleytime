@@ -2,12 +2,12 @@ import BTLoader from 'components/Custom/Loader';
 import {
   CourseOverviewFragment,
   useGetCourseForIdQuery,
-} from '../../graphql/graphql';
+} from '../../../graphql/graphql';
 import React from 'react';
 import { courseToColor, courseToName } from 'utils/courses/course';
 import { Semester } from 'utils/playlists/semesters';
 
-import { ReactComponent as Trash } from '../../assets/svg/common/trash.svg';
+import { ReactComponent as Trash } from '../../../assets/svg/common/trash.svg';
 import CourseCard from './CourseCard';
 
 type Props = {

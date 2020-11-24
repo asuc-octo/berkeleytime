@@ -34,6 +34,6 @@ export function getFullCourseCode(course: SearchableCourse): string {
 /**
  * Fitler option for react-select
  */
-export function courseFilterOption({ label }: { label: string }, query: string) {
+export function courseFilterOption({ label }: { label: string }, query: string): boolean {
   return search(query, normalizeSearchTerm(label), 0) >= 0;
 }
