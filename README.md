@@ -18,7 +18,7 @@ Please refer to the [wiki](https://github.com/asuc-octo/campanile/wiki) for all 
 ## Development
 
 Staging and production both build from the master branch. As such, please use the branches as follows:
-- <your branch name>: feel free to do whatever you want on this branch
-- <feature branch name>: finalize features here then merge to master when done
+- \<your branch name\>: feel free to do whatever you want on this branch
+- \<feature branch name\>: finalize features here then merge to master when done
 - **master: please only merge when your feature is complete and ready to be deployed**
 - production: this branch is now deprecated and is no longer linked to our production site
