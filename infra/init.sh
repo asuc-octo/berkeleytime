@@ -8,6 +8,9 @@
 # NEW=gcp.berkeleytime.com
 # find /berkeleytime -type f -name "*" -exec sed -i "s/$PREVIOUS/$NEW/g" "{}" \;
 
+# OCF only (stops resetting root password and account credentials)
+# sudo puppet agent --disable
+
 apt update
 apt install -y curl pv
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
