@@ -32,6 +32,10 @@
     color: $bt-light-text;
   }
 
+  .course-card-scroll {
+    padding-left: 4px;
+  }
+
   .section-label {
     color: $bt-light-text;
     font-size: 14px;
@@ -45,18 +49,6 @@
       border-radius: 4px;
       margin-right: 0.5em;
       margin-bottom: -1.5px;
-
-      &.bt-indicator-red {
-        background: $bt-indicator-red;
-      }
-
-      &.bt-indicator-green {
-        background: $bt-indicator-green;
-      }
-
-      &.bt-indicator-orange {
-        background: $bt-indicator-orange;
-      }
     }
   }
 }

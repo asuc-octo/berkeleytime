@@ -10,6 +10,8 @@ import sahai from '../../assets/img/eggs/sahai.png';
 import scott from '../../assets/img/eggs/scott.png';
 import kubi from '../../assets/img/eggs/kubi.png';
 import garcia from '../../assets/img/eggs/garcia.png';
+import { sortSections } from 'utils/sections/sort';
+import { formatSectionTime } from 'utils/sections/section';
 
 const easterEggImages = new Map<string, string>([
   ['DENERO J', denero],
@@ -39,7 +41,9 @@ type Props = {
   sections: SectionFragment[]
 };
 
-const SectionTable = ({ sections }: Props) => {
+const SectionTable = ({ sections: allSections }: Props) => {
+  const sections = sortSections(allSections);
+
   return (
     <Table className="table">
       <thead>
@@ -55,16 +59,14 @@ const SectionTable = ({ sections }: Props) => {
       </thead>
       <tbody>
         {sections.map((section) => {
-          const startDate = new Date(section.startTime + 'Z');
-          const endDate = new Date(section.endTime + 'Z');
           return (
             <tr key={section.ccn} style={findInstructor(section.instructor)}>
               <td>{section.kind}</td>
               <td>{section.ccn}</td>
               <td>{section.instructor}</td>
-              {!isNaN(+startDate) && !isNaN(+endDate) ? (
+              {section.startTime && section.endTime ? (
                 <td>
-                  {section.wordDays} {formatTime(startDate)} - {formatTime(endDate)}
+                  {section.wordDays} {formatSectionTime(section)}
                 </td>
               ) : (
                 <td></td>

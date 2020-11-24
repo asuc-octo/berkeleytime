@@ -1,8 +1,8 @@
 /**
  * Converts time string to date
  */
-export function stringToTime(time: string): Date {
-  return new Date(`${time}Z`);
+export function stringToDate(time: string): Date {
+  return new Date(`${time}`);
 }
 
 /**
@@ -10,11 +10,12 @@ export function stringToTime(time: string): Date {
  */
 export function formatTime(date: Date | string): string {
   if (typeof date === 'string') {
-    date = new Date(date + 'Z');
+    date = stringToDate(date);
   }
 
-  let hours = date.getUTCHours();
-  let minutes = date.getUTCMinutes().toString().padStart(2, '0');
+  // Sorry internationals but timezones r weird so this is go
+  let hours = date.getHours();
+  let minutes = date.getMinutes().toString().padStart(2, '0');
   let ampm = hours >= 12 ? 'pm' : 'am';
 
   hours = hours % 12;

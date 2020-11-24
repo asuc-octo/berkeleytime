@@ -12,9 +12,15 @@
     .calendar-card__title {
         font-size: 14px;
         font-weight: 500;
-        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        display: block;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; // Duplicated for fallback
+        -webkit-line-clamp: var(--calendar-card-lines, 1);
+        -webkit-box-orient: vertical;
+        line-height: 1.25;
+        margin-bottom: 3px;
     }
 
     p {

@@ -26,15 +26,17 @@ function calculateCellStyle(
     endTime,
   }: {
     startTime: number;
-    endTime: number;
+  endTime: number;
   }
 ): CSSProperties {
   const visualStartTime = startTime - calendarStartTime;
+  const height = Math.max(MIN_HEIGHT, (endTime - startTime) * CELL_HEIGHT);
   return {
     top: visualStartTime * CELL_HEIGHT,
-    height: Math.max(MIN_HEIGHT, (endTime - startTime) * CELL_HEIGHT),
+    height: height,
     left: 0,
-  };
+    '--calendar-card-lines': Math.max(1, Math.floor(height / 40)),
+  } as CSSProperties;
 }
 
 const CourseCalendar = ({

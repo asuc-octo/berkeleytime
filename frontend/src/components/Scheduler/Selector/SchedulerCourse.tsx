@@ -44,8 +44,6 @@ const SchedulerCourse = ({
     },
   });
 
-  const { schedule, setSchedule } = useScheduleContext();
-
   const color = courseToColor(courseId);
 
   return (
@@ -56,7 +54,9 @@ const SchedulerCourse = ({
           style={{ backgroundColor: color }}
         />
         <div className="scheduler-course-course">
-          {partialCourse ? courseToName(partialCourse) : 'Loading...'}
+          {partialCourse
+            ? courseToName(partialCourse)
+            : data?.course?.title || 'Loading...'}
         </div>
         {didRemove && (
           <div className="scheduler-course-remove" onClick={didRemove}>
@@ -73,12 +73,7 @@ const SchedulerCourse = ({
           )}
         </div>
       ) : (
-        <CourseCard
-          course={data.course!}
-          color={color}
-          schedule={schedule}
-          setSchedule={setSchedule}
-        />
+        <CourseCard course={data.course!} color={color} />
       )}
     </div>
   );
