@@ -12,7 +12,7 @@ try:
 except ImportError:
     from yaml import load, dump, Loader, Dumper
 
-from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
+from berkeleytime.settings import IS_LOCALHOST
 
 
 # Global Variables
@@ -46,10 +46,10 @@ for config in os.listdir('forms/configs'):
 
 
 def get_config_dict(config):
-    if IS_STAGING or IS_PRODUCTION:
-        return CACHED_CONFIGS[config]
-    elif IS_LOCALHOST:
+    if IS_LOCALHOST:
         return load(open('forms/configs/{}.yaml'.format(config)), Loader=Loader)
+    else:
+        return CACHED_CONFIGS[config]
 
 
 def send_message(to, subject, message_text):
