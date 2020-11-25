@@ -54,6 +54,10 @@
         display: flex;
         flex-direction: row;
 
+        .statline-div {
+          display: flex;
+        }
+
         > img {
           width: 14px;
           margin-right: 8px;
@@ -160,6 +164,10 @@
 
       // overflow-y: auto;
       // min-height: 300px;
+
+      @include mobile {
+        overflow-y: scroll;
+      }
 
       table {
         max-width: 100%;

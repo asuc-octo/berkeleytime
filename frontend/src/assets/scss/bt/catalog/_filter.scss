@@ -95,6 +95,10 @@
         color: $bt-light-border-grey;
       }
 
+      @include mobile {
+        // Set the font size so no zoom in on mobile
+        font-size: 16px;
+      }
     }
   }
 

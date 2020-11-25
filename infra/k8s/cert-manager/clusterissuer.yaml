@@ -1,0 +1,30 @@
+#   Need to generate gcloud IAM service account for autoconfigure DNS records
+# gcloud iam service-accounts create dns01-solver --display-name "dns01-solver"
+# gcloud iam service-accounts keys create key.json --iam-account dns01-solver@berkeleytime-218606.iam.gserviceaccount.com
+# gcloud projects add-iam-policy-binding berkeleytime-218606 --member serviceAccount:dns01-solver@berkeleytime-218606.iam.gserviceaccount.com --role roles/dns.admin
+# kubectl create secret generic clouddns-dns01-solver-svc-acct --from-file=key.json --namespace cert-manager
+#   OR use pre-existing dns01-solver credentials (apps.sh for download example)
+# gsutil cp gs://berkeleytime-218606/secrets/credentials-clouddns-dns01-solver-svc-acct.json /credentials-clouddns-dns01-solver-svc-acct.json
+# kubectl create secret generic clouddns-dns01-solver-svc-acct --from-file /credentials-clouddns-dns01-solver-svc-acct.json --namespace cert-manager
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt
+  # cluster-wide, so namespace does not matter
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory # dev
+    # server: https://acme-v02.api.letsencrypt.org/directory # prod ACME server URL
+    privateKeySecretRef:
+      name: letsencrypt
+    solvers:
+      - dns01:
+          cloudDNS:
+            project: berkeleytime-218606
+            serviceAccountSecretRef:
+              name: clouddns-dns01-solver-svc-acct
+              key: credentials-clouddns-dns01-solver-svc-acct.json
+      # - selector: {}
+      #   http01:
+      #     ingress:
+      #       class: nginx

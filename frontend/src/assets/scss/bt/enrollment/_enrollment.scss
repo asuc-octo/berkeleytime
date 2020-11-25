@@ -58,11 +58,16 @@
 
   .disclaimer {
     .info {
-      width: 1.4%;
+      width: 15px;
       margin-bottom: 2px;
     }
     padding-left: 55px;
     padding-top: 5px;
+
+    @include mobile {
+      padding: 0px 10px 20px 10px;
+      text-align: center;
+    }
 
     p {
       display: inline;

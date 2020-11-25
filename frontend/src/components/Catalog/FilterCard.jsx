@@ -1,6 +1,15 @@
 import React, { PureComponent } from 'react';
+import BookmarkSaved from '../../assets/svg/catalog/bookmark-saved.svg';
+import BookmarkUnsaved from '../../assets/svg/catalog/bookmark-unsaved.svg';
 
 class FilterCard extends PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      saved: false,
+    }
+  }
   static formatEnrollmentPercentage(percentage) {
     return `${Math.floor(percentage * 100, 100)}% enrolled`;
   }
@@ -50,7 +59,14 @@ class FilterCard extends PureComponent {
     this.props.data.selectCourse(course);
   }
 
+  saveHandler = () => {
+    this.setState(state => ({
+      saved: !state.saved
+    }));
+  }
+
   render() {
+    const { saved } = this.state;
     const { data, index, style } = this.props;
     const { courses, sortBy, selectedCourseId } = data;
     const course = courses[index];
@@ -91,7 +107,7 @@ class FilterCard extends PureComponent {
             <p className="filter-card-info-desc">{title}</p>
             <div className="filter-card-info-stats">
               { enrolled_percentage === -1
-                ? null
+                ? <p> N/A </p>
                 : <p className={FilterCard.colorEnrollment(enrolled_percentage)}>{FilterCard.formatEnrollmentPercentage(enrolled_percentage)}</p>
               }
 
@@ -99,6 +115,9 @@ class FilterCard extends PureComponent {
             </div>
           </div>
           { sort }
+          {/*<div className="filter-card-save" onClick={this.saveHandler}>
+            <img src={saved ? BookmarkSaved : BookmarkUnsaved}/>
+          </div>*/}
         </div>
       </div>
     );

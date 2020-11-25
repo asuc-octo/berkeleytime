@@ -1,0 +1,12 @@
+# Template from: https://gitlab.com/gitlab-org/charts/gitlab-runner/blob/master/values.yaml
+gitlabUrl: http://bt-gitlab:80/git
+runners:
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        image = "ubuntu:20.04"
+        privileged = false
+        image_pull_secrets = ["docker-registry-gcr"]
+        pull_policy = "always"
+        protected = true
+  secret: bt-gitlab-runner
