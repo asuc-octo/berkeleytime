@@ -43,6 +43,23 @@ spec:
                 name: bt-gitlab
                 port:
                   number: 80
+    - host: www.berkeleytime.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-frontend-svc-prod
+                port:
+                  number: 3000
+          - path: /git
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-gitlab
+                port:
+                  number: 80
     - host: staging.berkeleytime.com
       http:
         paths:
