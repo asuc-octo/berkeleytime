@@ -3,38 +3,75 @@ import CalendarCard, { Props as CalendarCardProps } from './CalendarCard';
 import { range } from 'utils/range';
 import { dayToLongName, timeToHourString } from 'utils/date';
 
+type CardData = {
+  key?: string | number;
+  day: number;
+  startTime: number;
+  endTime: number;
+  card: ReactElement<CalendarCardProps>;
+
+  /** **Do not directly provide** */
+  overlapNum?: number;
+
+  /** **Do not directly provide** */
+  overlapIndex?: number;
+};
+
 type CourseCalendarProps = {
   days?: number[];
   startTime?: number;
   endTime?: number;
-  cards: {
-    key?: string | number;
-    day: number;
-    startTime: number;
-    endTime: number;
-    card: ReactElement<CalendarCardProps>
-  }[];
+  cards: CardData[];
 };
 
 const CELL_HEIGHT = 60;
 const MIN_HEIGHT = 20;
+const INTER_CELL_PADDING = 2;
+
+/**
+ * Takes a list of cards and returns copies with the `numOverlaps` property set.
+ */
+function calculateOverlaps(cards: CardData[]): CardData[] {
+  const events = cards.sort((a, b) => a.startTime - b.startTime);
+
+  let finalCards: CardData[][] = [];
+  let currrentEndTime: number = -Infinity;
+
+  let currentOverlap: CardData[] | null = null;
+
+  for (let i = 0; i < events.length; i++) {
+    const c = cards[i];
+
+    // If the current course doesn't overlaps
+    if (c.startTime >= currrentEndTime) {
+      currentOverlap = [];
+      finalCards.push(currentOverlap);
+    }
+
+    currentOverlap!.push(c);
+    currrentEndTime = Math.max(c.endTime, currrentEndTime);
+  }
+
+  return finalCards.flatMap((group) =>
+    group.map((item, index) => ({
+      ...item,
+      overlapIndex: index,
+      overlapNum: group.length,
+    }))
+  );
+}
 
 function calculateCellStyle(
   calendarStartTime: number,
-  {
-    startTime,
-    endTime,
-  }: {
-    startTime: number;
-  endTime: number;
-  }
+  { startTime, endTime, overlapNum = 0, overlapIndex = 0 }: CardData
 ): CSSProperties {
   const visualStartTime = startTime - calendarStartTime;
   const height = Math.max(MIN_HEIGHT, (endTime - startTime) * CELL_HEIGHT);
   return {
     top: visualStartTime * CELL_HEIGHT,
     height: height,
-    left: 0,
+    left: `calc(${(overlapIndex / overlapNum) * 100}% + ${overlapIndex * INTER_CELL_PADDING}px)`,
+    width: `calc(${(1 / overlapNum) * 100}% - ${(overlapNum - 1) * INTER_CELL_PADDING}px)`,
     '--calendar-card-lines': Math.max(1, Math.floor(height / 40)),
   } as CSSProperties;
 }
@@ -46,7 +83,9 @@ const CourseCalendar = ({
   cards = [],
 }: CourseCalendarProps) => {
   const hourSlots = range(startTime, endTime);
-  const cardsByDay = days.map((day) => cards.filter((c) => c.day == day));
+  const cardsByDay = days.map((day) =>
+    cards.filter((c) => c.day == day).sort((a, b) => a.startTime - b.startTime)
+  );
 
   return (
     <div className="course-calendar">
@@ -75,7 +114,7 @@ const CourseCalendar = ({
           {days.map((day, dayIndex) => (
             <div key={day} className="course-calendar__day">
               <div>
-                {cardsByDay[dayIndex].map((card) => (
+                {calculateOverlaps(cardsByDay[dayIndex]).map((card) => (
                   <div
                     key={card.key}
                     className="course-card__positioner"
