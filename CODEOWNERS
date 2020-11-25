@@ -4,6 +4,6 @@
 
 *               @g-luo
 backend/        @LEON-MING
-kubernetes/     @LEON-MING
+infra/     @LEON-MING
 build/          @LEON-MING
 frontend/       @chrisdliu @g-luo @michaelli1324
