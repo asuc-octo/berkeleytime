@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
 
-import datetime
 import os
 import sys
 from pathlib import Path
+from datetime import timedelta
 from urllib.parse import urlparse
 
 from berkeleytime.config.general import *
@@ -26,12 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENV_NAME = os.getenv('ENVIRONMENT_NAME')
 IS_LOCALHOST = ENV_NAME == 'LOCALHOST'
-IS_STAGING = ENV_NAME == 'STAGING'
-IS_PRODUCTION = ENV_NAME == 'PRODUCTION'
-assert IS_LOCALHOST or IS_STAGING or IS_PRODUCTION, f'ENV not set properly: {ENV_NAME}'
 
-
-SECRET_KEY = '***REMOVED***'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # Admins/managers receive 500s and 404s
 ADMINS = MANAGERS = (
@@ -43,18 +39,7 @@ ADMINS = MANAGERS = (
 DEBUG = IS_LOCALHOST
 
 # Allowed hosts
-if IS_LOCALHOST:
-    ALLOWED_HOSTS = ['*']
-elif IS_STAGING:
-    ALLOWED_HOSTS = [
-        'staging.berkeleytime.com',
-    ]
-elif IS_PRODUCTION:
-    ALLOWED_HOSTS = [
-        'berkeleytime.com',
-        'www.berkeleytime.com',
-        'old.berkeleytime.com',
-    ]
+ALLOWED_HOSTS = ['*'] # Wildcard '*' allow is not a security issue because back-end is closed to private Kubernetes traffic
 
 # Database
 pg_instance = urlparse(os.getenv('DATABASE_URL'))
@@ -70,7 +55,14 @@ DATABASES = {
 }
 
 # Cache
-if IS_PRODUCTION or IS_STAGING:
+if IS_LOCALHOST:
+    CACHES = {
+        'default': {
+            'BACKEND': 'redis_cache.RedisCache',
+            'LOCATION': 'redis:6379',
+        }
+    }
+else:
     redis_instance = urlparse(os.getenv('REDIS_URL'))
     CACHES = {
         'default': {
@@ -80,13 +72,6 @@ if IS_PRODUCTION or IS_STAGING:
                 'PASSWORD': redis_instance.password,
                 'DB': 0,
             }
-        }
-    }
-elif IS_LOCALHOST:
-    CACHES = {
-        'default': {
-            'BACKEND': 'redis_cache.RedisCache',
-            'LOCATION': 'redis:6379',
         }
     }
 
@@ -123,7 +108,7 @@ INSTALLED_APPS = [
     'playlist',
     'forms',
     'user',
-    'rest_framework',
+    'graphene_django',
 ]
 
 # Middlewares
@@ -139,6 +124,29 @@ MIDDLEWARE = [
 
 # Root URLconf file
 ROOT_URLCONF = 'berkeleytime.urls'
+
+# WSGI app object to use with runserver
+WSGI_APPLICATION = 'berkeleytime.wsgi.application'
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
 
 # List of template engines (we need this for admin panel)
 TEMPLATES = [
@@ -157,90 +165,32 @@ TEMPLATES = [
     }
 ]
 
-# WSGI app object to use with runserver
-WSGI_APPLICATION = 'berkeleytime.wsgi.application'
-
-# Logging
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        },
-    },
-    'formatters': {
-        'verbose': {
-            'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-        'json': {
-            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-            'format': '%(levelname)s %(asctime)s %(message)s',
-        },
-    },
-    'handlers': {
-        'mail_admins': {
-            'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false'],
-            'level': 'ERROR',
-        },
-        'stdout': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'json',
-            'level': 'INFO',
-            'stream': sys.stdout,
-        },
-        'stderr': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'json',
-            'level': 'ERROR',
-            'stream': sys.stderr,
-        }
-    },
-    'root': {
-        'handlers': ['mail_admins'],
-    },
-    'loggers': {
-        'catalog': {
-            'handlers': ['stdout', 'stderr'],
-        },
-        'enrollment': {
-            'handlers': ['stdout', 'stderr'],
-        },
-        'grades': {
-            'handlers': ['stdout', 'stderr'],
-        },
-        'playlist': {
-            'handlers': ['stdout', 'stderr'],
-        },
-    }
-}
-
-
 # Course/Class API credentials
 SIS_COURSE_APP_ID = os.getenv('SIS_COURSE_APP_ID')
 SIS_COURSE_APP_KEY = os.getenv('SIS_COURSE_APP_KEY')
 SIS_CLASS_APP_ID = os.getenv('SIS_CLASS_APP_ID')
 SIS_CLASS_APP_KEY = os.getenv('SIS_CLASS_APP_KEY')
 
-# Django REST Framework
-REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-    ),
+# Graphene Config
+GRAPHENE = {
+    'SCHEMA': 'berkeleytime.schema.schema',
+    'MIDDLEWARE': [
+        'graphql_jwt.middleware.JSONWebTokenMiddleware',
+    ],
+    'RELAY_CONNECTION_MAX_LIMIT': 100000,
 }
 
-## JWT
-JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=1)
+# Graphene jwt
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # for admin panel
+    'graphql_jwt.backends.JSONWebTokenBackend',
+]
+
+GRAPHQL_JWT = {
+    'JWT_VERIFY_EXPIRATION': True,
+    'JWT_EXPIRATION_DELTA': timedelta(days=1),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),
+    'JWT_HIDE_TOKEN_FIELDS': True  # if we want to prevent sending the token back in response
 }
 
 # Password validation - we intend to use Google sign-in, but we may add in-house auth in the future
@@ -274,3 +224,5 @@ USE_L10N = True
 USE_TZ = False
 
 STATIC_URL = '/static/'
+
+

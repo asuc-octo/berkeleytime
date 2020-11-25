@@ -32,7 +32,7 @@ def enrollment_context(long_form=False):
     if cached:
         rtn = cached
     else:
-        courses = Course.objects.all().order_by('abbreviation', 'course_number')
+        courses = Course.objects.exclude(section__isnull=True).order_by('abbreviation', 'course_number')
         if long_form:
             rtn = courses.values('id', 'abbreviation', 'course_number', 'title')
         else:

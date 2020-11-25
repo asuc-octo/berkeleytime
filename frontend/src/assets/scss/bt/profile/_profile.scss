@@ -1,50 +1,107 @@
-.profile-subview{
-    max-width: 700px;
-    margin-top: 100px; 
-    margin-left: 30px;
-    margin-right: 30px;
+.profile-container {
+    min-height: 300px;
+    height: 100vh;
 
-    h1{
-        font-weight: bold;
-        font-size: 40px;
-        margin-bottom: 40px;
+    #account {
+        margin-top: 30vh;
     }
-
-    h2{
-        font-weight: bold;
-        font-size: 32px;
-        margin-top: 30px;
-        margin-bottom: 20px;
+    #account, #notif, #support {
+        margin-bottom: 12px;
+        width: 13vw;
+        height: 45px;
+        border-radius: 4px;
+        color: $bt-light-text;
+        img {
+            height: 24px;
+            outline-color: $bt-light-text;
+            margin-left: 15px;
+            margin-top: 10px;
+        }
+        span {
+            margin-left: 5px;
+            display: inline-block;
+            vertical-align: bottom;
+            line-height: normal;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        &.selected {
+            color: $bt-primary;
+            background: #F8F8F8;
+        }
+        &:hover {
+            background: #F8F8F8;
+            cursor: pointer;
+        }
+    }
+    #notif img {
+        margin-left: 17px;
+    }
+    #notif span {
+        margin-left: 7px;
     }
 }
 
-.profile-row{
-    display: flex;
-    position: relative;
-    align-items: center;
-    border-bottom: 1.5px solid #ECECEC;
+.subview-container {
+    padding: 45px 0px 0px 45px;
 
-    height: 50px;
-}
+    .profile-subview{
+        max-width: 700px;
+        margin-top: 100px; 
+        margin-left: 30px;
+        margin-right: 30px;
+    
+        h1{
+            font-weight: bold;
+            font-size: 40px;
+            margin-bottom: 40px;
+        }
+    
+        h2{
+            font-weight: bold;
+            font-size: 32px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+    
+        .profile-row{
+            display: flex;
+            position: relative;
+            align-items: center;
+            border-bottom: 1.5px solid #ECECEC;
+            height: 50px;
+        }
+        
+        .profile-title{
+            display:flex;
+            position:relative;
+            align-items: center;
+            
+            .edit-button{
+                background-color: Transparent;
+                border: none;
+                margin-top: 12px;
+                margin-left: 6px;
+            }
+            
+            .edit-button:focus{
+                outline: none;
+                box-shadow: none;
+            }
+            
+            .edit-pencil{
+                height:30px;
+                border-radius: 15px;
+                padding: 2px 2px 2px 2px;
 
-.profile-title{
-    display:flex;
-    position:relative;
-    align-items: center;
-}
-
-.edit-button{
-    background-color: Transparent;
-    border: none;
-    margin-top: 12px;
-    margin-left: 6px;
-}
-
-.edit-button:focus{
-    outline: none;
-    box-shadow: none;
-}
-
-.edit-pencil{
-    height:24px;
+                &:hover{
+                    transition: 0.3s;
+                    background: #fafafa;
+                    transition: 0.3s;
+                    filter: brightness(95%);
+                }
+            }
+            
+        }
+    }
 }

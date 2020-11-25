@@ -12,7 +12,7 @@ try:
 except ImportError:
     from yaml import load, dump, Loader, Dumper
 
-from berkeleytime.settings import IS_LOCALHOST, IS_STAGING, IS_PRODUCTION
+from berkeleytime.settings import IS_LOCALHOST
 
 
 # Global Variables
@@ -30,7 +30,7 @@ gc = gspread.authorize(credentials)
 GMAIL_SERVICE = SMTP('smtp.gmail.com', port=587)
 GMAIL_SERVICE.starttls()
 GMAIL_SERVICE.login(os.environ['GOOGLE_EMAIL'], os.environ['GOOGLE_PASS'])
-DRIVE_SERVICE = build('drive', 'v3', credentials=credentials)
+DRIVE_SERVICE = build('drive', 'v3', credentials=credentials, cache_discovery=False)
 
 for config in os.listdir('forms/configs'):
     if config == '__init__.py':
@@ -38,18 +38,18 @@ for config in os.listdir('forms/configs'):
     f = open('forms/configs/{}'.format(config))
     loaded_yaml = load(f, Loader=Loader)
     CACHED_CONFIGS[config.replace('.yaml', '')] = loaded_yaml
-    # if 'googlesheet_link' in loaded_yaml['info']:
-    #     doc_url = loaded_yaml['info']['googlesheet_link']
-    #     sheet = gc.open_by_url(doc_url).sheet1
-    #     if sheet:
-    #         CACHED_SHEETS[doc_url] = sheet
+    if 'googlesheet_link' in loaded_yaml['info']:
+        doc_url = loaded_yaml['info']['googlesheet_link']
+        sheet = gc.open_by_url(doc_url).sheet1
+        if sheet:
+            CACHED_SHEETS[doc_url] = sheet
 
 
 def get_config_dict(config):
-    if IS_STAGING or IS_PRODUCTION:
-        return CACHED_CONFIGS[config]
-    elif IS_LOCALHOST:
+    if IS_LOCALHOST:
         return load(open('forms/configs/{}.yaml'.format(config)), Loader=Loader)
+    else:
+        return CACHED_CONFIGS[config]
 
 
 def send_message(to, subject, message_text):

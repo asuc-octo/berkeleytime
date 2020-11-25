@@ -75,7 +75,7 @@ class GradeService:
             for filename in os.listdir(os.path.join(os.path.dirname(grades.resource.__file__), 'formatted/')):
                 filename = filename.split('.')[0]
                 semester, year = filename.split('_')
-                self._update_one(s, y)
+                self._update_one(semester, year)
 
 
     def _update_one(self, semester, year):

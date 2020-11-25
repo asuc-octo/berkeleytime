@@ -78,6 +78,7 @@ class CourseService:
                 'message': 'Exception encountered while updating/creating course',
                 'course_dict': course_dict,
             })
+            return None, False
 
 
     def _course_names_to_objects(self, names):
