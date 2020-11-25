@@ -19,6 +19,9 @@ const Blurbs: FC = () => (
         <a href="https://asuc.org">
           <img className="landing-sponsors-img" src={asuc_logo} alt="asuc" />
         </a>
+        <a href="https://www.ocf.berkeley.edu"> {/* https://www.ocf.berkeley.edu/docs/services/vhost/badges */}
+          <img src="https://www.ocf.berkeley.edu/hosting-logos/ocf-hosted-penguin.svg" alt="Hosted by the OCF" style="border: 0;" />
+       </a>
       </div>
     </div>
     <div className="landing-blurbs">
