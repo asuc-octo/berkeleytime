@@ -59,7 +59,6 @@ class Course(models.Model):
         enrolled_max = self.enrolled_max,
         enrolled_percentage = self.enrolled_percentage,
         waitlisted = self.waitlisted,
-        cross_listing = [f'{c.abbreviation} {c.course_number}' for c in self.cross_listing.all()]
       )
 
     def __repr__(self):
