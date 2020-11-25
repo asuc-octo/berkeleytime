@@ -115,9 +115,9 @@ class FilterCard extends PureComponent {
             </div>
           </div>
           { sort }
-          <div className="filter-card-save" onClick={this.saveHandler}>
+          {/*<div className="filter-card-save" onClick={this.saveHandler}>
             <img src={saved ? BookmarkSaved : BookmarkUnsaved}/>
-          </div>
+          </div>*/}
         </div>
       </div>
     );
