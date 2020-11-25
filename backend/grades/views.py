@@ -1,7 +1,7 @@
 import traceback
 
 from django.core.cache import cache
-from django.db.models import Sum, Q
+from django.db.models import Sum
 from django.shortcuts import render
 
 from berkeleytime.utils import render_to_json, render_to_empty_json, render_to_empty_json_with_status_code
@@ -54,24 +54,18 @@ def grade_section_json(request, course_id):
     {'instructor': 'Shewchuk', 'semester': 'spring', 'year': 2012, 'section_number': '003', 'grade_id': 1533}
     """
     try:
-        cached = cache.get('grade_section_json_new ' + course_id)
+        cached = cache.get('grade_section_json_new ' + str(course_id))
         if cached:
             print('Cache Hit in grade_section_json course_id ' + course_id)
             return render_to_json(cached)
-
-        entries = Grade.objects.filter(
-            Q(course__id=int(course_id)) | Q(course__cross_listing__id=int(course_id))
-        ).distinct('course_id', 'semester', 'year', 'section_number')
-
         sections = [
             {
                 'instructor': entry.instructor,
                 'semester': entry.semester,
                 'year': entry.year,
-                'section_number': entry.section_number + # adds course info if cross listed, temporary measure
-                    (f' ({entry.course.abbreviation} {entry.course.course_number})' if str(entry.course.id) != course_id else ''),
+                'section_number': entry.section_number,
                 'grade_id': entry.id,
-            } for entry in entries
+            } for entry in Grade.objects.filter(course__id=int(course_id))
         ]
         sections = sorted(sections, key=year_and_semester_to_value, reverse=True)
         cache.set('grade_section_json_new ' + str(course_id), sections, CACHE_TIMEOUT)

@@ -57,9 +57,6 @@ class SectionService:
             print(BColors.OKGREEN + f'Updating course {i.value()} of {len(courses)}.' + BColors.ENDC)
             time.sleep(5)
 
-        # Clear the cache to ensure an updated dropdown of courses with enrollment data
-        # course_service.invalidate_courses_with_enrollment_cache()
-
 
     def _update_class(self, course, semester, year):
         """Update all sections for a course in a semester.

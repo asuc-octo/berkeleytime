@@ -61,10 +61,11 @@ class CourseService:
 
             cross_listing_courses.append(course_obj)
             for cross_course in cross_listing_courses:
-                cross_course.cross_listing = []
+                other_courses_to_link = []
                 for other_course in cross_listing_courses:
                     if other_course.id != cross_course.id:
-                        cross_course.cross_listing.add(other_course)
+                        other_courses_to_link.append(other_course)
+                cross_course.cross_listing.set(other_courses_to_link)
                 cross_course.save()
 
             logger.info({
@@ -95,12 +96,11 @@ class CourseService:
             except Course.DoesNotExist:
                 pass
 
-            except Exception as e:
-                logger.warn({
-                'message': 'Exception encountered while finding course from name',
-                'course_name': n,
-                'exception': e,
-            })
+            except:
+                logger.exception({
+                    'message': 'Exception encountered while finding course from name',
+                    'course_name': n,
+                })
         return courses_list
 
 
@@ -108,7 +108,7 @@ class CourseService:
         """Take a course object and recalculate its derived grade fields."""
         grades = Grade.objects.filter(
             Q(course=course) | Q(course__cross_listing=course)
-        ).distinct('course_id', 'semester', 'year', 'section_number')
+        ).distinct('id')
         weighted_letter_grade_counter, total = add_up_grades(grades)
 
         if total == 0:
@@ -123,12 +123,9 @@ class CourseService:
     def _update_derived_enrollment_fields(self, course):
         """Update enrollment summary fields with the latest enrollment."""
         primary_sections = Section.objects.filter(
-            Q(course=course) | Q(course__cross_listing=course),
-            semester=CURRENT_SEMESTER,
-            year=CURRENT_YEAR,
-            is_primary=True,
-            disabled=False,
-        ).distinct('course_id', 'semester', 'year', 'section_number')
+            course=course, semester=CURRENT_SEMESTER, year=CURRENT_YEAR,
+            is_primary=True, disabled=False,
+        )
 
         # If no active primary sections exist, reset enrollment fields to default (-1)
         if not primary_sections.exists():
@@ -155,11 +152,6 @@ class CourseService:
             course.open_seats = 0
 
         course.save()
-
-
-    # def invalidate_courses_with_enrollment_cache(self):
-    #     """Invalidate the cache we use to store data of courses that have enrollment."""
-    #     cache.delete(self._courses_with_enrollment_cache_name)
 
 
 course_service = CourseService()
