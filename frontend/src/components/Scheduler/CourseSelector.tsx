@@ -75,14 +75,14 @@ const CourseSelector = ({
         onChange={(c) => c && addCourse((c as CourseOptionType).course)}
       />
       <p>Choose the sections to build your schedule.</p>
-      <Callout
+      {schedule.courses.length > 0 && (<Callout
         message={
           <>
             You have <strong>≤20</strong> possible schedules remaining with the
             following course selections.
           </>
         }
-      />
+      />)}
       <div>
         <ScheduleContext.Provider value={{ schedule, setSchedule }}>
           {schedule.courses.map((course) => (
