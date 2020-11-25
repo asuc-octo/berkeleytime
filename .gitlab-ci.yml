@@ -1,7 +1,7 @@
 image: gcr.io/berkeleytime-218606/gitlab-runner:latest # infra/docker/gitlab-runner/Dockerfile
 variables:
-  CI_COMMIT_BEFORE_SHA_SHORT: ${CI_COMMIT_BEFORE_SHA}
   FILEPATH_DEPLOY_BACKEND: infra/k8s/default/bt-backend.yaml
+  FILEPATH_DEPLOY_DATA: infra/k8s/default/bt-backend-data-updater.yaml
   FILEPATH_DEPLOY_FRONTEND: infra/k8s/default/bt-frontend.yaml
   FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND: backend
   FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND: frontend
@@ -11,6 +11,7 @@ variables:
 
 stages:
   - build
+  - deploy-dev
   - deploy-staging
   - deploy-prod
 
@@ -22,20 +23,14 @@ stages:
 .before_deploy:
   before_script:
     - SECRET_GOOGLE_SERVICE_ACCOUNT_JSON=$(cat $SECRET_GOOGLE_SERVICE_ACCOUNT_JSON) # We put credentials into a variable that goes to /etc/google/auth.json in back-end container
-    - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
-    - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
 
 build-backend:
   stage: build
   extends: .before_build
-  only:
-    refs:
-      - master
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
         gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
-        gcloud container images add-tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_BACKEND}:latest --project $PROJECT_ID
       else
         echo "Docker image of this commit already exists: ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}"
       fi
@@ -43,17 +38,24 @@ build-backend:
 build-frontend:
   stage: build
   extends: .before_build
-  only:
-    refs:
-      - master
   script:
     - >
       if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
         gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
-        gcloud container images add-tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} ${GCR_PATH_FRONTEND}:latest --project $PROJECT_ID
       else
         echo "Docker image of this commit already exists: ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA}"
       fi
+
+deploy-dev:
+  stage: deploy-dev
+  extends: .before_deploy
+  except:
+    refs:
+      - master
+  environment:
+    name: staging
+  script:
+    - /usr/bin/npm --prefix infra/tricycle install && /bin/node infra/tricycle
 
 deploy-staging:
   stage: deploy-staging
@@ -64,7 +66,9 @@ deploy-staging:
   environment:
     name: staging
   script:
-    - echo deployed bt-${CI_ENVIRONMENT_NAME}
+    - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_DATA | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
 
 deploy-prod:
   stage: deploy-prod
@@ -76,4 +80,6 @@ deploy-prod:
     name: prod
   when: manual
   script:
-    - echo deployed bt-${CI_ENVIRONMENT_NAME}
+    - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_DATA | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS

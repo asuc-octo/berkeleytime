@@ -1,11 +1,15 @@
 # This file intended to run only ONCE on new cluster and used as reference after
 # Manually authenticate with gcloud-sdk first if necessary before proceeding
 # gcloud auth login
+# Assume that github repo = /berkeleytime
 
 # To switch domain prefix (ex: ocf.berkeleytime.com -> gcp.berkeleytime.com)
 # PREVIOUS=ocf.berkeleytime.com
 # NEW=gcp.berkeleytime.com
 # find /berkeleytime -type f -name "*" -exec sed -i "s/$PREVIOUS/$NEW/g" "{}" \;
+
+# OCF only (stops resetting root password and account credentials)
+# sudo puppet agent --disable
 
 apt update
 apt install -y curl pv
@@ -95,7 +99,7 @@ done
 # > Backup >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
 apt install -y nodejs
-crontab -l | { cat; echo "0 11 * * * /usr/bin/npm --prefix /berkeleytime/backup install && /bin/node /berkeleytime/backup"; } | crontab -
+crontab -l | { cat; echo "0 11 * * * /usr/bin/npm --prefix /berkeleytime/infra/backup install && /bin/node /berkeleytime/infra/backup"; } | crontab -
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Backup <
 
 # > Regular k8s apps >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

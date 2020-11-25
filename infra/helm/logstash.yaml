@@ -45,7 +45,7 @@ logstashPipeline:
         geoip {
         # http://idcsec.com/2019/08/17/grafana可视化ingress-nginx日志日志分析，logstash配置/
         # https://knner.wang/2019/12/15/adding-filebeat-and-logstash-to-collect-and-processing-logs-in-kubernetes.html
-          source => "[client_ip]"
+          source => "[nginx][client_ip]"
           target => "[geoip]"
         } # https://stackoverflow.com/questions/36631754/elasticsearch-default-mapping-nested-fields
       }
