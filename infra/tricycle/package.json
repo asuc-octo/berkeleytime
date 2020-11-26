@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "promisify-child-process": "^4.1.1",
+    "promisify-child-process": "^4.1.1"
   }
 }
