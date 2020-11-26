@@ -24,7 +24,7 @@ const {
 
 const MAX_NUMBER_OF_LIVE_DEV_BRANCHES = 3;
 const BASE_NAME_DEPLOYMENT_BACKEND = `bt-backend-dev-`;
-const FILEPATH_DEPLOY_INGRESS = `infra/k8s/default/bt-ingress-tertiary.yaml`;
+const FILEPATH_DEPLOY_INGRESS = `infra/k8s/default/bt-ingress-tricycle.yaml`;
 
 await tee(
   `export CI_ENVIRONMENT_NAME=dev-${CI_COMMIT_BRANCH}; envsubst < ${FILEPATH_DEPLOY_BACKEND} | kubectl apply -f - --kubeconfig ${SECRET_KUBERNETES_CREDENTIALS}`
