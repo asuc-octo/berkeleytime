@@ -1,40 +1,21 @@
 import graphene
-from graphene import Node
-from graphene_django import DjangoObjectType
-from graphene_django.filter import DjangoFilterConnectionField
-from graphql import GraphQLError
 from graphql_relay.node.node import from_global_id
 from django.db.models import Sum
 
 from enrollment.models import Enrollment
-from catalog.models import Course
+from catalog.models import Course, Section
 from catalog.schema import CourseType, SectionType
 
 # telebears
 from berkeleytime.settings import (
     TELEBEARS, CURRENT_SEMESTER, CURRENT_YEAR, PAST_SEMESTERS_TELEBEARS
 )
-# new sections
-from catalog.resource import sis_class_resource
-
-
-class EnrollmentType(DjangoObjectType):
-    class Meta:
-        model = Enrollment
-        filter_fields = '__all__'
-        interfaces = (Node, )
-
-    enrolled_percent = graphene.Float()
-    waitlisted_percent = graphene.Float()
-
-    def resolve_enrolled_percent(parent, info):
-        return round(parent.enrolled / parent.enrolled_max, 3) if parent.enrolled_max else -1
-
-    def resolve_waitlisted_percent(parent, info):
-        return round(parent.waitlisted / parent.waitlisted_max, 3) if parent.waitlisted_max else -1
+# real time sis
+from enrollment.service import enrollment_service
 
 class EnrollmentData(graphene.ObjectType):
-    """ Proxy for enrollment object """
+    """ Proxy for enrollment object. Using this instead of
+    a DjangoObjectType gives us higher flexibility of the data. """
     day = graphene.Int()
     date_created = graphene.Date()
     
@@ -47,6 +28,7 @@ class EnrollmentData(graphene.ObjectType):
     waitlisted_percent = graphene.Float()
 
 class TelebearData(graphene.ObjectType):
+    """ Telebears JSON """
     phase1_start = graphene.Date()
     phase1_end = graphene.Date()
     phase2_start = graphene.Date()
@@ -54,29 +36,36 @@ class TelebearData(graphene.ObjectType):
     adj_start = graphene.Date()
 
 class EnrollmentInfo(graphene.ObjectType):
-    """ Aggregate enrollment """
+    """ The return format of both queries """
     course = graphene.Field(CourseType)
-    section = graphene.Field(SectionType)
+    section = graphene.List(SectionType)
+    # using a list since aggreagte can have multple sections
+    
+    telebears = graphene.Field(TelebearData)
+
     data = graphene.List(EnrollmentData)
+
     enrolled_max = graphene.Int()
     enrolled_percent_max = graphene.Float()
     enrolled_scale_max = graphene.Int()
+
     waitlisted_max = graphene.Int()
     waitlisted_percent_max = graphene.Float()
     waitlisted_scale_max = graphene.Int()
-    telebears = graphene.Field(TelebearData)
-
+    
 
 def create_enrollment_data(data, phase1_start):
     """ Creates an enrollment graphene type from
     raw data.
     
     Args:
-    data -- dictionary with fields enrolled, enrolled_max, waitlisted, waitlisted_max, and date_created
-    phase1_start -- datetime of phase 1 start date
+        data: dictionary with fields enrolled, enrolled_max,
+              waitlisted, waitlisted_max, and date_created
+        phase1_start: datetime of phase 1 start date
 
-    Return: EnrollmentData object
-     """ 
+    Return:
+        EnrollmentData object
+    """ 
     enrollment = EnrollmentData(**data)
 
     # manually add additional fields
@@ -85,12 +74,47 @@ def create_enrollment_data(data, phase1_start):
     enrollment.waitlisted_percent = round(enrollment.waitlisted / enrollment.waitlisted_max, 3) \
                                     if enrollment.waitlisted_max else -1
     enrollment.day = (enrollment.date_created - phase1_start).days + 1
+
     return enrollment
+
+def queryset_to_enrollment(enrollments, telebears):
+    """ Convert queryset to EnrollmentData object.
+    
+    Args:
+        enrollments: queryset with values enrolled, enrolled_max,
+                     waitlisted, waitlisted_max, and date_created
+        telebears: telebears dictionary
+
+    Return:
+        list of EnrollmentData, highest enrollment percentage, highest waitlist percentage
+    """
+    enrollment_data = []
+    enrolled_outlier = 1.0
+    waitlisted_outlier = 1.0
+    for data in enrollments:
+        model = create_enrollment_data(data, telebears.phase1_start)
+        enrollment_data.append(model)
+
+        # outliers
+        if model.enrolled_percent > enrolled_outlier:
+            enrolled_outlier = model.enrolled_percent
+        if model.waitlisted_percent > waitlisted_outlier:
+            waitlisted_outlier = model.waitlisted_percent
+
+    return enrollment_data, enrolled_outlier, waitlisted_outlier
+
+def get_telebears(semester, year):
+    if semester == CURRENT_SEMESTER and str(year) == CURRENT_YEAR:
+        return TelebearData(**TELEBEARS)
+    else:
+        return TelebearData(**PAST_SEMESTERS_TELEBEARS.get(f'{semester} {year}', {}))
 
 
 class Query(graphene.ObjectType):
-    all_enrollments = DjangoFilterConnectionField(EnrollmentType)
-    enrollment = Node.Field(EnrollmentType)
+    all_enrollments = graphene.Field(
+        EnrollmentInfo,
+        section_id = graphene.ID()
+    )
     aggregated_enrollment_by_semester = graphene.Field(
         EnrollmentInfo,
         course_id = graphene.ID(),
@@ -98,8 +122,62 @@ class Query(graphene.ObjectType):
         year = graphene.Int()
     )
 
+    def resolve_all_enrollments(root, info, section_id):
+        section = Section.objects.get(pk = from_global_id(section_id)[1])
+        enrollments = section.enrollment_set \
+                             .order_by('date_created') \
+                             .values(
+                                 'date_created',
+                                 'enrolled',
+                                 'enrolled_max',
+                                 'waitlisted',
+                                 'waitlisted_max'
+                                 )
+        
+
+        telebears = get_telebears(section.semester, section.year)
+
+        # convert queryset to graphene models
+        models, enrolled_outlier, waitlisted_outlier = queryset_to_enrollment(enrollments, telebears)
+
+        # sis - get real time data
+        if section.semester == CURRENT_SEMESTER and str(section.year) == CURRENT_YEAR:
+            sis_data = enrollment_service.get_live_enrollment(
+                semester=section.semester,
+                year=section.year,
+                course_id=section.course.id,
+                abbreviation=section.course.abbreviation,
+                course_number=section.course.course_number,
+                ccn=section.ccn
+            )[0]
+
+            # update the last data
+            models[-1] = create_enrollment_data(sis_data, telebears.phase1_start)
+
+        # get section percentages
+        enrolled_max = models[-1].enrolled_max
+        enrolled_percent_max = enrolled_outlier * 1.10
+        enrolled_scale_max = int(enrolled_max * enrolled_percent_max)
+        
+        waitlisted_max = models[-1].waitlisted_max
+        waitlisted_percent_max = waitlisted_outlier * 1.10
+        waitlisted_scale_max = int(waitlisted_max * waitlisted_percent_max)
+
+        return EnrollmentInfo(
+            course = section.course,
+            section = [section],
+            telebears = telebears,
+            data = models,
+            enrolled_max = enrolled_max,
+            enrolled_percent_max = enrolled_percent_max,
+            enrolled_scale_max = enrolled_scale_max,
+            waitlisted_max = waitlisted_max,
+            waitlisted_percent_max = waitlisted_percent_max,
+            waitlisted_scale_max = waitlisted_scale_max
+        )
+
+
     def resolve_aggregated_enrollment_by_semester(root, info, course_id, semester, year):
-        current_term = semester == CURRENT_SEMESTER and str(year) == CURRENT_YEAR
         course = Course.objects.get(pk = from_global_id(course_id)[1])
         sections = course.section_set.all().filter(semester = semester, year = year, disabled = False, is_primary = True)
         enrollments = Enrollment.objects.filter(section__in = sections) \
@@ -112,32 +190,17 @@ class Query(graphene.ObjectType):
                                         ) \
                                         .order_by('date_created')
 
-        # telebears
-        if current_term:
-            telebears = TelebearData(**TELEBEARS)
-        else:
-            telebears = TelebearData(**PAST_SEMESTERS_TELEBEARS.get(f'{semester} {year}', {}))
+        telebears = get_telebears(semester, year)
 
-        # django annotate dict to enrollment data
-        models = []
-        enrolled_outlier = 1.0
-        waitlisted_outlier = 1.0
-        for data in enrollments:
-            enrollment = create_enrollment_data(data, telebears.phase1_start)
-            models.append(enrollment)
-
-            # outliers
-            if enrollment.enrolled_percent > enrolled_outlier:
-                enrolled_outlier = enrollment.enrolled_percent
-            if enrollment.waitlisted_percent > waitlisted_outlier:
-                waitlisted_outlier = enrollment.waitlisted_percent
+        # convert queryset to graphene models
+        models, enrolled_outlier, waitlisted_outlier = queryset_to_enrollment(enrollments, telebears)
         
-        # sis
-        if current_term:
-            sis_data = sis_class_resource.get(
+        # sis - get real time data
+        if semester == CURRENT_SEMESTER and str(year) == CURRENT_YEAR:
+            sis_data = enrollment_service.get_live_enrollment(
                 semester=semester,
                 year=year,
-                course_id=course_id,
+                course_id=course.id,
                 abbreviation=course.abbreviation,
                 course_number=course.course_number
             )
@@ -145,11 +208,10 @@ class Query(graphene.ObjectType):
             # aggregate over sections
             last_enrolled, last_waitlisted, last_enrolled_max, last_waitlisted_max = 0, 0, 0, 0
             for section in sis_data:
-                if section['association']['primary'] and section['printInScheduleOfClasses']:
-                    last_enrolled += section['enrollmentStatus']['enrolledCount']
-                    last_waitlisted += section['enrollmentStatus']['waitlistedCount']
-                    last_enrolled_max += section['enrollmentStatus']['maxEnroll']
-                    last_waitlisted_max += section['enrollmentStatus']['maxWaitlist']
+                last_enrolled += section['enrolled']
+                last_waitlisted += section['waitlisted']
+                last_enrolled_max += section['enrolled_max']
+                last_waitlisted_max += section['waitlisted_max']
 
             # update the last data
             models[-1] = create_enrollment_data({
@@ -157,7 +219,7 @@ class Query(graphene.ObjectType):
                 'waitlisted': last_waitlisted,
                 'enrolled_max': last_enrolled_max,
                 'waitlisted_max': last_waitlisted_max,
-                'date_created': models[-1].date_created
+                'date_created': sis_data[-1]['date_created']
             }, telebears.phase1_start)
 
         # get section percentages
@@ -171,12 +233,13 @@ class Query(graphene.ObjectType):
 
         return EnrollmentInfo(
             course = course,
+            section = sections,
+            telebears = telebears,
             data = models,
             enrolled_max = enrolled_max,
             enrolled_percent_max = enrolled_percent_max,
             enrolled_scale_max = enrolled_scale_max,
             waitlisted_max = waitlisted_max,
             waitlisted_percent_max = waitlisted_percent_max,
-            waitlisted_scale_max = waitlisted_scale_max,
-            telebears = telebears
+            waitlisted_scale_max = waitlisted_scale_max
         )
