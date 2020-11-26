@@ -2,7 +2,7 @@ import BTSelect from 'components/Custom/Select';
 import { CourseOverviewFragment } from 'graphql/graphql';
 import React, { Dispatch, SetStateAction, useMemo } from 'react';
 import { courseToName } from 'utils/courses/course';
-import { courseFilterOption } from 'utils/courses/search';
+import { reactSelectCourseSearch } from 'utils/courses/search';
 import { compareDepartmentName } from 'utils/courses/sorting';
 import { Semester } from 'utils/playlists/semesters';
 import {
@@ -71,18 +71,20 @@ const CourseSelector = ({
         options={sortedCourses.filter(
           (course) => !hasCourseById(schedule, course.value)
         )}
-        filterOption={courseFilterOption}
+        filterOption={reactSelectCourseSearch}
         onChange={(c) => c && addCourse((c as CourseOptionType).course)}
       />
       <p>Choose the sections to build your schedule.</p>
-      {schedule.courses.length > 0 && (<Callout
-        message={
-          <>
-            You have <strong>≤20</strong> possible schedules remaining with the
-            following course selections.
-          </>
-        }
-      />)}
+      {schedule.courses.length > 0 && (
+        <Callout
+          message={
+            <>
+              You have <strong>≤20</strong> possible schedules remaining with
+              the following course selections.
+            </>
+          }
+        />
+      )}
       <div>
         <ScheduleContext.Provider value={{ schedule, setSchedule }}>
           {schedule.courses.map((course) => (

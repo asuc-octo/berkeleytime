@@ -2,7 +2,7 @@
   border: 1px solid #E5E5E5;
   border-radius: 8px;
 
-  padding: 1.3rem 2rem 1rem;
+  padding: 1.3rem 1.5rem 1rem;
 
   overflow: hidden;
   position: relative;
@@ -18,7 +18,11 @@
   }
 
   section > * {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.3rem;
+  }
+
+  section + section {
+    margin-top: 1rem;
   }
 
   h4 {
@@ -34,6 +38,7 @@
 
   .course-card-scroll {
     padding-left: 4px;
+    margin: 0.5rem 0;
   }
 
   .section-label {

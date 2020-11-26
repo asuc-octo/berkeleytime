@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 
 import { fetchGradeSelected } from '../../redux/actions';
 import { search } from 'utils/search';
+import { reactSelectCourseSearch } from 'utils/courses/search';
 
 const sortOptions = [
   { value: 'instructor', label: 'By Instructor' },
@@ -36,7 +37,6 @@ class GradesSearchBar extends Component {
     this.buildSecondaryOptions = this.buildSecondaryOptions.bind(this);
     this.getFilteredSections = this.getFilteredSections.bind(this);
     this.addSelected = this.addSelected.bind(this);
-    this.filterOptions = this.filterOptions.bind(this);
     this.reset = this.reset.bind(this);
   }
 
@@ -274,12 +274,6 @@ class GradesSearchBar extends Component {
     this.reset();
   }
 
-  filterOptions(option, query) {
-    return search(query, option.lowercaseLabel, 0) >= 0;
-    // Super non deterministic error where sometimes option.data or option.data.course
-    // refers to the course dict???
-    // https://github.com/asuc-octo/berkeleytime/issues/294
-  }
 
   reset() {
     this.setState({
@@ -343,33 +337,36 @@ class GradesSearchBar extends Component {
               placeholder="Choose a class..."
               options={this.buildCoursesOptions(classes)}
               onChange={this.handleClassSelect}
-              filterOption={this.filterOptions}
+              filterOption={reactSelectCourseSearch}
               components={{
-                IndicatorSeparator: () => null
+                IndicatorSeparator: () => null,
               }}
               styles={customStyles}
             />
           </Col>
-          {!isMobile ?
-          <Col lg={2}>
-            <Select
-              name="sortBy"
-              value={selectType === 'instructor' ? sortOptions[0] : sortOptions[1]}
-              placeholder="Sort by"
-              options={sortOptions}
-              isClearable={false}
-              onChange={this.handleSortSelect}
-              isDisabled={!selectedClass}
-              components={{
-                IndicatorSeparator: () => null
-              }}
-              styles={customStyles}
-            />
-          </Col> : null }
+          {!isMobile ? (
+            <Col lg={2}>
+              <Select
+                name="sortBy"
+                value={
+                  selectType === 'instructor' ? sortOptions[0] : sortOptions[1]
+                }
+                placeholder="Sort by"
+                options={sortOptions}
+                isClearable={false}
+                onChange={this.handleSortSelect}
+                isDisabled={!selectedClass}
+                components={{
+                  IndicatorSeparator: () => null,
+                }}
+                styles={customStyles}
+              />
+            </Col>
+          ) : null}
           <Col xs={6} sm={6} lg={3}>
             <Select
               name="instrSems"
-              placeholder={!isMobile ? "Select an option...": "Select..."}
+              placeholder={!isMobile ? 'Select an option...' : 'Select...'}
               value={onePrimaryOption ? primaryOptions[0] : primaryOption}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
@@ -377,7 +374,7 @@ class GradesSearchBar extends Component {
               isClearable={false}
               searchable={false}
               components={{
-                IndicatorSeparator: () => null
+                IndicatorSeparator: () => null,
               }}
               styles={customStyles}
             />
@@ -385,7 +382,7 @@ class GradesSearchBar extends Component {
           <Col xs={6} sm={6} lg={3}>
             <Select
               name="section"
-              placeholder={!isMobile ? "Select an option...": "Select..."}
+              placeholder={!isMobile ? 'Select an option...' : 'Select...'}
               value={oneSecondaryOption ? secondaryOptions[0] : secondaryOption}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}
@@ -393,7 +390,7 @@ class GradesSearchBar extends Component {
               isClearable={false}
               searchable={false}
               components={{
-                IndicatorSeparator: () => null
+                IndicatorSeparator: () => null,
               }}
               styles={customStyles}
             />
@@ -401,7 +398,9 @@ class GradesSearchBar extends Component {
           <Col xs={12} sm={12} lg={1}>
             <Button
               onClick={this.addSelected}
-              disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
+              disabled={
+                !selectedClass || !(selectPrimary && selectSecondary) || isFull
+              }
             >
               Add Class
             </Button>
