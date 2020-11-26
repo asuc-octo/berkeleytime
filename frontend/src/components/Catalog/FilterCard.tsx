@@ -1,5 +1,5 @@
 import { CourseOverviewFragment } from 'graphql/graphql';
-import React, { CSSProperties, memo, PureComponent, ReactNode } from 'react';
+import React, { CSSProperties, memo, ReactNode } from 'react';
 import { CourseSortAttribute } from 'utils/courses/sorting';
 import { ReactComponent as BookmarkSaved } from '../../assets/svg/catalog/bookmark-saved.svg';
 import { ReactComponent as BookmarkUnsaved } from '../../assets/svg/catalog/bookmark-unsaved.svg';

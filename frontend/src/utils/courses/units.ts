@@ -46,8 +46,8 @@ export function parseUnits(string: string): Units {
   } else {
     const value = +string;
     return {
-      lowerBound: +string,
-      upperBound: +string,
+      lowerBound: value,
+      upperBound: value,
     };
   }
 }

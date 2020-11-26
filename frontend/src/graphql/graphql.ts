@@ -76,6 +76,7 @@ export interface QueryAllCoursesArgs {
   lastUpdated?: Maybe<Scalars['DateTime']>;
   hasGrades?: Maybe<Scalars['Boolean']>;
   inPlaylists?: Maybe<Scalars['String']>;
+  idIn?: Maybe<Scalars['String']>;
 }
 
 
@@ -626,7 +627,7 @@ export interface Verify {
 
 export type CourseFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, 'title' | 'units' | 'waitlisted' | 'openSeats' | 'letterAverage' | 'lastUpdated' | 'id' | 'hasEnrollment' | 'gradeAverage' | 'enrolledPercentage' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'enrolled' | 'abbreviation' | 'prerequisites'>
+  & Pick<CourseType, 'title' | 'units' | 'waitlisted' | 'openSeats' | 'letterAverage' | 'gradeAverage' | 'lastUpdated' | 'id' | 'hasEnrollment' | 'enrolledPercentage' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'enrolled' | 'abbreviation' | 'prerequisites'>
   & { playlistSet: (
     { __typename?: 'PlaylistTypeConnection' }
     & { edges: Array<Maybe<(
@@ -801,6 +802,7 @@ export const CourseFragmentDoc = gql`
   waitlisted
   openSeats
   letterAverage
+  gradeAverage
   lastUpdated
   id
   hasEnrollment

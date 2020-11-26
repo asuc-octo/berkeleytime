@@ -9,7 +9,6 @@ import { Semester } from 'utils/playlists/semesters';
 
 import { ReactComponent as Trash } from '../../../assets/svg/common/trash.svg';
 import CourseCard from './CourseCard';
-import { useScheduleContext } from '../ScheduleContext';
 
 type Props = {
   courseId: string;
@@ -36,7 +35,7 @@ const SchedulerCourse = ({
   semester,
   didRemove,
 }: Props) => {
-  const { data, loading, error } = useGetCourseForIdQuery({
+  const { data, loading } = useGetCourseForIdQuery({
     variables: {
       id: courseId,
       year: semester.year,

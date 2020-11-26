@@ -4,6 +4,7 @@ fragment Course on CourseType {
   waitlisted
   openSeats
   letterAverage
+  gradeAverage
   lastUpdated
   id
   hasEnrollment

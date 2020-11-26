@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import Markdown from 'react-markdown';
 import Description from '../components/Recruiting/Description';
 
 export const PrivacyPolicy: FC = () => (

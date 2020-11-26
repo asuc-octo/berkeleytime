@@ -1,7 +1,6 @@
 import { SectionFragment } from 'graphql/graphql';
 import React, { CSSProperties } from 'react';
 import { Table } from 'react-bootstrap';
-import { daysToString, formatTime } from 'utils/date';
 
 import denero from '../../assets/img/eggs/denero.png';
 import hug from '../../assets/img/eggs/hug.png';

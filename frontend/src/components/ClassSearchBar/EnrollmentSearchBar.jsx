@@ -6,14 +6,13 @@ import {
 import hash from 'object-hash';
 
 import FilterResults from '../Catalog/FilterResults';
-import { reactSelectCourseSearch } from '../../utils/search';
 
 // import 'react-virtualized-select/styles.css'
 import { fetchEnrollSelected } from '../../redux/actions';
 import { connect } from "react-redux";
+import { reactSelectCourseSearch } from 'utils/courses/search';
 
 class EnrollmentSearchBar extends Component {
-
   constructor(props) {
     super(props);
 
@@ -38,31 +37,31 @@ class EnrollmentSearchBar extends Component {
 
   componentDidMount() {
     let { fromCatalog } = this.props;
-    if(fromCatalog) {
-      this.handleClassSelect({value: fromCatalog.id, addSelected: true});
+    if (fromCatalog) {
+      this.handleClassSelect({ value: fromCatalog.id, addSelected: true });
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.selectPrimary !== this.state.selectPrimary) {
       this.setState({
-        selectPrimary: nextProps.selectPrimary
+        selectPrimary: nextProps.selectPrimary,
       });
     }
     if (nextProps.selectSecondary !== this.state.selectSecondary) {
       this.setState({
-        selectSecondary: nextProps.selectSecondary
+        selectSecondary: nextProps.selectSecondary,
       });
     }
   }
 
   handleClassSelect(updatedClass) {
     const { fetchEnrollSelected } = this.props;
-    if(updatedClass === null) {
+    if (updatedClass === null) {
       this.reset();
       this.setState({
         selectedClass: 0,
-      })
+      });
       return;
     }
 
@@ -78,13 +77,17 @@ class EnrollmentSearchBar extends Component {
   handlePrimarySelect(primary) {
     this.setState({
       selectPrimary: primary ? primary.value : '',
-      selectSecondary: primary ? { value: 'all', label: 'All Instructors' } : '',
+      selectSecondary: primary
+        ? { value: 'all', label: 'All Instructors' }
+        : '',
     });
   }
 
   handleSecondarySelect(secondary) {
     this.setState({
-      selectSecondary: secondary ? secondary : { value: 'all', label: 'All Instructors' },
+      selectSecondary: secondary
+        ? secondary
+        : { value: 'all', label: 'All Instructors' },
     });
   }
 
@@ -92,7 +95,7 @@ class EnrollmentSearchBar extends Component {
     if (!courses) {
       return [];
     }
-    const options = courses.map(course => ({
+    const options = courses.map((course) => ({
       value: course.id,
       label: `${course.abbreviation} ${course.course_number}`,
       course,
@@ -113,14 +116,14 @@ class EnrollmentSearchBar extends Component {
     const ret = [];
     const map = new Map();
 
-    for(const section of sections) {
+    for (const section of sections) {
       let semester = this.getSectionSemester(section);
-      if(!map.has(semester)) {
+      if (!map.has(semester)) {
         map.set(semester, true);
         ret.push({
           value: semester,
           label: semester,
-        })
+        });
       }
     }
 
@@ -128,25 +131,35 @@ class EnrollmentSearchBar extends Component {
   }
 
   buildSecondaryOptions(semesters, selectPrimary) {
-    if (semesters.length === 0 || selectPrimary === undefined || selectPrimary === '') {
+    if (
+      semesters.length === 0 ||
+      selectPrimary === undefined ||
+      selectPrimary === ''
+    ) {
       return [];
     }
 
     const ret = [];
 
-    let sections = semesters.filter(semester => this.getSectionSemester(semester) === selectPrimary)[0].sections;
+    let sections = semesters.filter(
+      (semester) => this.getSectionSemester(semester) === selectPrimary
+    )[0].sections;
     if (sections.length > 1) {
       ret.push({ value: 'all', label: 'All Instructors' });
     }
 
     for (var section of sections) {
-      let instructor = `${(section.instructor == null || section.instructor == "")? "None" : section.instructor} / ${section.section_number}`;
-      ret.push( {
+      let instructor = `${
+        section.instructor == null || section.instructor == ''
+          ? 'None'
+          : section.instructor
+      } / ${section.section_number}`;
+      ret.push({
         value: instructor,
         label: instructor,
         sectionNumber: instructor.split(' / ')[1],
-        sectionId: section.section_id
-      } );
+        sectionId: section.section_id,
+      });
     }
     return ret;
   }
@@ -155,16 +168,19 @@ class EnrollmentSearchBar extends Component {
     const { selectPrimary, selectSecondary, sectionNumber } = this.state;
     const { sections } = this.props;
     let ret;
-    ret = sections.filter(section => {
-      return this.getSectionSemester(section) === selectPrimary;
-    })[0].sections
-    .filter(section => {
-      return selectSecondary.value === 'all' ? true : section.instructor === selectSecondary.value.split(' / ')[0];
-    })
-    .filter(section => {
-      return sectionNumber ? section.section_number === sectionNumber : true;
-    })
-    .map(s => s.section_id);
+    ret = sections
+      .filter((section) => {
+        return this.getSectionSemester(section) === selectPrimary;
+      })[0]
+      .sections.filter((section) => {
+        return selectSecondary.value === 'all'
+          ? true
+          : section.instructor === selectSecondary.value.split(' / ')[0];
+      })
+      .filter((section) => {
+        return sectionNumber ? section.section_number === sectionNumber : true;
+      })
+      .map((s) => s.section_id);
     return ret;
   }
 
@@ -172,32 +188,32 @@ class EnrollmentSearchBar extends Component {
     const { selectedClass, selectPrimary, selectSecondary } = this.state;
     const { sections } = this.props;
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
-    let instructor = "";
+    let instructor = '';
     let sectionId = [];
     if (secondaryOptions.length === 1) {
       instructor = secondaryOptions[0].value;
-      sectionId = [secondaryOptions[0].sectionId]
+      sectionId = [secondaryOptions[0].sectionId];
     } else {
       if (selectSecondary.value === 'all') {
         instructor = 'all';
       } else {
-        instructor = selectSecondary.value
+        instructor = selectSecondary.value;
       }
       if (selectSecondary.sectionId) {
-        sectionId = [selectSecondary.sectionId]
+        sectionId = [selectSecondary.sectionId];
       } else {
-        sectionId = this.getFilteredSections()
+        sectionId = this.getFilteredSections();
       }
     }
     let playlist = {
       courseID: selectedClass,
       instructor: instructor,
       semester: selectPrimary,
-      sections: sectionId
-    }
+      sections: sectionId,
+    };
 
     playlist.id = hash(playlist);
-    this.props.addCourse(playlist)
+    this.props.addCourse(playlist);
     this.reset();
   }
 
@@ -205,7 +221,7 @@ class EnrollmentSearchBar extends Component {
     this.setState({
       selectPrimary: '',
       selectSecondary: '',
-    })
+    });
   }
 
   render() {
@@ -213,14 +229,18 @@ class EnrollmentSearchBar extends Component {
     const { selectPrimary, selectSecondary, selectedClass } = this.state;
     let primaryOptions = this.buildPrimaryOptions(sections);
     let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
-    let onePrimaryOption = primaryOptions && primaryOptions.length === 1 && selectPrimary;
-    let oneSecondaryOption = secondaryOptions && secondaryOptions.length ===  1 && selectSecondary.value;
+    let onePrimaryOption =
+      primaryOptions && primaryOptions.length === 1 && selectPrimary;
+    let oneSecondaryOption =
+      secondaryOptions &&
+      secondaryOptions.length === 1 &&
+      selectSecondary.value;
 
     let primaryOption = { value: selectPrimary, label: selectPrimary };
     let secondaryOption = selectSecondary;
 
     if (selectSecondary === 'all') {
-      secondaryOption = { value: 'all', label: "All Instructors" };
+      secondaryOption = { value: 'all', label: 'All Instructors' };
     }
 
     if (selectPrimary === '') {

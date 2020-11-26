@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 
 import people from '../../assets/svg/catalog/people.svg';
@@ -100,7 +100,7 @@ const ClassDescription = ({
   } else {
     // collapse
     let descRows = Math.round(course.description.length / charsPerRow);
-    if (descRows > 3 || (descRows == 3 && course.prerequisites)) {
+    if (descRows > 3 || (descRows === 3 && course.prerequisites)) {
       description = description.slice(0, 3 * charsPerRow - moreOffset) + '...';
       moreDesc = true;
     }
@@ -109,7 +109,7 @@ const ClassDescription = ({
       if (descRows >= 1 && prereqs.length > charsPerRow) {
         prereqs = prereqs.slice(0, charsPerRow - moreOffset) + '...';
         morePrereq = true;
-      } else if (descRows == 0 && prereqs.length > 2 * charsPerRow) {
+      } else if (descRows === 0 && prereqs.length > 2 * charsPerRow) {
         prereqs = prereqs.slice(0, 2 * charsPerRow - moreOffset) + '...';
         morePrereq = true;
       }
@@ -127,7 +127,7 @@ const ClassDescription = ({
           <h6>{course.title}</h6>
           <div className="stats">
             <div className="statline">
-              <img src={people} />
+              <img src={people} alt="" />
               Enrolled: &nbsp;
               {course.enrolled !== -1 ? (
                 <div className="statline-div">
@@ -138,10 +138,11 @@ const ClassDescription = ({
                   &nbsp;
                   <a
                     href={toEnrollment.pathname}
+                    // eslint-disable-next-line react/jsx-no-target-blank
                     target="_blank"
                     className="statlink"
                   >
-                    <img src={launch} />
+                    <img src={launch} alt="" />
                   </a>
                 </div>
               ) : (
@@ -149,10 +150,15 @@ const ClassDescription = ({
               )}
             </div>
             <div className="statline">
-              <img src={chart} />
+              <img src={chart} alt="" />
               Average Grade: &nbsp;
               {course.gradeAverage !== -1 ? (
-                <div className="statline-div">
+                <div
+                  className="statline-div"
+                  title={course.gradeAverage ? `Avg Grade: ${
+                    (course.gradeAverage * 25).toFixed(1)
+                  }%` : undefined}
+                >
                   {applyIndicatorGrade(
                     course.letterAverage,
                     course.letterAverage
@@ -160,10 +166,11 @@ const ClassDescription = ({
                   &nbsp;
                   <a
                     href={toGrades.pathname}
+                    // eslint-disable-next-line react/jsx-no-target-blank
                     target="_blank"
                     className="statlink"
                   >
-                    <img src={launch} />
+                    <img src={launch} alt="" />
                   </a>
                 </div>
               ) : (
@@ -171,7 +178,7 @@ const ClassDescription = ({
               )}
             </div>
             <div className="statline">
-              <img src={book} />
+              <img src={book} alt="" />
               {formatUnits(course.units)}
             </div>
           </div>

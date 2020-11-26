@@ -4,8 +4,9 @@
     "es6": true
   },
   "extends": [
+    "react-app",
     "plugin:react/recommended",
-    "airbnb"
+    "prettier"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -22,15 +23,16 @@
     "react"
   ],
   "rules": {
+    "no-labels": "off",
     "arrow-parens": "off",
     "camelcase": "off",
-    "indent": ["error", 2],
     "max-len": "off",
     "no-console": "warn",
     "no-else-return": "off",
     "no-param-reassign": "off",
     "prefer-destructuring": "off",
     "radix": "off",
+    "react/prop-types": "off",
     "react/destructuring-assignment": "off",
     "react/jsx-one-expression-per-line": "off"
   }

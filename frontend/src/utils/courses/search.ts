@@ -44,7 +44,8 @@ export function searchCourse(query: string, courseCode: string, maxPenalty?: num
  * Runs {@link searchCourse} but for react-select
  */
 export function reactSelectCourseSearch(option: any, query: string): boolean {
-  return searchCourse(query, option.lowercaseLabel, 0.3) !== null;
+  console.log('searching', option.lowercaseLabel);
+  return searchCourse(query, option.lowercaseLabel, 0.4) !== null;
 }
 
 /**
