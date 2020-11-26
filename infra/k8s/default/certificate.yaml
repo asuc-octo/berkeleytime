@@ -11,4 +11,6 @@ spec:
   dnsNames:
     - berkeleytime.com
     - "*.berkeleytime.com"
+    - "*.staging.berkeleytime.com"
     - "*.ocf.berkeleytime.com"
+    - "*.staging.ocf.berkeleytime.com"
