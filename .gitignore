@@ -12,7 +12,7 @@ build/requirements.txt
 .sass-cache/
 postgres-data.tar.gz
 bt_main.sql
-.vscode
+/.vscode
 package-lock.json
 node_modules/
 build/docker-compose.yml

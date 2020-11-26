@@ -4,18 +4,15 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
-  Label,
 } from 'recharts';
 import {
   percentileToString
 } from '../../utils/utils';
 
 import vars from '../../variables/Variables';
-import click from '../../assets/img/images/click.png';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
 
 const EmptyLabel = props => {
@@ -91,6 +88,7 @@ export default function GradesGraph({
 
             {!graphEmpty && gradesData.map((item, i) => (
               <Bar
+                key={i}
                 name={`${item.title} • ${item.semester} • ${item.instructor}`}
                 dataKey={item.id}
                 fill={vars.colors[item.colorId]}
@@ -129,6 +127,7 @@ export default function GradesGraph({
             }
             {gradesData.map((item, i) => (
               <Bar
+                key={i}
                 name={`${item.title} • ${item.semester} • ${item.instructor}`}
                 dataKey={item.id}
                 fill={vars.colors[item.colorId]}

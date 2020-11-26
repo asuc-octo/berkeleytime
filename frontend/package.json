@@ -48,6 +48,7 @@
     "build": "npm-run-all codegen -p build:*",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
+    "lint": "eslint .",
     "prod": "serve -s build -p 3000"
   },
   "devDependencies": {

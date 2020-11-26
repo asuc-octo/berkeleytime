@@ -120,8 +120,6 @@ class EnrollmentGraphCard extends Component {
     const telebears = enrollmentData.length ? enrollmentData[0].telebears : {};
     const graphEmpty = enrollmentData.length === 0 || selectedCourses.length === 0;
 
-    let selectedPoint= hoveredClass && hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]
-
     return (
 
         <div className="enrollment-graph">
