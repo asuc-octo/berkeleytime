@@ -15,6 +15,11 @@
             color: $bt-light-text;
             font-weight: 600;
             text-align: right;
+
+            > span {
+                display: block;
+                transform: translateY(-50%);
+            }
         }
     }
 

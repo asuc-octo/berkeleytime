@@ -239,7 +239,7 @@ type Query {
 
   """The ID of the object"""
   course(id: ID!): CourseType
-  allCourses(before: String, after: String, first: Int, last: Int, title: String, department: String, abbreviation: String, courseNumber: String, description: String, units: String, prerequisites: String, gradeAverage: Float, letterAverage: String, hasEnrollment: Boolean, enrolled: Int, enrolledMax: Int, enrolledPercentage: Float, waitlisted: Int, openSeats: Int, lastUpdated: DateTime, hasGrades: Boolean, inPlaylists: String): CourseTypeConnection
+  allCourses(before: String, after: String, first: Int, last: Int, title: String, department: String, abbreviation: String, courseNumber: String, description: String, units: String, prerequisites: String, gradeAverage: Float, letterAverage: String, hasEnrollment: Boolean, enrolled: Int, enrolledMax: Int, enrolledPercentage: Float, waitlisted: Int, openSeats: Int, lastUpdated: DateTime, hasGrades: Boolean, inPlaylists: String, idIn: String): CourseTypeConnection
 
   """The ID of the object"""
   section(id: ID!): SectionType

@@ -20,7 +20,7 @@ type Props = {
 };
 
 /**
- * Outputs the calendar from a scheduler
+ * Outputs the calendar from a schedule object.
  */
 const SchedulerCalendar = ({ schedule }: Props) => {
 

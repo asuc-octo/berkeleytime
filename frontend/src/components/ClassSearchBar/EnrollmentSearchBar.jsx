@@ -6,7 +6,7 @@ import {
 import hash from 'object-hash';
 
 import FilterResults from '../Catalog/FilterResults';
-import { search } from '../../utils/search';
+import { reactSelectCourseSearch } from '../../utils/search';
 
 // import 'react-virtualized-select/styles.css'
 import { fetchEnrollSelected } from '../../redux/actions';
@@ -33,7 +33,6 @@ class EnrollmentSearchBar extends Component {
     this.buildSecondaryOptions = this.buildSecondaryOptions.bind(this);
     this.getFilteredSections = this.getFilteredSections.bind(this);
     this.addSelected = this.addSelected.bind(this);
-    this.filterOptions = this.filterOptions.bind(this);
     this.reset = this.reset.bind(this);
   }
 
@@ -202,13 +201,6 @@ class EnrollmentSearchBar extends Component {
     this.reset();
   }
 
-  filterOptions(option, query) {
-    return search(query, option.lowercaseLabel, 0) >= 0;
-    // Super non deterministic error where sometimes option.data or option.data.course
-    // refers to the course dict???
-    // https://github.com/asuc-octo/berkeleytime/issues/294
-  }
-
   reset() {
     this.setState({
       selectPrimary: '',
@@ -248,56 +240,58 @@ class EnrollmentSearchBar extends Component {
 
     return (
       <Container fluid className="enrollment-search-bar">
-        <Row style={{marginBottom: 10}}>
+        <Row style={{ marginBottom: 10 }}>
           <Col lg={4}>
             <Select
-                name="selectClass"
-                placeholder="Choose a class..."
-                // value={selectedClass}
-                options={this.buildCoursesOptions(classes)}
-                onChange={this.handleClassSelect}
-                filterOption={this.filterOptions}
-                components={{
-                  IndicatorSeparator: () => null
-                }}
-                styles={customStyles}
+              name="selectClass"
+              placeholder="Choose a class..."
+              // value={selectedClass}
+              options={this.buildCoursesOptions(classes)}
+              onChange={this.handleClassSelect}
+              filterOption={reactSelectCourseSearch}
+              components={{
+                IndicatorSeparator: () => null,
+              }}
+              styles={customStyles}
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
             <Select
-                name="instrSems"
-                placeholder={!isMobile ? "Select an option...": "Select..."}
-                value={onePrimaryOption ? primaryOptions[0] : primaryOption}
-                options={primaryOptions}
-                onChange={this.handlePrimarySelect}
-                isDisabled={!selectedClass}
-                isClearable={false}
-                components={{
-                  IndicatorSeparator: () => null
-                }}
-                styles={customStyles}
+              name="instrSems"
+              placeholder={!isMobile ? 'Select an option...' : 'Select...'}
+              value={onePrimaryOption ? primaryOptions[0] : primaryOption}
+              options={primaryOptions}
+              onChange={this.handlePrimarySelect}
+              isDisabled={!selectedClass}
+              isClearable={false}
+              components={{
+                IndicatorSeparator: () => null,
+              }}
+              styles={customStyles}
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
             <Select
-                name="section"
-                placeholder={!isMobile ? "Select an option...": "Select..."}
-                value={oneSecondaryOption ? secondaryOptions[0] : secondaryOption}
-                options={secondaryOptions}
-                onChange={this.handleSecondarySelect}
-                isDisabled={!selectedClass}
-                isClearable={false}
-                components={{
-                  IndicatorSeparator: () => null
-                }}
-                styles={customStyles}
+              name="section"
+              placeholder={!isMobile ? 'Select an option...' : 'Select...'}
+              value={oneSecondaryOption ? secondaryOptions[0] : secondaryOption}
+              options={secondaryOptions}
+              onChange={this.handleSecondarySelect}
+              isDisabled={!selectedClass}
+              isClearable={false}
+              components={{
+                IndicatorSeparator: () => null,
+              }}
+              styles={customStyles}
             />
           </Col>
           <Col lg={2}>
             <Button
               className="btn-bt-green"
               onClick={this.addSelected}
-              disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
+              disabled={
+                !selectedClass || !(selectPrimary && selectSecondary) || isFull
+              }
             >
               Add Class
             </Button>

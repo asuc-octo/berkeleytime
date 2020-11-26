@@ -17,6 +17,7 @@ const CalendarCard = ({ title, description, color }: Props) => {
         background: color,
         color: isLightCard ? '#535353' : '#FFF',
       }}
+      title={title}
     >
       <div className="calendar-card__title">{title}</div>
       <p>{description}</p>

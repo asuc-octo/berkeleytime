@@ -26,7 +26,7 @@ type CourseCalendarProps = {
 
 const CELL_HEIGHT = 60;
 const MIN_HEIGHT = 20;
-const INTER_CELL_PADDING = 2;
+const INTER_CELL_PADDING = 0;
 
 /**
  * Takes a list of cards and returns copies with the `numOverlaps` property set.
@@ -71,7 +71,7 @@ function calculateCellStyle(
     top: visualStartTime * CELL_HEIGHT,
     height: height,
     left: `calc(${(overlapIndex / overlapNum) * 100}% + ${overlapIndex * INTER_CELL_PADDING}px)`,
-    width: `calc(${(1 / overlapNum) * 100}% - ${(overlapNum - 1) * INTER_CELL_PADDING}px)`,
+    width: `calc(${((overlapNum - overlapIndex) / overlapNum) * 100}% - ${(overlapNum - 1) * INTER_CELL_PADDING}px)`,
     '--calendar-card-lines': Math.max(1, Math.floor(height / 40)),
   } as CSSProperties;
 }
@@ -79,7 +79,7 @@ function calculateCellStyle(
 const CourseCalendar = ({
   days = [1, 2, 3, 4, 5],
   startTime = 8,
-  endTime = 18,
+  endTime = 20,
   cards = [],
 }: CourseCalendarProps) => {
   const hourSlots = range(startTime, endTime);
