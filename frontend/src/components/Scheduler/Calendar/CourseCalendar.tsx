@@ -1,5 +1,5 @@
 import React, { CSSProperties, ReactElement } from 'react';
-import CalendarCard, { Props as CalendarCardProps } from './CalendarCard';
+import { Props as CalendarCardProps } from './CalendarCard';
 import { range } from 'utils/range';
 import { dayToLongName, timeToHourString } from 'utils/date';
 
@@ -84,7 +84,7 @@ const CourseCalendar = ({
 }: CourseCalendarProps) => {
   const hourSlots = range(startTime, endTime);
   const cardsByDay = days.map((day) =>
-    cards.filter((c) => c.day == day).sort((a, b) => a.startTime - b.startTime)
+    cards.filter((c) => c.day === day).sort((a, b) => a.startTime - b.startTime)
   );
 
   return (

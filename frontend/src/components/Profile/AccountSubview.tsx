@@ -1,5 +1,4 @@
-import React, { PureComponent, useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
 
 import Property from './Property';
 import ProfileCard from './ProfileCard';

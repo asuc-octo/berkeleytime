@@ -51,19 +51,18 @@ const routes: Array<RouteProps> = [
 const Routes: React.FC = () => (
   <Switch>
     <Redirect from="/" to="/landing" exact />
-    {
-      routes.map(route => (
-        <Route
-          key={route.path as string}
-          path={route.path}
-          component={route.component}
-          exact={route.exact ?? true} // force exact=true unless specified false
-          sensitive
-        />
-      ))
-    }
-    <Route component={Error} /> // 404 page if nothing matches
+    {routes.map((route) => (
+      <Route
+        key={route.path as string}
+        path={route.path}
+        component={route.component}
+        exact={route.exact ?? true} // force exact=true unless specified false
+        sensitive
+      />
+    ))}
+    {/* 404 page if nothing matches */}
+    <Route component={Error} />
   </Switch>
-)
+);
 
 export default Routes

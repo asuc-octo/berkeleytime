@@ -23,9 +23,9 @@ function ClassCardMobile(props) {
     return (
       <div className="class-card-mobile">
         <div className="class-card-mobile-column">
-          <div class="bt-h6">Course Average</div>
-          {nullCheck(courseLetter) ? 
-            <div class="bt-h6">
+          <div className="bt-h6">Course Average</div>
+          {nullCheck(courseLetter) ?
+            <div className="bt-h6">
               <span className={getGradeColor(courseLetter)}>{courseLetter}</span>
               (GPA: {courseGPA})
             </div>
@@ -33,16 +33,16 @@ function ClassCardMobile(props) {
           "--"}
         </div>
         <div className="class-card-mobile-column">
-          <div class="bt-h6">Section Average</div>
-          {nullCheck(sectionLetter) ? 
-            <div class="bt-h6">
+          <div className="bt-h6">Section Average</div>
+          {nullCheck(sectionLetter) ?
+            <div className="bt-h6">
               <span className={getGradeColor(sectionLetter)}>{sectionLetter}</span>
               (GPA: {sectionGPA})
             </div>
             :
             "--"}
         </div>
-      </div> 
+      </div>
     );
   }
 
@@ -54,23 +54,23 @@ function ClassCardMobile(props) {
 
     let date_info = []
     if(latest_point != null && telebears != null) {
-      date_info = getEnrollmentDay(latest_point, telebears); 
+      date_info = getEnrollmentDay(latest_point, telebears);
     }
 
     return (
       <div className="class-card-mobile">
         <div className="class-card-mobile-column">
-          <div class="bt-h6">
+          <div className="bt-h6">
             {date_info ? date_info['period'] + ": " + date_info['daysAfterPeriodStarts'] : "--"}
           </div>
-          <div class="bt-h6">Enrollment Percent:
+          <div className="bt-h6">Enrollment Percent:
             {nullCheck(enrollment_info) ? applyIndicatorEnrollment.apply(null, enrollment_info) : "--"}
-          </div> 
-          <div class="bt-h6">Waitlist Percent:
+          </div>
+          <div className="bt-h6">Waitlist Percent:
             {nullCheck(waitlisted_info) ? applyIndicatorEnrollment.apply(null, waitlisted_info) : "--"}
-          </div> 
-        </div> 
-      </div> 
+          </div>
+        </div>
+      </div>
     );
 
   }

@@ -17,6 +17,8 @@ const cache = new InMemoryCache({
   }
 });
 
+// Enabled only on development to allow for fast local dev. Not enabled on
+// production as we don't want to show out-of-date data.
 if (process.env.NODE_ENV === 'development') {
   const MB = 1 << 20;
   persistCacheSync({

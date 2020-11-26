@@ -13,79 +13,79 @@ const DEFAULT_START_BONUS: number = 0.1;
  * by penalizing ommisions at a much lower rate than transpositions
  */
 export function search(
-    query: string,
-    targetString: string,
-    maxTypos: number = 1,
-    nonAdjacentPenalty: number = DEFAULT_NON_ADJACENT_PENALTY
+  query: string,
+  targetString: string,
+  maxTypos: number = 1,
+  nonAdjacentPenalty: number = DEFAULT_NON_ADJACENT_PENALTY
 ): number | null {
-    // TODO: memo this function.
+  // TODO: memo this function.
 
-    let hlen = targetString.length;
-    let nlen = query.length;
+  let hlen = targetString.length;
+  let nlen = query.length;
 
-    // If the query is longer than the target string, it can never match
-    if (nlen >= hlen) {
-        if (nlen === hlen && query === targetString) {
-            return 0;
-        }
-
-        return null;
+  // If the query is longer than the target string, it can never match
+  if (nlen >= hlen) {
+    if (nlen === hlen && query === targetString) {
+      return 0;
     }
 
-    let penalty = 0;
+    return null;
+  }
 
-    outer: for (let i = 0, j = 0; i < nlen; i++) {
-        let nch = query.charCodeAt(i);
-        let start = j;
+  let penalty = 0;
 
-        // Try to find the search query char.
-        while (j < hlen) {
-            if (targetString.charCodeAt(j++) === nch) {
-                // If the matches char is NOT at the start of word or the
-                // beginning of the string, add a tiny penalty
-                if (j - 1 === 0 || targetString.charAt(j - 1) === ' ') {
-                    penalty -= DEFAULT_START_BONUS;
-                } else {
-                    penalty += Math.min(0.4, (j - start - 1) * nonAdjacentPenalty);
-                }
-                continue outer;
-            }
-        }
+  outer: for (let i = 0, j = 0; i < nlen; i++) {
+    let nch = query.charCodeAt(i);
+    let start = j;
 
-        // This point is reached if the character isn't found.
-        if (penalty < maxTypos) {
-          j = start;
-          penalty += 1;
+    // Try to find the search query char.
+    while (j < hlen) {
+      if (targetString.charCodeAt(j++) === nch) {
+        // If the matches char is NOT at the start of word or the
+        // beginning of the string, add a tiny penalty
+        if (j - 1 === 0 || targetString.charAt(j - 1) === ' ') {
+          penalty -= DEFAULT_START_BONUS;
         } else {
-          return null;
+          penalty += Math.min(0.4, (j - start - 1) * nonAdjacentPenalty);
         }
+        continue outer;
+      }
     }
 
-    if (penalty > maxTypos) {
-        return null;
+    // This point is reached if the character isn't found.
+    if (penalty < maxTypos) {
+      j = start;
+      penalty += 1;
     } else {
-        if (Math.random() < 0.5) console.log(targetString, penalty);
-        return penalty;
+      return null;
     }
+  }
+
+  if (penalty > maxTypos) {
+    return null;
+  } else {
+    if (Math.random() < 0.5) console.log(targetString, penalty);
+    return penalty;
+  }
 }
 
 /**
  * Combines two search queries and returns the best result
  */
 export function combineQueries(queries: (number | null)[]): number | null {
-    let start = Infinity;
-    for (let i = 0; i < queries.length; i++) {
-        const item = queries[i];
-        if (item !== null && item < start) {
-            start = item;
-        }
+  let start = Infinity;
+  for (let i = 0; i < queries.length; i++) {
+    const item = queries[i];
+    if (item !== null && item < start) {
+      start = item;
     }
-    return start === Infinity ? null : start;
+  }
+  return start === Infinity ? null : start;
 }
 
 /**
  * Normalizes a string for seraching
  */
 export function normalizeSearchTerm(value: string) {
-    return value.trim().toLowerCase();
+  return value.trim().toLowerCase();
 }

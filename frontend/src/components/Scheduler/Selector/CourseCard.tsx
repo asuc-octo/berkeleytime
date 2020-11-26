@@ -5,7 +5,6 @@ import {
 import React, { ChangeEvent, CSSProperties, ReactNode } from 'react';
 import { Form } from 'react-bootstrap';
 
-import { formatTime } from 'utils/date';
 import { hasSectionById, Schedule } from 'utils/scheduler/scheduler';
 import { formatLocation, formatSectionTime } from 'utils/sections/section';
 import { groupSections } from 'utils/sections/sort';

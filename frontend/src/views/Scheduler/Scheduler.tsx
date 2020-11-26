@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { Button, ButtonGroup, ButtonToolbar, Col, Row } from 'react-bootstrap';
 import CourseSelector from 'components/Scheduler/CourseSelector';
-import CourseCalendar from 'components/Scheduler/Calendar/CourseCalendar';
 
-import { Semester } from 'utils/playlists/semesters';
 import { useGetCoursesForFilterQuery } from '../../graphql/graphql';
 import BTLoader from 'components/Custom/Loader';
 import useLatestSemester from 'graphql/hooks/latestSemester';

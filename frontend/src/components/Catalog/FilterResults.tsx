@@ -64,7 +64,6 @@ const FilterResults = ({
   return (
     <div className="filter-results">
       {error ? (
-        console.log(error),
         <div className="filter-results-loading">
           <div>A critical error occured.</div>
         </div>

@@ -50,21 +50,21 @@ const About: FC = () => (
       {/* <Button variant="inverted" link_to="/apply">Join Our Team</Button> */}
     </div>
     <div className="group mb-5">
-      <img src={retreat_silly} />
-      <img src={zoom} />
-      <img src={doe} />
-      <img src={grace_janet} />
-      <img src={retreat} />
-      <img src={christina_janet} />
-      <img src={michaels} />
-      <img src={will} />
-      <img src={jemma} />
+      <img src={retreat_silly} alt="" />
+      <img src={zoom} alt="" />
+      <img src={doe} alt="" />
+      <img src={grace_janet} alt="" />
+      <img src={retreat} alt="" />
+      <img src={christina_janet} alt="" />
+      <img src={michaels} alt="" />
+      <img src={will} alt="" />
+      <img src={jemma} alt="" />
     </div>
     <div className="values">
       <h5>Our Values</h5>
       <Row>
         {values.map(value => (
-          <Col xs={12} md={4} className="value-col">
+          <Col key={value.name} xs={12} md={4} className="value-col">
             <div className="value">
               <div className="value-content">
                 <img src={value.svg} alt="value" />

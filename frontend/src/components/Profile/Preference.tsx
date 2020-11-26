@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import Switch from 'react-ios-switch';
 
 type PreferenceProps = {
