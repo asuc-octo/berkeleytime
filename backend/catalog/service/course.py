@@ -31,7 +31,7 @@ class CourseService:
                 unknown_departments=unknown_departments
             )
 
-            self.update_or_create_from_dict(course_dict)
+            course, created = self.update_or_create_from_dict(course_dict)
 
             # Update derived grade fields
             self._update_derived_grade_fields(course)
@@ -61,6 +61,7 @@ class CourseService:
                 'message': 'Exception encountered while updating/creating course',
                 'course_dict': course_dict,
             })
+            return None, False
 
 
     def _update_derived_grade_fields(self, course):
@@ -101,15 +102,12 @@ class CourseService:
         course.enrolled_max = aggregates['enrolled_max__sum']
         course.waitlisted = aggregates['waitlisted__sum']
 
-        if course.enrolled_max == -1 or course.enrolled == -1:
-            return
-
-        if course.enrolled_max != 0:
+        if course.enrolled_max > 0:
             course.enrolled_percentage = min(float(course.enrolled) / float(course.enrolled_max), 1)
+            course.open_seats = max(course.enrolled_max - course.enrolled, 0)
         else:
             course.enrolled_percentage = -1
-
-        course.open_seats = max(course.enrolled_max - course.enrolled, 0)
+            course.open_seats = 0
 
         course.save()
 

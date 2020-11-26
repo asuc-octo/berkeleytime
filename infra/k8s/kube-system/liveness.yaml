@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: healthz
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      component: healthz
+  template:
+    metadata:
+      name: healthz
+      labels:
+        component: healthz
+    spec:
+      hostNetwork: true
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+      containers:
+        - name: healthz
+          image: tapppi/healthz-200
+          ports:
+            - name: tcp
+              containerPort: 8080

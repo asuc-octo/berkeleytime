@@ -25,7 +25,6 @@ import grades.views
 
 # Note: We will begin to deprecate the endpoints seen here in favor of using GraphQL.
 urlpatterns = [
-    # Easier debugging for user models
     path('admin/', admin.site.urls),
 
     path('graphql', jwt_cookie(GraphQLView.as_view(graphiql=True))),

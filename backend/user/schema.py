@@ -31,7 +31,7 @@ class BerkeleytimeUserType(DjangoObjectType):
     @graphene.resolve_only_args
     def resolve_saved_classes(self):
         return self.saved_classes.all()
-        
+
     class Meta:
         model = BerkeleytimeUser
 
@@ -59,7 +59,7 @@ class UpdateUser(graphene.Mutation):
     def mutate(self, info, **kwargs):
         # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
         user = info.context.user.berkeleytimeuser
-        
+
         # update user info
         for key in kwargs:
             if key in UpdateUser._user_fields:
@@ -70,7 +70,7 @@ class UpdateUser(graphene.Mutation):
 class SaveClass(graphene.Mutation):
     class Arguments:
         class_id = graphene.ID()
-    
+
     # output
     user = graphene.Field(BerkeleytimeUserType)
 
@@ -88,7 +88,7 @@ class SaveClass(graphene.Mutation):
 class RemoveClass(graphene.Mutation):
     class Arguments:
         class_id = graphene.ID()
-    
+
     # output
     user = graphene.Field(BerkeleytimeUserType)
 
@@ -144,7 +144,7 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
     @refresh_expiration
     def resolve(cls, root, info, token_id):
         info.context._jwt_token_auth = True
-        
+
         # verify google auth
         try:
             idinfo = id_token.verify_oauth2_token(token_id, requests.Request())
@@ -173,7 +173,7 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
         """
         # verify berkeley email
         if 'hd' not in idinfo or idinfo['hd'] != 'berkeley.edu':
-            return GraphQLError('Not berkeley.edu account') 
+            return GraphQLError('Not berkeley.edu account')
 
         # find user in current db based on email
         try:

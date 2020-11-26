@@ -11,26 +11,23 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 """
+
 import os
 import sys
 from pathlib import Path
 from datetime import timedelta
 from urllib.parse import urlparse
 
-from berkeleytime.config.semesters.spring2021 import *
 from berkeleytime.config.general import *
+from berkeleytime.config.semesters.spring2021 import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENV_NAME = os.getenv('ENVIRONMENT_NAME')
 IS_LOCALHOST = ENV_NAME == 'LOCALHOST'
-IS_STAGING = ENV_NAME == 'STAGING'
-IS_PRODUCTION = ENV_NAME == 'PRODUCTION'
-assert IS_LOCALHOST or IS_STAGING or IS_PRODUCTION, f'ENV not set properly: {ENV_NAME}'
 
-
-SECRET_KEY = '***REMOVED***'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # Admins/managers receive 500s and 404s
 ADMINS = MANAGERS = (
@@ -42,18 +39,7 @@ ADMINS = MANAGERS = (
 DEBUG = IS_LOCALHOST
 
 # Allowed hosts
-if IS_LOCALHOST:
-    ALLOWED_HOSTS = ['*']
-elif IS_STAGING:
-    ALLOWED_HOSTS = [
-        'staging.berkeleytime.com',
-    ]
-elif IS_PRODUCTION:
-    ALLOWED_HOSTS = [
-        'berkeleytime.com',
-        'www.berkeleytime.com',
-        'old.berkeleytime.com',
-    ]
+ALLOWED_HOSTS = ['*'] # Wildcard '*' allow is not a security issue because back-end is closed to private Kubernetes traffic
 
 # Database
 pg_instance = urlparse(os.getenv('DATABASE_URL'))
@@ -69,7 +55,14 @@ DATABASES = {
 }
 
 # Cache
-if IS_PRODUCTION or IS_STAGING:
+if IS_LOCALHOST:
+    CACHES = {
+        'default': {
+            'BACKEND': 'redis_cache.RedisCache',
+            'LOCATION': 'redis:6379',
+        }
+    }
+else:
     redis_instance = urlparse(os.getenv('REDIS_URL'))
     CACHES = {
         'default': {
@@ -79,13 +72,6 @@ if IS_PRODUCTION or IS_STAGING:
                 'PASSWORD': redis_instance.password,
                 'DB': 0,
             }
-        }
-    }
-elif IS_LOCALHOST:
-    CACHES = {
-        'default': {
-            'BACKEND': 'redis_cache.RedisCache',
-            'LOCATION': 'redis:6379',
         }
     }
 
@@ -151,54 +137,15 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         },
     },
-    'formatters': {
-        'verbose': {
-            'format': '[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s',
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-        'json': {
-            'class': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-            'format': '%(levelname)s %(asctime)s %(message)s',
-        },
-    },
     'handlers': {
-        'mail_admins': {
-            'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['require_debug_false'],
-            'level': 'ERROR',
-        },
-        'stdout': {
+        'console': {
             'class': 'logging.StreamHandler',
-            'formatter': 'json',
-            'level': 'INFO',
-            'stream': sys.stdout,
         },
-        'stderr': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'json',
-            'level': 'ERROR',
-            'stream': sys.stderr,
-        }
     },
     'root': {
-        'handlers': ['mail_admins'],
+        'handlers': ['console'],
+        'level': 'INFO',
     },
-    'loggers': {
-        'catalog': {
-            'handlers': ['stdout', 'stderr'],
-        },
-        'enrollment': {
-            'handlers': ['stdout', 'stderr'],
-        },
-        'grades': {
-            'handlers': ['stdout', 'stderr'],
-        },
-        'playlist': {
-            'handlers': ['stdout', 'stderr'],
-        },
-    }
 }
 
 # List of template engines (we need this for admin panel)
@@ -230,6 +177,7 @@ GRAPHENE = {
     'MIDDLEWARE': [
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
+    'RELAY_CONNECTION_MAX_LIMIT': 100000,
 }
 
 # Graphene jwt
@@ -267,7 +215,7 @@ GRAPHQL_JWT = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -276,3 +224,5 @@ USE_L10N = True
 USE_TZ = False
 
 STATIC_URL = '/static/'
+
+

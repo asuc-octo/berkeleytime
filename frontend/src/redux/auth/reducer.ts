@@ -7,11 +7,11 @@ import {
 
 const initialState: AuthState = {
   loading: true,
-  userProfile: null,
+  userProfile: undefined,
   isLoggedIn: false
 };
 
-export function authReducer(
+export default function authReducer(
   state = initialState,
   action: AuthAction
 ): AuthState {
@@ -27,7 +27,7 @@ export function authReducer(
       return {
         ...state,
         loading: false,
-        userProfile: null,
+        userProfile: undefined,
         isLoggedIn: false
       }
     default:

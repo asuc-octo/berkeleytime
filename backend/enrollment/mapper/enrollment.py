@@ -35,6 +35,6 @@ class EnrollmentMapper:
                 'message': 'Error while mapping data to Enrollment object',
                 'data': data
             })
-            raise
+            return {}
 
 enrollment_mapper = EnrollmentMapper()

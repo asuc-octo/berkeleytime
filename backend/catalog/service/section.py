@@ -54,7 +54,7 @@ class SectionService:
         # Log progress of updates
         print(BColors.OKGREEN + f'Starting job with {NUM_THREADS} workers.' + BColors.ENDC)
         while not result.ready():
-            print(BColors.OKGREEN + f'Updating course {i.value() + 1} of {len(courses)}.' + BColors.ENDC)
+            print(BColors.OKGREEN + f'Updating course {i.value()} of {len(courses)}.' + BColors.ENDC)
             time.sleep(5)
 
         # Clear the cache to ensure an updated dropdown of courses with enrollment data
@@ -90,6 +90,8 @@ class SectionService:
         for sect in response:
             section_dict = section_mapper.map(sect, extras=section_extras)
             section, created = self.update_or_create_from_dict(section_dict)
+            if not section:
+                continue
             if semester != 'summer' and section.is_primary and not section.disabled:
                 enrollment_dict = enrollment_mapper.map(sect, extras={'section_id': section.id})
                 enrollment_service.update_or_create_from_dict(enrollment_dict)
@@ -143,6 +145,7 @@ class SectionService:
                 'message': 'Exception encountered while updating/creating section',
                 'section_dict': section_dict,
             })
+            return None, False
 
 
 section_service = SectionService()

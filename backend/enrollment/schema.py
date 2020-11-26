@@ -18,7 +18,7 @@ class EnrollmentData(graphene.ObjectType):
     a DjangoObjectType gives us higher flexibility of the data. """
     day = graphene.Int()
     date_created = graphene.Date()
-    
+
     enrolled = graphene.Int()
     enrolled_max = graphene.Int()
     enrolled_percent = graphene.Float()
@@ -40,7 +40,7 @@ class EnrollmentInfo(graphene.ObjectType):
     course = graphene.Field(CourseType)
     section = graphene.List(SectionType)
     # using a list since aggreagte can have multple sections
-    
+
     telebears = graphene.Field(TelebearData)
 
     data = graphene.List(EnrollmentData)
@@ -52,12 +52,12 @@ class EnrollmentInfo(graphene.ObjectType):
     waitlisted_max = graphene.Int()
     waitlisted_percent_max = graphene.Float()
     waitlisted_scale_max = graphene.Int()
-    
+
 
 def create_enrollment_data(data, phase1_start):
     """ Creates an enrollment graphene type from
     raw data.
-    
+
     Args:
         data: dictionary with fields enrolled, enrolled_max,
               waitlisted, waitlisted_max, and date_created
@@ -65,7 +65,7 @@ def create_enrollment_data(data, phase1_start):
 
     Return:
         EnrollmentData object
-    """ 
+    """
     enrollment = EnrollmentData(**data)
 
     # manually add additional fields
@@ -79,7 +79,7 @@ def create_enrollment_data(data, phase1_start):
 
 def queryset_to_enrollment(enrollments, telebears):
     """ Convert queryset to EnrollmentData object.
-    
+
     Args:
         enrollments: queryset with values enrolled, enrolled_max,
                      waitlisted, waitlisted_max, and date_created
@@ -133,7 +133,7 @@ class Query(graphene.ObjectType):
                                  'waitlisted',
                                  'waitlisted_max'
                                  )
-        
+
 
         telebears = get_telebears(section.semester, section.year)
 
@@ -158,7 +158,7 @@ class Query(graphene.ObjectType):
         enrolled_max = models[-1].enrolled_max
         enrolled_percent_max = enrolled_outlier * 1.10
         enrolled_scale_max = int(enrolled_max * enrolled_percent_max)
-        
+
         waitlisted_max = models[-1].waitlisted_max
         waitlisted_percent_max = waitlisted_outlier * 1.10
         waitlisted_scale_max = int(waitlisted_max * waitlisted_percent_max)
@@ -194,7 +194,7 @@ class Query(graphene.ObjectType):
 
         # convert queryset to graphene models
         models, enrolled_outlier, waitlisted_outlier = queryset_to_enrollment(enrollments, telebears)
-        
+
         # sis - get real time data
         if semester == CURRENT_SEMESTER and str(year) == CURRENT_YEAR:
             sis_data = enrollment_service.get_live_enrollment(
@@ -226,7 +226,7 @@ class Query(graphene.ObjectType):
         enrolled_max = models[-1].enrolled_max
         enrolled_percent_max = enrolled_outlier * 1.10
         enrolled_scale_max = int(enrolled_max * enrolled_percent_max)
-        
+
         waitlisted_max = models[-1].waitlisted_max
         waitlisted_percent_max = waitlisted_outlier * 1.10
         waitlisted_scale_max = int(waitlisted_max * waitlisted_percent_max)

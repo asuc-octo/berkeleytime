@@ -1,20 +1,26 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {Modal, Form} from "react-bootstrap";
+import {Button} from "react-bootstrap";
 
 function CheckboxGroup(props) {
   
   const { nestedOptions, handler, defaultSelection, displayRadio } = props;
   const formType = displayRadio ? "radio" : "checkbox";
 
+  /* Accounts for the fact that valueIDs can be either nums or strings */
+  const inValues = (obj, value) => {
+    return Object.values(obj).includes(value) || Object.values(obj).includes(value.toString());
+  }
+
   const isDefault = (item) => {
     let checked = false;
-    if(defaultSelection){
-      if(Object.values(defaultSelection).includes(item)) {
+    if (defaultSelection){
+      if (inValues(defaultSelection, item)) {
         checked = true;
       }
       for (var i = 0; i < defaultSelection.length; i++) {
-        if(Object.values(defaultSelection[i]).includes(item)){
+        if (inValues(defaultSelection[i], item)){
           checked = true;
         }
       }
@@ -78,10 +84,10 @@ export class FilterModal extends Component {
               />
             </div>
             <div className="filter-button-bar">
-              <button className="btn-bt-primary-inverted" onClick={this.props.hideModal}>
-              Cancel </button>
-              <button className="btn-bt-primary" onClick={this.props.saveModal}>
-              Save </button>
+              <Button className="bt-btn-inverted" onClick={this.props.hideModal}>
+              Cancel </Button>
+              <Button className="bt-btn-primary" onClick={this.props.saveModal}>
+              Save </Button>
             </div>
           </div>
       </Modal>

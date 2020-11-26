@@ -32,7 +32,7 @@ class LSResource(object):
         PAST_SEMESTERS_SIS + [{'semester': CURRENT_SEMESTER, 'year': CURRENT_YEAR}]  # noqa
     )
     # Max page size is 100. We only want courses that are marked as active.
-    url = 'https://apis.berkeley.edu/uat/sis/v1/classes/sections?term-id=%s&page-number=%s&page-size=100&status-code=A'
+    url = 'https://apis.berkeley.edu/sis/v1/classes/sections?term-id=%s&page-number=%s&page-size=100&status-code=A'
     headers = {
         'accept': 'application/json',
         'app_id': SIS_CLASS_APP_ID,

@@ -6,6 +6,7 @@
     height: 100%;
     border-radius: 8px;
     padding: 8px 10px;
+    position: relative;
 
     @include mobile {
       border: 0.5px solid $bt-light-border-grey;
@@ -70,6 +71,12 @@
         font-size: 18px;
         font-weight: 500;
       }
+    }
+
+    .filter-card-save{
+      position: absolute;
+      top: 5px;
+      right: 10px;
     }
   }
 

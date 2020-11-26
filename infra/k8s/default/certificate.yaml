@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bt-tls
+spec:
+  secretName: bt-tls
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  commonName: berkeleytime.com
+  dnsNames:
+    - berkeleytime.com
+    - "*.berkeleytime.com"
+    - "*.staging.berkeleytime.com"
+    - "*.ocf.berkeleytime.com"
+    - "*.staging.ocf.berkeleytime.com"

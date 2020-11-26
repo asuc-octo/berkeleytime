@@ -1,0 +1,931 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bt-gitlab
+  labels:
+    component: bt-gitlab
+spec:
+  type: ClusterIP
+  selector:
+    component: bt-gitlab
+  ports:
+    - name: bt-gitlab-http
+      port: 80
+      targetPort: 8181
+    - name: bt-gitlab-ssh
+      port: 2222
+      targetPort: 22
+    - name: bt-gitlab-mattermost
+      port: 8065
+      targetPort: 8065
+    - name: bt-gitlab-registry
+      port: 5050
+      targetPort: 5050
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bt-gitlab
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5G
+
+---
+# Not best security practices, but allows GitLab Runner to execute any kubectl
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bt-gitlab
+  labels:
+    component: bt-gitlab
+data:
+  GITLAB_BACKUP_EXPIRY: "604800"
+  GITLAB_EXTERNAL_HOSTNAME: ocf.berkeleytime.com/git
+  GITLAB_EXTERNAL_SCHEME: https
+  GITLAB_MATTERMOST_EXTERNAL_HOSTNAME: m.ocf.berkeleytime.com
+  GITLAB_MATTERMOST_EXTERNAL_SCHEME: https
+  GITLAB_REGISTRY_EXTERNAL_HOSTNAME: registry.ocf.berkeleytime.com
+  GITLAB_REGISTRY_EXTERNAL_SCHEME: https
+  POSTGRES_DB: gitlab
+  POSTGRES_DB_MATTERMOST: mattermost
+  POSTGRES_PORT_MATTERMOST: "5432"
+  POSTGRES_HOST: gitlab-pg.default.svc.cluster.local
+  POSTGRES_USER: gitlab
+  MATTERMOST_APP_UID: "2000"
+  REDIS_HOST: gitlab-rd.default.svc.cluster.local
+  REDIS_PORT: "6379"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bt-gitlab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: bt-gitlab
+  template:
+    metadata:
+      labels:
+        component: bt-gitlab
+    spec:
+      volumes:
+        - name: bt-gitlab
+          persistentVolumeClaim:
+            claimName: bt-gitlab
+        - name: bt-gitlab-license
+          configMap:
+            name: bt-gitlab-license
+      initContainers:
+        - name: init
+          image: busybox
+          volumeMounts:
+            - name: bt-gitlab
+              mountPath: /var/opt/gitlab
+              subPath: gitlab-data
+          command:
+            - /bin/sh
+            - -c
+            - >
+              mkdir -p /var/opt/gitlab/.ssh
+              mkdir -p /var/opt/gitlab/git-data/repositories
+      containers:
+        - name: bt-gitlab
+          image: gitlab/gitlab-ee:13.3.9-ee.0
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "gitlab-ctl stop"]
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - >
+                    update-permissions;
+          volumeMounts:
+            - name: bt-gitlab
+              mountPath: /etc/gitlab
+              subPath: gitlab-config
+            - name: bt-gitlab
+              mountPath: /var/opt/gitlab
+              subPath: gitlab-data
+            - name: bt-gitlab
+              mountPath: /var/log/gitlab
+              subPath: gitlab-logs
+            - name: bt-gitlab-license
+              mountPath: /opt/gitlab/embedded/service/gitlab-rails/.license_encryption_key.pub
+              subPath: license_encryption_key_pub
+            - name: bt-gitlab-license
+              mountPath: /opt/gitlab/embedded/service/gitlab-rails/ee/app/models/license.rb
+              subPath: license_rb
+          envFrom:
+            - configMapRef:
+                name: bt-gitlab
+          env:
+            - name: POSTGRES_PASSWORD
+              value: NOT_IN_USE
+            - name: MATTERMOST_APP_SECRET
+              value: NOT_IN_USE
+            - name: GITLAB_ROOT_EMAIL
+              value: root@ocf.berkeleytime.com
+            - name: GITLAB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: general-secrets
+                  key: PASSWORD_BT_GITLAB_GITLAB_ROOT_PASSWORD
+            - name: GITLAB_SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: general-secrets
+                  key: USERNAME_BT_GITLAB_SENDGRID_SMTP
+            - name: GITLAB_SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: general-secrets
+                  key: PASSWORD_BT_GITLAB_SENDGRID_SMTP
+            - name: GITLAB_OMNIBUS_CONFIG
+              value: |
+                alertmanager['enable'] = false
+                consul['enable'] = false
+                geo_postgresql['enable'] = false
+                gitaly['enable'] = true
+                gitlab_exporter['enable'] = false
+                gitlab_pages['enable'] = false
+                # gitlab_rails['incoming_email_enabled'] = true
+                gitlab_workhorse['enable'] = true
+                grafana['enable'] = false
+                letsencrypt['enable'] = nil
+                logrotate['enable'] = true
+                manage_accounts['enable'] = true
+                manage_storage_directories['enable'] = false
+                mattermost_nginx['enable'] = false
+                mattermost['enable'] = false
+                monitoring_role['enable'] = false
+                nginx['enable'] = false
+                node_exporter['enable'] = false
+                pages_nginx['enable'] = false
+                patroni['enable'] = false
+                pgbouncer_exporter['enable'] = false
+                pgbouncer['enable'] = false
+                postgres_exporter['enable'] = false
+                postgresql['enable'] = true
+                praefect['enable'] = false
+                prometheus_monitoring['enable'] = false
+                prometheus['enable'] = false
+                puma['enable'] = true
+                puma['exporter_enabled'] = false
+                redis_exporter['enable'] = false
+                redis_master_role['enable'] = true
+                redis_replica_role['enable'] = false
+                redis_sentinel_role['enable'] = false
+                redis['enable'] = true
+                registry_nginx['enable'] = false
+                registry['enable'] = false # Docker registry
+                repmgr['enable'] = false
+                repmgrd['enable'] = false
+                sentinel['enable'] = false
+                sentinel['enable'] = false
+                storage_check['enable'] = false
+                unicorn['enable'] = false
+
+                external_url "#{ENV['GITLAB_EXTERNAL_SCHEME']}://#{ENV['GITLAB_EXTERNAL_HOSTNAME']}"
+                nginx['real_ip_trusted_addresses'] = [ 'nlb.default.svc.cluster.local' ]
+                nginx['real_ip_header'] = 'X-Forwarded-For'
+                nginx['real_ip_recursive'] = 'on'
+                web_server['external_users'] = ['www-data']
+                gitlab_rails['trusted_proxies'] = [ 'nlb.default.svc.cluster.local', '10.244.0.0/24' ]
+                gitlab_workhorse['listen_network'] = "tcp"
+                gitlab_workhorse['listen_addr'] = "0.0.0.0:8181"
+                gitlab_rails['gitlab_shell_ssh_port'] = 2222
+                postgresql['shared_buffers'] = '128MB'
+
+                # Sidekiq, required for emails and other stuff to work
+                sidekiq['enable'] = true
+                sidekiq['cluster'] = true
+                # sidekiq['concurrency'] = 25 # Single-process sidekiq only
+                sidekiq['experimental_queue_selector'] = false
+                sidekiq['interval'] = nil
+                sidekiq['log_directory'] = "/var/log/gitlab/sidekiq"
+                sidekiq['log_format'] = "json"
+                sidekiq['max_concurrency'] = 25
+                sidekiq['min_concurrency'] = 15
+                sidekiq['shutdown_timeout'] = 4
+                sidekiq['queue_groups'] = ["*"]
+                # sidekiq['queue_groups'] = [
+                #   "elastic_indexer",
+                #   "mailers",
+                #   "*"
+                # ]
+                sidekiq['negate'] = false
+                sidekiq['metrics_enabled'] = true
+                sidekiq['listen_address'] = "localhost"
+                sidekiq['listen_port'] = 8082
+
+                # Optimizing Git Push with low resources
+                puma['worker_processes'] = 2
+                puma['min_threads'] = 1
+                puma['max_threads'] = 1
+                puma['per_worker_max_memory_mb'] = 4000
+
+                # Email Settings
+                gitlab_ci['gitlab_ci_email_from'] = 'noreply@ocf.berkeleytime.com'
+                gitlab_ci['smtp_address'] = "smtp.sendgrid.net"
+                gitlab_ci['smtp_authentication'] = "login"
+                gitlab_ci['smtp_domain'] = "smtp.sendgrid.net"
+                gitlab_ci['smtp_enable_starttls_auto'] = true
+                gitlab_ci['smtp_enable'] = true
+                gitlab_ci['smtp_password'] = ENV['GITLAB_SMTP_PASSWORD']
+                gitlab_ci['smtp_port'] = 587
+                gitlab_ci['smtp_tls'] = false
+                gitlab_ci['smtp_user_name'] = ENV['GITLAB_SMTP_USERNAME']
+                gitlab_rails['gitlab_email_display_name'] = 'Berkeleytime GitLab'
+                gitlab_rails['gitlab_email_enabled'] = true
+                gitlab_rails['gitlab_email_from'] = 'noreply@ocf.berkeleytime.com'
+                gitlab_rails['gitlab_email_reply_to'] = 'noreply@ocf.berkeleytime.com'
+                gitlab_rails['smtp_address'] = "smtp.sendgrid.net"
+                gitlab_rails['smtp_authentication'] = "login"
+                gitlab_rails['smtp_domain'] = "smtp.sendgrid.net"
+                gitlab_rails['smtp_enable_starttls_auto'] = true
+                gitlab_rails['smtp_enable'] = true
+                gitlab_rails['smtp_force_ssl'] = false
+                gitlab_rails['smtp_password'] = ENV['GITLAB_SMTP_PASSWORD']
+                gitlab_rails['smtp_port'] = 587
+                gitlab_rails['smtp_ssl'] = false
+                gitlab_rails['smtp_tls'] = false
+                gitlab_rails['smtp_user_name'] = ENV['GITLAB_SMTP_USERNAME']
+
+                # Docker registry
+                # registry_external_url 'url'
+
+                # Raspberry Pi optimization
+                # https://docs.gitlab.com/omnibus/settings/rpi.html
+                # puma['worker_processes'] = 7
+                # sidekiq['concurrency'] = 9
+
+                # prometheus['listen_address'] = '0.0.0.0:9090'
+                # postgres_exporter['env'] = {
+                #   'DATA_SOURCE_NAME' => "user=#{ENV['POSTGRES_USER']} host=#{ENV['POSTGRES_HOST']} port=#{ENV['POSTGRES_PORT_MATTERMOST']} dbname=#{ENV['POSTGRES_DB_MATTERMOST']} password=#{ENV['POSTGRES_PASSWORD']} sslmode=disable"
+                # }
+                # redis_exporter['flags'] = {
+                #   'redis.addr' => "#{ENV['REDIS_HOST']}:#{ENV['REDIS_PORT']}",
+                # }
+                # gitlab_rails['db_database'] = ENV['POSTGRES_DB']
+                # gitlab_rails['db_host'] = ENV['POSTGRES_HOST']
+                # gitlab_rails['db_password'] = ENV['POSTGRES_PASSWORD']
+                # gitlab_rails['db_username'] = ENV['POSTGRES_USER']
+                # gitlab_rails['redis_host'] = ENV['REDIS_HOST']
+                # registry_external_url "#{ENV['GITLAB_REGISTRY_EXTERNAL_SCHEME']}://#{ENV['GITLAB_REGISTRY_EXTERNAL_HOSTNAME']}"
+                # mattermost_external_url "#{ENV['GITLAB_MATTERMOST_EXTERNAL_SCHEME']}://#{ENV['GITLAB_MATTERMOST_EXTERNAL_HOSTNAME']}"
+                # mattermost['service_address'] = '0.0.0.0'
+                # mattermost['service_port'] = '8065'
+                # registry['registry_http_addr'] = '0.0.0.0:5050'
+                # mattermost['file_directory'] = '/gitlab-data/mattermost'
+                # mattermost['sql_driver_name'] = 'postgres'
+                # mattermost['sql_data_source'] = "user=#{ENV['POSTGRES_USER']} host=#{ENV['POSTGRES_HOST']} port=#{ENV['POSTGRES_PORT_MATTERMOST']} dbname=#{ENV['POSTGRES_DB_MATTERMOST']} password=#{ENV['POSTGRES_PASSWORD']} sslmode=disable"
+                # mattermost['gitlab_secret'] = ENV['MATTERMOST_APP_SECRET']
+                # mattermost['gitlab_id'] = ENV['MATTERMOST_APP_UID']
+                # mattermost['gitlab_scope'] = ''
+                # mattermost['gitlab_auth_endpoint'] = "#{ENV['GITLAB_EXTERNAL_SCHEME']}://#{ENV['GITLAB_EXTERNAL_HOSTNAME']}/oauth/authorize"
+                # mattermost['gitlab_token_endpoint'] = "#{ENV['GITLAB_EXTERNAL_SCHEME']}://#{ENV['GITLAB_EXTERNAL_HOSTNAME']}/oauth/token"
+                # mattermost['gitlab_user_api_endpoint'] = "#{ENV['GITLAB_EXTERNAL_SCHEME']}://#{ENV['GITLAB_EXTERNAL_HOSTNAME']}/api/v3/user"
+                # gitlab_shell['auth_file'] = '/gitlab-data/ssh/authorized_keys'
+                # git_data_dir '/gitlab-data/git-data'
+                # gitlab_rails['initial_license_file'] = "/etc/gitlab/Gitlab.gitlab-license"
+                # gitlab_rails['shared_path'] = '/gitlab-data/shared'
+                # gitlab_rails['uploads_directory'] = '/gitlab-data/uploads'
+                # gitlab_ci['builds_directory'] = '/gitlab-data/builds'
+                # gitlab_rails['registry_path'] = '/gitlab-registry'
+                # gitlab_rails['trusted_proxies'] = ["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16"]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bt-gitlab-license
+  labels:
+    component: bt-gitlab
+data:
+  license_encryption_key_pub: |
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqR8SclLmCUXgnC2fjndj
+    94Y/KMTnB+xc4UVGXy+26xHP6lhTsnUMVcpPyZkB877bQv7SXrFYC5MOwb+j53Nr
+    DgBcx+ikllUjEf1i7nFV+CRq6Ht0p8cdquTmANHw4Jv5hR9jUdPoNdrA0217wm+H
+    Rcz7r99Kx+n8UoFw5l6CQeYUzusV2kA70Sp2VkaAk1ZgA4CW7YcMZEvNH19NtWr7
+    ex1PBYcqn81KVkBovYeE5UnhN2cdgWC7VsLFNrCBesjkkcuZgiCWpABIV5nfsIma
+    I1m95IJm20irOtgWH0PIYJnZl2HCgLRbrv4bqb+ENK6USnYHOBAqP9G6nE0G3PFh
+    gQIDAQAB
+    -----END PUBLIC KEY-----
+  license_rb: |
+    # frozen_string_literal: true
+
+    class License < ApplicationRecord
+      include ActionView::Helpers::NumberHelper
+
+      STARTER_PLAN = 'starter'.freeze
+      PREMIUM_PLAN = 'premium'.freeze
+      ULTIMATE_PLAN = 'ultimate'.freeze
+      EARLY_ADOPTER_PLAN = 'early_adopter'.freeze
+
+      EES_FEATURES = %i[
+        audit_events
+        blocked_issues
+        burndown_charts
+        code_owners
+        code_review_analytics
+        contribution_analytics
+        description_diffs
+        elastic_search
+        group_activity_analytics
+        group_bulk_edit
+        group_burndown_charts
+        group_webhooks
+        issuable_default_templates
+        issue_weights
+        iterations
+        jenkins_integration
+        ldap_group_sync
+        member_lock
+        merge_request_approvers
+        multiple_issue_assignees
+        multiple_ldap_servers
+        multiple_merge_request_assignees
+        project_merge_request_analytics
+        protected_refs_for_users
+        push_rules
+        repository_mirrors
+        repository_size_limit
+        seat_link
+        send_emails_from_admin_area
+        scoped_issue_board
+        usage_quotas
+        visual_review_app
+        wip_limits
+      ].freeze
+
+      EEP_FEATURES = EES_FEATURES + %i[
+        adjourned_deletion_for_projects_and_groups
+        admin_audit_log
+        auditor_user
+        blocking_merge_requests
+        board_assignee_lists
+        board_milestone_lists
+        ci_cd_projects
+        ci_secrets_management
+        cluster_agents
+        cluster_deployments
+        code_owner_approval_required
+        commit_committer_check
+        compliance_framework
+        cross_project_pipelines
+        custom_file_templates
+        custom_file_templates_for_namespace
+        custom_project_templates
+        cycle_analytics_for_groups
+        db_load_balancing
+        default_branch_protection_restriction_in_groups
+        default_project_deletion_protection
+        dependency_proxy
+        deploy_board
+        disable_name_update_for_users
+        email_additional_text
+        epics
+        extended_audit_events
+        external_authorization_service_api_management
+        feature_flags
+        file_locks
+        geo
+        generic_alert_fingerprinting
+        github_project_service_integration
+        group_allowed_email_domains
+        group_coverage_reports
+        group_forking_protection
+        group_ip_restriction
+        group_merge_request_analytics
+        group_project_templates
+        group_saml
+        issues_analytics
+        jira_dev_panel_integration
+        jira_issues_integration
+        ldap_group_sync_filter
+        merge_pipelines
+        merge_request_performance_metrics
+        admin_merge_request_approvers_rules
+        merge_trains
+        metrics_reports
+        multiple_approval_rules
+        multiple_group_issue_boards
+        object_storage
+        operations_dashboard
+        opsgenie_integration
+        package_forwarding
+        pages_size_limit
+        productivity_analytics
+        project_aliases
+        protected_environments
+        reject_unsigned_commits
+        required_ci_templates
+        scoped_labels
+        smartcard_auth
+        group_timelogs
+        type_of_work_analytics
+        unprotection_restrictions
+        ci_project_subscriptions
+      ]
+      EEP_FEATURES.freeze
+
+      EEU_FEATURES = EEP_FEATURES + %i[
+        container_scanning
+        coverage_fuzzing
+        credentials_inventory
+        dast
+        dependency_scanning
+        enterprise_templates
+        api_fuzzing
+        group_level_compliance_dashboard
+        incident_management
+        insights
+        issuable_health_status
+        license_scanning
+        personal_access_token_api_management
+        personal_access_token_expiration_policy
+        enforce_pat_expiration
+        prometheus_alerts
+        pseudonymizer
+        release_evidence_test_artifacts
+        report_approver_rules
+        requirements
+        sast
+        secret_detection
+        security_dashboard
+        security_on_demand_scans
+        status_page
+        subepics
+        threat_monitoring
+        tracing
+      ]
+      EEU_FEATURES.freeze
+
+      # List all features available for early adopters,
+      # i.e. users that started using GitLab.com before
+      # the introduction of Bronze, Silver, Gold plans.
+      # Obs.: Do not extend from other feature constants.
+      # Early adopters should not earn new features as they're
+      # introduced.
+      EARLY_ADOPTER_FEATURES = %i[
+        audit_events
+        burndown_charts
+        contribution_analytics
+        cross_project_pipelines
+        deploy_board
+        file_locks
+        group_webhooks
+        issuable_default_templates
+        issue_weights
+        jenkins_integration
+        merge_request_approvers
+        multiple_group_issue_boards
+        multiple_issue_assignees
+        protected_refs_for_users
+        push_rules
+        related_issues
+        repository_mirrors
+        scoped_issue_board
+      ].freeze
+
+      FEATURES_BY_PLAN = {
+        STARTER_PLAN       => EES_FEATURES,
+        PREMIUM_PLAN       => EEP_FEATURES,
+        ULTIMATE_PLAN      => EEU_FEATURES,
+        EARLY_ADOPTER_PLAN => EARLY_ADOPTER_FEATURES
+      }.freeze
+
+      PLANS_BY_FEATURE = FEATURES_BY_PLAN.each_with_object({}) do |(plan, features), hash|
+        features.each do |feature|
+          hash[feature] ||= []
+          hash[feature] << plan
+        end
+      end.freeze
+
+      # Add on codes that may occur in legacy licenses that don't have a plan yet.
+      FEATURES_FOR_ADD_ONS = {
+        'GitLab_Auditor_User' => :auditor_user,
+        'GitLab_DeployBoard' => :deploy_board,
+        'GitLab_FileLocks' => :file_locks,
+        'GitLab_Geo' => :geo
+      }.freeze
+
+      # Global features that cannot be restricted to only a subset of projects or namespaces.
+      # Use `License.feature_available?(:feature)` to check if these features are available.
+      # For all other features, use `project.feature_available?` or `namespace.feature_available?` when possible.
+      GLOBAL_FEATURES = %i[
+        admin_audit_log
+        auditor_user
+        custom_file_templates
+        custom_project_templates
+        db_load_balancing
+        default_branch_protection_restriction_in_groups
+        elastic_search
+        enterprise_templates
+        extended_audit_events
+        external_authorization_service_api_management
+        geo
+        ldap_group_sync
+        ldap_group_sync_filter
+        multiple_ldap_servers
+        object_storage
+        pages_size_limit
+        project_aliases
+        repository_size_limit
+        required_ci_templates
+        seat_link
+        usage_quotas
+      ].freeze
+
+      validate :valid_license
+      validate :check_users_limit, if: :new_record?, unless: :validate_with_trueup?
+      validate :check_trueup, unless: :persisted?, if: :validate_with_trueup?
+      validate :not_expired, unless: :persisted?
+
+      before_validation :reset_license, if: :data_changed?
+
+      after_create :reset_current
+      after_destroy :reset_current
+      after_commit :reset_future_dated, on: [:create, :destroy]
+
+      scope :recent, -> { reorder(id: :desc) }
+      scope :last_hundred, -> { recent.limit(100) }
+
+      class << self
+        def features_for_plan(plan)
+          FEATURES_BY_PLAN.fetch(plan, [])
+        end
+
+        def plans_with_feature(feature)
+          if global_feature?(feature)
+            raise ArgumentError, "Use `License.feature_available?` for features that cannot be restricted to only a subset of projects or namespaces"
+          end
+
+          PLANS_BY_FEATURE.fetch(feature, [])
+        end
+
+        def plan_includes_feature?(plan, feature)
+          plans_with_feature(feature).include?(plan)
+        end
+
+        def current
+          if RequestStore.active?
+            RequestStore.fetch(:current_license) { load_license }
+          else
+            load_license
+          end
+        end
+
+        delegate :block_changes?, :feature_available?, to: :current, allow_nil: true
+
+        def reset_current
+          RequestStore.delete(:current_license)
+        end
+
+        def load_license
+          return unless self.table_exists?
+
+          self.last_hundred.find { |license| license.valid? && license.started? }
+        end
+
+        def future_dated
+          Gitlab::SafeRequestStore.fetch(:future_dated_license) { load_future_dated }
+        end
+
+        def reset_future_dated
+          Gitlab::SafeRequestStore.delete(:future_dated_license)
+        end
+
+        def future_dated_only?
+          return false if current.present?
+
+          future_dated.present?
+        end
+
+        def global_feature?(feature)
+          GLOBAL_FEATURES.include?(feature)
+        end
+
+        def eligible_for_trial?
+          Gitlab::CurrentSettings.license_trial_ends_on.nil?
+        end
+
+        def trial_ends_on
+          Gitlab::CurrentSettings.license_trial_ends_on
+        end
+
+        def promo_feature_available?(feature)
+          ::Feature.enabled?("promo_#{feature}", default_enabled: false)
+        end
+
+        def history
+          all.sort_by { |license| [license.starts_at, license.created_at, license.expires_at] }.reverse
+        end
+
+        private
+
+        def load_future_dated
+          self.last_hundred.find { |license| license.valid? && license.future_dated? }
+        end
+      end
+
+      def data_filename
+        company_name = self.licensee["Company"] || self.licensee.each_value.first
+        clean_company_name = company_name.gsub(/[^A-Za-z0-9]/, "")
+        "#{clean_company_name}.gitlab-license"
+      end
+
+      def data_file=(file)
+        self.data = file.read
+      end
+
+      def md5
+        normalized_data = self.data.gsub("\r\n", "\n").gsub(/\n+$/, '') + "\n"
+
+        Digest::MD5.hexdigest(normalized_data)
+      end
+
+      def license
+        return unless self.data
+
+        @license ||=
+          begin
+            Gitlab::License.import(self.data)
+          rescue Gitlab::License::ImportError
+            nil
+          end
+      end
+
+      def license?
+        self.license && self.license.valid?
+      end
+
+      def method_missing(method_name, *arguments, &block)
+        if License.column_names.include?(method_name.to_s)
+          super
+        elsif license && license.respond_to?(method_name)
+          license.__send__(method_name, *arguments, &block) # rubocop:disable GitlabSecurity/PublicSend
+        else
+          super
+        end
+      end
+
+      def respond_to_missing?(method_name, include_private = false)
+        if License.column_names.include?(method_name.to_s)
+          super
+        elsif license && license.respond_to?(method_name)
+          true
+        else
+          super
+        end
+      end
+
+      # New licenses persists only the `plan` (premium, starter, ..). But, old licenses
+      # keep `add_ons`.
+      def add_ons
+        restricted_attr(:add_ons, {})
+      end
+
+      def features_from_add_ons
+        add_ons.map { |name, count| FEATURES_FOR_ADD_ONS[name] if count.to_i > 0 }.compact
+      end
+
+      def features
+        @features ||= (self.class.features_for_plan(plan) + features_from_add_ons).to_set
+      end
+
+      def feature_available?(feature)
+        return false if trial? && expired?
+
+        # This feature might not be behind a feature flag at all, so default to true
+        return false unless ::Feature.enabled?(feature, default_enabled: true)
+
+        features.include?(feature)
+      end
+
+      def license_id
+        restricted_attr(:id)
+      end
+
+      def restricted_user_count
+        restricted_attr(:active_user_count)
+      end
+
+      def previous_user_count
+        restricted_attr(:previous_user_count)
+      end
+
+      def plan
+        restricted_attr(:plan).presence || ULTIMATE_PLAN
+      end
+
+      def edition
+        case restricted_attr(:plan)
+        when 'ultimate'
+          'EEU'
+        when 'premium'
+          'EEP'
+        when 'starter'
+          'EES'
+        else # Older licenses
+          'EE'
+        end
+      end
+
+      def current_active_users_count
+        @current_active_users_count ||= begin
+          if exclude_guests_from_active_count?
+            User.active.excluding_guests.count
+          else
+            User.active.count
+          end
+        end
+      end
+
+      def validate_with_trueup?
+        [restricted_attr(:trueup_quantity),
+         restricted_attr(:trueup_from),
+         restricted_attr(:trueup_to)].all?(&:present?)
+      end
+
+      def trial?
+        restricted_attr(:trial)
+      end
+
+      def exclude_guests_from_active_count?
+        plan == License::ULTIMATE_PLAN
+      end
+
+      def remaining_days
+        return 0 if expired?
+
+        (expires_at - Date.today).to_i
+      end
+
+      def overage(user_count = nil)
+        return 0 if restricted_user_count.nil?
+
+        user_count ||= current_active_users_count
+
+        [user_count - restricted_user_count, 0].max
+      end
+
+      def overage_with_historical_max
+        overage(historical_max_with_default_period)
+      end
+
+      def historical_max(from = nil, to = nil)
+        HistoricalData.max_historical_user_count(license: self, from: from, to: to)
+      end
+
+      def maximum_user_count
+        [historical_max, current_active_users_count].max
+      end
+
+      def historical_max_with_default_period
+        @historical_max_with_default_period ||=
+          historical_max
+      end
+
+      def update_trial_setting
+        return unless license.restrictions[:trial]
+        return if license.expires_at.nil?
+
+        settings = ApplicationSetting.current
+        return if settings.nil?
+        return if settings.license_trial_ends_on.present?
+
+        settings.update license_trial_ends_on: license.expires_at
+      end
+
+      def paid?
+        [License::STARTER_PLAN, License::PREMIUM_PLAN, License::ULTIMATE_PLAN].include?(plan)
+      end
+
+      def started?
+        starts_at <= Date.current
+      end
+
+      def future_dated?
+        starts_at > Date.current
+      end
+
+      def auto_renew
+        false
+      end
+
+      private
+
+      def restricted_attr(name, default = nil)
+        return default unless license? && restricted?(name)
+
+        restrictions[name]
+      end
+
+      def reset_current
+        self.class.reset_current
+      end
+
+      def reset_future_dated
+        self.class.reset_future_dated
+      end
+
+      def reset_license
+        @license = nil
+      end
+
+      def valid_license
+        return if license?
+
+        self.errors.add(:base, _('The license key is invalid. Make sure it is exactly as you received it from GitLab Inc.'))
+      end
+
+      def prior_historical_max
+        @prior_historical_max ||= begin
+          from = starts_at - 1.year
+          to   = starts_at
+
+          historical_max(from, to)
+        end
+      end
+
+      def check_users_limit
+        return unless restricted_user_count
+
+        if previous_user_count && (prior_historical_max <= previous_user_count)
+          return if restricted_user_count >= current_active_users_count
+        else
+          return if restricted_user_count >= prior_historical_max
+        end
+
+        user_count = prior_historical_max == 0 ? current_active_users_count : prior_historical_max
+
+        add_limit_error(current_period: prior_historical_max == 0, user_count: user_count)
+      end
+
+      def check_trueup
+        trueup_qty          = restrictions[:trueup_quantity]
+        trueup_from         = Date.parse(restrictions[:trueup_from]) rescue (starts_at - 1.year)
+        trueup_to           = Date.parse(restrictions[:trueup_to]) rescue starts_at
+        max_historical      = historical_max(trueup_from, trueup_to)
+        expected_trueup_qty = if previous_user_count
+                                max_historical - previous_user_count
+                              else
+                                max_historical - current_active_users_count
+                              end
+
+        if trueup_qty >= expected_trueup_qty
+          if restricted_user_count < current_active_users_count
+            add_limit_error(user_count: current_active_users_count)
+          end
+        else
+          message = ["You have applied a True-up for #{trueup_qty} #{"user".pluralize(trueup_qty)}"]
+          message << "but you need one for #{expected_trueup_qty} #{"user".pluralize(expected_trueup_qty)}."
+          message << "Please contact sales at renewals@gitlab.com"
+
+          self.errors.add(:base, message.join(' '))
+        end
+      end
+
+      def add_limit_error(current_period: true, user_count:)
+        overage_count = overage(user_count)
+
+        message =  [current_period ? "This GitLab installation currently has" : "During the year before this license started, this GitLab installation had"]
+        message << "#{number_with_delimiter(user_count)} active #{"user".pluralize(user_count)},"
+        message << "exceeding this license's limit of #{number_with_delimiter(restricted_user_count)} by"
+        message << "#{number_with_delimiter(overage_count)} #{"user".pluralize(overage_count)}."
+        message << "Please upload a license for at least"
+        message << "#{number_with_delimiter(user_count)} #{"user".pluralize(user_count)} or contact sales at renewals@gitlab.com"
+
+        self.errors.add(:base, message.join(' '))
+      end
+
+      def not_expired
+        return unless self.license? && self.expired?
+
+        self.errors.add(:base, _('This license has already expired.'))
+      end
+    end
