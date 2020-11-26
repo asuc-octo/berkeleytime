@@ -22,12 +22,13 @@ import catalog.views
 import enrollment.views
 import forms.views
 import grades.views
+from berkeleytime.graphql_cache import cache_graphql
 
 # Note: We will begin to deprecate the endpoints seen here in favor of using GraphQL.
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('graphql', jwt_cookie(GraphQLView.as_view(graphiql=True))),
+    path('graphql', jwt_cookie(cache_graphql(GraphQLView.as_view(graphiql=True)))),
 
     # Catalog
     ## List all courses with catalog data
