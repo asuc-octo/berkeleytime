@@ -88,6 +88,7 @@ const FilterModal = ({
     if (showFilters) {
       setCurrentFilters(defaultSelection || []);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showFilters]);
 
   function saveModal() {

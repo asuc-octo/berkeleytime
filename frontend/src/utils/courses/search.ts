@@ -34,7 +34,7 @@ export function searchCourse(query: string, courseCode: string, maxPenalty?: num
     .map(([source, replacement]) =>
       search(query, courseCode.replace(source, replacement), maxPenalty)
     );
-
+  if (courseCode.indexOf("70")> -1) console.log(courseCode, searches);
   searches.push(search(query, courseCode, maxPenalty));
 
   return combineQueries(searches);
