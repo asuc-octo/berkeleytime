@@ -5,7 +5,7 @@ import { useLoginMutation } from '../../graphql/graphql';
 import { Redirect } from 'react-router';
 
 const LoginButton = () => {
-  const [login, { loading, data }] = useLoginMutation();
+  const [login, { data }] = useLoginMutation();
 
   function onSignIn(response: GoogleLoginResponse) {
     const tokenId = response.tokenId;
@@ -15,6 +15,8 @@ const LoginButton = () => {
       }
     });
   }
+
+  // TODO: display error state possibly if login failed
 
   // If the login was successful. TODO: handle error states in a nicer way.
   if (!!data?.login?.user) {

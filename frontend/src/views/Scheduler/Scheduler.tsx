@@ -7,22 +7,22 @@ import BTLoader from 'components/Custom/Loader';
 import useLatestSemester from 'graphql/hooks/latestSemester';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
-import { addUnits, parseUnits, unitsToString, ZERO_UNITS } from 'utils/courses/units';
+import {
+  addUnits,
+  parseUnits,
+  unitsToString,
+  ZERO_UNITS,
+} from 'utils/courses/units';
 
 const Scheduler = () => {
   const {
     semester: latestSemester,
-    loading: semesterLoading,
     error: semesterError,
   } = useLatestSemester();
 
   // Only load the list of filters once we have the latest semester. If we
   // didn't wait, we'd load all semesters' classes which is way to many.
-  const {
-    data,
-    loading: coursesLoading,
-    error: coursesError,
-  } = useGetCoursesForFilterQuery({
+  const { data, error: coursesError } = useGetCoursesForFilterQuery({
     variables: {
       playlists: latestSemester?.playlistId!,
     },
@@ -31,7 +31,6 @@ const Scheduler = () => {
 
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
 
-  const loading = semesterLoading || coursesLoading;
   const error = semesterError || coursesError;
 
   if (!data) {
