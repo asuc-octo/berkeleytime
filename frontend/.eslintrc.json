@@ -1,32 +1,11 @@
 {
-  "env": {
-    "browser": true,
-    "es6": true
-  },
   "extends": [
     "react-app",
     "plugin:react/recommended",
     "prettier"
   ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "ecmaVersion": 2018,
-    "sourceType": "module"
-  },
-  "plugins": [
-    "react"
-  ],
   "rules": {
     "no-labels": "off",
-    "arrow-parens": "off",
-    "camelcase": "off",
-    "max-len": "off",
     "no-console": "warn",
     "no-else-return": "off",
     "no-param-reassign": "off",
@@ -35,5 +14,15 @@
     "react/prop-types": "off",
     "react/destructuring-assignment": "off",
     "react/jsx-one-expression-per-line": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.jsx",
+        "*.js",
+        "*.ts",
+        "*.tsx"
+      ]
+    }
+  ]
 }

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-import hash from 'object-hash';
 
 import { connect } from 'react-redux';
 import ClassCardList from '../../components/ClassCards/ClassCardList';
@@ -34,7 +33,7 @@ class Grades extends Component {
     this.fillFromUrl();
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.props.gradeReset();
   }
 
@@ -152,8 +151,8 @@ class Grades extends Component {
 
 
           <div className="disclaimer">
-            <img src={info} className="info" />
-            <p>We source our course grade data from Berkeley's official <a href="https://calanswers.berkeley.edu/">CalAnswers</a> database.</p>
+            <img src={info} className="info" alt="" />
+            <p>We source our course grade data from Berkeley&apos;s official <a href="https://calanswers.berkeley.edu/">CalAnswers</a> database.</p>
           </div>
 
         </div>

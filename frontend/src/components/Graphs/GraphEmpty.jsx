@@ -22,25 +22,25 @@ class GraphEmpty extends React.PureComponent {
               {pageType === "enrollment" ?
                 null :
                 <div>
-                <div class="bt-h6">Course Average
+                <div className="bt-h6">Course Average
                   <span data-tip={courseAvgText} data-for="courseAvg">
-                    <img src={info} className="info-icon"/>
+                    <img src={info} className="info-icon" alt="" />
                   </span>
                   <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
                       arrowColor="#FFFFFF"/>
                 </div>
                 <div className="course-average">
-                  <span class="bt-h6">No Data</span>
+                  <span className="bt-h6">No Data</span>
                 </div>
-                <div class="bt-h6">Section Average
+                <div className="bt-h6">Section Average
                   <span data-tip={sectionAvgText} data-for="sectionAvg">
-                    <img src={info} className="info-icon"/>
+                    <img src={info} className="info-icon" alt="" />
                   </span>
                   <ReactTooltip id='sectionAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
                       arrowColor="#FFFFFF"/>
                 </div>
                 <div className="section-average">
-                  <span class="bt-h6">No Data</span>
+                  <span className="bt-h6">No Data</span>
                 </div>
                 </div>
               }

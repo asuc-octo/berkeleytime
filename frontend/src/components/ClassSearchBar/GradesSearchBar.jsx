@@ -8,7 +8,6 @@ import hash from 'object-hash';
 import { connect } from 'react-redux';
 
 import { fetchGradeSelected } from '../../redux/actions';
-import { search } from 'utils/search';
 import { reactSelectCourseSearch } from 'utils/courses/search';
 
 const sortOptions = [
@@ -254,7 +253,6 @@ class GradesSearchBar extends Component {
   getFilteredSections() {
     const {
       selectType,
-      sectionNumber,
       selectPrimary,
       selectSecondary,
     } = this.state;

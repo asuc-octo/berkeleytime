@@ -4,7 +4,6 @@ import {
   LineChart,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Line,
   Legend,
@@ -31,7 +30,7 @@ const EmptyLabel = props => {
 
 function getLargestEnrollment(graphData) {
     let max_percentage = -1;
-    graphData.map(item => {
+    graphData.forEach(item => {
       Object.keys(item).forEach(function(key) {
         if (key !== 'name') {
           if (parseFloat(item[key]) > max_percentage) {
@@ -83,6 +82,7 @@ export default function EnrollmentGraph({
 
             {!graphEmpty && enrollmentData.map((item, i) => (
               <Line
+                key={i}
                 name={`${item.title} • ${item.section_name}`}
                 type="monotone"
                 dataKey={item.id}
@@ -132,7 +132,7 @@ export default function EnrollmentGraph({
       { graphEmpty &&
         <EmptyLabel />
       }
-      
+
     </div>
   );
 }

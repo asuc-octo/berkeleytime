@@ -5,8 +5,6 @@ import {
 } from 'react-bootstrap';
 import hash from 'object-hash';
 
-import FilterResults from '../Catalog/FilterResults';
-
 // import 'react-virtualized-select/styles.css'
 import { fetchEnrollSelected } from '../../redux/actions';
 import { connect } from "react-redux";
@@ -150,7 +148,7 @@ class EnrollmentSearchBar extends Component {
 
     for (var section of sections) {
       let instructor = `${
-        section.instructor == null || section.instructor == ''
+        section.instructor === null || section.instructor === ''
           ? 'None'
           : section.instructor
       } / ${section.section_number}`;
