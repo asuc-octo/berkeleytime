@@ -1,0 +1,17 @@
+{
+  "name": "tricycle",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moment": "^2.29.1",
+    "promisify-child-process": "^4.1.1",
+    "sleep-promise": "^9.0.0"
+  }
+}

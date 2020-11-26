@@ -1,8 +1,15 @@
 .catalog {
 
-  //hide mobile views
-  min-width: 992px;
   min-height: 600px;
+  height: 100vh;
+
+  @include mobile {
+    //row
+    > div {
+      height: 100%;
+      overflow-y: scroll;
+    }
+  }
 
   .row {
     margin: 0; // override bootstrap padding
@@ -11,14 +18,18 @@
       border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
 
-      /*@include mobile {
+      @include mobile {
         max-height: 128px;
-      }*/
+      }
     }
 
     .filter-results-column {
       border-right: 1.5px solid $bt-light-border-grey;
       padding: 0; // override bootstrap padding
+
+      @include mobile {
+        height: 70vh;
+      }
     }
 
     .catalog-description-column {

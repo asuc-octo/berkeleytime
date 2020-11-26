@@ -5,26 +5,37 @@ import { H3 } from 'bt/custom'
 
 import { ReactComponent as Web } from '../../assets/svg/about/web.svg';
 
-import leon_1 from 'assets/img/about/compressed/Leon_1.jpg';
-import leon_2 from 'assets/img/about/compressed/Leon_2.jpg';
-import michael_1 from 'assets/img/about/compressed/Michael_1.jpg';
-import michael_2 from 'assets/img/about/compressed/Michael_2.jpg';
-import chris_1 from 'assets/img/about/compressed/Chris_1.jpg';
-import chris_2 from 'assets/img/about/compressed/Chris_2.jpg';
-import grace_1 from 'assets/img/about/compressed/Grace_1.jpg';
-import grace_2 from 'assets/img/about/compressed/Grace_2.jpg';
-import hannah_1 from 'assets/img/about/compressed/Hannah_1.jpg';
-import hannah_2 from 'assets/img/about/compressed/Hannah_2.jpg';
-import chloe_1 from 'assets/img/about/compressed/Chloe_1.jpg';
-import chloe_2 from 'assets/img/about/compressed/Chloe_2.jpg';
-import christina_1 from 'assets/img/about/compressed/Christina_1.jpg';
-import christina_2 from 'assets/img/about/compressed/Christina_2.jpg';
-import izzie_1 from 'assets/img/about/compressed/Izzie_1.jpg';
-import izzie_2 from 'assets/img/about/compressed/Izzie_2.jpg';
-import janet_1 from 'assets/img/about/compressed/Janet_1.jpg';
-import janet_2 from 'assets/img/about/compressed/Janet_2.jpg';
-import annie_1 from 'assets/img/about/compressed/Annie_1.jpg';
-import annie_2 from 'assets/img/about/compressed/Annie_2.jpg';
+import annie_1 from 'assets/img/about/2020-21/annie_1.jpg';
+import annie_2 from 'assets/img/about/2020-21/annie_2.jpg';
+import austin_1 from 'assets/img/about/2020-21/austin_1.jpg';
+import austin_2 from 'assets/img/about/2020-21/austin_2.jpg';
+import chris_1 from 'assets/img/about/2020-21/chris_1.jpg';
+import chris_2 from 'assets/img/about/2020-21/chris_2.jpg';
+import christina_1 from 'assets/img/about/2020-21/christina_1.jpg';
+import christina_2 from 'assets/img/about/2020-21/christina_2.jpg';
+import grace_1 from 'assets/img/about/2020-21/grace_1.jpg';
+import grace_2 from 'assets/img/about/2020-21/grace_2.jpg';
+import hannah_1 from 'assets/img/about/2020-21/hannah_1.jpg';
+import hannah_2 from 'assets/img/about/2020-21/hannah_2.jpg';
+import hiroshi_1 from 'assets/img/about/2020-21/hiroshi_1.jpg';
+import hiroshi_2 from 'assets/img/about/2020-21/hiroshi_2.jpg';
+import janet_1 from 'assets/img/about/2020-21/janet_1.jpg';
+import janet_2 from 'assets/img/about/2020-21/janet_2.jpg';
+import jonathan_1 from 'assets/img/about/2020-21/jonathan_1.jpg';
+import jonathan_2 from 'assets/img/about/2020-21/jonathan_2.jpg';
+import junghyun_1 from 'assets/img/about/2020-21/junghyun_1.jpg';
+import junghyun_2 from 'assets/img/about/2020-21/junghyun_2.jpg';
+import kevin_1 from 'assets/img/about/2020-21/kevin_1.jpg';
+import kevin_2 from 'assets/img/about/2020-21/kevin_2.jpg';
+import leon_1 from 'assets/img/about/2020-21/leon_1.jpg';
+import leon_2 from 'assets/img/about/2020-21/leon_2.jpg';
+import shuming_1 from 'assets/img/about/2020-21/shuming_1.jpg';
+import shuming_2 from 'assets/img/about/2020-21/shuming_2.jpg';
+import vihan_1 from 'assets/img/about/2020-21/vihan_1.jpg';
+import vihan_2 from 'assets/img/about/2020-21/vihan_1.jpg';
+import michael_1 from 'assets/img/about/2020-21/michael_1.jpg';
+import michael_2 from 'assets/img/about/2020-21/michael_2.jpg';
+
 
 const contributors = [
   [
@@ -52,9 +63,39 @@ const contributors = [
     {
       name: 'Janet Xu',
       role: 'Design Lead',
-      site: 'https://www.linkedin.com/in/janet-xu/',
+      site: 'https://janetxrm.github.io',
       img: janet_1,
       silly_img: janet_2,
+    },
+  ],
+  [
+    {
+      name: 'Hiroshi Usui',
+      role: 'Infrastructure Engineer',
+      site: '',
+      img: hiroshi_1,
+      silly_img: hiroshi_2,
+    },
+    {
+      name: 'Jonathan Pan',
+      role: 'Backend Engineer',
+      site: 'https://www.linkedin.com/in/jonathan-pan',
+      img: jonathan_1,
+      silly_img: jonathan_2,
+    },
+    {
+      name: 'Shuming Xu',
+      role: 'Backend Engineer',
+      site: 'https://shumingxu.com/',
+      img: shuming_1,
+      silly_img: shuming_2,
+    },
+    {
+      name: 'Kevin Wang',
+      role: 'Backend Engineer',
+      site: 'https://kevwang.dev/',
+      img: kevin_1,
+      silly_img: kevin_2,
     },
   ],
   [
@@ -66,41 +107,48 @@ const contributors = [
       silly_img: annie_2,
     },
     {
-      name: 'Michael Li',
-      role: 'Frontend Engineer',
-      site: 'http://www.michaelli.me',
-      img: michael_1,
-      silly_img: michael_2,
-    },
-    {
-      name: 'Christina Shao',
-      role: 'Frontend Engineer',
-      site: 'https://www.linkedin.com/in/christina-shao',
-      img: christina_1,
-      silly_img: christina_2,
-    },
-    {
-      name: 'Chloe Liu',
-      role: 'Backend Engineer',
-      site: 'https://www.linkedin.com/in/ruochen99',
-      img: chloe_1,
-      silly_img: chloe_2,
-    },
-  ],
-  [
-    {
       name: 'Hannah Yan',
-      role: 'Backend Engineer',
+      role: 'Designer',
       site: 'https://www.linkedin.com/in/yanhannah',
       img: hannah_1,
       silly_img: hannah_2,
     },
     {
-      name: 'Isabella Lau',
-      role: 'Backend Engineer',
-      site: 'https://www.linkedin.com/in/xisabellalau',
-      img: izzie_1,
-      silly_img: izzie_2,
+      name: 'Junghyun Choy',
+      role: 'Designer',
+      site: '',
+      img: junghyun_1,
+      silly_img: junghyun_2,
+    },
+    {
+      name: 'Michael Li',
+      role: 'Advisor',
+      site: 'http://www.michaelli.me',
+      img: michael_1,
+      silly_img: michael_2,
+    },
+  ],
+  [
+    {
+      name: 'Christina Shao',
+      role: 'Frontend Engineer',
+      site: 'https://christinashao.github.io/',
+      img: christina_1,
+      silly_img: christina_2,
+    },
+    {
+      name: 'Austin George',
+      role: 'Frontend Engineer',
+      site: '',
+      img: austin_1,
+      silly_img: austin_2,
+    },
+    {
+      name: 'Vihan Bhargava',
+      role: 'Frontend Engineer',
+      site: 'https://vihan.org',
+      img: vihan_1,
+      silly_img: vihan_2,
     },
   ],
 ]

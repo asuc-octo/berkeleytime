@@ -1,6 +1,5 @@
 import graphene
 from graphene import JSONString
-from graphql import GraphQLError
 
 # ## Retrieve config
 

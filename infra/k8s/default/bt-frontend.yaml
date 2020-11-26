@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    appName: bt-frontend-svc-$CI_ENVIRONMENT_NAME
+  name: bt-frontend-svc-$CI_ENVIRONMENT_NAME
+  namespace: default
+spec:
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+  selector:
+    appName: bt-frontend-$CI_ENVIRONMENT_NAME
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    appName: bt-frontend-$CI_ENVIRONMENT_NAME
+  name: bt-frontend-$CI_ENVIRONMENT_NAME
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      appName: bt-frontend-$CI_ENVIRONMENT_NAME
+  template:
+    metadata:
+      labels:
+        appName: bt-frontend-$CI_ENVIRONMENT_NAME
+    spec:
+      containers:
+        - command:
+            - npm
+            - run
+            - prod
+          image: $GCR_PATH_FRONTEND:$CI_COMMIT_SHORT_SHA
+          imagePullPolicy: Always
+          name: bt-frontend-$CI_ENVIRONMENT_NAME

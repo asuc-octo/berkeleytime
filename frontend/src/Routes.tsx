@@ -7,7 +7,6 @@ import Grades from './views/Grades/Grades';
 import Enrollment from './views/Enrollment/Enrollment';
 import About from './views/About';
 import Dashboard from './views/Dashboard/Dashboard';
-import Login from './views/Login/Login';
 import Releases from './views/Releases/Releases';
 import Faq from './views/Faq';
 import ApiDocs from './views/Api/Api';
@@ -19,6 +18,8 @@ import BugsForm from './views/Forms/BugsForm';
 // import { Positions } from './views/Apply/DescriptionPages';
 import UserTestingForm from './views/Forms/UserTestingForm';
 import Error from './views/Error/Error';
+import Profile from './views/Profile/Profile';
+import { PrivacyPolicy, TermsOfService } from './views/Policies';
 
 const routes: Array<RouteProps> = [
   { path: '/landing',           component: Landing         },
@@ -27,7 +28,7 @@ const routes: Array<RouteProps> = [
   { path: '/enrollment',        component: Enrollment,     exact: false },
   { path: '/about',             component: About           },
   { path: '/dashboard',         component: Dashboard       },
-  { path: '/login',             component: Login           },
+  // { path: '/login',             component: Login           },
   { path: '/releases',          component: Releases        },
   { path: '/faq',               component: Faq             },
   { path: '/apidocs',           component: ApiDocs         },
@@ -35,11 +36,14 @@ const routes: Array<RouteProps> = [
   { path: '/bugs',              component: BugsForm        },
   { path: '/usertesting',       component: UserTestingForm },
   { path: '/apply',             component: Apply           },
+  { path: '/profile',           component: Profile         },
   // { path: '/apply/positions',   component: Positions       },
   // { path: '/apply/engineering', component: EngineeringApp  },
   // { path: '/apply/design',      component: DesignApp       },
   // { path: '/apply/embed',       component: Apply           },
   { path: '/error',             component: Error           },
+  { path: '/legal/privacy',    component: PrivacyPolicy      },
+  { path: '/legal/terms',      component: TermsOfService     },
 ]
 
 const Routes: React.FC = () => (
@@ -48,7 +52,7 @@ const Routes: React.FC = () => (
     {
       routes.map(route => (
         <Route
-          key={route.path}
+          key={route.path as string}
           path={route.path}
           component={route.component}
           exact={route.exact ?? true} // force exact=true unless specified false

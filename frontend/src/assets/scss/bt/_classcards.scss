@@ -2,7 +2,7 @@
   margin-bottom: 10px;
   min-height: 150px;
 
-  @include mobile {
+  @include touch {
     min-height: auto;
 
      > div {
@@ -33,7 +33,8 @@
       height: 130px;
 
       @include mobile {
-        height: 180px;
+        height: 200px;
+        width: 300px;
       }
 
       display: flex;
@@ -57,7 +58,8 @@
           margin-right: auto !important;
           font-weight: bold;
           color: $bt-base-text;
-          font-size: 18px;
+          //font-size: 18px;
+          @include font-size-responsive-larger(18px);
         }
 
         .class-card-remove {
@@ -82,7 +84,8 @@
 
       /* magic to truncate at 2 lines lol */
       .class-card-title {
-        font-size: 16px;
+        //font-size: 16px;
+        @include font-size-responsive-larger(16px);
 
         /* hide text if it more than N lines  */
         overflow: hidden;
@@ -100,7 +103,16 @@
       }
 
       .class-card-options {
-        font-size: 15px;
+        //font-size: 15px;
+        @include font-size-responsive-larger(15px);
+
+        @include mobile {
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
       }
     }
   }

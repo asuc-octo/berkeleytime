@@ -58,7 +58,7 @@
 }
 
 // have property take on 2 different values depending on the view
-@mixin desktop-and-touch($property, $desktop, $touch) {
+@mixin responsive($property, $desktop, $touch) {
   @include desktop {
     #{$property}: $desktop;
   }

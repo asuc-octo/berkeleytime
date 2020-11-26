@@ -37,22 +37,21 @@ a {
 @mixin font-size-responsive($size) {
   font-size: $size;
 
-  @if $size <= 20px {
-    @include tablet { font-size: $size - 1px; }
-    @include mobile { font-size: $size - 2px; }
-  } @else if $size <= 21px {
-    @include tablet { font-size: $size - 2px; }
-    @include mobile { font-size: $size - 3px; }
-  } @else if $size <= 30px {
+  @if $size <= 24px {
     @include tablet { font-size: $size - 2px; }
     @include mobile { font-size: $size - 4px; }
-  } @else if $size <= 31px {
+  } @else if $size <= 25px {
     @include tablet { font-size: $size - 3px; }
     @include mobile { font-size: $size - 5px; }
   } @else {
     @include tablet { font-size: $size - 3px; }
     @include mobile { font-size: $size - 6px; }
   }
+}
+
+@mixin font-size-responsive-larger($size) {
+  @include mobile { font-size: $size - 2px; }
+  font-size: $size;
 }
 
 .bt-h3 {
@@ -64,6 +63,10 @@ a {
 }
 
 .bt-p {
+  @include font-size-responsive(16px);
+}
+
+.bt-a {
   @include font-size-responsive(16px);
 }
 

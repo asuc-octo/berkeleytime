@@ -15,9 +15,9 @@ CACHE_TIMEOUT = 900
 
 # /grades/grades_json/
 def grade_context(long_form=False):
-    cache_key = 'grade__courses'
+    cache_key = 'grade__courses_new'
     if long_form:
-        cache_key = 'grade__courses__long'
+        cache_key = 'grade__courses__long_new'
     cached = cache.get(cache_key)
     if cached:
         rtn = cached
@@ -54,7 +54,7 @@ def grade_section_json(request, course_id):
     {'instructor': 'Shewchuk', 'semester': 'spring', 'year': 2012, 'section_number': '003', 'grade_id': 1533}
     """
     try:
-        cached = cache.get('grade_section_json ' + str(course_id))
+        cached = cache.get('grade_section_json_new ' + str(course_id))
         if cached:
             print('Cache Hit in grade_section_json course_id ' + course_id)
             return render_to_json(cached)
@@ -68,7 +68,7 @@ def grade_section_json(request, course_id):
             } for entry in Grade.objects.filter(course__id=int(course_id))
         ]
         sections = sorted(sections, key=year_and_semester_to_value, reverse=True)
-        cache.set('grade_section_json ' + str(course_id), sections, CACHE_TIMEOUT)
+        cache.set('grade_section_json_new ' + str(course_id), sections, CACHE_TIMEOUT)
         return render_to_json(sections)
     except Exception as e:
         traceback.print_exc()
@@ -83,7 +83,7 @@ STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
 
 def grade_json(request, grade_ids):
     try:
-        cached = cache.get('grade_json ' + str(grade_ids))
+        cached = cache.get('grade_json_new ' + str(grade_ids))
         if cached:
             print('Cache Hit in grade_json ' + grade_ids)
             return render_to_json(cached)
@@ -135,7 +135,7 @@ def grade_json(request, grade_ids):
         if rtn['section_letter'] == '':
             rtn['section_letter'] = 'N/A'
 
-        cache.set('grade_json' + str(grade_ids), rtn, CACHE_TIMEOUT)
+        cache.set('grade_json_new ' + str(grade_ids), rtn, CACHE_TIMEOUT)
         return render_to_json(rtn)
     except Exception as e:
         traceback.print_exc()

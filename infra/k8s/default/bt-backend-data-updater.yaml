@@ -1,0 +1,47 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
+  namespace: default
+spec:
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            component: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
+        spec:
+          containers:
+            - command:
+                - ./update-data.sh
+              env:
+                - name: PYTHONUNBUFFERED
+                  value: "0"
+                - name: GET_HOSTS_FROM
+                  value: dns
+                - name: ENVIRONMENT_NAME
+                  value: $CI_ENVIRONMENT_NAME
+              envFrom:
+                - configMapRef:
+                    name: bt-backend-config-$CI_ENVIRONMENT_NAME
+                - secretRef:
+                    name: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+              image: $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA
+              imagePullPolicy: Always
+              name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
+              volumeMounts:
+                - mountPath: /etc/google
+                  name: bt-backend-secrets-volume
+                  readOnly: true
+          restartPolicy: OnFailure
+          volumes:
+            - name: bt-backend-secrets-volume
+              secret:
+                defaultMode: 420
+                items:
+                  - key: google-tokens
+                    path: auth.json
+                secretName: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+  schedule: 0 9 * * *
