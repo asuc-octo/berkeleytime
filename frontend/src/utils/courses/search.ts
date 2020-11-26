@@ -34,7 +34,7 @@ export function searchCourse(query: string, courseCode: string, maxPenalty?: num
     .map(([source, replacement]) =>
       search(query, courseCode.replace(source, replacement), maxPenalty)
     );
-  if (courseCode.indexOf("70")> -1) console.log(courseCode, searches);
+
   searches.push(search(query, courseCode, maxPenalty));
 
   return combineQueries(searches);
@@ -44,8 +44,7 @@ export function searchCourse(query: string, courseCode: string, maxPenalty?: num
  * Runs {@link searchCourse} but for react-select
  */
 export function reactSelectCourseSearch(option: any, query: string): boolean {
-  console.log('searching', option.lowercaseLabel);
-  return searchCourse(query, option.lowercaseLabel, 0.4) !== null;
+  return searchCourse(query, option.lowercaseLabel, 0.2) !== null;
 }
 
 /**

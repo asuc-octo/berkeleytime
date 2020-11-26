@@ -64,7 +64,6 @@ export function search(
   if (penalty > maxTypos) {
     return null;
   } else {
-    if (Math.random() < 0.5) console.log(targetString, penalty);
     return penalty;
   }
 }
