@@ -107,7 +107,8 @@ kubectl apply -f /berkeleytime/infra/k8s/default/bt-elasticsearch.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/certificate.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/limitrange.yaml
-kubectl apply -f /berkeleytime/infra/k8s/default/ingress.yaml
+export INGRESS_LABEL=primary; export BASE_DOMAIN_NAME=berkeleytime.com; envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-primary.yaml | kubectl apply -f -
+export INGRESS_LABEL=secondary; export BASE_DOMAIN_NAME=ocf.berkeleytime.com; envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-primary.yaml | kubectl apply -f -
 gcloud auth configure-docker -q
 helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/gitlab-runner.yaml --version 0.23.0
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Regular k8s apps <

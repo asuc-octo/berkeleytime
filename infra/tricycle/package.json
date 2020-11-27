@@ -1,5 +1,5 @@
 {
-  "name": "dev-cycler",
+  "name": "tricycle",
   "version": "1.0.0",
   "description": "",
   "type": "module",
@@ -10,8 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "moment": "^2.29.1",
-    "promisify-child-process": "^4.1.1",
-    "sleep-promise": "^9.0.0"
+    "promisify-child-process": "^4.1.1"
   }
 }
