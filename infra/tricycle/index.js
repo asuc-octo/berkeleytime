@@ -20,9 +20,9 @@ const {
   FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND,
   FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND,
   SECRET_KUBERNETES_CREDENTIALS,
+  TRICYCLE_MAX_NUMBER_OF_LIVE_DEV_BRANCHES,
 } = process.env;
 
-const MAX_NUMBER_OF_LIVE_DEV_BRANCHES = 3;
 const BASE_NAME_DEPLOYMENT_BACKEND = `bt-backend-dev-`;
 const FILEPATH_DEPLOY_INGRESS = `infra/k8s/default/bt-ingress-tricycle.yaml`;
 
@@ -43,7 +43,7 @@ const backendDeployments = (
   .trim()
   .split("\n")
   .filter((name) => name.includes(BASE_NAME_DEPLOYMENT_BACKEND));
-if (backendDeployments.length > MAX_NUMBER_OF_LIVE_DEV_BRANCHES) {
+if (backendDeployments.length > TRICYCLE_MAX_NUMBER_OF_LIVE_DEV_BRANCHES) {
   const prunedBranch = backendDeployments[0]
     .split("/")[1]
     .split("-")
