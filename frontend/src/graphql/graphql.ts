@@ -10,6 +10,12 @@ export interface Scalars {
   Int: number;
   Float: number;
   /**
+   * The `Date` scalar type represents a Date
+   * value as specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  Date: any;
+  /**
    * The `DateTime` scalar type represents a DateTime
    * value as specified by
    * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
@@ -33,14 +39,13 @@ export interface Scalars {
 export interface Query {
   __typename?: 'Query';
   allCourses?: Maybe<CourseTypeConnection>;
-  allEnrollments?: Maybe<EnrollmentTypeConnection>;
   allGrades?: Maybe<GradeTypeConnection>;
   allPlaylists?: Maybe<PlaylistTypeConnection>;
   allSections?: Maybe<SectionTypeConnection>;
   /** The ID of the object */
   course?: Maybe<CourseType>;
-  /** The ID of the object */
-  enrollment?: Maybe<EnrollmentType>;
+  courseEnrollmentBySection?: Maybe<EnrollmentInfo>;
+  courseEnrollmentBySemester?: Maybe<EnrollmentInfo>;
   formConfig?: Maybe<FormConfigType>;
   /** The ID of the object */
   grade?: Maybe<GradeType>;
@@ -77,20 +82,6 @@ export interface QueryAllCoursesArgs {
   hasGrades?: Maybe<Scalars['Boolean']>;
   inPlaylists?: Maybe<Scalars['String']>;
   idIn?: Maybe<Scalars['String']>;
-}
-
-
-export interface QueryAllEnrollmentsArgs {
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  section?: Maybe<Scalars['ID']>;
-  dateCreated?: Maybe<Scalars['DateTime']>;
-  enrolled?: Maybe<Scalars['Int']>;
-  enrolledMax?: Maybe<Scalars['Int']>;
-  waitlisted?: Maybe<Scalars['Int']>;
-  waitlistedMax?: Maybe<Scalars['Int']>;
 }
 
 
@@ -177,8 +168,15 @@ export interface QueryCourseArgs {
 }
 
 
-export interface QueryEnrollmentArgs {
-  id: Scalars['ID'];
+export interface QueryCourseEnrollmentBySectionArgs {
+  sectionId?: Maybe<Scalars['ID']>;
+}
+
+
+export interface QueryCourseEnrollmentBySemesterArgs {
+  courseId?: Maybe<Scalars['ID']>;
+  semester?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['Int']>;
 }
 
 
@@ -306,33 +304,36 @@ export interface CourseTypeEdge {
 }
 
 
-export interface EnrollmentType extends Node {
-  __typename?: 'EnrollmentType';
-  /** The ID of the object. */
-  id: Scalars['ID'];
-  section: SectionType;
-  dateCreated: Scalars['DateTime'];
+
+/**
+ * Proxy for enrollment object. Using this instead of
+ * a DjangoObjectType gives us higher flexibility of the data. 
+ */
+export interface EnrollmentData {
+  __typename?: 'EnrollmentData';
+  day?: Maybe<Scalars['Int']>;
+  dateCreated?: Maybe<Scalars['Date']>;
   enrolled?: Maybe<Scalars['Int']>;
   enrolledMax?: Maybe<Scalars['Int']>;
+  enrolledPercent?: Maybe<Scalars['Float']>;
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
+  waitlistedPercent?: Maybe<Scalars['Float']>;
 }
 
-export interface EnrollmentTypeConnection {
-  __typename?: 'EnrollmentTypeConnection';
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** Contains the nodes in this connection. */
-  edges: Array<Maybe<EnrollmentTypeEdge>>;
-}
-
-/** A Relay edge containing a `EnrollmentType` and its cursor. */
-export interface EnrollmentTypeEdge {
-  __typename?: 'EnrollmentTypeEdge';
-  /** The item at the end of the edge */
-  node?: Maybe<EnrollmentType>;
-  /** A cursor for use in pagination */
-  cursor: Scalars['String'];
+/** The return format of both queries  */
+export interface EnrollmentInfo {
+  __typename?: 'EnrollmentInfo';
+  course?: Maybe<CourseType>;
+  section?: Maybe<Array<Maybe<SectionType>>>;
+  telebears?: Maybe<TelebearData>;
+  data?: Maybe<Array<Maybe<EnrollmentData>>>;
+  enrolledMax?: Maybe<Scalars['Int']>;
+  enrolledPercentMax?: Maybe<Scalars['Float']>;
+  enrolledScaleMax?: Maybe<Scalars['Int']>;
+  waitlistedMax?: Maybe<Scalars['Int']>;
+  waitlistedPercentMax?: Maybe<Scalars['Float']>;
+  waitlistedScaleMax?: Maybe<Scalars['Int']>;
 }
 
 export interface FormConfigType {
@@ -560,22 +561,7 @@ export interface SectionType extends Node {
   enrolledMax?: Maybe<Scalars['Int']>;
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
-  enrollmentSet: EnrollmentTypeConnection;
   wordDays?: Maybe<Scalars['String']>;
-}
-
-
-export interface SectionTypeEnrollmentSetArgs {
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  section?: Maybe<Scalars['ID']>;
-  dateCreated?: Maybe<Scalars['DateTime']>;
-  enrolled?: Maybe<Scalars['Int']>;
-  enrolledMax?: Maybe<Scalars['Int']>;
-  waitlisted?: Maybe<Scalars['Int']>;
-  waitlistedMax?: Maybe<Scalars['Int']>;
 }
 
 export interface SectionTypeConnection {
@@ -593,6 +579,16 @@ export interface SectionTypeEdge {
   node?: Maybe<SectionType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
+}
+
+/** Telebears JSON  */
+export interface TelebearData {
+  __typename?: 'TelebearData';
+  phase1Start?: Maybe<Scalars['Date']>;
+  phase1End?: Maybe<Scalars['Date']>;
+  phase2Start?: Maybe<Scalars['Date']>;
+  phase2End?: Maybe<Scalars['Date']>;
+  adjStart?: Maybe<Scalars['Date']>;
 }
 
 export interface UpdateUser {
