@@ -39,7 +39,7 @@ class EnrollmentInfo(graphene.ObjectType):
     """ The return format of both queries """
     course = graphene.Field(CourseType)
     section = graphene.List(SectionType)
-    # using a list since aggreagte can have multple sections
+    # using a list since aggregate can have multple sections
 
     telebears = graphene.Field(TelebearData)
 
@@ -111,18 +111,18 @@ def get_telebears(semester, year):
 
 
 class Query(graphene.ObjectType):
-    all_enrollments = graphene.Field(
+    course_enrollment_by_section = graphene.Field(
         EnrollmentInfo,
         section_id = graphene.ID()
     )
-    aggregated_enrollment_by_semester = graphene.Field(
+    course_enrollment_by_semester = graphene.Field(
         EnrollmentInfo,
         course_id = graphene.ID(),
         semester = graphene.String(),
         year = graphene.Int()
     )
 
-    def resolve_all_enrollments(root, info, section_id):
+    def resolve_course_enrollment_by_section(root, info, section_id):
         section = Section.objects.get(pk = from_global_id(section_id)[1])
         enrollments = section.enrollment_set \
                              .order_by('date_created') \
@@ -177,7 +177,7 @@ class Query(graphene.ObjectType):
         )
 
 
-    def resolve_aggregated_enrollment_by_semester(root, info, course_id, semester, year):
+    def resolve_course_enrollment_by_semester(root, info, course_id, semester, year):
         course = Course.objects.get(pk = from_global_id(course_id)[1])
         sections = course.section_set.all().filter(semester = semester, year = year, disabled = False, is_primary = True)
         enrollments = Enrollment.objects.filter(section__in = sections) \
