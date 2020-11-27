@@ -1,6 +1,6 @@
+import BTLoader from 'components/Common/BTLoader';
 import React, { Component } from 'react';
 import { ListGroup, Form, Button } from 'react-bootstrap';
-import BeatLoader from 'react-spinners/BeatLoader';
 import Markdown from 'react-markdown';
 
 class BTForm extends Component {
@@ -646,11 +646,7 @@ class BTForm extends Component {
     const { form, responses, validation, submitting, submitted } = this.state;
 
     if (form === null) {
-      return (
-        <div className="form-loader">
-          <BeatLoader color="#579EFF" size="15" sizeUnit="px" />
-        </div>
-      );
+      return <BTLoader />;
     }
 
     if (form.expired) {

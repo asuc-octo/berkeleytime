@@ -3,7 +3,7 @@ import { Button, ButtonGroup, ButtonToolbar, Col, Row } from 'react-bootstrap';
 import CourseSelector from 'components/Scheduler/CourseSelector';
 
 import { useGetCoursesForFilterQuery } from '../../graphql/graphql';
-import BTLoader from 'components/Custom/Loader';
+import BTLoader from 'components/Common/BTLoader';
 import useLatestSemester from 'graphql/hooks/latestSemester';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';

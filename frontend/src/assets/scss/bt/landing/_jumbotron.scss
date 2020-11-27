@@ -6,7 +6,8 @@
     min-height: $touch-viewport-min-height;
   }
 
-  .container, .container > .row {
+  .container,
+  .container > .row {
     // row takes up entire height of jumbotron
     height: 100%;
   }
@@ -14,11 +15,13 @@
   // if tablet or mobile, heading and svg will be stacked on top of each other
   @include tablet {
     .container > .row {
-      >:first-child { // heading
+      > :first-child {
+        // heading
         height: 40%;
       }
 
-      >:last-child { // svg
+      > :last-child {
+        // svg
         height: 60%;
       }
     }
@@ -26,11 +29,13 @@
 
   @include mobile {
     .container > .row {
-      >:first-child { // heading
+      > :first-child {
+        // heading
         height: 50%;
       }
 
-      >:last-child { // svg
+      > :last-child {
+        // svg
         height: 50%;
       }
     }
@@ -75,7 +80,8 @@
     justify-content: center;
     align-items: center;
 
-    svg {
+    svg,
+    img {
       width: 500px;
       max-width: 100%;
       object-fit: scale-down;
@@ -84,46 +90,6 @@
         width: auto;
         height: 100%;
         max-width: 70%;
-      }
-
-      @keyframes updown {
-        from {
-          transform: translateY(-8px);
-        } to {
-          transform: translateY(8px);
-        }
-      }
-  
-      @keyframes updownshort {
-        from {
-          transform: translateY(-4px);
-        } to {
-          transform: translateY(4x);
-        }
-      }
-  
-      #left-float {
-        animation: updown 3.5s ease alternate infinite;
-      }
-  
-      #middle-float {
-        animation: updown 3s ease alternate infinite;
-      }
-  
-      #right-float {
-        animation: updown 4.5s ease alternate infinite;
-      }
-  
-      #everything {
-        animation: updownshort 2.5s ease alternate infinite;
-      }
-  
-      #campanile, #hearst-building, #evans, #doe-library, #hearst-pond  {
-        animation: updownshort 2.5s ease alternate infinite;
-      }
-  
-      #treee, #treee-2, #other-bush, #ball-bush, #tre {
-        animation: updownshort 2.5s ease alternate infinite;
       }
     }
 

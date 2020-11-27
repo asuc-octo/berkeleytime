@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { BeatLoader } from 'react-spinners';
 
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
@@ -15,6 +14,7 @@ import { useGetCourseForIdQuery } from '../../graphql/graphql';
 import { stableSortPlaylists } from 'utils/playlists/playlist';
 import { getLatestSemester, Semester } from 'utils/playlists/semesters';
 import SectionTable from './SectionTable';
+import BTLoader from 'components/Common/BTLoader';
 
 type ClassDescriptionProps = {
   courseId: string;
@@ -45,11 +45,7 @@ const ClassDescription = ({
             A critical error occured loading the data.
           </div>
         ) : (
-          loading && (
-            <div className="loading">
-              <BeatLoader color="#579EFF" size={15} sizeUnit="px" />
-            </div>
-          )
+          loading && <BTLoader />
         )}
       </div>
     );
@@ -155,9 +151,11 @@ const ClassDescription = ({
               {course.gradeAverage !== -1 ? (
                 <div
                   className="statline-div"
-                  title={course.gradeAverage ? `Avg Grade: ${
-                    (course.gradeAverage * 25).toFixed(1)
-                  }%` : undefined}
+                  title={
+                    course.gradeAverage
+                      ? `Avg Grade: ${(course.gradeAverage * 25).toFixed(1)}%`
+                      : undefined
+                  }
                 >
                   {applyIndicatorGrade(
                     course.letterAverage,

@@ -83,40 +83,37 @@ const Navigation: FC<Props> = (props) => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto" />
         <Nav>
-          {
-            // TODO: Pass React-Router's Link to avoid full reloads
-            links.map((link, index) => {
-              if (link.nav_to === '/login') {
-                return <LoginButton key="login" />;
-              }
-              // return empty nav link if we are on the page referenced by the nav link
-              if (link.nav_to !== '') {
-                return (
-                  <Nav.Link
-                    key={link.text}
-                    as={Link}
-                    to={link.nav_to}
-                    className="bt-bold"
-                    eventKey={(index + 1).toString()}
-                    // eventKey required for collapseOnselect
-                    // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
-                  >
-                    {link.text}
-                  </Nav.Link>
-                );
-              } else {
-                return (
-                  <Nav.Link
-                    key={'currentPage'}
-                    className="bt-bold"
-                    eventKey={(index + 1).toString()}
-                  >
-                    {link.text}
-                  </Nav.Link>
-                );
-              }
-            })
-          }
+          {links.map((link, index) => {
+            if (link.nav_to === '/login') {
+              return <LoginButton key="login" />;
+            }
+            // return empty nav link if we are on the page referenced by the nav link
+            if (link.nav_to !== '') {
+              return (
+                <Nav.Link
+                  key={link.text}
+                  as={Link}
+                  to={link.nav_to}
+                  className="bt-bold"
+                  eventKey={(index + 1).toString()}
+                  // eventKey required for collapseOnselect
+                  // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
+                >
+                  {link.text}
+                </Nav.Link>
+              );
+            } else {
+              return (
+                <Nav.Link
+                  key={'currentPage'}
+                  className="bt-bold"
+                  eventKey={(index + 1).toString()}
+                >
+                  {link.text}
+                </Nav.Link>
+              );
+            }
+          })}
         </Nav>
       </Navbar.Collapse>
     </Navbar>

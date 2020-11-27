@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
-import BeatLoader from 'react-spinners/BeatLoader';
 import union from 'lodash/union';
 import difference from 'lodash/difference';
 
@@ -21,10 +20,8 @@ import {
 } from '../../utils/playlists/playlist';
 import { ReduxState } from 'redux/store';
 import { CourseSortAttribute } from 'utils/courses/sorting';
-import {
-  extractSemesters,
-  getLatestSemester,
-} from 'utils/playlists/semesters';
+import { extractSemesters, getLatestSemester } from 'utils/playlists/semesters';
+import BTLoader from 'components/Common/BTLoader';
 
 const Catalog = () => {
   const isMobile = useSelector((state: ReduxState) => state.common.mobile);
@@ -35,10 +32,7 @@ const Catalog = () => {
   const [allPlaylists, setAllPlaylists] = useState<FilterablePlaylist[]>([]);
   const [activePlaylists, setActivePlaylists] = useState<string[]>([]); // The active filters
 
-  const [
-    selectedCourse,
-    setSelectedCourse,
-  ] = useState<string | null>(null); // Selected course ID
+  const [selectedCourse, setSelectedCourse] = useState<string | null>(null); // Selected course ID
 
   const { loading, error } = useGetFiltersQuery({
     onCompleted: (data) => {
@@ -91,7 +85,7 @@ const Catalog = () => {
           {error ? (
             <div>A critical error occured loading.</div>
           ) : loading ? (
-            <BeatLoader color="#579EFF" size={15} sizeUnit="px" />
+            <BTLoader />
           ) : (
             <Filter
               filters={filters!}
@@ -114,7 +108,13 @@ const Catalog = () => {
             query={search}
           />
         </Col>
-        <Col md={6} lg={4} xl={6} className="catalog-description-column" key={activeCourseId}>
+        <Col
+          md={6}
+          lg={4}
+          xl={6}
+          className="catalog-description-column"
+          key={activeCourseId}
+        >
           {selectedCourse !== null &&
             (!isMobile ? (
               <ClassDescription

@@ -1,51 +1,49 @@
 import React, { ComponentType, ReactNode, useState } from 'react';
-import {
-  Container,
-  Row,
-  Col,
-} from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 
 import AccountSubview from '../../components/Profile/AccountSubview';
 import NotificationsSubview from '../../components/Profile/NotificationsSubview';
 import SupportSubview from '../../components/Profile/SupportSubview';
 
-import { ReactComponent as Account } from "../../assets/svg/profile/account.svg";
-import { ReactComponent as AccountSelected } from "../../assets/svg/profile/account_selected.svg";
-import { ReactComponent as Notif } from "../../assets/svg/profile/notif.svg";
-import { ReactComponent as NotifSelected } from "../../assets/svg/profile/notif_selected.svg";
-import { ReactComponent as Support } from "../../assets/svg/profile/support.svg";
-import { ReactComponent as SupportSelected } from "../../assets/svg/profile/support_selected.svg";
+import { ReactComponent as Account } from '../../assets/svg/profile/account.svg';
+import { ReactComponent as AccountSelected } from '../../assets/svg/profile/account_selected.svg';
+import { ReactComponent as Notif } from '../../assets/svg/profile/notif.svg';
+import { ReactComponent as NotifSelected } from '../../assets/svg/profile/notif_selected.svg';
+import { ReactComponent as Support } from '../../assets/svg/profile/support.svg';
+import { ReactComponent as SupportSelected } from '../../assets/svg/profile/support_selected.svg';
 import { useGetUserQuery, UserProfileFragment } from '../../graphql/graphql';
-import { BeatLoader } from 'react-spinners';
+import BTLoader from 'components/Common/BTLoader';
 
 const tabs: {
-  key: string
-  label: string
-  selectedImage: ReactNode
-  deselectedImage: ReactNode
-  component: ComponentType<{ userProfile: UserProfileFragment }> | ComponentType
+  key: string;
+  label: string;
+  selectedImage: ReactNode;
+  deselectedImage: ReactNode;
+  component:
+    | ComponentType<{ userProfile: UserProfileFragment }>
+    | ComponentType;
 }[] = [
   {
-    key: "account",
-    label: "Your Account",
+    key: 'account',
+    label: 'Your Account',
     selectedImage: <AccountSelected />,
     deselectedImage: <Account />,
-    component: AccountSubview
+    component: AccountSubview,
   },
   {
-    key: "notif",
-    label: "Your Account",
+    key: 'notif',
+    label: 'Your Account',
     selectedImage: <NotifSelected />,
     deselectedImage: <Notif />,
-    component: NotificationsSubview
+    component: NotificationsSubview,
   },
   {
-    key: "support",
-    label: "Support",
+    key: 'support',
+    label: 'Support',
     selectedImage: <SupportSelected />,
     deselectedImage: <Support />,
-    component: SupportSubview
-  }
+    component: SupportSubview,
+  },
 ];
 
 const Profile = () => {
@@ -63,7 +61,7 @@ const Profile = () => {
               <div
                 key={tab.key}
                 id={tab.key}
-                className={tabIndex === index ? "selected" : ""}
+                className={tabIndex === index ? 'selected' : ''}
                 onClick={() => setTabIndex(index)}
               >
                 {tabIndex === index ? tab.selectedImage : tab.deselectedImage}
@@ -73,11 +71,7 @@ const Profile = () => {
           </Col>
           <Col lg={10} className="subview-container">
             {loading ? (
-              <BeatLoader
-                color="#579EFF"
-                size={15}
-                sizeUnit="px"
-              />
+              <BTLoader />
             ) : (
               <TabComponent userProfile={data?.user!} />
             )}
@@ -86,6 +80,6 @@ const Profile = () => {
       </Container>
     </div>
   );
-}
+};
 
 export default Profile;
