@@ -18,14 +18,13 @@
     // height is *not* an absolute size.
     // (see https://bugs.webkit.org/show_bug.cgi?id=26559)
     display: flex;
+    flex-direction: column;
     align-items: stretch;
 
     min-height: $viewport-min-height;
 
     > div {
       // Effective height: 100%
-      align-items: stretch;
-      // Effective width: 100%
       flex: 1;
     }
 
