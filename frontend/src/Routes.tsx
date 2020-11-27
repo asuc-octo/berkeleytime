@@ -4,27 +4,27 @@ import BTLoader from 'components/Common/BTLoader';
 
 import Landing from './views/Landing';
 import Catalog from './views/Catalog/Catalog';
-import About from './views/About';
-import Dashboard from './views/Dashboard/Dashboard';
-import Releases from './views/Releases/Releases';
-import Faq from './views/Faq';
+// import Dashboard from './views/Dashboard/Dashboard';
 // import DesignApp from './views/Forms/DesignApp';
 // import EngineeringApp from './views/Forms/EngineeringApp';
 // import { Positions } from './views/Apply/DescriptionPages';
-import UserTestingForm from './views/Forms/UserTestingForm';
 import Error from './views/Error/Error';
 
 // const Grades = lazy(() => new Promise(() => {}));
 const Grades = lazy(() => import('./views/Grades/Grades'));
 const Enrollment = lazy(() => import('./views/Enrollment/Enrollment'));
+const About = lazy(() => import('./views/About'));
+const Releases = lazy(() => import('./views/Releases/Releases'));
+const Faq = lazy(() => import('./views/Faq'));
 const ApiDocs = lazy(() => import('./views/Api/Api'));
-const Profile = lazy(() => import('./views/Profile/Profile'));
-const Scheduler = lazy(() => import('./views/Scheduler/Scheduler'));
-const Apply = lazy(() => import('./views/Apply/Apply'));
 const TestForm = lazy(() => import('./views/Forms/TestForm'));
 const BugsForm = lazy(() => import('./views/Forms/BugsForm'));
+const Apply = lazy(() => import('./views/Apply/Apply'));
+const Profile = lazy(() => import('./views/Profile/Profile'));
+const Scheduler = lazy(() => import('./views/Scheduler/Scheduler'));
 const PrivacyPolicy = lazy(() => import('./views/Policies/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
+const UserTestingForm = lazy(() => import('./views/Forms/UserTestingForm'));
 
 const routes: Array<RouteProps> = [
   { path: '/landing', component: Landing },
@@ -32,7 +32,7 @@ const routes: Array<RouteProps> = [
   { path: '/grades', component: Grades, exact: false },
   { path: '/enrollment', component: Enrollment, exact: false },
   { path: '/about', component: About },
-  { path: '/dashboard', component: Dashboard },
+  // { path: '/dashboard', component: Dashboard },
   // { path: '/login',             component: Login           },
   { path: '/releases', component: Releases },
   { path: '/faq', component: Faq },
