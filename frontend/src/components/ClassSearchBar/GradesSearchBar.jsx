@@ -20,7 +20,7 @@ class GradesSearchBar extends Component {
 
     this.state = {
       selectedClass: 0,
-      selectType: 'instructor',
+      selectType: 'semester',
       selectPrimary: props.selectPrimary,
       selectSecondary: props.selectSecondary,
     };
@@ -43,7 +43,7 @@ class GradesSearchBar extends Component {
   componentDidMount() {
     const { fromCatalog } = this.props;
     this.setState({
-      selectType: 'instructor',
+      selectType: 'semester',
     });
     if (fromCatalog) {
       this.handleClassSelect({ value: fromCatalog.id, addSelected: true });
@@ -130,7 +130,6 @@ class GradesSearchBar extends Component {
   buildPrimaryOptions(sections, selectType) {
     const ret = [];
     const map = new Map();
-
     if (selectType === 'instructor') {
       if (sections.length > 1) {
         ret.push({ value: 'all', label: 'All Instructors' });
