@@ -52,38 +52,46 @@ type CourseTypeEdge {
 }
 
 """
+The `Date` scalar type represents a Date
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Date
+
+"""
 The `DateTime` scalar type represents a DateTime
 value as specified by
 [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
 """
 scalar DateTime
 
-type EnrollmentType implements Node {
-  """The ID of the object."""
-  id: ID!
-  section: SectionType!
-  dateCreated: DateTime!
+"""
+Proxy for enrollment object. Using this instead of
+a DjangoObjectType gives us higher flexibility of the data. 
+"""
+type EnrollmentData {
+  day: Int
+  dateCreated: Date
   enrolled: Int
   enrolledMax: Int
+  enrolledPercent: Float
   waitlisted: Int
   waitlistedMax: Int
+  waitlistedPercent: Float
 }
 
-type EnrollmentTypeConnection {
-  """Pagination data for this connection."""
-  pageInfo: PageInfo!
-
-  """Contains the nodes in this connection."""
-  edges: [EnrollmentTypeEdge]!
-}
-
-"""A Relay edge containing a `EnrollmentType` and its cursor."""
-type EnrollmentTypeEdge {
-  """The item at the end of the edge"""
-  node: EnrollmentType
-
-  """A cursor for use in pagination"""
-  cursor: String!
+"""The return format of both queries """
+type EnrollmentInfo {
+  course: CourseType
+  section: [SectionType]
+  telebears: TelebearData
+  data: [EnrollmentData]
+  enrolledMax: Int
+  enrolledPercentMax: Float
+  enrolledScaleMax: Int
+  waitlistedMax: Int
+  waitlistedPercentMax: Float
+  waitlistedScaleMax: Int
 }
 
 type FormConfigType {
@@ -232,10 +240,8 @@ type Query {
   """The ID of the object"""
   grade(id: ID!): GradeType
   formConfig: FormConfigType
-  allEnrollments(before: String, after: String, first: Int, last: Int, section: ID, dateCreated: DateTime, enrolled: Int, enrolledMax: Int, waitlisted: Int, waitlistedMax: Int): EnrollmentTypeConnection
-
-  """The ID of the object"""
-  enrollment(id: ID!): EnrollmentType
+  courseEnrollmentBySection(sectionId: ID): EnrollmentInfo
+  courseEnrollmentBySemester(courseId: ID, semester: String, year: Int): EnrollmentInfo
 
   """The ID of the object"""
   course(id: ID!): CourseType
@@ -287,7 +293,6 @@ type SectionType implements Node {
   enrolledMax: Int
   waitlisted: Int
   waitlistedMax: Int
-  enrollmentSet(before: String, after: String, first: Int, last: Int, section: ID, dateCreated: DateTime, enrolled: Int, enrolledMax: Int, waitlisted: Int, waitlistedMax: Int): EnrollmentTypeConnection!
   wordDays: String
 }
 
@@ -306,6 +311,15 @@ type SectionTypeEdge {
 
   """A cursor for use in pagination"""
   cursor: String!
+}
+
+"""Telebears JSON """
+type TelebearData {
+  phase1Start: Date
+  phase1End: Date
+  phase2Start: Date
+  phase2End: Date
+  adjStart: Date
 }
 
 type UpdateUser {
