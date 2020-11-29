@@ -2,7 +2,7 @@
   padding: 30px;
 
   @include desktop {
-     height: 100%;
+    height: 100%;
   }
 
   @include mobile {
@@ -54,7 +54,7 @@
 
     button {
       color: $bt-blue;
-      transition: .5s;
+      transition: 0.5s;
       border: none;
       background: none;
       padding: 4px 8px;
@@ -77,24 +77,48 @@
       margin-bottom: 16px;
     }
 
+    position: relative;
+
     input {
       width: 100%;
       padding: 6px;
-      border: solid 1px $bt-border-grey;
+      padding-left: 1.75rem;
+      border: 1px solid $bt-border-grey;
       box-shadow: none;
       color: $bt-base-text;
       font-size: 14px;
       font-family: 'FontAwesome', 'Inter', sans-serif;
-      transition: .5s;
+      transition: 100ms;
       border-radius: 4px;
       text-indent: 6px;
 
-      &::placeholder{
+      outline: none;
+
+      &::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        background: url(../../../svg/common/close.svg);
+        width: 10px;
+        height: 10px;
+        background-size: contain;
+      }
+
+      &::placeholder {
         color: $bt-light-grey;
       }
 
-      &:focus::placeholder {
-        color: $bt-light-border-grey;
+      &:focus {
+        border: 1px solid #2684ff;
+        box-shadow: 0 0 0 1px #2684ff;
+
+        + svg {
+          fill: #2684ff;
+        }
+      }
+
+      &:focus {
+        &::placeholder {
+          color: $bt-light-border-grey;
+        }
       }
 
       @include mobile {
@@ -102,10 +126,26 @@
         font-size: 16px;
       }
     }
+
+    svg {
+      position: absolute;
+      width: 1rem;
+      height: 1rem;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: inherit;
+      fill: $bt-light-grey;
+      transition: 100ms;
+    }
   }
 
-  .filter-sort, .filter-requirements, .filter-units,
-  .filter-department, .filter-class-level, .filter-semesters,
+  .filter-sort,
+  .filter-requirements,
+  .filter-units,
+  .filter-department,
+  .filter-class-level,
+  .filter-semesters,
   .filter-option {
     margin-bottom: 12px;
     display: flex;
@@ -114,19 +154,19 @@
     > p {
       margin-bottom: 10px;
       font-size: 14px;
-      font-weight:600;
+      font-weight: 600;
     }
 
     //override dropdown stylings
 
     .css-10r6hld-indicatorContainer:hover {
       color: $bt-border-grey;
-      transition: .5s;
+      transition: 0.5s;
     }
 
     .css-10r6hld-indicatorContainer:hover {
       color: $bt-border-grey;
-      transition: .5s;
+      transition: 0.5s;
     }
 
     .css-1wa3eu0-placeholder::placeholder {
@@ -137,18 +177,23 @@
       display: none;
     }
 
-    .css-1wa3eu0-placeholder, .css-1uccc91-singleValue , .css-12jo7m5, .css-12jo7m5, .css-26l3qy-menu {
+    .css-1wa3eu0-placeholder,
+    .css-1uccc91-singleValue,
+    .css-12jo7m5,
+    .css-12jo7m5,
+    .css-26l3qy-menu {
       font-size: 14px;
     }
 
-    .css-yk16xz-control::after, .css-1pahdxg-control::after {
+    .css-yk16xz-control::after,
+    .css-1pahdxg-control::after {
       border: solid 1.5px blue;
       background-color: blue;
     }
 
     .css-xb97g8 {
       color: $bt-border-grey;
-      transition: .5s;
+      transition: 0.5s;
     }
 
     .css-xb97g8:hover {
@@ -160,11 +205,11 @@
       color: hsl(0, 0%, 67%);
     }
 
-    .css-yk16xz-control:hover, .css-xb97g8:hover, .css-xb97g8:hover {
+    .css-yk16xz-control:hover,
+    .css-xb97g8:hover,
+    .css-xb97g8:hover {
       cursor: pointer;
     }
-
-
 
     .css-1rhbuit-multiValue {
       background-color: #f3f3f3;
@@ -175,7 +220,6 @@
 }
 
 .filter-modal {
-
   .filter-form {
     padding: 20px 28px;
     max-height: 50vh;
@@ -203,7 +247,7 @@
     padding: 20px 0;
 
     button {
-      margin-right:10px;
+      margin-right: 10px;
       width: 35vw;
       height: 6vh;
     }

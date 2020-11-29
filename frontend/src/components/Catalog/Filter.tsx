@@ -19,6 +19,8 @@ import {
 } from '../../utils/playlists/filterTypes';
 import { CourseSortAttribute } from 'utils/courses/sorting';
 
+import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg';
+
 type Props = {
   filters: Filters;
   activeFilters: string[];
@@ -54,13 +56,12 @@ const FilterSidebar = ({
   setSort,
   isMobile = false,
 }: Props) => {
-
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [modal, setModal] = useState({
     options: [] as PlaylistDescription,
     default: null as FilterParameter[] | null,
     handler: (_filters: FilterParameter[]) => {},
-    isMulti: true
+    isMulti: true,
   });
 
   function resetFilters() {
@@ -109,7 +110,7 @@ const FilterSidebar = ({
       options: [],
       default: null,
       handler: () => {},
-      isMulti: false
+      isMulti: false,
     });
     setShowFilterModal(false);
   }
@@ -126,9 +127,10 @@ const FilterSidebar = ({
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          type="text"
-          placeholder=" &#xf002;  Search for a class..."
+          type="search"
+          placeholder="Search for a class..."
         />
+        <SearchIcon />
       </div>
       <div className="filter-sort">
         <BTSelect
