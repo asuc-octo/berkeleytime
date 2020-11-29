@@ -3,6 +3,7 @@ variables:
   FILEPATH_DEPLOY_BACKEND: infra/k8s/default/bt-backend.yaml
   FILEPATH_DEPLOY_DATA: infra/k8s/default/bt-backend-data-updater.yaml
   FILEPATH_DEPLOY_FRONTEND: infra/k8s/default/bt-frontend.yaml
+  FILEPATH_DEPLOY_INGRESS: infra/k8s/default/bt-ingress-tricycle.yaml
   FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND: backend
   FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND: frontend
   GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/bt-backend
@@ -55,7 +56,7 @@ deploy-dev:
   environment:
     name: staging
   script:
-    - /usr/bin/npm --prefix infra/tricycle install && /bin/node infra/tricycle
+    - npm --prefix infra/tricycle install && node infra/tricycle
 
 deploy-staging:
   stage: deploy-staging
