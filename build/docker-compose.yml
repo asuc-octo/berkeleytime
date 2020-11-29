@@ -3,27 +3,16 @@ services:
   backend:
     build:
       context: ../backend
-    command: ["0.0.0.0:8000"]
+    command:
+        - /bin/bash
+        - -c
+        - >
+          echo $$GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64 | base64 --decode > $$GOOGLE_APPLICATION_CREDENTIALS;
+          python3 /backend/manage.py runserver 0.0.0.0:8000;
     volumes:
      - ../backend:/backend
-     - ./google-sa.json:/google-sa.json
-    environment:
-     - "PYTHONUNBUFFERED=1"
-     - "GOOGLE_CLIENT_ID=***REMOVED***"
-     - "GOOGLE_CLIENT_SECRET=***REMOVED***"
-     - "GOOGLE_TOKEN_URI=https://accounts.google.com/o/oauth2/token"
-     - "ENVIRONMENT_NAME=LOCALHOST"
-     - "DATABASE_URL=postgres://bt:yuxinsucks@34.94.155.47:5432/bt_prod"
-     - "SIS_CLASS_APP_ID=***REMOVED***"
-     - "SIS_CLASS_APP_KEY=***REMOVED***"
-     - "SIS_COURSE_APP_ID=***REMOVED***"
-     - "SIS_COURSE_APP_KEY=***REMOVED***"
-     - "GOOGLE_APPLICATION_CREDENTIALS=/google-sa.json"
-     - "GOOGLE_EMAIL=octo.berkeleytime@asuc.org"
-     - "GOOGLE_PASS=***REMOVED***"
-     - "DJANGO_SECRET_KEY=***REMOVED***"
-    depends_on:
-     - redis
+    env_file:
+      - ../.env.dev
   frontend:
     build:
       context: ../frontend
@@ -33,8 +22,6 @@ services:
       - ../frontend/public:/frontend/public
     command: ["npm", "start"]
     stdin_open: true # https://github.com/facebook/create-react-app/issues/8688
-  redis:
-    image: redis:alpine
   nginx:
     image: nginx
     volumes:
@@ -44,28 +31,3 @@ services:
     depends_on:
      - backend
      - frontend
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.0
-    ports:
-      - '9200:9200'
-    volumes:
-      - es_data:/usr/share/elasticsearch/data
-    environment:
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - cluster.name=docker-cluster
-      - node.name=elasticsearch
-      - bootstrap.memory_lock=true
-      - discovery.seed_hosts=elasticsearch
-      - cluster.initial_master_nodes=elasticsearch
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    healthcheck:
-      test: curl --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
-      interval: 30s
-      timeout: 10s
-      retries: 5
-volumes:
-  es_data:
-    driver: local
