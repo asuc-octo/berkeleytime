@@ -214,6 +214,7 @@ spec:
                 nginx['real_ip_recursive'] = 'on'
                 web_server['external_users'] = ['www-data']
                 gitlab_rails['trusted_proxies'] = [ 'nlb.default.svc.cluster.local', '10.244.0.0/24' ]
+                gitlab_rails['time_zone'] = 'America/Los_Angeles'
                 gitlab_workhorse['listen_network'] = "tcp"
                 gitlab_workhorse['listen_addr'] = "0.0.0.0:8181"
                 gitlab_rails['gitlab_shell_ssh_port'] = 2222
