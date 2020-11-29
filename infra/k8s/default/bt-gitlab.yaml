@@ -58,11 +58,11 @@ metadata:
     component: bt-gitlab
 data:
   GITLAB_BACKUP_EXPIRY: "604800"
-  GITLAB_EXTERNAL_HOSTNAME: ocf.berkeleytime.com/git
+  GITLAB_EXTERNAL_HOSTNAME: berkeleytime.com/git
   GITLAB_EXTERNAL_SCHEME: https
-  GITLAB_MATTERMOST_EXTERNAL_HOSTNAME: m.ocf.berkeleytime.com
+  GITLAB_MATTERMOST_EXTERNAL_HOSTNAME: m.berkeleytime.com
   GITLAB_MATTERMOST_EXTERNAL_SCHEME: https
-  GITLAB_REGISTRY_EXTERNAL_HOSTNAME: registry.ocf.berkeleytime.com
+  GITLAB_REGISTRY_EXTERNAL_HOSTNAME: registry.berkeleytime.com
   GITLAB_REGISTRY_EXTERNAL_SCHEME: https
   POSTGRES_DB: gitlab
   POSTGRES_DB_MATTERMOST: mattermost
@@ -147,7 +147,7 @@ spec:
             - name: MATTERMOST_APP_SECRET
               value: NOT_IN_USE
             - name: GITLAB_ROOT_EMAIL
-              value: root@ocf.berkeleytime.com
+              value: root@berkeleytime.com
             - name: GITLAB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -249,7 +249,7 @@ spec:
                 puma['per_worker_max_memory_mb'] = 4000
 
                 # Email Settings
-                gitlab_ci['gitlab_ci_email_from'] = 'noreply@ocf.berkeleytime.com'
+                gitlab_ci['gitlab_ci_email_from'] = 'noreply@berkeleytime.com'
                 gitlab_ci['smtp_address'] = "smtp.sendgrid.net"
                 gitlab_ci['smtp_authentication'] = "login"
                 gitlab_ci['smtp_domain'] = "smtp.sendgrid.net"
@@ -261,8 +261,8 @@ spec:
                 gitlab_ci['smtp_user_name'] = ENV['GITLAB_SMTP_USERNAME']
                 gitlab_rails['gitlab_email_display_name'] = 'Berkeleytime GitLab'
                 gitlab_rails['gitlab_email_enabled'] = true
-                gitlab_rails['gitlab_email_from'] = 'noreply@ocf.berkeleytime.com'
-                gitlab_rails['gitlab_email_reply_to'] = 'noreply@ocf.berkeleytime.com'
+                gitlab_rails['gitlab_email_from'] = 'noreply@berkeleytime.com'
+                gitlab_rails['gitlab_email_reply_to'] = 'noreply@berkeleytime.com'
                 gitlab_rails['smtp_address'] = "smtp.sendgrid.net"
                 gitlab_rails['smtp_authentication'] = "login"
                 gitlab_rails['smtp_domain'] = "smtp.sendgrid.net"
