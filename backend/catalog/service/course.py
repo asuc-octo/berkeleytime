@@ -1,6 +1,5 @@
 """Course Service."""
-
-import logging
+import sys
 
 from django.core.cache import cache
 from django.db.models import Sum, Q
@@ -15,10 +14,6 @@ from catalog.resource import sis_course_resource
 from catalog.models import Course, Section
 from grades.models import Grade
 from grades.utils import add_up_grades, gpa_to_letter_grade
-
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 class CourseService:
     _courses_with_enrollment_cache_name = "enrollment__courses"
@@ -42,10 +37,7 @@ class CourseService:
             self._update_derived_grade_fields(c)
 
         if unknown_departments:
-            logger.info({
-                'message': 'Found unknown departments/abbreviations',
-                'unknown': unknown_departments,
-            })
+            print('Found unknown departments/abbreviations:', unknown_departments, file=sys.stderr)
 
 
     def update_or_create_from_dict(self, course_dict):
@@ -68,17 +60,10 @@ class CourseService:
                 cross_course.cross_listing.set(other_courses_to_link)
                 cross_course.save()
 
-            logger.info({
-                'message': 'Updated/created new course object',
-                'course': course_obj,
-                'created': created,
-            })
+            print('Updated/created new course object', course_obj, created)
             return course_obj, created
-        except:
-            logger.exception({
-                'message': 'Exception encountered while updating/creating course',
-                'course_dict': course_dict,
-            })
+        except Exception as e:
+            print('Exception encountered while updating/creating course', course_dict, file=sys.stderr)
             return None, False
 
 
@@ -96,11 +81,8 @@ class CourseService:
             except Course.DoesNotExist:
                 pass
 
-            except:
-                logger.exception({
-                    'message': 'Exception encountered while finding course from name',
-                    'course_name': n,
-                })
+            except Exception as e:
+                print('Exception encountered while finding course from name', n, e, file=sys.stderr)
         return courses_list
 
 
