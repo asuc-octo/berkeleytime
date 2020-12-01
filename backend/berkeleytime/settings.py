@@ -119,25 +119,41 @@ ROOT_URLCONF = 'berkeleytime.urls'
 # WSGI app object to use with runserver
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
 
-# Logging
-LOGGING = {
+
+# https://stackoverflow.com/questions/14058453/making-python-loggers-output-all-messages-to-stdout-in-addition-to-log-file
+import logging
+import logging.config
+class _ExcludeErrorsFilter(logging.Filter):
+    def filter(self, record):
+        """Filters out log messages with log level WARNING (numeric value: 30) or higher.""" # https://docs.python.org/3/howto/logging.html
+        return record.levelno < 30
+LOGGING_CONFIG = None
+logging.config.dictConfig({
     'version': 1,
-    'disable_existing_loggers': False,
     'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        },
+        'exclude_errors': {
+            '()': _ExcludeErrorsFilter
+        }
     },
     'handlers': {
-        'console': {
+        'stderr': {
             'class': 'logging.StreamHandler',
+            'level': 'ERROR',
+            'stream': sys.stderr
         },
+        'stdout': {
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG',
+            'filters': ['exclude_errors'],
+            'stream': sys.stdout
+        }
     },
     'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
+        'level': 'NOTSET',
+        'handlers': ['stderr', 'stdout']
     },
-}
+})
+
 
 # List of template engines (we need this for admin panel)
 TEMPLATES = [

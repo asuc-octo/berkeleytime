@@ -1,16 +1,12 @@
 """Grade Service."""
 import csv
-import logging
 import os
+import sys
 
 import grades.resource
 from catalog.models import Course
 from grades.mapper import raw_grade_mapper, formatted_grade_mapper
 from grades.models import Grade
-
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 class GradeService:
     """Application logic for grade data."""
@@ -92,15 +88,15 @@ class GradeService:
             if course:
                 grade_dict['course_id'] = course.id
                 grade_obj, created = self.update_or_create_from_dict(grade_dict)
-                logger.info({
+                print({
                     'message': 'Updated grade record',
                     'grade': grade_obj,
                 })
             else:
-                logger.error({
+                print({
                     'message': 'Course not found while updating grades',
                     'grade_dict': grade_dict,
-                })
+                }, file=sys.stderr)
 
 
     def update_or_create_from_dict(self, grade_dict):
