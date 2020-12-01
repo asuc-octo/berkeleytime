@@ -1,13 +1,9 @@
 """Enrollment Mapper."""
-
-import logging
 import datetime
+import sys
 
 from berkeleytime.settings import finals_mapper
 from enrollment.models import Enrollment
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 class EnrollmentMapper:
     """Map SIS Class API response data to a dict."""
@@ -30,11 +26,11 @@ class EnrollmentMapper:
             enrollment_dict.update(extras)
 
             return enrollment_dict
-        except:
-            logger.exception({
+        except Exception as e:
+            print({
                 'message': 'Error while mapping data to Enrollment object',
                 'data': data
-            })
+            }, e, file=sys.stderr)
             return {}
 
 enrollment_mapper = EnrollmentMapper()

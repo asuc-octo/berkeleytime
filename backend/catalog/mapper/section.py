@@ -1,16 +1,13 @@
 """Schedule Mapper."""
 
 import arrow
-import logging
+import sys
 
 from berkeleytime.settings import finals_mapper
 from catalog.models import Section
 
 
 DAYS_OF_THE_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 class SectionMapper:
     """Map SIS Class API response data to a dict."""
@@ -36,10 +33,8 @@ class SectionMapper:
             section_dict.update(self.get_enrollment(data=data))
 
             return section_dict
-        except Exception:
-            logger.exception({
-                'message': 'Unknown exception while mapping Class API response to Section object'
-            })
+        except Exception as e:
+            print('Unknown exception while mapping Class API response to Section object', e, file=sys.stderr)
             return {}
 
     def get_enrollment(self, data):

@@ -1,12 +1,9 @@
 """SIS Course Resourcen#12585."""
-import logging
 import requests
+import sys
 from retry import retry
 
 from berkeleytime import settings
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 class SISCourseResource:
     """Resource for SIS Course API."""
@@ -21,7 +18,7 @@ class SISCourseResource:
     def get(self, page_number=0, page_size=100):
         """Return a generator of response chunks starting at start_index."""
         while True:
-            logger.info({
+            print({
                 'message': 'Querying SIS Course API',
                 'page_number': page_number,
                 'page_size': page_size
@@ -44,18 +41,16 @@ class SISCourseResource:
             response = requests.get(url, headers=self.headers)
             assert response.status_code in [200, 201]
             return response.json()['apiResponse']['response']['any']['courses']
-        except AssertionError:
-            logger.warning({
+        except AssertionError as e:
+            print({
                 'message': 'SIS Course API did not return valid data',
                 'status_code': response.status_code,
                 'page_number': page_number,
                 'page_size': page_size,
-            })
+            }, e, file=sys.stderr)
             raise
-        except:
-            logger.exception({
-                'message': 'Unable to reach SIS Course API'
-            })
+        except Exception as e:
+            print('Unable to reach SIS Course API', e, file=sys.stderr)
             raise
 
 sis_course_resource = SISCourseResource()
