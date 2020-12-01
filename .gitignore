@@ -6,6 +6,8 @@ venv*
 *.rdb
 .vagrant
 .idea
+.env*
+!.env.template
 vagrant/data/data.tar.gz
 build/postgres-data
 build/requirements.txt

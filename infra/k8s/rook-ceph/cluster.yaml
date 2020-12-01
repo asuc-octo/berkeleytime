@@ -1,3 +1,7 @@
+# This initializes Rook's Ceph cluster, an abstraction that can
+# provide block storage file systems (rbd: RADOS Block Devices) or
+# network file systems (CephFS) that k8s uses for dynamic persistent volumes
+---
 # https://stackoverflow.com/questions/51986300/kubernetes-default-qos-for-whole-namespace
 # Kubernetes default QoS for whole namespace
 apiVersion: ceph.rook.io/v1

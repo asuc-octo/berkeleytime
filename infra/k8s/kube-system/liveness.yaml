@@ -1,3 +1,7 @@
+# This is a liveness check that the VM responds to
+# - curl berkeleytime.com:8080/healthz
+# ("Here be dragons!")
+# Currently in use, but no monitoring system is currently checking on it
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:

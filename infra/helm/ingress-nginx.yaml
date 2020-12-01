@@ -8,4 +8,5 @@ controller:
 tcp:
   2222: default/bt-gitlab:2222
   5432: default/bt-psql-staging-postgresql-ha-pgpool:5432
+  6379: default/bt-redis-staging-master:6379
 resources: {}
