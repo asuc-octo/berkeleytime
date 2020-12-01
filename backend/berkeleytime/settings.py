@@ -24,8 +24,7 @@ from berkeleytime.config.semesters.spring2021 import *
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ENV_NAME = os.getenv('ENVIRONMENT_NAME')
-IS_LOCALHOST = ENV_NAME == 'LOCALHOST'
+IS_LOCALHOST = os.getenv('ENVIRONMENT_NAME') == 'localhost'
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
@@ -55,25 +54,17 @@ DATABASES = {
 }
 
 # Cache
-if IS_LOCALHOST:
-    CACHES = {
-        'default': {
-            'BACKEND': 'redis_cache.RedisCache',
-            'LOCATION': 'redis:6379',
+redis_instance = urlparse(os.getenv('REDIS_URL'))
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '{0}:{1}'.format(redis_instance.hostname, redis_instance.port),
+        'OPTIONS': {
+            'PASSWORD': redis_instance.password,
+            'DB': 0,
         }
     }
-else:
-    redis_instance = urlparse(os.getenv('REDIS_URL'))
-    CACHES = {
-        'default': {
-            'BACKEND': 'redis_cache.RedisCache',
-            'LOCATION': '{0}:{1}'.format(redis_instance.hostname, redis_instance.port),
-            'OPTIONS': {
-                'PASSWORD': redis_instance.password,
-                'DB': 0,
-            }
-        }
-    }
+}
 
 # Email config
 if IS_LOCALHOST:
@@ -128,25 +119,41 @@ ROOT_URLCONF = 'berkeleytime.urls'
 # WSGI app object to use with runserver
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
 
-# Logging
-LOGGING = {
+
+# https://stackoverflow.com/questions/14058453/making-python-loggers-output-all-messages-to-stdout-in-addition-to-log-file
+import logging
+import logging.config
+class _ExcludeErrorsFilter(logging.Filter):
+    def filter(self, record):
+        """Filters out log messages with log level WARNING (numeric value: 30) or higher.""" # https://docs.python.org/3/howto/logging.html
+        return record.levelno < 30
+LOGGING_CONFIG = None
+logging.config.dictConfig({
     'version': 1,
-    'disable_existing_loggers': False,
     'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        },
+        'exclude_errors': {
+            '()': _ExcludeErrorsFilter
+        }
     },
     'handlers': {
-        'console': {
+        'stderr': {
             'class': 'logging.StreamHandler',
+            'level': 'ERROR',
+            'stream': sys.stderr
         },
+        'stdout': {
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG',
+            'filters': ['exclude_errors'],
+            'stream': sys.stdout
+        }
     },
     'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
+        'level': 'NOTSET',
+        'handlers': ['stderr', 'stdout']
     },
-}
+})
+
 
 # List of template engines (we need this for admin panel)
 TEMPLATES = [

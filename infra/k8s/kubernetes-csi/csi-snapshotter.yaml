@@ -1,16 +1,25 @@
+# This is not a hand-crafted BT-specific YAML file
+# Don't bother trying to understand unless debugging
+# Basically gives permissions for snapshot controller pod that handles backup & restore on persistent volumes
+# git clone --single-branch --branch v3.0.0 https://github.com/kubernetes-csi/external-snapshotter.git
+# https://github.com/kubernetes-csi/external-snapshotter/blob/0802d19711c42543c0421dcfa3162f0bfe3143c9/deploy/kubernetes/csi-snapshotter
+# ^ merged following GitHub files into this file:
+# - rbac-csi-snapshotter.yaml
+# - setup-csi-snapshotter.yaml
+# For future maintainers, if need to upgrade, use this command and pull the YAML
+# git clone --single-branch --branch v3.0.0 https://github.com/kubernetes-csi/external-snapshotter.git
+---
 # RBAC file for the snapshot controller.
 #
 # The snapshot controller implements the control loop for CSI snapshot functionality.
 # It should be installed as part of the base Kubernetes distribution in an appropriate
 # namespace for components implementing base system functionality. For installing with
 # Vanilla Kubernetes, kube-system makes sense for the namespace.
-
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: snapshot-controller
   namespace: default # TODO: replace with the namespace you want for your controller, e.g. kube-system
-
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -65,9 +74,9 @@ metadata:
   namespace: default # TODO: replace with the namespace you want for your controller, e.g. kube-system
   name: snapshot-controller-leaderelection
 rules:
-- apiGroups: ["coordination.k8s.io"]
-  resources: ["leases"]
-  verbs: ["get", "watch", "list", "delete", "update", "create"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "watch", "list", "delete", "update", "create"]
 
 ---
 kind: RoleBinding
@@ -83,4 +92,28 @@ roleRef:
   kind: Role
   name: snapshot-controller-leaderelection
   apiGroup: rbac.authorization.k8s.io
-
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: snapshot-controller
+  namespace: default # TODO: replace with the namespace you want for your controller, e.g. kube-system
+spec:
+  serviceName: "snapshot-controller"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: snapshot-controller
+  template:
+    metadata:
+      labels:
+        app: snapshot-controller
+    spec:
+      serviceAccount: snapshot-controller
+      containers:
+        - name: snapshot-controller
+          image: quay.io/k8scsi/snapshot-controller:canary
+          args:
+            - "--v=5"
+            - "--leader-election=false"
+          imagePullPolicy: Always

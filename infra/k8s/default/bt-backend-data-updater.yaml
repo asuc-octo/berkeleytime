@@ -17,10 +17,6 @@ spec:
             - command:
                 - ./update-data.sh
               env:
-                - name: PYTHONUNBUFFERED
-                  value: "0"
-                - name: GET_HOSTS_FROM
-                  value: dns
                 - name: ENVIRONMENT_NAME
                   value: $CI_ENVIRONMENT_NAME
               envFrom:

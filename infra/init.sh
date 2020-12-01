@@ -39,14 +39,14 @@ gsutil cp gs://berkeleytime-218606/secrets/credentials-clouddns-dns01-solver-svc
 gsutil cp gs://berkeleytime-218606/secrets/helm-bt-gitlab-runner.env - | kubectl create secret generic bt-gitlab-runner --from-env-file /dev/stdin
 gsutil cp gs://berkeleytime-218606/secrets/kubernetes-docker-registry-gcr.json - | kubectl create secret docker-registry docker-registry-gcr --docker-server gcr.io --docker-username _json_key --docker-email jenkins-gcr-creds@berkeleytime-218606.iam.gserviceaccount.com --docker-password "$(cat /dev/stdin)"
 gsutil cp gs://berkeleytime-218606/secrets/kubernetes-general-secrets.env - | kubectl create secret generic general-secrets --from-env-file /dev/stdin
-gsutil cp gs://berkeleytime-218606/secrets/kubernetes-ingress-nginx-bt-protected-routes - | kubectl create secret generic ingress-nginx-bt-protected-routes --from-file auth=/dev/stdin
+gsutil cp gs://berkeleytime-218606/secrets/kubernetes-bt-ingress-protected-routes - | kubectl create secret generic bt-ingress-protected-routes --from-file auth=/dev/stdin
 kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Import secrets <
 
-# > Create base images >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# > Create CI/CD images >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 gcloud config set builds/use_kaniko True
 gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/docker/gitlab-runner --tag gcr.io/berkeleytime-218606/gitlab-runner:latest
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Create base images <
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Create CI/CD images <
 
 # > Helm >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -68,33 +68,29 @@ until kubectl apply -f /berkeleytime/infra/k8s/default/certificate.yaml && kubec
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Ingress <
 
 # > rook-ceph >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# External snapshotter from source:
-# git clone --single-branch --branch v3.0.0 https://github.com/kubernetes-csi/external-snapshotter.git
-# kubectl apply -f external-snapshotter/client/config/crd
-# kubectl apply -f external-snapshotter/deploy/kubernetes/snapshot-controller
 kubectl apply -f /berkeleytime/infra/k8s/kubernetes-csi
 helm install rook-ceph rook-release/rook-ceph --namespace rook-ceph --version v1.5.1 --create-namespace
-kubectl apply -f /berkeleytime/infra/k8s/rook-ceph/setup --recursive;
+kubectl apply -f /berkeleytime/infra/k8s/rook-ceph --recursive;
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< rook-ceph <
 
-# > Monitoring >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# > Monitoring >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 helm install bt-logstash elastic/logstash -f /berkeleytime/infra/helm/logstash.yaml --version 7.9.3
 helm install bt-kibana elastic/kibana --version 7.9.3 -f /berkeleytime/infra/helm/kibana.yaml
 helm install bt-metricbeat elastic/metricbeat --version 7.9.3 -f /berkeleytime/infra/helm/metricbeat.yaml
 helm install bt-filebeat elastic/filebeat -f /berkeleytime/infra/helm/filebeat.yaml --version 7.9.3
 helm install bt-elastalert codesim/elastalert --version 1.8.1 -f /berkeleytime/infra/helm/elastalert.yaml
-# helm install kubernetes-metrics-server bitnami/metrics-server --version bitnami/metrics-server --version 4.5.2
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Databases <
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Monitoring <
 
-# > Application DB >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# > BT Databases >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 for CI_ENVIRONMENT_NAME in "staging" "prod"
 do
   export CI_ENVIRONMENT_NAME=$CI_ENVIRONMENT_NAME
   gsutil cp gs://berkeleytime-218606/secrets/helm-bt-psql-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-psql-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
+  gsutil cp gs://berkeleytime-218606/secrets/helm-bt-redis-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-redis-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
   envsubst < /berkeleytime/infra/helm/postgres.yaml | helm install bt-psql-$CI_ENVIRONMENT_NAME bitnami/postgresql-ha --version 5.2.4 -f -
-  helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis -f /berkeleytime/infra/helm/redis.yaml --version 11.3.4
+  envsubst < /berkeleytime/infra/helm/redis.yaml | helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis --version 12.1.1 -f -
 done
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Application DB <
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BT Databases <
 
 # > Backup >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
