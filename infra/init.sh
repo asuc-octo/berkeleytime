@@ -35,9 +35,9 @@ kubectl taint nodes $(hostname) node-role.kubernetes.io/master-
 
 # > Import secrets >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 kubectl create ns cert-manager || true
-gsutil cp gs://berkeleytime-218606/secrets/iam-dns01-solver.json - | kubectl create secret generic clouddns-dns01-solver-svc-acct --from-file credentials-clouddns-dns01-solver-svc-acct.json=/dev/stdin --namespace cert-manager
+gsutil cp gs://berkeleytime-218606/secrets/iam-bt-dns01-solver.json - | kubectl create secret generic clouddns-dns01-solver-svc-acct --from-file credentials-clouddns-dns01-solver-svc-acct.json=/dev/stdin --namespace cert-manager
+gsutil cp gs://berkeleytime-218606/secrets/iam-bt-gitlab-runner.json - | kubectl create secret docker-registry docker-registry-gcr --docker-server gcr.io --docker-username _json_key --docker-email bt-gitlab-runner@berkeleytime-218606.iam.gserviceaccount.com --docker-password "$(cat /dev/stdin)"
 gsutil cp gs://berkeleytime-218606/secrets/helm-bt-gitlab-runner.env - | kubectl create secret generic bt-gitlab-runner --from-env-file /dev/stdin
-gsutil cp gs://berkeleytime-218606/secrets/kubernetes-docker-registry-gcr.json - | kubectl create secret docker-registry docker-registry-gcr --docker-server gcr.io --docker-username _json_key --docker-email jenkins-gcr-creds@berkeleytime-218606.iam.gserviceaccount.com --docker-password "$(cat /dev/stdin)"
 gsutil cp gs://berkeleytime-218606/secrets/kubernetes-general-secrets.env - | kubectl create secret generic general-secrets --from-env-file /dev/stdin
 gsutil cp gs://berkeleytime-218606/secrets/kubernetes-bt-ingress-protected-routes - | kubectl create secret generic bt-ingress-protected-routes --from-file auth=/dev/stdin
 kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
