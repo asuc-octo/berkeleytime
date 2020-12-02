@@ -75,7 +75,7 @@ const FilterSidebar = ({
    * the definitive list of new filters from value.
    */
   const filterHandler = (allOptions: PlaylistDescription) => (
-    value?: ValueType<FilterParameter>
+    value?: FilterParameter | FilterParameter[] | null
   ) => {
     const [add, remove] = getChanges(
       ([] as FilterParameter[]).concat(value || []),
@@ -138,7 +138,7 @@ const FilterSidebar = ({
           options={SORT_OPTIONS}
           isSearchable={false}
           isVirtual={false}
-          onChange={(e) => setSort((e as SortOption).value)}
+          onChange={(e: SortOption) => setSort(e.value)}
           value={SORT_OPTIONS.find((o) => o.value === sort)}
         />
       </div>
@@ -147,7 +147,7 @@ const FilterSidebar = ({
           <p>{filterTypeToString(option.type)}</p>
           <BTSelect
             isClearable={filterTypeIsClearable(option.type)}
-            isMulti={filterTypeIsMulti(option.type)}
+            isMulti={filterTypeIsMulti(option.type) as false}
             closeMenuOnSelect={!filterTypeIsMulti(option.type)}
             isSearchable={filterTypeIsSearchable(option.type)}
             options={option.options as GroupedOptionsType<FilterParameter>}

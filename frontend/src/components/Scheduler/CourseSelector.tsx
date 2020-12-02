@@ -72,7 +72,7 @@ const CourseSelector = ({
           (course) => !hasCourseById(schedule, course.value)
         )}
         filterOption={reactSelectCourseSearch}
-        onChange={(c) => c && addCourse((c as CourseOptionType).course)}
+        onChange={(c: CourseOptionType) => c && addCourse(c.course)}
       />
       <p>Choose the sections to build your schedule.</p>
       {schedule.courses.length > 0 && (
