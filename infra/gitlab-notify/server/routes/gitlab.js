@@ -101,12 +101,7 @@ router.post("/prod", async (req, res) => {
   if (!prod) {
     return res.sendStatus(200);
   }
-  const prodBuilds = [];
-  for (let build of builds) {
-    if (build.name == stageName) {
-      prodBuilds.push(build);
-    }
-  }
+  const prodBuilds = builds.filter((build) => build.name == stageName);
   if (prodBuilds.some((build) => build.status == "pending")) {
     await axios.post(slackWebhook, {
       username: "Oski",
