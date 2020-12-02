@@ -1,0 +1,17 @@
+{
+  "name": "gitlab-notify",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "ansi_up": "^4.0.4",
+    "axios": "^0.18.1",
+    "express": "^4.15.2",
+    "nodemailer": "^6.4.16"
+  },
+  "author": "",
+  "license": "ISC"
+}
