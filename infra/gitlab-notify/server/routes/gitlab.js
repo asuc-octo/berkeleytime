@@ -91,7 +91,7 @@ router.post("/prod", async (req, res) => {
     builds,
   } = req.body;
   console.log(req.body);
-  const slackWebhook = `https://hooks.slack.com/services/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`; // #berkeleytime-integrations
+  const slackWebhook = `https://hooks.slack.com/services/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`; // #berkeleytime
   const icon_url = "https://i.imgur.com/5TI5N3Q.png";
   const stageName = "deploy-prod";
   const shortCommit = commit.id.slice(0, 8);
