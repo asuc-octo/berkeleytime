@@ -45,7 +45,8 @@ kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-re
 
 # > Create CI/CD images >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 gcloud config set builds/use_kaniko True
-gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/docker/gitlab-runner --tag gcr.io/berkeleytime-218606/gitlab-runner:latest
+gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-runner --tag gcr.io/berkeleytime-218606/gitlab-runner:latest
+gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-notify --tag gcr.io/berkeleytime-218606/gitlab-notify:latest
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Create CI/CD images <
 
 # > Helm >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -101,6 +102,7 @@ crontab -l | { cat; echo "0 11 * * * /usr/bin/npm --prefix /berkeleytime/infra/b
 # > Regular k8s apps >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-elasticsearch.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab.yaml
+kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab-notify.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/certificate.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/limitrange.yaml
 export INGRESS_LABEL=primary; export BASE_DOMAIN_NAME=berkeleytime.com; envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-primary.yaml | kubectl apply -f -

@@ -42,7 +42,7 @@ lifecycle:
           KIBANA_URL=http://localhost:5601/kibana;
           ELASTICSEARCH_URL=http://bt-elasticsearch-primary:9200;
           sleep 20; while [ "$(curl -s -o /dev/null -w '%{http_code}\n' $KIBANA_URL/app/kibana)" != "200" ]; do sleep 1; done;
-          curl -X PUT "$ELASTICSEARCH_URL/_cluster/settings?pretty" -H 'Content-Type: application/json' -d'{"persistent":{"search":{ "allow_expensive_queries":true}}}'
+          curl -X PUT "$ELASTICSEARCH_URL/_cluster/settings?pretty" -H 'Content-Type: application/json' -d'{"persistent":{"search":{ "allow_expensive_queries":true}}}';
 
           INDEX_PATTERN_ID=k8s-index-pattern-id;
           INDEX_PATTERN="k8s-*";

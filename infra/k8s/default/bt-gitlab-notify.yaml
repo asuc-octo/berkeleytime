@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: bt-gitlab-notify
+  name: bt-gitlab-notify
+  namespace: default
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000
+  selector:
+    component: bt-gitlab-notify
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: bt-gitlab-notify
+  name: bt-gitlab-notify
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: bt-gitlab-notify
+  template:
+    metadata:
+      labels:
+        component: bt-gitlab-notify
+    spec:
+      containers:
+        - command:
+            - npm
+            - start
+          env:
+            - name: GITLAB_DOMAIN
+              value: https://berkeleytime.com/git
+          envFrom:
+            - secretRef:
+                name: general-secrets
+          image: gcr.io/berkeleytime-218606/gitlab-notify:latest
+          imagePullPolicy: Always
+          name: bt-gitlab-notify
