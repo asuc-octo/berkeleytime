@@ -81,48 +81,46 @@ router.post("/fail", async (req, res) => {
 
 router.post("/prod", async (req, res) => {
   const {
-    // Pipeline event payload https://docs.gitlab.com/ee/user/project/integrations/webhooks.html
-    object_kind,
-    object_attributes,
-    merge_request,
-    user,
+    // Deployment event payload
+    // https://docs.gitlab.com/ee/user/project/integrations/webhooks.html
+    // https://docs.gitlab.com/ee/api/deployments.html
+    environment,
     project,
-    commit,
-    builds,
+    short_sha,
+    status,
   } = req.body;
   console.log(req.body);
   const slackWebhook = `https://hooks.slack.com/services/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`; // #berkeleytime
   const icon_url = "https://i.imgur.com/5TI5N3Q.png";
-  const stageName = "deploy-prod";
-  const shortCommit = commit.id.slice(0, 8);
-  const prod = builds.some(
-    (build) => build.name == stageName && build.status != "manual"
-  );
-  if (!prod) {
+  if (environment != "prod") {
     return res.sendStatus(200);
   }
-  const prodBuilds = builds.filter((build) => build.name == stageName);
-  if (prodBuilds.some((build) => build.status == "pending")) {
+  const { author_name } = (
+    await axios.get(
+      `${GITLAB_DOMAIN}/api/v4/projects/${project.id}/repository/commits/${short_sha}`,
+      {
+        headers: {
+          "PRIVATE-TOKEN": GITLAB_PROJECT_BT_ACCESS_TOKEN,
+        },
+      }
+    )
+  ).data;
+  if (status == "running") {
     await axios.post(slackWebhook, {
       username: "Oski",
-      text: `We're deploying commit ${shortCommit} to production, OMG ${commit.author.name} I'M SO STRESSED, FINGERS CROSSED!!!🤞`,
+      text: `We're deploying commit ${short_sha} to production, OMG ${author_name.toUpperCase()} I'M SO STRESSED, FINGERS CROSSED!!!🤞`,
       icon_url,
     });
-  } else if (prodBuilds.every((build) => build.status == "success")) {
+  } else if (status == "success") {
     await axios.post(slackWebhook, {
       username: "Oski",
-      text: `It worked ${commit.author.name}! WE DEPLOYED COMMIT ${shortCommit} TO PROD! GO BEARS🐻🎉`,
+      text: `It worked ${author_name}! WE DEPLOYED COMMIT ${short_sha} TO PROD! GO BEARS🐻🎉\n...actually let's manually double check, just to be safe`,
       icon_url,
     });
+  } else if (status == "failed") {
     await axios.post(slackWebhook, {
       username: "Oski",
-      text: `...actually let's manually double check, just to be safe`,
-      icon_url,
-    });
-  } else if (prodBuilds.some((build) => build.status == "failed")) {
-    await axios.post(slackWebhook, {
-      username: "Oski",
-      text: `😭Sorry ${commit.author.name}, we did our best to deploy ${shortCommit} to prod, but we fucked up and now Stanford🌲 gets 1 more Big Game win`,
+      text: `😭Sorry ${author_name}, we did our best to deploy ${short_sha} to prod, but we fucked up and now Stanford🌲 gets 1 more Big Game win`,
       icon_url,
     });
   }
