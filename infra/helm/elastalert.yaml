@@ -9,7 +9,7 @@
 # https://github.com/jertel/elastalert-docker/blob/d0c017e5af2145b69511f7e6764b60e2c27166ee/chart/elastalert/values.yaml
 # Other examples:
 # https://github.com/oneoneonepig/elastalert-chart/blob/master/values.yaml
-replicaCount: 0
+replicaCount: 1
 elasticsearch:
   host: bt-elasticsearch-primary
   port: 9200

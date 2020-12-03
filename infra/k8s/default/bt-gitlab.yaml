@@ -110,7 +110,7 @@ spec:
               mkdir -p /var/opt/gitlab/git-data/repositories
       containers:
         - name: bt-gitlab
-          image: gitlab/13.6.1-ee.0
+          image: gitlab/gitlab-ee:13.6.1-ee.0
           lifecycle:
             preStop:
               exec:
