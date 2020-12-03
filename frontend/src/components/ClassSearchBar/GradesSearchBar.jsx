@@ -20,7 +20,7 @@ class GradesSearchBar extends Component {
 
     this.state = {
       selectedClass: 0,
-      selectType: 'semester',
+      selectType: 'instructor',
       selectPrimary: props.selectPrimary,
       selectSecondary: props.selectSecondary,
     };
@@ -43,7 +43,7 @@ class GradesSearchBar extends Component {
   componentDidMount() {
     const { fromCatalog } = this.props;
     this.setState({
-      selectType: 'semester',
+      selectType: 'instructor',
     });
     if (fromCatalog) {
       this.handleClassSelect({ value: fromCatalog.id, addSelected: true });
@@ -349,7 +349,6 @@ class GradesSearchBar extends Component {
               styles={customStyles}
             />
           </Col>
-          {!isMobile ?
           <Col lg={2}>
             <Select
               name="sortBy"
@@ -364,7 +363,7 @@ class GradesSearchBar extends Component {
               }}
               styles={customStyles}
             />
-          </Col> : null }
+          </Col>
           <Col xs={6} sm={6} lg={3}>
             <Select
               name="instrSems"
