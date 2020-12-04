@@ -11,6 +11,8 @@ const {
   GITLAB_PROJECT_BT_ACCESS_TOKEN,
 } = process.env;
 
+const quoteCache = {};
+
 const router = express.Router();
 const transporter = nodemailer.createTransport({
   host: "smtp.sendgrid.net",
@@ -39,10 +41,37 @@ router.post("/fail", async (req, res) => {
   if (!failureDetected) {
     return res.sendStatus(200);
   }
+  const ts = new Date(Date.now());
+  const today = `${ts
+    .getFullYear()
+    .toString()}${ts
+    .getMonth()
+    .toString()
+    .padStart(2, "0")}${ts.getDate().toString().padStart(2, "0")}`;
+  let message;
+  if (quoteCache[today]) {
+    console.log(`Cache hit for '${today}'`);
+    message = `"${quoteCache[today].quote}" —${quoteCache[today].author}`;
+  } else {
+    try {
+      const {
+        data: {
+          contents: { quotes },
+        },
+      } = await axios.get(`https://quotes.rest/qod.json?category=inspire`);
+      const { quote, author } = quotes[0];
+      message = `"${quote}" —${author}`;
+      quoteCache[today] = { quote, author };
+    } catch (e) {
+      console.error("Failed to get inspirational quote, using generic Oski...");
+      message = `"did u know? 1 build failure = 1 extra budget cut to EECS program" —Oski🐻`;
+    }
+  }
   let html = `
-  <h1 style='color: red'>You suck ${commit.author.name}</h1>
-  <p>1 build failure = 1🏈 win to Stanford🌲</p>
-  <p>- Oski💔😭</p>
+  <h1>${message}</h1>
+  <p style='color: red'>hi ${
+    commit.author.name
+  }, looks like your stuff is broken</p>
   <p><b>BRANCH:</b> ${object_attributes.ref}</p>
   <p><b>COMMIT:</b> ${commit.id.slice(0, 8)}</p>
   <p><b>MESSAGE:</b> ${commit.message}</p><br>`;
@@ -69,7 +98,7 @@ router.post("/fail", async (req, res) => {
     }
   }
   const sendMail = {
-    from: '"Oski 🐻" <oski@berkeleytime.com>',
+    from: '"Oski 🐻" <noreply@berkeleytime.com>',
     to: `"${commit.author.name}" ${commit.author.email}`,
     subject: `❌ Build branch '${object_attributes.ref}' pipeline #${object_attributes.id}, commit: '${commit.message}'`,
     html: `${html}`,
