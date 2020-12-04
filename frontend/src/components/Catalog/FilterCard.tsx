@@ -1,5 +1,6 @@
 import { CourseOverviewFragment } from 'graphql/graphql';
 import React, { CSSProperties, memo, ReactNode } from 'react';
+import { CourseReference, isSameCourse } from 'utils/courses/course';
 import { CourseSortAttribute } from 'utils/courses/sorting';
 import { ReactComponent as BookmarkSaved } from '../../assets/svg/catalog/bookmark-saved.svg';
 import { ReactComponent as BookmarkUnsaved } from '../../assets/svg/catalog/bookmark-unsaved.svg';
@@ -56,25 +57,17 @@ type FilterCardProps = {
     courses: CourseOverviewFragment[];
     selectCourse: (course: CourseOverviewFragment) => void;
     sortBy: CourseSortAttribute;
-    selectedCourseId: string | null;
+    selectedCourse: CourseReference | null;
     saved: boolean;
   };
   index: number;
   style: CSSProperties;
 };
 
-const FilterCard = ({
-  style,
-  data,
-  index
-}: FilterCardProps) => {
+const FilterCard = ({ style, data, index }: FilterCardProps) => {
   const course = data.courses[index];
 
-  const {
-    sortBy,
-    selectedCourseId,
-    saved
-  } = data;
+  const { sortBy, selectedCourse, saved } = data;
   const {
     abbreviation,
     courseNumber,
@@ -83,7 +76,7 @@ const FilterCard = ({
     enrolledPercentage,
     openSeats,
     units,
-    id
+    id,
   } = course;
 
   let sort;
@@ -104,7 +97,7 @@ const FilterCard = ({
       sort = null;
   }
 
-  const isSelectedCourse = id !== null && selectedCourseId === id;
+  const isSelectedCourse = isSameCourse(selectedCourse, course);
 
   return (
     <div
@@ -134,7 +127,7 @@ const FilterCard = ({
         </div>
         {sort}
         <div className="filter-card-save">
-            {saved ? <BookmarkSaved /> : <BookmarkUnsaved />}
+          {saved ? <BookmarkSaved /> : <BookmarkUnsaved />}
         </div>
       </div>
     </div>

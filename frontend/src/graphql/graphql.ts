@@ -704,6 +704,28 @@ export type GetCourseForIdQuery = (
   )> }
 );
 
+export type GetCourseForNameQueryVariables = Exact<{
+  abbreviation: Scalars['String'];
+  courseNumber: Scalars['String'];
+  year?: Maybe<Scalars['String']>;
+  semester?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetCourseForNameQuery = (
+  { __typename?: 'Query' }
+  & { allCourses?: Maybe<(
+    { __typename?: 'CourseTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'CourseTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'CourseType' }
+        & CourseFragment
+      )> }
+    )>> }
+  )> }
+);
+
 export type GetCoursesForFilterQueryVariables = Exact<{
   playlists: Scalars['String'];
 }>;
@@ -943,6 +965,46 @@ export function useGetCourseForIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetCourseForIdQueryHookResult = ReturnType<typeof useGetCourseForIdQuery>;
 export type GetCourseForIdLazyQueryHookResult = ReturnType<typeof useGetCourseForIdLazyQuery>;
 export type GetCourseForIdQueryResult = Apollo.QueryResult<GetCourseForIdQuery, GetCourseForIdQueryVariables>;
+export const GetCourseForNameDocument = gql`
+    query GetCourseForName($abbreviation: String!, $courseNumber: String!, $year: String, $semester: String) {
+  allCourses(abbreviation: $abbreviation, courseNumber: $courseNumber, first: 1) {
+    edges {
+      node {
+        ...Course
+      }
+    }
+  }
+}
+    ${CourseFragmentDoc}`;
+
+/**
+ * __useGetCourseForNameQuery__
+ *
+ * To run a query within a React component, call `useGetCourseForNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCourseForNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCourseForNameQuery({
+ *   variables: {
+ *      abbreviation: // value for 'abbreviation'
+ *      courseNumber: // value for 'courseNumber'
+ *      year: // value for 'year'
+ *      semester: // value for 'semester'
+ *   },
+ * });
+ */
+export function useGetCourseForNameQuery(baseOptions: Apollo.QueryHookOptions<GetCourseForNameQuery, GetCourseForNameQueryVariables>) {
+        return Apollo.useQuery<GetCourseForNameQuery, GetCourseForNameQueryVariables>(GetCourseForNameDocument, baseOptions);
+      }
+export function useGetCourseForNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCourseForNameQuery, GetCourseForNameQueryVariables>) {
+          return Apollo.useLazyQuery<GetCourseForNameQuery, GetCourseForNameQueryVariables>(GetCourseForNameDocument, baseOptions);
+        }
+export type GetCourseForNameQueryHookResult = ReturnType<typeof useGetCourseForNameQuery>;
+export type GetCourseForNameLazyQueryHookResult = ReturnType<typeof useGetCourseForNameLazyQuery>;
+export type GetCourseForNameQueryResult = Apollo.QueryResult<GetCourseForNameQuery, GetCourseForNameQueryVariables>;
 export const GetCoursesForFilterDocument = gql`
     query GetCoursesForFilter($playlists: String!) {
   allCourses(inPlaylists: $playlists) {

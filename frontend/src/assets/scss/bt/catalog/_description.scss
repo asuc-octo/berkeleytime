@@ -25,17 +25,26 @@
     align-items: center;
   }
 
+  .catalog-results-empty {
+    padding: 1.5rem;
+    font-size: 18px;
+    text-align: center;
+    color: $bt-light-text;
+  }
+
   .catalog-description {
     height: 100%;
     padding: 30px 0;
 
     display: block;
 
-    > *:not(section), > section > * {
+    > *:not(section),
+    > section > * {
       margin-bottom: 15px;
     }
 
-    > section:not(.description-section), .description-section > div {
+    > section:not(.description-section),
+    .description-section > div {
       padding: 0 30px;
     }
 
@@ -75,9 +84,9 @@
         }
 
         .statlink {
-          opacity: .8;
+          opacity: 0.8;
           border-radius: 2px;
-          transition: .2s;
+          transition: 0.2s;
           padding: 0px 4px;
           line-height: 0;
           padding-top: 4px;
@@ -86,7 +95,6 @@
             cursor: pointer;
             opacity: 1;
             background: $bt-button-background;
-
           }
 
           img {
@@ -196,7 +204,7 @@
         font-weight: normal;
 
         tr {
-          transition: .2s;
+          transition: 0.2s;
           &:hover {
             background-color: #d4d4d442;
           }
@@ -212,10 +220,9 @@
             padding: 0.75rem;
             position: sticky;
             background: white;
-            transition: .2s;
+            transition: 0.2s;
             top: 0;
           }
-
         }
 
         td {
@@ -223,8 +230,6 @@
           padding: 0.75rem;
         }
       }
-
     }
-
   }
 }

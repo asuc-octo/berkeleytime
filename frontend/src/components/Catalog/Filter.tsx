@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GroupedOptionsType, ValueType } from 'react-select';
+import { GroupedOptionsType } from 'react-select';
 import BTSelect from 'components/Custom/Select';
 import FilterModal from './FilterModal';
 
@@ -25,11 +25,12 @@ type Props = {
   filters: Filters;
   activeFilters: string[];
   modifyFilters: (add: Set<string>, remove: Set<string>) => void;
+  resetFilters: () => void;
 
   search?: string;
   setSearch: (query: string) => void;
 
-  sort?: string;
+  sort: string;
   setSort: (sort: CourseSortAttribute) => void;
 
   isMobile?: boolean;
@@ -44,15 +45,14 @@ const SORT_OPTIONS: SortOption[] = [
   { value: 'enrolled_percentage', label: 'Sort By: Percent Enrolled' },
 ];
 
-const DEFAULT_SORT = SORT_OPTIONS[0];
-
 const FilterSidebar = ({
   filters,
   activeFilters,
   modifyFilters,
+  resetFilters,
   search = '',
   setSearch,
-  sort = DEFAULT_SORT.value,
+  sort,
   setSort,
   isMobile = false,
 }: Props) => {
@@ -63,12 +63,6 @@ const FilterSidebar = ({
     handler: (_filters: FilterParameter[]) => {},
     isMulti: true,
   });
-
-  function resetFilters() {
-    setSearch('');
-    setSort(DEFAULT_SORT.value);
-    modifyFilters(new Set(), new Set(activeFilters));
-  }
 
   /**
    * Takes a subset of filters and then updates according to

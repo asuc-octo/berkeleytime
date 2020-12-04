@@ -1,0 +1,18 @@
+query GetCourseForName(
+  $abbreviation: String!
+  $courseNumber: String!
+  $year: String
+  $semester: String
+) {
+  allCourses(
+    abbreviation: $abbreviation
+    courseNumber: $courseNumber
+    first: 1
+  ) {
+    edges {
+      node {
+        ...Course
+      }
+    }
+  }
+}
