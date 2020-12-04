@@ -188,6 +188,14 @@ class ClassDescription extends Component {
     return {};
   }
 
+  getOverridePrereq(course, prereqs) {
+    // Hard code request from PB HLTH 126 (Health Economics and Public Policy)
+    if (course.id == 5639) {
+      prereqs = "No prerequisites. This field was modified as requested by the instructor.";
+    }
+    return prereqs;
+  }
+
   render() {
     const { courseData, loading } = this.props;
     const { course, sections, requirements } = courseData;
@@ -259,6 +267,9 @@ class ClassDescription extends Component {
           }
         }
       }
+
+      // This function retrieves manual overrides, else returns original morePrereq
+      prereqs = this.getOverridePrereq(course, prereqs);
 
       return (
         <div className="catalog-description-container">
