@@ -224,6 +224,11 @@ class Catalog extends Component {
     const { showDescription } = this.state;
     const { activePlaylists, loading, selectedCourse, isMobile } = this.props;
 
+    // Hard code request from PB HLTH 126 (Health Economics and Public Policy)
+    // if (selectedCourse.id == 5639) {
+    // } 
+    console.log(selectedCourse);
+
     return (
       <div className="catalog viewport-app">
         <Row noGutters>
