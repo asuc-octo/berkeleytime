@@ -2,10 +2,11 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import ClassDescription from './ClassDescription';
 import { Semester } from 'utils/playlists/semesters';
+import { CourseReference } from 'utils/courses/course';
 
 type ClassDescriptionModalProps = {
   show: boolean;
-  courseId: string;
+  course: CourseReference;
   semester: Semester;
   hideModal: () => void;
   modifyFilters: (add: Set<string>, remove: Set<string>) => void;
@@ -13,7 +14,7 @@ type ClassDescriptionModalProps = {
 
 const ClassDescriptionModal = ({
   show,
-  courseId,
+  course,
   semester,
   hideModal,
   modifyFilters,
@@ -38,7 +39,7 @@ const ClassDescriptionModal = ({
           Back to Courses{' '}
         </button>
         <ClassDescription
-          courseId={courseId}
+          course={course}
           semester={semester}
           modifyFilters={modifyFilters}
         />

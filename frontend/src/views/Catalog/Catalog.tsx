@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
@@ -22,19 +22,27 @@ import { ReduxState } from 'redux/store';
 import { CourseSortAttribute } from 'utils/courses/sorting';
 import { extractSemesters, getLatestSemester } from 'utils/playlists/semesters';
 import BTLoader from 'components/Common/BTLoader';
+import { CourseReference, courseToName } from 'utils/courses/course';
+
+const DEFAULT_SORT: CourseSortAttribute = 'relevance';
 
 const Catalog = () => {
   const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
   const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState<CourseSortAttribute>('relevance');
+  const [sortBy, setSortBy] = useState<CourseSortAttribute>(DEFAULT_SORT);
   const [showDescription, setShowDescription] = useState(false); // The course modal on mobile
   const [allPlaylists, setAllPlaylists] = useState<FilterablePlaylist[]>([]);
   const [activePlaylists, setActivePlaylists] = useState<string[]>([]); // The active filters
 
-  const [selectedCourse, setSelectedCourse] = useState<string | null>(null); // Selected course ID
+  const [selectedCourse, setSelectedCourse] = useState<CourseReference | null>(
+    null
+  ); // Selected course ID
 
-  const { loading, error } = useGetFiltersQuery({
+  const {
+    loading: loadingPlaylists,
+    error: errorPlaylists,
+  } = useGetFiltersQuery({
     onCompleted: (data) => {
       const allPlaylists = data.allPlaylists?.edges.map((edge) => edge!.node!)!;
       const latestSemester = getLatestSemester(allPlaylists);
@@ -47,7 +55,7 @@ const Catalog = () => {
 
   const history = useHistory();
   const match = useRouteMatch<{ abbreviation: string; courseNumber: string }>(
-    '/catalog/:abbrevation/:courseNumber'
+    '/catalog/:abbreviation/:courseNumber'
   );
 
   /**
@@ -60,12 +68,25 @@ const Catalog = () => {
   }
 
   /**
+   * Resets the filters
+   */
+  function resetFilters() {
+    const latestSemester = getLatestSemester(allPlaylists);
+    setActivePlaylists([latestSemester?.playlistId!]);
+    setSortBy(DEFAULT_SORT);
+    setSearch('');
+  }
+
+  /**
    * Sets the selected course and updates the url
    */
   function selectCourse(course: CourseOverviewFragment) {
     setShowDescription(true); //show modal if on mobile
     history.replace(`/catalog/${course.abbreviation}/${course.courseNumber}/`);
-    setSelectedCourse(course.id);
+    setSelectedCourse({
+      abbreviation: course.abbreviation,
+      courseNumber: course.courseNumber,
+    });
   }
 
   // Convert list of filter into semantic hierarchy
@@ -76,21 +97,23 @@ const Catalog = () => {
 
   // If the user has selected a course, show that. Otherwise, show the course
   // from the URL
-  const activeCourseId = selectedCourse;
+  const activeCourse =
+    selectedCourse || (activeSemester && match?.params) || null;
 
   return (
     <div className="catalog viewport-app">
       <Row noGutters>
         <Col md={3} lg={4} xl={3} className="filter-column">
-          {error ? (
+          {errorPlaylists ? (
             <div>A critical error occured loading.</div>
-          ) : loading ? (
+          ) : loadingPlaylists ? (
             <BTLoader />
           ) : (
             <Filter
               filters={filters!}
               activeFilters={activePlaylists}
               modifyFilters={modifyFilters}
+              resetFilters={resetFilters}
               search={search}
               setSearch={(query: string) => setSearch(query)}
               sort={sortBy}
@@ -103,7 +126,7 @@ const Catalog = () => {
           <FilterResults
             activePlaylists={activePlaylists}
             selectCourse={selectCourse}
-            selectedCourseId={activeCourseId}
+            selectedCourse={activeCourse}
             sortBy={sortBy}
             query={search}
           />
@@ -113,18 +136,18 @@ const Catalog = () => {
           lg={4}
           xl={6}
           className="catalog-description-column"
-          key={activeCourseId}
+          key={courseToName(activeCourse)}
         >
-          {selectedCourse !== null &&
+          {activeCourse !== null &&
             (!isMobile ? (
               <ClassDescription
-                courseId={activeCourseId!}
+                course={activeCourse}
                 semester={activeSemester}
                 modifyFilters={modifyFilters}
               />
             ) : (
               <ClassDescriptionModal
-                courseId={activeCourseId!}
+                course={activeCourse}
                 semester={activeSemester}
                 modifyFilters={modifyFilters}
                 show={showDescription}

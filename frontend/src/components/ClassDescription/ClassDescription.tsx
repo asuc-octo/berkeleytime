@@ -10,28 +10,30 @@ import {
   applyIndicatorGrade,
   formatUnits,
 } from '../../utils/utils';
-import { useGetCourseForIdQuery } from '../../graphql/graphql';
+import { useGetCourseForNameQuery } from '../../graphql/graphql';
 import { stableSortPlaylists } from 'utils/playlists/playlist';
 import { getLatestSemester, Semester } from 'utils/playlists/semesters';
 import SectionTable from './SectionTable';
 import BTLoader from 'components/Common/BTLoader';
+import { CourseReference, courseToName } from 'utils/courses/course';
 
-type ClassDescriptionProps = {
-  courseId: string;
+type Props = {
+  course: CourseReference;
   semester?: Semester;
   modifyFilters: (add: Set<string>, remove: Set<string>) => void;
 };
 
 const ClassDescription = ({
-  courseId,
+  course: courseRef,
   semester,
   modifyFilters,
-}: ClassDescriptionProps) => {
+}: Props) => {
   const [readMore, setReadMore] = useState<boolean | null>(false);
 
-  const { data, loading, error } = useGetCourseForIdQuery({
+  const { data, loading, error } = useGetCourseForNameQuery({
     variables: {
-      id: courseId,
+      abbreviation: courseRef.abbreviation,
+      courseNumber: courseRef.courseNumber,
       year: semester?.year,
       semester: semester?.semester,
     },
@@ -51,7 +53,20 @@ const ClassDescription = ({
     );
   }
 
-  const course = data.course!;
+  const course = data.allCourses?.edges[0]?.node;
+
+  if (!course) {
+    return (
+      <div className="catalog-description-container">
+        <div className="loading">
+          <div className="catalog-results-empty">
+            Unknown course {courseToName(courseRef)}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const playlists = course.playlistSet.edges.map((e) => e?.node!);
   const sections = course.sectionSet.edges.map((e) => e?.node!);
 

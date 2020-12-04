@@ -11,11 +11,12 @@ import {
 import { searchCourses } from 'utils/courses/search';
 import { sortByAttribute, CourseSortAttribute } from 'utils/courses/sorting';
 import BTLoader from 'components/Common/BTLoader';
+import { CourseReference } from 'utils/courses/course';
 
 type FilterResultsProps = {
   activePlaylists: string[];
   selectCourse?: (course: CourseOverviewFragment) => void;
-  selectedCourseId: string | null;
+  selectedCourse: CourseReference | null;
   sortBy: CourseSortAttribute;
   query: string;
 };
@@ -26,7 +27,7 @@ type FilterResultsProps = {
 const FilterResults = ({
   activePlaylists,
   selectCourse,
-  selectedCourseId,
+  selectedCourse,
   sortBy,
   query: rawQuery,
 }: FilterResultsProps) => {
@@ -58,7 +59,7 @@ const FilterResults = ({
     courses: sortedCourses,
     sortBy,
     selectCourse: selectCourse,
-    selectedCourseId,
+    selectedCourse,
   };
 
   return (

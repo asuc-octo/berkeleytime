@@ -1,5 +1,21 @@
-import { CourseFragment } from 'graphql/graphql';
+import { CourseFragment, CourseOverviewFragment } from 'graphql/graphql';
 import { hash } from 'utils/string';
+
+export type CourseReference = {
+  abbreviation: string;
+  courseNumber: string;
+};
+
+/**
+ * Checks if a course matches a refernece.
+ */
+export const isSameCourse = (
+  reference: CourseReference | null,
+  course: CourseOverviewFragment
+) =>
+  reference !== null &&
+  course.abbreviation === reference.abbreviation &&
+  course.courseNumber === reference.courseNumber;
 
 /**
  * Course to a course name
@@ -7,7 +23,11 @@ import { hash } from 'utils/string';
  * courseToName(course) == "COMPSCI 61B"
  */
 export function courseToName(
-  course: Pick<CourseFragment, 'abbreviation' | 'courseNumber'> | null | undefined
+  course:
+    | Pick<CourseFragment, 'abbreviation' | 'courseNumber'>
+    | CourseReference
+    | null
+    | undefined
 ): string {
   return course ? `${course.abbreviation} ${course.courseNumber}` : '';
 }
