@@ -47,6 +47,7 @@ kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-re
 gcloud config set builds/use_kaniko True
 gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-runner --tag gcr.io/berkeleytime-218606/gitlab-runner:latest
 gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-notify --tag gcr.io/berkeleytime-218606/gitlab-notify:latest
+gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/github-notify --tag gcr.io/berkeleytime-218606/github-notify:latest
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Create CI/CD images <
 
 # > Helm >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
