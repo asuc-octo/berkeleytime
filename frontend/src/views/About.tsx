@@ -23,18 +23,18 @@ import passion from 'assets/svg/about/passion.svg'
 const values = [
   {
     svg: growth,
-    name: 'Growth',
-    desc: 'You’ll grow your technical skills as you tackle real challenging design and engineering problems.',
+    name: 'Trees',
+    desc: 'We are strong and tall like a tree. That\'s why its our mascot. ',
   },
   {
     svg: curiosity,
-    name: 'Curiosity',
-    desc: 'We value team members that are curious about solving difficult problems and seek out solutions independently.',
+    name: 'Brilliance',
+    desc: 'Did you not get a 2395 SAT, 4.8 GPA, and attend Phillips Exeter?',
   },
   {
     svg: passion,
     name: 'Passion',
-    desc: 'Genuine commitment and dedication are critical to moving the Stanfurdtime product forward.',
+    desc: 'Your passion for this start up is why you must work 18 hours a day, 7 days a week for 0.1% equity and no pay.',
   },
 ]
 
@@ -44,8 +44,9 @@ const About: FC = () => (
       <H3 bold className="mb-2">About Our Team</H3>
       <P className="mb-3">
         We&apos;re a small tech firm contracted by Stanfurd, dedicated to
-        simplifying the course discovery experience. We actively build, improve
+        simplifying the course discovery experience. We charge the school an absurd amount to build,
         and maintain Stanfurdtime.
+
       </P>
       {/* <Button variant="inverted" link_to="/apply">Join Our Team</Button> */}
     </div>
