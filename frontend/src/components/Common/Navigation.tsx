@@ -19,22 +19,27 @@ const Navigation: FC<Props> = (props) => {
       {
         to: '/catalog',
         text: 'Catalog',
+        on_click: () => {}
       },
       {
         to: '/grades',
         text: 'Grades',
+        on_click: () => {}
       },
       {
         to: '/enrollment',
         text: 'Enrollment',
+        on_click: () => {}
       },
       {
         to: '/about',
         text: 'About',
+        on_click: () => {}
       },
       {
         to: '/faq',
         text: 'FAQ',
+        on_click: () => {}
       },
       // {
       //   to: '/apply',
@@ -45,7 +50,7 @@ const Navigation: FC<Props> = (props) => {
       //  text: 'Login',
       // },
     ].map(link => ({
-      on_click: "on_click" in link ? link.on_click : null,
+      on_click: link.on_click,
       to: link.to,
       text: link.text,
       nav_to: link.to,
