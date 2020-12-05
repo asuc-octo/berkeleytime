@@ -8,6 +8,7 @@ import { ReduxState } from '../../redux/store';
 
 import LoginButton from '../Login/LoginButton';
 import { useAuth, useUser } from '../../graphql/hooks/auth';
+import LoginModal from '../Login/LoginModal';
 
 interface Props extends PropsFromRedux {}
 
@@ -33,7 +34,16 @@ const NavigationLink: FC<
 );
 
 const Navigation: FC<Props> = (props) => {
-  const [links, setLinks] = useState(
+  const [showLogin, setShowLogin] = useState(false);
+
+  const [links, setLinks] = useState<
+    {
+      text: string;
+      to?: string;
+      nav_to?: string;
+      onClick?: () => void;
+    }[]
+  >(
     [
       {
         to: '/catalog',
@@ -64,6 +74,7 @@ const Navigation: FC<Props> = (props) => {
       //   text: 'Apply',
       // },
     ].map((link) => ({
+      on_click: 'on_click' in link ? (link as any).on_click : null,
       to: link.to,
       text: link.text,
       nav_to: link.to,
@@ -80,7 +91,7 @@ const Navigation: FC<Props> = (props) => {
         to: link.to,
         text: link.text,
         // nav_to is either [link.to] or '' if we are already on that page
-        nav_to: location.pathname.includes(link.to) ? '' : link.to,
+        nav_to: link.to && location.pathname.includes(link.to) ? '' : link.to,
       }))
     );
   }, [location.pathname]);
@@ -115,10 +126,13 @@ const Navigation: FC<Props> = (props) => {
               <NavigationLink to="/logout">Log Out</NavigationLink>
             </>
           ) : (
-            <LoginButton key="login" />
+            <NavigationLink onClick={() => setShowLogin(true)}>
+              Login
+            </NavigationLink>
           )}
         </Nav>
       </Navbar.Collapse>
+      <LoginModal showLogin={showLogin} hideLogin={() => setShowLogin(false)} />
     </Navbar>
   );
 };

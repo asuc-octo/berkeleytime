@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import Select from 'react-select-virtualized';
-import {
-  Container, Row, Col, Button,
-} from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import hash from 'object-hash';
 
 import { connect } from 'react-redux';
@@ -134,7 +132,6 @@ class GradesSearchBar extends Component {
   buildPrimaryOptions(sections, selectType) {
     const ret = [];
     const map = new Map();
-
     if (selectType === 'instructor') {
       if (sections.length > 1) {
         ret.push({ value: 'all', label: 'All Instructors' });
@@ -251,11 +248,7 @@ class GradesSearchBar extends Component {
   }
 
   getFilteredSections() {
-    const {
-      selectType,
-      selectPrimary,
-      selectSecondary,
-    } = this.state;
+    const { selectType, selectPrimary, selectSecondary } = this.state;
     const { sections } = this.props;
     let semester = selectSecondary;
     let number = -1;
@@ -394,25 +387,23 @@ class GradesSearchBar extends Component {
               styles={customStyles}
             />
           </Col>
-          {!isMobile ? (
-            <Col lg={2}>
-              <Select
-                name="sortBy"
-                value={
-                  selectType === 'instructor' ? sortOptions[0] : sortOptions[1]
-                }
-                placeholder="Sort by"
-                options={sortOptions}
-                isClearable={false}
-                onChange={this.handleSortSelect}
-                isDisabled={!selectedClass}
-                components={{
-                  IndicatorSeparator: () => null,
-                }}
-                styles={customStyles}
-              />
-            </Col>
-          ) : null}
+          <Col lg={2}>
+            <Select
+              name="sortBy"
+              value={
+                selectType === 'instructor' ? sortOptions[0] : sortOptions[1]
+              }
+              placeholder="Sort by"
+              options={sortOptions}
+              isClearable={false}
+              onChange={this.handleSortSelect}
+              isDisabled={!selectedClass}
+              components={{
+                IndicatorSeparator: () => null,
+              }}
+              styles={customStyles}
+            />
+          </Col>
           <Col xs={6} sm={6} lg={3}>
             <Select
               name="instrSems"
@@ -461,13 +452,13 @@ class GradesSearchBar extends Component {
   }
 }
 
-
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   dispatch,
-  fetchGradeSelected: (updatedClass) => dispatch(fetchGradeSelected(updatedClass)),
+  fetchGradeSelected: (updatedClass) =>
+    dispatch(fetchGradeSelected(updatedClass)),
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { sections, selectPrimary, selectSecondary } = state.grade;
   return {
     sections,
@@ -476,7 +467,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GradesSearchBar);
+export default connect(mapStateToProps, mapDispatchToProps)(GradesSearchBar);
