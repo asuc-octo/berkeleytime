@@ -4,6 +4,7 @@ import { H3, P } from 'bt/custom'
 
 import asuc_logo from '../../assets/img/landing/asuc_logo.png'
 import stf_logo from '../../assets/img/landing/stf_logo.jpeg'
+import ocf_logo from '../../assets/img/landing/ocf_logo.png'
 
 const Blurbs: FC = () => (
   <>
@@ -20,7 +21,7 @@ const Blurbs: FC = () => (
           <img className="landing-sponsors-img" src={asuc_logo} alt="asuc" />
         </a>
         <a href="https://www.ocf.berkeley.edu"> {/* https://www.ocf.berkeley.edu/docs/services/vhost/badges */}
-          <img src="https://www.ocf.berkeley.edu/hosting-logos/ocfbadge_silver8.png" alt="Hosted by the OCF" style={{border: 0}} />
+          <img className="landing-sponsors-img" src={ocf_logo} alt="Hosted by the OCF" style={{border: 0}} />
        </a>
       </div>
     </div>
