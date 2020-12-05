@@ -24,7 +24,7 @@ const Explore: FC = () => (
       <Col xs={12} md={4} className="feature">
         <img src={history} className="mb-4" alt="history" />
         <H6 bold className="mb-3">Enrollment History</H6>
-        <P>Track accurate, real-time course enrollment trends and history.</P>
+          <P>Why didn't Dr. Strange time reverse Thanos into a baby like he did that apple?</P>
       </Col>
     </Row>
   </div>

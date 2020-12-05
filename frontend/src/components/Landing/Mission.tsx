@@ -15,8 +15,7 @@ const Mission: FC = () => (
         <Col xs={12} md={5} xl={{ span: 4, offset: 1 }}>
           <div className="mission">
             <H3 bold className="mb-3">Our Mission</H3>
-            <P className="mb-3">Stanfurdtime is a local tech firm contracted by Stanfurd to provide course discovery solutions.
-              We are dedicated to designing profitable yet cheap software for students.
+            <P className="mb-3">Our mission is to transform individuals into starters who follow their passion, develop lasting relationships, and create value through innovative pursuits.
             </P>
             <Button variant="inverted" href={{as_link: "/about"}}>About our Team</Button>
           </div>
