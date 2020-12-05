@@ -14,17 +14,15 @@ interface Props extends PropsFromRedux {}
 
 const NavigationLink: FC<
   {
-    key?: string;
     to?: string;
     onClick?: () => void;
   } & NavProps
-> = ({ key, to, children, ...props }) => (
+> = ({ to, children, ...props }) => (
   <Nav.Link
     as={to ? Link : undefined}
     to={to}
     className="bt-bold"
-    key={key}
-    eventKey={key}
+    eventKey={to}
     {...props}
     // eventKey required for collapseOnselect
     // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
@@ -86,6 +84,9 @@ const Navigation: FC<Props> = (props) => {
   const { logout } = useAuth();
 
   useEffect(() => {
+    // Hide modal when path changes
+    setShowLogin(false);
+
     setLinks((links) =>
       links.map((link) => ({
         to: link.to,
@@ -115,7 +116,7 @@ const Navigation: FC<Props> = (props) => {
         <Nav className="mr-auto" />
         <Nav>
           {links.map((link, index) => (
-            <NavigationLink key={`${index + 1}`} to={link.nav_to}>
+            <NavigationLink key={index} to={link.nav_to}>
               {link.text}
             </NavigationLink>
           ))}

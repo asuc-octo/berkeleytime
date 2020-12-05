@@ -1,4 +1,3 @@
-import { ApolloError } from '@apollo/client';
 import { useGetUserQuery, UserProfileFragment } from '../../graphql/graphql';
 
 export const useUser = (): {
