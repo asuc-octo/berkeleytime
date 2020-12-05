@@ -92,7 +92,7 @@ const Navigation: FC<Props> = (props) => {
                     key={link.text}
                     as={Link}
                     to={link.nav_to}
-                    {/*onClick={link.on_click}}*/}
+                    /*onClick={link.on_click}}*/
                     className="bt-bold"
                     eventKey={(index + 1).toString()}
                     // eventKey required for collapseOnselect
