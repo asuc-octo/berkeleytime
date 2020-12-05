@@ -130,7 +130,6 @@ class GradesSearchBar extends Component {
   buildPrimaryOptions(sections, selectType) {
     const ret = [];
     const map = new Map();
-
     if (selectType === 'instructor') {
       if (sections.length > 1) {
         ret.push({ value: 'all', label: 'All Instructors' });
@@ -350,7 +349,6 @@ class GradesSearchBar extends Component {
               styles={customStyles}
             />
           </Col>
-          {!isMobile ?
           <Col lg={2}>
             <Select
               name="sortBy"
@@ -365,7 +363,7 @@ class GradesSearchBar extends Component {
               }}
               styles={customStyles}
             />
-          </Col> : null }
+          </Col>
           <Col xs={6} sm={6} lg={3}>
             <Select
               name="instrSems"

@@ -4,6 +4,7 @@ import GoogleLogin, { GoogleLogout } from 'react-google-login';
 import { Nav } from 'react-bootstrap'
 import axios from 'axios';
 import { connect } from 'react-redux';
+import btn_google_signin from 'assets/svg/profile/btn_google_signin.png';
 
 import { logIn } from '../../redux/auth/actions';
 
@@ -42,12 +43,12 @@ class LoginButton extends Component {
         clientId="***REMOVED***"
         render={renderProps => (
           <Nav.Link
-            className="bt-bold"
+            className="login-btn bt-bold"
             eventKey={6}
             onClick={renderProps.onClick}
             disabled={renderProps.disabled}
           >
-            Login
+            <img className="login-img" src={btn_google_signin} />
           </Nav.Link>
         )}
         onSuccess={this.onSignIn}
