@@ -12,9 +12,10 @@
 
 	.link-btn {
 		margin: 30px 0px 0px 15px;
-		color: $bt-blue !important;
+		color: $bt-blue;
 		background: none;
 		border: none;
+		outline: none;
 	}
 
 	.modal-dialog {
@@ -25,8 +26,8 @@
   		bottom: 0vh;
 
   		.modal-content {
-  			border: 0px !important;
-  			border-radius: 0px !important;
+  			border: 0px;
+  			border-radius: 0px;
   			overflow: scroll;
 
 				svg {
@@ -38,7 +39,7 @@
 		/* The padding is so this is viewable
 			even if the browser search bar is active */
 		.full {
-  			height: 100vh !important;
+  			height: 100vh;
   			padding-top: 80px;
   		}
 	}

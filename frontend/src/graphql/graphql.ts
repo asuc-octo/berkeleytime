@@ -36,164 +36,6 @@ export interface Scalars {
   JSONString: any;
 }
 
-export interface Query {
-  __typename?: 'Query';
-  allCourses?: Maybe<CourseTypeConnection>;
-  allGrades?: Maybe<GradeTypeConnection>;
-  allPlaylists?: Maybe<PlaylistTypeConnection>;
-  allSections?: Maybe<SectionTypeConnection>;
-  /** The ID of the object */
-  course?: Maybe<CourseType>;
-  courseEnrollmentBySection?: Maybe<EnrollmentInfo>;
-  courseEnrollmentBySemester?: Maybe<EnrollmentInfo>;
-  formConfig?: Maybe<FormConfigType>;
-  /** The ID of the object */
-  grade?: Maybe<GradeType>;
-  isLoggedIn: Scalars['Boolean'];
-  /** The ID of the object */
-  playlist?: Maybe<PlaylistType>;
-  /** The ID of the object */
-  section?: Maybe<SectionType>;
-  user?: Maybe<BerkeleytimeUserType>;
-}
-
-
-export interface QueryAllCoursesArgs {
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  department?: Maybe<Scalars['String']>;
-  abbreviation?: Maybe<Scalars['String']>;
-  courseNumber?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  units?: Maybe<Scalars['String']>;
-  prerequisites?: Maybe<Scalars['String']>;
-  gradeAverage?: Maybe<Scalars['Float']>;
-  letterAverage?: Maybe<Scalars['String']>;
-  hasEnrollment?: Maybe<Scalars['Boolean']>;
-  enrolled?: Maybe<Scalars['Int']>;
-  enrolledMax?: Maybe<Scalars['Int']>;
-  enrolledPercentage?: Maybe<Scalars['Float']>;
-  waitlisted?: Maybe<Scalars['Int']>;
-  openSeats?: Maybe<Scalars['Int']>;
-  lastUpdated?: Maybe<Scalars['DateTime']>;
-  hasGrades?: Maybe<Scalars['Boolean']>;
-  inPlaylists?: Maybe<Scalars['String']>;
-  idIn?: Maybe<Scalars['String']>;
-}
-
-
-export interface QueryAllGradesArgs {
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  course?: Maybe<Scalars['ID']>;
-  semester?: Maybe<Scalars['String']>;
-  year?: Maybe<Scalars['String']>;
-  abbreviation?: Maybe<Scalars['String']>;
-  courseNumber?: Maybe<Scalars['String']>;
-  sectionNumber?: Maybe<Scalars['String']>;
-  instructor?: Maybe<Scalars['String']>;
-  a1?: Maybe<Scalars['Int']>;
-  a2?: Maybe<Scalars['Int']>;
-  a3?: Maybe<Scalars['Int']>;
-  b1?: Maybe<Scalars['Int']>;
-  b2?: Maybe<Scalars['Int']>;
-  b3?: Maybe<Scalars['Int']>;
-  c1?: Maybe<Scalars['Int']>;
-  c2?: Maybe<Scalars['Int']>;
-  c3?: Maybe<Scalars['Int']>;
-  d1?: Maybe<Scalars['Int']>;
-  d2?: Maybe<Scalars['Int']>;
-  d3?: Maybe<Scalars['Int']>;
-  f?: Maybe<Scalars['Int']>;
-  gradedTotal?: Maybe<Scalars['Int']>;
-  p?: Maybe<Scalars['Int']>;
-  np?: Maybe<Scalars['Int']>;
-  average?: Maybe<Scalars['Float']>;
-}
-
-
-export interface QueryAllPlaylistsArgs {
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  category?: Maybe<Scalars['String']>;
-  name?: Maybe<Scalars['String']>;
-  semester?: Maybe<Scalars['String']>;
-  year?: Maybe<Scalars['String']>;
-  courses?: Maybe<Array<Maybe<Scalars['ID']>>>;
-}
-
-
-export interface QueryAllSectionsArgs {
-  before?: Maybe<Scalars['String']>;
-  after?: Maybe<Scalars['String']>;
-  first?: Maybe<Scalars['Int']>;
-  last?: Maybe<Scalars['Int']>;
-  course?: Maybe<Scalars['ID']>;
-  abbreviation?: Maybe<Scalars['String']>;
-  courseNumber?: Maybe<Scalars['String']>;
-  year?: Maybe<Scalars['String']>;
-  semester?: Maybe<Scalars['String']>;
-  courseTitle?: Maybe<Scalars['String']>;
-  sectionNumber?: Maybe<Scalars['String']>;
-  ccn?: Maybe<Scalars['String']>;
-  kind?: Maybe<Scalars['String']>;
-  isPrimary?: Maybe<Scalars['Boolean']>;
-  days?: Maybe<Scalars['String']>;
-  startTime?: Maybe<Scalars['DateTime']>;
-  endTime?: Maybe<Scalars['DateTime']>;
-  finalDay?: Maybe<Scalars['String']>;
-  finalEnd?: Maybe<Scalars['DateTime']>;
-  finalStart?: Maybe<Scalars['DateTime']>;
-  instructor?: Maybe<Scalars['String']>;
-  disabled?: Maybe<Scalars['Boolean']>;
-  locationName?: Maybe<Scalars['String']>;
-  instructionMode?: Maybe<Scalars['String']>;
-  lastUpdated?: Maybe<Scalars['DateTime']>;
-  enrolled?: Maybe<Scalars['Int']>;
-  enrolledMax?: Maybe<Scalars['Int']>;
-  waitlisted?: Maybe<Scalars['Int']>;
-  waitlistedMax?: Maybe<Scalars['Int']>;
-}
-
-
-export interface QueryCourseArgs {
-  id: Scalars['ID'];
-}
-
-
-export interface QueryCourseEnrollmentBySectionArgs {
-  sectionId?: Maybe<Scalars['ID']>;
-}
-
-
-export interface QueryCourseEnrollmentBySemesterArgs {
-  courseId?: Maybe<Scalars['ID']>;
-  semester?: Maybe<Scalars['String']>;
-  year?: Maybe<Scalars['Int']>;
-}
-
-
-export interface QueryGradeArgs {
-  id: Scalars['ID'];
-}
-
-
-export interface QueryPlaylistArgs {
-  id: Scalars['ID'];
-}
-
-
-export interface QuerySectionArgs {
-  id: Scalars['ID'];
-}
-
 export interface BerkeleytimeUserType {
   __typename?: 'BerkeleytimeUserType';
   id: Scalars['ID'];
@@ -216,6 +58,7 @@ export interface CourseType extends Node {
   courseNumber: Scalars['String'];
   description: Scalars['String'];
   units?: Maybe<Scalars['String']>;
+  crossListing: CourseTypeConnection;
   prerequisites: Scalars['String'];
   gradeAverage?: Maybe<Scalars['Float']>;
   letterAverage: Scalars['String'];
@@ -230,6 +73,31 @@ export interface CourseType extends Node {
   gradeSet: GradeTypeConnection;
   playlistSet: PlaylistTypeConnection;
   berkeleytimeuserSet: Array<BerkeleytimeUserType>;
+}
+
+
+export interface CourseTypeCrossListingArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  department?: Maybe<Scalars['String']>;
+  abbreviation?: Maybe<Scalars['String']>;
+  courseNumber?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  units?: Maybe<Scalars['String']>;
+  crossListing?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  prerequisites?: Maybe<Scalars['String']>;
+  gradeAverage?: Maybe<Scalars['Float']>;
+  letterAverage?: Maybe<Scalars['String']>;
+  hasEnrollment?: Maybe<Scalars['Boolean']>;
+  enrolled?: Maybe<Scalars['Int']>;
+  enrolledMax?: Maybe<Scalars['Int']>;
+  enrolledPercentage?: Maybe<Scalars['Float']>;
+  waitlisted?: Maybe<Scalars['Int']>;
+  openSeats?: Maybe<Scalars['Int']>;
+  lastUpdated?: Maybe<Scalars['DateTime']>;
 }
 
 
@@ -487,6 +355,7 @@ export interface PlaylistTypeCoursesArgs {
   courseNumber?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   units?: Maybe<Scalars['String']>;
+  crossListing?: Maybe<Array<Maybe<Scalars['ID']>>>;
   prerequisites?: Maybe<Scalars['String']>;
   gradeAverage?: Maybe<Scalars['Float']>;
   letterAverage?: Maybe<Scalars['String']>;
@@ -514,6 +383,164 @@ export interface PlaylistTypeEdge {
   node?: Maybe<PlaylistType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
+}
+
+export interface Query {
+  __typename?: 'Query';
+  user?: Maybe<BerkeleytimeUserType>;
+  allPlaylists?: Maybe<PlaylistTypeConnection>;
+  /** The ID of the object */
+  playlist?: Maybe<PlaylistType>;
+  allGrades?: Maybe<GradeTypeConnection>;
+  /** The ID of the object */
+  grade?: Maybe<GradeType>;
+  formConfig?: Maybe<FormConfigType>;
+  courseEnrollmentBySection?: Maybe<EnrollmentInfo>;
+  courseEnrollmentBySemester?: Maybe<EnrollmentInfo>;
+  /** The ID of the object */
+  course?: Maybe<CourseType>;
+  allCourses?: Maybe<CourseTypeConnection>;
+  /** The ID of the object */
+  section?: Maybe<SectionType>;
+  allSections?: Maybe<SectionTypeConnection>;
+}
+
+
+export interface QueryAllPlaylistsArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  category?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']>;
+  semester?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['String']>;
+  courses?: Maybe<Array<Maybe<Scalars['ID']>>>;
+}
+
+
+export interface QueryPlaylistArgs {
+  id: Scalars['ID'];
+}
+
+
+export interface QueryAllGradesArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  course?: Maybe<Scalars['ID']>;
+  semester?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['String']>;
+  abbreviation?: Maybe<Scalars['String']>;
+  courseNumber?: Maybe<Scalars['String']>;
+  sectionNumber?: Maybe<Scalars['String']>;
+  instructor?: Maybe<Scalars['String']>;
+  a1?: Maybe<Scalars['Int']>;
+  a2?: Maybe<Scalars['Int']>;
+  a3?: Maybe<Scalars['Int']>;
+  b1?: Maybe<Scalars['Int']>;
+  b2?: Maybe<Scalars['Int']>;
+  b3?: Maybe<Scalars['Int']>;
+  c1?: Maybe<Scalars['Int']>;
+  c2?: Maybe<Scalars['Int']>;
+  c3?: Maybe<Scalars['Int']>;
+  d1?: Maybe<Scalars['Int']>;
+  d2?: Maybe<Scalars['Int']>;
+  d3?: Maybe<Scalars['Int']>;
+  f?: Maybe<Scalars['Int']>;
+  gradedTotal?: Maybe<Scalars['Int']>;
+  p?: Maybe<Scalars['Int']>;
+  np?: Maybe<Scalars['Int']>;
+  average?: Maybe<Scalars['Float']>;
+}
+
+
+export interface QueryGradeArgs {
+  id: Scalars['ID'];
+}
+
+
+export interface QueryCourseEnrollmentBySectionArgs {
+  sectionId?: Maybe<Scalars['ID']>;
+}
+
+
+export interface QueryCourseEnrollmentBySemesterArgs {
+  courseId?: Maybe<Scalars['ID']>;
+  semester?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['Int']>;
+}
+
+
+export interface QueryCourseArgs {
+  id: Scalars['ID'];
+}
+
+
+export interface QueryAllCoursesArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  department?: Maybe<Scalars['String']>;
+  abbreviation?: Maybe<Scalars['String']>;
+  courseNumber?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  units?: Maybe<Scalars['String']>;
+  crossListing?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  prerequisites?: Maybe<Scalars['String']>;
+  gradeAverage?: Maybe<Scalars['Float']>;
+  letterAverage?: Maybe<Scalars['String']>;
+  hasEnrollment?: Maybe<Scalars['Boolean']>;
+  enrolled?: Maybe<Scalars['Int']>;
+  enrolledMax?: Maybe<Scalars['Int']>;
+  enrolledPercentage?: Maybe<Scalars['Float']>;
+  waitlisted?: Maybe<Scalars['Int']>;
+  openSeats?: Maybe<Scalars['Int']>;
+  lastUpdated?: Maybe<Scalars['DateTime']>;
+  hasGrades?: Maybe<Scalars['Boolean']>;
+  inPlaylists?: Maybe<Scalars['String']>;
+  idIn?: Maybe<Scalars['String']>;
+}
+
+
+export interface QuerySectionArgs {
+  id: Scalars['ID'];
+}
+
+
+export interface QueryAllSectionsArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  course?: Maybe<Scalars['ID']>;
+  abbreviation?: Maybe<Scalars['String']>;
+  courseNumber?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['String']>;
+  semester?: Maybe<Scalars['String']>;
+  courseTitle?: Maybe<Scalars['String']>;
+  sectionNumber?: Maybe<Scalars['String']>;
+  ccn?: Maybe<Scalars['String']>;
+  kind?: Maybe<Scalars['String']>;
+  isPrimary?: Maybe<Scalars['Boolean']>;
+  days?: Maybe<Scalars['String']>;
+  startTime?: Maybe<Scalars['DateTime']>;
+  endTime?: Maybe<Scalars['DateTime']>;
+  finalDay?: Maybe<Scalars['String']>;
+  finalEnd?: Maybe<Scalars['DateTime']>;
+  finalStart?: Maybe<Scalars['DateTime']>;
+  instructor?: Maybe<Scalars['String']>;
+  disabled?: Maybe<Scalars['Boolean']>;
+  locationName?: Maybe<Scalars['String']>;
+  instructionMode?: Maybe<Scalars['String']>;
+  lastUpdated?: Maybe<Scalars['DateTime']>;
+  enrolled?: Maybe<Scalars['Int']>;
+  enrolledMax?: Maybe<Scalars['Int']>;
+  waitlisted?: Maybe<Scalars['Int']>;
+  waitlistedMax?: Maybe<Scalars['Int']>;
 }
 
 export interface Refresh {

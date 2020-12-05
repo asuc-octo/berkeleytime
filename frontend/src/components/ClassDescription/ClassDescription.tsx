@@ -157,6 +157,12 @@ const ClassDescription = ({
     }
   }
 
+  // The instructor for this class wanted to override this.
+  if (courseToName(course) === 'PB HLTH 126') {
+    prereqs =
+      'No prerequisites. This field was modified as requested by the instructor.';
+  }
+
   // Render the contents of the catalog
   return (
     <div className="catalog-description-container">

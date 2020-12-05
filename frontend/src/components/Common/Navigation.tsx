@@ -7,11 +7,21 @@ import { connect, ConnectedProps } from 'react-redux';
 import { ReduxState } from '../../redux/store';
 
 import LoginButton from '../Login/LoginButton';
+import LoginModal from '../Login/LoginModal';
 
 interface Props extends PropsFromRedux {}
 
 const Navigation: FC<Props> = (props) => {
-  const [links, setLinks] = useState(
+  const [showLogin, setShowLogin] = useState(false);
+
+  const [links, setLinks] = useState<
+    {
+      text: string;
+      to?: string;
+      nav_to?: string;
+      onClick?: () => void;
+    }[]
+  >(
     [
       {
         to: '/catalog',
@@ -42,7 +52,7 @@ const Navigation: FC<Props> = (props) => {
       //   text: 'Apply',
       // },
       // {
-      //  to: '/login',
+      //  onClick: () => setShowLogin(true),
       //  text: 'Login',
       // },
     ].map((link) => ({
@@ -60,7 +70,7 @@ const Navigation: FC<Props> = (props) => {
         to: link.to,
         text: link.text,
         // nav_to is either [link.to] or '' if we are already on that page
-        nav_to: location.pathname.includes(link.to) ? '' : link.to,
+        nav_to: link.to && location.pathname.includes(link.to) ? '' : link.to,
       }))
     );
   }, [location.pathname]);
@@ -85,7 +95,7 @@ const Navigation: FC<Props> = (props) => {
         <Nav>
           {links.map((link, index) => {
             if (link.nav_to === '/login') {
-              return <LoginButton key="login" />;
+              return <LoginButton />;
             }
             // return empty nav link if we are on the page referenced by the nav link
             if (link.nav_to !== '') {
@@ -93,7 +103,8 @@ const Navigation: FC<Props> = (props) => {
                 <Nav.Link
                   key={link.text}
                   as={Link}
-                  to={link.nav_to}
+                  to={link.nav_to || ''}
+                  onClick={link.onClick}
                   className="bt-bold"
                   eventKey={(index + 1).toString()}
                   // eventKey required for collapseOnselect
@@ -116,6 +127,7 @@ const Navigation: FC<Props> = (props) => {
           })}
         </Nav>
       </Navbar.Collapse>
+      <LoginModal showLogin={showLogin} hideLogin={() => setShowLogin(false)} />
     </Navbar>
   );
 };
