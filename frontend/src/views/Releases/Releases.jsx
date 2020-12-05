@@ -33,7 +33,7 @@ class Releases extends Component {
             <Col lg={3}></Col>
             <Col lg={6}>
               <div className="releases-heading">
-                <h2>Berkeleytime Releases</h2>
+                <h2>Stanfurdtime Releases</h2>
                 <h3>Keep up-to-date with our releases and bug fixes.</h3>
                 <ButtonToolbar className="releases-heading-button">
                   <a href="/bugs">

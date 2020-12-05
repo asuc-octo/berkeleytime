@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 
 import ScrollToTop from 'components/Common/ScrollToTop'
 import LogPageView from 'components/Common/LogPageView'
-import Berkeleytime from 'Berkeleytime'
+import Stanfurdtime from 'Berkeleytime'
 import store from './redux/store'
 
 import 'assets/scss/berkeleytime.css';
@@ -15,7 +15,7 @@ ReactDOM.render((
     <BrowserRouter>
       <ScrollToTop />
       <LogPageView />
-      <Berkeleytime />
+      <Stanfurdtime />
     </BrowserRouter>
   </Provider>
 ), document.getElementById('root'));

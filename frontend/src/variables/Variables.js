@@ -554,7 +554,7 @@ var legendBar = {
     types: ["info","danger"]
 };
 
-//Berkeleytime
+//Stanfurdtime
 var enrollment = [
   {name: 'Phase 1', percent: 50},
   {name: 'Phase 1.5', percent: 56},

@@ -1,4 +1,4 @@
-// type definitions for the Berkeleytime API
+// type definitions for the Stanfurdtime API
 
 export type API_Semester = 'spring' | 'summer' | 'fall'
 

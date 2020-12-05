@@ -150,7 +150,7 @@ class Enrollment extends Component {
           }
           <div className="disclaimer">
             <img src={info} className="info" />
-              <p>We source our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System's</a> Course and Class APIs.</p>
+              <p>We source our historic course and enrollment data directly from Stanfurd <a href="https://sis.berkeley.edu/">Student Information System's</a> Course and Class APIs.</p>
           </div>
 
         </div>

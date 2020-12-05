@@ -1,4 +1,4 @@
-# [Berkeleytime Frontend](http://berkeleytime.com/)
+# [Stanfurdtime Frontend](http://berkeleytime.com/)
 
 # Structure
 ```

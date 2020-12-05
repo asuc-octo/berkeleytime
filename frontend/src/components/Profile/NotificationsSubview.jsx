@@ -11,7 +11,7 @@ class NotificationsSubview extends PureComponent {
         <Preference text="Class updates in catalog"/>
         <Preference text="Updated grades for saved classes"/>
         <Preference text="Enrollment openings in catalog"/>
-        <Preference text="Updates to Berkeleytime's software"/>
+        <Preference text="Updates to Stanfurdtime's software"/>
       </div>
     );
   }

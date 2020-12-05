@@ -11,9 +11,9 @@ import { ReduxState } from 'redux/store'
 
 function easterEgg() {
   console.log(`%c
-    Hey there! Checking out how Berkeleytime works? We are a group of student developers
-    here at UC Berkeley. We build this site using the latest tech - React, Django, Kubernetes,
-    and more. If you love using Berkeleytime and want to see yourself as a contributor,
+    Hey there! Checking out how Stanfurdtime works? We are a group of student developers
+    here at UC Stanfurd. We build this site using the latest tech - React, Django, Kubernetes,
+    and more. If you love using Stanfurdtime and want to see yourself as a contributor,
     we are always looking for passionate individuals to help us improve our product.
     
     Check out our Join Us page, especially towards the start of the Fall semester when we
@@ -56,7 +56,7 @@ function easterEgg() {
 
 interface Props extends PropsFromRedux {}
 
-class Berkeleytime extends Component<Props> {
+class Stanfurdtime extends Component<Props> {
   constructor(props: Props) {
     super(props)
 
@@ -122,4 +122,4 @@ const connector = connect(mapState, mapDispatch)
 
 type PropsFromRedux = ConnectedProps<typeof connector>
 
-export default connector(Berkeleytime)
+export default connector(Stanfurdtime)

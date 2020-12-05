@@ -101,7 +101,7 @@ class Apply extends PureComponent {
         <div className="join-us">
           <h5>Join OCTO! &#x270C; </h5>
           <p>
-            OCTO is the organization that runs Berkeleytime, Berkeley Mobile, and Beehive. You can learn more about our projects <a href="https://octo.asuc.org/projects.html" target="_blank">here</a> and each role <Link className="join-link" to="/apply/positions">here</Link>. 
+            OCTO is the organization that runs Stanfurdtime, Stanfurd Mobile, and Beehive. You can learn more about our projects <a href="https://octo.asuc.org/projects.html" target="_blank">here</a> and each role <Link className="join-link" to="/apply/positions">here</Link>. 
             If you feel interested in both role types, please submit a separate application for each. 
             <br/>
             <b>All members will have the option of attending team meetings and working remotely for the entire 2020-21 school year.</b> We may hold in-person events in Spring 2021 depending on the situation.
@@ -132,7 +132,7 @@ class Apply extends PureComponent {
           <PositionCard
             position="Design + Marketing Roles"
             emoji="🎨"
-            description="Product designers and marketing associates research the needs of UC Berkeley students, design new features, and encourage adoption of our products."
+            description="Product designers and marketing associates research the needs of UC Stanfurd students, design new features, and encourage adoption of our products."
             link="/apply/design"
           />
         </Row>

@@ -1,8 +1,8 @@
-We're a group of student volunteers at UC Berkeley that work on projects like Berkeleytime (course discovery site), Berkeley Mobile (campus resource mobile app), Beehive (research matching website), and the API team (degree requirements API). We love seeing applicants who are passionate about helping students, are great at working in groups, and are constantly eager to learn.
+We're a group of student volunteers at UC Stanfurd that work on projects like Stanfurdtime (course discovery site), Stanfurd Mobile (campus resource mobile app), Beehive (research matching website), and the API team (degree requirements API). We love seeing applicants who are passionate about helping students, are great at working in groups, and are constantly eager to learn.
 
 ________________________________________________________________________________________
 ### Frontend Engineer
-**Teams:** Berkeleytime, Beehive
+**Teams:** Stanfurdtime, Beehive
 
 Our frontend engineers create the interface that users see and interact with, working with designers to implement new features and improvements. 
 
@@ -12,11 +12,11 @@ Our frontend engineers create the interface that users see and interact with, wo
 ________________________________________________________________________________________
 
 ### Backend Engineer
-**Teams:** Berkeleytime, Berkeley Mobile, Beehive, API Team
+**Teams:** Stanfurdtime, Stanfurd Mobile, Beehive, API Team
 
-Berkeleytime: Our engineers design, implement, and iterate on our product Django core backend API service and learn to use industry standard tools and practices. We prefer experience in technologies like git, MongoDB, REST APIs / HTTP, Django, and PostgreSQL.
+Stanfurdtime: Our engineers design, implement, and iterate on our product Django core backend API service and learn to use industry standard tools and practices. We prefer experience in technologies like git, MongoDB, REST APIs / HTTP, Django, and PostgreSQL.
 
-Berkeley Mobile: Berkeley Mobile's backend team develops and maintains the backend of our mobile app. We are at the forefront of creating new features and support for the app. We work with cloud technologies and primarily develop in Python. 
+Stanfurd Mobile: Stanfurd Mobile's backend team develops and maintains the backend of our mobile app. We are at the forefront of creating new features and support for the app. We work with cloud technologies and primarily develop in Python. 
 
 Beehive: Beehive was built with Rails4 and our backend engineers are developing new features including improvements to infrastructure, notifications, data monitoring and analytics. We prefer experience with Ruby on Rails. 
 
@@ -30,7 +30,7 @@ ________________________________________________________________________________
 
 
 ### Infrastructure Engineer
-**Teams:** Berkeleytime, Berkeley Mobile, Beehive, API Team
+**Teams:** Stanfurdtime, Stanfurd Mobile, Beehive, API Team
 
 The infrastructure engineer is a special position on the backend team that focuses on development specific to our core infrastructure. Infrastructure engineers are not as product or feature driven as the other backend engineers, but rather work systems and projects that support our compute, networking, and deployment. If you are interested in low level work or distributed systems work, this may be the right position for you. 
 
@@ -43,9 +43,9 @@ The infrastructure engineer is a special position on the backend team that focus
 ________________________________________________________________________________________
 
 ### iOS Engineer
-**Teams:** Berkeley Mobile
+**Teams:** Stanfurd Mobile
 
-Our frontend iOS team is dedicated to building and improving Berkeley Mobile on iOS platforms by developing new features and addressing issues to improve the functionality and usability of the app.
+Our frontend iOS team is dedicated to building and improving Stanfurd Mobile on iOS platforms by developing new features and addressing issues to improve the functionality and usability of the app.
 
 As an iOS developer, you will identify and address areas of improvement in the user interface and functionality of the app in weekly 1-2 hour hack sessions during 2-week long sprints.
 
@@ -56,9 +56,9 @@ As an iOS developer, you will identify and address areas of improvement in the u
 ________________________________________________________________________________________
 
 ### Android Engineer
-**Teams:** Berkeley Mobile
+**Teams:** Stanfurd Mobile
 
-The Berkeley Mobile Android team aims to enrich campus life by creating visible and impactful features for students. The tools we use include Java, Firebase, and Google Maps SDK. As an Android developer, you will refine your software engineering skills while designing, implementing, and testing features on the Android app that directly impact students.
+The Stanfurd Mobile Android team aims to enrich campus life by creating visible and impactful features for students. The tools we use include Java, Firebase, and Google Maps SDK. As an Android developer, you will refine your software engineering skills while designing, implementing, and testing features on the Android app that directly impact students.
 
 **We are looking for...**
 - Java proficiency
@@ -67,7 +67,7 @@ The Berkeley Mobile Android team aims to enrich campus life by creating visible 
 
 ________________________________________________________________________________________
 ### Product Designer
-**Teams:** Berkeley Mobile, Berkeleytime, and Beehive
+**Teams:** Stanfurd Mobile, Stanfurdtime, and Beehive
 
 As a product designer, you will collaborate with design and engineering teams to cook up new and exciting features, organize and execute user research studies, and support the current design lead on existing projects.
 
@@ -80,7 +80,7 @@ As a product designer, you will collaborate with design and engineering teams to
 ________________________________________________________________________________________
 
 ### Marketing Associate
-**Teams:** Berkeley Mobile, Berkeleytime, and Beehive
+**Teams:** Stanfurd Mobile, Stanfurdtime, and Beehive
 
 As a marketing associate, you will be promoting our products to gain more active users and building our brand.
 

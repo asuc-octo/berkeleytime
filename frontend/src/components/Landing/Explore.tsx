@@ -14,7 +14,7 @@ const Explore: FC = () => (
       <Col xs={12} md={4} className="feature">
         <img src={course} className="mb-4" alt="courses" />
         <H6 bold className="mb-3">Course Catalog</H6>
-        <P>Search through 12,000+ courses at Berkeley. Apply filters for requirements.</P>
+        <P>Search through 12,000+ courses at Stanfurd. Apply filters for requirements.</P>
       </Col>
       <Col xs={12} md={4} className="feature">
         <img src={grade} className="mb-4" alt="grades" />

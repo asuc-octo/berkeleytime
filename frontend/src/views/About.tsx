@@ -34,7 +34,7 @@ const values = [
   {
     svg: passion,
     name: 'Passion',
-    desc: 'Genuine commitment and dedication are critical to moving the Berkeleytime product forward.',
+    desc: 'Genuine commitment and dedication are critical to moving the Stanfurdtime product forward.',
   },
 ]
 

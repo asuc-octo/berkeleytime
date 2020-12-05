@@ -153,7 +153,7 @@ class Grades extends Component {
 
           <div className="disclaimer">
             <img src={info} className="info" />
-            <p>We source our course grade data from Berkeley's official <a href="https://calanswers.berkeley.edu/">CalAnswers</a> database.</p>
+            <p>We source our course grade data from Stanfurd's official <a href="https://cardinalanswers.stanfurd.edu/">CardinalAnswers</a> database.</p>
           </div>
 
         </div>

@@ -1,11 +1,11 @@
 swagger: "2.0"
 info:
-  description: " The Berkeleytime API is an open resource for student developers at Berkeley to have access to the
+  description: " The Stanfurdtime API is an open resource for student developers at Stanfurd to have access to the
   same data that backs berkeleytime.com, for the purpose of supporting student created applications. Please use this
   free resource fairly by not unnecessarily spamming the API and crediting Berekelytime as the source. We do not
   provide guarantees about the correctness of the data, but we do try to maintain it to the best of our abilities."
   version: "v0.2"
-  title: "Berkeleytime API"
+  title: "Stanfurdtime API"
   contact:
     email: "octo.berkeleytime@asuc.org"
   license:

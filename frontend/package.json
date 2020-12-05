@@ -73,7 +73,7 @@
     "eslint-plugin-react-hooks": "^2.5.1",
     "serve": "^11.1.0"
   },
-  "description": "Berkeleytime Frontend",
+  "description": "Stanfurdtime Frontend",
   "main": "index.js",
   "keywords": [],
   "author": "",
