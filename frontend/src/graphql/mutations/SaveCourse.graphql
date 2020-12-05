@@ -1,0 +1,7 @@
+mutation SaveCourse($courseId: ID!) {
+  saveClass(classId: $courseId) {
+    user {
+      ...UserProfile
+    }
+  }
+}

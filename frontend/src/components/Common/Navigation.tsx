@@ -7,6 +7,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { ReduxState } from '../../redux/store';
 
 import LoginButton from '../Login/LoginButton';
+import { useUser } from 'graphql/hooks/auth';
 
 interface Props extends PropsFromRedux {}
 
@@ -41,10 +42,6 @@ const Navigation: FC<Props> = (props) => {
       //   to: '/apply',
       //   text: 'Apply',
       // },
-      // {
-      //  to: '/login',
-      //  text: 'Login',
-      // },
     ].map((link) => ({
       to: link.to,
       text: link.text,
@@ -52,7 +49,8 @@ const Navigation: FC<Props> = (props) => {
     }))
   );
 
-  let location = useLocation();
+  const location = useLocation();
+  const { isLoggedIn } = useUser();
 
   useEffect(() => {
     setLinks((links) =>
@@ -84,9 +82,6 @@ const Navigation: FC<Props> = (props) => {
         <Nav className="mr-auto" />
         <Nav>
           {links.map((link, index) => {
-            if (link.nav_to === '/login') {
-              return <LoginButton key="login" />;
-            }
             // return empty nav link if we are on the page referenced by the nav link
             if (link.nav_to !== '') {
               return (
@@ -114,6 +109,21 @@ const Navigation: FC<Props> = (props) => {
               );
             }
           })}
+
+          {isLoggedIn ? (
+            <Nav.Link
+              as={Link}
+              to="/profile"
+              className="bt-bold"
+              eventKey="profile-link"
+              // eventKey required for collapseOnselect
+              // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
+            >
+              Profile
+            </Nav.Link>
+          ) : (
+            <LoginButton key="login" />
+          )}
         </Nav>
       </Navbar.Collapse>
     </Navbar>
