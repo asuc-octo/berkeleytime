@@ -1,4 +1,5 @@
 import { CourseOverviewFragment } from 'graphql/graphql';
+import { useUser } from 'graphql/hooks/auth';
 import React, { CSSProperties, memo, ReactNode } from 'react';
 import { CourseReference, isSameCourse } from 'utils/courses/course';
 import { CourseSortAttribute } from 'utils/courses/sorting';
@@ -58,7 +59,6 @@ type FilterCardProps = {
     selectCourse: (course: CourseOverviewFragment) => void;
     sortBy: CourseSortAttribute;
     selectedCourse: CourseReference | null;
-    saved: boolean;
   };
   index: number;
   style: CSSProperties;
@@ -67,37 +67,34 @@ type FilterCardProps = {
 const FilterCard = ({ style, data, index }: FilterCardProps) => {
   const course = data.courses[index];
 
-  const { sortBy, selectedCourse, saved } = data;
-  const {
-    abbreviation,
-    courseNumber,
-    title,
-    letterAverage,
-    enrolledPercentage,
-    openSeats,
-    units,
-    id,
-  } = course;
+  const { user } = useUser();
+  const { sortBy, selectedCourse } = data;
 
   let sort;
   switch (sortBy) {
     case 'department_name':
     case 'enrolled_percentage':
     case 'average_grade':
-      if (letterAverage !== null) {
-        sort = gradeSort(letterAverage);
+      if (course.letterAverage !== null) {
+        sort = gradeSort(course.letterAverage);
       } else {
         sort = null;
       }
       break;
     case 'open_seats':
-      sort = openSeatsSort(openSeats);
+      sort = openSeatsSort(course.openSeats);
       break;
     default:
       sort = null;
   }
 
   const isSelectedCourse = isSameCourse(selectedCourse, course);
+  const isSaved = user?.savedClasses?.some(
+    (savedCourse) => savedCourse?.id === course.id
+  );
+
+  function saveCourse() {}
+  function unsaveCourse() {}
 
   return (
     <div
@@ -111,24 +108,31 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
         }`}
       >
         <div className="filter-card-info">
-          <h6>{`${abbreviation} ${courseNumber}`}</h6>
-          <p className="filter-card-info-desc">{title}</p>
+          <h6>{`${course.abbreviation} ${course.courseNumber}`}</h6>
+          <p className="filter-card-info-desc">{course.title}</p>
           <div className="filter-card-info-stats">
-            {enrolledPercentage === -1 ? (
+            {course.enrolledPercentage === -1 ? (
               <p> N/A </p>
             ) : (
-              <p className={colorEnrollment(enrolledPercentage)}>
-                {formatEnrollmentPercentage(enrolledPercentage)}
+              <p className={colorEnrollment(course.enrolledPercentage)}>
+                {formatEnrollmentPercentage(course.enrolledPercentage)}
               </p>
             )}
 
-            <p>&nbsp;•&nbsp;{units ? formatUnits(units) : 'N/A'}</p>
+            <p>
+              &nbsp;•&nbsp;{course.units ? formatUnits(course.units) : 'N/A'}
+            </p>
           </div>
         </div>
         {sort}
-        <div className="filter-card-save">
-          {saved ? <BookmarkSaved /> : <BookmarkUnsaved />}
-        </div>
+        {user && (
+          <div
+            className="filter-card-save"
+            onClick={isSaved ? saveCourse : unsaveCourse}
+          >
+            {isSaved ? <BookmarkSaved /> : <BookmarkUnsaved />}
+          </div>
+        )}
       </div>
     </div>
   );

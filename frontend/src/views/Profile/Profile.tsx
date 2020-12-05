@@ -11,8 +11,10 @@ import { ReactComponent as Notif } from '../../assets/svg/profile/notif.svg';
 import { ReactComponent as NotifSelected } from '../../assets/svg/profile/notif_selected.svg';
 import { ReactComponent as Support } from '../../assets/svg/profile/support.svg';
 import { ReactComponent as SupportSelected } from '../../assets/svg/profile/support_selected.svg';
-import { useGetUserQuery, UserProfileFragment } from '../../graphql/graphql';
+import { UserProfileFragment } from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
+import { useUser } from 'graphql/hooks/auth';
+import { Redirect } from 'react-router';
 
 const tabs: {
   key: string;
@@ -48,9 +50,14 @@ const tabs: {
 
 const Profile = () => {
   const [tabIndex, setTabIndex] = useState(0);
-  const { data, loading, error } = useGetUserQuery();
+  const { isLoggedIn, user, loading } = useUser();
 
   const TabComponent = tabs[tabIndex].component;
+
+  // If we're not logged in, redirect
+  if (!loading && !isLoggedIn) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <div className="profile-container">
@@ -70,11 +77,7 @@ const Profile = () => {
             ))}
           </Col>
           <Col lg={10} className="subview-container">
-            {loading ? (
-              <BTLoader />
-            ) : (
-              <TabComponent userProfile={data?.user!} />
-            )}
+            {!user ? <BTLoader /> : <TabComponent userProfile={user} />}
           </Col>
         </Row>
       </Container>
