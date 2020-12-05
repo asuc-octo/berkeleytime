@@ -24,6 +24,11 @@
     }
   }
 
+  .btn {
+    background-color: $bt-primary;
+    border-color: $bt-primary;
+  }
+
   .btn-primary:disabled {
       cursor: default;
   }

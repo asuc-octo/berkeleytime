@@ -103,11 +103,17 @@
       padding-left: 5px;
       padding-right: 5px;
 
+      .btn {
+        background-color: $bt-primary;
+        border-color: $bt-primary;
+      }
+
       @include touch {
         padding-top: 10px;
 
         .btn {
           width: 100%;
+          background-color: $bt-primary;
         }
       }
     }
