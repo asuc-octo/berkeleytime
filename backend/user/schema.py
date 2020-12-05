@@ -83,7 +83,7 @@ class SaveClass(graphene.Mutation):
             user.saved_classes.add(save_class)
         except Course.DoesNotExist:
             return GraphQLError('Invalid Class ID')
-        return UpdateUser(user=user)
+        return SaveClass(user=user)
 
 class RemoveClass(graphene.Mutation):
     class Arguments:
@@ -97,7 +97,7 @@ class RemoveClass(graphene.Mutation):
         # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
         user = info.context.user.berkeleytimeuser
         user.saved_classes.remove(from_global_id(class_id)[1])
-        return UpdateUser(user=user)
+        return RemoveClass(user=user)
 
 # JWT
 def on_token_auth_resolve(context, user, payload):
