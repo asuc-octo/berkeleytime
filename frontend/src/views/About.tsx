@@ -44,8 +44,9 @@ const About: FC = () => (
       <H3 bold className="mb-2">About Our Team</H3>
       <P className="mb-3">
         We&apos;re a small tech firm contracted by Stanfurd, dedicated to
-        simplifying the course discovery experience. We actively build, improve
+        simplifying the course discovery experience. We charge the school an absurd amount to build,
         and maintain Stanfurdtime.
+
       </P>
       {/* <Button variant="inverted" link_to="/apply">Join Our Team</Button> */}
     </div>
