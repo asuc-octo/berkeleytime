@@ -4,19 +4,11 @@ import Select from 'react-select-virtualized';
 class Property extends PureComponent {
   constructor(props) {
     super(props);
-
-    this.state = {
-      major: this.props.options[0],
-    };
+    this.state = {};
   }
-
-  majorHandler = (major) => {
-    this.setState({ major });
-  };
 
   render() {
     const { attribute, value, options } = this.props;
-    const { major } = this.state;
 
     const style = {
       control: (base) => ({
@@ -33,10 +25,16 @@ class Property extends PureComponent {
           <div className="major-select">
             <Select
               options={options}
+              name="major-selector"
               isSearchable={true}
               isClearable={false}
-              onChange={this.majorHandler}
-              value={major}
+              onChange={this.props.updateMajor}
+              placeholder="Select major..."
+              value={
+                this.props.major
+                  ? { label: this.props.major, value: this.props.major }
+                  : null
+              }
               components={{
                 IndicatorSeparator: () => null,
               }}

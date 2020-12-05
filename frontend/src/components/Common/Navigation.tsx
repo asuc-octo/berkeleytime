@@ -6,8 +6,7 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { ReduxState } from '../../redux/store';
 
-import LoginButton from '../Login/LoginButton';
-import { useAuth, useUser } from '../../graphql/hooks/auth';
+import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
 
 interface Props extends PropsFromRedux {}
@@ -81,7 +80,6 @@ const Navigation: FC<Props> = (props) => {
 
   const location = useLocation();
   const { isLoggedIn } = useUser();
-  const { logout } = useAuth();
 
   useEffect(() => {
     // Hide modal when path changes
