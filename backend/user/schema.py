@@ -213,5 +213,6 @@ class Mutation(graphene.ObjectType):
     save_class = SaveClass.Field()
     remove_class = RemoveClass.Field()
     login = ObtainJSONWebToken.Field()
+    logout = graphql_jwt.DeleteJSONWebTokenCookie.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
