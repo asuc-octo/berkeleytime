@@ -25,10 +25,7 @@ CACHE_TIMEOUT = 900
 NUM_PREFETCH_THREADS = 3
 
 
-STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
-                   ("b1", "B+"), ("b2", "B"), ("b3", "B-"),
-                   ("c1", "C+"), ("c2", "C"), ("c3", "C-"),
-                   ("d", "D"), ("f", "F"), ("p", "P"), ("np", "NP")]
+STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-")]
 
 
 def grade_context(long_form=False):
