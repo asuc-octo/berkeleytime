@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Property from './Property';
 import ProfileCard from './ProfileCard';
 import EditPencil from '../../assets/svg/profile/edit.svg';
-import { useGetUserQuery, UserProfileFragment } from 'graphql/graphql';
+import { UserProfileFragment } from 'graphql/graphql';
 
 import MAJORS from './majors.json';
 
