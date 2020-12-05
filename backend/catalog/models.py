@@ -25,6 +25,7 @@ class Course(models.Model):
     course_number = models.CharField(max_length=10)
     description = models.TextField()
     units = models.CharField(max_length=20)
+    cross_listing = models.ManyToManyField('self')
 
     prerequisites = models.TextField()
 

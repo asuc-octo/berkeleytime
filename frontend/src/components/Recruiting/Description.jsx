@@ -25,7 +25,7 @@ export default class Description extends Component {
 
   render() {
     const {body} = this.state;
-    const {title, link} = this.props;
+    const {title, link, linkName} = this.props;
 
     return (
       <div className="positions">
@@ -39,7 +39,7 @@ export default class Description extends Component {
              <Markdown source={ body } escapeHTML={false} className="positions-body" />
             </Col>
             <Col lg={2}></Col>
-            <LinkBar link={link} />
+            <LinkBar link={link} linkName={linkName} />
           </Row>
         </Container>
       </div>
@@ -48,11 +48,11 @@ export default class Description extends Component {
 }
 
 export function LinkBar(props) {
-  const {link} = props;
+  const {link, linkName} = props;
 
   return (
     <div className="positions-bar">
-      <Button className="position-button" variant="bt-primary" size="bt-md" as={Link} to={link}>Go to Application &rarr;</Button>
+      <Button className="position-button" variant="bt-primary" size="bt-md" as={Link} to={link}>{linkName} &rarr; </Button>
     </div>
   );
 }

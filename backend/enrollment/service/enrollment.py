@@ -1,14 +1,10 @@
 """Enrollment Service."""
-import logging
+import sys
 
 from catalog.resource import sis_class_resource
 from catalog.mapper import section_mapper
 from enrollment.mapper import enrollment_mapper
 from enrollment.models import Enrollment
-
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 class EnrollmentService:
     """Application logic for enrollment information."""
@@ -52,17 +48,17 @@ class EnrollmentService:
                 date_created=enroll_dict['date_created'],
                 defaults=enroll_dict,
             )
-            logger.info({
+            print({
                 'message': 'Created/updated enrollment object',
                 'enrollment': enroll_obj,
                 'created': created,
             })
             return enroll_obj, created
-        except:
-            logger.exception({
+        except Exception as e:
+            print({
                 'message': 'Exception encountered while updating/creating enrollment',
                 'enrollment_dict': enroll_dict,
-            })
+            }, e, file=sys.stderr)
 
 
 enrollment_service = EnrollmentService()

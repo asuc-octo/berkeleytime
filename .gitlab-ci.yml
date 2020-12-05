@@ -1,0 +1,79 @@
+image: gcr.io/berkeleytime-218606/gitlab-runner:latest # infra/docker/gitlab-runner/Dockerfile
+variables:
+  FILEPATH_DEPLOY_BACKEND: infra/k8s/default/bt-backend.yaml
+  FILEPATH_DEPLOY_DATA: infra/k8s/default/bt-backend-data-updater.yaml
+  FILEPATH_DEPLOY_FRONTEND: infra/k8s/default/bt-frontend.yaml
+  FILEPATH_DEPLOY_INGRESS: infra/k8s/default/bt-ingress-tricycle.yaml
+  FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND: backend
+  FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND: frontend
+  GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/bt-backend
+  GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/bt-frontend
+  PROJECT_ID: berkeleytime-218606
+
+stages:
+  - build
+  - deploy-dev
+  - deploy-staging
+  - deploy-prod
+
+.before_build:
+  before_script:
+    - gcloud config set builds/use_kaniko True
+    - gcloud auth activate-service-account --key-file $IAM_GITLAB_RUNNER
+
+build-backend:
+  stage: build
+  extends: .before_build
+  script:
+    - >
+      if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+      else
+        echo "Docker image of this commit already exists: ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA}"
+      fi
+
+build-frontend:
+  stage: build
+  extends: .before_build
+  script:
+    - >
+      if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
+      else
+        echo "Docker image of this commit already exists: ${GCR_PATH_FRONTEND}:${CI_COMMIT_SHORT_SHA}"
+      fi
+
+deploy-dev:
+  stage: deploy-dev
+  except:
+    refs:
+      - master
+  environment:
+    name: staging
+  script:
+    - npm --prefix infra/tricycle install && node infra/tricycle
+
+deploy-staging:
+  stage: deploy-staging
+  only:
+    refs:
+      - master
+  environment:
+    name: staging
+  script:
+    - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_DATA | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+
+deploy-prod:
+  stage: deploy-prod
+  only:
+    refs:
+      - master
+  environment:
+    name: prod
+  when: manual
+  script:
+    - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_DATA | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_FRONTEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS

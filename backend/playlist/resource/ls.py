@@ -13,6 +13,7 @@ from berkeleytime.settings import (
 )
 from berkeleytime.config.semesters.util.term import get_sis_term_id
 from berkeleytime.config.general import SPECIAL_CHARACTER_ABBREVIATIONS
+from catalog.mapper import course_mapper
 from playlist.enums import LSPlaylistName
 from playlist.utils.definition import MapperDefinition
 
@@ -157,7 +158,7 @@ class LSResource(object):
             print("Finished fetching " + str(page_num-1) + "pages. Status code: " + str(response.status_code))
             return False
         for section in response.json()['apiResponse']['response']['classSections']:
-            course_abbrv = section['class']['course']['subjectArea']['code']
+            course_abbrv = course_mapper.get_abbreviation_and_department(section['class']['course'], unknown_departments=[])['abbreviation']
             course_number = section['class']['course']['catalogNumber']['formatted']
             if 'sectionAttributes' in section:
                 for attr in section['sectionAttributes']:

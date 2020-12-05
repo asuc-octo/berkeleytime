@@ -1,12 +1,7 @@
 """Course Mapper."""
-
-import logging
+import sys
 
 from playlist.utils import utils
-
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 class CourseMapper:
     """Map SIS Course API response data to a dict."""
@@ -17,6 +12,7 @@ class CourseMapper:
                 'title': data['title'],
                 'course_number': data['catalogNumber']['formatted'],
                 'description': data['description'],
+                'cross_listing': data.get('crossListing', {}).get('courses', [])
             }
             course_dict.update(self.get_abbreviation_and_department(data, unknown_departments))
             course_dict.update(self.get_units(data))
@@ -25,10 +21,9 @@ class CourseMapper:
 
             return course_dict
 
-        except Exception:
-            logger.exception({
-                'message': 'Exception while mapping Course API response to Course dict'
-            })
+        except Exception as e:
+            print('Exception while mapping Course API response to Course dict', e, file=sys.stderr)
+            return {}
 
 
     def get_abbreviation_and_department(self, data, unknown_departments=None):
@@ -77,9 +72,9 @@ class CourseMapper:
             elif data['credit']['type'] == 'discrete':
                 units = ' or '.join([str(float(units)) for units in data['credit']['value']['discrete'].get('units')])
             else:
-                logger.warning({
+                print({
                     'message': 'Incorrect credit type: ' + data['credit']['type']
-                })
+                }, file=sys.stderr)
 
         return {
             'units': units,
