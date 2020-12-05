@@ -21,6 +21,7 @@ const TestForm = lazy(() => import('./views/Forms/TestForm'));
 const BugsForm = lazy(() => import('./views/Forms/BugsForm'));
 const Apply = lazy(() => import('./views/Apply/Apply'));
 const Profile = lazy(() => import('./views/Profile/Profile'));
+const Logout = lazy(() => import('./views/Profile/Logout'));
 // const Scheduler = lazy(() => import('./views/Scheduler/Scheduler'));
 const PrivacyPolicy = lazy(() => import('./views/Policies/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
@@ -42,6 +43,7 @@ const routes: Array<RouteProps> = [
   { path: '/usertesting', component: UserTestingForm },
   { path: '/apply', component: Apply },
   { path: '/profile', component: Profile },
+  { path: '/logout', component: Logout },
   // { path: '/scheduler', component: Scheduler },
   // { path: '/apply/positions',   component: Positions       },
   // { path: '/apply/engineering', component: EngineeringApp  },

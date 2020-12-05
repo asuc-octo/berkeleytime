@@ -1,12 +1,12 @@
 //Account Subview
 
-.personal-attribute{
+.personal-attribute {
   font-weight: 500;
   color: #535353;
   width: 250px;
 }
 
-.personal-value{
+.personal-value {
   width: 100%;
   margin-left: 100px;
   display: flex;
@@ -14,25 +14,25 @@
   align-items: center;
 }
 
-.personal-edit{
+.personal-edit {
   position: absolute;
   right: 0;
-  color: #2F80ED;
+  color: #2f80ed;
   background-color: Transparent;
   border: none;
   font-weight: 500;
 }
 
-.personal-edit:focus{
+.personal-edit:focus {
   outline: none;
   box-shadow: none;
 }
 
-.major-select{
-  width: 180px;
+.major-select {
+  width: 300px;
 }
 
-.see-all-classes{
+.see-all-classes {
   margin-top: 20px;
-  color: #2F80ED;
+  color: #2f80ed;
 }
