@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';

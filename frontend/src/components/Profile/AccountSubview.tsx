@@ -3,9 +3,10 @@ import React, { useState } from 'react';
 import Property from './Property';
 import ProfileCard from './ProfileCard';
 import EditPencil from '../../assets/svg/profile/edit.svg';
-import { UserProfileFragment } from 'graphql/graphql';
+import { UserProfileFragment } from '../../graphql/graphql';
 
 import MAJORS from './majors.json';
+import { useUpdateUser } from '../../graphql/hooks/user';
 
 type Props = {
   userProfile: UserProfileFragment;
@@ -13,6 +14,7 @@ type Props = {
 
 const AccountSubview = ({ userProfile }: Props) => {
   const [removable, setRemovable] = useState<boolean>(false);
+  const updateUser = useUpdateUser();
 
   //Information has been hardcoded for testing purposes only
   const majorOptions = MAJORS.map((major) => ({
@@ -40,7 +42,12 @@ const AccountSubview = ({ userProfile }: Props) => {
       <Property
         options={majorOptions}
         attribute="Major(s)"
-        value={userProfile.major}
+        major={userProfile.major}
+        updateMajor={({ value }: { value: string }) =>
+          updateUser(userProfile, {
+            major: value,
+          })
+        }
       />
 
       <div className="profile-title">

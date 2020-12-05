@@ -1,5 +1,5 @@
 import { CourseOverviewFragment } from 'graphql/graphql';
-import { useUser } from 'graphql/hooks/auth';
+import { useUser } from 'graphql/hooks/user';
 import React, { CSSProperties, memo, ReactNode } from 'react';
 import { CourseReference, isSameCourse } from 'utils/courses/course';
 import { CourseSortAttribute } from 'utils/courses/sorting';

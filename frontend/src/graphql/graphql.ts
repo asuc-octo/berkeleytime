@@ -748,6 +748,26 @@ export type UnsaveCourseMutation = (
   )> }
 );
 
+export type UpdateUserMutationVariables = Exact<{
+  emailBerkeleytimeUpdate?: Maybe<Scalars['Boolean']>;
+  emailClassUpdate?: Maybe<Scalars['Boolean']>;
+  emailEnrollmentOpening?: Maybe<Scalars['Boolean']>;
+  emailGradeUpdate?: Maybe<Scalars['Boolean']>;
+  major?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateUserMutation = (
+  { __typename?: 'Mutation' }
+  & { updateUser?: Maybe<(
+    { __typename?: 'UpdateUser' }
+    & { user?: Maybe<(
+      { __typename?: 'BerkeleytimeUserType' }
+      & Pick<BerkeleytimeUserType, 'id' | 'major' | 'emailGradeUpdate' | 'emailEnrollmentOpening' | 'emailClassUpdate' | 'emailBerkeleytimeUpdate'>
+    )> }
+  )> }
+);
+
 export type GetCourseForIdQueryVariables = Exact<{
   id: Scalars['ID'];
   year?: Maybe<Scalars['String']>;
@@ -1057,6 +1077,55 @@ export function useUnsaveCourseMutation(baseOptions?: Apollo.MutationHookOptions
 export type UnsaveCourseMutationHookResult = ReturnType<typeof useUnsaveCourseMutation>;
 export type UnsaveCourseMutationResult = Apollo.MutationResult<UnsaveCourseMutation>;
 export type UnsaveCourseMutationOptions = Apollo.BaseMutationOptions<UnsaveCourseMutation, UnsaveCourseMutationVariables>;
+export const UpdateUserDocument = gql`
+    mutation UpdateUser($emailBerkeleytimeUpdate: Boolean, $emailClassUpdate: Boolean, $emailEnrollmentOpening: Boolean, $emailGradeUpdate: Boolean, $major: String) {
+  updateUser(
+    emailBerkeleytimeUpdate: $emailBerkeleytimeUpdate
+    emailClassUpdate: $emailClassUpdate
+    emailEnrollmentOpening: $emailEnrollmentOpening
+    emailGradeUpdate: $emailGradeUpdate
+    major: $major
+  ) {
+    user {
+      id
+      major
+      emailGradeUpdate
+      emailEnrollmentOpening
+      emailClassUpdate
+      emailBerkeleytimeUpdate
+    }
+  }
+}
+    `;
+export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
+
+/**
+ * __useUpdateUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ *   variables: {
+ *      emailBerkeleytimeUpdate: // value for 'emailBerkeleytimeUpdate'
+ *      emailClassUpdate: // value for 'emailClassUpdate'
+ *      emailEnrollmentOpening: // value for 'emailEnrollmentOpening'
+ *      emailGradeUpdate: // value for 'emailGradeUpdate'
+ *      major: // value for 'major'
+ *   },
+ * });
+ */
+export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
+        return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, baseOptions);
+      }
+export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
+export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
+export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
 export const GetCourseForIdDocument = gql`
     query GetCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {
