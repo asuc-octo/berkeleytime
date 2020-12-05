@@ -1,0 +1,128 @@
+# This template file depends on environment variables
+# See infra/init.sh for how to apply this to cluster
+
+# Debugging certificate errors is annoying
+# Here's a bash for-loop to test every URL we care about
+# for url in 'http://berkeleytime.com' 'http://www.berkeleytime.com' 'http://staging.berkeleytime.com' 'http://www.staging.berkeleytime.com' 'http://ocf.berkeleytime.com' 'http://www.ocf.berkeleytime.com' 'http://staging.ocf.berkeleytime.com' 'http://www.staging.ocf.berkeleytime.com' 'https://berkeleytime.com' 'https://www.berkeleytime.com' 'https://staging.berkeleytime.com' 'https://www.staging.berkeleytime.com' 'https://ocf.berkeleytime.com' 'https://www.ocf.berkeleytime.com' 'https://staging.ocf.berkeleytime.com' 'https://www.staging.ocf.berkeleytime.com'; do echo $url; curl -L $url; echo; echo; done
+# All of the curl outputs should be the same
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bt-ingress-$INGRESS_LABEL-frontend
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.k8s.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/server-snippet: |-
+      server_name $BASE_DOMAIN_NAME ~^www\.;
+      if ($host ~* www\.(.*)) {
+        set $host_without_www $1;
+        rewrite ^(.*)$ $scheme://$host_without_www$1 permanent;
+      }
+spec:
+  tls:
+    - hosts:
+        - berkeleytime.com
+        - "*.berkeleytime.com"
+      secretName: bt-tls
+  rules:
+    - host: $BASE_DOMAIN_NAME
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-frontend-svc-prod
+                port:
+                  number: 3000
+          - path: /git
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-gitlab
+                port:
+                  number: 80
+          - path: /webhooks/github
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-github-notify
+                port:
+                  number: 80
+    - host: staging.$BASE_DOMAIN_NAME
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-frontend-svc-staging
+                port:
+                  number: 3000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bt-ingress-$INGRESS_LABEL-backend
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.k8s.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  tls:
+    - hosts:
+        - "*.berkeleytime.com"
+      secretName: bt-tls
+  rules:
+    - host: $BASE_DOMAIN_NAME
+      http:
+        paths:
+          - path: /api/(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-backend-svc-prod
+                port:
+                  number: 5000
+    - host: staging.$BASE_DOMAIN_NAME
+      http:
+        paths:
+          - path: /api/(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-backend-svc-staging
+                port:
+                  number: 5000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bt-ingress-$INGRESS_LABEL-protected-routes
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.k8s.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/auth-type: basic
+    nginx.ingress.kubernetes.io/auth-secret: bt-ingress-protected-routes
+    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required - Login with credentials"
+spec:
+  tls:
+    - hosts:
+        - berkeleytime.com
+      secretName: bt-tls
+  rules:
+    - host: $BASE_DOMAIN_NAME
+      http:
+        paths:
+          - path: /kibana
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-kibana-kibana
+                port:
+                  number: 5601

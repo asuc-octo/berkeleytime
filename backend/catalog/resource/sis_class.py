@@ -1,7 +1,7 @@
 """SIS Schedule Resource."""
-import logging
 import re
 import requests
+import sys
 
 from django.core.cache import cache
 from retry import retry
@@ -9,8 +9,6 @@ from retry import retry
 from berkeleytime import settings
 from berkeleytime.config.semesters.util.term import get_sis_term_id
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 CACHE_TIMEOUT = 900
 
 class SISClassResource:
@@ -28,7 +26,7 @@ class SISClassResource:
         """Fetch (cached) SIS Class API response."""
         response = cache.get('class_resource {} {} {} {} new'.format(semester, year, abbreviation, course_number))
         if response:
-            logger.info('Cache hit in class resource')
+            print('Cache hit in class resource')
             return response
 
         response = self._request(
@@ -59,18 +57,15 @@ class SISClassResource:
             response = requests.get(url, headers=self.headers)
             assert response.status_code in [200, 201]
             return response.json()['apiResponse']['response']['classSections']
-        except AssertionError:
-            logger.debug({
+        except AssertionError as e:
+            print({
                 'message': 'SIS Course API did not return valid data',
                 'status_code': response.status_code,
                 'url': url
-            })
+            }, e, file=sys.stderr)
             return []
-        except:
-            logger.exception({
-                'message': 'Unable to reach SIS Course API',
-                'url': url
-            })
+        except Exception as e:
+            print('Unable to reach SIS Course API', url, e, file=sys.stderr)
             raise
 
 

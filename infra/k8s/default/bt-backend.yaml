@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: bt-backend-svc-$CI_ENVIRONMENT_NAME
+  name: bt-backend-svc-$CI_ENVIRONMENT_NAME
+  namespace: default
+spec:
+  ports:
+    - name: http-bt-port
+      port: 80
+      protocol: TCP
+      targetPort: 5000
+  selector:
+    component: bt-backend-$CI_ENVIRONMENT_NAME
+  type: ClusterIP
+
+---
+apiVersion: v1
+data:
+  DATABASE_URL: $SECRET_DATABASE_URL
+  REDIS_URL: $SECRET_REDIS_URL
+kind: ConfigMap
+metadata:
+  name: bt-backend-config-$CI_ENVIRONMENT_NAME
+  namespace: default
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: bt-backend-$CI_ENVIRONMENT_NAME
+  name: bt-backend-$CI_ENVIRONMENT_NAME
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: bt-backend-$CI_ENVIRONMENT_NAME
+  template:
+    metadata:
+      labels:
+        component: bt-backend-$CI_ENVIRONMENT_NAME
+    spec:
+      containers:
+        - command:
+            - /bin/sh
+            - -c
+            - >
+              python3 /backend/manage.py runserver 0.0.0.0:5000;
+          env:
+            - name: ENVIRONMENT_NAME
+              value: $CI_ENVIRONMENT_NAME
+          envFrom:
+            - configMapRef:
+                name: bt-backend-config-$CI_ENVIRONMENT_NAME
+            - secretRef:
+                name: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+          image: $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA
+          imagePullPolicy: Always
+          name: bt-backend-$CI_ENVIRONMENT_NAME
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/google
+              name: bt-backend-secrets-volume
+              readOnly: true
+      volumes:
+        - name: bt-backend-secrets-volume
+          secret:
+            defaultMode: 420
+            items:
+              - key: google-tokens
+                path: auth.json
+            secretName: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+  namespace: default
+type: Opaque
+stringData:
+  google-tokens: |-
+    $IAM_BT_BACKEND
+  DJANGO_SECRET_KEY: $SECRET_BT_DJANGO_SECRET_KEY
+  GOOGLE_APPLICATION_CREDENTIALS: /etc/google/auth.json
+  GOOGLE_EMAIL: $SECRET_GOOGLE_EMAIL
+  GOOGLE_PASS: $SECRET_GOOGLE_PASS
+  SENDGRID_PASSWORD: $SECRET_SENDGRID_PASSWORD
+  SENDGRID_USERNAME: $SECRET_SENDGRID_USERNAME
+  SIS_CLASS_APP_ID: $SECRET_SIS_CLASS_APP_ID
+  SIS_CLASS_APP_KEY: $SECRET_SIS_CLASS_APP_KEY
+  SIS_COURSE_APP_ID: $SECRET_SIS_COURSE_APP_ID
+  SIS_COURSE_APP_KEY: $SECRET_SIS_COURSE_APP_KEY

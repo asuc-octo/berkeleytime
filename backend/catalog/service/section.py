@@ -1,6 +1,6 @@
 """Section Service."""
-import logging
 import os
+import sys
 import time
 from multiprocessing.pool import ThreadPool
 
@@ -12,11 +12,7 @@ from catalog.service import course_service
 from enrollment.mapper import enrollment_mapper
 from enrollment.service import enrollment_service
 
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 NUM_THREADS = min(2 * os.cpu_count(), 16)
-
 
 class SectionService:
     """Application logic for section information."""
@@ -26,7 +22,7 @@ class SectionService:
 
         If given abbreviation + course_number, update only that course's sections.
         """
-        logger.info({
+        print({
             'message': 'Updating sections.',
             'semester': semester,
             'year': year,
@@ -56,9 +52,6 @@ class SectionService:
         while not result.ready():
             print(BColors.OKGREEN + f'Updating course {i.value()} of {len(courses)}.' + BColors.ENDC)
             time.sleep(5)
-
-        # Clear the cache to ensure an updated dropdown of courses with enrollment data
-        # course_service.invalidate_courses_with_enrollment_cache()
 
 
     def _update_class(self, course, semester, year):
@@ -90,6 +83,8 @@ class SectionService:
         for sect in response:
             section_dict = section_mapper.map(sect, extras=section_extras)
             section, created = self.update_or_create_from_dict(section_dict)
+            if not section:
+                continue
             if semester != 'summer' and section.is_primary and not section.disabled:
                 enrollment_dict = enrollment_mapper.map(sect, extras={'section_id': section.id})
                 enrollment_service.update_or_create_from_dict(enrollment_dict)
@@ -97,7 +92,7 @@ class SectionService:
             updated_section_ids.add(section.id)
 
         if len(updated_section_ids) > 0:
-            logger.info({
+            print({
                 'message': 'Updated sections for course',
                 'course': course,
                 'sections updated': len(updated_section_ids),
@@ -113,7 +108,7 @@ class SectionService:
             if not section.disabled:
                 section.disabled = True
                 section.save()
-                logger.info({
+                print({
                     'message': 'Disabling section not in API response.',
                     'section': section,
                 })
@@ -132,17 +127,15 @@ class SectionService:
                 kind=section_dict['kind'],
                 defaults=section_dict,
             )
-            logger.info({
+            print({
                 'message': 'Created/updated section object',
                 'section': section_obj,
                 'created': created,
             })
             return section_obj, created
-        except:
-            logger.exception({
-                'message': 'Exception encountered while updating/creating section',
-                'section_dict': section_dict,
-            })
+        except Exception as e:
+            print('Exception encountered while updating/creating section', section_dict, e, file=sys.stderr)
+            return None, False
 
 
 section_service = SectionService()

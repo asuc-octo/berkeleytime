@@ -1,0 +1,16 @@
+{
+  "name": "github-notify",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.13.0",
+    "axios": "^0.18.1",
+    "express": "^4.15.2"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    component: bt-github-notify
+  name: bt-github-notify
+  namespace: default
+spec:
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5000
+  selector:
+    component: bt-github-notify
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: bt-github-notify
+  name: bt-github-notify
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: bt-github-notify
+  template:
+    metadata:
+      labels:
+        component: bt-github-notify
+    spec:
+      containers:
+        - command:
+            - npm
+            - start
+          env:
+            - name: KUBECONFIG
+              value: /kubeconfig
+            - name: GITLAB_DOMAIN
+              valeu: https://berkeleytime.com/git
+            - name: NODE_PORT
+              value: "5000"
+          envFrom:
+            - secretRef:
+                name: general-secrets
+          image: gcr.io/berkeleytime-218606/github-notify:latest
+          imagePullPolicy: Always
+          name: bt-github-notify

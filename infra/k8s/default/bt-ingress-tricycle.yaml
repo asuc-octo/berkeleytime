@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bt-ingress-tricycle-frontend-dev-$CI_ENVIRONMENT_NAME
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.k8s.io/cluster-issuer: letsencrypt
+spec:
+  tls:
+    - hosts:
+        - "*.berkeleytime.com"
+      secretName: bt-tls
+  rules:
+    - host: $CI_ENVIRONMENT_NAME.berkeleytime.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-frontend-svc-dev-$CI_ENVIRONMENT_NAME
+                port:
+                  number: 3000
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bt-ingress-tricycle-backend-dev-$CI_ENVIRONMENT_NAME
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.k8s.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  tls:
+    - hosts:
+        - "*.berkeleytime.com"
+      secretName: bt-tls
+  rules:
+    - host: $CI_ENVIRONMENT_NAME.berkeleytime.com
+      http:
+        paths:
+          - path: /api/(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-backend-svc-dev-$CI_ENVIRONMENT_NAME
+                port:
+                  number: 5000

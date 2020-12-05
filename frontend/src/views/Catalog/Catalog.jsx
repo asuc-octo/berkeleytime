@@ -205,7 +205,7 @@ class Catalog extends Component {
       };
     }) : [];
 
-    // setFilterMap(filterMap);
+    setFilterMap(filterMap);
 
     return {
       requirements,

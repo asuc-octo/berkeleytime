@@ -32,7 +32,7 @@ def enrollment_context(long_form=False):
     if cached:
         rtn = cached
     else:
-        courses = Course.objects.all().order_by('abbreviation', 'course_number')
+        courses = Course.objects.exclude(section__isnull=True).order_by('abbreviation', 'course_number')
         if long_form:
             rtn = courses.values('id', 'abbreviation', 'course_number', 'title')
         else:
@@ -107,8 +107,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
             return render_to_json(cached)
         rtn = {}
         course = Course.objects.get(id = course_id)
-        all_sections = course.section_set.all().filter(semester = semester, year = year, disabled = False)
-        sections = all_sections.filter(is_primary = True )
+        sections = course.section_set.all().filter(semester=semester, year=year, disabled=False, is_primary=True)
         if sections:
             rtn['course_id'] = course.id
             rtn['section_id'] = 'all'

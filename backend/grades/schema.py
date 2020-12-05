@@ -27,9 +27,16 @@ class LetterGradeType(graphene.ObjectType):
     percentile_low = graphene.Float()
 
 
+class GradeFilter(django_filters.FilterSet):
+    class Meta:
+        model = Grade
+        exclude = ('instructors',) + ALL_GRADES
+
+
 class GradeType(DjangoObjectType):
     class Meta:
         model = Grade
+        filterset_class = GradeFilter
         interfaces = (graphene.Node, )
         exclude = ALL_GRADES
 
@@ -84,11 +91,6 @@ class GradeType(DjangoObjectType):
             denom += getattr(self, grade) or 0.0
         return denom
 
-
-class GradeFilter(django_filters.FilterSet):
-    class Meta:
-        model = Grade
-        exclude = ('instructors',) + ALL_GRADES
 
 
 class Query(graphene.ObjectType):

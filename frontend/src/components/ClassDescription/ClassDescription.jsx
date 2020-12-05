@@ -268,19 +268,28 @@ class ClassDescription extends Component {
             <div className="stats">
               <div className="statline">
                 <img src={people} />
-                Enrolled:
+                Enrolled: &nbsp;
                 {course.enrolled !== -1
-                    ? applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)
+                    ? 
+                    <div className="statline-div">
+                      {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)}
+                      &nbsp;
+                      <a href={toEnrollment.pathname} target="_blank" className="statlink"><img src={launch} /></a>
+                    </div>
                     : " N/A "
                 }
-                &nbsp;
-                <a href={toEnrollment.pathname} target="_blank" className="statlink"><img src={launch} /></a>
               </div>
               <div className="statline">
                 <img src={chart} />
-                Average Grade:
-                {applyIndicatorGrade(course.letter_average, course.letter_average)} &nbsp;
-                <a href={toGrades.pathname} target="_blank" className="statlink"><img src={launch} /></a>
+                Average Grade: &nbsp;
+                {course.grade_average !== -1
+                    ? 
+                  <div className="statline-div">
+                    {applyIndicatorGrade(course.letter_average, course.letter_average)} &nbsp;
+                    <a href={toGrades.pathname} target="_blank" className="statlink"><img src={launch} /></a>
+                  </div>
+                  : " N/A "
+                }
               </div>
               <div className="statline">
                 <img src={book} />

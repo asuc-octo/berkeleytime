@@ -1,0 +1,9 @@
+# https://github.com/bitnami/charts/blob/4aad73ac532eb282e2c68162b475b0a1ae264e30/bitnami/redis/values.yaml
+usePassword: true
+existingSecret: bt-redis-${CI_ENVIRONMENT_NAME}
+existingSecretPasswordKey: REDIS_PASSWORD
+master:
+  persistence:
+    enabled: false
+cluster:
+  enabled: false
