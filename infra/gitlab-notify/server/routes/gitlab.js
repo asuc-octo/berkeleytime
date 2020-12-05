@@ -60,6 +60,9 @@ router.post("/fail", async (req, res) => {
         },
       } = await axios.get(`https://quotes.rest/qod.json?category=inspire`);
       const { quote, author } = quotes[0];
+      if (quote && author) {
+        console.log(`Retrieve quote success: `, quotes[0]);
+      }
       message = `"${quote}" —${author}`;
       quoteCache[today] = { quote, author };
     } catch (e) {
@@ -70,8 +73,8 @@ router.post("/fail", async (req, res) => {
   let html = `
   <h1>${message}</h1>
   <p style='color: red'>hi ${
-    commit.author.name
-  }, looks like your stuff is broken</p>
+    commit.author.name.toLowerCase()
+  }, looks like we failed to either build or deploy your branch</p>
   <p><b>BRANCH:</b> ${object_attributes.ref}</p>
   <p><b>COMMIT:</b> ${commit.id.slice(0, 8)}</p>
   <p><b>MESSAGE:</b> ${commit.message}</p><br>`;
