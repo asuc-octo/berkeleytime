@@ -199,10 +199,20 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
         # generate jwt token
         return on_token_auth_resolve(info.context, btuser.user, cls(user=btuser, new_user=new_user))
 
+class Logout(graphene.Mutation):
+    success = graphene.Boolean()
+
+    @classmethod
+    def mutate(cls, root, info):
+        # remove cookies
+        deleted = graphql_jwt.DeleteJSONWebTokenCookie.mutate(root, info).deleted
+        return Logout(success=deleted)
+
 class DeleteUser(graphene.Mutation):
     success = graphene.Boolean()
 
     @classmethod
+    @login_required
     def mutate(cls, root, info):
         # remove cookies
         graphql_jwt.DeleteJSONWebTokenCookie.mutate(root, info)
@@ -226,7 +236,7 @@ class Mutation(graphene.ObjectType):
     save_class = SaveClass.Field()
     remove_class = RemoveClass.Field()
     login = ObtainJSONWebToken.Field()
-    logout = graphql_jwt.DeleteJSONWebTokenCookie.Field()
+    logout = Logout.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
     delete_user = DeleteUser.Field()
