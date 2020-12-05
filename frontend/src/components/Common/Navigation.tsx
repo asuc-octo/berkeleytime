@@ -40,10 +40,10 @@ const Navigation: FC<Props> = (props) => {
       //   to: '/apply',
       //   text: 'Apply',
       // },
-      {
-        on_click: () => setShowLogin(true),
-        text: 'Login',
-      },
+      // {
+      //  on_click: () => setShowLogin(true),
+      //  text: 'Login',
+      // },
     ].map(link => ({
       on_click: link.on_click,
       to: link.to,
