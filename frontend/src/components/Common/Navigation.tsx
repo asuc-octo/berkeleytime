@@ -70,7 +70,7 @@ const Navigation: FC<Props> = (props) => {
          at the top of the app-container instead of fixed to the
          top of the viewport */
     >
-      <Navbar.Brand as={Link} to="/" className="bt-bold">Berkeleytime</Navbar.Brand>
+      <Navbar.Brand as={Link} to="/" className="bt-bold">Standfurdtime</Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto" />

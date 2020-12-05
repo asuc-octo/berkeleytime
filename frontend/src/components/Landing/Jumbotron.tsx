@@ -16,8 +16,8 @@ const Jumbotron: FC = () => (
       <Row>
         <Col xs={{ span: 12, order: 3 }} lg={{ span: 5, order: 1 }}>
           <div className="heading">
-            <H3 bold className="mb-3">Berkeley’s online course discovery platform.</H3>
-            <P className="mb-3">Berkeleytime is a platform built, maintained, and run by students, just like you. We work hard to simplify and improve the course discovery experience.</P>
+            <H3 bold className="mb-3">Stanfurd’s online course discovery platform.</H3>
+            <P className="mb-3">Stanfurdtime is a platform built, maintained, and run by a contracted tech firm. We work hard to simplify and improve the course discovery experience.</P>
             <ButtonToolbar>
               <ButtonGroup className="mr-2">
                 <Button href={{as_link: "/catalog"}}>Explore Courses</Button>

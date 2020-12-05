@@ -43,9 +43,9 @@ const About: FC = () => (
     <div className="about-our-team my-5">
       <H3 bold className="mb-2">About Our Team</H3>
       <P className="mb-3">
-        We&apos;re a small group of student volunteers at UC Berkeley, dedicated to
+        We&apos;re a small tech firm contracted by Stanfurd, dedicated to
         simplifying the course discovery experience. We actively build, improve
-        and maintain Berkeleytime.
+        and maintain Stanfurdtime.
       </P>
       {/* <Button variant="inverted" link_to="/apply">Join Our Team</Button> */}
     </div>
