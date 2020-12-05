@@ -39,7 +39,6 @@ const Jumbotron: FC = () => (
         <Col xs={{ span: 12, order: 2 }} lg={{ span: 7, order: 2 }}>
           <div className="animation-container">
             <img src={logo} alt="Welcome to BerkeleyTime." />
-            <p className="credit">© Janet Xu</p>
           </div>
         </Col>
       </Row>

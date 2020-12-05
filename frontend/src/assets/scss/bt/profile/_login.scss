@@ -1,0 +1,39 @@
+.login {
+  flex-direction: column;
+  .login-btn {
+    width: 200px;
+    padding: unset !important;
+    align-self: center;
+    .login-img {
+      width: 200px;
+    }
+  }
+
+  .back-btn {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    padding: unset;
+    margin: unset;
+  }
+
+  .modal-dialog {
+    width: 500px;
+    @include mobile {
+      width: 75vw;
+    }
+
+    position: absolute;
+    align-self: center;
+    top: 25vh;
+
+    .modal-content {
+      padding: 50px;
+      text-align: center;
+
+      .legal-text {
+        font-size: 12px;
+      }
+    }
+  }
+}
