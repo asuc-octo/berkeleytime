@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
@@ -16,6 +16,8 @@ import { getLatestSemester, Semester } from 'utils/playlists/semesters';
 import SectionTable from './SectionTable';
 import BTLoader from 'components/Common/BTLoader';
 import { CourseReference, courseToName } from 'utils/courses/course';
+import { fetchEnrollContext } from '../../redux/actions';
+import { useDispatch, useSelector } from 'react-redux';
 
 type Props = {
   course: CourseReference;
@@ -28,6 +30,31 @@ const ClassDescription = ({
   semester,
   modifyFilters,
 }: Props) => {
+  // Hack to work with REST-style enrollment/grades
+  const dispatch = useDispatch();
+
+  type RESTCourseInfo = {
+    id: number;
+    abbreviation: string;
+    course_number: string;
+  };
+
+  const enrollmentContext: RESTCourseInfo[] | undefined = useSelector(
+    (state) => (state as any).enrollment.context.courses
+  );
+
+  const oldCourseId = enrollmentContext?.find(
+    (c) =>
+      c.course_number === courseRef.courseNumber &&
+      c.abbreviation === courseRef.abbreviation
+  )?.id;
+
+  useEffect(() => {
+    dispatch(fetchEnrollContext());
+  }, [dispatch]);
+
+  // End hack
+
   const [readMore, setReadMore] = useState<boolean | null>(false);
 
   const { data, loading, error } = useGetCourseForNameQuery({
@@ -77,15 +104,18 @@ const ClassDescription = ({
   const pills = stableSortPlaylists(playlists, 4);
 
   const toGrades = {
-    pathname: course !== null ? `/grades/0-${course.id}-all-all` : `/grades`,
+    pathname:
+      course !== null && oldCourseId
+        ? `/grades/0-${oldCourseId}-all-all`
+        : `/grades`,
     state: { course: course },
   };
 
   // TODO: remove
   const toEnrollment = {
     pathname:
-      course !== null && semesterUrl !== null
-        ? `/enrollment/0-${course.id}-${semesterUrl}-all`
+      course !== null && semesterUrl !== null && oldCourseId
+        ? `/enrollment/0-${oldCourseId}-${semesterUrl}-all`
         : `/enrollment`,
     state: { course: course },
   };
