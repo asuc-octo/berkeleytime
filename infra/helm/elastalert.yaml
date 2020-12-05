@@ -9,7 +9,7 @@
 # https://github.com/jertel/elastalert-docker/blob/d0c017e5af2145b69511f7e6764b60e2c27166ee/chart/elastalert/values.yaml
 # Other examples:
 # https://github.com/oneoneonepig/elastalert-chart/blob/master/values.yaml
-replicaCount: 0
+replicaCount: 1
 elasticsearch:
   host: bt-elasticsearch-primary
   port: 9200
@@ -23,7 +23,7 @@ extraConfigOptions:
   # slack_webhook_url: https://hooks.slack.com/services/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 # berkeleytime-integrations channel
   # slack_webhook_url: https://hooks.slack.com/services/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 # berkeleytime channel
   # generate_kibana_link: true
-  # kibana_url: https://ocf.berkeleytime.com/kibana/
+  # kibana_url: https://berkeleytime.com/kibana/
 
 rules:
   PostgreSQL: |-
@@ -45,13 +45,13 @@ rules:
       - message
       - container.id
     alert_text: |-
-      :bear: <https://ocf.berkeleytime.com/kibana/app/kibana#/doc/k8s-index-pattern-id/k8s-*/logs?id={0}|Log Link URL>
+      :bear: <https://berkeleytime.com/kibana/app/kibana#/doc/k8s-index-pattern-id/k8s-*/logs?id={0}|Log Link URL>
       :upside_down_face: *Node:* <https://console.cloud.google.com/compute/instancesDetail/zones/us-west2-a/instances/{1}?project=berkeleytime-218606&authuser=octo.berkeleytime@asuc.org|{1}>
       :cry: *Container:* {2}
       :no_good::skin-tone-2: *Error:* {3}
     generate_kibana_discover_url: true
     kibana_discover_url: true
-    kibana_discover_app_url: https://ocf.berkeleytime.com/kibana/app/discover#
+    kibana_discover_app_url: https://berkeleytime.com/kibana/app/discover#
     kibana_discover_version: '7.3'
     kibana_discover_columns:
       - kubernetes.pod.name

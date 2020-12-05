@@ -45,6 +45,13 @@ spec:
                 name: bt-gitlab
                 port:
                   number: 80
+          - path: /webhooks/github
+            pathType: Prefix
+            backend:
+              service:
+                name: bt-github-notify
+                port:
+                  number: 80
     - host: staging.$BASE_DOMAIN_NAME
       http:
         paths:

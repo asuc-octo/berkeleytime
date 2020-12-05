@@ -55,7 +55,7 @@ const upload = async (serviceName) => {
     `kubectl -n rook-ceph exec ${rookCephToolsPod} -- rbd export rook-cephrbd/csi-snap-${snapshotHandle} - | gzip | gsutil cp - gs://berkeleytime-218606/${serviceName}/${snapshotFilenameCompressed}`
   );
 };
-upload("bt-psql-prod");
-upload("bt-psql-staging");
-upload("bt-gitlab");
-upload("bt-elasticsearch");
+await upload("bt-psql-prod");
+await upload("bt-psql-staging");
+await upload("bt-gitlab");
+await upload("bt-elasticsearch");
