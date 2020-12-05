@@ -49,7 +49,7 @@ class CourseFilter(django_filters.FilterSet):
 class CourseType(DjangoObjectType):
     class Meta:
         model = Course
-        filterset_class=CourseFilter
+        filterset_class = CourseFilter
         interfaces = (graphene.Node, )
 
     units = graphene.String()
