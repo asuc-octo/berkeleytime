@@ -1,3 +1,5 @@
+$filter-card-transition: 0.05s ease;
+
 .filter-card {
   padding: 5px 15px;
 
@@ -15,6 +17,9 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    background: transparent;
+    transition: all $filter-card-transition;
 
     &:hover {
       background-color: $bt-off-white;
@@ -73,11 +78,18 @@
       }
     }
 
-    .filter-card-save{
+    .filter-card-save {
       position: absolute;
       top: 5px;
       right: 10px;
+      opacity: 0.5;
+      transition: all $filter-card-transition;
+      color: $bt-light-grey;
     }
+  }
+
+  &:hover .filter-card-save {
+    opacity: 1;
   }
 
   .filter-card-container.selected {

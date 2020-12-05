@@ -54,7 +54,7 @@ const Profile = () => {
 
   const TabComponent = tabs[tabIndex].component;
 
-  // If we're not logged in, redirect
+  // If we're not logged in, redirect.
   if (!loading && !isLoggedIn) {
     return <Redirect to="/" />;
   }
