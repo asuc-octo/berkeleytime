@@ -1,7 +1,10 @@
 .current-contributors, .past-contributors {
-  // width's chosen so column widths are exactly 150px, kinda jank but whatever
+  // width's chosen so column widths are exactly 150px, kinda jank but whatevers
   @include desktop {
     width: 690px;
+  }
+  @include tablet {
+    width: 650px;
   }
   @include mobile {
     width: 330px;
