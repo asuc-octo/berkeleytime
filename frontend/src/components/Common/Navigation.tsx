@@ -45,7 +45,7 @@ const Navigation: FC<Props> = (props) => {
       //  text: 'Login',
       // },
     ].map(link => ({
-      on_click: link.on_click,
+      on_click: "on_click" in link ? link.on_click : null,
       to: link.to,
       text: link.text,
       nav_to: link.to,
