@@ -25,10 +25,10 @@ const Navigation: FC<Props> = (props) => {
         to: '/enrollment',
         text: 'Enrollment',
       },
-      {
-        to: '/scheduler',
-        text: 'Scheduler',
-      },
+      // {
+      //   to: '/scheduler',
+      //   text: 'Scheduler',
+      // },
       {
         to: '/about',
         text: 'About',
