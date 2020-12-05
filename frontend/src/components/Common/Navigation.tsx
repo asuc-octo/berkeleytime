@@ -45,7 +45,7 @@ const Navigation: FC<Props> = (props) => {
       //  text: 'Login',
       // },
     ].map(link => ({
-      on_click: "on_click" in link ? link.on_click : null,
+      // on_click: "on_click" in link ? link.on_click : null,
       to: link.to,
       text: link.text,
       nav_to: link.to,
@@ -56,7 +56,7 @@ const Navigation: FC<Props> = (props) => {
 
   useEffect(() => {
     setLinks(links.map(link => ({
-      on_click: link.on_click,
+      // on_click: link.on_click,
       to: link.to,
       text: link.text,
       // nav_to is either [link.to] or '' if we are already on that page
@@ -92,7 +92,7 @@ const Navigation: FC<Props> = (props) => {
                     key={link.text}
                     as={Link}
                     to={link.nav_to}
-                    onClick={link.on_click}
+                    /*onClick={link.on_click}}*/
                     className="bt-bold"
                     eventKey={(index + 1).toString()}
                     // eventKey required for collapseOnselect
