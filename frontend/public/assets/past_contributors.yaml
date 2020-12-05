@@ -1,99 +1,99 @@
 - name: Class of 2020
   rows:
     - - name: Will Wang
-        role: Backend Lead / PM
+        role: Project Lead
         site: http://www.hantaowang.me
       - name: Jemma Kwak
-        role: Design Lead
+        role: Director of Design
         site: https://jemmakwak.me
       - name: Anson Tsai
-        role: Backend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/anson-tsai-83b9a312a/
       - name: Eli Wu
-        role: Backend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/eli-w-8b192ba0/
       - name: Sean Meng
-        role: Backend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/sean-meng-berkeley
       - name: Isabella Lau
-        role: Backend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/xisabellalau/
       - name: Chloe Liu
-        role: Frontend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/ruochen99/
 - name: Class of 2019
   rows:
     - - name: Sangbin Cho
-        role: Backend Lead
+        role: Project Lead
         site: https://www.linkedin.com/in/sang-cho/
       - name: Evelyn Li
-        role: Backend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/yunqil
       - name: Richard Liu
-        role: Backend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/richard4912
       - name: Mary Liu
-        role: Backend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/mary-y-liu
     - - name: Kate Xu
-        role: Frontend Lead
+        role: Project Developer
         site: https://www.linkedin.com/in/kate-shijie-xu-666b57110
       - name: Scott Lee
-        role: Frontend Lead / PM
+        role: President
         site: http://scottjlee.github.io
 - name: Class of 2018
   rows:
     - - name: Tony Situ
-        role: Backend Lead
+        role: Director of Technology
         site: https://www.linkedin.com/in/c2tonyc2
       - name: Vaibhav Srikaran
-        role: Product Manager
+        role: Internal VP
         site: https://www.linkedin.com/in/vsrikaran
       - name: Katharine Jiang
-        role: Frontend Engineer
+        role: Project Lead
         site: http://katharinejiang.com
       - name: Flora Xue
-        role: Frontend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/flora-zhenruo-xue
     - - name: Alan Rosenthal
-        role: Backend Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/alan-rosenthal-37767614a
 - name: Founding Team
   rows:
     - - name: Christine Wang
-        role: Fullstack Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/cwang395/
       - name: Emily Chen
-        role: Fullstack Engineer
+        role: Project Developer
       - name: Eric Huynh
-        role: Fullstack Engineer
+        role: Project Developer
         site: http://erichuynhing.com/
       - name: Jennifer Yu
-        role: Fullstack Engineer
+        role: Project Developer
     - - name: Justin Lu
-        role: Fullstack Engineer
+        role: Project Developer
       - name: Kelvin Leong
-        role: Fullstack Engineer
+        role: Project Developer
         site: https://www.linkedin.com/in/kelvinjleong/
       - name: Kevin Jiang
-        role: Fullstack Engineer
+        role: Project Developer
         site: https://github.com/kevjiangba/
       - name: Kimya Khoshnan
-        role: Fullstack Engineer
+        role: Project Developer
     - - name: Laura Harker
-        role: Fullstack Engineer
+        role: Project Developer
       - name: Mihir Patil
-        role: Fullstack Engineer
+        role: Project Developer
       - name: Niraj Amalkanti
-        role: Fullstack Engineer
+        role: Project Developer
       - name: Parsa Attari
-        role: Fullstack Engineer
+        role: Project Developer
     - - name: Ronald Lee
-        role: Fullstack Engineer
+        role: Project Developer
       - name: Sanchit Bareja
-        role: Fullstack Engineer
+        role: Project Developer
       - name: Sandy Zhang
-        role: Fullstack Engineer
+        role: Project Developer
 - name: Founders
   rows:
     - - name: Yuxin Zhu

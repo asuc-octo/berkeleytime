@@ -23,18 +23,18 @@ import passion from 'assets/svg/about/passion.svg'
 const values = [
   {
     svg: growth,
-    name: 'Growth',
-    desc: 'You’ll grow your technical skills as you tackle real challenging design and engineering problems.',
+    name: 'Trees',
+    desc: 'We are strong and tall like a tree. That\'s why its our mascot. ',
   },
   {
     svg: curiosity,
-    name: 'Curiosity',
-    desc: 'We value team members that are curious about solving difficult problems and seek out solutions independently.',
+    name: 'Brilliance',
+    desc: 'Did you not get a 2395 SAT, 4.8 GPA, and attend Phillips Exeter?',
   },
   {
     svg: passion,
     name: 'Passion',
-    desc: 'Genuine commitment and dedication are critical to moving the Berkeleytime product forward.',
+    desc: 'Your passion for this start up is why you must work 18 hours a day, 7 days a week for 0.1% equity and no pay.',
   },
 ]
 
