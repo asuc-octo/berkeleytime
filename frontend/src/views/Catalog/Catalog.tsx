@@ -59,12 +59,30 @@ const Catalog = () => {
   );
 
   /**
-   * Adds and removes playlists from the active playlists
+   * Adds and removes playlists from the active playlists. Executes remove
+   * before add.
    */
   function modifyFilters(add: Set<string>, remove: Set<string> = new Set()) {
-    setActivePlaylists((currentPlaylists) =>
-      difference(union(currentPlaylists, [...add]), [...remove])
-    );
+    setActivePlaylists((currentPlaylists) => {
+      let addPlaylists = [...add];
+      let removePlaylists = [...remove];
+
+      // TODO: expand to 'Departments'. This can make it so the 'getChanges'
+      // logic can be discarded
+      const semesterPlaylists = allPlaylists
+        .filter((p) => p.category === 'semester')
+        .map((p) => p.id);
+
+      // If they are adding a semester, remove all other semesters. This logic
+      // ensures only 1 semester is selected at a time.
+      if (
+        addPlaylists.some((playlist) => semesterPlaylists.includes(playlist))
+      ) {
+        removePlaylists.push(...semesterPlaylists);
+      }
+
+      return union(difference(currentPlaylists, removePlaylists), addPlaylists);
+    });
   }
 
   /**
