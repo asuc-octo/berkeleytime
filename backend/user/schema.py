@@ -83,7 +83,7 @@ class SaveClass(graphene.Mutation):
             user.saved_classes.add(save_class)
         except Course.DoesNotExist:
             return GraphQLError('Invalid Class ID')
-        return UpdateUser(user=user)
+        return SaveClass(user=user)
 
 class RemoveClass(graphene.Mutation):
     class Arguments:
@@ -97,7 +97,7 @@ class RemoveClass(graphene.Mutation):
         # user = User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
         user = info.context.user.berkeleytimeuser
         user.saved_classes.remove(from_global_id(class_id)[1])
-        return UpdateUser(user=user)
+        return RemoveClass(user=user)
 
 # JWT
 def on_token_auth_resolve(context, user, payload):
@@ -199,6 +199,29 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
         # generate jwt token
         return on_token_auth_resolve(info.context, btuser.user, cls(user=btuser, new_user=new_user))
 
+class Logout(graphene.Mutation):
+    success = graphene.Boolean()
+
+    @classmethod
+    def mutate(cls, root, info):
+        # remove cookies
+        deleted = graphql_jwt.DeleteJSONWebTokenCookie.mutate(root, info).deleted
+        return Logout(success=deleted)
+
+class DeleteUser(graphene.Mutation):
+    success = graphene.Boolean()
+
+    @classmethod
+    @login_required
+    def mutate(cls, root, info):
+        # remove cookies
+        graphql_jwt.DeleteJSONWebTokenCookie.mutate(root, info)
+
+        # delete user
+        user = info.context.user
+        user.delete()
+        return DeleteUser(True)
+
 class Query(graphene.ObjectType):
     user = graphene.Field(BerkeleytimeUserType)
 
@@ -213,5 +236,7 @@ class Mutation(graphene.ObjectType):
     save_class = SaveClass.Field()
     remove_class = RemoveClass.Field()
     login = ObtainJSONWebToken.Field()
+    logout = Logout.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
+    delete_user = DeleteUser.Field()
