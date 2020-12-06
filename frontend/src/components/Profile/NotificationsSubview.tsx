@@ -5,6 +5,7 @@ import {
   UserProfileFragment,
 } from '../../graphql/graphql';
 import { useUpdateUser } from '../../graphql/hooks/user';
+import Subview from './Subview';
 
 type Props = {
   userProfile: UserProfileFragment;
@@ -19,9 +20,7 @@ const NotificationsSubview = ({ userProfile }: Props) => {
   ) => (checked: boolean) => updateUser(userProfile, property(checked));
 
   return (
-    <div className="profile-subview">
-      <h1>Notifications</h1>
-      <h2>Email Preferences</h2>
+    <Subview title="Email Preferences">
       <Preference
         isChecked={userProfile.emailClassUpdate}
         onChange={updateProperty((checked) => ({
@@ -50,7 +49,7 @@ const NotificationsSubview = ({ userProfile }: Props) => {
         }))}
         text="Updates to Berkeleytime's software"
       />
-    </div>
+    </Subview>
   );
 };
 
