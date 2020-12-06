@@ -10,15 +10,16 @@ import { openBanner, enterMobile, exitMobile } from './redux/common/actions'
 import { ReduxState } from 'redux/store'
 
 function easterEgg() {
+  // eslint-disable-next-line no-console
   console.log(`%c
     Hey there! Checking out how Berkeleytime works? We are a group of student developers
     here at UC Berkeley. We build this site using the latest tech - React, Django, Kubernetes,
     and more. If you love using Berkeleytime and want to see yourself as a contributor,
     we are always looking for passionate individuals to help us improve our product.
-    
+
     Check out our Join Us page, especially towards the start of the Fall semester when we
     are recruiting. Also, send us an email at octo.berkeleytime@asuc.org letting us know you
-    found this message!   
+    found this message!
 
 
                                    .,,uod8B8bou,,.

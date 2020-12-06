@@ -1,16 +1,10 @@
 import React, { Component } from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  ButtonToolbar
-} from 'react-bootstrap';
+import { Container, Row, Col, ButtonToolbar } from 'react-bootstrap';
 import yaml from 'js-yaml';
 
 import Log from '../../components/Releases/Log';
 
 class Releases extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -19,9 +13,9 @@ class Releases extends Component {
   }
 
   componentDidMount() {
-    fetch("/assets/releases.yaml")
-      .then(result => result.text())
-      .then(data => this.setState({ releases: yaml.load(data).releases }));
+    fetch('/assets/releases.yaml')
+      .then((result) => result.text())
+      .then((data) => this.setState({ releases: yaml.load(data).releases }));
   }
 
   render() {
@@ -49,7 +43,9 @@ class Releases extends Component {
           <Row>
             <Col lg={3}></Col>
             <Col lg={6}>
-              {releases.map(item => <Log {...item} />)}
+              {releases.map((item) => (
+                <Log key={item.date} {...item} />
+              ))}
             </Col>
             <Col lg={3}></Col>
           </Row>

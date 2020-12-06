@@ -5,6 +5,21 @@
 import React from 'react';
 
 /**
+ * Gets indicator class for a color.
+ */
+export function getIndicatorPercent(percentage) {
+  if (percentage >= 0.99999) {
+    return '#FC7676'; // red
+  } else if (percentage > 0.65) {
+    return '#FFA414'; // orange
+  } else if (percentage > 0.3) {
+    return '#D3BC3B'; // yellow
+  } else {
+    return '#18DE83'; // green
+  }
+}
+
+/**
  * Returns a paragraph tag styled with color with respect to percentage
  * @param {string} text text in the paragraph tag
  * @param {number} percentage percentage from 0.0 to 1.0
@@ -17,9 +32,7 @@ function applyIndicatorPercent(text, percentage) {
     theme = 'bt-indicator-orange';
   }
 
-  return (
-    <p className={theme}>{ text }</p>
-  );
+  return <span className={theme}>{text}</span>;
 }
 
 /**
@@ -29,9 +42,7 @@ function applyIndicatorPercent(text, percentage) {
  */
 function applyIndicatorGrade(text, grade) {
   if (grade === null) {
-    return (
-      <p>N/A</p>
-    );
+    return <span>N/A</span>;
   }
 
   let theme = 'bt-indicator-red';
@@ -43,9 +54,7 @@ function applyIndicatorGrade(text, grade) {
     theme = 'bt-indicator-orange';
   }
 
-  return (
-    <p className={theme}>{ text }</p>
-  );
+  return <span className={theme}>{text}</span>;
 }
 
 /**
@@ -55,7 +64,10 @@ function applyIndicatorGrade(text, grade) {
  *      "2.0 - 12.0" -> "2-12 Units"
  */
 function formatUnits(units) {
-  return `${units} Unit${units === '1.0' || units === '1' ? '' : 's'}`.replace(/.0/g, '').replace(/ - /, '-').replace(/ or /g, '-');
+  return `${units} Unit${units === '1.0' || units === '1' ? '' : 's'}`
+    .replace(/.0/g, '')
+    .replace(/ - /, '-')
+    .replace(/ or /g, '-');
 }
 
 /** Accepts a percentile between 0 and 1, converts it to a string. */
@@ -118,9 +130,9 @@ function getEnrollmentDay(selectedPoint, telebears) {
 
 function formatPercentage(num) {
   if (num === -1) {
-    return "N/A"
+    return 'N/A';
   }
-  return (num * 100).toFixed(1).toString() + "%";
+  return (num * 100).toFixed(1).toString() + '%';
 }
 
 function applyIndicatorEnrollment(enrolled, enrolledMax, percentage) {
@@ -134,10 +146,12 @@ function applyIndicatorEnrollment(enrolled, enrolledMax, percentage) {
   }
 
   return (
-    <span className={theme} > {enrolled}/{enrolledMax} ({`${formatPercentage(percentage)}`})</span>
+    <span className={theme}>
+      {' '}
+      {enrolled}/{enrolledMax} ({`${formatPercentage(percentage)}`})
+    </span>
   );
 }
-
 
 export {
   applyIndicatorPercent,
