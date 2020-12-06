@@ -750,7 +750,11 @@ export type SaveCourseMutation = (
     { __typename?: 'SaveClass' }
     & { user?: Maybe<(
       { __typename?: 'BerkeleytimeUserType' }
-      & UserProfileFragment
+      & Pick<BerkeleytimeUserType, 'id'>
+      & { savedClasses?: Maybe<Array<Maybe<(
+        { __typename?: 'CourseType' }
+        & CourseOverviewFragment
+      )>>> }
     )> }
   )> }
 );
@@ -766,7 +770,11 @@ export type UnsaveCourseMutation = (
     { __typename?: 'RemoveClass' }
     & { user?: Maybe<(
       { __typename?: 'BerkeleytimeUserType' }
-      & UserProfileFragment
+      & Pick<BerkeleytimeUserType, 'id'>
+      & { savedClasses?: Maybe<Array<Maybe<(
+        { __typename?: 'CourseType' }
+        & CourseOverviewFragment
+      )>>> }
     )> }
   )> }
 );
@@ -1067,11 +1075,14 @@ export const SaveCourseDocument = gql`
     mutation SaveCourse($courseId: ID!) {
   saveClass(classId: $courseId) {
     user {
-      ...UserProfile
+      id
+      savedClasses {
+        ...CourseOverview
+      }
     }
   }
 }
-    ${UserProfileFragmentDoc}`;
+    ${CourseOverviewFragmentDoc}`;
 export type SaveCourseMutationFn = Apollo.MutationFunction<SaveCourseMutation, SaveCourseMutationVariables>;
 
 /**
@@ -1101,11 +1112,14 @@ export const UnsaveCourseDocument = gql`
     mutation UnsaveCourse($courseId: ID!) {
   removeClass(classId: $courseId) {
     user {
-      ...UserProfile
+      id
+      savedClasses {
+        ...CourseOverview
+      }
     }
   }
 }
-    ${UserProfileFragmentDoc}`;
+    ${CourseOverviewFragmentDoc}`;
 export type UnsaveCourseMutationFn = Apollo.MutationFunction<UnsaveCourseMutation, UnsaveCourseMutationVariables>;
 
 /**
@@ -1257,7 +1271,7 @@ export type GetCourseForNameLazyQueryHookResult = ReturnType<typeof useGetCourse
 export type GetCourseForNameQueryResult = Apollo.QueryResult<GetCourseForNameQuery, GetCourseForNameQueryVariables>;
 export const GetCoursesForFilterDocument = gql`
     query GetCoursesForFilter($playlists: String!) {
-  allCourses(inPlaylists: $playlists) {
+  allCourses(inPlaylists: $playlists, first: 10) {
     edges {
       node {
         ...CourseOverview

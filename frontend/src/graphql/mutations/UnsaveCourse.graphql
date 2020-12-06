@@ -1,7 +1,10 @@
 mutation UnsaveCourse($courseId: ID!) {
   removeClass(classId: $courseId) {
     user {
-      ...UserProfile
+      id
+      savedClasses {
+        ...CourseOverview
+      }
     }
   }
 }

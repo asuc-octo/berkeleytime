@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import {
   GetUserDocument,
+  LoginMutationHookResult,
+  LogoutMutationHookResult,
   UpdateUserMutationVariables,
   useGetUserQuery,
   useLoginMutation,
@@ -30,7 +32,7 @@ export const useUser = (): {
 /**
  * Returns a function which logs in the user
  */
-export const useLogin = () => {
+export const useLogin = (): LoginMutationHookResult => {
   return useLoginMutation({
     update(cache, { data }) {
       const user = data?.login?.user;
@@ -45,17 +47,16 @@ export const useLogin = () => {
 /**
  * Returns a function which logs out
  */
-export const useLogout = () => {
+export const useLogout = (): LogoutMutationHookResult => {
   return useLogoutMutation({
-    update(cache, { data }) {
-      if (data?.logout?.success) {
-        cache.writeQuery({
-          query: GetUserDocument,
-          data: {
-            user: null,
-          },
-        });
-      }
+    update(cache) {
+      // Ensure there is no user in the cache after a log out
+      cache.writeQuery({
+        query: GetUserDocument,
+        data: {
+          user: null,
+        },
+      });
     },
   });
 };
