@@ -16,7 +16,7 @@ const CLIENT_ID =
     : '***REMOVED***');
 
 type Props = {
-  hideLogin: () => void
+  hideLogin: () => void;
 };
 
 const LoginButton = ({ hideLogin }: Props) => {
@@ -32,10 +32,10 @@ const LoginButton = ({ hideLogin }: Props) => {
     }).then((result) => {
       // If the login was successful.
       if (result.data?.login?.user) {
+        hideLogin();
         history.push('/profile');
       }
     });
-    hideLogin();
   }
 
   if (loading) {
@@ -53,7 +53,7 @@ const LoginButton = ({ hideLogin }: Props) => {
           onClick={renderProps.onClick}
           disabled={renderProps.disabled}
         >
-          <img className="login-img" src={btn_google_signin} />
+          <img className="login-img" src={btn_google_signin} alt="" />
         </Nav.Link>
       )}
       onSuccess={

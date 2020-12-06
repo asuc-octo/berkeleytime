@@ -96,7 +96,6 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
   const isSaved = user?.savedClasses?.some(
     (savedCourse) => savedCourse?.id === course.id
   );
-  console.log(user);
 
   return (
     <div
