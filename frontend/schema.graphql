@@ -18,6 +18,7 @@ type CourseType implements Node {
   courseNumber: String!
   description: String!
   units: String
+  crossListing(before: String, after: String, first: Int, last: Int, title: String, department: String, abbreviation: String, courseNumber: String, description: String, units: String, crossListing: [ID], prerequisites: String, gradeAverage: Float, letterAverage: String, hasEnrollment: Boolean, enrolled: Int, enrolledMax: Int, enrolledPercentage: Float, waitlisted: Int, openSeats: Int, lastUpdated: DateTime): CourseTypeConnection!
   prerequisites: String!
   gradeAverage: Float
   letterAverage: String!
@@ -64,6 +65,10 @@ value as specified by
 [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
 """
 scalar DateTime
+
+type DeleteUser {
+  success: Boolean
+}
 
 """
 Proxy for enrollment object. Using this instead of
@@ -160,6 +165,10 @@ schema (one of the key benefits of GraphQL).
 """
 scalar JSONString
 
+type Logout {
+  success: Boolean
+}
+
 type Mutation {
   updateUser(emailBerkeleytimeUpdate: Boolean, emailClassUpdate: Boolean, emailEnrollmentOpening: Boolean, emailGradeUpdate: Boolean, major: String): UpdateUser
   saveClass(classId: ID): SaveClass
@@ -167,8 +176,10 @@ type Mutation {
 
   """Login mutation using graphql_jwt """
   login(tokenId: String): ObtainJSONWebToken
+  logout: Logout
   verifyToken(token: String): Verify
   refreshToken(token: String): Refresh
+  deleteUser: DeleteUser
 }
 
 """An object with an ID"""
@@ -209,7 +220,7 @@ type PlaylistType implements Node {
   name: String!
   semester: String!
   year: String!
-  courses(before: String, after: String, first: Int, last: Int, title: String, department: String, abbreviation: String, courseNumber: String, description: String, units: String, prerequisites: String, gradeAverage: Float, letterAverage: String, hasEnrollment: Boolean, enrolled: Int, enrolledMax: Int, enrolledPercentage: Float, waitlisted: Int, openSeats: Int, lastUpdated: DateTime): CourseTypeConnection!
+  courses(before: String, after: String, first: Int, last: Int, title: String, department: String, abbreviation: String, courseNumber: String, description: String, units: String, crossListing: [ID], prerequisites: String, gradeAverage: Float, letterAverage: String, hasEnrollment: Boolean, enrolled: Int, enrolledMax: Int, enrolledPercentage: Float, waitlisted: Int, openSeats: Int, lastUpdated: DateTime): CourseTypeConnection!
 }
 
 type PlaylistTypeConnection {
@@ -245,7 +256,7 @@ type Query {
 
   """The ID of the object"""
   course(id: ID!): CourseType
-  allCourses(before: String, after: String, first: Int, last: Int, title: String, department: String, abbreviation: String, courseNumber: String, description: String, units: String, prerequisites: String, gradeAverage: Float, letterAverage: String, hasEnrollment: Boolean, enrolled: Int, enrolledMax: Int, enrolledPercentage: Float, waitlisted: Int, openSeats: Int, lastUpdated: DateTime, hasGrades: Boolean, inPlaylists: String, idIn: String): CourseTypeConnection
+  allCourses(before: String, after: String, first: Int, last: Int, title: String, department: String, abbreviation: String, courseNumber: String, description: String, units: String, crossListing: [ID], prerequisites: String, gradeAverage: Float, letterAverage: String, hasEnrollment: Boolean, enrolled: Int, enrolledMax: Int, enrolledPercentage: Float, waitlisted: Int, openSeats: Int, lastUpdated: DateTime, hasGrades: Boolean, inPlaylists: String, idIn: String): CourseTypeConnection
 
   """The ID of the object"""
   section(id: ID!): SectionType

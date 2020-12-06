@@ -1,38 +1,52 @@
 //Account Subview
+.account-view {
+  .profile-row {
+    display: flex;
 
-.personal-attribute{
-  font-weight: 500;
-  color: #535353;
-  width: 250px;
-}
+    .personal-attribute {
+      font-weight: 500;
+      color: #535353;
+      width: 250px;
+      flex: 0 0 auto;
 
-.personal-value{
-  width: 100%;
-  margin-left: 100px;
-  display: flex;
-  position: relative;
-  align-items: center;
-}
+      + .personal-value {
+        // flex: 1 0 auto;
+        // width: 100%;
+        // margin-left: 100px;
+        // display: flex;
+        // position: relative;
+        // align-items: center;
+      }
+    }
+  }
 
-.personal-edit{
-  position: absolute;
-  right: 0;
-  color: #2F80ED;
-  background-color: Transparent;
-  border: none;
-  font-weight: 500;
-}
+  .personal-edit {
+    position: absolute;
+    right: 0;
+    color: #2f80ed;
+    background-color: Transparent;
+    border: none;
+    font-weight: 500;
+  }
 
-.personal-edit:focus{
-  outline: none;
-  box-shadow: none;
-}
+  .personal-edit:focus {
+    outline: none;
+    box-shadow: none;
+  }
 
-.major-select{
-  width: 180px;
-}
+  .major-select {
+    width: 300px;
+    margin-left: -10px; // Account for react-select padding
+  }
 
-.see-all-classes{
-  margin-top: 20px;
-  color: #2F80ED;
+  .profile-see-more {
+    color: #2f80ed;
+  }
+
+  .profile-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 1rem 0;
+  }
 }

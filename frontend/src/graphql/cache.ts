@@ -1,21 +1,7 @@
-import { InMemoryCache, makeVar } from '@apollo/client';
+import { InMemoryCache } from '@apollo/client';
 import { LocalStorageWrapper, persistCacheSync } from 'apollo3-cache-persist';
 
-const isLoggedIn = makeVar<boolean>(false);
-
-const cache = new InMemoryCache({
-  typePolicies: {
-    Query: {
-      fields: {
-        isLoggedIn: {
-          read() {
-            return isLoggedIn();
-          },
-        },
-      },
-    },
-  },
-});
+const cache = new InMemoryCache();
 
 // Enabled only on development to allow for fast local dev. Not enabled on
 // production as we don't want to show out-of-date data.

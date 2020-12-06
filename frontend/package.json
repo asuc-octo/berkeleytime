@@ -40,7 +40,7 @@
   },
   "scripts": {
     "codegen": "graphql-codegen --config codegen.yml",
-    "build:js": "react-scripts build",
+    "build:js": "GENERATE_SOURCEMAP=false react-scripts build",
     "watch:js": "react-scripts start",
     "watch:codegen": "graphql-codegen --config codegen.yml --watch \"src/graphql/**/*.graphql\"",
     "start": "npm-run-all codegen -p watch:*",
