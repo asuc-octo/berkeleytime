@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import Select from 'react-select-virtualized';
-import {
-  Container, Row, Col, Button,
-} from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import hash from 'object-hash';
 
 import { connect } from 'react-redux';
 
 import { fetchGradeSelected } from '../../redux/actions';
-import { search } from 'utils/search';
+import { reactSelectCourseSearch } from 'utils/courses/search';
 
 const sortOptions = [
   { value: 'instructor', label: 'By Instructor' },
@@ -36,7 +34,6 @@ class GradesSearchBar extends Component {
     this.buildSecondaryOptions = this.buildSecondaryOptions.bind(this);
     this.getFilteredSections = this.getFilteredSections.bind(this);
     this.addSelected = this.addSelected.bind(this);
-    this.filterOptions = this.filterOptions.bind(this);
     this.reset = this.reset.bind(this);
   }
 
@@ -50,7 +47,7 @@ class GradesSearchBar extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.selectPrimary !== this.state.selectPrimary) {
       this.setState({
         selectPrimary: nextProps.selectPrimary,
@@ -86,17 +83,22 @@ class GradesSearchBar extends Component {
     this.setState({
       selectType: sortBy.value,
       selectPrimary: '',
-      selectSecondary: ''
+      selectSecondary: '',
     });
   }
 
   handlePrimarySelect(primary) {
     const { sections } = this.props;
     const { selectType } = this.state;
-    const secondaryOptions = this.buildSecondaryOptions(sections, selectType, primary.value);
+    const secondaryOptions = this.buildSecondaryOptions(
+      sections,
+      selectType,
+      primary.value
+    );
     this.setState({
       selectPrimary: primary ? primary.value : '',
-      selectSecondary: secondaryOptions.length === 1 ? secondaryOptions[0].value : 'all'
+      selectSecondary:
+        secondaryOptions.length === 1 ? secondaryOptions[0].value : 'all',
     });
   }
 
@@ -110,7 +112,7 @@ class GradesSearchBar extends Component {
     if (!courses) {
       return [];
     }
-    const options = courses.map(course => ({
+    const options = courses.map((course) => ({
       value: course.id,
       label: `${course.abbreviation} ${course.course_number}`,
       course,
@@ -168,23 +170,32 @@ class GradesSearchBar extends Component {
     if (selectPrimary === 'all') {
       let options;
       if (selectType === 'instructor') {
-        options = [...new Set(sections.map(s => `${this.getSectionSemester(s)} / ${s.section_number}`))]
-          .map(semester => ({
-            value: semester.split(' / ')[0],
-            label: semester,
-            sectionNumber: semester.split(' / ')[1],
-          }));
+        options = [
+          ...new Set(
+            sections.map(
+              (s) => `${this.getSectionSemester(s)} / ${s.section_number}`
+            )
+          ),
+        ].map((semester) => ({
+          value: semester.split(' / ')[0],
+          label: semester,
+          sectionNumber: semester.split(' / ')[1],
+        }));
       } else {
-        options = [...new Set(sections.map(s => `${s.instructor} / ${s.section_number}`))]
-          .map(instructor => ({
-            value: instructor.split(' / ')[0],
-            label: instructor,
-            sectionNumber: instructor.split(' / ')[1],
-          }));
+        options = [
+          ...new Set(
+            sections.map((s) => `${s.instructor} / ${s.section_number}`)
+          ),
+        ].map((instructor) => ({
+          value: instructor.split(' / ')[0],
+          label: instructor,
+          sectionNumber: instructor.split(' / ')[1],
+        }));
       }
 
       if (options.length > 1) {
-        const label = selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
+        const label =
+          selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
         ret.push({ value: 'all', label });
       }
 
@@ -194,9 +205,12 @@ class GradesSearchBar extends Component {
     } else {
       let options;
       if (selectType === 'instructor') {
-        options = sections.filter(section => section.instructor === selectPrimary)
-          .map(section => {
-            const semester = `${this.getSectionSemester(section)} / ${section.section_number}`;
+        options = sections
+          .filter((section) => section.instructor === selectPrimary)
+          .map((section) => {
+            const semester = `${this.getSectionSemester(section)} / ${
+              section.section_number
+            }`;
 
             return {
               value: semester,
@@ -205,8 +219,11 @@ class GradesSearchBar extends Component {
             };
           });
       } else {
-        options = sections.filter(section => this.getSectionSemester(section) === selectPrimary)
-          .map(section => {
+        options = sections
+          .filter(
+            (section) => this.getSectionSemester(section) === selectPrimary
+          )
+          .map((section) => {
             const instructor = `${section.instructor} / ${section.section_number}`;
             return {
               value: instructor,
@@ -217,7 +234,8 @@ class GradesSearchBar extends Component {
       }
 
       if (options.length > 1) {
-        const label = selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
+        const label =
+          selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
         ret.push({ value: 'all', label });
       }
 
@@ -230,9 +248,7 @@ class GradesSearchBar extends Component {
   }
 
   getFilteredSections() {
-    const {
-      selectType, sectionNumber, selectPrimary, selectSecondary,
-    } = this.state;
+    const { selectType, selectPrimary, selectSecondary } = this.state;
     const { sections } = this.props;
     let semester = selectSecondary;
     let number = -1;
@@ -243,22 +259,43 @@ class GradesSearchBar extends Component {
     let ret;
 
     if (selectType === 'instructor') {
-      ret = sections.filter(section => (selectPrimary === 'all' ? true : section.instructor === selectPrimary))
-        .filter(section => (semester === 'all' ? true : this.getSectionSemester(section) === semester))
-        .filter(section => (number !== -1 ? section.section_number === number : true));
+      ret = sections
+        .filter((section) =>
+          selectPrimary === 'all' ? true : section.instructor === selectPrimary
+        )
+        .filter((section) =>
+          semester === 'all'
+            ? true
+            : this.getSectionSemester(section) === semester
+        )
+        .filter((section) =>
+          number !== -1 ? section.section_number === number : true
+        );
     } else {
-      ret = sections.filter(section => (selectPrimary === 'all' ? true : this.getSectionSemester(section) === selectPrimary))
-        .filter(section => (semester === 'all' ? true : section.instructor === semester))
-        .filter(section => (number !== -1 ? section.section_number === number : true));
+      ret = sections
+        .filter((section) =>
+          selectPrimary === 'all'
+            ? true
+            : this.getSectionSemester(section) === selectPrimary
+        )
+        .filter((section) =>
+          semester === 'all' ? true : section.instructor === semester
+        )
+        .filter((section) =>
+          number !== -1 ? section.section_number === number : true
+        );
     }
 
-    ret = ret.map(s => s.grade_id);
+    ret = ret.map((s) => s.grade_id);
     return ret;
   }
 
   addSelected() {
     const {
-      selectedClass, selectType, selectPrimary, selectSecondary,
+      selectedClass,
+      selectType,
+      selectPrimary,
+      selectSecondary,
     } = this.state;
 
     const playlist = {
@@ -273,13 +310,6 @@ class GradesSearchBar extends Component {
     this.reset();
   }
 
-  filterOptions(option, query) {
-    return search(query, option.lowercaseLabel, 0) >= 0;
-    // Super non deterministic error where sometimes option.data or option.data.course
-    // refers to the course dict???
-    // https://github.com/asuc-octo/berkeleytime/issues/294
-  }
-
   reset() {
     this.setState({
       selectPrimary: '',
@@ -290,14 +320,22 @@ class GradesSearchBar extends Component {
   render() {
     const { classes, isFull, isMobile } = this.props;
     const {
-      selectType, selectPrimary, selectSecondary, selectedClass,
+      selectType,
+      selectPrimary,
+      selectSecondary,
+      selectedClass,
     } = this.state;
     const { sections } = this.props;
     const primaryOptions = this.buildPrimaryOptions(sections, selectType);
-    const secondaryOptions = this.buildSecondaryOptions(sections, selectType, selectPrimary);
-    const onePrimaryOption = primaryOptions && primaryOptions.length === 1 && selectPrimary;
-    const oneSecondaryOption = secondaryOptions && secondaryOptions.length === 1 && selectSecondary;
-
+    const secondaryOptions = this.buildSecondaryOptions(
+      sections,
+      selectType,
+      selectPrimary
+    );
+    const onePrimaryOption =
+      primaryOptions && primaryOptions.length === 1 && selectPrimary;
+    const oneSecondaryOption =
+      secondaryOptions && secondaryOptions.length === 1 && selectSecondary;
 
     let primaryOption = { value: selectPrimary, label: selectPrimary };
     let secondaryOption = { value: selectSecondary, label: selectSecondary };
@@ -342,9 +380,9 @@ class GradesSearchBar extends Component {
               placeholder="Choose a class..."
               options={this.buildCoursesOptions(classes)}
               onChange={this.handleClassSelect}
-              filterOption={this.filterOptions}
+              filterOption={reactSelectCourseSearch}
               components={{
-                IndicatorSeparator: () => null
+                IndicatorSeparator: () => null,
               }}
               styles={customStyles}
             />
@@ -352,14 +390,16 @@ class GradesSearchBar extends Component {
           <Col lg={2}>
             <Select
               name="sortBy"
-              value={selectType === 'instructor' ? sortOptions[0] : sortOptions[1]}
+              value={
+                selectType === 'instructor' ? sortOptions[0] : sortOptions[1]
+              }
               placeholder="Sort by"
               options={sortOptions}
               isClearable={false}
               onChange={this.handleSortSelect}
               isDisabled={!selectedClass}
               components={{
-                IndicatorSeparator: () => null
+                IndicatorSeparator: () => null,
               }}
               styles={customStyles}
             />
@@ -367,7 +407,7 @@ class GradesSearchBar extends Component {
           <Col xs={6} sm={6} lg={3}>
             <Select
               name="instrSems"
-              placeholder={!isMobile ? "Select an option...": "Select..."}
+              placeholder={!isMobile ? 'Select an option...' : 'Select...'}
               value={onePrimaryOption ? primaryOptions[0] : primaryOption}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
@@ -375,7 +415,7 @@ class GradesSearchBar extends Component {
               isClearable={false}
               searchable={false}
               components={{
-                IndicatorSeparator: () => null
+                IndicatorSeparator: () => null,
               }}
               styles={customStyles}
             />
@@ -383,7 +423,7 @@ class GradesSearchBar extends Component {
           <Col xs={6} sm={6} lg={3}>
             <Select
               name="section"
-              placeholder={!isMobile ? "Select an option...": "Select..."}
+              placeholder={!isMobile ? 'Select an option...' : 'Select...'}
               value={oneSecondaryOption ? secondaryOptions[0] : secondaryOption}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}
@@ -391,7 +431,7 @@ class GradesSearchBar extends Component {
               isClearable={false}
               searchable={false}
               components={{
-                IndicatorSeparator: () => null
+                IndicatorSeparator: () => null,
               }}
               styles={customStyles}
             />
@@ -399,7 +439,9 @@ class GradesSearchBar extends Component {
           <Col xs={12} sm={12} lg={1}>
             <Button
               onClick={this.addSelected}
-              disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
+              disabled={
+                !selectedClass || !(selectPrimary && selectSecondary) || isFull
+              }
             >
               Add Class
             </Button>
@@ -410,13 +452,13 @@ class GradesSearchBar extends Component {
   }
 }
 
-
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   dispatch,
-  fetchGradeSelected: (updatedClass) => dispatch(fetchGradeSelected(updatedClass)),
+  fetchGradeSelected: (updatedClass) =>
+    dispatch(fetchGradeSelected(updatedClass)),
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { sections, selectPrimary, selectSecondary } = state.grade;
   return {
     sections,
@@ -425,7 +467,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GradesSearchBar);
+export default connect(mapStateToProps, mapDispatchToProps)(GradesSearchBar);

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-import { H3 } from 'bt/custom'
+import { H3 } from 'bt/custom';
 
 import { ReactComponent as Web } from '../../assets/svg/about/web.svg';
 
@@ -36,19 +36,30 @@ import vihan_2 from 'assets/img/about/2020-21/vihan_1.jpg';
 import michael_1 from 'assets/img/about/2020-21/michael_1.jpg';
 import michael_2 from 'assets/img/about/2020-21/michael_2.jpg';
 
-
 const contributors = [
   [
     {
       name: 'Grace Luo',
-      role:  <>ASUC CTO<br/>Product Manager</>,
+      role: (
+        <>
+          ASUC CTO
+          <br />
+          Product Manager
+        </>
+      ),
       site: 'https://graceluo.me',
       img: grace_1,
       silly_img: grace_2,
     },
     {
       name: 'Christopher Liu',
-      role: <>Product Manager<br />Frontend Lead</>,
+      role: (
+        <>
+          Product Manager
+          <br />
+          Frontend Lead
+        </>
+      ),
       site: 'https://chrisdliu.github.io',
       img: chris_1,
       silly_img: chris_2,
@@ -151,32 +162,35 @@ const contributors = [
       silly_img: vihan_2,
     },
   ],
-]
-
+];
 
 const CurrentContributors: FC = () => (
   <div className="current-contributors mb-5">
-    <H3 bold className="mb-4">Current Team</H3>
-    {contributors.map(row => (
-      <Row>
-        {row.map(member => (
-          <Col xs={6} md={3} className="contributor-card">
+    <H3 bold className="mb-4">
+      Current Team
+    </H3>
+    {contributors.map((row, i) => (
+      <Row key={i}>
+        {row.map((member) => (
+          <Col key={member.name} xs={6} md={3} className="contributor-card">
             <div className="headshot">
               <img className="serious" src={member.img} alt={member.name} />
               <img src={member.silly_img} alt={member.name} />
             </div>
             <div className="name">
-              <p className="bt-light-bold">{ member.name }</p>
-              { member.site ? (
-                <a href={member.site}><Web /></a>
-              ) : null }
+              <p className="bt-light-bold">{member.name}</p>
+              {member.site ? (
+                <a href={member.site}>
+                  <Web />
+                </a>
+              ) : null}
             </div>
-            <div className="role">{ member.role }</div>
+            <div className="role">{member.role}</div>
           </Col>
         ))}
       </Row>
     ))}
   </div>
-)
+);
 
-export default CurrentContributors
+export default CurrentContributors;
