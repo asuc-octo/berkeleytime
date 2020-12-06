@@ -1,7 +1,10 @@
 import { useCallback } from 'react';
 import {
+  GetUserDocument,
   UpdateUserMutationVariables,
   useGetUserQuery,
+  useLoginMutation,
+  useLogoutMutation,
   UserProfileFragment,
   useUpdateUserMutation,
 } from '../graphql';
@@ -24,6 +27,44 @@ export const useUser = (): {
   };
 };
 
+/**
+ * Returns a function which logs in the user
+ */
+export const useLogin = () => {
+  return useLoginMutation({
+    update(cache, { data }) {
+      const user = data?.login?.user;
+      cache.writeQuery({
+        query: GetUserDocument,
+        data: { user },
+      });
+    },
+  });
+};
+
+/**
+ * Returns a function which logs out
+ */
+export const useLogout = () => {
+  return useLogoutMutation({
+    update(cache, { data }) {
+      if (data?.logout?.success) {
+        cache.writeQuery({
+          query: GetUserDocument,
+          data: {
+            user: null,
+          },
+        });
+      }
+    },
+  });
+};
+
+/**
+ * Returns a function for which you can pass a user, and the properties of the
+ * user which you wish to update, and it'll run an optimistically updated
+ * mutation.
+ */
 export const useUpdateUser = () => {
   const [updateUser] = useUpdateUserMutation();
   const optimisticUpdateUser = useCallback(

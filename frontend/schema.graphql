@@ -66,6 +66,10 @@ value as specified by
 """
 scalar DateTime
 
+type DeleteUser {
+  success: Boolean
+}
+
 """
 Proxy for enrollment object. Using this instead of
 a DjangoObjectType gives us higher flexibility of the data. 
@@ -161,6 +165,10 @@ schema (one of the key benefits of GraphQL).
 """
 scalar JSONString
 
+type Logout {
+  success: Boolean
+}
+
 type Mutation {
   updateUser(emailBerkeleytimeUpdate: Boolean, emailClassUpdate: Boolean, emailEnrollmentOpening: Boolean, emailGradeUpdate: Boolean, major: String): UpdateUser
   saveClass(classId: ID): SaveClass
@@ -168,8 +176,10 @@ type Mutation {
 
   """Login mutation using graphql_jwt """
   login(tokenId: String): ObtainJSONWebToken
+  logout: Logout
   verifyToken(token: String): Verify
   refreshToken(token: String): Refresh
+  deleteUser: DeleteUser
 }
 
 """An object with an ID"""

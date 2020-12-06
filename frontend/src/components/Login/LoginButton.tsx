@@ -4,20 +4,12 @@ import GoogleLogin, {
   GoogleLoginResponseOffline,
 } from 'react-google-login';
 import { Nav } from 'react-bootstrap';
-import { GetUserDocument, useLoginMutation } from '../../graphql/graphql';
-import { Redirect, useHistory } from 'react-router';
+import { useLogin } from '../../graphql/hooks/user';
+import { useHistory } from 'react-router';
 import BTLoader from 'components/Common/BTLoader';
 
 const LoginButton = () => {
-  const [login, { loading }] = useLoginMutation({
-    update(cache, { data }) {
-      const user = data?.login?.user;
-      cache.writeQuery({
-        query: GetUserDocument,
-        data: { user },
-      });
-    },
-  });
+  const [login, { loading }] = useLogin();
 
   const history = useHistory();
 

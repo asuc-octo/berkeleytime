@@ -1,0 +1,24 @@
+.logout,
+.logout.viewport-app {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .logout-status {
+    flex: 0 0 auto;
+
+    span {
+      display: block;
+      padding: 1.5rem;
+      font-size: 24px;
+      text-align: center;
+      max-width: 300px;
+      color: $bt-light-text;
+    }
+  }
+
+  .bt-loader-wrapper {
+    display: block;
+    height: auto;
+  }
+}
