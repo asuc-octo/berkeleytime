@@ -11,7 +11,7 @@
   position: relative;
 
   .profile-card-info {
-    max-width: 87%;
+    min-width: 0; // Prevents it from growing past parent
     padding-right: 12px;
     display: flex;
     flex-direction: column;
@@ -43,23 +43,30 @@
   }
 
   .profile-card-sort {
-    width: 6rem;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
+
+    width: 2rem;
+    flex: 0 0 auto;
   }
 
   .profile-card-remove {
     position: absolute;
-    top: 5px;
-    right: 10px;
+    top: 2px;
+    right: 3px;
     color: $bt-indicator-red;
     cursor: pointer;
     opacity: 0.5;
     padding: 2px;
     transition: opacity 0.2s ease, background 0.2s ease;
     border-radius: 4px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
 
     &:hover {
       opacity: 1;
