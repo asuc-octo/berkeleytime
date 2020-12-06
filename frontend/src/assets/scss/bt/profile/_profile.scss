@@ -1,107 +1,131 @@
 .profile-container {
-    min-height: 300px;
-    height: 100vh;
+  min-height: 300px;
+  padding: 3rem 1rem;
+  box-sizing: border-box;
 
-    #account {
-        margin-top: 30vh;
+  .profile-sidebar {
+    button {
+      width: 100%;
+      border-radius: 4px;
+      color: $bt-light-text;
+      background: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+
+      display: flex;
+      align-items: center;
+
+      margin-bottom: 12px;
+
+      > * {
+        vertical-align: middle;
+      }
+
+      svg,
+      img {
+        height: 18px;
+        width: 18px;
+        outline-color: $bt-light-text;
+      }
+
+      span {
+        margin-left: 8px;
+        line-height: normal;
+        font-weight: 600;
+        font-size: 14px;
+        line-height: 18px;
+      }
+
+      &.selected {
+        color: $bt-primary;
+        background: #f8f8f8;
+      }
+
+      &:focus {
+        text-decoration: none;
+      }
+
+      &:hover,
+      &:active {
+        text-decoration: none;
+        background: #f8f8f8;
+        cursor: pointer;
+      }
     }
-    #account, #notif, #support {
-        margin-bottom: 12px;
-        width: 13vw;
-        height: 45px;
-        border-radius: 4px;
-        color: $bt-light-text;
-        img {
-            height: 24px;
-            outline-color: $bt-light-text;
-            margin-left: 15px;
-            margin-top: 10px;
-        }
-        span {
-            margin-left: 5px;
-            display: inline-block;
-            vertical-align: bottom;
-            line-height: normal;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        &.selected {
-            color: $bt-primary;
-            background: #F8F8F8;
-        }
+  }
+
+  h1 {
+    font-weight: bold;
+    font-size: 32px;
+    margin-bottom: 32px;
+  }
+
+  .profile-view-container {
+    position: relative;
+
+    .profile-sidebar {
+      position: absolute;
+      top: 0;
+      left: -150px - 32px;
+      width: 150px;
+    }
+
+    .profile-view {
+      // Prevents weird CSS margin collapse
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .profile-row {
+    display: flex;
+    position: relative;
+    align-items: center;
+    border-bottom: 1.5px solid #ececec;
+    height: 50px;
+  }
+
+  .profile-subview {
+    margin-bottom: 2rem;
+
+    .profile-subview-title {
+      display: flex;
+      position: relative;
+      align-items: center;
+
+      margin-bottom: 1rem;
+
+      h3 {
+        font-weight: bold;
+        font-size: 24px;
+        margin: 0;
+      }
+
+      button {
+        background-color: Transparent;
+        border: none;
+      }
+
+      button:focus {
+        outline: none;
+        box-shadow: none;
+      }
+
+      img,
+      svg {
+        margin-left: 8px;
+        height: 28px;
+        width: 28px;
+        border-radius: 15px;
+        padding: 4px 4px 4px 4px;
+
+        transition: all 0.25s ease;
+
         &:hover {
-            background: #F8F8F8;
-            cursor: pointer;
+          background: #fafafa;
+          filter: brightness(95%);
         }
+      }
     }
-    #notif img {
-        margin-left: 17px;
-    }
-    #notif span {
-        margin-left: 7px;
-    }
-}
-
-.subview-container {
-    padding: 45px 0px 0px 45px;
-
-    .profile-subview{
-        max-width: 700px;
-        margin-top: 100px; 
-        margin-left: 30px;
-        margin-right: 30px;
-    
-        h1{
-            font-weight: bold;
-            font-size: 40px;
-            margin-bottom: 40px;
-        }
-    
-        h2{
-            font-weight: bold;
-            font-size: 32px;
-            margin-top: 30px;
-            margin-bottom: 20px;
-        }
-    
-        .profile-row{
-            display: flex;
-            position: relative;
-            align-items: center;
-            border-bottom: 1.5px solid #ECECEC;
-            height: 50px;
-        }
-        
-        .profile-title{
-            display:flex;
-            position:relative;
-            align-items: center;
-            
-            .edit-button{
-                background-color: Transparent;
-                border: none;
-                margin-top: 12px;
-                margin-left: 6px;
-            }
-            
-            .edit-button:focus{
-                outline: none;
-                box-shadow: none;
-            }
-            
-            .edit-pencil{
-                height:30px;
-                border-radius: 15px;
-                padding: 2px 2px 2px 2px;
-
-                &:hover{
-                    transition: 0.3s;
-                    background: #fafafa;
-                    transition: 0.3s;
-                    filter: brightness(95%);
-                }
-            }
-            
-        }
-    }
+  }
 }

@@ -16,7 +16,7 @@ class GradesInfoCard extends PureComponent {
       course, subtitle, semester, instructor,
       courseLetter, courseGPA, sectionLetter,
       sectionGPA, selectedPercentiles, selectedGrade,
-      denominator, betterGrade, worseGrade, color
+      denominator, color
     } = this.props;
 
 
@@ -34,7 +34,7 @@ class GradesInfoCard extends PureComponent {
         <div className="info">{ `${semester} • ${instructor}` }</div>
         <h6>Course Average
           <span data-tip={courseAvgText} data-for="courseAvg">
-            <img src={info} className="info-icon"/>
+            <img src={info} className="info-icon" alt="" />
           </span>
           <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
               arrowColor="#FFFFFF"/>
@@ -45,7 +45,7 @@ class GradesInfoCard extends PureComponent {
         </div>
         <h6>Section Average
           <span data-tip={sectionAvgText} data-for="sectionAvg">
-            <img src={info} className="info-icon"/>
+            <img src={info} className="info-icon" alt="" />
           </span>
           <ReactTooltip id='sectionAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
               arrowColor="#FFFFFF"/>
@@ -59,7 +59,7 @@ class GradesInfoCard extends PureComponent {
             <h6>
               {`${percentileToString(selectedPercentiles.percentile_low)}-${percentileToString(selectedPercentiles.percentile_high)} Percentile`}
               <span data-tip={percentileText} data-for="percentileInfo">
-                <img src={info} className="info-icon"/>
+                <img src={info} className="info-icon" alt="" />
               </span>
               <ReactTooltip id='percentileInfo' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
                   arrowColor="#FFFFFF"/>

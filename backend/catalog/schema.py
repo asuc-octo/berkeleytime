@@ -11,32 +11,6 @@ from catalog.models import Course, Section
 from playlist.models import Playlist
 
 
-class CourseType(DjangoObjectType):
-    class Meta:
-        model = Course
-        filter_fields = '__all__'
-        interfaces = (graphene.Node, )
-
-    units = graphene.String()
-
-    def resolve_units(self, info):
-        """Format units in a readable way."""
-        if '-' in self.units:
-            separator = '-'
-        elif 'or' in self.units:
-            separator = 'or'
-        else:
-            return self.units
-        try:
-            first, second = list(map(
-                lambda u: int(float(u.strip())),
-                self.units.split(separator)
-            ))
-            return f'{first}-{second}'
-        except ValueError:
-            return self.units
-
-
 class CourseFilter(django_filters.FilterSet):
     class Meta:
         model = Course
@@ -72,10 +46,42 @@ class CourseFilter(django_filters.FilterSet):
         return queryset.filter(id__in=course_ids)
 
 
+class CourseType(DjangoObjectType):
+    class Meta:
+        model = Course
+        filterset_class = CourseFilter
+        interfaces = (graphene.Node, )
+
+    units = graphene.String()
+
+    def resolve_units(self, info):
+        """Format units in a readable way."""
+        if '-' in self.units:
+            separator = '-'
+        elif 'or' in self.units:
+            separator = 'or'
+        else:
+            return self.units
+        try:
+            first, second = list(map(
+                lambda u: int(float(u.strip())),
+                self.units.split(separator)
+            ))
+            return f'{first}-{second}'
+        except ValueError:
+            return self.units
+
+
+class SectionFilter(django_filters.FilterSet):
+    class Meta:
+        model = Section
+        fields = '__all__'
+
+
 class SectionType(DjangoObjectType):
     class Meta:
         model = Section
-        filter_fields = '__all__'
+        filterset_class = SectionFilter
         interfaces = (graphene.Node, )
 
     word_days = graphene.String()
@@ -98,20 +104,14 @@ class SectionType(DjangoObjectType):
             return None
         return arrow.get(dt).to(tz='US/Pacific').naive
 
-    @property
-    def qs(self):
-        return super().qs.filter(disabled=False)
-
-
-class SectionFilter(django_filters.FilterSet):
-    class Meta:
-        model = Section
-        fields = '__all__'
+    @classmethod
+    def get_queryset(cls, queryset, info):
+        return queryset.filter(disabled=False)
 
 
 class Query(graphene.ObjectType):
     course = graphene.Node.Field(CourseType)
-    all_courses = DjangoFilterConnectionField(CourseType, filterset_class=CourseFilter)
+    all_courses = DjangoFilterConnectionField(CourseType)
 
     section = graphene.Node.Field(SectionType)
-    all_sections = DjangoFilterConnectionField(SectionType, filterset_class=SectionFilter)
+    all_sections = DjangoFilterConnectionField(SectionType)

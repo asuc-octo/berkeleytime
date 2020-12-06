@@ -1,81 +1,89 @@
 // bootstrap 4
-@import "../node_modules/bootstrap/scss/bootstrap";
+@import '~bootstrap/scss/bootstrap';
 
 // base & themes
-@import "bt/base/responsive";
-@import "bt/base/variables";
-@import "bt/theming/colors";
-@import "bt/base/typography";
-@import "bt/theming/buttons";
-@import "bt/theming/navbar";
-@import "bt/theming/grades_color";
-@import "bt/theming/enrollment_color";
+@import 'bt/base/responsive';
+@import 'bt/base/variables';
+@import 'bt/theming/colors';
+@import 'bt/base/typography';
+@import 'bt/theming/buttons';
+@import 'bt/theming/navbar';
+@import 'bt/theming/grades_color';
+@import 'bt/theming/enrollment_color';
 
-@import "bt/berkeleytime";
+@import 'bt/berkeleytime';
 
 // common
-@import "bt/common/banner";
-@import "bt/common/footer";
+@import 'bt/common/banner';
+@import 'bt/common/footer';
+@import 'bt/common/bt-loader';
 
 // landing
-@import "bt/landing/jumbotron";
-@import "bt/landing/explore";
-@import "bt/landing/mission";
-@import "bt/landing/blurbs";
+@import 'bt/landing/jumbotron';
+@import 'bt/landing/explore';
+@import 'bt/landing/mission';
+@import 'bt/landing/blurbs';
 
 // catalog
-@import "bt/catalog/catalog";
-@import "bt/catalog/filter";
-@import "bt/catalog/modal";
-@import "bt/catalog/results";
-@import "bt/catalog/card";
-@import "bt/catalog/description";
+@import 'bt/catalog/catalog';
+@import 'bt/catalog/filter';
+@import 'bt/catalog/modal';
+@import 'bt/catalog/results';
+@import 'bt/catalog/card';
+@import 'bt/catalog/description';
 
 // Grades & Enrollment
-@import "bt/classcards";
-@import "bt/graph-empty";
+@import 'bt/classcards';
+@import 'bt/graph-empty';
 
 // Grades
-@import "bt/grades/grades";
-@import "bt/grades/graph";
-@import "bt/shared/grades_enrollment_info";
+@import 'bt/grades/grades';
+@import 'bt/grades/graph';
+@import 'bt/shared/grades_enrollment_info';
 
 // Enrollment
-@import "bt/enrollment/enrollment";
+@import 'bt/enrollment/enrollment';
+
+// Scheduler
+@import 'bt/scheduler/course-selector';
+@import 'bt/scheduler/course-calendar';
+@import 'bt/scheduler/calendar-card';
+@import 'bt/scheduler/course-card';
+@import 'bt/scheduler/callout';
+@import 'bt/scheduler/scheduler';
 
 // Releases
-@import "bt/releases";
+@import 'bt/releases';
 
 // Faq
-@import "bt/faq";
+@import 'bt/faq';
 
-@import "bt/temporary";
-@import "bt/dashboard";
+@import 'bt/temporary';
+@import 'bt/dashboard';
 
 // About page
-@import "bt/about/about";
-@import "bt/about/current_and_past";
+@import 'bt/about/about';
+@import 'bt/about/current_and_past';
 
 // Join page
-@import "bt/join";
-@import "bt/about/position";
-
+@import 'bt/join';
+@import 'bt/about/position';
 
 // Apidocs
-@import "bt/apidocs/apidocs";
+@import 'bt/apidocs/apidocs';
 
 // Apply
-@import "bt/forms";
-@import "bt/positions";
+@import 'bt/forms';
+@import 'bt/positions';
 
 // Error page
-@import "bt/error/error";
-
+@import 'bt/error/error';
 
 // Profile
-@import "bt/profile/profile";
-@import "bt/profile/notifications";
-@import "bt/profile/account";
-@import "bt/profile/card";
-@import "bt/profile/support";
-@import "bt/profile/login";
+@import 'bt/profile/profile';
+@import 'bt/profile/notifications';
+@import 'bt/profile/account';
+@import 'bt/profile/card';
+@import 'bt/profile/support';
+@import 'bt/profile/login';
+@import 'bt/profile/logout';

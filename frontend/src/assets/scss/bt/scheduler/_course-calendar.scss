@@ -1,0 +1,70 @@
+.course-calendar {
+    width: 100%;
+    height: 100%;
+
+    $calendar-border: 1px solid rgba(0, 0, 0, 0.04);
+
+    .course-calendar__time {
+        box-sizing: border-box;
+        width: 90px;
+        flex: 0 0 auto;
+
+        > div {
+            padding: 0 16px;
+            font-size: 14px;
+            color: $bt-light-text;
+            font-weight: 600;
+            text-align: right;
+
+            > span {
+                display: block;
+                transform: translateY(-50%);
+            }
+        }
+    }
+
+    .course-calendar__header {
+        height: 40px;
+        line-height: 40px;
+        vertical-align: middle;
+        font-size: 18px;
+        color: $bt-base-text;
+        text-align: center;
+        font-weight: bold;
+        border-bottom: $calendar-border;
+    }
+
+    .course-calendar__content {
+        display: flex;
+        .course-calendar__week {
+            flex: 1;
+            display: flex;
+            box-sizing: border-box;
+        }
+    }
+
+    .course-calendar__body {
+        .course-calendar__time, .course-calendar__day {
+            padding: 4px 4px;
+            box-sizing: border-box;
+        }
+
+        .course-calendar__day > div {
+            position: relative;
+        }
+    }
+
+    .course-card__positioner {
+        position: absolute;
+        right: 0;
+    }
+
+    .course-calendar__day {
+        position: relative;
+        flex: 1;
+        border-left: $calendar-border;
+        &:last-child {
+            border-right: $calendar-border;
+        }
+    }
+}
