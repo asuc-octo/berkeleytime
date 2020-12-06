@@ -1,8 +1,5 @@
 // This file contains some default styling for all text tags.
 
-// import font from google
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 body,
 h1,
 h2,
@@ -38,19 +35,33 @@ a {
   font-size: $size;
 
   @if $size <= 24px {
-    @include tablet { font-size: $size - 2px; }
-    @include mobile { font-size: $size - 4px; }
+    @include tablet {
+      font-size: $size - 2px;
+    }
+    @include mobile {
+      font-size: $size - 4px;
+    }
   } @else if $size <= 25px {
-    @include tablet { font-size: $size - 3px; }
-    @include mobile { font-size: $size - 5px; }
+    @include tablet {
+      font-size: $size - 3px;
+    }
+    @include mobile {
+      font-size: $size - 5px;
+    }
   } @else {
-    @include tablet { font-size: $size - 3px; }
-    @include mobile { font-size: $size - 6px; }
+    @include tablet {
+      font-size: $size - 3px;
+    }
+    @include mobile {
+      font-size: $size - 6px;
+    }
   }
 }
 
 @mixin font-size-responsive-larger($size) {
-  @include mobile { font-size: $size - 2px; }
+  @include mobile {
+    font-size: $size - 2px;
+  }
   font-size: $size;
 }
 

@@ -1,0 +1,41 @@
+.scheduler,
+.scheduler.viewport-app {
+  > .row > .col {
+    box-sizing: border-box;
+    height: 100%;
+  }
+
+  // Force auto-sizing
+  &.scheduler {
+    min-height: 0;
+  }
+
+  .scheduler-header {
+    display: flex;
+    align-items: center;
+    margin-left: 72px;
+    padding: 1rem;
+
+    > *:not(:last-child) {
+      margin-right: 1rem;
+    }
+
+    .scheduler-units {
+      font-size: 16px;
+      font-weight: 600;
+      color: $bt-base-text;
+      flex: 1;
+    }
+  }
+
+  .scheduler__status {
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    font-size: 18px;
+    text-align: center;
+    color: $bt-light-text;
+  }
+}

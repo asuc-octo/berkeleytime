@@ -1,4 +1,4 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux'
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 
 import catalog from './reducers/catalog';
@@ -20,4 +20,6 @@ const reducer = combineReducers({
 
 export type ReduxState = ReturnType<typeof reducer>
 
-export default createStore(reducer, applyMiddleware(thunkMiddleware))
+export const composeEnhancers =
+  (window && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
+export default createStore(reducer, composeEnhancers(applyMiddleware(thunkMiddleware)));

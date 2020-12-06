@@ -1,0 +1,20 @@
+overwrite: true
+schema:
+  - ./schema.graphql
+  - ./client.graphql
+documents:
+  # - "src/**/!(*.d).{ts,tsx}" # Scans for inline GraphQL queries.
+  - "src/**/*.graphql"
+generates:
+  src/graphql/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+    config:
+      declarationKind: interface
+  # src/graphql/introspection.json:
+  #   plugins:
+  #     - introspection
+  #   config:
+  #     minify: true

@@ -1,3 +1,11 @@
+.bt-filter-modal.modal.fade .modal-dialog {
+	transform: translate(0, 50px);
+}
+
+.bt-filter-modal.modal.show .modal-dialog {
+	transform: none;
+}
+
 //override bootstrap modal settings
 .modal {
 	display: flex !important;
