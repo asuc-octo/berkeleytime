@@ -2,7 +2,10 @@ build/
 node_modules/
 tmpaddon
 
-package-lock.json
+.eslintcache
 .DS_Store
+
+.vscode/*
+!.vscode/launch.json
 
 src/assets/scss/berkeleytime.css

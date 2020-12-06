@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router';
-import hash from 'object-hash';
 
 import { connect } from 'react-redux';
 import ClassCardList from '../../components/ClassCards/ClassCardList';
@@ -149,8 +148,8 @@ class Enrollment extends Component {
             <div className="xlabel">Days After Phase 1</div>
           }
           <div className="disclaimer">
-            <img src={info} className="info" />
-              <p>We source our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System's</a> Course and Class APIs.</p>
+            <img src={info} className="info" alt="" />
+              <p>We source our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System&apos;s</a> Course and Class APIs.</p>
           </div>
 
         </div>

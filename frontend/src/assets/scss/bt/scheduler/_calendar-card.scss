@@ -1,0 +1,37 @@
+.calendar-card {
+    width: 100%;
+    height: 100%;
+
+    line-height: 1.5;
+
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+
+    box-shadow: 0 0 0 2px #FFF;
+
+    color: $bt-white-text;
+
+    .calendar-card__title {
+        font-size: 14px;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        display: -webkit-box;
+        -webkit-line-clamp: 1; // Duplicated for fallback
+        -webkit-line-clamp: var(--calendar-card-lines, 1);
+        -webkit-box-orient: vertical;
+        line-height: 1.25;
+        margin-bottom: 3px;
+    }
+
+    p {
+        margin: 0;
+        font-size: 11px;
+        color: inherit;
+        line-height: inherit;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

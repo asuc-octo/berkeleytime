@@ -1,0 +1,23 @@
+fragment UserProfile on BerkeleytimeUserType {
+  # Basic user information
+  id
+  major
+  user {
+    id
+    username
+    firstName
+    lastName
+    email
+  }
+
+  # Notification fields
+  emailClassUpdate
+  emailGradeUpdate
+  emailEnrollmentOpening
+  emailBerkeleytimeUpdate
+
+  # Saved classes
+  savedClasses {
+    ...CourseOverview
+  }
+}

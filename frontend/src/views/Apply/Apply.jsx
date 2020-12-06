@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import React, { PureComponent } from 'react';
 import { Row, ButtonToolbar } from 'react-bootstrap';
 import PositionCard from '../../components/Recruiting/Position';
@@ -32,8 +33,8 @@ class Apply extends PureComponent {
   }
 
   submit() {
-    const { validated, email } = this.state;
-    console.log(validated, email);
+    const { email } = this.state;
+
     if (this.validateEmail(email)) {
       const requestOptions = {
         method: 'POST',
@@ -62,6 +63,7 @@ class Apply extends PureComponent {
   }
 
   validateEmail(email) {
+      // eslint-disable-next-line no-useless-escape
       let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email.toLowerCase());
   }
@@ -75,7 +77,7 @@ class Apply extends PureComponent {
         <div className="join-us">
           <h5>Join the BT Team! ✌️ </h5>
           <p>
-            We'll be recruiting for new team members in the fall! Sign up to hear about recruitment updates.
+            We&apos;ll be recruiting for new team members in the fall! Sign up to hear about recruitment updates.
           </p>
         </div>
         <ButtonToolbar className="releases-heading-button join">
@@ -92,7 +94,7 @@ class Apply extends PureComponent {
           ? (<p style={{color: "#18D869"}}>We got your email! You will get an update when we start our recruitment.</p>)
           : null
         }
-        <img className="join-pic" src={doe}/>
+        <img className="join-pic" src={doe} alt=""/>
       </div>
       );
     } else {
@@ -101,8 +103,8 @@ class Apply extends PureComponent {
         <div className="join-us">
           <h5>Join OCTO! &#x270C; </h5>
           <p>
-            OCTO is the organization that runs Berkeleytime, Berkeley Mobile, and Beehive. You can learn more about our projects <a href="https://octo.asuc.org/projects.html" target="_blank">here</a> and each role <Link className="join-link" to="/apply/positions">here</Link>. 
-            If you feel interested in both role types, please submit a separate application for each. 
+            OCTO is the organization that runs Berkeleytime, Berkeley Mobile, and Beehive. You can learn more about our projects <a href="https://octo.asuc.org/projects.html" target="_blank">here</a> and each role <Link className="join-link" to="/apply/positions">here</Link>.
+            If you feel interested in both role types, please submit a separate application for each.
             <br/>
             <b>All members will have the option of attending team meetings and working remotely for the entire 2020-21 school year.</b> We may hold in-person events in Spring 2021 depending on the situation.
             <br/><br/>
