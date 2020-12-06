@@ -57,28 +57,38 @@ router.post("/delete", verifyPostData, async (req, res) => {
   if (ref_type != "branch") {
     return res.sendStatus(200);
   }
-  await apps.deleteNamespacedDeployment(`bt-backend-dev-${ref}`, NS);
-  await apps.deleteNamespacedDeployment(`bt-frontend-dev-${ref}`, NS);
-  await core.deleteNamespacedConfigMap(`bt-backend-config-dev-${ref}`, NS);
-  await core.deleteNamespacedSecret(`bt-backend-secrets-dev-${ref}`, NS);
-  await core.deleteNamespacedService(`bt-backend-svc-dev-${ref}`, NS);
-  await core.deleteNamespacedService(`bt-frontend-svc-dev-${ref}`, NS);
-  await networking.deleteNamespacedIngress(
-    `bt-ingress-tricycle-backend-dev-${ref}`,
-    NS
-  );
-  await networking.deleteNamespacedIngress(
-    `bt-ingress-tricycle-frontend-dev-${ref}`,
-    NS
-  );
-  await axios.delete(
-    `${GITLAB_DOMAIN}/api/v4/projects/${GITLAB_PROJECT_ID}/repository/branches/${ref}`,
-    {
-      headers: {
-        "PRIVATE-TOKEN": GITLAB_PROJECT_BT_ACCESS_TOKEN,
-      },
-    }
-  );
+  try {
+    await Promise.all([
+      apps.deleteNamespacedDeployment(`bt-backend-dev-${ref}`, NS),
+      apps.deleteNamespacedDeployment(`bt-frontend-dev-${ref}`, NS),
+      core.deleteNamespacedConfigMap(`bt-backend-config-dev-${ref}`, NS),
+      core.deleteNamespacedSecret(`bt-backend-secrets-dev-${ref}`, NS),
+      core.deleteNamespacedService(`bt-backend-svc-dev-${ref}`, NS),
+      core.deleteNamespacedService(`bt-frontend-svc-dev-${ref}`, NS),
+      networking.deleteNamespacedIngress(
+        `bt-ingress-tricycle-backend-dev-${ref}`,
+        NS
+      ),
+      networking.deleteNamespacedIngress(
+        `bt-ingress-tricycle-frontend-dev-${ref}`,
+        NS
+      ),
+    ]);
+  } catch (e) {
+    console.error(e);
+  }
+  try {
+    await axios.delete(
+      `${GITLAB_DOMAIN}/api/v4/projects/${GITLAB_PROJECT_ID}/repository/branches/${ref}`,
+      {
+        headers: {
+          "PRIVATE-TOKEN": GITLAB_PROJECT_BT_ACCESS_TOKEN,
+        },
+      }
+    );
+  } catch (e) {
+    console.error(e);
+  }
   return res.sendStatus(200);
 });
 

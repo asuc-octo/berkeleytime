@@ -7,7 +7,6 @@ import vars from '../../variables/Variables';
 import GradesGraph from '../Graphs/GradesGraph';
 import GraphEmpty from '../Graphs/GraphEmpty';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
-import GradesInfoCardMobile from '../GradesInfoCard/GradesInfoCardMobile';
 
 import { fetchGradeData } from '../../redux/actions';
 

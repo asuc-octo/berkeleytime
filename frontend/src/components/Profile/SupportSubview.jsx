@@ -12,7 +12,7 @@ class SupportSubview extends PureComponent {
         {/* Information has been hardcoded for testing purposes only */}
         <Resource text="Contact Us" link="https://berkeleytime.com"/>
         <Resource text="Give us feedback" link="https://berkeleytime.com" />
-        <Resource text="Report a bug" link="https://berkeleytime.com" />
+        <Resource text="Report a bug" link="https://berkeleytime.com/bug" />
         <Resource text="Delete Account" link="https://berkeleytime.com"/>
       </div>
     );

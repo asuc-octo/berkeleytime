@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import { Row, Col } from 'react-bootstrap';
 
 import {
   getEnrollmentDay,
@@ -9,12 +8,8 @@ import {
 class EnrollmentInfoCard extends PureComponent {
   render() {
     const {title, subtitle, semester, instructor,
-      selectedPoint, todayPoint, telebears,
+      selectedPoint, telebears,
       color, enrolledMax, waitlistedMax} = this.props;
-
-    const today = new Date();
-    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-    const todayString = today.toLocaleDateString('en-US', dateOptions);
 
     let { period, daysAfterPeriodStarts } = getEnrollmentDay(selectedPoint, telebears);
 

@@ -26,4 +26,11 @@
     justify-content: center;
     align-items: center;
   }
+
+  .filter-results-empty {
+    padding: 1.5rem;
+    font-size: 18px;
+    text-align: center;
+    color: $bt-light-text;
+  }
 }

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 
 import ClassCard from './ClassCard';
 import vars from '../../variables/Variables';
@@ -15,6 +15,7 @@ class ClassCardList extends PureComponent {
           {
             selectedCourses.map((item, i) => (
               <ClassCard
+                key={item.id}
                 id={item.id}
                 course={item.course}
                 title={item.title}
@@ -26,7 +27,7 @@ class ClassCardList extends PureComponent {
                 additionalInfo={additionalInfo ? additionalInfo[i] : 0}
                 type={type}
                 isMobile={isMobile}
-              /> 
+              />
             ))
           }
         </Row>
