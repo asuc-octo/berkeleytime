@@ -3,7 +3,6 @@ import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavProps } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
-
 import { ReduxState } from '../../redux/store';
 
 import { useUser } from '../../graphql/hooks/user';
@@ -71,7 +70,7 @@ const Navigation: FC<Props> = (props) => {
       //   text: 'Apply',
       // },
     ].map((link) => ({
-      on_click: 'on_click' in link ? (link as any).on_click : null,
+      onClick: link.onClick,
       to: link.to,
       text: link.text,
       nav_to: link.to,
@@ -87,6 +86,7 @@ const Navigation: FC<Props> = (props) => {
 
     setLinks((links) =>
       links.map((link) => ({
+        onClick: link.onClick,
         to: link.to,
         text: link.text,
         // nav_to is either [link.to] or '' if we are already on that page

@@ -1,12 +1,18 @@
 .login {
   flex-direction: column;
   .login-btn {
-    width: 200px;
+    width: 325px;
     padding: unset !important;
     align-self: center;
     .login-img {
-      width: 200px;
+      width: 325px;
     }
+  }
+
+  .login-text {
+    color: $bt-light-text;
+    @include font-size-responsive(14px);
+    padding: 5px 0 20px 0;
   }
 
   .back-btn {
@@ -30,10 +36,7 @@
     .modal-content {
       padding: 50px;
       text-align: center;
-
-      .legal-text {
-        font-size: 12px;
-      }
+      border-radius: 4px;
     }
   }
 }

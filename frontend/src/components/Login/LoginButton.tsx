@@ -14,9 +14,12 @@ const CLIENT_ID =
     ? '634751923298-s21r1ph48c2bvcser7thbsd368udknqt'
     : '***REMOVED***');
 
-const LoginButton = () => {
-  const [login, { loading }] = useLogin();
+type Props = {
+  hideLogin: () => void
+};
 
+const LoginButton = ({ hideLogin }: Props) => {
+  const [login, { loading }] = useLogin();
   const history = useHistory();
 
   function onSignIn(response: GoogleLoginResponse) {
@@ -31,6 +34,7 @@ const LoginButton = () => {
         history.push('/profile');
       }
     });
+    hideLogin();
   }
 
   if (loading) {
@@ -43,12 +47,12 @@ const LoginButton = () => {
       clientId={CLIENT_ID}
       render={(renderProps) => (
         <Nav.Link
-          className="bt-bold"
+          className="login-btn bt-bold"
           eventKey={6}
           onClick={renderProps.onClick}
           disabled={renderProps.disabled}
         >
-          Login
+          <img className="login-img" src={btn_google_signin} />
         </Nav.Link>
       )}
       onSuccess={
