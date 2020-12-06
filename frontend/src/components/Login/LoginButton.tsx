@@ -7,6 +7,7 @@ import { Nav } from 'react-bootstrap';
 import { useLogin } from '../../graphql/hooks/user';
 import { useHistory } from 'react-router';
 import BTLoader from 'components/Common/BTLoader';
+import btn_google_signin from 'assets/svg/profile/btn_google_signin.svg';
 
 const CLIENT_ID =
   process.env.REACT_APP_GOOGLE_CLIENT_ID ||

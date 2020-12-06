@@ -13,6 +13,7 @@ import { useUpdateUser } from '../../graphql/hooks/user';
 import { compareDepartmentName } from 'utils/courses/sorting';
 import { Button } from 'react-bootstrap';
 import Subview from './Subview';
+import { Link } from 'react-router-dom';
 
 type Props = {
   userProfile: UserProfileFragment;
@@ -80,18 +81,24 @@ const AccountSubview = ({ userProfile }: Props) => {
           )
         }
       >
-        <div className="profile-card-grid">
-          {(showAll
-            ? savedClasses
-            : savedClasses.slice(0, MAX_PROFILE_CARDS)
-          ).map((course) => (
-            <ProfileCard
-              removable={removable}
-              key={course.id}
-              course={course}
-            />
-          ))}
-        </div>
+        {
+          savedClasses.length > 0 ? (
+            <div className="profile-card-grid">
+              {(showAll
+                ? savedClasses
+                : savedClasses.slice(0, MAX_PROFILE_CARDS)
+              ).map((course) => (
+                <ProfileCard
+                  removable={removable}
+                  key={course.id}
+                  course={course}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="bt-light-text"> Click on the bookmark icons in <Link to="/catalog"> Catalog </Link> to start saving classes! </div>
+          )
+        }
 
         {savedClasses.length > MAX_PROFILE_CARDS && (
           <Button
