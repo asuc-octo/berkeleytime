@@ -7,6 +7,7 @@ import { Nav } from 'react-bootstrap';
 import { useLogin } from '../../graphql/hooks/user';
 import { useHistory } from 'react-router';
 import BTLoader from 'components/Common/BTLoader';
+import btn_google_signin from 'assets/svg/profile/btn_google_signin.svg';
 
 const CLIENT_ID =
   process.env.REACT_APP_GOOGLE_CLIENT_ID ||
@@ -14,9 +15,12 @@ const CLIENT_ID =
     ? '634751923298-s21r1ph48c2bvcser7thbsd368udknqt'
     : '***REMOVED***');
 
-const LoginButton = () => {
-  const [login, { loading }] = useLogin();
+type Props = {
+  hideLogin: () => void
+};
 
+const LoginButton = ({ hideLogin }: Props) => {
+  const [login, { loading }] = useLogin();
   const history = useHistory();
 
   function onSignIn(response: GoogleLoginResponse) {
@@ -31,6 +35,7 @@ const LoginButton = () => {
         history.push('/profile');
       }
     });
+    hideLogin();
   }
 
   if (loading) {
@@ -43,12 +48,12 @@ const LoginButton = () => {
       clientId={CLIENT_ID}
       render={(renderProps) => (
         <Nav.Link
-          className="bt-bold"
+          className="login-btn bt-bold"
           eventKey={6}
           onClick={renderProps.onClick}
           disabled={renderProps.disabled}
         >
-          Login
+          <img className="login-img" src={btn_google_signin} />
         </Nav.Link>
       )}
       onSuccess={

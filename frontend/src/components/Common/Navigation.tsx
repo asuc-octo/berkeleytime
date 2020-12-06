@@ -3,11 +3,11 @@ import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavProps } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
-
 import { ReduxState } from '../../redux/store';
 
 import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
+import btn_google_signin from 'assets/svg/profile/btn_google_signin.svg';
 
 interface Props extends PropsFromRedux {}
 
@@ -71,7 +71,6 @@ const Navigation: FC<Props> = (props) => {
       //   text: 'Apply',
       // },
     ].map((link) => ({
-      on_click: 'on_click' in link ? (link as any).on_click : null,
       to: link.to,
       text: link.text,
       nav_to: link.to,

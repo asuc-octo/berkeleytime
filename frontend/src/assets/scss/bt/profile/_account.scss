@@ -16,6 +16,12 @@
         // display: flex;
         // position: relative;
         // align-items: center;
+
+        /* Truncate long fields in mobile for now */
+        @include mobile {
+          white-space: nowrap;
+          overflow: hidden;
+        }
       }
     }
   }
