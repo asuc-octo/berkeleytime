@@ -8,7 +8,7 @@ from graphene_django.views import GraphQLView
 
 
 CACHE_TIMEOUT = 24 * 60 * 60
-CACHE_BLOCKLIST = ['Login', 'GetUser']
+CACHE_WHITELIST = ['GetCourseForId', 'GetCourseForName', 'GetCoursesForFilter', 'GetFilters', 'GetSemesters']
 
 def cache_graphql(view_func):
     @wraps(view_func)
@@ -17,7 +17,7 @@ def cache_graphql(view_func):
             data = json.loads(request.body.decode("utf-8"))
             query, variables, operation_name, id = GraphQLView.get_graphql_params(request, data)
 
-            assert operation_name not in CACHE_BLOCKLIST
+            assert operation_name in CACHE_WHITELIST
 
             hashed_query = sha1(str(query).encode("utf-8")).hexdigest()
             cache_key = (hashed_query, variables, operation_name, id)
