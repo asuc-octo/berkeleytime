@@ -7,6 +7,7 @@ import { ReduxState } from '../../redux/store';
 
 import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
+import btn_google_signin from 'assets/svg/profile/btn_google_signin.svg';
 
 interface Props extends PropsFromRedux {}
 
@@ -70,7 +71,6 @@ const Navigation: FC<Props> = (props) => {
       //   text: 'Apply',
       // },
     ].map((link) => ({
-      onClick: link.onClick,
       to: link.to,
       text: link.text,
       nav_to: link.to,
@@ -86,7 +86,6 @@ const Navigation: FC<Props> = (props) => {
 
     setLinks((links) =>
       links.map((link) => ({
-        onClick: link.onClick,
         to: link.to,
         text: link.text,
         // nav_to is either [link.to] or '' if we are already on that page
