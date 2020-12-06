@@ -8,20 +8,13 @@
       color: #535353;
       width: 250px;
       flex: 0 0 auto;
-    }
 
-    + .personal-value {
-      // flex: 1 0 auto;
-      // width: 100%;
-      // margin-left: 100px;
-      // display: flex;
-      // position: relative;
-      // align-items: center;
-
-      /* Truncate long fields in mobile for now */
-      @include mobile {
-        white-space: nowrap;
-        overflow: hidden;
+      + .personal-value {
+        /* Truncate long fields in mobile for now */
+        @include mobile {
+          white-space: nowrap;
+          overflow: hidden;
+        }
       }
     }
 
