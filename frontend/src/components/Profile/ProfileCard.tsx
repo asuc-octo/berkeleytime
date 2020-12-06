@@ -38,9 +38,11 @@ const ProfileCard = ({ course, removable }: Props) => {
           <span>&nbsp;•&nbsp;{formatUnits(course.units)}</span>
         </div>
       </div>
-      <div className="profile-card-sort profile-card-grade">
-        {applyIndicatorGrade(course.letterAverage, course.letterAverage)}
-      </div>
+      {course.letterAverage && (
+        <div className="profile-card-sort profile-card-grade">
+          {applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+        </div>
+      )}
       {removable && (
         <Button
           className="profile-card-remove"
