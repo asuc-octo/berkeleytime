@@ -8,6 +8,12 @@ import { useLogin } from '../../graphql/hooks/user';
 import { useHistory } from 'react-router';
 import BTLoader from 'components/Common/BTLoader';
 
+const CLIENT_ID =
+  process.env.REACT_APP_GOOGLE_CLIENT_ID ||
+  (process.env.NODE_ENV === 'production'
+    ? '634751923298-s21r1ph48c2bvcser7thbsd368udknqt'
+    : '***REMOVED***');
+
 const LoginButton = () => {
   const [login, { loading }] = useLogin();
 
@@ -34,7 +40,7 @@ const LoginButton = () => {
   // TODO: potentially add loading state for this button?
   return (
     <GoogleLogin
-      clientId="***REMOVED***"
+      clientId={CLIENT_ID}
       render={(renderProps) => (
         <Nav.Link
           className="bt-bold"

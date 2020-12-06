@@ -46,10 +46,6 @@ $filter-card-transition: 0.1s ease;
         font-size: 14px;
       }
 
-      .filter-card-info-desc {
-        // padding-bottom: 10px;
-      }
-
       .filter-card-info-stats {
         display: flex;
         flex-direction: row;
@@ -83,8 +79,12 @@ $filter-card-transition: 0.1s ease;
       top: 5px;
       right: 10px;
       opacity: 0.5;
-      transition: all $filter-card-transition;
+      transition: opacity $filter-card-transition,
+        transform 0.2s cubic-bezier(0, 0.55, 0.45, 1);
       color: $bt-light-grey;
+      &:active {
+        transform: scale(0.9);
+      }
     }
   }
 
