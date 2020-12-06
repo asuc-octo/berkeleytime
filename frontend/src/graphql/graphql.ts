@@ -173,6 +173,11 @@ export interface CourseTypeEdge {
 
 
 
+export interface DeleteUser {
+  __typename?: 'DeleteUser';
+  success?: Maybe<Scalars['Boolean']>;
+}
+
 /**
  * Proxy for enrollment object. Using this instead of
  * a DjangoObjectType gives us higher flexibility of the data. 
@@ -259,6 +264,11 @@ export interface GradeTypeEdge {
 }
 
 
+export interface Logout {
+  __typename?: 'Logout';
+  success?: Maybe<Scalars['Boolean']>;
+}
+
 export interface Mutation {
   __typename?: 'Mutation';
   updateUser?: Maybe<UpdateUser>;
@@ -266,8 +276,10 @@ export interface Mutation {
   removeClass?: Maybe<RemoveClass>;
   /** Login mutation using graphql_jwt  */
   login?: Maybe<ObtainJsonWebToken>;
+  logout?: Maybe<Logout>;
   verifyToken?: Maybe<Verify>;
   refreshToken?: Maybe<Refresh>;
+  deleteUser?: Maybe<DeleteUser>;
 }
 
 
@@ -716,6 +728,17 @@ export type LoginMutation = (
   )> }
 );
 
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & { logout?: Maybe<(
+    { __typename?: 'Logout' }
+    & Pick<Logout, 'success'>
+  )> }
+);
+
 export type SaveCourseMutationVariables = Exact<{
   courseId: Scalars['ID'];
 }>;
@@ -1009,6 +1032,37 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout {
+    success
+  }
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, baseOptions);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const SaveCourseDocument = gql`
     mutation SaveCourse($courseId: ID!) {
   saveClass(classId: $courseId) {
