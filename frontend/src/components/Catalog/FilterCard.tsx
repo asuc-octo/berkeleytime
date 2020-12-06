@@ -1,4 +1,5 @@
 import { CourseOverviewFragment } from 'graphql/graphql';
+import { useSaveCourse, useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { useUser } from 'graphql/hooks/user';
 import React, { CSSProperties, memo, ReactNode } from 'react';
 import { CourseReference, isSameCourse } from 'utils/courses/course';
@@ -68,6 +69,9 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
   const course = data.courses[index];
 
   const { user } = useUser();
+  const saveCourse = useSaveCourse();
+  const unsaveCourse = useUnsaveCourse();
+
   const { sortBy, selectedCourse } = data;
 
   let sort;
@@ -92,9 +96,7 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
   const isSaved = user?.savedClasses?.some(
     (savedCourse) => savedCourse?.id === course.id
   );
-
-  function saveCourse() {}
-  function unsaveCourse() {}
+  console.log(user);
 
   return (
     <div
@@ -128,7 +130,9 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
         {user && (
           <div
             className="filter-card-save"
-            onClick={isSaved ? saveCourse : unsaveCourse}
+            onClick={
+              isSaved ? () => unsaveCourse(course) : () => saveCourse(course)
+            }
           >
             {isSaved ? <BookmarkSaved /> : <BookmarkUnsaved />}
           </div>
