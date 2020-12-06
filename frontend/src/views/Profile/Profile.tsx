@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 
 import AccountSubview from '../../components/Profile/AccountSubview';
 import NotificationsSubview from '../../components/Profile/NotificationsSubview';
@@ -11,8 +11,10 @@ import { ReactComponent as Notif } from '../../assets/svg/profile/notif.svg';
 import { ReactComponent as NotifSelected } from '../../assets/svg/profile/notif_selected.svg';
 import { ReactComponent as Support } from '../../assets/svg/profile/support.svg';
 import { ReactComponent as SupportSelected } from '../../assets/svg/profile/support_selected.svg';
-import { useGetUserQuery, UserProfileFragment } from '../../graphql/graphql';
+import { UserProfileFragment } from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
+import { useUser } from '../../graphql/hooks/user';
+import { Redirect } from 'react-router';
 
 const tabs: {
   key: string;
@@ -32,7 +34,7 @@ const tabs: {
   },
   {
     key: 'notif',
-    label: 'Your Account',
+    label: 'Notifications',
     selectedImage: <NotifSelected />,
     deselectedImage: <Notif />,
     component: NotificationsSubview,
@@ -48,35 +50,37 @@ const tabs: {
 
 const Profile = () => {
   const [tabIndex, setTabIndex] = useState(0);
-  const { data, loading, error } = useGetUserQuery();
+  const { isLoggedIn, user, loading } = useUser();
 
   const TabComponent = tabs[tabIndex].component;
 
+  // If we're not logged in, redirect.
+  if (!loading && !isLoggedIn) {
+    return <Redirect to="/" />;
+  }
+
   return (
-    <div className="profile-container">
-      <Container>
-        <Row>
-          <Col lg={2}>
+    <div className="viewport-app">
+      <Container className="profile-container col-lg-6 col-12 offset-lg-3">
+        <h1>{tabs[tabIndex].label}</h1>
+        <div className="profile-view-container">
+          <div className="profile-sidebar">
             {tabs.map((tab, index) => (
-              <div
+              <Button
+                variant="link"
                 key={tab.key}
-                id={tab.key}
                 className={tabIndex === index ? 'selected' : ''}
                 onClick={() => setTabIndex(index)}
               >
                 {tabIndex === index ? tab.selectedImage : tab.deselectedImage}
-                <span>Your Account</span>
-              </div>
+                <span>{tab.label}</span>
+              </Button>
             ))}
-          </Col>
-          <Col lg={10} className="subview-container">
-            {loading ? (
-              <BTLoader />
-            ) : (
-              <TabComponent userProfile={data?.user!} />
-            )}
-          </Col>
-        </Row>
+          </div>
+          <div className="profile-view">
+            {!user ? <BTLoader /> : <TabComponent userProfile={user} />}
+          </div>
+        </div>
       </Container>
     </div>
   );

@@ -173,6 +173,11 @@ export interface CourseTypeEdge {
 
 
 
+export interface DeleteUser {
+  __typename?: 'DeleteUser';
+  success?: Maybe<Scalars['Boolean']>;
+}
+
 /**
  * Proxy for enrollment object. Using this instead of
  * a DjangoObjectType gives us higher flexibility of the data. 
@@ -259,6 +264,11 @@ export interface GradeTypeEdge {
 }
 
 
+export interface Logout {
+  __typename?: 'Logout';
+  success?: Maybe<Scalars['Boolean']>;
+}
+
 export interface Mutation {
   __typename?: 'Mutation';
   updateUser?: Maybe<UpdateUser>;
@@ -266,8 +276,10 @@ export interface Mutation {
   removeClass?: Maybe<RemoveClass>;
   /** Login mutation using graphql_jwt  */
   login?: Maybe<ObtainJsonWebToken>;
+  logout?: Maybe<Logout>;
   verifyToken?: Maybe<Verify>;
   refreshToken?: Maybe<Refresh>;
+  deleteUser?: Maybe<DeleteUser>;
 }
 
 
@@ -674,7 +686,7 @@ export type CourseFragment = (
 
 export type CourseOverviewFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'units'>
+  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'enrolled' | 'enrolledMax' | 'units'>
 );
 
 export type FilterFragment = (
@@ -699,6 +711,17 @@ export type UserProfileFragment = (
   )>>> }
 );
 
+export type DeleteUserMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type DeleteUserMutation = (
+  { __typename?: 'Mutation' }
+  & { deleteUser?: Maybe<(
+    { __typename?: 'DeleteUser' }
+    & Pick<DeleteUser, 'success'>
+  )> }
+);
+
 export type LoginMutationVariables = Exact<{
   token: Scalars['String'];
 }>;
@@ -712,6 +735,77 @@ export type LoginMutation = (
     & { user?: Maybe<(
       { __typename?: 'BerkeleytimeUserType' }
       & UserProfileFragment
+    )> }
+  )> }
+);
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = (
+  { __typename?: 'Mutation' }
+  & { logout?: Maybe<(
+    { __typename?: 'Logout' }
+    & Pick<Logout, 'success'>
+  )> }
+);
+
+export type SaveCourseMutationVariables = Exact<{
+  courseId: Scalars['ID'];
+}>;
+
+
+export type SaveCourseMutation = (
+  { __typename?: 'Mutation' }
+  & { saveClass?: Maybe<(
+    { __typename?: 'SaveClass' }
+    & { user?: Maybe<(
+      { __typename?: 'BerkeleytimeUserType' }
+      & Pick<BerkeleytimeUserType, 'id'>
+      & { savedClasses?: Maybe<Array<Maybe<(
+        { __typename?: 'CourseType' }
+        & CourseOverviewFragment
+      )>>> }
+    )> }
+  )> }
+);
+
+export type UnsaveCourseMutationVariables = Exact<{
+  courseId: Scalars['ID'];
+}>;
+
+
+export type UnsaveCourseMutation = (
+  { __typename?: 'Mutation' }
+  & { removeClass?: Maybe<(
+    { __typename?: 'RemoveClass' }
+    & { user?: Maybe<(
+      { __typename?: 'BerkeleytimeUserType' }
+      & Pick<BerkeleytimeUserType, 'id'>
+      & { savedClasses?: Maybe<Array<Maybe<(
+        { __typename?: 'CourseType' }
+        & CourseOverviewFragment
+      )>>> }
+    )> }
+  )> }
+);
+
+export type UpdateUserMutationVariables = Exact<{
+  emailBerkeleytimeUpdate?: Maybe<Scalars['Boolean']>;
+  emailClassUpdate?: Maybe<Scalars['Boolean']>;
+  emailEnrollmentOpening?: Maybe<Scalars['Boolean']>;
+  emailGradeUpdate?: Maybe<Scalars['Boolean']>;
+  major?: Maybe<Scalars['String']>;
+}>;
+
+
+export type UpdateUserMutation = (
+  { __typename?: 'Mutation' }
+  & { updateUser?: Maybe<(
+    { __typename?: 'UpdateUser' }
+    & { user?: Maybe<(
+      { __typename?: 'BerkeleytimeUserType' }
+      & Pick<BerkeleytimeUserType, 'id' | 'major' | 'emailGradeUpdate' | 'emailEnrollmentOpening' | 'emailClassUpdate' | 'emailBerkeleytimeUpdate'>
     )> }
   )> }
 );
@@ -897,6 +991,8 @@ export const CourseOverviewFragmentDoc = gql`
   letterAverage
   openSeats
   enrolledPercentage
+  enrolled
+  enrolledMax
   units
 }
     `;
@@ -920,6 +1016,37 @@ export const UserProfileFragmentDoc = gql`
   }
 }
     ${CourseOverviewFragmentDoc}`;
+export const DeleteUserDocument = gql`
+    mutation DeleteUser {
+  deleteUser {
+    success
+  }
+}
+    `;
+export type DeleteUserMutationFn = Apollo.MutationFunction<DeleteUserMutation, DeleteUserMutationVariables>;
+
+/**
+ * __useDeleteUserMutation__
+ *
+ * To run a mutation, you first call `useDeleteUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteUserMutation, { data, loading, error }] = useDeleteUserMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDeleteUserMutation(baseOptions?: Apollo.MutationHookOptions<DeleteUserMutation, DeleteUserMutationVariables>) {
+        return Apollo.useMutation<DeleteUserMutation, DeleteUserMutationVariables>(DeleteUserDocument, baseOptions);
+      }
+export type DeleteUserMutationHookResult = ReturnType<typeof useDeleteUserMutation>;
+export type DeleteUserMutationResult = Apollo.MutationResult<DeleteUserMutation>;
+export type DeleteUserMutationOptions = Apollo.BaseMutationOptions<DeleteUserMutation, DeleteUserMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($token: String!) {
   login(tokenId: $token) {
@@ -957,6 +1084,160 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout {
+    success
+  }
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, baseOptions);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const SaveCourseDocument = gql`
+    mutation SaveCourse($courseId: ID!) {
+  saveClass(classId: $courseId) {
+    user {
+      id
+      savedClasses {
+        ...CourseOverview
+      }
+    }
+  }
+}
+    ${CourseOverviewFragmentDoc}`;
+export type SaveCourseMutationFn = Apollo.MutationFunction<SaveCourseMutation, SaveCourseMutationVariables>;
+
+/**
+ * __useSaveCourseMutation__
+ *
+ * To run a mutation, you first call `useSaveCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveCourseMutation, { data, loading, error }] = useSaveCourseMutation({
+ *   variables: {
+ *      courseId: // value for 'courseId'
+ *   },
+ * });
+ */
+export function useSaveCourseMutation(baseOptions?: Apollo.MutationHookOptions<SaveCourseMutation, SaveCourseMutationVariables>) {
+        return Apollo.useMutation<SaveCourseMutation, SaveCourseMutationVariables>(SaveCourseDocument, baseOptions);
+      }
+export type SaveCourseMutationHookResult = ReturnType<typeof useSaveCourseMutation>;
+export type SaveCourseMutationResult = Apollo.MutationResult<SaveCourseMutation>;
+export type SaveCourseMutationOptions = Apollo.BaseMutationOptions<SaveCourseMutation, SaveCourseMutationVariables>;
+export const UnsaveCourseDocument = gql`
+    mutation UnsaveCourse($courseId: ID!) {
+  removeClass(classId: $courseId) {
+    user {
+      id
+      savedClasses {
+        ...CourseOverview
+      }
+    }
+  }
+}
+    ${CourseOverviewFragmentDoc}`;
+export type UnsaveCourseMutationFn = Apollo.MutationFunction<UnsaveCourseMutation, UnsaveCourseMutationVariables>;
+
+/**
+ * __useUnsaveCourseMutation__
+ *
+ * To run a mutation, you first call `useUnsaveCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnsaveCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unsaveCourseMutation, { data, loading, error }] = useUnsaveCourseMutation({
+ *   variables: {
+ *      courseId: // value for 'courseId'
+ *   },
+ * });
+ */
+export function useUnsaveCourseMutation(baseOptions?: Apollo.MutationHookOptions<UnsaveCourseMutation, UnsaveCourseMutationVariables>) {
+        return Apollo.useMutation<UnsaveCourseMutation, UnsaveCourseMutationVariables>(UnsaveCourseDocument, baseOptions);
+      }
+export type UnsaveCourseMutationHookResult = ReturnType<typeof useUnsaveCourseMutation>;
+export type UnsaveCourseMutationResult = Apollo.MutationResult<UnsaveCourseMutation>;
+export type UnsaveCourseMutationOptions = Apollo.BaseMutationOptions<UnsaveCourseMutation, UnsaveCourseMutationVariables>;
+export const UpdateUserDocument = gql`
+    mutation UpdateUser($emailBerkeleytimeUpdate: Boolean, $emailClassUpdate: Boolean, $emailEnrollmentOpening: Boolean, $emailGradeUpdate: Boolean, $major: String) {
+  updateUser(
+    emailBerkeleytimeUpdate: $emailBerkeleytimeUpdate
+    emailClassUpdate: $emailClassUpdate
+    emailEnrollmentOpening: $emailEnrollmentOpening
+    emailGradeUpdate: $emailGradeUpdate
+    major: $major
+  ) {
+    user {
+      id
+      major
+      emailGradeUpdate
+      emailEnrollmentOpening
+      emailClassUpdate
+      emailBerkeleytimeUpdate
+    }
+  }
+}
+    `;
+export type UpdateUserMutationFn = Apollo.MutationFunction<UpdateUserMutation, UpdateUserMutationVariables>;
+
+/**
+ * __useUpdateUserMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserMutation, { data, loading, error }] = useUpdateUserMutation({
+ *   variables: {
+ *      emailBerkeleytimeUpdate: // value for 'emailBerkeleytimeUpdate'
+ *      emailClassUpdate: // value for 'emailClassUpdate'
+ *      emailEnrollmentOpening: // value for 'emailEnrollmentOpening'
+ *      emailGradeUpdate: // value for 'emailGradeUpdate'
+ *      major: // value for 'major'
+ *   },
+ * });
+ */
+export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserMutation, UpdateUserMutationVariables>) {
+        return Apollo.useMutation<UpdateUserMutation, UpdateUserMutationVariables>(UpdateUserDocument, baseOptions);
+      }
+export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
+export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
+export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
 export const GetCourseForIdDocument = gql`
     query GetCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {

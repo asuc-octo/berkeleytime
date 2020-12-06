@@ -2,58 +2,61 @@ import React, { PureComponent } from 'react';
 import Select from 'react-select';
 
 class Property extends PureComponent {
-
-  constructor(props){
+  constructor(props) {
     super(props);
-
-    this.state = {
-      major: this.props.options[0],
-    }
-  }
-
-  majorHandler = (major) => {
-    this.setState({ major });
+    this.state = {};
   }
 
   render() {
     const { attribute, value, options } = this.props;
-    const { major } = this.state;
 
     const style = {
       control: (base) => ({
         ...base,
         border: 0,
-        boxShadow: "none"
-      })
+        boxShadow: 'none',
+      }),
     };
 
     let body;
-    switch(attribute) {
-      case "Major(s)":
-        body = <div className="major-select">
-          <Select
-            options={options}
-            defaultValue={major}
-            isSearchable={false}
-            onChange={this.majorHandler}
-            value={major}
-            components={{
-              IndicatorSeparator: () => null
-            }}
-            styles={style}
-          />
-        </div>;
+    switch (attribute) {
+      case 'Major(s)':
+        body = (
+          <div className="major-select">
+            <Select
+              options={options}
+              name="major-selector"
+              isSearchable={true}
+              isClearable={false}
+              onChange={this.props.updateMajor}
+              placeholder="Select major..."
+              value={
+                this.props.major
+                  ? { label: this.props.major, value: this.props.major }
+                  : null
+              }
+              components={{
+                IndicatorSeparator: () => null,
+              }}
+              styles={style}
+            />
+          </div>
+        );
         break;
-      case "Full Name":
-        body = <div className="personal-value">
-          <p>{value}</p>
-          <button className="personal-edit">edit</button>
-        </div>
+      case 'Full Name':
+        body = (
+          <div className="personal-value">
+            <p>{value}</p>
+            {/* <button className="personal-edit">edit</button> */}
+          </div>
+        );
         break;
       default:
-        body = <div className="personal-value">
-          <p>{value}</p>
-        </div>;
+        body = (
+          <div className="personal-value">
+            <p>{value}</p>
+          </div>
+        );
     }
 
     return (

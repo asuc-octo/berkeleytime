@@ -1,15 +1,34 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav, NavProps } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { ReduxState } from '../../redux/store';
 
-import LoginButton from '../Login/LoginButton';
+import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
 
 interface Props extends PropsFromRedux {}
+
+const NavigationLink: FC<
+  {
+    to?: string;
+    onClick?: () => void;
+  } & NavProps
+> = ({ to, children, ...props }) => (
+  <Nav.Link
+    as={to ? Link : undefined}
+    to={to}
+    className="bt-bold"
+    eventKey={to}
+    {...props}
+    // eventKey required for collapseOnselect
+    // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
+  >
+    {children}
+  </Nav.Link>
+);
 
 const Navigation: FC<Props> = (props) => {
   const [showLogin, setShowLogin] = useState(false);
@@ -51,10 +70,6 @@ const Navigation: FC<Props> = (props) => {
       //   to: '/apply',
       //   text: 'Apply',
       // },
-      // {
-      //  onClick: () => setShowLogin(true),
-      //  text: 'Login',
-      // },
     ].map((link) => ({
       on_click: 'on_click' in link ? (link as any).on_click : null,
       to: link.to,
@@ -63,9 +78,13 @@ const Navigation: FC<Props> = (props) => {
     }))
   );
 
-  let location = useLocation();
+  const location = useLocation();
+  const { isLoggedIn } = useUser();
 
   useEffect(() => {
+    // Hide modal when path changes
+    setShowLogin(false);
+
     setLinks((links) =>
       links.map((link) => ({
         to: link.to,
@@ -94,38 +113,22 @@ const Navigation: FC<Props> = (props) => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto" />
         <Nav>
-          {links.map((link, index) => {
-            if (link.nav_to === '/login') {
-              return <LoginButton />;
-            }
-            // return empty nav link if we are on the page referenced by the nav link
-            if (link.nav_to !== '') {
-              return (
-                <Nav.Link
-                  key={link.text}
-                  as={Link}
-                  to={link.nav_to || ''}
-                  onClick={link.onClick}
-                  className="bt-bold"
-                  eventKey={(index + 1).toString()}
-                  // eventKey required for collapseOnselect
-                  // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
-                >
-                  {link.text}
-                </Nav.Link>
-              );
-            } else {
-              return (
-                <Nav.Link
-                  key={'currentPage'}
-                  className="bt-bold"
-                  eventKey={(index + 1).toString()}
-                >
-                  {link.text}
-                </Nav.Link>
-              );
-            }
-          })}
+          {links.map((link, index) => (
+            <NavigationLink key={index} to={link.nav_to}>
+              {link.text}
+            </NavigationLink>
+          ))}
+
+          {isLoggedIn ? (
+            <>
+              <NavigationLink to="/profile">Profile</NavigationLink>
+              <NavigationLink to="/logout">Log Out</NavigationLink>
+            </>
+          ) : (
+            <NavigationLink onClick={() => setShowLogin(true)}>
+              Login
+            </NavigationLink>
+          )}
         </Nav>
       </Navbar.Collapse>
       <LoginModal showLogin={showLogin} hideLogin={() => setShowLogin(false)} />

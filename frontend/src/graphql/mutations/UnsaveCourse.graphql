@@ -1,0 +1,10 @@
+mutation UnsaveCourse($courseId: ID!) {
+  removeClass(classId: $courseId) {
+    user {
+      id
+      savedClasses {
+        ...CourseOverview
+      }
+    }
+  }
+}
