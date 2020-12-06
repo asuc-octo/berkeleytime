@@ -1,12 +1,29 @@
+/* eslint-disable */
 import axios from 'axios';
 import hash from 'object-hash';
 import {
   FILTER,
-  START_REQUEST, START_REQUEST_DESCRIPTION, UPDATE_COURSE_DATA,
-  FILTER_MAP, REQUIREMENTS, UNITS, DEPARTMENT, LEVEL, SEMESTER,
-  UPDATE_GRADE_CONTEXT, GRADE_ADD_COURSE, GRADE_REMOVE_COURSE, GRADE_RESET,
-  UPDATE_GRADE_DATA, UPDATE_GRADE_SELECTED, UPDATE_ENROLL_CONTEXT, ENROLL_RESET,
-  ENROLL_ADD_COURSE, ENROLL_REMOVE_COURSE, UPDATE_ENROLL_DATA, UPDATE_ENROLL_SELECTED,
+  START_REQUEST,
+  START_REQUEST_DESCRIPTION,
+  UPDATE_COURSE_DATA,
+  FILTER_MAP,
+  REQUIREMENTS,
+  UNITS,
+  DEPARTMENT,
+  LEVEL,
+  SEMESTER,
+  UPDATE_GRADE_CONTEXT,
+  GRADE_ADD_COURSE,
+  GRADE_REMOVE_COURSE,
+  GRADE_RESET,
+  UPDATE_GRADE_DATA,
+  UPDATE_GRADE_SELECTED,
+  UPDATE_ENROLL_CONTEXT,
+  ENROLL_RESET,
+  ENROLL_ADD_COURSE,
+  ENROLL_REMOVE_COURSE,
+  UPDATE_ENROLL_DATA,
+  UPDATE_ENROLL_SELECTED,
 } from './actionTypes';
 
 // function to update the courses when the filters are changed
@@ -163,46 +180,52 @@ export const updatedEnrollSelected = (sections) => ({
 
 // get information for the class displayed in the class description component
 export function getCourseData(id) {
-  return dispatch => axios.get('/api/catalog/catalog_json/course_box/', {
-    params: {
-      course_id: id,
-    },
-  }).then(
-    res => {
-      dispatch(updateCourses(res.data));
-    },
-    error => console.log('An error occurred.', error),
-  );
+  return (dispatch) =>
+    axios
+      .get('/api/catalog/catalog_json/course_box/', {
+        params: {
+          course_id: id,
+        },
+      })
+      .then(
+        (res) => {
+          dispatch(updateCourses(res.data));
+        },
+        (error) => console.log('An error occurred.', error)
+      );
 }
 
 // get the courses after applying the filters
 export function getFilterResults(filters) {
-  return dispatch => axios.get('/api/catalog/filter/', {
-    params: {
-      filters,
-    },
-  }).then(
-    res => {
-      dispatch(filter(res.data));
-    },
-    error => console.log('An error occurred.', error),
-  );
+  return (dispatch) =>
+    axios
+      .get('/api/catalog/filter/', {
+        params: {
+          filters,
+        },
+      })
+      .then(
+        (res) => {
+          dispatch(filter(res.data));
+        },
+        (error) => console.log('An error occurred.', error)
+      );
 }
 
 export function fetchGradeContext() {
-  return dispatch => axios.get('/api/grades/grades_json/')
-    .then(
-      res => {
+  return (dispatch) =>
+    axios.get('/api/grades/grades_json/').then(
+      (res) => {
         dispatch(updateGradeContext(res.data));
       },
-      error => console.log('An error occurred.', error),
+      (error) => console.log('An error occurred.', error)
     );
 }
 
 export function fetchGradeClass(course) {
-  return dispatch => axios.get(`/api/catalog/catalog_json/course/${course.courseID}/`)
-    .then(
-      res => {
+  return (dispatch) =>
+    axios.get(`/api/catalog/catalog_json/course/${course.courseID}/`).then(
+      (res) => {
         const courseData = res.data;
         const formattedCourse = {
           id: course.id,
@@ -216,7 +239,7 @@ export function fetchGradeClass(course) {
         };
         dispatch(gradeAddCourse(formattedCourse));
       },
-      error => console.log('An error occurred.', error),
+      (error) => console.log('An error occurred.', error)
     );
 }
 
@@ -227,41 +250,48 @@ export function fetchGradeData(classData) {
     const url = `/api/grades/sections/${sections.join('&')}/`;
     promises.push(axios.get(url));
   }
-  return dispatch => axios.all(promises)
-    .then(
-      data => {
+  return (dispatch) =>
+    axios.all(promises).then(
+      (data) => {
         let gradesData = data.map((res, i) => {
           let gradesData = res.data;
           gradesData['id'] = classData[i].id;
-          gradesData['instructor'] = classData[i].instructor === 'all' ? 'All Instructors' : classData[i].instructor;
-          gradesData['semester'] = classData[i].semester === 'all' ? 'All Semesters' : classData[i].semester;
+          gradesData['instructor'] =
+            classData[i].instructor === 'all'
+              ? 'All Instructors'
+              : classData[i].instructor;
+          gradesData['semester'] =
+            classData[i].semester === 'all'
+              ? 'All Semesters'
+              : classData[i].semester;
           gradesData['colorId'] = classData[i].colorId;
-          return gradesData
+          return gradesData;
         });
         dispatch(updateGradeData(gradesData));
       },
-      error => console.log('An error occurred.', error),
+      (error) => console.log('An error occurred.', error)
     );
 }
 
 export function fetchGradeSelected(updatedClass) {
   const url = `/api/grades/course_grades/${updatedClass.value}/`;
-  return dispatch => axios.get(url)
-    .then(
-      res => {
+  return (dispatch) =>
+    axios.get(url).then(
+      (res) => {
         dispatch(updatedGradeSelected(res.data));
-      // if (updatedClass.addSelected) {
-      //   this.addSelected();
-      //   this.handleClassSelect({value: updatedClass.value, addSelected: false});
-      // }
+        // if (updatedClass.addSelected) {
+        //   this.addSelected();
+        //   this.handleClassSelect({value: updatedClass.value, addSelected: false});
+        // }
       },
-      error => console.log('An error occurred.', error),
+      (error) => console.log('An error occurred.', error)
     );
 }
 
 export function fetchGradeFromUrl(url, history) {
-  const toUrlForm = s => s.replace('/', '_').toLowerCase().split(" ").join('-');
-  const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const toUrlForm = (s) =>
+    s.replace('/', '_').toLowerCase().split(' ').join('-');
+  const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   let courseUrls = url.split('/')[2].split('&');
   const urlData = [];
   let promises = [];
@@ -282,72 +312,91 @@ export function fetchGradeFromUrl(url, history) {
       colorId: cUrl[0],
       courseID: cUrl[1],
       semester: semester,
-      instructor: instructor
+      instructor: instructor,
     });
     let u = `/api/grades/course_grades/${cUrl[1]}/`;
     promises.push(axios.get(u));
   }
   let courses = [];
   let success = true;
-  return dispatch => axios.all(promises)
-    .then(
-      data => {
-        courses = data.map((res, i) => {
-          try {
-            let instructor = urlData[i].instructor;
-            let semester = urlData[i].semester;
-            let sections = [];
-            if (instructor === 'all') {
-              res.data.map((item, i) => sections[i] = item.grade_id);
-            } else {
-              let matches = [];
-              if (instructor.includes('/')) {
-                matches = res.data.filter(item => instructor === (toUrlForm(item.instructor) + '-/-' + item.section_number));
-                matches.map((item, i) => sections[i] = item.grade_id);
-                instructor = matches[0].instructor + ' / ' + matches[0].section_number;
+  return (dispatch) =>
+    axios
+      .all(promises)
+      .then(
+        (data) => {
+          courses = data.map((res, i) => {
+            try {
+              let instructor = urlData[i].instructor;
+              let semester = urlData[i].semester;
+              let sections = [];
+              if (instructor === 'all') {
+                res.data.map((item, i) => (sections[i] = item.grade_id));
               } else {
-                matches = res.data.filter(item => instructor === toUrlForm(item.instructor));
-                matches.map((item, i) => sections[i] = item.grade_id);
-                instructor = matches[0].instructor;
+                let matches = [];
+                if (instructor.includes('/')) {
+                  matches = res.data.filter(
+                    (item) =>
+                      instructor ===
+                      toUrlForm(item.instructor) + '-/-' + item.section_number
+                  );
+                  matches.map((item, i) => (sections[i] = item.grade_id));
+                  instructor =
+                    matches[0].instructor + ' / ' + matches[0].section_number;
+                } else {
+                  matches = res.data.filter(
+                    (item) => instructor === toUrlForm(item.instructor)
+                  );
+                  matches.map((item, i) => (sections[i] = item.grade_id));
+                  instructor = matches[0].instructor;
+                }
               }
-            }
-            if (semester !== 'all') {
-              let matches = [];
-              if (semester.split(' ').length > 2) {
-                matches = res.data.filter(item => semester === (capitalize(item.semester) + ' ' + item.year + ' / ' + item.section_number));
-              } else {
-                matches = res.data.filter(item => semester === (capitalize(item.semester) + ' ' + item.year));
+              if (semester !== 'all') {
+                let matches = [];
+                if (semester.split(' ').length > 2) {
+                  matches = res.data.filter(
+                    (item) =>
+                      semester ===
+                      capitalize(item.semester) +
+                        ' ' +
+                        item.year +
+                        ' / ' +
+                        item.section_number
+                  );
+                } else {
+                  matches = res.data.filter(
+                    (item) =>
+                      semester === capitalize(item.semester) + ' ' + item.year
+                  );
+                }
+                let allSems = matches.map((item) => item.grade_id);
+                sections = sections.filter((item) => allSems.includes(item));
               }
-              let allSems = matches.map(item => item.grade_id);
-              sections = sections.filter(item => allSems.includes(item));
+              let formattedCourse = {
+                courseID: parseInt(urlData[i].courseID),
+                instructor: instructor,
+                semester: semester,
+                sections: sections,
+              };
+              formattedCourse.id = hash(formattedCourse);
+              formattedCourse.colorId = urlData[i].colorId;
+              return formattedCourse;
+            } catch (err) {
+              success = false;
+              history.push('/error');
             }
-            let formattedCourse = {
-              courseID: parseInt(urlData[i].courseID),
-              instructor: instructor,
-              semester: semester,
-              sections: sections
-            };
-            formattedCourse.id = hash(formattedCourse);
-            formattedCourse.colorId = urlData[i].colorId;
-            return formattedCourse;
-          } catch (err) {
-            success = false;
-            history.push('/error');
+          });
+        },
+        (error) => console.log('An error occurred.', error)
+      )
+      .then(() => {
+        if (success) {
+          promises = [];
+          for (const course of courses) {
+            const u = `/api/catalog/catalog_json/course/${course.courseID}/`;
+            promises.push(axios.get(u));
           }
-        });
-      },
-      error => console.log('An error occurred.', error),
-    )
-    .then(() => {
-      if (success) {
-        promises = [];
-        for (const course of courses) {
-          const u = `/api/catalog/catalog_json/course/${course.courseID}/`;
-          promises.push(axios.get(u));
-        }
-        axios.all(promises)
-          .then(
-            data => {
+          axios.all(promises).then(
+            (data) => {
               data.map((res, i) => {
                 const courseData = res.data;
                 const course = courses[i];
@@ -359,31 +408,33 @@ export function fetchGradeFromUrl(url, history) {
                   instructor: course.instructor,
                   courseID: course.courseID,
                   sections: course.sections,
-                  colorId: course.colorId
-                }
+                  colorId: course.colorId,
+                };
                 dispatch(gradeAddCourse(formattedCourse));
               });
             },
-            error => console.log('An error occurred.', error),
+            (error) => console.log('An error occurred.', error)
           );
-      }
-    });
+        }
+      });
 }
 
 export function fetchEnrollContext() {
-  return dispatch => axios.get('/api/enrollment/enrollment_json/')
-    .then(
-      res => {
-        dispatch(updateEnrollContext(res.data));
-      },
-      error => console.log('An error occurred.', error),
-    );
+  return async (dispatch, getState) => {
+    // Avoid fetching enrollment data twice.
+    if (getState().enrollment.context?.courses) {
+      return;
+    }
+
+    const res = await axios.get('/api/enrollment/enrollment_json/');
+    dispatch(updateEnrollContext(res.data));
+  };
 }
 
 export function fetchEnrollClass(course) {
-  return dispatch => axios.get(`/api/catalog/catalog_json/course/${course.courseID}/`)
-    .then(
-      res => {
+  return (dispatch) =>
+    axios.get(`/api/catalog/catalog_json/course/${course.courseID}/`).then(
+      (res) => {
         const courseData = res.data;
         const formattedCourse = {
           id: course.id,
@@ -397,16 +448,14 @@ export function fetchEnrollClass(course) {
         };
         dispatch(enrollAddCourse(formattedCourse));
       },
-      error => console.log('An error occurred.', error),
+      (error) => console.log('An error occurred.', error)
     );
 }
 
 export function fetchEnrollData(classData) {
   const promises = [];
   for (const course of classData) {
-    const {
-      instructor, courseID, semester, sections,
-    } = course;
+    const { instructor, courseID, semester, sections } = course;
     let url;
     if (instructor === 'all') {
       const [sem, year] = semester.split(' ');
@@ -416,101 +465,111 @@ export function fetchEnrollData(classData) {
     }
     promises.push(axios.get(url));
   }
-  return dispatch => axios.all(promises)
-    .then(
-      data => {
+  return (dispatch) =>
+    axios.all(promises).then(
+      (data) => {
         let enrollmentData = data.map((res, i) => {
           let enrollmentData = res.data;
           enrollmentData['id'] = classData[i].id;
           enrollmentData['colorId'] = classData[i].colorId;
-          return enrollmentData
-      })
-      dispatch(updateEnrollData(enrollmentData));
-    },
-    error => console.log('An error occurred.', error),
-  )
+          return enrollmentData;
+        });
+        dispatch(updateEnrollData(enrollmentData));
+      },
+      (error) => console.log('An error occurred.', error)
+    );
 }
 
 export function fetchEnrollSelected(updatedClass) {
   const url = `/api/enrollment/sections/${updatedClass.value}/`;
-  return dispatch => axios.get(url)
-    .then(
-      res => {
+  return (dispatch) =>
+    axios.get(url).then(
+      (res) => {
         dispatch(updatedEnrollSelected(res.data));
-      // if (updatedClass.addSelected) {
-      //   this.addSelected();
-      //   this.handleClassSelect({value: updatedClass.value, addSelected: false});
-      // }
+        // if (updatedClass.addSelected) {
+        //   this.addSelected();
+        //   this.handleClassSelect({value: updatedClass.value, addSelected: false});
+        // }
       },
-      error => console.log('An error occurred.', error),
+      (error) => console.log('An error occurred.', error)
     );
 }
 
 export function fetchEnrollFromUrl(url, history) {
-  const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
   let courseUrls = url.split('/')[2].split('&');
   const urlData = [];
   let promises = [];
   for (const c of courseUrls) {
     let cUrl = c.split('-');
-    let semester = capitalize(cUrl[2]) + " " + cUrl[3];
+    let semester = capitalize(cUrl[2]) + ' ' + cUrl[3];
     urlData.push({
       colorId: cUrl[0],
       courseID: cUrl[1],
       semester: semester,
-      section: cUrl[4]
+      section: cUrl[4],
     });
     let u = `/api/enrollment/sections/${cUrl[1]}/`;
     promises.push(axios.get(u));
   }
   let courses = [];
   let success = true;
-  return dispatch => axios.all(promises)
-    .then(
-      data => {
-        courses = data.map((res, i) => {
-          try {
-            let semester = urlData[i].semester;
-            let section = urlData[i].section === 'all' ? urlData[i].section : parseInt(urlData[i].section);
-            let sections = [section];
-            let instructor = 'all';
-            let match = [];
-            if (section === 'all') {
-              match = res.data.filter(item => semester === (capitalize(item.semester) + ' ' + item.year))[0];
-              sections = match.sections.map(item => item.section_id);
-            } else {
-              match = res.data.map(item => item.sections.filter(item => item.section_id == section));
-              match = match.filter(item => item.length !== 0);
-              instructor = match[0][0].instructor + ' / ' + match[0][0].section_number;
+  return (dispatch) =>
+    axios
+      .all(promises)
+      .then(
+        (data) => {
+          courses = data.map((res, i) => {
+            try {
+              let semester = urlData[i].semester;
+              let section =
+                urlData[i].section === 'all'
+                  ? urlData[i].section
+                  : parseInt(urlData[i].section);
+              let sections = [section];
+              let instructor = 'all';
+              let match = [];
+              if (section === 'all') {
+                match = res.data.filter(
+                  (item) =>
+                    semester === capitalize(item.semester) + ' ' + item.year
+                )[0];
+                sections = match.sections.map((item) => item.section_id);
+              } else {
+                match = res.data.map((item) =>
+                  item.sections.filter((item) => item.section_id == section)
+                );
+                match = match.filter((item) => item.length !== 0);
+                instructor =
+                  match[0][0].instructor + ' / ' + match[0][0].section_number;
+              }
+              let formattedCourse = {
+                courseID: parseInt(urlData[i].courseID),
+                instructor: instructor,
+                semester: semester,
+                sections: sections,
+              };
+              formattedCourse.id = hash(formattedCourse);
+              formattedCourse.colorId = urlData[i].colorId;
+              return formattedCourse;
+            } catch (err) {
+              success = false;
+              console.log(err);
+              history.push('/error');
             }
-            let formattedCourse = {
-              courseID: parseInt(urlData[i].courseID),
-              instructor: instructor,
-              semester: semester,
-              sections: sections
-            };
-            formattedCourse.id = hash(formattedCourse);
-            formattedCourse.colorId = urlData[i].colorId;
-            return formattedCourse;
-          } catch (err) {
-            success = false;
-            console.log(err);
-            history.push('/error');
+          });
+        },
+        (error) => console.log('An error occurred.', error)
+      )
+      .then(() => {
+        if (success) {
+          promises = [];
+          for (const course of courses) {
+            const u = `/api/catalog/catalog_json/course/${course.courseID}/`;
+            promises.push(axios.get(u));
           }
-        });
-      },
-      error => console.log('An error occurred.', error),
-    )
-    .then(() => {
-      if (success) {
-        promises = [];
-        for (const course of courses) {
-          const u = `/api/catalog/catalog_json/course/${course.courseID}/`;
-          promises.push(axios.get(u));
-        }
-        axios.all(promises)
-          .then(
-            data => {
+          axios.all(promises).then(
+            (data) => {
               data.map((res, i) => {
                 const courseData = res.data;
                 const course = courses[i];
@@ -522,13 +581,13 @@ export function fetchEnrollFromUrl(url, history) {
                   instructor: course.instructor,
                   courseID: course.courseID,
                   sections: course.sections,
-                  colorId: course.colorId
-                }
+                  colorId: course.colorId,
+                };
                 dispatch(enrollAddCourse(formattedCourse));
               });
             },
-            error => console.log('An error occurred.', error),
+            (error) => console.log('An error occurred.', error)
           );
-      }
-    });
+        }
+      });
 }

@@ -1,0 +1,24 @@
+mutation UpdateUser(
+  $emailBerkeleytimeUpdate: Boolean
+  $emailClassUpdate: Boolean
+  $emailEnrollmentOpening: Boolean
+  $emailGradeUpdate: Boolean
+  $major: String
+) {
+  updateUser(
+    emailBerkeleytimeUpdate: $emailBerkeleytimeUpdate
+    emailClassUpdate: $emailClassUpdate
+    emailEnrollmentOpening: $emailEnrollmentOpening
+    emailGradeUpdate: $emailGradeUpdate
+    major: $major
+  ) {
+    user {
+      id # Get the ID prop so Apollo can update the user
+      major
+      emailGradeUpdate
+      emailEnrollmentOpening
+      emailClassUpdate
+      emailBerkeleytimeUpdate
+    }
+  }
+}

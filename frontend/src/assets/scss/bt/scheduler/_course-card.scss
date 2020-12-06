@@ -1,0 +1,108 @@
+.course-card {
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+
+  padding: 1.3rem 1.5rem 1rem;
+
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 6px;
+    background: var(--card-color);
+  }
+
+  section > * {
+    margin-bottom: 0.3rem;
+  }
+
+  section + section {
+    margin-top: 1rem;
+  }
+
+  h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: $bt-base-text;
+  }
+
+  p {
+    font-size: 14px;
+    color: $bt-light-text;
+  }
+
+  .course-card-scroll {
+    padding-left: 4px;
+    margin: 0.5rem 0;
+  }
+
+  .section-label {
+    color: $bt-light-text;
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 4px;
+
+    .section-label-box {
+      display: inline-block;
+      height: 1em;
+      width: 1em;
+      border-radius: 4px;
+      margin-right: 0.5em;
+      margin-bottom: -1.5px;
+    }
+  }
+}
+
+.scheduler-course {
+  .scheduler-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    font-size: 18px;
+    text-align: center;
+    color: $bt-light-text;
+  }
+
+  .scheduler-course-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0.5rem 0;
+
+    .scheduler-course-square {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      margin-right: 8px;
+      margin-bottom: 4px;
+    }
+
+    .scheduler-course-course {
+      margin-right: auto !important;
+      font-weight: bold;
+      color: $bt-base-text;
+      //font-size: 18px;
+      @include font-size-responsive-larger(18px);
+    }
+
+    .scheduler-course-remove {
+      color: $bt-indicator-red;
+      cursor: pointer;
+      opacity: 0.5;
+      padding: 2px;
+      transition: 0.5s;
+      border-radius: 4px;
+
+      &:hover {
+        opacity: 1;
+        background: rgba(224, 185, 185, 0.4);
+      }
+    }
+  }
+}

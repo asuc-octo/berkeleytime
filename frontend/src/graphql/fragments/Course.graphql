@@ -1,0 +1,40 @@
+fragment Course on CourseType {
+  title
+  units
+  waitlisted
+  openSeats
+  letterAverage
+  gradeAverage
+  lastUpdated
+  id
+  hasEnrollment
+  gradeAverage
+  enrolledPercentage
+  enrolledMax
+  courseNumber
+  department
+  description
+  enrolled
+  abbreviation
+  prerequisites
+
+  playlistSet {
+    edges {
+      node {
+        category
+        id
+        name
+        semester
+        year
+      }
+    }
+  }
+
+  sectionSet(year: $year, semester: $semester) {
+    edges {
+      node {
+        ...Section
+      }
+    }
+  }
+}

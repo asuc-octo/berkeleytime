@@ -1,0 +1,10 @@
+mutation Login($token: String!) {
+  login(tokenId: $token) {
+    newUser
+    refreshExpiresIn
+    payload
+    user {
+      ...UserProfile
+    }
+  }
+}

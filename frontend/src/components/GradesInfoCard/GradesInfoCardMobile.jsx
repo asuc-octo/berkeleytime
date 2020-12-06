@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import GradesInfoCard from './GradesInfoCard';
-import vars from '../../variables/Variables';
 
 class GradesInfoCardMobile extends PureComponent {
 
@@ -12,7 +11,7 @@ class GradesInfoCardMobile extends PureComponent {
 		const {
       		course, subtitle, semester, instructor,
       		courseLetter, courseGPA, sectionLetter,
-      		sectionGPA, selectedPercentiles, selectedGrade,
+      		sectionGPA,
       		denominator, betterGrade, worseGrade, color,
     	} = this.props;
 
@@ -31,7 +30,7 @@ class GradesInfoCardMobile extends PureComponent {
             	selectedGrade={this.checkNullState(worseGrade)}
             	color={this.checkNullState(color)}
         	/>
-    	)              
+    	)
   	}
 }
 
