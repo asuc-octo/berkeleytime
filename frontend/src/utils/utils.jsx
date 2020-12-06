@@ -5,6 +5,21 @@
 import React from 'react';
 
 /**
+ * Gets indicator class for a color.
+ */
+export function getIndicatorPercent(percentage) {
+  if (percentage >= 0.99999) {
+    return '#FC7676'; // red
+  } else if (percentage > 0.65) {
+    return '#FFA414'; // orange
+  } else if (percentage > 0.3) {
+    return '#D3BC3B'; // yellow
+  } else {
+    return '#18DE83'; // green
+  }
+}
+
+/**
  * Returns a paragraph tag styled with color with respect to percentage
  * @param {string} text text in the paragraph tag
  * @param {number} percentage percentage from 0.0 to 1.0
@@ -18,7 +33,7 @@ function applyIndicatorPercent(text, percentage) {
   }
 
   return (
-    <p className={theme}>{ text }</p>
+    <span className={theme}>{ text }</span>
   );
 }
 
@@ -134,7 +149,7 @@ function applyIndicatorEnrollment(enrolled, enrolledMax, percentage) {
   }
 
   return (
-    <span className={theme} > {enrolled}/{enrolledMax} ({`${formatPercentage(percentage)}`})</span>
+    <span className={theme}> {enrolled}/{enrolledMax} ({`${formatPercentage(percentage)}`})</span>
   );
 }
 

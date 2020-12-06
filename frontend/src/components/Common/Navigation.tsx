@@ -1,20 +1,27 @@
-import React, { FC, useState, useEffect } from 'react'
-import { useLocation } from 'react-router'
-import { Link } from 'react-router-dom'
-import { Navbar, Nav } from 'react-bootstrap'
-import { connect, ConnectedProps } from 'react-redux'
+import React, { FC, useState, useEffect } from 'react';
+import { useLocation } from 'react-router';
+import { Link } from 'react-router-dom';
+import { Navbar, Nav } from 'react-bootstrap';
+import { connect, ConnectedProps } from 'react-redux';
 
-import { ReduxState } from '../../redux/store'
+import { ReduxState } from '../../redux/store';
 
-import LoginButton from '../Login/LoginButton'
-import LoginModal from '../Login/LoginModal'
+import LoginButton from '../Login/LoginButton';
+import LoginModal from '../Login/LoginModal';
 
 interface Props extends PropsFromRedux {}
 
 const Navigation: FC<Props> = (props) => {
   const [showLogin, setShowLogin] = useState(false);
 
-  const [links, setLinks] = useState(
+  const [links, setLinks] = useState<
+    {
+      text: string;
+      to?: string;
+      nav_to?: string;
+      onClick?: () => void;
+    }[]
+  >(
     [
       {
         to: '/catalog',
@@ -28,6 +35,10 @@ const Navigation: FC<Props> = (props) => {
         to: '/enrollment',
         text: 'Enrollment',
       },
+      // {
+      //   to: '/scheduler',
+      //   text: 'Scheduler',
+      // },
       {
         to: '/about',
         text: 'About',
@@ -41,28 +52,29 @@ const Navigation: FC<Props> = (props) => {
       //   text: 'Apply',
       // },
       // {
-      //  on_click: () => setShowLogin(true),
+      //  onClick: () => setShowLogin(true),
       //  text: 'Login',
       // },
-    ].map(link => ({
-      // on_click: "on_click" in link ? link.on_click : null,
+    ].map((link) => ({
+      on_click: 'on_click' in link ? (link as any).on_click : null,
       to: link.to,
       text: link.text,
       nav_to: link.to,
     }))
-  )
+  );
 
   let location = useLocation();
 
   useEffect(() => {
-    setLinks(links.map(link => ({
-      // on_click: link.on_click,
-      to: link.to,
-      text: link.text,
-      // nav_to is either [link.to] or '' if we are already on that page
-      nav_to: location.pathname.includes(link.to) ? '' : link.to
-    })))
-  }, [location.pathname])
+    setLinks((links) =>
+      links.map((link) => ({
+        to: link.to,
+        text: link.text,
+        // nav_to is either [link.to] or '' if we are already on that page
+        nav_to: link.to && location.pathname.includes(link.to) ? '' : link.to,
+      }))
+    );
+  }, [location.pathname]);
 
   return (
     <Navbar
@@ -70,63 +82,63 @@ const Navigation: FC<Props> = (props) => {
       fixed="top"
       expand="lg"
       bg="white"
-      style={props.banner ? { position: 'absolute'} : {}}
+      style={props.banner ? { position: 'absolute' } : {}}
       /* when the banner is open, the navbar will be positioned
          at the top of the app-container instead of fixed to the
          top of the viewport */
     >
-      <Navbar.Brand as={Link} to="/" className="bt-bold">Berkeleytime</Navbar.Brand>
+      <Navbar.Brand as={Link} to="/" className="bt-bold">
+        Berkeleytime
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto" />
         <Nav>
-          {
-            links.map((link, index) => {
-              if (link.nav_to === '/login') {
-                return (<LoginButton/>);
-              }
-              // return empty nav link if we are on the page referenced by the nav link
-              if (link.nav_to !== '') {
-                return (
-                  <Nav.Link
-                    key={link.text}
-                    as={Link}
-                    to={link.nav_to}
-                    /*onClick={link.on_click}}*/
-                    className="bt-bold"
-                    eventKey={(index + 1).toString()}
-                    // eventKey required for collapseOnselect
-                    // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
-                  >
-                    {link.text}
-                  </Nav.Link>
-                )
-              } else {
-                return (
-                  <Nav.Link
-                    key={"currentPage"}
-                    className="bt-bold"
-                    eventKey={(index + 1).toString()}
-                  >
-                    {link.text}
-                  </Nav.Link>
-                )
-              }
-            })
-          }
+          {links.map((link, index) => {
+            if (link.nav_to === '/login') {
+              return <LoginButton />;
+            }
+            // return empty nav link if we are on the page referenced by the nav link
+            if (link.nav_to !== '') {
+              return (
+                <Nav.Link
+                  key={link.text}
+                  as={Link}
+                  to={link.nav_to || ''}
+                  onClick={link.onClick}
+                  className="bt-bold"
+                  eventKey={(index + 1).toString()}
+                  // eventKey required for collapseOnselect
+                  // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
+                >
+                  {link.text}
+                </Nav.Link>
+              );
+            } else {
+              return (
+                <Nav.Link
+                  key={'currentPage'}
+                  className="bt-bold"
+                  eventKey={(index + 1).toString()}
+                >
+                  {link.text}
+                </Nav.Link>
+              );
+            }
+          })}
         </Nav>
       </Navbar.Collapse>
       <LoginModal showLogin={showLogin} hideLogin={() => setShowLogin(false)} />
     </Navbar>
   );
-}
+};
 
 const mapState = (state: ReduxState) => ({
-  banner: state.common.banner
-})
+  banner: state.common.banner,
+});
 
-const connector = connect(mapState)
+const connector = connect(mapState);
 
-type PropsFromRedux = ConnectedProps<typeof connector>
+type PropsFromRedux = ConnectedProps<typeof connector>;
 
-export default connector(Navigation)
+export default connector(Navigation);
