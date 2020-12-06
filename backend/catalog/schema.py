@@ -56,7 +56,6 @@ class CourseType(DjangoObjectType):
 
     def resolve_units(self, info):
         """Format units in a readable way."""
-        print(info)
         if '-' in self.units:
             separator = '-'
         elif 'or' in self.units:
