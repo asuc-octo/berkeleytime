@@ -31,7 +31,7 @@ const ProfileCard = ({ course, removable }: Props) => {
           {course.enrolledPercentage === -1
             ? null
             : applyIndicatorPercent(
-                formatPercentage(course.enrolledPercentage),
+                `${course.enrolled}/${course.enrolledMax} enrolled`,
                 course.enrolledPercentage
               )}
 
@@ -46,7 +46,9 @@ const ProfileCard = ({ course, removable }: Props) => {
           className="profile-card-remove"
           variant="link"
           onClick={(e) => {
+            e.preventDefault();
             e.stopPropagation();
+            e.nativeEvent.stopImmediatePropagation();
             unsaveCourse(course);
           }}
         >

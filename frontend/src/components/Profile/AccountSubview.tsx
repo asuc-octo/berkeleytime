@@ -23,6 +23,8 @@ const MAX_PROFILE_CARDS = 6;
 
 const AccountSubview = ({ userProfile }: Props) => {
   const [removable, setRemovable] = useState<boolean>(false);
+  const [showAll, setShowAll] = useState<boolean>(false);
+
   const updateUser = useUpdateUser();
 
   //Information has been hardcoded for testing purposes only
@@ -79,7 +81,10 @@ const AccountSubview = ({ userProfile }: Props) => {
         }
       >
         <div className="profile-card-grid">
-          {savedClasses.slice(0, MAX_PROFILE_CARDS).map((course) => (
+          {(showAll
+            ? savedClasses
+            : savedClasses.slice(0, MAX_PROFILE_CARDS)
+          ).map((course) => (
             <ProfileCard
               removable={removable}
               key={course.id}
@@ -89,8 +94,12 @@ const AccountSubview = ({ userProfile }: Props) => {
         </div>
 
         {savedClasses.length > MAX_PROFILE_CARDS && (
-          <Button variant="link" className="profile-see-more px-0">
-            See all classes
+          <Button
+            onClick={() => setShowAll((v) => !v)}
+            variant="link"
+            className="profile-see-more px-0"
+          >
+            {showAll ? 'Show fewer classes' : 'See all classes'}
           </Button>
         )}
       </Subview>
