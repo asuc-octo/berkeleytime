@@ -1,15 +1,19 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 import { Link as RoutingLink } from 'react-router-dom';
 
 type Props = {
   text: string;
-  link: string;
+  link?: string;
+  isDestructive?: boolean;
+  onClick?: () => void;
 };
 
-const Resource = ({ text, link }: Props) => {
-  const isExternal = link.includes(':');
-  const Component = (isExternal ? 'a' : RoutingLink) as any;
-  const props = isExternal
+const Resource = ({ text, link, isDestructive = false, onClick }: Props) => {
+  const isExternal = link?.includes(':');
+  const Component = (!link || isExternal ? 'a' : RoutingLink) as any;
+  const props = !link
+    ? {}
+    : isExternal
     ? {
         href: link,
         target: '_blank',
@@ -21,12 +25,8 @@ const Resource = ({ text, link }: Props) => {
 
   return (
     <div className="profile-row">
-      <Component {...props}>
-        <p
-          className={`resource-text-${
-            text === 'Delete Account' ? 'red' : 'blue'
-          }`}
-        >
+      <Component {...props} onClick={onClick}>
+        <p className={`resource-text-${isDestructive ? 'red' : 'blue'}`}>
           {text}
         </p>
       </Component>

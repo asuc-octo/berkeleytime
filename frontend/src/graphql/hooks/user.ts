@@ -1,9 +1,11 @@
 import { useCallback } from 'react';
 import {
+  DeleteUserMutationHookResult,
   GetUserDocument,
   LoginMutationHookResult,
   LogoutMutationHookResult,
   UpdateUserMutationVariables,
+  useDeleteUserMutation,
   useGetUserQuery,
   useLoginMutation,
   useLogoutMutation,
@@ -49,6 +51,24 @@ export const useLogin = (): LoginMutationHookResult => {
  */
 export const useLogout = (): LogoutMutationHookResult => {
   return useLogoutMutation({
+    update(cache) {
+      // Ensure there is no user in the cache after a log out
+      cache.writeQuery({
+        query: GetUserDocument,
+        data: {
+          user: null,
+        },
+      });
+    },
+  });
+};
+
+/**
+ * Deletes the user, so logically, be careful with this and display some
+ * confirmation prompt before executing.
+ */
+export const useDeleteUser = (): DeleteUserMutationHookResult => {
+  return useDeleteUserMutation({
     update(cache) {
       // Ensure there is no user in the cache after a log out
       cache.writeQuery({
