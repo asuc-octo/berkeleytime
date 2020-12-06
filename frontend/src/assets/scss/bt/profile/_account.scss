@@ -10,28 +10,26 @@
       flex: 0 0 auto;
     }
 
-<<<<<<< Updated upstream
-      + .personal-value {
-        // flex: 1 0 auto;
-        // width: 100%;
-        // margin-left: 100px;
-        // display: flex;
-        // position: relative;
-        // align-items: center;
+    + .personal-value {
+      // flex: 1 0 auto;
+      // width: 100%;
+      // margin-left: 100px;
+      // display: flex;
+      // position: relative;
+      // align-items: center;
 
-        /* Truncate long fields in mobile for now */
-        @include mobile {
-          white-space: nowrap;
-          overflow: hidden;
-        }
+      /* Truncate long fields in mobile for now */
+      @include mobile {
+        white-space: nowrap;
+        overflow: hidden;
       }
-=======
+    }
+
     @include xs {
       flex-direction: column;
       height: auto;
       align-items: flex-start;
       padding: 8px 0;
->>>>>>> Stashed changes
     }
   }
 
