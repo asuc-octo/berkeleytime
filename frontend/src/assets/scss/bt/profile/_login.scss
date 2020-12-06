@@ -2,10 +2,16 @@
   flex-direction: column;
   .login-btn {
     width: 325px;
+    @include mobile {
+      width: 200px;
+    }
     padding: unset !important;
     align-self: center;
     .login-img {
       width: 325px;
+      @include mobile {
+        width: 200px;
+      }
     }
   }
 
@@ -17,10 +23,14 @@
 
   .back-btn {
     position: absolute;
-    left: 20px;
-    top: 20px;
+    right: 20px;
+    top: 10px;
     padding: unset;
     margin: unset;
+    img {
+      width: 10px;
+      height: 10px;
+    }
   }
 
   .modal-dialog {
