@@ -159,9 +159,10 @@ const FilterSidebar = ({
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          type="text"
-          placeholder=" &#xf002;  Search for a class..."
+          type="search"
+          placeholder="Search for a class..."
         />
+        <SearchIcon />
       </div>
 
       <div className="filter-scroll">
