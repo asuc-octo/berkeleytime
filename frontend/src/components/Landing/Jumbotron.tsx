@@ -8,7 +8,7 @@ import {
 } from 'react-bootstrap';
 
 import { Button, H3, P } from 'bt/custom';
-import logo from '../../assets/svg/landing/main.svg';
+import { ReactComponent as Logo } from '../../assets/svg/landing/main.svg';
 
 const Jumbotron: FC = () => (
   <div className="landing-jumbo">
@@ -38,7 +38,8 @@ const Jumbotron: FC = () => (
         </Col>
         <Col xs={{ span: 12, order: 2 }} lg={{ span: 7, order: 2 }}>
           <div className="animation-container">
-            <img src={logo} alt="Welcome to BerkeleyTime." />
+            {/* <img src={logo} alt="Welcome to BerkeleyTime." /> */}
+            <Logo title="Welcome to Berkeleytime." />
           </div>
         </Col>
       </Row>
