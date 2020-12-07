@@ -184,7 +184,7 @@
             text-align: center;
             border: solid 1px #8e8eab70;
             border-radius: 20px;
-            background: #fff;
+            background: #fff !important;
             font-family: Inter;
             color: #3b4151;
             text-shadow: none;
@@ -346,7 +346,7 @@
 
     section.models {
       .model-container {
-          margin: 0 20px 15px;
+          margin: 0 20px 15px !important;
           position: relative;
           transition: all .5s;
           border: solid 1px lightgrey;

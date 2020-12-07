@@ -1,4 +1,16 @@
 releases:
+  - date: Dec 6, 2020
+    whatsNew:
+    - We wrote new backend APIs using GraphQL (our previous APIs use the REST framework). 
+      Although the APIs listed on our <a href="/apidocs">API Docs</a> are currently supported,
+      they may change in the future.
+    - We are now primarily hosted on the <a href="https://www.ocf.berkeley.edu/">OCF's</a> servers.
+    - We have added a <a href="/legal/privacy">Privacy Policy</a> and <a href="/legal/terms">Terms of Service</a> to the site. 
+    fixes:
+    - Modified prerequisites for PB HLTH 126 in Spring 2021 as requested by the instructor.
+    - Added support for opening a course by url in catalog on mobile. 
+    - Added easter eggs back into the catalog.
+    - Changed the semester dropdown in catalog to be single select rather than multi-select.
   - date: Nov 15, 2020
     whatsNew:
     - We have released mobile views! You can now browse our site on your phone and tablet.
