@@ -2,40 +2,6 @@
 <!-- Generator: Adobe Illustrator 23.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 1249.2 1243.3" style="enable-background:new 0 0 1249.2 1243.3;" xml:space="preserve">
-<style>
-	@keyframes updown {
-		from {
-			transform: translateY(-8px);
-		} to {
-			transform: translateY(8px);
-		}
-	}
-	@keyframes updownshort {
-		from {
-			transform: translateY(-4px);
-		} to {
-			transform: translateY(4x);
-		}
-	}
-	#left-float {
-		animation: updown 3.5s ease alternate infinite;
-	}
-	#middle-float {
-		animation: updown 3s ease alternate infinite;
-	}
-	#right-float {
-		animation: updown 4.5s ease alternate infinite;
-	}
-	#everything {
-		animation: updownshort 2.5s ease alternate infinite;
-	}
-	#campanile, #hearst-building, #evans, #doe-library, #hearst-pond  {
-		animation: updownshort 2.5s ease alternate infinite;
-	}
-	#treee, #treee-2, #other-bush, #ball-bush, #tre {
-		animation: updownshort 2.5s ease alternate infinite;
-	}
-</style>
 <style type="text/css">
 	.st0{fill:none;}
 	.st1{fill:#8A8A8A;}
