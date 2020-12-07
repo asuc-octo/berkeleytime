@@ -3,7 +3,13 @@ import React, { useEffect, useState } from 'react';
 // Wait this many MS before showing the loader.
 const TIME_BEFORE_LOADER = 80;
 
-const BTLoader = () => {
+type Props = {
+  showInstantly?: boolean;
+};
+
+const BTLoader = ({
+  showInstantly = false
+}: Props) => {
   const [showingLoader, setShowingLoader] = useState(false);
 
   useEffect(() => {
@@ -14,7 +20,7 @@ const BTLoader = () => {
     return () => clearTimeout(loader);
   }, []);
 
-  if (showingLoader) {
+  if (showingLoader || showInstantly) {
     return (
       <div className="bt-loader-wrapper">
         <div className="bt-loader">
