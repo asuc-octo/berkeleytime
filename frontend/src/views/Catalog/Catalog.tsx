@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
@@ -31,7 +31,6 @@ const Catalog = () => {
 
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<CourseSortAttribute>(DEFAULT_SORT);
-  const [showDescription, setShowDescription] = useState(false); // The course modal on mobile
   const [allPlaylists, setAllPlaylists] = useState<FilterablePlaylist[]>([]);
   const [activePlaylists, setActivePlaylists] = useState<string[]>([]); // The active filters
 
@@ -118,6 +117,19 @@ const Catalog = () => {
   const activeCourse =
     selectedCourse || (activeSemester && match?.params) || null;
 
+  // The course modal on mobile
+  const [showDescription, setShowDescription] = useState(false);
+  
+  useEffect(() => { 
+    setShowDescription(activeCourse !== null);
+  }, [activeCourse]);
+
+  // If the user closes the modal, remove the active course from the url
+  const hideModal = () => {
+    history.replace(`/catalog`);
+    setShowDescription(false);
+  }
+
   return (
     <div className="catalog viewport-app">
       <Row noGutters>
@@ -169,7 +181,7 @@ const Catalog = () => {
                 semester={activeSemester}
                 modifyFilters={modifyFilters}
                 show={showDescription}
-                hideModal={() => setShowDescription(false)}
+                hideModal={hideModal}
               />
             ))}
         </Col>

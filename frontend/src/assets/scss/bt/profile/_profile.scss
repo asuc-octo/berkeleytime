@@ -4,6 +4,9 @@
   box-sizing: border-box;
 
   .profile-sidebar {
+    @include mobile {
+      overflow: scroll;
+    }
     button {
       width: 100%;
       border-radius: 4px;
@@ -34,6 +37,7 @@
         font-weight: 600;
         font-size: 14px;
         line-height: 18px;
+        white-space: nowrap;
       }
 
       &.selected {
