@@ -61,7 +61,7 @@ const Profile = () => {
 
   return (
     <div className="viewport-app">
-      <Container className="profile-container col-lg-6 col-12 offset-lg-3">
+      <Container className="profile-container col-lg-6 cold-md-6 col-12 offset-lg-3 offset-md-3">
         <h1>{tabs[tabIndex].label}</h1>
         <div className="profile-view-container">
           <div className="profile-sidebar">

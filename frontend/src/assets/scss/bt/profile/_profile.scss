@@ -73,7 +73,7 @@
       left: -150px - 32px;
       width: 150px;
 
-      @include xs {
+      @include mobile {
         position: static;
         display: flex;
         width: 100%;
