@@ -125,7 +125,7 @@ const Catalog = () => {
           {errorPlaylists ? (
             <div>A critical error occured loading.</div>
           ) : loadingPlaylists ? (
-            <BTLoader />
+            <BTLoader showInstantly />
           ) : (
             <Filter
               filters={filters!}
