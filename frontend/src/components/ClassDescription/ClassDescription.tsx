@@ -120,6 +120,15 @@ const ClassDescription = ({
     state: { course: course },
   };
 
+  const checkOverridePrereqs = (prereqs: string) => {
+    // The instructor for this class wanted to override this.
+    if (courseToName(course) === 'PB HLTH 126') {
+      prereqs =
+        'No prerequisites. This field was modified as requested by the instructor.';
+    }
+    return prereqs;
+  };
+
   // This is all 'Read more' logic.
   const charsPerRow = 80;
   const moreOffset = 15;
@@ -133,7 +142,7 @@ const ClassDescription = ({
   if (readMore) {
     // expand
     if (course.prerequisites) {
-      prereqs = course.prerequisites;
+      prereqs = checkOverridePrereqs(course.prerequisites);
       morePrereq = false;
     } else {
       moreDesc = false;
@@ -146,7 +155,7 @@ const ClassDescription = ({
       moreDesc = true;
     }
     if (descRows < 3 && course.prerequisites) {
-      prereqs = course.prerequisites;
+      prereqs = checkOverridePrereqs(course.prerequisites);
       if (descRows >= 1 && prereqs.length > charsPerRow) {
         prereqs = prereqs.slice(0, charsPerRow - moreOffset) + '...';
         morePrereq = true;
@@ -155,12 +164,6 @@ const ClassDescription = ({
         morePrereq = true;
       }
     }
-  }
-
-  // The instructor for this class wanted to override this.
-  if (courseToName(course) === 'PB HLTH 126') {
-    prereqs =
-      'No prerequisites. This field was modified as requested by the instructor.';
   }
 
   // Render the contents of the catalog
