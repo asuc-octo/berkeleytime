@@ -72,11 +72,6 @@
 
   .filter-search {
     margin-bottom: 16px;
-
-    @include mobile {
-      margin-bottom: 16px;
-    }
-
     position: relative;
 
     input {
