@@ -101,7 +101,7 @@ def grade_json(request, grade_ids):
             if grade == 'd':
                 numerator = sum([sections.aggregate(Sum(d)).get(d + '__sum', 0) for d in ('d1', 'd2', 'd3')])
             else:
-                numerator = sections.aggregate(Sum(grade)).get(grade + '__sum')
+                numerator = sections.aggregate(Sum(grade)).get(grade + '__sum', 0)
             actual_total += numerator
             percent = numerator / percentile_total if percentile_total > 0 else 0.0
             grade_entry['percent'] = round(percent, 2)
