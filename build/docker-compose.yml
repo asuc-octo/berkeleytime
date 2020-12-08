@@ -17,6 +17,8 @@ services:
     build:
       context: ../frontend
       target: base
+    env_file:
+      - ../.env.dev
     volumes:
       - ../frontend/src:/frontend/src
       - ../frontend/public:/frontend/public
