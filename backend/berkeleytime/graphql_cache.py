@@ -28,7 +28,7 @@ def cache_graphql(view_func):
                 response = cache.get(cache_key)
             else:
                 response = view_func(request, *args, **kwargs)
-            cache.set(cache_key, response, CACHE_TIMEOUT)
+                cache.set(cache_key, response, CACHE_TIMEOUT)
         except:
             response = view_func(request, *args, **kwargs)
 
