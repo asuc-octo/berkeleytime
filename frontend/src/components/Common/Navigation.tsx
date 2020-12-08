@@ -9,7 +9,7 @@ import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
 import btn_google_signin from 'assets/svg/profile/btn_google_signin.svg';
 
-interface Props extends PropsFromRedux {}
+interface Props extends PropsFromRedux { }
 
 const NavigationLink: FC<
   {
@@ -23,8 +23,8 @@ const NavigationLink: FC<
     className="bt-bold"
     eventKey={to}
     {...props}
-    // eventKey required for collapseOnselect
-    // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
+  // eventKey required for collapseOnselect
+  // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
   >
     {children}
   </Nav.Link>
@@ -101,9 +101,9 @@ const Navigation: FC<Props> = (props) => {
       expand="lg"
       bg="white"
       style={props.banner ? { position: 'absolute' } : {}}
-      /* when the banner is open, the navbar will be positioned
-         at the top of the app-container instead of fixed to the
-         top of the viewport */
+    /* when the banner is open, the navbar will be positioned
+       at the top of the app-container instead of fixed to the
+       top of the viewport */
     >
       <Navbar.Brand as={Link} to="/" className="bt-bold">
         Berkeleytime
@@ -118,7 +118,7 @@ const Navigation: FC<Props> = (props) => {
             </NavigationLink>
           ))}
 
-          {isLoggedIn ? (
+          {/*isLoggedIn ? (
             <>
               <NavigationLink to="/profile">Profile</NavigationLink>
               <NavigationLink to="/logout">Log Out</NavigationLink>
@@ -127,7 +127,7 @@ const Navigation: FC<Props> = (props) => {
             <NavigationLink onClick={() => setShowLogin(true)}>
               Login
             </NavigationLink>
-          )}
+          )*/}
         </Nav>
       </Navbar.Collapse>
       <LoginModal showLogin={showLogin} hideLogin={() => setShowLogin(false)} />
