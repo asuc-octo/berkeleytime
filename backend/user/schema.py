@@ -225,9 +225,10 @@ class DeleteUser(graphene.Mutation):
 class Query(graphene.ObjectType):
     user = graphene.Field(BerkeleytimeUserType)
 
-    @login_required
     def resolve_user(self, info):
-        return info.context.user.berkeleytimeuser
+        if info.context.user.is_authenticated:
+            return info.context.user.berkeleytimeuser
+        return None
         # testing:
         # return User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser
 
