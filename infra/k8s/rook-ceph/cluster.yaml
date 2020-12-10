@@ -54,7 +54,7 @@ spec:
   storage:
     useAllNodes: true
     useAllDevices: true
-    deviceFilter: sd[b-z]
+    # deviceFilter: vd[b-z] # OCF: vdb, vdc / GCP: sdb, sdc
 # ---
 # kind: ConfigMap
 # apiVersion: v1

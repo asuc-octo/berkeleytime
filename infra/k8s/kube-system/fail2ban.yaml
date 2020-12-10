@@ -20,9 +20,9 @@ spec:
             - /bin/bash
             - -c
             - |
-              if [ -n "$(cat /denylist.txt)" ]; then
-                gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag ${GCR_PATH_BACKEND}:${CI_COMMIT_SHORT_SHA} --project $PROJECT_ID
-              fi
+              # if [ -n "$(cat /denylist.txt)" ]; then
+              #   gcloud ...
+              # fi
               mkdir -p /data/jail.d;
               touch /manban.log;
 

@@ -1,37 +1,51 @@
-# This file intended to run only ONCE on new cluster and used as reference after
+# This file intended to run once on new cluster and used as reference after
+# Recommend run these lines manually during first-time node setup
 # Manually authenticate with gcloud-sdk first if necessary before proceeding
-# gcloud auth login
-# Assume that github repo = /berkeleytime
+#   apt install -y google-cloud-sdk && gcloud auth login
+# GitHub repo must exist at /berkeleytime
 
-# To switch domain prefix (ex: ocf.berkeleytime.com -> gcp.berkeleytime.com)
-# PREVIOUS=ocf.berkeleytime.com
-# NEW=gcp.berkeleytime.com
-# find /berkeleytime -type f -name "*" -exec sed -i "s/$PREVIOUS/$NEW/g" "{}" \;
+# To switch domain prefix, ocf.berkeleytime.com -> gcp.berkeleytime.com
+# find /berkeleytime -type f -name "*" -exec sed -i 's/ocf.berkeleytime.com/gcp.berkeleytime.com/g' "{}" \;
 
-# OCF only (stops resetting root password and account credentials)
-# sudo puppet agent --disable
+# OCF only, prevent Puppet from root password reset
+# puppet agent --disable
 
+# Tested on: Ubuntu 20.04, Debian 10 (Buster), install apt packages if errors occur
+# Specific kernel required for core features like BPF (Berkeley Packet Filter)
+# > uname -a (show Linux kernel version)
+# Linux hozer-55 5.9.0-0.bpo.2-rt-amd64 #1 SMP PREEMPT_RT Debian 5.9.6-1~bpo10+1 (2020-11-19) x86_64 GNU/Linux
+
+export DEVICE_IP=$(ip -4 addr show $(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)') | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 apt update
-apt install -y curl pv
+apt install -y curl
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial-unstable main" > /etc/apt/sources.list.d/kubernetes.list
 curl https://baltocdn.com/helm/signing.asc | apt-key add -
-echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial-unstable main" > /etc/apt/sources.list.d/kubernetes.list
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" > /etc/apt/sources.list.d/helm-stable-debian.list
 apt update
-apt install -y docker.io=19.03.8-0ubuntu1 kubeadm=1.19.2-00 kubelet=1.19.2-00 helm=3.3.4-1
+apt install -y docker.io kubeadm kubelet helm
 systemctl enable docker
-systemctl daemon-reload
 cp ~/.bashrc ~/.bashrc.bak
 echo export KUBECONFIG=\$HOME/.kube/config >> ~/.bashrc
 echo alias k='kubectl' >> ~/.bashrc
 echo shopt -s histverify >> ~/.bashrc
 echo "br_netfilter" > /etc/modules-load.d/containerd.conf
 modprobe br_netfilter
-kubeadm init
+kubeadm init --skip-phases addon/kube-proxy # BPF replaces kube-proxy, https://docs.cilium.io/en/v1.9/gettingstarted/kubeproxy-free
 mkdir -p ~/.kube && cp /etc/kubernetes/admin.conf ~/.kube/config
-
 kubectl apply -f /berkeleytime/infra/k8s/kube-system
 kubectl taint nodes $(hostname) node-role.kubernetes.io/master-
+
+# > Backup >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+curl -sL https://deb.nodesource.com/setup_14.x | bash -
+apt install -y nodejs
+crontab -l | { cat; echo "0 11 * * * /usr/bin/npm --prefix /berkeleytime/infra/backup install && /bin/node /berkeleytime/infra/backup"; } | crontab -
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Backup <
+
+# > Cluster networking >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# If BPF works, policy-related things appear in /sys/fs/bpf
+helm install cilium cilium/cilium --version 1.8.6 --namespace kube-system --set global.kubeProxyReplacement=strict,global.k8sServiceHost=$DEVICE_IP,global.k8sServicePort=6443,operator.replicas=1
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Cluster networking <
 
 # > Import secrets >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 kubectl create ns cert-manager || true
@@ -43,15 +57,9 @@ gsutil cp gs://berkeleytime-218606/secrets/kubernetes-bt-ingress-protected-route
 kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Import secrets <
 
-# > Create CI/CD images >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-gcloud config set builds/use_kaniko True
-gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-runner --tag gcr.io/berkeleytime-218606/gitlab-runner:latest
-gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-notify --tag gcr.io/berkeleytime-218606/gitlab-notify:latest
-gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/github-notify --tag gcr.io/berkeleytime-218606/github-notify:latest
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Create CI/CD images <
-
 # > Helm >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add cilium https://helm.cilium.io
 helm repo add codesim https://helm.codesim.com
 helm repo add elastic https://helm.elastic.co
 helm repo add gitlab https://charts.gitlab.io/
@@ -63,51 +71,56 @@ helm repo add rook-release https://charts.rook.io/release
 helm repo update
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Helm <
 
+# > rook-ceph >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# This handles dynamic pvcs with bare-metal storage. Uses attached block devices
+helm install rook-ceph rook-release/rook-ceph --namespace rook-ceph --version v1.5.3 --create-namespace
+kubectl apply -f /berkeleytime/infra/k8s/rook-ceph --recursive;
+kubectl apply -f /berkeleytime/infra/k8s/kubernetes-csi
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< rook-ceph <
+
 # > Ingress >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-helm install ingress-nginx ingress-nginx/ingress-nginx --version 3.11.0 --namespace ingress-nginx --create-namespace -f /berkeleytime/infra/helm/ingress-nginx.yaml
+envsubst < /berkeleytime/infra/k8s/ingress-nginx/nlb.yaml | kubectl apply -f -
+envsubst < /berkeleytime/infra/helm/metallb.yaml | helm install metallb bitnami/metallb --version 1.0.1 --namespace kube-system -f -
+helm install ingress-nginx ingress-nginx/ingress-nginx --version 3.15.2 --namespace ingress-nginx --create-namespace -f /berkeleytime/infra/helm/ingress-nginx.yaml
 helm install cert-manager jetstack/cert-manager --version v1.0.4 --namespace cert-manager --create-namespace --set installCRDs=true
 until kubectl apply -f /berkeleytime/infra/k8s/default/certificate.yaml && kubectl apply -f /berkeleytime/infra/k8s/cert-manager/clusterissuer.yaml; do sleep 1; done;
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Ingress <
 
-# > rook-ceph >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-kubectl apply -f /berkeleytime/infra/k8s/kubernetes-csi
-helm install rook-ceph rook-release/rook-ceph --namespace rook-ceph --version v1.5.1 --create-namespace
-kubectl apply -f /berkeleytime/infra/k8s/rook-ceph --recursive;
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< rook-ceph <
-
-# > Monitoring >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# > Elasticsearch >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# helm install bt-metricbeat elastic/metricbeat --version 7.9.3 -f /berkeleytime/infra/helm/metricbeat.yaml # Consumes a lot of space on Elasticsearch, still unsure how to use
+kubectl apply -f /berkeleytime/infra/k8s/default/bt-elasticsearch.yaml
 helm install bt-logstash elastic/logstash -f /berkeleytime/infra/helm/logstash.yaml --version 7.9.3
 helm install bt-kibana elastic/kibana --version 7.9.3 -f /berkeleytime/infra/helm/kibana.yaml
-helm install bt-metricbeat elastic/metricbeat --version 7.9.3 -f /berkeleytime/infra/helm/metricbeat.yaml
 helm install bt-filebeat elastic/filebeat -f /berkeleytime/infra/helm/filebeat.yaml --version 7.9.3
 helm install bt-elastalert codesim/elastalert --version 1.8.1 -f /berkeleytime/infra/helm/elastalert.yaml
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Monitoring <
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Elasticsearch <
 
-# > BT Databases >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# > GitLab >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# Cannot deploy BT app manually unless have extracted bt-*-prod YAML manifests
+# GitLab injects secrets during build time
+gcloud auth configure-docker -q
+gcloud config set builds/use_kaniko True
+gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-runner --tag gcr.io/berkeleytime-218606/gitlab-runner:latest
+gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-notify --tag gcr.io/berkeleytime-218606/gitlab-notify:latest
+gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/github-notify --tag gcr.io/berkeleytime-218606/github-notify:latest
+kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab.yaml
+kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab-notify.yaml
+kubectl apply -f /berkeleytime/infra/k8s/default/bt-github-notify.yaml
+helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/gitlab-runner.yaml --version 0.23.0
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GitLab <
+
+# > BT App Data Layer >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 for CI_ENVIRONMENT_NAME in "staging" "prod"
 do
   export CI_ENVIRONMENT_NAME=$CI_ENVIRONMENT_NAME
   gsutil cp gs://berkeleytime-218606/secrets/helm-bt-psql-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-psql-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
+  envsubst < /berkeleytime/infra/helm/postgres.yaml | helm install bt-psql-$CI_ENVIRONMENT_NAME bitnami/postgresql-ha --version 6.2.1 -f -
   gsutil cp gs://berkeleytime-218606/secrets/helm-bt-redis-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-redis-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
-  envsubst < /berkeleytime/infra/helm/postgres.yaml | helm install bt-psql-$CI_ENVIRONMENT_NAME bitnami/postgresql-ha --version 5.2.4 -f -
   envsubst < /berkeleytime/infra/helm/redis.yaml | helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis --version 12.1.1 -f -
 done
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BT Databases <
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< BT App Data Layer <
 
-# > Backup >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
-apt install -y nodejs
-crontab -l | { cat; echo "0 11 * * * /usr/bin/npm --prefix /berkeleytime/infra/backup install && /bin/node /berkeleytime/infra/backup"; } | crontab -
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Backup <
-
-# > Regular k8s apps >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-kubectl apply -f /berkeleytime/infra/k8s/default/bt-elasticsearch.yaml
-kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab.yaml
-kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab-notify.yaml
-kubectl apply -f /berkeleytime/infra/k8s/default/certificate.yaml
-kubectl apply -f /berkeleytime/infra/k8s/default/limitrange.yaml
+# > Ingress >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 export INGRESS_LABEL=primary; export BASE_DOMAIN_NAME=berkeleytime.com; envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-primary.yaml | kubectl apply -f -
 export INGRESS_LABEL=secondary; export BASE_DOMAIN_NAME=ocf.berkeleytime.com; envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-primary.yaml | kubectl apply -f -
-gcloud auth configure-docker -q
-helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/gitlab-runner.yaml --version 0.23.0
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Regular k8s apps <
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Ingress <
