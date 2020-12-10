@@ -1,12 +1,8 @@
+# https://github.com/helm/charts/blob/99548969316eed3121040b102d969e111cc15ef4/stable/nginx-ingress/values.yaml
 controller:
-  config:
-    hsts: "false"
-  hostNetwork: true
   service:
     type: ClusterIP
-  kind: DaemonSet
 tcp:
   2222: default/bt-gitlab:2222
   5432: default/bt-psql-staging-postgresql-ha-pgpool:5432
   6379: default/bt-redis-staging-master:6379
-resources: {}

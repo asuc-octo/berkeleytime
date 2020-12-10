@@ -36,18 +36,6 @@ metricsImage:
 postgresql:
   replicaCount: 1
   extendedConf:
-    # walLevel: "replica"
-    # walLogHints: "on"
-    # archiveMode: "on"
-    # archiveCommand: "'/bin/true'"
-    # maxWalSenders: "16"
-    # maxReplicationSlots: "10"
-    # hotStandby: "on"
-    # loggingCollector: "on"
-    # logDirectory: "'/opt/bitnami/postgresql/logs'"
-    # logFilename: "'postgresql.log'"
-    # sharedPreloadLibraries: "repmgr"
-    # includeDir: "'conf.d'"
     logLinePrefix: "'%h %m [%p] %q%u@%d '"
 pgpool:
   replicaCount: 1

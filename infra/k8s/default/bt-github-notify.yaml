@@ -40,7 +40,7 @@ spec:
             - name: KUBECONFIG
               value: /kubeconfig
             - name: GITLAB_DOMAIN
-              valeu: https://berkeleytime.com/git
+              value: https://berkeleytime.com/git
             - name: NODE_PORT
               value: "5000"
           envFrom:
