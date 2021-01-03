@@ -190,6 +190,7 @@ const ClassDescription = ({
                     href={toEnrollment.pathname}
                     // eslint-disable-next-line react/jsx-no-target-blank
                     target="_blank"
+                    rel="noreferrer"
                     className="statlink"
                   >
                     <img src={launch} alt="" />
@@ -220,6 +221,7 @@ const ClassDescription = ({
                     href={toGrades.pathname}
                     // eslint-disable-next-line react/jsx-no-target-blank
                     target="_blank"
+                    rel="noreferrer"
                     className="statlink"
                   >
                     <img src={launch} alt="" />
