@@ -122,14 +122,17 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
             else:
                 CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
                 CORRECTED_TELEBEARS = TELEBEARS
-                new_sections = enrollment_service.get_live_enrollment(
-                    semester=semester,
-                    year=year,
-                    course_id=course_id,
-                    abbreviation=course.abbreviation,
-                    course_number=course.course_number,
-                    log=True,
-                )
+                try:
+                    new_sections = enrollment_service.get_live_enrollment(
+                        semester=semester,
+                        year=year,
+                        course_id=course_id,
+                        abbreviation=course.abbreviation,
+                        course_number=course.course_number,
+                        log=True,
+                    )
+                except:
+                    print('SIS did not return valid live enrollment')
 
             rtn['telebears'] = CORRECTED_TELEBEARS_JSON #THIS NEEDS TO BE FROM THE OTHER SEMESTER, NOT THE CURRENT SEMESTER
             rtn['telebears']['semester'] = semester.capitalize() + ' ' + year
@@ -161,7 +164,7 @@ def enrollment_aggregate_json(request, course_id, semester=CURRENT_SEMESTER, yea
                 curr_d['waitlisted_percent'] = round(d[1][1] / curr_waitlisted_max, 3) if curr_waitlisted_max else -1
                 rtn['data'].append(curr_d)
 
-            if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
+            if semester == CURRENT_SEMESTER and year == CURRENT_YEAR and new_sections is not None:
                 last_enrolled = sum([s['enrolled'] for s in new_sections])
                 last_waitlisted = sum([s['waitlisted'] for s in new_sections])
                 enrolled_max = sum([s['enrolled_max'] for s in new_sections])
@@ -211,21 +214,25 @@ def enrollment_json(request, section_id):
 
         semester = section.semester
         year = section.year
+        new_section = None
         if semester != CURRENT_SEMESTER or year != CURRENT_YEAR:
             CORRECTED_TELEBEARS_JSON = PAST_SEMESTERS_TELEBEARS_JSON[semester + ' ' + year]
             CORRECTED_TELEBEARS = PAST_SEMESTERS_TELEBEARS[semester + ' ' + year]
         else:
             CORRECTED_TELEBEARS_JSON = TELEBEARS_JSON
             CORRECTED_TELEBEARS = TELEBEARS
-            new_section = enrollment_service.get_live_enrollment(
-                semester=semester,
-                year=year,
-                course_id=course.id,
-                abbreviation=course.abbreviation,
-                course_number=course.course_number,
-                ccn=section.ccn,
-                log=True,
-            )[0]
+            try:
+                new_section = enrollment_service.get_live_enrollment(
+                    semester=semester,
+                    year=year,
+                    course_id=course.id,
+                    abbreviation=course.abbreviation,
+                    course_number=course.course_number,
+                    ccn=section.ccn,
+                    log=True,
+                )[0]
+            except:
+                print('SIS did not return valid live enrollment')
 
         rtn['telebears'] = CORRECTED_TELEBEARS_JSON
         enrolled_max = section.enrollment_set.all().latest('date_created').enrolled_max
@@ -248,7 +255,7 @@ def enrollment_json(request, section_id):
             rtn['data'].append(curr_d)
 
 
-        if semester == CURRENT_SEMESTER and year == CURRENT_YEAR:
+        if semester == CURRENT_SEMESTER and year == CURRENT_YEAR and new_section is not None:
             last_enrolled = new_section['enrolled']
             last_waitlisted = new_section['waitlisted']
             enrolled_max = new_section['enrolled_max']
