@@ -103,7 +103,7 @@ class Apply extends PureComponent {
         <div className="join-us">
           <h5>Join OCTO! &#x270C; </h5>
           <p>
-            OCTO is the organization that runs Berkeleytime, Berkeley Mobile, and Beehive. You can learn more about our projects <a href="https://octo.asuc.org/projects.html" target="_blank">here</a> and each role <Link className="join-link" to="/apply/positions">here</Link>.
+              OCTO is the organization that runs Berkeleytime, Berkeley Mobile, and Beehive. You can learn more about our projects <a href="https://octo.asuc.org/projects.html" target="_blank" rel="noreferrer">here</a> and each role <Link className="join-link" to="/apply/positions">here</Link>.
             If you feel interested in both role types, please submit a separate application for each.
             <br/>
             <b>All members will have the option of attending team meetings and working remotely for the entire 2020-21 school year.</b> We may hold in-person events in Spring 2021 depending on the situation.
@@ -111,13 +111,13 @@ class Apply extends PureComponent {
             Application Timeline
             <ul>
               <li>Any time - Ask questions at our virtual table
-                <a href="http://bit.ly/octo-virtual-tabling" target="_blank"> (Discord)</a>
+                <a href="http://bit.ly/octo-virtual-tabling" target="_blank" rel="noreferrer"> (Discord)</a>
               </li>
               <li>September 3rd, 8-10PM PST - General Infosession
-                <a href="https://bit.ly/octo-infosession-zoom" target="_blank"> (Zoom)</a><a href="https://bit.ly/octo-infosession-calendar" target="_blank"> (Add to Calendar)</a>
+                <a href="https://bit.ly/octo-infosession-zoom" target="_blank" rel="noreferrer"> (Zoom)</a><a href="https://bit.ly/octo-infosession-calendar" target="_blank" rel="noreferrer"> (Add to Calendar)</a>
               </li>
               <li>September 4th, 4-6PM PST - Calapalooza Booth
-                <a href="https://bit.ly/octo-calapalooza-zoom" target="_blank"> (Zoom)</a><a href="http://bit.ly/octo-calapalooza-calendar" target="_blank"> (Add to Calendar)</a>
+                <a href="https://bit.ly/octo-calapalooza-zoom" target="_blank" rel="noreferrer"> (Zoom)</a><a href="http://bit.ly/octo-calapalooza-calendar" target="_blank" rel="noreferrer"> (Add to Calendar)</a>
               </li>
               <li>September 5th, 11:59PM PST - Applications due
               </li>
