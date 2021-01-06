@@ -100,6 +100,7 @@ INSTALLED_APPS = [
     'forms',
     'user',
     'graphene_django',
+    'django_cas_ng',
 ]
 
 # Middlewares
@@ -111,6 +112,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_cas_ng.middleware.CASMiddleware',
 ]
 
 # Root URLconf file
@@ -191,6 +193,7 @@ GRAPHENE = {
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # for admin panel
     'graphql_jwt.backends.JSONWebTokenBackend',
+    'django_cas_ng.backends.CASBackend',
 ]
 
 GRAPHQL_JWT = {
