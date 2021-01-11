@@ -48,6 +48,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if 'subject' not in options or 'template' not in options or 'occasion' not in options:
             print('Please enter all required parameters.')
+            return
         subject, template, occasion = options['subject'], options['template'], options['occasion']
 
         bt_users = BerkeleytimeUser.objects.filter(**{ occasion: True }).select_related('auth_user__email')
