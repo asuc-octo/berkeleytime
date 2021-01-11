@@ -4,8 +4,8 @@ Send emails based on occasions from database.
 BerkeleytimeUser model has boolean fields to determine if emails are desired. 
 """
 from django.core.management.base import BaseCommand
+from django.core.mail import send_mass_mail
 
-from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
 from user.models import BerkeleytimeUser
 
 
@@ -16,12 +16,17 @@ class Command(BaseCommand):
         parser.add_argument(
             '--template',
             action='store',
-            default=CURRENT_SEMESTER,
+            default=,
             help="Path to template email",
         )
         parser.add_argument(
             '--occasion',
             action='store',
-            default=CURRENT_YEAR,
+            default=,
             help="Type of email update (e.g. email_class_update)",
         )
+
+    
+    def handle(self, *args, **options):
+        template, occasion = options['template'], options['occasion']
+        occasion_attribute = getattr(BerkeleytimeUser, occasion) 
