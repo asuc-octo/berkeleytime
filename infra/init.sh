@@ -147,7 +147,7 @@ gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/github-no
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab-notify.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-github-notify.yaml
-helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/gitlab-runner.yaml --version 0.23.0
+helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/gitlab-runner.yaml --version 0.24.0
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GitLab <
 
 # > BT App Data Layer >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
