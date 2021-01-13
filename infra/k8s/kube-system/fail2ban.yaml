@@ -1,3 +1,7 @@
+# Test failregex parsing:
+# k -n kube-system exec -it deploy/fail2ban -- fail2ban-regex 'STRING' 'REGEX'
+# View fail2ban logs:
+# k -n kube-system exec -it deploy/fail2ban -- cat /var/log/fail2ban.log
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,7 +32,6 @@ spec:
 
               cat << EOF > /etc/fail2ban/action.d/iptables-common.local
               [init]
-              chain = KUBE-FIREWALL
               blocktype = DROP
               EOF
 
@@ -49,17 +52,20 @@ spec:
               # fail2ban-client status manban
               [manban] # https://unix.stackexchange.com/questions/414039/creating-an-alternate-jail-in-fail2ban-for-manual-banning
               enabled  = true
-              action   = iptables-allports[name=fail2ban]
+              action   = iptables-ipset-proto4[lockingopt="-w -t raw", chain="PREROUTING", port="1:21,23:65535", blocktype=DROP]
               bantime  = -1
               filter   = manban
 
-              [psql] # https://talk.plesk.com/threads/howto-secure-a-standard-postgres-port-with-fail2ban.355984/
+              [psql] # https://talk.plesk.com/threads/howto-secure-a-standard-postgres-port-with-fail2ban.355984
               enabled  = true
               filter   = psql
-              action   = iptables-multiport[name=manual, port="80,443,5432,6379", protocol=tcp]
-              findtime = 3600
-              logpath  = /var/log/containers/bt-psql-staging-*.log
-              maxretry = 1
+              # action = iptables-ipset-proto4[lockingopt="-w -t raw", chain="PREROUTING", port="5432", blocktype=DROP]
+              action   = iptables-ipset-proto4[lockingopt="-w -t raw", chain="PREROUTING", port="1:21,23:65535", blocktype=DROP]
+              findtime = 100 # 100-second rolling window for failed psql login attempts
+              # logpath  = /var/log/containers/bt-psql-staging-*_bt-psql-*.log
+              logpath = /var/log/containers/bt-psql-staging.log
+              bantime  = 60
+              maxretry = 5
               EOF
 
               cat << EOF > /etc/fail2ban/filter.d/manban.conf
@@ -70,7 +76,7 @@ spec:
 
               cat << EOF > /etc/fail2ban/filter.d/psql.conf
               [Definition]
-              failregex = ^<HOST>.+FATAL: password authentication failed for user.+$
+              failregex = <HOST> FATAL
               ignoreregex =
               EOF
 
@@ -109,6 +115,7 @@ spec:
             capabilities:
               add:
                 - "NET_ADMIN"
+                - "NET_RAW"
                 - "SYS_TIME"
           volumeMounts:
             - mountPath: /var/log

@@ -43,7 +43,7 @@ spec:
     #     cpu: "200m"
     #     memory: "1000M"
     # osd:
-    #   # Hard, explicit control of OSD resources absolutely necessary
+    #   # Explicit limit of OSD absolutely necessary if low resources
     #   # As for the above resources, answer not obvious yet
     #   requests:
     #     cpu: "200m"
