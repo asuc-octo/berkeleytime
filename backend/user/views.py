@@ -22,7 +22,8 @@ def login(request):
     # match one of the authorized redirect URIs for the OAuth 2.0 client, which you
     # configured in the API Console. If this value doesn't match an authorized URI,
     # you will get a 'redirect_uri_mismatch' error.
-    flow.redirect_uri = request.build_absolute_uri('/api/oauth2callback/')
+    flow.redirect_uri = request.build_absolute_uri(
+        '/api/oauth2callback/').replace('http', 'https')
 
     # Generate URL for request to Google's OAuth 2.0 server.
     # Use kwargs to set optional request parameters.
@@ -42,8 +43,10 @@ def oauth2callback(request):
             'https://www.googleapis.com/auth/userinfo.email',
             'https://www.googleapis.com/auth/userinfo.profile',
         ])
-    flow.redirect_uri = request.build_absolute_uri('/api/oauth2callback/')
+    flow.redirect_uri = request.build_absolute_uri(
+        '/api/oauth2callback/').replace('http', 'https')
     flow.fetch_token(code=request.GET.get('code'))
     id_token = flow.credentials.id_token
 
-    return HttpResponseRedirect(f'{request.build_absolute_uri("/oauth2callback")}?id_token={id_token}')
+    return HttpResponseRedirect(
+        f'{request.build_absolute_uri("/oauth2callback")}?id_token={id_token}'.replace('http', 'https'))
