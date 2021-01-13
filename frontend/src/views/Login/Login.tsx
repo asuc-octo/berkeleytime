@@ -16,6 +16,7 @@ const Login = () => {
 
   const id_token = query.get("id_token");
   if (!id_token) {
+    history.push('/error');
     return (null);
   }
 
