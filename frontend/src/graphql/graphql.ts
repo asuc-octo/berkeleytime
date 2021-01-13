@@ -180,7 +180,7 @@ export interface DeleteUser {
 
 /**
  * Proxy for enrollment object. Using this instead of
- * a DjangoObjectType gives us higher flexibility of the data. 
+ * a DjangoObjectType gives us higher flexibility of the data.
  */
 export interface EnrollmentData {
   __typename?: 'EnrollmentData';
