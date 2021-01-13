@@ -10,7 +10,7 @@ def login(request):
     # Use the client_secret.json file to identify the application requesting
     # authorization. The client ID (from that file) and access scopes are required.
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        os.getenv('GOOGLE_SIGNIN_CLIENT_SECRET'),
+        os.getenv('GOOGLE_SIGNIN_CLIENT_SECRET_FILEPATH'),
         scopes=[
             'https://www.googleapis.com/auth/userinfo.email',
             'https://www.googleapis.com/auth/userinfo.profile',
@@ -36,7 +36,7 @@ def login(request):
 def oauth2callback(request):
     # get ID token from auth code
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        os.getenv('GOOGLE_SIGNIN_CLIENT_SECRET'),
+        os.getenv('GOOGLE_SIGNIN_CLIENT_SECRET_FILEPATH'),
         scopes=[
             'openid',
             'https://www.googleapis.com/auth/userinfo.email',
