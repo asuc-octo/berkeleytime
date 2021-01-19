@@ -11,7 +11,7 @@ from django.utils.html import strip_tags
 
 from berkeleytime.settings import DEFAULT_FROM_EMAIL
 from user.models import BerkeleytimeUser
-
+import os
 
 class Command(BaseCommand):
     """python manage.py email [--subject] [--template] [path-to-template] [--occasion]."""
@@ -51,13 +51,13 @@ class Command(BaseCommand):
             return
         subject, template, occasion = options['subject'], options['template'], options['occasion']
 
+        # dir = os.path.dirname(os.path.dirname(__file__))
+        # temp_path = os.path.join(dir, template)
         bt_users = BerkeleytimeUser.objects.filter(**{ occasion: True }).select_related('auth_user__email')
-        # html_message = render_to_string(template)
-        # plain_message = strip_tags(html_message)
-        html_message = 'hello'
-        plain_message = 'hello'
+        html_message = render_to_string(template)
+        plain_message = strip_tags(html_message)
         
-        # email_datatuple = [(subject, plain_message, html_message, bt_user.user.email) for bt_user in bt_users]
-        email_datatuple = [(subject, plain_message, html_message, bt_user) for bt_user in ['jonathanpan@berkeley.edu', 'leon.ming@berkeley.edu']]
+        email_datatuple = [(subject, plain_message, html_message, bt_user.user.email) for bt_user in bt_users]
+        # email_datatuple = [(subject, plain_message, html_message, bt_user) for bt_user in ['jonathanpan@berkeley.edu', 'leon.ming@berkeley.edu']]
         
         self.send_mass_html_mail(email_datatuple)
