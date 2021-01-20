@@ -121,13 +121,13 @@ COMPSCI,61A,14416,001,Str Interp Cmp Prgs,Aman Shah; Andrew Lenz; Caitlin Phan; 
 COMPSCI,61BL,14441,001,Data Strs Prog Meth,Ada Hu; Adel Setoodehnia; Alexander Feng; Alexander Schedel; Connor Lafferty; Daniel Garcia; Eric Tang; Fatema Yasini; Itai Smith; Jay Kakkar; John Xiang; Manu Chopra; Matthew Owen; Meng Wei Ko; Nicholas Mecklenburg; Ryan Nuqui; Sarah Liu; Shreya Sahoo; Yoosang Park; Zoe Plaxco,under,41,69,51,52,52,25,6,8,6,1,1,0,17,16,3
 COMPSCI,61C,14451,001,Machine Structures,Daniel Garcia; Jingyi Song; Sean Farhat-Sabet; Stephan Kaminsky,under,6,98,12,12,14,4,6,6,2,0,4,0,20,9,4
 COMPSCI,70,14462,001,Discrete Math&Prob,Agnibho Roy; Amin Ghafari Zeydabadi; Andrew Lin; Angela Jiang; Austin Lei; Ayush Kamat; Daniel Garcia; Doris Xin; Frank Liu; Jasper Hu; Kevin Lin; Kevin Zhu; Khalil Sarwari; Nikhil Pimpalkhare; Pranshu Bansal; Sagnik Bhattacharya; Sean O'Brien; Shengze Wang; Shreyansh Loharuka; Srishti Agarwal; Xiaoyu He; Yining Liu,under,11,185,36,69,90,43,16,3,2,1,3,0,7,4,2
-COMPSCI,C100,14567,001,Princ&Tech Data Sci,Alexander Le-Tu; Allen Shen; Daniel Garcia; Henry Maier; Isaac Schmidt; Ishaan Srivastava; Jessica Wu; John Tsortos; Kevin Moy; Kunal Agarwal; Olivia Qin; Rubina Aujla; Shichao Han; Sophia Phillips; Suraj Rampure; Xinran Liang,under,15,70,64,49,53,22,5,4,2,0,2,0,16,17,4
 COMPSCI,W169A,15376,001,Software Engineer,Aslihan Akalin; Daniel Garcia; John Yang; Srujay Korlakunta; Varun Murthy,under,7,22,25,8,6,2,0,2,0,0,1,0,4,14,5
 CY PLAN,101,14980,001,Intro Urb Data,Karen Chapple; Manuel Santana Palacios,under,1,32,16,0,0,0,0,0,0,0,0,0,0,0,0
 CY PLAN,110,10610,001,Intro To City Plng,David Amos; Karen Chapple; Priscila Coli Rocha,under,0,19,12,10,2,0,0,1,1,0,0,0,0,1,0
 CY PLAN,114,10611,001,Intro Urb Reg Trans,Chester Harvey; Daniel Chatman,under,10,25,7,4,2,2,0,0,0,0,0,0,0,2,0
 CY PLAN,N115,10648,001,Urban Devel Countrs,James Mizes,under,3,36,5,1,0,1,0,0,0,0,0,0,0,0,0
 DATA,C6,15767,001,Intro Comp Think,Deborah Nolan; Hans Kristian Castro,under,7,8,1,2,2,0,0,0,0,0,0,0,0,0,0
+DATASCI,C100,14567,001,Princ&Tech Data Sci,Alexander Le-Tu; Allen Shen; Daniel Garcia; Henry Maier; Isaac Schmidt; Ishaan Srivastava; Jessica Wu; John Tsortos; Kevin Moy; Kunal Agarwal; Olivia Qin; Rubina Aujla; Shichao Han; Sophia Phillips; Suraj Rampure; Xinran Liang,under,15,70,64,49,53,22,5,4,2,0,2,0,16,17,4
 DES INV,190,15649,10,Spec Topics Des Inv,George Moore II; Vivek Rao,under,1,11,2,1,0,0,0,0,0,0,0,0,0,6,1
 DES INV,22,14509,1,Prototype & Fab,Christopher Myers; Tina Piracci; -,under,1,11,3,2,0,0,0,0,0,0,0,0,0,2,0
 DES INV,23,14552,1,Creative Prog&Elec,Michael Shiloh; Tina Piracci; -,under,16,2,0,0,0,1,0,0,0,0,0,0,0,1,0
