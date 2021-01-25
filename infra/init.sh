@@ -18,6 +18,7 @@
 # (OCF only)
 # Prevent Puppet from root password reset
 # puppet agent --disable
+# systemctl disable node_exporter munin-node postfix
 
 # Tested on: Ubuntu 20.04, Debian 10 (Buster), install apt pkgs if errors occur
 # Specific kernel required for core features like BPF (Berkeley Packet Filter)
@@ -95,6 +96,8 @@ kubectl label namespace default istio-injection=disabled
 kubectl patch mutatingwebhookconfigurations istio-sidecar-injector-istio --type json -p '[{"op": "replace", "path": "/webhooks/0/namespaceSelector", "value": {"matchExpressions":[{"key":"istio-injection","operator":"In","values":["disabled","enabled"]}]} }]'
 kubectl get cm istio-sidecar-injector -n istio -o yaml | sed "s/policy: enabled/policy: disabled/g" | k apply -f -
 kubectl apply -f /berkeleytime/infra/k8s/istio/istio.yaml
+# Add metrics-server so 'kubectl top <pod>' is available
+helm install metrics-server bitnami/metrics-server -n kube-system --set rbac.create=false --set apiService.create=true --set extraArgs.kubelet-insecure-tls=true
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Cluster networking <
 
 # > Import secrets >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

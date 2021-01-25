@@ -2,7 +2,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: bt-elasticsearch-primary
+  name: bt-elasticsearch
   namespace: default
   labels:
     component: bt-elasticsearch
@@ -20,7 +20,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: bt-elasticsearch-pvc
+  name: bt-elasticsearch
 spec:
   accessModes:
     - ReadWriteOnce
@@ -52,7 +52,7 @@ spec:
             name: bt-elasticsearch-config
         - name: bt-elasticsearch-pvc
           persistentVolumeClaim:
-            claimName: bt-elasticsearch-pvc
+            claimName: bt-elasticsearch
       containers:
         - name: bt-elasticsearch
           image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
@@ -69,6 +69,11 @@ spec:
               subPath: elasticsearch.yml
             - name: bt-elasticsearch-pvc
               mountPath: /usr/share/elasticsearch/data
+          # resources:
+          #   requests:
+          #     cpu: 500m
+          #   limits:
+          #     cpu: 500m
           # env:
           #   - name: ELASTICSEARCH_USERNAME
           #     valueFrom:
@@ -107,3 +112,5 @@ data:
     xpack.graph.enabled: false
     xpack.watcher.enabled: false
     xpack.ml.enabled: false
+
+# vm.max_map_count = 65530

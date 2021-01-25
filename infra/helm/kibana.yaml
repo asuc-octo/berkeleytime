@@ -17,6 +17,7 @@
 #     }
 #   }
 # }
+# Regex Kibana Query DSL: {"wildcard":{"kubernetes.pod.name":"berkeleytime*"}}
 kibanaConfig:
   kibana.yml: |
     server:
@@ -29,7 +30,7 @@ kibanaConfig:
         enabled: true
       encryptedSavedObjects:
         encryptionKey: ${ENCRYPTION_KEY_KIBANA}
-elasticsearchHosts: http://bt-elasticsearch-primary:9200
+elasticsearchHosts: http://bt-elasticsearch:9200
 healthCheckPath: /kibana/api/status
 replicas: 1
 lifecycle:
@@ -40,7 +41,7 @@ lifecycle:
         - -c
         - >
           KIBANA_URL=http://localhost:5601/kibana;
-          ELASTICSEARCH_URL=http://bt-elasticsearch-primary:9200;
+          ELASTICSEARCH_URL=http://bt-elasticsearch:9200;
           sleep 20; while [ "$(curl -s -o /dev/null -w '%{http_code}\n' $KIBANA_URL/app/kibana)" != "200" ]; do sleep 1; done;
           curl -X PUT "$ELASTICSEARCH_URL/_cluster/settings?pretty" -H 'Content-Type: application/json' -d'{"persistent":{"search":{ "allow_expensive_queries":true}}}';
 
@@ -55,13 +56,13 @@ lifecycle:
                 "hot": {
                   "actions": {
                     "rollover": {
-                      "max_size": "15GB",
-                      "max_age": "1M"
+                      "max_size": "9GB",
+                      "max_age": "70d"
                     }
                   }
                 },
                 "delete": {
-                  "min_age": "30s",
+                  "min_age": "0",
                   "actions": {
                     "delete": {}
                   }
@@ -126,6 +127,9 @@ lifecycle:
           }
           ';
 
+          INDEX_PATTERN_ID=gitlab-index-pattern-id;
+          INDEX_PATTERN="gitlab-*";
+          curl -X POST -H "Content-Type: application/json" -H "kbn-xsrf: anything" "$KIBANA_URL/api/saved_objects/index-pattern/$INDEX_PATTERN_ID" -d "{\"attributes\":{\"title\":\"$INDEX_PATTERN\"}}" || true;
 extraEnvs:
   - name: ENCRYPTION_KEY_KIBANA
     valueFrom:

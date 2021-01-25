@@ -15,7 +15,7 @@ logstashConfig:
         enabled: true
         elasticsearch:
           hosts:
-            - http://bt-elasticsearch-primary:9200
+            - http://bt-elasticsearch:9200
     http.host: "0.0.0.0"
 
 # Allows you to add any pipeline files in /usr/share/logstash/pipeline/
@@ -60,7 +60,7 @@ logstashPipeline:
     output {
       # stdout { codec => rubydebug }
       elasticsearch {
-        hosts => "http://bt-elasticsearch-primary:9200"
+        hosts => "http://bt-elasticsearch:9200"
         manage_template => false
         action => "create"
         ilm_enabled => false
