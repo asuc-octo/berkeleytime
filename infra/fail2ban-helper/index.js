@@ -5,7 +5,7 @@ const sleep = (milliseconds) => {
 };
 
 const LOGDIR = `/var/log/containers`;
-for (let i = 0; i < 50; i++) {
+while (true) {
   let target = null;
   try {
     target = (await readFile(`${LOGDIR}/bt-psql-staging.log`))

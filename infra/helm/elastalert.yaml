@@ -11,7 +11,7 @@
 # https://github.com/oneoneonepig/elastalert-chart/blob/master/values.yaml
 replicaCount: 1
 elasticsearch:
-  host: bt-elasticsearch-primary
+  host: bt-elasticsearch
   port: 9200
   # # Specifies an existing secret to be used for the ES username/password
   # credentialsSecret: general-secrets
