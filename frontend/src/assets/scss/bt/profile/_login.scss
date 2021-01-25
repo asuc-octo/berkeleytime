@@ -2,16 +2,16 @@
   flex-direction: column;
   .login-btn {
     width: 350px;
-    height: 40px;
-    padding: 5px 0 3px 0;
+    height: 35px;
+    padding: 3px 0 3px 0;
+    @include font-size-responsive(16px);
     @include mobile {
       width: 200px;
       height: 35px;
-      padding: 3px 0 0 0;
     }
     align-self: center;
     .login-img {
-      transform: scale(0.8);
+      transform: scale(0.75);
     }
   }
 
