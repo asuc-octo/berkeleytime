@@ -74,6 +74,8 @@ spec:
             items:
               - key: google-tokens
                 path: auth.json
+              - key: GOOGLE_SIGNIN_CLIENT_SECRET_CONTENT
+                path: signin.json
             secretName: bt-backend-secrets-$CI_ENVIRONMENT_NAME
 
 ---
@@ -86,8 +88,11 @@ type: Opaque
 stringData:
   google-tokens: |-
     $IAM_BT_BACKEND
+  GOOGLE_SIGNIN_CLIENT_SECRET_CONTENT: |-
+    $SECRET_GOOGLE_SIGNIN_CLIENT_SECRET
   DJANGO_SECRET_KEY: $SECRET_BT_DJANGO_SECRET_KEY
   GOOGLE_APPLICATION_CREDENTIALS: /etc/google/auth.json
+  GOOGLE_SIGNIN_CLIENT_SECRET_FILEPATH: /etc/google/signin.json
   GOOGLE_EMAIL: $SECRET_GOOGLE_EMAIL
   GOOGLE_PASS: $SECRET_GOOGLE_PASS
   SENDGRID_PASSWORD: $SECRET_SENDGRID_PASSWORD

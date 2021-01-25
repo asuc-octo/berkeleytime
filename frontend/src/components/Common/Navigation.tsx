@@ -118,7 +118,7 @@ const Navigation: FC<Props> = (props) => {
             </NavigationLink>
           ))}
 
-          {/* {isLoggedIn ? (
+          {isLoggedIn ? (
             <>
               <NavigationLink to="/profile">Profile</NavigationLink>
               <NavigationLink to="/logout">Log Out</NavigationLink>
@@ -127,7 +127,7 @@ const Navigation: FC<Props> = (props) => {
             <NavigationLink onClick={() => setShowLogin(true)}>
               Login
             </NavigationLink>
-          )} */}
+          )}
         </Nav>
       </Navbar.Collapse>
       <LoginModal showLogin={showLogin} hideLogin={() => setShowLogin(false)} />
