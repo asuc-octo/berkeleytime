@@ -22,11 +22,14 @@ import catalog.views
 import enrollment.views
 import forms.views
 import grades.views
+import user.views
 from berkeleytime.graphql_cache import cache_graphql
 
 # Note: We will begin to deprecate the endpoints seen here in favor of using GraphQL.
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', user.views.login),
+    path('oauth2callback/', user.views.oauth2callback),
 
     path('graphql', jwt_cookie(cache_graphql(GraphQLView.as_view(graphiql=True)))),
 

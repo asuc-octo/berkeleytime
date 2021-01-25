@@ -1,4 +1,13 @@
 releases:
+  - date: Jan 24, 2021
+    whatsNew:
+    - We released user profiles! Click on the bookmark icon in <a href="/catalog">catalog</a> to save a class, then click on the 
+        class in your user home to see it in the catalog. Also be sure to opt in to notifications for when 
+        we update the catalog, grades, and the site. 
+    - We updated the site with Summer 2020 <a href="/grades">grade</a> distributions. 
+    fixes:
+    - Updated GEOG 20 in the catalog, which no longer satisfies the L&S International Studies,
+        Social and Behavioral Sciences Breadths. 
   - date: Dec 6, 2020
     whatsNew:
     - We wrote new backend APIs using GraphQL (our previous APIs use the REST framework). 
