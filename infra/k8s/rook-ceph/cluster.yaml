@@ -43,8 +43,6 @@ spec:
     #     cpu: "200m"
     #     memory: "1000M"
     # osd:
-    #   # Hard, explicit control of OSD resources absolutely necessary
-    #   # As for the above resources, answer not obvious yet
     #   requests:
     #     cpu: "200m"
     #     memory: "2G"

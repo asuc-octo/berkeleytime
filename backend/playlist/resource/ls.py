@@ -148,7 +148,7 @@ class LSResource(object):
             (bool) True if we should continue looking, False if there are no more courses left.
         """
         try:
-            response = requests.get(self.url % (term_id, page_num), headers=self.headers, timeout=1.0)
+            response = requests.get(self.url % (term_id, page_num), headers=self.headers, timeout=10.0)
         except Exception as e:
             print("Exception fetching class section data from SIS: " + e.message)
             return False

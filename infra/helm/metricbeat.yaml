@@ -1,13 +1,9 @@
 # https://github.com/elastic/helm-charts/blob/7.9/metricbeat/values.yaml
-# To enable regex queries:
-# kubectl port-forward svc/bt-elasticsearch-primary-headless 9200:9200 &
-# curl -X PUT "localhost:9200/_cluster/settings?pretty" -H 'Content-Type: application/json' -d'{"persistent":{"search":{ "allow_expensive_queries":true}}}'
-# In Kibana Query DSL: {"wildcard":{"kubernetes.pod.name":"berkeleytime*"}}
 daemonset:
   # For environment variables in bt-metricbeat-metricbeat-kv6mg
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
-      value: http://bt-elasticsearch-primary:9200
+      value: http://bt-elasticsearch:9200
     # - name: ELASTICSEARCH_USERNAME
     #   valueFrom:
     #     secretKeyRef:
@@ -99,7 +95,7 @@ replicas: 1
 deployment:
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
-      value: http://bt-elasticsearch-primary:9200
+      value: http://bt-elasticsearch:9200
     # - name: ELASTICSEARCH_USERNAME
     #   valueFrom:
     #     secretKeyRef:

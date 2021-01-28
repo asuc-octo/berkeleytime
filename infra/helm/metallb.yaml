@@ -1,6 +1,0 @@
-configInline:
-  address-pools:
-    - name: default
-      protocol: layer2
-      addresses:
-        - ${DEVICE_IP}-${DEVICE_IP}
