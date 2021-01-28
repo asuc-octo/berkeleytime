@@ -110,7 +110,7 @@ spec:
               mkdir -p /var/opt/gitlab/git-data/repositories
       containers:
         - name: bt-gitlab
-          image: gitlab/gitlab-ee:13.6.1-ee.0
+          image: gitlab/gitlab-ee:13.7.4-ee.0
           lifecycle:
             preStop:
               exec:
@@ -315,6 +315,7 @@ spec:
                 # gitlab_ci['builds_directory'] = '/gitlab-data/builds'
                 # gitlab_rails['registry_path'] = '/gitlab-registry'
                 # gitlab_rails['trusted_proxies'] = ["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16"]
+
 ---
 apiVersion: v1
 kind: ConfigMap

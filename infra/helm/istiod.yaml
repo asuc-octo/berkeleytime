@@ -1,0 +1,8 @@
+global:
+  hub: gcr.io/istio-testing
+  tag: 1.9-alpha.5ea614d48ee3887884922789985f6cef88346ecf
+  istioNamespace: istio
+  proxy:
+    excludeIPRanges: 10.0.0.0/8
+meshConfig:
+  rootNamespace: istio

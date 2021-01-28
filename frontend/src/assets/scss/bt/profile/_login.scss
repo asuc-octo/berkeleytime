@@ -1,17 +1,17 @@
 .login {
   flex-direction: column;
   .login-btn {
-    width: 325px;
+    width: 350px;
+    height: 35px;
+    padding: 3px 0 3px 0;
+    @include font-size-responsive(16px);
     @include mobile {
       width: 200px;
+      height: 35px;
     }
-    padding: unset !important;
     align-self: center;
     .login-img {
-      width: 325px;
-      @include mobile {
-        width: 200px;
-      }
+      transform: scale(0.75);
     }
   }
 

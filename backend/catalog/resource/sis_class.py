@@ -2,6 +2,7 @@
 import re
 import requests
 import sys
+from requests.exceptions import Timeout
 
 from django.core.cache import cache
 from retry import retry
@@ -54,9 +55,16 @@ class SISClassResource:
         )
 
         try:
-            response = requests.get(url, headers=self.headers, timeout=1.0)
+            response = requests.get(url, headers=self.headers, timeout=5.0)
             assert response.status_code in [200, 201]
             return response.json()['apiResponse']['response']['classSections']
+        except Timeout as e:
+            print({
+                'message': 'Request to SIS Class API timed out',
+                'url': url,
+                'exception': e
+            }, file=sys.stderr)
+            return []
         except AssertionError as e:
             print({
                 'message': 'SIS Class API did not return valid data',
