@@ -80,11 +80,17 @@ metadata:
   name: bt-gitlab
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       component: bt-gitlab
   template:
     metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        sidecar.istio.io/interceptionMode: TPROXY
+        traffic.sidecar.istio.io/includeInboundPorts: "22"
       labels:
         component: bt-gitlab
     spec:
@@ -105,24 +111,35 @@ spec:
           command:
             - /bin/sh
             - -c
-            - >
+            - |
               mkdir -p /var/opt/gitlab/.ssh
               mkdir -p /var/opt/gitlab/git-data/repositories
       containers:
         - name: bt-gitlab
-          image: gitlab/gitlab-ee:13.7.4-ee.0
+          image: gitlab/gitlab-ee:13.7.5-ee.0
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "gitlab-ctl stop"]
+                command:
+                  - /bin/sh
+                  - -c
+                  - gitlab-ctl stop
             postStart:
               exec:
                 command:
                   - /bin/sh
                   - -c
-                  - >
-                    update-permissions;
-                    sed -i 's/|| STARTER_PLAN/|| ULTIMATE_PLAN/g' /opt/gitlab/embedded/service/gitlab-rails/ee/app/models/license.rb;
+                  - |
+                    update-permissions
+                    chmod -R 400 /etc/gitlab/
+                    sed -i 's/|| STARTER_PLAN/|| ULTIMATE_PLAN/g' /opt/gitlab/embedded/service/gitlab-rails/ee/app/models/license.rb
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - localhost:8181/git
+            initialDelaySeconds: 600
+            periodSeconds: 300
           volumeMounts:
             - name: bt-gitlab
               mountPath: /etc/gitlab

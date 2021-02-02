@@ -25,7 +25,7 @@ build-backend:
   stage: build
   extends: .before_build
   script:
-    - >
+    - |
       if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
         gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA --project $PROJECT_ID
       else
@@ -36,9 +36,9 @@ build-frontend:
   stage: build
   extends: .before_build
   script:
-    - >
+    - |
       if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
-        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag $GCR_PATH_FRONTEND:$CI_COMMIT_SHORT_SHA --project $PROJECT_ID
+        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag $GCR_PATH_FRONTEND:$CI_COMMIT_SHORT_SHA --project $PROJECT_ID --timeout 20m
       else
         echo "Docker image of this commit already exists: $GCR_PATH_FRONTEND:$CI_COMMIT_SHORT_SHA"
       fi
