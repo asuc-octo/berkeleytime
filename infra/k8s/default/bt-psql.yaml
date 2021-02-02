@@ -30,6 +30,8 @@ metadata:
   name: bt-psql-${CI_ENVIRONMENT_NAME}
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       component: bt-psql-${CI_ENVIRONMENT_NAME}

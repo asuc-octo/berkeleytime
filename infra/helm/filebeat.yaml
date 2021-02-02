@@ -16,10 +16,8 @@ filebeatConfig:
         retry:
           enabled: false
       ilm:
-        enabled: true
+        enabled: false
       template:
-        name: "k8s"
-        pattern: "k8s-*"
         enabled: false
     logging.level: info
     filebeat:

@@ -4,6 +4,7 @@ metadata:
   name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
   namespace: default
 spec:
+  concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:

@@ -1,8 +1,9 @@
 global:
-  hub: gcr.io/istio-testing
-  tag: 1.9-alpha.5ea614d48ee3887884922789985f6cef88346ecf
+  hub: docker.io/istio
+  tag: 1.9.0-beta.1
   istioNamespace: istio
   proxy:
-    excludeIPRanges: 10.0.0.0/8
+    autoInject: disabled
+    excludeIPRanges: 10.96.0.0/12 # inter-cluster traffic breaks without this, kubectl describe pod kube-apiserver -n kube-system | grep 'service-cluster-ip-range'
 meshConfig:
   rootNamespace: istio
