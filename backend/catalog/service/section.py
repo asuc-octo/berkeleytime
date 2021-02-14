@@ -127,6 +127,23 @@ class SectionService:
                 kind=section_dict['kind'],
                 defaults=section_dict,
             )
+
+            if section_dict['primary_section']:
+                primary_obj, _ = Section.objects.get_or_create(
+                    is_primary=True,
+                    course_id=section_dict['course_id'],
+                    semester=section_dict['semester'],
+                    year=section_dict['year'],
+                    section_number=section_dict['primary_section']
+                )
+
+                for s in primary_obj.associated_sections.all():
+                    section_obj.associated_sections.add(s)
+                    s.associated_sections.add(section_obj)
+
+                primary_obj.associated_sections.add(section_obj)
+                section_obj.associated_sections.add(primary_obj)
+
             print({
                 'message': 'Created/updated section object',
                 'section': section_obj,
