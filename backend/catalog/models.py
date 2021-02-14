@@ -117,6 +117,7 @@ class Section(models.Model):
     ccn = models.CharField(max_length=50)
     kind = models.CharField(max_length=100)
     is_primary = models.BooleanField(default=False)
+    associated_sections = models.ManyToManyField('self')
 
     days = models.CharField(max_length=20)
     start_time = models.DateTimeField(null=True)
