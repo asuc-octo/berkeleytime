@@ -72,6 +72,8 @@ metadata:
   namespace: default
 type: Opaque
 stringData:
+  google-tokens: |-
+    $IAM_BT_BACKEND
   DATABASE_URL: $SECRET_DATABASE_URL
   DJANGO_SECRET_KEY: $SECRET_BT_DJANGO_SECRET_KEY
   GOOGLE_APPLICATION_CREDENTIALS: /etc/google/auth.json
