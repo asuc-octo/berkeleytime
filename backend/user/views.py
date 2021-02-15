@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 
 from berkeleytime.utils import render_to_json
 
-
+# https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps#python
 def login(request):
     # Use the client_secret.json file to identify the application requesting
     # authorization. The client ID (from that file) and access scopes are required.
@@ -29,7 +29,9 @@ def login(request):
     # Use kwargs to set optional request parameters.
     authorization_url, state = flow.authorization_url(
         # Enable incremental authorization. Recommended as a best practice.
-        include_granted_scopes='true')
+        include_granted_scopes='true',
+        { "hd": "berkeley.edu" } # optional argument to specify g-suite domain
+        )
 
     return HttpResponseRedirect(authorization_url)
 

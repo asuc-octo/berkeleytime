@@ -16,7 +16,7 @@ const LoginButton = ({ hideLogin }: Props) => {
       eventKey={6}
       onClick={() => { window.location.href = "/api/login/"; }}
     >
-      <GoogleIcon className="login-img" /> Sign in with Google
+      <GoogleIcon className="login-img" /> Sign in with CalNet
     </Nav.Link>
   );
 };
