@@ -35,7 +35,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: bt-frontend-svc-prod
+                name: bt-frontend-prod
                 port:
                   number: 3000
           - path: /git
@@ -59,7 +59,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: bt-frontend-svc-staging
+                name: bt-frontend-staging
                 port:
                   number: 3000
 
@@ -85,7 +85,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: bt-backend-svc-prod
+                name: bt-backend-prod
                 port:
                   number: 5000
     - host: staging.$BASE_DOMAIN_NAME
@@ -95,7 +95,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: bt-backend-svc-staging
+                name: bt-backend-staging
                 port:
                   number: 5000
 
