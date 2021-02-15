@@ -30,7 +30,7 @@ def login(request):
     authorization_url, state = flow.authorization_url(
         # Enable incremental authorization. Recommended as a best practice.
         include_granted_scopes='true',
-        { "hd": "berkeley.edu" } # optional argument to specify g-suite domain
+        hd="berkeley.edu" # optional argument to restrict g-suite domain
         )
 
     return HttpResponseRedirect(authorization_url)
