@@ -85,7 +85,7 @@ operator:
   replicas: 1
 EOF
 git clone --single-branch --branch release-1.9 https://github.com/istio/istio.git # https://github.com/istio/istio/commit/5dd2044
-git -C istio checkout 5dd2044
+git -C istio checkout b63e196
 helm -n istio install istio-base istio/manifests/charts/base -f /berkeleytime/infra/helm/istio-base.yaml --create-namespace
 helm -n istio install istiod istio/manifests/charts/istio-control/istio-discovery -f /berkeleytime/infra/helm/istiod.yaml
 kubectl patch mutatingwebhookconfigurations istio-sidecar-injector-istio --type json -p '[{"op": "remove", "path": "/webhooks/0/namespaceSelector" }]' # Make sidecar injection an opt-in for pods
@@ -97,7 +97,7 @@ helm -n kube-system install metrics-server bitnami/metrics-server --version 5.3.
 kubectl create ns cert-manager
 gsutil cp gs://berkeleytime-218606/secrets/iam-bt-dns01-solver.json - | kubectl create secret generic clouddns-dns01-solver-svc-acct --from-file credentials-clouddns-dns01-solver-svc-acct.json=/dev/stdin -n cert-manager
 gsutil cp gs://berkeleytime-218606/secrets/iam-bt-gitlab-runner.json - | kubectl create secret docker-registry docker-registry-gcr --docker-server gcr.io --docker-username _json_key --docker-email bt-gitlab-runner@berkeleytime-218606.iam.gserviceaccount.com --docker-password "$(cat /dev/stdin)"
-gsutil cp gs://berkeleytime-218606/secrets/helm-bt-gitlab-runner.env - | kubectl create secret generic bt-gitlab-runner --from-env-file /dev/stdin
+gsutil cp gs://berkeleytime-218606/secrets/bt-gitlab-runner.env - | kubectl create secret generic bt-gitlab-runner --from-env-file /dev/stdin
 gsutil cp gs://berkeleytime-218606/secrets/kubernetes-general-secrets.env - | kubectl create secret generic general-secrets --from-env-file /dev/stdin
 gsutil cp gs://berkeleytime-218606/secrets/kubernetes-bt-ingress-protected-routes - | kubectl create secret generic bt-ingress-protected-routes --from-file auth=/dev/stdin
 kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
@@ -151,8 +151,8 @@ helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/g
 for CI_ENVIRONMENT_NAME in "staging" "prod"
 do
   export CI_ENVIRONMENT_NAME=$CI_ENVIRONMENT_NAME
-  gsutil cp gs://berkeleytime-218606/secrets/helm-bt-psql-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-psql-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
-  gsutil cp gs://berkeleytime-218606/secrets/helm-bt-redis-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-redis-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
+  gsutil cp gs://berkeleytime-218606/secrets/bt-psql-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-psql-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
+  gsutil cp gs://berkeleytime-218606/secrets/bt-redis-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-redis-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
   envsubst < /berkeleytime/infra/k8s/default/bt-psql.yaml | kubectl apply -f -
   envsubst < /berkeleytime/infra/helm/redis.yaml | helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis --version 12.1.1 -f -
   if [ $CI_ENVIRONMENT_NAME == "staging" ]; then
