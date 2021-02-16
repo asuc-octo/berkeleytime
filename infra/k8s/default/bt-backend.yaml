@@ -53,10 +53,10 @@ spec:
               protocol: TCP
           volumeMounts:
             - mountPath: /etc/google
-              name: bt-backend-volume
+              name: bt-backend
               readOnly: true
       volumes:
-        - name: bt-backend-volume
+        - name: bt-backend
           secret:
             defaultMode: 420
             items:
