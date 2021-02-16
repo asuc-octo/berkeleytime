@@ -60,8 +60,10 @@ spec:
           secret:
             defaultMode: 420
             items:
-              - key: google-tokens
+              - key: GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64
                 path: auth.json
+              - key: GOOGLE_SIGNIN_CLIENT_SECRET_CONTENT
+                path: signin.json
             secretName: bt-backend-$CI_ENVIRONMENT_NAME
 
 ---
