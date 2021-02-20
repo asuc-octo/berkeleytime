@@ -26,13 +26,13 @@ extraConfigOptions:
   # kibana_url: https://berkeleytime.com/kibana/
 # :upside_down_face: *Node:* <https://console.cloud.google.com/compute/instancesDetail/zones/us-west2-a/instances/{1}?project=berkeleytime-218606&authuser=octo.berkeleytime@asuc.org|{1}>
 rules:
-  PostgreSQL: |-
-    name: PostgreSQL
+  bt-psql-prod: |-
+    name: bt-psql-prod
     type: any
     index: k8s-*
     filter:
       - term:
-          kubernetes.labels.component: bt-psql-prod
+          kubernetes.labels.component.keyword: bt-psql-prod
       - term:
           stream: stderr
     alert:
@@ -44,21 +44,51 @@ rules:
       - kubernetes.pod.name
       - message
       - container.id
+      - "@timestamp"
+      - kubernetes.labels.component
     alert_text: |-
-      :bear: <https://berkeleytime.com/kibana/app/kibana#/doc/k8s-index-pattern-id/k8s-*/logs?id={0}|Log Link URL>
-      :cry: *Container:* {2}
+      :bear: <https://berkeleytime.com/kibana/app/logs/stream?logFilter=(expression:'_id:"{0}" and kubernetes.labels.component:"{6}"',kind:kuery)&logPosition=(start:'{5}',end:'{5}')|Logs Link>
+      :cry: *Pod:* {2}
       :no_good::skin-tone-2: *Error:* {3}
-    generate_kibana_discover_url: true
-    kibana_discover_url: true
-    kibana_discover_app_url: https://berkeleytime.com/kibana/app/discover#
-    kibana_discover_version: '7.3'
-    kibana_discover_columns:
-      - kubernetes.pod.name
-      - message
-    kibana_discover_index_pattern_id: k8s-index-pattern-id
-    slack_attach_kibana_discover_url: true
-    slack_kibana_discover_title: "Kibana Log Stream"
+    # generate_kibana_discover_url: true
+    # kibana_discover_url: true
+    # kibana_discover_app_url: https://berkeleytime.com/kibana/app/discover#
+    # kibana_discover_version: '7.3'
+    # kibana_discover_columns:
+    #   - kubernetes.pod.name
+    #   - message
+    # kibana_discover_index_pattern_id: k8s-index-pattern-id
+    # slack_attach_kibana_discover_url: true
+    # slack_kibana_discover_title: "Kibana Log Stream"
     slack_username_override: Oski
     slack_icon_url_override: https://i.imgur.com/5TI5N3Q.png
-    slack_title: ":point_right::skin-tone-2::point_left::skin-tone-2:🥺 PostgreSQL"
+    slack_title: ":point_right::skin-tone-2::point_left::skin-tone-2:🥺 bt-psql-prod"
+    slack_webhook_url: https://hooks.slack.com/services/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 # berkeleytime-integrations channel`
+  bt-backend-prod: |-
+    name: bt-backend-prod
+    type: any
+    index: k8s-*
+    filter:
+      - term:
+          kubernetes.labels.component.keyword: bt-backend-prod
+      - term:
+          stream: stderr
+    alert:
+      - slack
+    alert_text_type: alert_text_only
+    alert_text_args:
+      - _id
+      - kubernetes.node.name
+      - kubernetes.pod.name
+      - message
+      - container.id
+      - "@timestamp"
+      - kubernetes.labels.component
+    alert_text: |-
+      :bear: <https://berkeleytime.com/kibana/app/logs/stream?logFilter=(expression:'_id:"{0}" and kubernetes.labels.component:"{6}"',kind:kuery)&logPosition=(start:'{5}',end:'{5}')|Logs Link>
+      :cry: *Pod:* {2}
+      :no_good::skin-tone-2: *Error:* {3}
+    slack_username_override: Oski
+    slack_icon_url_override: https://i.imgur.com/5TI5N3Q.png
+    slack_title: ":point_right::skin-tone-2::point_left::skin-tone-2:🥺 bt-backend-prod"
     slack_webhook_url: https://hooks.slack.com/services/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 # berkeleytime-integrations channel`

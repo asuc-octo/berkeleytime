@@ -21,24 +21,22 @@ spec:
                 - name: ENVIRONMENT_NAME
                   value: $CI_ENVIRONMENT_NAME
               envFrom:
-                - configMapRef:
-                    name: bt-backend-config-$CI_ENVIRONMENT_NAME
                 - secretRef:
-                    name: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+                    name: bt-backend-$CI_ENVIRONMENT_NAME
               image: $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA
               imagePullPolicy: Always
               name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
               volumeMounts:
                 - mountPath: /etc/google
-                  name: bt-backend-secrets-volume
+                  name: bt-backend
                   readOnly: true
           restartPolicy: OnFailure
           volumes:
-            - name: bt-backend-secrets-volume
+            - name: bt-backend
               secret:
                 defaultMode: 420
                 items:
-                  - key: google-tokens
+                  - key: GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64
                     path: auth.json
-                secretName: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+                secretName: bt-backend-$CI_ENVIRONMENT_NAME
   schedule: 0 9 * * *
