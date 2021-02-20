@@ -24,7 +24,7 @@ scopes = [
 CACHED_SHEETS = {}
 CACHED_CONFIGS = {}
 
-credentials = service_account.Credentials.from_service_account_file(os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
+credentials = service_account.Credentials.from_service_account_file(os.environ['GOOGLE_APPLICATION_CREDENTIALS_FILEPATH'])
 credentials = credentials.with_scopes(scopes)
 gc = gspread.authorize(credentials)
 GMAIL_SERVICE = SMTP('smtp.gmail.com', port=587)

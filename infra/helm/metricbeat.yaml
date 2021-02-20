@@ -41,7 +41,7 @@ daemonset:
         template:
           type: component
           name: metricbeat
-          pattern: metricbeat*
+          pattern: metricbeat-index-pattern-id
 
       metricbeat.modules:
       - module: kubernetes
