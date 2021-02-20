@@ -18,7 +18,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: bt-frontend-svc-dev-$CI_ENVIRONMENT_NAME
+                name: bt-frontend-dev-$CI_ENVIRONMENT_NAME
                 port:
                   number: 3000
 
@@ -44,6 +44,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: bt-backend-svc-dev-$CI_ENVIRONMENT_NAME
+                name: bt-backend-dev-$CI_ENVIRONMENT_NAME
                 port:
                   number: 5000

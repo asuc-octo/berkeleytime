@@ -1,6 +1,6 @@
 global:
   hub: docker.io/istio
-  tag: 1.9.0-beta.1
+  tag: 1.9.0 # https://hub.docker.com/r/istio/pilot/tags
   istioNamespace: istio
   proxy:
     autoInject: disabled
