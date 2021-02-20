@@ -61,10 +61,9 @@ router.post("/delete", verifyPostData, async (req, res) => {
     await Promise.all([
       apps.deleteNamespacedDeployment(`bt-backend-dev-${ref}`, NS),
       apps.deleteNamespacedDeployment(`bt-frontend-dev-${ref}`, NS),
-      core.deleteNamespacedConfigMap(`bt-backend-config-dev-${ref}`, NS),
-      core.deleteNamespacedSecret(`bt-backend-secrets-dev-${ref}`, NS),
-      core.deleteNamespacedService(`bt-backend-svc-dev-${ref}`, NS),
-      core.deleteNamespacedService(`bt-frontend-svc-dev-${ref}`, NS),
+      core.deleteNamespacedSecret(`bt-backend-dev-${ref}`, NS),
+      core.deleteNamespacedService(`bt-backend-dev-${ref}`, NS),
+      core.deleteNamespacedService(`bt-frontend-dev-${ref}`, NS),
       networking.deleteNamespacedIngress(
         `bt-ingress-tricycle-backend-dev-${ref}`,
         NS

@@ -7,6 +7,8 @@ from berkeleytime.settings import IS_LOCALHOST
 from berkeleytime.utils import render_to_json
 
 
+# https://developers.google.com/youtube/v3/guides/auth/server-side-web-apps#python
+
 def url_to_https_if_not_dev(url):
     if IS_LOCALHOST:
         return url.replace('localhost', 'localhost:8080')
@@ -37,7 +39,9 @@ def login(request):
     # Use kwargs to set optional request parameters.
     authorization_url, state = flow.authorization_url(
         # Enable incremental authorization. Recommended as a best practice.
-        include_granted_scopes='true')
+        include_granted_scopes='true',
+        hd="berkeley.edu" # optional argument to restrict g-suite domain
+        )
 
     return HttpResponseRedirect(authorization_url)
 
