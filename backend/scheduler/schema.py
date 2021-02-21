@@ -63,6 +63,10 @@ class CreateSchedule(graphene.Mutation):
         return CreateSchedule(schedule=schedule)
 
 def forceInt(value):
+    """
+    Returns integer casted from string VALUE
+    Also forces float strings into ints since some units are formatted as 3.0
+    """
     try:
         return int(value)
     except ValueError:
