@@ -9,13 +9,6 @@ from user.models import BerkeleytimeUser
 # list of all timezones
 TIMEZONES = tuple(zip(pytz.all_timezones, pytz.all_timezones))
 
-SEMESTER_CHOICES = [
-        ('FA', 'fall'),
-        ('SP', 'spring'),
-        ('SU', 'summer')
-    ]
-
-
 class Schedule(models.Model):
     # meta
     user = models.ForeignKey(
@@ -25,7 +18,7 @@ class Schedule(models.Model):
     )
     name = models.CharField(max_length=32)
     year = models.CharField(max_length=4)
-    semester = models.CharField(max_length=2, choices=SEMESTER_CHOICES)
+    semester = models.CharField(max_length=20)
     timezone = models.CharField(max_length=32, choices=TIMEZONES, default='America/Los_Angeles')
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -33,7 +26,7 @@ class Schedule(models.Model):
     # content
     classes = models.ManyToManyField(Course)
     selected_sections = models.ManyToManyField(Section)
-    total_units = models.PositiveSmallIntegerField() # [0, 32767]
+    total_units = models.PositiveSmallIntegerField(default=0) # [0, 32767]
     # don't think anyone is going to have more than 32767 units lol
 
     # foreign keys: schedule.timeblocks
@@ -43,8 +36,8 @@ class TimeBlock(models.Model):
     """ A time block without classes that the user
     can define when creating a schedule. """
     name = models.CharField(max_length=32)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
     days = models.CharField(max_length=7)
     schedule = models.ForeignKey(
         Schedule,
