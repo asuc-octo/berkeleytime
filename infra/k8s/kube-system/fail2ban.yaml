@@ -135,13 +135,8 @@ spec:
           volumeMounts:
             - mountPath: /var/log
               name: var-log
-            - mountPath: /var/lib/docker/containers
-              name: docker-log
       hostNetwork: true
       volumes:
         - name: var-log
           hostPath:
             path: /var/log
-        - name: docker-log
-          hostPath:
-            path: /var/lib/docker/containers

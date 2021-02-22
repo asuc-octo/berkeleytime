@@ -1,28 +1,16 @@
-# Values template: https://github.com/elastic/helm-charts/blob/e4ab721d108439a23187dc4da674ac20e6ede056/logstash/values.yaml
-# co.elastic.logs.nginx/module: nginx
-# co.elastic.logs/fileset.stdout: access
+# Values template
+# https://github.com/elastic/helm-charts/blob/e4ab721d108439a23187dc4da674ac20e6ede056/logstash/values.yaml
 replicas: 1
-
-# Allows you to add any config files in /usr/share/logstash/config/
-# such as logstash.yml and log4j2.properties
-#
-# Note that when overriding logstash.yml, `http.host: 0.0.0.0` should always be included
-# to make default probes work.
 logstashConfig:
   logstash.yml: |
     xpack:
       monitoring:
-        enabled: true
+        enabled: false
         elasticsearch:
           hosts:
             - http://bt-elasticsearch:9200
     http.host: "0.0.0.0"
-
-# Allows you to add any pipeline files in /usr/share/logstash/pipeline/
-### ***warn*** there is a hardcoded logstash.conf in the image, override it first
 logstashPipeline:
-  # How to Automate Elasticsearch Index Creation
-  # https://cloudhero.io/automate-elasticsearch-index-creation
   logstash.conf: |
     input {
       beats {
@@ -31,12 +19,13 @@ logstashPipeline:
       }
     }
     filter {
-      if ("" in [kubernetes][labels][app]) and ("" in [kubernetes][labels][environment]) {
-        mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][labels][app]}-%{[kubernetes][labels][environment]}-%{[kubernetes][container][name]}-%{+yyyy.MM.dd}" } }
-      }
-      else {
-        mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][namespace]}-%{+yyyy.MM.dd}" } }
-      }
+      # if ("" in [kubernetes][labels][app]) and ("" in [kubernetes][labels][environment]) {
+      #   mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][labels][app]}-%{[kubernetes][labels][environment]}-%{[kubernetes][container][name]}-%{+yyyy.MM.dd}" } }
+      # }
+      # else {
+      #   mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][namespace]}-%{+yyyy.MM.dd}" } }
+      # }
+      mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][namespace]}" } }
       if [kubernetes][namespace] == "ingress-nginx" {
         # HTTP nginx logs
         grok {

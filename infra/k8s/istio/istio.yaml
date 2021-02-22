@@ -1,10 +1,6 @@
-# Get possible configuration options:
+# Get possible configuration options from istio repo:
 #   cat istio/manifests/charts/base/values.yaml
 #   cat istio/manifests/charts/istio-control/istio-discovery/values.yaml
-# add the following to any pod spec to make it have istio-proxy sidecar
-#   annotations:
-#     sidecar.istio.io/inject: "true"
-#     sidecar.istio.io/interceptionMode: TPROXY
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
