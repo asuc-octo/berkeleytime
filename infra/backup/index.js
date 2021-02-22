@@ -1,6 +1,5 @@
 import moment from "moment";
 import { spawn } from "promisify-child-process";
-import sleep from "sleep-promise";
 
 const tee = async (...args) => {
   const child = spawn(...args, {
@@ -47,5 +46,5 @@ await upload({
 });
 await upload({
   label: "bt-elasticsearch",
-  pvc: "bt-elasticsearch-pvc",
+  pvc: "bt-elasticsearch",
 });

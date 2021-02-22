@@ -748,6 +748,7 @@ XAFRICA:
 
 XAMRSTD:
     - "UCB EXT FPF-American Studies"
+    - "FPF-American Studies"
 
 XANTHRO:
     - "FPF-Anthropology"
@@ -907,6 +908,7 @@ XRHETOR:
 
 XSEASIA:
     - "UCB EXT FPF-Southeast Asian"
+    - "FPF-Southeast Asian"
 
 XSOCIOL:
     - "FPF-Sociology"

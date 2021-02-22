@@ -1,0 +1,8 @@
+# Documentation, default values.yaml
+# https://github.com/rook/rook/blob/e305810/Documentation/helm-operator.md
+# https://github.com/rook/rook/blob/e305810/cluster/charts/rook-ceph/values.yaml
+csi:
+  enableCephfsDriver: false
+  enableCephfsSnapshotter: false
+  enableRBDSnapshotter: false
+enableDiscoveryDaemon: true
