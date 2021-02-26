@@ -862,7 +862,7 @@
 1,5,,,28636,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,A,Letter Grade,A+,Intro To Stoch Proc
 1,4,,,28671,Kristopher Swick; Purin Phanichphant,,Design Innovation,21,1,A,Letter Grade,A+,Vis Comm & Sketch
 1,2,,,28675,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,A,Letter Grade,A+,Linp & Netwrk Flows
-1,369,,,28679,Anindita Adhikari; Joseph Gonzalez,,Computer Science,C100,001,A,Letter Grade,A+,Princ&Tech Data Sci
+1,369,,,28679,Anindita Adhikari; Joseph Gonzalez,,"Data Science, Undergraduate",C100,001,A,Letter Grade,A+,Princ&Tech Data Sci
 1,13,,,28745,Gireeja Ranade,,Electrical Eng & Computer Sci,127,001,A,Letter Grade,A+,Optimization Models
 1,37,,,28753,Justin Hong; Kannan Ramchandran; William Gan,,Electrical Eng & Computer Sci,126,001,A,Letter Grade,A+,Prob & Random P
 1,7,,,28759,Ruzena Bajcsy; Sosale Sastry; Tiffany Cappellari; Valmik Prabhu,,Electrical Eng & Computer Sci,C106B,001,A,Letter Grade,A+,Robotic Manipulatio
@@ -2838,7 +2838,7 @@
 2,31,,,28636,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,A,Letter Grade,A,Intro To Stoch Proc
 2,23,,,28671,Kristopher Swick; Purin Phanichphant,,Design Innovation,21,1,A,Letter Grade,A,Vis Comm & Sketch
 2,11,,,28675,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,A,Letter Grade,A,Linp & Netwrk Flows
-2,162,,,28679,Anindita Adhikari; Joseph Gonzalez,,Computer Science,C100,001,A,Letter Grade,A,Princ&Tech Data Sci
+2,162,,,28679,Anindita Adhikari; Joseph Gonzalez,,"Data Science, Undergraduate",C100,001,A,Letter Grade,A,Princ&Tech Data Sci
 2,15,,,28735,Phillip Messersmith,,Materials Science & Eng,45,001,A,Letter Grade,A,Prop Of Matls
 2,1,,,28736,Amir Peyman Delparastan; Martin Siron; Phillip Messersmith,,Materials Science & Eng,45L,101,A,Letter Grade,A,Prop Of Mats L
 2,4,,,28737,Amir Peyman Delparastan; Martin Siron; Phillip Messersmith,,Materials Science & Eng,45L,102,A,Letter Grade,A,Prop Of Mats L
@@ -5291,7 +5291,7 @@
 4,2,,,28629,Hung Nguyen; Hung Nguyen; Stanislaus Tuholski; Stanislaus Tuholski,,Civil & Environmental Eng,180,001,B,Letter Grade,B+,Cee Systems Design
 4,2,,,28636,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,B,Letter Grade,B+,Intro To Stoch Proc
 4,7,,,28675,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,B,Letter Grade,B+,Linp & Netwrk Flows
-4,58,,,28679,Anindita Adhikari; Joseph Gonzalez,,Computer Science,C100,001,B,Letter Grade,B+,Princ&Tech Data Sci
+4,58,,,28679,Anindita Adhikari; Joseph Gonzalez,,"Data Science, Undergraduate",C100,001,B,Letter Grade,B+,Princ&Tech Data Sci
 4,3,,,28735,Phillip Messersmith,,Materials Science & Eng,45,001,B,Letter Grade,B+,Prop Of Matls
 4,2,,,28737,Amir Peyman Delparastan; Martin Siron; Phillip Messersmith,,Materials Science & Eng,45L,102,B,Letter Grade,B+,Prop Of Mats L
 4,3,,,28741,Francesco Borrelli,,Mechanical Engineering,131,001,B,Letter Grade,B+,Veh Dyn And Ctr
@@ -5967,7 +5967,7 @@
 5,1,,,28582,MASSIMILIANO FRATONI,,Nuclear Engineering,150,001,B,Letter Grade,B,Reactor Theory
 5,4,,,28636,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,B,Letter Grade,B,Intro To Stoch Proc
 5,2,,,28675,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,B,Letter Grade,B,Linp & Netwrk Flows
-5,13,,,28679,Anindita Adhikari; Joseph Gonzalez,,Computer Science,C100,001,B,Letter Grade,B,Princ&Tech Data Sci
+5,13,,,28679,Anindita Adhikari; Joseph Gonzalez,,"Data Science, Undergraduate",C100,001,B,Letter Grade,B,Princ&Tech Data Sci
 5,9,,,28735,Phillip Messersmith,,Materials Science & Eng,45,001,B,Letter Grade,B,Prop Of Matls
 5,1,,,28736,Amir Peyman Delparastan; Martin Siron; Phillip Messersmith,,Materials Science & Eng,45L,101,B,Letter Grade,B,Prop Of Mats L
 5,4,,,28737,Amir Peyman Delparastan; Martin Siron; Phillip Messersmith,,Materials Science & Eng,45L,102,B,Letter Grade,B,Prop Of Mats L
@@ -6507,7 +6507,7 @@
 7,2,,,28528,Stephen Morris,,Mechanical Engineering,104,001,C,Letter Grade,C+,Engr Mechanics Ii
 7,1,,,28534,Grace O'Connell,,Mechanical Engineering,108,001,C,Letter Grade,C+,Mech Beh Eng Matris
 7,2,,,28545,Christopher Dames,,Mechanical Engineering,109,001,C,Letter Grade,C+,Heat Transfer
-7,3,,,28679,Anindita Adhikari; Joseph Gonzalez,,Computer Science,C100,001,C,Letter Grade,C+,Princ&Tech Data Sci
+7,3,,,28679,Anindita Adhikari; Joseph Gonzalez,,"Data Science, Undergraduate",C100,001,C,Letter Grade,C+,Princ&Tech Data Sci
 7,1,,,29180,Mohammad Mofrad,,Bioengineering,C112,001,C,Letter Grade,C+,Molec Biomec Cell
 7,1,,,30327,Arman Shehabi,,Civil & Environmental Eng,107,001,C,Letter Grade,C+,Climate Chg Mitig
 7,1,,,30476,Amanda Jackson; Neelesh Ramachandran; Prabal Dutta; Samuel Chaim-Weismann; Sarika Madhvapathy; Thomas Courtade,,Electrical Eng & Computer Sci,16A,001,C,Letter Grade,C+,Design Info Dev I
@@ -6622,7 +6622,7 @@
 8,1,,,28481,Anna Waldo; Robert Leachman,,Industrial Eng & Ops Rsch,180,001,C,Letter Grade,C,Senior Project
 8,1,,,28506,Ivan Jayapurna; Ting Xu,,Materials Science & Eng,151,001,C,Letter Grade,C,Polymeric Materials
 8,1,,,28675,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,C,Letter Grade,C,Linp & Netwrk Flows
-8,1,,,28679,Anindita Adhikari; Joseph Gonzalez,,Computer Science,C100,001,C,Letter Grade,C,Princ&Tech Data Sci
+8,1,,,28679,Anindita Adhikari; Joseph Gonzalez,,"Data Science, Undergraduate",C100,001,C,Letter Grade,C,Princ&Tech Data Sci
 8,1,,,28735,Phillip Messersmith,,Materials Science & Eng,45,001,C,Letter Grade,C,Prop Of Matls
 8,1,,,28738,Amir Peyman Delparastan; Martin Siron; Phillip Messersmith,,Materials Science & Eng,45L,103,C,Letter Grade,C,Prop Of Mats L
 8,1,,,28739,Amir Peyman Delparastan; Martin Siron; Phillip Messersmith,,Materials Science & Eng,45L,104,C,Letter Grade,C,Prop Of Mats L
@@ -9678,7 +9678,7 @@
 22,48,,,28675,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,Credit,Non-Letter Grade,Pass,Linp & Netwrk Flows
 22,17,,,28677,Purin Phanichphant,,Design Innovation,198,2,Credit,Non-Letter Grade,Pass,Directed Group Stud
 22,11,,,28678,Purin Phanichphant,,Design Innovation,98,1,Credit,Non-Letter Grade,Pass,Directed Group Stud
-22,455,,,28679,Anindita Adhikari; Joseph Gonzalez,,Computer Science,C100,001,Credit,Non-Letter Grade,Pass,Princ&Tech Data Sci
+22,455,,,28679,Anindita Adhikari; Joseph Gonzalez,,"Data Science, Undergraduate",C100,001,Credit,Non-Letter Grade,Pass,Princ&Tech Data Sci
 22,4,,,28717,Carlos JImenez; Michael Riemer,,Civil & Environmental Eng,98,008,Credit,Non-Letter Grade,Pass,Directed Group Stdy
 22,3,,,28718,Carlos JImenez; Michael Riemer,,Civil & Environmental Eng,198,008,Credit,Non-Letter Grade,Pass,Directed Group Stdy
 22,9,,,28719,Mark Stacey,,Civil & Environmental Eng,198,009,Credit,Non-Letter Grade,Pass,Directed Group Stdy
@@ -11478,7 +11478,7 @@
 27,2,,,28560,Tarek Zohdi,,Mechanical Engineering,C180,001,No Credit,Non-Letter Grade,Not Pass,Eng Analyfinite Mth
 27,3,,,28675,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,No Credit,Non-Letter Grade,Not Pass,Linp & Netwrk Flows
 27,1,,,28678,Purin Phanichphant,,Design Innovation,98,1,No Credit,Non-Letter Grade,Not Pass,Directed Group Stud
-27,15,,,28679,Anindita Adhikari; Joseph Gonzalez,,Computer Science,C100,001,No Credit,Non-Letter Grade,Not Pass,Princ&Tech Data Sci
+27,15,,,28679,Anindita Adhikari; Joseph Gonzalez,,"Data Science, Undergraduate",C100,001,No Credit,Non-Letter Grade,Not Pass,Princ&Tech Data Sci
 27,3,,,28731,Joshua Hug,,Design Innovation,198,3,No Credit,Non-Letter Grade,Not Pass,Directed Group Stud
 27,3,,,28735,Phillip Messersmith,,Materials Science & Eng,45,001,No Credit,Non-Letter Grade,Not Pass,Prop Of Matls
 27,1,,,28738,Amir Peyman Delparastan; Martin Siron; Phillip Messersmith,,Materials Science & Eng,45L,103,No Credit,Non-Letter Grade,Not Pass,Prop Of Mats L
@@ -13146,7 +13146,7 @@
 34,1,,,28675,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,Administrative Code,Administrative Code,Withdrawn,Linp & Netwrk Flows
 34,1,,,28677,Purin Phanichphant,,Design Innovation,198,2,Administrative Code,Administrative Code,Withdrawn,Directed Group Stud
 34,2,,,28678,Purin Phanichphant,,Design Innovation,98,1,Administrative Code,Administrative Code,Withdrawn,Directed Group Stud
-34,24,,,28679,Anindita Adhikari; Joseph Gonzalez,,Computer Science,C100,001,Administrative Code,Administrative Code,Withdrawn,Princ&Tech Data Sci
+34,24,,,28679,Anindita Adhikari; Joseph Gonzalez,,"Data Science, Undergraduate",C100,001,Administrative Code,Administrative Code,Withdrawn,Princ&Tech Data Sci
 34,1,,,28731,Joshua Hug,,Design Innovation,198,3,Administrative Code,Administrative Code,Withdrawn,Directed Group Stud
 34,2,,,28735,Phillip Messersmith,,Materials Science & Eng,45,001,Administrative Code,Administrative Code,Withdrawn,Prop Of Matls
 34,1,,,28737,Amir Peyman Delparastan; Martin Siron; Phillip Messersmith,,Materials Science & Eng,45L,102,Administrative Code,Administrative Code,Withdrawn,Prop Of Mats L
@@ -15993,8 +15993,8 @@
 ,2,,,28776,Amay Saxena; Valmik Prabhu,,Bioengineering,C106B,102,Unknown,Unknown,Unknown,Robotic Manipulatio
 ,52,,,28783,Kourosh Youssefi; Maria Echeverria Molina,,Engineering,26,103,Unknown,Unknown,Unknown,3 Dimen Mod Des
 ,22,,,28791,Joel Given,,Civil & Environmental Eng,175,101,Unknown,Unknown,Unknown,Geot Geoenv Engrg
-,1100,,,28826,-,,Computer Science,C100,999L,Unknown,Unknown,Unknown,Princ&Tech Data Sci
-,1100,,,28841,Allen Shen; Andy Sheu; Chia-yin Shih; Christopher Pyles; Daniel Zhu; David Yi; Dequan Wang; Devin Petersohn; Frances McQuarrie; Haihan Yu; Ishaan Srivastava; Jake Singleton; Japjot Singh; Jiayue Yang; Kunal Agarwal; Manana Hakobyan; Maya Shen; Pranav Nagarajan; Raguvir Kunani; Rahul Jain; Rami Mostafa; Ruizhe Cheng; Samir Naqvi; Shrishti Jeswani; Sophia Phillips; Suraj Rampure; Vikram Sreekanti; William Huang; Yifan Wu; Yimeng Wang; Yuqiao Shao,,Computer Science,C100,999,Unknown,Unknown,Unknown,Princ&Tech Data Sci
+,1100,,,28826,-,,"Data Science, Undergraduate",C100,999L,Unknown,Unknown,Unknown,Princ&Tech Data Sci
+,1100,,,28841,Allen Shen; Andy Sheu; Chia-yin Shih; Christopher Pyles; Daniel Zhu; David Yi; Dequan Wang; Devin Petersohn; Frances McQuarrie; Haihan Yu; Ishaan Srivastava; Jake Singleton; Japjot Singh; Jiayue Yang; Kunal Agarwal; Manana Hakobyan; Maya Shen; Pranav Nagarajan; Raguvir Kunani; Rahul Jain; Rami Mostafa; Ruizhe Cheng; Samir Naqvi; Shrishti Jeswani; Sophia Phillips; Suraj Rampure; Vikram Sreekanti; William Huang; Yifan Wu; Yimeng Wang; Yuqiao Shao,,"Data Science, Undergraduate",C100,999,Unknown,Unknown,Unknown,Princ&Tech Data Sci
 ,5,,,28842,-,,Mechanical Engineering,170,102,Unknown,Unknown,Unknown,Engr Mech Iii
 ,31,,,28849,Albert Ou,,Computer Science,152,101,Unknown,Unknown,Unknown,Comp Arch & Eng
 ,26,,,28851,Han Liu,,Civil & Environmental Eng,120,102,Unknown,Unknown,Unknown,Structural Engrg
