@@ -12,25 +12,30 @@ from django.contrib.auth.models import User
 from scheduler.models import Schedule, TimeBlock, SectionSelection
 from catalog.models import Course, Section
 
+
 class TimeBlockType(DjangoObjectType):
     class Meta:
         model = TimeBlock
         interfaces = (graphene.Node, )
+
 
 class SectionSelectionType(DjangoObjectType):
     class Meta:
         model = SectionSelection
         interfaces = (graphene.Node, )
 
+
 class ScheduleType(DjangoObjectType):
     class Meta:
         model = Schedule
         interfaces = (graphene.Node, )
 
+
 class SectionSelectionInput(graphene.InputObjectType):
     course = graphene.ID(required=True)
     primary = graphene.ID(required=False)
     secondary = graphene.List(graphene.ID, required=False)
+
 
 class TimeBlockInput(graphene.InputObjectType):
     name = graphene.String(required=True)
@@ -41,7 +46,7 @@ class TimeBlockInput(graphene.InputObjectType):
 
 def forceInt(value):
     """
-    Returns integer casted from string VALUE
+    Returns integer casted from string value
     Also forces float strings into ints since some units are formatted as 3.0
     """
     try:
@@ -243,6 +248,7 @@ class Query(graphene.ObjectType):
         # return None
         # testing:
         return User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser.schedules.all()
+
 
 class Mutation(graphene.ObjectType):
     create_schedule = CreateSchedule.Field()
