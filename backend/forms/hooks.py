@@ -23,7 +23,7 @@ def auto_github_issue(response, hook_config):
     This hook posts a github issue after a response is received. It titles the issue with
     either hook_config['title'] or the response submitted to the question hook_config['question'].
     """
-    ghToken = '***REMOVED***'
+    ghToken = os.getenv('GITHUB_TOKEN')
     ghURL = 'https://api.github.com/repos/asuc-octo/berkeleytime/issues?access_token='
 
     payload = {

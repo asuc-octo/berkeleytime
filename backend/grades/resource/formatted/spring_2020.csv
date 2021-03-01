@@ -379,7 +379,7 @@ COMPSCI,61C,28234,001,Machine Structures,Nicholas Weaver; Sayan Paul; Stephan Ka
 COMPSCI,70,28259,001,Discrete Math&Prob,Anant Sahai; Babak Ayazifar,under,6,135,16,32,14,5,0,2,0,0,0,0,0,351,34
 COMPSCI,88,29260,001,Cs Struct Data Sci,Alexander Kassil; Brian Mi; Gerald Friedland; Julia Yu; Michael Ball,under,14,10,7,6,4,4,0,0,0,0,0,0,0,126,3
 COMPSCI,88,33153,002,Cs Struct Data Sci,Gerald Friedland; Michael Ball,under,11,6,8,3,1,1,0,0,0,0,0,0,0,50,3
-COMPSCI,C100,28679,001,Princ&Tech Data Sci,Anindita Adhikari; Joseph Gonzalez,under,369,162,0,58,13,0,3,1,0,0,0,0,0,455,15
+DATA,C100,28679,001,Princ&Tech Data Sci,Anindita Adhikari; Joseph Gonzalez,under,369,162,0,58,13,0,3,1,0,0,0,0,0,455,15
 COMPSCI,L182,31264,001,Neural Networks,John Canny,under,6,4,3,0,0,0,0,0,0,0,0,0,0,33,1
 COMPSCI,W182,32842,001,Neural Networks,John Canny,under,20,22,14,7,1,2,1,0,0,0,0,0,0,142,4
 COMPSCI,W186,24246,001,Intro To Database,Ethan Shang; Joshua Hug; Michael Ball,under,15,124,17,9,9,0,0,0,1,0,1,0,2,279,27

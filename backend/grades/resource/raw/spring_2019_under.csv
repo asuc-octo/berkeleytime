@@ -906,7 +906,7 @@
 1,7,,,28472,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,A,Letter Grade,A+,Intro To Stoch Proc
 1,6,,,28530,Purin Phanichphant; Tara Shi,,Design Innovation,21,1,A,Letter Grade,A+,Vis Comm & Sketch
 1,6,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,A,Letter Grade,A+,Linp & Netwrk Flows
-1,33,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,A,Letter Grade,A+,Princ&Tech Data Sci
+1,33,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,A,Letter Grade,A+,Princ&Tech Data Sci
 1,7,,,28579,Kenneth Sandy,,Industrial Eng & Ops Rsch,186,001,A,Letter Grade,A+,Product Management
 1,17,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,A,Letter Grade,A+,Prop Of Matls
 1,3,,,28621,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,101,A,Letter Grade,A+,Prop Of Mats L
@@ -2986,7 +2986,7 @@
 2,21,,,28472,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,A,Letter Grade,A,Intro To Stoch Proc
 2,10,,,28530,Purin Phanichphant; Tara Shi,,Design Innovation,21,1,A,Letter Grade,A,Vis Comm & Sketch
 2,23,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,A,Letter Grade,A,Linp & Netwrk Flows
-2,166,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,A,Letter Grade,A,Princ&Tech Data Sci
+2,166,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,A,Letter Grade,A,Princ&Tech Data Sci
 2,17,,,28579,Kenneth Sandy,,Industrial Eng & Ops Rsch,186,001,A,Letter Grade,A,Product Management
 2,27,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,A,Letter Grade,A,Prop Of Matls
 2,2,,,28621,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,101,A,Letter Grade,A,Prop Of Mats L
@@ -4886,7 +4886,7 @@
 3,15,,,28472,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,A,Letter Grade,A-,Intro To Stoch Proc
 3,13,,,28530,Purin Phanichphant; Tara Shi,,Design Innovation,21,1,A,Letter Grade,A-,Vis Comm & Sketch
 3,11,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,A,Letter Grade,A-,Linp & Netwrk Flows
-3,135,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,A,Letter Grade,A-,Princ&Tech Data Sci
+3,135,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,A,Letter Grade,A-,Princ&Tech Data Sci
 3,14,,,28579,Kenneth Sandy,,Industrial Eng & Ops Rsch,186,001,A,Letter Grade,A-,Product Management
 3,14,,,28628,Francesco Borrelli,,Mechanical Engineering,131,001,A,Letter Grade,A-,Veh Dyn And Ctr
 3,11,,,28645,Alexandre Bayen; Gireeja Ranade,,Electrical Eng & Computer Sci,127,001,A,Letter Grade,A-,Optimization Models
@@ -6437,7 +6437,7 @@
 4,15,,,28472,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,B,Letter Grade,B+,Intro To Stoch Proc
 4,1,,,28530,Purin Phanichphant; Tara Shi,,Design Innovation,21,1,B,Letter Grade,B+,Vis Comm & Sketch
 4,12,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,B,Letter Grade,B+,Linp & Netwrk Flows
-4,136,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,B,Letter Grade,B+,Princ&Tech Data Sci
+4,136,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,B,Letter Grade,B+,Princ&Tech Data Sci
 4,3,,,28579,Kenneth Sandy,,Industrial Eng & Ops Rsch,186,001,B,Letter Grade,B+,Product Management
 4,11,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,B,Letter Grade,B+,Prop Of Matls
 4,1,,,28621,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,101,B,Letter Grade,B+,Prop Of Mats L
@@ -7800,7 +7800,7 @@
 5,18,,,28472,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,B,Letter Grade,B,Intro To Stoch Proc
 5,1,,,28530,Purin Phanichphant; Tara Shi,,Design Innovation,21,1,B,Letter Grade,B,Vis Comm & Sketch
 5,10,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,B,Letter Grade,B,Linp & Netwrk Flows
-5,99,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,B,Letter Grade,B,Princ&Tech Data Sci
+5,99,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,B,Letter Grade,B,Princ&Tech Data Sci
 5,2,,,28579,Kenneth Sandy,,Industrial Eng & Ops Rsch,186,001,B,Letter Grade,B,Product Management
 5,37,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,B,Letter Grade,B,Prop Of Matls
 5,4,,,28621,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,101,B,Letter Grade,B,Prop Of Mats L
@@ -8885,7 +8885,7 @@
 6,1,,,28451,Khalid Kadir,,Engineering,157AC,001,B,Letter Grade,B-,"Eng,Envrn & Society"
 6,9,,,28472,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,B,Letter Grade,B-,Intro To Stoch Proc
 6,1,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,B,Letter Grade,B-,Linp & Netwrk Flows
-6,97,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,B,Letter Grade,B-,Princ&Tech Data Sci
+6,97,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,B,Letter Grade,B-,Princ&Tech Data Sci
 6,3,,,28645,Alexandre Bayen; Gireeja Ranade,,Electrical Eng & Computer Sci,127,001,B,Letter Grade,B-,Optimization Models
 6,8,,,28653,Kannan Ramchandran,,Electrical Eng & Computer Sci,126,001,B,Letter Grade,B-,Prob & Random P
 6,3,,,28660,Carisa Harris-Adamson; Marie Elimbi Moudio; Nathan Poon,,Industrial Eng & Ops Rsch,170,001,B,Letter Grade,B-,Ind Des Human Fact
@@ -9658,7 +9658,7 @@
 7,1,,,28383,James Casey,,Mechanical Engineering,170,001,C,Letter Grade,C+,Engr Mech Iii
 7,1,,,28403,Kai Vetter,,Nuclear Engineering,104,001,C,Letter Grade,C+,Rad Detection Lab
 7,3,,,28407,Jasmina Vujic,,Nuclear Engineering,150,001,C,Letter Grade,C+,Reactor Theory
-7,55,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,C,Letter Grade,C+,Princ&Tech Data Sci
+7,55,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,C,Letter Grade,C+,Princ&Tech Data Sci
 7,3,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,C,Letter Grade,C+,Prop Of Matls
 7,1,,,28621,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,101,C,Letter Grade,C+,Prop Of Mats L
 7,1,,,28622,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,102,C,Letter Grade,C+,Prop Of Mats L
@@ -10321,7 +10321,7 @@
 8,3,,,28365,CARLOS Fernandez-Pello,,Mechanical Engineering,109,001,C,Letter Grade,C,Heat Transfer
 8,4,,,28384,Sanjay Govindjee,,Mechanical Engineering,C180,001,C,Letter Grade,C,Eng Analyfinite Mth
 8,1,,,28407,Jasmina Vujic,,Nuclear Engineering,150,001,C,Letter Grade,C,Reactor Theory
-8,29,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,C,Letter Grade,C,Princ&Tech Data Sci
+8,29,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,C,Letter Grade,C,Princ&Tech Data Sci
 8,11,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,C,Letter Grade,C,Prop Of Matls
 8,1,,,28621,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,101,C,Letter Grade,C,Prop Of Mats L
 8,1,,,28622,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,102,C,Letter Grade,C,Prop Of Mats L
@@ -10849,7 +10849,7 @@
 9,1,,,28412,MASSIMILIANO FRATONI,,Nuclear Engineering,170A,001,C,Letter Grade,C-,Nuclear Design
 9,1,,,28472,Zeyu Zheng,,Industrial Eng & Ops Rsch,173,001,C,Letter Grade,C-,Intro To Stoch Proc
 9,1,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,C,Letter Grade,C-,Linp & Netwrk Flows
-9,22,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,C,Letter Grade,C-,Princ&Tech Data Sci
+9,22,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,C,Letter Grade,C-,Princ&Tech Data Sci
 9,1,,,28645,Alexandre Bayen; Gireeja Ranade,,Electrical Eng & Computer Sci,127,001,C,Letter Grade,C-,Optimization Models
 9,1,,,28653,Kannan Ramchandran,,Electrical Eng & Computer Sci,126,001,C,Letter Grade,C-,Prob & Random P
 9,3,,,28775,Krste Asanovic,,Computer Science,152,001,C,Letter Grade,C-,Comp Arch & Eng
@@ -11038,7 +11038,7 @@
 10,1,,,28326,Christopher Dames,,Mechanical Engineering,40,001,D,Letter Grade,D+,Thermodynamics
 10,2,,,28354,Kyriakos Komvopoulos,,Mechanical Engineering,108,001,D,Letter Grade,D+,Mech Beh Eng Matris
 10,1,,,28384,Sanjay Govindjee,,Mechanical Engineering,C180,001,D,Letter Grade,D+,Eng Analyfinite Mth
-10,5,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,D,Letter Grade,D+,Princ&Tech Data Sci
+10,5,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,D,Letter Grade,D+,Princ&Tech Data Sci
 10,2,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,D,Letter Grade,D+,Prop Of Matls
 10,1,,,29424,Geoffrey Nunberg; Paul Duguid,,Information,103,001,D,Letter Grade,D+,History Of Info
 10,4,,,29640,Bethany Lee; Katie Marker; Lisa Barcellos; Mahasin Mujahid; Mary Horton; Molly West; Moon Choi; Rachel Berkowitz,,Public Health,150A,001,D,Letter Grade,D+,Intr Epidem Hum Dis
@@ -11271,7 +11271,7 @@
 11,2,,,28330,Francisco Armero,,Mechanical Engineering,C85,002,D,Letter Grade,D,Intro Solid Mechncs
 11,4,,,28342,Mark Mueller,,Mechanical Engineering,104,001,D,Letter Grade,D,Engr Mechanics Ii
 11,1,,,28345,Stephen Morris,,Mechanical Engineering,106,001,D,Letter Grade,D,Fluid Mechanics
-11,5,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,D,Letter Grade,D,Princ&Tech Data Sci
+11,5,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,D,Letter Grade,D,Princ&Tech Data Sci
 11,5,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,D,Letter Grade,D,Prop Of Matls
 11,1,,,28621,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,101,D,Letter Grade,D,Prop Of Mats L
 11,1,,,28623,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,103,D,Letter Grade,D,Prop Of Mats L
@@ -11412,7 +11412,7 @@
 12,3,,,28076,Jonathan Shewchuk,,Computer Science,189,001,D,Letter Grade,D-,Intro Machine Learn
 12,1,,,28098,John Wawrzynek,,Electrical Eng & Computer Sci,151,001,D,Letter Grade,D-,Intro Dig Inte Cir
 12,3,,,28326,Christopher Dames,,Mechanical Engineering,40,001,D,Letter Grade,D-,Thermodynamics
-12,3,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,D,Letter Grade,D-,Princ&Tech Data Sci
+12,3,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,D,Letter Grade,D-,Princ&Tech Data Sci
 12,1,,,29424,Geoffrey Nunberg; Paul Duguid,,Information,103,001,D,Letter Grade,D-,History Of Info
 12,1,,,29640,Bethany Lee; Katie Marker; Lisa Barcellos; Mahasin Mujahid; Mary Horton; Molly West; Moon Choi; Rachel Berkowitz,,Public Health,150A,001,D,Letter Grade,D-,Intr Epidem Hum Dis
 12,1,,,29793,Neil Gilbert,,Social Welfare,112,001,D,Letter Grade,D-,Soc Welfare Policy
@@ -11812,7 +11812,7 @@
 13,1,,,28354,Kyriakos Komvopoulos,,Mechanical Engineering,108,001,F,Letter Grade,F,Mech Beh Eng Matris
 13,1,,,28451,Khalid Kadir,,Engineering,157AC,001,F,Letter Grade,F,"Eng,Envrn & Society"
 13,1,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,F,Letter Grade,F,Linp & Netwrk Flows
-13,14,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,F,Letter Grade,F,Princ&Tech Data Sci
+13,14,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,F,Letter Grade,F,Princ&Tech Data Sci
 13,1,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,F,Letter Grade,F,Prop Of Matls
 13,3,,,28645,Alexandre Bayen; Gireeja Ranade,,Electrical Eng & Computer Sci,127,001,F,Letter Grade,F,Optimization Models
 13,3,,,28653,Kannan Ramchandran,,Electrical Eng & Computer Sci,126,001,F,Letter Grade,F,Prob & Random P
@@ -13943,7 +13943,7 @@
 22,1,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,Credit,Non-Letter Grade,Pass,Linp & Netwrk Flows
 22,88,,,28543,Bjorn Hartmann,,Design Innovation,198,2,Credit,Non-Letter Grade,Pass,Directed Group Stud
 22,27,,,28544,Alice Agogino,,Design Innovation,98,1,Credit,Non-Letter Grade,Pass,
-22,52,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,Credit,Non-Letter Grade,Pass,Princ&Tech Data Sci
+22,52,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,Credit,Non-Letter Grade,Pass,Princ&Tech Data Sci
 22,14,,,28615,Sara Beckman,,Design Innovation,198,3,Credit,Non-Letter Grade,Pass,Directed Group Stud
 22,13,,,28617,Michael Cassidy,,Civil & Environmental Eng,198,011,Credit,Non-Letter Grade,Pass,Directed Group Stdy
 22,2,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,Credit,Non-Letter Grade,Pass,Prop Of Matls
@@ -15347,7 +15347,7 @@
 27,1,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,No Credit,Non-Letter Grade,Not Pass,Linp & Netwrk Flows
 27,9,,,28543,Bjorn Hartmann,,Design Innovation,198,2,No Credit,Non-Letter Grade,Not Pass,Directed Group Stud
 27,4,,,28544,Alice Agogino,,Design Innovation,98,1,No Credit,Non-Letter Grade,Not Pass,
-27,3,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,No Credit,Non-Letter Grade,Not Pass,Princ&Tech Data Sci
+27,3,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,No Credit,Non-Letter Grade,Not Pass,Princ&Tech Data Sci
 27,4,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,No Credit,Non-Letter Grade,Not Pass,Prop Of Matls
 27,1,,,28625,Marcel Kristel,,Mechanical Engineering,191K,002,No Credit,Non-Letter Grade,Not Pass,Prof Communication
 27,3,,,28645,Alexandre Bayen; Gireeja Ranade,,Electrical Eng & Computer Sci,127,001,No Credit,Non-Letter Grade,Not Pass,Optimization Models
@@ -15880,7 +15880,7 @@
 30,1,,,28411,Rebecca Abergel,,Nuclear Engineering,162,001,Administrative Code,Administrative Code,Incomplete,Rad Biophys And Dos
 30,1,,,28451,Khalid Kadir,,Engineering,157AC,001,Administrative Code,Administrative Code,Incomplete,"Eng,Envrn & Society"
 30,4,,,28530,Purin Phanichphant; Tara Shi,,Design Innovation,21,1,Administrative Code,Administrative Code,Incomplete,Vis Comm & Sketch
-30,4,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,Administrative Code,Administrative Code,Incomplete,Princ&Tech Data Sci
+30,4,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,Administrative Code,Administrative Code,Incomplete,Princ&Tech Data Sci
 30,1,,,28615,Sara Beckman,,Design Innovation,198,3,Administrative Code,Administrative Code,Incomplete,Directed Group Stud
 30,1,,,28623,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,103,Administrative Code,Administrative Code,Incomplete,Prop Of Mats L
 30,5,,,28653,Kannan Ramchandran,,Electrical Eng & Computer Sci,126,001,Administrative Code,Administrative Code,Incomplete,Prob & Random P
@@ -16926,7 +16926,7 @@
 34,2,,,28530,Purin Phanichphant; Tara Shi,,Design Innovation,21,1,Administrative Code,Administrative Code,Withdrawn,Vis Comm & Sketch
 34,3,,,28539,Dorit Hochbaum,,Industrial Eng & Ops Rsch,162,001,Administrative Code,Administrative Code,Withdrawn,Linp & Netwrk Flows
 34,2,,,28543,Bjorn Hartmann,,Design Innovation,198,2,Administrative Code,Administrative Code,Withdrawn,Directed Group Stud
-34,13,,,28558,John DeNero; Sandrine Dudoit,,Computer Science,C100,001,Administrative Code,Administrative Code,Withdrawn,Princ&Tech Data Sci
+34,13,,,28558,John DeNero; Sandrine Dudoit,,"Data Science, Undergraduate",C100,001,Administrative Code,Administrative Code,Withdrawn,Princ&Tech Data Sci
 34,3,,,28620,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45,001,Administrative Code,Administrative Code,Withdrawn,Prop Of Matls
 34,2,,,28624,Eduardo Lupi Sosa; Lane Martin; Matin Amani,,Materials Science & Eng,45L,104,Administrative Code,Administrative Code,Withdrawn,Prop Of Mats L
 34,1,,,28625,Marcel Kristel,,Mechanical Engineering,191K,002,Administrative Code,Administrative Code,Withdrawn,Prof Communication
