@@ -35,6 +35,8 @@ import vihan_1 from 'assets/img/about/2020-21/vihan_1.jpg';
 import vihan_2 from 'assets/img/about/2020-21/vihan_1.jpg';
 import michael_1 from 'assets/img/about/2020-21/michael_1.jpg';
 import michael_2 from 'assets/img/about/2020-21/michael_2.jpg';
+import danji_1 from 'assets/img/about/2020-21/danji_1.png';
+import danji_2 from 'assets/img/about/2020-21/danji_2.png';
 
 const contributors = [
   [
@@ -72,11 +74,11 @@ const contributors = [
       silly_img: leon_2,
     },
     {
-      name: 'Janet Xu',
+      name: 'Annie Pan',
       role: 'Design Lead',
-      site: 'https://janetxrm.github.io',
-      img: janet_1,
-      silly_img: janet_2,
+      site: 'http://anniexpan.com',
+      img: annie_1,
+      silly_img: annie_2,
     },
   ],
   [
@@ -111,36 +113,6 @@ const contributors = [
   ],
   [
     {
-      name: 'Annie Pan',
-      role: 'Marketing Director',
-      site: 'https://anniexpan.com',
-      img: annie_1,
-      silly_img: annie_2,
-    },
-    {
-      name: 'Hannah Yan',
-      role: 'Designer',
-      site: 'https://www.linkedin.com/in/yanhannah',
-      img: hannah_1,
-      silly_img: hannah_2,
-    },
-    {
-      name: 'Junghyun Choy',
-      role: 'Designer',
-      site: '',
-      img: junghyun_1,
-      silly_img: junghyun_2,
-    },
-    {
-      name: 'Michael Li',
-      role: 'Advisor',
-      site: 'http://www.michaelli.me',
-      img: michael_1,
-      silly_img: michael_2,
-    },
-  ],
-  [
-    {
       name: 'Christina Shao',
       role: 'Frontend Engineer',
       site: 'https://christinashao.github.io/',
@@ -160,6 +132,36 @@ const contributors = [
       site: 'https://vihan.org',
       img: vihan_1,
       silly_img: vihan_2,
+    },
+    {
+      name: 'Michael Li',
+      role: 'Advisor',
+      site: 'http://www.michaelli.me',
+      img: michael_1,
+      silly_img: michael_2,
+    },
+  ],
+  [
+    {
+      name: 'Hannah Yan',
+      role: 'Designer',
+      site: 'https://www.linkedin.com/in/yanhannah',
+      img: hannah_1,
+      silly_img: hannah_2,
+    },
+    {
+      name: 'Junghyun Choy',
+      role: 'Designer',
+      site: '',
+      img: junghyun_1,
+      silly_img: junghyun_2,
+    },
+    {
+      name: 'Danji Liu',
+      role: 'Designer',
+      site: 'https://www.linkedin.com/in/danji-liu/',
+      img: danji_1,
+      silly_img: danji_2,
     },
   ],
 ];
