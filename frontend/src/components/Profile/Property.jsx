@@ -62,7 +62,6 @@ class Property extends PureComponent {
     return (
       <div className="profile-row">
         <p className="personal-attribute">{attribute}</p>
-
         {body}
       </div>
     );
