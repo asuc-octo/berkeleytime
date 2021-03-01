@@ -20,7 +20,7 @@ class SectionMapper:
                 'ccn': str(data['id']),
                 'kind': data['component']['description'],
             }
-            section_dict.update(self.get_is_primary(data=data))
+            section_dict.update(self.get_association(data=data))
             section_dict.update(self.get_datetime(data=data))
             section_dict.update(self.get_finals(section_dict, extras))
             section_dict.update(self.get_instructor(data=data))
@@ -48,12 +48,13 @@ class SectionMapper:
         }
         return kwargs
 
-    def get_is_primary(self, data):
+    def get_association(self, data):
         """Get primary/secondary for a single section."""
-        is_primary = data['association']['primary']
+        association = data.get('association', {})
 
         return {
-            'is_primary': is_primary is True,
+            'is_primary': association.get('primary', False) is True,
+            'primary_section': association.get('primaryAssociatedSectionId')
         }
 
     def _get_meeting(self, data):

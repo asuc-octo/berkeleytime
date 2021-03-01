@@ -100,6 +100,7 @@ INSTALLED_APPS = [
     'forms',
     'user',
     'graphene_django',
+    'scheduler'
 ]
 
 # Middlewares
