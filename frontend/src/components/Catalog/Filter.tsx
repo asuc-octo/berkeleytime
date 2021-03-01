@@ -20,6 +20,7 @@ import {
 import { CourseSortAttribute } from 'utils/courses/sorting';
 
 import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg';
+import BTInput from 'components/Custom/Input';
 
 type Props = {
   filters: Filters;
@@ -118,13 +119,13 @@ const FilterSidebar = ({
         </button>
       </div>
       <div className="filter-search">
-        <input
+        <BTInput
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           type="search"
           placeholder="Search for a class..."
+          icon={<SearchIcon />}
         />
-        <SearchIcon />
       </div>
       <div className="filter-sort">
         <BTSelect
