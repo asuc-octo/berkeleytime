@@ -74,7 +74,7 @@ if IS_LOCALHOST:
     EMAIL_HOST_USER = ''
     EMAIL_HOST_PASSWORD = ''
     EMAIL_USE_TLS = False
-    DEFAULT_FROM_EMAIL = os.getenv('GOOGLE_EMAIL')
+    DEFAULT_FROM_EMAIL = f'Berkeleytime <{os.getenv("GOOGLE_EMAIL")}>'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.sendgrid.net'
