@@ -85,7 +85,7 @@ const contributors = [
     {
       name: 'Hiroshi Usui',
       role: 'Infrastructure Engineer',
-      site: '',
+      site: 'https://2se.xyz',
       img: hiroshi_1,
       silly_img: hiroshi_2,
     },
