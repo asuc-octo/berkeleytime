@@ -125,7 +125,9 @@ class SectionService:
                 year=section_dict['year'],
                 section_number=section_dict['section_number'],
                 kind=section_dict['kind'],
-                defaults=section_dict,
+                defaults={
+                    key: section_dict[key] for key in section_dict if key != 'primary_section'
+                },
             )
 
             if section_dict['primary_section']:
