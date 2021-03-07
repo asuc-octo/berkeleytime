@@ -51,7 +51,7 @@ class CourseMapper:
             abbreviation = utils.department_to_abbreviation(department)
         else:
             abbreviation, department = raw_abbreviation, raw_department
-            unknown_departments.append((abbreviation, department))
+            unknown_departments.add((abbreviation, department))
 
         return {
             'abbreviation': abbreviation,
