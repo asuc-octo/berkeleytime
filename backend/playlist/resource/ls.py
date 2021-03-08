@@ -158,7 +158,7 @@ class LSResource(object):
             print("Finished fetching " + str(page_num-1) + "pages. Status code: " + str(response.status_code))
             return False
         for section in response.json()['apiResponse']['response']['classSections']:
-            course_abbrv = course_mapper.get_abbreviation_and_department(section['class']['course'], unknown_departments=[])['abbreviation']
+            course_abbrv = course_mapper.get_abbreviation_and_department(section['class']['course'])['abbreviation']
             course_number = section['class']['course']['catalogNumber']['formatted']
             if 'sectionAttributes' in section:
                 for attr in section['sectionAttributes']:
