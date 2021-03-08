@@ -27,6 +27,7 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        print('Running python3 manage.py course')
         course_service.update(
             page_number=options['page_number'],
             page_size=options['page_size']
