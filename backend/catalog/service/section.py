@@ -139,9 +139,10 @@ class SectionService:
                     section_number=section_dict['primary_section']
                 )
 
-                for s in primary_obj.associated_sections.all():
-                    section_obj.associated_sections.add(s)
-                    s.associated_sections.add(section_obj)
+                # Is this necessary? Might be really inefficient
+                # for s in primary_obj.associated_sections.all():
+                #     section_obj.associated_sections.add(s)
+                #     s.associated_sections.add(section_obj)
 
                 primary_obj.associated_sections.add(section_obj)
                 section_obj.associated_sections.add(primary_obj)
