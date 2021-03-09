@@ -2,6 +2,7 @@
 import os
 import sys
 import time
+from collections import defaultdict
 from multiprocessing.pool import ThreadPool
 
 from berkeleytime.utils import AtomicInteger, BColors
@@ -71,6 +72,7 @@ class SectionService:
         )
 
         updated_section_ids = set()
+        primary_sect_id_to_sections = defaultdict(list)
 
         # Map response to Section and Enrollment objects and persist to database
         section_extras = {
@@ -81,15 +83,30 @@ class SectionService:
             'year': year,
         }
         for sect in response:
+            if not sect:
+                continue
             section_dict = section_mapper.map(sect, extras=section_extras)
             section, created = self.update_or_create_from_dict(section_dict)
             if not section:
                 continue
+
+            updated_section_ids.add(section.id)
+
+            if section_dict['primary_section']:
+                primary_sect_id_to_sections[section_dict['primary_section']].append(section)
+
+            # Update enrollment
             if semester != 'summer' and section.is_primary and not section.disabled:
                 enrollment_dict = enrollment_mapper.map(sect, extras={'section_id': section.id})
                 enrollment_service.update_or_create_from_dict(enrollment_dict)
 
-            updated_section_ids.add(section.id)
+        # Add associations between primary and non-primary sections
+        for related_sections in primary_sect_id_to_sections.values():
+            primary_section = [s for s in related_sections if s.is_primary][0]
+            other_sections = [s for s in related_sections if not s.is_primary]
+            primary_section.associated_sections.add(*other_sections)
+            for section in related_sections:
+                section.save()
 
         if len(updated_section_ids) > 0:
             print({
@@ -129,23 +146,6 @@ class SectionService:
                     key: section_dict[key] for key in section_dict if key != 'primary_section'
                 },
             )
-
-            if section_dict['primary_section']:
-                primary_obj, _ = Section.objects.get_or_create(
-                    is_primary=True,
-                    course_id=section_dict['course_id'],
-                    semester=section_dict['semester'],
-                    year=section_dict['year'],
-                    section_number=section_dict['primary_section']
-                )
-
-                # Is this necessary? Might be really inefficient
-                # for s in primary_obj.associated_sections.all():
-                #     section_obj.associated_sections.add(s)
-                #     s.associated_sections.add(section_obj)
-
-                primary_obj.associated_sections.add(section_obj)
-                section_obj.associated_sections.add(primary_obj)
 
             print({
                 'message': 'Created/updated section object',
