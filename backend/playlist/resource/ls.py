@@ -150,7 +150,7 @@ class LSResource(object):
         try:
             response = requests.get(self.url % (term_id, page_num), headers=self.headers, timeout=10.0)
         except Exception as e:
-            print("Exception fetching class section data from SIS: " + e.message)
+            print("Exception fetching class section data from SIS: ", e)
             return False
         if response.status_code != 200:
             if page_num == 1:
