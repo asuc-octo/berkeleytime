@@ -10,6 +10,7 @@ import {
 
 import MAJORS from './majors.json';
 import { useUpdateUser } from '../../graphql/hooks/user';
+import { useUnsaveCourse } from '../../graphql/hooks/saveCourse';
 import { compareDepartmentName } from 'utils/courses/sorting';
 import { Button } from 'react-bootstrap';
 import Subview from './Subview';
@@ -92,6 +93,7 @@ const AccountSubview = ({ userProfile }: Props) => {
                   removable={removable}
                   key={course.id}
                   course={course}
+                  remove={useUnsaveCourse}
                 />
               ))}
             </div>
