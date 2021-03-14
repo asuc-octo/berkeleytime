@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Button, ButtonGroup, ButtonToolbar, Col, Row } from 'react-bootstrap';
+import BTLoader from 'components/Common/BTLoader';
+import Welcome from 'components/Scheduler/BuildSchedule/Welcome';
 import CourseSelector from 'components/Scheduler/CourseSelector';
 
 import { useGetCoursesForFilterQuery } from '../../graphql/graphql';
-import BTLoader from 'components/Common/BTLoader';
 import useLatestSemester from 'graphql/hooks/latestSemester';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
@@ -15,6 +16,8 @@ import {
 } from 'utils/courses/units';
 
 const Scheduler = () => {
+  const [pageIndex, setPageIndex] = useState(0);
+
   const {
     semester: latestSemester,
     error: semesterError,
@@ -59,7 +62,9 @@ const Scheduler = () => {
 
   return (
     <div className="scheduler viewport-app">
-      <Row noGutters>
+      <Welcome updatePage={setPageIndex}/>
+
+      {/* <Row noGutters>
         <Col md={4} lg={4} xl={4}>
           <CourseSelector
             allCourses={allCourses}
@@ -88,7 +93,7 @@ const Scheduler = () => {
           </div>
           <SchedulerCalendar schedule={schedule} />
         </Col>
-      </Row>
+      </Row> */}
     </div>
   );
 };
