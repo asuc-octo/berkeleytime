@@ -10,6 +10,50 @@
     min-height: 0;
   }
 
+  .welcome {
+    width: 50vw;
+    min-height: 300px;
+    padding: 13rem 1rem;
+    text-align: center;
+
+    h1 {
+      margin-bottom: 50px;
+      font-weight: bold;
+      font-size: 32px;
+      color: $bt-base-text;
+    }
+
+    h3 {
+      width: 30vw;
+      margin: auto auto 45px auto;
+      font-weight: 500;
+      font-size: 18px;
+      color: $bt-light-text;
+    }
+
+    .bt-btn-primary {
+      margin-bottom: 24px;
+      width: 100px;
+      font-weight: 600;
+    }
+
+    p {
+      font-weight: 600;
+      font-size: 14px;
+      color: $bt-light-text;
+
+      a {
+        color: $bt-blue;
+        font-weight: 600;
+        text-decoration: underline;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
   .scheduler-header {
     display: flex;
     align-items: center;
