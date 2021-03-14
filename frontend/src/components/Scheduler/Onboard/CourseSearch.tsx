@@ -8,7 +8,7 @@ import {
   hasCourseById,
   Schedule,
 } from 'utils/scheduler/scheduler';
-import { addCourse } from './build';
+import { addCourse } from './onboard';
 
 type CourseType = CourseOverviewFragment;
 

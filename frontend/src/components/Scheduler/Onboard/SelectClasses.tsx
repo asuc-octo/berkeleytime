@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import BTLoader from 'components/Common/BTLoader';
-import CourseSearch from 'components/Scheduler/BuildSchedule/CourseSearch';
+import CourseSearch from 'components/Scheduler/Onboard/CourseSearch';
 import ProfileCard from 'components/Profile/ProfileCard';
 
 import { ScheduleContext } from '../ScheduleContext';
@@ -9,7 +9,7 @@ import { CourseOverviewFragment } from '../../../graphql/graphql';
 import { useUser } from '../../../graphql/hooks/user';
 import { useGetCoursesForFilterQuery } from '../../../graphql/graphql';
 import useLatestSemester from 'graphql/hooks/latestSemester';
-import { addCourse } from './build';
+import { addCourse } from './onboard';
 import { compareDepartmentName } from 'utils/courses/sorting';
 import { DEFAULT_SCHEDULE, Schedule, removeCourse } from 'utils/scheduler/scheduler';
 
@@ -104,7 +104,12 @@ const SelectClasses = ({ updatePage }: Props) => {
               ))}
             </ScheduleContext.Provider>
           </div>
-          <Button className="continue">Continue</Button>
+          <Button
+            className="continue"
+            onClick={() => updatePage(2)}
+          >
+            Continue
+          </Button>
         </Col>
       </Row>
     </Container>

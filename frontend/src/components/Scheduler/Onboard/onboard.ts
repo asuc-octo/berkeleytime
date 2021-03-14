@@ -2,7 +2,7 @@ import { CourseOverviewFragment } from '../../../graphql/graphql';
 import { Schedule, SchedulerCourseType } from 'utils/scheduler/scheduler';
 
 /**
- * Adds a course to build
+ * Adds a course to schedule
  */
 export function addCourse(course: SchedulerCourseType, schedule: Schedule, setSchedule: (schedule: Schedule) => void) {
   if (schedule.courses.filter((e: CourseOverviewFragment) => e.id === course.id).length === 0) {
