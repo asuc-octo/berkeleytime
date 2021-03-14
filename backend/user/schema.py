@@ -155,8 +155,6 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
         Sample idinfo
         {
             'iss': 'accounts.google.com',
-            'azp': '***REMOVED***.apps.googleusercontent.com',
-            'aud': '***REMOVED***.apps.googleusercontent.com',
             'sub': '118249227406852333938',
             'hd': 'berkeley.edu',
             'email': 'smxu@berkeley.edu',
