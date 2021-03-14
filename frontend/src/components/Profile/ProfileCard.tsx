@@ -8,17 +8,15 @@ import {
 import { CourseOverviewFragment } from '../../graphql/graphql';
 import { ReactComponent as Trash } from '../../assets/svg/profile/trash.svg';
 import { Button } from 'react-bootstrap';
-import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { Link } from 'react-router-dom';
 
 type Props = {
   course: CourseOverviewFragment;
   removable: boolean;
+  remove: () => void;
 };
 
-const ProfileCard = ({ course, removable }: Props) => {
-  const unsaveCourse = useUnsaveCourse();
-
+const ProfileCard = ({ course, removable, remove }: Props) => {
   return (
     <Link
       className="profile-card"
@@ -51,7 +49,7 @@ const ProfileCard = ({ course, removable }: Props) => {
             e.preventDefault();
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
-            unsaveCourse(course);
+            remove();
           }}
         >
           <Trash />
