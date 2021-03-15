@@ -50,9 +50,9 @@ class CourseMapper:
         elif department:
             abbreviation = utils.department_to_abbreviation(department)
         else:
-            abbreviation, department = raw_abbreviation, raw_department
             if unknown_departments is not None:
                 unknown_departments.add((abbreviation, department))
+            raise Exception('Could not parse abbreviation and department:', abbreviation, department)
 
         return {
             'abbreviation': abbreviation,
