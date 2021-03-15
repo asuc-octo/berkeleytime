@@ -34,6 +34,7 @@ class AmericanCulturesResource:
         for dept in departments:
             try:
                 abbrev = self.parse_abbrev(dept)
+                assert abbrev is not None, 'Cannot parse American Cultures department'
                 course_numbers = self.parse_course_numbers(dept)
             except:
                 print('Could not parse American Cultures requirement:',
