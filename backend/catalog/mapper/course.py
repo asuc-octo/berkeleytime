@@ -52,7 +52,7 @@ class CourseMapper:
         else:
             if unknown_departments is not None:
                 unknown_departments.add((abbreviation, department))
-            raise Exception('Could not parse abbreviation and department:', abbreviation, department)
+            raise Exception('Could not parse abbreviation and department:', raw_abbreviation, raw_department)
 
         return {
             'abbreviation': abbreviation,
