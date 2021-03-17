@@ -8,6 +8,17 @@
 
   max-width: 900px;
 
+  .api-notice {
+    margin-top: 50px;
+    background-color: $bt-off-white;
+    color: $bt-indicator-red;
+    padding: 50px;
+    a {
+       color: $bt-indicator-red;
+       font-weight: bold;
+    }
+  }
+
   .swagger-ui div, section.models.is-open h4  {
     font-family: Inter;
   }
