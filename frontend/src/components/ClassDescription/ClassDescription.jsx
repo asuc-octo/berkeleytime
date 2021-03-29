@@ -438,10 +438,8 @@ class ClassDescription extends Component {
                           <td></td>
                         )}
                         <td>{section.location_name}</td>
-                        <td>
-                          {section.enrolled}/{section.enrolled_max}
-                        </td>
-                        <td>{section.waitlisted}</td>
+                        <td>0/{section.enrolled_max}</td>
+                        <td>0</td>
                       </tr>
                     );
                   })}
