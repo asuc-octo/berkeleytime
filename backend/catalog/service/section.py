@@ -2,6 +2,7 @@
 import os
 import sys
 import time
+from collections import defaultdict
 from multiprocessing.pool import ThreadPool
 
 from berkeleytime.utils import AtomicInteger, BColors
@@ -71,6 +72,7 @@ class SectionService:
         )
 
         updated_section_ids = set()
+        primary_sect_id_to_sections = defaultdict(list)
 
         # Map response to Section and Enrollment objects and persist to database
         section_extras = {
@@ -81,15 +83,30 @@ class SectionService:
             'year': year,
         }
         for sect in response:
+            if not sect:
+                continue
             section_dict = section_mapper.map(sect, extras=section_extras)
             section, created = self.update_or_create_from_dict(section_dict)
             if not section:
                 continue
+
+            updated_section_ids.add(section.id)
+
+            if section_dict['primary_section']:
+                primary_sect_id_to_sections[section_dict['primary_section']].append(section)
+
+            # Update enrollment
             if semester != 'summer' and section.is_primary and not section.disabled:
                 enrollment_dict = enrollment_mapper.map(sect, extras={'section_id': section.id})
                 enrollment_service.update_or_create_from_dict(enrollment_dict)
 
-            updated_section_ids.add(section.id)
+        # Add associations between primary and non-primary sections
+        for related_sections in primary_sect_id_to_sections.values():
+            primary_section = [s for s in related_sections if s.is_primary][0]
+            other_sections = [s for s in related_sections if not s.is_primary]
+            primary_section.associated_sections.add(*other_sections)
+            for section in related_sections:
+                section.save()
 
         if len(updated_section_ids) > 0:
             print({
@@ -125,8 +142,11 @@ class SectionService:
                 year=section_dict['year'],
                 section_number=section_dict['section_number'],
                 kind=section_dict['kind'],
-                defaults=section_dict,
+                defaults={
+                    key: section_dict[key] for key in section_dict if key != 'primary_section'
+                },
             )
+
             print({
                 'message': 'Created/updated section object',
                 'section': section_obj,

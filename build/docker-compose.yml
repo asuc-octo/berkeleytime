@@ -6,9 +6,10 @@ services:
     command:
         - /bin/bash
         - -c
-        - >
-          echo $$GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64 | base64 --decode > $$GOOGLE_APPLICATION_CREDENTIALS;
-          python3 /backend/manage.py runserver 0.0.0.0:8000;
+        - |
+          echo $$GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64 | base64 --decode > $$GOOGLE_APPLICATION_CREDENTIALS_FILEPATH
+          echo $$GOOGLE_SIGNIN_CLIENT_SECRET_CONTENTS_BASE64 | base64 --decode > $$GOOGLE_SIGNIN_CLIENT_SECRET_FILEPATH
+          python3 /backend/manage.py runserver 0.0.0.0:8000
     volumes:
      - ../backend:/backend
     env_file:
@@ -17,6 +18,8 @@ services:
     build:
       context: ../frontend
       target: base
+    env_file:
+      - ../.env.dev
     volumes:
       - ../frontend/src:/frontend/src
       - ../frontend/public:/frontend/public

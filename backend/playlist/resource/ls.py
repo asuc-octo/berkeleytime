@@ -148,9 +148,9 @@ class LSResource(object):
             (bool) True if we should continue looking, False if there are no more courses left.
         """
         try:
-            response = requests.get(self.url % (term_id, page_num), headers=self.headers)
+            response = requests.get(self.url % (term_id, page_num), headers=self.headers, timeout=10.0)
         except Exception as e:
-            print("Exception fetching class section data from SIS: " + e.message)
+            print("Exception fetching class section data from SIS: ", e)
             return False
         if response.status_code != 200:
             if page_num == 1:
@@ -158,16 +158,20 @@ class LSResource(object):
             print("Finished fetching " + str(page_num-1) + "pages. Status code: " + str(response.status_code))
             return False
         for section in response.json()['apiResponse']['response']['classSections']:
-            course_abbrv = course_mapper.get_abbreviation_and_department(section['class']['course'], unknown_departments=[])['abbreviation']
-            course_number = section['class']['course']['catalogNumber']['formatted']
-            if 'sectionAttributes' in section:
-                for attr in section['sectionAttributes']:
-                    if 'attribute' in attr and 'description' in attr['attribute'] \
-                            and 'value' in attr and 'description' in attr['value']:
-                        attribute = attr['attribute']['description']
-                        breadth_abbrv = self._abbreviate_breadth_name(attr['value']['description'])
-                        if attribute == 'Breadth' and breadth_abbrv in breadth_to_courses.keys():
-                            breadth_to_courses[breadth_abbrv].add(course_abbrv + "," + course_number)
+            try:
+                course_abbrv = course_mapper.get_abbreviation_and_department(section['class']['course'])['abbreviation']
+                course_number = section['class']['course']['catalogNumber']['formatted']
+                if 'sectionAttributes' in section:
+                    for attr in section['sectionAttributes']:
+                        if 'attribute' in attr and 'description' in attr['attribute'] \
+                                and 'value' in attr and 'description' in attr['value']:
+                            attribute = attr['attribute']['description']
+                            breadth_abbrv = self._abbreviate_breadth_name(attr['value']['description'])
+                            if attribute == 'Breadth' and breadth_abbrv in breadth_to_courses.keys():
+                                breadth_to_courses[breadth_abbrv].add(course_abbrv + "," + course_number)
+            except Exception as e:
+                print(e)
+
         return True
 
     def handler(self, csv_rel_path):

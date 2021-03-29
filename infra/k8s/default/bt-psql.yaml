@@ -1,0 +1,141 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bt-psql-${CI_ENVIRONMENT_NAME}
+  labels:
+    component: bt-psql-${CI_ENVIRONMENT_NAME}
+spec:
+  selector:
+    component: bt-psql-${CI_ENVIRONMENT_NAME}
+  ports:
+    - port: 5432
+      targetPort: 5432
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: bt-psql-${CI_ENVIRONMENT_NAME}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5G
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bt-psql-${CI_ENVIRONMENT_NAME}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      component: bt-psql-${CI_ENVIRONMENT_NAME}
+  template:
+    metadata:
+      labels:
+        component: bt-psql-${CI_ENVIRONMENT_NAME}
+    spec:
+      volumes:
+        - name: bt-psql-data
+          persistentVolumeClaim:
+            claimName: bt-psql-${CI_ENVIRONMENT_NAME}
+        - name: bt-psql-config
+          configMap:
+            name: bt-psql-${CI_ENVIRONMENT_NAME}
+        - name: pg-conf-placeholder
+          emptyDir: {}
+        - name: pg-tmp
+          emptyDir: {}
+      initContainers:
+        - name: copy-pg-config-files
+          image: busybox
+          volumeMounts:
+            - name: bt-psql-config
+              mountPath: /pg_hba.conf
+              subPath: pgHbaConfiguration
+            - name: bt-psql-config
+              mountPath: /postgresql.conf
+              subPath: postgresqlConfiguration
+            - name: pg-conf-placeholder
+              mountPath: /pg-conf-placeholder
+          command:
+            - /bin/sh
+            - -c
+            - >
+              cp /pg_hba.conf /postgresql.conf /pg-conf-placeholder;
+      containers:
+        - name: bt-psql
+          command:
+            - /bin/sh
+            - -c
+            - |
+              ./docker-entrypoint.sh postgres # -c listen_addresses='localhost'; # Can add command-line options
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    cp /pg-conf-placeholder/pg_hba.conf /pg-conf-placeholder/postgresql.conf /var/lib/postgresql/data;
+          image: postgres:12
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: bt-psql-data
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+            - name: pg-conf-placeholder
+              mountPath: /pg-conf-placeholder
+            - name: pg-tmp
+              mountPath: /pg-tmp
+          envFrom:
+            - configMapRef:
+                name: bt-psql-${CI_ENVIRONMENT_NAME}
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bt-psql-${CI_ENVIRONMENT_NAME}
+                  key: postgresql-password
+            - name: POSTGRES_USER
+              value: bt
+            - name: POSTGRES_DB
+              value: bt
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bt-psql-${CI_ENVIRONMENT_NAME}
+data:
+  pgHbaConfiguration: |
+    # Default /var/lib/postgresql/data/pg_hba.conf from Docker image
+    local   all             all                                      trust
+    host    all             all             127.0.0.1/32             trust
+    host    all             all             ::1/128                  trust
+    local   replication     all                                      trust
+    host    replication     all             127.0.0.1/32             trust
+    host    replication     all             ::1/128                  trust
+    host    all             all             all                      md5
+  postgresqlConfiguration: |
+    # Default /var/lib/postgresql/data/postgresql.conf from Docker image
+    listen_addresses = '*'
+    max_connections = 100
+    shared_buffers = 128MB
+    dynamic_shared_memory_type = posix
+    max_wal_size = 1GB
+    min_wal_size = 80MB
+    datestyle = 'iso, mdy'
+    default_text_search_config = 'pg_catalog.english'
+
+    # Non-default https://www.postgresql.org/docs/9.5/runtime-config-logging.html
+    log_line_prefix = '[%m] %h '
+
+    # Without this line, get "LOG: using stale statistics instead of current ones because stats collector is not responding"
+    stats_temp_directory = '/pg-tmp'

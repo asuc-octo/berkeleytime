@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    component: bt-backend-svc-$CI_ENVIRONMENT_NAME
-  name: bt-backend-svc-$CI_ENVIRONMENT_NAME
+    component: bt-backend-$CI_ENVIRONMENT_NAME
+  name: bt-backend-$CI_ENVIRONMENT_NAME
   namespace: default
 spec:
   ports:
@@ -14,16 +14,6 @@ spec:
   selector:
     component: bt-backend-$CI_ENVIRONMENT_NAME
   type: ClusterIP
-
----
-apiVersion: v1
-data:
-  DATABASE_URL: $SECRET_DATABASE_URL
-  REDIS_URL: $SECRET_REDIS_URL
-kind: ConfigMap
-metadata:
-  name: bt-backend-config-$CI_ENVIRONMENT_NAME
-  namespace: default
 
 ---
 apiVersion: apps/v1
@@ -53,10 +43,8 @@ spec:
             - name: ENVIRONMENT_NAME
               value: $CI_ENVIRONMENT_NAME
           envFrom:
-            - configMapRef:
-                name: bt-backend-config-$CI_ENVIRONMENT_NAME
             - secretRef:
-                name: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+                name: bt-backend-$CI_ENVIRONMENT_NAME
           image: $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA
           imagePullPolicy: Always
           name: bt-backend-$CI_ENVIRONMENT_NAME
@@ -65,34 +53,43 @@ spec:
               protocol: TCP
           volumeMounts:
             - mountPath: /etc/google
-              name: bt-backend-secrets-volume
+              name: bt-backend
               readOnly: true
       volumes:
-        - name: bt-backend-secrets-volume
+        - name: bt-backend
           secret:
             defaultMode: 420
             items:
-              - key: google-tokens
+              - key: GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64
                 path: auth.json
-            secretName: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+              - key: GOOGLE_SIGNIN_CLIENT_SECRET_CONTENT
+                path: signin.json
+            secretName: bt-backend-$CI_ENVIRONMENT_NAME
 
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: bt-backend-secrets-$CI_ENVIRONMENT_NAME
+  name: bt-backend-$CI_ENVIRONMENT_NAME
   namespace: default
 type: Opaque
 stringData:
-  google-tokens: |-
-    $IAM_BT_BACKEND
+  DATABASE_URL: $SECRET_DATABASE_URL
   DJANGO_SECRET_KEY: $SECRET_BT_DJANGO_SECRET_KEY
-  GOOGLE_APPLICATION_CREDENTIALS: /etc/google/auth.json
+  GITHUB_TOKEN: $SECRET_GITHUB_TOKEN
+  GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64: |-
+    $IAM_BT_BACKEND
+  GOOGLE_APPLICATION_CREDENTIALS_FILEPATH: /etc/google/auth.json
+  GOOGLE_SIGNIN_CLIENT_SECRET_CONTENT: |-
+    $SECRET_GOOGLE_SIGNIN_CLIENT_SECRET
+  GOOGLE_SIGNIN_CLIENT_SECRET_FILEPATH: /etc/google/signin.json
   GOOGLE_EMAIL: $SECRET_GOOGLE_EMAIL
   GOOGLE_PASS: $SECRET_GOOGLE_PASS
+  REDIS_URL: $SECRET_REDIS_URL
   SENDGRID_PASSWORD: $SECRET_SENDGRID_PASSWORD
   SENDGRID_USERNAME: $SECRET_SENDGRID_USERNAME
   SIS_CLASS_APP_ID: $SECRET_SIS_CLASS_APP_ID
   SIS_CLASS_APP_KEY: $SECRET_SIS_CLASS_APP_KEY
   SIS_COURSE_APP_ID: $SECRET_SIS_COURSE_APP_ID
   SIS_COURSE_APP_KEY: $SECRET_SIS_COURSE_APP_KEY
+  OAUTHLIB_RELAX_TOKEN_SCOPE: "true"

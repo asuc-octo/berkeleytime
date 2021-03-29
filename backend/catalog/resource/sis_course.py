@@ -38,7 +38,7 @@ class SISCourseResource:
         """
         url = self.url % (page_number, page_size)
         try:
-            response = requests.get(url, headers=self.headers)
+            response = requests.get(url, headers=self.headers, timeout=10.0)
             assert response.status_code in [200, 201]
             return response.json()['apiResponse']['response']['any']['courses']
         except AssertionError as e:

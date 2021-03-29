@@ -2,6 +2,7 @@
 import csv
 import re
 import os
+import sys
 from collections import defaultdict
 from urllib.request import urlopen
 
@@ -31,8 +32,14 @@ class AmericanCulturesResource:
         bs = BeautifulSoup(html, 'html.parser')
         departments = bs.find_all(class_='openberkeley-collapsible-container')
         for dept in departments:
-            abbrev = self.parse_abbrev(dept)
-            course_numbers = self.parse_course_numbers(dept)
+            try:
+                abbrev = self.parse_abbrev(dept)
+                assert abbrev is not None, 'Cannot parse American Cultures department'
+                course_numbers = self.parse_course_numbers(dept)
+            except:
+                print('Could not parse American Cultures requirement:',
+                      dept, file=sys.stderr)
+                continue
             for course_number in course_numbers[:]:
                 if not Course.objects.filter(
                         abbreviation=abbrev,

@@ -1,0 +1,142 @@
+# Test failregex parsing:
+# k -n kube-system exec -it deploy/fail2ban -- fail2ban-regex 'STRING' 'REGEX'
+
+# View fail2ban logs:
+# k -n kube-system exec -it deploy/fail2ban -- tail -f /var/log/fail2ban.log
+
+# Manual IP bans (must run in pod)
+# fail2ban-client set manban banip 172.58.35.209 (supports CIDR)
+# fail2ban-client status manban
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: fail2ban
+  name: fail2ban
+  namespace: kube-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: fail2ban
+  template:
+    metadata:
+      labels:
+        component: fail2ban
+    spec:
+      containers:
+        - command:
+            - /bin/bash
+            - -c
+            - |
+              # Idea: implement pulling banned IPs from cloud storage
+              # if [ -n "$(cat /denylist.txt)" ]; then
+              #   gcloud ...
+              # fi
+              mkdir -p /data/jail.d; # Required for fail2ban to start
+              touch /manban.log;     # Required for manban jail to work
+
+              cat << EOF > /etc/fail2ban/action.d/iptables-ipset-proto4.local
+              [Init]
+              blocktype = DROP
+              chain = PREROUTING
+              lockingopt = -w -t raw
+              EOF
+
+              cat << EOF > /etc/fail2ban/action.d/iptables-ipset-proto6-allports.local
+              [Init]
+              blocktype = DROP
+              chain = PREROUTING
+              lockingopt = -w -t raw
+              EOF
+
+              cat << EOF > /etc/fail2ban/jail.local
+              [DEFAULT]
+              bantime  = 3600 # One hour ban
+              maxretry = 2
+              action = %(action_)s # action only
+              # destemail = octo-berkeleytime@asuc.org
+              # sender = noreply@berkeleytime.com
+              # action = %(action_mwl)s # mail with logs
+
+              [manban]
+              enabled  = true
+              # action   = iptables-ipset-proto6-allports[protocol="all"] # bantime = -1 supported in 0.11.2, but has kernel bug
+              action   = iptables-ipset-proto4[actname="manban-tcp", name="manban-tcp", protocol="tcp", port="1:65535"]
+                         iptables-ipset-proto4[actname="manban-udp", name="manban-udp", protocol="udp", port="1:65535"]
+                         iptables-ipset-proto4[actname="manban-icmp", name="manban-icmp", protocol="icmp \$(:", port=")"]
+              bantime  = -1
+              filter   = manban
+
+              [psql]
+              enabled  = true
+              filter   = psql
+              action   = iptables-ipset-proto4[actname="psql-tcp", name="psql-tcp", protocol="tcp", port="1:21,23:65535"]
+                         iptables-ipset-proto4[actname="psql-udp", name="psql-udp", protocol="udp", port="1:21,23:65535"]
+                         iptables-ipset-proto4[actname="psql-icmp", name="psql-icmp", protocol="icmp \$(:", port=")"]
+              findtime = 100 # 100-second rolling search window for logins
+              logpath  = /var/log/containers/bt-psql-staging.log
+
+              [ssh]
+              enabled  = true
+              filter   = sshd
+              logpath  = /var/log/auth.log
+              action   = iptables-ipset-proto6-allports[protocol="all"]
+              EOF
+
+              cat << EOF > /etc/fail2ban/filter.d/manban.conf
+              [Definition]
+              failregex =
+              ignoreregex =
+              EOF
+
+              cat << EOF > /etc/fail2ban/filter.d/psql.conf
+              [Definition]
+              failregex = <HOST> FATAL
+              EOF
+
+              fail2ban-server -f -x -v start;
+          env:
+            - name: F2B_DB_PURGE_AGE
+              value: 1d
+            - name: F2B_LOG_TARGET
+              value: STDOUT
+            - name: F2B_LOG_LEVEL
+              value: DEBUG
+            - name: SSMTP_HOST
+              value: smtp.sendgrid.net
+            - name: SSMTP_HOSTNAME
+              value: berkeleytime.com
+            # - name: SSMTP_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: general-secrets
+            #       key: PASSWORD_BT_GITLAB_SENDGRID_SMTP
+            - name: SSMTP_PORT
+              value: "587"
+            - name: SSMTP_TLS
+              value: "NO"
+            # - name: SSMTP_USER
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: general-secrets
+            #       key: USERNAME_BT_GITLAB_SENDGRID_SMTP
+            - name: TZ
+              value: America/Los_Angeles
+          image: crazymax/fail2ban:0.11.1
+          name: fail2ban
+          securityContext:
+            capabilities:
+              add:
+                - "NET_ADMIN"
+                - "NET_RAW"
+                - "SYS_TIME"
+          volumeMounts:
+            - mountPath: /var/log
+              name: var-log
+      hostNetwork: true
+      volumes:
+        - name: var-log
+          hostPath:
+            path: /var/log

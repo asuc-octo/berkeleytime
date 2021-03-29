@@ -119,7 +119,7 @@ export default function GradesGraph({
                 <Bar
                   name={`${item.title} • ${item.semester} • ${item.instructor}`}
                   dataKey={item.id}
-                  fill="#8C1515"
+                  fill={vars.colors[item.colorId]}
                   onMouseEnter={updateBarHover}
                   radius={[4, 4, 0, 0]}
                 />

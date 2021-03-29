@@ -1,0 +1,28 @@
+# Get possible configuration options from istio repo:
+#   cat istio/manifests/charts/base/values.yaml
+#   cat istio/manifests/charts/istio-control/istio-discovery/values.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: proxy-protocol
+  namespace: default
+spec:
+  configPatches:
+    - applyTo: LISTENER
+      match:
+        context: SIDECAR_INBOUND
+        listener:
+          portNumber: 15006
+      patch:
+        operation: MERGE
+        value:
+          listener_filters:
+            - name: envoy.filters.listener.proxy_protocol
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.listener.proxy_protocol.v3.ProxyProtocol
+            - name: envoy.filters.listener.original_dst
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.listener.original_dst.v3.OriginalDst
+            - name: envoy.filters.listener.original_src
+              typed_config:
+                "@type": type.googleapis.com/envoy.extensions.filters.listener.original_src.v3.OriginalSrc

@@ -10,6 +10,9 @@ AFRKANS:
 AGR CHM:
     - "Agricultural and Environmental Chemistry"
 
+AGRS:
+    - "Ancient Greek and Roman Studies"
+
 A,RESEC:
     - "Agricultural and Resource Economics"
     - "Agricultural and Resource Economics and Policy"
@@ -497,6 +500,9 @@ MED ST:
 M E STU:
     - "Middle Eastern Studies"
 
+MELC:
+    - "Middle Eastern Languages and Cultures"
+
 MIL AFF:
     - "Military Affairs"
 
@@ -748,6 +754,7 @@ XAFRICA:
 
 XAMRSTD:
     - "UCB EXT FPF-American Studies"
+    - "FPF-American Studies"
 
 XANTHRO:
     - "FPF-Anthropology"
@@ -907,6 +914,7 @@ XRHETOR:
 
 XSEASIA:
     - "UCB EXT FPF-Southeast Asian"
+    - "FPF-Southeast Asian"
 
 XSOCIOL:
     - "FPF-Sociology"

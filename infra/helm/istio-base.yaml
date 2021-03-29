@@ -1,0 +1,4 @@
+global:
+  hub: docker.io/istio
+  tag: 1.9-dev.3 # https://hub.docker.com/r/istio/base/tags
+  istioNamespace: istio

@@ -1,28 +1,16 @@
-# Values template: https://github.com/elastic/helm-charts/blob/e4ab721d108439a23187dc4da674ac20e6ede056/logstash/values.yaml
-# co.elastic.logs.nginx/module: nginx
-# co.elastic.logs/fileset.stdout: access
+# Values template
+# https://github.com/elastic/helm-charts/blob/e4ab721d108439a23187dc4da674ac20e6ede056/logstash/values.yaml
 replicas: 1
-
-# Allows you to add any config files in /usr/share/logstash/config/
-# such as logstash.yml and log4j2.properties
-#
-# Note that when overriding logstash.yml, `http.host: 0.0.0.0` should always be included
-# to make default probes work.
 logstashConfig:
   logstash.yml: |
     xpack:
       monitoring:
-        enabled: true
+        enabled: false
         elasticsearch:
           hosts:
-            - http://bt-elasticsearch-primary:9200
+            - http://bt-elasticsearch:9200
     http.host: "0.0.0.0"
-
-# Allows you to add any pipeline files in /usr/share/logstash/pipeline/
-### ***warn*** there is a hardcoded logstash.conf in the image, override it first
 logstashPipeline:
-  # How to Automate Elasticsearch Index Creation
-  # https://cloudhero.io/automate-elasticsearch-index-creation
   logstash.conf: |
     input {
       beats {
@@ -31,15 +19,23 @@ logstashPipeline:
       }
     }
     filter {
-      if ("" in [kubernetes][labels][app]) and ("" in [kubernetes][labels][environment]) {
-        mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][labels][app]}-%{[kubernetes][labels][environment]}-%{[kubernetes][container][name]}-%{+yyyy.MM.dd}" } }
-      }
-      else {
-        mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][namespace]}-%{+yyyy.MM.dd}" } }
-      }
+      # if ("" in [kubernetes][labels][app]) and ("" in [kubernetes][labels][environment]) {
+      #   mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][labels][app]}-%{[kubernetes][labels][environment]}-%{[kubernetes][container][name]}-%{+yyyy.MM.dd}" } }
+      # }
+      # else {
+      #   mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][namespace]}-%{+yyyy.MM.dd}" } }
+      # }
+      mutate { add_field => { "[@metadata][target_index]" => "k8s-%{[kubernetes][namespace]}" } }
       if [kubernetes][namespace] == "ingress-nginx" {
+        # HTTP nginx logs
         grok {
-          match => { "message" => "%{IPORHOST:[nginx][client_ip]} - .* \[%{HTTPDATE:[nginx][access_time]}\] \"%{WORD:[nginx][http_method]} %{DATA:[nginx][access_url]} HTTP/%{NUMBER:[nginx][http_version]}\" %{NUMBER:[nginx][http_response_code]} %{NUMBER:[nginx][http_body_bytes_sent]} \"%{DATA:[nginx][access_referrer]}\" \"%{DATA:[nginx][user_agent]}\"" }
+          match => { "message" => "%{IPORHOST:[nginx][client_ip]} \[%{HTTPDATE:[nginx][access_time]}\] \[%{WORD:[nginx][http_method]} %{DATA:[nginx][access_url]} HTTP/%{NUMBER:[nginx][http_version]}\] \[%{DATA:[nginx][access_referrer]}\] \[%{DATA:[nginx][user_agent]}\] \[%{DATA:[nginx][proxy_upstream_name]}\] \[%{DATA:[nginx][upstream_addr]}\] %{NUMBER:[nginx][http_response_code]} %{NUMBER:[nginx][body_bytes_sent]} %{NUMBER:[nginx][request_length]} %{NUMBER:[nginx][request_time]} %{NUMBER:[nginx][upstream_response_length]} %{NUMBER:[nginx][upstream_response_time]} %{NUMBER:[nginx][upstream_status]} %{DATA:[nginx][req_id]}" }
+          remove_field => "message"
+        }
+
+        # For non-HTTP nginx logs
+        grok {
+          match => { "message" => "%{IPORHOST:[nginx][client_ip]} \[%{WORD:[nginx][port_protocol]}\] %{NUMBER:[nginx][port_number]} \[%{HTTPDATE:[nginx][access_time]}\] \[%{DATA:[nginx][proxy_upstream_name]}\] \[%{DATA:[nginx][upstream_addr]}\] %{NUMBER:[nginx][status]} %{NUMBER:[nginx][bytes_sent] %{NUMBER:[nginx][bytes_received] %{NUMBER:[nginx][session_time] %{DATA:[nginx][req_id]}" }
           remove_field => "message"
         }
         geoip {
@@ -53,7 +49,7 @@ logstashPipeline:
     output {
       # stdout { codec => rubydebug }
       elasticsearch {
-        hosts => "http://bt-elasticsearch-primary:9200"
+        hosts => "http://bt-elasticsearch:9200"
         manage_template => false
         action => "create"
         ilm_enabled => false

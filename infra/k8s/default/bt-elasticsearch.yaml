@@ -2,7 +2,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: bt-elasticsearch-primary
+  name: bt-elasticsearch
   namespace: default
   labels:
     component: bt-elasticsearch
@@ -20,7 +20,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: bt-elasticsearch-pvc
+  name: bt-elasticsearch
 spec:
   accessModes:
     - ReadWriteOnce
@@ -38,6 +38,8 @@ metadata:
   namespace: default
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       component: bt-elasticsearch
@@ -52,10 +54,10 @@ spec:
             name: bt-elasticsearch-config
         - name: bt-elasticsearch-pvc
           persistentVolumeClaim:
-            claimName: bt-elasticsearch-pvc
+            claimName: bt-elasticsearch
       containers:
         - name: bt-elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
           ports:
             - containerPort: 9200
               name: rest
@@ -69,6 +71,98 @@ spec:
               subPath: elasticsearch.yml
             - name: bt-elasticsearch-pvc
               mountPath: /usr/share/elasticsearch/data
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    while [[ ! "$(curl -s $HOSTNAME:9200/_cat/health)" =~ "green" ]] && [[ ! "$(curl -s $HOSTNAME:9200/_cat/health)" =~ "yellow" ]]
+                    do
+                      echo `date +"%Y-%m-%d %H:%M:%S"` ...waiting for Elasticsearch to be ready
+                      sleep 1
+                    done
+
+                    curl -X PUT "$HOSTNAME:9200/_cluster/settings" -H 'Content-Type: application/json' -d '@-' << EOF
+                    {
+                      "persistent": {
+                        "search": {
+                          "allow_expensive_queries": true
+                        }
+                      }
+                    }
+                    EOF
+
+                    add_datastream_template() {
+                      TEMPLATE_NAME=$1
+                      POLICY=$2
+                      ROLLOVER=$3
+                      PRIORITY=$4
+                      PATTERNS=$5
+                      COMPOSITION=$6
+                      curl -d "@-" -X PUT -H "Content-Type: application/json" "$HOSTNAME:9200/_index_template/$TEMPLATE_NAME" << EOF
+                      {
+                        "data_stream": {},
+                        "template": {
+                          "settings": {
+                            "number_of_shards": 1,
+                            "number_of_replicas": 0,
+                            "index": {
+                              "lifecycle": {
+                                "name": "$POLICY",
+                                "rollover_alias": "$ROLLOVER"
+                              }
+                            }
+                          },
+                          "mappings": {
+                            "dynamic_templates": [
+                              {
+                                "geoip":{
+                                  "path_match":"geoip.location",
+                                  "mapping":{
+                                    "type":"geo_point"
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "priority": $PRIORITY,
+                        "index_patterns": [
+                          $PATTERNS
+                        ],
+                        "composed_of": [
+                          $COMPOSITION
+                        ]
+                      }
+                    EOF
+                    }
+
+                    curl -d "@-" -X PUT -H "Content-Type: application/json" "$HOSTNAME:9200/_ilm/policy/datastream" << EOF
+                    {
+                      "policy": {
+                        "phases": {
+                          "hot": {
+                            "actions": {
+                              "rollover": {
+                                "max_size":"1gb"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                    EOF
+
+                    add_datastream_template k8s datastream k8s 0 '"k8s*"'
+                    add_datastream_template k8s-ingress-nginx datastream k8s-ingress-nginx 100 '"k8s-ingress-nginx*"'
+                    add_datastream_template metricbeat datastream metricbeat 0 '"metricbeat*"' '"metricbeat"' || true # Requires bt-metricbeat helm chart for component template
+          # resources:
+          #   requests:
+          #     cpu: 500m
+          #   limits:
+          #     cpu: 500m
           # env:
           #   - name: ELASTICSEARCH_USERNAME
           #     valueFrom:
@@ -99,11 +193,6 @@ data:
     bootstrap.memory_lock: true
     discovery.type: single-node
     transport.host: 127.0.0.1
-    xpack.license.self_generated.type: basic
-    # Enable xpack.security which is provided in basic subscription
-    xpack.security.enabled: false
-    # Disable unused xpack features
-    xpack.monitoring.enabled: false
-    xpack.graph.enabled: false
-    xpack.watcher.enabled: false
-    xpack.ml.enabled: false
+    indices:
+      lifecycle:
+        poll_interval: 1m

@@ -6,17 +6,20 @@ graphene-django==2.13.0
 django-filter==2.4.0
 django-graphql-jwt==0.3.1
 
+# Quickfix until pyjwt 2.0.0 is patched
+# https://github.com/flavors/django-graphql-jwt/issues/241
+pyjwt==1.7.1
+
 # Google APIs
-google-api-python-client
-google-auth
-gspread
+google-api-python-client==1.12.8
+google-auth==1.24.0
+gspread==3.6.0
 
 # Other
-arrow
-beautifulsoup4
-nameparser
-python-dateutil
-python-json-logger
-pyyaml
-redlock-py
-retry
+arrow==0.17.0
+beautifulsoup4==4.9.3
+nameparser==1.0.6
+python-dateutil==2.8.1
+pyyaml==5.3.1
+redlock-py==1.0.8
+retry==0.9.2

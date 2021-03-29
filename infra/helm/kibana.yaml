@@ -1,22 +1,26 @@
+# TODO: Access control in Kibana?
+# https://github.com/floragunncom/search-guard
+
 # Template: https://github.com/elastic/helm-charts/blob/480a19413024cab7f9ea96e2d40078bc2247ce2d/kibana/values.yaml
-# Must manually create scripted field with ip+device, input in Kibana
-# Scripted field: nginx.ip_user_agent
-# [ doc['nginx.client_ip.keyword']+''+doc['nginx.user_agent.keyword'] ]
-# Also in Dev Tools:
-# GET /k8s-ingress-nginx-*/_search?pretty=true
-# {
-#   "size": 55,
-#   "aggs": {
-#     "ip_agent": {
-#       "composite": {
-#         "sources": [
-#           { "ip": { "terms": { "field": "nginx.client_ip.keyword" } } },
-#           { "agent": { "terms": { "field": "nginx.user_agent.keyword" } } }
-#         ]
+# Example scripted field nginx.ip_agent which combines 2 existing fields
+#   [ doc['nginx.client_ip.keyword']+''+doc['nginx.user_agent.keyword'] ]
+# Kibana Dev Tools example to verify:
+#   GET /k8s-ingress-nginx-*/_search?pretty=true
+#   {
+#     "size": 55,
+#     "aggs": {
+#       "ip_agent": {
+#         "composite": {
+#           "sources": [
+#             { "ip": { "terms": { "field": "nginx.client_ip.keyword" } } },
+#             { "agent": { "terms": { "field": "nginx.user_agent.keyword" } } }
+#           ]
+#         }
 #       }
 #     }
 #   }
-# }
+# Example Kibana query DSL that uses wildcards in searches
+#    {"wildcard":{"kubernetes.pod.name":"berkeleytime*"}}
 kibanaConfig:
   kibana.yml: |
     server:
@@ -24,12 +28,20 @@ kibanaConfig:
       rewriteBasePath: true
     telemetry:
       enabled: false
+    # https://stackoverflow.com/questions/56048741/how-to-hide-menu-items-in-kibana
     xpack:
+      infra:
+        sources:
+          default:
+            logAlias: k8s*
+            metricAlias: metricbeat*
+      reporting:
+        encryptionKey: ${ENCRYPTION_KEY_KIBANA}
       security:
-        enabled: true
+        encryptionKey: ${ENCRYPTION_KEY_KIBANA}
       encryptedSavedObjects:
         encryptionKey: ${ENCRYPTION_KEY_KIBANA}
-elasticsearchHosts: http://bt-elasticsearch-primary:9200
+elasticsearchHosts: http://bt-elasticsearch:9200
 healthCheckPath: /kibana/api/status
 replicas: 1
 lifecycle:
@@ -38,100 +50,46 @@ lifecycle:
       command:
         - /bin/sh
         - -c
-        - >
-          KIBANA_URL=http://localhost:5601/kibana;
-          ELASTICSEARCH_URL=http://bt-elasticsearch-primary:9200;
-          sleep 20; while [ "$(curl -s -o /dev/null -w '%{http_code}\n' $KIBANA_URL/app/kibana)" != "200" ]; do sleep 1; done;
-          curl -X PUT "$ELASTICSEARCH_URL/_cluster/settings?pretty" -H 'Content-Type: application/json' -d'{"persistent":{"search":{ "allow_expensive_queries":true}}}';
-
-          INDEX_PATTERN_ID=k8s-index-pattern-id;
-          INDEX_PATTERN="k8s-*";
-          curl -X POST -H "Content-Type: application/json" -H "kbn-xsrf: anything" "$KIBANA_URL/api/saved_objects/index-pattern/$INDEX_PATTERN_ID" -d "{\"attributes\":{\"title\":\"$INDEX_PATTERN\",\"timeFieldName\":\"@timestamp\"}}" || true;
-          curl "$KIBANA_URL/api/kibana/settings" -H "content-type: application/json" -H "kbn-xsrf: anything" --data-binary "{\"changes\":{\"defaultIndex\":\"$INDEX_PATTERN_ID\"}}" || true;
-          curl -X PUT "$ELASTICSEARCH_URL/_ilm/policy/datastream_policy?pretty" -H 'Content-Type: application/json' -d'
-          {
-            "policy": {
-              "phases": {
-                "hot": {
-                  "actions": {
-                    "rollover": {
-                      "max_size": "15GB",
-                      "max_age": "1M"
-                    }
-                  }
-                },
-                "delete": {
-                  "min_age": "30s",
-                  "actions": {
-                    "delete": {}
-                  }
-                }
+        - |
+          while [ "$(curl -s -o /dev/null -w '%{http_code}\n' $KIBANA/app/kibana)" != "200" ]
+          do
+            echo `date +"%Y-%m-%d %H:%M:%S"` ...waiting for Kibana to be ready
+            sleep 1
+          done
+          add_index_pattern() {
+            curl -d "@-" -X POST -H "Content-Type: application/json" -H "kbn-xsrf: -" "$KIBANA/api/saved_objects/index-pattern/$1" << EOF
+            {
+              "attributes": {
+                "title": "$2",
+                "timeFieldName": "$3"
               }
             }
+          EOF
           }
-          ';
-          curl -X PUT "$ELASTICSEARCH_URL/_index_template/datastream_k8s-template?pretty" -H 'Content-Type: application/json' -d'
-          {
-            "index_patterns":[
-              "k8s-*"
-            ],
-            "data_stream":{
-            },
-            "template":{
-              "settings":{
-                "number_of_shards":1,
-                "number_of_replicas":0,
-                "index.lifecycle.name":"datastream_policy",
-                "index.lifecycle.rollover_alias":"k8s"
-              },
-              "mappings":{
-                "dynamic_templates":[
-                ]
+          set_default_index_pattern() {
+            curl -d "@-" -X POST -H "Content-Type: application/json" -H "kbn-xsrf: -" "$KIBANA/api/kibana/settings" << EOF
+            {
+              "changes": {
+                "defaultIndex": "$1"
               }
             }
+          EOF
           }
-          ';
 
-          INDEX_PATTERN_ID=k8s-ingress-nginx-index-pattern-id;
-          INDEX_PATTERN="k8s-ingress-nginx-*";
-          curl -X POST -H "Content-Type: application/json" -H "kbn-xsrf: anything" "$KIBANA_URL/api/saved_objects/index-pattern/$INDEX_PATTERN_ID" -d "{\"attributes\":{\"title\":\"$INDEX_PATTERN\",\"timeFieldName\":\"@timestamp\"}}" || true;
-          curl -X PUT "$ELASTICSEARCH_URL/_index_template/datastream_k8s-ingress-nginx-template?pretty" -H 'Content-Type: application/json' -d'
-          {
-            "priority": 100,
-            "index_patterns":[
-              "k8s-ingress-nginx-*"
-            ],
-            "data_stream":{
-            },
-            "template":{
-              "settings":{
-                "number_of_shards":1,
-                "number_of_replicas":0,
-                "index.lifecycle.name":"datastream_policy",
-                "index.lifecycle.rollover_alias":"k8s-ingress-nginx"
-              },
-              "mappings":{
-                "dynamic_templates":[
-                  {
-                    "geoip":{
-                      "path_match":"geoip.location",
-                      "mapping":{
-                        "type":"geo_point"
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-          ';
-
+          # We add "|| true" because POST = can run only once, and PUT = doesn't work because if resource doesn't exist, it fails
+          add_index_pattern k8s-index-pattern-id k8s-* @timestamp || true
+          add_index_pattern k8s-ingress-nginx-index-pattern-id k8s-ingress-nginx* @timestamp || true
+          add_index_pattern gitlab-index-pattern-id gitlab-* || true
+          add_index_pattern metricbeat-index-pattern-id metricbeat* @timestamp || true
+          set_default_index_pattern k8s-index-pattern-id
 extraEnvs:
   - name: ENCRYPTION_KEY_KIBANA
     valueFrom:
       secretKeyRef:
         name: general-secrets
         key: ENCRYPTION_KEY_KIBANA
+  - name: KIBANA
+    value: http://localhost:5601/kibana
 #   - name: ELASTICSEARCH_USERNAME
 #     valueFrom:
 #       secretKeyRef:

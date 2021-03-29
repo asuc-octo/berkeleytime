@@ -19,7 +19,7 @@ function applyIndicatorPercent(text, percentage) {
  * @param {string | null} grade grade, either as a string (ex. "B+") or null
  */
 function applyIndicatorGrade(text, grade) {
-  return <p className="bt-indicator-green">A</p>;
+  return <p className="bt-indicator-green">A+</p>;
 }
 
 /**

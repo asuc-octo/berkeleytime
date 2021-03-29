@@ -74,7 +74,7 @@ if IS_LOCALHOST:
     EMAIL_HOST_USER = ''
     EMAIL_HOST_PASSWORD = ''
     EMAIL_USE_TLS = False
-    DEFAULT_FROM_EMAIL = os.getenv('GOOGLE_EMAIL')
+    DEFAULT_FROM_EMAIL = f'Berkeleytime <{os.getenv("GOOGLE_EMAIL")}>'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.sendgrid.net'
@@ -100,6 +100,7 @@ INSTALLED_APPS = [
     'forms',
     'user',
     'graphene_django',
+    'scheduler'
 ]
 
 # Middlewares
@@ -159,7 +160,7 @@ logging.config.dictConfig({
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -1,0 +1,42 @@
+# Default values
+# https://github.com/helm/charts/blob/01fe5e32178ea1540d1907a7a8badf3bf530c520/stable/elasticsearch-curator/values.yaml
+image:
+  repository: untergeek/curator
+  tag: 5.8.1
+
+cronjob:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: "1"
+  schedule: "* * * * *"
+  successfulJobsHistoryLimit: "1"
+
+configMaps:
+  action_file_yml: |-
+    actions:
+      1:
+        action: delete_indices
+        description: >-
+          Delete indices matching the prefix in excess of specified maximum GB
+          cluster space starting with the oldest indices' index creation_date.
+          The disk space total condition is cumulative for all matched indices.
+        options:
+          allow_ilm_indices: True
+          ignore_empty_list: True
+          timeout_override: 300
+          continue_if_exception: True
+          disable_action: False
+        filters:
+        - filtertype: pattern
+          kind: prefix
+          value: .ds-metricbeat
+        - filtertype: count # count filters the active data stream write index
+          count: 1
+        - filtertype: space
+          disk_space: 10
+          use_age: True
+          source: creation_date
+  config_yml: |-
+    client:
+      hosts:
+        - bt-elasticsearch
+      port: 9200

@@ -1,13 +1,11 @@
+# https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-reference-yml.html
 # https://github.com/elastic/helm-charts/blob/7.9/metricbeat/values.yaml
-# To enable regex queries:
-# kubectl port-forward svc/bt-elasticsearch-primary-headless 9200:9200 &
-# curl -X PUT "localhost:9200/_cluster/settings?pretty" -H 'Content-Type: application/json' -d'{"persistent":{"search":{ "allow_expensive_queries":true}}}'
-# In Kibana Query DSL: {"wildcard":{"kubernetes.pod.name":"berkeleytime*"}}
+replicas: 1
 daemonset:
-  # For environment variables in bt-metricbeat-metricbeat-kv6mg
+  enabled: true
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
-      value: http://bt-elasticsearch-primary:9200
+      value: http://bt-elasticsearch:9200
     # - name: ELASTICSEARCH_USERNAME
     #   valueFrom:
     #     secretKeyRef:
@@ -20,100 +18,99 @@ daemonset:
     #       key: PASSWORD_ELASTICSEARCH_USER_ELASTIC
   metricbeatConfig:
     metricbeat.yml: |
-      output.elasticsearch:
-        hosts: '${ELASTICSEARCH_HOSTS}'
-        # username: '${ELASTICSEARCH_USERNAME}'
-        # password: '${ELASTICSEARCH_PASSWORD}'
+      output:
+        elasticsearch:
+          hosts: '${ELASTICSEARCH_HOSTS}'
+          index: metricbeat-%{[agent.version]}
+          # username: '${ELASTICSEARCH_USERNAME}'
+          # password: '${ELASTICSEARCH_PASSWORD}'
       hosts: ["${ELASTICSEARCH_HOSTS}"]
       setup:
         kibana:
           host: bt-kibana-kibana:5601
           path: /kibana
-        ilm:
-          enabled: true
         dashboards:
           enabled: true
+          index: metricbeat*
           retry:
             enabled: true
+        ilm:
+          enabled: false
+          rollover_alias: metricbeat
+          pattern: ~
+        template:
+          type: component
+          name: metricbeat
+          pattern: metricbeat-index-pattern-id
+
       metricbeat.modules:
-        - module: kubernetes
-          metricsets:
-            - container
-            - node
-            - pod
-            - system
-            - volume
-          period: 10s
-          host: "${NODE_NAME}"
-          hosts: ["https://${NODE_NAME}:10250"]
-          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-          ssl.verification_mode: "none"
-          # If using Red Hat OpenShift remove ssl.verification_mode entry and
-          # uncomment these settings:
-          #ssl.certificate_authorities:
-            #- /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
-          processors:
-          - add_kubernetes_metadata: ~
-        - module: kubernetes
-          enabled: true
-          metricsets:
-            - event
-        - module: system
-          period: 10s
-          metricsets:
-            - cpu
-            - load
-            - memory
-            - network
-            - process
-            - process_summary
-          processes: ['.*']
-          process.include_top_n:
-            by_cpu: 5
-            by_memory: 5
-        - module: system
-          period: 1m
-          metricsets:
-            - filesystem
-            - fsstat
-          processors:
-          - drop_event.when.regexp:
-              system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
-      kube-state-metrics-metricbeat.yml: |
-          metricbeat.modules:
-          - module: kubernetes
-            enabled: true
-            metricsets:
-              - state_node
-              - state_deployment
-              - state_replicaset
-              - state_pod
-              - state_container
-            period: 10s
-            hosts: ["${KUBE_STATE_METRICS_HOSTS}"]
-          output.elasticsearch:
-            # username: '${ELASTICSEARCH_USERNAME}'
-            # password: '${ELASTICSEARCH_PASSWORD}'
-            hosts: ["${ELASTICSEARCH_HOSTS}"]
-replicas: 1
+      - module: kubernetes
+        enabled: true
+        metricsets:
+          - container
+          - node
+          - pod
+          - system
+          - volume
+        period: 10s
+        hosts: ["https://169.229.226.55:10250"]
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        ssl.verification_mode: "none"
+        processors:
+          - add_kubernetes_metadata:
+              in_cluster: true
+
+      - module: kubernetes
+        enabled: true
+        hosts: ["bt-metricbeat-kube-state-metrics:8080"]
+        metricsets:
+          - state_node
+          - state_deployment
+          - state_replicaset
+          - state_pod
+          - state_container
+          - state_persistentvolume
+          - state_persistentvolumeclaim
+        add_metadata: true
+
+      # - module: docker
+      #   enabled: true
+      #   metricsets:
+      #     - container
+      #     - cpu
+      #     - diskio
+      #     - event
+      #     - healthcheck
+      #     - info
+      #     - memory
+      #     - network
+      #   hosts: ["unix:///var/run/docker.sock"]
+      #   period: 10s
+
+      # - module: system
+      #   enabled: true
+      #   metricsets:
+      #     - cpu
+      #     - load
+      #     - memory
+      #     - network
+      #     - process
+      #     - process_summary
+      #     - uptime
+      #     - socket_summary
+      #   processes: ['.*']
+      #   process.include_top_n:
+      #     by_cpu: 10
+      #     by_memory: 10
+
+      # - module: system
+      #   enabled: true
+      #   period: 1m
+      #   metricsets:
+      #     - filesystem
+      #     - fsstat
+      #   processors:
+      #   - drop_event.when.regexp:
+      #       system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
 deployment:
-  extraEnvs:
-    - name: ELASTICSEARCH_HOSTS
-      value: http://bt-elasticsearch-primary:9200
-    # - name: ELASTICSEARCH_USERNAME
-    #   valueFrom:
-    #     secretKeyRef:
-    #       name: general-secrets
-    #       key: USERNAME_ELASTICSEARCH_USER_ELASTIC
-    # - name: ELASTICSEARCH_PASSWORD
-    #   valueFrom:
-    #     secretKeyRef:
-    #       name: general-secrets
-    #       key: PASSWORD_ELASTICSEARCH_USER_ELASTIC
-# resources:
-#   requests:
-#     cpu: "100m" # Default: 100m
-#     memory: "200Mi" # Default: 100Mi
-#   limits:
-#     cpu: "100m" # Default: 1000m
-#     memory: "200Mi" # Default: 200Mi
+  enabled: false

@@ -11,8 +11,7 @@ metadata:
   namespace: rook-ceph
 spec:
   cephVersion:
-    image: ceph/ceph:v15.2.4
-    allowUnsupported: false
+    image: ceph/ceph:v15.2.8
   skipUpgradeChecks: true
   dataDirHostPath: /var/lib/rook
   mon:
@@ -43,8 +42,6 @@ spec:
     #     cpu: "200m"
     #     memory: "1000M"
     # osd:
-    #   # Hard, explicit control of OSD resources absolutely necessary
-    #   # As for the above resources, answer not obvious yet
     #   requests:
     #     cpu: "200m"
     #     memory: "2G"
@@ -54,7 +51,7 @@ spec:
   storage:
     useAllNodes: true
     useAllDevices: true
-    deviceFilter: sd[b-z]
+    # deviceFilter: vd[b-z] # OCF: vdb, vdc / GCP: sdb, sdc
 # ---
 # kind: ConfigMap
 # apiVersion: v1

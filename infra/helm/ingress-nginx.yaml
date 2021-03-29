@@ -1,12 +1,28 @@
+# https://github.com/helm/charts/blob/99548969316eed3121040b102d969e111cc15ef4/stable/nginx-ingress/values.yaml
 controller:
-  config:
-    hsts: "false"
-  hostNetwork: true
   service:
-    type: ClusterIP
-  kind: DaemonSet
+    type: LoadBalancer
+    externalTrafficPolicy: Local
+  config:
+    http2-max-field-size: "8k"
+    large-client-header-buffers: "4 12k"
+    proxy-buffer-size: "32k"
+    vts-status-zone-size: "20m"
+    disable-access-log: "false"
+    log-format-escape-json: "false"
+    # (Default HTTP log) log-format-upstream: '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" $request_length $request_time [$proxy_upstream_name] [$proxy_alternative_upstream_name] $upstream_addr $upstream_response_length $upstream_response_time $upstream_status $req_id'
+    # (JSON-based example) log-format-upstream: '{ "type": "access_logs", "ssl_protocl": "$ssl_protocol", "time": "$time_iso8601", "remote_addr": "$proxy_protocol_addr","x-forward-for": "$proxy_add_x_forwarded_for", "request_id": "$req_id", "remote_user":"$remote_user", "bytes_sent": $bytes_sent, "request_time": $request_time, "status":"$status", "vhost": "$host", "request_proto": "$server_protocol", "path": "$uri","request_query": "$args", "request_length": $request_length, "duration": $request_time,"method": "$request_method", "http_referrer": "$http_referer", "http_user_agent":"$http_user_agent", "upstream": "$upstream_addr", "upstream_status": "$upstream_status", "upstream_latency": "$upstream_response_time", "ingress": "$ingress_name", "namespace": "$namespace" }'
+    # (Default TCP/UDP log) log_format: '[$remote_addr] [$time_local] $protocol $status $bytes_sent $bytes_received $session_time'
+    # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/
+    log-format-upstream: "$remote_addr [$time_local] [$request] [$http_referer] [$http_user_agent] [$proxy_upstream_name] [$upstream_addr] $status $body_bytes_sent $request_length $request_time $upstream_response_length $upstream_response_time $upstream_status $req_id"
+    log-format-stream: "$remote_addr [$protocol] $remote_port [$time_local] [$proxy_upstream_name] [$upstream_addr] $status $bytes_sent $bytes_received $session_time"
+    # http-snippet: |
+    #   more_set_headers "Server: "; map $geoip_city_continent_code $is_eu_visit { default 0; EU 1; }
+    # limit-conn-status-code: "429"
+    # worker-shutdown-timeout: 240s
+    # enable-opentracing: "true"
+    # datadog-collector-host: $HOST_IP
 tcp:
-  2222: default/bt-gitlab:2222
-  5432: default/bt-psql-staging-postgresql-ha-pgpool:5432
-  6379: default/bt-redis-staging-master:6379
-resources: {}
+  2222: default/bt-gitlab:2222::PROXY
+  5432: default/bt-psql-staging:5432::PROXY
+  6379: default/bt-redis-staging-master:6379::PROXY
