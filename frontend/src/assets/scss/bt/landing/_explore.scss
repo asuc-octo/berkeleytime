@@ -25,7 +25,7 @@
   
     p {
       width: 95%;
-      color: #8a8a8a;
+      @include themed('color', 'text-light');
     }
   }
 }

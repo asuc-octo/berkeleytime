@@ -2,6 +2,10 @@
   padding-top: $bt-navbar-height;
   margin-bottom: 100px;
 
+  p {
+    @include themed('color', 'text-light');
+  }
+
   .faq-heading {
     text-align: center;
   }
@@ -26,11 +30,9 @@
         text-align: center;
         font-size: 24px;
         font-weight: 500;
-        color: $bt-primary;
+        @include themed('color', 'primary');
 
-        -webkit-user-select: none;  /* Chrome all / Safari all */
-        -moz-user-select: none;     /* Firefox all */
-        -ms-user-select: none;      /* IE 10+ */
+        user-select: none;
       }
     }
 
@@ -40,10 +42,6 @@
 
       .collapse-text {
         line-height: 1.75;
-      }
-
-      a {
-        color: $bt-primary;
       }
     }
   }

@@ -1,19 +1,15 @@
-$bt-white:                 #FFFFFF;
-$bt-off-white:             #F8F8F8;
+
+
 $bt-light-border-grey:	   #EAEAEA;
 $bt-border-grey:           #C7C7C7;
 $bt-light-grey:            #A0A0A0;
-$bt-grey:                  #5C5C5C;
 $bt-black:                 #000000;
-$bt-button-background:     #8e9fc81c;
-$bt-primary-background:    #0069d9;
+$bt-grey:                  #5C5C5C;
 
-$bt-footer:                #FFFFFF;
-
-$bt-blue:                  #2F80ED;
-$bt-green:                 #18DE83;
-$bt-pink:                  #F85386;
-$bt-yellow:                #FFFF00;
+// $bt-blue:                  #2F80ED;
+// $bt-green:                 #18DE83;
+// $bt-pink:                  #F85386;
+// $bt-yellow:                #FFFF00;
 
 $bt-indicator-red:         #FC7676;
 $bt-indicator-squash:      #DE5F18;
@@ -27,8 +23,6 @@ $bt-white-text:            #FFFFFF;
 $bt-light-text:            #8A8A8A;
 $bt-grey-text:             #535353;
 $bt-base-text:             #383838;
-
-$bt-primary:               #2F80ED;
 
 
 
@@ -51,3 +45,185 @@ $bt-primary:               #2F80ED;
 .bt-light-text {
   color: $bt-light-text !important;
 }
+
+
+
+
+/*
+  Themed colors
+
+  Themes:
+    light
+    dark
+    stanfurd
+
+  Variants:
+    primary (blue with white)
+    primary-inverted (white with blue)
+
+  How it works:
+    The BT app is wrapped by a div with a theme class: .bt-theme-{light,dark,stanfurd}
+
+    The themed mixin applies the provided property _underneath_ each theme with the
+    appropriate color, using scss's & operator.
+*/
+
+// bt white-black gradient
+$bt-white:                 #ffffff;
+$bt-off-white:             #f2f2f2;
+$bt-border-white:          #eaeaea;
+
+$bt-bright-gray:           #dddddd;
+$bt-light-gray:            #c4c4c4;
+
+$bt-dark-gray:             #606060;
+$bt-dim-gray:              #555555;
+
+$bt-border-black:          #414141;
+$bt-off-black:             #373737;
+$bt-black:                 #222222;
+
+// bt text colors
+$bt-text-white:            #e8e8e8;
+$bt-text-white-light:      #c1c1c1;
+$bt-text-white-faded:      #717171;
+
+$bt-text-black-faded:      #969696;
+$bt-text-black-light:      #535353;
+$bt-text-black:            #383838;
+
+// bt colors: blue green pink yellow
+$bt-blue:                  #2f80ed;
+$bt-green:                 #18DE83;
+$bt-pink:                  #F85386;
+$bt-yellow:                #FFFF00;
+
+// bt variants: primary, danger
+$bt-primary-light: #4287e1;
+$bt-primary:       #1e72e1;
+$bt-primary-faded: #1a61bf;
+
+$bt-danger-light: #de5c5c;
+$bt-danger:       #dc3333;
+$bt-danger-faded: #b62727;
+
+$bt-cardinal-light:        #ae3535;
+$bt-cardinal:              #8c1515;
+$bt-cardinal-faded:        #6d1414;
+
+// store of all themed color settings
+$themed-colors: (
+  "light": (
+    "white": $bt-white,
+    "off-white": $bt-off-white,
+    "border-white": $bt-border-white,
+    "bright-gray": $bt-bright-gray,
+    
+    "text-base": $bt-text-black,
+    "text-light": $bt-text-black-light,
+    "text-faded": $bt-text-black-faded,
+
+    "blue": $bt-blue,
+
+    "primary": $bt-primary,
+    "primary-light": $bt-primary-light,
+    "primary-faded": $bt-primary-faded,
+    "primary-highlight": $bt-white,
+    "primary-inverted": $bt-white,
+    "primary-inverted-light": $bt-white,
+    "primary-inverted-faded": $bt-off-white,
+    "primary-inverted-highlight": $bt-primary,
+    "danger": $bt-danger,
+    "danger-light": $bt-danger-light,
+    "danger-faded": $bt-danger-faded,
+    "danger-highlight": $bt-white,
+    "danger-inverted": $bt-white,
+    "danger-inverted-light": $bt-white,
+    "danger-inverted-faded": $bt-off-white,
+    "danger-inverted-highlight": $bt-danger,
+  ),
+  "dark": (
+    "white": $bt-black,
+    "off-white": $bt-off-black,
+    "border-white": $bt-border-black,
+    "bright-gray": $bt-dim-gray,
+
+    "text-base": $bt-text-white,
+    "text-light": $bt-text-white-light,
+    "text-faded": $bt-text-white-faded,
+
+    "blue": $bt-blue,
+
+    "primary": $bt-primary,
+    "primary-light": $bt-primary-light,
+    "primary-faded": $bt-primary-faded,
+    "primary-highlight": $bt-white,
+    "primary-inverted": $bt-black,
+    "primary-inverted-light": $bt-black,
+    "primary-inverted-faded": $bt-off-black,
+    "primary-inverted-highlight": $bt-primary,
+    "danger": $bt-danger,
+    "danger-light": $bt-danger-light,
+    "danger-faded": $bt-danger-faded,
+    "danger-highlight": $bt-white,
+    "danger-inverted": $bt-black,
+    "danger-inverted-light": $bt-black,
+    "danger-inverted-faded": $bt-off-black,
+    "danger-inverted-highlight": $bt-danger,
+  ),
+  "stanfurd": (
+    "white": $bt-white,
+    "off-white": $bt-off-white,
+    "border-white": $bt-border-white,
+    "bright-gray": $bt-bright-gray,
+    
+    "text-base": $bt-text-black,
+    "text-light": $bt-text-black-light,
+    "text-faded": $bt-text-black-faded,
+
+    "blue": $bt-cardinal,
+
+    "primary": $bt-cardinal,
+    "primary-light": $bt-cardinal-light,
+    "primary-faded": $bt-cardinal-faded,
+    "primary-highlight": $bt-white,
+    "primary-inverted": $bt-white,
+    "primary-inverted-light": $bt-white,
+    "primary-inverted-faded": $bt-off-white,
+    "primary-inverted-highlight": $bt-cardinal,
+    "danger": $bt-danger,
+    "danger-light": $bt-danger-light,
+    "danger-faded": $bt-danger-faded,
+    "danger-highlight": $bt-white,
+    "danger-inverted": $bt-white,
+    "danger-inverted-light": $bt-white,
+    "danger-inverted-faded": $bt-off-white,
+    "danger-inverted-highlight": $bt-danger,
+  ),
+);
+
+// use this mixin to apply a themed color to a property
+// ex. @include themed('color', 'primary');
+@mixin themed($property, $color) {
+  @each $theme in map-keys($themed-colors) {
+    .bt-theme-#{$theme} & {
+      #{$property}: map-get(map-get($themed-colors, $theme), $color);
+    }
+  }
+
+  transition: #{$property} 0.2s;
+}
+
+// // we tag the html body with a class to apply the appropriate background color
+// // we can't use the themed mixin b/c the theme class is inside of the body
+// body.bt-theme-light-body {
+//   background-color: map-get(map-get($themed-colors, 'light'), 'white');
+// }
+
+// body.bt-theme-dark-body {
+//   background-color: map-get(map-get($themed-colors, 'dark'), 'white');
+// }
+
+// body.bt-theme-stanfurd-body {
+//   background-color: map-get(map-get($themed-colors, 'stanfurd'), 'white');
+// }

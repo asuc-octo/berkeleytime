@@ -17,12 +17,10 @@
 @import 'bt/common/banner';
 @import 'bt/common/footer';
 @import 'bt/common/bt-loader';
+@import 'bt/common/theme_picker';
 
 // landing
-@import 'bt/landing/jumbotron';
-@import 'bt/landing/explore';
-@import 'bt/landing/mission';
-@import 'bt/landing/blurbs';
+@import 'bt/landing/landing';
 
 // catalog
 @import 'bt/catalog/catalog';

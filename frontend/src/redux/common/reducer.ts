@@ -4,12 +4,16 @@ import {
   OPEN_BANNER,
   CLOSE_BANNER,
   ENTER_MOBILE,
-  EXIT_MOBILE
+  EXIT_MOBILE,
+  SET_THEME_LIGHT,
+  SET_THEME_DARK,
+  SET_THEME_STANFURD
 } from './types'
 
 const initialState: CommonState = {
   banner: false,
-  mobile: false
+  mobile: false,
+  theme: 'light'
 }
 
 export function commonReducer(
@@ -36,6 +40,21 @@ export function commonReducer(
       return {
         ...state,
         mobile: false
+      }
+    case SET_THEME_LIGHT:
+      return {
+        ...state,
+        theme: 'light'
+      }
+    case SET_THEME_DARK:
+      return {
+        ...state,
+        theme: 'dark'
+      }
+    case SET_THEME_STANFURD:
+      return {
+        ...state,
+        theme: 'stanfurd'
       }
     default:
       return state

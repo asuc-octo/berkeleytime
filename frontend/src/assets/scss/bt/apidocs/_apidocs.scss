@@ -9,12 +9,16 @@
   max-width: 900px;
 
   .api-notice {
+    border-radius: 5px;
     margin-top: 50px;
-    background-color: $bt-off-white;
-    color: $bt-indicator-red;
+    @include themed('background-color', 'off-white');
+    @include themed('color', 'danger');
     padding: 50px;
+    b {
+      @include themed('color', 'danger-light');
+    }
     a {
-       color: $bt-indicator-red;
+       @include themed('color', 'danger-light');
        font-weight: bold;
     }
   }
@@ -24,11 +28,18 @@
   }
 
   .swagger-ui {
+    h1, h2, h3, h4, h5, h6, p, span, select {
+      @include themed('color', 'text-base');
+    }
+
+    .scheme-container, select {
+      @include themed('background-color', 'white');
+    }
+
     .wrapper {
       padding: 0px;
     }
 
-    font-family: Inter;
 
     .info {
       .title {
@@ -111,17 +122,6 @@
         text-transform: capitalize;
     }
 
-    .opblock-tag {
-        font-family: 'Roboto Mono', monospace;
-        font-weight: 600;
-        border-bottom: none;
-
-        p {
-          color: #4f566b;
-        }
-
-    }
-
     .expand-operation {
       display: none;
     }
@@ -180,7 +180,6 @@
         .opblock-summary-path {
             a.nostyle span {
               font-size: 14px;
-              color: #3b4151;
               padding: 0 8px;
               font-family: 'Roboto Mono', monospace;
             }
@@ -200,10 +199,6 @@
             color: #3b4151;
             text-shadow: none;
             transition: .2s;
-
-            &:hover {
-              background-color: #9eb3ff2b;
-            }
         }
 
         .opblock-summary-description {
@@ -531,13 +526,6 @@
       transition: none;
     }
 
-    .info a {
-      font-size: 14px;
-      color: $bt-primary;
-      &:hover {
-        text-decoration: underline;
-      }
-    }
 
     .download-contents {
       padding: 4px 2px;

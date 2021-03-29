@@ -1,77 +1,44 @@
-// This file includes additional variants and sizes for Bootstrap buttons.
+// This file includes custom styling and variants for buttons.
 // https://react-bootstrap.github.io/getting-started/theming/
 
-// custom BsPrefix for buttons
-.bt-btn {
-  @extend .btn;
-
+.btn {
   @include font-size-responsive(16px);
 }
 
-.bt-btn-sm {
-  @extend .btn-sm;
-
+.btn-sm {
   @include font-size-responsive(14px);
 }
 
-@mixin bt-variant($color, $background, $border, $hover) {
-  color: $color;
-  background-color: $background;
-  border-color: $border;
+@mixin themed-bt-button($color, $background, $border, $hover) {
+  @include themed('color', $color);
+  @include themed('background-color', $background);
+  @include themed('border-color', $border);
 
   &:hover {
-    color: $color;
-    background-color: $hover;
+    @include themed('color', $color);
+    @include themed('background-color', $hover);
     cursor: pointer;
   }
 }
 
-.bt-btn-primary {
-  @include bt-variant($bt-white, $bt-primary, $bt-primary, $bt-primary-background);
+.btn-bt-primary {
+  @include themed-bt-button('primary-highlight', 'primary', 'primary', 'primary-faded');
 }
 
-.bt-btn-inverted {
-  @include bt-variant($bt-primary, $bt-white, $bt-border-grey, $bt-button-background);
+.btn-bt-primary-inverted {
+  @include themed-bt-button('primary-inverted-highlight', 'primary-inverted', 'primary-inverted-highlight', 'primary-inverted-faded');
 }
 
-.btn-bt-red-inverted {
-  color: $bt-indicator-red;
-  background-color: $bt-white;
-  border-color: $bt-border-grey;
-  border-width: 2px;
-
-  transition: 0.2s;
-
-  &:hover {
-    color: $bt-indicator-red;
-    background-color: $bt-button-background;
-    border-color: $bt-border-grey;
-  }
-
-  a {
-    color: inherit;
-  }
+.btn-bt-danger {
+  @include themed-bt-button('danger-highlight', 'danger', 'danger', 'danger-faded');
 }
 
-.btn-bt-blue-inverted {
-  color: $bt-indicator-blue;
-  background-color: $bt-white;
-  border-color: $bt-border-grey;
-  border-width: 2px;
-
-  transition: 0.2s;
-
-  &:hover {
-    color: $bt-indicator-blue;
-    background-color: $bt-button-background;
-    border-color:$bt-border-grey;
-  }
-
-  a {
-    color: inherit;
-  }
+.btn-bt-danger-inverted {
+  @include themed-bt-button('danger-inverted-highlight', 'danger-inverted', 'danger-inverted-highlight', 'danger-inverted-faded');
 }
 
+
+//deprecate
 .btn-bt-lg {
   font-size: 18px;
   line-height: 1.5;
@@ -82,6 +49,7 @@
   }
 }
 
+//deprecate
 .btn-bt-md {
   font-size: 16px;
   line-height: 1.5;
@@ -96,14 +64,4 @@
   border: 0.5px solid $bt-light-border-grey;
   box-sizing: border-box;
   border-radius: 4px;
-}
-
-.as-link {
-  background: none !important;
-  border: none;
-  padding: 0 !important;
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
-  }
 }

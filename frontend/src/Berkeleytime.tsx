@@ -4,6 +4,7 @@ import { connect, ConnectedProps } from 'react-redux'
 import Banner from './components/Common/Banner'
 import Navigation from './components/Common/Navigation'
 import Footer from './components/Common/Footer'
+import ThemePicker from './components/Common/ThemePicker'
 import Routes from './Routes'
 
 import { openBanner, enterMobile, exitMobile } from './redux/common/actions'
@@ -96,21 +97,25 @@ class Berkeleytime extends Component<Props> {
     // const embeded = window.location.pathname.includes('/embed')
     const embeded = false
 
+    const theme_class = `bt-theme-${this.props.theme}`
+
     return (
-      <>
+      <div className={theme_class}>
         {!embeded && <Banner />}
         <div className="app">
           {!embeded && <Navigation />}
           <Routes />
           {!embeded && <Footer />}
         </div>
-      </>
+        {!embeded && <ThemePicker />}
+      </div>
     )
   }
 }
 
 const mapState = (state: ReduxState) => ({
-  mobile: state.common.mobile
+  mobile: state.common.mobile,
+  theme: state.common.theme
 })
 
 const mapDispatch = {

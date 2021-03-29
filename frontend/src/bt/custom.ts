@@ -5,13 +5,15 @@ import H6, { Props as H6Props} from 'components/Custom/H6'
 import P, { Props as PProps } from 'components/Custom/P'
 import A, { Props as AProps } from 'components/Custom/A'
 import Button, { Props as ButtonProps } from 'components/Custom/Button'
+import Themed, { Props as ThemedProps } from 'components/Custom/Themed'
 
 export {
   H3,
   H6,
   P,
   A,
-  Button
+  Button,
+  Themed
 }
 
 export type {
@@ -19,5 +21,6 @@ export type {
   H6Props,
   PProps,
   AProps,
-  ButtonProps
+  ButtonProps,
+  ThemedProps,
 }

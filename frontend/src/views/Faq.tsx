@@ -15,7 +15,7 @@ const Faq: FC = () => (
             Frequently Asked Questions
           </H3>
           <P className="mb-3">Answering your most commonly asked questions.</P>
-          <Button variant="inverted" href="mailto: octo.berkeleytime@asuc.org">
+          <Button variant="primary-inverted" href="mailto: octo.berkeleytime@asuc.org">
             Contact Us
           </Button>
         </Col>

@@ -1,37 +1,39 @@
 import React, { FC } from 'react'
-import { Button as BootstrapButton, ButtonProps as BootstrapProps } from 'react-bootstrap'
+import { Button as BsButton, ButtonProps as BsProps } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
+// we use bt- prefixed variants instead of bootstrap variants
+// see _buttons.scss
+
 const Button: FC<Props> = (props) => {
-  const bootstrapProps: BootstrapProps = {
-    bsPrefix: 'bt-btn',
+  const bsProps: BsProps = {
     className: props.className,
     size: props.size,
-    variant: props.variant ?? 'primary'
+    variant: `bt-${props.variant ?? 'primary'}`
   }
 
   if (typeof props.href === 'object') {
     return (
-      <BootstrapButton
-        {...bootstrapProps}
+      <BsButton
+        {...bsProps}
         as={Link}
         to={props.href.as_link}
       >
         {props.children}
-      </BootstrapButton>
+      </BsButton>
     )
   } else {
     return (
-      <BootstrapButton {...bootstrapProps} href={props.href}>
+      <BsButton {...bsProps} href={props.href}>
         {props.children}
-      </BootstrapButton>
+      </BsButton>
     )
   }
 }
 
 export interface Props {
   className?: string
-  variant?: 'primary' | 'inverted'
+  variant?: 'primary' | 'primary-inverted' | 'danger' | 'danger-inverted'
   size?: 'sm'
   href?: string | { as_link: string }
 }

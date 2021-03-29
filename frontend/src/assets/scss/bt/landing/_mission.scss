@@ -22,6 +22,7 @@
 
     p {
       max-width: 300px;
+      @include themed('color', 'text-light');
     }
   }
 }

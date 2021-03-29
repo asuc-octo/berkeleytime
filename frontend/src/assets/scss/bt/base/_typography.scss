@@ -14,7 +14,7 @@ td {
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: normal;
-  color: $bt-base-text;
+  @include themed('color', 'text-base');
   margin: 0;
 
   -webkit-font-smoothing: antialiased;
@@ -22,11 +22,15 @@ td {
 }
 
 a {
-  color: $bt-blue;
+  @include themed('color', 'primary');
   transition: color 0.2s;
 
   &:hover {
     text-decoration: none;
+  }
+
+  &:focus {
+    @include themed('color', 'text-base');
   }
 }
 

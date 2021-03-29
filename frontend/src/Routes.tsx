@@ -14,7 +14,7 @@ import Error from './views/Error/Error';
 const Grades = lazy(() => import('./views/Grades/Grades'));
 const Enrollment = lazy(() => import('./views/Enrollment/Enrollment'));
 const About = lazy(() => import('./views/About'));
-const Releases = lazy(() => import('./views/Releases/Releases'));
+const Releases = lazy(() => import('./views/Releases'));
 const Faq = lazy(() => import('./views/Faq'));
 const ApiDocs = lazy(() => import('./views/Api/Api'));
 const TestForm = lazy(() => import('./views/Forms/TestForm'));

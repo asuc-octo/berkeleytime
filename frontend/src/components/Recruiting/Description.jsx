@@ -36,7 +36,7 @@ export default class Description extends Component {
               <div className="positions-heading">
                 <h2>{title}</h2>
               </div>
-             <Markdown source={ body } escapeHTML={false} className="positions-body" />
+              <Markdown source={ body } escapeHTML={false} className="positions-body" />
             </Col>
             <Col lg={2}></Col>
             <LinkBar link={link} linkName={linkName} />

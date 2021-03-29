@@ -29,7 +29,7 @@ const Jumbotron: FC = () => (
                 <Button href={{ as_link: '/catalog' }}>Explore Courses</Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button variant="inverted" href={{ as_link: '/about' }}>
+                <Button variant="primary-inverted" href={{ as_link: '/about' }}>
                   About Us
                 </Button>
               </ButtonGroup>

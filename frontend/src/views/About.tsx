@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-import { H3, P } from 'bt/custom'
+import { H3, H6, P } from 'bt/custom'
 
 import CurrentContributors from '../components/About/CurrentContributors';
 import PastContributors from '../components/About/PastContributors';
@@ -61,15 +61,15 @@ const About: FC = () => (
       <img src={jemma} alt="" />
     </div>
     <div className="values">
-      <h5>Our Values</h5>
+      <H3 bold>Our Values</H3>
       <Row>
         {values.map(value => (
           <Col key={value.name} xs={12} md={4} className="value-col">
             <div className="value">
               <div className="value-content">
                 <img src={value.svg} alt="value" />
-                <h6>{ value.name }</h6>
-                <p>{ value.desc }</p>
+                <H6 bold>{ value.name }</H6>
+                <P>{ value.desc }</P>
               </div>
             </div>
           </Col>

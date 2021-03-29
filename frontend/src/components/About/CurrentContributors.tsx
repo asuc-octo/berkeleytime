@@ -3,7 +3,7 @@ import { Row, Col } from 'react-bootstrap';
 
 import { H3 } from 'bt/custom';
 
-import { ReactComponent as Web } from '../../assets/svg/about/web.svg';
+import { ReactComponent as Web } from 'assets/svg/about/web.svg'
 
 import annie_1 from 'assets/img/about/2020-21/annie_1.jpg';
 import annie_2 from 'assets/img/about/2020-21/annie_2.jpg';
@@ -166,9 +166,7 @@ const contributors = [
 
 const CurrentContributors: FC = () => (
   <div className="current-contributors mb-5">
-    <H3 bold className="mb-4">
-      Current Team
-    </H3>
+    <H3 bold className="mb-4">Current Team</H3>
     {contributors.map((row, i) => (
       <Row key={i}>
         {row.map((member) => (
