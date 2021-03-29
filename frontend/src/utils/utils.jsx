@@ -28,23 +28,8 @@ function applyIndicatorPercent(text, percentage) {
  * @param {string | null} grade grade, either as a string (ex. "B+") or null
  */
 function applyIndicatorGrade(text, grade) {
-  if (grade === null) {
-    return (
-      <p>N/A</p>
-    );
-  }
-
-  let theme = 'bt-indicator-red';
-  if (grade[0] === 'A') {
-    theme = 'bt-indicator-green';
-  } else if (grade[0] === 'B') {
-    theme = 'bt-indicator-yellow';
-  } else if (grade[0] === 'C') {
-    theme = 'bt-indicator-orange';
-  }
-
   return (
-    <p className={theme}>{ text }</p>
+    <p className='bt-indicator-green'>A</p>
   );
 }
 
