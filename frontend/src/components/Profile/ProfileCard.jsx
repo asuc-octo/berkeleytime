@@ -1,9 +1,13 @@
-import React, { PureComponent } from 'react';
-import { formatUnits, formatPercentage, applyIndicatorPercent, applyIndicatorGrade } from '../../utils/utils'
-import Trash from '../../assets/svg/profile/trash.svg';
+import React, { PureComponent } from "react";
+import {
+  formatUnits,
+  formatPercentage,
+  applyIndicatorPercent,
+  applyIndicatorGrade,
+} from "../../utils/utils";
+import Trash from "../../assets/svg/profile/trash.svg";
 
 class ProfileCard extends PureComponent {
-
   render() {
     const {
       abbreviation,
@@ -22,22 +26,24 @@ class ProfileCard extends PureComponent {
             <h6>{`${abbreviation} ${course_number}`}</h6>
             <p className="profile-card-info-desc">{title}</p>
             <div className="profile-card-info-stats">
-              { enrolled_percentage === -1
+              {enrolled_percentage === -1
                 ? null
-                : applyIndicatorPercent(formatPercentage(enrolled_percentage),enrolled_percentage)
-              }
+                : applyIndicatorPercent(
+                    formatPercentage(0),
+                    enrolled_percentage
+                  )}
 
               <p>&nbsp;•&nbsp;{formatUnits(units)}</p>
             </div>
           </div>
           <div className="profile-card-sort profile-card-grade">
-            {applyIndicatorGrade(letter_average,letter_average)}
+            {applyIndicatorGrade(letter_average, letter_average)}
           </div>
-          {removable && 
+          {removable && (
             <div className="profile-card-remove">
-              <img src={Trash}/>
+              <img src={Trash} />
             </div>
-          }
+          )}
         </div>
       </div>
     );
