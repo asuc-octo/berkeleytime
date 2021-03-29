@@ -54,7 +54,7 @@ const questions = [
   },
   {
     question: 'How do I give feedback about the product?',
-    answer: <P>Send mail to 450 Jane Stanford Way, Stanford, CA 94305 and we will get back to you within 4-6 weeks.</P>,
+    answer: <P>Send mail to 450 Jane Stanford Way, Stanford, CA 94305 and we will get back to you within 4-6 business weeks.</P>,
   }, {
     question: 'Can Stanfurdtime add a feature to review/rate professors and courses?',
     answer: <P>Lets not pretend you actually go to class.</P>
