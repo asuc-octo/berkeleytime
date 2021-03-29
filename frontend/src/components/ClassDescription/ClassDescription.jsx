@@ -1,30 +1,39 @@
-import React, { Component } from 'react';
-import Radium from 'radium';
-import { withRouter, Link } from 'react-router-dom';
-import { Table } from 'react-bootstrap';
-import { BeatLoader } from 'react-spinners';
+import React, { Component } from "react";
+import Radium from "radium";
+import { withRouter, Link } from "react-router-dom";
+import { Table } from "react-bootstrap";
+import { BeatLoader } from "react-spinners";
 
-import people from '../../assets/svg/catalog/people.svg';
-import chart from '../../assets/svg/catalog/chart.svg';
-import book from '../../assets/svg/catalog/book.svg';
-import launch from '../../assets/svg/catalog/launch.svg';
+import people from "../../assets/svg/catalog/people.svg";
+import chart from "../../assets/svg/catalog/chart.svg";
+import book from "../../assets/svg/catalog/book.svg";
+import launch from "../../assets/svg/catalog/launch.svg";
 
-import denero from '../../assets/img/eggs/denero.png';
-import hug from '../../assets/img/eggs/hug.png';
-import hilf from '../../assets/img/eggs/hilf.png';
-import sahai from '../../assets/img/eggs/sahai.png';
-import scott from '../../assets/img/eggs/scott.png';
-import kubi from '../../assets/img/eggs/kubi.png';
-import garcia from '../../assets/img/eggs/garcia.png';
+import denero from "../../assets/img/eggs/denero.png";
+import hug from "../../assets/img/eggs/hug.png";
+import hilf from "../../assets/img/eggs/hilf.png";
+import sahai from "../../assets/img/eggs/sahai.png";
+import scott from "../../assets/img/eggs/scott.png";
+import kubi from "../../assets/img/eggs/kubi.png";
+import garcia from "../../assets/img/eggs/garcia.png";
 
-import { updateCourses, getCourseData, makeRequestDescription, setRequirements, setUnits, setDepartment, setLevel, setSemester } from '../../redux/actions';
+import {
+  updateCourses,
+  getCourseData,
+  makeRequestDescription,
+  setRequirements,
+  setUnits,
+  setDepartment,
+  setLevel,
+  setSemester,
+} from "../../redux/actions";
 import { connect } from "react-redux";
 
 import {
   applyIndicatorPercent,
   applyIndicatorGrade,
-  formatUnits
-} from '../../utils/utils';
+  formatUnits,
+} from "../../utils/utils";
 
 function isEmpty(obj) {
   return Object.keys(obj).length === 0;
@@ -36,8 +45,8 @@ const easterEggImages = {
   "SAHAI A": sahai,
   "HILFINGER P": hilf,
   "SHENKER S": scott,
-  'KUBIATOWICZ J': kubi,
-  'GARCIA D': garcia,
+  "KUBIATOWICZ J": kubi,
+  "GARCIA D": garcia,
 };
 
 class ClassDescription extends Component {
@@ -48,22 +57,22 @@ class ClassDescription extends Component {
   static colorEnrollment(percentage) {
     const pct = Math.floor(percentage * 100, 100);
     if (pct < 33) {
-      return 'enrollment-first-third';
+      return "enrollment-first-third";
     } else if (pct < 67) {
-      return 'enrollment-second-third';
+      return "enrollment-second-third";
     } else {
-      return 'enrollment-last-third';
+      return "enrollment-last-third";
     }
   }
 
   static formatDate(date) {
     var hours = date.getUTCHours();
     var minutes = date.getUTCMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
+    var ampm = hours >= 12 ? "pm" : "am";
     hours = hours % 12;
     hours = hours ? hours : 12;
-    minutes = minutes < 10 ? '0'+minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    var strTime = hours + ":" + minutes + " " + ampm;
     return strTime;
   }
 
@@ -72,16 +81,16 @@ class ClassDescription extends Component {
 
     this.state = {
       readMore: false,
-    }
+    };
   }
 
   details = () => {
     this.props.selectCourse(this.props.course, 0);
-  }
+  };
 
   sections = () => {
     this.props.selectCourse(this.props.course, 1);
-  }
+  };
 
   componentDidMount() {
     this.updateCourseData();
@@ -95,7 +104,10 @@ class ClassDescription extends Component {
       if (!isEmpty(this.props.course)) {
         this.updateCourseData();
       }
-    } else if (!isEmpty(this.props.course) && prevProps.course.id !== this.props.course.id) {
+    } else if (
+      !isEmpty(this.props.course) &&
+      prevProps.course.id !== this.props.course.id
+    ) {
       this.updateCourseData();
     } else if (isEmpty(this.props.course)) {
       this.updateCourseData();
@@ -103,7 +115,12 @@ class ClassDescription extends Component {
   }
 
   updateCourseData() {
-    const { course, getCourseData, makeRequestDescription, updateCourses } = this.props;
+    const {
+      course,
+      getCourseData,
+      makeRequestDescription,
+      updateCourses,
+    } = this.props;
     this.setReadMore(false);
     if (isEmpty(course)) {
       updateCourses({});
@@ -127,39 +144,49 @@ class ClassDescription extends Component {
   }
 
   pillFilter(req) {
-    const { filterMap, modifyFilters, setRequirements, setUnits, setDepartment, setLevel, setSemester } = this.props;
+    const {
+      filterMap,
+      modifyFilters,
+      setRequirements,
+      setUnits,
+      setDepartment,
+      setLevel,
+      setSemester,
+    } = this.props;
     const { requirements, units, department, level, semester } = this.props;
     if (filterMap === null || filterMap[req] === null) {
       return;
     }
     var formattedFilter = {
       value: filterMap[req].id,
-      label: req
+      label: req,
     };
-    const newFilters = list => {
+    const newFilters = (list) => {
       if (list === null) {
         return [formattedFilter];
       }
-      let isDuplicate = list.some(item => item.value === formattedFilter.value);
+      let isDuplicate = list.some(
+        (item) => item.value === formattedFilter.value
+      );
       if (isDuplicate) {
         return list;
       }
       return [...list, formattedFilter];
-    }
+    };
     switch (filterMap[req].type) {
-      case 'requirements':
+      case "requirements":
         setRequirements(newFilters(requirements));
         break;
-      case 'department':
+      case "department":
         setDepartment(formattedFilter);
         break;
-      case 'units':
+      case "units":
         setUnits(newFilters(units));
         break;
-      case 'level':
+      case "level":
         setLevel(newFilters(level));
         break;
-      case 'semester':
+      case "semester":
         setSemester(newFilters(semester));
         break;
       default:
@@ -179,10 +206,10 @@ class ClassDescription extends Component {
     for (let egg in easterEggImages) {
       if (instr.indexOf(egg) !== -1) {
         return {
-          ':hover': {
+          ":hover": {
             cursor: `url(${easterEggImages[egg]}), auto`,
-          }
-        }
+          },
+        };
       }
     }
     return {};
@@ -198,12 +225,22 @@ class ClassDescription extends Component {
 
     var pills = [];
     if (requirements !== null) {
-      let allSemesters = requirements.filter(item => item.includes("Spring") || item.includes("Fall"));
-      var semesterUrl = allSemesters.length > 0 ? allSemesters[0].toLowerCase().split(' ').join('-') : null;
+      let allSemesters = requirements.filter(
+        (item) => item.includes("Spring") || item.includes("Fall")
+      );
+      var semesterUrl =
+        allSemesters.length > 0
+          ? allSemesters[0].toLowerCase().split(" ").join("-")
+          : null;
       let latestSemesters = allSemesters.slice(0, 4);
 
-      let units = requirements.filter(item => item.includes("Unit"));
-      var otherFilters = requirements.filter(item => !item.includes("Spring") && !item.includes("Fall") && !item.includes("Unit"));
+      let units = requirements.filter((item) => item.includes("Unit"));
+      var otherFilters = requirements.filter(
+        (item) =>
+          !item.includes("Spring") &&
+          !item.includes("Fall") &&
+          !item.includes("Unit")
+      );
 
       pills = otherFilters.concat(units).concat(latestSemesters);
     }
@@ -214,9 +251,12 @@ class ClassDescription extends Component {
     };
 
     const toEnrollment = {
-      pathname: (course !== null && semesterUrl !== null) ? `/enrollment/0-${course.id}-${semesterUrl}-all` : `/enrollment`,
+      pathname:
+        course !== null && semesterUrl !== null
+          ? `/enrollment/0-${course.id}-${semesterUrl}-all`
+          : `/enrollment`,
       state: { course: course },
-    }
+    };
 
     if (loading) {
       return (
@@ -230,7 +270,7 @@ class ClassDescription extends Component {
       const charsPerRow = 80;
       const moreOffset = 15;
       var description = course.description;
-      var prereqs = '';
+      var prereqs = "";
       var moreDesc;
       var morePrereq;
       if (this.state.readMore) {
@@ -245,16 +285,17 @@ class ClassDescription extends Component {
         // collapse
         let descRows = Math.round(course.description.length / charsPerRow);
         if (descRows > 3 || (descRows == 3 && course.prerequisites)) {
-          description = description.slice(0, 3*charsPerRow - moreOffset) + '...';
+          description =
+            description.slice(0, 3 * charsPerRow - moreOffset) + "...";
           moreDesc = true;
         }
         if (descRows < 3 && course.prerequisites) {
           prereqs = course.prerequisites;
           if (descRows >= 1 && prereqs.length > charsPerRow) {
-            prereqs = prereqs.slice(0, charsPerRow - moreOffset) + '...';
+            prereqs = prereqs.slice(0, charsPerRow - moreOffset) + "...";
             morePrereq = true;
-          } else if (descRows == 0 && prereqs.length > 2*charsPerRow) {
-            prereqs = prereqs.slice(0, 2*charsPerRow - moreOffset) + '...';
+          } else if (descRows == 0 && prereqs.length > 2 * charsPerRow) {
+            prereqs = prereqs.slice(0, 2 * charsPerRow - moreOffset) + "...";
             morePrereq = true;
           }
         }
@@ -263,33 +304,54 @@ class ClassDescription extends Component {
       return (
         <div className="catalog-description-container">
           <div className="catalog-description">
-            <h3>{course.abbreviation} {course.course_number}</h3>
+            <h3>
+              {course.abbreviation} {course.course_number}
+            </h3>
             <h6>{course.title}</h6>
             <div className="stats">
               <div className="statline">
                 <img src={people} />
                 Enrolled: &nbsp;
-                {course.enrolled !== -1
-                    ? 
-                    <div className="statline-div">
-                      {applyIndicatorPercent(`${course.enrolled}/${course.enrolled_max}`, course.enrolled_percentage)}
-                      &nbsp;
-                      <a href={toEnrollment.pathname} target="_blank" className="statlink"><img src={launch} /></a>
-                    </div>
-                    : " N/A "
-                }
+                {course.enrolled !== -1 ? (
+                  <div className="statline-div">
+                    {applyIndicatorPercent(
+                      `0/${course.enrolled_max}`,
+                      course.enrolled_percentage
+                    )}
+                    &nbsp;
+                    <a
+                      href={toEnrollment.pathname}
+                      target="_blank"
+                      className="statlink"
+                    >
+                      <img src={launch} />
+                    </a>
+                  </div>
+                ) : (
+                  " N/A "
+                )}
               </div>
               <div className="statline">
                 <img src={chart} />
                 Average Grade: &nbsp;
-                {course.grade_average !== -1
-                    ? 
+                {course.grade_average !== -1 ? (
                   <div className="statline-div">
-                    {applyIndicatorGrade(course.letter_average, course.letter_average)} &nbsp;
-                    <a href={toGrades.pathname} target="_blank" className="statlink"><img src={launch} /></a>
+                    {applyIndicatorGrade(
+                      course.letter_average,
+                      course.letter_average
+                    )}{" "}
+                    &nbsp;
+                    <a
+                      href={toGrades.pathname}
+                      target="_blank"
+                      className="statlink"
+                    >
+                      <img src={launch} />
+                    </a>
                   </div>
-                  : " N/A "
-                }
+                ) : (
+                  " N/A "
+                )}
               </div>
               <div className="statline">
                 <img src={book} />
@@ -297,56 +359,91 @@ class ClassDescription extends Component {
               </div>
             </div>
             <section className="pill-container">
-              {pills.map(req => <div className="pill" key={req} onClick={() => this.pillFilter(req)}>{req}</div>)}
+              {pills.map((req) => (
+                <div
+                  className="pill"
+                  key={req}
+                  onClick={() => this.pillFilter(req)}
+                >
+                  {req}
+                </div>
+              ))}
             </section>
-            {description.length > 0 ?
+            {description.length > 0 ? (
               <p className="description">
                 {description}
-                {moreDesc != null ? (<span onClick={() => this.setReadMore(moreDesc)}> {moreDesc ? ' See more' : ' See less'}</span>) : ''}
-              </p> : ''
-            }
-            {prereqs.length > 0 ?
+                {moreDesc != null ? (
+                  <span onClick={() => this.setReadMore(moreDesc)}>
+                    {" "}
+                    {moreDesc ? " See more" : " See less"}
+                  </span>
+                ) : (
+                  ""
+                )}
+              </p>
+            ) : (
+              ""
+            )}
+            {prereqs.length > 0 ? (
               <div className="prereqs">
                 <h6>Prerequisites</h6>
                 <p>
                   {prereqs}
-                  {morePrereq != null ? (<span onClick={() => this.setReadMore(morePrereq)}> {morePrereq ? ' See more' : ' See less'}</span>) : ''}
+                  {morePrereq != null ? (
+                    <span onClick={() => this.setReadMore(morePrereq)}>
+                      {" "}
+                      {morePrereq ? " See more" : " See less"}
+                    </span>
+                  ) : (
+                    ""
+                  )}
                 </p>
-              </div> : ''
-            }
+              </div>
+            ) : (
+              ""
+            )}
             <h5>Class Times</h5>
             <div className="table-container">
               <Table className="table">
                 <thead>
                   <tr>
-                    <th style={{width: '75px'}}>Type</th>
-                    <th style={{width: '50px'}}>CCN</th>
-                    <th style={{width: '100px'}}>Instructor</th>
-                    <th style={{width: '85px'}}>Time</th>
-                    <th style={{width: '85px'}}>Location</th>
-                    <th style={{width: '75px'}}>Enrolled</th>
-                    <th style={{width: '75px'}}>Waitlist</th>
+                    <th style={{ width: "75px" }}>Type</th>
+                    <th style={{ width: "50px" }}>CCN</th>
+                    <th style={{ width: "100px" }}>Instructor</th>
+                    <th style={{ width: "85px" }}>Time</th>
+                    <th style={{ width: "85px" }}>Location</th>
+                    <th style={{ width: "75px" }}>Enrolled</th>
+                    <th style={{ width: "75px" }}>Waitlist</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sections.map(section => {
+                  {sections.map((section) => {
                     let startDate = new Date(section.start_time + "Z");
                     let endDate = new Date(section.end_time + "Z");
                     return (
-                      <tr key={section.ccn} style={this.findInstructor(section.instructor)}>
+                      <tr
+                        key={section.ccn}
+                        style={this.findInstructor(section.instructor)}
+                      >
                         <td>{section.kind}</td>
                         <td>{section.ccn}</td>
                         <td>{section.instructor}</td>
                         {!isNaN(startDate) && !isNaN(endDate) ? (
-                        <td>{section.word_days} {ClassDescription.formatDate(startDate)} - {ClassDescription.formatDate(endDate)}</td>
+                          <td>
+                            {section.word_days}{" "}
+                            {ClassDescription.formatDate(startDate)} -{" "}
+                            {ClassDescription.formatDate(endDate)}
+                          </td>
                         ) : (
                           <td></td>
                         )}
                         <td>{section.location_name}</td>
-                        <td>{section.enrolled}/{section.enrolled_max}</td>
+                        <td>
+                          {section.enrolled}/{section.enrolled_max}
+                        </td>
                         <td>{section.waitlisted}</td>
                       </tr>
-                    )
+                    );
                   })}
                 </tbody>
               </Table>
@@ -360,7 +457,7 @@ class ClassDescription extends Component {
 
 // ClassDescription = Radium(ClassDescription);
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     dispatch,
     getCourseData: (id) => dispatch(getCourseData(id)),
@@ -370,18 +467,22 @@ const mapDispatchToProps = dispatch => {
     setUnits: (data) => dispatch(setUnits(data)),
     setDepartment: (data) => dispatch(setDepartment(data)),
     setLevel: (data) => dispatch(setLevel(data)),
-    setSemester: (data) => dispatch(setSemester(data))
-  }
-}
+    setSemester: (data) => dispatch(setSemester(data)),
+  };
+};
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { loading, courseData, filterMap } = state.classDescription;
   const { requirements, units, department, level, semester } = state.filter;
   return {
     loading,
     courseData,
     filterMap,
-    requirements, units, department, level, semester
+    requirements,
+    units,
+    department,
+    level,
+    semester,
   };
 };
 
