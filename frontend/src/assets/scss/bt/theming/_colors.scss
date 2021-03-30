@@ -73,11 +73,8 @@ $bt-white:                 #ffffff;
 $bt-off-white:             #f2f2f2;
 $bt-border-white:          #eaeaea;
 
-$bt-bright-gray:           #dddddd;
-$bt-light-gray:            #c4c4c4;
-
+$bt-light-gray:            #b0b0b0;
 $bt-dark-gray:             #606060;
-$bt-dim-gray:              #555555;
 
 $bt-border-black:          #414141;
 $bt-off-black:             #373737;
@@ -111,13 +108,13 @@ $bt-cardinal-light:        #ae3535;
 $bt-cardinal:              #8c1515;
 $bt-cardinal-faded:        #6d1414;
 
-// store of all themed color settings
 $themed-colors: (
   "light": (
     "white": $bt-white,
     "off-white": $bt-off-white,
     "border-white": $bt-border-white,
-    "bright-gray": $bt-bright-gray,
+    "light-gray": $bt-light-gray,
+
     
     "text-base": $bt-text-black,
     "text-light": $bt-text-black-light,
@@ -146,7 +143,7 @@ $themed-colors: (
     "white": $bt-black,
     "off-white": $bt-off-black,
     "border-white": $bt-border-black,
-    "bright-gray": $bt-dim-gray,
+    "light-gray": $bt-dark-gray,
 
     "text-base": $bt-text-white,
     "text-light": $bt-text-white-light,
@@ -175,7 +172,7 @@ $themed-colors: (
     "white": $bt-white,
     "off-white": $bt-off-white,
     "border-white": $bt-border-white,
-    "bright-gray": $bt-bright-gray,
+    "light-gray": $bt-light-gray,
     
     "text-base": $bt-text-black,
     "text-light": $bt-text-black-light,
@@ -214,16 +211,30 @@ $themed-colors: (
   transition: #{$property} 0.2s;
 }
 
-// // we tag the html body with a class to apply the appropriate background color
-// // we can't use the themed mixin b/c the theme class is inside of the body
-// body.bt-theme-light-body {
-//   background-color: map-get(map-get($themed-colors, 'light'), 'white');
-// }
+@mixin themed-multi($property, $params, $color) {
+  @each $theme in map-keys($themed-colors) {
+    .bt-theme-#{$theme} & {
+      #{$property}: #{$params} map-get(map-get($themed-colors, $theme), $color);
+    }
+  }
 
-// body.bt-theme-dark-body {
-//   background-color: map-get(map-get($themed-colors, 'dark'), 'white');
-// }
+  transition: #{$property} 0.2s;
+}
 
-// body.bt-theme-stanfurd-body {
-//   background-color: map-get(map-get($themed-colors, 'stanfurd'), 'white');
-// }
+// we tag the html body with a class to apply the appropriate background color
+// we can't use the themed mixin b/c the theme class is inside of the body
+body {
+  transition: background-color $transition-time;
+}
+
+body.bt-theme-light-body {
+  background-color: map-get(map-get($themed-colors, 'light'), 'white');
+}
+
+body.bt-theme-dark-body {
+  background-color: map-get(map-get($themed-colors, 'dark'), 'white');
+}
+
+body.bt-theme-stanfurd-body {
+  background-color: map-get(map-get($themed-colors, 'stanfurd'), 'white');
+}

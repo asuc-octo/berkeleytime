@@ -1,5 +1,4 @@
 .catalog {
-
   min-height: 600px;
   height: 100vh;
 
@@ -12,10 +11,9 @@
   }
 
   .row {
-    margin: 0; // override bootstrap padding
-
     .filter-column {
-      border-right: 1.5px solid $bt-light-border-grey;
+      border-right: 1.5px solid;
+      @include themed('border-right-color', 'border-white');
       padding: 0; // override bootstrap padding
 
       @include mobile {

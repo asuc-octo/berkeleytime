@@ -40,7 +40,7 @@
       border-radius: 4px;
 
       &:hover, &.selected {
-        @include themed('background-color', 'bright-gray');
+        @include themed('background-color', 'light-gray');
         cursor: pointer;
       }
     }

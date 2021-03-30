@@ -73,6 +73,10 @@ a {
   @include font-size-responsive(26px);
 }
 
+.bt-h5 {
+  @include font-size-responsive(20px);
+}
+
 .bt-h6 {
   @include font-size-responsive(18px);
 }

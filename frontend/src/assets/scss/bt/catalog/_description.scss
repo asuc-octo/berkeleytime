@@ -29,7 +29,7 @@
     padding: 1.5rem;
     font-size: 18px;
     text-align: center;
-    color: $bt-light-text;
+    @include themed('color', 'text-light');
   }
 
   .catalog-description {
@@ -56,7 +56,7 @@
     h6 {
       font-size: 18px;
       font-weight: 400;
-      color: $bt-light-text;
+      @include themed('color', 'text-light');
     }
 
     .stats {
@@ -76,10 +76,10 @@
           margin-right: 8px;
         }
 
-        color: $bt-light-text;
+        @include themed('color', 'text-light');
 
         > p {
-          color: $bt-light-text;
+          @include themed('color', 'text-light');
           margin-left: 5px;
         }
 
@@ -94,7 +94,7 @@
           &:hover {
             cursor: pointer;
             opacity: 1;
-            background: $bt-light-gray;
+            @include themed('color', 'text-light');
           }
 
           img {
@@ -122,25 +122,27 @@
         margin: 0px 10px 2px 0px;
         padding: 6px 12px;
         white-space: nowrap;
-        border: 1px solid $bt-border-grey;
+        border-width: 1px;
+        border-style: solid;
+        @include themed('border-color', 'light-gray');
         border-radius: 50vh;
         text-align: center;
-        color: $bt-blue;
+        @include themed('color', 'primary');
         font-size: 14px;
         transition: 200ms;
 
         &:hover {
           cursor: pointer;
-          background-color: $bt-light-gray;
+          @include themed('color', 'text-light');
         }
       }
     }
 
     .description {
-      color: $bt-grey-text;
+      @include themed('color', 'text-light');
 
       span {
-        color: $bt-blue;
+        @include themed('color', 'primary');
 
         &:hover {
           cursor: pointer;
@@ -151,13 +153,13 @@
     .prereqs {
       h6 {
         margin-bottom: 10px;
-        color: $bt-grey-text;
+        @include themed('color', 'text-base');
         font-weight: 700;
         font-size: 1rem;
       }
 
       span {
-        color: $bt-blue;
+        @include themed('color', 'primary');
 
         &:hover {
           cursor: pointer;
@@ -166,7 +168,7 @@
     }
 
     h5 {
-      color: $bt-base-text;
+      @include themed('color', 'text-base');
       font-weight: 700;
       margin-top: 10px;
       font-size: 18px;
@@ -191,7 +193,7 @@
       }
 
       .table-empty {
-        color: $bt-light-text;
+        @include themed('color', 'text-light');
         font-size: 18px;
         text-align: center;
       }
@@ -200,13 +202,13 @@
         max-width: 100%;
         max-height: 100%;
         margin-bottom: 0;
-        color: $bt-base-text;
+        @include themed('color', 'text-base');
         font-weight: normal;
 
         tr {
-          transition: 0.2s;
+          transition: background-color 0.2s;
           &:hover {
-            background-color: #d4d4d442;
+            @include themed('background-color', 'light-gray');
           }
 
           cursor: var(--section-cursor), pointer;
@@ -219,8 +221,6 @@
             border-bottom: none;
             padding: 0.75rem;
             position: sticky;
-            background: white;
-            transition: 0.2s;
             top: 0;
           }
         }

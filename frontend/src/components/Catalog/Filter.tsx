@@ -19,6 +19,8 @@ import {
 } from '../../utils/playlists/filterTypes';
 import { CourseSortAttribute } from 'utils/courses/sorting';
 
+import { H5, P } from 'bt/custom';
+
 import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg';
 
 type Props = {
@@ -112,7 +114,7 @@ const FilterSidebar = ({
   return !isMobile ? (
     <div id="filter" className="filter">
       <div className="filter-name">
-        <p>Filters</p>
+        <H5 bold className="mr-3">Filters</H5>
         <button type="button" onClick={resetFilters}>
           Reset
         </button>
@@ -138,7 +140,7 @@ const FilterSidebar = ({
       </div>
       {filters.map((option) => (
         <div className="filter-option" key={option.type}>
-          <p>{filterTypeToString(option.type)}</p>
+          <P bold="light" className="mb-2">{filterTypeToString(option.type)}</P>
           <BTSelect
             isClearable={filterTypeIsClearable(option.type)}
             isMulti={filterTypeIsMulti(option.type) as false}

@@ -53,7 +53,7 @@
     }
 
     button {
-      color: $bt-blue;
+      @include themed('color', 'primary');
       transition: 0.5s;
       border: none;
       background: none;
@@ -65,7 +65,7 @@
       }
 
       &:hover {
-        background-color: #ebebeb9e;
+        @include themed('background-color', 'off-white');
       }
     }
   }
@@ -79,15 +79,15 @@
       padding: 6px;
       padding-left: 1.75rem;
       border: 1px solid $bt-border-grey;
-      box-shadow: none;
-      color: $bt-base-text;
       font-size: 14px;
       font-family: 'FontAwesome', 'Inter', sans-serif;
-      transition: 100ms;
       border-radius: 4px;
       text-indent: 6px;
 
-      outline: none;
+      // @include themed('color', 'text-base');
+      // @include themed('background-color', 'white');
+      color: $bt-text-black;
+      background-color: $bt-white;
 
       &::-webkit-search-cancel-button {
         -webkit-appearance: none;
@@ -98,21 +98,22 @@
       }
 
       &::placeholder {
-        color: $bt-light-grey;
+        // @include themed('color', 'light-gray');
+        color: $bt-light-gray;
       }
 
       &:focus {
-        border: 1px solid #2684ff;
-        box-shadow: 0 0 0 1px #2684ff;
+        outline: none; // override default focus
+        border-width: 1px;
+        border-style: solid;
+        // @include themed('border-color', 'primary');
+        // @include themed-multi('box-shadow', '0 0 0 1px', 'primary');
+        border-color: $bt-primary;
+        box-shadow: 0 0 0 1px $bt-primary;
 
         + svg {
-          fill: #2684ff;
-        }
-      }
-
-      &:focus {
-        &::placeholder {
-          color: $bt-light-border-grey;
+          // @include themed('fill', 'primary');
+          fill: $bt-primary;
         }
       }
 
@@ -146,71 +147,7 @@
     display: flex;
     flex-direction: column;
 
-    > p {
-      margin-bottom: 10px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    //override dropdown stylings
-
-    .css-10r6hld-indicatorContainer:hover {
-      color: $bt-border-grey;
-      transition: 0.5s;
-    }
-
-    .css-10r6hld-indicatorContainer:hover {
-      color: $bt-border-grey;
-      transition: 0.5s;
-    }
-
-    .css-1wa3eu0-placeholder::placeholder {
-      color: $bt-light-border-grey;
-    }
-
-    .css-1okebmr-indicatorSeparator {
-      display: none;
-    }
-
-    .css-1wa3eu0-placeholder,
-    .css-1uccc91-singleValue,
-    .css-12jo7m5,
-    .css-12jo7m5,
-    .css-26l3qy-menu {
-      font-size: 14px;
-    }
-
-    .css-yk16xz-control::after,
-    .css-1pahdxg-control::after {
-      border: solid 1.5px blue;
-      background-color: blue;
-    }
-
-    .css-xb97g8 {
-      color: $bt-border-grey;
-      transition: 0.5s;
-    }
-
-    .css-xb97g8:hover {
-      color: #7e7e7e;
-    }
-
-    .css-xb97g8:hover {
-      background-color: #ffbdad00;
-      color: hsl(0, 0%, 67%);
-    }
-
-    .css-yk16xz-control:hover,
-    .css-xb97g8:hover,
-    .css-xb97g8:hover {
-      cursor: pointer;
-    }
-
-    .css-1rhbuit-multiValue {
-      background-color: #f3f3f3;
-      border-radius: 16px;
-      padding: 2px 6px;
-    }
+    font-size: 14px;
   }
 }
 

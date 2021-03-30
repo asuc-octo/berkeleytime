@@ -35,7 +35,7 @@
 
 @mixin bt-loader-dot($i) {
   display: inline-block;
-  background-color: #579eff;
+  @include themed('background-color', 'primary');
   width: 15px;
   height: 15px;
   margin: 2px;

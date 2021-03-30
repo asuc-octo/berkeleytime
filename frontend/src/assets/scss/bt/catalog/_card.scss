@@ -19,10 +19,10 @@ $filter-card-transition: 0.1s ease;
     justify-content: space-between;
 
     background: transparent;
-    transition: all $filter-card-transition;
+    transition: all $transition-time;
 
     &:hover {
-      background-color: $bt-off-white;
+      @include themed('background-color', 'off-white');
       cursor: pointer;
     }
 
@@ -79,9 +79,10 @@ $filter-card-transition: 0.1s ease;
       top: 5px;
       right: 10px;
       opacity: 0.5;
-      transition: opacity $filter-card-transition,
+      transition: opacity $transition-time,
         transform 0.2s cubic-bezier(0, 0.55, 0.45, 1);
-      color: $bt-light-grey;
+      // color: $bt-light-grey;
+      @include themed('color', 'light-gray');
       &:active {
         transform: scale(0.9);
       }
@@ -93,6 +94,6 @@ $filter-card-transition: 0.1s ease;
   }
 
   .filter-card-container.selected {
-    background-color: $bt-off-white;
+    @include themed('background-color', 'off-white');
   }
 }

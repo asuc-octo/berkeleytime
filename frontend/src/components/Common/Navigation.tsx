@@ -8,6 +8,7 @@ import { ReduxState } from '../../redux/store';
 import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
 import { Theme } from 'bt/types';
+import { Themed } from 'bt/custom';
 
 const NavigationLink: FC<
   {
@@ -107,7 +108,7 @@ const Navigation: FC = () => {
        top of the viewport */
     >
       <Navbar.Brand as={Link} to="/" className="bt-bold">
-        Berkeleytime
+        <Themed light={<>{'Berkeleytime'}</>} stanfurd={<>{'Stanfurdtime'}</>} />
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
