@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
 import book from '../../assets/svg/catalog/book.svg';
-import launch from '../../assets/svg/catalog/launch.svg';
+import { ReactComponent as Launch } from '../../assets/svg/catalog/launch.svg';
 
 import {
   applyIndicatorPercent,
@@ -193,7 +193,7 @@ const ClassDescription = ({
                     rel="noreferrer"
                     className="statlink"
                   >
-                    <img src={launch} alt="" />
+                    <Launch />
                   </a>
                 </div>
               ) : (
@@ -224,7 +224,7 @@ const ClassDescription = ({
                     rel="noreferrer"
                     className="statlink"
                   >
-                    <img src={launch} alt="" />
+                    <Launch />
                   </a>
                 </div>
               ) : (

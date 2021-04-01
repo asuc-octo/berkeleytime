@@ -19,6 +19,14 @@
     @include themed('background-color', $hover);
     cursor: pointer;
   }
+
+  &.disabled {
+    cursor: default;
+
+    &:hover {
+      @include themed('background-color', $background);
+    }
+  }
 }
 
 .btn-bt-primary {

@@ -56,16 +56,8 @@
     p {
       display: inline;
       margin-left: 5px;
-      color: $bt-light-grey;
+      @include themed('color', 'text-light');
       font-size: 14px;
-
-      a {
-        color: $bt-blue;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
     }
   }
 

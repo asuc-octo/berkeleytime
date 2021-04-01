@@ -17,10 +17,13 @@
 
     @extend .mb-5;
   
-    img {
+    svg {
       width: 60px;
       height: 60px;
-      object-fit: scale-down;
+
+      path {
+        @include themed('fill', 'primary');
+      }
     }
   
     p {

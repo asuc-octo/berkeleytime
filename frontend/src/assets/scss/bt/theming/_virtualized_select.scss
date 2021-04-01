@@ -1,0 +1,22 @@
+// styles.option prop doesn't work for some reason
+.flat-virtualized-item {
+  @include themed('background-color', 'white');
+
+  transition: background-color 0s !important;
+
+  &:hover {
+    @include themed('background-color', 'primary-light');
+  }
+
+  .fast-option-focused {
+    @include themed('background-color', 'primary-light');
+  }
+
+  .fast-option-selected {
+    @include themed('background-color', 'primary');
+  }
+  
+  .fast-option {
+    @include themed('color', 'text-base');
+  }
+}

@@ -32,8 +32,8 @@ const Jumbotron: FC = () => (
                 stanfurd={
                   <>
                     Stanfurdtime is a platform built, maintained, and run by Stanfurd&apos;s
-                    premier tech consulting club. We work hard to simplify and improve the course
-                    discovery experience.
+                    premier tech consulting club. We work hard to pretend like we&apos;re doing a
+                    lot of work.
                   </>
                 }
               />

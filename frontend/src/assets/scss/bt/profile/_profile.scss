@@ -4,14 +4,22 @@
   box-sizing: border-box;
 
   .profile-sidebar {
+    svg > path {
+      @include themed('fill', 'text-light');
+    }
+
+    .selected > svg > path {
+      @include themed('fill', 'primary');
+    }
+
     @include mobile {
       overflow: scroll;
     }
     button {
       width: 100%;
       border-radius: 4px;
-      color: $bt-light-text;
-      background: #fff;
+      @include themed('color', 'text-light');
+      @include themed('background-color', 'white');
       border: none;
       padding: 0.5rem 1rem;
 
@@ -41,8 +49,7 @@
       }
 
       &.selected {
-        color: $bt-blue;
-        background: #f8f8f8;
+        @include themed('color', 'primary');
       }
 
       &:focus {
@@ -52,7 +59,7 @@
       &:hover,
       &:active {
         text-decoration: none;
-        background: #f8f8f8;
+        @include themed('background-color', 'off-white');
         cursor: pointer;
       }
     }

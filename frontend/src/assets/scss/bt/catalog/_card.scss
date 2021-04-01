@@ -61,14 +61,14 @@ $filter-card-transition: 0.1s ease;
     }
 
     .filter-card-sort.filter-card-grade {
-      h6 {
+      > div {
         font-size: 16px;
         font-weight: 600;
       }
     }
 
     .filter-card-sort.filter-card-open-seats {
-      h6 {
+      > div {
         font-size: 18px;
         font-weight: 500;
       }

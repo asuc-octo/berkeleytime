@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   BarChart,
   Bar,
@@ -14,6 +15,7 @@ import {
 
 import vars from '../../variables/Variables';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
+import themed from 'bt/themed_colors';
 
 const EmptyLabel = props => {
   return (
@@ -71,6 +73,11 @@ export default function GradesGraph({
 
   let numClasses = gradesData.length;
 
+  const theme = useSelector(state => state.common.theme);
+  let fill = themed(theme, 'border_white') ?? '#fff';
+  // let background = themed(theme, 'white') ?? 'white';
+  // const fill = 'red';
+ 
   return (
       <div>
       {!isMobile ? (
@@ -83,7 +90,7 @@ export default function GradesGraph({
 
             <Tooltip
               formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-              cursor={graphEmpty ? {fill: '#fff'} : {fill: '#EAEAEA'}}
+              cursor={graphEmpty ? {fill: fill} : {fill: fill}}
             />
 
             {!graphEmpty && gradesData.map((item, i) => (

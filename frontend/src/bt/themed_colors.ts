@@ -1,12 +1,15 @@
 // store of all themed color settings
 // keep consistent with theming/_colors.scss
 
+import { Theme } from "./types";
+
 // bt white_black gradient
 const bt_white =                  "#ffffff";
 const bt_off_white =              "#f2f2f2";
 const bt_border_white =           "#eaeaea";
 
 const bt_light_gray =             "#b0b0b0";
+const bt_gray =                   "#777777";
 const bt_dark_gray =              "#606060";
 
 const bt_border_black =           "#414141";
@@ -29,7 +32,7 @@ const bt_pink =                   "#F85386";
 const bt_yellow =                 "#FFFF00";
 
 // bt variants =  primary, danger
-const bt_primary_light =  "#4287e1";
+const bt_primary_light =  "#6ea1e3";
 const bt_primary =        "#1e72e1";
 const bt_primary_faded =  "#1a61bf";
 
@@ -37,24 +40,28 @@ const bt_danger_light =  "#de5c5c";
 const bt_danger =        "#dc3333";
 const bt_danger_faded =  "#b62727";
 
-const bt_cardinal_light =         "#ae3535";
+const bt_cardinal_light =         "#e39494";
 const bt_cardinal =               "#8c1515";
 const bt_cardinal_faded =         "#6d1414";
 
-const themed_colors = {
+export const themed_colors = {
   "light": {
     "white": bt_white,
     "off_white": bt_off_white,
     "border_white": bt_border_white,
     "light_gray": bt_light_gray,
-
+    "gray": bt_gray,
+    "dark_gray": bt_dark_gray,
+    "border_black": bt_border_black,
+    "off_black": bt_off_black,
+    "black": bt_black,
     
     "text_base": bt_text_black,
     "text_light": bt_text_black_light,
     "text_faded": bt_text_black_faded,
-
+  
     "blue": bt_blue,
-
+  
     "primary": bt_primary,
     "primary_light": bt_primary_light,
     "primary_faded": bt_primary_faded,
@@ -77,13 +84,18 @@ const themed_colors = {
     "off_white": bt_off_black,
     "border_white": bt_border_black,
     "light_gray": bt_dark_gray,
-
+    "gray": bt_gray,
+    "dark_gray": bt_light_gray,
+    "border_black": bt_border_black,
+    "off_black": bt_off_white,
+    "black": bt_white,
+  
     "text_base": bt_text_white,
     "text_light": bt_text_white_light,
     "text_faded": bt_text_white_faded,
-
+  
     "blue": bt_blue,
-
+  
     "primary": bt_primary,
     "primary_light": bt_primary_light,
     "primary_faded": bt_primary_faded,
@@ -106,13 +118,18 @@ const themed_colors = {
     "off_white": bt_off_white,
     "border_white": bt_border_white,
     "light_gray": bt_light_gray,
+    "gray": bt_gray,
+    "dark_gray": bt_dark_gray,
+    "border_black": bt_border_black,
+    "off_black": bt_off_black,
+    "black": bt_black,
     
     "text_base": bt_text_black,
     "text_light": bt_text_black_light,
     "text_faded": bt_text_black_faded,
-
+  
     "blue": bt_cardinal,
-
+  
     "primary": bt_cardinal,
     "primary_light": bt_cardinal_light,
     "primary_faded": bt_cardinal_faded,
@@ -132,4 +149,6 @@ const themed_colors = {
   },
 }
 
-export default themed_colors;
+const themed = (theme: Theme, color: string) => themed_colors[theme] ? ((themed_colors[theme] as any)[color] as string) : null
+
+export default themed;

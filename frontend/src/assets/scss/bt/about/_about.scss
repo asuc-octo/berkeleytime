@@ -104,9 +104,14 @@
           flex-direction: column;
           align-items: center;
 
-          > img {
+          > svg {
             width: 60px;
             height: 60px;
+
+            path {
+              @include themed('fill', 'primary');
+              @include themed('stroke', 'primary');
+            }
 
             @include touch {
               width: 40px;

@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import ReactTooltip from "react-tooltip";
 
+import { H5, H6, P } from 'bt/custom';
+
 
 import {
   percentileToString,
@@ -28,44 +30,44 @@ class GradesInfoCard extends PureComponent {
       <div className="grades-info">
         <div className="header">
           <div className="square" style={{ backgroundColor: color }} />
-          <div className="course">{ course }</div>
+          <H5 bold className="course">{ course }</H5>
         </div>
-        <div className="title">{ subtitle }</div>
-        <div className="info">{ `${semester} • ${instructor}` }</div>
-        <h6>Course Average
+        <P className="title">{ subtitle }</P>
+        <P className="info">{ `${semester} • ${instructor}` }</P>
+        <H6 bold>Course Average
           <span data-tip={courseAvgText} data-for="courseAvg">
             <img src={info} className="info-icon" alt="" />
           </span>
           <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
               arrowColor="#FFFFFF"/>
-        </h6>
+        </H6>
         <div className="course-average">
           <span className={courseLetter ? getGradeColor(courseLetter) : ""}>{ courseLetter }</span>
-         { courseGPA !== -1 ? '(' + courseGPA + ')' : null }
+          <span className="count">{ courseGPA !== -1 ? '(' + courseGPA + ')' : null }</span>
         </div>
-        <h6>Section Average
+        <H6 bold>Section Average
           <span data-tip={sectionAvgText} data-for="sectionAvg">
             <img src={info} className="info-icon" alt="" />
           </span>
           <ReactTooltip id='sectionAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
               arrowColor="#FFFFFF"/>
-        </h6>
+        </H6>
         <div className="section-average">
           <span className={sectionLetter ? getGradeColor(sectionLetter) : ""}>{ sectionLetter }</span>
-          { sectionGPA !== -1 ? '(' + sectionGPA + ')' : null }
+          <span className="count">{ sectionGPA !== -1 ? '(' + sectionGPA + ')' : null }</span>
         </div>
         {selectedGrade !== undefined && selectedGrade !== null && selectedPercentiles !== undefined && selectedPercentiles !== null && (
           <div>
-            <h6>
+            <H6 bold>
               {`${percentileToString(selectedPercentiles.percentile_low)}-${percentileToString(selectedPercentiles.percentile_high)} Percentile`}
               <span data-tip={percentileText} data-for="percentileInfo">
                 <img src={info} className="info-icon" alt="" />
               </span>
               <ReactTooltip id='percentileInfo' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
                   arrowColor="#FFFFFF"/>
-            </h6>
+            </H6>
               <span className={selectedGrade ? getGradeColor(selectedGrade) : ""}>{ selectedGrade }</span>
-              ({selectedPercentiles.numerator}/{denominator}, {Math.round(selectedPercentiles.numerator/denominator * 1000) / 10}%)
+              <span className="count">({selectedPercentiles.numerator}/{denominator}, {Math.round(selectedPercentiles.numerator/denominator * 1000) / 10}%)</span>
           </div>
         )}
       </div>

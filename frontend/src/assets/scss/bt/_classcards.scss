@@ -27,7 +27,9 @@
     }
 
     .class-card {
-      border: 1px solid $border-color;
+      border-width: 1px;
+      border-style: solid;
+      @include themed('border-color', 'border-white');
       border-radius: 5px;
       padding: 15px;
       height: 130px;
@@ -56,14 +58,10 @@
 
         .class-card-course {
           margin-right: auto !important;
-          font-weight: bold;
-          color: $bt-base-text;
-          //font-size: 18px;
-          @include font-size-responsive-larger(18px);
         }
 
         .class-card-remove {
-          color: $bt-indicator-red;
+          
           cursor: pointer;
           opacity: .5;
           padding: 2px;
@@ -72,14 +70,14 @@
 
           &:hover {
             opacity: 1;
-            background: rgba(224,185,185,.4);
+            @include themed('background-color', 'off-white');
           }
 
         }
       }
 
       .class-card-title, .class-card-options {
-        color: $bt-grey-text;
+        @include themed('color', 'text-light');
       }
 
       /* magic to truncate at 2 lines lol */
@@ -103,7 +101,6 @@
       }
 
       .class-card-options {
-        //font-size: 15px;
         @include font-size-responsive-larger(15px);
 
         @include mobile {

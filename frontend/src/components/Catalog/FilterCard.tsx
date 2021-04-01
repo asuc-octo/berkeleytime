@@ -41,7 +41,7 @@ function colorGrade(grade: string): string {
 function gradeSort(grade: string): ReactNode {
   return (
     <div className="filter-card-sort filter-card-grade">
-      <h6 className={colorGrade(grade)}>{grade}</h6>
+      <div className={colorGrade(grade)}>{grade}</div>
     </div>
   );
 }
@@ -49,7 +49,7 @@ function gradeSort(grade: string): ReactNode {
 function openSeatsSort(open_seats: number): ReactNode {
   return (
     <div className="filter-card-sort filter-card-open-seats">
-      <h6>{open_seats}</h6>
+      <div>{open_seats}</div>
     </div>
   );
 }

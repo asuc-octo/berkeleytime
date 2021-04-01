@@ -5,7 +5,7 @@ import 'swagger-ui-react/swagger-ui.css';
 function Api() {
   return (
     <div className="apidocs">
-      <div className="api-notice">Please note that we will be discontinuing the Berkeleytime API. Official support for the API will end on <b>Thursday, April 1st at 11:59PM PST</b>. If you have concerns or would like assistance in removing your dependencies on the Berkeleytime API, please contact us at <a href="mailto:octo.berkeleytime@asuc.org">octo.berkeleytime@asuc.org</a> and we would be more than happy to assist you.</div>
+      <div className="api-notice">Please note that we will be discontinuing the API. Official support for the API will end on <b>Friday, April 30st at 11:59PM PST</b>. If you have concerns or would like assistance in removing your dependencies on this API, please contact us at <a href="mailto:octo.berkeleytime@asuc.org">octo.berkeleytime@asuc.org</a> and we would be more than happy to assist you.</div>
       <SwaggerUI url="/assets/swagger.yaml" docExpansion="list" />
     </div>
   );

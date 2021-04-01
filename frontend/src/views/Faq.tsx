@@ -1,39 +1,48 @@
 import React, { FC } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 
 import { H3, P, Button } from 'bt/custom';
 
 import QuestionCard from 'components/Faq/QuestionCard';
+import { ReduxState } from 'redux/store';
+import { Theme } from 'bt/types';
 
-const Faq: FC = () => (
-  <div className="faq">
-    <Container className="mt-5">
-      <Row className="mb-5">
-        <Col xs={12} lg={{ span: 6, offset: 3 }} className="faq-heading">
-          <H3 bold className="mb-3">
-            Frequently Asked Questions
-          </H3>
-          <P className="mb-3">Answering your most commonly asked questions.</P>
-          <Button variant="primary-inverted" href="mailto: octo.berkeleytime@asuc.org">
-            Contact Us
-          </Button>
-        </Col>
-      </Row>
-      <Row>
-        <Col xs={12} lg={{ span: 6, offset: 3 }}>
-          {questions.map((item, index) => (
-            <QuestionCard
-              key={index}
-              question={item.question}
-              answer={item.answer}
-            />
-          ))}
-        </Col>
-      </Row>
-    </Container>
-  </div>
-);
+const Faq: FC = () => {
+  const theme = useSelector<ReduxState, Theme>(state => state.common.theme);
+  const themedQuestions = theme !== 'stanfurd' ? questions : [
+    { question: 'Is this real?', answer: <P>It&apos;s April Fools! You can disable the theme at the bottom-left.</P>}
+  ];
+  return (
+    <div className="faq">
+      <Container className="mt-5">
+        <Row className="mb-5">
+          <Col xs={12} lg={{ span: 6, offset: 3 }} className="faq-heading">
+            <H3 bold className="mb-3">
+              Frequently Asked Questions
+            </H3>
+            <P className="mb-3">Answering your most commonly asked questions.</P>
+            <Button variant="primary-inverted" href="mailto: octo.berkeleytime@asuc.org">
+              Contact Us
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs={12} lg={{ span: 6, offset: 3 }}>
+            {themedQuestions.map((item, index) => (
+              <QuestionCard
+                key={index}
+                question={item.question}
+                answer={item.answer}
+              />
+            ))}
+          </Col>
+        </Row>
+      </Container>
+    </div>
+  )
+}
 
 const questions = [
   {

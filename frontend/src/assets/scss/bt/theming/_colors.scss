@@ -74,6 +74,7 @@ $bt-off-white:             #f2f2f2;
 $bt-border-white:          #eaeaea;
 
 $bt-light-gray:            #b0b0b0;
+$bt-gray:                  #777777;
 $bt-dark-gray:             #606060;
 
 $bt-border-black:          #414141;
@@ -96,11 +97,11 @@ $bt-pink:                  #F85386;
 $bt-yellow:                #FFFF00;
 
 // bt variants: primary, danger
-$bt-primary-light: #4287e1;
+$bt-primary-light: #6ea1e3;
 $bt-primary:       #1e72e1;
 $bt-primary-faded: #1a61bf;
 
-$bt-danger-light: #de5c5c;
+$bt-danger-light: #e39494;
 $bt-danger:       #dc3333;
 $bt-danger-faded: #b62727;
 
@@ -114,7 +115,11 @@ $themed-colors: (
     "off-white": $bt-off-white,
     "border-white": $bt-border-white,
     "light-gray": $bt-light-gray,
-
+    "gray": $bt-gray,
+    "dark-gray": $bt-dark-gray,
+    "border-black": $bt-border-black,
+    "off-black": $bt-off-black,
+    "black": $bt-black,
     
     "text-base": $bt-text-black,
     "text-light": $bt-text-black-light,
@@ -144,6 +149,11 @@ $themed-colors: (
     "off-white": $bt-off-black,
     "border-white": $bt-border-black,
     "light-gray": $bt-dark-gray,
+    "gray": $bt-gray,
+    "dark-gray": $bt-light-gray,
+    "border-black": $bt-border-black,
+    "off-black": $bt-off-white,
+    "black": $bt-white,
 
     "text-base": $bt-text-white,
     "text-light": $bt-text-white-light,
@@ -173,6 +183,11 @@ $themed-colors: (
     "off-white": $bt-off-white,
     "border-white": $bt-border-white,
     "light-gray": $bt-light-gray,
+    "gray": $bt-gray,
+    "dark-gray": $bt-dark-gray,
+    "border-black": $bt-border-black,
+    "off-black": $bt-off-black,
+    "black": $bt-black,
     
     "text-base": $bt-text-black,
     "text-light": $bt-text-black-light,
@@ -205,6 +220,16 @@ $themed-colors: (
   @each $theme in map-keys($themed-colors) {
     .bt-theme-#{$theme} & {
       #{$property}: map-get(map-get($themed-colors, $theme), $color);
+    }
+  }
+
+  transition: #{$property} 0.2s;
+}
+
+@mixin themed-important($property, $color) {
+  @each $theme in map-keys($themed-colors) {
+    .bt-theme-#{$theme} & {
+      #{$property}: map-get(map-get($themed-colors, $theme), $color) !important;
     }
   }
 

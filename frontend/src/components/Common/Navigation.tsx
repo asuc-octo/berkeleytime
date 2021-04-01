@@ -8,7 +8,7 @@ import { ReduxState } from '../../redux/store';
 import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
 import { Theme } from 'bt/types';
-import { Themed } from 'bt/custom';
+import { Button, Themed } from 'bt/custom';
 
 const NavigationLink: FC<
   {

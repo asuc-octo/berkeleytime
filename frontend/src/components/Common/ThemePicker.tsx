@@ -30,7 +30,25 @@ const ThemePicker: FC = () => {
   }
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem('theme') ?? 'light';
+    let storedTheme = localStorage.getItem('theme');
+
+    if (storedTheme === null) {
+      storedTheme = 'light';
+
+      if (window.matchMedia('(prefers-color-scheme: light').matches) {
+        localStorage.setItem('theme', 'light');
+      }
+
+      if (window.matchMedia('(prefers-color-scheme: dark').matches) {
+        localStorage.setItem('theme', 'dark');
+        storedTheme = 'dark';
+      }
+    }
+
+    if (window.location.hostname.includes('stanfurdtime') && localStorage.getItem('aprilfools2021') === null) {
+      storedTheme = 'stanfurd';
+      localStorage.setItem('theme', 'stanfurd');
+    }
     switch (storedTheme) {
       case 'light':
         light();
@@ -45,15 +63,16 @@ const ThemePicker: FC = () => {
 
     window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (ev) => {
       if (ev.matches) {
-        light()
+        light();
       }
     });
 
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (ev) => {
       if (ev.matches) {
-        dark()
+        dark();
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const currentTheme = useSelector<ReduxState, Theme>(state => state.common.theme);

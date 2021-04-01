@@ -1,9 +1,12 @@
 import React, { FC, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Container, Row, Col } from 'react-bootstrap';
 import yaml from 'js-yaml';
 
 import { H3, H6, Button } from 'bt/custom';
 import Log from 'components/Releases/Log';
+import { ReduxState } from 'redux/store';
+import { Theme } from 'bt/types';
 
 type Release = {
   date: string,
@@ -20,6 +23,9 @@ const Releases: FC = () => {
       .then((data) => setReleases( yaml.load(data).releases ));
   }, []);
 
+  const theme = useSelector<ReduxState, Theme>(state => state.common.theme);
+  const themedReleases: Release[] = theme !== 'stanfurd' ? releases : [{date: 'Apr 1, 2021', whatsNew: ['Stanfurdtime baby!'], fixes: ['Got rid of the ugly Berkeley colors.']}]
+
   return (
     <div className="releases">
       <Container>
@@ -34,7 +40,7 @@ const Releases: FC = () => {
         </Row>
         <Row>
           <Col lg={{ span: 6, offset: 3 }}>
-            {releases.map((item) => (
+            {themedReleases.map((item) => (
               <Log key={item.date} {...item} />
             ))}
           </Col>

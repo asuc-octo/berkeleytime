@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import Select from 'react-select-virtualized';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import hash from 'object-hash';
 
 import { connect } from 'react-redux';
 
 import { fetchGradeSelected } from '../../redux/actions';
 import { reactSelectCourseSearch } from 'utils/courses/search';
+
+import { Button } from 'bt/custom';
+import themed from 'bt/themed_colors';
 
 const sortOptions = [
   { value: 'instructor', label: 'By Instructor' },
@@ -363,13 +366,35 @@ class GradesSearchBar extends Component {
       secondaryOption = '';
     }
 
+    const makeSelectTheme = (selectTheme) => ({
+      ...selectTheme,
+      colors: {
+        ...selectTheme.colors,
+        primary25: themed(this.props.theme, 'primary_light'),
+        primary50: themed(this.props.theme, 'primary'),
+        primary75: themed(this.props.theme, 'primary'),
+        primary: themed(this.props.theme, 'primary'),
+        neutral0: themed(this.props.theme, 'white'),
+        neutral5: themed(this.props.theme, 'off_white'),
+        neutral10: themed(this.props.theme, 'border_white'),
+        neutral20: themed(this.props.theme, 'light_gray'),
+        neutral30: themed(this.props.theme, 'gray'),
+        neutral40: themed(this.props.theme, 'gray'),
+        neutral50: themed(this.props.theme, 'gray'),
+        neutral60: themed(this.props.theme, 'dark_black'),
+        neutral70: themed(this.props.theme, 'border_black'),
+        neutral80: themed(this.props.theme, 'off_black'),
+        neutral90: themed(this.props.theme, 'black'),
+      }
+    })
+
     const customStyles = {
       clearIndicator: (provided, state) => ({
         ...provided,
         marginRight: 0,
         paddingRight: 0,
       }),
-    };
+    };  
 
     return (
       <Container fluid className="grades-search-bar">
@@ -385,6 +410,7 @@ class GradesSearchBar extends Component {
                 IndicatorSeparator: () => null,
               }}
               styles={customStyles}
+              theme={makeSelectTheme}
             />
           </Col>
           <Col lg={2}>
@@ -402,6 +428,7 @@ class GradesSearchBar extends Component {
                 IndicatorSeparator: () => null,
               }}
               styles={customStyles}
+              theme={makeSelectTheme}
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
@@ -418,6 +445,7 @@ class GradesSearchBar extends Component {
                 IndicatorSeparator: () => null,
               }}
               styles={customStyles}
+              theme={makeSelectTheme}
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
@@ -434,6 +462,7 @@ class GradesSearchBar extends Component {
                 IndicatorSeparator: () => null,
               }}
               styles={customStyles}
+              theme={makeSelectTheme}
             />
           </Col>
           <Col xs={12} sm={12} lg={1}>
@@ -464,6 +493,7 @@ const mapStateToProps = (state) => {
     sections,
     selectPrimary,
     selectSecondary,
+    theme: state.common.theme,
   };
 };
 

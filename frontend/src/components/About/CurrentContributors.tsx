@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-import { H3 } from 'bt/custom';
+import { H3, Themed } from 'bt/custom';
 
 import { ReactComponent as Web } from 'assets/svg/about/web.svg'
 
@@ -19,8 +19,6 @@ import hannah_1 from 'assets/img/about/2020-21/hannah_1.jpg';
 import hannah_2 from 'assets/img/about/2020-21/hannah_2.jpg';
 import hiroshi_1 from 'assets/img/about/2020-21/hiroshi_1.jpg';
 import hiroshi_2 from 'assets/img/about/2020-21/hiroshi_2.jpg';
-import janet_1 from 'assets/img/about/2020-21/janet_1.jpg';
-import janet_2 from 'assets/img/about/2020-21/janet_2.jpg';
 import jonathan_1 from 'assets/img/about/2020-21/jonathan_1.jpg';
 import jonathan_2 from 'assets/img/about/2020-21/jonathan_2.jpg';
 import junghyun_1 from 'assets/img/about/2020-21/junghyun_1.jpg';
@@ -33,8 +31,7 @@ import shuming_1 from 'assets/img/about/2020-21/shuming_1.jpg';
 import shuming_2 from 'assets/img/about/2020-21/shuming_2.jpg';
 import vihan_1 from 'assets/img/about/2020-21/vihan_1.jpg';
 import vihan_2 from 'assets/img/about/2020-21/vihan_1.jpg';
-import michael_1 from 'assets/img/about/2020-21/michael_1.jpg';
-import michael_2 from 'assets/img/about/2020-21/michael_2.jpg';
+import oski from 'assets/img/images/oski.jpg';
 
 const contributors = [
   [
@@ -72,11 +69,17 @@ const contributors = [
       silly_img: leon_2,
     },
     {
-      name: 'Janet Xu',
-      role: 'Design Lead',
-      site: 'https://janetxrm.github.io',
-      img: janet_1,
-      silly_img: janet_2,
+      name: 'Annie Pan',
+      role: (
+        <>
+          Design Lead
+          <br />
+          Marketing Director
+        </>
+      ),
+      site: 'https://anniexpan.com',
+      img: annie_1,
+      silly_img: annie_2,
     },
   ],
   [
@@ -111,13 +114,6 @@ const contributors = [
   ],
   [
     {
-      name: 'Annie Pan',
-      role: 'Marketing Director',
-      site: 'https://anniexpan.com',
-      img: annie_1,
-      silly_img: annie_2,
-    },
-    {
       name: 'Hannah Yan',
       role: 'Designer',
       site: 'https://www.linkedin.com/in/yanhannah',
@@ -132,14 +128,12 @@ const contributors = [
       silly_img: junghyun_2,
     },
     {
-      name: 'Michael Li',
-      role: 'Advisor',
-      site: 'http://www.michaelli.me',
-      img: michael_1,
-      silly_img: michael_2,
+      name: 'Danji Liu',
+      role: 'Designer',
+      site: 'https://danjiliu.com/',
+      img: oski,
+      silly_img: oski,
     },
-  ],
-  [
     {
       name: 'Christina Shao',
       role: 'Frontend Engineer',
@@ -147,6 +141,8 @@ const contributors = [
       img: christina_1,
       silly_img: christina_2,
     },
+  ],
+  [
     {
       name: 'Austin George',
       role: 'Frontend Engineer',
@@ -166,7 +162,9 @@ const contributors = [
 
 const CurrentContributors: FC = () => (
   <div className="current-contributors mb-5">
-    <H3 bold className="mb-4">Current Team</H3>
+    <H3 bold className="mb-4">
+      <Themed light={<>Current Team</>} stanfurd={<>Unpaid UC Berkeley Interns</>}/>
+    </H3>
     {contributors.map((row, i) => (
       <Row key={i}>
         {row.map((member) => (

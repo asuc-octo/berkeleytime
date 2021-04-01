@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, MouseEventHandler } from 'react'
 import { Button as BsButton, ButtonProps as BsProps } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
@@ -7,9 +7,10 @@ import { Link } from 'react-router-dom'
 
 const Button: FC<Props> = (props) => {
   const bsProps: BsProps = {
-    className: props.className,
+    className: (props.className ?? '') + (props.disabled ? 'disabled' : ''),
     size: props.size,
-    variant: `bt-${props.variant ?? 'primary'}`
+    variant: `bt-${props.variant ?? 'primary'}`,
+    onClick: props.onClick,
   }
 
   if (typeof props.href === 'object') {
@@ -36,6 +37,8 @@ export interface Props {
   variant?: 'primary' | 'primary-inverted' | 'danger' | 'danger-inverted'
   size?: 'sm'
   href?: string | { as_link: string }
+  onClick?: MouseEventHandler<HTMLElement>
+  disabled?: boolean
 }
 
 export default Button

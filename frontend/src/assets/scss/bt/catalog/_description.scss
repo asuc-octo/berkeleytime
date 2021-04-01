@@ -69,6 +69,10 @@
 
         .statline-div {
           display: flex;
+
+          svg > path {
+            @include themed('fill', 'primary');
+          }
         }
 
         > img {
@@ -208,7 +212,7 @@
         tr {
           transition: background-color 0.2s;
           &:hover {
-            @include themed('background-color', 'light-gray');
+            @include themed('background-color', 'border-white');
           }
 
           cursor: var(--section-cursor), pointer;

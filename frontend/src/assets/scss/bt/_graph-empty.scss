@@ -71,18 +71,10 @@
         margin-right: 8px;
         margin-bottom: 4px;
       }
-
-      .course {
-        font-weight: bold;
-        color: $bt-base-text;
-        //font-size: 18px;
-        @include font-size-responsive-larger(18px);
-      }
     }
 
     .title, .info {
-      //font-size: 16px;
-      @include font-size-responsive-larger(16px);
+      @include themed('color', 'text-light');
       color: $bt-border-grey;
     }
 
@@ -100,7 +92,7 @@
 
     .course-average, .section-average, .percentile {
       margin-bottom: 10px;
-      color: $bt-border-grey;
+      @include themed('color', 'text-light');
     }
   }
 
