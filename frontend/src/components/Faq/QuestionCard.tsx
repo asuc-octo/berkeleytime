@@ -4,7 +4,7 @@ import { Collapse } from 'react-bootstrap';
 import { P } from 'bt/custom'
 
 interface Props {
-  question: string
+  question: JSX.Element,
   answer: JSX.Element
 }
 

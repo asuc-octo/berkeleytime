@@ -18,17 +18,10 @@ const Jumbotron: FC = () => (
         <Col xs={{ span: 12, order: 3 }} lg={{ span: 5, order: 1 }} style={{ zIndex: 0 }}>
           <div className="heading">
             <H3 bold className="mb-3">Stanfurd’s online course discovery platform.</H3>
-            <P className="mb-3">See that big logo? We figure our nice school name can do most of the talking. This investment <i>is</i> paying off, damn it.</P>
-            <div style={{ textAlign: "center" }}>
-              <img src={Stanfurd} />
-            </div>
             <P className="mb-3">Stanfurdtime is a platform built, maintained, and run by Stanfurd's premier tech consulting club. We work hard to simplify and improve the course discovery experience.</P>
             <ButtonToolbar>
               <ButtonGroup className="mr-2">
-                <Button href={{as_link: "/catalog"}}>Explore Courses</Button>
-              </ButtonGroup>
-              <ButtonGroup>
-                <Button variant="inverted" href={{as_link: "/about"}}>About Us</Button>
+                <Button href="https://real.berkeleytime.com">I don't like this</Button>
               </ButtonGroup>
             </ButtonToolbar>
           </div>

@@ -19,12 +19,12 @@ const Explore: FC = () => (
       <Col xs={12} md={4} className="feature">
         <img src={grade} className="mb-4" alt="grades" />
         <H6 bold className="mb-3">Grade Distributions</H6>
-        <P>Our course averages are at an all time high and ready to moon</P><P>🚀🚀🚀</P>
+        <P>Stanfurd A+ Printer go brrr... Grade inflation is at an all time high, we&apos;re going to the moon <br />🚀🚀🚀</P>
       </Col>
       <Col xs={12} md={4} className="feature">
         <img src={history} className="mb-4" alt="history" />
         <H6 bold className="mb-3">Enrollment History</H6>
-          <P>Why didn't Dr. Strange time reverse Thanos into a baby like he did that apple?</P>
+          <P>Do we really need to track this? We admitted like 10 people last year.</P>
       </Col>
     </Row>
   </div>
