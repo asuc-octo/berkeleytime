@@ -1626,19 +1626,6 @@
 	<circle class="st126" cx="647.9" cy="945.9" r="14.2"/>
 	<circle class="st125" cx="647.9" cy="943.7" r="14.2"/>
 </g>
-<g id="evans">
-	<polygon class="st36" points="677.5,654.4 729.2,689 729.7,899 677.5,866.5 	"/>
-	<polygon class="st115" points="677.5,654.4 729.2,689 783.7,656.1 729.8,627.3 	"/>
-	<polygon class="st35" points="729.2,689 729.7,899 785.3,868.2 783.7,656.1 	"/>
-	<path class="st115" d="M769.4,693.7"/>
-	<polygon class="st115" points="778.9,692 749.5,708.6 759.7,714 789.3,696.2 	"/>
-	<polygon class="st36" points="749.5,708.6 760.1,714 760.1,892 749.5,888 	"/>
-	<polygon class="st35" points="789.3,696.2 789.3,876.8 760.1,892 760.1,714 	"/>
-	<polygon class="st115" points="729.5,604.8 690.8,626.4 729.5,650.3 768.6,627.5 	"/>
-	<polygon class="st36" points="690.8,626.5 690.8,655.2 728.8,680.4 729.5,650.3 	"/>
-	<polygon class="st35" points="729.5,650.3 728.8,680.4 768.6,655.2 768.6,627.5 	"/>
-	<polygon class="st115" points="729.7,591.4 701.9,607 729.7,622.7 757.5,607.2 	"/>
-	<polygon class="st36" points="701.9,607 701.9,626.8 729.2,643.4 729.7,622.7 	"/>
-	<polygon class="st35" points="729.7,622.7 729.2,643.4 757.5,626.3 757.5,607.2 	"/>
-</g>
+<image style="overflow:visible;" width="522" height="750" xlink:href="../../img/tree.png"  transform="matrix(0.5029 0 0 0.5029 587.5198 589.8971)">
+</image>
 </svg>
