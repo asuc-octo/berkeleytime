@@ -19,7 +19,7 @@ const Jumbotron: FC = () => (
           <div className="heading">
             <H3 bold className="mb-3">Stanfurd’s online course discovery platform.</H3>
             <P className="mb-3">See that big logo? We figure our nice school name can do most of the talking. This investment <i>is</i> paying off, damn it.</P>
-            <img src={Stanfurd} style={{ filter: "brightness(55%)" }} />
+            <img src={Stanfurd} />
             <P className="mb-3">Stanfurdtime is a platform built, maintained, and run by Stanfurd's premier tech consulting club. We work hard to simplify and improve the course discovery experience.</P>
             <ButtonToolbar>
               <ButtonGroup className="mr-2">
