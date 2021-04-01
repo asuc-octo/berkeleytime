@@ -29,7 +29,7 @@ const values = [
   {
     svg: curiosity,
     name: 'Brilliance',
-    desc: 'Only 🤡🤡🤡 allowed.',
+    desc: 'Did you not get a 2395 SAT, 4.8 GPA, and attend Phillips Exeter?',
   },
   {
     svg: passion,
