@@ -179,8 +179,8 @@ const CurrentContributors: FC = () => (
                 {member.name == "Shuming Xu" ? <div className="unserious">Master Shitposter</div> : null}
                 {member.name == "Hiroshi Usui" ? <div className="unserious">Apprentice Shitposter</div> : null}
                 {member.name == "Kevin Wang" ? <div className="unserious">Nice Guy</div> : null}
-                {member.name == "Leon Ming" ? <div className="unserious">Senior that DGAF</div> : null}
-                {member.name == "Jonathan Pan" ? <div className="unserious">Skateboarder</div> : null}
+                {member.name == "Leon Ming" ? <div className="unserious">Pretty-Chill-For-A-Middle-Manager</div> : null}
+                {member.name == "Jonathan Pan" ? <div className="unserious">Skater Boi</div> : null}
               </div>
             </div>
           </Col>

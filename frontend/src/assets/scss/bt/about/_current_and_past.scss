@@ -40,6 +40,16 @@
       }
     }
 
+	.role {
+		.unserious {
+			opacity: 0;
+			&:hover {
+				opacity: 1;
+			}
+		}
+	}
+
+
     .name {
       display: flex;
       flex-direction: row;

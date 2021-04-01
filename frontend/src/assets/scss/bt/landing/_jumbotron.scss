@@ -51,6 +51,13 @@
       padding: 20px;
     }
 
+	img {
+      height: 100%;
+      @include mobile {
+	    height: 50%
+      }
+	}
+
     p {
       color: $bt-grey-text;
     }
