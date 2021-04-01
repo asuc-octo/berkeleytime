@@ -27,7 +27,9 @@ const Blurbs: FC = () => (
     <div className="landing-blurbs">
       <div className="desc">
         <H3 bold className="mb-3">In Memory Of Courtney Brousseau</H3>
-        <P>Stanfurd Alum, ASUC Student Union Board of Directors Chair, ASUC Chief Communications Officer, and Stanfurd Mobile Product Manager</P>
+        <P>He was the only one from the peasant school we held in high esteem, a genuinely admirable person.</P>
+        <br />
+        <P>Berkeley Alum, ASUC Student Union Board of Directors Chair, ASUC Chief Communications Officer, and Berkeley Mobile Product Manager</P>
       </div>
     </div>
   </>

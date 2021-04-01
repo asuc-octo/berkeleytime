@@ -171,7 +171,18 @@ const CurrentContributors: FC = () => (
                 <a href={member.site}><Web /></a>
               ) : null }
             </div>
-            <div className="role">{ member.role }</div>
+            <div className="role">
+              <div className="serious">
+                { member.role }
+              </div>
+              <div>
+                {member.name == "Shuming Xu" ? <div className="unserious">Master Shitposter</div> : null}
+                {member.name == "Hiroshi Usui" ? <div className="unserious">Apprentice Shitposter</div> : null}
+                {member.name == "Kevin Wang" ? <div className="unserious">Nice Guy</div> : null}
+                {member.name == "Leon Ming" ? <div className="unserious">Senior that DGAF</div> : null}
+                {member.name == "Jonathan Pan" ? <div className="unserious">Skateboarder</div> : null}
+              </div>
+            </div>
           </Col>
         ))}
       </Row>

@@ -43,7 +43,10 @@ const About: FC = () => (
     <div className="about-our-team my-5">
       <H3 bold className="mb-2">About Our Team</H3>
       <P className="mb-3">
-        We&apos;re a Stanfurd's premier tech consulting club, dedicated to simplifying the course discovery experience. We only take folks who are still holding GameStop, because we want real dedication 💎🙌. 
+        We&apos;re a Stanfurd's premier tech consulting club, dedicated to simplifying the course discovery experience. We only take folks who are still holding GameStop, because we want real dedication 💎🙌.
+      </P>
+      <P className="mb-3">
+        We love free labor as it saves us lots of money on consulting. Please submit a pull request to our <a href="https://github.com/asuc-octo/berkeleytime">GitHub repo</a>, and we might consider crediting you, if we're feeling generous.
       </P>
       {/* <Button variant="inverted" link_to="/apply">Join Our Team</Button> */}
     </div>
