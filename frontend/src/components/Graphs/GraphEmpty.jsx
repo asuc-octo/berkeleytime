@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactTooltip from "react-tooltip";
 
+import { H5, H6, P } from 'bt/custom';
+
 import info from '../../assets/img/images/graphs/info.svg';
 
 class GraphEmpty extends React.PureComponent {
@@ -15,32 +17,32 @@ class GraphEmpty extends React.PureComponent {
             <div className="grades-info">
               <div className="header">
                 <div className="square" />
-                <div className="course">No Class Selected</div>
+                <H5 bold className="course">No Class Selected</H5>
               </div>
-              <div className="title">No Class Name Data</div>
-              <div className="info">No Semester or Instructor Data</div>
+              <P className="title">No Class Name Data</P>
+              <P className="info">No Semester or Instructor Data</P>
               {pageType === "enrollment" ?
                 null :
                 <div>
-                <div className="bt-h6">Course Average
+                <H6 bold>Course Average
                   <span data-tip={courseAvgText} data-for="courseAvg">
                     <img src={info} className="info-icon" alt="" />
                   </span>
                   <ReactTooltip id='courseAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
                       arrowColor="#FFFFFF"/>
-                </div>
+                </H6>
                 <div className="course-average">
-                  <span className="bt-h6">No Data</span>
+                  <span>No Data</span>
                 </div>
-                <div className="bt-h6">Section Average
+                <H6 bold>Section Average
                   <span data-tip={sectionAvgText} data-for="sectionAvg">
                     <img src={info} className="info-icon" alt="" />
                   </span>
                   <ReactTooltip id='sectionAvg' type='light' html={true} border={true} borderColor="#C4C4C4" className="opaque"
                       arrowColor="#FFFFFF"/>
-                </div>
+                </H6>
                 <div className="section-average">
-                  <span className="bt-h6">No Data</span>
+                  <span>No Data</span>
                 </div>
                 </div>
               }

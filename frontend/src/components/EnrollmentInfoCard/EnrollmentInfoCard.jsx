@@ -5,6 +5,8 @@ import {
   applyIndicatorEnrollment
 } from '../../utils/utils';
 
+import { H5, H6, P } from 'bt/custom';
+
 class EnrollmentInfoCard extends PureComponent {
   render() {
     const {title, subtitle, semester, instructor,
@@ -17,15 +19,15 @@ class EnrollmentInfoCard extends PureComponent {
       <div className="enrollment-info">
         <div className="header">
           <div className="square" style={{ backgroundColor: color }} />
-          <div className="course">{ title }</div>
+          <H5 bold className="course">{ title }</H5>
         </div>
-        <div className="title">{ subtitle }</div>
-        <div className="info">{ `${semester} • ${instructor}` }</div>
+        <P className="title">{ subtitle }</P>
+        <P className="info">{ `${semester} • ${instructor}` }</P>
 
         <div className="stat-section">
-          <div className="date">{daysAfterPeriodStarts} Days After {period}</div>
+          <H6 bold className="date">{daysAfterPeriodStarts} Days After {period}</H6>
           <div className="enrolled-stat">
-            <span className="text">Enrolled:</span> {applyIndicatorEnrollment(selectedPoint.enrolled, enrolledMax, selectedPoint.enrolled_percent)}
+            <span className="text">Enrolled:</span>{applyIndicatorEnrollment(selectedPoint.enrolled, enrolledMax, selectedPoint.enrolled_percent)}
           </div>
           <div className="waitlisted-stat">
             <span className="text">Waitlisted:</span> {applyIndicatorEnrollment(selectedPoint.waitlisted, waitlistedMax, selectedPoint.waitlisted_percent)}

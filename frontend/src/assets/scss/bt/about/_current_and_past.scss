@@ -35,7 +35,7 @@
 
       .serious {
         z-index: $z-index-serious;
-        transition: .2s;
+        transition: opacity $transition-time;
 
         &:hover {
           opacity: 0;
@@ -53,8 +53,7 @@
       margin-bottom: 3px;
 
       p {
-        // font-weight: 500;
-        color: $bt-grey-text;
+        @include themed('color', 'text-light');
       }
 
       svg {
@@ -66,14 +65,14 @@
         margin-bottom: 2px;
 
         &:hover {
-          background-color: $bt-button-background;
+          @include themed('background-color', 'border-white');
         }
       }
     }
 
     .role {
       font-size: 14px;
-      color: $bt-light-text;
+      @include themed('color', 'text-faded');
     }
   }
 }

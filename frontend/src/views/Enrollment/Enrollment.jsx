@@ -9,6 +9,7 @@ import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearc
 import info from '../../assets/img/images/graphs/info.svg';
 
 import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse, enrollReset, updateEnrollData, fetchEnrollFromUrl } from '../../redux/actions';
+import { H6, Themed } from 'bt/custom';
 
 class Enrollment extends Component {
   constructor(props) {
@@ -145,11 +146,24 @@ class Enrollment extends Component {
             isMobile={isMobile}
           />
           {!isMobile &&
-            <div className="xlabel">Days After Phase 1</div>
+            <H6 bold className="xlabel">Days After Phase 1</H6>
           }
           <div className="disclaimer">
             <img src={info} className="info" alt="" />
-              <p>We source our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System&apos;s</a> Course and Class APIs.</p>
+              <p>
+                <Themed
+                  light={
+                    <>
+                      We source our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System&apos;s</a> Course and Class APIs.
+                    </>
+                  }
+                  stanfurd={
+                    <>
+                      We used to source our data by sneaking into Stanfurd&apos;s campus and counting students through the windows while behind a tree. <br /> Now we zoom-bomb lectures and try to check the participants tab before we get ejected.
+                    </>
+                  }
+                />
+              </p>
           </div>
 
         </div>

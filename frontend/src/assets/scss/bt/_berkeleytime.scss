@@ -1,6 +1,6 @@
 // wrapper for bt app (excluding banner)
 .app {
-  background-color: $bt-white;
+  @include themed('background-color', 'white');
 
   // we change navbar's position to absolute when the banner is open
   // so the container needs to be positioned relatively

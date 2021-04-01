@@ -6,6 +6,10 @@
 
   margin-bottom: $landing-section-gap;
 
+  p {
+    @include themed('color', 'text-light');
+  }
+
   .desc {
     text-align: center;
     width: 450px;

@@ -1,6 +1,6 @@
 footer {
-  background-color: $bt-footer;
-  border-top: 1.5px solid $bt-light-border-grey;
+  border-top: 1.5px solid;
+  @include themed('border-top-color', 'border-white');
 
   .footer-col-container {
     display: flex;
@@ -11,22 +11,22 @@ footer {
       flex-direction: column;
   
       h6 {
-        color: $bt-grey;
+        @include themed('color', 'text-light');
         text-transform: uppercase;
       }
   
       a {
-        color: $bt-light-grey;
+        @include themed('color', 'text-faded');
   
         &:hover {
-          color: $bt-blue;
+          @include themed('color', 'primary');
         }
   
         .footer-new {
           @include font-size-responsive(14px);
   
-          color: $bt-white !important;
-          background-color: $bt-blue;
+          @include themed('color', 'primary-highlight');
+          @include themed('background-color', 'primary');
           padding: 2px 4px;
           border-radius: 6px;
         }

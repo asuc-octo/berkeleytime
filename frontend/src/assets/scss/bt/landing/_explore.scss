@@ -17,15 +17,18 @@
 
     @extend .mb-5;
   
-    img {
+    svg {
       width: 60px;
       height: 60px;
-      object-fit: scale-down;
+
+      path {
+        @include themed('fill', 'primary');
+      }
     }
   
     p {
       width: 95%;
-      color: #8a8a8a;
+      @include themed('color', 'text-light');
     }
   }
 }

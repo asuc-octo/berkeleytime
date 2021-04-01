@@ -9,6 +9,7 @@ import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 import info from '../../assets/img/images/graphs/info.svg';
 
 import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset, fetchGradeFromUrl } from '../../redux/actions';
+import { Themed } from 'bt/custom';
 
 class Grades extends Component {
   constructor(props) {
@@ -152,7 +153,20 @@ class Grades extends Component {
 
           <div className="disclaimer">
             <img src={info} className="info" alt="" />
-            <p>We source our course grade data from Berkeley&apos;s official <a href="https://calanswers.berkeley.edu/">CalAnswers</a> database.</p>
+            <p>
+              <Themed
+                light={
+                  <>
+                    We source our course grade data from Berkeley&apos;s official <a href="https://calanswers.berkeley.edu/">CalAnswers</a> database.
+                  </>
+                }
+                stanfurd={
+                  <>
+                    We source our course grade data from <a href="https://reddit.com/r/stanford">r/stanfurd</a> shitposts and <a href="https://ratemyprofessors.com">ratemyprofessors.com</a> reviews.
+                  </>
+                }
+              />
+            </p>
           </div>
 
         </div>

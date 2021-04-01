@@ -35,17 +35,10 @@
       margin-right: 8px;
       margin-bottom: 4px;
     }
-
-    .course {
-      font-weight: bold;
-      color: $bt-base-text;
-      font-size: 18px;
-    }
   }
 
   .title, .info {
-    font-size: 16px;
-    color: $bt-grey-text;
+    @include themed('color', 'text-light');
   }
 
   .title {
@@ -57,14 +50,11 @@
   }
 
   h6 {
-    font-size: 16px;
-    font-weight: bold;
     margin-bottom: 5px;
   }
 
   .stat-section {
     .date {
-      font-weight: bold;
       padding-bottom: 5px;
     }
     .text {
@@ -79,9 +69,14 @@
 
   span {
     margin-right: 5px;
+    @include themed('color', 'text-light');
   }
 
   .course-average, .section-average, .percentile {
     margin-bottom: 10px;
+  }
+
+  .count {
+    @include themed('color', 'text-light');
   }
 }

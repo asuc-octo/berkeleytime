@@ -2,14 +2,13 @@ import React, { FC, useState, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavProps } from 'react-bootstrap';
-import { connect, ConnectedProps } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { ReduxState } from '../../redux/store';
 
 import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
-import btn_google_signin from 'assets/svg/profile/btn_google_signin.svg';
-
-interface Props extends PropsFromRedux { }
+import { Theme } from 'bt/types';
+import { Button, Themed } from 'bt/custom';
 
 const NavigationLink: FC<
   {
@@ -30,7 +29,10 @@ const NavigationLink: FC<
   </Nav.Link>
 );
 
-const Navigation: FC<Props> = (props) => {
+const Navigation: FC = () => {
+  const banner = useSelector<ReduxState, boolean>(state => state.common.banner);
+  const theme = useSelector<ReduxState, Theme>(state => state.common.theme);
+
   const [showLogin, setShowLogin] = useState(false);
 
   const [links, setLinks] = useState<
@@ -99,14 +101,14 @@ const Navigation: FC<Props> = (props) => {
       collapseOnSelect={true}
       fixed="top"
       expand="lg"
-      bg="white"
-      style={props.banner ? { position: 'absolute' } : {}}
+      variant={theme === 'dark' ? 'dark' : 'light'}
+      style={banner ? { position: 'absolute' } : {}}
     /* when the banner is open, the navbar will be positioned
        at the top of the app-container instead of fixed to the
        top of the viewport */
     >
       <Navbar.Brand as={Link} to="/" className="bt-bold">
-        Berkeleytime
+        <Themed light={<>{'Berkeleytime'}</>} stanfurd={<>{'Stanfurdtime'}</>} />
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
@@ -135,12 +137,4 @@ const Navigation: FC<Props> = (props) => {
   );
 };
 
-const mapState = (state: ReduxState) => ({
-  banner: state.common.banner,
-});
-
-const connector = connect(mapState);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-export default connector(Navigation);
+export default Navigation;

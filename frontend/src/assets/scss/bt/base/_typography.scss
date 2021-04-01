@@ -9,12 +9,11 @@ h5,
 h6,
 p,
 a,
-button,
 td {
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: normal;
-  color: $bt-base-text;
+  @include themed('color', 'text-base');
   margin: 0;
 
   -webkit-font-smoothing: antialiased;
@@ -22,11 +21,15 @@ td {
 }
 
 a {
-  color: $bt-blue;
+  @include themed('color', 'primary');
   transition: color 0.2s;
 
   &:hover {
     text-decoration: none;
+  }
+
+  &:focus {
+    @include themed('color', 'text-base');
   }
 }
 
@@ -67,6 +70,10 @@ a {
 
 .bt-h3 {
   @include font-size-responsive(26px);
+}
+
+.bt-h5 {
+  @include font-size-responsive(20px);
 }
 
 .bt-h6 {

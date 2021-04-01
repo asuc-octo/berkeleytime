@@ -56,8 +56,12 @@
       padding: 20px;
     }
 
-    p {
-      color: $bt-grey-text;
+    > h3 {
+      @include themed("color", "text-base");
+    }
+
+    > p {
+      @include themed("color", "text-light");
     }
   }
 
