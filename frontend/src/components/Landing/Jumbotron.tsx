@@ -8,7 +8,7 @@ import {
 } from 'react-bootstrap'
 
 import { Button, H3, P } from 'bt/custom'
-import { ReactComponent as Logo } from '../../assets/svg/landing/main.svg'
+import Tree from '../../assets/img/tree.png'
 
 const Jumbotron: FC = () => (
   <div className="landing-jumbo">
@@ -30,8 +30,7 @@ const Jumbotron: FC = () => (
         </Col>
         <Col xs={{ span: 12, order: 2 }} lg={{ span: 7, order: 2 }}>
           <div className="animation-container">
-            <Logo />
-            <p className="credit">© Janet Xu</p>
+            <img src={Tree} height="500" />
           </div>
         </Col>
       </Row>

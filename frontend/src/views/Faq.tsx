@@ -30,7 +30,7 @@ const Faq: FC = () => (
 const questions = [
   {
     question: 'Where does Stanfurdtime get its data? Is it accurate?',
-    answer: <P>We source all our historic course and enrollment data by asking our friends and making educated guesses to fill the gaps.</P>,
+    answer: <P>All of this data is identical to Berkeleytime. Like the grades, catalog, and enrollment info is the exact same. We were too lazy to port over Stanfurd's stuff.</P>,
   },
   {
     question: 'Why does an enrollment chart show more than 100% students enrolled?',
@@ -54,7 +54,7 @@ const questions = [
   },
   {
     question: 'How do I give feedback about the product?',
-    answer: <P>Send mail to 450 Jane Stanford Way, Stanford, CA 94305 and we will get back to you within 4-6 business weeks.</P>,
+    answer: <P>Send mail to 450 Jane Stanfurd Way, Stanfurd, CA 94305 and we will get back to you within 4-6 business weeks.</P>,
   }, {
     question: 'Can Stanfurdtime add a feature to review/rate professors and courses?',
     answer: <P>Lets not pretend you actually go to class.</P>

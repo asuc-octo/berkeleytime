@@ -29,7 +29,7 @@ const values = [
   {
     svg: curiosity,
     name: 'Brilliance',
-    desc: 'Did you not get a 2395 SAT, 4.8 GPA, and attend Phillips Exeter?',
+    desc: 'Only 🤡🤡🤡 allowed.',
   },
   {
     svg: passion,
@@ -43,8 +43,7 @@ const About: FC = () => (
     <div className="about-our-team my-5">
       <H3 bold className="mb-2">About Our Team</H3>
       <P className="mb-3">
-        We&apos;re a Stanfurd's premier tech consulting club, dedicated to simplifying the course discovery experience.
-        We have alumni at FANNG and some unicorns, so you know we're prestigious.
+        We&apos;re a Stanfurd's premier tech consulting club, dedicated to simplifying the course discovery experience. We only take folks who are still holding GameStop, because we want real dedication 💎🙌. 
       </P>
       {/* <Button variant="inverted" link_to="/apply">Join Our Team</Button> */}
     </div>
