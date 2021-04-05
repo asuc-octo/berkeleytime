@@ -18,7 +18,7 @@ const Banner: FC<Props> = (props) => {
     <div className="banner">
       <div className="content">
         {text}
-        <a className="btn-bt-patriotic" onClick={() => onNavigate("https://callink.berkeley.edu")}><b>VOTE</b></a>
+        <a className="btn-bt-patriotic" onClick={() => onNavigate("https://callink.berkeley.edu/submitter/election/start/477985")}><b>VOTE</b></a>
       </div>
       <img src={close} alt="close" onClick={props.closeBanner} />
     </div>
