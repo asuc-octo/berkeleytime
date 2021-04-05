@@ -73,6 +73,7 @@
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-jsx-a11y": "^6.3.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "get-graphql-schema": "^2.1.2",
     "prettier": "^2.2.0",
     "serve": "^11.1.0",
     "source-map-explorer": "^2.5.0"
