@@ -107,3 +107,28 @@
     text-decoration: underline;
   }
 }
+
+// Theming for ASUC Elections
+.btn-bt-patriotic {
+  @extend .bt-btn;
+  padding: 3px 15px 3px 15px;
+  font-size: 14px;
+  color: $bt-white;
+  background: repeating-linear-gradient(
+    to bottom,
+    $bt-blue,
+    $bt-indicator-red
+  );
+  border: none;
+  border-radius: 100%;
+  &:hover {
+    color: $bt-white;
+  }
+}
+
+.link {
+  font-size: 14px;
+  &:hover {
+    cursor: pointer;
+  }
+}
