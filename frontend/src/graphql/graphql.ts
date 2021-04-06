@@ -954,7 +954,7 @@ export type FilterFragment = (
 
 export type SchedulerCourseFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, 'title' | 'units' | 'waitlisted' | 'openSeats' | 'enrolled' | 'enrolledMax' | 'id' | 'hasEnrollment' | 'courseNumber' | 'department' | 'description' | 'abbreviation'>
+  & Pick<CourseType, 'id' | 'title' | 'units' | 'waitlisted' | 'openSeats' | 'enrolled' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'abbreviation'>
 );
 
 export type SectionFragment = (
@@ -1148,8 +1148,6 @@ export type GetFiltersQuery = (
 
 export type GetSchedulerCourseForIdQueryVariables = Exact<{
   id: Scalars['ID'];
-  year?: Maybe<Scalars['String']>;
-  semester?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1261,14 +1259,13 @@ export const FilterFragmentDoc = gql`
     `;
 export const SchedulerCourseFragmentDoc = gql`
     fragment SchedulerCourse on CourseType {
+  id
   title
   units
   waitlisted
   openSeats
   enrolled
   enrolledMax
-  id
-  hasEnrollment
   courseNumber
   department
   description
@@ -1681,7 +1678,7 @@ export type GetFiltersQueryHookResult = ReturnType<typeof useGetFiltersQuery>;
 export type GetFiltersLazyQueryHookResult = ReturnType<typeof useGetFiltersLazyQuery>;
 export type GetFiltersQueryResult = Apollo.QueryResult<GetFiltersQuery, GetFiltersQueryVariables>;
 export const GetSchedulerCourseForIdDocument = gql`
-    query GetSchedulerCourseForId($id: ID!, $year: String, $semester: String) {
+    query GetSchedulerCourseForId($id: ID!) {
   course(id: $id) {
     ...SchedulerCourse
   }
@@ -1701,8 +1698,6 @@ export const GetSchedulerCourseForIdDocument = gql`
  * const { data, loading, error } = useGetSchedulerCourseForIdQuery({
  *   variables: {
  *      id: // value for 'id'
- *      year: // value for 'year'
- *      semester: // value for 'semester'
  *   },
  * });
  */
