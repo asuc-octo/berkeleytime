@@ -1,0 +1,23 @@
+fragment SchedulerCourse on CourseType {
+  title
+  units
+  waitlisted
+  openSeats
+  enrolled
+  enrolledMax
+  id
+  hasEnrollment
+  courseNumber
+  department
+  description
+  abbreviation
+  schedulerSections {
+    edges {
+      node {
+        primary {
+          
+        }
+      }
+    }
+  }
+}
