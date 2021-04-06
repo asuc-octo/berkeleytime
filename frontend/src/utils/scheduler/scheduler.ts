@@ -1,4 +1,5 @@
 import { CourseOverviewFragment, SectionFragment } from 'graphql/graphql';
+import { addUnits, parseUnits, Units, ZERO_UNITS } from 'utils/courses/units';
 
 export type SchedulerCourseType = CourseOverviewFragment;
 export type SchedulerSectionType = SectionFragment & {
@@ -24,6 +25,16 @@ export const getCourseForSchedule = (
   section: SchedulerSectionType
 ): SchedulerCourseType | null =>
   schedule.courses.find((c) => c.id === section.courseId) || null;
+
+/**
+ * Computes the amount of units in a schedule
+ */
+export const getUnitsForSchedule = (schedule: Schedule): Units =>
+  schedule.courses.reduce(
+    (sum, course) =>
+      course.units ? addUnits(sum, parseUnits(course.units)) : sum,
+    ZERO_UNITS
+  );
 
 /**
  * Removes a course by id
