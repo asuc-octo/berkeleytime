@@ -1,0 +1,5 @@
+query GetSchedulerCourseForId($id: ID!) {
+  course(id: $id) {
+    ...SchedulerCourse
+  }
+}
