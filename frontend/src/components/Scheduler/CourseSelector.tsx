@@ -6,6 +6,7 @@ import { reactSelectCourseSearch } from 'utils/courses/search';
 import { compareDepartmentName } from 'utils/courses/sorting';
 import { Semester } from 'utils/playlists/semesters';
 import {
+  getUnitsForSchedule,
   hasCourseById,
   removeCourse,
   Schedule,
@@ -14,6 +15,7 @@ import {
 import Callout from './Callout';
 import SchedulerCourse from './Selector/SchedulerCourse';
 import { ScheduleContext } from './ScheduleContext';
+import { unitsToString } from 'utils/courses/units';
 
 type CourseType = CourseOverviewFragment;
 
@@ -74,17 +76,9 @@ const CourseSelector = ({
         filterOption={reactSelectCourseSearch}
         onChange={(c: CourseOptionType) => c && addCourse(c.course)}
       />
-      <p>Choose the sections to build your schedule.</p>
-      {schedule.courses.length > 0 && (
-        <Callout
-          message={
-            <>
-              You have <strong>≤20</strong> possible schedules remaining with
-              the following course selections.
-            </>
-          }
-        />
-      )}
+      <div className="scheduler-units">
+        Scheduled Units: {unitsToString(getUnitsForSchedule(schedule))}
+      </div>
       <div>
         <ScheduleContext.Provider value={{ schedule, setSchedule }}>
           {schedule.courses.map((course) => (

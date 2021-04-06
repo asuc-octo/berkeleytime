@@ -7,12 +7,9 @@ import BTLoader from 'components/Common/BTLoader';
 import useLatestSemester from 'graphql/hooks/latestSemester';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
-import {
-  addUnits,
-  parseUnits,
-  unitsToString,
-  ZERO_UNITS,
-} from 'utils/courses/units';
+import { useLocalStorageState } from 'utils/hooks';
+
+const SCHEDULER_KEY = 'SCHEDULER:DEFAULT';
 
 const Scheduler = () => {
   const {
@@ -29,7 +26,7 @@ const Scheduler = () => {
     skip: !latestSemester?.playlistId,
   });
 
-  const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
+  const [schedule, setSchedule] = useLocalStorageState<Schedule>(SCHEDULER_KEY, DEFAULT_SCHEDULE);
 
   const error = semesterError || coursesError;
 
@@ -38,7 +35,7 @@ const Scheduler = () => {
       <div className="scheduler viewport-app">
         <div className="scheduler__status">
           {error ? (
-            'A critical error occured loading scheduler information.'
+            'An error occured loading scheduler information. Please try again later.'
           ) : (
             <BTLoader />
           )}
@@ -49,13 +46,6 @@ const Scheduler = () => {
 
   // Get a list of all courses which will be used by the search bar.
   const allCourses = data.allCourses?.edges.map((e) => e?.node!)!;
-
-  // Sum up the amount of units selected
-  const selectedUnits = schedule.courses.reduce(
-    (sum, course) =>
-      course.units ? addUnits(sum, parseUnits(course.units)) : sum,
-    ZERO_UNITS
-  );
 
   return (
     <div className="scheduler viewport-app">
@@ -70,9 +60,6 @@ const Scheduler = () => {
         </Col>
         <Col>
           <div className="scheduler-header">
-            <div className="scheduler-units">
-              Selected Units: {unitsToString(selectedUnits)}
-            </div>
             <ButtonToolbar>
               <ButtonGroup className="mr-3">
                 <Button className="bt-btn-primary" size="sm">

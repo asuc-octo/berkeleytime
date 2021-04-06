@@ -10,6 +10,13 @@
     min-height: 0;
   }
 
+  .scheduler-units {
+    font-size: 16px;
+    font-weight: 500;
+    color: $bt-base-text;
+    flex: 1;
+  }
+
   .scheduler-header {
     display: flex;
     align-items: center;
@@ -18,13 +25,6 @@
 
     > *:not(:last-child) {
       margin-right: 1rem;
-    }
-
-    .scheduler-units {
-      font-size: 16px;
-      font-weight: 600;
-      color: $bt-base-text;
-      flex: 1;
     }
   }
 
