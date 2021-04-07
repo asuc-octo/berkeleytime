@@ -158,11 +158,13 @@ spec:
                     add_datastream_template k8s datastream k8s 0 '"k8s*"'
                     add_datastream_template k8s-ingress-nginx datastream k8s-ingress-nginx 100 '"k8s-ingress-nginx*"'
                     add_datastream_template metricbeat datastream metricbeat 0 '"metricbeat*"' '"metricbeat"' || true # Requires bt-metricbeat helm chart for component template
-          resources:
-            limits:
-              cpu: 500m
-              memory: 4Gi
-          # env:
+          # resources:
+          #   limits:
+          #     cpu: 500m
+          #     memory: 4Gi
+          env:
+            - name: ES_JAVA_OPTS
+              value: -Xms1g -Xmx1g
           #   - name: ELASTICSEARCH_USERNAME
           #     valueFrom:
           #       secretKeyRef:
