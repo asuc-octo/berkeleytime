@@ -7,9 +7,8 @@ import { ReduxState } from '../../redux/store';
 
 import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
-import btn_google_signin from 'assets/svg/profile/btn_google_signin.svg';
 
-interface Props extends PropsFromRedux { }
+interface Props extends PropsFromRedux {}
 
 const NavigationLink: FC<
   {
@@ -21,10 +20,10 @@ const NavigationLink: FC<
     as={to ? Link : undefined}
     to={to}
     className="bt-bold"
+    // eventKey required for collapseOnselect
+    // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
     eventKey={to}
     {...props}
-  // eventKey required for collapseOnselect
-  // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
   >
     {children}
   </Nav.Link>
@@ -60,9 +59,10 @@ const Navigation: FC<Props> = (props) => {
         <Nav className="mr-auto" />
         <Nav>
           <NavigationLink to="/catalog">Catalog</NavigationLink>
-          {isLoggedIn || true && (
+          <NavigationLink to="/scheduler">Scheduler</NavigationLink>
+          {/* {isLoggedIn && (
             <NavigationLink to="/scheduler">Scheduler</NavigationLink>
-          )}
+          )} */}
           <NavigationLink to="/grades">Grades</NavigationLink>
           <NavigationLink to="/enrollment">Enrollment</NavigationLink>
           <NavigationLink to="/about">About</NavigationLink>

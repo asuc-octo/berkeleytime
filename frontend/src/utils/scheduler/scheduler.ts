@@ -3,7 +3,17 @@ import { addUnits, parseUnits, Units, ZERO_UNITS } from 'utils/courses/units';
 
 export type SchedulerCourseType = CourseOverviewFragment;
 export type SchedulerSectionType = SectionFragment & {
+  /**
+   * The ID of the parent course of this seciton
+   */
   courseId: string;
+
+  /**
+   * If this is a secondary section, the ID of
+   * the primary section. If this is undefined,
+   * it is a primary section.
+   */
+  lectureId?: string;
 };
 
 export type Schedule = {
@@ -56,3 +66,12 @@ export const hasCourseById = (schedule: Schedule, id: string): boolean =>
  */
 export const hasSectionById = (schedule: Schedule, id: string): boolean =>
   !!schedule.sections.find((c) => c.id === id);
+
+/**
+ * Converts a schedule from the frontend to backend format
+ */
+// export const serializeSchedule = (schedule: Schedule): SectionSelectionInput[] =>
+//   schedule.courses.map(course => ({
+//     course: course.id,
+//     primary: schedule.sections.find(section => section.)
+//   })).filter((input) => !!input.primary)

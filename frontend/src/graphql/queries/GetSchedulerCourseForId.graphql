@@ -1,4 +1,4 @@
-query GetSchedulerCourseForId($id: ID!) {
+query GetSchedulerCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {
     ...SchedulerCourse
   }
