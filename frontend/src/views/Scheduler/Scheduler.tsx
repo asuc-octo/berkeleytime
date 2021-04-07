@@ -26,7 +26,10 @@ const Scheduler = () => {
     skip: !latestSemester?.playlistId,
   });
 
-  const [schedule, setSchedule] = useLocalStorageState<Schedule>(SCHEDULER_KEY, DEFAULT_SCHEDULE);
+  const [schedule, setSchedule] = useLocalStorageState<Schedule>(
+    SCHEDULER_KEY,
+    DEFAULT_SCHEDULE
+  );
 
   const error = semesterError || coursesError;
 

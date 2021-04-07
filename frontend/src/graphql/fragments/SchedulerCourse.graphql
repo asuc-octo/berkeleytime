@@ -10,4 +10,12 @@ fragment SchedulerCourse on CourseType {
   department
   description
   abbreviation
+
+  sectionSet(isPrimary: true, year: $year, semester: $semester) {
+    edges {
+      node {
+        ...Lecture
+      }
+    }
+  }
 }
