@@ -1,13 +1,20 @@
 # https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-reference-yml.html
 # https://github.com/elastic/helm-charts/blob/7.9/metricbeat/values.yaml
+
+# Infamous bug: 2020-11-27T10:07:38.176Z ERROR instance/metrics.go:285 error getting group status: open /proc/450037/cgroup: no such file or directory
+# Addressed by:
+# Refactor use of system.hostfs to fix cgroup metrics #24334
+# https://github.com/elastic/beats/pull/24334
+# Monitoring: allow specifying /proc or hostfs path. #23267
+# https://github.com/elastic/beats/issues/23267
+image: docker.elastic.co/beats/metricbeat
+imageTag: 7.13.0-SNAPSHOT
 replicas: 1
 daemonset:
   enabled: true
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
       value: http://bt-elasticsearch:9200
-    - name: LIBBEAT_MONITORING_CGROUPS_HIERARCHY_OVERRIDE # https://github.com/elastic/beats/issues/23267
-      value: /hostfs
     # - name: ELASTICSEARCH_USERNAME
     #   valueFrom:
     #     secretKeyRef:
@@ -22,11 +29,12 @@ daemonset:
     metricbeat.yml: |
       output:
         elasticsearch:
-          hosts: '${ELASTICSEARCH_HOSTS}'
+          hosts: ${ELASTICSEARCH_HOSTS}
           index: metricbeat-%{[agent.version]}
           # username: '${ELASTICSEARCH_USERNAME}'
           # password: '${ELASTICSEARCH_PASSWORD}'
-      hosts: ["${ELASTICSEARCH_HOSTS}"]
+      hosts:
+        - ${ELASTICSEARCH_HOSTS}
       setup:
         kibana:
           host: bt-kibana-kibana:5601
@@ -55,16 +63,47 @@ daemonset:
           - system
           - volume
         period: 10s
-        hosts: ["https://169.229.226.55:10250"]
+        hosts:
+          - https://berkeleytime.com:10250
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-        ssl.verification_mode: "none"
+        ssl.verification_mode: none
         processors:
           - add_kubernetes_metadata:
               in_cluster: true
 
+      # - module: kubernetes
+      #   enabled: true
+      #   metricsets:
+      #     - apiserver
+      #   hosts:
+      #     - https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT}
+      #   ssl.verification_mode: none
+      #   bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      #
+      # - module: kubernetes
+      #   enabled: true
+      #   metricsets:
+      #     - scheduler
+      #   hosts:
+      #     - https://localhost:10259
+      #   sl.certificate_authorities:
+      #     - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      #   period: 10s
+      #
+      # - module: kubernetes
+      #   enabled: true
+      #   metricsets:
+      #     - controllermanager
+      #   hosts:
+      #     - https://localhost:10257
+      #   sl.certificate_authorities:
+      #     - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      #   period: 10s
+
       - module: kubernetes
         enabled: true
-        hosts: ["bt-metricbeat-kube-state-metrics:8080"]
+        hosts:
+          - bt-metricbeat-kube-state-metrics:8080
         metricsets:
           - state_node
           - state_deployment
@@ -75,6 +114,8 @@ daemonset:
           - state_persistentvolumeclaim
         add_metadata: true
 
+
+
       - module: docker
         enabled: true
         metricsets:
@@ -83,27 +124,52 @@ daemonset:
           - diskio
           - event
           - healthcheck
+          - image
           - info
           - memory
           - network
-        hosts: ["unix:///var/run/docker.sock"]
+        hosts:
+          - unix:///var/run/docker.sock
         period: 10s
+        system.hostfs: /hostfs
+
+
+
+      - module: elasticsearch
+        enabled: true
+        metricsets:
+          - node
+          - node_stats
+          - index
+          - index_recovery
+          - shard
+          - ml_job
+        hosts:
+          - http://bt-elasticsearch:9200
+        period: 10s
+        system.hostfs: /hostfs
+
+
 
       - module: system
         enabled: true
         metricsets:
+          - core
           - cpu
+          - diskio
           - load
           - memory
           - network
           - process
           - process_summary
-          - uptime
+          - socket
           - socket_summary
+          - uptime
         processes: ['.*']
         process.include_top_n:
           by_cpu: 10
           by_memory: 10
+        system.hostfs: /hostfs
 
       # - module: system
       #   enabled: true
@@ -114,5 +180,67 @@ daemonset:
       #   processors:
       #   - drop_event.when.regexp:
       #       system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
+
+
+
+      - module: postgresql # run 'CREATE extension pg_stat_statements;' in psql
+        enabled: true
+        hosts:
+          - postgres://<USER>:<PASSWORD>@ingress-nginx-controller.ingress-nginx.svc.cluster.local/?sslmode=disable
+        metricsets:
+          - database # Stats about every PostgreSQL database
+          - bgwriter # Stats about the background writer process's activity
+          - activity # Stats about every PostgreSQL process
+          - statement # Stats for statement executions, needs pg_stat_statements
+        period: 10s
+
+      # TODO: separate out USER and PASSWORD for postgres and mongodb to secret
+
+      - module: mongodb
+        enabled: true
+        hosts:
+          - mongodb://<USER>:<PASSWORD@berkeleytime.com:27017,berkeleytime.com:27018,berkeleytime.com:27019
+        metricsets:
+          - collstats
+          - dbstats
+          - metrics
+          - replstatus
+          - status
+        period: 10s
 deployment:
   enabled: false
+livenessProbe:
+  exec:
+    command:
+      - sh
+      - -c
+      - |
+        #!/usr/bin/env bash -e
+        curl --fail 127.0.0.1:5066
+  failureThreshold: 15
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+clusterRoleRules:
+  - apiGroups: [""]
+    resources:
+      - nodes
+      - namespaces
+      - events
+      - pods
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions"]
+    resources:
+      - replicasets
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources:
+      - statefulsets
+      - deployments
+      - replicasets
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources:
+      - nodes/stats
+      - nodes/metrics # Error fetching data for metricset kubernetes.apiserver
+    verbs: ["get"]
