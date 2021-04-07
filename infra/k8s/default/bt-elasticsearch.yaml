@@ -26,7 +26,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20G
+      storage: 30G
 
 ---
 apiVersion: apps/v1
@@ -57,7 +57,7 @@ spec:
             claimName: bt-elasticsearch
       containers:
         - name: bt-elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
           ports:
             - containerPort: 9200
               name: rest
@@ -158,11 +158,10 @@ spec:
                     add_datastream_template k8s datastream k8s 0 '"k8s*"'
                     add_datastream_template k8s-ingress-nginx datastream k8s-ingress-nginx 100 '"k8s-ingress-nginx*"'
                     add_datastream_template metricbeat datastream metricbeat 0 '"metricbeat*"' '"metricbeat"' || true # Requires bt-metricbeat helm chart for component template
-          # resources:
-          #   requests:
-          #     cpu: 500m
-          #   limits:
-          #     cpu: 500m
+          resources:
+            limits:
+              cpu: 500m
+              memory: 4Gi
           # env:
           #   - name: ELASTICSEARCH_USERNAME
           #     valueFrom:
