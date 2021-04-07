@@ -40,5 +40,5 @@ while (true) {
     }
   }
   console.log(new Date());
-  await sleep(1000);
+  await sleep(10000);
 }

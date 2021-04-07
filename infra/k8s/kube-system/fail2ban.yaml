@@ -1,12 +1,23 @@
+# fail2ban focuses banning IP addresses at the application level rather than
+# TCP-level packet inspection. This means that most ban filters require setting
+# up highly specific listeners or parsers for ban criteria
+
+# In the event of an offending action by an external IP address, our course of
+# action is fairly simple: Drop all future packets from IP until the ban expires
+
 # Test failregex parsing:
 # k -n kube-system exec -it deploy/fail2ban -- fail2ban-regex 'STRING' 'REGEX'
 
 # View fail2ban logs:
 # k -n kube-system exec -it deploy/fail2ban -- tail -f /var/log/fail2ban.log
 
-# Manual IP bans (must run in pod)
-# fail2ban-client set manban banip 172.58.35.209 (supports CIDR)
+# Manual IP bans (run cmd in pod)
+# fail2ban-client set manban banip 172.58.35.209 (also supports CIDR)
 # fail2ban-client status manban
+
+# Further reading
+# https://github.com/crazy-max/docker-fail2ban
+# https://github.com/fail2ban/fail2ban
 
 apiVersion: apps/v1
 kind: Deployment
@@ -30,7 +41,7 @@ spec:
             - /bin/bash
             - -c
             - |
-              # Idea: implement pulling banned IPs from cloud storage
+              # Persistent bans idea: save and read IPs from cloud storage
               # if [ -n "$(cat /denylist.txt)" ]; then
               #   gcloud ...
               # fi
@@ -56,13 +67,16 @@ spec:
               bantime  = 3600 # One hour ban
               maxretry = 2
               action = %(action_)s # action only
+              # action = %(action_mwl)s # action + mail with logs
               # destemail = octo-berkeleytime@asuc.org
               # sender = noreply@berkeleytime.com
-              # action = %(action_mwl)s # mail with logs
 
               [manban]
               enabled  = true
-              # action   = iptables-ipset-proto6-allports[protocol="all"] # bantime = -1 supported in 0.11.2, but has kernel bug
+              # if using action = iptables-ipset-proto6-allports[protocol="all"]
+              # => bantime = -1 supported     0.11.2, but separate kernel bug
+              # => bantime = -1 NOT supported 0.11.1
+
               action   = iptables-ipset-proto4[actname="manban-tcp", name="manban-tcp", protocol="tcp", port="1:65535"]
                          iptables-ipset-proto4[actname="manban-udp", name="manban-udp", protocol="udp", port="1:65535"]
                          iptables-ipset-proto4[actname="manban-icmp", name="manban-icmp", protocol="icmp \$(:", port=")"]
@@ -135,6 +149,31 @@ spec:
           volumeMounts:
             - mountPath: /var/log
               name: var-log
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  # For some reason, as of crazymax/fail2ban:0.11.1 after an
+                  # indeterminate amount of time, two fail2ban-server instances
+                  # appear, causing IP ban failures altogether as the two
+                  # processes compete with each other
+                  # This livenessProbe attempts to remedy that somewhat by
+                  # simply restarting the container when it detects two servers
+                  # This has some security implications as currently, bans do
+                  # not persist across container restarts, meaning that the
+                  # node is vulnerable in between the container restart and
+                  # when the fail2ban container realizes it needs to re-ban the
+                  # offender
+                  # THIS IS A BAND-AID SOLUTION!!!
+                  if [ $(ps auxw | grep fail2ban-server | grep -v grep | wc -l) -ge 2 ];
+                  then
+                    exit 1
+                  fi
+            failureThreshold: 5
+            initialDelaySeconds: 20
+            periodSeconds: 1
       hostNetwork: true
       volumes:
         - name: var-log
