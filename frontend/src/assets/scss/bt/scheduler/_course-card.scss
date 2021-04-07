@@ -1,24 +1,34 @@
 .course-card {
-  border: 1px solid #E5E5E5;
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
 
-  padding: 1.3rem 1.5rem 1rem;
+  padding: 1rem 1.5rem;
+
+  margin-top: 1rem;
 
   overflow: hidden;
   position: relative;
 
+  .course-card-description {
+    padding-left: 1.5rem;
+  }
+
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     left: 0;
     top: 0;
-    right: 0;
-    height: 6px;
+    bottom: 0;
+    width: 6px;
     background: var(--card-color);
   }
 
   section > * {
-    margin-bottom: 0.3rem;
+    margin-bottom: 2px;
+  }
+
+  section.course-card--disabled {
+    opacity: 0.5;
   }
 
   section + section {
@@ -26,9 +36,20 @@
   }
 
   h4 {
-    font-size: 18px;
+    font-size: 1rem;
     font-weight: 700;
     color: $bt-base-text;
+    line-height: 1.5;
+
+    > .custom-checkbox {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      label {
+        flex: 1;
+      }
+    }
   }
 
   p {
@@ -59,6 +80,12 @@
 }
 
 .scheduler-course {
+  + .scheduler-course {
+    margin-top: 1rem;
+    border-top: 1px solid $bt-light-border-grey;
+    padding-top: 1rem;
+  }
+
   .scheduler-status {
     display: flex;
     align-items: center;
@@ -73,30 +100,61 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin: 0.5rem 0;
+    margin: 0;
+    margin-top: 2px;
+
+    position: relative;
+    padding-left: 16px + 8px;
 
     .scheduler-course-square {
+      position: absolute;
+      left: 0;
       width: 16px;
       height: 16px;
       border-radius: 3px;
       margin-right: 8px;
-      margin-bottom: 4px;
     }
 
-    .scheduler-course-course {
+    .scheduler-course-title {
       margin-right: auto !important;
       font-weight: bold;
       color: $bt-base-text;
-      //font-size: 18px;
-      @include font-size-responsive-larger(18px);
+      font-size: 1rem;
+      line-height: 1rem;
+    }
+
+    .scheduler-course-name {
+      margin-right: auto !important;
+      color: $bt-light-text;
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+
+    .scheduler-course-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      opacity: 0.5;
+      transition: 0.5s;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    .scheduler-course-expand {
+      svg {
+        transition: 0.2s ease all;
+      }
     }
 
     .scheduler-course-remove {
       color: $bt-indicator-red;
-      cursor: pointer;
-      opacity: 0.5;
       padding: 2px;
-      transition: 0.5s;
       border-radius: 4px;
 
       &:hover {

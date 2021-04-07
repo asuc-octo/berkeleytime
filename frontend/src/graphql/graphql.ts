@@ -952,9 +952,64 @@ export type FilterFragment = (
   & Pick<PlaylistType, 'id' | 'name' | 'category'>
 );
 
+export type LectureFragment = (
+  { __typename?: 'SectionType' }
+  & { associatedSections: (
+    { __typename?: 'SectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionType' }
+        & SectionFragment
+      )> }
+    )>> }
+  ) }
+  & SectionFragment
+);
+
+export type ScheduleFragment = (
+  { __typename?: 'ScheduleType' }
+  & Pick<ScheduleType, 'name' | 'semester' | 'year'>
+  & { selectedSections: (
+    { __typename?: 'SectionSelectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionSelectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionSelectionType' }
+        & { course: (
+          { __typename?: 'CourseType' }
+          & SchedulerCourseFragment
+        ), primary?: Maybe<(
+          { __typename?: 'SectionType' }
+          & Pick<SectionType, 'id'>
+        )>, secondary: (
+          { __typename?: 'SectionTypeConnection' }
+          & { edges: Array<Maybe<(
+            { __typename?: 'SectionTypeEdge' }
+            & { node?: Maybe<(
+              { __typename?: 'SectionType' }
+              & Pick<SectionType, 'id'>
+            )> }
+          )>> }
+        ) }
+      )> }
+    )>> }
+  ) }
+);
+
 export type SchedulerCourseFragment = (
   { __typename?: 'CourseType' }
   & Pick<CourseType, 'id' | 'title' | 'units' | 'waitlisted' | 'openSeats' | 'enrolled' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'abbreviation'>
+  & { sectionSet: (
+    { __typename?: 'SectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionType' }
+        & LectureFragment
+      )> }
+    )>> }
+  ) }
 );
 
 export type SectionFragment = (
@@ -974,6 +1029,26 @@ export type UserProfileFragment = (
   )>>> }
 );
 
+export type CreateScheduleMutationVariables = Exact<{
+  name: Scalars['String'];
+  selectedSections: Array<Maybe<SectionSelectionInput>> | Maybe<SectionSelectionInput>;
+  timeblocks: Array<Maybe<TimeBlockInput>> | Maybe<TimeBlockInput>;
+  semester: Scalars['String'];
+  year: Scalars['String'];
+}>;
+
+
+export type CreateScheduleMutation = (
+  { __typename?: 'Mutation' }
+  & { createSchedule?: Maybe<(
+    { __typename?: 'CreateSchedule' }
+    & { schedule?: Maybe<(
+      { __typename?: 'ScheduleType' }
+      & ScheduleFragment
+    )> }
+  )> }
+);
+
 export type DeleteUserMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -982,6 +1057,23 @@ export type DeleteUserMutation = (
   & { deleteUser?: Maybe<(
     { __typename?: 'DeleteUser' }
     & Pick<DeleteUser, 'success'>
+  )> }
+);
+
+export type LoginMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type LoginMutation = (
+  { __typename?: 'Mutation' }
+  & { login?: Maybe<(
+    { __typename?: 'ObtainJSONWebToken' }
+    & Pick<ObtainJsonWebToken, 'newUser' | 'refreshExpiresIn' | 'payload'>
+    & { user?: Maybe<(
+      { __typename?: 'BerkeleytimeUserType' }
+      & UserProfileFragment
+    )> }
   )> }
 );
 
@@ -1052,23 +1144,6 @@ export type UpdateUserMutation = (
     & { user?: Maybe<(
       { __typename?: 'BerkeleytimeUserType' }
       & Pick<BerkeleytimeUserType, 'id' | 'major' | 'emailGradeUpdate' | 'emailEnrollmentOpening' | 'emailClassUpdate' | 'emailBerkeleytimeUpdate'>
-    )> }
-  )> }
-);
-
-export type LoginMutationVariables = Exact<{
-  token: Scalars['String'];
-}>;
-
-
-export type LoginMutation = (
-  { __typename?: 'Mutation' }
-  & { login?: Maybe<(
-    { __typename?: 'ObtainJSONWebToken' }
-    & Pick<ObtainJsonWebToken, 'newUser' | 'refreshExpiresIn' | 'payload'>
-    & { user?: Maybe<(
-      { __typename?: 'BerkeleytimeUserType' }
-      & UserProfileFragment
     )> }
   )> }
 );
@@ -1148,6 +1223,8 @@ export type GetFiltersQuery = (
 
 export type GetSchedulerCourseForIdQueryVariables = Exact<{
   id: Scalars['ID'];
+  year?: Maybe<Scalars['String']>;
+  semester?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -1257,6 +1334,18 @@ export const FilterFragmentDoc = gql`
   category
 }
     `;
+export const LectureFragmentDoc = gql`
+    fragment Lecture on SectionType {
+  ...Section
+  associatedSections {
+    edges {
+      node {
+        ...Section
+      }
+    }
+  }
+}
+    ${SectionFragmentDoc}`;
 export const SchedulerCourseFragmentDoc = gql`
     fragment SchedulerCourse on CourseType {
   id
@@ -1270,8 +1359,41 @@ export const SchedulerCourseFragmentDoc = gql`
   department
   description
   abbreviation
+  sectionSet(isPrimary: true, year: $year, semester: $semester) {
+    edges {
+      node {
+        ...Lecture
+      }
+    }
+  }
 }
-    `;
+    ${LectureFragmentDoc}`;
+export const ScheduleFragmentDoc = gql`
+    fragment Schedule on ScheduleType {
+  name
+  semester
+  year
+  selectedSections {
+    edges {
+      node {
+        course {
+          ...SchedulerCourse
+        }
+        primary {
+          id
+        }
+        secondary {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    ${SchedulerCourseFragmentDoc}`;
 export const CourseOverviewFragmentDoc = gql`
     fragment CourseOverview on CourseType {
   id
@@ -1307,6 +1429,50 @@ export const UserProfileFragmentDoc = gql`
   }
 }
     ${CourseOverviewFragmentDoc}`;
+export const CreateScheduleDocument = gql`
+    mutation CreateSchedule($name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $semester: String!, $year: String!) {
+  createSchedule(
+    name: $name
+    selectedSections: $selectedSections
+    timeblocks: $timeblocks
+    semester: $semester
+    year: $year
+  ) {
+    schedule {
+      ...Schedule
+    }
+  }
+}
+    ${ScheduleFragmentDoc}`;
+export type CreateScheduleMutationFn = Apollo.MutationFunction<CreateScheduleMutation, CreateScheduleMutationVariables>;
+
+/**
+ * __useCreateScheduleMutation__
+ *
+ * To run a mutation, you first call `useCreateScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createScheduleMutation, { data, loading, error }] = useCreateScheduleMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      selectedSections: // value for 'selectedSections'
+ *      timeblocks: // value for 'timeblocks'
+ *      semester: // value for 'semester'
+ *      year: // value for 'year'
+ *   },
+ * });
+ */
+export function useCreateScheduleMutation(baseOptions?: Apollo.MutationHookOptions<CreateScheduleMutation, CreateScheduleMutationVariables>) {
+        return Apollo.useMutation<CreateScheduleMutation, CreateScheduleMutationVariables>(CreateScheduleDocument, baseOptions);
+      }
+export type CreateScheduleMutationHookResult = ReturnType<typeof useCreateScheduleMutation>;
+export type CreateScheduleMutationResult = Apollo.MutationResult<CreateScheduleMutation>;
+export type CreateScheduleMutationOptions = Apollo.BaseMutationOptions<CreateScheduleMutation, CreateScheduleMutationVariables>;
 export const DeleteUserDocument = gql`
     mutation DeleteUser {
   deleteUser {
@@ -1338,6 +1504,43 @@ export function useDeleteUserMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteUserMutationHookResult = ReturnType<typeof useDeleteUserMutation>;
 export type DeleteUserMutationResult = Apollo.MutationResult<DeleteUserMutation>;
 export type DeleteUserMutationOptions = Apollo.BaseMutationOptions<DeleteUserMutation, DeleteUserMutationVariables>;
+export const LoginDocument = gql`
+    mutation Login($token: String!) {
+  login(tokenId: $token) {
+    newUser
+    refreshExpiresIn
+    payload
+    user {
+      ...UserProfile
+    }
+  }
+}
+    ${UserProfileFragmentDoc}`;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
+
+/**
+ * __useLoginMutation__
+ *
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, baseOptions);
+      }
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout {
@@ -1492,43 +1695,6 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
-export const LoginDocument = gql`
-    mutation Login($token: String!) {
-  login(tokenId: $token) {
-    newUser
-    refreshExpiresIn
-    payload
-    user {
-      ...UserProfile
-    }
-  }
-}
-    ${UserProfileFragmentDoc}`;
-export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
-
-/**
- * __useLoginMutation__
- *
- * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLoginMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [loginMutation, { data, loading, error }] = useLoginMutation({
- *   variables: {
- *      token: // value for 'token'
- *   },
- * });
- */
-export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
-        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, baseOptions);
-      }
-export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
-export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
-export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const GetCourseForIdDocument = gql`
     query GetCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {
@@ -1678,7 +1844,7 @@ export type GetFiltersQueryHookResult = ReturnType<typeof useGetFiltersQuery>;
 export type GetFiltersLazyQueryHookResult = ReturnType<typeof useGetFiltersLazyQuery>;
 export type GetFiltersQueryResult = Apollo.QueryResult<GetFiltersQuery, GetFiltersQueryVariables>;
 export const GetSchedulerCourseForIdDocument = gql`
-    query GetSchedulerCourseForId($id: ID!) {
+    query GetSchedulerCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {
     ...SchedulerCourse
   }
@@ -1698,6 +1864,8 @@ export const GetSchedulerCourseForIdDocument = gql`
  * const { data, loading, error } = useGetSchedulerCourseForIdQuery({
  *   variables: {
  *      id: // value for 'id'
+ *      year: // value for 'year'
+ *      semester: // value for 'semester'
  *   },
  * });
  */

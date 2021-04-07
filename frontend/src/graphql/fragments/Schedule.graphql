@@ -1,0 +1,26 @@
+fragment Schedule on ScheduleType {
+  name
+  semester
+  year
+  selectedSections {
+    edges {
+      node {
+        course {
+          ...SchedulerCourse
+        }
+
+        primary {
+          id
+        }
+
+        secondary {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
