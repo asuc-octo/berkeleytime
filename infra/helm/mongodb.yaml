@@ -1,0 +1,103 @@
+# Default values
+# https://github.com/bitnami/charts/blob/d7677560c211ed0b44aab879e5bf7c232a32d3ef/bitnami/mongodb/values.yaml
+
+# MANUALLY EXTRACT SECRETS FROM K8S CLUSTER:
+# export MONGODB_ROOT_PASSWORD=$(kubectl get secret --namespace default bt-mdb-staging -o jsonpath="{.data.mongodb-root-password}" | base64 --decode)
+# export MONGODB_PASSWORD=$(kubectl get secret --namespace default bt-mdb-staging -o jsonpath="{.data.mongodb-password}" | base64 --decode)
+# export MONGODB_REPLICA_SET_KEY=$(kubectl get secret --namespace "default" bt-mdb-staging -o jsonpath="{.data.mongodb-replica-set-key}" | base64 --decode)
+
+# INSTALL A MONGODB CLIENT LOCALLY ON UBUNTU 20.04:
+# apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5
+# echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb.list
+# apt install -y mongodb-org
+
+# MANUALLY VERIFY WORKS IN MONGO:
+# mongo "mongodb://<username>:<password>@bt-mdb-staging-0.bt-mdb-staging-headless.default.svc.cluster.local,bt-mdb-staging-1.bt-mdb-staging-headless.default.svc.cluster.local/?authSource=admin&replicaSet=rs0"
+# use bt
+# db.asdf.insertOne({ name: "Mango", season: "Summer"})
+# db.asdf.find({})
+
+# example secret format for existingSecret:
+# mongodb-password=<any pass>
+# mongodb-replica-set-key=<any key>
+# mongodb-root-password=<any pass>
+
+arbiter:
+  enabled: false
+architecture: replicaset
+auth:
+  enabled: true
+  existingSecret: bt-mdb-$CI_ENVIRONMENT_NAME
+  username: bt
+  database: bt
+fullnameOverride: bt-mdb-$CI_ENVIRONMENT_NAME
+persistence:
+  size: 500M
+  accessModes:
+    - ReadWriteOnce
+  mountPath: /bitnami/mongodb
+  subPath: ""
+replicaSetName: rs0
+replicaSetHostnames: true
+strategyType: RollingUpdate
+externalAccess:
+  enabled: true
+  service:
+    type: ClusterIP
+readinessProbe: # must be disabled so that traffic can go through svc for init
+  enabled: false
+replicaCount: 3
+# TODO: Must automate sending this command for staging external cluster access
+# rs.reconfig({
+#    _id : "rs0",
+#    members: [
+#       { _id: 0, host: "berkeleytime.com:27017" },
+#       { _id: 1, host: "berkeleytime.com:27018" },
+#       { _id: 2, host: "berkeleytime.com:27019" }
+#    ]
+# }, { force: true })
+# command:
+#   - bash
+#   - -c
+#   - |
+#     mkdir -p /bitnami/mongodb/data/db
+#     /opt/bitnami/mongodb/bin/mongod --config=/opt/bitnami/mongodb/conf/mongodb.conf
+
+# configuration: |-
+#   # Default configuration file that comes in Helm chart
+#   # path: /opt/bitnami/mongodb/conf/mongodb.conf
+#   # -------------------------------------------------
+#   # mongod.conf
+#   # for documentation of all options, see:
+#   #   http://docs.mongodb.org/manual/reference/configuration-options/
+#   storage:
+#     dbPath: /bitnami/mongodb/data/db
+#     journal:
+#       enabled: true
+#     directoryPerDB: false
+#   systemLog:
+#     destination: file
+#     quiet: false
+#     logAppend: true
+#     logRotate: reopen
+#     path: /opt/bitnami/mongodb/logs/mongodb.log
+#     verbosity: 0
+#   net:
+#     port: 27017
+#     unixDomainSocket:
+#       enabled: true
+#       pathPrefix: /opt/bitnami/mongodb/tmp
+#     ipv6: false
+#     bindIpAll: true
+#     #bindIp:
+#   replication:
+#     replSetName: rs0
+#     enableMajorityReadConcern: true
+#   processManagement:
+#      fork: false
+#      pidFilePath: /opt/bitnami/mongodb/tmp/mongodb.pid
+#   setParameter:
+#      enableLocalhostAuthBypass: true
+#   security:
+#     authorization: disabled
+#     keyFile: /opt/bitnami/mongodb/conf/keyfile
