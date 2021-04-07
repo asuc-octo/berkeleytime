@@ -1,5 +1,12 @@
 # Template: https://github.com/elastic/helm-charts/blob/master/filebeat/values.yaml
-
+# daemonset:
+#   resources:
+#     requests:
+#       cpu: "100m"
+#       memory: "100Mi"
+#     limits:
+#       cpu: "100m"
+#       memory: "100Mi"
 filebeatConfig:
   # How to Automate Elasticsearch Index Creation
   # https://cloudhero.io/automate-elasticsearch-index-creation
