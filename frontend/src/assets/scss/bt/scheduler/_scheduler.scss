@@ -20,11 +20,37 @@
   .scheduler-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin-left: 72px;
     padding: 1rem;
 
     > *:not(:last-child) {
       margin-right: 1rem;
+    }
+
+    span {
+      font-size: 0.9rem;
+      color: $bt-light-text;
+    }
+
+    .scheduler-name-input {
+      box-shadow: none;
+      border: none;
+      appearance: none;
+      border-radius: 0;
+      font-size: 1.2rem;
+      margin: 0;
+      padding: 0 4px;
+      font-weight: 500;
+      border-bottom: 1px solid $bt-border-grey;
+      background: none;
+
+      &:focus {
+        border-radius: 0;
+        outline: none;
+        border-color: #2684ff;
+        box-shadow: 0 1px 0px 0px #2684ff;
+      }
     }
   }
 

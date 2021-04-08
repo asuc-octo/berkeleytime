@@ -1,0 +1,19 @@
+fragment ScheduleOverview on ScheduleType {
+  id
+  year
+  semester
+  name
+  totalUnits
+  dateCreated
+
+  selectedSections {
+    edges {
+      node {
+        course {
+          department
+          courseNumber
+        }
+      }
+    }
+  }
+}
