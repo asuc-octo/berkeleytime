@@ -20,7 +20,7 @@ type Props = {
 const ProfileScheduleCard = ({ schedule, removable }: Props) => {
   const classes = schedule.selectedSections.edges
     .map((section) => section?.node?.course)
-    .map((course) => course && `${course.department} ${course.courseNumber}`)
+    .map((course) => course && `${course.abbreviation} ${course.courseNumber}`)
     .filter((x): x is string => x !== undefined);
 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -45,7 +45,7 @@ const ProfileScheduleCard = ({ schedule, removable }: Props) => {
           {schedule.totalUnits} units &bull; {semesterToString(schedule)}
         </p>
         <div className="profile-card-info-stats">
-          <span>{classes.join(' ')}</span>
+          <span>{classes.join(' • ')}</span>
         </div>
       </div>
       {removable && (

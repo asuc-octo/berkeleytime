@@ -9,6 +9,7 @@ import {
 } from '../../graphql/graphql';
 import { addUnits, parseUnits, Units, ZERO_UNITS } from 'utils/courses/units';
 import { Semester } from 'utils/playlists/semesters';
+import { getNodes } from '../graphql';
 
 export type SchedulerCourseType = CourseOverviewFragment;
 export type SchedulerSectionType = SectionFragment & {
@@ -83,31 +84,24 @@ export const hasSectionById = (schedule: Schedule, id: string): boolean =>
 /**
  * Deserializes a schedule from backend to frontend format
  */
-export const deserializeSchedule = (schedule: ScheduleFragment): Schedule =>
-  ((sections) => ({
-    name: schedule.name,
-    courses: sections.map((section) => section.course),
-    sections: sections
-      .flatMap((section) =>
-        section.primary
-          ? [
-              { ...section.primary, courseId: section.course.id },
-              ...section.secondary.edges.map(
-                (secondary) =>
-                  secondary?.node && {
-                    courseId: section.course.id,
-                    lectureId: section.primary!.id,
-                  }
-              ),
-            ]
-          : []
-      )
-      .filter((n): n is SchedulerSectionType => !!n),
-  }))(
-    schedule.selectedSections.edges
-      .map((e) => e?.node)
-      .filter((s): s is SectionSelectionFragment => !!s)
-  );
+export const deserializeSchedule = (schedule: ScheduleFragment): Schedule => ({
+  name: schedule.name,
+  courses: getNodes(schedule.selectedSections).map((section) => section.course),
+  sections: getNodes(schedule.selectedSections)
+    .flatMap((section) =>
+      section.primary
+        ? [
+            { ...section.primary, courseId: section.course.id },
+            ...getNodes(section.secondary).map((secondary) => ({
+              courseId: section.course.id,
+              lectureId: section.primary!.id,
+              ...secondary,
+            })),
+          ]
+        : []
+    )
+    .filter((n): n is SchedulerSectionType => !!n),
+});
 
 /**
  * Converts a schedule from the frontend to backend format
