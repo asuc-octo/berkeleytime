@@ -131,6 +131,7 @@
   font-size: 14px;
   border: 2px solid $bt-black;
   padding: 0px 15px 0px 15px;
+  white-space: nowrap;
   &:hover {
     background-color: $bt-black;
     color: $bt-white;
