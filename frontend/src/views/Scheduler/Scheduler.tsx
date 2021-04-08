@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, ButtonGroup, ButtonToolbar, Col, Row } from 'react-bootstrap';
 import CourseSelector from 'components/Scheduler/CourseSelector';
 
-import { useGetCoursesForFilterQuery } from '../../graphql/graphql';
+import {
+  useCreateScheduleMutation,
+  useGetCoursesForFilterQuery,
+} from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
 import useLatestSemester from 'graphql/hooks/latestSemester';
-import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
+import { createSchedule, Schedule } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import { useLocalStorageState } from 'utils/hooks';
 
-const SCHEDULER_KEY = 'SCHEDULER:DEFAULT';
+// Change the version when the scheduler schema changes to
+// avoid breaking users' schedules
+const SCHEDULER_KEY = 'SCHEDULER:v1.0:DEFAULT';
 
 const Scheduler = () => {
   const {
@@ -28,8 +33,10 @@ const Scheduler = () => {
 
   const [schedule, setSchedule] = useLocalStorageState<Schedule>(
     SCHEDULER_KEY,
-    DEFAULT_SCHEDULE
+    () => createSchedule()
   );
+
+  // const [createScheduleMutation, { data, loading, error }] = useCreateScheduleMutation();
 
   const error = semesterError || coursesError;
 
