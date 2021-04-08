@@ -65,7 +65,11 @@ type Props = {
 
 const ScheduleModal = ({ scheduleId, show, handleClose }: Props) => {
   return (
-    <Modal show={show} onHide={handleClose} className="schedule-modal">
+    <Modal
+      show={show}
+      onHide={handleClose}
+      className="schedule-modal default-modal"
+    >
       {scheduleId && <ScheduleModalContent scheduleId={scheduleId} />}
     </Modal>
   );
