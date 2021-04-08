@@ -7,7 +7,7 @@
 }
 
 //override bootstrap modal settings
-.modal.mobile-modal {
+.modal:not(.default-modal) {
   display: flex !important;
 
   .link-btn {

@@ -1,8 +1,17 @@
 .scheduler,
 .scheduler.viewport-app {
-  > .row > .col {
+  > .row > div {
     box-sizing: border-box;
-    height: 100%;
+    position: relative;
+
+    > .course-selector {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      overflow-y: auto;
+    }
   }
 
   // Force auto-sizing
@@ -24,13 +33,20 @@
     margin-left: 72px;
     padding: 1rem;
 
+    > div {
+      display: flex;
+      align-items: center;
+    }
+
     > *:not(:last-child) {
       margin-right: 1rem;
     }
 
     span {
       font-size: 0.9rem;
-      color: $bt-light-text;
+      &:not(.callout) {
+        color: $bt-light-text;
+      }
     }
 
     .scheduler-name-input {
