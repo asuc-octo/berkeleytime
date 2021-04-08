@@ -1,4 +1,8 @@
-import { CourseOverviewFragment, SectionFragment } from 'graphql/graphql';
+import {
+  CourseOverviewFragment,
+  SectionFragment,
+  SectionSelectionInput,
+} from '../../graphql/graphql';
 import { addUnits, parseUnits, Units, ZERO_UNITS } from 'utils/courses/units';
 
 export type SchedulerCourseType = CourseOverviewFragment;
@@ -17,14 +21,16 @@ export type SchedulerSectionType = SectionFragment & {
 };
 
 export type Schedule = {
+  name: string;
   courses: SchedulerCourseType[];
   sections: SchedulerSectionType[];
 };
 
-export const DEFAULT_SCHEDULE: Schedule = {
+export const createSchedule = (name: string = 'My Schedule'): Schedule => ({
+  name: name,
   courses: [],
   sections: [],
-};
+});
 
 /**
  * Gets a corresponding course for a section (assuming it exists in the
@@ -70,8 +76,19 @@ export const hasSectionById = (schedule: Schedule, id: string): boolean =>
 /**
  * Converts a schedule from the frontend to backend format
  */
-// export const serializeSchedule = (schedule: Schedule): SectionSelectionInput[] =>
-//   schedule.courses.map(course => ({
-//     course: course.id,
-//     primary: schedule.sections.find(section => section.)
-//   })).filter((input) => !!input.primary)
+export const serializeSchedule = (
+  schedule: Schedule
+): SectionSelectionInput[] =>
+  schedule.courses
+    .map((course) => ({
+      course: course.id,
+      primary: schedule.sections.find(
+        (section) => section.courseId === course.id && !section.lectureId
+      )?.id,
+      secondary: schedule.sections
+        .filter(
+          (section) => section.courseId === course.id && !!section.lectureId
+        )
+        .map((section) => section.id),
+    }))
+    .filter((input) => !!input.primary);
