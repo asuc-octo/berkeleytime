@@ -47,7 +47,7 @@ const SchedulerCourse = ({
       semester: semester.semester,
     },
   });
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const color = courseToColor(courseId);
 
