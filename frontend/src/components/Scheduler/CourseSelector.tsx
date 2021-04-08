@@ -29,25 +29,23 @@ type Props = {
   allCourses: CourseType[];
   semester: Semester;
   schedule: Schedule;
-  setSchedule: Dispatch<SetStateAction<Schedule>>;
+  setSchedule: (newValue: Schedule) => void;
 };
 
 const CourseSelector = ({
   allCourses,
   semester,
   schedule,
-  setSchedule
+  setSchedule,
 }: Props) => {
   // Sort courses
   const sortedCourses: CourseOptionType[] = useMemo(
     () =>
-      allCourses
-        .sort(compareDepartmentName)
-        .map((course) => ({
-          value: course.id,
-          label: courseToName(course),
-          course,
-        })),
+      allCourses.sort(compareDepartmentName).map((course) => ({
+        value: course.id,
+        label: courseToName(course),
+        course,
+      })),
     [allCourses]
   );
 

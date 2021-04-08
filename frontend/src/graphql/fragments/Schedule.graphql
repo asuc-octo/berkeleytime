@@ -1,25 +1,13 @@
 fragment Schedule on ScheduleType {
+  id
   name
   semester
   year
+  totalUnits
   selectedSections {
     edges {
       node {
-        course {
-          ...SchedulerCourse
-        }
-
-        primary {
-          id
-        }
-
-        secondary {
-          edges {
-            node {
-              id
-            }
-          }
-        }
+        ...SectionSelection
       }
     }
   }

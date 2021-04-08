@@ -1,9 +1,14 @@
 import {
   CourseOverviewFragment,
+  CreateScheduleMutationVariables,
+  ScheduleFragment,
   SectionFragment,
+  SectionSelectionFragment,
   SectionSelectionInput,
+  UpdateScheduleMutationVariables,
 } from '../../graphql/graphql';
 import { addUnits, parseUnits, Units, ZERO_UNITS } from 'utils/courses/units';
+import { Semester } from 'utils/playlists/semesters';
 
 export type SchedulerCourseType = CourseOverviewFragment;
 export type SchedulerSectionType = SectionFragment & {
@@ -26,11 +31,13 @@ export type Schedule = {
   sections: SchedulerSectionType[];
 };
 
-export const createSchedule = (name: string = 'My Schedule'): Schedule => ({
-  name: name,
+export type BackendSchedule = CreateScheduleMutationVariables;
+
+export const DEFAULT_SCHEDULE: Schedule = {
+  name: 'My Schedule',
   courses: [],
   sections: [],
-});
+};
 
 /**
  * Gets a corresponding course for a section (assuming it exists in the
@@ -74,12 +81,45 @@ export const hasSectionById = (schedule: Schedule, id: string): boolean =>
   !!schedule.sections.find((c) => c.id === id);
 
 /**
+ * Deserializes a schedule from backend to frontend format
+ */
+export const deserializeSchedule = (schedule: ScheduleFragment): Schedule =>
+  ((sections) => ({
+    name: schedule.name,
+    courses: sections.map((section) => section.course),
+    sections: sections
+      .flatMap((section) =>
+        section.primary
+          ? [
+              { ...section.primary, courseId: section.course.id },
+              ...section.secondary.edges.map(
+                (secondary) =>
+                  secondary?.node && {
+                    courseId: section.course.id,
+                    lectureId: section.primary!.id,
+                  }
+              ),
+            ]
+          : []
+      )
+      .filter((n): n is SchedulerSectionType => !!n),
+  }))(
+    schedule.selectedSections.edges
+      .map((e) => e?.node)
+      .filter((s): s is SectionSelectionFragment => !!s)
+  );
+
+/**
  * Converts a schedule from the frontend to backend format
  */
 export const serializeSchedule = (
-  schedule: Schedule
-): SectionSelectionInput[] =>
-  schedule.courses
+  schedule: Schedule,
+  semester: Semester
+): BackendSchedule => ({
+  name: schedule.name,
+  semester: semester.semester,
+  year: semester.year,
+  selectedSections: schedule.courses
     .map((course) => ({
       course: course.id,
       primary: schedule.sections.find(
@@ -91,4 +131,6 @@ export const serializeSchedule = (
         )
         .map((section) => section.id),
     }))
-    .filter((input) => !!input.primary);
+    .filter((input) => !!input.primary),
+  timeblocks: [],
+});
