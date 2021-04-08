@@ -1,0 +1,21 @@
+.schedule-modal {
+  .modal-dialog {
+    max-width: 1024px;
+  }
+
+  .modal-content {
+    overflow-x: auto;
+
+    .schedule-modal-content {
+      min-width: 600px;
+      padding: 1rem;
+      padding-right: 2rem;
+
+      .scheduler-header {
+        margin-left: 1rem;
+        margin-bottom: 1rem;
+        padding-right: 0;
+      }
+    }
+  }
+}

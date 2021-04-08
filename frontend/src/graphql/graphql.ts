@@ -969,7 +969,22 @@ export type LectureFragment = (
 
 export type ScheduleFragment = (
   { __typename?: 'ScheduleType' }
-  & Pick<ScheduleType, 'name' | 'semester' | 'year'>
+  & Pick<ScheduleType, 'id' | 'name' | 'semester' | 'year' | 'totalUnits'>
+  & { selectedSections: (
+    { __typename?: 'SectionSelectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionSelectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionSelectionType' }
+        & SectionSelectionFragment
+      )> }
+    )>> }
+  ) }
+);
+
+export type ScheduleOverviewFragment = (
+  { __typename?: 'ScheduleType' }
+  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated'>
   & { selectedSections: (
     { __typename?: 'SectionSelectionTypeConnection' }
     & { edges: Array<Maybe<(
@@ -978,19 +993,7 @@ export type ScheduleFragment = (
         { __typename?: 'SectionSelectionType' }
         & { course: (
           { __typename?: 'CourseType' }
-          & SchedulerCourseFragment
-        ), primary?: Maybe<(
-          { __typename?: 'SectionType' }
-          & Pick<SectionType, 'id'>
-        )>, secondary: (
-          { __typename?: 'SectionTypeConnection' }
-          & { edges: Array<Maybe<(
-            { __typename?: 'SectionTypeEdge' }
-            & { node?: Maybe<(
-              { __typename?: 'SectionType' }
-              & Pick<SectionType, 'id'>
-            )> }
-          )>> }
+          & Pick<CourseType, 'department' | 'courseNumber'>
         ) }
       )> }
     )>> }
@@ -1017,6 +1020,27 @@ export type SectionFragment = (
   & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled'>
 );
 
+export type SectionSelectionFragment = (
+  { __typename?: 'SectionSelectionType' }
+  & Pick<SectionSelectionType, 'id'>
+  & { course: (
+    { __typename?: 'CourseType' }
+    & CourseOverviewFragment
+  ), primary?: Maybe<(
+    { __typename?: 'SectionType' }
+    & SectionFragment
+  )>, secondary: (
+    { __typename?: 'SectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionType' }
+        & SectionFragment
+      )> }
+    )>> }
+  ) }
+);
+
 export type UserProfileFragment = (
   { __typename?: 'BerkeleytimeUserType' }
   & Pick<BerkeleytimeUserType, 'id' | 'major' | 'emailClassUpdate' | 'emailGradeUpdate' | 'emailEnrollmentOpening' | 'emailBerkeleytimeUpdate'>
@@ -1026,7 +1050,16 @@ export type UserProfileFragment = (
   ), savedClasses?: Maybe<Array<Maybe<(
     { __typename?: 'CourseType' }
     & CourseOverviewFragment
-  )>>> }
+  )>>>, schedules: (
+    { __typename?: 'ScheduleTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'ScheduleTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'ScheduleType' }
+        & ScheduleOverviewFragment
+      )> }
+    )>> }
+  ) }
 );
 
 export type CreateScheduleMutationVariables = Exact<{
@@ -1044,7 +1077,7 @@ export type CreateScheduleMutation = (
     { __typename?: 'CreateSchedule' }
     & { schedule?: Maybe<(
       { __typename?: 'ScheduleType' }
-      & ScheduleFragment
+      & Pick<ScheduleType, 'id'>
     )> }
   )> }
 );
@@ -1124,6 +1157,25 @@ export type UnsaveCourseMutation = (
         { __typename?: 'CourseType' }
         & CourseOverviewFragment
       )>>> }
+    )> }
+  )> }
+);
+
+export type UpdateScheduleMutationVariables = Exact<{
+  scheduleId: Scalars['ID'];
+  name: Scalars['String'];
+  selectedSections: Array<Maybe<SectionSelectionInput>> | Maybe<SectionSelectionInput>;
+  timeblocks: Array<Maybe<TimeBlockInput>> | Maybe<TimeBlockInput>;
+}>;
+
+
+export type UpdateScheduleMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSchedule?: Maybe<(
+    { __typename?: 'UpdateSchedule' }
+    & { schedule?: Maybe<(
+      { __typename?: 'ScheduleType' }
+      & Pick<ScheduleType, 'dateModified'>
     )> }
   )> }
 );
@@ -1218,6 +1270,26 @@ export type GetFiltersQuery = (
         & FilterFragment
       )> }
     )>> }
+  )> }
+);
+
+export type GetScheduleForIdQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetScheduleForIdQuery = (
+  { __typename?: 'Query' }
+  & { user?: Maybe<(
+    { __typename?: 'BerkeleytimeUserType' }
+    & { schedules: (
+      { __typename?: 'ScheduleTypeConnection' }
+      & { edges: Array<Maybe<(
+        { __typename?: 'ScheduleTypeEdge' }
+        & { node?: Maybe<(
+          { __typename?: 'ScheduleType' }
+          & ScheduleFragment
+        )> }
+      )>> }
+    ) }
   )> }
 );
 
@@ -1334,6 +1406,56 @@ export const FilterFragmentDoc = gql`
   category
 }
     `;
+export const CourseOverviewFragmentDoc = gql`
+    fragment CourseOverview on CourseType {
+  id
+  abbreviation
+  courseNumber
+  title
+  gradeAverage
+  letterAverage
+  openSeats
+  enrolledPercentage
+  enrolled
+  enrolledMax
+  units
+}
+    `;
+export const SectionSelectionFragmentDoc = gql`
+    fragment SectionSelection on SectionSelectionType {
+  id
+  course {
+    ...CourseOverview
+  }
+  primary {
+    ...Section
+  }
+  secondary {
+    edges {
+      node {
+        ...Section
+      }
+    }
+  }
+}
+    ${CourseOverviewFragmentDoc}
+${SectionFragmentDoc}`;
+export const ScheduleFragmentDoc = gql`
+    fragment Schedule on ScheduleType {
+  id
+  name
+  semester
+  year
+  totalUnits
+  selectedSections {
+    edges {
+      node {
+        ...SectionSelection
+      }
+    }
+  }
+}
+    ${SectionSelectionFragmentDoc}`;
 export const LectureFragmentDoc = gql`
     fragment Lecture on SectionType {
   ...Section
@@ -1368,45 +1490,24 @@ export const SchedulerCourseFragmentDoc = gql`
   }
 }
     ${LectureFragmentDoc}`;
-export const ScheduleFragmentDoc = gql`
-    fragment Schedule on ScheduleType {
-  name
-  semester
+export const ScheduleOverviewFragmentDoc = gql`
+    fragment ScheduleOverview on ScheduleType {
+  id
   year
+  semester
+  name
+  totalUnits
+  dateCreated
   selectedSections {
     edges {
       node {
         course {
-          ...SchedulerCourse
-        }
-        primary {
-          id
-        }
-        secondary {
-          edges {
-            node {
-              id
-            }
-          }
+          department
+          courseNumber
         }
       }
     }
   }
-}
-    ${SchedulerCourseFragmentDoc}`;
-export const CourseOverviewFragmentDoc = gql`
-    fragment CourseOverview on CourseType {
-  id
-  abbreviation
-  courseNumber
-  title
-  gradeAverage
-  letterAverage
-  openSeats
-  enrolledPercentage
-  enrolled
-  enrolledMax
-  units
 }
     `;
 export const UserProfileFragmentDoc = gql`
@@ -1427,8 +1528,16 @@ export const UserProfileFragmentDoc = gql`
   savedClasses {
     ...CourseOverview
   }
+  schedules {
+    edges {
+      node {
+        ...ScheduleOverview
+      }
+    }
+  }
 }
-    ${CourseOverviewFragmentDoc}`;
+    ${CourseOverviewFragmentDoc}
+${ScheduleOverviewFragmentDoc}`;
 export const CreateScheduleDocument = gql`
     mutation CreateSchedule($name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $semester: String!, $year: String!) {
   createSchedule(
@@ -1439,11 +1548,11 @@ export const CreateScheduleDocument = gql`
     year: $year
   ) {
     schedule {
-      ...Schedule
+      id
     }
   }
 }
-    ${ScheduleFragmentDoc}`;
+    `;
 export type CreateScheduleMutationFn = Apollo.MutationFunction<CreateScheduleMutation, CreateScheduleMutationVariables>;
 
 /**
@@ -1646,6 +1755,48 @@ export function useUnsaveCourseMutation(baseOptions?: Apollo.MutationHookOptions
 export type UnsaveCourseMutationHookResult = ReturnType<typeof useUnsaveCourseMutation>;
 export type UnsaveCourseMutationResult = Apollo.MutationResult<UnsaveCourseMutation>;
 export type UnsaveCourseMutationOptions = Apollo.BaseMutationOptions<UnsaveCourseMutation, UnsaveCourseMutationVariables>;
+export const UpdateScheduleDocument = gql`
+    mutation UpdateSchedule($scheduleId: ID!, $name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!) {
+  updateSchedule(
+    scheduleId: $scheduleId
+    name: $name
+    selectedSections: $selectedSections
+    timeblocks: $timeblocks
+  ) {
+    schedule {
+      dateModified
+    }
+  }
+}
+    `;
+export type UpdateScheduleMutationFn = Apollo.MutationFunction<UpdateScheduleMutation, UpdateScheduleMutationVariables>;
+
+/**
+ * __useUpdateScheduleMutation__
+ *
+ * To run a mutation, you first call `useUpdateScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateScheduleMutation, { data, loading, error }] = useUpdateScheduleMutation({
+ *   variables: {
+ *      scheduleId: // value for 'scheduleId'
+ *      name: // value for 'name'
+ *      selectedSections: // value for 'selectedSections'
+ *      timeblocks: // value for 'timeblocks'
+ *   },
+ * });
+ */
+export function useUpdateScheduleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateScheduleMutation, UpdateScheduleMutationVariables>) {
+        return Apollo.useMutation<UpdateScheduleMutation, UpdateScheduleMutationVariables>(UpdateScheduleDocument, baseOptions);
+      }
+export type UpdateScheduleMutationHookResult = ReturnType<typeof useUpdateScheduleMutation>;
+export type UpdateScheduleMutationResult = Apollo.MutationResult<UpdateScheduleMutation>;
+export type UpdateScheduleMutationOptions = Apollo.BaseMutationOptions<UpdateScheduleMutation, UpdateScheduleMutationVariables>;
 export const UpdateUserDocument = gql`
     mutation UpdateUser($emailBerkeleytimeUpdate: Boolean, $emailClassUpdate: Boolean, $emailEnrollmentOpening: Boolean, $emailGradeUpdate: Boolean, $major: String) {
   updateUser(
@@ -1843,6 +1994,44 @@ export function useGetFiltersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetFiltersQueryHookResult = ReturnType<typeof useGetFiltersQuery>;
 export type GetFiltersLazyQueryHookResult = ReturnType<typeof useGetFiltersLazyQuery>;
 export type GetFiltersQueryResult = Apollo.QueryResult<GetFiltersQuery, GetFiltersQueryVariables>;
+export const GetScheduleForIdDocument = gql`
+    query GetScheduleForId {
+  user {
+    schedules {
+      edges {
+        node {
+          ...Schedule
+        }
+      }
+    }
+  }
+}
+    ${ScheduleFragmentDoc}`;
+
+/**
+ * __useGetScheduleForIdQuery__
+ *
+ * To run a query within a React component, call `useGetScheduleForIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetScheduleForIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetScheduleForIdQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetScheduleForIdQuery(baseOptions?: Apollo.QueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {
+        return Apollo.useQuery<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>(GetScheduleForIdDocument, baseOptions);
+      }
+export function useGetScheduleForIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>(GetScheduleForIdDocument, baseOptions);
+        }
+export type GetScheduleForIdQueryHookResult = ReturnType<typeof useGetScheduleForIdQuery>;
+export type GetScheduleForIdLazyQueryHookResult = ReturnType<typeof useGetScheduleForIdLazyQuery>;
+export type GetScheduleForIdQueryResult = Apollo.QueryResult<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>;
 export const GetSchedulerCourseForIdDocument = gql`
     query GetSchedulerCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {
