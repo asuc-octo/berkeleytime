@@ -14,27 +14,31 @@ export function useLocalStorageState<S>(
     if (value) {
       try {
         return JSON.parse(value);
-      } catch(e) {
-        
-      }
+      } catch (e) {}
     }
 
-    localStorage.setItem(key, JSON.stringify(initialValue));
-    return initialValue;
+    let computedInitialValue: S =
+      initialValue instanceof Function ? initialValue() : initialValue;
+
+    localStorage.setItem(key, JSON.stringify(computedInitialValue));
+    return computedInitialValue;
   });
 
-  const wrappedSetValue = useCallback((newValue: S | SetStateAction<S>) => {
-    setValue(oldValue => {
-      let updatedValue: S;
-      if (newValue instanceof Function) {
-        updatedValue = newValue(oldValue);
-      } else {
-        updatedValue = newValue;
-      }
-      localStorage.setItem(key, JSON.stringify(updatedValue));
-      return updatedValue;
-    });
-  }, [key]);
+  const wrappedSetValue = useCallback(
+    (newValue: S | SetStateAction<S>) => {
+      setValue((oldValue) => {
+        let updatedValue: S;
+        if (newValue instanceof Function) {
+          updatedValue = newValue(oldValue);
+        } else {
+          updatedValue = newValue;
+        }
+        localStorage.setItem(key, JSON.stringify(updatedValue));
+        return updatedValue;
+      });
+    },
+    [key]
+  );
 
   return [value, wrappedSetValue];
 }
