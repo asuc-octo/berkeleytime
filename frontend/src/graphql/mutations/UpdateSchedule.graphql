@@ -1,19 +1,17 @@
-mutation CreateSchedule(
+mutation UpdateSchedule(
+  $scheduleId: ID!
   $name: String!
   $selectedSections: [SectionSelectionInput]!
   $timeblocks: [TimeBlockInput]!
-  $semester: String!
-  $year: String!
 ) {
-  createSchedule(
+  updateSchedule(
+    scheduleId: $scheduleId
     name: $name
     selectedSections: $selectedSections
     timeblocks: $timeblocks
-    semester: $semester
-    year: $year
   ) {
     schedule {
-      id
+      dateModified
     }
   }
 }

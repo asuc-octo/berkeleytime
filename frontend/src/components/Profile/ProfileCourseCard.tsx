@@ -16,7 +16,7 @@ type Props = {
   removable: boolean;
 };
 
-const ProfileCard = ({ course, removable }: Props) => {
+const ProfileCourseCard = ({ course, removable }: Props) => {
   const unsaveCourse = useUnsaveCourse();
 
   return (
@@ -61,4 +61,4 @@ const ProfileCard = ({ course, removable }: Props) => {
   );
 };
 
-export default ProfileCard;
+export default ProfileCourseCard;
