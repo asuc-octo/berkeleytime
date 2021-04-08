@@ -10,7 +10,7 @@ fragment ScheduleOverview on ScheduleType {
     edges {
       node {
         course {
-          department
+          abbreviation
           courseNumber
         }
       }

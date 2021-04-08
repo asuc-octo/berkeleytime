@@ -993,7 +993,7 @@ export type ScheduleOverviewFragment = (
         { __typename?: 'SectionSelectionType' }
         & { course: (
           { __typename?: 'CourseType' }
-          & Pick<CourseType, 'department' | 'courseNumber'>
+          & Pick<CourseType, 'abbreviation' | 'courseNumber'>
         ) }
       )> }
     )>> }
@@ -1502,7 +1502,7 @@ export const ScheduleOverviewFragmentDoc = gql`
     edges {
       node {
         course {
-          department
+          abbreviation
           courseNumber
         }
       }
