@@ -1,0 +1,16 @@
+info:
+  unique_name: "DarkModeForm"
+  public_name: I Voted!
+  description: |-
+    Enter your email to get early access to dark mode on Berkeleytime.
+  googlesheet_link: "https://docs.google.com/spreadsheets/d/1a1WCpe9KQqbdomt1DzM91W1S1s6GX7tCFRplgF2Xpqg/edit"
+  drive_folder_name: ""
+  close_on: "2021-08-04 00:59:59 -0700"
+questions:
+  - title: "Email Address"
+    type: "short"
+    placeholder: "example@berkeley.edu"
+    format: "email"
+    required: True
+  
+  

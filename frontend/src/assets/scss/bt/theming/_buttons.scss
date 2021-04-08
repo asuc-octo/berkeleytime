@@ -111,7 +111,7 @@
 // Theming for ASUC Elections
 .btn-bt-patriotic {
   @extend .bt-btn;
-  padding: 2px 15px 2px 15px;
+  padding: 3px 15px 3px 15px;
   font-size: 14px;
   color: $bt-white;
   background: repeating-linear-gradient(
@@ -122,6 +122,17 @@
   border: none;
   //border-radius: 100%;
   &:hover {
+    color: $bt-white;
+  }
+}
+
+.btn-bt-dark-mode {
+  @extend .bt-btn;
+  font-size: 14px;
+  border: 2px solid $bt-black;
+  padding: 0px 15px 0px 15px;
+  &:hover {
+    background-color: $bt-black;
     color: $bt-white;
   }
 }

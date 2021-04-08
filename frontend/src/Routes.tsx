@@ -28,6 +28,7 @@ const PrivacyPolicy = lazy(() => import('./views/Policies/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
 const UserTestingForm = lazy(() => import('./views/Forms/UserTestingForm'));
 const STFGuide = lazy(() => import('./views/STFGuide'));
+const DarkModeForm = lazy(() => import('./views/Forms/DarkModeForm'));
 
 const routes: Array<RouteProps> = [
   { path: '/landing', component: Landing },
@@ -55,6 +56,7 @@ const routes: Array<RouteProps> = [
   { path: '/legal/privacy', component: PrivacyPolicy },
   { path: '/legal/terms', component: TermsOfService },
   { path: '/stf-guide', component: STFGuide },
+  { path: '/i-voted', component: DarkModeForm },
 ];
 
 const Routes: React.FC = () => (
