@@ -22,12 +22,14 @@ const SCROLL_SECTION_HEIGHT: string = '280px';
 type SectionProps = {
   sections: SectionFragment[];
   course: SchedulerCourseFragment;
+  lecture: SectionFragment;
   isDisabled?: boolean;
 };
 
 const SectionGroup = ({
   sections,
   course,
+  lecture,
   isDisabled = false,
 }: SectionProps) => {
   const { schedule, setSchedule } = useScheduleContext();
@@ -68,6 +70,7 @@ const SectionGroup = ({
               newSchedule.sections.push({
                 ...section,
                 courseId: course.id,
+                lectureId: lecture.id,
               });
             }
 
@@ -185,6 +188,7 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
           key={category}
           sections={sections}
           course={course}
+          lecture={section}
           isDisabled={!checked}
         />
       ))}
