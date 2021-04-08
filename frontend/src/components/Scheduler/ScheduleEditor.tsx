@@ -25,9 +25,12 @@ import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import { Semester } from 'utils/playlists/semesters';
 import { getNodes } from 'utils/graphql';
 import { debounce } from 'utils/fn';
+import Callout from './Callout';
 
-// Change the version when the scheduler schema changes to
-// avoid breaking users' schedules
+// This is NOT an interval. Rather it combines all
+// changes within this time interval into one
+// update event. This means there will be at MOST
+// one event sent in each of the specfied interval.
 const SCHEDULER_AUTOSAVE_INTERVAL = 500;
 
 type Props = {
@@ -123,9 +126,13 @@ const ScheduleEditor = ({
       });
 
       currentlyPendingUpdate.current = result;
-      await currentlyPendingUpdate.current;
-
-      setIsVisualSaving(false);
+      try {
+        await currentlyPendingUpdate.current;
+      } finally {
+        // If there was a autosave error, the hook
+        // handles that so we don't need to worry.
+        setIsVisualSaving(false);
+      }
     }, SCHEDULER_AUTOSAVE_INTERVAL),
     [scheduleId]
   );
@@ -138,21 +145,25 @@ const ScheduleEditor = ({
       // In effect, this will result in sequential updates being
       // combined due to saveSchedule being 'debounced'.
       await currentlyPendingUpdate.current;
+      setIsVisualSaving(true);
       saveSchedule(newSchedule, semester, scheduleId);
     }
   }
 
   async function createSchedule() {
     setIsVisualSaving(true);
-    const result = await createScheduleMutation({
-      variables: serializeSchedule(schedule, semester),
-    });
 
-    if (result.data?.createSchedule?.schedule) {
-      setScheduleId(result.data.createSchedule.schedule.id);
+    try {
+      const result = await createScheduleMutation({
+        variables: serializeSchedule(schedule, semester),
+      });
+
+      if (result.data?.createSchedule?.schedule) {
+        setScheduleId(result.data.createSchedule.schedule.id);
+      }
+    } finally {
+      setIsVisualSaving(false);
     }
-
-    setIsVisualSaving(false);
   }
 
   const setScheduleName = (event: ChangeEvent<HTMLInputElement>) =>
@@ -188,7 +199,11 @@ const ScheduleEditor = ({
             {isVisualSaving ? (
               <span>Saving schedule...</span>
             ) : saveError ? (
-              <span>Error saving</span>
+              <Callout
+                type="warning"
+                state="error"
+                message="Error autosaving."
+              />
             ) : isRemoteSaved ? (
               <span>Schedule saved.</span>
             ) : (

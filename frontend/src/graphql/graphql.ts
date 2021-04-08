@@ -993,7 +993,7 @@ export type ScheduleOverviewFragment = (
         { __typename?: 'SectionSelectionType' }
         & { course: (
           { __typename?: 'CourseType' }
-          & Pick<CourseType, 'abbreviation' | 'courseNumber'>
+          & Pick<CourseType, 'abbreviation' | 'courseNumber' | 'units'>
         ) }
       )> }
     )>> }
@@ -1504,6 +1504,7 @@ export const ScheduleOverviewFragmentDoc = gql`
         course {
           abbreviation
           courseNumber
+          units
         }
       }
     }
