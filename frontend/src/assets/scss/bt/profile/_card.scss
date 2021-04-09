@@ -56,21 +56,24 @@
     position: absolute;
     top: 2px;
     right: 3px;
-    color: $bt-indicator-red;
-    cursor: pointer;
-    opacity: 0.5;
-    padding: 2px;
-    transition: opacity 0.2s ease, background 0.2s ease;
-    border-radius: 4px;
+  }
+}
 
-    svg {
-      width: 20px;
-      height: 20px;
-    }
+.profile-card-remove {
+  color: $bt-indicator-red;
+  cursor: pointer;
+  opacity: 0.5;
+  padding: 2px;
+  transition: opacity 0.2s ease, background 0.2s ease;
+  border-radius: 4px;
 
-    &:hover {
-      opacity: 1;
-      background: rgba(224, 185, 185, 0.1);
-    }
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    opacity: 1;
+    background: rgba(224, 185, 185, 0.1);
   }
 }
