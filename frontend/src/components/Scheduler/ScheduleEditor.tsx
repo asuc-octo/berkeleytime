@@ -198,6 +198,12 @@ const ScheduleEditor = ({
             />
             {isVisualSaving ? (
               <span>Saving schedule...</span>
+            ) : creationError ? (
+              <Callout
+                type="warning"
+                state="error"
+                message="Could not save schedule."
+              />
             ) : saveError ? (
               <Callout
                 type="warning"
