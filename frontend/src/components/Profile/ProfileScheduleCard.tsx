@@ -27,43 +27,45 @@ const ProfileScheduleCard = ({ schedule, removable }: Props) => {
   const [modalId, setModalId] = useState<string | null>(null);
 
   return (
-    <div
-      className="profile-card"
-      onClick={() => {
-        setShowModal(true);
-        setModalId(schedule.id);
-      }}
-    >
+    <>
+      <div
+        className="profile-card"
+        onClick={() => {
+          setShowModal(true);
+          setModalId(schedule.id);
+        }}
+      >
+        <div className="profile-card-info">
+          <h6>{schedule.name}</h6>
+          <p className="profile-card-info-desc">
+            {schedule.totalUnits} units &bull; {semesterToString(schedule)}
+          </p>
+          <div className="profile-card-info-stats">
+            <span>{classes.join(' • ')}</span>
+          </div>
+        </div>
+        {removable && (
+          <Button
+            className="profile-card-remove"
+            variant="link"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              e.nativeEvent.stopImmediatePropagation();
+              // TODO: unsave schedule
+              // unsaveCourse(course);
+            }}
+          >
+            <Trash />
+          </Button>
+        )}
+      </div>
       <ScheduleModal
         scheduleId={modalId}
         show={showModal}
         handleClose={() => setShowModal(false)}
       />
-      <div className="profile-card-info">
-        <h6>{schedule.name}</h6>
-        <p className="profile-card-info-desc">
-          {schedule.totalUnits} units &bull; {semesterToString(schedule)}
-        </p>
-        <div className="profile-card-info-stats">
-          <span>{classes.join(' • ')}</span>
-        </div>
-      </div>
-      {removable && (
-        <Button
-          className="profile-card-remove"
-          variant="link"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            e.nativeEvent.stopImmediatePropagation();
-            // TODO: unsave schedule
-            // unsaveCourse(course);
-          }}
-        >
-          <Trash />
-        </Button>
-      )}
-    </div>
+    </>
   );
 };
 
