@@ -34,13 +34,15 @@ const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
     <div className="scheduler schedule-modal-content">
       <div className="scheduler-header">
         <div>
+          <span>Selected units: {rawSchedule.totalUnits}</span>
+        </div>
+        <div>
           <input
             type="text"
             value={schedule.name}
             readOnly
             className="scheduler-name-input mr-3"
           />
-          <span>Selected units: {rawSchedule.totalUnits}</span>
         </div>
         <div>
           <Button
