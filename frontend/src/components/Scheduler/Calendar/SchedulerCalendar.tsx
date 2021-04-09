@@ -1,10 +1,12 @@
-import React from 'react';
-import { courseToColor, courseToName } from 'utils/courses/course';
+import React, { ReactNode } from 'react';
 import { stringToDate } from 'utils/date';
-import { getCourseForSchedule, Schedule } from 'utils/scheduler/scheduler';
-import { formatLocation, formatSectionTime } from 'utils/sections/section';
-import CalendarCard from './CalendarCard';
-import CourseCalendar from './CourseCalendar';
+import {
+  getCourseForSchedule,
+  Schedule,
+  SchedulerSectionType,
+} from 'utils/scheduler/scheduler';
+import CourseCalendar, { CardData } from './CourseCalendar';
+import CourseCard from './CourseCard';
 
 /**
  * Converts time to a number representing hour
@@ -15,39 +17,69 @@ function timeToHour(time: string): number {
   return date.getHours() + date.getMinutes() / 60;
 }
 
+/**
+ * Convert section object to a card data object
+ * WITHOUT the actual
+ */
+const sectionToCard = (
+  section: SchedulerSectionType,
+  getCard: (section: SchedulerSectionType, day: number) => ReactNode
+): CardData[] =>
+  section.days.split('').map((day) => ({
+    key: `${day}:${section.id}`,
+    day: +day,
+    startTime: timeToHour(section.startTime),
+    endTime: timeToHour(section.endTime),
+    card: getCard(section, +day),
+  }));
+
 type Props = {
   schedule: Schedule;
+
+  previewSection?: SchedulerSectionType | null;
+
+  /**
+   * If a set schedule function is passed. This will
+   * be treated as an editable calendar.
+   */
+  setSchedule?: (newSchedule: Schedule) => void;
 };
 
 /**
  * Outputs the calendar from a schedule object.
  */
-const SchedulerCalendar = ({ schedule }: Props) => {
-
-  const cards = schedule.sections
+const SchedulerCalendar = ({
+  schedule,
+  setSchedule,
+  previewSection = null,
+}: Props) => {
+  const courseCards = schedule.sections
     .filter((section) => section.startTime && section.endTime)
     .flatMap((section) =>
-      section.days.split('').map((day) => ({
-        key: `${day}:${section.id}`,
-        day: +day,
-        startTime: timeToHour(section.startTime),
-        endTime: timeToHour(section.endTime),
-        card: (
-          <CalendarCard
-            title={`${courseToName(getCourseForSchedule(schedule, section))} ${section.kind}`}
-            description={[
-              formatSectionTime(section),
-              formatLocation(section.locationName),
-            ]
-              .filter(Boolean)
-              .join(', ')}
-            color={courseToColor(section.courseId)}
-          />
-        ),
-      }))
+      sectionToCard(section, () => (
+        <CourseCard
+          course={getCourseForSchedule(schedule, section)}
+          section={section}
+          schedule={schedule}
+          setSchedule={setSchedule}
+        />
+      ))
     );
 
-  return <CourseCalendar cards={cards} />;
+  const previewCards =
+    previewSection && !schedule.sections.find((s) => s.id === previewSection.id)
+      ? sectionToCard(previewSection, () => (
+          <CourseCard
+            course={getCourseForSchedule(schedule, previewSection)}
+            section={previewSection}
+            schedule={schedule}
+            isPreview
+          />
+        ))
+      : [];
+
+  const allCards: CardData[] = [...courseCards, ...previewCards];
+  return <CourseCalendar cards={allCards} />;
 };
 
 export default SchedulerCalendar;

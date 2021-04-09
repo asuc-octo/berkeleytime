@@ -1,9 +1,10 @@
 import { createContext, Dispatch, SetStateAction, useContext } from 'react';
-import { Schedule } from 'utils/scheduler/scheduler';
+import { Schedule, SchedulerSectionType } from 'utils/scheduler/scheduler';
 
 type ContextType = {
   schedule: Schedule;
   setSchedule: (newSchedule: Schedule) => void;
+  setPreviewSection?: (newPreviewSection: SchedulerSectionType | null) => void;
 };
 
 const ScheduleContext = createContext<ContextType>(

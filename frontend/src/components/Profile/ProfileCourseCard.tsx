@@ -6,10 +6,9 @@ import {
   applyIndicatorGrade,
 } from '../../utils/utils';
 import { CourseOverviewFragment } from '../../graphql/graphql';
-import { ReactComponent as Trash } from '../../assets/svg/profile/trash.svg';
-import { Button } from 'react-bootstrap';
 import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { Link } from 'react-router-dom';
+import TrashButton from 'components/Common/TrashButton';
 
 type Props = {
   course: CourseOverviewFragment;
@@ -44,18 +43,14 @@ const ProfileCourseCard = ({ course, removable }: Props) => {
         </div>
       )}
       {removable && (
-        <Button
-          className="profile-card-remove"
-          variant="link"
+        <TrashButton
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
             unsaveCourse(course);
           }}
-        >
-          <Trash />
-        </Button>
+        />
       )}
     </Link>
   );
