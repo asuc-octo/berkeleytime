@@ -19,6 +19,7 @@ import {
   DEFAULT_SCHEDULE,
   deserializeSchedule,
   Schedule,
+  SchedulerSectionType,
   serializeSchedule,
 } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
@@ -92,6 +93,12 @@ const ScheduleEditor = ({
 
   const [schedule, setRawSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
   const isRemoteSaved = scheduleId !== null;
+
+  // If the user is hovering over a section. This will store that section
+  const [
+    previewSection,
+    setPreviewSection,
+  ] = useState<SchedulerSectionType | null>(null);
 
   // Whether or not we say 'is saving...' may be different from whether
   // or not there is an ongoing network requests. The main constraint
@@ -184,6 +191,7 @@ const ScheduleEditor = ({
           semester={semester}
           schedule={schedule}
           setSchedule={setSchedule}
+          setPreviewSection={setPreviewSection}
         />
       </Col>
       <Col>
@@ -228,7 +236,11 @@ const ScheduleEditor = ({
             </Button>
           </div>
         </div>
-        <SchedulerCalendar schedule={schedule} />
+        <SchedulerCalendar
+          schedule={schedule}
+          setSchedule={setSchedule}
+          previewSection={previewSection}
+        />
       </Col>
     </Row>
   );

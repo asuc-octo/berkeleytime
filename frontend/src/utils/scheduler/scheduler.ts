@@ -70,6 +70,17 @@ export const removeCourse = (schedule: Schedule, id: string): Schedule => ({
 });
 
 /**
+ * Removes a section from the schedule. If a primary section is
+ * removed, all associated sections are also removed
+ */
+export const removeSection = (schedule: Schedule, sectionId: string) => ({
+  ...schedule,
+  sections: schedule.sections.filter(
+    (s) => s.lectureId !== sectionId && s.id !== sectionId
+  ),
+});
+
+/**
  * Checks if the scheduler has a course by Id
  */
 export const hasCourseById = (schedule: Schedule, id: string): boolean =>

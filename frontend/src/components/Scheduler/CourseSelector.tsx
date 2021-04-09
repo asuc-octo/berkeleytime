@@ -11,6 +11,7 @@ import {
   removeCourse,
   Schedule,
   SchedulerCourseType,
+  SchedulerSectionType,
 } from 'utils/scheduler/scheduler';
 import Callout from './Callout';
 import SchedulerCourse from './Selector/SchedulerCourse';
@@ -30,6 +31,12 @@ type Props = {
   semester: Semester;
   schedule: Schedule;
   setSchedule: (newValue: Schedule) => void;
+
+  /**
+   * Pass this to add the ability to preview a section when a user
+   * hovers over it.
+   */
+  setPreviewSection?: (newSection: SchedulerSectionType | null) => void;
 };
 
 const CourseSelector = ({
@@ -37,6 +44,7 @@ const CourseSelector = ({
   semester,
   schedule,
   setSchedule,
+  setPreviewSection,
 }: Props) => {
   // Sort courses
   const sortedCourses: CourseOptionType[] = useMemo(
@@ -78,7 +86,9 @@ const CourseSelector = ({
         Scheduled Units: {unitsToString(getUnitsForSchedule(schedule))}
       </div>
       <div>
-        <ScheduleContext.Provider value={{ schedule, setSchedule }}>
+        <ScheduleContext.Provider
+          value={{ schedule, setSchedule, setPreviewSection }}
+        >
           {schedule.courses.map((course) => (
             <SchedulerCourse
               key={course.id}

@@ -7,7 +7,11 @@ import React, { ChangeEvent, CSSProperties } from 'react';
 import { Form } from 'react-bootstrap';
 import cx from 'classnames';
 
-import { hasSectionById, Schedule } from 'utils/scheduler/scheduler';
+import {
+  hasSectionById,
+  Schedule,
+  SchedulerSectionType,
+} from 'utils/scheduler/scheduler';
 import {
   formatLocation,
   formatSectionEnrollment,
@@ -32,7 +36,7 @@ const SectionGroup = ({
   lecture,
   isDisabled = false,
 }: SectionProps) => {
-  const { schedule, setSchedule } = useScheduleContext();
+  const { schedule, setSchedule, setPreviewSection } = useScheduleContext();
 
   const shouldScroll = sections.length > MAX_SECTIONS_BEFORE_SCROLL;
 
@@ -51,6 +55,12 @@ const SectionGroup = ({
         }}
       >
         {sections.map((section) => {
+          const currentSection: SchedulerSectionType = {
+            ...section,
+            courseId: course.id,
+            lectureId: lecture.id,
+          };
+
           const sectionLabel = (
             <span className="section-label">
               {section.wordDays}, {formatSectionTime(section)},{' '}
@@ -67,11 +77,7 @@ const SectionGroup = ({
 
             // If it's not checked, then we'll check it
             if (event.target.checked) {
-              newSchedule.sections.push({
-                ...section,
-                courseId: course.id,
-                lectureId: lecture.id,
-              });
+              newSchedule.sections.push(currentSection);
             }
 
             setSchedule(newSchedule);
@@ -79,7 +85,11 @@ const SectionGroup = ({
 
           const checked = hasSectionById(schedule, section.id);
           return (
-            <div key={section.id}>
+            <div
+              key={section.id}
+              onMouseEnter={() => setPreviewSection?.(currentSection)}
+              onMouseLeave={() => setPreviewSection?.(null)}
+            >
               <Form.Check
                 custom
                 disabled={isDisabled}
@@ -117,11 +127,16 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
     (e) => e?.node!
   );
 
+  const currentSection: SchedulerSectionType = {
+    ...section,
+    courseId: course.id,
+  };
+
   // Groups sections [sec1, sec2] into 'discussion, 'lecture', etc.
   // and sorts appropriately.
   const sectionTypes = groupSections(associatedSections);
 
-  const { schedule, setSchedule } = useScheduleContext();
+  const { schedule, setSchedule, setPreviewSection } = useScheduleContext();
   const checked = hasSectionById(schedule, section.id);
 
   function setChecked(event: ChangeEvent<HTMLInputElement>) {
@@ -130,12 +145,7 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
         ...schedule,
         sections: schedule.sections
           .filter((s) => s.courseId !== course.id || s.lectureId === section.id)
-          .concat([
-            {
-              ...section,
-              courseId: course.id,
-            },
-          ]),
+          .concat([currentSection]),
       };
 
       setSchedule(newSchedule);
@@ -156,7 +166,10 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
       className="course-card"
       style={{ '--card-color': color } as CSSProperties}
     >
-      <section>
+      <section
+        onMouseEnter={() => setPreviewSection?.(currentSection)}
+        onMouseLeave={() => setPreviewSection?.(null)}
+      >
         <h4>
           <Form.Check
             custom
