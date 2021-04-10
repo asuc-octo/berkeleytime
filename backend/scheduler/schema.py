@@ -239,6 +239,29 @@ class UpdateSchedule(graphene.Mutation):
         return UpdateSchedule(schedule = schedule)
 
 
+class RemoveSchedule(graphene.Mutation):
+    class Arguments:
+        schedule_id = graphene.ID()
+
+    schedule = graphene.Field(ScheduleType)
+
+    @login_required
+    def mutate(self, info, schedule_id):
+        schedule = None
+        try:
+            schedule = Schedule.objects.get(pk=from_global_id(schedule_id)[1])
+        except Schedule.DoesNotExist:
+            return GraphQLError('Invalid Schedule ID')
+        
+        # ensure that schedule belongs to the current user
+        if info.context.user.berkeleytimeuser != schedule.user:
+            return GraphQLError('No permission')
+        
+        # remove schedule
+        schedule.delete()
+        return RemoveSchedule(schedule)
+
+
 class Query(graphene.ObjectType):
     schedules = graphene.List(ScheduleType)
 
@@ -253,3 +276,4 @@ class Query(graphene.ObjectType):
 class Mutation(graphene.ObjectType):
     create_schedule = CreateSchedule.Field()
     update_schedule = UpdateSchedule.Field()
+    remove_schedule = RemoveSchedule.Field()
