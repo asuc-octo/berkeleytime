@@ -8,7 +8,6 @@ from graphql import GraphQLError
 from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
 
 # Django models
-from django.contrib.auth.models import User
 from scheduler.models import Schedule, TimeBlock, SectionSelection
 from catalog.models import Course, Section
 
@@ -264,13 +263,18 @@ class RemoveSchedule(graphene.Mutation):
 
 class Query(graphene.ObjectType):
     schedules = graphene.List(ScheduleType)
+    schedule = graphene.Field(ScheduleType, id=graphene.ID())
 
     def resolve_schedules(self, info):
-        # if info.context.user.is_authenticated:
-        #     return info.context.user.berkeleytimeuser
-        # return None
-        # testing:
-        return User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser.schedules.all()
+        if info.context.user.is_authenticated:
+            return info.context.user.berkeleytimeuser.schedules.all()
+        return None
+
+    def resolve_schedule(self, info, id):
+        try:
+            return Schedule.objects.get(pk=from_global_id(id)[1])
+        except Schedule.DoesNotExist:
+            return GraphQLError('Invalid Schedule ID')
 
 
 class Mutation(graphene.ObjectType):
