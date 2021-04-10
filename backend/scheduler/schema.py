@@ -272,7 +272,11 @@ class Query(graphene.ObjectType):
 
     def resolve_schedule(self, info, id):
         try:
-            return Schedule.objects.get(pk=from_global_id(id)[1])
+            schedule = Schedule.objects.get(pk=from_global_id(id)[1])
+            # ensure that schedule belongs to the current user
+            if info.context.user.berkeleytimeuser != schedule.user:
+                return GraphQLError('No permission')
+            return schedule
         except Schedule.DoesNotExist:
             return GraphQLError('Invalid Schedule ID')
 
