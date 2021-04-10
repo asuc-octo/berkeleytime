@@ -97,7 +97,7 @@ def set_selected_sections(schedule, selected_sections):
             selection.secondary.set(secondary_sections)
 
         selection.save()
-        old_selections.remove(selection)
+        old_selections.discard(selection)
 
     # remove not added selections
     for selection in old_selections:
