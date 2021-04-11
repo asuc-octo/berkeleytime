@@ -47,7 +47,6 @@ const routes: Array<RouteProps> = [
   { path: '/oauth2callback', component: Login },
   { path: '/logout', component: Logout },
   { path: '/scheduler', component: Scheduler },
-  { path: '/scheduler-onboard', component: SchedulerOnboard },
   // { path: '/apply/positions',   component: Positions       },
   // { path: '/apply/engineering', component: EngineeringApp  },
   // { path: '/apply/design',      component: DesignApp       },

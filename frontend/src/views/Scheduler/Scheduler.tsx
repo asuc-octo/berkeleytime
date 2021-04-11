@@ -13,6 +13,7 @@ import {
   unitsToString,
   ZERO_UNITS,
 } from 'utils/courses/units';
+import SchedulerOnboard from './SchedulerOnboard';
 
 const Scheduler = () => {
   const {
@@ -30,6 +31,7 @@ const Scheduler = () => {
   });
 
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
+  const [onboarding, setOnboarding] = useState(true);
 
   const error = semesterError || coursesError;
 
@@ -57,9 +59,19 @@ const Scheduler = () => {
     ZERO_UNITS
   );
 
+  function createSchedule() {
+    setOnboarding(false);
+  }
+
   return (
     <div className="scheduler viewport-app">
-      <Row noGutters>
+      {onboarding ?
+      (<SchedulerOnboard
+        schedule={schedule}
+        setSchedule={setSchedule}
+        createSchedule={createSchedule}
+      />) :
+      (<Row noGutters>
         <Col md={4} lg={4} xl={4}>
           <CourseSelector
             allCourses={allCourses}
@@ -88,7 +100,7 @@ const Scheduler = () => {
           </div>
           <SchedulerCalendar schedule={schedule} />
         </Col>
-      </Row>
+      </Row>)}
     </div>
   );
 };
