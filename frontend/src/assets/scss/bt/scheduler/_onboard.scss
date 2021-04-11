@@ -38,6 +38,7 @@
 
         &:hover {
           cursor: pointer;
+          text-decoration: underline;
         }
       }
     }
@@ -86,6 +87,10 @@
   
         .profile-card {
           width: 81%;
+
+          &:hover {
+            cursor: default;
+          }
         }
       }
     }
@@ -99,6 +104,10 @@
 
         .profile-card-grade {
           margin-right: 18px;
+        }
+
+        &:hover {
+          cursor: default;
         }
       }
     }
@@ -140,6 +149,7 @@
 
     .blocks {
       margin-top: 4rem;
+      margin-bottom: 4rem;
 
       .blocks-grid {
         margin: 1rem 0;
@@ -200,6 +210,12 @@
 
     .select {
       width: 100%;
+    }
+
+    .continue {
+      position: absolute;
+      bottom: 4rem;
+      right: 5%;
     }
   }
 

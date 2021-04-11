@@ -14,13 +14,14 @@ type Props = {
   course: CourseOverviewFragment;
   removable: boolean;
   remove: () => void;
+  link: string;
 };
 
-const ProfileCard = ({ course, removable, remove }: Props) => {
+const ProfileCard = ({ course, removable, remove, link }: Props) => {
   return (
     <Link
       className="profile-card"
-      to={`/catalog/${course.abbreviation}/${course.courseNumber}`}
+      to={link}
     >
       <div className="profile-card-info">
         <h6>{`${course.abbreviation} ${course.courseNumber}`}</h6>

@@ -18,7 +18,7 @@ const Welcome = ({ updatePage }: Props) => {
             >
               Start
             </Button>
-            <p>Click to view <a>saved schedules</a></p>
+            {/* <p>Click to view <a>saved schedules</a></p> */}
           </Col>
         </Row>
       </Container>

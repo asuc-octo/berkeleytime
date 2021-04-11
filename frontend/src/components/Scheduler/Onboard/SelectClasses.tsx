@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import BTLoader from 'components/Common/BTLoader';
 import CourseSearch from 'components/Scheduler/Onboard/CourseSearch';
@@ -11,13 +11,15 @@ import { useGetCoursesForFilterQuery } from '../../../graphql/graphql';
 import useLatestSemester from 'graphql/hooks/latestSemester';
 import { addCourse } from './onboard';
 import { compareDepartmentName } from 'utils/courses/sorting';
-import { DEFAULT_SCHEDULE, Schedule, removeCourse } from 'utils/scheduler/scheduler';
+import { Schedule, removeCourse } from 'utils/scheduler/scheduler';
 
 type Props = {
   updatePage: (i: number) => void;
+  schedule: Schedule;
+  setSchedule: Dispatch<SetStateAction<Schedule>>;
 };
 
-const SelectClasses = ({ updatePage }: Props) => {
+const SelectClasses = ({ updatePage, schedule, setSchedule }: Props) => {
   const { isLoggedIn, user, loading } = useUser();
 
   const savedClasses = ((user && user.savedClasses) || [])
@@ -37,8 +39,6 @@ const SelectClasses = ({ updatePage }: Props) => {
     },
     skip: !latestSemester?.playlistId,
   });
-
-  const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
 
   const error = semesterError || coursesError;
 
@@ -85,6 +85,7 @@ const SelectClasses = ({ updatePage }: Props) => {
                   removable={false}
                   course={course}
                   remove={() => trashCourse(course.id)}
+                  link={'/scheduler'}
                 />
               </div>
             ))}
@@ -100,6 +101,7 @@ const SelectClasses = ({ updatePage }: Props) => {
                   removable={true}
                   course={course}
                   remove={() => trashCourse(course.id)}
+                  link={'/scheduler'}
                 />
               ))}
             </ScheduleContext.Provider>

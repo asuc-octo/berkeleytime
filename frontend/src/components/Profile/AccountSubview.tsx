@@ -94,6 +94,7 @@ const AccountSubview = ({ userProfile }: Props) => {
                   key={course.id}
                   course={course}
                   remove={useUnsaveCourse}
+                  link={`/catalog/${course.abbreviation}/${course.courseNumber}`}
                 />
               ))}
             </div>

@@ -42,10 +42,10 @@ type TimeBlock = {
 let blockIdCounter = 0;
 
 type Props = {
-  updatePage: (i: number) => void;
+  createSchedule: () => void;
 };
 
-const TimePreferences = ({ updatePage }: Props) => {
+const TimePreferences = ({ createSchedule }: Props) => {
   const [blockName, setBlockName] = useState('');
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
 
@@ -67,10 +67,10 @@ const TimePreferences = ({ updatePage }: Props) => {
         <Col xs={12} lg={{ span: 4, offset: 4 }}>
           <H3 bold className="mt-5 mb-2 text-center">
             2. Add Time Preferences (Optional)
-            </H3>
+          </H3>
           <P className="mb-2 text-center bt-light-text">
             Add blocks of time you’d prefer not to have classes.
-            </P>
+          </P>
           <BTInput
             className="my-3"
             value={blockName}
@@ -110,7 +110,7 @@ const TimePreferences = ({ updatePage }: Props) => {
               onClick={createTimeBlock}
             >
               Create Time Block
-              </Button>
+            </Button>
           </div>
           <div className="blocks">
             <H6 className="small-caps">Blocks</H6>
@@ -142,6 +142,9 @@ const TimePreferences = ({ updatePage }: Props) => {
               </div>
             )}
           </div>
+        </Col>
+        <Col>
+          <Button className="continue" onClick={createSchedule}>Continue</Button>
         </Col>
       </Row>
     </Container>
