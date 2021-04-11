@@ -1,0 +1,16 @@
+{
+    "url": "https://berkeleytime.com",
+    "apiKey": "api key",
+    "pageId": "page id",
+    "statusInterval": 120,
+
+    "apiStatus": {
+        "metricId": "api metric id",
+        "componentId": "api component id"
+    },
+
+    "frontendStatus": {
+        "metricId": "frontend metric id",
+        "componentId": "frontend component id"
+    }
+}
