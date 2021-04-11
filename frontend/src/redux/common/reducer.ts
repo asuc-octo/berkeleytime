@@ -8,7 +8,7 @@ import {
 } from './types'
 
 const initialState: CommonState = {
-  banner: false,
+  banner: true,
   mobile: false
 }
 

@@ -8,7 +8,6 @@ from graphql import GraphQLError
 from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
 
 # Django models
-from django.contrib.auth.models import User
 from scheduler.models import Schedule, TimeBlock, SectionSelection
 from catalog.models import Course, Section
 
@@ -97,7 +96,7 @@ def set_selected_sections(schedule, selected_sections):
             selection.secondary.set(secondary_sections)
 
         selection.save()
-        old_selections.remove(selection)
+        old_selections.discard(selection)
 
     # remove not added selections
     for selection in old_selections:
@@ -239,17 +238,50 @@ class UpdateSchedule(graphene.Mutation):
         return UpdateSchedule(schedule = schedule)
 
 
+class RemoveSchedule(graphene.Mutation):
+    class Arguments:
+        schedule_id = graphene.ID()
+
+    schedule = graphene.Field(ScheduleType)
+
+    @login_required
+    def mutate(self, info, schedule_id):
+        schedule = None
+        try:
+            schedule = Schedule.objects.get(pk=from_global_id(schedule_id)[1])
+        except Schedule.DoesNotExist:
+            return GraphQLError('Invalid Schedule ID')
+        
+        # ensure that schedule belongs to the current user
+        if info.context.user.berkeleytimeuser != schedule.user:
+            return GraphQLError('No permission')
+        
+        # remove schedule
+        schedule.delete()
+        return RemoveSchedule(schedule)
+
+
 class Query(graphene.ObjectType):
     schedules = graphene.List(ScheduleType)
+    schedule = graphene.Field(ScheduleType, id=graphene.ID())
 
     def resolve_schedules(self, info):
-        # if info.context.user.is_authenticated:
-        #     return info.context.user.berkeleytimeuser
-        # return None
-        # testing:
-        return User.objects.get(email='smxu@berkeley.edu').berkeleytimeuser.schedules.all()
+        if info.context.user.is_authenticated:
+            return info.context.user.berkeleytimeuser.schedules.all()
+        return None
+
+    def resolve_schedule(self, info, id):
+        try:
+            schedule = Schedule.objects.get(pk=from_global_id(id)[1])
+            # ensure that schedule belongs to the current user
+            if info.context.user.berkeleytimeuser != schedule.user:
+                return GraphQLError('No permission')
+            return schedule
+        except Schedule.DoesNotExist:
+            return GraphQLError('Invalid Schedule ID')
 
 
 class Mutation(graphene.ObjectType):
     create_schedule = CreateSchedule.Field()
     update_schedule = UpdateSchedule.Field()
+    remove_schedule = RemoveSchedule.Field()

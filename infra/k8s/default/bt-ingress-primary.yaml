@@ -1,5 +1,5 @@
 # This template file depends on environment variables
-# See infra/init.sh for how to apply this to cluster
+# See infra/init.sh for how to apply this to cluster with envsubst
 
 # Debugging certificate errors is annoying
 # Here's a bash for-loop to test every URL we care about
@@ -38,20 +38,6 @@ spec:
                 name: bt-frontend-prod
                 port:
                   number: 3000
-          - path: /git
-            pathType: Prefix
-            backend:
-              service:
-                name: bt-gitlab
-                port:
-                  number: 80
-          - path: /webhooks/github
-            pathType: Prefix
-            backend:
-              service:
-                name: bt-github-notify
-                port:
-                  number: 80
     - host: staging.$BASE_DOMAIN_NAME
       http:
         paths:
@@ -98,31 +84,3 @@ spec:
                 name: bt-backend-staging
                 port:
                   number: 5000
-
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: bt-ingress-$INGRESS_LABEL-protected-routes
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    cert-manager.k8s.io/cluster-issuer: letsencrypt
-    nginx.ingress.kubernetes.io/auth-type: basic
-    nginx.ingress.kubernetes.io/auth-secret: bt-ingress-protected-routes
-    nginx.ingress.kubernetes.io/auth-realm: "Authentication Required - Login with credentials"
-spec:
-  tls:
-    - hosts:
-        - berkeleytime.com
-      secretName: bt-tls
-  rules:
-    - host: $BASE_DOMAIN_NAME
-      http:
-        paths:
-          - path: /kibana
-            pathType: Prefix
-            backend:
-              service:
-                name: bt-kibana-kibana
-                port:
-                  number: 5601
