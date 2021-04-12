@@ -27,9 +27,7 @@ async function submit(ping, auth) {
         )
 
         let status = 'operational'
-        if (responseTime > 5000) {
-            status = 'partial_outage'
-        } else if (responseTime > 2000) {
+        if (responseTime > 2000) {
             status = 'degraded_performance'
         }
 
@@ -92,7 +90,7 @@ async function pingFrontend() {
 }
 
 async function update() {
-    await submit(pingRestApi, config.apiStatus)
+    await submit(pingGraphqlApi, config.apiStatus)
     await submit(pingFrontend, config.frontendStatus)
 }
 
