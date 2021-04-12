@@ -13,19 +13,17 @@ interface Props extends PropsFromRedux {}
 const Banner: FC<Props> = (props) => {
   const location = useLocation();
   const history = useHistory();
-  const text = <p> 👩‍💻 💖 Sign up for <a className="link" onClick={() => redirect('/civhacks', 'https://www.civhacks.com')}><b>CivHacks</b></a>, a hackathon for social good from April 23rd-25th </p>;
+  const text = <p> 👩‍💻 💖 Sign up for <a className="link" onClick={() => redirect('civhacks')}><b>CivHacks</b></a>, a hackathon for social good from April 23rd-25th </p>;
 
-  function redirect(redirect: string, url: string) {
-    history.replace(redirect);
-    history.replace(location.pathname);
-    window.open(url, '_blank');
+  function redirect(site: string) {
+    history.push("/redirect?site=" + site)
   }
 
   return props.banner ? (
     <div className="banner">
       <div className="content">
         {text}
-        <Button size="sm" onClick={() => redirect('/civhacks-register', 'https://pzudnhexo5v.typeform.com/to/demEictZ')}>Register</Button>
+        <Button size="sm" onClick={() => redirect('civhacks-register')}>Register</Button>
       </div>
       <img src={close} alt="close" onClick={props.closeBanner} />
     </div>
