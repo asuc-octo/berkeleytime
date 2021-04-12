@@ -17,7 +17,7 @@ type Props = {
   link: string;
 };
 
-const ProfileCard = ({ course, removable, remove, link }: Props) => {
+const ProfileCourseCard = ({ course, removable, remove, link }: Props) => {
   return (
     <Link
       className="profile-card"
@@ -60,4 +60,4 @@ const ProfileCard = ({ course, removable, remove, link }: Props) => {
   );
 };
 
-export default ProfileCard;
+export default ProfileCourseCard;

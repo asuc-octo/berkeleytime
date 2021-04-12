@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 
 import Property from './Property';
-import ProfileCard from './ProfileCard';
+import ProfileCourseCard from './ProfileCourseCard';
 import EditPencil from '../../assets/svg/profile/edit.svg';
 import {
   CourseOverviewFragment,
+  ScheduleOverviewFragment,
   UserProfileFragment,
 } from '../../graphql/graphql';
 
@@ -15,6 +16,7 @@ import { compareDepartmentName } from 'utils/courses/sorting';
 import { Button } from 'react-bootstrap';
 import Subview from './Subview';
 import { Link } from 'react-router-dom';
+import ProfileScheduleCard from './ProfileScheduleCard';
 
 type Props = {
   userProfile: UserProfileFragment;
@@ -25,7 +27,8 @@ const MAX_PROFILE_CARDS = 6;
 
 const AccountSubview = ({ userProfile }: Props) => {
   const [removable, setRemovable] = useState<boolean>(false);
-  const [showAll, setShowAll] = useState<boolean>(false);
+  const [showAllCourses, setShowAllCourses] = useState<boolean>(false);
+  const [showAllSchedules, setShowAllSchedules] = useState<boolean>(false);
 
   const updateUser = useUpdateUser();
 
@@ -39,6 +42,11 @@ const AccountSubview = ({ userProfile }: Props) => {
   const savedClasses = (userProfile.savedClasses || [])
     .filter((c): c is CourseOverviewFragment => c !== null)
     .sort(compareDepartmentName);
+
+  const savedSchedules = userProfile.schedules.edges
+    .map((schedule) => schedule?.node)
+    .filter((s): s is ScheduleOverviewFragment => s !== null)
+    .sort((a, b) => Date.parse(b.dateCreated) - Date.parse(a.dateCreated));
 
   return (
     <div className="account-view">
@@ -82,34 +90,71 @@ const AccountSubview = ({ userProfile }: Props) => {
           )
         }
       >
-        {
-          savedClasses.length > 0 ? (
-            <div className="profile-card-grid">
-              {(showAll
-                ? savedClasses
-                : savedClasses.slice(0, MAX_PROFILE_CARDS)
-              ).map((course) => (
-                <ProfileCard
-                  removable={removable}
-                  key={course.id}
-                  course={course}
-                  remove={useUnsaveCourse}
-                  link={`/catalog/${course.abbreviation}/${course.courseNumber}`}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="bt-light-text"> Click on the bookmark icons in <Link to="/catalog"> Catalog </Link> to start saving classes! </div>
-          )
-        }
+        {savedClasses.length > 0 ? (
+          <div className="profile-card-grid">
+            {(showAllCourses
+              ? savedClasses
+              : savedClasses.slice(0, MAX_PROFILE_CARDS)
+            ).map((course) => (
+              <ProfileCourseCard
+                removable={removable}
+                key={course.id}
+                course={course}
+                remove={useUnsaveCourse}
+                link={`/catalog/${course.abbreviation}/${course.courseNumber}`}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="bt-light-text">
+            You do not have any saved schedules.{' '}
+            <Link to="/scheduler">Build one now.</Link>
+          </div>
+        )}
 
         {savedClasses.length > MAX_PROFILE_CARDS && (
           <Button
-            onClick={() => setShowAll((v) => !v)}
+            onClick={() => setShowAllCourses((v) => !v)}
             variant="link"
             className="profile-see-more px-0"
           >
-            {showAll ? 'Show fewer classes' : 'See all classes'}
+            {showAllCourses ? 'Show fewer classes' : 'See all classes'}
+          </Button>
+        )}
+      </Subview>
+
+      <Subview title="Saved Schedules">
+        {savedSchedules.length > 0 ? (
+          <div className="profile-card-grid">
+            {(showAllSchedules
+              ? savedSchedules
+              : savedSchedules.slice(0, MAX_PROFILE_CARDS)
+            ).map((course) => (
+              <ProfileScheduleCard
+                removable={removable}
+                key={course.id}
+                schedule={course}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="bt-light-text">
+            {' '}
+            Click on the bookmark icons in <Link to="/catalog">
+              {' '}
+              Catalog{' '}
+            </Link>{' '}
+            to start saving classes!{' '}
+          </div>
+        )}
+
+        {savedSchedules.length > MAX_PROFILE_CARDS && (
+          <Button
+            onClick={() => setShowAllCourses((v) => !v)}
+            variant="link"
+            className="profile-see-more px-0"
+          >
+            {showAllSchedules ? 'Show fewer schedules' : 'See all schedules'}
           </Button>
         )}
       </Subview>

@@ -29,7 +29,8 @@ class CourseService:
             )
 
             course, created = self.update_or_create_from_dict(course_dict)
-            courses.append(course)
+            if course is not None:
+                courses.append(course)
 
         for c in courses:
             # Update derived grade fields.

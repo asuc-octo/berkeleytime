@@ -1,0 +1,23 @@
+fragment ScheduleOverview on ScheduleType {
+  id
+  year
+  semester
+  name
+  totalUnits
+  dateCreated
+
+  selectedSections {
+    edges {
+      node {
+        course {
+          abbreviation
+          courseNumber
+
+          # Get the number of units and compute it ourselves
+          # bc can't trust backend
+          units
+        }
+      }
+    }
+  }
+}
