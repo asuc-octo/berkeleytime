@@ -14,7 +14,11 @@ class Query(
     CatalogQuery, EnrollmentQuery, FormsQuery,
     GradesQuery, PlaylistQuery, UserQuery, SchedulerQuery
 ):
-    pass
+    ping = graphene.String()
+
+    def resolve_ping(self, info):
+        return 'pong!'
+
 
 class Mutation(
     UserMutation, SchedulerMutation
