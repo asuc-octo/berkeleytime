@@ -1,0 +1,14 @@
+fragment Schedule on ScheduleType {
+  id
+  name
+  semester
+  year
+  totalUnits
+  selectedSections {
+    edges {
+      node {
+        ...SectionSelection
+      }
+    }
+  }
+}

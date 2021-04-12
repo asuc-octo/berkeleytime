@@ -13,9 +13,13 @@ class DepartmentService(AbstractPlaylistService):
     def update(self):
         """Update playlists broken down by department."""
         abbreviations = Course.objects.values_list('abbreviation', flat=True).distinct()
-        abbreviations_departments = sorted([
-            (a, utils.abbreviation_to_department(a)) for a in abbreviations
-        ], key=lambda x: x[1])
+        abbreviations_departments = sorted(
+            filter(
+                lambda abbrev_dept: abbrev_dept[1] is not None,
+                [(a, utils.abbreviation_to_department(a)) for a in abbreviations]
+            ),
+            key=lambda x: x[1]
+        )
 
         for abbreviation, department in abbreviations_departments:
             definition = ConstraintDefinition(

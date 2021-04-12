@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-import { Button, ButtonGroup, ButtonToolbar, Col, Row } from 'react-bootstrap';
-import CourseSelector from 'components/Scheduler/CourseSelector';
-
 import { useGetCoursesForFilterQuery } from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
 import useLatestSemester from 'graphql/hooks/latestSemester';
-import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
-import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
-import {
-  addUnits,
-  parseUnits,
-  unitsToString,
-  ZERO_UNITS,
-} from 'utils/courses/units';
+import { DEFAULT_SCHEDULE, Schedule, serializeSchedule } from 'utils/scheduler/scheduler';
 import SchedulerOnboard from './SchedulerOnboard';
+import ScheduleEditor from 'components/Scheduler/ScheduleEditor';
+import { useHistory, useParams } from 'react-router';
+import { getNodes } from 'utils/graphql';
 
 const Scheduler = () => {
   const {
@@ -32,6 +25,9 @@ const Scheduler = () => {
 
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
   const [onboarding, setOnboarding] = useState(true);
+  const { scheduleId } = useParams<{ scheduleId?: string }>();
+
+  const history = useHistory();
 
   const error = semesterError || coursesError;
 
@@ -40,7 +36,7 @@ const Scheduler = () => {
       <div className="scheduler viewport-app">
         <div className="scheduler__status">
           {error ? (
-            'A critical error occured loading scheduler information.'
+            'An error occured loading scheduler information. Please try again later.'
           ) : (
             <BTLoader />
           )}
@@ -49,58 +45,32 @@ const Scheduler = () => {
     );
   }
 
-  // Get a list of all courses which will be used by the search bar.
-  const allCourses = data.allCourses?.edges.map((e) => e?.node!)!;
+  function setScheduleId(newScheduleId: string) {
+    history.push(`/scheduler/${newScheduleId}`);
+  }
 
-  // Sum up the amount of units selected
-  const selectedUnits = schedule.courses.reduce(
-    (sum, course) =>
-      course.units ? addUnits(sum, parseUnits(course.units)) : sum,
-    ZERO_UNITS
-  );
+  const allCourses = getNodes(data.allCourses!);
 
-  function createSchedule() {
+  async function createSchedule() {
     setOnboarding(false);
   }
 
   return (
     <div className="scheduler viewport-app">
       {onboarding ?
-      (<SchedulerOnboard
+      <SchedulerOnboard
         schedule={schedule}
         setSchedule={setSchedule}
         createSchedule={createSchedule}
-      />) :
-      (<Row noGutters>
-        <Col md={4} lg={4} xl={4}>
-          <CourseSelector
-            allCourses={allCourses}
-            semester={latestSemester!}
-            schedule={schedule}
-            setSchedule={setSchedule}
-          />
-        </Col>
-        <Col>
-          <div className="scheduler-header">
-            <div className="scheduler-units">
-              Selected Units: {unitsToString(selectedUnits)}
-            </div>
-            <ButtonToolbar>
-              <ButtonGroup className="mr-3">
-                <Button className="bt-btn-primary" size="sm">
-                  Save
-                </Button>
-              </ButtonGroup>
-              <ButtonGroup>
-                <Button className="bt-btn-inverted" size="sm">
-                  Export to Google Calendar
-                </Button>
-              </ButtonGroup>
-            </ButtonToolbar>
-          </div>
-          <SchedulerCalendar schedule={schedule} />
-        </Col>
-      </Row>)}
+      /> :
+      <ScheduleEditor
+        scheduleId={scheduleId ?? null}
+        setScheduleId={setScheduleId}
+        allCourses={allCourses}
+        semester={latestSemester!}
+        schedule={schedule}
+        setRawSchedule={setSchedule}
+      />}
     </div>
   );
 };

@@ -38,6 +38,7 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        print('Running python3 manage.py class')
         section_service.update(
             semester=options['semester'],
             year=options['year'],

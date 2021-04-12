@@ -1,5 +1,7 @@
 import { SectionFragment } from 'graphql/graphql';
+import { ReactNode } from 'react';
 import { formatTime } from 'utils/date';
+import { applyIndicatorPercent } from 'utils/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type SectionType =
@@ -43,3 +45,18 @@ export const formatSectionTime = (section: SectionFragment): string =>
   section.startTime && section.endTime
     ? `${formatTime(section.startTime)} - ${formatTime(section.endTime)}`
     : `no time`;
+
+export const formatSectionEnrollment = (section: SectionFragment): ReactNode =>
+  section.enrolled !== null &&
+  section.enrolledMax !== null &&
+  section.enrolled !== undefined &&
+  section.enrolledMax !== undefined
+    ? applyIndicatorPercent(
+        `${section.enrolled}/${section.enrolledMax} enrolled`,
+        section.enrolled / section.enrolledMax
+      )
+    : 'Enrollment N/A';
+
+/**
+ *
+ */

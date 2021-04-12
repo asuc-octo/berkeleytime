@@ -41,6 +41,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Command handler."""
+        print('Running python3 manage.py playlist')
         category = options['category'] and playlists[options['category']]
         if options['clean']:
             playlist_service.clean(category)

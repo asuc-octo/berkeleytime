@@ -1,0 +1,17 @@
+mutation UpdateSchedule(
+  $scheduleId: ID!
+  $name: String!
+  $selectedSections: [SectionSelectionInput]!
+  $timeblocks: [TimeBlockInput]!
+) {
+  updateSchedule(
+    scheduleId: $scheduleId
+    name: $name
+    selectedSections: $selectedSections
+    timeblocks: $timeblocks
+  ) {
+    schedule {
+      dateModified
+    }
+  }
+}

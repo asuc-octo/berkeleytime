@@ -1,0 +1,19 @@
+mutation CreateSchedule(
+  $name: String!
+  $selectedSections: [SectionSelectionInput]!
+  $timeblocks: [TimeBlockInput]!
+  $semester: String!
+  $year: String!
+) {
+  createSchedule(
+    name: $name
+    selectedSections: $selectedSections
+    timeblocks: $timeblocks
+    semester: $semester
+    year: $year
+  ) {
+    schedule {
+      id
+    }
+  }
+}

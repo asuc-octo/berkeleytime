@@ -1,0 +1,11 @@
+query GetScheduleForId {
+  user {
+    schedules {
+      edges {
+        node {
+          ...Schedule
+        }
+      }
+    }
+  }
+}
