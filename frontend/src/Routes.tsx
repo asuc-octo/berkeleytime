@@ -27,7 +27,7 @@ const Logout = lazy(() => import('./views/Profile/Logout'));
 const PrivacyPolicy = lazy(() => import('./views/Policies/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
 const UserTestingForm = lazy(() => import('./views/Forms/UserTestingForm'));
-const STFGuide = lazy(() => import('./views/STFGuide'));
+const RedirectLink = lazy(() => import('./views/RedirectLink'));
 
 const routes: Array<RouteProps> = [
   { path: '/landing', component: Landing },
@@ -54,7 +54,7 @@ const routes: Array<RouteProps> = [
   { path: '/error', component: Error },
   { path: '/legal/privacy', component: PrivacyPolicy },
   { path: '/legal/terms', component: TermsOfService },
-  { path: '/stf-guide', component: STFGuide },
+  { path: '/redirect', component: RedirectLink, exact: false },
 ];
 
 const Routes: React.FC = () => (
