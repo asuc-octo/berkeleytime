@@ -19,7 +19,7 @@ import moment from "moment-timezone";
  * to create a DNS A record for status.berkeleytime.com
  * export ADDRESS=34.82.91.206
  * gcloud dns record-sets transaction start --project berkeleytime-218606 --zone berkeleytime
- * gcloud dns record-sets transaction add --project berkeleytime-218606 --zone berkeleytime --name berkeleytime.com --ttl 300 --type A $ADDRESS
+ * gcloud dns record-sets transaction add --project berkeleytime-218606 --zone berkeleytime --name status.berkeleytime.com --ttl 300 --type A $ADDRESS
  * gcloud dns record-sets transaction execute --project berkeleytime-218606 --zone berkeleytime
  *
  * TODO:
