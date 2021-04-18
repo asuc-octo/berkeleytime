@@ -4,7 +4,8 @@
   }
 
   &.calendar-course-card--preview {
-    color: var(--mixed-text) !important;
+    // color: var(--mixed-text) !important;
+    opacity: 0.5;
   }
 }
 

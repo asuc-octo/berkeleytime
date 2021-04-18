@@ -14,7 +14,7 @@ const CalendarCard = forwardRef<HTMLDivElement, Props>(
     { title, description, color, style = {}, className = '', ...props },
     ref
   ) => {
-    const isLightCard = Color(color).luminosity() > 0.5;
+    const isLightCard = Color(color).luminosity() > 0.65;
 
     return (
       <div
