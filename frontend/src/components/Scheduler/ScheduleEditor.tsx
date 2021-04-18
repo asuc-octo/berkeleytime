@@ -51,27 +51,16 @@ const ScheduleEditor = ({
     getScheduleForId,
     { loading: isFetchingRemoteSchedule },
   ] = useGetScheduleForIdLazyQuery({
+    onError: (error) => {
+      alert(`Couldn't load schedule: ${error.message}`);
+    },
     onCompleted: (data) => {
-      // TODO: remove (won't be necessary with dedicated query).
-      if (!data.user) {
-        alert('You must be logged in to see this schedule.');
-        return;
-      }
-      const schedules = getNodes(data.user!.schedules);
-
-      // TODO: possible race condition. If `scheduleId` changes
-      // before response. This shouldn't be an issue once the
-      // dedicated query is added.
-      const rawSchedule = schedules.find(
-        (schedule) => schedule.id === scheduleId
-      );
-
-      if (!rawSchedule) {
-        alert("That schedule doesn't exist");
+      if (!data.schedule) {
+        alert(`Couldn't find the given schedule.`);
         return;
       }
 
-      const schedule = deserializeSchedule(rawSchedule);
+      const schedule = deserializeSchedule(data.schedule);
       setRawSchedule(schedule);
     },
   });
@@ -83,7 +72,7 @@ const ScheduleEditor = ({
     if (scheduleId !== null) {
       getScheduleForId({
         variables: {
-          // scheduleId: scheduleId
+          id: scheduleId,
         },
       });
     } else {
