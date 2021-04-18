@@ -15,6 +15,10 @@ google-api-python-client==1.12.8
 google-auth==1.24.0
 gspread==3.6.0
 
+# Mongo
+pymongo==3.11.3
+dnspython==1.16.0
+
 # Other
 arrow==0.17.0
 beautifulsoup4==4.9.3
