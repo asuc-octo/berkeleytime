@@ -47,15 +47,7 @@ const CourseCard = ({
     .filter(Boolean)
     .join(', ');
 
-  let cardColor = courseToColor(section.courseId);
-  let textColor: string | null = null;
-
-  // If it's a preview mix the color 50% with white.
-  if (isPreview) {
-    const dimmedColor = Color(cardColor).lighten(0.3);
-    cardColor = dimmedColor.hex();
-    textColor = dimmedColor.darken(0.4).desaturate(0.8).hex();
-  }
+  const cardColor = courseToColor(section.courseId);
 
   const card = (
     <CalendarCard
@@ -65,11 +57,6 @@ const CourseCard = ({
       className={cx('calendar-course-card', {
         'calendar-course-card--preview': isPreview,
       })}
-      style={
-        {
-          '--mixed-text': textColor,
-        } as CSSProperties
-      }
     />
   );
 

@@ -313,6 +313,7 @@ export interface Mutation {
   __typename?: 'Mutation';
   createSchedule?: Maybe<CreateSchedule>;
   updateSchedule?: Maybe<UpdateSchedule>;
+  removeSchedule?: Maybe<RemoveSchedule>;
   updateUser?: Maybe<UpdateUser>;
   saveClass?: Maybe<SaveClass>;
   removeClass?: Maybe<RemoveClass>;
@@ -339,6 +340,11 @@ export interface MutationUpdateScheduleArgs {
   scheduleId?: Maybe<Scalars['ID']>;
   selectedSections?: Maybe<Array<Maybe<SectionSelectionInput>>>;
   timeblocks?: Maybe<Array<Maybe<TimeBlockInput>>>;
+}
+
+
+export interface MutationRemoveScheduleArgs {
+  scheduleId?: Maybe<Scalars['ID']>;
 }
 
 
@@ -462,6 +468,7 @@ export interface PlaylistTypeEdge {
 export interface Query {
   __typename?: 'Query';
   schedules?: Maybe<Array<Maybe<ScheduleType>>>;
+  schedule?: Maybe<ScheduleType>;
   user?: Maybe<BerkeleytimeUserType>;
   allPlaylists?: Maybe<PlaylistTypeConnection>;
   /** The ID of the object */
@@ -478,6 +485,11 @@ export interface Query {
   /** The ID of the object */
   section?: Maybe<SectionType>;
   allSections?: Maybe<SectionTypeConnection>;
+}
+
+
+export interface QueryScheduleArgs {
+  id?: Maybe<Scalars['ID']>;
 }
 
 
@@ -613,6 +625,11 @@ export interface Refresh {
 export interface RemoveClass {
   __typename?: 'RemoveClass';
   user?: Maybe<BerkeleytimeUserType>;
+}
+
+export interface RemoveSchedule {
+  __typename?: 'RemoveSchedule';
+  schedule?: Maybe<ScheduleType>;
 }
 
 export interface SaveClass {
@@ -1082,6 +1099,16 @@ export type CreateScheduleMutation = (
   )> }
 );
 
+export type DeleteScheduleMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteScheduleMutation = (
+  { __typename?: 'Mutation' }
+  & { removeSchedule?: Maybe<{ __typename: 'RemoveSchedule' }> }
+);
+
 export type DeleteUserMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1273,23 +1300,16 @@ export type GetFiltersQuery = (
   )> }
 );
 
-export type GetScheduleForIdQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetScheduleForIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
 
 
 export type GetScheduleForIdQuery = (
   { __typename?: 'Query' }
-  & { user?: Maybe<(
-    { __typename?: 'BerkeleytimeUserType' }
-    & { schedules: (
-      { __typename?: 'ScheduleTypeConnection' }
-      & { edges: Array<Maybe<(
-        { __typename?: 'ScheduleTypeEdge' }
-        & { node?: Maybe<(
-          { __typename?: 'ScheduleType' }
-          & ScheduleFragment
-        )> }
-      )>> }
-    ) }
+  & { schedule?: Maybe<(
+    { __typename?: 'ScheduleType' }
+    & ScheduleFragment
   )> }
 );
 
@@ -1583,6 +1603,38 @@ export function useCreateScheduleMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateScheduleMutationHookResult = ReturnType<typeof useCreateScheduleMutation>;
 export type CreateScheduleMutationResult = Apollo.MutationResult<CreateScheduleMutation>;
 export type CreateScheduleMutationOptions = Apollo.BaseMutationOptions<CreateScheduleMutation, CreateScheduleMutationVariables>;
+export const DeleteScheduleDocument = gql`
+    mutation DeleteSchedule($id: ID!) {
+  removeSchedule(scheduleId: $id) {
+    __typename
+  }
+}
+    `;
+export type DeleteScheduleMutationFn = Apollo.MutationFunction<DeleteScheduleMutation, DeleteScheduleMutationVariables>;
+
+/**
+ * __useDeleteScheduleMutation__
+ *
+ * To run a mutation, you first call `useDeleteScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteScheduleMutation, { data, loading, error }] = useDeleteScheduleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteScheduleMutation(baseOptions?: Apollo.MutationHookOptions<DeleteScheduleMutation, DeleteScheduleMutationVariables>) {
+        return Apollo.useMutation<DeleteScheduleMutation, DeleteScheduleMutationVariables>(DeleteScheduleDocument, baseOptions);
+      }
+export type DeleteScheduleMutationHookResult = ReturnType<typeof useDeleteScheduleMutation>;
+export type DeleteScheduleMutationResult = Apollo.MutationResult<DeleteScheduleMutation>;
+export type DeleteScheduleMutationOptions = Apollo.BaseMutationOptions<DeleteScheduleMutation, DeleteScheduleMutationVariables>;
 export const DeleteUserDocument = gql`
     mutation DeleteUser {
   deleteUser {
@@ -1996,15 +2048,9 @@ export type GetFiltersQueryHookResult = ReturnType<typeof useGetFiltersQuery>;
 export type GetFiltersLazyQueryHookResult = ReturnType<typeof useGetFiltersLazyQuery>;
 export type GetFiltersQueryResult = Apollo.QueryResult<GetFiltersQuery, GetFiltersQueryVariables>;
 export const GetScheduleForIdDocument = gql`
-    query GetScheduleForId {
-  user {
-    schedules {
-      edges {
-        node {
-          ...Schedule
-        }
-      }
-    }
+    query GetScheduleForId($id: ID!) {
+  schedule(id: $id) {
+    ...Schedule
   }
 }
     ${ScheduleFragmentDoc}`;
@@ -2021,10 +2067,11 @@ export const GetScheduleForIdDocument = gql`
  * @example
  * const { data, loading, error } = useGetScheduleForIdQuery({
  *   variables: {
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetScheduleForIdQuery(baseOptions?: Apollo.QueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {
+export function useGetScheduleForIdQuery(baseOptions: Apollo.QueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {
         return Apollo.useQuery<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>(GetScheduleForIdDocument, baseOptions);
       }
 export function useGetScheduleForIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {
