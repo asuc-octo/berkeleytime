@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 
 # telebears
 from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
+from berkeleytime.config.semesters.util.term import get_sis_term_id
 
 # testing
 from django.contrib.auth.models import User
@@ -24,6 +25,8 @@ from django.contrib.auth.models import User
 PERCENTAGE_THRESHOLDS = [0.50, 0.75]
 MOMENTUM_THRESHOLD = 0.2
 
+TERM_ID = get_sis_term_id(CURRENT_SEMESTER, CURRENT_YEAR)
+
 # ======================================================
 # Fetch real time (~2min) data from Course Catalog's API
 # ======================================================
@@ -35,7 +38,7 @@ def scrape_enrollment(section_number):
     try:
         # 2212 changes for every semester,
         # there seems to be a pattern not sure how we can get it yet...
-        course_req = requests.get(f'https://classes.berkeley.edu/enrollment/get/2212/{section_number}')
+        course_req = requests.get(f'https://classes.berkeley.edu/enrollment/get/{TERM_ID}/{section_number}')
         course = course_req.json()
         
         # error, most likely section number not found
@@ -54,7 +57,7 @@ def scrape_sections(section_number):
     of the class. Returns an empty list if failed to get data. """
     # TODO: Cache this
     try:
-        sections_req = requests.get(f'https://classes.berkeley.edu/enrollment/json-all-associated-sections/{section_number}/{section_number}/2212')
+        sections_req = requests.get(f'https://classes.berkeley.edu/enrollment/json-all-associated-sections/{section_number}/{section_number}/{TERM_ID}')
         sections = sections_req.json()
         # error, most likely section number not found
         if 'error' in sections:
