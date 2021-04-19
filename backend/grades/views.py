@@ -83,7 +83,8 @@ STANDARD_GRADES = [("a1", "A+"), ("a2", "A"), ("a3", "A-"),
 
 def grade_json(request, grade_ids):
     try:
-        cached = cache.get('grade_json_new ' + str(grade_ids))
+        cache_key = 'grade_json_new ' + str(grade_ids)
+        cached = cache.get(cache_key)
         if cached:
             print('Cache Hit in grade_json ' + grade_ids)
             return render_to_json(cached)
@@ -135,7 +136,7 @@ def grade_json(request, grade_ids):
         if rtn['section_letter'] == '':
             rtn['section_letter'] = 'N/A'
 
-        cache.set('grade_json_new ' + str(grade_ids), rtn, CACHE_TIMEOUT)
+        cache.set(cache_key, rtn, CACHE_TIMEOUT)
         return render_to_json(rtn)
     except Exception as e:
         traceback.print_exc()
