@@ -2,7 +2,7 @@
  * Converts time string to date
  */
 export function stringToDate(time: string): Date {
-  return new Date(`${time}-08:00`);
+  return new Date(`${time}-00:00`);
 }
 
 /**
