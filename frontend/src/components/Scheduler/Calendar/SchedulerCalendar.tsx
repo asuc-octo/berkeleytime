@@ -12,7 +12,7 @@ import CourseCalendar from './CourseCalendar';
  */
 function timeToHour(time: string): number {
   const date = stringToDate(time);
-  return date.getHours() + date.getMinutes() / 60;
+  return date.getUTCHours() + date.getUTCMinutes() / 60;
 }
 
 type Props = {
