@@ -10,6 +10,7 @@ import {
 import { addUnits, parseUnits, Units, ZERO_UNITS } from 'utils/courses/units';
 import { Semester } from 'utils/playlists/semesters';
 import { getNodes } from '../graphql';
+import { COURSE_PALETTE } from 'utils/courses/course';
 
 export type SchedulerCourseType = CourseOverviewFragment;
 export type SchedulerSectionType = SectionFragment & {
@@ -49,6 +50,19 @@ export const getCourseForSchedule = (
   section: SchedulerSectionType
 ): SchedulerCourseType | null =>
   schedule.courses.find((c) => c.id === section.courseId) || null;
+
+/**
+ * Gets the color for a course (based off a section)
+ * within a schedule.
+ */
+export const getColorForSection = (
+  schedule: Schedule,
+  section: SchedulerSectionType
+): string =>
+  COURSE_PALETTE[
+    (schedule.courses.findIndex((c) => c.id === section.courseId) || 0) %
+      COURSE_PALETTE.length
+  ];
 
 /**
  * Computes the amount of units in a schedule
