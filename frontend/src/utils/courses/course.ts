@@ -33,6 +33,17 @@ export function courseToName(
 }
 
 /**
+ * Color palette for courses
+ */
+export const COURSE_PALETTE = [
+  '#1AA8E5',
+  '#18DE83',
+  '#FCD571',
+  '#ED5186',
+  '#FFA414',
+];
+
+/**
  * Gets a color for a course
  * @param course Either a course object or the courseId.
  * @returns a CSS color code.
@@ -40,8 +51,8 @@ export function courseToName(
 export function courseToColor(
   course: Pick<CourseFragment, 'id'> | string
 ): string {
-  const COLORS = ['#1AA8E5', '#18DE83', '#FCD571', '#ED5186', '#FFA414'];
-  return COLORS[
-    hash(typeof course === 'string' ? course : course.id) % COLORS.length
+  return COURSE_PALETTE[
+    hash(typeof course === 'string' ? course : course.id) %
+      COURSE_PALETTE.length
   ];
 }

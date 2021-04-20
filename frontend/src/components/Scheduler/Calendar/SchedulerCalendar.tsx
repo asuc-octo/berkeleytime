@@ -58,7 +58,6 @@ const SchedulerCalendar = ({
     .flatMap((section) =>
       sectionToCard(section, () => (
         <CourseCard
-          course={getCourseForSchedule(schedule, section)}
           section={section}
           schedule={schedule}
           setSchedule={setSchedule}
@@ -69,17 +68,25 @@ const SchedulerCalendar = ({
   const previewCards =
     previewSection && !schedule.sections.find((s) => s.id === previewSection.id)
       ? sectionToCard(previewSection, () => (
-          <CourseCard
-            course={getCourseForSchedule(schedule, previewSection)}
-            section={previewSection}
-            schedule={schedule}
-            isPreview
-          />
+          <CourseCard section={previewSection} schedule={schedule} isPreview />
         ))
       : [];
 
   const allCards: CardData[] = [...courseCards, ...previewCards];
-  return <CourseCalendar cards={allCards} />;
+
+  // See if there is a card on saturday or sunday
+  let days: Set<number> = new Set([
+    1,
+    2,
+    3,
+    4,
+    5,
+    ...allCards.map((card) => card.day),
+  ]);
+
+  return (
+    <CourseCalendar days={[...days].sort((a, b) => a - b)} cards={allCards} />
+  );
 };
 
 export default SchedulerCalendar;

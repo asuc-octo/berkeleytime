@@ -1,3 +1,26 @@
+import { ReactNode } from 'react';
+
+/**
+ * Combines non-null components into a string seperated by seperator.
+ *
+ * @example
+ * combineStrings([1, null, 0, 'hello'], ', ');
+ * // "1, hello"
+ */
+export const combineStrings = (components: any[], seperator: string): string =>
+  components.filter(Boolean).join(seperator);
+
+/**
+ * Analgous version of combineStrings for React nodes
+ */
+export const combineNodes = (
+  components: ReactNode[],
+  seperator: ReactNode
+): ReactNode[] =>
+  components
+    .filter(Boolean)
+    .flatMap((item, index) => (index ? [seperator, item] : [item]));
+
 /**
  * Converts a string to a number
  */
