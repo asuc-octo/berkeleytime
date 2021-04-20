@@ -27,6 +27,6 @@ tcp:
   5432: default/bt-psql-staging:5432::PROXY
   6379: default/bt-redis-staging-master:6379::PROXY
   5433: tutor-staging/postgres:5432::PROXY
-  27017: default/bt-mdb-staging-0:27017
-  27018: default/bt-mdb-staging-1:27017
-  27019: default/bt-mdb-staging-2:27017
+  27017: default/bt-mdb-staging-0:27017::PROXY
+  27018: default/bt-mdb-staging-1:27017::PROXY
+  27019: default/bt-mdb-staging-2:27017::PROXY
