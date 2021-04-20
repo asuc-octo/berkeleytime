@@ -13,18 +13,26 @@
 
 # MANUALLY VERIFY WORKS IN MONGO:
 # mongo "mongodb://<username>:<password>@bt-mdb-staging-0.bt-mdb-staging-headless.default.svc.cluster.local,bt-mdb-staging-1.bt-mdb-staging-headless.default.svc.cluster.local/?authSource=admin&replicaSet=rs0"
+# OR for external access:
+# mongo "mongodb+srv://<username>:<password>@mdb.berkeleytime.com/?authSource=admin&replicaSet=rs0"
 # use bt
-# db.asdf.insertOne({ name: "Mango", season: "Summer"})
-# db.asdf.find({})
+# db.fruits.insertOne({ name: "Mango", season: "Summer"})
+# db.fruits.find({})
 
 # example secret format for existingSecret:
 # mongodb-password=<any pass>
 # mongodb-replica-set-key=<any key>
 # mongodb-root-password=<any pass>
 
+# Fancy mongodb dns srv records in GCP so that mongodb+srv is possible
+# gcloud dns record-sets delete --zone berkeleytime --type SRV _mongodb._tcp.mdb.berkeleytime.com.
+# gcloud dns record-sets delete --zone berkeleytime --type TXT mdb.berkeleytime.com.
+# gcloud dns record-sets create _mongodb._tcp.mdb.berkeleytime.com. --type SRV --ttl 300 --zone berkeleytime --rrdatas "0 0 27017 mdb0.berkeleytime.com.","0 0 27018 mdb1.berkeleytime.com.","0 0 27019 mdb2.berkeleytime.com."
+# gcloud dns record-sets create mdb.berkeleytime.com. --type TXT --ttl 300 --zone berkeleytime --rrdatas "authSource=bt&replicaSet=rs0"
+
 arbiter:
   enabled: false
-architecture: replicaset
+architecture: replicaset # replicaset is great as it enables transaction support
 auth:
   enabled: true
   existingSecret: bt-mdb-$CI_ENVIRONMENT_NAME
@@ -47,15 +55,86 @@ externalAccess:
 readinessProbe: # must be disabled so that traffic can go through svc for init
   enabled: false
 replicaCount: 3
-# TODO: Must automate sending this command for staging external cluster access
-# rs.reconfig({
-#    _id : "rs0",
-#    members: [
-#       { _id: 0, host: "berkeleytime.com:27017" },
-#       { _id: 1, host: "berkeleytime.com:27018" },
-#       { _id: 2, host: "berkeleytime.com:27019" }
-#    ]
-# }, { force: true })
+sidecars: # This sidecar waits first time replica set start, then change to dns
+  - name: mongo
+    image: mongo:4.4.4
+    env:
+      - name: DOMAIN
+        value: berkeleytime.com
+      - name: PORT
+        value: "27017"
+      - name: REPLICAS
+        value: "3"
+    envFrom:
+      - secretRef:
+          name: bt-mdb-$CI_ENVIRONMENT_NAME
+    command:
+      - bash
+      - -c
+      - |
+        while true
+        do
+          password=`env | sed -n 's/mongodb-root-password=\(.*\)/\1/p'`
+
+          mongo "mongodb://root:${password}@localhost" << EOF
+            const replicaCount = $REPLICAS;
+            const domain = "$DOMAIN";
+            const h = getHostName();
+            const baseHostname = h.split('-').slice(0, -1).join('-');
+            const basePort = $PORT;
+            const c = rs.conf();
+            const s = rs.status();
+
+            if (s.members.every(member => member.name.includes(baseHostname) && member.health == 1) ||
+                s.members.every(member => member.name.includes(domain) && member.health == 1) ) {
+                if (s.members.length == replicaCount) {
+                  print("all replicas healthy and properly named");
+                  quit(255);
+                } else {
+                  print("some replicas are missing");
+                  quit(0);
+                }
+            }
+
+            for (let [index, value] of c.members.entries()) {
+              let port;
+              if (h.includes('staging')) {
+                c.members[index].host = \`$DOMAIN:\${basePort + index}\`;
+              } else {
+                c.members[index].host = \`\${baseHostname}-\${index}:\${basePort}\`;
+              }
+            }
+            rs.reconfig(c, { force: true });
+        EOF
+
+          if [[ $? -eq 255 ]]; then
+            echo ...`date +"%Y-%m-%d %H:%M:%S"` replica set is configured correctly...
+            sleep 600
+          else
+            echo "retrying replica set configuration..."
+            sleep 15
+          fi
+        done
+# tls:
+#   enabled: true
+#   caCert: $CA_CERT
+#   caKey: $CA_KEY
+
+# old bash tricks but helpful tricks to keep just in case
+# function check(){
+#   mongo --eval 'db.runCommand("ping").ok' mongodb://root:${password}@$1 --quiet
+# }
+# i=$((${#HOSTNAME}-1))
+# if [[ "${HOSTNAME:$i:1}" =~ "0" ]]
+# then
+#   # this is member 0, attempt to initialize replica set
+# EOF
+# else
+#   echo this node is not the first init member, do nothing
+#   while true; do sleep 1000; done;
+# fi
+
+# can replace container cmd, perhaps automate for staging external access
 # command:
 #   - bash
 #   - -c

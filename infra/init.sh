@@ -15,19 +15,9 @@
 # Benefit of domain prefixing is that you can initialize and test a GCP server in the background while OCF still runs
 
 # Can use command-line to switch between GCP and OCF IPs in case of failover
-# Declare this function in bash
-# update_dns() {
-#   export IP_FROM=$1
-#   export IP_TO=$2
-#   gcloud dns record-sets transaction start --project berkeleytime-218606 --zone berkeleytime
-#   gcloud dns record-sets transaction remove --project berkeleytime-218606 --zone berkeleytime --name berkeleytime.com --ttl 300 --type A $IP_FROM
-#   gcloud dns record-sets transaction add --project berkeleytime-218606 --zone berkeleytime --name berkeleytime.com --ttl 300 --type A $IP_TO
-#   gcloud dns record-sets transaction execute --project berkeleytime-218606 --zone berkeleytime
-# }
-# update_dns 169.229.226.55 34.94.48.10 # OCF to GCP
-# update_dns 34.94.48.10 169.229.226.55 # GCP to OCF
-# Manually abort DNS transaction if there is a problem:
-#   gcloud dns record-sets transaction abort --project berkeleytime-218606 --zone berkeleytime
+# gcloud dns record-sets delete --zone berkeleytime --type A berkeleytime.com
+# ADDRESS_GCP=34.94.48.10; gcloud dns record-sets create --zone berkeleytime --type A berkeleytime.com --rrdatas $ADDRESS_OCF
+# ADDRESS_OCF=169.229.226.55; gcloud dns record-sets create --zone berkeleytime --type A berkeleytime.com --rrdatas $ADDRESS_GCP
 
 # Tested on: Ubuntu 20.04, Kubernetes v1.20.2, single-node architecture
 # Specific kernel required for core features like BPF (Berkeley Packet Filter)
@@ -68,6 +58,7 @@ modprobe br_netfilter
 swapoff -a && sed -i "s/\/swap/# \/swap/g" /etc/fstab
 kubeadm init --skip-phases addon/kube-proxy # BPF replaces kube-proxy, https://docs.cilium.io/en/v1.9/gettingstarted/kubeproxy-free
 sed -i '/- kube-apiserver/a\ \ \ \ - --feature-gates=MixedProtocolLBService=true' /etc/kubernetes/manifests/kube-apiserver.yaml # k8s 1.20 Alpha feature
+echo "KUBELET_EXTRA_ARGS='--kube-reserved=cpu=100m,memory=100Mi,ephemeral-storage=1Gi,pid=1000 --system-reserved=cpu=100m,memory=100Mi,ephemeral-storage=1Gi,pid=1000 --eviction-hard=memory.available<500Mi'" > /etc/default/kubelet
 mkdir -p ~/.kube && cp /etc/kubernetes/admin.conf ~/.kube/config
 kubectl taint nodes $(hostname) node-role.kubernetes.io/master-
 kubectl apply -f /berkeleytime/infra/k8s/kube-system
@@ -103,7 +94,7 @@ crontab -l | { cat; echo "@reboot /bin/node /berkeleytime/infra/fail2ban-helper"
 
 # > Cluster networking >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # If BPF works, policy-related things appear in /sys/fs/bpf
-helm upgrade cilium cilium/cilium --version 1.9.5 -n kube-system -f - << EOF
+helm install cilium cilium/cilium --version 1.9.5 -n kube-system -f - << EOF
 # https://github.com/cilium/cilium/blob/e3f96e3328757f5af394a7e09a2781ce5a1554be/install/kubernetes/cilium/values.yaml
 k8sServiceHost: $DEVICE_IP
 k8sServicePort: 6443
@@ -112,7 +103,6 @@ operator:
   replicas: 1
 EOF
 git clone --single-branch --branch release-1.9 https://github.com/istio/istio.git # https://github.com/istio/istio/commit/5dd2044
-git -C istio checkout b63e196
 helm -n istio install istio-base istio/manifests/charts/base -f /berkeleytime/infra/helm/istio-base.yaml --create-namespace
 helm -n istio install istiod istio/manifests/charts/istio-control/istio-discovery -f /berkeleytime/infra/helm/istiod.yaml
 kubectl patch mutatingwebhookconfigurations istio-sidecar-injector-istio --type json -p '[{"op": "remove", "path": "/webhooks/0/namespaceSelector" }]' # Make sidecar injection an opt-in for pods
@@ -167,13 +157,20 @@ gcloud auth configure-docker -q
 gcloud config set builds/use_kaniko True # use_kaniko allows for easy-peasy simple caching logic by Google during `gcloud builds submit`
 gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-runner --tag gcr.io/berkeleytime-218606/gitlab-runner:latest
 gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-notify --tag gcr.io/berkeleytime-218606/gitlab-notify:latest
-gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/github-notify --tag gcr.io/berkeleytime-218606/github-notify:latest
+gcloud builds submit --prwoject berkeleytime-218606 /berkeleytime/infra/github-notify --tag gcr.io/berkeleytime-218606/github-notify:latest
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab-notify.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-github-notify.yaml
-helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/gitlab-runner.yaml --version 0.25.0
+helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/gitlab-runner.yaml --version 0.27.0
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GitLab <
 
+export INGRESS_LABEL=primary;
+export BASE_DOMAIN_NAME=berkeleytime.com;
+envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-infra.yaml | kubectl apply -f -
+envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-status.yaml | kubectl apply -f -
+
+export CA_CERT=$(kubectl get secrets/bt-tls --template='{{index .data "tls.crt"}}')
+export CA_KEY=$(kubectl get secrets/bt-tls --template='{{index .data "tls.key"}}')
 # > BT App Data Layer >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 for CI_ENVIRONMENT_NAME in "staging" "prod"
 do
@@ -183,7 +180,7 @@ do
   gsutil cp gs://berkeleytime-218606/secrets/bt-mdb-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-mdb-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
   envsubst < /berkeleytime/infra/k8s/default/bt-psql.yaml | kubectl apply -f -
   envsubst < /berkeleytime/infra/helm/redis.yaml | helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis --version 12.1.1 -f -
-  envsubst < /berkeleytime/infra/helm/mongodb.yaml | helm install bt-mdb-$CI_ENVIRONMENT_NAME bitnami/mongodb --version 10.12.0 -f -
+  envsubst '$CI_ENVIRONMENT_NAME $CA_CERT $CA_KEY' < /berkeleytime/infra/helm/mongodb.yaml | helm install bt-mdb-$CI_ENVIRONMENT_NAME bitnami/mongodb --version 10.12.0 -f -
   if [ $CI_ENVIRONMENT_NAME == "staging" ]; then
     # Expose staging services to the external internet and use istio-proxy sidecars to handle HAProxy Protocol, which preserves client source IPs via annotation TPROXY
     kubectl patch deploy/bt-psql-$CI_ENVIRONMENT_NAME -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true","sidecar.istio.io/interceptionMode":"TPROXY"}}}}}'

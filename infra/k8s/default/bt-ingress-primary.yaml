@@ -16,6 +16,14 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
     nginx.ingress.kubernetes.io/server-snippet: |-
+      proxy_intercept_errors on;
+      error_page 404 500 501 502 503 504 = @errorpages;
+      
+      location @errorpages {
+        proxy_set_header X-Code $status;
+        proxy_pass http://bt-status-primary.default.svc.cluster.local;
+      }
+
       server_name $BASE_DOMAIN_NAME ~^www\.;
       if ($host ~* www\.(.*)) {
         set $host_without_www $1;

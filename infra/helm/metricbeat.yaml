@@ -183,30 +183,30 @@ daemonset:
 
 
 
-      - module: postgresql # run 'CREATE extension pg_stat_statements;' in psql
-        enabled: true
-        hosts:
-          - postgres://<USER>:<PASSWORD>@ingress-nginx-controller.ingress-nginx.svc.cluster.local/?sslmode=disable
-        metricsets:
-          - database # Stats about every PostgreSQL database
-          - bgwriter # Stats about the background writer process's activity
-          - activity # Stats about every PostgreSQL process
-          - statement # Stats for statement executions, needs pg_stat_statements
-        period: 10s
+      # - module: postgresql # run 'CREATE extension pg_stat_statements;' in psql
+      #   enabled: true
+      #   hosts:
+      #     - postgres://<username>:<password>@ingress-nginx-controller.ingress-nginx.svc.cluster.local/?sslmode=disable
+      #   metricsets:
+      #     - database # Stats about every PostgreSQL database
+      #     - bgwriter # Stats about the background writer process's activity
+      #     - activity # Stats about every PostgreSQL process
+      #     - statement # Stats for statement executions, needs pg_stat_statements
+      #   period: 10s
 
       # TODO: separate out USER and PASSWORD for postgres and mongodb to secret
 
-      - module: mongodb
-        enabled: true
-        hosts:
-          - mongodb://<USER>:<PASSWORD@berkeleytime.com:27017,berkeleytime.com:27018,berkeleytime.com:27019
-        metricsets:
-          - collstats
-          - dbstats
-          - metrics
-          - replstatus
-          - status
-        period: 10s
+      # - module: mongodb
+      #   enabled: true
+      #   hosts:
+      #     - mongodb://<USER>:<PASSWORD@berkeleytime.com:27017,berkeleytime.com:27018,berkeleytime.com:27019
+      #   metricsets:
+      #     - collstats
+      #     - dbstats
+      #     - metrics
+      #     - replstatus
+      #     - status
+      #   period: 10s
 deployment:
   enabled: false
 livenessProbe:
