@@ -163,7 +163,7 @@ class SectionMapper:
     def get_instruction_mode(self, data):
         """Get instruction mode."""
         return {
-            'instruction_mode': data.get('instructionMode', {}).get('description')
+            'instruction_mode': data.get('instructionMode', {}).get('description', '')
         }
 
 
