@@ -13,4 +13,5 @@ fragment Section on SectionType {
   days
   wordDays
   disabled
+  sectionNumber
 }

@@ -41,10 +41,26 @@ export const formatLocation = (location: string): string => {
   }
 };
 
-export const formatSectionTime = (section: SectionFragment): string =>
+/**
+ * Formats a section time.
+ *
+ * @example
+ * formatSecctionTime(someSection)
+ * // "3:00pm - 4:30pm"
+ *
+ * @example
+ * formatSecctionTime(someSectionWithNoTime, false)
+ * // ""
+ */
+export const formatSectionTime = (
+  section: SectionFragment,
+  showNoTime: boolean = true
+): string =>
   section.startTime && section.endTime
     ? `${formatTime(section.startTime)} - ${formatTime(section.endTime)}`
-    : `no time`;
+    : showNoTime
+    ? `no time`
+    : '';
 
 export const formatSectionEnrollment = (section: SectionFragment): ReactNode =>
   section.enrolled !== null &&
@@ -58,5 +74,12 @@ export const formatSectionEnrollment = (section: SectionFragment): ReactNode =>
     : 'Enrollment N/A';
 
 /**
+ * Checks if the section is the 'enrollment' section.
+ * For CS classes this means its a 999 section.
  *
+ * @example
+ * isEnrollmentSection({ sectionNumber: '999', ... })
+ * // true
  */
+export const isEnrollmentSection = (section: SectionFragment): boolean =>
+  /^999[A-Z]?$/.test(section.sectionNumber);

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { Fragment, ReactNode } from 'react';
 
 /**
  * Combines non-null components into a string seperated by seperator.
@@ -19,7 +19,8 @@ export const combineNodes = (
 ): ReactNode[] =>
   components
     .filter(Boolean)
-    .flatMap((item, index) => (index ? [seperator, item] : [item]));
+    .flatMap((item, index) => (index ? [seperator, item] : [item]))
+    .map((item, index) => <Fragment key={index}>{item}</Fragment>);
 
 /**
  * Converts a string to a number
