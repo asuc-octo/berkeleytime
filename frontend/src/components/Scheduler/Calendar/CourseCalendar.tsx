@@ -87,7 +87,10 @@ const CourseCalendar = ({
 }: CourseCalendarProps) => {
   const hourSlots = range(startTime, endTime);
   const cardsByDay = days.map((day) =>
-    cards.filter((c) => c.day === day).sort((a, b) => a.startTime - b.startTime)
+    cards
+      .filter((c) => c.day === day)
+      .filter((c) => !!c.startTime && !!c.endTime)
+      .sort((a, b) => a.startTime - b.startTime)
   );
 
   return (
