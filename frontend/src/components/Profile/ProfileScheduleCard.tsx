@@ -4,7 +4,10 @@ import {
   applyIndicatorPercent,
   applyIndicatorGrade,
 } from '../../utils/utils';
-import { ScheduleOverviewFragment } from '../../graphql/graphql';
+import {
+  CourseOverviewFragment,
+  ScheduleOverviewFragment,
+} from '../../graphql/graphql';
 import { ReactComponent as Trash } from '../../assets/svg/profile/trash.svg';
 import { Button } from 'react-bootstrap';
 import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
@@ -18,10 +21,9 @@ type Props = {
 };
 
 const ProfileScheduleCard = ({ schedule, removable }: Props) => {
-  const classes = schedule.selectedSections.edges
+  const courses = schedule.selectedSections.edges
     .map((section) => section?.node?.course)
-    .map((course) => course && `${course.abbreviation} ${course.courseNumber}`)
-    .filter((x): x is string => x !== undefined);
+    .filter((c): c is CourseOverviewFragment => c !== undefined);
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalId, setModalId] = useState<string | null>(null);
@@ -41,7 +43,13 @@ const ProfileScheduleCard = ({ schedule, removable }: Props) => {
             {schedule.totalUnits} units &bull; {semesterToString(schedule)}
           </p>
           <div className="profile-card-info-stats">
-            <span>{classes.join(' • ')}</span>
+            <span>
+              {courses
+                .map(
+                  (course) => `${course.abbreviation} ${course.courseNumber}`
+                )
+                .join(' • ')}
+            </span>
           </div>
         </div>
         {removable && (
