@@ -19,6 +19,7 @@ import {
 } from 'utils/sections/section';
 import { groupSections } from 'utils/sections/sort';
 import { useScheduleContext } from '../ScheduleContext';
+import { combineNodes } from 'utils/string';
 
 const MAX_SECTIONS_BEFORE_SCROLL: number = 8;
 const SCROLL_SECTION_HEIGHT: string = '280px';
@@ -63,9 +64,17 @@ const SectionGroup = ({
 
           const sectionLabel = (
             <span className="section-label">
-              {section.wordDays}, {formatSectionTime(section)},{' '}
-              {formatLocation(section.locationName)},{' '}
-              {formatSectionEnrollment(section)} &bull; CCN: {section.ccn}
+              <strong>{section.sectionNumber}: </strong>
+              {combineNodes(
+                [
+                  section.wordDays,
+                  formatSectionTime(section, false),
+                  formatLocation(section.locationName),
+                  formatSectionEnrollment(section),
+                ],
+                ', '
+              )}{' '}
+              &bull; CCN: {section.ccn}
             </span>
           );
 
@@ -189,8 +198,8 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
           />
         </h4>
         <p className="course-card-description">
-          {section.instructor} &bull; {section.wordDays},{' '}
-          {formatSectionTime(section)}, {formatLocation(section.locationName)}
+          {section.instructor || 'Unknown instructor'} &bull; {section.wordDays}
+          , {formatSectionTime(section)}, {formatLocation(section.locationName)}
         </p>
         <p className="course-card-description">
           {formatSectionEnrollment(section)} &bull; CCN: {section.ccn}

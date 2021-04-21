@@ -1034,7 +1034,7 @@ export type SchedulerCourseFragment = (
 
 export type SectionFragment = (
   { __typename?: 'SectionType' }
-  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled'>
+  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled' | 'sectionNumber'>
 );
 
 export type SectionSelectionFragment = (
@@ -1377,6 +1377,7 @@ export const SectionFragmentDoc = gql`
   days
   wordDays
   disabled
+  sectionNumber
 }
     `;
 export const CourseFragmentDoc = gql`
