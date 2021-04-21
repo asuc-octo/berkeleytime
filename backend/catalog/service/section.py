@@ -1,9 +1,12 @@
 """Section Service."""
+import datetime
 import os
 import sys
 import time
 from collections import defaultdict
 from multiprocessing.pool import ThreadPool
+
+from django.core.cache import cache
 
 from berkeleytime.utils import AtomicInteger, BColors
 from catalog.mapper import section_mapper
@@ -31,10 +34,13 @@ class SectionService:
             'course_number': course_number,
         })
 
-        # Get list of courses for which to update sections
-        courses = Course.objects.all()
+        # Get list of courses for which to update sections, excluding those updated already today
         if abbreviation and course_number:
-            courses = courses.filter(abbreviation=abbreviation, course_number=course_number)
+            courses = Course.objects.filter(abbreviation=abbreviation, course_number=course_number)
+        else:
+            midnight = datetime.datetime.combine(datetime.datetime.now().date(),datetime.time(0))
+            courses = Course.objects.exclude(section__last_updated__gte=midnight).distinct()
+
 
         # Asynchronously perform an update for each course's sections
         i = AtomicInteger()
@@ -62,6 +68,10 @@ class SectionService:
         of sections for a course offered in a single semester.
         """
 
+        if cache_result := cache.get(f'no classes {course.id}'):
+            print(f'no classes found for course {course.id} at {cache_result}')
+            return
+
         # Get response from SIS class resource
         response = sis_class_resource.get(
             semester=semester,
@@ -70,6 +80,11 @@ class SectionService:
             abbreviation=course.abbreviation,
             course_number=course.course_number,
         )
+
+        if len(response) == 0:
+            cache.add(f'no classes {course.id}', datetime.datetime.now(), timeout=7 * 24 * 60 * 60)
+            print(f'no classes found for course {course.id}')
+            return
 
         updated_section_ids = set()
         primary_sect_id_to_sections = defaultdict(list)

@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bt-status-$INGRESS_LABEL
+spec:
+  defaultBackend:
+    service:
+      name: bt-status-$INGRESS_LABEL
+      port:
+        number: 80
+  tls:
+    - hosts:
+        - berkeleytime.com
+        - '*.berkeleytime.com'
+      secretName: bt-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bt-status-$INGRESS_LABEL
+spec:
+  externalName: status.berkeleytime.com
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 443
+  type: ExternalName
