@@ -3,7 +3,6 @@ fragment Schedule on ScheduleType {
   name
   semester
   year
-  totalUnits
   selectedSections {
     edges {
       node {
