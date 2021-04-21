@@ -60,7 +60,7 @@ const CourseSelector = ({
   function addCourse(course: SchedulerCourseType) {
     setSchedule({
       ...schedule,
-      courses: [course, ...schedule.courses],
+      courses: [course, ...schedule.courses.filter((c) => c.id !== course.id)],
     });
   }
 

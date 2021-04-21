@@ -986,7 +986,7 @@ export type LectureFragment = (
 
 export type ScheduleFragment = (
   { __typename?: 'ScheduleType' }
-  & Pick<ScheduleType, 'id' | 'name' | 'semester' | 'year' | 'totalUnits'>
+  & Pick<ScheduleType, 'id' | 'name' | 'semester' | 'year'>
   & { selectedSections: (
     { __typename?: 'SectionSelectionTypeConnection' }
     & { edges: Array<Maybe<(
@@ -1467,7 +1467,6 @@ export const ScheduleFragmentDoc = gql`
   name
   semester
   year
-  totalUnits
   selectedSections {
     edges {
       node {
