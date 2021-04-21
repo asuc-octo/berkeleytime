@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Button, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import CourseSelector from 'components/Scheduler/CourseSelector';
 
 import {
@@ -27,6 +27,7 @@ import { Semester } from 'utils/playlists/semesters';
 import { getNodes } from 'utils/graphql';
 import { debounce } from 'utils/fn';
 import Callout from './Callout';
+import { useUser } from 'graphql/hooks/user';
 
 // This is NOT an interval. Rather it combines all
 // changes within this time interval into one
@@ -168,9 +169,23 @@ const ScheduleEditor = ({
       name: event.target.value,
     });
 
+  const { isLoggedIn, loading: loadingUser } = useUser();
+
   if (isFetchingRemoteSchedule) {
     return <BTLoader />;
   }
+
+  const saveButton = (
+    <Button
+      className="bt-btn-primary px-3"
+      size="sm"
+      onClick={createSchedule}
+      disabled={!isLoggedIn}
+      style={{ pointerEvents: !isLoggedIn ? 'none' : undefined }}
+    >
+      Save
+    </Button>
+  );
 
   return (
     <Row noGutters>
@@ -209,14 +224,21 @@ const ScheduleEditor = ({
               />
             ) : isRemoteSaved ? (
               <span>Schedule saved.</span>
+            ) : isLoggedIn ? (
+              saveButton
             ) : (
-              <Button
-                className="bt-btn-primary"
-                size="sm"
-                onClick={createSchedule}
+              <OverlayTrigger
+                overlay={
+                  <Tooltip id="schedule-save-popover">
+                    {loadingUser
+                      ? 'Loading account...'
+                      : 'You must be logged in to save.'}
+                  </Tooltip>
+                }
+                placement="bottom"
               >
-                Save
-              </Button>
+                <span className="d-inline-block">{saveButton}</span>
+              </OverlayTrigger>
             )}
           </div>
           <div>
