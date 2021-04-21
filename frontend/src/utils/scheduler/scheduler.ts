@@ -58,10 +58,20 @@ export const getCourseForSchedule = (
 export const getColorForSection = (
   schedule: Schedule,
   section: SchedulerSectionType
+): string => getColorForCourse(schedule, section.courseId);
+
+/**
+ * Gets the color for a course within a schedule. You
+ * can pass the course or course id.
+ */
+export const getColorForCourse = (
+  schedule: Schedule,
+  course: CourseOverviewFragment | string
 ): string =>
   COURSE_PALETTE[
-    (schedule.courses.findIndex((c) => c.id === section.courseId) || 0) %
-      COURSE_PALETTE.length
+    (schedule.courses.findIndex((c) =>
+      typeof course === 'string' ? c.id === course : c.id === course.id
+    ) || 0) % COURSE_PALETTE.length
   ];
 
 /**
