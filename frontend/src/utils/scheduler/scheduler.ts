@@ -78,11 +78,16 @@ export const getColorForCourse = (
  * Computes the amount of units in a schedule
  */
 export const getUnitsForSchedule = (schedule: Schedule): Units =>
-  schedule.courses.reduce(
-    (sum, course) =>
-      course.units ? addUnits(sum, parseUnits(course.units)) : sum,
-    ZERO_UNITS
-  );
+  schedule.courses
+    .filter(
+      (course) =>
+        !!schedule.sections.find((section) => section.courseId === course.id)
+    )
+    .reduce(
+      (sum, course) =>
+        course.units ? addUnits(sum, parseUnits(course.units)) : sum,
+      ZERO_UNITS
+    );
 
 /**
  * Removes a course by id
