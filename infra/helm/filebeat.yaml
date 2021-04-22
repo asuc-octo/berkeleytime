@@ -1,15 +1,13 @@
 # Template: https://github.com/elastic/helm-charts/blob/master/filebeat/values.yaml
 daemonset:
   resources:
-    requests: {}
-#       cpu: "100m"
-#       memory: "100Mi"
-    limits: {}
-#       cpu: "100m"
-#       memory: "100Mi"
+    requests:
+      cpu: ~
+      memory: ~
+    limits:
+      cpu: ~
+      memory: ~
 filebeatConfig:
-  # How to Automate Elasticsearch Index Creation
-  # https://cloudhero.io/automate-elasticsearch-index-creation
   filebeat.yml: |
     output:
       logstash:
@@ -26,61 +24,49 @@ filebeatConfig:
         enabled: false
       template:
         enabled: false
-    logging.level: info
+    logging:
+      level: info
     filebeat:
+      # inputs:
+      #   - type: container
+      #     paths:
+      #       - /var/log/containers/*.log
+      #     processors:
+      #       - add_kubernetes_metadata:
+      #           host: ${NODE_NAME}
+      #           matchers:
+      #             - logs_path:
+      #                 logs_path: /var/log/containers/
       autodiscover:
         providers:
           - type: kubernetes
-            node: ${NODE_NAME}
-            hints:
-              enabled: true
-              default_config:
-                type: container
-                paths:
-                  - /var/log/containers/*${data.kubernetes.container.id}.log
-            templates: # https://gist.github.com/jaganthoutam/34c02a5f19c47a49dcea7b85b9b3667a#file-filebeat-with-pipeline-yam
-                - condition: # Exclude pods/namespace listed here
-                    or:
-                      - equals:
-                          kubernetes.namespace: kube-system
-                  config:
-                    - type: container
-                      paths:
-                        - /var/log/containers/*${data.kubernetes.container.id}.log
-                      exclude_files: ['.*$']
-                - condition:
-                    or:
-                      - equals:
-                          kubernetes.namespace: default
-                      - equals:
-                          kubernetes.namespace: ingress-nginx
-                  config:
-                    - type: container
-                      paths:
-                        - /var/log/containers/*${data.kubernetes.container.id}.log
-                      exclude_lines: ['healthcheck'] # this is optional
-                      json:
-                        message_key: message
-                        overwrite_keys: true
-                        keys_under_root: true
-                        add_error_key: false
-                        ignore_decoding_error: true
-                      fields_under_root: true
-                      multiline:
-                        pattern: '^{'
-                        negate: true
-                        match: after
-                      encoding: utf-8
-                      close_inactive: 20m
-      queue.mem:
-        events: 4096
-        flush.min_events: 512
-        flush.timeout: 5s
+            templates:
+              - condition:
+                  or:
+                    - equals:
+                        kubernetes.namespace: default
+                    - equals:
+                        kubernetes.namespace: ingress-nginx
+                config:
+                  - type: container
+                    paths:
+                      - /var/log/containers/*-${data.kubernetes.container.id}.log
+                    processors:
+                      - add_kubernetes_metadata:
+                          host: ${NODE_NAME}
+                          matchers:
+                            - logs_path:
+                                logs_path: /var/log/containers/
+             # https://gist.github.com/jaganthoutam/34c02a5f19c47a49dcea7b85b9b3667a#file-filebeat-with-pipeline-yam
+             # documented at https://www.elastic.co/guide/en/beats/filebeat/master/filebeat-input-container.html
 tolerations:
   - key: node-role.kubernetes.io/master
     operator: Exists
     effect: NoSchedule
-podAnnotations:
-  co.elastic.logs/module: nginx
-  co.elastic.logs/fileset.stdout: access
-  co.elastic.logs/fileset.stderr: error
+extraVolumeMounts: 
+  - name: sysdate
+    mountPath: /etc/localtime
+extraVolumes:  
+  - name: sysdate
+    hostPath:
+      path: /etc/localtime
