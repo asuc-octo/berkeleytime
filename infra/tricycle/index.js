@@ -5,7 +5,6 @@ const tee = async (...args) => {
     encoding: "utf8",
     shell: true,
     stdio: "pipe",
-    signal: null,
   });
   child.stdin.pipe(process.stdin);
   child.stdout.pipe(process.stdout);

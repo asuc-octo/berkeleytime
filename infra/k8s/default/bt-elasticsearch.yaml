@@ -164,7 +164,7 @@ spec:
           #     memory: 4Gi
           env:
             - name: ES_JAVA_OPTS
-              value: -Xms1g -Xmx1g
+              value: -Xms2g -Xmx2g
           #   - name: ELASTICSEARCH_USERNAME
           #     valueFrom:
           #       secretKeyRef:
@@ -197,3 +197,4 @@ data:
     indices:
       lifecycle:
         poll_interval: 1m
+    stack.templates.enabled: false

@@ -1,9 +1,9 @@
 import axios from "axios";
 import express from "express";
 import { readFile } from "fs/promises";
+import { setInterval } from "timers/promises";
 import http from "http";
 import https from "https";
-import interval from "interval-promise";
 import moment from "moment-timezone";
 
 /**
@@ -17,17 +17,40 @@ import moment from "moment-timezone";
  * kubectl get secrets/bt-tls --template='{{index.data "tls.key"}}' | base64 --decode > bt-tls.key
  *
  * to create a DNS A record for status.berkeleytime.com
- * export ADDRESS=34.82.91.206
- * gcloud dns record-sets transaction start --project berkeleytime-218606 --zone berkeleytime
- * gcloud dns record-sets transaction add --project berkeleytime-218606 --zone berkeleytime --name status.berkeleytime.com --ttl 300 --type A $ADDRESS
- * gcloud dns record-sets transaction execute --project berkeleytime-218606 --zone berkeleytime
+ * export ADDRESS=
+ * gcloud dns record-sets delete --zone berkeleytime --type A status.berkeleytime.com
+ * gcloud dns record-sets delete --zone berkeleytime --type A *.status.berkeleytime.com
+ * gcloud dns record-sets create status.berkeleytime.com --type A --ttl 300 --zone berkeleytime --rrdatas 34.82.91.206
+ * gcloud dns record-sets create *.status.berkeleytime.com --type A --ttl 300 --zone berkeleytime --rrdatas 34.82.91.206
  *
  * TODO:
  * pull certificate + key every x amount of days and then restart server
  */
+
+/* redirect status.berkeleytime.com to statuspage.io ************************ */
 const cert = await readFile("bt-tls.cert");
 const key = await readFile("bt-tls.key");
+const app = express();
+app.use((req, res) => {
+  console.log(`${req.ip} redirect to https://berkeleytime.statuspage.io`);
+  res.redirect("https://berkeleytime.statuspage.io");
+});
+http.createServer(app).listen(PORT_EXPRESS_HTTP);
+https
+  .createServer(
+    {
+      key,
+      cert,
+    },
+    app
+  )
+  .listen(PORT_EXPRESS_HTTPS);
+console.log(
+  `Server now listening on port ${PORT_EXPRESS_HTTP} and ${PORT_EXPRESS_HTTPS}`
+);
+/* ************************ redirect status.berkeleytime.com to statuspage.io */
 
+/* update berkeleytime.statuspage.io **************************************** */
 import {
   PORT_EXPRESS_HTTP,
   PORT_EXPRESS_HTTPS,
@@ -39,26 +62,27 @@ import spConfig from "./config.statuspage.json";
 
 axios.defaults.headers["Authorization"] = `OAuth ${spConfig.apiKey}`;
 
-/* update berkeleytime.statuspage.io **************************************** */
-async function updateStatuspage(ping, auth) {
-  const { pageId, metridId } = spConfig;
+const updateStatuspage = async (ping, auth) => {
+  const { pageId } = spConfig;
   const { componentId, metricId } = auth;
   const statusUrl = `https://api.statuspage.io/v1/pages/${pageId}`;
 
   try {
-    let start = Date.now();
+    const start = Date.now();
     await ping();
-    let responseTime = Date.now() - start;
+    const responseTime = Date.now() - start;
 
-    await axios.post(`${statusUrl}/metrics/${metricId}/data.json`, {
-      data: {
-        timestamp: Math.floor(start / 1000),
-        value: responseTime,
-      },
-    });
+    if (metricId) {
+      await axios.post(`${statusUrl}/metrics/${metricId}/data.json`, {
+        data: {
+          timestamp: Math.floor(start / 1000),
+          value: responseTime,
+        },
+      });
+    }
 
     let status;
-    if (responseTime > 2000) {
+    if (metricId && responseTime > 2000) {
       status = STATUS_DEGRADED_PERFORMANCE;
     } else {
       status = STATUS_OPERATIONAL;
@@ -77,59 +101,52 @@ async function updateStatuspage(ping, auth) {
       },
     });
   }
-}
+};
 
-// REST API check
-// await updateStatuspage(async () => {
-//   await axios.get(
-//     `berkeleytime.com/api/catalog/catalog_json/course_box/?course_id=2321`
-//   );
-// }, spConfig.restStatus);
-
-interval(async () => {
-  const { apiStatus, statusInterval, frontendStatus, url } = spConfig;
+for await (const _ of setInterval(spConfig.statusInterval * 1000)) {
+  const {
+    apiStatus,
+    frontendStatus,
+    gitlabStatus,
+    elasticsearchStatus,
+    url,
+  } = spConfig;
+  const niceTime = () =>
+    moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH:mm:ss dddd`);
   await updateStatuspage(async () => {
     await axios.post(`${url}/api/graphql`, {
       query: "query PingQuery{ ping }",
     });
+    console.log(`${niceTime()} successful ping for /api/graphql`);
   }, apiStatus);
-  console.log(
-    `${moment()
-      .tz("America/Los_Angeles")
-      .format()} successful ping for /api/graphql`
-  );
 
   await updateStatuspage(async () => {
     await axios.get(`${url}/landing`);
+    console.log(`${niceTime()} successful ping for /landing`);
   }, frontendStatus);
-  console.log(
-    `${moment()
-      .tz("America/Los_Angeles")
-      .format()} successful ping for /landing`
-  );
-}, spConfig.statusInterval * 100);
-/* **************************************** update berkeleytime.statuspage.io */
 
-/* redirect status.berkeleytime.com to statuspage.io ************************ */
-const app = express();
-const router = express.Router();
-app.use((req, res) => {
-  console.log(
-    `${req.connection.remoteAddress} redirect to https://berkeleytime.statuspage.io`
-  );
-  res.redirect("https://berkeleytime.statuspage.io");
-});
-http.createServer(app).listen(PORT_EXPRESS_HTTP);
-https
-  .createServer(
-    {
-      key,
-      cert,
-    },
-    app
-  )
-  .listen(PORT_EXPRESS_HTTPS);
-console.log(
-  `Server now listening on port ${PORT_EXPRESS_HTTP} and ${PORT_EXPRESS_HTTPS}`
-);
-/* ************************ redirect status.berkeleytime.com to statuspage.io */
+  await updateStatuspage(async () => {
+    if (
+      !(await axios.get(`${url}/git`)).request.res.responseUrl.includes(
+        "sign_in"
+      )
+    ) {
+      throw Error("expected sign-in page");
+    }
+    console.log(`${niceTime()} successful ping for /git`);
+  }, gitlabStatus);
+
+  await updateStatuspage(async () => {
+    try {
+      await axios.get(`${url}/kibana`);
+      throw Error("expected 401 Unauthorized");
+    } catch (err) {
+      if (err.response && err.response.status == 401) {
+        console.log(`${niceTime()} successful ping for /kibana`);
+      } else {
+        throw err;
+      }
+    }
+  }, elasticsearchStatus);
+}
+/* **************************************** update berkeleytime.statuspage.io */
