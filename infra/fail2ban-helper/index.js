@@ -1,8 +1,6 @@
 // Currently only fail2ban on postgres logs. Redis still under consideration
-import { appendFile, readdir, readFile, stat, writeFile } from "fs/promises";
-const sleep = (milliseconds) => {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds));
-};
+import { appendFile, readdir, readFile, stat } from "fs/promises";
+import { setTimeout } from "timers/promises";
 
 const LOGDIR = `/var/log/containers`;
 while (true) {
@@ -40,5 +38,5 @@ while (true) {
     }
   }
   console.log(new Date());
-  await sleep(10000);
+  await setTimeout(10000);
 }

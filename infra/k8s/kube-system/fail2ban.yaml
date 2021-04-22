@@ -2,8 +2,8 @@
 # TCP-level packet inspection. This means that most ban filters require setting
 # up highly specific listeners or parsers for ban criteria
 
-# In the event of an offending action by an external IP address, our course of
-# action is fairly simple: Drop all future packets from IP until the ban expires
+# In the event of an offending action by an IP address, we drop all future 
+# packets from IP until the ban expires
 
 # Test failregex parsing:
 # k -n kube-system exec -it deploy/fail2ban -- fail2ban-regex 'STRING' 'REGEX'
@@ -38,10 +38,11 @@ spec:
     spec:
       containers:
         - command:
-            - /bin/bash
+            - /bin/sh
             - -c
             - |
-              # Persistent bans idea: save and read IPs from cloud storage
+              # TODO: Create scheme for persisted bans (write file, cloud, etc)
+              # and sync it across different Kubernetes nodes
               # if [ -n "$(cat /denylist.txt)" ]; then
               #   gcloud ...
               # fi
@@ -73,22 +74,14 @@ spec:
 
               [manban]
               enabled  = true
-              # if using action = iptables-ipset-proto6-allports[protocol="all"]
-              # => bantime = -1 supported     0.11.2, but separate kernel bug
-              # => bantime = -1 NOT supported 0.11.1
-
-              action   = iptables-ipset-proto4[actname="manban-tcp", name="manban-tcp", protocol="tcp", port="1:65535"]
-                         iptables-ipset-proto4[actname="manban-udp", name="manban-udp", protocol="udp", port="1:65535"]
-                         iptables-ipset-proto4[actname="manban-icmp", name="manban-icmp", protocol="icmp \$(:", port=")"]
+              action = iptables-ipset-proto6-allports[protocol="all"]
               bantime  = -1
               filter   = manban
 
               [psql]
               enabled  = true
               filter   = psql
-              action   = iptables-ipset-proto4[actname="psql-tcp", name="psql-tcp", protocol="tcp", port="1:21,23:65535"]
-                         iptables-ipset-proto4[actname="psql-udp", name="psql-udp", protocol="udp", port="1:21,23:65535"]
-                         iptables-ipset-proto4[actname="psql-icmp", name="psql-icmp", protocol="icmp \$(:", port=")"]
+              action   = iptables-ipset-proto6-allports[protocol="all"]
               findtime = 100 # 100-second rolling search window for logins
               logpath  = /var/log/containers/bt-psql-staging.log
 
@@ -118,27 +111,9 @@ spec:
               value: STDOUT
             - name: F2B_LOG_LEVEL
               value: DEBUG
-            - name: SSMTP_HOST
-              value: smtp.sendgrid.net
-            - name: SSMTP_HOSTNAME
-              value: berkeleytime.com
-            # - name: SSMTP_PASSWORD
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: general-secrets
-            #       key: PASSWORD_BT_GITLAB_SENDGRID_SMTP
-            - name: SSMTP_PORT
-              value: "587"
-            - name: SSMTP_TLS
-              value: "NO"
-            # - name: SSMTP_USER
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: general-secrets
-            #       key: USERNAME_BT_GITLAB_SENDGRID_SMTP
             - name: TZ
               value: America/Los_Angeles
-          image: crazymax/fail2ban:0.11.1
+          image: crazymax/fail2ban:0.10.5
           name: fail2ban
           securityContext:
             capabilities:
@@ -149,31 +124,6 @@ spec:
           volumeMounts:
             - mountPath: /var/log
               name: var-log
-          livenessProbe:
-            exec:
-              command:
-                - /bin/bash
-                - -c
-                - |
-                  # For some reason, as of crazymax/fail2ban:0.11.1 after an
-                  # indeterminate amount of time, two fail2ban-server instances
-                  # appear, causing IP ban failures altogether as the two
-                  # processes compete with each other
-                  # This livenessProbe attempts to remedy that somewhat by
-                  # simply restarting the container when it detects two servers
-                  # This has some security implications as currently, bans do
-                  # not persist across container restarts, meaning that the
-                  # node is vulnerable in between the container restart and
-                  # when the fail2ban container realizes it needs to re-ban the
-                  # offender
-                  # THIS IS A BAND-AID SOLUTION!!!
-                  if [ $(ps auxw | grep fail2ban-server | grep -v grep | wc -l) -ge 2 ];
-                  then
-                    exit 1
-                  fi
-            failureThreshold: 5
-            initialDelaySeconds: 20
-            periodSeconds: 1
       hostNetwork: true
       volumes:
         - name: var-log
