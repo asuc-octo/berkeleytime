@@ -42,7 +42,10 @@ const Scheduler = () => {
   }
 
   function setScheduleId(newScheduleId: string) {
-    history.push(`/scheduler/${newScheduleId}`);
+    // Defer this to the next tick
+    setTimeout(() => {
+      history.push(`/scheduler/${newScheduleId}`);
+    });
   }
 
   const allCourses = getNodes(data.allCourses!);

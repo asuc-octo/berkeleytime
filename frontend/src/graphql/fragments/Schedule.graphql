@@ -1,8 +1,12 @@
 fragment Schedule on ScheduleType {
   id
-  name
-  semester
   year
+  semester
+  name
+  totalUnits
+  dateCreated
+  dateModified
+
   selectedSections {
     edges {
       node {

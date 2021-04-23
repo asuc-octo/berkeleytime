@@ -1,5 +1,7 @@
 mutation DeleteSchedule($id: ID!) {
   removeSchedule(scheduleId: $id) {
-    __typename
+    schedule {
+      id
+    }
   }
 }

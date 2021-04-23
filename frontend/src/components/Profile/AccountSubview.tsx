@@ -25,7 +25,8 @@ type Props = {
 const MAX_PROFILE_CARDS = 6;
 
 const AccountSubview = ({ userProfile }: Props) => {
-  const [removable, setRemovable] = useState<boolean>(false);
+  const [removeCourses, setRemoveCourses] = useState<boolean>(false);
+  const [removeSchedules, setRemoveSchedules] = useState<boolean>(false);
   const [showAllCourses, setShowAllCourses] = useState<boolean>(false);
   const [showAllSchedules, setShowAllSchedules] = useState<boolean>(false);
 
@@ -78,7 +79,7 @@ const AccountSubview = ({ userProfile }: Props) => {
           savedClasses.length > 0 && (
             <button
               className="edit-button"
-              onClick={() => setRemovable((v) => !v)}
+              onClick={() => setRemoveCourses((v) => !v)}
             >
               <img
                 className="edit-pencil"
@@ -96,7 +97,7 @@ const AccountSubview = ({ userProfile }: Props) => {
               : savedClasses.slice(0, MAX_PROFILE_CARDS)
             ).map((course) => (
               <ProfileCourseCard
-                removable={removable}
+                removable={removeCourses}
                 key={course.id}
                 course={course}
               />
@@ -120,7 +121,23 @@ const AccountSubview = ({ userProfile }: Props) => {
         )}
       </Subview>
 
-      <Subview title="Saved Schedules">
+      <Subview
+        title="Saved Schedules"
+        widget={
+          savedClasses.length > 0 && (
+            <button
+              className="edit-button"
+              onClick={() => setRemoveSchedules((v) => !v)}
+            >
+              <img
+                className="edit-pencil"
+                src={EditPencil}
+                alt="Edit Schedules"
+              />
+            </button>
+          )
+        }
+      >
         {savedSchedules.length > 0 ? (
           <div className="profile-card-grid">
             {(showAllSchedules
@@ -128,7 +145,7 @@ const AccountSubview = ({ userProfile }: Props) => {
               : savedSchedules.slice(0, MAX_PROFILE_CARDS)
             ).map((course) => (
               <ProfileScheduleCard
-                removable={removable}
+                removable={removeSchedules}
                 key={course.id}
                 schedule={course}
               />
@@ -136,12 +153,8 @@ const AccountSubview = ({ userProfile }: Props) => {
           </div>
         ) : (
           <div className="bt-light-text">
-            {' '}
-            Click on the bookmark icons in <Link to="/catalog">
-              {' '}
-              Catalog{' '}
-            </Link>{' '}
-            to start saving classes!{' '}
+            Click on the bookmark icons in <Link to="/catalog">Catalog</Link> to
+            start saving classes!
           </div>
         )}
 
