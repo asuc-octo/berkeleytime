@@ -19,7 +19,6 @@ import ProfileCard from './ProfileCard';
 
 type Props = {
   schedule: ScheduleOverviewFragment;
-  removable: boolean;
 };
 
 const ProfileScheduleCard = ({ schedule, removable }: Props) => {
