@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { semesterToString } from 'utils/playlists/semesters';
 import ScheduleModal from 'components/Scheduler/ScheduleModal';
 import { useDeleteSchedule } from 'graphql/hooks/schedule';
+import ProfileCard from './ProfileCard';
 
 type Props = {
   schedule: ScheduleOverviewFragment;
@@ -33,44 +34,20 @@ const ProfileScheduleCard = ({ schedule, removable }: Props) => {
 
   return (
     <>
-      <div
-        className="profile-card"
+      <ProfileCard
         onClick={() => {
           setShowModal(true);
           setModalId(schedule.id);
         }}
-      >
-        <div className="profile-card-info">
-          <h6>{schedule.name}</h6>
-          <p className="profile-card-info-desc">
-            {schedule.totalUnits} units &bull; {semesterToString(schedule)}
-          </p>
-          <div className="profile-card-info-stats">
-            <span>
-              {courses
-                .map(
-                  (course) => `${course.abbreviation} ${course.courseNumber}`
-                )
-                .join(' • ')}
-            </span>
-          </div>
-        </div>
-        {removable && (
-          <Button
-            className="profile-card-remove"
-            variant="link"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              e.nativeEvent.stopImmediatePropagation();
-
-              deleteSchedule(schedule);
-            }}
-          >
-            <Trash />
-          </Button>
-        )}
-      </div>
+        title={schedule.name}
+        subtitle={`${schedule.totalUnits} units \u2022 ${semesterToString(
+          schedule
+        )}`}
+        description={courses
+          .map((course) => `${course.abbreviation} ${course.courseNumber}`)
+          .join(' • ')}
+        didRemove={() => deleteSchedule(schedule)}
+      />
       <ScheduleModal
         scheduleId={modalId}
         show={showModal}

@@ -39,6 +39,9 @@
       font-size: 12px;
       line-height: 1.7;
       color: $bt-light-text;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
 
@@ -53,9 +56,14 @@
   }
 
   .profile-card-remove {
+    display: none;
     position: absolute;
     top: 2px;
     right: 3px;
+  }
+
+  &:hover .profile-card-remove {
+    display: block;
   }
 }
 

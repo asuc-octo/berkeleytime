@@ -9,6 +9,7 @@ import { CourseOverviewFragment } from '../../graphql/graphql';
 import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { Link } from 'react-router-dom';
 import TrashButton from 'components/Common/TrashButton';
+import ProfileCard from './ProfileCard';
 
 type Props = {
   course: CourseOverviewFragment;
@@ -19,40 +20,34 @@ const ProfileCourseCard = ({ course, removable }: Props) => {
   const unsaveCourse = useUnsaveCourse();
 
   return (
-    <Link
-      className="profile-card"
+    <ProfileCard
+      component={Link}
       to={`/catalog/${course.abbreviation}/${course.courseNumber}`}
-    >
-      <div className="profile-card-info">
-        <h6>{`${course.abbreviation} ${course.courseNumber}`}</h6>
-        <p className="profile-card-info-desc">{course.title}</p>
-        <div className="profile-card-info-stats">
-          {course.enrolledPercentage === -1
-            ? null
-            : applyIndicatorPercent(
+      title={`${course.abbreviation} ${course.courseNumber}`}
+      subtitle={course.title}
+      description={
+        <>
+          {course.enrolledPercentage !== -1 && (
+            <span>
+              {applyIndicatorPercent(
                 `${course.enrolled}/${course.enrolledMax} enrolled`,
                 course.enrolledPercentage
               )}
-
-          <span>&nbsp;•&nbsp;{formatUnits(course.units)}</span>
-        </div>
-      </div>
-      {course.letterAverage && (
-        <div className="profile-card-sort profile-card-grade">
-          {applyIndicatorGrade(course.letterAverage, course.letterAverage)}
-        </div>
-      )}
-      {removable && (
-        <TrashButton
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            e.nativeEvent.stopImmediatePropagation();
-            unsaveCourse(course);
-          }}
-        />
-      )}
-    </Link>
+              &nbsp;•&nbsp;
+            </span>
+          )}
+          <span>{formatUnits(course.units)}</span>
+        </>
+      }
+      aside={
+        course.letterAverage && (
+          <div className="profile-card-sort profile-card-grade">
+            {applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+          </div>
+        )
+      }
+      didRemove={() => unsaveCourse(course)}
+    />
   );
 };
 
