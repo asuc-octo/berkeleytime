@@ -24,6 +24,7 @@ const Profile = lazy(() => import('./views/Profile/Profile'));
 const Login = lazy(() => import('./views/Login/Login'));
 const Logout = lazy(() => import('./views/Profile/Logout'));
 const Scheduler = lazy(() => import('./views/Scheduler/Scheduler'));
+const ViewSchedule = lazy(() => import('./views/Scheduler/ViewSchedule'));
 const PrivacyPolicy = lazy(() => import('./views/Policies/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
 const UserTestingForm = lazy(() => import('./views/Forms/UserTestingForm'));
@@ -48,6 +49,7 @@ const routes: Array<RouteProps> = [
   { path: '/logout', component: Logout },
   { path: '/scheduler', component: Scheduler },
   { path: '/scheduler/:scheduleId', component: Scheduler },
+  { path: '/schedule/:scheduleId', component: ViewSchedule },
   // { path: '/apply/positions',   component: Positions       },
   // { path: '/apply/engineering', component: EngineeringApp  },
   // { path: '/apply/design',      component: DesignApp       },
@@ -68,6 +70,7 @@ const Routes: React.FC = () => (
   >
     <Switch>
       <Redirect from="/" to="/landing" exact />
+      <Redirect from="/s/:scheduleId" to="/schedule/:scheduleId" />
       {routes.map((route) => (
         <Route
           key={route.path as string}
