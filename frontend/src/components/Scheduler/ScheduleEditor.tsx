@@ -10,7 +10,6 @@ import CourseSelector from 'components/Scheduler/CourseSelector';
 
 import {
   CourseOverviewFragment,
-  useCreateScheduleMutation,
   useGetScheduleForIdLazyQuery,
   useUpdateScheduleMutation,
 } from '../../graphql/graphql';
@@ -24,10 +23,10 @@ import {
 } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import { Semester } from 'utils/playlists/semesters';
-import { getNodes } from 'utils/graphql';
 import { debounce } from 'utils/fn';
 import Callout from './Callout';
 import { useUser } from 'graphql/hooks/user';
+import { useCreateSchedule } from 'graphql/hooks/schedule';
 
 // This is NOT an interval. Rather it combines all
 // changes within this time interval into one
@@ -98,7 +97,7 @@ const ScheduleEditor = ({
   const [
     createScheduleMutation,
     { error: creationError },
-  ] = useCreateScheduleMutation();
+  ] = useCreateSchedule();
 
   const [
     updateScheduleMutation,
@@ -151,9 +150,7 @@ const ScheduleEditor = ({
     setIsVisualSaving(true);
 
     try {
-      const result = await createScheduleMutation({
-        variables: serializeSchedule(schedule, semester),
-      });
+      const result = await createScheduleMutation(schedule, semester);
 
       if (result.data?.createSchedule?.schedule) {
         setScheduleId(result.data.createSchedule.schedule.id);
