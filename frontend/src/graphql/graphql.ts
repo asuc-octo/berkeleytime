@@ -986,7 +986,7 @@ export type LectureFragment = (
 
 export type ScheduleFragment = (
   { __typename?: 'ScheduleType' }
-  & Pick<ScheduleType, 'id' | 'name' | 'semester' | 'year'>
+  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated' | 'dateModified'>
   & { selectedSections: (
     { __typename?: 'SectionSelectionTypeConnection' }
     & { edges: Array<Maybe<(
@@ -1001,7 +1001,7 @@ export type ScheduleFragment = (
 
 export type ScheduleOverviewFragment = (
   { __typename?: 'ScheduleType' }
-  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated'>
+  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated' | 'dateModified'>
   & { selectedSections: (
     { __typename?: 'SectionSelectionTypeConnection' }
     & { edges: Array<Maybe<(
@@ -1094,7 +1094,7 @@ export type CreateScheduleMutation = (
     { __typename?: 'CreateSchedule' }
     & { schedule?: Maybe<(
       { __typename?: 'ScheduleType' }
-      & Pick<ScheduleType, 'id'>
+      & ScheduleFragment
     )> }
   )> }
 );
@@ -1106,7 +1106,13 @@ export type DeleteScheduleMutationVariables = Exact<{
 
 export type DeleteScheduleMutation = (
   { __typename?: 'Mutation' }
-  & { removeSchedule?: Maybe<{ __typename: 'RemoveSchedule' }> }
+  & { removeSchedule?: Maybe<(
+    { __typename?: 'RemoveSchedule' }
+    & { schedule?: Maybe<(
+      { __typename?: 'ScheduleType' }
+      & Pick<ScheduleType, 'id'>
+    )> }
+  )> }
 );
 
 export type DeleteUserMutationVariables = Exact<{ [key: string]: never; }>;
@@ -1202,7 +1208,7 @@ export type UpdateScheduleMutation = (
     { __typename?: 'UpdateSchedule' }
     & { schedule?: Maybe<(
       { __typename?: 'ScheduleType' }
-      & Pick<ScheduleType, 'dateModified'>
+      & ScheduleFragment
     )> }
   )> }
 );
@@ -1464,9 +1470,12 @@ ${SectionFragmentDoc}`;
 export const ScheduleFragmentDoc = gql`
     fragment Schedule on ScheduleType {
   id
-  name
-  semester
   year
+  semester
+  name
+  totalUnits
+  dateCreated
+  dateModified
   selectedSections {
     edges {
       node {
@@ -1518,6 +1527,7 @@ export const ScheduleOverviewFragmentDoc = gql`
   name
   totalUnits
   dateCreated
+  dateModified
   selectedSections {
     edges {
       node {
@@ -1569,11 +1579,11 @@ export const CreateScheduleDocument = gql`
     year: $year
   ) {
     schedule {
-      id
+      ...Schedule
     }
   }
 }
-    `;
+    ${ScheduleFragmentDoc}`;
 export type CreateScheduleMutationFn = Apollo.MutationFunction<CreateScheduleMutation, CreateScheduleMutationVariables>;
 
 /**
@@ -1606,7 +1616,9 @@ export type CreateScheduleMutationOptions = Apollo.BaseMutationOptions<CreateSch
 export const DeleteScheduleDocument = gql`
     mutation DeleteSchedule($id: ID!) {
   removeSchedule(scheduleId: $id) {
-    __typename
+    schedule {
+      id
+    }
   }
 }
     `;
@@ -1817,11 +1829,11 @@ export const UpdateScheduleDocument = gql`
     timeblocks: $timeblocks
   ) {
     schedule {
-      dateModified
+      ...Schedule
     }
   }
 }
-    `;
+    ${ScheduleFragmentDoc}`;
 export type UpdateScheduleMutationFn = Apollo.MutationFunction<UpdateScheduleMutation, UpdateScheduleMutationVariables>;
 
 /**

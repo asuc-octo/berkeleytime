@@ -11,7 +11,7 @@ mutation UpdateSchedule(
     timeblocks: $timeblocks
   ) {
     schedule {
-      dateModified
+      ...Schedule
     }
   }
 }
