@@ -13,10 +13,9 @@ import ProfileCard from './ProfileCard';
 
 type Props = {
   course: CourseOverviewFragment;
-  removable: boolean;
 };
 
-const ProfileCourseCard = ({ course, removable }: Props) => {
+const ProfileCourseCard = ({ course }: Props) => {
   const unsaveCourse = useUnsaveCourse();
 
   return (
