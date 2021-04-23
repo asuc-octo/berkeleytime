@@ -139,7 +139,8 @@ const ScheduleEditor = ({
     if (scheduleId) {
       // Wait for previous update to finish before queuing next one
       // In effect, this will result in sequential updates being
-      // combined due to saveSchedule being 'debounced'.
+      // combined due to saveSchedule being 'debounced'. This is
+      // also done to avoid data races.
       await currentlyPendingUpdate.current;
       setIsVisualSaving(true);
       saveSchedule(newSchedule, semester, scheduleId);

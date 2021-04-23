@@ -25,8 +25,6 @@ type Props = {
 const MAX_PROFILE_CARDS = 6;
 
 const AccountSubview = ({ userProfile }: Props) => {
-  const [removeCourses, setRemoveCourses] = useState<boolean>(false);
-  const [removeSchedules, setRemoveSchedules] = useState<boolean>(false);
   const [showAllCourses, setShowAllCourses] = useState<boolean>(false);
   const [showAllSchedules, setShowAllSchedules] = useState<boolean>(false);
 
@@ -73,34 +71,14 @@ const AccountSubview = ({ userProfile }: Props) => {
         />
       </Subview>
 
-      <Subview
-        title="Saved Classes"
-        widget={
-          savedClasses.length > 0 && (
-            <button
-              className="edit-button"
-              onClick={() => setRemoveCourses((v) => !v)}
-            >
-              <img
-                className="edit-pencil"
-                src={EditPencil}
-                alt="Edit Classes"
-              />
-            </button>
-          )
-        }
-      >
+      <Subview title="Saved Classes">
         {savedClasses.length > 0 ? (
           <div className="profile-card-grid">
             {(showAllCourses
               ? savedClasses
               : savedClasses.slice(0, MAX_PROFILE_CARDS)
             ).map((course) => (
-              <ProfileCourseCard
-                removable={removeCourses}
-                key={course.id}
-                course={course}
-              />
+              <ProfileCourseCard key={course.id} course={course} />
             ))}
           </div>
         ) : (
@@ -121,34 +99,14 @@ const AccountSubview = ({ userProfile }: Props) => {
         )}
       </Subview>
 
-      <Subview
-        title="Saved Schedules"
-        widget={
-          savedClasses.length > 0 && (
-            <button
-              className="edit-button"
-              onClick={() => setRemoveSchedules((v) => !v)}
-            >
-              <img
-                className="edit-pencil"
-                src={EditPencil}
-                alt="Edit Schedules"
-              />
-            </button>
-          )
-        }
-      >
+      <Subview title="Saved Schedules">
         {savedSchedules.length > 0 ? (
           <div className="profile-card-grid">
             {(showAllSchedules
               ? savedSchedules
               : savedSchedules.slice(0, MAX_PROFILE_CARDS)
             ).map((course) => (
-              <ProfileScheduleCard
-                removable={removeSchedules}
-                key={course.id}
-                schedule={course}
-              />
+              <ProfileScheduleCard key={course.id} schedule={course} />
             ))}
           </div>
         ) : (
@@ -160,7 +118,7 @@ const AccountSubview = ({ userProfile }: Props) => {
 
         {savedSchedules.length > MAX_PROFILE_CARDS && (
           <Button
-            onClick={() => setShowAllCourses((v) => !v)}
+            onClick={() => setShowAllSchedules((v) => !v)}
             variant="link"
             className="profile-see-more px-0"
           >
