@@ -14,6 +14,7 @@ import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { Link } from 'react-router-dom';
 import { semesterToString } from 'utils/playlists/semesters';
 import ScheduleModal from 'components/Scheduler/ScheduleModal';
+import { useDeleteSchedule } from 'graphql/hooks/schedule';
 
 type Props = {
   schedule: ScheduleOverviewFragment;
@@ -27,6 +28,8 @@ const ProfileScheduleCard = ({ schedule, removable }: Props) => {
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalId, setModalId] = useState<string | null>(null);
+
+  const [deleteSchedule] = useDeleteSchedule();
 
   return (
     <>
@@ -60,8 +63,8 @@ const ProfileScheduleCard = ({ schedule, removable }: Props) => {
               e.preventDefault();
               e.stopPropagation();
               e.nativeEvent.stopImmediatePropagation();
-              // TODO: unsave schedule
-              // unsaveCourse(course);
+
+              deleteSchedule(schedule);
             }}
           >
             <Trash />
