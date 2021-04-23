@@ -69,9 +69,11 @@ export const getColorForCourse = (
   course: CourseOverviewFragment | string
 ): string =>
   COURSE_PALETTE[
-    (schedule.courses.findIndex((c) =>
-      typeof course === 'string' ? c.id === course : c.id === course.id
-    ) || 0) % COURSE_PALETTE.length
+    (schedule.courses.length -
+      (schedule.courses.findIndex((c) =>
+        typeof course === 'string' ? c.id === course : c.id === course.id
+      ) || 0)) %
+      COURSE_PALETTE.length
   ];
 
 /**
