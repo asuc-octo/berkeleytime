@@ -27,6 +27,8 @@ import { debounce } from 'utils/fn';
 import Callout from './Callout';
 import { useUser } from 'graphql/hooks/user';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
+import AccessControl from './AccessControl';
+import { AccessStatus } from 'utils/scheduler/accessStatus';
 
 // This is NOT an interval. Rather it combines all
 // changes within this time interval into one
@@ -167,6 +169,12 @@ const ScheduleEditor = ({
       name: event.target.value,
     });
 
+  const setScheduleVisibility = (newAccess: AccessStatus) =>
+    setSchedule({
+      ...schedule,
+      access: newAccess,
+    });
+
   const { isLoggedIn, loading: loadingUser } = useUser();
 
   if (isFetchingRemoteSchedule) {
@@ -240,7 +248,14 @@ const ScheduleEditor = ({
             )}
           </div>
           <div>
-            <Button className="bt-btn-inverted" size="sm">
+            {isRemoteSaved && false && (
+              <AccessControl
+                visibility={schedule.access}
+                setVisibility={setScheduleVisibility}
+                scheduleId={scheduleId!}
+              />
+            )}
+            <Button className="bt-btn-inverted ml-3" size="sm">
               Export to Google Calendar
             </Button>
           </div>

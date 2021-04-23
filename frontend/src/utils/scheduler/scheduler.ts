@@ -11,6 +11,7 @@ import { addUnits, parseUnits, Units, ZERO_UNITS } from 'utils/courses/units';
 import { Semester } from 'utils/playlists/semesters';
 import { getNodes } from '../graphql';
 import { COURSE_PALETTE } from 'utils/courses/course';
+import { AccessStatus } from './accessStatus';
 
 export type SchedulerCourseType = CourseOverviewFragment;
 export type SchedulerSectionType = SectionFragment & {
@@ -29,6 +30,7 @@ export type SchedulerSectionType = SectionFragment & {
 
 export type Schedule = {
   name: string;
+  access: AccessStatus;
   courses: SchedulerCourseType[];
   sections: SchedulerSectionType[];
 };
@@ -37,6 +39,7 @@ export type BackendSchedule = CreateScheduleMutationVariables;
 
 export const DEFAULT_SCHEDULE: Schedule = {
   name: 'My Schedule',
+  access: 'private',
   courses: [],
   sections: [],
 };
@@ -128,6 +131,7 @@ export const hasSectionById = (schedule: Schedule, id: string): boolean =>
  */
 export const deserializeSchedule = (schedule: ScheduleFragment): Schedule => ({
   name: schedule.name,
+  access: 'private',
   courses: getNodes(schedule.selectedSections).map((section) => section.course),
   sections: getNodes(schedule.selectedSections)
     .flatMap((section) =>
