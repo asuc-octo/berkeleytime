@@ -60,7 +60,9 @@ class PublicScheduleType(DjangoObjectType):
             'semester',
             'date_created',
             'date_modified',
-            'total_units'
+            'total_units',
+            'selected_sections',
+            'timeblocks'
         )
 
 
@@ -308,11 +310,13 @@ class Query(graphene.ObjectType):
     schedule = graphene.Field(PublicScheduleType, id=graphene.ID())
 
     def resolve_schedules(self, info):
+        """ Query all schedules from the user """
         if info.context.user.is_authenticated:
             return info.context.user.berkeleytimeuser.schedules.all()
         return None
 
     def resolve_schedule(self, info, id):
+        """ Query a single schedule based on id """
         try:
             schedule = Schedule.objects.get(pk=from_global_id(id)[1])
 
