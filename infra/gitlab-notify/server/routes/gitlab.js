@@ -9,6 +9,7 @@ const {
   USERNAME_BT_GITLAB_SENDGRID_SMTP,
   GITLAB_DOMAIN,
   GITLAB_PROJECT_BT_ACCESS_TOKEN,
+  SLACK_WEBHOOK_URL,
 } = process.env;
 
 const quoteCache = {};
@@ -28,10 +29,7 @@ await transporter.verify();
 router.post("/fail", async (req, res) => {
   const {
     // Pipeline event payload https://docs.gitlab.com/ee/user/project/integrations/webhooks.html
-    object_kind,
     object_attributes,
-    merge_request,
-    user,
     project,
     commit,
     builds,
@@ -122,7 +120,6 @@ router.post("/prod", async (req, res) => {
     status,
   } = req.body;
   console.log(req.body);
-  const slackWebhook = `https://hooks.slack.com/services/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`; // #berkeleytime
   const icon_url = "https://i.imgur.com/5TI5N3Q.png";
   if (environment != "prod") {
     return res.sendStatus(200);
@@ -138,19 +135,19 @@ router.post("/prod", async (req, res) => {
     )
   ).data;
   if (status == "running") {
-    await axios.post(slackWebhook, {
+    await axios.post(SLACK_WEBHOOK_URL, {
       username: "Oski",
       text: `We're deploying commit ${short_sha} to production, OMG ${author_name.toUpperCase()} I'M SO STRESSED, FINGERS CROSSED!!!🤞`,
       icon_url,
     });
   } else if (status == "success") {
-    await axios.post(slackWebhook, {
+    await axios.post(SLACK_WEBHOOK_URL, {
       username: "Oski",
       text: `It worked ${author_name}! WE DEPLOYED COMMIT ${short_sha} TO PROD! GO BEARS🐻🎉\n...actually let's manually double check, just to be safe`,
       icon_url,
     });
   } else if (status == "failed") {
-    await axios.post(slackWebhook, {
+    await axios.post(SLACK_WEBHOOK_URL, {
       username: "Oski",
       text: `😭Sorry ${author_name}, we did our best to deploy ${short_sha} to prod, but we fucked up and now Stanford🌲 gets 1 more Big Game win`,
       icon_url,
