@@ -1,3 +1,4 @@
+from django.db.models import fields
 import graphene
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
@@ -10,7 +11,12 @@ from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
 # Django models
 from scheduler.models import Schedule, TimeBlock, SectionSelection
 from catalog.models import Course, Section
+from user.models import BerkeleytimeUser
 
+
+# =======================
+#     Graphene Types
+# =======================
 
 class TimeBlockType(DjangoObjectType):
     class Meta:
@@ -30,6 +36,38 @@ class ScheduleType(DjangoObjectType):
         interfaces = (graphene.Node, )
 
 
+class PublicBerkeleytimeUser(DjangoObjectType):
+    """ Type for berkeleytime user model with restricted fields.
+    Prevents accessing saved classes / other settings. """
+    class Meta:
+        model = BerkeleytimeUser
+        fields = ('id', 'user', 'major')
+
+
+class PublicScheduleType(DjangoObjectType):
+    """ Type for public schedules. Only shows allowed fields
+    and uses PublicBerkeleytimeUser to restrict user data. """
+
+    user = graphene.Field(PublicBerkeleytimeUser)
+    class Meta:
+        model = Schedule
+        interfaces = (graphene.Node, )
+        fields = (
+            'id',
+            'user',
+            'name',
+            'year',
+            'semester',
+            'date_created',
+            'date_modified',
+            'total_units'
+        )
+
+
+# =======================
+#     Graphene Inputs
+# =======================
+
 class SectionSelectionInput(graphene.InputObjectType):
     course = graphene.ID(required=True)
     primary = graphene.ID(required=False)
@@ -42,6 +80,10 @@ class TimeBlockInput(graphene.InputObjectType):
     end_time = graphene.Time(required=True)
     days = graphene.String(required=True)
 
+
+# =======================
+#       Mutataions
+# =======================
 
 def set_selected_sections(schedule, selected_sections):
     """
@@ -257,9 +299,13 @@ class RemoveSchedule(graphene.Mutation):
         return RemoveSchedule(schedule)
 
 
+# =======================
+#        Graphene
+# =======================
+
 class Query(graphene.ObjectType):
     schedules = graphene.List(ScheduleType)
-    schedule = graphene.Field(ScheduleType, id=graphene.ID())
+    schedule = graphene.Field(PublicScheduleType, id=graphene.ID())
 
     def resolve_schedules(self, info):
         if info.context.user.is_authenticated:
@@ -269,8 +315,14 @@ class Query(graphene.ObjectType):
     def resolve_schedule(self, info, id):
         try:
             schedule = Schedule.objects.get(pk=from_global_id(id)[1])
+
             # ensure that schedule belongs to the current user
-            if info.context.user.berkeleytimeuser != schedule.user:
+            is_owner = False
+            if info.context.user.is_authenticated:
+                is_owner = info.context.user.berkeleytimeuser == schedule.user
+            
+            # don't show private schedules to non-owner
+            if not is_owner and not schedule.public:
                 return GraphQLError('No permission')
             return schedule
         except Schedule.DoesNotExist:
