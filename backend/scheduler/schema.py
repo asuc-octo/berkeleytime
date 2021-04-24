@@ -95,13 +95,14 @@ class CreateSchedule(graphene.Mutation):
         selected_sections = graphene.List(SectionSelectionInput, required=False)
         timeblocks = graphene.List(TimeBlockInput, required=False)
         total_units = graphene.String(required=False)
+        public = graphene.Boolean(required=False, default_value=False)
 
     # output
     schedule = graphene.Field(ScheduleType)
 
     @login_required
     def mutate(self, info, name=None, year=CURRENT_YEAR, semester=CURRENT_SEMESTER,
-        selected_sections=None, timeblocks=None, total_units=None):
+        selected_sections=None, timeblocks=None, total_units=None, public=False):
         user = info.context.user.berkeleytimeuser
 
         # fill in with default values
@@ -114,7 +115,8 @@ class CreateSchedule(graphene.Mutation):
             user = user,
             name = name,
             year = year,
-            semester = semester
+            semester = semester,
+            public = public
         )
 
         # update units
@@ -159,12 +161,13 @@ class UpdateSchedule(graphene.Mutation):
         selected_sections = graphene.List(SectionSelectionInput, required=False)
         timeblocks = graphene.List(TimeBlockInput, required=False)
         total_units = graphene.String(required=False)
+        public = graphene.Boolean(required=False)
 
     schedule = graphene.Field(ScheduleType)
 
     @login_required
     def mutate(self, info, schedule_id, name=None, selected_sections=None,
-        timeblocks=None, total_units=None):
+        timeblocks=None, total_units=None, public=None):
         schedule = None
         try:
             schedule = Schedule.objects.get(pk=from_global_id(schedule_id)[1])
@@ -178,6 +181,10 @@ class UpdateSchedule(graphene.Mutation):
         # update name
         if name:
             schedule.name = name
+
+        # update public
+        if public is not None:
+            schedule.public = public
 
         # update units
         if total_units and len(total_units) <= 16:

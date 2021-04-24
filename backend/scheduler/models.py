@@ -21,6 +21,8 @@ class Schedule(models.Model):
 
     total_units = models.CharField(max_length=16, default='0')
 
+    public = models.BooleanField(default=False)
+
     # foreign keys: schedule.timeblocks, schedule.selected_sections
 
 
