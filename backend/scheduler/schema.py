@@ -1,4 +1,3 @@
-from django.db.models import fields
 import graphene
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
@@ -11,7 +10,6 @@ from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
 # Django models
 from scheduler.models import Schedule, TimeBlock, SectionSelection
 from catalog.models import Course, Section
-from user.models import BerkeleytimeUser
 
 
 # =======================
