@@ -13,7 +13,7 @@ interface Props extends PropsFromRedux {}
 const Banner: FC<Props> = (props) => {
   const location = useLocation();
   const history = useHistory();
-  const text = <p> ✨ We are co-hosting an <a className="link" onClick={() => redirect('workshop-facebook')}><b>Enrollment & Course Planning Workshop</b></a>. Join and get early access to our new Course Scheduler feature. ✨</p>;
+  const text = <p> ✨ We are co-hosting an <a className="link" onClick={() => redirect('workshop-facebook')}><b>Enrollment & Course Planning Workshop</b></a> this <b>Sunday 04/25, 4-5PM PST.</b> ✨</p>;
 
   function redirect(site: string) {
     history.push("/redirect?site=" + site)
