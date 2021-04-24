@@ -248,7 +248,7 @@ const ScheduleEditor = ({
             )}
           </div>
           <div>
-            {isRemoteSaved && false && (
+            {isRemoteSaved && (
               <AccessControl
                 visibility={schedule.access}
                 setVisibility={setScheduleVisibility}
