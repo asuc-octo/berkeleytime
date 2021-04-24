@@ -42,6 +42,8 @@ spec:
           envFrom:
             - secretRef:
                 name: general-secrets
+            - secretRef:
+                name: slack-webhooks
           image: gcr.io/berkeleytime-218606/gitlab-notify:latest
           imagePullPolicy: Always
           name: bt-gitlab-notify

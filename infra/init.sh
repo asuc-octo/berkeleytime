@@ -80,7 +80,7 @@ helm repo update
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Helm <
 
 # > Nightly Backup >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-curl -sL https://deb.nodesource.com/setup_14.x | bash -
+curl https://deb.nodesource.com/setup_16.x | bash -
 apt install -y nodejs
 crontab -l | { cat; echo "0 4 * * * /usr/bin/npm --prefix /berkeleytime/infra/backup install && /bin/node /berkeleytime/infra/backup"; } | crontab -
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Nightly Backup <
@@ -107,7 +107,7 @@ helm -n istio install istio-base istio/manifests/charts/base -f /berkeleytime/in
 helm -n istio install istiod istio/manifests/charts/istio-control/istio-discovery -f /berkeleytime/infra/helm/istiod.yaml
 kubectl patch mutatingwebhookconfigurations istio-sidecar-injector-istio --type json -p '[{"op": "remove", "path": "/webhooks/0/namespaceSelector" }]' # Make sidecar injection an opt-in for pods
 kubectl apply -f /berkeleytime/infra/k8s/istio/istio.yaml
-helm -n kube-system install metrics-server bitnami/metrics-server --version 5.3.2 -f /berkeleytime/infra/helm/metrics-server.yaml
+helm -n kube-system install metrics-server bitnami/metrics-server --version 5.8.4 -f /berkeleytime/infra/helm/metrics-server.yaml
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Cluster networking <
 
 # > Import secrets >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -146,9 +146,16 @@ helm install bt-logstash elastic/logstash --version 7.12.0 -f /berkeleytime/infr
 helm install bt-kibana elastic/kibana --version 7.12.0 -f /berkeleytime/infra/helm/kibana.yaml
 helm install bt-filebeat elastic/filebeat --version 7.12.0 -f /berkeleytime/infra/helm/filebeat.yaml
 helm install bt-metricbeat elastic/metricbeat --version 7.12.0 -f /berkeleytime/infra/helm/metricbeat.yaml # As of 2021-04-01, still waiting for a fix first noticed in Version 7.10.2: "error getting group status: open /proc/<PID>/cgroup: no such file or directory"
-helm install bt-elastalert codesim/elastalert --version 1.9.0 -f /berkeleytime/infra/helm/elastalert.yaml
 helm install bt-curator stable/elasticsearch-curator -f /berkeleytime/infra/helm/curator.yaml
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Elasticsearch <
+
+# > Slack Webhook >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+export $(gsutil cp gs://berkeleytime-218606/secrets/slack-url-incoming-webhook.env -)
+gsutil cp gs://berkeleytime-218606/secrets/slack-url-incoming-webhook.env - | kubectl create secret generic slack-webhooks --from-env-file /dev/stdin
+envsubst < /berkeleytime/infra/helm/elastalert.yaml | helm install bt-elastalert codesim/elastalert --version 1.9.0 -f -
+gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-notify --tag gcr.io/berkeleytime-218606/gitlab-notify:latest
+kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab-notify.yaml
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Slack Webhook <
 
 # > GitLab >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # Cannot deploy BT app manually unless have extracted bt-*-prod YAML manifests
@@ -156,12 +163,10 @@ helm install bt-curator stable/elasticsearch-curator -f /berkeleytime/infra/helm
 gcloud auth configure-docker -q
 gcloud config set builds/use_kaniko True # use_kaniko allows for easy-peasy simple caching logic by Google during `gcloud builds submit`
 gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-runner --tag gcr.io/berkeleytime-218606/gitlab-runner:latest
-gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/gitlab-notify --tag gcr.io/berkeleytime-218606/gitlab-notify:latest
-gcloud builds submit --prwoject berkeleytime-218606 /berkeleytime/infra/github-notify --tag gcr.io/berkeleytime-218606/github-notify:latest
+gcloud builds submit --project berkeleytime-218606 /berkeleytime/infra/github-notify --tag gcr.io/berkeleytime-218606/github-notify:latest
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab.yaml
-kubectl apply -f /berkeleytime/infra/k8s/default/bt-gitlab-notify.yaml
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-github-notify.yaml
-helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/gitlab-runner.yaml --version 0.27.0
+helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/gitlab-runner.yaml --version 0.28.0
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< GitLab <
 
 export INGRESS_LABEL=primary;
@@ -179,7 +184,7 @@ do
   gsutil cp gs://berkeleytime-218606/secrets/bt-redis-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-redis-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
   gsutil cp gs://berkeleytime-218606/secrets/bt-mdb-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-mdb-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
   envsubst < /berkeleytime/infra/k8s/default/bt-psql.yaml | kubectl apply -f -
-  envsubst < /berkeleytime/infra/helm/redis.yaml | helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis --version 12.1.1 -f -
+  envsubst < /berkeleytime/infra/helm/redis.yaml | helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis --version 13.0.1 -f -
   envsubst '$CI_ENVIRONMENT_NAME $CA_CERT $CA_KEY' < /berkeleytime/infra/helm/mongodb.yaml | helm install bt-mdb-$CI_ENVIRONMENT_NAME bitnami/mongodb --version 10.12.0 -f -
   if [ $CI_ENVIRONMENT_NAME == "staging" ]; then
     # Expose staging services to the external internet and use istio-proxy sidecars to handle HAProxy Protocol, which preserves client source IPs via annotation TPROXY

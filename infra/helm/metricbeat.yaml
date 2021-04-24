@@ -1,12 +1,3 @@
-# https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-reference-yml.html
-# https://github.com/elastic/helm-charts/blob/7.9/metricbeat/values.yaml
-
-# Infamous bug: 2020-11-27T10:07:38.176Z ERROR instance/metrics.go:285 error getting group status: open /proc/450037/cgroup: no such file or directory
-# Addressed by:
-# Refactor use of system.hostfs to fix cgroup metrics #24334
-# https://github.com/elastic/beats/pull/24334
-# Monitoring: allow specifying /proc or hostfs path. #23267
-# https://github.com/elastic/beats/issues/23267
 image: docker.elastic.co/beats/metricbeat
 imageTag: 7.13.0-SNAPSHOT
 replicas: 1
@@ -15,16 +6,6 @@ daemonset:
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
       value: http://bt-elasticsearch:9200
-    # - name: ELASTICSEARCH_USERNAME
-    #   valueFrom:
-    #     secretKeyRef:
-    #       name: general-secrets
-    #       key: USERNAME_ELASTICSEARCH_USER_ELASTIC
-    # - name: ELASTICSEARCH_PASSWORD
-    #   valueFrom:
-    #     secretKeyRef:
-    #       name: general-secrets
-    #       key: PASSWORD_ELASTICSEARCH_USER_ELASTIC
   metricbeatConfig:
     metricbeat.yml: |
       output:
@@ -33,6 +14,7 @@ daemonset:
           index: metricbeat-%{[agent.version]}
           # username: '${ELASTICSEARCH_USERNAME}'
           # password: '${ELASTICSEARCH_PASSWORD}'
+          index: metricbeat
       hosts:
         - ${ELASTICSEARCH_HOSTS}
       setup:
@@ -66,10 +48,86 @@ daemonset:
         hosts:
           - https://berkeleytime.com:10250
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-        ssl.verification_mode: none
+        ssl:
+          verification_mode: none
         processors:
           - add_kubernetes_metadata:
               in_cluster: true
+
+      - module: kubernetes
+        enabled: true
+        hosts:
+          - bt-metricbeat-kube-state-metrics:8080
+        metricsets:
+          - state_node
+          - state_deployment
+          - state_replicaset
+          - state_pod
+          - state_container
+          - state_persistentvolume
+          - state_persistentvolumeclaim
+        add_metadata: true
+
+      - module: system
+        enabled: true
+        metricsets:
+          - core
+          - cpu
+          - diskio
+          - load
+          - memory
+          - network
+          - process
+          - process_summary
+          - socket
+          - socket_summary
+          - uptime
+        processes: ['.*']
+        process.include_top_n:
+          by_cpu: 10
+          by_memory: 10
+        system.hostfs: /hostfs
+
+      - module: system
+        enabled: true
+        period: 1m
+        metricsets:
+          - filesystem
+          - fsstat
+        processors:
+        - drop_event.when.regexp:
+            system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
+
+      - module: docker
+        enabled: true
+        metricsets:
+          - container
+          - cpu
+          - diskio
+          - event
+          - healthcheck
+          - image
+          - info
+          - memory
+          - network
+        hosts:
+          - unix:///var/run/docker.sock
+        period: 10s
+        system.hostfs: /hostfs
+
+      - module: elasticsearch
+        enabled: true
+        metricsets:
+          - node
+          - node_stats
+          - index
+          - index_recovery
+          - shard
+          - ml_job
+        hosts:
+          - http://bt-elasticsearch:9200
+        period: 10s
+        system.hostfs: /hostfs
 
       # - module: kubernetes
       #   enabled: true
@@ -100,88 +158,7 @@ daemonset:
       #     - /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
       #   period: 10s
 
-      - module: kubernetes
-        enabled: true
-        hosts:
-          - bt-metricbeat-kube-state-metrics:8080
-        metricsets:
-          - state_node
-          - state_deployment
-          - state_replicaset
-          - state_pod
-          - state_container
-          - state_persistentvolume
-          - state_persistentvolumeclaim
-        add_metadata: true
-
-
-
-      - module: docker
-        enabled: true
-        metricsets:
-          - container
-          - cpu
-          - diskio
-          - event
-          - healthcheck
-          - image
-          - info
-          - memory
-          - network
-        hosts:
-          - unix:///var/run/docker.sock
-        period: 10s
-        system.hostfs: /hostfs
-
-
-
-      - module: elasticsearch
-        enabled: true
-        metricsets:
-          - node
-          - node_stats
-          - index
-          - index_recovery
-          - shard
-          - ml_job
-        hosts:
-          - http://bt-elasticsearch:9200
-        period: 10s
-        system.hostfs: /hostfs
-
-
-
-      - module: system
-        enabled: true
-        metricsets:
-          - core
-          - cpu
-          - diskio
-          - load
-          - memory
-          - network
-          - process
-          - process_summary
-          - socket
-          - socket_summary
-          - uptime
-        processes: ['.*']
-        process.include_top_n:
-          by_cpu: 10
-          by_memory: 10
-        system.hostfs: /hostfs
-
-      # - module: system
-      #   enabled: true
-      #   period: 1m
-      #   metricsets:
-      #     - filesystem
-      #     - fsstat
-      #   processors:
-      #   - drop_event.when.regexp:
-      #       system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
-
-
+      # TODO: separate out USER and PASSWORD for postgres and mongodb to secret
 
       # - module: postgresql # run 'CREATE extension pg_stat_statements;' in psql
       #   enabled: true
@@ -193,8 +170,6 @@ daemonset:
       #     - activity # Stats about every PostgreSQL process
       #     - statement # Stats for statement executions, needs pg_stat_statements
       #   period: 10s
-
-      # TODO: separate out USER and PASSWORD for postgres and mongodb to secret
 
       # - module: mongodb
       #   enabled: true
@@ -213,7 +188,7 @@ livenessProbe:
   exec:
     command:
       - sh
-      - -c
+      - '-c'
       - |
         #!/usr/bin/env bash -e
         curl --fail 127.0.0.1:5066
@@ -222,25 +197,39 @@ livenessProbe:
   periodSeconds: 10
   timeoutSeconds: 5
 clusterRoleRules:
-  - apiGroups: [""]
+  - apiGroups:
+      - ''
     resources:
       - nodes
       - namespaces
       - events
       - pods
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["extensions"]
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
     resources:
       - replicasets
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["apps"]
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
     resources:
       - statefulsets
       - deployments
       - replicasets
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ''
     resources:
       - nodes/stats
-      - nodes/metrics # Error fetching data for metricset kubernetes.apiserver
-    verbs: ["get"]
+      - nodes/metrics
+    verbs:
+      - get
