@@ -36,36 +36,6 @@ class ScheduleType(DjangoObjectType):
         interfaces = (graphene.Node, )
 
 
-class PublicBerkeleytimeUser(DjangoObjectType):
-    """ Type for berkeleytime user model with restricted fields.
-    Prevents accessing saved classes / other settings. """
-    class Meta:
-        model = BerkeleytimeUser
-        fields = ('id', 'user', 'major')
-
-
-class PublicScheduleType(DjangoObjectType):
-    """ Type for public schedules. Only shows allowed fields
-    and uses PublicBerkeleytimeUser to restrict user data. """
-
-    user = graphene.Field(PublicBerkeleytimeUser)
-    class Meta:
-        model = Schedule
-        interfaces = (graphene.Node, )
-        fields = (
-            'id',
-            'user',
-            'name',
-            'year',
-            'semester',
-            'date_created',
-            'date_modified',
-            'total_units',
-            'selected_sections',
-            'timeblocks'
-        )
-
-
 # =======================
 #     Graphene Inputs
 # =======================
@@ -307,7 +277,7 @@ class RemoveSchedule(graphene.Mutation):
 
 class Query(graphene.ObjectType):
     schedules = graphene.List(ScheduleType)
-    schedule = graphene.Field(PublicScheduleType, id=graphene.ID())
+    schedule = graphene.Field(ScheduleType, id=graphene.ID())
 
     def resolve_schedules(self, info):
         """ Query all schedules from the user """
