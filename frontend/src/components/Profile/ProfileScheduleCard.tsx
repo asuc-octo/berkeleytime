@@ -21,7 +21,7 @@ type Props = {
   schedule: ScheduleOverviewFragment;
 };
 
-const ProfileScheduleCard = ({ schedule, removable }: Props) => {
+const ProfileScheduleCard = ({ schedule }: Props) => {
   const courses = schedule.selectedSections.edges
     .map((section) => section?.node?.course)
     .filter((c): c is CourseOverviewFragment => c !== undefined);
