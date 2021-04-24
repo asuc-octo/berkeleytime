@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.db.models.deletion import CASCADE
 from catalog.models import Course, Section
@@ -6,6 +7,7 @@ from user.models import BerkeleytimeUser
 
 class Schedule(models.Model):
     # meta
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
         BerkeleytimeUser,
         on_delete=CASCADE,
@@ -17,8 +19,9 @@ class Schedule(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
-    total_units = models.PositiveSmallIntegerField(default=0)
-    # [0, 32767], but don't think anyone is going to have more than 32767 units lol
+    total_units = models.CharField(max_length=16, default='0')
+
+    public = models.BooleanField(default=False)
 
     # foreign keys: schedule.timeblocks, schedule.selected_sections
 

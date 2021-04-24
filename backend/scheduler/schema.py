@@ -1,3 +1,4 @@
+from django.db.models import fields
 import graphene
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
@@ -10,7 +11,12 @@ from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
 # Django models
 from scheduler.models import Schedule, TimeBlock, SectionSelection
 from catalog.models import Course, Section
+from user.models import BerkeleytimeUser
 
+
+# =======================
+#     Graphene Types
+# =======================
 
 class TimeBlockType(DjangoObjectType):
     class Meta:
@@ -30,6 +36,38 @@ class ScheduleType(DjangoObjectType):
         interfaces = (graphene.Node, )
 
 
+class PublicBerkeleytimeUser(DjangoObjectType):
+    """ Type for berkeleytime user model with restricted fields.
+    Prevents accessing saved classes / other settings. """
+    class Meta:
+        model = BerkeleytimeUser
+        fields = ('id', 'user', 'major')
+
+
+class PublicScheduleType(DjangoObjectType):
+    """ Type for public schedules. Only shows allowed fields
+    and uses PublicBerkeleytimeUser to restrict user data. """
+
+    user = graphene.Field(PublicBerkeleytimeUser)
+    class Meta:
+        model = Schedule
+        interfaces = (graphene.Node, )
+        fields = (
+            'id',
+            'user',
+            'name',
+            'year',
+            'semester',
+            'date_created',
+            'date_modified',
+            'total_units'
+        )
+
+
+# =======================
+#     Graphene Inputs
+# =======================
+
 class SectionSelectionInput(graphene.InputObjectType):
     course = graphene.ID(required=True)
     primary = graphene.ID(required=False)
@@ -43,31 +81,20 @@ class TimeBlockInput(graphene.InputObjectType):
     days = graphene.String(required=True)
 
 
-def forceInt(value):
-    """
-    Returns integer casted from string value
-    Also forces float strings into ints since some units are formatted as 3.0
-    """
-    try:
-        return int(value)
-    except ValueError:
-        return int(float(value))
-
+# =======================
+#       Mutataions
+# =======================
 
 def set_selected_sections(schedule, selected_sections):
     """
     Update schedule.selected_sections with selected_sections. Selections not in
-    selected_sections will be removed. Returns the total unit count.
+    selected_sections will be removed.
 
     Args:
         schedule: scheduler.Schedule object
         selected_sections: List of SectionSelectionInput from mutation
-
-    Returns:
-        Total unit count (Integer)
     """
     old_selections = set(schedule.selected_sections.all())
-    units = 0
     for selection_input in selected_sections:
         # get course
         course = Course.objects.get(pk=from_global_id(selection_input.course)[1])
@@ -76,7 +103,6 @@ def set_selected_sections(schedule, selected_sections):
             schedule = schedule,
             course = course
         )
-        units += forceInt(course.units)
 
         # get primary
         if selection_input.primary:
@@ -102,8 +128,6 @@ def set_selected_sections(schedule, selected_sections):
     for selection in old_selections:
         selection.delete()
 
-    return units
-
 
 class CreateSchedule(graphene.Mutation):
     class Arguments:
@@ -112,13 +136,15 @@ class CreateSchedule(graphene.Mutation):
         semester = graphene.String(required=False)
         selected_sections = graphene.List(SectionSelectionInput, required=False)
         timeblocks = graphene.List(TimeBlockInput, required=False)
+        total_units = graphene.String(required=False)
+        public = graphene.Boolean(required=False, default_value=False)
 
     # output
     schedule = graphene.Field(ScheduleType)
 
     @login_required
     def mutate(self, info, name=None, year=CURRENT_YEAR, semester=CURRENT_SEMESTER,
-    selected_sections=None, timeblocks=None):
+        selected_sections=None, timeblocks=None, total_units=None, public=False):
         user = info.context.user.berkeleytimeuser
 
         # fill in with default values
@@ -131,17 +157,20 @@ class CreateSchedule(graphene.Mutation):
             user = user,
             name = name,
             year = year,
-            semester = semester
+            semester = semester,
+            public = public
         )
+
+        # update units
+        if total_units and len(total_units) <= 16:
+            schedule.total_units = total_units
 
         # update sections
         if selected_sections is not None:
             # use is not None to allow empty lists for clearing selections
             try:
                 # generate section selections
-                units = set_selected_sections(schedule, selected_sections)
-                # update units
-                schedule.total_units = units
+                set_selected_sections(schedule, selected_sections)
             except Course.DoesNotExist:
                 return GraphQLError('Invalid Course ID')
             except Section.DoesNotExist:
@@ -173,11 +202,14 @@ class UpdateSchedule(graphene.Mutation):
         name = graphene.String(required=False)
         selected_sections = graphene.List(SectionSelectionInput, required=False)
         timeblocks = graphene.List(TimeBlockInput, required=False)
+        total_units = graphene.String(required=False)
+        public = graphene.Boolean(required=False)
 
     schedule = graphene.Field(ScheduleType)
 
     @login_required
-    def mutate(self, info, schedule_id, name=None, selected_sections=None, timeblocks=None):
+    def mutate(self, info, schedule_id, name=None, selected_sections=None,
+        timeblocks=None, total_units=None, public=None):
         schedule = None
         try:
             schedule = Schedule.objects.get(pk=from_global_id(schedule_id)[1])
@@ -191,15 +223,21 @@ class UpdateSchedule(graphene.Mutation):
         # update name
         if name:
             schedule.name = name
+
+        # update public
+        if public is not None:
+            schedule.public = public
+
+        # update units
+        if total_units and len(total_units) <= 16:
+            schedule.total_units = total_units
         
         # update sections
         if selected_sections is not None:
             # use is not None to allow empty lists for clearing selections
             try:
                 # generate section selections
-                units = set_selected_sections(schedule, selected_sections)
-                # update units
-                schedule.total_units = units
+                set_selected_sections(schedule, selected_sections)
             except Course.DoesNotExist:
                 return GraphQLError('Invalid Course ID')
             except Section.DoesNotExist:
@@ -261,9 +299,13 @@ class RemoveSchedule(graphene.Mutation):
         return RemoveSchedule(schedule)
 
 
+# =======================
+#        Graphene
+# =======================
+
 class Query(graphene.ObjectType):
     schedules = graphene.List(ScheduleType)
-    schedule = graphene.Field(ScheduleType, id=graphene.ID())
+    schedule = graphene.Field(PublicScheduleType, id=graphene.ID())
 
     def resolve_schedules(self, info):
         if info.context.user.is_authenticated:
@@ -273,8 +315,14 @@ class Query(graphene.ObjectType):
     def resolve_schedule(self, info, id):
         try:
             schedule = Schedule.objects.get(pk=from_global_id(id)[1])
+
             # ensure that schedule belongs to the current user
-            if info.context.user.berkeleytimeuser != schedule.user:
+            is_owner = False
+            if info.context.user.is_authenticated:
+                is_owner = info.context.user.berkeleytimeuser == schedule.user
+            
+            # don't show private schedules to non-owner
+            if not is_owner and not schedule.public:
                 return GraphQLError('No permission')
             return schedule
         except Schedule.DoesNotExist:
