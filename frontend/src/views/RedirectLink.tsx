@@ -3,8 +3,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 
 // We must have an allowlist of redirects to prevent an attacker from arbitrarily opening external sites.
 const allowedRedirects = new Map([
-	["civhacks", "https://www.civhacks.com"],
-	["civhacks-register", "https://pzudnhexo5v.typeform.com/to/demEictZ"]
+	["workshop-facebook", "https://www.facebook.com/events/314954970047731"],
+	["workshop-register", "https://docs.google.com/forms/d/e/1FAIpQLSf92FiqIwMc5et1ZSI_Rj1NGi3Y7Rx2kyMl8uQLSX1QzDIsuQ/viewform?usp=sf_link"]
 ])
 
 const RedirectLink: FC = () => {
