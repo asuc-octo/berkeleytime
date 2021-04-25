@@ -8,16 +8,19 @@ import {
 } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import { unitsToString } from 'utils/courses/units';
+import { useUser } from 'graphql/hooks/user';
+import { Button } from 'bt/custom';
 
 const ViewSchedule = () => {
-  const { scheduleId } = useParams<{ scheduleId?: string }>();
+  const { scheduleId: scheduleUUID } = useParams<{ scheduleId?: string }>();
+  const { user } = useUser();
 
   const { data, error } = useGetScheduleForIdQuery({
-    variables: { id: scheduleId! },
-    skip: scheduleId === undefined,
+    variables: { id: btoa(`ScheduleType:${scheduleUUID}`) },
+    skip: scheduleUUID === undefined,
   });
 
-  if (!scheduleId) {
+  if (!scheduleUUID) {
     return <Redirect to="/" />;
   }
 
@@ -26,7 +29,14 @@ const ViewSchedule = () => {
       <div className="scheduler viewport-app">
         <div className="scheduler__status">
           {error ? (
-            'An error occured loading scheduler information. Please try again later.'
+            error.message.includes('No permission') ? (
+              'This schedule is not publicly accessible.'
+            ) : error.message.includes('not a valid UUID') ||
+              error.message.includes('Invalid Schedule ID') ? (
+              'That schedule does not exist.'
+            ) : (
+              'An error occured loading scheduler information. Please try again later.'
+            )
           ) : (
             <BTLoader />
           )}
@@ -36,6 +46,7 @@ const ViewSchedule = () => {
   }
 
   const schedule = deserializeSchedule(data.schedule!);
+  const scheduleOwner = data.schedule!.user.user;
   const totalUnits = getUnitsForSchedule(schedule);
 
   return (
@@ -52,7 +63,21 @@ const ViewSchedule = () => {
             className="scheduler-name-input mr-3"
           />
         </div>
-        <div />
+        <div>
+          {scheduleOwner.id === user?.user.id ? (
+            <Button
+              className="bt-btn-primary"
+              size="sm"
+              href={`/scheduler/${scheduleUUID}`}
+            >
+              Edit
+            </Button>
+          ) : (
+            <span className="scheduler-header-strong">
+              by {scheduleOwner.firstName} {scheduleOwner.lastName}
+            </span>
+          )}
+        </div>
       </div>
       <SchedulerCalendar schedule={schedule} />
     </div>
