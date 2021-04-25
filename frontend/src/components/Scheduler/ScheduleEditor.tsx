@@ -19,11 +19,12 @@ import {
   deserializeSchedule,
   Schedule,
   SchedulerSectionType,
+  scheduleToICal,
   serializeSchedule,
 } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import { Semester } from 'utils/playlists/semesters';
-import { debounce } from 'utils/fn';
+import { debounce } from 'lodash';
 import Callout from './Callout';
 import { useUser } from 'graphql/hooks/user';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
@@ -175,6 +176,17 @@ const ScheduleEditor = ({
       access: newAccess,
     });
 
+  function exportToCalendar() {
+    const icsData = scheduleToICal(schedule, semester);
+    const icsURI =
+      `data:text/calendar;charset=utf8,` + encodeURIComponent(icsData);
+
+    const link = document.createElement('a');
+    link.href = icsURI;
+    link.download = `${schedule.name}.ics`;
+    link.click();
+  }
+
   const { isLoggedIn, loading: loadingUser } = useUser();
 
   if (isFetchingRemoteSchedule) {
@@ -255,8 +267,12 @@ const ScheduleEditor = ({
                 scheduleId={scheduleId!}
               />
             )}
-            <Button className="bt-btn-inverted ml-3" size="sm">
-              Export to Google Calendar
+            <Button
+              className="bt-btn-inverted ml-3"
+              size="sm"
+              onClick={exportToCalendar}
+            >
+              Export to Calendar
             </Button>
           </div>
         </div>

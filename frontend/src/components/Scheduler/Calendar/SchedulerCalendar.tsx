@@ -1,10 +1,6 @@
 import React, { ReactNode } from 'react';
 import { stringToDate } from 'utils/date';
-import {
-  getCourseForSchedule,
-  Schedule,
-  SchedulerSectionType,
-} from 'utils/scheduler/scheduler';
+import { Schedule, SchedulerSectionType } from 'utils/scheduler/scheduler';
 import CourseCalendar, { CardData } from './CourseCalendar';
 import CourseCard from './CourseCard';
 
@@ -14,7 +10,7 @@ import CourseCard from './CourseCard';
  */
 function timeToHour(time: string): number {
   const date = stringToDate(time);
-  return date.getHours() + date.getMinutes() / 60;
+  return date.getUTCHours() + date.getUTCMinutes() / 60;
 }
 
 /**

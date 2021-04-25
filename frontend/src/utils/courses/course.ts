@@ -49,10 +49,10 @@ export const COURSE_PALETTE = [
  * @returns a CSS color code.
  */
 export function courseToColor(
-  course: Pick<CourseFragment, 'id'> | string
+  course: Pick<CourseFragment, 'id'> | string | null
 ): string {
   return COURSE_PALETTE[
-    hash(typeof course === 'string' ? course : course.id) %
+    (course ? hash(typeof course === 'string' ? course : course.id) : 0) %
       COURSE_PALETTE.length
   ];
 }
