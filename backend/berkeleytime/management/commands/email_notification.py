@@ -9,6 +9,7 @@ from django.core.management.base import BaseCommand
 from django.core.mail.message import EmailMultiAlternatives
 from django.core.mail import get_connection
 from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # telebears
 from berkeleytime.settings import CURRENT_SEMESTER, CURRENT_YEAR
@@ -160,16 +161,21 @@ def check_all(new_enrollment, last_enrollment):
     """ Returns a list of tuples containing all of passed checks with their
     relevant information as [('check_name', check_data),] """
     notifs = []
+    
     if check_has_new_seats(new_enrollment, last_enrollment):
-        notifs.append(('new_seats', ))
+        seats = new_enrollment['enrolled']
+        notifs.append({'title': 'New seast', 'detail': f'There are now {seats} seats!'})
+    
     past_threshold = check_past_threshold(new_enrollment, last_enrollment)
     if past_threshold:
-        notifs.append(('past_threshold', past_threshold))
+        notifs.append({'title': 'Past threshold', 'detail': f'There are now {past_threshold} seats!'})
+    
     if check_is_full(new_enrollment, last_enrollment):
-        notifs.append(('is_full', ))
+        notifs.append({'title': 'Is full', 'detail': f'Full :('})
+    
     momentum = check_momentum(new_enrollment, last_enrollment)
     if momentum:
-        notifs.append(('momentum', momentum))
+        notifs.append({'title': 'New seast', 'detail': f'There are now {momentum} momentum!'})
     return notifs
 
 # ======================================================
@@ -218,23 +224,24 @@ class Command(BaseCommand):
             primary_sections = saved_class.section_set.all().filter(
                 semester=CURRENT_SEMESTER,
                 year=CURRENT_YEAR,
-                is_primary=True,
-                section_number__iregex=r'^.{4,}$' # section numbers with length 4 or more
-                # and disabled=False but removing this bc all of them are disabled rn
+                is_primary=True
             )
 
             class_notifs = []
             # get enrollment notifications for each section
             for primary_section in primary_sections:
                 # fetch enrollment json from api
-                section_number = primary_section.section_number
-                section_json = scrape_enrollment(section_number)
+                ccn = primary_section.ccn
+                if not ccn:
+                    # skip
+                    continue
+                section_json = scrape_enrollment(ccn)
 
                 # parse json for enrollment info
                 new_enrollment = parse_enrollment_json(section_json)
                 
                 # get previous state from mongo
-                last_enrollment = get_previous_state(section_number, enrollment_collection)
+                last_enrollment = get_previous_state(ccn, enrollment_collection)
 
                 # check for notifications
                 primary_notifs = check_all(new_enrollment, last_enrollment)
@@ -258,11 +265,9 @@ class Command(BaseCommand):
         #   (class 2, ...)
         # ]
 
-        # TODO: Change this into sending emails
-        for class_notif in notifs:
-            print('===========')
-            class_model, primary_notifs = class_notif
-            print(class_model.abbreviation, class_model.course_number, class_model.title)
-            for primary_section, section_notifs in primary_notifs:
-                print(primary_section.section_number)
-                print(section_notifs)
+        html_message = render_to_string('enrollment_update.html', { 'notifs': notifs })
+        # with open('test.html', 'w') as static_file:
+        #     static_file.write(html_message)
+        plain_message = strip_tags(html_message)
+        email_datatuple = [('Enrollment Updates from Berkeleytime', plain_message, html_message, 'smxu@berkeley.edu')]
+        self.send_mass_html_mail(email_datatuple)
