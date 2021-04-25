@@ -11,10 +11,24 @@ import {
   unitsToString,
   ZERO_UNITS,
 } from 'utils/courses/units';
-import { Semester } from 'utils/playlists/semesters';
+import { Semester, semesterToString } from 'utils/playlists/semesters';
 import { getNodes } from '../graphql';
-import { COURSE_PALETTE } from 'utils/courses/course';
+import {
+  courseToColor,
+  courseToName,
+  COURSE_PALETTE,
+} from 'utils/courses/course';
 import { AccessStatus } from './accessStatus';
+import { dayToICalDay, reinterpretDateAsUTC, stringToDate } from 'utils/date';
+import {
+  addWeeks,
+  isBefore,
+  min,
+  nextDay,
+  setDay,
+  subDays,
+  subWeeks,
+} from 'date-fns';
 
 export type SchedulerCourseType = CourseOverviewFragment;
 export type SchedulerSectionType = SectionFragment & {
@@ -179,3 +193,122 @@ export const serializeSchedule = (
     .filter((input) => !!input.primary),
   timeblocks: [],
 });
+
+/**
+ * Generates iCal file string.
+ */
+export function scheduleToICal(schedule: Schedule, semester: Semester): string {
+  const SEMESTER_START = new Date(2021, 7, 18);
+  const SEMESTER_END = new Date(2021, 11, 17);
+
+  // Two weeks before finals week, on Saturday
+  const LAST_COURSE_DAY = reinterpretDateAsUTC(
+    setDay(subWeeks(SEMESTER_END, 2), 7)
+  );
+
+  const dateToICal = (date: Date) =>
+    date.toISOString().replace(/[-:Z]|\.\d+/g, '');
+
+  const stringToICal = (str: string) =>
+    str
+      .replace(/\\/g, '\\\\')
+      .replace(/\n/g, '\\n')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,');
+
+  const DTSTAMP = dateToICal(new Date());
+
+  const events = schedule.sections
+    .map((section): [SchedulerSectionType, CourseOverviewFragment | null] => [
+      section,
+      getCourseForSchedule(schedule, section),
+    ])
+    .filter(([section, course]) => section.days.length >= 1 && course)
+    .map(([section]) => {
+      const course = getCourseForSchedule(schedule, section)!;
+      const courseName = courseToName(course);
+      const courseColor = courseToColor(course);
+
+      // To find the first day of the course, we generate all
+      // instances of the course for the first two weeks
+      const firstWeek = section.days
+        .split('')
+        .map((day) => setDay(SEMESTER_START, +day as Day));
+      const secondWeek = firstWeek.map((day) => addWeeks(day, 1));
+
+      const firstCourseDay = reinterpretDateAsUTC(
+        min(
+          firstWeek
+            .concat(secondWeek)
+            .filter((instance) => !isBefore(instance, SEMESTER_START))
+        )
+      );
+
+      const startTime = stringToDate(section.startTime);
+      const endTime = stringToDate(section.endTime);
+
+      const startDateTime = new Date(firstCourseDay);
+      startDateTime.setUTCHours(startTime.getUTCHours());
+      startDateTime.setUTCMinutes(startTime.getUTCMinutes());
+
+      const endDateTime = new Date(firstCourseDay);
+      endDateTime.setUTCHours(endTime.getUTCHours());
+      endDateTime.setUTCMinutes(endTime.getUTCMinutes());
+
+      const days = section.days.split('').map((day) => dayToICalDay(+day));
+
+      const name = `${courseName} ${section.kind}`;
+      const description = `${courseName}: ${course?.title || 'Unknown Course'}
+
+Instructor: ${section.instructor}
+Section CCN: ${section.ccn}
+
+Generated with the Berkeleytime scheduler (https://berkeleytime.com).`;
+
+      return `BEGIN:VEVENT
+UID:${section.id}
+DTSTAMP:${DTSTAMP}
+DTSTART;TZID=America/Los_Angeles:${dateToICal(startDateTime)}
+DTEND;TZID=America/Los_Angeles:${dateToICal(endDateTime)}
+RRULE:FREQ=WEEKLY;UNTIL=${dateToICal(LAST_COURSE_DAY)};BYDAY=${days}
+LOCATION:${stringToICal(section.locationName)}
+SUMMARY:${stringToICal(name)}
+DESCRIPTION:${stringToICal(description)}
+COLOR:${courseColor}
+END:VEVENT`;
+    });
+
+  const PST_TIMEZONE_SPEC = `BEGIN:VTIMEZONE
+TZID:America/Los_Angeles
+X-LIC-LOCATION:America/Los_Angeles
+BEGIN:DAYLIGHT
+TZOFFSETFROM:-0800
+TZOFFSETTO:-0700
+TZNAME:PDT
+DTSTART:19700308T020000
+RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
+END:DAYLIGHT
+BEGIN:STANDARD
+TZOFFSETFROM:-0700
+TZOFFSETTO:-0800
+TZNAME:PST
+DTSTART:19701101T020000
+RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
+END:STANDARD
+END:VTIMEZONE`;
+
+  return `BEGIN:VCALENDAR
+METHOD:PUBLISH
+PRODID:-//Berkeleytime.com//Berkeleytime Scheduler 1.0//EN
+CALSCALE:GREGORIAN
+VERSION:2.0
+X-WR-CALNAME: ${schedule.name}
+X-WR-CALDESC: Course schedule for ${semesterToString(semester)}
+X-WR-TIMEZONE:America/Los_Angeles
+${PST_TIMEZONE_SPEC}
+${events.join('\n')}
+END:VCALENDAR
+`
+    .split('\n')
+    .join('\r\n');
+}
