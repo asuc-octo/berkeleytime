@@ -3,10 +3,12 @@ import { useGetCoursesForFilterQuery } from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
 import useLatestSemester from 'graphql/hooks/latestSemester';
 import ScheduleEditor from 'components/Scheduler/ScheduleEditor';
-import { useHistory, useParams } from 'react-router';
+import { Redirect, useHistory, useParams } from 'react-router';
 import { getNodes } from 'utils/graphql';
+import { useUser } from 'graphql/hooks/user';
 
 const Scheduler = () => {
+  const { isLoggedIn, loading: userLoading } = useUser();
   const {
     semester: latestSemester,
     error: semesterError,
@@ -21,17 +23,16 @@ const Scheduler = () => {
     skip: !latestSemester?.playlistId,
   });
 
-  const { scheduleId } = useParams<{ scheduleId?: string }>();
+  const { scheduleId: scheduleUUID } = useParams<{ scheduleId?: string }>();
+  const scheduleId = scheduleUUID && btoa(`ScheduleType:${scheduleUUID}`);
 
   const history = useHistory();
 
-  const error = semesterError || coursesError;
-
-  if (!data) {
+  if (!data || userLoading) {
     return (
       <div className="scheduler viewport-app">
         <div className="scheduler__status">
-          {error ? (
+          {semesterError || coursesError ? (
             'An error occured loading scheduler information. Please try again later.'
           ) : (
             <BTLoader />
@@ -41,10 +42,17 @@ const Scheduler = () => {
     );
   }
 
+  // if you're not logged in, we'll go to the schedule preview
+  if (!isLoggedIn && scheduleUUID) {
+    return <Redirect to={`/s/${scheduleUUID}`} />;
+  }
+
   function setScheduleId(newScheduleId: string) {
+    const scheduleUUID = atob(newScheduleId).split(':')[1];
+
     // Defer this to the next tick
     setTimeout(() => {
-      history.push(`/scheduler/${newScheduleId}`);
+      history.push(`/scheduler/${scheduleUUID}`);
     });
   }
 

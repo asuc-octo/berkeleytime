@@ -6,6 +6,15 @@ fragment Schedule on ScheduleType {
   totalUnits
   dateCreated
   dateModified
+  public
+
+  user {
+    user {
+      id
+      firstName
+      lastName
+    }
+  }
 
   selectedSections {
     edges {

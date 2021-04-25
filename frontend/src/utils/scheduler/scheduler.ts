@@ -3,11 +3,14 @@ import {
   CreateScheduleMutationVariables,
   ScheduleFragment,
   SectionFragment,
-  SectionSelectionFragment,
-  SectionSelectionInput,
-  UpdateScheduleMutationVariables,
 } from '../../graphql/graphql';
-import { addUnits, parseUnits, Units, ZERO_UNITS } from 'utils/courses/units';
+import {
+  addUnits,
+  parseUnits,
+  Units,
+  unitsToString,
+  ZERO_UNITS,
+} from 'utils/courses/units';
 import { Semester } from 'utils/playlists/semesters';
 import { getNodes } from '../graphql';
 import { COURSE_PALETTE } from 'utils/courses/course';
@@ -131,7 +134,7 @@ export const hasSectionById = (schedule: Schedule, id: string): boolean =>
  */
 export const deserializeSchedule = (schedule: ScheduleFragment): Schedule => ({
   name: schedule.name,
-  access: 'private',
+  access: schedule.public ? 'public' : 'private',
   courses: getNodes(schedule.selectedSections).map((section) => section.course),
   sections: getNodes(schedule.selectedSections)
     .flatMap((section) =>
@@ -159,6 +162,8 @@ export const serializeSchedule = (
   name: schedule.name,
   semester: semester.semester,
   year: semester.year,
+  public: schedule.access === 'public',
+  totalUnits: unitsToString(getUnitsForSchedule(schedule)),
   selectedSections: schedule.courses
     .map((course) => ({
       course: course.id,

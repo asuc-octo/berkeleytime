@@ -48,10 +48,10 @@ export interface BerkeleytimeUserType {
   user: UserType;
   major: Scalars['String'];
   savedClasses?: Maybe<Array<Maybe<CourseType>>>;
-  emailClassUpdate: Scalars['Boolean'];
-  emailGradeUpdate: Scalars['Boolean'];
-  emailEnrollmentOpening: Scalars['Boolean'];
-  emailBerkeleytimeUpdate: Scalars['Boolean'];
+  emailClassUpdate?: Maybe<Scalars['Boolean']>;
+  emailGradeUpdate?: Maybe<Scalars['Boolean']>;
+  emailEnrollmentOpening?: Maybe<Scalars['Boolean']>;
+  emailBerkeleytimeUpdate?: Maybe<Scalars['Boolean']>;
   schedules: ScheduleTypeConnection;
 }
 
@@ -328,18 +328,22 @@ export interface Mutation {
 
 export interface MutationCreateScheduleArgs {
   name?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
   selectedSections?: Maybe<Array<Maybe<SectionSelectionInput>>>;
   semester?: Maybe<Scalars['String']>;
   timeblocks?: Maybe<Array<Maybe<TimeBlockInput>>>;
+  totalUnits?: Maybe<Scalars['String']>;
   year?: Maybe<Scalars['String']>;
 }
 
 
 export interface MutationUpdateScheduleArgs {
   name?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
   scheduleId?: Maybe<Scalars['ID']>;
   selectedSections?: Maybe<Array<Maybe<SectionSelectionInput>>>;
   timeblocks?: Maybe<Array<Maybe<TimeBlockInput>>>;
+  totalUnits?: Maybe<Scalars['String']>;
 }
 
 
@@ -485,6 +489,7 @@ export interface Query {
   /** The ID of the object */
   section?: Maybe<SectionType>;
   allSections?: Maybe<SectionTypeConnection>;
+  ping?: Maybe<Scalars['String']>;
 }
 
 
@@ -647,7 +652,8 @@ export interface ScheduleType extends Node {
   semester: Scalars['String'];
   dateCreated: Scalars['DateTime'];
   dateModified: Scalars['DateTime'];
-  totalUnits: Scalars['Int'];
+  totalUnits: Scalars['String'];
+  public: Scalars['Boolean'];
   selectedSections: SectionSelectionTypeConnection;
   timeblocks: TimeBlockTypeConnection;
 }
@@ -913,21 +919,11 @@ export interface UpdateUser {
 export interface UserType {
   __typename?: 'UserType';
   id: Scalars['ID'];
-  password: Scalars['String'];
-  lastLogin?: Maybe<Scalars['DateTime']>;
-  /** Designates that this user has all permissions without explicitly assigning them. */
-  isSuperuser: Scalars['Boolean'];
   /** Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
   username: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   email: Scalars['String'];
-  /** Designates whether the user can log into this admin site. */
-  isStaff: Scalars['Boolean'];
-  /** Designates whether this user should be treated as active. Unselect this instead of deleting accounts. */
-  isActive: Scalars['Boolean'];
-  dateJoined: Scalars['DateTime'];
-  berkeleytimeuser?: Maybe<BerkeleytimeUserType>;
 }
 
 export interface Verify {
@@ -986,8 +982,14 @@ export type LectureFragment = (
 
 export type ScheduleFragment = (
   { __typename?: 'ScheduleType' }
-  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated' | 'dateModified'>
-  & { selectedSections: (
+  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated' | 'dateModified' | 'public'>
+  & { user: (
+    { __typename?: 'BerkeleytimeUserType' }
+    & { user: (
+      { __typename?: 'UserType' }
+      & Pick<UserType, 'id' | 'firstName' | 'lastName'>
+    ) }
+  ), selectedSections: (
     { __typename?: 'SectionSelectionTypeConnection' }
     & { edges: Array<Maybe<(
       { __typename?: 'SectionSelectionTypeEdge' }
@@ -1083,8 +1085,10 @@ export type CreateScheduleMutationVariables = Exact<{
   name: Scalars['String'];
   selectedSections: Array<Maybe<SectionSelectionInput>> | Maybe<SectionSelectionInput>;
   timeblocks: Array<Maybe<TimeBlockInput>> | Maybe<TimeBlockInput>;
+  totalUnits: Scalars['String'];
   semester: Scalars['String'];
   year: Scalars['String'];
+  public: Scalars['Boolean'];
 }>;
 
 
@@ -1199,6 +1203,8 @@ export type UpdateScheduleMutationVariables = Exact<{
   name: Scalars['String'];
   selectedSections: Array<Maybe<SectionSelectionInput>> | Maybe<SectionSelectionInput>;
   timeblocks: Array<Maybe<TimeBlockInput>> | Maybe<TimeBlockInput>;
+  totalUnits: Scalars['String'];
+  public: Scalars['Boolean'];
 }>;
 
 
@@ -1476,6 +1482,14 @@ export const ScheduleFragmentDoc = gql`
   totalUnits
   dateCreated
   dateModified
+  public
+  user {
+    user {
+      id
+      firstName
+      lastName
+    }
+  }
   selectedSections {
     edges {
       node {
@@ -1570,13 +1584,15 @@ export const UserProfileFragmentDoc = gql`
     ${CourseOverviewFragmentDoc}
 ${ScheduleOverviewFragmentDoc}`;
 export const CreateScheduleDocument = gql`
-    mutation CreateSchedule($name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $semester: String!, $year: String!) {
+    mutation CreateSchedule($name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $totalUnits: String!, $semester: String!, $year: String!, $public: Boolean!) {
   createSchedule(
     name: $name
     selectedSections: $selectedSections
     timeblocks: $timeblocks
     semester: $semester
     year: $year
+    public: $public
+    totalUnits: $totalUnits
   ) {
     schedule {
       ...Schedule
@@ -1602,8 +1618,10 @@ export type CreateScheduleMutationFn = Apollo.MutationFunction<CreateScheduleMut
  *      name: // value for 'name'
  *      selectedSections: // value for 'selectedSections'
  *      timeblocks: // value for 'timeblocks'
+ *      totalUnits: // value for 'totalUnits'
  *      semester: // value for 'semester'
  *      year: // value for 'year'
+ *      public: // value for 'public'
  *   },
  * });
  */
@@ -1821,12 +1839,14 @@ export type UnsaveCourseMutationHookResult = ReturnType<typeof useUnsaveCourseMu
 export type UnsaveCourseMutationResult = Apollo.MutationResult<UnsaveCourseMutation>;
 export type UnsaveCourseMutationOptions = Apollo.BaseMutationOptions<UnsaveCourseMutation, UnsaveCourseMutationVariables>;
 export const UpdateScheduleDocument = gql`
-    mutation UpdateSchedule($scheduleId: ID!, $name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!) {
+    mutation UpdateSchedule($scheduleId: ID!, $name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $totalUnits: String!, $public: Boolean!) {
   updateSchedule(
     scheduleId: $scheduleId
     name: $name
     selectedSections: $selectedSections
     timeblocks: $timeblocks
+    totalUnits: $totalUnits
+    public: $public
   ) {
     schedule {
       ...Schedule
@@ -1853,6 +1873,8 @@ export type UpdateScheduleMutationFn = Apollo.MutationFunction<UpdateScheduleMut
  *      name: // value for 'name'
  *      selectedSections: // value for 'selectedSections'
  *      timeblocks: // value for 'timeblocks'
+ *      totalUnits: // value for 'totalUnits'
+ *      public: // value for 'public'
  *   },
  * });
  */

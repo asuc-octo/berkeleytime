@@ -54,6 +54,11 @@
       &:not(.callout) {
         color: $bt-light-text;
       }
+
+      &.scheduler-header-strong {
+        color: $bt-base-text;
+        font-weight: 500;
+      }
     }
 
     .scheduler-name-input {
