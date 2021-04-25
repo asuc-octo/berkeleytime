@@ -36,7 +36,8 @@ const AccessControl = ({
 }: Props) => {
   const [isShowing, setIsShowing] = useState(false);
 
-  const scheduleLink = `${window.location.origin}/s/${scheduleId}`;
+  const scheduleUUID = atob(scheduleId).split(':')[1];
+  const scheduleLink = `${window.location.origin}/s/${scheduleUUID}`;
 
   return (
     <Dropdown

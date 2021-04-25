@@ -22,14 +22,14 @@ const NotificationsSubview = ({ userProfile }: Props) => {
   return (
     <Subview title="Email Preferences">
       <Preference
-        isChecked={userProfile.emailClassUpdate}
+        isChecked={userProfile.emailClassUpdate!}
         onChange={updateProperty((checked) => ({
           emailClassUpdate: checked,
         }))}
         text="Class updates in catalog"
       />
       <Preference
-        isChecked={userProfile.emailGradeUpdate}
+        isChecked={userProfile.emailGradeUpdate!}
         onChange={updateProperty((checked) => ({
           emailGradeUpdate: checked,
         }))}
@@ -43,7 +43,7 @@ const NotificationsSubview = ({ userProfile }: Props) => {
         text="Enrollment openings in catalog"
       />*/}
       <Preference
-        isChecked={userProfile.emailBerkeleytimeUpdate}
+        isChecked={userProfile.emailBerkeleytimeUpdate!}
         onChange={updateProperty((checked) => ({
           emailBerkeleytimeUpdate: checked,
         }))}

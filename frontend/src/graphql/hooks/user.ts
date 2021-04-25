@@ -1,7 +1,10 @@
 import { useCallback } from 'react';
+import { getNodes } from 'utils/graphql';
 import {
   DeleteUserMutationHookResult,
   GetUserDocument,
+  GetUserQuery,
+  GetUserQueryVariables,
   LoginMutationHookResult,
   LogoutMutationHookResult,
   UpdateUserMutationVariables,
@@ -66,6 +69,12 @@ export const useLogin = (): LoginMutationHookResult => {
 export const useLogout = (): LogoutMutationHookResult => {
   return useLogoutMutation({
     update(cache) {
+      const existingUser = cache.readQuery<GetUserQuery, GetUserQueryVariables>(
+        {
+          query: GetUserDocument,
+        }
+      );
+
       // Ensure there is no user in the cache after a log out
       cache.writeQuery({
         query: GetUserDocument,
@@ -73,6 +82,18 @@ export const useLogout = (): LogoutMutationHookResult => {
           user: null,
         },
       });
+
+      // Invalidate all the schedules for the user (if they are private)
+      if (existingUser?.user) {
+        getNodes(existingUser.user.schedules).forEach((schedule) =>
+          cache.modify({
+            id: cache.identify(schedule),
+            fields(_fieldValue, details) {
+              return details.DELETE;
+            },
+          })
+        );
+      }
     },
   });
 };
