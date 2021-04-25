@@ -2,8 +2,10 @@ mutation CreateSchedule(
   $name: String!
   $selectedSections: [SectionSelectionInput]!
   $timeblocks: [TimeBlockInput]!
+  $totalUnits: String!
   $semester: String!
   $year: String!
+  $public: Boolean!
 ) {
   createSchedule(
     name: $name
@@ -11,6 +13,8 @@ mutation CreateSchedule(
     timeblocks: $timeblocks
     semester: $semester
     year: $year
+    public: $public
+    totalUnits: $totalUnits
   ) {
     schedule {
       ...Schedule

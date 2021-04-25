@@ -14,6 +14,7 @@ type ContentProps = {
   scheduleId: string;
 };
 const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
+  const scheduleUUID = atob(scheduleId).split(':')[1];
   const { data, loading } = useGetScheduleForIdQuery({
     variables: { id: scheduleId },
   });
@@ -53,7 +54,7 @@ const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
           <Button
             className="bt-btn-primary"
             size="sm"
-            href={`/scheduler/${scheduleId}`}
+            href={`/scheduler/${scheduleUUID}`}
           >
             Edit
           </Button>
