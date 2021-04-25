@@ -957,7 +957,7 @@ export type CourseFragment = (
 
 export type CourseOverviewFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'enrolled' | 'enrolledMax' | 'units'>
+  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'description' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'enrolled' | 'enrolledMax' | 'units'>
 );
 
 export type FilterFragment = (
@@ -1036,7 +1036,7 @@ export type SchedulerCourseFragment = (
 
 export type SectionFragment = (
   { __typename?: 'SectionType' }
-  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled' | 'sectionNumber'>
+  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled' | 'sectionNumber' | 'isPrimary'>
 );
 
 export type SectionSelectionFragment = (
@@ -1390,6 +1390,7 @@ export const SectionFragmentDoc = gql`
   wordDays
   disabled
   sectionNumber
+  isPrimary
 }
     `;
 export const CourseFragmentDoc = gql`
@@ -1444,6 +1445,7 @@ export const CourseOverviewFragmentDoc = gql`
   id
   abbreviation
   courseNumber
+  description
   title
   gradeAverage
   letterAverage
