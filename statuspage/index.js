@@ -104,49 +104,53 @@ const updateStatuspage = async (ping, auth) => {
 };
 
 for await (const _ of setInterval(spConfig.statusInterval * 1000)) {
-  const {
-    apiStatus,
-    frontendStatus,
-    gitlabStatus,
-    elasticsearchStatus,
-    url,
-  } = spConfig;
-  const niceTime = () =>
-    moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH:mm:ss dddd`);
-  await updateStatuspage(async () => {
-    await axios.post(`${url}/api/graphql`, {
-      query: "query PingQuery{ ping }",
-    });
-    console.log(`${niceTime()} successful ping for /api/graphql`);
-  }, apiStatus);
+  try {
+    const {
+      apiStatus,
+      frontendStatus,
+      gitlabStatus,
+      elasticsearchStatus,
+      url,
+    } = spConfig;
+    const niceTime = () =>
+      moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH:mm:ss dddd`);
+    await updateStatuspage(async () => {
+      await axios.post(`${url}/api/graphql`, {
+        query: "query PingQuery{ ping }",
+      });
+      console.log(`${niceTime()} successful ping for /api/graphql`);
+    }, apiStatus);
 
-  await updateStatuspage(async () => {
-    await axios.get(`${url}/landing`);
-    console.log(`${niceTime()} successful ping for /landing`);
-  }, frontendStatus);
+    await updateStatuspage(async () => {
+      await axios.get(`${url}/landing`);
+      console.log(`${niceTime()} successful ping for /landing`);
+    }, frontendStatus);
 
-  await updateStatuspage(async () => {
-    if (
-      !(await axios.get(`${url}/git`)).request.res.responseUrl.includes(
-        "sign_in"
-      )
-    ) {
-      throw Error("expected sign-in page");
-    }
-    console.log(`${niceTime()} successful ping for /git`);
-  }, gitlabStatus);
-
-  await updateStatuspage(async () => {
-    try {
-      await axios.get(`${url}/kibana`);
-      throw Error("expected 401 Unauthorized");
-    } catch (err) {
-      if (err.response && err.response.status == 401) {
-        console.log(`${niceTime()} successful ping for /kibana`);
-      } else {
-        throw err;
+    await updateStatuspage(async () => {
+      if (
+        !(await axios.get(`${url}/git`)).request.res.responseUrl.includes(
+          "sign_in"
+        )
+      ) {
+        throw Error("expected sign-in page");
       }
-    }
-  }, elasticsearchStatus);
+      console.log(`${niceTime()} successful ping for /git`);
+    }, gitlabStatus);
+
+    await updateStatuspage(async () => {
+      try {
+        await axios.get(`${url}/kibana`);
+        throw Error("expected 401 Unauthorized");
+      } catch (err) {
+        if (err.response && err.response.status == 401) {
+          console.log(`${niceTime()} successful ping for /kibana`);
+        } else {
+          throw err;
+        }
+      }
+    }, elasticsearchStatus);
+  } catch (e) {
+    console.error(e);
+  }
 }
 /* **************************************** update berkeleytime.statuspage.io */
