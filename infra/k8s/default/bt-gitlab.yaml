@@ -57,21 +57,21 @@ metadata:
   labels:
     component: bt-gitlab
 data:
-  GITLAB_BACKUP_EXPIRY: "604800"
+  # GITLAB_BACKUP_EXPIRY: "604800"
   GITLAB_EXTERNAL_HOSTNAME: berkeleytime.com/git
   GITLAB_EXTERNAL_SCHEME: https
-  GITLAB_MATTERMOST_EXTERNAL_HOSTNAME: m.berkeleytime.com
-  GITLAB_MATTERMOST_EXTERNAL_SCHEME: https
-  GITLAB_REGISTRY_EXTERNAL_HOSTNAME: registry.berkeleytime.com
-  GITLAB_REGISTRY_EXTERNAL_SCHEME: https
-  POSTGRES_DB: gitlab
-  POSTGRES_DB_MATTERMOST: mattermost
-  POSTGRES_PORT_MATTERMOST: "5432"
-  POSTGRES_HOST: gitlab-pg.default.svc.cluster.local
-  POSTGRES_USER: gitlab
-  MATTERMOST_APP_UID: "2000"
-  REDIS_HOST: gitlab-rd.default.svc.cluster.local
-  REDIS_PORT: "6379"
+  # GITLAB_MATTERMOST_EXTERNAL_HOSTNAME: m.berkeleytime.com
+  # GITLAB_MATTERMOST_EXTERNAL_SCHEME: https
+  # GITLAB_REGISTRY_EXTERNAL_HOSTNAME: registry.berkeleytime.com
+  # GITLAB_REGISTRY_EXTERNAL_SCHEME: https
+  # POSTGRES_DB: gitlab
+  # POSTGRES_DB_MATTERMOST: mattermost
+  # POSTGRES_PORT_MATTERMOST: "5432"
+  # POSTGRES_HOST: bt-psql-prod
+  # POSTGRES_USER: bt
+  # MATTERMOST_APP_UID: "2000"
+  # REDIS_HOST: bt-redis-prod-master
+  # REDIS_PORT: "6379"
 
 ---
 apiVersion: apps/v1
@@ -116,7 +116,7 @@ spec:
               mkdir -p /var/opt/gitlab/git-data/repositories
       containers:
         - name: bt-gitlab
-          image: gitlab/gitlab-ee:13.7.5-ee.0
+          image: gitlab/gitlab-ee:13.11.0-ee.0
           lifecycle:
             preStop:
               exec:
@@ -138,8 +138,10 @@ spec:
               command:
                 - curl
                 - localhost:8181/git
-            initialDelaySeconds: 600
+            failureThreshold: 5
+            initialDelaySeconds: 1200
             periodSeconds: 300
+            timeoutSeconds: 5
           volumeMounts:
             - name: bt-gitlab
               mountPath: /etc/gitlab
@@ -257,11 +259,11 @@ spec:
                 sidekiq['listen_address'] = "localhost"
                 sidekiq['listen_port'] = 8082
 
-                # Optimizing Git Push with low resources
-                puma['worker_processes'] = 2
+                # Optimizing Git
+                puma['worker_processes'] = 0
                 puma['min_threads'] = 1
-                puma['max_threads'] = 1
-                puma['per_worker_max_memory_mb'] = 4000
+                puma['max_threads'] = 4
+                puma['per_worker_max_memory_mb'] = 850
 
                 # Email Settings
                 gitlab_ci['gitlab_ci_email_from'] = 'noreply@berkeleytime.com'

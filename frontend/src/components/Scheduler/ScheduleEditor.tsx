@@ -7,12 +7,11 @@ import React, {
   Dispatch,
   SetStateAction,
 } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Button, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import CourseSelector from 'components/Scheduler/CourseSelector';
 
 import {
   CourseOverviewFragment,
-  useCreateScheduleMutation,
   useGetScheduleForIdLazyQuery,
   useUpdateScheduleMutation,
 } from '../../graphql/graphql';
@@ -21,13 +20,18 @@ import {
   DEFAULT_SCHEDULE,
   deserializeSchedule,
   Schedule,
+  SchedulerSectionType,
+  scheduleToICal,
   serializeSchedule,
 } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import { Semester } from 'utils/playlists/semesters';
-import { getNodes } from 'utils/graphql';
-import { debounce } from 'utils/fn';
+import { debounce } from 'lodash';
 import Callout from './Callout';
+import { useUser } from 'graphql/hooks/user';
+import { useCreateSchedule } from 'graphql/hooks/schedule';
+import AccessControl from './AccessControl';
+import { AccessStatus } from 'utils/scheduler/accessStatus';
 
 // This is NOT an interval. Rather it combines all
 // changes within this time interval into one
@@ -56,27 +60,16 @@ const ScheduleEditor = ({
     getScheduleForId,
     { loading: isFetchingRemoteSchedule },
   ] = useGetScheduleForIdLazyQuery({
+    onError: (error) => {
+      alert(`Couldn't load schedule: ${error.message}`);
+    },
     onCompleted: (data) => {
-      // TODO: remove (won't be necessary with dedicated query).
-      if (!data.user) {
-        alert('You must be logged in to see this schedule.');
-        return;
-      }
-      const schedules = getNodes(data.user!.schedules);
-
-      // TODO: possible race condition. If `scheduleId` changes
-      // before response. This shouldn't be an issue once the
-      // dedicated query is added.
-      const rawSchedule = schedules.find(
-        (schedule) => schedule.id === scheduleId
-      );
-
-      if (!rawSchedule) {
-        alert("That schedule doesn't exist");
+      if (!data.schedule) {
+        alert(`Couldn't find the given schedule.`);
         return;
       }
 
-      const schedule = deserializeSchedule(rawSchedule);
+      const schedule = deserializeSchedule(data.schedule);
       setRawSchedule(schedule);
     },
   });
@@ -88,7 +81,7 @@ const ScheduleEditor = ({
     if (scheduleId !== null) {
       getScheduleForId({
         variables: {
-          // scheduleId: scheduleId
+          id: scheduleId,
         },
       });
     } else {
@@ -98,6 +91,12 @@ const ScheduleEditor = ({
 
   const isRemoteSaved = scheduleId !== null;
 
+  // If the user is hovering over a section. This will store that section
+  const [
+    previewSection,
+    setPreviewSection,
+  ] = useState<SchedulerSectionType | null>(null);
+
   // Whether or not we say 'is saving...' may be different from whether
   // or not there is an ongoing network requests. The main constraint
   // is we do NOT want to say the schedule is saved if the schedule as
@@ -106,7 +105,7 @@ const ScheduleEditor = ({
   const [
     createScheduleMutation,
     { error: creationError },
-  ] = useCreateScheduleMutation();
+  ] = useCreateSchedule();
 
   const [
     updateScheduleMutation,
@@ -148,7 +147,8 @@ const ScheduleEditor = ({
     if (scheduleId) {
       // Wait for previous update to finish before queuing next one
       // In effect, this will result in sequential updates being
-      // combined due to saveSchedule being 'debounced'.
+      // combined due to saveSchedule being 'debounced'. This is
+      // also done to avoid data races.
       await currentlyPendingUpdate.current;
       setIsVisualSaving(true);
       saveSchedule(newSchedule, semester, scheduleId);
@@ -159,9 +159,7 @@ const ScheduleEditor = ({
     setIsVisualSaving(true);
 
     try {
-      const result = await createScheduleMutation({
-        variables: serializeSchedule(schedule, semester),
-      });
+      const result = await createScheduleMutation(schedule, semester);
 
       if (result.data?.createSchedule?.schedule) {
         setScheduleId(result.data.createSchedule.schedule.id);
@@ -177,9 +175,40 @@ const ScheduleEditor = ({
       name: event.target.value,
     });
 
+  const setScheduleVisibility = (newAccess: AccessStatus) =>
+    setSchedule({
+      ...schedule,
+      access: newAccess,
+    });
+
+  function exportToCalendar() {
+    const icsData = scheduleToICal(schedule, semester);
+    const icsURI =
+      `data:text/calendar;charset=utf8,` + encodeURIComponent(icsData);
+
+    const link = document.createElement('a');
+    link.href = icsURI;
+    link.download = `${schedule.name}.ics`;
+    link.click();
+  }
+
+  const { isLoggedIn, loading: loadingUser } = useUser();
+
   if (isFetchingRemoteSchedule) {
     return <BTLoader />;
   }
+
+  const saveButton = (
+    <Button
+      className="bt-btn-primary px-3"
+      size="sm"
+      onClick={createSchedule}
+      disabled={!isLoggedIn}
+      style={{ pointerEvents: !isLoggedIn ? 'none' : undefined }}
+    >
+      Save
+    </Button>
+  );
 
   return (
     <Row noGutters>
@@ -189,6 +218,7 @@ const ScheduleEditor = ({
           semester={semester}
           schedule={schedule}
           setSchedule={setSchedule}
+          setPreviewSection={setPreviewSection}
         />
       </Col>
       <Col>
@@ -217,23 +247,45 @@ const ScheduleEditor = ({
               />
             ) : isRemoteSaved ? (
               <span>Schedule saved.</span>
+            ) : isLoggedIn ? (
+              saveButton
             ) : (
-              <Button
-                className="bt-btn-primary"
-                size="sm"
-                onClick={createSchedule}
+              <OverlayTrigger
+                overlay={
+                  <Tooltip id="schedule-save-popover">
+                    {loadingUser
+                      ? 'Loading account...'
+                      : 'You must be logged in to save.'}
+                  </Tooltip>
+                }
+                placement="bottom"
               >
-                Save
-              </Button>
+                <span className="d-inline-block">{saveButton}</span>
+              </OverlayTrigger>
             )}
           </div>
           <div>
-            <Button className="bt-btn-inverted" size="sm">
-              Export to Google Calendar
+            {isRemoteSaved && (
+              <AccessControl
+                visibility={schedule.access}
+                setVisibility={setScheduleVisibility}
+                scheduleId={scheduleId!}
+              />
+            )}
+            <Button
+              className="bt-btn-inverted ml-3"
+              size="sm"
+              onClick={exportToCalendar}
+            >
+              Export to Calendar
             </Button>
           </div>
         </div>
-        <SchedulerCalendar schedule={schedule} />
+        <SchedulerCalendar
+          schedule={schedule}
+          setSchedule={setSchedule}
+          previewSection={previewSection}
+        />
       </Col>
     </Row>
   );

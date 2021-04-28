@@ -1,8 +1,11 @@
+import { CalendarOptions, ICalendar, ICSPropertyValue } from 'datebook';
+import { floorMod } from './number';
+
 /**
  * Converts time string to date
  */
 export function stringToDate(time: string): Date {
-  return new Date(`${time}`);
+  return new Date(`${time}Z`);
 }
 
 /**
@@ -14,8 +17,8 @@ export function formatTime(date: Date | string): string {
   }
 
   // Sorry internationals but timezones r weird so this is go
-  let hours = date.getHours();
-  let minutes = date.getMinutes().toString().padStart(2, '0');
+  let hours = date.getUTCHours();
+  let minutes = date.getUTCMinutes().toString().padStart(2, '0');
   let ampm = hours >= 12 ? 'pm' : 'am';
 
   hours = hours % 12;
@@ -81,12 +84,19 @@ const DAY_NAMES = [
   'Saturday',
 ];
 
+const ICAL_DAY_NAMES = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+
 /**
  * Converts numerical day of the week to day. e.g. 0 => Sunday.
  */
 export function dayToLongName(day: number): string {
   return DAY_NAMES[day];
 }
+
+/**
+ * Converts day to iCal number
+ */
+export const dayToICalDay = (day: number): string => ICAL_DAY_NAMES[day];
 
 /**
  * Converts a 'time' e.g. 13 into a time "1 PM"
@@ -99,4 +109,38 @@ export function timeToHourString(time: number): string {
   } else {
     return `${floorModTime % 12}pm`;
   }
+}
+
+/**
+ * Re-interprets a local date as a UTC date.
+ */
+export const reinterpretDateAsUTC = (date: Date) =>
+  new Date(date.getTime() + new Date().getTimezoneOffset() * 60 * 1000);
+
+type ICalOptions = CalendarOptions & {
+  metadata?: { [key: string]: string };
+  property?: { [key: string]: ICSPropertyValue };
+};
+
+/**
+ * Creates ICalendar from dates
+ */
+export function createICalendar(events: ICalOptions[]): ICalendar | null {
+  function createEvent(event: ICalOptions): ICalendar {
+    const calendar = new ICalendar(event);
+    for (const [key, value] of Object.entries(event.metadata || {})) {
+      calendar.setMeta(key, value);
+    }
+    for (const [key, value] of Object.entries(event.property || {})) {
+      calendar.addProperty(key, value);
+    }
+    return calendar;
+  }
+
+  if (events.length === 0) return null;
+  const calendar = createEvent(events[0]);
+  for (let i = 1; i < events.length; i++) {
+    calendar.addEvent(createEvent(events[i]));
+  }
+  return calendar;
 }

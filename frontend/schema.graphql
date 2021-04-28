@@ -3,10 +3,10 @@ type BerkeleytimeUserType {
   user: UserType!
   major: String!
   savedClasses: [CourseType]
-  emailClassUpdate: Boolean!
-  emailGradeUpdate: Boolean!
-  emailEnrollmentOpening: Boolean!
-  emailBerkeleytimeUpdate: Boolean!
+  emailClassUpdate: Boolean
+  emailGradeUpdate: Boolean
+  emailEnrollmentOpening: Boolean
+  emailBerkeleytimeUpdate: Boolean
   schedules(before: String, after: String, first: Int, last: Int): ScheduleTypeConnection!
 }
 
@@ -173,8 +173,9 @@ type Logout {
 }
 
 type Mutation {
-  createSchedule(name: String, selectedSections: [SectionSelectionInput], semester: String, timeblocks: [TimeBlockInput], year: String): CreateSchedule
-  updateSchedule(name: String, scheduleId: ID, selectedSections: [SectionSelectionInput], timeblocks: [TimeBlockInput]): UpdateSchedule
+  createSchedule(name: String, public: Boolean = false, selectedSections: [SectionSelectionInput], semester: String, timeblocks: [TimeBlockInput], totalUnits: String, year: String): CreateSchedule
+  updateSchedule(name: String, public: Boolean, scheduleId: ID, selectedSections: [SectionSelectionInput], timeblocks: [TimeBlockInput], totalUnits: String): UpdateSchedule
+  removeSchedule(scheduleId: ID): RemoveSchedule
   updateUser(emailBerkeleytimeUpdate: Boolean, emailClassUpdate: Boolean, emailEnrollmentOpening: Boolean, emailGradeUpdate: Boolean, major: String): UpdateUser
   saveClass(classId: ID): SaveClass
   removeClass(classId: ID): RemoveClass
@@ -247,6 +248,7 @@ type PlaylistTypeEdge {
 
 type Query {
   schedules: [ScheduleType]
+  schedule(id: ID): ScheduleType
   user: BerkeleytimeUserType
   allPlaylists(before: String, after: String, first: Int, last: Int, category: String, name: String, semester: String, year: String, courses: [ID]): PlaylistTypeConnection
 
@@ -267,6 +269,7 @@ type Query {
   """The ID of the object"""
   section(id: ID!): SectionType
   allSections(before: String, after: String, first: Int, last: Int, course: ID, abbreviation: String, courseNumber: String, year: String, semester: String, courseTitle: String, sectionNumber: String, ccn: String, kind: String, isPrimary: Boolean, associatedSections: [ID], days: String, startTime: DateTime, endTime: DateTime, finalDay: String, finalEnd: DateTime, finalStart: DateTime, instructor: String, disabled: Boolean, locationName: String, instructionMode: String, lastUpdated: DateTime, enrolled: Int, enrolledMax: Int, waitlisted: Int, waitlistedMax: Int): SectionTypeConnection
+  ping: String
 }
 
 type Refresh {
@@ -276,6 +279,10 @@ type Refresh {
 
 type RemoveClass {
   user: BerkeleytimeUserType
+}
+
+type RemoveSchedule {
+  schedule: ScheduleType
 }
 
 type SaveClass {
@@ -291,7 +298,8 @@ type ScheduleType implements Node {
   semester: String!
   dateCreated: DateTime!
   dateModified: DateTime!
-  totalUnits: Int!
+  totalUnits: String!
+  public: Boolean!
   selectedSections(before: String, after: String, first: Int, last: Int): SectionSelectionTypeConnection!
   timeblocks(before: String, after: String, first: Int, last: Int): TimeBlockTypeConnection!
 }
@@ -456,29 +464,12 @@ type UpdateUser {
 
 type UserType {
   id: ID!
-  password: String!
-  lastLogin: DateTime
-
-  """
-  Designates that this user has all permissions without explicitly assigning them.
-  """
-  isSuperuser: Boolean!
 
   """Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only."""
   username: String!
   firstName: String!
   lastName: String!
   email: String!
-
-  """Designates whether the user can log into this admin site."""
-  isStaff: Boolean!
-
-  """
-  Designates whether this user should be treated as active. Unselect this instead of deleting accounts.
-  """
-  isActive: Boolean!
-  dateJoined: DateTime!
-  berkeleytimeuser: BerkeleytimeUserType
 }
 
 type Verify {

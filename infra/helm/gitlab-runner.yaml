@@ -11,3 +11,4 @@ runners:
         pull_policy = "always"
         protected = true
   secret: bt-gitlab-runner
+unregisterRunners: true

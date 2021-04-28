@@ -48,10 +48,10 @@ export interface BerkeleytimeUserType {
   user: UserType;
   major: Scalars['String'];
   savedClasses?: Maybe<Array<Maybe<CourseType>>>;
-  emailClassUpdate: Scalars['Boolean'];
-  emailGradeUpdate: Scalars['Boolean'];
-  emailEnrollmentOpening: Scalars['Boolean'];
-  emailBerkeleytimeUpdate: Scalars['Boolean'];
+  emailClassUpdate?: Maybe<Scalars['Boolean']>;
+  emailGradeUpdate?: Maybe<Scalars['Boolean']>;
+  emailEnrollmentOpening?: Maybe<Scalars['Boolean']>;
+  emailBerkeleytimeUpdate?: Maybe<Scalars['Boolean']>;
   schedules: ScheduleTypeConnection;
 }
 
@@ -313,6 +313,7 @@ export interface Mutation {
   __typename?: 'Mutation';
   createSchedule?: Maybe<CreateSchedule>;
   updateSchedule?: Maybe<UpdateSchedule>;
+  removeSchedule?: Maybe<RemoveSchedule>;
   updateUser?: Maybe<UpdateUser>;
   saveClass?: Maybe<SaveClass>;
   removeClass?: Maybe<RemoveClass>;
@@ -327,18 +328,27 @@ export interface Mutation {
 
 export interface MutationCreateScheduleArgs {
   name?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
   selectedSections?: Maybe<Array<Maybe<SectionSelectionInput>>>;
   semester?: Maybe<Scalars['String']>;
   timeblocks?: Maybe<Array<Maybe<TimeBlockInput>>>;
+  totalUnits?: Maybe<Scalars['String']>;
   year?: Maybe<Scalars['String']>;
 }
 
 
 export interface MutationUpdateScheduleArgs {
   name?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
   scheduleId?: Maybe<Scalars['ID']>;
   selectedSections?: Maybe<Array<Maybe<SectionSelectionInput>>>;
   timeblocks?: Maybe<Array<Maybe<TimeBlockInput>>>;
+  totalUnits?: Maybe<Scalars['String']>;
+}
+
+
+export interface MutationRemoveScheduleArgs {
+  scheduleId?: Maybe<Scalars['ID']>;
 }
 
 
@@ -462,6 +472,7 @@ export interface PlaylistTypeEdge {
 export interface Query {
   __typename?: 'Query';
   schedules?: Maybe<Array<Maybe<ScheduleType>>>;
+  schedule?: Maybe<ScheduleType>;
   user?: Maybe<BerkeleytimeUserType>;
   allPlaylists?: Maybe<PlaylistTypeConnection>;
   /** The ID of the object */
@@ -478,6 +489,12 @@ export interface Query {
   /** The ID of the object */
   section?: Maybe<SectionType>;
   allSections?: Maybe<SectionTypeConnection>;
+  ping?: Maybe<Scalars['String']>;
+}
+
+
+export interface QueryScheduleArgs {
+  id?: Maybe<Scalars['ID']>;
 }
 
 
@@ -615,6 +632,11 @@ export interface RemoveClass {
   user?: Maybe<BerkeleytimeUserType>;
 }
 
+export interface RemoveSchedule {
+  __typename?: 'RemoveSchedule';
+  schedule?: Maybe<ScheduleType>;
+}
+
 export interface SaveClass {
   __typename?: 'SaveClass';
   user?: Maybe<BerkeleytimeUserType>;
@@ -630,7 +652,8 @@ export interface ScheduleType extends Node {
   semester: Scalars['String'];
   dateCreated: Scalars['DateTime'];
   dateModified: Scalars['DateTime'];
-  totalUnits: Scalars['Int'];
+  totalUnits: Scalars['String'];
+  public: Scalars['Boolean'];
   selectedSections: SectionSelectionTypeConnection;
   timeblocks: TimeBlockTypeConnection;
 }
@@ -896,21 +919,11 @@ export interface UpdateUser {
 export interface UserType {
   __typename?: 'UserType';
   id: Scalars['ID'];
-  password: Scalars['String'];
-  lastLogin?: Maybe<Scalars['DateTime']>;
-  /** Designates that this user has all permissions without explicitly assigning them. */
-  isSuperuser: Scalars['Boolean'];
   /** Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
   username: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   email: Scalars['String'];
-  /** Designates whether the user can log into this admin site. */
-  isStaff: Scalars['Boolean'];
-  /** Designates whether this user should be treated as active. Unselect this instead of deleting accounts. */
-  isActive: Scalars['Boolean'];
-  dateJoined: Scalars['DateTime'];
-  berkeleytimeuser?: Maybe<BerkeleytimeUserType>;
 }
 
 export interface Verify {
@@ -944,7 +957,7 @@ export type CourseFragment = (
 
 export type CourseOverviewFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'enrolled' | 'enrolledMax' | 'units'>
+  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'description' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'enrolled' | 'enrolledMax' | 'units'>
 );
 
 export type FilterFragment = (
@@ -969,8 +982,14 @@ export type LectureFragment = (
 
 export type ScheduleFragment = (
   { __typename?: 'ScheduleType' }
-  & Pick<ScheduleType, 'id' | 'name' | 'semester' | 'year' | 'totalUnits'>
-  & { selectedSections: (
+  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated' | 'dateModified' | 'public'>
+  & { user: (
+    { __typename?: 'BerkeleytimeUserType' }
+    & { user: (
+      { __typename?: 'UserType' }
+      & Pick<UserType, 'id' | 'firstName' | 'lastName'>
+    ) }
+  ), selectedSections: (
     { __typename?: 'SectionSelectionTypeConnection' }
     & { edges: Array<Maybe<(
       { __typename?: 'SectionSelectionTypeEdge' }
@@ -984,7 +1003,7 @@ export type ScheduleFragment = (
 
 export type ScheduleOverviewFragment = (
   { __typename?: 'ScheduleType' }
-  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated'>
+  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated' | 'dateModified'>
   & { selectedSections: (
     { __typename?: 'SectionSelectionTypeConnection' }
     & { edges: Array<Maybe<(
@@ -1017,7 +1036,7 @@ export type SchedulerCourseFragment = (
 
 export type SectionFragment = (
   { __typename?: 'SectionType' }
-  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled'>
+  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled' | 'sectionNumber' | 'isPrimary'>
 );
 
 export type SectionSelectionFragment = (
@@ -1066,8 +1085,10 @@ export type CreateScheduleMutationVariables = Exact<{
   name: Scalars['String'];
   selectedSections: Array<Maybe<SectionSelectionInput>> | Maybe<SectionSelectionInput>;
   timeblocks: Array<Maybe<TimeBlockInput>> | Maybe<TimeBlockInput>;
+  totalUnits: Scalars['String'];
   semester: Scalars['String'];
   year: Scalars['String'];
+  public: Scalars['Boolean'];
 }>;
 
 
@@ -1075,6 +1096,22 @@ export type CreateScheduleMutation = (
   { __typename?: 'Mutation' }
   & { createSchedule?: Maybe<(
     { __typename?: 'CreateSchedule' }
+    & { schedule?: Maybe<(
+      { __typename?: 'ScheduleType' }
+      & ScheduleFragment
+    )> }
+  )> }
+);
+
+export type DeleteScheduleMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteScheduleMutation = (
+  { __typename?: 'Mutation' }
+  & { removeSchedule?: Maybe<(
+    { __typename?: 'RemoveSchedule' }
     & { schedule?: Maybe<(
       { __typename?: 'ScheduleType' }
       & Pick<ScheduleType, 'id'>
@@ -1149,6 +1186,8 @@ export type UpdateScheduleMutationVariables = Exact<{
   name: Scalars['String'];
   selectedSections: Array<Maybe<SectionSelectionInput>> | Maybe<SectionSelectionInput>;
   timeblocks: Array<Maybe<TimeBlockInput>> | Maybe<TimeBlockInput>;
+  totalUnits: Scalars['String'];
+  public: Scalars['Boolean'];
 }>;
 
 
@@ -1158,7 +1197,7 @@ export type UpdateScheduleMutation = (
     { __typename?: 'UpdateSchedule' }
     & { schedule?: Maybe<(
       { __typename?: 'ScheduleType' }
-      & Pick<ScheduleType, 'dateModified'>
+      & ScheduleFragment
     )> }
   )> }
 );
@@ -1273,23 +1312,16 @@ export type GetFiltersQuery = (
   )> }
 );
 
-export type GetScheduleForIdQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetScheduleForIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
 
 
 export type GetScheduleForIdQuery = (
   { __typename?: 'Query' }
-  & { user?: Maybe<(
-    { __typename?: 'BerkeleytimeUserType' }
-    & { schedules: (
-      { __typename?: 'ScheduleTypeConnection' }
-      & { edges: Array<Maybe<(
-        { __typename?: 'ScheduleTypeEdge' }
-        & { node?: Maybe<(
-          { __typename?: 'ScheduleType' }
-          & ScheduleFragment
-        )> }
-      )>> }
-    ) }
+  & { schedule?: Maybe<(
+    { __typename?: 'ScheduleType' }
+    & ScheduleFragment
   )> }
 );
 
@@ -1357,6 +1389,8 @@ export const SectionFragmentDoc = gql`
   days
   wordDays
   disabled
+  sectionNumber
+  isPrimary
 }
     `;
 export const CourseFragmentDoc = gql`
@@ -1411,6 +1445,7 @@ export const CourseOverviewFragmentDoc = gql`
   id
   abbreviation
   courseNumber
+  description
   title
   gradeAverage
   letterAverage
@@ -1443,10 +1478,20 @@ ${SectionFragmentDoc}`;
 export const ScheduleFragmentDoc = gql`
     fragment Schedule on ScheduleType {
   id
-  name
-  semester
   year
+  semester
+  name
   totalUnits
+  dateCreated
+  dateModified
+  public
+  user {
+    user {
+      id
+      firstName
+      lastName
+    }
+  }
   selectedSections {
     edges {
       node {
@@ -1498,6 +1543,7 @@ export const ScheduleOverviewFragmentDoc = gql`
   name
   totalUnits
   dateCreated
+  dateModified
   selectedSections {
     edges {
       node {
@@ -1540,20 +1586,22 @@ export const UserProfileFragmentDoc = gql`
     ${CourseOverviewFragmentDoc}
 ${ScheduleOverviewFragmentDoc}`;
 export const CreateScheduleDocument = gql`
-    mutation CreateSchedule($name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $semester: String!, $year: String!) {
+    mutation CreateSchedule($name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $totalUnits: String!, $semester: String!, $year: String!, $public: Boolean!) {
   createSchedule(
     name: $name
     selectedSections: $selectedSections
     timeblocks: $timeblocks
     semester: $semester
     year: $year
+    public: $public
+    totalUnits: $totalUnits
   ) {
     schedule {
-      id
+      ...Schedule
     }
   }
 }
-    `;
+    ${ScheduleFragmentDoc}`;
 export type CreateScheduleMutationFn = Apollo.MutationFunction<CreateScheduleMutation, CreateScheduleMutationVariables>;
 
 /**
@@ -1572,8 +1620,10 @@ export type CreateScheduleMutationFn = Apollo.MutationFunction<CreateScheduleMut
  *      name: // value for 'name'
  *      selectedSections: // value for 'selectedSections'
  *      timeblocks: // value for 'timeblocks'
+ *      totalUnits: // value for 'totalUnits'
  *      semester: // value for 'semester'
  *      year: // value for 'year'
+ *      public: // value for 'public'
  *   },
  * });
  */
@@ -1583,6 +1633,40 @@ export function useCreateScheduleMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateScheduleMutationHookResult = ReturnType<typeof useCreateScheduleMutation>;
 export type CreateScheduleMutationResult = Apollo.MutationResult<CreateScheduleMutation>;
 export type CreateScheduleMutationOptions = Apollo.BaseMutationOptions<CreateScheduleMutation, CreateScheduleMutationVariables>;
+export const DeleteScheduleDocument = gql`
+    mutation DeleteSchedule($id: ID!) {
+  removeSchedule(scheduleId: $id) {
+    schedule {
+      id
+    }
+  }
+}
+    `;
+export type DeleteScheduleMutationFn = Apollo.MutationFunction<DeleteScheduleMutation, DeleteScheduleMutationVariables>;
+
+/**
+ * __useDeleteScheduleMutation__
+ *
+ * To run a mutation, you first call `useDeleteScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteScheduleMutation, { data, loading, error }] = useDeleteScheduleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteScheduleMutation(baseOptions?: Apollo.MutationHookOptions<DeleteScheduleMutation, DeleteScheduleMutationVariables>) {
+        return Apollo.useMutation<DeleteScheduleMutation, DeleteScheduleMutationVariables>(DeleteScheduleDocument, baseOptions);
+      }
+export type DeleteScheduleMutationHookResult = ReturnType<typeof useDeleteScheduleMutation>;
+export type DeleteScheduleMutationResult = Apollo.MutationResult<DeleteScheduleMutation>;
+export type DeleteScheduleMutationOptions = Apollo.BaseMutationOptions<DeleteScheduleMutation, DeleteScheduleMutationVariables>;
 export const DeleteUserDocument = gql`
     mutation DeleteUser {
   deleteUser {
@@ -1720,19 +1804,21 @@ export type UnsaveCourseMutationHookResult = ReturnType<typeof useUnsaveCourseMu
 export type UnsaveCourseMutationResult = Apollo.MutationResult<UnsaveCourseMutation>;
 export type UnsaveCourseMutationOptions = Apollo.BaseMutationOptions<UnsaveCourseMutation, UnsaveCourseMutationVariables>;
 export const UpdateScheduleDocument = gql`
-    mutation UpdateSchedule($scheduleId: ID!, $name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!) {
+    mutation UpdateSchedule($scheduleId: ID!, $name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $totalUnits: String!, $public: Boolean!) {
   updateSchedule(
     scheduleId: $scheduleId
     name: $name
     selectedSections: $selectedSections
     timeblocks: $timeblocks
+    totalUnits: $totalUnits
+    public: $public
   ) {
     schedule {
-      dateModified
+      ...Schedule
     }
   }
 }
-    `;
+    ${ScheduleFragmentDoc}`;
 export type UpdateScheduleMutationFn = Apollo.MutationFunction<UpdateScheduleMutation, UpdateScheduleMutationVariables>;
 
 /**
@@ -1752,6 +1838,8 @@ export type UpdateScheduleMutationFn = Apollo.MutationFunction<UpdateScheduleMut
  *      name: // value for 'name'
  *      selectedSections: // value for 'selectedSections'
  *      timeblocks: // value for 'timeblocks'
+ *      totalUnits: // value for 'totalUnits'
+ *      public: // value for 'public'
  *   },
  * });
  */
@@ -1996,15 +2084,9 @@ export type GetFiltersQueryHookResult = ReturnType<typeof useGetFiltersQuery>;
 export type GetFiltersLazyQueryHookResult = ReturnType<typeof useGetFiltersLazyQuery>;
 export type GetFiltersQueryResult = Apollo.QueryResult<GetFiltersQuery, GetFiltersQueryVariables>;
 export const GetScheduleForIdDocument = gql`
-    query GetScheduleForId {
-  user {
-    schedules {
-      edges {
-        node {
-          ...Schedule
-        }
-      }
-    }
+    query GetScheduleForId($id: ID!) {
+  schedule(id: $id) {
+    ...Schedule
   }
 }
     ${ScheduleFragmentDoc}`;
@@ -2021,10 +2103,11 @@ export const GetScheduleForIdDocument = gql`
  * @example
  * const { data, loading, error } = useGetScheduleForIdQuery({
  *   variables: {
+ *      id: // value for 'id'
  *   },
  * });
  */
-export function useGetScheduleForIdQuery(baseOptions?: Apollo.QueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {
+export function useGetScheduleForIdQuery(baseOptions: Apollo.QueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {
         return Apollo.useQuery<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>(GetScheduleForIdDocument, baseOptions);
       }
 export function useGetScheduleForIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {

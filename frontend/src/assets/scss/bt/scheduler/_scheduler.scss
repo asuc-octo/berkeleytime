@@ -26,6 +26,12 @@
     flex: 1;
   }
 
+  &.schedule-standalone-content {
+    .scheduler-header input {
+      text-align: center;
+    }
+  }
+
   .scheduler-header {
     display: flex;
     align-items: center;
@@ -42,10 +48,16 @@
       margin-right: 1rem;
     }
 
-    span {
+    > span,
+    > * > span {
       font-size: 0.9rem;
       &:not(.callout) {
         color: $bt-light-text;
+      }
+
+      &.scheduler-header-strong {
+        color: $bt-base-text;
+        font-weight: 500;
       }
     }
 

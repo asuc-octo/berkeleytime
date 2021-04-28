@@ -6,57 +6,47 @@ import {
   applyIndicatorGrade,
 } from '../../utils/utils';
 import { CourseOverviewFragment } from '../../graphql/graphql';
-import { ReactComponent as Trash } from '../../assets/svg/profile/trash.svg';
-import { Button } from 'react-bootstrap';
+import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { Link } from 'react-router-dom';
+import TrashButton from 'components/Common/TrashButton';
+import ProfileCard from './ProfileCard';
 
 type Props = {
   course: CourseOverviewFragment;
-  removable: boolean;
-  remove: () => void;
-  link: string;
 };
 
-const ProfileCourseCard = ({ course, removable, remove, link }: Props) => {
+const ProfileCourseCard = ({ course }: Props) => {
+  const unsaveCourse = useUnsaveCourse();
+
   return (
-    <Link
-      className="profile-card"
-      to={link}
-    >
-      <div className="profile-card-info">
-        <h6>{`${course.abbreviation} ${course.courseNumber}`}</h6>
-        <p className="profile-card-info-desc">{course.title}</p>
-        <div className="profile-card-info-stats">
-          {course.enrolledPercentage === -1
-            ? null
-            : applyIndicatorPercent(
+    <ProfileCard
+      component={Link}
+      to={`/catalog/${course.abbreviation}/${course.courseNumber}`}
+      title={`${course.abbreviation} ${course.courseNumber}`}
+      subtitle={course.title}
+      description={
+        <>
+          {course.enrolledPercentage !== -1 && (
+            <span>
+              {applyIndicatorPercent(
                 `${course.enrolled}/${course.enrolledMax} enrolled`,
                 course.enrolledPercentage
               )}
-
-          <span>&nbsp;•&nbsp;{formatUnits(course.units)}</span>
-        </div>
-      </div>
-      {course.letterAverage && (
-        <div className="profile-card-sort profile-card-grade">
-          {applyIndicatorGrade(course.letterAverage, course.letterAverage)}
-        </div>
-      )}
-      {removable && (
-        <Button
-          className="profile-card-remove"
-          variant="link"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            e.nativeEvent.stopImmediatePropagation();
-            remove();
-          }}
-        >
-          <Trash />
-        </Button>
-      )}
-    </Link>
+              &nbsp;•&nbsp;
+            </span>
+          )}
+          <span>{formatUnits(course.units)}</span>
+        </>
+      }
+      aside={
+        course.letterAverage && (
+          <div className="profile-card-sort profile-card-grade">
+            {applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+          </div>
+        )
+      }
+      didRemove={() => unsaveCourse(course)}
+    />
   );
 };
 

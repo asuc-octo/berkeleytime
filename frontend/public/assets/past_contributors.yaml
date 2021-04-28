@@ -1,3 +1,8 @@
+- name: Class of 2021
+  rows:
+    - - name: Janet Xu
+        role: Design Lead
+        site: https://janetxrm.github.io
 - name: Class of 2020
   rows:
     - - name: Will Wang

@@ -1,11 +1,5 @@
-query GetScheduleForId {
-  user {
-    schedules {
-      edges {
-        node {
-          ...Schedule
-        }
-      }
-    }
+query GetScheduleForId($id: ID!) {
+  schedule(id: $id) {
+    ...Schedule
   }
 }

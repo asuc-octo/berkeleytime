@@ -5,6 +5,7 @@ fragment ScheduleOverview on ScheduleType {
   name
   totalUnits
   dateCreated
+  dateModified
 
   selectedSections {
     edges {

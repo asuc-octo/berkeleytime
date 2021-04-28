@@ -139,3 +139,10 @@ data:
 
     # Without this line, get "LOG: using stale statistics instead of current ones because stats collector is not responding"
     stats_temp_directory = '/pg-tmp'
+
+    # To enable Elasticsearch metrics on statement executions
+    # first time setup requires:
+    # CREATE EXTENSION btree_gist;
+    # CREATE EXTENSION pg_stat_statements;
+    # CREATE EXTENSION pg_trgm;
+    shared_preload_libraries = 'pg_stat_statements'

@@ -52,14 +52,14 @@ spec:
     useAllNodes: true
     useAllDevices: true
     # deviceFilter: vd[b-z] # OCF: vdb, vdc / GCP: sdb, sdc
-# ---
-# kind: ConfigMap
-# apiVersion: v1
-# metadata:
-#   name: rook-config-override
-#   namespace: rook-ceph
-# data:
-#   config: |
-#     [global]
-#     osd_pool_default_size = 1
-#     mon_warn_on_pool_no_redundancy = false
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rook-config-override
+  namespace: rook-ceph
+data:
+  config: |
+    [global]
+    osd_pool_default_size = 1
+    mon_warn_on_pool_no_redundancy = false

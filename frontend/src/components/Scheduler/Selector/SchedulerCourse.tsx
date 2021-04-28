@@ -3,7 +3,7 @@ import {
   useGetSchedulerCourseForIdQuery,
 } from '../../../graphql/graphql';
 import React, { useState } from 'react';
-import { courseToColor, courseToName } from 'utils/courses/course';
+import { courseToName } from 'utils/courses/course';
 import { Semester } from 'utils/playlists/semesters';
 
 import { ReactComponent as Trash } from '../../../assets/svg/common/trash.svg';
@@ -14,6 +14,8 @@ import { parseUnits, unitsToString } from 'utils/courses/units';
 
 import { ReactComponent as ExpandMore } from '../../../assets/svg/common/expand.svg';
 import { Collapse } from 'react-bootstrap';
+import { getColorForCourse } from 'utils/scheduler/scheduler';
+import { useScheduleContext } from '../ScheduleContext';
 
 type Props = {
   courseId: string;
@@ -48,8 +50,9 @@ const SchedulerCourse = ({
     },
   });
   const [isExpanded, setIsExpanded] = useState(false);
+  const { schedule } = useScheduleContext();
 
-  const color = courseToColor(courseId);
+  const color = getColorForCourse(schedule, courseId);
 
   return (
     <div className="scheduler-course">
