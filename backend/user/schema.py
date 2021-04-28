@@ -21,20 +21,72 @@ from catalog.schema import CourseType
 from catalog.models import Course
 
 
-# Object Types
+# =======================
+#     Graphene Types
+# =======================
+
 class UserType(DjangoObjectType):
     class Meta:
         model = User
+        fields = (
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'email'
+        )
+
+
+def is_owner(self, info):
+    """ Returns if current user matches SELF """
+    return info.context.user.is_authenticated and info.context.user.berkeleytimeuser == self
+
 
 class BerkeleytimeUserType(DjangoObjectType):
+    # Overriding fields for authentication
     saved_classes = graphene.List(CourseType)
+    email_class_update = graphene.Boolean(required=False)
+    email_grade_update = graphene.Boolean(required=False)
+    email_enrollment_opening = graphene.Boolean(required=False)
+    email_berkeleytime_update = graphene.Boolean(required=False)
 
-    @graphene.resolve_only_args
-    def resolve_saved_classes(self):
-        return self.saved_classes.all()
+    def resolve_saved_classes(self, info):
+        if is_owner(self, info):
+            return self.saved_classes.all()
+        else:
+            return None
+
+    def resolve_email_class_update(self, info):
+        if is_owner(self, info):
+            return self.email_class_update
+        else:
+            return None
+    
+    def resolve_email_grade_update(self, info):
+        if is_owner(self, info):
+            return self.email_grade_update
+        else:
+            return None
+            
+    def resolve_email_enrollment_opening(self, info):
+        if is_owner(self, info):
+            return self.email_enrollment_opening
+        else:
+            return None
+
+    def resolve_email_berkeleytime_update(self, info):
+        if is_owner(self, info):
+            return self.email_berkeleytime_update
+        else:
+            return None
 
     class Meta:
         model = BerkeleytimeUser
+
+
+# =======================
+#       Mutataions
+# =======================
 
 class UpdateUser(graphene.Mutation):
     class Arguments:
@@ -68,6 +120,7 @@ class UpdateUser(graphene.Mutation):
         user.save()
         return UpdateUser(user=user)
 
+
 class SaveClass(graphene.Mutation):
     class Arguments:
         class_id = graphene.ID()
@@ -86,6 +139,7 @@ class SaveClass(graphene.Mutation):
             return GraphQLError('Invalid Class ID')
         return SaveClass(user=user)
 
+
 class RemoveClass(graphene.Mutation):
     class Arguments:
         class_id = graphene.ID()
@@ -100,7 +154,11 @@ class RemoveClass(graphene.Mutation):
         user.saved_classes.remove(from_global_id(class_id)[1])
         return RemoveClass(user=user)
 
-# JWT
+
+# =======================
+#       JWT Auth
+# =======================
+
 def on_token_auth_resolve(context, user, payload):
     """ Append JWT payload (not really needed tbh) and token to graphql
     payload.
@@ -198,6 +256,7 @@ class ObtainJSONWebToken(graphql_jwt.mixins.JSONWebTokenMixin, graphene.Mutation
         # generate jwt token
         return on_token_auth_resolve(info.context, btuser.user, cls(user=btuser, new_user=new_user))
 
+
 class Logout(graphene.Mutation):
     success = graphene.Boolean()
 
@@ -206,6 +265,7 @@ class Logout(graphene.Mutation):
         # remove cookies
         deleted = graphql_jwt.DeleteJSONWebTokenCookie.mutate(root, info).deleted
         return Logout(success=deleted)
+
 
 class DeleteUser(graphene.Mutation):
     success = graphene.Boolean()
@@ -220,6 +280,11 @@ class DeleteUser(graphene.Mutation):
         user = info.context.user
         user.delete()
         return DeleteUser(True)
+
+
+# =======================
+#        Graphene
+# =======================
 
 class Query(graphene.ObjectType):
     user = graphene.Field(BerkeleytimeUserType)
