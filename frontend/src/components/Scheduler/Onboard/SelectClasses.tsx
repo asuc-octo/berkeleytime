@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import BTLoader from 'components/Common/BTLoader';
 import CourseSearch from 'components/Scheduler/Onboard/CourseSearch';
-import ProfileCourseCard from 'components/Profile/ProfileCourseCard';
+import SchedulerCourseCard from 'components/Scheduler/Onboard/SchedulerCourseCard';
 
 import { ScheduleContext } from '../ScheduleContext';
 import { CourseOverviewFragment } from '../../../graphql/graphql';
@@ -81,11 +81,9 @@ const SelectClasses = ({ updatePage, schedule, setSchedule }: Props) => {
                   variant="link"
                   onClick={() => addCourse(course, schedule, setSchedule)}
                 >+</Button>
-                <ProfileCourseCard
-                  removable={false}
+                <SchedulerCourseCard
+                  key={course.id}
                   course={course}
-                  remove={() => trashCourse(course.id)}
-                  link={'/scheduler'}
                 />
               </div>
             ))}
@@ -96,12 +94,9 @@ const SelectClasses = ({ updatePage, schedule, setSchedule }: Props) => {
           <div className="selected-classes">
             <ScheduleContext.Provider value={{ schedule, setSchedule }}>
               {schedule.courses.map((course: CourseOverviewFragment) => (
-                <ProfileCourseCard
+                <SchedulerCourseCard
                   key={course.id}
-                  removable={true}
                   course={course}
-                  remove={() => trashCourse(course.id)}
-                  link={'/scheduler'}
                 />
               ))}
             </ScheduleContext.Provider>

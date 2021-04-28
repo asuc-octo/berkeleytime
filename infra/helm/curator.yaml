@@ -6,9 +6,10 @@ image:
 
 cronjob:
   concurrencyPolicy: Forbid
-  failedJobsHistoryLimit: "1"
-  schedule: "* * * * *"
-  successfulJobsHistoryLimit: "1"
+  failedJobsHistoryLimit: 1
+  schedule: "0 * * * *"
+  successfulJobsHistoryLimit: 1
+  startingDeadlineSeconds: 60
 
 configMaps:
   action_file_yml: |-
@@ -18,7 +19,7 @@ configMaps:
         description: >-
           Delete indices matching the prefix in excess of specified maximum GB
           cluster space starting with the oldest indices' index creation_date.
-          The disk space total condition is cumulative for all matched indices.
+          The disk space total condition is cumulative for all matched indices
         options:
           allow_ilm_indices: True
           ignore_empty_list: True
@@ -29,10 +30,64 @@ configMaps:
         - filtertype: pattern
           kind: prefix
           value: .ds-metricbeat
-        - filtertype: count # count filters the active data stream write index
+        - filtertype: count # exclude undeletable active data stream write index
           count: 1
         - filtertype: space
-          disk_space: 10
+          disk_space: 15
+          use_age: True
+          source: creation_date
+      2:
+        action: delete_indices
+        options:
+          allow_ilm_indices: True
+          ignore_empty_list: True
+          timeout_override: 300
+          continue_if_exception: True
+          disable_action: False
+        filters:
+        - filtertype: pattern
+          kind: prefix
+          value: .ds-k8s-rook-ceph
+        - filtertype: count
+          count: 1
+        - filtertype: space
+          disk_space: 2
+          use_age: True
+          source: creation_date
+      3:
+        action: delete_indices
+        options:
+          allow_ilm_indices: True
+          ignore_empty_list: True
+          timeout_override: 300
+          continue_if_exception: True
+          disable_action: False
+        filters:
+        - filtertype: pattern
+          kind: prefix
+          value: .ds-k8s-ingress-nginx
+        - filtertype: count
+          count: 1
+        - filtertype: space
+          disk_space: 2
+          use_age: True
+          source: creation_date
+      4:
+        action: delete_indices
+        options:
+          allow_ilm_indices: True
+          ignore_empty_list: True
+          timeout_override: 300
+          continue_if_exception: True
+          disable_action: False
+        filters:
+        - filtertype: pattern
+          kind: prefix
+          value: .ds-k8s-default
+        - filtertype: count
+          count: 1
+        - filtertype: space
+          disk_space: 2
           use_age: True
           source: creation_date
   config_yml: |-

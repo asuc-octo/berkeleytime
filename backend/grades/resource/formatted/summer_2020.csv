@@ -126,8 +126,8 @@ CY PLAN,101,14980,001,Intro Urb Data,Karen Chapple; Manuel Santana Palacios,unde
 CY PLAN,110,10610,001,Intro To City Plng,David Amos; Karen Chapple; Priscila Coli Rocha,under,0,19,12,10,2,0,0,1,1,0,0,0,0,1,0
 CY PLAN,114,10611,001,Intro Urb Reg Trans,Chester Harvey; Daniel Chatman,under,10,25,7,4,2,2,0,0,0,0,0,0,0,2,0
 CY PLAN,N115,10648,001,Urban Devel Countrs,James Mizes,under,3,36,5,1,0,1,0,0,0,0,0,0,0,0,0
-DATA,C6,15767,001,Intro Comp Think,Deborah Nolan; Hans Kristian Castro,under,7,8,1,2,2,0,0,0,0,0,0,0,0,0,0
 DATA,C100,14567,001,Princ&Tech Data Sci,Alexander Le-Tu; Allen Shen; Daniel Garcia; Henry Maier; Isaac Schmidt; Ishaan Srivastava; Jessica Wu; John Tsortos; Kevin Moy; Kunal Agarwal; Olivia Qin; Rubina Aujla; Shichao Han; Sophia Phillips; Suraj Rampure; Xinran Liang,under,15,70,64,49,53,22,5,4,2,0,2,0,16,17,4
+DATA,C6,15767,001,Intro Comp Think,Deborah Nolan; Hans Kristian Castro,under,7,8,1,2,2,0,0,0,0,0,0,0,0,0,0
 DES INV,190,15649,10,Spec Topics Des Inv,George Moore II; Vivek Rao,under,1,11,2,1,0,0,0,0,0,0,0,0,0,6,1
 DES INV,22,14509,1,Prototype & Fab,Christopher Myers; Tina Piracci; -,under,1,11,3,2,0,0,0,0,0,0,0,0,0,2,0
 DES INV,23,14552,1,Creative Prog&Elec,Michael Shiloh; Tina Piracci; -,under,16,2,0,0,0,1,0,0,0,0,0,0,0,1,0
@@ -146,7 +146,7 @@ ECON,119,13047,001,Psych And Econ,James Campbell,under,9,23,24,24,32,9,6,1,0,0,0
 ECON,131,15328,001,Public Economics,Tomer Blumkin,under,4,6,5,6,6,5,4,2,1,0,0,0,4,1,0
 ECON,136,12107,001,Financial Economics,Raymond Hawkins,under,3,30,31,10,13,11,4,1,0,0,0,0,0,14,4
 ECON,140,12108,001,Econometrics,Emi Nakamura; Jon Steinsson; Scott Carson,under,1,171,22,16,6,6,3,4,3,2,0,0,6,1,3
-ECON,151,13048,001,Labor Economics,Emi Nakamura; Jon Steinsson; Scott Carson,under,0,111,8,2,1,0,0,0,0,0,0,0,2,4,1
+ECON,151,13048,001,Labor Economics,Scott Carson; Jon Steinsson,under,0,111,8,2,1,0,0,0,0,0,0,0,2,4,1
 ECON,157,15341,001,Health Economics,Kayleigh Barnes; Ryan Edwards,under,18,36,4,1,1,0,0,0,0,0,0,0,1,0,0
 ECON,N110,12926,001,Game Theory Soc Sci,Zheng Huang,under,5,11,13,12,4,4,2,0,0,0,0,0,1,4,0
 EDUC,130,15049,001,Know Learn Math Sci,Kiera Brodsky Chase,under,0,15,0,1,0,0,0,0,0,0,0,0,0,1,1

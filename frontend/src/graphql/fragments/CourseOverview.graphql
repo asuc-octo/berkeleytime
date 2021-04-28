@@ -2,6 +2,7 @@ fragment CourseOverview on CourseType {
   id
   abbreviation
   courseNumber
+  description
   title
   gradeAverage
   letterAverage

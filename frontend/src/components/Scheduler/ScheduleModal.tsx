@@ -3,18 +3,23 @@ import { useGetScheduleForIdQuery } from '../../graphql/graphql';
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import SchedulerCalendar from './Calendar/SchedulerCalendar';
-import { deserializeSchedule } from '../../utils/scheduler/scheduler';
+import {
+  deserializeSchedule,
+  getUnitsForSchedule,
+} from '../../utils/scheduler/scheduler';
 import { Button } from 'bt/custom';
+import { unitsToString } from 'utils/courses/units';
 
 type ContentProps = {
   scheduleId: string;
 };
 const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
+  const scheduleUUID = atob(scheduleId).split(':')[1];
   const { data, loading } = useGetScheduleForIdQuery({
-    // variables: { scheduleId },
+    variables: { id: scheduleId },
   });
 
-  if (!data?.user) {
+  if (!data) {
     return loading ? (
       <BTLoader />
     ) : (
@@ -24,17 +29,18 @@ const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
     );
   }
 
-  const rawSchedule = data.user.schedules.edges.find(
-    (schedule) => schedule?.node?.id === scheduleId
-  )?.node!;
+  if (!data.schedule) {
+    return <div className="loading">That schedule could not be found.</div>;
+  }
 
-  const schedule = deserializeSchedule(rawSchedule);
+  const schedule = deserializeSchedule(data.schedule);
+  const totalUnits = getUnitsForSchedule(schedule);
 
   return (
     <div className="scheduler schedule-modal-content">
       <div className="scheduler-header">
         <div>
-          <span>Selected units: {rawSchedule.totalUnits}</span>
+          <span>Selected units: {unitsToString(totalUnits)}</span>
         </div>
         <div>
           <input
@@ -48,7 +54,7 @@ const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
           <Button
             className="bt-btn-primary"
             size="sm"
-            href={`/scheduler/${scheduleId}`}
+            href={`/scheduler/${scheduleUUID}`}
           >
             Edit
           </Button>

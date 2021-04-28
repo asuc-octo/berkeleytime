@@ -1,0 +1,65 @@
+# This template file depends on environment variables
+# See infra/init.sh for how to apply this to cluster with envsubst
+
+# This ingress file is purely concerned with single-instance routes, most
+# likely on the infrastructure side. This contrasts with the primary and
+# tricycle ingresses because those routes need to account for dev-vs-prod env
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.k8s.io/cluster-issuer: letsencrypt
+    kubernetes.io/ingress.class: nginx
+  name: bt-ingress-infra-$INGRESS_LABEL-public
+spec:
+  rules:
+    - host: $BASE_DOMAIN_NAME
+      http:
+        paths:
+          - backend:
+              service:
+                name: bt-gitlab
+                port:
+                  number: 80
+            path: /git
+            pathType: Prefix
+          - backend:
+              service:
+                name: bt-github-notify
+                port:
+                  number: 80
+            path: /webhooks/github
+            pathType: Prefix
+  tls:
+    - hosts:
+        - berkeleytime.com
+        - '*.berkeleytime.com'
+      secretName: bt-tls
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.k8s.io/cluster-issuer: letsencrypt
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/auth-realm: Authentication Required - Login with credentials
+    nginx.ingress.kubernetes.io/auth-secret: bt-ingress-protected-routes
+    nginx.ingress.kubernetes.io/auth-type: basic
+  name: bt-ingress-infra-$INGRESS_LABEL-protected-routes
+spec:
+  rules:
+    - host: $BASE_DOMAIN_NAME
+      http:
+        paths:
+          - backend:
+              service:
+                name: bt-kibana-kibana
+                port:
+                  number: 5601
+            path: /kibana
+            pathType: Prefix
+  tls:
+    - hosts:
+        - berkeleytime.com
+      secretName: bt-tls
