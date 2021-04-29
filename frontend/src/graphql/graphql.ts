@@ -1340,7 +1340,9 @@ export type GetSchedulerCourseForIdQuery = (
   )> }
 );
 
-export type GetSemestersQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetSemestersQueryVariables = Exact<{
+  name?: Maybe<Scalars['String']>;
+}>;
 
 
 export type GetSemestersQuery = (
@@ -2152,8 +2154,8 @@ export type GetSchedulerCourseForIdQueryHookResult = ReturnType<typeof useGetSch
 export type GetSchedulerCourseForIdLazyQueryHookResult = ReturnType<typeof useGetSchedulerCourseForIdLazyQuery>;
 export type GetSchedulerCourseForIdQueryResult = Apollo.QueryResult<GetSchedulerCourseForIdQuery, GetSchedulerCourseForIdQueryVariables>;
 export const GetSemestersDocument = gql`
-    query GetSemesters {
-  allPlaylists(category: "semester") {
+    query GetSemesters($name: String) {
+  allPlaylists(category: "semester", name: $name) {
     edges {
       node {
         ...Filter
@@ -2175,6 +2177,7 @@ export const GetSemestersDocument = gql`
  * @example
  * const { data, loading, error } = useGetSemestersQuery({
  *   variables: {
+ *      name: // value for 'name'
  *   },
  * });
  */
