@@ -121,10 +121,16 @@ const ClassDescription = ({
   };
 
   const checkOverridePrereqs = (prereqs: string) => {
-    // The instructor for this class wanted to override this.
-    if (courseToName(course) === 'PB HLTH 126') {
-      prereqs =
-        'No prerequisites. This field was modified as requested by the instructor.';
+    // Spring 2020 override from fultonb@berkeley.edu
+    // if (courseToName(course) === 'PB HLTH 126') {
+    //   prereqs =
+    //     'No prerequisites. This field was modified as requested by the instructor.';
+    // }
+    // Fall 2021 override from brutger@berkeley.edu
+    if (courseToName(course) === 'POL SCI 126A') {
+        prereqs =
+          'No prerequisites. This field was modified as requested by the instructor.';
+      }
     }
     return prereqs;
   };
