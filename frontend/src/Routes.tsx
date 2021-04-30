@@ -64,7 +64,7 @@ const Routes: React.FC = () => (
   <Suspense
     fallback={
       <div className="viewport-app">
-        <BTLoader />
+        <BTLoader fill />
       </div>
     }
   >

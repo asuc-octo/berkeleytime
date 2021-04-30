@@ -16,6 +16,7 @@ import { ReactComponent as ExpandMore } from '../../../assets/svg/common/expand.
 import { Collapse } from 'react-bootstrap';
 import { getColorForCourse } from 'utils/scheduler/scheduler';
 import { useScheduleContext } from '../ScheduleContext';
+import { getNodes } from 'utils/graphql';
 
 type Props = {
   courseId: string;
@@ -123,8 +124,8 @@ const SchedulerCourse = ({
       ) : (
         <Collapse in={isExpanded}>
           <div>
-            {data.course.sectionSet.edges
-              .map((e) => e?.node!)
+            {getNodes(data.course.sectionSet)
+              .filter((section) => !section.disabled)
               .map((section, index) => (
                 <LectureCard
                   section={section}

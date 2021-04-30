@@ -102,8 +102,9 @@ const RemoteScheduler = ({ scheduleId }: Props) => {
   );
 
   if (!schedule || !semester) {
-    // TODO: handle scheduleLoadError
-    return <BTLoader />;
+    return (
+      <BTLoader error={scheduleLoadError} message="Fetching schedule..." fill />
+    );
   }
 
   async function setSchedule(newSchedule: Schedule) {
