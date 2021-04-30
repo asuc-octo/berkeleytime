@@ -26,6 +26,10 @@
     > div {
       // Effective height: 100%
       flex: 1;
+
+      @include touch {
+        align-content: flex-start;
+      }
     }
 
     @include touch {

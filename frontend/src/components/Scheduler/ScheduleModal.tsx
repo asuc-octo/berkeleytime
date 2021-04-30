@@ -5,6 +5,7 @@ import { Modal } from 'react-bootstrap';
 import SchedulerCalendar from './Calendar/SchedulerCalendar';
 import {
   deserializeSchedule,
+  formatScheduleError,
   getUnitsForSchedule,
 } from '../../utils/scheduler/scheduler';
 import { Button } from 'bt/custom';
@@ -15,22 +16,12 @@ type ContentProps = {
 };
 const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
   const scheduleUUID = atob(scheduleId).split(':')[1];
-  const { data, loading } = useGetScheduleForIdQuery({
+  const { data, error } = useGetScheduleForIdQuery({
     variables: { id: scheduleId },
   });
 
-  if (!data) {
-    return loading ? (
-      <BTLoader />
-    ) : (
-      <div className="loading">
-        An error occured loading the data. Try again later.
-      </div>
-    );
-  }
-
-  if (!data.schedule) {
-    return <div className="loading">That schedule could not be found.</div>;
+  if (!data?.schedule) {
+    return <BTLoader fill error={formatScheduleError(error)} />;
   }
 
   const schedule = deserializeSchedule(data.schedule);

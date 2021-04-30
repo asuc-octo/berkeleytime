@@ -62,7 +62,7 @@
   color: $bt-white-text;
 
   .calendar-card__title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -71,17 +71,19 @@
     -webkit-line-clamp: 1; // Duplicated for fallback
     -webkit-line-clamp: var(--calendar-card-lines, 1);
     -webkit-box-orient: vertical;
-    line-height: 1.25;
-    margin-bottom: 3px;
+    line-height: 1.2;
+    margin-bottom: 1px;
   }
 
-  p {
+  .calendar-card__description {
     margin: 0;
-    font-size: 11px;
+    font-size: 10px;
     color: inherit;
     line-height: inherit;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-height: 1.2;
   }
 }

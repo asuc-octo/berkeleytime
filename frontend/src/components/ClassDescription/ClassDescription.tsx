@@ -74,7 +74,7 @@ const ClassDescription = ({
             A critical error occured loading the data.
           </div>
         ) : (
-          loading && <BTLoader />
+          loading && <BTLoader fill />
         )}
       </div>
     );

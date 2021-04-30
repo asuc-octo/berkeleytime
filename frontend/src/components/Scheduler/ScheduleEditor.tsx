@@ -86,15 +86,11 @@ const ScheduleEditor = ({
 
   if (!data || !semester) {
     return (
-      <div className="scheduler viewport-app">
-        <div className="scheduler__status">
-          {semesterError || coursesError ? (
-            'An error occured loading scheduler information. Please try again later.'
-          ) : (
-            <BTLoader />
-          )}
-        </div>
-      </div>
+      <BTLoader
+        message="Loading courses..."
+        error={semesterError || coursesError}
+        fill
+      />
     );
   }
 

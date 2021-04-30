@@ -57,7 +57,7 @@ export const formatSectionTime = (
   showNoTime: boolean = true
 ): string =>
   section.startTime && section.endTime
-    ? `${formatTime(section.startTime)} - ${formatTime(section.endTime)}`
+    ? `${formatTime(section.startTime)} \u{2013} ${formatTime(section.endTime)}`
     : showNoTime
     ? `no time`
     : '';

@@ -56,11 +56,17 @@ const LocalScheduler = () => {
   });
 
   if (!semester) {
-    return <BTLoader />;
+    return (
+      <BTLoader
+        message="Loading semester information..."
+        error={semesterError}
+        fill
+      />
+    );
   }
 
   const createSchedule = async () =>
-    await createScheduleMutation(schedule, semester);
+    await createScheduleMutation(schedule, semester!);
 
   const saveButton = (
     <Button

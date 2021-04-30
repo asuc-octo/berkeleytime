@@ -119,8 +119,8 @@ const Catalog = () => {
 
   // The course modal on mobile
   const [showDescription, setShowDescription] = useState(false);
-  
-  useEffect(() => { 
+
+  useEffect(() => {
     setShowDescription(activeCourse !== null);
   }, [activeCourse]);
 
@@ -128,7 +128,7 @@ const Catalog = () => {
   const hideModal = () => {
     history.replace(`/catalog`);
     setShowDescription(false);
-  }
+  };
 
   return (
     <div className="catalog viewport-app">
@@ -137,7 +137,7 @@ const Catalog = () => {
           {errorPlaylists ? (
             <div>A critical error occured loading.</div>
           ) : loadingPlaylists ? (
-            <BTLoader showInstantly />
+            <BTLoader showInstantly fill />
           ) : (
             <Filter
               filters={filters!}
