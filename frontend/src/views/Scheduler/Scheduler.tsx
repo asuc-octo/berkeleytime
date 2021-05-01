@@ -68,7 +68,7 @@ const Scheduler = () => {
 
   return (
     <div className="scheduler viewport-app">
-      {onboarding ?
+      {(onboarding && !scheduleId) ?
       <SchedulerOnboard
         schedule={schedule}
         setSchedule={setSchedule}

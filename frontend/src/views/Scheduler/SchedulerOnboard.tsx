@@ -22,10 +22,10 @@ const pages: {
     key: 'select-classes',
     component: SelectClasses,
   },
-  {
-    key: 'time-preferences',
-    component: TimePreferences,
-  },
+  // {
+  //   key: 'time-preferences',
+  //   component: TimePreferences,
+  // },
 ];
 
 type Props = {
