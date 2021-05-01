@@ -14,12 +14,13 @@ import { compareDepartmentName } from 'utils/courses/sorting';
 import { Schedule, removeCourse } from 'utils/scheduler/scheduler';
 
 type Props = {
-  updatePage: (i: number) => void;
+  // updatePage: (i: number) => void;
   schedule: Schedule;
   setSchedule: Dispatch<SetStateAction<Schedule>>;
+  createSchedule: () => void;
 };
 
-const SelectClasses = ({ updatePage, schedule, setSchedule }: Props) => {
+const SelectClasses = ({ schedule, setSchedule, createSchedule }: Props) => {
   const { isLoggedIn, user, loading } = useUser();
 
   const savedClasses = ((user && user.savedClasses) || [])
@@ -84,6 +85,7 @@ const SelectClasses = ({ updatePage, schedule, setSchedule }: Props) => {
                 <SchedulerCourseCard
                   key={course.id}
                   course={course}
+                  removable={false}
                 />
               </div>
             ))}
@@ -97,13 +99,15 @@ const SelectClasses = ({ updatePage, schedule, setSchedule }: Props) => {
                 <SchedulerCourseCard
                   key={course.id}
                   course={course}
+                  removable={true}
+                  remove={() => trashCourse(course.id)}
                 />
               ))}
             </ScheduleContext.Provider>
           </div>
           <Button
             className="continue"
-            onClick={() => updatePage(2)}
+            onClick={createSchedule}
           >
             Continue
           </Button>

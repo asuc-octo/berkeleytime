@@ -1,45 +1,52 @@
 .onboard {
+  .scheduler-heading {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+  }
+
   .welcome {
-    width: 50vw;
+    width: 65vw;
     min-height: 300px;
-    padding: 13rem 1rem;
+    padding: 8rem 1rem;
     text-align: center;
 
-    h1 {
+    .scheduler-title {
       margin-bottom: 50px;
       font-weight: bold;
       font-size: 32px;
       color: $bt-base-text;
+      text-align: center;
     }
 
-    h3 {
+    .prompt {
       width: 30vw;
       margin: auto auto 45px auto;
       font-weight: 500;
       font-size: 18px;
       color: $bt-light-text;
+      text-align: center;
     }
 
     .bt-btn-primary {
-      margin-bottom: 24px;
+      margin: auto auto 24px auto;
       width: 100px;
       font-weight: 600;
     }
 
-    p {
-      font-weight: 600;
-      font-size: 14px;
-      color: $bt-light-text;
+    .saved-schedules {
+      margin-top: 3rem;
 
-      a {
-        color: $bt-blue;
-        font-weight: 600;
-        text-decoration: underline;
+      .scheduler-heading {
+        text-align: initial;
+      }
 
-        &:hover {
-          cursor: pointer;
-          text-decoration: underline;
-        }
+      .profile-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin: 1rem 0;
+        text-align: initial !important;
       }
     }
   }
@@ -47,12 +54,6 @@
   .select-classes {
     min-height: 710px;
     padding: 5rem 1rem;
-
-    .scheduler-heading {
-      font-weight: bold;
-      font-size: 20px;
-      text-align: center;
-    }
 
     .prompt {
       margin-top: 18px;

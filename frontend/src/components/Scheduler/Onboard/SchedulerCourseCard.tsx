@@ -10,9 +10,11 @@ import ProfileCard from './../../Profile/ProfileCard';
 
 type Props = {
   course: CourseOverviewFragment;
+  removable: boolean;
+  remove?: () => void;
 };
 
-const SchedulerCourseCard = ({ course }: Props) => {
+const SchedulerCourseCard = ({ course, removable, remove }: Props) => {
   return (
     <ProfileCard
       component={Link}
@@ -40,7 +42,8 @@ const SchedulerCourseCard = ({ course }: Props) => {
           </div>
         )
       }
-      removable={false}
+      removable={removable}
+      didRemove={remove}
     />
   );
 };
