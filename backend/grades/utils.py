@@ -22,6 +22,12 @@ _LETTER_GRADE_TO_GPA = {
     '': -0.1,
 }
 
+STANDARD_GRADES = [('a1', 'A+'), ('a2', 'A'), ('a3', 'A-'),
+                   ('b1', 'B+'), ('b2', 'B'), ('b3', 'B-'),
+                   ('c1', 'C+'), ('c2', 'C'), ('c3', 'C-'),
+                   ('d', 'D'), ('f', 'F'), ('p', 'P'), ('np', 'NP')]
+
+
 
 def letter_grade_to_gpa(letter_grade):
     """Take a letter grade (e.g. A+) and convert it to a GPA float."""
@@ -65,3 +71,37 @@ def add_up_grades(grades):
             weighted_letter_grade_counter[letter_grade] += count * letter_grade_to_gpa(letter_grade)
 
     return weighted_letter_grade_counter, total
+
+def add_up_distributions(grades):
+    dist = []
+    for grade, display in STANDARD_GRADES:
+        dist.append({
+            'standard': grade,
+            'letter': display,
+            'numerator': 0,
+        })
+
+    total = 0
+    for grade in grades:
+        total += grade.graded_total
+        for dist_dict in dist:
+            if dist_dict['standard'] == 'd':
+                numerator = sum([getattr(grade, d, 0.0) for d in ('d1', 'd2', 'd3')])
+            else:
+                numerator = getattr(grade, dist_dict['standard'], 0.0)
+            
+            dist_dict['numerator'] += numerator
+
+    percentile_ceiling = 0
+    for dist_dict in dist:
+        dist_dict['percent'] = round(dist_dict['numerator'] / total if total else 0.0, 2)
+        if dist_dict['standard'] == 'p' or dist_dict['standard'] == 'np':
+            dist_dict['percentile_high'] = 0
+            dist_dict['percentile_low'] = 0
+        else:
+            dist_dict['percentile_high'] = abs(round(1.0 - percentile_ceiling, 2))
+            dist_dict['percentile_low'] = abs(round(1.0 - percentile_ceiling - dist_dict['percent'], 2))
+        percentile_ceiling += dist_dict['percent']
+        del dist_dict['standard']
+
+    return dist
