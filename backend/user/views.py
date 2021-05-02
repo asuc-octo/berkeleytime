@@ -1,4 +1,3 @@
-import urllib.parse
 import os
 
 import google_auth_oauthlib.flow
@@ -41,8 +40,8 @@ def login(request):
     authorization_url, state = flow.authorization_url(
         # Enable incremental authorization. Recommended as a best practice.
         include_granted_scopes='true',
-        hd="berkeley.edu", # optional argument to restrict g-suite domain
-        state=urllib.parse.urlencode({'redirect_url': '/enrollment'})
+        hd='berkeley.edu', # optional argument to restrict g-suite domain
+        state=request.GET.get('data')
     )
 
     return HttpResponseRedirect(authorization_url)
@@ -63,11 +62,9 @@ def oauth2callback(request):
     flow.fetch_token(code=request.GET.get('code'))
     id_token = flow.credentials.id_token
 
-    state = urllib.parse.parse_qs(request.GET.get("state"))
-
     return HttpResponseRedirect(
         url_to_https_if_not_dev(
-            f'{request.build_absolute_uri("/oauth2callback")}?id_token={id_token}&redirect_url={state.get("redirect_url")[0]}'
+            f'{request.build_absolute_uri("/oauth2callback")}?id_token={id_token}&data={request.GET.get("state")}'
         )
     )
 
