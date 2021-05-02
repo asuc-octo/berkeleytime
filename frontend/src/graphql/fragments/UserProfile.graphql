@@ -20,4 +20,13 @@ fragment UserProfile on BerkeleytimeUserType {
   savedClasses {
     ...CourseOverview
   }
+
+  # Schedule
+  schedules {
+    edges {
+      node {
+        ...ScheduleOverview
+      }
+    }
+  }
 }

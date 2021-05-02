@@ -1,14 +1,13 @@
-import React, { CSSProperties, ReactElement } from 'react';
-import { Props as CalendarCardProps } from './CalendarCard';
+import React, { CSSProperties, ReactNode } from 'react';
 import { range } from 'utils/range';
 import { dayToLongName, timeToHourString } from 'utils/date';
 
-type CardData = {
+export type CardData = {
   key?: string | number;
   day: number;
   startTime: number;
   endTime: number;
-  card: ReactElement<CalendarCardProps>;
+  card: ReactNode;
 
   /** **Do not directly provide** */
   overlapNum?: number;
@@ -70,8 +69,12 @@ function calculateCellStyle(
   return {
     top: visualStartTime * CELL_HEIGHT,
     height: height,
-    left: `calc(${(overlapIndex / overlapNum) * 100}% + ${overlapIndex * INTER_CELL_PADDING}px)`,
-    width: `calc(${((overlapNum - overlapIndex) / overlapNum) * 100}% - ${(overlapNum - 1) * INTER_CELL_PADDING}px)`,
+    left: `calc(${(overlapIndex / overlapNum) * 100}% + ${
+      overlapIndex * INTER_CELL_PADDING
+    }px)`,
+    width: `calc(${((overlapNum - overlapIndex) / overlapNum) * 100}% - ${
+      (overlapNum - 1) * INTER_CELL_PADDING
+    }px)`,
     '--calendar-card-lines': Math.max(1, Math.floor(height / 40)),
   } as CSSProperties;
 }
@@ -84,7 +87,10 @@ const CourseCalendar = ({
 }: CourseCalendarProps) => {
   const hourSlots = range(startTime, endTime);
   const cardsByDay = days.map((day) =>
-    cards.filter((c) => c.day === day).sort((a, b) => a.startTime - b.startTime)
+    cards
+      .filter((c) => c.day === day)
+      .filter((c) => !!c.startTime && !!c.endTime)
+      .sort((a, b) => a.startTime - b.startTime)
   );
 
   return (

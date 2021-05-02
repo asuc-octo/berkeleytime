@@ -1,94 +1,60 @@
 import React, { useState } from 'react';
-import { Button, ButtonGroup, ButtonToolbar, Col, Row } from 'react-bootstrap';
-import CourseSelector from 'components/Scheduler/CourseSelector';
-
 import { useGetCoursesForFilterQuery } from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
 import useLatestSemester from 'graphql/hooks/latestSemester';
-import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
-import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
-import {
-  addUnits,
-  parseUnits,
-  unitsToString,
-  ZERO_UNITS,
-} from 'utils/courses/units';
+import { DEFAULT_SCHEDULE, Schedule, serializeSchedule } from 'utils/scheduler/scheduler';
+import SchedulerOnboard from './SchedulerOnboard';
+import ScheduleEditor from 'components/Scheduler/ScheduleEditor';
+import { Redirect, useHistory, useParams } from 'react-router';
+import { getNodes } from 'utils/graphql';
+import { useUser } from 'graphql/hooks/user';
+import RemoteScheduler from 'components/Scheduler/Editor/RemoteScheduler';
+import LocalScheduler from 'components/Scheduler/Editor/LocalScheduler';
 
 const Scheduler = () => {
-  const {
-    semester: latestSemester,
-    error: semesterError,
-  } = useLatestSemester();
-
-  // Only load the list of filters once we have the latest semester. If we
-  // didn't wait, we'd load all semesters' classes which is way to many.
-  const { data, error: coursesError } = useGetCoursesForFilterQuery({
-    variables: {
-      playlists: latestSemester?.playlistId!,
-    },
-    skip: !latestSemester?.playlistId,
-  });
-
+  const { isLoggedIn, loading: userLoading } = useUser();
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
+  const [onboarding, setOnboarding] = useState(true);
+  const { scheduleId: scheduleUUID } = useParams<{ scheduleId?: string }>();
+  const scheduleId = scheduleUUID && btoa(`ScheduleType:${scheduleUUID}`);
 
-  const error = semesterError || coursesError;
-
-  if (!data) {
+  if (userLoading) {
     return (
       <div className="scheduler viewport-app">
         <div className="scheduler__status">
-          {error ? (
-            'A critical error occured loading scheduler information.'
-          ) : (
-            <BTLoader />
-          )}
+          <BTLoader />
         </div>
       </div>
     );
   }
 
-  // Get a list of all courses which will be used by the search bar.
-  const allCourses = data.allCourses?.edges.map((e) => e?.node!)!;
+  // if you're not logged in, we'll go to the schedule preview
+  if (!isLoggedIn && !userLoading && scheduleUUID) {
+    return <Redirect to={`/s/${scheduleUUID}`} />;
+  }
 
-  // Sum up the amount of units selected
-  const selectedUnits = schedule.courses.reduce(
-    (sum, course) =>
-      course.units ? addUnits(sum, parseUnits(course.units)) : sum,
-    ZERO_UNITS
-  );
+  async function createSchedule() {
+    setOnboarding(false);
+  }
 
   return (
     <div className="scheduler viewport-app">
-      <Row noGutters>
-        <Col md={4} lg={4} xl={4}>
-          <CourseSelector
-            allCourses={allCourses}
-            semester={latestSemester!}
-            schedule={schedule}
-            setSchedule={setSchedule}
-          />
-        </Col>
-        <Col>
-          <div className="scheduler-header">
-            <div className="scheduler-units">
-              Selected Units: {unitsToString(selectedUnits)}
-            </div>
-            <ButtonToolbar>
-              <ButtonGroup className="mr-3">
-                <Button className="bt-btn-primary" size="sm">
-                  Save
-                </Button>
-              </ButtonGroup>
-              <ButtonGroup>
-                <Button className="bt-btn-inverted" size="sm">
-                  Export to Google Calendar
-                </Button>
-              </ButtonGroup>
-            </ButtonToolbar>
-          </div>
-          <SchedulerCalendar schedule={schedule} />
-        </Col>
-      </Row>
+      {(onboarding && !scheduleId) ? (
+        <SchedulerOnboard
+          schedule={schedule}
+          setSchedule={setSchedule}
+          createSchedule={createSchedule}
+        />) : scheduleId ? (
+        <RemoteScheduler
+          scheduleId={scheduleId}
+          schedule={schedule}
+          setRawSchedule={setSchedule}
+        />) : (
+        <LocalScheduler
+          schedule={schedule}
+          setSchedule={setSchedule}
+        />
+      )}
     </div>
   );
 };

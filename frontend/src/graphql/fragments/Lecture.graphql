@@ -1,0 +1,10 @@
+fragment Lecture on SectionType {
+  ...Section
+  associatedSections {
+    edges {
+      node {
+        ...Section
+      }
+    }
+  }
+}

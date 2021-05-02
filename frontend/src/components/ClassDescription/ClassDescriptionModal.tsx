@@ -20,7 +20,7 @@ const ClassDescriptionModal = ({
   modifyFilters,
 }: ClassDescriptionModalProps) => {
   return (
-    <Modal show={show} className="modal">
+    <Modal show={show} className="modal mobile-modal">
       <div className="full">
         <button onClick={hideModal} className="link-btn">
           <svg

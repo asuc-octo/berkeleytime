@@ -1,0 +1,19 @@
+fragment SectionSelection on SectionSelectionType {
+  id
+
+  course {
+    ...CourseOverview
+  }
+
+  primary {
+    ...Section
+  }
+
+  secondary {
+    edges {
+      node {
+        ...Section
+      }
+    }
+  }
+}

@@ -17,6 +17,8 @@
 @import 'bt/common/banner';
 @import 'bt/common/footer';
 @import 'bt/common/bt-loader';
+@import 'bt/common/input';
+@import 'bt/common/popover';
 
 // landing
 @import 'bt/landing/jumbotron';
@@ -51,6 +53,9 @@
 @import 'bt/scheduler/course-card';
 @import 'bt/scheduler/callout';
 @import 'bt/scheduler/scheduler';
+@import 'bt/scheduler/onboard';
+@import 'bt/scheduler/schedule-modal';
+@import 'bt/scheduler/access-control';
 
 // Releases
 @import 'bt/releases';

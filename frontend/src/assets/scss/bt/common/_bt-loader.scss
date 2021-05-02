@@ -44,11 +44,29 @@
   animation-fill-mode: both;
 }
 
-.bt-loader-wrapper {
-  height: 100vh;
+.bt-loader-wrapper,
+.viewport-app > div.bt-loader-wrapper {
+  &.bt-loader--fill {
+    height: calc(100vh - 58px);
+    flex: 1 0 auto;
+  }
+
+  &.bt-loader--error {
+    p {
+      font-size: 1.5rem;
+    }
+  }
+
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+
+  p {
+    margin-top: 1rem;
+    font-size: 18px;
+    color: $bt-light-text;
+  }
 }
 
 .bt-loader {

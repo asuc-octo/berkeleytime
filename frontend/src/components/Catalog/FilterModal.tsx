@@ -88,7 +88,7 @@ const FilterModal = ({
     if (showFilters) {
       setCurrentFilters(defaultSelection || []);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showFilters]);
 
   function saveModal() {
@@ -109,7 +109,11 @@ const FilterModal = ({
   }
 
   return (
-    <Modal show={showFilters} onHide={hideModal} className="bt-filter-modal">
+    <Modal
+      show={showFilters}
+      onHide={hideModal}
+      className="bt-filter-modal mobile-modal"
+    >
       <div className="filter-modal">
         <div className="filter-form">
           <CheckboxGroup

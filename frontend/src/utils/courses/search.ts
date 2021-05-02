@@ -1,34 +1,44 @@
-import { CourseOverviewFragment } from "../../graphql/graphql";
-import { combineQueries, normalizeSearchTerm, search } from "utils/search";
+import { CourseOverviewFragment } from '../../graphql/graphql';
+import { combineQueries, normalizeSearchTerm, search } from 'utils/search';
 
 export type SearchableCourse = CourseOverviewFragment;
 
 /**
  * Applies search query over list of courses
  */
-export function searchCourses(courses: SearchableCourse[], rawQuery: string): SearchableCourse[] {
-    const query = normalizeSearchTerm(rawQuery);
-    const results = courses
-      .map<[SearchableCourse, number | null]>((course) => {
-        return [
-          course,
-          combineQueries([
-            searchCourse(query, getFullCourseCode(course), 1),
-            search(query, `${course.title}`.toLowerCase(), 0.3, 0.05)
-          ]),
-        ];
-      })
-      .filter((result): result is [SearchableCourse, number] => result[1] !== null)
-      .sort((a, b) => a[1] - b[1])
-      .map(([course]) => course);
+export function searchCourses(
+  courses: SearchableCourse[],
+  rawQuery: string
+): SearchableCourse[] {
+  const query = normalizeSearchTerm(rawQuery);
+  const results = courses
+    .map<[SearchableCourse, number | null]>((course) => {
+      return [
+        course,
+        combineQueries([
+          searchCourse(query, getFullCourseCode(course), 1),
+          search(query, `${course.title}`.toLowerCase(), 0.3, 0.05),
+        ]),
+      ];
+    })
+    .filter(
+      (result): result is [SearchableCourse, number] => result[1] !== null
+    )
+    .sort((a, b) => a[1] - b[1])
+    .map(([course]) => course);
 
-    return results;
+  return results;
 }
 
 /**
  * Searches for a single course
+ * @return a number (lower is better) representing the quality of the match
  */
-export function searchCourse(query: string, courseCode: string, maxPenalty?: number): number | null {
+export function searchCourse(
+  query: string,
+  courseCode: string,
+  maxPenalty?: number
+): number | null {
   const searches = laymanToAbbreviation
     .filter(([source]) => courseCode.indexOf(source) > -1)
     .map(([source, replacement]) =>
@@ -44,15 +54,15 @@ export function searchCourse(query: string, courseCode: string, maxPenalty?: num
  * Runs {@link searchCourse} but for react-select
  */
 export function reactSelectCourseSearch(option: any, query: string): boolean {
-  return searchCourse(query, option.lowercaseLabel, 0.2) !== null;
+  return searchCourse(query, option.label.toLowerCase(), 0.2) !== null;
 }
 
 /**
  * Course object to a fully-descriptive course search string.
  */
 export function getFullCourseCode(course: SearchableCourse): string {
-    const searchComponents = [course.abbreviation, course.courseNumber];
-    return searchComponents.join(" ").toLowerCase();
+  const searchComponents = [course.abbreviation, course.courseNumber];
+  return searchComponents.join(' ').toLowerCase();
 }
 
 export const laymanToAbbreviation: [string, string][] = [

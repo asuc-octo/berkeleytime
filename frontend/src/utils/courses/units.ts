@@ -18,7 +18,7 @@ export const ZERO_UNITS = { lowerBound: 0, upperBound: 0 };
 export function addUnits(a: Units, b: Units): Units {
   return {
     lowerBound: a.lowerBound + b.lowerBound,
-    upperBound: a.upperBound + b.upperBound
+    upperBound: a.upperBound + b.upperBound,
   };
 }
 

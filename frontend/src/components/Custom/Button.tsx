@@ -1,39 +1,46 @@
-import React, { FC } from 'react'
-import { Button as BootstrapButton, ButtonProps as BootstrapProps } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
+import React, { FC } from 'react';
+import {
+  Button as BootstrapButton,
+  ButtonProps as BootstrapProps,
+} from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
-const Button: FC<Props> = (props) => {
+const Button: FC<Props & Omit<BootstrapProps, 'href'>> = ({
+  className,
+  size,
+  variant,
+  children,
+  href,
+  ...props
+}) => {
   const bootstrapProps: BootstrapProps = {
     bsPrefix: 'bt-btn',
-    className: props.className,
-    size: props.size,
-    variant: props.variant ?? 'primary'
-  }
+    className: className,
+    size: size,
+    variant: variant ?? 'primary',
+    ...props,
+  };
 
-  if (typeof props.href === 'object') {
+  if (typeof href === 'object') {
     return (
-      <BootstrapButton
-        {...bootstrapProps}
-        as={Link}
-        to={props.href.as_link}
-      >
-        {props.children}
+      <BootstrapButton {...bootstrapProps} as={Link} to={href.as_link}>
+        {children}
       </BootstrapButton>
-    )
+    );
   } else {
     return (
-      <BootstrapButton {...bootstrapProps} href={props.href}>
-        {props.children}
+      <BootstrapButton {...bootstrapProps} href={href}>
+        {children}
       </BootstrapButton>
-    )
+    );
   }
-}
+};
 
 export interface Props {
-  className?: string
-  variant?: 'primary' | 'inverted'
-  size?: 'sm'
-  href?: string | { as_link: string }
+  className?: string;
+  variant?: 'primary' | 'inverted';
+  size?: 'sm';
+  href?: string | { as_link: string };
 }
 
-export default Button
+export default Button;

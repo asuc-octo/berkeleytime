@@ -1,9 +1,8 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import { useLocation } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import { useLogin } from '../../graphql/hooks/user';
 import BTLoader from 'components/Common/BTLoader';
-
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -14,14 +13,14 @@ const Login = () => {
   const history = useHistory();
   const query = useQuery();
 
-  const id_token = query.get("id_token");
+  const id_token = query.get('id_token');
   if (!id_token) {
     history.push('/error');
-    return (null);
+    return null;
   }
 
   if (loading) {
-    return <BTLoader />;
+    return <BTLoader fill />;
   }
 
   login({
@@ -35,7 +34,7 @@ const Login = () => {
     }
   });
 
-  return (null);
+  return null;
 };
 
 export default Login;
