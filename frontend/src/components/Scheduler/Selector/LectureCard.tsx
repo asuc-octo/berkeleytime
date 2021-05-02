@@ -198,8 +198,9 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
           />
         </h4>
         <p className="course-card-description">
-          {section.instructor || 'Unknown instructor'} &bull; {section.wordDays}
-          , {formatSectionTime(section)}, {formatLocation(section.locationName)}
+          {section.instructor ? section.instructor + ` \u{2022} ` : ''}
+          {section.wordDays}, {formatSectionTime(section)},{' '}
+          {formatLocation(section.locationName)}
         </p>
         <p className="course-card-description">
           {formatSectionEnrollment(section)} &bull; CCN: {section.ccn}

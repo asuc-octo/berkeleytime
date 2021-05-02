@@ -29,7 +29,7 @@ const CalendarCard = forwardRef<HTMLDivElement, Props>(
         {...props}
       >
         <div className="calendar-card__title">{title}</div>
-        <p>{description}</p>
+        <p className="calendar-card__description">{description}</p>
       </div>
     );
   }

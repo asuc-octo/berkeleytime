@@ -312,3 +312,17 @@ END:VCALENDAR
     .split('\n')
     .join('\r\n');
 }
+
+/**
+ * Formats a schedule error message
+ */
+export const formatScheduleError = (
+  error?: Error | null
+): Error | string | null | undefined =>
+  error &&
+  (error.message.includes('No permission')
+    ? 'This schedule is not publicly accessible.'
+    : error.message.includes('not a valid UUID') ||
+      error.message.includes('Invalid Schedule ID')
+    ? 'That schedule does not exist.'
+    : 'An error occured loading scheduler information. Please try again later.');
