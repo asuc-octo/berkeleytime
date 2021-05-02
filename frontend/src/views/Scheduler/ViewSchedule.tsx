@@ -4,6 +4,7 @@ import BTLoader from 'components/Common/BTLoader';
 import { Redirect, useParams } from 'react-router';
 import {
   deserializeSchedule,
+  formatScheduleError,
   getUnitsForSchedule,
 } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
@@ -28,18 +29,7 @@ const ViewSchedule = () => {
     return (
       <div className="scheduler viewport-app">
         <div className="scheduler__status">
-          {error ? (
-            error.message.includes('No permission') ? (
-              'This schedule is not publicly accessible.'
-            ) : error.message.includes('not a valid UUID') ||
-              error.message.includes('Invalid Schedule ID') ? (
-              'That schedule does not exist.'
-            ) : (
-              'An error occured loading scheduler information. Please try again later.'
-            )
-          ) : (
-            <BTLoader />
-          )}
+          <BTLoader fill error={formatScheduleError(error)} />
         </div>
       </div>
     );

@@ -13,6 +13,7 @@ import {
 import { formatLocation, formatSectionTime } from 'utils/sections/section';
 import cx from 'classnames';
 import CalendarCard from './CalendarCard';
+import { combineStrings } from 'utils/string';
 
 type Props = {
   /**
@@ -66,12 +67,10 @@ const CourseCard = ({
   noPopover = false,
 }: Props) => {
   const cardTitle = `${courseToName(course)} ${section.kind}`;
-  const cardDescription = [
-    formatSectionTime(section),
-    formatLocation(section.locationName),
-  ]
-    .filter(Boolean)
-    .join(', ');
+  const cardDescription = combineStrings(
+    [formatLocation(section.locationName), formatSectionTime(section)],
+    ', '
+  );
 
   const card = (
     <CalendarCard
