@@ -82,7 +82,7 @@ const FilterResults = ({
             <FixedSizeList
               height={height}
               width={width}
-              itemData={courseCardProps}
+              itemData={courseCardProps as any}
               itemCount={sortedCourses.length}
               itemSize={110}
               itemKey={(index) => sortedCourses[index].id}
