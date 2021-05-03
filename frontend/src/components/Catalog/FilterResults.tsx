@@ -69,7 +69,7 @@ const FilterResults = ({
           <div>A critical error occured.</div>
         </div>
       ) : loading ? (
-        <BTLoader fill showInstantly />
+        <BTLoader showInstantly />
       ) : sortedCourses.length === 0 && !showEmptyState ? (
         <div className="filter-results-loading">
           <div className="filter-results-empty">
