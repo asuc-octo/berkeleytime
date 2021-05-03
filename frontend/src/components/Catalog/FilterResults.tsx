@@ -69,7 +69,7 @@ const FilterResults = ({
           <div>A critical error occured.</div>
         </div>
       ) : loading ? (
-        <BTLoader showInstantly />
+        <BTLoader fill showInstantly />
       ) : sortedCourses.length === 0 && !showEmptyState ? (
         <div className="filter-results-loading">
           <div className="filter-results-empty">
@@ -82,7 +82,7 @@ const FilterResults = ({
             <FixedSizeList
               height={height}
               width={width}
-              itemData={courseCardProps}
+              itemData={courseCardProps as any}
               itemCount={sortedCourses.length}
               itemSize={110}
               itemKey={(index) => sortedCourses[index].id}
