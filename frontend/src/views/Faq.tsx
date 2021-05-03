@@ -138,9 +138,7 @@ const questions = [
     question: 'Can I access your API for a project I’m working on?',
     answer: (
       <P>
-        Yes! Our <Link to="/apidocs">backend API</Link> is officially open and
-        available for anyone to use.
-      </P>
+        Unfortunately we discontinued our backend API as of April 30th, 2021. Please <a href="mailto: octo.berkeleytime@asuc.org">email us</a> and we can direct you to the data sources we use for our API.</P>
     ),
   },
   {
