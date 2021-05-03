@@ -4,7 +4,7 @@ from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
 from grades.models import Grade
-from grades.utils import add_up_grades, gpa_to_letter_grade
+from grades.utils import add_up_grades, gpa_to_letter_grade, add_up_distributions
 
 STANDARD_GRADES = [('a1', 'A+'), ('a2', 'A'), ('a3', 'A-'),
                    ('b1', 'B+'), ('b2', 'B'), ('b3', 'B-'),
@@ -26,6 +26,34 @@ class LetterGradeType(graphene.ObjectType):
     percentile_high = graphene.Float()
     percentile_low = graphene.Float()
 
+class GradeConnection(graphene.Connection):
+    class Meta:
+        abstract = True
+
+    distribution = graphene.List(LetterGradeType)
+    section_gpa = graphene.Float()
+    section_letter = graphene.String()
+    denominator = graphene.Int()
+
+    def resolve_distribution(self, info):
+        return [LetterGradeType(**dist) for dist in add_up_distributions([section.node for section in self.edges])]
+
+    def resolve_section_gpa(self, info):
+        counter, total = add_up_grades([section.node for section in self.edges])
+        if total == 0:
+            return -1
+        else:
+            return round(float(sum(counter.values())) / total, 3)
+
+    def resolve_section_letter(self, info):
+        counter, total = add_up_grades([section.node for section in self.edges])
+        if total == 0:
+            return 'N/A'
+        else:
+            return gpa_to_letter_grade(round(float(sum(counter.values())) / total, 3))
+    
+    def resolve_denominator(self, info):
+        return sum([sum(getattr(section.node, grade, 0.0) for grade in ALL_GRADES) for section in self.edges])
 
 class GradeFilter(django_filters.FilterSet):
     class Meta:
@@ -39,6 +67,7 @@ class GradeType(DjangoObjectType):
         filterset_class = GradeFilter
         interfaces = (graphene.Node, )
         exclude = ALL_GRADES
+        connection_class = GradeConnection
 
     distribution = graphene.List(LetterGradeType)
     section_gpa = graphene.Float()
@@ -46,29 +75,7 @@ class GradeType(DjangoObjectType):
     denominator = graphene.Int()
 
     def resolve_distribution(self, info):
-        dist = []
-        percentile_ceiling = 0
-        for grade, display in STANDARD_GRADES:
-            if grade == 'd':
-                numerator = sum([getattr(self, d, 0.0) for d in ('d1', 'd2', 'd3')])
-            else:
-                numerator = getattr(self, grade, 0.0)
-            percent = round(numerator / self.graded_total if self.graded_total else 0.0, 2)
-            if grade == 'p' or grade == 'np':
-                percentile_high = 0
-                percentile_low = 0
-            else:
-                percentile_high = abs(round(1.0 - percentile_ceiling, 2))
-                percentile_low = abs(round(1.0 - percentile_ceiling - percent, 2))
-            percentile_ceiling += percent
-            dist.append(LetterGradeType(
-                letter=display,
-                numerator=numerator,
-                percent=percent,
-                percentile_high=percentile_high,
-                percentile_low=percentile_low
-            ))
-        return dist
+        return [LetterGradeType(**dist) for dist in add_up_distributions([self])]
 
     def resolve_section_gpa(self, info):
         counter, total = add_up_grades([self])
