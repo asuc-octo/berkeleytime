@@ -40,8 +40,9 @@ def login(request):
     authorization_url, state = flow.authorization_url(
         # Enable incremental authorization. Recommended as a best practice.
         include_granted_scopes='true',
-        hd="berkeley.edu" # optional argument to restrict g-suite domain
-        )
+        hd='berkeley.edu', # optional argument to restrict g-suite domain
+        state=request.GET.get('data')
+    )
 
     return HttpResponseRedirect(authorization_url)
 
@@ -63,7 +64,7 @@ def oauth2callback(request):
 
     return HttpResponseRedirect(
         url_to_https_if_not_dev(
-            f'{request.build_absolute_uri("/oauth2callback")}?id_token={id_token}'
+            f'{request.build_absolute_uri("/oauth2callback")}?id_token={id_token}&data={request.GET.get("state")}'
         )
     )
 
