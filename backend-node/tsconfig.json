@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "lib": ["ES2020"],
+    "moduleResolution": "node",
+
+    "baseUrl": "./src",
+    "outDir": "./build",
+    
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true
+    
+    /* some other configs you might wanna play around with */
+    // "incremental": true,                         /* Enable incremental compilation */
+    // "rootDir": "./",                             /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+    // "noEmit": true,                              /* Do not emit outputs. */
+    // "allowSyntheticDefaultImports": true,        /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
+
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
