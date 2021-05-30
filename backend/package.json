@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node build/index.js",
+    "dev": "cross-env NODE_ENV=dev nodemon --exec 'prettier --write --config prettier.config.cjs --loglevel warn *.json src/*.{js,mjs} src/**/*.{js,mjs} && node --experimental-json-modules src/index.js' server client prettier.config.cjs",
     "build": "mkdir build; rollup src/index.js -c rollup.config.js | terser --compress --mangle -o build/index.js"
   },
   "type": "module",
@@ -23,7 +24,11 @@
     "typescript": "^4.2.4"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^2.0.2",
     "@rollup/plugin-alias": "^3.1.2",
+    "concurrently": "^6.2.0",
+    "cross-env": "^7.0.3",
+    "nodemon": "^2.0.7",
     "rollup": "^2.50.4",
     "terser": "^5.7.0"
   }
