@@ -37,8 +37,8 @@ spec:
         - command:
             - /bin/sh
             - -c
-            - >
-              python3 /backend/manage.py runserver 0.0.0.0:5000;
+            - |
+              node /backend/build
           env:
             - name: ENVIRONMENT_NAME
               value: $CI_ENVIRONMENT_NAME
