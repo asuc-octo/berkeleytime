@@ -5,7 +5,7 @@ module.exports = {
   tabWidth: 2,
   singleQuote: false,
   jsxBracketSameLine: false,
-  importOrder: ["^.*dotenv.*", "^[a-zA-Z]", "#node", "^@[a-zA-Z]", "^[./]"],
+  importOrder: ["#src/env", "^[a-zA-Z]", "#src", "^@[a-zA-Z]", "^[./]"],
   importOrderSeparation: true,
-  semi: false
+  semi: false,
 }

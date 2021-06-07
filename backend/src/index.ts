@@ -1,33 +1,36 @@
-import express from "express"
-import { ApolloServer } from "apollo-server-express"
-import { Server as IoServer } from "socket.io"
-import { Server as HttpServer } from "http"
-import "express-async-errors"
+import "#src/env"
 
-import "./env.js"
+import express from "express"
+import "express-async-errors"
+import { Server as HttpServer } from "http"
+
+import { EXPIRE_TIME_REDIS_KEY, PORT_EXPRESS } from "#src/config"
+import { apolloServer } from "#src/graphql/index"
+import Fruit from "#src/models/Fruit"
+import courses from "#src/routes/courses"
+import "#src/services/mongodb"
+import { redisClient } from "#src/services/redis"
 
 const app = express()
-const apollo = new ApolloServer({})
 const http = new HttpServer(app)
+await redisClient.setAsync("ASDF", "hello", "EX", EXPIRE_TIME_REDIS_KEY)
 
-apollo.applyMiddleware({ app: app, path: "/graphql" })
+apolloServer.applyMiddleware({ app, path: "/graphql" })
+console.log(await Fruit.findOne({ name: "Mango" }))
 
-// Uncomment when you are ready to play with websockets.
-// const io = new IoServer(http)
-// const sockets = {}
-// io.on("connection", (socket) => {
-//     sockets[socket.id] = socket
-//     socket.on("disconnect", (reason) => {
-//         delete sockets[socket.id]
-//     })
-// })
-
-// Generic error handler for uncaught exceptions, from express-async-errors
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use("/api", courses)
+app.use(
+  (
+    err: any,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
     console.error(err)
     return res.status(500).json({ error: err.stack })
-})
+  }
+)
 
-http.listen(process.env.PORT_EXPRESS, () => {
-    console.log(`Server now listening on port ${process.env.PORT_EXPRESS}`)
+http.listen(PORT_EXPRESS, () => {
+  console.log(`Server now listening on port ${PORT_EXPRESS}`)
 })
