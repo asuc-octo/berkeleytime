@@ -4,7 +4,7 @@ import { Server as IoServer } from "socket.io"
 import { Server as HttpServer } from "http"
 import "express-async-errors"
 
-import "./env"
+import "./env.js"
 
 const app = express()
 const apollo = new ApolloServer({})
