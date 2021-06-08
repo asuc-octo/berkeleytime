@@ -40,8 +40,8 @@ spec:
             - |
               node /backend/build
           env:
-            - name: ENVIRONMENT_NAME
-              value: $CI_ENVIRONMENT_NAME
+            - name: NODE_ENV
+              value: $CI_ENVIRONMENT_NAE
           envFrom:
             - secretRef:
                 name: bt-backend-$CI_ENVIRONMENT_NAME
@@ -51,21 +51,6 @@ spec:
           ports:
             - containerPort: 5000
               protocol: TCP
-          volumeMounts:
-            - mountPath: /etc/google
-              name: bt-backend
-              readOnly: true
-      volumes:
-        - name: bt-backend
-          secret:
-            defaultMode: 420
-            items:
-              - key: GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64
-                path: auth.json
-              - key: GOOGLE_SIGNIN_CLIENT_SECRET_CONTENT
-                path: signin.json
-            secretName: bt-backend-$CI_ENVIRONMENT_NAME
-
 ---
 apiVersion: v1
 kind: Secret
@@ -74,22 +59,7 @@ metadata:
   namespace: default
 type: Opaque
 stringData:
-  DATABASE_URL: $SECRET_DATABASE_URL
-  DJANGO_SECRET_KEY: $SECRET_BT_DJANGO_SECRET_KEY
-  GITHUB_TOKEN: $SECRET_GITHUB_TOKEN
-  GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64: |-
-    $IAM_BT_BACKEND
-  GOOGLE_APPLICATION_CREDENTIALS_FILEPATH: /etc/google/auth.json
-  GOOGLE_SIGNIN_CLIENT_SECRET_CONTENT: |-
-    $SECRET_GOOGLE_SIGNIN_CLIENT_SECRET
-  GOOGLE_SIGNIN_CLIENT_SECRET_FILEPATH: /etc/google/signin.json
-  GOOGLE_EMAIL: $SECRET_GOOGLE_EMAIL
-  GOOGLE_PASS: $SECRET_GOOGLE_PASS
-  OAUTHLIB_RELAX_TOKEN_SCOPE: "true"
-  REDIS_URL: $SECRET_REDIS_URL
-  SENDGRID_PASSWORD: $SECRET_SENDGRID_PASSWORD
-  SENDGRID_USERNAME: $SECRET_SENDGRID_USERNAME
-  SIS_CLASS_APP_ID: $SECRET_SIS_CLASS_APP_ID
-  SIS_CLASS_APP_KEY: $SECRET_SIS_CLASS_APP_KEY
-  SIS_COURSE_APP_ID: $SECRET_SIS_COURSE_APP_ID
-  SIS_COURSE_APP_KEY: $SECRET_SIS_COURSE_APP_KEY
+  EXPIRE_TIME_REDIS_KEY: $EXPIRE_TIME_REDIS_KEY
+  PORT_EXPRESS: $PORT_EXPRESS
+  URL_MONGODB: $URL_MONGODB
+  URL_REDIS: $URL_REDIS
