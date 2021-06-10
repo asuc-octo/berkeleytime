@@ -37,6 +37,8 @@
 # each Berkeleytime environment ==> "k create ns prod" and then make a
 # "$NAMESPACE" env variable in the YAML files, to be substituted with envsubst
 
+# TO-DO / FIXME:
+# This is a giant bash script. Make it more reproducible with Ansible or some other tool
 
 export DEVICE_IP=$(ip -4 addr show $(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)') | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 apt update
@@ -54,6 +56,7 @@ echo alias k='kubectl' >> ~/.bashrc
 echo shopt -s histverify >> ~/.bashrc
 echo "br_netfilter" > /etc/modules-load.d/containerd.conf
 echo "net.ipv4.conf.all.route_localnet = 1" >> /etc/sysctl.conf
+echo "127.0.0.1 $HOSTNAME" >> /etc/hosts # for some reason, host can have trouble identifying itself
 modprobe br_netfilter
 swapoff -a && sed -i "s/\/swap/# \/swap/g" /etc/fstab
 kubeadm init --skip-phases addon/kube-proxy # BPF replaces kube-proxy, https://docs.cilium.io/en/v1.9/gettingstarted/kubeproxy-free
@@ -64,6 +67,9 @@ kubectl taint nodes $(hostname) node-role.kubernetes.io/master-
 kubectl apply -f /berkeleytime/infra/k8s/kube-system
 timedatectl set-timezone America/Los_Angeles
 
+# example use: istioctl proxy-config cluster deploy/bt-psql-staging -n default
+curl -sL https://istio.io/downloadIstioctl | sh - # istioctl is istio util, helps
+echo export PATH=\$PATH:\$HOME/.istioctl/bin >> ~/.bashrc
 # > Helm >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add cilium https://helm.cilium.io
@@ -94,7 +100,7 @@ crontab -l | { cat; echo "@reboot /bin/node /berkeleytime/infra/fail2ban-helper"
 
 # > Cluster networking >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # If BPF works, policy-related things appear in /sys/fs/bpf
-helm install cilium cilium/cilium --version 1.9.5 -n kube-system -f - << EOF
+helm install cilium cilium/cilium --version 1.9.6 -n kube-system -f - << EOF
 # https://github.com/cilium/cilium/blob/e3f96e3328757f5af394a7e09a2781ce5a1554be/install/kubernetes/cilium/values.yaml
 k8sServiceHost: $DEVICE_IP
 k8sServicePort: 6443
@@ -105,8 +111,7 @@ EOF
 git clone --single-branch --branch release-1.9 https://github.com/istio/istio.git # https://github.com/istio/istio/commit/5dd2044
 helm -n istio install istio-base istio/manifests/charts/base -f /berkeleytime/infra/helm/istio-base.yaml --create-namespace
 helm -n istio install istiod istio/manifests/charts/istio-control/istio-discovery -f /berkeleytime/infra/helm/istiod.yaml
-kubectl patch mutatingwebhookconfigurations istio-sidecar-injector-istio --type json -p '[{"op": "remove", "path": "/webhooks/0/namespaceSelector" }]' # Make sidecar injection an opt-in for pods
-kubectl apply -f /berkeleytime/infra/k8s/istio/istio.yaml
+kubectl apply -f /berkeleytime/infra/k8s/istio/envoy-filter.yaml
 helm -n kube-system install metrics-server bitnami/metrics-server --version 5.8.4 -f /berkeleytime/infra/helm/metrics-server.yaml
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Cluster networking <
 
@@ -120,11 +125,11 @@ gsutil cp gs://berkeleytime-218606/secrets/kubernetes-bt-ingress-protected-route
 kubectl patch serviceaccount default -p '{"imagePullSecrets":[{"name":"docker-registry-gcr"}]}'
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Import secrets <
 
-# > rook-ceph >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# > rook >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # This handles dynamic pvcs with bare-metal storage. Uses attached block devices
-helm install rook-ceph rook-release/rook-ceph -n rook-ceph --version v1.5.6 --create-namespace -f /berkeleytime/infra/helm/rook-ceph.yaml
-kubectl apply -f /berkeleytime/infra/k8s/rook-ceph --recursive;
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< rook-ceph <
+helm install rook rook-release/rook-ceph -n rook --version v1.6.4 --create-namespace -f /berkeleytime/infra/helm/rook.yaml
+kubectl apply -f /berkeleytime/infra/k8s/rook --recursive;
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< rook <
 
 # > Ingress >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 envsubst << EOF | helm install metallb bitnami/metallb --version 1.0.2 -n kube-system -f -
@@ -142,10 +147,10 @@ until kubectl apply -f /berkeleytime/infra/k8s/default/certificate.yaml && kubec
 
 # > Elasticsearch >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 kubectl apply -f /berkeleytime/infra/k8s/default/bt-elasticsearch.yaml
-helm install bt-logstash elastic/logstash --version 7.12.0 -f /berkeleytime/infra/helm/logstash.yaml
-helm install bt-kibana elastic/kibana --version 7.12.0 -f /berkeleytime/infra/helm/kibana.yaml
-helm install bt-filebeat elastic/filebeat --version 7.12.0 -f /berkeleytime/infra/helm/filebeat.yaml
-helm install bt-metricbeat elastic/metricbeat --version 7.12.0 -f /berkeleytime/infra/helm/metricbeat.yaml # As of 2021-04-01, still waiting for a fix first noticed in Version 7.10.2: "error getting group status: open /proc/<PID>/cgroup: no such file or directory"
+helm install bt-logstash elastic/logstash --version 7.12.1 -f /berkeleytime/infra/helm/logstash.yaml
+helm install bt-kibana elastic/kibana --version 7.12.1 -f /berkeleytime/infra/helm/kibana.yaml
+helm install bt-filebeat elastic/filebeat --version 7.12.1 -f /berkeleytime/infra/helm/filebeat.yaml
+helm install bt-metricbeat elastic/metricbeat --version 7.12.1 -f /berkeleytime/infra/helm/metricbeat.yaml # As of 2021-04-01, still waiting for a fix first noticed in Version 7.10.2: "error getting group status: open /proc/<PID>/cgroup: no such file or directory"
 helm install bt-curator stable/elasticsearch-curator -f /berkeleytime/infra/helm/curator.yaml
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Elasticsearch <
 
@@ -171,11 +176,15 @@ helm install bt-gitlab-runner gitlab/gitlab-runner -f /berkeleytime/infra/helm/g
 
 export INGRESS_LABEL=primary;
 export BASE_DOMAIN_NAME=berkeleytime.com;
-envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-infra.yaml | kubectl apply -f -
+envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-infra.yaml  gv| kubectl apply -f -
 envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-status.yaml | kubectl apply -f -
 
-export CA_CERT=$(kubectl get secrets/bt-tls --template='{{index .data "tls.crt"}}')
-export CA_KEY=$(kubectl get secrets/bt-tls --template='{{index .data "tls.key"}}')
+
+# kubectl get secrets/bt-tls --template='{{index .data "tls.crt"}}' | base64 --decode > tls.crt
+# kubectl get secrets/bt-tls --template='{{index .data "tls.key"}}' | base64 --decode > tls.key
+# openssl x509 -CA tls.crt -CAKey tls.key -out tls.pem -outform PEM
+# cat tls.crt tls.key > tls.pem
+# kubectl create secret generic bt-mdb --from-file mongodb-ca-cert=tls.crt --from-file mongodb-ca-key=tls.key --from-file mongodb.pem=tls.pem # need to find out a way to make sure it uses mongodb.pem from tls.pem instead of mongodb.pem genered by initContainer
 # > BT App Data Layer >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 for CI_ENVIRONMENT_NAME in "staging" "prod"
 do
@@ -184,8 +193,8 @@ do
   gsutil cp gs://berkeleytime-218606/secrets/bt-redis-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-redis-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
   gsutil cp gs://berkeleytime-218606/secrets/bt-mdb-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-mdb-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
   envsubst < /berkeleytime/infra/k8s/default/bt-psql.yaml | kubectl apply -f -
-  envsubst < /berkeleytime/infra/helm/redis.yaml | helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis --version 13.0.1 -f -
-  envsubst '$CI_ENVIRONMENT_NAME $CA_CERT $CA_KEY' < /berkeleytime/infra/helm/mongodb.yaml | helm install bt-mdb-$CI_ENVIRONMENT_NAME bitnami/mongodb --version 10.12.0 -f -
+  envsubst < /berkeleytime/infra/helm/redis.yaml | helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis --version 14.1.0 -f -
+  export MDB_REPLICA_COUNT=3; envsubst '$CI_ENVIRONMENT_NAME $MDB_REPLICA_COUNT' < /berkeleytime/infra/helm/mongodb.yaml | helm install bt-mdb-$CI_ENVIRONMENT_NAME bitnami/mongodb --version 10.19.0 -f -
   if [ $CI_ENVIRONMENT_NAME == "staging" ]; then
     # Expose staging services to the external internet and use istio-proxy sidecars to handle HAProxy Protocol, which preserves client source IPs via annotation TPROXY
     kubectl patch deploy/bt-psql-$CI_ENVIRONMENT_NAME -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true","sidecar.istio.io/interceptionMode":"TPROXY"}}}}}'
@@ -201,3 +210,12 @@ export INGRESS_LABEL=primary; export BASE_DOMAIN_NAME=berkeleytime.com; envsubst
 export INGRESS_LABEL=secondary; export BASE_DOMAIN_NAME=ocf.berkeleytime.com; envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-primary.yaml | kubectl apply -f -
 export INGRESS_LABEL=secondary; export BASE_DOMAIN_NAME=ocf.berkeleytime.com; envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-infra.yaml | kubectl apply -f -
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Ingress <
+
+openssl genrsa -out signed.key 2048
+openssl req -x509 -new -subj "/C=US/ST=NY/L=New York/O=Example Corp/OU=IT Department/CN=berkeleytime.com" -key signed.key -out signed.crt
+
+openssl req -new -nodes -subj "/C=US/ST=NY/L=New York/O=Example Corp/OU=IT Department/CN=berkeleytime.com" -keyout signed-me.key -out signed-me.csr
+openssl x509 -req -days 365 -in signed-me.csr -out signed-me.crt -CA signed.crt -CAkey signed.key -CAcreateserial -extensions req
+cat signed-me.key signed-me.crt > signed-me.pem
+
+kubectl create secret generic bt-mdb --from-file mongodb-ca-cert=signed-me.crt --from-file mongodb-ca-key=signed-me.pem --from-file client-pem=signed-me.pem

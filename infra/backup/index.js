@@ -36,7 +36,7 @@ const upload = async (obj) => {
   const timestamp = moment(new Date()).format("YYYY-MM-DD_HH-mm-ss");
   const volumeSnapshotCompressed = `snapshot_${label}_${timestamp}.img.gz`;
   await tee(
-    `kubectl -n rook-ceph exec deploy/rook-ceph-tools -- rbd export rook-cephrbd/csi-vol-${volumeHandle} - | gzip | gsutil cp - gs://berkeleytime-218606/${label}/${volumeSnapshotCompressed}`
+    `kubectl -n rook exec deploy/rook-ceph-tools -- rbd export rook-cephrbd/csi-vol-${volumeHandle} - | gzip | gsutil cp - gs://berkeleytime-218606/${label}/${volumeSnapshotCompressed}`
   );
   const backups = (
     await tee(

@@ -1,0 +1,55 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: nlb-tcp
+  namespace: ingress-nginx
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "true"
+spec:
+  loadBalancerIP: 169.229.226.55
+  externalTrafficPolicy: Local
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/instance: ingress-nginx
+    app.kubernetes.io/component: controller
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+    - name: https
+      port: 443
+      targetPort: 443
+    - name: gitlab-ssh
+      port: 2222
+      targetPort: 2222
+    - name: psql
+      port: 5432
+      targetPort: 5432
+    - name: redis-staging
+      port: 6379
+      targetPort: 6379
+    - name: mdb-staging-0
+      port: 27017
+      targetPort: 27017
+    - name: mdb-staging-1
+      port: 27018
+      targetPort: 27018
+    - name: mdb-staging-2
+      port: 27019
+      targetPort: 27019
+# ---
+# kind: Service
+# apiVersion: v1
+# metadata:
+#   name: nlb-udp
+#   namespace: ingress-nginx
+#   annotations:
+#     metallb.universe.tf/allow-shared-ip: "true"
+# spec:
+#   loadBalancerIP: 169.229.226.55
+#   externalTrafficPolicy: Local
+#   type: LoadBalancer
+#   selector:
+#     app.kubernetes.io/instance: ingress-nginx
+#     app.kubernetes.io/component: controller
+#   ports: []
