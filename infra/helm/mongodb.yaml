@@ -8,7 +8,7 @@
 
 # INSTALL A MONGODB CLIENT LOCALLY ON UBUNTU 20.04:
 # apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 656408E390CFB1F5
-# echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb.list
+# echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.4 multiverse" > /etc/apt/sources.list.d/mongodb.list
 # apt install -y mongodb-org
 
 # MANUALLY VERIFY WORKS IN MONGO:
@@ -40,7 +40,7 @@ auth:
   database: bt
 fullnameOverride: bt-mdb-$CI_ENVIRONMENT_NAME
 persistence:
-  size: 500M
+  size: 1G
   accessModes:
     - ReadWriteOnce
   mountPath: /bitnami/mongodb
@@ -52,10 +52,10 @@ externalAccess:
   enabled: true
   service:
     type: ClusterIP
-readinessProbe: # must be disabled so that traffic can go through svc for init
+readinessProbe: # must be disabled so that traffic can use svc name for sidecar
   enabled: false
-replicaCount: 3
-sidecars: # This sidecar waits first time replica set start, then change to dns
+replicaCount: $MDB_REPLICA_COUNT
+sidecars: # custom sidecar waits for mdb to start, then changes hostnames to dns
   - name: mongo
     image: mongo:4.4.4
     env:
@@ -64,7 +64,7 @@ sidecars: # This sidecar waits first time replica set start, then change to dns
       - name: PORT
         value: "27017"
       - name: REPLICAS
-        value: "3"
+        value: "$MDB_REPLICA_COUNT"
     envFrom:
       - secretRef:
           name: bt-mdb-$CI_ENVIRONMENT_NAME
@@ -76,7 +76,7 @@ sidecars: # This sidecar waits first time replica set start, then change to dns
         do
           password=`env | sed -n 's/mongodb-root-password=\(.*\)/\1/p'`
 
-          mongo "mongodb://root:${password}@localhost" << EOF
+          mongo "mongodb://root:${password}@localhost" -- << EOF
             const replicaCount = $REPLICAS;
             const domain = "$DOMAIN";
             const h = getHostName();
@@ -85,62 +85,88 @@ sidecars: # This sidecar waits first time replica set start, then change to dns
             const c = rs.conf();
             const s = rs.status();
 
-            if (s.members.every(member => member.name.includes(baseHostname) && member.health == 1) ||
-                s.members.every(member => member.name.includes(domain) && member.health == 1) ) {
-                if (s.members.length == replicaCount) {
-                  print("all replicas healthy and properly named");
-                  quit(255);
-                } else {
-                  print("some replicas are missing");
-                  quit(0);
-                }
+            if (
+                s.members &&
+                s.members.length == replicaCount &&
+                s.members.every(member => member.name.includes(baseHostname) && member.health == 1)
+              ) {
+                print("all replicas healthy and properly named");
+                quit(255);
             }
-
-            for (let [index, value] of c.members.entries()) {
-              let port;
-              if (h.includes('staging')) {
-                c.members[index].host = \`$DOMAIN:\${basePort + index}\`;
-              } else {
-                c.members[index].host = \`\${baseHostname}-\${index}:\${basePort}\`;
+            c.members = [];
+            if (h.includes('staging')) {
+              for (let i = 0; i < replicaCount; i++) {
+                c.members.push({ _id: i, host: \`\${domain}:\${basePort + i}\`})
+              }
+            } else {
+              for (let i = 0; i < replicaCount; i++) {
+                c.members.push({ _id: i, host: \`\${baseHostname}-\${i}:\${basePort}\` });
               }
             }
             rs.reconfig(c, { force: true });
         EOF
 
           if [[ $? -eq 255 ]]; then
-            echo ...`date +"%Y-%m-%d %H:%M:%S"` replica set is configured correctly...
+            echo `date +"%Y-%m-%d %H:%M:%S"` ...replica set is configured correctly...
             sleep 600
           else
-            echo "retrying replica set configuration..."
+            echo `date +"%Y-%m-%d %H:%M:%S"` ...retrying replica set configuration...
             sleep 15
           fi
         done
-# tls:
-#   enabled: true
-#   caCert: $CA_CERT
-#   caKey: $CA_KEY
+livenessProbe:
+  enabled: false
+  initialDelaySeconds: 300
+  timeoutSeconds: 5
+  failureThreshold: 20
+  successThreshold: 1
+readinessProbe: # required to be disabled so that svc cluster traffic can arrive
+  enabled: false
+  initialDelaySeconds: 300
+  timeoutSeconds: 10
+  failureThreshold: 20
+  successThreshold: 1
+tls:
+  enabled: false # only because we want to bring external certs from LetsEncrypt
+  # existingSecret: # only use this if self-signed certs are desired
 
-# old bash tricks but helpful tricks to keep just in case
-# function check(){
-#   mongo --eval 'db.runCommand("ping").ok' mongodb://root:${password}@$1 --quiet
-# }
-# i=$((${#HOSTNAME}-1))
-# if [[ "${HOSTNAME:$i:1}" =~ "0" ]]
-# then
-#   # this is member 0, attempt to initialize replica set
-# EOF
-# else
-#   echo this node is not the first init member, do nothing
-#   while true; do sleep 1000; done;
-# fi
-
-# can replace container cmd, perhaps automate for staging external access
-# command:
-#   - bash
-#   - -c
-#   - |
-#     mkdir -p /bitnami/mongodb/data/db
-#     /opt/bitnami/mongodb/bin/mongod --config=/opt/bitnami/mongodb/conf/mongodb.conf
+# During first-time setup, must comment out extraEnvVars, then enable later
+# Purpose is to disable TLS temporarily so replicas can connect and set user+passwords
+# After login and password are working, then reenable vars for TLS
+extraEnvVars: 
+  - name: MONGODB_EXTRA_FLAGS
+    value: --tlsMode allowTLS --tlsCAFile /pki/tls.crt --tlsCertificateKeyFile /pki/tls.pem --tlsAllowConnectionsWithoutCertificates
+  - name: MONGODB_CLIENT_EXTRA_FLAGS
+    value: --tls --tlsCAFile /pki/tls.crt --tlsCertificateKeyFile /pki/tls.pem
+extraVolumes:
+  - name: pki
+    emptyDir: {} # this vol is for building pem file for mdb container using tls
+  - name: letsencrypt
+    secret:
+      secretName: bt-tls # change secretName to whichever LetsEncrypt TLS secret
+      items:
+      - key: tls.crt
+        path: tls.crt
+      - key: tls.key
+        path: tls.key
+extraVolumeMounts:
+  - name: pki
+    mountPath: /pki
+initContainers:
+  - name: busybox
+    image: busybox
+    command:
+      - sh
+      - -c
+      - |
+        cat /letsencrypt/tls.crt /letsencrypt/tls.key > /pki/tls.pem
+        cp /letsencrypt/tls.crt /pki/tls.crt
+        chmod 777 /pki/tls.crt /pki/tls.pem
+    volumeMounts:
+      - mountPath: /pki
+        name: pki
+      - mountPath: /letsencrypt
+        name: letsencrypt
 
 # configuration: |-
 #   # Default configuration file that comes in Helm chart
@@ -167,16 +193,22 @@ sidecars: # This sidecar waits first time replica set start, then change to dns
 #       enabled: true
 #       pathPrefix: /opt/bitnami/mongodb/tmp
 #     ipv6: false
-#     bindIpAll: true
-#     #bindIp:
-#   replication:
-#     replSetName: rs0
-#     enableMajorityReadConcern: true
+#     bindIpAll: false
+#     bindIp: 127.0.0.1
+#   #replication:
+#     #replSetName: replicaset
+#     #enableMajorityReadConcern: true
+#   # sharding options
+#   #sharding:
+#     #clusterRole:
+#   # process management options
 #   processManagement:
-#      fork: false
-#      pidFilePath: /opt/bitnami/mongodb/tmp/mongodb.pid
+#     fork: false
+#     pidFilePath: /opt/bitnami/mongodb/tmp/mongodb.pid
+#   # set parameter options
 #   setParameter:
-#      enableLocalhostAuthBypass: true
+#     enableLocalhostAuthBypass: true
+#   # security options
 #   security:
 #     authorization: disabled
-#     keyFile: /opt/bitnami/mongodb/conf/keyfile
+#     #keyFile: replace_me

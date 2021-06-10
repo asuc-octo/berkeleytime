@@ -82,7 +82,7 @@ spec:
                   - /bin/sh
                   - -c
                   - |
-                    cp /pg-conf-placeholder/pg_hba.conf /pg-conf-placeholder/postgresql.conf /var/lib/postgresql/data;
+                    cp /pg-conf-placeholder/pg_hba.conf /pg-conf-placeholder/postgresql.conf /var/lib/postgresql/data
           image: postgres:12
           ports:
             - containerPort: 5432
@@ -126,7 +126,7 @@ data:
   postgresqlConfiguration: |
     # Default /var/lib/postgresql/data/postgresql.conf from Docker image
     listen_addresses = '*'
-    max_connections = 100
+    max_connections = 1000
     shared_buffers = 128MB
     dynamic_shared_memory_type = posix
     max_wal_size = 1GB
