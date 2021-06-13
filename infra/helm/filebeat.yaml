@@ -51,6 +51,10 @@ filebeatConfig:
                   - type: container
                     paths:
                       - /var/log/containers/*-${data.kubernetes.container.id}.log
+                    multiline:
+                      pattern: '^{'
+                      negate: true
+                      match: after
                     processors:
                       - add_kubernetes_metadata:
                           host: ${NODE_NAME}
@@ -63,10 +67,10 @@ tolerations:
   - key: node-role.kubernetes.io/master
     operator: Exists
     effect: NoSchedule
-extraVolumeMounts: 
+extraVolumeMounts:
   - name: sysdate
     mountPath: /etc/localtime
-extraVolumes:  
+extraVolumes:
   - name: sysdate
     hostPath:
       path: /etc/localtime

@@ -57,7 +57,7 @@ spec:
             claimName: bt-elasticsearch
       containers:
         - name: bt-elasticsearch
-          image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
+          image: docker.elastic.co/elasticsearch/elasticsearch:7.12.1
           ports:
             - containerPort: 9200
               name: rest
@@ -155,6 +155,21 @@ spec:
                     }
                     EOF
 
+                    # Stop "TOO_MANY_REQUESTS/12/disk"
+                    curl -d "@-" -X PUT -H "Content-Type: application/json" "$HOSTNAME:9200/_all/_settings" << EOF
+                    {
+                      "index.blocks.read_only_allow_delete": null
+                    }
+                    EOF
+                    curl -d "@-" -X PUT -H "Content-Type: application/json" "$HOSTNAME:9200/_cluster/settings" << EOF
+                    {
+                      "transient": {
+                        "cluster.routing.allocation.disk.threshold_enabled": false
+                      }
+                    }
+                    EOF
+                    # Stop "TOO_MANY_REQUESTS/12/disk"
+
                     add_datastream_template k8s datastream k8s 0 '"k8s*"'
                     add_datastream_template k8s-ingress-nginx datastream k8s-ingress-nginx 100 '"k8s-ingress-nginx*"'
                     add_datastream_template metricbeat datastream metricbeat 0 '"metricbeat*"' '"metricbeat"' || true # Requires bt-metricbeat helm chart for component template
@@ -164,7 +179,7 @@ spec:
           #     memory: 4Gi
           env:
             - name: ES_JAVA_OPTS
-              value: -Xms2g -Xmx2g
+              value: -Xms1g -Xmx1g
           #   - name: ELASTICSEARCH_USERNAME
           #     valueFrom:
           #       secretKeyRef:
