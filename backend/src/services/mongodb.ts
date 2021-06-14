@@ -19,3 +19,6 @@ mongoose.connect(URL_MDB, {
 mongoose.connection.on("open", () => {
   console.log("********** MongoDB Successfully Connected **********")
 })
+if (process.env.NODE_ENV != "prod") {
+  mongoose.set("debug", true)
+}
