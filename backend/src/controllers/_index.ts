@@ -1,2 +1,2 @@
-export * from "./courses"
-export * from "./users"
+export * from "#src/controllers/courses"
+export * from "#src/controllers/users"

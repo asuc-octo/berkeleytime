@@ -26,7 +26,7 @@ interface IController {
   login: ExpressMiddleware<LoginRequest, LoginResponse>
 }
 
-export default new (class Controller implements IController {
+export const Users = new (class Controller implements IController {
   current: ExpressMiddleware<{}, {}> = async (req, res) => {
     res.json({ user: req.user.toJSON() })
   }
