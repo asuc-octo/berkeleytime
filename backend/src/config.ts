@@ -2,6 +2,7 @@ export const EXPIRE_TIME_ACTIVATION_EMAIL: number =
   parseInt(process.env.EXPIRE_TIME_ACTIVATION_EMAIL) || 3600000 // milliseconds
 export const EXPIRE_TIME_REDIS_KEY: number =
   parseInt(process.env.EXPIRE_TIME_REDIS_KEY) || 60 // seconds
+export const KEY_APOLLO = process.env.KEY_APOLLO
 export const KEY_BERKELEYTIME = process.env.KEY_BERKELEYTIME
 export const KEY_SENDGRID = process.env.KEY_SENDGRID
 export const SENDGRID_PASSWORD = process.env.SENDGRID_PASSWORD

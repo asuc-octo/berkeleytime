@@ -1,5 +1,3 @@
-// https://dev.to/smithg09/building-graphql-api-with-nodejs-typegraphql-typegoose-and-troubleshooting-common-challenges-9oa
-// https://github.com/DevUnderflow/nx-node-apollo-grahql-mongo/commit/06ee5fb8a1e50d434b5001e796b0b8d181daf874
 import { IsEmail, Length } from "class-validator"
 import { Field, ObjectType } from "type-graphql"
 
@@ -8,7 +6,7 @@ import { CourseClass } from "#src/models/Course"
 import { prop, getModelForClass } from "@typegoose/typegoose"
 
 @ObjectType()
-class UserClass {
+export class UserClass {
   @Field()
   readonly _id: string
 
@@ -33,12 +31,12 @@ class UserClass {
   @Length(1, 255)
   bio: string
 
-  @Field(({}) => [CourseClass])
+  @Field(() => [CourseClass])
   @prop({ ref: CourseClass })
   @Length(1, 30)
   classes_saved: CourseClass[]
 
-  @Field(({}) => [CourseClass])
+  @Field(() => [CourseClass])
   @prop({ ref: CourseClass })
   @Length(1, 30)
   classes_watching: CourseClass[]
