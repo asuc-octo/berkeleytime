@@ -1,12 +1,12 @@
 import { IsEmail, Length } from "class-validator"
 import { Field, ObjectType } from "type-graphql"
 
-import { CourseClass } from "#src/models/Course"
+import { CourseSchema } from "#src/models/Course"
 
-import { prop, getModelForClass } from "@typegoose/typegoose"
+import { prop, getModelForClass, Ref } from "@typegoose/typegoose"
 
 @ObjectType()
-export class UserClass {
+export class UserSchema {
   @Field()
   readonly _id: string
 
@@ -31,15 +31,15 @@ export class UserClass {
   @Length(1, 255)
   bio: string
 
-  @Field(() => [CourseClass])
-  @prop({ ref: CourseClass })
+  @Field(() => [CourseSchema])
+  @prop({ ref: CourseSchema })
   @Length(1, 30)
-  classes_saved: CourseClass[]
+  classes_saved: Ref<CourseSchema>[]
 
-  @Field(() => [CourseClass])
-  @prop({ ref: CourseClass })
+  @Field(() => [CourseSchema])
+  @prop({ ref: CourseSchema })
   @Length(1, 30)
-  classes_watching: CourseClass[]
+  classes_watching: Ref<CourseSchema>[]
 
   @Field()
   @prop({ default: false })
@@ -86,11 +86,11 @@ export class UserClass {
   }
 }
 
-export const User = getModelForClass(UserClass, {
+export const User = getModelForClass(UserSchema, {
   schemaOptions: {
     toObject: { virtuals: true },
     collection: "users",
-    timestamps: true,
+    timestamps: { createdAt: "_created", updatedAt: "_updated" },
     optimisticConcurrency: true,
     toJSON: {
       /* Can use toJSON() as the method for public-facing responses */

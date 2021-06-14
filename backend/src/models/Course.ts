@@ -21,7 +21,7 @@ type ENUM_GRADES =
   | "F"
 
 @ObjectType()
-export class CourseClass {
+export class CourseSchema {
   @Field()
   @prop()
   readonly _id: string
@@ -97,17 +97,9 @@ export class CourseClass {
   waitlisted: number
 }
 
-export const Course = getModelForClass(CourseClass, {
+export const Course = getModelForClass(CourseSchema, {
   schemaOptions: {
-    toObject: { virtuals: true },
     collection: "courses",
-    timestamps: true,
-    optimisticConcurrency: true,
-    toJSON: {
-      /* Can use toJSON() as the method for public-facing responses */
-      getters: true,
-      virtuals: true,
-      transform: (doc, ret, options) => {},
-    },
+    timestamps: { createdAt: "_created", updatedAt: "_updated" },
   },
 })
