@@ -1,7 +1,20 @@
 import express from "express"
 
+import {
+  SIS_CLASS_APP_ID,
+  SIS_CLASS_APP_KEY,
+  SIS_COURSE_APP_ID,
+  SIS_COURSE_APP_KEY,
+} from "#src/config"
+
 const router = express.Router()
 
+console.log(
+  SIS_CLASS_APP_ID,
+  SIS_CLASS_APP_KEY,
+  SIS_COURSE_APP_ID,
+  SIS_COURSE_APP_KEY
+)
 router.get("/coursePull", async (req, res, next) => {
   /*
    * GET /api/coursePull
