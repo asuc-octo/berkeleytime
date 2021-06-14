@@ -1,37 +1,59 @@
 {
-  "name": "backend",
-  "version": "0.1.0",
-  "description": "Berkeleytime backend v3, written in Node.js",
-  "main": "build/index.js",
-  "imports": {
-    "#src/*": "./build/*.js"
-  },
-  "scripts": {
-    "start": "node build",
-    "dev": "NODE_ENV=dev rimraf build/ && tsc-watch --onSuccess \"node build\"",
-    "build": "rimraf build/ && tsc"
-  },
-  "type": "module",
   "dependencies": {
-    "apollo-server-express": "^2.7.0",
+    "@sendgrid/mail": "^7.4.4",
+    "@typegoose/typegoose": "^7.6.1",
+    "apollo-server-express": "^2.25.1",
     "app-root-path": "^3.0.0",
     "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.19.0",
+    "class-validator": "^0.13.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "graphql": "^15.5.0",
     "graphql-middleware": "^6.0.10",
     "graphql-tools": "^7.0.5",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.13",
+    "passport": "^0.4.1",
     "redis": "^2.8.0",
-    "typescript": "^4.2.4"
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1",
+    "typescript": "^4.3.2"
   },
+  "description": "Berkeleytime backend v3, written in Node.js",
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^2.0.2",
     "@types/app-root-path": "^1.2.4",
-    "rimraf": "^3.0.2",
+    "husky": "^6.0.0",
+    "lint-staged": "^11.0.0",
+    "prettier": "^2.3.1",
+    "prettier-plugin-sort-json": "0.0.2",
     "tsc-watch": "^4.4.0"
-  }
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "imports": {
+    "#src/*": "./build/*.js"
+  },
+  "lint-staged": {
+    "*.js|*.ts|*.jsx|*.tsx|*.json": [
+      "npm run format"
+    ]
+  },
+  "main": "build/index.js",
+  "name": "backend",
+  "scripts": {
+    "build": "rm -rf build && tsc",
+    "dev": "NODE_ENV=dev rm -rf build && tsc-watch --onSuccess \"node build\"",
+    "format": "prettier --write **/*.{js,ts,json}",
+    "start": "node build"
+  },
+  "type": "module",
+  "version": "0.1.0"
 }
