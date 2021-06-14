@@ -1,3 +1,3 @@
-export * from "./Course.js"
-export * from "./Fruit.js"
-export * from "./User.js"
+export * from "#src/models/Course"
+export * from "#src/models/Fruit"
+export * from "#src/models/User"

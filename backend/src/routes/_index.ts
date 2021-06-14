@@ -1,1 +1,2 @@
-export * from "./users.js"
+export * from "#src/routes/courses"
+export * from "#src/routes/users"

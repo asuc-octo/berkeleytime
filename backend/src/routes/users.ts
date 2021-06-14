@@ -1,7 +1,7 @@
 import express from "express"
 import passport from "passport"
 
-import Users from "#src/controllers/users"
+import { Users } from "#src/controllers/users"
 
 const router = express.Router()
 const authenticate = passport.authenticate("jwt", { session: false })
