@@ -1,14 +1,14 @@
 // @ts-nocheck
-import { URL_REDIS } from "#src/config"
-
 import bluebird from "bluebird"
 import redis from "redis"
 
+import { URL_REDIS } from "#src/config"
+
 bluebird.promisifyAll(redis)
 export const redisClient = redis.createClient(URL_REDIS)
-await redisClient.configAsync("SET", "notify-keyspace-events", "Ex");
+await redisClient.configAsync("SET", "notify-keyspace-events", "Ex")
 
-// sconsole.log when a key expires
+// console.log when a key expires
 class PubSub {
   publisher = redis.createClient(URL_REDIS)
   subscriber = redis.createClient(URL_REDIS)

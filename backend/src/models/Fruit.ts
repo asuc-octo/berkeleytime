@@ -1,4 +1,3 @@
-// This is a random Model
 import mongoose, { Document } from "mongoose"
 
 const FruitSchema = new mongoose.Schema({
@@ -13,4 +12,4 @@ interface IFruit extends Document {
   updatedAt?: Date
 }
 
-export default mongoose.model<IFruit>("fruits", FruitSchema)
+export const Fruit = mongoose.model<IFruit>("fruits", FruitSchema)

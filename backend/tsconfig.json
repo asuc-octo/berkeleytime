@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": "./src",
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "lib": ["ES2020"],
     "module": "esnext",
     "moduleResolution": "node",
@@ -13,10 +16,9 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "strict": true,
+    "strictPropertyInitialization": false,
     "target": "esnext"
-    /* some other configs you might wanna play around with */
-    // "incremental": true,                         /* Enable incremental compilation */
+    // "strict": true,
     // "rootDir": "./",                             /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
     // "noEmit": true,                              /* Do not emit outputs. */
     // "allowSyntheticDefaultImports": true,        /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */

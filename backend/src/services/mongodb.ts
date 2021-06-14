@@ -1,7 +1,7 @@
-import { URL_MDB } from "#src/config"
-
 import _ from "lodash"
 import mongoose from "mongoose"
+
+import { URL_MDB } from "#src/config"
 
 /* useNewUrlParser to fix warning --> (node:57275)
  * DeprecationWarning: current URL string parser is deprecated,
