@@ -4,6 +4,10 @@ import redis from "redis"
 
 import { URL_REDIS } from "#src/config"
 
+// example use
+// import { redisClient } from "#src/services/redis"
+// await redisClient.setAsync("ASDF", "hello", "EX", EXPIRE_TIME_REDIS_KEY)
+
 bluebird.promisifyAll(redis)
 export const redisClient = redis.createClient(URL_REDIS)
 await redisClient.configAsync("SET", "notify-keyspace-events", "Ex")

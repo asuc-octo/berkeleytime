@@ -15,7 +15,7 @@ import { Container } from "typedi"
 import { Service, Inject } from "typedi"
 
 import { URL_DOMAIN, URL_REDIS } from "#src/config"
-import { User, UserClass } from "#src/models/_index"
+import { User, UserSchema } from "#src/models/_index"
 import { redisClient } from "#src/services/redis"
 
 import { getClassForDocument } from "@typegoose/typegoose"
@@ -56,7 +56,7 @@ function convertDocument(doc: mongoose.Document) {
 class UserResolver {
   constructor(private readonly userService: UserService) {}
 
-  @Query(() => [UserClass])
+  @Query(() => [UserSchema])
   async users() {
     return this.userService.getAll()
   }
