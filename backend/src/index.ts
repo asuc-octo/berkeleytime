@@ -4,23 +4,26 @@ import bodyParser from "body-parser"
 import express from "express"
 import "express-async-errors"
 import { Server as HttpServer } from "http"
+import passport from "passport"
 
 import { EXPIRE_TIME_REDIS_KEY, PORT_EXPRESS } from "#src/config"
 import { apolloServer } from "#src/graphql/index"
-import { Fruit } from "#src/models/_index"
+import { Fruit, User } from "#src/models/_index"
 import { users } from "#src/routes/_index"
 import courses from "#src/routes/courses"
 import "#src/services/mongodb"
+import "#src/services/passport"
 import { redisClient } from "#src/services/redis"
 
 const app = express()
+app.use(passport.initialize())
 app.use(bodyParser.urlencoded({ extended: true })) // converts application/x-www-form-urlencoded to applicaton/json
 
 const http = new HttpServer(app)
 await redisClient.setAsync("ASDF", "hello", "EX", EXPIRE_TIME_REDIS_KEY)
 
 apolloServer.applyMiddleware({ app, path: "/graphql" })
-console.log(await Fruit.find({ name: "Mango" }))
+console.log(await User.find({}))
 
 const apiRouter = express.Router()
 app.use("/api", apiRouter)

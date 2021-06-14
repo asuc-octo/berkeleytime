@@ -5,7 +5,7 @@ import { Field, ObjectType } from "type-graphql"
 
 import { CourseClass } from "#src/models/Course"
 
-import { prop, getModelForClass, Ref } from "@typegoose/typegoose"
+import { prop, getModelForClass } from "@typegoose/typegoose"
 
 @ObjectType()
 class UserClass {

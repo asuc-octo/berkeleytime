@@ -47,7 +47,7 @@ export default new (class Controller implements IController {
         jwt: token,
       })
     }
-    return res.status(400)
+    return res.status(400).json({ success: false, message: "Login failed" })
   }
 
   register: ExpressMiddleware<RegisterRequest, RegisterResponse> = async (
