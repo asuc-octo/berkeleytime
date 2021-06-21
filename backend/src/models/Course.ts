@@ -1,9 +1,12 @@
 // https://dev.to/smithg09/building-graphql-api-with-nodejs-typegraphql-typegoose-and-troubleshooting-common-challenges-9oa
 // https://github.com/DevUnderflow/nx-node-apollo-grahql-mongo/commit/06ee5fb8a1e50d434b5001e796b0b8d181daf874
 import { Length } from "class-validator"
+import timeMachine from "mongoose-time-machine"
 import { Field, ObjectType } from "type-graphql"
 
-import { prop, getModelForClass } from "@typegoose/typegoose"
+import { prop, getModelForClass, plugin } from "@typegoose/typegoose"
+
+// https://github.com/bsovs/mongoose-time-machine
 
 type ENUM_GRADES =
   | "A+"
@@ -20,12 +23,9 @@ type ENUM_GRADES =
   | "D-"
   | "F"
 
+@plugin(timeMachine.plugin, { name: "course_history" })
 @ObjectType()
 export class CourseSchema {
-  @Field()
-  @prop()
-  readonly _id: string
-
   @Field()
   @prop()
   @Length(1, 10)
@@ -99,7 +99,7 @@ export class CourseSchema {
 
 export const Course = getModelForClass(CourseSchema, {
   schemaOptions: {
-    collection: "courses",
+    collection: "course",
     timestamps: { createdAt: "_created", updatedAt: "_updated" },
   },
 })

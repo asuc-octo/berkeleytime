@@ -88,10 +88,10 @@ export class UserSchema {
 
 export const User = getModelForClass(UserSchema, {
   schemaOptions: {
-    toObject: { virtuals: true },
-    collection: "users",
-    timestamps: { createdAt: "_created", updatedAt: "_updated" },
+    collection: "user",
     optimisticConcurrency: true,
+    timestamps: { createdAt: "_created", updatedAt: "_updated" },
+    toObject: { virtuals: true },
     toJSON: {
       /* Can use toJSON() as the method for public-facing responses */
       getters: true,
@@ -103,5 +103,6 @@ export const User = getModelForClass(UserSchema, {
         return ret
       },
     },
+    versionKey: "_version",
   },
 })
