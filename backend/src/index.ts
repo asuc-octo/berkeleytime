@@ -8,20 +8,20 @@ import "reflect-metadata"
 
 import apollo from "#src/apollo"
 import { PORT_EXPRESS } from "#src/config"
-import { users } from "#src/routes/_index"
-import courses from "#src/routes/courses"
+import { sis_courses, users } from "#src/routes/_index"
+import "#src/services/gcloud"
 import "#src/services/mongodb"
 import "#src/services/passport"
 
 const app = express()
-app.use(express.urlencoded() as express.RequestHandler)
+app.use(express.urlencoded({ extended: true }) as express.RequestHandler)
 app.use(passport.initialize())
 
 const http = new HttpServer(app)
 
 const apiRouter = express.Router()
 app.use("/api", apiRouter)
-apiRouter.use("/courses", courses) // eg: http://localhost:5000/api/users/register
+apiRouter.use("/sis_courses", sis_courses) // eg: http://localhost:5000/api/users/register
 apiRouter.use("/users", users) // eg: http://localhost:5000/api/courses/xxx
 apiRouter.use((err: any, {}, res: express.Response, {}) => {
   console.error(err)

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@google-cloud/storage": "^5.8.5",
     "@sendgrid/mail": "^7.4.4",
     "@typegoose/typegoose": "^7.6.1",
     "apollo-cache-control": "^0.14.0",
@@ -9,6 +10,7 @@
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.1",
+    "cheerio": "^1.0.0-rc.10",
     "class-validator": "^0.13.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
@@ -18,19 +20,25 @@
     "graphql-middleware": "^6.0.10",
     "graphql-tools": "^7.0.5",
     "jsonwebtoken": "^8.5.1",
+    "moment-timezone": "^0.5.33",
     "mongoose": "^5.10.18",
+    "mongoose-time-machine": "^1.0.3",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
+    "querystring": "^0.2.1",
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1",
     "typedi": "^0.8.0",
-    "typescript": "^4.3.2"
+    "typescript": "^4.3.2",
+    "yawn": "^0.1.1",
+    "yawn-yaml": "^1.5.0"
   },
   "description": "Berkeleytime backend v3, written in Node.js",
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^2.0.2",
     "@types/app-root-path": "^1.2.4",
+    "colors": "^1.4.0",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.1",

@@ -20,5 +20,17 @@ mongoose.connection.on("open", () => {
   console.log("********** MongoDB Successfully Connected **********")
 })
 if (process.env.NODE_ENV != "prod") {
-  mongoose.set("debug", true)
+  await import("colors")
+
+  mongoose.set("debug", function (collectionName, method, query, doc) {
+    console.log(
+      "Mongoose: ".cyan +
+        collectionName +
+        "." +
+        method +
+        " (" +
+        JSON.stringify(query, null, 2) +
+        ")"
+    )
+  })
 }
