@@ -27,11 +27,40 @@ interface IController {
 }
 
 export const Users = new (class Controller implements IController {
+  activate: ExpressMiddleware<{}, {}> = async (req, res) => {
+    const { token } = req.params
+    let errors: any = {}
+    let decoded
+    try {
+      decoded = await jwt.verify(token, KEY_BERKELEYTIME)
+    } catch (err) {
+      return res.status(422).json({
+        activation:
+          "Activation token has expired! Register again with the same email address",
+      })
+    }
+    const user = await User.findById(decoded.id)
+    if (!user) {
+      errors.user = "User not found"
+      return res.status(422).json(errors)
+    }
+    if (user.activated) {
+      errors.activation = "User is already activated"
+      return res.status(422).json(errors)
+    }
+    user.activated = true
+    req.user = await user.save()
+    return res.json({
+      user: req.user,
+    })
+  }
+
   current: ExpressMiddleware<{}, {}> = async (req, res) => {
     res.json({ user: req.user.toJSON() })
   }
 
   login: ExpressMiddleware<LoginRequest, LoginResponse> = async (req, res) => {
+    // TODO: Add Joi validation
     let { email, password } = req.body
     email = email.toLowerCase()
 
@@ -54,11 +83,22 @@ export const Users = new (class Controller implements IController {
     req,
     res
   ) => {
+    // TODO: Add Joi validation
     let { email, name, password } = req.body
+    let errors: any = {}
     email = email.toLowerCase()
 
     await mongoose.connection.transaction(async (session) => {
       const user = await User.findOne({ email }).session(session)
+      if (
+        user &&
+        (user.activated ||
+          (!user.activated &&
+            Date.now() - user.date < EXPIRE_TIME_ACTIVATION_EMAIL))
+      ) {
+        errors.email = "User with that email already exists"
+        return res.status(422).json(errors)
+      }
       if (user) {
         await User.deleteOne({ _id: user.id }).session(session)
       }
@@ -83,25 +123,6 @@ export const Users = new (class Controller implements IController {
       })
       const savedUser = await newUser.save({ session })
       return res.json({ user: savedUser })
-    })
-  }
-
-  activate: ExpressMiddleware<{}, {}> = async (req, res) => {
-    let decoded
-    const { token } = req.params
-    try {
-      decoded = await jwt.verify(token, KEY_BERKELEYTIME)
-    } catch (err) {
-      return res.status(400).json({
-        activation:
-          "Activation token has expired! Register your account with the same email address.",
-      })
-    }
-    const user = await User.findById(decoded.id)
-    user.activated = true
-    req.user = await user.save()
-    return res.json({
-      user: req.user,
     })
   }
 
