@@ -157,7 +157,11 @@ export const SIS_Courses = new (class Controller {
         }
       )
       console.log(
-        `************************ SIS COURSE COUNT:\t${sisCourseCount++}\t${
+        `${moment()
+          .tz("America/Los_Angeles")
+          .format(
+            `YYYY-MM-DD HH-mm-ss`
+          )} ************************ SIS COURSE COUNT:\t${sisCourseCount++}\t${
           result.lastErrorObject.updatedExisting
             ? `UPDATED "${result.value.displayName} '${result.value.title}'" (${result.value._id})`
             : `CREATED "${result.value.displayName} '${result.value.title}'" (${result.lastErrorObject.upserted})`
@@ -233,7 +237,7 @@ export const SIS_Courses = new (class Controller {
         .tz("America/Los_Angeles")
         .format(
           `YYYY-MM-DD HH-mm-ss`
-        )}\s successful close on stream "${key}" (bytes: ${byteCount})`
+        )}\t successful close on stream "${key}" (bytes: ${byteCount})`
     )
     res.json({ success: true })
   }
