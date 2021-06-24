@@ -11,7 +11,8 @@ const SIS_CourseSchema = new mongoose.Schema(
   {
     collection: "sis_course",
     strict: "false",
-    timestamps: { createdAt: "_created", updatedAt: "_updated" },
+    // timestamps: { createdAt: "_created", updatedAt: "_updated" },
+    timestamps: false,
     versionKey: "_version",
   }
 )
