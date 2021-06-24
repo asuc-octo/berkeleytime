@@ -9,7 +9,9 @@ const authenticate = passport.authenticate("jwt", { session: false })
 
 router.post("/login", AjvMiddleware(usersValidator.login), Users.login)
 router.post("/register", AjvMiddleware(usersValidator.register), Users.register)
+router.get("/activate/:token", Users.activate)
 router.get("/exists", authenticate, Users.exists)
 router.get("/current", authenticate, Users.current)
+router.delete("/current", authenticate, Users.delete)
 
 export const users = router
