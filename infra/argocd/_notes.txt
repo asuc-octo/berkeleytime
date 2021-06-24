@@ -1,0 +1,6 @@
+https://www.arthurkoziel.com/setting-up-argocd-with-helm/
+helm repo add argocd https://argoproj.github.io/argo-helm
+helm dep update /berkeleytime/infra/argocd/charts/argocd
+helm install argocd /berkeleytime/infra/argocd/charts/argocd
+kubectl port-forward svc/argocd-server 8081:443 --address 0.0.0.0 # web app for ArgoCD on first-time setup, make accessible to external traffic
+kubectl get pods -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2 # get default admin password, username is 'admin'
