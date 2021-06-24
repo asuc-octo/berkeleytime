@@ -60,7 +60,6 @@ export const Users = new (class Controller implements IController {
   }
 
   login: ExpressMiddleware<LoginRequest, LoginResponse> = async (req, res) => {
-    // TODO: Add Joi validation
     let { email, password } = req.body
     email = email.toLowerCase()
 
@@ -83,7 +82,6 @@ export const Users = new (class Controller implements IController {
     req,
     res
   ) => {
-    // TODO: Add Joi validation
     let { email, name, password } = req.body
     let errors: any = {}
     email = email.toLowerCase()
