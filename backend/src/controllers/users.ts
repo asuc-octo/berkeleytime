@@ -59,15 +59,27 @@ export const Users = new (class Controller implements IController {
     res.json({ user: req.user.toJSON() })
   }
 
+  delete: ExpressMiddleware<{}, {}> = async (req, res) => {
+    // const { google_id } = req.user
+    // await User.deleteOne({ google_id })
+    // res.json({ success: true })
+
+    await User.deleteOne({ _id: req.user.id })
+    res.json({ success: true })
+  }
+
   login: ExpressMiddleware<LoginRequest, LoginResponse> = async (req, res) => {
     let { email, password } = req.body
+    let errors: any = {}
     email = email.toLowerCase()
 
     const user = await User.findOne({ email })
-    const hashedPassword = user.password
-
-    if (await bcrypt.compare(password, hashedPassword)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const payload = user.toJSON()
+      if (!user.activated) {
+        errors.activation = `Account has not been activated yet. Check your inbox at ${email}`
+        return res.status(403).json(errors)
+      }
 
       const token = await jwt.sign(payload, KEY_BERKELEYTIME)
       return res.json({
@@ -92,7 +104,7 @@ export const Users = new (class Controller implements IController {
         user &&
         (user.activated ||
           (!user.activated &&
-            Date.now() - user.date < EXPIRE_TIME_ACTIVATION_EMAIL))
+            Date.now() - user._created < EXPIRE_TIME_ACTIVATION_EMAIL))
       ) {
         errors.email = "User with that email already exists"
         return res.status(422).json(errors)
@@ -139,12 +151,6 @@ export const Users = new (class Controller implements IController {
       success: false,
       msg: `User with the given email address of ${email} does not exist`,
     })
-  }
-
-  delete: ExpressMiddleware<{}, {}> = async (req, res) => {
-    const { google_id } = req.user
-    await User.deleteOne({ google_id })
-    res.json({ success: true })
   }
 
   googleAuthorize: ExpressMiddleware<{}, {}> = async ({}, {}) => {
