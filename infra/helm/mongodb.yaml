@@ -103,7 +103,7 @@ sidecars: # custom sidecar waits for mdb to start, then changes hostnames to dns
                 c.members.push({ _id: i, host: \`\${baseHostname}-\${i}:\${basePort}\` });
               }
             }
-            rs.reconfig(c, { force: true });
+            rs.reconfig(c, { force: true }); // forced reconfig results in maxing out NumberLong https://stackoverflow.com/questions/15285060/reconfig-mongo-replicaset-increments-version-randomly
         EOF
 
           if [[ $? -eq 255 ]]; then
@@ -133,6 +133,7 @@ tls:
 # During first-time setup, must comment out extraEnvVars, then enable later
 # Purpose is to disable TLS temporarily so replicas can connect and set user+passwords
 # After login and password are working, then reenable vars for TLS
+# Also cannot patch in Istio for Source IP/TLS until replica set is established
 extraEnvVars: 
   - name: MONGODB_EXTRA_FLAGS
     value: --tlsMode allowTLS --tlsCAFile /pki/tls.crt --tlsCertificateKeyFile /pki/tls.pem --tlsAllowConnectionsWithoutCertificates
