@@ -26,3 +26,6 @@ export const URL_DOMAIN = process.env.URL_DOMAIN || "http://localhost:3000"
 export const URL_MDB = process.env.URL_MDB || ""
 export const URL_REDIS = process.env.URL_REDIS
 export const URL_SIS_COURSE_API = "https://apis.berkeley.edu/sis/v2/courses"
+export const MIKRO_ORM_CONFIG = {
+  // TODO
+}

@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "@google-cloud/storage": "^5.8.5",
+    "@mikro-orm/core": "^4.5.7",
+    "@mikro-orm/postgresql": "^4.5.7",
     "@sendgrid/mail": "^7.4.4",
     "@typegoose/typegoose": "^7.6.1",
     "ajv": "^8.6.0",
