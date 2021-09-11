@@ -2,7 +2,7 @@ import moment from "moment";
 import { spawn } from "promisify-child-process";
 
 /**
- * TO-DO: Convert this from a regular cron to k8s Cronjob, but slightly tricky 
+ * TO-DO: Convert this from a regular cron to k8s Cronjob, but slightly tricky
  * since it requires gcloud auth and rook-ceph-tools pod
  */
 
