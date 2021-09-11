@@ -46,99 +46,95 @@ persistence:
   mountPath: /bitnami/mongodb
   subPath: ""
 replicaSetName: rs0
-replicaSetHostnames: true
 strategyType: RollingUpdate
 externalAccess:
   enabled: true
   service:
-    type: ClusterIP
-readinessProbe: # must be disabled so that traffic can use svc name for sidecar
-  enabled: false
+    type: NodePort
+    domain: berkeleytime.com
+    nodePorts:
+      - 32017
+# readinessProbe: # must be disabled so that traffic can use svc name for sidecar
+# enabled: false
 replicaCount: $MDB_REPLICA_COUNT
-sidecars: # custom sidecar waits for mdb to start, then changes hostnames to dns
-  - name: mongo
-    image: mongo:4.4.4
-    env:
-      - name: DOMAIN
-        value: berkeleytime.com
-      - name: PORT
-        value: "27017"
-      - name: REPLICAS
-        value: "$MDB_REPLICA_COUNT"
-    envFrom:
-      - secretRef:
-          name: bt-mdb-$CI_ENVIRONMENT_NAME
-    command:
-      - bash
-      - -c
-      - |
-        while true
-        do
-          password=`env | sed -n 's/mongodb-root-password=\(.*\)/\1/p'`
+# sidecars: # custom sidecar waits for mdb to start, then changes hostnames to dns, only required if replicaCount > 1
+#   - name: mongo
+#     image: mongo:4.4.4
+#     env:
+#       - name: DOMAIN
+#         value: berkeleytime.com
+#       - name: PORT
+#         value: "27017"
+#       - name: REPLICAS
+#         value: "$MDB_REPLICA_COUNT"
+#     envFrom:
+#       - secretRef:
+#           name: bt-mdb-$CI_ENVIRONMENT_NAME
+#     command:
+#       - bash
+#       - -c
+#       - |
+#         while true
+#         do
+#           password=`env | sed -n 's/mongodb-root-password=\(.*\)/\1/p'`
 
-          mongo "mongodb://root:${password}@localhost" -- << EOF
-            const replicaCount = $REPLICAS;
-            const domain = "$DOMAIN";
-            const h = getHostName();
-            const baseHostname = h.split('-').slice(0, -1).join('-');
-            const basePort = $PORT;
-            const c = rs.conf();
-            const s = rs.status();
+#           mongo "mongodb://root:${password}@localhost" -- << EOF
+#             const replicaCount = $REPLICAS;
+#             const domain = "$DOMAIN";
+#             const h = getHostName();
+#             const baseHostname = h.split('-').slice(0, -1).join('-');
+#             const basePort = $PORT;
+#             const c = rs.conf();
+#             const s = rs.status();
 
-            if (
-                s.members &&
-                s.members.length == replicaCount &&
-                s.members.every(member => member.name.includes(baseHostname) && member.health == 1)
-              ) {
-                print("all replicas healthy and properly named");
-                quit(255);
-            }
-            c.members = [];
-            if (h.includes('staging')) {
-              for (let i = 0; i < replicaCount; i++) {
-                c.members.push({ _id: i, host: \`\${domain}:\${basePort + i}\`})
-              }
-            } else {
-              for (let i = 0; i < replicaCount; i++) {
-                c.members.push({ _id: i, host: \`\${baseHostname}-\${i}:\${basePort}\` });
-              }
-            }
-            rs.reconfig(c, { force: true }); // forced reconfig results in maxing out NumberLong https://stackoverflow.com/questions/15285060/reconfig-mongo-replicaset-increments-version-randomly
-        EOF
+#             if (
+#                 s.members &&
+#                 s.members.length == replicaCount &&
+#                 s.members.every(member => member.name.includes(baseHostname) && member.health == 1)
+#               ) {
+#                 print("all replicas healthy and properly named");
+#                 quit(255);
+#             }
+#             c.members = [];
+#             if (h.includes('staging')) {
+#               for (let i = 0; i < replicaCount; i++) {
+#                 c.members.push({ _id: i, host: \`\${domain}:\${basePort + i}\`})
+#               }
+#             } else {
+#               for (let i = 0; i < replicaCount; i++) {
+#                 c.members.push({ _id: i, host: \`\${baseHostname}-\${i}:\${basePort}\` });
+#               }
+#             }
+#             rs.reconfig(c, { force: true }); // forced reconfig results in maxing out NumberLong https://stackoverflow.com/questions/15285060/reconfig-mongo-replicaset-increments-version-randomly
+#         EOF
 
-          if [[ $? -eq 255 ]]; then
-            echo `date +"%Y-%m-%d %H:%M:%S"` ...replica set is configured correctly...
-            sleep 600
-          else
-            echo `date +"%Y-%m-%d %H:%M:%S"` ...retrying replica set configuration...
-            sleep 15
-          fi
-        done
-livenessProbe:
-  enabled: false
-  initialDelaySeconds: 300
-  timeoutSeconds: 5
-  failureThreshold: 20
-  successThreshold: 1
-readinessProbe: # required to be disabled so that svc cluster traffic can arrive
-  enabled: false
-  initialDelaySeconds: 300
-  timeoutSeconds: 10
-  failureThreshold: 20
-  successThreshold: 1
+#           if [[ $? -eq 255 ]]; then
+#             echo `date +"%Y-%m-%d %H:%M:%S"` ...replica set is configured correctly...
+#             sleep 600
+#           else
+#             echo `date +"%Y-%m-%d %H:%M:%S"` ...retrying replica set configuration...
+#             sleep 15
+#           fi
+#         done
+# livenessProbe:
+#   enabled: false
+#   initialDelaySeconds: 300
+#   timeoutSeconds: 5
+#   failureThreshold: 20
+#   successThreshold: 1
+# readinessProbe: # required to be disabled so that svc cluster traffic can arrive
+#   enabled: false
+#   initialDelaySeconds: 300
+#   timeoutSeconds: 10
+#   failureThreshold: 20
+#   successThreshold: 1
 tls:
   enabled: false # only because we want to bring external certs from LetsEncrypt
-  # existingSecret: # only use this if self-signed certs are desired
+# existingSecret: # only use this if self-signed certs are desired, because apparently this can only do self-signed certs # https://github.com/bitnami/charts/issues/6045#issuecomment-831480168
 
-# During first-time setup, must comment out extraEnvVars, then enable later
-# Purpose is to disable TLS temporarily so replicas can connect and set user+passwords
-# After login and password are working, then reenable vars for TLS
-# Also cannot patch in Istio for Source IP/TLS until replica set is established
-extraEnvVars: 
+extraEnvVars:
   - name: MONGODB_EXTRA_FLAGS
-    value: --tlsMode allowTLS --tlsCAFile /pki/tls.crt --tlsCertificateKeyFile /pki/tls.pem --tlsAllowConnectionsWithoutCertificates
-  - name: MONGODB_CLIENT_EXTRA_FLAGS
-    value: --tls --tlsCAFile /pki/tls.crt --tlsCertificateKeyFile /pki/tls.pem
+    value: --tlsMode allowTLS --tlsCAFile /pki/lets-encrypt-r3.pem --tlsCertificateKeyFile /pki/tls.pem --tlsAllowConnectionsWithoutCertificates
 extraVolumes:
   - name: pki
     emptyDir: {} # this vol is for building pem file for mdb container using tls
@@ -146,29 +142,27 @@ extraVolumes:
     secret:
       secretName: bt-tls # change secretName to whichever LetsEncrypt TLS secret
       items:
-      - key: tls.crt
-        path: tls.crt
-      - key: tls.key
-        path: tls.key
+        - key: tls.crt
+          path: tls.crt
+        - key: tls.key
+          path: tls.key
 extraVolumeMounts:
   - name: pki
     mountPath: /pki
 initContainers:
-  - name: busybox
-    image: busybox
+  - name: curl
+    image: curlimages/curl
     command:
       - sh
       - -c
       - |
         cat /letsencrypt/tls.crt /letsencrypt/tls.key > /pki/tls.pem
-        cp /letsencrypt/tls.crt /pki/tls.crt
-        chmod 777 /pki/tls.crt /pki/tls.pem
+        curl https://letsencrypt.org/certs/lets-encrypt-r3.pem > /pki/lets-encrypt-r3.pem
     volumeMounts:
       - mountPath: /pki
         name: pki
       - mountPath: /letsencrypt
         name: letsencrypt
-
 # configuration: |-
 #   # Default configuration file that comes in Helm chart
 #   # path: /opt/bitnami/mongodb/conf/mongodb.conf
