@@ -179,12 +179,6 @@ export BASE_DOMAIN_NAME=berkeleytime.com;
 envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-infra.yaml  gv| kubectl apply -f -
 envsubst '$INGRESS_LABEL $BASE_DOMAIN_NAME' < /berkeleytime/infra/k8s/default/bt-ingress-status.yaml | kubectl apply -f -
 
-
-# kubectl get secrets/bt-tls --template='{{index .data "tls.crt"}}' | base64 --decode > tls.crt
-# kubectl get secrets/bt-tls --template='{{index .data "tls.key"}}' | base64 --decode > tls.key
-# openssl x509 -CA tls.crt -CAKey tls.key -out tls.pem -outform PEM
-# cat tls.crt tls.key > tls.pem
-# kubectl create secret generic bt-mdb --from-file mongodb-ca-cert=tls.crt --from-file mongodb-ca-key=tls.key --from-file mongodb.pem=tls.pem # need to find out a way to make sure it uses mongodb.pem from tls.pem instead of mongodb.pem genered by initContainer
 # > BT App Data Layer >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 for CI_ENVIRONMENT_NAME in "staging" "prod"
 do
@@ -194,7 +188,7 @@ do
   gsutil cp gs://berkeleytime-218606/secrets/bt-mdb-$CI_ENVIRONMENT_NAME.env - | kubectl create secret generic bt-mdb-$CI_ENVIRONMENT_NAME --from-env-file /dev/stdin;
   envsubst < /berkeleytime/infra/k8s/default/bt-psql.yaml | kubectl apply -f -
   envsubst < /berkeleytime/infra/helm/redis.yaml | helm install bt-redis-$CI_ENVIRONMENT_NAME bitnami/redis --version 14.1.0 -f -
-  export MDB_REPLICA_COUNT=3; envsubst '$CI_ENVIRONMENT_NAME $MDB_REPLICA_COUNT' < /berkeleytime/infra/helm/mongodb.yaml | helm install bt-mdb-$CI_ENVIRONMENT_NAME bitnami/mongodb --version 10.19.0 -f -
+  export MDB_REPLICA_COUNT=1; envsubst '$CI_ENVIRONMENT_NAME $MDB_REPLICA_COUNT' < /berkeleytime/infra/helm/mongodb.yaml | helm install bt-mdb-$CI_ENVIRONMENT_NAME bitnami/mongodb --version 10.25.2 -f - # cannot use more than 1 replica for now until switch to Kubernetes Operator with Split Horizon feature
   if [ $CI_ENVIRONMENT_NAME == "staging" ]; then
     # Expose staging services to the external internet and use istio-proxy sidecars to handle HAProxy Protocol, which preserves client source IPs via annotation TPROXY
     kubectl patch deploy/bt-psql-$CI_ENVIRONMENT_NAME -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true","sidecar.istio.io/interceptionMode":"TPROXY"}}}}}'
