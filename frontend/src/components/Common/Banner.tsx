@@ -13,7 +13,7 @@ interface Props extends PropsFromRedux {}
 const Banner: FC<Props> = (props) => {
   const location = useLocation();
   const history = useHistory();
-  const text = <p>Want to join OCTO or Berkeleytime?</p>;
+  const text = <p>Want to join Berkeleytime? <a href="https://github.com/asuc-octo/berkeleytime">GitHub</a>, <a href="https://discord.gg/DeCEPNdPjc">Discord</a></p>;
 
   function redirect(site: string) {
     history.push("/redirect?site=" + site)
