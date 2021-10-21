@@ -1,0 +1,218 @@
+.onboard {
+  .scheduler-heading {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .welcome {
+    padding: 5rem 1rem;
+    text-align: center;
+
+    .scheduler-title {
+      font-weight: bold;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: $bt-base-text;
+      text-align: center;
+    }
+
+    .prompt {
+      margin-bottom: 2rem;
+      font-weight: 400;
+      font-size: 18px;
+      color: $bt-light-text;
+      text-align: center;
+    }
+
+    .bt-btn-primary {
+      width: 100px;
+      font-weight: 600;
+    }
+
+    .saved-schedules {
+      margin-top: 3rem;
+
+      .scheduler-heading {
+        text-align: initial;
+      }
+
+      .profile-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin: 1rem 0;
+        text-align: initial !important;
+      }
+    }
+  }
+
+  .select-classes {
+    min-height: 710px;
+    padding: 5rem 1rem;
+
+    .prompt {
+      margin-top: 18px;
+      color: $bt-light-text;
+      font-weight: 500;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .course-selector {
+      padding: 32px 32px 18px 32px;
+    }
+
+    .profile-card-grid {
+      .profile-card-row {
+        margin-bottom: 10px;
+        display: flex;
+
+        .add-class {
+          height: fit-content;
+          margin-top: 14px;
+          margin-right: 10px;
+          padding: 0;
+          font-size: 32px;
+          color: $bt-blue;
+          text-decoration: none;
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
+
+        .profile-card {
+          width: 81%;
+
+          &:hover {
+            cursor: default;
+          }
+        }
+      }
+    }
+
+    .selected-classes {
+      margin: 30px 15px 75px 15px;
+
+      .profile-card {
+        width: 81%;
+        margin: auto auto 10px auto;
+
+        .profile-card-grade {
+          margin-right: 18px;
+        }
+
+        &:hover {
+          cursor: default;
+        }
+      }
+    }
+
+    .continue {
+      position: absolute;
+      bottom: 0;
+      right: 20%;
+    }
+  }
+
+  .time-preferences {
+    .data-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+
+      + .data-row {
+        border-top: 1px solid $bt-light-border-grey;
+      }
+
+      > :first-child {
+        font-weight: 500;
+        color: #535353;
+        width: 100px;
+        flex: 0 0 auto;
+
+        + * {
+          font-weight: 400;
+          color: $bt-base-text;
+          flex: 1;
+
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+      }
+    }
+
+    .blocks {
+      margin-top: 4rem;
+      margin-bottom: 4rem;
+
+      .blocks-grid {
+        margin: 1rem 0;
+
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 200px));
+        gap: 12px;
+
+        .block {
+          padding: 8px;
+          border: 1px solid $bt-light-border-grey;
+          border-radius: 6px;
+
+          .block__title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: $bt-base-text;
+          }
+
+          .block__desc {
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: $bt-light-text;
+          }
+        }
+      }
+
+      .blocks__placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+
+        svg {
+          margin: 1rem 0;
+        }
+
+        p {
+          color: $bt-light-text;
+          line-height: 1.5;
+          font-weight: 600;
+          width: 200px;
+        }
+      }
+    }
+
+    .small-caps {
+      text-transform: uppercase;
+      color: $bt-light-text;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .inline-select {
+      display: inline-block;
+      width: 115px;
+    }
+
+    .select {
+      width: 100%;
+    }
+
+    .continue {
+      position: absolute;
+      bottom: 4rem;
+      right: 5%;
+    }
+  }
+}

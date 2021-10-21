@@ -88,18 +88,6 @@
     }
   }
 
-  .profile-row {
-    display: flex;
-    position: relative;
-    align-items: center;
-    border-bottom: 1.5px solid #ececec;
-    height: 50px;
-
-    a {
-      cursor: pointer;
-    }
-  }
-
   .profile-subview {
     margin-bottom: 2rem;
 
@@ -142,5 +130,17 @@
         }
       }
     }
+  }
+}
+
+.profile-row {
+  display: flex;
+  position: relative;
+  align-items: center;
+  border-bottom: 1.5px solid #ececec;
+  height: 50px;
+
+  a {
+    cursor: pointer;
   }
 }

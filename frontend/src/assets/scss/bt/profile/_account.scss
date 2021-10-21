@@ -1,34 +1,5 @@
 //Account Subview
 .account-view {
-  .profile-row {
-    display: flex;
-
-    .personal-attribute {
-      font-weight: 500;
-      color: #535353;
-      width: 250px;
-      flex: 0 0 auto;
-
-      .personal-value {
-        .p {
-          @include mobile {
-            width: 90vw;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-        }
-      }
-    }
-
-    @include xs {
-      flex-direction: column;
-      height: auto;
-      align-items: flex-start;
-      padding: 8px 0;
-    }
-  }
-
   .personal-edit {
     position: absolute;
     right: 0;
@@ -57,5 +28,38 @@
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 12px;
     margin: 1rem 0;
+  }
+}
+
+.profile-row {
+  display: flex;
+
+  .personal-attribute {
+    font-weight: 500;
+    color: #535353;
+    width: 250px;
+    max-width: 30%;
+    flex: 0 0 auto;
+
+    .personal-value {
+      .p {
+        @include mobile {
+          width: 90vw;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+
+  @include xs {
+    .personal-attribute {
+      max-width: 100%;
+    }
+    flex-direction: column;
+    height: auto;
+    align-items: flex-start;
+    padding: 8px 0;
   }
 }
