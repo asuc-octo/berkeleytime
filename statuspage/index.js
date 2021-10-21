@@ -73,7 +73,7 @@ const updateStatuspage = async (ping, auth) => {
     const responseTime = Date.now() - start;
 
     if (metricId) {
-      await axios.post(`${statusUrl}/metrics/${metricId}/data.json`, {
+      await axios.post(`${statusUrl}/metrics/${metricId}/data`, {
         data: {
           timestamp: Math.floor(start / 1000),
           value: responseTime,

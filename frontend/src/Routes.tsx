@@ -4,19 +4,18 @@ import BTLoader from 'components/Common/BTLoader';
 
 import Landing from './views/Landing';
 import Catalog from './views/Catalog/Catalog';
-// import Dashboard from './views/Dashboard/Dashboard';
+import Error from './views/Error/Error';
+// const Grades = lazy(() => new Promise(() => {}));
 // import DesignApp from './views/Forms/DesignApp';
 // import EngineeringApp from './views/Forms/EngineeringApp';
 // import { Positions } from './views/Apply/DescriptionPages';
-import Error from './views/Error/Error';
+// const ApiDocs = lazy(() => import('./views/Api/Api'));
 
-// const Grades = lazy(() => new Promise(() => {}));
 const Grades = lazy(() => import('./views/Grades/Grades'));
 const Enrollment = lazy(() => import('./views/Enrollment/Enrollment'));
 const About = lazy(() => import('./views/About'));
 const Releases = lazy(() => import('./views/Releases/Releases'));
 const Faq = lazy(() => import('./views/Faq'));
-const ApiDocs = lazy(() => import('./views/Api/Api'));
 const TestForm = lazy(() => import('./views/Forms/TestForm'));
 const BugsForm = lazy(() => import('./views/Forms/BugsForm'));
 const Apply = lazy(() => import('./views/Apply/Apply'));
@@ -36,10 +35,8 @@ const routes: Array<RouteProps> = [
   { path: '/grades', component: Grades, exact: false },
   { path: '/enrollment', component: Enrollment, exact: false },
   { path: '/about', component: About },
-  // { path: '/login',             component: Login           },
   { path: '/releases', component: Releases },
   { path: '/faq', component: Faq },
-  { path: '/apidocs', component: ApiDocs },
   { path: '/testform', component: TestForm },
   { path: '/bugs', component: BugsForm },
   { path: '/usertesting', component: UserTestingForm },
@@ -54,6 +51,7 @@ const routes: Array<RouteProps> = [
   // { path: '/apply/engineering', component: EngineeringApp  },
   // { path: '/apply/design',      component: DesignApp       },
   // { path: '/apply/embed',       component: Apply           },
+  // { path: '/scheduler', component: Scheduler },
   { path: '/error', component: Error },
   { path: '/legal/privacy', component: PrivacyPolicy },
   { path: '/legal/terms', component: TermsOfService },

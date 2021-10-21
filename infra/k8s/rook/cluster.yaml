@@ -1,0 +1,105 @@
+# This initializes Rook's Ceph cluster, an abstraction that can
+# provide block storage file systems (rbd: RADOS Block Devices) or
+# network file systems (CephFS) that k8s uses for dynamic persistent volumes
+
+# https://github.com/rook/rook/blob/master/Documentation/ceph-cluster-crd.md
+# https://stackoverflow.com/questions/51986300/kubernetes-default-qos-for-whole-namespace
+# Kubernetes default QoS for whole namespace
+apiVersion: ceph.rook.io/v1
+kind: CephCluster
+metadata:
+  name: rook-ceph-cluster
+  namespace: rook
+spec:
+  cephVersion:
+    image: ceph/ceph:v16
+  skipUpgradeChecks: false
+  dataDirHostPath: /var/lib/rook
+  mon:
+    allowMultiplePerNode: true
+    count: 1
+  crashCollector:
+    disable: true
+  healthCheck:
+    daemonHealth:
+      mon:
+        disabled: false
+      osd:
+        disabled: false
+      status:
+        disabled: false
+    livenessProbe:
+      mon:
+        disabled: false
+      mgr:
+        disabled: false
+      osd:
+        disabled: false
+        probe:
+          initialDelaySeconds: 300
+          timeoutSeconds: 10
+          periodSeconds: 0
+          successThreshold: 0
+          failureThreshold: 10
+  monitoring:
+    enabled: false
+    rulesNamespace: rook
+    # placement:
+    #   all:
+    #     nodeAffinity:
+    #       requiredDuringSchedulingIgnoredDuringExecution:
+    #         nodeSelectorTerms:
+    #           - matchExpressions:
+    #               - key: kubernetes.io/hostname
+    #                 operator: In
+    #                 values:
+    #                   - hozer-55
+  resources:
+    # api:
+    #   requests:
+    #     cpu: "100m"
+    #     memory: "250M"
+    #   limits:
+    #     cpu: "100m"
+    #     memory: "250M"
+    # mgr:
+    #   requests:
+    #     cpu: "100m"
+    #     memory: "750M"
+    #   limits:
+    #     cpu: "100m"
+    #     memory: "750M"
+    # mon:
+    #   requests:
+    #     cpu: "200m"
+    #     memory: "1000M"
+    #   limits:
+    #     cpu: "200m"
+    #     memory: "1000M"
+    osd:
+      requests:
+        cpu: "200m"
+        memory: "2G"
+      limits:
+        cpu: "200m"
+        memory: "2G"
+  storage:
+    useAllNodes: true
+    useAllDevices: true
+    # deviceFilter: vd[b-z] # OCF: vdb, vdc / GCP: sdb, sdc
+  disruptionManagement:
+    managePodBudgets: false
+    osdMaintenanceTimeout: 30
+    manageMachineDisruptionBudgets: false
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: rook-config-override
+  namespace: rook
+data:
+  config: |
+    [global]
+    osd_pool_default_size = 1
+    mon_warn_on_pool_no_redundancy = false

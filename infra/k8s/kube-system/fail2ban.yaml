@@ -20,14 +20,18 @@
 # https://github.com/fail2ban/fail2ban
 
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   labels:
     component: fail2ban
   name: fail2ban
   namespace: kube-system
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fail2ban
+  namespace: kube-system
 spec:
-  replicas: 1
   selector:
     matchLabels:
       component: fail2ban

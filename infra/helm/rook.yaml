@@ -5,4 +5,5 @@ csi:
   enableCephfsDriver: false
   enableCephfsSnapshotter: false
   enableRBDSnapshotter: false
+logLevel: DEBUG
 enableDiscoveryDaemon: true
