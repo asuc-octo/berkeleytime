@@ -27,8 +27,7 @@ const Logout = () => {
           <span>There was an error logging you out. Try refreshing</span>
         ) : (
           <>
-            <BTLoader />
-            <span>Logging you out...</span>
+            <BTLoader message="Logging you out..." fill />
           </>
         )}
       </div>
