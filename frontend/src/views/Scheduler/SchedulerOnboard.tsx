@@ -1,17 +1,20 @@
-import React, { ComponentType, useState, Dispatch, SetStateAction } from 'react';
+import React, {
+  ComponentType,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from 'react';
 import Welcome from 'components/Scheduler/Onboard/Welcome';
 import SelectClasses from 'components/Scheduler/Onboard/SelectClasses';
-import TimePreferences from 'components/Scheduler/Onboard/TimePreferences';
 
-import { Schedule } from 'utils/scheduler/scheduler';
+import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 
 const pages: {
   key: string;
   component: ComponentType<{
-    updatePage: (i: number) => void,
-    schedule: Schedule,
-    setSchedule: Dispatch<SetStateAction<Schedule>>,
-    createSchedule: () => void,
+    updatePage: (i: number) => void;
+    schedule: Schedule;
+    setSchedule: Dispatch<SetStateAction<Schedule>>;
   }>;
 }[] = [
   {
@@ -28,24 +31,21 @@ const pages: {
   // },
 ];
 
-type Props = {
-  schedule: Schedule;
-  setSchedule: Dispatch<SetStateAction<Schedule>>;
-  createSchedule: () => void;
-};
-
-const SchedulerOnboard = ({schedule, setSchedule, createSchedule}: Props) => {
+const SchedulerOnboard = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const PageComponent = pages[pageIndex].component;
 
+  const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
+
   return (
-    <div className="onboard">
-      <PageComponent
-        updatePage={setPageIndex}
-        schedule={schedule}
-        setSchedule={setSchedule}
-        createSchedule={createSchedule}
-      />
+    <div className="scheduler viewport-app">
+      <div className="onboard">
+        <PageComponent
+          updatePage={setPageIndex}
+          schedule={schedule}
+          setSchedule={setSchedule}
+        />
+      </div>
     </div>
   );
 };

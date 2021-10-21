@@ -17,10 +17,9 @@ type Props = {
   // updatePage: (i: number) => void;
   schedule: Schedule;
   setSchedule: Dispatch<SetStateAction<Schedule>>;
-  createSchedule: () => void;
 };
 
-const SelectClasses = ({ schedule, setSchedule, createSchedule }: Props) => {
+const SelectClasses = ({ schedule, setSchedule }: Props) => {
   const { isLoggedIn, user, loading } = useUser();
 
   const savedClasses = ((user && user.savedClasses) || [])
@@ -68,27 +67,39 @@ const SelectClasses = ({ schedule, setSchedule, createSchedule }: Props) => {
         <Col md={4} lg={4} xl={4}></Col>
         <Col md={4} lg={4} xl={4}>
           <div className="scheduler-heading">1. Select your classes</div>
-          <div className="prompt">Search from the course catalog for the classes you’d like to include in your schedule.</div>
+          <div className="prompt">
+            Search from the course catalog for the classes you’d like to include
+            in your schedule.
+          </div>
           <CourseSearch
             allCourses={allCourses}
             schedule={schedule}
             setSchedule={setSchedule}
           />
           <div className="profile-card-grid">
-            {savedClasses.filter(course => schedule.courses.filter((e: CourseOverviewFragment) => e.id === course.id).length === 0).map((course) => (
-              <div className="profile-card-row" key={course.id}>
-                <Button
-                  className="add-class"
-                  variant="link"
-                  onClick={() => addCourse(course, schedule, setSchedule)}
-                >+</Button>
-                <SchedulerCourseCard
-                  key={course.id}
-                  course={course}
-                  removable={false}
-                />
-              </div>
-            ))}
+            {savedClasses
+              .filter(
+                (course) =>
+                  schedule.courses.filter(
+                    (e: CourseOverviewFragment) => e.id === course.id
+                  ).length === 0
+              )
+              .map((course) => (
+                <div className="profile-card-row" key={course.id}>
+                  <Button
+                    className="add-class"
+                    variant="link"
+                    onClick={() => addCourse(course, schedule, setSchedule)}
+                  >
+                    +
+                  </Button>
+                  <SchedulerCourseCard
+                    key={course.id}
+                    course={course}
+                    removable={false}
+                  />
+                </div>
+              ))}
           </div>
         </Col>
         <Col md={4} lg={4} xl={4}>
@@ -105,12 +116,7 @@ const SelectClasses = ({ schedule, setSchedule, createSchedule }: Props) => {
               ))}
             </ScheduleContext.Provider>
           </div>
-          <Button
-            className="continue"
-            onClick={createSchedule}
-          >
-            Continue
-          </Button>
+          <Button className="continue">Continue</Button>
         </Col>
       </Row>
     </Container>

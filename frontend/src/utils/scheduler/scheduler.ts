@@ -30,6 +30,9 @@ import {
   subWeeks,
 } from 'date-fns';
 
+// Update the version when the scheduler schema changes.
+export const SCHEDULER_LOCALSTORAGE_KEY = 'schedule:save:v1.0';
+
 export type SchedulerCourseType = CourseOverviewFragment;
 export type SchedulerSectionType = SectionFragment & {
   /**
@@ -60,6 +63,13 @@ export const DEFAULT_SCHEDULE: Schedule = {
   courses: [],
   sections: [],
 };
+
+/**
+ * Checks if a course is empty
+ */
+export const isScheduleEmpty = (schedule: Schedule): boolean =>
+  !schedule ||
+  (schedule.courses.length === 0 && schedule.sections.length === 0);
 
 /**
  * Gets a corresponding course for a section (assuming it exists in the
@@ -198,13 +208,8 @@ export const serializeSchedule = (
  * Generates iCal file string.
  */
 export function scheduleToICal(schedule: Schedule, semester: Semester): string {
-  const SEMESTER_START = new Date(2021, 7, 18);
-  const SEMESTER_END = new Date(2021, 11, 17);
-
-  // Two weeks before finals week, on Saturday
-  const LAST_COURSE_DAY = reinterpretDateAsUTC(
-    setDay(subWeeks(SEMESTER_END, 2), 7)
-  );
+  const SEMESTER_START = new Date(2022, 1, 18);
+  const LAST_COURSE_DAY = new Date(2022, 5, 6);
 
   const dateToICal = (date: Date) =>
     date.toISOString().replace(/[-:Z]|\.\d+/g, '');

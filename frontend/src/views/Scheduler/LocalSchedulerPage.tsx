@@ -1,27 +1,28 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-import { CourseOverviewFragment } from '../../../graphql/graphql';
+import { CourseOverviewFragment } from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
-import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
+import {
+  DEFAULT_SCHEDULE,
+  Schedule,
+  SCHEDULER_LOCALSTORAGE_KEY,
+} from 'utils/scheduler/scheduler';
 import { Semester } from 'utils/playlists/semesters';
 import { useUser } from 'graphql/hooks/user';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
 import { useLocalStorageState } from 'utils/hooks';
-import ScheduleEditor from '../ScheduleEditor';
+import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
 import { useHistory } from 'react-router';
 import { useSemester } from 'graphql/hooks/semester';
-import Callout from '../Callout';
+import Callout from '../../components/Scheduler/Callout';
 
-// Update the version when the scheduler schema changes.
-const SCHEDULER_LOCALSTORAGE_KEY = 'schedule:save:v1.0';
+const LocalScheduler = () => {
+  const [schedule, setSchedule] = useLocalStorageState<Schedule>(
+    SCHEDULER_LOCALSTORAGE_KEY,
+    DEFAULT_SCHEDULE
+  );
 
-type Props = {
-  schedule: Schedule;
-  setSchedule: Dispatch<SetStateAction<Schedule>>;
-};
-
-const LocalScheduler = ({ schedule, setSchedule }: Props) => {
   const { isLoggedIn, loading: loadingUser } = useUser();
   const history = useHistory();
 
@@ -75,37 +76,39 @@ const LocalScheduler = ({ schedule, setSchedule }: Props) => {
   );
 
   return (
-    <ScheduleEditor
-      schedule={schedule}
-      semester={semester}
-      setSchedule={setSchedule}
-      saveWidget={
-        isSaving ? (
-          <span>Saving schedule...</span>
-        ) : creationError ? (
-          <Callout
-            type="warning"
-            state="error"
-            message="Could not save schedule."
-          />
-        ) : !isLoggedIn ? (
-          <OverlayTrigger
-            overlay={
-              <Tooltip id="schedule-save-popover">
-                {loadingUser
-                  ? 'Loading account...'
-                  : 'You must be logged in to save.'}
-              </Tooltip>
-            }
-            placement="bottom"
-          >
-            <span className="d-inline-block">{saveButton}</span>
-          </OverlayTrigger>
-        ) : (
-          saveButton
-        )
-      }
-    />
+    <div className="scheduler viewport-app">
+      <ScheduleEditor
+        schedule={schedule}
+        semester={semester}
+        setSchedule={setSchedule}
+        saveWidget={
+          isSaving ? (
+            <span>Saving schedule...</span>
+          ) : creationError ? (
+            <Callout
+              type="warning"
+              state="error"
+              message="Could not save schedule."
+            />
+          ) : !isLoggedIn ? (
+            <OverlayTrigger
+              overlay={
+                <Tooltip id="schedule-save-popover">
+                  {loadingUser
+                    ? 'Loading account...'
+                    : 'You must be logged in to save.'}
+                </Tooltip>
+              }
+              placement="bottom"
+            >
+              <span className="d-inline-block">{saveButton}</span>
+            </OverlayTrigger>
+          ) : (
+            saveButton
+          )
+        }
+      />
+    </div>
   );
 };
 
