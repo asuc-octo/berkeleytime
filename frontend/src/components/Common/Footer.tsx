@@ -15,7 +15,6 @@ const Footer: FC = () => (
               <A href={{ as_link: "/catalog" }} className="mb-2">Catalog</A>
               <A href={{ as_link: "/grades" }} className="mb-2">Grades</A>
               <A href={{ as_link: "/enrollment" }} className="mb-2">Enrollment</A>
-              <A href={{ as_link: "/apidocs" }}>API Docs <New /></A>
             </div>
           </div>
         </Col>

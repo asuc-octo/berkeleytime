@@ -1,5 +1,6 @@
-# https://github.com/helm/charts/blob/99548969316eed3121040b102d969e111cc15ef4/stable/nginx-ingress/values.yaml
+# https://github.com/kubernetes/ingress-nginx/blob/7cdc819bb33e47628aa626912255249952eb18c1/charts/ingress-nginx/values.yaml
 controller:
+  kind: DaemonSet
   service:
     type: LoadBalancer
     externalTrafficPolicy: Local
@@ -16,6 +17,7 @@ controller:
     # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/
     log-format-upstream: "$remote_addr [$time_local] [$request] [$http_referer] [$http_user_agent] [$proxy_upstream_name] [$upstream_addr] $status $body_bytes_sent $request_length $request_time $upstream_response_length $upstream_response_time $upstream_status $req_id"
     log-format-stream: "$remote_addr [$protocol] $remote_port [$time_local] [$proxy_upstream_name] [$upstream_addr] $status $bytes_sent $bytes_received $session_time"
+    # hostNetwork: true
     # http-snippet: |
     #   more_set_headers "Server: "; map $geoip_city_continent_code $is_eu_visit { default 0; EU 1; }
     # limit-conn-status-code: "429"
@@ -26,7 +28,4 @@ tcp:
   2222: default/bt-gitlab:2222::PROXY
   5432: default/bt-psql-staging:5432::PROXY
   6379: default/bt-redis-staging-master:6379::PROXY
-  5433: tutor-staging/postgres:5432::PROXY
-  27017: default/bt-mdb-staging-0:27017::PROXY
-  27018: default/bt-mdb-staging-1:27017::PROXY
-  27019: default/bt-mdb-staging-2:27017::PROXY
+  27017: default/bt-mdb-staging-0-external:27017::PROXY

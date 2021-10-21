@@ -1,3 +1,6 @@
+# https://www.elastic.co/guide/en/beats/metricbeat/current/metricbeat-reference-yml.html
+# https://github.com/elastic/helm-charts/blob/7.9/metricbeat/values.yaml
+
 image: docker.elastic.co/beats/metricbeat
 imageTag: 7.13.0-SNAPSHOT
 replicas: 1
@@ -44,7 +47,7 @@ daemonset:
           - pod
           - system
           - volume
-        period: 10s
+        period: 20s
         hosts:
           - https://berkeleytime.com:10250
         bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
@@ -67,6 +70,7 @@ daemonset:
           - state_persistentvolume
           - state_persistentvolumeclaim
         add_metadata: true
+        period: 20s
 
       - module: system
         enabled: true
@@ -87,47 +91,48 @@ daemonset:
           by_cpu: 10
           by_memory: 10
         system.hostfs: /hostfs
+        period: 20s
 
-      - module: system
-        enabled: true
-        period: 1m
-        metricsets:
-          - filesystem
-          - fsstat
-        processors:
-        - drop_event.when.regexp:
-            system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
+      # - module: system
+      #   enabled: true
+      #   period: 1m
+      #   metricsets:
+      #     - filesystem
+      #     - fsstat
+      #   processors:
+      #   - drop_event.when.regexp:
+      #       system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
 
       - module: docker
         enabled: true
         metricsets:
           - container
           - cpu
-          - diskio
-          - event
-          - healthcheck
-          - image
-          - info
+          # - diskio
+          # - event
+          # - healthcheck
+          # - image
+          # - info
           - memory
           - network
         hosts:
           - unix:///var/run/docker.sock
-        period: 10s
+        period: 20s
         system.hostfs: /hostfs
 
-      - module: elasticsearch
-        enabled: true
-        metricsets:
-          - node
-          - node_stats
-          - index
-          - index_recovery
-          - shard
-          - ml_job
-        hosts:
-          - http://bt-elasticsearch:9200
-        period: 10s
-        system.hostfs: /hostfs
+      # - module: elasticsearch
+      #   enabled: true
+      #   metricsets:
+      #     - node
+      #     - node_stats
+      #     - index
+      #     - index_recovery
+      #     - shard
+      #     - ml_job
+      #   hosts:
+      #     - http://bt-elasticsearch:9200
+      #   period: 10s
+      #   system.hostfs: /hostfs
 
       # - module: kubernetes
       #   enabled: true
@@ -188,7 +193,7 @@ livenessProbe:
   exec:
     command:
       - sh
-      - '-c'
+      - "-c"
       - |
         #!/usr/bin/env bash -e
         curl --fail 127.0.0.1:5066
@@ -198,7 +203,7 @@ livenessProbe:
   timeoutSeconds: 5
 clusterRoleRules:
   - apiGroups:
-      - ''
+      - ""
     resources:
       - nodes
       - namespaces
@@ -227,9 +232,12 @@ clusterRoleRules:
       - list
       - watch
   - apiGroups:
-      - ''
+      - ""
     resources:
       - nodes/stats
       - nodes/metrics
     verbs:
       - get
+resources:
+  requests: {}
+  limits: {}

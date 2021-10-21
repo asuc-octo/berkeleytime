@@ -1,0 +1,5 @@
+https://www.arthurkoziel.com/setting-up-argocd-with-helm/
+helm repo add argo https://argoproj.github.io/argo-helm
+helm -n argocd install argocd argo/argo-cd --create-namespace
+kubectl port-forward svc/argocd-server 8081:443 --address 0.0.0.0 # web app for ArgoCD on first-time setup, make accessible to external traffic
+k get secret -o yaml argocd-initial-admin-secret

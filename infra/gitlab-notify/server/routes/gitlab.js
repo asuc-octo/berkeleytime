@@ -70,9 +70,7 @@ router.post("/fail", async (req, res) => {
   }
   let html = `
   <h1>${message}</h1>
-  <p style='color: red'>hi ${
-    commit.author.name.toLowerCase()
-  }, looks like we failed to either build or deploy your branch</p>
+  <p style='color: red'>hi ${commit.author.name.toLowerCase()}, looks like we failed to either build or deploy your branch</p>
   <p><b>BRANCH:</b> ${object_attributes.ref}</p>
   <p><b>COMMIT:</b> ${commit.id.slice(0, 8)}</p>
   <p><b>MESSAGE:</b> ${commit.message}</p><br>`;
@@ -120,6 +118,7 @@ router.post("/prod", async (req, res) => {
     status,
   } = req.body;
   console.log(req.body);
+  const channel = "#berkeleytime";
   const icon_url = "https://i.imgur.com/5TI5N3Q.png";
   if (environment != "prod") {
     return res.sendStatus(200);
@@ -139,18 +138,21 @@ router.post("/prod", async (req, res) => {
       username: "Oski",
       text: `We're deploying commit ${short_sha} to production, OMG ${author_name.toUpperCase()} I'M SO STRESSED, FINGERS CROSSED!!!🤞`,
       icon_url,
+      channel,
     });
   } else if (status == "success") {
     await axios.post(SLACK_WEBHOOK_URL, {
       username: "Oski",
       text: `It worked ${author_name}! WE DEPLOYED COMMIT ${short_sha} TO PROD! GO BEARS🐻🎉\n...actually let's manually double check, just to be safe`,
       icon_url,
+      channel,
     });
   } else if (status == "failed") {
     await axios.post(SLACK_WEBHOOK_URL, {
       username: "Oski",
       text: `😭Sorry ${author_name}, we did our best to deploy ${short_sha} to prod, but we fucked up and now Stanford🌲 gets 1 more Big Game win`,
       icon_url,
+      channel,
     });
   }
   return res.sendStatus(200);
