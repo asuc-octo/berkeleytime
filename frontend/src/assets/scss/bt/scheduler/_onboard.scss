@@ -6,30 +6,26 @@
   }
 
   .welcome {
-    width: 65vw;
-    min-height: 300px;
-    padding: 8rem 1rem;
+    padding: 5rem 1rem;
     text-align: center;
 
     .scheduler-title {
-      margin-bottom: 50px;
       font-weight: bold;
-      font-size: 32px;
+      font-size: 2rem;
+      margin-bottom: 1rem;
       color: $bt-base-text;
       text-align: center;
     }
 
     .prompt {
-      width: 30vw;
-      margin: auto auto 45px auto;
-      font-weight: 500;
+      margin-bottom: 2rem;
+      font-weight: 400;
       font-size: 18px;
       color: $bt-light-text;
       text-align: center;
     }
 
     .bt-btn-primary {
-      margin: auto auto 24px auto;
       width: 100px;
       font-weight: 600;
     }
@@ -71,7 +67,7 @@
       .profile-card-row {
         margin-bottom: 10px;
         display: flex;
-  
+
         .add-class {
           height: fit-content;
           margin-top: 14px;
@@ -85,7 +81,7 @@
             cursor: pointer;
           }
         }
-  
+
         .profile-card {
           width: 81%;
 
@@ -219,5 +215,4 @@
       right: 5%;
     }
   }
-
 }

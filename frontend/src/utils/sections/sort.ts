@@ -1,6 +1,5 @@
 import { SectionFragment } from 'graphql/graphql';
 import groupBy from 'lodash/groupBy';
-import { RSA_SSLV23_PADDING } from 'node:constants';
 import { stringToDate } from 'utils/date';
 import { isEnrollmentSection } from './section';
 

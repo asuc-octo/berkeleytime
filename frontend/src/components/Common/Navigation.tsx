@@ -14,12 +14,13 @@ const NavigationLink: FC<
   {
     to?: string;
     onClick?: () => void;
+    isNew?: boolean;
   } & NavProps
-> = ({ to, children, ...props }) => (
+> = ({ to, children, isNew = false, ...props }) => (
   <Nav.Link
     as={to ? Link : undefined}
     to={to}
-    className="bt-bold"
+    className={'bt-bold ' + (isNew ? 'is-new' : '')}
     // eventKey required for collapseOnselect
     // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
     eventKey={to}
@@ -59,7 +60,9 @@ const Navigation: FC<Props> = (props) => {
         <Nav className="mr-auto" />
         <Nav>
           <NavigationLink to="/catalog">Catalog</NavigationLink>
-          <NavigationLink to="/scheduler">Scheduler</NavigationLink>
+          <NavigationLink to="/scheduler" isNew>
+            Scheduler
+          </NavigationLink>
           {/* {isLoggedIn && (
             <NavigationLink to="/scheduler">Scheduler</NavigationLink>
           )} */}
