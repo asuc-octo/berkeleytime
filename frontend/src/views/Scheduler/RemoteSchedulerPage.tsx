@@ -5,10 +5,9 @@ import { Redirect, useParams } from 'react-router';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import RemoteScheduler from '../../components/Scheduler/Editor/RemoteScheduler';
 
-const RemoteSchedule = () => {
+const RemoteSchedulePage = () => {
   const { isLoggedIn, loading: userLoading } = useUser();
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
-  const [onboarding, setOnboarding] = useState(true);
   const { scheduleId: scheduleUUID } = useParams<{ scheduleId: string }>();
   const scheduleId = btoa(`ScheduleType:${scheduleUUID}`);
 
@@ -38,4 +37,4 @@ const RemoteSchedule = () => {
   );
 };
 
-export default RemoteScheduler;
+export default RemoteSchedulePage;
