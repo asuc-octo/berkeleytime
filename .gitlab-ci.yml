@@ -18,7 +18,7 @@ stages:
 
 .before_build:
   before_script:
-    - gcloud config set builds/use_kaniko True
+    # - gcloud config set builds/use_kaniko True # https://github.com/GoogleContainerTools/kaniko/issues/1793
     - gcloud auth activate-service-account --key-file $IAM_GITLAB_RUNNER
 
 build-backend:
