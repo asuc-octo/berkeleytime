@@ -6,14 +6,17 @@ import { reactSelectCourseSearch } from 'utils/courses/search';
 import { compareDepartmentName } from 'utils/courses/sorting';
 import { Semester } from 'utils/playlists/semesters';
 import {
+  getUnitsForSchedule,
   hasCourseById,
   removeCourse,
   Schedule,
   SchedulerCourseType,
+  SchedulerSectionType,
 } from 'utils/scheduler/scheduler';
 import Callout from './Callout';
 import SchedulerCourse from './Selector/SchedulerCourse';
 import { ScheduleContext } from './ScheduleContext';
+import { unitsToString } from 'utils/courses/units';
 
 type CourseType = CourseOverviewFragment;
 
@@ -27,32 +30,37 @@ type Props = {
   allCourses: CourseType[];
   semester: Semester;
   schedule: Schedule;
-  setSchedule: Dispatch<SetStateAction<Schedule>>;
+  setSchedule: (newValue: Schedule) => void;
+
+  /**
+   * Pass this to add the ability to preview a section when a user
+   * hovers over it.
+   */
+  setPreviewSection?: (newSection: SchedulerSectionType | null) => void;
 };
 
 const CourseSelector = ({
   allCourses,
   semester,
   schedule,
-  setSchedule
+  setSchedule,
+  setPreviewSection,
 }: Props) => {
   // Sort courses
   const sortedCourses: CourseOptionType[] = useMemo(
     () =>
-      allCourses
-        .sort(compareDepartmentName)
-        .map((course) => ({
-          value: course.id,
-          label: courseToName(course),
-          course,
-        })),
+      allCourses.sort(compareDepartmentName).map((course) => ({
+        value: course.id,
+        label: courseToName(course),
+        course,
+      })),
     [allCourses]
   );
 
   function addCourse(course: SchedulerCourseType) {
     setSchedule({
       ...schedule,
-      courses: [course, ...schedule.courses],
+      courses: [course, ...schedule.courses.filter((c) => c.id !== course.id)],
     });
   }
 
@@ -74,19 +82,13 @@ const CourseSelector = ({
         filterOption={reactSelectCourseSearch}
         onChange={(c: CourseOptionType) => c && addCourse(c.course)}
       />
-      <p>Choose the sections to build your schedule.</p>
-      {schedule.courses.length > 0 && (
-        <Callout
-          message={
-            <>
-              You have <strong>≤20</strong> possible schedules remaining with
-              the following course selections.
-            </>
-          }
-        />
-      )}
+      <div className="scheduler-units">
+        Scheduled Units: {unitsToString(getUnitsForSchedule(schedule))}
+      </div>
       <div>
-        <ScheduleContext.Provider value={{ schedule, setSchedule }}>
+        <ScheduleContext.Provider
+          value={{ schedule, setSchedule, setPreviewSection }}
+        >
           {schedule.courses.map((course) => (
             <SchedulerCourse
               key={course.id}

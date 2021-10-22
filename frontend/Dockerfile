@@ -14,7 +14,7 @@ WORKDIR /frontend
 COPY package.json package.json
 RUN npm cache clean --force
 RUN npm set registry https://registry.npmjs.org/
-RUN npm install
+RUN npm install --force
 
 COPY . /frontend
 

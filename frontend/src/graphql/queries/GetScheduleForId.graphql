@@ -1,0 +1,5 @@
+query GetScheduleForId($id: ID!) {
+  schedule(id: $id) {
+    ...Schedule
+  }
+}

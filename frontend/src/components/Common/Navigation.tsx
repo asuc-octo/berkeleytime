@@ -7,24 +7,24 @@ import { ReduxState } from '../../redux/store';
 
 import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
-import btn_google_signin from 'assets/svg/profile/btn_google_signin.svg';
 
-interface Props extends PropsFromRedux { }
+interface Props extends PropsFromRedux {}
 
 const NavigationLink: FC<
   {
     to?: string;
     onClick?: () => void;
+    isNew?: boolean;
   } & NavProps
-> = ({ to, children, ...props }) => (
+> = ({ to, children, isNew = false, ...props }) => (
   <Nav.Link
     as={to ? Link : undefined}
     to={to}
-    className="bt-bold"
+    className={'bt-bold ' + (isNew ? 'is-new' : '')}
+    // eventKey required for collapseOnselect
+    // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
     eventKey={to}
     {...props}
-  // eventKey required for collapseOnselect
-  // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
   >
     {children}
   </Nav.Link>
@@ -33,65 +33,12 @@ const NavigationLink: FC<
 const Navigation: FC<Props> = (props) => {
   const [showLogin, setShowLogin] = useState(false);
 
-  const [links, setLinks] = useState<
-    {
-      text: string;
-      to?: string;
-      nav_to?: string;
-      onClick?: () => void;
-    }[]
-  >(
-    [
-      {
-        to: '/catalog',
-        text: 'Catalog',
-      },
-      {
-        to: '/grades',
-        text: 'Grades',
-      },
-      {
-        to: '/enrollment',
-        text: 'Enrollment',
-      },
-      // {
-      //   to: '/scheduler',
-      //   text: 'Scheduler',
-      // },
-      {
-        to: '/about',
-        text: 'About',
-      },
-      {
-        to: '/faq',
-        text: 'FAQ',
-      },
-      // {
-      //   to: '/apply',
-      //   text: 'Apply',
-      // },
-    ].map((link) => ({
-      to: link.to,
-      text: link.text,
-      nav_to: link.to,
-    }))
-  );
-
   const location = useLocation();
   const { isLoggedIn } = useUser();
 
   useEffect(() => {
     // Hide modal when path changes
     setShowLogin(false);
-
-    setLinks((links) =>
-      links.map((link) => ({
-        to: link.to,
-        text: link.text,
-        // nav_to is either [link.to] or '' if we are already on that page
-        nav_to: link.to && location.pathname.includes(link.to) ? '' : link.to,
-      }))
-    );
   }, [location.pathname]);
 
   return (
@@ -101,7 +48,7 @@ const Navigation: FC<Props> = (props) => {
       expand="lg"
       bg="white"
       style={props.banner ? { position: 'absolute' } : {}}
-    /* when the banner is open, the navbar will be positioned
+      /* when the banner is open, the navbar will be positioned
        at the top of the app-container instead of fixed to the
        top of the viewport */
     >
@@ -112,11 +59,17 @@ const Navigation: FC<Props> = (props) => {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto" />
         <Nav>
-          {links.map((link, index) => (
-            <NavigationLink key={index} to={link.nav_to}>
-              {link.text}
-            </NavigationLink>
-          ))}
+          <NavigationLink to="/catalog">Catalog</NavigationLink>
+          <NavigationLink to="/scheduler" isNew>
+            Scheduler
+          </NavigationLink>
+          {/* {isLoggedIn && (
+            <NavigationLink to="/scheduler">Scheduler</NavigationLink>
+          )} */}
+          <NavigationLink to="/grades">Grades</NavigationLink>
+          <NavigationLink to="/enrollment">Enrollment</NavigationLink>
+          <NavigationLink to="/about">About</NavigationLink>
+          <NavigationLink to="/faq">FAQ</NavigationLink>
 
           {isLoggedIn ? (
             <>

@@ -1,63 +1,47 @@
-import React from 'react';
-import {
-  formatUnits,
-  formatPercentage,
-  applyIndicatorPercent,
-  applyIndicatorGrade,
-} from '../../utils/utils';
-import { CourseOverviewFragment } from '../../graphql/graphql';
-import { ReactComponent as Trash } from '../../assets/svg/profile/trash.svg';
-import { Button } from 'react-bootstrap';
-import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
-import { Link } from 'react-router-dom';
+import React, { ComponentProps, ElementType, ReactNode } from 'react';
+import TrashButton from 'components/Common/TrashButton';
 
-type Props = {
-  course: CourseOverviewFragment;
-  removable: boolean;
+type Props<T extends ElementType> = ComponentProps<T> & {
+  removable?: boolean;
+  component: T;
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  description?: ReactNode;
+  aside?: ReactNode;
+  didRemove?: () => void;
 };
 
-const ProfileCard = ({ course, removable }: Props) => {
-  const unsaveCourse = useUnsaveCourse();
-
+const ProfileCard = <Component extends ElementType>({
+  removable = true,
+  component: WrapperComponent = 'div',
+  title,
+  subtitle,
+  description,
+  aside,
+  didRemove,
+  ...props
+}: Props<Component>) => {
   return (
-    <Link
-      className="profile-card"
-      to={`/catalog/${course.abbreviation}/${course.courseNumber}`}
-    >
+    <WrapperComponent {...props} className="profile-card">
       <div className="profile-card-info">
-        <h6>{`${course.abbreviation} ${course.courseNumber}`}</h6>
-        <p className="profile-card-info-desc">{course.title}</p>
-        <div className="profile-card-info-stats">
-          {course.enrolledPercentage === -1
-            ? null
-            : applyIndicatorPercent(
-                `${course.enrolled}/${course.enrolledMax} enrolled`,
-                course.enrolledPercentage
-              )}
-
-          <span>&nbsp;•&nbsp;{formatUnits(course.units)}</span>
-        </div>
+        <h6>{title}</h6>
+        <p className="profile-card-info-desc">{subtitle}</p>
+        <div className="profile-card-info-stats">{description}</div>
       </div>
-      {course.letterAverage && (
-        <div className="profile-card-sort profile-card-grade">
-          {applyIndicatorGrade(course.letterAverage, course.letterAverage)}
-        </div>
+      {aside && (
+        <div className="profile-card-sort profile-card-grade">{aside}</div>
       )}
       {removable && (
-        <Button
-          className="profile-card-remove"
-          variant="link"
+        <TrashButton
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             e.nativeEvent.stopImmediatePropagation();
-            unsaveCourse(course);
+            didRemove?.();
           }}
-        >
-          <Trash />
-        </Button>
+        />
       )}
-    </Link>
+    </WrapperComponent>
   );
 };
 
