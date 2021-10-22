@@ -1,14 +1,22 @@
 import {
   CourseOverviewFragment,
-  useGetCourseForIdQuery,
+  useGetSchedulerCourseForIdQuery,
 } from '../../../graphql/graphql';
-import React from 'react';
-import { courseToColor, courseToName } from 'utils/courses/course';
+import React, { useState } from 'react';
+import { courseToName } from 'utils/courses/course';
 import { Semester } from 'utils/playlists/semesters';
 
 import { ReactComponent as Trash } from '../../../assets/svg/common/trash.svg';
-import CourseCard from './CourseCard';
+import LectureCard from './LectureCard';
 import BTLoader from '../../Common/BTLoader';
+import { applyIndicatorPercent } from 'utils/utils';
+import { parseUnits, unitsToString } from 'utils/courses/units';
+
+import { ReactComponent as ExpandMore } from '../../../assets/svg/common/expand.svg';
+import { Collapse } from 'react-bootstrap';
+import { getColorForCourse } from 'utils/scheduler/scheduler';
+import { useScheduleContext } from '../ScheduleContext';
+import { getNodes } from 'utils/graphql';
 
 type Props = {
   courseId: string;
@@ -35,15 +43,17 @@ const SchedulerCourse = ({
   semester,
   didRemove,
 }: Props) => {
-  const { data, loading } = useGetCourseForIdQuery({
+  const { data, loading } = useGetSchedulerCourseForIdQuery({
     variables: {
       id: courseId,
       year: semester.year,
       semester: semester.semester,
     },
   });
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { schedule } = useScheduleContext();
 
-  const color = courseToColor(courseId);
+  const color = getColorForCourse(schedule, courseId);
 
   return (
     <div className="scheduler-course">
@@ -52,18 +62,58 @@ const SchedulerCourse = ({
           className="scheduler-course-square"
           style={{ backgroundColor: color }}
         />
-        <div className="scheduler-course-course">
-          {partialCourse
-            ? courseToName(partialCourse)
-            : data?.course?.title || 'Loading...'}
+        <div className="scheduler-course-title">
+          {partialCourse ? courseToName(partialCourse) : 'Loading...'}
         </div>
+
         {didRemove && (
-          <div className="scheduler-course-remove" onClick={didRemove}>
+          <div
+            className="scheduler-course-icon scheduler-course-remove"
+            onClick={didRemove}
+          >
             <Trash />
           </div>
         )}
       </div>
-      {!data ? (
+      <div className="scheduler-course-header">
+        <div className="scheduler-course-name">
+          {partialCourse ? partialCourse.title : 'Loading...'}
+        </div>
+        {data && (
+          <div
+            className="scheduler-course-icon scheduler-course-expand"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            <ExpandMore
+              style={{
+                transform: isExpanded ? 'rotate(-180deg)' : '',
+              }}
+            />
+          </div>
+        )}
+      </div>
+      <div className="scheduler-course-header">
+        <div className="scheduler-course-name">
+          {!data?.course ? (
+            'Loading...'
+          ) : (
+            <>
+              {data.course.enrolled !== -1 && (
+                <>
+                  {applyIndicatorPercent(
+                    `${data.course.enrolled}/${data.course.enrolledMax} enrolled`,
+                    data.course.enrolled / data.course.enrolledMax
+                  )}{' '}
+                  &bull;{' '}
+                </>
+              )}
+              {data.course.units &&
+                `${unitsToString(parseUnits(data.course.units))} units`}
+            </>
+          )}
+        </div>
+      </div>
+      {!data?.course ? (
         <div className="scheduler-status">
           {loading ? (
             <BTLoader />
@@ -72,7 +122,21 @@ const SchedulerCourse = ({
           )}
         </div>
       ) : (
-        <CourseCard course={data.course!} color={color} />
+        <Collapse in={isExpanded}>
+          <div>
+            {getNodes(data.course.sectionSet)
+              .filter((section) => !section.disabled)
+              .map((section, index) => (
+                <LectureCard
+                  section={section}
+                  course={data.course!}
+                  color={color}
+                  sectionId={String(index + 1).padStart(3, '0')}
+                  key={section.id}
+                />
+              ))}
+          </div>
+        </Collapse>
       )}
     </div>
   );

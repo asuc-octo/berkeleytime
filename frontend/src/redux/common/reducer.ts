@@ -4,13 +4,13 @@ import {
   OPEN_BANNER,
   CLOSE_BANNER,
   ENTER_MOBILE,
-  EXIT_MOBILE
-} from './types'
+  EXIT_MOBILE,
+} from './types';
 
 const initialState: CommonState = {
-  banner: true,
-  mobile: false
-}
+  banner: false,
+  mobile: false,
+};
 
 export function commonReducer(
   state = initialState,
@@ -20,24 +20,24 @@ export function commonReducer(
     case OPEN_BANNER:
       return {
         ...state,
-        banner: true
-      }
+        banner: true,
+      };
     case CLOSE_BANNER:
       return {
         ...state,
-        banner: false
-      }
+        banner: false,
+      };
     case ENTER_MOBILE:
       return {
         ...state,
-        mobile: true
-      }
+        mobile: true,
+      };
     case EXIT_MOBILE:
       return {
         ...state,
-        mobile: false
-      }
+        mobile: false,
+      };
     default:
-      return state
+      return state;
   }
 }

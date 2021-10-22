@@ -1,0 +1,96 @@
+.access-control-toggle {
+  display: block;
+  margin: 0;
+  outline: none;
+  border: none;
+  background: none;
+  margin: 0;
+  padding: 4px 4px;
+
+  display: flex;
+  align-items: center;
+
+  svg:first-child {
+    height: 1rem;
+    width: 1rem;
+    margin-right: 8px;
+  }
+
+  span {
+    text-align: left;
+    color: $bt-black;
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+
+  .access-control-toggle__expand {
+    height: 0.8rem;
+    width: 0.8rem;
+  }
+}
+
+.access-control-menu {
+  padding: 0;
+
+  .access-control-menu__link {
+    padding: 1rem;
+
+    h4 {
+      font-size: 0.9rem;
+      color: $bt-black;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 0.9rem;
+      color: $bt-light-text;
+    }
+
+    input {
+      font-size: 0.9rem;
+      color: $bt-base-text;
+      display: block;
+      width: 100%;
+      border: 1px solid $bt-border-grey;
+      border-radius: 4px;
+      box-sizing: border-box;
+      padding: 2px 8px;
+      margin-top: 8px;
+      cursor: pointer;
+    }
+
+    border-bottom: 1px solid $bt-light-border-grey;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      background: $bt-off-white;
+    }
+
+    padding: 12px 1rem;
+    line-height: 1.2;
+
+    .access-control-menu__name {
+      font-size: 0.85rem;
+      color: $bt-base-text;
+      font-weight: 500;
+    }
+
+    .access-control-menu__desc {
+      font-size: 0.85rem;
+      color: $bt-light-text;
+    }
+
+    svg {
+      height: 1rem;
+      width: 1rem;
+    }
+
+    > div:not(:first-child) {
+      flex: 1;
+    }
+  }
+}

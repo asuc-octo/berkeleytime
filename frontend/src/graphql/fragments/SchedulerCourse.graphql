@@ -1,0 +1,21 @@
+fragment SchedulerCourse on CourseType {
+  id
+  title
+  units
+  waitlisted
+  openSeats
+  enrolled
+  enrolledMax
+  courseNumber
+  department
+  description
+  abbreviation
+
+  sectionSet(isPrimary: true, year: $year, semester: $semester) {
+    edges {
+      node {
+        ...Lecture
+      }
+    }
+  }
+}

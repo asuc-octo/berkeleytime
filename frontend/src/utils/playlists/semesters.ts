@@ -1,8 +1,5 @@
 import { capitalize } from 'bt/utils';
-import {
-  FilterablePlaylist,
-  playlistToTimeComparable,
-} from './playlist';
+import { FilterablePlaylist, playlistToTimeComparable } from './playlist';
 
 export type Semester = {
   playlistId?: string;
@@ -10,16 +7,18 @@ export type Semester = {
   semester: string;
 };
 
+export type SemesterWithPlaylist = Semester & { playlistId: string };
+
 /**
  * Takes a list of playlist IDs and tries to convert it to a semester
  */
 export function extractSemesters(
   playlists: string[],
   allPlaylists: FilterablePlaylist[]
-): Semester[] {
-  return allPlaylists.filter(
-    (p) => p.category === 'semester' && playlists.includes(p.id)
-  ).map(playlistToSemester);
+): SemesterWithPlaylist[] {
+  return allPlaylists
+    .filter((p) => p.category === 'semester' && playlists.includes(p.id))
+    .map(playlistToSemester);
 }
 
 /**
@@ -27,7 +26,7 @@ export function extractSemesters(
  */
 export function getLatestSemester(
   playlists: FilterablePlaylist[]
-): Semester | null {
+): SemesterWithPlaylist | null {
   const semesterPlaylists = playlists
     .filter((p) => p.category === 'semester')
     .sort((a, b) => playlistToTimeComparable(b) - playlistToTimeComparable(a));
@@ -43,17 +42,28 @@ export function getLatestSemester(
 /**
  * Converts playlist to semester
  */
-export function playlistToSemester(playlist: FilterablePlaylist): Semester {
+export function playlistToSemester(
+  playlist: FilterablePlaylist
+): SemesterWithPlaylist {
   return stringToSemester(playlist.name, playlist.id);
 }
 
 /**
  * Convert a string to a semester.
  */
-export function stringToSemester(string: string, playlistId?: string): Semester {
+export function stringToSemester(
+  string: string,
+  playlistId: string
+): SemesterWithPlaylist;
+export function stringToSemester(
+  string: string,
+  playlistId?: string
+): Semester {
   const [semester, year] = string.trim().toLowerCase().split(' ');
   return {
-    semester, year, playlistId
+    semester,
+    year,
+    playlistId,
   };
 }
 
@@ -61,6 +71,6 @@ export function stringToSemester(string: string, playlistId?: string): Semester 
  * Converts a semester to human-readable string
  */
 export function semesterToString(semester?: Semester | null): string {
-  if (!semester) return "";
+  if (!semester) return '';
   return `${capitalize(semester.semester)} ${semester.year}`;
 }

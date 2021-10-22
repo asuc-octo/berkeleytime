@@ -29,11 +29,17 @@ export interface Scalars {
   GenericScalar: any;
   /**
    * Allows use of a JSON String for input / output from the GraphQL schema.
-   * 
+   *
    * Use of this type is *not recommended* as you lose the benefits of having a defined, static
    * schema (one of the key benefits of GraphQL).
    */
   JSONString: any;
+  /**
+   * The `Time` scalar type represents a Time value as
+   * specified by
+   * [iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+   */
+  Time: any;
 }
 
 export interface BerkeleytimeUserType {
@@ -42,10 +48,19 @@ export interface BerkeleytimeUserType {
   user: UserType;
   major: Scalars['String'];
   savedClasses?: Maybe<Array<Maybe<CourseType>>>;
-  emailClassUpdate: Scalars['Boolean'];
-  emailGradeUpdate: Scalars['Boolean'];
-  emailEnrollmentOpening: Scalars['Boolean'];
-  emailBerkeleytimeUpdate: Scalars['Boolean'];
+  emailClassUpdate?: Maybe<Scalars['Boolean']>;
+  emailGradeUpdate?: Maybe<Scalars['Boolean']>;
+  emailEnrollmentOpening?: Maybe<Scalars['Boolean']>;
+  emailBerkeleytimeUpdate?: Maybe<Scalars['Boolean']>;
+  schedules: ScheduleTypeConnection;
+}
+
+
+export interface BerkeleytimeUserTypeSchedulesArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 }
 
 export interface CourseType extends Node {
@@ -73,6 +88,7 @@ export interface CourseType extends Node {
   gradeSet: GradeTypeConnection;
   playlistSet: PlaylistTypeConnection;
   berkeleytimeuserSet: Array<BerkeleytimeUserType>;
+  schedulerSections: SectionSelectionTypeConnection;
 }
 
 
@@ -98,6 +114,9 @@ export interface CourseTypeCrossListingArgs {
   waitlisted?: Maybe<Scalars['Int']>;
   openSeats?: Maybe<Scalars['Int']>;
   lastUpdated?: Maybe<Scalars['DateTime']>;
+  hasGrades?: Maybe<Scalars['Boolean']>;
+  inPlaylists?: Maybe<Scalars['String']>;
+  idIn?: Maybe<Scalars['String']>;
 }
 
 
@@ -116,6 +135,7 @@ export interface CourseTypeSectionSetArgs {
   ccn?: Maybe<Scalars['String']>;
   kind?: Maybe<Scalars['String']>;
   isPrimary?: Maybe<Scalars['Boolean']>;
+  associatedSections?: Maybe<Array<Maybe<Scalars['ID']>>>;
   days?: Maybe<Scalars['String']>;
   startTime?: Maybe<Scalars['DateTime']>;
   endTime?: Maybe<Scalars['DateTime']>;
@@ -139,6 +159,15 @@ export interface CourseTypeGradeSetArgs {
   after?: Maybe<Scalars['String']>;
   first?: Maybe<Scalars['Int']>;
   last?: Maybe<Scalars['Int']>;
+  course?: Maybe<Scalars['ID']>;
+  semester?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['String']>;
+  abbreviation?: Maybe<Scalars['String']>;
+  courseNumber?: Maybe<Scalars['String']>;
+  sectionNumber?: Maybe<Scalars['String']>;
+  instructor?: Maybe<Scalars['String']>;
+  gradedTotal?: Maybe<Scalars['Int']>;
+  average?: Maybe<Scalars['Float']>;
 }
 
 
@@ -152,6 +181,14 @@ export interface CourseTypePlaylistSetArgs {
   semester?: Maybe<Scalars['String']>;
   year?: Maybe<Scalars['String']>;
   courses?: Maybe<Array<Maybe<Scalars['ID']>>>;
+}
+
+
+export interface CourseTypeSchedulerSectionsArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 }
 
 export interface CourseTypeConnection {
@@ -169,6 +206,11 @@ export interface CourseTypeEdge {
   node?: Maybe<CourseType>;
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
+}
+
+export interface CreateSchedule {
+  __typename?: 'CreateSchedule';
+  schedule?: Maybe<ScheduleType>;
 }
 
 
@@ -227,23 +269,12 @@ export interface GradeType extends Node {
   sectionNumber: Scalars['String'];
   instructor: Scalars['String'];
   instructors: Array<Scalars['String']>;
-  a1: Scalars['Int'];
-  a2: Scalars['Int'];
-  a3: Scalars['Int'];
-  b1: Scalars['Int'];
-  b2: Scalars['Int'];
-  b3: Scalars['Int'];
-  c1: Scalars['Int'];
-  c2: Scalars['Int'];
-  c3: Scalars['Int'];
-  d1: Scalars['Int'];
-  d2: Scalars['Int'];
-  d3: Scalars['Int'];
-  f: Scalars['Int'];
   gradedTotal: Scalars['Int'];
-  p?: Maybe<Scalars['Int']>;
-  np?: Maybe<Scalars['Int']>;
   average: Scalars['Float'];
+  distribution?: Maybe<Array<Maybe<LetterGradeType>>>;
+  sectionGpa?: Maybe<Scalars['Float']>;
+  sectionLetter?: Maybe<Scalars['String']>;
+  denominator?: Maybe<Scalars['Int']>;
 }
 
 export interface GradeTypeConnection {
@@ -264,6 +295,15 @@ export interface GradeTypeEdge {
 }
 
 
+export interface LetterGradeType {
+  __typename?: 'LetterGradeType';
+  letter?: Maybe<Scalars['String']>;
+  numerator?: Maybe<Scalars['Int']>;
+  percent?: Maybe<Scalars['Float']>;
+  percentileHigh?: Maybe<Scalars['Float']>;
+  percentileLow?: Maybe<Scalars['Float']>;
+}
+
 export interface Logout {
   __typename?: 'Logout';
   success?: Maybe<Scalars['Boolean']>;
@@ -271,6 +311,9 @@ export interface Logout {
 
 export interface Mutation {
   __typename?: 'Mutation';
+  createSchedule?: Maybe<CreateSchedule>;
+  updateSchedule?: Maybe<UpdateSchedule>;
+  removeSchedule?: Maybe<RemoveSchedule>;
   updateUser?: Maybe<UpdateUser>;
   saveClass?: Maybe<SaveClass>;
   removeClass?: Maybe<RemoveClass>;
@@ -280,6 +323,32 @@ export interface Mutation {
   verifyToken?: Maybe<Verify>;
   refreshToken?: Maybe<Refresh>;
   deleteUser?: Maybe<DeleteUser>;
+}
+
+
+export interface MutationCreateScheduleArgs {
+  name?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
+  selectedSections?: Maybe<Array<Maybe<SectionSelectionInput>>>;
+  semester?: Maybe<Scalars['String']>;
+  timeblocks?: Maybe<Array<Maybe<TimeBlockInput>>>;
+  totalUnits?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['String']>;
+}
+
+
+export interface MutationUpdateScheduleArgs {
+  name?: Maybe<Scalars['String']>;
+  public?: Maybe<Scalars['Boolean']>;
+  scheduleId?: Maybe<Scalars['ID']>;
+  selectedSections?: Maybe<Array<Maybe<SectionSelectionInput>>>;
+  timeblocks?: Maybe<Array<Maybe<TimeBlockInput>>>;
+  totalUnits?: Maybe<Scalars['String']>;
+}
+
+
+export interface MutationRemoveScheduleArgs {
+  scheduleId?: Maybe<Scalars['ID']>;
 }
 
 
@@ -378,6 +447,9 @@ export interface PlaylistTypeCoursesArgs {
   waitlisted?: Maybe<Scalars['Int']>;
   openSeats?: Maybe<Scalars['Int']>;
   lastUpdated?: Maybe<Scalars['DateTime']>;
+  hasGrades?: Maybe<Scalars['Boolean']>;
+  inPlaylists?: Maybe<Scalars['String']>;
+  idIn?: Maybe<Scalars['String']>;
 }
 
 export interface PlaylistTypeConnection {
@@ -399,6 +471,8 @@ export interface PlaylistTypeEdge {
 
 export interface Query {
   __typename?: 'Query';
+  schedules?: Maybe<Array<Maybe<ScheduleType>>>;
+  schedule?: Maybe<ScheduleType>;
   user?: Maybe<BerkeleytimeUserType>;
   allPlaylists?: Maybe<PlaylistTypeConnection>;
   /** The ID of the object */
@@ -415,6 +489,12 @@ export interface Query {
   /** The ID of the object */
   section?: Maybe<SectionType>;
   allSections?: Maybe<SectionTypeConnection>;
+  ping?: Maybe<Scalars['String']>;
+}
+
+
+export interface QueryScheduleArgs {
+  id?: Maybe<Scalars['ID']>;
 }
 
 
@@ -448,22 +528,7 @@ export interface QueryAllGradesArgs {
   courseNumber?: Maybe<Scalars['String']>;
   sectionNumber?: Maybe<Scalars['String']>;
   instructor?: Maybe<Scalars['String']>;
-  a1?: Maybe<Scalars['Int']>;
-  a2?: Maybe<Scalars['Int']>;
-  a3?: Maybe<Scalars['Int']>;
-  b1?: Maybe<Scalars['Int']>;
-  b2?: Maybe<Scalars['Int']>;
-  b3?: Maybe<Scalars['Int']>;
-  c1?: Maybe<Scalars['Int']>;
-  c2?: Maybe<Scalars['Int']>;
-  c3?: Maybe<Scalars['Int']>;
-  d1?: Maybe<Scalars['Int']>;
-  d2?: Maybe<Scalars['Int']>;
-  d3?: Maybe<Scalars['Int']>;
-  f?: Maybe<Scalars['Int']>;
   gradedTotal?: Maybe<Scalars['Int']>;
-  p?: Maybe<Scalars['Int']>;
-  np?: Maybe<Scalars['Int']>;
   average?: Maybe<Scalars['Float']>;
 }
 
@@ -538,6 +603,7 @@ export interface QueryAllSectionsArgs {
   ccn?: Maybe<Scalars['String']>;
   kind?: Maybe<Scalars['String']>;
   isPrimary?: Maybe<Scalars['Boolean']>;
+  associatedSections?: Maybe<Array<Maybe<Scalars['ID']>>>;
   days?: Maybe<Scalars['String']>;
   startTime?: Maybe<Scalars['DateTime']>;
   endTime?: Maybe<Scalars['DateTime']>;
@@ -566,9 +632,130 @@ export interface RemoveClass {
   user?: Maybe<BerkeleytimeUserType>;
 }
 
+export interface RemoveSchedule {
+  __typename?: 'RemoveSchedule';
+  schedule?: Maybe<ScheduleType>;
+}
+
 export interface SaveClass {
   __typename?: 'SaveClass';
   user?: Maybe<BerkeleytimeUserType>;
+}
+
+export interface ScheduleType extends Node {
+  __typename?: 'ScheduleType';
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  user: BerkeleytimeUserType;
+  name: Scalars['String'];
+  year: Scalars['String'];
+  semester: Scalars['String'];
+  dateCreated: Scalars['DateTime'];
+  dateModified: Scalars['DateTime'];
+  totalUnits: Scalars['String'];
+  public: Scalars['Boolean'];
+  selectedSections: SectionSelectionTypeConnection;
+  timeblocks: TimeBlockTypeConnection;
+}
+
+
+export interface ScheduleTypeSelectedSectionsArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+}
+
+
+export interface ScheduleTypeTimeblocksArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+}
+
+export interface ScheduleTypeConnection {
+  __typename?: 'ScheduleTypeConnection';
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<ScheduleTypeEdge>>;
+}
+
+/** A Relay edge containing a `ScheduleType` and its cursor. */
+export interface ScheduleTypeEdge {
+  __typename?: 'ScheduleTypeEdge';
+  /** The item at the end of the edge */
+  node?: Maybe<ScheduleType>;
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+}
+
+export interface SectionSelectionInput {
+  course: Scalars['ID'];
+  primary?: Maybe<Scalars['ID']>;
+  secondary?: Maybe<Array<Maybe<Scalars['ID']>>>;
+}
+
+export interface SectionSelectionType extends Node {
+  __typename?: 'SectionSelectionType';
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  schedule: ScheduleType;
+  course: CourseType;
+  primary?: Maybe<SectionType>;
+  secondary: SectionTypeConnection;
+}
+
+
+export interface SectionSelectionTypeSecondaryArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  course?: Maybe<Scalars['ID']>;
+  abbreviation?: Maybe<Scalars['String']>;
+  courseNumber?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['String']>;
+  semester?: Maybe<Scalars['String']>;
+  courseTitle?: Maybe<Scalars['String']>;
+  sectionNumber?: Maybe<Scalars['String']>;
+  ccn?: Maybe<Scalars['String']>;
+  kind?: Maybe<Scalars['String']>;
+  isPrimary?: Maybe<Scalars['Boolean']>;
+  associatedSections?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  days?: Maybe<Scalars['String']>;
+  startTime?: Maybe<Scalars['DateTime']>;
+  endTime?: Maybe<Scalars['DateTime']>;
+  finalDay?: Maybe<Scalars['String']>;
+  finalEnd?: Maybe<Scalars['DateTime']>;
+  finalStart?: Maybe<Scalars['DateTime']>;
+  instructor?: Maybe<Scalars['String']>;
+  disabled?: Maybe<Scalars['Boolean']>;
+  locationName?: Maybe<Scalars['String']>;
+  instructionMode?: Maybe<Scalars['String']>;
+  lastUpdated?: Maybe<Scalars['DateTime']>;
+  enrolled?: Maybe<Scalars['Int']>;
+  enrolledMax?: Maybe<Scalars['Int']>;
+  waitlisted?: Maybe<Scalars['Int']>;
+  waitlistedMax?: Maybe<Scalars['Int']>;
+}
+
+export interface SectionSelectionTypeConnection {
+  __typename?: 'SectionSelectionTypeConnection';
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<SectionSelectionTypeEdge>>;
+}
+
+/** A Relay edge containing a `SectionSelectionType` and its cursor. */
+export interface SectionSelectionTypeEdge {
+  __typename?: 'SectionSelectionTypeEdge';
+  /** The item at the end of the edge */
+  node?: Maybe<SectionSelectionType>;
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
 }
 
 export interface SectionType extends Node {
@@ -585,6 +772,7 @@ export interface SectionType extends Node {
   ccn: Scalars['String'];
   kind: Scalars['String'];
   isPrimary: Scalars['Boolean'];
+  associatedSections: SectionTypeConnection;
   days: Scalars['String'];
   startTime?: Maybe<Scalars['DateTime']>;
   endTime?: Maybe<Scalars['DateTime']>;
@@ -600,7 +788,59 @@ export interface SectionType extends Node {
   enrolledMax?: Maybe<Scalars['Int']>;
   waitlisted?: Maybe<Scalars['Int']>;
   waitlistedMax?: Maybe<Scalars['Int']>;
+  schedulerPrimarySections: SectionSelectionTypeConnection;
+  schedulerSecondarySections: SectionSelectionTypeConnection;
   wordDays?: Maybe<Scalars['String']>;
+}
+
+
+export interface SectionTypeAssociatedSectionsArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+  course?: Maybe<Scalars['ID']>;
+  abbreviation?: Maybe<Scalars['String']>;
+  courseNumber?: Maybe<Scalars['String']>;
+  year?: Maybe<Scalars['String']>;
+  semester?: Maybe<Scalars['String']>;
+  courseTitle?: Maybe<Scalars['String']>;
+  sectionNumber?: Maybe<Scalars['String']>;
+  ccn?: Maybe<Scalars['String']>;
+  kind?: Maybe<Scalars['String']>;
+  isPrimary?: Maybe<Scalars['Boolean']>;
+  associatedSections?: Maybe<Array<Maybe<Scalars['ID']>>>;
+  days?: Maybe<Scalars['String']>;
+  startTime?: Maybe<Scalars['DateTime']>;
+  endTime?: Maybe<Scalars['DateTime']>;
+  finalDay?: Maybe<Scalars['String']>;
+  finalEnd?: Maybe<Scalars['DateTime']>;
+  finalStart?: Maybe<Scalars['DateTime']>;
+  instructor?: Maybe<Scalars['String']>;
+  disabled?: Maybe<Scalars['Boolean']>;
+  locationName?: Maybe<Scalars['String']>;
+  instructionMode?: Maybe<Scalars['String']>;
+  lastUpdated?: Maybe<Scalars['DateTime']>;
+  enrolled?: Maybe<Scalars['Int']>;
+  enrolledMax?: Maybe<Scalars['Int']>;
+  waitlisted?: Maybe<Scalars['Int']>;
+  waitlistedMax?: Maybe<Scalars['Int']>;
+}
+
+
+export interface SectionTypeSchedulerPrimarySectionsArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
+}
+
+
+export interface SectionTypeSchedulerSecondarySectionsArgs {
+  before?: Maybe<Scalars['String']>;
+  after?: Maybe<Scalars['String']>;
+  first?: Maybe<Scalars['Int']>;
+  last?: Maybe<Scalars['Int']>;
 }
 
 export interface SectionTypeConnection {
@@ -630,6 +870,47 @@ export interface TelebearData {
   adjStart?: Maybe<Scalars['Date']>;
 }
 
+
+export interface TimeBlockInput {
+  name: Scalars['String'];
+  startTime: Scalars['Time'];
+  endTime: Scalars['Time'];
+  days: Scalars['String'];
+}
+
+export interface TimeBlockType extends Node {
+  __typename?: 'TimeBlockType';
+  /** The ID of the object. */
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  startTime: Scalars['Time'];
+  endTime: Scalars['Time'];
+  days: Scalars['String'];
+  schedule: ScheduleType;
+}
+
+export interface TimeBlockTypeConnection {
+  __typename?: 'TimeBlockTypeConnection';
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** Contains the nodes in this connection. */
+  edges: Array<Maybe<TimeBlockTypeEdge>>;
+}
+
+/** A Relay edge containing a `TimeBlockType` and its cursor. */
+export interface TimeBlockTypeEdge {
+  __typename?: 'TimeBlockTypeEdge';
+  /** The item at the end of the edge */
+  node?: Maybe<TimeBlockType>;
+  /** A cursor for use in pagination */
+  cursor: Scalars['String'];
+}
+
+export interface UpdateSchedule {
+  __typename?: 'UpdateSchedule';
+  schedule?: Maybe<ScheduleType>;
+}
+
 export interface UpdateUser {
   __typename?: 'UpdateUser';
   user?: Maybe<BerkeleytimeUserType>;
@@ -638,21 +919,11 @@ export interface UpdateUser {
 export interface UserType {
   __typename?: 'UserType';
   id: Scalars['ID'];
-  password: Scalars['String'];
-  lastLogin?: Maybe<Scalars['DateTime']>;
-  /** Designates that this user has all permissions without explicitly assigning them. */
-  isSuperuser: Scalars['Boolean'];
   /** Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. */
   username: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   email: Scalars['String'];
-  /** Designates whether the user can log into this admin site. */
-  isStaff: Scalars['Boolean'];
-  /** Designates whether this user should be treated as active. Unselect this instead of deleting accounts. */
-  isActive: Scalars['Boolean'];
-  dateJoined: Scalars['DateTime'];
-  berkeleytimeuser?: Maybe<BerkeleytimeUserType>;
 }
 
 export interface Verify {
@@ -686,7 +957,7 @@ export type CourseFragment = (
 
 export type CourseOverviewFragment = (
   { __typename?: 'CourseType' }
-  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'enrolled' | 'enrolledMax' | 'units'>
+  & Pick<CourseType, 'id' | 'abbreviation' | 'courseNumber' | 'description' | 'title' | 'gradeAverage' | 'letterAverage' | 'openSeats' | 'enrolledPercentage' | 'enrolled' | 'enrolledMax' | 'units'>
 );
 
 export type FilterFragment = (
@@ -694,9 +965,99 @@ export type FilterFragment = (
   & Pick<PlaylistType, 'id' | 'name' | 'category'>
 );
 
+export type LectureFragment = (
+  { __typename?: 'SectionType' }
+  & { associatedSections: (
+    { __typename?: 'SectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionType' }
+        & SectionFragment
+      )> }
+    )>> }
+  ) }
+  & SectionFragment
+);
+
+export type ScheduleFragment = (
+  { __typename?: 'ScheduleType' }
+  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated' | 'dateModified' | 'public'>
+  & { user: (
+    { __typename?: 'BerkeleytimeUserType' }
+    & { user: (
+      { __typename?: 'UserType' }
+      & Pick<UserType, 'id' | 'firstName' | 'lastName'>
+    ) }
+  ), selectedSections: (
+    { __typename?: 'SectionSelectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionSelectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionSelectionType' }
+        & SectionSelectionFragment
+      )> }
+    )>> }
+  ) }
+);
+
+export type ScheduleOverviewFragment = (
+  { __typename?: 'ScheduleType' }
+  & Pick<ScheduleType, 'id' | 'year' | 'semester' | 'name' | 'totalUnits' | 'dateCreated' | 'dateModified'>
+  & { selectedSections: (
+    { __typename?: 'SectionSelectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionSelectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionSelectionType' }
+        & { course: (
+          { __typename?: 'CourseType' }
+          & Pick<CourseType, 'abbreviation' | 'courseNumber' | 'units'>
+        ) }
+      )> }
+    )>> }
+  ) }
+);
+
+export type SchedulerCourseFragment = (
+  { __typename?: 'CourseType' }
+  & Pick<CourseType, 'id' | 'title' | 'units' | 'waitlisted' | 'openSeats' | 'enrolled' | 'enrolledMax' | 'courseNumber' | 'department' | 'description' | 'abbreviation'>
+  & { sectionSet: (
+    { __typename?: 'SectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionType' }
+        & LectureFragment
+      )> }
+    )>> }
+  ) }
+);
+
 export type SectionFragment = (
   { __typename?: 'SectionType' }
-  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled'>
+  & Pick<SectionType, 'id' | 'ccn' | 'kind' | 'instructor' | 'startTime' | 'endTime' | 'enrolled' | 'enrolledMax' | 'locationName' | 'waitlisted' | 'waitlistedMax' | 'days' | 'wordDays' | 'disabled' | 'sectionNumber' | 'isPrimary'>
+);
+
+export type SectionSelectionFragment = (
+  { __typename?: 'SectionSelectionType' }
+  & Pick<SectionSelectionType, 'id'>
+  & { course: (
+    { __typename?: 'CourseType' }
+    & CourseOverviewFragment
+  ), primary?: Maybe<(
+    { __typename?: 'SectionType' }
+    & SectionFragment
+  )>, secondary: (
+    { __typename?: 'SectionTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'SectionTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'SectionType' }
+        & SectionFragment
+      )> }
+    )>> }
+  ) }
 );
 
 export type UserProfileFragment = (
@@ -708,7 +1069,54 @@ export type UserProfileFragment = (
   ), savedClasses?: Maybe<Array<Maybe<(
     { __typename?: 'CourseType' }
     & CourseOverviewFragment
-  )>>> }
+  )>>>, schedules: (
+    { __typename?: 'ScheduleTypeConnection' }
+    & { edges: Array<Maybe<(
+      { __typename?: 'ScheduleTypeEdge' }
+      & { node?: Maybe<(
+        { __typename?: 'ScheduleType' }
+        & ScheduleOverviewFragment
+      )> }
+    )>> }
+  ) }
+);
+
+export type CreateScheduleMutationVariables = Exact<{
+  name: Scalars['String'];
+  selectedSections: Array<Maybe<SectionSelectionInput>> | Maybe<SectionSelectionInput>;
+  timeblocks: Array<Maybe<TimeBlockInput>> | Maybe<TimeBlockInput>;
+  totalUnits: Scalars['String'];
+  semester: Scalars['String'];
+  year: Scalars['String'];
+  public: Scalars['Boolean'];
+}>;
+
+
+export type CreateScheduleMutation = (
+  { __typename?: 'Mutation' }
+  & { createSchedule?: Maybe<(
+    { __typename?: 'CreateSchedule' }
+    & { schedule?: Maybe<(
+      { __typename?: 'ScheduleType' }
+      & ScheduleFragment
+    )> }
+  )> }
+);
+
+export type DeleteScheduleMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteScheduleMutation = (
+  { __typename?: 'Mutation' }
+  & { removeSchedule?: Maybe<(
+    { __typename?: 'RemoveSchedule' }
+    & { schedule?: Maybe<(
+      { __typename?: 'ScheduleType' }
+      & Pick<ScheduleType, 'id'>
+    )> }
+  )> }
 );
 
 export type DeleteUserMutationVariables = Exact<{ [key: string]: never; }>;
@@ -719,6 +1127,23 @@ export type DeleteUserMutation = (
   & { deleteUser?: Maybe<(
     { __typename?: 'DeleteUser' }
     & Pick<DeleteUser, 'success'>
+  )> }
+);
+
+export type LoginMutationVariables = Exact<{
+  token: Scalars['String'];
+}>;
+
+
+export type LoginMutation = (
+  { __typename?: 'Mutation' }
+  & { login?: Maybe<(
+    { __typename?: 'ObtainJSONWebToken' }
+    & Pick<ObtainJsonWebToken, 'newUser' | 'refreshExpiresIn' | 'payload'>
+    & { user?: Maybe<(
+      { __typename?: 'BerkeleytimeUserType' }
+      & UserProfileFragment
+    )> }
   )> }
 );
 
@@ -773,6 +1198,27 @@ export type UnsaveCourseMutation = (
   )> }
 );
 
+export type UpdateScheduleMutationVariables = Exact<{
+  scheduleId: Scalars['ID'];
+  name: Scalars['String'];
+  selectedSections: Array<Maybe<SectionSelectionInput>> | Maybe<SectionSelectionInput>;
+  timeblocks: Array<Maybe<TimeBlockInput>> | Maybe<TimeBlockInput>;
+  totalUnits: Scalars['String'];
+  public: Scalars['Boolean'];
+}>;
+
+
+export type UpdateScheduleMutation = (
+  { __typename?: 'Mutation' }
+  & { updateSchedule?: Maybe<(
+    { __typename?: 'UpdateSchedule' }
+    & { schedule?: Maybe<(
+      { __typename?: 'ScheduleType' }
+      & ScheduleFragment
+    )> }
+  )> }
+);
+
 export type UpdateUserMutationVariables = Exact<{
   emailBerkeleytimeUpdate?: Maybe<Scalars['Boolean']>;
   emailClassUpdate?: Maybe<Scalars['Boolean']>;
@@ -789,23 +1235,6 @@ export type UpdateUserMutation = (
     & { user?: Maybe<(
       { __typename?: 'BerkeleytimeUserType' }
       & Pick<BerkeleytimeUserType, 'id' | 'major' | 'emailGradeUpdate' | 'emailEnrollmentOpening' | 'emailClassUpdate' | 'emailBerkeleytimeUpdate'>
-    )> }
-  )> }
-);
-
-export type LoginMutationVariables = Exact<{
-  token: Scalars['String'];
-}>;
-
-
-export type LoginMutation = (
-  { __typename?: 'Mutation' }
-  & { login?: Maybe<(
-    { __typename?: 'ObtainJSONWebToken' }
-    & Pick<ObtainJsonWebToken, 'newUser' | 'refreshExpiresIn' | 'payload'>
-    & { user?: Maybe<(
-      { __typename?: 'BerkeleytimeUserType' }
-      & UserProfileFragment
     )> }
   )> }
 );
@@ -883,7 +1312,37 @@ export type GetFiltersQuery = (
   )> }
 );
 
-export type GetSemestersQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetScheduleForIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetScheduleForIdQuery = (
+  { __typename?: 'Query' }
+  & { schedule?: Maybe<(
+    { __typename?: 'ScheduleType' }
+    & ScheduleFragment
+  )> }
+);
+
+export type GetSchedulerCourseForIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+  year?: Maybe<Scalars['String']>;
+  semester?: Maybe<Scalars['String']>;
+}>;
+
+
+export type GetSchedulerCourseForIdQuery = (
+  { __typename?: 'Query' }
+  & { course?: Maybe<(
+    { __typename?: 'CourseType' }
+    & SchedulerCourseFragment
+  )> }
+);
+
+export type GetSemestersQueryVariables = Exact<{
+  name?: Maybe<Scalars['String']>;
+}>;
 
 
 export type GetSemestersQuery = (
@@ -932,6 +1391,8 @@ export const SectionFragmentDoc = gql`
   days
   wordDays
   disabled
+  sectionNumber
+  isPrimary
 }
     `;
 export const CourseFragmentDoc = gql`
@@ -986,6 +1447,7 @@ export const CourseOverviewFragmentDoc = gql`
   id
   abbreviation
   courseNumber
+  description
   title
   gradeAverage
   letterAverage
@@ -994,6 +1456,107 @@ export const CourseOverviewFragmentDoc = gql`
   enrolled
   enrolledMax
   units
+}
+    `;
+export const SectionSelectionFragmentDoc = gql`
+    fragment SectionSelection on SectionSelectionType {
+  id
+  course {
+    ...CourseOverview
+  }
+  primary {
+    ...Section
+  }
+  secondary {
+    edges {
+      node {
+        ...Section
+      }
+    }
+  }
+}
+    ${CourseOverviewFragmentDoc}
+${SectionFragmentDoc}`;
+export const ScheduleFragmentDoc = gql`
+    fragment Schedule on ScheduleType {
+  id
+  year
+  semester
+  name
+  totalUnits
+  dateCreated
+  dateModified
+  public
+  user {
+    user {
+      id
+      firstName
+      lastName
+    }
+  }
+  selectedSections {
+    edges {
+      node {
+        ...SectionSelection
+      }
+    }
+  }
+}
+    ${SectionSelectionFragmentDoc}`;
+export const LectureFragmentDoc = gql`
+    fragment Lecture on SectionType {
+  ...Section
+  associatedSections {
+    edges {
+      node {
+        ...Section
+      }
+    }
+  }
+}
+    ${SectionFragmentDoc}`;
+export const SchedulerCourseFragmentDoc = gql`
+    fragment SchedulerCourse on CourseType {
+  id
+  title
+  units
+  waitlisted
+  openSeats
+  enrolled
+  enrolledMax
+  courseNumber
+  department
+  description
+  abbreviation
+  sectionSet(isPrimary: true, year: $year, semester: $semester) {
+    edges {
+      node {
+        ...Lecture
+      }
+    }
+  }
+}
+    ${LectureFragmentDoc}`;
+export const ScheduleOverviewFragmentDoc = gql`
+    fragment ScheduleOverview on ScheduleType {
+  id
+  year
+  semester
+  name
+  totalUnits
+  dateCreated
+  dateModified
+  selectedSections {
+    edges {
+      node {
+        course {
+          abbreviation
+          courseNumber
+          units
+        }
+      }
+    }
+  }
 }
     `;
 export const UserProfileFragmentDoc = gql`
@@ -1014,8 +1577,98 @@ export const UserProfileFragmentDoc = gql`
   savedClasses {
     ...CourseOverview
   }
+  schedules {
+    edges {
+      node {
+        ...ScheduleOverview
+      }
+    }
+  }
 }
-    ${CourseOverviewFragmentDoc}`;
+    ${CourseOverviewFragmentDoc}
+${ScheduleOverviewFragmentDoc}`;
+export const CreateScheduleDocument = gql`
+    mutation CreateSchedule($name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $totalUnits: String!, $semester: String!, $year: String!, $public: Boolean!) {
+  createSchedule(
+    name: $name
+    selectedSections: $selectedSections
+    timeblocks: $timeblocks
+    semester: $semester
+    year: $year
+    public: $public
+    totalUnits: $totalUnits
+  ) {
+    schedule {
+      ...Schedule
+    }
+  }
+}
+    ${ScheduleFragmentDoc}`;
+export type CreateScheduleMutationFn = Apollo.MutationFunction<CreateScheduleMutation, CreateScheduleMutationVariables>;
+
+/**
+ * __useCreateScheduleMutation__
+ *
+ * To run a mutation, you first call `useCreateScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createScheduleMutation, { data, loading, error }] = useCreateScheduleMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      selectedSections: // value for 'selectedSections'
+ *      timeblocks: // value for 'timeblocks'
+ *      totalUnits: // value for 'totalUnits'
+ *      semester: // value for 'semester'
+ *      year: // value for 'year'
+ *      public: // value for 'public'
+ *   },
+ * });
+ */
+export function useCreateScheduleMutation(baseOptions?: Apollo.MutationHookOptions<CreateScheduleMutation, CreateScheduleMutationVariables>) {
+        return Apollo.useMutation<CreateScheduleMutation, CreateScheduleMutationVariables>(CreateScheduleDocument, baseOptions);
+      }
+export type CreateScheduleMutationHookResult = ReturnType<typeof useCreateScheduleMutation>;
+export type CreateScheduleMutationResult = Apollo.MutationResult<CreateScheduleMutation>;
+export type CreateScheduleMutationOptions = Apollo.BaseMutationOptions<CreateScheduleMutation, CreateScheduleMutationVariables>;
+export const DeleteScheduleDocument = gql`
+    mutation DeleteSchedule($id: ID!) {
+  removeSchedule(scheduleId: $id) {
+    schedule {
+      id
+    }
+  }
+}
+    `;
+export type DeleteScheduleMutationFn = Apollo.MutationFunction<DeleteScheduleMutation, DeleteScheduleMutationVariables>;
+
+/**
+ * __useDeleteScheduleMutation__
+ *
+ * To run a mutation, you first call `useDeleteScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteScheduleMutation, { data, loading, error }] = useDeleteScheduleMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteScheduleMutation(baseOptions?: Apollo.MutationHookOptions<DeleteScheduleMutation, DeleteScheduleMutationVariables>) {
+        return Apollo.useMutation<DeleteScheduleMutation, DeleteScheduleMutationVariables>(DeleteScheduleDocument, baseOptions);
+      }
+export type DeleteScheduleMutationHookResult = ReturnType<typeof useDeleteScheduleMutation>;
+export type DeleteScheduleMutationResult = Apollo.MutationResult<DeleteScheduleMutation>;
+export type DeleteScheduleMutationOptions = Apollo.BaseMutationOptions<DeleteScheduleMutation, DeleteScheduleMutationVariables>;
 export const DeleteUserDocument = gql`
     mutation DeleteUser {
   deleteUser {
@@ -1047,6 +1700,43 @@ export function useDeleteUserMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeleteUserMutationHookResult = ReturnType<typeof useDeleteUserMutation>;
 export type DeleteUserMutationResult = Apollo.MutationResult<DeleteUserMutation>;
 export type DeleteUserMutationOptions = Apollo.BaseMutationOptions<DeleteUserMutation, DeleteUserMutationVariables>;
+export const LoginDocument = gql`
+    mutation Login($token: String!) {
+  login(tokenId: $token) {
+    newUser
+    refreshExpiresIn
+    payload
+    user {
+      ...UserProfile
+    }
+  }
+}
+    ${UserProfileFragmentDoc}`;
+export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
+
+/**
+ * __useLoginMutation__
+ *
+ * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginMutation, { data, loading, error }] = useLoginMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, baseOptions);
+      }
+export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
+export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
+export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout {
@@ -1152,6 +1842,52 @@ export function useUnsaveCourseMutation(baseOptions?: Apollo.MutationHookOptions
 export type UnsaveCourseMutationHookResult = ReturnType<typeof useUnsaveCourseMutation>;
 export type UnsaveCourseMutationResult = Apollo.MutationResult<UnsaveCourseMutation>;
 export type UnsaveCourseMutationOptions = Apollo.BaseMutationOptions<UnsaveCourseMutation, UnsaveCourseMutationVariables>;
+export const UpdateScheduleDocument = gql`
+    mutation UpdateSchedule($scheduleId: ID!, $name: String!, $selectedSections: [SectionSelectionInput]!, $timeblocks: [TimeBlockInput]!, $totalUnits: String!, $public: Boolean!) {
+  updateSchedule(
+    scheduleId: $scheduleId
+    name: $name
+    selectedSections: $selectedSections
+    timeblocks: $timeblocks
+    totalUnits: $totalUnits
+    public: $public
+  ) {
+    schedule {
+      ...Schedule
+    }
+  }
+}
+    ${ScheduleFragmentDoc}`;
+export type UpdateScheduleMutationFn = Apollo.MutationFunction<UpdateScheduleMutation, UpdateScheduleMutationVariables>;
+
+/**
+ * __useUpdateScheduleMutation__
+ *
+ * To run a mutation, you first call `useUpdateScheduleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateScheduleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateScheduleMutation, { data, loading, error }] = useUpdateScheduleMutation({
+ *   variables: {
+ *      scheduleId: // value for 'scheduleId'
+ *      name: // value for 'name'
+ *      selectedSections: // value for 'selectedSections'
+ *      timeblocks: // value for 'timeblocks'
+ *      totalUnits: // value for 'totalUnits'
+ *      public: // value for 'public'
+ *   },
+ * });
+ */
+export function useUpdateScheduleMutation(baseOptions?: Apollo.MutationHookOptions<UpdateScheduleMutation, UpdateScheduleMutationVariables>) {
+        return Apollo.useMutation<UpdateScheduleMutation, UpdateScheduleMutationVariables>(UpdateScheduleDocument, baseOptions);
+      }
+export type UpdateScheduleMutationHookResult = ReturnType<typeof useUpdateScheduleMutation>;
+export type UpdateScheduleMutationResult = Apollo.MutationResult<UpdateScheduleMutation>;
+export type UpdateScheduleMutationOptions = Apollo.BaseMutationOptions<UpdateScheduleMutation, UpdateScheduleMutationVariables>;
 export const UpdateUserDocument = gql`
     mutation UpdateUser($emailBerkeleytimeUpdate: Boolean, $emailClassUpdate: Boolean, $emailEnrollmentOpening: Boolean, $emailGradeUpdate: Boolean, $major: String) {
   updateUser(
@@ -1201,43 +1937,6 @@ export function useUpdateUserMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateUserMutationHookResult = ReturnType<typeof useUpdateUserMutation>;
 export type UpdateUserMutationResult = Apollo.MutationResult<UpdateUserMutation>;
 export type UpdateUserMutationOptions = Apollo.BaseMutationOptions<UpdateUserMutation, UpdateUserMutationVariables>;
-export const LoginDocument = gql`
-    mutation Login($token: String!) {
-  login(tokenId: $token) {
-    newUser
-    refreshExpiresIn
-    payload
-    user {
-      ...UserProfile
-    }
-  }
-}
-    ${UserProfileFragmentDoc}`;
-export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
-
-/**
- * __useLoginMutation__
- *
- * To run a mutation, you first call `useLoginMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLoginMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [loginMutation, { data, loading, error }] = useLoginMutation({
- *   variables: {
- *      token: // value for 'token'
- *   },
- * });
- */
-export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
-        return Apollo.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, baseOptions);
-      }
-export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
-export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
-export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const GetCourseForIdDocument = gql`
     query GetCourseForId($id: ID!, $year: String, $semester: String) {
   course(id: $id) {
@@ -1386,9 +2085,77 @@ export function useGetFiltersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type GetFiltersQueryHookResult = ReturnType<typeof useGetFiltersQuery>;
 export type GetFiltersLazyQueryHookResult = ReturnType<typeof useGetFiltersLazyQuery>;
 export type GetFiltersQueryResult = Apollo.QueryResult<GetFiltersQuery, GetFiltersQueryVariables>;
+export const GetScheduleForIdDocument = gql`
+    query GetScheduleForId($id: ID!) {
+  schedule(id: $id) {
+    ...Schedule
+  }
+}
+    ${ScheduleFragmentDoc}`;
+
+/**
+ * __useGetScheduleForIdQuery__
+ *
+ * To run a query within a React component, call `useGetScheduleForIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetScheduleForIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetScheduleForIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetScheduleForIdQuery(baseOptions: Apollo.QueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {
+        return Apollo.useQuery<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>(GetScheduleForIdDocument, baseOptions);
+      }
+export function useGetScheduleForIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>(GetScheduleForIdDocument, baseOptions);
+        }
+export type GetScheduleForIdQueryHookResult = ReturnType<typeof useGetScheduleForIdQuery>;
+export type GetScheduleForIdLazyQueryHookResult = ReturnType<typeof useGetScheduleForIdLazyQuery>;
+export type GetScheduleForIdQueryResult = Apollo.QueryResult<GetScheduleForIdQuery, GetScheduleForIdQueryVariables>;
+export const GetSchedulerCourseForIdDocument = gql`
+    query GetSchedulerCourseForId($id: ID!, $year: String, $semester: String) {
+  course(id: $id) {
+    ...SchedulerCourse
+  }
+}
+    ${SchedulerCourseFragmentDoc}`;
+
+/**
+ * __useGetSchedulerCourseForIdQuery__
+ *
+ * To run a query within a React component, call `useGetSchedulerCourseForIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSchedulerCourseForIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSchedulerCourseForIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *      year: // value for 'year'
+ *      semester: // value for 'semester'
+ *   },
+ * });
+ */
+export function useGetSchedulerCourseForIdQuery(baseOptions: Apollo.QueryHookOptions<GetSchedulerCourseForIdQuery, GetSchedulerCourseForIdQueryVariables>) {
+        return Apollo.useQuery<GetSchedulerCourseForIdQuery, GetSchedulerCourseForIdQueryVariables>(GetSchedulerCourseForIdDocument, baseOptions);
+      }
+export function useGetSchedulerCourseForIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetSchedulerCourseForIdQuery, GetSchedulerCourseForIdQueryVariables>) {
+          return Apollo.useLazyQuery<GetSchedulerCourseForIdQuery, GetSchedulerCourseForIdQueryVariables>(GetSchedulerCourseForIdDocument, baseOptions);
+        }
+export type GetSchedulerCourseForIdQueryHookResult = ReturnType<typeof useGetSchedulerCourseForIdQuery>;
+export type GetSchedulerCourseForIdLazyQueryHookResult = ReturnType<typeof useGetSchedulerCourseForIdLazyQuery>;
+export type GetSchedulerCourseForIdQueryResult = Apollo.QueryResult<GetSchedulerCourseForIdQuery, GetSchedulerCourseForIdQueryVariables>;
 export const GetSemestersDocument = gql`
-    query GetSemesters {
-  allPlaylists(category: "semester") {
+    query GetSemesters($name: String) {
+  allPlaylists(category: "semester", name: $name) {
     edges {
       node {
         ...Filter
@@ -1410,6 +2177,7 @@ export const GetSemestersDocument = gql`
  * @example
  * const { data, loading, error } = useGetSemestersQuery({
  *   variables: {
+ *      name: // value for 'name'
  *   },
  * });
  */
