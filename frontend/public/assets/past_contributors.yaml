@@ -1,6 +1,23 @@
 - name: Class of 2021
   rows:
-    - - name: Janet Xu
+    - - name: Grace Luo
+        role: Product Manager
+        site: https://www.linkedin.com/in/g-luo/
+      - name: Christopher Liu
+        role: Frontend Lead
+        site: https://chrisdliu.github.io
+      - name: Hannah Yan
+        role: Designer
+        site: https://www.linkedin.com/in/yanhannah/
+      - name: Leon Ming
+        role: Backend Lead
+        site: https://leon-ming.com
+    - - name: Junghyun Choy
+        role: Designer
+      - name: Jonathan Pan
+        role: Backend Engineer
+        site: https://www.linkedin.com/in/jonathan-pan/
+      - name: Janet Xu
         role: Design Lead
         site: https://janetxrm.github.io
 - name: Class of 2020
