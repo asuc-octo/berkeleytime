@@ -3,7 +3,7 @@ import redis from "redis"
 import { URL_REDIS } from "#src/config"
 
 export const redisClient = redis.createClient({
-  url: `rediss://default:E56dMwqNSQwppVGx@rpi.berkeleytime.com:6379`,
+  url: URL_REDIS,
 })
 await redisClient.connect()
 await redisClient.sendCommand(["CONFIG", "SET", "notify-keyspace-events", "Ex"])
