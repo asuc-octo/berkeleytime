@@ -48,7 +48,7 @@ export const SIS_Courses = new (class Controller {
         "status-code": statusCode,
       })}`
     )
-    return sisResponse.data.apiResponse.response.any.courses
+    return sisResponse.data.apiResponse.response.courses
   }
 
   requestDump: ExpressMiddleware<

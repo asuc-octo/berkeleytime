@@ -21,11 +21,7 @@ export const SIS_CLASS_APP_ID: string = process.env.SIS_CLASS_APP_ID
 export const SIS_CLASS_APP_KEY: string = process.env.SIS_CLASS_APP_KEY
 export const SIS_COURSE_APP_ID: string = process.env.SIS_COURSE_APP_ID
 export const SIS_COURSE_APP_KEY: string = process.env.SIS_COURSE_APP_KEY
-export const URL_DISCORD_WEBHOOK: string = process.env.URL_DISCORD_WEBHOOK
 export const URL_DOMAIN = process.env.URL_DOMAIN || "http://localhost:3000"
 export const URL_MDB = process.env.URL_MDB || ""
 export const URL_REDIS = process.env.URL_REDIS
-export const URL_SIS_COURSE_API = "https://apis.berkeley.edu/sis/v2/courses"
-export const MIKRO_ORM_CONFIG = {
-  // TODO
-}
+export const URL_SIS_COURSE_API = "https://apis.berkeley.edu/sis/v3/courses"

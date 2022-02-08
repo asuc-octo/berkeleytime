@@ -1,10 +1,11 @@
 {
   "dependencies": {
     "@google-cloud/storage": "^5.8.5",
-    "@mikro-orm/core": "^4.5.7",
+    "@mikro-orm/core": "^4.5.10",
+    "@mikro-orm/mongodb": "^4.5.10",
     "@mikro-orm/postgresql": "^4.5.7",
     "@sendgrid/mail": "^7.4.4",
-    "@typegoose/typegoose": "^7.6.1",
+    "@typegoose/typegoose": "^9.6.2",
     "ajv": "^8.6.0",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.0",
@@ -14,7 +15,6 @@
     "app-root-path": "^3.0.0",
     "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
-    "bluebird": "^3.5.1",
     "cheerio": "^1.0.0-rc.10",
     "class-validator": "^0.13.1",
     "cors": "^2.8.5",
@@ -26,16 +26,17 @@
     "graphql-tools": "^7.0.5",
     "jsonwebtoken": "^8.5.1",
     "moment-timezone": "^0.5.33",
-    "mongoose": "^5.10.18",
+    "mongoose": "^6.2.0",
     "mongoose-time-machine": "^1.0.3",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "querystring": "^0.2.1",
-    "redis": "^2.8.0",
+    "redis": "^4.0.3",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1",
     "typedi": "^0.8.0",
-    "typescript": "^4.3.2"
+    "typescript": "^4.5.5",
+    "uuid": "^8.3.2"
   },
   "description": "Berkeleytime backend v3, written in Node.js",
   "devDependencies": {
@@ -46,6 +47,7 @@
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.1",
     "prettier-plugin-sort-json": "0.0.2",
+    "ts-node": "^10.5.0",
     "tsc-watch": "^4.4.0"
   },
   "husky": {
@@ -65,7 +67,7 @@
   "name": "backend",
   "scripts": {
     "build": "rm -rf build && tsc",
-    "dev": "NODE_ENV=dev rm -rf build && tsc-watch --onSuccess \"node build\"",
+    "dev": "NODE_ENV=dev tsc-watch --onSuccess \"node --enable-source-maps build\"",
     "format": "prettier --write **/*.{js,ts,json}",
     "start": "node build"
   },

@@ -3,7 +3,10 @@ import { Field, ObjectType } from "type-graphql"
 
 import { CourseSchema } from "#src/models/Course"
 
-import { prop, getModelForClass, Ref } from "@typegoose/typegoose"
+import { getModelForClass, Ref } from "@typegoose/typegoose"
+import Typegoose from "@typegoose/typegoose"
+
+// cannot just import @prop, @plugin because https://github.com/typegoose/typegoose/issues/214
 
 @ObjectType()
 export class UserSchema {
@@ -11,67 +14,73 @@ export class UserSchema {
   readonly _id: string
 
   @Field()
-  @prop()
+  readonly _created: Date
+
+  @Field()
+  readonly _updated: Date
+
+  @Field()
+  @Typegoose.prop()
   access_token_expiration: Date
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   access_token: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   activated: boolean
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   activation_token: string
 
   @Field()
-  @prop({ default: null })
+  @Typegoose.prop({ default: null })
   @Length(1, 255)
   bio: string
 
   @Field(() => [CourseSchema])
-  @prop({ ref: CourseSchema })
+  @Typegoose.prop({ ref: CourseSchema })
   @Length(1, 30)
   classes_saved: Ref<CourseSchema>[]
 
   @Field(() => [CourseSchema])
-  @prop({ ref: CourseSchema })
+  @Typegoose.prop({ ref: CourseSchema })
   @Length(1, 30)
   classes_watching: Ref<CourseSchema>[]
 
   @Field()
-  @prop({ default: false })
+  @Typegoose.prop({ default: false })
   notify_update_classes: boolean
 
   @Field()
-  @prop({ default: false })
+  @Typegoose.prop({ default: false })
   notify_update_grades: boolean
 
   @Field()
-  @prop({ default: false })
+  @Typegoose.prop({ default: false })
   notify_update_berkeleytime: boolean
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   @IsEmail()
   email: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   google_id: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   jwt: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   name: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   password: string
 
   get name_given() {

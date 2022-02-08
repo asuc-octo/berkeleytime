@@ -4,9 +4,10 @@ import { Length } from "class-validator"
 import timeMachine from "mongoose-time-machine"
 import { Field, ObjectType } from "type-graphql"
 
-import { prop, getModelForClass, plugin } from "@typegoose/typegoose"
+import { getModelForClass } from "@typegoose/typegoose"
+import Typegoose from "@typegoose/typegoose"
 
-// https://github.com/bsovs/mongoose-time-machine
+// cannot just import @prop, @plugin because https://github.com/typegoose/typegoose/issues/214
 
 type ENUM_GRADES =
   | "A+"
@@ -23,77 +24,77 @@ type ENUM_GRADES =
   | "D-"
   | "F"
 
-@plugin(timeMachine.plugin, { name: "course_history" })
+@Typegoose.plugin(timeMachine.plugin, { name: "course_history" })
 @ObjectType()
 export class CourseSchema {
   @Field()
-  @prop()
+  @Typegoose.prop()
   @Length(1, 10)
   abbreviation: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   @Length(1, 10)
   course_number: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   @Length(1, 300)
   department: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   @Length(1, 1000)
   description: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   gpa: number
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   enrollment: boolean
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   enrollment_max: number
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   enrollment_min: number
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   enrollment_percent: number
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   letter_average: ENUM_GRADES
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   @Length(1, 1000)
   prerequisites: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   seats_open: number
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   @Length(1, 1000)
   title: string
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   units_min: number
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   units_max: number
 
   @Field()
-  @prop()
+  @Typegoose.prop()
   waitlisted: number
 }
 
