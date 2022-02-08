@@ -104,7 +104,8 @@ export const Users = new (class Controller implements IController {
         user &&
         (user.activated ||
           (!user.activated &&
-            Date.now() - user._created < EXPIRE_TIME_ACTIVATION_EMAIL))
+            Date.now().valueOf() - user._created.valueOf() <
+              EXPIRE_TIME_ACTIVATION_EMAIL))
       ) {
         errors.email = "User with that email already exists"
         return res.status(422).json(errors)

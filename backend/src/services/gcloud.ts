@@ -2,8 +2,7 @@ import {
   GCLOUD_BUCKET,
   GCLOUD_REGION,
   GCLOUD_SERVICE_ACCOUNT_EMAIL,
-  GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY,
-  URL_DISCORD_WEBHOOK,
+  GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY
 } from "#src/config"
 
 import * as gcs from "@google-cloud/storage"
