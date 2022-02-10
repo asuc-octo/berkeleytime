@@ -63,7 +63,8 @@ deploy-staging:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_DATA    | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
-    - kubectl wait --for condition=Available --timeout=1200s deploy/bt-frontend-staging deploy/bt-backend-staging
+    - kubectl rollout status --timeout=1200s deploy/bt-backend-staging
+    - kubectl rollout status --timeout=1200s deploy/bt-frontend-staging
 
 deploy-prod:
   stage: deploy-prod
@@ -77,4 +78,5 @@ deploy-prod:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_DATA    | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
-    - kubectl wait --for condition=Available --timeout=1200s deploy/bt-frontend-prod deploy/bt-backend-prod
+    - kubectl rollout status --timeout=1200s deploy/bt-backend-prod
+    - kubectl rollout status --timeout=1200s deploy/bt-frontend-prod
