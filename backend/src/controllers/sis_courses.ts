@@ -4,6 +4,7 @@ import axios from "axios"
 import fs from "fs"
 import _ from "lodash"
 import moment from "moment-timezone"
+import PQueue from "p-queue"
 import { Readable } from "stream"
 import stream from "stream/promises"
 import zlib from "zlib"
@@ -122,8 +123,8 @@ export const SIS_Courses = new (class Controller {
        * db.sis_course_histories.find({ collectionId: ObjectId("60d48b6c2a31c9ae8d937058") }).pretty()
        */
       const foundCourse = await SIS_Course.findOne({
-        identifiers: sisCourse.identifiers,
-      })
+        identifiers: sisCourse.identifiers, // it is possible for old/deprecated courses to have same 'cs-course-id', so it is important to also use 'cms-id' which is truly unique
+      }).cache(43200)
       if (_.isEqual(foundCourse?.toJSON(), sisCourse)) {
         console.info(
           moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
@@ -163,6 +164,7 @@ export const SIS_Courses = new (class Controller {
      * Parse lines as they stream in from internet, to avoid entire file load
      * https://nodejs.org/api/stream.html#stream_stream_pipeline_streams_callback
      */
+    const queue = new PQueue({ concurrency: 10 })
     await stream.pipeline(
       storageClient.currentBucket
         .file(`${GCLOUD_PATH_SIS_COURSE_DUMPS}/${key}`)
@@ -173,9 +175,11 @@ export const SIS_Courses = new (class Controller {
         for await (const chunk of source) {
           for (let c of chunk) {
             if (c == "\n") {
-              await businessLogic({
-                sisCourse: JSON.parse(jsonLine),
-              })
+              await queue.add(() =>
+                businessLogic({
+                  sisCourse: JSON.parse(jsonLine),
+                })
+              )
               jsonLine = ""
             } else {
               jsonLine += c
@@ -189,7 +193,7 @@ export const SIS_Courses = new (class Controller {
     console.info(
       `${moment()
         .tz("America/Los_Angeles")
-        .format(`YYYY-MM-DD HH-mm-ss`)}\tsuccessful close on stream "${key}"`
+        .format(`YYYY-MM-DD HH-mm-ss`)}\tfinished parsing of dump "${key}"`
     )
 
     res.json({ success: true })
