@@ -90,7 +90,7 @@ export const SIS_Classes = new (class Controller {
       res.json({ message: "started" })
       for await (const sisCourse of SIS_Course.find({
         "status.code": "ACTIVE",
-        identifiers: { $eq: { type: "cs-course-id", id: "" } },
+        identifiers: { $ne: { type: "cs-course-id", id: "" } },
       })) {
         const ts = moment()
           .tz("America/Los_Angeles")
