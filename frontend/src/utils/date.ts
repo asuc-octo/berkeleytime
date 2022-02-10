@@ -104,7 +104,7 @@ export const dayToICalDay = (day: number): string => ICAL_DAY_NAMES[day];
 export function timeToHourString(time: number): string {
   const floorModTime = ((time % 24) + 24) % 24;
 
-  if (time <= 12) {
+  if (time < 12) {
     return `${floorModTime}am`;
   } else {
     return `${floorModTime % 12}pm`;
