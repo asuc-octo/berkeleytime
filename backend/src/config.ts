@@ -7,7 +7,6 @@ export const GCLOUD_SERVICE_ACCOUNT_EMAIL =
 export const GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY =
   process.env.GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, "\n")
 export const GCLOUD_BUCKET = "berkeleytime-218606"
-export const GCLOUD_PATH_SIS_CLASS_DUMPS: string = "dumps_sis_class"
 export const GCLOUD_PATH_SIS_COURSE_DUMPS: string = "dumps_sis_course"
 export const GCLOUD_PROJECT_ID = "berkeleytime-218606"
 export const GCLOUD_REGION = "us-west2"
@@ -25,3 +24,6 @@ export const URL_DOMAIN = process.env.URL_DOMAIN || "http://localhost:3000"
 export const URL_MDB = process.env.URL_MDB || ""
 export const URL_REDIS = process.env.URL_REDIS
 export const URL_SIS_COURSE_API = "https://apis.berkeley.edu/sis/v3/courses"
+export const URL_SIS_CLASS_API = "https://apis.berkeley.edu/sis/v1/classes"
+export const URL_SIS_CLASS_SECTIONS_API =
+  "https://apis.berkeley.edu/sis/v1/classes/sections"

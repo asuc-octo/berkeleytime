@@ -1,15 +1,10 @@
-/**
- * SIS Course API is a huge pain in the ass so there's still tons of value in
- * converting their XML responses into a Mongo collection that we can use as
- * even if it's not inserted into GraphQL and even if it's just "raw data"
- */
 import mongoose from "mongoose"
 import timeMachine from "mongoose-time-machine"
 
-const SIS_CourseSchema = new mongoose.Schema(
+const SIS_ClassSchema = new mongoose.Schema(
   {},
   {
-    collection: "sis_course",
+    collection: "sis_class",
     minimize: false,
     strict: false,
     timestamps: { createdAt: "_created", updatedAt: "_updated" },
@@ -29,6 +24,6 @@ const SIS_CourseSchema = new mongoose.Schema(
   }
 )
 
-SIS_CourseSchema.plugin(timeMachine.plugin, { name: "sis_course_history" })
+SIS_ClassSchema.plugin(timeMachine.plugin, { name: "sis_class_history" })
 
-export const SIS_Course = mongoose.model("sis_course", SIS_CourseSchema)
+export const SIS_Class = mongoose.model("sis_class", SIS_ClassSchema)
