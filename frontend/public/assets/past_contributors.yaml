@@ -6,20 +6,20 @@
       - name: Christopher Liu
         role: Frontend Lead
         site: https://chrisdliu.github.io
-      - name: Hannah Yan
-        role: Designer
-        site: https://www.linkedin.com/in/yanhannah/
-      - name: Leon Ming
-        role: Backend Lead
-        site: https://leon-ming.com
-    - - name: Junghyun Choy
-        role: Designer
-      - name: Jonathan Pan
-        role: Backend Engineer
-        site: https://www.linkedin.com/in/jonathan-pan/
       - name: Janet Xu
         role: Design Lead
         site: https://www.linkedin.com/in/janet-xu/
+      - name: Hannah Yan
+        role: Designer
+        site: https://www.linkedin.com/in/yanhannah/
+    - - name: Junghyun Choy
+        role: Designer
+      - name: Leon Ming
+        role: Backend Lead
+        site: https://leon-ming.com 
+      - name: Jonathan Pan 
+        role: Backend Engineer
+        site: https://www.linkedin.com/in/jonathan-pan/
 - name: Class of 2020
   rows:
     - - name: Will Wang
