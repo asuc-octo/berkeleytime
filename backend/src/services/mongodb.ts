@@ -15,15 +15,6 @@ export interface IMongooseCacheOptions {
   ttlExtend?: boolean
 }
 
-/* useNewUrlParser to fix warning --> (node:57275)
- * DeprecationWarning: current URL string parser is deprecated,
- * and will be removed in a future version. To use the new parser,
- * pass option { useNewUrlParser: true } to MongoClient.connect. */
-/* useUnifiedTopology to fix warning --> (node:57231)
- * DeprecationWarning: current Server Discovery and Monitoring
- * engine is deprecated, and will be removed in a future version.
- * To use the new Server Discover and Monitoring engine, pass option
- * { useUnifiedTopology: true } to the MongoClient constructor. */
 mongoose.connect(URL_MDB)
 mongoose.connection.on("open", () => {
   console.log("********** MongoDB Successfully Connected **********")
