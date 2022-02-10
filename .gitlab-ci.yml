@@ -18,7 +18,6 @@ stages:
 
 .before_build:
   before_script:
-    # - gcloud config set builds/use_kaniko True # https://github.com/GoogleContainerTools/kaniko/issues/1793
     - gcloud auth activate-service-account --key-file $IAM_GITLAB_RUNNER
 
 build-backend:
@@ -64,6 +63,7 @@ deploy-staging:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_DATA    | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - kubectl wait --for condition=Available --timeout=1200s deploy/bt-frontend-staging deploy/bt-backend-staging
 
 deploy-prod:
   stage: deploy-prod
@@ -77,3 +77,4 @@ deploy-prod:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_DATA    | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - kubectl wait --for condition=Available --timeout=1200s deploy/bt-frontend-prod deploy/bt-backend-prod
