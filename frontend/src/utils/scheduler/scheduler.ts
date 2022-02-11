@@ -208,8 +208,8 @@ export const serializeSchedule = (
  * Generates iCal file string.
  */
 export function scheduleToICal(schedule: Schedule, semester: Semester): string {
-  const SEMESTER_START = new Date(2022, 1, 18);
-  const LAST_COURSE_DAY = new Date(2022, 5, 6);
+  const SEMESTER_START = new Date(2022, 0, 18);
+  const LAST_COURSE_DAY = new Date(2022, 4, 6);
 
   const dateToICal = (date: Date) =>
     date.toISOString().replace(/[-:Z]|\.\d+/g, '');
