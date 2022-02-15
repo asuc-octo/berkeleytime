@@ -4,7 +4,6 @@
 import "apollo-cache-control";
 import { RedisCache } from "apollo-server-cache-redis";
 import { ApolloServer } from "apollo-server-express";
-import cors from "cors";
 import mongoose from "mongoose";
 import passport from "passport";
 import { dirname } from "path";
@@ -13,7 +12,7 @@ import { MiddlewareFn } from "type-graphql";
 import { Container } from "typedi";
 import { URL } from "url";
 
-import { URL_DOMAIN, URL_REDIS } from "#src/config";
+import { URL_REDIS } from "#src/config";
 import { UserResolver } from "#src/graphql/resolvers/_index";
 import { dependencyInjector } from "#src/helpers/dependencyInjector";
 import { User } from "#src/models/_index";
@@ -64,18 +63,7 @@ const configureApolloServer = async ({ redis, Container }) => {
 };
 
 export default async (app) => {
-  if (process.env.NODE_ENV == "prod") {
-    app.use(
-      cors({
-        origin: URL_DOMAIN,
-        credentials: true,
-      })
-    );
-  } else {
-    app.use(cors());
-  }
-
-  await dependencyInjector(Container, [{ name: "userModel", model: User }]);
+  await dependencyInjector(Container, [{ name: "user", model: User }]);
   const apolloServer = await configureApolloServer({
     redis: redisClient,
     Container,
