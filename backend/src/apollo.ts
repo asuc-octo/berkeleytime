@@ -1,44 +1,44 @@
 // https://dev.to/smithg09/building-graphql-api-with-nodejs-typegraphql-typegoose-and-troubleshooting-common-challenges-9oa
 // https://github.com/DevUnderflow/nx-node-apollo-grahql-mongo/commit/06ee5fb8a1e50d434b5001e796b0b8d181daf874
 // ! FIXME: typedi stuck on version 0.8 due to bug with autogeneration https://github.com/typestack/typedi/issues/173
-import "apollo-cache-control"
-import { RedisCache } from "apollo-server-cache-redis"
-import { ApolloServer } from "apollo-server-express"
-import cors from "cors"
-import mongoose from "mongoose"
-import passport from "passport"
-import { dirname } from "path"
-import { buildSchema } from "type-graphql"
-import { MiddlewareFn } from "type-graphql"
-import { Container } from "typedi"
-import { URL } from "url"
+import "apollo-cache-control";
+import { RedisCache } from "apollo-server-cache-redis";
+import { ApolloServer } from "apollo-server-express";
+import cors from "cors";
+import mongoose from "mongoose";
+import passport from "passport";
+import { dirname } from "path";
+import { buildSchema } from "type-graphql";
+import { MiddlewareFn } from "type-graphql";
+import { Container } from "typedi";
+import { URL } from "url";
 
-import { URL_DOMAIN, URL_REDIS } from "#src/config"
-import { UserResolver } from "#src/graphql/resolvers/_index"
-import { dependencyInjector } from "#src/helpers/dependencyInjector"
-import { User } from "#src/models/_index"
-import { redisClient } from "#src/services/redis"
+import { URL_DOMAIN, URL_REDIS } from "#src/config";
+import { UserResolver } from "#src/graphql/resolvers/_index";
+import { dependencyInjector } from "#src/helpers/dependencyInjector";
+import { User } from "#src/models/_index";
+import { redisClient } from "#src/services/redis";
 
-import { getClassForDocument } from "@typegoose/typegoose"
+import { getClassForDocument } from "@typegoose/typegoose";
 
-const currentDir = dirname(new URL(import.meta.url).pathname)
+const currentDir = dirname(new URL(import.meta.url).pathname);
 
 function convertDocument(doc: mongoose.Document) {
-  const convertedDocument = doc.toObject()
-  const DocumentClass = getClassForDocument(doc)!
-  Object.setPrototypeOf(convertedDocument, DocumentClass.prototype)
-  return convertedDocument
+  const convertedDocument = doc.toObject();
+  const DocumentClass = getClassForDocument(doc)!;
+  Object.setPrototypeOf(convertedDocument, DocumentClass.prototype);
+  return convertedDocument;
 }
 
 const TypegooseMiddleware: MiddlewareFn = async ({}, next) => {
-  const result = await next()
+  const result = await next();
   if (Array.isArray(result)) {
     return result.map((item) =>
       item instanceof mongoose.Model ? convertDocument(item) : item
-    )
+    );
   }
-  return result instanceof mongoose.Model ? convertDocument(result) : result
-}
+  return result instanceof mongoose.Model ? convertDocument(result) : result;
+};
 
 const configureApolloServer = async ({ redis, Container }) => {
   return new ApolloServer({
@@ -60,8 +60,8 @@ const configureApolloServer = async ({ redis, Container }) => {
     introspection: true,
     playground: process.env.NODE_ENV != "prod",
     tracing: true,
-  })
-}
+  });
+};
 
 export default async (app) => {
   if (process.env.NODE_ENV == "prod") {
@@ -70,18 +70,18 @@ export default async (app) => {
         origin: URL_DOMAIN,
         credentials: true,
       })
-    )
+    );
   } else {
-    app.use(cors())
+    app.use(cors());
   }
 
-  await dependencyInjector(Container, [{ name: "userModel", model: User }])
+  await dependencyInjector(Container, [{ name: "userModel", model: User }]);
   const apolloServer = await configureApolloServer({
     redis: redisClient,
     Container,
-  })
-  apolloServer.applyMiddleware({ app, path: "/api/graphql" })
-}
+  });
+  apolloServer.applyMiddleware({ app, path: "/api/graphql" });
+};
 
 // Almost working
 // import { Base } from "#src/entities/_index"
