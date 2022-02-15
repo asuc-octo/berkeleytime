@@ -29,6 +29,7 @@
     "moment-timezone": "^0.5.33",
     "mongoose": "^6.2.0",
     "mongoose-time-machine": "^1.0.3",
+    "p-queue": "^7.2.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "redis": "^4.0.3",

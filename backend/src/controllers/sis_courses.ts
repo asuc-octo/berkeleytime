@@ -1,13 +1,13 @@
 // @ts-nocheck
 // https://api-central.berkeley.edu/api/72
-import axios from "axios"
-import fs from "fs"
-import _ from "lodash"
-import moment from "moment-timezone"
-import PQueue from "p-queue"
-import { Readable } from "stream"
-import stream from "stream/promises"
-import zlib from "zlib"
+import axios from "axios";
+import fs from "fs";
+import _ from "lodash";
+import moment from "moment-timezone";
+import PQueue from "p-queue";
+import { Readable } from "stream";
+import stream from "stream/promises";
+import zlib from "zlib";
 
 import {
   GCLOUD_BUCKET,
@@ -15,24 +15,24 @@ import {
   SIS_COURSE_APP_ID,
   SIS_COURSE_APP_KEY,
   URL_SIS_COURSE_API,
-} from "#src/config"
-import { SIS_Course } from "#src/models/_index"
-import { storageClient } from "#src/services/gcloud"
-import { ExpressMiddleware } from "#src/types"
+} from "#src/config";
+import { SIS_Course } from "#src/models/_index";
+import { storageClient } from "#src/services/gcloud";
+import { ExpressMiddleware } from "#src/types";
 
 export const SIS_Courses = new (class Controller {
   requestDataHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
-    res.json(await this.requestData({ ...req.query, user: req.user }))
-  }
+    res.json(await this.requestData({ ...req.query, user: req.user }));
+  };
 
   requestData = async ({
     pageNumber,
     pageSize,
     user,
   }: {
-    pageNumber: number
-    pageSize: number
-    user?: any
+    pageNumber: number;
+    pageSize: number;
+    user?: any;
   }) => {
     const sisResponse = await axios.get(`${URL_SIS_COURSE_API}`, {
       headers: {
@@ -44,48 +44,33 @@ export const SIS_Courses = new (class Controller {
         "page-number": pageNumber,
         "page-size": pageSize,
       },
-    })
-    return sisResponse.data?.apiResponse?.response?.courses
-  }
+    });
+    return sisResponse.data?.apiResponse?.response?.courses;
+  };
 
   requestDump: ExpressMiddleware<
     {
-      pageNumber: number | null
-      pageSize: number | null
+      pageNumber: number | null;
+      pageSize: number | null;
     },
     {}
   > = async (req, res) => {
-    let key: string
-    const timestamp = moment()
-      .tz("America/Los_Angeles")
-      .format(`YYYY-MM-DD----HH-mm-ss----dddd`)
-    if (req.user) {
-      key = `${GCLOUD_PATH_SIS_COURSE_DUMPS}/dump_SIS_Course_${timestamp}----${req.user.email}.jsonl.gz`
-    } else {
-      key = `${GCLOUD_PATH_SIS_COURSE_DUMPS}/dump_SIS_Course_${timestamp}----root.jsonl.gz`
-    }
+    const key = `${GCLOUD_PATH_SIS_COURSE_DUMPS}/dump_SIS_Course.jsonl.gz`;
+    let bytesSent = 0;
+    let pageNumber = 1;
+    const pageSize = 500;
+    let sisCourses;
+
     const googleWriteStream = storageClient.currentBucket
       .file(key)
-      .createWriteStream()
-    googleWriteStream.on("finish", () => {
-      console.info(
-        `${moment()
-          .tz("America/Los_Angeles")
-          .format(`YYYY-MM-DD HH-mm-ss`)}\tsuccessful close on stream "${key}"`
-      )
-    })
-    let bytesSent = 0
-    let pageNumber = 1
-    let sisCourses
-    const pageSize = 500
+      .createWriteStream();
     do {
       sisCourses = await this.requestData({
         pageNumber,
         pageSize,
-      })
-      console.info(`pageNumber ${pageNumber.toString().padStart(4, "0")}`)
+      });
       for (let sisCourse of sisCourses) {
-        const jsonl = `${JSON.stringify(sisCourse)}\n`
+        const jsonl = `${JSON.stringify(sisCourse)}\n`;
         await stream.pipeline(
           Readable.from(jsonl),
           zlib.createGzip().on("data", (buf) => {
@@ -99,38 +84,40 @@ export const SIS_Courses = new (class Controller {
                   "0"
                 )} total bytes streamed "${key}": ${(bytesSent +=
                 buf.byteLength)}`
-            )
+            );
           }),
           googleWriteStream,
           { end: false } // https://github.com/nodejs/node/pull/40886
-        )
+        );
       }
-    } while (sisCourses.length == pageSize && pageNumber++ < Infinity)
-    googleWriteStream.end()
-    res.json({ key: `gs://${GCLOUD_BUCKET}/${key}` })
-  }
+    } while (sisCourses.length == pageSize && pageNumber++ < Infinity);
+    googleWriteStream.end();
+    console.info(
+      `${moment()
+        .tz("America/Los_Angeles")
+        .format(`YYYY-MM-DD HH-mm-ss`)} successful close on stream "${key}"`
+    );
+    res.json({ key: `gs://${GCLOUD_BUCKET}/${key}` });
+  };
 
+  /**
+   * Parse lines as they stream in from internet, to avoid entire file load
+   * https://nodejs.org/api/stream.html#stream_stream_pipeline_streams_callback
+   */
   parseDump: ExpressMiddleware<{}, {}> = async (req, res) => {
-    const { key } = req.query
-    let sisCourseCount = 0
-    let jsonLine = ""
+    const { key } = req.query;
+    let sisCourseCount = 0;
 
     const businessLogic = async ({ sisCourse }) => {
-      /**
-       * https://mongoosejs.com/docs/tutorials/findoneandupdate.html
-       * example raw query in MongoDB
-       * db.sis_course.find({ identifiers: [{"type":"cms-id","id":"28bfb333-c098-4893-b2a9-08a15a099f11"},{"type":"cs-course-id","id":"124556"},{"type":"cms-version-independent-id","id":"780a3bbb-4b28-4a02-bf7a-20c3f6d3c998"}]})
-       * db.sis_course_histories.find({ collectionId: ObjectId("60d48b6c2a31c9ae8d937058") }).pretty()
-       */
       const foundCourse = await SIS_Course.findOne({
         identifiers: sisCourse.identifiers, // it is possible for old/deprecated courses to have same 'cs-course-id', so it is important to also use 'cms-id' which is truly unique
-      }).cache(43200)
+      }).cache(43200);
       if (_.isEqual(foundCourse?.toJSON(), sisCourse)) {
         console.info(
           moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
             ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") +
-            `no changes: (${foundCourse.id}) "${foundCourse.displayName}" / "${foundCourse.title}"`
-        )
+            `no changes: (${foundCourse._id}) "${foundCourse.displayName}" / "${foundCourse.title}"`
+        );
       } else {
         const result = await SIS_Course.findOneAndUpdate(
           { identifiers: sisCourse.identifiers },
@@ -142,60 +129,58 @@ export const SIS_Courses = new (class Controller {
             upsert: true,
             rawResult: true,
           }
-        )
+        );
         console.info(
           moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
             ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") +
             (result.lastErrorObject?.updatedExisting
               ? `updated (${result.value?._id}) '${result.value?.displayName}' '${result.value?.title}'`
               : `created (${result.lastErrorObject?.upserted}) "${result.value?.displayName}' '${result.value?.title}'`)
-        )
+        );
       }
-      sisCourseCount++
-      // const history = await SIS_Course.getHistories(result.value._id).limit(1)
-      // const history = await SIS_Course.history
-      //   .findOne({
-      //     collectionId: result.value._id,
-      //   })
-      //   .sort({ updatedAt: "desc" })
-    }
+      sisCourseCount++;
+    };
 
-    /**
-     * Parse lines as they stream in from internet, to avoid entire file load
-     * https://nodejs.org/api/stream.html#stream_stream_pipeline_streams_callback
-     */
-    const queue = new PQueue({ concurrency: 10 })
+    const queue = new PQueue({ concurrency: 10 });
+    let jsonLine = "";
+    const [files] = await storageClient.currentBucket.getFiles({
+      prefix: GCLOUD_PATH_SIS_COURSE_DUMPS,
+    });
+    const file = key
+      ? `${GCLOUD_PATH_SIS_COURSE_DUMPS}/${key}`
+      : _.orderBy(files, (f) => f.name, "desc")[0].name;
+    if (!file && !key) return res.json({ msg: `No object found` });
     await stream.pipeline(
-      storageClient.currentBucket
-        .file(`${GCLOUD_PATH_SIS_COURSE_DUMPS}/${key}`)
-        .createReadStream(),
+      storageClient.currentBucket.file(file).createReadStream(),
       zlib.createGunzip(),
       async function* (source) {
-        source.setEncoding("utf8")
+        source.setEncoding("utf8");
         for await (const chunk of source) {
-          for (let c of chunk) {
+          let lines = [];
+          for (const c of chunk) {
             if (c == "\n") {
-              await queue.add(() =>
-                businessLogic({
-                  sisCourse: JSON.parse(jsonLine),
-                })
-              )
-              jsonLine = ""
+              lines.push(jsonLine);
+              jsonLine = "";
             } else {
-              jsonLine += c
+              jsonLine += c;
             }
           }
-          yield "" // we write nothing because we don't want to save to disk
+          for (const line of lines) {
+            await queue.onSizeLessThan(1000);
+            queue.add(() => businessLogic({ sisCourse: JSON.parse(line) }));
+          }
+          yield ""; // we write nothing because we don't want to save to disk. TypeScript complains if no /dev/null
         }
       },
       fs.createWriteStream("/dev/null")
-    )
+    );
+    await queue.onEmpty();
     console.info(
       `${moment()
         .tz("America/Los_Angeles")
-        .format(`YYYY-MM-DD HH-mm-ss`)}\tfinished parsing of dump "${key}"`
-    )
+        .format(`YYYY-MM-DD HH-mm-ss`)}\tfinished parsing of dump "${file}"`
+    );
 
-    res.json({ success: true })
-  }
-})()
+    res.json({ success: true });
+  };
+})();
