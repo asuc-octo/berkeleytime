@@ -8,5 +8,5 @@ module.exports = {
   importOrder: ["#src/env", "^[a-zA-Z]", "#src", "^@[a-zA-Z]", "^[./]"],
   jsonRecursiveSort: true,
   importOrderSeparation: true,
-  semi: false,
+  semi: true,
 }

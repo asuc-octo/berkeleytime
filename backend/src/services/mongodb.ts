@@ -1,27 +1,29 @@
-import { createHash } from "crypto"
-import _ from "lodash"
-import mongoose from "mongoose"
+import { createHash } from "crypto";
+import _ from "lodash";
+import mongoose from "mongoose";
 
-import { URL_MDB } from "#src/config"
-import { redisClient } from "#src/services/redis"
+import { URL_MDB } from "#src/config";
+import { redisClient } from "#src/services/redis";
 
-const DEFAULT_TTL = 60
-const originalExec = mongoose.Query.prototype.exec
+const DEFAULT_TTL = 60;
+const originalExec = mongoose.Query.prototype.exec;
 
 export interface IMongooseCacheOptions {
-  ttl?: number
-  key?: string
-  flag?: boolean | string
-  ttlExtend?: boolean
+  ttl?: number;
+  key?: string;
+  flag?: boolean | string;
+  ttlExtend?: boolean;
 }
 
-mongoose.connect(URL_MDB)
+mongoose.pluralize(null);
+mongoose.connect(URL_MDB);
 mongoose.connection.on("open", () => {
-  console.log("********** MongoDB Successfully Connected **********")
-})
+  console.log("********** MongoDB Successfully Connected **********");
+});
 if (process.env.NODE_ENV != "prod") {
-  await import("colors")
+  await import("colors");
 
+  // uncomment if interested in seeing full MongoDB interactions printed to console
   // mongoose.set("debug", function (collectionName, method, query, doc) {
   //   console.log(
   //     "Mongoose: ".cyan +
@@ -41,29 +43,29 @@ if (process.env.NODE_ENV != "prod") {
 mongoose.Query.prototype["cache"] = function (
   options?: IMongooseCacheOptions | number
 ): mongoose.Query<any, any> {
-  this._cacheEnabled = true
-  this._key = null
-  this._ttl = DEFAULT_TTL
+  this._cacheEnabled = true;
+  this._key = null;
+  this._ttl = DEFAULT_TTL;
   if (typeof options === "number") {
-    this._ttl = options
+    this._ttl = options;
   } else if (options !== undefined) {
-    this._key = options.key
-    this._ttl = options.ttl ?? DEFAULT_TTL
-    this._ttlExtend = options.ttlExtend
+    this._key = options.key;
+    this._ttl = options.ttl ?? DEFAULT_TTL;
+    this._ttlExtend = options.ttlExtend;
     this._flag =
       typeof options.flag === "boolean"
         ? options.flag
           ? "cache"
           : undefined
-        : options.flag
+        : options.flag;
   }
-  return this
-}
+  return this;
+};
 mongoose.Query.prototype.exec = async function (): Promise<
   mongoose.QueryCursor<mongoose.Document>
 > {
   if (this._cacheEnabled !== true) {
-    return originalExec.apply(this, arguments)
+    return originalExec.apply(this, arguments);
   }
   const key =
     this._key ??
@@ -78,31 +80,31 @@ mongoose.Query.prototype.exec = async function (): Promise<
           },
         })
       )
-      .digest("hex")
-  const cachedResult = await redisClient.get(key)
+      .digest("hex");
+  const cachedResult = await redisClient.get(key);
   if (cachedResult !== null) {
-    const result: Object | Object[] = JSON.parse(cachedResult)
+    const result: Object | Object[] = JSON.parse(cachedResult);
     if (this._ttlExtend === true) {
-      redisClient.set(key, cachedResult, { EX: this._ttl })
+      redisClient.set(key, cachedResult, { EX: this._ttl });
     }
-    let models: any = []
+    let models: any = [];
     if (Array.isArray(result)) {
       result.forEach((item) => {
-        const model = new this.model(item)
-        model[this._flag] = true
-        models.push(model)
-      })
+        const model = new this.model(item);
+        model[this._flag] = true;
+        models.push(model);
+      });
     } else {
-      const model = new this.model(result)
-      model[this._flag] = true
-      models = model
+      const model = new this.model(result);
+      model[this._flag] = true;
+      models = model;
     }
-    return models
+    return models;
   }
-  const result = await originalExec.apply(this, arguments)
+  const result = await originalExec.apply(this, arguments);
   if (result !== null) {
-    redisClient.set(key, JSON.stringify(result), { EX: this._ttl })
+    redisClient.set(key, JSON.stringify(result), { EX: this._ttl });
   }
-  return result
-}
-mongoose.Model["purgeCacheKey"] = (key: string) => redisClient.del(key)
+  return result;
+};
+mongoose.Model["purgeCacheKey"] = (key: string) => redisClient.del(key);
