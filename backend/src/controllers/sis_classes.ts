@@ -3,7 +3,6 @@
 import axios from "axios";
 import _ from "lodash";
 import moment from "moment-timezone";
-import mongoose from "mongoose";
 import PQueue from "p-queue";
 
 import {
@@ -60,6 +59,7 @@ export const SIS_Classes = new (class Controller {
       .orderBy((sisClass) => sisClass.session.term.id, ["desc"])
       .filter(
         (value) =>
+          value.session.term.name.includes(moment().year() - 1) ||
           value.session.term.name.includes(moment().year()) ||
           value.session.term.name.includes(moment().year() + 1)
       )
@@ -102,7 +102,7 @@ export const SIS_Classes = new (class Controller {
       const terms = await SIS_Class.find({
         "course.identifiers": { type: "cs-course-id", id: courseId },
         "session.term.name": RegExp(
-          `${moment().year()}|${moment().year() + 1}`
+          `${moment().year() - 1}|${moment().year()}|${moment().year() + 1}`
         ),
       }).distinct("session.term.id");
       for (let termId of terms.reverse()) {
@@ -171,6 +171,7 @@ export const SIS_Classes = new (class Controller {
         }
       }
     }
+    await queue.onEmpty();
     res.json({ message: "finished" });
   };
 
@@ -266,6 +267,7 @@ export const SIS_Classes = new (class Controller {
 
         queue.add(() => businessLogic(sisCourse));
       }
+      await queue.onEmpty();
       res.json({ message: "finished" });
     } catch (err) {
       console.error(err);
