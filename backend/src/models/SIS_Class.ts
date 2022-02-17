@@ -1,9 +1,14 @@
+import { GraphQLScalarType } from "graphql";
 import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
 import Typegoose from "@typegoose/typegoose";
 
+const GraphQlTypelessData = new GraphQLScalarType({
+  name: "TypelessData",
+  serialize: (value) => value,
+});
 mongoose.pluralize(null);
 
 @GQL.ObjectType()
@@ -11,7 +16,10 @@ mongoose.pluralize(null);
   name: "sis_class_history",
   omit: ["_updated"],
 })
-export class SIS_ClassSchema {}
+export class SIS_ClassSchema {
+  @GQL.Field(() => GraphQlTypelessData)
+  _doc: object;
+}
 export const SIS_Class = Typegoose.getModelForClass(SIS_ClassSchema, {
   schemaOptions: {
     collection: "sis_class",
@@ -39,6 +47,9 @@ export const SIS_Class = Typegoose.getModelForClass(SIS_ClassSchema, {
   omit: ["_created", "_id", "_updated", "_version"],
 })
 class SIS_Class_SectionSchema {
+  @GQL.Field(() => GraphQlTypelessData)
+  _doc: object;
+
   @GQL.Field()
   @Typegoose.prop()
   readonly _id: string;

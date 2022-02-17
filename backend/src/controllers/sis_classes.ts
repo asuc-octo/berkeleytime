@@ -15,6 +15,8 @@ import {
 import { SIS_Class, SIS_Class_Section, SIS_Course } from "#src/models/_index";
 import { ExpressMiddleware } from "#src/types";
 
+const OMIT_KEYS = ["_created", "_id", "_updated", "_version"];
+
 export const SIS_Classes = new (class Controller {
   requestClassDataHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
     res.json(await this.requestClassData({ ...req.query, user: req.user }));
@@ -112,23 +114,23 @@ export const SIS_Classes = new (class Controller {
             });
 
             for (let classSection of sisClassSections) {
-              const foundClassSection: any = await SIS_Class_Section.findOne({
+              const original = await SIS_Class_Section.findOne({
                 "class.session.term.id": termId,
                 id: classSection.id,
               });
 
-              if (
-                _.isEqual(
-                  _.without(foundClassSection, undefined),
-                  _.without(classSection, undefined)
-                )
-              ) {
+              const foundClassSection = _.omitBy(
+                original?._doc,
+                (v, k) => OMIT_KEYS.includes(k) || v === undefined
+              );
+
+              if (_.isEqual(foundClassSection, classSection)) {
                 if (!foundClassSection) {
                   // prettier-ignore
                   console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(classSection)}`.red);
                 }
                 // prettier-ignore
-                console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS SECTION COUNT: ${shared.sisClassSectionCount}`.padEnd(55, " ") + `no changes: (${foundClassSection?._id}) cs-course-id '${courseId}' '${foundClassSection?.id}' '${classSection["displayName"]}'`
+                console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS SECTION COUNT: ${shared.sisClassSectionCount}`.padEnd(55, " ") + `no changes: (${original?._id}) cs-course-id '${courseId}' '${foundClassSection['id']}' '${classSection["displayName"]}'`
                 );
               } else {
                 const result = await SIS_Class_Section.findOneAndUpdate(
@@ -194,52 +196,35 @@ export const SIS_Classes = new (class Controller {
             });
           } catch (e) {
             if (e.response?.data?.apiResponse?.httpStatus) {
-              console.error(
-                `${moment()
-                  .tz("America/Los_Angeles")
-                  .format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${
-                  shared.sisClassCount
-                }`.padEnd(55, " ") +
-                  `FAILED cs-course-id '${courseId}' '${
-                    sisCourse.displayName
-                  }' '${sisCourse.title}', ${JSON.stringify(
-                    e.response.data.apiResponse.httpStatus
-                  )}`
-              );
+              // prettier-ignore
+              console.error(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse.displayName}' '${sisCourse.title}', ${JSON.stringify(e.response.data.apiResponse.httpStatus)}`);
             } else {
-              console.error(
-                `${moment()
-                  .tz("America/Los_Angeles")
-                  .format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${
-                  shared.sisClassCount
-                }`.padEnd(55, " ") +
-                  `FAILED cs-course-id '${courseId}' '${sisCourse.displayName}' '${sisCourse.title}', UNHANDLED EXCEPTION: ${e}`
-              );
+              // prettier-ignore
+              console.error(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse.displayName}' '${sisCourse.title}', UNHANDLED EXCEPTION: ${e}`);
             }
             shared.sisClassCount++;
             return;
           }
           for (let sisClass of sisClasses) {
-            const foundClass: any = await SIS_Class.findOne({
+            const original = await SIS_Class.findOne({
               "course.displayName": sisClass.course.displayName,
               "course.identifiers": sisClass.course.identifiers,
               "session.id": sisClass.session.id,
               "session.term.id": sisClass.session.term.id,
               number: sisClass.number,
             });
+            const foundClass = _.omitBy(
+              original?._doc,
+              (v, k) => OMIT_KEYS.includes(k) || v === undefined
+            );
 
-            if (
-              _.isEqual(
-                _.without(foundClass, undefined),
-                _.without(sisClass, undefined)
-              )
-            ) {
+            if (_.isEqual(foundClass, sisClass)) {
               if (!foundClass) {
                 // prettier-ignore
                 console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(sisClass)}`.red);
               }
               // prettier-ignore
-              console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `no changes: (${foundClass?._id}) cs-course-id '${courseId}' '${sisClass?.displayName}' / '${sisClass?.course?.title}'`);
+              console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `no changes: (${original?._id}) cs-course-id '${courseId}' '${sisClass?.displayName}' / '${sisClass?.course?.title}'`);
             } else {
               const result = await SIS_Class.findOneAndUpdate(
                 {
