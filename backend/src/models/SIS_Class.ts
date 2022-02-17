@@ -1,9 +1,19 @@
 import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
+import * as GQL from "type-graphql";
 
-const SIS_ClassSchema = new mongoose.Schema(
-  {},
-  {
+import Typegoose from "@typegoose/typegoose";
+
+mongoose.pluralize(null);
+
+@GQL.ObjectType()
+@Typegoose.plugin(timeMachine.plugin, {
+  name: "sis_class_history",
+  omit: ["_updated"],
+})
+export class SIS_ClassSchema {}
+export const SIS_Class = Typegoose.getModelForClass(SIS_ClassSchema, {
+  schemaOptions: {
     collection: "sis_class",
     id: false,
     minimize: false,
@@ -20,42 +30,44 @@ const SIS_ClassSchema = new mongoose.Schema(
       },
     },
     versionKey: "_version",
-  }
-);
-
-const SIS_Class_SectionSchema = new mongoose.Schema(
-  {},
-  {
-    collection: "sis_class_section",
-    id: false,
-    minimize: false,
-    strict: false,
-    timestamps: { createdAt: "_created", updatedAt: "_updated" },
-    toJSON: {
-      getters: true,
-      transform: (doc, ret, options) => {
-        delete ret._created;
-        delete ret._id;
-        delete ret._updated;
-        delete ret._version;
-        return ret;
-      },
-    },
-    versionKey: "_version",
-  }
-);
-
-SIS_ClassSchema.plugin(timeMachine.plugin, {
-  name: "sis_class_history",
-  omit: ["_updated"],
+  },
 });
-SIS_Class_SectionSchema.plugin(timeMachine.plugin, {
+
+@GQL.ObjectType()
+@Typegoose.plugin(timeMachine.plugin, {
   name: "sis_class_section_history",
-  omit: ["_updated"],
-});
+  omit: ["_created", "_id", "_updated", "_version"],
+})
+class SIS_Class_SectionSchema {
+  @GQL.Field()
+  @Typegoose.prop()
+  readonly _id: string;
 
-export const SIS_Class = mongoose.model("sis_class", SIS_ClassSchema);
-export const SIS_Class_Section = mongoose.model(
-  "sis_class_section",
-  SIS_Class_SectionSchema
+  @GQL.Field()
+  @Typegoose.prop()
+  readonly _created: Date;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  readonly _updated: Date;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  readonly _version: number;
+}
+export const SIS_Class_Section = Typegoose.getModelForClass(
+  SIS_Class_SectionSchema,
+  {
+    schemaOptions: {
+      collection: "sis_class_section",
+      id: false,
+      minimize: false,
+      strict: false,
+      timestamps: { createdAt: "_created", updatedAt: "_updated" },
+      toJSON: {
+        getters: true,
+      },
+      versionKey: "_version",
+    },
+  }
 );

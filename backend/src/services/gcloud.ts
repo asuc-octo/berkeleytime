@@ -2,10 +2,10 @@ import {
   GCLOUD_BUCKET,
   GCLOUD_REGION,
   GCLOUD_SERVICE_ACCOUNT_EMAIL,
-  GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY
-} from "#src/config"
+  GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY,
+} from "#src/config";
 
-import * as gcs from "@google-cloud/storage"
+import * as gcs from "@google-cloud/storage";
 
 /**
  * Helpful links:
@@ -32,45 +32,45 @@ import * as gcs from "@google-cloud/storage"
  */
 
 class storage extends gcs.Storage {
-  currentBucket: gcs.Bucket
+  currentBucket: gcs.Bucket;
   constructor({ bucketName, ...opts }) {
     super({
       credentials: {
         client_email: GCLOUD_SERVICE_ACCOUNT_EMAIL,
         private_key: GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY,
       },
-    })
-    this.currentBucket = this.bucket(bucketName)
+    });
+    this.currentBucket = this.bucket(bucketName);
   }
   bucketExists = async () => {
-    return (await this.currentBucket?.exists())[0]
-  }
+    return (await this.currentBucket?.exists())[0];
+  };
   bucketCreate = async (bucketName) => {
     const [bucket] = await this.createBucket(bucketName, {
       location: GCLOUD_REGION,
       storageClass: "STANDARD",
-    })
-    console.log(`Bucket ${bucket.name} created`)
-  }
+    });
+    console.info(`Bucket ${bucket.name} created`);
+  };
   ls = async (opts: gcs.GetFilesOptions): Promise<gcs.File[]> => {
-    const [files] = await this.currentBucket.getFiles(opts)
-    return files
-  }
+    const [files] = await this.currentBucket.getFiles(opts);
+    return files;
+  };
   upload = async ({
     key,
     data,
     fileOptions,
     fileSaveOptions,
   }: {
-    key: string
-    data: string | Buffer
-    fileOptions?: gcs.FileOptions
-    fileSaveOptions?: gcs.SaveOptions
+    key: string;
+    data: string | Buffer;
+    fileOptions?: gcs.FileOptions;
+    fileSaveOptions?: gcs.SaveOptions;
   }): Promise<gcs.File> => {
-    const file = await this.currentBucket.file(key, fileOptions)
-    await file.save(data, fileSaveOptions)
-    return file
-  }
+    const file = await this.currentBucket.file(key, fileOptions);
+    await file.save(data, fileSaveOptions);
+    return file;
+  };
 }
 
 export const storageClient = new storage({
@@ -79,16 +79,16 @@ export const storageClient = new storage({
     client_email: GCLOUD_SERVICE_ACCOUNT_EMAIL,
     private_key: GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY,
   },
-})
+});
 try {
   if (!(await storageClient.bucketExists())) {
-    await storageClient.bucketCreate(GCLOUD_BUCKET)
+    await storageClient.bucketCreate(GCLOUD_BUCKET);
   }
 } catch (error) {
-  console.error(error)
+  console.error(error);
   console.error(
     `ERROR! Resource access failure in Google Cloud Storage Bucket named "${GCLOUD_BUCKET}"! Program will now exit!`
       .red
-  )
-  process.exit(1)
+  );
+  process.exit(1);
 }

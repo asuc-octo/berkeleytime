@@ -16,25 +16,13 @@ export interface IMongooseCacheOptions {
 }
 
 mongoose.pluralize(null);
-mongoose.connect(URL_MDB);
-mongoose.connection.on("open", () => {
-  console.log("********** MongoDB Successfully Connected **********");
-});
+await mongoose.connect(URL_MDB);
+console.info(
+  `*** MongoDB successfully connected at ${mongoose.connection.host} ***`
+);
+
 if (process.env.NODE_ENV != "prod") {
   await import("colors");
-
-  // uncomment if interested in seeing full MongoDB interactions printed to console
-  // mongoose.set("debug", function (collectionName, method, query, doc) {
-  //   console.log(
-  //     "Mongoose: ".cyan +
-  //       collectionName +
-  //       "." +
-  //       method +
-  //       " (" +
-  //       JSON.stringify(query, null, 2) +
-  //       ")"
-  //   )
-  // })
 }
 
 // Mongoose + Redis caching

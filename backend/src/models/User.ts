@@ -1,117 +1,121 @@
-import { IsEmail, Length } from "class-validator"
-import { Field, ObjectType } from "type-graphql"
+import { IsEmail, Length } from "class-validator";
+import * as GQL from "type-graphql";
 
-import { CourseSchema } from "#src/models/Course"
+import { SIS_CourseSchema } from "#src/models/SIS_Course";
 
-import { getModelForClass, Ref } from "@typegoose/typegoose"
-import Typegoose from "@typegoose/typegoose"
+import Typegoose from "@typegoose/typegoose";
 
 // cannot just import @prop, @plugin because https://github.com/typegoose/typegoose/issues/214
 
-@ObjectType()
+@GQL.ObjectType()
 export class UserSchema {
-  @Field()
-  readonly _id: string
+  @GQL.Field(() => GQL.ID)
+  readonly _id: Typegoose.mongoose.Types.ObjectId;
 
-  @Field()
-  readonly _created: Date
-
-  @Field()
-  readonly _updated: Date
-
-  @Field()
+  @GQL.Field()
   @Typegoose.prop()
-  access_token_expiration: Date
+  readonly _created: Date;
 
-  @Field()
+  @GQL.Field()
   @Typegoose.prop()
-  access_token: string
+  readonly _updated: Date;
 
-  @Field()
+  @GQL.Field()
   @Typegoose.prop()
-  activated: boolean
+  access_token_expiration: Date;
 
-  @Field()
+  @GQL.Field()
   @Typegoose.prop()
-  activation_token: string
+  access_token: string;
 
-  @Field()
+  @GQL.Field()
+  @Typegoose.prop()
+  activated: boolean;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  activation_token: string;
+
+  @GQL.Field()
   @Typegoose.prop({ default: null })
   @Length(1, 255)
-  bio: string
+  bio: string;
 
-  @Field(() => [CourseSchema])
-  @Typegoose.prop({ ref: CourseSchema })
+  @GQL.Field(() => [SIS_CourseSchema])
+  @Typegoose.prop({ ref: SIS_CourseSchema })
   @Length(1, 30)
-  classes_saved: Ref<CourseSchema>[]
+  classes_saved: Typegoose.Ref<SIS_CourseSchema>[];
 
-  @Field(() => [CourseSchema])
-  @Typegoose.prop({ ref: CourseSchema })
+  @GQL.Field(() => [SIS_CourseSchema])
+  @Typegoose.prop({ ref: SIS_CourseSchema })
   @Length(1, 30)
-  classes_watching: Ref<CourseSchema>[]
+  classes_watching: Typegoose.Ref<SIS_CourseSchema>[];
 
-  @Field()
+  @GQL.Field(() => [UserSchema])
+  @Typegoose.prop({ autopopulate: true, ref: UserSchema })
+  @Length(1, 30)
+  friends: Typegoose.Ref<UserSchema>[];
+
+  @GQL.Field()
   @Typegoose.prop({ default: false })
-  notify_update_classes: boolean
+  notify_update_classes: boolean;
 
-  @Field()
+  @GQL.Field()
   @Typegoose.prop({ default: false })
-  notify_update_grades: boolean
+  notify_update_grades: boolean;
 
-  @Field()
+  @GQL.Field()
   @Typegoose.prop({ default: false })
-  notify_update_berkeleytime: boolean
+  notify_update_berkeleytime: boolean;
 
-  @Field()
+  @GQL.Field()
   @Typegoose.prop()
   @IsEmail()
-  email: string
+  email: string;
 
-  @Field()
+  @GQL.Field()
   @Typegoose.prop()
-  google_id: string
+  google_id: string;
 
-  @Field()
+  @GQL.Field()
   @Typegoose.prop()
-  jwt: string
+  jwt: string;
 
-  @Field()
+  @GQL.Field()
   @Typegoose.prop()
-  name: string
+  name: string;
 
-  @Field()
-  @Typegoose.prop()
-  password: string
+  @GQL.Field()
+  @Typegoose.prop({ select: false })
+  password: string;
 
-  get name_given() {
-    if (this.name) {
-      return this.name.split(" ")[0]
-    }
+  @GQL.Field(() => String)
+  public name_given(): String {
+    return this?.name?.split(" ")[0];
   }
-  get name_family() {
-    if (this.name) {
-      return this.name.split(" ").slice(-1)[0]
-    }
+
+  @GQL.Field(() => String)
+  public name_family(): String {
+    return this?.name?.split(" ").slice(-1)[0];
   }
 }
 
-export const User = getModelForClass(UserSchema, {
+export const User = Typegoose.getModelForClass(UserSchema, {
   schemaOptions: {
     collection: "user",
     optimisticConcurrency: true,
     timestamps: { createdAt: "_created", updatedAt: "_updated" },
     toObject: { virtuals: true },
     toJSON: {
-      /* Can use toJSON() as the method for public-facing responses */
       getters: true,
       virtuals: true,
       transform: (doc, ret, options) => {
-        delete ret.activation_token
-        delete ret.activated
-        delete ret.password
-        return ret
+        delete ret.activation_token;
+        delete ret.activated;
+        delete ret.password;
+        return ret;
       },
     },
     versionKey: "_version",
   },
-})
+});
