@@ -66,38 +66,3 @@ export default async (app) => {
   });
   apolloServer.applyMiddleware({ app, path: "/api/graphql" });
 };
-
-// Almost working
-// import { Base } from "#src/entities/_index"
-// import { MikroORM } from "@mikro-orm/core"
-// import type { MongoDriver } from "@mikro-orm/mongodb"
-// export default async (app) => {
-//   const schema = await buildSchema({
-//     resolvers: [UserResolver],
-//     emitSchemaFile: {
-//       path: path.resolve(process.cwd(), "schema.gql"), // process.cwd() assumes calling process takes place from project root
-//       commentDescriptions: true,
-//       sortedSchema: true,
-//     },
-//   })
-//   const orm = await MikroORM.init<MongoDriver>({
-//     clientUrl: URL_MDB,
-//     entities: [Base],
-//     type: "mongo",
-//   })
-//   // TODO: re-add redis cache and re-evaluate use of dependency injection
-//   const apolloServer = new ApolloServer({
-//     schema,
-//     cache: new RedisCache(URL_REDIS),
-//     cacheControl: {
-//       defaultMaxAge: 5,
-//     },
-//     context: ({ req, res }) => ({
-//       req,
-//       res,
-//       em: orm.em.fork(), // https://mikro-orm.io/docs/identity-map
-//     }),
-//   })
-//   apolloServer.start()
-//   apolloServer.applyMiddleware({ app, path: "/api/graphql" })
-// }
