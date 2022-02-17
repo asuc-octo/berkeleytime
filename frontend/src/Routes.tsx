@@ -1,3 +1,4 @@
+/*eslint max-len: ["error", { "code": 180 }]*/
 import React, { lazy, Suspense } from 'react';
 import { Switch, Route, RouteProps, Redirect } from 'react-router-dom';
 import BTLoader from 'components/Common/BTLoader';
@@ -22,7 +23,10 @@ const Apply = lazy(() => import('./views/Apply/Apply'));
 const Profile = lazy(() => import('./views/Profile/Profile'));
 const Login = lazy(() => import('./views/Login/Login'));
 const Logout = lazy(() => import('./views/Profile/Logout'));
-// const Scheduler = lazy(() => import('./views/Scheduler/Scheduler'));
+const SchedulerOnboard = lazy(() => import('./views/Scheduler/SchedulerOnboard'));
+const LocalScheduler = lazy(() => import('./views/Scheduler/LocalSchedulerPage'));
+const RemoteScheduler = lazy(() => import('./views/Scheduler/RemoteSchedulerPage'));
+const ViewSchedule = lazy(() => import('./views/Scheduler/ViewSchedule'));
 const PrivacyPolicy = lazy(() => import('./views/Policies/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
 const UserTestingForm = lazy(() => import('./views/Forms/UserTestingForm'));
@@ -43,6 +47,14 @@ const routes: Array<RouteProps> = [
   { path: '/profile', component: Profile },
   { path: '/oauth2callback', component: Login },
   { path: '/logout', component: Logout },
+  { path: '/scheduler', component: SchedulerOnboard },
+  { path: '/scheduler/new', component: LocalScheduler },
+  { path: '/scheduler/:scheduleId', component: RemoteScheduler },
+  { path: '/schedule/:scheduleId', component: ViewSchedule },
+  // { path: '/apply/positions',   component: Positions       },
+  // { path: '/apply/engineering', component: EngineeringApp  },
+  // { path: '/apply/design',      component: DesignApp       },
+  // { path: '/apply/embed',       component: Apply           },
   // { path: '/scheduler', component: Scheduler },
   { path: '/error', component: Error },
   { path: '/legal/privacy', component: PrivacyPolicy },
@@ -54,12 +66,13 @@ const Routes: React.FC = () => (
   <Suspense
     fallback={
       <div className="viewport-app">
-        <BTLoader />
+        <BTLoader fill />
       </div>
     }
   >
     <Switch>
       <Redirect from="/" to="/landing" exact />
+      <Redirect from="/s/:scheduleId" to="/schedule/:scheduleId" />
       {routes.map((route) => (
         <Route
           key={route.path as string}

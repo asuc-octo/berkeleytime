@@ -1,6 +1,7 @@
 import { SectionFragment } from 'graphql/graphql';
 import groupBy from 'lodash/groupBy';
 import { stringToDate } from 'utils/date';
+import { isEnrollmentSection } from './section';
 
 export type SectionSort = {
   category: string;
@@ -33,13 +34,31 @@ export function sectionSortComparator(
     return typeA - typeB;
   }
 
-  const t1 = +stringToDate(s1.startTime);
-  const t2 = +stringToDate(s2.startTime);
-  if (t1 === t2) {
-    return +s1.days[0] - +s2.days[0];
-  } else {
+  const e1 = +isEnrollmentSection(s1);
+  const e2 = +isEnrollmentSection(s2);
+
+  if (e1 !== e2) {
+    return (e1 * 2 - 1) * -Infinity;
+  }
+
+  const t1 = +s1.days[0] || Infinity;
+  const t2 = +s2.days[0] || Infinity;
+
+  if (t1 !== t2) {
     return t1 - t2;
   }
+
+  const d1 = +stringToDate(s1.startTime);
+  const d2 = +stringToDate(s2.startTime);
+
+  if (d1 !== d2) {
+    return d1 - d2;
+  }
+
+  const n1 = s1.sectionNumber;
+  const n2 = s2.sectionNumber;
+
+  return n1.localeCompare(n2);
 }
 
 /**

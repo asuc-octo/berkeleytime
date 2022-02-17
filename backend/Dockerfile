@@ -1,12 +1,7 @@
-FROM ubuntu:20.04
-USER root
-RUN apt update
-RUN apt install -y curl
-RUN curl -s https://deb.nodesource.com/setup_16.x | bash -
-RUN apt update
-RUN apt install -y nodejs
+FROM node:16-slim AS builder
+MAINTAINER ASUC OCTO octo.berkeleytime@asuc.org
 RUN mkdir /backend
 WORKDIR /backend
-COPY . /backend
-RUN npm install
+COPY . .
+RUN npm install --only prod
 RUN npm run build
