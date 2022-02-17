@@ -127,7 +127,7 @@ export const SIS_Courses = new (class Controller {
           moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
             ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") +
             (result.lastErrorObject?.updatedExisting
-              ? //@ts-ignore
+              ? // @ts-ignore
                 // prettier-ignore
                 `updated (${result.value?._id}) '${result.value["displayName"]}' '${result.value?.title}' ${JSON.stringify((await SIS_Course.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`
               : `created (${result.lastErrorObject?.upserted}) '${result.value["displayName"]}' '${result.value?.title}'`)
