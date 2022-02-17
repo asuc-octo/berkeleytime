@@ -22,7 +22,7 @@ console.info(
 );
 
 if (process.env.NODE_ENV != "prod") {
-  await import("colors");
+  await import("@colors/colors");
 }
 
 // Mongoose + Redis caching

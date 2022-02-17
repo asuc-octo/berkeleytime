@@ -1,7 +1,10 @@
 import { useCallback } from 'react';
+import { getNodes } from 'utils/graphql';
 import {
   DeleteUserMutationHookResult,
   GetUserDocument,
+  GetUserQuery,
+  GetUserQueryVariables,
   LoginMutationHookResult,
   LogoutMutationHookResult,
   UpdateUserMutationVariables,
@@ -13,13 +16,27 @@ import {
   useUpdateUserMutation,
 } from '../graphql';
 
-export const useUser = (): {
-  /** This may change once the user query is loaded. */
+export type UserInfo = {
+  /**
+   * This may change once the user query is loaded. This will
+   * be false while the user's login state is undetermined.
+   */
   isLoggedIn: boolean;
   loading: boolean;
   /** This is null while loading, or if the user isn't logged in. */
   user: UserProfileFragment | null;
-} => {
+};
+
+/**
+ * Gets the current user or the login status. Note that the
+ * `isLoggedIn` parameter and `user` parameter will be
+ * `false` and `null` respectively while the user's authorization
+ * is unknown/loading. You can check this using the `loading` param.
+ *
+ * @example
+ * const { user, isLoggedIn, loading } = useUser();
+ */
+export const useUser = (): UserInfo => {
   const { data, loading } = useGetUserQuery({
     errorPolicy: 'all',
   });
@@ -52,6 +69,12 @@ export const useLogin = (): LoginMutationHookResult => {
 export const useLogout = (): LogoutMutationHookResult => {
   return useLogoutMutation({
     update(cache) {
+      const existingUser = cache.readQuery<GetUserQuery, GetUserQueryVariables>(
+        {
+          query: GetUserDocument,
+        }
+      );
+
       // Ensure there is no user in the cache after a log out
       cache.writeQuery({
         query: GetUserDocument,
@@ -59,6 +82,18 @@ export const useLogout = (): LogoutMutationHookResult => {
           user: null,
         },
       });
+
+      // Invalidate all the schedules for the user (if they are private)
+      if (existingUser?.user) {
+        getNodes(existingUser.user.schedules).forEach((schedule) =>
+          cache.modify({
+            id: cache.identify(schedule),
+            fields(_fieldValue, details) {
+              return details.DELETE;
+            },
+          })
+        );
+      }
     },
   });
 };

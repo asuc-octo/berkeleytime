@@ -1,8 +1,17 @@
 .scheduler,
 .scheduler.viewport-app {
-  > .row > .col {
+  > .row > div {
     box-sizing: border-box;
-    height: 100%;
+    position: relative;
+
+    > .course-selector {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      overflow-y: auto;
+    }
   }
 
   // Force auto-sizing
@@ -10,21 +19,66 @@
     min-height: 0;
   }
 
+  .scheduler-units {
+    font-size: 16px;
+    font-weight: 500;
+    color: $bt-base-text;
+    flex: 1;
+  }
+
+  &.schedule-standalone-content {
+    .scheduler-header input {
+      text-align: center;
+    }
+  }
+
   .scheduler-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin-left: 72px;
     padding: 1rem;
+
+    > div {
+      display: flex;
+      align-items: center;
+    }
 
     > *:not(:last-child) {
       margin-right: 1rem;
     }
 
-    .scheduler-units {
-      font-size: 16px;
-      font-weight: 600;
-      color: $bt-base-text;
-      flex: 1;
+    > span,
+    > * > span {
+      font-size: 0.9rem;
+      &:not(.callout) {
+        color: $bt-light-text;
+      }
+
+      &.scheduler-header-strong {
+        color: $bt-base-text;
+        font-weight: 500;
+      }
+    }
+
+    .scheduler-name-input {
+      box-shadow: none;
+      border: none;
+      appearance: none;
+      border-radius: 0;
+      font-size: 1.2rem;
+      margin: 0;
+      padding: 0 4px;
+      font-weight: 500;
+      border-bottom: 1px solid $bt-border-grey;
+      background: none;
+
+      &:focus {
+        border-radius: 0;
+        outline: none;
+        border-color: #2684ff;
+        box-shadow: 0 1px 0px 0px #2684ff;
+      }
     }
   }
 

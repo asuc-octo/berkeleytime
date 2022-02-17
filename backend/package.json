@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@colors/colors": "^1.5.0",
     "@google-cloud/storage": "^5.8.5",
     "@mikro-orm/core": "^4.5.10",
     "@mikro-orm/mongodb": "^4.5.10",
@@ -23,7 +24,7 @@
     "express-async-errors": "^3.1.1",
     "graphql": "^15.5.0",
     "graphql-middleware": "^6.0.10",
-    "graphql-tools": "^7.0.5",
+    "graphql-tools": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.33",
@@ -44,7 +45,6 @@
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^2.0.2",
     "@types/app-root-path": "^1.2.4",
-    "colors": "^1.4.0",
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.1",
