@@ -123,13 +123,12 @@ export const SIS_Classes = new (class Controller {
                   _.without(classSection, undefined)
                 )
               ) {
-                console.info(
-                  `${moment()
-                    .tz("America/Los_Angeles")
-                    .format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS SECTION COUNT: ${
-                    shared.sisClassSectionCount
-                  }`.padEnd(55, " ") +
-                    `no changes: (${foundClassSection._id}) cs-course-id '${courseId}' '${foundClassSection.id}' '${classSection["displayName"]}'`
+                if (!foundClassSection) {
+                  // prettier-ignore
+                  console.error(`WARNING! ONE OF THE IDENTIFIERS HAVE A FATAL ERROR: ${JSON.stringify(classSection)}`.red);
+                }
+                // prettier-ignore
+                console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS SECTION COUNT: ${shared.sisClassSectionCount}`.padEnd(55, " ") + `no changes: (${foundClassSection?._id}) cs-course-id '${courseId}' '${foundClassSection?.id}' '${classSection["displayName"]}'`
                 );
               } else {
                 const result = await SIS_Class_Section.findOneAndUpdate(
