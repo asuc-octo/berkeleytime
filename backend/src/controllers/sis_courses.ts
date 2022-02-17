@@ -20,6 +20,8 @@ import { SIS_Course } from "#src/models/_index";
 import { storageClient } from "#src/services/gcloud";
 import { ExpressMiddleware } from "#src/types";
 
+const OMIT_KEYS = ["_created", "_id", "_updated", "_version"];
+
 export const SIS_Courses = new (class Controller {
   requestDataHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
     res.json(await this.requestData({ ...req.query, user: req.user }));
@@ -94,22 +96,21 @@ export const SIS_Courses = new (class Controller {
     let sisCourseCount = 0;
 
     const businessLogic = async ({ sisCourse }) => {
-      const foundCourse = await SIS_Course.findOne({
+      const original = await SIS_Course.findOne({
         identifiers: sisCourse.identifiers, // it is possible for old/deprecated courses to have same 'cs-course-id', so it is important to also use 'cms-id' which is truly unique
       }).cache(43200);
-      if (
-        _.isEqual(
-          _.without(foundCourse, undefined),
-          _.without(sisCourse, undefined)
-        )
-      ) {
+      const foundCourse = _.omitBy(
+        original?._doc,
+        (v, k) => OMIT_KEYS.includes(k) || v === undefined
+      );
+      if (_.isEqual(foundCourse, sisCourse)) {
         if (!foundCourse) {
           // prettier-ignore
           // SIS Course API has at least 60 courses that have a blank "" cs-course-id, 🤦🏻‍♀️ some of them 'status.code: active'... just... why? 🤷🏻‍♀️  MDB query: db.sis_course.find({ 'identifiers.id': "" }, {'status.code': true, 'catalogNumber.formatted': true, 'subjectArea.description': true, title: true })
           console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(sisCourse)}`.red);
         }
         // prettier-ignore
-        console.info(moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) + ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") + `no changes: (${foundCourse?._id}) "${foundCourse?.displayName}" / "${foundCourse?.title}"`);
+        console.info(moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) + ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") + `no changes: (${original?._id}) "${foundCourse?.displayName}" / "${foundCourse?.title}"`);
       } else {
         const result = await SIS_Course.findOneAndUpdate(
           { identifiers: sisCourse.identifiers },
@@ -126,7 +127,9 @@ export const SIS_Courses = new (class Controller {
           moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
             ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") +
             (result.lastErrorObject?.updatedExisting
-              ? `updated (${result.value?._id}) '${result.value["displayName"]}' '${result.value?.title}'`
+              ? //@ts-ignore
+                // prettier-ignore
+                `updated (${result.value?._id}) '${result.value["displayName"]}' '${result.value?.title}' ${JSON.stringify((await SIS_Course.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`
               : `created (${result.lastErrorObject?.upserted}) '${result.value["displayName"]}' '${result.value?.title}'`)
         );
       }
