@@ -125,7 +125,7 @@ export const SIS_Classes = new (class Controller {
               ) {
                 if (!foundClassSection) {
                   // prettier-ignore
-                  console.error(`WARNING! ONE OF THE IDENTIFIERS HAVE A FATAL ERROR: ${JSON.stringify(classSection)}`.red);
+                  console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(classSection)}`.red);
                 }
                 // prettier-ignore
                 console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS SECTION COUNT: ${shared.sisClassSectionCount}`.padEnd(55, " ") + `no changes: (${foundClassSection?._id}) cs-course-id '${courseId}' '${foundClassSection?.id}' '${classSection["displayName"]}'`
@@ -234,14 +234,12 @@ export const SIS_Classes = new (class Controller {
                 _.without(sisClass, undefined)
               )
             ) {
-              console.info(
-                `${moment()
-                  .tz("America/Los_Angeles")
-                  .format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${
-                  shared.sisClassCount
-                }`.padEnd(55, " ") +
-                  `no changes: (${foundClass._id}) cs-course-id '${courseId}' '${sisClass.displayName}' / '${sisClass.course.title}'`
-              );
+              if (!foundClass) {
+                // prettier-ignore
+                console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(sisClass)}`.red);
+              }
+              // prettier-ignore
+              console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `no changes: (${foundClass?._id}) cs-course-id '${courseId}' '${sisClass?.displayName}' / '${sisClass?.course?.title}'`);
             } else {
               const result = await SIS_Class.findOneAndUpdate(
                 {

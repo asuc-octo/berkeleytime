@@ -106,7 +106,7 @@ export const SIS_Courses = new (class Controller {
         if (!foundCourse) {
           // prettier-ignore
           // SIS Course API has at least 60 courses that have a blank "" cs-course-id, 🤦🏻‍♀️ some of them 'status.code: active'... just... why? 🤷🏻‍♀️  MDB query: db.sis_course.find({ 'identifiers.id': "" }, {'status.code': true, 'catalogNumber.formatted': true, 'subjectArea.description': true, title: true })
-          console.error(`WARNING! ONE OF THE IDENTIFIERS HAVE A FATAL ERROR: ${JSON.stringify(sisCourse)}`.red);
+          console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(sisCourse)}`.red);
         }
         // prettier-ignore
         console.info(moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) + ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") + `no changes: (${foundCourse?._id}) "${foundCourse?.displayName}" / "${foundCourse?.title}"`);
