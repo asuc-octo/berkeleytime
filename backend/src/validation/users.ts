@@ -1,6 +1,6 @@
-import Ajv from "ajv"
-import ajvErrors from "ajv-errors"
-import addFormats from "ajv-formats"
+import Ajv from "ajv";
+import ajvErrors from "ajv-errors";
+import addFormats from "ajv-formats";
 
 // interface Login {
 //   email: string
@@ -14,9 +14,9 @@ import addFormats from "ajv-formats"
 //   password_confirm: string
 // }
 
-const ajv = new Ajv({ allErrors: true, $data: true })
-addFormats(ajv)
-ajvErrors(ajv)
+const ajv = new Ajv({ allErrors: true, $data: true });
+addFormats(ajv);
+ajvErrors(ajv);
 
 // const SchemaLogin: JSONSchemaType<Login> = {
 const SchemaLogin = {
@@ -31,7 +31,7 @@ const SchemaLogin = {
       type: "string",
     },
   },
-}
+};
 
 const SchemaRegister = {
   type: "object",
@@ -59,9 +59,9 @@ const SchemaRegister = {
       },
     },
   },
-}
+};
 
 export const usersValidator = {
   login: ajv.compile(SchemaLogin),
   register: ajv.compile(SchemaRegister),
-}
+};
