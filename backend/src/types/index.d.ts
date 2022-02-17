@@ -1,8 +1,8 @@
-import { User } from "#src/models/_index"
+import { User } from "#src/models/_index";
 
 declare namespace Express {
   interface Request {
-    user?: User
+    user?: User;
   }
 }
 
@@ -15,7 +15,7 @@ type TypedRequest<
   Record<string, unknown>,
   Partial<ReqBody>,
   Partial<QueryString>
->
+>;
 export type ExpressMiddleware<
   ReqBody = Record<string, unknown>,
   Res = Record<string, unknown>,
@@ -24,4 +24,4 @@ export type ExpressMiddleware<
   req: TypedRequest<ReqBody, QueryString>,
   res: Response<Res>,
   next: NextFunction
-) => Promise<void> | void
+) => Promise<void> | void;

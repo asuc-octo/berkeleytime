@@ -1,4 +1,4 @@
-// @ts-nocheck
+// Berkeley API Central Course API
 // https://api-central.berkeley.edu/api/72
 import axios from "axios";
 import fs from "fs";
@@ -28,11 +28,9 @@ export const SIS_Courses = new (class Controller {
   requestData = async ({
     pageNumber,
     pageSize,
-    user,
   }: {
     pageNumber: number;
     pageSize: number;
-    user?: any;
   }) => {
     const sisResponse = await axios.get(`${URL_SIS_COURSE_API}`, {
       headers: {
@@ -71,24 +69,11 @@ export const SIS_Courses = new (class Controller {
       });
       for (let sisCourse of sisCourses) {
         const jsonl = `${JSON.stringify(sisCourse)}\n`;
-        await stream.pipeline(
-          Readable.from(jsonl),
-          zlib.createGzip().on("data", (buf) => {
-            console.info(
-              `${moment()
-                .tz("America/Los_Angeles")
-                .format(`YYYY-MM-DD HH-mm-ss`)} page ${pageNumber
-                .toString()
-                .padStart(
-                  4,
-                  "0"
-                )} total bytes streamed "${key}": ${(bytesSent +=
-                buf.byteLength)}`
-            );
-          }),
-          googleWriteStream,
-          { end: false } // https://github.com/nodejs/node/pull/40886
-        );
+
+        // still waiting for types on stream.pipeline to update: https://github.com/nodejs/node/pull/40886
+        // @ts-ignore
+        // prettier-ignore
+        await stream.pipeline(Readable.from(jsonl),zlib.createGzip().on("data", (buf) => {console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} page ${pageNumber.toString() .padStart(4, "0" )} total bytes streamed "${key}": ${(bytesSent += buf.byteLength)}` ); }), googleWriteStream, { end: false });
       }
     } while (sisCourses.length == pageSize && pageNumber++ < Infinity);
     googleWriteStream.end();
@@ -112,7 +97,12 @@ export const SIS_Courses = new (class Controller {
       const foundCourse = await SIS_Course.findOne({
         identifiers: sisCourse.identifiers, // it is possible for old/deprecated courses to have same 'cs-course-id', so it is important to also use 'cms-id' which is truly unique
       }).cache(43200);
-      if (_.isEqual(foundCourse?.toJSON(), sisCourse)) {
+      if (
+        _.isEqual(
+          _.without(foundCourse, undefined),
+          _.without(sisCourse, undefined)
+        )
+      ) {
         console.info(
           moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
             ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") +
@@ -134,8 +124,8 @@ export const SIS_Courses = new (class Controller {
           moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
             ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") +
             (result.lastErrorObject?.updatedExisting
-              ? `updated (${result.value?._id}) '${result.value?.displayName}' '${result.value?.title}'`
-              : `created (${result.lastErrorObject?.upserted}) "${result.value?.displayName}' '${result.value?.title}'`)
+              ? `updated (${result.value?._id}) '${result.value["displayName"]}' '${result.value?.title}'`
+              : `created (${result.lastErrorObject?.upserted}) '${result.value["displayName"]}' '${result.value?.title}'`)
         );
       }
       sisCourseCount++;

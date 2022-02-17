@@ -10,7 +10,7 @@ import passport from "passport";
 import "reflect-metadata";
 
 import apollo from "#src/apollo";
-import { URL_DOMAIN, URL_REDIS } from "#src/config";
+import { URL_DOMAIN } from "#src/config";
 import { PORT_EXPRESS } from "#src/config";
 import { sis_classes, sis_courses, users } from "#src/routes/_index";
 import "#src/services/gcloud";
@@ -45,7 +45,19 @@ apiRouter.use((err: any, {}, res: express.Response, {}) => {
   return res.status(500).json({ error: err.stack });
 });
 http.listen(PORT_EXPRESS, () => {
-  console.log(`Server now listening on port ${PORT_EXPRESS}`);
+  console.info(`Server now listening on port ${PORT_EXPRESS}`);
 });
 
 await apollo(app);
+
+// uncomment if interested in seeing full MongoDB interactions printed to console
+/*
+mongoose.set("debug", function (collectionName, method, query, doc) {
+  console.debug(
+    "Mongoose: ".cyan +
+      `${collectionName}.${method} (${JSON.stringify(query, null, 2)})`
+  );
+});
+
+await import("#src/helpers/schemaWalker");
+*/

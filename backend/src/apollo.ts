@@ -13,21 +13,22 @@ import { Container } from "typedi";
 import { URL } from "url";
 
 import { URL_REDIS } from "#src/config";
-import { UserResolver } from "#src/graphql/resolvers/_index";
-import { dependencyInjector } from "#src/helpers/dependencyInjector";
-import { User } from "#src/models/_index";
-import { redisClient } from "#src/services/redis";
+import { dependencyInjection } from "#src/graphql/dependencyInjection";
+import {
+  SIS_CourseResolver,
+  UserResolver,
+} from "#src/graphql/resolvers/_index";
 
 import { getClassForDocument } from "@typegoose/typegoose";
 
 const currentDir = dirname(new URL(import.meta.url).pathname);
 
-function convertDocument(doc: mongoose.Document) {
+const convertDocument = (doc: mongoose.Document) => {
   const convertedDocument = doc.toObject();
   const DocumentClass = getClassForDocument(doc)!;
   Object.setPrototypeOf(convertedDocument, DocumentClass.prototype);
   return convertedDocument;
-}
+};
 
 const TypegooseMiddleware: MiddlewareFn = async ({}, next) => {
   const result = await next();
@@ -39,10 +40,11 @@ const TypegooseMiddleware: MiddlewareFn = async ({}, next) => {
   return result instanceof mongoose.Model ? convertDocument(result) : result;
 };
 
-const configureApolloServer = async ({ redis, Container }) => {
-  return new ApolloServer({
+export default async (app) => {
+  dependencyInjection(Container);
+  const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver],
+      resolvers: [SIS_CourseResolver, UserResolver],
       authChecker: passport.authenticate("jwt", { session: false }),
       globalMiddlewares: [TypegooseMiddleware],
       emitSchemaFile: {
@@ -51,22 +53,16 @@ const configureApolloServer = async ({ redis, Container }) => {
         sortedSchema: true,
       },
       container: Container,
+      nullableByDefault: true,
     }),
+
     cache: new RedisCache(URL_REDIS),
     cacheControl: {
       defaultMaxAge: 5,
     },
-    introspection: true,
+    introspection: false,
     playground: process.env.NODE_ENV != "prod",
-    tracing: true,
-  });
-};
-
-export default async (app) => {
-  await dependencyInjector(Container, [{ name: "user", model: User }]);
-  const apolloServer = await configureApolloServer({
-    redis: redisClient,
-    Container,
+    tracing: false,
   });
   apolloServer.applyMiddleware({ app, path: "/api/graphql" });
 };

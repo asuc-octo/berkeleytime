@@ -1,4 +1,4 @@
-// API Central Berkeley Class API
+// Berkeley API Central Class API
 // https://api-central.berkeley.edu/api/45
 import axios from "axios";
 import _ from "lodash";
@@ -94,7 +94,7 @@ export const SIS_Classes = new (class Controller {
       "status.code": "ACTIVE",
       identifiers: { $ne: { type: "cs-course-id", id: "" } },
     }).sort({ displayName: 1 })) {
-      const courseId = _.find(sisCourse.identifiers, {
+      const courseId = _.find(sisCourse["identifiers"], {
         type: "cs-course-id",
       }).id;
       const terms = await SIS_Class.find({
@@ -112,18 +112,24 @@ export const SIS_Classes = new (class Controller {
             });
 
             for (let classSection of sisClassSections) {
-              const foundClassSection = await SIS_Class_Section.findOne({
+              const foundClassSection: any = await SIS_Class_Section.findOne({
                 "class.session.term.id": termId,
                 id: classSection.id,
               });
-              if (_.isEqual(foundClassSection?.toJSON(), classSection)) {
+
+              if (
+                _.isEqual(
+                  _.without(foundClassSection, undefined),
+                  _.without(classSection, undefined)
+                )
+              ) {
                 console.info(
                   `${moment()
                     .tz("America/Los_Angeles")
                     .format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS SECTION COUNT: ${
                     shared.sisClassSectionCount
                   }`.padEnd(55, " ") +
-                    `no changes: (${foundClassSection._id}) cs-course-id '${courseId}' '${foundClassSection.id}' '${classSection.displayName}'`
+                    `no changes: (${foundClassSection._id}) cs-course-id '${courseId}' '${foundClassSection.id}' '${classSection["displayName"]}'`
                 );
               } else {
                 const result = await SIS_Class_Section.findOneAndUpdate(
@@ -151,7 +157,7 @@ export const SIS_Classes = new (class Controller {
                         ? //@ts-ignore
                           //prettier-ignore
                           `updated (${result.value._id}) cs-course-id '${courseId}' '${classSection.displayName} ${JSON.stringify((await SIS_Class_Section.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])+"\n"}'`
-                        : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value.displayName}'`
+                        : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value["displayName"]}'`
                     }`
                 );
               }
@@ -215,14 +221,20 @@ export const SIS_Classes = new (class Controller {
             return;
           }
           for (let sisClass of sisClasses) {
-            const foundClass = await SIS_Class.findOne({
+            const foundClass: any = await SIS_Class.findOne({
               "course.displayName": sisClass.course.displayName,
               "course.identifiers": sisClass.course.identifiers,
               "session.id": sisClass.session.id,
               "session.term.id": sisClass.session.term.id,
               number: sisClass.number,
             });
-            if (_.isEqual(foundClass?.toJSON(), sisClass)) {
+
+            if (
+              _.isEqual(
+                _.without(foundClass, undefined),
+                _.without(sisClass, undefined)
+              )
+            ) {
               console.info(
                 `${moment()
                   .tz("America/Los_Angeles")
@@ -260,7 +272,7 @@ export const SIS_Classes = new (class Controller {
                       ? //@ts-ignore
                         //prettier-ignore
                         `updated (${result.value._id}) cs-course-id '${courseId}' '${result.value.displayName}' '${result.value.course.title}' ${JSON.stringify((await SIS_Class.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`
-                      : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value.displayName}' '${result.value.course.title}'`
+                      : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value["displayName"]}' '${result.value["course"]["title"]}'`
                   }`
               );
             }

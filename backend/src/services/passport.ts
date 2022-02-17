@@ -1,8 +1,8 @@
-import passport from "passport"
-import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt"
+import passport from "passport";
+import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 
-import { KEY_BERKELEYTIME } from "#src/config"
-import { User } from "#src/models/_index"
+import { KEY_BERKELEYTIME } from "#src/config";
+import { User } from "#src/models/_index";
 
 passport.use(
   new JwtStrategy(
@@ -12,17 +12,17 @@ passport.use(
       secretOrKey: KEY_BERKELEYTIME,
     },
     async (req, jwtPayload, done) => {
-      const { id } = jwtPayload
+      const { id } = jwtPayload;
       if (id) {
-        const user = await User.findById(id)
+        const user = await User.findById(id);
         if (user) {
-          done(null, user)
+          done(null, user);
         } else {
-          done(null, false)
+          done(null, false);
         }
       } else {
-        done(null, false, { message: "authentication failed" })
+        done(null, false, { message: "authentication failed" });
       }
     }
   )
-)
+);

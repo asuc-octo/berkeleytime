@@ -9,4 +9,4 @@ module.exports = {
   jsonRecursiveSort: true,
   importOrderSeparation: true,
   semi: true,
-}
+};
