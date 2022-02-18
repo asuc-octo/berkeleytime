@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
+import { Identifier } from "#src/models/subtypes";
+
 import Typegoose from "@typegoose/typegoose";
 
 const GraphQlTypelessData = new GraphQLScalarType({
@@ -65,6 +67,10 @@ class SIS_Class_SectionSchema {
   @GQL.Field()
   @Typegoose.prop()
   readonly _version: number;
+
+  @GQL.Field(() => [Identifier])
+  @Typegoose.prop({ type: [Identifier] })
+  identifiers: Identifier[];
 }
 export const SIS_Class_Section = Typegoose.getModelForClass(
   SIS_Class_SectionSchema,

@@ -27,7 +27,6 @@ export class SIS_CourseService {
         "catalogNumber.formatted": true,
         "subjectArea.code": true,
       })
-      .cache();
-    // .limit(3000);
+      .limit(1);
   }
 }
