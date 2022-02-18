@@ -271,7 +271,6 @@ export const SIS_Classes = new (class Controller {
       res.json({ message: "finished" });
     } catch (err) {
       console.error(err);
-      throw err;
     }
   };
 })();
