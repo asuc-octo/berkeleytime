@@ -12,7 +12,12 @@ import "reflect-metadata";
 import apollo from "#src/apollo";
 import { URL_DOMAIN } from "#src/config";
 import { PORT_EXPRESS } from "#src/config";
-import { sis_classes, sis_courses, users } from "#src/routes/_index";
+import {
+  calanswers_grades,
+  sis_classes,
+  sis_courses,
+  users,
+} from "#src/routes/_index";
 import "#src/services/gcloud";
 import "#src/services/mongodb";
 import "#src/services/passport";
@@ -37,6 +42,7 @@ if (process.env.NODE_ENV == "prod") {
 const http = new HttpServer(app);
 const apiRouter = express.Router();
 app.use("/api", apiRouter);
+apiRouter.use("/calanswers_grades", calanswers_grades);
 apiRouter.use("/sis_classes", sis_classes);
 apiRouter.use("/sis_courses", sis_courses);
 apiRouter.use("/users", users);
