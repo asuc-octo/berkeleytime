@@ -1,4 +1,8 @@
+import * as GQL from "type-graphql";
+
 import { User } from "#src/models/_index";
+
+import Typegoose, { prop } from "@typegoose/typegoose";
 
 declare namespace Express {
   interface Request {
@@ -25,3 +29,8 @@ export type ExpressMiddleware<
   res: Response<Res>,
   next: NextFunction
 ) => Promise<void> | void;
+
+export type ENUM_IDENTIFIER_TYPES =
+  | "cs-course-id"
+  | "cms-version-independent-id"
+  | "cms-id";
