@@ -1,12 +1,11 @@
 // https://dev.to/smithg09/building-graphql-api-with-nodejs-typegraphql-typegoose-and-troubleshooting-common-challenges-9oa
 // https://github.com/DevUnderflow/nx-node-apollo-grahql-mongo/commit/06ee5fb8a1e50d434b5001e796b0b8d181daf874;
-import { Length } from "class-validator";
 import { GraphQLScalarType } from "graphql";
 import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
-import { Identifier } from "#src/models/subtypes";
+import { OneOf } from "#src/types";
 
 import Typegoose from "@typegoose/typegoose";
 
@@ -32,9 +31,103 @@ type ENUM_GRADES =
 
 mongoose.pluralize(null);
 
+@GQL.ObjectType()
+class SIS_Code {
+  @GQL.Field()
+  @Typegoose.prop()
+  code: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  description: string;
+}
+
+@GQL.ObjectType()
+class catalogNumber {
+  @GQL.Field()
+  @Typegoose.prop()
+  prefix: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  number: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  suffix: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  formatted: string;
+}
+
+@GQL.ObjectType()
+class discrete {
+  @GQL.Field(() => [Number])
+  units: number[];
+}
+@GQL.ObjectType()
+class fixed {
+  @GQL.Field()
+  units: number;
+}
+@GQL.ObjectType()
+class range {
+  @GQL.Field()
+  minUnits: number;
+
+  @GQL.Field()
+  maxUnits: number;
+}
+@GQL.ObjectType()
+class value {
+  @GQL.Field()
+  @Typegoose.prop()
+  discrete: discrete;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  fixed: fixed;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  range: range;
+}
+@GQL.ObjectType()
+class credit {
+  @GQL.Field()
+  @Typegoose.prop()
+  type: "discrete" | "fixed" | "range";
+
+  @GQL.Field()
+  @Typegoose.prop()
+  value: value;
+}
+
+@GQL.ObjectType()
+class creditRestriction {
+  @GQL.Field()
+  @Typegoose.prop()
+  restrictionText: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  restrictionCourses: value;
+}
+
+@GQL.ObjectType()
+class identifier {
+  @GQL.Field()
+  @Typegoose.prop()
+  type: "cs-course-id" | "cms-version-independent-id" | "cms-id";
+
+  @GQL.Field()
+  @Typegoose.prop()
+  id: string;
+}
+
 @GQL.ObjectType({
-  description:
-    "The entire SIS_Course instance from the SIS Course API with a thin wrapper on top for easy properties",
+  description: "A superset of all data resulting from the SIS Course API",
 })
 @Typegoose.plugin(timeMachine.plugin, {
   name: "sis_course_history",
@@ -59,9 +152,65 @@ export class SIS_CourseSchema {
   @Typegoose.prop()
   readonly _version: number;
 
-  @GQL.Field(() => [Identifier])
-  @Typegoose.prop({ type: [Identifier], default: [] })
-  identifiers: Identifier[];
+  @GQL.Field(() => SIS_Code)
+  @Typegoose.prop({ type: SIS_Code })
+  academicCareer: SIS_Code;
+
+  @GQL.Field(() => SIS_Code)
+  @Typegoose.prop({ type: SIS_Code })
+  academicGroup: SIS_Code;
+
+  @GQL.Field(() => SIS_Code)
+  @Typegoose.prop({ type: SIS_Code })
+  academicOrganization: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  allowMultipleEnrollments: boolean;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  anyFeesExist: boolean;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  blindGrading: boolean;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  catalogNumber: catalogNumber;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  cip: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  classDisplayName: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  classSubjectArea: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  credit: credit;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  creditRestriction: creditRestriction;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  contactHours: number;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  createdDate: string;
+
+  @GQL.Field(() => [identifier])
+  @Typegoose.prop({ type: [identifier] })
+  identifiers: identifier[];
 
   @GQL.Field()
   @Typegoose.prop()
@@ -85,33 +234,7 @@ export class SIS_CourseSchema {
 
   @GQL.Field()
   @Typegoose.prop()
-  subjectArea___code: string; // legacy field equivalent: abbreviation
-
-  @GQL.Field()
-  @Typegoose.prop()
-  subjectArea___description: string; // legacy field equivalent: department
-
-  /*
-   * TODO: figure out what to do with not-fully-transferable fields from old Berkeleytime
-   */
-
-  /*
-  @GQL.Field()
-  @Typegoose.prop()
-  gpa: number;
-
-  @GQL.Field()
-  @Typegoose.prop()
-  letter_average: ENUM_GRADES;
-
-  @GQL.Field()
-  @Typegoose.prop()
-  seats_open: number;
-
-  @GQL.Field()
-  @Typegoose.prop()
-  waitlisted: number;
-  */
+  subjectArea: SIS_Code;
 }
 
 export const SIS_Course = Typegoose.getModelForClass(SIS_CourseSchema, {
