@@ -267,16 +267,16 @@ export class SIS_CourseSchema {
   @Typegoose.prop()
   readonly _version: number;
 
-  @GQL.Field(() => SIS_Code)
-  @Typegoose.prop({ type: SIS_Code })
+  @GQL.Field()
+  @Typegoose.prop()
   academicCareer: SIS_Code;
 
-  @GQL.Field(() => SIS_Code)
-  @Typegoose.prop({ type: SIS_Code })
+  @GQL.Field()
+  @Typegoose.prop()
   academicGroup: SIS_Code;
 
-  @GQL.Field(() => SIS_Code)
-  @Typegoose.prop({ type: SIS_Code })
+  @GQL.Field()
+  @Typegoose.prop()
   academicOrganization: SIS_Code;
 
   @GQL.Field()
