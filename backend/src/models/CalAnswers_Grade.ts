@@ -5,6 +5,21 @@ import * as GQL from "type-graphql";
 
 import Typegoose from "@typegoose/typegoose";
 
+type ENUM_GRADES =
+  | "A+"
+  | "A"
+  | "A-"
+  | "B+"
+  | "B"
+  | "B-"
+  | "C+"
+  | "C"
+  | "C-"
+  | "D+"
+  | "D"
+  | "D-"
+  | "F";
+
 const GraphQlTypelessData = new GraphQLScalarType({
   name: "TypelessData",
   serialize: (value) => value,

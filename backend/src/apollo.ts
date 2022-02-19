@@ -13,11 +13,10 @@ import { Container } from "typedi";
 import { URL } from "url";
 
 import { URL_REDIS } from "#src/config";
-import { dependencyInjection } from "#src/graphql/dependencyInjection";
 import {
-  SIS_CourseResolver,
-  UserResolver,
-} from "#src/graphql/resolvers/_index";
+  dependencyInjection,
+  resolvers,
+} from "#src/graphql/dependencyInjection";
 
 import { getClassForDocument } from "@typegoose/typegoose";
 
@@ -44,7 +43,7 @@ export default async (app) => {
   dependencyInjection(Container);
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [SIS_CourseResolver, UserResolver],
+      resolvers,
       authChecker: passport.authenticate("jwt", { session: false }),
       globalMiddlewares: [TypegooseMiddleware],
       emitSchemaFile: {
