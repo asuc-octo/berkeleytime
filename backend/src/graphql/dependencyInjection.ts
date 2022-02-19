@@ -1,6 +1,7 @@
 // https://github.com/DevUnderflow/nx-node-apollo-grahql-mongo/blob/9b6d4ba96e7f6be80d39d28bbb0aaba7670d04e5/apps/api/src/app/loaders/dependencyInjector.ts
 import {
   SIS_ClassResolver,
+  SIS_Class_SectionResolver,
   SIS_CourseResolver,
   UserResolver,
 } from "#src/graphql/resolvers/_index";
@@ -25,6 +26,7 @@ export const dependencyInjection = (Container) => {
 
 export const resolvers: any = [
   SIS_ClassResolver,
+  SIS_Class_SectionResolver,
   SIS_CourseResolver,
   UserResolver,
 ];
