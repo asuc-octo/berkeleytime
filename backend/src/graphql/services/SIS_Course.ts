@@ -17,16 +17,6 @@ export class SIS_CourseService {
   }
 
   async getAll() {
-    return await this.model
-      .find({ "status.code": "ACTIVE" })
-      .select({
-        _created: true,
-        _id: true,
-        _updated: true,
-        _version: true,
-        "catalogNumber.formatted": true,
-        "subjectArea.code": true,
-      })
-      .limit(1);
+    return await this.model.find({ "credit.type": "discrete" }).limit(1);
   }
 }

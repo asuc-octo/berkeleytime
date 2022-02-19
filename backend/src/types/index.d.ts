@@ -30,7 +30,30 @@ export type ExpressMiddleware<
   next: NextFunction
 ) => Promise<void> | void;
 
-export type ENUM_IDENTIFIER_TYPES =
-  | "cs-course-id"
-  | "cms-version-independent-id"
-  | "cms-id";
+/*
+ * "Does Typescript support mutually exclusive types?"
+ * https://stackoverflow.com/questions/42123407/does-typescript-support-mutually-exclusive-types
+ * usage:
+ * interface Cat { isCat: true; }
+ * interface Dog { isDog: true; }
+ * interface Bird { isBird: true; }
+ * type Animal = OneOf<[Cat, Dog, Bird]>;
+ */
+type Values<T extends {}> = T[keyof T];
+type Tuplize<T extends {}[]> = Pick<
+  T,
+  Exclude<keyof T, Extract<keyof {}[], string> | number>
+>;
+type _OneOf<T extends {}> = Values<
+  {
+    [K in keyof T]: T[K] &
+      {
+        [M in Values<{ [L in keyof Omit<T, K>]: keyof T[L] }>]?: undefined;
+      };
+  }
+>;
+export type OneOf<T extends {}[]> = _OneOf<Tuplize<T>>;
+
+interface FixedLengthArray<L extends number, T> extends ArrayLike<T> {
+  length: L;
+}
