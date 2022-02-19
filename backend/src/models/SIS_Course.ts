@@ -1,46 +1,15 @@
 // https://dev.to/smithg09/building-graphql-api-with-nodejs-typegraphql-typegoose-and-troubleshooting-common-challenges-9oa
 // https://github.com/DevUnderflow/nx-node-apollo-grahql-mongo/commit/06ee5fb8a1e50d434b5001e796b0b8d181daf874;
-import { GraphQLScalarType } from "graphql";
 import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
-import { OneOf } from "#src/types";
+import { GraphQlTypelessData } from "#src/models/_index";
+import { SIS_Code } from "#src/models/subtypes";
 
 import Typegoose from "@typegoose/typegoose";
 
-const GraphQlTypelessData = new GraphQLScalarType({
-  name: "TypelessData",
-  serialize: (value) => value,
-});
-
-type ENUM_GRADES =
-  | "A+"
-  | "A"
-  | "A-"
-  | "B+"
-  | "B"
-  | "B-"
-  | "C+"
-  | "C"
-  | "C-"
-  | "D+"
-  | "D"
-  | "D-"
-  | "F";
-
 mongoose.pluralize(null);
-
-@GQL.ObjectType()
-class SIS_Code {
-  @GQL.Field()
-  @Typegoose.prop()
-  code: string;
-
-  @GQL.Field()
-  @Typegoose.prop()
-  description: string;
-}
 
 @GQL.ObjectType()
 class catalogNumber {
@@ -105,17 +74,6 @@ class credit {
 }
 
 @GQL.ObjectType()
-class creditRestriction {
-  @GQL.Field()
-  @Typegoose.prop()
-  restrictionText: string;
-
-  @GQL.Field()
-  @Typegoose.prop()
-  restrictionCourses: value;
-}
-
-@GQL.ObjectType()
 class identifier {
   @GQL.Field()
   @Typegoose.prop()
@@ -124,6 +82,163 @@ class identifier {
   @GQL.Field()
   @Typegoose.prop()
   id: string;
+}
+@GQL.ObjectType()
+class course {
+  @GQL.Field(() => [identifier])
+  @Typegoose.prop({ type: [identifier] })
+  identifiers: identifier[];
+
+  @GQL.Field()
+  @Typegoose.prop()
+  displayName: string;
+}
+@GQL.ObjectType()
+class creditRestrictionCourse {
+  @GQL.Field()
+  @Typegoose.prop()
+  course: course;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  maxCreditPercentage: number;
+}
+@GQL.ObjectType()
+class creditRestrictionCourses {
+  @GQL.Field(() => [creditRestrictionCourse])
+  @Typegoose.prop({ type: [creditRestrictionCourse] })
+  creditRestrictionCourses: creditRestrictionCourse[];
+}
+@GQL.ObjectType()
+class creditRestriction {
+  @GQL.Field()
+  @Typegoose.prop()
+  restrictionText: string;
+
+  @GQL.Field(() => creditRestrictionCourses)
+  @Typegoose.prop({ type: creditRestrictionCourse })
+  restrictionCourses: creditRestrictionCourses;
+}
+
+@GQL.ObjectType()
+class termAllowed {
+  @GQL.Field(() => [String])
+  @Typegoose.prop({ type: [String] })
+  termNames: string[];
+}
+@GQL.ObjectType()
+class component {
+  @GQL.Field()
+  @Typegoose.prop()
+  instructionMethod: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  primary: boolean;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  minContactHours: number;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  maxContactHours: number;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  feesExist: boolean;
+}
+@GQL.ObjectType()
+class format {
+  @GQL.Field()
+  @Typegoose.prop()
+  termsAllowed: termAllowed;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  sessionType: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  description: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  aggregateMinContactHours: number;
+  @GQL.Field()
+  @Typegoose.prop()
+  aggregateMaxContactHours: number;
+  @GQL.Field()
+  @Typegoose.prop()
+  minWorkloadHours: number;
+  @GQL.Field()
+  @Typegoose.prop()
+  maxWorkloadHours: number;
+  @GQL.Field()
+  @Typegoose.prop()
+  anyFeesExist: boolean;
+
+  @GQL.Field(() => [component])
+  @Typegoose.prop({ type: [component] })
+  components: component[];
+}
+@GQL.ObjectType()
+class course_term {
+  @GQL.Field(() => [String])
+  @Typegoose.prop({ type: [String] })
+  termNames: string[];
+}
+@GQL.ObjectType()
+class typicalOffer {
+  @GQL.Field(() => [course_term])
+  @Typegoose.prop({ type: [course_term] })
+  terms: course_term[];
+
+  @GQL.Field(() => [String])
+  @Typegoose.prop({ type: [String] })
+  comments: string[];
+}
+@GQL.ObjectType()
+class formatsOffered {
+  @GQL.Field()
+  @Typegoose.prop()
+  description: string;
+
+  @GQL.Field(() => [format])
+  @Typegoose.prop({ type: [format] })
+  formats: format[];
+
+  @GQL.Field(() => typicalOffer)
+  @Typegoose.prop({ type: typicalOffer })
+  typicallyOffered: typicalOffer;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  summerOnly: boolean;
+}
+
+@GQL.ObjectType()
+class repeatability {
+  @GQL.Field()
+  @Typegoose.prop()
+  repeatable: boolean;
+}
+
+@GQL.ObjectType()
+class requiredCourse {
+  @GQL.Field(() => [course])
+  @Typegoose.prop({ type: [course] })
+  courses: course[];
+}
+@GQL.ObjectType()
+class preparation {
+  @GQL.Field()
+  @Typegoose.prop()
+  requiredText: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  requiredCourses: requiredCourse;
 }
 
 @GQL.ObjectType({
@@ -178,7 +293,7 @@ export class SIS_CourseSchema {
 
   @GQL.Field()
   @Typegoose.prop()
-  catalogNumber: catalogNumber;
+  catalogNumber: catalogNumber; // legacy field equivalent: course_number
 
   @GQL.Field()
   @Typegoose.prop()
@@ -194,7 +309,15 @@ export class SIS_CourseSchema {
 
   @GQL.Field()
   @Typegoose.prop()
-  credit: credit;
+  contactHours: number;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  createdDate: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  credit: credit; // legacy field equivalent: units
 
   @GQL.Field()
   @Typegoose.prop()
@@ -202,11 +325,47 @@ export class SIS_CourseSchema {
 
   @GQL.Field()
   @Typegoose.prop()
-  contactHours: number;
+  departmentNicknames: string;
 
   @GQL.Field()
   @Typegoose.prop()
-  createdDate: string;
+  description: string; // legacy field equivalent: description
+
+  @GQL.Field()
+  @Typegoose.prop()
+  displayName: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  finalExam: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  formatsOffered: formatsOffered;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  formerDisplayName: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  fromDate: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  gradingBasis: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  hegis: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  instructorAddConsentRequired: boolean;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  instructorDropConsentRequired: boolean;
 
   @GQL.Field(() => [identifier])
   @Typegoose.prop({ type: [identifier] })
@@ -214,7 +373,47 @@ export class SIS_CourseSchema {
 
   @GQL.Field()
   @Typegoose.prop()
-  description: string; // legacy field equivalent: description
+  multipleTermNumber: number;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  preparation: preparation; // legacy field equivalent: prerequisites
+
+  @GQL.Field()
+  @Typegoose.prop()
+  primaryInstructionMethod: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  printInCatalog: boolean;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  printInstructors: boolean;
+
+  @GQL.Field(() => [String])
+  @Typegoose.prop({ type: [String] })
+  proposedInstructors: string[];
+
+  @GQL.Field()
+  @Typegoose.prop()
+  repeatability: repeatability;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  spansMultipleTerms: boolean;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  status: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  subjectArea: SIS_Code;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  tie: SIS_Code;
 
   @GQL.Field()
   @Typegoose.prop() // legacy field equivalent: title
@@ -222,19 +421,19 @@ export class SIS_CourseSchema {
 
   @GQL.Field()
   @Typegoose.prop()
-  catalogNumber___formatted: string; // legacy field equivalent: course_number
-
-  @GQL.Field(() => GraphQlTypelessData)
-  @Typegoose.prop() // legacy field equivalent: units
-  credit___value: object;
+  toDate: string;
 
   @GQL.Field()
   @Typegoose.prop()
-  preparation___requiredText: string; // legacy field equivalent: prerequisites
+  transcriptTitle: string;
 
   @GQL.Field()
   @Typegoose.prop()
-  subjectArea: SIS_Code;
+  updatedDate: string;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  workloadHours: number;
 }
 
 export const SIS_Course = Typegoose.getModelForClass(SIS_CourseSchema, {
