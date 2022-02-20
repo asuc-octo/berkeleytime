@@ -72,10 +72,26 @@ export const SIS_Courses = new (class Controller {
       for (let sisCourse of sisCourses) {
         const jsonl = `${JSON.stringify(sisCourse)}\n`;
 
-        // still waiting for types on stream.pipeline to update: https://github.com/nodejs/node/pull/40886
+        // still waiting for types on stream.pipelineOptions to update {end: false}: https://github.com/nodejs/node/pull/40886, https://github.com/DefinitelyTyped/DefinitelyTyped/blob/da0e347d6a7df8a6a67812c11d388fea0d106852/types/node/stream.d.ts#L1029
         // @ts-ignore
-        // prettier-ignore
-        await stream.pipeline(Readable.from(jsonl),zlib.createGzip().on("data", (buf) => {console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} page ${pageNumber.toString() .padStart(4, "0" )} total bytes streamed "${key}": ${(bytesSent += buf.byteLength)}` ); }), googleWriteStream, { end: false });
+        await stream.pipeline(
+          Readable.from(jsonl),
+          zlib.createGzip().on("data", (buf) => {
+            console.info(
+              `${moment()
+                .tz("America/Los_Angeles")
+                .format(`YYYY-MM-DD HH-mm-ss`)} page ${pageNumber
+                .toString()
+                .padStart(
+                  4,
+                  "0"
+                )} total bytes streamed "${key}": ${(bytesSent +=
+                buf.byteLength)}`
+            );
+          }),
+          googleWriteStream,
+          { end: false }
+        );
       }
     } while (sisCourses.length == pageSize && pageNumber++ < Infinity);
     googleWriteStream.end();
