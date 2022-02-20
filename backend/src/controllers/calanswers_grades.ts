@@ -12,7 +12,6 @@ import { CalAnswers_Grade } from "#src/models/_index";
 import { storageClient } from "#src/services/gcloud";
 import { ExpressMiddleware } from "#src/types";
 
-const OMIT_KEYS = ["_created", "_id", "_updated", "_version"];
 const THESE_FIELDS_ALWAYS_SEEM_TO_BE_BLANK = [
   `% Grades Receivedof Enrollment`,
   `Letter Grd Cnt`,
@@ -20,9 +19,9 @@ const THESE_FIELDS_ALWAYS_SEEM_TO_BE_BLANK = [
 ];
 
 const parseCalAnswersGradeLine = ({ header, line, term }) => {
-  const values = line.split("\t"); // CSV has commas in course title names, so we use tab-delimited files instead
+  const recordFields = line.split("\t"); // CSV has commas in course title names, so we use tab-delimited files instead
   const calAnswersObject = {};
-  for (let [index, element] of values.entries()) {
+  for (let [index, element] of recordFields.entries()) {
     if (THESE_FIELDS_ALWAYS_SEEM_TO_BE_BLANK.includes(header[index])) {
       continue;
     } else if (header[index] == "Course Control Nbr") {
@@ -43,67 +42,58 @@ const parseCalAnswersGradeLine = ({ header, line, term }) => {
 
 export const CalAnswers_Grades = new (class Controller {
   parseGradeDump: ExpressMiddleware<{}, {}> = async (req, res) => {
-    const shared = { gradeCount: 0 };
+    const shared = { gradeCount: 1 };
 
-    const businessLogic = async (calAnswersObject) => {
-      const CAstring = JSON.stringify(calAnswersObject);
-      const original = await CalAnswers_Grade.findOne(calAnswersObject).cache(
-        43200
+    const businessLogic = async (calAnswersObject, lineNumber) => {
+      const CAstring = `${JSON.stringify(
+        calAnswersObject.term
+      )} ${JSON.stringify(calAnswersObject)}`.substring(0, 250);
+
+      const result = await CalAnswers_Grade.findOneAndUpdate(
+        {
+          "Course Control Nbr": calAnswersObject["Course Control Nbr"],
+          term: calAnswersObject.term,
+          "Grade Nm": calAnswersObject["Grade Nm"],
+        },
+        calAnswersObject,
+        {
+          lean: true,
+          new: true,
+          strict: false,
+          upsert: true,
+          rawResult: true,
+        }
       );
-      const foundGrade = _.omitBy(
-        original?._doc,
-        (v, k) => OMIT_KEYS.includes(k) || v === undefined
+      console.info(
+        moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
+          ` GRADE: ${shared.gradeCount++}, LINE: ${lineNumber
+            .toString()
+            .padStart(5, "0")}`.padEnd(40, " ") +
+          (result.lastErrorObject?.updatedExisting
+            ? `updated (${result.value?._id}) ${CAstring}`
+            : `created (${result.lastErrorObject?.upserted}) ${CAstring}`)
       );
-      if (_.isEqual(foundGrade, calAnswersObject)) {
-        console.info(
-          moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
-            ` GRADE COUNT: ${shared.gradeCount}`.padEnd(50, " ") +
-            `no changes: (${original?._id}) ${CAstring}`
-        );
-      } else {
-        const result = await CalAnswers_Grade.findOneAndUpdate(
-          calAnswersObject,
-          calAnswersObject,
-          {
-            lean: true,
-            new: true,
-            strict: false,
-            upsert: true,
-            rawResult: true,
-          }
-        );
-        console.info(
-          moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
-            ` GRADE COUNT: ${shared.gradeCount}`.padEnd(50, " ") +
-            (result.lastErrorObject?.updatedExisting
-              ? `updated (${result.value?._id}) ${JSON.stringify(
-                  calAnswersObject
-                )}`
-              : `created (${result.lastErrorObject?.upserted}) ${JSON.stringify(
-                  calAnswersObject
-                )}`)
-        );
-      }
-      shared.gradeCount++;
     };
 
     const { key } = req.query;
     const queue = new PQueue({ concurrency: 10 });
-
     const [gFiles] = await storageClient.currentBucket.getFiles({
       prefix: GCLOUD_PATH_CAL_ANSWERS_GRADE_DUMPS,
     });
     const files: any = key
       ? [`${GCLOUD_PATH_CAL_ANSWERS_GRADE_DUMPS}/${key}`]
-      : _.orderBy(gFiles, (f) => f.name, "desc").map((f) => f.name);
+      : _.orderBy(gFiles, (f) => f.name, "desc")
+          .map((f) => f.name)
+          .filter((f) => f.endsWith(".csv"));
     if (files.length == 0) return res.json({ msg: `No object found` });
 
     for (const file of files) {
+      let lineNumber = 2;
       console.info(
         `${moment()
           .tz("America/Los_Angeles")
-          .format(`YYYY-MM-DD HH-mm-ss`)} OPENING: ${file}`.padEnd(50, " ")
-          .green
+          .format(`YYYY-MM-DD HH-mm-ss`)} OPENING: ${file}`.padEnd(40, " ")
+          .yellow
       );
       const reg = file.match(/(\d{4})-(\d{2})-([a-zA-Z]+)\.csv/);
       const term = {
@@ -113,48 +103,65 @@ export const CalAnswers_Grades = new (class Controller {
       }; // this is necessary because Course Control Numbers (CCN) can collide across semesters
       let csvLine = "";
       let header = [];
+
+      const write = fs.createWriteStream("/dev/null");
+      const read = storageClient.currentBucket
+        .file(file)
+        .createReadStream()
+        .on("end", async () => {
+          await queue.onEmpty();
+          write.end();
+        });
+
+      // still waiting for types on stream.pipelineOptions to update {end: false}: https://github.com/nodejs/node/pull/40886, https://github.com/DefinitelyTyped/DefinitelyTyped/blob/da0e347d6a7df8a6a67812c11d388fea0d106852/types/node/stream.d.ts#L1029
+      // @ts-ignore
       await stream.pipeline(
-        storageClient.currentBucket.file(file).createReadStream(),
+        read,
         async function* (source) {
           source.setEncoding("utf16le");
           for await (const chunk of source) {
-            let lines = [];
-            for (const c of chunk) {
-              if (c == "\n") {
-                lines.push(csvLine);
-                if (header.length == 0) {
-                  lines.shift(); // take header line into account
-                  header = csvLine.split("\t").map((field) => field.trim());
+            try {
+              let lines = [];
+              for (const c of chunk) {
+                if (c == "\n") {
+                  lines.push(csvLine);
+                  if (header.length == 0) {
+                    lines.shift(); // take header line into account
+                    header = csvLine.split("\t").map((field) => field.trim());
+                  }
+                  csvLine = "";
+                } else {
+                  csvLine += c;
                 }
-                csvLine = "";
-              } else {
-                csvLine += c;
               }
-            }
-            for (const line of lines) {
-              await queue.onSizeLessThan(1000);
-              queue.add(() =>
-                businessLogic(
-                  parseCalAnswersGradeLine({
-                    header,
-                    line,
-                    term,
-                  })
-                )
-              );
+              for (const line of lines) {
+                await queue.onSizeLessThan(100);
+                queue.add(() =>
+                  businessLogic(
+                    parseCalAnswersGradeLine({
+                      header,
+                      line,
+                      term,
+                    }),
+                    lineNumber++
+                  )
+                );
+              }
+            } catch (e) {
+              console.error(e);
             }
             yield ""; // we write nothing because we don't want to save to disk. TypeScript complains if no /dev/null
           }
         },
-        fs.createWriteStream("/dev/null")
+        write,
+        { end: false }
       );
       console.info(
         `${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} ` +
-          `GRADE COUNT: ${shared.gradeCount++}`.padEnd(50, " ") +
+          `GRADE: ${shared.gradeCount}`.padEnd(40, " ") +
           `finished parsing of grade dump "${file}"`
       );
     }
-    await queue.onEmpty();
     console.info(
       `${moment()
         .tz("America/Los_Angeles")

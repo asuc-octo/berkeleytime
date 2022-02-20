@@ -1,6 +1,5 @@
 import { GraphQLScalarType } from "graphql";
 import mongoose from "mongoose";
-import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
 import Typegoose from "@typegoose/typegoose";
@@ -27,10 +26,6 @@ const GraphQlTypelessData = new GraphQLScalarType({
 mongoose.pluralize(null);
 
 @GQL.ObjectType()
-@Typegoose.plugin(timeMachine.plugin, {
-  name: "calanswers_grade_history",
-  omit: ["_updated"],
-})
 export class CalAnswers_GradeSchema {
   @GQL.Field(() => GraphQlTypelessData)
   _doc: object;
