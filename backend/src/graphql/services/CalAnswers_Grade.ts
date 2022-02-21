@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Service, Inject } from "typedi";
 
-import { SIS_Class_Section, CalAnswers_Grade } from "#src/models/_index";
+import { CalAnswers_Grade } from "#src/models/_index";
 
 import { ReturnModelType } from "@typegoose/typegoose";
 
@@ -16,16 +16,16 @@ const parseArgs = (args) => {
 };
 
 @Service()
-export class SIS_Class_SectionService {
+export class CalAnswers_GradeService {
   constructor(
-    @Inject(SIS_Class_Section.collection.collectionName)
-    private readonly model: ReturnModelType<typeof SIS_Class_Section>
+    @Inject(CalAnswers_Grade.collection.collectionName)
+    private readonly model: ReturnModelType<typeof CalAnswers_Grade>
   ) {}
 
   get = async (args) => {
     return await this.model.find({
-      id: args.id,
-      "class.session.term.name": RegExp(`^${args.year} ${args.semester}`),
+      "Course Control Nbr": args["CourseControlNbr"],
+      ...parseArgs(args),
     });
   };
 }

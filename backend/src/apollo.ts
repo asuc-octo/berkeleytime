@@ -59,7 +59,7 @@ export default async (app) => {
     cacheControl: {
       defaultMaxAge: 5,
     },
-    introspection: false,
+    introspection: true,
     playground: process.env.NODE_ENV != "prod",
     tracing: false,
   });
