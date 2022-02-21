@@ -2,8 +2,12 @@ import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
+import {
+  CalAnswers_Grade,
+  CalAnswers_GradeSchema,
+} from "#src/models/CalAnswers_Grade";
 import { SIS_CourseSchema } from "#src/models/SIS_Course";
-import { GraphQlTypelessData } from "#src/models/_index";
+import { GraphQlTypelessData } from "#src/models/subtypes";
 import { SIS_Code } from "#src/models/subtypes";
 
 import Typegoose from "@typegoose/typegoose";
@@ -418,7 +422,7 @@ class sectionAttribute {
   name: "sis_class_section_history",
   omit: ["_created", "_id", "_updated", "_version"],
 })
-export class SIS_Class_SectionSchema {
+export class SIS_Class_SectionSchema extends mongoose.Schema {
   @GQL.Field(() => GraphQlTypelessData)
   _doc: object;
 
@@ -528,7 +532,31 @@ export class SIS_Class_SectionSchema {
   @GQL.Field()
   @Typegoose.prop()
   type: SIS_Code_Formal;
+
+  // @Typegoose.prop({
+  //   ref: () => CalAnswers_Grade,
+  //   autopopulate: true,
+  //   foreignField: "CourseControlNbr",
+  //   localField: "id",
+  //   default: [],
+  // })
+  // public async _grades(): Promise<Typegoose.Ref<CalAnswers_GradeSchema>[]> {
+  //   return (await CalAnswers_Grade.find({ id: this.id }, { _id: true })).map(
+  //     (o) => o._doc
+  //   );
+  // }
+  @GQL.Field(() => [CalAnswers_GradeSchema])
+  async _grades() {
+    const [year, semester, ...rest] = this.class.session.term.name.split(" ");
+    return await CalAnswers_Grade.find({
+      "Course Control Nbr": this.id,
+      "term.year": year,
+      "term.semester": semester,
+    });
+  }
+  // public _grades: Typegoose.Ref<CalAnswers_GradeSchema>[];
 }
+
 export const SIS_Class_Section = Typegoose.getModelForClass(
   SIS_Class_SectionSchema,
   {
@@ -538,8 +566,10 @@ export const SIS_Class_Section = Typegoose.getModelForClass(
       minimize: false,
       strict: false,
       timestamps: { createdAt: "_created", updatedAt: "_updated" },
+      toObject: { virtuals: true },
       toJSON: {
         getters: true,
+        virtuals: true,
       },
       versionKey: "_version",
     },

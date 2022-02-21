@@ -1,10 +1,29 @@
-import { Args, ArgsType, Ctx, Resolver, Query, Root } from "type-graphql";
+import {
+  Args,
+  ArgsType,
+  Ctx,
+  Field,
+  Resolver,
+  Query,
+  Root,
+} from "type-graphql";
 
 import { SIS_Class_SectionService } from "#src/graphql/services/SIS_Class_Section";
 import { SIS_Class_SectionSchema } from "#src/models/_index";
 
+type ENUM_SEMESTER = "Spring" | "Summer" | "Fall";
+
 @ArgsType()
-class SIS_Class_SectionArgs {}
+class SIS_Class_SectionArgs {
+  @Field(() => Number, { nullable: false })
+  id: number;
+
+  @Field(() => Number, { nullable: false })
+  year: number;
+
+  @Field(() => String, { nullable: false })
+  semester: ENUM_SEMESTER;
+}
 
 @Resolver(() => SIS_Class_SectionSchema)
 export class SIS_Class_SectionResolver {
@@ -16,6 +35,6 @@ export class SIS_Class_SectionResolver {
     @Args() args: SIS_Class_SectionArgs,
     @Ctx() ctx
   ) {
-    return await this.service.getAll();
+    return await this.service.get(args);
   }
 }

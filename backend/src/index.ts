@@ -41,6 +41,16 @@ if (process.env.NODE_ENV == "prod") {
 
 const http = new HttpServer(app);
 const apiRouter = express.Router();
+
+app.use((req, res, next) => {
+  req.socket.on("error", (err) => {
+    console.error(err);
+  });
+  res.socket.on("error", (err) => {
+    console.error(err);
+  });
+  next();
+});
 app.use("/api", apiRouter);
 apiRouter.use("/calanswers_grades", calanswers_grades);
 apiRouter.use("/sis_classes", sis_classes);
