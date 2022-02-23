@@ -14,7 +14,11 @@ import {
 } from "type-graphql";
 
 import { SIS_CourseService } from "#src/graphql/services/SIS_Course";
-import { SIS_ClassSchema, SIS_CourseSchema } from "#src/models/_index";
+import {
+  SIS_ClassSchema,
+  SIS_Class_SectionSchema,
+  SIS_CourseSchema,
+} from "#src/models/_index";
 
 @ArgsType()
 class ClassArgs {
@@ -32,6 +36,15 @@ class SubjectArgs {
 
   @Field(() => String)
   subjectArea___description?: string;
+}
+
+@ArgsType()
+class _classesArgs {
+  @Field()
+  year?: number;
+
+  @Field(() => String)
+  semester?: string;
 }
 
 @Resolver(() => SIS_CourseSchema)
@@ -58,7 +71,18 @@ export class SIS_CourseResolver {
   }
 
   @FieldResolver(() => [SIS_ClassSchema])
-  async _classes(@Root() root) {
-    return await this.service.getClasses(root._courseId());
+  async _classes(@Root() root, @Args() args: _classesArgs) {
+    return await this.service.getClasses({
+      courseId: root._courseId(),
+      ...args,
+    });
+  }
+
+  @FieldResolver(() => [SIS_Class_SectionSchema])
+  async _sections(@Root() root, @Args() args: _classesArgs) {
+    return await this.service.getSections({
+      courseId: root._courseId(),
+      ...args,
+    });
   }
 }
