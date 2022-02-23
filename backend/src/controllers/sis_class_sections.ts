@@ -103,7 +103,7 @@ export const SIS_Class_Sections = new (class Controller {
                   result.lastErrorObject.updatedExisting
                     ? //@ts-ignore
                       //prettier-ignore
-                      `updated (${result.value._id}) cs-course-id '${courseId}' '${sisClassSection.displayName} ${JSON.stringify((await SIS_Class_Section.history.find({ collectionId: result.value._id }).sort({ updatedAt: "desc" }).limit(1))[0]) + "\n"}'`.yellow
+                      `updated (${result.value._id}) cs-course-id '${courseId}' '${sisClassSection.displayName}' ${JSON.stringify((await SIS_Class_Section.history.find({ collectionId: result.value._id }).sort({ updatedAt: "desc" }).limit(1))[0])}`.yellow
                     : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value["displayName"]}'`
                         .yellow
                 }`
