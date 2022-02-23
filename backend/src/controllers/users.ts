@@ -130,6 +130,10 @@ export const Users = new (class Controller implements IController {
         }
       );
       newUser.activation_token = activationToken;
+      console.info(
+        `ACTIVATION TOKEN for USER ${newUser.email}: ${newUser.activation_token}`
+          .red
+      );
       await sendActivationEmail({
         email: newUser.email,
         activationToken,

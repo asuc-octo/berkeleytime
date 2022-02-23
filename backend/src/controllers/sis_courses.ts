@@ -16,17 +16,17 @@ import {
   SIS_COURSE_APP_KEY,
   URL_SIS_COURSE_API,
 } from "#src/config";
+import omitter from "#src/helpers/omitter";
+import ts from "#src/helpers/time";
 import { SIS_Course } from "#src/models/_index";
 import { storageClient } from "#src/services/gcloud";
 import { ExpressMiddleware } from "#src/types";
 
-const OMIT_KEYS = ["_created", "_id", "_updated", "_version"];
-
 export const SIS_Courses = new (class Controller {
   requestDataHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
+    console.info(JSON.stringify(req.user));
     res.json(await this.requestData({ ...req.query, user: req.user }));
   };
-
   requestData = async ({
     pageNumber,
     pageSize,
@@ -48,13 +48,17 @@ export const SIS_Courses = new (class Controller {
     return sisResponse.data?.apiResponse?.response?.courses;
   };
 
-  requestDump: ExpressMiddleware<
+  requestDumpHandler: ExpressMiddleware<
     {
       pageNumber: number | null;
       pageSize: number | null;
     },
     {}
   > = async (req, res) => {
+    console.info(JSON.stringify(req.user));
+    res.json(await this.requestDump({ ...req.query, user: req.user }));
+  };
+  requestDump = async ({ req, res }) => {
     const key = `${GCLOUD_PATH_SIS_COURSE_DUMPS}/dump_SIS_Course.jsonl.gz`;
     let bytesSent = 0;
     let pageNumber = 1;
@@ -69,7 +73,7 @@ export const SIS_Courses = new (class Controller {
         pageNumber,
         pageSize,
       });
-      for (let sisCourse of sisCourses) {
+      for (const sisCourse of sisCourses) {
         const jsonl = `${JSON.stringify(sisCourse)}\n`;
 
         // still waiting for types on stream.pipelineOptions to update {end: false}: https://github.com/nodejs/node/pull/40886, https://github.com/DefinitelyTyped/DefinitelyTyped/blob/da0e347d6a7df8a6a67812c11d388fea0d106852/types/node/stream.d.ts#L1029
@@ -78,9 +82,7 @@ export const SIS_Courses = new (class Controller {
           Readable.from(jsonl),
           zlib.createGzip().on("data", (buf) => {
             console.info(
-              `${moment()
-                .tz("America/Los_Angeles")
-                .format(`YYYY-MM-DD HH-mm-ss`)} page ${pageNumber
+              `${ts()} page ${pageNumber
                 .toString()
                 .padStart(
                   4,
@@ -95,38 +97,37 @@ export const SIS_Courses = new (class Controller {
       }
     } while (sisCourses.length == pageSize && pageNumber++ < Infinity);
     googleWriteStream.end();
-    console.info(
-      `${moment()
-        .tz("America/Los_Angeles")
-        .format(`YYYY-MM-DD HH-mm-ss`)} successful close on stream "${key}"`
-    );
-    res.json({ key: `gs://${GCLOUD_BUCKET}/${key}` });
+    console.info(`${ts()} successful close on stream "${key}"`);
+    return { key: `gs://${GCLOUD_BUCKET}/${key}` };
   };
 
+  parseDumpHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
+    console.info(JSON.stringify(req.user));
+    res.json(await this.parseDump({ ...req.query, user: req.user }));
+  };
   /**
    * Parse lines as they stream in from internet, to avoid entire file load
    * https://nodejs.org/api/stream.html#stream_stream_pipeline_streams_callback
    */
-  parseDump: ExpressMiddleware<{}, {}> = async (req, res) => {
-    const { key } = req.query;
+  parseDump = async (req) => {
+    const start = moment().tz("America/Los_Angeles");
+    const { key } = req;
     let sisCourseCount = 0;
 
     const businessLogic = async ({ sisCourse }) => {
       const original = await SIS_Course.findOne({
         identifiers: sisCourse.identifiers, // it is possible for old/deprecated courses to have same 'cs-course-id', so it is important to also use 'cms-id' which is truly unique
-      }).cache(43200);
-      const foundCourse = _.omitBy(
-        original?._doc,
-        (v, k) => OMIT_KEYS.includes(k) || v === undefined
-      );
+      });
+      const foundCourse = original?.toJSON();
+      omitter(foundCourse);
       if (_.isEqual(foundCourse, sisCourse)) {
         if (!foundCourse) {
+          // SIS Course API has at least 40 courses that have blank "" cs-course-id, 🤦🏻‍♀️ and 17 of them have 'status.code: ACTIVE' ... just... why? 🤷🏻‍♀️  MDB query: db.sis_course.find({ "identifiers.id": "", "status.code": "ACTIVE"}, {"status.code": true, "catalogNumber.formatted": true, "subjectArea.description": true, title: true })
           // prettier-ignore
-          // SIS Course API has at least 60 courses that have a blank "" cs-course-id, 🤦🏻‍♀️ some of them 'status.code: active'... just... why? 🤷🏻‍♀️  MDB query: db.sis_course.find({ 'identifiers.id': "" }, {'status.code': true, 'catalogNumber.formatted': true, 'subjectArea.description': true, title: true })
           console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(sisCourse)}`.red);
         }
         // prettier-ignore
-        console.info(moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) + ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") + `no changes: (${original?._id}) "${foundCourse?.displayName}" / "${foundCourse?.title}"`);
+        console.info(ts() + ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") + `no changes: (${original?._id}) "${foundCourse['displayName']}" / "${foundCourse['title']}"`.green);
       } else {
         const result = await SIS_Course.findOneAndUpdate(
           { identifiers: sisCourse.identifiers },
@@ -140,13 +141,14 @@ export const SIS_Courses = new (class Controller {
           }
         );
         console.info(
-          moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
+          ts() +
             ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") +
             (result.lastErrorObject?.updatedExisting
               ? // @ts-ignore
                 // prettier-ignore
-                `updated (${result.value?._id}) '${result.value["displayName"]}' '${result.value?.title}' ${JSON.stringify((await SIS_Course.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`
-              : `created (${result.lastErrorObject?.upserted}) '${result.value["displayName"]}' '${result.value?.title}'`)
+                `updated (${result.value?._id}) '${result.value["displayName"]}' '${result.value?.title}' ${JSON.stringify((await SIS_Course.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`.yellow
+              : `created (${result.lastErrorObject?.upserted}) '${result.value["displayName"]}' '${result.value?.title}'`
+                  .yellow)
         );
       }
       sisCourseCount++;
@@ -160,14 +162,14 @@ export const SIS_Courses = new (class Controller {
     const file = key
       ? `${GCLOUD_PATH_SIS_COURSE_DUMPS}/${key}`
       : _.orderBy(files, (f) => f.name, "desc")[0].name;
-    if (!file && !key) return res.json({ msg: `No object found` });
+    if (!file && !key) return { msg: `No object found` };
     await stream.pipeline(
       storageClient.currentBucket.file(file).createReadStream(),
       zlib.createGunzip(),
       async function* (source) {
         source.setEncoding("utf8");
         for await (const chunk of source) {
-          let lines = [];
+          const lines = [];
           for (const c of chunk) {
             if (c == "\n") {
               lines.push(jsonLine);
@@ -186,12 +188,7 @@ export const SIS_Courses = new (class Controller {
       fs.createWriteStream("/dev/null")
     );
     await queue.onEmpty();
-    console.info(
-      `${moment()
-        .tz("America/Los_Angeles")
-        .format(`YYYY-MM-DD HH-mm-ss`)}\tfinished parsing of dump "${file}"`
-    );
-
-    res.json({ success: true });
+    console.info(`${ts()}\tfinished parsing of dump "${file}"`);
+    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();

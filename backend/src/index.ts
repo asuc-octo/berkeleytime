@@ -14,6 +14,7 @@ import { URL_DOMAIN } from "#src/config";
 import { PORT_EXPRESS } from "#src/config";
 import {
   calanswers_grades,
+  sis_class_sections,
   sis_classes,
   sis_courses,
   users,
@@ -42,29 +43,21 @@ if (process.env.NODE_ENV == "prod") {
 const http = new HttpServer(app);
 const apiRouter = express.Router();
 
-app.use((req, res, next) => {
-  req.socket.on("error", (err) => {
-    console.error(err);
-  });
-  res.socket.on("error", (err) => {
-    console.error(err);
-  });
-  next();
-});
 app.use("/api", apiRouter);
 apiRouter.use("/calanswers_grades", calanswers_grades);
+apiRouter.use("/sis_class_sections", sis_class_sections);
 apiRouter.use("/sis_classes", sis_classes);
 apiRouter.use("/sis_courses", sis_courses);
 apiRouter.use("/users", users);
-apiRouter.use((err: any, {}, res: express.Response, {}) => {
-  console.error(err);
-  return res.status(500).json({ error: err.stack });
-});
 http.listen(PORT_EXPRESS, () => {
   console.info(`Server now listening on port ${PORT_EXPRESS}`);
 });
 
 await apollo(app);
+apiRouter.use((err: any, {}, res: express.Response, {}) => {
+  console.error(err);
+  return res.status(500).json({ error: err.stack });
+});
 
 // uncomment if interested in seeing full MongoDB interactions printed to console
 /*
@@ -74,6 +67,8 @@ mongoose.set("debug", function (collectionName, method, query, doc) {
       `${collectionName}.${method} (${JSON.stringify(query, null, 2)})`
   );
 });
-
-await import("#src/helpers/schemaWalker");
 */
+
+// prints out all found fields for models
+// note that because of SIS API weirdness, not ALL fields will be non-null for any document instan
+// await import("#src/helpers/schemaWalker");

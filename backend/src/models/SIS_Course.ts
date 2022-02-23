@@ -1,17 +1,26 @@
 // https://dev.to/smithg09/building-graphql-api-with-nodejs-typegraphql-typegoose-and-troubleshooting-common-challenges-9oa
 // https://github.com/DevUnderflow/nx-node-apollo-grahql-mongo/commit/06ee5fb8a1e50d434b5001e796b0b8d181daf874;
+import _ from "lodash";
 import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
-import { GraphQlTypelessData } from "#src/models/_index";
-import { SIS_Code } from "#src/models/subtypes";
+import { SIS_ClassService } from "#src/graphql/services/SIS_Class";
+import { SIS_ClassSchema } from "#src/models/SIS_Class";
+import {
+  GraphQlTypelessData,
+  NullObject,
+  SIS_Code,
+} from "#src/models/subtypes";
 
 import Typegoose from "@typegoose/typegoose";
 
 mongoose.pluralize(null);
 
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class catalogNumber {
   @GQL.Field()
   @Typegoose.prop()
@@ -31,24 +40,40 @@ class catalogNumber {
 }
 
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class discrete {
   @GQL.Field(() => [Number])
+  @Typegoose.prop()
   units: number[];
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class fixed {
   @GQL.Field()
+  @Typegoose.prop()
   units: number;
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class range {
   @GQL.Field()
+  @Typegoose.prop()
   minUnits: number;
 
   @GQL.Field()
+  @Typegoose.prop()
   maxUnits: number;
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class value {
   @GQL.Field()
   @Typegoose.prop()
@@ -63,6 +88,9 @@ class value {
   range: range;
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class credit {
   @GQL.Field()
   @Typegoose.prop()
@@ -74,6 +102,9 @@ class credit {
 }
 
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class identifier {
   @GQL.Field()
   @Typegoose.prop()
@@ -84,6 +115,9 @@ class identifier {
   id: string;
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class course {
   @GQL.Field(() => [identifier])
   @Typegoose.prop({ type: [identifier] })
@@ -94,6 +128,9 @@ class course {
   displayName: string;
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class creditRestrictionCourse {
   @GQL.Field()
   @Typegoose.prop()
@@ -104,29 +141,41 @@ class creditRestrictionCourse {
   maxCreditPercentage: number;
 }
 @GQL.ObjectType()
-class creditRestrictionCourses {
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
+class restrictionCourses {
   @GQL.Field(() => [creditRestrictionCourse])
   @Typegoose.prop({ type: [creditRestrictionCourse] })
   creditRestrictionCourses: creditRestrictionCourse[];
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class creditRestriction {
   @GQL.Field()
   @Typegoose.prop()
   restrictionText: string;
 
-  @GQL.Field(() => creditRestrictionCourses)
-  @Typegoose.prop({ type: creditRestrictionCourse })
-  restrictionCourses: creditRestrictionCourses;
+  @GQL.Field()
+  @Typegoose.prop()
+  restrictionCourses: restrictionCourses;
 }
 
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class termAllowed {
   @GQL.Field(() => [String])
   @Typegoose.prop({ type: [String] })
   termNames: string[];
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class component {
   @GQL.Field()
   @Typegoose.prop()
@@ -147,8 +196,15 @@ class component {
   @GQL.Field()
   @Typegoose.prop()
   feesExist: boolean;
+
+  // this "formatsOffered.formats.finalExam" object, out of >50,000 SIS Course objects, has always been just an empty object. why????? https://api-central.berkeley.edu/api/72/interactive-docs/
+  @Typegoose.prop({ type: NullObject, minimize: false })
+  finalExam: object;
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class format {
   @GQL.Field()
   @Typegoose.prop()
@@ -165,15 +221,19 @@ class format {
   @GQL.Field()
   @Typegoose.prop()
   aggregateMinContactHours: number;
+
   @GQL.Field()
   @Typegoose.prop()
   aggregateMaxContactHours: number;
+
   @GQL.Field()
   @Typegoose.prop()
   minWorkloadHours: number;
+
   @GQL.Field()
   @Typegoose.prop()
   maxWorkloadHours: number;
+
   @GQL.Field()
   @Typegoose.prop()
   anyFeesExist: boolean;
@@ -183,22 +243,31 @@ class format {
   components: component[];
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class course_term {
   @GQL.Field(() => [String])
   @Typegoose.prop({ type: [String] })
   termNames: string[];
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class typicalOffer {
-  @GQL.Field(() => [course_term])
-  @Typegoose.prop({ type: [course_term] })
-  terms: course_term[];
+  @GQL.Field()
+  @Typegoose.prop()
+  terms: course_term;
 
-  @GQL.Field(() => [String])
-  @Typegoose.prop({ type: [String] })
-  comments: string[];
+  @GQL.Field()
+  @Typegoose.prop()
+  comments: string;
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class formatsOffered {
   @GQL.Field()
   @Typegoose.prop()
@@ -208,8 +277,8 @@ class formatsOffered {
   @Typegoose.prop({ type: [format] })
   formats: format[];
 
-  @GQL.Field(() => typicalOffer)
-  @Typegoose.prop({ type: typicalOffer })
+  @GQL.Field()
+  @Typegoose.prop()
   typicallyOffered: typicalOffer;
 
   @GQL.Field()
@@ -218,19 +287,32 @@ class formatsOffered {
 }
 
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class repeatability {
   @GQL.Field()
   @Typegoose.prop()
   repeatable: boolean;
+
+  @GQL.Field()
+  @Typegoose.prop()
+  description: string;
 }
 
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class requiredCourse {
   @GQL.Field(() => [course])
-  @Typegoose.prop({ type: [course] })
-  courses: course[];
+  @Typegoose.prop({ type: [course], default: void 0 }) // SIS API sets preparation.requiredCourses.courses to undefined if there are no required courses, so must override default empty []
+  courses: null | course[];
 }
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class preparation {
   @GQL.Field()
   @Typegoose.prop()
@@ -244,6 +326,7 @@ class preparation {
 @GQL.ObjectType({
   description: "A superset of all data resulting from the SIS Course API",
 })
+@Typegoose.modelOptions({ schemaOptions: { minimize: false } })
 @Typegoose.plugin(timeMachine.plugin, {
   name: "sis_course_history",
   omit: ["_created", "_id", "_updated", "_version"],
@@ -392,7 +475,7 @@ export class SIS_CourseSchema {
   printInstructors: boolean;
 
   @GQL.Field(() => [String])
-  @Typegoose.prop({ type: [String] })
+  @Typegoose.prop({ type: [String], default: void 0 }) // SIS API sets proposedInstructors to undefined if result is empty, so must override default
   proposedInstructors: string[];
 
   @GQL.Field()
@@ -434,6 +517,13 @@ export class SIS_CourseSchema {
   @GQL.Field()
   @Typegoose.prop()
   workloadHours: number;
+
+  @GQL.Field(() => String)
+  _courseId() {
+    return _.find(this.identifiers, {
+      type: "cs-course-id",
+    }).id;
+  }
 }
 
 export const SIS_Course = Typegoose.getModelForClass(SIS_CourseSchema, {

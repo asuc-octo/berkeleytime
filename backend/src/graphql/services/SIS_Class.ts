@@ -1,22 +1,28 @@
 import _ from "lodash";
-import { Service, Inject } from "typedi";
+import moment from "moment-timezone";
+import { Container, Service, Inject } from "typedi";
 
-import { SIS_Class } from "#src/models/_index";
+import { SIS_Class } from "#src/models/SIS_Class";
 
 import { ReturnModelType } from "@typegoose/typegoose";
 
 @Service()
-export class SIS_ClassService {
+class service {
   constructor(
     @Inject(SIS_Class.collection.collectionName)
     private readonly model: ReturnModelType<typeof SIS_Class>
-  ) {}
-
-  async get(id): Promise<typeof SIS_Class> {
-    return (await this.model.findOne({ _id: id }).cache())._doc;
+  ) {
+    this.model = SIS_Class;
   }
 
-  async getAll() {
-    return await this.model.find().limit(100);
-  }
+  get = async (id): Promise<typeof SIS_Class> => {
+    return await this.model.findOne({ _id: id });
+  };
+
+  sample = async () => {
+    return await this.model.aggregate([{ $sample: { size: 100 } }]);
+  };
 }
+
+Container.set(SIS_Class.collection.collectionName, SIS_Class);
+export const SIS_ClassService = Container.get(service);

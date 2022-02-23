@@ -1,11 +1,11 @@
-import { Service, Inject } from "typedi";
+import { Container, Service, Inject } from "typedi";
 
 import { User } from "#src/models/_index";
 
 import { ReturnModelType } from "@typegoose/typegoose";
 
 @Service()
-export class UserService {
+export class service {
   constructor(
     @Inject(User.collection.collectionName)
     private readonly model: ReturnModelType<typeof User>
@@ -31,3 +31,6 @@ export class UserService {
     ).friends;
   }
 }
+
+Container.set(User.collection.collectionName, User);
+export const UserService = Container.get(service);

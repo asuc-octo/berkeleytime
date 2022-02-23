@@ -74,9 +74,8 @@ const schemaWalker = async (model) => {
 
 for (const model of [SIS_Class, SIS_Class_Section, SIS_Course]) {
   const s = await schemaWalker(model);
-  console.info(model.collection.collectionName);
+  console.info(model.collection.collectionName.red);
   console.dir(s, { depth: null });
-  console.info("");
 
   console.info(
     await parseSchema(
@@ -86,4 +85,5 @@ for (const model of [SIS_Class, SIS_Class_Section, SIS_Course]) {
       { storeValues: false }
     )
   );
+  console.info("\n\n\n\n");
 }

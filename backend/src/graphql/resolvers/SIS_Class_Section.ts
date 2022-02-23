@@ -9,7 +9,7 @@ import {
 } from "type-graphql";
 
 import { SIS_Class_SectionService } from "#src/graphql/services/SIS_Class_Section";
-import { SIS_Class_SectionSchema } from "#src/models/_index";
+import { SIS_ClassSchema, SIS_Class_SectionSchema } from "#src/models/_index";
 
 type ENUM_SEMESTER = "Spring" | "Summer" | "Fall";
 
@@ -25,9 +25,11 @@ class SIS_Class_SectionArgs {
   semester: ENUM_SEMESTER;
 }
 
-@Resolver(() => SIS_Class_SectionSchema)
+@Resolver(() => SIS_ClassSchema)
 export class SIS_Class_SectionResolver {
-  constructor(private readonly service: SIS_Class_SectionService) {}
+  constructor(private readonly service: typeof SIS_Class_SectionService) {
+    this.service = SIS_Class_SectionService;
+  }
 
   @Query(() => [SIS_Class_SectionSchema])
   async SIS_Class_Section(

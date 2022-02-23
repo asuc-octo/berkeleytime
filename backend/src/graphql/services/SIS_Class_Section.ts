@@ -1,22 +1,12 @@
 import _ from "lodash";
-import { Service, Inject } from "typedi";
+import { Container, Service, Inject } from "typedi";
 
-import { SIS_Class_Section, CalAnswers_Grade } from "#src/models/_index";
+import { SIS_Class_Section } from "#src/models/SIS_Class_Section";
 
 import { ReturnModelType } from "@typegoose/typegoose";
 
-const parseArgs = (args) => {
-  const newObject = {};
-  _.each(args, (value, key) => {
-    if (value !== undefined && key !== "CourseControlNbr") {
-      newObject[key.replace(/___/g, ".")] = value;
-    }
-  });
-  return newObject;
-};
-
 @Service()
-export class SIS_Class_SectionService {
+class service {
   constructor(
     @Inject(SIS_Class_Section.collection.collectionName)
     private readonly model: ReturnModelType<typeof SIS_Class_Section>
@@ -29,3 +19,6 @@ export class SIS_Class_SectionService {
     });
   };
 }
+
+Container.set(SIS_Class_Section.collection.collectionName, SIS_Class_Section);
+export const SIS_Class_SectionService = Container.get(service);

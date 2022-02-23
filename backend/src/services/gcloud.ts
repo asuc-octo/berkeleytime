@@ -1,5 +1,6 @@
 import {
   GCLOUD_BUCKET,
+  GCLOUD_PROJECT_ID,
   GCLOUD_REGION,
   GCLOUD_SERVICE_ACCOUNT_EMAIL,
   GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY,
@@ -39,6 +40,7 @@ class storage extends gcs.Storage {
         client_email: GCLOUD_SERVICE_ACCOUNT_EMAIL,
         private_key: GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY,
       },
+      projectId: GCLOUD_PROJECT_ID,
     });
     this.currentBucket = this.bucket(bucketName);
   }
