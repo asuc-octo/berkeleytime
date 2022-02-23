@@ -19,6 +19,7 @@
     "express-async-errors": "^3.1.1",
     "graphql": "^15.5.0",
     "graphql-fields-list": "^2.2.4",
+    "jsondiffpatch": "^0.4.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.33",
