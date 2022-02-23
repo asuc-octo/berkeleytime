@@ -1,10 +1,6 @@
 import mongoose from "mongoose";
 import * as GQL from "type-graphql";
 
-import {
-  SIS_ClassSchema,
-  SIS_Class_SectionSchema,
-} from "#src/models/SIS_Class";
 import { GraphQlTypelessData } from "#src/models/subtypes";
 
 import Typegoose from "@typegoose/typegoose";
@@ -43,6 +39,9 @@ type ENUM_GRADES =
 mongoose.pluralize(null);
 
 @GQL.ObjectType()
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 class grade_term {
   @GQL.Field()
   @Typegoose.prop()
@@ -58,6 +57,7 @@ class grade_term {
 }
 
 @GQL.ObjectType()
+@Typegoose.modelOptions({ schemaOptions: { minimize: false, strict: false } })
 export class CalAnswers_GradeSchema {
   @GQL.Field(() => GraphQlTypelessData)
   _doc: object;
@@ -80,7 +80,7 @@ export class CalAnswers_GradeSchema {
 
   @GQL.Field()
   @Typegoose.prop()
-  GradeSortNbr: number;
+  GradeSortNbr: string;
 
   @GQL.Field()
   @Typegoose.prop()
@@ -116,7 +116,7 @@ export class CalAnswers_GradeSchema {
 
   @GQL.Field()
   @Typegoose.prop()
-  GradeNm: string;
+  GradeNm: ENUM_GRADES;
 
   @GQL.Field()
   @Typegoose.prop()

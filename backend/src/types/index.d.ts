@@ -10,6 +10,8 @@ declare namespace Express {
   }
 }
 
+export type ENUM_SEMESTER = "Spring" | "Summer" | "Fall";
+
 // https://stackoverflow.com/questions/34508081/how-to-add-typescript-definitions-to-express-req-res
 type TypedRequest<
   ReqBody = Record<string, unknown>,

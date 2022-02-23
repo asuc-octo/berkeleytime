@@ -86,7 +86,7 @@ export class UserSchema {
   name: string;
 
   @GQL.Field()
-  @Typegoose.prop({ select: false })
+  @Typegoose.prop()
   password: string;
 
   @GQL.Field(() => String)

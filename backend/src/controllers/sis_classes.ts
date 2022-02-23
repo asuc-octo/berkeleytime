@@ -9,33 +9,24 @@ import {
   SIS_CLASS_APP_ID,
   SIS_CLASS_APP_KEY,
   URL_SIS_CLASS_API,
-  URL_SIS_CLASS_SECTIONS_API,
 } from "#src/config";
-import { SIS_Class, SIS_Class_Section, SIS_Course } from "#src/models/_index";
+import omitter from "#src/helpers/omitter";
+import ts from "#src/helpers/time";
+import { SIS_Class, SIS_Course } from "#src/models/_index";
 import { ExpressMiddleware } from "#src/types";
-
-const OMIT_KEYS = ["_created", "_id", "_updated", "_version"];
 
 export const SIS_Classes = new (class Controller {
   requestClassDataHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
+    console.info(JSON.stringify(req.user));
     res.json(await this.requestClassData({ ...req.query, user: req.user }));
   };
-  requestClassSectionDataHandler: ExpressMiddleware<{}, {}> = async (
-    req,
-    res
-  ) => {
-    res.json(
-      await this.requestClassSectionData({ ...req.query, user: req.user })
-    );
-  };
-
   requestClassData = async ({ courseId }: { courseId: string; user?: any }) => {
-    let sisClasses = [];
     let pageNumber = 1;
+    let sisClasses = [];
     let sisResponse;
     const pageSize = 200;
     do {
-      // SIS Class API is really shitty and will 500 error if their payload is too large, so we use 'page-size', but also a too-large page size will error
+      // SIS Class API is shitty and will 500 error if their payload is too large, so we use 'page-size', but also a too-large page size will error
       sisResponse = await axios.get(`${URL_SIS_CLASS_API}`, {
         headers: {
           app_id: SIS_CLASS_APP_ID,
@@ -65,117 +56,12 @@ export const SIS_Classes = new (class Controller {
       )
       .value();
   };
-
-  requestClassSectionData = async ({
-    courseId,
-    termId,
-  }: {
-    courseId: string;
-    termId: number;
-    user?: any;
-  }) => {
-    const sisResponse = await axios.get(`${URL_SIS_CLASS_SECTIONS_API}`, {
-      headers: {
-        app_id: SIS_CLASS_APP_ID,
-        app_key: SIS_CLASS_APP_KEY,
-      },
-      params: {
-        "cs-course-id": courseId,
-        "term-id": termId,
-      },
-    });
-    return sisResponse.data?.apiResponse?.response?.classSections;
+  requestClassDumpHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
+    console.info(JSON.stringify(req.user));
+    res.json(await this.requestClassDump());
   };
-
-  requestClassSectionDump: ExpressMiddleware<{}, {}> = async (req, res) => {
-    const queue = new PQueue({ concurrency: 10 });
-    const shared = {
-      sisClassSectionCount: 1,
-    };
-    for await (const sisCourse of SIS_Course.find({
-      "status.code": "ACTIVE",
-      identifiers: { $ne: { type: "cs-course-id", id: "" } },
-    }).sort({ displayName: 1 })) {
-      const courseId = _.find(sisCourse["identifiers"], {
-        type: "cs-course-id",
-      }).id;
-      const terms = await SIS_Class.find({
-        "course.identifiers": { type: "cs-course-id", id: courseId },
-        "session.term.name": RegExp(
-          `${moment().year() - 1}|${moment().year()}|${moment().year() + 1}`
-        ),
-      }).distinct("session.term.id");
-      for (let termId of terms.reverse()) {
-        try {
-          const businessLogic = async () => {
-            const sisClassSections = await this.requestClassSectionData({
-              courseId,
-              termId,
-            });
-
-            for (let classSection of sisClassSections) {
-              const original = await SIS_Class_Section.findOne({
-                "class.session.term.id": termId,
-                id: classSection.id,
-              });
-
-              const foundClassSection = _.omitBy(
-                original?._doc,
-                (v, k) => OMIT_KEYS.includes(k) || v === undefined
-              );
-
-              if (_.isEqual(foundClassSection, classSection)) {
-                if (!foundClassSection) {
-                  // prettier-ignore
-                  console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(classSection)}`.red);
-                }
-                // prettier-ignore
-                console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS SECTION COUNT: ${shared.sisClassSectionCount}`.padEnd(55, " ") + `no changes: (${original?._id}) cs-course-id '${courseId}' '${foundClassSection['id']}' '${classSection["displayName"]}'`
-                );
-              } else {
-                const result = await SIS_Class_Section.findOneAndUpdate(
-                  {
-                    "class.session.term.id": termId,
-                    id: classSection.id,
-                  },
-                  classSection,
-                  {
-                    lean: true,
-                    new: true,
-                    strict: false,
-                    upsert: true,
-                    rawResult: true,
-                  }
-                );
-                console.info(
-                  `${moment()
-                    .tz("America/Los_Angeles")
-                    .format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS SECTION COUNT: ${
-                    shared.sisClassSectionCount
-                  }`.padEnd(55, " ") +
-                    `${
-                      result.lastErrorObject.updatedExisting
-                        ? //@ts-ignore
-                          //prettier-ignore
-                          `updated (${result.value._id}) cs-course-id '${courseId}' '${classSection.displayName} ${JSON.stringify((await SIS_Class_Section.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])+"\n"}'`
-                        : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value["displayName"]}'`
-                    }`
-                );
-              }
-              shared.sisClassSectionCount++;
-            }
-          };
-          queue.add(() => businessLogic());
-        } catch (e) {
-          console.error(JSON.stringify(e));
-        }
-      }
-    }
-    await queue.onEmpty();
-    res.json({ message: "finished" });
-  };
-
-  requestClassDump: ExpressMiddleware<{}, {}> = async (req, res) => {
+  requestClassDump = async () => {
+    const start = moment().tz("America/Los_Angeles");
     const queue = new PQueue({ concurrency: 10 });
     const shared = {
       sisClassCount: 1,
@@ -185,12 +71,14 @@ export const SIS_Classes = new (class Controller {
       for await (const sisCourse of SIS_Course.find({
         "status.code": "ACTIVE",
         identifiers: { $ne: { type: "cs-course-id", id: "" } },
-      }).sort({ displayName: 1 })) {
+      })
+        .sort({ displayName: 1 })
+        .allowDiskUse(true)) {
         const businessLogic = async (sisCourse) => {
+          let sisClasses;
           const courseId = _.find(sisCourse.identifiers, {
             type: "cs-course-id",
           }).id;
-          let sisClasses;
           try {
             sisClasses = await this.requestClassData({
               courseId,
@@ -198,15 +86,15 @@ export const SIS_Classes = new (class Controller {
           } catch (e) {
             if (e.response?.data?.apiResponse?.httpStatus) {
               // prettier-ignore
-              console.error(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse.displayName}' '${sisCourse.title}', ${JSON.stringify(e.response.data.apiResponse.httpStatus)}`);
+              console.error(`${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse.displayName}' '${sisCourse.title}', ${JSON.stringify(e.response.data.apiResponse.httpStatus)}`.red);
             } else {
               // prettier-ignore
-              console.error(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse.displayName}' '${sisCourse.title}', UNHANDLED EXCEPTION: ${e}`);
+              console.error(`${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse.displayName}' '${sisCourse.title}', UNHANDLED EXCEPTION: ${e}`.red);
             }
             shared.sisClassCount++;
             return;
           }
-          for (let sisClass of sisClasses) {
+          for (const sisClass of sisClasses) {
             const original = await SIS_Class.findOne({
               "course.displayName": sisClass.course.displayName,
               "course.identifiers": sisClass.course.identifiers,
@@ -214,18 +102,11 @@ export const SIS_Classes = new (class Controller {
               "session.term.id": sisClass.session.term.id,
               number: sisClass.number,
             });
-            const foundClass = _.omitBy(
-              original?._doc,
-              (v, k) => OMIT_KEYS.includes(k) || v === undefined
-            );
-
+            const foundClass = original?.toJSON();
+            omitter(foundClass);
             if (_.isEqual(foundClass, sisClass)) {
-              if (!foundClass) {
-                // prettier-ignore
-                console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(sisClass)}`.red);
-              }
               // prettier-ignore
-              console.info(`${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `no changes: (${original?._id}) cs-course-id '${courseId}' '${sisClass?.displayName}' / '${sisClass?.course?.title}'`);
+              console.info(`${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `no changes: (${original?._id}) cs-course-id '${courseId}' '${sisClass?.displayName}' / '${sisClass?.course?.title}'`.green);
             } else {
               const result = await SIS_Class.findOneAndUpdate(
                 {
@@ -245,17 +126,17 @@ export const SIS_Classes = new (class Controller {
                 }
               );
               console.info(
-                `${moment()
-                  .tz("America/Los_Angeles")
-                  .format(`YYYY-MM-DD HH-mm-ss`)} SIS CLASS COUNT: ${
-                  shared.sisClassCount
-                }`.padEnd(55, " ") +
+                `${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(
+                  55,
+                  " "
+                ) +
                   `${
                     result.lastErrorObject.updatedExisting
                       ? //@ts-ignore
                         //prettier-ignore
-                        `updated (${result.value._id}) cs-course-id '${courseId}' '${result.value.displayName}' '${result.value.course.title}' ${JSON.stringify((await SIS_Class.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`
+                        `updated (${result.value._id}) cs-course-id '${courseId}' '${result.value.displayName}' '${result.value.course.title}' ${JSON.stringify((await SIS_Class.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`.yellow
                       : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value["displayName"]}' '${result.value["course"]["title"]}'`
+                          .yellow
                   }`
               );
             }
@@ -268,9 +149,9 @@ export const SIS_Classes = new (class Controller {
         queue.add(() => businessLogic(sisCourse));
       }
       await queue.onEmpty();
-      res.json({ message: "finished" });
     } catch (err) {
       console.error(err);
     }
+    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();

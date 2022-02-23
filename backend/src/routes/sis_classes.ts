@@ -12,15 +12,9 @@ router.get(
   SIS_Classes.requestClassDataHandler
 );
 router.get(
-  "/requestClassSectionData",
+  "/requestClassDump",
   authenticate,
-  SIS_Classes.requestClassSectionDataHandler
+  SIS_Classes.requestClassDumpHandler
 );
-router.get(
-  "/requestClassSectionDump",
-  authenticate,
-  SIS_Classes.requestClassSectionDump
-);
-router.get("/requestClassDump", authenticate, SIS_Classes.requestClassDump);
 
 export const sis_classes = router;

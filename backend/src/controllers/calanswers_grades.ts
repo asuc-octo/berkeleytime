@@ -8,6 +8,7 @@ import PQueue from "p-queue";
 import stream from "stream/promises";
 
 import { GCLOUD_PATH_CAL_ANSWERS_GRADE_DUMPS } from "#src/config";
+import ts from "#src/helpers/time";
 import { CalAnswers_Grade } from "#src/models/_index";
 import { storageClient } from "#src/services/gcloud";
 import { ExpressMiddleware } from "#src/types";
@@ -35,25 +36,29 @@ const parseCalAnswersGradeLine = ({ header, line, term }) => {
     } else {
       element = element.trim();
     }
-    calAnswersObject[header[index]] = element;
+    calAnswersObject[header[index].replace(/ /g, "")] = element;
   }
   return { ...calAnswersObject, term };
 };
 
 export const CalAnswers_Grades = new (class Controller {
-  parseGradeDump: ExpressMiddleware<{}, {}> = async (req, res) => {
+  parseGradeDumpHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
+    console.info(JSON.stringify(req.user));
+    res.json(await this.parseGradeDump({ ...req.query, user: req.user }));
+  };
+  parseGradeDump = async (req) => {
+    const start = moment().tz("America/Los_Angeles");
     const shared = { gradeCount: 1 };
 
     const businessLogic = async (calAnswersObject, lineNumber) => {
       const CAstring = `${JSON.stringify(
         calAnswersObject.term
-      )} ${JSON.stringify(calAnswersObject)}`.substring(0, 250);
-
+      )} ${JSON.stringify(calAnswersObject)}`;
       const result = await CalAnswers_Grade.findOneAndUpdate(
         {
-          "Course Control Nbr": calAnswersObject["Course Control Nbr"],
+          CourseControlNbr: calAnswersObject.CourseControlNbr,
           term: calAnswersObject.term,
-          "Grade Nm": calAnswersObject["Grade Nm"],
+          GradeNm: calAnswersObject.GradeNm,
         },
         calAnswersObject,
         {
@@ -65,7 +70,7 @@ export const CalAnswers_Grades = new (class Controller {
         }
       );
       console.info(
-        moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`) +
+        ts() +
           ` GRADE: ${shared.gradeCount++}, LINE: ${lineNumber
             .toString()
             .padStart(5, "0")}`.padEnd(40, " ") +
@@ -75,7 +80,7 @@ export const CalAnswers_Grades = new (class Controller {
       );
     };
 
-    const { key } = req.query;
+    const { key } = req;
     const queue = new PQueue({ concurrency: 10 });
     const [gFiles] = await storageClient.currentBucket.getFiles({
       prefix: GCLOUD_PATH_CAL_ANSWERS_GRADE_DUMPS,
@@ -85,16 +90,11 @@ export const CalAnswers_Grades = new (class Controller {
       : _.orderBy(gFiles, (f) => f.name, "desc")
           .map((f) => f.name)
           .filter((f) => f.endsWith(".csv"));
-    if (files.length == 0) return res.json({ msg: `No object found` });
+    if (files.length == 0) return { msg: `No object found` };
 
     for (const file of files) {
       let lineNumber = 2;
-      console.info(
-        `${moment()
-          .tz("America/Los_Angeles")
-          .format(`YYYY-MM-DD HH-mm-ss`)} OPENING: ${file}`.padEnd(40, " ")
-          .yellow
-      );
+      console.info(`${ts()} OPENING: ${file}`.padEnd(40, " ").yellow);
       const reg = file.match(/(\d{4})-(\d{2})-([a-zA-Z]+)\.csv/);
       const term = {
         year: parseInt(reg[1]),
@@ -157,16 +157,12 @@ export const CalAnswers_Grades = new (class Controller {
         { end: false }
       );
       console.info(
-        `${moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH-mm-ss`)} ` +
+        `${ts()} ` +
           `GRADE: ${shared.gradeCount}`.padEnd(40, " ") +
           `finished parsing of grade dump "${file}"`
       );
     }
-    console.info(
-      `${moment()
-        .tz("America/Los_Angeles")
-        .format(`YYYY-MM-DD HH-mm-ss`)}\tfinished parsing of all grade dumps`
-    );
-    res.json({ success: true });
+    console.info(`${ts()}\tfinished parsing of all grade dumps`);
+    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();
