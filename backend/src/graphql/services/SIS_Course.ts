@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Container, Service, Inject } from "typedi";
 
-import { SIS_Class, SIS_Course } from "#src/models/_index";
+import { SIS_Class, SIS_Class_Section, SIS_Course } from "#src/models/_index";
 
 import { ReturnModelType } from "@typegoose/typegoose";
 
@@ -26,27 +26,45 @@ class service {
     return await this.model.findOne({ _id: id });
   };
 
-  getClasses = async (courseId) => {
-    return await SIS_Class.find({
-      "course.identifiers.id": courseId,
-    });
+  getClasses = async (args) => {
+    const where = {
+      "course.identifiers.id": args.courseId,
+    };
+    let expr = `${args.year ?? ""} ${args.semester ?? ""}`;
+    if (expr.trim() != "") {
+      where["session.term.name"] = RegExp(expr);
+    }
+    return await SIS_Class.find(where);
+  };
+
+  getSections = async (args) => {
+    const where = {
+      "class.course.identifiers.id": args.courseId,
+    };
+    let expr = `^${args.year ?? ""} ${args.semester ?? ""}`;
+    if (expr.trim() != "") {
+      where["class.session.term.name"] = RegExp(expr);
+    }
+    return await SIS_Class_Section.find(where);
   };
 
   getCourses = async (args, fieldsProjection) => {
     return _.chain(
-      await this.model.find(
-        {
-          "status.code": "ACTIVE",
-          ...parseArgs(args),
-        },
-        {
-          "identifiers.id": 1,
-          "identifiers.type": 1,
-          "subjectArea.code": 1,
-          "catalogNumber.number": 1,
-          ...fieldsProjection,
-        }
-      )
+      await this.model
+        .find(
+          {
+            "status.code": "ACTIVE",
+            ...parseArgs(args),
+          },
+          {
+            "identifiers.id": 1,
+            "identifiers.type": 1,
+            "subjectArea.code": 1,
+            "catalogNumber.number": 1,
+            ...fieldsProjection,
+          }
+        )
+        .cache()
     )
       .orderBy((o) => parseInt(o.catalogNumber.number))
       .orderBy("subjectArea.code");

@@ -5,8 +5,6 @@ import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
-import { SIS_ClassService } from "#src/graphql/services/SIS_Class";
-import { SIS_ClassSchema } from "#src/models/SIS_Class";
 import {
   GraphQlTypelessData,
   NullObject,
@@ -533,8 +531,10 @@ export const SIS_Course = Typegoose.getModelForClass(SIS_CourseSchema, {
     minimize: false,
     strict: false,
     timestamps: { createdAt: "_created", updatedAt: "_updated" },
+    toObject: { virtuals: true },
     toJSON: {
       getters: true,
+      virtuals: true,
     },
     versionKey: "_version",
   },

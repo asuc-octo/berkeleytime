@@ -13,11 +13,13 @@ class service {
   ) {}
 
   get = async ({ CourseControlNbr, term }) => {
-    return await this.model.find({
-      CourseControlNbr,
-      "term.year": term.year,
-      "term.semester": term.semester,
-    });
+    return await this.model
+      .find({
+        CourseControlNbr,
+        "term.year": term.year,
+        "term.semester": term.semester,
+      })
+      .cache(86400);
   };
 }
 

@@ -57,20 +57,10 @@ mongoose.Query.prototype.exec = async function (): Promise<
   }
   const key =
     this._key ??
-    createHash("md5")
-      .update(
-        JSON.stringify({
-          ...{
-            name: this._collection.collectionName,
-            conditions: this._conditions,
-            fields: this._fields,
-            options: this._options,
-          },
-        })
-      )
-      .digest("hex");
+    createHash("md5").update(JSON.stringify(this.getQuery())).digest("hex");
   const cachedResult = await redisClient.get(key);
-  if (cachedResult !== null) {
+  if (cachedResult) {
+    console.info(`cache hit: ${key}`);
     const result: Object | Object[] = JSON.parse(cachedResult);
     if (this._ttlExtend === true) {
       redisClient.set(key, cachedResult, { EX: this._ttl });
@@ -90,7 +80,7 @@ mongoose.Query.prototype.exec = async function (): Promise<
     return models;
   }
   const result = await originalExec.apply(this, arguments);
-  if (result !== null) {
+  if (result) {
     redisClient.set(key, JSON.stringify(result), { EX: this._ttl });
   }
   return result;
