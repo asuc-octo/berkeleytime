@@ -145,7 +145,7 @@ export const SIS_Classes = new (class Controller {
           console.info(`courses: ${shared.sisCourseCount}`);
           shared.sisCourseCount++;
         };
-
+        await queue.onSizeLessThan(1000);
         queue.add(() => businessLogic(sisCourse));
       }
       await queue.onEmpty();

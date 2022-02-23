@@ -128,6 +128,7 @@ export const SIS_Class_Sections = new (class Controller {
               shared.sisClassSectionCount++;
             }
           };
+          await queue.onSizeLessThan(1000);
           queue.add(() => businessLogic());
         } catch (e) {
           console.error(JSON.stringify(e));
