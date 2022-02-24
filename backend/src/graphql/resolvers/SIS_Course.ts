@@ -1,12 +1,11 @@
 import { GraphQLResolveInfo } from "graphql";
 import { fieldsProjection } from "graphql-fields-list";
+import _ from "lodash";
 import {
   Args,
   ArgsType,
-  Ctx,
   Field,
   FieldResolver,
-  Int,
   Resolver,
   Query,
   Root,
@@ -19,15 +18,6 @@ import {
   SIS_Class_Section_Schema,
   SIS_Course_Schema,
 } from "#src/models/_index";
-
-@ArgsType()
-class ClassArgs {
-  @Field(() => String)
-  displayName: string;
-
-  @Field(() => Int)
-  id?: number;
-}
 
 @ArgsType()
 class SubjectArgs {
@@ -49,40 +39,41 @@ class _classesArgs {
 
 @Resolver(() => SIS_Course_Schema)
 export class SIS_CourseResolver {
-  constructor(private readonly service: typeof SIS_CourseService) {
-    this.service = SIS_CourseService;
-  }
-
   @Query(() => [String], {
     description: "All departments in human-readable format",
   })
-  async Subjects(@Root() root, @Args() args: SubjectArgs, @Ctx() ctx) {
-    return await this.service.getSubjects();
+  async subjects() {
+    return await SIS_CourseService.subjects();
   }
 
   @Query(() => [SIS_Course_Schema])
   async SIS_Course(
-    @Root() root,
     @Args() args: SubjectArgs,
-    @Ctx() ctx,
     @Info() info: GraphQLResolveInfo
   ) {
-    return await this.service.getCourses(args, fieldsProjection(info));
+    return await SIS_CourseService.courses(args, fieldsProjection(info));
+  }
+
+  @FieldResolver(() => String)
+  _courseId(@Root() root) {
+    return _.find(root.identifiers, {
+      type: "cs-course-id",
+    }).id;
   }
 
   @FieldResolver(() => [SIS_Class_Schema])
   async _classes(@Root() root, @Args() args: _classesArgs) {
-    return await this.service.getClasses({
-      courseId: root._courseId(),
-      ...args,
+    return await SIS_CourseService.classes({
+      courseId: this._courseId(root),
+      args,
     });
   }
 
   @FieldResolver(() => [SIS_Class_Section_Schema])
   async _sections(@Root() root, @Args() args: _classesArgs) {
-    return await this.service.getSections({
-      courseId: root._courseId(),
-      ...args,
+    return await SIS_CourseService.sections({
+      courseId: this._courseId(root),
+      args,
     });
   }
 }

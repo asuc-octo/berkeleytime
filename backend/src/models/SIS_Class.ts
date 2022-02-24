@@ -175,13 +175,6 @@ export class SIS_Class_Schema {
   @GQL.Field()
   @Typegoose.prop()
   session: session;
-
-  @GQL.Field(() => [SIS_Class_Section_Schema])
-  async _sections() {
-    return await SIS_Class_Section_Model.find({
-      "class.displayName": RegExp(`^${this.displayName}`),
-    });
-  }
 }
 export const SIS_Class_Model = Typegoose.getModelForClass(SIS_Class_Schema, {
   schemaOptions: {

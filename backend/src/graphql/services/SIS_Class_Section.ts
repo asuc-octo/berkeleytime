@@ -12,11 +12,22 @@ class service {
     private readonly model: ReturnModelType<typeof SIS_Class_Section_Model>
   ) {}
 
-  get = async (args) => {
-    return await this.model.find({
-      id: args.id,
-      "class.session.term.name": RegExp(`^${args.year} ${args.semester}`),
-    });
+  sections = async ({ args, projection }) => {
+    if (args.id) {
+      return await this.model.find({
+        id: args.id,
+        "class.session.term.name": RegExp(
+          `${args.year ?? ""} ${args.semester ?? ""}`
+        ),
+      });
+    } else if (args.root) {
+      return await this.model.find(
+        {
+          "class.displayName": RegExp(`^${args.root.displayName}`),
+        },
+        { ...projection, id: 1, displayName: 1 }
+      );
+    }
   };
 }
 
