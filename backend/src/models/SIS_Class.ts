@@ -3,10 +3,10 @@ import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
 import {
-  SIS_Class_Section,
-  SIS_Class_SectionSchema,
+  SIS_Class_Section_Model,
+  SIS_Class_Section_Schema,
 } from "#src/models/SIS_Class_Section";
-import { SIS_CourseSchema } from "#src/models/SIS_Course";
+import { SIS_Course_Schema } from "#src/models/SIS_Course";
 import { GraphQlTypelessData } from "#src/models/subtypes";
 import { SIS_Code, enrollmentStatus } from "#src/models/subtypes";
 
@@ -85,7 +85,7 @@ class assignedClassMaterials {
   name: "sis_class_history",
   omit: ["_created", "_id", "_updated", "_version"],
 })
-export class SIS_ClassSchema {
+export class SIS_Class_Schema {
   @GQL.Field(() => GraphQlTypelessData)
   _doc: object;
 
@@ -106,7 +106,7 @@ export class SIS_ClassSchema {
 
   @GQL.Field()
   @Typegoose.prop()
-  course: SIS_CourseSchema;
+  course: SIS_Course_Schema;
 
   @GQL.Field()
   @Typegoose.prop()
@@ -176,14 +176,14 @@ export class SIS_ClassSchema {
   @Typegoose.prop()
   session: session;
 
-  @GQL.Field(() => [SIS_Class_SectionSchema])
+  @GQL.Field(() => [SIS_Class_Section_Schema])
   async _sections() {
-    return await SIS_Class_Section.find({
+    return await SIS_Class_Section_Model.find({
       "class.displayName": RegExp(`^${this.displayName}`),
     });
   }
 }
-export const SIS_Class = Typegoose.getModelForClass(SIS_ClassSchema, {
+export const SIS_Class_Model = Typegoose.getModelForClass(SIS_Class_Schema, {
   schemaOptions: {
     collection: "sis_class",
     id: false,

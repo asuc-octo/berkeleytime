@@ -18,7 +18,7 @@ import {
 } from "#src/config";
 import omitter from "#src/helpers/omitter";
 import ts from "#src/helpers/time";
-import { SIS_Course } from "#src/models/_index";
+import { SIS_Course_Model } from "#src/models/_index";
 import { storageClient } from "#src/services/gcloud";
 import { ExpressMiddleware } from "#src/types";
 
@@ -115,7 +115,7 @@ export const SIS_Courses = new (class Controller {
     let sisCourseCount = 0;
 
     const businessLogic = async ({ sisCourse }) => {
-      const original = await SIS_Course.findOne({
+      const original = await SIS_Course_Model.findOne({
         identifiers: sisCourse.identifiers, // it is possible for old/deprecated courses to have same 'cs-course-id', so it is important to also use 'cms-id' which is truly unique
       });
       const foundCourse = original?.toJSON();
@@ -129,7 +129,7 @@ export const SIS_Courses = new (class Controller {
         // prettier-ignore
         console.info(ts() + ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") + `no changes: (${original?._id}) "${foundCourse['displayName']}" / "${foundCourse['title']}"`.green);
       } else {
-        const result = await SIS_Course.findOneAndUpdate(
+        const result = await SIS_Course_Model.findOneAndUpdate(
           { identifiers: sisCourse.identifiers },
           sisCourse,
           {
@@ -146,7 +146,7 @@ export const SIS_Courses = new (class Controller {
             (result.lastErrorObject?.updatedExisting
               ? // @ts-ignore
                 // prettier-ignore
-                `updated (${result.value?._id}) '${result.value["displayName"]}' '${result.value?.title}' ${JSON.stringify((await SIS_Course.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`.yellow
+                `updated (${result.value?._id}) '${result.value["displayName"]}' '${result.value?.title}' ${JSON.stringify((await SIS_Course_Model.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`.yellow
               : `created (${result.lastErrorObject?.upserted}) '${result.value["displayName"]}' '${result.value?.title}'`
                   .yellow)
         );

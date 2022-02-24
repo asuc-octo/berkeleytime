@@ -58,7 +58,7 @@ class grade_term {
 
 @GQL.ObjectType()
 @Typegoose.modelOptions({ schemaOptions: { minimize: false, strict: false } })
-export class CalAnswers_GradeSchema {
+export class CalAnswers_Grade_Schema {
   @GQL.Field(() => GraphQlTypelessData)
   _doc: object;
 
@@ -126,8 +126,8 @@ export class CalAnswers_GradeSchema {
   @Typegoose.prop()
   term: grade_term;
 }
-export const CalAnswers_Grade = Typegoose.getModelForClass(
-  CalAnswers_GradeSchema,
+export const CalAnswers_Grade_Model = Typegoose.getModelForClass(
+  CalAnswers_Grade_Schema,
   {
     schemaOptions: {
       collection: "calanswers_grade",

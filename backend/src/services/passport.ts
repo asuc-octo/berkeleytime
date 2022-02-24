@@ -2,7 +2,7 @@ import passport from "passport";
 import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 
 import { KEY_BERKELEYTIME } from "#src/config";
-import { User } from "#src/models/_index";
+import { User_Model } from "#src/models/_index";
 
 passport.use(
   new JwtStrategy(
@@ -14,7 +14,7 @@ passport.use(
     async (req, jwtPayload, done) => {
       const { id } = jwtPayload;
       if (id) {
-        const user = await User.findById(id);
+        const user = await User_Model.findById(id);
         if (user) {
           done(null, user);
         } else {

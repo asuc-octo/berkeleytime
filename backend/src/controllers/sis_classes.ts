@@ -12,7 +12,7 @@ import {
 } from "#src/config";
 import omitter from "#src/helpers/omitter";
 import ts from "#src/helpers/time";
-import { SIS_Class, SIS_Course } from "#src/models/_index";
+import { SIS_Class_Model, SIS_Course_Model } from "#src/models/_index";
 import { ExpressMiddleware } from "#src/types";
 
 export const SIS_Classes = new (class Controller {
@@ -68,7 +68,7 @@ export const SIS_Classes = new (class Controller {
       sisCourseCount: 1,
     };
     try {
-      for await (const sisCourse of SIS_Course.find({
+      for await (const sisCourse of SIS_Course_Model.find({
         "status.code": "ACTIVE",
         identifiers: { $ne: { type: "cs-course-id", id: "" } },
       })
@@ -95,7 +95,7 @@ export const SIS_Classes = new (class Controller {
             return;
           }
           for (const sisClass of sisClasses) {
-            const original = await SIS_Class.findOne({
+            const original = await SIS_Class_Model.findOne({
               "course.displayName": sisClass.course.displayName,
               "course.identifiers": sisClass.course.identifiers,
               "session.id": sisClass.session.id,
@@ -108,7 +108,7 @@ export const SIS_Classes = new (class Controller {
               // prettier-ignore
               console.info(`${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `no changes: (${original?._id}) cs-course-id '${courseId}' '${sisClass?.displayName}' / '${sisClass?.course?.title}'`.green);
             } else {
-              const result = await SIS_Class.findOneAndUpdate(
+              const result = await SIS_Class_Model.findOneAndUpdate(
                 {
                   "course.displayName": sisClass.course.displayName,
                   "course.identifiers": sisClass.course.identifiers,
@@ -134,7 +134,7 @@ export const SIS_Classes = new (class Controller {
                     result.lastErrorObject.updatedExisting
                       ? //@ts-ignore
                         //prettier-ignore
-                        `updated (${result.value._id}) cs-course-id '${courseId}' '${result.value.displayName}' '${result.value.course.title}' ${JSON.stringify((await SIS_Class.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`.yellow
+                        `updated (${result.value._id}) cs-course-id '${courseId}' '${result.value.displayName}' '${result.value.course.title}' ${JSON.stringify((await SIS_Class_Model.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`.yellow
                       : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value["displayName"]}' '${result.value["course"]["title"]}'`
                           .yellow
                   }`
