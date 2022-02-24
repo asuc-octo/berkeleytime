@@ -30,9 +30,9 @@ class service {
     return await this.model.findOne({ _id: id });
   };
 
-  getClasses = async (args) => {
+  classes = async ({ args, courseId }) => {
     const where = {
-      "course.identifiers.id": args.courseId,
+      "course.identifiers.id": courseId,
     };
     let expr = `${args.year ?? ""} ${args.semester ?? ""}`;
     if (expr.trim() != "") {
@@ -41,7 +41,7 @@ class service {
     return await SIS_Class_Model.find(where);
   };
 
-  getSections = async (args) => {
+  sections = async ({ args, courseId }) => {
     const where = {
       "class.course.identifiers.id": args.courseId,
     };
@@ -52,7 +52,7 @@ class service {
     return await SIS_Class_Section_Model.find(where);
   };
 
-  getCourses = async (args, fieldsProjection) => {
+  courses = async (args, fieldsProjection) => {
     return _.chain(
       await this.model
         .find(
@@ -73,7 +73,7 @@ class service {
       .orderBy((o) => parseInt(o.catalogNumber.number))
       .orderBy("subjectArea.code");
   };
-  getSubjects = async () => {
+  subjects = async () => {
     return await this.model.distinct("subjectArea.description", {
       "status.code": "ACTIVE",
     });

@@ -1,20 +1,28 @@
+import { GraphQLResolveInfo } from "graphql";
+import { fieldsProjection } from "graphql-fields-list";
 import {
   Args,
   ArgsType,
   Ctx,
   Field,
+  FieldResolver,
+  Info,
   Resolver,
   Query,
   Root,
 } from "type-graphql";
 
+import { CalAnswers_GradeService } from "#src/graphql/services/CalAnswers_Grade";
 import { SIS_Class_SectionService } from "#src/graphql/services/SIS_Class_Section";
-import { SIS_Class_Schema, SIS_Class_Section_Schema } from "#src/models/_index";
+import {
+  CalAnswers_Grade_Schema,
+  SIS_Class_Section_Schema,
+} from "#src/models/_index";
 
 type ENUM_SEMESTER = "Spring" | "Summer" | "Fall";
 
 @ArgsType()
-class SIS_Class_SectionArgs {
+class query {
   @Field(() => Number, { nullable: false })
   id: number;
 
@@ -25,18 +33,43 @@ class SIS_Class_SectionArgs {
   semester: ENUM_SEMESTER;
 }
 
-@Resolver(() => SIS_Class_Schema)
-export class SIS_Class_SectionResolver {
-  constructor(private readonly service: typeof SIS_Class_SectionService) {
-    this.service = SIS_Class_SectionService;
-  }
+@ArgsType()
+class grades {
+  @Field(() => Number, { nullable: false })
+  CourseControlNbr: number;
 
+  @Field(() => Number, { nullable: false })
+  year: number;
+
+  @Field(() => String, { nullable: false })
+  semester: ENUM_SEMESTER;
+}
+
+@Resolver(() => SIS_Class_Section_Schema)
+export class SIS_Class_SectionResolver {
   @Query(() => [SIS_Class_Section_Schema])
   async SIS_Class_Section(
-    @Root() root,
-    @Args() args: SIS_Class_SectionArgs,
-    @Ctx() ctx
+    @Args() args: query,
+    @Info() info: GraphQLResolveInfo
   ) {
-    return await this.service.get(args);
+    return await SIS_Class_SectionService.sections({
+      args,
+      projection: fieldsProjection(info),
+    });
+  }
+
+  @FieldResolver(() => [CalAnswers_Grade_Schema])
+  async _grades(@Root() root, args: grades) {
+    const [sectionYear, sectionSemester] = root.displayName.split(" ");
+    return await CalAnswers_GradeService.grades({
+      args: {
+        root,
+        CourseControlNbr: args?.CourseControlNbr,
+        term: {
+          year: args?.year ?? sectionYear,
+          semester: args?.semester ?? sectionSemester,
+        },
+      },
+    });
   }
 }

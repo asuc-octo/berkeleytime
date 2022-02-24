@@ -12,14 +12,25 @@ class service {
     private readonly model: ReturnModelType<typeof CalAnswers_Grade_Model>
   ) {}
 
-  get = async ({ CourseControlNbr, term }) => {
-    return await this.model
-      .find({
-        CourseControlNbr,
-        "term.year": term.year,
-        "term.semester": term.semester,
-      })
-      .cache(86400);
+  grades = async ({ args }) => {
+    if (args.CourseControlNbr && args.term.year && args.term.semester) {
+      return await this.model
+        .find({
+          CourseControlNbr: args.CourseControlNbr,
+          "term.year": args.term.year,
+          "term.semester": args.term.semester,
+        })
+        .cache(86400);
+    } else {
+      const [sectionYear, sectionSemester] = args.root.displayName.split(" ");
+      return await this.model
+        .find({
+          CourseControlNbr: args.root.id,
+          "term.year": sectionYear,
+          "term.semester": sectionSemester,
+        })
+        .cache(86400);
+    }
   };
 }
 

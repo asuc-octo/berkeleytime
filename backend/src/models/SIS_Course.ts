@@ -515,13 +515,6 @@ export class SIS_Course_Schema {
   @GQL.Field()
   @Typegoose.prop()
   workloadHours: number;
-
-  @GQL.Field(() => String)
-  _courseId() {
-    return _.find(this.identifiers, {
-      type: "cs-course-id",
-    }).id;
-  }
 }
 
 export const SIS_Course_Model = Typegoose.getModelForClass(SIS_Course_Schema, {

@@ -397,18 +397,6 @@ export class SIS_Class_Section_Schema extends mongoose.Schema {
   @GQL.Field()
   @Typegoose.prop()
   type: SIS_Code_Formal;
-
-  @GQL.Field(() => [CalAnswers_Grade_Schema])
-  async _grades() {
-    const [year, semester, ...rest] = this.class.session.term.name.split(" ");
-    return await CalAnswers_GradeService.get({
-      CourseControlNbr: this.id,
-      term: {
-        year,
-        semester,
-      },
-    });
-  }
 }
 
 export const SIS_Class_Section_Model = Typegoose.getModelForClass(
