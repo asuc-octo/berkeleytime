@@ -1,0 +1,1423 @@
+{
+	"info": {
+		"_postman_id": "ddfc1b5d-9b19-41bb-a350-c98ca890814f",
+		"name": "berkeleytime",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "(Legacy) Grades JSON",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://berkeleytime.com/catalog",
+					"protocol": "https",
+					"host": [
+						"berkeleytime",
+						"com"
+					],
+					"path": [
+						"catalog"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(Legacy) Courses",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"operationName\":\"GetCoursesForFilter\",\"variables\":{\"playlists\":\"UGxheWxpc3RUeXBlOjMyNTAz\"},\"query\":\"query GetCoursesForFilter($playlists: String!) {\\n  allCourses(inPlaylists: $playlists) {\\n    edges {\\n      node {\\n        ...CourseOverview\\n        __typename\\n      }\\n      __typename\\n    }\\n    __typename\\n  }\\n}\\n\\nfragment CourseOverview on CourseType {\\n  id\\n  abbreviation\\n  courseNumber\\n  description\\n  title\\n  gradeAverage\\n  letterAverage\\n  openSeats\\n  enrolledPercentage\\n  enrolled\\n  enrolledMax\\n  units\\n  __typename\\n}\\n\"}"
+				},
+				"url": {
+					"raw": "https://berkeleytime.com/api/graphql",
+					"protocol": "https",
+					"host": [
+						"berkeleytime",
+						"com"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL Introspect (Schemas)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query allSchemaTypes {\n    __schema {\n        types {\n            name\n            kind\n            description\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL Introspect (Queries)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query availableQueries {\n  __schema {\n    queryType {\n      fields {\n        name\n        description\n      }\n    }\n  }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL Introspect (Type)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query {\n  SIS_Class: __type(name: \"SIS_ClassSchema\") {\n    fields {\n      name\n      type {\n        name\n        kind\n      }\n    }\n  }\n\n  SIS_Class_Section: __type(name: \"SIS_Class_SectionSchema\") {\n    fields {\n      name\n      type {\n        name\n        kind\n      }\n    }\n  }\n\n  __type(name: \"SIS_Code\") {\n    name\n    fields {\n      name\n      type {\n          name\n          kind\n      }\n    }\n  }\n}\n",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL CalAnswers Grade (All fields)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    CalAnswers_Grade (CourseControlNbr: {{CourseControlNbr}}, year: 2021, semester: \"Fall\") {\n        _id\n        GradeSortNbr\n        EnrollmentCnt\n        CourseControlNbr\n        InstructorName\n        CourseSubjectShortNm\n        CourseNumber\n        SectionNbr\n        GradeSubtypeDesc\n        GradeTypeDesc\n        GradeNm\n        CourseTitleNm\n        term {\n            year\n            month\n            semester\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Class Section (Grades)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Class_Section (id: {{CourseControlNbr}}, year: 2021, semester: \"Fall\") {\n        id\n        displayName\n        _grades {\n            EnrollmentCnt\n            GradeNm\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Class Section (All fields)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Class_Section (id: {{CourseControlNbr}}, year: 2021, semester: \"Fall\") {\n        _id\n        _created\n        _updated\n        _version\n        class {\n            course {\n                identifiers {\n                    type\n                    id\n                }\n                subjectArea {\n                    code\n                    description\n                }\n                catalogNumber {\n                    number\n                    formatted\n                }\n                displayName\n                title\n                transcriptTitle\n            }\n            offeringNumber\n            session {\n                term {\n                    id\n                    name\n                }\n                id\n                name\n            }\n            number\n            displayName\n            allowedUnits {\n                minimum\n                maximum\n                forAcademicProgress\n                forFinancialAid\n            }\n            gradingBasis {\n                code\n                description\n            }\n        }\n        id\n        academicGroup {\n            code\n            description\n            formalDescription\n        }\n        academicOrganization {\n            code\n            description\n            formalDescription\n        }\n        addConsentRequired {\n            code\n            description\n        }\n        association {\n            primary\n            primaryAssociatedComponent {\n                code\n                description\n            }\n            primaryAssociatedSectionId\n            primaryAssociatedSectionIds\n            associatedClass\n        }\n        combination {\n            id\n            description\n            type {\n                code\n                description\n            }\n            enrolledCountCombinedSections\n            waitlistedCountCombinedSections\n            maxEnrollCombinedSections\n            maxWaitlistCombinedSections\n            combinedSections\n        }\n        component {\n            code\n            description\n        }\n        displayName\n        dropConsentRequired {\n            code\n            description\n        }\n        endDate\n        enrollmentStatus {\n            status {\n                code\n                description\n            }\n            enrolledCount\n            reservedCount\n            waitlistedCount\n            minEnroll\n            maxEnroll\n            maxWaitlist\n            openReserved\n        }\n        feesExist\n        graded\n        instructionMode {\n            code\n            description\n        }\n        meetings {\n            number\n            meetsMonday\n            meetsTuesday\n            meetsWednesday\n            meetsThursday\n            meetsFriday\n            meetsSaturday\n            meetsSunday\n            startTime\n            endTime\n            assignedInstructors {\n                assignmentNumber\n                instructor {\n                    identifiers {\n                        type\n                        id\n                        disclose\n                    }\n                    names {\n                        type {\n                            code\n                            description\n                        }\n                        familyName\n                        givenName\n                        formattedName\n                        disclose\n                        uiControl {\n                            code\n                            description\n                        }\n                        fromDate\n                    }\n                }\n                role {\n                    code\n                    description\n                    formalDescription\n                }\n                contactMinutes\n                printInScheduleOfClasses\n                gradeRosterAccess {\n                    code\n                    description\n                    formalDescription\n                }\n            }\n            startDate\n            endDate\n        }\n        number\n        printInScheduleOfClasses\n        roomShare\n        sectionAttributes {\n            attribute {\n                code\n                description\n                formalDescription\n            }\n            value {\n                code\n                description\n                formalDescription\n            }\n        }\n        startDate\n        status {\n            code\n            description\n        }\n        type {\n            code\n            description\n            formalDescription\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Class (Sections)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Class {\n        _id\n        _created\n        _updated\n        _version\n        _sections {\n            displayName\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Class (All fields)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Class {\n        _id\n        _created\n        _updated\n        _version\n        course {\n            identifiers {\n                type\n                id\n            }\n            subjectArea {\n                code\n                description\n            }\n            catalogNumber {\n                number\n                formatted\n            }\n            displayName\n            title\n            transcriptTitle\n        }\n        number\n        session {\n            term {\n                id\n                name\n            }\n            id\n            name\n        }\n        aggregateEnrollmentStatus {\n            status {\n                code\n                description\n            }\n            enrolledCount\n            waitlistedCount\n            minEnroll\n            maxEnroll\n            maxWaitlist\n            instructorAddConsentRequired\n            instructorDropConsentRequired\n        }\n        allowedUnits {\n            minimum\n            maximum\n            forAcademicProgress\n            forFinancialAid\n        }\n        anyFeesExist\n        anyPrintInScheduleOfClasses\n        anyPrintInstructors\n        assignedClassMaterials {\n            noneAssigned\n        }\n        blindGrading\n        contactHours\n        displayName\n        finalExam {\n            code\n            description\n        }\n        gradingBasis {\n            code\n            description\n        }\n        instructionMode {\n            code\n            description\n        }\n        offeringNumber\n        primaryComponent {\n            code\n            description\n        }\n        status {\n            code\n            description\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (Basic Query)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Course(subjectArea___description: \"Computer Science\"){\n        displayName\n        title\n        catalogNumber {\n            number\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (Big Query)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Course {\n        displayName\n        title\n        catalogNumber {\n            number\n        }\n        subjectArea {\n            description\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (Classes)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Course (displayName: \"MATH 54\") {\n        _classes {\n            displayName\n            offeringNumber\n        }\n        credit {\n            type\n            value {\n                discrete {\n                    units\n                }\n                fixed {\n                    units\n                }\n                range {\n                    minUnits\n                    maxUnits\n                }\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (Classes Grades)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Course (displayName: \"COMPSCI 70\") {\n        _classes {\n            displayName\n            _sections {\n                displayName\n                _grades {\n                    EnrollmentCnt\n                    GradeNm\n                    InstructorName\n                }\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (Sections Grades)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Course (displayName: \"MATH 54\") {\n        _sections (year: 2017, semester: \"Summer\") {\n            displayName\n            _grades {\n                EnrollmentCnt\n                GradeNm\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (Subjects)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    subjects\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (By Department)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Course(subjectArea___description: \"Computer Science\"){\n        finalExam {\n            code\n            description\n        }\n        credit {\n            type\n            value {\n                discrete {\n                    units\n                }\n                fixed {\n                    units\n                }\n                range {\n                    minUnits\n                    maxUnits\n                }\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (All fields)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Course (subjectArea___description: \"Agricultural and Resource Economics\") {\n        _id\n        _created\n        _updated\n        _version\n        academicCareer {\n            code\n            description\n        }\n        academicGroup {\n            code\n            description\n        }\n        academicOrganization {\n            code\n            description\n        }\n        allowMultipleEnrollments\n        identifiers {\n            type\n            id\n        }\n        anyFeesExist\n        blindGrading\n        catalogNumber {\n            prefix\n            number\n            suffix\n            formatted\n        }\n        cip {\n            code\n            description\n        }\n        classDisplayName\n        classSubjectArea {\n            code\n            description\n        }\n        contactHours\n        createdDate\n        credit {\n            type\n            value {\n                discrete {\n                    units\n                }\n                fixed {\n                    units\n                }\n                range {\n                    minUnits\n                    maxUnits\n                }\n            }\n        }\n        creditRestriction {\n            restrictionCourses {\n                creditRestrictionCourses {\n                    course {\n                        identifiers {\n                            type\n                            id\n                        }\n                        displayName\n                        }\n                }\n            }\n        }\n        departmentNicknames\n        description\n        displayName\n        finalExam {\n            code\n            description\n        }\n        formatsOffered {\n            formats {\n                termsAllowed {\n                    termNames\n                }\n                sessionType\n                description\n                aggregateMinContactHours\n                aggregateMaxContactHours\n                minWorkloadHours\n                maxWorkloadHours\n                anyFeesExist\n                components {\n                    instructionMethod {\n                        code\n                        description\n                    }\n                    primary\n                    minContactHours\n                    maxContactHours\n                    feesExist\n                }\n            }\n            typicallyOffered {\n                terms {\n                    termNames\n                }\n                comments\n            }\n            summerOnly\n        }\n        formerDisplayName\n        fromDate\n        gradingBasis {\n            code\n            description\n        }\n        hegis {\n            code\n            description\n        }\n        instructorAddConsentRequired\n        instructorDropConsentRequired\n        preparation {\n            requiredText\n            requiredCourses {\n                courses {\n                    identifiers {\n                        type\n                        id\n                    }\n                    displayName\n                }\n            }\n        }\n        primaryInstructionMethod {\n            code\n            description\n        }\n        printInCatalog\n        printInstructors\n        proposedInstructors\n        repeatability {\n            repeatable\n        }\n        spansMultipleTerms\n        status {\n            code\n            description\n        }\n        subjectArea {\n            code\n            description\n        }\n        tie {\n            code\n            description\n        }\n        title\n        toDate\n        transcriptTitle\n        updatedDate\n        workloadHours\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL User (One)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    user (id: \"6201a84169e0fbc69f789ca3\", email: \"asdf@berkeley.edu\") {\n        _id\n        name\n        email\n        friends {\n            name\n            email\n            friends {\n                name\n            }\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL User (All)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    users {\n        _id\n        name\n        password\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST User (Register)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "asdf@berkeley.edu",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "whatever name string",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "password_confirm",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/users/register",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST User (Activate)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"jwt\", JSON.parse(responseBody).jwt);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/users/activate/{{activation_token}}",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"activate",
+						"{{activation_token}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST User (Sign in)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"jwt\", JSON.parse(responseBody).jwt);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "asdf@berkeley.edu",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/users/login",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST User (Delete Current)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/users/current",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"current"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST CalAnswers Parse",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/calanswers_grades/parseGradeDump",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"calanswers_grades",
+						"parseGradeDump"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST SIS Class Section Single",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/sis_class_sections/requestClassSectionData?courseId={{courseId}}&termId={{termId}}",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"sis_class_sections",
+						"requestClassSectionData"
+					],
+					"query": [
+						{
+							"key": "courseId",
+							"value": "{{courseId}}"
+						},
+						{
+							"key": "termId",
+							"value": "{{termId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST SIS Class Section Dump",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/sis_class_sections/requestClassSectionDump",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"sis_class_sections",
+						"requestClassSectionDump"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST SIS Class Single",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/sis_classes/requestClassData?courseId={{courseId}}",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"sis_classes",
+						"requestClassData"
+					],
+					"query": [
+						{
+							"key": "courseId",
+							"value": "{{courseId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST SIS Class Dump",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/sis_classes/requestClassDump",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"sis_classes",
+						"requestClassDump"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST SIS Course Dump",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/sis_courses/requestDump",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"sis_courses",
+						"requestDump"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "REST SIS Course Parse",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/sis_courses/parseDump",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"sis_courses",
+						"parseDump"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "dump_SIS_Course_2022-02-09----16-42-20----Wednesday----usui@berkeley.edu.jsonl.gz",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(Public) SIS Class Section",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "app_id",
+						"type": "text",
+						"value": "{{SIS_CLASS_APP_ID}}"
+					},
+					{
+						"key": "app_key",
+						"type": "text",
+						"value": "{{SIS_CLASS_APP_KEY}}"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://apis.berkeley.edu/sis/v1/classes/sections?cs-course-id={{courseId}}&term-id={{termId}}",
+					"protocol": "https",
+					"host": [
+						"apis",
+						"berkeley",
+						"edu"
+					],
+					"path": [
+						"sis",
+						"v1",
+						"classes",
+						"sections"
+					],
+					"query": [
+						{
+							"key": "cs-course-id",
+							"value": "{{courseId}}"
+						},
+						{
+							"key": "term-id",
+							"value": "{{termId}}"
+						},
+						{
+							"key": "page-size",
+							"value": "100",
+							"disabled": true
+						},
+						{
+							"key": "page-number",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "class-number",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "include-secondary",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(Public) SIS Class",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "app_id",
+						"type": "text",
+						"value": "{{SIS_CLASS_APP_ID}}"
+					},
+					{
+						"key": "app_key",
+						"type": "text",
+						"value": "{{SIS_CLASS_APP_KEY}}"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://apis.berkeley.edu/sis/v1/classes?cs-course-id={{courseId}}&term-id={{termId}}",
+					"protocol": "https",
+					"host": [
+						"apis",
+						"berkeley",
+						"edu"
+					],
+					"path": [
+						"sis",
+						"v1",
+						"classes"
+					],
+					"query": [
+						{
+							"key": "cs-course-id",
+							"value": "{{courseId}}"
+						},
+						{
+							"key": "term-id",
+							"value": "{{termId}}"
+						},
+						{
+							"key": "page-number",
+							"value": "150",
+							"disabled": true
+						},
+						{
+							"key": "page-size",
+							"value": "100",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(Public) SIS Class",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://classes.berkeley.edu/enrollment/get/{{termId}}/{{CourseControlNbr}}",
+					"protocol": "https",
+					"host": [
+						"classes",
+						"berkeley",
+						"edu"
+					],
+					"path": [
+						"enrollment",
+						"get",
+						"{{termId}}",
+						"{{CourseControlNbr}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "(Public) SIS Course",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "app_id",
+						"value": "{{SIS_COURSE_APP_ID}}",
+						"type": "text"
+					},
+					{
+						"key": "app_key",
+						"value": "{{SIS_COURSE_APP_KEY}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://apis.berkeley.edu/sis/v3/courses?cs-course-id={{courseId}}&page-number=1&page-size=10",
+					"protocol": "https",
+					"host": [
+						"apis",
+						"berkeley",
+						"edu"
+					],
+					"path": [
+						"sis",
+						"v3",
+						"courses"
+					],
+					"query": [
+						{
+							"key": "cs-course-id",
+							"value": "{{courseId}}"
+						},
+						{
+							"key": "page-number",
+							"value": "1"
+						},
+						{
+							"key": "page-size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
