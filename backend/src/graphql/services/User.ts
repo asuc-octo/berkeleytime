@@ -1,14 +1,14 @@
 import { Container, Service, Inject } from "typedi";
 
-import { User } from "#src/models/_index";
+import { User_Model } from "#src/models/_index";
 
 import { ReturnModelType } from "@typegoose/typegoose";
 
 @Service()
 export class service {
   constructor(
-    @Inject(User.collection.collectionName)
-    private readonly model: ReturnModelType<typeof User>
+    @Inject(User_Model.collection.collectionName)
+    private readonly model: ReturnModelType<typeof User_Model>
   ) {}
 
   async getAll() {
@@ -32,5 +32,5 @@ export class service {
   }
 }
 
-Container.set(User.collection.collectionName, User);
+Container.set(User_Model.collection.collectionName, User_Model);
 export const UserService = Container.get(service);

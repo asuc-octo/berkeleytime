@@ -1,7 +1,11 @@
 import parseSchema from "mongodb-schema";
 import mongoose from "mongoose";
 
-import { SIS_Class, SIS_Class_Section, SIS_Course } from "#src/models/_index";
+import {
+  SIS_Class_Model,
+  SIS_Class_Section_Model,
+  SIS_Course_Model,
+} from "#src/models/_index";
 
 const SAMPLING_SIZE = 1;
 
@@ -72,7 +76,11 @@ const schemaWalker = async (model) => {
   ).keys;
 };
 
-for (const model of [SIS_Class, SIS_Class_Section, SIS_Course]) {
+for (const model of [
+  SIS_Class_Model,
+  SIS_Class_Section_Model,
+  SIS_Course_Model,
+]) {
   const s = await schemaWalker(model);
   console.info(model.collection.collectionName.red);
   console.dir(s, { depth: null });

@@ -15,9 +15,9 @@ import {
 
 import { SIS_CourseService } from "#src/graphql/services/SIS_Course";
 import {
-  SIS_ClassSchema,
-  SIS_Class_SectionSchema,
-  SIS_CourseSchema,
+  SIS_Class_Schema,
+  SIS_Class_Section_Schema,
+  SIS_Course_Schema,
 } from "#src/models/_index";
 
 @ArgsType()
@@ -47,7 +47,7 @@ class _classesArgs {
   semester?: string;
 }
 
-@Resolver(() => SIS_CourseSchema)
+@Resolver(() => SIS_Course_Schema)
 export class SIS_CourseResolver {
   constructor(private readonly service: typeof SIS_CourseService) {
     this.service = SIS_CourseService;
@@ -60,7 +60,7 @@ export class SIS_CourseResolver {
     return await this.service.getSubjects();
   }
 
-  @Query(() => [SIS_CourseSchema])
+  @Query(() => [SIS_Course_Schema])
   async SIS_Course(
     @Root() root,
     @Args() args: SubjectArgs,
@@ -70,7 +70,7 @@ export class SIS_CourseResolver {
     return await this.service.getCourses(args, fieldsProjection(info));
   }
 
-  @FieldResolver(() => [SIS_ClassSchema])
+  @FieldResolver(() => [SIS_Class_Schema])
   async _classes(@Root() root, @Args() args: _classesArgs) {
     return await this.service.getClasses({
       courseId: root._courseId(),
@@ -78,7 +78,7 @@ export class SIS_CourseResolver {
     });
   }
 
-  @FieldResolver(() => [SIS_Class_SectionSchema])
+  @FieldResolver(() => [SIS_Class_Section_Schema])
   async _sections(@Root() root, @Args() args: _classesArgs) {
     return await this.service.getSections({
       courseId: root._courseId(),

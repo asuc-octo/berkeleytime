@@ -4,8 +4,8 @@ import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
 import { CalAnswers_GradeService } from "#src/graphql/services/CalAnswers_Grade";
-import { CalAnswers_GradeSchema } from "#src/models/CalAnswers_Grade";
-import { SIS_ClassSchema } from "#src/models/SIS_Class";
+import { CalAnswers_Grade_Schema } from "#src/models/CalAnswers_Grade";
+import { SIS_Class_Schema } from "#src/models/SIS_Class";
 import {
   GraphQlTypelessData,
   SIS_Code,
@@ -283,7 +283,7 @@ class sectionAttribute {
   name: "sis_class_section_history",
   omit: ["_created", "_id", "_updated", "_version"],
 })
-export class SIS_Class_SectionSchema extends mongoose.Schema {
+export class SIS_Class_Section_Schema extends mongoose.Schema {
   @GQL.Field(() => GraphQlTypelessData)
   _doc: object;
 
@@ -304,7 +304,7 @@ export class SIS_Class_SectionSchema extends mongoose.Schema {
 
   @GQL.Field()
   @Typegoose.prop()
-  class: SIS_ClassSchema;
+  class: SIS_Class_Schema;
 
   @GQL.Field()
   @Typegoose.prop()
@@ -398,7 +398,7 @@ export class SIS_Class_SectionSchema extends mongoose.Schema {
   @Typegoose.prop()
   type: SIS_Code_Formal;
 
-  @GQL.Field(() => [CalAnswers_GradeSchema])
+  @GQL.Field(() => [CalAnswers_Grade_Schema])
   async _grades() {
     const [year, semester, ...rest] = this.class.session.term.name.split(" ");
     return await CalAnswers_GradeService.get({
@@ -411,8 +411,8 @@ export class SIS_Class_SectionSchema extends mongoose.Schema {
   }
 }
 
-export const SIS_Class_Section = Typegoose.getModelForClass(
-  SIS_Class_SectionSchema,
+export const SIS_Class_Section_Model = Typegoose.getModelForClass(
+  SIS_Class_Section_Schema,
   {
     schemaOptions: {
       collection: "sis_class_section",

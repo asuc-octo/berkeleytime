@@ -1,7 +1,11 @@
 import _ from "lodash";
 import { Container, Service, Inject } from "typedi";
 
-import { SIS_Class, SIS_Class_Section, SIS_Course } from "#src/models/_index";
+import {
+  SIS_Class_Model,
+  SIS_Class_Section_Model,
+  SIS_Course_Model,
+} from "#src/models/_index";
 
 import { ReturnModelType } from "@typegoose/typegoose";
 
@@ -18,11 +22,11 @@ const parseArgs = (args) => {
 @Service()
 class service {
   constructor(
-    @Inject(SIS_Course.collection.collectionName)
-    private readonly model: ReturnModelType<typeof SIS_Course>
+    @Inject(SIS_Course_Model.collection.collectionName)
+    private readonly model: ReturnModelType<typeof SIS_Course_Model>
   ) {}
 
-  get = async (id: Promise<typeof SIS_Course>) => {
+  get = async (id: Promise<typeof SIS_Course_Model>) => {
     return await this.model.findOne({ _id: id });
   };
 
@@ -34,7 +38,7 @@ class service {
     if (expr.trim() != "") {
       where["session.term.name"] = RegExp(expr);
     }
-    return await SIS_Class.find(where);
+    return await SIS_Class_Model.find(where);
   };
 
   getSections = async (args) => {
@@ -45,7 +49,7 @@ class service {
     if (expr.trim() != "") {
       where["class.session.term.name"] = RegExp(expr);
     }
-    return await SIS_Class_Section.find(where);
+    return await SIS_Class_Section_Model.find(where);
   };
 
   getCourses = async (args, fieldsProjection) => {
@@ -76,5 +80,5 @@ class service {
   };
 }
 
-Container.set(SIS_Course.collection.collectionName, SIS_Course);
+Container.set(SIS_Course_Model.collection.collectionName, SIS_Course_Model);
 export const SIS_CourseService = Container.get(service);

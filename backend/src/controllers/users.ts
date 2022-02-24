@@ -4,7 +4,7 @@ import passport from "passport";
 
 import { EXPIRE_TIME_ACTIVATION_EMAIL, KEY_BERKELEYTIME } from "#src/config";
 import jwt from "#src/helpers/jwt";
-import { User, UserSchema } from "#src/models/_index";
+import { User_Model, User_Schema } from "#src/models/_index";
 import sendActivationEmail from "#src/services/sendgrid";
 import { ExpressMiddleware } from "#src/types";
 
@@ -29,7 +29,7 @@ interface IController {
 }
 
 export const Users = new (class Controller implements IController {
-  async activate(req, res): Promise<DocumentType<UserSchema>> {
+  async activate(req, res): Promise<DocumentType<User_Schema>> {
     const { token } = req.params;
     let errors: any = {};
     let decoded;
@@ -41,7 +41,7 @@ export const Users = new (class Controller implements IController {
           "Activation token has expired! Register again with the same email address",
       });
     }
-    const user = await User.findById(decoded.id);
+    const user = await User_Model.findById(decoded.id);
     if (!user) {
       errors.user = "User not found";
       return res.status(422).json(errors);
@@ -66,7 +66,7 @@ export const Users = new (class Controller implements IController {
     // await User.deleteOne({ google_id })
     // res.json({ success: true })
 
-    await User.deleteOne({ _id: req.user.id });
+    await User_Model.deleteOne({ _id: req.user.id });
     res.json({ success: true });
   };
 
@@ -75,7 +75,7 @@ export const Users = new (class Controller implements IController {
     let errors: any = {};
     email = email.toLowerCase();
 
-    const user = await User.findOne({ email });
+    const user = await User_Model.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
       const payload = user.toJSON();
       if (!user.activated) {
@@ -101,7 +101,7 @@ export const Users = new (class Controller implements IController {
     email = email.toLowerCase();
 
     await mongoose.connection.transaction(async (session) => {
-      const user = await User.findOne({ email }).session(session);
+      const user = await User_Model.findOne({ email }).session(session);
       if (
         user &&
         (user.activated ||
@@ -113,11 +113,11 @@ export const Users = new (class Controller implements IController {
         return res.status(422).json(errors);
       }
       if (user) {
-        await User.deleteOne({ _id: user.id }).session(session);
+        await User_Model.deleteOne({ _id: user.id }).session(session);
       }
       const salt = await bcrypt.genSalt(10);
       const hash = await bcrypt.hash(password, salt);
-      const newUser = new User({
+      const newUser = new User_Model({
         email,
         name,
         password: hash,
@@ -147,7 +147,7 @@ export const Users = new (class Controller implements IController {
     let { email } = req.params;
     email = email.toLowerCase();
 
-    const user = await User.findOne({ email });
+    const user = await User_Model.findOne({ email });
     if (user) {
       res.json({
         success: true,
@@ -177,7 +177,7 @@ export const Users = new (class Controller implements IController {
 
   googleCallback: ExpressMiddleware<{}, {}> = async (req, res) => {
     const { google_id } = req.user;
-    const user = await User.findOne({ google_id });
+    const user = await User_Model.findOne({ google_id });
     const userToken = await jwt.sign(user.toJSON(), KEY_BERKELEYTIME);
     user.jwt = userToken;
     await user.save();

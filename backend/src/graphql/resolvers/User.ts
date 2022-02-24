@@ -1,20 +1,20 @@
 import { Arg, Resolver, Query } from "type-graphql";
 
 import { UserService } from "#src/graphql/services/User";
-import { UserSchema } from "#src/models/_index";
+import { User_Schema } from "#src/models/_index";
 
-@Resolver(() => UserSchema)
+@Resolver(() => User_Schema)
 export class UserResolver {
   constructor(private readonly service: typeof UserService) {
     this.service = UserService;
   }
 
-  @Query(() => [UserSchema])
+  @Query(() => [User_Schema])
   async users() {
     return this.service.getAll();
   }
 
-  @Query(() => UserSchema)
+  @Query(() => User_Schema)
   user(@Arg("id") id: string, @Arg("email") email: string) {
     return this.service.get({ id });
   }

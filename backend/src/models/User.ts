@@ -1,14 +1,14 @@
 import { IsEmail, Length } from "class-validator";
 import * as GQL from "type-graphql";
 
-import { SIS_CourseSchema } from "#src/models/SIS_Course";
+import { SIS_Course_Schema } from "#src/models/SIS_Course";
 
 import Typegoose from "@typegoose/typegoose";
 
 // cannot just import @prop, @plugin because https://github.com/typegoose/typegoose/issues/214
 
 @GQL.ObjectType()
-export class UserSchema {
+export class User_Schema {
   @GQL.Field(() => GQL.ID)
   readonly _id: Typegoose.mongoose.Types.ObjectId;
 
@@ -41,20 +41,20 @@ export class UserSchema {
   @Length(1, 255)
   bio: string;
 
-  @GQL.Field(() => [SIS_CourseSchema])
-  @Typegoose.prop({ ref: SIS_CourseSchema })
+  @GQL.Field(() => [SIS_Course_Schema])
+  @Typegoose.prop({ ref: SIS_Course_Schema })
   @Length(1, 30)
-  classes_saved: Typegoose.Ref<SIS_CourseSchema>[];
+  classes_saved: Typegoose.Ref<SIS_Course_Schema>[];
 
-  @GQL.Field(() => [SIS_CourseSchema])
-  @Typegoose.prop({ ref: SIS_CourseSchema })
+  @GQL.Field(() => [SIS_Course_Schema])
+  @Typegoose.prop({ ref: SIS_Course_Schema })
   @Length(1, 30)
-  classes_watching: Typegoose.Ref<SIS_CourseSchema>[];
+  classes_watching: Typegoose.Ref<SIS_Course_Schema>[];
 
-  @GQL.Field(() => [UserSchema])
-  @Typegoose.prop({ autopopulate: true, ref: UserSchema })
+  @GQL.Field(() => [User_Schema])
+  @Typegoose.prop({ autopopulate: true, ref: User_Schema })
   @Length(1, 30)
-  friends: Typegoose.Ref<UserSchema>[];
+  friends: Typegoose.Ref<User_Schema>[];
 
   @GQL.Field()
   @Typegoose.prop({ default: false })
@@ -100,7 +100,7 @@ export class UserSchema {
   }
 }
 
-export const User = Typegoose.getModelForClass(UserSchema, {
+export const User_Model = Typegoose.getModelForClass(User_Schema, {
   schemaOptions: {
     collection: "user",
     optimisticConcurrency: true,

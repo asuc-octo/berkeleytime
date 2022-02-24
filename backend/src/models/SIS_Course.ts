@@ -329,7 +329,7 @@ class preparation {
   name: "sis_course_history",
   omit: ["_created", "_id", "_updated", "_version"],
 })
-export class SIS_CourseSchema {
+export class SIS_Course_Schema {
   @GQL.Field(() => GraphQlTypelessData)
   _doc: object;
 
@@ -524,7 +524,7 @@ export class SIS_CourseSchema {
   }
 }
 
-export const SIS_Course = Typegoose.getModelForClass(SIS_CourseSchema, {
+export const SIS_Course_Model = Typegoose.getModelForClass(SIS_Course_Schema, {
   schemaOptions: {
     collection: "sis_course",
     id: false,

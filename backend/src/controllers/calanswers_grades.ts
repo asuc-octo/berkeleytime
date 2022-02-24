@@ -9,7 +9,7 @@ import stream from "stream/promises";
 
 import { GCLOUD_PATH_CAL_ANSWERS_GRADE_DUMPS } from "#src/config";
 import ts from "#src/helpers/time";
-import { CalAnswers_Grade } from "#src/models/_index";
+import { CalAnswers_Grade_Model } from "#src/models/_index";
 import { storageClient } from "#src/services/gcloud";
 import { ExpressMiddleware } from "#src/types";
 
@@ -54,7 +54,7 @@ export const CalAnswers_Grades = new (class Controller {
       const CAstring = `${JSON.stringify(
         calAnswersObject.term
       )} ${JSON.stringify(calAnswersObject)}`;
-      const result = await CalAnswers_Grade.findOneAndUpdate(
+      const result = await CalAnswers_Grade_Model.findOneAndUpdate(
         {
           CourseControlNbr: calAnswersObject.CourseControlNbr,
           term: calAnswersObject.term,
