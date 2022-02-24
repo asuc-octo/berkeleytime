@@ -87,10 +87,9 @@ try {
     await storageClient.bucketCreate(GCLOUD_BUCKET);
   }
 } catch (error) {
-  console.error(error);
   console.error(
-    `ERROR! Resource access failure in Google Cloud Storage Bucket named "${GCLOUD_BUCKET}"! Program will now exit!`
+    `ERROR! Resource access failure in Google Cloud Storage Bucket named "${GCLOUD_BUCKET}"!`
       .red
   );
-  process.exit(1);
+  console.error(error);
 }

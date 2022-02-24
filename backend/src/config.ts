@@ -5,14 +5,13 @@ export const EXPIRE_TIME_REDIS_KEY: number =
 export const GCLOUD_SERVICE_ACCOUNT_EMAIL =
   process.env.GCLOUD_SERVICE_ACCOUNT_EMAIL;
 export const GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY =
-  process.env.GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, "\n");
+  process.env.GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, "\n");
 export const GCLOUD_BUCKET = "berkeleytime-218606";
 export const GCLOUD_PATH_CAL_ANSWERS_GRADE_DUMPS: string =
   "dumps_CalAnswers_grades";
 export const GCLOUD_PATH_SIS_COURSE_DUMPS: string = "dumps_sis_course";
 export const GCLOUD_PROJECT_ID = "berkeleytime-218606";
 export const GCLOUD_REGION = "us-west2";
-export const KEY_APOLLO = process.env.KEY_APOLLO;
 export const KEY_BERKELEYTIME = process.env.KEY_BERKELEYTIME;
 export const KEY_SENDGRID = process.env.KEY_SENDGRID;
 export const PORT_EXPRESS: number = parseInt(process.env.PORT_EXPRESS) || 5000;

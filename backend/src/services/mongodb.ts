@@ -2,10 +2,9 @@ import { createHash } from "crypto";
 import _ from "lodash";
 import mongoose from "mongoose";
 
-import { URL_MDB } from "#src/config";
+import { EXPIRE_TIME_REDIS_KEY, URL_MDB } from "#src/config";
 import { redisClient } from "#src/services/redis";
 
-const DEFAULT_TTL = 60;
 const originalExec = mongoose.Query.prototype.exec;
 
 export interface IMongooseCacheOptions {
@@ -33,12 +32,12 @@ mongoose.Query.prototype["cache"] = function (
 ): mongoose.Query<any, any> {
   this._cacheEnabled = true;
   this._key = null;
-  this._ttl = DEFAULT_TTL;
+  this._ttl = EXPIRE_TIME_REDIS_KEY;
   if (typeof options === "number") {
     this._ttl = options;
   } else if (options !== undefined) {
     this._key = options.key;
-    this._ttl = options.ttl ?? DEFAULT_TTL;
+    this._ttl = options.ttl ?? EXPIRE_TIME_REDIS_KEY;
     this._ttlExtend = options.ttlExtend;
     this._flag =
       typeof options.flag === "boolean"
