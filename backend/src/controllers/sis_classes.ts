@@ -50,7 +50,6 @@ export const SIS_Classes = new (class Controller {
       .orderBy((sisClass) => sisClass.session.term.id, ["desc"])
       .filter(
         (value) =>
-          value.session.term.name.includes(moment().year() - 1) ||
           value.session.term.name.includes(moment().year()) ||
           value.session.term.name.includes(moment().year() + 1)
       )

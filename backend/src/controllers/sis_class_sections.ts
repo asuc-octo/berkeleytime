@@ -132,7 +132,7 @@ export const SIS_Class_Sections = new (class Controller {
       const terms = await SIS_Class_Model.find({
         "course.identifiers": { type: "cs-course-id", id: courseId },
         "session.term.name": RegExp(
-          `${moment().year() - 1}|${moment().year()}|${moment().year() + 1}`
+          `${moment().year()}|${moment().year() + 1}`
         ),
       }).distinct("session.term.id");
       for (const termId of terms.reverse()) {
