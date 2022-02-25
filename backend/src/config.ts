@@ -6,7 +6,7 @@ export const GCLOUD_SERVICE_ACCOUNT_EMAIL =
   process.env.GCLOUD_SERVICE_ACCOUNT_EMAIL;
 export const GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY =
   process.env.GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, "\n");
-export const GCLOUD_BUCKET = "berkeleytime-218606";
+export const GCLOUD_BUCKET = "berkeleytime";
 export const GCLOUD_PATH_CAL_ANSWERS_GRADE_DUMPS: string =
   "dumps_CalAnswers_grades";
 export const GCLOUD_PATH_SIS_COURSE_DUMPS: string = "dumps_sis_course";
