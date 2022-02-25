@@ -2,10 +2,6 @@ import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
-import {
-  SIS_Class_Section_Model,
-  SIS_Class_Section_Schema,
-} from "#src/models/SIS_Class_Section";
 import { SIS_Course_Schema } from "#src/models/SIS_Course";
 import { GraphQlTypelessData } from "#src/models/subtypes";
 import { SIS_Code, enrollmentStatus } from "#src/models/subtypes";

@@ -3,8 +3,6 @@ import mongoose from "mongoose";
 import timeMachine from "mongoose-time-machine";
 import * as GQL from "type-graphql";
 
-import { CalAnswers_GradeService } from "#src/graphql/services/CalAnswers_Grade";
-import { CalAnswers_Grade_Schema } from "#src/models/CalAnswers_Grade";
 import { SIS_Class_Schema } from "#src/models/SIS_Class";
 import {
   GraphQlTypelessData,
@@ -278,7 +276,9 @@ class sectionAttribute {
 }
 
 @GQL.ObjectType()
-@Typegoose.modelOptions({ schemaOptions: { minimize: false } })
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 @Typegoose.plugin(timeMachine.plugin, {
   name: "sis_class_section_history",
   omit: ["_created", "_id", "_updated", "_version"],
