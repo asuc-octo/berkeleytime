@@ -125,6 +125,7 @@ export const SIS_Class_Sections = new (class Controller {
       identifiers: { $ne: { type: "cs-course-id", id: "" } },
     })
       .sort({ displayName: 1 })
+      .batchSize(12)
       .allowDiskUse(true)) {
       const courseId = _.find(sisCourse["identifiers"], {
         type: "cs-course-id",
