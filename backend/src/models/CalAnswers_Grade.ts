@@ -57,7 +57,9 @@ class grade_term {
 }
 
 @GQL.ObjectType()
-@Typegoose.modelOptions({ schemaOptions: { minimize: false, strict: false } })
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 export class CalAnswers_Grade_Schema {
   @GQL.Field(() => GraphQlTypelessData)
   _doc: object;
