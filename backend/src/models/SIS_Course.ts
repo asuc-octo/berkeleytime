@@ -324,7 +324,9 @@ class preparation {
 @GQL.ObjectType({
   description: "A superset of all data resulting from the SIS Course API",
 })
-@Typegoose.modelOptions({ schemaOptions: { minimize: false } })
+@Typegoose.modelOptions({
+  schemaOptions: { _id: false, minimize: false, strict: false },
+})
 @Typegoose.plugin(timeMachine.plugin, {
   name: "sis_course_history",
   omit: ["_created", "_id", "_updated", "_version"],
