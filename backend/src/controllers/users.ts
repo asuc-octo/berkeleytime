@@ -8,10 +8,8 @@ import { User_Model, User_Schema } from "#src/models/_index";
 import sendActivationEmail from "#src/services/sendgrid";
 import { ExpressMiddleware } from "#src/types";
 
+import "@colors/colors";
 import { DocumentType } from "@typegoose/typegoose";
-
-// ! FIXME: Not all user routes have been tested yet
-// TODO: Organize types, add validation
 
 type LoginRequest = { email: string; password: string };
 type LoginResponse = { success: boolean };

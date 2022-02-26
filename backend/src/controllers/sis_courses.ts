@@ -2,6 +2,7 @@
 // https://api-central.berkeley.edu/api/72
 import axios from "axios";
 import fs from "fs";
+import jsondiffpatch from "jsondiffpatch";
 import _ from "lodash";
 import moment from "moment-timezone";
 import PQueue from "p-queue";
@@ -10,7 +11,6 @@ import stream from "stream/promises";
 import zlib from "zlib";
 
 import {
-  GCLOUD_BUCKET,
   GCLOUD_PATH_SIS_COURSE_DUMPS,
   SIS_COURSE_APP_ID,
   SIS_COURSE_APP_KEY,
@@ -22,10 +22,12 @@ import { SIS_Course_Model } from "#src/models/_index";
 import { storageClient } from "#src/services/gcloud";
 import { ExpressMiddleware } from "#src/types";
 
+import "@colors/colors";
+
 export const SIS_Courses = new (class Controller {
   requestDataHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
     console.info(JSON.stringify(req.user));
-    res.json(await this.requestData({ ...req.query, user: req.user }));
+    res.json(await this.requestData({ ...req.query, user: req.user, res }));
   };
   requestData = async ({
     pageNumber,
@@ -56,9 +58,10 @@ export const SIS_Courses = new (class Controller {
     {}
   > = async (req, res) => {
     console.info(JSON.stringify(req.user));
-    res.json(await this.requestDump({ ...req.query, user: req.user }));
+    res.json(await this.requestDump({ req, res }));
   };
   requestDump = async ({ req, res }) => {
+    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
     const key = `${GCLOUD_PATH_SIS_COURSE_DUMPS}/dump_SIS_Course.jsonl.gz`;
     let bytesSent = 0;
     let pageNumber = 1;
@@ -98,25 +101,27 @@ export const SIS_Courses = new (class Controller {
     } while (sisCourses.length == pageSize && pageNumber++ < Infinity);
     googleWriteStream.end();
     console.info(`${ts()} successful close on stream "${key}"`);
-    return { key: `gs://${GCLOUD_BUCKET}/${key}` };
   };
 
   parseDumpHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
     console.info(JSON.stringify(req.user));
-    res.json(await this.parseDump({ ...req.query, user: req.user }));
+    res.json(await this.parseDump({ req, res }));
   };
   /**
    * Parse lines as they stream in from internet, to avoid entire file load
    * https://nodejs.org/api/stream.html#stream_stream_pipeline_streams_callback
    */
-  parseDump = async (req) => {
-    const start = moment().tz("America/Los_Angeles");
-    const { key } = req;
+  parseDump = async ({ req, res }) => {
+    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
+    const { key } = req.query;
     let sisCourseCount = 0;
 
     const businessLogic = async ({ sisCourse }) => {
+      const cmsId = _.find(sisCourse.identifiers, {
+        type: "cms-id",
+      }).id;
       const original = await SIS_Course_Model.findOne({
-        identifiers: sisCourse.identifiers, // it is possible for old/deprecated courses to have same 'cs-course-id', so it is important to also use 'cms-id' which is truly unique
+        "identifiers.id": cmsId, // it is possible for old/deprecated courses to have same 'cs-course-id', so it is important to also use 'cms-id' which is truly unique
       });
       const foundCourse = original?.toJSON();
       omitter(foundCourse);
@@ -127,10 +132,10 @@ export const SIS_Courses = new (class Controller {
           console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(sisCourse)}`.red);
         }
         // prettier-ignore
-        console.info(ts() + ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") + `no changes: (${original?._id}) "${foundCourse['displayName']}" / "${foundCourse['title']}"`.green);
+        console.info(ts() + ` SIS COURSE COUNT: ${sisCourseCount}`.padEnd(50, " ") + `no changes: (${original?._id}) "${foundCourse?.displayName}" / "${foundCourse?.title}"`.green);
       } else {
         const result = await SIS_Course_Model.findOneAndUpdate(
-          { identifiers: sisCourse.identifiers },
+          { "identifiers.id": cmsId },
           sisCourse,
           {
             lean: true,
@@ -146,8 +151,8 @@ export const SIS_Courses = new (class Controller {
             (result.lastErrorObject?.updatedExisting
               ? // @ts-ignore
                 // prettier-ignore
-                `updated (${result.value?._id}) '${result.value["displayName"]}' '${result.value?.title}' ${JSON.stringify((await SIS_Course_Model.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`.yellow
-              : `created (${result.lastErrorObject?.upserted}) '${result.value["displayName"]}' '${result.value?.title}'`
+                `updated (${result?.value?._id}) '${result?.value?.displayName}' '${result?.value?.title}' ${JSON.stringify(jsondiffpatch.diff(foundCourse, result?.value))}`.yellow
+              : `created (${result?.lastErrorObject?.upserted}) '${result?.value?.displayName}' '${result?.value?.title}'`
                   .yellow)
         );
       }
@@ -189,6 +194,5 @@ export const SIS_Courses = new (class Controller {
     );
     await queue.onEmpty();
     console.info(`${ts()}\tfinished parsing of dump "${file}"`);
-    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();
