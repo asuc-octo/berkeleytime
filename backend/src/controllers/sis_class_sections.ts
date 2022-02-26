@@ -1,6 +1,7 @@
 // Berkeley API Central Class API
 // https://api-central.berkeley.edu/api/45
 import axios from "axios";
+import jsondiffpatch from "jsondiffpatch";
 import _ from "lodash";
 import moment from "moment-timezone";
 import PQueue from "p-queue";
@@ -19,6 +20,8 @@ import {
 } from "#src/models/_index";
 import { ExpressMiddleware } from "#src/types";
 
+import "@colors/colors";
+
 export const SIS_Class_Sections = new (class Controller {
   requestClassSectionDataHandler: ExpressMiddleware<{}, {}> = async (
     req,
@@ -26,7 +29,7 @@ export const SIS_Class_Sections = new (class Controller {
   ) => {
     console.info(JSON.stringify(req.user));
     res.json(
-      await this.requestClassSectionData({ ...req.query, user: req.user })
+      await this.requestClassSectionData({ ...req.query, user: req.user, res })
     );
   };
   requestClassSectionData = async ({
@@ -53,10 +56,10 @@ export const SIS_Class_Sections = new (class Controller {
     res
   ) => {
     console.info(JSON.stringify(req.user));
-    res.json(await this.requestClassSectionDump());
+    res.json(await this.requestClassSectionDump({ res }));
   };
-  requestClassSectionDump = async () => {
-    const start = moment().tz("America/Los_Angeles");
+  requestClassSectionDump = async ({ res }) => {
+    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
     const queue = new PQueue({ concurrency: 10 });
     const shared = {
       sisClassSectionCount: 1,
@@ -76,14 +79,13 @@ export const SIS_Class_Sections = new (class Controller {
 
           const foundClassSection = original?.toJSON();
           omitter(foundClassSection);
-
           if (_.isEqual(foundClassSection, sisClassSection)) {
             if (!foundClassSection) {
               // prettier-ignore
               console.error(`WARNING! ONE OF THE IDENTIFIERS HAS A FATAL ERROR: ${JSON.stringify(sisClassSection)}`.red);
             }
             // prettier-ignore
-            console.info(`${ts()} SIS CLASS SECTION COUNT: ${shared.sisClassSectionCount}`.padEnd(55, " ") + `no changes: (${original?._id}) cs-course-id '${courseId}' '${foundClassSection['id']}' '${sisClassSection["displayName"]}'`.green);
+            console.info(`${ts()} SIS CLASS SECTION COUNT: ${shared.sisClassSectionCount}`.padEnd(55, " ") + `no changes: (${original?._id}) cs-course-id '${courseId}' '${foundClassSection?.id}' '${sisClassSection?.displayName}'`.green);
           } else {
             const result = await SIS_Class_Section_Model.findOneAndUpdate(
               {
@@ -104,11 +106,11 @@ export const SIS_Class_Sections = new (class Controller {
                 shared.sisClassSectionCount
               }`.padEnd(55, " ") +
                 `${
-                  result.lastErrorObject.updatedExisting
+                  result?.lastErrorObject.updatedExisting
                     ? //@ts-ignore
                       //prettier-ignore
-                      `updated (${result.value._id}) cs-course-id '${courseId}' '${sisClassSection.displayName}' ${JSON.stringify((await SIS_Class_Section_Model.history.find({ collectionId: result.value._id }).sort({ updatedAt: "desc" }).limit(1))[0])}`.yellow
-                    : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value["displayName"]}'`
+                      `updated (${result?.value?._id}) cs-course-id '${courseId}' '${sisClassSection?.displayName}' ${JSON.stringify(jsondiffpatch.diff(foundClassSection, sisClassSection))}`.yellow
+                    : `created (${result?.lastErrorObject?.upserted}) cs-course-id '${courseId}' '${result?.value?.displayName}'`
                         .yellow
                 }`
             );
@@ -142,6 +144,5 @@ export const SIS_Class_Sections = new (class Controller {
       }
     }
     await queue.onEmpty();
-    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();

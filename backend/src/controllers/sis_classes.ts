@@ -1,6 +1,7 @@
 // Berkeley API Central Class API
 // https://api-central.berkeley.edu/api/45
 import axios from "axios";
+import jsondiffpatch from "jsondiffpatch";
 import _ from "lodash";
 import moment from "moment-timezone";
 import PQueue from "p-queue";
@@ -15,10 +16,14 @@ import ts from "#src/helpers/time";
 import { SIS_Class_Model, SIS_Course_Model } from "#src/models/_index";
 import { ExpressMiddleware } from "#src/types";
 
+import "@colors/colors";
+
 export const SIS_Classes = new (class Controller {
   requestClassDataHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
     console.info(JSON.stringify(req.user));
-    res.json(await this.requestClassData({ ...req.query, user: req.user }));
+    res.json(
+      await this.requestClassData({ ...req.query, user: req.user, res })
+    );
   };
   requestClassData = async ({ courseId }: { courseId: string; user?: any }) => {
     let pageNumber = 1;
@@ -57,10 +62,10 @@ export const SIS_Classes = new (class Controller {
   };
   requestClassDumpHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
     console.info(JSON.stringify(req.user));
-    res.json(await this.requestClassDump());
+    res.json(await this.requestClassDump({ res }));
   };
-  requestClassDump = async () => {
-    const start = moment().tz("America/Los_Angeles");
+  requestClassDump = async ({ res }) => {
+    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
     const queue = new PQueue({ concurrency: 10 });
     const shared = {
       sisClassCount: 1,
@@ -85,10 +90,10 @@ export const SIS_Classes = new (class Controller {
           } catch (e) {
             if (e.response?.data?.apiResponse?.httpStatus) {
               // prettier-ignore
-              console.error(`${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse.displayName}' '${sisCourse.title}', ${JSON.stringify(e.response.data.apiResponse.httpStatus)}`.red);
+              console.error(`${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse?.displayName}' '${sisCourse?.title}', ${JSON.stringify(e.response.data.apiResponse.httpStatus)}`.red);
             } else {
               // prettier-ignore
-              console.error(`${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse.displayName}' '${sisCourse.title}', UNHANDLED EXCEPTION: ${e}`.red);
+              console.error(`${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse?.displayName}' '${sisCourse?.title}', UNHANDLED EXCEPTION: ${e}`.red);
             }
             shared.sisClassCount++;
             return;
@@ -130,11 +135,11 @@ export const SIS_Classes = new (class Controller {
                   " "
                 ) +
                   `${
-                    result.lastErrorObject.updatedExisting
+                    result?.lastErrorObject?.updatedExisting
                       ? //@ts-ignore
                         //prettier-ignore
-                        `updated (${result.value._id}) cs-course-id '${courseId}' '${result.value.displayName}' '${result.value.course.title}' ${JSON.stringify((await SIS_Class_Model.history.find({collectionId:result.value._id}).sort({updatedAt:"desc"}).limit(1))[0])}`.yellow
-                      : `created (${result.lastErrorObject.upserted}) cs-course-id '${courseId}' '${result.value["displayName"]}' '${result.value["course"]["title"]}'`
+                        `updated (${result?.value?._id}) cs-course-id '${courseId}' '${result?.value?.displayName}' '${result?.value?.course?.title}' ${JSON.stringify(jsondiffpatch.diff(foundClass, result?.value))}`.yellow
+                      : `created (${result?.lastErrorObject?.upserted}) cs-course-id '${courseId}' '${result?.value?.displayName}' '${result?.value?.course?.title}'`
                           .yellow
                   }`
               );
@@ -151,6 +156,5 @@ export const SIS_Classes = new (class Controller {
     } catch (err) {
       console.error(err);
     }
-    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();
