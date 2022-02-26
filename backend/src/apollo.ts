@@ -11,6 +11,7 @@ import { buildSchema } from "type-graphql";
 import { MiddlewareFn } from "type-graphql";
 import { Container } from "typedi";
 import { URL } from "url";
+import { v4 as uuidv4 } from "uuid";
 
 import { URL_REDIS } from "#src/config";
 import {
@@ -36,6 +37,33 @@ const TypegooseMiddleware: MiddlewareFn = async ({}, next) => {
   } else {
     return result instanceof mongoose.Model ? documentToObject(result) : result;
   }
+};
+
+const BASIC_LOGGING = {
+  requestDidStart(requestContext) {
+    const uuid = uuidv4();
+    console.info(`request start: ${uuid}`);
+    console.info(
+      `query:  ${JSON.stringify(requestContext.request.query)
+        ?.replace(/\\n/g, "")
+        .replace(/\s\s+/g, " ")}, variables: ${JSON.stringify(
+        requestContext.request.variables
+      )
+        ?.replace(/\\n/g, "")
+        .replace(/\s\s+/g, " ")}, request: ${uuid}`
+    );
+    return {
+      didEncounterErrors(requestContext) {
+        console.error(
+          `an error happened in response to query: ${requestContext.request.query}`
+        );
+        console.error(requestContext.errors);
+      },
+      willSendResponse(requestContext) {
+        console.info(`request end: ${uuid}`);
+      },
+    };
+  },
 };
 
 export default async (app) => {
@@ -65,6 +93,7 @@ export default async (app) => {
     },
     introspection: true,
     playground: process.env.NODE_ENV != "prod",
+    plugins: [BASIC_LOGGING],
     tracing: false,
   });
   apolloServer.applyMiddleware({ app, path: "/api/graphql" });
