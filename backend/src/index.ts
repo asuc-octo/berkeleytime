@@ -59,6 +59,9 @@ apiRouter.use((err: any, {}, res: express.Response, {}) => {
   return res.status(500).json({ error: err.stack });
 });
 
+process.on("SIGINT", () => process.exit(0));
+process.on("SIGTERM", () => process.exit(0));
+
 // uncomment if interested in seeing full MongoDB interactions printed to console
 /*
 mongoose.set("debug", function (collectionName, method, query, doc) {
