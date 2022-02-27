@@ -41,17 +41,6 @@ class service {
     return await SIS_Class_Model.find(where);
   };
 
-  sections = async ({ args, courseId }) => {
-    const where = {
-      "class.course.identifiers.id": args.courseId,
-    };
-    let expr = `^${args.year ?? ""} ${args.semester ?? ""}`;
-    if (expr.trim() != "") {
-      where["class.session.term.name"] = RegExp(expr);
-    }
-    return await SIS_Class_Section_Model.find(where);
-  };
-
   courses = async (args, fieldsProjection) => {
     return _.chain(
       await this.model
@@ -61,6 +50,7 @@ class service {
             ...parseArgs(args),
           },
           {
+            _id: 1,
             "identifiers.id": 1,
             "identifiers.type": 1,
             "subjectArea.code": 1,
@@ -68,11 +58,12 @@ class service {
             ...fieldsProjection,
           }
         )
-        .cache()
+        .cache(86400)
     )
       .orderBy((o) => parseInt(o.catalogNumber.number))
       .orderBy("subjectArea.code");
   };
+
   subjects = async () => {
     return await this.model.distinct("subjectArea.description", {
       "status.code": "ACTIVE",
