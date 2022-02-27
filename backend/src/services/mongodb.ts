@@ -60,17 +60,21 @@ mongoose.Query.prototype.exec = async function (): Promise<
   const cachedResult = await redisClient.get(key);
   if (cachedResult) {
     console.info(`cache hit: ${key}`);
-    const result: Object | Object[] = JSON.parse(cachedResult);
+    const result = JSON.parse(cachedResult);
     if (this._ttlExtend === true) {
       redisClient.set(key, cachedResult, { EX: this._ttl });
     }
     let models: any = [];
     if (Array.isArray(result)) {
-      result.forEach((item) => {
-        const model = new this.model(item);
-        model[this._flag] = true;
-        models.push(model);
-      });
+      if (result.some((doc) => doc._id)) {
+        result.forEach((item) => {
+          const model = new this.model(item);
+          model[this._flag] = true;
+          models.push(model);
+        });
+      } else {
+        models = result;
+      }
     } else {
       const model = new this.model(result);
       model[this._flag] = true;
@@ -80,6 +84,9 @@ mongoose.Query.prototype.exec = async function (): Promise<
   }
   const result = await originalExec.apply(this, arguments);
   if (result) {
+    console.info(
+      `cache set: ${key}, query: ${JSON.stringify(this.getQuery())}`
+    );
     redisClient.set(key, JSON.stringify(result), { EX: this._ttl });
   }
   return result;
