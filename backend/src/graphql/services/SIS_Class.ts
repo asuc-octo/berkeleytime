@@ -19,12 +19,6 @@ class service {
     return await this.model.findOne({ _id: id });
   };
 
-  sections = async (root) => {
-    return await this.model.find({
-      "class.displayName": RegExp(`^${root.displayName}`),
-    });
-  };
-
   sample = async () => {
     return await this.model.aggregate([{ $sample: { size: 100 } }]);
   };
