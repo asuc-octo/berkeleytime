@@ -23,7 +23,7 @@ class service {
     } else if (args.root) {
       return await this.model.find(
         {
-          "class.displayName": RegExp(`^${args.root.displayName}`),
+          displayName: RegExp(`^${args.root.displayName}`),
         },
         { ...projection, id: 1, displayName: 1 }
       );

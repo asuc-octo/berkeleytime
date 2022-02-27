@@ -64,6 +64,8 @@ process.on("SIGTERM", () => process.exit(0));
 
 // uncomment if interested in seeing full MongoDB interactions printed to console
 /*
+RegExp.prototype["toJSON"] = RegExp.prototype.toString;
+import mongoose from "mongoose";
 mongoose.set("debug", function (collectionName, method, query, doc) {
   console.debug(
     "Mongoose: ".cyan +
