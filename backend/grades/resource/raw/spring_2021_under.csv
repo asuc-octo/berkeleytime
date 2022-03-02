@@ -1,0 +1,32 @@
+﻿Grade Sort Nbr,Enrollment Cnt,% Grades Receivedof Enrollment,Letter Grd Cnt,Course Control Nbr,Instructor Name,Average Grade,Course Subject Short Nm,Course Number,Section Nbr,Grade Subtype Desc,Grade Type Desc,Grade Nm,Course Title Nm
+1,1,,,20863,Mary Holman,,Aerospace Studies,135A,001,A,Letter Grade,A+,Air Force Studies
+1,1,,,21255,Michael Kraft,,Aerospace Studies,2A,001,A,Letter Grade,A+,Evolut Of Air Power
+1,1,,,25364,Michael Kraft,,Aerospace Studies,2A,002,A,Letter Grade,A+,Evolut Of Air Power
+1,5,,,25525,Mary Holman,,Aerospace Studies,135A,002,A,Letter Grade,A+,Air Force Studies
+2,4,,,20863,Mary Holman,,Aerospace Studies,135A,001,A,Letter Grade,A,Air Force Studies
+2,15,,,21255,Michael Kraft,,Aerospace Studies,2A,001,A,Letter Grade,A,Evolut Of Air Power
+2,15,,,21256,Shawn Whitney,,Aerospace Studies,1A,001,A,Letter Grade,A,Found Us Air Force
+2,15,,,25363,Shawn Whitney,,Aerospace Studies,1A,002,A,Letter Grade,A,Found Us Air Force
+2,9,,,25364,Michael Kraft,,Aerospace Studies,2A,002,A,Letter Grade,A,Evolut Of Air Power
+2,3,,,25525,Mary Holman,,Aerospace Studies,135A,002,A,Letter Grade,A,Air Force Studies
+3,1,,,20863,Mary Holman,,Aerospace Studies,135A,001,A,Letter Grade,A-,Air Force Studies
+3,5,,,21255,Michael Kraft,,Aerospace Studies,2A,001,A,Letter Grade,A-,Evolut Of Air Power
+3,2,,,25364,Michael Kraft,,Aerospace Studies,2A,002,A,Letter Grade,A-,Evolut Of Air Power
+4,1,,,20863,Mary Holman,,Aerospace Studies,135A,001,B,Letter Grade,B+,Air Force Studies
+4,1,,,25364,Michael Kraft,,Aerospace Studies,2A,002,B,Letter Grade,B+,Evolut Of Air Power
+5,1,,,21255,Michael Kraft,,Aerospace Studies,2A,001,B,Letter Grade,B,Evolut Of Air Power
+5,1,,,21256,Shawn Whitney,,Aerospace Studies,1A,001,B,Letter Grade,B,Found Us Air Force
+5,2,,,25364,Michael Kraft,,Aerospace Studies,2A,002,B,Letter Grade,B,Evolut Of Air Power
+6,1,,,25525,Mary Holman,,Aerospace Studies,135A,002,B,Letter Grade,B-,Air Force Studies
+7,1,,,25525,Mary Holman,,Aerospace Studies,135A,002,C,Letter Grade,C+,Air Force Studies
+13,1,,,21256,Shawn Whitney,,Aerospace Studies,1A,001,F,Letter Grade,F,Found Us Air Force
+13,2,,,25363,Shawn Whitney,,Aerospace Studies,1A,002,F,Letter Grade,F,Found Us Air Force
+22,71,,,20861,Mary Holman; Michael Kraft; Shawn Whitney,,Aerospace Studies,100,001,Credit,Non-Letter Grade,Pass,Leadership Lab
+22,1,,,20863,Mary Holman,,Aerospace Studies,135A,001,Credit,Non-Letter Grade,Pass,Air Force Studies
+22,1,,,21255,Michael Kraft,,Aerospace Studies,2A,001,Credit,Non-Letter Grade,Pass,Evolut Of Air Power
+22,1,,,25364,Michael Kraft,,Aerospace Studies,2A,002,Credit,Non-Letter Grade,Pass,Evolut Of Air Power
+34,4,,,20861,Mary Holman; Michael Kraft; Shawn Whitney,,Aerospace Studies,100,001,Administrative Code,Administrative Code,Withdrawn,Leadership Lab
+34,3,,,21255,Michael Kraft,,Aerospace Studies,2A,001,Administrative Code,Administrative Code,Withdrawn,Evolut Of Air Power
+34,1,,,21256,Shawn Whitney,,Aerospace Studies,1A,001,Administrative Code,Administrative Code,Withdrawn,Found Us Air Force
+34,1,,,25525,Mary Holman,,Aerospace Studies,135A,002,Administrative Code,Administrative Code,Withdrawn,Air Force Studies
+,1,,,20861,Mary Holman; Michael Kraft; Shawn Whitney,,Aerospace Studies,100,001,Unknown,Unknown,Unknown,Leadership Lab
