@@ -1,14 +1,13 @@
-FROM node:12-slim AS builder
-MAINTAINER ASUC OCTO octo.berkeleytime@asuc.org
+FROM node:12-slim AS dev
 RUN mkdir /frontend
 WORKDIR /frontend
+COPY package.json .
+RUN npm install
 COPY . .
-RUN npm install --only prod
+ENTRYPOINT npm start
+
+FROM dev AS prod
+RUN npm install -g serve
 RUN npm run build
 RUN rm -rf node_modules
-
-FROM node:12-slim
-RUN mkdir /frontend
-WORKDIR /frontend
-RUN npm install -g serve
-COPY --from=builder /frontend .
+ENTRYPOINT npm run prod
