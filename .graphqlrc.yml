@@ -1,4 +1,0 @@
-schema:
-  - ./frontend/schema.graphql
-  - ./frontend/client.graphql
-documents: "frontend/src/**/*.{graphql,js,ts,jsx,tsx}"

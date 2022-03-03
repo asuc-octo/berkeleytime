@@ -32,7 +32,6 @@ const contributors = [
     {
       name: 'Hiroshi Usui',
       role: 'Backend Lead',
-      site: 'https://i-am.2se.xyz',
       img: hiroshi_1,
       silly_img: hiroshi_2,
     },
