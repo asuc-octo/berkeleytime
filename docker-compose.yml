@@ -1,0 +1,55 @@
+---
+networks:
+  bt:
+    name: bt
+services:
+  backend:
+    build:
+      context: backend
+    entrypoint: npm run dev
+    depends_on:
+      - redis
+      - mongodb
+    networks:
+      - bt
+    ports:
+      - 5000:5000
+    volumes:
+      - ./backend:/backend
+  frontend:
+    build:
+      context: frontend
+      target: dev
+    command:
+      - npm
+      - start
+    networks:
+      - bt
+    volumes:
+      - ./frontend/src:/frontend/src
+      - ./frontend/public:/frontend/public
+  mongodb:
+    image: mongo:5
+    networks:
+      - bt
+    ports:
+      - 27017:27017
+    volumes:
+      - ./db:/data/db
+  nginx:
+    depends_on:
+      - backend
+      - frontend
+    image: nginx:1.21
+    networks:
+      - bt
+    ports:
+      - 8080:8080
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+  redis:
+    image: redis:6
+    ports:
+      - 6379:6379
+    networks:
+      - bt
