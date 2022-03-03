@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
-import path from "path";
+import { dirname } from "path";
 
-const envFile = `.env.${process.env.NODE_ENV || "dev"}`; // gsutil cp gs://berkeleytime-218606/secrets/.env.dev.ts .env.dev
-
+const envFile = `.env.${process.env.NODE_ENV ?? "dev"}`;
+const currentDir = dirname(dirname(new URL(import.meta.url).pathname));
+const path = `${currentDir}/${envFile}`;
 dotenv.config({
-  path: path.resolve(process.cwd(), envFile), // process.cwd() assumes calling process takes place from project root
+  path,
 });
