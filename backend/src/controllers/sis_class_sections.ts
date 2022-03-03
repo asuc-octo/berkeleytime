@@ -124,7 +124,7 @@ export const SIS_Class_Sections = new (class Controller {
 
     for await (const sisCourse of SIS_Course_Model.find({
       "status.code": "ACTIVE",
-      identifiers: { $ne: { type: "cs-course-id", id: "" } },
+      "identifiers.id": { $ne: "" },
     })
       .sort({ displayName: 1 })
       .batchSize(12)
@@ -132,12 +132,12 @@ export const SIS_Class_Sections = new (class Controller {
       const courseId = _.find(sisCourse["identifiers"], {
         type: "cs-course-id",
       }).id;
-      const terms = await SIS_Class_Model.find({
-        "course.identifiers": { type: "cs-course-id", id: courseId },
+      const terms = await SIS_Class_Model.distinct("session.term.id", {
+        "course.identifiers.id": courseId,
         "session.term.name": RegExp(
-          `${moment().year()}|${moment().year() + 1}`
+          `^(${moment().year()}|${moment().year() + 1})`
         ),
-      }).distinct("session.term.id");
+      });
       for (const termId of terms.reverse()) {
         await queue.onSizeLessThan(1000);
         queue.add(() => businessLogic({ courseId, termId }));

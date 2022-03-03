@@ -74,7 +74,7 @@ export const SIS_Classes = new (class Controller {
     try {
       for await (const sisCourse of SIS_Course_Model.find({
         "status.code": "ACTIVE",
-        identifiers: { $ne: { type: "cs-course-id", id: "" } },
+        "identifiers.id": { $ne: "" },
       })
         .sort({ displayName: 1 })
         .allowDiskUse(true)) {
