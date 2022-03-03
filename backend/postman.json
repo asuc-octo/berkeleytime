@@ -305,39 +305,7 @@
 			"response": []
 		},
 		{
-			"name": "GQL SIS Course (Basic Query)",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "graphql",
-					"graphql": {
-						"query": "query { \n    SIS_Course(subjectArea___description: \"Computer Science\"){\n        displayName\n        title\n        catalogNumber {\n            number\n        }\n    }\n}",
-						"variables": ""
-					}
-				},
-				"url": {
-					"raw": "{{URL_DOMAIN}}/api/graphql",
-					"host": [
-						"{{URL_DOMAIN}}"
-					],
-					"path": [
-						"api",
-						"graphql"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GQL SIS Course (Big Query)",
+			"name": "GQL SIS Course (Catalog)",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -416,38 +384,6 @@
 					"mode": "graphql",
 					"graphql": {
 						"query": "query { \n    SIS_Course (displayName: \"COMPSCI 70\") {\n        _classes {\n            displayName\n            _sections {\n                displayName\n                _grades {\n                    EnrollmentCnt\n                    GradeNm\n                    InstructorName\n                }\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
-						"variables": ""
-					}
-				},
-				"url": {
-					"raw": "{{URL_DOMAIN}}/api/graphql",
-					"host": [
-						"{{URL_DOMAIN}}"
-					],
-					"path": [
-						"api",
-						"graphql"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GQL SIS Course (Sections Grades)",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
-					}
-				],
-				"body": {
-					"mode": "graphql",
-					"graphql": {
-						"query": "query { \n    SIS_Course (displayName: \"MATH 54\") {\n        _sections (year: 2017, semester: \"Summer\") {\n            displayName\n            _grades {\n                EnrollmentCnt\n                GradeNm\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
 						"variables": ""
 					}
 				},

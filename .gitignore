@@ -9,6 +9,7 @@
 *.key
 *.log
 *.pyc
+**/db
 **/dump.rdb
 **/dump
 **/mdb.tgz
