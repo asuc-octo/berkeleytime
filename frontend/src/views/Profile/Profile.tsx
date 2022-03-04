@@ -47,7 +47,20 @@ const tabs: {
   },
 ];
 
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
 const Profile = () => {
+  const query = useQuery();
+  const params = useParams();
+  console.log(JSON.stringify(params));
+  const id_token = query.get("id_token");
+  if (!id_token) {
+    throw new Error("no token supplied");
+  }
+  console.log(jwt_decode(id_token));
+
   const [tabIndex, setTabIndex] = useState(0);
   const { isLoggedIn, user, loading } = useUser();
 
