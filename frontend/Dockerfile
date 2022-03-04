@@ -1,7 +1,7 @@
 FROM node:16-slim AS dev
 RUN mkdir /frontend
 WORKDIR /frontend
-COPY package*.json .
+COPY package*.json ./
 RUN npm install --prefer-offline --no-audit
 COPY . .
 ENTRYPOINT npm start
