@@ -25,6 +25,7 @@ const MAX_SECTIONS_BEFORE_SCROLL: number = 8;
 const SCROLL_SECTION_HEIGHT: string = '280px';
 
 type SectionProps = {
+  key: string;
   sections: SectionFragment[];
   course: SchedulerCourseFragment;
   lecture: SectionFragment;

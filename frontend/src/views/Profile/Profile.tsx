@@ -14,7 +14,7 @@ import { ReactComponent as SupportSelected } from '../../assets/svg/profile/supp
 import { UserProfileFragment } from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
 import { useUser } from '../../graphql/hooks/user';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
 const tabs: {
   key: string;
