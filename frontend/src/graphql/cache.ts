@@ -22,7 +22,7 @@ if (process.env.NODE_ENV === "development" && false) {
   const MB = 1 << 20;
   persistCacheSync({
     cache,
-    storage: new LocalStorageWrapper(window.localStorage),
+    storage: new LocalStorageWrapper(localStorage),
     debug: true,
     maxSize: 2 * MB,
   });

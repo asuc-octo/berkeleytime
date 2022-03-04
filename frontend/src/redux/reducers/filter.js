@@ -6,7 +6,7 @@ import {
   DEPARTMENT,
   LEVEL,
   SEMESTER,
-} from "../actionTypes";
+} from "redux/actionTypes.js";
 
 const initialState = {
   loading: true,

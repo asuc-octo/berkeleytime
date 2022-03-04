@@ -2,7 +2,7 @@ import {
   START_REQUEST_DESCRIPTION,
   UPDATE_COURSE_DATA,
   FILTER_MAP,
-} from "../actionTypes";
+} from "redux/actionTypes.js";
 
 const initialState = {
   loading: false,

@@ -64,19 +64,19 @@ class Berkeleytime extends Component<Props> {
     super(props);
 
     const bannerType = "sp22recruitment"; // should match value in ./redux/common/reducer.ts
-    if (localStorage.getItem("bt-hide-banner") !== bannerType) {
+    if (localStorage?.getItem("bt-hide-banner") !== bannerType) {
       props.openBanner();
     }
 
     easterEgg();
 
     const key = "bt-spring-2021-catalog";
-    if (localStorage.getItem(key) === null) {
-      localStorage.setItem(key, key);
+    if (localStorage?.getItem(key) === null) {
+      localStorage?.setItem(key, key);
     }
 
     /* Clear storage if not storing anything */
-    // localStorage.clear()
+    // localStorage?.clear()
 
     this.checkMobile();
   }

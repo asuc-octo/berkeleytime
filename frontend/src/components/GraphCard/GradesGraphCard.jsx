@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { connect } from "react-redux";
+import * as vars from "variables/Variables.js";
 
 import { fetchGradeData } from "../../redux/actions";
-import vars from "../../variables/Variables";
 import GradesInfoCard from "../GradesInfoCard/GradesInfoCard";
 import GradesGraph from "../Graphs/GradesGraph";
 import GraphEmpty from "../Graphs/GraphEmpty";

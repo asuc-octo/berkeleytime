@@ -8,10 +8,10 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import * as vars from "variables/Variables.js";
 
 import emptyImage from "../../assets/img/images/graphs/empty.svg";
 import { percentileToString } from "../../utils/utils";
-import vars from "../../variables/Variables";
 
 const EmptyLabel = (props) => {
   return (
