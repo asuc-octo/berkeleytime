@@ -1,14 +1,14 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunkMiddleware from "redux-thunk";
 
-import catalog from "./reducers/catalog";
-import filter from "./reducers/filter";
-import classDescription from "./reducers/classDescription";
-import grade from "./reducers/grade";
-import enrollment from "./reducers/enrollment";
 import authReducer from "./auth/reducer";
-
 import { commonReducer } from "./common/reducer";
+import catalog from "./reducers/catalog";
+import classDescription from "./reducers/classDescription";
+import enrollment from "./reducers/enrollment";
+import filter from "./reducers/filter";
+import grade from "./reducers/grade";
+
 // import { enrollmentReducer } from './enrollment/reducer';
 
 const reducer = combineReducers({

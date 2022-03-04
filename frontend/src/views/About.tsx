@@ -1,24 +1,21 @@
+import christina_janet from "assets/img/about/group/christina_janet.jpg";
+import doe from "assets/img/about/group/doe.jpg";
+import grace_janet from "assets/img/about/group/grace_janet.jpg";
+import jemma from "assets/img/about/group/jemma.jpg";
+import michaels from "assets/img/about/group/michaels.jpg";
+import retreat from "assets/img/about/group/retreat.jpg";
+import retreat_silly from "assets/img/about/group/retreat_silly.png";
+import will from "assets/img/about/group/will.jpg";
+import zoom from "assets/img/about/group/zoom.png";
+import curiosity from "assets/svg/about/curiosity.svg";
+import growth from "assets/svg/about/growth.svg";
+import passion from "assets/svg/about/passion.svg";
+import { H3, P } from "bt/custom";
 import React, { FC } from "react";
 import { Row, Col } from "react-bootstrap";
 
-import { H3, P } from "bt/custom";
-
 import CurrentContributors from "../components/About/CurrentContributors";
 import PastContributors from "../components/About/PastContributors";
-
-import doe from "assets/img/about/group/doe.jpg";
-import michaels from "assets/img/about/group/michaels.jpg";
-import retreat from "assets/img/about/group/retreat.jpg";
-import grace_janet from "assets/img/about/group/grace_janet.jpg";
-import will from "assets/img/about/group/will.jpg";
-import jemma from "assets/img/about/group/jemma.jpg";
-import christina_janet from "assets/img/about/group/christina_janet.jpg";
-import retreat_silly from "assets/img/about/group/retreat_silly.png";
-import zoom from "assets/img/about/group/zoom.png";
-
-import growth from "assets/svg/about/growth.svg";
-import curiosity from "assets/svg/about/curiosity.svg";
-import passion from "assets/svg/about/passion.svg";
 
 const values = [
   {

@@ -1,16 +1,16 @@
+import "assets/scss/berkeleytime.scss";
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+
 import { ApolloProvider } from "@apollo/client";
 
-import ScrollToTop from "./components/Common/ScrollToTop";
-import LogPageView from "./components/Common/LogPageView";
 import Berkeleytime from "./Berkeleytime";
-import store from "./redux/store";
+import LogPageView from "./components/Common/LogPageView";
+import ScrollToTop from "./components/Common/ScrollToTop";
 import client from "./graphql/client";
-
-import "assets/scss/berkeleytime.scss";
+import store from "./redux/store";
 
 ReactDOM.render(
   <ApolloProvider client={client}>

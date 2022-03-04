@@ -1,3 +1,5 @@
+import { useCallback } from "react";
+
 import {
   FetchResult,
   LazyQueryHookOptions,
@@ -9,7 +11,6 @@ import {
   QueryTuple,
   useMutation,
 } from "@apollo/client";
-import { useCallback } from "react";
 
 /**
  * Wraps mutation in a custom hook

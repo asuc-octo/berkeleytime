@@ -1,3 +1,4 @@
+import cx from "classnames";
 import {
   LectureFragment,
   SchedulerCourseFragment,
@@ -5,8 +6,6 @@ import {
 } from "graphql/graphql";
 import React, { ChangeEvent, CSSProperties } from "react";
 import { Form } from "react-bootstrap";
-import cx from "classnames";
-
 import {
   hasSectionById,
   Schedule,
@@ -18,8 +17,9 @@ import {
   formatSectionTime,
 } from "utils/sections/section";
 import { groupSections } from "utils/sections/sort";
-import { useScheduleContext } from "../ScheduleContext";
 import { combineNodes } from "utils/string";
+
+import { useScheduleContext } from "../ScheduleContext";
 
 const MAX_SECTIONS_BEFORE_SCROLL: number = 8;
 const SCROLL_SECTION_HEIGHT: string = "280px";

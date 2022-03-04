@@ -1,5 +1,5 @@
-import React, { ComponentProps, ElementType, ReactNode } from "react";
 import TrashButton from "components/Common/TrashButton";
+import React, { ComponentProps, ElementType, ReactNode } from "react";
 
 type Props<T extends ElementType> = ComponentProps<T> & {
   removable?: boolean;

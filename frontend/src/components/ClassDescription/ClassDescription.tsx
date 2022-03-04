@@ -1,23 +1,22 @@
+import BTLoader from "components/Common/BTLoader";
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { CourseReference, courseToName } from "utils/courses/course";
+import { stableSortPlaylists } from "utils/playlists/playlist";
+import { getLatestSemester, Semester } from "utils/playlists/semesters";
 
-import people from "../../assets/svg/catalog/people.svg";
-import chart from "../../assets/svg/catalog/chart.svg";
 import book from "../../assets/svg/catalog/book.svg";
+import chart from "../../assets/svg/catalog/chart.svg";
 import launch from "../../assets/svg/catalog/launch.svg";
-
+import people from "../../assets/svg/catalog/people.svg";
+import { useGetCourseForNameQuery } from "../../graphql/graphql";
+import { fetchEnrollContext } from "../../redux/actions";
 import {
   applyIndicatorPercent,
   applyIndicatorGrade,
   formatUnits,
 } from "../../utils/utils";
-import { useGetCourseForNameQuery } from "../../graphql/graphql";
-import { stableSortPlaylists } from "utils/playlists/playlist";
-import { getLatestSemester, Semester } from "utils/playlists/semesters";
 import SectionTable from "./SectionTable";
-import BTLoader from "components/Common/BTLoader";
-import { CourseReference, courseToName } from "utils/courses/course";
-import { fetchEnrollContext } from "../../redux/actions";
-import { useDispatch, useSelector } from "react-redux";
 
 type Props = {
   course: CourseReference;

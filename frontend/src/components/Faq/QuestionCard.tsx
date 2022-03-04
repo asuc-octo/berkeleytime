@@ -1,7 +1,6 @@
+import { P } from "bt/custom";
 import React, { FC, useState } from "react";
 import { Collapse } from "react-bootstrap";
-
-import { P } from "bt/custom";
 
 interface Props {
   question: string;

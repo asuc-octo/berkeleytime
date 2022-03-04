@@ -1,6 +1,6 @@
 import React, { CSSProperties, ReactNode } from "react";
-import { range } from "utils/range";
 import { dayToLongName, timeToHourString } from "utils/date";
+import { range } from "utils/range";
 
 export type CardData = {
   key?: string | number;

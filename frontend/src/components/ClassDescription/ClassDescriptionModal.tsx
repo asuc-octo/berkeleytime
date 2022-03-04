@@ -1,8 +1,9 @@
 import React from "react";
 import { Modal } from "react-bootstrap";
-import ClassDescription from "./ClassDescription";
-import { Semester } from "utils/playlists/semesters";
 import { CourseReference } from "utils/courses/course";
+import { Semester } from "utils/playlists/semesters";
+
+import ClassDescription from "./ClassDescription";
 
 type ClassDescriptionModalProps = {
   show: boolean;

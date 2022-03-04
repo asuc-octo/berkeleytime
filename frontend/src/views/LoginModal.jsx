@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import google_login from "assets/svg/profile/btn_google_signin.png";
 import PropTypes from "prop-types";
+import React, { Component } from "react";
 import { Modal, Form } from "react-bootstrap";
 import { Button } from "react-bootstrap";
-import google_login from "assets/svg/profile/btn_google_signin.png";
 
 export class LoginModal extends Component {
   constructor(props) {

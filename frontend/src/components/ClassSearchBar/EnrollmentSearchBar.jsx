@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import Select from "react-select-virtualized";
-import { Container, Row, Col, Button } from "react-bootstrap";
 import hash from "object-hash";
+import React, { Component } from "react";
+import { Container, Row, Col, Button } from "react-bootstrap";
+import { connect } from "react-redux";
+import Select from "react-select-virtualized";
+import { reactSelectCourseSearch } from "utils/courses/search";
 
 // import 'react-virtualized-select/styles.css'
 import { fetchEnrollSelected } from "../../redux/actions";
-import { connect } from "react-redux";
-import { reactSelectCourseSearch } from "utils/courses/search";
 
 class EnrollmentSearchBar extends Component {
   constructor(props) {

@@ -1,6 +1,6 @@
+import yaml from "js-yaml";
 import React, { Component } from "react";
 import { Container, Row, Col, ButtonToolbar } from "react-bootstrap";
-import yaml from "js-yaml";
 
 import Log from "../../components/Releases/Log";
 

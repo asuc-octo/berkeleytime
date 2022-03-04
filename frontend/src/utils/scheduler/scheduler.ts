@@ -1,26 +1,4 @@
 import {
-  CourseOverviewFragment,
-  CreateScheduleMutationVariables,
-  ScheduleFragment,
-  SectionFragment,
-} from "../../graphql/graphql";
-import {
-  addUnits,
-  parseUnits,
-  Units,
-  unitsToString,
-  ZERO_UNITS,
-} from "utils/courses/units";
-import { Semester, semesterToString } from "utils/playlists/semesters";
-import { getNodes } from "../graphql";
-import {
-  courseToColor,
-  courseToName,
-  COURSE_PALETTE,
-} from "utils/courses/course";
-import { AccessStatus } from "./accessStatus";
-import { dayToICalDay, reinterpretDateAsUTC, stringToDate } from "utils/date";
-import {
   addWeeks,
   isBefore,
   min,
@@ -29,6 +7,29 @@ import {
   subDays,
   subWeeks,
 } from "date-fns";
+import {
+  courseToColor,
+  courseToName,
+  COURSE_PALETTE,
+} from "utils/courses/course";
+import {
+  addUnits,
+  parseUnits,
+  Units,
+  unitsToString,
+  ZERO_UNITS,
+} from "utils/courses/units";
+import { dayToICalDay, reinterpretDateAsUTC, stringToDate } from "utils/date";
+import { Semester, semesterToString } from "utils/playlists/semesters";
+
+import {
+  CourseOverviewFragment,
+  CreateScheduleMutationVariables,
+  ScheduleFragment,
+  SectionFragment,
+} from "../../graphql/graphql";
+import { getNodes } from "../graphql";
+import { AccessStatus } from "./accessStatus";
 
 // Update the version when the scheduler schema changes.
 export const SCHEDULER_LOCALSTORAGE_KEY = "schedule:save:v1.0";

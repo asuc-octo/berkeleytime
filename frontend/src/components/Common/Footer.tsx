@@ -1,6 +1,6 @@
+import { H6, A } from "bt/custom";
 import React, { FC } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import { H6, A } from "bt/custom";
 
 const New: FC = () => <span className="footer-new ml-1">New</span>;
 

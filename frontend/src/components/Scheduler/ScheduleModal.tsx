@@ -1,15 +1,16 @@
+import { Button } from "bt/custom";
 import BTLoader from "components/Common/BTLoader";
-import { useGetScheduleForIdQuery } from "../../graphql/graphql";
 import React from "react";
 import { Modal } from "react-bootstrap";
-import SchedulerCalendar from "./Calendar/SchedulerCalendar";
+import { unitsToString } from "utils/courses/units";
+
+import { useGetScheduleForIdQuery } from "../../graphql/graphql";
 import {
   deserializeSchedule,
   formatScheduleError,
   getUnitsForSchedule,
 } from "../../utils/scheduler/scheduler";
-import { Button } from "bt/custom";
-import { unitsToString } from "utils/courses/units";
+import SchedulerCalendar from "./Calendar/SchedulerCalendar";
 
 type ContentProps = {
   scheduleId: string;

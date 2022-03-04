@@ -1,3 +1,4 @@
+import cx from "classnames";
 import TrashButton from "components/Common/TrashButton";
 import { CourseOverviewFragment } from "graphql/graphql";
 import React from "react";
@@ -11,9 +12,9 @@ import {
   SchedulerSectionType,
 } from "utils/scheduler/scheduler";
 import { formatLocation, formatSectionTime } from "utils/sections/section";
-import cx from "classnames";
-import CalendarCard from "./CalendarCard";
 import { combineStrings } from "utils/string";
+
+import CalendarCard from "./CalendarCard";
 
 type Props = {
   /**

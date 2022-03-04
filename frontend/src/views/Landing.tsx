@@ -1,9 +1,8 @@
-import React, { FC } from "react";
-
-import Jumbotron from "components/Landing/Jumbotron";
-import Explore from "components/Landing/Explore";
-import Mission from "components/Landing/Mission";
 import Blurbs from "components/Landing/Blurbs";
+import Explore from "components/Landing/Explore";
+import Jumbotron from "components/Landing/Jumbotron";
+import Mission from "components/Landing/Mission";
+import React, { FC } from "react";
 
 const Landing: FC = () => (
   <div>

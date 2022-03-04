@@ -1,9 +1,7 @@
+import BTLoader from "components/Common/BTLoader";
 import React, { ComponentType, ReactNode, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
-
-import AccountSubview from "../../components/Profile/AccountSubview";
-import NotificationsSubview from "../../components/Profile/NotificationsSubview";
-import SupportSubview from "../../components/Profile/SupportSubview";
+import { Redirect } from "react-router-dom";
 
 import { ReactComponent as Account } from "../../assets/svg/profile/account.svg";
 import { ReactComponent as AccountSelected } from "../../assets/svg/profile/account_selected.svg";
@@ -11,10 +9,11 @@ import { ReactComponent as Notif } from "../../assets/svg/profile/notif.svg";
 import { ReactComponent as NotifSelected } from "../../assets/svg/profile/notif_selected.svg";
 import { ReactComponent as Support } from "../../assets/svg/profile/support.svg";
 import { ReactComponent as SupportSelected } from "../../assets/svg/profile/support_selected.svg";
+import AccountSubview from "../../components/Profile/AccountSubview";
+import NotificationsSubview from "../../components/Profile/NotificationsSubview";
+import SupportSubview from "../../components/Profile/SupportSubview";
 import { UserProfileFragment } from "../../graphql/graphql";
-import BTLoader from "components/Common/BTLoader";
 import { useUser } from "../../graphql/hooks/user";
-import { Redirect } from "react-router-dom";
 
 const tabs: {
   key: string;

@@ -1,9 +1,10 @@
+import { useCallback } from "react";
+
 import {
   CourseOverviewFragment,
   useSaveCourseMutation,
   useUnsaveCourseMutation,
 } from "../../graphql/graphql";
-import { useCallback } from "react";
 import { useUser } from "./user";
 
 /**

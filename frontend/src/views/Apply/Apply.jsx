@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-no-target-blank */
+import doe from "assets/img/about/group/doe.jpg";
 import React, { PureComponent } from "react";
 import { Row, ButtonToolbar } from "react-bootstrap";
-import PositionCard from "../../components/Recruiting/Position";
 import { Link } from "react-router-dom";
 
-import doe from "assets/img/about/group/doe.jpg";
+import PositionCard from "../../components/Recruiting/Position";
 
 const IS_RECRUITING = false;
 

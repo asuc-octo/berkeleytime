@@ -5,6 +5,7 @@ import { courseToName } from "utils/courses/course";
 import { reactSelectCourseSearch } from "utils/courses/search";
 import { compareDepartmentName } from "utils/courses/sorting";
 import { hasCourseById, Schedule } from "utils/scheduler/scheduler";
+
 import { addCourse } from "./onboard";
 
 type CourseType = CourseOverviewFragment;

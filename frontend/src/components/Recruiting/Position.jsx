@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 function PositionCard(props) {
   const { position, description, emoji, link } = props;

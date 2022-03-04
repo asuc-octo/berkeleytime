@@ -1,17 +1,16 @@
+import BTLoader from "components/Common/BTLoader";
 import React from "react";
-import { FixedSizeList } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-
-import FilterCard from "./FilterCard";
+import { FixedSizeList } from "react-window";
+import { CourseReference } from "utils/courses/course";
+import { searchCourses } from "utils/courses/search";
+import { sortByAttribute, CourseSortAttribute } from "utils/courses/sorting";
 
 import {
   CourseOverviewFragment,
   useGetCoursesForFilterQuery,
 } from "../../graphql/graphql";
-import { searchCourses } from "utils/courses/search";
-import { sortByAttribute, CourseSortAttribute } from "utils/courses/sorting";
-import BTLoader from "components/Common/BTLoader";
-import { CourseReference } from "utils/courses/course";
+import FilterCard from "./FilterCard";
 
 type FilterResultsProps = {
   activePlaylists: string[];

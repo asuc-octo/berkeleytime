@@ -1,6 +1,6 @@
 import React, { FC } from "react";
-import { useLocation } from "react-router";
 import ReactGA from "react-ga";
+import { useLocation } from "react-router";
 
 const gaTrackingID = "UA-35316609-1";
 

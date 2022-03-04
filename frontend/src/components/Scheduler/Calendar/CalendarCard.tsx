@@ -1,5 +1,5 @@
-import React, { CSSProperties, forwardRef, HTMLProps } from "react";
 import Color from "color";
+import React, { CSSProperties, forwardRef, HTMLProps } from "react";
 
 export type Props = HTMLProps<HTMLDivElement> & {
   title: string;

@@ -1,20 +1,20 @@
+import BTLoader from "components/Common/BTLoader";
+import SchedulerCalendar from "components/Scheduler/Calendar/SchedulerCalendar";
+import CourseSelector from "components/Scheduler/CourseSelector";
+import { useSemester } from "graphql/hooks/semester";
 import React, { ChangeEvent, ReactNode, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
-import CourseSelector from "components/Scheduler/CourseSelector";
-
-import { useGetCoursesForFilterQuery } from "../../graphql/graphql";
-import BTLoader from "components/Common/BTLoader";
+import { getNodes } from "utils/graphql";
+import { Semester } from "utils/playlists/semesters";
+import { AccessStatus } from "utils/scheduler/accessStatus";
 import {
   Schedule,
   SchedulerSectionType,
   scheduleToICal,
 } from "utils/scheduler/scheduler";
-import SchedulerCalendar from "components/Scheduler/Calendar/SchedulerCalendar";
+
+import { useGetCoursesForFilterQuery } from "../../graphql/graphql";
 import AccessControl from "./AccessControl";
-import { AccessStatus } from "utils/scheduler/accessStatus";
-import { useSemester } from "graphql/hooks/semester";
-import { getNodes } from "utils/graphql";
-import { Semester } from "utils/playlists/semesters";
 
 type Props = {
   /**

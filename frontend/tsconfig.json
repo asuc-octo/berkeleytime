@@ -4,20 +4,34 @@
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./src",
     "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
+    "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["ES2020"],
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
+    "outDir": "./build",
+    "paths": {
+      "#src/*": ["./*"]
+    },
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "sourceMap": true,
     "strict": false,
-    "target": "es5"
+    "strictPropertyInitialization": false,
+    "target": "esnext"
+    // "strict": true,
+    // "rootDir": "./",                             /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
+    // "noEmit": true,                              /* Do not emit outputs. */
+    // "allowSyntheticDefaultImports": true,        /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */
   },
+  "exclude": ["build/**/*", "node_modules/**/*"],
   "include": ["src/**/*"]
 }

@@ -4,6 +4,7 @@ import React, { Dispatch, SetStateAction, useMemo } from "react";
 import { courseToName } from "utils/courses/course";
 import { reactSelectCourseSearch } from "utils/courses/search";
 import { compareDepartmentName } from "utils/courses/sorting";
+import { unitsToString } from "utils/courses/units";
 import { Semester } from "utils/playlists/semesters";
 import {
   getUnitsForSchedule,
@@ -13,10 +14,10 @@ import {
   SchedulerCourseType,
   SchedulerSectionType,
 } from "utils/scheduler/scheduler";
+
 import Callout from "./Callout";
-import SchedulerCourse from "./Selector/SchedulerCourse";
 import { ScheduleContext } from "./ScheduleContext";
-import { unitsToString } from "utils/courses/units";
+import SchedulerCourse from "./Selector/SchedulerCourse";
 
 type CourseType = CourseOverviewFragment;
 

@@ -1,22 +1,21 @@
 import React, { useState } from "react";
+import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { compareDepartmentName } from "utils/courses/sorting";
 
-import Property from "./Property";
-import ProfileCourseCard from "./ProfileCourseCard";
 import EditPencil from "../../assets/svg/profile/edit.svg";
 import {
   CourseOverviewFragment,
   ScheduleOverviewFragment,
   UserProfileFragment,
 } from "../../graphql/graphql";
-
-import MAJORS from "./majors.json";
-import { useUpdateUser } from "../../graphql/hooks/user";
 import { useUnsaveCourse } from "../../graphql/hooks/saveCourse";
-import { compareDepartmentName } from "utils/courses/sorting";
-import { Button } from "react-bootstrap";
-import Subview from "./Subview";
-import { Link } from "react-router-dom";
+import { useUpdateUser } from "../../graphql/hooks/user";
+import ProfileCourseCard from "./ProfileCourseCard";
 import ProfileScheduleCard from "./ProfileScheduleCard";
+import Property from "./Property";
+import Subview from "./Subview";
+import MAJORS from "./majors.json";
 
 type Props = {
   userProfile: UserProfileFragment;

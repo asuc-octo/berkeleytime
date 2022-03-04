@@ -1,5 +1,6 @@
-import { useDeleteUser } from "../../graphql/hooks/user";
 import React from "react";
+
+import { useDeleteUser } from "../../graphql/hooks/user";
 import Resource from "./Resource";
 import Subview from "./Subview";
 

@@ -1,8 +1,5 @@
 import BTLoader from "components/Common/BTLoader";
-import {
-  useGetScheduleForIdLazyQuery,
-  useUpdateScheduleMutation,
-} from "../../../graphql/graphql";
+import { debounce } from "lodash";
 import React, {
   useCallback,
   useEffect,
@@ -11,15 +8,19 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
+import { Semester } from "utils/playlists/semesters";
 import {
   deserializeSchedule,
   Schedule,
   serializeSchedule,
 } from "utils/scheduler/scheduler";
-import ScheduleEditor from "../ScheduleEditor";
-import { Semester } from "utils/playlists/semesters";
-import { debounce } from "lodash";
+
+import {
+  useGetScheduleForIdLazyQuery,
+  useUpdateScheduleMutation,
+} from "../../../graphql/graphql";
 import Callout from "../Callout";
+import ScheduleEditor from "../ScheduleEditor";
 
 // This is NOT a loop. Rather it combines all
 // changes within this time interval into one

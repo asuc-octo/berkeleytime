@@ -1,14 +1,9 @@
-import React, { useState } from "react";
+import BTInput from "components/Custom/Input";
 import BTSelect from "components/Custom/Select";
-import FilterModal from "./FilterModal";
+import React, { useState } from "react";
+import { CourseSortAttribute } from "utils/courses/sorting";
 
-import {
-  FilterParameter,
-  Filters,
-  getChanges,
-  getOverlappingValues,
-  PlaylistDescription,
-} from "../../utils/playlists/playlist";
+import { ReactComponent as SearchIcon } from "../../assets/svg/common/search.svg";
 import {
   filterTypeIsClearable,
   filterTypeIsMulti,
@@ -16,10 +11,14 @@ import {
   filterTypeToPlaceholder,
   filterTypeToString,
 } from "../../utils/playlists/filterTypes";
-import { CourseSortAttribute } from "utils/courses/sorting";
-
-import { ReactComponent as SearchIcon } from "../../assets/svg/common/search.svg";
-import BTInput from "components/Custom/Input";
+import {
+  FilterParameter,
+  Filters,
+  getChanges,
+  getOverlappingValues,
+  PlaylistDescription,
+} from "../../utils/playlists/playlist";
+import FilterModal from "./FilterModal";
 
 type Props = {
   filters: Filters;

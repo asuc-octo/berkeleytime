@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+
 import BTForm from "../../components/Form/Form.jsx";
 
 class TestForm extends PureComponent {

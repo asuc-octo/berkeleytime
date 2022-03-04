@@ -1,4 +1,5 @@
 import { capitalize } from "bt/utils";
+
 import { FilterablePlaylist, playlistToTimeComparable } from "./playlist";
 
 export type Semester = {
