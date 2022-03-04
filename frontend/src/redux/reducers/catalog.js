@@ -6,7 +6,7 @@ import {
   RECEIVE_FILTER_DATA,
   MODIFY_SELECTED_COURSE,
   SET_DEFAULT_PLAYLISTS,
-} from "../actionTypes";
+} from "redux/actionTypes.js";
 
 const initialState = {
   data: {}, // data from initial API call to /api/catalog/catalog_json/filters/

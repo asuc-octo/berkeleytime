@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import { connect } from "react-redux";
+import * as vars from "variables/Variables.js";
 
 import { fetchEnrollData } from "../../redux/actions";
-import vars from "../../variables/Variables";
 import EnrollmentInfoCard from "../EnrollmentInfoCard/EnrollmentInfoCard.jsx";
 import EnrollmentGraph from "../Graphs/EnrollmentGraph.jsx";
 import GraphEmpty from "../Graphs/GraphEmpty.jsx";

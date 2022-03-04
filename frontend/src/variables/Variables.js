@@ -3,12 +3,12 @@
 // // // For notifications
 // //
 //
-var defaultWidth =
+export const defaultWidth =
   window.screen.width > 768
     ? (window.screen.width * 1) / 3
     : window.screen.width;
 
-var style = {
+export const style = {
   Wrapper: {},
   Containers: {
     DefaultStyle: {
@@ -475,17 +475,17 @@ const iconsArray = [
 // //
 //
 // Data for Pie Chart
-var dataPie = {
+export const dataPie = {
   labels: ["40%", "20%", "40%"],
   series: [40, 20, 40],
 };
-var legendPie = {
+export const legendPie = {
   names: ["Open", "Bounce", "Unsubscribe"],
   types: ["info", "danger", "warning"],
 };
 
 // Data for Line Chart
-var dataSales = {
+export const dataSales = {
   labels: [
     "9:00AM",
     "12:00AM",
@@ -502,7 +502,7 @@ var dataSales = {
     [23, 113, 67, 108, 190, 239, 307, 308],
   ],
 };
-var optionsSales = {
+export const optionsSales = {
   low: 0,
   high: 800,
   showArea: false,
@@ -518,7 +518,7 @@ var optionsSales = {
     right: 50,
   },
 };
-var responsiveSales = [
+export const responsiveSales = [
   [
     "screen and (max-width: 640px)",
     {
@@ -530,12 +530,12 @@ var responsiveSales = [
     },
   ],
 ];
-var legendSales = {
+export const legendSales = {
   names: ["Open", "Click", "Click Second Time"],
   types: ["info", "danger", "warning"],
 };
 // Data for Bar Chart
-var dataBar = {
+export const dataBar = {
   labels: [
     "Jan",
     "Feb",
@@ -555,14 +555,14 @@ var dataBar = {
     [412, 243, 280, 580, 453, 353, 300, 364, 368, 410, 636, 695],
   ],
 };
-var optionsBar = {
+export const optionsBar = {
   seriesBarDistance: 10,
   axisX: {
     showGrid: false,
   },
   height: "245px",
 };
-var responsiveBar = [
+export const responsiveBar = [
   [
     "screen and (max-width: 640px)",
     {
@@ -575,13 +575,13 @@ var responsiveBar = [
     },
   ],
 ];
-var legendBar = {
+export const legendBar = {
   names: ["Tesla Model S", "BMW 5 Series"],
   types: ["info", "danger"],
 };
 
 //Berkeleytime
-var enrollment = [
+export const enrollment = [
   { name: "Phase 1", percent: 50 },
   { name: "Phase 1.5", percent: 56 },
   { name: "Phase 2", percent: 70 },
@@ -590,7 +590,7 @@ var enrollment = [
   { name: "Current", percent: 100 },
 ];
 
-var optionsEnrollment = {
+export const optionsEnrollment = {
   low: 0,
   high: 100,
   showArea: false,
@@ -606,7 +606,7 @@ var optionsEnrollment = {
     right: 50,
   },
 };
-var responsiveEnrollment = [
+export const responsiveEnrollment = [
   [
     "screen and (max-width: 640px)",
     {
@@ -619,7 +619,7 @@ var responsiveEnrollment = [
   ],
 ];
 
-var grades = [
+export const grades = [
   { name: "A+", classA: 20, classB: 2 },
   { name: "A", classA: 56, classB: 2 },
   { name: "A-", classA: 1, classB: 2 },
@@ -635,7 +635,7 @@ var grades = [
   { name: "F", classA: 0, classB: 2 },
 ];
 
-var possibleGrades = [
+export const possibleGrades = [
   "A+",
   "A",
   "A-",
@@ -651,27 +651,4 @@ var possibleGrades = [
   "NP",
 ];
 
-var colors = ["#4EA6FB", "#6AE086", "#ED5186", "#F9E152"];
-
-module.exports = {
-  style, // For notifications (App container and Notifications view)
-  thArray,
-  tdArray, // For tables (TableList view)
-  iconsArray, // For icons (Icons view)
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales, // For charts (Dashboard view)
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  legendBar, // For charts (Dashboard view)
-  colors,
-  enrollment,
-  optionsEnrollment,
-  responsiveEnrollment,
-  grades,
-  possibleGrades,
-};
+export const colors = ["#4EA6FB", "#6AE086", "#ED5186", "#F9E152"];

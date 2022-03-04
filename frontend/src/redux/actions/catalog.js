@@ -1,12 +1,11 @@
 /* eslint-disable */
 import axios from "axios";
-
 import {
   MODIFY_ACTIVE_PLAYLISTS,
   RECEIVE_FILTER_DATA,
   MODIFY_SELECTED_COURSE,
   SET_DEFAULT_PLAYLISTS,
-} from "../actionTypes";
+} from "redux/actionTypes.js";
 
 export const setDefaultPlaylists = (defaultPlaylists) => ({
   type: SET_DEFAULT_PLAYLISTS,

@@ -5,7 +5,7 @@ import {
   UPDATE_ENROLL_SELECTED,
   ENROLL_REMOVE_COURSE,
   ENROLL_RESET,
-} from "../actionTypes";
+} from "redux/actionTypes.js";
 
 const initialState = {
   context: {},

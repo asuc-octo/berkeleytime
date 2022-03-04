@@ -1,4 +1,3 @@
-import vars from "../../variables/Variables";
 import {
   UPDATE_GRADE_CONTEXT,
   GRADE_ADD_COURSE,
@@ -6,7 +5,8 @@ import {
   UPDATE_GRADE_SELECTED,
   GRADE_REMOVE_COURSE,
   GRADE_RESET,
-} from "../actionTypes";
+} from "redux/actionTypes.js";
+import * as vars from "variables/Variables.js";
 
 const initialState = {
   context: {},

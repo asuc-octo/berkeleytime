@@ -24,7 +24,7 @@ import {
   ENROLL_REMOVE_COURSE,
   UPDATE_ENROLL_DATA,
   UPDATE_ENROLL_SELECTED,
-} from "redux/actionTypes";
+} from "redux/actionTypes.js";
 
 // function to update the courses when the filters are changed
 export const filter = (data) => ({
