@@ -1,16 +1,16 @@
-import React from 'react';
-import { useGetScheduleForIdQuery } from '../../graphql/graphql';
-import BTLoader from 'components/Common/BTLoader';
-import { Redirect, useParams } from 'react-router';
+import React from "react";
+import { useGetScheduleForIdQuery } from "../../graphql/graphql";
+import BTLoader from "components/Common/BTLoader";
+import { Redirect, useParams } from "react-router";
 import {
   deserializeSchedule,
   formatScheduleError,
   getUnitsForSchedule,
-} from 'utils/scheduler/scheduler';
-import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
-import { unitsToString } from 'utils/courses/units';
-import { useUser } from 'graphql/hooks/user';
-import { Button } from 'bt/custom';
+} from "utils/scheduler/scheduler";
+import SchedulerCalendar from "components/Scheduler/Calendar/SchedulerCalendar";
+import { unitsToString } from "utils/courses/units";
+import { useUser } from "graphql/hooks/user";
+import { Button } from "bt/custom";
 
 const ViewSchedule = () => {
   const { scheduleId: scheduleUUID } = useParams<{ scheduleId?: string }>();

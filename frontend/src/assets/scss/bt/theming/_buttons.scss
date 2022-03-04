@@ -27,11 +27,21 @@
 }
 
 .bt-btn-primary {
-  @include bt-variant($bt-white, $bt-primary, $bt-primary, $bt-primary-background);
+  @include bt-variant(
+    $bt-white,
+    $bt-primary,
+    $bt-primary,
+    $bt-primary-background
+  );
 }
 
 .bt-btn-inverted {
-  @include bt-variant($bt-primary, $bt-white, $bt-border-grey, $bt-button-background);
+  @include bt-variant(
+    $bt-primary,
+    $bt-white,
+    $bt-border-grey,
+    $bt-button-background
+  );
 }
 
 .btn-bt-red-inverted {
@@ -64,7 +74,7 @@
   &:hover {
     color: $bt-indicator-blue;
     background-color: $bt-button-background;
-    border-color:$bt-border-grey;
+    border-color: $bt-border-grey;
   }
 
   a {

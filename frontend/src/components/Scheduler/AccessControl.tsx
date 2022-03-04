@@ -1,8 +1,8 @@
-import React, { forwardRef, MouseEvent, useState } from 'react';
-import { Dropdown } from 'react-bootstrap';
-import { AccessStatus, ACCESS_STATUSES } from 'utils/scheduler/accessStatus';
+import React, { forwardRef, MouseEvent, useState } from "react";
+import { Dropdown } from "react-bootstrap";
+import { AccessStatus, ACCESS_STATUSES } from "utils/scheduler/accessStatus";
 
-import { ReactComponent as ExpandMore } from '../../assets/svg/common/expand.svg';
+import { ReactComponent as ExpandMore } from "../../assets/svg/common/expand.svg";
 
 type ACToggleProps = {
   visibility: AccessStatus;
@@ -14,14 +14,14 @@ const ACToggle = forwardRef<HTMLButtonElement, ACToggleProps>(
 
     return (
       <button ref={ref} onClick={onClick} className="access-control-toggle">
-        {status?.icon} <span>{status?.name}</span>{' '}
+        {status?.icon} <span>{status?.name}</span>{" "}
         <ExpandMore className="access-control-toggle__expand ml-2" />
       </button>
     );
   }
 );
 
-ACToggle.displayName = 'ACToggle';
+ACToggle.displayName = "ACToggle";
 
 type Props = {
   visibility: AccessStatus;
@@ -30,13 +30,13 @@ type Props = {
 };
 
 const AccessControl = ({
-  visibility = 'private',
+  visibility = "private",
   setVisibility,
   scheduleId,
 }: Props) => {
   const [isShowing, setIsShowing] = useState(false);
 
-  const scheduleUUID = atob(scheduleId).split(':')[1];
+  const scheduleUUID = atob(scheduleId).split(":")[1];
   const scheduleLink = `${window.location.origin}/s/${scheduleUUID}`;
 
   return (
@@ -44,14 +44,14 @@ const AccessControl = ({
       alignRight
       onSelect={(eventKey) => setVisibility(eventKey as AccessStatus)}
       onToggle={(isOpen, event, metadata) => {
-        if (metadata.source === 'select') return;
+        if (metadata.source === "select") return;
         setIsShowing(isOpen);
       }}
       show={isShowing}
     >
       <Dropdown.Toggle as={ACToggle} visibility={visibility} />
       <Dropdown.Menu className="access-control-menu">
-        {visibility === 'public' && (
+        {visibility === "public" && (
           <div className="access-control-menu__link">
             <h4>Schedule Link</h4>
             <p>Click below to copy your schedule&apos;s link.</p>
@@ -62,7 +62,7 @@ const AccessControl = ({
               readOnly
               onClick={(e) => {
                 (e.target as HTMLInputElement).select();
-                document.execCommand('copy');
+                document.execCommand("copy");
               }}
             />
           </div>

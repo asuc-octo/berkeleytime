@@ -1,5 +1,5 @@
-import { CourseFragment, CourseOverviewFragment } from 'graphql/graphql';
-import { hash } from 'utils/string';
+import { CourseFragment, CourseOverviewFragment } from "graphql/graphql";
+import { hash } from "utils/string";
 
 export type CourseReference = {
   abbreviation: string;
@@ -24,23 +24,23 @@ export const isSameCourse = (
  */
 export function courseToName(
   course:
-    | Pick<CourseFragment, 'abbreviation' | 'courseNumber'>
+    | Pick<CourseFragment, "abbreviation" | "courseNumber">
     | CourseReference
     | null
     | undefined
 ): string {
-  return course ? `${course.abbreviation} ${course.courseNumber}` : '';
+  return course ? `${course.abbreviation} ${course.courseNumber}` : "";
 }
 
 /**
  * Color palette for courses
  */
 export const COURSE_PALETTE = [
-  '#1AA8E5',
-  '#18DE83',
-  '#FCD571',
-  '#ED5186',
-  '#FFA414',
+  "#1AA8E5",
+  "#18DE83",
+  "#FCD571",
+  "#ED5186",
+  "#FFA414",
 ];
 
 /**
@@ -49,10 +49,10 @@ export const COURSE_PALETTE = [
  * @returns a CSS color code.
  */
 export function courseToColor(
-  course: Pick<CourseFragment, 'id'> | string | null
+  course: Pick<CourseFragment, "id"> | string | null
 ): string {
   return COURSE_PALETTE[
-    (course ? hash(typeof course === 'string' ? course : course.id) : 0) %
+    (course ? hash(typeof course === "string" ? course : course.id) : 0) %
       COURSE_PALETTE.length
   ];
 }

@@ -5,7 +5,7 @@
   @include touch {
     min-height: auto;
 
-     > div {
+    > div {
       display: flex;
       flex-wrap: nowrap;
       overflow-x: scroll;
@@ -65,20 +65,20 @@
         .class-card-remove {
           color: $bt-indicator-red;
           cursor: pointer;
-          opacity: .5;
+          opacity: 0.5;
           padding: 2px;
-          transition: .5s;
+          transition: 0.5s;
           border-radius: 4px;
 
           &:hover {
             opacity: 1;
-            background: rgba(224,185,185,.4);
+            background: rgba(224, 185, 185, 0.4);
           }
-
         }
       }
 
-      .class-card-title, .class-card-options {
+      .class-card-title,
+      .class-card-options {
         color: $bt-grey-text;
       }
 

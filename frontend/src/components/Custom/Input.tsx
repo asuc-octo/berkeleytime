@@ -2,7 +2,7 @@ import React, {
   DetailedHTMLProps,
   InputHTMLAttributes,
   ReactNode,
-} from 'react';
+} from "react";
 
 type Props = {
   icon?: ReactNode;
@@ -11,18 +11,18 @@ type Props = {
 
 const BTInput = ({
   icon,
-  className = '',
-  inputClassName = '',
+  className = "",
+  inputClassName = "",
   ...props
 }: Props &
   DetailedHTMLProps<
     InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   >) => {
-  const iconClass = icon ? ' bt-input--icon' : '';
+  const iconClass = icon ? " bt-input--icon" : "";
 
   return (
-    <div className={'bt-input' + iconClass + ' ' + className}>
+    <div className={"bt-input" + iconClass + " " + className}>
       <input type="text" className={inputClassName} {...props} />
       {icon}
     </div>

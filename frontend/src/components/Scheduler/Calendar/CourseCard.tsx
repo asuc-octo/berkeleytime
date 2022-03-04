@@ -1,19 +1,19 @@
-import TrashButton from 'components/Common/TrashButton';
-import { CourseOverviewFragment } from 'graphql/graphql';
-import React from 'react';
-import { OverlayTrigger, Popover } from 'react-bootstrap';
-import { courseToColor, courseToName } from 'utils/courses/course';
+import TrashButton from "components/Common/TrashButton";
+import { CourseOverviewFragment } from "graphql/graphql";
+import React from "react";
+import { OverlayTrigger, Popover } from "react-bootstrap";
+import { courseToColor, courseToName } from "utils/courses/course";
 import {
   getColorForSection,
   getCourseForSchedule,
   removeSection,
   Schedule,
   SchedulerSectionType,
-} from 'utils/scheduler/scheduler';
-import { formatLocation, formatSectionTime } from 'utils/sections/section';
-import cx from 'classnames';
-import CalendarCard from './CalendarCard';
-import { combineStrings } from 'utils/string';
+} from "utils/scheduler/scheduler";
+import { formatLocation, formatSectionTime } from "utils/sections/section";
+import cx from "classnames";
+import CalendarCard from "./CalendarCard";
+import { combineStrings } from "utils/string";
 
 type Props = {
   /**
@@ -69,7 +69,7 @@ const CourseCard = ({
   const cardTitle = `${courseToName(course)} ${section.kind}`;
   const cardDescription = combineStrings(
     [formatLocation(section.locationName), formatSectionTime(section)],
-    ', '
+    ", "
   );
 
   const card = (
@@ -77,8 +77,8 @@ const CourseCard = ({
       title={cardTitle}
       description={cardDescription}
       color={color}
-      className={cx('calendar-course-card', {
-        'calendar-course-card--preview': isPreview,
+      className={cx("calendar-course-card", {
+        "calendar-course-card--preview": isPreview,
       })}
     />
   );

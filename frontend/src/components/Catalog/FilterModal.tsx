@@ -1,7 +1,7 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import without from 'lodash/without';
-import { Button, Modal, Form } from 'react-bootstrap';
-import { FilterParameter, PlaylistDescription } from 'utils/playlists/playlist';
+import React, { ChangeEvent, useEffect, useState } from "react";
+import without from "lodash/without";
+import { Button, Modal, Form } from "react-bootstrap";
+import { FilterParameter, PlaylistDescription } from "utils/playlists/playlist";
 
 type CheckboxGroupProps = {
   nestedOptions: PlaylistDescription;
@@ -16,7 +16,7 @@ const CheckboxGroup = ({
   selected,
   displayRadio,
 }: CheckboxGroupProps) => {
-  const formType = displayRadio ? 'radio' : 'checkbox';
+  const formType = displayRadio ? "radio" : "checkbox";
 
   const isSelected = (parameter: FilterParameter): boolean =>
     !!selected.find((s) => s.value === parameter.value);
@@ -25,7 +25,7 @@ const CheckboxGroup = ({
     <Form>
       {nestedOptions.map((item, index) => (
         <div key={index}>
-          {'options' in item ? (
+          {"options" in item ? (
             <>
               <div className="filter-form-label">{item.label}</div>
               {Object.values(item.options).map((option) => (
@@ -125,10 +125,10 @@ const FilterModal = ({
         </div>
         <div className="filter-button-bar">
           <Button className="bt-btn-inverted" onClick={hideModal}>
-            Cancel{' '}
+            Cancel{" "}
           </Button>
           <Button className="bt-btn-primary" onClick={saveModal}>
-            Save{' '}
+            Save{" "}
           </Button>
         </div>
       </div>

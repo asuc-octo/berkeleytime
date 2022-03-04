@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { getNodes } from 'utils/graphql';
+import { useCallback } from "react";
+import { getNodes } from "utils/graphql";
 import {
   DeleteUserMutationHookResult,
   GetUserDocument,
@@ -14,7 +14,7 @@ import {
   useLogoutMutation,
   UserProfileFragment,
   useUpdateUserMutation,
-} from '../graphql';
+} from "../graphql";
 
 export type UserInfo = {
   /**
@@ -38,7 +38,7 @@ export type UserInfo = {
  */
 export const useUser = (): UserInfo => {
   const { data, loading } = useGetUserQuery({
-    errorPolicy: 'all',
+    errorPolicy: "all",
   });
 
   return {
@@ -128,9 +128,9 @@ export const useUpdateUser = () => {
       updateUser({
         variables: variables,
         optimisticResponse: {
-          __typename: 'Mutation',
+          __typename: "Mutation",
           updateUser: {
-            __typename: 'UpdateUser',
+            __typename: "UpdateUser",
             user: {
               ...user,
               ...Object.fromEntries(

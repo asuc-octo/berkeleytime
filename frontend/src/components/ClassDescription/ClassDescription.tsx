@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import people from '../../assets/svg/catalog/people.svg';
-import chart from '../../assets/svg/catalog/chart.svg';
-import book from '../../assets/svg/catalog/book.svg';
-import launch from '../../assets/svg/catalog/launch.svg';
+import people from "../../assets/svg/catalog/people.svg";
+import chart from "../../assets/svg/catalog/chart.svg";
+import book from "../../assets/svg/catalog/book.svg";
+import launch from "../../assets/svg/catalog/launch.svg";
 
 import {
   applyIndicatorPercent,
   applyIndicatorGrade,
   formatUnits,
-} from '../../utils/utils';
-import { useGetCourseForNameQuery } from '../../graphql/graphql';
-import { stableSortPlaylists } from 'utils/playlists/playlist';
-import { getLatestSemester, Semester } from 'utils/playlists/semesters';
-import SectionTable from './SectionTable';
-import BTLoader from 'components/Common/BTLoader';
-import { CourseReference, courseToName } from 'utils/courses/course';
-import { fetchEnrollContext } from '../../redux/actions';
-import { useDispatch, useSelector } from 'react-redux';
+} from "../../utils/utils";
+import { useGetCourseForNameQuery } from "../../graphql/graphql";
+import { stableSortPlaylists } from "utils/playlists/playlist";
+import { getLatestSemester, Semester } from "utils/playlists/semesters";
+import SectionTable from "./SectionTable";
+import BTLoader from "components/Common/BTLoader";
+import { CourseReference, courseToName } from "utils/courses/course";
+import { fetchEnrollContext } from "../../redux/actions";
+import { useDispatch, useSelector } from "react-redux";
 
 type Props = {
   course: CourseReference;
@@ -127,9 +127,9 @@ const ClassDescription = ({
     //     'No prerequisites. This field was modified as requested by the instructor.';
     // }
     // Fall 2021 override from brutger@berkeley.edu
-    if (courseToName(course) === 'POL SCI 126A') {
-        prereqs =
-          'No prerequisites. This field was modified as requested by the instructor.';
+    if (courseToName(course) === "POL SCI 126A") {
+      prereqs =
+        "No prerequisites. This field was modified as requested by the instructor.";
     }
     return prereqs;
   };
@@ -138,7 +138,7 @@ const ClassDescription = ({
   const charsPerRow = 80;
   const moreOffset = 15;
   let description = course.description;
-  let prereqs = '';
+  let prereqs = "";
   let moreDesc: boolean | null = null;
   let morePrereq: boolean | null = null;
 
@@ -156,16 +156,16 @@ const ClassDescription = ({
     // collapse
     let descRows = Math.round(course.description.length / charsPerRow);
     if (descRows > 3 || (descRows === 3 && course.prerequisites)) {
-      description = description.slice(0, 3 * charsPerRow - moreOffset) + '...';
+      description = description.slice(0, 3 * charsPerRow - moreOffset) + "...";
       moreDesc = true;
     }
     if (descRows < 3 && course.prerequisites) {
       prereqs = checkOverridePrereqs(course.prerequisites);
       if (descRows >= 1 && prereqs.length > charsPerRow) {
-        prereqs = prereqs.slice(0, charsPerRow - moreOffset) + '...';
+        prereqs = prereqs.slice(0, charsPerRow - moreOffset) + "...";
         morePrereq = true;
       } else if (descRows === 0 && prereqs.length > 2 * charsPerRow) {
-        prereqs = prereqs.slice(0, 2 * charsPerRow - moreOffset) + '...';
+        prereqs = prereqs.slice(0, 2 * charsPerRow - moreOffset) + "...";
         morePrereq = true;
       }
     }
@@ -202,7 +202,7 @@ const ClassDescription = ({
                   </a>
                 </div>
               ) : (
-                ' N/A '
+                " N/A "
               )}
             </div>
             <div className="statline">
@@ -220,7 +220,7 @@ const ClassDescription = ({
                   {applyIndicatorGrade(
                     course.letterAverage,
                     course.letterAverage
-                  )}{' '}
+                  )}{" "}
                   &nbsp;
                   <a
                     href={toGrades.pathname}
@@ -233,7 +233,7 @@ const ClassDescription = ({
                   </a>
                 </div>
               ) : (
-                ' N/A '
+                " N/A "
               )}
             </div>
             <div className="statline">
@@ -261,8 +261,8 @@ const ClassDescription = ({
               {description}
               {moreDesc != null && (
                 <span onClick={() => setReadMore(moreDesc)}>
-                  {' '}
-                  {moreDesc ? ' See more' : ' See less'}
+                  {" "}
+                  {moreDesc ? " See more" : " See less"}
                 </span>
               )}
             </p>
@@ -275,8 +275,8 @@ const ClassDescription = ({
               {prereqs}
               {morePrereq != null && (
                 <span onClick={() => setReadMore(morePrereq)}>
-                  {' '}
-                  {morePrereq ? ' See more' : ' See less'}
+                  {" "}
+                  {morePrereq ? " See more" : " See less"}
                 </span>
               )}
             </p>

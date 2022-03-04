@@ -1,11 +1,11 @@
-import { CourseOverviewFragment } from 'graphql/graphql';
-import { useSaveCourse, useUnsaveCourse } from 'graphql/hooks/saveCourse';
-import { useUser } from 'graphql/hooks/user';
-import React, { CSSProperties, memo, ReactNode } from 'react';
-import { CourseReference, isSameCourse } from 'utils/courses/course';
-import { CourseSortAttribute } from 'utils/courses/sorting';
-import { ReactComponent as BookmarkSaved } from '../../assets/svg/catalog/bookmark-saved.svg';
-import { ReactComponent as BookmarkUnsaved } from '../../assets/svg/catalog/bookmark-unsaved.svg';
+import { CourseOverviewFragment } from "graphql/graphql";
+import { useSaveCourse, useUnsaveCourse } from "graphql/hooks/saveCourse";
+import { useUser } from "graphql/hooks/user";
+import React, { CSSProperties, memo, ReactNode } from "react";
+import { CourseReference, isSameCourse } from "utils/courses/course";
+import { CourseSortAttribute } from "utils/courses/sorting";
+import { ReactComponent as BookmarkSaved } from "../../assets/svg/catalog/bookmark-saved.svg";
+import { ReactComponent as BookmarkUnsaved } from "../../assets/svg/catalog/bookmark-unsaved.svg";
 
 // TODO: consider importing utils after latest changes merged into master.
 function formatEnrollmentPercentage(percentage: number): string {
@@ -13,27 +13,27 @@ function formatEnrollmentPercentage(percentage: number): string {
 }
 
 function formatUnits(units: string): string {
-  return `${units} Unit${units === '1.0' || units === '1' ? '' : 's'}`
-    .replace(/.0/g, '')
-    .replace(/ - /, '-')
-    .replace(/ or /g, '-');
+  return `${units} Unit${units === "1.0" || units === "1" ? "" : "s"}`
+    .replace(/.0/g, "")
+    .replace(/ - /, "-")
+    .replace(/ or /g, "-");
 }
 
 function colorEnrollment(percentage: number): string {
   const pct = percentage * 100;
   if (pct < 33) {
-    return 'enrollment-first-third';
+    return "enrollment-first-third";
   } else if (pct < 67) {
-    return 'enrollment-second-third';
+    return "enrollment-second-third";
   } else {
-    return 'enrollment-last-third';
+    return "enrollment-last-third";
   }
 }
 
 function colorGrade(grade: string): string {
-  if (grade === '') {
+  if (grade === "") {
     // console.error('colorGrade: no grade provided!');
-    return '';
+    return "";
   }
   return `grade-${grade[0]}`;
 }
@@ -76,16 +76,16 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
 
   let sort;
   switch (sortBy) {
-    case 'department_name':
-    case 'enrolled_percentage':
-    case 'average_grade':
+    case "department_name":
+    case "enrolled_percentage":
+    case "average_grade":
       if (course.letterAverage !== null) {
         sort = gradeSort(course.letterAverage);
       } else {
         sort = null;
       }
       break;
-    case 'open_seats':
+    case "open_seats":
       sort = openSeatsSort(course.openSeats);
       break;
     default:
@@ -105,7 +105,7 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
     >
       <div
         className={`filter-card-container ${
-          isSelectedCourse ? 'selected' : ''
+          isSelectedCourse ? "selected" : ""
         }`}
       >
         <div className="filter-card-info">
@@ -121,7 +121,7 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
             )}
 
             <p>
-              &nbsp;•&nbsp;{course.units ? formatUnits(course.units) : 'N/A'}
+              &nbsp;•&nbsp;{course.units ? formatUnits(course.units) : "N/A"}
             </p>
           </div>
         </div>

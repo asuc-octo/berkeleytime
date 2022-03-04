@@ -1,18 +1,25 @@
-import BTLoader from 'components/Common/BTLoader';
+import BTLoader from "components/Common/BTLoader";
 import {
   useGetScheduleForIdLazyQuery,
   useUpdateScheduleMutation,
-} from '../../../graphql/graphql';
-import React, { useCallback, useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
+} from "../../../graphql/graphql";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import {
   deserializeSchedule,
   Schedule,
   serializeSchedule,
-} from 'utils/scheduler/scheduler';
-import ScheduleEditor from '../ScheduleEditor';
-import { Semester } from 'utils/playlists/semesters';
-import { debounce } from 'lodash';
-import Callout from '../Callout';
+} from "utils/scheduler/scheduler";
+import ScheduleEditor from "../ScheduleEditor";
+import { Semester } from "utils/playlists/semesters";
+import { debounce } from "lodash";
+import Callout from "../Callout";
 
 // This is NOT a loop. Rather it combines all
 // changes within this time interval into one
@@ -71,10 +78,8 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
     // usually the requests come back in the same order.
   }, [scheduleId, getScheduleForId]);
 
-  const [
-    updateScheduleMutation,
-    { error: saveError },
-  ] = useUpdateScheduleMutation();
+  const [updateScheduleMutation, { error: saveError }] =
+    useUpdateScheduleMutation();
 
   // Call this to save a schedule. This gets renewed when the
   // scheduleId changes (to clear the save queue).

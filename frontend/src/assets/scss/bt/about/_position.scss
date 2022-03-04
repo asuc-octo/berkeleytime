@@ -1,4 +1,3 @@
-
 .position-card-row {
   width: 800px;
 
@@ -43,7 +42,8 @@
       }
     }
 
-    .position-card-title, .position-card-options {
+    .position-card-title,
+    .position-card-options {
       color: $bt-grey-text;
     }
 
@@ -51,7 +51,7 @@
     .position-card-title {
       font-size: 16px;
       line-height: 1.75;
-      color: #8A8A8A;
+      color: #8a8a8a;
 
       /* for set '...' in absolute position */
       position: relative;
@@ -74,6 +74,5 @@
     .position-card-link {
       color: $bt-primary;
     }
-
   }
 }

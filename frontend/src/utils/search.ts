@@ -43,7 +43,7 @@ export function search(
       if (targetString.charCodeAt(j++) === nch) {
         // If the matches char is NOT at the start of word or the
         // beginning of the string, add a tiny penalty
-        if (j - 1 === 0 || targetString.charAt(j - 1) === ' ') {
+        if (j - 1 === 0 || targetString.charAt(j - 1) === " ") {
           penalty -= DEFAULT_START_BONUS;
         } else {
           penalty += Math.min(0.4, (j - start - 1) * nonAdjacentPenalty);

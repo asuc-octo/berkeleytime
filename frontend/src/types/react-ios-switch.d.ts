@@ -1,3 +1,3 @@
-declare module 'react-ios-switch' {
+declare module "react-ios-switch" {
   export = Switch;
 }

@@ -1,7 +1,7 @@
-import { SectionFragment } from 'graphql/graphql';
-import groupBy from 'lodash/groupBy';
-import { stringToDate } from 'utils/date';
-import { isEnrollmentSection } from './section';
+import { SectionFragment } from "graphql/graphql";
+import groupBy from "lodash/groupBy";
+import { stringToDate } from "utils/date";
+import { isEnrollmentSection } from "./section";
 
 export type SectionSort = {
   category: string;

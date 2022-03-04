@@ -1,8 +1,8 @@
-import React from 'react';
-import { useHistory } from 'react-router';
-import { useLocation } from 'react-router-dom';
-import { useLogin } from '../../graphql/hooks/user';
-import BTLoader from 'components/Common/BTLoader';
+import React from "react";
+import { useHistory } from "react-router";
+import { useLocation } from "react-router-dom";
+import { useLogin } from "../../graphql/hooks/user";
+import BTLoader from "components/Common/BTLoader";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -13,9 +13,9 @@ const Login = () => {
   const history = useHistory();
   const query = useQuery();
 
-  const id_token = query.get('id_token');
+  const id_token = query.get("id_token");
   if (!id_token) {
-    history.push('/error');
+    history.push("/error");
     return null;
   }
 
@@ -30,7 +30,7 @@ const Login = () => {
   }).then((result) => {
     // If the login was successful.
     if (result.data?.login?.user) {
-      history.push('/profile');
+      history.push("/profile");
     }
   });
 

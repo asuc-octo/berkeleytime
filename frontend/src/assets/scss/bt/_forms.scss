@@ -23,7 +23,6 @@
 }
 
 .bt-form {
-
   justify-content: center;
   margin-bottom: 64px;
   max-width: 500px;
@@ -32,7 +31,8 @@
     max-width: 250px;
   }
 
-  h6, .form-label {
+  h6,
+  .form-label {
     font-weight: 600;
     line-height: 1.5;
     font-size: 14px;
@@ -42,10 +42,11 @@
     margin-bottom: 40px;
   }
 
-  h6.required, .form-label.required {
+  h6.required,
+  .form-label.required {
     &::after {
       color: $bt-indicator-red;
-      content: ' *';
+      content: " *";
     }
   }
 
@@ -56,7 +57,9 @@
     margin-bottom: 8px;
   }
 
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     overflow: visible;
     margin-right: 10px;
     border: solid 1px #cfcfcf;
@@ -69,7 +72,7 @@
     //transition: .5s; This somehow messes up the (!) validator - the size changes during the transition
     background-color: white;
 
-    &::placeholder{
+    &::placeholder {
       color: $bt-light-grey;
     }
 
@@ -82,25 +85,34 @@
     margin: 0px 0 32px 0;
   }
 
-  .was-validated .form-control:valid, .form-control.is-valid {
+  .was-validated .form-control:valid,
+  .form-control.is-valid {
     border-color: $bt-blue;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%232F80ED' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
   }
 
-  .was-validated .custom-select:valid, .custom-select.is-valid {
+  .was-validated .custom-select:valid,
+  .custom-select.is-valid {
     border-color: $bt-blue;
-    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right 0.75rem center/8px 10px, url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%232F80ED' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") #fff no-repeat center right 1.75rem/calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
+        no-repeat right 0.75rem center/8px 10px,
+      url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%232F80ED' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e")
+        #fff no-repeat center right 1.75rem / calc(0.75em + 0.375rem)
+        calc(0.75em + 0.375rem);
   }
 
-  .was-validated .custom-control-input:valid ~ .custom-control-label, .custom-control-input.is-valid ~ .custom-control-label {
+  .was-validated .custom-control-input:valid ~ .custom-control-label,
+  .custom-control-input.is-valid ~ .custom-control-label {
     color: $bt-blue;
   }
 
-  .was-validated .custom-control-input:valid ~ .custom-control-label::before, .custom-control-input.is-valid ~ .custom-control-label::before {
+  .was-validated .custom-control-input:valid ~ .custom-control-label::before,
+  .custom-control-input.is-valid ~ .custom-control-label::before {
     border-color: $bt-blue;
   }
 
-  .was-validated .custom-file-input:valid ~ .custom-file-label, .custom-file-input.is-valid ~ .custom-file-label {
+  .was-validated .custom-file-input:valid ~ .custom-file-label,
+  .custom-file-input.is-valid ~ .custom-file-label {
     border-color: $bt-blue;
   }
 
@@ -110,13 +122,13 @@
     margin-right: 20px;
     padding-bottom: 3px;
     cursor: pointer;
-    opacity: .5;
-    transition: .5s;
+    opacity: 0.5;
+    transition: 0.5s;
     border-radius: 4px;
 
     &:hover {
       opacity: 1;
-      background: rgba(224,185,185,.4);
+      background: rgba(224, 185, 185, 0.4);
     }
   }
 
@@ -153,7 +165,7 @@
       margin-top: 15px;
       line-height: 1.75;
       font-size: 16px;
-      color: #8A8A8A;
+      color: #8a8a8a;
     }
 
     .markdown {
@@ -164,7 +176,7 @@
       }
       line-height: 1.75;
       font-size: 16px;
-      color: #8A8A8A;
+      color: #8a8a8a;
 
       h1 {
         font-size: 22px;
@@ -192,7 +204,7 @@
 
       p {
         @include font-size-responsive-larger(16px);
-        color: #8A8A8A;
+        color: #8a8a8a;
       }
 
       a {
@@ -225,7 +237,7 @@
       border-radius: 4px;
       width: 280px;
 
-      &::placeholder{
+      &::placeholder {
         color: $bt-light-grey;
       }
     }

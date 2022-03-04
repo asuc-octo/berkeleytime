@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import Select from 'react-select-virtualized';
-import { Container, Row, Col, Button } from 'react-bootstrap';
-import hash from 'object-hash';
+import React, { Component } from "react";
+import Select from "react-select-virtualized";
+import { Container, Row, Col, Button } from "react-bootstrap";
+import hash from "object-hash";
 
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
 
-import { fetchGradeSelected } from '../../redux/actions';
-import { reactSelectCourseSearch } from 'utils/courses/search';
+import { fetchGradeSelected } from "../../redux/actions";
+import { reactSelectCourseSearch } from "utils/courses/search";
 
 const sortOptions = [
-  { value: 'instructor', label: 'By Instructor' },
-  { value: 'semester', label: 'By Semester' },
+  { value: "instructor", label: "By Instructor" },
+  { value: "semester", label: "By Semester" },
 ];
 class GradesSearchBar extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class GradesSearchBar extends Component {
 
     this.state = {
       selectedClass: 0,
-      selectType: 'instructor',
+      selectType: "instructor",
       selectPrimary: props.selectPrimary,
       selectSecondary: props.selectSecondary,
     };
@@ -40,7 +40,7 @@ class GradesSearchBar extends Component {
   componentDidMount() {
     const { fromCatalog } = this.props;
     this.setState({
-      selectType: 'instructor',
+      selectType: "instructor",
     });
     if (fromCatalog) {
       this.handleClassSelect({ value: fromCatalog.id, addSelected: true });
@@ -66,8 +66,8 @@ class GradesSearchBar extends Component {
       this.reset();
       this.setState({
         selectedClass: 0,
-        selectPrimary: '',
-        selectSecondary: '',
+        selectPrimary: "",
+        selectSecondary: "",
       });
       return;
     }
@@ -82,8 +82,8 @@ class GradesSearchBar extends Component {
   handleSortSelect(sortBy) {
     this.setState({
       selectType: sortBy.value,
-      selectPrimary: '',
-      selectSecondary: '',
+      selectPrimary: "",
+      selectSecondary: "",
     });
   }
 
@@ -96,15 +96,15 @@ class GradesSearchBar extends Component {
       primary.value
     );
     this.setState({
-      selectPrimary: primary ? primary.value : '',
+      selectPrimary: primary ? primary.value : "",
       selectSecondary:
-        secondaryOptions.length === 1 ? secondaryOptions[0].value : 'all',
+        secondaryOptions.length === 1 ? secondaryOptions[0].value : "all",
     });
   }
 
   handleSecondarySelect(secondary) {
     this.setState({
-      selectSecondary: secondary ? secondary.value : '',
+      selectSecondary: secondary ? secondary.value : "",
     });
   }
 
@@ -132,9 +132,9 @@ class GradesSearchBar extends Component {
   buildPrimaryOptions(sections, selectType) {
     const ret = [];
     const map = new Map();
-    if (selectType === 'instructor') {
+    if (selectType === "instructor") {
       if (sections.length > 1) {
-        ret.push({ value: 'all', label: 'All Instructors' });
+        ret.push({ value: "all", label: "All Instructors" });
       }
       for (const section of sections) {
         if (!map.has(section.instructor)) {
@@ -147,7 +147,7 @@ class GradesSearchBar extends Component {
       }
     } else {
       if (sections.length > 1) {
-        ret.push({ value: 'all', label: 'All Semesters' });
+        ret.push({ value: "all", label: "All Semesters" });
       }
       for (const section of sections) {
         const semester = this.getSectionSemester(section);
@@ -167,9 +167,9 @@ class GradesSearchBar extends Component {
   buildSecondaryOptions(sections, selectType, selectPrimary) {
     const ret = [];
 
-    if (selectPrimary === 'all') {
+    if (selectPrimary === "all") {
       let options;
-      if (selectType === 'instructor') {
+      if (selectType === "instructor") {
         options = [
           ...new Set(
             sections.map(
@@ -177,9 +177,9 @@ class GradesSearchBar extends Component {
             )
           ),
         ].map((semester) => ({
-          value: semester.split(' / ')[0],
+          value: semester.split(" / ")[0],
           label: semester,
-          sectionNumber: semester.split(' / ')[1],
+          sectionNumber: semester.split(" / ")[1],
         }));
       } else {
         options = [
@@ -187,16 +187,16 @@ class GradesSearchBar extends Component {
             sections.map((s) => `${s.instructor} / ${s.section_number}`)
           ),
         ].map((instructor) => ({
-          value: instructor.split(' / ')[0],
+          value: instructor.split(" / ")[0],
           label: instructor,
-          sectionNumber: instructor.split(' / ')[1],
+          sectionNumber: instructor.split(" / ")[1],
         }));
       }
 
       if (options.length > 1) {
         const label =
-          selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
-        ret.push({ value: 'all', label });
+          selectType === "instructor" ? "All Semesters" : "All Instructors";
+        ret.push({ value: "all", label });
       }
 
       for (const o of options) {
@@ -204,7 +204,7 @@ class GradesSearchBar extends Component {
       }
     } else {
       let options;
-      if (selectType === 'instructor') {
+      if (selectType === "instructor") {
         options = sections
           .filter((section) => section.instructor === selectPrimary)
           .map((section) => {
@@ -215,7 +215,7 @@ class GradesSearchBar extends Component {
             return {
               value: semester,
               label: semester,
-              sectionNumber: semester.split(' / ')[1],
+              sectionNumber: semester.split(" / ")[1],
             };
           });
       } else {
@@ -228,15 +228,15 @@ class GradesSearchBar extends Component {
             return {
               value: instructor,
               label: instructor,
-              sectionNumber: instructor.split(' / ')[1],
+              sectionNumber: instructor.split(" / ")[1],
             };
           });
       }
 
       if (options.length > 1) {
         const label =
-          selectType === 'instructor' ? 'All Semesters' : 'All Instructors';
-        ret.push({ value: 'all', label });
+          selectType === "instructor" ? "All Semesters" : "All Instructors";
+        ret.push({ value: "all", label });
       }
 
       for (const o of options) {
@@ -252,19 +252,19 @@ class GradesSearchBar extends Component {
     const { sections } = this.props;
     let semester = selectSecondary;
     let number = -1;
-    if (selectSecondary.split(' ').length > 2) {
-      semester = selectSecondary.split(' ').slice(0, 2).join(' ');
-      number = selectSecondary.split(' ')[3];
+    if (selectSecondary.split(" ").length > 2) {
+      semester = selectSecondary.split(" ").slice(0, 2).join(" ");
+      number = selectSecondary.split(" ")[3];
     }
     let ret;
 
-    if (selectType === 'instructor') {
+    if (selectType === "instructor") {
       ret = sections
         .filter((section) =>
-          selectPrimary === 'all' ? true : section.instructor === selectPrimary
+          selectPrimary === "all" ? true : section.instructor === selectPrimary
         )
         .filter((section) =>
-          semester === 'all'
+          semester === "all"
             ? true
             : this.getSectionSemester(section) === semester
         )
@@ -274,12 +274,12 @@ class GradesSearchBar extends Component {
     } else {
       ret = sections
         .filter((section) =>
-          selectPrimary === 'all'
+          selectPrimary === "all"
             ? true
             : this.getSectionSemester(section) === selectPrimary
         )
         .filter((section) =>
-          semester === 'all' ? true : section.instructor === semester
+          semester === "all" ? true : section.instructor === semester
         )
         .filter((section) =>
           number !== -1 ? section.section_number === number : true
@@ -291,17 +291,13 @@ class GradesSearchBar extends Component {
   }
 
   addSelected() {
-    const {
-      selectedClass,
-      selectType,
-      selectPrimary,
-      selectSecondary,
-    } = this.state;
+    const { selectedClass, selectType, selectPrimary, selectSecondary } =
+      this.state;
 
     const playlist = {
       courseID: selectedClass,
-      instructor: selectType === 'instructor' ? selectPrimary : selectSecondary,
-      semester: selectType === 'semester' ? selectPrimary : selectSecondary,
+      instructor: selectType === "instructor" ? selectPrimary : selectSecondary,
+      semester: selectType === "semester" ? selectPrimary : selectSecondary,
       sections: this.getFilteredSections(),
     };
 
@@ -312,19 +308,15 @@ class GradesSearchBar extends Component {
 
   reset() {
     this.setState({
-      selectPrimary: '',
-      selectSecondary: '',
+      selectPrimary: "",
+      selectSecondary: "",
     });
   }
 
   render() {
     const { classes, isFull, isMobile } = this.props;
-    const {
-      selectType,
-      selectPrimary,
-      selectSecondary,
-      selectedClass,
-    } = this.state;
+    const { selectType, selectPrimary, selectSecondary, selectedClass } =
+      this.state;
     const { sections } = this.props;
     const primaryOptions = this.buildPrimaryOptions(sections, selectType);
     const secondaryOptions = this.buildSecondaryOptions(
@@ -340,27 +332,27 @@ class GradesSearchBar extends Component {
     let primaryOption = { value: selectPrimary, label: selectPrimary };
     let secondaryOption = { value: selectSecondary, label: selectSecondary };
 
-    if (selectType === 'instructor') {
-      if (selectPrimary === 'all') {
-        primaryOption = { value: 'all', label: 'All Instructors' };
+    if (selectType === "instructor") {
+      if (selectPrimary === "all") {
+        primaryOption = { value: "all", label: "All Instructors" };
       }
-      if (selectSecondary === 'all') {
-        secondaryOption = { value: 'all', label: 'All Semesters' };
+      if (selectSecondary === "all") {
+        secondaryOption = { value: "all", label: "All Semesters" };
       }
     } else {
-      if (selectPrimary === 'all') {
-        primaryOption = { value: 'all', label: 'All Semesters' };
+      if (selectPrimary === "all") {
+        primaryOption = { value: "all", label: "All Semesters" };
       }
-      if (selectSecondary === 'all') {
-        secondaryOption = { value: 'all', label: 'All Instructors' };
+      if (selectSecondary === "all") {
+        secondaryOption = { value: "all", label: "All Instructors" };
       }
     }
 
-    if (selectPrimary === '') {
-      primaryOption = '';
+    if (selectPrimary === "") {
+      primaryOption = "";
     }
-    if (selectSecondary === '') {
-      secondaryOption = '';
+    if (selectSecondary === "") {
+      secondaryOption = "";
     }
 
     const customStyles = {
@@ -391,7 +383,7 @@ class GradesSearchBar extends Component {
             <Select
               name="sortBy"
               value={
-                selectType === 'instructor' ? sortOptions[0] : sortOptions[1]
+                selectType === "instructor" ? sortOptions[0] : sortOptions[1]
               }
               placeholder="Sort by"
               options={sortOptions}
@@ -407,7 +399,7 @@ class GradesSearchBar extends Component {
           <Col xs={6} sm={6} lg={3}>
             <Select
               name="instrSems"
-              placeholder={!isMobile ? 'Select an option...' : 'Select...'}
+              placeholder={!isMobile ? "Select an option..." : "Select..."}
               value={onePrimaryOption ? primaryOptions[0] : primaryOption}
               options={primaryOptions}
               onChange={this.handlePrimarySelect}
@@ -423,7 +415,7 @@ class GradesSearchBar extends Component {
           <Col xs={6} sm={6} lg={3}>
             <Select
               name="section"
-              placeholder={!isMobile ? 'Select an option...' : 'Select...'}
+              placeholder={!isMobile ? "Select an option..." : "Select..."}
               value={oneSecondaryOption ? secondaryOptions[0] : secondaryOption}
               options={secondaryOptions}
               onChange={this.handleSecondarySelect}

@@ -1,5 +1,5 @@
-import React, { PureComponent } from 'react';
-import Select from 'react-select';
+import React, { PureComponent } from "react";
+import Select from "react-select";
 
 class Property extends PureComponent {
   constructor(props) {
@@ -14,13 +14,13 @@ class Property extends PureComponent {
       control: (base) => ({
         ...base,
         border: 0,
-        boxShadow: 'none',
+        boxShadow: "none",
       }),
     };
 
     let body;
     switch (attribute) {
-      case 'Major(s)':
+      case "Major(s)":
         body = (
           <div className="major-select">
             <Select
@@ -43,7 +43,7 @@ class Property extends PureComponent {
           </div>
         );
         break;
-      case 'Full Name':
+      case "Full Name":
         body = (
           <div className="personal-value">
             <p>{value}</p>

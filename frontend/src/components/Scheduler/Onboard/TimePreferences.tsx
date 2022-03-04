@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
-import { Button, P, H3, H6 } from 'bt/custom';
-import BTSelect from 'components/Custom/Select';
-import BTInput from 'components/Custom/Input';
+import React, { useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import { Button, P, H3, H6 } from "bt/custom";
+import BTSelect from "components/Custom/Select";
+import BTInput from "components/Custom/Input";
 
 const DAYS = [
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
+  { value: 1, label: "Monday" },
+  { value: 2, label: "Tuesday" },
+  { value: 3, label: "Wednesday" },
+  { value: 4, label: "Thursday" },
+  { value: 5, label: "Friday" },
 ];
 
 // Hour ranges for times
@@ -22,7 +22,7 @@ const TIMES = new Array(LAST_TIME - FIRST_TIME)
   .map((hour): [number, string, string] => [
     hour,
     `${((hour - 1) % 12) + 1}`,
-    hour >= 12 ? 'PM' : 'AM',
+    hour >= 12 ? "PM" : "AM",
   ])
   .flatMap(([hour, hourText, ampm]) => [
     { value: hour + 0.0, label: `${hourText}:00 ${ampm}` },
@@ -46,7 +46,7 @@ type Props = {
 };
 
 const TimePreferences = ({ createSchedule }: Props) => {
-  const [blockName, setBlockName] = useState('');
+  const [blockName, setBlockName] = useState("");
   const [timeBlocks, setTimeBlocks] = useState<TimeBlock[]>([]);
 
   function createTimeBlock() {
@@ -58,7 +58,7 @@ const TimePreferences = ({ createSchedule }: Props) => {
       days: [],
     };
     setTimeBlocks([newBlock, ...timeBlocks]);
-    setBlockName('');
+    setBlockName("");
   }
 
   return (
@@ -85,7 +85,7 @@ const TimePreferences = ({ createSchedule }: Props) => {
                 options={TIMES}
                 placeholder="Start"
               />
-              {' to '}
+              {" to "}
               <BTSelect
                 className="inline-select"
                 options={TIMES}
@@ -105,10 +105,7 @@ const TimePreferences = ({ createSchedule }: Props) => {
             </span>
           </div>
           <div className="mt-3 text-right">
-            <Button
-              className="bt-btn-inverted bt-lg"
-              onClick={createTimeBlock}
-            >
+            <Button className="bt-btn-inverted bt-lg" onClick={createTimeBlock}>
               Create Time Block
             </Button>
           </div>
@@ -144,7 +141,9 @@ const TimePreferences = ({ createSchedule }: Props) => {
           </div>
         </Col>
         <Col>
-          <Button className="continue" onClick={createSchedule}>Continue</Button>
+          <Button className="continue" onClick={createSchedule}>
+            Continue
+          </Button>
         </Col>
       </Row>
     </Container>

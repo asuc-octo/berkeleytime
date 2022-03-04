@@ -1,7 +1,7 @@
-import BTLoader from 'components/Common/BTLoader';
-import React, { Component } from 'react';
-import { ListGroup, Form, Button } from 'react-bootstrap';
-import Markdown from 'react-markdown';
+import BTLoader from "components/Common/BTLoader";
+import React, { Component } from "react";
+import { ListGroup, Form, Button } from "react-bootstrap";
+import Markdown from "react-markdown";
 
 class BTForm extends Component {
   constructor(props) {
@@ -24,14 +24,14 @@ class BTForm extends Component {
 
   componentDidMount() {
     const { name } = this.props;
-    fetch('/api/forms/config/' + name + '/')
+    fetch("/api/forms/config/" + name + "/")
       .then((result) => result.json())
       .then((data) =>
         this.setState({ form: data }, function () {
           const { form } = this.state;
           let responses = {};
           form.questions.forEach((question) => {
-            if (question.type === 'file') {
+            if (question.type === "file") {
               responses[question.unique_name] = {
                 files: [],
               };
@@ -78,7 +78,7 @@ class BTForm extends Component {
     if (validationSuccess) {
       this.postResponses(form, responses);
     } else {
-      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }
   }
 
@@ -86,52 +86,50 @@ class BTForm extends Component {
     let submission = {};
     for (let question of form.questions) {
       if (responses[question.unique_name]) {
-        if (question.type === 'file') {
+        if (question.type === "file") {
           if (responses[question.unique_name].files.length > 0) {
             submission[question.unique_name] = [];
             for (let file of responses[question.unique_name].files) {
               if (!responses[question.unique_name][file.name]) {
-                alert('Files not finished uploading!');
+                alert("Files not finished uploading!");
                 return;
               }
               submission[question.unique_name].push(
                 responses[question.unique_name][file.name]
               );
             }
-            submission[question.unique_name] = submission[
-              question.unique_name
-            ].join('\n');
+            submission[question.unique_name] =
+              submission[question.unique_name].join("\n");
           }
         } else if (
-          question.type === 'multiple_select' &&
+          question.type === "multiple_select" &&
           responses[question.unique_name].length > 0
         ) {
-          submission[question.unique_name] = responses[
-            question.unique_name
-          ].join('\n');
+          submission[question.unique_name] =
+            responses[question.unique_name].join("\n");
         } else {
           submission[question.unique_name] = responses[question.unique_name];
         }
       }
     }
-    submission['Config'] = form.info.unique_name;
+    submission["Config"] = form.info.unique_name;
     const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(submission),
     };
     this.setState({
       submitting: true,
     });
-    fetch('/api/forms/submit/', requestOptions)
+    fetch("/api/forms/submit/", requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        if (data['expired']) {
-          alert('This form has closed. Sorry!');
-        } else if (!data['success']) {
+        if (data["expired"]) {
+          alert("This form has closed. Sorry!");
+        } else if (!data["success"]) {
           alert(
-            'There was an internal error with your submission. Please contact octo.berkeleytime@asuc.org. Error: ' +
-              data['error']
+            "There was an internal error with your submission. Please contact octo.berkeleytime@asuc.org. Error: " +
+              data["error"]
           );
         } else {
           this.setState(
@@ -139,7 +137,7 @@ class BTForm extends Component {
               submitted: true,
             },
             () => {
-              window.scroll({ top: 0, left: 0, behavior: 'smooth' });
+              window.scroll({ top: 0, left: 0, behavior: "smooth" });
             }
           );
         }
@@ -227,11 +225,11 @@ class BTForm extends Component {
       const file = target.files[i];
       reader.onload = (event) => {
         const requestOptions = {
-          method: 'POST',
+          method: "POST",
           body: event.target.result,
         };
         fetch(
-          '/api/forms/upload/' + form.info.unique_name + '/' + file.name + '/',
+          "/api/forms/upload/" + form.info.unique_name + "/" + file.name + "/",
           requestOptions
         )
           .then((response) => response.json())
@@ -242,7 +240,7 @@ class BTForm extends Component {
                 ...prevState.responses,
                 [target.name]: {
                   ...prevState.responses[target.name],
-                  [file.name]: data['success'] ? data['link'] : 'error',
+                  [file.name]: data["success"] ? data["link"] : "error",
                 },
               },
             }))
@@ -288,7 +286,7 @@ class BTForm extends Component {
         [question]: {
           ...prevState.responses[question],
           files: files,
-          [removedFile]: 'removed',
+          [removedFile]: "removed",
         },
       },
       validation: prevState.validated ? validation : {},
@@ -315,7 +313,7 @@ class BTForm extends Component {
 
   setRemainingValid(form, validation) {
     return form.questions
-      .map((question) => this.setValidation(question, '', true, validation))
+      .map((question) => this.setValidation(question, "", true, validation))
       .every((item) => item === true);
   }
 
@@ -323,23 +321,23 @@ class BTForm extends Component {
     for (let question of form.questions) {
       if (question.required) {
         if (
-          question.type === 'file' &&
+          question.type === "file" &&
           responses[question.unique_name].files.length === 0
         ) {
           this.setValidation(
             question,
-            'This question is required.',
+            "This question is required.",
             false,
             validation
           );
-        } else if (question.type === 'multiple_select') {
+        } else if (question.type === "multiple_select") {
           if (
             !responses[question.unique_name] ||
             responses[question.unique_name].length === 0
           ) {
             this.setValidation(
               question,
-              'This question is required.',
+              "This question is required.",
               false,
               validation
             );
@@ -350,7 +348,7 @@ class BTForm extends Component {
         ) {
           this.setValidation(
             question,
-            'This question is required.',
+            "This question is required.",
             false,
             validation
           );
@@ -367,30 +365,30 @@ class BTForm extends Component {
           responses[question.unique_name].length < question.min
         ) {
           let message =
-            'Input must be at least ' +
+            "Input must be at least " +
             question.min +
-            ' characters. Currently ' +
+            " characters. Currently " +
             responses[question.unique_name].length +
-            ' character';
+            " character";
           if (responses[question.unique_name].length !== 1) {
-            message += 's';
+            message += "s";
           }
-          message += '.';
+          message += ".";
           this.setValidation(question, message, false, validation);
         }
       }
       if (question.max && responses[question.unique_name]) {
         if (responses[question.unique_name].length > question.max) {
           let message =
-            'Input must be at most ' +
+            "Input must be at most " +
             question.min +
-            ' characters. Currently ' +
+            " characters. Currently " +
             responses[question.unique_name].length +
-            ' character';
+            " character";
           if (responses[question.unique_name].length !== 1) {
-            message += 's';
+            message += "s";
           }
-          message += '.';
+          message += ".";
           this.setValidation(question, message, false, validation);
         }
       }
@@ -401,33 +399,35 @@ class BTForm extends Component {
   validateFormat(form, responses, validation) {
     for (let question of form.questions) {
       if (question.format && responses[question.unique_name]) {
-        if (question.format === 'email') {
+        if (question.format === "email") {
           // eslint-disable-next-line no-useless-escape
-          const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          const re =
+            /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
           if (!re.test(responses[question.unique_name].toLowerCase())) {
             this.setValidation(
               question,
-              'Please enter a valid email.',
+              "Please enter a valid email.",
               false,
               validation
             );
           }
-        } else if (question.format === 'number') {
+        } else if (question.format === "number") {
           const re = /^\d+$/;
           if (!re.test(responses[question.unique_name].toLowerCase())) {
             this.setValidation(
               question,
-              'Please enter a number.',
+              "Please enter a number.",
               false,
               validation
             );
           }
-        } else if (question.format === 'date') {
-          const re = /^(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/((19|20)[0-9][0-9])$/;
+        } else if (question.format === "date") {
+          const re =
+            /^(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])\/((19|20)[0-9][0-9])$/;
           if (!re.test(responses[question.unique_name].toLowerCase())) {
             this.setValidation(
               question,
-              'Please enter a date in MM/DD/YYYY format.',
+              "Please enter a date in MM/DD/YYYY format.",
               false,
               validation
             );
@@ -439,15 +439,15 @@ class BTForm extends Component {
   }
 
   createQuestion(question, responses, validation) {
-    if (question.type === 'short') {
+    if (question.type === "short") {
       return this.createShort(question, responses, validation);
-    } else if (question.type === 'long') {
+    } else if (question.type === "long") {
       return this.createLong(question, responses, validation);
-    } else if (question.type === 'multiple_choice') {
+    } else if (question.type === "multiple_choice") {
       return this.createMultipleChoice(question, responses, validation);
-    } else if (question.type === 'file') {
+    } else if (question.type === "file") {
       return this.createFile(question, responses, validation);
-    } else if (question.type === 'multiple_select') {
+    } else if (question.type === "multiple_select") {
       return this.createMultipleSelect(question, responses, validation);
     } else {
       return null;
@@ -481,7 +481,7 @@ class BTForm extends Component {
     if (question.html_type) {
       qType = question.type;
     } else {
-      qType = 'text';
+      qType = "text";
     }
     let valid = validation[question.unique_name]
       ? validation[question.unique_name].valid
@@ -522,10 +522,10 @@ class BTForm extends Component {
         custom
         isInvalid={invalid}
         isValid={valid}
-        defaultValue={'_DEFAULT_'}
+        defaultValue={"_DEFAULT_"}
       >
         {question.placeholder ? (
-          <option value="_DEFAULT_" style={{ color: 'grey' }} disabled>
+          <option value="_DEFAULT_" style={{ color: "grey" }} disabled>
             {question.placeholder}
           </option>
         ) : null}
@@ -587,15 +587,15 @@ class BTForm extends Component {
         let fileName = responses[question.unique_name].files[i].name;
         fileList.push(fileName);
         if (responses[question.unique_name][fileName]) {
-          if (responses[question.unique_name][fileName] === 'error') {
-            fileStatus[fileName] = '(error)';
-          } else if (responses[question.unique_name][fileName] === 'removed') {
-            fileStatus[fileName] = '(uploading)';
+          if (responses[question.unique_name][fileName] === "error") {
+            fileStatus[fileName] = "(error)";
+          } else if (responses[question.unique_name][fileName] === "removed") {
+            fileStatus[fileName] = "(uploading)";
           } else {
-            fileStatus[fileName] = 'loaded';
+            fileStatus[fileName] = "loaded";
           }
         } else {
-          fileStatus[fileName] = '(uploading)';
+          fileStatus[fileName] = "(uploading)";
         }
       }
     }
@@ -604,7 +604,7 @@ class BTForm extends Component {
         <Form.File
           label={question.placeholder}
           name={question.unique_name}
-          accept={question.accept ? question.accept : ''}
+          accept={question.accept ? question.accept : ""}
           onChange={this.handleFileUpload}
           required={question.required}
           isInvalid={invalid}
@@ -615,7 +615,7 @@ class BTForm extends Component {
         <ListGroup>
           {fileList.map((file, index) => (
             <ListGroup.Item key={index}>
-              {file} {fileStatus[file] === 'loaded' ? null : fileStatus[file]}
+              {file} {fileStatus[file] === "loaded" ? null : fileStatus[file]}
               <span
                 className="uploaded-file-remove"
                 onClick={() => {
@@ -689,9 +689,9 @@ class BTForm extends Component {
           {form.questions.map((item, index) => (
             <Form.Group
               key={index}
-              className={'bt-question' + (item.gap === false ? ' no-gap' : '')}
+              className={"bt-question" + (item.gap === false ? " no-gap" : "")}
             >
-              <Form.Label className={item.required ? 'required' : ''}>
+              <Form.Label className={item.required ? "required" : ""}>
                 {item.title}
               </Form.Label>
               {item.description ? (
@@ -701,7 +701,7 @@ class BTForm extends Component {
               {validation[item.unique_name] ? (
                 <Form.Control.Feedback
                   type={
-                    validation[item.unique_name].valid ? 'valid' : 'invalid'
+                    validation[item.unique_name].valid ? "valid" : "invalid"
                   }
                 >
                   {validation[item.unique_name].message}

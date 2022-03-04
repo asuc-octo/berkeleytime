@@ -1,5 +1,5 @@
-import { FilterFragment } from '../../graphql/graphql';
-import { FilterType } from './filterTypes';
+import { FilterFragment } from "../../graphql/graphql";
+import { FilterType } from "./filterTypes";
 
 export type FilterablePlaylist = FilterFragment;
 export type FilterParameter = {
@@ -16,7 +16,6 @@ export type PlaylistDescription = (
   | FilterParameter
   | CategorizedFilterParameter
 )[];
-
 
 export type Filter = {
   type: FilterType;
@@ -42,8 +41,8 @@ const PLAYLIST_CATEGORY_TO_ORDER: { [key: string]: number } = {
  * Converts a playlist to a quantifiable year value. Greater = newer
  */
 export function playlistToTimeComparable(playlist: FilterablePlaylist): number {
-  if (playlist.category === 'semester') {
-    const [semester, year] = playlist.name.toLowerCase().split(' ');
+  if (playlist.category === "semester") {
+    const [semester, year] = playlist.name.toLowerCase().split(" ");
     return +year + SEMESTER_TYPE_TO_OFFSET[semester];
   } else {
     return 0;
@@ -58,16 +57,16 @@ export function stableSortPlaylists(
   maxSemesters: number = Infinity
 ): FilterablePlaylist[] {
   const semesterPlaylists = playlists
-    .filter((p) => p.category === 'semester')
+    .filter((p) => p.category === "semester")
     .sort((a, b) => playlistToTimeComparable(b) - playlistToTimeComparable(a))
     .slice(0, maxSemesters);
 
   const unitPlaylists = playlists
-    .filter((p) => p.category === 'units')
+    .filter((p) => p.category === "units")
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const otherPlaylists = playlists
-    .filter((p) => !['units', 'semester'].includes(p.category))
+    .filter((p) => !["units", "semester"].includes(p.category))
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return otherPlaylists.concat(unitPlaylists, semesterPlaylists);
@@ -102,45 +101,45 @@ export function playlistsToFilters(rawData: FilterablePlaylist[]): Filters {
   const data = stableSortPlaylists(rawData);
   const requirements = [
     {
-      label: 'University Requirements',
-      options: getCategoryFromPlaylists(data, 'university'),
+      label: "University Requirements",
+      options: getCategoryFromPlaylists(data, "university"),
     },
     {
-      label: 'L&S Breadths',
-      options: getCategoryFromPlaylists(data, 'ls'),
+      label: "L&S Breadths",
+      options: getCategoryFromPlaylists(data, "ls"),
     },
     {
-      label: 'College of Engineering',
-      options: getCategoryFromPlaylists(data, 'engineering'),
+      label: "College of Engineering",
+      options: getCategoryFromPlaylists(data, "engineering"),
     },
     {
-      label: 'Haas Breadths',
-      options: getCategoryFromPlaylists(data, 'haas'),
+      label: "Haas Breadths",
+      options: getCategoryFromPlaylists(data, "haas"),
     },
   ];
 
   return [
     {
-      type: 'requirements',
+      type: "requirements",
       options: requirements,
     },
     {
-      type: 'units',
-      options: getCategoryFromPlaylists(data, 'units', (label) =>
-        label === '5 Units' ? '5+ Units' : label
+      type: "units",
+      options: getCategoryFromPlaylists(data, "units", (label) =>
+        label === "5 Units" ? "5+ Units" : label
       ),
     },
     {
-      type: 'department',
-      options: getCategoryFromPlaylists(data, 'department'),
+      type: "department",
+      options: getCategoryFromPlaylists(data, "department"),
     },
     {
-      type: 'level',
-      options: getCategoryFromPlaylists(data, 'level'),
+      type: "level",
+      options: getCategoryFromPlaylists(data, "level"),
     },
     {
-      type: 'semesters',
-      options: getCategoryFromPlaylists(data, 'semester'),
+      type: "semesters",
+      options: getCategoryFromPlaylists(data, "semester"),
     },
   ];
 }
@@ -155,7 +154,7 @@ export function getPlaylistEntries(
     return [];
   }
 
-  if ('value' in playlist[0]) {
+  if ("value" in playlist[0]) {
     return playlist as FilterParameter[];
   } else {
     return (playlist as CategorizedFilterParameter[]).flatMap(
@@ -180,7 +179,7 @@ export function getOverlappingValues(
  * Get changes.
  */
 export function getChanges(
-  selectedParameters: Pick<FilterParameter, 'value'>[],
+  selectedParameters: Pick<FilterParameter, "value">[],
   allParameters: PlaylistDescription
 ): ParameterChange {
   const add = new Set<string>();

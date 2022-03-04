@@ -15,7 +15,7 @@ nav {
     &.is-new {
       position: relative;
       &::after {
-        content: 'New!';
+        content: "New!";
         display: inline-block;
         text-transform: uppercase;
         font-size: 8px;

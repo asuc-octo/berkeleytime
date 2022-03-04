@@ -11,12 +11,12 @@ export interface AuthState {
   isLoggedIn: boolean;
 }
 
-export const LOG_IN = "LOG_IN"
-export const LOG_OUT = "LOG_OUT"
+export const LOG_IN = "LOG_IN";
+export const LOG_OUT = "LOG_OUT";
 
 export type AuthAction =
   | {
-      type: typeof LOG_IN
-      profile: UserProfile
+      type: typeof LOG_IN;
+      profile: UserProfile;
     }
-  | { type: typeof LOG_OUT }
+  | { type: typeof LOG_OUT };

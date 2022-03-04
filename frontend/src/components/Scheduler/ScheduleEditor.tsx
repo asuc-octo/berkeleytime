@@ -1,20 +1,20 @@
-import React, { ChangeEvent, ReactNode, useState } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
-import CourseSelector from 'components/Scheduler/CourseSelector';
+import React, { ChangeEvent, ReactNode, useState } from "react";
+import { Button, Col, Row } from "react-bootstrap";
+import CourseSelector from "components/Scheduler/CourseSelector";
 
-import { useGetCoursesForFilterQuery } from '../../graphql/graphql';
-import BTLoader from 'components/Common/BTLoader';
+import { useGetCoursesForFilterQuery } from "../../graphql/graphql";
+import BTLoader from "components/Common/BTLoader";
 import {
   Schedule,
   SchedulerSectionType,
   scheduleToICal,
-} from 'utils/scheduler/scheduler';
-import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
-import AccessControl from './AccessControl';
-import { AccessStatus } from 'utils/scheduler/accessStatus';
-import { useSemester } from 'graphql/hooks/semester';
-import { getNodes } from 'utils/graphql';
-import { Semester } from 'utils/playlists/semesters';
+} from "utils/scheduler/scheduler";
+import SchedulerCalendar from "components/Scheduler/Calendar/SchedulerCalendar";
+import AccessControl from "./AccessControl";
+import { AccessStatus } from "utils/scheduler/accessStatus";
+import { useSemester } from "graphql/hooks/semester";
+import { getNodes } from "utils/graphql";
+import { Semester } from "utils/playlists/semesters";
 
 type Props = {
   /**
@@ -53,9 +53,8 @@ const ScheduleEditor = ({
   saveWidget,
   accessControl,
 }: Props) => {
-  const { semester: latestSemester, error: semesterError } = useSemester(
-    semester
-  );
+  const { semester: latestSemester, error: semesterError } =
+    useSemester(semester);
 
   // Only load the list of filters once we have the latest semester. If we
   // didn't wait, we'd load all semesters' classes which is way to many.
@@ -67,10 +66,8 @@ const ScheduleEditor = ({
   });
 
   // If the user is hovering over a section. This will store that section
-  const [
-    previewSection,
-    setPreviewSection,
-  ] = useState<SchedulerSectionType | null>(null);
+  const [previewSection, setPreviewSection] =
+    useState<SchedulerSectionType | null>(null);
 
   const setScheduleName = (event: ChangeEvent<HTMLInputElement>) =>
     setSchedule({
@@ -99,7 +96,7 @@ const ScheduleEditor = ({
     const icsURI =
       `data:text/calendar;charset=utf8,` + encodeURIComponent(icsData);
 
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = icsURI;
     link.download = `${schedule.name}.ics`;
     link.click();

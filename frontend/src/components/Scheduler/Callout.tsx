@@ -1,8 +1,8 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
 type CalloutProps = {
-  type?: 'info' | 'warning';
-  state?: 'default' | 'error';
+  type?: "info" | "warning";
+  state?: "default" | "error";
   message: ReactNode;
 };
 
@@ -31,8 +31,8 @@ const icons = {
 };
 
 const Callout = ({
-  type = 'info',
-  state = 'default',
+  type = "info",
+  state = "default",
   message,
 }: CalloutProps) => {
   return (

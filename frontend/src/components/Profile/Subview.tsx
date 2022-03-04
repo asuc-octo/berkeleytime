@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode } from "react";
 
 type Props = {
   title: string;
@@ -7,7 +7,7 @@ type Props = {
 };
 
 const Subview: FC<Props> = ({ title, className, widget, children }) => (
-  <div className={'profile-subview ' + (className ?? '')}>
+  <div className={"profile-subview " + (className ?? "")}>
     <div className="profile-subview-title">
       <h3>{title}</h3>
       {widget}

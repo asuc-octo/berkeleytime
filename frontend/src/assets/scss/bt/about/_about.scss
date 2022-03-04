@@ -69,7 +69,8 @@
   }
 
   // remove scroll bar
-  .group::-webkit-scrollbar { /* Safari and Chrome */
+  .group::-webkit-scrollbar {
+    /* Safari and Chrome */
     display: none;
   }
 
@@ -105,7 +106,7 @@
         .value-content {
           height: 100%;
           border-radius: 4px;
-          border: solid 2px  #6d6a7238;
+          border: solid 2px #6d6a7238;
           padding: 20px 10px;
 
           display: flex;
@@ -135,9 +136,6 @@
     }
   }
 
-
-
-
   // should move somewhere else???
   .releases-heading-button {
     justify-content: center;
@@ -153,7 +151,7 @@
       border-radius: 4px;
       width: 280px;
 
-      &::placeholder{
+      &::placeholder {
         color: $bt-light-grey;
       }
     }

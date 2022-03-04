@@ -1,7 +1,5 @@
-
-
-
-.grades-info, .enrollment-info {
+.grades-info,
+.enrollment-info {
   display: flex;
   flex-direction: column;
 
@@ -19,7 +17,6 @@
     color: $bt-grey-text;
     font-weight: lighter;
   }
-
 
   .header {
     display: flex;
@@ -43,7 +40,8 @@
     }
   }
 
-  .title, .info {
+  .title,
+  .info {
     font-size: 16px;
     color: $bt-grey-text;
   }
@@ -74,14 +72,15 @@
       margin-top: 5px;
       margin-bottom: 20px;
     }
-
   }
 
   span {
     margin-right: 5px;
   }
 
-  .course-average, .section-average, .percentile {
+  .course-average,
+  .section-average,
+  .percentile {
     margin-bottom: 10px;
   }
 }

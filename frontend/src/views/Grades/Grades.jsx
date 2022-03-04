@@ -1,14 +1,20 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router';
+import React, { Component } from "react";
+import { withRouter } from "react-router";
 
-import { connect } from 'react-redux';
-import ClassCardList from '../../components/ClassCards/ClassCardList';
-import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
-import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
+import { connect } from "react-redux";
+import ClassCardList from "../../components/ClassCards/ClassCardList";
+import GradesGraphCard from "../../components/GraphCard/GradesGraphCard";
+import GradesSearchBar from "../../components/ClassSearchBar/GradesSearchBar";
 
-import info from '../../assets/img/images/graphs/info.svg';
+import info from "../../assets/img/images/graphs/info.svg";
 
-import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset, fetchGradeFromUrl } from '../../redux/actions';
+import {
+  fetchGradeContext,
+  fetchGradeClass,
+  gradeRemoveCourse,
+  gradeReset,
+  fetchGradeFromUrl,
+} from "../../redux/actions";
 
 class Grades extends Component {
   constructor(props) {
@@ -41,29 +47,31 @@ class Grades extends Component {
     const { gradeReset, fetchGradeFromUrl, history } = this.props;
     try {
       let url = history.location.pathname;
-      if (url && (url === '/grades/' || url === '/grades')) {
+      if (url && (url === "/grades/" || url === "/grades")) {
         gradeReset();
       } else if (url) {
         fetchGradeFromUrl(url, history);
       }
     } catch (err) {
-      history.push('/error');
+      history.push("/error");
     }
   }
 
   toUrlForm(s) {
-    s = s.replace('/', '_');
-    return s.toLowerCase().split(" ").join('-');
+    s = s.replace("/", "_");
+    return s.toLowerCase().split(" ").join("-");
   }
 
   addToUrl(course) {
     const { history } = this.props;
     let instructor = this.toUrlForm(course.instructor);
-    let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(course.semester)}-${instructor}`;
+    let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(
+      course.semester
+    )}-${instructor}`;
     let url = history.location.pathname;
     if (url && !url.includes(courseUrl)) {
-      url += (url === '/grades') ? '/' : '';
-      url += (url === '/grades/') ? '' : '&';
+      url += url === "/grades" ? "/" : "";
+      url += url === "/grades/" ? "" : "&";
       url += courseUrl;
       history.replace(url);
     }
@@ -92,12 +100,16 @@ class Grades extends Component {
 
   refillUrl(id) {
     const { selectedCourses, history } = this.props;
-    let updatedCourses = selectedCourses.filter(classInfo => classInfo.id !== id);
-    let url = '/grades/';
+    let updatedCourses = selectedCourses.filter(
+      (classInfo) => classInfo.id !== id
+    );
+    let url = "/grades/";
     for (let i = 0; i < updatedCourses.length; i++) {
       let c = updatedCourses[i];
-      if (i !== 0) url += '&';
-      url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${this.toUrlForm(c.instructor)}`;
+      if (i !== 0) url += "&";
+      url += `${c.colorId}-${c.courseID}-${this.toUrlForm(
+        c.semester
+      )}-${this.toUrlForm(c.instructor)}`;
     }
     history.replace(url);
   }
@@ -109,12 +121,16 @@ class Grades extends Component {
   }
 
   updateClassCardGrade(course_letter, course_gpa, section_letter, section_gpa) {
-
-    var info=[]
-    for(var i=0; i<course_letter.length; i++) {
-      info.push([course_letter[i], course_gpa[i], section_letter[i], section_gpa[i]])
+    var info = [];
+    for (var i = 0; i < course_letter.length; i++) {
+      info.push([
+        course_letter[i],
+        course_gpa[i],
+        section_letter[i],
+        section_gpa[i],
+      ]);
     }
-    this.setState({ additionalInfo: info })
+    this.setState({ additionalInfo: info });
   }
 
   render() {
@@ -149,28 +165,31 @@ class Grades extends Component {
             isMobile={isMobile}
           />
 
-
           <div className="disclaimer">
             <img src={info} className="info" alt="" />
-            <p>We source our course grade data from Berkeley&apos;s official <a href="https://calanswers.berkeley.edu/">CalAnswers</a> database.</p>
+            <p>
+              We source our course grade data from Berkeley&apos;s official{" "}
+              <a href="https://calanswers.berkeley.edu/">CalAnswers</a>{" "}
+              database.
+            </p>
           </div>
-
         </div>
       </div>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   dispatch,
   fetchGradeContext: () => dispatch(fetchGradeContext()),
   fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
   gradeRemoveCourse: (id, color) => dispatch(gradeRemoveCourse(id, color)),
   gradeReset: () => dispatch(gradeReset()),
-  fetchGradeFromUrl: (url, history) => dispatch(fetchGradeFromUrl(url, history))
+  fetchGradeFromUrl: (url, history) =>
+    dispatch(fetchGradeFromUrl(url, history)),
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const { context, selectedCourses, usedColorIds, sections } = state.grade;
   const { mobile } = state.common;
   return {
@@ -182,8 +201,4 @@ const mapStateToProps = state => {
   };
 };
 
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(Grades));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Grades));

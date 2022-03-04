@@ -37,8 +37,8 @@ export function unitsToString(units: Units): string {
  * Parses a unit string
  */
 export function parseUnits(string: string): Units {
-  if (string.includes('-')) {
-    const [lower, upper] = string.split('-');
+  if (string.includes("-")) {
+    const [lower, upper] = string.split("-");
     return {
       lowerBound: +lower,
       upperBound: +upper,

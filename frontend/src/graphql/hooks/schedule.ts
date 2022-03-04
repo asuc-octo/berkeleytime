@@ -1,5 +1,5 @@
-import { Semester } from 'utils/playlists/semesters';
-import { Schedule, serializeSchedule } from 'utils/scheduler/scheduler';
+import { Semester } from "utils/playlists/semesters";
+import { Schedule, serializeSchedule } from "utils/scheduler/scheduler";
 import {
   DeleteScheduleMutationOptions,
   GetUserDocument,
@@ -8,8 +8,8 @@ import {
   ScheduleOverviewFragment,
   useCreateScheduleMutation,
   useDeleteScheduleMutation,
-} from '../graphql';
-import { wrapMutation } from './graphql';
+} from "../graphql";
+import { wrapMutation } from "./graphql";
 
 /**
  * This will create a NEW schedule. Do not use this
@@ -36,7 +36,7 @@ export const useCreateSchedule = wrapMutation(
                 edges: [
                   ...existingUser.user.schedules.edges,
                   {
-                    __typename: 'ScheduleTypeEdge',
+                    __typename: "ScheduleTypeEdge",
                     node: data?.createSchedule?.schedule,
                   },
                 ],
@@ -60,7 +60,7 @@ export const useDeleteSchedule = wrapMutation(
     schedule: ScheduleOverviewFragment | string,
     options?: DeleteScheduleMutationOptions
   ) => {
-    const scheduleId = typeof schedule === 'string' ? schedule : schedule.id;
+    const scheduleId = typeof schedule === "string" ? schedule : schedule.id;
 
     return {
       ...options,

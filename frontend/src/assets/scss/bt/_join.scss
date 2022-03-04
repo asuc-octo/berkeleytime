@@ -5,45 +5,44 @@
   flex-direction: column;
   align-items: center;
 
-  .releases-heading-button{
-      justify-content: center;
-      margin: 20px 0px 12px 0px;
-      flex-direction: row;
-      padding-top: 0px;
+  .releases-heading-button {
+    justify-content: center;
+    margin: 20px 0px 12px 0px;
+    flex-direction: row;
+    padding-top: 0px;
 
-      input {
-        overflow: visible;
-        margin-right: 10px;
-        border: solid 1px #cfcfcf;
-        text-indent: 10px;
-        color: $bt-base-text;
-        border-radius: 4px;
-        width: 280px;
-        padding: 6px;
+    input {
+      overflow: visible;
+      margin-right: 10px;
+      border: solid 1px #cfcfcf;
+      text-indent: 10px;
+      color: $bt-base-text;
+      border-radius: 4px;
+      width: 280px;
+      padding: 6px;
 
-        &::placeholder{
-          color: $bt-light-grey;
-        }
+      &::placeholder {
+        color: $bt-light-grey;
+      }
 
-        &:focus::placeholder {
-          color: $bt-light-border-grey;
-        }
-
+      &:focus::placeholder {
+        color: $bt-light-border-grey;
       }
     }
+  }
 
-    .join-pic {
-      width: 800px;
-      margin-top: 24px;
-      margin-bottom: 28px;
-      @include mobile {
-        width: 95%;
-      }
+  .join-pic {
+    width: 800px;
+    margin-top: 24px;
+    margin-bottom: 28px;
+    @include mobile {
+      width: 95%;
     }
+  }
 
   .join-us {
-
-    .join-link, a {
+    .join-link,
+    a {
       color: $bt-blue;
     }
 
@@ -66,7 +65,7 @@
       text-align: left;
       font-size: 16px;
       line-height: 1.75;
-      color: #8A8A8A;
+      color: #8a8a8a;
       width: 650px;
 
       @include mobile {
@@ -84,11 +83,10 @@
         border-radius: 4px;
         width: 280px;
 
-        &::placeholder{
+        &::placeholder {
           color: $bt-light-grey;
         }
       }
     }
   }
-
 }

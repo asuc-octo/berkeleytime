@@ -1,35 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Col } from 'react-bootstrap';
-import { useHistory, useRouteMatch } from 'react-router';
-import { useSelector } from 'react-redux';
-import union from 'lodash/union';
-import difference from 'lodash/difference';
+import React, { useState, useEffect } from "react";
+import { Row, Col } from "react-bootstrap";
+import { useHistory, useRouteMatch } from "react-router";
+import { useSelector } from "react-redux";
+import union from "lodash/union";
+import difference from "lodash/difference";
 
-import Filter from '../../components/Catalog/Filter';
-import FilterResults from '../../components/Catalog/FilterResults';
-import ClassDescription from '../../components/ClassDescription/ClassDescription';
-import ClassDescriptionModal from '../../components/ClassDescription/ClassDescriptionModal';
+import Filter from "../../components/Catalog/Filter";
+import FilterResults from "../../components/Catalog/FilterResults";
+import ClassDescription from "../../components/ClassDescription/ClassDescription";
+import ClassDescriptionModal from "../../components/ClassDescription/ClassDescriptionModal";
 
 import {
   CourseOverviewFragment,
   useGetFiltersQuery,
-} from '../../graphql/graphql';
+} from "../../graphql/graphql";
 import {
   FilterablePlaylist,
   playlistsToFilters,
-} from '../../utils/playlists/playlist';
-import { ReduxState } from 'redux/store';
-import { CourseSortAttribute } from 'utils/courses/sorting';
-import { extractSemesters, getLatestSemester } from 'utils/playlists/semesters';
-import BTLoader from 'components/Common/BTLoader';
-import { CourseReference, courseToName } from 'utils/courses/course';
+} from "../../utils/playlists/playlist";
+import { ReduxState } from "redux/store";
+import { CourseSortAttribute } from "utils/courses/sorting";
+import { extractSemesters, getLatestSemester } from "utils/playlists/semesters";
+import BTLoader from "components/Common/BTLoader";
+import { CourseReference, courseToName } from "utils/courses/course";
 
-const DEFAULT_SORT: CourseSortAttribute = 'relevance';
+const DEFAULT_SORT: CourseSortAttribute = "relevance";
 
 const Catalog = () => {
   const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<CourseSortAttribute>(DEFAULT_SORT);
   const [allPlaylists, setAllPlaylists] = useState<FilterablePlaylist[]>([]);
   const [activePlaylists, setActivePlaylists] = useState<string[]>([]); // The active filters
@@ -38,23 +38,23 @@ const Catalog = () => {
     null
   ); // Selected course ID
 
-  const {
-    loading: loadingPlaylists,
-    error: errorPlaylists,
-  } = useGetFiltersQuery({
-    onCompleted: (data) => {
-      const allPlaylists = data.allPlaylists?.edges.map((edge) => edge!.node!)!;
-      const latestSemester = getLatestSemester(allPlaylists);
-      setAllPlaylists(allPlaylists);
+  const { loading: loadingPlaylists, error: errorPlaylists } =
+    useGetFiltersQuery({
+      onCompleted: (data) => {
+        const allPlaylists = data.allPlaylists?.edges.map(
+          (edge) => edge!.node!
+        )!;
+        const latestSemester = getLatestSemester(allPlaylists);
+        setAllPlaylists(allPlaylists);
 
-      // Set the initial playlist
-      setActivePlaylists([latestSemester?.playlistId!]);
-    },
-  });
+        // Set the initial playlist
+        setActivePlaylists([latestSemester?.playlistId!]);
+      },
+    });
 
   const history = useHistory();
   const match = useRouteMatch<{ abbreviation: string; courseNumber: string }>(
-    '/catalog/:abbreviation/:courseNumber'
+    "/catalog/:abbreviation/:courseNumber"
   );
 
   /**
@@ -69,7 +69,7 @@ const Catalog = () => {
       // TODO: expand to 'Departments'. This can make it so the 'getChanges'
       // logic can be discarded
       const semesterPlaylists = allPlaylists
-        .filter((p) => p.category === 'semester')
+        .filter((p) => p.category === "semester")
         .map((p) => p.id);
 
       // If they are adding a semester, remove all other semesters. This logic
@@ -91,7 +91,7 @@ const Catalog = () => {
     const latestSemester = getLatestSemester(allPlaylists);
     setActivePlaylists([latestSemester?.playlistId!]);
     setSortBy(DEFAULT_SORT);
-    setSearch('');
+    setSearch("");
   }
 
   /**
