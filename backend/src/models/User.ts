@@ -22,19 +22,7 @@ export class User_Schema {
 
   @GQL.Field()
   @Typegoose.prop()
-  access_token_expiration: Date;
-
-  @GQL.Field()
-  @Typegoose.prop()
   access_token: string;
-
-  @GQL.Field()
-  @Typegoose.prop()
-  activated: boolean;
-
-  @GQL.Field()
-  @Typegoose.prop()
-  activation_token: string;
 
   @GQL.Field()
   @Typegoose.prop({ default: null })
@@ -79,15 +67,11 @@ export class User_Schema {
 
   @GQL.Field()
   @Typegoose.prop()
-  jwt: string;
-
-  @GQL.Field()
-  @Typegoose.prop()
   name: string;
 
   @GQL.Field()
   @Typegoose.prop()
-  password: string;
+  refresh_token: string;
 
   @GQL.Field(() => String)
   public name_given(): String {

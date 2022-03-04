@@ -19,19 +19,6 @@ addFormats(ajv);
 ajvErrors(ajv);
 
 // const SchemaLogin: JSONSchemaType<Login> = {
-const SchemaLogin = {
-  type: "object",
-  required: ["email", "password"],
-  properties: {
-    email: {
-      type: "string",
-      format: "email",
-    },
-    password: {
-      type: "string",
-    },
-  },
-};
 
 const SchemaRegister = {
   type: "object",
@@ -62,6 +49,6 @@ const SchemaRegister = {
 };
 
 export const usersValidator = {
-  login: ajv.compile(SchemaLogin),
+  // login: ajv.compile(SchemaLogin),
   register: ajv.compile(SchemaRegister),
 };

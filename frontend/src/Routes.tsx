@@ -2,7 +2,6 @@
 import BTLoader from "components/Common/BTLoader";
 import React, { lazy, Suspense } from "react";
 import { Switch, Route, RouteProps, Redirect } from "react-router-dom";
-import GoogleLanding from "views/Login/GoogleLanding";
 
 import Catalog from "./views/Catalog/Catalog";
 import Error from "./views/Error/Error";
@@ -52,7 +51,6 @@ const routes: Array<RouteProps> = [
   { path: "/usertesting", component: UserTestingForm },
   { path: "/apply", component: Apply },
   { path: "/profile", component: Profile },
-  { path: "/googleLanding", component: GoogleLanding },
   { path: "/logout", component: Logout },
   { path: "/scheduler", component: SchedulerOnboard },
   { path: "/scheduler/new", component: LocalScheduler },

@@ -1,6 +1,7 @@
 /**
  * A bunch of utility functions
  */
+import axios from "axios";
 import React from "react";
 
 /**
@@ -23,7 +24,7 @@ export function getIndicatorPercent(percentage) {
  * @param {string} text text in the paragraph tag
  * @param {number} percentage percentage from 0.0 to 1.0
  */
-function applyIndicatorPercent(text, percentage) {
+export function applyIndicatorPercent(text, percentage) {
   let theme = "bt-indicator-red";
   if (percentage < 0.34) {
     theme = "bt-indicator-green";
@@ -39,7 +40,7 @@ function applyIndicatorPercent(text, percentage) {
  * @param {string} text text in the paragraph tag
  * @param {string | null} grade grade, either as a string (ex. "B+") or null
  */
-function applyIndicatorGrade(text, grade) {
+export function applyIndicatorGrade(text, grade) {
   if (grade === null) {
     return <span>N/A</span>;
   }
@@ -62,7 +63,7 @@ function applyIndicatorGrade(text, grade) {
  * ex:  "4.0" -> "4 Units"
  *      "2.0 - 12.0" -> "2-12 Units"
  */
-function formatUnits(units) {
+export function formatUnits(units) {
   return `${units} Unit${units === "1.0" || units === "1" ? "" : "s"}`
     .replace(/.0/g, "")
     .replace(/ - /, "-")
@@ -70,7 +71,7 @@ function formatUnits(units) {
 }
 
 /** Accepts a percentile between 0 and 1, converts it to a string. */
-function percentileToString(percentile) {
+export function percentileToString(percentile) {
   if (percentile === 1) {
     return "100th";
   }
@@ -99,7 +100,7 @@ function percentileToString(percentile) {
   }
 }
 
-function getGradeColor(grade) {
+export function getGradeColor(grade) {
   if (grade === undefined) {
     return "";
   } else if (grade.includes("A") || grade === "P") {
@@ -111,7 +112,7 @@ function getGradeColor(grade) {
   }
 }
 
-function getEnrollmentDay(selectedPoint, telebears) {
+export function getEnrollmentDay(selectedPoint, telebears) {
   let period = "";
   let daysAfterPeriodStarts = 0;
   if (selectedPoint.day < telebears.phase2_start_day) {
@@ -127,14 +128,14 @@ function getEnrollmentDay(selectedPoint, telebears) {
   return { period, daysAfterPeriodStarts };
 }
 
-function formatPercentage(num) {
+export function formatPercentage(num) {
   if (num === -1) {
     return "N/A";
   }
   return (num * 100).toFixed(1).toString() + "%";
 }
 
-function applyIndicatorEnrollment(enrolled, enrolledMax, percentage) {
+export function applyIndicatorEnrollment(enrolled, enrolledMax, percentage) {
   let theme;
   if (percentage < 0.34) {
     theme = "bt-indicator-green";
@@ -152,13 +153,10 @@ function applyIndicatorEnrollment(enrolled, enrolledMax, percentage) {
   );
 }
 
-export {
-  applyIndicatorPercent,
-  applyIndicatorGrade,
-  formatUnits,
-  percentileToString,
-  getGradeColor,
-  getEnrollmentDay,
-  formatPercentage,
-  applyIndicatorEnrollment,
+export const setAuthToken = (token) => {
+  if (token) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common["Authorization"];
+  }
 };
