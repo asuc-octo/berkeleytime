@@ -28,6 +28,7 @@ axios.defaults.headers["Accept"] = "application/json";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }) as express.RequestHandler);
+app.use(express.json());
 app.use(passport.initialize());
 if (process.env.NODE_ENV == "prod") {
   app.use(
