@@ -1,5 +1,4 @@
 import React from "react";
-
 import {
   LineChart,
   XAxis,
@@ -12,8 +11,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import vars from "../../variables/Variables";
 import emptyImage from "../../assets/img/images/graphs/empty.svg";
+import vars from "../../variables/Variables";
 
 const EmptyLabel = (props) => {
   return (

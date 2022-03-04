@@ -4,6 +4,7 @@ import { useUser } from "graphql/hooks/user";
 import React, { CSSProperties, memo, ReactNode } from "react";
 import { CourseReference, isSameCourse } from "utils/courses/course";
 import { CourseSortAttribute } from "utils/courses/sorting";
+
 import { ReactComponent as BookmarkSaved } from "../../assets/svg/catalog/bookmark-saved.svg";
 import { ReactComponent as BookmarkUnsaved } from "../../assets/svg/catalog/bookmark-unsaved.svg";
 

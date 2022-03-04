@@ -1,14 +1,9 @@
-import React, { FC } from "react";
-import { Row, Col } from "react-bootstrap";
-
-import { H3 } from "bt/custom";
-
-import { ReactComponent as Web } from "../../assets/svg/about/web.svg";
-
 import annie_1 from "assets/img/about/2020-21/annie_1.jpg";
 import annie_2 from "assets/img/about/2020-21/annie_2.jpg";
 import christina_1 from "assets/img/about/2020-21/christina_1.jpg";
 import christina_2 from "assets/img/about/2020-21/christina_2.jpg";
+import danji_1 from "assets/img/about/2020-21/danji_1.png";
+import danji_2 from "assets/img/about/2020-21/danji_2.png";
 import hiroshi_1 from "assets/img/about/2020-21/hiroshi_1.jpg";
 import hiroshi_2 from "assets/img/about/2020-21/hiroshi_2.jpg";
 import kevin_1 from "assets/img/about/2020-21/kevin_1.jpg";
@@ -17,8 +12,11 @@ import shuming_1 from "assets/img/about/2020-21/shuming_1.jpg";
 import shuming_2 from "assets/img/about/2020-21/shuming_2.jpg";
 import vihan_1 from "assets/img/about/2020-21/vihan_1.jpg";
 import vihan_2 from "assets/img/about/2020-21/vihan_1.jpg";
-import danji_1 from "assets/img/about/2020-21/danji_1.png";
-import danji_2 from "assets/img/about/2020-21/danji_2.png";
+import { H3 } from "bt/custom";
+import React, { FC } from "react";
+import { Row, Col } from "react-bootstrap";
+
+import { ReactComponent as Web } from "../../assets/svg/about/web.svg";
 
 const contributors = [
   [

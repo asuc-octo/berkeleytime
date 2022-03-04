@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import { connect, ConnectedProps } from "react-redux";
-
-import Banner from "./components/Common/Banner";
-import Navigation from "./components/Common/Navigation";
-import Footer from "./components/Common/Footer";
-import Routes from "./Routes";
-
-import { openBanner, enterMobile, exitMobile } from "./redux/common/actions";
 import { ReduxState } from "redux/store";
+
+import Routes from "./Routes";
+import Banner from "./components/Common/Banner";
+import Footer from "./components/Common/Footer";
+import Navigation from "./components/Common/Navigation";
+import { openBanner, enterMobile, exitMobile } from "./redux/common/actions";
 
 function easterEgg() {
   // eslint-disable-next-line no-console

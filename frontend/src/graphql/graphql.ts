@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import * as Apollo from "@apollo/client";
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -238,7 +239,7 @@ export interface EnrollmentData {
   waitlistedPercent?: Maybe<Scalars["Float"]>;
 }
 
-/** The return format of both queries  */
+/** The return format of both queries */
 export interface EnrollmentInfo {
   __typename?: "EnrollmentInfo";
   course?: Maybe<CourseType>;
@@ -317,7 +318,7 @@ export interface Mutation {
   updateUser?: Maybe<UpdateUser>;
   saveClass?: Maybe<SaveClass>;
   removeClass?: Maybe<RemoveClass>;
-  /** Login mutation using graphql_jwt  */
+  /** Login mutation using graphql_jwt */
   login?: Maybe<ObtainJsonWebToken>;
   logout?: Maybe<Logout>;
   verifyToken?: Maybe<Verify>;
@@ -382,7 +383,7 @@ export interface Node {
   id: Scalars["ID"];
 }
 
-/** Login mutation using graphql_jwt  */
+/** Login mutation using graphql_jwt */
 export interface ObtainJsonWebToken {
   __typename?: "ObtainJSONWebToken";
   payload: Scalars["GenericScalar"];
@@ -833,7 +834,7 @@ export interface SectionTypeEdge {
   cursor: Scalars["String"];
 }
 
-/** Telebears JSON  */
+/** Telebears JSON */
 export interface TelebearData {
   __typename?: "TelebearData";
   phase1Start?: Maybe<Scalars["Date"]>;

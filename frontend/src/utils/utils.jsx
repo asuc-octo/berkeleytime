@@ -1,7 +1,6 @@
 /**
  * A bunch of utility functions
  */
-
 import React from "react";
 
 /**

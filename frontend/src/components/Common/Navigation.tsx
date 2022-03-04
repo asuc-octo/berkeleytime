@@ -1,11 +1,11 @@
 import React, { FC, useState, useEffect } from "react";
-import { useLocation } from "react-router";
-import { Link } from "react-router-dom";
 import { Navbar, Nav, NavProps } from "react-bootstrap";
 import { connect, ConnectedProps } from "react-redux";
-import { ReduxState } from "../../redux/store";
+import { useLocation } from "react-router";
+import { Link } from "react-router-dom";
 
 import { useUser } from "../../graphql/hooks/user";
+import { ReduxState } from "../../redux/store";
 import LoginModal from "../Login/LoginModal";
 
 interface Props extends PropsFromRedux {}

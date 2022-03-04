@@ -1,21 +1,21 @@
+import BTLoader from "components/Common/BTLoader";
+import { useCreateSchedule } from "graphql/hooks/schedule";
+import { useSemester } from "graphql/hooks/semester";
+import { useUser } from "graphql/hooks/user";
 import React, { Dispatch, SetStateAction } from "react";
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
-
-import { CourseOverviewFragment } from "../../graphql/graphql";
-import BTLoader from "components/Common/BTLoader";
+import { useHistory } from "react-router";
+import { useLocalStorageState } from "utils/hooks";
+import { Semester } from "utils/playlists/semesters";
 import {
   DEFAULT_SCHEDULE,
   Schedule,
   SCHEDULER_LOCALSTORAGE_KEY,
 } from "utils/scheduler/scheduler";
-import { Semester } from "utils/playlists/semesters";
-import { useUser } from "graphql/hooks/user";
-import { useCreateSchedule } from "graphql/hooks/schedule";
-import { useLocalStorageState } from "utils/hooks";
-import ScheduleEditor from "../../components/Scheduler/ScheduleEditor";
-import { useHistory } from "react-router";
-import { useSemester } from "graphql/hooks/semester";
+
 import Callout from "../../components/Scheduler/Callout";
+import ScheduleEditor from "../../components/Scheduler/ScheduleEditor";
+import { CourseOverviewFragment } from "../../graphql/graphql";
 
 const LocalScheduler = () => {
   const [schedule, setSchedule] = useLocalStorageState<Schedule>(

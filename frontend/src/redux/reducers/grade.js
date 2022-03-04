@@ -1,3 +1,4 @@
+import vars from "../../variables/Variables";
 import {
   UPDATE_GRADE_CONTEXT,
   GRADE_ADD_COURSE,
@@ -6,7 +7,6 @@ import {
   GRADE_REMOVE_COURSE,
   GRADE_RESET,
 } from "../actionTypes";
-import vars from "../../variables/Variables";
 
 const initialState = {
   context: {},

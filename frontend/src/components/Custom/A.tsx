@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
+
 import TextProps, { getClassNames } from "./TextProps";
 
 const A: FC<Props> = (props) => {

@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+
 import TextProps, { getClassNames } from "./TextProps";
 
 const P: FC<TextProps> = (props) => {

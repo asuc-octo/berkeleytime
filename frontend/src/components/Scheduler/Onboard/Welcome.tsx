@@ -1,7 +1,6 @@
+import { Button } from "bt/custom";
 import React from "react";
 import { Container, Row, Col, ButtonToolbar } from "react-bootstrap";
-import { useUser } from "../../../graphql/hooks/user";
-import ProfileScheduleCard from "./../../Profile/ProfileScheduleCard";
 import { getNodes } from "utils/graphql";
 import { useLocalStorageState } from "utils/hooks";
 import {
@@ -10,7 +9,10 @@ import {
   Schedule,
   SCHEDULER_LOCALSTORAGE_KEY,
 } from "utils/scheduler/scheduler";
-import { Button } from "bt/custom";
+
+import { useUser } from "../../../graphql/hooks/user";
+import ProfileScheduleCard from "./../../Profile/ProfileScheduleCard";
+
 // import { Button } from 'bt/custom';
 
 type Props = {

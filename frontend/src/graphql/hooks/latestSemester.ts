@@ -1,10 +1,12 @@
-import { useGetSemestersQuery } from "../graphql";
+import { useState } from "react";
 import {
   getLatestSemester,
   SemesterWithPlaylist,
 } from "utils/playlists/semesters";
-import { useState } from "react";
+
 import { ApolloError } from "@apollo/client";
+
+import { useGetSemestersQuery } from "../graphql";
 
 const useLatestSemester = (): {
   semester: SemesterWithPlaylist | null;

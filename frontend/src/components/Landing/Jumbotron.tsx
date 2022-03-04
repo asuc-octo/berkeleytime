@@ -1,3 +1,4 @@
+import { Button, H3, P } from "bt/custom";
 import React, { FC } from "react";
 import {
   Container,
@@ -7,7 +8,6 @@ import {
   ButtonGroup,
 } from "react-bootstrap";
 
-import { Button, H3, P } from "bt/custom";
 import { ReactComponent as Logo } from "../../assets/svg/landing/main.svg";
 
 const Jumbotron: FC = () => (

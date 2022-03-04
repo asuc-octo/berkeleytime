@@ -1,12 +1,11 @@
 import React, { FC } from "react";
-import { connect, ConnectedProps } from "react-redux";
 import { Button } from "react-bootstrap";
+import { connect, ConnectedProps } from "react-redux";
 import { useLocation, useHistory } from "react-router-dom";
 
-import { ReduxState } from "../../redux/store";
-import { closeBanner } from "../../redux/common/actions";
-
 import close from "../../assets/svg/common/close.svg";
+import { closeBanner } from "../../redux/common/actions";
+import { ReduxState } from "../../redux/store";
 
 interface Props extends PropsFromRedux {}
 

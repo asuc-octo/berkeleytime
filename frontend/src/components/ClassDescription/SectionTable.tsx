@@ -1,16 +1,16 @@
 import { SectionFragment } from "graphql/graphql";
 import React, { CSSProperties } from "react";
 import { Table } from "react-bootstrap";
+import { formatSectionTime } from "utils/sections/section";
+import { sortSections } from "utils/sections/sort";
 
 import denero from "../../assets/img/eggs/denero.png";
-import hug from "../../assets/img/eggs/hug.png";
+import garcia from "../../assets/img/eggs/garcia.png";
 import hilf from "../../assets/img/eggs/hilf.png";
+import hug from "../../assets/img/eggs/hug.png";
+import kubi from "../../assets/img/eggs/kubi.png";
 import sahai from "../../assets/img/eggs/sahai.png";
 import scott from "../../assets/img/eggs/scott.png";
-import kubi from "../../assets/img/eggs/kubi.png";
-import garcia from "../../assets/img/eggs/garcia.png";
-import { sortSections } from "utils/sections/sort";
-import { formatSectionTime } from "utils/sections/section";
 
 const easterEggImages = new Map<string, string>([
   ["DENERO J", denero],

@@ -1,8 +1,8 @@
 import React, { PureComponent } from "react";
 import ReactTooltip from "react-tooltip";
 
-import { percentileToString, getGradeColor } from "../../utils/utils";
 import info from "../../assets/img/images/graphs/info.svg";
+import { percentileToString, getGradeColor } from "../../utils/utils";
 
 class GradesInfoCard extends PureComponent {
   render() {

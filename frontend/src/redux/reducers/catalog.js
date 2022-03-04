@@ -1,7 +1,6 @@
 /**
  * Contains data of initial API call for filter data and playlist info
  */
-
 import {
   MODIFY_ACTIVE_PLAYLISTS,
   RECEIVE_FILTER_DATA,

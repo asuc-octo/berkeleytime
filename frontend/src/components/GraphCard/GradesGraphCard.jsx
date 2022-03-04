@@ -1,14 +1,12 @@
 import React, { Component } from "react";
 import { Container, Row, Col } from "react-bootstrap";
-
 import { connect } from "react-redux";
-import vars from "../../variables/Variables";
-
-import GradesGraph from "../Graphs/GradesGraph";
-import GraphEmpty from "../Graphs/GraphEmpty";
-import GradesInfoCard from "../GradesInfoCard/GradesInfoCard";
 
 import { fetchGradeData } from "../../redux/actions";
+import vars from "../../variables/Variables";
+import GradesInfoCard from "../GradesInfoCard/GradesInfoCard";
+import GradesGraph from "../Graphs/GradesGraph";
+import GraphEmpty from "../Graphs/GraphEmpty";
 
 class GradesGraphCard extends Component {
   constructor(props) {

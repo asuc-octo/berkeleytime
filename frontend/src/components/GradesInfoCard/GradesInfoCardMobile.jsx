@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+
 import GradesInfoCard from "./GradesInfoCard";
 
 class GradesInfoCardMobile extends PureComponent {

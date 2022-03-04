@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Markdown from "react-markdown";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import Markdown from "react-markdown";
 import { Link } from "react-router-dom";
 
 export default class Description extends Component {

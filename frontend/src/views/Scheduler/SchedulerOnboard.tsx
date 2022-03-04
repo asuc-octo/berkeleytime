@@ -1,12 +1,11 @@
+import SelectClasses from "components/Scheduler/Onboard/SelectClasses";
+import Welcome from "components/Scheduler/Onboard/Welcome";
 import React, {
   ComponentType,
   useState,
   Dispatch,
   SetStateAction,
 } from "react";
-import Welcome from "components/Scheduler/Onboard/Welcome";
-import SelectClasses from "components/Scheduler/Onboard/SelectClasses";
-
 import { DEFAULT_SCHEDULE, Schedule } from "utils/scheduler/scheduler";
 
 const pages: {

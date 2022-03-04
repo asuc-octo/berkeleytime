@@ -1,5 +1,6 @@
-import { InMemoryCache } from "@apollo/client";
 import { LocalStorageWrapper, persistCacheSync } from "apollo3-cache-persist";
+
+import { InMemoryCache } from "@apollo/client";
 
 const cache = new InMemoryCache({
   typePolicies: {

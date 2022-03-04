@@ -1,10 +1,9 @@
+import { H3, P } from "bt/custom";
 import React, { FC } from "react";
 
-import { H3, P } from "bt/custom";
-
 import asuc_logo from "../../assets/img/landing/asuc_logo.png";
-import stf_logo from "../../assets/img/landing/stf_logo.jpeg";
 import ocf_logo from "../../assets/img/landing/ocf_logo.png";
+import stf_logo from "../../assets/img/landing/stf_logo.jpeg";
 
 const Blurbs: FC = () => (
   <>

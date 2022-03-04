@@ -1,13 +1,11 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { withRouter } from "react-router";
 
-import { connect } from "react-redux";
-import ClassCardList from "../../components/ClassCards/ClassCardList";
-import GradesGraphCard from "../../components/GraphCard/GradesGraphCard";
-import GradesSearchBar from "../../components/ClassSearchBar/GradesSearchBar";
-
 import info from "../../assets/img/images/graphs/info.svg";
-
+import ClassCardList from "../../components/ClassCards/ClassCardList";
+import GradesSearchBar from "../../components/ClassSearchBar/GradesSearchBar";
+import GradesGraphCard from "../../components/GraphCard/GradesGraphCard";
 import {
   fetchGradeContext,
   fetchGradeClass,

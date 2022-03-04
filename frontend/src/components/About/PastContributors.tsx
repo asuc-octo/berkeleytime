@@ -1,8 +1,7 @@
+import { H3, H6 } from "bt/custom";
+import yaml from "js-yaml";
 import React, { FC, useState, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
-import yaml from "js-yaml";
-
-import { H3, H6 } from "bt/custom";
 
 import { ReactComponent as Web } from "../../assets/svg/about/web.svg";
 

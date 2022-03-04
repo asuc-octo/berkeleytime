@@ -1,12 +1,11 @@
-import React, { Component } from "react";
-import Select from "react-select-virtualized";
-import { Container, Row, Col, Button } from "react-bootstrap";
 import hash from "object-hash";
-
+import React, { Component } from "react";
+import { Container, Row, Col, Button } from "react-bootstrap";
 import { connect } from "react-redux";
+import Select from "react-select-virtualized";
+import { reactSelectCourseSearch } from "utils/courses/search";
 
 import { fetchGradeSelected } from "../../redux/actions";
-import { reactSelectCourseSearch } from "utils/courses/search";
 
 const sortOptions = [
   { value: "instructor", label: "By Instructor" },

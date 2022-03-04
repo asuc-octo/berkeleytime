@@ -1,15 +1,19 @@
+import BTLoader from "components/Common/BTLoader";
+import difference from "lodash/difference";
+import union from "lodash/union";
 import React, { useState, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
-import { useHistory, useRouteMatch } from "react-router";
 import { useSelector } from "react-redux";
-import union from "lodash/union";
-import difference from "lodash/difference";
+import { useHistory, useRouteMatch } from "react-router";
+import { ReduxState } from "redux/store";
+import { CourseReference, courseToName } from "utils/courses/course";
+import { CourseSortAttribute } from "utils/courses/sorting";
+import { extractSemesters, getLatestSemester } from "utils/playlists/semesters";
 
 import Filter from "../../components/Catalog/Filter";
 import FilterResults from "../../components/Catalog/FilterResults";
 import ClassDescription from "../../components/ClassDescription/ClassDescription";
 import ClassDescriptionModal from "../../components/ClassDescription/ClassDescriptionModal";
-
 import {
   CourseOverviewFragment,
   useGetFiltersQuery,
@@ -18,11 +22,6 @@ import {
   FilterablePlaylist,
   playlistsToFilters,
 } from "../../utils/playlists/playlist";
-import { ReduxState } from "redux/store";
-import { CourseSortAttribute } from "utils/courses/sorting";
-import { extractSemesters, getLatestSemester } from "utils/playlists/semesters";
-import BTLoader from "components/Common/BTLoader";
-import { CourseReference, courseToName } from "utils/courses/course";
 
 const DEFAULT_SORT: CourseSortAttribute = "relevance";
 

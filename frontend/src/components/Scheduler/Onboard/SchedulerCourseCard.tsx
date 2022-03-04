@@ -1,11 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
+
+import { CourseOverviewFragment } from "../../../graphql/graphql";
 import {
   formatUnits,
   applyIndicatorPercent,
   applyIndicatorGrade,
 } from "../../../utils/utils";
-import { CourseOverviewFragment } from "../../../graphql/graphql";
-import { Link } from "react-router-dom";
 import ProfileCard from "./../../Profile/ProfileCard";
 
 type Props = {

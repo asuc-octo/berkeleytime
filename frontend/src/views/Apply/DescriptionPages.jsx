@@ -1,4 +1,5 @@
 import React from "react";
+
 import Description from "../../components/Recruiting/Description";
 
 export function Positions(props) {

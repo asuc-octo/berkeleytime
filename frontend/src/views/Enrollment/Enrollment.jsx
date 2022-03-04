@@ -1,13 +1,11 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { withRouter } from "react-router";
 
-import { connect } from "react-redux";
-import ClassCardList from "../../components/ClassCards/ClassCardList";
-import EnrollmentGraphCard from "../../components/GraphCard/EnrollmentGraphCard";
-import EnrollmentSearchBar from "../../components/ClassSearchBar/EnrollmentSearchBar";
-
 import info from "../../assets/img/images/graphs/info.svg";
-
+import ClassCardList from "../../components/ClassCards/ClassCardList";
+import EnrollmentSearchBar from "../../components/ClassSearchBar/EnrollmentSearchBar";
+import EnrollmentGraphCard from "../../components/GraphCard/EnrollmentGraphCard";
 import {
   fetchEnrollContext,
   fetchEnrollClass,

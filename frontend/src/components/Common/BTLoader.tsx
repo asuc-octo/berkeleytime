@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
 import cx from "classnames";
+import React, { useEffect, useState } from "react";
 
 // Wait this many MS before showing the loader.
 const TIME_BEFORE_LOADER = 80;

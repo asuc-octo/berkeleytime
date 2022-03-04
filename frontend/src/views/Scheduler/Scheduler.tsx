@@ -1,7 +1,8 @@
-import React from "react";
 import BTLoader from "components/Common/BTLoader";
-import SchedulerOnboard from "./SchedulerOnboard";
 import { useUser } from "graphql/hooks/user";
+import React from "react";
+
+import SchedulerOnboard from "./SchedulerOnboard";
 
 const Scheduler = () => {
   const { loading: userLoading } = useUser();
