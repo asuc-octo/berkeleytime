@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { GroupedOptionsType } from 'react-select';
 import BTSelect from 'components/Custom/Select';
 import FilterModal from './FilterModal';
 
@@ -69,15 +68,15 @@ const FilterSidebar = ({
    * Takes a subset of filters and then updates according to
    * the definitive list of new filters from value.
    */
-  const filterHandler = (allOptions: PlaylistDescription) => (
-    value?: FilterParameter | FilterParameter[] | null
-  ) => {
-    const [add, remove] = getChanges(
-      ([] as FilterParameter[]).concat(value || []),
-      allOptions
-    );
-    modifyFilters(add, remove);
-  };
+  const filterHandler =
+    (allOptions: PlaylistDescription) =>
+    (value?: FilterParameter | FilterParameter[] | null) => {
+      const [add, remove] = getChanges(
+        ([] as FilterParameter[]).concat(value || []),
+        allOptions
+      );
+      modifyFilters(add, remove);
+    };
 
   //show the mobile modals
   function showModal({
@@ -145,7 +144,7 @@ const FilterSidebar = ({
             isMulti={filterTypeIsMulti(option.type) as false}
             closeMenuOnSelect={!filterTypeIsMulti(option.type)}
             isSearchable={filterTypeIsSearchable(option.type)}
-            options={option.options as GroupedOptionsType<FilterParameter>}
+            options={option.options}
             onChange={filterHandler(option.options)}
             value={getOverlappingValues(activeFilters, option.options)}
             placeholder={filterTypeToPlaceholder(option.type)}

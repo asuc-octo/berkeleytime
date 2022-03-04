@@ -77,7 +77,7 @@ export function groupSections(sections: SectionFragment[]) {
       (a, b) =>
         (SECTION_TYPE_ORDER[a[0]] ?? Infinity) - SECTION_TYPE_ORDER[b[0]]
     )
-    .map(([category, sections]) => ({
+    .map(([category, sections]: [string, SectionFragment[]]) => ({
       category,
       sections: sections.sort(sectionSortComparator),
     }));

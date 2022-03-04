@@ -10,7 +10,6 @@ import Error from './views/Error/Error';
 // import DesignApp from './views/Forms/DesignApp';
 // import EngineeringApp from './views/Forms/EngineeringApp';
 // import { Positions } from './views/Apply/DescriptionPages';
-// const ApiDocs = lazy(() => import('./views/Api/Api'));
 
 const Grades = lazy(() => import('./views/Grades/Grades'));
 const Enrollment = lazy(() => import('./views/Enrollment/Enrollment'));
@@ -23,9 +22,15 @@ const Apply = lazy(() => import('./views/Apply/Apply'));
 const Profile = lazy(() => import('./views/Profile/Profile'));
 const Login = lazy(() => import('./views/Login/Login'));
 const Logout = lazy(() => import('./views/Profile/Logout'));
-const SchedulerOnboard = lazy(() => import('./views/Scheduler/SchedulerOnboard'));
-const LocalScheduler = lazy(() => import('./views/Scheduler/LocalSchedulerPage'));
-const RemoteScheduler = lazy(() => import('./views/Scheduler/RemoteSchedulerPage'));
+const SchedulerOnboard = lazy(
+  () => import('./views/Scheduler/SchedulerOnboard')
+);
+const LocalScheduler = lazy(
+  () => import('./views/Scheduler/LocalSchedulerPage')
+);
+const RemoteScheduler = lazy(
+  () => import('./views/Scheduler/RemoteSchedulerPage')
+);
 const ViewSchedule = lazy(() => import('./views/Scheduler/ViewSchedule'));
 const PrivacyPolicy = lazy(() => import('./views/Policies/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
