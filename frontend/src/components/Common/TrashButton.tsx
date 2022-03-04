@@ -1,7 +1,7 @@
-import React, { ComponentProps } from 'react';
-import { Button } from 'react-bootstrap';
+import React, { ComponentProps } from "react";
+import { Button } from "react-bootstrap";
 
-import { ReactComponent as Trash } from '../../assets/svg/profile/trash.svg';
+import { ReactComponent as Trash } from "../../assets/svg/profile/trash.svg";
 
 type Props = ComponentProps<typeof Button>;
 

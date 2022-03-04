@@ -2,9 +2,9 @@ import {
   CourseOverviewFragment,
   useSaveCourseMutation,
   useUnsaveCourseMutation,
-} from '../../graphql/graphql';
-import { useCallback } from 'react';
-import { useUser } from './user';
+} from "../../graphql/graphql";
+import { useCallback } from "react";
+import { useUser } from "./user";
 
 /**
  * Saves a course optimistically
@@ -17,11 +17,11 @@ export const useSaveCourse = () => {
       saveCourse({
         variables: { courseId: course.id },
         optimisticResponse: {
-          __typename: 'Mutation',
+          __typename: "Mutation",
           saveClass: user && {
-            __typename: 'SaveClass',
+            __typename: "SaveClass",
             user: {
-              __typename: 'BerkeleytimeUserType',
+              __typename: "BerkeleytimeUserType",
               id: user.id,
               savedClasses: (user.savedClasses || [])
                 .filter((c) => c?.id !== course.id)
@@ -45,11 +45,11 @@ export const useUnsaveCourse = () => {
       unsaveCourse({
         variables: { courseId: course.id },
         optimisticResponse: {
-          __typename: 'Mutation',
+          __typename: "Mutation",
           removeClass: user && {
-            __typename: 'RemoveClass',
+            __typename: "RemoveClass",
             user: {
-              __typename: 'BerkeleytimeUserType',
+              __typename: "BerkeleytimeUserType",
               id: user.id,
               savedClasses: (user.savedClasses || []).filter(
                 (c) => c?.id !== course.id

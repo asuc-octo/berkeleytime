@@ -1,10 +1,10 @@
-import BTSelect from 'components/Custom/Select';
-import { CourseOverviewFragment } from 'graphql/graphql';
-import React, { Dispatch, SetStateAction, useMemo } from 'react';
-import { courseToName } from 'utils/courses/course';
-import { reactSelectCourseSearch } from 'utils/courses/search';
-import { compareDepartmentName } from 'utils/courses/sorting';
-import { Semester } from 'utils/playlists/semesters';
+import BTSelect from "components/Custom/Select";
+import { CourseOverviewFragment } from "graphql/graphql";
+import React, { Dispatch, SetStateAction, useMemo } from "react";
+import { courseToName } from "utils/courses/course";
+import { reactSelectCourseSearch } from "utils/courses/search";
+import { compareDepartmentName } from "utils/courses/sorting";
+import { Semester } from "utils/playlists/semesters";
 import {
   getUnitsForSchedule,
   hasCourseById,
@@ -12,11 +12,11 @@ import {
   Schedule,
   SchedulerCourseType,
   SchedulerSectionType,
-} from 'utils/scheduler/scheduler';
-import Callout from './Callout';
-import SchedulerCourse from './Selector/SchedulerCourse';
-import { ScheduleContext } from './ScheduleContext';
-import { unitsToString } from 'utils/courses/units';
+} from "utils/scheduler/scheduler";
+import Callout from "./Callout";
+import SchedulerCourse from "./Selector/SchedulerCourse";
+import { ScheduleContext } from "./ScheduleContext";
+import { unitsToString } from "utils/courses/units";
 
 type CourseType = CourseOverviewFragment;
 

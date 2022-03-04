@@ -1,17 +1,17 @@
-import React from 'react';
-import { FixedSizeList } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import React from "react";
+import { FixedSizeList } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 
-import FilterCard from './FilterCard';
+import FilterCard from "./FilterCard";
 
 import {
   CourseOverviewFragment,
   useGetCoursesForFilterQuery,
-} from '../../graphql/graphql';
-import { searchCourses } from 'utils/courses/search';
-import { sortByAttribute, CourseSortAttribute } from 'utils/courses/sorting';
-import BTLoader from 'components/Common/BTLoader';
-import { CourseReference } from 'utils/courses/course';
+} from "../../graphql/graphql";
+import { searchCourses } from "utils/courses/search";
+import { sortByAttribute, CourseSortAttribute } from "utils/courses/sorting";
+import BTLoader from "components/Common/BTLoader";
+import { CourseReference } from "utils/courses/course";
 
 type FilterResultsProps = {
   activePlaylists: string[];
@@ -34,7 +34,7 @@ const FilterResults = ({
   const showEmptyState = activePlaylists.length === 0;
   const { data, loading, error } = useGetCoursesForFilterQuery({
     variables: {
-      playlists: activePlaylists.join(','),
+      playlists: activePlaylists.join(","),
     },
     // We will not show results unless there's at least 1 filter selected.
     skip: showEmptyState,
@@ -46,7 +46,7 @@ const FilterResults = ({
 
     // If we're using a "Relevance" search *and* there's a search query, we'll
     // use the search text-distance as the sorting metric.
-    const hasQuery = rawQuery.trim() !== '';
+    const hasQuery = rawQuery.trim() !== "";
     if (hasQuery) {
       // TODO: consider memoizing if this is slow.
       sortedCourses = searchCourses(courses, rawQuery);

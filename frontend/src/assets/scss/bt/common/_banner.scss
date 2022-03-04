@@ -1,11 +1,10 @@
 .banner {
-
   .patriotic {
     background: repeating-linear-gradient(
       to right,
       $bt-blue,
       $bt-indicator-red
-    )
+    );
   }
 
   min-height: $banner-height;
@@ -44,7 +43,7 @@
     width: 24px;
     height: 24px;
     border-radius: 4px;
-    transition: background-color .2s;
+    transition: background-color 0.2s;
     cursor: pointer;
 
     &:hover {

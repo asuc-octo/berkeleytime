@@ -1,6 +1,6 @@
-import React, { CSSProperties, ReactNode } from 'react';
-import { range } from 'utils/range';
-import { dayToLongName, timeToHourString } from 'utils/date';
+import React, { CSSProperties, ReactNode } from "react";
+import { range } from "utils/range";
+import { dayToLongName, timeToHourString } from "utils/date";
 
 export type CardData = {
   key?: string | number;
@@ -75,7 +75,7 @@ function calculateCellStyle(
     width: `calc(${((overlapNum - overlapIndex) / overlapNum) * 100}% - ${
       (overlapNum - 1) * INTER_CELL_PADDING
     }px)`,
-    '--calendar-card-lines': Math.max(1, Math.floor(height / 40)),
+    "--calendar-card-lines": Math.max(1, Math.floor(height / 40)),
   } as CSSProperties;
 }
 

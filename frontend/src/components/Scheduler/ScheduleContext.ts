@@ -1,5 +1,5 @@
-import { createContext, Dispatch, SetStateAction, useContext } from 'react';
-import { Schedule, SchedulerSectionType } from 'utils/scheduler/scheduler';
+import { createContext, Dispatch, SetStateAction, useContext } from "react";
+import { Schedule, SchedulerSectionType } from "utils/scheduler/scheduler";
 
 type ContextType = {
   schedule: Schedule;
@@ -8,7 +8,7 @@ type ContextType = {
 };
 
 const ScheduleContext = createContext<ContextType>(
-  (null as unknown) as ContextType
+  null as unknown as ContextType
 );
 
 const useScheduleContext = () => useContext(ScheduleContext);

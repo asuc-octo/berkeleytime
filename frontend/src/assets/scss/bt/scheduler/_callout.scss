@@ -1,28 +1,28 @@
 .callout {
-    display: flex;
+  display: flex;
 
-    font-size: 12px;
+  font-size: 12px;
 
-    &.callout--state-default {
-        color: $bt-indicator-blue;
-    }
+  &.callout--state-default {
+    color: $bt-indicator-blue;
+  }
 
-    &.callout--state-error {
-        color: $bt-indicator-red;
-    }
+  &.callout--state-error {
+    color: $bt-indicator-red;
+  }
 
-    svg {
-        width: 1em;
-        height: 1em;
-        margin-right: 4px;
-        margin-top: 0.25em;
-    }
+  svg {
+    width: 1em;
+    height: 1em;
+    margin-right: 4px;
+    margin-top: 0.25em;
+  }
 
-    p {
-        flex: 1;
-        margin: 0;
-        color: currentColor;
-        line-height: 1.5;
-        font-size: inherit;
-    }
+  p {
+    flex: 1;
+    margin: 0;
+    color: currentColor;
+    line-height: 1.5;
+    font-size: inherit;
+  }
 }

@@ -1,22 +1,22 @@
 import {
   CourseOverviewFragment,
   useGetSchedulerCourseForIdQuery,
-} from '../../../graphql/graphql';
-import React, { useState } from 'react';
-import { courseToName } from 'utils/courses/course';
-import { Semester } from 'utils/playlists/semesters';
+} from "../../../graphql/graphql";
+import React, { useState } from "react";
+import { courseToName } from "utils/courses/course";
+import { Semester } from "utils/playlists/semesters";
 
-import { ReactComponent as Trash } from '../../../assets/svg/common/trash.svg';
-import LectureCard from './LectureCard';
-import BTLoader from '../../Common/BTLoader';
-import { applyIndicatorPercent } from 'utils/utils';
-import { parseUnits, unitsToString } from 'utils/courses/units';
+import { ReactComponent as Trash } from "../../../assets/svg/common/trash.svg";
+import LectureCard from "./LectureCard";
+import BTLoader from "../../Common/BTLoader";
+import { applyIndicatorPercent } from "utils/utils";
+import { parseUnits, unitsToString } from "utils/courses/units";
 
-import { ReactComponent as ExpandMore } from '../../../assets/svg/common/expand.svg';
-import { Collapse } from 'react-bootstrap';
-import { getColorForCourse } from 'utils/scheduler/scheduler';
-import { useScheduleContext } from '../ScheduleContext';
-import { getNodes } from 'utils/graphql';
+import { ReactComponent as ExpandMore } from "../../../assets/svg/common/expand.svg";
+import { Collapse } from "react-bootstrap";
+import { getColorForCourse } from "utils/scheduler/scheduler";
+import { useScheduleContext } from "../ScheduleContext";
+import { getNodes } from "utils/graphql";
 
 type Props = {
   courseId: string;
@@ -63,7 +63,7 @@ const SchedulerCourse = ({
           style={{ backgroundColor: color }}
         />
         <div className="scheduler-course-title">
-          {partialCourse ? courseToName(partialCourse) : 'Loading...'}
+          {partialCourse ? courseToName(partialCourse) : "Loading..."}
         </div>
 
         {didRemove && (
@@ -77,7 +77,7 @@ const SchedulerCourse = ({
       </div>
       <div className="scheduler-course-header">
         <div className="scheduler-course-name">
-          {partialCourse ? partialCourse.title : 'Loading...'}
+          {partialCourse ? partialCourse.title : "Loading..."}
         </div>
         {data && (
           <div
@@ -86,7 +86,7 @@ const SchedulerCourse = ({
           >
             <ExpandMore
               style={{
-                transform: isExpanded ? 'rotate(-180deg)' : '',
+                transform: isExpanded ? "rotate(-180deg)" : "",
               }}
             />
           </div>
@@ -95,7 +95,7 @@ const SchedulerCourse = ({
       <div className="scheduler-course-header">
         <div className="scheduler-course-name">
           {!data?.course ? (
-            'Loading...'
+            "Loading..."
           ) : (
             <>
               {data.course.enrolled !== -1 && (
@@ -103,8 +103,8 @@ const SchedulerCourse = ({
                   {applyIndicatorPercent(
                     `${data.course.enrolled}/${data.course.enrolledMax} enrolled`,
                     data.course.enrolled / data.course.enrolledMax
-                  )}{' '}
-                  &bull;{' '}
+                  )}{" "}
+                  &bull;{" "}
                 </>
               )}
               {data.course.units &&
@@ -131,7 +131,7 @@ const SchedulerCourse = ({
                   section={section}
                   course={data.course!}
                   color={color}
-                  sectionId={String(index + 1).padStart(3, '0')}
+                  sectionId={String(index + 1).padStart(3, "0")}
                   key={section.id}
                 />
               ))}

@@ -1,20 +1,18 @@
-import { useGetSemestersQuery } from '../graphql';
+import { useGetSemestersQuery } from "../graphql";
 import {
   getLatestSemester,
   SemesterWithPlaylist,
-} from 'utils/playlists/semesters';
-import { useState } from 'react';
-import { ApolloError } from '@apollo/client';
+} from "utils/playlists/semesters";
+import { useState } from "react";
+import { ApolloError } from "@apollo/client";
 
 const useLatestSemester = (): {
   semester: SemesterWithPlaylist | null;
   loading: boolean;
   error: ApolloError | undefined;
 } => {
-  const [
-    latestSemester,
-    setLatestSemester,
-  ] = useState<SemesterWithPlaylist | null>(null);
+  const [latestSemester, setLatestSemester] =
+    useState<SemesterWithPlaylist | null>(null);
 
   const { loading, error } = useGetSemestersQuery({
     onCompleted: (data) => {

@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import Property from './Property';
-import ProfileCourseCard from './ProfileCourseCard';
-import EditPencil from '../../assets/svg/profile/edit.svg';
+import Property from "./Property";
+import ProfileCourseCard from "./ProfileCourseCard";
+import EditPencil from "../../assets/svg/profile/edit.svg";
 import {
   CourseOverviewFragment,
   ScheduleOverviewFragment,
   UserProfileFragment,
-} from '../../graphql/graphql';
+} from "../../graphql/graphql";
 
-import MAJORS from './majors.json';
-import { useUpdateUser } from '../../graphql/hooks/user';
-import { useUnsaveCourse } from '../../graphql/hooks/saveCourse';
-import { compareDepartmentName } from 'utils/courses/sorting';
-import { Button } from 'react-bootstrap';
-import Subview from './Subview';
-import { Link } from 'react-router-dom';
-import ProfileScheduleCard from './ProfileScheduleCard';
+import MAJORS from "./majors.json";
+import { useUpdateUser } from "../../graphql/hooks/user";
+import { useUnsaveCourse } from "../../graphql/hooks/saveCourse";
+import { compareDepartmentName } from "utils/courses/sorting";
+import { Button } from "react-bootstrap";
+import Subview from "./Subview";
+import { Link } from "react-router-dom";
+import ProfileScheduleCard from "./ProfileScheduleCard";
 
 type Props = {
   userProfile: UserProfileFragment;
@@ -84,7 +84,7 @@ const AccountSubview = ({ userProfile }: Props) => {
           </div>
         ) : (
           <div className="bt-light-text">
-            You do not have any saved schedules.{' '}
+            You do not have any saved schedules.{" "}
             <Link to="/scheduler">Build one now.</Link>
           </div>
         )}
@@ -95,7 +95,7 @@ const AccountSubview = ({ userProfile }: Props) => {
             variant="link"
             className="profile-see-more px-0"
           >
-            {showAllCourses ? 'Show fewer classes' : 'See all classes'}
+            {showAllCourses ? "Show fewer classes" : "See all classes"}
           </Button>
         )}
       </Subview>
@@ -123,7 +123,7 @@ const AccountSubview = ({ userProfile }: Props) => {
             variant="link"
             className="profile-see-more px-0"
           >
-            {showAllSchedules ? 'Show fewer schedules' : 'See all schedules'}
+            {showAllSchedules ? "Show fewer schedules" : "See all schedules"}
           </Button>
         )}
       </Subview>

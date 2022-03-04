@@ -1,6 +1,12 @@
 import {
-  FILTER, START_REQUEST, REQUIREMENTS, UNITS, DEPARTMENT, LEVEL, SEMESTER
-} from '../actionTypes';
+  FILTER,
+  START_REQUEST,
+  REQUIREMENTS,
+  UNITS,
+  DEPARTMENT,
+  LEVEL,
+  SEMESTER,
+} from "../actionTypes";
 
 const initialState = {
   loading: true,
@@ -14,53 +20,53 @@ const initialState = {
 
 export default function filter(state = initialState, action) {
   switch (action.type) {
-  case START_REQUEST: {
-    return { ...state, loading: true };
-  }
-  case FILTER: {
-    const { data } = action.payload;
-    return {
-      ...state,
-      courses: data,
-      loading: false,
-    };
-  }
-  case REQUIREMENTS: {
-    const { data } = action.payload;
-    return {
-      ...state,
-      requirements: data,
-    };
-  }
-  case UNITS: {
-    const { data } = action.payload;
-    return {
-      ...state,
-      units: data,
-    };
-  }
-  case DEPARTMENT: {
-    const { data } = action.payload;
-    return {
-      ...state,
-      department: data,
-    };
-  }
-  case LEVEL: {
-    const { data } = action.payload;
-    return {
-      ...state,
-      level: data,
-    };
-  }
-  case SEMESTER: {
-    const { data } = action.payload;
-    return {
-      ...state,
-      semester: data,
-    };
-  }
-  default:
-    return state;
+    case START_REQUEST: {
+      return { ...state, loading: true };
+    }
+    case FILTER: {
+      const { data } = action.payload;
+      return {
+        ...state,
+        courses: data,
+        loading: false,
+      };
+    }
+    case REQUIREMENTS: {
+      const { data } = action.payload;
+      return {
+        ...state,
+        requirements: data,
+      };
+    }
+    case UNITS: {
+      const { data } = action.payload;
+      return {
+        ...state,
+        units: data,
+      };
+    }
+    case DEPARTMENT: {
+      const { data } = action.payload;
+      return {
+        ...state,
+        department: data,
+      };
+    }
+    case LEVEL: {
+      const { data } = action.payload;
+      return {
+        ...state,
+        level: data,
+      };
+    }
+    case SEMESTER: {
+      const { data } = action.payload;
+      return {
+        ...state,
+        semester: data,
+      };
+    }
+    default:
+      return state;
   }
 }

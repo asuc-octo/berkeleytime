@@ -9,22 +9,22 @@ footer {
     .footer-col {
       display: flex;
       flex-direction: column;
-  
+
       h6 {
         color: $bt-grey;
         text-transform: uppercase;
       }
-  
+
       a {
         color: $bt-light-grey;
-  
+
         &:hover {
           color: $bt-blue;
         }
-  
+
         .footer-new {
           @include font-size-responsive(14px);
-  
+
           color: $bt-white !important;
           background-color: $bt-blue;
           padding: 2px 4px;

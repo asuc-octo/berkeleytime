@@ -2,27 +2,27 @@ import {
   LectureFragment,
   SchedulerCourseFragment,
   SectionFragment,
-} from 'graphql/graphql';
-import React, { ChangeEvent, CSSProperties } from 'react';
-import { Form } from 'react-bootstrap';
-import cx from 'classnames';
+} from "graphql/graphql";
+import React, { ChangeEvent, CSSProperties } from "react";
+import { Form } from "react-bootstrap";
+import cx from "classnames";
 
 import {
   hasSectionById,
   Schedule,
   SchedulerSectionType,
-} from 'utils/scheduler/scheduler';
+} from "utils/scheduler/scheduler";
 import {
   formatLocation,
   formatSectionEnrollment,
   formatSectionTime,
-} from 'utils/sections/section';
-import { groupSections } from 'utils/sections/sort';
-import { useScheduleContext } from '../ScheduleContext';
-import { combineNodes } from 'utils/string';
+} from "utils/sections/section";
+import { groupSections } from "utils/sections/sort";
+import { useScheduleContext } from "../ScheduleContext";
+import { combineNodes } from "utils/string";
 
 const MAX_SECTIONS_BEFORE_SCROLL: number = 8;
-const SCROLL_SECTION_HEIGHT: string = '280px';
+const SCROLL_SECTION_HEIGHT: string = "280px";
 
 type SectionProps = {
   key: string;
@@ -45,15 +45,15 @@ const SectionGroup = ({
   return (
     <section
       className={cx({
-        'course-card--disabled': isDisabled,
+        "course-card--disabled": isDisabled,
       })}
     >
       <h4>{sections[0].kind}</h4>
       <section
         className="course-card-scroll"
         style={{
-          overflow: shouldScroll ? 'auto' : '',
-          height: shouldScroll ? SCROLL_SECTION_HEIGHT : '',
+          overflow: shouldScroll ? "auto" : "",
+          height: shouldScroll ? SCROLL_SECTION_HEIGHT : "",
         }}
       >
         {sections.map((section) => {
@@ -73,8 +73,8 @@ const SectionGroup = ({
                   formatLocation(section.locationName),
                   formatSectionEnrollment(section),
                 ],
-                ', '
-              )}{' '}
+                ", "
+              )}{" "}
               &bull; CCN: {section.ccn}
             </span>
           );
@@ -174,7 +174,7 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
   return (
     <div
       className="course-card"
-      style={{ '--card-color': color } as CSSProperties}
+      style={{ "--card-color": color } as CSSProperties}
     >
       <section
         onMouseEnter={() => setPreviewSection?.(currentSection)}
@@ -199,8 +199,8 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
           />
         </h4>
         <p className="course-card-description">
-          {section.instructor ? section.instructor + ` \u{2022} ` : ''}
-          {section.wordDays}, {formatSectionTime(section)},{' '}
+          {section.instructor ? section.instructor + ` \u{2022} ` : ""}
+          {section.wordDays}, {formatSectionTime(section)},{" "}
           {formatLocation(section.locationName)}
         </p>
         <p className="course-card-description">

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link as RoutingLink } from 'react-router-dom';
+import React from "react";
+import { Link as RoutingLink } from "react-router-dom";
 
 type Props = {
   text: string;
@@ -9,15 +9,15 @@ type Props = {
 };
 
 const Resource = ({ text, link, isDestructive = false, onClick }: Props) => {
-  const isExternal = link?.includes(':');
-  const Component = (!link || isExternal ? 'a' : RoutingLink) as any;
+  const isExternal = link?.includes(":");
+  const Component = (!link || isExternal ? "a" : RoutingLink) as any;
   const props = !link
     ? {}
     : isExternal
     ? {
         href: link,
-        target: '_blank',
-        rel: 'noopener noreferrer',
+        target: "_blank",
+        rel: "noopener noreferrer",
       }
     : {
         to: link,
@@ -26,7 +26,7 @@ const Resource = ({ text, link, isDestructive = false, onClick }: Props) => {
   return (
     <div className="profile-row">
       <Component {...props} onClick={onClick}>
-        <p className={`resource-text-${isDestructive ? 'red' : 'blue'}`}>
+        <p className={`resource-text-${isDestructive ? "red" : "blue"}`}>
           {text}
         </p>
       </Component>

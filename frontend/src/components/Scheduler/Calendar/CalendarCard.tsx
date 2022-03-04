@@ -1,5 +1,5 @@
-import React, { CSSProperties, forwardRef, HTMLProps } from 'react';
-import Color from 'color';
+import React, { CSSProperties, forwardRef, HTMLProps } from "react";
+import Color from "color";
 
 export type Props = HTMLProps<HTMLDivElement> & {
   title: string;
@@ -11,17 +11,17 @@ export type Props = HTMLProps<HTMLDivElement> & {
 
 const CalendarCard = forwardRef<HTMLDivElement, Props>(
   (
-    { title, description, color, style = {}, className = '', ...props },
+    { title, description, color, style = {}, className = "", ...props },
     ref
   ) => {
     const isLightCard = Color(color).luminosity() > 0.65;
 
     return (
       <div
-        className={'calendar-card ' + className}
+        className={"calendar-card " + className}
         style={{
           background: color,
-          color: isLightCard ? '#535353' : '#FFF',
+          color: isLightCard ? "#535353" : "#FFF",
           ...style,
         }}
         title={title}
@@ -35,6 +35,6 @@ const CalendarCard = forwardRef<HTMLDivElement, Props>(
   }
 );
 
-CalendarCard.displayName = 'CalendarCard';
+CalendarCard.displayName = "CalendarCard";
 
 export default CalendarCard;

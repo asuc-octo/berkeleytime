@@ -5,7 +5,7 @@ import {
   CLOSE_BANNER,
   ENTER_MOBILE,
   EXIT_MOBILE,
-} from './types';
+} from "./types";
 
 const initialState: CommonState = {
   banner: false,
@@ -23,8 +23,8 @@ export function commonReducer(
         banner: true,
       };
     case CLOSE_BANNER:
-      const bannerType = 'sp22recruitment'
-      localStorage.setItem('bt-hide-banner', bannerType);
+      const bannerType = "sp22recruitment";
+      localStorage.setItem("bt-hide-banner", bannerType);
       return {
         ...state,
         banner: false,

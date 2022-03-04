@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import cx from 'classnames';
+import React, { useEffect, useState } from "react";
+import cx from "classnames";
 
 // Wait this many MS before showing the loader.
 const TIME_BEFORE_LOADER = 80;
@@ -46,11 +46,11 @@ const BTLoader = ({
   if (error) {
     return (
       <div
-        className={cx('bt-loader-wrapper', 'bt-loader--error', {
-          'bt-loader--fill': fill,
+        className={cx("bt-loader-wrapper", "bt-loader--error", {
+          "bt-loader--fill": fill,
         })}
       >
-        {typeof error === 'string' ? (
+        {typeof error === "string" ? (
           <p>{error}</p>
         ) : (
           <>
@@ -65,8 +65,8 @@ const BTLoader = ({
   if (showingLoader || showInstantly) {
     return (
       <div
-        className={cx('bt-loader-wrapper', {
-          'bt-loader--fill': fill,
+        className={cx("bt-loader-wrapper", {
+          "bt-loader--fill": fill,
         })}
       >
         <div className="bt-loader">

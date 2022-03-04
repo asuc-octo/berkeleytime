@@ -1,83 +1,88 @@
 .purpose-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 60px;
+  height: 100%;
+
+  .purpose-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    padding-bottom: 60px;
-    height: 100%;
+    height: auto;
+    width: 85%;
+    margin: auto;
 
+    .purpose-title {
+      text-align: center;
+      font-weight: bold;
+      font-family: "Open Sans";
+    }
 
-    .purpose-container {
+    .purpose-subheading {
+      text-align: center;
+      font-family: "Open Sans";
+      margin-top: 10px;
+      margin-bottom: 30px;
+    }
+
+    .app-cards {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      margin: 0 20px;
+
+      .app-card {
+        min-width: 150px;
+        width: 25%;
+        max-width: 400px;
         display: flex;
         flex-direction: column;
+        margin: 30px;
+        padding: 25px;
         align-items: center;
-        height: auto;
-        width: 85%;
-        margin: auto;
+        border-radius: 15px;
+        box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
 
-        .purpose-title {
-            text-align: center;
-            font-weight: bold;
+        .app-icon {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .app-text {
+          min-height: 150px;
+
+          .app-title {
+            margin: 15px 0;
             font-family: "Open Sans";
-        }
-
-        .purpose-subheading {
+            font-weight: 500;
             text-align: center;
+          }
+
+          .app-description {
+            font-size: 14px;
             font-family: "Open Sans";
-            margin-top: 10px;
-            margin-bottom: 30px;
+            text-align: center;
+            margin-bottom: 10px;
+          }
         }
 
-        .app-cards {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            margin: 0 20px;
-
-            .app-card {
-                min-width: 150px;
-                width: 25%;
-                max-width: 400px;
-                display: flex;
-                flex-direction: column;
-                margin: 30px;
-                padding: 25px;
-                align-items: center;
-                border-radius: 15px;
-                box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.1);
-
-                .app-icon {
-                    width: 100%;
-                    margin-bottom: 10px;
-                }
-
-                .app-text{
-                    min-height: 150px;
-
-                    .app-title {
-                        margin: 15px 0;
-                        font-family: "Open Sans";
-                        font-weight: 500;
-                        text-align: center;
-                    }
-
-                    .app-description {
-                        font-size: 14px;
-                        font-family: "Open Sans";
-                        text-align: center;
-                        margin-bottom: 10px;
-                    }
-                }
-
-                .app-link {
-                    font-family: "Open Sans";
-                    color: $bt-blue;
-                }
-            }
+        .app-link {
+          font-family: "Open Sans";
+          color: $bt-blue;
         }
+      }
     }
+  }
 }
 
-.bt-pink {color: $bt-pink}
-.bt-green {color: $bt-green}
-.bt-blue {color: $bt-blue}
+.bt-pink {
+  color: $bt-pink;
+}
+.bt-green {
+  color: $bt-green;
+}
+.bt-blue {
+  color: $bt-blue;
+}

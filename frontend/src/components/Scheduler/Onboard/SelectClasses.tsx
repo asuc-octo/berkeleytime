@@ -1,17 +1,17 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
-import BTLoader from 'components/Common/BTLoader';
-import CourseSearch from 'components/Scheduler/Onboard/CourseSearch';
-import SchedulerCourseCard from 'components/Scheduler/Onboard/SchedulerCourseCard';
+import React, { Dispatch, SetStateAction } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import BTLoader from "components/Common/BTLoader";
+import CourseSearch from "components/Scheduler/Onboard/CourseSearch";
+import SchedulerCourseCard from "components/Scheduler/Onboard/SchedulerCourseCard";
 
-import { ScheduleContext } from '../ScheduleContext';
-import { CourseOverviewFragment } from '../../../graphql/graphql';
-import { useUser } from '../../../graphql/hooks/user';
-import { useGetCoursesForFilterQuery } from '../../../graphql/graphql';
-import useLatestSemester from 'graphql/hooks/latestSemester';
-import { addCourse } from './onboard';
-import { compareDepartmentName } from 'utils/courses/sorting';
-import { Schedule, removeCourse } from 'utils/scheduler/scheduler';
+import { ScheduleContext } from "../ScheduleContext";
+import { CourseOverviewFragment } from "../../../graphql/graphql";
+import { useUser } from "../../../graphql/hooks/user";
+import { useGetCoursesForFilterQuery } from "../../../graphql/graphql";
+import useLatestSemester from "graphql/hooks/latestSemester";
+import { addCourse } from "./onboard";
+import { compareDepartmentName } from "utils/courses/sorting";
+import { Schedule, removeCourse } from "utils/scheduler/scheduler";
 
 type Props = {
   // updatePage: (i: number) => void;
@@ -26,10 +26,8 @@ const SelectClasses = ({ schedule, setSchedule }: Props) => {
     .filter((c): c is CourseOverviewFragment => c !== null)
     .sort(compareDepartmentName);
 
-  const {
-    semester: latestSemester,
-    error: semesterError,
-  } = useLatestSemester();
+  const { semester: latestSemester, error: semesterError } =
+    useLatestSemester();
 
   // Only load the list of filters once we have the latest semester. If we
   // didn't wait, we'd load all semesters' classes which is way to many.
@@ -46,7 +44,7 @@ const SelectClasses = ({ schedule, setSchedule }: Props) => {
     return (
       <div className="scheduler__status">
         {error ? (
-          'A critical error occured loading scheduler information.'
+          "A critical error occured loading scheduler information."
         ) : (
           <BTLoader />
         )}

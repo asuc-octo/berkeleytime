@@ -1,7 +1,7 @@
 /* eslint-disable */
-import React from 'react';
+import React from "react";
 
-import jemma from 'assets/img/about/2020-21/michael_1.jpg';
+import jemma from "assets/img/about/2020-21/michael_1.jpg";
 
 function Profile({ profile }) {
   return (
@@ -9,12 +9,14 @@ function Profile({ profile }) {
       <div className="dashboard-container">
         <div className="dashboard-profile-pic-container">
           <img className="dashboard-profile-pic" src={profile.pic} />
-          <h3 className="dashboard-profile-name"><b>{profile.name}</b></h3>
+          <h3 className="dashboard-profile-name">
+            <b>{profile.name}</b>
+          </h3>
         </div>
         <div className="dashboard-profile-info">
           <div className="dashboard-profile-info-section">
             <h4>Major(s)</h4>
-            {profile.majors.map(major => (
+            {profile.majors.map((major) => (
               <p>{major}</p>
             ))}
           </div>
@@ -34,14 +36,11 @@ function Profile({ profile }) {
 
 Profile.defaultProps = {
   profile: {
-    name: 'Jemma Kwak',
+    name: "Jemma Kwak",
     pic: jemma,
-    majors: [
-      'Cognitive Science (L&S)',
-      'a double major',
-    ],
-    academic_career: 'Undergraduate',
-    level: 'Junior',
+    majors: ["Cognitive Science (L&S)", "a double major"],
+    academic_career: "Undergraduate",
+    level: "Junior",
   },
 };
 

@@ -1,7 +1,7 @@
-import { useDeleteUser } from '../../graphql/hooks/user';
-import React from 'react';
-import Resource from './Resource';
-import Subview from './Subview';
+import { useDeleteUser } from "../../graphql/hooks/user";
+import React from "react";
+import Resource from "./Resource";
+import Subview from "./Subview";
 
 const SupportSubview = () => {
   const [deleteUser, { loading }] = useDeleteUser();

@@ -1,14 +1,9 @@
-import {
-  AuthState,
-  LOG_IN,
-  LOG_OUT,
-  AuthAction
-} from "./types";
+import { AuthState, LOG_IN, LOG_OUT, AuthAction } from "./types";
 
 const initialState: AuthState = {
   loading: true,
   userProfile: undefined,
-  isLoggedIn: false
+  isLoggedIn: false,
 };
 
 export default function authReducer(
@@ -21,16 +16,16 @@ export default function authReducer(
         ...state,
         loading: false,
         userProfile: action.profile,
-        isLoggedIn: true
-      }
+        isLoggedIn: true,
+      };
     case LOG_OUT:
       return {
         ...state,
         loading: false,
         userProfile: undefined,
-        isLoggedIn: false
-      }
+        isLoggedIn: false,
+      };
     default:
-      return state
+      return state;
   }
 }

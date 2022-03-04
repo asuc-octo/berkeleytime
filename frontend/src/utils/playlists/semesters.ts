@@ -1,5 +1,5 @@
-import { capitalize } from 'bt/utils';
-import { FilterablePlaylist, playlistToTimeComparable } from './playlist';
+import { capitalize } from "bt/utils";
+import { FilterablePlaylist, playlistToTimeComparable } from "./playlist";
 
 export type Semester = {
   playlistId?: string;
@@ -17,7 +17,7 @@ export function extractSemesters(
   allPlaylists: FilterablePlaylist[]
 ): SemesterWithPlaylist[] {
   return allPlaylists
-    .filter((p) => p.category === 'semester' && playlists.includes(p.id))
+    .filter((p) => p.category === "semester" && playlists.includes(p.id))
     .map(playlistToSemester);
 }
 
@@ -28,7 +28,7 @@ export function getLatestSemester(
   playlists: FilterablePlaylist[]
 ): SemesterWithPlaylist | null {
   const semesterPlaylists = playlists
-    .filter((p) => p.category === 'semester')
+    .filter((p) => p.category === "semester")
     .sort((a, b) => playlistToTimeComparable(b) - playlistToTimeComparable(a));
 
   const semester = semesterPlaylists[0];
@@ -59,7 +59,7 @@ export function stringToSemester(
   string: string,
   playlistId?: string
 ): Semester {
-  const [semester, year] = string.trim().toLowerCase().split(' ');
+  const [semester, year] = string.trim().toLowerCase().split(" ");
   return {
     semester,
     year,
@@ -71,6 +71,6 @@ export function stringToSemester(
  * Converts a semester to human-readable string
  */
 export function semesterToString(semester?: Semester | null): string {
-  if (!semester) return '';
+  if (!semester) return "";
   return `${capitalize(semester.semester)} ${semester.year}`;
 }

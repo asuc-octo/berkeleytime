@@ -3,23 +3,23 @@ import {
   CreateScheduleMutationVariables,
   ScheduleFragment,
   SectionFragment,
-} from '../../graphql/graphql';
+} from "../../graphql/graphql";
 import {
   addUnits,
   parseUnits,
   Units,
   unitsToString,
   ZERO_UNITS,
-} from 'utils/courses/units';
-import { Semester, semesterToString } from 'utils/playlists/semesters';
-import { getNodes } from '../graphql';
+} from "utils/courses/units";
+import { Semester, semesterToString } from "utils/playlists/semesters";
+import { getNodes } from "../graphql";
 import {
   courseToColor,
   courseToName,
   COURSE_PALETTE,
-} from 'utils/courses/course';
-import { AccessStatus } from './accessStatus';
-import { dayToICalDay, reinterpretDateAsUTC, stringToDate } from 'utils/date';
+} from "utils/courses/course";
+import { AccessStatus } from "./accessStatus";
+import { dayToICalDay, reinterpretDateAsUTC, stringToDate } from "utils/date";
 import {
   addWeeks,
   isBefore,
@@ -28,10 +28,10 @@ import {
   setDay,
   subDays,
   subWeeks,
-} from 'date-fns';
+} from "date-fns";
 
 // Update the version when the scheduler schema changes.
-export const SCHEDULER_LOCALSTORAGE_KEY = 'schedule:save:v1.0';
+export const SCHEDULER_LOCALSTORAGE_KEY = "schedule:save:v1.0";
 
 export type SchedulerCourseType = CourseOverviewFragment;
 export type SchedulerSectionType = SectionFragment & {
@@ -58,8 +58,8 @@ export type Schedule = {
 export type BackendSchedule = CreateScheduleMutationVariables;
 
 export const DEFAULT_SCHEDULE: Schedule = {
-  name: 'My Schedule',
-  access: 'private',
+  name: "My Schedule",
+  access: "private",
   courses: [],
   sections: [],
 };
@@ -101,7 +101,7 @@ export const getColorForCourse = (
   COURSE_PALETTE[
     (schedule.courses.length -
       (schedule.courses.findIndex((c) =>
-        typeof course === 'string' ? c.id === course : c.id === course.id
+        typeof course === "string" ? c.id === course : c.id === course.id
       ) || 0)) %
       COURSE_PALETTE.length
   ];
@@ -158,7 +158,7 @@ export const hasSectionById = (schedule: Schedule, id: string): boolean =>
  */
 export const deserializeSchedule = (schedule: ScheduleFragment): Schedule => ({
   name: schedule.name,
-  access: schedule.public ? 'public' : 'private',
+  access: schedule.public ? "public" : "private",
   courses: getNodes(schedule.selectedSections).map((section) => section.course),
   sections: getNodes(schedule.selectedSections)
     .flatMap((section) =>
@@ -186,7 +186,7 @@ export const serializeSchedule = (
   name: schedule.name,
   semester: semester.semester,
   year: semester.year,
-  public: schedule.access === 'public',
+  public: schedule.access === "public",
   totalUnits: unitsToString(getUnitsForSchedule(schedule)),
   selectedSections: schedule.courses
     .map((course) => ({
@@ -212,14 +212,14 @@ export function scheduleToICal(schedule: Schedule, semester: Semester): string {
   const LAST_COURSE_DAY = new Date(2022, 4, 6);
 
   const dateToICal = (date: Date) =>
-    date.toISOString().replace(/[-:Z]|\.\d+/g, '');
+    date.toISOString().replace(/[-:Z]|\.\d+/g, "");
 
   const stringToICal = (str: string) =>
     str
-      .replace(/\\/g, '\\\\')
-      .replace(/\n/g, '\\n')
-      .replace(/;/g, '\\;')
-      .replace(/,/g, '\\,');
+      .replace(/\\/g, "\\\\")
+      .replace(/\n/g, "\\n")
+      .replace(/;/g, "\\;")
+      .replace(/,/g, "\\,");
 
   const DTSTAMP = dateToICal(new Date());
 
@@ -237,7 +237,7 @@ export function scheduleToICal(schedule: Schedule, semester: Semester): string {
       // To find the first day of the course, we generate all
       // instances of the course for the first two weeks
       const firstWeek = section.days
-        .split('')
+        .split("")
         .map((day) => setDay(SEMESTER_START, +day as Day));
       const secondWeek = firstWeek.map((day) => addWeeks(day, 1));
 
@@ -260,10 +260,10 @@ export function scheduleToICal(schedule: Schedule, semester: Semester): string {
       endDateTime.setUTCHours(endTime.getUTCHours());
       endDateTime.setUTCMinutes(endTime.getUTCMinutes());
 
-      const days = section.days.split('').map((day) => dayToICalDay(+day));
+      const days = section.days.split("").map((day) => dayToICalDay(+day));
 
       const name = `${courseName} ${section.kind}`;
-      const description = `${courseName}: ${course?.title || 'Unknown Course'}
+      const description = `${courseName}: ${course?.title || "Unknown Course"}
 
 Instructor: ${section.instructor}
 Section CCN: ${section.ccn}
@@ -311,11 +311,11 @@ X-WR-CALNAME: ${schedule.name}
 X-WR-CALDESC: Course schedule for ${semesterToString(semester)}
 X-WR-TIMEZONE:America/Los_Angeles
 ${PST_TIMEZONE_SPEC}
-${events.join('\n')}
+${events.join("\n")}
 END:VCALENDAR
 `
-    .split('\n')
-    .join('\r\n');
+    .split("\n")
+    .join("\r\n");
 }
 
 /**
@@ -325,9 +325,9 @@ export const formatScheduleError = (
   error?: Error | null
 ): Error | string | null | undefined =>
   error &&
-  (error.message.includes('No permission')
-    ? 'This schedule is not publicly accessible.'
-    : error.message.includes('not a valid UUID') ||
-      error.message.includes('Invalid Schedule ID')
-    ? 'That schedule does not exist.'
-    : 'An error occured loading scheduler information. Please try again later.');
+  (error.message.includes("No permission")
+    ? "This schedule is not publicly accessible."
+    : error.message.includes("not a valid UUID") ||
+      error.message.includes("Invalid Schedule ID")
+    ? "That schedule does not exist."
+    : "An error occured loading scheduler information. Please try again later.");

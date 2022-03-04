@@ -1,5 +1,5 @@
-declare module 'react-select-virtualized' {
-  import Select from 'react-select'
+declare module "react-select-virtualized" {
+  import Select from "react-select";
 
-  export default Select
+  export default Select;
 }

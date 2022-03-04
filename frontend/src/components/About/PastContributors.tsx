@@ -1,10 +1,10 @@
-import React, { FC, useState, useEffect } from 'react';
-import { Row, Col } from 'react-bootstrap';
-import yaml from 'js-yaml';
+import React, { FC, useState, useEffect } from "react";
+import { Row, Col } from "react-bootstrap";
+import yaml from "js-yaml";
 
-import { H3, H6 } from 'bt/custom';
+import { H3, H6 } from "bt/custom";
 
-import { ReactComponent as Web } from '../../assets/svg/about/web.svg';
+import { ReactComponent as Web } from "../../assets/svg/about/web.svg";
 
 type Contributor = {
   name: string;
@@ -21,7 +21,7 @@ const PastContributors: FC = () => {
   const [sections, setSections] = useState<Section[]>([]);
 
   useEffect(() => {
-    fetch('/assets/past_contributors.yaml')
+    fetch("/assets/past_contributors.yaml")
       .then((response) => response.text())
       .then((text) => setSections(yaml.load(text) ?? []));
   }, []); // only run once

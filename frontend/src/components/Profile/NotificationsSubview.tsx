@@ -1,11 +1,11 @@
-import React from 'react';
-import Preference from './Preference';
+import React from "react";
+import Preference from "./Preference";
 import {
   UpdateUserMutationVariables,
   UserProfileFragment,
-} from '../../graphql/graphql';
-import { useUpdateUser } from '../../graphql/hooks/user';
-import Subview from './Subview';
+} from "../../graphql/graphql";
+import { useUpdateUser } from "../../graphql/hooks/user";
+import Subview from "./Subview";
 
 type Props = {
   userProfile: UserProfileFragment;
@@ -15,9 +15,10 @@ const NotificationsSubview = ({ userProfile }: Props) => {
   const updateUser = useUpdateUser();
 
   // Helper function to trigger an update mutation.
-  const updateProperty = (
-    property: (checked: boolean) => UpdateUserMutationVariables
-  ) => (checked: boolean) => updateUser(userProfile, property(checked));
+  const updateProperty =
+    (property: (checked: boolean) => UpdateUserMutationVariables) =>
+    (checked: boolean) =>
+      updateUser(userProfile, property(checked));
 
   return (
     <Subview title="Email Preferences">

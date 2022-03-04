@@ -1,5 +1,5 @@
-import { CalendarOptions, ICalendar, ICSPropertyValue } from 'datebook';
-import { floorMod } from './number';
+import { CalendarOptions, ICalendar, ICSPropertyValue } from "datebook";
+import { floorMod } from "./number";
 
 /**
  * Converts time string to date
@@ -12,19 +12,19 @@ export function stringToDate(time: string): Date {
  * Formats a time to 12-hour w/ AM PM
  */
 export function formatTime(date: Date | string): string {
-  if (typeof date === 'string') {
+  if (typeof date === "string") {
     date = stringToDate(date);
   }
 
   // Sorry internationals but timezones r weird so this is go
   let hours = date.getUTCHours();
-  let minutes = date.getUTCMinutes().toString().padStart(2, '0');
-  let ampm = hours >= 12 ? 'pm' : 'am';
+  let minutes = date.getUTCMinutes().toString().padStart(2, "0");
+  let ampm = hours >= 12 ? "pm" : "am";
 
   hours = hours % 12;
   hours = hours || 12;
 
-  let strTime = hours + ':' + minutes + ampm;
+  let strTime = hours + ":" + minutes + ampm;
 
   return strTime;
 }
@@ -41,9 +41,9 @@ export function daysToString(
 ): string {
   return days
     .trim()
-    .split('')
+    .split("")
     .map((day) => convertor(+day))
-    .join('');
+    .join("");
 }
 
 /**
@@ -56,35 +56,35 @@ export function dayToShortName(day: number): string {
   switch (day) {
     case 7:
     case 0:
-      return 'Sun';
+      return "Sun";
     case 1:
-      return 'M';
+      return "M";
     case 2:
-      return 'Tu';
+      return "Tu";
     case 3:
-      return 'W';
+      return "W";
     case 4:
-      return 'Th';
+      return "Th";
     case 5:
-      return 'F';
+      return "F";
     case 6:
-      return 'Sat';
+      return "Sat";
     default:
       return `${day}`;
   }
 }
 
 const DAY_NAMES = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
 ];
 
-const ICAL_DAY_NAMES = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+const ICAL_DAY_NAMES = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
 
 /**
  * Converts numerical day of the week to day. e.g. 0 => Sunday.

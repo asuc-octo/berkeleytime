@@ -1,5 +1,5 @@
-import React, { ComponentProps, ElementType, ReactNode } from 'react';
-import TrashButton from 'components/Common/TrashButton';
+import React, { ComponentProps, ElementType, ReactNode } from "react";
+import TrashButton from "components/Common/TrashButton";
 
 type Props<T extends ElementType> = ComponentProps<T> & {
   removable?: boolean;
@@ -13,7 +13,7 @@ type Props<T extends ElementType> = ComponentProps<T> & {
 
 const ProfileCard = <Component extends ElementType>({
   removable = true,
-  component: WrapperComponent = 'div',
+  component: WrapperComponent = "div",
   title,
   subtitle,
   description,

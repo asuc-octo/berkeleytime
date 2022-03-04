@@ -1,8 +1,8 @@
-import React from 'react';
-import { Modal } from 'react-bootstrap';
-import ClassDescription from './ClassDescription';
-import { Semester } from 'utils/playlists/semesters';
-import { CourseReference } from 'utils/courses/course';
+import React from "react";
+import { Modal } from "react-bootstrap";
+import ClassDescription from "./ClassDescription";
+import { Semester } from "utils/playlists/semesters";
+import { CourseReference } from "utils/courses/course";
 
 type ClassDescriptionModalProps = {
   show: boolean;
@@ -36,7 +36,7 @@ const ClassDescriptionModal = ({
               fill="white"
             />
           </svg>
-          Back to Courses{' '}
+          Back to Courses{" "}
         </button>
         <ClassDescription
           course={course}

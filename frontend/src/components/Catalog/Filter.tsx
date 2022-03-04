@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import BTSelect from 'components/Custom/Select';
-import FilterModal from './FilterModal';
+import React, { useState } from "react";
+import BTSelect from "components/Custom/Select";
+import FilterModal from "./FilterModal";
 
 import {
   FilterParameter,
@@ -8,18 +8,18 @@ import {
   getChanges,
   getOverlappingValues,
   PlaylistDescription,
-} from '../../utils/playlists/playlist';
+} from "../../utils/playlists/playlist";
 import {
   filterTypeIsClearable,
   filterTypeIsMulti,
   filterTypeIsSearchable,
   filterTypeToPlaceholder,
   filterTypeToString,
-} from '../../utils/playlists/filterTypes';
-import { CourseSortAttribute } from 'utils/courses/sorting';
+} from "../../utils/playlists/filterTypes";
+import { CourseSortAttribute } from "utils/courses/sorting";
 
-import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg';
-import BTInput from 'components/Custom/Input';
+import { ReactComponent as SearchIcon } from "../../assets/svg/common/search.svg";
+import BTInput from "components/Custom/Input";
 
 type Props = {
   filters: Filters;
@@ -38,11 +38,11 @@ type Props = {
 
 type SortOption = { value: CourseSortAttribute; label: string };
 const SORT_OPTIONS: SortOption[] = [
-  { value: 'relevance', label: 'Sort By: Relevance' },
-  { value: 'average_grade', label: 'Sort By: Average Grade' },
-  { value: 'department_name', label: 'Sort By: Department Name' },
-  { value: 'open_seats', label: 'Sort By: Open Seats' },
-  { value: 'enrolled_percentage', label: 'Sort By: Percent Enrolled' },
+  { value: "relevance", label: "Sort By: Relevance" },
+  { value: "average_grade", label: "Sort By: Average Grade" },
+  { value: "department_name", label: "Sort By: Department Name" },
+  { value: "open_seats", label: "Sort By: Open Seats" },
+  { value: "enrolled_percentage", label: "Sort By: Percent Enrolled" },
 ];
 
 const FilterSidebar = ({
@@ -50,7 +50,7 @@ const FilterSidebar = ({
   activeFilters,
   modifyFilters,
   resetFilters,
-  search = '',
+  search = "",
   setSearch,
   sort,
   setSort,
@@ -170,7 +170,7 @@ const FilterSidebar = ({
           className="btn-bt-border filter-scroll-btn blue-text"
           onClick={resetFilters}
         >
-          Reset{' '}
+          Reset{" "}
         </button>
         <button
           className="btn-bt-border filter-scroll-btn"
@@ -183,7 +183,7 @@ const FilterSidebar = ({
             })
           }
         >
-          Sort&nbsp;By{' '}
+          Sort&nbsp;By{" "}
         </button>
         {filters.map((option) => (
           <button

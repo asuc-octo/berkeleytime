@@ -1,11 +1,11 @@
-import { CourseOverviewFragment } from 'graphql/graphql';
+import { CourseOverviewFragment } from "graphql/graphql";
 
 export type CourseSortAttribute =
-  | 'relevance'
-  | 'average_grade'
-  | 'department_name'
-  | 'open_seats'
-  | 'enrolled_percentage';
+  | "relevance"
+  | "average_grade"
+  | "department_name"
+  | "open_seats"
+  | "enrolled_percentage";
 
 export type SortableCourse = CourseOverviewFragment;
 type CourseComparator = (
@@ -81,15 +81,15 @@ export function sortByAttribute(
   sortAttribute: CourseSortAttribute
 ): CourseComparator {
   switch (sortAttribute) {
-    case 'relevance':
+    case "relevance":
       return compareRelevance;
-    case 'average_grade':
+    case "average_grade":
       return compareAverageGrade;
-    case 'department_name':
+    case "department_name":
       return compareDepartmentName;
-    case 'open_seats':
+    case "open_seats":
       return compareOpenSeats;
-    case 'enrolled_percentage':
+    case "enrolled_percentage":
       return compareEnrollmentPercentage;
   }
 }

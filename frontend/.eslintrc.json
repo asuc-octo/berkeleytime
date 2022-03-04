@@ -1,9 +1,5 @@
 {
-  "extends": [
-    "react-app",
-    "plugin:react/recommended",
-    "prettier"
-  ],
+  "extends": ["react-app", "plugin:react/recommended", "prettier"],
   "rules": {
     "no-labels": "off",
     "no-console": "warn",
@@ -17,12 +13,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "*.jsx",
-        "*.js",
-        "*.ts",
-        "*.tsx"
-      ]
+      "files": ["*.jsx", "*.js", "*.ts", "*.tsx"]
     }
   ]
 }

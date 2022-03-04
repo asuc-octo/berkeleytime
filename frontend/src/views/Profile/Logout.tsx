@@ -1,7 +1,7 @@
-import BTLoader from 'components/Common/BTLoader';
-import { useLogout, useUser } from '../../graphql/hooks/user';
-import React, { useEffect } from 'react';
-import { useHistory } from 'react-router';
+import BTLoader from "components/Common/BTLoader";
+import { useLogout, useUser } from "../../graphql/hooks/user";
+import React, { useEffect } from "react";
+import { useHistory } from "react-router";
 
 const Logout = () => {
   const history = useHistory();

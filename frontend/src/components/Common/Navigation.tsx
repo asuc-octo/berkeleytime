@@ -1,12 +1,12 @@
-import React, { FC, useState, useEffect } from 'react';
-import { useLocation } from 'react-router';
-import { Link } from 'react-router-dom';
-import { Navbar, Nav, NavProps } from 'react-bootstrap';
-import { connect, ConnectedProps } from 'react-redux';
-import { ReduxState } from '../../redux/store';
+import React, { FC, useState, useEffect } from "react";
+import { useLocation } from "react-router";
+import { Link } from "react-router-dom";
+import { Navbar, Nav, NavProps } from "react-bootstrap";
+import { connect, ConnectedProps } from "react-redux";
+import { ReduxState } from "../../redux/store";
 
-import { useUser } from '../../graphql/hooks/user';
-import LoginModal from '../Login/LoginModal';
+import { useUser } from "../../graphql/hooks/user";
+import LoginModal from "../Login/LoginModal";
 
 interface Props extends PropsFromRedux {}
 
@@ -20,7 +20,7 @@ const NavigationLink: FC<
   <Nav.Link
     as={to ? Link : undefined}
     to={to}
-    className={'bt-bold ' + (isNew ? 'is-new' : '')}
+    className={"bt-bold " + (isNew ? "is-new" : "")}
     // eventKey required for collapseOnselect
     // https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
     eventKey={to}
@@ -47,7 +47,7 @@ const Navigation: FC<Props> = (props) => {
       fixed="top"
       expand="lg"
       bg="white"
-      style={props.banner ? { position: 'absolute' } : {}}
+      style={props.banner ? { position: "absolute" } : {}}
       /* when the banner is open, the navbar will be positioned
        at the top of the app-container instead of fixed to the
        top of the viewport */

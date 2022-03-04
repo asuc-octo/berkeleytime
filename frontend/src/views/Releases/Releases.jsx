@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Container, Row, Col, ButtonToolbar } from 'react-bootstrap';
-import yaml from 'js-yaml';
+import React, { Component } from "react";
+import { Container, Row, Col, ButtonToolbar } from "react-bootstrap";
+import yaml from "js-yaml";
 
-import Log from '../../components/Releases/Log';
+import Log from "../../components/Releases/Log";
 
 class Releases extends Component {
   constructor(props) {
@@ -13,7 +13,7 @@ class Releases extends Component {
   }
 
   componentDidMount() {
-    fetch('/assets/releases.yaml')
+    fetch("/assets/releases.yaml")
       .then((result) => result.text())
       .then((data) => this.setState({ releases: yaml.load(data).releases }));
   }

@@ -1,4 +1,4 @@
-import React, { Fragment, ReactNode } from 'react';
+import React, { Fragment, ReactNode } from "react";
 
 /**
  * Combines non-null components into a string seperated by seperator.

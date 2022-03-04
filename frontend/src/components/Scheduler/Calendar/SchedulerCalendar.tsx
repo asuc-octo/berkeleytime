@@ -1,8 +1,8 @@
-import React, { ReactNode } from 'react';
-import { stringToDate } from 'utils/date';
-import { Schedule, SchedulerSectionType } from 'utils/scheduler/scheduler';
-import CourseCalendar, { CardData } from './CourseCalendar';
-import CourseCard from './CourseCard';
+import React, { ReactNode } from "react";
+import { stringToDate } from "utils/date";
+import { Schedule, SchedulerSectionType } from "utils/scheduler/scheduler";
+import CourseCalendar, { CardData } from "./CourseCalendar";
+import CourseCard from "./CourseCard";
 
 /**
  * Converts time to a number representing hour
@@ -21,7 +21,7 @@ const sectionToCard = (
   section: SchedulerSectionType,
   getCard: (section: SchedulerSectionType, day: number) => ReactNode
 ): CardData[] =>
-  section.days.split('').map((day) => ({
+  section.days.split("").map((day) => ({
     key: `${day}:${section.id}`,
     day: +day,
     startTime: timeToHour(section.startTime),
