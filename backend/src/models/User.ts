@@ -25,6 +25,10 @@ export class User_Schema {
   access_token: string;
 
   @GQL.Field()
+  @Typegoose.prop()
+  admin: boolean;
+
+  @GQL.Field()
   @Typegoose.prop({ default: null })
   @Length(1, 255)
   bio: string;

@@ -13,13 +13,17 @@ const ResponseGoogle = async (resp) => {
   console.log(idToken);
   console.log(accessToken);
   try {
-    await axios.post(`${REACT_APP_API_URL}/users/google/callback`, {
-      idToken,
-      accessToken,
-    });
-    setAuthToken(idToken);
+    const { data: user } = await axios.post(
+      `${REACT_APP_API_URL}/users/google/callback`,
+      {
+        idToken,
+        accessToken,
+      }
+    );
     localStorage.setItem("id_token", idToken);
     localStorage.setItem("access_token", accessToken);
+    localStorage.setItem("user", JSON.stringify(user));
+    setAuthToken(idToken);
     window.location.href = "/profile";
   } catch (e) {
     window.location.href = "/landing";

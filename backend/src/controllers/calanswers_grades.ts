@@ -44,10 +44,10 @@ const parseCalAnswersGradeLine = ({ header, line, term }) => {
 export const CalAnswers_Grades = new (class Controller {
   parseGradeDumpHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
     console.info(JSON.stringify(req.user));
-    res.json(await this.parseGradeDump({ ...req.query, user: req.user }));
+    res.json(await this.parseGradeDump({ req, res }));
   };
-  parseGradeDump = async (req) => {
-    const start = moment().tz("America/Los_Angeles");
+  parseGradeDump = async ({ req, res }) => {
+    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
     const shared = { gradeCount: 1 };
 
     const businessLogic = async (calAnswersObject, lineNumber) => {
@@ -80,7 +80,7 @@ export const CalAnswers_Grades = new (class Controller {
       );
     };
 
-    const { key } = req;
+    const { key } = req.query;
     const queue = new PQueue({ concurrency: 10 });
     const [gFiles] = await storageClient.currentBucket.getFiles({
       prefix: GCLOUD_PATH_CAL_ANSWERS_GRADE_DUMPS,
@@ -91,7 +91,6 @@ export const CalAnswers_Grades = new (class Controller {
           .map((f) => f.name)
           .filter((f) => f.endsWith(".csv"));
     if (files.length == 0) return { msg: `No object found` };
-
     for (const file of files) {
       let lineNumber = 2;
       console.info(`${ts()} OPENING: ${file}`.padEnd(40, " ").yellow);
@@ -159,10 +158,9 @@ export const CalAnswers_Grades = new (class Controller {
       console.info(
         `${ts()} ` +
           `GRADE: ${shared.gradeCount}`.padEnd(40, " ") +
-          `finished parsing of grade dump "${file}"`
+          `finished parsing grade dump "${file}"`
       );
     }
-    console.info(`${ts()}\tfinished parsing of all grade dumps`);
-    return { start, finish: moment().tz("America/Los_Angeles") };
+    console.info(`${ts()}\tfinished parsing all grade dumps`);
   };
 })();

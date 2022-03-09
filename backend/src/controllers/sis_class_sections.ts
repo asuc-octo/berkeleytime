@@ -29,7 +29,7 @@ export const SIS_Class_Sections = new (class Controller {
   ) => {
     console.info(JSON.stringify(req.user));
     res.json(
-      await this.requestClassSectionData({ ...req.query, user: req.user, res })
+      await this.requestClassSectionData({ ...req.query, user: req.user })
     );
   };
   requestClassSectionData = async ({

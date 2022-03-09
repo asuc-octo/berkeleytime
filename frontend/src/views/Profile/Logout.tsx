@@ -6,13 +6,15 @@ import { useLogout, useUser } from "../../graphql/hooks/user";
 
 const Logout = () => {
   const history = useHistory();
-  const [logout, { error }] = useLogout();
+  // TODO
+  // const [logout, { error }] = useLogout();
+  useLogout();
   const { isLoggedIn } = useUser();
 
   // Log the user out when they visit this page
-  useEffect(() => {
-    logout();
-  }, [logout]);
+  // useEffect(() => {
+  //   logout();
+  // }, [logout]);
 
   // If the logout was successful go to the previous page.
   useEffect(() => {
@@ -24,13 +26,13 @@ const Logout = () => {
   return (
     <div className="logout viewport-app">
       <div className="logout-status">
-        {error ? (
+        {/* {error ? (
           <span>There was an error logging you out. Try refreshing</span>
         ) : (
           <>
             <BTLoader message="Logging you out..." fill />
           </>
-        )}
+        )} */}
       </div>
     </div>
   );

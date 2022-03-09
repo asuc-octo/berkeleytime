@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useCallback } from "react";
 import { getNodes } from "utils/graphql";
 
@@ -37,16 +38,28 @@ export type UserInfo = {
  * @example
  * const { user, isLoggedIn, loading } = useUser();
  */
-export const useUser = (): UserInfo => {
-  const { data, loading } = useGetUserQuery({
-    errorPolicy: "all",
-  });
+// TODO
+// export const useUser = (): UserInfo => {
+//   const { data, loading } = useGetUserQuery({
+//     errorPolicy: "all",
+//   });
 
-  return {
-    isLoggedIn: !!data?.user,
-    loading,
-    user: data?.user ?? null,
-  };
+//   return {
+//     isLoggedIn: !!data?.user,
+//     loading,
+//     user: data?.user ?? null,
+//   };
+// };
+export const useUser = (): UserInfo => {
+  if (localStorage.user) {
+    return {
+      isLoggedIn: true,
+      loading: false,
+      user: null,
+    };
+  }
+
+  return { isLoggedIn: false, loading: false, user: null };
 };
 
 /**
@@ -67,36 +80,43 @@ export const useLogin = (): LoginMutationHookResult => {
 /**
  * Returns a function which logs out
  */
-export const useLogout = (): LogoutMutationHookResult => {
-  return useLogoutMutation({
-    update(cache) {
-      const existingUser = cache.readQuery<GetUserQuery, GetUserQueryVariables>(
-        {
-          query: GetUserDocument,
-        }
-      );
+// TODO
+// export const useLogout = (): LogoutMutationHookResult => {
+//   return useLogoutMutation({
+//     update(cache) {
+//       const existingUser = cache.readQuery<GetUserQuery, GetUserQueryVariables>(
+//         {
+//           query: GetUserDocument,
+//         }
+//       );
 
-      // Ensure there is no user in the cache after a log out
-      cache.writeQuery({
-        query: GetUserDocument,
-        data: {
-          user: null,
-        },
-      });
+//       // Ensure there is no user in the cache after a log out
+//       cache.writeQuery({
+//         query: GetUserDocument,
+//         data: {
+//           user: null,
+//         },
+//       });
 
-      // Invalidate all the schedules for the user (if they are private)
-      if (existingUser?.user) {
-        getNodes(existingUser.user.schedules).forEach((schedule) =>
-          cache.modify({
-            id: cache.identify(schedule),
-            fields(_fieldValue, details) {
-              return details.DELETE;
-            },
-          })
-        );
-      }
-    },
-  });
+//       // Invalidate all the schedules for the user (if they are private)
+//       if (existingUser?.user) {
+//         getNodes(existingUser.user.schedules).forEach((schedule) =>
+//           cache.modify({
+//             id: cache.identify(schedule),
+//             fields(_fieldValue, details) {
+//               return details.DELETE;
+//             },
+//           })
+//         );
+//       }
+//     },
+//   });
+// };
+export const useLogout = (): any => {
+  delete localStorage.user;
+  delete localStorage.id_token;
+  delete localStorage.access_token;
+  return { success: true };
 };
 
 /**
