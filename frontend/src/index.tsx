@@ -3,7 +3,7 @@ import "assets/scss/berkeleytime.scss";
 import axios from "axios";
 import LogPageView from "components/Common/LogPageView";
 import ScrollToTop from "components/Common/ScrollToTop";
-import { REACT_APP_API_URL } from "config";
+import { URL_VERIFY_GOOGLE_TOKEN } from "config";
 import client from "graphql/client";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -16,9 +16,10 @@ import { ApolloProvider } from "@apollo/client";
 
 if (localStorage.id_token) {
   axios
-    .post(`${REACT_APP_API_URL}/users/google/callback`, {
-      idToken: localStorage.id_token,
-      accessToken: localStorage.access_token,
+    .get(URL_VERIFY_GOOGLE_TOKEN, {
+      params: {
+        id_token: localStorage.id_token,
+      },
     })
     .then(() => {
       setAuthToken(localStorage.id_token);

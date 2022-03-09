@@ -27,7 +27,7 @@ import "@colors/colors";
 export const SIS_Courses = new (class Controller {
   requestDataHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
     console.info(JSON.stringify(req.user));
-    res.json(await this.requestData({ ...req.query, user: req.user, res }));
+    res.json(await this.requestData({ ...req.query, user: req.user }));
   };
   requestData = async ({
     pageNumber,
@@ -58,9 +58,9 @@ export const SIS_Courses = new (class Controller {
     {}
   > = async (req, res) => {
     console.info(JSON.stringify(req.user));
-    res.json(await this.requestDump({ req, res }));
+    res.json(await this.requestDump({ res }));
   };
-  requestDump = async ({ req, res }) => {
+  requestDump = async ({ res }) => {
     if (res) res.json({ start: moment().tz("America/Los_Angeles") });
     const key = `${GCLOUD_PATH_SIS_COURSE_DUMPS}/dump_SIS_Course.jsonl.gz`;
     let bytesSent = 0;

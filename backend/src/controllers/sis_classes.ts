@@ -21,9 +21,7 @@ import "@colors/colors";
 export const SIS_Classes = new (class Controller {
   requestClassDataHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
     console.info(JSON.stringify(req.user));
-    res.json(
-      await this.requestClassData({ ...req.query, user: req.user, res })
-    );
+    res.json(await this.requestClassData({ ...req.query, user: req.user }));
   };
   requestClassData = async ({ courseId }: { courseId: string; user?: any }) => {
     let pageNumber = 1;

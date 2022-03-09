@@ -1,11 +1,9 @@
 import express from "express";
-import passport from "passport";
 
 import { SIS_Class_Sections } from "#src/controllers/_index";
+import { authenticate, checkAdmin } from "#src/middlewares";
 
 const router = express.Router();
-const authenticate = passport.authenticate("jwt", { session: false });
-
 router.get(
   "/requestClassSectionData",
   authenticate,
@@ -14,6 +12,7 @@ router.get(
 router.get(
   "/requestClassSectionDump",
   authenticate,
+  checkAdmin,
   SIS_Class_Sections.requestClassSectionDumpHandler
 );
 

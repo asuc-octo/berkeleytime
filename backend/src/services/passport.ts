@@ -1,6 +1,5 @@
 import passport from "passport";
 import { Strategy as GoogleTokenStrategy } from "passport-google-verify-token";
-import { ExtractJwt, Strategy as JwtStrategy } from "passport-jwt";
 
 import { KEY_GOOGLE_CLIENT_ID } from "#src/config";
 import { User_Model } from "#src/models/_index";
@@ -19,11 +18,10 @@ passport.use(
       clientID: KEY_GOOGLE_CLIENT_ID,
     },
     async (parsedToken, googleId, done) => {
-      console.log(parsedToken, googleId);
       const { iss, azp, aud, sub, hd, email, email_verified, iat, exp, jti } =
         parsedToken;
       if (hd != "berkeley.edu") {
-        done(null, false);
+        done(null, false, { message: "unauthorized domain" });
       }
       if (!googleId) {
         done(null, false, { message: "authentication failed" });

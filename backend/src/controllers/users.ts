@@ -23,6 +23,12 @@ interface IController {
 // async activate(req, res): Promise<DocumentType<User_Schema>> {
 
 export const Users = new (class Controller implements IController {
+  adminCheck: ExpressMiddleware<{}, {}> = async (req, res) => {
+    if (!req.user.admin) {
+      res.json(403);
+    }
+  };
+
   current: ExpressMiddleware<{}, {}> = async (req, res) => {
     res.json({ user: req.user.toJSON() });
   };
@@ -38,9 +44,11 @@ export const Users = new (class Controller implements IController {
 
   googleCallback: ExpressMiddleware<{}, {}> = async (req, res) => {
     const { idToken, accessToken } = req.body;
-    const { data } = await axios.get(
-      `${URL_VERIFY_GOOGLE_TOKEN}?id_token=${idToken}`
-    );
+    const { data } = await axios.get(`${URL_VERIFY_GOOGLE_TOKEN}`, {
+      params: {
+        id_token: idToken,
+      },
+    });
     const {
       iss,
       azp,

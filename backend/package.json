@@ -30,7 +30,6 @@
     "p-queue": "^7.2.0",
     "passport": "^0.4.1",
     "passport-google-verify-token": "^2.2.0",
-    "passport-jwt": "^4.0.0",
     "redis": "^4.0.3",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1",
