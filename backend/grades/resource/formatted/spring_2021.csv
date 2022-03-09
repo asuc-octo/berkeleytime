@@ -1,9 +1,1764 @@
 Abbreviation,CourseNum,CCN,SectionNum,CourseDesc,Instructor,Level,A+,A,A-,B+,B,B-,C+,C,C-,D+,D,D-,F,P,NP
-AEROSPC,135A,25525,002,Air Force Studies,Mary Holman,under,5,3,0,0,0,1,1,0,0,0,0,0,0,0,0
-AEROSPC,1A,21256,001,Found Us Air Force,Shawn Whitney,under,0,15,0,0,1,0,0,0,0,0,0,0,1,0,0
-AEROSPC,1A,25363,002,Found Us Air Force,Shawn Whitney,under,0,15,0,0,0,0,0,0,0,0,0,0,2,0,0
-AEROSPC,2A,21255,001,Evolut Of Air Power,Michael Kraft,under,1,15,5,0,1,0,0,0,0,0,0,0,0,1,0
-AEROSPC,2A,25364,002,Evolut Of Air Power,Michael Kraft,under,1,9,2,1,2,0,0,0,0,0,0,0,0,1,0
+AEROSPC,135B,26252,002,Air Force Studies,Andrew Emerson,under,0,13,0,0,0,0,0,0,0,0,0,0,1,0,0
+AEROSPC,1B,25013,002,Found Us Air Force,Mary Holman,under,10,8,5,2,2,1,0,0,0,0,0,0,1,0,0
+AEROSPC,2B,21337,001,Evolut Of Air Power,Andrew Emerson,under,2,7,4,0,0,0,0,0,1,0,0,0,0,0,0
+AEROSPC,2B,25014,002,Evolut Of Air Power,Andrew Emerson,under,2,7,4,0,1,0,0,0,0,0,0,0,0,2,0
+AFRICAM,100,25042,001,Black Intllctl Thgh,Leigh Raiford; Kevin Rigby,under,0,23,23,2,1,0,0,1,0,0,0,0,2,5,2
+AFRICAM,112A,30940,001,Pol/Eco Dev 3rd Wld,Tianna Paschel,under,0,23,23,4,2,1,0,0,0,0,0,0,2,15,0
+AFRICAM,115,25708,001,Lang Soc Iss Africa,Sam Mchombo,under,5,13,6,5,3,2,1,0,0,0,0,0,0,1,0
+AFRICAM,120,24839,001,Africa From Revolut,G Ugo Nwokeji,under,0,5,4,4,8,3,1,1,0,0,0,0,0,6,0
+AFRICAM,152F,26534,1,Neo-Slave Narrative,Darieck Scott,under,7,8,3,1,7,0,0,0,1,0,0,0,0,4,3
+AFRICAM,159,21376,001,Spec Top Afam Lit,Chiyuma Elliott,under,5,6,1,0,1,1,0,0,0,0,0,0,0,4,0
+AFRICAM,194B,24767,001,Aatp Seminar,Takiyah Jackson,under,9,23,0,0,0,0,0,0,0,0,1,0,0,1,0
+AFRICAM,28AC,21348,001,Glob & Min Am Comm,Nitoshia Ford; Cherod Johnson; Frederick Vincent,under,11,50,14,3,2,0,0,0,0,0,0,0,3,6,1
+AFRICAM,5B,25300,001,Afam Life & Cul U S,Peace And Love El Henson,under,8,12,11,11,13,5,0,2,0,1,2,0,4,11,6
+AFRICAM,C133A,30924,001,Race Urban Sch,Travis Bristol; Christian Gordon; Caleb Dawson,under,16,4,10,4,1,2,0,0,0,0,0,0,2,6,1
+AFRICAM,R1A,21340,001,Fresh Composition,Ula Taylor; Malika Imhotep,under,7,6,3,0,0,0,0,1,0,0,0,0,0,0,0
+AFRICAM,R1B,24549,001,Freshmn Composition,Ula Taylor; Brittany Botts,under,1,4,7,2,0,0,0,0,0,0,0,0,1,3,0
+AFRICAM,R1B,25023,002,Freshmn Composition,Ula Taylor; John Mundell,under,1,11,4,0,1,0,0,0,0,0,0,0,0,1,0
+AMERSTD,10,21395,001,Intro American Stdy,Kathleen Moran; Christine Palmer,under,0,4,9,4,4,4,3,2,1,0,0,1,1,5,4
+AMERSTD,101,21398,001,Us Cultures In Time,Christine Palmer; Bryan Wagner,under,0,3,9,4,3,3,3,0,0,0,0,1,0,15,3
+AMERSTD,102,26522,002,Us Cultures/Place,Kathleen Moran; Andrew Shanken,under,1,8,4,2,4,5,0,0,0,0,0,0,1,17,0
+AMERSTD,102,21399,001,Us Cultures/Place,Sarah Gold Mcbride,under,0,25,10,2,5,1,2,0,0,0,0,0,1,5,3
+AMERSTD,102,32609,003,Us Cultures/Place,Mark Brilliant; Steven Solomon; Cristina Violante,under,0,3,3,5,2,1,0,0,2,1,0,0,0,6,0
+AMERSTD,191,15686,002,Senior Seminar,Mark Brilliant,under,0,1,2,1,3,1,0,1,2,0,0,0,0,2,0
+AMERSTD,191,15685,001,Senior Seminar,Sarah Gold Mcbride,under,0,0,2,3,1,0,2,0,1,0,0,0,0,1,0
+AMERSTD,C172,25020,001,Hist American Bus,Christine Rosen; Max Lopez; Chelsea Muir,under,0,6,9,4,3,1,0,0,0,1,0,0,1,20,2
+AMERSTD,H195,19673,001,Honors Thesis,Christine Palmer,under,2,10,3,0,0,0,1,0,0,0,0,0,0,1,0
+ANTHRO,1,21401,001,Intro To Bio Anthro,Sabrina Agarwal,under,90,38,16,14,8,8,4,2,1,0,1,1,3,27,0
+ANTHRO,112,21464,001,Sp Topics: Bio Anth,Burcu Tung,under,14,7,1,1,1,1,0,0,0,0,0,0,0,7,0
+ANTHRO,114,25060,001,Hist/Anthro Thought,Corinne Hayden,under,9,81,16,0,1,0,0,0,0,0,0,0,0,7,1
+ANTHRO,115,25350,001,Intro Med Anthro,Karen Nakamura,under,36,68,0,0,2,0,0,0,0,0,0,0,1,1,0
+ANTHRO,121AC,30227,001,Amercn Materl Cultr,Laurie Wilkie,under,17,20,0,2,0,0,0,0,0,0,0,0,0,3,0
+ANTHRO,122A,32284,001,Archaeol No Amer,Jun Sunseri,under,21,8,1,0,0,0,0,0,0,0,0,0,0,1,0
+ANTHRO,122E,30207,001,Andean Archaeology,Christine Hastorf,under,4,8,2,3,1,0,0,0,0,0,0,0,0,2,0
+ANTHRO,128,32798,002,Spec Topics In Arch,Lisa Maher,under,13,11,2,0,1,0,0,0,0,0,0,0,0,0,1
+ANTHRO,128,25238,001,Spec Topics In Arch,William White,under,0,19,0,0,0,0,0,0,0,0,0,0,0,4,0
+ANTHRO,128M,32286,001,Topics:Arch/Method,Ann Danis,under,5,8,0,0,1,0,0,3,0,0,0,0,0,4,0
+ANTHRO,141,30212,001,Comparative Society,Xin Liu,under,3,5,3,0,0,1,0,0,0,0,0,0,1,1,0
+ANTHRO,146,30208,001,Cities Global South,James Holston,under,3,30,0,0,1,0,0,0,0,0,0,0,0,3,1
+ANTHRO,149,30217,001,Psychological Anth,Stefania Pandolfo,under,16,53,3,0,0,2,0,0,0,0,0,0,1,3,0
+ANTHRO,160AC,24471,001,Forms Of Folklore,Charles Briggs,under,16,59,16,6,6,0,0,0,2,0,0,0,5,33,3
+ANTHRO,162,24761,001,Topics In Folklore,Anthony Buccitelli,under,2,6,3,1,0,1,0,0,0,0,0,0,0,0,0
+ANTHRO,169B,26295,001,Res Theo/Meth Soc,Lawrence Cohen,under,13,7,0,0,0,0,0,0,0,0,0,0,0,0,0
+ANTHRO,189A,32472,001,Topics:Culture Area,Sa'ed Atshan,under,1,6,4,1,1,0,2,0,0,0,0,0,0,0,1
+ANTHRO,189A,32550,002,Topics:Culture Area,Jason Price,under,1,9,4,1,0,0,0,0,0,0,0,0,0,0,0
+ANTHRO,24,25202,001,Freshman Seminar,Nelson Graburn,under,0,5,3,2,0,0,0,0,0,0,0,0,0,1,0
+ANTHRO,2AC,21417,001,Intro Archaeology,Christopher Lowman,under,21,192,10,5,6,5,0,1,0,1,0,0,1,22,2
+ANTHRO,3AC,21428,001,Intro Soc/Cult Ac,Daniel Fisher,under,8,44,23,17,13,8,1,8,3,0,0,0,10,59,1
+ANTHRO,84,24739,001,Sophomore Seminar,Rosemary Joyce,under,2,9,0,0,0,0,0,0,0,0,0,0,0,0,0
+ANTHRO,R5B,21451,002,Reading & Comp,Burcu Tung,under,4,6,1,0,1,0,0,0,0,0,0,0,0,6,0
+ANTHRO,R5B,21450,001,Reading & Comp,Julia Sizek; Rosemary Joyce,under,0,4,0,1,0,1,0,1,0,0,0,0,0,5,2
+ARABIC,100B,21505,001,Advanced Arabic,Haitham Mohamed,under,5,4,2,0,0,0,0,0,0,0,0,0,0,0,0
+ARABIC,1B,21500,003,Elementary Arabic,Amel Belguith,under,3,1,3,2,0,0,0,0,0,0,0,0,0,0,1
+ARABIC,1B,21501,004,Elementary Arabic,Amel Belguith,under,2,1,2,4,0,0,0,0,0,0,0,0,0,1,0
+ARABIC,1B,21498,001,Elementary Arabic,Nathalie Khankan,under,0,8,1,0,1,0,0,0,0,0,0,0,0,0,0
+ARABIC,20B,21502,001,Intermediate Arabic,Haitham Mohamed,under,2,8,1,0,0,0,0,0,0,0,0,0,0,6,0
+ARCH,100B,21098,001,Fund Of Arch Design,William Di Napoli; Gerard Creedon; Keith Plymale; Eleanor Pries; Franklyn Campbell; Lingxiu Chong; Robert Scott; Monica Sanga,under,0,15,18,20,18,12,1,0,1,1,0,0,0,20,1
+ARCH,100D,21108,003,Arch Design Iv,David Orkand,under,1,5,2,3,0,0,0,0,0,0,0,0,0,2,0
+ARCH,100D,21110,005,Arch Design Iv,Sarah Hirschman,under,1,2,2,2,3,1,0,0,0,0,0,0,0,0,0
+ARCH,100D,21224,006,Arch Design Iv,Logman Arja,under,1,7,2,1,0,0,0,0,0,0,0,0,0,1,0
+ARCH,100D,32763,002,Arch Design Iv,Rene Davids,under,1,4,1,2,1,0,0,0,0,0,0,0,0,2,0
+ARCH,100D,21109,004,Arch Design Iv,James Leng,under,0,4,3,2,3,0,0,0,0,0,0,0,0,1,0
+ARCH,100D,21299,007,Arch Design Iv,Kristen Sidell,under,0,2,4,3,2,1,0,0,0,0,0,0,0,1,0
+ARCH,102B,21289,002,Capstone Project,Lindsay Baker,under,0,9,2,1,0,0,0,0,0,0,0,0,0,0,0
+ARCH,11B,21094,001,Intro To Design,Rudabeh Pakravan,under,0,13,14,12,7,2,3,0,0,0,0,0,1,6,4
+ARCH,140,21113,001,Energy & Enviro,Stefano Schiavon; Gail Brager,under,16,63,30,8,8,3,3,1,1,0,0,0,0,26,0
+ARCH,160,21120,001,Intro Construction,Dana Buntrock,under,0,39,0,0,27,0,0,1,0,0,1,0,0,7,1
+ARCH,170B,21125,001,"Hist, Arch&Urbanism",Margaret Crawford,under,37,46,9,4,0,0,0,0,0,0,0,0,0,8,0
+ARCH,98,33718,002,Directed Group Stdy,Maria Luisa de Oliveira Gama Caldas,under,0,0,0,0,0,0,0,0,0,0,0,0,0,12,1
+ARMENI,126,32424,001,Armen Cult And Film,Myrna Douzjian; Matthew Ghazarian,under,3,9,3,6,3,0,0,0,0,0,0,0,0,4,0
+ART,102,24310,001,Adv Ptng R&M,Craig Nagasawa,under,2,15,0,0,0,0,0,0,0,0,0,0,0,0,0
+ART,103,25308,001,Adv Pntng Portrait,Felicita Norris,under,5,3,3,1,0,0,0,0,0,0,1,0,0,1,0
+ART,117,21514,001,Adv Draw Re/Methods,Aida Gamez,under,3,6,5,1,2,0,0,0,0,0,0,0,0,0,0
+ART,118,21515,001,Adv Draw Figure,Indira Morre,under,12,6,1,0,0,0,0,0,0,0,0,0,0,0,0
+ART,119,21516,001,Gpca,Sholeh Asgary,under,9,3,0,2,0,1,0,0,0,0,0,0,1,7,0
+ART,12,24307,001,Drawing: Fdns,Christopher Christion,under,3,10,1,0,1,0,0,0,0,0,0,0,0,3,1
+ART,124,32628,001,Adv Printmaking,Randy Hussong,under,1,13,0,0,0,0,0,0,0,0,0,0,0,0,0
+ART,13,24308,001,Painting: Fdns,Christina Klein-Tross,under,12,4,1,0,0,0,0,0,0,0,0,0,0,3,0
+ART,137,26089,001,Adv Proj Ceram Scul,Nicki Green,under,0,10,2,1,0,0,0,0,0,0,0,0,0,2,0
+ART,138,26719,001,Installation,Carolyn Hott,under,10,1,0,0,1,0,0,0,0,0,0,0,0,0,0
+ART,14,21511,001,Sculpture: Fdns,Dana Hemenway,under,6,7,0,0,0,0,0,0,0,0,0,0,0,2,0
+ART,15,21512,001,Ceramics: Fdns,Nicki Green,under,1,12,3,0,0,0,0,0,0,0,0,0,0,1,0
+ART,16,32622,001,Prnt:Rlf/Int:Fdns,Randy Hussong,under,1,14,0,0,0,0,0,0,0,0,0,0,0,0,0
+ART,160,32629,003,Spec Topics Vis Std,Stephanie Syjuco,under,2,9,2,1,1,0,0,0,0,0,0,0,0,1,0
+ART,160,33030,004,Spec Topics Vis Std,Greg Niemeyer,under,4,23,0,0,1,0,0,0,0,0,0,0,0,1,0
+ART,171,33158,002,Video Projects,Leila Weefur,under,2,9,0,0,0,0,0,0,0,0,0,0,0,3,0
+ART,172,32807,001,Adv Comp Graph Std,Greg Niemeyer,under,6,18,0,0,0,0,0,0,0,0,0,0,0,3,0
+ART,180,21517,001,Advanced Digital Ph,Arielle Rebek,under,1,7,6,0,1,0,0,1,0,0,0,0,0,0,0
+ART,182,26720,001,Creativ Writing Art,Anne Walsh,under,4,7,0,0,0,0,0,0,0,0,0,0,0,0,0
+ART,185,24312,001,Sn Projects,Jill Miller,under,2,9,1,0,0,0,0,0,0,0,0,0,0,0,0
+ART,185,24313,002,Sn Projects,Allan deSouza,under,0,8,1,0,0,0,0,0,0,0,0,0,0,1,0
+ART,8,21507,001,Intro Vis Thinking,Anne Walsh,under,48,16,6,0,0,0,0,0,0,0,0,0,0,6,0
+ASAMST,121,21549,001,Chinese Amer Hist,Harvey Dong,under,0,27,2,0,0,0,0,0,0,0,0,0,0,11,1
+ASAMST,122,25319,001,Japanese Amer Hist,Lisa Hirai Tsuchitani,under,0,6,1,1,0,0,0,0,0,0,0,0,0,3,0
+ASAMST,131,21551,001,Asian Diaspora,Khatharya Um,under,0,3,13,5,0,1,0,0,0,0,0,0,1,4,0
+ASAMST,132AC,21552,001,Islamophobia,Hatem Bazian; Blanca Gamez-Djokic; Talha Mirza; Rasheed Shabazz,under,104,21,14,6,1,0,1,0,0,0,0,0,0,24,0
+ASAMST,152,30651,001,Second Gen Asiam Am,Carolyn Chen,under,1,20,5,2,1,0,0,0,0,0,0,0,0,5,0
+ASAMST,171,21560,001,"Asam In Film, Video",Hannah Michell,under,15,6,11,2,1,0,0,0,0,0,1,0,0,6,1
+ASAMST,176,21561,001,Genre As Amer Lit,Fae Myenne Ng,under,13,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+ASAMST,190,19687,001,Sem-Advanced Topics,Catherine Choy,under,6,3,0,0,1,0,0,0,0,0,0,0,0,0,0
+ASAMST,20A,21528,001,Intro Asian Am Hist,Caleb Ford; Michael Chang; Claire Chun,under,7,43,28,2,1,0,0,0,0,0,0,0,0,16,1
+ASAMST,20C,25470,001,Cultural Politics,Lok Siu; Lisa Ng,under,1,27,11,2,0,0,0,0,0,0,0,0,0,3,0
+ASAMST,R2B,21523,001,Reading&Composition,Khatharya Um; David Pham,under,5,5,1,1,0,0,0,0,0,0,0,0,0,4,0
+ASTRON,121,21597,001,Radio Astronomy Lab,Aaron Parsons; Tyler Cox; Clinton Miller,under,0,4,5,2,1,2,0,0,0,0,0,0,0,0,2
+ASTRON,128,25880,001,Data Lab,Daniel Weisz; Kareem El-Badry; Ellianna Schwab,under,2,1,2,1,0,0,0,0,0,0,0,0,0,12,0
+ASTRON,7B,21592,001,Intro Astrophysics,Mariska Kriek; Nick Choksi; Andrea Antoni; Kaela Lee,under,5,10,3,2,4,2,1,1,1,0,0,0,0,9,1
+ASTRON,98,21596,002,Directed Group Stdy,Jessica Lu,under,0,0,0,0,0,0,0,0,0,0,0,0,0,50,3
+ASTRON,98,27259,003,Directed Group Stdy,Daniel Kasen,under,0,0,0,0,0,0,0,0,0,0,0,0,0,29,1
+ASTRON,C12,24328,001,The Planets,Raymond Jeanloz; Courtney Dressing,under,14,31,8,5,2,4,1,0,0,0,0,0,3,27,5
+ASTRON,C161,21598,001,Rela Astro & Cosmo,Adrian Lee,under,5,4,4,1,6,5,0,1,1,0,0,0,0,7,0
+BIO ENG,100,29196,001,Ethics In Sci & Eng,Teresa Head-Gordon,under,78,20,2,3,2,0,0,0,0,0,0,0,0,16,0
+BIO ENG,101,27946,001,Instr Biology Med,Steven Conolly,under,8,4,4,6,4,0,3,0,0,0,0,0,0,14,0
+BIO ENG,104,27950,001,Bio Trans Phen,Aaron Streets,under,0,13,12,8,17,8,6,3,0,0,0,0,0,20,0
+BIO ENG,11,27917,001,Engineering Molecul,John Dueber; Niren Murthy; Andrew Chen; Navid Jawad,under,5,34,17,20,19,10,6,4,2,2,0,1,2,64,8
+BIO ENG,110,27957,001,Biomed Phys For Eng,Dorian Liepmann,under,20,46,26,7,9,0,0,0,0,0,0,0,0,23,0
+BIO ENG,111,32728,001,Func Bio Dev & Char,Seung-Wuk Lee; Han Kim,under,6,12,0,10,2,0,0,0,0,0,0,0,0,17,0
+BIO ENG,115,27962,001,Tissue Engineering,Michael Conboy; Irina Conboy,under,1,8,23,1,4,0,0,0,0,0,0,0,0,2,0
+BIO ENG,135,28829,001,Front/Micro Sys Bio,Adam Arkin,under,1,1,4,1,1,0,1,1,0,0,0,0,0,7,1
+BIO ENG,140L,28892,001,Synth Bio Lab,JOHN ANDERSON,under,0,5,6,7,1,1,1,0,0,0,0,0,0,8,0
+BIO ENG,145,29291,001, Intro Machine Lrn,Liana Lareau,under,5,18,2,4,0,0,0,0,0,0,0,0,0,5,1
+BIO ENG,153,28945,001,Biotech Entrepren,David Kirn; Sydnee Ruff,under,2,46,0,0,0,0,0,0,0,0,0,0,0,5,0
+BIO ENG,171,33413,001,Neuroethology And N,Michael Yartsev,under,5,6,6,1,0,0,0,0,0,0,0,0,0,0,0
+BIO ENG,25,29060,001,Careers In Biotech,Hayley Lam,under,0,0,0,0,0,0,0,0,0,0,0,0,0,242,2
+BIO ENG,C112,33036,001,Molec Biomec Cell,Mohammad Kaazempur Mofrad,under,0,0,4,2,2,2,0,0,0,0,0,0,0,3,0
+BIOLOGY,1A,21613,001,General Biology Lec,Michael Meighan; Erol Kepkep; Randy Schekman; Marla Feller; Karine Gibbs,under,4,179,132,62,147,19,32,19,13,1,0,0,1,141,2
+BIOLOGY,1AL,21644,001,General Biology Lab,Michael Meighan; Erol Kepkep; Robin Ball,under,20,507,92,32,17,7,2,0,0,0,0,0,2,52,2
+BIOLOGY,1B,21672,001,General Biology,Brett Boltz; Ellen Simms; Joshua Povich; Benjamin Blackman; Benjamin Blonder,under,6,91,81,79,53,56,46,27,23,6,5,0,5,75,24
+BUDDSTD,C113,25539,001,Thought In India,Alexander Von Rospatt,under,3,4,2,1,0,0,0,1,0,0,1,0,0,6,1
+BUDDSTD,C117,24340,001,Mongolian Buddhism,Brian Baumann,under,0,6,0,0,0,0,0,0,0,0,0,0,2,2,0
+BUDDSTD,C128,25550,001,Buddhism Contemp,Mark Blum,under,1,14,3,2,4,0,0,0,0,0,0,0,0,17,1
+BUDDSTD,C152,32817,001,Buddhist Astral Sci,Brian Baumann,under,0,8,1,0,0,0,0,0,0,0,0,0,2,0,0
+CELTIC,129,24940,001,Mod Celtic Cultures,Thomas Walsh,under,1,14,1,0,2,0,0,0,0,0,0,0,0,14,0
+CELTIC,173,30225,001,Celtic Christianity,Annalee Rejhon,under,0,3,1,0,1,0,1,1,0,0,0,0,0,3,0
+CELTIC,R1B,26177,002,Voices/Celtic World,Thomas Walsh,under,1,8,2,0,1,0,0,0,0,0,0,0,0,5,0
+CELTIC,R1B,21724,001,Voices/Celtic World,Myriah Williams,under,0,2,2,3,0,0,0,1,0,0,0,0,1,7,0
+CHEM,104B,20848,001,Adv Inorganic Chem,Jeffrey Long; Kennedy McCone; Danh Ngo,under,1,21,9,5,8,1,1,2,3,1,0,0,0,14,1
+CHEM,105,20849,001,Instrumen Analysis,Ronald Cohen,under,4,4,4,2,9,5,3,0,0,0,1,0,1,14,2
+CHEM,115,20856,001,Organic Chemistry,Dean Toste,under,0,5,2,4,1,0,0,0,0,0,0,0,0,6,0
+CHEM,120A,20859,001,Physical Chemistry,Stephen Leone; Rebecca Hanscam; Adam Rettig; Iulia-Oxana Andriuc; Yue Sun,under,6,27,33,10,13,8,0,4,0,0,0,0,2,69,6
+CHEM,125,20860,001,Phys Chem Lab,Jianbo Jin; Michael Werner Zuerch,under,2,9,0,0,1,0,0,0,0,0,0,0,1,7,0
+CHEM,12B,20933,001,Organic Chemistry,Felix Fischer; Matthew Rollings,under,3,19,4,12,11,9,10,1,4,0,2,0,1,25,3
+CHEM,130B,20870,001,Biophysical Chem,Graham Fleming; Leo Hamerlynck,under,3,8,0,0,5,0,0,3,0,0,0,0,0,7,0
+CHEM,195,19703,001,Special Topics,K Whaley,under,1,3,3,3,1,0,0,0,0,0,0,0,0,3,0
+CHEM,196,11347,003,Special Lab Study,John Arnold; Korshid Tarin,under,2,12,0,0,0,0,0,0,0,0,0,0,0,1,0
+CHEM,196,11413,070,Special Lab Study,Armand Alivisatos,under,0,40,9,4,0,0,0,0,0,0,0,0,0,0,0
+CHEM,1A,20764,001,General Chemistry,Alexis Shusterman; Magan Powell,under,19,67,53,46,21,8,17,6,7,0,0,0,8,73,6
+CHEM,1A,20765,002,General Chemistry,Alexis Shusterman; Magan Powell,under,11,27,23,30,21,11,4,4,4,0,0,0,4,60,7
+CHEM,1AL,20777,001,General Chem Lab,Michelle Douskey; Jonathon Nessralla,under,0,152,38,25,19,13,4,4,3,0,0,0,4,12,5
+CHEM,1AL,20778,002,General Chem Lab,Michelle Douskey; Jonathon Nessralla,under,0,94,24,14,15,7,1,2,2,0,0,0,4,14,3
+CHEM,1B,20793,001,General Chemistry,Michelle Douskey,under,4,59,10,10,7,3,4,1,2,0,0,0,1,11,1
+CHEM,3A,20798,001,Chem Struct React,Kurt Vollhardt; Natalie Johnson; Danny Huang,under,4,45,17,21,22,22,21,17,10,1,0,0,7,43,19
+CHEM,3A,20799,002,Chem Struct React,Kurt Vollhardt; Natalie Johnson; Danny Huang,under,8,71,42,31,37,26,25,23,12,2,0,0,3,74,13
+CHEM,3AL,20800,001,Organic Chem Lab,Peter Marsden; Danny Huang,under,53,96,87,41,19,3,4,1,1,0,0,0,2,25,2
+CHEM,3AL,20801,002,Organic Chem Lab,Peter Marsden; Danny Huang,under,44,72,60,26,15,10,0,1,0,0,0,0,2,13,0
+CHEM,3B,20819,001,Chem Struct React,Maryann Robak; Benjamin Cousineau,under,17,37,33,25,24,15,4,19,7,0,2,0,1,35,11
+CHEM,3B,20820,002,Chem Struct React,Maryann Robak; Benjamin Cousineau,under,22,33,43,39,26,15,8,12,4,0,1,0,3,56,11
+CHEM,3BL,20821,001,Organic Chem Lab,Peter Marsden; Benjamin Cousineau,under,48,134,99,33,9,6,3,1,0,0,0,0,0,31,4
+CHEM,3BL,20822,002,Organic Chem Lab,Peter Marsden; Benjamin Cousineau,under,33,68,39,24,7,2,2,0,0,0,0,0,0,19,0
+CHEM,4B,20834,001,Gen Chm Quant Analy,John Arnold; Richard Saykally; Shane Devlin,under,13,34,28,49,32,6,6,3,0,0,1,0,2,51,3
+CHEM,98,33778,003,Directed Group Stdy,Alexis Shusterman,under,0,0,0,0,0,0,0,0,0,0,0,0,0,52,1
+CHEM,C110L,20852,001,Biochem & Molbi,Isabelle Le Blanc; Eunyong Park,under,2,4,5,5,4,1,0,1,0,0,0,0,0,5,1
+CHEM,C130,20864,001,Biophysical Chem,John Kuriyan; John Groves,under,2,3,3,2,3,2,2,0,1,0,0,0,0,12,0
+CHEM,C150,20872,001,Intr Materials Chem,Daniel Bediako; Samra Husremovic,under,1,6,8,8,2,0,0,0,0,0,0,0,0,6,0
+CHEM,C182,20920,001,Atmos Chem Phys Lab,Kristie Boering,under,4,7,4,0,0,1,0,0,0,0,0,0,0,0,0
+CHEM,H194,11656,002,Honors Research,John Arnold; Korshid Tarin,under,1,12,0,0,0,0,0,0,0,0,0,0,0,0,0
+CHICANO,110,21745,001,Latina/O Phil & Rel,Laura Perez,under,3,7,2,2,2,1,0,0,0,0,0,0,0,3,0
+CHICANO,150B,21748,001,Hist Of Southwest,Pablo Gonzalez,under,4,29,0,0,1,0,0,0,0,0,0,0,0,1,0
+CHICANO,172,21752,001,Chicano & Educ Syst,Maria del Carmen Martinez-Calderon,under,1,7,10,4,1,3,1,0,0,0,0,0,0,4,0
+CHICANO,174,21753,001,"Chic, Law, Crim Jst",Pablo Gonzalez,under,5,37,0,0,0,2,0,0,0,0,0,0,0,1,0
+CHICANO,176,26521,001,Chic Health Care,Bernard Griego,under,3,12,8,7,1,1,0,0,0,0,0,0,0,3,0
+CHICANO,180,21755,002,Topics In Chic Stud,Pablo Gonzalez,under,9,31,0,0,0,0,0,0,0,0,0,0,0,0,0
+CHICANO,180,21756,003,Topics In Chic Stud,Jesus Barraza,under,24,9,0,0,0,0,0,0,0,0,0,0,0,0,1
+CHICANO,180AC,21757,001,Topics In Chic Stud,Jesus Barraza,under,14,18,0,0,0,1,0,0,0,0,0,0,0,1,0
+CHICANO,194B,24737,001,Casa Mora Seminar,Maria Gallegos-Diaz; Laura Jimenez-Olvera; Evelyn Rojo,under,1,21,2,0,0,0,0,0,0,0,0,0,0,0,0
+CHICANO,20,25027,001,Intro Chicano Cult,Peter Kim; Raul Coronado,under,0,11,10,3,9,2,0,0,0,0,2,0,3,12,0
+CHICANO,40,31178,001,Intro Chicano Lit,Mary Garcia,under,0,30,2,0,0,0,0,1,0,0,0,0,1,0,0
+CHICANO,R1B,21729,001,Reading & Comp,Laura Perez; Angela Aguilar,under,6,11,3,0,0,0,0,0,0,0,0,0,0,0,0
+CHINESE,100B,21781,001,Advanced Chinese,Mingzhe Zheng,under,0,15,1,2,0,0,0,0,0,0,0,0,0,5,0
+CHINESE,100XB,25976,001,Adv Chinese Mandar,Li Liu,under,0,7,4,2,0,0,0,0,0,0,0,0,0,3,0
+CHINESE,101,21783,001,4th Year Read:Lit,Weisi Cai,under,0,13,1,0,0,0,0,1,0,0,0,0,0,1,0
+CHINESE,10A,25009,001,Inter Chinese,Li Liu,under,0,4,4,1,0,0,0,0,0,0,0,0,0,2,0
+CHINESE,10B,21774,001,Inter Chinese,Chunhong Xie,under,0,1,1,0,0,1,0,0,0,0,0,0,0,7,0
+CHINESE,10B,21775,002,Inter Chinese,Chunhong Xie,under,0,3,3,0,0,1,0,0,0,0,0,0,0,5,0
+CHINESE,10X,21777,001,Int Chinese Mandar,Hsinyu Lin,under,0,12,1,0,0,0,0,0,0,0,0,0,0,3,0
+CHINESE,10X,21778,002,Int Chinese Mandar,Hsinyu Lin,under,0,12,3,1,0,0,0,0,0,0,0,0,0,3,0
+CHINESE,10Y,31594,001,Int Chinese Dialec,Chunhong Xie,under,0,9,3,2,1,0,0,0,0,0,0,0,0,2,0
+CHINESE,110B,21784,001,Literary Chinese,Robert Ashmore,under,0,5,0,0,0,1,0,0,0,0,0,0,0,3,3
+CHINESE,158,31078,001,Rdng Chinese Cities,Lanchih Po,under,2,14,2,2,2,0,0,0,0,0,0,0,0,6,0
+CHINESE,179,31079,001,Premodern Novels,Ling Hon Lam,under,0,1,1,1,1,1,0,0,0,0,0,0,0,8,0
+CHINESE,186,31080,001,Confucius & Int,Mark Csikszentmihalyi,under,2,15,9,3,3,0,0,0,0,0,0,0,0,13,2
+CHINESE,188,31081,001,Popular Media,Weihong Bao,under,1,4,4,4,1,0,1,0,0,0,0,0,0,8,0
+CHINESE,1A,24724,001,Elementary Chinese,Damien Donnelly,under,0,5,3,0,1,1,0,0,0,0,0,0,0,2,0
+CHINESE,1A,24725,002,Elementary Chinese,Damien Donnelly,under,0,5,2,0,1,0,0,0,0,0,0,0,0,6,0
+CHINESE,1A,27164,003,Elementary Chinese,Lihua Zhang,under,0,5,2,3,0,0,0,0,0,0,0,0,0,3,0
+CHINESE,1B,21768,001,Elementary Chinese,Lihua Zhang; Mingzhe Zheng,under,0,9,6,1,0,0,0,0,0,0,0,0,0,3,0
+CHINESE,1B,21769,002,Elementary Chinese,Lihua Zhang; Mingzhe Zheng,under,0,4,2,1,0,0,0,0,0,0,0,0,0,3,0
+CHINESE,1B,21770,003,Elementary Chinese,Lihua Zhang; Mingzhe Zheng,under,0,7,2,1,1,0,0,0,0,0,0,0,0,4,0
+CHINESE,1X,26546,001,Elem Chinese Mandar,Weisi Cai,under,0,16,0,0,0,1,0,0,0,0,0,0,0,4,0
+CHINESE,1X,31010,002,Elem Chinese Mandar,Weisi Cai,under,0,11,0,1,1,0,0,0,0,0,0,0,0,4,0
+CHINESE,30X,31013,001,Int Canton Herit,Chi Leung Chan,under,0,8,1,0,0,0,0,0,0,0,0,0,0,4,0
+CHINESE,7B,21771,001,Modern Chinese Lit,Sophie Volpp,under,0,6,5,4,1,1,0,0,0,0,0,0,0,3,0
+CHM ENG,140,21041,001,Chem Proc Analysis,Kranthi Kiran Mandadapu; Kaitlyn Engler,under,1,10,3,5,2,2,0,1,0,0,0,0,3,7,1
+CHM ENG,141,20894,001,Chem Eng Thermo,Carlo Carraro,under,1,26,15,29,10,3,1,1,0,0,0,0,1,33,3
+CHM ENG,142,21062,001,Chem Kin React Eng,Enrique Iglesia,under,2,6,3,3,3,2,0,3,0,0,1,0,1,9,2
+CHM ENG,143,21046,001,Comp Methods,Ali Mesbah; Georgios Makrygiorgos,under,4,3,2,0,1,0,0,0,0,0,0,0,0,3,0
+CHM ENG,150A,20900,001,"Trans: Fluids, Heat",Susan Muller; Karthik Shekhar,under,3,18,12,11,9,6,1,0,2,0,1,0,3,53,4
+CHM ENG,150B,21066,001,Trans & Separa,Alexander Katz,under,1,5,3,5,2,2,5,1,0,0,0,0,1,16,1
+CHM ENG,154,20906,001,Chem Eng Laboratory,Nitash Balsara; Negar Beheshti Pour,under,3,13,4,6,8,1,0,0,0,0,0,0,0,10,0
+CHM ENG,160,20909,001,Chem Process Design,Dean Draemel; Marjorie Went,under,4,43,9,1,3,0,0,0,0,0,0,0,0,30,0
+CHM ENG,162,20911,001,Dyn Contr Chem Proc,Jay Keasling,under,7,10,10,3,0,2,0,1,0,0,0,0,0,23,0
+CHM ENG,170B,21048,001,Biochemical Engin,Wenjun Zhang; Jason Ryder,under,9,19,3,0,0,1,0,0,0,0,0,0,0,11,0
+CHM ENG,176,30244,001,Electrochem Process,Bryan Mccloskey; Helen Bergstrom,under,5,19,7,3,8,2,0,0,0,0,0,0,0,24,2
+CHM ENG,179,30245,001,Solid State Devices,Roya Maboudian; Matthew Crafton,under,3,2,3,0,2,2,0,1,0,0,1,0,0,10,1
+CHM ENG,195,16087,007,Special Topics,Jeffrey Reimer,under,2,9,0,0,0,0,0,0,0,0,0,0,0,1,0
+CHM ENG,40,21037,001,Intro Ch E Design,Negar Beheshti Pour; Muhimbo Karangizi; Alberto Nava,under,17,32,3,7,7,5,0,2,3,1,0,0,1,5,3
+CHM ENG,90,20891,001,Sci Eng Sust Energy,Alexis Bell; Tzu-Yang Huang,under,9,26,3,2,1,0,0,0,0,0,0,0,1,4,0
+CIV ENG,105,28980,001,Design Global Trans,Fotini Chow,under,1,8,2,2,1,0,0,0,0,0,0,0,0,1,0
+CIV ENG,107,28986,001,Climate Chg Mitig,Joshua Apte,under,6,14,8,11,0,1,0,1,0,0,1,0,1,7,2
+CIV ENG,11,27996,001,Eng Sys & Susta,Robert Harley; Amber Chau; James Butler,under,1,28,28,29,27,19,5,4,1,0,0,0,0,49,0
+CIV ENG,113,30898,001,Ecol Eng Wat Qual,Kara Nelson,under,1,8,7,2,0,0,2,2,0,0,0,0,0,10,0
+CIV ENG,120,28013,001,Structural Engrg,Matthew De Jong,under,8,21,11,13,8,2,0,2,0,0,0,0,0,25,3
+CIV ENG,123,30900,001,Des Reinf Con Struc,David Kren,under,2,10,0,0,2,3,0,0,0,0,0,0,0,0,0
+CIV ENG,132,28989,001,Applstruct Mech,Sanjay Govindjee,under,2,7,10,8,2,0,1,0,0,0,0,0,0,3,1
+CIV ENG,155,30902,001,Trans Sys Engrg,Michael Cassidy,under,6,11,4,3,10,0,0,0,0,0,0,0,0,32,0
+CIV ENG,165,32797,001,Concrete Mat/Cons,Paulo Monteiro; Ke Xu,under,1,9,2,0,0,0,0,0,0,0,0,0,0,2,0
+CIV ENG,166,30905,001,Construction Engrg,Arpad Horvath,under,0,44,2,0,0,0,0,0,0,0,0,0,0,8,0
+CIV ENG,175,32506,001,Geot Geoenv Engrg,Jonathan Bray; Nina Gardner,under,0,7,17,9,12,4,0,0,0,0,0,0,0,24,0
+CIV ENG,176,30907,001,Environ Geotechnics,Kenichi Soga; Dimitrios Zekkos; Lydia Kelley,under,1,9,7,4,1,0,0,0,0,0,0,0,0,1,0
+CIV ENG,180,28526,001,Cee Systems Design,Hung Nguyen; Stanislaus Tuholski,under,11,5,3,0,0,0,0,0,0,0,0,0,0,1,0
+CIV ENG,191,19714,001,Cee System Analysis,Raja Sengupta,under,3,3,3,4,4,2,1,2,0,0,0,0,0,11,0
+CIV ENG,60,28004,001,Civil Engrg Matls,Claudia Ostertag,under,0,10,10,5,6,7,2,3,3,0,0,0,0,9,0
+CIV ENG,93,28006,001,Engrg Data Analysis,Mark Hansen; Kaijing Ding,under,6,18,8,1,8,3,3,1,0,0,0,0,0,10,2
+CIV ENG,C103N,30897,001,Terrestrial Hydrolo,Sooyeon Yi; Vera Belaia,under,0,30,0,0,13,0,0,0,0,0,0,0,0,3,0
+CIV ENG,C106,28983,001,Air Pollution,Allen Goldstein; Alice Hsu,under,0,15,2,2,0,0,1,0,0,0,0,0,0,6,0
+CIV ENG,C30,27999,002,Intro Solid Mechncs,Francisco Armero,under,1,3,1,0,4,0,0,1,0,0,1,1,0,10,5
+CIV ENG,C30,27998,001,Intro Solid Mechncs,Panayiotis Papadopoulos,under,0,1,2,0,2,2,2,0,0,1,0,0,0,8,3
+CIV ENG,C88,32460,001,Data Sc Smartcities,Mark Stacey; Marta Gonzalez; Alben Rome Bagabaldo,under,6,7,0,1,0,0,0,0,0,0,0,0,0,5,0
+CLASSIC,10B,21786,001,Intro Roman Civ,Kathleen Mccarthy,under,1,23,25,16,9,5,3,1,2,0,0,0,0,52,0
+CLASSIC,124,30583,001,Classical Poetics,Giovanni Ferrari,under,4,16,2,0,0,1,0,0,0,0,0,0,0,3,0
+CLASSIC,130E,32476,001,The Trojan War,Kim Shelton,under,1,16,3,2,1,0,0,1,1,0,0,0,0,9,0
+CLASSIC,17B,21793,001,Elem Roman Arch,J Pena,under,0,2,2,10,2,0,0,0,0,0,0,0,3,4,0
+CLASSIC,28,21794,001,Classic Myths,Duncan Macrae,under,10,71,51,41,12,4,0,0,0,1,0,0,4,46,4
+COG SCI,1,21807,001,Intro To Cogsci,Paul Li,under,0,85,34,25,18,10,1,3,1,1,0,0,0,33,2
+COG SCI,131,24913,001,Comp Models Of Cog,Jose Ramirez,under,43,13,5,1,1,0,2,0,0,0,0,1,2,17,3
+COG SCI,150,26062,001,Sensemaking And Org,Robert Glushko,under,1,6,5,3,1,0,0,0,0,0,0,0,0,3,0
+COG SCI,170,32689,001,Brain Damage,Linda Isaac,under,22,31,14,6,4,1,3,2,0,0,0,0,2,16,1
+COG SCI,190,19748,001,Spec Topics Cog Sci,Davina Chan,under,13,45,1,2,3,0,1,2,1,0,0,0,0,18,1
+COG SCI,190,32923,002,Spec Topics Cog Sci,Jose Ramirez,under,23,2,0,1,0,0,0,0,0,0,0,0,0,5,0
+COG SCI,1B,32779,001,Intro To Cog Sci,Jose Ramirez,under,28,4,2,1,3,0,0,0,0,0,0,2,1,4,0
+COG SCI,C100,32780,001,Issues In Cognition,Davina Chan,under,31,64,15,4,16,2,1,3,1,0,0,0,2,36,6
+COG SCI,C101,25606,001,Cognitive Linguisti,Eve Sweetser,under,0,12,3,1,3,0,0,0,0,0,0,0,1,4,0
+COG SCI,C126,21814,001,Perception,David Whitney,under,0,10,11,10,6,10,1,2,1,0,0,0,1,85,0
+COG SCI,C127,30520,001,Cognitive Neurosci,Richard Ivry,under,1,13,13,9,18,5,3,4,5,0,0,0,1,27,1
+COG SCI,C142,26258,001,Language & Thou,Noah Hermalin; Terrance Regier,under,2,25,3,2,1,0,0,0,1,0,0,1,2,20,0
+COLWRIT,25AC,21869,001,Read Us Educ Insts,Margi Wald,under,12,17,0,0,0,0,0,0,0,0,0,0,0,2,1
+COLWRIT,R1A,21835,004,College Writing 1a,Margaret Sokolik; Carmen Acevedo Butcher,under,1,6,2,1,0,1,0,1,0,1,0,0,0,0,0
+COLWRIT,R1A,21837,006,College Writing 1a,Margaret Sokolik; Lindsey Lanfersieck,under,1,2,4,2,1,2,0,1,0,1,0,0,0,0,0
+COLWRIT,R1A,21839,008,College Writing 1a,Margaret Sokolik; Joe De Quattro,under,7,5,0,0,1,0,0,0,0,0,0,1,0,0,0
+COLWRIT,R1A,21851,020,College Writing 1a,Margaret Sokolik; Jordan Ruyle,under,3,5,1,2,2,0,0,0,0,0,0,0,0,0,0
+COLWRIT,R1A,21834,003,College Writing 1a,Margaret Sokolik; Becky Hsu,under,0,2,9,1,0,0,0,0,0,0,0,0,0,0,0
+COLWRIT,R1A,21836,005,College Writing 1a,Margaret Sokolik; Carmen Acevedo Butcher,under,0,5,3,1,0,0,0,0,0,1,0,0,0,0,0
+COLWRIT,R1A,21838,007,College Writing 1a,Margaret Sokolik; Michelle Baptiste,under,0,7,5,0,1,0,0,1,0,0,0,0,0,0,0
+COLWRIT,R1A,21840,009,College Writing 1a,Margaret Sokolik; Michal Reznizki,under,0,1,3,0,4,1,2,0,0,0,0,0,3,0,0
+COLWRIT,R1A,21841,010,College Writing 1a,Margaret Sokolik; Kimberly Freeman,under,0,3,4,4,0,1,1,0,0,0,1,0,0,0,0
+COLWRIT,R1A,21842,011,College Writing 1a,Margaret Sokolik; Tara Hottman,under,0,11,3,0,0,0,0,0,0,0,0,0,0,0,0
+COLWRIT,R1A,21843,012,College Writing 1a,Patricia Steenland; Margaret Sokolik,under,0,4,1,0,1,2,4,0,0,0,0,0,1,0,0
+COLWRIT,R1A,21844,013,College Writing 1a,Margaret Sokolik; Scott Wallin,under,0,1,2,4,3,1,0,1,0,0,0,0,0,0,0
+COLWRIT,R1A,21846,015,College Writing 1a,Margaret Sokolik; Sae Na Hong,under,0,2,3,0,6,0,0,0,0,0,0,0,2,0,0
+COLWRIT,R1A,21847,016,College Writing 1a,Margaret Sokolik; Chisako Cole,under,0,8,3,1,0,1,0,1,0,0,0,0,0,0,0
+COLWRIT,R1A,21848,017,College Writing 1a,Margaret Sokolik; Teri Crisp,under,0,4,3,3,0,0,0,0,0,0,0,0,2,0,0
+COLWRIT,R1A,21849,018,College Writing 1a,Margaret Sokolik; Aparajita Nanda,under,0,3,5,4,0,0,0,0,0,0,0,0,1,0,0
+COLWRIT,R1A,21850,019,College Writing 1a,Margaret Sokolik; Aparajita Nanda,under,0,5,4,3,2,0,0,0,0,0,0,0,0,0,0
+COLWRIT,R1A,21832,001,College Writing 1a,Belinda Kremer; Margaret Sokolik,under,0,0,1,0,0,2,1,3,0,2,0,1,0,0,0
+COLWRIT,R1A,21833,002,College Writing 1a,Belinda Kremer; Margaret Sokolik,under,0,0,3,2,2,1,0,1,0,1,0,0,2,0,0
+COLWRIT,R1A,21845,014,College Writing 1a,Margaret Sokolik; Scott Wallin,under,0,0,1,1,3,1,1,2,0,1,0,0,1,0,0
+COLWRIT,R4A,25290,001,Reading & Comp,Michelle Baptiste,under,1,7,2,1,0,1,0,0,1,0,0,0,0,2,1
+COLWRIT,R4A,25291,002,Reading & Comp,Donnett Flash,under,1,3,2,4,0,0,0,0,0,0,0,0,0,7,0
+COLWRIT,R4A,31073,003,Reading & Comp,Mary Grover,under,1,11,3,0,0,0,0,0,0,0,0,0,1,0,0
+COLWRIT,R4B,21856,005,"Read,Comp,Research",Benjamin Spanbock,under,1,6,5,2,1,0,0,0,0,0,0,0,0,1,0
+COLWRIT,R4B,21857,006,"Read,Comp,Research",Michael Larkin,under,1,8,1,1,0,0,0,0,0,1,0,0,0,3,1
+COLWRIT,R4B,21858,007,"Read,Comp,Research",Jordan Ruyle,under,6,5,0,0,1,1,0,0,0,0,0,0,0,3,1
+COLWRIT,R4B,21864,013,"Read,Comp,Research",David Wiese,under,1,5,3,1,0,0,0,0,0,0,0,0,0,3,0
+COLWRIT,R4B,24860,015,"Read,Comp,Research",Teri Crisp,under,2,5,2,0,0,0,0,0,0,0,0,0,0,3,0
+COLWRIT,R4B,33745,021,"Read,Comp,Research",Donnett Flash,under,1,4,2,1,0,0,0,0,0,0,0,0,1,5,0
+COLWRIT,R4B,21852,001,"Read,Comp,Research",Caroline Cole,under,0,2,1,1,1,0,0,0,0,0,0,0,2,6,0
+COLWRIT,R4B,21854,003,"Read,Comp,Research",Jonathan Lang,under,0,2,1,4,2,2,1,0,2,0,0,0,0,2,1
+COLWRIT,R4B,21855,004,"Read,Comp,Research",Chisako Cole,under,0,10,0,0,1,0,1,0,0,0,0,0,0,3,1
+COLWRIT,R4B,21859,008,"Read,Comp,Research",Catherine Oakes,under,0,7,3,0,0,0,0,0,0,1,0,0,0,4,0
+COLWRIT,R4B,21860,009,"Read,Comp,Research",Ryan Sloan,under,0,11,0,0,0,0,0,0,0,0,0,0,0,3,1
+COLWRIT,R4B,21861,010,"Read,Comp,Research",Kimberly Freeman,under,0,12,2,1,0,0,0,1,0,0,0,0,0,1,0
+COLWRIT,R4B,21862,011,"Read,Comp,Research",Patricia Steenland,under,0,10,1,1,1,0,0,0,0,0,0,0,0,3,1
+COLWRIT,R4B,21863,012,"Read,Comp,Research",John Levine,under,0,13,0,0,1,0,0,0,0,0,0,0,0,3,0
+COLWRIT,R4B,24744,014,"Read,Comp,Research",David Wiese,under,0,9,4,1,0,1,0,0,0,0,0,0,0,1,0
+COLWRIT,R4B,25292,016,"Read,Comp,Research",Ryan Sloan,under,0,15,0,0,0,0,0,0,0,0,0,0,0,2,0
+COLWRIT,R4B,26715,017,"Read,Comp,Research",Catherine Oakes,under,0,5,1,1,1,0,0,0,0,0,0,0,0,8,0
+COLWRIT,R4B,27182,018,"Read,Comp,Research",Benjamin Spanbock,under,0,2,4,2,1,1,0,0,0,0,0,0,1,5,0
+COLWRIT,R4B,27183,019,"Read,Comp,Research",Michael Larkin,under,0,11,6,0,0,0,0,0,0,0,0,0,0,0,0
+COLWRIT,R4B,33744,020,"Read,Comp,Research",John Levine,under,0,7,2,2,1,0,0,0,0,0,0,0,0,3,1
+COLWRIT,R4B,21853,002,"Read,Comp,Research",Caroline Cole,under,0,0,3,2,3,0,0,0,1,0,0,0,1,3,0
+COM LIT,100,21888,001,Intro To Comp Lit,Mario Telo,under,10,6,4,1,1,0,0,0,0,0,0,0,0,1,0
+COM LIT,160AC,30562,001,Topics/Lit/Poetry,Robert Kaufman,under,0,7,3,3,1,0,0,0,0,0,0,0,0,2,0
+COM LIT,165,24479,001,Myth And Literature,Annalee Rejhon,under,0,4,0,1,1,1,0,1,0,0,0,0,1,4,2
+COM LIT,171,21890,001,Modern Greek Lit,Maria Kotzamanidou,under,0,17,2,0,0,0,0,0,0,0,0,0,0,3,0
+COM LIT,190,19755,001,Senior Seminar,Robert Kaufman,under,0,7,3,3,0,1,0,2,1,0,0,0,1,4,0
+COM LIT,20,30567,001,Literary Cultures,Miryam Sas,under,2,12,11,9,1,2,0,0,0,0,0,0,2,5,0
+COM LIT,60AC,24490,001,Lit Amer Cultures,Karina Palau,under,7,61,11,3,2,0,0,0,0,0,0,0,4,18,2
+COM LIT,R1A,21877,004,Engl Comp World Lit,Karina Palau; Pedro Rolon Machado,under,1,3,2,8,1,0,0,0,0,0,0,0,0,2,0
+COM LIT,R1A,21875,002,Engl Comp World Lit,Karina Palau; Louisa Kirk; Matteo Cavelier Riccardi,under,0,2,4,8,5,3,1,1,0,0,0,0,0,6,0
+COM LIT,R1A,21876,003,Engl Comp World Lit,Karina Palau; Samuel Jackson; Anna Spadafora,under,0,13,12,3,4,0,0,0,0,0,0,0,1,0,0
+COM LIT,R1A,21878,005,Engl Comp World Lit,Karina Palau; Nathan Cohan,under,0,5,8,1,0,0,1,0,0,0,0,0,0,2,0
+COM LIT,R1A,21879,006,Engl Comp World Lit,Karina Palau; Layla Hazemi-Jebelli,under,0,8,4,2,2,0,0,1,0,0,0,0,0,0,0
+COM LIT,R1A,30622,007,Engl Comp World Lit,Karina Palau; Gianna Ward-Vetrano,under,0,0,3,5,0,0,0,0,1,0,0,0,0,7,0
+COM LIT,R1B,21881,001,Engl Comp World Lit,Karina Palau,under,1,11,1,0,0,0,0,0,0,0,0,0,1,2,0
+COM LIT,R1B,21882,002,Engl Comp World Lit,Laila Riazi; Karina Palau; Ata Sunucu,under,3,24,0,3,0,1,0,0,0,0,0,0,0,0,0
+COM LIT,R1B,21886,006,Engl Comp World Lit,Karina Palau; Dinah Lensing-Sharp,under,1,4,5,0,4,0,0,0,0,0,0,0,0,0,0
+COM LIT,R1B,24964,008,Engl Comp World Lit,Karina Palau; Hannah Katznelson,under,4,6,0,2,2,0,0,0,1,0,0,0,0,0,2
+COM LIT,R1B,24967,012,Engl Comp World Lit,Karina Palau; Paul De Morais,under,1,2,3,1,1,0,3,0,0,0,0,0,1,1,1
+COM LIT,R1B,24972,017,Engl Comp World Lit,Karina Palau; Saniya Taher,under,8,5,3,1,0,0,0,0,0,0,0,0,0,0,0
+COM LIT,R1B,21883,003,Engl Comp World Lit,Karina Palau; Pedro Hurtado Ortiz; Alexander Lin,under,0,7,8,9,2,0,0,0,0,0,0,0,0,6,0
+COM LIT,R1B,21884,004,Engl Comp World Lit,Belen Bistue,under,0,2,4,2,2,1,0,0,1,0,0,0,1,1,2
+COM LIT,R1B,24963,007,Engl Comp World Lit,Karina Palau; Molly Bronstein; Mufei Jiang,under,0,8,9,6,3,1,1,0,0,0,0,0,0,6,0
+COM LIT,R1B,24965,010,Engl Comp World Lit,Karina Palau; Christopher Scott,under,0,6,4,1,1,1,0,0,0,0,0,0,0,4,0
+COM LIT,R1B,24968,013,Engl Comp World Lit,Belen Bistue,under,0,3,3,3,1,1,0,0,0,0,0,0,1,2,1
+COM LIT,R1B,24971,016,Engl Comp World Lit,Karina Palau; Mehak Khan,under,0,15,0,0,0,0,0,0,0,0,0,0,0,2,0
+COM LIT,R1B,30623,009,Engl Comp World Lit,Karina Palau; Kathryn Crim; Haley Stewart,under,0,18,2,3,3,0,0,0,0,0,0,0,0,5,0
+COMPSCI,10,28035,001,Beauty Joy Computng,Daniel Garcia,under,14,17,3,8,15,1,0,1,2,0,1,0,5,31,5
+COMPSCI,152,28668,001,Comp Arch & Eng,Krste Asanovic; Albert Ou; Hankun Zhao,under,4,14,14,1,4,0,1,1,0,0,0,0,4,15,5
+COMPSCI,161,32544,001,Computer Security,Nicholas Weaver; Peyrin Kao,under,55,161,44,17,8,2,0,3,0,0,0,0,1,133,3
+COMPSCI,162,28243,001,Op Sys And Sys Prog,Anthony Joseph; Natacha Crooks,under,3,93,51,16,5,2,0,0,1,0,0,0,0,129,8
+COMPSCI,169L,32363,001,Softwar Eng Project,Armando Fox; Michael Ball; Cassidy Hardin; Nicholas Mecklenburg; Srujay Korlakunta,under,4,18,4,1,0,0,0,1,0,0,0,0,0,14,0
+COMPSCI,170,28254,001,Intro Cs Theory,James Demmel; Alessandro Chiesa; Varun Jhunjhunwalla,under,15,126,100,44,25,13,3,3,6,0,0,0,3,253,14
+COMPSCI,171,30276,001,Cryptography,Sanjam Garg; Yinuo Zhang,under,5,10,5,3,7,1,0,0,0,0,0,0,0,44,0
+COMPSCI,172,32355,001,Comp And Complexity,Alistair Sinclair,under,5,13,4,3,4,0,1,1,0,0,0,0,1,16,1
+COMPSCI,184,28267,001,Computer Graphics,Ren Ng; Angjoo Kanazawa,under,10,73,31,30,13,4,1,2,1,1,1,0,2,76,5
+COMPSCI,188,28272,001,Artif Intelligence,Stuart Russell; Xiaodong Song; Xiaocheng Yang,under,17,161,105,64,31,19,7,2,2,0,0,1,3,274,7
+COMPSCI,189,28286,001,Intro Machine Learn,Jonathan Shewchuk,under,129,138,21,18,6,4,7,2,3,2,0,1,5,210,21
+COMPSCI,194,32407,035,Special Topics,Joseph Hellerstein; Aditya Parameswaran,under,10,69,6,3,1,1,1,1,0,0,0,0,0,7,2
+COMPSCI,194,33077,080,Special Topics,Pieter Abbeel; Sergey Karayev; Joshua Tobin,under,0,46,0,0,2,0,0,0,0,0,0,0,0,12,0
+COMPSCI,194,33332,100,Special Topics,John Canny,under,0,40,15,1,0,0,0,0,0,0,0,0,0,12,0
+COMPSCI,195,19759,001,Social Implic Comp,Michael Ball,under,0,0,0,0,0,0,0,0,0,0,0,0,0,181,3
+COMPSCI,197,16441,001,Field Study,Paul Hilfinger,under,0,0,0,0,0,0,0,0,0,0,0,0,0,29,1
+COMPSCI,197,16447,215,Field Study,Christopher Hunn,under,0,0,0,0,0,0,0,0,0,0,0,0,0,344,14
+COMPSCI,198,29256,056,Directed Group Stdy,Bjorn Hartmann,under,0,0,0,0,0,0,0,0,0,0,0,0,0,84,5
+COMPSCI,198,33198,112,Directed Group Stdy,Jelani Nelson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,201,1
+COMPSCI,198,33199,008,Directed Group Stdy,Paul Hilfinger,under,0,0,0,0,0,0,0,0,0,0,0,0,0,83,4
+COMPSCI,47B,28045,001,Supl Data Structure,Joshua Hug,under,7,6,2,1,1,0,0,0,0,1,0,0,0,2,1
+COMPSCI,61A,28047,001,Str Interp Cmp Prgs,Paul Hilfinger; Pamela Fox,under,52,81,86,113,113,62,14,4,4,0,0,4,10,313,34
+COMPSCI,61B,28108,001,Data Structures,Joshua Hug,under,136,295,266,207,61,23,16,13,14,0,0,2,5,299,25
+COMPSCI,61C,28177,001,Machine Structures,Nicholas Weaver; John Kolb; Stephan Kaminsky; Connor McMahon,under,7,131,12,10,9,2,0,4,2,0,1,0,3,210,13
+COMPSCI,70,28202,001,Discrete Math&Prob,Satish Rao; Shyam Parekh,under,32,109,73,103,78,40,20,11,9,0,0,0,7,215,22
+COMPSCI,88,28893,001,Cs Struct Data Sci,Gerald Friedland; Michael Ball,under,4,20,51,31,13,2,0,1,2,0,0,1,0,120,5
+COMPSCI,W182,29224,001,Neural Networks,Sergey Levine,under,21,67,54,18,9,0,0,1,0,3,0,1,3,181,7
+COMPSCI,W186,25860,001,Intro To Database,Lakshya Jain; Christopher Wong; Alvin Cheung; Kaitlyn Lee; David Wang,under,24,134,61,34,8,3,2,0,0,0,1,0,1,165,3
+CY PLAN,101,21262,001,Intro Urb Data,Karen Chapple; Irene Farah Rivadeneyra; Felicia Jiang,under,37,42,10,2,0,0,0,1,0,0,0,0,0,20,0
+CY PLAN,114,21285,001,Intro Urb Reg Trans,Daniel Chatman; Amelia Thomson,under,0,30,17,1,2,2,0,0,0,0,0,0,0,12,0
+CY PLAN,116,21145,001,Urban Plng Process,Kimberly Smith,under,3,5,3,2,0,0,0,0,0,0,0,0,0,1,0
+CY PLAN,117AC,21238,001,Urbn & Comm Hlth,Joseph Griffin; Jason Corburn; Rafael Velazquez; Juan Gonzalez; Whitney Francis,under,36,11,1,0,0,0,0,1,0,0,0,0,1,4,2
+CY PLAN,120,33370,001,Com Plan/Pb Pol Dis,Victor Pineda; Pierce Abrahamson,under,1,19,8,2,0,2,0,1,0,0,0,0,0,3,0
+CY PLAN,160,33093,001,Comm Dev Orig Pract,Carolina Reid; Honora Montano; Jamon Franklin,under,18,37,7,2,2,1,0,0,0,0,0,0,1,6,0
+CY PLAN,180,21151,001,Research Sem Urb St,Daniel Lindheim,under,0,5,2,1,0,1,0,0,0,0,0,0,0,1,0
+CY PLAN,190,15742,001,Adv Topcs Urban Stu,Deborah Mckoy; David Garcia,under,1,10,1,2,1,0,0,0,0,0,0,0,0,0,0
+CY PLAN,198,21152,001,Directed Group Stdy,Carol Galante; -,under,0,0,0,0,0,0,0,0,0,0,0,0,0,9,3
+CY PLAN,C88,21319,001,Data Sc Smartcities,Mark Stacey; Marta Gonzalez; Alben Rome Bagabaldo,under,6,3,0,0,0,0,0,0,0,0,1,0,0,1,0
+DATA,197,26903,1,Datasci Field Study,Deborah Nolan,under,0,0,0,0,0,0,0,0,0,0,0,0,0,12,1
+DATA,198,33833,016,Directed Group Study,Deborah Nolan; Tianran Li; Varun Mittal; Kyle Kishimoto,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,4
+DATA,4AC,33106,001,Data And Justice,Margarita Boenig-Liptsin,under,4,20,9,2,1,0,1,1,0,0,1,0,0,4,2
+DATA,88,27092,002,Data Sci Connector,Dennis Feehan,under,0,3,10,2,1,0,0,0,0,0,0,0,0,3,1
+DATA,88E,33109,001,Economic Models,Matthew Van Dusen,under,2,18,8,1,5,0,0,1,0,0,0,0,0,37,0
+DATA,94,33626,001,Topics Data Science,Joshua Hug; Suraj Rampure,under,3,11,1,0,0,0,0,0,0,0,0,0,0,3,1
+DATA,C100,31296,001,Princ&Tech Data Sci,Andrew Bray; Joseph Gonzalez; Ishaan Srivastava; Kunal Agarwal,under,31,284,173,93,38,37,2,3,0,0,0,0,2,319,5
+DATA,C102,31428,001,Data Inf Dec,Yan Shuo Tan; Ramesh Sridharan,under,9,75,11,8,3,0,0,3,0,0,0,0,0,119,0
+DATA,C104,31302,001,Ethics Of Data,Ari Edmundson,under,11,49,37,18,12,3,1,1,0,0,0,0,1,62,0
+DATA,C8,31157,001,Foundation Data Sci,Babak Ayazifar; Tamara Vilaythong; Sam Wu; Ananya Krishnan; Shiyun Shen; Angela Zhou; Swupnil Sahai; Ellen Persson,under,45,265,193,121,120,54,32,33,7,0,0,0,4,397,19
+DATA,H195B,26902,1,Data Science Honors,Matthew Van Dusen,under,1,11,0,0,0,0,0,0,0,0,0,0,0,0,0
+DEMOG,C175,24424,001,Econ Demography,Ellen Langer; Joshua Goldstein; Felipe Menares Salas; Sakshina Bhatt; Payal Hathi; Andrew Atkinson,under,1,4,7,4,6,2,0,0,0,0,0,0,1,31,2
+DES INV,10,28888,1,Discovering Design,Yim Lee Au; Effie Jia,under,23,16,11,1,0,0,0,0,0,0,0,0,0,6,0
+DES INV,15,29201,001,Design Methodology,Kosa Goucher-Lambert; Elisa Kwon,under,0,43,17,3,0,0,0,0,0,0,0,0,0,2,0
+DES INV,198,28942,4,Directed Group Stud,Bjorn Hartmann,under,0,0,0,0,0,0,0,0,0,0,0,0,0,20,2
+DES INV,198,28943,5,Directed Group Stud,Bjorn Hartmann,under,0,0,0,0,0,0,0,0,0,0,0,0,0,76,2
+DES INV,21,28567,1,Vis Comm & Sketch,Justin Rheinfrank,under,22,7,0,0,0,0,0,0,0,0,0,0,0,1,0
+DES INV,23,28700,1,Creative Prog&Elec,Christopher Myers; Tina Piracci,under,1,9,8,0,1,1,0,0,0,0,0,0,0,2,0
+DES INV,25,29207,1,Ux Design,Jennifer Shirey,under,9,17,1,1,0,0,0,0,0,0,0,0,0,4,0
+DES INV,95,28687,001,Lecture Series,Amy Dinh,under,0,0,0,0,0,0,0,0,0,0,0,0,0,69,3
+DUTCH,171AC,32320,001,New Netherland,Jeroen Dewulf,under,2,35,11,5,0,0,0,0,0,0,0,0,0,14,1
+EA LANG,109,25545,001,Tea Cultures,John Wallace,under,10,7,2,0,0,0,0,0,0,0,0,0,0,3,0
+EA LANG,114,31083,001,Illness Narratives,Daniel O'Neill,under,1,19,6,1,1,0,0,0,0,0,0,0,0,0,0
+EA LANG,119,31085,001,History Of Heaven,Brian Baumann,under,1,8,5,0,1,3,0,0,0,0,2,0,0,4,2
+EA LANG,181,31105,001,Ea Film: Genre,Daniel O'Neill; Jinsoo An,under,0,16,3,2,1,2,0,2,0,0,0,0,0,1,0
+EA LANG,C128,25552,001,Buddhism Contemp,Mark Blum,under,0,5,4,1,1,1,0,1,0,0,0,0,0,6,0
+EA LANG,R1B,32900,001,Reading And Comp,Andrew Jones; Bonnie McClure; William Stewart,under,2,8,5,4,2,3,1,0,1,0,0,0,1,2,4
+EA LANG,R1B,32901,002,Reading And Comp,Andrew Jones; Linda Zhang,under,2,9,1,0,0,0,0,0,0,0,0,0,0,3,1
+ECON,1,21899,001,Intro To Economics,Mehtab Khan; James Campbell,under,23,93,106,48,58,12,5,6,9,0,1,0,7,111,6
+ECON,1,31053,002,Intro To Economics,Enrico Moretti; Juan Diego Havraneg Delpiazzo,under,36,77,30,51,52,32,21,7,3,0,4,0,4,66,4
+ECON,100A,21936,001,Micro Analysis,Shradhey Prasad; James Campbell,under,17,113,55,47,25,24,5,5,1,0,1,0,11,174,6
+ECON,100B,21951,001,Macro Analysis,Martha Olney; Shreya Dutt,under,11,75,67,57,38,24,13,9,0,0,1,0,3,165,4
+ECON,101A,21966,001,Econ Theory--Micro,Stefano Dellavigna,under,6,25,14,7,3,1,1,1,0,0,0,0,0,25,1
+ECON,101B,21971,001,Econ Theory--Macro,Benjamin Schoefer,under,4,18,20,7,0,0,0,0,0,0,0,0,0,26,0
+ECON,104,32850,001,Adv Micro Theory,Zheng Huang,under,6,8,11,7,7,4,0,0,1,0,0,0,0,18,1
+ECON,106,31108,001,Adv Macro,Yuriy Gorodnichenko,under,0,8,1,2,1,0,0,0,0,0,0,0,0,8,2
+ECON,115,21974,001,20th Cen World Econ,Barry Eichengreen,under,0,44,17,11,7,3,2,0,2,0,0,0,0,61,0
+ECON,121,26951,001,Ind Org & Pub P,Aaron Edlin; Martin Caruso Bloeck; Nicole Gandre,under,3,17,22,15,3,2,0,0,0,0,0,0,0,20,0
+ECON,131,21984,001,Public Economics,Emmanuel Saez,under,9,14,14,21,14,9,5,2,1,0,0,0,0,45,1
+ECON,133,21988,001,Glob Ineq And Growt,Gabriel Zucman,under,6,16,29,12,10,3,0,2,4,0,0,0,0,63,0
+ECON,135,26638,001,Econ Grow Hist Pers,James Delong,under,4,20,20,9,1,0,0,0,0,0,0,0,0,17,0
+ECON,136,21992,001,Financial Economics,Raymond Hawkins,under,8,55,31,13,9,1,1,0,0,0,0,0,0,95,2
+ECON,138,21999,001,Finan & Behav Econ,Raymond Hawkins,under,7,75,38,19,12,2,0,0,0,0,0,0,0,65,0
+ECON,139,24838,001,Intermed Fin Econ,Stephen Bianchi,under,1,10,10,4,3,1,0,0,0,0,0,0,0,13,1
+ECON,140,22006,001,Econometrics,Stephen Bianchi; Alexey Sinyashin; Jon Steinsson,under,6,89,54,43,42,19,6,6,0,0,0,0,2,227,11
+ECON,141,22015,001,Econometric Analys,Vira Semenova,under,6,18,14,1,0,4,1,0,0,0,0,0,1,24,0
+ECON,157,32618,001,Health Economics,Ryan Edwards,under,41,99,34,8,4,4,0,1,0,0,0,0,1,28,1
+ECON,172,31112,001,Econ Dev-Case Study,Edward Miguel,under,0,22,14,8,3,1,1,1,0,0,0,0,0,82,0
+ECON,174,31119,001,Poverty Impact Eval,Frederico Finan,under,5,11,8,0,1,0,0,0,0,0,0,0,0,26,0
+ECON,182,31126,001,Intl Monet Econ,Esther Shears; Yingge Yan; Maurice Obstfeld,under,1,48,18,12,1,4,1,0,0,0,0,0,3,34,1
+ECON,183,26929,001,Intl Econ Seminar,Barry Eichengreen,under,0,3,4,4,0,0,0,0,0,0,0,0,0,1,0
+ECON,191,19781,001,Topic Econ Research,Barry Eichengreen; Priscila De Oliveira; Caleb Wroblewski,under,0,7,1,2,4,0,0,1,0,0,0,0,1,12,1
+ECON,C125,21979,001,Environmental Econ,James Sallee,under,1,35,8,4,4,0,0,1,0,0,0,0,0,47,0
+ECON,C142,24633,001,Appl Metric/Pub Pol,David Card,under,20,15,6,0,0,0,0,0,0,0,0,0,0,14,1
+ECON,C171,25511,001,Dev Econ,Benjamin Faber,under,4,7,6,7,1,2,0,0,0,0,0,0,0,16,0
+ECON,C175,24425,001,Econ Demography,Ellen Langer; Joshua Goldstein; Felipe Menares Salas; Sakshina Bhatt; Payal Hathi; Andrew Atkinson,under,14,17,31,18,8,4,0,0,0,0,0,0,0,77,1
+ECON,C181,22021,001,International Trade,Andres Rodriguez-clare,under,5,44,10,6,5,0,0,0,0,0,2,0,1,77,2
+EDSTEM,187,33309,001,Project-Based Instr,Mark Spencer,under,5,13,0,0,0,0,0,0,0,0,0,0,0,0,0
+EDSTEM,82,33325,002,K-8 Stem Teaching,Jonathan Osler,under,9,2,0,0,0,0,0,0,0,0,0,0,0,0,0
+EDSTEM,82,33326,004,K-8 Stem Teaching,Marlo Warburton,under,4,6,2,0,0,0,0,0,0,0,0,0,0,0,0
+EDSTEM,82,33324,001,K-8 Stem Teaching,Maria Laws,under,0,11,0,0,0,0,0,0,0,0,0,0,1,0,1
+EDSTEM,82T,33327,001,K-12 Stem Tutoring,Dylan Bland,under,0,14,1,2,1,0,0,0,0,0,0,0,0,3,0
+EDUC,130,29384,001,Know Learn Math Sci,Alan Schoenfeld; Heather Fink,under,0,14,5,5,4,7,0,0,0,0,0,0,0,3,1
+EDUC,131AC,29385,001,Sci And Math Equity,Daniel Golub; Sandra Zuniga Ruiz,under,7,15,6,2,0,0,1,0,0,0,0,0,0,3,0
+EDUC,140AC,29386,001,Art Of Making Mean,Glynda Hull; Bharat Suri,under,2,5,2,0,0,1,0,0,0,0,0,0,0,6,1
+EDUC,140AC,29387,002,Art Of Making Mean,Glynda Hull; Daniele Fogel,under,2,6,4,0,2,0,0,0,0,1,0,0,0,5,0
+EDUC,154,29496,001,Language In World,Laura Sterponi,under,0,12,5,1,0,1,0,0,0,0,0,0,1,1,0
+EDUC,167,33798,001,Higher Ed Policy,Tolani Britton,under,0,3,10,0,0,0,0,0,0,0,0,0,0,2,0
+EDUC,188F,29423,001,"Lang, Race, And Edu",Sahara Baquedano Lopez; Derrika Hunt,under,15,8,2,0,1,0,0,0,0,0,0,0,0,2,0
+EDUC,190AC,15754,003,Critical Studies,Glynda Hull; Talia Leibovitz,under,20,4,3,0,0,0,0,0,0,0,0,0,0,0,0
+EDUC,190AC,15753,002,Critical Studies,Glynda Hull; Gema Cardona,under,0,15,1,0,0,0,0,0,0,0,0,0,0,2,0
+EDUC,198,29390,002,Directed Group Stdy,Dor Abrahamson; -,under,0,0,0,0,0,0,0,0,0,0,0,0,0,52,4
+EDUC,198,29391,003,Directed Group Stdy,Lisa Garcia Bedolla; Jessica Mena Flores,under,0,0,0,0,0,0,0,0,0,0,0,0,0,11,1
+EDUC,98,29381,002,Directed Group Stdy,Dor Abrahamson; -,under,0,0,0,0,0,0,0,0,0,0,0,0,0,22,1
+EDUC,C181,30919,001,Race Urban Sch,Travis Bristol; Christian Gordon; Caleb Dawson,under,26,4,17,4,2,0,0,0,0,0,0,0,2,1,0
+EDUC,W140A,29388,001,Art Of Making Mean,Glynda Hull; Catherine Park,under,3,6,10,1,1,2,0,0,0,0,0,0,0,5,0
+EDUC,W141,29477,001,Exp Digtl Pedagogy,Jessica Adams-Grigorieff; Glynda Hull,under,0,15,3,1,1,1,1,0,0,0,0,0,1,7,0
+EDUC,W142,30704,001,Ed In Global World,Erin Murphy-Graham,under,0,6,5,2,1,0,0,0,0,0,0,0,0,1,0
+EDUC,W142,32450,002,Ed In Global World,Erin Murphy-Graham; Amy Banas,under,0,12,4,1,0,0,0,0,0,0,0,0,1,1,0
+EDUC,W142,32451,003,Ed In Global World,Erin Murphy-Graham; Julia Zhu,under,0,4,4,0,0,0,0,0,0,0,0,0,2,1,0
+EDUC,W144,32446,001,Practicum In Educ,Erin Murphy-Graham; Martha Mendoza; Monica Zegers Larrain,under,1,31,12,3,5,2,0,0,0,0,0,0,0,12,1
+EDUC,W161,29462,001,Digital Learning En,Zachary Pardos; Ioannis Anastasopoulos,under,11,1,3,0,0,0,0,0,0,0,0,0,0,3,0
+EDUC,W165,33076,001,Early Learning,Bruce Fuller,under,3,16,2,0,0,0,0,0,0,0,0,0,0,2,0
+EDUC,W190A,29453,002,Crit Studies In Edu,Christyna Serrano,under,1,34,0,0,0,0,0,0,0,0,0,0,0,0,0
+EECS,126,28631,001,Prob & Random P,Thomas Courtade,under,3,54,38,22,22,7,2,2,0,0,0,0,2,82,2
+EECS,127,28623,001,Optimization Models,Laurent El Ghaoui,under,8,47,32,10,3,1,0,1,0,0,1,0,2,54,8
+EECS,151,28304,001,Intro Dig Inte Cir,John Wawrzynek,under,2,8,4,4,0,0,0,0,0,0,0,0,0,8,2
+EECS,151LB,28307,101,Dig Des Ic Fpga Lab,John Wawrzynek; Tan Nguyen,under,5,5,0,0,0,0,0,0,0,0,0,0,0,4,0
+EECS,151LB,28308,102,Dig Des Ic Fpga Lab,John Wawrzynek; Tan Nguyen,under,6,2,0,1,0,0,0,0,0,1,0,0,0,0,1
+EECS,16A,28998,001,Design Info Dev I,Laura Waller; Amanda Jackson; Anika Ramachandran; Vidish Gupta; Raghav Gupta,under,17,81,70,72,20,10,5,7,2,3,3,4,7,143,32
+EECS,16B,29019,001,Design Info Dev Ii,Vladimir Stojanovic; Gireeja Ranade; Steven Lu; Ana Tudor; Neelesh Ramachandran; Sravya Basvapatri; Maxwell Chen,under,22,201,21,41,38,21,9,4,5,1,1,0,4,622,68
+EECS,C106B,28637,001,Robotic Manipulatio,Sosale Sastry; Yi Ma; Amay Saxena; Jaeyun Seo,under,6,14,2,1,0,0,0,0,0,0,0,0,0,6,0
+EL ENG,105,28324,001,Micro Dev & Cir,Rikky Muller,under,1,9,2,2,1,0,1,0,0,0,0,0,0,15,4
+EL ENG,117,28329,001,Em Fields & Wav,Boubacar Kante,under,2,3,2,0,2,2,1,0,0,0,0,0,0,4,0
+EL ENG,120,28332,001,Signals And Systems,Chunlei Liu,under,7,23,9,3,8,3,0,0,0,0,0,0,0,42,0
+EL ENG,123,28338,001,Digit Sig Process,Kannan Ramchandran,under,2,15,1,3,4,2,0,0,0,0,0,0,0,14,1
+EL ENG,130,28348,001,Ic Devices,Sayeef Salahuddin,under,0,3,0,1,3,0,0,0,0,0,0,0,0,6,4
+EL ENG,134,28350,001,Photovoltaic Devic,Ana Arias,under,4,3,3,0,3,0,0,1,0,0,0,0,0,9,2
+EL ENG,137B,28352,001,Elec Power Systems,Alexandra Von Meier,under,4,13,0,3,3,0,0,0,0,0,0,0,0,5,1
+EL ENG,143,28354,001,Microfab Tech,Ali Javey,under,0,9,2,0,1,0,0,0,0,0,0,0,0,5,2
+EL ENG,192,19785,001,Mechtron Design Lab,Ronald Fearing,under,3,2,1,1,0,0,0,0,0,0,0,0,0,9,0
+EL ENG,194,32319,002,Special Topics,Miki Lustig,under,1,7,0,0,0,0,0,0,0,0,0,0,0,6,0
+EL ENG,C128,28342,001,Feedback Cntrl Sys,Somayeh Sojoudi,under,4,0,4,4,1,0,0,0,0,0,0,0,0,5,0
+"ENE,RES",102,27300,001,Global Env Probs,Lara Kueppers,under,5,22,14,1,1,0,1,1,2,0,0,0,1,12,1
+"ENE,RES",160,32272,001,Climate Justice,Daniel Kammen,under,2,22,25,6,8,1,1,0,0,0,0,0,0,7,0
+"ENE,RES",190B,32786,001,"Energy, Env Issues",Youjin Chung,under,6,4,2,1,1,0,0,0,0,0,0,1,0,0,2
+ENGIN,120,28406,001,Prin Of Engr Econom,Daniel Pirutinsky,under,0,94,3,8,7,0,1,0,0,0,0,0,0,29,2
+ENGIN,125,29120,001,Engineering Ethics,Raluca Scarlat,under,102,27,11,3,0,2,1,0,0,0,0,0,1,29,1
+ENGIN,157AC,28521,001,"Eng,Envrn & Society",Khalid Kadir; Sean Kelly,under,0,20,10,4,2,1,0,0,0,0,0,0,0,6,1
+ENGIN,185,28926,001,Stem Communication,Emily Kehrt,under,0,16,11,2,0,0,0,0,0,0,0,0,0,3,1
+ENGIN,26,28400,001,3 Dimen Mod Des,Kourosh Youssefi,under,11,74,2,1,1,1,1,1,1,0,0,0,0,13,0
+ENGIN,29,31307,001,Manufac & Des Comm,Hayden Taylor,under,4,37,4,13,10,2,2,0,0,0,0,0,0,5,0
+ENGIN,7,28384,001,Intr Computer Prog,Michael Frenklach,under,12,21,60,51,25,18,9,2,2,0,0,0,6,92,12
+ENGLISH,110,30383,001,Medieval Literature,Spencer Strub,under,2,30,15,3,3,2,0,1,0,0,0,0,0,5,0
+ENGLISH,112,30549,001,Middle Eng Lit,Jennifer Miller,under,0,3,2,3,1,1,0,0,0,0,0,0,0,0,0
+ENGLISH,117S,22073,001,Shakespeare,Jeffrey Knapp,under,2,7,13,10,2,9,5,1,0,0,0,0,2,16,0
+ENGLISH,119,30514,001,Lit Rest & Ear,JAMES TURNER,under,0,1,2,2,2,1,1,0,0,0,0,0,1,7,1
+ENGLISH,120,32294,001,Lit Later 18th Cent,Joanna Picciotto,under,3,20,13,7,0,0,0,0,0,0,0,0,0,4,0
+ENGLISH,121,30384,001,Romantic Period,Celeste Langan,under,0,5,3,1,3,1,0,0,1,0,0,0,0,3,0
+ENGLISH,125B,30550,001,English Novel,Sukanya Banerjee,under,0,6,5,6,3,0,0,0,0,0,0,0,0,9,0
+ENGLISH,125C,25439,001,European Novel,Catherine Flynn,under,1,6,2,0,1,0,0,0,0,0,0,0,1,4,0
+ENGLISH,126,26118,001,British Lit/1900-45,Joshua Gang,under,0,8,12,2,0,0,0,0,0,0,0,0,1,3,0
+ENGLISH,130A,24415,001,Am Lit: Before 1800,Samuel Otter,under,1,6,2,3,2,3,0,0,0,0,0,0,0,7,0
+ENGLISH,130C,30385,001,Am Lit: 1865-1900,Elisa Tamarkin,under,0,20,8,4,3,1,0,0,0,0,0,0,0,2,0
+ENGLISH,133T,30554,001,Topics Af Am,Stephen Best,under,1,2,4,2,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,133T,30555,002,Topics Af Am,Nadia Ellis,under,0,11,8,3,4,0,0,0,0,0,0,0,0,2,0
+ENGLISH,134,30519,001,Contemp Lit,Joshua Gang,under,0,7,11,3,0,1,0,0,0,0,0,0,0,3,0
+ENGLISH,141,25442,001,Modes Of Writing,Melanie Abrams,under,0,35,35,5,4,2,2,0,0,0,1,0,0,10,0
+ENGLISH,143A,22074,001,Short Fiction,Vikram Chandra,under,0,9,0,0,0,0,0,0,0,0,0,0,0,2,0
+ENGLISH,143A,26751,002,Short Fiction,Melanie Abrams,under,0,10,0,0,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,143B,22075,001,Verse,John Shoptaw,under,1,9,0,0,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,153T,30387,001,Top As Am Lit & Cul,Andrew Leong,under,6,31,4,0,0,0,0,0,1,0,1,0,0,1,0
+ENGLISH,160,26121,001,Literary Criticism,Andrew Leong,under,4,11,0,0,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,161,30566,001,Int To Lit Theory,Dorothy Hale,under,0,10,5,9,4,2,0,0,0,0,0,0,1,5,0
+ENGLISH,165,24890,004,Special Topics,Geoffrey O'Brien,under,1,19,0,1,0,0,0,0,0,0,0,0,0,2,0
+ENGLISH,165,22078,002,Special Topics,George Starr,under,0,6,16,2,0,0,0,0,0,0,0,0,0,0,0
+ENGLISH,165,24889,003,Special Topics,Frank Cruz,under,0,5,8,0,3,0,0,0,0,0,0,0,1,5,0
+ENGLISH,165AC,26752,001,Spec Top Amer Cult,Dena Fehrenbacher,under,11,8,1,0,1,0,0,0,0,0,0,0,0,3,0
+ENGLISH,166,32308,004,Special Topics,Hannah Zeavin,under,3,29,0,0,0,0,0,0,0,0,0,0,0,5,0
+ENGLISH,166,32792,005,Special Topics,Anna Muza,under,3,10,3,1,1,0,0,0,0,0,0,0,0,0,0
+ENGLISH,166,30516,001,Special Topics,Hertha Wong,under,0,23,7,1,0,0,1,0,0,0,0,0,0,0,0
+ENGLISH,166,30518,003,Special Topics,Mark Danner,under,0,25,8,4,0,0,0,0,0,0,0,0,0,3,1
+ENGLISH,166AC,32392,001,Spe Top Am Cultures,Steven Lee,under,0,27,6,4,0,0,0,0,0,0,0,0,0,5,0
+ENGLISH,174,30515,001,Lit & History,Scott Saul,under,4,10,13,9,8,3,0,0,1,0,0,0,0,13,1
+ENGLISH,176,30389,001,Lit & Pop Cultu,Spencer Strub,under,2,31,16,2,1,2,0,0,0,0,0,0,0,3,0
+ENGLISH,177,26932,001,Lit & Philosoph,Colleen Lye,under,2,16,14,3,1,0,0,0,0,0,0,0,1,6,0
+ENGLISH,180C,30552,001,Comedy,David Marno,under,0,17,11,3,4,0,0,0,0,0,0,0,0,7,0
+ENGLISH,180H,26126,001,Short Story,Vikram Chandra,under,0,20,9,4,2,0,0,2,0,0,1,0,0,10,0
+ENGLISH,180Z,25443,001,Science Fiction,Katherine Snyder,under,2,28,8,6,5,0,0,0,0,0,0,0,1,5,2
+ENGLISH,190,16945,002,Research Seminar,Jason De Stefano,under,2,8,0,0,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,190,16951,009,Research Seminar,Genaro Padilla,under,3,9,0,1,1,0,0,0,0,0,0,0,0,2,0
+ENGLISH,190,16953,004,Research Seminar,Susan Schweik,under,1,9,3,0,3,0,0,0,0,0,0,0,0,2,0
+ENGLISH,190,16944,001,Research Seminar,Kevis Bea Goodman,under,0,6,4,1,4,1,0,0,0,0,0,0,0,1,0
+ENGLISH,190,16946,003,Research Seminar,Scott Saul,under,0,7,6,3,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,190,16947,005,Research Seminar,Katherine Snyder,under,0,4,1,2,2,0,2,0,0,0,0,0,0,0,0
+ENGLISH,198,22085,006,Directed Group Stdy,Eric Falci,under,0,0,0,0,0,0,0,0,0,0,0,0,0,28,1
+ENGLISH,198,22086,007,Directed Group Stdy,David Marno,under,0,0,0,0,0,0,0,0,0,0,0,0,0,24,3
+ENGLISH,26,24894,001,Intro To Poetry,Susan Schweik,under,0,21,0,0,2,0,0,0,0,0,0,0,1,3,0
+ENGLISH,43A,30359,001,Intro/Writ Fiction,Amy Rowland,under,0,12,1,1,0,0,0,0,0,0,0,0,0,0,0
+ENGLISH,43A,33320,002,Intro/Writ Fiction,Vikram Chandra; Mary Wilson,under,0,13,2,0,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,45A,22070,001,Lit In English,David Landreth,under,0,46,6,0,1,1,0,0,0,0,0,0,1,1,1
+ENGLISH,45B,22071,001,Lit In English,Ian Duncan,under,0,19,17,12,1,2,0,0,0,0,0,0,0,2,0
+ENGLISH,45C,22072,001,Lit In English,Eric Falci,under,0,14,47,13,4,0,0,1,0,0,0,0,0,12,0
+ENGLISH,H195B,22080,002,Honors Course,Celeste Langan,under,1,15,0,0,0,0,0,0,0,0,0,0,0,0,0
+ENGLISH,R1A,22062,006,Reading And Comp,David Walter,under,4,9,4,0,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,R1A,26136,008,Reading And Comp,Nadia Ellis; Atti Viragh,under,1,4,3,3,4,1,0,0,0,0,0,0,0,0,0
+ENGLISH,R1A,22057,001,Reading And Comp,Jesse Nathan,under,0,17,0,0,0,1,0,0,0,0,0,0,0,0,0
+ENGLISH,R1A,22058,002,Reading And Comp,Jennifer Cho,under,0,8,4,3,2,0,0,0,0,0,0,0,0,1,1
+ENGLISH,R1A,22059,003,Reading And Comp,Nadia Ellis; Jared Robinson,under,0,16,0,2,0,0,0,0,0,0,0,0,0,0,0
+ENGLISH,R1A,22060,004,Reading And Comp,Nadia Ellis; Dana Swensen,under,0,11,1,2,0,0,1,0,0,0,0,0,1,1,0
+ENGLISH,R1A,22061,005,Reading And Comp,Ryan McWilliams,under,0,9,3,2,1,0,0,0,0,0,0,0,0,2,0
+ENGLISH,R1A,26135,007,Reading And Comp,Jasper Bernes,under,0,9,6,1,0,0,0,0,0,0,1,0,0,1,1
+ENGLISH,R1B,22068,006,Reading And Comp,Nadia Ellis; Jacob Wang,under,2,2,6,4,1,0,0,0,0,0,0,0,0,2,0
+ENGLISH,R1B,24888,011,Reading And Comp,Nadia Ellis; Jason Trevino,under,3,2,1,2,1,1,0,0,1,0,0,0,2,3,2
+ENGLISH,R1B,24895,012,Reading And Comp,Nadia Ellis; Abigail Struhl,under,2,9,2,0,1,0,0,1,0,0,0,0,0,3,0
+ENGLISH,R1B,24897,014,Reading And Comp,Srijani Ghosh,under,2,12,1,0,0,0,0,0,0,0,0,0,0,0,0
+ENGLISH,R1B,22063,001,Reading And Comp,Srijani Ghosh,under,0,12,1,1,1,0,0,0,1,0,0,0,0,1,0
+ENGLISH,R1B,22064,002,Reading And Comp,Nadia Ellis; Lizzie Vinyard Boyle,under,0,8,5,1,1,1,0,0,0,0,0,0,0,1,1
+ENGLISH,R1B,22067,005,Reading And Comp,Nadia Ellis; Alexander Ullman,under,0,8,2,1,1,0,1,0,1,0,0,0,0,2,0
+ENGLISH,R1B,24885,007,Reading And Comp,Nadia Ellis; Rudi Yniguez,under,0,6,8,3,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,R1B,24886,009,Reading And Comp,Nadia Ellis; Leo Dunsker,under,0,10,2,1,2,0,0,0,0,0,0,0,0,2,0
+ENGLISH,R1B,24887,010,Reading And Comp,Nadia Ellis; Jessica Laser,under,0,8,3,3,0,0,0,0,0,0,0,0,0,1,0
+ENGLISH,R1B,25685,016,Reading And Comp,Jennifer Cho,under,0,9,3,2,0,1,0,0,0,0,0,0,1,1,1
+ENGLISH,R1B,30570,008,Reading And Comp,Nadia Ellis; Garreth O'Brien,under,0,15,0,0,0,0,0,0,0,0,0,0,1,2,0
+ENGLISH,R1B,22066,004,Reading And Comp,Nadia Ellis; Kevin Ogunniyi,under,0,0,1,5,2,0,1,1,0,0,0,0,0,1,0
+ENV DES,1,21159,001,Intro To Env Des,Deni Ruggeri,under,9,30,8,5,0,0,0,0,0,0,0,0,0,7,0
+ENV DES,100,21166,001,The City,Priscila Coli Rocha; Giselle Kristina Mendonca Abreu; Michael Larice,under,19,30,9,3,6,0,0,0,0,0,0,0,3,16,5
+ENV DES,104,21258,001,Design Frameworks,Thomas Chastain,under,12,13,1,2,0,0,0,0,0,0,0,0,0,3,0
+ENV DES,106,21172,001,Sustanbity Wrkshop,Eric Cesal,under,1,3,9,7,0,0,0,0,0,0,0,0,0,2,0
+ENV DES,4B,21164,001,Global Cities,Karen Frick; Tamara Kerzhner; Archimedes Faulkner; Deni Ruggeri; Cameron Toler; Jeremiah Tolbert,under,0,116,0,0,0,0,0,0,0,0,0,0,0,4,0
+ENV DES,4C,21165,001,Future Ecologies,Jennifer Wolch; Gwendolyn Fuertes; Kristina Hill; Maria Gonzalez,under,30,35,9,5,7,0,0,1,1,1,0,0,0,12,2
+ENV DES,R3B,21163,001,R & C In Env De,C Crysler; Giuseppina Forte,under,2,7,4,1,0,0,0,0,0,0,0,0,0,1,0
+ENVECON,100,27311,001,Microecon Theory,Jeffrey Perloff; Shuo Yu; Leila Njee Bugha,under,7,14,9,0,1,1,0,0,0,0,0,0,2,9,0
+ENVECON,141,30279,001,Ag & Environ Policy,David Zilberman,under,12,26,28,26,9,6,0,3,3,1,0,0,2,22,1
+ENVECON,147,27324,001,Reg Of Energy & Env,Meredith Fowlie,under,5,16,10,7,3,3,2,0,2,0,0,0,0,32,5
+ENVECON,153,27844,001,Envir & Development,Ethan Ligon,under,10,7,6,2,1,0,0,1,0,0,0,0,0,11,1
+ENVECON,162,27327,001,Econ Of Water Res,David Sunding,under,2,14,2,11,0,0,1,0,0,0,0,0,1,11,0
+ENVECON,170,30830,001,Energy&Climate,Jiang Lin,under,0,16,0,0,0,0,0,0,0,0,0,0,0,10,0
+ENVECON,C101,27316,001,Environmental Econ,James Sallee,under,6,54,11,14,3,0,5,1,0,0,0,0,0,79,0
+ENVECON,C118,27687,001,Intro Econometrics,Sofia Villas-Boas,under,4,41,20,14,7,3,1,0,0,0,0,0,2,46,4
+ENVECON,C151,27723,001,Dev Econ,Benjamin Faber,under,1,2,3,0,1,1,1,0,0,0,0,0,0,3,0
+ENVECON,C181,27330,001,International Trade,Andres Rodriguez-clare,under,0,9,3,2,2,1,0,0,0,0,0,0,0,20,0
+EPS,100B,22103,001,Gen/Interp Of Rocks,Paul Renne,under,0,5,2,4,1,0,0,0,1,0,0,0,1,2,0
+EPS,103,22107,001,Intro Mar Chem,James Bishop; Ashley Marie Poindexter,under,5,6,6,0,0,2,0,0,0,0,0,0,0,2,0
+EPS,108,25816,001,Geodynamics,Harriet Lau; Mrinal Dursun,under,13,17,7,3,3,4,0,0,0,0,0,0,0,3,0
+EPS,124,25819,001,Isotopic Geochem,David Shuster,under,2,14,1,0,0,0,1,0,0,0,0,0,0,1,0
+EPS,130,22110,001,Stg Motion Seismol,Douglas Dreger; Jessica Parker,under,0,3,1,2,0,0,0,0,0,0,0,0,1,4,0
+EPS,150,22111,001,Case Stdy-Earth Sys,Bruce Buffett,under,5,4,3,3,1,0,0,0,0,0,1,0,1,8,0
+EPS,3,25043,001,Water Planet,William Dietrich; Jennifer Natali; Teresa Bilir,under,1,24,17,5,8,3,3,2,1,0,0,0,0,16,0
+EPS,50,22098,001,The Planet Earth,Daniel Stolper,under,0,9,6,4,9,5,1,0,0,0,0,0,0,8,0
+EPS,C12,24329,001,The Planets,Raymond Jeanloz; Courtney Dressing,under,3,12,0,0,2,1,0,0,0,0,1,0,0,2,0
+EPS,C180,26197,001,Air Pollution,Allen Goldstein; Alice Hsu,under,0,7,1,1,1,2,1,0,0,0,0,0,0,1,0
+EPS,C20,26966,001,Earthquakes,Roland Burgmann; William Davis; Ryan Yohler; Ellen Mills,under,48,55,27,9,9,7,4,2,1,0,2,0,1,24,1
+ESPM,100ES,27409,001,Methods Of Env Sci,John Battles,under,0,35,18,8,8,1,0,0,0,0,0,0,0,4,0
+ESPM,102C,27413,001,Resource Mangmt,Matthew Potts,under,6,20,7,7,2,1,5,0,1,0,0,0,4,12,6
+ESPM,106,27790,001,American Wildlife,Arthur Middleton,under,24,21,0,4,1,0,0,0,1,0,0,0,0,4,3
+ESPM,111,27792,001,Ecosystem Ecology,Dennis Baldocchi,under,7,14,4,2,2,1,0,2,2,0,0,0,0,4,1
+ESPM,112,27419,001,Microbial Ecology,Jill Banfield,under,0,16,5,2,5,1,0,1,0,0,0,0,0,4,0
+ESPM,112L,27421,001,Comp Res Meta Data,Jill Banfield; Jacob West-Roberts,under,0,18,0,0,0,0,0,0,0,0,0,0,0,1,0
+ESPM,113,27422,001,Insect Ecology,Nicholas Mills,under,1,5,10,5,4,0,1,0,1,0,0,0,1,11,1
+ESPM,114,27423,001,Wildlife Ecology,Justin Brashares,under,31,22,17,11,3,1,0,1,0,0,1,0,1,20,2
+ESPM,120,27888,001,Science Of Soils,Celine Pallud; Aidee Guzman,under,6,8,6,7,3,0,0,0,1,0,0,0,0,12,1
+ESPM,131,27435,001,Soil Microbiology A,Celine Pallud,under,1,9,4,7,0,1,0,0,0,0,0,0,0,1,0
+ESPM,134,27438,001,For Ecosys Disrupt,Nicholas Mills; Ignacio Chapela; Brandon Collins,under,0,6,6,3,3,1,1,0,0,0,0,0,0,21,0
+ESPM,144,27440,001,Insect Physiology,Mark Tanouye,under,15,28,6,0,1,0,0,0,0,0,0,0,0,1,0
+ESPM,15,27694,001,Intro Environ Sci,Matthew Potts; Paolo D'Odorico,under,8,50,27,20,24,12,7,9,8,2,0,0,9,76,2
+ESPM,150,32379,001,Special Topics,Sunaura Taylor; Sebastian Rubiano-Galvis,under,8,3,0,0,0,0,0,0,0,0,0,1,0,4,0
+ESPM,150,32721,002,Special Topics,Youjin Chung,under,11,11,3,3,2,0,1,0,0,0,0,0,0,4,0
+ESPM,150,32963,003,Special Topics,Aakash Desai,under,46,4,0,0,0,0,0,0,0,0,0,0,0,2,0
+ESPM,152,27446,001,Global Change Biol,Erica Rosenblum,under,16,45,15,5,10,2,1,1,1,0,0,0,0,11,0
+ESPM,160AC,27730,001,Am Env/Cultrl Hist,Kurt Spreyer,under,8,101,8,5,6,2,0,0,0,0,0,0,0,10,0
+ESPM,165,27465,001,Int'L Rural Dev Pol,Claudia Carr,under,7,12,5,1,0,1,1,0,0,0,0,0,0,9,0
+ESPM,168,27716,001,Political Ecology,Nancy Peluso; Jesse Williamson,under,18,40,21,9,5,2,1,1,1,0,0,0,0,14,1
+ESPM,175B,27477,001,Sen Res Sem Env Sci,Patina Mendez; Leslie Mcginnis; Kyle Leathers,under,2,14,4,6,3,0,0,0,0,0,0,0,0,4,0
+ESPM,175L,33847,001,Sen Res Lab Env Sci,Patina Mendez,under,0,25,1,3,0,0,0,0,0,0,0,0,0,2,0
+ESPM,181A,27904,001,Fire Ecology,Scott Stephens,under,2,2,5,7,7,2,2,1,1,0,0,0,0,7,0
+ESPM,183,27737,001,Forest Ecosyst Mgmt,Julia Murphy,under,2,6,0,0,0,3,0,0,0,0,0,0,0,4,0
+ESPM,186,27497,001,Range Management,Felix Ratcliff,under,4,20,5,2,4,0,0,0,0,0,0,0,0,5,1
+ESPM,194A,19521,001,Senior Seminr Crs,Mark Tanouye,under,4,22,0,0,0,0,0,0,0,0,0,0,0,0,0
+ESPM,194A,19522,002,Senior Seminr Crs,Adina Merenlender,under,8,18,0,0,0,0,0,0,0,0,0,0,0,1,0
+ESPM,198,27506,006,Directed Group Stdy,Ronald Amundson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,13,1
+ESPM,198,27507,007,Directed Group Stdy,Katherine O'Neill,under,0,0,0,0,0,0,0,0,0,0,0,0,0,106,3
+ESPM,198,27509,009,Directed Group Stdy,Rosemary Gillespie,under,0,0,0,0,0,0,0,0,0,0,0,0,0,29,1
+ESPM,24,27356,002,Freshman Seminar,Vincent Resh,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,2
+ESPM,40,27705,001,Insect/Humn Society,Rodrigo Almeida,under,14,41,16,12,8,5,2,4,0,1,0,0,1,38,0
+ESPM,50AC,27364,001,Intro Cult/Res Mgt,Kurt Spreyer,under,16,355,46,16,21,1,1,3,0,0,0,0,7,98,7
+ESPM,72,27711,001,Gis,Van Butsic,under,4,25,6,1,0,0,1,0,0,0,0,0,2,10,1
+ESPM,C10,27340,001,Environ Issues,Ronald Amundson,under,12,101,25,5,5,1,1,0,1,0,1,0,1,14,1
+ESPM,C115A,27772,001,Freshwater Ecology,Albert Ruhi Vidal,under,3,6,1,3,2,0,1,0,0,0,0,0,0,2,0
+ESPM,C115C,27430,001,Fish Ecology,Stephanie Carlson,under,1,13,6,7,3,0,2,0,0,0,0,0,0,4,0
+ESPM,C138,27439,001,Intro Comp Virology,Britt Glaunsinger; Kim Seed,under,1,11,0,4,10,0,1,0,0,0,0,0,0,10,1
+ESPM,C167,27467,001,Env Health & Dev,Rachel Morello-Frosch; Katherine Wolf,under,12,100,10,3,0,1,0,0,0,0,0,0,0,24,0
+ESPM,C180,27493,001,Air Pollution,Allen Goldstein; Alice Hsu,under,0,6,0,1,0,0,1,0,0,0,0,0,0,4,0
+ESPM,C46,27357,001,Cal Climate Change,David Sedlak; Whendee Silver,under,6,28,3,11,10,4,2,1,4,0,0,0,5,9,4
+ESPM,H175B,27479,001,Sen Res Sem Env Sci,Patina Mendez; Leslie Mcginnis; Kyle Leathers,under,1,10,0,0,0,1,0,0,0,0,0,0,0,0,0
+ETH STD,100,22158,001,Comp Eth Lit,Gregory Choy,under,3,22,6,2,0,0,0,0,0,0,0,0,0,1,0
+ETH STD,101A,30589,001,Soc Sci Methods,Fantasia Painter; Carolyn Chen,under,6,19,20,4,0,1,1,0,0,0,0,0,1,8,0
+ETH STD,10AC,30592,001,Hist Of Race West,Frances Ramos; Christian Paiz; Sofia Chavez,under,43,21,6,1,2,1,0,2,0,0,0,0,3,2,0
+ETH STD,122AC,26437,001,Eth/Race In Am Film,Raymond Telles; Abraham Ramirez,under,5,52,11,0,1,0,1,0,0,0,0,0,1,5,1
+ETH STD,126,25475,001,Gender & Sexuality,Sara Mameni,under,0,2,6,6,10,4,1,0,0,0,0,0,0,0,0
+ETH STD,174,22165,001,Exist Panic The Lit,Gregory Choy,under,4,23,1,1,2,0,0,0,0,0,0,0,0,2,1
+ETH STD,176,22166,001,Eth Art And Artists,Gregory Choy,under,0,35,1,1,1,0,0,1,0,0,0,0,0,0,1
+ETH STD,180,24677,001,Comp Eth Std Topics,Enrique Lima,under,0,7,2,4,1,0,0,0,0,0,0,0,0,2,0
+ETH STD,190,19526,002,Adv Sem In Eth Std,Christian Paiz,under,0,14,0,0,0,0,0,0,0,0,0,0,0,2,0
+ETH STD,194,25389,001,Stud Acad Success,Luisa Giulianetti; Ryan Farquhar,under,3,13,0,0,0,0,0,0,0,0,0,0,0,0,1
+ETH STD,194,26000,004,Stud Acad Success,Luisa Giulianetti; Ryan Farquhar,under,2,9,0,0,0,0,0,0,0,0,0,0,0,0,0
+ETH STD,194,25390,002,Stud Acad Success,Luisa Giulianetti; Ryan Farquhar,under,0,21,1,0,1,1,0,0,0,0,0,0,0,2,0
+ETH STD,197,17078,011,Field Study,Luisa Giulianetti; Brieanna Wright; Pablo Gonzalez,under,0,0,0,0,0,0,0,0,0,0,0,0,0,67,2
+ETH STD,198,22177,010,Superv Group Study,Hatem Bazian,under,0,0,0,0,0,0,0,0,0,0,0,0,0,26,1
+ETH STD,21AC,22129,001,Comp Surv Ethnic Gr,Victoria Robinson; Cynthia Ledesma; David Maldonado,under,32,39,11,1,4,2,1,3,1,0,0,0,2,16,1
+ETH STD,C73AC,25482,001,Indig Ppls Gbl Ineq,Thomas Biolsi,under,5,9,0,2,1,0,0,0,0,0,0,0,0,1,0
+FILIPN,101B,25044,001,Advanced Filipino,Maria Barrios-Leblanc,under,9,3,0,0,0,0,0,0,0,0,0,0,0,0,0
+FILIPN,1B,22192,001,Intro To Filipino,Cynthia Agnes Aban,under,3,13,2,0,0,0,0,0,0,0,0,0,0,1,0
+FILIPN,1B,25839,003,Intro To Filipino,Cynthia Agnes Aban,under,0,13,1,0,0,0,0,0,0,0,0,0,0,0,0
+FILIPN,W1Y,22194,001,Intro Filipn Online,Maria Barrios-Leblanc,under,34,18,1,0,0,0,0,0,0,0,0,0,0,2,0
+FILM,10,31250,001,Film History & Form,Emily West,under,15,18,5,1,2,2,0,0,0,0,0,0,1,1,1
+FILM,125,31258,001,Documentary Forms,Jeffrey Skoller,under,0,10,11,8,1,1,0,0,0,0,0,0,1,11,0
+FILM,145,31268,201,Global Media,Miryam Sas,under,2,6,6,5,2,0,0,0,0,0,0,0,0,2,0
+FILM,155,31270,001,Media Technologies,Jacob Gaboury,under,3,11,17,6,1,0,1,0,0,0,0,0,0,9,1
+FILM,171,31272,001,Film Genre,Weihong Bao,under,3,3,2,2,1,0,0,0,0,0,0,0,0,1,0
+FILM,171,31273,002,Film Genre,Emily West,under,32,10,3,0,1,1,0,0,0,0,0,0,0,1,2
+FILM,172,31276,001,Auteur Theory,Dolores McElroy,under,1,18,8,2,1,0,0,0,0,1,0,0,0,5,1
+FILM,180,31278,001,Screenwriting,J Kopell,under,0,14,0,1,0,0,0,0,0,0,0,0,0,0,0
+FILM,186,25859,001,Adv Digital Video,Juan Pereda Rodriguez,under,3,6,3,1,0,0,0,0,0,0,0,0,0,1,0
+FILM,190,31281,001,Capstone,Anton Kaes,under,2,6,0,0,0,0,0,0,0,0,0,0,1,2,0
+FILM,20,24464,001,Film & Media Theory,Mary Ann Doane,under,1,14,1,3,1,4,0,1,1,0,0,0,0,12,3
+FILM,35,31257,001,Digital Media,Jacob Gaboury,under,8,7,8,8,2,1,1,0,1,0,0,0,0,10,0
+FILM,98,27244,001,Directed Group Stdy,J Kopell,under,0,0,0,0,0,0,0,0,0,0,0,0,0,11,1
+FILM,R1A,31222,002,Writing-Film Focus,Mark Sandberg; Patrick Harrison; Cole Moore,under,3,22,0,0,0,0,0,0,0,0,0,0,1,6,0
+FILM,R1A,31220,001,Writing-Film Focus,Mark Sandberg; Jessica Ruffin; Jonathan Mackris,under,0,21,8,3,0,0,0,0,0,0,0,0,0,2,0
+FILM,R1A,31224,003,Writing-Film Focus,Mark Sandberg; Chi Li,under,0,3,5,4,3,0,0,0,0,0,0,0,0,2,0
+FILM,R1A,31225,004,Writing-Film Focus,Mark Sandberg; Jennifer Alpert,under,0,3,3,6,3,0,0,0,0,0,0,0,0,1,1
+FILM,R1A,31226,005,Writing-Film Focus,Dolores McElroy,under,0,9,2,2,0,2,0,0,0,0,0,0,0,2,0
+FILM,R1B,31234,003,Writing-Film Focus,Mark Sandberg; Lisa Jacobson; Derek Price,under,3,9,12,6,1,1,0,0,0,0,0,0,0,2,0
+FILM,R1B,31233,002,Writing-Film Focus,Mark Sandberg; Lida Wu; Caleb Murray-Bozeman,under,0,7,6,4,2,1,0,0,1,0,0,0,0,11,0
+FILM,R1B,31235,004,Writing-Film Focus,James Boman,under,0,6,2,5,5,1,0,0,0,0,0,0,0,10,0
+FILM,R1B,31237,005,Writing-Film Focus,Dolores McElroy,under,0,6,2,1,2,1,0,0,0,0,0,0,0,4,0
+FILM,R1B,31232,001,Writing-Film Focus,Mark Sandberg; Katherine Guerra; Annie Felix,under,0,0,9,3,0,5,0,0,0,0,0,0,0,9,2
+FRENCH,1,22210,001,Elementary French,Richard Kern; Daniel Hoffmann; Angelique Allain,under,0,8,5,1,0,0,0,0,0,0,0,0,0,5,0
+FRENCH,1,22211,002,Elementary French,Richard Kern; Daniel Hoffmann; Angelique Allain,under,0,7,3,2,1,0,0,0,0,0,0,0,0,4,0
+FRENCH,1,22212,003,Elementary French,Richard Kern; Daniel Hoffmann; Zehlia Babaci Wilhite,under,0,2,4,0,0,2,0,0,0,0,0,0,0,4,0
+FRENCH,1,22213,004,Elementary French,Richard Kern; Margot Szarke; Daniel Hoffmann,under,0,9,3,2,0,1,0,0,0,0,0,0,0,3,0
+FRENCH,1,22214,005,Elementary French,Richard Kern; Daniel Hoffmann; Angelique Allain,under,0,2,1,1,1,1,0,1,0,0,0,0,0,3,0
+FRENCH,1,22216,007,Elementary French,Richard Kern; Daniel Hoffmann; Kerrie McKim,under,0,6,4,1,3,0,0,0,0,0,0,0,0,4,0
+FRENCH,1,22217,008,Elementary French,Richard Kern; Daniel Hoffmann; Tanya Mushinsky,under,0,5,1,0,1,1,1,0,0,0,0,0,0,2,0
+FRENCH,102,22239,002,"Read, Wr In French",Daniel Hoffmann,under,1,10,0,1,0,0,0,0,0,0,0,0,0,5,0
+FRENCH,102,22238,001,"Read, Wr In French",Vesna Rodic,under,0,8,2,1,0,0,0,0,0,0,0,0,0,0,0
+FRENCH,103B,22240,001,Lang And Culture,Eglantine Colon,under,0,11,6,0,0,0,0,0,0,0,0,0,0,0,0
+FRENCH,119B,30364,001,19th Century Lit,Rachel Shuh,under,0,10,2,0,1,0,0,0,0,0,0,0,0,1,0
+FRENCH,126,24476,001,Senior Seminar,Thoraya Tlatli,under,6,4,1,0,0,0,0,0,0,0,0,0,0,1,0
+FRENCH,141,30368,001,Fr Stud Int'L Contx,Debarati Sanyal,under,7,9,3,1,0,0,0,0,0,0,0,0,0,3,1
+FRENCH,148,31370,001,"Translation, Method",Kathryn Levine,under,0,15,0,0,0,0,0,0,0,0,0,0,0,1,0
+FRENCH,149,32419,001,French Lang Acquis,Richard Kern,under,0,1,3,1,1,0,0,1,0,0,0,0,0,3,0
+FRENCH,172A,30367,001,Psychoanal And Lit,Thoraya Tlatli,under,3,10,0,0,0,0,0,0,0,0,0,0,0,3,0
+FRENCH,178A,30366,001,Stud In Fr Film,Maya Sidhu,under,0,14,4,2,1,0,0,0,0,0,0,0,0,2,0
+FRENCH,2,22226,007,Elementary French,Richard Kern; Daniel Hoffmann; Claire Tourmen Perron,under,1,6,3,0,0,0,0,0,0,0,0,0,1,1,0
+FRENCH,2,22221,002,Elementary French,Richard Kern; Daniel Hoffmann; Alexis Stanley,under,0,7,2,2,2,0,0,0,0,0,0,0,0,0,0
+FRENCH,2,22225,006,Elementary French,Richard Kern; Daniel Hoffmann; Amber Sweat,under,0,8,0,0,2,0,0,1,1,0,0,0,0,1,0
+FRENCH,2,22227,008,Elementary French,Richard Kern; Daniel Hoffmann; Kyle Thomson,under,0,3,4,2,2,1,1,0,0,1,0,0,0,1,0
+FRENCH,2,25254,001,Elementary French,Richard Kern; Ariel Shannon; Daniel Hoffmann,under,0,4,2,3,1,0,0,1,0,0,0,0,1,5,0
+FRENCH,3,22231,004,Intermediate French,Richard Kern; Vesna Rodic; Claire Tourmen Perron,under,0,10,2,0,1,0,0,0,0,0,0,0,0,1,0
+FRENCH,3,22232,005,Intermediate French,Richard Kern; Vesna Rodic; Margot Szarke,under,0,12,3,1,0,0,0,0,0,0,0,0,0,1,0
+FRENCH,4,22233,001,Adv Int French,Richard Kern; Vesna Rodic; Michael Arrigo,under,0,7,2,0,0,0,0,0,0,0,0,0,0,0,1
+FRENCH,4,22234,002,Adv Int French,Richard Kern; Ariel Shannon; Vesna Rodic,under,0,7,2,3,0,0,1,0,0,0,0,0,0,7,0
+FRENCH,4,22235,003,Adv Int French,Richard Kern; Vesna Rodic; Maya Sidhu,under,0,12,2,0,2,0,0,0,0,0,0,0,0,2,0
+FRENCH,80,30363,001,Cult Hist Of Paris,Nicholas Paige,under,3,26,24,11,4,4,0,0,0,0,0,0,1,11,1
+FRENCH,R1B,22219,001,Eng Com With Fr Lit,Timothy Hampton; Tyler Blakeney,under,2,4,1,0,0,1,0,0,0,0,0,0,0,9,0
+FRENCH,R1B,22220,002,Eng Com With Fr Lit,Timothy Hampton; Trevor Sanders,under,0,7,4,0,0,0,0,0,0,0,0,0,1,3,0
+GEOG,110,26955,001,Econ Geog Industrl,Desiree Fields,under,19,27,0,6,4,0,0,2,0,0,0,0,2,8,1
+GEOG,124,27104,001,Urban & City,Brandi Summers,under,0,23,0,0,0,0,0,0,0,0,0,0,0,2,0
+GEOG,130,22251,001,Food Environment,Robert Rhew; James Eckhouse,under,4,54,37,16,8,3,1,1,0,0,0,1,1,122,0
+GEOG,140A,22264,001,Physical Landscape,Kurt Cuffey,under,3,7,10,5,2,1,3,2,0,0,0,0,1,14,1
+GEOG,142,30922,001,Climate Dynamics,John Chiang,under,7,4,5,6,10,3,1,0,0,1,0,0,0,17,0
+GEOG,149B,26520,001,Climate Impacts,Norman Miller,under,2,13,0,0,2,1,0,1,0,0,0,0,0,4,1
+GEOG,160,25845,001,American Landscapes,Peter Ekman,under,0,9,4,3,2,0,0,0,1,0,0,0,0,3,0
+GEOG,164,25903,001,Global China,Crystal Cohen,under,1,7,2,0,0,0,0,0,0,0,0,0,0,5,0
+GEOG,167AC,26441,001,Border Geographies,Diana Negrin,under,13,36,7,1,3,0,0,0,0,0,0,0,0,5,0
+GEOG,170,33221,002,Special Topics,Seth Lunine,under,2,9,0,0,0,0,0,0,0,0,0,0,0,1,0
+GEOG,183,22266,001,Cartograph Represen,John Isom,under,1,17,1,1,1,0,0,0,0,0,0,0,0,4,0
+GEOG,185,10002,001,Earth System Remote,Jeffrey Chambers,under,4,24,12,3,3,0,0,0,0,0,0,0,1,6,0
+GEOG,198,33425,006,Directed Group Stdy,Robert Rhew; -,under,0,0,0,0,0,0,0,0,0,0,0,0,0,11,3
+GEOG,20,22244,001,Globalization,Sharad Chari,under,5,37,6,7,7,1,1,1,1,0,0,0,1,38,6
+GEOG,40,25646,001,Intro Earth Sys Sci,Robert Rhew; Samuel Stein,under,2,3,1,1,2,2,0,0,0,0,0,0,1,9,0
+GEOG,70AC,24480,001,Urban Experience,Brandi Summers,under,0,68,0,0,0,0,0,0,0,0,0,0,0,31,0
+GEOG,72AC,33062,001,The Bay Area,Seth Lunine,under,1,26,10,4,1,0,0,0,0,0,0,0,0,7,0
+GEOG,C112,24426,001,Global Dev,Gillian Hart,under,6,14,6,4,1,0,0,0,0,0,0,0,2,6,1
+GEOG,C32,32725,001,Intro To Global,Michael Watts,under,2,3,5,2,0,1,0,0,0,0,0,0,0,9,2
+GERMAN,1,22279,003,Elementary German 1,Nikolaus Euba; Isabella Carlsson,under,0,6,3,0,0,0,0,0,0,0,0,0,0,5,0
+GERMAN,1,22280,004,Elementary German 1,Nikolaus Euba; Molly Krueger,under,0,10,3,1,0,0,0,1,0,0,0,0,0,3,2
+GERMAN,101,22291,001,Advanced German,Nikolaus Euba,under,0,17,1,0,0,0,0,0,0,0,0,0,0,0,0
+GERMAN,103,26385,001,Intro Gm Ling,Thomas Shannon,under,2,11,1,0,0,0,0,0,0,0,0,0,0,1,0
+GERMAN,105,30727,001,Mhg Undergrads,Niklaus Largier,under,0,9,1,0,0,0,0,0,0,0,0,0,0,0,0
+GERMAN,160C,31040,001,Div Nation: 1945-90,Lilla Balint,under,1,5,2,0,0,0,1,0,0,0,0,0,0,1,0
+GERMAN,39S,31042,001,Freshman Seminar,Thomas Shannon,under,3,11,0,0,0,0,0,0,0,0,0,0,0,2,0
+GERMAN,C160G,33066,001,Ideas Of Education,Lilla Balint,under,1,5,4,1,0,0,0,0,0,0,0,0,0,0,0
+GERMAN,C60V,32739,001,Moral Provocations:,Karen Feldman,under,0,4,2,0,0,1,0,1,0,0,0,0,0,5,0
+GERMAN,R5B,22287,001,Reading And Comp,Thomas Shannon; Sarah Harris,under,0,8,6,1,0,0,0,0,0,0,0,0,0,2,0
+GERMAN,R5B,22288,002,Reading And Comp,Thomas Shannon; Vera Feinberg,under,0,9,2,1,1,0,0,0,0,0,0,0,1,1,0
+GERMAN,R5B,22289,003,Reading And Comp,Laura Sacia Bonicatto,under,0,12,3,0,1,0,0,0,0,0,0,0,0,1,0
+GERMAN,R5B,26973,004,Reading And Comp,Thomas Shannon; Kumars Salehi,under,0,10,2,1,1,0,0,0,0,0,0,0,0,3,0
+GLOBAL,100P,25610,001,Apprch Peace Confl,Karenjot Bhangoo Randhawa,under,0,15,8,3,5,2,0,0,0,0,0,0,1,7,1
+GLOBAL,100S,24721,001,Global Societies,Stephanie Ballenger,under,3,4,4,3,4,0,0,1,0,0,0,0,1,6,0
+GLOBAL,102,25613,001,Critical Thinking,Peter Bartu,under,0,8,3,2,0,0,0,0,0,0,0,0,0,2,0
+GLOBAL,102,31162,002,Critical Thinking,Stephanie Ballenger,under,0,5,3,2,5,0,0,0,0,0,0,0,0,4,1
+GLOBAL,110E,24699,001,Europe/Russia,Richard Ashcroft,under,0,8,12,4,2,1,0,0,0,0,0,0,0,6,1
+GLOBAL,110L,24700,001,Latam Global Contex,Tiffany Page,under,0,10,2,5,4,1,0,1,0,0,0,0,1,4,0
+GLOBAL,110M,24722,001,Me In Global Contex,Peter Bartu,under,0,25,3,1,0,0,0,0,0,0,0,0,0,6,0
+GLOBAL,110Q,24698,001,Asia Global Context,Lanchih Po,under,1,15,7,4,4,7,0,1,0,0,0,0,1,13,0
+GLOBAL,133,25612,001,Internat Conflict,Karenjot Bhangoo Randhawa,under,1,7,8,2,1,1,0,0,0,0,0,0,0,1,0
+GLOBAL,150E,32449,001,Topics: Europe,Darren Zook,under,1,25,14,9,1,3,0,0,0,0,1,0,2,13,0
+GLOBAL,150Q,31191,002,Topics: Asia,Keiko Yamanaka,under,0,19,5,2,0,0,0,0,0,0,0,0,0,4,0
+GLOBAL,172,25584,001,Un Unplugged,Peter Bartu,under,0,24,3,1,2,0,0,0,0,0,0,0,0,5,0
+GLOBAL,173,31188,001,Interl Human Rights,Darren Zook,under,3,51,32,26,4,10,0,0,0,0,0,0,1,42,1
+GLOBAL,45,26428,001,World History,Emily Gottreich,under,0,16,23,21,16,15,13,1,1,0,3,0,4,30,6
+GLOBAL,C100D,25821,001,Global Dev,Gillian Hart,under,5,25,9,7,7,1,0,0,1,0,0,0,2,4,0
+GLOBAL,C10A,32457,001,Intro To Global,Michael Watts,under,5,12,23,12,6,2,1,1,0,0,0,0,1,32,4
+GPP,105,22298,003,Global Practice,Khalid Kadir,under,2,3,4,3,1,0,0,0,0,0,0,0,0,0,1
+GPP,105,22296,001,Global Practice,Clare Talwalker,under,0,10,2,2,0,0,0,0,0,0,0,0,0,5,0
+GPP,105,22297,002,Global Practice,Clare Talwalker,under,0,8,5,1,1,0,0,0,0,0,0,0,0,0,0
+GPP,196,19866,001,Global Capstone,Khalid Kadir,under,0,9,4,1,1,0,0,0,0,0,0,0,0,2,0
+GWS,10,22302,001,Int Gender/Wom Stdy,Anna Eng,under,0,15,6,6,7,4,1,1,0,0,0,0,0,7,0
+GWS,100AC,25689,001,Wom America Culture,Barbara Barnes,under,2,69,34,10,7,0,1,1,0,0,0,0,3,25,5
+GWS,101,22314,001,Doing Feminist Res,Laura Nelson,under,0,14,11,3,4,0,1,1,0,0,1,0,1,7,0
+GWS,131,30935,001,Gender & Scienc,Barbara Barnes,under,0,27,4,2,3,0,0,2,0,0,0,0,1,5,2
+GWS,134,30936,001,Gen Poli Childhood,Laura Nelson,under,0,16,7,5,3,3,3,2,0,0,0,0,0,13,5
+GWS,139,30937,001,Why Wk Gen Lab Cap,Leslie Salzinger,under,0,14,28,8,1,2,0,0,1,0,0,0,0,9,0
+GWS,14,26494,1,Gen Sex Rac Glo Pol,Fuifuilupe Niumeitolu,under,3,75,4,3,0,0,0,0,0,0,0,0,0,8,1
+GWS,20,25025,001,Intro Feminist Theo,Jac Asher,under,0,26,10,2,3,0,0,0,0,0,0,0,1,2,0
+GWS,H195,19867,001,W.S. Honors Thesis,Laura Nelson,under,2,6,2,0,0,0,0,0,0,0,0,0,0,1,0
+HINDI,100B,25525,001,Intermediate Hindi,Nora Melnikova,under,1,6,1,1,0,0,0,0,0,0,0,0,0,1,0
+HINDI,1B,25524,001,Intrd Hindi,Nora Melnikova,under,2,8,0,0,0,0,0,0,0,0,0,0,0,5,0
+HISTART,105,30806,001,Eco Art,Elizabeth Fair; Sugata Ray,under,0,51,3,0,2,1,0,1,1,0,0,0,0,5,1
+HISTART,131B,30807,001,Painting In China,Jun Hu,under,1,12,6,5,0,1,0,0,0,0,0,0,0,4,0
+HISTART,151,30808,001,Late Antiquity,Diliana Angelova,under,2,9,0,0,0,2,1,0,0,0,0,0,0,3,0
+HISTART,170,30811,001,South Baroque Art,Todd Olson,under,2,13,8,3,4,1,0,0,0,0,0,0,0,7,1
+HISTART,186A,32783,001,Early 20th Cent Art,Aglaya Glebova,under,2,24,5,1,3,0,0,0,0,0,0,0,1,16,1
+HISTART,190A,30818,001,Asian,Kwi Jeong Lee,under,1,5,5,1,0,0,0,0,0,0,0,0,0,6,0
+HISTART,190B,33393,001,Ancient,Lisa Pieraccini,under,3,7,5,2,1,0,0,0,0,0,0,0,0,0,0
+HISTART,190F,32559,002,19th-20th Century,Whitney Davis; Michele D'Aurizio,under,1,7,3,2,0,1,0,0,0,0,0,0,0,5,0
+HISTART,190M,26247,001,Global Modernism,Ivy Mills,under,0,4,2,3,1,0,0,0,1,0,0,0,0,2,0
+HISTART,190T,32570,001,Special Topics,Winnie Wong,under,0,2,2,2,1,0,0,0,0,0,0,0,0,5,0
+HISTART,192B,30815,002,Ancient,Lisa Pieraccini,under,2,3,3,1,0,0,0,0,0,0,0,0,0,2,0
+HISTART,192D,30816,001,15th-16th Century,Henrike Lange,under,3,4,0,1,0,0,0,0,0,0,0,0,0,3,0
+HISTART,192F,26249,001,19th-20th Century,Imogen Hart,under,1,9,0,0,0,0,0,0,0,0,0,0,0,0,0
+HISTART,36,30805,001,Asia Mod: Art+Arch,Atreyee Gupta,under,27,11,1,0,0,0,0,0,0,0,0,0,0,3,0
+HISTART,C11,30804,001,Intr To Western Art,Saif El-Dean Radi; Darcy Grigsby; Delphine Sims; Vanessa Jackson,under,3,23,17,2,4,3,1,0,0,0,0,0,2,16,1
+HISTART,R1B,22328,001,Visual Experience,Ivy Mills; Gabriel Regalado,under,2,2,4,2,0,1,0,1,0,0,0,0,0,5,0
+HISTART,R1B,22332,005,Visual Experience,Ivy Mills; Jennifer Black,under,2,4,3,5,1,1,0,0,0,0,0,0,0,1,0
+HISTART,R1B,22329,002,Visual Experience,Ivy Mills; Julia Keblinska,under,0,4,4,5,2,0,0,0,0,0,0,0,0,2,0
+HISTART,R1B,22330,003,Visual Experience,Ivy Mills; Tiffany Taylor,under,0,10,1,0,0,0,0,0,0,0,0,0,0,4,1
+HISTART,R1B,22331,004,Visual Experience,Ivy Mills; Lesdi Goussen Robleto,under,0,11,3,0,2,0,0,0,0,0,0,0,0,1,0
+HISTART,R1B,22333,006,Visual Experience,Ivy Mills; Megan Alvarado Saggese,under,0,3,3,2,1,2,0,0,0,0,0,0,0,5,0
+HISTART,R1B,22334,007,Visual Experience,Ivy Mills; Jon Soriano,under,0,3,0,3,1,1,0,0,0,0,0,0,1,6,2
+HISTART,R1B,25981,008,Visual Experience,Ivy Mills; Riad Kherdeen,under,0,5,3,1,3,0,0,0,0,0,0,0,0,4,1
+HISTORY,100AP,31036,001,Topics-Ancient,Christopher Bonura,under,1,16,8,6,5,1,0,1,0,0,0,0,0,13,0
+HISTORY,100B,26590,001,Topics-European,John Connelly,under,1,11,11,6,2,0,0,0,0,0,0,0,0,17,0
+HISTORY,100D,30847,001,Topics - U.S.,Rebecca McLennan; Dana Landress,under,6,16,13,5,3,3,0,0,0,0,0,0,0,3,0
+HISTORY,100D,30868,002,Topics - U.S.,Bernadette Perez,under,0,9,14,3,7,0,1,0,2,0,1,0,1,6,2
+HISTORY,100F,26569,001,Topics-Asia,Lewis Bremner,under,3,4,11,2,0,3,0,0,0,0,0,0,1,3,0
+HISTORY,100M,32440,002,Topics-Mideast,Stephanie Rotem,under,2,6,2,0,0,0,0,0,0,0,0,0,0,0,0
+HISTORY,100M,32436,001,Topics-Mideast,Eran Kaplan,under,0,17,6,1,1,0,0,0,0,0,0,0,0,1,0
+HISTORY,101,24749,001,"Research, Writing",Christopher Bonura,under,2,6,2,0,0,0,0,0,1,0,0,0,0,2,0
+HISTORY,101,24751,003,"Research, Writing",John Connelly,under,1,9,0,2,0,0,0,0,0,0,0,0,0,0,0
+HISTORY,101,24753,005,"Research, Writing",David Henkin,under,1,3,2,5,0,0,0,1,0,0,0,0,1,2,0
+HISTORY,101,24754,006,"Research, Writing",Daniel Kelly,under,4,8,1,2,0,0,0,0,0,0,0,0,0,1,0
+HISTORY,101,24755,007,"Research, Writing",Rebecca Weber,under,2,6,0,2,0,0,0,0,0,0,0,0,0,3,0
+HISTORY,101,24750,002,"Research, Writing",Ethan Shagan,under,0,7,3,2,0,0,1,0,0,0,0,0,0,1,0
+HISTORY,101,24752,004,"Research, Writing",Bernadette Perez,under,0,4,4,4,0,0,0,0,0,0,0,0,0,0,0
+HISTORY,101,33433,009,"Research, Writing",Hakeem Naim,under,0,8,1,1,0,0,0,0,0,0,0,0,0,0,0
+HISTORY,103A,32834,001,Proseminar:  Ancnt,Diliana Angelova,under,1,8,2,1,0,0,0,0,0,0,0,0,0,0,0
+HISTORY,103B,32836,002,Proseminar:  Europe,Stefan-Ludwig Hoffmann,under,2,9,3,0,0,0,0,0,0,0,0,0,0,0,0
+HISTORY,103B,32837,003,Proseminar:  Europe,Geoffrey Koziol,under,0,4,6,1,0,0,0,0,0,0,0,0,1,1,0
+HISTORY,103D,32840,002,Proseminar: U.S.,Waldo Martin,under,4,5,0,3,2,2,0,0,0,0,0,0,0,0,0
+HISTORY,103D,32841,003,Proseminar: U.S.,Rebecca McLennan,under,2,3,3,0,0,0,0,0,0,0,0,0,1,2,0
+HISTORY,103D,32839,001,Proseminar: U.S.,Sandra Eder,under,0,10,1,1,0,0,0,0,0,0,0,0,0,2,0
+HISTORY,103E,32842,001,Proseminar: Lat Am,Elena Schneider,under,0,8,2,0,0,1,0,0,0,0,0,0,0,0,0
+HISTORY,103F,32843,001,Proseminar:  Asia,Puck Engman,under,2,3,1,4,1,0,0,0,0,0,0,0,0,2,0
+HISTORY,103U,32849,001,Proseminar:  Cmprtv,Stephan Astourian,under,1,4,3,2,0,0,0,0,0,0,0,0,0,3,0
+HISTORY,109C,30849,001,Mid East 1750-Pres,Hakeem Naim,under,0,14,14,4,3,3,0,0,1,0,0,0,0,11,0
+HISTORY,111D,30850,001,Vietnam At War,Peter Zinoman,under,0,17,7,10,10,1,0,0,0,0,0,0,0,11,0
+HISTORY,112B,30851,001,South Afr 1652-Pres,Tabitha Kanogo,under,0,7,4,0,0,0,0,0,0,0,0,0,1,0,0
+HISTORY,114B,24578,001,Modern South Asia,Janaki Bakhle,under,1,4,3,2,0,0,0,0,0,0,0,0,0,1,0
+HISTORY,118C,32888,001,Japan: 20th Century,Andrew Barshay,under,0,8,7,8,4,2,1,1,0,0,0,0,1,23,1
+HISTORY,125A,30853,001,Afric-Am 1450-1860,Stephanie Jones-Rogers,under,18,27,0,5,3,0,0,2,0,0,0,1,2,15,2
+HISTORY,131B,30854,001,Us Social Fr Civwar,Daniel Kelly,under,23,49,22,13,17,2,0,0,0,0,0,0,3,44,5
+HISTORY,133B,30799,001,Wall St/Main St,Mark Brilliant; Steven Solomon; Cristina Violante,under,0,4,8,3,2,0,0,0,0,0,0,0,0,7,0
+HISTORY,140B,30856,001,Modern Mexico,Margaret Chowning,under,0,21,3,5,8,2,0,0,0,0,0,0,3,9,0
+HISTORY,152A,31034,001,Modern Ireland,Maureen Miller,under,0,32,3,0,0,2,0,0,0,0,1,0,0,9,0
+HISTORY,160,25704,001,Mod Internatl Econ,Christoph Hermann,under,2,95,35,15,3,0,4,0,0,0,0,2,2,26,3
+HISTORY,165D,30857,001,Erly Mod Europe Soc,Ethan Shagan,under,0,1,7,7,2,0,0,0,0,0,0,0,0,5,0
+HISTORY,166C,30858,001,Modern France,Ethan Katz,under,1,4,6,2,1,0,0,1,0,0,0,0,0,6,0
+HISTORY,167C,30859,001,Germany From 1914,Isabel Richter,under,0,20,7,2,0,0,1,0,0,0,0,0,0,7,1
+HISTORY,182A,26551,001,Technology/Society,Ashton Wesner,under,4,49,13,8,2,1,0,1,0,0,0,0,0,23,1
+HISTORY,182AT,25134,001,Technology/Society,Ashton Wesner,under,0,23,13,6,0,0,0,0,0,0,0,0,0,4,0
+HISTORY,185B,30861,001,Xianity From 1250,Thomas Dandelet,under,0,15,10,4,0,0,0,0,0,0,0,0,0,5,1
+HISTORY,190,30862,001,Global Soccer,James Vernon; Eva Vaillancourt,under,4,59,60,30,17,5,0,0,1,0,0,0,0,83,3
+HISTORY,198BC,17243,002,Directed Group Study,Peter Zinoman,under,0,0,0,0,0,0,0,0,0,0,0,0,0,17,2
+HISTORY,198BC,17244,001,Directed Group Study,Peter Zinoman,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,2
+HISTORY,2,30838,001,Comp World Hist,Michael Nylan; Carlos Norena,under,0,14,3,1,1,0,1,1,1,0,0,0,0,9,0
+HISTORY,39B,32486,001,Fashion & Cath Imag,Maureen Miller,under,1,10,2,0,0,0,0,0,0,0,0,0,0,2,0
+HISTORY,39C,32720,001,Hist Of Neoliberal,Christoph Hermann,under,0,7,5,3,0,0,0,0,0,0,0,0,0,1,2
+HISTORY,39N,33319,001,Feminism In S. Asia,Janaki Bakhle,under,0,5,3,1,0,0,0,0,0,0,0,0,0,1,1
+HISTORY,4B,22339,001,Medieval Europe,Geoffrey Koziol,under,0,16,13,3,4,6,0,0,0,0,0,0,2,8,1
+HISTORY,5,30841,001,Modern Europe,Carla Hesse,under,3,10,6,5,4,2,2,1,2,0,0,0,0,15,1
+HISTORY,6B,22344,001,China: 13th-20th C,Wen-Hsing Yeh,under,4,15,5,0,2,0,1,0,0,0,0,0,1,9,2
+HISTORY,7B,22348,001,The Us Civ War Pres,Nicole Viglini; Ronit Stahl,under,2,149,65,33,13,4,0,6,0,2,0,0,2,42,4
+HISTORY,84,32487,001,Sophomore Seminar,Massimo Mazzotti,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,1
+HISTORY,8B,25652,001,Modern Latin Amer,Rebecca Weber,under,7,19,6,6,7,2,0,3,0,1,0,0,3,8,3
+HISTORY,98BC,17246,001,Directed Group Study,Peter Zinoman,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,2
+HISTORY,C139C,30855,001,Us Social Movements,Waldo Martin,under,5,38,16,11,1,0,1,0,1,0,0,0,2,15,4
+HISTORY,R1B,22336,001,History Rding&Comp,Ethan Shagan; Brent Otto,under,0,4,7,1,1,0,1,0,0,0,0,0,0,3,0
+HISTORY,R1B,22337,002,History Rding&Comp,Ethan Shagan; John Daukas,under,0,2,0,2,1,0,0,0,0,0,0,0,0,8,4
+HISTORY,R1B,22338,004,History Rding&Comp,Ethan Shagan; Peter Michelli,under,0,10,2,0,1,0,1,0,0,0,0,0,0,2,0
+HISTORY,R1B,24603,003,History Rding&Comp,Ethan Shagan; Jonathan Lear,under,0,7,3,1,0,0,0,0,0,0,0,0,0,6,0
+HUM,10,30328,001,Compass Course,Karl Britto; Debarati Sanyal; Samera Esmeir,under,7,29,23,6,3,1,0,0,0,0,0,0,1,10,1
+HUM,105,32295,001,Arts Entrepreneur,Richard Andrews,under,21,4,2,0,0,0,1,0,0,1,0,0,1,6,2
+HUM,120,25908,001,Entrepreneurship,Charles Huang; Umair Khan,under,37,46,4,1,0,0,0,0,1,0,0,0,0,15,0
+HUM,20,25907,001,Arts And Design,Shannon Jackson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,17,3
+IAS,150,22377,001,Adv Std In Ias,Tiffany Page,under,0,7,0,2,1,1,1,0,0,0,0,0,0,3,0
+IAS,157AC,22378,001,"Eng,Envrn & Society",Khalid Kadir; Sean Kelly,under,0,5,0,2,0,0,0,0,0,0,0,0,0,3,0
+IAS,C118,22374,001,Intro Econometrics,Sofia Villas-Boas,under,0,6,2,1,1,1,0,0,0,0,0,0,0,2,0
+IND ENG,135,28711,001,Applied Data Sci,Ikhlaq Sidhu; Yu-Hung Liao; Xiaoer Hu; Edward Henrich; Arash Nourian; Mahan Tajrobehkar,under,0,40,24,10,3,2,0,0,1,0,0,0,1,33,1
+IND ENG,142,31201,001,Intro To Ml & Da,Paul Grigas,under,0,60,36,15,4,2,0,1,0,0,0,0,0,82,0
+IND ENG,153,28410,001,Log Nt Des Supchmgt,Robert Leachman; Han Feng,under,3,9,10,3,1,2,0,1,1,0,0,0,0,40,1
+IND ENG,162,28571,001,Linp & Netwrk Flows,Dorit Hochbaum,under,11,11,11,4,2,3,2,0,0,0,0,1,0,33,4
+IND ENG,165,28411,001,Quality Control,Anil Aswani,under,0,82,7,1,2,1,0,0,0,0,0,0,0,29,0
+IND ENG,166,31203,001,Decision Analytics,Rhonda Righter,under,3,46,7,7,10,1,0,0,0,0,0,0,0,29,1
+IND ENG,169,28890,001,Integer Optimizatio,Daniel Pirutinsky,under,0,11,0,1,0,0,0,0,0,0,0,0,0,8,0
+IND ENG,170,28638,001,Ind Des Human Fact,Carisa Harris-Adamson; Julia Park; Yishu Yan,under,19,35,9,6,1,0,0,0,0,0,0,0,0,36,0
+IND ENG,173,28532,001,Intro To Stoch Proc,Zeyu Zheng,under,12,41,14,7,0,0,0,1,0,0,0,0,0,43,0
+IND ENG,180,28414,001,Senior Project,Robert Leachman,under,0,14,29,2,0,0,0,0,0,0,0,0,0,9,0
+IND ENG,185,28416,002,Challenge Lab,Kenneth Singer; Jennifer Nice,under,7,12,14,7,3,0,0,0,0,0,0,0,0,3,0
+IND ENG,185,28701,003,Challenge Lab,Ricardo San Martin,under,6,17,1,0,0,0,0,0,0,0,0,0,0,1,0
+IND ENG,186,30787,001,Product Management,Kenneth Sandy,under,4,15,11,11,5,0,0,0,0,0,0,0,0,9,0
+IND ENG,190E,28879,001,Advance Topics Ieor,Mathieu Aguesse,under,4,6,9,2,3,0,0,0,0,0,0,0,0,5,1
+IND ENG,190E,29258,002,Advance Topics Ieor,Ikhlaq Sidhu; Aleks Gollu,under,2,6,5,1,0,0,0,0,0,0,0,0,0,4,0
+IND ENG,190E,30790,003,Advance Topics Ieor,Jocelyn Weber; Lukasz Kowalski; Sehyun Chung,under,5,2,0,3,2,0,0,0,0,0,0,0,0,4,0
+IND ENG,190E,30999,004,Advance Topics Ieor,Conrad Voorsanger,under,0,12,16,4,4,1,0,0,0,0,0,0,0,13,0
+IND ENG,191,19943,001,Entrepreneurship,Naeem Zafar,under,3,9,12,5,1,0,0,0,0,0,0,0,0,17,0
+IND ENG,198,28419,002,Directed Group Stdy,Ikhlaq Sidhu; Victoria Howell; Yi Xu,under,0,0,0,0,0,0,0,0,0,0,0,0,0,74,1
+IND ENG,95,28409,001,Newton Lect Series,Victoria Howell,under,0,0,0,0,0,0,0,0,0,0,0,0,0,153,3
+INDONES,100B,25527,001,Intermed Indonesian,Ninik Lunde,under,5,21,0,0,0,0,0,0,0,0,0,0,0,0,0
+INFO,103,29669,001,History Of Info,Paul Duguid,under,3,8,11,9,5,2,0,2,1,0,0,0,0,13,3
+INFO,114,29722,001,User Exp Res,Laith Ulaby,under,0,12,0,0,0,0,0,0,0,0,0,0,0,4,0
+INFO,134,32470,001,It Econ Strat & Pol,John Chuang,under,0,5,1,0,0,0,0,0,0,0,0,0,0,4,0
+INFO,159,29750,001,Nat Lang Processing,David Bamman,under,20,40,12,12,4,1,2,2,0,0,0,0,0,65,2
+INTEGBI,104LF,22389,001,Hist Of Vertebrate,Jimmy Mcguire; Alan Shabel; Rauri Bowie,under,1,9,8,7,1,2,1,0,0,0,0,0,0,2,1
+INTEGBI,113L,22394,001,Pal Pers Ecol Evol,Seth Finnegan,under,2,10,2,5,2,2,2,1,0,0,0,0,0,6,0
+INTEGBI,114,24731,001,Infectious Disease,Britt Koskella; Michael Boots,under,16,64,13,7,5,1,0,0,1,0,0,0,0,17,1
+INTEGBI,132,22399,001,Surv Human Physiol,George Brooks; Jose Pablo Vazquez-Medina; Daniela Kaufer; Annaliese Beery,under,25,29,21,22,15,3,6,1,0,0,0,0,5,27,1
+INTEGBI,132L,22410,002,Mammal Physiol Lab,George Brooks; Aleksey Maro; Erin Person,under,2,18,0,0,0,0,0,0,0,0,0,0,0,0,0
+INTEGBI,132L,32480,003,Mammal Physiol Lab,George Brooks; Aleksey Maro; Erin Person,under,4,10,5,1,0,0,0,0,0,0,0,0,0,0,0
+INTEGBI,132L,32481,004,Mammal Physiol Lab,George Brooks; Aleksey Maro; Erik Sathe,under,8,10,3,0,0,0,0,0,0,0,0,0,0,0,0
+INTEGBI,132L,32482,005,Mammal Physiol Lab,George Brooks; Aleksey Maro; Celina Gilmore,under,4,14,1,1,0,0,0,0,0,0,0,0,0,0,0
+INTEGBI,132L,32483,006,Mammal Physiol Lab,George Brooks; Aleksey Maro; Celina Gilmore,under,3,16,2,0,0,0,0,0,0,0,0,0,0,0,0
+INTEGBI,132L,22409,001,Mammal Physiol Lab,George Brooks; Aleksey Maro; Erik Sathe,under,0,14,2,0,1,0,0,0,0,0,0,0,0,1,0
+INTEGBI,138,22417,001,Comparat Endocrino,George Bentley,under,11,12,0,3,0,0,0,0,0,0,0,0,0,3,0
+INTEGBI,140,22419,001,Bio Human Reprod,Thomas Carlson,under,86,67,9,5,9,8,0,2,3,0,0,0,0,19,0
+INTEGBI,153,30794,001,Ecol,Mary Power,under,0,7,4,5,2,4,2,0,1,0,0,0,0,2,0
+INTEGBI,161,25571,001,Evolution Genetics,Rasmus Nielsen,under,3,16,11,2,4,2,1,1,0,0,0,0,0,13,0
+INTEGBI,168L,25580,001,Plants: Div And Evo,Carl Rothfels,under,16,2,1,0,0,0,0,0,0,0,0,0,0,4,0
+INTEGBI,169,22442,001,Evol Medicine,Thomas Carlson,under,27,75,30,21,11,9,3,5,6,0,0,0,0,10,0
+INTEGBI,172,24702,001,Coevo: Genes To Eco,Britt Koskella,under,4,8,3,3,3,3,0,1,0,0,0,0,1,2,0
+INTEGBI,198,24774,004,Directed Group Stdy,Brent Mishler; Sarah Tang; Namra Sammee,under,0,0,0,0,0,0,0,0,0,0,0,0,0,33,2
+INTEGBI,77B,25002,001,Integr Human Bio,Christopher Martin,under,0,0,0,0,0,0,0,0,0,0,0,0,0,122,1
+INTEGBI,C143B,22429,001,Hormones & Behavior,Lance Kriegsfeld,under,14,39,12,9,5,1,0,1,2,0,0,0,0,19,1
+INTEGBI,C147,30573,001,Neuroethology,Frederic Theunissen,under,1,3,5,8,1,1,0,1,0,0,0,0,1,2,2
+INTEGBI,C171,30338,001,Freshwater Ecology,Albert Ruhi Vidal,under,1,2,1,3,1,1,1,0,0,0,0,0,0,4,0
+INTEGBI,C176L,24624,001,Fish Ecology,Stephanie Carlson,under,0,18,10,2,3,0,0,0,0,0,0,0,0,2,0
+INTEGBI,C32,24710,001,Bioinspired Design,Robert Full,under,21,59,0,0,3,0,0,1,0,0,0,0,0,4,1
+ISF,100A,22469,001,Soc Thry Cult Anlys,Rakesh Bhandari,under,0,57,3,2,9,0,1,1,1,0,1,0,2,15,4
+ISF,100C,30260,001,Language And Identi,Fang Xu,under,0,23,13,3,0,0,0,0,0,0,1,0,0,15,2
+ISF,100J,26103,001,Social Life Computi,Shreeharsh Kelkar,under,0,43,29,4,2,0,0,1,0,0,0,0,0,17,3
+ISF,100K,25193,001,Health And Developm,Amm Quamruzzaman,under,0,1,6,1,0,1,0,0,0,0,0,0,1,5,1
+ISF,189,19584,003,Isf Research Method,Shreeharsh Kelkar,under,0,8,3,0,0,0,0,0,0,0,0,0,0,2,0
+ISF,190,17449,001,Senior Thesis,Fang Xu,under,2,3,1,2,3,1,0,0,0,0,0,0,1,4,0
+ISF,190,17450,002,Senior Thesis,Rakesh Bhandari,under,1,9,1,2,2,0,0,0,0,0,0,0,1,3,0
+ISF,190,17451,003,Senior Thesis,Amm Quamruzzaman,under,1,3,5,3,0,1,0,0,0,0,0,0,1,2,1
+ISF,190,17452,005,Senior Thesis,Shreeharsh Kelkar,under,0,10,4,0,1,0,0,0,0,0,0,0,1,1,0
+ITALIAN,1,22475,001,Elementary Italian,Cristina Farronato; Daisy Ament,under,0,13,5,0,0,0,0,0,0,0,0,0,0,0,1
+ITALIAN,120,25436,001,Italian Studies,Mia Fuller; Michele Segretario,under,2,5,0,0,0,0,0,0,0,0,0,0,0,3,0
+ITALIAN,2,22476,001,Elementary Italian,Cristina Farronato,under,4,6,3,0,0,0,0,1,0,0,0,0,0,2,0
+ITALIAN,3,22477,001,Interm Italian,Giuliana Perco; Cristina Farronato,under,0,3,0,0,0,0,0,0,0,0,0,0,0,7,0
+ITALIAN,30,24511,001,Dante (English),Henrike Lange; Zhonghua Wang,under,6,34,10,1,0,0,0,0,0,0,0,0,0,5,0
+ITALIAN,R5A,26421,002,Reading & Comp,Matthew Mason; Mia Fuller,under,2,13,0,0,0,0,0,0,0,0,0,0,0,2,0
+ITALIAN,R5A,25237,001,Reading & Comp,Rachel Cook; Mia Fuller,under,0,4,3,3,2,0,0,0,0,0,0,0,0,5,0
+ITALIAN,R5A,32502,003,Reading & Comp,Mia Fuller; Kristen Keach,under,0,9,4,0,1,0,0,0,0,0,0,0,0,4,0
+ITALIAN,R5B,30638,003,Reading & Comp,Mia Fuller; Michiko Arai,under,1,7,4,0,0,0,0,0,0,0,0,0,0,5,0
+ITALIAN,R5B,22478,001,Reading & Comp,Diana Thow,under,0,10,2,2,0,0,0,0,0,0,0,0,0,2,0
+ITALIAN,R5B,24508,002,Reading & Comp,Diana Thow,under,0,9,1,1,0,0,0,0,0,0,0,0,0,4,0
+JAPAN,100B,22496,001,Advanced Japanese,Chika Shibahara,under,2,8,1,0,1,0,0,0,0,0,0,0,0,0,0
+JAPAN,100B,22497,002,Advanced Japanese,Yuriko Caltabiano,under,0,8,1,2,2,3,0,0,0,0,0,0,0,0,0
+JAPAN,105,31012,001,Fourth-Yr: Issues,Maki Takata,under,1,2,3,1,2,0,0,0,0,0,0,0,0,4,0
+JAPAN,10A,26536,001,Interm Japanese,Yasuko Baker,under,0,11,1,1,0,0,0,0,0,0,0,0,0,5,0
+JAPAN,10B,22493,001,Interm Japanese,Kayoko Imagawa; Yukiko Tsuchiya,under,1,5,1,2,0,0,1,1,0,0,0,0,0,4,0
+JAPAN,10B,22494,002,Interm Japanese,Kayoko Imagawa; Yukiko Tsuchiya,under,1,5,1,0,1,0,0,0,0,0,0,0,0,5,0
+JAPAN,130,25544,001,Class Japan Poetry,H Horton,under,1,1,0,2,4,0,0,1,0,0,0,0,0,7,0
+JAPAN,155,26673,001,Modern Japanese Lit,Jonathan Zwicker,under,1,13,4,0,0,0,0,0,0,0,0,0,0,2,0
+JAPAN,173,26626,001,Modern Lit - Trans,John Wallace,under,8,12,1,0,0,0,0,0,0,0,0,0,0,1,0
+JAPAN,177,26627,001,Rancor & Revenge,John Wallace,under,7,16,0,0,0,0,0,0,0,0,0,0,0,1,0
+JAPAN,1A,25356,003,Elementary Japanese,Maki Takata,under,1,4,3,0,1,0,0,0,0,1,0,0,0,7,2
+JAPAN,1A,26535,005,Elementary Japanese,Yuriko Caltabiano,under,1,6,4,0,3,1,1,0,0,0,0,0,0,5,0
+JAPAN,1A,25004,001,Elementary Japanese,Yuriko Caltabiano,under,0,8,5,1,0,1,0,0,0,0,0,0,0,4,0
+JAPAN,1A,25005,002,Elementary Japanese,Chika Shibahara,under,0,10,3,0,1,1,0,0,0,0,0,0,1,4,1
+JAPAN,1A,25402,004,Elementary Japanese,Maki Takata,under,0,4,4,0,0,1,1,0,1,0,0,0,0,7,2
+JAPAN,1B,22485,002,Elementary Japanese,Yukiko Tsuchiya,under,3,9,1,1,1,1,0,0,0,0,0,0,0,6,0
+JAPAN,1B,22487,004,Elementary Japanese,Kyoko Ahn,under,1,7,7,1,0,0,0,0,0,0,0,0,0,4,0
+JAPAN,1B,31011,001,Elementary Japanese,Hayato Saito,under,1,9,1,0,0,0,0,0,0,0,0,0,0,3,0
+JAPAN,1B,22486,003,Elementary Japanese,Hayato Saito,under,0,14,1,1,0,0,0,0,0,0,0,0,0,2,0
+JAPAN,7B,22489,001,Modern Japan Lit,Jonathan Zwicker,under,2,14,6,1,0,0,0,0,0,0,0,0,0,2,0
+JAPAN,80,24723,001,Japanese Culture,Mikiko Soga,under,0,11,11,5,1,0,0,0,1,0,0,0,0,6,0
+JEWISH,121A,32428,001,Arts And Culture,Stephanie Rotem,under,2,4,2,1,0,0,0,0,0,0,0,0,0,1,0
+JEWISH,122,24898,001,Judaism,Tomer Persico,under,2,6,0,0,0,0,0,0,0,0,0,0,0,5,0
+JEWISH,39,25795,001,Fresh/Soph Sem,John Efron; Madeline Wyse,under,2,9,1,0,0,0,0,0,0,0,0,0,0,2,0
+KOREAN,100B,27137,001,Advanced Korean,Kijoo Ko,under,0,9,3,1,0,0,0,0,0,0,0,0,0,0,0
+KOREAN,100BX,22513,001,Adv Korean Heritag,Meehyei Lee,under,1,8,2,0,0,0,0,0,0,0,0,0,0,0,0
+KOREAN,109,31018,001,Popular Media,Minsook Kim,under,0,15,0,0,0,0,0,0,0,0,0,0,1,1,0
+KOREAN,10A,25922,001,Intermediate Korean,Kyongmi Park,under,2,9,2,0,0,0,0,0,0,0,0,0,0,0,0
+KOREAN,10B,25008,001,Intermediate Korean,Ina Choi; Shin Young Park,under,0,10,5,1,0,0,0,0,0,0,0,0,0,5,0
+KOREAN,10BX,22512,001,Int Korean Heritag,Soojin Lee,under,2,11,1,0,0,0,0,0,0,0,0,0,0,2,0
+KOREAN,150,22516,001,Mod Korean Poetry,Youngmin Kwon,under,6,4,5,1,0,0,0,0,0,0,0,0,0,1,0
+KOREAN,153,22517,001,Mod Korean Lit,Youngmin Kwon,under,5,2,6,0,0,0,0,0,0,0,0,0,0,0,0
+KOREAN,170,32921,001,Cultural Encounters,Tae Hyun Kim,under,12,11,0,0,0,0,0,0,0,0,0,0,0,0,0
+KOREAN,188,31088,001,Cold War Culture,Jinsoo An,under,2,17,2,2,0,0,1,3,0,0,0,0,0,2,0
+KOREAN,1A,24726,001,Elementary Korean,Junghee Park,under,1,14,4,0,0,0,0,0,0,0,0,0,0,1,0
+KOREAN,1A,25007,003,Elementary Korean,Minsook Kim,under,4,10,4,0,0,0,0,0,0,0,0,0,0,1,1
+KOREAN,1A,25006,002,Elementary Korean,Minsook Kim,under,0,12,2,0,1,0,0,0,0,0,0,0,0,2,0
+KOREAN,1B,22504,001,Elementary Korean,Meehyei Lee,under,2,11,1,0,1,0,0,0,0,0,0,0,0,2,0
+KOREAN,1B,22505,002,Elementary Korean,Meehyei Lee,under,1,6,4,1,0,0,0,0,0,0,0,0,0,0,0
+KOREAN,1B,22506,003,Elementary Korean,Kijoo Ko,under,1,14,2,1,0,0,0,0,0,0,0,0,0,0,0
+KOREAN,1B,24728,004,Elementary Korean,Ina Choi,under,0,10,3,2,0,0,0,0,0,0,0,0,0,0,0
+KOREAN,1BX,22507,001,Elem Korean Heritag,Kyongmi Park,under,1,9,2,0,0,1,0,0,0,0,0,0,0,3,0
+KOREAN,7B,22508,001,Modern Korean Lit,Tae Hyun Kim,under,11,37,0,0,0,0,0,0,0,0,0,0,0,2,0
+L & S,120C,30313,001,Bible Westrn Cultur,Ronald Hendel,under,0,16,0,3,1,0,1,0,0,0,0,0,0,10,0
+L & S,180AC,26814,001,Archaeol Sex Gender,Rosemary Joyce,under,9,34,0,0,1,0,0,0,0,0,0,0,0,1,0
+L & S,198,27237,001,Directed Group Study,Sam Davis; John Swartzberg,under,0,0,0,0,0,0,0,0,0,0,0,0,0,32,1
+L & S,22,26212,1,Sensibility/Science,Alison Gopnik; John Campbell; Weichen Yin; Saul Perlmutter,under,59,122,52,22,16,4,1,1,0,0,0,0,3,54,1
+L & S,25,22520,001,Thinking Art/Design,Shannon Jackson,under,0,23,9,4,0,0,0,1,0,0,0,0,2,12,1
+L & S,70C,24690,001,Living On The Edge,Robert Kayen,under,3,45,18,12,2,2,0,2,0,0,1,0,2,38,1
+L & S,C12,33085,001,Changemaker,Brandi Pearce; Mariana Somma; Alex Budak; Laura Hassner,under,12,18,4,4,3,1,1,1,0,0,0,0,0,56,13
+L & S,C120T,33059,001,Ideas Of Education,Lilla Balint,under,3,6,6,0,1,0,0,0,1,0,0,0,0,4,1
+L & S,C160V,26211,001,Human Happiness,Dacher Keltner,under,10,137,11,11,20,0,0,4,1,0,0,0,0,95,0
+L & S,C180U,22533,001,Wealth And Poverty,Robert Reich,under,2,28,20,8,6,1,0,0,0,0,0,0,0,34,2
+L & S,C30V,22525,001,Environ Issues,Ronald Amundson,under,5,30,6,4,1,0,0,0,0,0,0,0,0,5,0
+L & S,C30Z,24703,001,Bioinspired Design,Robert Full,under,11,55,0,0,3,0,0,1,0,0,0,0,1,5,1
+L & S,C46,30312,001,Cal Climate Change,David Sedlak; Whendee Silver,under,3,9,5,9,5,1,1,2,1,0,0,0,2,10,2
+L & S,C60V,32769,001,Moral Provocations:,Karen Feldman,under,0,4,1,0,1,1,0,0,0,0,0,0,1,5,1
+L & S,C70T,26736,001,The Planets,Raymond Jeanloz; Courtney Dressing,under,1,3,1,0,0,0,0,1,0,0,0,0,0,6,0
+L & S,C70W,25011,001,Physics And Music,Terrence Buehler,under,6,13,2,2,0,1,1,0,0,0,0,0,1,27,3
+L & S,C70Y,26967,001,Earthquakes,Roland Burgmann; William Davis; Ryan Yohler; Ellen Mills,under,15,21,7,7,3,5,4,0,0,0,0,0,0,10,1
+LATIN,2,22567,001,Elementary Latin,Duncan Macrae; Sophie Cushman,under,0,6,4,2,0,0,0,0,0,0,0,0,0,5,0
+LD ARCH,1,21180,001,Draw Green Future,Robert Glass; Isabelle Doerschlag; Bradley Tomy; Lillian Byrd,under,26,8,4,1,0,0,0,0,0,0,0,0,1,10,1
+LD ARCH,102,21182,001,Case Studies,Carl Kullmann,under,4,5,4,0,0,0,0,1,0,0,0,0,0,1,0
+LD ARCH,111,32655,001,Plants In Design,Richard Hindle; Yumiko Nakano,under,0,46,4,2,0,1,0,0,0,0,0,0,0,3,0
+LD ARCH,121,21186,001,Dn Detail Landconst,Damir Hurdich; Sarah Baxendale,under,0,26,5,1,2,1,0,0,0,0,0,0,0,7,0
+LD ARCH,130,21188,001,Sustain Landscapes,Kimberlee Stryker,under,0,80,5,1,3,2,0,1,0,0,0,0,0,4,0
+LD ARCH,135,21254,001,Sacred Landscapes,Hannah Pae; Robert Glass,under,27,6,1,0,0,0,0,0,0,0,0,0,0,0,0
+LD ARCH,160,21192,001,Practice Seminar,Nathan Lozier,under,0,3,6,0,0,0,0,0,0,0,0,0,0,1,0
+LD ARCH,170,21193,001,Hist/Lit Ld Arch,Louise Mozingo; Alan Waxman,under,0,10,33,7,7,0,1,1,0,0,0,0,0,13,0
+LEGALST,100,30287,001,Foundations Legalst,Jonathan Simon; Kyneshawau Hurd; Brittani McLemore; Rafael Grillo Avila,under,10,37,34,13,9,5,3,2,2,0,0,0,0,12,0
+LEGALST,103,30292,001,Theor Of Law & Soc,Christopher Tomlins; Cheri Kruse,under,1,7,14,10,4,4,2,2,0,0,1,0,1,7,2
+LEGALST,109,26158,001,Aim/Limit Crim Law,Richard Perry; Eduardo Bautista Duran,under,2,15,21,15,1,0,0,0,0,0,0,0,0,5,0
+LEGALST,123,25759,001,Data & Law,Jonathan Marshall; Elez Ilya Akdemir,under,1,15,8,0,1,1,0,0,1,0,0,0,0,12,4
+LEGALST,132AC,25208,001,Immgrtn & Citiznshp,Bonnie Cherry; Zabdi Salazar; Lisa Knox,under,0,50,20,6,2,4,2,0,0,0,0,0,2,3,2
+LEGALST,133AC,26159,001,Immigrant Rights,Kathryn Abrams; Alex Mabanta,under,0,6,8,10,0,0,0,0,0,0,0,0,0,1,1
+LEGALST,138,24350,001,Sup Ct & Pub Pol,Robert Brown; Dvir Yogev; Brianne Felsher,under,5,12,21,14,13,12,1,0,0,0,0,0,0,27,3
+LEGALST,138,27106,002,Sup Ct & Pub Pol,Elizabeth Tejada; Daimeon Shanks,under,0,26,4,2,5,4,1,0,0,2,0,0,2,6,3
+LEGALST,141,30301,001,Wall St/ Main St,Mark Brilliant; Steven Solomon; Cristina Violante,under,0,7,9,9,6,3,0,1,0,0,0,0,0,11,0
+LEGALST,147,25454,001,Law & Economics,Mark Leinauer; Bruno Meyerhof Salama,under,3,15,7,12,7,3,0,0,1,0,0,0,0,8,0
+LEGALST,158,26160,001,Law & Development,Douglas Sangster; Bruno Meyerhof Salama,under,6,10,8,5,9,4,1,1,0,0,0,0,0,8,0
+LEGALST,159,30306,001,Law & Sexuality,Elias Lawliet; Ilona Turner; Nikila Lakshmanan,under,21,14,10,5,3,3,1,0,3,0,0,0,1,3,0
+LEGALST,160,31239,002,Punishment Cult Soc,Kristin Sangren; Alex Mabanta; Nandina Babic,under,0,18,23,14,7,3,0,1,1,0,0,0,2,14,5
+LEGALST,162AC,30309,001,Restorative Justice,Julie Shackford-Bradley,under,4,15,4,1,0,0,0,0,0,0,0,0,0,1,0
+LEGALST,170,26162,001,Criminal Justice,Jessie Garcia Gutierrez; Elizabeth Tejada,under,0,21,4,1,2,1,3,2,0,0,0,0,1,8,0
+LEGALST,174,25148,001,The Case Of Israel,Roy Peled,under,4,2,4,6,4,3,2,0,0,0,0,0,0,7,0
+LEGALST,177,24356,001,Am Legal Const Hist,Robert Brown; Amin Ebrahimi Afrouzi; Jorge Cortes Monroy,under,2,14,28,10,7,5,3,0,1,0,1,0,2,24,3
+LEGALST,184,26557,001,Sociology Of Law,Kristin Sangren; Kyle Deland; Yen-Tung Lin,under,0,23,19,3,10,3,2,0,1,0,2,0,2,8,5
+LEGALST,190,17253,005,Topics In Law/Soc,David Lieberman,under,1,1,5,2,1,0,0,0,0,0,0,0,2,0,0
+LEGALST,190,31303,006,Topics In Law/Soc,Christopher Kutz; Anna Zaret,under,2,9,7,2,0,0,0,0,0,0,0,0,0,1,1
+LEGALST,190,31305,008,Topics In Law/Soc,Alan Pomerantz,under,7,8,0,2,3,0,0,0,0,0,0,0,0,3,0
+LEGALST,190,31304,007,Topics In Law/Soc,Rebecca Goldstein,under,0,9,1,1,4,0,0,0,0,0,0,0,0,1,0
+LEGALST,198,24361,003,Directed Group Stdy,Kenneth Bamberger,under,0,0,0,0,0,0,0,0,0,0,0,0,0,11,1
+LEGALST,39D,19585,001,Fresh/Soph Seminar,Alan Pomerantz,under,7,8,3,0,1,0,0,0,0,0,0,0,0,3,0
+LEGALST,R1B,24349,001,Reading & Comp,Jonathan Marshall; Meredith Spoto,under,6,11,9,1,0,0,0,0,0,0,0,0,0,3,0
+LGBT,145,25697,001,Interpret Qr Past,Michelle Koerner,under,0,44,0,0,0,0,0,0,0,0,0,0,0,3,0
+LGBT,146,30939,001,Cul Rep Sexuality,Peace And Love El Henson,under,10,12,14,3,1,5,1,1,1,0,0,1,1,6,5
+LINGUIS,100,22578,001,Intro Ling Sci,Susan Lin,under,9,92,13,2,4,2,4,1,1,0,0,0,1,28,1
+LINGUIS,115,30504,001,Morphology,Larry Hyman,under,4,17,12,9,11,7,2,4,3,0,0,0,0,38,1
+LINGUIS,120,22589,001,Syntax,Line Mikkelsen,under,1,34,19,6,6,4,4,0,1,0,0,2,0,18,2
+LINGUIS,1B,22571,001,American Sign Lang,Sherry Hicks,under,4,4,4,0,3,0,0,0,0,0,0,0,0,0,0
+LINGUIS,1B,22572,002,American Sign Lang,Sherry Hicks,under,5,6,3,0,2,0,0,0,0,0,0,0,0,0,0
+LINGUIS,40,30501,001,Lang Of Advertising,Eve Sweetser,under,0,5,2,1,3,0,0,0,0,1,0,0,0,14,0
+LINGUIS,47,26408,001,Lang & Comm Disord,Susanne Gahl,under,0,9,3,0,8,4,0,0,0,0,0,0,0,3,0
+LINGUIS,5,26213,001,Lang & Linguistics,Amy Rose Deal,under,3,20,7,5,3,1,0,0,0,1,0,0,2,2,1
+LINGUIS,C105,30598,001,Cognitive Linguisti,Eve Sweetser,under,1,17,1,0,3,1,0,0,0,0,0,0,0,4,0
+LINGUIS,C142,26229,001,Language & Thou,Noah Hermalin; Terrance Regier,under,4,18,9,1,1,1,0,0,0,0,0,0,0,9,0
+LINGUIS,C146,30534,001,Lang Acquisition,Mahesh Srinivasan,under,5,8,4,0,4,0,2,1,0,0,0,0,0,7,2
+LINGUIS,C160,26230,001,Quantitative Method,Keith Johnson,under,0,8,0,0,2,0,0,0,0,0,0,0,0,1,1
+LINGUIS,R1B,22575,001,Endangered Language,Line Mikkelsen; Zachary Wellstood,under,9,3,2,0,0,0,1,1,0,0,0,0,0,1,0
+LINGUIS,R1B,22576,002,Endangered Language,Line Mikkelsen; Anna Bjorklund,under,5,5,0,0,0,0,0,0,0,0,0,0,0,4,1
+MAT SCI,103,28428,001,Phs Trans & Kin,Matthew Sherburne; Zijian Cai,under,7,16,14,5,1,1,1,0,0,0,0,0,0,13,0
+MAT SCI,104,28429,001,Mat Char,Andrew Minor,under,2,20,10,1,1,0,0,0,0,0,0,0,0,8,0
+MAT SCI,104L,29266,105,Mat Char Lab,Andrew Minor; Sunmoon Yu; Chunsong Zhao; Han-Ming Hau,under,0,8,2,0,1,0,0,0,0,0,0,0,0,1,0
+MAT SCI,111,28430,001,Prop Elect Mats,Junqiao Wu,under,7,15,8,3,5,3,0,0,0,0,0,0,0,24,0
+MAT SCI,112,28432,001,Corrosi (Chem Prop),Thomas Devine; Anthony Salazar,under,1,4,7,2,5,3,1,3,0,0,0,0,0,25,1
+MAT SCI,151,28433,001,Polymeric Materials,Ting Xu; Yiwen Qian,under,2,2,6,3,7,5,2,2,0,0,0,0,0,4,2
+MAT SCI,45,28613,001,Prop Of Matls,Phillip Messersmith,under,0,14,10,6,17,6,4,2,4,0,0,0,3,25,4
+MAT SCI,45L,28614,101,Prop Of Mats L,Amir Peyman Delparastan; Arianna Avellan Jaramillo; Phillip Messersmith,under,0,8,0,0,0,1,1,0,0,0,0,0,1,5,1
+MAT SCI,45L,28615,102,Prop Of Mats L,Amir Peyman Delparastan; Arianna Avellan Jaramillo; Phillip Messersmith,under,0,3,4,4,0,1,0,2,2,0,0,0,0,7,0
+MAT SCI,45L,28616,103,Prop Of Mats L,Amir Peyman Delparastan; Arianna Avellan Jaramillo; Phillip Messersmith,under,0,2,1,1,0,1,0,1,0,0,0,0,1,5,4
+MAT SCI,45L,28617,104,Prop Of Mats L,Amir Peyman Delparastan; Arianna Avellan Jaramillo; Phillip Messersmith,under,0,6,7,0,1,0,0,0,3,0,0,0,0,4,1
+MATH,104,22810,002,Intro To Analysis,Yu-Wei Fan,under,5,2,5,5,0,2,0,2,0,0,0,0,1,8,2
+MATH,104,22811,003,Intro To Analysis,Koji Shimizu,under,2,2,6,1,5,2,0,1,1,0,1,0,0,15,0
+MATH,104,24852,006,Intro To Analysis,Peng Zhou,under,1,4,1,1,2,0,1,2,0,0,0,0,0,12,2
+MATH,104,25157,007,Intro To Analysis,Dmitry Vaintrob,under,5,15,4,1,2,4,0,0,0,0,1,0,1,7,0
+MATH,104,25268,008,Intro To Analysis,Ian Charlesworth,under,3,4,5,3,0,0,0,0,0,0,0,0,0,6,6
+MATH,104,31595,009,Intro To Analysis,Rui Wang,under,5,3,2,1,2,0,1,1,1,0,0,0,5,9,0
+MATH,104,22812,004,Intro To Analysis,Koji Shimizu,under,0,8,4,3,0,1,3,2,1,0,0,0,0,11,2
+MATH,104,22813,005,Intro To Analysis,Peng Zhou,under,0,5,0,0,3,0,1,4,0,0,1,0,2,8,1
+MATH,105,22814,001,Analysis Ii,Ryan Hass,under,1,8,3,1,0,0,0,1,0,0,2,0,1,3,2
+MATH,10B,22646,001,Methods Of Math,Kelli Talaska,under,10,38,32,22,23,9,10,11,2,2,1,0,0,25,7
+MATH,10B,22647,002,Methods Of Math,Kelli Talaska,under,9,16,21,4,9,7,9,2,4,0,0,0,2,21,5
+MATH,110,22815,001,Linear Algebra,Olga Holtz,under,2,26,14,16,13,9,4,6,3,0,2,0,6,43,14
+MATH,113,22826,001,Abstract Algebra,Jeremy Lovejoy,under,4,11,3,5,5,2,1,1,0,0,0,0,0,10,0
+MATH,113,22827,002,Abstract Algebra,Gabriel Goldberg,under,5,1,0,5,0,1,2,0,0,0,0,0,0,12,1
+MATH,113,22828,003,Abstract Algebra,Dan-Virgil Voiculescu,under,14,10,0,2,3,0,0,0,0,0,0,0,0,4,0
+MATH,113,22830,005,Abstract Algebra,Gabriel Dorfsman-Hopkins,under,6,4,7,1,0,1,2,0,0,1,0,0,0,11,2
+MATH,113,22831,006,Abstract Algebra,Rui Wang,under,1,1,1,3,0,0,1,2,1,0,0,0,1,13,1
+MATH,113,24856,007,Abstract Algebra,Jeremy Lovejoy,under,3,16,1,2,8,1,0,0,0,0,0,0,0,10,1
+MATH,113,25280,008,Abstract Algebra,Christopher Ryba,under,4,8,0,3,0,4,1,1,2,0,0,0,3,1,1
+MATH,114,24586,001,Abstract Algebra Ii,Emiliano Gomez,under,0,11,0,0,3,0,0,1,0,0,0,0,0,3,1
+MATH,115,31318,001,Intro Number Theory,Kenneth Ribet; Kubrat Danailov,under,3,10,2,3,1,0,0,0,0,0,0,0,1,11,1
+MATH,121B,22833,001,Math Tool Phys Sci,Marc Rieffel,under,0,6,1,0,0,2,2,1,3,0,0,0,0,14,2
+MATH,124,25723,001,Prgmg For Math,Per-Olof Persson,under,20,23,10,9,3,2,1,0,5,0,0,0,1,15,4
+MATH,126,24587,001,Intro Part Dif Equa,Sung-Jin Oh,under,1,2,1,1,2,2,0,0,1,0,0,0,0,10,0
+MATH,128A,22834,001,Numerical Analysis,Ming Gu,under,21,37,15,4,4,2,1,1,0,0,0,0,10,87,6
+MATH,128B,22843,001,Numerical Analysis,Olga Holtz,under,1,8,4,2,2,1,2,0,0,0,1,0,0,6,1
+MATH,136,26682,001,Incomplete/Undecid,Pierre Simon; Matthew McCauley,under,6,8,2,3,1,2,0,0,0,0,0,0,0,14,0
+MATH,140,25722,001,Metric Dif Geometry,John Lott,under,2,2,4,2,1,0,0,0,1,0,1,0,0,10,2
+MATH,143,26699,001,Elem Alg Geom,Daniel Bragg,under,2,2,3,0,2,0,0,0,1,0,0,0,1,7,3
+MATH,152,25726,001,School Curriculum,Ole Hald,under,2,4,4,0,0,1,0,0,0,0,0,0,0,3,0
+MATH,160,22845,001,History Of Math,Ole Hald,under,2,5,7,0,4,0,0,2,0,0,0,0,0,14,0
+MATH,16A,22668,001,Anal Geo & Calculus,Anningzhe Gao; Katrina Biele; Matthew McCauley; Theodore Slaman,under,2,36,37,23,21,10,5,3,2,1,1,3,4,34,5
+MATH,16B,22680,001,Anal Geo & Calculus,Arun Sharma; Anthony Villafranca; Edric Wang; Tong Zhou,under,10,34,12,13,24,6,4,13,3,0,2,0,3,31,13
+MATH,16B,22681,002,Anal Geo & Calculus,Arun Sharma; Yafei Li; Maksym Zubkov; Ritvik Ramkumar; Jeremy Taylor,under,18,47,11,20,34,3,9,7,5,0,2,1,1,49,15
+MATH,172,31319,001,Combinatorics,Sylvie Corteel,under,4,12,3,0,1,0,3,1,0,0,0,0,0,2,1
+MATH,185,22846,001,Complex Analysis,Khalilah Beal-Uribe,under,2,9,2,0,2,0,0,0,1,0,0,0,0,7,1
+MATH,185,22847,002,Complex Analysis,Sebastian Eterovic,under,4,6,2,6,3,2,1,2,1,0,0,0,0,6,1
+MATH,185,22848,003,Complex Analysis,Yu-Wei Fan,under,3,4,3,0,1,2,2,1,0,0,1,1,1,19,0
+MATH,185,22849,004,Complex Analysis,Di Fang,under,4,6,2,2,1,2,1,0,0,0,0,0,0,20,1
+MATH,185,24853,005,Complex Analysis,Francisco Grunbaum,under,3,1,0,4,1,2,0,0,0,0,0,0,0,2,0
+MATH,185,25269,006,Complex Analysis,Nicholas Miller,under,8,9,2,1,2,0,0,0,0,0,1,1,0,8,2
+MATH,185,25391,007,Complex Analysis,Ivan Danilenko,under,4,7,3,4,2,0,0,4,0,0,0,0,1,9,1
+MATH,185,26930,008,Complex Analysis,Ryan Hass,under,1,7,1,0,4,0,0,2,0,0,0,0,0,19,0
+MATH,195,31310,001,Spec Math Topics,Lawrence Evans; Haotian Gu,under,2,8,2,2,1,0,0,0,0,0,0,0,1,5,0
+MATH,198,22851,002,Directed Group Stdy,Semeon Artamonov,under,0,0,0,0,0,0,0,0,0,0,0,0,0,28,1
+MATH,198BC,19588,003,Directed Group Stud,Nikhil Srivastava; Kubrat Danailov,under,0,0,0,0,0,0,0,0,0,0,0,0,0,15,1
+MATH,198BC,19589,004,Directed Group Stud,Nikhil Srivastava; Adele Padgett,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,2
+MATH,1A,22598,001,Calculus,Mina Aganagic,under,35,61,40,12,52,20,19,13,4,0,0,0,9,36,10
+MATH,1B,22611,001,Calculus,Nicolai Reshetikhin; Bo Li; Xinyu Zhao; Qinyi Zhu; Brinda Gurusamy; Utkarsh Yadav; Wai Shan Michelle Lui; Anaka Maher; Aubrey Gross; Ian Francis; Vishnu Swaroop Vijaykumar; Rose Lopez,under,28,87,72,65,52,33,10,3,20,1,0,1,9,121,15
+MATH,1B,22612,002,Calculus,Alexander Paulin,under,91,128,87,55,59,15,25,17,8,1,1,0,11,131,8
+MATH,32,22705,001,Precalculus,Per-Olof Persson; Ethan Dlugie,under,10,3,2,6,7,3,0,2,3,0,0,0,2,7,4
+MATH,53,22710,001,Multivar Calculus,Zvezdelina Stankova; Michael Yeh; David Casey; Junsheng Zhang; John Nolan; Pranav Trivedi; Mingyang Li; Carlos Esparza Sanchez,under,16,63,29,23,29,16,18,12,4,0,1,2,3,90,12
+MATH,53,22711,002,Multivar Calculus,Xiaoyu Huang; Zvezdelina Stankova; Michael Smith; Theodore Coyne; Sean Murphy; Marvin Castellon; Yuchen Mao; Zhongkai Tao,under,13,52,22,22,26,14,16,11,0,1,5,0,3,77,7
+MATH,54,22745,002,Lin Alg & Diff Eqns,Katrin Wehrheim,under,70,86,38,24,13,11,2,8,1,0,0,0,6,82,8
+MATH,54,25957,001,Lin Alg & Diff Eqns,Nikhil Srivastava,under,18,107,55,52,37,24,4,16,0,0,0,0,3,143,16
+MATH,55,22777,001,Discrete Math,Mark Haiman,under,0,82,43,29,19,10,7,5,2,0,3,0,1,39,3
+MATH,98,22794,009,Directed Group Stdy,Per-Olof Persson; Andrew Shi,under,0,0,0,0,0,0,0,0,0,0,0,0,0,14,4
+MATH,98,22795,010,Directed Group Stdy,Per-Olof Persson; Andrew Shi,under,0,0,0,0,0,0,0,0,0,0,0,0,0,13,1
+MATH,98,22796,011,Directed Group Stdy,Michael Wong; Per-Olof Persson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,1
+MATH,98,22797,012,Directed Group Stdy,Michael Wong; Per-Olof Persson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,26,1
+MATH,98,22800,015,Directed Group Stdy,Michael Wong; Per-Olof Persson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,32,1
+MATH,98,22802,017,Directed Group Stdy,Michael Wong; Per-Olof Persson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,25,1
+MATH,98,22806,021,Directed Group Stdy,Michael Wong; Per-Olof Persson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,34,1
+MATH,98,22807,022,Directed Group Stdy,Michael Wong; Per-Olof Persson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,39,2
+MATH,98,22808,023,Directed Group Stdy,Michael Wong; Per-Olof Persson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,21,1
+MATH,98,24825,024,Directed Group Stdy,Michael Wong; Per-Olof Persson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,31,1
+MATH,98BC,19590,001,Directed Group Stud,Nikhil Srivastava; Jorge Garza Vargas,under,0,0,0,0,0,0,0,0,0,0,0,0,0,18,1
+MATH,H113,22832,001,Hnrs Intro Abst Alg,Edward Frenkel,under,8,9,3,2,1,0,0,0,0,0,1,0,0,6,0
+MATH,H53,24584,001,Hons Multi Calculus,David Corwin,under,5,2,1,1,0,2,1,0,0,0,0,0,1,5,0
+MCELLBI,100B,22917,001,"Path, Mech, & Regul",Michael Marletta; Roberto Zoncu; Dipti Nayak,under,5,22,10,2,23,5,0,3,0,0,0,0,1,23,1
+MCELLBI,102,22922,001,Surv Biochem & Mobi,Sabeeha Merchant; Evan Miller; Nicholas Ingolia,under,5,32,41,36,35,26,19,26,9,0,1,0,8,57,16
+MCELLBI,104,22935,001,Gen Genom Cell Bio,Matthew Welch; Nicole King; Xavier Darzacq,under,19,50,60,70,22,15,9,9,9,0,0,0,1,98,1
+MCELLBI,110,22944,001,Molecular Biology,Jeremy Thorner; Qiang Zhou; Eunyong Park,under,5,12,8,8,11,3,9,15,3,0,0,0,1,30,4
+MCELLBI,130,24467,001,Cell & Systems,David Drubin; Gloria Brar; Michael Rape,under,4,10,12,3,3,3,0,0,0,0,0,0,0,5,1
+MCELLBI,133L,22955,001,Cell Bio & Phy,Kunxin Luo; Ellen Lumpkin; Sam Lewis,under,0,30,13,14,13,3,0,5,0,0,0,0,1,19,0
+MCELLBI,140,22960,001,General Genetics,Nicole King; Henk Roelink; Andrew Dillin,under,8,24,7,16,20,3,7,5,0,0,0,0,1,24,0
+MCELLBI,140L,22965,001,Genetics Lab,Gian Garriga; Andrew Dillin; Elaine Tan,under,3,35,5,7,0,0,3,0,0,0,0,0,0,9,0
+MCELLBI,141,22968,001,Developmental Biol,Richard Harland; Craig Miller,under,5,23,11,8,8,2,2,2,0,0,0,0,0,21,0
+MCELLBI,15,22872,001,Current Topics,John Matsui; Hui-Ping Yu,under,21,53,4,3,0,0,0,0,1,0,0,0,0,3,0
+MCELLBI,150,22976,001,Molecular Immunol,Ellen Robey; Laurent Coscoy,under,2,24,21,11,6,6,3,7,2,0,4,0,0,26,3
+MCELLBI,150L,22981,001,Immunology Lab,P Beatty; Kaoru Saijo,under,1,13,3,4,4,4,0,2,0,0,0,0,0,5,1
+MCELLBI,150L,22982,002,Immunology Lab,P Beatty; Kaoru Saijo; Jeffery Cox,under,1,9,2,7,3,3,0,2,0,0,0,0,0,6,0
+MCELLBI,161,22988,001,"Circ, Sys & Beh Neu",Yang Dan; Kristin Scott; Hillel Adesnik,under,9,43,38,14,14,3,3,5,5,0,0,0,1,25,1
+MCELLBI,163L,30716,001,Mammal Neuro Lab,Richard Kramer; Robin Ball; Tamira Elul,under,4,56,8,4,3,3,0,1,0,0,0,0,1,3,1
+MCELLBI,165,22995,001,Neurobio Disease,Robin Ball; Helen Bateup; Stephan Lammel,under,4,21,5,9,7,2,0,3,1,0,0,0,2,24,1
+MCELLBI,198,23000,002,Directed Group Stdy,Helen Bateup; Trinity Rico; Tory Benson,under,0,0,0,0,0,0,0,0,0,0,0,0,0,20,2
+MCELLBI,198,23002,004,Directed Group Stdy,Marla Feller; Aryana Bates; Mohamed Yassin,under,0,0,0,0,0,0,0,0,0,0,0,0,0,27,1
+MCELLBI,198,23003,005,Directed Group Stdy,Jet Liu; Gary Firestone; James Lappin Jr,under,0,0,0,0,0,0,0,0,0,0,0,0,0,42,2
+MCELLBI,198,23004,006,Directed Group Stdy,Dirk Hockemeyer; Linh Bui; Ruchika Singla,under,0,0,0,0,0,0,0,0,0,0,0,0,0,18,2
+MCELLBI,38,24934,001,Stem Cells,Gary Firestone; Robin Ball,under,6,76,19,4,3,2,1,0,0,0,0,0,1,28,0
+MCELLBI,50,22877,001,Immunity Disease,P Beatty,under,3,12,8,6,14,7,4,7,5,0,0,0,3,26,6
+MCELLBI,C100A,22910,001,Biophysical Chem,John Kuriyan; John Groves,under,4,12,2,6,4,3,0,2,2,0,0,0,0,11,0
+MCELLBI,C103,26394,001,Pathogenesis,Daniel Portnoy; Russell Vance; Victoria Chevee,under,3,41,3,16,25,3,0,3,1,0,0,0,0,36,1
+MCELLBI,C110L,22949,001,Biochem & Molbi,Isabelle Le Blanc; Eunyong Park,under,1,9,5,7,5,0,0,0,1,0,0,0,0,14,0
+MCELLBI,C112L,24520,001,Microbiology Lab,Arash Komeili,under,0,9,2,0,1,0,0,0,0,0,0,0,0,0,0
+MCELLBI,C114,22953,001,Intro Comp Virology,Britt Glaunsinger; Kim Seed,under,4,38,0,12,9,0,2,0,0,0,0,0,0,3,0
+MCELLBI,C134,24929,001,Cytogenetics,Gary Karpen,under,8,8,6,7,2,0,0,2,0,0,0,0,0,8,0
+MCELLBI,C148,22973,001,Micro Genom And Gen,Adam Deutschbauer; Michiko Taga,under,1,7,5,2,5,0,1,0,1,0,0,1,0,1,0
+MCELLBI,C61,22882,001,"Brain, Mind, Behav",David Presti,under,9,153,0,20,16,1,1,2,1,0,0,0,1,69,3
+MEC ENG,100,29114,001,Electronics For Iot,George Anwar,under,1,50,9,1,1,1,0,0,1,0,0,0,0,14,2
+MEC ENG,101,31413,001,Intro Lean Mfg Sys,Sara McMains,under,0,5,1,1,1,2,0,0,0,0,0,0,0,10,0
+MEC ENG,102B,28448,001,Mechatronics Design,Homayoon Kazerooni,under,21,65,4,3,3,5,2,1,0,0,2,1,0,14,0
+MEC ENG,103,28820,001,Exp And Measurement,Marcel Kristel; Simo Makiharju; Michael Gollner,under,3,34,19,12,3,3,1,2,1,0,1,0,0,34,0
+MEC ENG,104,28453,001,Engr Mechanics Ii,James Casey,under,10,31,35,18,8,4,2,1,2,1,0,0,0,35,5
+MEC ENG,106,28456,001,Fluid Mechanics,Philip Marcus,under,9,15,5,5,8,3,2,0,0,0,1,0,1,66,1
+MEC ENG,108,28459,001,Mech Beh Eng Matris,Kyriakos Komvopoulos,under,5,23,17,15,10,6,1,0,0,0,1,0,0,61,1
+MEC ENG,109,28470,001,Heat Transfer,Costas Grigoropoulos,under,0,9,18,8,8,4,0,1,1,0,0,0,0,37,0
+MEC ENG,110,28883,001,Intro Product Dev,Sareum Kim; Ala Moradian,under,35,44,4,1,0,0,0,0,0,0,0,0,0,3,0
+MEC ENG,127,31412,001,Composite Materials,David Steigmann; Zilan Zhang,under,7,16,15,2,2,0,0,0,0,0,0,0,0,25,0
+MEC ENG,131,32953,001,Veh Dyn And Ctr,Francesco Borrelli,under,0,7,11,4,2,3,2,0,0,0,0,0,0,11,1
+MEC ENG,133,28824,001,Mech Vibr,Fai Ma,under,0,10,0,0,0,0,0,0,0,0,0,0,0,1,0
+MEC ENG,163,31418,001,Engr Aerodynamics,Omer Savas; Eric Ibarra,under,19,29,0,0,0,1,0,0,2,0,0,0,0,7,0
+MEC ENG,179,32453,001,Aug Human Dexterity,Hannah Stuart,under,2,8,2,2,0,0,0,0,0,0,0,0,0,1,0
+MEC ENG,191K,28618,002,Prof Communication,Marcel Kristel,under,5,36,0,0,0,0,0,0,0,0,0,0,0,3,0
+MEC ENG,191K,28487,001,Prof Communication,Marcel Kristel,under,0,43,0,0,0,0,0,0,0,0,0,0,0,2,0
+MEC ENG,40,28439,001,Thermodynamics,David Rich,under,5,16,9,7,16,2,2,1,3,0,0,0,1,42,0
+MEC ENG,C134,28477,001,Feedback Cntrl Sys,Somayeh Sojoudi,under,3,6,3,3,0,1,0,0,1,0,0,0,0,1,1
+MEC ENG,C180,28484,001,Eng Analyfinite Mth,Shawn Shadden,under,5,9,2,3,0,1,0,0,0,0,0,0,0,12,2
+MEC ENG,C85,28442,001,Intro Solid Mechncs,Panayiotis Papadopoulos,under,2,4,6,6,1,6,1,1,2,0,3,0,0,9,10
+MEC ENG,C85,28443,002,Intro Solid Mechncs,Francisco Armero,under,4,6,1,1,1,1,1,2,0,0,1,0,0,15,3
+MEDIAST,104B,25660,001,Hist Journalism,Ian Davis,under,0,5,5,8,12,5,1,0,0,0,0,0,0,8,0
+MEDIAST,111,26181,001,Media History,Matthew Berry,under,2,33,18,4,7,2,1,2,0,0,0,0,1,28,0
+MEDIAST,113,25797,001,Media And Democracy,Meeta Rani JHA,under,13,77,95,22,13,6,2,1,0,0,1,0,3,61,0
+MEDIAST,160,23149,001,International Media,Ian Davis,under,0,8,5,7,11,1,0,0,0,0,0,0,0,17,0
+MEDIAST,165,26137,001,Internet & Culture,Josh Jackson,under,0,3,6,2,5,0,0,0,0,0,0,1,0,7,0
+MEDIAST,190,20018,002,Special Topics,Matthew Berry,under,6,14,11,4,0,2,0,0,0,0,0,0,0,11,1
+MEDIAST,190,30246,003,Special Topics,Ian Davis,under,0,14,11,4,4,0,0,1,0,0,0,0,2,7,0
+MEDIAST,199,17260,001,Superv Indep Study,Ian Davis,under,0,0,0,0,0,0,0,0,0,0,0,0,0,10,2
+MEDIAST,W10,30180,001,Intro To Mediast,Josh Jackson,under,0,12,15,5,4,3,5,4,2,1,0,1,2,9,2
+MIL AFF,1,23152,001,Mil Phys Fit,Michael Volpe,under,10,14,10,6,1,0,0,0,0,0,0,0,0,7,0
+MIL AFF,180,26723,001,Philosophy Of Leade,Andrew Emerson,under,1,9,18,4,7,0,0,1,0,0,0,0,1,6,0
+MIL SCI,101,23157,001,Army Doc And Tm Dev,Gregory Dempsey,under,1,3,2,2,2,1,0,0,0,0,0,0,0,1,0
+MIL SCI,142,23159,001,Co Grade Ldship,Michael Volpe,under,0,0,3,1,1,0,0,1,0,0,0,0,0,6,0
+MUSIC,128,25744,001,Historical Topics,Lester Hu,under,5,7,6,1,0,0,0,0,0,0,0,0,0,11,0
+MUSIC,128,25745,002,Historical Topics,Nicholas Mathew,under,29,14,1,0,0,0,0,0,0,0,0,0,0,4,0
+MUSIC,128,32724,003,Historical Topics,Delia Casadei,under,2,26,8,2,1,2,0,0,0,0,0,0,1,5,0
+MUSIC,139,25746,001,World Topics,Lisa Gold,under,13,17,0,0,1,0,0,0,0,0,0,0,1,18,1
+MUSIC,14,25752,001,Vocal Technique,Deborah Jackson,under,0,21,0,0,0,0,0,0,0,0,0,0,0,1,0
+MUSIC,140,23188,001,Javanese Gamelan,Midiyanto Midiyanto,under,4,17,0,0,0,0,0,0,0,0,0,0,0,1,0
+MUSIC,140,23189,002,Javanese Gamelan,Midiyanto Midiyanto,under,4,18,0,0,0,0,0,0,0,0,0,0,0,0,0
+MUSIC,140,23190,003,Javanese Gamelan,Midiyanto Midiyanto,under,4,15,0,0,0,0,0,0,0,0,0,0,0,0,0
+MUSIC,141,23191,001,Univ Orchestra,David Milnes,under,0,44,0,0,0,0,0,0,0,0,0,0,0,1,0
+MUSIC,142,23192,001,Univ Wind Ensemble,Matthew Sadowski,under,0,27,0,0,0,0,0,0,0,0,0,0,0,2,0
+MUSIC,143,25230,001,Gospel Chorus,Doniel Wilson,under,4,6,4,0,0,0,0,0,0,0,0,0,0,2,0
+MUSIC,144,23194,001,University Chorus,Wei Cheng,under,0,15,0,0,0,1,0,1,0,0,0,0,0,1,0
+MUSIC,148,23199,001,African Mus Perf,Cornelius Ladzekpo,under,29,34,0,0,1,0,0,0,0,0,0,0,3,4,2
+MUSIC,153B,24747,001,20thcentury Harmony,Robert Yamasato,under,2,7,0,0,1,0,0,0,0,0,0,0,0,1,0
+MUSIC,155,23201,001,Music Composition,Matthew Hough,under,0,8,1,1,0,0,0,0,0,0,0,0,0,1,0
+MUSIC,155,33583,002,Music Composition,Matthew Hough,under,0,8,1,0,0,0,0,0,0,0,0,0,0,3,0
+MUSIC,158A,26880,001,Music And Computing,Jonathan Kulpa,under,11,14,4,0,0,0,0,0,0,0,0,0,0,2,0
+MUSIC,158A,33151,002,Music And Computing,Jonathan Kulpa,under,12,12,2,0,0,0,0,0,0,0,0,0,0,1,0
+MUSIC,159,24798,001,Computer Programmin,Carmine Emanuele Cella,under,0,13,8,2,0,0,0,0,0,0,0,0,0,7,1
+MUSIC,168B,26047,001,Vocal Performance,Jeffrey Sykes; Nikolas Nackley; Wei Cheng,under,2,8,0,0,0,0,0,0,0,0,0,0,0,0,0
+MUSIC,168C,26042,001,Piano Performance,Jacqueline Chew; Martha Wasley; Louise Bidwell; Michael Orland; David Milnes; Betty Woo; Jean Ahn; Jeffrey Sykes,under,3,15,2,2,0,0,0,0,0,0,0,0,0,3,0
+MUSIC,168CS,26041,001,Piano Performance,Jeffrey Sykes,under,7,4,0,0,0,0,0,0,0,0,0,0,0,1,0
+MUSIC,168E,26052,001,Jazz Performance,Richard Worn; Glenn Richman; Myra Melford; Jeff Massanari; Franklin Martin,under,1,10,0,0,0,0,0,0,0,0,0,0,0,0,0
+MUSIC,170,24748,001,"History, Culture & Analysis",James Davies,under,1,9,7,0,0,0,0,0,0,0,0,0,0,0,0
+MUSIC,180,26904,001,Ethno Semnr: Topics,T Carlis Roberts,under,1,5,1,0,0,0,0,0,1,0,0,0,0,3,0
+MUSIC,198,23208,005,Directed Group Stdy,Ken Ueno; Isabella Smith,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,5
+MUSIC,20A,23162,001,Basic Musicianship,Matthew Hough; Caitlin Brown Romtvedt,under,15,11,1,0,1,0,0,0,0,0,0,0,1,2,1
+MUSIC,20A,23163,002,Basic Musicianship,Matthew Hough; Kevin Lo,under,10,9,0,1,0,1,0,0,0,0,0,0,0,2,0
+MUSIC,20A,23165,004,Basic Musicianship,Jean Ahn,under,2,4,2,4,0,0,0,0,0,0,0,0,0,8,1
+MUSIC,20A,23166,005,Basic Musicianship,Amadeus Regucera,under,11,6,2,0,0,0,0,0,0,0,0,0,0,4,1
+MUSIC,25,25213,001,Music Theory,David Pereira; Andrew Harlan,under,0,18,0,0,0,0,0,0,0,0,0,0,0,4,0
+MUSIC,25,25214,002,Music Theory,David Pereira; Isabella Smith,under,0,8,1,0,1,0,0,0,0,0,0,0,1,7,2
+MUSIC,27,25215,001,Intro West Music,Emily Zazulia,under,25,157,22,6,5,4,5,3,0,0,2,1,1,29,5
+MUSIC,31,33316,001,Radical Listening,Ken Ueno,under,1,9,3,0,0,0,0,0,0,0,0,0,0,3,1
+MUSIC,44,23181,001,Voice Class,Candace Johnson,under,5,6,1,1,0,0,0,0,0,0,0,0,0,4,0
+MUSIC,44,23182,002,Voice Class,Candace Johnson,under,6,6,1,1,0,0,0,0,0,0,0,0,0,4,0
+MUSIC,44,23183,003,Voice Class,Candace Johnson,under,8,5,0,1,0,0,0,0,0,0,0,0,1,1,0
+MUSIC,52A,33584,002,Musicianship I,Jean Ahn,under,2,4,3,0,0,1,0,1,0,1,0,0,0,1,1
+MUSIC,52A,24580,001,Musicianship I,Robert Yamasato,under,0,6,5,2,1,0,0,0,0,0,0,0,0,1,0
+MUSIC,53A,33620,002,Harmony I,David Pereira; Jeremy Wexler,under,2,3,3,2,1,1,0,0,0,0,0,0,1,0,0
+MUSIC,53A,24712,001,Harmony I,Robert Yamasato,under,0,5,3,1,2,1,0,1,0,0,0,0,0,1,0
+MUSIC,53B,24713,001,Harmony Ii,David Pereira,under,0,3,3,0,0,0,1,0,1,0,0,0,0,8,0
+MUSIC,80,23184,001,World Musics,Maria Sonevytsky,under,9,21,3,0,1,2,1,0,0,0,0,0,0,6,1
+MUSIC,R1B,26853,002,Reading & Writing,Gavin Williams,under,2,5,3,2,0,1,0,1,0,0,0,0,0,3,1
+MUSIC,R1B,23161,001,Reading & Writing,Franz Nicolay,under,0,11,2,1,0,0,0,0,1,0,0,0,0,4,0
+MUSIC,R1B,26854,003,Reading & Writing,David Milnes; Edmund Mendelssohn,under,0,12,4,3,1,0,0,0,0,0,0,0,0,0,0
+NAT RES,24,32601,002,Freshman Seminars,Traci Grzymala,under,0,0,0,0,0,0,0,0,0,0,0,0,0,17,1
+NATAMST,105,26519,001,Indig Issues Amer,Enrique Lima,under,0,7,2,1,1,0,0,0,0,0,1,0,1,2,0
+NATAMST,110,23228,001,"Theories, Methods",Diane Pearson; John Dougherty,under,1,20,0,0,2,0,0,0,0,0,0,0,0,1,1
+NATAMST,149,23230,001,Gender,Diane Pearson; John Dougherty,under,0,28,0,0,0,0,0,0,0,0,0,0,1,1,1
+NATAMST,151,24530,001,Nat Amer Philos,Diane Pearson; John Dougherty,under,0,29,0,0,0,0,0,0,0,0,0,0,0,0,1
+NATAMST,158,24531,001,"Nat Am, Cinema",Enrique Lima,under,0,15,6,2,5,0,0,0,0,0,0,0,1,4,0
+NATAMST,20B,23221,001,Intro To Nas Ii:Art,John Dougherty,under,0,21,0,0,0,0,2,0,1,0,0,0,0,0,0
+NATAMST,72,23223,001,Nat Am 1900-Present,Enrique Lima,under,0,20,7,1,0,0,0,0,0,0,0,0,1,0,0
+NATAMST,C73AC,24544,001,Indig Ppls Gbl Ineq,Thomas Biolsi,under,6,4,0,0,0,0,0,0,0,0,0,0,0,1,0
+NATAMST,R1B,23217,001,"Reading,Composition",Shari Huhndorf; Hector Callejas,under,0,12,3,0,0,0,1,0,0,0,0,0,0,1,0
+NAV SCI,12A,25480,001,Navigation Nav Op I,Patrick Casey,under,7,3,2,0,0,0,0,0,0,0,0,0,0,0,0
+NAV SCI,2,23239,001,Sea Power,Travis Petzoldt,under,5,3,5,0,0,0,0,0,0,0,0,0,0,0,0
+NE STUD,10,30954,001,Intro Near East,John Hayes,under,0,42,12,2,2,0,1,1,0,0,0,0,0,36,0
+NE STUD,103,30966,001,Egyptian Religion,Rita Lucarelli,under,12,20,1,0,1,0,0,0,0,0,0,0,0,0,0
+NE STUD,109,30967,001,Mesopotamian Hist,Francesca Rochberg; Matthew Ong,under,1,2,4,0,0,0,0,0,0,0,0,0,0,6,0
+NE STUD,126,25040,001,Silk Road Art,Sanjyot Mehendale,under,3,19,0,0,0,0,0,0,0,0,0,0,0,5,1
+NE STUD,146,30970,001,Islam,Asad Ahmed,under,1,47,0,0,0,0,0,0,0,0,0,0,0,2,0
+NE STUD,149,33664,001,Modern Middle East,Hatem Bazian,under,2,5,5,0,0,1,0,0,0,0,0,0,0,1,0
+NE STUD,153,30973,001,Islamic Spain,Nasser Meerkhan,under,0,14,0,0,0,0,0,0,0,0,0,0,0,1,0
+NE STUD,18,30959,001,Intro Ancient Egypt,Carol Redmount,under,25,43,17,5,4,2,0,2,2,1,2,0,0,41,1
+NE STUD,24,26399,001,Freshman Seminars,Carol Redmount,under,0,9,0,0,0,0,0,0,0,0,0,0,0,2,0
+NE STUD,R1B,25840,001,Read Comp Ne Stud,Francesca Rochberg; Betty Rosen,under,2,6,6,1,1,0,0,0,0,0,0,0,0,2,0
+NUC ENG,101,29171,100,Nuclear Reactions,Lee Bernstein,under,4,3,5,4,4,2,2,0,0,0,0,0,0,6,0
+NUC ENG,130,28502,001,Non-Prolif,Edward Morse,under,2,4,2,0,0,2,0,0,0,0,0,0,0,1,0
+NUC ENG,150,28503,001,Reactor Theory,Jasmina Vujic,under,3,6,0,3,0,0,1,0,0,0,0,0,0,5,0
+NUC ENG,155,31343,001,Num Sim Rad Transp,Rachel Slaybaugh,under,2,6,2,1,2,0,0,0,0,0,0,0,0,2,0
+NUC ENG,170A,28507,001,Nuclear Design,Janette Hanks,under,2,7,1,0,2,0,0,0,0,0,0,0,0,0,0
+NUSCTX,104,27584,001,Food Culture Enviro,Ashley Reaver,under,90,43,10,2,9,1,0,1,1,0,0,0,0,22,0
+NUSCTX,10S,33442,001,Intro Human Nutr,Gregory Aponte; Ashley Reaver,under,33,153,46,43,49,13,6,9,0,0,0,0,3,75,7
+NUSCTX,11,27565,001,Intro To Toxicology,Jen Chywan Wang; Sona Kang; Daniel Nomura,under,160,180,23,5,4,0,1,0,0,0,0,0,1,46,2
+NUSCTX,115,27587,001,Drug Action,Dale Johnson; Nick Holloway,under,4,56,0,0,0,0,0,0,0,0,0,0,0,0,0
+NUSCTX,121,27588,001,Computational Tox,Dale Johnson; Nick Holloway,under,14,57,0,0,0,0,0,0,0,0,0,0,0,1,0
+NUSCTX,135,27591,001,Fd Syst Org And Mgt,Ashley Reaver,under,0,26,1,0,2,0,0,0,0,0,0,0,0,2,1
+NUSCTX,145,27593,001,Nutr Edu Counseling,Karen Johal,under,17,4,0,0,0,0,0,0,0,0,0,0,0,1,0
+NUSCTX,160,27600,001,Metabolic Diseases,Joseph Napoli; Ronald Krauss; Andreas Stahl,under,25,35,14,13,19,4,2,3,1,2,0,0,3,28,10
+NUSCTX,161B,27606,001,Med Nutr Thrpy Ii,Mary Lesser,under,0,2,4,3,12,0,0,0,1,0,0,0,0,3,0
+NUSCTX,170,27607,001,Exper Nutrition Lab,Danica Chen; Anders Naar; Chihiro Tabuchi; Ariel Tsay,under,0,17,5,0,2,1,0,0,0,0,0,0,1,3,0
+NUSCTX,170,27608,002,Exper Nutrition Lab,Danica Chen; Anders Naar,under,0,14,9,0,1,0,0,0,0,0,0,0,0,5,0
+NUSCTX,190,20033,001,Intro Res Nutrsci,Hei Sook Sul,under,0,42,0,0,1,0,0,0,0,0,0,0,0,3,0
+NUSCTX,193,27609,001,Intro Res Tox,Daniel Nomura,under,0,51,0,0,0,0,0,0,0,0,0,0,0,2,0
+NUSCTX,194,20035,001,Sr Dietetics Sem,Mikelle McCoin,under,9,10,1,0,0,0,0,0,0,0,0,0,0,2,0
+NUSCTX,198,27613,005,Directed Group Stdy,Ashley Reaver,under,0,0,0,0,0,0,0,0,0,0,0,0,0,62,3
+NUSCTX,20,27727,001,Pers Food Sec Well,Sarah Minkow,under,32,1,1,0,0,0,0,1,0,0,0,0,1,3,0
+NUSCTX,98,27573,001,Directed Group Stdy,Sona Kang,under,0,0,0,0,0,0,0,0,0,0,0,0,0,46,3
+NUSCTX,98,27574,002,Directed Group Stdy,Sona Kang,under,0,0,0,0,0,0,0,0,0,0,0,0,0,24,2
+NWMEDIA,190,20041,002,Spec Top New Media,Daniel Garcia,under,7,4,4,1,0,0,0,0,0,0,0,0,1,5,0
+PB HLTH,101,29960,001,Sustainable World,Kevin Lee; Marlon Maus; Lauren van der Walt; Amia Nash; Monique Patil; David Connell,under,197,24,4,1,1,0,0,0,0,0,0,0,0,14,0
+PB HLTH,116,29885,001,Sem Hlth Med Issues,Darlene Francis; Brian Villa; Aurora Chavez; Jessica Ross,under,0,0,0,0,0,0,0,0,0,0,0,0,0,181,1
+PB HLTH,118,30617,001,Nutr Developng Ctry,Lia Fernald; Caitlin Hemlock,under,3,16,5,4,4,2,0,0,0,0,0,0,1,8,0
+PB HLTH,126,29903,001,Health Economics,Brent Fulton; Jacqueline Wilson,under,4,20,6,2,1,3,1,0,0,0,0,0,0,23,0
+PB HLTH,130,29947,001,Advanced Health Pol,Robin Flagg; Jenna Traurig; Emma Strauss,under,0,33,24,3,1,1,0,0,0,0,0,0,0,3,0
+PB HLTH,142,29886,001,Intro Prob Stat,Mi-Suk Kang Dufour; Sarah Johnson; Saher Daredia; Chandler Beon; Sophia Fuller; Nana Mizuide; Shazia Nooruddin; Andrew Liu; Yunwen Ji; Lei Shi,under,53,127,43,17,7,1,3,3,2,0,3,0,0,42,0
+PB HLTH,147,29964,001,Global Pers Vision,Scott Lee,under,3,8,0,0,0,1,0,0,0,0,0,0,0,0,0
+PB HLTH,150A,29906,001,Intr Epidem Hum Dis,Lisa Barcellos; Mahasin Mujahid; Olivia Solomon; Kelsey MacCuish; Cheyenne Butcher; Nicholas Murdock; Lawrence Tello; Jessica Lutz; Rose Glenn-Finer,under,25,61,36,20,24,6,7,5,3,0,0,1,1,58,0
+PB HLTH,150E,29898,001,Intro Com Health,Joseph Griffin; Jason Corburn; Rafael Velazquez; Juan Gonzalez; Whitney Francis,under,229,5,4,0,0,0,0,0,0,0,0,0,0,5,0
+PB HLTH,170C,29924,001,Drinkingwaterhealth,Charlotte Smith,under,0,21,0,0,0,0,0,0,0,0,0,0,0,2,0
+PB HLTH,188,30064,001,Fung Fellowship,Wilson Torres; Dana Ragouzeos,under,9,34,4,1,0,0,0,0,0,0,0,0,0,0,0
+PB HLTH,198,30003,010,Directed Group Stdy,Jaspal Sandhu,under,0,0,0,0,0,0,0,0,0,0,0,0,0,15,1
+PB HLTH,198,30005,012,Directed Group Stdy,Marlon Maus,under,0,0,0,0,0,0,0,0,0,0,0,0,0,25,1
+PB HLTH,C160,29872,001,Env Health & Dev,Rachel Morello-Frosch; Katherine Wolf,under,2,48,5,1,2,1,0,0,0,0,0,0,0,10,1
+PB HLTH,H195B,19639,001,Special Stdy Honors,Kristine Madsen,under,3,12,0,0,0,0,0,0,0,0,0,0,0,0,0
+PB HLTH,W108,30052,101,Wmn Hlth Gend Empwt,Deborah Mindry; Anke Hemmerling,under,25,8,6,2,0,1,0,0,0,0,0,0,0,1,0
+PB HLTH,W108,30054,UC10,Wmn Hlth Gend Empwt,Deborah Mindry; Anke Hemmerling,under,2,5,1,1,0,0,0,0,0,0,0,0,1,0,0
+PB HLTH,W142,29939,001,Intro Prob Stat,Maureen Lahiff; Emily Place; Montserrat Ayala-Ramirez; Gene Ho; Jessica Alway; Lourdes Valdez; Barbara Spangler,under,9,35,18,11,5,6,0,0,0,0,0,0,0,13,0
+PERSIAN,101A,32970,001,Read Pers Lit,Francesca Rochberg; Fateme Montazeri,under,0,12,0,0,0,0,0,0,0,0,0,0,0,1,0
+PERSIAN,1B,23254,001,Elem Mod Persian,Gholam-reza Ghahramani,under,10,5,0,0,0,0,0,0,0,0,0,0,0,0,0
+PHILOS,100,23277,001,Phil Methods,Daniel Warren,under,0,8,9,6,4,2,2,0,0,0,0,0,0,1,0
+PHILOS,104,26309,001,Ethical Theories,Richard Wallace,under,2,12,14,4,5,3,1,0,0,0,0,0,1,8,0
+PHILOS,107,24410,001,Moral Psychology,Kwong-loi Shun,under,0,5,10,4,4,1,1,1,0,0,0,0,1,13,0
+PHILOS,117AC,30725,001,Phil Race Ethnicity,Timothy Crockett,under,0,5,4,16,4,4,2,0,0,0,0,0,3,11,0
+PHILOS,121,30738,001,Moral Questions Ds,Nicholas Kolodny,under,0,5,9,6,2,0,0,0,0,0,0,0,0,31,0
+PHILOS,12A,23263,001,Intro To Logic,Paolo Mancosu,under,61,26,14,6,5,3,3,4,0,0,1,3,1,45,8
+PHILOS,132,26317,001,Philosophy Of Mind,Geoffrey Lee,under,0,10,11,4,4,5,1,1,1,0,0,0,2,5,2
+PHILOS,135,30745,001,Theory Of Meaning,John Campbell,under,0,13,7,19,1,1,0,0,0,0,0,0,2,4,1
+PHILOS,142,30746,001,Philosophical Logic,John Macfarlane,under,0,7,3,1,1,0,0,0,1,0,0,0,0,6,2
+PHILOS,161,24411,001,Aristotle,Timothy Clarke,under,0,12,9,6,6,3,1,1,1,0,1,0,0,7,0
+PHILOS,176,30747,001,Hume,Olivia Bailey,under,0,10,8,4,6,6,0,0,0,0,0,0,2,9,1
+PHILOS,178,30773,001,Kant,Daniel Warren,under,2,12,9,3,1,1,2,0,0,0,0,0,0,7,0
+PHILOS,187,30777,001,Special Topics,Andreja Novakovic,under,0,16,6,5,2,0,2,0,0,0,0,0,0,8,0
+PHILOS,190,19640,001,Proseminar,Katharina Kaiser; Florian Grosser,under,0,5,3,3,0,0,0,0,0,0,0,0,0,0,0
+PHILOS,2,25532,001,Ind Moral/Soc Just,Richard Wallace,under,1,8,7,17,23,9,4,5,2,0,0,0,4,70,0
+PHILOS,25B,23267,001,Modern Philosophy,Kristin Primus,under,6,73,50,11,7,0,1,0,0,0,2,0,5,24,3
+PHILOS,3,23258,001,Nature Of Mind,John Campbell,under,8,70,29,20,19,3,3,3,0,0,0,0,2,69,8
+PHILOS,7,30757,001,Exist In Lit/Film,Andreja Novakovic,under,2,17,23,14,3,2,1,0,0,0,0,0,3,21,1
+PHILOS,98BC,19641,001,Directed Group Stud,Timothy Clarke; Austin Andrews,under,0,0,0,0,0,0,0,0,0,0,0,0,0,19,1
+PHILOS,R1B,25698,001,Read & Comp Philos,Erica Klempner,under,0,4,2,6,0,0,0,0,0,0,0,0,0,3,0
+PHYS ED,1,23290,016,Pe Activities,Kyungmi Yoo,under,3,2,0,0,0,0,0,0,0,0,0,0,1,11,0
+PHYS ED,1,23291,017,Pe Activities,Kyungmi Yoo,under,7,0,0,0,0,0,0,0,0,0,0,0,0,5,0
+PHYS ED,1,23292,018,Pe Activities,Kyungmi Yoo,under,4,0,0,0,0,0,0,0,0,0,0,0,0,7,0
+PHYS ED,1,23293,019,Pe Activities,Kyungmi Yoo,under,15,0,0,0,0,0,0,0,0,0,0,0,0,14,0
+PHYS ED,1,23294,020,Pe Activities,Kyungmi Yoo,under,9,0,0,0,0,0,0,0,0,0,0,0,0,9,0
+PHYS ED,1,23295,021,Pe Activities,Kyungmi Yoo,under,8,0,0,0,0,0,0,0,0,0,0,0,1,7,0
+PHYS ED,1,25779,056,Pe Activities,Jason Britton,under,1,11,2,0,0,0,0,0,0,0,0,0,0,6,0
+PHYS ED,1,25782,059,Pe Activities,Jason Britton,under,2,12,0,0,0,0,0,0,0,0,0,0,0,5,0
+PHYS ED,1,25783,060,Pe Activities,Jason Britton,under,1,13,0,0,0,0,0,0,0,0,0,0,0,8,0
+PHYS ED,1,31364,075,Pe Activities,Russell Ahn,under,1,3,0,0,0,0,0,0,0,0,0,0,0,7,0
+PHYS ED,1,31379,015,Pe Activities,Kendra Barnes,under,6,3,0,0,0,0,0,0,0,0,0,1,0,7,1
+PHYS ED,1,23297,030,Pe Activities,William Caraway,under,0,2,0,0,0,0,0,0,0,0,0,0,0,11,0
+PHYS ED,1,23298,031,Pe Activities,William Caraway,under,0,4,0,1,0,0,0,0,0,0,0,0,0,10,0
+PHYS ED,1,23300,034,Pe Activities,Dini Wong,under,0,2,0,0,0,0,0,0,0,0,0,0,0,12,1
+PHYS ED,1,25764,036,Pe Activities,Toni Mar,under,0,8,0,0,1,0,0,0,0,0,0,0,1,13,1
+PHYS ED,1,25765,037,Pe Activities,Toni Mar,under,0,9,0,0,0,0,0,0,0,0,0,0,0,17,3
+PHYS ED,1,25766,038,Pe Activities,Dini Wong,under,0,5,0,0,0,0,0,0,0,0,0,0,0,18,0
+PHYS ED,1,25767,039,Pe Activities,Dini Wong,under,0,2,0,1,0,0,0,0,0,0,0,0,0,16,0
+PHYS ED,1,25768,040,Pe Activities,Dini Wong,under,0,2,0,0,0,0,0,1,0,0,0,0,0,18,1
+PHYS ED,1,25769,041,Pe Activities,Jason Britton,under,0,6,0,0,0,0,0,0,0,0,0,0,0,14,0
+PHYS ED,1,25770,042,Pe Activities,Jason Britton,under,0,3,0,0,0,1,0,0,0,0,0,0,2,9,0
+PHYS ED,1,25771,043,Pe Activities,Lon Rork,under,0,5,0,0,0,0,0,1,0,0,0,0,0,17,1
+PHYS ED,1,25772,044,Pe Activities,Lon Rork,under,0,1,0,0,0,0,0,0,0,0,0,0,0,17,0
+PHYS ED,1,25773,050,Pe Activities,Toni Mar,under,0,12,0,0,0,0,0,0,0,0,0,0,0,9,1
+PHYS ED,1,25778,055,Pe Activities,Toni Mar,under,0,9,0,0,2,0,0,0,0,0,0,0,0,19,0
+PHYS ED,1,25780,057,Pe Activities,Jason Britton,under,0,8,0,0,0,0,0,0,0,0,0,0,1,11,1
+PHYS ED,1,25781,058,Pe Activities,Jason Britton,under,0,11,0,0,0,0,0,0,0,0,0,0,0,7,0
+PHYS ED,1,25784,061,Pe Activities,Toni Mar,under,0,6,1,0,0,0,0,0,0,0,0,0,0,14,1
+PHYS ED,1,26815,062,Pe Activities,Toni Mar,under,0,12,0,0,0,0,0,1,0,0,0,0,1,14,2
+PHYS ED,1,31360,071,Pe Activities,Russell Ahn,under,0,4,0,0,0,0,1,0,0,0,0,0,0,4,1
+PHYS ED,1,31361,072,Pe Activities,Russell Ahn,under,0,4,0,1,1,0,0,0,0,0,0,0,1,5,0
+PHYS ED,1,31363,074,Pe Activities,Russell Ahn,under,0,5,0,0,0,0,0,0,0,0,0,0,0,7,0
+PHYS ED,1,32496,046,Pe Activities,Lon Rork,under,0,8,0,0,0,0,0,0,0,0,0,0,0,16,1
+PHYS ED,1,32497,049,Pe Activities,Lon Rork,under,0,7,0,0,0,0,0,0,0,0,0,0,0,14,0
+PHYS ED,1,32525,063,Pe Activities,Toni Mar,under,0,6,0,0,0,0,0,1,0,0,0,0,0,16,1
+PHYS ED,1,33191,009,Pe Activities,Lon Rork,under,0,5,2,0,1,0,0,0,0,0,0,0,1,13,4
+PHYS ED,1,23299,032,Pe Activities,Dini Wong,under,0,0,0,0,1,1,0,0,0,0,0,0,0,9,1
+PHYS ED,1,23301,035,Pe Activities,Dini Wong,under,0,0,0,0,1,1,0,0,0,0,0,0,0,9,1
+PHYS ED,1,31381,033,Pe Activities,Dini Wong,under,0,0,0,0,2,0,0,0,0,0,0,0,0,15,1
+PHYS ED,11,23323,007,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,88,4
+PHYS ED,11,23324,008,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,87,4
+PHYS ED,11,23329,013,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,32,1
+PHYS ED,11,23330,014,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,32,1
+PHYS ED,11,23341,025,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,256,5
+PHYS ED,11,23342,026,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,255,5
+PHYS ED,12,23359,017,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,21,1
+PHYS ED,12,23360,018,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,21,1
+PHYS ED,12,23371,029,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,209,1
+PHYS ED,12,23372,030,Pe Activities,Steven Murray; Thomas Salinaro,under,0,0,0,0,0,0,0,0,0,0,0,0,0,205,1
+PHYS ED,130,25886,001,Hist Phil Sport Phy,Steven Murray,under,1,1,1,3,4,2,4,0,0,0,0,0,0,12,0
+PHYS ED,177,31337,001,Wellness For Life,Lon Rork; Steven Murray,under,1,4,7,1,3,4,1,0,0,1,0,0,1,8,2
+PHYS ED,2,25786,031,Pe Activities,Toni Mar,under,0,10,0,0,0,0,0,0,0,0,0,0,2,6,0
+PHYS ED,2,26829,081,Pe Activities,Lon Rork,under,0,1,0,0,0,0,0,0,0,0,0,0,0,18,1
+PHYS ED,2,26830,082,Pe Activities,Lon Rork,under,0,6,0,0,1,0,0,0,0,0,0,0,0,11,1
+PHYS ED,2,26831,083,Pe Activities,Lon Rork,under,0,4,2,0,0,0,0,0,0,0,0,0,0,9,1
+PHYS ED,2,31385,072,Pe Activities,Russell Ahn,under,0,4,0,0,0,0,0,0,0,0,0,0,1,5,1
+PHYS ED,2,32533,084,Pe Activities,Toni Mar,under,0,13,0,0,0,0,0,0,0,0,0,0,2,10,0
+PHYS ED,3,25790,030,Pe Activities,Toni Mar,under,0,2,0,0,0,0,0,1,0,0,0,0,0,8,1
+PHYS ED,3,25792,060,Pe Activities,Toni Mar,under,0,6,0,0,0,0,0,0,0,0,0,0,1,11,1
+PHYS ED,3,32552,070,Pe Activities,Russell Ahn,under,0,3,0,0,2,0,0,0,0,0,0,0,0,6,0
+PHYS ED,32,23373,001,Fitness: Phs Ada/Ex,Sue Johannessen,under,1,8,3,9,4,4,0,1,0,0,0,0,0,1,0
+PHYS ED,32,31334,002,Fitness: Phs Ada/Ex,Sue Johannessen,under,0,5,5,10,2,2,2,1,0,0,0,0,0,1,0
+PHYS ED,32,31335,003,Fitness: Phs Ada/Ex,Sue Johannessen,under,0,4,6,7,3,1,1,2,0,0,0,0,0,8,0
+PHYS ED,4,32553,070,Pe Activities,Russell Ahn,under,0,2,0,0,1,1,0,0,0,0,0,0,0,8,0
+PHYS ED,5,32554,070,Pe Activities,Russell Ahn,under,1,2,0,0,1,0,0,0,0,0,0,0,0,7,0
+PHYSICS,105,23656,001,Analytic Mechanics,Matthias Reinsch,under,4,25,16,6,3,4,1,0,0,0,0,0,3,10,0
+PHYSICS,110A,23659,001,Electromagnet Optic,Chien-I Chiang,under,4,13,8,10,0,1,0,0,1,0,0,0,1,17,1
+PHYSICS,110A,24943,002,Electromagnet Optic,Liang Dai,under,1,6,1,3,3,1,1,0,0,0,0,2,0,5,1
+PHYSICS,110B,23662,001,Electromagnet Optic,Andrew Charman,under,0,5,4,3,3,2,0,0,2,0,1,0,1,10,0
+PHYSICS,111A,23665,001,Instrumentation Lab,Joel Fajans; Waqas Khalid; Kam-Biu Luk; Yihua Zhong; Jackson Schrott; Matthew Tao; Joseph Slivka,under,7,13,3,4,3,2,0,0,0,0,0,0,1,2,1
+PHYSICS,111B,23667,001,Adv Exp Lab,Hartmut Haeffner; Daniel Mckinsey; Kam-Biu Luk; Aditya Prasad; Madeline Monroy; Yasemin Kiriscioglu; Noah Goss,under,2,9,11,6,2,4,1,0,3,0,0,0,2,36,1
+PHYSICS,112,23669,001,Stat Thermal Phys,William Holzapfel,under,12,14,2,1,2,3,0,0,0,0,0,0,3,7,1
+PHYSICS,112,30264,002,Stat Thermal Phys,Dung-Hai Lee,under,7,6,3,0,2,0,2,0,1,0,0,0,4,7,1
+PHYSICS,137A,23672,001,Quantum Mechanics,Daniel Kasen,under,9,32,12,8,8,0,0,3,0,0,3,0,2,36,1
+PHYSICS,137B,23678,001,Quantum Mechanics,Marjorie Shapiro,under,3,6,3,1,1,0,1,0,0,0,0,0,1,2,1
+PHYSICS,137B,23679,002,Quantum Mechanics,Michael Crommie,under,7,22,2,12,8,1,1,1,2,0,0,0,0,21,1
+PHYSICS,138,24568,001,Modern Atomic Phys,Dan Stamper-Kurn,under,0,3,2,0,1,0,0,0,0,0,0,0,0,8,0
+PHYSICS,139,23684,001,Sp Theo Relativity,Lawrence Hall,under,6,3,3,4,4,0,3,0,0,0,0,0,1,6,2
+PHYSICS,141A,23687,001,Solid State Physics,Zi Qiu,under,8,16,2,2,3,0,0,0,0,0,0,0,0,11,0
+PHYSICS,141B,23690,001,Solid State Physics,Joseph Orenstein,under,0,16,0,0,0,0,0,0,0,0,0,0,0,1,0
+PHYSICS,142,24945,001,Intro Plasma Phys,Stuart Bale,under,3,5,3,1,0,1,0,0,0,0,0,0,0,4,0
+PHYSICS,151,24950,001,Phys Special Topics,Hitoshi Murayama,under,10,11,0,0,0,0,1,0,0,0,0,0,0,5,0
+PHYSICS,177,23698,001,Molec Biophysics,Ahmet Yildiz,under,0,6,1,1,0,0,0,1,0,0,0,0,0,7,1
+PHYSICS,5A,24553,001,Intro Mech And Rel,Matthias Reinsch,under,4,7,6,4,4,2,0,2,0,0,0,0,1,16,0
+PHYSICS,5B,24486,001,Intr Em Waves Optcs,Feng Wang,under,12,23,5,4,4,1,0,0,0,0,0,2,1,5,1
+PHYSICS,5BL,24503,002,Intr To Exp Phys I,Nathan Lowhorn; Jose Soria,under,9,10,0,0,0,0,0,0,0,0,0,0,0,3,0
+PHYSICS,5BL,24505,003,Intr To Exp Phys I,Gurpreet Kaur; Jose Soria,under,0,17,2,2,0,2,0,0,0,0,0,0,0,1,0
+PHYSICS,5C,24951,001,Intro Thermo And Qm,Holger Mueller,under,1,5,8,6,3,4,1,1,1,0,0,0,1,5,0
+PHYSICS,5CL,24955,102,Intr To Exp Phys Ii,Gurpreet Kaur; Ryan Gibbons,under,5,13,1,1,0,0,1,0,0,0,0,0,0,1,0
+PHYSICS,5CL,24954,101,Intr To Exp Phys Ii,Chien-I Chiang; Ryan Gibbons,under,0,12,1,1,0,0,0,0,0,0,0,0,0,0,0
+PHYSICS,77,23650,001,Intro Comp Tech Phy,Yury Kolomensky,under,1,10,3,1,0,0,0,0,0,0,0,0,0,4,0
+PHYSICS,7A,23379,001,Scient Engin Phys,Ronnie Spitzer; Nicholas Cinko,under,3,39,19,8,33,2,3,6,0,0,0,0,3,43,3
+PHYSICS,7A,23380,002,Scient Engin Phys,Nicholas Cinko; Alex Zettl,under,5,37,12,13,23,2,1,3,0,0,0,0,3,36,3
+PHYSICS,7A,23381,003,Scient Engin Phys,Nicholas Cinko; Alex Zettl,under,4,58,19,18,58,6,6,4,0,0,1,0,6,67,6
+PHYSICS,7B,23448,001,Scient Engin Phys,Chien-I Chiang; Haoxing Du,under,1,35,12,9,6,4,0,2,3,0,0,0,1,134,2
+PHYSICS,7B,23449,002,Scient Engin Phys,Achilles Speliotopoulos; Haoxing Du,under,2,28,27,22,15,6,2,2,5,0,0,0,1,100,1
+PHYSICS,7C,23513,001,Scient Engin Phys,Steven Stahler,under,9,6,4,11,6,7,4,3,0,0,0,0,1,25,0
+PHYSICS,89,23653,001,Intro To Math Phys,Austin Hedeman,under,3,9,8,4,4,2,0,2,2,0,2,0,1,7,3
+PHYSICS,8A,23525,001,Intro Physics,Michael DeWeese; Nathan Lowhorn; Nicolas Aldana,under,6,77,30,17,20,14,4,6,4,0,0,0,1,46,4
+PHYSICS,8A,23526,002,Intro Physics,Michael DeWeese; Catherine Bordel; Nicolas Aldana,under,6,72,56,40,43,25,6,6,6,0,0,0,2,57,5
+PHYSICS,8B,23587,001,Intro Physics,Catherine Bordel; Stephen Randall,under,3,39,31,21,25,16,6,8,3,0,0,0,0,39,0
+PHYSICS,8B,23588,002,Intro Physics,Achilles Speliotopoulos; Stephen Randall,under,2,46,50,23,24,13,5,5,4,0,0,0,0,95,4
+PHYSICS,C10,30661,001,Descriptive Intro,Na Ji,under,3,4,2,0,2,1,0,0,0,0,0,0,1,0,0
+PHYSICS,C161,23695,001,Rela Astro & Cosmo,Adrian Lee,under,1,0,3,2,0,3,2,1,0,0,0,0,1,8,0
+PHYSICS,C21,25084,001,Physics And Music,Terrence Buehler,under,19,19,4,3,0,1,0,0,0,0,0,0,0,54,2
+PLANTBI,101L,27835,001,Plant Biology Lab,Mary Wildermuth,under,4,16,1,0,0,0,0,0,0,0,0,0,0,0,0
+PLANTBI,122,27653,001,Bioenergy,Anastasios Melis,under,20,15,5,1,1,0,0,0,0,0,0,0,1,6,0
+PLANTBI,160,27657,001,Plant Mol Genetics,Jennifer Fletcher; Devin Coleman Derr; John Vogel,under,3,3,4,4,2,1,0,0,1,0,0,0,0,13,2
+PLANTBI,165,27660,001,Plant Pathology,Barbara Baker; Jennifer Lewis,under,1,3,4,2,1,0,0,1,1,0,0,0,0,2,0
+PLANTBI,40,27640,001,Secret Life Plants,Patricia Zambryski,under,45,53,27,8,5,1,0,0,0,0,0,0,1,37,0
+PLANTBI,98,27648,002,Directed Group Stdy,Jennifer Fletcher,under,0,0,0,0,0,0,0,0,0,0,0,0,0,35,1
+PLANTBI,C103,27649,001,Pathogenesis,Daniel Portnoy; Russell Vance; Victoria Chevee,under,0,3,0,2,4,0,0,1,0,0,0,0,0,8,0
+PLANTBI,C112L,27691,001,Microbiology Lab,Arash Komeili,under,0,8,0,2,1,0,0,0,0,0,0,0,0,0,0
+PLANTBI,C114,27650,001,Intro Comp Virology,Britt Glaunsinger; Kim Seed,under,1,21,0,4,12,0,0,3,0,0,0,0,1,8,0
+PLANTBI,C148,27654,001,Micro Genom And Gen,Adam Deutschbauer; Michiko Taga,under,3,8,4,5,3,5,1,1,1,0,0,0,1,5,0
+POL SCI,1,23738,001,Intro American Pol,Robert Van Houweling; Thomas Kent; Jeremy Martin; Anna Mikkelborg; Matthew Brundage; Michael Sun; Claire Jang,under,9,52,37,17,29,7,6,5,2,0,1,0,1,79,9
+POL SCI,103,25591,001,Congress,Eric Schickler; David Foster; Christian Hosam; Jacqueline Colao,under,10,68,42,16,10,3,0,0,0,1,2,0,4,6,2
+POL SCI,106A,26595,001,Camp Strat/Media,Daniel Schnur,under,2,15,15,14,4,0,0,0,0,0,0,0,0,6,0
+POL SCI,109Z,25594,001,Topics In Area Stdy,Gabriel Lenz; Joseph Warren; Norris Davis,under,8,24,10,23,20,6,0,0,0,0,0,0,1,15,1
+POL SCI,110B,23775,001,Cal-In-Sacramento,DAVID AYON,under,1,12,4,9,0,0,0,0,0,0,0,0,0,4,0
+POL SCI,111AC,23776,001,Pol Of Displacement,Nadesan Permaul; Mary Shi,under,5,16,9,2,3,0,0,0,0,0,0,0,0,11,0
+POL SCI,112C,24992,001,Hist Pol Theory,Joshua Freed; Kristin Zuhone; Daniela Cammack; Kai Yui Samuel Chan; Jesse Strecker,under,18,55,46,24,12,3,1,1,2,1,0,0,3,36,0
+POL SCI,123L,30721,001,Topics Intntl Rel,Andrew Reddie; Alia Braley; Vanessa Navarro Rodriguez,under,7,43,16,4,10,1,2,0,0,0,0,1,1,13,2
+POL SCI,123M,23781,001,Conflict Management,Michaela Mattes; Andrew Blinkinsop; Jennie Barker,under,0,24,19,14,14,5,3,1,1,0,0,0,1,29,0
+POL SCI,123S,25015,001,Topics Intntl Rel,Surili Sheth; Helene Silverberg,under,0,13,8,3,4,2,1,0,0,0,0,0,0,15,2
+POL SCI,124B,26976,001,War In The Mid East,Julia Raven; Ron Hassner; Aishwarya Saxena; Max Kagan,under,7,30,37,11,3,5,0,1,1,0,0,0,1,5,0
+POL SCI,124C,23791,001,Int'L Ethics &,Amy Gurowitz; John Jamieson; Anna Callis,under,0,44,13,14,2,1,5,1,0,0,2,0,3,18,1
+POL SCI,126A,24981,001,Int Pol Economy,Bhumi Purohit; Ryan Brutger,under,10,25,12,2,1,0,0,0,0,0,0,0,0,6,1
+POL SCI,140W,32747,001,Topics In Comp Pol,Wendy Muse Sinek; Jiali Li; Ritika Goel,under,21,29,14,8,4,0,2,0,0,0,0,1,1,18,1
+POL SCI,146A,25621,001,African Politics,Christopher Ansell; Deirdre Martin; Melanie Phillips; Soo Sun You; Benjamin Chu,under,27,55,22,3,7,2,3,2,1,0,0,0,2,16,6
+POL SCI,148A,25624,001,Latin Amer Pol,Alison Post; Craig Johnson; Juan Campos,under,1,13,17,10,14,7,3,2,1,2,1,2,1,15,3
+POL SCI,149E,23798,001,Topics In Area Stdy,Darren Zook,under,0,83,42,8,6,2,0,0,0,0,0,0,1,8,0
+POL SCI,149P,32756,001,Topics In Area Stdy,Christopher Ansell; Matthew Stenberg; Vanessa Ehrenpreis,under,0,17,14,9,5,3,0,0,0,0,0,0,0,8,0
+POL SCI,171,23802,001,California Politics,Edward Lempert; Cat Benson,under,15,18,8,3,0,0,0,0,0,0,0,0,0,10,0
+POL SCI,179,24638,001,Colloq On Pol Sci,Alan Ross,under,0,0,0,0,0,0,0,0,0,0,0,0,0,300,7
+POL SCI,191,17736,002,Junior Seminar,Pradeep Chhibber,under,1,4,3,0,1,0,0,0,0,0,0,0,0,1,0
+POL SCI,191,17735,001,Junior Seminar,Michaela Mattes,under,0,4,4,3,2,0,0,0,0,0,0,0,0,3,1
+POL SCI,191,17737,003,Junior Seminar,Helene Silverberg,under,0,8,2,0,0,0,0,0,0,0,0,0,0,3,0
+POL SCI,191,17738,004,Junior Seminar,Thad Dunning,under,0,8,0,0,0,0,0,0,0,0,0,0,0,3,1
+POL SCI,191,17739,005,Junior Seminar,Christopher Ansell,under,0,5,3,2,0,0,0,0,0,0,0,0,0,1,0
+POL SCI,2,23750,001,Intro Comparat Pol,Michael Fish; Oren Samet-Marram; Adan Martinez; Junius Brown; Benjamin Lee,under,37,67,21,16,9,5,3,3,1,0,1,0,2,36,2
+POL SCI,24,33156,001,Freshman Seminars,Daniela Cammack,under,0,0,0,0,0,0,0,0,0,0,0,0,0,12,1
+POL SCI,4,23763,001,Pol Theory,Mark Bevir; Sam Stevens; Johnathan Guy; Yi-Chen Lee,under,0,16,51,18,15,5,3,0,1,1,0,0,1,39,1
+POL SCI,C196A,24457,001,Ucdc Core Seminar,Marc Sandalow,under,0,12,3,0,1,0,0,0,0,0,0,0,0,2,0
+POL SCI,H190B,19647,001,Honors Seminar,Terri Bimes,under,0,14,2,0,0,0,0,0,0,0,0,0,0,0,0
+POL SCI,H190B,19648,002,Honors Seminar,Amy Gurowitz,under,0,9,2,0,0,0,0,0,0,0,0,0,0,1,0
+POLECON,100,23822,001,Theory Of Pol Econ,Clare Talwalker,under,2,22,23,18,6,7,1,1,0,0,0,0,0,36,5
+POLECON,101,23829,001,Contemp Theo Pol Ec,Crystal Cohen,under,3,26,25,19,6,1,0,0,0,1,1,0,1,41,0
+POLECON,106,26846,001,Inter Micro Theory,Mario Muzzi,under,1,26,5,6,1,3,1,1,2,0,0,0,1,30,5
+POLECON,160,23836,001,Pe His Context,Richard Ashcroft,under,0,3,4,5,0,0,0,0,0,0,0,0,0,4,0
+PORTUG,102,23842,001,Readings In Portug,Sebastiao Sousa Macedo,under,1,2,2,2,1,1,0,1,0,0,0,0,0,2,0
+PORTUG,135,31159,001,Luso-Brazilian Lit,Nathaniel Wolfson,under,2,6,1,0,1,0,0,0,0,0,0,0,0,1,0
+PORTUG,27,25163,001,Intro Portug Cultur,Nathaniel Wolfson,under,0,13,9,1,0,0,0,0,0,0,0,0,0,10,0
+PORTUG,50,25150,002,Intensive Portugues,Clelia Donovan; Alejandro Munera,under,0,5,0,3,1,0,1,0,0,0,0,0,0,1,0
+PSYCH,1,23845,001,General Psychology,Christopher Gade,under,53,67,37,17,15,14,2,6,2,3,2,0,4,24,3
+PSYCH,101,23888,001,Res & Data Anal,Arman Catterson,under,88,53,15,10,4,5,7,5,1,0,0,0,3,12,5
+PSYCH,110,30377,001,Introd Biol Psych,David Foster,under,41,18,8,10,6,2,6,2,1,3,0,0,1,26,3
+PSYCH,111,25904,001,Human Neuroanatomy,Kevin Weiner,under,5,13,5,5,3,0,0,1,1,0,0,0,0,11,0
+PSYCH,114,30378,001,Bio Of Learning,Linda Wilbrecht,under,7,39,13,14,9,9,5,7,1,2,0,0,2,15,6
+PSYCH,124,26290,001,Evol Human  Behav,Lucia Jacobs,under,19,48,14,8,5,1,0,1,1,1,0,0,1,34,3
+PSYCH,130,23901,001,Clinical Psychology,Sheri Johnson,under,6,67,12,11,6,1,3,2,1,0,0,1,1,14,4
+PSYCH,135,25522,001,Treating Mental Ill,Allison Harvey; Laura Bell; Jiyoung Song,under,68,52,6,2,1,0,0,0,1,0,0,0,0,8,0
+PSYCH,140,30379,001,Development Psych,Fei Xu,under,22,49,26,7,9,0,2,1,0,1,0,0,1,18,0
+PSYCH,147,25996,001,Methods In Cog Dev,Celeste Kidd,under,126,13,2,1,1,1,0,0,0,0,0,0,0,4,0
+PSYCH,158,32399,001,Top Sem In Personal,Oliver John,under,2,3,3,1,0,0,0,0,0,0,0,0,0,1,0
+PSYCH,160,25542,001,Social Psychology,Iris Mauss; Ryan Lundell-Creagh; Rosalinda Nava,under,51,78,26,12,15,3,2,4,0,0,0,0,0,19,2
+PSYCH,167AC,30380,001,Stigma,Rodolfo Mendoza-Denton,under,20,39,14,23,13,4,3,2,1,1,1,0,3,72,8
+PSYCH,198,23940,004,Directed Group Stdy,Silvia Bunge; Anna Tsuchimoto,under,0,0,0,0,0,0,0,0,0,0,0,0,0,51,1
+PSYCH,198,23947,012,Directed Group Stdy,David Presti; Dylan Earp; Noah Saso; Anthony Dunn; Delainey Conger,under,0,0,0,0,0,0,0,0,0,0,0,0,0,71,6
+PSYCH,2,23862,001,Principles Of Psych,Lance Kriegsfeld; Allison Altman,under,51,71,27,10,7,1,2,1,1,0,0,0,0,14,2
+PSYCH,C115C,30373,001,Neuroethology,Frederic Theunissen,under,0,5,1,1,3,0,0,0,0,0,0,0,0,3,2
+PSYCH,C116,30374,001,Hormones & Behavior,Lance Kriegsfeld,under,2,22,3,1,5,1,1,0,0,0,1,1,1,16,2
+PSYCH,C126,24374,001,Perception,David Whitney,under,0,6,6,11,5,7,4,1,5,0,1,0,0,69,3
+PSYCH,C127,30375,001,Cognitive Neurosci,Richard Ivry,under,1,3,7,9,6,2,0,1,1,0,0,0,2,14,3
+PSYCH,C143,30376,001,Lang Acquisition,Mahesh Srinivasan,under,22,41,20,21,12,4,3,4,1,0,0,1,0,16,1
+PSYCH,C162,26294,001,Human Happiness,Dacher Keltner,under,4,70,4,3,16,0,0,7,0,0,0,0,0,40,0
+PSYCH,C61,23863,001,"Brain, Mind, Behav",David Presti,under,4,114,0,22,28,1,0,6,2,0,0,0,1,72,3
+PSYCH,H194B,23936,001,Honors Seminar,Frederic Theunissen; Peter Soyster,under,0,30,1,0,0,0,0,0,0,0,0,0,0,0,0
+PSYCH,W1,23861,001,General Psychology,Christopher Gade; Vyoma Shah; Amanda Perez-Ceballos,under,0,15,3,2,12,3,8,2,1,0,0,0,0,21,4
+PUB POL,101,29512,001,Intro Pub Pol Anal,Larry Rosenthal,under,31,90,42,16,6,0,0,0,0,0,0,0,0,15,0
+PUB POL,157,29546,001,Arts/Cultural Pol,Michael O'Hare,under,4,5,5,6,3,2,0,1,0,0,0,0,0,14,0
+PUB POL,162AC,33889,001,Labor Organizing,Anibel Ferus-Comelo,under,0,21,2,1,0,0,0,0,0,0,0,0,0,1,0
+PUB POL,190,17889,001,Spec Topics Pub Pol,David Kirp,under,2,16,24,7,2,4,0,0,1,0,1,0,0,11,0
+PUB POL,190,17895,009,Spec Topics Pub Pol,Steven Weissman,under,0,6,1,0,1,0,0,0,0,0,0,0,0,3,0
+PUB POL,192AC,29612,001,Social Movements,Sarumathi Jayaraman,under,1,139,12,6,0,0,0,0,0,0,0,0,1,19,2
+PUB POL,C103,29517,001,Wealth And Poverty,Robert Reich,under,45,190,125,63,16,3,0,0,0,0,0,0,0,237,2
+PUB POL,C189,29601,001,Social Sci & Crime,Jennifer Skeem,under,0,12,14,6,3,1,1,0,0,1,0,0,0,7,0
+PUNJABI,1B,23958,001,Introd Punjabi,Upkar Ubhi,under,1,6,3,0,0,0,0,0,0,0,0,0,0,0,0
+RHETOR,10,26538,001,Reason And Argument,Nasser Zakariya,under,3,20,20,13,4,0,0,0,0,0,0,0,1,13,4
+RHETOR,103B,23967,001,Hist Of Rhetoric Ii,Marianne Constable,under,1,15,12,8,11,2,0,1,0,0,0,0,3,11,2
+RHETOR,107,31202,001,Scientific Disc,David Bates,under,2,11,6,7,0,0,0,0,0,0,0,0,1,4,0
+RHETOR,108,25682,001,Philosophical Disc,David Bates,under,1,3,3,0,3,1,0,0,0,0,0,0,1,3,0
+RHETOR,113,33490,001,Rhet Of Ethics,Osita Udekwu,under,0,13,0,0,0,0,0,0,0,0,0,0,0,2,0
+RHETOR,121,25683,001,Rhetoric Of Fiction,Michael Mascuch,under,0,9,14,8,1,0,0,0,0,0,0,0,0,3,0
+RHETOR,136,31204,001,Art And Authorship,Winnie Wong,under,0,3,7,1,0,0,0,0,0,0,0,0,0,9,0
+RHETOR,158,23972,001,Adv Pol Theory,Osita Udekwu,under,0,10,0,0,0,0,0,0,0,0,0,0,0,2,0
+RHETOR,176,31213,001,Material Culture,Michael Dalebout,under,5,9,4,1,1,0,0,0,0,0,0,0,0,4,1
+RHETOR,189,17315,001,Special Topics,Ramona Naddaff; Jeehyun Choi; Anooj Kansara,under,0,4,5,0,2,0,0,0,0,0,0,0,0,1,0
+RHETOR,R1A,23960,001,Craft Of Writing,Kuan Hwa; Nathan Atkinson,under,1,5,6,1,0,1,0,0,0,0,0,0,0,3,0
+RHETOR,R1A,31192,002,Craft Of Writing,Jennifer Lum,under,0,14,5,2,5,1,0,0,0,0,0,0,0,4,2
+RHETOR,R1A,31194,003,Craft Of Writing,Nathan Atkinson; Lyndsey Karr; Joel Auerbach,under,0,10,2,3,4,0,0,2,0,0,0,0,2,5,1
+RHETOR,R1A,31196,004,Craft Of Writing,Jack Chang; Nathan Atkinson; Janice Yu,under,0,14,11,0,0,2,0,0,1,0,0,0,1,3,1
+RHETOR,R1A,33788,005,Craft Of Writing,Richard Grijalva,under,0,3,5,3,0,0,0,0,0,0,0,0,1,1,1
+RHETOR,R1B,23962,001,Craft Of Writing,William Morgan; Nathan Atkinson; Myke Samuels,under,3,17,7,0,0,0,0,0,0,0,0,0,0,4,0
+RHETOR,R1B,31198,003,Craft Of Writing,Katie Brown; Nathan Atkinson; Angela Yu,under,5,15,4,1,2,0,0,0,0,0,0,0,0,5,0
+RHETOR,R1B,31197,002,Craft Of Writing,Nathan Atkinson; Devin Choudhury; Mary Wiltshire-Gordon,under,0,17,7,3,1,0,0,0,0,0,0,0,0,4,1
+RHETOR,R1B,33335,004,Craft Of Writing,Richard Grijalva,under,0,3,4,1,1,2,0,0,1,0,0,0,1,1,1
+RUSSIAN,1,26055,002,Elementary Russian,Anna Muza; Lucas Plazek,under,0,6,1,1,0,0,0,1,0,0,0,0,0,2,0
+RUSSIAN,2,23974,001,Elementary Russian,Anna Muza; Helena Kernan,under,2,3,4,0,3,1,0,0,0,0,0,0,0,2,0
+S ASIAN,130,32822,001,Film In South Asia,Vasugi Kailasam,under,0,1,4,4,1,0,0,0,0,0,0,1,0,2,0
+S ASIAN,142,25375,001,India'S Great Epics,Robert Goldman,under,49,46,27,5,2,1,0,0,0,0,0,0,0,21,0
+S ASIAN,1B,23978,001,Civ Med & Mod India,Munis Faruqui,under,0,12,0,1,1,0,0,0,0,0,0,0,1,9,0
+S ASIAN,R5B,25927,004,India Writers Eye,Penelope Edwards; Kashi Gomez,under,2,5,2,0,1,0,0,1,0,0,0,0,0,3,0
+S ASIAN,R5B,26532,006,India Writers Eye,Penelope Edwards; Petra Lamberson,under,4,7,2,1,1,0,0,0,0,0,0,0,0,2,0
+S ASIAN,R5B,23981,001,India Writers Eye,Penelope Edwards; Kristina Anderson,under,0,5,1,1,0,0,0,0,0,0,0,0,0,10,0
+"S,SEASN",39,17334,004,Freshman/Sophomore,Nora Melnikova,under,2,9,1,0,0,0,0,0,0,0,0,0,0,1,0
+"S,SEASN",C145,25282,001,Buddhism Contemp,Mark Blum,under,0,3,4,0,1,1,0,0,0,0,0,0,0,5,0
+SCANDIN,100B,24507,001,Inter Scandin Langs,Karen Moller,under,0,10,1,0,0,0,0,0,0,0,0,0,0,0,0
+SCANDIN,106,23990,001,Hans C Andersen,Tim Tangherlini,under,1,15,5,3,2,0,0,1,0,0,0,0,0,4,0
+SCANDIN,115,25431,001,Drama And Film,Mark Sandberg,under,1,7,3,7,3,0,3,1,0,0,0,0,1,7,1
+SCANDIN,132,30254,001,Intro Fin Cult/Hist,Jonas Wellendorf; Anna Tomi,under,2,7,7,2,2,0,0,0,0,0,0,0,1,5,0
+SCANDIN,60,23988,001,Heroic Legends,Katherine Heslop,under,0,3,7,0,0,0,0,0,0,0,0,0,0,4,0
+SCANDIN,R5A,25549,001,Reading & Comp,Katherine Heslop; Donna Isobel Boles,under,5,8,3,1,0,0,0,0,0,0,0,0,0,0,0
+SCANDIN,R5A,26836,002,Reading & Comp,Katherine Heslop; Michael Lawson,under,1,8,2,0,0,2,0,0,0,0,0,0,2,2,0
+SCANDIN,R5B,30257,001,Reading & Comp,Katherine Heslop; Jacob Malone,under,1,0,5,3,0,1,0,0,0,0,0,0,0,6,0
+SEASIAN,10B,24000,001,Intrd Civ Se Asia,Sylvia Tiwon,under,2,25,9,3,0,0,0,0,0,0,0,0,0,8,0
+SEASIAN,148,31087,001,Philhistory,Lisandro Claudio,under,0,8,5,3,1,1,1,0,0,1,0,0,2,2,0
+SEASIAN,R5B,33561,002,Under Western Eyes,Penelope Edwards; Melissa Carlson,under,7,6,0,0,0,0,0,0,1,0,0,0,0,3,0
+SEASIAN,R5B,33566,003,Under Western Eyes,Penelope Edwards; Anne Greenwood,under,3,9,3,0,0,0,0,0,0,0,0,0,0,2,0
+SEASIAN,R5B,25529,001,Under Western Eyes,Penelope Edwards; Sophia Warshall,under,0,4,7,0,0,0,0,0,0,0,0,0,0,6,0
+SEASIAN,R5B,33567,004,Under Western Eyes,Penelope Edwards; Megan Hewitt,under,0,8,5,0,0,0,1,0,0,0,0,0,0,2,0
+SLAVIC,134C,30698,001,Dostoevsky,Kathryn Pribble; Lyubov Golburt,under,2,6,6,1,0,0,0,0,0,0,0,0,0,2,0
+SLAVIC,134E,30697,001,Chekhov,Anna Muza,under,4,7,0,0,0,0,0,0,0,0,0,0,0,2,0
+SLAVIC,39,26263,001,Freshman/Soph Sem,Djordje Popovic,under,0,0,0,0,0,0,0,0,0,0,0,0,0,11,1
+SLAVIC,50,26260,001,Rus/E Eur/Euras Cul,Darya Kavitskaya,under,15,23,4,3,1,0,1,0,0,0,0,0,0,20,1
+SLAVIC,R5A,24003,001,Reading And Comp,Lyubov Golburt; Harald Miller,under,0,1,7,5,1,2,0,0,0,0,0,0,0,2,0
+SLAVIC,R5A,24004,002,Reading And Comp,Lyubov Golburt; Emily Laskin,under,0,14,1,0,1,0,0,0,0,0,0,0,0,0,0
+SLAVIC,R5B,24005,001,Reading And Comp,Brian Egdorf; Lyubov Golburt,under,2,8,0,3,0,1,0,0,0,0,0,0,0,1,2
+SLAVIC,R5B,24519,002,Reading And Comp,Lyubov Golburt; Nihal Shetty,under,2,6,3,1,0,0,0,0,0,1,0,0,0,4,0
+SLAVIC,R5B,26270,003,Reading And Comp,Lyubov Golburt; Zachary Hicks,under,0,13,1,0,0,0,0,0,1,0,0,0,0,3,0
+SLAVIC,R5B,30769,004,Reading And Comp,Zachary Johnson,under,0,9,4,0,0,0,0,0,0,0,0,0,0,4,0
+SLAVIC,R5B,30770,005,Reading And Comp,Zachary Johnson,under,0,11,5,1,0,0,0,0,0,0,0,0,0,0,0
+SOC WEL,110,30154,001,Soc Wk As A Prof,Jill Berrick,under,0,11,5,2,2,1,0,2,2,0,0,1,0,4,3
+SOC WEL,112,30113,001,Soc Welfare Policy,Erika Weissinger,under,1,28,15,6,1,2,1,0,0,0,0,0,0,0,0
+SOC WEL,114,30167,001,Practice In Soc Wk,Wendy Wiegmann,under,15,21,5,1,1,0,1,0,0,0,0,0,0,1,0
+SOC WEL,98,30105,002,Directed Group Stdy,Wendy Wiegmann,under,0,0,0,0,0,0,0,0,0,0,0,0,0,20,3
+SOC WEL,98BC,30111,001,Directed Group Stud,Jill Berrick; Brita Bookser,under,0,0,0,0,0,0,0,0,0,0,0,0,0,15,1
+SOC WEL,C181,30160,001,Social Sci & Crime,Jennifer Skeem,under,0,13,13,2,1,1,0,0,0,0,0,0,0,5,0
+SOCIOL,1,24012,001,Intro To Sociology,Ann Swidler,under,16,104,50,43,32,6,3,2,2,0,0,0,8,23,3
+SOCIOL,101,24493,001,Soc Theory I,Cihan Tugal,under,7,21,23,26,14,11,4,5,2,0,0,0,3,7,4
+SOCIOL,102,24051,001,Soc Theory Ii,Michael Burawoy,under,9,29,21,34,24,11,11,3,1,0,0,0,3,41,4
+SOCIOL,106,32546,001,Quan Soc Methods,Laura Enriquez; Robert Pickett,under,1,8,7,1,1,0,1,0,1,0,0,0,0,4,0
+SOCIOL,110,24062,001,Org & Soc Institut,Linus Huang,under,9,17,12,12,8,6,0,1,2,0,0,0,3,16,4
+SOCIOL,111AC,24063,001,Socio Of The Family,Mary Kelsey,under,5,45,26,11,9,2,0,1,0,0,0,0,0,21,3
+SOCIOL,111C,25185,001,Soc Of Childhood,Caitlin Daniel,under,0,6,14,10,14,4,1,0,0,0,0,0,0,10,0
+SOCIOL,111L,26484,001,Soc Of The Life,Linus Huang,under,3,8,4,0,4,0,0,2,0,0,0,0,0,7,0
+SOCIOL,113AC,26090,001,Education,Brian Powers,under,9,4,17,13,1,1,0,0,0,0,0,0,1,3,2
+SOCIOL,116,30831,001,Sociology Of Work,Joanna Reed,under,0,13,4,9,3,2,0,1,0,0,0,0,0,3,0
+SOCIOL,120,24064,001,Econ And Society,Neil Fligstein,under,7,18,16,10,7,5,1,0,1,1,0,0,2,3,0
+SOCIOL,121,24068,001,Soc Of Entrepreneur,Szonja Ivester,under,3,25,8,2,2,3,0,0,0,0,0,0,0,14,2
+SOCIOL,124,30597,001,Sociol Of Poverty,Caitlin Daniel,under,0,12,14,11,4,5,3,0,1,0,0,0,1,4,1
+SOCIOL,127,26100,001,Develop & Globaliza,Edwin Lin,under,13,62,16,7,0,0,0,0,1,0,0,0,0,16,4
+SOCIOL,135,30605,001,Sexual Cultures,Jill Bakehorn,under,1,5,7,11,10,5,1,1,0,0,1,0,0,16,2
+SOCIOL,136,24070,001,Urban Sociology,Joanna Reed,under,0,13,10,9,8,2,0,1,0,0,0,0,2,10,2
+SOCIOL,139,33204,001,Sel Top:Inequality,Fatmir Haskaj,under,0,12,1,0,2,0,0,0,0,0,0,0,0,1,1
+SOCIOL,140,30607,001,Polit & Soc Cha,Laleh Behbehanian,under,5,35,17,16,15,2,2,3,0,0,0,0,2,22,1
+SOCIOL,145,33458,001,Social Change,Dylan Riley,under,2,2,6,2,3,0,1,0,1,0,0,0,1,1,2
+SOCIOL,150,24078,001,Social Psych,Brian Powers,under,4,19,27,21,3,1,1,0,0,1,0,0,2,18,5
+SOCIOL,163,26095,001,Popular Culture,Jill Bakehorn,under,1,12,22,10,21,11,5,2,1,0,0,0,0,31,2
+SOCIOL,166,30616,001,Society & Technolog,Linus Huang,under,17,10,9,5,5,3,1,1,0,0,0,0,1,6,2
+SOCIOL,167,26096,001,Virtual Communities,Edwin Lin,under,1,80,17,8,8,1,1,1,0,0,0,0,3,8,0
+SOCIOL,169C,19653,002, Cultural Communica,John Kaiser,under,0,12,11,9,3,0,0,0,0,0,0,0,2,0,0
+SOCIOL,180C,24079,001,Comp Persp: Culture,Szonja Ivester,under,3,19,5,2,1,1,3,0,1,0,0,0,0,6,0
+SOCIOL,189G,25041,001,Soc Global Elite,Szonja Ivester,under,4,16,4,5,1,1,0,1,0,0,0,0,0,4,1
+SOCIOL,190,17519,001,Sem & Res In So,Jill Bakehorn,under,8,6,5,1,3,0,0,1,0,0,0,0,0,1,0
+SOCIOL,190,17520,003,Sem & Res In So,Christopher Muller,under,4,11,4,1,2,2,0,0,0,0,0,0,0,1,0
+SOCIOL,190,17521,004,Sem & Res In So,Laura Enriquez; Nallely Mejia,under,2,12,5,2,1,0,1,0,0,0,0,0,0,1,0
+SOCIOL,190,17522,005,Sem & Res In So,Laura Enriquez; Skyler Wang,under,2,2,12,4,2,1,0,0,0,0,0,0,1,0,0
+SOCIOL,190,17524,002,Sem & Res In So,Caitlin Daniel,under,2,4,5,4,2,1,0,0,0,0,0,0,0,2,0
+SOCIOL,190,17523,007,Sem & Res In So,Laura Enriquez; Matthew Stimpson,under,0,4,3,1,1,2,0,1,0,1,0,0,0,5,0
+SOCIOL,190,17525,006,Sem & Res In So,Laura Enriquez; Andrew Jaeger,under,0,8,3,4,6,0,0,0,1,0,0,0,0,1,0
+SOCIOL,198BC,17861,001,Directed Group Stud,Griselda Mora,under,0,0,0,0,0,0,0,0,0,0,0,0,0,18,1
+SOCIOL,198BC,17862,002,Directed Group Stud,Griselda Mora,under,0,0,0,0,0,0,0,0,0,0,0,0,0,18,1
+SOCIOL,198BC,17863,003,Directed Group Stud,Griselda Mora,under,0,0,0,0,0,0,0,0,0,0,0,0,0,20,1
+SOCIOL,198BC,17864,004,Directed Group Stud,Griselda Mora,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,2
+SOCIOL,3AC,24022,001,Prin Soc: Am Cultur,Laleh Behbehanian,under,4,28,54,27,14,7,5,4,1,0,0,0,1,42,4
+SOCIOL,5,24023,001,Eval Of Evidence,Edwin Lin,under,3,114,22,11,28,9,2,4,0,1,0,1,3,20,2
+SOCIOL,88,26483,001,Data Science Sociol,David Harding,under,0,7,2,0,1,0,0,0,0,0,0,0,0,2,0
+SOCIOL,R1B,25458,001,Sociol Composition,John Kaiser,under,0,4,8,2,0,0,0,0,0,0,0,0,0,1,0
+SPANISH,1,24120,001,Elem Spanish,Miriam Hernandez-Rodriguez; Benjamin Papadopoulos,under,0,11,3,2,0,0,0,0,0,1,0,0,0,0,0
+SPANISH,1,24121,002,Elem Spanish,Miriam Hernandez-Rodriguez; Alejandra Decker,under,0,5,5,1,2,1,0,0,0,0,0,0,0,2,0
+SPANISH,1,24122,003,Elem Spanish,Miriam Hernandez-Rodriguez; Ariel Wind,under,0,6,3,3,3,0,1,0,0,0,0,0,0,1,1
+SPANISH,1,24123,004,Elem Spanish,Ana Belen Redondo Campillos; Miriam Hernandez-Rodriguez,under,0,11,5,0,0,1,0,0,0,0,0,0,0,2,0
+SPANISH,100,24143,001,Spanish Linguistics,Jhonni Carr,under,3,9,6,5,2,0,2,1,0,0,0,0,0,0,1
+SPANISH,102A,24144,001,Adv Gram And Comp,Amelia Barili,under,3,1,5,1,0,1,0,0,0,0,0,0,0,2,0
+SPANISH,102C,32592,001,Adv. Writ. Wkshop,Ignacio Navarrete,under,0,2,6,1,0,0,0,0,0,0,0,0,0,2,0
+SPANISH,104B,24145,001,Survey Span Am Lit,Daylet Dominguez,under,0,22,7,4,1,0,1,0,0,0,0,0,0,7,0
+SPANISH,107B,24146,001,Survey Span Lit,Michael Iarocci,under,0,21,0,0,0,0,0,0,0,0,0,0,1,3,0
+SPANISH,111A,32398,001,Cervantes,Ignacio Navarrete,under,0,10,7,2,2,0,0,0,0,0,0,0,1,4,1
+SPANISH,131,31169,001,Span Am Short Story,Estelle Tarica,under,0,16,4,2,1,2,0,0,0,0,0,0,0,1,0
+SPANISH,135,24147,001,Hispanic Literature,Ivonne Del Valle,under,5,7,1,0,0,1,1,0,0,0,0,0,0,3,0
+SPANISH,135,24148,002,Hispanic Literature,Alexandra Saum Pascual,under,2,9,1,1,1,0,0,1,1,0,0,0,0,1,0
+SPANISH,135,26388,003,Hispanic Literature,Amelia Barili,under,4,4,2,1,0,0,0,0,0,0,0,0,0,5,0
+SPANISH,135AC,33064,001,Ac Spec Topics,Estelle Tarica,under,0,12,9,1,0,1,0,0,0,0,0,0,1,1,0
+SPANISH,135W,24149,001,Writing Intensive,Ivonne Del Valle,under,3,9,6,0,1,0,0,0,0,0,0,0,0,1,0
+SPANISH,162,26391,001,Span Morph Syn,Jhonni Carr,under,1,10,3,5,2,0,1,0,0,0,0,0,1,3,0
+SPANISH,163,24150,001,Span Bilingualism,Justin Davidson,under,1,13,5,1,1,1,1,0,0,0,0,0,1,1,0
+SPANISH,166,31170,001,Foreign Lang Acq,Justin Davidson,under,2,13,2,1,0,0,1,0,0,0,0,0,1,1,0
+SPANISH,2,24124,001,Elem Spanish,Miriam Hernandez-Rodriguez; Annie Helms,under,0,2,5,4,3,1,0,0,0,0,0,0,0,6,1
+SPANISH,2,24125,002,Elem Spanish,Jose Lujan Perez; Miriam Hernandez-Rodriguez,under,0,4,9,2,2,0,0,0,0,0,0,0,0,3,1
+SPANISH,2,24126,003,Elem Spanish,Jose Lujan Perez; Miriam Hernandez-Rodriguez,under,0,3,9,2,1,0,0,0,0,0,0,0,0,4,0
+SPANISH,2,24127,004,Elem Spanish,Jose Lujan Perez; Miriam Hernandez-Rodriguez,under,0,4,6,3,2,1,0,0,0,0,0,0,0,4,0
+SPANISH,21,24136,001,Elem Span Bilingual,Miriam Hernandez-Rodriguez; Ernesto Gutierrez Topete,under,0,5,7,5,1,0,0,0,0,0,0,0,0,5,0
+SPANISH,22,24137,001,Interm Sp Bilingual,Miriam Hernandez-Rodriguez; Ana Tello,under,0,9,6,2,1,0,0,0,0,0,0,0,1,1,1
+SPANISH,25,24138,001,Read And Analysis,Alexandra Saum Pascual; Diego Arevalo,under,6,6,0,0,0,0,0,0,0,0,0,0,0,1,0
+SPANISH,25,24140,003,Read And Analysis,Alexandra Saum Pascual; Monica Carvalho Gimenes,under,1,10,4,1,0,0,0,0,0,0,0,0,1,1,0
+SPANISH,25,24141,004,Read And Analysis,Alexandra Saum Pascual; Delia Neyra Tercero,under,1,12,1,0,1,0,0,0,0,0,0,0,0,1,0
+SPANISH,25,24139,002,Read And Analysis,Alexandra Saum Pascual; Luis Barco,under,0,5,4,1,3,0,0,0,1,0,0,0,0,3,0
+SPANISH,25,24142,005,Read And Analysis,Alexandra Saum Pascual; Alfonso Fierro Obregon,under,0,6,7,1,0,0,0,0,0,0,0,0,0,0,1
+SPANISH,3,24128,001,Intermed Spanish,Victoria Robertson; Miriam Hernandez-Rodriguez,under,0,6,7,0,1,0,0,0,0,0,0,0,0,5,0
+SPANISH,3,24129,002,Intermed Spanish,Victoria Robertson; Miriam Hernandez-Rodriguez,under,0,2,7,2,1,0,0,0,0,0,0,0,0,4,0
+SPANISH,3,24130,003,Intermed Spanish,Tanya Varela; Miriam Hernandez-Rodriguez,under,0,5,7,3,1,1,0,0,0,0,0,0,0,4,0
+SPANISH,3,24131,004,Intermed Spanish,Tanya Varela; Miriam Hernandez-Rodriguez,under,0,3,8,2,1,0,0,0,0,0,0,0,0,4,0
+SPANISH,4,24132,001,Intermed Spanish,Miriam Hernandez-Rodriguez; Justin Berner,under,0,7,5,3,0,0,0,0,0,0,0,0,0,3,0
+SPANISH,4,24133,002,Intermed Spanish,Miriam Hernandez-Rodriguez; Victor Quiroz,under,0,4,7,1,0,0,0,1,0,0,0,0,0,2,0
+SPANISH,4,24135,004,Intermed Spanish,Donna Southard; Miriam Hernandez-Rodriguez,under,0,1,6,2,1,0,0,0,0,0,0,0,0,9,0
+SPANISH,4,24134,003,Intermed Spanish,Donna Southard; Miriam Hernandez-Rodriguez,under,0,0,5,2,0,0,1,0,0,0,0,0,0,9,0
+SPANISH,R1B,24675,001,Span Speak World,Michael Iarocci; Anahit Manoukian,under,0,6,5,3,0,1,0,0,0,0,0,0,0,1,0
+STAT,133,24185,001,Computing Data,Gaston Sanchez Trujillo,under,8,61,20,5,4,2,4,3,1,0,0,0,2,51,3
+STAT,134,24192,001,Concepts Of Prob,Adam Lucas,under,6,52,28,12,17,7,14,6,14,0,0,0,3,132,6
+STAT,135,24203,001,Concepts Of Stat,Noureddine El Karoui,under,9,25,16,10,6,4,4,3,4,0,1,0,2,63,3
+STAT,150,25153,001,Stochastic Process,Mohamed Mehdi Ouaki; Brett Kolesnik,under,51,6,5,4,1,1,1,1,0,0,0,0,1,26,0
+STAT,151A,24210,001,Linear Modelling,Gaston Sanchez Trujillo,under,0,20,6,4,7,2,0,1,2,0,0,0,0,18,0
+STAT,153,24216,001,Intro Time Series,Jared Fisher,under,11,63,18,4,1,0,0,0,0,0,0,0,0,40,3
+STAT,154,24221,001,Stat Predict Mach/L,Noureddine El Karoui,under,3,5,7,3,3,2,0,0,0,0,0,0,0,6,0
+STAT,155,24224,001,Game Theory,Shirshendu Ganguly; Adam Jaffe,under,4,16,8,3,4,3,2,4,2,0,4,0,0,37,5
+STAT,158,25329,001,Dsgn Of Experiments,Samuel Pimentel,under,5,6,1,2,2,0,0,1,0,0,0,0,0,15,1
+STAT,159,31588,001,Repro Collab Datsci,Philip Stark; Fernando Perez,under,4,17,4,3,0,0,0,0,0,0,0,0,0,10,0
+STAT,198,24227,003,Directed Group Stdy,Jared Fisher; Eric Jung,under,0,0,0,0,0,0,0,0,0,0,0,0,0,12,1
+STAT,198,24228,004,Directed Group Stdy,Shobhana Murali Stoyanov; Arin Tykodi; Neil Bhattacharjee,under,0,0,0,0,0,0,0,0,0,0,0,0,0,70,2
+STAT,2,24152,001,Intro To Stat,Cari Kaufman,under,25,99,52,23,31,11,15,5,0,0,0,0,7,56,5
+STAT,20,24165,001,Intro Prob Stat Cal,Fletcher Ibser,under,35,37,31,34,31,21,7,8,7,0,2,0,15,113,11
+STAT,20,26907,002,Intro Prob Stat Cal,Adam Lucas,under,6,15,12,10,4,4,8,4,10,0,0,0,2,53,3
+STAT,33A,26610,001,Intro R Pgm,Deborah Nolan,under,2,32,5,4,1,0,0,1,0,0,0,0,0,17,4
+STAT,33B,26616,001,Adv R Pgm,Deborah Nolan,under,8,50,10,4,1,0,0,0,0,0,1,0,0,23,1
+STAT,88,24180,001,Prob/Stat Data Sci,Shobhana Murali Stoyanov; Yanwei Liu; Daniel Cohen; Donghe Lyu,under,6,83,3,15,12,3,2,1,3,0,0,0,6,144,3
+STAT,89A,24181,001,Lin Alg For Datasci,Michael Mahoney; Nils Benjamin Erichson,under,0,5,4,1,0,2,0,0,0,0,0,0,0,13,1
+STAT,C131A,33103,001,Stat For Datasci,Shobhana Murali Stoyanov,under,3,6,0,2,3,0,1,0,0,0,0,0,0,22,4
+STAT,C140,33100,001,Prob For Data Sci,Anindita Adhikari,under,6,36,6,11,19,6,4,2,5,0,0,0,1,181,14
+THEATER,10,24252,002,Fund. Of Acting I,Leyla Modirzadeh,under,8,7,1,0,1,0,0,0,0,0,0,0,0,0,0
+THEATER,10,24251,001,Fund. Of Acting I,Michael Moran,under,0,17,0,0,0,0,0,0,0,0,0,0,0,2,0
+THEATER,10,33659,004,Fund. Of Acting I,Jessica Berman; Patrick Russell,under,0,14,0,0,0,0,0,0,1,0,0,0,0,2,0
+THEATER,112,24262,001,Voice And Speech,Jessica Berman,under,0,16,0,0,0,0,0,0,0,0,0,0,0,1,0
+THEATER,114,25528,001,Perf Research Wrksh,Peter Glazer,under,2,6,2,1,0,0,0,0,0,0,0,0,0,1,0
+THEATER,121,30278,001,Performance/Culture,Jenefer Johnson,under,2,11,0,0,1,0,0,0,0,0,0,0,2,3,1
+THEATER,125,30657,001,Performance/History,Julia Fawcett,under,0,25,10,3,0,0,0,1,0,0,0,0,1,4,0
+THEATER,126,25506,001,Perform Literatures,Angela Marino,under,7,9,1,4,1,0,0,0,0,0,0,1,0,1,0
+THEATER,139B,24263,001,Playwriting,Philip Gotanda,under,1,11,0,0,0,0,0,0,0,0,0,0,0,2,0
+THEATER,141,24264,001,Interm Modern Dance,Latanya Tigner,under,0,14,0,0,0,1,0,0,1,0,0,0,0,1,0
+THEATER,148,24729,001,Movement Improv,Katharine Faulkner,under,1,14,2,0,1,0,0,0,0,0,0,0,0,0,0
+THEATER,160,30920,001,Design For Perform,Nina Ball,under,2,5,1,0,1,0,0,0,0,0,0,0,1,0,0
+THEATER,166,33337,001,Special Topics,Kenyatta Hinkle,under,8,4,0,0,1,0,0,0,0,0,0,0,0,2,1
+THEATER,166,30216,002,Special Topics,Margo Hall,under,0,10,2,1,0,0,0,1,0,0,0,0,0,2,0
+THEATER,168,24266,001,Tech Theater Shop,Jamila Cobham,under,0,20,0,0,0,0,0,0,0,0,0,0,0,2,0
+THEATER,172,24269,001,Stage Mgmt,Laxmi Kumaran,under,15,0,1,2,0,0,0,0,0,0,0,0,0,1,0
+THEATER,173,30683,001,Scenic Design,Annie Smart,under,0,1,3,2,2,0,0,0,0,0,0,0,2,2,0
+THEATER,174,24930,001,Costume Design,Annie Smart,under,0,1,4,2,1,1,0,0,0,0,0,0,2,5,0
+THEATER,177,30565,001,Sound Design,Abigail De Kosnik,under,3,18,0,0,0,0,0,0,0,0,0,0,0,0,0
+THEATER,40,30199,002,Begin. Modern Dance,Susan Kwan,under,0,15,0,0,0,0,0,0,0,0,0,0,0,4,0
+THEATER,5,32343,001,Public Speaking,Leyla Modirzadeh,under,7,12,1,0,0,0,0,0,0,0,0,0,0,1,0
+THEATER,52AC,26084,001,Dance In Am Culture,Susan Kwan; Aparna Nambiar; Crystal Song,under,0,43,9,4,3,2,0,0,0,0,1,1,5,16,0
+THEATER,60,24255,001,Intro Tech Theater,Laxmi Kumaran,under,49,1,1,0,0,0,0,0,0,0,0,0,0,2,0
+THEATER,R1A,24247,002,Performce & Writing,Abigail De Kosnik; Rebecca Struch,under,1,6,5,3,2,0,0,0,0,0,0,0,0,0,0
+THEATER,R1A,25502,003,Performce & Writing,Abigail De Kosnik; Jaclyn Zhou,under,10,6,2,0,0,0,0,0,0,0,0,0,0,0,0
+THEATER,R1A,27173,001,Performce & Writing,Abigail De Kosnik; Lashon Daley,under,3,10,3,0,0,0,0,0,0,0,0,0,1,1,0
+THEATER,R1B,24248,001,Performce & Writing,Abigail De Kosnik; Christian Nagler,under,1,9,0,3,0,0,0,0,0,0,0,0,0,3,0
+THEATER,R1B,25293,005,Performce & Writing,Abigail De Kosnik; Caleb Luna,under,1,9,4,0,2,0,0,0,0,0,0,0,0,2,0
+THEATER,R1B,25294,006,Performce & Writing,Abigail De Kosnik; Randi Evans,under,1,11,3,0,0,0,0,0,0,0,0,0,1,2,0
+THEATER,R1B,25503,009,Performce & Writing,Sima Belmar,under,1,13,4,0,0,0,0,0,0,0,0,0,0,0,0
+THEATER,R1B,25504,010,Performce & Writing,Srijani Ghosh,under,3,10,5,0,0,0,0,0,0,0,0,0,0,0,0
+THEATER,R1B,24249,002,Performce & Writing,Abigail De Kosnik; Miyoko Conley,under,0,7,6,2,2,0,0,0,0,0,0,0,1,0,0
+THEATER,R1B,24250,004,Performce & Writing,Abigail De Kosnik; Lyndsey Ogle,under,0,10,1,0,1,1,0,1,0,0,0,0,1,0,0
+THEATER,R1B,24926,003,Performce & Writing,Abigail De Kosnik; Miyuki Baker,under,0,16,2,0,0,0,0,0,0,0,0,0,0,0,0
+UGBA,10,20480,001,Principles Of Bus,John Briginshaw; Daniel Mulhern; Omar Romero-Hernandez; Judith Hopelain; Jonathan Heyne; Torsor Kotee,under,46,62,120,105,60,19,16,22,6,3,2,1,7,135,16
+UGBA,100,20501,003,Business Comm,Krystal Thomas,under,2,5,11,8,1,0,0,0,0,0,0,0,0,5,0
+UGBA,100,20499,001,Business Comm,Arturo Perez-Reyes,under,0,2,6,9,4,0,0,0,0,0,0,0,0,7,0
+UGBA,100,20500,002,Business Comm,Krystal Thomas,under,0,3,18,4,0,0,0,0,0,0,0,0,0,7,0
+UGBA,100,20502,004,Business Comm,Krystal Thomas,under,0,2,17,7,2,0,0,0,0,0,0,0,0,3,0
+UGBA,100,20503,005,Business Comm,Ryan Sloan,under,0,32,0,0,0,0,0,0,0,0,0,0,0,1,0
+UGBA,100,20504,006,Business Comm,Daniel Himelstein,under,0,7,27,5,0,0,0,0,0,0,0,0,0,0,0
+UGBA,101A,20506,001,Microeconomic Analy,Todd Fitch,under,0,12,6,6,7,3,2,1,0,0,0,0,0,24,0
+UGBA,101B,20508,001,Macroeconomics,Donald Hanna,under,1,26,31,9,1,1,0,0,0,0,0,0,0,64,0
+UGBA,101B,20509,002,Macroeconomics,David Levine,under,0,14,3,5,4,2,1,3,0,0,0,0,0,30,1
+UGBA,101B,20642,003,Macroeconomics,David Levine,under,0,11,3,2,3,2,0,1,0,0,0,0,0,24,0
+UGBA,102A,20513,001,Fin Accounting,Xi Wu,under,3,25,9,12,2,1,1,0,0,0,1,0,0,28,0
+UGBA,102A,32661,002,Fin Accounting,Xi Wu,under,11,43,13,8,6,1,0,0,0,0,0,0,0,35,2
+UGBA,102B,20516,001,Managerial Acct,James Webb,under,3,21,11,0,0,6,1,1,0,0,0,0,0,20,3
+UGBA,102B,20517,002,Managerial Acct,Tiffany Rasmussen,under,1,42,38,7,9,7,2,0,0,0,0,0,0,38,4
+UGBA,102B,20518,003,Managerial Acct,John Briginshaw,under,3,21,12,2,9,4,1,2,0,0,0,0,0,22,1
+UGBA,103,20525,001,Intro To Finance,Dmitry Livdan,under,23,12,8,6,0,4,1,1,0,0,0,0,0,72,0
+UGBA,103,20526,002,Intro To Finance,Dmitry Livdan,under,24,19,8,7,3,5,1,0,0,0,0,0,0,68,0
+UGBA,104,20533,001,Business Analytics,Richard Huntsinger; Yiangos Papanastasiou; Luyi Yang,under,9,65,23,29,7,8,0,1,0,0,0,0,0,90,0
+UGBA,105,20534,001,Leading People,Edward Kass,under,18,53,0,10,0,0,0,0,0,0,0,0,0,28,0
+UGBA,105,20535,002,Leading People,Edward Kass,under,14,36,25,15,1,0,0,1,2,0,0,0,0,31,0
+UGBA,106,20668,002,Marketing,Wasim Azhar,under,1,22,6,9,4,3,0,0,0,0,0,0,1,15,1
+UGBA,106,20712,004,Marketing,Janet Brady,under,2,17,16,12,7,0,0,0,0,0,0,0,0,12,0
+UGBA,106,20536,001,Marketing,Wasim Azhar,under,0,16,18,7,8,2,0,0,0,0,0,0,0,11,0
+UGBA,106,20669,003,Marketing,William Fanning,under,0,20,9,4,8,1,1,0,0,0,0,0,0,14,0
+UGBA,107,20537,001,Soc & Pol Eth Env,Alan Ross; Benjamin Stollman; Alexandra Carley; Hannah Lukanuski,under,2,42,49,21,8,7,5,0,0,0,0,0,0,90,1
+UGBA,118,20545,001,International Trade,Matilde Bombardini,under,3,5,7,3,2,1,0,0,0,0,0,0,0,20,0
+UGBA,120AB,20551,001,Int Fin Accnting 2,Francis Stanton,under,10,4,4,0,3,2,0,0,0,0,0,0,0,4,0
+UGBA,120AB,20638,002,Int Fin Accnting 2,Tiffany Rasmussen,under,1,5,5,1,2,0,0,0,0,0,0,0,0,4,0
+UGBA,120B,20554,001,Adv Fin Accounting,Francis Stanton,under,7,3,1,0,1,0,0,0,0,0,0,0,0,2,0
+UGBA,121,20556,001,Fed Inc Tax Acctg,Eric Ryan,under,4,0,5,1,5,2,1,0,1,0,2,0,0,18,0
+UGBA,122,20558,001,Fin Info Analysis,Francis Stanton,under,11,12,2,0,9,3,0,0,0,0,0,0,0,11,1
+UGBA,126,20560,001,Auditing,Tiffany Rasmussen,under,0,12,11,7,0,0,1,0,0,0,0,0,0,8,0
+UGBA,127,20636,001,Spec Topics In Acct,Yaniv Konchitchki,under,59,1,27,0,0,0,0,0,0,0,0,0,0,16,0
+UGBA,128,20562,001,Strat Cost Mgmt,John Briginshaw,under,2,2,2,2,1,0,0,0,0,0,0,0,0,1,0
+UGBA,131,20563,001,Corp Fin Analysis,Stephen Etter,under,1,25,6,0,2,0,0,0,0,0,0,0,0,14,0
+UGBA,135,20734,001,Personal Finance,Terrance Odean; Fred Selinger,under,9,75,63,43,16,8,2,2,1,0,0,0,0,93,1
+UGBA,135,20735,002,Personal Finance,Terrance Odean; Fred Selinger,under,5,80,65,36,26,6,5,0,4,0,0,0,0,93,3
+UGBA,141,20571,001,Prod & Oper Mgmt,Candace Yano,under,1,7,5,1,0,3,0,0,0,0,1,0,0,10,1
+UGBA,147,20672,001,Spec Topics In Oitm,Richard Huntsinger,under,2,29,6,0,0,0,0,0,0,0,0,0,0,17,0
+UGBA,151,20573,001,Mgmt Human Resourcs,Cristina Banks,under,0,11,2,4,1,3,0,0,0,0,0,0,1,7,1
+UGBA,152,20574,001,Negotiation,Timothy Dayonot,under,0,18,16,1,0,0,0,0,0,0,0,0,0,3,0
+UGBA,157,20578,001,Spec Top Mors,Brandi Pearce,under,3,14,9,0,0,1,0,0,0,0,0,0,0,5,0
+UGBA,157,20579,002,Spec Top Mors,Mike Katz,under,0,8,5,0,1,0,0,0,0,0,0,0,0,13,0
+UGBA,160,20580,001,Customer Insights,William Fanning,under,0,8,8,3,3,1,0,0,0,0,0,0,0,14,0
+UGBA,169,20583,001,Pricing,Yuichiro Kamada,under,16,13,2,1,0,0,0,0,0,0,0,0,0,8,1
+UGBA,177,20585,001,Spec Top/Bus Pub Po,Molly Turner,under,1,7,10,2,1,0,1,0,1,0,0,0,0,2,0
+UGBA,180,20589,001,Intro Real Estate,Mark McGranahan; Alice Devine; Brendan McKeon; Casey Smith,under,2,26,7,6,5,0,1,0,0,0,0,0,0,21,1
+UGBA,190T,17335,001,Topics Innov/Design,Michael Barry,under,7,15,3,0,0,0,0,0,0,0,0,0,0,4,0
+UGBA,190T,17337,003,Topics Innov/Design,Mariana Somma; Clark Kellogg,under,5,24,7,3,0,0,0,0,0,0,0,0,0,5,0
+UGBA,190T,32662,007,Topics Innov/Design,Todd Fitch,under,1,30,5,0,0,0,0,0,0,0,1,0,0,5,0
+UGBA,191P,19657,001,Ldrshp & Persnl Dev,Cort Worthington,under,0,8,17,4,3,0,0,0,0,0,0,0,0,1,0
+UGBA,191P,19658,002,Ldrshp & Persnl Dev,Cort Worthington,under,0,8,15,3,1,0,0,0,0,0,0,0,0,4,0
+UGBA,192B,20127,001,Strategic Philanthr,Colin Lacon; Alicia Perez,under,0,4,7,14,0,0,0,0,0,0,0,0,0,5,0
+UGBA,192H,32854,001,Hum Rights In Bus,Roger McElrath; Faris Natour,under,0,9,6,4,0,0,0,0,0,0,0,0,0,2,0
+UGBA,192T,19660,002,Responsible Bus,William Rosenzweig; Eva Gurfein,under,15,41,27,12,7,1,0,0,0,0,0,0,0,6,1
+UGBA,192T,19662,004,Responsible Bus,Kellie McElhaney,under,2,9,5,5,1,0,0,0,0,0,0,0,0,2,0
+UGBA,192T,19663,005,Responsible Bus,William Rosenzweig; Samantha Derrick,under,9,54,2,0,0,0,0,0,0,0,0,0,0,2,0
+UGBA,192T,19659,001,Responsible Bus,Robert Strand,under,0,30,1,1,0,0,1,0,0,0,0,0,0,13,0
+UGBA,192T,19665,007,Responsible Bus,Nora Silver,under,0,2,3,2,0,0,0,0,0,0,0,0,0,5,0
+UGBA,194,20124,001,Colloq Bus Topics,Alan Ross,under,0,0,0,0,0,0,0,0,0,0,0,0,0,116,2
+UGBA,194,20125,002,Colloq Bus Topics,Douglas Leeds,under,0,0,0,0,0,0,0,0,0,0,0,0,0,85,1
+UGBA,195T,20686,002,Topics In Ent,Jonathan Heyne,under,0,8,4,11,7,2,2,3,1,0,0,0,1,6,1
+UGBA,196,17341,001,Spec Topics Bus Adm,Daniel Himelstein,under,0,23,6,0,0,0,0,0,0,0,0,0,0,2,0
+UGBA,196,17342,002,Spec Topics Bus Adm,Susan Snyder,under,0,7,3,3,2,0,0,0,0,0,0,0,0,3,0
+UGBA,196,17343,003,Spec Topics Bus Adm,Solomon Fulp; Nicole Lee,under,0,5,14,1,2,0,0,0,0,0,0,0,0,4,0
+UGBA,198,20596,002,Directed Group Stdy,Daniel Himelstein,under,0,0,0,0,0,0,0,0,0,0,0,0,0,35,1
+UGBA,88,20737,001,Data And Decisions,Richard Huntsinger,under,0,19,3,1,0,2,0,0,0,0,0,0,0,4,0
+UGBA,88,20738,002,Data And Decisions,Richard Huntsinger,under,0,13,3,0,1,0,0,0,0,0,0,0,0,7,0
+UGBA,96,17350,003,Ld Spec Top Bus Adm,Daniel Himelstein,under,0,11,20,0,0,0,0,0,0,0,0,0,0,0,0
+UGBA,C12,33048,001,Changemaker,Brandi Pearce; Mariana Somma; Alex Budak; Laura Hassner,under,16,21,7,4,1,0,0,2,1,0,0,0,1,37,6
+UGBA,C172,20584,001,Hist American Bus,Christine Rosen; Max Lopez; Chelsea Muir,under,1,6,10,4,2,0,1,1,0,0,0,0,1,19,2
+UGIS,112,24289,001,Women/Disability,Marsha Saxton,under,0,42,2,1,1,0,0,0,0,0,0,0,0,0,0
+UGIS,98,24288,003,Directed Group Stdy,David Presti; Harrison Rappaport; Gabrielle Dimick,under,0,0,0,0,0,0,0,0,0,0,0,0,0,43,3
+UGIS,98,27210,001,Directed Group Stdy,Robert Jacobsen; Amy Azuma,under,0,0,0,0,0,0,0,0,0,0,0,0,0,16,1
+URDU,100B,25531,001,Intermediate Urdu,Gregory Bruce,under,1,10,1,0,0,1,0,0,0,0,0,0,0,1,0
+URDU,1B,25530,001,Intrd Urdu,Gregory Bruce,under,2,10,0,0,1,0,0,0,0,0,0,0,0,1,0
+VIETNMS,101B,24303,001,Advanced Vietnamese,Cam Nguyen,under,3,8,0,0,0,0,0,0,0,0,0,0,0,0,0
+VIETNMS,1B,24301,001,Intro Vietnamese,Hanh Tran,under,0,1,8,2,0,0,0,0,0,0,0,0,0,8,0
 "A,RESEC",202,27282,001,Issues In Agri Econ,Larry Karp; Jeffrey Perloff,grad,2,5,3,1,1,0,0,0,0,0,0,0,0,0,1
 "A,RESEC",212,27284,001,Econometrics 2,Ethan Ligon; Sofia Villas-Boas,grad,0,6,7,2,1,0,0,0,0,0,0,0,0,1,0
 "A,RESEC",219B,27286,001,Econometric Proj,Ethan Ligon,grad,0,3,3,5,1,0,0,0,0,0,0,0,0,0,0
