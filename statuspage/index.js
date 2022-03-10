@@ -104,13 +104,8 @@ const updateStatuspage = async (ping, auth) => {
 };
 
 for await (const _ of setInterval(spConfig.statusInterval * 1000)) {
-  const {
-    apiStatus,
-    frontendStatus,
-    gitlabStatus,
-    elasticsearchStatus,
-    url,
-  } = spConfig;
+  const { apiStatus, frontendStatus, gitlabStatus, elasticsearchStatus, url } =
+    spConfig;
   const niceTime = () =>
     moment().tz("America/Los_Angeles").format(`YYYY-MM-DD HH:mm:ss dddd`);
   await updateStatuspage(async () => {
