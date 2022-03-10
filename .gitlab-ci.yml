@@ -1,4 +1,4 @@
-services:
+ services:
   - docker:19.03.13-dind
 
 variables:
@@ -49,7 +49,7 @@ deploy-dev:
       - master
   environment:
     name: staging
-  image: node:16-slim
+  image: $CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX/berkeleytime/bt-gitlab-runner
   script:
     - npm --prefix infra/tricycle install && node infra/tricycle
 
@@ -81,3 +81,4 @@ deploy-prod:
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - kubectl rollout status --timeout=1200s deploy/bt-backend-prod
     - kubectl rollout status --timeout=1200s deploy/bt-frontend-prod
+
