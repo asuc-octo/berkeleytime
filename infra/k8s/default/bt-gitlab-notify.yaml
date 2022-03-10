@@ -44,6 +44,6 @@ spec:
                 name: general-secrets
             - secretRef:
                 name: slack-webhooks
-          image: gcr.io/berkeleytime-218606/gitlab-notify:latest
+          image: berkeleytime.com:5000/berkeleytime/bt-gitlab-notify
           imagePullPolicy: Always
           name: bt-gitlab-notify

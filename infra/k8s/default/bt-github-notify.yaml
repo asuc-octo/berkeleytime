@@ -46,6 +46,6 @@ spec:
           envFrom:
             - secretRef:
                 name: general-secrets
-          image: gcr.io/berkeleytime-218606/github-notify:latest
+          image: berkeleytime.com:5000/berkeleytime/bt-github-notify
           imagePullPolicy: Always
           name: bt-github-notify
