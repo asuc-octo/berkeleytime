@@ -49,7 +49,7 @@ deploy-dev:
       - master
   environment:
     name: staging
-  image: $CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX/bt-gitlab-runner
+  image: $CI_SERVER_HOST:5000/berkeleytime/bt-gitlab-runner
   script:
     - npm --prefix infra/tricycle install && node infra/tricycle
 
@@ -60,7 +60,7 @@ deploy-staging:
       - master
   environment:
     name: staging
-  image: $CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX/bt-gitlab-runner
+  image: $CI_SERVER_HOST:5000/berkeleytime/bt-gitlab-runner
   script:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
@@ -75,7 +75,7 @@ deploy-prod:
   environment:
     name: prod
   when: manual
-  image: $CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX/bt-gitlab-runner
+  image: $CI_SERVER_HOST:5000/berkeleytime/bt-gitlab-runner
   script:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
