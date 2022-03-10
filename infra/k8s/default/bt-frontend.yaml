@@ -40,6 +40,6 @@ spec:
           env:
             - name: REACT_APP_GOOGLE_CLIENT_ID
               value: $SECRET_REACT_APP_GOOGLE_CLIENT_ID
-          image: $GCR_PATH_FRONTEND:$CI_COMMIT_SHORT_SHA
+          image: $CI_REGISTRY_IMAGE/bt-frontend:$CI_COMMIT_BRANCH
           imagePullPolicy: Always
           name: bt-frontend-$CI_ENVIRONMENT_NAME
