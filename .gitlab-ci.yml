@@ -1,14 +1,16 @@
-image: gcr.io/berkeleytime-218606/gitlab-runner:latest # infra/docker/gitlab-runner/Dockerfile
+ services:
+  - docker:19.03.13-dind
+
 variables:
+  DOCKER_HOST: tcp://docker:2376
+  DOCKER_TLS_CERTDIR: /certs
+  DOCKER_TLS_VERIFY: 1
+  DOCKER_CERT_PATH: $DOCKER_TLS_CERTDIR/client
   FILEPATH_DEPLOY_BACKEND: infra/k8s/default/bt-backend.yaml
-  FILEPATH_DEPLOY_DATA: infra/k8s/default/bt-backend-data-updater.yaml
   FILEPATH_DEPLOY_FRONTEND: infra/k8s/default/bt-frontend.yaml
   FILEPATH_DEPLOY_INGRESS: infra/k8s/default/bt-ingress-tricycle.yaml
   FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND: backend
   FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND: frontend
-  GCR_PATH_BACKEND: gcr.io/berkeleytime-218606/bt-backend
-  GCR_PATH_FRONTEND: gcr.io/berkeleytime-218606/bt-frontend
-  PROJECT_ID: berkeleytime-218606
 
 stages:
   - build
@@ -18,29 +20,27 @@ stages:
 
 .before_build:
   before_script:
-    - gcloud auth activate-service-account --key-file $IAM_GITLAB_RUNNER
+    - until docker info; do sleep 1; done;
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - |
+      tag=":$CI_COMMIT_BRANCH"
+      echo "Running on branch '$CI_COMMIT_BRANCH': tag = $tag"
 
 build-backend:
   stage: build
+  image: docker:19.03.13-dind
   extends: .before_build
   script:
-    - |
-      if [ -z "$(gcloud container images list-tags $GCR_PATH_BACKEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
-        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND --tag $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA --project $PROJECT_ID
-      else
-        echo "Docker image of this commit already exists: $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA"
-      fi
+    - docker build -t "${CI_REGISTRY_IMAGE}/bt-backend${tag}" $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND
+    - docker push "${CI_REGISTRY_IMAGE}/bt-backend${tag}"
 
 build-frontend:
   stage: build
+  image: docker:19.03.13-dind
   extends: .before_build
   script:
-    - |
-      if [ -z "$(gcloud container images list-tags $GCR_PATH_FRONTEND --filter tags~"$CI_COMMIT_SHORT_SHA")" ]; then
-        gcloud builds submit $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND --tag $GCR_PATH_FRONTEND:$CI_COMMIT_SHORT_SHA --project $PROJECT_ID --timeout 20m
-      else
-        echo "Docker image of this commit already exists: $GCR_PATH_FRONTEND:$CI_COMMIT_SHORT_SHA"
-      fi
+    - docker build -t "${CI_REGISTRY_IMAGE}/bt-frontend${tag}" $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND
+    - docker push "${CI_REGISTRY_IMAGE}/bt-frontend${tag}"
 
 deploy-dev:
   stage: deploy-dev
@@ -49,6 +49,7 @@ deploy-dev:
       - master
   environment:
     name: staging
+  image: $CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX/berkeleytime/bt-gitlab-runner
   script:
     - npm --prefix infra/tricycle install && node infra/tricycle
 
@@ -59,6 +60,7 @@ deploy-staging:
       - master
   environment:
     name: staging
+  image: $CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX/berkeleytime/bt-gitlab-runner
   script:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_DATA    | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
@@ -74,9 +76,12 @@ deploy-prod:
   environment:
     name: prod
   when: manual
+  image: $CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX/berkeleytime/bt-gitlab-runner
   script:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_DATA    | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - kubectl rollout status --timeout=1200s deploy/bt-backend-prod
     - kubectl rollout status --timeout=1200s deploy/bt-frontend-prod
+
+
