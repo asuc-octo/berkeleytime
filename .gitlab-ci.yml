@@ -7,6 +7,7 @@ variables:
   DOCKER_TLS_VERIFY: 1
   DOCKER_CERT_PATH: $DOCKER_TLS_CERTDIR/client
   FILEPATH_DEPLOY_BACKEND: infra/k8s/default/bt-backend.yaml
+  FILEPATH_DEPLOY_DATA: infra/k8s/default/bt-backend-data-updater.yaml
   FILEPATH_DEPLOY_FRONTEND: infra/k8s/default/bt-frontend.yaml
   FILEPATH_DEPLOY_INGRESS: infra/k8s/default/bt-ingress-tricycle.yaml
   FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND: backend
