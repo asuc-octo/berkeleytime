@@ -6,6 +6,7 @@ import events from "events";
 import express from "express";
 import "express-async-errors";
 import { Server as HttpServer } from "http";
+import mongoose from "mongoose";
 import passport from "passport";
 import "reflect-metadata";
 
@@ -63,18 +64,18 @@ apiRouter.use((err: any, {}, res: express.Response, {}) => {
 process.on("SIGINT", () => process.exit(0));
 process.on("SIGTERM", () => process.exit(0));
 
-// uncomment if interested in seeing full MongoDB interactions printed to console
-/*
-RegExp.prototype["toJSON"] = RegExp.prototype.toString;
-import mongoose from "mongoose";
-mongoose.set("debug", function (collectionName, method, query, doc) {
-  console.debug(
-    "Mongoose: ".cyan +
-      `${collectionName}.${method} (${JSON.stringify(query, null, 2)})`
-  );
-});
-*/
-
 // prints out all found fields for models
-// note that because of SIS API weirdness, not ALL fields will be non-null for any document instan
-// await import("#src/helpers/schemaWalker");
+
+if (process.env.NODE_ENV == "dev") {
+  RegExp.prototype["toJSON"] = RegExp.prototype.toString;
+
+  mongoose.set("debug", function (collectionName, method, query, doc) {
+    console.debug(
+      "Mongoose: ".cyan +
+        `${collectionName}.${method} (${JSON.stringify(query, null, 2)})`
+    );
+  });
+
+  // note that because of SIS API weirdness, not ALL fields will be non-null for any document instan
+  // await import("#src/helpers/schemaWalker");
+}

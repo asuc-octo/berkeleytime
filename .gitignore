@@ -12,7 +12,7 @@
 **/db
 **/dump.rdb
 **/dump
-**/mdb.tgz
+**/mdb.archive
 /.vscode
 bt_main.sql
 build/docker-compose.yml
