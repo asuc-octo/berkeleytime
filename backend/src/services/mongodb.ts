@@ -86,9 +86,7 @@ mongoose.Query.prototype.exec = async function (): Promise<
   }
   const result = await originalExec.apply(this, arguments);
   if (result) {
-    console.info(
-      `cache set: ${key}, query: ${JSON.stringify(this.getQuery())}`
-    );
+    console.info(`cache set (${key}): ${JSON.stringify(this.getQuery())}`);
     redisClient.set(key, JSON.stringify(result), { EX: this._ttl });
   }
   return result;
