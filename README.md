@@ -37,7 +37,7 @@ From host machine
 # Enter mongo shell
 docker run -it --rm --network bt mongo:5 bash -c 'mongosh mongodb/bt'
 # or directly from host machine
-mongo localhost/bt
+mongosh localhost/bt
 
 # some example mongo shell commands
 show dbs
