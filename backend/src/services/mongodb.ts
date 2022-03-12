@@ -59,7 +59,9 @@ mongoose.Query.prototype.exec = async function (): Promise<
     createHash("md5").update(JSON.stringify(this.getQuery())).digest("hex");
   const cachedResult = await redisClient.get(key);
   if (cachedResult) {
-    console.info(`cache hit: ${key}`);
+    if (process.env.NODE_ENV == "dev") {
+      console.info(`cache hit (${key}): ${JSON.stringify(this.getQuery())}`);
+    }
     const result = JSON.parse(cachedResult);
     if (this._ttlExtend === true) {
       redisClient.set(key, cachedResult, { EX: this._ttl });
