@@ -1,5 +1,7 @@
 # Berkeleytime
 
+[Discord](https://discord.gg/DeCEPNdPjc)
+
 A course discovery and planning tool which combines all of Berkeley's academic information in one place
 
 The intent is to make it the most powerful academic planning tool than anything students currently use
@@ -8,7 +10,7 @@ Berkeleytime is a publicly collaborative open-source project that follows [MIT](
 
 Full local development is possible, except direct API usage of [Student Information Systems](https://api-central.berkeley.edu/). Per our agreement with SIS, we keep our API keys for [Class API](https://api-central.berkeley.edu/api/45) and [Course API](https://api-central.berkeley.edu/api/72) private
 
-However, our development database with its full data set is available in all its glory [here](https://storage.googleapis.com/berkeleytime/public/mdb.tar.gz), so _anyone_ can help improve Berkeleytime
+However, our development database with its full data set is available [here](https://storage.googleapis.com/berkeleytime/public/mdb.archive), so _anyone_ can help improve Berkeleytime
 
 Getting started (start Docker before running these in repo root):
 
@@ -23,4 +25,6 @@ docker run --rm --volume ${PWD}/mdb.archive:/mdb.archive --network bt mongo:5 mo
 
 Local site becomes available at http://localhost:8080
 
-[Discord](https://discord.gg/DeCEPNdPjc)
+If you have Postman, you can play and test API routes after importing **backend/postman_environment.json** and **backend/postman_routes.json**
+
+![Screen Shot 2022-03-12 at 10 23 13](https://user-images.githubusercontent.com/22272118/158030106-7d88366c-3c62-4832-96af-fdb9ec43d2d4.png)
