@@ -31,8 +31,12 @@ If you have Postman, you can play and test API routes after importing **postman_
 
 # Debugging
 
+From host machine
+
 ```{bash}
 # Enter mongo shell
+docker run -it --rm --network bt mongo:5 bash -c 'mongosh mongodb/bt'
+# or directly from host machine
 mongo localhost/bt
 
 # some example mongo shell commands
@@ -47,10 +51,13 @@ db.sis_class_section.find().limit(1).pretty()
 db.sis_class_section_history.find().limit(1).pretty()
 
 # Enter redis shell
+docker run -it --rm --network bt redis:6 redis-cli -h redis
+# or directly from host machine
 redis-cli
 
 # some example redis-cli commands
 FLUSHALL
 KEYS *
+GET a97c026ceac066bba7c96cb7fd125958
 DEL 9cb4f765240d81cb227a9fdbff74f0c0
 ```
