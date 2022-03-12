@@ -12,7 +12,7 @@ Full local development is possible, except direct API usage of [Student Informat
 
 However, our development database with its full data set is available [here](https://storage.googleapis.com/berkeleytime/public/mdb.archive), so _anyone_ can help improve Berkeleytime
 
-# Getting started:
+# Getting started
 
 Start Docker before running these in repo root
 
