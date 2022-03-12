@@ -1,9 +1,0 @@
-# Lines starting with '#' are comments.
-# Each line is a file pattern followed by one or more owners.
-# The last matching lines takes the most precendence.
-
-*               @vihanb
-backend/        @hi-usui @kevinzwang @gundamMC
-infra/          @hi-usui @kevinzwang @gundamMC
-build/          @hi-usui @kevinzwang @gundamMC
-frontend/       @christinas24
