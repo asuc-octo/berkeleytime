@@ -6,7 +6,7 @@ A course discovery and planning tool which combines all of Berkeley's academic i
 
 The intent is to make it the most powerful academic planning tool than anything students currently use
 
-Berkeleytime is a publicly collaborative open-source project that follows [MIT](https://en.wikipedia.org/wiki/MIT_License), with more guided maintenance by the ASUC Office of the CTO
+Berkeleytime is a publicly collaborative [MIT](https://en.wikipedia.org/wiki/MIT_License) open-source project, with more guided maintenance by ASUC Office of the CTO
 
 Full local development is possible, except direct API usage of [Student Information Systems](https://api-central.berkeley.edu/). Per our agreement with SIS, we keep our API keys for [Class API](https://api-central.berkeley.edu/api/45) and [Course API](https://api-central.berkeley.edu/api/72) private
 
