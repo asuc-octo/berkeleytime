@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ddfc1b5d-9b19-41bb-a350-c98ca890814f",
+		"_postman_id": "85d1126b-ed17-44ea-b961-d044debcc859",
 		"name": "berkeleytime",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -543,7 +543,7 @@
 				"body": {
 					"mode": "graphql",
 					"graphql": {
-						"query": "query { \n    users {\n        _id\n        name\n        password\n    }\n}",
+						"query": "query { \n    users {\n        _id\n        name\n        email\n    }\n}",
 						"variables": ""
 					}
 				},
@@ -555,171 +555,6 @@
 					"path": [
 						"api",
 						"graphql"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "REST User (Register)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "email",
-							"value": "asdf@berkeley.edu",
-							"type": "text"
-						},
-						{
-							"key": "name",
-							"value": "whatever name string",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "123456",
-							"type": "text"
-						},
-						{
-							"key": "password_confirm",
-							"value": "123456",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{URL_DOMAIN}}/api/users/register",
-					"host": [
-						"{{URL_DOMAIN}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"register"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "REST User (Activate)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.environment.set(\"jwt\", JSON.parse(responseBody).jwt);"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": []
-				},
-				"url": {
-					"raw": "{{URL_DOMAIN}}/api/users/activate/{{activation_token}}",
-					"host": [
-						"{{URL_DOMAIN}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"activate",
-						"{{activation_token}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "REST User (Sign in)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.environment.set(\"jwt\", JSON.parse(responseBody).jwt);"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
-						{
-							"key": "email",
-							"value": "asdf@berkeley.edu",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "123456",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{URL_DOMAIN}}/api/users/login",
-					"host": [
-						"{{URL_DOMAIN}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"login"
 					]
 				}
 			},
@@ -1086,7 +921,7 @@
 			"response": []
 		},
 		{
-			"name": "(Public) SIS Class Section",
+			"name": "(NON-BT) SIS Class Section",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -1173,7 +1008,7 @@
 			"response": []
 		},
 		{
-			"name": "(Public) SIS Class",
+			"name": "(NON-BT) SIS Class",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -1249,7 +1084,7 @@
 			"response": []
 		},
 		{
-			"name": "(Public) SIS Class",
+			"name": "(NON-BT) SIS Class",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -1291,7 +1126,7 @@
 			"response": []
 		},
 		{
-			"name": "(Public) SIS Course",
+			"name": "(NON-BT) SIS Course",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
