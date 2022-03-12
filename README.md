@@ -25,6 +25,6 @@ docker run --rm --volume ${PWD}/mdb.archive:/mdb.archive --network bt mongo:5 mo
 
 Local site becomes available at http://localhost:8080
 
-If you have Postman, you can play and test API routes after importing **backend/postman_environment.json** and **backend/postman_routes.json**
+If you have Postman, you can play and test API routes after importing **postman_environment.json** and **postman_routes.json**
 
 ![Screen Shot 2022-03-12 at 10 23 13](https://user-images.githubusercontent.com/22272118/158030106-7d88366c-3c62-4832-96af-fdb9ec43d2d4.png)
