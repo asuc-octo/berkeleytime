@@ -98,7 +98,7 @@ export const setSemester = (data) => ({
 export const updateGradeContext = (data) => ({
   type: UPDATE_GRADE_CONTEXT,
   payload: {
-    data,
+    data: { courses: data },
   },
 });
 
@@ -213,13 +213,23 @@ export function getFilterResults(filters) {
 }
 
 export function fetchGradeContext() {
-  return (dispatch) =>
-    axios.get("/api/grades/grades_json/").then(
-      (res) => {
-        dispatch(updateGradeContext(res.data));
-      },
-      (error) => console.log("An error occurred.", error)
-    );
+  return async (dispatch) => {
+    const res = await axios.post("/api/graphql", {
+      query: `
+        query { 
+            SIS_Course {
+                _id
+                catalogNumber {
+                    formatted
+                }
+                subjectArea {
+                    code
+                }
+            }
+        }`,
+    });
+    dispatch(updateGradeContext(res.data.data.SIS_Course));
+  };
 }
 
 export function fetchGradeClass(course) {
@@ -274,18 +284,30 @@ export function fetchGradeData(classData) {
 }
 
 export function fetchGradeSelected(updatedClass) {
-  const url = `/api/grades/course_grades/${updatedClass.value}/`;
-  return (dispatch) =>
-    axios.get(url).then(
-      (res) => {
-        dispatch(updatedGradeSelected(res.data));
-        // if (updatedClass.addSelected) {
-        //   this.addSelected();
-        //   this.handleClassSelect({value: updatedClass.value, addSelected: false});
-        // }
-      },
-      (error) => console.log("An error occurred.", error)
-    );
+  return async (dispatch) => {
+    const res = await axios.post("/api/graphql", {
+      query: `
+        query { 
+            SIS_Course (displayName: "${updatedClass}") {
+                _classes {
+                    displayName
+                    _sections {
+                        displayName
+                        _grades {
+                            EnrollmentCnt
+                            GradeNm
+                            InstructorName
+                        }
+                    }
+                }
+                displayName
+                description
+                title
+            }
+        }`,
+    });
+    dispatch(updatedGradeSelected(res.data.data.SIS_Course[0]._classes));
+  };
 }
 
 export function fetchGradeFromUrl(url, history) {

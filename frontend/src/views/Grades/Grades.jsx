@@ -78,7 +78,7 @@ class Grades extends Component {
   addCourse(course) {
     const { fetchGradeClass, selectedCourses, usedColorIds } = this.props;
     for (let selected of selectedCourses) {
-      if (selected.id === course.id) {
+      if (selected._id === course._id) {
         return;
       }
     }
