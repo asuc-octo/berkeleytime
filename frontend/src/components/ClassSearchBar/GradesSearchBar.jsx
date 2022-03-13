@@ -1,3 +1,4 @@
+import _ from "lodash";
 import hash from "object-hash";
 import React, { Component } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
@@ -70,12 +71,10 @@ class GradesSearchBar extends Component {
       });
       return;
     }
-
     this.setState({
-      selectedClass: updatedClass.value,
+      selectedClass: updatedClass.label,
     });
-
-    fetchGradeSelected(updatedClass);
+    fetchGradeSelected(updatedClass.label);
   }
 
   handleSortSelect(sortBy) {
@@ -87,10 +86,10 @@ class GradesSearchBar extends Component {
   }
 
   handlePrimarySelect(primary) {
-    const { sections } = this.props;
+    const { sis_classes } = this.props;
     const { selectType } = this.state;
     const secondaryOptions = this.buildSecondaryOptions(
-      sections,
+      sis_classes,
       selectType,
       primary.value
     );
@@ -111,9 +110,10 @@ class GradesSearchBar extends Component {
     if (!courses) {
       return [];
     }
+
     const options = courses.map((course) => ({
-      value: course.id,
-      label: `${course.abbreviation} ${course.course_number}`,
+      value: course._id,
+      label: `${course.subjectArea.code} ${course.catalogNumber.formatted}`,
       course,
     }));
 
@@ -124,46 +124,47 @@ class GradesSearchBar extends Component {
     return str.charAt(0).toUpperCase() + str.slice(1);
   }
 
-  getSectionSemester(section) {
-    return `${this.capitalize(section.semester)} ${section.year}`;
-  }
-
-  buildPrimaryOptions(sections, selectType) {
-    const ret = [];
-    const map = new Map();
+  buildPrimaryOptions(sis_classes, selectType) {
+    let ret = [];
+    const set = new Set();
+    const all = selectType == "instructor" ? { value: "all", label: "All Instructors" } : { value: "all", label: "All Semesters" }
     if (selectType === "instructor") {
-      if (sections.length > 1) {
-        ret.push({ value: "all", label: "All Instructors" });
-      }
-      for (const section of sections) {
-        if (!map.has(section.instructor)) {
-          map.set(section.instructor, true);
+      for (const sis_class of sis_classes) {
+        const instructorName = sis_class._sections[0]?._grades[0]?.InstructorName[0]
+        if (
+          sis_class._sections[0]._grades.length &&
+          !set.has(instructorName)
+        ) {
+          set.add(instructorName);
           ret.push({
-            value: section.instructor,
-            label: section.instructor,
+            value: instructorName,
+            label: instructorName,
           });
         }
       }
+      ret = _.orderBy(ret, o => o.label)
     } else {
-      if (sections.length > 1) {
-        ret.push({ value: "all", label: "All Semesters" });
-      }
-      for (const section of sections) {
-        const semester = this.getSectionSemester(section);
-        if (!map.has(semester)) {
-          map.set(semester, true);
-          ret.push({
-            value: semester,
-            label: semester,
+      for (const sis_class of sis_classes) {
+        if (
+          sis_class._sections[0]._grades.length
+        ) {
+          const [semester] = sis_class.displayName.match(/[0-9]+ [\w]+/)
+          console.log(semester)
+          if (!set.has(semester)) {
+            set.add(semester);
+            ret.push({
+              value: semester,
+              label: semester,
           });
+          }
         }
       }
+      ret = _.orderBy(ret, o => o.label, "desc")
     }
-
-    return ret;
+    return [all, ...ret];
   }
 
-  buildSecondaryOptions(sections, selectType, selectPrimary) {
+  buildSecondaryOptions(sis_classes, selectType, selectPrimary) {
     const ret = [];
 
     if (selectPrimary === "all") {
@@ -171,7 +172,7 @@ class GradesSearchBar extends Component {
       if (selectType === "instructor") {
         options = [
           ...new Set(
-            sections.map(
+            sis_classes.map(
               (s) => `${this.getSectionSemester(s)} / ${s.section_number}`
             )
           ),
@@ -183,7 +184,7 @@ class GradesSearchBar extends Component {
       } else {
         options = [
           ...new Set(
-            sections.map((s) => `${s.instructor} / ${s.section_number}`)
+            sis_classes.map((s) => `${s.instructor} / ${s.section_number}`)
           ),
         ].map((instructor) => ({
           value: instructor.split(" / ")[0],
@@ -204,7 +205,7 @@ class GradesSearchBar extends Component {
     } else {
       let options;
       if (selectType === "instructor") {
-        options = sections
+        options = sis_classes
           .filter((section) => section.instructor === selectPrimary)
           .map((section) => {
             const semester = `${this.getSectionSemester(section)} / ${
@@ -218,10 +219,7 @@ class GradesSearchBar extends Component {
             };
           });
       } else {
-        options = sections
-          .filter(
-            (section) => this.getSectionSemester(section) === selectPrimary
-          )
+        options = sis_classes
           .map((section) => {
             const instructor = `${section.instructor} / ${section.section_number}`;
             return {
@@ -248,7 +246,7 @@ class GradesSearchBar extends Component {
 
   getFilteredSections() {
     const { selectType, selectPrimary, selectSecondary } = this.state;
-    const { sections } = this.props;
+    const { sis_classes } = this.props;
     let semester = selectSecondary;
     let number = -1;
     if (selectSecondary.split(" ").length > 2) {
@@ -258,7 +256,7 @@ class GradesSearchBar extends Component {
     let ret;
 
     if (selectType === "instructor") {
-      ret = sections
+      ret = sis_classes
         .filter((section) =>
           selectPrimary === "all" ? true : section.instructor === selectPrimary
         )
@@ -271,7 +269,7 @@ class GradesSearchBar extends Component {
           number !== -1 ? section.section_number === number : true
         );
     } else {
-      ret = sections
+      ret = sis_classes
         .filter((section) =>
           selectPrimary === "all"
             ? true
@@ -297,7 +295,7 @@ class GradesSearchBar extends Component {
       courseID: selectedClass,
       instructor: selectType === "instructor" ? selectPrimary : selectSecondary,
       semester: selectType === "semester" ? selectPrimary : selectSecondary,
-      sections: this.getFilteredSections(),
+      sis_classes: this.getFilteredSections(),
     };
 
     playlist.id = hash(playlist);
@@ -316,10 +314,10 @@ class GradesSearchBar extends Component {
     const { classes, isFull, isMobile } = this.props;
     const { selectType, selectPrimary, selectSecondary, selectedClass } =
       this.state;
-    const { sections } = this.props;
-    const primaryOptions = this.buildPrimaryOptions(sections, selectType);
+    const { sis_classes } = this.props;
+    const primaryOptions = this.buildPrimaryOptions(sis_classes, selectType);
     const secondaryOptions = this.buildSecondaryOptions(
-      sections,
+      sis_classes,
       selectType,
       selectPrimary
     );
@@ -445,14 +443,14 @@ class GradesSearchBar extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch,
-  fetchGradeSelected: (updatedClass) =>
-    dispatch(fetchGradeSelected(updatedClass)),
+  fetchGradeSelected: (selectedClass) =>
+    dispatch(fetchGradeSelected(selectedClass)),
 });
 
 const mapStateToProps = (state) => {
-  const { sections, selectPrimary, selectSecondary } = state.grade;
+  const { sis_classes, selectPrimary, selectSecondary } = state.grade;
   return {
-    sections,
+    sis_classes,
     selectPrimary,
     selectSecondary,
   };

@@ -13,7 +13,7 @@ const initialState = {
   selectedCourses: [],
   gradesData: [],
   graphData: [],
-  sections: [],
+  sis_classes: [],
   selectPrimary: "",
   selectSecondary: "",
   usedColorIds: [],
@@ -68,7 +68,7 @@ export default function grade(state = initialState, action) {
       const { data } = action.payload;
       return {
         ...state,
-        sections: data,
+        sis_classes: data,
         selectPrimary: "",
         selectSecondary: "",
       };
