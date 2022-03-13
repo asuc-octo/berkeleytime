@@ -44,13 +44,13 @@ mongosh localhost/bt
 # some example mongo shell commands
 show dbs
 show collections
-db.calanswers_grade.find().limit(1).pretty()
-db.sis_course.find().limit(1).pretty()
-db.sis_course_history.find().limit(1).pretty()
-db.sis_class.find().limit(1).pretty()
-db.sis_class_history.find().limit(1).pretty()
-db.sis_class_section.find().limit(1).pretty()
-db.sis_class_section_history.find().limit(1).pretty()
+db.calanswers_grade.find().limit(1)
+db.sis_course.find().limit(1)
+db.sis_course_history.find().limit(1)
+db.sis_class.find().limit(1)
+db.sis_class_history.find().limit(1)
+db.sis_class_section.find().limit(1)
+db.sis_class_section_history.find().limit(1)
 
 # Enter redis shell
 docker run -it --rm --network bt redis:6 redis-cli -h redis
