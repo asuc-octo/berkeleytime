@@ -30,7 +30,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     cert-manager.k8s.io/cluster-issuer: letsencrypt
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /api/$1
 spec:
   tls:
     - hosts:
