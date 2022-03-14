@@ -11,8 +11,7 @@ import passport from "passport";
 import "reflect-metadata";
 
 import apollo from "#src/apollo";
-import { URL_DOMAIN } from "#src/config";
-import { PORT_EXPRESS } from "#src/config";
+import { DEV_MODE, PORT_EXPRESS, URL_DOMAIN } from "#src/config";
 import {
   calanswers_grades,
   sis_class_sections,
@@ -69,7 +68,7 @@ process.on("SIGTERM", () => process.exit(0));
 
 // prints out all found fields for models
 
-if (process.env.NODE_ENV == "dev") {
+if (DEV_MODE) {
   RegExp.prototype["toJSON"] = RegExp.prototype.toString;
 
   mongoose.set("debug", function (collectionName, method, query, doc) {

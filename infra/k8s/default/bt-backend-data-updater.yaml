@@ -54,6 +54,6 @@ spec:
               ports:
                 - containerPort: 5000
                   protocol: TCP
-          restartPolicy: OnFailure
+          restartPolicy: Never
   schedule: 0 0 * * *
   successfulJobsHistoryLimit: 1
