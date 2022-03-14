@@ -2,7 +2,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
+  name: bt-backend-data-updater-dev-node
   namespace: default
 spec:
   concurrencyPolicy: Replace
@@ -13,7 +13,7 @@ spec:
       template:
         metadata:
           labels:
-            component: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
+            component: bt-backend-data-updater-dev-node
         spec:
           shareProcessNamespace: true
           containers:
@@ -25,10 +25,10 @@ spec:
                   value: privileged
               envFrom:
                 - secretRef:
-                    name: bt-backend-$CI_ENVIRONMENT_NAME
-              image: $CI_REGISTRY_IMAGE/bt-backend:$CI_COMMIT_BRANCH
+                    name: bt-backend-dev-node
+              image: berkeleytime.com:5000/berkeleytime/berkeleytime/bt-backend:node
               imagePullPolicy: Always
-              name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
+              name: bt-backend-data-updater-dev-node
             - command:
                 - bash
                 - -c
@@ -44,9 +44,9 @@ spec:
                   value: privileged
               envFrom:
                 - secretRef:
-                    name: bt-backend-$CI_ENVIRONMENT_NAME
+                    name: bt-backend-dev-node
               securityContext:
-                runAsUser: root
+                runAsUser: 0
               image: curlimages/curl
               imagePullPolicy: Always
               name: curl
