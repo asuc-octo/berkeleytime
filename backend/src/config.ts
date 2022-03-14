@@ -1,3 +1,4 @@
+export const DEV_MODE = process.env.NODE_ENV?.startsWith("dev") ? true : false;
 export const EXPIRE_TIME_ACTIVATION_EMAIL: number =
   parseInt(process.env.EXPIRE_TIME_ACTIVATION_EMAIL) || 3600000; // milliseconds
 export const EXPIRE_TIME_REDIS_KEY: number =
