@@ -33,6 +33,7 @@ spec:
                 - sh
                 - -c
                 - |
+                  until curl http://localhost:5000/api/health; do sleep 5; echo waiting for backend...; done;
                   curl http://localhost:5000/api/sis_courses/requestDump
                   curl http://localhost:5000/api/sis_courses/parseDump
                   curl http://localhost:5000/api/sis_classes/requestClassDump
@@ -53,12 +54,6 @@ spec:
               ports:
                 - containerPort: 5000
                   protocol: TCP
-              startupProbe:
-                failureThreshold: 30
-                httpGet:
-                  path: /health
-                  port: 5000
-                periodSeconds: 10
           restartPolicy: OnFailure
   schedule: 0 0 * * *
   successfulJobsHistoryLimit: 1
