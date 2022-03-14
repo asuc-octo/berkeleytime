@@ -1,5 +1,4 @@
 import axios from "axios";
-import { REACT_APP_API_URL } from "config";
 import { KEY_GOOGLE_CLIENT_ID } from "config";
 import React, { Component } from "react";
 import { Nav } from "react-bootstrap";
@@ -13,13 +12,10 @@ const ResponseGoogle = async (resp) => {
   console.log(idToken);
   console.log(accessToken);
   try {
-    const { data: user } = await axios.post(
-      `${REACT_APP_API_URL}/users/google/callback`,
-      {
-        idToken,
-        accessToken,
-      }
-    );
+    const { data: user } = await axios.post(`/api/users/google/callback`, {
+      idToken,
+      accessToken,
+    });
     localStorage.setItem("id_token", idToken);
     localStorage.setItem("access_token", accessToken);
     localStorage.setItem("user", JSON.stringify(user));
