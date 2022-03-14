@@ -19,9 +19,8 @@ export const KEY_GOOGLE_CLIENT_ID =
 export const KEY_GOOGLE_CLIENT_SECRET = process.env.KEY_GOOGLE_CLIENT_SECRET;
 export const KEY_SENDGRID = process.env.KEY_SENDGRID;
 export const PORT_EXPRESS: number = parseInt(process.env.PORT_EXPRESS) || 5000;
-export const PRIVILEGED_MODE = process.env.NODE_ENV?.startsWith("dev")
-  ? true
-  : false;
+export const PRIVILEGED_MODE =
+  process.env.NODE_ENV == "privileged" ? true : false;
 export const SENDGRID_PASSWORD = process.env.SENDGRID_PASSWORD;
 export const SENDGRID_USERNAME = process.env.SENDGRID_USERNAME;
 export const SIS_CLASS_APP_ID: string = process.env.SIS_CLASS_APP_ID;

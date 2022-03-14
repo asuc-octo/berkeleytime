@@ -59,7 +59,7 @@ export const SIS_Class_Sections = new (class Controller {
     res.json(await this.requestClassSectionDump({ res }));
   };
   requestClassSectionDump = async ({ res }) => {
-    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
+    const start = moment().tz("America/Los_Angeles");
     const queue = new PQueue({ concurrency: 10 });
     const shared = {
       sisClassSectionCount: 1,
@@ -144,5 +144,6 @@ export const SIS_Class_Sections = new (class Controller {
       }
     }
     await queue.onEmpty();
+    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();
