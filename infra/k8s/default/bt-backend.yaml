@@ -41,7 +41,7 @@ spec:
               node /backend/build
           env:
             - name: NODE_ENV
-              value: $CI_ENVIRONMENT_NAE
+              value: $CI_ENVIRONMENT_NAME
           envFrom:
             - secretRef:
                 name: bt-backend-$CI_ENVIRONMENT_NAME
