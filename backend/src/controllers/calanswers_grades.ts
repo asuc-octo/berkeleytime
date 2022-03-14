@@ -47,7 +47,7 @@ export const CalAnswers_Grades = new (class Controller {
     res.json(await this.parseGradeDump({ req, res }));
   };
   parseGradeDump = async ({ req, res }) => {
-    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
+    const start = moment().tz("America/Los_Angeles");
     const shared = { gradeCount: 1 };
 
     const businessLogic = async (calAnswersObject, lineNumber) => {
@@ -162,5 +162,6 @@ export const CalAnswers_Grades = new (class Controller {
       );
     }
     console.info(`${ts()}\tfinished parsing all grade dumps`);
+    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();

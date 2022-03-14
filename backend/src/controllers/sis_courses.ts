@@ -112,7 +112,7 @@ export const SIS_Courses = new (class Controller {
    * https://nodejs.org/api/stream.html#stream_stream_pipeline_streams_callback
    */
   parseDump = async ({ req, res }) => {
-    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
+    const start = moment().tz("America/Los_Angeles");
     const { key } = req.query;
     let sisCourseCount = 0;
 
@@ -194,5 +194,6 @@ export const SIS_Courses = new (class Controller {
     );
     await queue.onEmpty();
     console.info(`${ts()}\tfinished parsing of dump "${file}"`);
+    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();

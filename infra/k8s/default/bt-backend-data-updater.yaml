@@ -1,11 +1,11 @@
+---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
   namespace: default
 spec:
-  concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 1
+  concurrencyPolicy: Replace
   failedJobsHistoryLimit: 1
   jobTemplate:
     spec:
@@ -15,29 +15,50 @@ spec:
           labels:
             component: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
         spec:
+          shareProcessNamespace: true
           containers:
             - command:
-                - ./update-data.sh
+                - node
+                - build
               env:
-                - name: ENVIRONMENT_NAME
-                  value: $CI_ENVIRONMENT_NAME
+                - name: NODE_ENV
+                  value: privileged
               envFrom:
                 - secretRef:
                     name: bt-backend-$CI_ENVIRONMENT_NAME
-              image: $GCR_PATH_BACKEND:$CI_COMMIT_SHORT_SHA
+              image: $CI_REGISTRY_IMAGE/bt-backend:$CI_COMMIT_BRANCH
               imagePullPolicy: Always
               name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
-              volumeMounts:
-                - mountPath: /etc/google
-                  name: bt-backend
-                  readOnly: true
+            - command:
+                - bash
+                - -c
+                - |
+                  curl http://localhost:5000/api/sis_courses/requestDump
+                  curl http://localhost:5000/api/sis_courses/parseDump
+                  curl http://localhost:5000/api/sis_classes/requestClassDump
+                  curl http://localhost:5000/api/sis_class_sections/requestClassSectionDump
+                  curl http://localhost:5000/api/calanswers_grades/parseGradeDump
+                  pkill node
+              env:
+                - name: NODE_ENV
+                  value: privileged
+              envFrom:
+                - secretRef:
+                    name: bt-backend-$CI_ENVIRONMENT_NAME
+              securityContext:
+                runAsUser: root
+              image: curlimages/curl
+              imagePullPolicy: Always
+              name: curl
+              ports:
+                - containerPort: 5000
+                  protocol: TCP
+              startupProbe:
+                failureThreshold: 30
+                httpGet:
+                  path: /health
+                  port: 5000
+                periodSeconds: 10
           restartPolicy: OnFailure
-          volumes:
-            - name: bt-backend
-              secret:
-                defaultMode: 420
-                items:
-                  - key: GOOGLE_APPLICATION_CREDENTIALS_FILE_CONTENTS_BASE64
-                    path: auth.json
-                secretName: bt-backend-$CI_ENVIRONMENT_NAME
-  schedule: 0 9 * * *
+  schedule: 0 0 * * *
+  successfulJobsHistoryLimit: 1

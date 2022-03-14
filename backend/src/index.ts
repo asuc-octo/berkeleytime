@@ -51,6 +51,9 @@ apiRouter.use("/sis_class_sections", sis_class_sections);
 apiRouter.use("/sis_classes", sis_classes);
 apiRouter.use("/sis_courses", sis_courses);
 apiRouter.use("/users", users);
+apiRouter.get("/health", (req, res) => {
+  res.send("ok");
+});
 http.listen(PORT_EXPRESS, () => {
   console.info(`Server now listening on port ${PORT_EXPRESS}`);
 });

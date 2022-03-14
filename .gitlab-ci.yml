@@ -7,6 +7,7 @@ variables:
   DOCKER_TLS_VERIFY: 1
   DOCKER_CERT_PATH: $DOCKER_TLS_CERTDIR/client
   FILEPATH_DEPLOY_BACKEND: infra/k8s/default/bt-backend.yaml
+  FILEPATH_DEPLOY_DATA: infra/k8s/default/bt-backend-data-updater.yaml
   FILEPATH_DEPLOY_FRONTEND: infra/k8s/default/bt-frontend.yaml
   FILEPATH_DEPLOY_INGRESS: infra/k8s/default/bt-ingress-tricycle.yaml
   FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND: backend
@@ -63,6 +64,7 @@ deploy-staging:
   image: $CI_SERVER_HOST:5000/berkeleytime/bt-gitlab-runner
   script:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_DATA    | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - kubectl rollout status --timeout=1200s deploy/bt-backend-staging
     - kubectl rollout status --timeout=1200s deploy/bt-frontend-staging
@@ -78,6 +80,7 @@ deploy-prod:
   image: $CI_SERVER_HOST:5000/berkeleytime/bt-gitlab-runner
   script:
     - envsubst < $FILEPATH_DEPLOY_BACKEND | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
+    - envsubst < $FILEPATH_DEPLOY_DATA    | kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - envsubst < $FILEPATH_DEPLOY_FRONTEND| kubectl apply -f - --kubeconfig $SECRET_KUBERNETES_CREDENTIALS
     - kubectl rollout status --timeout=1200s deploy/bt-backend-prod
     - kubectl rollout status --timeout=1200s deploy/bt-frontend-prod

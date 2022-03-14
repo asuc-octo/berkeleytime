@@ -63,7 +63,7 @@ export const SIS_Classes = new (class Controller {
     res.json(await this.requestClassDump({ res }));
   };
   requestClassDump = async ({ res }) => {
-    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
+    const start = moment().tz("America/Los_Angeles");
     const queue = new PQueue({ concurrency: 10 });
     const shared = {
       sisClassCount: 1,
@@ -154,5 +154,6 @@ export const SIS_Classes = new (class Controller {
     } catch (err) {
       console.error(err);
     }
+    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 })();
