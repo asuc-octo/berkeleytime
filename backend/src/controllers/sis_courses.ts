@@ -61,7 +61,7 @@ export const SIS_Courses = new (class Controller {
     res.json(await this.requestDump({ res }));
   };
   requestDump = async ({ res }) => {
-    if (res) res.json({ start: moment().tz("America/Los_Angeles") });
+    const start = moment().tz("America/Los_Angeles");
     const key = `${GCLOUD_PATH_SIS_COURSE_DUMPS}/dump_SIS_Course.jsonl.gz`;
     let bytesSent = 0;
     let pageNumber = 1;
@@ -101,6 +101,7 @@ export const SIS_Courses = new (class Controller {
     } while (sisCourses.length == pageSize && pageNumber++ < Infinity);
     googleWriteStream.end();
     console.info(`${ts()} successful close on stream "${key}"`);
+    return { start, finish: moment().tz("America/Los_Angeles") };
   };
 
   parseDumpHandler: ExpressMiddleware<{}, {}> = async (req, res) => {
