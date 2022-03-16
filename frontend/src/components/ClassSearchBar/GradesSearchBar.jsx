@@ -248,11 +248,14 @@ class GradesSearchBar extends Component {
               for (const sis_section of sis_class._sections) {
                 for (const calanswers_grade of sis_section._grades) {
                   for (const instructorName of calanswers_grade.InstructorName) {
-                    if (!set.has(instructorName)) {
-                      set.add(instructorName);
+                    if (
+                      !set.has(`${instructorName} - ${sis_section.displayName}`)
+                    ) {
+                      set.add(`${instructorName} - ${sis_section.displayName}`);
                       ret.push({
-                        value: instructorName,
-                        label: instructorName,
+                        value: `${instructorName} - ${sis_section.displayName}`,
+                        label: `${instructorName} - ${sis_section.displayName}`,
+                        instructorName,
                         sis_class,
                         sis_section,
                         calanswers_grade,
@@ -263,8 +266,15 @@ class GradesSearchBar extends Component {
               }
             }
             ret = _.chain(ret)
-              .filter((o) => o.value != "-")
-              .orderBy([(o) => o.label]);
+              .filter((o) => !o.value.startsWith("-"))
+              .orderBy(
+                [
+                  (o) => o.instructorName,
+                  (o) => o.calanswers_grade.term.year,
+                  (o) => o.calanswers_grade.term.month,
+                ],
+                ["asc", "desc", "desc"]
+              );
             break;
           default:
             for (const sis_class of sis_classes) {
@@ -275,11 +285,18 @@ class GradesSearchBar extends Component {
                       selectPrimary ==
                       `${calanswers_grade.term.year} ${calanswers_grade.term.semester}`
                     ) {
-                      if (!set.has(instructorName)) {
-                        set.add(instructorName);
+                      if (
+                        !set.has(
+                          `${instructorName} - ${sis_section.displayName}`
+                        )
+                      ) {
+                        set.add(
+                          `${instructorName} - ${sis_section.displayName}`
+                        );
                         ret.push({
-                          value: instructorName,
-                          label: instructorName,
+                          value: `${instructorName} - ${sis_section.displayName}`,
+                          label: `${instructorName} - ${sis_section.displayName}`,
+                          instructorName,
                           sis_class,
                           sis_section,
                           calanswers_grade,
@@ -291,8 +308,8 @@ class GradesSearchBar extends Component {
               }
             }
             ret = _.chain(ret)
-              .filter((o) => o.value != "-")
-              .orderBy([(o) => o.label]);
+              .filter((o) => !o.value.startsWith("-"))
+              .orderBy([(o) => o.label], ["asc"]);
             break;
         }
     }
