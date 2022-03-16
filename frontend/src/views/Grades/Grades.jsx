@@ -156,12 +156,12 @@ class Grades extends Component {
             isMobile={isMobile}
           />
 
-          <GradesGraphCard
+          {/* <GradesGraphCard
             id="gradesGraph"
             title="Grades"
             updateClassCardGrade={this.updateClassCardGrade}
             isMobile={isMobile}
-          />
+          /> */}
 
           <div className="disclaimer">
             <img src={info} className="info" alt="" />
