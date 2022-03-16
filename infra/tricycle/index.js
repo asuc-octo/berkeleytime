@@ -21,6 +21,7 @@ const {
   TRICYCLE_MAX_NUMBER_OF_LIVE_DEV_BRANCHES,
 } = process.env;
 const BASE_NAME_DEPLOYMENT_BACKEND = `bt-backend-dev-`;
+const BASE_NAME_DEPLOYMENT_FRONTEND = `bt-frontend-dev-`;
 const ILLEGAL_BRANCH_NAMES = ["gcp", "ocf", "staging", "www"];
 const SUBDOMAIN_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9\-]{0,61}[A-Za-z0-9])?$/; // RFC-1123 subdomain name compliance
 if (ILLEGAL_BRANCH_NAMES.includes(CI_COMMIT_BRANCH)) {
@@ -43,6 +44,12 @@ await tee(
 );
 await tee(
   `export CI_ENVIRONMENT_NAME=${CI_COMMIT_BRANCH}; envsubst < ${FILEPATH_DEPLOY_INGRESS} | kubectl apply -f - --kubeconfig ${SECRET_KUBERNETES_CREDENTIALS}`
+);
+await tee(
+  `kubectl rollout restart deploy/${BASE_NAME_DEPLOYMENT_BACKEND}${CI_COMMIT_BRANCH} --kubeconfig ${SECRET_KUBERNETES_CREDENTIALS}`
+);
+await tee(
+  `kubectl rollout restart deploy/${BASE_NAME_DEPLOYMENT_FRONTEND}${CI_COMMIT_BRANCH} --kubeconfig ${SECRET_KUBERNETES_CREDENTIALS}`
 );
 const backendDeployments = (
   await tee(
