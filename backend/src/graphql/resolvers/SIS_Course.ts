@@ -42,6 +42,13 @@ export class SIS_CourseResolver {
     return await SIS_CourseService.subjects();
   }
 
+  @Query(() => [String], {
+    description: "Quick query for all SIS_Course displayNames, nothing else",
+  })
+  async courseNames() {
+    return await SIS_CourseService.courseNames();
+  }
+
   @Query(() => [SIS_Course_Schema])
   async SIS_Course(
     @Args() args: SubjectArgs,

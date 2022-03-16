@@ -112,136 +112,196 @@ class GradesSearchBar extends Component {
     }
 
     const options = courses.map((course) => ({
-      value: course._id,
-      label: `${course.subjectArea.code} ${course.catalogNumber.formatted}`,
-      course,
+      value: course,
+      label: course,
     }));
 
     return options;
   }
 
-  capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-
   buildPrimaryOptions(sis_classes, selectType) {
     let ret = [];
     const set = new Set();
-    const all = selectType == "instructor" ? { value: "all", label: "All Instructors" } : { value: "all", label: "All Semesters" }
-    if (selectType === "instructor") {
-      for (const sis_class of sis_classes) {
-        const instructorName = sis_class._sections[0]?._grades[0]?.InstructorName[0]
-        if (
-          sis_class._sections[0]._grades.length &&
-          !set.has(instructorName)
-        ) {
-          set.add(instructorName);
-          ret.push({
-            value: instructorName,
-            label: instructorName,
-          });
-        }
-      }
-      ret = _.orderBy(ret, o => o.label)
-    } else {
-      for (const sis_class of sis_classes) {
-        if (
-          sis_class._sections[0]._grades.length
-        ) {
-          const [semester] = sis_class.displayName.match(/[0-9]+ [\w]+/)
-          console.log(semester)
-          if (!set.has(semester)) {
-            set.add(semester);
-            ret.push({
-              value: semester,
-              label: semester,
-          });
+    switch (selectType) {
+      case "instructor":
+        for (const sis_class of sis_classes) {
+          for (const sis_section of sis_class._sections) {
+            for (const calanswers_grade of sis_section._grades) {
+              for (const instructorName of calanswers_grade.InstructorName) {
+                if (!set.has(instructorName)) {
+                  set.add(instructorName);
+                  ret.push({
+                    value: instructorName,
+                    label: instructorName,
+                  });
+                }
+              }
+            }
           }
         }
-      }
-      ret = _.orderBy(ret, o => o.label, "desc")
+        ret = _.chain(ret)
+          .filter((o) => o.value != "-")
+          .orderBy([(o) => o.label]);
+        break;
+      case "semester":
+        for (const sis_class of sis_classes) {
+          for (const sis_section of sis_class._sections) {
+            for (const calanswers_grade of sis_section._grades) {
+              const term = `${calanswers_grade.term.year} ${calanswers_grade.term.semester}`;
+              if (!set.has(term)) {
+                set.add(term);
+                ret.push({
+                  value: term,
+                  label: term,
+                  calanswers_grade,
+                });
+              }
+            }
+          }
+        }
+        ret = _.orderBy(
+          ret,
+          [
+            (o) => o.calanswers_grade.term.year,
+            (o) => o.calanswers_grade.term.month,
+          ],
+          ["desc", "desc"]
+        );
+        break;
     }
-    return [all, ...ret];
+    return [
+      selectType == "instructor"
+        ? { value: "all", label: "All Instructors" }
+        : { value: "all", label: "All Semesters" },
+      ...ret,
+    ];
   }
 
   buildSecondaryOptions(sis_classes, selectType, selectPrimary) {
-    const ret = [];
-
-    if (selectPrimary === "all") {
-      let options;
-      if (selectType === "instructor") {
-        options = [
-          ...new Set(
-            sis_classes.map(
-              (s) => `${this.getSectionSemester(s)} / ${s.section_number}`
-            )
-          ),
-        ].map((semester) => ({
-          value: semester.split(" / ")[0],
-          label: semester,
-          sectionNumber: semester.split(" / ")[1],
-        }));
-      } else {
-        options = [
-          ...new Set(
-            sis_classes.map((s) => `${s.instructor} / ${s.section_number}`)
-          ),
-        ].map((instructor) => ({
-          value: instructor.split(" / ")[0],
-          label: instructor,
-          sectionNumber: instructor.split(" / ")[1],
-        }));
-      }
-
-      if (options.length > 1) {
-        const label =
-          selectType === "instructor" ? "All Semesters" : "All Instructors";
-        ret.push({ value: "all", label });
-      }
-
-      for (const o of options) {
-        ret.push(o);
-      }
-    } else {
-      let options;
-      if (selectType === "instructor") {
-        options = sis_classes
-          .filter((section) => section.instructor === selectPrimary)
-          .map((section) => {
-            const semester = `${this.getSectionSemester(section)} / ${
-              section.section_number
-            }`;
-
-            return {
-              value: semester,
-              label: semester,
-              sectionNumber: semester.split(" / ")[1],
-            };
-          });
-      } else {
-        options = sis_classes
-          .map((section) => {
-            const instructor = `${section.instructor} / ${section.section_number}`;
-            return {
-              value: instructor,
-              label: instructor,
-              sectionNumber: instructor.split(" / ")[1],
-            };
-          });
-      }
-
-      if (options.length > 1) {
-        const label =
-          selectType === "instructor" ? "All Semesters" : "All Instructors";
-        ret.push({ value: "all", label });
-      }
-
-      for (const o of options) {
-        ret.push(o);
-      }
+    let ret = [];
+    const set = new Set();
+    switch (selectType) {
+      case "instructor":
+        switch (selectPrimary) {
+          case "all":
+            for (const sis_class of sis_classes) {
+              for (const sis_section of sis_class._sections) {
+                for (const calanswers_grade of sis_section._grades) {
+                  if (!set.has(sis_section.displayName)) {
+                    set.add(sis_section.displayName);
+                    ret.push({
+                      value: sis_section.displayName,
+                      label: sis_section.displayName,
+                      sis_class,
+                      sis_section,
+                      calanswers_grade,
+                    });
+                  }
+                }
+              }
+            }
+            ret = _.orderBy(
+              ret,
+              [
+                (o) => o.calanswers_grade.term.year,
+                (o) => o.calanswers_grade.term.month,
+                (o) => o.sis_class.displayName,
+              ],
+              ["desc", "desc", "asc"]
+            );
+            break;
+          default:
+            for (const sis_class of sis_classes) {
+              for (const sis_section of sis_class._sections) {
+                for (const calanswers_grade of sis_section._grades) {
+                  if (calanswers_grade.InstructorName.includes(selectPrimary)) {
+                    if (!set.has(sis_section.displayName)) {
+                      set.add(sis_section.displayName);
+                      ret.push({
+                        value: sis_section.displayName,
+                        label: sis_section.displayName,
+                        sis_class,
+                        sis_section,
+                        calanswers_grade,
+                      });
+                    }
+                  }
+                }
+              }
+            }
+            ret = _.orderBy(
+              ret,
+              [
+                (o) => o.calanswers_grade.term.year,
+                (o) => o.calanswers_grade.term.month,
+                (o) => o.sis_class.displayName,
+              ],
+              ["desc", "desc", "asc"]
+            );
+            break;
+        }
+        break;
+      case "semester":
+        switch (selectPrimary) {
+          case "all":
+            for (const sis_class of sis_classes) {
+              for (const sis_section of sis_class._sections) {
+                for (const calanswers_grade of sis_section._grades) {
+                  for (const instructorName of calanswers_grade.InstructorName) {
+                    if (!set.has(instructorName)) {
+                      set.add(instructorName);
+                      ret.push({
+                        value: instructorName,
+                        label: instructorName,
+                        sis_class,
+                        sis_section,
+                        calanswers_grade,
+                      });
+                    }
+                  }
+                }
+              }
+            }
+            ret = _.chain(ret)
+              .filter((o) => o.value != "-")
+              .orderBy([(o) => o.label]);
+            break;
+          default:
+            for (const sis_class of sis_classes) {
+              for (const sis_section of sis_class._sections) {
+                for (const calanswers_grade of sis_section._grades) {
+                  for (const instructorName of calanswers_grade.InstructorName) {
+                    if (
+                      selectPrimary ==
+                      `${calanswers_grade.term.year} ${calanswers_grade.term.semester}`
+                    ) {
+                      if (!set.has(instructorName)) {
+                        set.add(instructorName);
+                        ret.push({
+                          value: instructorName,
+                          label: instructorName,
+                          sis_class,
+                          sis_section,
+                          calanswers_grade,
+                        });
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            ret = _.chain(ret)
+              .filter((o) => o.value != "-")
+              .orderBy([(o) => o.label]);
+            break;
+        }
     }
-
-    return ret;
+    return [
+      selectType == "instructor"
+        ? { value: "all", label: "All Instructors" }
+        : { value: "all", label: "All Semesters" },
+      ...ret,
+    ];
   }
 
   getFilteredSections() {
@@ -311,10 +371,9 @@ class GradesSearchBar extends Component {
   }
 
   render() {
-    const { classes, isFull, isMobile } = this.props;
+    const { classes, isFull, isMobile, sis_classes } = this.props;
     const { selectType, selectPrimary, selectSecondary, selectedClass } =
       this.state;
-    const { sis_classes } = this.props;
     const primaryOptions = this.buildPrimaryOptions(sis_classes, selectType);
     const secondaryOptions = this.buildSecondaryOptions(
       sis_classes,
@@ -325,33 +384,65 @@ class GradesSearchBar extends Component {
       primaryOptions && primaryOptions.length === 1 && selectPrimary;
     const oneSecondaryOption =
       secondaryOptions && secondaryOptions.length === 1 && selectSecondary;
+    let primaryOption;
+    let secondaryOption;
 
-    let primaryOption = { value: selectPrimary, label: selectPrimary };
-    let secondaryOption = { value: selectSecondary, label: selectSecondary };
-
-    if (selectType === "instructor") {
-      if (selectPrimary === "all") {
-        primaryOption = { value: "all", label: "All Instructors" };
-      }
-      if (selectSecondary === "all") {
-        secondaryOption = { value: "all", label: "All Semesters" };
-      }
-    } else {
-      if (selectPrimary === "all") {
-        primaryOption = { value: "all", label: "All Semesters" };
-      }
-      if (selectSecondary === "all") {
-        secondaryOption = { value: "all", label: "All Instructors" };
-      }
+    switch (selectType) {
+      case "instructor":
+        switch (selectPrimary) {
+          case "":
+            primaryOption = "";
+            break;
+          case "all":
+            primaryOption = { value: "all", label: "All Instructors" };
+            break;
+          default:
+            primaryOption = { value: selectPrimary, label: selectPrimary };
+            break;
+        }
+        switch (selectSecondary) {
+          case "":
+            secondaryOption = "";
+            break;
+          case "all":
+            secondaryOption = { value: "all", label: "All Semesters" };
+            break;
+          default:
+            secondaryOption = {
+              value: selectSecondary,
+              label: selectSecondary,
+            };
+            break;
+        }
+        break;
+      case "semester":
+        switch (selectPrimary) {
+          case "":
+            primaryOption = "";
+            break;
+          case "all":
+            primaryOption = { value: "all", label: "All Semesters" };
+            break;
+          default:
+            primaryOption = { value: selectPrimary, label: selectPrimary };
+            break;
+        }
+        switch (selectSecondary) {
+          case "":
+            secondaryOption = "";
+            break;
+          case "all":
+            secondaryOption = { value: "all", label: "All Instructors" };
+            break;
+          default:
+            secondaryOption = {
+              value: selectSecondary,
+              label: selectSecondary,
+            };
+            break;
+        }
+        break;
     }
-
-    if (selectPrimary === "") {
-      primaryOption = "";
-    }
-    if (selectSecondary === "") {
-      secondaryOption = "";
-    }
-
     const customStyles = {
       clearIndicator: (provided, state) => ({
         ...provided,
