@@ -3,7 +3,6 @@ import { Container, Service, Inject } from "typedi";
 
 import {
   SIS_Class_Model,
-  SIS_Class_Section_Model,
   SIS_Course_Model,
 } from "#src/models/_index";
 
@@ -62,6 +61,12 @@ class service {
     )
       .orderBy((o) => parseInt(o.catalogNumber.number))
       .orderBy("subjectArea.code");
+  };
+
+  courseNames = async () => {
+    return _.orderBy(await this.model.distinct("displayName", {
+      "status.code": "ACTIVE",
+    })).sort();
   };
 
   subjects = async () => {

@@ -217,18 +217,10 @@ export function fetchGradeContext() {
     const res = await axios.post("/api/graphql", {
       query: `
         query { 
-            SIS_Course {
-                _id
-                catalogNumber {
-                    formatted
-                }
-                subjectArea {
-                    code
-                }
-            }
+            courseNames
         }`,
     });
-    dispatch(updateGradeContext(res.data.data.SIS_Course));
+    dispatch(updateGradeContext(res.data.data.courseNames));
   };
 }
 
@@ -297,6 +289,11 @@ export function fetchGradeSelected(updatedClass) {
                             EnrollmentCnt
                             GradeNm
                             InstructorName
+                            term {
+                              year
+                              month
+                              semester 
+                            }
                         }
                     }
                 }
