@@ -1,4 +1,5 @@
 FROM node:16-slim AS dev
+RUN apt-get update || : && apt-get install python3 make g++ -y
 RUN mkdir /frontend
 WORKDIR /frontend
 COPY package*.json ./
