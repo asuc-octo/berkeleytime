@@ -61,7 +61,6 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "node-sass": "^7.0.1",
     "prettier": "^2.5.1",
     "source-map-explorer": "^2.5.0"
   },
