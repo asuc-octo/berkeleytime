@@ -12,8 +12,6 @@ services:
       - mongodb
     networks:
       - bt
-    ports:
-      - 5000:5000
     volumes:
       - ./backend/src:/backend/src
   frontend:
@@ -26,7 +24,7 @@ services:
     networks:
       - bt
     ports:
-      - 3000:3000
+      - 3000:3000 # local dev seems to use ws://localhost:3000/ws to listen for source code changes and refresh
     volumes:
       - ./frontend/src:/frontend/src
       - ./frontend/public:/frontend/public
