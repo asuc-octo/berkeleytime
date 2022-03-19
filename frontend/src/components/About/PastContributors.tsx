@@ -22,6 +22,7 @@ const PastContributors: FC = () => {
   useEffect(() => {
     fetch("/assets/past_contributors.yaml")
       .then((response) => response.text())
+      // @ts-ignore
       .then((text) => setSections(yaml.load(text) ?? []));
   }, []); // only run once
 
