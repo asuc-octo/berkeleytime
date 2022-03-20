@@ -13,7 +13,6 @@ interface Props extends PropsFromRedux {}
 const Banner: FC<Props> = (props) => {
   const location = useLocation();
   const history = useHistory();
-  const text = <p>Spring 2022 recruitment is open!</p>;
   const links = <p><a href="https://github.com/asuc-octo/berkeleytime">GitHub</a>, <a href="https://discord.gg/DeCEPNdPjc">Discord</a></p>;
 
   function redirect(site: string) {
@@ -23,8 +22,6 @@ const Banner: FC<Props> = (props) => {
   return props.banner ? (
     <div className="banner">
       <div className="content">
-        {text}
-        <Button size="sm" href="https://form.typeform.com/to/yVbpSDBN">Apply Now</Button>
         {links}
       </div>
       <img src={close} alt="close" onClick={props.closeBanner} />
