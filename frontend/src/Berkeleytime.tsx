@@ -62,9 +62,9 @@ class Berkeleytime extends Component<Props> {
     super(props)
 
     const bannerType = 'sp22recruitment'  // should match value in ./redux/common/reducer.ts
-    if (localStorage.getItem('bt-hide-banner') !== bannerType) {
-      props.openBanner()
-    }
+    // if (localStorage.getItem('bt-hide-banner') !== bannerType) {
+    //   props.openBanner()
+    // }
     
     easterEgg()
     
