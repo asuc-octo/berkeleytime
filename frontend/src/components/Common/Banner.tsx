@@ -13,7 +13,7 @@ interface Props extends PropsFromRedux {}
 const Banner: FC<Props> = (props) => {
   const location = useLocation();
   const history = useHistory();
-  const text = <p><a href="https://github.com/asuc-octo/berkeleytime">GitHub</a>, <a href="https://discord.gg/DeCEPNdPjc">Discord</a></p>;
+  const links = <p><a href="https://github.com/asuc-octo/berkeleytime">GitHub</a>, <a href="https://discord.gg/DeCEPNdPjc">Discord</a></p>;
 
   function redirect(site: string) {
     history.push("/redirect?site=" + site)
@@ -22,7 +22,7 @@ const Banner: FC<Props> = (props) => {
   return props.banner ? (
     <div className="banner">
       <div className="content">
-        {text}
+        {links}
       </div>
       <img src={close} alt="close" onClick={props.closeBanner} />
     </div>

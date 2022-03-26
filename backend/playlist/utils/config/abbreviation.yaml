@@ -12,6 +12,7 @@ AGR CHM:
 
 AGRS:
     - "Ancient Greek and Roman Studies"
+    - "Ancient Greek & Roman Studies"
 
 A,RESEC:
     - "Agricultural and Resource Economics"
@@ -502,6 +503,7 @@ M E STU:
 
 MELC:
     - "Middle Eastern Languages and Cultures"
+    - "Mid Eastern Lang and Cultures"
 
 MIL AFF:
     - "Military Affairs"
@@ -697,6 +699,9 @@ SWEDISH:
 STAT:
     - "Statistics"
 
+STRELIG:
+    - "Study of Religion"
+
 TAGALG:
     - "Tagalog"
 
@@ -735,6 +740,9 @@ UGIS:
     - "Undergrad Interdisciplinary Studies"
     - "UGIS-UG Interdisc Studies"
 
+UNKNOWN:
+    - "Advanced Doctoral Studies" # every single grade CSV we have ever gotten has had 'UNKNOWN' or 'MISSING' for "Advanced Doctoral Studies"
+
 URDU:
     - "Urdu"
 
@@ -751,6 +759,9 @@ XAFRICA:
     - "FPF-African American Studies"
     - "UCB EXT FPF-African American Studies"
     - "UCB EXT FPF- African American Studies"
+
+XAGRS:
+    - "FPF- Ancient Greek & Roman"
 
 XAMRSTD:
     - "UCB EXT FPF-American Studies"

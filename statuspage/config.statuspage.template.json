@@ -1,16 +1,15 @@
 {
-    "url": "https://berkeleytime.com",
-    "apiKey": "api key",
-    "pageId": "page id",
-    "statusInterval": 120,
-
-    "apiStatus": {
-        "metricId": "api metric id",
-        "componentId": "api component id"
-    },
-
-    "frontendStatus": {
-        "metricId": "frontend metric id",
-        "componentId": "frontend component id"
-    }
+  "apiKey": "32465954-9baf-4532-....",
+  "pageId": "0xf....",
+  "apiStatus": {
+    "metricId": "6kt04d...",
+    "componentId": "8gz..."
+  },
+  "frontendStatus": {
+    "metricId": "sdysw0....",
+    "componentId": "4yzhg..."
+  },
+  "gitlabStatus": {
+    "componentId": "z4m6slg..."
+  }
 }

@@ -20,7 +20,7 @@
     "moment-timezone": "^0.5.33"
   },
   "devDependencies": {
-    "nodemon": "^2.0.7",
+    "nodemon": "^2.0.15",
     "prettier-plugin-jsdoc": "^0.3.18"
   }
 }
