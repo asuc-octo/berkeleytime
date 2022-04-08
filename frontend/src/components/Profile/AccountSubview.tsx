@@ -84,8 +84,8 @@ const AccountSubview = ({ userProfile }: Props) => {
           </div>
         ) : (
           <div className="bt-light-text">
-            You do not have any saved schedules.{' '}
-            <Link to="/scheduler">Build one now.</Link>
+            Click on the bookmark icons in <Link to="/catalog">Catalog</Link> to
+            start saving classes!
           </div>
         )}
 
@@ -112,8 +112,8 @@ const AccountSubview = ({ userProfile }: Props) => {
           </div>
         ) : (
           <div className="bt-light-text">
-            Click on the bookmark icons in <Link to="/catalog">Catalog</Link> to
-            start saving classes!
+            You do not have any saved schedules.{' '}
+            <Link to="/scheduler">Build one now.</Link>
           </div>
         )}
 
