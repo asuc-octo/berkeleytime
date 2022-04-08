@@ -19,7 +19,7 @@ from datetime import timedelta
 from urllib.parse import urlparse
 
 from berkeleytime.config.general import *
-from berkeleytime.config.semesters.spring2022 import *
+from berkeleytime.config.semesters.fall2022 import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
