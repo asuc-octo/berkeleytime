@@ -369,6 +369,38 @@
 			"response": []
 		},
 		{
+			"name": "GQL SIS Course (Class Sections)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Course (displayName: \"DATA C100\") {\n        displayName\n        title\n        catalogNumber {\n            number\n        }\n        subjectArea {\n            description\n        }\n        _classes {\n            displayName\n            _ccn\n            _sections {\n                displayName\n                id\n            }\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "GQL SIS Course (Classes Grades)",
 			"request": {
 				"method": "POST",
@@ -383,7 +415,7 @@
 				"body": {
 					"mode": "graphql",
 					"graphql": {
-						"query": "query { \n    SIS_Course (displayName: \"COMPSCI 70\") {\n        _classes {\n            displayName\n            _sections {\n                displayName\n                _grades {\n                    EnrollmentCnt\n                    GradeNm\n                    InstructorName\n                }\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
+						"query": "query { \n    SIS_Course (displayName: \"DATA C100\") {\n        _classes {\n            displayName\n            _ccn\n            _sections {\n                displayName\n                id\n                _grades {\n                    CourseControlNbr\n                    EnrollmentCnt\n                    GradeNm\n                    InstructorName\n                }\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
 						"variables": ""
 					}
 				},
@@ -416,6 +448,38 @@
 					"mode": "graphql",
 					"graphql": {
 						"query": "query { \n    subjects\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (courseNames)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    courseNames\n}",
 						"variables": ""
 					}
 				},

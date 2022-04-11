@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo } from "graphql";
 import { fieldsProjection } from "graphql-fields-list";
+import { Int } from "type-graphql";
 import {
   Args,
   ArgsType,
@@ -23,6 +24,13 @@ export class SIS_ClassResolver {
   @Query(() => [SIS_Class_Schema])
   async SIS_Class(@Root() root, @Args() args: SIS_ClassArgs, @Ctx() ctx) {
     return await SIS_ClassService.sample();
+  }
+
+  @FieldResolver(() => Int)
+  async _ccn(@Root() root) {
+    return await SIS_ClassService.ccn({
+      args: { root },
+    });
   }
 
   @FieldResolver(() => [SIS_Class_Section_Schema])
