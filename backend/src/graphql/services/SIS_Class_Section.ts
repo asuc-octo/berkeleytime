@@ -2,6 +2,7 @@ import _ from "lodash";
 import { Container, Service, Inject } from "typedi";
 
 import { SIS_Class_Section_Model } from "#src/models/SIS_Class_Section";
+import { SIS_ClassService } from "#src/graphql/services/SIS_Class";
 
 import { ReturnModelType } from "@typegoose/typegoose";
 
@@ -23,10 +24,11 @@ class service {
     } else if (args.root) {
       return await this.model.find(
         {
-          displayName: RegExp(`^${args.root.displayName}`),
+          'class.session.term.id': args.root.session.term.id,
+          'association.primaryAssociatedSectionId': await SIS_ClassService.ccn({ args: { root: args.root }}),
         },
-        { ...projection, id: 1, displayName: 1 }
-      );
+        { ...projection, id: 1, association: 1 }
+      );;
     }
   };
 }
