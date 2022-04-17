@@ -157,13 +157,13 @@ const FilterSidebar = ({
   ) : (
     <div id="filter" className="filter">
       <div className="filter-search">
-        <input
+        <BTInput
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           type="search"
           placeholder="Search for a class..."
+          icon={<SearchIcon />}
         />
-        <SearchIcon />
       </div>
 
       <div className="filter-scroll">
