@@ -3,7 +3,7 @@
     "@colors/colors": "^1.5.0",
     "@google-cloud/storage": "^5.8.5",
     "@sendgrid/mail": "^7.4.4",
-    "@typegoose/typegoose": "^9.6.2",
+    "@typegoose/typegoose": "~9.6.2",
     "ajv": "^8.6.0",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.0",
