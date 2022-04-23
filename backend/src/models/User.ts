@@ -98,9 +98,6 @@ export const User_Model = Typegoose.getModelForClass(User_Schema, {
       getters: true,
       virtuals: true,
       transform: (doc, ret, options) => {
-        delete ret.activation_token;
-        delete ret.activated;
-        delete ret.password;
         return ret;
       },
     },
