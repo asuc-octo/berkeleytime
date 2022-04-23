@@ -1,7 +1,7 @@
-.modal.modal {
+.modal.landing-modal {
   flex-direction: column;
   
-  .modal-btn {
+  .landing-modal-btn {
     width: 350px;
     align-self: center;
     @include mobile {
@@ -13,7 +13,7 @@
     }
   }
 
-  .modal-img {
+  .landing-modal-img {
     margin: auto;
     width: 400px;
     margin-bottom: 15px;
@@ -22,13 +22,13 @@
     }
   }
 
-  .modal-text {
+  .landing-modal-text {
     color: $bt-light-text;
     @include font-size-responsive(14px);
     padding: 5px 0 20px 0;
   }
 
-  .modal-subtitle {
+  .landing-modal-subtitle {
     color: $bt-primary;
   }
 
