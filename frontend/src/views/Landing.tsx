@@ -4,7 +4,7 @@ import Jumbotron from 'components/Landing/Jumbotron'
 import Explore from 'components/Landing/Explore'
 import Mission from 'components/Landing/Mission'
 import Blurbs from 'components/Landing/Blurbs'
-import LandingModal from 'components/Landing/Modal'
+import LandingModal from 'components/Landing/LandingModal.tsx'
 import schedulerImg from '../assets/img/landing/scheduler.png';
 
 const Landing: FC = () => {
@@ -14,7 +14,7 @@ const Landing: FC = () => {
                        button: 'Explore Scheduler', link: '/scheduler', img: schedulerImg };
   return (
     <div>
-      <LandingModal content={{...modal_info}} showModal={showModal} hideModal={() => setShowModal(false)} />
+      <LandingModal content={{...modal_info}} />
       <Jumbotron />
       <Explore />
       <Mission />

@@ -6,7 +6,7 @@ import Navigation from './components/Common/Navigation'
 import Footer from './components/Common/Footer'
 import Routes from './Routes'
 
-import { openBanner, enterMobile, exitMobile } from './redux/common/actions'
+import { openBanner, enterMobile, exitMobile, openLandingModal } from './redux/common/actions'
 import { ReduxState } from 'redux/store'
 
 function easterEgg() {
@@ -65,6 +65,13 @@ class Berkeleytime extends Component<Props> {
     // if (localStorage.getItem('bt-hide-banner') !== bannerType) {
     //   props.openBanner()
     // }
+
+    const modalType = 'sp22scheduler'  // should match value in ./redux/common/reducer.ts
+    if (localStorage.getItem('bt-hide-landing-modal') !== modalType) {
+      console.log("OPENING MODAL")
+      props.openLandingModal()
+    }
+
     
     easterEgg()
     
@@ -119,6 +126,7 @@ const mapState = (state: ReduxState) => ({
 
 const mapDispatch = {
   openBanner,
+  openLandingModal,
   enterMobile,
   exitMobile
 }
