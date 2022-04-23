@@ -22,7 +22,7 @@ docker-compose down # cleaner shutdown, removes containers
 
 # only need to run once to seed the database
 curl -O https://storage.googleapis.com/berkeleytime/public/mdb.archive
-docker run --rm --volume ${PWD}/mdb.archive:/mdb.archive --network bt mongo:5 mongorestore --drop --host mongodb --gzip --archive=mdb.archive
+docker run --rm --volume "${PWD}/mdb.archive":/mdb.archive --network bt mongo:5 mongorestore --drop --host mongodb --gzip --archive=mdb.archive
 ```
 
 Local site becomes available at http://localhost:8080
