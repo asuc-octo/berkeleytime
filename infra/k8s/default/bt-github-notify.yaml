@@ -47,5 +47,5 @@ spec:
             - secretRef:
                 name: general-secrets
           image: berkeleytime.com:5000/berkeleytime/bt-github-notify
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: bt-github-notify

@@ -45,5 +45,5 @@ spec:
             - secretRef:
                 name: slack-webhooks
           image: berkeleytime.com:5000/berkeleytime/bt-gitlab-notify
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: bt-gitlab-notify

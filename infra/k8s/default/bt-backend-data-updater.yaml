@@ -25,7 +25,7 @@ spec:
                 - secretRef:
                     name: bt-backend-$CI_ENVIRONMENT_NAME
               image: $CI_REGISTRY_IMAGE/bt-backend:$CI_COMMIT_BRANCH
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               name: bt-backend-data-updater-$CI_ENVIRONMENT_NAME
               volumeMounts:
                 - mountPath: /etc/google

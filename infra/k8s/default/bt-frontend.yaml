@@ -41,5 +41,5 @@ spec:
             - name: REACT_APP_GOOGLE_CLIENT_ID
               value: $SECRET_REACT_APP_GOOGLE_CLIENT_ID
           image: $CI_REGISTRY_IMAGE/bt-frontend:$CI_COMMIT_BRANCH
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           name: bt-frontend-$CI_ENVIRONMENT_NAME
