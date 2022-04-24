@@ -1,6 +1,6 @@
 # Berkeleytime
 
-[Discord](https://discord.gg/DeCEPNdPjc)
+[Discord](https://discord.gg/uP2bTPh99U)
 
 A course discovery and planning tool which combines all of Berkeley's academic information in one place
 
