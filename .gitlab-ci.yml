@@ -57,6 +57,7 @@ deploy-dev:
     - kubectl rollout restart deploy/bt-frontend-$CI_COMMIT_BRANCH
     - kubectl rollout status --timeout=1200s deploy/bt-backend-$CI_COMMIT_BRANCH
     - kubectl rollout status --timeout=1200s deploy/bt-frontend-$CI_COMMIT_BRANCH
+
 deploy-staging:
   stage: deploy-staging
   only:
