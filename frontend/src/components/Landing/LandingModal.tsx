@@ -16,15 +16,11 @@ button: 'Explore Scheduler', link: '/scheduler', img: schedulerImg };
 
 class LandingModal extends Component<Props> {
 
-  constructor(props: Props) {
-    super(props);
-  }
-
   render() {
     return (
       <Modal show={this.props.landingModal} onHide={this.props.closeLandingModal} className="landing-modal" dialogClassName={"landing-modal-dialog"}>
         <button className="link-btn back-btn" onClick={this.props.closeLandingModal}>
-          <img src={close} />
+          <img src={close} alt="close" />
         </button>
         <img className="landing-modal-img" src={modal_info["img"]} alt="" />
         <P bold className="mb-2 landing-modal-subtitle">{modal_info["subtitle"]}</P>
@@ -38,7 +34,6 @@ class LandingModal extends Component<Props> {
   }
 
   componentWillUnmount() {
-    console.log("UNMOUNTING");
     this.props.closeLandingModal();
   }
 }

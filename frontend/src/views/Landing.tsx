@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 
 import Jumbotron from 'components/Landing/Jumbotron'
 import Explore from 'components/Landing/Explore'
