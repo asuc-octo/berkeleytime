@@ -67,10 +67,11 @@ class SectionService:
         Though not rigorously defined, a 'class' here is the collection
         of sections for a course offered in a single semester.
         """
-
-        if cache_result := cache.get(f'no classes {course.id}'):
-            print(f'no classes found for course {course.id} at {cache_result}')
-            return
+        
+        # currently disabled due to causing a class-retrieval-failure by default when creating new semesters
+        # if cache_result := cache.get(f'no classes {course.id}'):
+        #    print(f'no classes found for course {course.id} at {cache_result}')
+        #    return
 
         # Get response from SIS class resource
         response = sis_class_resource.get(
