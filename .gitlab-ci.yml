@@ -34,7 +34,6 @@ build-backend:
   script:
     - docker build -t "${CI_REGISTRY_IMAGE}/bt-backend${tag}" $FILEPATH_LOCAL_DOCKER_COMPOSE_BACKEND
     - docker push "${CI_REGISTRY_IMAGE}/bt-backend${tag}"
-    - docker pull "${CI_REGISTRY_IMAGE}/bt-backend${tag}" # assumes that Docker socket for building is same as Docker used for deployment: fine for single node, not so much multiple k8s nodes, rationale: to refresh image tag, but still keep simplicity of 'image: $branch' and 'imagePullPolicy: IfNotPresent'
 
 build-frontend:
   stage: build
@@ -43,7 +42,6 @@ build-frontend:
   script:
     - docker build -t "${CI_REGISTRY_IMAGE}/bt-frontend${tag}" $FILEPATH_LOCAL_DOCKER_COMPOSE_FRONTEND
     - docker push "${CI_REGISTRY_IMAGE}/bt-frontend${tag}"
-    - docker pull "${CI_REGISTRY_IMAGE}/bt-frontend${tag}" # assumes that Docker socket for building is same as Docker used for deployment: fine for single node, not so much multiple k8s nodes, rationale: to refresh image tag, but still keep simplicity of 'image: $branch' and 'imagePullPolicy: IfNotPresent'
 
 deploy-dev:
   stage: deploy-dev
