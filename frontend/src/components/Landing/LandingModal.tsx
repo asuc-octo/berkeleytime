@@ -2,12 +2,17 @@ import React, { Component } from 'react';
 import { Modal } from 'react-bootstrap';
 import { H3, P, Button } from 'bt/custom';
 import close from 'assets/svg/common/close.svg';
+import schedulerImg from '../../assets/img/landing/scheduler.png';
 
 import { connect, ConnectedProps } from 'react-redux'
 import { ReduxState } from '../../redux/store'
 import { closeLandingModal } from '../../redux/common/actions'
 
 interface Props extends PropsFromRedux {}
+
+const modal_info = { subtitle: 'NEW!', title: 'Berkeleytime Scheduler', 
+message: 'Try out our new scheduler feature to build your ideal schedule!', 
+button: 'Explore Scheduler', link: '/scheduler', img: schedulerImg };
 
 class LandingModal extends Component<Props> {
 
@@ -21,13 +26,13 @@ class LandingModal extends Component<Props> {
         <button className="link-btn back-btn" onClick={this.props.closeLandingModal}>
           <img src={close} />
         </button>
-        <img className="landing-modal-img" src={this.props.content["img"]} alt="" />
-        <P bold className="mb-2 landing-modal-subtitle">{this.props.content["subtitle"]}</P>
-        <H3 bold className="mb-2">{this.props.content["title"]}</H3>
+        <img className="landing-modal-img" src={modal_info["img"]} alt="" />
+        <P bold className="mb-2 landing-modal-subtitle">{modal_info["subtitle"]}</P>
+        <H3 bold className="mb-2">{modal_info["title"]}</H3>
         <P className="landing-modal-text">
-        {this.props.content["message"]}
+        {modal_info["message"]}
         </P>
-        <Button className="landing-modal-btn" href={{ as_link: this.props.content["link"] }}>{this.props.content["button"]}</Button>
+        <Button className="landing-modal-btn" href={{ as_link: modal_info["link"] }}>{modal_info["button"]}</Button>
       </Modal>
     );
   }
