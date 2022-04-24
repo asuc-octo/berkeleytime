@@ -8,7 +8,7 @@ const Footer: FC = () => (
   <footer className="py-5">
     <Container>
       <Row noGutters>
-        <Col xs={4} lg={{ span: 2, offset: 3 }}>
+        <Col xs={4} lg={{ span: 2, offset: 2 }}>
           <div className="footer-col-container">
             <div className="footer-col">
               <H6 bold className="mb-3">
@@ -19,6 +19,9 @@ const Footer: FC = () => (
               </A>
               <A href={{ as_link: '/grades' }} className="mb-2">
                 Grades
+              </A>
+              <A href={{ as_link: '/scheduler' }} className="mb-2">
+                Scheduler
               </A>
               <A href={{ as_link: '/enrollment' }} className="mb-2">
                 Enrollment
@@ -38,11 +41,32 @@ const Footer: FC = () => (
               <A href="mailto:octo.berkeleytime@asuc.org" className="mb-2">
                 Contact Us
               </A>
-              <A href={{ as_link: '/releases' }} className="mb-2">
-                Releases
+              <A href="https://status.berkeleytime.com/" className="mb-2">
+                Status
               </A>
               <A href={{ as_link: '/faq' }} className="mb-2">
                 FAQ
+              </A>
+            </div>
+          </div>
+        </Col>
+        <Col xs={4} lg={2}>
+          <div className="footer-col-container">
+            <div className="footer-col">
+              <H6 bold className="mb-3">
+                Updates
+              </H6>
+              <A href={{ as_link: '/releases' }} className="mb-2">
+                Releases
+              </A>
+              <A href="https://github.com/asuc-octo/berkeleytime" className="mb-2">
+                GitHub
+              </A>
+              <A href="https://discord.gg/uP2bTPh99U" className="mb-2">
+                Discord
+              </A>
+              <A href="https://facebook.com/berkeleytime" className="mb-2">
+                Facebook
               </A>
             </div>
           </div>
@@ -56,9 +80,6 @@ const Footer: FC = () => (
               </A>
               <A href="https://octo.asuc.org" className="mb-2">
                 ASUC OCTO
-              </A>
-              <A href="https://facebook.com/berkeleytime" className="mb-2">
-                Facebook
               </A>
               <A href={{ as_link: '/legal/privacy' }} className="mb-2">
                 Privacy Policy

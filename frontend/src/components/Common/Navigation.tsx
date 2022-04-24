@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavProps } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
 import { ReduxState } from '../../redux/store';
+import { Button } from 'bt/custom';
 
 import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
@@ -74,12 +75,12 @@ const Navigation: FC<Props> = (props) => {
           {isLoggedIn ? (
             <>
               <NavigationLink to="/profile">Profile</NavigationLink>
-              <NavigationLink to="/logout">Log Out</NavigationLink>
+              <Button href="/logout">Log out</Button>
             </>
           ) : (
-            <NavigationLink onClick={() => setShowLogin(true)}>
-              Login
-            </NavigationLink>
+            <Button onClick={() => setShowLogin(true)}>
+              Log in
+            </Button>
           )}
         </Nav>
       </Navbar.Collapse>
