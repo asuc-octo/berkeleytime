@@ -46,7 +46,7 @@ spec:
             - secretRef:
                 name: bt-backend-$CI_ENVIRONMENT_NAME
           image: $CI_REGISTRY_IMAGE/bt-backend:$CI_COMMIT_BRANCH
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: bt-backend-$CI_ENVIRONMENT_NAME
           ports:
             - containerPort: 5000
