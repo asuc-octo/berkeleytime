@@ -19,7 +19,7 @@ class LandingModal extends Component<Props> {
   render() {
     return (
       <Modal show={this.props.landingModal} onHide={this.props.closeLandingModal} className="landing-modal" dialogClassName={"landing-modal-dialog"}>
-        <button className="link-btn back-btn" onClick={this.props.closeLandingModal}>
+        <button className="landing-close-btn" onClick={this.props.closeLandingModal}>
           <img src={close} alt="close" />
         </button>
         <img className="landing-modal-img" src={modal_info["img"]} alt="" />
