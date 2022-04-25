@@ -36,16 +36,19 @@
     color: $bt-primary;
   }
 
-  .back-btn {
+  .landing-close-btn {
     position: absolute;
-    right: 20px;
-    top: 10px;
+    right: 22px;
+    top: 20px;
     padding: unset;
     margin: unset;
     img {
       width: 10px;
       height: 10px;
     }
+    background: none;
+    border: none;
+    outline: none;
   }
 
   .landing-modal-dialog {
