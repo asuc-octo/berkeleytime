@@ -223,8 +223,6 @@ type Query {
   SIS_Course(displayName: String, subjectArea___description: String): [SIS_Course_Schema]
   users: [User_Schema]
   user(email: String, id: String): User_Schema
-
-  all_Courses: [SIS_Course_Schema]
 }
 
 type range {
