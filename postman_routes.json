@@ -497,6 +497,38 @@
 			"response": []
 		},
 		{
+			"name": "GQL SIS Course (departmentNames)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    departmentNames\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "GQL SIS Course (By Department)",
 			"request": {
 				"method": "POST",

@@ -1,10 +1,7 @@
 import _ from "lodash";
 import { Container, Service, Inject } from "typedi";
 
-import {
-  SIS_Class_Model,
-  SIS_Course_Model,
-} from "#src/models/_index";
+import { SIS_Class_Model, SIS_Course_Model } from "#src/models/_index";
 
 import { ReturnModelType } from "@typegoose/typegoose";
 
@@ -42,29 +39,39 @@ class service {
 
   courses = async (args, fieldsProjection) => {
     return _.chain(
-      await this.model
-        .find(
-          {
-            "status.code": "ACTIVE",
-            ...parseArgs(args),
-          },
-          {
-            _id: 1,
-            "identifiers.id": 1,
-            "identifiers.type": 1,
-            "subjectArea.code": 1,
-            "catalogNumber.number": 1,
-            ...fieldsProjection,
-          }
-        )    )
+      await this.model.find(
+        {
+          "status.code": "ACTIVE",
+          ...parseArgs(args),
+        },
+        {
+          _id: 1,
+          "identifiers.id": 1,
+          "identifiers.type": 1,
+          "subjectArea.code": 1,
+          "catalogNumber.number": 1,
+          ...fieldsProjection,
+        }
+      )
+    )
       .orderBy((o) => parseInt(o.catalogNumber.number))
       .orderBy("subjectArea.code");
   };
 
   courseNames = async () => {
-    return _.orderBy(await this.model.distinct("displayName", {
-      "status.code": "ACTIVE",
-    })).sort();
+    return _.orderBy(
+      await this.model.distinct("displayName", {
+        "status.code": "ACTIVE",
+      })
+    ).sort();
+  };
+
+  departmentNames = async () => {
+    return _.orderBy(
+      await this.model.distinct("subjectArea.description", {
+        "status.code": "ACTIVE",
+      })
+    ).sort();
   };
 
   subjects = async () => {
