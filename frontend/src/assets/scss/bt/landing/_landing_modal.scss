@@ -1,0 +1,70 @@
+.modal.landing-modal {
+  flex-direction: column;
+  
+  .landing-modal-btn {
+    width: 350px;
+    align-self: center;
+    @include mobile {
+      width: 200px;
+      justify-content: center;
+      height: 40px;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .landing-modal-img {
+    margin: auto;
+    width: 400px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.2);
+    @include mobile {
+      width: 100%;
+    }
+  }
+
+  .landing-modal-text {
+    color: $bt-light-text;
+    @include font-size-responsive(14px);
+    padding: 5px 0 20px 0;
+  }
+
+  .landing-modal-subtitle {
+    color: $bt-primary;
+  }
+
+  .landing-close-btn {
+    position: absolute;
+    right: 22px;
+    top: 20px;
+    padding: unset;
+    margin: unset;
+    img {
+      width: 10px;
+      height: 10px;
+    }
+    background: none;
+    border: none;
+    outline: none;
+  }
+
+  .landing-modal-dialog {
+    width: 650px !important;
+    @include mobile {
+      width: 75vw !important;
+    }
+
+    position: absolute !important;
+    align-self: center !important;
+    top: 15vh !important;
+
+    .modal-content {
+      padding: 50px !important;
+      text-align: center !important;
+      border-radius: 4px !important;
+    }
+  }
+}
