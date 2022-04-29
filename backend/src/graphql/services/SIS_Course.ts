@@ -56,9 +56,7 @@ class service {
             "catalogNumber.number": 1,
             ...fieldsProjection,
           }
-        )
-        .cache(86400)
-    )
+        )    )
       .orderBy((o) => parseInt(o.catalogNumber.number))
       .orderBy("subjectArea.code");
   };
