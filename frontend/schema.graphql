@@ -1,421 +1,893 @@
-"""Exposes a URL that specifies the behaviour of this scalar."""
-directive @specifiedBy(
-  """The URL that specifies the behaviour of this scalar."""
-  url: String!
-) on SCALAR
-
-type allowedUnits {
-  minimum: Float
-  maximum: Float
-  forAcademicProgress: Float
-  forFinancialAid: Float
+type BerkeleytimeUserType {
+  id: ID!
+  user: UserType!
+  major: String!
+  savedClasses: [CourseType]
+  emailClassUpdate: Boolean
+  emailGradeUpdate: Boolean
+  emailEnrollmentOpening: Boolean
+  emailBerkeleytimeUpdate: Boolean
+  schedules(
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): ScheduleTypeConnection!
 }
 
-type assignedClassMaterials {
-  noneAssigned: Boolean
+type CourseType implements Node {
+  """
+  The ID of the object.
+  """
+  id: ID!
+  title: String!
+  department: String!
+  abbreviation: String!
+  courseNumber: String!
+  description: String!
+  units: String
+  crossListing(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    title: String
+    department: String
+    abbreviation: String
+    courseNumber: String
+    description: String
+    units: String
+    crossListing: [ID]
+    prerequisites: String
+    gradeAverage: Float
+    letterAverage: String
+    hasEnrollment: Boolean
+    enrolled: Int
+    enrolledMax: Int
+    enrolledPercentage: Float
+    waitlisted: Int
+    openSeats: Int
+    lastUpdated: DateTime
+    hasGrades: Boolean
+    inPlaylists: String
+    idIn: String
+  ): CourseTypeConnection!
+  prerequisites: String!
+  gradeAverage: Float
+  letterAverage: String!
+  hasEnrollment: Boolean!
+  enrolled: Int!
+  enrolledMax: Int!
+  enrolledPercentage: Float!
+  waitlisted: Int!
+  openSeats: Int!
+  lastUpdated: DateTime!
+  sectionSet(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    course: ID
+    abbreviation: String
+    courseNumber: String
+    year: String
+    semester: String
+    courseTitle: String
+    sectionNumber: String
+    ccn: String
+    kind: String
+    isPrimary: Boolean
+    associatedSections: [ID]
+    days: String
+    startTime: DateTime
+    endTime: DateTime
+    finalDay: String
+    finalEnd: DateTime
+    finalStart: DateTime
+    instructor: String
+    disabled: Boolean
+    locationName: String
+    instructionMode: String
+    lastUpdated: DateTime
+    enrolled: Int
+    enrolledMax: Int
+    waitlisted: Int
+    waitlistedMax: Int
+  ): SectionTypeConnection!
+  gradeSet(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    course: ID
+    semester: String
+    year: String
+    abbreviation: String
+    courseNumber: String
+    sectionNumber: String
+    instructor: String
+    gradedTotal: Int
+    average: Float
+  ): GradeTypeConnection!
+  playlistSet(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    category: String
+    name: String
+    semester: String
+    year: String
+    courses: [ID]
+  ): PlaylistTypeConnection!
+  berkeleytimeuserSet: [BerkeleytimeUserType!]!
+  schedulerSections(
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): SectionSelectionTypeConnection!
 }
 
-type assignedInstructor {
-  assignmentNumber: Float
-  instructor: instructor
-  role: SIS_Code_Formal
-  contactMinutes: Float
-  printInScheduleOfClasses: Boolean
-  gradeRosterAccess: SIS_Code_Formal
-}
+type CourseTypeConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
 
-type association {
-  primary: Boolean
-  primaryAssociatedComponent: SIS_Code
-  primaryAssociatedSectionId: Float
-  primaryAssociatedSectionIds: [Float]
-  associatedClass: Float
-}
-
-type CalAnswers_Grade_Schema {
-  _doc: TypelessData
-  _id: String
-  _created: DateTime
-  _updated: DateTime
-  _version: Float
-  GradeSortNbr: String
-  EnrollmentCnt: Float
-  CourseControlNbr: Float
-  InstructorName: [String]
-  CourseSubjectShortNm: String
-  CourseNumber: String
-  SectionNbr: String
-  GradeSubtypeDesc: String
-  GradeTypeDesc: String
-  GradeNm: String
-  CourseTitleNm: String
-  term: grade_term
-}
-
-type catalogNumber {
-  prefix: String
-  number: String
-  suffix: String
-  formatted: String
-}
-
-type class_term {
-  id: String
-  name: String
-}
-
-type combination {
-  id: String
-  description: String
-  type: SIS_Code
-  enrolledCountCombinedSections: Float
-  waitlistedCountCombinedSections: Float
-  maxEnrollCombinedSections: Float
-  maxWaitlistCombinedSections: Float
-  combinedSections: [Float]
-}
-
-type component {
-  instructionMethod: SIS_Code
-  primary: Boolean
-  minContactHours: Float
-  maxContactHours: Float
-  feesExist: Boolean
-}
-
-type course {
-  identifiers: [identifier]
-  displayName: String
-}
-
-type course_term {
-  termNames: [String]
-}
-
-type credit {
-  type: String
-  value: value
-}
-
-type creditRestriction {
-  restrictionText: String
-  restrictionCourses: restrictionCourses
-}
-
-type creditRestrictionCourse {
-  course: course
-  maxCreditPercentage: Float
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [CourseTypeEdge]!
 }
 
 """
-The javascript `Date` as string. Type represents date and time as the ISO Date string.
+A Relay edge containing a `CourseType` and its cursor.
+"""
+type CourseTypeEdge {
+  """
+  The item at the end of the edge
+  """
+  node: CourseType
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+
+type CreateSchedule {
+  schedule: ScheduleType
+}
+
+"""
+The `Date` scalar type represents a Date
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Date
+
+"""
+The `DateTime` scalar type represents a DateTime
+value as specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
 """
 scalar DateTime
 
-type discrete {
-  units: [Float]
+type DeleteUser {
+  success: Boolean
 }
 
-type enrollmentStatus {
-  status: SIS_Code
-  enrolledCount: Float
-  minEnroll: Float
-  maxEnroll: Float
-  maxWaitlist: Float
-  instructorAddConsentRequired: Boolean
-  instructorDropConsentRequired: Boolean
-  waitlistedCount: Float
-  openReserved: Float
-  reservedCount: Float
+"""
+Proxy for enrollment object. Using this instead of
+a DjangoObjectType gives us higher flexibility of the data.
+"""
+type EnrollmentData {
+  day: Int
+  dateCreated: Date
+  enrolled: Int
+  enrolledMax: Int
+  enrolledPercent: Float
+  waitlisted: Int
+  waitlistedMax: Int
+  waitlistedPercent: Float
 }
 
-type fixed {
-  units: Float
+"""
+The return format of both queries
+"""
+type EnrollmentInfo {
+  course: CourseType
+  section: [SectionType]
+  telebears: TelebearData
+  data: [EnrollmentData]
+  enrolledMax: Int
+  enrolledPercentMax: Float
+  enrolledScaleMax: Int
+  waitlistedMax: Int
+  waitlistedPercentMax: Float
+  waitlistedScaleMax: Int
 }
 
-type format {
-  termsAllowed: termAllowed
-  sessionType: String
-  description: String
-  aggregateMinContactHours: Float
-  aggregateMaxContactHours: Float
-  minWorkloadHours: Float
-  maxWorkloadHours: Float
-  anyFeesExist: Boolean
-  components: [component]
+type FormConfigType {
+  field: JSONString
 }
 
-type formatsOffered {
-  description: String
-  formats: [format]
-  typicallyOffered: typicalOffer
-  summerOnly: Boolean
+"""
+The `GenericScalar` scalar type represents a generic
+GraphQL scalar value that could be:
+String, Boolean, Int, Float, List or Object.
+"""
+scalar GenericScalar
+
+type GradeType implements Node {
+  """
+  The ID of the object.
+  """
+  id: ID!
+  course: CourseType!
+  semester: String!
+  year: String!
+  abbreviation: String!
+  courseNumber: String!
+  sectionNumber: String!
+  instructor: String!
+  instructors: [String!]!
+  gradedTotal: Int!
+  average: Float!
+  distribution: [LetterGradeType]
+  sectionGpa: Float
+  sectionLetter: String
+  denominator: Int
 }
 
-type grade_term {
-  year: Float
-  month: Float
-  semester: String
+type GradeTypeConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [GradeTypeEdge]!
 }
 
-type identifier {
-  type: String
-  id: String
+"""
+A Relay edge containing a `GradeType` and its cursor.
+"""
+type GradeTypeEdge {
+  """
+  The item at the end of the edge
+  """
+  node: GradeType
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
 
-type instructor {
-  identifiers: [instructor_identifiers]
-  names: [instructor_names]
+"""
+Allows use of a JSON String for input / output from the GraphQL schema.
+
+Use of this type is *not recommended* as you lose the benefits of having a defined, static
+schema (one of the key benefits of GraphQL).
+"""
+scalar JSONString
+
+type LetterGradeType {
+  letter: String
+  numerator: Int
+  percent: Float
+  percentileHigh: Float
+  percentileLow: Float
 }
 
-type instructor_identifiers {
-  type: String
-  id: String
-  disclose: Boolean
+type Logout {
+  success: Boolean
 }
 
-type instructor_names {
-  type: SIS_Code
-  familyName: String
-  givenName: String
-  formattedName: String
-  disclose: Boolean
-  uiControl: SIS_Code
-  fromDate: String
+type Mutation {
+  createSchedule(
+    name: String
+    public: Boolean = false
+    selectedSections: [SectionSelectionInput]
+    semester: String
+    timeblocks: [TimeBlockInput]
+    totalUnits: String
+    year: String
+  ): CreateSchedule
+  updateSchedule(
+    name: String
+    public: Boolean
+    scheduleId: ID
+    selectedSections: [SectionSelectionInput]
+    timeblocks: [TimeBlockInput]
+    totalUnits: String
+  ): UpdateSchedule
+  removeSchedule(scheduleId: ID): RemoveSchedule
+  updateUser(
+    emailBerkeleytimeUpdate: Boolean
+    emailClassUpdate: Boolean
+    emailEnrollmentOpening: Boolean
+    emailGradeUpdate: Boolean
+    major: String
+  ): UpdateUser
+  saveClass(classId: ID): SaveClass
+  removeClass(classId: ID): RemoveClass
+
+  """
+  Login mutation using graphql_jwt
+  """
+  login(tokenId: String): ObtainJSONWebToken
+  logout: Logout
+  verifyToken(token: String): Verify
+  refreshToken(token: String): Refresh
+  deleteUser: DeleteUser
 }
 
-type meeting {
-  number: Float
-  meetsMonday: Boolean
-  meetsTuesday: Boolean
-  meetsWednesday: Boolean
-  meetsThursday: Boolean
-  meetsFriday: Boolean
-  meetsSaturday: Boolean
-  meetsSunday: Boolean
-  startTime: String
-  endTime: String
-  assignedInstructors: [assignedInstructor]
-  startDate: String
-  endDate: String
-  meetingTopic: meetingTopic
+"""
+An object with an ID
+"""
+interface Node {
+  """
+  The ID of the object.
+  """
+  id: ID!
 }
 
-type meetingTopic {
-  description: String
+"""
+Login mutation using graphql_jwt
+"""
+type ObtainJSONWebToken {
+  payload: GenericScalar!
+  refreshExpiresIn: Int!
+  user: BerkeleytimeUserType
+  newUser: Boolean
 }
 
-type preparation {
-  requiredText: String
-  requiredCourses: requiredCourse
+"""
+The Relay compliant `PageInfo` type, containing data necessary to paginate this connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
+}
+
+type PlaylistType implements Node {
+  """
+  The ID of the object.
+  """
+  id: ID!
+  category: String!
+  name: String!
+  semester: String!
+  year: String!
+  courses(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    title: String
+    department: String
+    abbreviation: String
+    courseNumber: String
+    description: String
+    units: String
+    crossListing: [ID]
+    prerequisites: String
+    gradeAverage: Float
+    letterAverage: String
+    hasEnrollment: Boolean
+    enrolled: Int
+    enrolledMax: Int
+    enrolledPercentage: Float
+    waitlisted: Int
+    openSeats: Int
+    lastUpdated: DateTime
+    hasGrades: Boolean
+    inPlaylists: String
+    idIn: String
+  ): CourseTypeConnection!
+}
+
+type PlaylistTypeConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [PlaylistTypeEdge]!
+}
+
+"""
+A Relay edge containing a `PlaylistType` and its cursor.
+"""
+type PlaylistTypeEdge {
+  """
+  The item at the end of the edge
+  """
+  node: PlaylistType
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
 
 type Query {
-  CalAnswers_Grade(CourseControlNbr: Float!, year: Float!, semester: String!): [CalAnswers_Grade_Schema]
-  SIS_Class_Section(id: Float!, year: Float!, semester: String!): [SIS_Class_Section_Schema]
-  SIS_Class: [SIS_Class_Schema]
+  schedules: [ScheduleType]
+  schedule(id: ID): ScheduleType
+  user: BerkeleytimeUserType
+  allPlaylists(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    category: String
+    name: String
+    semester: String
+    year: String
+    courses: [ID]
+  ): PlaylistTypeConnection
 
-  """All departments in human-readable format"""
-  subjects: [String]
+  """
+  The ID of the object
+  """
+  playlist(id: ID!): PlaylistType
+  allGrades(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    course: ID
+    semester: String
+    year: String
+    abbreviation: String
+    courseNumber: String
+    sectionNumber: String
+    instructor: String
+    gradedTotal: Int
+    average: Float
+  ): GradeTypeConnection
 
-  """Quick query for all SIS_Course displayNames, nothing else"""
-  courseNames: [String]
-  SIS_Course(displayName: String, subjectArea___description: String): [SIS_Course_Schema]
-  users: [User_Schema]
-  user(email: String, id: String): User_Schema
+  """
+  The ID of the object
+  """
+  grade(id: ID!): GradeType
+  formConfig: FormConfigType
+  courseEnrollmentBySection(sectionId: ID): EnrollmentInfo
+  courseEnrollmentBySemester(
+    courseId: ID
+    semester: String
+    year: Int
+  ): EnrollmentInfo
 
-  all_Courses: [SIS_Course_Schema]
+  """
+  The ID of the object
+  """
+  course(id: ID!): CourseType
+  allCourses(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    title: String
+    department: String
+    abbreviation: String
+    courseNumber: String
+    description: String
+    units: String
+    crossListing: [ID]
+    prerequisites: String
+    gradeAverage: Float
+    letterAverage: String
+    hasEnrollment: Boolean
+    enrolled: Int
+    enrolledMax: Int
+    enrolledPercentage: Float
+    waitlisted: Int
+    openSeats: Int
+    lastUpdated: DateTime
+    hasGrades: Boolean
+    inPlaylists: String
+    idIn: String
+  ): CourseTypeConnection
+
+  """
+  The ID of the object
+  """
+  section(id: ID!): SectionType
+  allSections(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    course: ID
+    abbreviation: String
+    courseNumber: String
+    year: String
+    semester: String
+    courseTitle: String
+    sectionNumber: String
+    ccn: String
+    kind: String
+    isPrimary: Boolean
+    associatedSections: [ID]
+    days: String
+    startTime: DateTime
+    endTime: DateTime
+    finalDay: String
+    finalEnd: DateTime
+    finalStart: DateTime
+    instructor: String
+    disabled: Boolean
+    locationName: String
+    instructionMode: String
+    lastUpdated: DateTime
+    enrolled: Int
+    enrolledMax: Int
+    waitlisted: Int
+    waitlistedMax: Int
+  ): SectionTypeConnection
+  ping: String
 }
 
-type range {
-  minUnits: Float
-  maxUnits: Float
+type Refresh {
+  payload: GenericScalar!
+  refreshExpiresIn: Int!
 }
 
-type repeatability {
-  repeatable: Boolean
-  description: String
+type RemoveClass {
+  user: BerkeleytimeUserType
 }
 
-type requiredCourse {
-  courses: [course]
+type RemoveSchedule {
+  schedule: ScheduleType
 }
 
-type restrictionCourses {
-  creditRestrictionCourses: [creditRestrictionCourse]
+type SaveClass {
+  user: BerkeleytimeUserType
 }
 
-type sectionAttribute {
-  attribute: SIS_Code_Formal
-  value: SIS_Code_Formal
+type ScheduleType implements Node {
+  """
+  The ID of the object.
+  """
+  id: ID!
+  user: BerkeleytimeUserType!
+  name: String!
+  year: String!
+  semester: String!
+  dateCreated: DateTime!
+  dateModified: DateTime!
+  totalUnits: String!
+  public: Boolean!
+  selectedSections(
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): SectionSelectionTypeConnection!
+  timeblocks(
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): TimeBlockTypeConnection!
 }
 
-type session {
-  id: String
-  name: String
-  term: class_term
+type ScheduleTypeConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [ScheduleTypeEdge]!
 }
 
-type SIS_Class_Schema {
-  _doc: TypelessData
-  _id: ID
-  _created: DateTime
-  _updated: DateTime
-  _version: Float
-  course: SIS_Course_Schema
-  allowedUnits: allowedUnits
-  aggregateEnrollmentStatus: enrollmentStatus
-  anyFeesExist: Boolean
-  anyPrintInScheduleOfClasses: Boolean
-  anyPrintInstructors: Boolean
-  assignedClassMaterials: assignedClassMaterials
-  blindGrading: Boolean
-  contactHours: Float
-  displayName: String
-  finalExam: SIS_Code
-  gradingBasis: SIS_Code
-  instructionMode: SIS_Code
-  offeringNumber: Float
-  primaryComponent: SIS_Code
-  status: SIS_Code
-  number: String
-  session: session
-  _ccn: Int
-  _sections: [SIS_Class_Section_Schema]
+"""
+A Relay edge containing a `ScheduleType` and its cursor.
+"""
+type ScheduleTypeEdge {
+  """
+  The item at the end of the edge
+  """
+  node: ScheduleType
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
 
-type SIS_Class_Section_Schema {
-  _doc: TypelessData
-  _id: ID
-  _created: DateTime
-  _updated: DateTime
-  _version: Float
-  class: SIS_Class_Schema
-  id: Float
-  academicGroup: SIS_Code_Formal
-  academicOrganization: SIS_Code_Formal
-  addConsentRequired: SIS_Code
-  association: association
-  combination: combination
-  component: SIS_Code
-  displayName: String
-  dropConsentRequired: SIS_Code
-  endDate: String
-  enrollmentStatus: enrollmentStatus
-  feesExist: Boolean
-  graded: Boolean
-  instructorAddConsentRequired: Boolean
-  instructionMode: SIS_Code
-  meetings: [meeting]
-  number: String
-  printInScheduleOfClasses: Boolean
-  roomShare: Boolean
-  sectionAttributes: [sectionAttribute]
-  startDate: String
-  status: SIS_Code
-  type: SIS_Code_Formal
-  _grades: [CalAnswers_Grade_Schema]
+input SectionSelectionInput {
+  course: ID!
+  primary: ID
+  secondary: [ID]
 }
 
-type SIS_Code {
-  code: String
-  description: String
+type SectionSelectionType implements Node {
+  """
+  The ID of the object.
+  """
+  id: ID!
+  schedule: ScheduleType!
+  course: CourseType!
+  primary: SectionType
+  secondary(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    course: ID
+    abbreviation: String
+    courseNumber: String
+    year: String
+    semester: String
+    courseTitle: String
+    sectionNumber: String
+    ccn: String
+    kind: String
+    isPrimary: Boolean
+    associatedSections: [ID]
+    days: String
+    startTime: DateTime
+    endTime: DateTime
+    finalDay: String
+    finalEnd: DateTime
+    finalStart: DateTime
+    instructor: String
+    disabled: Boolean
+    locationName: String
+    instructionMode: String
+    lastUpdated: DateTime
+    enrolled: Int
+    enrolledMax: Int
+    waitlisted: Int
+    waitlistedMax: Int
+  ): SectionTypeConnection!
 }
 
-type SIS_Code_Formal {
-  code: String
-  description: String
-  formalDescription: String
+type SectionSelectionTypeConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [SectionSelectionTypeEdge]!
 }
 
-"""A superset of all data resulting from the SIS Course API"""
-type SIS_Course_Schema {
-  _doc: TypelessData
-  _id: ID
-  _created: DateTime
-  _updated: DateTime
-  _version: Float
-  academicCareer: SIS_Code
-  academicGroup: SIS_Code
-  academicOrganization: SIS_Code
-  allowMultipleEnrollments: Boolean
-  anyFeesExist: Boolean
-  blindGrading: Boolean
-  catalogNumber: catalogNumber
-  cip: SIS_Code
-  classDisplayName: String
-  classSubjectArea: SIS_Code
-  contactHours: Float
-  createdDate: String
-  credit: credit
-  creditRestriction: creditRestriction
-  departmentNicknames: String
-  description: String
-  displayName: String
-  finalExam: SIS_Code
-  formatsOffered: formatsOffered
-  formerDisplayName: String
-  fromDate: String
-  gradingBasis: SIS_Code
-  hegis: SIS_Code
-  instructorAddConsentRequired: Boolean
-  instructorDropConsentRequired: Boolean
-  identifiers: [identifier]
-  multipleTermNumber: Float
-  preparation: preparation
-  primaryInstructionMethod: SIS_Code
-  printInCatalog: Boolean
-  printInstructors: Boolean
-  proposedInstructors: [String]
-  repeatability: repeatability
-  spansMultipleTerms: Boolean
-  status: SIS_Code
-  subjectArea: SIS_Code
-  tie: SIS_Code
-  title: String
-  toDate: String
-  transcriptTitle: String
-  updatedDate: String
-  workloadHours: Float
-  _courseId: String
-  _classes(year: Float, semester: String): [SIS_Class_Schema]
+"""
+A Relay edge containing a `SectionSelectionType` and its cursor.
+"""
+type SectionSelectionTypeEdge {
+  """
+  The item at the end of the edge
+  """
+  node: SectionSelectionType
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
 
-type termAllowed {
-  termNames: [String]
+type SectionType implements Node {
+  """
+  The ID of the object.
+  """
+  id: ID!
+  course: CourseType!
+  abbreviation: String!
+  courseNumber: String!
+  year: String!
+  semester: String!
+  courseTitle: String!
+  sectionNumber: String!
+  ccn: String!
+  kind: String!
+  isPrimary: Boolean!
+  associatedSections(
+    before: String
+    after: String
+    first: Int
+    last: Int
+    course: ID
+    abbreviation: String
+    courseNumber: String
+    year: String
+    semester: String
+    courseTitle: String
+    sectionNumber: String
+    ccn: String
+    kind: String
+    isPrimary: Boolean
+    associatedSections: [ID]
+    days: String
+    startTime: DateTime
+    endTime: DateTime
+    finalDay: String
+    finalEnd: DateTime
+    finalStart: DateTime
+    instructor: String
+    disabled: Boolean
+    locationName: String
+    instructionMode: String
+    lastUpdated: DateTime
+    enrolled: Int
+    enrolledMax: Int
+    waitlisted: Int
+    waitlistedMax: Int
+  ): SectionTypeConnection!
+  days: String!
+  startTime: DateTime
+  endTime: DateTime
+  finalDay: String!
+  finalEnd: DateTime
+  finalStart: DateTime
+  instructor: String!
+  disabled: Boolean!
+  locationName: String!
+  instructionMode: String!
+  lastUpdated: DateTime!
+  enrolled: Int
+  enrolledMax: Int
+  waitlisted: Int
+  waitlistedMax: Int
+  schedulerPrimarySections(
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): SectionSelectionTypeConnection!
+  schedulerSecondarySections(
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): SectionSelectionTypeConnection!
+  wordDays: String
 }
 
-scalar TypelessData
+type SectionTypeConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
 
-type typicalOffer {
-  terms: course_term
-  comments: String
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [SectionTypeEdge]!
 }
 
-type User_Schema {
-  _id: ID
-  _created: DateTime
-  _updated: DateTime
-  access_token: String
-  admin: Boolean
-  bio: String
-  classes_saved: [SIS_Course_Schema]
-  classes_watching: [SIS_Course_Schema]
-  friends: [User_Schema]
-  notify_update_classes: Boolean
-  notify_update_grades: Boolean
-  notify_update_berkeleytime: Boolean
-  email: String
-  google_id: String
-  name: String
-  refresh_token: String
-  name_given: String
-  name_family: String
+"""
+A Relay edge containing a `SectionType` and its cursor.
+"""
+type SectionTypeEdge {
+  """
+  The item at the end of the edge
+  """
+  node: SectionType
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
 }
 
-type value {
-  discrete: discrete
-  fixed: fixed
-  range: range
+"""
+Telebears JSON
+"""
+type TelebearData {
+  phase1Start: Date
+  phase1End: Date
+  phase2Start: Date
+  phase2End: Date
+  adjStart: Date
 }
 
+"""
+The `Time` scalar type represents a Time value as
+specified by
+[iso8601](https://en.wikipedia.org/wiki/ISO_8601).
+"""
+scalar Time
+
+input TimeBlockInput {
+  name: String!
+  startTime: Time!
+  endTime: Time!
+  days: String!
+}
+
+type TimeBlockType implements Node {
+  """
+  The ID of the object.
+  """
+  id: ID!
+  name: String!
+  startTime: Time!
+  endTime: Time!
+  days: String!
+  schedule: ScheduleType!
+}
+
+type TimeBlockTypeConnection {
+  """
+  Pagination data for this connection.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Contains the nodes in this connection.
+  """
+  edges: [TimeBlockTypeEdge]!
+}
+
+"""
+A Relay edge containing a `TimeBlockType` and its cursor.
+"""
+type TimeBlockTypeEdge {
+  """
+  The item at the end of the edge
+  """
+  node: TimeBlockType
+
+  """
+  A cursor for use in pagination
+  """
+  cursor: String!
+}
+
+type UpdateSchedule {
+  schedule: ScheduleType
+}
+
+type UpdateUser {
+  user: BerkeleytimeUserType
+}
+
+type UserType {
+  id: ID!
+
+  """
+  Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.
+  """
+  username: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+}
+
+type Verify {
+  payload: GenericScalar!
+}
