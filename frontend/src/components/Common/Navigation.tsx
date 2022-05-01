@@ -61,7 +61,7 @@ const Navigation: FC<Props> = (props) => {
         <Nav className="mr-auto" />
         <Nav>
           <NavigationLink to="/catalog">Catalog</NavigationLink>
-          <NavigationLink to="/scheduler" isNew>
+          <NavigationLink to="/scheduler">
             Scheduler
           </NavigationLink>
           {/* {isLoggedIn && (
