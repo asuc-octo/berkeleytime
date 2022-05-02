@@ -33,7 +33,7 @@ nav {
   }
 
   // log in button
-  .navbar-nav bt-btn {
+  .navbar-nav .bt-btn {
     @extend .bt-bold;
     font-size: 1rem;
   }
@@ -57,7 +57,7 @@ nav {
     }
 
     // log in button
-    .navbar-nav bt-btn {
+    .navbar-nav .bt-btn {
       margin-left: .5rem;
     }
   }
