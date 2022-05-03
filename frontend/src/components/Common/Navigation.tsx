@@ -75,7 +75,7 @@ const Navigation: FC<Props> = (props) => {
           {isLoggedIn ? (
             <>
               <NavigationLink to="/profile">Profile</NavigationLink>
-              <Button style="width: fit-content;" href="/logout">Log out</Button>
+              <Button href="/logout">Log out</Button>
             </>
           ) : (
             <Button onClick={() => setShowLogin(true)}>
