@@ -34,6 +34,12 @@ class service {
   sample = async () => {
     return await this.model.aggregate([{ $sample: { size: 100 } }]);
   };
+
+    semesters = async () => {
+    return _.orderBy(
+      await this.model.distinct("session.term.name")
+    ).sort();
+  };
 }
 
 Container.set(SIS_Class_Model.collection.collectionName, SIS_Class_Model);

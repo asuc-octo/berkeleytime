@@ -33,6 +33,13 @@ export class SIS_ClassResolver {
     });
   }
 
+    @Query(() => [String], {
+    description: "Quick query for all SIS_Course displayNames, nothing else",
+  })
+  async semesters() {
+    return await SIS_ClassService.semesters();
+  }
+
   @FieldResolver(() => [SIS_Class_Section_Schema])
   async _sections(@Root() root, @Info() info: GraphQLResolveInfo) {
     return await SIS_Class_SectionService.sections({
