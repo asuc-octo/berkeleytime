@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "85d1126b-ed17-44ea-b961-d044debcc859",
+		"_postman_id": "89b6d88b-1369-4a1f-a888-b67913fd5df2",
 		"name": "berkeleytime",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -498,6 +498,38 @@
 		},
 		{
 			"name": "GQL SIS Course (departmentNames)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    departmentNames\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (semesters)",
 			"request": {
 				"method": "POST",
 				"header": [
