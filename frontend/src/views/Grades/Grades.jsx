@@ -7,7 +7,6 @@ import ClassCardList from "../../components/ClassCards/ClassCardList";
 import GradesSearchBar from "../../components/ClassSearchBar/GradesSearchBar";
 import GradesGraphCard from "../../components/GraphCard/GradesGraphCard";
 import {
-  fetchGradeContext,
   fetchGradeClass,
   gradeRemoveCourse,
   gradeReset,
@@ -32,8 +31,6 @@ class Grades extends Component {
   }
 
   componentDidMount() {
-    const { fetchGradeContext } = this.props;
-    fetchGradeContext();
     this.fillFromUrl();
   }
 
@@ -135,14 +132,11 @@ class Grades extends Component {
     const { context, selectedCourses, isMobile } = this.props;
     let { location } = this.props;
     const { additionalInfo } = this.state;
-    let courses = context.courses;
 
     return (
       <div className="viewport-app">
         <div className="grades">
           <GradesSearchBar
-            classes={courses}
-            addCourse={this.addCourse}
             fromCatalog={location.state ? location.state.course : false}
             isFull={selectedCourses.length === 4}
             isMobile={isMobile}
@@ -179,7 +173,6 @@ class Grades extends Component {
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch,
-  fetchGradeContext: () => dispatch(fetchGradeContext()),
   fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
   gradeRemoveCourse: (id, color) => dispatch(gradeRemoveCourse(id, color)),
   gradeReset: () => dispatch(gradeReset()),
