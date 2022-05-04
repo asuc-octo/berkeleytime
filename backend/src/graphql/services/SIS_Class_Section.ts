@@ -27,7 +27,7 @@ class service {
           'class.session.term.id': args.root.session.term.id,
           'association.primaryAssociatedSectionId': await SIS_ClassService.ccn({ args: { root: args.root }}),
         },
-        { ...projection, id: 1, association: 1 }
+        { ...projection, id: 1 }
       );;
     }
   };

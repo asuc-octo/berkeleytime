@@ -12,16 +12,16 @@ import {
   DEPARTMENT,
   LEVEL,
   SEMESTER,
-  UPDATE_GRADE_CONTEXT,
+  UPDATE_CONTEXT_SIS_COURSES,
   GRADE_ADD_COURSE,
   GRADE_REMOVE_COURSE,
   GRADE_RESET,
   UPDATE_GRADE_DATA,
-  UPDATE_GRADE_SELECTED,
   UPDATE_ENROLL_CONTEXT,
   ENROLL_RESET,
   ENROLL_ADD_COURSE,
   ENROLL_REMOVE_COURSE,
+  UPDATE_CONTEXT_SIS_CLASSES,
   UPDATE_ENROLL_DATA,
   UPDATE_ENROLL_SELECTED,
 } from "redux/actionTypes.js";
@@ -94,14 +94,6 @@ export const setSemester = (data) => ({
   },
 });
 
-// update grade list
-export const updateGradeContext = (data) => ({
-  type: UPDATE_GRADE_CONTEXT,
-  payload: {
-    data: { courses: data },
-  },
-});
-
 export const gradeReset = () => ({
   type: GRADE_RESET,
 });
@@ -126,13 +118,6 @@ export const updateGradeData = (gradesData) => ({
   type: UPDATE_GRADE_DATA,
   payload: {
     gradesData,
-  },
-});
-
-export const updatedGradeSelected = (data) => ({
-  type: UPDATE_GRADE_SELECTED,
-  payload: {
-    data,
   },
 });
 
@@ -212,18 +197,6 @@ export function getFilterResults(filters) {
       );
 }
 
-export function fetchGradeContext() {
-  return async (dispatch) => {
-    const res = await axios.post("/api/graphql", {
-      query: `
-        query { 
-            courseNames
-        }`,
-    });
-    dispatch(updateGradeContext(res.data.data.courseNames));
-  };
-}
-
 export function fetchGradeClass(course) {
   return (dispatch) =>
     axios.get(`/api/catalog/catalog_json/course/${course.courseID}/`).then(
@@ -273,38 +246,6 @@ export function fetchGradeData(classData) {
       },
       (error) => console.log("An error occurred.", error)
     );
-}
-
-export function fetchGradeSelected(updatedClass) {
-  return async (dispatch) => {
-    const res = await axios.post("/api/graphql", {
-      query: `
-        query { 
-            SIS_Course (displayName: "${updatedClass}") {
-                _classes {
-                    displayName
-                    _sections {
-                        displayName
-                        _grades {
-                            EnrollmentCnt
-                            GradeNm
-                            InstructorName
-                            term {
-                              year
-                              month
-                              semester 
-                            }
-                        }
-                    }
-                }
-                displayName
-                description
-                title
-            }
-        }`,
-    });
-    dispatch(updatedGradeSelected(res.data.data.SIS_Course[0]._classes));
-  };
 }
 
 export function fetchGradeFromUrl(url, history) {
@@ -499,7 +440,7 @@ export function fetchEnrollData(classData) {
     );
 }
 
-export function fetchEnrollSelected(updatedClass) {
+export function fetchEnrollSelected(displayName) {
   const url = `/api/enrollment/sections/${updatedClass.value}/`;
   return (dispatch) =>
     axios.get(url).then(
@@ -610,3 +551,56 @@ export function fetchEnrollFromUrl(url, history) {
         }
       });
 }
+
+export const fetchContextCourses = () => async (dispatch) => {
+  const res = await axios.post("/api/graphql", {
+    query: `
+        query { 
+            courseNames
+        }`,
+  });
+  dispatch({
+    type: UPDATE_CONTEXT_SIS_COURSES,
+    payload: res.data.data.courseNames,
+  });
+};
+
+export const fetchContextClasses = (displayName) => async (dispatch) => {
+  const res = await axios.post("/api/graphql", {
+    query: `
+        query { 
+            SIS_Course (displayName: "${displayName}") {
+                _classes {
+                    displayName
+                    _sections {
+                        displayName
+                        component {
+                          code
+                        }
+                        number
+                        association {
+                          primary
+                        }
+                        _grades {
+                            EnrollmentCnt
+                            GradeNm
+                            InstructorName
+                            term {
+                              year
+                              month
+                              semester 
+                            }
+                        }
+                    }
+                }
+                displayName
+                description
+                title
+            }
+        }`,
+  });
+  dispatch({
+    type: UPDATE_CONTEXT_SIS_CLASSES,
+    payload: res.data.data.SIS_Course[0]._classes,
+  });
+};

@@ -4,6 +4,7 @@ import thunkMiddleware from "redux-thunk";
 import authReducer from "./auth/reducer";
 import { commonReducer } from "./common/reducer";
 import catalog from "./reducers/catalog";
+import context from "./reducers/context";
 import classDescription from "./reducers/classDescription";
 import enrollment from "./reducers/enrollment";
 import filter from "./reducers/filter";
@@ -12,6 +13,7 @@ import grade from "./reducers/grade";
 // import { enrollmentReducer } from './enrollment/reducer';
 
 const reducer = combineReducers({
+  context,
   catalog,
   filter,
   classDescription,
