@@ -543,7 +543,7 @@
 				"body": {
 					"mode": "graphql",
 					"graphql": {
-						"query": "query { \n    departmentNames\n}",
+						"query": "query { \n    semesters\n}",
 						"variables": ""
 					}
 				},
