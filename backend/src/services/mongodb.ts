@@ -45,16 +45,20 @@ mongoose.Query.prototype.exec = async function (): Promise<
     return originalExec.apply(this, arguments);
   }
   const prehash =
-    JSON.stringify(this.getQuery()) + JSON.stringify(this.projection());
+    JSON.stringify(this.getFilter()) +
+    JSON.stringify(this.projection()) +
+    this._distinct;
+  const prehashPretty = `query: ${JSON.stringify(
+    this.getFilter()
+  )},\tfields: ${JSON.stringify(this.projection())},\tdistinct: ${
+    this._distinct
+  }`;
+  console.log(prehash);
   const key = this._key ?? createHash("md5").update(prehash).digest("hex");
   const cachedResult = await redisClient.get(key);
   if (cachedResult) {
     if (DEV_MODE) {
-      console.info(
-        `cache hit (${key}) query: ${JSON.stringify(this.getQuery())} fields: ${
-          this._fields
-        }`
-      );
+      console.info(`cache hit (${key})\t${prehashPretty}`);
     }
     const result = JSON.parse(cachedResult);
     if (this._ttlExtend === true) {
@@ -78,7 +82,7 @@ mongoose.Query.prototype.exec = async function (): Promise<
   const result = await originalExec.apply(this, arguments);
   if (result) {
     if (DEV_MODE) {
-      console.info(`cache set (${key}): ${prehash}`);
+      console.info(`cache set (${key})\t${prehashPretty}`);
     }
     redisClient.set(key, JSON.stringify(result), { EX: this._ttl });
   }

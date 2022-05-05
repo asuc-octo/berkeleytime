@@ -39,20 +39,23 @@ class service {
 
   courses = async (args, fieldsProjection) => {
     return _.chain(
-      await this.model.find(
-        {
-          "status.code": "ACTIVE",
-          ...parseArgs(args),
-        },
-        {
-          _id: 1,
-          "identifiers.id": 1,
-          "identifiers.type": 1,
-          "subjectArea.code": 1,
-          "catalogNumber.number": 1,
-          ...fieldsProjection,
-        }
-      ).lean().cache()
+      await this.model
+        .find(
+          {
+            "status.code": "ACTIVE",
+            ...parseArgs(args),
+          },
+          {
+            _id: 1,
+            "identifiers.id": 1,
+            "identifiers.type": 1,
+            "subjectArea.code": 1,
+            "catalogNumber.number": 1,
+            ...fieldsProjection,
+          }
+        )
+        .lean()
+        .cache()
     )
       .orderBy((o) => parseInt(o.catalogNumber.number))
       .orderBy("subjectArea.code");
@@ -60,24 +63,30 @@ class service {
 
   courseNames = async () => {
     return _.orderBy(
-      await this.model.distinct("displayName", {
-        "status.code": "ACTIVE",
-      })
+      await this.model
+        .distinct("displayName", {
+          "status.code": "ACTIVE",
+        })
+        .cache()
     ).sort();
   };
 
   departmentNames = async () => {
     return _.orderBy(
-      await this.model.distinct("subjectArea.description", {
-        "status.code": "ACTIVE",
-      })
+      await this.model
+        .distinct("subjectArea.description", {
+          "status.code": "ACTIVE",
+        })
+        .cache()
     ).sort();
   };
 
   subjects = async () => {
-    return await this.model.distinct("subjectArea.description", {
-      "status.code": "ACTIVE",
-    });
+    return await this.model
+      .distinct("subjectArea.description", {
+        "status.code": "ACTIVE",
+      })
+      .cache();
   };
 }
 
