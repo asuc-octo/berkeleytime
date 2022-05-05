@@ -12,6 +12,7 @@ services:
       - mongodb
     networks:
       - bt
+    restart: always
     volumes:
       - ./backend/src:/backend/src
   frontend:
@@ -25,6 +26,7 @@ services:
       - bt
     ports:
       - 3000:3000 # local dev seems to use ws://localhost:3000/ws to listen for source code changes and refresh
+    restart: always
     volumes:
       - ./frontend/src:/frontend/src
       - ./frontend/public:/frontend/public
@@ -34,6 +36,7 @@ services:
       - bt
     ports:
       - 27017:27017
+    restart: always
     volumes:
       - ./db:/data/db
   nginx:
@@ -45,11 +48,13 @@ services:
       - bt
     ports:
       - 8080:8080
+    restart: always
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
   redis:
     image: redis:6
     ports:
       - 6379:6379
+    restart: always
     networks:
       - bt
