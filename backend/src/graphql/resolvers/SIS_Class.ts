@@ -33,8 +33,9 @@ export class SIS_ClassResolver {
     });
   }
 
-    @Query(() => [String], {
-    description: "Quick query for all SIS_Course displayNames, nothing else",
+  @Query(() => [String], {
+    description:
+      "All semesters based on classes linked to an active SIS_Course. Sorts by by term.id first, then returns Array of human-readable term.name",
   })
   async semesters() {
     return await SIS_ClassService.semesters();
