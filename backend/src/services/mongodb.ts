@@ -35,12 +35,6 @@ mongoose.Query.prototype["cache"] = function (
     this._key = options.key;
     this._ttl = options.ttl ?? EXPIRE_TIME_REDIS_KEY;
     this._ttlExtend = options.ttlExtend;
-    this._flag =
-      typeof options.flag === "boolean"
-        ? options.flag
-          ? "cache"
-          : undefined
-        : options.flag;
   }
   return this;
 };
@@ -50,32 +44,33 @@ mongoose.Query.prototype.exec = async function (): Promise<
   if (this._cacheEnabled !== true) {
     return originalExec.apply(this, arguments);
   }
-  const key =
-    this._key ??
-    createHash("md5").update(JSON.stringify(this.getQuery())).digest("hex");
+  const prehash =
+    JSON.stringify(this.getQuery()) + JSON.stringify(this.projection());
+  const key = this._key ?? createHash("md5").update(prehash).digest("hex");
   const cachedResult = await redisClient.get(key);
   if (cachedResult) {
     if (DEV_MODE) {
-      console.info(`cache hit (${key}): ${JSON.stringify(this.getQuery())}`);
+      console.info(
+        `cache hit (${key}) query: ${JSON.stringify(this.getQuery())} fields: ${
+          this._fields
+        }`
+      );
     }
     const result = JSON.parse(cachedResult);
     if (this._ttlExtend === true) {
       redisClient.set(key, cachedResult, { EX: this._ttl });
     }
-    let models: any = [];
+    let models: any = new Array(result.length);
     if (Array.isArray(result)) {
-      if (result.some((doc) => doc._id)) {
-        result.forEach((item) => {
-          const model = new this.model(item);
-          model[this._flag] = true;
-          models.push(model);
-        });
+      if (!this._mongooseOptions.lean && result.some((doc) => doc._id)) {
+        for (const [index, item] of result.entries()) {
+          models[index] = this.model(item);
+        }
       } else {
         models = result;
       }
     } else {
       const model = new this.model(result);
-      model[this._flag] = true;
       models = model;
     }
     return models;
@@ -83,7 +78,7 @@ mongoose.Query.prototype.exec = async function (): Promise<
   const result = await originalExec.apply(this, arguments);
   if (result) {
     if (DEV_MODE) {
-      console.info(`cache set (${key}): ${JSON.stringify(this.getQuery())}`);
+      console.info(`cache set (${key}): ${prehash}`);
     }
     redisClient.set(key, JSON.stringify(result), { EX: this._ttl });
   }

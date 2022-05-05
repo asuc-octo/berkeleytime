@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "89b6d88b-1369-4a1f-a888-b67913fd5df2",
+		"_postman_id": "1d0bf956-606e-45fc-9008-ee8dd8ebe054",
 		"name": "berkeleytime",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -319,7 +319,7 @@
 				"body": {
 					"mode": "graphql",
 					"graphql": {
-						"query": "query { \n    SIS_Course {\n        displayName\n        title\n        catalogNumber {\n            number\n        }\n        subjectArea {\n            description\n        }\n    }\n}",
+						"query": "query { \n    SIS_Course {\n        displayName\n        title\n        catalogNumber {\n            number\n        }\n        credit {\n            type\n            value {\n                discrete {\n                    units\n                }\n                fixed {\n                    units\n                }\n                range {\n                    minUnits\n                    maxUnits\n                }\n            }\n        }\n        subjectArea {\n            description\n        }\n    }\n}",
 						"variables": ""
 					}
 				},
