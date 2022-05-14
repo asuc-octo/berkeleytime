@@ -8,7 +8,7 @@ const Footer: FC = () => (
   <footer className="py-5">
     <Container>
       <Row noGutters>
-        <Col xs={4} lg={{ span: 2, offset: 2 }}>
+        <Col xs={4} lg={{ span: 2, offset: 3 }}>
           <div className="footer-col-container">
             <div className="footer-col">
               <H6 bold className="mb-3">
