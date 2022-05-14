@@ -12,27 +12,6 @@ const Footer: FC = () => (
           <div className="footer-col-container">
             <div className="footer-col">
               <H6 bold className="mb-3">
-                Get Started
-              </H6>
-              <A href={{ as_link: '/catalog' }} className="mb-2">
-                Catalog
-              </A>
-              <A href={{ as_link: '/grades' }} className="mb-2">
-                Grades
-              </A>
-              <A href={{ as_link: '/scheduler' }} className="mb-2">
-                Scheduler
-              </A>
-              <A href={{ as_link: '/enrollment' }} className="mb-2">
-                Enrollment
-              </A>
-            </div>
-          </div>
-        </Col>
-        <Col xs={4} lg={2}>
-          <div className="footer-col-container">
-            <div className="footer-col">
-              <H6 bold className="mb-3">
                 Support
               </H6>
               <A href={{ as_link: '/bugs' }} className="mb-2">
