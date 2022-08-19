@@ -209,7 +209,7 @@ export const serializeSchedule = (
  */
 export function scheduleToICal(schedule: Schedule, semester: Semester): string {
   const SEMESTER_START = new Date(2022, 7, 24);
-  const LAST_COURSE_DAY = new Date(2022, 11, 20 );
+  const LAST_COURSE_DAY = new Date(2022, 11, 2 );
 
   const dateToICal = (date: Date) =>
     date.toISOString().replace(/[-:Z]|\.\d+/g, '');
