@@ -208,8 +208,38 @@ export const serializeSchedule = (
  * Generates iCal file string.
  */
 export function scheduleToICal(schedule: Schedule, semester: Semester): string {
-  const SEMESTER_START = new Date(2022, 7, 24);
-  const LAST_COURSE_DAY = new Date(2022, 11, 2);
+  const SEMESTER_START = new Date();
+  const LAST_COURSE_DAY = new Date();
+  const NOW = new Date();
+  const CURRENT_MONTH = NOW.getMonth()
+
+  const LOW = 4;
+  const HIGH = 10;
+
+  if (LOW <= CURRENT_MONTH && CURRENT_MONTH < HIGH) {
+      // Fall
+      SEMESTER_START.setMonth(7); 
+      SEMESTER_START.setDate(1);
+      SEMESTER_START.setDate((7 - SEMESTER_START.getDay() + 3)%7 + 22);
+
+      LAST_COURSE_DAY.setMonth(7); 
+      LAST_COURSE_DAY.setDate(SEMESTER_START.getDate() + 2 + 14*7);
+  } else {
+      // Spring
+
+      if (HIGH <= CURRENT_MONTH) {
+          let NEXT_YEAR = NOW.getFullYear() + 1;
+          SEMESTER_START.setYear(NEXT_YEAR);
+          LAST_COURSE_DAY.setYear(NEXT_YEAR);
+      }
+
+      SEMESTER_START.setMonth(0);
+      SEMESTER_START.setDate(1);
+      SEMESTER_START.setDate((7 - SEMESTER_START.getDay() + 2)%7 + 15);
+
+      LAST_COURSE_DAY.setMonth(0); 
+      LAST_COURSE_DAY.setDate(SEMESTER_START.getDate() + 3 + 14*7);
+  }
 
   const dateToICal = (date: Date) =>
     date.toISOString().replace(/[-:Z]|\.\d+/g, '');
