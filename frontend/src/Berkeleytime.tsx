@@ -61,10 +61,10 @@ class Berkeleytime extends Component<Props> {
   constructor(props: Props) {
     super(props)
 
-    const bannerType = 'sp22recruitment'  // should match value in ./redux/common/reducer.ts
-    // if (localStorage.getItem('bt-hide-banner') !== bannerType) {
-    //   props.openBanner()
-    // }
+    const bannerType = 'fa22recruitment'  // should match value in ./redux/common/reducer.ts
+    if (localStorage.getItem('bt-hide-banner') !== bannerType) {
+      props.openBanner()
+    }
 
     const modalType = 'sp22scheduler'  // should match value in ./redux/common/reducer.ts
     if (localStorage.getItem('bt-hide-landing-modal') !== modalType) {

@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
 import { connect, ConnectedProps } from 'react-redux'
-import { Button } from 'react-bootstrap'
+// import { Button } from 'react-bootstrap'
 import { useLocation, useHistory } from 'react-router-dom'
-
+import { Button } from 'bt/custom';
 import { ReduxState } from '../../redux/store'
 import { closeBanner } from '../../redux/common/actions'
 
@@ -13,7 +13,6 @@ interface Props extends PropsFromRedux {}
 const Banner: FC<Props> = (props) => {
   const location = useLocation();
   const history = useHistory();
-  const links = <p><a href="https://github.com/asuc-octo/berkeleytime">GitHub</a>, <a href="https://discord.gg/DeCEPNdPjc">Discord</a></p>;
 
   function redirect(site: string) {
     history.push("/redirect?site=" + site)
@@ -22,7 +21,8 @@ const Banner: FC<Props> = (props) => {
   return props.banner ? (
     <div className="banner">
       <div className="content">
-        {links}
+        <p>Berkeleytime is recruiting for Fall 2022!</p>
+        <Button size="sm" href="https://octo.asuc.org/apply.html">Apply Now</Button>
       </div>
       <img src={close} alt="close" onClick={props.closeBanner} />
     </div>
