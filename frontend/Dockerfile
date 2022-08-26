@@ -1,4 +1,4 @@
-FROM node:16-slim AS dev
+FROM node:16.14.2-slim AS dev
 RUN mkdir /frontend
 WORKDIR /frontend
 COPY package*.json ./
