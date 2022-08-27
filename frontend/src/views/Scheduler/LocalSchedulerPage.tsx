@@ -61,6 +61,7 @@ const LocalScheduler = () => {
   }
 
   const createSchedule = async () =>
+    // @ts-ignore
     await createScheduleMutation(schedule, semester!);
 
   const saveButton = (

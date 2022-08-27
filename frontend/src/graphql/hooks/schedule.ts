@@ -17,6 +17,7 @@ import { wrapMutation } from './graphql';
  */
 export const useCreateSchedule = wrapMutation(
   useCreateScheduleMutation,
+  // @ts-ignore
   (schedule: Schedule, semester: Semester) => ({
     variables: serializeSchedule(schedule, semester),
     update(cache, { data }) {
