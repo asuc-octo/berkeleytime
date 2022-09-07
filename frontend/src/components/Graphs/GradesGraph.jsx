@@ -20,7 +20,7 @@ const EmptyLabel = props => {
     <div className="graph-empty">
       <div className="graph-empty-content">
         <img className="graph-empty-image" src={emptyImage} alt="empty state" />
-        <h3 className="graph-empty-heading" align="center">
+        <h3 className="graph-empty-heading">
           You have not added any <br /> classes yet.
         </h3>
       </div>
