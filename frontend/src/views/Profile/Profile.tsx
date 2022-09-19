@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactNode, useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Button } from 'react-bootstrap';
 
 import AccountSubview from '../../components/Profile/AccountSubview';
 import NotificationsSubview from '../../components/Profile/NotificationsSubview';

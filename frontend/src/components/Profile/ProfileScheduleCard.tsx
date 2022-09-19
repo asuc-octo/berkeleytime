@@ -1,17 +1,8 @@
 import React, { useState } from 'react';
 import {
-  formatUnits,
-  applyIndicatorPercent,
-  applyIndicatorGrade,
-} from '../../utils/utils';
-import {
   CourseOverviewFragment,
   ScheduleOverviewFragment,
 } from '../../graphql/graphql';
-import { ReactComponent as Trash } from '../../assets/svg/profile/trash.svg';
-import { Button } from 'react-bootstrap';
-import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
-import { Link } from 'react-router-dom';
 import { semesterToString } from 'utils/playlists/semesters';
 import ScheduleModal from 'components/Scheduler/ScheduleModal';
 import { useDeleteSchedule } from 'graphql/hooks/schedule';

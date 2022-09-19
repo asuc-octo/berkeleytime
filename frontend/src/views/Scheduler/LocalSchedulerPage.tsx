@@ -1,14 +1,12 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-import { CourseOverviewFragment } from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
 import {
   DEFAULT_SCHEDULE,
   Schedule,
   SCHEDULER_LOCALSTORAGE_KEY,
 } from 'utils/scheduler/scheduler';
-import { Semester } from 'utils/playlists/semesters';
 import { useUser } from 'graphql/hooks/user';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
 import { useLocalStorageState } from 'utils/hooks';
