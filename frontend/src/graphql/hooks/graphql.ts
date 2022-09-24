@@ -2,12 +2,10 @@ import {
   FetchResult,
   LazyQueryHookOptions,
   LazyQueryResult,
-  MutationFunction,
   MutationHookOptions,
   MutationResult,
   MutationTuple,
   QueryTuple,
-  useMutation,
 } from '@apollo/client';
 import { useCallback } from 'react';
 
