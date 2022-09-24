@@ -1,6 +1,5 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
-import btn_google_signin from 'assets/svg/profile/btn_google_signin.svg';
 import { ReactComponent as GoogleIcon } from '../../assets/svg/profile/google.svg';
 
 type Props = {

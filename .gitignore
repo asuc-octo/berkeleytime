@@ -21,3 +21,5 @@ build/docker-compose.yml
 config.statuspage.json
 *.cert
 *.key
+db/
+mdb.archive

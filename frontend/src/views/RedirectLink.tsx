@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useHistory, useLocation } from 'react-router-dom';
 
 // We must have an allowlist of redirects to prevent an attacker from arbitrarily opening external sites.
@@ -19,4 +19,3 @@ const RedirectLink: FC = () => {
 }
 
 export default RedirectLink
-

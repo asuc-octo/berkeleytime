@@ -24,10 +24,7 @@ import {
   addWeeks,
   isBefore,
   min,
-  nextDay,
   setDay,
-  subDays,
-  subWeeks,
 } from 'date-fns';
 
 // Update the version when the scheduler schema changes.

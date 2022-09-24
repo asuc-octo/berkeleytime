@@ -33,11 +33,6 @@ const SEMESTER_TYPE_TO_OFFSET: { [key: string]: number } = {
   fall: 0.2,
 };
 
-// Higher = appear further behind
-const PLAYLIST_CATEGORY_TO_ORDER: { [key: string]: number } = {
-  units: 2.0,
-};
-
 /**
  * Converts a playlist to a quantifiable year value. Greater = newer
  */

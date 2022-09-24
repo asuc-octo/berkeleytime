@@ -40,7 +40,7 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
 
   const [
     getScheduleForId,
-    { loading: isLoadingSchedule, error: scheduleLoadError },
+    { error: scheduleLoadError },
   ] = useGetScheduleForIdLazyQuery({
     onCompleted: (data) => {
       if (!data.schedule) {

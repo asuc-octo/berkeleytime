@@ -20,7 +20,7 @@ type Props = {
 };
 
 const SelectClasses = ({ schedule, setSchedule }: Props) => {
-  const { isLoggedIn, user, loading } = useUser();
+  const { user } = useUser();
 
   const savedClasses = ((user && user.savedClasses) || [])
     .filter((c): c is CourseOverviewFragment => c !== null)
