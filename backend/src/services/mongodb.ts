@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { createHash } from "crypto";
 import _ from "lodash";
 import mongoose from "mongoose";

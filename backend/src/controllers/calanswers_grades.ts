@@ -101,7 +101,7 @@ export const CalAnswers_Grades = new (class Controller {
         semester: reg[3],
       }; // this is necessary because Course Control Numbers (CCN) can collide across semesters
       let csvLine = "";
-      let header = [];
+      let header: string[] = [];
 
       const write = fs.createWriteStream("/dev/null");
       const read = storageClient.currentBucket
@@ -120,7 +120,7 @@ export const CalAnswers_Grades = new (class Controller {
           source.setEncoding("utf16le");
           for await (const chunk of source) {
             try {
-              let lines = [];
+              let lines: string[] = [];
               for (const c of chunk) {
                 if (c == "\n") {
                   lines.push(csvLine);

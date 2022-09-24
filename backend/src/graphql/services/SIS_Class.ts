@@ -19,7 +19,7 @@ class service {
   }
 
   get = async (id): Promise<typeof SIS_Class_Model> => {
-    return await this.model.findOne({ _id: id });
+    return (await this.model.findOne({ _id: id })) as any; // FIXME: typing
   };
 
   ccn = async ({ args }) => {
@@ -31,7 +31,7 @@ class service {
       { class: 1, association: 1 }
     );
     const CourseControlNbr =
-      classSection.association.primaryAssociatedSectionId;
+      classSection?.association.primaryAssociatedSectionId;
     return CourseControlNbr;
   };
 

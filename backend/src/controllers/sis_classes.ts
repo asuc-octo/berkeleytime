@@ -50,9 +50,9 @@ export const SIS_Classes = new (class Controller {
       pageNumber++ < Infinity
     );
     return _.chain(sisClasses)
-      .orderBy((sisClass) => sisClass.session.term.id, ["desc"])
+      .orderBy((sisClass: any) => sisClass.session.term.id, ["desc"])
       .filter(
-        (value) =>
+        (value: any) =>
           value.session.term.name.includes(moment().year()) ||
           value.session.term.name.includes(moment().year() + 1)
       )
@@ -85,7 +85,7 @@ export const SIS_Classes = new (class Controller {
             sisClasses = await this.requestClassData({
               courseId,
             });
-          } catch (e) {
+          } catch (e: any) {
             if (e.response?.data?.apiResponse?.httpStatus) {
               // prettier-ignore
               console.error(`${ts()} SIS CLASS COUNT: ${shared.sisClassCount}`.padEnd(55, " ") + `FAILED cs-course-id '${courseId}' '${sisCourse?.displayName}' '${sisCourse?.title}', ${JSON.stringify(e.response.data.apiResponse.httpStatus)}`.red);

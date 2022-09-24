@@ -106,7 +106,7 @@ export const SIS_Class_Sections = new (class Controller {
                 shared.sisClassSectionCount
               }`.padEnd(55, " ") +
                 `${
-                  result?.lastErrorObject.updatedExisting
+                  result?.lastErrorObject?.updatedExisting
                     ? //@ts-ignore
                       //prettier-ignore
                       `updated (${result?.value?._id}) cs-course-id '${courseId}' '${sisClassSection?.displayName}' ${JSON.stringify(jsondiffpatch.diff(foundClassSection, sisClassSection))}`.yellow
@@ -131,7 +131,7 @@ export const SIS_Class_Sections = new (class Controller {
       .allowDiskUse(true)) {
       const courseId = _.find(sisCourse["identifiers"], {
         type: "cs-course-id",
-      }).id;
+      })?.id;
       const terms = await SIS_Class_Model.distinct("session.term.id", {
         "course.identifiers.id": courseId,
         "session.term.name": RegExp(

@@ -1,5 +1,5 @@
 FROM node:16.14.2-slim AS builder
-MAINTAINER ASUC OCTO octo.berkeleytime@asuc.org
+LABEL ASUC OCTO octo.berkeleytime@asuc.org
 RUN mkdir /backend
 WORKDIR /backend
 COPY package.json .

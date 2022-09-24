@@ -73,7 +73,7 @@ const schemaWalker = async (model) => {
         },
       ])
       .next()
-  ).keys;
+  )?.keys;
 };
 
 for (const model of [

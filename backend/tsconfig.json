@@ -18,8 +18,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strictPropertyInitialization": false,
-    "target": "esnext"
-    // "strict": true,
+    "target": "esnext", 
+    "strict": true,
     // "rootDir": "./",                             /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
     // "noEmit": true,                              /* Do not emit outputs. */
     // "allowSyntheticDefaultImports": true,        /* Allow default imports from modules with no default export. This does not affect code emit, just typechecking. */

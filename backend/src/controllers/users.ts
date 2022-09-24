@@ -63,7 +63,7 @@ export const Users = new (class Controller implements IController {
       alg,
       kid,
       typ,
-    } = data;
+    } = data; // TODO: Can we type this and rename fields for readability
     if (hd != "berkeley.edu") {
       return res
         .status(400)

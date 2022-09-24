@@ -28,7 +28,7 @@ export class service {
           id: id,
         })
         .populate("friends")
-    ).friends;
+    )?.friends;
   }
 }
 

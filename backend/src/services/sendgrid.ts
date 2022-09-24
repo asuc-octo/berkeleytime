@@ -3,7 +3,7 @@ import activation from "#src/templates/activation";
 
 import sendgrid from "@sendgrid/mail";
 
-sendgrid.setApiKey(KEY_SENDGRID);
+sendgrid.setApiKey(KEY_SENDGRID as string);
 
 export default async ({ email, activationToken }) => {
   const msg = {
@@ -16,6 +16,6 @@ export default async ({ email, activationToken }) => {
   try {
     await sendgrid.send(msg);
   } catch (err) {
-    console.error(err.toString());
+    console.error(err?.toString());
   }
 };

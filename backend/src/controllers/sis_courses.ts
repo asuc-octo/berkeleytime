@@ -175,7 +175,7 @@ export const SIS_Courses = new (class Controller {
       async function* (source) {
         source.setEncoding("utf8");
         for await (const chunk of source) {
-          const lines = [];
+          const lines: string[] = [];
           for (const c of chunk) {
             if (c == "\n") {
               lines.push(jsonLine);

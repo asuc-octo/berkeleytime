@@ -1,8 +1,10 @@
 export const DEV_MODE = process.env.NODE_ENV?.startsWith("dev") ? true : false;
-export const EXPIRE_TIME_ACTIVATION_EMAIL: number =
-  parseInt(process.env.EXPIRE_TIME_ACTIVATION_EMAIL) || 3600000; // milliseconds
-export const EXPIRE_TIME_REDIS_KEY: number =
-  parseInt(process.env.EXPIRE_TIME_REDIS_KEY) || 60; // seconds
+export const EXPIRE_TIME_ACTIVATION_EMAIL: number = parseInt(
+  process.env.EXPIRE_TIME_ACTIVATION_EMAIL || "3600000"
+); // milliseconds
+export const EXPIRE_TIME_REDIS_KEY: number = parseInt(
+  process.env.EXPIRE_TIME_REDIS_KEY || "60"
+); // seconds
 export const GCLOUD_SERVICE_ACCOUNT_EMAIL =
   process.env.GCLOUD_SERVICE_ACCOUNT_EMAIL;
 export const GCLOUD_SERVICE_ACCOUNT_PRIVATE_KEY =
@@ -19,15 +21,20 @@ export const KEY_GOOGLE_CLIENT_ID =
   "634751923298-s21r1ph48c2bvcser7thbsd368udknqt.apps.googleusercontent.com";
 export const KEY_GOOGLE_CLIENT_SECRET = process.env.KEY_GOOGLE_CLIENT_SECRET;
 export const KEY_SENDGRID = process.env.KEY_SENDGRID;
-export const PORT_EXPRESS: number = parseInt(process.env.PORT_EXPRESS) || 5000;
+export const PORT_EXPRESS: number = parseInt(
+  process.env.PORT_EXPRESS || "5000"
+);
 export const PRIVILEGED_MODE =
   process.env.NODE_ENV == "privileged" ? true : false;
 export const SENDGRID_PASSWORD = process.env.SENDGRID_PASSWORD;
 export const SENDGRID_USERNAME = process.env.SENDGRID_USERNAME;
-export const SIS_CLASS_APP_ID: string = process.env.SIS_CLASS_APP_ID;
-export const SIS_CLASS_APP_KEY: string = process.env.SIS_CLASS_APP_KEY;
-export const SIS_COURSE_APP_ID: string = process.env.SIS_COURSE_APP_ID;
-export const SIS_COURSE_APP_KEY: string = process.env.SIS_COURSE_APP_KEY;
+export const SIS_CLASS_APP_ID: string = process.env.SIS_CLASS_APP_ID as string;
+export const SIS_CLASS_APP_KEY: string = process.env
+  .SIS_CLASS_APP_KEY as string;
+export const SIS_COURSE_APP_ID: string = process.env
+  .SIS_COURSE_APP_ID as string;
+export const SIS_COURSE_APP_KEY: string = process.env
+  .SIS_COURSE_APP_KEY as string;
 export const URL_DOMAIN = process.env.URL_DOMAIN || "http://localhost:8080";
 export const URL_MDB = process.env.URL_MDB || "mongodb://mongodb/bt";
 export const URL_REDIS = process.env.URL_REDIS || "redis://redis";
