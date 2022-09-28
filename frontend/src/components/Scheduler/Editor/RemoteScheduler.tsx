@@ -93,6 +93,7 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
       currentlyPendingUpdate.current = result;
       try {
         await currentlyPendingUpdate.current;
+        setRawSchedule(schedule);
       } finally {
         // If there was a autosave error, the hook
         // handles that so we don't need to worry.
