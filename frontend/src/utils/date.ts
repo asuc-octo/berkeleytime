@@ -1,5 +1,4 @@
 import { CalendarOptions, ICalendar, ICSPropertyValue } from 'datebook';
-import { floorMod } from './number';
 
 /**
  * Converts time string to date
@@ -106,7 +105,7 @@ export function timeToHourString(time: number): string {
 
   if (time < 12) {
     return `${floorModTime}am`;
-  } else if (time == 12) {
+  } else if (time === 12) {
     return `12pm`;
   } else {
     return `${floorModTime % 12}pm`;
