@@ -19,3 +19,6 @@ frontend:
 
 backend:
 	docker-compose -f build/docker-compose.yml up backend redis nginx
+
+postgres: 
+	docker-compose -f build/docker-compose.yml up postgres
