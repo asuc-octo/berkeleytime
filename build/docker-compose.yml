@@ -34,3 +34,16 @@ services:
     depends_on:
      - backend
      - frontend
+  postgres:
+    container_name: bt_postgres
+    image: postgres:latest
+    volumes:
+      - ./bt_main.dump:/bt_main.dump
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - "54321:5432"
+    environment:
+      - "POSTGRES_DB=bt_main"
+      - "POSTGRES_USER=bt"
+      - "POSTGRES_PASSWORD=bt"
+ 
