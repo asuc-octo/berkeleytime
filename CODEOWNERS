@@ -2,8 +2,8 @@
 # Each line is a file pattern followed by one or more owners.
 # The last matching lines takes the most precendence.
 
-*               @vihanb
-backend/        @hi-usui @kevinzwang @gundamMC
-infra/          @hi-usui @kevinzwang @gundamMC
-build/          @hi-usui @kevinzwang @gundamMC
+*               @kevinzwang
+backend/        @AlexXi19
+infra/          @AlexXi19
+build/          @AlexXi19 @christinas24
 frontend/       @christinas24
