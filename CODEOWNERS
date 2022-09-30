@@ -3,7 +3,7 @@
 # The last matching lines takes the most precendence.
 
 *               @kevinzwang
-backend/        @AlexXi19 @kevinzwang
-infra/          @AlexXi19 @kevinzwang
-build/          @AlexXi19 @kevinzwang
+backend/        @AlexXi19
+infra/          @AlexXi19
+build/          @AlexXi19
 frontend/       @christinas24
