@@ -23,3 +23,5 @@ config.statuspage.json
 *.key
 db/
 mdb.archive
+bt_seed.sql
+bt_seed.sql.gz
