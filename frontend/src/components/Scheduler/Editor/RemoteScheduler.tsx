@@ -48,9 +48,12 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
         return;
       }
 
-      const schedule = deserializeSchedule(data.schedule);
-      setRawSchedule(schedule);
-      setSemester(data.schedule);
+      // Only update the schedule state if a save mutation is not ongoing.
+      if (currentlyPendingUpdate.current === null) {
+        const schedule = deserializeSchedule(data.schedule);
+        setRawSchedule(schedule);
+        setSemester(data.schedule);
+      }
     },
   });
 
