@@ -25,7 +25,7 @@ class service {
       //@ts-ignore
       return await SIS_Class_Section_Model.history
         .find({ collectionId })
-        .sort({ createdAt: "desc" })
+        .sort({ createdAt: "asc" })
         .allowDiskUse(true)
         .cache();
     } else {
