@@ -25,7 +25,7 @@
   }
 
   .btn-primary:disabled {
-      cursor: default;
+    cursor: default;
   }
 
   .css-yk16xz-control:hover {
@@ -100,15 +100,15 @@
   box-shadow: none;
   border: none;
 
-    .graph-content {
-      .graph {
-        padding: 15px 15px 15px 15px;
-      }
-      .graph-title {
-          font-weight: bold;
-          font-size: 20px;
-      }
+  .graph-content {
+    .graph {
+      padding: 15px 15px 15px 15px;
     }
+    .graph-title {
+      font-weight: bold;
+      font-size: 20px;
+    }
+  }
 }
 
 // GradesInfoCard
@@ -116,47 +116,47 @@
   box-shadow: none;
 
   .content {
-      padding: 0px 15px 15px 15px;
+    padding: 0px 15px 15px 15px;
 
-      .class-num {
+    .class-num {
+      font-weight: bold;
+      font-size: 20px;
+      width: fit-content;
+    }
+
+    .class-info {
+      margin-top: 5px;
+      color: #8F8F8F;
+    }
+
+    .class-title {
+      padding-top: 5px;
+      padding-bottom: 10px;
+    }
+
+    .class-avgs {
+      padding: 0;
+
+      .class-avg-stats {
+        padding: 0;
+        font-size: 15px;
         font-weight: bold;
-        font-size: 20px;
-        width: fit-content;
+        margin-bottom: 3%;
       }
 
-      .class-info {
-        margin-top: 5px;
+      .class-stats-name {
         color: #8F8F8F;
       }
 
-      .class-title {
-        padding-top: 5px;
-        padding-bottom: 10px;
+      .class-grade {
+        font-size: 18px;
+        font-weight: bold;
       }
 
-      .class-avgs {
-        padding: 0;
-
-        .class-avg-stats {
-          padding: 0;
-          font-size: 15px;
-          font-weight: bold;
-          margin-bottom: 3%;
-        }
-
-        .class-stats-name {
-          color: #8F8F8F;
-        }
-
-        .class-grade {
-          font-size: 18px;
-          font-weight: bold;
-        }
-
-        .class-percent {
-          color:gray;
-          font-size: 18px;
-        }
+      .class-percent {
+        color:gray;
+        font-size: 18px;
       }
+    }
   }
 }
