@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 import { URL_REDIS } from "#src/config";
 import {
   CalAnswers_GradeResolver,
+  DiffResolver,
   SIS_ClassResolver,
   SIS_Class_SectionResolver,
   SIS_CourseResolver,
@@ -27,13 +28,15 @@ import { getClassForDocument } from "@typegoose/typegoose";
 const currentDir = dirname(new URL(import.meta.url).pathname);
 
 const documentToObject = (doc: mongoose.Document) =>
-  Object.setPrototypeOf(doc.toObject(), getClassForDocument(doc)!.prototype);
+  getClassForDocument(doc)
+    ? Object.setPrototypeOf(doc.toObject(), getClassForDocument(doc).prototype)
+    : doc;
 const TypegooseMiddleware: MiddlewareFn = async ({}, next) => {
   const result = await next();
   if (Array.isArray(result)) {
-    return result.map((item) =>
-      item instanceof mongoose.Model ? documentToObject(item) : item
-    );
+    return result.map((item) => {
+      return item instanceof mongoose.Model ? documentToObject(item) : item;
+    });
   } else {
     return result instanceof mongoose.Model ? documentToObject(result) : result;
   }
@@ -71,6 +74,7 @@ export default async (app) => {
     schema: await buildSchema({
       resolvers: [
         CalAnswers_GradeResolver,
+        DiffResolver,
         SIS_ClassResolver,
         SIS_Class_SectionResolver,
         SIS_CourseResolver,

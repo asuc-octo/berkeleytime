@@ -71,3 +71,30 @@ export class enrollmentStatus {
   @Typegoose.prop()
   reservedCount?: number;
 }
+
+@GQL.ObjectType()
+export class DiffType {
+  @GQL.Field(() => GraphQlTypelessData)
+  _doc: object;
+
+  @GQL.Field()
+  readonly _id: string;
+
+  @GQL.Field()
+  readonly createdAt: Date;
+
+  @GQL.Field()
+  readonly updatedAt: Date;
+
+  @GQL.Field()
+  readonly version: number;
+
+  @GQL.Field()
+  collectionName: string;
+
+  @GQL.Field()
+  collectionId: number;
+
+  @GQL.Field(() => GraphQlTypelessData)
+  diff: object;
+}

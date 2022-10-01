@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "1d0bf956-606e-45fc-9008-ee8dd8ebe054",
+		"_postman_id": "5b797e76-991f-45a5-9555-24969a03891a",
 		"name": "berkeleytime",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8696716"
 	},
 	"item": [
 		{
@@ -145,6 +146,38 @@
 			"response": []
 		},
 		{
+			"name": "GQL Diffs",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    Diff (CourseControlNbr: 24918, year: 2022, semester: \"Spring\") {\n        createdAt\n        diff\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "GQL CalAnswers Grade (All fields)",
 			"request": {
 				"method": "POST",
@@ -192,6 +225,38 @@
 					"mode": "graphql",
 					"graphql": {
 						"query": "query { \n    SIS_Class_Section (id: {{CourseControlNbr}}, year: 2021, semester: \"Fall\") {\n        id\n        displayName\n        _grades {\n            EnrollmentCnt\n            GradeNm\n        }\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Class Section (Diffs)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Class_Section (id: 24918, year: 2022, semester: \"Spring\") {\n        id\n        displayName\n        _diffs {\n            createdAt\n            diff\n        }\n    }\n}",
 						"variables": ""
 					}
 				},
@@ -416,6 +481,38 @@
 					"mode": "graphql",
 					"graphql": {
 						"query": "query { \n    SIS_Course (displayName: \"DATA C100\") {\n        _classes {\n            displayName\n            _ccn\n            _sections {\n                displayName\n                id\n                _grades {\n                    CourseControlNbr\n                    EnrollmentCnt\n                    GradeNm\n                    InstructorName\n                }\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{URL_DOMAIN}}/api/graphql",
+					"host": [
+						"{{URL_DOMAIN}}"
+					],
+					"path": [
+						"api",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GQL SIS Course (Classes Diffs)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "query { \n    SIS_Course (displayName: \"DATA C100\") {\n        _classes {\n            displayName\n            _ccn\n            _sections {\n                displayName\n                id\n                _diffs {\n                    createdAt\n                    diff\n                }\n            }\n        }\n        displayName\n        description\n        title\n    }\n}",
 						"variables": ""
 					}
 				},
