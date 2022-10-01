@@ -11,9 +11,11 @@
     @include desktop {
       height: 410px;
     }
+    // don't cut off number label on widest bar in mobile view
+    overflow: visible;
   }
 
-  .recharts-default-tooltip {
+  .recharts-default-tooltip, .grades-graph-tooltip {
     border-radius: 4px;
     border: 1px solid rgb(225, 225, 225);
   }
@@ -21,7 +23,6 @@
   .grades-graph-tooltip {
     opacity: 1 !important;
     background: white;
-    outline: 2px solid $bt-border-grey;
     text-align: left;
     padding: 12px 12px 12px 12px;
 
