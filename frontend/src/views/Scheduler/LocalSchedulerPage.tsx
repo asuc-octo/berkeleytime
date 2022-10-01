@@ -13,8 +13,8 @@ import { useLocalStorageState } from 'utils/hooks';
 import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
 import { useHistory } from 'react-router';
 import { useSemester } from 'graphql/hooks/semester';
-import { useMobile } from 'utils/hooks';
 import Callout from '../../components/Scheduler/Callout';
+import { ReduxState } from 'redux/store';
 
 const LocalScheduler = () => {
   const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -48,10 +48,10 @@ const LocalScheduler = () => {
       }
     },
   });
-  
-  const mobile = useMobile();
 
-  if (mobile) {
+  const isMobile = React.useSelector((state: ReduxState) => state.common.mobile);
+
+  if (isMobile) {
     return (
       <div className="scheduler viewport-app">
         <div className="onboard">

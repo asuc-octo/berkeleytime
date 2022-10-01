@@ -11,7 +11,7 @@ import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import { unitsToString } from 'utils/courses/units';
 import { useUser } from 'graphql/hooks/user';
 import { Button } from 'bt/custom';
-import { useMobile } from 'utils/hooks';
+import { ReduxState } from 'redux/store';
 
 const ViewSchedule = () => {
   const { scheduleId: scheduleUUID } = useParams<{ scheduleId?: string }>();
@@ -22,9 +22,9 @@ const ViewSchedule = () => {
     skip: scheduleUUID === undefined,
   });
 
-  const mobile = useMobile();
+  const isMobile = React.useSelector((state: ReduxState) => state.common.mobile);
 
-  if (mobile) {
+  if (isMobile) {
     return (
       <div className="scheduler viewport-app">
         <div className="onboard">

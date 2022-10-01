@@ -3,12 +3,13 @@ import React, {
   useState,
   Dispatch,
   SetStateAction,
+  useSelector
 } from 'react';
 import Welcome from 'components/Scheduler/Onboard/Welcome';
 import SelectClasses from 'components/Scheduler/Onboard/SelectClasses';
 
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
-import { useMobile } from 'utils/hooks';
+import { ReduxState } from 'redux/store';
 
 const pages: {
   key: string;
@@ -38,9 +39,9 @@ const SchedulerOnboard = () => {
 
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
   
-  const mobile = useMobile();
+  const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
-  if (mobile) {
+  if (isMobile) {
     return (
       <div className="scheduler viewport-app">
         <div className="onboard">
