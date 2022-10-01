@@ -12,6 +12,7 @@ import { unitsToString } from 'utils/courses/units';
 import { useUser } from 'graphql/hooks/user';
 import { Button } from 'bt/custom';
 import { ReduxState } from 'redux/store';
+import { useSelector } from "react-redux";
 
 const ViewSchedule = () => {
   const { scheduleId: scheduleUUID } = useParams<{ scheduleId?: string }>();
@@ -22,7 +23,7 @@ const ViewSchedule = () => {
     skip: scheduleUUID === undefined,
   });
 
-  const isMobile = React.useSelector((state: ReduxState) => state.common.mobile);
+  const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
   if (isMobile) {
     return (
