@@ -1,20 +1,20 @@
 import BTLoader from 'components/Common/BTLoader';
 import { useUser } from 'graphql/hooks/user';
 import React, { useState } from 'react';
-import { Redirect, useParams } from 'react-router';
+import { Redirect, useParams, useSelector } from 'react-router';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import RemoteScheduler from '../../components/Scheduler/Editor/RemoteScheduler';
-import { useMobile } from 'utils/hooks';
+import { ReduxState } from 'redux/store';
 
 const RemoteSchedulePage = () => {
   const { isLoggedIn, loading: userLoading } = useUser();
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
   const { scheduleId: scheduleUUID } = useParams<{ scheduleId: string }>();
   const scheduleId = btoa(`ScheduleType:${scheduleUUID}`);
-  
-  const mobile = useMobile();
 
-  if (mobile) {
+  const isMobile = useSelector((state: ReduxState) => state.common.mobile);
+
+  if (isMobile) {
     return (
       <div className="scheduler viewport-app">
         <div className="onboard">
