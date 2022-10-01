@@ -15,6 +15,7 @@ import { useHistory } from 'react-router';
 import { useSemester } from 'graphql/hooks/semester';
 import Callout from '../../components/Scheduler/Callout';
 import { ReduxState } from 'redux/store';
+import { useSelector } from "react-redux";
 
 const LocalScheduler = () => {
   const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -49,7 +50,7 @@ const LocalScheduler = () => {
     },
   });
 
-  const isMobile = React.useSelector((state: ReduxState) => state.common.mobile);
+  const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
   if (isMobile) {
     return (

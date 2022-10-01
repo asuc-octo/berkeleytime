@@ -1,10 +1,11 @@
 import BTLoader from 'components/Common/BTLoader';
 import { useUser } from 'graphql/hooks/user';
 import React, { useState } from 'react';
-import { Redirect, useParams, useSelector } from 'react-router';
+import { Redirect, useParams } from 'react-router';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import RemoteScheduler from '../../components/Scheduler/Editor/RemoteScheduler';
 import { ReduxState } from 'redux/store';
+import { useSelector } from "react-redux";
 
 const RemoteSchedulePage = () => {
   const { isLoggedIn, loading: userLoading } = useUser();
