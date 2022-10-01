@@ -1,4 +1,21 @@
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState, useEffect } from 'react';
+
+/**
+ * A hook to determine whether the width of the document
+ * constitutes a mobile device or not.
+ */
+export function useMobile(): boolean {
+  const [width, setWidth] = useState(document.body.clientWidth);
+
+  const updateWidth = (): void => setWidth(document.body.clientWidth);
+
+  useEffect(() => {
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  });
+
+  return width < 992;
+}
 
 /**
  * A version of useState that presists a value across page

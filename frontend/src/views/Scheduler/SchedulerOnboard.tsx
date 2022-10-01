@@ -8,6 +8,7 @@ import Welcome from 'components/Scheduler/Onboard/Welcome';
 import SelectClasses from 'components/Scheduler/Onboard/SelectClasses';
 
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
+import { useMobile } from 'utils/hooks';
 
 const pages: {
   key: string;
@@ -36,6 +37,18 @@ const SchedulerOnboard = () => {
   const PageComponent = pages[pageIndex].component;
 
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
+  
+  const mobile = useMobile();
+
+  if (mobile) {
+    return (
+      <div className="scheduler viewport-app">
+        <div className="onboard">
+          <p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="scheduler viewport-app">
