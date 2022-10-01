@@ -4,12 +4,25 @@ import React, { useState } from 'react';
 import { Redirect, useParams } from 'react-router';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import RemoteScheduler from '../../components/Scheduler/Editor/RemoteScheduler';
+import { useMobile } from 'utils/hooks';
 
 const RemoteSchedulePage = () => {
   const { isLoggedIn, loading: userLoading } = useUser();
   const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
   const { scheduleId: scheduleUUID } = useParams<{ scheduleId: string }>();
   const scheduleId = btoa(`ScheduleType:${scheduleUUID}`);
+  
+  const mobile = useMobile();
+
+  if (mobile) {
+    return (
+      <div className="scheduler viewport-app">
+        <div className="onboard">
+          <p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (userLoading) {
     return (

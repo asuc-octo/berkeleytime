@@ -13,6 +13,7 @@ import { useLocalStorageState } from 'utils/hooks';
 import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
 import { useHistory } from 'react-router';
 import { useSemester } from 'graphql/hooks/semester';
+import { useMobile } from 'utils/hooks';
 import Callout from '../../components/Scheduler/Callout';
 
 const LocalScheduler = () => {
@@ -47,6 +48,18 @@ const LocalScheduler = () => {
       }
     },
   });
+  
+  const mobile = useMobile();
+
+  if (mobile) {
+    return (
+      <div className="scheduler viewport-app">
+        <div className="onboard">
+          <p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!semester) {
     return (
