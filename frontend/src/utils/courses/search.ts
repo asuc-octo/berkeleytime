@@ -1,5 +1,6 @@
 import { CourseOverviewFragment } from '../../graphql/graphql';
 import { combineQueries, normalizeSearchTerm, search } from 'utils/search-utils';
+import Fuse from 'fuse.js';
 
 export type SearchableCourse = CourseOverviewFragment;
 
@@ -10,24 +11,31 @@ export function searchCourses(
   courses: SearchableCourse[],
   rawQuery: string
 ): SearchableCourse[] {
-  const query = normalizeSearchTerm(rawQuery);
-  const results = courses
-    .map<[SearchableCourse, number | null]>((course) => {
-      return [
-        course,
-        combineQueries([
-          searchCourse(query, getFullCourseCode(course), 1),
-          search(query, `${course.title}`.toLowerCase(), 0.3, 0.05),
-        ]),
-      ];
-    })
-    .filter(
-      (result): result is [SearchableCourse, number] => result[1] !== null
-    )
-    .sort((a, b) => a[1] - b[1])
-    .map(([course]) => course);
 
-  return results;
+  const options = {
+    includeScore: true,
+    shouldSort: true,
+    threshold: 0.2,
+    keys: [
+      "title",
+      "abbreviation",
+      "courseNumber",
+      "fullCourseCode"
+    ]
+  };
+  const courseInfo = courses.map(course => {
+    return {
+      ...course,
+      fullCourseCode: getFullCourseCode(course),
+    }
+  })
+  const fuse = new Fuse(courseInfo, options);
+  const query = normalizeSearchTerm(rawQuery);
+  const fuseResults = fuse.search(query);
+  const newResults = fuseResults.map<SearchableCourse>((result) => {
+    return courses[result.refIndex];
+  })
+  return newResults;
 }
 
 /**

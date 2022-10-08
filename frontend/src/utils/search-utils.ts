@@ -60,6 +60,7 @@ export function search(
       return null;
     }
   }
+  
 
   if (penalty > maxTypos) {
     return null;
