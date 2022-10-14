@@ -125,7 +125,7 @@ PAST_SEMESTERS_TELEBEARS = {
     'spring 2021': spring2021.TELEBEARS,
     'fall 2021': fall2021.TELEBEARS,
     'spring 2022': spring2022.TELEBEARS,
-    'fall 2022': fall2022.TELEBEARS_JSON,
+    'fall 2022': fall2022.TELEBEARS,
     'spring 2023': spring2023.TELEBEARS,
 }
 
