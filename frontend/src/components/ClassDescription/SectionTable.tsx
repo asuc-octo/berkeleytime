@@ -41,7 +41,7 @@ type Props = {
 };
 
 const SectionTable = ({ sections: allSections }: Props) => {
-  const sections = sortSections(allSections);
+  const sections = allSections;
 
   return (
     <Table className="table">

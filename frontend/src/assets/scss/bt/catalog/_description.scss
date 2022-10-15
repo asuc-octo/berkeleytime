@@ -59,6 +59,30 @@
       color: $bt-light-text;
     }
 
+    .title {
+      display: flex;
+      flex-direction: row;
+      .statlink {
+        opacity: 0.8;
+        border-radius: 2px;
+        transition: 0.2s;
+        padding: 0px 4px;
+        line-height: 0;
+        padding-top: 4px;
+
+        &:hover {
+          cursor: pointer;
+          opacity: 1;
+          background: $bt-button-background;
+        }
+
+        img {
+          height: 16px;
+          vertical-align: bottom;
+        }
+      }
+    }
+
     .stats {
       display: flex;
       flex-direction: column;
@@ -102,6 +126,19 @@
             vertical-align: bottom;
           }
         }
+      }
+    }
+
+    .toCatalog {
+      display: inline-block;
+      padding-left: 30px;
+    }
+
+    span {
+      color: $bt-blue;
+
+      &:hover {
+        cursor: pointer;
       }
     }
 
@@ -161,6 +198,25 @@
 
         &:hover {
           cursor: pointer;
+        }
+      }
+
+      .statlink {
+        opacity: 0.8;
+        border-radius: 2px;
+        transition: 0.2s;
+        padding: 0px 4px;
+        line-height: 0;
+        padding-top: 4px;
+
+        &:hover {
+          cursor: pointer;
+          opacity: 1;
+          background: $bt-button-background;
+        }
+
+        img {
+          height: 16px;
         }
       }
     }
