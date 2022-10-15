@@ -41,7 +41,7 @@ services:
     image: postgres:12.6
     volumes:
       - ./bt_main.dump:/bt_main.dump
-      - ./postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     environment:
@@ -49,3 +49,7 @@ services:
       - "POSTGRES_USER=bt"
       - "POSTGRES_PASSWORD=bt"
  
+volumes:
+  postgres-data:
+ 
+ # docker-compose up --build backend
