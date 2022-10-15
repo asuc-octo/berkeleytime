@@ -69,7 +69,7 @@ const CourseSelector = ({
 
   return (
     <div className="course-selector">
-      <h2>Build Schedule</h2>
+      <h2>{semester.semester.charAt(0).toUpperCase() + semester.semester.slice(1)} {semester.year} Scheduler</h2>
       <BTSelect
         isVirtual
         value={null}
