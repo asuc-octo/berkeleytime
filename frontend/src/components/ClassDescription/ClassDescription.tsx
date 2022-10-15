@@ -4,6 +4,7 @@ import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
 import book from '../../assets/svg/catalog/book.svg';
 import launch from '../../assets/svg/catalog/launch.svg';
+import link from '../../assets/svg/catalog/link.svg';
 
 import {
   applyIndicatorPercent,
@@ -13,6 +14,7 @@ import {
 import { useGetCourseForNameQuery } from '../../graphql/graphql';
 import { stableSortPlaylists } from 'utils/playlists/playlist';
 import { getLatestSemester, Semester } from 'utils/playlists/semesters';
+import { sortSections } from 'utils/sections/sort';
 import SectionTable from './SectionTable';
 import BTLoader from 'components/Common/BTLoader';
 import { CourseReference, courseToName } from 'utils/courses/course';
@@ -66,6 +68,41 @@ const ClassDescription = ({
     },
   });
 
+  var dict = new Map([
+    ["Field Work", "FLD"],
+    ["Session", "SES"],
+    ["Colloquium", "COL"],
+    ["Recitation", "REC"],
+    ["Internship", "INT"],
+    ["Studio", "STD"],
+    ["Demonstration", "dem"],
+    ["Web-based Discussion", "WBD"],
+    ["Discussion", "DIS"],
+    ["Tutorial", "TUT"],
+    ["Clinic", "CLN"],
+    ["Independent Study", "IND"],
+    ["Self-paced", "SLF"],
+    ["Seminar", "SEM"],
+    ["Lecture", "LEC"],
+    ["Web-based Lecture", "WBL"],
+    ["Web-Based Lecture", "WBL"],
+    ["Directed Group Study", "GRP"],
+    ["Laboratory", "LAB"]
+  ]);
+ 
+/* Conversation
+ Voluntary
+ Simulcast
+ Reading
+ Supplementary
+ Workshop
+ 
+ S,SEASN C220
+Seminar in Buddhism and Buddhist Texts???
+
+https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
+ */
+
   if (!data) {
     return (
       <div className="catalog-description-container">
@@ -95,7 +132,17 @@ const ClassDescription = ({
   }
 
   const playlists = course.playlistSet.edges.map((e) => e?.node!);
-  const sections = course.sectionSet.edges.map((e) => e?.node!);
+  
+  let sections = course.sectionSet.edges.map((e) => e?.node!);
+  sections = sortSections(sections);
+  var stre = "";
+  if (semester != null) { 
+    var punctuation = ',';
+    var regex = new RegExp('[' + punctuation + ']', 'g');
+    var rmc = courseRef.abbreviation.replace(regex, '');
+    stre = "https://classes.berkeley.edu/content/"+semester.year+"-"+semester.semester+"-"+rmc+"-"+courseRef.courseNumber+"-"+sections[0].sectionNumber+"-"+dict.get(sections[0].kind)+"-"+sections[0].sectionNumber;
+    stre = stre.replace(/\s+/g, '');
+  }
 
   const latestSemester = getLatestSemester(playlists);
   const semesterUrl =
@@ -141,6 +188,7 @@ const ClassDescription = ({
   let prereqs = '';
   let moreDesc: boolean | null = null;
   let morePrereq: boolean | null = null;
+  let moreInfo: any = <></>;
 
   // No idea how this works, but this is what
   // handles the 'Read More' functionality.
@@ -152,6 +200,24 @@ const ClassDescription = ({
     } else {
       moreDesc = false;
     }
+    moreInfo = (
+    <div className='toCatalog'>
+      <p className='prereqs'>For more details, please checkout the 
+        <a 
+          href={stre} target="_blank"
+          rel="noreferrer"
+          className="statlink">
+          &nbsp;Berkeley Academic Guide&nbsp;
+          <img src={launch} alt=''/>
+        </a>
+      </p>
+      {morePrereq != null && (
+                <span onClick={() => setReadMore(morePrereq)}>
+                  {' '}
+                  {morePrereq ? ' See more' : ' See less'}
+                </span>
+              )}
+    </div>)
   } else {
     // collapse
     let descRows = Math.round(course.description.length / charsPerRow);
@@ -169,7 +235,10 @@ const ClassDescription = ({
         morePrereq = true;
       }
     }
+    moreInfo = <></>
   }
+
+  
 
   // Render the contents of the catalog
   return (
@@ -179,7 +248,19 @@ const ClassDescription = ({
           <h3>
             {course.abbreviation} {course.courseNumber}
           </h3>
-          <h6>{course.title}</h6>
+          <div className="title">
+            <h6>
+              {course.title}
+            </h6>
+            <a
+              href={stre}
+              target="_blank"
+              rel="noreferrer"
+              className="statlink"
+            >
+              <img src={link} alt="" />
+            </a>
+          </div>
           <div className="stats">
             <div className="statline">
               <img src={people} alt="" />
@@ -273,15 +354,11 @@ const ClassDescription = ({
             <h6>Prerequisites</h6>
             <p>
               {prereqs}
-              {morePrereq != null && (
-                <span onClick={() => setReadMore(morePrereq)}>
-                  {' '}
-                  {morePrereq ? ' See more' : ' See less'}
-                </span>
-              )}
+              
             </p>
           </section>
         )}
+        {moreInfo}
         <section>
           <h5>Class Times</h5>
         </section>

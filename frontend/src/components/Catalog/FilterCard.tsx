@@ -119,7 +119,7 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
                 {formatEnrollmentPercentage(course.enrolledPercentage)}
               </p>
             )}
-
+            
             <p>
               &nbsp;•&nbsp;{course.units ? formatUnits(course.units) : 'N/A'}
             </p>
