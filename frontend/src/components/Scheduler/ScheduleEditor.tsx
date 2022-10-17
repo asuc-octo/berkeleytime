@@ -109,7 +109,7 @@ const ScheduleEditor = ({
 
   return (
     <Row noGutters>
-      <Col md={4} lg={4} xl={4}>
+      <Col lg={4}>
         <CourseSelector
           allCourses={allCourses}
           semester={semester}
@@ -118,7 +118,7 @@ const ScheduleEditor = ({
           setPreviewSection={setPreviewSection}
         />
       </Col>
-      <Col>
+      <Col lg={8}>
         <div className="scheduler-header">
           <div>
             <input
