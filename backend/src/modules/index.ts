@@ -1,9 +1,10 @@
-import TodoResolver from "./todo/resolver";
+import User from "./user";
 
 // Important: Add all your module's resolver in this
-export const resolvers: [Function, ...Function[]] = [
-  TodoResolver,
-  // UserResolver
+export const resolvers = [
+  User.resolver,
   // AuthResolver
   // ...
 ];
+
+export const typeDefs = [User.typeDef];

@@ -80,4 +80,4 @@ This repo is aiming to be used as a starter kit for your next GraphQL api projec
 
 #### Access to the GraphQL Playground (Dev only)
 
-- `http://localhost:5000/graphql`
+- `http://localhost:5001/graphql`

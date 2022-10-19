@@ -19,10 +19,6 @@ export interface Config {
   mongoDB: {
     uri: string;
   };
-  redis: {
-    host: string;
-    port: number;
-  };
 }
 
 // All your secrets, keys go here
@@ -32,9 +28,5 @@ export const config: Config = {
   isDev: env("NODE_ENV") === "development",
   mongoDB: {
     uri: env("MONGODB_URI"),
-  },
-  redis: {
-    port: +env("REDIS_PORT"),
-    host: env("REDIS_HOST"),
   },
 };

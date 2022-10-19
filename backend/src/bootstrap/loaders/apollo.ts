@@ -1,14 +1,14 @@
-import Container from "typedi";
 import { ApolloServer } from "apollo-server-express";
 
 import { config } from "../../config";
 import { buildSchema } from "../../utils";
 
 export default async () => {
-  const schema = await buildSchema();
+  const { resolvers, typeDefs } = buildSchema();
 
   return new ApolloServer({
-    schema,
+    resolvers,
+    typeDefs,
     playground: config.isDev,
   });
 };
