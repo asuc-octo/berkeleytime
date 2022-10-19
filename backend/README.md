@@ -16,13 +16,15 @@ New playground for the node/graphql rewrite
 
 - `http://localhost:5001/graphql`
 
-## Typesafety 
-The main concern for typesafety comes from the potential inconsistency between `typedefs` (GraphQL SDL) and your actual resolvers. To maintain typesafety, we use [GraphQL Code Generation](https://www.the-guild.dev/graphql/codegen/docs/getting-started) to generate types for schemas, resolvers and more. 
+## Typesafety
 
-### Typesafety with Modules 
-Type safety is also set up within modules, see the [documentation](https://www.the-guild.dev/graphql/codegen/docs/guides/graphql-modules) for more details. 
+The main concern for typesafety comes from the potential inconsistency between `typedefs` (GraphQL SDL) and your actual resolvers. To maintain typesafety, we use [GraphQL Code Generation](https://www.the-guild.dev/graphql/codegen/docs/getting-started) to generate types for schemas, resolvers and more.
 
+To generate types, run `npm run generate`
 
+### Typesafety with Modules
+
+Type safety is also set up within modules, see the [documentation](https://www.the-guild.dev/graphql/codegen/docs/guides/graphql-modules) for more details.
 
 ## Folder structure
 
