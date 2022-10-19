@@ -1,17 +1,20 @@
 # berkeleytime-gql
-New playground for the node/graphql rewrite 
+
+New playground for the node/graphql rewrite
 
 ## Before you start
+
 - Duplicate the `.env.example` file and rename it `.env`
 - Run `npm install`
 
-## Development 
-- Run `npm run dev` 
-- Start you docker container from the berkeleytime repo node branch 
+## Development
+
+- Run `npm run dev`
+- Start you docker container from the berkeleytime repo node branch
 
 #### Access to the GraphQL Playground (Dev only)
-- `http://localhost:5001/graphql`
 
+- `http://localhost:5001/graphql`
 
 ## Folder structure
 
@@ -37,40 +40,29 @@ New playground for the node/graphql rewrite
 └── tsconfig.json              # TypeScript compiler options
 ```
 
-#### Module example (FOR NOW) 
+#### Module example (FOR NOW)
 
 ```
 .
 ├── src
 │   └── modules
 │       └── user               # Module name
-│           ├── index.ts       # Entrypoint to the module 
+│           ├── index.ts       # Entrypoint to the module
 │           ├── controller.ts  # Your crud controller methods
-│           ├── fixture.ts     # Object used for testing (can ignore) 
-│           ├── formatter.ts   # Formats your db models to your controller/gql models 
-│           ├── model.ts       # Mongo schemas, models and types      
-│           ├── resolver.ts    # Your resolver 
-│           ├── schema.ts      # Your gql schemas (and potentially typscript interfaces associated to the schemas) 
-│           └── service.ts     # Business logic of your app 
+│           ├── fixture.ts     # Object used for testing (can ignore)
+│           ├── formatter.ts   # Formats your db models to your controller/gql models
+│           ├── model.ts       # Mongo schemas, models and types
+│           ├── resolver.ts    # Your resolver
+│           ├── schema.ts      # Your gql schemas (and potentially typscript interfaces associated to the schemas)
+│           └── service.ts     # Business logic of your app
 ```
-
 
 #### Build and start server for production
 
 - Run `npm start`
 
-#### Run integration tests
-
-- Run 'npm test'
-
-> Integration tests are done with Jest, Apollo Server Testing and MongoDB Memory Server. This way every test are testing our entire logic with every graphQL request, from our resolvers to our models!
-
 #### Technologies used
 
 - NodeJS and TypeScript
-- GraphQL with Apollo Server and Type GraphQL
-- MongoDB Database integrated with Mongoose/TypeGoose
-- Jest for testing
-- Docker (Not mandatory)
-
-
+- GraphQL with Apollo Server
+- MongoDB Database integrated with Mongoose
