@@ -16,6 +16,14 @@ New playground for the node/graphql rewrite
 
 - `http://localhost:5001/graphql`
 
+## Typesafety 
+The main concern for typesafety comes from the potential inconsistency between `typedefs` (GraphQL SDL) and your actual resolvers. To maintain typesafety, we use [GraphQL Code Generation](https://www.the-guild.dev/graphql/codegen/docs/getting-started) to generate types for schemas, resolvers and more. 
+
+### Typesafety with Modules 
+Type safety is also set up within modules, see the [documentation](https://www.the-guild.dev/graphql/codegen/docs/guides/graphql-modules) for more details. 
+
+
+
 ## Folder structure
 
 #### Overview
@@ -24,6 +32,7 @@ New playground for the node/graphql rewrite
 .
 ├── src                        # Where your source code lives
 │   ├── bootstrap              # Bootstrapping and loading of the API dependencies (Express, Apollo, Database, ...)
+│   ├── generated-types        # Generated types from codegen
 │   ├── modules                # Business logic of the app divided by domain (eg: User, Post, Todo)
 │   ├── tests                  # Where all our testing strategy lives
 │   ├── utils                  # Collection of utils function that we use in the project
@@ -35,6 +44,7 @@ New playground for the node/graphql rewrite
 ├── docker-compose.yml         # Docker compose configuration (Optional !)
 ├── .env.example               # Example of what your .env file should look like
 ├── .gitignore                 # Standard gitignore file
+└── codegen.ts                 # Code generation configurations
 ├── package.json               # Node module dependencies
 ├── README.md                  # Simple readme file
 └── tsconfig.json              # TypeScript compiler options
@@ -46,15 +56,19 @@ New playground for the node/graphql rewrite
 .
 ├── src
 │   └── modules
-│       └── user               # Module name
-│           ├── index.ts       # Entrypoint to the module
-│           ├── controller.ts  # Your crud controller methods
-│           ├── fixture.ts     # Object used for testing (can ignore)
-│           ├── formatter.ts   # Formats your db models to your controller/gql models
-│           ├── model.ts       # Mongo schemas, models and types
-│           ├── resolver.ts    # Your resolver
-│           ├── schema.ts      # Your gql schemas (and potentially typscript interfaces associated to the schemas)
-│           └── service.ts     # Business logic of your app
+│       └── user                      # Module name
+│           ├── index.ts              # Entrypoint to the module
+│           └── generated-types       # Generated types from codegen
+│               └── module-types.ts   # Relevant GraphQL typescript types
+│           └── typedefs              # Typedefs
+│               └── [schema].ts       # A typedef for a schema
+│           ├── controller.ts         # Your crud controller methods
+│           ├── fixture.ts            # Object used for testing (can ignore)
+│           ├── formatter.ts          # Formats your db models to your controller/gql models
+│           ├── model.ts              # Mongo schemas, models and types
+│           ├── resolver.ts           # Your resolver
+│           ├── schema.ts             # Your gql schemas (and potentially typscript interfaces associated to the schemas)
+│           └── service.ts            # Business logic of your app
 ```
 
 #### Build and start server for production
