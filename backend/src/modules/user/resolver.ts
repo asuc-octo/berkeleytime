@@ -1,6 +1,7 @@
 import { users } from "./controller";
+import { UserModule } from "./generated-types/module-types";
 
-const resolvers = {
+const resolvers: UserModule.Resolvers = {
   Query: {
     users,
   },

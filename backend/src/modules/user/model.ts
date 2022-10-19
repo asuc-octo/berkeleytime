@@ -1,7 +1,7 @@
-import mongoose, { Schema, InferSchemaType } from "mongoose";
+import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
 
 export const UserSchema = new Schema({
-  _id: Schema.Types.ObjectId,
+  _id: { type: Types.ObjectId, required: true },
   _created: String,
   _updated: String,
   _version: Number,

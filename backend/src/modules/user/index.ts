@@ -1,5 +1,5 @@
 import resolver from "./resolver";
-import typeDef from "./schema";
+import typeDef from "./typedefs/user";
 
 export default {
   resolver,
