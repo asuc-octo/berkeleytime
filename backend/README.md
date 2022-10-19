@@ -1,16 +1,17 @@
-# ts-graphql-starter
+# berkeleytime-gql
+New playground for the node/graphql rewrite 
 
-This repo is aiming to be used as a starter kit for your next GraphQL api project. The structure as been heavily inspired by the SOLID principle, you can read more about it here: https://dev.to/santypk4/bulletproof-node-js-project-architecture-4epf
+## Before you start
+- Duplicate the `.env.example` file and rename it `.env`
+- Run `npm install`
 
-> Recommendations and pull requests are always welcome to improve this starter kit!
+## Development 
+- Run `npm run dev` 
+- Start you docker container from the berkeleytime repo node branch 
 
-#### Technologies used
+#### Access to the GraphQL Playground (Dev only)
+- `http://localhost:5001/graphql`
 
-- NodeJS and TypeScript
-- GraphQL with Apollo Server and Type GraphQL
-- MongoDB Database integrated with Mongoose/TypeGoose
-- Jest for testing
-- Docker (Not mandatory)
 
 ## Folder structure
 
@@ -20,7 +21,6 @@ This repo is aiming to be used as a starter kit for your next GraphQL api projec
 .
 ├── src                        # Where your source code lives
 │   ├── bootstrap              # Bootstrapping and loading of the API dependencies (Express, Apollo, Database, ...)
-│   ├── entities               # Used to generate typing, schemas and ORM models
 │   ├── modules                # Business logic of the app divided by domain (eg: User, Post, Todo)
 │   ├── tests                  # Where all our testing strategy lives
 │   ├── utils                  # Collection of utils function that we use in the project
@@ -37,36 +37,23 @@ This repo is aiming to be used as a starter kit for your next GraphQL api projec
 └── tsconfig.json              # TypeScript compiler options
 ```
 
-#### Module example (Domain)
+#### Module example (FOR NOW) 
 
 ```
 .
 ├── src
 │   └── modules
 │       └── user               # Module name
-│           ├── input.ts       # Input validation for mutations and queries using class-validator
-│           ├── model.ts       # Database model
-│           ├── resolver.ts    # GraphQL revolver
-│           └── service.ts     # Business logic of your app
+│           ├── index.ts       # Entrypoint to the module 
+│           ├── controller.ts  # Your crud controller methods
+│           ├── fixture.ts     # Object used for testing (can ignore) 
+│           ├── formatter.ts   # Formats your db models to your controller/gql models 
+│           ├── model.ts       # Mongo schemas, models and types      
+│           ├── resolver.ts    # Your resolver 
+│           ├── schema.ts      # Your gql schemas (and potentially typscript interfaces associated to the schemas) 
+│           └── service.ts     # Business logic of your app 
 ```
 
-## How to use
-
-- Duplicate the `.env.example` file and rename it `.env`
-- Run `npm install`
-
-#### Start mongoDB with docker-compose
-
-- Make sure you have docker installed on your machine
-- Run `docker-compose up` to start the containers
-- Run `docker-compose down` to remove the running containers
-
-> This will spin up a mongoDB instance locally, you can also add in the future other stuff like redis, elastic search ...
-> If using docker doesn't appeal you, feel free to install mondoDB manually or to use a service like mongoDB Atlas instead.
-
-#### Start server for development
-
-- Run `npm run start:dev`
 
 #### Build and start server for production
 
@@ -78,6 +65,12 @@ This repo is aiming to be used as a starter kit for your next GraphQL api projec
 
 > Integration tests are done with Jest, Apollo Server Testing and MongoDB Memory Server. This way every test are testing our entire logic with every graphQL request, from our resolvers to our models!
 
-#### Access to the GraphQL Playground (Dev only)
+#### Technologies used
 
-- `http://localhost:5001/graphql`
+- NodeJS and TypeScript
+- GraphQL with Apollo Server and Type GraphQL
+- MongoDB Database integrated with Mongoose/TypeGoose
+- Jest for testing
+- Docker (Not mandatory)
+
+
