@@ -1,17 +1,28 @@
 .scheduler,
 .scheduler.viewport-app {
-  > .row > div {
-    box-sizing: border-box;
-    position: relative;
+  // I suggest completely overhauling the SCSS lol
+  @media screen and (min-width: 992px) {
+    > .row > div {
+      box-sizing: border-box;
+      position: relative;
 
-    > .course-selector {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      overflow-y: auto;
+      > .course-selector {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        overflow-y: auto;
+      }
     }
+  }
+
+  .mobile {
+    margin-bottom: 2rem;
+    font-weight: 400;
+    font-size: 18px;
+    color: #8A8A8A;
+    text-align: center;
   }
 
   // Force auto-sizing
