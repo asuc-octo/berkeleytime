@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useState, useEffect } from 'react';
+import { Dispatch, SetStateAction, useCallback, useState } from 'react';
 
 /**
  * A version of useState that presists a value across page
