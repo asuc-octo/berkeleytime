@@ -14,6 +14,8 @@ import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
 import { useHistory } from 'react-router';
 import { useSemester } from 'graphql/hooks/semester';
 import Callout from '../../components/Scheduler/Callout';
+import { ReduxState } from 'redux/store';
+import { useSelector } from "react-redux";
 
 const LocalScheduler = () => {
   const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -47,6 +49,18 @@ const LocalScheduler = () => {
       }
     },
   });
+
+  const isMobile = useSelector((state: ReduxState) => state.common.mobile);
+
+  if (isMobile) {
+    return (
+      <div className="scheduler viewport-app">
+        <div className="onboard">
+          <p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!semester) {
     return (
