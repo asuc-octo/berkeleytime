@@ -8,10 +8,17 @@ Docker is a container platform and Docker Compose is a a tool for defining and r
 Docker applications. Make sure you have both install on your computer before you start. Docker Compose
 comes with Docker in most cases (such as MacOS).
 
-To run Berkeleytime, make sure this repo is clone. From the top level, first download the development
-Postgres data with `make init`. This will create a folder `build/postgres-data`. Don't try to push it to Github - 
-its a local copy of the production data. Note: If you recieve the error `make: wget: No such file or directory`, make sure you have `wget` installed.
+### Seeding the Local Database
+To run Berkeleytime, make sure this repo is cloned. From the top level, first download the development
+Postgres data:
+1. `make postgres` - start up the postgres container
+2. `curl -O https://storage.googleapis.com/berkeleytime/public/bt_seed.sql.gz` - download the database as a GZip file
+3. `gzip -d bt_seed.sql.gz` - unzip this file
+4. `cat bt_seed.sql | docker exec -i bt_postgres psql -U bt -d bt_main` - see Postgres container with the data.
 
+Before starting the server, make sure the `DATABASE_URL` entry in your `.env.dev` is `postgres://bt:bt@postgres:5432/bt_main` so that the backend connects to the local DB.
+
+### Starting the local server
 To boot the services, run `make up`. This will boot 6 containers (redis, postgres, nginx, Django, Node.js). Wait for both
 Postgres and Django to be running before you proceed. Django will say 
 
