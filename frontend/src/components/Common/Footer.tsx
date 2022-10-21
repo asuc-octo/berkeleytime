@@ -20,9 +20,6 @@ const Footer: FC = () => (
               <A href="mailto:octo.berkeleytime@asuc.org" className="mb-2">
                 Contact Us
               </A>
-              <A href="https://status.berkeleytime.com/" className="mb-2">
-                Status
-              </A>
               <A href={{ as_link: '/faq' }} className="mb-2">
                 FAQ
               </A>
