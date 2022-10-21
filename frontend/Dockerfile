@@ -1,4 +1,4 @@
-FROM node:14-slim AS dev
+FROM node:14-slim@sha256:4402144207a33ba95cb1119be593b9a9699721ad46e15acd32a0b5ca8784a527 AS dev
 RUN mkdir /frontend
 WORKDIR /frontend
 COPY package.json .
