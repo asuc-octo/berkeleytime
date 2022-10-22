@@ -13,6 +13,7 @@ const {
 } = process.env;
 
 const quoteCache = {};
+const alreadyPosted = {};
 
 const router = express.Router();
 const transporter = nodemailer.createTransport({
@@ -26,30 +27,21 @@ const transporter = nodemailer.createTransport({
 });
 await transporter.verify();
 
-router.post("/fail", async (req, res) => {
-  const {
-    // Pipeline event payload https://docs.gitlab.com/ee/user/project/integrations/webhooks.html
-    object_attributes,
-    project,
-    commit,
-    builds,
-  } = req.body;
-  console.log(req.body);
-  const failureDetected = builds.some((build) => build.status == "failed");
-  if (!failureDetected) {
-    return res.sendStatus(200);
-  }
+const today = () => {
   const ts = new Date(Date.now());
-  const today = `${ts
-    .getFullYear()
-    .toString()}${ts
+  const today = `${ts.getFullYear().toString()}${ts
     .getMonth()
     .toString()
     .padStart(2, "0")}${ts.getDate().toString().padStart(2, "0")}`;
+  return today;
+};
+
+const inspire = async () => {
+  const day = today();
   let message;
-  if (quoteCache[today]) {
-    console.log(`Cache hit for '${today}'`);
-    message = `"${quoteCache[today].quote}" —${quoteCache[today].author}`;
+  if (quoteCache[day]) {
+    console.log(`Cache hit for '${day}'`);
+    message = `"${quoteCache[day].quote}" —${quoteCache[day].author}`;
   } else {
     try {
       const {
@@ -62,7 +54,7 @@ router.post("/fail", async (req, res) => {
         console.log(`Retrieve quote success: `, quotes[0]);
       }
       message = `"${quote}" —${author}`;
-      quoteCache[today] = { quote, author };
+      quoteCache[day] = { quote, author };
     } catch (e) {
       console.error("Failed to get inspirational quote, using generic Oski...");
       message = `"did u know? 1 build failure = 1 extra budget cut to EECS program" —Oski🐻`;
@@ -103,7 +95,7 @@ router.post("/fail", async (req, res) => {
     html: `${html}`,
   };
   console.log(sendMail);
-  await transporter.sendMail(sendMail);
+    alreadyPosted[day] = true;
   return res.sendStatus(200);
 });
 
