@@ -1,7 +1,8 @@
 import { Resolvers } from "../generated-types/graphql";
 import User from "./user";
+import Grade from "./grade";
 
-const modules = [User];
+const modules = [User, Grade];
 
 // Important: Add all your module's resolver in this
 export const resolvers: Resolvers = modules.reduce(
