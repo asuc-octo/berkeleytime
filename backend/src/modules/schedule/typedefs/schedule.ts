@@ -18,13 +18,12 @@ const typedef = gql`
     title: String
     location: String
     description: String
-    days_of_week: [String] // ex: MWF
+    days_of_week: [String]
   }
 
   type Query {
     schedules: [Schedule]
   }
-
 `;
 
 export default typedef;
