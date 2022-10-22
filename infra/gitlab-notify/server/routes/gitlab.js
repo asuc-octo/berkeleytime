@@ -96,6 +96,7 @@ const inspire = async () => {
   };
   console.log(sendMail);
     alreadyPosted[day] = true;
+  // await transporter.sendMail(sendMail);
   return res.sendStatus(200);
 });
 
