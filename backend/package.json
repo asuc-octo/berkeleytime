@@ -9,7 +9,7 @@
     "start": "npm run build && node ./build/index.js",
     "test": "jest --watch",
     "coverage": "jest --coverage",
-    "generate": "graphql-codegen --config codegen.ts", 
+    "generate": "graphql-codegen --config codegen.ts",
     "typecheck": "tsc --noEmit"
   },
   "repository": {
@@ -34,7 +34,6 @@
     "@types/jest": "^25.2.1",
     "@types/lodash": "^4.14.186",
     "@types/node": "^13.13.5",
-    "apollo-server-testing": "^2.13.1",
     "jest": "^29.0.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.1",
@@ -43,19 +42,18 @@
   },
   "dependencies": {
     "@types/mongoose": "^5.7.16",
-    "apollo-server-express": "^2.13.0",
+    "apollo-server-express": "^3.10.3",
     "body-parser": "^1.19.0",
-    "class-validator": "^0.12.2",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "graphql": "^15.8.0",
+    "graphql": "^16.6.0",
     "graphql-modules": "^2.1.0",
+    "graphql-tools": "^8.0.0",
     "helmet": "^3.22.0",
     "lodash": "^4.17.21",
     "mongodb": "^4.10.0",
     "mongoose": "^6.6.5",
-    "reflect-metadata": "^0.1.13",
-    "type-graphql": "^1.0.0-rc.1"
+    "reflect-metadata": "^0.1.13"
   }
 }
