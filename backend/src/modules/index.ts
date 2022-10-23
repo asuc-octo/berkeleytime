@@ -1,4 +1,3 @@
-import { Resolvers } from "../generated-types/graphql";
 import User from "./user";
 import Grade from "./grade";
 import { merge } from "lodash";

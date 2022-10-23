@@ -14,5 +14,5 @@ jobs:
         node-version: 12
     - name: npm install
       run: npm install
-    - name: typecheck 
-      run: npm run typecheck
+    - name: lint
+      run: npm run lint
