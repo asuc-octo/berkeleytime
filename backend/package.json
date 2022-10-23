@@ -9,7 +9,8 @@
     "start": "npm run build && node ./build/index.js",
     "test": "jest --watch",
     "coverage": "jest --coverage",
-    "generate": "graphql-codegen --config codegen.ts"
+    "generate": "graphql-codegen --config codegen.ts", 
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
