@@ -1,6 +1,7 @@
 import { CourseOverviewFragment } from '../../graphql/graphql';
 import { combineQueries, normalizeSearchTerm, search } from 'utils/search-utils';
 import Fuse from 'fuse.js';
+import CourseSelector from 'components/Scheduler/CourseSelector';
 
 export type SearchableCourse = CourseOverviewFragment;
 
@@ -15,18 +16,30 @@ export function searchCourses(
   const options = {
     includeScore: true,
     shouldSort: true,
-    threshold: 0.2,
+    threshold: 0.3,
     keys: [
       "title",
       "abbreviation",
+      "abbreviations",
       "courseNumber",
       "fullCourseCode"
     ]
   };
   const courseInfo = courses.map(course => {
+    let abbreviations: string[]
+    if (laymanMap[course.abbreviation.toLowerCase()]) {
+      abbreviations = laymanMap[course.abbreviation.toLowerCase()].map<string>(abbreviation => {
+        return abbreviation + "" + course.courseNumber;
+      })
+    } else {
+      abbreviations = []
+    }
     return {
-      ...course,
+      title: course.title,
+      abbreviation: course.abbreviation,
+      courseNumber: course.courseNumber,
       fullCourseCode: getFullCourseCode(course),
+      abbreviations: abbreviations
     }
   })
   const fuse = new Fuse(courseInfo, options);
@@ -36,6 +49,23 @@ export function searchCourses(
     return courses[result.refIndex];
   })
   return newResults;
+  // const results = courses
+  //   .map<[SearchableCourse, number | null]>((course) => {
+  //     return [
+  //       course,
+  //       combineQueries([
+  //         searchCourse(query, getFullCourseCode(course), 1),
+  //         search(query, `${course.title}`.toLowerCase(), 0.3, 0.05),
+  //       ]),
+  //     ];
+  //   })
+  //   .filter(
+  //     (result): result is [SearchableCourse, number] => result[1] !== null
+  //   )
+  //   .sort((a, b) => a[1] - b[1])
+  //   .map(([course]) => course);
+
+  // return results;
 }
 
 /**
@@ -70,7 +100,77 @@ export function reactSelectCourseSearch(option: any, query: string): boolean {
  */
 export function getFullCourseCode(course: SearchableCourse): string {
   const searchComponents = [course.abbreviation, course.courseNumber];
-  return searchComponents.join(' ').toLowerCase();
+  return searchComponents.join('').toLowerCase();
+}
+
+type abbreviationMap = {
+  [key: string]: string[];
+}
+export const laymanMap: abbreviationMap = {
+  'astron': ['astro'],
+  'compsci': ['cs', 'comp sci', 'computer science'],
+  'mcellbi': ['mcb'],
+  'nusctx': ['nutrisci'],
+  'bio eng': ['bioe', 'bio e', 'bio p', 'bioeng'],
+  'biology': ['bio'],
+  'civ eng': ['cive', 'civ e', 'civeng'],
+  'chm eng': ['cheme'],
+  'classic': ['classics'],
+  'cog sci': ['cogsci'],
+  'colwrit': ['college writing'],
+  'com lit': ['complit', 'comlit'],
+  'cy plan': ['cyplan', 'cp'],
+  'des inv': ['desinv', 'design'],
+  'dev eng': ['eveng'],
+  'dev std': ['devstd'],
+  'datasci': ['ds', 'data'],
+  'ea lang': ['ealang'],
+  'env des': ['ed'],
+  'el eng': ['ee', 'electrical engineering'],
+  'ene,res': ['erg', 'er', 'eneres'],
+  'engin': ['e', 'engineering'],
+  'env sci': ['envsci'],
+  'eth std': ['ethstd'],
+  'eura st': ['eurast'],
+  'geog': ['geology', 'geo'],
+  'hin-urd': ['hinurd'],
+  'hum bio': ['humbio'],
+  'integbi': ['ib'],
+  'ind eng': ['ie', 'ieor'],
+  'linguis': ['ling'],
+  'l & s': ['l&s', 'ls', 'lns'],
+  'malay/i': ['malayi'],
+  'mat sci': ['matsci', 'ms', 'mse'],
+  'mec eng': ['meceng', 'meche', 'mech e', 'me'],
+  'med st': ['medst'],
+  'me stu': ['mestu', 'middle eastern studies'],
+  'mil aff': ['milaff'],
+  'mil sci': ['milsci'],
+  'natamst': ['native american studies', 'nat am st'],
+  'neurosc': ['neurosci'],
+  'nuc en': ['ne'],
+  'ne stud': ['nestud'],
+  'mediast': ['media'],
+  'music': ['mus'],
+  'pb hlth': ['pbhlth', 'ph', 'pub hlth', 'public health'],
+  'phys end': ['pe', 'physed'],
+  'philos': ['philo', 'phil'],
+  'polecon': ['poliecon'],
+  'philo': ['philosophy'],
+  'plantbi': ['pmb'],
+  'pol sci': ['poli', 'polsci', 'polisci', 'poli sci', 'ps'],
+  'pub pol': ['pubpol', 'pp', 'public policy'],
+  'pub aff': ['pubaff', 'public affaris'],
+  'psych': ['psychology'],
+  'rhetor': ['rhetoric'],
+  's asian': ['sasian'],
+  's,seasn': ['sseasn'],
+  'stat': ['stats'],
+  'theater': ['tdps'],
+  'ugba': ['haas'],
+  'vietnms': ['vietnamese'],
+  'vis sci': ['vissci'],
+  'vis std': ['visstd']
 }
 
 export const laymanToAbbreviation: [string, string][] = [
