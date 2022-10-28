@@ -1,4 +1,3 @@
-import { response } from "express";
 import { GradeModel } from "./model";
 import { GradeModule } from "./generated-types/module-types";
 // import { formatGrade } from "./formatter";
@@ -8,7 +7,7 @@ export async function grades() {
 
   // total enrolled DOES NOT include students who withdrew/incomplete
   let totalEnrolled = 0;
-  let possible_grades: { [key: string]: Number } = {};
+  let possible_grades: { [key: string]: number } = {};
 
   grades.map((grade)=> {
     if (grade.EnrollmentCnt && grade.GradeNm) {
@@ -19,7 +18,7 @@ export async function grades() {
     }
   })
 
-  let response : GradeModule.Grade = {
+  let gradesResponse : GradeModule.Grade = {
     APlus: {
       percent: 0,
       numerator: 0,
@@ -102,7 +101,7 @@ export async function grades() {
 
   let starting_percentile = 1;
   // map over response object and add percent, numerator, percentile_high, percentile_low
-  Object.keys(response).map((grade)=> {
+  Object.keys(gradesResponse).map((grade)=> {
 
     let newGrade = grade.toString().replace("Plus", "+").replace("Minus", "-")
     if (grade === "P") {
@@ -114,15 +113,15 @@ export async function grades() {
 
     if (newGrade in possible_grades) {
       let percentage = Math.round((possible_grades[newGrade] / totalEnrolled) * 100) / 100;
-      response[grade].percent = percentage;
-      response[grade].numerator = possible_grades[newGrade];
-      response[grade].percentile_high = starting_percentile;
+      gradesResponse[grade as keyof GradeModule.Grade].percent = percentage;
+      gradesResponse[grade as keyof GradeModule.Grade].numerator = possible_grades[newGrade];
+      gradesResponse[grade as keyof GradeModule.Grade].percentile_high = starting_percentile;
 
       let percentile_low = Math.round((starting_percentile - percentage) * 100) / 100;
-      response[grade].percentile_low = percentile_low;
+      gradesResponse[grade as keyof GradeModule.Grade].percentile_low = percentile_low;
       starting_percentile = percentile_low;
     }
   })
 
-  return response;
+  return gradesResponse;
 }
