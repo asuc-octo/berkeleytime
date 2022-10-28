@@ -1,6 +1,7 @@
 import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
+import { schemaToDiff } from "../../utils/diff";
 
-export const SisClassSchema = new Schema({
+const SisClassSchemaObject = {
   _id: {
     type: Types.ObjectId,
   },
@@ -17,7 +18,8 @@ export const SisClassSchema = new Schema({
       type: String,
     },
     identifiers: {
-      type: [],
+      type: String,
+      id: String,
     },
     subjectArea: {
       code: {
@@ -117,7 +119,7 @@ export const SisClassSchema = new Schema({
     type: Boolean,
   },
   assignedClassMaterials: {
-    status: {},
+    // status: {},
     noneAssigned: {
       type: Boolean,
     },
@@ -174,14 +176,36 @@ export const SisClassSchema = new Schema({
       type: String,
     },
   },
-});
+};
+
+export const SisClassHistoryDiffSchema = new Schema(
+  schemaToDiff(SisClassSchemaObject)
+);
+
+export const SisClassSchema = new Schema(SisClassSchemaObject);
 
 export const SisClassHistorySchema = new Schema({
   _id: { type: Types.ObjectId, required: true },
-  _createdAt: String,
-  _updatedAt: String,
-  _version: Number,
+  createdAt: String,
+  updatedAt: String,
+  version: Number,
+  __v: Number,
   collectionName: String,
-  collectionId: { type: Types.ObjectId, required: true },
-  diff: {},
+  collectionId: { type: Types.ObjectId, required: true, ref: "SisClass" },
+  diff: SisClassHistoryDiffSchema,
 });
+
+export type SisClass = InferSchemaType<typeof SisClassSchema>;
+export type SisClassHistory = InferSchemaType<typeof SisClassHistorySchema>;
+
+export const SisClassModel = mongoose.model(
+  "sis_class",
+  SisClassSchema,
+  "sis_class"
+);
+
+export const SisClassHistoryModel = mongoose.model(
+  "sis_class_history",
+  SisClassHistorySchema,
+  "sis_class_history"
+);
