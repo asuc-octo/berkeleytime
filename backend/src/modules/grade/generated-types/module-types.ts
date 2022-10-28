@@ -2,7 +2,7 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace GradeModule {
   interface DefinedFields {
-    Grade: 'course_id';
+    Grade: 'APlus' | 'A' | 'AMinus' | 'BPlus' | 'B' | 'BMinus' | 'CPlus' | 'C' | 'CMinus' | 'D' | 'F' | 'P' | 'NP';
     Query: 'grades';
   };
   
@@ -23,7 +23,19 @@ export namespace GradeModule {
     };
     Grade?: {
       '*'?: gm.Middleware[];
-      course_id?: gm.Middleware[];
+      APlus?: gm.Middleware[];
+      A?: gm.Middleware[];
+      AMinus?: gm.Middleware[];
+      BPlus?: gm.Middleware[];
+      B?: gm.Middleware[];
+      BMinus?: gm.Middleware[];
+      CPlus?: gm.Middleware[];
+      C?: gm.Middleware[];
+      CMinus?: gm.Middleware[];
+      D?: gm.Middleware[];
+      F?: gm.Middleware[];
+      P?: gm.Middleware[];
+      NP?: gm.Middleware[];
     };
     Query?: {
       '*'?: gm.Middleware[];

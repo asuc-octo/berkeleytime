@@ -19,9 +19,29 @@ export type Scalars = {
   Float: number;
 };
 
+export type LetterGrade = {
+  __typename?: "LetterGrade";
+  percent: Scalars["Float"];
+  numerator: Scalars["Int"];
+  percentile_high: Scalars["Int"];
+  percentile_low: Scalars["Float"];
+}
+
 export type Grade = {
   __typename?: "Grade";
-  course_id: Scalars["String"];
+  APlus: LetterGrade;
+  A: LetterGrade;
+  AMinus: LetterGrade;
+  BPlus: LetterGrade;
+  B: LetterGrade;
+  BMinus: LetterGrade;
+  CPlus: LetterGrade;
+  C: LetterGrade;
+  CMinus: LetterGrade;
+  D: LetterGrade;
+  F: LetterGrade;
+  P: LetterGrade;
+  NP: LetterGrade;
 };
 
 export type Query = {
@@ -149,6 +169,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars["String"]>;
   User: ResolverTypeWrapper<User>;
+  LetterGrade: ResolverTypeWrapper<LetterGrade>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -164,7 +185,19 @@ export type GradeResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes["Grade"] = ResolversParentTypes["Grade"]
 > = {
-  course_id?: Resolver<ResolversTypes["String"], ParentType, ContextType>;
+  APlus?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  A?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  AMinus?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  BPlus?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  B?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  BMinus?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  CPlus?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  C?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  CMinus?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  D?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  F?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  P?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
+  NP?: Resolver<ResolversTypes["LetterGrade"], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

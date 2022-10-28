@@ -23,5 +23,5 @@ export const GradeSchema = new Schema({
     SectionNbr: Number
 });
 
-export const GradeModel = mongoose.model("grade", GradeSchema, "grade");
+export const GradeModel = mongoose.model("calanswers_grade", GradeSchema, "calanswers_grade");
 export type GradeType = InferSchemaType<typeof GradeSchema>;
