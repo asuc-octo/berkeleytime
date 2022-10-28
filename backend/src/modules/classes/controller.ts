@@ -1,8 +1,7 @@
 import { ObjectId } from "mongodb";
 import { Enrollment } from "../../generated-types/graphql";
-import { enrollment } from "./fixture";
 import { ClassesModule } from "./generated-types/module-types";
-import { SisClassHistoryModel, SisClassHistory, SisClassModel } from "./model";
+import { SisClassHistoryModel, SisClassModel } from "./model";
 
 // FIXME: sus typescript
 export async function getEnrollment(): Promise<Enrollment[]> {
@@ -17,16 +16,16 @@ export async function getEnrollment(): Promise<Enrollment[]> {
   const enrollmentInfo = classHistory
     .map((r) => {
       return {
-        date: r.createdAt!,
+        date: r.createdAt,
         enrolledCount: r.diff?.aggregateEnrollmentStatus
           ?.enrolledCount[1] as number,
       };
     })
-    .filter((r) => r?.enrolledCount !== undefined);
+    .filter((r) => r?.enrolledCount);
 
   return [
     {
-      classId: sisClass?.course?.catalogNumber?.number!,
+      classId: sisClass?.course?.catalogNumber?.number as string,
       enrollmentInfo,
     },
   ];
@@ -47,15 +46,15 @@ export async function getEnrollmentByClassId(
   const enrollmentInfo = classHistory
     .map((r) => {
       return {
-        date: r.createdAt!,
+        date: r.createdAt,
         enrolledCount: r.diff?.aggregateEnrollmentStatus
           ?.enrolledCount[1] as number,
       };
     })
-    .filter((r) => r?.enrolledCount !== undefined);
+    .filter((r) => r?.enrolledCount);
 
   return {
-    classId: sisClass?.course?.catalogNumber?.number!,
+    classId: sisClass?.course?.catalogNumber?.number as string,
     enrollmentInfo,
   };
 }

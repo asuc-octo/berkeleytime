@@ -9,20 +9,25 @@
  * @param obj The schema object that you want to convert to a diff object
  * @returns the schema object with the innermost keys converted to a list of the same type
  */
-export function schemaToDiff<T>(obj: T): NestedObjectToList<T> {
-  const obj1 = obj as any;
-  return Object.keys(obj1).reduce((acc, key) => {
-    if (typeof obj1[key] === "object") {
+export function schemaToDiff<T extends KeyValueMap>(
+  obj: T
+): NestedObjectToList<T> {
+  return Object.keys(obj).reduce((acc, key) => {
+    if (typeof obj[key] === "object") {
       return {
         ...acc,
-        [key]: schemaToDiff(obj1[key]),
+        [key]: schemaToDiff(obj[key]),
       };
     }
     return {
       ...acc,
-      [key]: [obj1[key]],
+      [key]: [obj[key]],
     };
   }, {} as NestedObjectToList<T>);
+}
+
+interface KeyValueMap {
+  [key: string]: any;
 }
 
 type NestedObjectToList<T> = {

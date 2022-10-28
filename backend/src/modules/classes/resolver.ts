@@ -4,7 +4,7 @@ import { ClassesModule } from "./generated-types/module-types";
 const resolvers: ClassesModule.Resolvers = {
   Query: {
     Enrollment: getEnrollment,
-    EnrollmentById(parent, args: { classId: string }, context, info) {
+    EnrollmentById(_parent, args: { classId: string }) {
       return getEnrollmentByClassId(args.classId);
     },
   },
