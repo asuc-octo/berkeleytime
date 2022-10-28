@@ -20,6 +20,7 @@ import BTLoader from 'components/Common/BTLoader';
 import { CourseReference, courseToName } from 'utils/courses/course';
 import { fetchEnrollContext } from '../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button } from 'react-bootstrap';
 
 type Props = {
   course: CourseReference;
@@ -58,6 +59,7 @@ const ClassDescription = ({
   // End hack
 
   const [readMore, setReadMore] = useState<boolean | null>(false);
+  const [tabs, setTabs] = useState<number | null>(0);
 
   const { data, loading, error } = useGetCourseForNameQuery({
     variables: {
@@ -202,19 +204,17 @@ https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
     }
     moreInfo = (
     <div className='toCatalog'>
-      <p className='prereqs'>For more details, please checkout the 
+      <p className='prereqs'>For more details, please checkout the
         <a 
           href={stre} target="_blank"
           rel="noreferrer"
-          className="statlink">
-          &nbsp;Berkeley Academic Guide&nbsp;
-          <img src={launch} alt=''/>
+          >&nbsp;Berkeley Academic Guide&nbsp;<img src={launch} alt=''/>
         </a>
       </p>
-      {morePrereq != null && (
-                <span onClick={() => setReadMore(morePrereq)}>
+      {readMore == true && (
+                <span onClick={() => setReadMore(!readMore)}>
                   {' '}
-                  {morePrereq ? ' See more' : ' See less'}
+                  {' See less'}
                 </span>
               )}
     </div>)
@@ -223,6 +223,7 @@ https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
     let descRows = Math.round(course.description.length / charsPerRow);
     if (descRows > 3 || (descRows === 3 && course.prerequisites)) {
       description = description.slice(0, 3 * charsPerRow - moreOffset) + '...';
+      moreInfo = <></>
       moreDesc = true;
     }
     if (descRows < 3 && course.prerequisites) {
@@ -236,6 +237,17 @@ https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
       }
     }
     moreInfo = <></>
+    if (!moreDesc) {
+      moreInfo = (<div className='toCatalog'>
+          <p className='prereqs'>For more details, please checkout the
+            <a 
+              href={stre} target="_blank"
+              rel="noreferrer"
+              >&nbsp;Berkeley Academic Guide<img className="statlink" src={launch} alt=''/>
+            </a>
+          </p>
+        </div>)
+    }
   }
 
   
@@ -250,7 +262,7 @@ https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
           </h3>
           <div className="title">
             <h6>
-              {course.title}
+              {course.title}&nbsp;
             </h6>
             <a
               href={stre}
@@ -341,9 +353,9 @@ https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
             <p className="description">
               {description}
               {moreDesc != null && (
-                <span onClick={() => setReadMore(moreDesc)}>
+                <span onClick={() => setReadMore(!readMore)}>
                   {' '}
-                  {moreDesc ? ' See more' : ' See less'}
+                  {moreDesc ? ' See more' : ''}
                 </span>
               )}
             </p>
@@ -369,7 +381,10 @@ https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
                 This class has no sections for the selected semester.
               </div>
             ) : (
-              <SectionTable sections={sections} />
+              <>
+                
+                <SectionTable sections={sections} />
+              </>
             )}
           </div>
         </section>

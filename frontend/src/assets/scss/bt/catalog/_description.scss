@@ -186,6 +186,7 @@
     }
 
     .prereqs {
+
       h6 {
         margin-bottom: 10px;
         color: $bt-grey-text;
@@ -203,11 +204,10 @@
 
       .statlink {
         opacity: 0.8;
-        border-radius: 2px;
+        border-radius: 1px;
         transition: 0.2s;
         padding: 0px 4px;
         line-height: 0;
-        padding-top: 4px;
 
         &:hover {
           cursor: pointer;
@@ -217,6 +217,7 @@
 
         img {
           height: 16px;
+          padding-bottom: 1px;
         }
       }
     }
