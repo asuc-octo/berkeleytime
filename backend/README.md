@@ -4,7 +4,7 @@ New playground for the node/graphql rewrite
 
 ## Before you start
 
-- Duplicate the `.env.example` file and rename it `.env`
+- Duplicate the `env.example` file and rename it `.env`
 - Run `npm install`
 
 ## Development
