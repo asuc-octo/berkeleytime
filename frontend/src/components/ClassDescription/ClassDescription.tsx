@@ -59,7 +59,6 @@ const ClassDescription = ({
   // End hack
 
   const [readMore, setReadMore] = useState<boolean | null>(false);
-  const [tabs, setTabs] = useState<number | null>(0);
 
   const { data, loading, error } = useGetCourseForNameQuery({
     variables: {
@@ -92,19 +91,6 @@ const ClassDescription = ({
     ["Laboratory", "LAB"]
   ]);
  
-/* Conversation
- Voluntary
- Simulcast
- Reading
- Supplementary
- Workshop
- 
- S,SEASN C220
-Seminar in Buddhism and Buddhist Texts???
-
-https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
- */
-
   if (!data) {
     return (
       <div className="catalog-description-container">
@@ -134,7 +120,7 @@ https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
   }
 
   const playlists = course.playlistSet.edges.map((e) => e?.node!);
-  
+
   let sections = course.sectionSet.edges.map((e) => e?.node!);
   sections = sortSections(sections);
   var stre = "";
@@ -223,7 +209,7 @@ https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
     let descRows = Math.round(course.description.length / charsPerRow);
     if (descRows > 3 || (descRows === 3 && course.prerequisites)) {
       description = description.slice(0, 3 * charsPerRow - moreOffset) + '...';
-      moreInfo = <></>
+      moreInfo = <></>;
       moreDesc = true;
     }
     if (descRows < 3 && course.prerequisites) {
@@ -236,7 +222,7 @@ https://classes.berkeley.edu/content/2016-fall-xrhetor-2-002-lec-002?????
         morePrereq = true;
       }
     }
-    moreInfo = <></>
+    moreInfo = <></>;
     if (!moreDesc) {
       moreInfo = (<div className='toCatalog'>
           <p className='prereqs'>For more details, please checkout the
