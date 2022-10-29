@@ -2,7 +2,7 @@ import { GradeModel } from "./model";
 import { GradeModule } from "./generated-types/module-types";
 // import { formatGrade } from "./formatter";
 
-export async function grades() {
+export async function grades(): Promise<GradeModule.Grade[]> {
   const grades = await GradeModel.find({CourseControlNbr: 26384, "term.year": 2021, "term.semester": "Fall"});
 
   // total enrolled DOES NOT include students who withdrew/incomplete
@@ -123,5 +123,5 @@ export async function grades() {
     }
   })
 
-  return gradesResponse;
+  return [gradesResponse];
 }
