@@ -70,27 +70,27 @@ const ClassDescription = ({
   });
 
   var dict = new Map([
-    ["Field Work", "FLD"],
-    ["Session", "SES"],
-    ["Colloquium", "COL"],
-    ["Recitation", "REC"],
-    ["Internship", "INT"],
-    ["Studio", "STD"],
-    ["Demonstration", "dem"],
-    ["Web-based Discussion", "WBD"],
-    ["Discussion", "DIS"],
-    ["Tutorial", "TUT"],
-    ["Clinic", "CLN"],
-    ["Independent Study", "IND"],
-    ["Self-paced", "SLF"],
-    ["Seminar", "SEM"],
-    ["Lecture", "LEC"],
-    ["Web-based Lecture", "WBL"],
-    ["Web-Based Lecture", "WBL"],
-    ["Directed Group Study", "GRP"],
-    ["Laboratory", "LAB"]
+    ['Field Work', 'FLD'],
+    ['Session', 'SES'],
+    ['Colloquium', 'COL'],
+    ['Recitation', 'REC'],
+    ['Internship', 'INT'],
+    ['Studio', 'STD'],
+    ['Demonstration', 'dem'],
+    ['Web-based Discussion', 'WBD'],
+    ['Discussion', 'DIS'],
+    ['Tutorial', 'TUT'],
+    ['Clinic', 'CLN'],
+    ['Independent Study', 'IND'],
+    ['Self-paced', 'SLF'],
+    ['Seminar', 'SEM'],
+    ['Lecture', 'LEC'],
+    ['Web-based Lecture', 'WBL'],
+    ['Web-Based Lecture', 'WBL'],
+    ['Directed Group Study', 'GRP'],
+    ['Laboratory', 'LAB'],
   ]);
- 
+
   if (!data) {
     return (
       <div className="catalog-description-container">
@@ -123,12 +123,18 @@ const ClassDescription = ({
 
   let sections = course.sectionSet.edges.map((e) => e?.node!);
   sections = sortSections(sections);
-  var stre = "";
-  if (semester != null) { 
+  var stre = '';
+  if (semester != null) {
     var punctuation = ',';
     var regex = new RegExp('[' + punctuation + ']', 'g');
     var rmc = courseRef.abbreviation.replace(regex, '');
-    stre = "https://classes.berkeley.edu/content/"+semester.year+"-"+semester.semester+"-"+rmc+"-"+courseRef.courseNumber+"-"+sections[0].sectionNumber+"-"+dict.get(sections[0].kind)+"-"+sections[0].sectionNumber;
+    stre = `https://classes.berkeley.edu/content/${semester.year}
+    -${semester.semester}
+    -${rmc}
+    -${courseRef.courseNumber}
+    -${sections[0].sectionNumber}
+    -${dict.get(sections[0].kind)}
+    -${sections[0].sectionNumber}`;
     stre = stre.replace(/\s+/g, '');
   }
 
@@ -163,8 +169,8 @@ const ClassDescription = ({
     // }
     // Fall 2021 override from brutger@berkeley.edu
     if (courseToName(course) === 'POL SCI 126A') {
-        prereqs =
-          'No prerequisites. This field was modified as requested by the instructor.';
+      prereqs =
+        'No prerequisites. This field was modified as requested by the instructor.';
     }
     return prereqs;
   };
@@ -189,21 +195,19 @@ const ClassDescription = ({
       moreDesc = false;
     }
     moreInfo = (
-    <div className='toCatalog'>
-      <p className='prereqs'>For more details, please checkout the
-        <a 
-          href={stre} target="_blank"
-          rel="noreferrer"
-          >&nbsp;Berkeley Academic Guide&nbsp;<img src={launch} alt=''/>
-        </a>
-      </p>
-      {readMore == true && (
-                <span onClick={() => setReadMore(!readMore)}>
-                  {' '}
-                  {' See less'}
-                </span>
-              )}
-    </div>)
+      <div className="toCatalog">
+        <p className="prereqs">
+          For more details, please checkout the
+          <a href={stre} target="_blank" rel="noreferrer">
+            &nbsp;Berkeley Academic Guide&nbsp;
+            <img src={launch} alt="" />
+          </a>
+        </p>
+        {readMore == true && (
+          <span onClick={() => setReadMore(!readMore)}> {' See less'}</span>
+        )}
+      </div>
+    );
   } else {
     // collapse
     let descRows = Math.round(course.description.length / charsPerRow);
@@ -224,19 +228,19 @@ const ClassDescription = ({
     }
     moreInfo = <></>;
     if (!moreDesc) {
-      moreInfo = (<div className='toCatalog'>
-          <p className='prereqs'>For more details, please checkout the
-            <a 
-              href={stre} target="_blank"
-              rel="noreferrer"
-              >&nbsp;Berkeley Academic Guide<img className="statlink" src={launch} alt=''/>
+      moreInfo = (
+        <div className="toCatalog">
+          <p className="prereqs">
+            For more details, please checkout the
+            <a href={stre} target="_blank" rel="noreferrer">
+              &nbsp;Berkeley Academic Guide
+              <img className="statlink" src={launch} alt="" />
             </a>
           </p>
-        </div>)
+        </div>
+      );
     }
   }
-
-  
 
   // Render the contents of the catalog
   return (
@@ -247,9 +251,7 @@ const ClassDescription = ({
             {course.abbreviation} {course.courseNumber}
           </h3>
           <div className="title">
-            <h6>
-              {course.title}&nbsp;
-            </h6>
+            <h6>{course.title}&nbsp;</h6>
             <a
               href={stre}
               target="_blank"
@@ -350,10 +352,7 @@ const ClassDescription = ({
         {prereqs.length > 0 && (
           <section className="prereqs">
             <h6>Prerequisites</h6>
-            <p>
-              {prereqs}
-              
-            </p>
+            <p>{prereqs}</p>
           </section>
         )}
         {moreInfo}
@@ -368,7 +367,6 @@ const ClassDescription = ({
               </div>
             ) : (
               <>
-                
                 <SectionTable sections={sections} />
               </>
             )}
