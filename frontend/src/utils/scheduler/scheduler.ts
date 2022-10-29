@@ -24,10 +24,7 @@ import {
   addWeeks,
   isBefore,
   min,
-  nextDay,
   setDay,
-  subDays,
-  subWeeks,
 } from 'date-fns';
 
 // Update the version when the scheduler schema changes.
@@ -208,8 +205,8 @@ export const serializeSchedule = (
  * Generates iCal file string.
  */
 export function scheduleToICal(schedule: Schedule, semester: Semester): string {
-  const SEMESTER_START = new Date(2022, 7, 24);
-  const LAST_COURSE_DAY = new Date(2022, 11, 2);
+  const SEMESTER_START = new Date(2023, 0, 17);
+  const LAST_COURSE_DAY = new Date(2023, 4, 6);
 
   const dateToICal = (date: Date) =>
     date.toISOString().replace(/[-:Z]|\.\d+/g, '');
