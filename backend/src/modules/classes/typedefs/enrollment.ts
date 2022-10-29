@@ -1,5 +1,6 @@
 import { gql } from "graphql-tag";
 
+// TODO: section id link
 const typedef = gql`
   type Enrollment {
     classId: String!
@@ -8,12 +9,14 @@ const typedef = gql`
 
   type EnrollmentInfo {
     enrolledCount: Int
+    enrolledMax: Int
+    waitlistedCount: Int
+    waitlistedMax: Int
     date: String
   }
 
   type Query {
-    Enrollment: [Enrollment]
-    EnrollmentById(classId: String!): Enrollment
+    Enrollment(classId: String!): Enrollment
   }
 `;
 
