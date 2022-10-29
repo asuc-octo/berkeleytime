@@ -9,6 +9,7 @@
   "dependencies": {
     "ansi_up": "^4.0.4",
     "axios": "^0.18.1",
+    "discord.js": "^14.6.0",
     "express": "^4.15.2",
     "nodemailer": "^6.4.16"
   },

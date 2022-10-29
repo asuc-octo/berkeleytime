@@ -26,7 +26,7 @@ function ClassCardMobile(props) {
           {nullCheck(courseLetter) ?
             <div className="bt-h6">
               <span className={getGradeColor(courseLetter)}>{courseLetter}</span>
-              (GPA: {courseGPA})
+              {' '}(GPA: {courseGPA})
             </div>
           :
           "--"}
@@ -36,7 +36,7 @@ function ClassCardMobile(props) {
           {nullCheck(sectionLetter) ?
             <div className="bt-h6">
               <span className={getGradeColor(sectionLetter)}>{sectionLetter}</span>
-              (GPA: {sectionGPA})
+              {' '}(GPA: {sectionGPA})
             </div>
             :
             "--"}
