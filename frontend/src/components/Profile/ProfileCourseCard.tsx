@@ -1,14 +1,12 @@
 import React from 'react';
 import {
   formatUnits,
-  formatPercentage,
   applyIndicatorPercent,
   applyIndicatorGrade,
 } from '../../utils/utils';
 import { CourseOverviewFragment } from '../../graphql/graphql';
 import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { Link } from 'react-router-dom';
-import TrashButton from 'components/Common/TrashButton';
 import ProfileCard from './ProfileCard';
 
 type Props = {

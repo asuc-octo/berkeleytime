@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import Property from './Property';
 import ProfileCourseCard from './ProfileCourseCard';
-import EditPencil from '../../assets/svg/profile/edit.svg';
 import {
   CourseOverviewFragment,
   ScheduleOverviewFragment,
@@ -11,7 +10,6 @@ import {
 
 import MAJORS from './majors.json';
 import { useUpdateUser } from '../../graphql/hooks/user';
-import { useUnsaveCourse } from '../../graphql/hooks/saveCourse';
 import { compareDepartmentName } from 'utils/courses/sorting';
 import { Button } from 'react-bootstrap';
 import Subview from './Subview';
