@@ -124,7 +124,7 @@ const ClassDescription = ({
   let sections = course.sectionSet.edges.map((e) => e?.node!);
   sections = sortSections(sections);
   var stre = '';
-  if (semester != null) {
+  if (semester != null && sections.length > 0) {
     var punctuation = ',';
     var regex = new RegExp('[' + punctuation + ']', 'g');
     var rmc = courseRef.abbreviation.replace(regex, '');
@@ -139,9 +139,7 @@ const ClassDescription = ({
   }
 
   const latestSemester = getLatestSemester(playlists);
-  const semesterUrl =
-    latestSemester && `${latestSemester.semester}-${latestSemester.year}`;
-
+  const semesterUrl = latestSemester && `${latestSemester.semester}-${latestSemester.year}`;
   const pills = stableSortPlaylists(playlists, 4);
 
   const toGrades = {
@@ -196,13 +194,17 @@ const ClassDescription = ({
     }
     moreInfo = (
       <div className="toCatalog">
-        <p className="prereqs">
-          For more details, please checkout the
-          <a href={stre} target="_blank" rel="noreferrer">
-            &nbsp;Berkeley Academic Guide&nbsp;
-            <img src={launch} alt="" />
-          </a>
-        </p>
+        {stre.length > 0 ? (
+          <p className="prereqs">
+            For more details, please checkout the
+            <a href={stre} target="_blank" rel="noreferrer">
+              &nbsp;Berkeley Academic Guide&nbsp;
+              <img src={launch} alt="" />
+            </a>
+          </p>
+        ) : (
+          <></>
+        )}
         {readMore == true && (
           <span onClick={() => setReadMore(!readMore)}> {' See less'}</span>
         )}
@@ -230,13 +232,17 @@ const ClassDescription = ({
     if (!moreDesc) {
       moreInfo = (
         <div className="toCatalog">
-          <p className="prereqs">
-            For more details, please checkout the
-            <a href={stre} target="_blank" rel="noreferrer">
-              &nbsp;Berkeley Academic Guide
-              <img className="statlink" src={launch} alt="" />
-            </a>
-          </p>
+          {stre.length > 0 ? (
+            <p className="prereqs">
+              For more details, please checkout the
+              <a href={stre} target="_blank" rel="noreferrer">
+                &nbsp;Berkeley Academic Guide
+                <img className="statlink" src={launch} alt="" />
+              </a>
+            </p>
+          ) : (
+            <></>
+          )}
         </div>
       );
     }
@@ -252,14 +258,18 @@ const ClassDescription = ({
           </h3>
           <div className="title">
             <h6>{course.title}&nbsp;</h6>
-            <a
-              href={stre}
-              target="_blank"
-              rel="noreferrer"
-              className="statlink"
-            >
-              <img src={link} alt="" />
-            </a>
+            {stre.length > 0 ? (
+              <a
+                href={stre}
+                target="_blank"
+                rel="noreferrer"
+                className="statlink"
+              >
+                <img src={link} alt="" />
+              </a>
+            ) : (
+              <></>
+            )}
           </div>
           <div className="stats">
             <div className="statline">
