@@ -24,6 +24,9 @@ export type EnrollmentInfo = {
   __typename?: 'EnrollmentInfo';
   date?: Maybe<Scalars['String']>;
   enrolledCount?: Maybe<Scalars['Int']>;
+  enrolledMax?: Maybe<Scalars['Int']>;
+  waitlistedCount?: Maybe<Scalars['Int']>;
+  waitlistedMax?: Maybe<Scalars['Int']>;
 };
 
 export type Grade = {
@@ -33,14 +36,13 @@ export type Grade = {
 
 export type Query = {
   __typename?: 'Query';
-  Enrollment?: Maybe<Array<Maybe<Enrollment>>>;
-  EnrollmentById?: Maybe<Enrollment>;
+  Enrollment?: Maybe<Enrollment>;
   grades?: Maybe<Array<Maybe<Grade>>>;
   users?: Maybe<Array<Maybe<User>>>;
 };
 
 
-export type QueryEnrollmentByIdArgs = {
+export type QueryEnrollmentArgs = {
   classId: Scalars['String'];
 };
 
@@ -151,6 +153,9 @@ export type EnrollmentResolvers<ContextType = any, ParentType extends ResolversP
 export type EnrollmentInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['EnrollmentInfo'] = ResolversParentTypes['EnrollmentInfo']> = {
   date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   enrolledCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  enrolledMax?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  waitlistedCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  waitlistedMax?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -160,8 +165,7 @@ export type GradeResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  Enrollment?: Resolver<Maybe<Array<Maybe<ResolversTypes['Enrollment']>>>, ParentType, ContextType>;
-  EnrollmentById?: Resolver<Maybe<ResolversTypes['Enrollment']>, ParentType, ContextType, RequireFields<QueryEnrollmentByIdArgs, 'classId'>>;
+  Enrollment?: Resolver<Maybe<ResolversTypes['Enrollment']>, ParentType, ContextType, RequireFields<QueryEnrollmentArgs, 'classId'>>;
   grades?: Resolver<Maybe<Array<Maybe<ResolversTypes['Grade']>>>, ParentType, ContextType>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 };

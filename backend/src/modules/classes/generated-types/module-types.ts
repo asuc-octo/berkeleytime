@@ -3,8 +3,8 @@ import * as gm from "graphql-modules";
 export namespace ClassesModule {
   interface DefinedFields {
     Enrollment: 'classId' | 'enrollmentInfo';
-    EnrollmentInfo: 'enrolledCount' | 'date';
-    Query: 'Enrollment' | 'EnrollmentById';
+    EnrollmentInfo: 'enrolledCount' | 'enrolledMax' | 'waitlistedCount' | 'waitlistedMax' | 'date';
+    Query: 'Enrollment';
   };
   
   export type Enrollment = Pick<Types.Enrollment, DefinedFields['Enrollment']>;
@@ -33,12 +33,14 @@ export namespace ClassesModule {
     EnrollmentInfo?: {
       '*'?: gm.Middleware[];
       enrolledCount?: gm.Middleware[];
+      enrolledMax?: gm.Middleware[];
+      waitlistedCount?: gm.Middleware[];
+      waitlistedMax?: gm.Middleware[];
       date?: gm.Middleware[];
     };
     Query?: {
       '*'?: gm.Middleware[];
       Enrollment?: gm.Middleware[];
-      EnrollmentById?: gm.Middleware[];
     };
   };
 }
