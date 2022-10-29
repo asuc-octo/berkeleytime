@@ -40,7 +40,7 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
 
   const [
     getScheduleForId,
-    { loading: isLoadingSchedule, error: scheduleLoadError },
+    { error: scheduleLoadError },
   ] = useGetScheduleForIdLazyQuery({
     onCompleted: (data) => {
       if (!data.schedule) {
@@ -48,9 +48,12 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
         return;
       }
 
-      const schedule = deserializeSchedule(data.schedule);
-      setRawSchedule(schedule);
-      setSemester(data.schedule);
+      // Only update the schedule state if a save mutation is not ongoing.
+      if (currentlyPendingUpdate.current === null) {
+        const schedule = deserializeSchedule(data.schedule);
+        setRawSchedule(schedule);
+        setSemester(data.schedule);
+      }
     },
   });
 

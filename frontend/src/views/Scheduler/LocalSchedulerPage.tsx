@@ -1,14 +1,12 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-import { CourseOverviewFragment } from '../../graphql/graphql';
 import BTLoader from 'components/Common/BTLoader';
 import {
   DEFAULT_SCHEDULE,
   Schedule,
   SCHEDULER_LOCALSTORAGE_KEY,
 } from 'utils/scheduler/scheduler';
-import { Semester } from 'utils/playlists/semesters';
 import { useUser } from 'graphql/hooks/user';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
 import { useLocalStorageState } from 'utils/hooks';
@@ -16,6 +14,8 @@ import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
 import { useHistory } from 'react-router';
 import { useSemester } from 'graphql/hooks/semester';
 import Callout from '../../components/Scheduler/Callout';
+import { ReduxState } from 'redux/store';
+import { useSelector } from "react-redux";
 
 const LocalScheduler = () => {
   const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -49,6 +49,18 @@ const LocalScheduler = () => {
       }
     },
   });
+
+  const isMobile = useSelector((state: ReduxState) => state.common.mobile);
+
+  if (isMobile) {
+    return (
+      <div className="scheduler viewport-app">
+        <div className="onboard">
+          <p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!semester) {
     return (
