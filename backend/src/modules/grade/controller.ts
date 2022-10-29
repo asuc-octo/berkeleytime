@@ -2,12 +2,12 @@ import { GradeModel } from "./model";
 import { GradeModule } from "./generated-types/module-types";
 // import { formatGrade } from "./formatter";
 
-export async function grades(): Promise<GradeModule.Grade[]> {
+export async function grades(): Promise<GradeModule.Grade> {
   const grades = await GradeModel.find({CourseControlNbr: 26384, "term.year": 2021, "term.semester": "Fall"});
 
   // total enrolled DOES NOT include students who withdrew/incomplete
   let totalEnrolled = 0;
-  let possible_grades: { [key: string]: number } = {};
+  const possible_grades: { [key: string]: number } = {};
 
   grades.map((grade)=> {
     if (grade.EnrollmentCnt && grade.GradeNm) {
@@ -18,7 +18,7 @@ export async function grades(): Promise<GradeModule.Grade[]> {
     }
   })
 
-  let gradesResponse : GradeModule.Grade = {
+  const gradesResponse : GradeModule.Grade = {
     APlus: {
       percent: 0,
       numerator: 0,
@@ -112,16 +112,16 @@ export async function grades(): Promise<GradeModule.Grade[]> {
     }
 
     if (newGrade in possible_grades) {
-      let percentage = Math.round((possible_grades[newGrade] / totalEnrolled) * 100) / 100;
+      const percentage = Math.round((possible_grades[newGrade] / totalEnrolled) * 100) / 100;
       gradesResponse[grade as keyof GradeModule.Grade].percent = percentage;
       gradesResponse[grade as keyof GradeModule.Grade].numerator = possible_grades[newGrade];
       gradesResponse[grade as keyof GradeModule.Grade].percentile_high = starting_percentile;
 
-      let percentile_low = Math.round((starting_percentile - percentage) * 100) / 100;
+      const percentile_low = Math.round((starting_percentile - percentage) * 100) / 100;
       gradesResponse[grade as keyof GradeModule.Grade].percentile_low = percentile_low;
       starting_percentile = percentile_low;
     }
   })
 
-  return [gradesResponse];
+  return gradesResponse;
 }

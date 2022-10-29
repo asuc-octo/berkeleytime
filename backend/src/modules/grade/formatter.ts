@@ -1,5 +1,5 @@
-import { GradeModule } from "./generated-types/module-types";
-import { GradeType } from "./model";
+//import { GradeModule } from "./generated-types/module-types";
+//import { GradeType } from "./model";
 
 //export function formatGrade(grade: GradeType): GradeModule.Grade {
 //    return {
