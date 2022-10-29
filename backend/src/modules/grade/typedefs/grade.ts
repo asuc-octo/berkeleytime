@@ -25,7 +25,7 @@ const typedef = gql`
   }
 
   type Query {
-    grades: Grade
+    grades(CourseControlNumber: Int!, Year: Int!, Semester: String!): Grade
   }
 `;
 
