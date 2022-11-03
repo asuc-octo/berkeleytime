@@ -2,7 +2,7 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace UserModule {
   interface DefinedFields {
-    User: 'id' | 'google_id' | 'email';
+    User: 'name' | 'google_id' | 'email' | 'majors' | 'classes_saved' | 'schedules';
     Query: 'User';
   };
   
@@ -23,9 +23,12 @@ export namespace UserModule {
     };
     User?: {
       '*'?: gm.Middleware[];
-      id?: gm.Middleware[];
+      name?: gm.Middleware[];
       google_id?: gm.Middleware[];
       email?: gm.Middleware[];
+      majors?: gm.Middleware[];
+      classes_saved?: gm.Middleware[];
+      schedules?: gm.Middleware[];
     };
     Query?: {
       '*'?: gm.Middleware[];

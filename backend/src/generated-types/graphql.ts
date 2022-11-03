@@ -26,9 +26,12 @@ export type QueryUserArgs = {
 
 export type User = {
   __typename?: 'User';
+  classes_saved?: Maybe<Array<Maybe<Scalars['String']>>>;
   email: Scalars['String'];
   google_id: Scalars['String'];
-  id: Scalars['String'];
+  majors?: Maybe<Array<Maybe<Scalars['String']>>>;
+  name: Scalars['String'];
+  schedules?: Maybe<Array<Maybe<Scalars['String']>>>;
 };
 
 
@@ -119,9 +122,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  classes_saved?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   google_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  majors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  schedules?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
