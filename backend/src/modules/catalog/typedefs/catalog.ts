@@ -56,13 +56,13 @@ type Instructor {
 }
 
 type Query {
-    catalog: [CatalogItem]
+    catalog(courseId: String): [CatalogItem]
 }
 
 type CatalogItem {
-    courseId: String!
-    displayName: String!
-    courseTitle: String!
+    courseId: String
+    displayName: String
+    courseTitle: String
     classTitle: String
     letterAverage: String!
     enrolled: Float!

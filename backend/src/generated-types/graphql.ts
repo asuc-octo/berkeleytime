@@ -4,6 +4,7 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -16,9 +17,9 @@ export type Scalars = {
 export type CatalogItem = {
   __typename?: 'CatalogItem';
   classTitle?: Maybe<Scalars['String']>;
-  courseId: Scalars['String'];
-  courseTitle: Scalars['String'];
-  displayName: Scalars['String'];
+  courseId?: Maybe<Scalars['String']>;
+  courseTitle?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
   enrolled: Scalars['Float'];
   letterAverage: Scalars['String'];
   units: Scalars['String'];
@@ -66,6 +67,11 @@ export type Query = {
   catalog?: Maybe<Array<Maybe<CatalogItem>>>;
   grades?: Maybe<Array<Maybe<Grade>>>;
   users?: Maybe<Array<Maybe<User>>>;
+};
+
+
+export type QueryCatalogArgs = {
+  courseID: Scalars['String'];
 };
 
 export type Section = {
@@ -206,9 +212,9 @@ export type ResolversParentTypes = {
 
 export type CatalogItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogItem'] = ResolversParentTypes['CatalogItem']> = {
   classTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  courseId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  courseTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  courseId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  courseTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   enrolled?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   letterAverage?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   units?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -253,7 +259,7 @@ export type InstructorResolvers<ContextType = any, ParentType extends ResolversP
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType>;
+  catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'courseID'>>;
   grades?: Resolver<Maybe<Array<Maybe<ResolversTypes['Grade']>>>, ParentType, ContextType>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 };

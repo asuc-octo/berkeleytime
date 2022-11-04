@@ -7,7 +7,8 @@ export const Identifier = {
 
 export const CourseSchema = new Schema({
   _id: {
-    $oid: Types.ObjectId
+    type: Types.ObjectId,
+    required: true
   },
   identifiers: [Identifier],
   _created: {
@@ -46,7 +47,10 @@ export const CourseSchema = new Schema({
     code: String,
     description: String
   },
-  classDisplayName: String,
+  classDisplayName: {
+    type: String,
+    required: true
+  },
   classSubjectArea: {
     code: String,
     description: String
@@ -163,12 +167,15 @@ export const CourseSchema = new Schema({
     code: String,
     description: String,
   },
-  title: String,
+  title: {
+    type: String,
+    required: true
+  },
   toDate: Date,
   transcriptTitle: String,
   updatedDate: Date,
   workloadHours: Number,
 })
 
-export const CourseModel = mongoose.model("course", CourseSchema, "course");
+export const CourseModel = mongoose.model("sis_course", CourseSchema, "sis_course");
 export type CourseType = InferSchemaType<typeof CourseSchema>;
