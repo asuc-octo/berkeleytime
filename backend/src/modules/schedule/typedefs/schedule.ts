@@ -2,7 +2,8 @@ import { gql } from "apollo-server-express";
 
 const typedef = gql`
   type Schedule {
-    created_by: User!
+    name: String
+    created_by: String!
     date_created: String!
     last_updated: String!
     term: String!

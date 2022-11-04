@@ -1,4 +1,5 @@
 export const Schedule = {
+    name: "test-name",
     created_by: "test-user",
     date_created: "test-created",
     last_updated: "test-updated",
@@ -15,5 +16,5 @@ export const CustomEvent = {
     title: "test-title",
     location: "test-location",
     description: "test-description",
-    days_of_week: ["test-days-of-week"], // ex: MWF
+    days_of_week: ["test-days-of-week"],
 }

@@ -2,7 +2,7 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace ScheduleModule {
   interface DefinedFields {
-    Schedule: 'created_by' | 'date_created' | 'last_updated' | 'term' | 'public' | 'class_IDs' | 'section_IDs' | 'custom_events';
+    Schedule: 'name' | 'created_by' | 'date_created' | 'last_updated' | 'term' | 'public' | 'class_IDs' | 'section_IDs' | 'custom_events';
     CustomEvent: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
     Query: 'schedules';
   };
@@ -28,6 +28,7 @@ export namespace ScheduleModule {
     };
     Schedule?: {
       '*'?: gm.Middleware[];
+      name?: gm.Middleware[];
       created_by?: gm.Middleware[];
       date_created?: gm.Middleware[];
       last_updated?: gm.Middleware[];
