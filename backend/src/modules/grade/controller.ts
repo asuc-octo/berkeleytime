@@ -1,29 +1,37 @@
 import { GradeModel } from "./model";
 import { GradeModule } from "./generated-types/module-types";
-// import { formatGrade } from "./formatter";
 
 export async function grades(CourseControlNumber: number, Year: number, Semester: string): Promise<GradeModule.Grade> {
   // DATA C100: 26384 2021 "Fall"
   let grades;
-  if (Year === -1 && Semester === "") {
-    grades = await GradeModel.find({CourseControlNbr: CourseControlNumber});
-  } else if (Year >= 1868 && ["Fall", "Spring", "Summer"].includes(Semester)) {
+  if (Year >= 1868 && ["Fall", "Spring", "Summer"].includes(Semester)) {
     grades = await GradeModel.find({CourseControlNbr: CourseControlNumber, "term.year": Year, "term.semester": Semester});
   } else {
     throw new Error("Invalid query parameters");
   }
 
-  // total enrolled DOES NOT include students who withdrew/incomplete
+  // Create a dictionary of grades from mongo data
   let totalEnrolled = 0;
+  let letterGradeCount = 0;
   const possible_grades: { [key: string]: number } = {};
+  const letterGrades = new Set(["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"]);
+  const PNP = new Set(["Pass", "Not Pass"]);
 
   grades.map((grade)=> {
     if (grade.EnrollmentCnt && grade.GradeNm) {
-      if (grade.GradeNm !== "Withdrawn" && grade.GradeNm !== "Incomplete") {
-        if (grade.GradeNm in possible_grades) {
-          possible_grades[grade.GradeNm] += grade.EnrollmentCnt;
+      let gradeNm = grade.GradeNm;
+      if (grade.GradeNm == "D-" || grade.GradeNm == "D+") {
+        gradeNm = "D";
+      }
+
+      if (letterGrades.has(gradeNm) || PNP.has(gradeNm)) {
+        if (gradeNm in possible_grades) {
+          possible_grades[gradeNm] += grade.EnrollmentCnt;
         } else {
-          possible_grades[grade.GradeNm] = grade.EnrollmentCnt;
+          possible_grades[gradeNm] = grade.EnrollmentCnt;
+        }
+        if (letterGrades.has(gradeNm)) {
+          letterGradeCount += grade.EnrollmentCnt;
         }
         totalEnrolled += grade.EnrollmentCnt;
       }
@@ -53,27 +61,35 @@ export async function grades(CourseControlNumber: number, Year: number, Semester
     NP: LetterGradeZero
   }
 
-  let starting_percentile = 1;
   // map over response object and add percent, numerator, percentile_high, percentile_low
-  Object.keys(gradesResponse).map((grade)=> {
-    let newGrade = grade.toString().replace("Plus", "+").replace("Minus", "-")
-    if (grade === "P") {
-      newGrade = "Pass";
+  let starting_percentile = 1;
+  Object.keys(possible_grades).map((grade) => {
+    let keyInGradeResponse = grade.replace("+", "Plus").replace("-", "Minus");
+    if (grade === "Pass") {
+      keyInGradeResponse = "P";
     }
-    if (grade === "NP") {
-      newGrade = "Not Pass"
+    if (grade === "Not Pass") {
+      keyInGradeResponse = "NP";
     }
 
-    if (newGrade in possible_grades) {
-      const percentage = Math.round((possible_grades[newGrade] / totalEnrolled) * 100) / 100;
-      const percentile_low = Math.round((starting_percentile - percentage) * 100) / 100;
-      gradesResponse[grade as keyof GradeModule.Grade] = {
+    const percentage = Math.round((possible_grades[grade] / totalEnrolled) * 100) / 100;
+    if (letterGrades.has(grade)) {
+      const percentile = Math.round((possible_grades[grade] / letterGradeCount) * 100) / 100;
+      const percentile_low = Math.round((starting_percentile - percentile) * 100) / 100;
+      gradesResponse[keyInGradeResponse as keyof GradeModule.Grade] = {
         percent: percentage,
-        numerator: possible_grades[newGrade],
+        numerator: possible_grades[grade],
         percentile_high: starting_percentile,
-        percentile_low: percentile_low
+        percentile_low: percentile_low < 0 ? 0 : percentile_low
       }
       starting_percentile = percentile_low;
+    } else {
+      gradesResponse[keyInGradeResponse as keyof GradeModule.Grade] = {
+        percent: percentage,
+        numerator: possible_grades[grade],
+        percentile_high: 0,
+        percentile_low: 0
+      }
     }
   })
 
