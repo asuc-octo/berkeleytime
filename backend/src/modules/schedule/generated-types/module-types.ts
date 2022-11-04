@@ -8,7 +8,6 @@ export namespace ScheduleModule {
   };
   
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;
-  export type User = Types.User;
   export type CustomEvent = Pick<Types.CustomEvent, DefinedFields['CustomEvent']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   
