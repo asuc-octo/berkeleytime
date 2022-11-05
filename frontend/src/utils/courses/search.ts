@@ -17,7 +17,7 @@ export function searchCourses(
         course,
         combineQueries([
           searchCourse(query, getFullCourseCode(course), 1),
-          search(query, `${course.title}`.toLowerCase(), 0.3, 0.05),
+          search(query, `${course.title}`.toLowerCase(), 2, 0.05),
         ]),
       ];
     })

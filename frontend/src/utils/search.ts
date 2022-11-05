@@ -15,17 +15,17 @@ const DEFAULT_START_BONUS: number = 0.1;
 export function search(
   query: string,
   targetString: string,
-  maxTypos: number = 1,
+  penaltyLimit: number = 1,
   nonAdjacentPenalty: number = DEFAULT_NON_ADJACENT_PENALTY
 ): number | null {
   // TODO: memo this function.
 
-  let hlen = targetString.length;
-  let nlen = query.length;
+  let targetLen = targetString.length;
+  let queryLen = query.length;
 
   // If the query is longer than the target string, it can never match
-  if (nlen >= hlen) {
-    if (nlen === hlen && query === targetString) {
+  if (queryLen >= targetLen) {
+    if (queryLen === targetLen && query === targetString) {
       return 0;
     }
 
@@ -33,35 +33,41 @@ export function search(
   }
 
   let penalty = 0;
-
-  outer: for (let i = 0, j = 0; i < nlen; i++) {
-    let nch = query.charCodeAt(i);
-    let start = j;
+  let targetIdx = -1;
+  let previousMatchTargetIdx = -1;
+  outer: for (let queryIdx = 0; queryIdx < queryLen; queryIdx++) {
+    let queryChar = query.charCodeAt(queryIdx);
+    let start = targetIdx;
 
     // Try to find the search query char.
-    while (j < hlen) {
-      if (targetString.charCodeAt(j++) === nch) {
-        // If the matches char is NOT at the start of word or the
-        // beginning of the string, add a tiny penalty
-        if (j - 1 === 0 || targetString.charAt(j - 1) === ' ') {
-          penalty -= DEFAULT_START_BONUS;
-        } else {
-          penalty += Math.min(0.4, (j - start - 1) * nonAdjacentPenalty);
+    while (targetIdx < targetLen) {
+      if (targetString.charCodeAt(targetIdx) === queryChar) {
+        // If the target string's char is NOT at the start of a word (or the
+        // start of the string) add a tiny penalty
+        // TODO figure out why
+        // if (targetIdx === 0 || targetString.charAt(targetIdx) === ' ') {
+        //   penalty -= DEFAULT_START_BONUS;
+        // } else
+        if (previousMatchTargetIdx >= 0) {
+          penalty += Math.min(0.4, (targetIdx - (previousMatchTargetIdx + 1)) * nonAdjacentPenalty);
         }
+        previousMatchTargetIdx = targetIdx;
+        targetIdx++;
         continue outer;
       }
+      targetIdx++;
     }
 
     // This point is reached if the character isn't found.
-    if (penalty < maxTypos) {
-      j = start;
+    if (penalty < penaltyLimit) {
+      targetIdx = start;
       penalty += 1;
     } else {
       return null;
     }
   }
 
-  if (penalty > maxTypos) {
+  if (penalty > penaltyLimit) {
     return null;
   } else {
     return penalty;
