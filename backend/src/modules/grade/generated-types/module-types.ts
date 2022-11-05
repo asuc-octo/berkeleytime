@@ -2,7 +2,7 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace GradeModule {
   interface DefinedFields {
-    Grade: 'APlus' | 'A' | 'AMinus' | 'BPlus' | 'B' | 'BMinus' | 'CPlus' | 'C' | 'CMinus' | 'D' | 'F' | 'P' | 'NP';
+    Grade: 'APlus' | 'A' | 'AMinus' | 'BPlus' | 'B' | 'BMinus' | 'CPlus' | 'C' | 'CMinus' | 'D' | 'F' | 'P' | 'NP' | 'section_gpa' | 'section_letter' | 'denominator';
     LetterGrade: 'percent' | 'numerator' | 'percentile_high' | 'percentile_low';
     Query: 'grades';
   };
@@ -40,6 +40,9 @@ export namespace GradeModule {
       F?: gm.Middleware[];
       P?: gm.Middleware[];
       NP?: gm.Middleware[];
+      section_gpa?: gm.Middleware[];
+      section_letter?: gm.Middleware[];
+      denominator?: gm.Middleware[];
     };
     LetterGrade?: {
       '*'?: gm.Middleware[];

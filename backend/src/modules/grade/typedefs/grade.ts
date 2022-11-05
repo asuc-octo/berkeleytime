@@ -14,7 +14,10 @@ const typedef = gql`
     D: LetterGrade!,
     F: LetterGrade!,
     P: LetterGrade!,
-    NP: LetterGrade!
+    NP: LetterGrade!,
+    section_gpa: Float!,
+    section_letter: String!,
+    denominator: Int!
   }
 
   type LetterGrade {

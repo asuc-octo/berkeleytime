@@ -44,6 +44,9 @@ export type Grade = {
   F: LetterGrade;
   NP: LetterGrade;
   P: LetterGrade;
+  denominator: Scalars['Int'];
+  section_gpa: Scalars['Float'];
+  section_letter: Scalars['String'];
 };
 
 export type LetterGrade = {
@@ -204,6 +207,9 @@ export type GradeResolvers<ContextType = any, ParentType extends ResolversParent
   F?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
   NP?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
   P?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  denominator?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  section_gpa?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  section_letter?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
