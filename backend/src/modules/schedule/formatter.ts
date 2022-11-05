@@ -16,7 +16,7 @@ export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule 
   };
 }
 
-function formatCustomEvents(customEvent: CustomEventType) {
+function formatCustomEvents(customEvent: CustomEventType): ScheduleModule.CustomEvent{
     return {
         start_time: customEvent.start_time,
         end_time: customEvent.end_time,

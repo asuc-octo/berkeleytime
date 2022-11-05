@@ -23,7 +23,7 @@ const typedef = gql`
   }
 
   type Query {
-    schedules: [Schedule]
+    schedules(created_by: String!): [Schedule]
   }
 `;
 
