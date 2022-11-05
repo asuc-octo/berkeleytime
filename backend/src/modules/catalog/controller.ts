@@ -6,6 +6,7 @@ import { CourseType } from "./model";
 export async function catalog(courseId?: string) {
     if (courseId) {
         const course = await CourseModel.findById(courseId);
+        console.log(course);
         return [formatCatalogItem(course as CourseType)];
     }
     else {

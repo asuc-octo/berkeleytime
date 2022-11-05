@@ -1,7 +1,9 @@
 import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
 
 export const Identifier = {
-  type: String, 
+  type: {
+    type: String
+  }, 
   id: String
 }
 
@@ -175,6 +177,14 @@ export const CourseSchema = new Schema({
   transcriptTitle: String,
   updatedDate: Date,
   workloadHours: Number,
+})
+
+export const ClassSchema = new Schema({
+  _id: {
+    type: Types.ObjectId,
+    required: true
+  }
+  
 })
 
 export const CourseModel = mongoose.model("sis_course", CourseSchema, "sis_course");
