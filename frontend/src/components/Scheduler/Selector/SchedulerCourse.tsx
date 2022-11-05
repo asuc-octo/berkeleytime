@@ -50,35 +50,19 @@ const SchedulerCourse = ({
       semester: semester.semester,
     },
   });
+
   const [isExpanded, setIsExpanded] = useState(false);
   const { schedule } = useScheduleContext();
 
   const color = getColorForCourse(schedule, courseId);
 
   return (
-    <div className="scheduler-course">
+    <div 
+      className="scheduler-course"
+      style={{ borderColor: color }}
+    >
       <div className="scheduler-course-header">
-        <div
-          className="scheduler-course-square"
-          style={{ backgroundColor: color }}
-        />
-        <div className="scheduler-course-title">
-          {partialCourse ? courseToName(partialCourse) : 'Loading...'}
-        </div>
-
-        {didRemove && (
-          <div
-            className="scheduler-course-icon scheduler-course-remove"
-            onClick={didRemove}
-          >
-            <Trash />
-          </div>
-        )}
-      </div>
-      <div className="scheduler-course-header">
-        <div className="scheduler-course-name">
-          {partialCourse ? partialCourse.title : 'Loading...'}
-        </div>
+        {/* Loading icon while course loads? */}
         {data && (
           <div
             className="scheduler-course-icon scheduler-course-expand"
@@ -91,28 +75,48 @@ const SchedulerCourse = ({
             />
           </div>
         )}
-      </div>
-      <div className="scheduler-course-header">
-        <div className="scheduler-course-name">
-          {!data?.course ? (
-            'Loading...'
-          ) : (
-            <>
-              {data.course.enrolled !== -1 && (
-                <>
-                  {applyIndicatorPercent(
-                    `${data.course.enrolled}/${data.course.enrolledMax} enrolled`,
-                    data.course.enrolled / data.course.enrolledMax
-                  )}{' '}
-                  &bull;{' '}
-                </>
-              )}
-              {data.course.units &&
-                `${unitsToString(parseUnits(data.course.units))} units`}
-            </>
-          )}
+
+        <div className="header-text">
+          <div className="scheduler-course-title">
+            {partialCourse ? courseToName(partialCourse) : 'Loading...'}
+          </div>
+
+          <div className="scheduler-course-name">
+            {partialCourse ? partialCourse.title : 'Loading...'}
+          </div>
+
+          <div className="scheduler-course-name">
+            {!data?.course ? (
+              'Loading...'
+            ) : (
+              <>
+                {data.course.enrolled !== -1 && (
+                  <>
+                    {applyIndicatorPercent(
+                      `${data.course.enrolled}/${data.course.enrolledMax} enrolled`,
+                      data.course.enrolled / data.course.enrolledMax
+                    )}{' '}
+                    &bull;{' '}
+                  </>
+                )}
+                {data.course.units &&
+                  `${unitsToString(parseUnits(data.course.units))} units`}
+              </>
+            )}
+          </div>
         </div>
+
+        {/* Different icon buttons? */}
+        {didRemove && (
+          <div
+            className="scheduler-course-icon scheduler-course-remove"
+            onClick={didRemove}
+          >
+            <Trash />
+          </div>
+        )}
       </div>
+      
       {!data?.course ? (
         <div className="scheduler-status">
           {loading ? (
@@ -123,7 +127,34 @@ const SchedulerCourse = ({
         </div>
       ) : (
         <Collapse in={isExpanded}>
-          <div>
+          {/* Lectures */}
+          <div className="scheduler-course-body">
+            <div className="scheduler-course-category">
+              <p className="scheduler-course-label">Lecture</p>
+
+              {getNodes(data.course.sectionSet)
+                .filter((section) => !section.disabled)
+                .map((section, index) => (
+                  <LectureCard
+                    section={section}
+                    course={data.course!}
+                    sectionId={String(index + 1).padStart(3, '0')}
+                    key={section.id}
+                  />
+                ))}
+            </div>
+
+            {/* Sections */}
+            <div className="scheduler-course-category">
+              <p className="scheduler-course-label">Discussion</p>
+            </div>
+
+            <div className="scheduler-course-category">
+              <p className="scheduler-course-label">Laboratory</p>
+            </div>
+          </div>
+
+          {/*<div>
             {getNodes(data.course.sectionSet)
               .filter((section) => !section.disabled)
               .map((section, index) => (
@@ -135,7 +166,7 @@ const SchedulerCourse = ({
                   key={section.id}
                 />
               ))}
-          </div>
+            </div>*/}
         </Collapse>
       )}
     </div>

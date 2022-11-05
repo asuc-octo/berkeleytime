@@ -1,9 +1,4 @@
 .course-card {
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-
-  padding: 1rem 1.5rem;
-
   margin-top: 1rem;
 
   overflow: hidden;
@@ -11,16 +6,6 @@
 
   .course-card-description {
     padding-left: 1.5rem;
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 6px;
-    background: var(--card-color);
   }
 
   section > * {
@@ -80,9 +65,15 @@
 }
 
 .scheduler-course {
+  border-left-width: 8px;
+  border-left-style: solid;
+
+  border-radius: 8px 0 0 8px;
+
+  padding: 35px 30px 40px;
+
   + .scheduler-course {
     margin-top: 1rem;
-    border-top: 1px solid $bt-light-border-grey;
     padding-top: 1rem;
   }
 
@@ -96,38 +87,49 @@
     color: $bt-light-text;
   }
 
+  .scheduler-course-body {
+    .scheduler-course-category {
+      padding-top: 1.5rem;
+      padding-left: 25px;
+
+      margin-top: 1.5rem;
+
+      border-top: 1px solid #dadada;
+
+      .scheduler-course-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: $bt-light-text;
+        line-height: 1.25;
+
+        text-transform: uppercase;
+      }
+    }
+  }
+
   .scheduler-course-header {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 0;
-    margin-top: 2px;
 
-    position: relative;
-    padding-left: 16px + 8px;
+    .header-text {
+      flex-grow: 1;
 
-    .scheduler-course-square {
-      position: absolute;
-      left: 0;
-      width: 16px;
-      height: 16px;
-      border-radius: 3px;
-      margin-right: 8px;
-    }
+      margin-left: 0.75rem;
 
-    .scheduler-course-title {
-      margin-right: auto !important;
-      font-weight: bold;
-      color: $bt-base-text;
-      font-size: 1rem;
-      line-height: 1rem;
-    }
+      .scheduler-course-title {
+        font-weight: 700;
+        color: $bt-base-text;
+        font-size: 1.25rem;
+        line-height: 1.2;
+      }
+  
+      .scheduler-course-name {
+        color: $bt-light-text;
+        font-weight: 500;
+        font-size: 1rem;
+        line-height: 1.1875;
 
-    .scheduler-course-name {
-      margin-right: auto !important;
-      color: $bt-light-text;
-      font-size: 0.85rem;
-      line-height: 1.8;
+        margin-top: 0.75rem;
+      }
     }
 
     .scheduler-course-icon {
