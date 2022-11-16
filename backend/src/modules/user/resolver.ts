@@ -1,10 +1,10 @@
-import { getByGoogleId } from "./controller";
+import { getById } from "./controller";
 import { UserModule } from "./generated-types/module-types";
 
 const resolvers: UserModule.Resolvers = {
     Query: {
-        User(_parent, args: { google_id: string }) {
-            return getByGoogleId(args.google_id);
+        User(_parent, args: { id: string }) {
+            return getById(args.id);
         },
     },
 };

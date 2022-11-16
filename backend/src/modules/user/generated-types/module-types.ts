@@ -2,7 +2,7 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace UserModule {
   interface DefinedFields {
-    User: 'name' | 'google_id' | 'email' | 'majors' | 'classes_saved' | 'schedules';
+    User: 'id' | 'password' | 'last_login' | 'is_superuser' | 'username' | 'first_name' | 'last_name' | 'email' | 'is_staff' | 'is_active' | 'date_joined' | 'major' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
     Query: 'User';
   };
   
@@ -23,12 +23,22 @@ export namespace UserModule {
     };
     User?: {
       '*'?: gm.Middleware[];
-      name?: gm.Middleware[];
-      google_id?: gm.Middleware[];
+      id?: gm.Middleware[];
+      password?: gm.Middleware[];
+      last_login?: gm.Middleware[];
+      is_superuser?: gm.Middleware[];
+      username?: gm.Middleware[];
+      first_name?: gm.Middleware[];
+      last_name?: gm.Middleware[];
       email?: gm.Middleware[];
-      majors?: gm.Middleware[];
-      classes_saved?: gm.Middleware[];
-      schedules?: gm.Middleware[];
+      is_staff?: gm.Middleware[];
+      is_active?: gm.Middleware[];
+      date_joined?: gm.Middleware[];
+      major?: gm.Middleware[];
+      email_class_update?: gm.Middleware[];
+      email_grade_update?: gm.Middleware[];
+      email_enrollment_opening?: gm.Middleware[];
+      email_berkeleytime_update?: gm.Middleware[];
     };
     Query?: {
       '*'?: gm.Middleware[];

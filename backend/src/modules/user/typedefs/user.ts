@@ -2,16 +2,26 @@ import { gql } from "apollo-server-express";
 
 const typedef = gql`
   type User {
-    name: String!
-    google_id: String!
+    id: String!
+    password: String!
+    last_login: String
+    is_superuser: Boolean!
+    username: String!
+    first_name: String!
+    last_name: String!
     email: String!
-    majors: [String]
-    classes_saved: [String]
-    schedules: [String]
+    is_staff: Boolean!
+    is_active: Boolean!
+    date_joined: String!
+    major: [String],
+    email_class_update: Boolean,
+    email_grade_update: Boolean,
+    email_enrollment_opening: Boolean,
+    email_berkeleytime_update: Boolean
   }
 
   type Query {
-    User(google_id: String!): User
+    User(id: String!): User
   }
 `;
 

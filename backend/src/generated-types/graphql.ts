@@ -21,17 +21,27 @@ export type Query = {
 
 
 export type QueryUserArgs = {
-  google_id: Scalars['String'];
+  id: Scalars['String'];
 };
 
 export type User = {
   __typename?: 'User';
-  classes_saved?: Maybe<Array<Maybe<Scalars['String']>>>;
+  date_joined: Scalars['String'];
   email: Scalars['String'];
-  google_id: Scalars['String'];
-  majors?: Maybe<Array<Maybe<Scalars['String']>>>;
-  name: Scalars['String'];
-  schedules?: Maybe<Array<Maybe<Scalars['String']>>>;
+  email_berkeleytime_update?: Maybe<Scalars['Boolean']>;
+  email_class_update?: Maybe<Scalars['Boolean']>;
+  email_enrollment_opening?: Maybe<Scalars['Boolean']>;
+  email_grade_update?: Maybe<Scalars['Boolean']>;
+  first_name: Scalars['String'];
+  id: Scalars['String'];
+  is_active: Scalars['Boolean'];
+  is_staff: Scalars['Boolean'];
+  is_superuser: Scalars['Boolean'];
+  last_login?: Maybe<Scalars['String']>;
+  last_name: Scalars['String'];
+  major?: Maybe<Array<Maybe<Scalars['String']>>>;
+  password: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -118,16 +128,26 @@ export type ResolversParentTypes = {
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'google_id'>>;
+  User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  classes_saved?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  date_joined?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  google_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  majors?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  schedules?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  email_berkeleytime_update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  email_class_update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  email_enrollment_opening?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  email_grade_update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  first_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  is_active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  is_staff?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  is_superuser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  last_login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  last_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  major?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

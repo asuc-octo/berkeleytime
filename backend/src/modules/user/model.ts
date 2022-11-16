@@ -2,22 +2,21 @@ import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
 
 export const UserSchema = new Schema({
     _id: { type: Types.ObjectId, required: true },
-    _created: String,
-    _updated: String,
-    _version: Number,
-    access_token: String,
-    bio: String,
-    email: String,
-    name: String,
-    google_id: String,
-    notify_update_classes: Boolean,
-    notify_update_grades: Boolean,
-    notify_update_berkeleytime: Boolean,
-    classes_saved: [String],
-    classes_watching: [String],
-    majors: [String],
-    friends: [String],
-    schedules: [String]
+    password: { type: String, required: true },
+    last_login: { type: String, required: true },
+    is_superuser: { type: Boolean, required: false },
+    username: { type: String, required: true },
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    email: { type: String, required: true },
+    is_staff: { type: Boolean, required: true },
+    is_active: { type: Boolean, required: true },
+    date_joined: { type: String, required: true },
+    major: { type: [String], required: false },
+    email_class_update: { type: Boolean, required: false },
+    email_grade_update: { type: Boolean, required: false },
+    email_enrollment_opening: { type: Boolean, required: false },
+    email_berkeleytime_update: { type: Boolean, required: false }
 });
 
 export const UserModel = mongoose.model("user", UserSchema, "user");
