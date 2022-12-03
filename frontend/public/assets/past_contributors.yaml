@@ -1,3 +1,30 @@
+- name: Class of 2024
+  rows:
+    - - name: Shuming Xu
+        role: Backend Engineer
+        site: https://shumingxu.com/
+      - name: Vihan Bhargava
+        role: Frontend Engineer
+        site: https://vihan.org/
+
+- name: Class of 2023
+  rows:
+    - - name: Annie Pan
+        role: Designer
+        site: http://anniexpan.com/
+
+- name: Class of 2022
+  rows:
+    - - name: Hiroshi Usui
+        role: Backend Lead
+        site: https://i-am.2se.xyz/
+      - name: Danji Liu
+        role: Design Lead
+        site: https://www.linkedin.com/in/danji-liu/
+      - name: Christina Shao
+        role: Frontend Lead
+        site: https://christinashao.github.io/
+
 - name: Class of 2021
   rows:
     - - name: Grace Luo
@@ -16,8 +43,8 @@
         role: Designer
       - name: Leon Ming
         role: Backend Lead
-        site: https://leon-ming.com 
-      - name: Jonathan Pan 
+        site: https://leon-ming.com
+      - name: Jonathan Pan
         role: Backend Engineer
         site: https://www.linkedin.com/in/jonathan-pan/
 - name: Class of 2020

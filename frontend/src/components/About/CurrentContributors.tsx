@@ -5,74 +5,115 @@ import { H3 } from 'bt/custom';
 
 import { ReactComponent as Web } from '../../assets/svg/about/web.svg';
 
-import annie_1 from 'assets/img/about/2020-21/annie_1.jpg';
-import annie_2 from 'assets/img/about/2020-21/annie_2.jpg';
-import christina_1 from 'assets/img/about/2020-21/christina_1.jpg';
-import christina_2 from 'assets/img/about/2020-21/christina_2.jpg';
-import hiroshi_1 from 'assets/img/about/2020-21/hiroshi_1.jpg';
-import hiroshi_2 from 'assets/img/about/2020-21/hiroshi_2.jpg';
-import kevin_1 from 'assets/img/about/2020-21/kevin_1.jpg';
-import kevin_2 from 'assets/img/about/2020-21/kevin_2.jpg';
-import shuming_1 from 'assets/img/about/2020-21/shuming_1.jpg';
-import shuming_2 from 'assets/img/about/2020-21/shuming_2.jpg';
-import vihan_1 from 'assets/img/about/2020-21/vihan_1.jpg';
-import vihan_2 from 'assets/img/about/2020-21/vihan_1.jpg';
-import danji_1 from 'assets/img/about/2020-21/danji_1.png';
-import danji_2 from 'assets/img/about/2020-21/danji_2.png';
+import ethan_1 from 'assets/img/about/2022-23/ethan_1.jpg';
+import ethan_2 from 'assets/img/about/2022-23/ethan_2.jpg';
+import michelle_1 from 'assets/img/about/2022-23/michelle_1.jpg';
+import michelle_2 from 'assets/img/about/2022-23/michelle_2.jpg';
+import william_1 from 'assets/img/about/2022-23/william_1.jpg';
+import william_2 from 'assets/img/about/2022-23/william_2.jpg';
+import levi_1 from 'assets/img/about/2022-23/levi_1.jpg';
+import levi_2 from 'assets/img/about/2022-23/levi_2.jpg';
+import zachary_1 from 'assets/img/about/2022-23/zachary_1.jpg';
+import zachary_2 from 'assets/img/about/2022-23/zachary_2.jpg';
+import henric_1 from 'assets/img/about/2022-23/henric_1.jpg';
+import henric_2 from 'assets/img/about/2022-23/henric_2.jpg';
+import gabe_1 from 'assets/img/about/2022-23/gabe_1.jpg';
+import gabe_2 from 'assets/img/about/2022-23/gabe_2.jpg';
+import kevin_1 from 'assets/img/about/2022-23/kevin_1.jpg';
+import kevin_2 from 'assets/img/about/2022-23/kevin_2.jpg';
+import yueheng_1 from 'assets/img/about/2022-23/yueheng_1.jpg';
+import yueheng_2 from 'assets/img/about/2022-23/yueheng_2.jpg';
+import eric_1 from 'assets/img/about/2022-23/eric_1.jpg';
+import eric_2 from 'assets/img/about/2022-23/eric_2.jpg';
+
+
 
 const contributors = [
   [
     {
       name: 'Kevin Wang',
-      role: 'Product Manager',
+      role: 'Product Manager/Backend Engineer',
       site: 'https://kevwang.dev/',
       img: kevin_1,
       silly_img: kevin_2,
     },
     {
-      name: 'Hiroshi Usui',
-      role: 'Backend Lead',
-      site: 'https://i-am.2se.xyz',
-      img: hiroshi_1,
-      silly_img: hiroshi_2,
-    },
-    {
-      name: 'Danji Liu',
-      role: 'Design Lead',
-      site: 'https://www.linkedin.com/in/danji-liu/',
-      img: danji_1,
-      silly_img: danji_2,
-    },
-    {
-      name: 'Christina Shao',
+      name: 'Henric Zhang',
       role: 'Frontend Engineer',
-      site: 'https://christinashao.github.io/',
-      img: christina_1,
-      silly_img: christina_2,
+      site: 'none',
+      img: henric_1,
+      silly_img: henric_2,
     },
-  ],
-  [
     {
-      name: 'Shuming Xu',
+      name: 'Ethan Ikegami',
       role: 'Backend Engineer',
-      site: 'https://shumingxu.com/',
-      img: shuming_1,
-      silly_img: shuming_2,
+      site: 'https://ethanikegami.com/',
+      img: ethan_1,
+      silly_img: ethan_2,
     },
     {
-      name: 'Annie Pan',
-      role: 'Designer',
-      site: 'http://anniexpan.com',
-      img: annie_1,
-      silly_img: annie_2,
+      name: 'William Tang',
+      role: 'Backend Engineer',
+      site: 'https://www.linkedin.com/in/william-tang-cal/',
+      img: william_1,
+      silly_img: william_2,
     },
     {
-      name: 'Vihan Bhargava',
+      name: 'Levi Kline',
       role: 'Frontend Engineer',
-      site: 'https://vihan.org',
-      img: vihan_1,
-      silly_img: vihan_2,
+      site: 'levibkline.com',
+      img: levi_1,
+      silly_img: levi_2,
     },
+    {
+      name: 'Yueheng Zhang',
+      role: 'Backend Engineer',
+      site: 'https://www.linkedin.com/in/azicon/',
+      img: yueheng_1,
+      silly_img: yueheng_2,
+    },
+    {
+      name: 'Zachary Zollman',
+      role: 'Backend Engineer',
+      site: 'https://zacharyzollman.com/',
+      img: zachary_1,
+      silly_img: zachary_2,
+    },
+    {
+      name: 'Eric Xu',
+      role: 'Backend Engineer',
+      site: 'none',
+      img: eric_1,
+      silly_img: eric_2,
+    },
+    {
+      name: 'Matthew Rowland',
+      role: 'Frontend Engineer',
+      site: 'none',
+      img: matthew_1,
+      silly_img: matthew_2,
+    },
+    {
+      name: 'Alex Xi',
+      role: 'Backend Lead',
+      site: 'https://www.alexhxi.com/',
+      img: alex_1,
+      silly_img: alex_2,
+    },
+    {
+      name: 'Michelle Tran',
+      role: 'Designer',
+      site: 'https://michelletran.design',
+      img: michelle_1,
+      silly_img: michelle_2,
+    },
+    {
+      name: 'Gabe Mitnick',
+      role: 'Frontend Engineer',
+      site: 'https://gabe-mitnick.github.io/',
+      img: gabe_1,
+      silly_img: gabe_2,
+    }
   ],
 ];
 
