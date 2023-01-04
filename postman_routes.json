@@ -1185,10 +1185,11 @@
 					}
 				},
 				"url": {
-					"raw": "https://apis.berkeley.edu/sis/v1/classes/sections?cs-course-id={{courseId}}&term-id={{termId}}",
+					"raw": "https://gateway.api.berkeley.edu/sis/v1/classes/sections?cs-course-id={{courseId}}&term-id={{termId}}",
 					"protocol": "https",
 					"host": [
-						"apis",
+						"gateway",
+						"api",
 						"berkeley",
 						"edu"
 					],
@@ -1272,10 +1273,11 @@
 					}
 				},
 				"url": {
-					"raw": "https://apis.berkeley.edu/sis/v1/classes?cs-course-id={{courseId}}&term-id={{termId}}",
+					"raw": "https://gateway.api.berkeley.edu/sis/v1/classes?cs-course-id={{courseId}}&term-id={{termId}}",
 					"protocol": "https",
 					"host": [
-						"apis",
+						"gateway",
+						"api",
 						"berkeley",
 						"edu"
 					],
@@ -1385,10 +1387,11 @@
 					}
 				},
 				"url": {
-					"raw": "https://apis.berkeley.edu/sis/v3/courses?cs-course-id={{courseId}}&page-number=1&page-size=10",
+					"raw": "https://gateway.api.berkeley.edu/sis/v3/courses?cs-course-id={{courseId}}&page-number=1&page-size=10",
 					"protocol": "https",
 					"host": [
-						"apis",
+						"gateway",
+						"api",
 						"berkeley",
 						"edu"
 					],

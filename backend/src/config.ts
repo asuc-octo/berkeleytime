@@ -31,9 +31,9 @@ export const SIS_COURSE_APP_KEY: string = process.env.SIS_COURSE_APP_KEY;
 export const URL_DOMAIN = process.env.URL_DOMAIN || "http://localhost:8080";
 export const URL_MDB = process.env.URL_MDB || "mongodb://mongodb/bt";
 export const URL_REDIS = process.env.URL_REDIS || "redis://redis";
-export const URL_SIS_COURSE_API = "https://apis.berkeley.edu/sis/v3/courses";
-export const URL_SIS_CLASS_API = "https://apis.berkeley.edu/sis/v1/classes";
+export const URL_SIS_COURSE_API = "https://gateway.api.berkeley.edu/sis/v3/courses";
+export const URL_SIS_CLASS_API = "https://gateway.api.berkeley.edu/sis/v1/classes";
 export const URL_SIS_CLASS_SECTIONS_API =
-  "https://apis.berkeley.edu/sis/v1/classes/sections";
+  "https://gateway.api.berkeley.edu/sis/v1/classes/sections";
 export const URL_VERIFY_GOOGLE_TOKEN =
   "https://www.googleapis.com/oauth2/v3/tokeninfo";
