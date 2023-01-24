@@ -13,7 +13,6 @@ import { fetchGradeData } from '../../redux/actions';
 class GradesGraphCard extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
       hoveredClass: false,
       updateMobileHover: true,
@@ -103,6 +102,7 @@ class GradesGraphCard extends Component {
   }
 
   render() {
+    
     const { hoveredClass } = this.state;
     const { graphData, gradesData, selectedCourses, isMobile } = this.props;
     const graphEmpty = gradesData.length === 0 || selectedCourses.length === 0;
