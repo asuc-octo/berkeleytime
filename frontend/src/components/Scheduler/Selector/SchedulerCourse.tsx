@@ -2,7 +2,7 @@ import {
   CourseOverviewFragment,
   useGetSchedulerCourseForIdQuery,
 } from '../../../graphql/graphql';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { courseToName } from 'utils/courses/course';
 import { Semester } from 'utils/playlists/semesters';
 
@@ -51,7 +51,22 @@ const SchedulerCourse = ({
     },
   });
   const [isExpanded, setIsExpanded] = useState(false);
-  const { schedule } = useScheduleContext();
+  const { schedule, setSchedule } = useScheduleContext();
+
+  useEffect(() => {
+    // select first section if no sections selected
+    const addedSections = schedule.sections.filter((s) => s.courseId == courseId);
+    if (addedSections.length === 0 && data?.course?.sectionSet.edges[0]?.node) {
+      const firstSection = {
+        ...data?.course?.sectionSet.edges[0]?.node,
+        courseId: courseId
+      };
+      setSchedule({
+        ...schedule,
+        sections: [...schedule.sections, firstSection],
+      });
+    }
+  }, [data]);
 
   const color = getColorForCourse(schedule, courseId);
 
