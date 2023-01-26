@@ -6,12 +6,21 @@
       - name: Vihan Bhargava
         role: Frontend Engineer
         site: https://vihan.org/
+      - name: Gabe Mitnick
+        role: Frontend Engineer
+        site: https://gabe-mitnick.github.io/
 
 - name: Class of 2023
   rows:
     - - name: Annie Pan
         role: Designer
         site: http://anniexpan.com/
+      - name: Alex Xi
+        role: Backend Lead
+        site: https://www.alexhxi.com/
+      - name: Yueheng Zhang
+        role: Backend Engineer
+        site: https://www.linkedin.com/in/azicon/
 
 - name: Class of 2022
   rows:
