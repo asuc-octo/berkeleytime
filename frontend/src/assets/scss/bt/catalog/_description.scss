@@ -1,4 +1,3 @@
-@import "../../../../../node_modules/bootstrap/scss/bootstrap";
 .catalog-description-container {
   // We don't want the description container to
   // make the description column giant, so we make
@@ -293,7 +292,7 @@
 
 
   .nav-tabs {
-    //background-color: blueviolet !important;
+    
     .nav-item.active {
       border-radius: 0px;
       border-width: medium;
@@ -301,15 +300,11 @@
       border-color: #579EFF;
       border-left: none;
       border-right: none;
-      margin-left: 2.5%;
-      margin-right: 2.5%;
       color: black;
-      width: 20%;
       text-align: center;
-      padding: 0;
+      padding-left: 2.5%;
+      padding-right: 2.5%;
     }
-
-
 
     .nav-item {
       border-radius: 0px;
@@ -317,13 +312,12 @@
       border-top: none;
       border-left: none;
       border-right: none;
-      margin-left: 2.5%;
-      margin-right: 2.5%;
       color: #C7C7C7;
-      width: 20%;
       text-align: center;
       padding: 0;
       padding-bottom: 2%;
+      padding-left: 2.5%;
+      padding-right: 2.5%;
     }
   }
 
