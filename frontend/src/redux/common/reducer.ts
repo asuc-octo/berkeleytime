@@ -26,7 +26,7 @@ export function commonReducer(
         banner: true,
       };
     case CLOSE_BANNER:
-      const bannerType = 'sp23recruitment'
+      const bannerType = 'sp23recruitment2'
       localStorage.setItem('bt-hide-banner', bannerType);
       return {
         ...state,
