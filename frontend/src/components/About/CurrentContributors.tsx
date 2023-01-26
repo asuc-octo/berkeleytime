@@ -17,16 +17,12 @@ import zachary_1 from 'assets/img/about/2022-23/zachary_1.jpg';
 import zachary_2 from 'assets/img/about/2022-23/zachary_2.jpg';
 import henric_1 from 'assets/img/about/2022-23/henric_1.jpg';
 import henric_2 from 'assets/img/about/2022-23/henric_2.jpg';
-import gabe_1 from 'assets/img/about/2022-23/gabe_1.jpg';
-import gabe_2 from 'assets/img/about/2022-23/gabe_2.jpg';
+import matthew_1 from 'assets/img/about/2022-23/matthew_1.jpg';
+import matthew_2 from 'assets/img/about/2022-23/matthew_2.jpg';
 import kevin_1 from 'assets/img/about/2022-23/kevin_1.jpg';
 import kevin_2 from 'assets/img/about/2022-23/kevin_2.jpg';
-import yueheng_1 from 'assets/img/about/2022-23/yueheng_1.jpg';
-import yueheng_2 from 'assets/img/about/2022-23/yueheng_2.jpg';
 import eric_1 from 'assets/img/about/2022-23/eric_1.jpg';
 import eric_2 from 'assets/img/about/2022-23/eric_2.jpg';
-
-
 
 const contributors = [
   [
@@ -66,13 +62,6 @@ const contributors = [
       silly_img: levi_2,
     },
     {
-      name: 'Yueheng Zhang',
-      role: 'Backend Engineer',
-      site: 'https://www.linkedin.com/in/azicon/',
-      img: yueheng_1,
-      silly_img: yueheng_2,
-    },
-    {
       name: 'Zachary Zollman',
       role: 'Backend Engineer',
       site: 'https://zacharyzollman.com/',
@@ -88,17 +77,10 @@ const contributors = [
     },
     {
       name: 'Matthew Rowland',
-      role: 'Frontend Engineer',
+      role: 'Frontend Lead',
       site: 'none',
       img: matthew_1,
       silly_img: matthew_2,
-    },
-    {
-      name: 'Alex Xi',
-      role: 'Backend Lead',
-      site: 'https://www.alexhxi.com/',
-      img: alex_1,
-      silly_img: alex_2,
     },
     {
       name: 'Michelle Tran',
@@ -108,11 +90,11 @@ const contributors = [
       silly_img: michelle_2,
     },
     {
-      name: 'Gabe Mitnick',
+      name: 'Joel Jaison',
       role: 'Frontend Engineer',
-      site: 'https://gabe-mitnick.github.io/',
-      img: gabe_1,
-      silly_img: gabe_2,
+      site: 'none',
+      img: joel_1,
+      silly_img: joel_2
     }
   ],
 ];
