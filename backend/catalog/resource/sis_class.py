@@ -20,8 +20,8 @@ class SISClassResource:
         'app_id': settings.SIS_CLASS_APP_ID,
         'app_key': settings.SIS_CLASS_APP_KEY
     }
-    # Example URL: https://apis.berkeley.edu/uat/sis/v1/classes/sections?term-id=2182&subject-area-code=ENGLISH'
-    url = 'https://apis.berkeley.edu/sis/v1/classes/sections?term-id=%s&subject-area-code=%s&catalog-number=%s&page-size=400'
+    # Example URL: https://gateway.api.berkeley.edu/uat/sis/v1/classes/sections?term-id=2182&subject-area-code=ENGLISH'
+    url = 'https://gateway.api.berkeley.edu/sis/v1/classes/sections?term-id=%s&subject-area-code=%s&catalog-number=%s&page-size=400'
 
     def get(self, semester, year, course_id, abbreviation, course_number, log=False):
         """Fetch (cached) SIS Class API response."""
@@ -45,7 +45,7 @@ class SISClassResource:
     def _request(self, semester, year, abbreviation, course_number):
         """Fetch SIS Class API response.
 
-        Docs: https://api-central.berkeley.edu/api/45/interactive-docs
+        Docs: https://developers.api.berkeley.edu/api/18/interactive-docs
         """
         stripped_abbreviation = re.compile('[^a-zA-Z]').sub('', abbreviation)
         url = self.url % (

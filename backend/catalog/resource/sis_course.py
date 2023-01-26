@@ -13,7 +13,7 @@ class SISCourseResource:
         'app_id': settings.SIS_COURSE_APP_ID,
         'app_key': settings.SIS_COURSE_APP_KEY
     }
-    url = 'https://apis.berkeley.edu/sis/v3/courses?page-number=%s&page-size=%s&status-code=ACTIVE'
+    url = 'https://gateway.api.berkeley.edu/sis/v3/courses?page-number=%s&page-size=%s&status-code=ACTIVE'
 
     def get(self, page_number=0, page_size=100):
         """Return a generator of response chunks starting at start_index."""
@@ -34,9 +34,7 @@ class SISCourseResource:
     def _request(self, page_number, page_size):
         """Fetch SIS Course API response.
         
-        (SIS killed the v2 API 46)
-        Old Docs: https://api-central.berkeley.edu/api/46/interactive-docs
-        New DOcs: https://api-central.berkeley.edu/api/72
+        Docs: https://developers.api.berkeley.edu/api/49/interactive-docs
         """
         url = self.url % (page_number, page_size)
         try:
