@@ -12,8 +12,7 @@ import michelle_2 from 'assets/img/about/2022-23/michelle_2.jpg';
 import william_1 from 'assets/img/about/2022-23/william_1.jpg';
 import william_2 from 'assets/img/about/2022-23/william_2.jpg';
 import levi_1 from 'assets/img/about/2022-23/levi_1.jpg';
-import levi_2 from 'assets/img/about/2022-23/levi_2.jpg';
-import zachary_1 from 'assets/img/about/2022-23/zachary_1.jpg';
+import zachary_1 from 'assets/img/about/2022-23/zachary_1.jpeg';
 import zachary_2 from 'assets/img/about/2022-23/zachary_2.jpg';
 import henric_1 from 'assets/img/about/2022-23/henric_1.jpg';
 import henric_2 from 'assets/img/about/2022-23/henric_2.jpg';
@@ -23,15 +22,30 @@ import kevin_1 from 'assets/img/about/2022-23/kevin_1.jpg';
 import kevin_2 from 'assets/img/about/2022-23/kevin_2.jpg';
 import eric_1 from 'assets/img/about/2022-23/eric_1.jpg';
 import eric_2 from 'assets/img/about/2022-23/eric_2.jpg';
+import joel_1 from 'assets/img/about/2022-23/joel_1.jpg';
 
 const contributors = [
   [
     {
       name: 'Kevin Wang',
-      role: 'Product Manager/Backend Engineer',
+      role: 'Product Manager and Backend Engineer',
       site: 'https://kevwang.dev/',
       img: kevin_1,
       silly_img: kevin_2,
+    },
+    {
+      name: 'Zachary Zollman',
+      role: 'Backend Lead',
+      site: 'https://zacharyzollman.com/',
+      img: zachary_1,
+      silly_img: zachary_2,
+    },
+    {
+      name: 'Matthew Rowland',
+      role: 'Frontend Lead',
+      site: 'none',
+      img: matthew_1,
+      silly_img: matthew_2,
     },
     {
       name: 'Henric Zhang',
@@ -59,14 +73,7 @@ const contributors = [
       role: 'Frontend Engineer',
       site: 'levibkline.com',
       img: levi_1,
-      silly_img: levi_2,
-    },
-    {
-      name: 'Zachary Zollman',
-      role: 'Backend Engineer',
-      site: 'https://zacharyzollman.com/',
-      img: zachary_1,
-      silly_img: zachary_2,
+      silly_img: levi_1,
     },
     {
       name: 'Eric Xu',
@@ -74,13 +81,6 @@ const contributors = [
       site: 'none',
       img: eric_1,
       silly_img: eric_2,
-    },
-    {
-      name: 'Matthew Rowland',
-      role: 'Frontend Lead',
-      site: 'none',
-      img: matthew_1,
-      silly_img: matthew_2,
     },
     {
       name: 'Michelle Tran',
@@ -94,7 +94,7 @@ const contributors = [
       role: 'Frontend Engineer',
       site: 'none',
       img: joel_1,
-      silly_img: joel_2
+      silly_img: joel_1
     }
   ],
 ];
