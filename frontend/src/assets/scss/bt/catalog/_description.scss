@@ -173,13 +173,8 @@
     }
 
     .table-container {
-      // flex: 1;
-      // right: .75rem;
       position: relative;
       overflow-x: auto;
-
-      // overflow-y: auto;
-      // min-height: 300px;
 
       @include mobile {
         overflow-y: scroll;
@@ -187,13 +182,12 @@
 
       > div {
         display: inline-block;
-        padding: 0 calc(30px - 0.75rem);
+        padding: 0 30px;
       }
 
       .table-empty {
         color: $bt-light-text;
         font-size: 18px;
-        text-align: center;
       }
 
       table {
