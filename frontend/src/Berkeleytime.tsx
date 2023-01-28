@@ -61,7 +61,7 @@ class Berkeleytime extends Component<Props> {
   constructor(props: Props) {
     super(props)
 
-    const bannerType = 'sp23recruitment2'  // should match value in ./redux/common/reducer.ts
+    const bannerType = 'sp23recruitment3'  // should match value in ./redux/common/reducer.ts
     if (localStorage.getItem('bt-hide-banner') !== bannerType) {
       props.openBanner()
     }
