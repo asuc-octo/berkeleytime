@@ -610,7 +610,7 @@ var possibleGrades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F
 
 var colors = ['#4EA6FB', '#6AE086', '#ED5186', '#F9E152'];
 
-module.exports = {
+const vars = {
     style, // For notifications (App container and Notifications view)
     thArray, tdArray, // For tables (TableList view)
     iconsArray, // For icons (Icons view)
@@ -620,3 +620,5 @@ module.exports = {
     enrollment, optionsEnrollment, responsiveEnrollment,
     grades, possibleGrades
 };
+
+export default vars;
