@@ -11,7 +11,7 @@ import {
 } from 'utils/scheduler/scheduler';
 import ScheduleEditor from '../ScheduleEditor';
 import { Semester } from 'utils/playlists/semesters';
-import { debounce } from 'lodash';
+import { debounce } from 'lodash-es';
 import Callout from '../Callout';
 
 // This is NOT a loop. Rather it combines all

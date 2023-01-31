@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { useHistory, useRouteMatch } from 'react-router';
 import { useSelector } from 'react-redux';
-import union from 'lodash/union';
-import difference from 'lodash/difference';
+import { difference, union } from 'lodash-es';
 
 import Filter from '../../components/Catalog/Filter';
 import FilterResults from '../../components/Catalog/FilterResults';
