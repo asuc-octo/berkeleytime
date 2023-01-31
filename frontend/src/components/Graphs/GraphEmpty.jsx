@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactTooltip from "react-tooltip";
+import { Tooltip as ReactTooltip } from 'react-tooltip'
 
 import info from '../../assets/img/images/graphs/info.svg';
 

@@ -7,5 +7,6 @@ tmpaddon
 
 .vscode/*
 !.vscode/launch.json
+stats.html
 
 src/assets/scss/berkeleytime.css
