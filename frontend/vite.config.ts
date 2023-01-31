@@ -2,8 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import svgr from "vite-plugin-svgr";
-const path = require('path')
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 
 export default defineConfig({
   root: path.resolve(__dirname, 'src'),
