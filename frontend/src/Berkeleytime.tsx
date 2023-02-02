@@ -106,9 +106,10 @@ class Berkeleytime extends Component<Props> {
     // const embeded = window.location.pathname.includes('/embed')
     const embeded = false
 
+    //first line of code is the recruitment banner
     return (
       <>
-        {!embeded && <Banner />}
+        {/*!embeded && <Banner />*/}
         <div className="app">
           {!embeded && <Navigation />}
           <Routes />
