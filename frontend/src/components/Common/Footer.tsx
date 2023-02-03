@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { H6, A } from 'bt/custom';
+import { Link } from 'react-router-dom';
 
 const Footer: FC = () => (
   <footer className="py-5">
@@ -12,15 +13,15 @@ const Footer: FC = () => (
               <H6 bold className="mb-3">
                 Support
               </H6>
-              <A href={{ as_link: '/bugs' }} className="mb-2">
+              <Link to='/bugs' className="mb-2">
                 Report a Bug
-              </A>
-              <A href="mailto:octo.berkeleytime@asuc.org" className="mb-2">
+              </Link>
+              <a href="mailto:octo.berkeleytime@asuc.org" className="mb-2">
                 Contact Us
-              </A>
-              <A href={{ as_link: '/faq' }} className="mb-2">
+              </a>
+              <Link to='/faq' className="mb-2">
                 FAQ
-              </A>
+              </Link>
             </div>
           </div>
         </Col>
@@ -30,18 +31,18 @@ const Footer: FC = () => (
               <H6 bold className="mb-3">
                 Updates
               </H6>
-              <A href={{ as_link: '/releases' }} className="mb-2">
+              <Link to='/releases' className="mb-2">
                 Releases
-              </A>
-              <A href="https://github.com/asuc-octo/berkeleytime" className="mb-2">
+              </Link>
+              <a href="https://github.com/asuc-octo/berkeleytime" className="mb-2">
                 GitHub
-              </A>
-              <A href="https://discord.gg/uP2bTPh99U" className="mb-2">
+              </a>
+              <a href="https://discord.gg/uP2bTPh99U" className="mb-2">
                 Discord
-              </A>
-              <A href="https://facebook.com/berkeleytime" className="mb-2">
+              </a>
+              <a href="https://facebook.com/berkeleytime" className="mb-2">
                 Facebook
-              </A>
+              </a>
             </div>
           </div>
         </Col>
@@ -49,18 +50,18 @@ const Footer: FC = () => (
           <div className="footer-col-container">
             <div className="footer-col">
               <H6 className="bt-bold mb-3">About Us</H6>
-              <A href={{ as_link: '/about' }} className="mb-2">
+              <Link to='/about' className="mb-2" >
                 Our Team
-              </A>
-              <A href="https://octo.asuc.org" className="mb-2">
+              </Link>
+              <a href="https://octo.asuc.org" className="mb-2">
                 ASUC OCTO
-              </A>
-              <A href={{ as_link: '/legal/privacy' }} className="mb-2">
+              </a>
+              <Link to='/legal/privacy' className="mb-2">
                 Privacy Policy
-              </A>
-              <A href={{ as_link: '/legal/terms' }} className="mb-2">
+              </Link>
+              <Link to='//legal/terms' className="mb-2">
                 Terms of Service
-              </A>
+              </Link>
             </div>
           </div>
         </Col>
