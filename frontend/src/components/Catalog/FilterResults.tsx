@@ -1,13 +1,13 @@
-import React from 'react';
+;
 import { FixedSizeList } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
+// import AutoSizer from 'react-virtualized-auto-sizer';
 
 import FilterCard from './FilterCard';
 
 import {
   CourseOverviewFragment,
   useGetCoursesForFilterQuery,
-} from '../../graphql/graphql';
+} from 'graphql';
 import { searchCourses } from 'utils/courses/search';
 import { sortByAttribute, CourseSortAttribute } from 'utils/courses/sorting';
 import BTLoader from 'components/Common/BTLoader';
@@ -77,20 +77,21 @@ const FilterResults = ({
           </div>
         </div>
       ) : (
-        <AutoSizer>
-          {({ height, width }) => (
-            <FixedSizeList
-              height={height}
-              width={width}
-              itemData={courseCardProps as any}
-              itemCount={sortedCourses.length}
-              itemSize={110}
-              itemKey={(index) => sortedCourses[index].id}
-            >
-              {FilterCard}
-            </FixedSizeList>
-          )}
-        </AutoSizer>
+        <></>
+        // <AutoSizer>
+        //   {({ height, width }) => (
+        //     <FixedSizeList
+        //       height={height}
+        //       width={width}
+        //       itemData={courseCardProps as any}
+        //       itemCount={sortedCourses.length}
+        //       itemSize={110}
+        //       itemKey={(index) => sortedCourses[index].id}
+        //     >
+        //       {FilterCard}
+        //     </FixedSizeList>
+        //   )}
+        // </AutoSizer>
       )}
     </div>
   );

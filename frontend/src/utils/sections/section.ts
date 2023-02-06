@@ -1,4 +1,4 @@
-import { SectionFragment } from 'graphql/graphql';
+import { SectionFragment } from 'graphql';
 import { ReactNode } from 'react';
 import { formatTime } from 'utils/date';
 import { applyIndicatorPercent } from 'utils/utils';

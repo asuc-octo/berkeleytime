@@ -1,10 +1,10 @@
-import React from 'react';
+;
 import {
   formatUnits,
   applyIndicatorPercent,
   applyIndicatorGrade,
 } from '../../../utils/utils';
-import { CourseOverviewFragment } from '../../../graphql/graphql';
+import { CourseOverviewFragment } from 'graphql';
 import { Link } from 'react-router-dom';
 import ProfileCard from './../../Profile/ProfileCard';
 

@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import { Collapse } from 'react-bootstrap';
 
 import { P } from 'bt/custom'

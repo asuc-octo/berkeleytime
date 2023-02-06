@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import { ComponentProps } from 'react';
 import { Button } from 'react-bootstrap';
 
 import { ReactComponent as Trash } from '../../assets/svg/profile/trash.svg';

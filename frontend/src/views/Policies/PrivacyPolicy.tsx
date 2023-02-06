@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import Description from '../../components/Recruiting/Description';
 
 const PrivacyPolicy: FC = () => (

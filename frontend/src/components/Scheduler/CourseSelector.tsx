@@ -1,6 +1,6 @@
 import BTSelect from 'components/Custom/Select';
-import { CourseOverviewFragment } from 'graphql/graphql';
-import React, { useMemo } from 'react';
+import { CourseOverviewFragment } from 'graphql';
+import { useMemo } from 'react';
 import { courseToName } from 'utils/courses/course';
 import { reactSelectCourseSearch } from 'utils/courses/search';
 import { compareDepartmentName } from 'utils/courses/sorting';

@@ -12,19 +12,14 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:@typescript-eslint/recommended',
+    'plugin:react/jsx-runtime',
     'prettier',
   ],
   plugins: ['react'],
   rules: {
     "no-labels": "off",
     "no-console": "warn",
-    "no-else-return": "off",
-    "no-param-reassign": "off",
-    "prefer-destructuring": "off",
-    "radix": "off",
-    "react/prop-types": "off",
-    "react/destructuring-assignment": "off",
-    "react/jsx-one-expression-per-line": "off"
+    "react/prop-types": "off"
   },
   ignorePatterns: ['build', '**/*.js', '**/*.json', 'node_modules'],
   settings: {

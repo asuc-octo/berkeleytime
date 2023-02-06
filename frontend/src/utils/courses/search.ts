@@ -1,4 +1,4 @@
-import { CourseOverviewFragment } from '../../graphql/graphql';
+import { CourseOverviewFragment } from 'graphql';
 import { combineQueries, normalizeSearchTerm, search } from 'utils/search';
 
 export type SearchableCourse = CourseOverviewFragment;

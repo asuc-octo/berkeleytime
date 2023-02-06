@@ -1,6 +1,6 @@
 import TrashButton from 'components/Common/TrashButton';
-import { CourseOverviewFragment } from 'graphql/graphql';
-import React from 'react';
+import { CourseOverviewFragment } from 'graphql';
+;
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { courseToColor, courseToName } from 'utils/courses/course';
 import {

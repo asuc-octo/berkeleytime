@@ -1,5 +1,5 @@
-import { SectionFragment } from 'graphql/graphql';
-import React, { CSSProperties } from 'react';
+import { SectionFragment } from 'graphql';
+import { CSSProperties } from 'react';
 import { Table } from 'react-bootstrap';
 
 import denero from '../../assets/img/eggs/denero.png';

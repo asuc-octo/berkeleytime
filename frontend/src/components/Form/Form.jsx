@@ -1,7 +1,7 @@
 import BTLoader from 'components/Common/BTLoader';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { ListGroup, Form, Button } from 'react-bootstrap';
-import Markdown from 'react-markdown';
+// import Markdown from 'react-markdown';
 
 class BTForm extends Component {
   constructor(props) {
@@ -678,11 +678,11 @@ class BTForm extends Component {
       <div className="bt-form">
         <div className="bt-form-header">
           <h5>{form.info.public_name} </h5>
-          <Markdown
+          {/* <Markdown
             source={form.info.description}
             escapeHTML={false}
             className="markdown"
-          />
+          /> */}
         </div>
 
         <Form noValidate onSubmit={this.handleSubmit}>

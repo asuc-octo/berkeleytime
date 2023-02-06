@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import Select from 'react-select';
 
 class Property extends PureComponent {

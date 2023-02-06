@@ -1,4 +1,4 @@
-import React, { ComponentProps, ElementType, ReactNode } from 'react';
+import { ComponentProps, ElementType, ReactNode } from 'react';
 import TrashButton from 'components/Common/TrashButton';
 
 type Props<T extends ElementType> = ComponentProps<T> & {

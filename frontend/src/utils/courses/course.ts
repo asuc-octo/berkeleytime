@@ -1,4 +1,4 @@
-import { CourseFragment, CourseOverviewFragment } from 'graphql/graphql';
+import { CourseFragment, CourseOverviewFragment } from 'graphql';
 import { hash } from 'utils/string';
 
 export type CourseReference = {

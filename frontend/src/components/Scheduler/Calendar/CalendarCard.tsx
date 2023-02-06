@@ -1,4 +1,4 @@
-import React, { CSSProperties, forwardRef, HTMLProps } from 'react';
+import { CSSProperties, forwardRef, HTMLProps } from 'react';
 import Color from 'color';
 
 export type Props = HTMLProps<HTMLDivElement> & {

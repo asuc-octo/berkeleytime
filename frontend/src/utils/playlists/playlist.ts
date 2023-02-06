@@ -1,19 +1,17 @@
-import { FilterFragment } from '../../graphql/graphql';
+import { FilterFragment } from 'graphql';
 import { FilterType } from './filterTypes';
+import { FilterOption} from 'app/Catalog/types';
 
 export type FilterablePlaylist = FilterFragment;
-export type FilterParameter = {
-  value: string;
-  label: string;
-};
+
 
 export type CategorizedFilterParameter = {
   label: string;
-  options: FilterParameter[];
+  options: FilterOption[];
 };
 
 export type PlaylistDescription = (
-  | FilterParameter
+  | FilterOption
   | CategorizedFilterParameter
 )[];
 
@@ -76,7 +74,7 @@ export function getCategoryFromPlaylists(
   playlists: FilterablePlaylist[],
   parameter: string,
   process: (label: string) => string = (s) => s
-): FilterParameter[] {
+): FilterOption[] {
   return playlists
     .filter((playlist) => playlist.category === parameter)
     .map((playlist) => ({
@@ -145,13 +143,13 @@ export function playlistsToFilters(rawData: FilterablePlaylist[]): Filters {
  */
 export function getPlaylistEntries(
   playlist: PlaylistDescription
-): FilterParameter[] {
+): FilterOption[] {
   if (playlist.length === 0) {
     return [];
   }
 
   if ('value' in playlist[0]) {
-    return playlist as FilterParameter[];
+    return playlist as FilterOption[];
   } else {
     return (playlist as CategorizedFilterParameter[]).flatMap(
       (section) => section.options
@@ -165,7 +163,7 @@ export function getPlaylistEntries(
 export function getOverlappingValues(
   values: string[],
   playlist: PlaylistDescription
-): FilterParameter[] {
+): FilterOption[] {
   const allValues = getPlaylistEntries(playlist);
   const overlap = allValues.filter((opt) => values.includes(opt.value));
   return overlap;
@@ -175,7 +173,7 @@ export function getOverlappingValues(
  * Get changes.
  */
 export function getChanges(
-  selectedParameters: Pick<FilterParameter, 'value'>[],
+  selectedParameters: Pick<FilterOption, 'value'>[],
   allParameters: PlaylistDescription
 ): ParameterChange {
   const add = new Set<string>();

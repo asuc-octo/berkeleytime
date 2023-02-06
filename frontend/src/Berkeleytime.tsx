@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 import { connect, ConnectedProps } from 'react-redux'
 
 import Banner from './components/Common/Banner'
@@ -13,7 +13,7 @@ function easterEgg() {
   // eslint-disable-next-line no-console
   console.log(`%c
     Hey there! Checking out how Berkeleytime works? We are a group of student developers
-    here at UC Berkeley. We build this site using the latest tech - React, Django, Kubernetes,
+    here at UC Berkeley. We build this site using the latest tech - Django, Kubernetes,
     and more. If you love using Berkeleytime and want to see yourself as a contributor,
     we are always looking for passionate individuals to help us improve our product.
 

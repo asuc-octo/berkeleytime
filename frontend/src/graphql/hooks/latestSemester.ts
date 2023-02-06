@@ -1,4 +1,4 @@
-import { useGetSemestersQuery } from '../graphql';
+import { useGetSemestersQuery } from 'graphql';
 import {
   getLatestSemester,
   SemesterWithPlaylist,
@@ -18,7 +18,7 @@ const useLatestSemester = (): {
 
   const { loading, error } = useGetSemestersQuery({
     onCompleted: (data) => {
-      const allPlaylists = data.allPlaylists?.edges.map((edge) => edge!.node!)!;
+      const allPlaylists = data?.allPlaylists.edges.map((edge) => edge.node);
       setLatestSemester(getLatestSemester(allPlaylists));
     },
   });

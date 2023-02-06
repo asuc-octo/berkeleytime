@@ -1,4 +1,4 @@
-import { CourseOverviewFragment } from 'graphql/graphql';
+import { CourseOverviewFragment } from 'graphql';
 
 export type CourseSortAttribute =
   | 'relevance'

@@ -1,4 +1,4 @@
-import React, { forwardRef, MouseEvent, useState } from 'react';
+import { forwardRef, MouseEvent, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { AccessStatus, ACCESS_STATUSES } from 'utils/scheduler/accessStatus';
 

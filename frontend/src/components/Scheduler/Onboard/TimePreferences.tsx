@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Button, P, H3, H6 } from 'bt/custom';
 import BTSelect from 'components/Custom/Select';

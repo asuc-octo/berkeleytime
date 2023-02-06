@@ -1,8 +1,8 @@
 import {
   CourseOverviewFragment,
   useGetSchedulerCourseForIdQuery,
-} from '../../../graphql/graphql';
-import React, { useState } from 'react';
+} from 'graphql';
+import { useState } from 'react';
 import { courseToName } from 'utils/courses/course';
 import { Semester } from 'utils/playlists/semesters';
 
