@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { CourseOverviewFragment } from '../../../graphql/graphql';
+import { CourseOverviewFragment } from 'graphql';
 import { Schedule, SchedulerCourseType } from 'utils/scheduler/scheduler';
 
 /**

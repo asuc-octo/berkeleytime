@@ -1,9 +1,9 @@
-import React from 'react';
+;
 import Preference from './Preference';
 import {
   UpdateUserMutationVariables,
   UserProfileFragment,
-} from '../../graphql/graphql';
+} from 'graphql';
 import { useUpdateUser } from '../../graphql/hooks/user';
 import Subview from './Subview';
 

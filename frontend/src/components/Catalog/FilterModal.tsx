@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { without } from 'lodash-es';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { FilterParameter, PlaylistDescription } from 'utils/playlists/playlist';

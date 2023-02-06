@@ -1,9 +1,9 @@
-import React from 'react';
+import { PureComponent } from 'react';
 import { Tooltip as ReactTooltip } from 'react-tooltip'
 
 import info from '../../assets/img/images/graphs/info.svg';
 
-class GraphEmpty extends React.PureComponent {
+class GraphEmpty extends PureComponent {
 
   render() {
     const { pageType } = this.props;

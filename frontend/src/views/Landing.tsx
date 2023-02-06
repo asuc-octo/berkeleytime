@@ -1,21 +1,24 @@
-import React, { FC } from 'react';
+import { FC, Suspense, lazy } from 'react';
 
-import Jumbotron from 'components/Landing/Jumbotron'
-import Explore from 'components/Landing/Explore'
-import Mission from 'components/Landing/Mission'
-import Blurbs from 'components/Landing/Blurbs'
-import LandingModal from 'components/Landing/LandingModal'
+import Explore from 'components/Landing/Explore';
+import Mission from 'components/Landing/Mission';
+import Blurbs from 'components/Landing/Blurbs';
+import LandingModal from 'components/Landing/LandingModal';
+
+const Jumbotron = lazy(() => import('components/Landing/Jumbotron'));
 
 const Landing: FC = () => {
-  return (
-    <div>
-      <LandingModal/>
-      <Jumbotron />
-      <Explore />
-      <Mission />
-      <Blurbs />
-    </div>
-  );
-}
+	return (
+		<div>
+			<LandingModal />
+			<Suspense fallback={<div style={{width: 500, height: 500}} />}>
+				<Jumbotron />
+			</Suspense>
+			<Explore />
+			<Mission />
+			<Blurbs />
+		</div>
+	);
+};
 
-export default Landing
+export default Landing;

@@ -1,4 +1,4 @@
-import { SectionFragment } from 'graphql/graphql';
+import { SectionFragment } from 'graphql';
 import { groupBy } from 'lodash-es';
 import { stringToDate } from 'utils/date';
 import { isEnrollmentSection } from './section';

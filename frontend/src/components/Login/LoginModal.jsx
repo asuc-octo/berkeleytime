@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Modal } from 'react-bootstrap';
 import LoginButton from './LoginButton';
 import { H3, P } from 'bt/custom';

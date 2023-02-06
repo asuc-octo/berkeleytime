@@ -1,4 +1,4 @@
-import React from 'react';
+;
 import BTLoader from 'components/Common/BTLoader';
 import SchedulerOnboard from './SchedulerOnboard';
 import { useUser } from 'graphql/hooks/user';

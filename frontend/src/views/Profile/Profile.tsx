@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactNode, useState } from 'react';
+import { ComponentType, ReactNode, useState } from 'react';
 import { Container, Button } from 'react-bootstrap';
 
 import AccountSubview from '../../components/Profile/AccountSubview';
@@ -11,7 +11,7 @@ import { ReactComponent as Notif } from '../../assets/svg/profile/notif.svg';
 import { ReactComponent as NotifSelected } from '../../assets/svg/profile/notif_selected.svg';
 import { ReactComponent as Support } from '../../assets/svg/profile/support.svg';
 import { ReactComponent as SupportSelected } from '../../assets/svg/profile/support_selected.svg';
-import { UserProfileFragment } from '../../graphql/graphql';
+import { UserProfileFragment } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
 import { useUser } from '../../graphql/hooks/user';
 import { Redirect } from 'react-router';

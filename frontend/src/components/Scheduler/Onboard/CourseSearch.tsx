@@ -1,6 +1,6 @@
 import BTSelect from 'components/Custom/Select';
-import { CourseOverviewFragment } from 'graphql/graphql';
-import React, { Dispatch, SetStateAction, useMemo } from 'react';
+import { CourseOverviewFragment } from 'graphql';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { courseToName } from 'utils/courses/course';
 import { reactSelectCourseSearch } from 'utils/courses/search';
 import { compareDepartmentName } from 'utils/courses/sorting';
@@ -45,7 +45,6 @@ const CourseSelector = ({
   return (
     <div className="course-selector">
       <BTSelect
-        isVirtual
         value={null}
         name="selectClass"
         placeholder="Search for a class..."
@@ -53,7 +52,7 @@ const CourseSelector = ({
           (course) => !hasCourseById(schedule, course.value)
         )}
         filterOption={reactSelectCourseSearch}
-        onChange={(c: CourseOptionType) => c && addCourse(c.course, schedule, setSchedule)}
+        onChange={(c) => c && addCourse(c.course, schedule, setSchedule)}
       />
     </div>
   );

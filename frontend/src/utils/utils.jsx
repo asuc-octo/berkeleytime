@@ -2,7 +2,7 @@
  * A bunch of utility functions
  */
 
-import React from 'react';
+;
 
 /**
  * Gets indicator class for a color.

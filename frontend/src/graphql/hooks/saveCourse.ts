@@ -2,7 +2,7 @@ import {
   CourseOverviewFragment,
   useSaveCourseMutation,
   useUnsaveCourseMutation,
-} from '../../graphql/graphql';
+} from 'graphql';
 import { useCallback } from 'react';
 import { useUser } from './user';
 

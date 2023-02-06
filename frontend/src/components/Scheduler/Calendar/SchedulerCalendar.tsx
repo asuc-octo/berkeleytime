@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { stringToDate } from 'utils/date';
 import { Schedule, SchedulerSectionType } from 'utils/scheduler/scheduler';
 import CourseCalendar, { CardData } from './CourseCalendar';

@@ -1,10 +1,9 @@
 /*eslint max-len: ["error", { "code": 180 }]*/
-import React, { lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Switch, Route, RouteProps, Redirect } from 'react-router-dom';
 import BTLoader from 'components/Common/BTLoader';
 
 import Landing from './views/Landing';
-import Catalog from './views/Catalog/Catalog';
 import Error from './views/Error/Error';
 // const Grades = lazy(() => new Promise(() => {}));
 // import DesignApp from './views/Forms/DesignApp';
@@ -12,6 +11,7 @@ import Error from './views/Error/Error';
 // import { Positions } from './views/Apply/DescriptionPages';
 // const ApiDocs = lazy(() => import('./views/Api/Api'));
 
+const Catalog = lazy(() => import('./app/Catalog/Catalog'))
 const Grades = lazy(() => import('./views/Grades/Grades'));
 const Enrollment = lazy(() => import('./views/Enrollment/Enrollment'));
 const About = lazy(() => import('./views/About'));
@@ -62,7 +62,7 @@ const routes: Array<RouteProps> = [
   { path: '/redirect', component: RedirectLink, exact: false },
 ];
 
-const Routes: React.FC = () => (
+const Routes = () => (
   <Suspense
     fallback={
       <div className="viewport-app">

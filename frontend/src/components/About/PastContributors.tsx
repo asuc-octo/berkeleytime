@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import yaml from 'js-yaml';
 

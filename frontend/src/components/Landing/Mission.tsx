@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
 import { H3, P, Button } from 'bt/custom'

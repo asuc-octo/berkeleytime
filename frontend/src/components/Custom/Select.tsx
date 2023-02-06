@@ -1,30 +1,21 @@
-import React from 'react';
-import Select, { Props as SelectProps } from 'react-select';
-import VirtualSelect from 'react-select-virtualized';
+;
+import Select, { GroupBase, Props } from 'react-select';
 
-type Props = {
-  isVirtual?: boolean;
-  isMulti?: boolean;
-  value?: { label: string; value: string } | { label: string; value: string }[] | null;
-};
-
-const BTSelect = ({
-  isVirtual = false,
-  isMulti,
-  value,
-  ...props
-}: Omit<SelectProps, 'value'> & Props) => {
-  const Component = isVirtual ? VirtualSelect : Select;
-  return (
-    <Component
-      isMulti={isMulti}
-      value={value}
-      {...props}
-      components={{
-        IndicatorSeparator: () => null,
-      }}
-    />
-  );
+const BTSelect = <
+	Option,
+	IsMulti extends boolean = false,
+	Group extends GroupBase<Option> = GroupBase<Option>
+>(
+	props: Props<Option, IsMulti, Group>
+) => {
+	return (
+		<Select
+			{...props}
+			components={{
+				IndicatorSeparator: () => null
+			}}
+		/>
+	);
 };
 
 export default BTSelect;

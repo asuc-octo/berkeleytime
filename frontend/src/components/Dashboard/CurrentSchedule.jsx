@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from 'react';
+;
 
 function CurrentSchedule({ current }) {
   return (

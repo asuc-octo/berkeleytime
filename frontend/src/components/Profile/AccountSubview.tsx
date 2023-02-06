@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import Property from './Property';
 import ProfileCourseCard from './ProfileCourseCard';
@@ -6,7 +6,7 @@ import {
   CourseOverviewFragment,
   ScheduleOverviewFragment,
   UserProfileFragment,
-} from '../../graphql/graphql';
+} from 'graphql';
 
 import MAJORS from './majors.json';
 import { useUpdateUser } from '../../graphql/hooks/user';

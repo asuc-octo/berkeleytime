@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   CourseOverviewFragment,
   ScheduleOverviewFragment,
-} from '../../graphql/graphql';
+} from 'graphql';
 import { semesterToString } from 'utils/playlists/semesters';
 import ScheduleModal from 'components/Scheduler/ScheduleModal';
 import { useDeleteSchedule } from 'graphql/hooks/schedule';

@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import { PureComponent } from 'react';
 import { Container, Row } from 'react-bootstrap';
 
 import ClassCard from './ClassCard';

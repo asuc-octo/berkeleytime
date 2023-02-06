@@ -1,14 +1,13 @@
-import React, { Component } from 'react';
-import Select from 'react-select-virtualized';
+import { Component } from 'react';
 import {
   Container, Row, Col, Button
 } from 'react-bootstrap';
 import hash from 'object-hash';
 
-// import 'react-virtualized-select/styles.css'
 import { fetchEnrollSelected } from '../../redux/actions';
 import { connect } from "react-redux";
 import { reactSelectCourseSearch } from 'utils/courses/search';
+import BTSelect from 'components/Custom/Select';
 
 class EnrollmentSearchBar extends Component {
   constructor(props) {
@@ -260,7 +259,7 @@ class EnrollmentSearchBar extends Component {
       <Container fluid className="enrollment-search-bar">
         <Row style={{ marginBottom: 10 }}>
           <Col lg={4}>
-            <Select
+            <BTSelect
               name="selectClass"
               placeholder="Choose a class..."
               // value={selectedClass}
@@ -274,7 +273,7 @@ class EnrollmentSearchBar extends Component {
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
-            <Select
+            <BTSelect
               name="instrSems"
               placeholder={!isMobile ? 'Select an option...' : 'Select...'}
               value={onePrimaryOption ? primaryOptions[0] : primaryOption}
@@ -289,7 +288,7 @@ class EnrollmentSearchBar extends Component {
             />
           </Col>
           <Col xs={6} sm={6} lg={3}>
-            <Select
+            <BTSelect
               name="section"
               placeholder={!isMobile ? 'Select an option...' : 'Select...'}
               value={oneSecondaryOption ? secondaryOptions[0] : secondaryOption}

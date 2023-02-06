@@ -1,4 +1,4 @@
-import React from 'react';
+;
 
 import { ReactComponent as Lock } from '../../assets/svg/profile/lock.svg';
 import { ReactComponent as World } from '../../assets/svg/profile/world.svg';

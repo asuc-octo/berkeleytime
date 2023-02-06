@@ -2,8 +2,8 @@ import BTLoader from 'components/Common/BTLoader';
 import {
   useGetScheduleForIdLazyQuery,
   useUpdateScheduleMutation,
-} from '../../../graphql/graphql';
-import React, { useCallback, useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
+} from 'graphql';
+import { useCallback, useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
 import {
   deserializeSchedule,
   Schedule,

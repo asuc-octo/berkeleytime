@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
@@ -10,7 +10,7 @@ import {
   applyIndicatorGrade,
   formatUnits,
 } from '../../utils/utils';
-import { useGetCourseForNameQuery } from '../../graphql/graphql';
+import { useGetCourseForNameQuery } from 'graphql';
 import { stableSortPlaylists } from 'utils/playlists/playlist';
 import { getLatestSemester, Semester } from 'utils/playlists/semesters';
 import SectionTable from './SectionTable';

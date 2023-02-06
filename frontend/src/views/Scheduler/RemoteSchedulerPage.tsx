@@ -1,6 +1,6 @@
 import BTLoader from 'components/Common/BTLoader';
 import { useUser } from 'graphql/hooks/user';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Redirect, useParams } from 'react-router';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import RemoteScheduler from '../../components/Scheduler/Editor/RemoteScheduler';

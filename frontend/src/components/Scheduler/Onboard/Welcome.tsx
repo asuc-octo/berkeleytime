@@ -1,4 +1,4 @@
-import React from 'react';
+;
 import { Container, Row, Col } from 'react-bootstrap';
 import { useUser } from '../../../graphql/hooks/user';
 import ProfileScheduleCard from './../../Profile/ProfileScheduleCard';

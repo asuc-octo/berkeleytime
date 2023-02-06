@@ -8,7 +8,7 @@ import {
   ScheduleOverviewFragment,
   useCreateScheduleMutation,
   useDeleteScheduleMutation,
-} from '../graphql';
+} from 'graphql';
 import { wrapMutation } from './graphql';
 
 /**

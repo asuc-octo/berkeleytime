@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { connect, ConnectedProps } from 'react-redux'
 // import { Button } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
