@@ -1,6 +1,8 @@
 import { FilterFragment } from 'graphql';
 import { GroupBase } from 'react-select';
 
+export const DEFAULT_SORT: SortOption = 	{ value: 'relevance', label: 'Sort By: Relevance' };
+
 export type CatalogCategoryKeys =
 	| 'department'
 	| 'engineering'
@@ -12,7 +14,7 @@ export type CatalogCategoryKeys =
 	| 'university'
 	| 'requirements';
 
-export type CatalogOptionKeys = Exclude<
+export type CatalogFilterKeys = Exclude<
 	CatalogCategoryKeys,
 	'haas' | 'ls' | 'engineering' | 'university'
 >;
@@ -21,8 +23,8 @@ export type CatalogFilters = {
 	[category in CatalogCategoryKeys]: FilterFragment[];
 };
 
-export type ActiveFilters = {
-	[category in CatalogCategoryKeys]: string;
+export type CurrentFilters = {
+	[category in CatalogFilterKeys]: FilterOption | FilterOption[] | null;
 };
 
 export type CatalogSortKeys =
@@ -33,11 +35,10 @@ export type CatalogSortKeys =
 	| 'enrolled_percentage';
 
 export type SortOption = { value: CatalogSortKeys; label: string };
-
 export type FilterOption = { value: FilterFragment; label: string }
 
 export type FilterOptions = {
-	[key in CatalogOptionKeys]: {
+	[key in CatalogFilterKeys]: {
 		name: string;
 		isClearable: boolean;
 		isMulti: boolean;

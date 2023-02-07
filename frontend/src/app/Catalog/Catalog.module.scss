@@ -1,0 +1,75 @@
+//
+// Catalog Component
+//
+.catalogRoot {
+	display: grid;
+	grid-template-areas: 'filters list view';
+	grid-template-rows: 1fr;
+	grid-template-columns: 1.3fr 1.4fr 3fr;
+	position: relative;
+	flex-direction: column;
+	padding-top: 58px;
+	height: 100vh;
+	align-items: stretch;
+	min-height: 800px;
+}
+
+//
+// CatalogFilters Component
+//
+.catalogFilterRoot {
+	display: flex;
+	flex-direction: column;
+	padding: 30px;
+	gap: 12px;
+  font-size: 14px;
+	border-right: 1.5px solid #eaeaea;
+}
+
+.filterItem {
+	p {
+		font-weight: 600;
+		margin-bottom: 10px;
+	}
+}
+
+.catalogFilterHeader {
+	margin-bottom: 20px;
+	display: flex;
+  justify-content: space-between;
+	flex-direction: row;
+	align-items: baseline;
+	gap: 30px;
+	h3 {
+		font-size: 20px;
+		line-height: 30px;
+		font-weight: 600;
+	}
+
+  button {
+    color: #2f80ed;
+    transition: .5s;
+    border: none;
+    background: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 16px;
+    &:hover {
+      background: hsla(0,0%,92.2%,.6196078431);
+    }
+  }
+}
+
+//
+// CatalogList Component
+//
+.catalogListRoot {
+	display: flex;
+	grid-area: list;
+	position: relative;
+	flex-direction: column;
+	border-right: 1.5px solid #eaeaea;
+	height: 100%;
+	overflow: auto;
+	overflow-x: hidden;
+}

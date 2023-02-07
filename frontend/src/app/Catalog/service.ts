@@ -1,5 +1,5 @@
 import { FilterFragment, GetFiltersQuery } from 'graphql';
-import { CatalogCategoryKeys, FilterOptions, CatalogOptionKeys, CatalogFilters } from './types';
+import { CatalogCategoryKeys, FilterOptions, CatalogFilterKeys, CatalogFilters } from './types';
 
 const SEMESTER_VALUES = {
 	spring: 0.0,
@@ -61,7 +61,7 @@ const processFilterListOptions = (filterItems: FilterOptions, filters: CatalogFi
 	Object.entries(result)
 		.filter(([key]) => key !== 'requirements')
 		.map(([k]) => {
-			const key = k as CatalogOptionKeys;
+			const key = k as CatalogFilterKeys;
 			result[key].options = filters[key].map((filter) => ({
 				label: filter.name,
 				value: filter

@@ -54,7 +54,7 @@ function openSeatsSort(open_seats: number): ReactNode {
   );
 }
 
-type FilterCardProps = {
+type CatalogListItemProps = {
   data: {
     courses: CourseOverviewFragment[];
     selectCourse: (course: CourseOverviewFragment) => void;
@@ -65,7 +65,7 @@ type FilterCardProps = {
   style: CSSProperties;
 };
 
-const FilterCard = ({ style, data, index }: FilterCardProps) => {
+const CatalogListItem = ({ style, data, index }: CatalogListItemProps) => {
   const course = data.courses[index];
 
   const { user } = useUser();
@@ -141,4 +141,4 @@ const FilterCard = ({ style, data, index }: FilterCardProps) => {
   );
 };
 
-export default memo(FilterCard);
+export default memo(CatalogListItem);
