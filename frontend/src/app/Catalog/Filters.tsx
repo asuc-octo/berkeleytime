@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo } from 'react';
 import { ActionMeta } from 'react-select';
 import BTSelect from 'components/Custom/Select';
 import FilterModal from '../../components/Catalog/FilterModal';
@@ -8,21 +8,18 @@ import catalogService from './service';
 import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg';
 import BTInput from 'components/Custom/Input';
 import {
-	ActiveFilters,
-	CatalogSortKeys,
+	CurrentFilters,
 	FilterOptions,
 	FilterOption,
 	CatalogFilters,
-	SortOption
+	SortOption,
+	CatalogFilterKeys,
+	DEFAULT_SORT
 } from './types';
 import { useSelector } from 'react-redux';
 import { ReduxState } from 'redux/store';
 
-type FilterListProps = {
-	filters: CatalogFilters;
-};
-
-const DEFAULT_SORT: CatalogSortKeys = 'relevance';
+import styles from './Catalog.module.scss';
 
 const SORT_OPTIONS: SortOption[] = [
 	{ value: 'relevance', label: 'Sort By: Relevance' },
@@ -40,7 +37,7 @@ const defaultFilterList: FilterOptions = {
 		closeMenuOnSelect: false,
 		isSearchable: false,
 		options: [],
-		placeholder: 'Select Requirements...'
+		placeholder: 'Select requirements...'
 	},
 	units: {
 		name: 'Units',
@@ -49,14 +46,14 @@ const defaultFilterList: FilterOptions = {
 		closeMenuOnSelect: false,
 		isSearchable: false,
 		options: [],
-		placeholder: 'Specify Units...'
+		placeholder: 'Specify units...'
 	},
 	department: {
 		name: 'Department',
 		isClearable: true,
 		isMulti: false,
 		closeMenuOnSelect: true,
-		isSearchable: false,
+		isSearchable: true,
 		options: [],
 		placeholder: 'Choose a department...'
 	},
@@ -71,7 +68,7 @@ const defaultFilterList: FilterOptions = {
 	},
 	semester: {
 		name: 'Semesters',
-		isClearable: true,
+		isClearable: false,
 		isMulti: false,
 		closeMenuOnSelect: true,
 		isSearchable: false,
@@ -80,16 +77,47 @@ const defaultFilterList: FilterOptions = {
 	}
 };
 
-const CatalogFilterList = ({ filters }: FilterListProps) => {
-	const [searchQuery, setSearchQuery] = useState('');
-	const [sortBy, setSortBy] = useState<CatalogSortKeys>(DEFAULT_SORT);
-	const [ActiveFilters, setActiveFilters] = useState<Partial<ActiveFilters>>({});
+type CatalogFilterProps = {
+	filters: CatalogFilters;
+	currentFilters: CurrentFilters;
+	sortQuery: SortOption;
+	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
+	setSortQuery: Dispatch<SetStateAction<SortOption>>;
+	setSearchQuery: Dispatch<SetStateAction<string>>;
+};
+
+const CatalogFilter = (props: CatalogFilterProps) => {
+	const { filters, currentFilters, setCurrentFilters, sortQuery, setSortQuery, setSearchQuery } =
+		props;
 	const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
 	const filterList = useMemo(
 		() => catalogService.processFilterListOptions(defaultFilterList, filters),
 		[filters]
 	);
+
+	useEffect(() => {
+		if (filterList.semester) {
+			setCurrentFilters((prev) => ({
+				...prev,
+				semester: filterList.semester.options[0] as FilterOption
+			}));
+		}
+	}, [filterList.semester, setCurrentFilters]);
+
+	/**
+	 * @description Removes all active filters and replaces them with the current semester filter.
+	 *
+	 */
+	const handleFilterReset = useCallback(() => {
+		if (filterList.semester)
+			setCurrentFilters((prev) => ({
+				...prev,
+				semester: filterList.semester.options[0] as FilterOption
+			}));
+		setSortQuery(DEFAULT_SORT);
+		setSearchQuery('');
+	}, [filterList.semester, setCurrentFilters, setSearchQuery, setSortQuery]);
 
 	// const [showFilterModal, setShowFilterModal] = useState(false);
 	// const [modal, setModal] = useState({
@@ -98,18 +126,6 @@ const CatalogFilterList = ({ filters }: FilterListProps) => {
 	//   handler: (_filters: FilterParameter[]) => {},
 	//   isMulti: true,
 	// });
-
-	const latestSemesterId = useMemo(() => filters.semester[0].id, [filters]);
-
-	/**
-	 * @description
-	 * Removes all active filters and replaces them with the current semester filter.
-	 */
-	const resetFilters = useCallback(() => {
-		if (latestSemesterId) setActiveFilters({ semester: latestSemesterId });
-		setSortBy(DEFAULT_SORT);
-		setSearchQuery('');
-	}, [latestSemesterId]);
 
 	//show the mobile modals
 	// function showModal({
@@ -146,20 +162,23 @@ const CatalogFilterList = ({ filters }: FilterListProps) => {
 		newValue: FilterOption | readonly FilterOption[] | null,
 		meta: ActionMeta<FilterOption>
 	) => {
-		return
+		const key = meta.name as CatalogFilterKeys;
+		setCurrentFilters((prev) => ({
+			...prev,
+			[key]: newValue
+		}));
 	};
 
 	return (
-		<div id="filter" className="filter">
-			<div className="filter-name">
-				<p>Filters</p>
-				<button type="button" onClick={resetFilters}>
+		<div id="filter" className={styles.catalogFilterRoot}>
+			<div className={styles.catalogFilterHeader}>
+				<h3>Filters</h3>
+				<button type="button" onClick={handleFilterReset}>
 					Reset
 				</button>
 			</div>
 			<div className="filter-search">
 				<BTInput
-					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 					type="search"
 					placeholder="Search for a class..."
@@ -168,17 +187,19 @@ const CatalogFilterList = ({ filters }: FilterListProps) => {
 			</div>
 			<div className="filter-sort">
 				<BTSelect
+					value={sortQuery}
 					isClearable={false}
 					options={SORT_OPTIONS}
 					isSearchable={false}
-					onChange={(e) => setSortBy(e?.value ?? 'relevance')}
-					value={SORT_OPTIONS.find((o) => o.value === sortBy)}
+					onChange={newValue => setSortQuery(newValue as SortOption)}
 				/>
 			</div>
 			{Object.entries(filterList).map(([key, filter]) => (
-				<div className="filter-option" key={key}>
+				<div className={styles.filterItem} key={key}>
 					<p>{filter.name}</p>
 					<BTSelect
+						name={key}
+						value={currentFilters[key as CatalogFilterKeys]}
 						isClearable={filter.isClearable}
 						isMulti={filter.isMulti}
 						closeMenuOnSelect={filter.closeMenuOnSelect}
@@ -250,4 +271,4 @@ const CatalogFilterList = ({ filters }: FilterListProps) => {
 	// </div>
 };
 
-export default CatalogFilterList;
+export default CatalogFilter;

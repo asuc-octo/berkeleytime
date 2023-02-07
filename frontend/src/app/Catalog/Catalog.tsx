@@ -1,29 +1,31 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { useState, useMemo } from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
-import { useSelector } from 'react-redux';
-import { difference, union } from 'lodash-es';
 
-import CatalogFilterList from 'app/Catalog/Filters';
-import FilterResults from 'components/Catalog/FilterResults';
+import CatalogFilter from 'app/Catalog/Filters';
+import CatalogList from 'app/Catalog/CatalogList';
 import ClassDescription from 'components/ClassDescription/ClassDescription';
 import ClassDescriptionModal from 'components/ClassDescription/ClassDescriptionModal';
 
-import { FilterFragment, useGetFiltersQuery } from 'graphql';
-import { ReduxState } from 'redux/store';
-import { CourseSortAttribute } from 'utils/courses/sorting';
-import { extractSemesters, getLatestSemester } from 'utils/playlists/semesters';
+import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
-import { CourseReference, courseToName } from 'utils/courses/course';
-import { CourseOverviewFragment } from 'graphql';
 import catalogService from './service';
-import { ActiveFilters, CatalogFilters } from './types';
+import { CurrentFilters, DEFAULT_SORT, SortOption } from './types';
+import styles from './Catalog.module.scss';
+
+const initialFilters: CurrentFilters = {
+	department: null,
+	semester: null,
+	units: null,
+	level: null,
+	requirements: null
+};
 
 const Catalog = () => {
 	const { data, loading, error } = useGetFiltersQuery();
 	const filters = useMemo(() => (data ? catalogService.processFilterData(data) : null), [data]);
-
-	// console.log(latestSemesterId);
+	const [currentFilters, setCurrentFilters] = useState<CurrentFilters>(initialFilters);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [sortQuery, setSortQuery] = useState<SortOption>(DEFAULT_SORT);
 
 	// const history = useHistory();
 	// const match = useRouteMatch<{ abbreviation: string; courseNumber: string }>(
@@ -93,23 +95,25 @@ const Catalog = () => {
 	//   setShowDescription(false);
 	// };
 
+	const onCourseSelect = (selectedCourse: any) => {
+		return;
+	};
+
 	return (
-		<div className="catalog viewport-app">
-			<Row noGutters>
-				<Col md={3} lg={4} xl={3} className="filter-column">
+		<div className={styles.catalogRoot}>
 					{loading && <BTLoader showInstantly fill />}
-					{filters && <CatalogFilterList filters={filters} />}
+					{filters && (
+						<CatalogFilter
+							filters={filters}
+							sortQuery={sortQuery}
+							currentFilters={currentFilters}
+							setCurrentFilters={setCurrentFilters}
+							setSearchQuery={setSearchQuery}
+							setSortQuery={setSortQuery}
+						/>
+					)}
 					{error && <div>A critical error occured loading.</div>}
-				</Col>
-				<Col md={3} lg={4} xl={3} className="filter-results-column">
-          {/* <FilterResults
-            activePlaylists={activePlaylists}
-            selectCourse={selectCourse}
-            selectedCourse={activeCourse}
-            sortBy={sortBy}
-            query={search}
-          /> */}
-        </Col>
+					<CatalogList currentFilters={currentFilters} onCourseSelect={onCourseSelect} />
 				{/* <Col
           md={6}
           lg={4}
@@ -134,7 +138,6 @@ const Catalog = () => {
               />
             ))}
         </Col> */}
-			</Row>
 		</div>
 	);
 };
