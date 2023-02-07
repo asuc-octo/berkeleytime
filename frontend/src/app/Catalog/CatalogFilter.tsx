@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo } from 'react';
 import { ActionMeta } from 'react-select';
 import BTSelect from 'components/Custom/Select';
-import FilterModal from '../../components/Catalog/FilterModal';
+// import FilterModal from '../../components/Catalog/FilterModal';
 
 import catalogService from './service';
 
@@ -9,15 +9,14 @@ import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg
 import BTInput from 'components/Custom/Input';
 import {
 	CurrentFilters,
-	FilterOptions,
 	FilterOption,
 	CatalogFilters,
 	SortOption,
 	CatalogFilterKeys,
 	DEFAULT_SORT
 } from './types';
-import { useSelector } from 'react-redux';
-import { ReduxState } from 'redux/store';
+// import { useSelector } from 'react-redux';
+// import { ReduxState } from 'redux/store';
 
 import styles from './Catalog.module.scss';
 
@@ -29,70 +28,30 @@ const SORT_OPTIONS: SortOption[] = [
 	{ value: 'enrolled_percentage', label: 'Sort By: Percent Enrolled' }
 ];
 
-const defaultFilterList: FilterOptions = {
-	requirements: {
-		name: 'Requirements',
-		isClearable: true,
-		isMulti: true,
-		closeMenuOnSelect: false,
-		isSearchable: false,
-		options: [],
-		placeholder: 'Select requirements...'
-	},
-	units: {
-		name: 'Units',
-		isClearable: true,
-		isMulti: true,
-		closeMenuOnSelect: false,
-		isSearchable: false,
-		options: [],
-		placeholder: 'Specify units...'
-	},
-	department: {
-		name: 'Department',
-		isClearable: true,
-		isMulti: false,
-		closeMenuOnSelect: true,
-		isSearchable: true,
-		options: [],
-		placeholder: 'Choose a department...'
-	},
-	level: {
-		name: 'Class Level',
-		isClearable: true,
-		isMulti: true,
-		closeMenuOnSelect: false,
-		isSearchable: false,
-		options: [],
-		placeholder: 'Select class levels...'
-	},
-	semester: {
-		name: 'Semesters',
-		isClearable: false,
-		isMulti: false,
-		closeMenuOnSelect: true,
-		isSearchable: false,
-		options: [],
-		placeholder: 'Specify Semester...'
-	}
-};
-
 type CatalogFilterProps = {
 	filters: CatalogFilters;
 	currentFilters: CurrentFilters;
 	sortQuery: SortOption;
+	searchQuery: string;
 	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
 	setSortQuery: Dispatch<SetStateAction<SortOption>>;
 	setSearchQuery: Dispatch<SetStateAction<string>>;
 };
 
 const CatalogFilter = (props: CatalogFilterProps) => {
-	const { filters, currentFilters, setCurrentFilters, sortQuery, setSortQuery, setSearchQuery } =
-		props;
-	const isMobile = useSelector((state: ReduxState) => state.common.mobile);
+	const {
+		filters,
+		currentFilters,
+		setCurrentFilters,
+		sortQuery,
+		searchQuery,
+		setSortQuery,
+		setSearchQuery
+	} = props;
+	// const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
 	const filterList = useMemo(
-		() => catalogService.processFilterListOptions(defaultFilterList, filters),
+		() => catalogService.processFilterListOptions(catalogService.defaultFilters, filters),
 		[filters]
 	);
 
@@ -179,6 +138,7 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 			</div>
 			<div className="filter-search">
 				<BTInput
+					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 					type="search"
 					placeholder="Search for a class..."
@@ -191,7 +151,7 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 					isClearable={false}
 					options={SORT_OPTIONS}
 					isSearchable={false}
-					onChange={newValue => setSortQuery(newValue as SortOption)}
+					onChange={(newValue) => setSortQuery(newValue as SortOption)}
 				/>
 			</div>
 			{Object.entries(filterList).map(([key, filter]) => (

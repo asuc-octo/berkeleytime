@@ -16,17 +16,17 @@ type CatalogListProps = {
  * Component for course list
  */
 const CatalogList = ({ currentFilters, onCourseSelect }: CatalogListProps) => {
-	// const showEmptyState = currentFilters.length === 0;
-
 	const [fetchCatalogList, { data, loading, error }] = useGetCoursesForFilterLazyQuery({});
 
-	const filterString = useMemo(() => {
-		return Object.values(currentFilters ?? {})
-			.filter((val) => val !== null)
-			.map((item) => (Array.isArray(item) ? item.map((v) => v.value.id) : item?.value.id))
-			.flat()
-			.join(',');
-	}, [currentFilters]);
+	const filterString = useMemo(
+		() =>
+			Object.values(currentFilters ?? {})
+				.filter((val) => val !== null)
+				.map((item) => (Array.isArray(item) ? item.map((v) => v.value.id) : item?.value.id))
+				.flat()
+				.join(','),
+		[currentFilters]
+	);
 
 	const courses = useMemo(() => data?.allCourses.edges.map((edge) => edge.node) ?? null, [data]);
 
@@ -58,9 +58,9 @@ const CatalogList = ({ currentFilters, onCourseSelect }: CatalogListProps) => {
 						key={item.id}
 						data={{
 							courses,
-							selectCourse: onCourseSelect,
-							sortBy: '',
-							selectedCourse: ''
+							onCourseSelect,
+							sortQuery: '',
+							selectedCourse: null
 						}}
 						index={index}
 					/>

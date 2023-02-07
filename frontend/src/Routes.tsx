@@ -5,11 +5,6 @@ import BTLoader from 'components/Common/BTLoader';
 
 import Landing from './views/Landing';
 import Error from './views/Error/Error';
-// const Grades = lazy(() => new Promise(() => {}));
-// import DesignApp from './views/Forms/DesignApp';
-// import EngineeringApp from './views/Forms/EngineeringApp';
-// import { Positions } from './views/Apply/DescriptionPages';
-// const ApiDocs = lazy(() => import('./views/Api/Api'));
 
 const Catalog = lazy(() => import('./app/Catalog/Catalog'))
 const Grades = lazy(() => import('./views/Grades/Grades'));
@@ -51,11 +46,6 @@ const routes: Array<RouteProps> = [
   { path: '/scheduler/new', component: LocalScheduler },
   { path: '/scheduler/:scheduleId', component: RemoteScheduler },
   { path: '/schedule/:scheduleId', component: ViewSchedule },
-  // { path: '/apply/positions',   component: Positions       },
-  // { path: '/apply/engineering', component: EngineeringApp  },
-  // { path: '/apply/design',      component: DesignApp       },
-  // { path: '/apply/embed',       component: Apply           },
-  // { path: '/scheduler', component: Scheduler },
   { path: '/error', component: Error },
   { path: '/legal/privacy', component: PrivacyPolicy },
   { path: '/legal/terms', component: TermsOfService },
@@ -82,7 +72,6 @@ const Routes = () => (
           sensitive
         />
       ))}
-      {/* 404 page if nothing matches */}
       <Route component={Error} />
     </Switch>
   </Suspense>
