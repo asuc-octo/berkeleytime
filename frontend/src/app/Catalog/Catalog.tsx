@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
-import { useHistory, useRouteMatch } from 'react-router';
+// import { useHistory, useRouteMatch } from 'react-router';
 
-import CatalogFilter from 'app/Catalog/Filters';
+import CatalogFilter from 'app/Catalog/CatalogFilter';
 import CatalogList from 'app/Catalog/CatalogList';
-import ClassDescription from 'components/ClassDescription/ClassDescription';
-import ClassDescriptionModal from 'components/ClassDescription/ClassDescriptionModal';
+// import ClassDescription from 'components/ClassDescription/ClassDescription';
+// import ClassDescriptionModal from 'components/ClassDescription/ClassDescriptionModal';
 
 import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
@@ -101,20 +101,23 @@ const Catalog = () => {
 
 	return (
 		<div className={styles.catalogRoot}>
-					{loading && <BTLoader showInstantly fill />}
-					{filters && (
-						<CatalogFilter
-							filters={filters}
-							sortQuery={sortQuery}
-							currentFilters={currentFilters}
-							setCurrentFilters={setCurrentFilters}
-							setSearchQuery={setSearchQuery}
-							setSortQuery={setSortQuery}
-						/>
-					)}
-					{error && <div>A critical error occured loading.</div>}
-					<CatalogList currentFilters={currentFilters} onCourseSelect={onCourseSelect} />
-				{/* <Col
+			<div className={styles.catalogFilterRoot}>
+				{loading && <BTLoader showInstantly fill />}
+				{filters && (
+					<CatalogFilter
+						filters={filters}
+						sortQuery={sortQuery}
+						searchQuery={searchQuery}
+						currentFilters={currentFilters}
+						setCurrentFilters={setCurrentFilters}
+						setSearchQuery={setSearchQuery}
+						setSortQuery={setSortQuery}
+					/>
+				)}
+				{error && <div>Unable to fetch catalog filters.</div>}
+			</div>
+			<CatalogList currentFilters={currentFilters} onCourseSelect={onCourseSelect} />
+			{/* <Col
           md={6}
           lg={4}
           xl={6}

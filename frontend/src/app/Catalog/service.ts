@@ -7,6 +7,54 @@ const SEMESTER_VALUES = {
 	fall: 0.2
 };
 
+const defaultFilters: FilterOptions = {
+	requirements: {
+		name: 'Requirements',
+		isClearable: true,
+		isMulti: true,
+		closeMenuOnSelect: false,
+		isSearchable: false,
+		options: [],
+		placeholder: 'Select requirements...'
+	},
+	units: {
+		name: 'Units',
+		isClearable: true,
+		isMulti: true,
+		closeMenuOnSelect: false,
+		isSearchable: false,
+		options: [],
+		placeholder: 'Specify units...'
+	},
+	department: {
+		name: 'Department',
+		isClearable: true,
+		isMulti: false,
+		closeMenuOnSelect: true,
+		isSearchable: true,
+		options: [],
+		placeholder: 'Choose a department...'
+	},
+	level: {
+		name: 'Class Level',
+		isClearable: true,
+		isMulti: true,
+		closeMenuOnSelect: false,
+		isSearchable: false,
+		options: [],
+		placeholder: 'Select class levels...'
+	},
+	semester: {
+		name: 'Semesters',
+		isClearable: false,
+		isMulti: false,
+		closeMenuOnSelect: true,
+		isSearchable: false,
+		options: [],
+		placeholder: 'Specify Semester...'
+	}
+};
+
 /**
  * @param data The raw, unprocessed query data from the server
  * @returns An object where the keys are filter categories and the values are
@@ -102,6 +150,7 @@ const sortByAlphabet = (filters: CatalogFilters[CatalogCategoryKeys]) => {
 };
 
 export default {
+	defaultFilters,
 	processFilterData,
 	processFilterListOptions
 };

@@ -22,21 +22,27 @@
 	flex-direction: column;
 	padding: 30px;
 	gap: 12px;
-  font-size: 14px;
+	font-size: 14px;
 	border-right: 1.5px solid #eaeaea;
 }
 
-.filterItem {
+.filterItem, .multiValue {
 	p {
 		font-weight: 600;
 		margin-bottom: 10px;
 	}
 }
 
+.filter-option {
+	background-color: #f3f3f3;
+	border-radius: 16px;
+	padding: 2px 6px;
+}
+
 .catalogFilterHeader {
 	margin-bottom: 20px;
 	display: flex;
-  justify-content: space-between;
+	justify-content: space-between;
 	flex-direction: row;
 	align-items: baseline;
 	gap: 30px;
@@ -46,18 +52,18 @@
 		font-weight: 600;
 	}
 
-  button {
-    color: #2f80ed;
-    transition: .5s;
-    border: none;
-    background: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 16px;
-    &:hover {
-      background: hsla(0,0%,92.2%,.6196078431);
-    }
-  }
+	button {
+		color: #2f80ed;
+		transition: 0.5s;
+		border: none;
+		background: none;
+		padding: 4px 8px;
+		border-radius: 4px;
+		font-size: 16px;
+		&:hover {
+			background: hsla(0, 0%, 92.2%, 0.6196078431);
+		}
+	}
 }
 
 //
