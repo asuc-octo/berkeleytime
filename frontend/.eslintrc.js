@@ -19,7 +19,8 @@ module.exports = {
   rules: {
     "no-labels": "off",
     "no-console": "warn",
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    '@typescript-eslint/no-unused-vars': ['warn', { "varsIgnorePattern": "^_" }]
   },
   ignorePatterns: ['build', '**/*.js', '**/*.json', 'node_modules'],
   settings: {

@@ -26,11 +26,11 @@
 	border-right: 1.5px solid #eaeaea;
 }
 
-.filterItem, .multiValue {
-	p {
-		font-weight: 600;
-		margin-bottom: 10px;
-	}
+.filterItem {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	font-weight: 600;
 }
 
 .filter-option {
@@ -78,4 +78,14 @@
 	height: 100%;
 	overflow: auto;
 	overflow-x: hidden;
+}
+
+
+//
+// CatalogView Component
+//
+.catalogViewRoot {
+	display: flex;
+	grid-area: view;
+	flex-direction: column;
 }

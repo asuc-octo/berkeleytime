@@ -9,6 +9,7 @@ import path from 'path';
 export default defineConfig({
   root: path.resolve(__dirname, 'src'),
   server: {
+    host: true,
     port: 3000,
   },
   plugins: [

@@ -1,6 +1,6 @@
 ;
 import { Modal } from 'react-bootstrap';
-import ClassDescription from './ClassDescription';
+import CatalogView from '../../app/Catalog/CatalogView';
 import { Semester } from 'utils/playlists/semesters';
 import { CourseReference } from 'utils/courses/course';
 
@@ -38,7 +38,7 @@ const ClassDescriptionModal = ({
           </svg>
           Back to Courses{' '}
         </button>
-        <ClassDescription
+        <CatalogView
           course={course}
           semester={semester}
           modifyFilters={modifyFilters}
