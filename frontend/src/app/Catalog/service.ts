@@ -1,5 +1,5 @@
 import { FilterFragment, GetFiltersQuery } from 'graphql';
-import { CatalogCategoryKeys, FilterOptions, CatalogFilterKeys, CatalogFilters } from './types';
+import { CatalogCategoryKeys, FilterOptions, CatalogFilterKeys, CatalogFilters, SortOption } from './types';
 
 const SEMESTER_VALUES = {
 	spring: 0.0,
@@ -7,7 +7,15 @@ const SEMESTER_VALUES = {
 	fall: 0.2
 };
 
-const defaultFilters: FilterOptions = {
+const SORT_OPTIONS: SortOption[] = [
+	{ value: 'relevance', label: 'Sort By: Relevance' },
+	{ value: 'average_grade', label: 'Sort By: Average Grade' },
+	{ value: 'department_name', label: 'Sort By: Department Name' },
+	{ value: 'open_seats', label: 'Sort By: Open Seats' },
+	{ value: 'enrolled_percentage', label: 'Sort By: Percent Enrolled' }
+];
+
+const FILTER_TEMPLATE: FilterOptions = {
 	requirements: {
 		name: 'Requirements',
 		isClearable: true,
@@ -90,19 +98,19 @@ const processFilterListOptions = (filterItems: FilterOptions, filters: CatalogFi
 	result['requirements'].options = [
 		{
 			label: 'University Requirements',
-			options: filters['university'].map((filter) => ({ label: filter.name, value: filter }))
+			options: filters['university']?.map((filter) => ({ label: filter.name, value: filter })) || []
 		},
 		{
 			label: 'L&S Breadths',
-			options: filters['ls'].map((filter) => ({ label: filter.name, value: filter }))
+			options: filters['ls']?.map((filter) => ({ label: filter.name, value: filter })) || []
 		},
 		{
 			label: 'College of Engineering',
-			options: filters['engineering'].map((filter) => ({ label: filter.name, value: filter }))
+			options: filters['engineering']?.map((filter) => ({ label: filter.name, value: filter })) || []
 		},
 		{
 			label: 'Haas Breadths',
-			options: filters['haas'].map((filter) => ({ label: filter.name, value: filter }))
+			options: filters['haas']?.map((filter) => ({ label: filter.name, value: filter })) || []
 		}
 	];
 
@@ -136,8 +144,8 @@ const sortSemestersByLatest = (semester: CatalogFilters['semester']) => {
  * @returns a number representing the semester in the form (year + semester)
  * @description Converts the name of a semester to a number value to be compared with. Greater = more recent
  */
-const SemesterToValue = (semesterFiler: FilterFragment) => {
-	const [semester, year] = semesterFiler.name.toLowerCase().split(' ') as [
+const SemesterToValue = (semesterFilter: FilterFragment) => {
+	const [semester, year] = semesterFilter.name.toLowerCase().split(' ') as [
 		'spring' | 'fall' | 'summer',
 		string
 	];
@@ -150,7 +158,8 @@ const sortByAlphabet = (filters: CatalogFilters[CatalogCategoryKeys]) => {
 };
 
 export default {
-	defaultFilters,
+	FILTER_TEMPLATE,
+	SORT_OPTIONS,
 	processFilterData,
 	processFilterListOptions
 };

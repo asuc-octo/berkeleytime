@@ -1,38 +1,37 @@
-import { FixedSizeList, VariableSizeList } from 'react-window';
+import { FixedSizeList } from 'react-window';
 import CatalogListItem from './CatalogListItem';
-import { useGetCoursesForFilterLazyQuery } from 'graphql';
+import { CourseOverviewFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
 import { CurrentFilters } from './types';
-import { useEffect, useMemo } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import BTLoader from 'components/Common/BTLoader';
+import useDimensions from 'react-cool-dimensions';
 
 import styles from './Catalog.module.scss';
 
 type CatalogListProps = {
 	currentFilters: CurrentFilters;
-	onCourseSelect: (selectedCourseId: string) => void;
+	setCurrentCourse: Dispatch<SetStateAction<CourseOverviewFragment | null>>;
 };
 
 /**
  * Component for course list
  */
-const CatalogList = ({ currentFilters, onCourseSelect }: CatalogListProps) => {
-	const [fetchCatalogList, { data, loading, error }] = useGetCoursesForFilterLazyQuery({});
-
-	const filterString = useMemo(
-		() =>
-			Object.values(currentFilters ?? {})
-				.filter((val) => val !== null)
-				.map((item) => (Array.isArray(item) ? item.map((v) => v.value.id) : item?.value.id))
-				.flat()
-				.join(','),
-		[currentFilters]
-	);
+const CatalogList = ({ currentFilters, setCurrentCourse }: CatalogListProps) => {
+	const [fetchCatalogList, { data, loading }] = useGetCoursesForFilterLazyQuery({});
+	const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+	const { observe, height } = useDimensions();
 
 	const courses = useMemo(() => data?.allCourses.edges.map((edge) => edge.node) ?? null, [data]);
 
 	useEffect(() => {
-		if (filterString) fetchCatalogList({ variables: { playlists: filterString } });
-	}, [fetchCatalogList, filterString]);
+		const playlists = Object.values(currentFilters ?? {})
+			.filter((val) => val !== null)
+			.map((item) => (Array.isArray(item) ? item.map((v) => v.value.id) : item?.value.id))
+			.flat()
+			.join(',');
+
+		if (playlists) fetchCatalogList({ variables: { playlists } });
+	}, [fetchCatalogList, currentFilters]);
 
 	// let sortedCourses: CourseOverviewFragment[] = [];
 	// if (data) {
@@ -49,22 +48,36 @@ const CatalogList = ({ currentFilters, onCourseSelect }: CatalogListProps) => {
 	//   }
 	// }
 
+	const handleCourseSelect = (course: CourseOverviewFragment) => {
+		setCurrentCourse(course);
+		setSelectedCourseId(course.id);
+	};
+
 	return (
-		<div className={styles.catalogListRoot}>
+		<div ref={observe} className={styles.catalogListRoot}>
 			{loading && <BTLoader />}
-			{courses &&
-				courses.map((item, index) => (
-					<CatalogListItem
-						key={item.id}
-						data={{
-							courses,
-							onCourseSelect,
-							sortQuery: '',
-							selectedCourse: null
-						}}
-						index={index}
-					/>
-				))}
+			{courses && (
+				<FixedSizeList
+					height={height}
+					width={'100%'}
+					itemCount={courses.length}
+					itemSize={110}
+					itemKey={(index) => courses[index].id}
+				>
+					{({ index, style }) => (
+						<CatalogListItem
+							data={{
+								courses,
+								handleCourseSelect,
+								sortQuery: null,
+								selectedCourseId
+							}}
+							index={index}
+							style={style}
+						/>
+					)}
+				</FixedSizeList>
+			)}
 		</div>
 	);
 };

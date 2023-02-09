@@ -1,16 +1,15 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 // import { useHistory, useRouteMatch } from 'react-router';
 
 import CatalogFilter from 'app/Catalog/CatalogFilter';
 import CatalogList from 'app/Catalog/CatalogList';
-// import ClassDescription from 'components/ClassDescription/ClassDescription';
+import CatalogView from 'app/Catalog/CatalogView';
 // import ClassDescriptionModal from 'components/ClassDescription/ClassDescriptionModal';
 
-import { useGetFiltersQuery } from 'graphql';
-import BTLoader from 'components/Common/BTLoader';
-import catalogService from './service';
 import { CurrentFilters, DEFAULT_SORT, SortOption } from './types';
 import styles from './Catalog.module.scss';
+import { CourseOverviewFragment } from 'graphql';
+import { FilterOption } from './types';
 
 const initialFilters: CurrentFilters = {
 	department: null,
@@ -21,9 +20,8 @@ const initialFilters: CurrentFilters = {
 };
 
 const Catalog = () => {
-	const { data, loading, error } = useGetFiltersQuery();
-	const filters = useMemo(() => (data ? catalogService.processFilterData(data) : null), [data]);
 	const [currentFilters, setCurrentFilters] = useState<CurrentFilters>(initialFilters);
+	const [currentCourse, setCurrentCourse] = useState<CourseOverviewFragment | null>(null);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [sortQuery, setSortQuery] = useState<SortOption>(DEFAULT_SORT);
 
@@ -94,53 +92,24 @@ const Catalog = () => {
 	//   history.replace(`/catalog`);
 	//   setShowDescription(false);
 	// };
-
-	const onCourseSelect = (selectedCourse: any) => {
-		return;
-	};
-
+console.log(currentCourse)
 	return (
 		<div className={styles.catalogRoot}>
-			<div className={styles.catalogFilterRoot}>
-				{loading && <BTLoader showInstantly fill />}
-				{filters && (
-					<CatalogFilter
-						filters={filters}
-						sortQuery={sortQuery}
-						searchQuery={searchQuery}
-						currentFilters={currentFilters}
-						setCurrentFilters={setCurrentFilters}
-						setSearchQuery={setSearchQuery}
-						setSortQuery={setSortQuery}
-					/>
-				)}
-				{error && <div>Unable to fetch catalog filters.</div>}
-			</div>
-			<CatalogList currentFilters={currentFilters} onCourseSelect={onCourseSelect} />
-			{/* <Col
-          md={6}
-          lg={4}
-          xl={6}
-          className="catalog-description-column"
-          key={courseToName(activeCourse)}
-        >
-          {activeCourse !== null &&
-            (!isMobile ? (
-              <ClassDescription
-                course={activeCourse}
-                semester={activeSemester}
-                modifyFilters={modifyFilters}
-              />
-            ) : (
-              <ClassDescriptionModal
-                course={activeCourse}
-                semester={activeSemester}
-                modifyFilters={modifyFilters}
-                show={showDescription}
-                hideModal={hideModal}
-              />
-            ))}
-        </Col> */}
+			<CatalogFilter
+				sortQuery={sortQuery}
+				searchQuery={searchQuery}
+				currentFilters={currentFilters}
+				setCurrentFilters={setCurrentFilters}
+				setSearchQuery={setSearchQuery}
+				setSortQuery={setSortQuery}
+			/>
+			<CatalogList currentFilters={currentFilters} setCurrentCourse={setCurrentCourse} />
+			{currentCourse && currentFilters?.semester && (
+				<CatalogView
+					coursePreview={currentCourse as CourseOverviewFragment}
+					semesterFilter={currentFilters.semester as FilterOption}
+				/>
+			)}
 		</div>
 	);
 };

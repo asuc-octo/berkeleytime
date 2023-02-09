@@ -4,32 +4,21 @@ import BTSelect from 'components/Custom/Select';
 // import FilterModal from '../../components/Catalog/FilterModal';
 
 import catalogService from './service';
-
 import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg';
 import BTInput from 'components/Custom/Input';
 import {
 	CurrentFilters,
 	FilterOption,
-	CatalogFilters,
 	SortOption,
 	CatalogFilterKeys,
 	DEFAULT_SORT
 } from './types';
-// import { useSelector } from 'react-redux';
-// import { ReduxState } from 'redux/store';
 
 import styles from './Catalog.module.scss';
-
-const SORT_OPTIONS: SortOption[] = [
-	{ value: 'relevance', label: 'Sort By: Relevance' },
-	{ value: 'average_grade', label: 'Sort By: Average Grade' },
-	{ value: 'department_name', label: 'Sort By: Department Name' },
-	{ value: 'open_seats', label: 'Sort By: Open Seats' },
-	{ value: 'enrolled_percentage', label: 'Sort By: Percent Enrolled' }
-];
+import { useGetFiltersQuery } from 'graphql';
+import BTLoader from 'components/Common/BTLoader';
 
 type CatalogFilterProps = {
-	filters: CatalogFilters;
 	currentFilters: CurrentFilters;
 	sortQuery: SortOption;
 	searchQuery: string;
@@ -38,9 +27,10 @@ type CatalogFilterProps = {
 	setSearchQuery: Dispatch<SetStateAction<string>>;
 };
 
+const {SORT_OPTIONS, FILTER_TEMPLATE } = catalogService
+
 const CatalogFilter = (props: CatalogFilterProps) => {
 	const {
-		filters,
 		currentFilters,
 		setCurrentFilters,
 		sortQuery,
@@ -49,34 +39,39 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 		setSearchQuery
 	} = props;
 	// const isMobile = useSelector((state: ReduxState) => state.common.mobile);
+	const { data, loading, error } = useGetFiltersQuery();
+	const filters = useMemo(() => (data ? catalogService.processFilterData(data) : null), [data]);
 
 	const filterList = useMemo(
-		() => catalogService.processFilterListOptions(catalogService.defaultFilters, filters),
+		() =>
+			filters
+				? catalogService.processFilterListOptions(FILTER_TEMPLATE, filters)
+				: null,
 		[filters]
 	);
 
 	useEffect(() => {
-		if (filterList.semester) {
+		if (filterList?.semester) {
 			setCurrentFilters((prev) => ({
 				...prev,
 				semester: filterList.semester.options[0] as FilterOption
 			}));
 		}
-	}, [filterList.semester, setCurrentFilters]);
+	}, [filterList, setCurrentFilters]);
 
 	/**
 	 * @description Removes all active filters and replaces them with the current semester filter.
 	 *
 	 */
 	const handleFilterReset = useCallback(() => {
-		if (filterList.semester)
+		if (filterList?.semester)
 			setCurrentFilters((prev) => ({
 				...prev,
 				semester: filterList.semester.options[0] as FilterOption
 			}));
 		setSortQuery(DEFAULT_SORT);
 		setSearchQuery('');
-	}, [filterList.semester, setCurrentFilters, setSearchQuery, setSortQuery]);
+	}, [filterList, setCurrentFilters, setSearchQuery, setSortQuery]);
 
 	// const [showFilterModal, setShowFilterModal] = useState(false);
 	// const [modal, setModal] = useState({
@@ -136,41 +131,46 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 					Reset
 				</button>
 			</div>
-			<div className="filter-search">
-				<BTInput
-					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.target.value)}
-					type="search"
-					placeholder="Search for a class..."
-					icon={<SearchIcon />}
-				/>
-			</div>
-			<div className="filter-sort">
-				<BTSelect
-					value={sortQuery}
-					isClearable={false}
-					options={SORT_OPTIONS}
-					isSearchable={false}
-					onChange={(newValue) => setSortQuery(newValue as SortOption)}
-				/>
-			</div>
-			{Object.entries(filterList).map(([key, filter]) => (
-				<div className={styles.filterItem} key={key}>
-					<p>{filter.name}</p>
-					<BTSelect
-						name={key}
-						value={currentFilters[key as CatalogFilterKeys]}
-						isClearable={filter.isClearable}
-						isMulti={filter.isMulti}
-						closeMenuOnSelect={filter.closeMenuOnSelect}
-						isSearchable={filter.isSearchable}
-						options={filter.options}
-						onChange={handleFilterChange}
-						placeholder={filter.placeholder}
-					/>
-				</div>
-			))}
-			<div id="filter-end"></div>
+			{filterList && (
+				<>
+					<div className="filter-search">
+						<BTInput
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+							type="search"
+							placeholder="Search for a class..."
+							icon={<SearchIcon />}
+						/>
+					</div>
+					<div className="filter-sort">
+						<BTSelect
+							value={sortQuery}
+							isClearable={false}
+							options={SORT_OPTIONS}
+							isSearchable={false}
+							onChange={(newValue) => setSortQuery(newValue as SortOption)}
+						/>
+					</div>
+					{Object.entries(filterList).map(([key, filter]) => (
+						<div className={styles.filterItem} key={key}>
+							<p>{filter.name}</p>
+							<BTSelect
+								name={key}
+								value={currentFilters[key as CatalogFilterKeys]}
+								isClearable={filter.isClearable}
+								isMulti={filter.isMulti}
+								closeMenuOnSelect={filter.closeMenuOnSelect}
+								isSearchable={filter.isSearchable}
+								options={filter.options}
+								onChange={handleFilterChange}
+								placeholder={filter.placeholder}
+							/>
+						</div>
+					))}
+				</>
+			)}
+			{loading && <BTLoader />}
+			{error && <div>Unable to fetch catalog filters.</div>}
 		</div>
 	);
 	// <div id="filter" className="filter">
