@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
 import people from '../../assets/svg/catalog/people.svg';
 import chart from '../../assets/svg/catalog/chart.svg';
@@ -6,93 +6,94 @@ import book from '../../assets/svg/catalog/book.svg';
 import launch from '../../assets/svg/catalog/launch.svg';
 
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from '../../utils/utils';
-import { CourseFragment, CourseOverviewFragment, useGetCourseForNameQuery } from 'graphql';
-import { stableSortPlaylists } from 'utils/playlists/playlist';
-import { getLatestSemester, Semester } from 'utils/playlists/semesters';
+import { CourseOverviewFragment, useGetCourseForNameQuery } from 'graphql';
 import SectionTable from '../../components/ClassDescription/SectionTable';
 import BTLoader from 'components/Common/BTLoader';
 import { courseToName } from 'utils/courses/course';
-import { fetchEnrollContext } from '../../redux/actions';
-import { useDispatch } from 'react-redux';
-import { FilterOption } from 'app/Catalog/types';
+import { CurrentCourse, FilterOption } from 'app/Catalog/types';
+import { useParams } from 'react-router';
+import { sortByName } from './service';
 
 import styles from './Catalog.module.scss';
 
-interface Props {
-	coursePreview: CourseOverviewFragment | CourseFragment;
-	semesterFilter: FilterOption;
+interface CatalogViewProps {
+	coursePreview: CourseOverviewFragment | null;
+	semesterFilter: FilterOption | null;
 }
 
-const CatalogView = ({ coursePreview, semesterFilter }: Props) => {
-	const { abbreviation, courseNumber } = coursePreview;
+const CatalogView = (props: CatalogViewProps) => {
+	const { coursePreview, semesterFilter } = props;
 	const [readMore, setReadMore] = useState<boolean | null>(false);
 
+	const slug = useParams<{
+		abbreviation: string;
+		courseNumber: string;
+		semester: string;
+	}>();
+
 	const [semester, year] = useMemo(
-		() => semesterFilter.value.name.toLowerCase().split(' '),
+		() => semesterFilter?.value.name.toLowerCase().split(' ') || [null, null],
 		[semesterFilter]
 	);
 
-	const [course, setCourse] = useState(coursePreview);
+	const [course, setCourse] = useState<CurrentCourse>(coursePreview);
 
-	useEffect(() => {
-		setCourse(coursePreview);
-	}, [coursePreview]);
-
-	const { loading, error } = useGetCourseForNameQuery({
+	const { data, loading, error } = useGetCourseForNameQuery({
 		variables: {
-			abbreviation,
-			courseNumber,
-			year,
-			semester
+			abbreviation: coursePreview?.abbreviation ?? slug?.abbreviation ?? null,
+			courseNumber: coursePreview?.courseNumber ?? slug?.courseNumber ?? null,
+			year: year ?? slug?.semester?.split(' ')[1] ?? null,
+			semester: semester ?? slug?.semester?.split(' ')[0] ?? null
 		},
 		onCompleted: (data) => {
-			const course = data.allCourses?.edges[0]?.node;
+			const course = data.allCourses.edges[0].node;
 			if (course) {
 				setCourse((prev) => ({ ...prev, ...course }));
 			}
 		}
 	});
 
-	// if (!data) {
-	// 	return (
-	// 		<div className="catalog-description-container">
-	// 			{error ? (
-	// 				<div className="loading">A critical error occured loading the data.</div>
-	// 			) : (
-	// 				loading && <BTLoader fill />
-	// 			)}
-	// 		</div>
-	// 	);
-	// }
+	useEffect(() => {
+		setCourse(data?.allCourses.edges[0].node ?? coursePreview);
+	}, [coursePreview, data]);
 
-	// if (!course) {
-	// 	return (
-	// 		<div className="catalog-description-container">
-	// 			<div className="loading">
-	// 				<div className="catalog-results-empty">Unknown course {courseToName(courseRef)}</div>
-	// 			</div>
-	// 		</div>
-	// 	);
-	// }
+	const playlists = useMemo(
+		() =>
+			course?.__typename === 'CourseType'
+				? sortByName(course?.playlistSet?.edges?.map((e) => e.node) ?? [])
+				: null,
+		[course]
+	);
 
-	const playlists = useMemo(() => course.playlistSet?.edges.map((e) => e?.node) ?? {}, [course]);
-	const sections = useMemo(() => course.sectionSet?.edges.map((e) => e?.node) ?? {}, [course]);
+	const sections = useMemo(
+		() =>
+			course?.__typename === 'CourseType'
+				? course?.sectionSet?.edges?.map((e) => e.node) ?? []
+				: null,
+		[course]
+	);
 
-	// const latestSemester = getLatestSemester(playlists);
-	// const semesterUrl = latestSemester && `${latestSemester.semester}-${latestSemester.year}`;
+	if (loading) {
+		return (
+			<div className="catalog-description-container">
+				{error ? (
+					<div className="loading">A critical error occured loading the data.</div>
+				) : (
+					loading && <BTLoader fill />
+				)}
+			</div>
+		);
+	}
 
-	// const pills = stableSortPlaylists(playlists, 4);
+	// TODO
+	if (!course) {
+		return null;
+	}
 
 	const toGrades = {
 		pathname: `/grades/0-${course.id}-all-all`,
 		state: { course: course }
 	};
-
-	// TODO: remove
-	// const toEnrollment = {
-	// 	pathname: `/enrollment/0-${course.id}-${semesterUrl}-all`,
-	// 	state: { course: course }
-	// };
 
 	const checkOverridePrereqs = (prereqs: string) => {
 		if (courseToName(course) === 'POL SCI 126A') {
@@ -104,7 +105,7 @@ const CatalogView = ({ coursePreview, semesterFilter }: Props) => {
 	// This is all 'Read more' logic.
 	const charsPerRow = 80;
 	const moreOffset = 15;
-	let description = course.description;
+	let description = course?.description;
 	let prereqs = '';
 	let moreDesc: boolean | null = null;
 	let morePrereq: boolean | null = null;
@@ -121,7 +122,7 @@ const CatalogView = ({ coursePreview, semesterFilter }: Props) => {
 		}
 	} else {
 		// collapse
-		const descRows = Math.round(course.description.length / charsPerRow);
+		const descRows = Math.round(course.description?.length / charsPerRow);
 		if (descRows > 3 || (descRows === 3 && course.prerequisites)) {
 			description = description.slice(0, 3 * charsPerRow - moreOffset) + '...';
 			moreDesc = true;
@@ -187,7 +188,6 @@ const CatalogView = ({ coursePreview, semesterFilter }: Props) => {
 									{applyIndicatorGrade(course.letterAverage, course.letterAverage)} &nbsp;
 									<a
 										href={toGrades.pathname}
-										// eslint-disable-next-line react/jsx-no-target-blank
 										target="_blank"
 										rel="noreferrer"
 										className="statlink"
@@ -206,17 +206,12 @@ const CatalogView = ({ coursePreview, semesterFilter }: Props) => {
 					</div>
 				</section>
 				<section className="pill-container description-section">
-					<div>
-						{/* {pills.map((req) => (
-							<div
-								className="pill"
-								key={req.id}
-								onClick={() => modifyFilters(new Set([req.id]), new Set())}
-							>
+					{playlists &&
+						playlists.map((req) => (
+							<div className="pill" key={req.id}>
 								{req.name}
 							</div>
-						))} */}
-					</div>
+						))}
 				</section>
 				{description.length > 0 && (
 					<section>
@@ -249,19 +244,23 @@ const CatalogView = ({ coursePreview, semesterFilter }: Props) => {
 					<h5>Class Times</h5>
 				</section>
 				<section className="table-container description-section">
-					{/* <div>
-						{sections.length === 0 ? (
-							<div className="table-empty">
-								This class has no sections for the selected semester.
-							</div>
-						) : (
-							<SectionTable sections={sections} />
+					<div>
+						{sections && (
+							<>
+								{sections.length === 0 ? (
+									<div className="table-empty">
+										This class has no sections for the selected semester.
+									</div>
+								) : (
+									<SectionTable sections={sections} />
+								)}
+							</>
 						)}
-					</div> */}
+					</div>
 				</section>
 			</div>
 		</div>
 	);
 };
 
-export default CatalogView;
+export default memo(CatalogView);

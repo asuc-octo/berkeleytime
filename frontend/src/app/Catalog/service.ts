@@ -85,7 +85,7 @@ const processFilterData = (data: GetFiltersQuery) => {
 			case 'semester':
 				return sortSemestersByLatest(category);
 			default:
-				return sortByAlphabet(category);
+				return sortByName(category);
 		}
 	});
 
@@ -153,13 +153,14 @@ const SemesterToValue = (semesterFilter: FilterFragment) => {
 	return parseInt(year, 10) + SEMESTER_VALUES[semester];
 };
 
-const sortByAlphabet = (filters: CatalogFilters[CatalogCategoryKeys]) => {
-	return filters.sort((a, b) => a.name.localeCompare(b.name));
+export const sortByName = <T extends {name: string}[]>(arr: T) => {
+	return arr.sort((a, b) => a.name.localeCompare(b.name));
 };
 
 export default {
 	FILTER_TEMPLATE,
 	SORT_OPTIONS,
 	processFilterData,
-	processFilterListOptions
+	processFilterListOptions,
+	sortByName
 };
