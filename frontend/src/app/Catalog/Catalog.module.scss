@@ -86,6 +86,7 @@
 //
 .catalogViewRoot {
 	display: flex;
+	position: relative;
 	grid-area: view;
 	flex-direction: column;
 }

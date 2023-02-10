@@ -1,12 +1,13 @@
 import { FixedSizeList } from 'react-window';
 import CatalogListItem from './CatalogListItem';
 import { CourseOverviewFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
-import { CurrentFilters } from './types';
+import { CurrentFilters, FilterOption } from './types';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import BTLoader from 'components/Common/BTLoader';
 import useDimensions from 'react-cool-dimensions';
 
 import styles from './Catalog.module.scss';
+import { useHistory } from 'react-router';
 
 type CatalogListProps = {
 	currentFilters: CurrentFilters;
@@ -19,6 +20,7 @@ type CatalogListProps = {
 const CatalogList = ({ currentFilters, setCurrentCourse }: CatalogListProps) => {
 	const [fetchCatalogList, { data, loading }] = useGetCoursesForFilterLazyQuery({});
 	const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+	const history = useHistory();
 	const { observe, height } = useDimensions();
 
 	const courses = useMemo(() => data?.allCourses.edges.map((edge) => edge.node) ?? null, [data]);
@@ -51,6 +53,11 @@ const CatalogList = ({ currentFilters, setCurrentCourse }: CatalogListProps) => 
 	const handleCourseSelect = (course: CourseOverviewFragment) => {
 		setCurrentCourse(course);
 		setSelectedCourseId(course.id);
+		history.push(
+			`/catalog/${(currentFilters.semester as FilterOption)?.value?.name}/${course.abbreviation}/${
+				course.courseNumber
+			}/`
+		);
 	};
 
 	return (

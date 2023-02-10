@@ -29,6 +29,7 @@ const RedirectLink = lazy(() => import('./views/RedirectLink'));
 
 const routes: Array<RouteProps> = [
   { path: '/landing', component: Landing },
+  { path: '/catalog/:semester/:abbreviation/:courseNumber', component: Catalog },
   { path: '/catalog', component: Catalog, exact: false },
   { path: '/grades', component: Grades, exact: false },
   { path: '/enrollment', component: Enrollment, exact: false },
