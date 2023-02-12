@@ -4,7 +4,7 @@ import people from 'assets/svg/catalog/people.svg';
 import chart from 'assets/svg/catalog/chart.svg';
 import book from 'assets/svg/catalog/book.svg';
 import launch from 'assets/svg/catalog/launch.svg';
-
+import catalogService from './service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { CourseFragment, CourseOverviewFragment, useGetCourseForNameLazyQuery } from 'graphql';
 import SectionTable from 'components/ClassDescription/SectionTable';
@@ -57,12 +57,27 @@ const CatalogView = (props: CatalogViewProps) => {
 	}, [coursePreview]);
 
 	const playlists = useMemo(
-		() => sortByName((course as CourseFragment)?.playlistSet?.edges?.map((e) => e.node) ?? []),
+		() =>
+			sortByName(
+				(course as CourseFragment)?.playlistSet?.edges
+					?.map((e) => e.node)
+					.filter((n) => n.category !== 'semester') ?? []
+			),
 		[course]
 	);
 
 	const sections = useMemo(
 		() => (course as CourseFragment)?.sectionSet?.edges?.map((e) => e.node) ?? [],
+		[course]
+	);
+
+	const pastSemesters = useMemo(
+		() =>
+			catalogService.sortSemestersByLatest(
+				(course as CourseFragment)?.playlistSet?.edges
+					?.map((e) => e.node)
+					.filter((n) => n.category === 'semester') ?? []
+			),
 		[course]
 	);
 
@@ -139,63 +154,61 @@ const CatalogView = (props: CatalogViewProps) => {
 	return (
 		<div className={`catalog-description-container ${styles.catalogViewRoot}`}>
 			<div className="catalog-description">
-				<section>
-					<h3>
-						{course.abbreviation} {course.courseNumber}
-					</h3>
-					<h6>{course.title}</h6>
-					<div className="stats">
-						<div className="statline">
-							<img src={people} alt="" />
-							Enrolled: &nbsp;
-							{course.enrolled !== -1 ? (
-								<div className="statline-div">
-									{applyIndicatorPercent(
-										`${course.enrolled}/${course.enrolledMax}`,
-										course.enrolledPercentage
-									)}
-									&nbsp;
-									<a
-										// href={toEnrollment.pathname}
-										// eslint-disable-next-line react/jsx-no-target-blank
-										target="_blank"
-										rel="noreferrer"
-										className="statlink"
-									>
-										<img src={launch} alt="" />
-									</a>
-								</div>
-							) : (
-								' N/A '
-							)}
-						</div>
-						<div className="statline">
-							<img src={chart} alt="" />
-							Average Grade: &nbsp;
-							{course.gradeAverage !== -1 ? (
-								<div
-									className="statline-div"
-									title={
-										course.gradeAverage
-											? `Avg Grade: ${(course.gradeAverage * 25).toFixed(1)}%`
-											: undefined
-									}
+				<h3>
+					{course.abbreviation} {course.courseNumber}
+				</h3>
+				<h6>{course.title}</h6>
+				<div className="stats">
+					<div className="statline">
+						<img src={people} alt="" />
+						Enrolled: &nbsp;
+						{course.enrolled !== -1 ? (
+							<div className="statline-div">
+								{applyIndicatorPercent(
+									`${course.enrolled}/${course.enrolledMax}`,
+									course.enrolledPercentage
+								)}
+								&nbsp;
+								<a
+									// href={toEnrollment.pathname}
+									// eslint-disable-next-line react/jsx-no-target-blank
+									target="_blank"
+									rel="noreferrer"
+									className="statlink"
 								>
-									{applyIndicatorGrade(course.letterAverage, course.letterAverage)} &nbsp;
-									<a href={toGrades.pathname} target="_blank" rel="noreferrer" className="statlink">
-										<img src={launch} alt="" />
-									</a>
-								</div>
-							) : (
-								' N/A '
-							)}
-						</div>
-						<div className="statline">
-							<img src={book} alt="" />
-							{formatUnits(course.units)}
-						</div>
+									<img src={launch} alt="" />
+								</a>
+							</div>
+						) : (
+							' N/A '
+						)}
 					</div>
-				</section>
+					<div className="statline">
+						<img src={chart} alt="" />
+						Average Grade: &nbsp;
+						{course.gradeAverage !== -1 ? (
+							<div
+								className="statline-div"
+								title={
+									course.gradeAverage
+										? `Avg Grade: ${(course.gradeAverage * 25).toFixed(1)}%`
+										: undefined
+								}
+							>
+								{applyIndicatorGrade(course.letterAverage, course.letterAverage)} &nbsp;
+								<a href={toGrades.pathname} target="_blank" rel="noreferrer" className="statlink">
+									<img src={launch} alt="" />
+								</a>
+							</div>
+						) : (
+							' N/A '
+						)}
+					</div>
+					<div className="statline">
+						<img src={book} alt="" />
+						{formatUnits(course.units)}
+					</div>
+				</div>
 				<section className="pill-container description-section">
 					{playlists &&
 						playlists.map((req) => (
@@ -204,50 +217,43 @@ const CatalogView = (props: CatalogViewProps) => {
 							</div>
 						))}
 				</section>
+				<h5>Past Offerings</h5>
+				<section className="pill-container description-section">
+					{pastSemesters &&
+						pastSemesters.map((req) => (
+							<div className="pill" key={req.id}>
+								{req.name}
+							</div>
+						))}
+				</section>
 				{description.length > 0 && (
-					<section>
+					<>
+						<h5>Description</h5>
 						<p className="description">
 							{description}
-							{moreDesc != null && (
-								<span onClick={() => setReadMore(moreDesc)}>
-									{' '}
-									{moreDesc ? ' See more' : ' See less'}
-								</span>
-							)}
+							<span onClick={() => setReadMore((prev) => !prev)}>
+								{moreDesc ? ' See more' : ' See less'}
+							</span>
 						</p>
-					</section>
+					</>
 				)}
-				{prereqs.length > 0 && (
-					<section className="prereqs">
-						<h6>Prerequisites</h6>
-						<p>
-							{prereqs}
-							{morePrereq != null && (
-								<span onClick={() => setReadMore(morePrereq)}>
-									{' '}
-									{morePrereq ? ' See more' : ' See less'}
-								</span>
-							)}
-						</p>
-					</section>
-				)}
-				<section>
-					<h5>Class Times</h5>
-				</section>
+				<h5>Prerequisites</h5>
+				<p>
+					{course?.prerequisites || 'There is no information on the prerequisites for this course.'}
+				</p>
+				<h5>Class Times</h5>
 				<section className="table-container description-section">
-					<div>
-						{sections && (
-							<>
-								{sections.length === 0 ? (
-									<div className="table-empty">
-										This class has no sections for the selected semester.
-									</div>
-								) : (
-									<SectionTable sections={sections} />
-								)}
-							</>
-						)}
-					</div>
+					{sections && (
+						<>
+							{sections.length === 0 ? (
+								<div className="table-empty">
+									This class has no sections for the selected semester.
+								</div>
+							) : (
+								<SectionTable sections={sections} />
+							)}
+						</>
+					)}
 				</section>
 			</div>
 		</div>

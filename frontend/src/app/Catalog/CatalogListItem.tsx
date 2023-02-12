@@ -3,9 +3,9 @@ import { useSaveCourse, useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { useUser } from 'graphql/hooks/user';
 import { CSSProperties, memo, ReactNode } from 'react';
 import { areEqual } from 'react-window';
-import { CourseSortAttribute } from 'utils/courses/sorting';
 import { ReactComponent as BookmarkSaved } from '../../assets/svg/catalog/bookmark-saved.svg';
 import { ReactComponent as BookmarkUnsaved } from '../../assets/svg/catalog/bookmark-unsaved.svg';
+import { SortOption } from './types';
 
 // TODO: consider importing utils after latest changes merged into master.
 function formatEnrollmentPercentage(percentage: number): string {
@@ -58,7 +58,7 @@ type CatalogListItemProps = {
 	data: {
 		courses: CourseOverviewFragment[];
 		handleCourseSelect: (course: CourseOverviewFragment) => void;
-		sortQuery: CourseSortAttribute | null;
+		sortQuery: SortOption | null;
 		selectedCourseId: string | null;
 	};
 	index: number;
@@ -76,7 +76,7 @@ const CatalogListItem = ({ style, data, index }: CatalogListItemProps) => {
 	const { sortQuery, selectedCourseId } = data;
 
 	let sort;
-	switch (sortQuery) {
+	switch (sortQuery?.value) {
 		case 'department_name':
 		case 'enrolled_percentage':
 		case 'average_grade':

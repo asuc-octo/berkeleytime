@@ -1,7 +1,7 @@
 import { FixedSizeList } from 'react-window';
 import CatalogListItem from './CatalogListItem';
 import { CourseOverviewFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
-import { CurrentFilters, FilterOption } from './types';
+import { CurrentFilters, FilterOption, SortOption } from './types';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import BTLoader from 'components/Common/BTLoader';
 import useDimensions from 'react-cool-dimensions';
@@ -9,18 +9,20 @@ import useDimensions from 'react-cool-dimensions';
 import styles from './Catalog.module.scss';
 import { useHistory } from 'react-router';
 import { searchCourses } from 'utils/courses/search';
+import { sortByAttribute } from 'utils/courses/sorting';
 
 type CatalogListProps = {
 	currentFilters: CurrentFilters;
 	setCurrentCourse: Dispatch<SetStateAction<CourseOverviewFragment | null>>;
 	searchQuery: string;
+	sortQuery: SortOption;
 };
 
 /**
  * Component for course list
  */
 const CatalogList = (props: CatalogListProps) => {
-	const { currentFilters, setCurrentCourse, searchQuery } = props;
+	const { currentFilters, setCurrentCourse, searchQuery, sortQuery } = props;
 	const [fetchCatalogList, { data, loading }] = useGetCoursesForFilterLazyQuery({});
 	const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 	const history = useHistory();
@@ -28,9 +30,11 @@ const CatalogList = (props: CatalogListProps) => {
 
 	const courses = useMemo(() => {
 		if (!data) return null;
-		const courses = data.allCourses.edges.map((edge) => edge.node);
-		return searchCourses(courses, searchQuery);
-	}, [data, searchQuery]);
+		let courses = data.allCourses.edges.map((edge) => edge.node);
+		courses = searchCourses(courses, searchQuery);
+
+		return courses.sort(sortByAttribute(sortQuery.value));
+	}, [data, searchQuery, sortQuery]);
 
 	useEffect(() => {
 		const playlists = Object.values(currentFilters ?? {})
@@ -83,7 +87,7 @@ const CatalogList = (props: CatalogListProps) => {
 							data={{
 								courses,
 								handleCourseSelect,
-								sortQuery: null,
+								sortQuery,
 								selectedCourseId
 							}}
 							index={index}
