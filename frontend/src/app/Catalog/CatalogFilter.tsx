@@ -6,17 +6,12 @@ import BTSelect from 'components/Custom/Select';
 import catalogService from './service';
 import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg';
 import BTInput from 'components/Custom/Input';
-import {
-	CurrentFilters,
-	FilterOption,
-	SortOption,
-	CatalogFilterKeys,
-	DEFAULT_SORT
-} from './types';
+import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, DEFAULT_SORT } from './types';
 
 import styles from './Catalog.module.scss';
 import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
+import { useHistory, useParams } from 'react-router';
 
 type CatalogFilterProps = {
 	currentFilters: CurrentFilters;
@@ -27,7 +22,7 @@ type CatalogFilterProps = {
 	setSearchQuery: Dispatch<SetStateAction<string>>;
 };
 
-const {SORT_OPTIONS, FILTER_TEMPLATE } = catalogService
+const { SORT_OPTIONS, FILTER_TEMPLATE } = catalogService;
 
 const CatalogFilter = (props: CatalogFilterProps) => {
 	const {
@@ -38,26 +33,32 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 		setSortQuery,
 		setSearchQuery
 	} = props;
-	// const isMobile = useSelector((state: ReduxState) => state.common.mobile);
+
 	const { data, loading, error } = useGetFiltersQuery();
 	const filters = useMemo(() => (data ? catalogService.processFilterData(data) : null), [data]);
+	const history = useHistory();
+	const slug = useParams<{
+		abbreviation: string;
+		courseNumber: string;
+		semester: string;
+	}>();
 
 	const filterList = useMemo(
-		() =>
-			filters
-				? catalogService.processFilterListOptions(FILTER_TEMPLATE, filters)
-				: null,
+		() => (filters ? catalogService.processFilterOptions(FILTER_TEMPLATE, filters) : null),
 		[filters]
 	);
 
 	useEffect(() => {
 		if (filterList?.semester) {
+			const options = filterList.semester.options as FilterOption[];
+			const semester = options.find(({ label }) => label === slug?.semester) ?? null;
+
 			setCurrentFilters((prev) => ({
 				...prev,
-				semester: filterList.semester.options[0] as FilterOption
+				semester: semester ?? options[0]
 			}));
 		}
-	}, [filterList, setCurrentFilters]);
+	}, [filterList, setCurrentFilters, slug?.semester]);
 
 	/**
 	 * @description Removes all active filters and replaces them with the current semester filter.
@@ -121,6 +122,15 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 			...prev,
 			[key]: newValue
 		}));
+	
+		// Update the url slug if semester filter changes.
+		if (key === 'semester') {
+			history.push(
+				`/catalog/${(newValue as FilterOption)?.value?.name}/${slug?.abbreviation}/${
+					slug?.courseNumber
+				}/`
+			);
+		}
 	};
 
 	return (
@@ -173,62 +183,6 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 			{error && <div>Unable to fetch catalog filters.</div>}
 		</div>
 	);
-	// <div id="filter" className="filter">
-	// 	<div className="filter-search">
-	// 		<BTInput
-	// 			value={search}
-	// 			onChange={(e) => setSearch(e.target.value)}
-	// 			type="search"
-	// 			placeholder="Search for a class..."
-	// 			icon={<SearchIcon />}
-	// 		/>
-	// 	</div>
-	// 	<div className="filter-scroll">
-	//     <button
-	//       className="btn-bt-border filter-scroll-btn blue-text"
-	//       onClick={resetFilters}
-	//     >
-	//       Reset{' '}
-	//     </button>
-	//     <button
-	//       className="btn-bt-border filter-scroll-btn"
-	//       onClick={() =>
-	//         showModal({
-	//           selected: SORT_OPTIONS.filter((o) => o.value === sort),
-	//           options: SORT_OPTIONS,
-	//           handler: (p) => setSort((p[0] as SortOption).value),
-	//           isMulti: false,
-	//         })
-	//       }
-	//     >
-	//       Sort&nbsp;By{' '}
-	//     </button>
-	//     {filters.map((option) => (
-	//       <button
-	//         key={option.type}
-	//         className="btn-bt-border filter-scroll-btn"
-	//         onClick={() =>
-	//           showModal({
-	//             selected: getOverlappingValues(activeFilters, option.options),
-	//             options: option.options,
-	//             handler: filterHandler(option.options),
-	//             isMulti: filterTypeIsMulti(option.type),
-	//           })
-	//         }
-	//       >
-	//         {`${filterTypeToString(option.type)} `}
-	//       </button>
-	//     ))}
-	//   </div>
-	// 	<FilterModal
-	//     options={modal.options}
-	//     defaultSelection={modal.default}
-	//     showFilters={showFilterModal}
-	//     hideModal={hideModal}
-	//     storeSelection={modal.handler}
-	//     displayRadio={!modal.isMulti}
-	//   />
-	// </div>
 };
 
 export default CatalogFilter;

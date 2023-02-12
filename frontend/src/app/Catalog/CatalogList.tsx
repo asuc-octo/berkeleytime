@@ -8,22 +8,29 @@ import useDimensions from 'react-cool-dimensions';
 
 import styles from './Catalog.module.scss';
 import { useHistory } from 'react-router';
+import { searchCourses } from 'utils/courses/search';
 
 type CatalogListProps = {
 	currentFilters: CurrentFilters;
 	setCurrentCourse: Dispatch<SetStateAction<CourseOverviewFragment | null>>;
+	searchQuery: string;
 };
 
 /**
  * Component for course list
  */
-const CatalogList = ({ currentFilters, setCurrentCourse }: CatalogListProps) => {
+const CatalogList = (props: CatalogListProps) => {
+	const { currentFilters, setCurrentCourse, searchQuery } = props;
 	const [fetchCatalogList, { data, loading }] = useGetCoursesForFilterLazyQuery({});
 	const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 	const history = useHistory();
 	const { observe, height } = useDimensions();
 
-	const courses = useMemo(() => data?.allCourses.edges.map((edge) => edge.node) ?? null, [data]);
+	const courses = useMemo(() => {
+		if (!data) return null;
+		const courses = data.allCourses.edges.map((edge) => edge.node);
+		return searchCourses(courses, searchQuery);
+	}, [data, searchQuery]);
 
 	useEffect(() => {
 		const playlists = Object.values(currentFilters ?? {})

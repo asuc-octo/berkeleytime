@@ -32,8 +32,12 @@ const Catalog = () => {
 				setSearchQuery={setSearchQuery}
 				setSortQuery={setSortQuery}
 			/>
-			<CatalogList currentFilters={currentFilters} setCurrentCourse={setCurrentCourse} />
-			<CatalogView coursePreview={currentCourse} semesterFilter={currentFilters?.semester} />
+			<CatalogList
+				currentFilters={currentFilters}
+				setCurrentCourse={setCurrentCourse}
+				searchQuery={searchQuery}
+			/>
+			<CatalogView coursePreview={currentCourse} />
 		</div>
 	);
 };
