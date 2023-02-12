@@ -1,16 +1,16 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 
-import people from '../../assets/svg/catalog/people.svg';
-import chart from '../../assets/svg/catalog/chart.svg';
-import book from '../../assets/svg/catalog/book.svg';
-import launch from '../../assets/svg/catalog/launch.svg';
+import people from 'assets/svg/catalog/people.svg';
+import chart from 'assets/svg/catalog/chart.svg';
+import book from 'assets/svg/catalog/book.svg';
+import launch from 'assets/svg/catalog/launch.svg';
 
-import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from '../../utils/utils';
-import { CourseOverviewFragment, useGetCourseForNameQuery } from 'graphql';
-import SectionTable from '../../components/ClassDescription/SectionTable';
+import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
+import { CourseFragment, CourseOverviewFragment, useGetCourseForNameLazyQuery } from 'graphql';
+import SectionTable from 'components/ClassDescription/SectionTable';
 import BTLoader from 'components/Common/BTLoader';
 import { courseToName } from 'utils/courses/course';
-import { CurrentCourse, FilterOption } from 'app/Catalog/types';
+import { CurrentCourse } from 'app/Catalog/types';
 import { useParams } from 'react-router';
 import { sortByName } from './service';
 
@@ -18,33 +18,20 @@ import styles from './Catalog.module.scss';
 
 interface CatalogViewProps {
 	coursePreview: CourseOverviewFragment | null;
-	semesterFilter: FilterOption | null;
 }
 
 const CatalogView = (props: CatalogViewProps) => {
-	const { coursePreview, semesterFilter } = props;
+	const { coursePreview } = props;
 	const [readMore, setReadMore] = useState<boolean | null>(false);
-
 	const slug = useParams<{
 		abbreviation: string;
 		courseNumber: string;
 		semester: string;
 	}>();
 
-	const [semester, year] = useMemo(
-		() => semesterFilter?.value.name.toLowerCase().split(' ') || [null, null],
-		[semesterFilter]
-	);
-
 	const [course, setCourse] = useState<CurrentCourse>(coursePreview);
 
-	const { data, loading, error } = useGetCourseForNameQuery({
-		variables: {
-			abbreviation: coursePreview?.abbreviation ?? slug?.abbreviation ?? null,
-			courseNumber: coursePreview?.courseNumber ?? slug?.courseNumber ?? null,
-			year: year ?? slug?.semester?.split(' ')[1] ?? null,
-			semester: semester ?? slug?.semester?.split(' ')[0] ?? null
-		},
+	const [getCourse, { loading, error }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
@@ -54,25 +41,32 @@ const CatalogView = (props: CatalogViewProps) => {
 	});
 
 	useEffect(() => {
-		setCourse(data?.allCourses.edges[0].node ?? coursePreview);
-	}, [coursePreview, data]);
+		const variables = {
+			abbreviation: slug?.abbreviation ?? null,
+			courseNumber: slug?.courseNumber ?? null,
+			year: slug?.semester?.split(' ')[1] ?? null,
+			semester: slug?.semester?.split(' ')[0].toLowerCase() ?? null
+		};
+
+		// Only fetch the course if every parameter has a value.
+		if (Object.values(variables).every((value) => value !== null)) getCourse({ variables });
+	}, [slug, getCourse]);
+
+	useEffect(() => {
+		setCourse(coursePreview);
+	}, [coursePreview]);
 
 	const playlists = useMemo(
-		() =>
-			course?.__typename === 'CourseType'
-				? sortByName(course?.playlistSet?.edges?.map((e) => e.node) ?? [])
-				: null,
+		() => sortByName((course as CourseFragment)?.playlistSet?.edges?.map((e) => e.node) ?? []),
 		[course]
 	);
 
 	const sections = useMemo(
-		() =>
-			course?.__typename === 'CourseType'
-				? course?.sectionSet?.edges?.map((e) => e.node) ?? []
-				: null,
+		() => (course as CourseFragment)?.sectionSet?.edges?.map((e) => e.node) ?? [],
 		[course]
 	);
 
+	// TODO
 	if (loading) {
 		return (
 			<div className="catalog-description-container">
@@ -110,31 +104,33 @@ const CatalogView = (props: CatalogViewProps) => {
 	let moreDesc: boolean | null = null;
 	let morePrereq: boolean | null = null;
 
-	// No idea how this works, but this is what
-	// handles the 'Read More' functionality.
-	if (readMore) {
-		// expand
-		if (course.prerequisites) {
-			prereqs = checkOverridePrereqs(course.prerequisites);
-			morePrereq = false;
+	if (course?.__typename === 'CourseType') {
+		// No idea how this works, but this is what
+		// handles the 'Read More' functionality.
+		if (readMore) {
+			// expand
+			if (course.prerequisites) {
+				prereqs = checkOverridePrereqs(course.prerequisites);
+				morePrereq = false;
+			} else {
+				moreDesc = false;
+			}
 		} else {
-			moreDesc = false;
-		}
-	} else {
-		// collapse
-		const descRows = Math.round(course.description?.length / charsPerRow);
-		if (descRows > 3 || (descRows === 3 && course.prerequisites)) {
-			description = description.slice(0, 3 * charsPerRow - moreOffset) + '...';
-			moreDesc = true;
-		}
-		if (descRows < 3 && course.prerequisites) {
-			prereqs = checkOverridePrereqs(course.prerequisites);
-			if (descRows >= 1 && prereqs.length > charsPerRow) {
-				prereqs = prereqs.slice(0, charsPerRow - moreOffset) + '...';
-				morePrereq = true;
-			} else if (descRows === 0 && prereqs.length > 2 * charsPerRow) {
-				prereqs = prereqs.slice(0, 2 * charsPerRow - moreOffset) + '...';
-				morePrereq = true;
+			// collapse
+			const descRows = Math.round(course.description?.length / charsPerRow);
+			if (descRows > 3 || (descRows === 3 && course.prerequisites)) {
+				description = description.slice(0, 3 * charsPerRow - moreOffset) + '...';
+				moreDesc = true;
+			}
+			if (descRows < 3 && course.prerequisites) {
+				prereqs = checkOverridePrereqs(course.prerequisites);
+				if (descRows >= 1 && prereqs.length > charsPerRow) {
+					prereqs = prereqs.slice(0, charsPerRow - moreOffset) + '...';
+					morePrereq = true;
+				} else if (descRows === 0 && prereqs.length > 2 * charsPerRow) {
+					prereqs = prereqs.slice(0, 2 * charsPerRow - moreOffset) + '...';
+					morePrereq = true;
+				}
 			}
 		}
 	}
@@ -186,12 +182,7 @@ const CatalogView = (props: CatalogViewProps) => {
 									}
 								>
 									{applyIndicatorGrade(course.letterAverage, course.letterAverage)} &nbsp;
-									<a
-										href={toGrades.pathname}
-										target="_blank"
-										rel="noreferrer"
-										className="statlink"
-									>
+									<a href={toGrades.pathname} target="_blank" rel="noreferrer" className="statlink">
 										<img src={launch} alt="" />
 									</a>
 								</div>

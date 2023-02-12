@@ -92,7 +92,7 @@ const processFilterData = (data: GetFiltersQuery) => {
 	return filters;
 };
 
-const processFilterListOptions = (filterItems: FilterOptions, filters: CatalogFilters) => {
+const processFilterOptions = (filterItems: FilterOptions, filters: CatalogFilters) => {
 	const result = { ...filterItems };
 
 	result['requirements'].options = [
@@ -161,6 +161,6 @@ export default {
 	FILTER_TEMPLATE,
 	SORT_OPTIONS,
 	processFilterData,
-	processFilterListOptions,
+	processFilterOptions,
 	sortByName
 };
