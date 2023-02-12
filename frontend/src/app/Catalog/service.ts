@@ -162,5 +162,6 @@ export default {
 	SORT_OPTIONS,
 	processFilterData,
 	processFilterOptions,
-	sortByName
+	sortByName,
+	sortSemestersByLatest
 };

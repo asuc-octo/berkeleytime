@@ -36,6 +36,7 @@ const Catalog = () => {
 				currentFilters={currentFilters}
 				setCurrentCourse={setCurrentCourse}
 				searchQuery={searchQuery}
+				sortQuery={sortQuery}
 			/>
 			<CatalogView coursePreview={currentCourse} />
 		</div>
