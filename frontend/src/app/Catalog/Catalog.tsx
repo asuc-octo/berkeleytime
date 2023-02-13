@@ -2,7 +2,8 @@ import { useState } from 'react';
 import CatalogFilter from 'app/Catalog/CatalogFilter';
 import CatalogList from 'app/Catalog/CatalogList';
 import CatalogView from 'app/Catalog/CatalogView';
-import { CurrentFilters, DEFAULT_SORT, SortOption } from './types';
+import { CurrentFilters, SortOption } from './types';
+import catalogService from './service';
 import styles from './Catalog.module.scss';
 import { CourseOverviewFragment } from 'graphql';
 
@@ -14,11 +15,13 @@ const initialFilters: CurrentFilters = {
 	requirements: null
 };
 
+const { SORT_OPTIONS } = catalogService;
+
 const Catalog = () => {
 	const [currentFilters, setCurrentFilters] = useState<CurrentFilters>(initialFilters);
 	const [currentCourse, setCurrentCourse] = useState<CourseOverviewFragment | null>(null);
 	const [searchQuery, setSearchQuery] = useState('');
-	const [sortQuery, setSortQuery] = useState<SortOption>(DEFAULT_SORT);
+	const [sortQuery, setSortQuery] = useState<SortOption>(SORT_OPTIONS[0]);
 	// The course modal on mobile
 	// const [showDescription, setShowDescription] = useState(false);
 

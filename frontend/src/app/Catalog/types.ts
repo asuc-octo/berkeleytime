@@ -1,8 +1,6 @@
 import { CourseFragment, CourseOverviewFragment, FilterFragment } from 'graphql';
 import { GroupBase } from 'react-select';
 
-export const DEFAULT_SORT: SortOption = { value: 'relevance', label: 'Sort By: Relevance' };
-
 export type CurrentCourse = CourseFragment & {__typename?: 'CourseType'} | CourseOverviewFragment & {__typename?: 'CourseOverviewFragment'} | null
 
 export type CatalogCategoryKeys =

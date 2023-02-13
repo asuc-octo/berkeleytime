@@ -31,7 +31,7 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	const [course, setCourse] = useState<CurrentCourse>(coursePreview);
 
-	const [getCourse, { loading, error }] = useGetCourseForNameLazyQuery({
+	const [getCourse, { error }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
@@ -184,7 +184,7 @@ const CatalogView = (props: CatalogViewProps) => {
 					Average Grade:
 					{course.gradeAverage !== -1 ? (
 						<div>
-							{applyIndicatorGrade(course.letterAverage, course.letterAverage)} &nbsp;
+							{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
 							<a
 								href={toGrades.pathname}
 								target="_blank"
@@ -204,12 +204,12 @@ const CatalogView = (props: CatalogViewProps) => {
 				</div>
 			</div>
 			<section className={styles.pillContainer}>
-				{playlists &&
+				{playlists ?
 					playlists.map((req) => (
 						<div className={styles.pill} key={req.id}>
 							{req.name}
 						</div>
-					))}
+					)) : <BTLoader />}
 			</section>
 			{description.length > 0 && (
 				<p className={styles.description}>
@@ -254,7 +254,6 @@ const CatalogView = (props: CatalogViewProps) => {
 					<BTLoader />
 				)}
 			</section>
-			{loading && <BTLoader />}
 			{error && <div>A critical error occured loading the data.</div>}
 		</div>
 	);
