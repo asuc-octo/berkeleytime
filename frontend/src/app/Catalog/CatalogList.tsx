@@ -33,6 +33,13 @@ const CatalogList = (props: CatalogListProps) => {
 		let courses = data.allCourses.edges.map((edge) => edge.node);
 		courses = searchCourses(courses, searchQuery);
 
+		//TODO: Very big problem to inspect - server is returning duplicate entries of same courses.
+		//			Here we filter the duplicates to ensure catalog list consistency.
+		courses = courses.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+
+		// Inspect one case of duplication:
+		// console.log(courses.filter((v, i, a) => v.id === 'Q291cnNlVHlwZTo0NDc1'));
+		
 		return courses.sort(sortByAttribute(sortQuery.value));
 	}, [data, searchQuery, sortQuery]);
 
@@ -45,21 +52,6 @@ const CatalogList = (props: CatalogListProps) => {
 
 		if (playlists) fetchCatalogList({ variables: { playlists } });
 	}, [fetchCatalogList, currentFilters]);
-
-	// let sortedCourses: CourseOverviewFragment[] = [];
-	// if (data) {
-	//   const courses = data!.allCourses!.edges.map((edge) => edge!.node!);
-
-	//   // If we're using a "Relevance" search *and* there's a search query, we'll
-	//   // use the search text-distance as the sorting metric.
-	//   const hasQuery = rawQuery.trim() !== '';
-	//   if (hasQuery) {
-	//     // TODO: consider memoizing if this is slow.
-	//     sortedCourses = searchCourses(courses, rawQuery);
-	//   } else {
-	//     sortedCourses = courses.sort(sortByAttribute(sortBy));
-	//   }
-	// }
 
 	const handleCourseSelect = (course: CourseOverviewFragment) => {
 		setCurrentCourse(course);
@@ -85,12 +77,11 @@ const CatalogList = (props: CatalogListProps) => {
 					{({ index, style }) => (
 						<CatalogListItem
 							data={{
-								courses,
+								course: courses[index],
 								handleCourseSelect,
 								sortQuery,
 								selectedCourseId
 							}}
-							index={index}
 							style={style}
 						/>
 					)}

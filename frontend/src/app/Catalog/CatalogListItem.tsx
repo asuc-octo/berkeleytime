@@ -56,18 +56,16 @@ function openSeatsSort(open_seats: number): ReactNode {
 
 type CatalogListItemProps = {
 	data: {
-		courses: CourseOverviewFragment[];
+		course: CourseOverviewFragment;
 		handleCourseSelect: (course: CourseOverviewFragment) => void;
 		sortQuery: SortOption | null;
 		selectedCourseId: string | null;
 	};
-	index: number;
 	style: CSSProperties;
 };
 
-const CatalogListItem = ({ style, data, index }: CatalogListItemProps) => {
-	const { courses, handleCourseSelect } = data;
-	const course = courses[index];
+const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
+	const { course, handleCourseSelect } = data;
 
 	const { user } = useUser();
 	const saveCourse = useSaveCourse();

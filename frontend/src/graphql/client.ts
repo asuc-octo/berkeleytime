@@ -2,7 +2,7 @@ import { ApolloClient, ApolloLink, HttpLink } from '@apollo/client';
 import { cache } from './cache';
 
 const httpLink = new HttpLink({
-	uri: 'https://berkeleytime.com/api/graphql'
+	uri: '/api/graphql'
 });
 
 // const transformRepsonseLink = new ApolloLink((operation, forward) => {

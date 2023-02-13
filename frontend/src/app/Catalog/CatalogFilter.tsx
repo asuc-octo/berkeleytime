@@ -165,6 +165,7 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 						<div className={styles.filterItem} key={key}>
 							<p>{filter.name}</p>
 							<BTSelect
+								className={styles.select}
 								name={key}
 								value={currentFilters[key as CatalogFilterKeys]}
 								isClearable={filter.isClearable}
