@@ -6,10 +6,11 @@
 // md: 768-992  (tablet) (touch)
 // lg: 992-1200 (desktop)
 // xl: 1200+    (widescreen) (desktop)
+$screen-md-min: 768px;
 
 // up to 768px, or xs + sm
 @mixin mobile {
-  @include media-breakpoint-down(sm) {
+  @media (max-width: #{$screen-md-min}) {
     @content;
   }
 }

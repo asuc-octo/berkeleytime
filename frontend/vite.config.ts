@@ -32,4 +32,14 @@ export default defineConfig({
     outDir: '../build',
     sourcemap: false
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `
+        @import '/assets/scss/bt/base/responsive';
+        @import '/assets/scss/bt/theming/colors';
+        `
+      }
+    }
+  },
 });
