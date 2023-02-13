@@ -6,7 +6,7 @@ import BTSelect from 'components/Custom/Select';
 import catalogService from './service';
 import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg';
 import BTInput from 'components/Custom/Input';
-import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, DEFAULT_SORT } from './types';
+import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys } from './types';
 
 import styles from './Catalog.module.scss';
 import { useGetFiltersQuery } from 'graphql';
@@ -70,7 +70,7 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 				...prev,
 				semester: filterList.semester.options[0] as FilterOption
 			}));
-		setSortQuery(DEFAULT_SORT);
+		setSortQuery(SORT_OPTIONS[0]);
 		setSearchQuery('');
 	}, [filterList, setCurrentFilters, setSearchQuery, setSortQuery]);
 

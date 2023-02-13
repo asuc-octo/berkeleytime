@@ -5,7 +5,7 @@
 	display: grid;
 	grid-template-areas: 'filters list view';
 	grid-template-rows: 1fr;
-	grid-template-columns: 1.3fr 1.4fr 3fr;
+	grid-template-columns: 1.45fr 1.45fr 2.9fr;
 	position: relative;
 	flex-direction: column;
 	padding-top: 58px;
@@ -38,7 +38,11 @@
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	font-weight: 600;
+	font-weight: 600; 
+
+	p {
+		font-weight: 600;
+	}
 }
 
 .filter-option {
@@ -94,6 +98,10 @@
 		background: white;
 		border: 1px solid $bt-border-grey;
 		border-radius: 12px;
+  }
+
+	[class$="-placeholder"] {
+		font-weight: 400;
   }
 
 	[class$="MultiValueGeneric2"] {
