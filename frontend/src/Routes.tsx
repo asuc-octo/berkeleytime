@@ -3,10 +3,11 @@ import { lazy, Suspense } from 'react';
 import { Switch, Route, RouteProps, Redirect } from 'react-router-dom';
 import BTLoader from 'components/Common/BTLoader';
 
+import Catalog from './app/Catalog';
 import Landing from './views/Landing';
 import Error from './views/Error/Error';
 
-const Catalog = lazy(() => import('./app/Catalog/Catalog'))
+// const Catalog = lazy(() => import('./app/Catalog/Catalog'))
 const Grades = lazy(() => import('./views/Grades/Grades'));
 const Enrollment = lazy(() => import('./views/Enrollment/Enrollment'));
 const About = lazy(() => import('./views/About'));

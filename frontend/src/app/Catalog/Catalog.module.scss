@@ -12,6 +12,14 @@
 	height: 100vh;
 	align-items: stretch;
 	min-height: 800px;
+	overflow-x: hidden;
+	@include mobile {
+		grid-template-areas:
+			'filters'
+			'list';
+		grid-template-rows: 1fr 1fr 1fr;
+		grid-template-columns: 1fr;
+	}
 }
 
 //
@@ -78,16 +86,4 @@
 	height: 100%;
 	overflow: auto;
 	overflow-x: hidden;
-}
-
-
-//
-// CatalogView Component
-//
-.catalogViewRoot {
-	display: flex;
-	position: relative;
-	grid-area: view;
-	flex-direction: column;
-	padding: 0px 30px;
 }

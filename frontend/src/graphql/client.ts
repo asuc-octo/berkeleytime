@@ -1,13 +1,31 @@
-import { ApolloClient, HttpLink } from "@apollo/client";
-import { cache } from "./cache";
+import { ApolloClient, ApolloLink, HttpLink } from '@apollo/client';
+import { cache } from './cache';
 
-const link = new HttpLink({
-  uri: 'https://berkeleytime.com/api/graphql',
+const httpLink = new HttpLink({
+	uri: 'https://berkeleytime.com/api/graphql'
 });
 
+// const transformRepsonseLink = new ApolloLink((operation, forward) => {
+// 	return forward(operation).map((response) => {
+// 		if (response.data) {
+// 			const { data } = response;
+// 			const keys = Object.keys(data);
+
+// 			keys.map((key) => {
+// 				if (data[key]['edges']) {
+// 					if (Array.isArray(data[key]['edges'])) {
+// 						data[key] = data[key]['edges'].map((edge) => edge.node);
+// 					}
+// 				}
+// 			});
+// 		}
+// 		return response;
+// 	});
+// });
+
 const client = new ApolloClient({
-    link: link,
-    cache: cache
+	link: httpLink,
+	cache: cache
 });
 
 export default client;
