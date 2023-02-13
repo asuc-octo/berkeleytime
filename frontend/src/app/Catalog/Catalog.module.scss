@@ -87,3 +87,28 @@
 	overflow: auto;
 	overflow-x: hidden;
 }
+
+
+.select {
+	[class$="-multiValue"] {
+		background: white;
+		border: 1px solid $bt-border-grey;
+		border-radius: 12px;
+  }
+
+	[class$="MultiValueGeneric2"] {
+		color: $bt-blue;
+	}
+
+	[class$="-MultiValueRemove"] {
+		border-radius: 12px;
+		color: hsl(0, 0%, 80%);
+	}
+
+	[class$="-MultiValueRemove"]:hover {
+		background: $bt-button-background;
+		color: $bt-base-text;
+	}
+
+
+}
