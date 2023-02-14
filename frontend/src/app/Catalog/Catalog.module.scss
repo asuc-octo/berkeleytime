@@ -7,17 +7,15 @@
 	grid-template-rows: 1fr;
 	grid-template-columns: 1.45fr 1.45fr 2.9fr;
 	position: relative;
-	flex-direction: column;
-	padding-top: 58px;
-	height: 100vh;
+	top: 58px;
+	height: calc(100vh - 58px);
 	align-items: stretch;
-	min-height: 800px;
 	overflow-x: hidden;
 	@include mobile {
 		grid-template-areas:
 			'filters'
 			'list';
-		grid-template-rows: 1fr 1fr 1fr;
+		grid-template-rows: min-content 1fr;
 		grid-template-columns: 1fr;
 	}
 }
@@ -84,6 +82,7 @@
 .catalogListRoot {
 	display: flex;
 	grid-area: list;
+	flex: 1;
 	position: relative;
 	flex-direction: column;
 	border-right: 1.5px solid #eaeaea;

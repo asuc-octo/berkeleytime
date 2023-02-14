@@ -122,13 +122,13 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 			...prev,
 			[key]: newValue
 		}));
-	
+
 		// Update the url slug if semester filter changes.
 		if (key === 'semester') {
 			history.push(
-				`/catalog/${(newValue as FilterOption)?.value?.name}/${slug?.abbreviation}/${
-					slug?.courseNumber
-				}/`
+				`/catalog/${(currentFilters.semester as FilterOption)?.value?.name}${
+					slug?.abbreviation ? '/'.concat(slug.abbreviation) : ''
+				}${slug?.courseNumber ? '/'.concat(slug.courseNumber) : ''}/`
 			);
 		}
 	};

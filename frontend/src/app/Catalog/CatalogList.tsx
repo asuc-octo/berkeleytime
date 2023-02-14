@@ -35,11 +35,11 @@ const CatalogList = (props: CatalogListProps) => {
 
 		//TODO: Very big problem to inspect - server is returning duplicate entries of same courses.
 		//			Here we filter the duplicates to ensure catalog list consistency.
-		courses = courses.filter((v, i, a) => a.findIndex(t => (t.id === v.id)) === i);
+		courses = courses.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i);
 
 		// Inspect one case of duplication:
 		// console.log(courses.filter((v, i, a) => v.id === 'Q291cnNlVHlwZTo0NDc1'));
-		
+
 		return courses.sort(sortByAttribute(sortQuery.value));
 	}, [data, searchQuery, sortQuery]);
 
