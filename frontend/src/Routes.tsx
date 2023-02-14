@@ -6,8 +6,8 @@ import BTLoader from 'components/Common/BTLoader';
 import Catalog from './app/Catalog';
 import Landing from './views/Landing';
 import Error from './views/Error/Error';
+import Layout from 'components/Common/Layout';
 
-// const Catalog = lazy(() => import('./app/Catalog/Catalog'))
 const Grades = lazy(() => import('./views/Grades/Grades'));
 const Enrollment = lazy(() => import('./views/Enrollment/Enrollment'));
 const About = lazy(() => import('./views/About'));
@@ -29,54 +29,66 @@ const UserTestingForm = lazy(() => import('./views/Forms/UserTestingForm'));
 const RedirectLink = lazy(() => import('./views/RedirectLink'));
 
 const routes: Array<RouteProps> = [
-  { path: '/landing', component: Landing },
-  { path: '/catalog/:semester/:abbreviation/:courseNumber', component: Catalog, exact: false },
-  { path: '/catalog', component: Catalog, exact: false },
-  { path: '/grades', component: Grades, exact: false },
-  { path: '/enrollment', component: Enrollment, exact: false },
-  { path: '/about', component: About },
-  { path: '/releases', component: Releases },
-  { path: '/faq', component: Faq },
-  { path: '/testform', component: TestForm },
-  { path: '/bugs', component: BugsForm },
-  { path: '/usertesting', component: UserTestingForm },
-  { path: '/apply', component: Apply },
-  { path: '/profile', component: Profile },
-  { path: '/oauth2callback', component: Login },
-  { path: '/logout', component: Logout },
-  { path: '/scheduler', component: SchedulerOnboard },
-  { path: '/scheduler/new', component: LocalScheduler },
-  { path: '/scheduler/:scheduleId', component: RemoteScheduler },
-  { path: '/schedule/:scheduleId', component: ViewSchedule },
-  { path: '/error', component: Error },
-  { path: '/legal/privacy', component: PrivacyPolicy },
-  { path: '/legal/terms', component: TermsOfService },
-  { path: '/redirect', component: RedirectLink, exact: false },
+	{ path: '/landing', component: Landing },
+	{ path: '/grades', component: Grades, exact: false },
+	{ path: '/enrollment', component: Enrollment, exact: false },
+	{ path: '/about', component: About },
+	{ path: '/releases', component: Releases },
+	{ path: '/faq', component: Faq },
+	{ path: '/testform', component: TestForm },
+	{ path: '/bugs', component: BugsForm },
+	{ path: '/usertesting', component: UserTestingForm },
+	{ path: '/apply', component: Apply },
+	{ path: '/profile', component: Profile },
+	{ path: '/oauth2callback', component: Login },
+	{ path: '/logout', component: Logout },
+	{ path: '/scheduler', component: SchedulerOnboard },
+	{ path: '/scheduler/new', component: LocalScheduler },
+	{ path: '/scheduler/:scheduleId', component: RemoteScheduler },
+	{ path: '/schedule/:scheduleId', component: ViewSchedule },
+	{ path: '/error', component: Error },
+	{ path: '/legal/privacy', component: PrivacyPolicy },
+	{ path: '/legal/terms', component: TermsOfService },
+	{ path: '/redirect', component: RedirectLink, exact: false }
 ];
 
 const Routes = () => (
-  <Suspense
-    fallback={
-      <div className="viewport-app">
-        <BTLoader fill />
-      </div>
-    }
-  >
-    <Switch>
-      <Redirect from="/" to="/landing" exact />
-      <Redirect from="/s/:scheduleId" to="/schedule/:scheduleId" />
-      {routes.map((route) => (
-        <Route
-          key={route.path as string}
-          path={route.path}
-          component={route.component}
-          exact={route.exact ?? true} // force exact=true unless specified false
-          sensitive
-        />
-      ))}
-      <Route component={Error} />
-    </Switch>
-  </Suspense>
+	<Suspense
+		fallback={
+			<div className="viewport-app">
+				<BTLoader fill />
+			</div>
+		}
+	>
+		<Switch>
+			<Redirect from="/" to="/landing" exact />
+			<Redirect from="/s/:scheduleId" to="/schedule/:scheduleId" />
+
+			<Route path="/catalog/:semester?/:abbreviation?/:courseNumber?" exact={false}>
+				<Layout noFooter>
+					<Catalog />
+				</Layout>
+			</Route>
+
+			<Route>
+				<Layout>
+					<Switch>
+						{routes.map((route) => (
+							<Route
+								key={route.path as string}
+								path={route.path}
+								component={route.component}
+								exact={route.exact ?? true} // force exact=true unless specified false
+								sensitive
+							/>
+						))}
+					</Switch>
+				</Layout>
+			</Route>
+
+			<Route component={Error} />
+		</Switch>
+	</Suspense>
 );
 
 export default Routes;
