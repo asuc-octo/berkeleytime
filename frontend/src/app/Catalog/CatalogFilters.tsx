@@ -12,6 +12,7 @@ import styles from './Catalog.module.scss';
 import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
 import { useHistory, useParams } from 'react-router';
+import { initialFilters } from './Catalog';
 
 type CatalogFilterProps = {
 	currentFilters: CurrentFilters;
@@ -24,7 +25,7 @@ type CatalogFilterProps = {
 
 const { SORT_OPTIONS, FILTER_TEMPLATE } = catalogService;
 
-const CatalogFilter = (props: CatalogFilterProps) => {
+const CatalogFilters = (props: CatalogFilterProps) => {
 	const {
 		currentFilters,
 		setCurrentFilters,
@@ -65,14 +66,18 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 	 *
 	 */
 	const handleFilterReset = useCallback(() => {
-		if (filterList?.semester)
-			setCurrentFilters((prev) => ({
-				...prev,
-				semester: filterList.semester.options[0] as FilterOption
-			}));
 		setSortQuery(SORT_OPTIONS[0]);
 		setSearchQuery('');
-	}, [filterList, setCurrentFilters, setSearchQuery, setSortQuery]);
+
+		if (filterList) {
+			const semester = filterList.semester.options[0] as FilterOption;
+			setCurrentFilters({
+				...initialFilters,
+				semester
+			});
+			history.push(`/catalog/${semester.value.name}`);
+		}
+	}, [filterList, history, setCurrentFilters, setSearchQuery, setSortQuery]);
 
 	// const [showFilterModal, setShowFilterModal] = useState(false);
 	// const [modal, setModal] = useState({
@@ -126,9 +131,9 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 		// Update the url slug if semester filter changes.
 		if (key === 'semester') {
 			history.push(
-				`/catalog/${(currentFilters.semester as FilterOption)?.value?.name}${
-					slug?.abbreviation ? '/'.concat(slug.abbreviation) : ''
-				}${slug?.courseNumber ? '/'.concat(slug.courseNumber) : ''}/`
+				`/catalog/${(newValue as FilterOption)?.value?.name}`
+					.concat(slug?.abbreviation ? `/${slug.abbreviation}` : '')
+					.concat(slug?.courseNumber ? `/${slug.courseNumber}` : '')
 			);
 		}
 	};
@@ -141,49 +146,46 @@ const CatalogFilter = (props: CatalogFilterProps) => {
 					Reset
 				</button>
 			</div>
-			{filterList && (
-				<>
-					<div className="filter-search">
-						<BTInput
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-							type="search"
-							placeholder="Search for a class..."
-							icon={<SearchIcon />}
-						/>
-					</div>
-					<div className="filter-sort">
+			<div className="filter-search">
+				<BTInput
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					type="search"
+					placeholder="Search for a class..."
+					icon={<SearchIcon />}
+				/>
+			</div>
+			<div className="filter-sort">
+				<BTSelect
+					value={sortQuery}
+					isClearable={false}
+					options={SORT_OPTIONS}
+					isSearchable={false}
+					onChange={(newValue) => setSortQuery(newValue as SortOption)}
+				/>
+			</div>
+			{filterList &&
+				Object.entries(filterList).map(([key, filter]) => (
+					<div className={styles.filterItem} key={key}>
+						<p>{filter.name}</p>
 						<BTSelect
-							value={sortQuery}
-							isClearable={false}
-							options={SORT_OPTIONS}
-							isSearchable={false}
-							onChange={(newValue) => setSortQuery(newValue as SortOption)}
+							className={styles.select}
+							name={key}
+							value={currentFilters[key as CatalogFilterKeys]}
+							isClearable={filter.isClearable}
+							isMulti={filter.isMulti}
+							closeMenuOnSelect={filter.closeMenuOnSelect}
+							isSearchable={filter.isSearchable}
+							options={filter.options}
+							onChange={handleFilterChange}
+							placeholder={filter.placeholder}
 						/>
 					</div>
-					{Object.entries(filterList).map(([key, filter]) => (
-						<div className={styles.filterItem} key={key}>
-							<p>{filter.name}</p>
-							<BTSelect
-								className={styles.select}
-								name={key}
-								value={currentFilters[key as CatalogFilterKeys]}
-								isClearable={filter.isClearable}
-								isMulti={filter.isMulti}
-								closeMenuOnSelect={filter.closeMenuOnSelect}
-								isSearchable={filter.isSearchable}
-								options={filter.options}
-								onChange={handleFilterChange}
-								placeholder={filter.placeholder}
-							/>
-						</div>
-					))}
-				</>
-			)}
+				))}
 			{loading && <BTLoader />}
 			{error && <div>Unable to fetch catalog filters.</div>}
 		</div>
 	);
 };
 
-export default CatalogFilter;
+export default CatalogFilters;
