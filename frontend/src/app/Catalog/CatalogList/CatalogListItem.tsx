@@ -1,25 +1,25 @@
 import { CourseOverviewFragment } from 'graphql';
 import { useSaveCourse, useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { useUser } from 'graphql/hooks/user';
-import { CSSProperties, memo, ReactNode } from 'react';
+import { CSSProperties, memo } from 'react';
 import { areEqual } from 'react-window';
-import { ReactComponent as BookmarkSaved } from '../../assets/svg/catalog/bookmark-saved.svg';
-import { ReactComponent as BookmarkUnsaved } from '../../assets/svg/catalog/bookmark-unsaved.svg';
-import { SortOption } from './types';
+import { ReactComponent as BookmarkSaved } from 'assets/svg/catalog/bookmark-saved.svg';
+import { ReactComponent as BookmarkUnsaved } from 'assets/svg/catalog/bookmark-unsaved.svg';
+import { SortOption } from '../types';
 
 // TODO: consider importing utils after latest changes merged into master.
-function formatEnrollmentPercentage(percentage: number): string {
+function formatEnrollmentPercentage(percentage: number) {
 	return `${Math.floor(percentage * 100)}% enrolled`;
 }
 
-function formatUnits(units: string): string {
+function formatUnits(units: string) {
 	return `${units} Unit${units === '1.0' || units === '1' ? '' : 's'}`
 		.replace(/.0/g, '')
 		.replace(/ - /, '-')
 		.replace(/ or /g, '-');
 }
 
-function colorEnrollment(percentage: number): string {
+function colorEnrollment(percentage: number) {
 	const pct = percentage * 100;
 	if (pct < 33) {
 		return 'enrollment-first-third';
@@ -30,7 +30,7 @@ function colorEnrollment(percentage: number): string {
 	}
 }
 
-function colorGrade(grade: string): string {
+function colorGrade(grade: string) {
 	if (grade === '') {
 		// console.error('colorGrade: no grade provided!');
 		return '';
@@ -38,7 +38,7 @@ function colorGrade(grade: string): string {
 	return `grade-${grade[0]}`;
 }
 
-function gradeSort(grade: string): ReactNode {
+function gradeSort(grade: string) {
 	return (
 		<div className="filter-card-sort filter-card-grade">
 			<h6 className={colorGrade(grade)}>{grade}</h6>
@@ -46,7 +46,7 @@ function gradeSort(grade: string): ReactNode {
 	);
 }
 
-function openSeatsSort(open_seats: number): ReactNode {
+function openSeatsSort(open_seats: number) {
 	return (
 		<div className="filter-card-sort filter-card-open-seats">
 			<h6>{open_seats}</h6>

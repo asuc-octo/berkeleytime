@@ -7,7 +7,7 @@ import launch from 'assets/svg/catalog/launch.svg';
 import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { CourseFragment, CourseOverviewFragment, useGetCourseForNameLazyQuery } from 'graphql';
-import SectionTable from 'components/ClassDescription/SectionTable';
+import CatalogViewSections from './CatalogViewSections';
 import BTLoader from 'components/Common/BTLoader';
 import { courseToName } from 'utils/courses/course';
 import { CurrentCourse } from 'app/Catalog/types';
@@ -204,12 +204,15 @@ const CatalogView = (props: CatalogViewProps) => {
 				</div>
 			</div>
 			<section className={styles.pillContainer}>
-				{playlists ?
+				{playlists ? (
 					playlists.map((req) => (
 						<div className={styles.pill} key={req.id}>
 							{req.name}
 						</div>
-					)) : <BTLoader />}
+					))
+				) : (
+					<BTLoader />
+				)}
 			</section>
 			{description.length > 0 && (
 				<p className={styles.description}>
@@ -237,7 +240,7 @@ const CatalogView = (props: CatalogViewProps) => {
 								This class has no sections for the selected semester.
 							</div>
 						) : (
-							<SectionTable sections={sections} />
+							<CatalogViewSections sections={sections} />
 						)}
 					</>
 				)}
