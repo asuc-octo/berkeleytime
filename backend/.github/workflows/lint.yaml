@@ -1,10 +1,12 @@
+name: 
+  Linting
+  
 on:
   push:
   pull_request:
 
 jobs:
-  tsc:
-    name: tsc
+  Lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -14,5 +16,5 @@ jobs:
         node-version: 12
     - name: npm install
       run: npm install
-    - name: typecheck 
-      run: npm run typecheck
+    - name: lint
+      run: npm run lint

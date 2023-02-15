@@ -1,4 +1,3 @@
-import { makeExecutableSchema } from "apollo-server-express";
 import { resolvers, typeDefs } from "../modules";
 import { mergeSchemas } from "@graphql-tools/schema";
 

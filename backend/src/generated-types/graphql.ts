@@ -24,6 +24,21 @@ export type CustomEvent = {
   title?: Maybe<Scalars['String']>;
 };
 
+export type Enrollment = {
+  __typename?: 'Enrollment';
+  classId: Scalars['String'];
+  enrollmentInfo?: Maybe<Array<Maybe<EnrollmentInfo>>>;
+};
+
+export type EnrollmentInfo = {
+  __typename?: 'EnrollmentInfo';
+  date?: Maybe<Scalars['String']>;
+  enrolledCount?: Maybe<Scalars['Int']>;
+  enrolledMax?: Maybe<Scalars['Int']>;
+  waitlistedCount?: Maybe<Scalars['Int']>;
+  waitlistedMax?: Maybe<Scalars['Int']>;
+};
+
 export type Grade = {
   __typename?: 'Grade';
   course_id: Scalars['String'];
@@ -31,6 +46,7 @@ export type Grade = {
 
 export type Query = {
   __typename?: 'Query';
+  Enrollment?: Maybe<Enrollment>;
   grades?: Maybe<Array<Maybe<Grade>>>;
   schedules?: Maybe<Array<Maybe<Schedule>>>;
   users?: Maybe<Array<Maybe<User>>>;
@@ -52,6 +68,10 @@ export type Schedule = {
   public: Scalars['Boolean'];
   section_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
   term: Scalars['String'];
+};
+
+export type QueryEnrollmentArgs = {
+  classId: Scalars['String'];
 };
 
 export type User = {
@@ -132,7 +152,10 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   CustomEvent: ResolverTypeWrapper<CustomEvent>;
+  Enrollment: ResolverTypeWrapper<Enrollment>;
+  EnrollmentInfo: ResolverTypeWrapper<EnrollmentInfo>;
   Grade: ResolverTypeWrapper<Grade>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -143,7 +166,10 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   CustomEvent: CustomEvent;
+  Enrollment: Enrollment;
+  EnrollmentInfo: EnrollmentInfo;
   Grade: Grade;
+  Int: Scalars['Int'];
   Query: {};
   Schedule: Schedule;
   String: Scalars['String'];
@@ -184,6 +210,22 @@ export type ScheduleResolvers<ContextType = any, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type EnrollmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Enrollment'] = ResolversParentTypes['Enrollment']> = {
+  classId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  enrollmentInfo?: Resolver<Maybe<Array<Maybe<ResolversTypes['EnrollmentInfo']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type EnrollmentInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['EnrollmentInfo'] = ResolversParentTypes['EnrollmentInfo']> = {
+  date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  enrolledCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  enrolledMax?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  waitlistedCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  waitlistedMax?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   google_id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -193,6 +235,8 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type Resolvers<ContextType = any> = {
   CustomEvent?: CustomEventResolvers<ContextType>;
+  Enrollment?: EnrollmentResolvers<ContextType>;
+  EnrollmentInfo?: EnrollmentInfoResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
