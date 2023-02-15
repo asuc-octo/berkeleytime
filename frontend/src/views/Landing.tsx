@@ -9,15 +9,15 @@ const Jumbotron = lazy(() => import('components/Landing/Jumbotron'));
 
 const Landing: FC = () => {
 	return (
-		<div>
+		<>
 			<LandingModal />
-			<Suspense fallback={<div style={{width: 500, height: 500}} />}>
+			<Suspense fallback={<div style={{ display: 'flex', flex: '1' }} />}>
 				<Jumbotron />
 			</Suspense>
 			<Explore />
 			<Mission />
 			<Blurbs />
-		</div>
+		</>
 	);
 };
 

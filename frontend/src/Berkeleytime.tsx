@@ -102,7 +102,6 @@ class Berkeleytime extends Component<PropsFromRedux> {
 	render() {
 		return (
 			<div className="app">
-				<Banner />
 				<Routes />
 			</div>
 		);
