@@ -1,5 +1,4 @@
-import { ApolloServer, makeExecutableSchema } from "apollo-server-express";
-import { config } from "../../config";
+import { ApolloServer } from "@apollo/server";
 import { buildSchema } from "../../utils/buildSchema";
 
 export default async () => {
