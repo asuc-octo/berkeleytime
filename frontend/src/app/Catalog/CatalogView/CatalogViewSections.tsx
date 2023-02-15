@@ -63,7 +63,7 @@ const CatalogViewSections = ({ sections: allSections }: Props) => {
 					<div className={styles.sectionItem} key={section.ccn}>
 						<div className={styles.sectionInfo}>
 							<h5>
-								{section.kind} - {section.locationName ? section.locationName : 'Unknown Location'}
+								<span>{section.kind}</span> - {section.locationName ? section.locationName : 'Unknown Location'}
 							</h5>
 							<h6>
 								<span>

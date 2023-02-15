@@ -227,7 +227,7 @@ const CatalogView = (props: CatalogViewProps) => {
 					<h5>Prerequisites</h5>
 					<p>
 						{course?.prerequisites ||
-							'There is no information on the prerequisites for this course.'}
+							'There is no information on the prerequisites of this course.'}
 					</p>
 				</>
 			)}

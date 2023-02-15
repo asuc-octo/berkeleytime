@@ -21,6 +21,10 @@
 		font-weight: 700;
 		margin-top: 10px;
 		font-size: 18px;
+
+		 span {
+			color: $bt-blue;
+		 }
 	}
 
 	h6 {
@@ -146,9 +150,10 @@
 .sectionItem {
 	display: flex;
 	flex-direction: row;
-	background: #F8F8F8;
+	// background: #F8F8F8;
 	padding: 10px 20px;
 	border-radius: 12px;
+	border: 1px solid #C7C7C7;
 	gap: 20px;
 	h5 {
 		font-size: 16px;
