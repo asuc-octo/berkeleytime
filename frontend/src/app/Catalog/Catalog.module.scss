@@ -76,22 +76,6 @@
 	}
 }
 
-//
-// CatalogList Component
-//
-.catalogListRoot {
-	display: flex;
-	grid-area: list;
-	flex: 1;
-	position: relative;
-	flex-direction: column;
-	border-right: 1.5px solid #eaeaea;
-	height: 100%;
-	overflow: auto;
-	overflow-x: hidden;
-}
-
-
 .select {
 	[class$="-multiValue"] {
 		background: white;
