@@ -1,0 +1,156 @@
+//
+// CatalogFilters Component
+//
+.catalogFilterRoot {
+	display: flex;
+	flex-direction: column;
+	background: transparent;
+
+	@include media(mobile, tablet) {
+		padding-top: 0;
+		align-items: center;
+	}
+}
+
+.toggleButton {
+	display: none;
+	z-index: 200;
+
+	@include media(mobile, tablet) {
+		display: flex;
+		color: black;
+		outline: none;
+		border: none;
+		justify-content: center;
+		align-items: center;
+		transition-duration: 0.1s;
+		background: white;
+		padding: 0;
+		border-radius: 0px 0px 12px 12px;
+
+		img {
+			border: 1.5px solid #eaeaea;
+			border-top: none;
+			border-radius: 0px 0px 12px 12px;
+			padding: 10px 10vw;
+			color: $bt-blue;
+			&:hover {
+				background: $bt-off-white;
+			}
+		}
+	}
+}
+
+.filterWrapper {
+	position: relative;
+	background: white;
+	z-index: 100;
+	flex-direction: column;
+	font-size: 14px;
+	border: none;
+	height: 100%;
+	transition-duration: 0.2s;
+
+	@include media(mobile, tablet) {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: hsla(0, 0%, 0%, 0.3);
+		padding: 60px 60px 30px 60px;
+		&[data-modal='false'] {
+			display: none;
+		}
+
+		&[data-modal='true'] {
+			display: flex;
+		}
+	}
+
+	.filterContent {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		height: 100%;
+		background: white;
+		padding: 15px;
+		border-right: 1.5px solid #eaeaea;
+		overflow-y: auto;
+
+		@include media(mobile, tablet) {
+			padding: 30px;
+			border-radius: 12px;
+		}
+	}
+}
+
+.filterItem {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	font-weight: 600;
+
+	p {
+		font-weight: 600;
+	}
+}
+
+.filter-option {
+	background-color: #f3f3f3;
+	border-radius: 16px;
+	padding: 2px 6px;
+}
+
+.catalogFilterHeader {
+	margin-bottom: 20px;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	align-items: baseline;
+	gap: 30px;
+	h3 {
+		font-size: 20px;
+		line-height: 30px;
+		font-weight: 600;
+	}
+
+	button {
+		color: #2f80ed;
+		transition: 0.5s;
+		border: none;
+		background: none;
+		padding: 4px 8px;
+		border-radius: 4px;
+		font-size: 16px;
+		&:hover {
+			background: hsla(0, 0%, 92.2%, 0.6196078431);
+		}
+	}
+}
+
+.select {
+	[class$='-multiValue'] {
+		background: white;
+		border: 1px solid $bt-border-grey;
+		border-radius: 12px;
+	}
+
+	[class$='-placeholder'] {
+		font-weight: 400;
+	}
+
+	[class$='MultiValueGeneric2'] {
+		color: $bt-blue;
+	}
+
+	[class$='-MultiValueRemove'] {
+		border-radius: 12px;
+		color: hsl(0, 0%, 80%);
+	}
+
+	[class$='-MultiValueRemove']:hover {
+		background: $bt-button-background;
+		color: $bt-base-text;
+	}
+}
