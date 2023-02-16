@@ -2,7 +2,7 @@ import { User } from "../../generated-types/graphql";
 import { formatUser } from "./formatter";
 import { UserModel, UserType } from "./model";
 
-export async function getById(id: String): Promise<User> {
+export async function getById(id: string): Promise<User> {
     const user = await UserModel.findById(id);
 
     if (!user) {
