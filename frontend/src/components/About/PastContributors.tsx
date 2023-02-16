@@ -28,9 +28,7 @@ const PastContributors: FC = () => {
 
   return (
     <div className="past-contributors mb-5">
-      <H3 bold className="mb-4">
-        Alumni
-      </H3>
+      <h3 className='bt-h3 mb-4 bt-bold'>Alumni</h3>
       {sections.map((section) => (
         <div key={section.name} className="section mb-4">
           <h6 className='bt-h6 bt-bold mb-3'>{section.name}</h6>

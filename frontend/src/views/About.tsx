@@ -41,7 +41,7 @@ const values = [
 const About: FC = () => (
   <div className="about">
     <div className="about-our-team my-5">
-      <H3 bold className="mb-2">About Our Team</H3>
+      <h3 className='bt-h3 mb-2 bt-bold'>About Our Team</h3>
       <P className="mb-3">
         We&apos;re a small group of student volunteers at UC Berkeley, dedicated to
         simplifying the course discovery experience. We actively build, improve
