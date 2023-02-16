@@ -1,14 +1,10 @@
-import { ApolloServer } from "apollo-server-express";
-
-import { config } from "../../config";
-import { buildSchema } from "../../utils";
+import { ApolloServer } from "@apollo/server";
+import { buildSchema } from "../../utils/buildSchema";
 
 export default async () => {
-  const { resolvers, typeDefs } = buildSchema();
+  const schema = buildSchema();
 
   return new ApolloServer({
-    resolvers,
-    typeDefs,
-    playground: config.isDev,
+    schema,
   });
 };
