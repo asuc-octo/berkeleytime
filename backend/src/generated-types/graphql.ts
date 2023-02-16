@@ -37,18 +37,18 @@ export type Grade = {
 export type Query = {
   __typename?: 'Query';
   Enrollment?: Maybe<Enrollment>;
-  grades?: Maybe<Array<Maybe<Grade>>>;
   User?: Maybe<User>;
-};
-
-
-export type QueryUserArgs = {
-  id: Scalars['String'];
+  grades?: Maybe<Array<Maybe<Grade>>>;
 };
 
 
 export type QueryEnrollmentArgs = {
   classId: Scalars['String'];
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars['String'];
 };
 
 export type User = {
@@ -184,8 +184,8 @@ export type GradeResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   Enrollment?: Resolver<Maybe<ResolversTypes['Enrollment']>, ParentType, ContextType, RequireFields<QueryEnrollmentArgs, 'classId'>>;
-  grades?: Resolver<Maybe<Array<Maybe<ResolversTypes['Grade']>>>, ParentType, ContextType>;
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
+  grades?: Resolver<Maybe<Array<Maybe<ResolversTypes['Grade']>>>, ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
