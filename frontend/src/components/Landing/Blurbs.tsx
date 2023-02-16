@@ -1,7 +1,5 @@
 import React, { FC } from 'react'
 
-import { H3, P } from 'bt/custom'
-
 import asuc_logo from '../../assets/img/landing/asuc_logo.png'
 import stf_logo from '../../assets/img/landing/stf_logo.jpeg'
 import ocf_logo from '../../assets/img/landing/ocf_logo.png'
@@ -11,7 +9,7 @@ const Blurbs: FC = () => (
     <div className="landing-blurbs">
       <div className="desc">
         <h3 className='bt-h3 mb-3 bt-bold'>Sponsors</h3>
-        <P className="mb-3">Thank you to the folks that help the Berkeleytime team continue to provide this service free-of-charge to students!</P>
+        <p className="bt-p mb-3">Thank you to the folks that help the Berkeleytime team continue to provide this service free-of-charge to students!</p>
       </div>
       <div className="sponsors">
         <a href="https://techfund.berkeley.edu/home">
@@ -28,7 +26,7 @@ const Blurbs: FC = () => (
     <div className="landing-blurbs">
       <div className="desc">
         <h3 className='bt-h3 mb-3 bt-bold'>In Memory Of Courtney Brousseau</h3>
-        <P>Berkeley Alum, ASUC Student Union Board of Directors Chair, ASUC Chief Communications Officer, and Berkeley Mobile Product Manager</P>
+        <p className='bt-p'>Berkeley Alum, ASUC Student Union Board of Directors Chair, ASUC Chief Communications Officer, and Berkeley Mobile Product Manager</p>
       </div>
     </div>
   </>

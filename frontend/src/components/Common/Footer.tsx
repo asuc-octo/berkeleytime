@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import { H6, A } from 'bt/custom';
 import { Link } from 'react-router-dom';
 import TextProps, { getClassNames } from '../Custom/TextProps';
 

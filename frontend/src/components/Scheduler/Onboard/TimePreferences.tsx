@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import { Button, P, H3, H6 } from 'bt/custom';
+import { Button } from 'bt/custom';
 import BTSelect from 'components/Custom/Select';
 import BTInput from 'components/Custom/Input';
 
@@ -69,9 +69,9 @@ const TimePreferences = ({ createSchedule }: Props) => {
           {/*<H3 bold className="mt-5 mb-2 text-center">
             2. Add Time Preferences (Optional)
             </H3>*/}
-          <P className="mb-2 text-center bt-light-text">
+          <p className="bt-p mb-2 text-center bt-light-text">
             Add blocks of time you’d prefer not to have classes.
-          </P>
+          </p>
           <BTInput
             className="my-3"
             value={blockName}
@@ -114,7 +114,7 @@ const TimePreferences = ({ createSchedule }: Props) => {
             </Button>
           </div>
           <div className="blocks">
-            <H6 className="small-caps">Blocks</H6>
+            <h6 className="bt-h6 small-caps">Blocks</h6>
             {timeBlocks.length === 0 ? (
               <div className="blocks__placeholder">
                 <svg
