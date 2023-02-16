@@ -11,10 +11,8 @@ const Faq: FC = () => (
     <Container className="mt-5">
       <Row className="mb-5">
         <Col xs={12} lg={{ span: 6, offset: 3 }} className="faq-heading">
-          <H3 bold className="mb-3">
-            Frequently Asked Questions
-          </H3>
-          <P className="mb-3">Answering your most commonly asked questions.</P>
+          <h3 className="bt-h3 bt-bold mb-3">Frequently Asked Questions</h3>
+          <p className='bt-p mb-3'>Answering your most commonly asked questions.</p>
           <Button variant="inverted" href="mailto: octo.berkeleytime@asuc.org">
             Contact Us
           </Button>

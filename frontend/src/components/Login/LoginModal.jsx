@@ -11,7 +11,7 @@ export class LoginModal extends Component {
         <button className="link-btn back-btn" onClick={this.props.hideLogin}>
           <img src={close} alt="close"/>
         </button>
-        <H3 bold className="mb-2">Welcome to Berkeleytime</H3>
+        <h3 className="bt-h3 bt-bold mb-2">Welcome to Berkeleytime</h3>
         <P className="login-text">
           Sign in to save favorite classes and <br/> get notifications of course updates.
         </P>

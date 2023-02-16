@@ -16,9 +16,7 @@ const Jumbotron: FC = () => (
       <Row>
         <Col xs={{ span: 12, order: 3 }} lg={{ span: 5, order: 1 }}>
           <div className="heading">
-            <H3 bold className="mb-3">
-              Berkeley’s online course discovery platform.
-            </H3>
+            <h3 className="bt-h3 bt-bold mb-5">Berkeley’s online course discovery platform.</h3>
             <P className="mb-3">
               Berkeleytime is a platform built, maintained, and run by students,
               just like you. We work hard to simplify and improve the course

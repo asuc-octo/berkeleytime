@@ -10,7 +10,7 @@ const Blurbs: FC = () => (
   <>
     <div className="landing-blurbs">
       <div className="desc">
-        <H3 bold className="mb-3">Sponsors</H3>
+        <h3 className='bt-h3 mb-3 bt-bold'>Sponsors</h3>
         <P className="mb-3">Thank you to the folks that help the Berkeleytime team continue to provide this service free-of-charge to students!</P>
       </div>
       <div className="sponsors">
@@ -27,7 +27,7 @@ const Blurbs: FC = () => (
     </div>
     <div className="landing-blurbs">
       <div className="desc">
-        <H3 bold className="mb-3">In Memory Of Courtney Brousseau</H3>
+        <h3 className='bt-h3 mb-3 bt-bold'>In Memory Of Courtney Brousseau</h3>
         <P>Berkeley Alum, ASUC Student Union Board of Directors Chair, ASUC Chief Communications Officer, and Berkeley Mobile Product Manager</P>
       </div>
     </div>

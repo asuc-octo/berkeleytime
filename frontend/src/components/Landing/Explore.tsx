@@ -9,7 +9,7 @@ import history from '../../assets/svg/landing/history.svg'
 
 const Explore: FC = () => (
   <div className="landing-explore">
-    <H3 bold className="mb-5">Our Features</H3>
+    <h3 className="bt-h3 bt-bold mb-5">Our Features</h3>
     <Row>
       <Col xs={12} md={4} className="feature">
         <img src={course} className="mb-4" alt="courses" />
