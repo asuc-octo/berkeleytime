@@ -33,9 +33,7 @@ const PastContributors: FC = () => {
       </H3>
       {sections.map((section) => (
         <div key={section.name} className="section mb-4">
-          <H6 bold className="mb-3">
-            {section.name}
-          </H6>
+          <h6 className='bt-h6 bt-bold mb-3'>{section.name}</h6>
           {section.rows.map((row, index) => (
             <Row key={index}>
               {row.map((member) => (
