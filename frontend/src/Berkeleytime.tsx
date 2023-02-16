@@ -102,17 +102,15 @@ class Berkeleytime extends Component<Props> {
   }
 
   render() {
-    /* Provide a plain version of OCTO Application for embedding */
-    // const embeded = window.location.pathname.includes('/embed')
-    const embeded = false
 
+    //first line of code is the recruitment banner
     return (
       <>
-        {!embeded && <Banner />}
+        {/*<Banner />*/}
         <div className="app">
-          {!embeded && <Navigation />}
+          <Navigation />
           <Routes />
-          {!embeded && <Footer />}
+          <Footer />
         </div>
       </>
     )
