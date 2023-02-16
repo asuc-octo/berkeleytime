@@ -101,9 +101,7 @@ const contributors = [
 
 const CurrentContributors: FC = () => (
   <div className="current-contributors mb-5">
-    <H3 bold className="mb-4">
-      Current Team
-    </H3>
+    <h3 className='bt-h3 mb-4 bt-bold'>Current Team</h3>
     {contributors.map((row, i) => (
       <Row key={i}>
         {row.map((member) => (

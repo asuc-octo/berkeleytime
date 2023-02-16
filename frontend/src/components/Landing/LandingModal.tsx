@@ -24,7 +24,7 @@ class LandingModal extends Component<Props> {
         </button>
         <img className="landing-modal-img" src={modal_info["img"]} alt="" />
         <P bold className="mb-2 landing-modal-subtitle">{modal_info["subtitle"]}</P>
-        <H3 bold className="mb-2">{modal_info["title"]}</H3>
+        <h3 className="bt-h3 bt-bold mb-2">{modal_info["title"]}</h3>
         <P className="landing-modal-text">
         {modal_info["message"]}
         </P>

@@ -65,9 +65,10 @@ const TimePreferences = ({ createSchedule }: Props) => {
     <Container className="time-preferences">
       <Row noGutters>
         <Col xs={12} lg={{ span: 4, offset: 4 }}>
-          <H3 bold className="mt-5 mb-2 text-center">
+          <h3 className="bt-h3 bt-bold mb-2 text-center mt-5">2. Add Time Preferences (Optional)</h3>
+          {/*<H3 bold className="mt-5 mb-2 text-center">
             2. Add Time Preferences (Optional)
-          </H3>
+            </H3>*/}
           <P className="mb-2 text-center bt-light-text">
             Add blocks of time you’d prefer not to have classes.
           </P>

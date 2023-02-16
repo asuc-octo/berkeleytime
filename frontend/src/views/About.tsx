@@ -42,11 +42,10 @@ const About: FC = () => (
   <div className="about">
     <div className="about-our-team my-5">
       <h3 className='bt-h3 mb-2 bt-bold'>About Our Team</h3>
-      <P className="mb-3">
-        We&apos;re a small group of student volunteers at UC Berkeley, dedicated to
+      <p className='bt-p mb-3'>We&apos;re a small group of student volunteers at UC Berkeley, dedicated to
         simplifying the course discovery experience. We actively build, improve
         and maintain Berkeleytime.
-      </P>
+      </p>
       {/* <Button variant="inverted" link_to="/apply">Join Our Team</Button> */}
     </div>
     <div className="group mb-5">
