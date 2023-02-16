@@ -1,8 +1,6 @@
 import React, { FC } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-import { H3 } from 'bt/custom';
-
 import { ReactComponent as Web } from '../../assets/svg/about/web.svg';
 
 import ethan_1 from 'assets/img/about/2022-23/ethan_1.jpg';

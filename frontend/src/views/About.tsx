@@ -1,8 +1,6 @@
 import React, { FC } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
-import { H3, P } from 'bt/custom'
-
 import CurrentContributors from '../components/About/CurrentContributors';
 import PastContributors from '../components/About/PastContributors';
 
