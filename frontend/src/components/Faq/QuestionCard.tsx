@@ -1,8 +1,6 @@
 import React, { FC, useState } from 'react';
 import { Collapse } from 'react-bootstrap';
 
-import { P } from 'bt/custom'
-
 interface Props {
   question: string
   answer: JSX.Element
@@ -14,7 +12,7 @@ const QuestionCard: FC<Props> = (props) => {
   return (
     <div className="faq-row">
       <div className="faq-question" onClick={() => setOpen(!open)}>
-        <P bold>{ props.question }</P>
+        <p className='bt-p bt-bold'>{ props.question }</p>
         <span> {open ? '-' : '+'} </span>
       </div>
       <div className="faq-answer">

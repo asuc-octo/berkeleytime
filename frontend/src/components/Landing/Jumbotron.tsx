@@ -7,7 +7,7 @@ import {
   ButtonGroup,
 } from 'react-bootstrap';
 
-import { Button, H3, P } from 'bt/custom';
+import { Button } from 'bt/custom';
 import { ReactComponent as Logo } from '../../assets/svg/landing/main.svg';
 
 const Jumbotron: FC = () => (
@@ -17,11 +17,11 @@ const Jumbotron: FC = () => (
         <Col xs={{ span: 12, order: 3 }} lg={{ span: 5, order: 1 }}>
           <div className="heading">
             <h3 className="bt-h3 bt-bold mb-5">Berkeley’s online course discovery platform.</h3>
-            <P className="mb-3">
+            <p className="bt-p mb-3">
               Berkeleytime is a platform built, maintained, and run by students,
               just like you. We work hard to simplify and improve the course
               discovery experience.
-            </P>
+            </p>
             <ButtonToolbar>
               <ButtonGroup className="mr-2">
                 <Button href={{ as_link: '/catalog' }}>Explore Courses</Button>

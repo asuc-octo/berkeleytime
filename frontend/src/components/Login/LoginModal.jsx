@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Modal } from 'react-bootstrap';
 import LoginButton from './LoginButton';
-import { H3, P } from 'bt/custom';
 import close from 'assets/svg/common/close.svg';
 
 export class LoginModal extends Component {
@@ -12,9 +11,9 @@ export class LoginModal extends Component {
           <img src={close} alt="close"/>
         </button>
         <h3 className="bt-h3 bt-bold mb-2">Welcome to Berkeleytime</h3>
-        <P className="login-text">
+        <p className="bt-p login-text">
           Sign in to save favorite classes and <br/> get notifications of course updates.
-        </P>
+        </p>
         <LoginButton hideLogin={this.props.hideLogin} />
       </Modal>
     );

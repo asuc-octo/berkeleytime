@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Modal } from 'react-bootstrap';
-import { H3, P, Button } from 'bt/custom';
+import { Button } from 'bt/custom';
 import close from 'assets/svg/common/close.svg';
 import schedulerImg from '../../assets/img/landing/scheduler.png';
 
@@ -23,11 +23,11 @@ class LandingModal extends Component<Props> {
           <img src={close} alt="close" />
         </button>
         <img className="landing-modal-img" src={modal_info["img"]} alt="" />
-        <P bold className="mb-2 landing-modal-subtitle">{modal_info["subtitle"]}</P>
+        <p className="bt-p mb-2 landing-modal-subtitle">{modal_info["subtitle"]}</p>
         <h3 className="bt-h3 bt-bold mb-2">{modal_info["title"]}</h3>
-        <P className="landing-modal-text">
+        <p className="bt-p landing-modal-text">
         {modal_info["message"]}
-        </P>
+        </p>
         <Button className="landing-modal-btn" href={{ as_link: modal_info["link"] }}>{modal_info["button"]}</Button>
       </Modal>
     );
