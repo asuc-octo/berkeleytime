@@ -1,16 +1,22 @@
-//
-// Catalog Component
-//
 .catalogRoot {
 	display: grid;
 	grid-template-areas: 'filters list view';
 	grid-template-rows: 1fr;
 	grid-template-columns: 1.45fr 1.45fr 2.9fr;
 	position: relative;
-	top: 58px;
+	top: 57px;
 	height: calc(100vh - 58px);
 	align-items: stretch;
-	overflow-x: hidden;
+	overflow: hidden;
+
+	@include tablet {
+		grid-template-areas:
+			'filters view'
+			'list view';
+		grid-template-rows: auto 1fr;
+		grid-template-columns: 1.5fr 2fr;
+	}
+
 	@include mobile {
 		grid-template-areas:
 			'filters'
@@ -18,88 +24,4 @@
 		grid-template-rows: min-content 1fr;
 		grid-template-columns: 1fr;
 	}
-}
-
-//
-// CatalogFilters Component
-//
-.catalogFilterRoot {
-	display: flex;
-	flex-direction: column;
-	padding: 30px;
-	gap: 12px;
-	font-size: 14px;
-	border-right: 1.5px solid #eaeaea;
-}
-
-.filterItem {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	font-weight: 600; 
-
-	p {
-		font-weight: 600;
-	}
-}
-
-.filter-option {
-	background-color: #f3f3f3;
-	border-radius: 16px;
-	padding: 2px 6px;
-}
-
-.catalogFilterHeader {
-	margin-bottom: 20px;
-	display: flex;
-	justify-content: space-between;
-	flex-direction: row;
-	align-items: baseline;
-	gap: 30px;
-	h3 {
-		font-size: 20px;
-		line-height: 30px;
-		font-weight: 600;
-	}
-
-	button {
-		color: #2f80ed;
-		transition: 0.5s;
-		border: none;
-		background: none;
-		padding: 4px 8px;
-		border-radius: 4px;
-		font-size: 16px;
-		&:hover {
-			background: hsla(0, 0%, 92.2%, 0.6196078431);
-		}
-	}
-}
-
-.select {
-	[class$="-multiValue"] {
-		background: white;
-		border: 1px solid $bt-border-grey;
-		border-radius: 12px;
-  }
-
-	[class$="-placeholder"] {
-		font-weight: 400;
-  }
-
-	[class$="MultiValueGeneric2"] {
-		color: $bt-blue;
-	}
-
-	[class$="-MultiValueRemove"] {
-		border-radius: 12px;
-		color: hsl(0, 0%, 80%);
-	}
-
-	[class$="-MultiValueRemove"]:hover {
-		background: $bt-button-background;
-		color: $bt-base-text;
-	}
-
-
 }

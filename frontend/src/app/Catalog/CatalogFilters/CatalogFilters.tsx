@@ -1,18 +1,19 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { ActionMeta } from 'react-select';
 import BTSelect from 'components/Custom/Select';
-// import FilterModal from '../../components/Catalog/FilterModal';
 
-import catalogService from './service';
-import { ReactComponent as SearchIcon } from '../../assets/svg/common/search.svg';
+import catalogService from '../service';
+import { ReactComponent as SearchIcon } from 'assets/svg/common/search.svg';
+import filter from 'assets/svg/catalog/filter.svg';
 import BTInput from 'components/Custom/Input';
-import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys } from './types';
+import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys } from '../types';
 
-import styles from './Catalog.module.scss';
 import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
 import { useHistory, useParams } from 'react-router';
-import { initialFilters } from './Catalog';
+import { initialFilters } from '../Catalog';
+
+import styles from './CatalogFilters.module.scss';
 
 type CatalogFilterProps = {
 	currentFilters: CurrentFilters;
@@ -36,6 +37,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	} = props;
 
 	const { data, loading, error } = useGetFiltersQuery();
+	const [isOpen, setOpen] = useState(false);
 	const filters = useMemo(() => (data ? catalogService.processFilterData(data) : null), [data]);
 	const history = useHistory();
 	const slug = useParams<{
@@ -79,45 +81,6 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 		}
 	}, [filterList, history, setCurrentFilters, setSearchQuery, setSortQuery]);
 
-	// const [showFilterModal, setShowFilterModal] = useState(false);
-	// const [modal, setModal] = useState({
-	//   options: [] as PlaylistDescription,
-	//   default: null as FilterParameter[] | null,
-	//   handler: (_filters: FilterParameter[]) => {},
-	//   isMulti: true,
-	// });
-
-	//show the mobile modals
-	// function showModal({
-	//   options,
-	//   selected,
-	//   handler,
-	//   isMulti = true,
-	// }: {
-	//   options: PlaylistDescription;
-	//   selected: FilterParameter[];
-	//   handler: (filters: FilterParameter[]) => void;
-	//   isMulti?: boolean;
-	// }) {
-	//   setModal({
-	//     options: options,
-	//     default: selected,
-	//     handler: handler,
-	//     isMulti: isMulti,
-	//   });
-	//   setShowFilterModal(true);
-	// }
-
-	// function hideModal() {
-	//   setModal({
-	//     options: [],
-	//     default: null,
-	//     handler: () => {},
-	//     isMulti: false,
-	//   });
-	//   setShowFilterModal(false);
-	// }
-
 	const handleFilterChange = (
 		newValue: FilterOption | readonly FilterOption[] | null,
 		meta: ActionMeta<FilterOption>
@@ -139,51 +102,58 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	};
 
 	return (
-		<div id="filter" className={styles.catalogFilterRoot}>
-			<div className={styles.catalogFilterHeader}>
-				<h3>Filters</h3>
-				<button type="button" onClick={handleFilterReset}>
-					Reset
-				</button>
-			</div>
-			<div className="filter-search">
-				<BTInput
-					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.target.value)}
-					type="search"
-					placeholder="Search for a class..."
-					icon={<SearchIcon />}
-				/>
-			</div>
-			<div className="filter-sort">
-				<BTSelect
-					value={sortQuery}
-					isClearable={false}
-					options={SORT_OPTIONS}
-					isSearchable={false}
-					onChange={(newValue) => setSortQuery(newValue as SortOption)}
-				/>
-			</div>
-			{filterList &&
-				Object.entries(filterList).map(([key, filter]) => (
-					<div className={styles.filterItem} key={key}>
-						<p>{filter.name}</p>
-						<BTSelect
-							className={styles.select}
-							name={key}
-							value={currentFilters[key as CatalogFilterKeys]}
-							isClearable={filter.isClearable}
-							isMulti={filter.isMulti}
-							closeMenuOnSelect={filter.closeMenuOnSelect}
-							isSearchable={filter.isSearchable}
-							options={filter.options}
-							onChange={handleFilterChange}
-							placeholder={filter.placeholder}
+		<div className={styles.catalogFilterRoot}>
+			<button className={styles.toggleButton} onClick={() => setOpen((prev) => !prev)}>
+				<img src={filter} />
+			</button>
+			<div className={styles.filterWrapper} data-modal={isOpen}>
+				<div className={styles.filterContent}>
+					<div className={styles.catalogFilterHeader}>
+						<h3>Filters</h3>
+						<button type="button" onClick={handleFilterReset}>
+							Reset
+						</button>
+					</div>
+					<div className="filter-search">
+						<BTInput
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+							type="search"
+							placeholder="Search for a class..."
+							icon={<SearchIcon />}
 						/>
 					</div>
-				))}
-			{loading && <BTLoader />}
-			{error && <div>Unable to fetch catalog filters.</div>}
+					<div className="filter-sort">
+						<BTSelect
+							value={sortQuery}
+							isClearable={false}
+							options={SORT_OPTIONS}
+							isSearchable={false}
+							onChange={(newValue) => setSortQuery(newValue as SortOption)}
+						/>
+					</div>
+					{filterList &&
+						Object.entries(filterList).map(([key, filter]) => (
+							<div className={styles.filterItem} key={key}>
+								<p>{filter.name}</p>
+								<BTSelect
+									className={styles.select}
+									name={key}
+									value={currentFilters[key as CatalogFilterKeys]}
+									isClearable={filter.isClearable}
+									isMulti={filter.isMulti}
+									closeMenuOnSelect={filter.closeMenuOnSelect}
+									isSearchable={filter.isSearchable}
+									options={filter.options}
+									onChange={handleFilterChange}
+									placeholder={filter.placeholder}
+								/>
+							</div>
+						))}
+					{loading && <BTLoader />}
+					{error && <div>Unable to fetch catalog filters.</div>}
+				</div>
+			</div>
 		</div>
 	);
 };

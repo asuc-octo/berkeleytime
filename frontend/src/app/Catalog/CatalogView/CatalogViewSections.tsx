@@ -1,6 +1,5 @@
 import { SectionFragment } from 'graphql';
 import { CSSProperties } from 'react';
-import { sortSections } from 'utils/sections/sort';
 import { formatSectionTime } from 'utils/sections/section';
 import people from 'assets/svg/catalog/people.svg';
 
@@ -30,7 +29,7 @@ function findInstructor(instr: string | null): CSSProperties {
 	for (const [name, eggUrl] of easterEggImages) {
 		if (instr.includes(name)) {
 			return {
-				'--section-cursor': `url("${eggUrl}")`
+				cursor: `url("${eggUrl}"), pointer`
 			} as CSSProperties;
 		}
 	}
@@ -53,23 +52,23 @@ type Props = {
 	sections: SectionFragment[];
 };
 
-const CatalogViewSections = ({ sections: allSections }: Props) => {
-	const sections = sortSections(allSections);
-
+const CatalogViewSections = ({ sections }: Props) => {
 	return (
 		<div className={styles.sectionRoot}>
 			{sections.map((section) => {
 				return (
-					<div className={styles.sectionItem} key={section.ccn}>
+					<div
+						className={styles.sectionItem}
+						style={findInstructor(section.instructor)}
+						key={section.ccn}
+					>
 						<div className={styles.sectionInfo}>
 							<h5>
 								<span>{section.kind}</span> - {section.locationName ? section.locationName : 'Unknown Location'}
 							</h5>
 							<h6>
-								<span>
-									{section.instructor ? section.instructor.toLowerCase() : 'instructor'}
-								</span>
-								, {section.wordDays} {formatSectionTime(section)}
+								<span>{section.instructor ? section.instructor.toLowerCase() : 'instructor'}</span>,{' '}
+								{section.wordDays} {formatSectionTime(section)}
 							</h6>
 						</div>
 						<div

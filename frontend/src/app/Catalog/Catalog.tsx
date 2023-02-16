@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import CatalogFilters from 'app/Catalog/CatalogFilters';
-import CatalogList from 'app/Catalog/CatalogList';
-import CatalogView from 'app/Catalog/CatalogView';
+import CatalogFilters from './CatalogFilters/CatalogFilters';
+import CatalogList from './CatalogList';
+import CatalogView from './CatalogView';
 import { CurrentFilters, SortOption } from './types';
 import catalogService from './service';
 import styles from './Catalog.module.scss';
@@ -25,6 +25,12 @@ const Catalog = () => {
 
 	return (
 		<div className={styles.catalogRoot}>
+			<CatalogList
+				currentFilters={currentFilters}
+				setCurrentCourse={setCurrentCourse}
+				searchQuery={searchQuery}
+				sortQuery={sortQuery}
+			/>
 			<CatalogFilters
 				sortQuery={sortQuery}
 				searchQuery={searchQuery}
@@ -32,12 +38,6 @@ const Catalog = () => {
 				setCurrentFilters={setCurrentFilters}
 				setSearchQuery={setSearchQuery}
 				setSortQuery={setSortQuery}
-			/>
-			<CatalogList
-				currentFilters={currentFilters}
-				setCurrentCourse={setCurrentCourse}
-				searchQuery={searchQuery}
-				sortQuery={sortQuery}
 			/>
 			<CatalogView coursePreview={currentCourse} />
 		</div>

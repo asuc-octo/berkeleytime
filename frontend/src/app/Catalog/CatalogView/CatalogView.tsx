@@ -15,6 +15,7 @@ import { useParams } from 'react-router';
 import { sortByName } from '../service';
 
 import styles from './CatalogView.module.scss';
+import { sortSections } from 'utils/sections/sort';
 
 interface CatalogViewProps {
 	coursePreview: CourseOverviewFragment | null;
@@ -65,10 +66,14 @@ const CatalogView = (props: CatalogViewProps) => {
 		return null;
 	}, [course]);
 
-	const sections = useMemo(
-		() => (course as CourseFragment)?.sectionSet?.edges?.map((e) => e.node) ?? [],
-		[course]
-	);
+	const sections = useMemo(() => {
+		if ((course as CourseFragment)?.sectionSet) {
+			const sections = (course as CourseFragment).sectionSet.edges.map((e) => e.node);
+			return sortSections(sections);
+		}
+
+		return [];
+	}, [course]);
 
 	const pastSemesters = useMemo(
 		() =>
@@ -233,16 +238,10 @@ const CatalogView = (props: CatalogViewProps) => {
 			)}
 			<h5>Class Times</h5>
 			<section className="table-container description-section">
-				{sections && (
-					<>
-						{sections.length === 0 ? (
-							<div className="table-empty">
-								This class has no sections for the selected semester.
-							</div>
-						) : (
-							<CatalogViewSections sections={sections} />
-						)}
-					</>
+				{sections?.length > 0 ? (
+					<CatalogViewSections sections={sections} />
+				) : (
+					<div className="table-empty">This class has no sections for the selected semester.</div>
 				)}
 			</section>
 			<h5>Past Offerings</h5>
