@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { H6, A } from 'bt/custom';
 import { Link } from 'react-router-dom';
+import TextProps, { getClassNames } from '../Custom/TextProps';
 
 const Footer: FC = () => (
   <footer className="py-5">
@@ -10,9 +11,7 @@ const Footer: FC = () => (
         <Col xs={4} lg={{ span: 2, offset: 3 }}>
           <div className="footer-col-container">
             <div className="footer-col">
-              <H6 bold className="mb-3">
-                Support
-              </H6>
+              <h6 className='bt-h6 bt-bold mb-3'>Support</h6>
               <Link to='/bugs' className="mb-2">
                 Report a Bug
               </Link>
@@ -28,9 +27,7 @@ const Footer: FC = () => (
         <Col xs={4} lg={2}>
           <div className="footer-col-container">
             <div className="footer-col">
-              <H6 bold className="mb-3">
-                Updates
-              </H6>
+              <h6 className='bt-h6 bt-bold mb-3'>Updates</h6>
               <Link to='/releases' className="mb-2">
                 Releases
               </Link>
@@ -49,7 +46,7 @@ const Footer: FC = () => (
         <Col xs={4} lg={2}>
           <div className="footer-col-container">
             <div className="footer-col">
-              <H6 className="bt-bold mb-3">About Us</H6>
+              <h6 className='bt-h6 bt-bold mb-3'>About Us</h6>
               <Link to='/about' className="mb-2" >
                 Our Team
               </Link>
