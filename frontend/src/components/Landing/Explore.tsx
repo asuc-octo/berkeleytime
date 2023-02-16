@@ -13,17 +13,17 @@ const Explore: FC = () => (
     <Row>
       <Col xs={12} md={4} className="feature">
         <img src={course} className="mb-4" alt="courses" />
-        <H6 bold className="mb-3">Course Catalog</H6>
+        <h6 className='bt-h6 bt-bold mb-3'>Course Catalog</h6>
         <P>Search through 12,000+ courses at Berkeley. Apply filters for requirements.</P>
       </Col>
       <Col xs={12} md={4} className="feature">
         <img src={grade} className="mb-4" alt="grades" />
-        <H6 bold className="mb-3">Grade Distributions</H6>
+        <h6 className='bt-h6 bt-bold mb-3'>Grade Distributions</h6>
         <P>View and compare grade distributions for each course and semester.</P>
       </Col>
       <Col xs={12} md={4} className="feature">
         <img src={history} className="mb-4" alt="history" />
-        <H6 bold className="mb-3">Enrollment History</H6>
+        <h6 className='bt-h6 bt-bold mb-3'>Enrollment History</h6>
         <P>Track accurate, real-time course enrollment trends and history.</P>
       </Col>
     </Row>
