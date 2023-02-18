@@ -11,7 +11,6 @@ import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, CatalogSlu
 import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
 import { useHistory, useParams } from 'react-router';
-import { initialFilters } from '../Catalog';
 
 import styles from './CatalogFilters.module.scss';
 
@@ -24,7 +23,7 @@ type CatalogFilterProps = {
 	setSearchQuery: Dispatch<SetStateAction<string>>;
 };
 
-const { SORT_OPTIONS, FILTER_TEMPLATE } = catalogService;
+const { SORT_OPTIONS, FILTER_TEMPLATE, INITIAL_FILTERS } = catalogService;
 
 const CatalogFilters = (props: CatalogFilterProps) => {
 	const {
@@ -84,7 +83,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 		if (filterList) {
 			const semester = filterList.semester.options[0] as FilterOption;
 			setCurrentFilters({
-				...initialFilters,
+				...INITIAL_FILTERS,
 				semester
 			});
 			history.push(`/catalog/${semester.value.name}`);

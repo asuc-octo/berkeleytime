@@ -7,18 +7,10 @@ import CatalogFilters from './CatalogFilters';
 import CatalogList from './CatalogList';
 import CatalogView from './CatalogView';
 
-export const initialFilters: CurrentFilters = {
-	department: null,
-	semester: null,
-	units: null,
-	level: null,
-	requirements: null
-};
-
-const { SORT_OPTIONS } = catalogService;
+const { SORT_OPTIONS, INITIAL_FILTERS } = catalogService;
 
 const Catalog = () => {
-	const [currentFilters, setCurrentFilters] = useState<CurrentFilters>(initialFilters);
+	const [currentFilters, setCurrentFilters] = useState<CurrentFilters>(INITIAL_FILTERS);
 	const [currentCourse, setCurrentCourse] = useState<CourseOverviewFragment | null>(null);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [sortQuery, setSortQuery] = useState<SortOption>(SORT_OPTIONS[0]);

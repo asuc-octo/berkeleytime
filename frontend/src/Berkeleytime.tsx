@@ -40,8 +40,6 @@ const Berkeleytime = () => {
 		}
 	}, [dispatch]);
 
-	console.log('render');
-
 	return (
 		<div ref={observe} className="app">
 			<Routes />

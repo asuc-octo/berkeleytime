@@ -3,8 +3,9 @@ import {
 	CatalogCategoryKeys,
 	FilterOptions,
 	CatalogFilterKeys,
-	CatalogFilters,
-	SortOption
+	RawFilters,
+	SortOption,
+	CurrentFilters
 } from './types';
 
 const SEMESTER_VALUES = {
@@ -20,6 +21,14 @@ const SORT_OPTIONS: SortOption[] = [
 	{ value: 'open_seats', label: 'Sort By: Open Seats' },
 	{ value: 'enrolled_percentage', label: 'Sort By: Percent Enrolled' }
 ];
+
+const INITIAL_FILTERS: CurrentFilters = {
+	department: null,
+	semester: null,
+	units: null,
+	level: null,
+	requirements: null
+};
 
 const FILTER_TEMPLATE: FilterOptions = {
 	requirements: {
@@ -85,7 +94,7 @@ const processFilterData = (data?: GetFiltersQuery) => {
 				...prev,
 				[category]: [...(prev[category] || []), filter]
 			};
-		}, {} as CatalogFilters);
+		}, {} as RawFilters);
 
 	// After organizing the data, sort each category accordingly.
 	Object.entries(filters).map(([key, category]) => {
@@ -100,7 +109,7 @@ const processFilterData = (data?: GetFiltersQuery) => {
 	return filters;
 };
 
-const putFilterOptions = (filterItems: FilterOptions, filters?: CatalogFilters | null) => {
+const putFilterOptions = (filterItems: FilterOptions, filters?: RawFilters | null) => {
 	if (!filters) return null;
 
 	const result = { ...filterItems };
@@ -145,7 +154,7 @@ const putFilterOptions = (filterItems: FilterOptions, filters?: CatalogFilters |
  * @description Sorts all semester filters by their year and semester,
  * then returns the id of the most recent one
  */
-const sortSemestersByLatest = (semester: CatalogFilters['semester']) => {
+const sortSemestersByLatest = (semester: RawFilters['semester']) => {
 	return semester.sort((a, b) => SemesterToValue(b) - SemesterToValue(a));
 };
 
@@ -171,6 +180,7 @@ export const sortByName = <T extends { name: string }[]>(arr: T) => {
 export default {
 	FILTER_TEMPLATE,
 	SORT_OPTIONS,
+	INITIAL_FILTERS,
 	processFilterData,
 	putFilterOptions,
 	sortByName,
