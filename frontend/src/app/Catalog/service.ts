@@ -1,5 +1,11 @@
 import { FilterFragment, GetFiltersQuery } from 'graphql';
-import { CatalogCategoryKeys, FilterOptions, CatalogFilterKeys, CatalogFilters, SortOption } from './types';
+import {
+	CatalogCategoryKeys,
+	FilterOptions,
+	CatalogFilterKeys,
+	CatalogFilters,
+	SortOption
+} from './types';
 
 const SEMESTER_VALUES = {
 	spring: 0.0,
@@ -66,9 +72,11 @@ const FILTER_TEMPLATE: FilterOptions = {
 /**
  * @param data The raw, unprocessed query data from the server
  * @returns An object where the keys are filter categories and the values are
- * a sorted array of `FilterFragments`
+ * a sorted array of `FilterFragments` or null if no data was passed.
  */
-const processFilterData = (data: GetFiltersQuery) => {
+const processFilterData = (data?: GetFiltersQuery) => {
+	if (!data) return null;
+
 	const filters = data.allPlaylists.edges
 		.map((edge) => edge.node)
 		.reduce((prev, filter) => {
@@ -92,7 +100,9 @@ const processFilterData = (data: GetFiltersQuery) => {
 	return filters;
 };
 
-const processFilterOptions = (filterItems: FilterOptions, filters: CatalogFilters) => {
+const putFilterOptions = (filterItems: FilterOptions, filters?: CatalogFilters | null) => {
+	if (!filters) return null;
+
 	const result = { ...filterItems };
 
 	result['requirements'].options = [
@@ -106,7 +116,8 @@ const processFilterOptions = (filterItems: FilterOptions, filters: CatalogFilter
 		},
 		{
 			label: 'College of Engineering',
-			options: filters['engineering']?.map((filter) => ({ label: filter.name, value: filter })) || []
+			options:
+				filters['engineering']?.map((filter) => ({ label: filter.name, value: filter })) || []
 		},
 		{
 			label: 'Haas Breadths',
@@ -153,7 +164,7 @@ const SemesterToValue = (semesterFilter: FilterFragment) => {
 	return parseInt(year, 10) + SEMESTER_VALUES[semester];
 };
 
-export const sortByName = <T extends {name: string}[]>(arr: T) => {
+export const sortByName = <T extends { name: string }[]>(arr: T) => {
 	return arr.sort((a, b) => a.name.localeCompare(b.name));
 };
 
@@ -161,7 +172,7 @@ export default {
 	FILTER_TEMPLATE,
 	SORT_OPTIONS,
 	processFilterData,
-	processFilterOptions,
+	putFilterOptions,
 	sortByName,
 	sortSemestersByLatest
 };
