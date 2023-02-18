@@ -25,7 +25,7 @@ export type CatalogFilterKeys = Exclude<
 	'haas' | 'ls' | 'engineering' | 'university'
 >;
 
-export type CatalogFilters = {
+export type RawFilters = {
 	[category in CatalogCategoryKeys]: FilterFragment[];
 };
 
@@ -37,7 +37,7 @@ export type CurrentFilters = {
 	requirements: FilterOption[] | null;
 };
 
-export type CatalogSortKeys =
+type CatalogSortKeys =
 	| 'relevance'
 	| 'average_grade'
 	| 'department_name'
