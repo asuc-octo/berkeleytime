@@ -1,8 +1,4 @@
-
-//
-// CatalogList Component
-//
-.catalogListRoot {
+.root {
 	display: flex;
 	grid-area: list;
 	flex: 1;
@@ -18,3 +14,8 @@
 	}
 }
 
+.list {
+	@include media(mobile, tablet) {
+		margin-top: 37px;
+	}
+}

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActionMeta } from 'react-select';
 import BTSelect from 'components/Custom/Select';
 
@@ -6,7 +6,7 @@ import catalogService from '../service';
 import { ReactComponent as SearchIcon } from 'assets/svg/common/search.svg';
 import filter from 'assets/svg/catalog/filter.svg';
 import BTInput from 'components/Custom/Input';
-import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys } from '../types';
+import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, CatalogSlug } from '../types';
 
 import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
@@ -38,16 +38,13 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 
 	const { data, loading, error } = useGetFiltersQuery();
 	const [isOpen, setOpen] = useState(false);
-	const filters = useMemo(() => (data ? catalogService.processFilterData(data) : null), [data]);
+	const filters = useMemo(() => catalogService.processFilterData(data), [data]);
 	const history = useHistory();
-	const slug = useParams<{
-		abbreviation: string;
-		courseNumber: string;
-		semester: string;
-	}>();
+	const slug = useParams<CatalogSlug>();
+	const modalRef = useRef<HTMLDivElement>(null);
 
 	const filterList = useMemo(
-		() => (filters ? catalogService.processFilterOptions(FILTER_TEMPLATE, filters) : null),
+		() => catalogService.putFilterOptions(FILTER_TEMPLATE, filters),
 		[filters]
 	);
 
@@ -63,10 +60,23 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 		}
 	}, [filterList, setCurrentFilters, slug?.semester]);
 
-	/**
-	 * @description Removes all active filters and replaces them with the current semester filter.
-	 *
-	 */
+	useEffect(() => {
+		const ref = modalRef;
+
+		const listener = (event: MouseEvent | TouchEvent) => {
+			if (ref.current && isOpen && (event.target as HTMLDivElement)?.contains(ref.current))
+				setOpen((prev) => !prev);
+		};
+
+		document.addEventListener('mouseup', listener);
+		document.addEventListener('touchstart', listener);
+
+		return () => {
+			document.removeEventListener('mouseup', listener);
+			document.removeEventListener('touchstart', listener);
+		};
+	}, [isOpen, modalRef, setOpen]);
+
 	const handleFilterReset = useCallback(() => {
 		setSortQuery(SORT_OPTIONS[0]);
 		setSearchQuery('');
@@ -102,16 +112,16 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	};
 
 	return (
-		<div className={styles.catalogFilterRoot}>
-			<button className={styles.toggleButton} onClick={() => setOpen((prev) => !prev)}>
+		<div className={styles.root}>
+			<button className={styles.toggle} onClick={() => setOpen((prev) => !prev)}>
 				<img src={filter} />
 			</button>
-			<div className={styles.filterWrapper} data-modal={isOpen}>
-				<div className={styles.filterContent}>
-					<div className={styles.catalogFilterHeader}>
+			<div ref={modalRef} className={styles.container} data-modal={isOpen}>
+				<div id="wrapper" className={styles.wrapper} data-modal={isOpen}>
+					<div className={styles.header}>
 						<h3>Filters</h3>
 						<button type="button" onClick={handleFilterReset}>
-							Reset
+							Clear
 						</button>
 					</div>
 					<div className="filter-search">
@@ -134,7 +144,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 					</div>
 					{filterList &&
 						Object.entries(filterList).map(([key, filter]) => (
-							<div className={styles.filterItem} key={key}>
+							<div className={styles.item} key={key}>
 								<p>{filter.name}</p>
 								<BTSelect
 									className={styles.select}
