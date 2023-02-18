@@ -4,7 +4,7 @@ export namespace ScheduleModule {
   interface DefinedFields {
     Schedule: 'name' | 'created_by' | 'date_created' | 'last_updated' | 'term' | 'public' | 'class_IDs' | 'section_IDs' | 'custom_events';
     CustomEvent: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
-    Query: 'schedules';
+    Query: 'schedulesByUser' | 'schedulesByUserAndTerm';
   };
   
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;
@@ -48,7 +48,8 @@ export namespace ScheduleModule {
     };
     Query?: {
       '*'?: gm.Middleware[];
-      schedules?: gm.Middleware[];
+      schedulesByUser?: gm.Middleware[];
+      schedulesByUserAndTerm?: gm.Middleware[];
     };
   };
 }

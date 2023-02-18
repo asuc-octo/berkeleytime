@@ -9,7 +9,7 @@ export const CustomEventSchema = new Schema({
   title: { type: String, required: false },
   location: { type: String, required: false },
   description: { type: String, required: false },
-  days_of_week: { type: [String], required: false }
+  days_of_week: { type: String, required: false }
 });
 
 

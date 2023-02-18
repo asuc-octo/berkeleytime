@@ -16,5 +16,5 @@ export const CustomEvent = {
     title: "test-title",
     location: "test-location",
     description: "test-description",
-    days_of_week: ["test-days-of-week"],
+    days_of_week: "test-days-of-week",
 }

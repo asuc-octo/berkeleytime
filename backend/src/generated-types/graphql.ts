@@ -16,7 +16,7 @@ export type Scalars = {
 
 export type CustomEvent = {
   __typename?: 'CustomEvent';
-  days_of_week?: Maybe<Array<Maybe<Scalars['String']>>>;
+  days_of_week?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   end_time: Scalars['String'];
   location?: Maybe<Scalars['String']>;
@@ -49,7 +49,8 @@ export type Query = {
   Enrollment?: Maybe<Enrollment>;
   User?: Maybe<User>;
   grades?: Maybe<Array<Maybe<Grade>>>;
-  schedules?: Maybe<Array<Maybe<Schedule>>>;
+  schedulesByUser?: Maybe<Array<Maybe<Schedule>>>;
+  schedulesByUserAndTerm?: Maybe<Schedule>;
 };
 
 
@@ -63,8 +64,14 @@ export type QueryUserArgs = {
 };
 
 
-export type QuerySchedulesArgs = {
+export type QuerySchedulesByUserArgs = {
   created_by: Scalars['String'];
+};
+
+
+export type QuerySchedulesByUserAndTermArgs = {
+  created_by: Scalars['String'];
+  term: Scalars['String'];
 };
 
 export type Schedule = {
@@ -196,7 +203,7 @@ export type ResolversParentTypes = {
 };
 
 export type CustomEventResolvers<ContextType = any, ParentType extends ResolversParentTypes['CustomEvent'] = ResolversParentTypes['CustomEvent']> = {
-  days_of_week?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  days_of_week?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   end_time?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -229,7 +236,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   Enrollment?: Resolver<Maybe<ResolversTypes['Enrollment']>, ParentType, ContextType, RequireFields<QueryEnrollmentArgs, 'classId'>>;
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'email'>>;
   grades?: Resolver<Maybe<Array<Maybe<ResolversTypes['Grade']>>>, ParentType, ContextType>;
-  schedules?: Resolver<Maybe<Array<Maybe<ResolversTypes['Schedule']>>>, ParentType, ContextType, RequireFields<QuerySchedulesArgs, 'created_by'>>;
+  schedulesByUser?: Resolver<Maybe<Array<Maybe<ResolversTypes['Schedule']>>>, ParentType, ContextType, RequireFields<QuerySchedulesByUserArgs, 'created_by'>>;
+  schedulesByUserAndTerm?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QuerySchedulesByUserAndTermArgs, 'created_by' | 'term'>>;
 };
 
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {

@@ -19,11 +19,12 @@ const typedef = gql`
     title: String
     location: String
     description: String
-    days_of_week: [String]
+    days_of_week: String
   }
 
   type Query {
-    schedules(created_by: String!): [Schedule]
+    schedulesByUser(created_by: String!): [Schedule]
+    schedulesByUserAndTerm(created_by: String!, term: String!): Schedule
   }
 `;
 
