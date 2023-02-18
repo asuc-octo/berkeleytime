@@ -68,11 +68,11 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 				setOpen((prev) => !prev);
 		};
 
-		document.addEventListener('mouseup', listener);
+		document.addEventListener('mousedown', listener);
 		document.addEventListener('touchstart', listener);
 
 		return () => {
-			document.removeEventListener('mouseup', listener);
+			document.removeEventListener('mousedown', listener);
 			document.removeEventListener('touchstart', listener);
 		};
 	}, [isOpen, modalRef, setOpen]);

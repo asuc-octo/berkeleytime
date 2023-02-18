@@ -1,3 +1,3 @@
-import CatalogFilters from "./CatalogFilters";
+import CatalogFilters from './CatalogFilters';
 
 export default CatalogFilters;
