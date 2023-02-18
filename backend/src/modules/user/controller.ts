@@ -2,8 +2,8 @@ import { User } from "../../generated-types/graphql";
 import { formatUser } from "./formatter";
 import { UserModel, UserType } from "./model";
 
-export async function getById(id: string): Promise<User> {
-    const user = await UserModel.findById(id);
+export async function getByEmail(email: string): Promise<User> {
+    const user = await UserModel.findOne({ email });
 
     if (!user) {
         throw new Error("User not found");

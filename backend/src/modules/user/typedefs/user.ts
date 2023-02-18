@@ -21,7 +21,7 @@ const typedef = gql`
   }
 
   type Query {
-    User(id: String!): User
+    User(email: String!): User
   }
 `;
 
