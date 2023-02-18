@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import CatalogFilters from './CatalogFilters/CatalogFilters';
-import CatalogList from './CatalogList';
-import CatalogView from './CatalogView';
 import { CurrentFilters, SortOption } from './types';
 import catalogService from './service';
 import styles from './Catalog.module.scss';
 import { CourseOverviewFragment } from 'graphql';
+import CatalogFilters from './CatalogFilters';
+import CatalogList from './CatalogList';
+import CatalogView from './CatalogView';
 
 export const initialFilters: CurrentFilters = {
 	department: null,

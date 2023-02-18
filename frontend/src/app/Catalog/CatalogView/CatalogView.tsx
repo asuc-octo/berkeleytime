@@ -236,7 +236,7 @@ const CatalogView = (props: CatalogViewProps) => {
 					</p>
 				</>
 			)}
-			<h5>Class Times</h5>
+			<h5>Class Times - {slug?.semester}</h5>
 			<section className="table-container description-section">
 				{sections?.length > 0 ? (
 					<CatalogViewSections sections={sections} />

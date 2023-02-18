@@ -65,7 +65,11 @@ const CatalogList = (props: CatalogListProps) => {
 
 	return (
 		<div ref={observe} className={styles.root}>
-			{loading && <BTLoader />}
+			{loading && (
+				<div className={styles.loader}>
+					<BTLoader />
+				</div>
+			)}
 			{courses && (
 				<FixedSizeList
 					className={styles.list}
