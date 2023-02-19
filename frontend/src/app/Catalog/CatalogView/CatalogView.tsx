@@ -227,14 +227,11 @@ const CatalogView = (props: CatalogViewProps) => {
 					</span>
 				</p>
 			)}
+			<h5>Prerequisites</h5>
 			{course?.__typename === 'CourseType' && (
-				<>
-					<h5>Prerequisites</h5>
-					<p>
-						{course?.prerequisites ||
-							'There is no information on the prerequisites of this course.'}
-					</p>
-				</>
+				<p>
+					{course?.prerequisites || 'There is no information on the prerequisites of this course.'}
+				</p>
 			)}
 			<h5>Class Times - {slug?.semester}</h5>
 			<section className="table-container description-section">

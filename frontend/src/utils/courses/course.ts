@@ -1,21 +1,10 @@
-import { CourseFragment, CourseOverviewFragment } from 'graphql';
+import { CourseFragment } from 'graphql';
 import { hash } from 'utils/string';
 
-export type CourseReference = {
+type CourseReference = {
   abbreviation: string;
   courseNumber: string;
 };
-
-/**
- * Checks if a course matches a refernece.
- */
-export const isSameCourse = (
-  reference: CourseReference | null,
-  course: CourseOverviewFragment
-) =>
-  reference !== null &&
-  course.abbreviation === reference.abbreviation &&
-  course.courseNumber === reference.courseNumber;
 
 /**
  * Course to a course name

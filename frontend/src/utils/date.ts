@@ -1,5 +1,3 @@
-import { CalendarOptions, ICalendar, ICSPropertyValue } from 'datebook';
-
 /**
  * Converts time string to date
  */
@@ -26,51 +24,6 @@ export function formatTime(date: Date | string): string {
   let strTime = hours + ':' + minutes + ampm;
 
   return strTime;
-}
-
-/**
- * Converts a numerical string of multiple dates to a human readable string.
- * Prefer to use 'SectionType.wordDays'
- * @example
- * `12` -> `MTu`
- */
-export function daysToString(
-  days: string,
-  convertor: (day: number) => string = dayToShortName
-): string {
-  return days
-    .trim()
-    .split('')
-    .map((day) => convertor(+day))
-    .join('');
-}
-
-/**
- * Converts a 'day' number to a string.
- * @example
- * `1` -> `M`
- * `2` -> `Tu`
- */
-export function dayToShortName(day: number): string {
-  switch (day) {
-    case 7:
-    case 0:
-      return 'Sun';
-    case 1:
-      return 'M';
-    case 2:
-      return 'Tu';
-    case 3:
-      return 'W';
-    case 4:
-      return 'Th';
-    case 5:
-      return 'F';
-    case 6:
-      return 'Sat';
-    default:
-      return `${day}`;
-  }
 }
 
 const DAY_NAMES = [
@@ -117,31 +70,3 @@ export function timeToHourString(time: number): string {
  */
 export const reinterpretDateAsUTC = (date: Date) =>
   new Date(date.getTime() + new Date().getTimezoneOffset() * 60 * 1000);
-
-type ICalOptions = CalendarOptions & {
-  metadata?: { [key: string]: string };
-  property?: { [key: string]: ICSPropertyValue };
-};
-
-/**
- * Creates ICalendar from dates
- */
-export function createICalendar(events: ICalOptions[]): ICalendar | null {
-  function createEvent(event: ICalOptions): ICalendar {
-    const calendar = new ICalendar(event);
-    for (const [key, value] of Object.entries(event.metadata || {})) {
-      calendar.setMeta(key, value);
-    }
-    for (const [key, value] of Object.entries(event.property || {})) {
-      calendar.addProperty(key, value);
-    }
-    return calendar;
-  }
-
-  if (events.length === 0) return null;
-  const calendar = createEvent(events[0]);
-  for (let i = 1; i < events.length; i++) {
-    calendar.addEvent(createEvent(events[i]));
-  }
-  return calendar;
-}
