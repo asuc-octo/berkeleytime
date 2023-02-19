@@ -21,9 +21,9 @@
 		margin-top: 10px;
 		font-size: 18px;
 
-		 span {
+		span {
 			color: $bt-blue;
-		 }
+		}
 	}
 
 	h6 {
@@ -65,19 +65,18 @@
 		gap: 10px;
 		padding: 0;
 		margin-bottom: 15px;
-	
+
 		&:hover {
-			color: #2f80ed
+			color: #2f80ed;
 		}
 	}
 }
 
 .description {
 	color: $bt-grey-text;
-
 	span {
 		color: $bt-blue;
-
+		margin-left: 5px;
 		&:hover {
 			cursor: pointer;
 		}
@@ -159,7 +158,7 @@
 	// background: #F8F8F8;
 	padding: 10px 20px;
 	border-radius: 12px;
-	border: 1px solid #C7C7C7;
+	border: 1px solid #c7c7c7;
 	gap: 20px;
 	h5 {
 		font-size: 16px;
