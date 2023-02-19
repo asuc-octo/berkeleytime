@@ -1,4 +1,3 @@
-;
 import {
   BarChart,
   Bar,
@@ -84,19 +83,6 @@ export default function GradesGraph({
   graphEmpty,
 }) {
   let numClasses = gradesData.length;
-
- /*console.log(graphData)
-  console.log(gradesData)
-  console.log(updateBarHover)
-  console.log(updateGraphHover)
-  console.log(course)
-  console.log(semester)
-  console.log(instructor)
-  console.log(selectedPercentiles)
-  console.log(denominator)
-  console.log(color)
-  console.log(isMobile)
-  console.log(graphEmpty)*/
 
   return (
     <div>

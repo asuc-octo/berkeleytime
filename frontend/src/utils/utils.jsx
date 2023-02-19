@@ -2,9 +2,6 @@
  * A bunch of utility functions
  */
 
-;
-
-
 /**
  * Returns a paragraph tag styled with color with respect to percentage
  * @param {string} text text in the paragraph tag

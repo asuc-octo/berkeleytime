@@ -1,4 +1,3 @@
-;
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import BTLoader from 'components/Common/BTLoader';

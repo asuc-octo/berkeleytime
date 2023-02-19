@@ -1,5 +1,3 @@
-;
-
 import {
   LineChart,
   XAxis,

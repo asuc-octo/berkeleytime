@@ -1,4 +1,3 @@
-;
 import { Link as RoutingLink } from 'react-router-dom';
 
 type Props = {

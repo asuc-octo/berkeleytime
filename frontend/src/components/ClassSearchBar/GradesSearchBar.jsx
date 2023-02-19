@@ -60,7 +60,6 @@ class GradesSearchBar extends Component {
   }
 
   handleClassSelect(updatedClass) {
-    console.log(updatedClass)
     const { fetchGradeSelected } = this.props;
     if (updatedClass === null) {
       this.reset();

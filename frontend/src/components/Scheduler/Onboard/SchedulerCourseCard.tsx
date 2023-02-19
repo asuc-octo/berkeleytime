@@ -1,4 +1,3 @@
-;
 import {
   formatUnits,
   applyIndicatorPercent,
