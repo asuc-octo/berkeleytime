@@ -62,17 +62,20 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	useEffect(() => {
 		const ref = modalRef;
 
-		const listener = (event: MouseEvent | TouchEvent) => {
+		const listener = (event: MouseEvent) => {
+			event.stopPropagation();
+			event.preventDefault();
+
 			if (ref.current && isOpen && (event.target as HTMLDivElement)?.contains(ref.current))
-				setOpen((prev) => !prev);
+				setOpen(!isOpen);
 		};
 
-		document.addEventListener('mousedown', listener);
-		document.addEventListener('touchstart', listener);
+		document.addEventListener('click', listener);
+		// document.addEventListener('touchstart', listener);
 
 		return () => {
-			document.removeEventListener('mousedown', listener);
-			document.removeEventListener('touchstart', listener);
+			document.removeEventListener('click', listener);
+			// document.removeEventListener('touchstart', listener);
 		};
 	}, [isOpen, modalRef, setOpen]);
 

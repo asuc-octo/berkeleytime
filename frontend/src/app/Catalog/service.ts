@@ -1,9 +1,9 @@
 import { FilterFragment, GetFiltersQuery } from 'graphql';
 import {
 	CatalogCategoryKeys,
-	FilterOptions,
+	FilterTemplate,
 	CatalogFilterKeys,
-	RawFilters,
+	FilterOptions,
 	SortOption,
 	CurrentFilters
 } from './types';
@@ -15,7 +15,7 @@ const SEMESTER_VALUES = {
 };
 
 const SORT_OPTIONS: SortOption[] = [
-	{ value: 'relevance', label: 'Sort By: Relevance' },
+	// { value: 'relevance', label: 'Sort By: Relevance' },
 	{ value: 'average_grade', label: 'Sort By: Average Grade' },
 	{ value: 'department_name', label: 'Sort By: Department Name' },
 	{ value: 'open_seats', label: 'Sort By: Open Seats' },
@@ -30,7 +30,7 @@ const INITIAL_FILTERS: CurrentFilters = {
 	requirements: null
 };
 
-const FILTER_TEMPLATE: FilterOptions = {
+const FILTER_TEMPLATE: FilterTemplate = {
 	requirements: {
 		name: 'Requirements',
 		isClearable: true,
@@ -94,7 +94,7 @@ const processFilterData = (data?: GetFiltersQuery) => {
 				...prev,
 				[category]: [...(prev[category] || []), filter]
 			};
-		}, {} as RawFilters);
+		}, {} as FilterOptions);
 
 	// After organizing the data, sort each category accordingly.
 	Object.entries(filters).map(([key, category]) => {
@@ -108,8 +108,15 @@ const processFilterData = (data?: GetFiltersQuery) => {
 
 	return filters;
 };
-
-const putFilterOptions = (filterItems: FilterOptions, filters?: RawFilters | null) => {
+/**
+ * 
+ * @param filterItems an empty filter template
+ * @param filters processed filter data
+ * @description Populates the `options` field of each template item with the
+ * appropriate filter options from the server.
+ * @returns a `FilterTemplate` with populated `options`
+ */
+const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions | null) => {
 	if (!filters) return null;
 
 	const result = { ...filterItems };
@@ -154,7 +161,7 @@ const putFilterOptions = (filterItems: FilterOptions, filters?: RawFilters | nul
  * @description Sorts all semester filters by their year and semester,
  * then returns the id of the most recent one
  */
-const sortSemestersByLatest = (semester: RawFilters['semester']) => {
+const sortSemestersByLatest = (semester: FilterOptions['semester']) => {
 	return semester.sort((a, b) => SemesterToValue(b) - SemesterToValue(a));
 };
 
