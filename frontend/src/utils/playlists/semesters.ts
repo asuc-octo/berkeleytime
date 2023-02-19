@@ -1,7 +1,7 @@
 import { capitalize } from 'bt/utils';
 import { FilterFragment } from 'graphql';
 
-export type FilterablePlaylist = FilterFragment;
+type FilterablePlaylist = FilterFragment;
 
 const SEMESTER_TYPE_TO_OFFSET: { [key: string]: number } = {
   spring: 0.0,
@@ -12,7 +12,7 @@ const SEMESTER_TYPE_TO_OFFSET: { [key: string]: number } = {
 /**
  * Converts a playlist to a quantifiable year value. Greater = newer
  */
-export function playlistToTimeComparable(playlist: FilterablePlaylist): number {
+function playlistToTimeComparable(playlist: FilterablePlaylist): number {
   if (playlist.category === 'semester') {
     const [semester, year] = playlist.name.toLowerCase().split(' ');
     return +year + SEMESTER_TYPE_TO_OFFSET[semester];

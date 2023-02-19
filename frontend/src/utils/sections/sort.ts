@@ -3,11 +3,6 @@ import { groupBy } from 'lodash-es';
 import { stringToDate } from 'utils/date';
 import { isEnrollmentSection } from './section';
 
-export type SectionSort = {
-  category: string;
-  sections: SectionFragment[];
-}[];
-
 // Specify an ordering for section types.
 const SECTION_TYPE_ORDER: { [key: string]: number } = {
   Lecture: 0.1,
@@ -18,7 +13,7 @@ const SECTION_TYPE_ORDER: { [key: string]: number } = {
 /**
  * Section time sort comparatorr
  */
-export function sectionSortComparator(
+function sectionSortComparator(
   s1: SectionFragment,
   s2: SectionFragment
 ): number {
@@ -48,8 +43,8 @@ export function sectionSortComparator(
     return t1 - t2;
   }
 
-  const d1 = +stringToDate(s1.startTime);
-  const d2 = +stringToDate(s2.startTime);
+  const d1 = +stringToDate(s1.startTime as string);
+  const d2 = +stringToDate(s2.startTime as string);
 
   if (d1 !== d2) {
     return d1 - d2;

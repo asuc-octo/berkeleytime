@@ -11,9 +11,11 @@ const Landing: FC = () => {
 	return (
 		<>
 			<LandingModal />
-			<Suspense fallback={<div style={{ display: 'flex', flex: '1' }} />}>
-				<Jumbotron />
-			</Suspense>
+			<div className="landing-jumbo">
+				<Suspense fallback={null}>
+					<Jumbotron />
+				</Suspense>
+			</div>
 			<Explore />
 			<Mission />
 			<Blurbs />
