@@ -208,7 +208,7 @@ const CatalogView = (props: CatalogViewProps) => {
 					{formatUnits(course.units)}
 				</div>
 			</div>
-			<section className={styles.pillContainer}>
+			<section className={styles.pills}>
 				{playlists ? (
 					playlists.map((req) => (
 						<div className={styles.pill} key={req.id}>
@@ -242,7 +242,7 @@ const CatalogView = (props: CatalogViewProps) => {
 				)}
 			</section>
 			<h5>Past Offerings</h5>
-			<section className={styles.pillContainer}>
+			<section className={styles.pills}>
 				{pastSemesters ? (
 					pastSemesters.map((req) => (
 						<div className={styles.pill} key={req.id}>

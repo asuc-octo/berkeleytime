@@ -22,7 +22,6 @@ class GradesSearchBar extends Component {
       selectPrimary: props.selectPrimary,
       selectSecondary: props.selectSecondary,
     };
-    console.log(this.state)
     this.queryCache = {};
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
@@ -61,7 +60,6 @@ class GradesSearchBar extends Component {
   }
 
   handleClassSelect(updatedClass) {
-    console.log(updatedClass)
     const { fetchGradeSelected } = this.props;
     if (updatedClass === null) {
       this.reset();

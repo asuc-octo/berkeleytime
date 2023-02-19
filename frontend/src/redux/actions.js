@@ -444,7 +444,6 @@ export function fetchEnrollFromUrl(url, history) {
               return formattedCourse;
             } catch (err) {
               success = false;
-              console.log(err);
               history.push('/error');
             }
           });
