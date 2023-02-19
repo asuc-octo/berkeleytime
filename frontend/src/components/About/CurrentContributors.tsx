@@ -43,14 +43,12 @@ const contributors = [
     {
       name: 'Matthew Rowland',
       role: 'Frontend Lead',
-      site: 'none',
       img: matthew_1,
       silly_img: matthew_2,
     },
     {
       name: 'Henric Zhang',
       role: 'Frontend Engineer',
-      site: 'none',
       img: henric_1,
       silly_img: henric_2,
     },
@@ -71,14 +69,13 @@ const contributors = [
     {
       name: 'Levi Kline',
       role: 'Frontend Engineer',
-      site: 'levibkline.com',
+      site: 'https://levibkline.com',
       img: levi_1,
       silly_img: levi_1,
     },
     {
       name: 'Eric Xu',
       role: 'Backend Engineer',
-      site: 'none',
       img: eric_1,
       silly_img: eric_2,
     },
@@ -92,7 +89,6 @@ const contributors = [
     {
       name: 'Joel Jaison',
       role: 'Frontend Engineer',
-      site: 'none',
       img: joel_1,
       silly_img: joel_1
     }
