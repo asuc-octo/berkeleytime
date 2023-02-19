@@ -1,4 +1,3 @@
-;
 import Switch from 'react-ios-switch';
 
 type PreferenceProps = {

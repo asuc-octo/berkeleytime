@@ -1,4 +1,3 @@
-;
 import Preference from './Preference';
 import {
   UpdateUserMutationVariables,

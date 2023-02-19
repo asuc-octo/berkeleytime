@@ -1,4 +1,3 @@
-;
 import { Nav } from 'react-bootstrap';
 import { ReactComponent as GoogleIcon } from '../../assets/svg/profile/google.svg';
 

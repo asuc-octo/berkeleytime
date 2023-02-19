@@ -1,5 +1,3 @@
-;
-
 function Log({ date, whatsNew, fixes }) {
   return (
     <div className="releases-log">

@@ -1,4 +1,3 @@
-;
 import { Link } from 'react-router-dom';
 import { Col } from 'react-bootstrap';
 

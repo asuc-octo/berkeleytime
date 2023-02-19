@@ -1,5 +1,4 @@
 import { useDeleteUser } from '../../graphql/hooks/user';
-;
 import Resource from './Resource';
 import Subview from './Subview';
 

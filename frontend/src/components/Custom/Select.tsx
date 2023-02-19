@@ -1,4 +1,3 @@
-;
 import Select, { GroupBase, Props } from 'react-select';
 
 const BTSelect = <

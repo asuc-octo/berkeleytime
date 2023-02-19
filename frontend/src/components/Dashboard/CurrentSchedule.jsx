@@ -1,5 +1,4 @@
 /* eslint-disable */
-;
 
 function CurrentSchedule({ current }) {
   return (

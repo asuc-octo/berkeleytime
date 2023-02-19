@@ -1,4 +1,3 @@
-;
 import { useGetScheduleForIdQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
 import { Redirect, useParams } from 'react-router';

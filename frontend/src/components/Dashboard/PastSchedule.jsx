@@ -1,5 +1,4 @@
 /* eslint-disable */
-;
 
 function PastSchedule({ past }) {
   return (

@@ -1,4 +1,3 @@
-;
 import Description from '../../components/Recruiting/Description';
 
 export function Positions(props) {

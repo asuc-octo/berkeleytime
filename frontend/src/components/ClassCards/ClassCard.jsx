@@ -1,4 +1,3 @@
-;
 import { Col } from 'react-bootstrap';
 
 import ClassCardMobile from './ClassCardMobile';
