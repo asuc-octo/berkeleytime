@@ -111,10 +111,13 @@
 	}
 }
 
-.filter-option {
-	background-color: #f3f3f3;
-	border-radius: 16px;
-	padding: 2px 6px;
+.error {
+	background: $bt-indicator-red;
+	color: $bt-white;
+	font-weight: 600;
+	padding: 10px;
+	border-radius: 6px;
+	text-align: center;
 }
 
 .header {

@@ -163,7 +163,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 							</div>
 						))}
 					{loading && <BTLoader />}
-					{error && <div>Unable to fetch catalog filters.</div>}
+					{error && <div className={styles.error}>Unable to fetch catalog filters.</div>}
 				</div>
 			</div>
 		</div>
