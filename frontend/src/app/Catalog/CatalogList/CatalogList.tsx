@@ -59,7 +59,7 @@ const CatalogList = (props: CatalogListProps) => {
 		history.push(
 			`/catalog/${(currentFilters.semester as FilterOption)?.value?.name}/${course.abbreviation}/${
 				course.courseNumber
-			}/`
+			}`
 		);
 	};
 

@@ -9,9 +9,8 @@ import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/u
 import { CourseOverviewFragment, useGetCourseForNameLazyQuery } from 'graphql';
 import CatalogViewSections from './CatalogViewSections';
 import BTLoader from 'components/Common/BTLoader';
-import { courseToName } from 'utils/courses/course';
 import { CurrentCourse, CurrentFilters } from 'app/Catalog/types';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { sortByName } from '../service';
 import { sortSections } from 'utils/sections/sort';
 
@@ -24,7 +23,7 @@ interface CatalogViewProps {
 
 const CatalogView = (props: CatalogViewProps) => {
 	const { coursePreview, setCurrentFilters } = props;
-	const [readMore, setReadMore] = useState<boolean | null>(false);
+	const history = useHistory();
 	const slug = useParams<{
 		abbreviation: string;
 		courseNumber: string;
@@ -78,7 +77,7 @@ const CatalogView = (props: CatalogViewProps) => {
 			}
 		}
 
-		return [sortByName(playlists ?? []), sections, semesters];
+		return [sortByName(playlists ?? []), sections ?? [], semesters];
 	}, [course]);
 
 	const handlePill = (pillItem: (typeof playlists)[number]) => {
@@ -101,47 +100,6 @@ const CatalogView = (props: CatalogViewProps) => {
 			};
 		});
 	};
-
-	const checkOverridePrereqs = (prereqs: string) => {
-		if (courseToName(course) === 'POL SCI 126A') {
-			prereqs = 'No prerequisites. This field was modified as requested by the instructor.';
-		}
-		return prereqs;
-	};
-
-	// This is all 'Read more' logic.
-	const charsPerRow = 80;
-	const moreOffset = 15;
-	let description = course?.description || '';
-	let prereqs = '';
-	let moreDesc: boolean | null = null;
-
-	if (course?.__typename === 'CourseType') {
-		// handles the 'Read More' functionality.
-		if (readMore) {
-			// expand
-			if (course.prerequisites) {
-				prereqs = checkOverridePrereqs(course.prerequisites);
-			} else {
-				moreDesc = false;
-			}
-		} else {
-			// collapse
-			const descRows = Math.round(course.description?.length / charsPerRow);
-			if (descRows > 3 || (descRows === 3 && course.prerequisites)) {
-				description = description.slice(0, 3 * charsPerRow - moreOffset) + '...';
-				moreDesc = true;
-			}
-			if (descRows < 3 && course.prerequisites) {
-				prereqs = checkOverridePrereqs(course.prerequisites);
-				if (descRows >= 1 && prereqs.length > charsPerRow) {
-					prereqs = prereqs.slice(0, charsPerRow - moreOffset) + '...';
-				} else if (descRows === 0 && prereqs.length > 2 * charsPerRow) {
-					prereqs = prereqs.slice(0, 2 * charsPerRow - moreOffset) + '...';
-				}
-			}
-		}
-	}
 
 	return course ? (
 		<div className={`${styles.catalogViewRoot}`} data-modal={course !== null}>
@@ -211,12 +169,9 @@ const CatalogView = (props: CatalogViewProps) => {
 					<BTLoader />
 				)}
 			</section>
-			{description.length > 0 && (
+			{course.description.length > 0 && (
 				<p className={styles.description}>
-					{description}
-					<span onClick={() => setReadMore((prev) => !prev)}>
-						{moreDesc ? ' See more' : ' See less'}
-					</span>
+					<ReadMore>{course.description}</ReadMore>
 				</p>
 			)}
 			<h5>Prerequisites</h5>
@@ -227,7 +182,7 @@ const CatalogView = (props: CatalogViewProps) => {
 			)}
 			<h5>Class Times - {slug?.semester}</h5>
 			<section className="table-container description-section">
-				{sections ? (
+				{sections.length > 0 ? (
 					<CatalogViewSections sections={sections} />
 				) : (
 					<div className="table-empty">This class has no sections for the selected semester.</div>
@@ -241,10 +196,7 @@ const CatalogView = (props: CatalogViewProps) => {
 							className={styles.pill}
 							key={req.id}
 							onClick={() =>
-								setCurrentFilters((prev) => ({
-									...prev,
-									semester: { label: req.name, value: req }
-								}))
+								history.push(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
 							}
 						>
 							{req.name}
@@ -257,6 +209,24 @@ const CatalogView = (props: CatalogViewProps) => {
 		</div>
 	) : (
 		<>{error && <div>A critical error occured loading the data.</div>}</>
+	);
+};
+
+const ReadMore = ({ children }: { children: string }) => {
+	const [isReadMore, setIsReadMore] = useState(true);
+	return (
+		<>
+			{children.length > 150 ? (
+				<>
+					{isReadMore ? children.slice(0, 150) + '...' : children}
+					<span onClick={() => setIsReadMore((prev) => !prev)}>
+						{isReadMore ? 'See more' : 'See less'}
+					</span>
+				</>
+			) : (
+				children
+			)}
+		</>
 	);
 };
 
