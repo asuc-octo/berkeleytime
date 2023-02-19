@@ -11,7 +11,6 @@ import { Button, H3, P } from 'bt/custom';
 import { ReactComponent as Logo } from '../../assets/svg/landing/main.svg';
 
 const Jumbotron: FC = () => (
-  <div className="landing-jumbo">
     <Container>
       <Row>
         <Col xs={{ span: 12, order: 3 }} lg={{ span: 5, order: 1 }}>
@@ -38,13 +37,11 @@ const Jumbotron: FC = () => (
         </Col>
         <Col xs={{ span: 12, order: 2 }} lg={{ span: 7, order: 2 }}>
           <div className="animation-container">
-            {/* <img src={logo} alt="Welcome to BerkeleyTime." /> */}
             <Logo title="Welcome to Berkeleytime." />
           </div>
         </Col>
       </Row>
     </Container>
-  </div>
 );
 
 export default Jumbotron;
