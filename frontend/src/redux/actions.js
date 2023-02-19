@@ -3,15 +3,6 @@ import axios from 'axios';
 import hash from 'object-hash';
 import {
   FILTER,
-  START_REQUEST,
-  START_REQUEST_DESCRIPTION,
-  UPDATE_COURSE_DATA,
-  FILTER_MAP,
-  REQUIREMENTS,
-  UNITS,
-  DEPARTMENT,
-  LEVEL,
-  SEMESTER,
   UPDATE_GRADE_CONTEXT,
   GRADE_ADD_COURSE,
   GRADE_REMOVE_COURSE,
@@ -26,76 +17,8 @@ import {
   UPDATE_ENROLL_SELECTED,
 } from './actionTypes';
 
-// function to update the courses when the filters are changed
-export const filter = (data) => ({
-  type: FILTER,
-  payload: {
-    data,
-  },
-});
-
-// function to start a request
-export const makeRequest = () => ({
-  type: START_REQUEST,
-});
-
-// function to start a request in class description component
-export const makeRequestDescription = () => ({
-  type: START_REQUEST_DESCRIPTION,
-});
-
-// update courses
-export const updateCourses = (data) => ({
-  type: UPDATE_COURSE_DATA,
-  payload: {
-    data,
-  },
-});
-
-export const setFilterMap = (data) => ({
-  type: FILTER_MAP,
-  payload: {
-    data,
-  },
-});
-
-export const setRequirements = (data) => ({
-  type: REQUIREMENTS,
-  payload: {
-    data,
-  },
-});
-
-export const setUnits = (data) => ({
-  type: UNITS,
-  payload: {
-    data,
-  },
-});
-
-export const setDepartment = (data) => ({
-  type: DEPARTMENT,
-  payload: {
-    data,
-  },
-});
-
-export const setLevel = (data) => ({
-  type: LEVEL,
-  payload: {
-    data,
-  },
-});
-
-export const setSemester = (data) => ({
-  type: SEMESTER,
-  payload: {
-    data,
-  },
-});
-
 // update grade list
-export const updateGradeContext = (data) => ({
+const updateGradeContext = (data) => ({
   type: UPDATE_GRADE_CONTEXT,
   payload: {
     data,
@@ -107,7 +30,7 @@ export const gradeReset = () => ({
 });
 
 // add displayed course to the grade page
-export const gradeAddCourse = (formattedCourse) => ({
+const gradeAddCourse = (formattedCourse) => ({
   type: GRADE_ADD_COURSE,
   payload: {
     formattedCourse,
@@ -122,14 +45,14 @@ export const gradeRemoveCourse = (id, color) => ({
   },
 });
 
-export const updateGradeData = (gradesData) => ({
+const updateGradeData = (gradesData) => ({
   type: UPDATE_GRADE_DATA,
   payload: {
     gradesData,
   },
 });
 
-export const updatedGradeSelected = (data) => ({
+const updatedGradeSelected = (data) => ({
   type: UPDATE_GRADE_SELECTED,
   payload: {
     data,
@@ -137,7 +60,7 @@ export const updatedGradeSelected = (data) => ({
 });
 
 // update enroll list
-export const updateEnrollContext = (data) => ({
+const updateEnrollContext = (data) => ({
   type: UPDATE_ENROLL_CONTEXT,
   payload: {
     data,
@@ -149,7 +72,7 @@ export const enrollReset = () => ({
 });
 
 // add displayed course to the enroll page
-export const enrollAddCourse = (formattedCourse) => ({
+const enrollAddCourse = (formattedCourse) => ({
   type: ENROLL_ADD_COURSE,
   payload: {
     formattedCourse,
@@ -171,46 +94,12 @@ export const updateEnrollData = (enrollmentData) => ({
   },
 });
 
-export const updatedEnrollSelected = (sections) => ({
+const updatedEnrollSelected = (sections) => ({
   type: UPDATE_ENROLL_SELECTED,
   payload: {
     sections,
   },
 });
-
-// get information for the class displayed in the class description component
-export function getCourseData(id) {
-  return (dispatch) =>
-    axios
-      .get('/api/catalog/catalog_json/course_box/', {
-        params: {
-          course_id: id,
-        },
-      })
-      .then(
-        (res) => {
-          dispatch(updateCourses(res.data));
-        },
-        (error) => console.log('An error occurred.', error)
-      );
-}
-
-// get the courses after applying the filters
-export function getFilterResults(filters) {
-  return (dispatch) =>
-    axios
-      .get('/api/catalog/filter/', {
-        params: {
-          filters,
-        },
-      })
-      .then(
-        (res) => {
-          dispatch(filter(res.data));
-        },
-        (error) => console.log('An error occurred.', error)
-      );
-}
 
 export function fetchGradeContext() {
   return (dispatch) =>

@@ -1,4 +1,4 @@
-export interface UserProfile {
+interface UserProfile {
   token: string;
   email: string;
   firstName: string;

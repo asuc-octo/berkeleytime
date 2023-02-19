@@ -1,5 +1,25 @@
 import { capitalize } from 'bt/utils';
-import { FilterablePlaylist, playlistToTimeComparable } from './playlist';
+import { FilterFragment } from 'graphql';
+
+export type FilterablePlaylist = FilterFragment;
+
+const SEMESTER_TYPE_TO_OFFSET: { [key: string]: number } = {
+  spring: 0.0,
+  summer: 0.1,
+  fall: 0.2,
+};
+
+/**
+ * Converts a playlist to a quantifiable year value. Greater = newer
+ */
+export function playlistToTimeComparable(playlist: FilterablePlaylist): number {
+  if (playlist.category === 'semester') {
+    const [semester, year] = playlist.name.toLowerCase().split(' ');
+    return +year + SEMESTER_TYPE_TO_OFFSET[semester];
+  } else {
+    return 0;
+  }
+}
 
 export type Semester = {
   playlistId?: string;
@@ -8,18 +28,6 @@ export type Semester = {
 };
 
 export type SemesterWithPlaylist = Semester & { playlistId: string };
-
-/**
- * Takes a list of playlist IDs and tries to convert it to a semester
- */
-export function extractSemesters(
-  playlists: string[],
-  allPlaylists: FilterablePlaylist[]
-): SemesterWithPlaylist[] {
-  return allPlaylists
-    .filter((p) => p.category === 'semester' && playlists.includes(p.id))
-    .map(playlistToSemester);
-}
 
 /**
  * Gets the latest semester from a list of playlists.
@@ -42,7 +50,7 @@ export function getLatestSemester(
 /**
  * Converts playlist to semester
  */
-export function playlistToSemester(
+function playlistToSemester(
   playlist: FilterablePlaylist
 ): SemesterWithPlaylist {
   return stringToSemester(playlist.name, playlist.id);
@@ -51,11 +59,11 @@ export function playlistToSemester(
 /**
  * Convert a string to a semester.
  */
-export function stringToSemester(
+function stringToSemester(
   string: string,
   playlistId: string
 ): SemesterWithPlaylist;
-export function stringToSemester(
+function stringToSemester(
   string: string,
   playlistId?: string
 ): Semester {

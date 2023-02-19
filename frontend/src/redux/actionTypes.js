@@ -1,20 +1,7 @@
-// CATALOG
-// set default playlists
-export const SET_DEFAULT_PLAYLISTS = 'SET_DEFAULT_PLAYLISTS';
-// modify the active playlists
-export const MODIFY_ACTIVE_PLAYLISTS = 'MODIFY_ACTIVE_PLAYLISTS';
-// receive initial filter data
-export const RECEIVE_FILTER_DATA = 'RECEIVE_FILTER_DATA';
-// modify currently selected class
-export const MODIFY_SELECTED_COURSE = 'MODIFY_SELECTED_COURSE';
-
 // FILTER
 export const FILTER = 'FILTER';
 export const START_REQUEST = 'START_REQUEST';
-export const START_REQUEST_DESCRIPTION = 'START_REQUEST_DESCRIPTION';
-export const UPDATE_COURSE_DATA = 'UPDATE_COURSE_DATA';
 
-export const FILTER_MAP = 'FILTER_MAP';
 export const REQUIREMENTS = 'REQUIREMENTS';
 export const UNITS = 'UNITS';
 export const DEPARTMENT = 'DEPARTMENT';
