@@ -65,6 +65,7 @@ class Enrollment extends Component {
   }
 
   addCourse(course) {
+    
     const { fetchEnrollClass, selectedCourses, usedColorIds } = this.props;
     for (let selected of selectedCourses) {
       if (selected.id === course.id) {
