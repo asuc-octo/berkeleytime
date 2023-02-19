@@ -1,28 +1,28 @@
-import { memo, useEffect, useMemo, useState } from 'react';
-
+import { Dispatch, memo, SetStateAction, useEffect, useMemo, useState } from 'react';
 import people from 'assets/svg/catalog/people.svg';
 import chart from 'assets/svg/catalog/chart.svg';
 import book from 'assets/svg/catalog/book.svg';
 import launch from 'assets/svg/catalog/launch.svg';
 import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
-import { CourseFragment, CourseOverviewFragment, useGetCourseForNameLazyQuery } from 'graphql';
+import { CourseOverviewFragment, useGetCourseForNameLazyQuery } from 'graphql';
 import CatalogViewSections from './CatalogViewSections';
 import BTLoader from 'components/Common/BTLoader';
 import { courseToName } from 'utils/courses/course';
-import { CurrentCourse } from 'app/Catalog/types';
+import { CurrentCourse, CurrentFilters } from 'app/Catalog/types';
 import { useParams } from 'react-router';
 import { sortByName } from '../service';
+import { sortSections } from 'utils/sections/sort';
 
 import styles from './CatalogView.module.scss';
-import { sortSections } from 'utils/sections/sort';
 
 interface CatalogViewProps {
 	coursePreview: CourseOverviewFragment | null;
+	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
 }
 
 const CatalogView = (props: CatalogViewProps) => {
-	const { coursePreview } = props;
+	const { coursePreview, setCurrentFilters } = props;
 	const [readMore, setReadMore] = useState<boolean | null>(false);
 	const slug = useParams<{
 		abbreviation: string;
@@ -57,44 +57,48 @@ const CatalogView = (props: CatalogViewProps) => {
 		setCourse(coursePreview);
 	}, [coursePreview]);
 
-	const playlists = useMemo(() => {
-		if (course?.__typename === 'CourseType' && course?.playlistSet) {
-			const { edges } = course.playlistSet;
-			const playlists = edges.map((e) => e.node).filter((n) => n.category !== 'semester');
-			return sortByName(playlists ?? []);
+	const [playlists, sections, pastSemesters] = useMemo(() => {
+		let playlists,
+			sections,
+			semesters = null;
+
+		if (course?.__typename === 'CourseType') {
+			if (course.playlistSet) {
+				const { edges } = course.playlistSet;
+				playlists = edges.map((e) => e.node).filter((n) => n.category !== 'semester');
+
+				semesters = catalogService.sortSemestersByLatest(
+					edges.map((e) => e.node).filter((n) => n.category === 'semester')
+				);
+			}
+
+			if (course.sectionSet) {
+				sections = sortSections(course.sectionSet.edges.map((e) => e.node));
+			}
 		}
-		return null;
+
+		return [sortByName(playlists ?? []), sections, semesters];
 	}, [course]);
 
-	const sections = useMemo(() => {
-		if ((course as CourseFragment)?.sectionSet) {
-			const sections = (course as CourseFragment).sectionSet.edges.map((e) => e.node);
-			return sortSections(sections);
-		}
+	const handlePill = (pillItem: (typeof playlists)[number]) => {
+		setCurrentFilters((prev) => {
+			if (['haas', 'ls', 'engineering', 'university'].includes(pillItem.category)) {
+				const reqs = prev.requirements;
+				if (reqs?.find((el) => el.label === pillItem.name)) {
+					return prev;
+				}
 
-		return [];
-	}, [course]);
+				return {
+					...prev,
+					requirements: [...(reqs ?? []), { label: pillItem.name, value: pillItem }]
+				};
+			}
 
-	const pastSemesters = useMemo(
-		() =>
-			(course as CourseFragment)?.playlistSet
-				? catalogService.sortSemestersByLatest(
-						(course as CourseFragment).playlistSet.edges
-							?.map((e) => e.node)
-							.filter((n) => n.category === 'semester')
-				  )
-				: null,
-		[course]
-	);
-
-	// TODO
-	if (!course) {
-		return null;
-	}
-
-	const toGrades = {
-		pathname: `/grades/0-${course.id}-all-all`,
-		state: { course: course }
+			return {
+				...prev,
+				[pillItem.category]: { label: pillItem.name, value: pillItem }
+			};
+		});
 	};
 
 	const checkOverridePrereqs = (prereqs: string) => {
@@ -107,12 +111,11 @@ const CatalogView = (props: CatalogViewProps) => {
 	// This is all 'Read more' logic.
 	const charsPerRow = 80;
 	const moreOffset = 15;
-	let description = course?.description;
+	let description = course?.description || '';
 	let prereqs = '';
 	let moreDesc: boolean | null = null;
 
 	if (course?.__typename === 'CourseType') {
-		// No idea how this works, but this is what
 		// handles the 'Read More' functionality.
 		if (readMore) {
 			// expand
@@ -141,118 +144,134 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	return (
 		<div className={`${styles.catalogViewRoot}`} data-modal={course !== null}>
-			<button onClick={() => setCourse(null)} className={styles.modalButton}>
-				<svg
-					width="32"
-					height="32"
-					viewBox="0 0 32 32"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<circle cx="16" cy="16" r="16" fill="#C4C4C4" />
-					<path
-						d="M24 15H11.83L17.42 9.41L16 8L8 16L16 24L17.41 22.59L11.83 17H24V15Z"
-						fill="white"
-					/>
-				</svg>
-				Back to Courses{' '}
-			</button>
-			<h3>
-				{course.abbreviation} {course.courseNumber}
-			</h3>
-			<h6>{course.title}</h6>
-			<div className={styles.stats}>
-				<div className={styles.statLine}>
-					<img src={people} />
-					Enrolled:
-					{course.enrolled !== -1 ? (
-						<div>
-							{applyIndicatorPercent(
-								`${course.enrolled}/${course.enrolledMax}`,
-								course.enrolledPercentage
+			{course && (
+				<>
+					<button onClick={() => setCourse(null)} className={styles.modalButton}>
+						<svg
+							width="32"
+							height="32"
+							viewBox="0 0 32 32"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<circle cx="16" cy="16" r="16" fill="#C4C4C4" />
+							<path
+								d="M24 15H11.83L17.42 9.41L16 8L8 16L16 24L17.41 22.59L11.83 17H24V15Z"
+								fill="white"
+							/>
+						</svg>
+						Back to Courses{' '}
+					</button>
+					<h3>
+						{course.abbreviation} {course.courseNumber}
+					</h3>
+					<h6>{course.title}</h6>
+					<div className={styles.stats}>
+						<div className={styles.statLine}>
+							<img src={people} />
+							Enrolled:
+							{course.enrolled !== -1 ? (
+								<div>
+									{applyIndicatorPercent(
+										`${course.enrolled}/${course.enrolledMax}`,
+										course.enrolledPercentage
+									)}
+									<a
+										// href={toEnrollment.pathname}
+										target="_blank"
+										rel="noreferrer"
+										className={styles.statLink}
+									>
+										<img src={launch} alt="" />
+									</a>
+								</div>
+							) : (
+								'N/A'
 							)}
-							<a
-								// href={toEnrollment.pathname}
-								target="_blank"
-								rel="noreferrer"
-								className={styles.statLink}
-							>
-								<img src={launch} alt="" />
-							</a>
 						</div>
-					) : (
-						'N/A'
+						<div className={styles.statLine}>
+							<img src={chart} alt="" />
+							Average Grade:
+							{course.gradeAverage !== -1 ? (
+								<div>
+									{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+									<a
+										// href={toGrades.pathname}
+										target="_blank"
+										rel="noreferrer"
+										className={styles.statLink}
+									>
+										<img src={launch} alt="" />
+									</a>
+								</div>
+							) : (
+								' N/A '
+							)}
+						</div>
+						<div className={styles.statLine}>
+							<img src={book} alt="" />
+							{formatUnits(course.units)}
+						</div>
+					</div>
+					<section className={styles.pills}>
+						{playlists ? (
+							playlists.map((req) => (
+								<div className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
+									{req.name}
+								</div>
+							))
+						) : (
+							<BTLoader />
+						)}
+					</section>
+					{description?.length > 0 && (
+						<p className={styles.description}>
+							{description}
+							<span onClick={() => setReadMore((prev) => !prev)}>
+								{moreDesc ? ' See more' : ' See less'}
+							</span>
+						</p>
 					)}
-				</div>
-				<div className={styles.statLine}>
-					<img src={chart} alt="" />
-					Average Grade:
-					{course.gradeAverage !== -1 ? (
-						<div>
-							{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
-							<a
-								href={toGrades.pathname}
-								target="_blank"
-								rel="noreferrer"
-								className={styles.statLink}
-							>
-								<img src={launch} alt="" />
-							</a>
-						</div>
-					) : (
-						' N/A '
+					<h5>Prerequisites</h5>
+					{course?.__typename === 'CourseType' && (
+						<p>
+							{course?.prerequisites ||
+								'There is no information on the prerequisites of this course.'}
+						</p>
 					)}
-				</div>
-				<div className={styles.statLine}>
-					<img src={book} alt="" />
-					{formatUnits(course.units)}
-				</div>
-			</div>
-			<section className={styles.pills}>
-				{playlists ? (
-					playlists.map((req) => (
-						<div className={styles.pill} key={req.id}>
-							{req.name}
-						</div>
-					))
-				) : (
-					<BTLoader />
-				)}
-			</section>
-			{description.length > 0 && (
-				<p className={styles.description}>
-					{description}
-					<span onClick={() => setReadMore((prev) => !prev)}>
-						{moreDesc ? ' See more' : ' See less'}
-					</span>
-				</p>
+					<h5>Class Times - {slug?.semester}</h5>
+					<section className="table-container description-section">
+						{sections ? (
+							<CatalogViewSections sections={sections} />
+						) : (
+							<div className="table-empty">
+								This class has no sections for the selected semester.
+							</div>
+						)}
+					</section>
+					<h5>Past Offerings</h5>
+					<section className={styles.pills}>
+						{pastSemesters ? (
+							pastSemesters.map((req) => (
+								<button
+									className={styles.pill}
+									key={req.id}
+									onClick={() =>
+										setCurrentFilters((prev) => ({
+											...prev,
+											semester: { label: req.name, value: req }
+										}))
+									}
+								>
+									{req.name}
+								</button>
+							))
+						) : (
+							<BTLoader />
+						)}
+					</section>
+				</>
 			)}
-			<h5>Prerequisites</h5>
-			{course?.__typename === 'CourseType' && (
-				<p>
-					{course?.prerequisites || 'There is no information on the prerequisites of this course.'}
-				</p>
-			)}
-			<h5>Class Times - {slug?.semester}</h5>
-			<section className="table-container description-section">
-				{sections?.length > 0 ? (
-					<CatalogViewSections sections={sections} />
-				) : (
-					<div className="table-empty">This class has no sections for the selected semester.</div>
-				)}
-			</section>
-			<h5>Past Offerings</h5>
-			<section className={styles.pills}>
-				{pastSemesters ? (
-					pastSemesters.map((req) => (
-						<div className={styles.pill} key={req.id}>
-							{req.name}
-						</div>
-					))
-				) : (
-					<BTLoader />
-				)}
-			</section>
 			{error && <div>A critical error occured loading the data.</div>}
 		</div>
 	);
