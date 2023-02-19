@@ -9,37 +9,68 @@ import jemma from 'assets/img/about/group/jemma.jpg'
 import christina_janet from 'assets/img/about/group/christina_janet.jpg'
 import retreat_silly from 'assets/img/about/group/retreat_silly.png'
 import zoom from 'assets/img/about/group/zoom.png'
-
+enum Sliding {
+  Still = 0,
+  Right = 1,
+  Left = 2
+}
 const AboutCarousel : FC = () => {
   const [shownImage, setShownImage] = useState<number>(2);
+
+  const [queuedImage, setQueuedImage] = useState<number>(2);
+  const [sliding, setSliding] = useState<Sliding>(Sliding.Still);
   const images = [retreat_silly, zoom, doe, grace_janet, retreat,
   christina_janet, michaels, will, jemma];
   const wrap = (val: number) => {
     return (val + images.length) % images.length;
   }
   const previousImage = () => {
-    setShownImage(wrap(shownImage - 1))
+    if (sliding === Sliding.Still) {
+      setSliding(Sliding.Right)
+      setQueuedImage(wrap(shownImage - 1))
+    }
   }
   const nextImage = () => {
-    setShownImage(wrap(shownImage + 1))
+    if (sliding === Sliding.Still) {
+      setSliding(Sliding.Left)
+      setQueuedImage(wrap(shownImage + 1))
+    }
+  }
+  const triggerSwap = () => {
+    setShownImage(queuedImage)
+    setSliding(Sliding.Still)
   }
   const getCarouselItemClass = (idx: number) => {
     let classes = "about-carousel-item "
     if (idx === shownImage) {
-      classes += "about-carousel-active-second"
+      classes += "about-carousel-active-second "
     } else if (idx === wrap(shownImage - 1)) {
-      classes += "about-carousel-active-first"
+      classes += "about-carousel-active-first "
     } else if (idx === wrap(shownImage + 1)) {
-      classes += "about-carousel-active-third"
+      classes += "about-carousel-active-third "
+    } else if (idx === wrap(shownImage - 2)) {
+      classes += "about-carousel-active-prev "
+    } else if (idx === wrap(shownImage + 2)) {
+      classes += "about-carousel-active-next "
+    }
+    if (idx === wrap(shownImage - 1) || idx === wrap(shownImage + 1) || idx === wrap(shownImage) ||
+    idx === wrap(shownImage - 2) || idx === wrap(shownImage + 2)) {
+      if (sliding == Sliding.Left) {
+        classes += "about-carousel-slide-left "
+      } else if (sliding == Sliding.Right) {
+        classes += "about-carousel-slide-right "
+      }
     }
     return classes
   }
   return (
     <div className="group mb-5">
-      {images.map((imgVal, idx) => 
-        <div key={imgVal} className={getCarouselItemClass(idx)}>
-          <img src={imgVal} alt="" />
-        </div>)}
+      <div className="about-carousel">
+        {images.map((imgVal, idx) => 
+          <div key={imgVal} className={getCarouselItemClass(idx)} onTransitionEnd={triggerSwap}>
+            <img src={imgVal} alt="" />
+          </div>)}
+      </div>
       <div className="about-carousel-prev">
         <span onClick={previousImage} className="about-carousel-prev-icon" aria-hidden="true"></span>
       </div>

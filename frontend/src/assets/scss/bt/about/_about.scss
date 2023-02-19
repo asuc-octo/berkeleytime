@@ -16,60 +16,79 @@
   }
 
   .group {
-    display: flex;
-    flex-direction: row;
     width: 100%;
     position: relative;
-    justify-content: center;
-    column-gap: 12px;
-    
-    .about-carousel-item {
-      display: none;
-      transition: transform 3s ease;
+    overflow: hidden;
+    .about-carousel {
+      /* make space for items on edges to cycle around */
+      width: 300%;
+      margin-left: -100%; 
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
       
-      &.about-carousel-active {
-        display: block;
-        transform: translateX(0);
-      }
-      &.about-carousel-active-first {
-        @extend .about-carousel-active;
-        order: 1;
-      }
-      &.about-carousel-active-second {
-        @extend .about-carousel-active;
-        order: 2;
-      }
-      &.about-carousel-active-third {
-        @extend .about-carousel-active;
-        order: 3;
+      .about-carousel-item {
+        display: none;
+        
+        &.about-carousel-active {
+          display: block;
+          transform: translateX(0);
+        }
+        &.about-carousel-slide-left {
+          transition: transform 1s ease;
+          transform: translateX(-100%);
+        }
+        &.about-carousel-slide-right {
+          transition: transform 1s ease;
+          transform: translateX(100%);
+        }
+        &.about-carousel-active-prev {
+          @extend .about-carousel-active;
+          order: 0;
+        }
+        &.about-carousel-active-first {
+          @extend .about-carousel-active;
+          order: 1;
+        }
+        &.about-carousel-active-second {
+          @extend .about-carousel-active;
+          order: 2;
+        }
+        &.about-carousel-active-third {
+          @extend .about-carousel-active;
+          order: 3;
+        }
+        &.about-carousel-active-next {
+          @extend .about-carousel-active;
+          order: 4;
+        }
+
+        > img {
+          border-radius: 3px;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        @include desktop {
+          height: 400px;
+          width: 711px;
+        }
+
+        @include sm-md {
+          height: 300px;
+          width: 533px;
+        }
+
+        @include xs {
+          height: 200px;
+          width: 356px;
+        }
       }
 
-      > img {
-        border-radius: 3px;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      @include desktop {
-        height: 400px;
-        width: 711px;
-      }
-
-      @include sm-md {
-        height: 300px;
-        width: 533px;
-      }
-
-      @include xs {
-        height: 200px;
-        width: 356px;
-      }
+      // remove scroll bar
+      -ms-overflow-style: none; /* Internet Explorer 10+ */
+      scrollbar-width: none; /* Firefox */
     }
-
-    // remove scroll bar
-    overflow-x: scroll;
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
 
     .about-carousel-arrow {
       position: absolute;
