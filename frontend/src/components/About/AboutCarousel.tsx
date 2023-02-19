@@ -23,23 +23,29 @@ const AboutCarousel : FC = () => {
   const nextImage = () => {
     setShownImage(wrap(shownImage + 1))
   }
-  const getImageClass = (idx: number) => {
-    let classes = ""
+  const getCarouselItemClass = (idx: number) => {
+    let classes = "about-carousel-item "
     if (idx === shownImage) {
-       classes += "about-carousel-active"
+      classes += "about-carousel-active-second"
+    } else if (idx === wrap(shownImage - 1)) {
+      classes += "about-carousel-active-first"
+    } else if (idx === wrap(shownImage + 1)) {
+      classes += "about-carousel-active-third"
     }
     return classes
   }
   return (
     <div className="group mb-5">
-      <a className="about-carousel-prev">
+      {images.map((imgVal, idx) => 
+        <div key={imgVal} className={getCarouselItemClass(idx)}>
+          <img src={imgVal} alt="" />
+        </div>)}
+      <div className="about-carousel-prev">
         <span onClick={previousImage} className="about-carousel-prev-icon" aria-hidden="true"></span>
-      </a>
-      {images.map((imgVal, idx) => <img key={imgVal} className={getImageClass(idx)} src={imgVal} alt="" />)}
-      
-      <a className="about-carousel-next">
+      </div>
+      <div className="about-carousel-next">
         <span onClick={nextImage} className="about-carousel-next-icon" aria-hidden="true"></span>
-      </a>
+      </div>
     </div>
   );
 }
