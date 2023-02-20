@@ -121,6 +121,10 @@
 	}
 }
 
+.selected {
+	background: $bt-off-white;
+}
+
 .saveIcon {
 	opacity: 0.5;
 	transition: all 0.15s ease-in-out;

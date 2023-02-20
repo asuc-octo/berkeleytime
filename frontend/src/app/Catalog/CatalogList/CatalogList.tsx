@@ -84,8 +84,7 @@ const CatalogList = (props: CatalogListProps) => {
 							data={{
 								course: courses[index],
 								handleCourseSelect,
-								sortQuery,
-								selectedCourseId
+								isSelected: selectedCourseId === courses[index].id
 							}}
 							style={style}
 						/>
