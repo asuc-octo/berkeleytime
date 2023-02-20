@@ -9,7 +9,7 @@ import { ReactComponent as BookmarkUnsaved } from 'assets/svg/catalog/bookmark-u
 import styles from './CatalogList.module.scss';
 
 // TODO: consider importing utils after latest changes merged into master.
-function formatEnrollent(percentage: number) {
+function formatEnrollment(percentage: number) {
 	if (percentage === -1) return 'N/A';
 	return `${Math.floor(percentage * 100)}% enrolled`;
 }
@@ -76,7 +76,7 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 				</div>
 				<div className={styles.itemStats}>
 					<span className={colorEnrollment(course.enrolledPercentage)}>
-						{formatEnrollent(course.enrolledPercentage)}
+						{formatEnrollment(course.enrolledPercentage)}
 					</span>
 					<span> • {course.units ? formatUnits(course.units) : 'N/A'}</span>
 				</div>
