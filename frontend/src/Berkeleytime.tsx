@@ -4,6 +4,7 @@ import { openBanner, enterMobile, exitMobile, openLandingModal } from './redux/c
 import useDimensions from 'react-cool-dimensions';
 import easterEgg from 'utils/easterEgg';
 import Routes from './Routes';
+import { fetchEnrollContext } from 'redux/actions';
 
 const Berkeleytime = () => {
 	const dispatch = useDispatch();
@@ -20,6 +21,9 @@ const Berkeleytime = () => {
 	});
 
 	useEffect(() => {
+		// Fetch enrollment context early on for catalog and enrollment page.
+		dispatch(fetchEnrollContext());
+
 		const bannerType = 'sp23recruitment3'; // should match value in ./redux/common/reducer.ts
 		if (localStorage.getItem('bt-hide-banner') !== bannerType) {
 			dispatch(openBanner());
