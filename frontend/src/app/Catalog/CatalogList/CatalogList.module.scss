@@ -1,28 +1,136 @@
 .root {
 	display: flex;
 	grid-area: list;
-	flex: 1;
+	gap: 10px;
 	position: relative;
 	flex-direction: column;
 	border-right: 1.5px solid #eaeaea;
 	height: calc(100% + 37px);
-	overflow: auto;
-	overflow-x: hidden;
+	overflow: hidden;
 
 	@include media(mobile, tablet) {
 		top: -37px;
 	}
-}
 
-.list {
-	@include media(mobile, tablet) {
-		margin-top: 37px;
+	.list {
+		@include media(mobile, tablet) {
+			margin-top: 37px;
+		}
+	}
+
+	.loader {
+		display: flex;
+		height: 100%;
+		justify-content: center;
+		align-items: center;
 	}
 }
 
-.loader {
+.itemRoot {
 	display: flex;
-	height: 100%;
+	flex-direction: row;
+	justify-content: space-between;
+	transition: all 0.15s ease-in-out;
+	padding: 6px 12px;
+
+	.itemContainer {
+		display: grid;
+		grid-template-columns: 100%;
+		grid-template-rows: 1fr min-content;
+		width: 100%;
+		height: 100%;
+		border-radius: 8px;
+		padding: 6px 12px;
+		position: relative;
+
+		@include mobile {
+			border: 0.5px solid $bt-light-border-grey;
+		}
+
+		&:hover {
+			background-color: $bt-off-white;
+			cursor: pointer;
+		}
+	}
+}
+
+.itemInfo {
+	display: flex;
+	width: 100%;
+	flex-direction: row;
+	gap: 10px;
+	justify-content: space-between;
+
+	h6 {
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	p {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2; /* number of lines to show */
+		line-height: 1.2em; /* fallback */
+		max-height: 1.2em * 2;
+		color: $bt-light-text;
+		font-size: 14px;
+	}
+}
+
+.itemContent {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.grade {
+	display: flex;
 	justify-content: center;
-	align-items: center;
+}
+
+.A {
+	color: $bt-indicator-green;
+}
+
+.B {
+	color: $bt-indicator-yellow;
+}
+
+.C {
+	color: $bt-indicator-orange;
+}
+
+.D {
+	color: $bt-indicator-squash;
+}
+
+.F {
+	color: $bt-indicator-red;
+}
+
+.itemStats {
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+	color: $bt-light-text;
+
+	span {
+		font-size: 14px;
+	}
+}
+
+.saveIcon {
+	opacity: 0.5;
+	transition: all 0.15s ease-in-out;
+	color: $bt-light-grey;
+	&:active {
+		transform: scale(0.9) !important;
+	}
+
+	&:hover {
+		opacity: 1;
+		transform: scale(1.1);
+	}
 }

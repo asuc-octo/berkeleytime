@@ -63,9 +63,6 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 		const ref = modalRef;
 
 		const listener = (event: MouseEvent) => {
-			event.stopPropagation();
-			event.preventDefault();
-
 			if (ref.current && isOpen && (event.target as HTMLDivElement)?.contains(ref.current))
 				setOpen(!isOpen);
 		};
@@ -119,31 +116,27 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 				<img src={filter} />
 			</button>
 			<div ref={modalRef} className={styles.container} data-modal={isOpen}>
-				<div id="wrapper" className={styles.wrapper} data-modal={isOpen}>
+				<div className={styles.wrapper} data-modal={isOpen}>
 					<div className={styles.header}>
 						<h3>Filters</h3>
 						<button type="button" onClick={handleFilterReset}>
 							Clear
 						</button>
 					</div>
-					<div className="filter-search">
-						<BTInput
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-							type="search"
-							placeholder="Search for a class..."
-							icon={<SearchIcon />}
-						/>
-					</div>
-					<div className="filter-sort">
-						<BTSelect
-							value={sortQuery}
-							isClearable={false}
-							options={SORT_OPTIONS}
-							isSearchable={false}
-							onChange={(newValue) => setSortQuery(newValue as SortOption)}
-						/>
-					</div>
+					<BTInput
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						type="search"
+						placeholder="Search for a class..."
+						icon={<SearchIcon />}
+					/>
+					<BTSelect
+						value={sortQuery}
+						isClearable={false}
+						options={SORT_OPTIONS}
+						isSearchable={false}
+						onChange={(newValue) => setSortQuery(newValue as SortOption)}
+					/>
 					{filterList &&
 						Object.entries(filterList).map(([key, filter]) => (
 							<div className={styles.item} key={key}>
@@ -163,7 +156,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 							</div>
 						))}
 					{loading && <BTLoader />}
-					{error && <div className={styles.error}>Unable to fetch catalog filters.</div>}
+					{error && <div className={styles.error}>Failed to fetch catalog filters.</div>}
 				</div>
 			</div>
 		</div>

@@ -15,6 +15,7 @@ import { sortByName } from '../service';
 import { sortSections } from 'utils/sections/sort';
 
 import styles from './CatalogView.module.scss';
+import { useSelector } from 'react-redux';
 
 interface CatalogViewProps {
 	coursePreview: CourseOverviewFragment | null;
@@ -24,13 +25,21 @@ interface CatalogViewProps {
 const CatalogView = (props: CatalogViewProps) => {
 	const { coursePreview, setCurrentFilters } = props;
 	const history = useHistory();
-	const slug = useParams<{
+	const { abbreviation, courseNumber, semester } = useParams<{
 		abbreviation: string;
 		courseNumber: string;
 		semester: string;
 	}>();
 
 	const [course, setCourse] = useState<CurrentCourse>(coursePreview);
+
+	const legacyId = useSelector((state: any) => {
+		return (
+			state.enrollment?.context?.courses?.find(
+				(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
+			)?.id ?? null
+		);
+	});
 
 	const [getCourse, { error }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
@@ -43,15 +52,15 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	useEffect(() => {
 		const variables = {
-			abbreviation: slug?.abbreviation ?? null,
-			courseNumber: slug?.courseNumber ?? null,
-			year: slug?.semester?.split(' ')[1] ?? null,
-			semester: slug?.semester?.split(' ')[0].toLowerCase() ?? null
+			abbreviation: abbreviation ?? null,
+			courseNumber: courseNumber ?? null,
+			year: semester?.split(' ')[1] ?? null,
+			semester: semester?.split(' ')[0].toLowerCase() ?? null
 		};
 
 		// Only fetch the course if every parameter has a value.
 		if (Object.values(variables).every((value) => value !== null)) getCourse({ variables });
-	}, [slug, getCourse]);
+	}, [getCourse, abbreviation, courseNumber, semester]);
 
 	useEffect(() => {
 		setCourse(coursePreview);
@@ -101,6 +110,13 @@ const CatalogView = (props: CatalogViewProps) => {
 		});
 	};
 
+	const enrollPath =
+		course && legacyId
+			? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
+			: `/enrollment`;
+
+	const gradePath = course && legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
+
 	return course ? (
 		<div className={`${styles.catalogViewRoot}`} data-modal={course !== null}>
 			<button onClick={() => setCourse(null)} className={styles.modalButton}>
@@ -122,7 +138,7 @@ const CatalogView = (props: CatalogViewProps) => {
 								course.enrolledPercentage
 							)}
 							<a
-								// href={toEnrollment.pathname}
+								href={enrollPath}
 								target="_blank"
 								rel="noreferrer"
 								className={styles.statLink}
@@ -141,7 +157,7 @@ const CatalogView = (props: CatalogViewProps) => {
 						<div>
 							{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
 							<a
-								// href={toGrades.pathname}
+								href={gradePath}
 								target="_blank"
 								rel="noreferrer"
 								className={styles.statLink}
@@ -180,14 +196,12 @@ const CatalogView = (props: CatalogViewProps) => {
 					{course.prerequisites || 'There is no information on the prerequisites of this course.'}
 				</p>
 			)}
-			<h5>Class Times - {slug?.semester}</h5>
-			<section className="table-container description-section">
-				{sections.length > 0 ? (
-					<CatalogViewSections sections={sections} />
-				) : (
-					<div className="table-empty">This class has no sections for the selected semester.</div>
-				)}
-			</section>
+			<h5>Class Times - {semester ?? ''}</h5>
+			{sections.length > 0 ? (
+				<CatalogViewSections sections={sections} />
+			) : (
+				<div>This class has no sections for the selected semester.</div>
+			)}
 			<h5>Past Offerings</h5>
 			<section className={styles.pills}>
 				{pastSemesters ? (
