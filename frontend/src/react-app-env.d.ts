@@ -1,5 +1,8 @@
-/// <reference types="react-scripts" />
 /// <reference types="vite-plugin-svgr/client" />
+
+declare module 'react-ios-switch' {
+  export = Switch;
+}
 
 declare module "*.jpg" {
   const value: string;

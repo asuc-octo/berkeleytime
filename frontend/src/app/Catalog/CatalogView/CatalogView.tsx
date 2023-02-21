@@ -51,11 +51,13 @@ const CatalogView = (props: CatalogViewProps) => {
 	});
 
 	useEffect(() => {
+		const [sem, year] = semester?.split(' ') ?? [null, null];
+
 		const variables = {
 			abbreviation: abbreviation ?? null,
 			courseNumber: courseNumber ?? null,
-			year: semester?.split(' ')[1] ?? null,
-			semester: semester?.split(' ')[0].toLowerCase() ?? null
+			semester: sem?.toLowerCase() ?? null,
+			year: year
 		};
 
 		// Only fetch the course if every parameter has a value.
@@ -110,12 +112,11 @@ const CatalogView = (props: CatalogViewProps) => {
 		});
 	};
 
-	const enrollPath =
-		course && legacyId
-			? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
-			: `/enrollment`;
+	const enrollPath = legacyId
+		? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
+		: `/enrollment`;
 
-	const gradePath = course && legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
+	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
 
 	return course ? (
 		<div className={`${styles.catalogViewRoot}`} data-modal={course !== null}>
@@ -137,12 +138,7 @@ const CatalogView = (props: CatalogViewProps) => {
 								`${course.enrolled}/${course.enrolledMax}`,
 								course.enrolledPercentage
 							)}
-							<a
-								href={enrollPath}
-								target="_blank"
-								rel="noreferrer"
-								className={styles.statLink}
-							>
+							<a href={enrollPath} target="_blank" rel="noreferrer" className={styles.statLink}>
 								<img src={launch} alt="" />
 							</a>
 						</div>
@@ -156,12 +152,7 @@ const CatalogView = (props: CatalogViewProps) => {
 					{course && course.gradeAverage !== -1 ? (
 						<div>
 							{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
-							<a
-								href={gradePath}
-								target="_blank"
-								rel="noreferrer"
-								className={styles.statLink}
-							>
+							<a href={gradePath} target="_blank" rel="noreferrer" className={styles.statLink}>
 								<img src={launch} alt="" />
 							</a>
 						</div>

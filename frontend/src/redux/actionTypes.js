@@ -1,12 +1,3 @@
-// FILTER
-export const FILTER = 'FILTER';
-export const START_REQUEST = 'START_REQUEST';
-
-export const REQUIREMENTS = 'REQUIREMENTS';
-export const UNITS = 'UNITS';
-export const DEPARTMENT = 'DEPARTMENT';
-export const LEVEL = 'LEVEL';
-export const SEMESTER = 'SEMESTER';
 
 export const UPDATE_GRADE_CONTEXT = 'UPDATE_GRADE_CONTEXT';
 export const GRADE_ADD_COURSE = 'GRADE_ADD_COURSE';

@@ -2,7 +2,6 @@
 import axios from 'axios';
 import hash from 'object-hash';
 import {
-  FILTER,
   UPDATE_GRADE_CONTEXT,
   GRADE_ADD_COURSE,
   GRADE_REMOVE_COURSE,
