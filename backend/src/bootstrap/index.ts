@@ -13,7 +13,6 @@ export default async (config: Config) => {
 
   app.use(
     "/graphql",
-    cors<cors.CorsRequest>(),
     json(),
     expressMiddleware(server, {
       context: async ({ req }) => ({ token: req.headers.token }),
