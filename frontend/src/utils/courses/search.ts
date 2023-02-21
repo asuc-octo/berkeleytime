@@ -1,7 +1,7 @@
 import { CourseOverviewFragment } from 'graphql';
 import { combineQueries, normalizeSearchTerm, search } from 'utils/search';
 
-export type SearchableCourse = CourseOverviewFragment;
+type SearchableCourse = CourseOverviewFragment;
 
 /**
  * Applies search query over list of courses
@@ -34,7 +34,7 @@ export function searchCourses(
  * Searches for a single course
  * @return a number (lower is better) representing the quality of the match
  */
-export function searchCourse(
+function searchCourse(
   query: string,
   courseCode: string,
   maxPenalty?: number
@@ -59,12 +59,12 @@ export function reactSelectCourseSearch(option: any, query: string): boolean {
 /**
  * Course object to a fully-descriptive course search string.
  */
-export function getFullCourseCode(course: SearchableCourse): string {
+function getFullCourseCode(course: SearchableCourse): string {
   const searchComponents = [course.abbreviation, course.courseNumber];
   return searchComponents.join(' ').toLowerCase();
 }
 
-export const laymanToAbbreviation: [string, string][] = [
+const laymanToAbbreviation: [string, string][] = [
   ['astron', 'astro'],
   ['compsci', 'cs'],
   ['mcellbi', 'mcb'],

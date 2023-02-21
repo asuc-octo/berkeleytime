@@ -14,10 +14,7 @@
     "watch:codegen": "graphql-codegen --config codegen.yml --watch",
     "start": "npm-run-all codegen -p watch:*",
     "build": "npm-run-all codegen -p build:*",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
     "lint": "eslint .",
-    "analyze": "source-map-explorer 'build/assets/*.js'",
     "prod": "serve -s build -p 3000"
   },
   "dependencies": {
