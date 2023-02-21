@@ -1,5 +1,4 @@
-import express, { json } from "express";
-import cors from "cors";
+import express from "express";
 import { expressMiddleware } from "@apollo/server/express4";
 import loaders from "./loaders";
 import { Config } from "../config";
@@ -13,7 +12,6 @@ export default async (config: Config) => {
 
   app.use(
     "/graphql",
-    json(),
     expressMiddleware(server, {
       context: async ({ req }) => ({ token: req.headers.token }),
     })

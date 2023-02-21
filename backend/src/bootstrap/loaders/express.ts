@@ -1,5 +1,4 @@
-import express from "express";
-import bodyParser from "body-parser";
+import express, { json } from "express";
 import cors from "cors";
 import helmet from "helmet";
 
@@ -7,7 +6,7 @@ import { config } from "../../config";
 
 export default async (app: express.Application) => {
   // Body parser only needed during POST on the graphQL path
-  app.use(config.graphqlPath, bodyParser.json());
+  app.use(config.graphqlPath, json());
 
   // Cors configuration
   app.use(cors());
