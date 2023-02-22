@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import doe from 'assets/img/about/group/doe.jpg'
 import michaels from 'assets/img/about/group/michaels.jpg'
@@ -19,21 +19,30 @@ const AboutCarousel : FC = () => {
 
   const [queuedImage, setQueuedImage] = useState<number>(2);
   const [sliding, setSliding] = useState<Sliding>(Sliding.Still);
+  const [intervalID, setIntervalID] = useState<number>(0);
   const images = [retreat_silly, zoom, doe, grace_janet, retreat,
   christina_janet, michaels, will, jemma];
+  useEffect(() => {
+    let interval = window.setInterval(nextImage, 5000)
+    setIntervalID(interval)
+  }, []);
+  const stopInterval = () => {
+    clearInterval(intervalID)
+  }
   const wrap = (val: number) => {
     return (val + images.length) % images.length;
   }
   const previousImage = () => {
     if (sliding === Sliding.Still) {
       setSliding(Sliding.Right)
-      setQueuedImage(wrap(shownImage - 1))
+      setQueuedImage(prevShownImage => wrap(prevShownImage - 1))
     }
   }
   const nextImage = () => {
     if (sliding === Sliding.Still) {
       setSliding(Sliding.Left)
-      setQueuedImage(wrap(shownImage + 1))
+      /* If we call from setInterval, "shownImage" will always be the init value */
+      setQueuedImage(prevShownImage => wrap(prevShownImage + 1))
     }
   }
   const triggerSwap = () => {
@@ -73,10 +82,10 @@ const AboutCarousel : FC = () => {
           </div>)}
       </div>
       <div className="about-carousel-prev">
-        <span onClick={previousImage} className="about-carousel-prev-icon" aria-hidden="true"></span>
+        <span onClick={() => {previousImage(); stopInterval()}} className="about-carousel-prev-icon" aria-hidden="true"></span>
       </div>
       <div className="about-carousel-next">
-        <span onClick={nextImage} className="about-carousel-next-icon" aria-hidden="true"></span>
+        <span onClick={() => {nextImage(); stopInterval()}} className="about-carousel-next-icon" aria-hidden="true"></span>
       </div>
     </div>
   );
