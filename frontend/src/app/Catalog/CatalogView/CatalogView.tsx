@@ -6,9 +6,8 @@ import launch from 'assets/svg/catalog/launch.svg';
 import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow.svg';
 import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
-import { CourseOverviewFragment, useGetCourseForNameLazyQuery } from 'graphql';
+import { CourseFragment, CourseOverviewFragment, useGetCourseForNameLazyQuery } from 'graphql';
 import CatalogViewSections from './CatalogViewSections';
-import BTLoader from 'components/Common/BTLoader';
 import { CurrentCourse, CurrentFilters } from 'app/Catalog/types';
 import { useHistory, useParams } from 'react-router';
 import { sortByName } from '../service';
@@ -42,7 +41,7 @@ const CatalogView = (props: CatalogViewProps) => {
 		);
 	});
 
-	const [getCourse, { error }] = useGetCourseForNameLazyQuery({
+	const [getCourse, { error, loading }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
@@ -50,7 +49,6 @@ const CatalogView = (props: CatalogViewProps) => {
 			}
 		}
 	});
-
 	useEffect(() => {
 		const [sem, year] = semester?.split(' ') ?? [null, null];
 
@@ -179,7 +177,7 @@ const CatalogView = (props: CatalogViewProps) => {
 						inline
 						count={5}
 						width={80}
-						height={28}
+						height={24}
 						borderRadius={12}
 					/>
 				)}
@@ -190,11 +188,16 @@ const CatalogView = (props: CatalogViewProps) => {
 				</p>
 			)}
 			<h5>Prerequisites</h5>
-			{course.__typename === 'CourseType' && (
-				<p>
-					{course.prerequisites || 'There is no information on the prerequisites of this course.'}
-				</p>
-			)}
+			<p>
+				{loading ? (
+					<Skeleton />
+				) : (
+					<span>
+						{(course as CourseFragment)?.prerequisites ||
+							'There is no information on the prerequisites of this course.'}
+					</span>
+				)}
+			</p>
 			<h5>Class Times - {semester ?? ''}</h5>
 			<CatalogViewSections sections={sections} />
 			<h5>Past Offerings</h5>

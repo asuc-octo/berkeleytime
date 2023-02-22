@@ -56,33 +56,40 @@ type Props = {
 const CatalogViewSections = ({ sections }: Props) => {
 	return (
 		<div className={styles.sectionRoot}>
-			{sections.length > 0 ? sections.map((section) => {
-				return (
-					<div
-						className={styles.sectionItem}
-						style={findInstructor(section.instructor)}
-						key={section.ccn}
-					>
-						<div className={styles.sectionInfo}>
-							<h5>
-								<span>{section.kind}</span> - {section.locationName ? section.locationName : 'Unknown Location'}
-							</h5>
-							<h6>
-								<span>{section.instructor ? section.instructor.toLowerCase() : 'instructor'}</span>,{' '}
-								{section.wordDays} {formatSectionTime(section)}
-							</h6>
-						</div>
+			{sections.length > 0 ? (
+				sections.map((section) => {
+					return (
 						<div
-							className={`${colorEnrollment(section.enrolled / section.enrolledMax)} ${
-								styles.enrolled
-							}`}
+							className={styles.sectionItem}
+							style={findInstructor(section.instructor)}
+							key={section.ccn}
 						>
-							<img src={people} />
-							{section.enrolled}/{section.enrolledMax}
+							<div className={styles.sectionInfo}>
+								<h5>
+									<span>{section.kind}</span> -{' '}
+									{section.locationName ? section.locationName : 'Unknown Location'}
+								</h5>
+								<h6>
+									<span>
+										{section.instructor ? section.instructor.toLowerCase() : 'instructor'}
+									</span>
+									, {section.wordDays} {formatSectionTime(section)}
+								</h6>
+							</div>
+							<div
+								className={`${colorEnrollment(section.enrolled / section.enrolledMax)} ${
+									styles.enrolled
+								}`}
+							>
+								<img src={people} />
+								{section.enrolled}/{section.enrolledMax}
+							</div>
 						</div>
-					</div>
-				);
-			}) : <Skeleton height={65} count={3} borderRadius={12}/>}
+					);
+				})
+			) : (
+				<Skeleton style={{ marginBottom: '10px' }} height={65} count={5} borderRadius={12} />
+			)}
 		</div>
 	);
 };
