@@ -33,6 +33,7 @@
     "react-dom": "^18.0.0",
     "react-ga": "^3.3.1",
     "react-ios-switch": "^0.1.19",
+    "react-loading-skeleton": "^3.1.1",
     "react-redux": "^7.2.0",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",

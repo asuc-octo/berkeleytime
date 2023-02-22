@@ -10,6 +10,7 @@ import store from './redux/store';
 import client from './graphql/client';
 
 import 'assets/scss/berkeleytime.scss';
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 

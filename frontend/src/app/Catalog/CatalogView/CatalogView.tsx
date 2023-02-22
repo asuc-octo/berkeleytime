@@ -13,6 +13,7 @@ import { CurrentCourse, CurrentFilters } from 'app/Catalog/types';
 import { useHistory, useParams } from 'react-router';
 import { sortByName } from '../service';
 import { sortSections } from 'utils/sections/sort';
+import Skeleton from 'react-loading-skeleton';
 
 import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
@@ -76,7 +77,7 @@ const CatalogView = (props: CatalogViewProps) => {
 		if (course?.__typename === 'CourseType') {
 			if (course.playlistSet) {
 				const { edges } = course.playlistSet;
-				playlists = edges.map((e) => e.node).filter((n) => n.category !== 'semester');
+				playlists = sortByName(edges.map((e) => e.node).filter((n) => n.category !== 'semester'));
 
 				semesters = catalogService.sortSemestersByLatest(
 					edges.map((e) => e.node).filter((n) => n.category === 'semester')
@@ -88,7 +89,7 @@ const CatalogView = (props: CatalogViewProps) => {
 			}
 		}
 
-		return [sortByName(playlists ?? []), sections ?? [], semesters];
+		return [playlists ?? [], sections ?? [], semesters];
 	}, [course]);
 
 	const handlePill = (pillItem: (typeof playlists)[number]) => {
@@ -169,11 +170,18 @@ const CatalogView = (props: CatalogViewProps) => {
 				{playlists.length > 0 ? (
 					playlists.map((req) => (
 						<div className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
-							{req.name}
+							{req?.name}
 						</div>
 					))
 				) : (
-					<BTLoader />
+					<Skeleton
+						style={{ marginRight: '5px' }}
+						inline
+						count={5}
+						width={80}
+						height={28}
+						borderRadius={12}
+					/>
 				)}
 			</section>
 			{course.description.length > 0 && (
@@ -188,11 +196,7 @@ const CatalogView = (props: CatalogViewProps) => {
 				</p>
 			)}
 			<h5>Class Times - {semester ?? ''}</h5>
-			{sections.length > 0 ? (
-				<CatalogViewSections sections={sections} />
-			) : (
-				<div>This class has no sections for the selected semester.</div>
-			)}
+			<CatalogViewSections sections={sections} />
 			<h5>Past Offerings</h5>
 			<section className={styles.pills}>
 				{pastSemesters ? (
@@ -208,7 +212,14 @@ const CatalogView = (props: CatalogViewProps) => {
 						</button>
 					))
 				) : (
-					<BTLoader />
+					<Skeleton
+						style={{ marginRight: '5px' }}
+						inline
+						count={10}
+						width={80}
+						height={28}
+						borderRadius={12}
+					/>
 				)}
 			</section>
 		</div>
