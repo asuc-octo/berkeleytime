@@ -53,21 +53,22 @@ const AboutCarousel : FC = () => {
     } else if (idx === wrap(shownImage + 2)) {
       classes += "about-carousel-active-next "
     }
-    if (idx === wrap(shownImage - 1) || idx === wrap(shownImage + 1) || idx === wrap(shownImage) ||
-    idx === wrap(shownImage - 2) || idx === wrap(shownImage + 2)) {
-      if (sliding == Sliding.Left) {
-        classes += "about-carousel-slide-left "
-      } else if (sliding == Sliding.Right) {
-        classes += "about-carousel-slide-right "
-      }
+    return classes
+  }
+  const getCarouselClass = () => {
+    let classes = "about-carousel "
+    if (sliding === Sliding.Left) {
+      classes += "about-carousel-slide-left "
+    } else if (sliding === Sliding.Right) {
+      classes += "about-carousel-slide-right "
     }
     return classes
   }
   return (
     <div className="group mb-5">
-      <div className="about-carousel">
+      <div className={getCarouselClass()} onTransitionEnd={triggerSwap}>
         {images.map((imgVal, idx) => 
-          <div key={imgVal} className={getCarouselItemClass(idx)} onTransitionEnd={triggerSwap}>
+          <div key={imgVal} className={getCarouselItemClass(idx)}>
             <img src={imgVal} alt="" />
           </div>)}
       </div>

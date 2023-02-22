@@ -16,16 +16,25 @@
   }
 
   .group {
+    display: flex;
+    justify-content: center;
     width: 100%;
     position: relative;
     overflow: hidden;
     .about-carousel {
-      /* make space for items on edges to cycle around */
-      width: 300%;
-      margin-left: -100%; 
-      display: flex;
+      /* Make the width of the flexbox equal the sum of the width of its items */
+      display: inline-flex;
       flex-direction: row;
       justify-content: center;
+      
+      &.about-carousel-slide-left {
+        transition: transform 1s ease;
+        transform: translateX(-20%);
+      }
+      &.about-carousel-slide-right {
+        transition: transform 1s ease;
+        transform: translateX(20%);
+      }
       
       .about-carousel-item {
         display: none;
@@ -33,14 +42,6 @@
         &.about-carousel-active {
           display: block;
           transform: translateX(0);
-        }
-        &.about-carousel-slide-left {
-          transition: transform 1s ease;
-          transform: translateX(-100%);
-        }
-        &.about-carousel-slide-right {
-          transition: transform 1s ease;
-          transform: translateX(100%);
         }
         &.about-carousel-active-prev {
           @extend .about-carousel-active;
