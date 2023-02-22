@@ -50,6 +50,11 @@ CHEM,3A,14946,001,Chem Struct React,Peter Marsden,under,12,44,14,13,14,12,12,5,4
 CHEM,3AL,14950,001,Organic Chem Lab,Peter Marsden,under,17,56,34,20,8,5,1,0,1,0,0,0,1,1,0
 CHEM,3B,14961,001,Chem Struct React,Kevin Sibucao,under,3,13,8,6,13,5,12,12,8,7,7,5,10,0,1
 CHEM,3BL,14962,001,Organic Chem Lab,Kevin Sibucao,under,13,8,12,17,9,6,4,2,2,1,1,0,1,0,0
+CHICANO,110,14004,001,Latina/O Phil & Rel,Lara Medina,under,1,2,4,0,4,0,0,0,0,0,0,0,0,0,0
+CHICANO,130,14219,001,Mex Chic Art Hist,Jesus Barraza,under,7,5,1,0,0,0,0,1,0,0,0,0,0,2,0
+CHICANO,135C,14005,001,Latino Doc Film,Raymond Telles; David Maldonado,under,9,25,2,0,0,0,0,0,0,0,0,0,2,8,0
+CHICANO,50,14001,001,Intro Chicano Hist,Juan Berumen; Fernanda Rivera,under,9,20,10,7,3,1,1,2,1,0,0,1,1,1,0
+CHICANO,N180,14341,001,Sel Top Cl Std Abrd,Pablo Gonzalez,under,0,32,1,1,0,0,0,0,0,0,0,0,0,0,0
 CHINESE,7B,14006,001,Modern Chinese Lit,Robert Ashmore; Zijing Fan,under,0,5,2,1,0,0,0,0,0,0,0,0,0,3,0
 COG SCI,131,13775,001,Comp Models Of Cog,Jose Ramirez,under,17,4,2,0,0,0,0,0,0,0,0,0,1,0,0
 COG SCI,190,15299,004,Spec Topics Cog Sci,Adam Croom,under,44,5,2,2,0,0,0,0,0,0,0,0,5,1,1
@@ -231,18 +236,13 @@ ESPM,C103,13064,001,Prin Conserv Biol,Jean Erick Rakotoarisoa,under,1,3,2,1,2,1,
 ESPM,C167,13062,001,Env Health & De,Kenneth Worthy,under,12,17,3,3,0,0,0,0,0,0,0,0,1,1,0
 ESPM,W169,13117,001,Intnatl Env Politic,Katherine O'Neill,under,64,90,21,3,0,0,0,0,0,0,0,0,2,24,2
 ETH STD,101A,13142,001,Soc Sci Methods,John Dougherty,under,0,8,2,1,0,0,0,0,0,0,0,0,0,0,0
-ETH STD,110,14004,001,Latina/O Phil & Rel,Lara Medina,under,1,2,4,0,4,0,0,0,0,0,0,0,0,0,0
 ETH STD,11AC,14334,001,Intro To Eth Std,Juana Maria Rodriguez; Salvador Gutierrez Peraza; Keith Feldman,under,0,33,17,3,4,4,1,1,0,0,1,1,0,1,0
 ETH STD,122AC,14017,001,Eth/Race In Am Film,Raymond Telles,under,0,33,0,1,0,0,0,0,0,0,0,0,0,2,0
-ETH STD,130,14219,001,Mex Chic Art Hist,Jesus Barraza,under,7,5,1,0,0,0,0,1,0,0,0,0,0,2,0
 ETH STD,135,14018,001,U.S. Immigration,Juan Berumen,under,2,2,3,1,1,1,0,0,1,0,0,0,0,1,0
-ETH STD,135C,14005,001,Latino Doc Film,Raymond Telles; David Maldonado,under,9,25,2,0,0,0,0,0,0,0,0,0,2,8,0
 ETH STD,144AC,14019,001,Racism And U.S. Law,Kathleen Tarr; -,under,1,9,0,1,9,4,0,1,0,0,1,0,1,1,0
 ETH STD,180L,13209,001,Topics In Race Law,Francisco Casique,under,0,4,5,0,1,0,0,0,0,0,0,0,0,1,0
 ETH STD,180L,13210,002,Topics In Race Law,Michael Chang,under,0,9,4,1,0,1,0,0,0,0,0,0,0,0,1
 ETH STD,197,11787,004,Field Study,Luisa Giulianetti,under,0,0,0,0,0,0,0,0,0,0,0,0,0,13,1
-ETH STD,50,14001,001,Intro Chicano Hist,Juan Berumen; Fernanda Rivera,under,9,20,10,7,3,1,1,2,1,0,0,1,1,1,0
-ETH STD,N180,14341,001,Sel Top Cl Std Abrd,Pablo Gonzalez,under,0,32,1,1,0,0,0,0,0,0,0,0,0,0,0
 ETH STD,N194,14125,002,Transfer Student Tr,Luisa Giulianetti,under,0,22,0,2,0,0,0,0,0,0,0,0,0,0,0
 FILM,10,15327,001,Film History & Form,Dolores McElroy,under,0,5,4,2,1,0,0,0,0,0,0,0,1,0,0
 FILM,135,13348,001,Experimental Media,Mark Sandberg; Kaitlin Forcier,under,8,10,3,3,0,1,0,0,0,0,0,0,0,1,0

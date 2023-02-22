@@ -189,6 +189,19 @@ CHEM,C110L,20249,001,Biochem & Molbi,David Drubin; Isabelle Le Blanc,under,0,5,0
 CHEM,C130,20224,001,Biophysical Chem,John Kuriyan,under,3,3,1,7,5,3,0,1,1,0,1,0,0,0,0
 CHEM,C150,20396,001,Intr Materials Chem,Daniel Bediako,under,1,3,2,2,2,1,2,0,0,0,0,0,0,0,0
 CHEM,H194,11497,003,Honors Research,Maura Daly; John Arnold; Maritsi Perez,under,6,18,0,0,0,0,0,0,0,0,0,0,0,0,0
+CHICANO,130,21013,001,Mex Chic Art Hist,Jesus Barraza,under,23,3,0,1,0,0,0,0,0,0,0,0,0,3,0
+CHICANO,132,33749,001,Day Of The Dead,Jesus Barraza,under,28,5,1,0,1,0,0,0,0,0,0,0,0,0,0
+CHICANO,135B,23513,001,Contemp Latino Film,Raymond Telles; Peter Kim,under,3,35,32,7,7,1,0,0,1,0,0,0,0,4,1
+CHICANO,159,21011,001,Mexican Immigration,Pablo Gonzalez,under,5,31,9,1,7,0,0,0,0,0,0,0,0,0,0
+CHICANO,161,23504,001,Central Amer People,Enrique Lima,under,0,13,6,1,1,0,0,0,0,0,0,0,0,0,0
+CHICANO,175,32341,001,Latinx And The Env,Federico Castillo,under,4,19,7,2,4,0,0,0,1,0,0,0,0,0,0
+CHICANO,190,25962,001,Adv Sem Chx/Lx Std,Juan Berumen,under,0,2,6,4,2,2,2,1,1,0,1,0,1,1,0
+CHICANO,197,17376,001,Field Study,Laura Jimenez-Olvera; Pablo Gonzalez,under,0,0,0,0,0,0,0,0,0,0,0,0,0,27,1
+CHICANO,198,21052,008,Directed Group Stdy,Maria Gallegos-Diaz; Laura Jimenez-Olvera; Juan Berumen,under,0,0,0,0,0,0,0,0,0,0,0,0,0,26,1
+CHICANO,39,33748,001,Fresh/Soph Seminar,Christian Paiz,under,16,0,0,0,0,0,0,0,0,0,0,0,0,1,0
+CHICANO,40,31211,001,Intro Chicano Lit,Juan Berumen,under,0,1,13,8,9,6,0,1,0,0,0,0,0,2,0
+CHICANO,50,23496,001,Intro Chicano Hist,Pablo Gonzalez,under,21,77,5,5,4,0,0,0,0,0,0,0,0,7,0
+CHICANO,R1A,21041,001,Reading & Comp,Juan Berumen,under,1,1,5,3,5,1,1,0,0,0,0,2,1,1,0
 CHINESE,100A,21019,001,Advanced Chinese,Lihua Zhang,under,0,5,6,3,0,0,2,0,0,0,0,0,0,0,0
 CHINESE,100XA,21043,001,Adv Chinese Mandar,Li Liu,under,0,5,3,1,0,0,0,0,0,0,0,0,0,3,1
 CHINESE,100XA,21044,002,Adv Chinese Mandar,Li Liu,under,0,10,1,0,0,0,0,0,0,0,0,0,0,1,0
@@ -705,32 +718,19 @@ ESPM,H175L,26898,001,Sen Res Lab Env Sci,Patina Mendez,under,0,26,2,0,0,0,0,0,0,
 ETH STD,101B,24678,001,Humanities Methods,Gregory Choy,under,6,42,1,2,3,0,0,0,0,0,0,0,1,2,0
 ETH STD,11AC,24674,001,Intro To Eth Std,Juana Maria Rodriguez; Sofia Chavez; Pilar Jefferson,under,5,77,11,0,4,0,2,1,3,0,0,0,1,11,0
 ETH STD,12,33315,001,Contemp Issues Es,Catherine Choy; Fernanda Rivera,under,15,9,1,2,1,0,0,0,1,0,0,0,0,0,0
-ETH STD,130,21013,001,Mex Chic Art Hist,Jesus Barraza,under,23,3,0,1,0,0,0,0,0,0,0,0,0,3,0
-ETH STD,132,33749,001,Day Of The Dead,Jesus Barraza,under,28,5,1,0,1,0,0,0,0,0,0,0,0,0,0
-ETH STD,135B,23513,001,Contemp Latino Film,Raymond Telles; Peter Kim,under,3,35,32,7,7,1,0,0,1,0,0,0,0,4,1
 ETH STD,150,21440,001,Mix Racial Descent,Gregory Choy,under,0,29,0,3,0,0,0,0,0,0,0,0,0,1,0
-ETH STD,159,21011,001,Mexican Immigration,Pablo Gonzalez,under,5,31,9,1,7,0,0,0,0,0,0,0,0,0,0
-ETH STD,161,23504,001,Central Amer People,Enrique Lima,under,0,13,6,1,1,0,0,0,0,0,0,0,0,0,0
 ETH STD,173AC,23457,001,Indig Ppls Gbl Ineq,Thomas Biolsi; Lucy Gill,under,5,6,7,2,0,1,0,0,0,0,0,0,0,0,0
-ETH STD,175,32341,001,Latinx And The Env,Federico Castillo,under,4,19,7,2,4,0,0,0,1,0,0,0,0,0,0
 ETH STD,175,21441,001,Lit From Eth Mvmts,Gregory Choy,under,0,30,0,2,1,0,0,0,0,0,0,0,0,1,0
 ETH STD,180,23856,002,Comp Eth Std Topics,John Dougherty,under,1,16,1,0,0,0,0,0,0,0,0,0,1,0,0
 ETH STD,180,31042,003,Comp Eth Std Topics,Philip Ting,under,0,13,4,0,0,0,0,0,0,0,0,0,0,2,0
-ETH STD,190,25962,001,Adv Sem Chx/Lx Std,Juan Berumen,under,0,2,6,4,2,2,2,1,1,0,1,0,1,1,0
 ETH STD,194,24049,001,Stud Acad Success,Luisa Giulianetti; Jan Carmelo Bautista,under,4,11,0,1,4,0,0,0,0,0,0,0,1,0,0
 ETH STD,197,16370,014,Field Study,Luisa Giulianetti; Pablo Gonzalez; Andrew Henry,under,0,0,0,0,0,0,0,0,0,0,0,0,0,26,1
 ETH STD,197,16375,012,Field Study,Luisa Giulianetti; Pablo Gonzalez,under,0,0,0,0,0,0,0,0,0,0,0,0,0,11,1
 ETH STD,197,16380,005,Field Study,Victoria Robinson; Aileen Pagdanganan,under,0,0,0,0,0,0,0,0,0,0,0,0,0,26,1
 ETH STD,197,16384,009,Field Study,Laura Jimenez-Olvera; Dewey St Germaine; Keith Feldman,under,0,0,0,0,0,0,0,0,0,0,0,0,0,42,1
 ETH STD,197,16386,011,Field Study,Luisa Giulianetti; Pablo Gonzalez,under,0,0,0,0,0,0,0,0,0,0,0,0,0,21,1
-ETH STD,197,17376,001,Field Study,Laura Jimenez-Olvera; Pablo Gonzalez,under,0,0,0,0,0,0,0,0,0,0,0,0,0,27,1
-ETH STD,198,21052,008,Directed Group Stdy,Maria Gallegos-Diaz; Laura Jimenez-Olvera; Juan Berumen,under,0,0,0,0,0,0,0,0,0,0,0,0,0,26,1
 ETH STD,198,23302,008,Superv Group Study,Ronald Williams; Keith Feldman,under,0,0,0,0,0,0,0,0,0,0,0,0,0,17,2
 ETH STD,39,24421,001,Fresh/Soph Seminar,Christian Paiz,under,11,1,0,0,1,0,0,0,1,0,0,0,0,1,0
-ETH STD,39,33748,001,Fresh/Soph Seminar,Christian Paiz,under,16,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-ETH STD,40,31211,001,Intro Chicano Lit,Juan Berumen,under,0,1,13,8,9,6,0,1,0,0,0,0,0,2,0
-ETH STD,50,23496,001,Intro Chicano Hist,Pablo Gonzalez,under,21,77,5,5,4,0,0,0,0,0,0,0,0,7,0
-ETH STD,R1A,21041,001,Reading & Comp,Juan Berumen,under,1,1,5,3,5,1,1,0,0,0,0,2,1,1,0
 FILIPN,100A,21410,001,Intermed Filipino,Karen Llagas,under,4,6,1,0,0,0,0,0,0,0,0,0,0,1,0
 FILIPN,101A,23694,001,Advanced Filipino,Maria Barrios-Leblanc,under,9,7,0,0,0,0,0,0,0,0,0,0,0,2,0
 FILIPN,1A,30941,001,Intro To Filipino,Cynthia Agnes Aban,under,1,16,5,0,0,0,0,0,0,0,0,0,0,1,0
