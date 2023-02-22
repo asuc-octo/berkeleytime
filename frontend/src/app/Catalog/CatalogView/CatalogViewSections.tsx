@@ -1,8 +1,9 @@
 import { SectionFragment } from 'graphql';
 import { CSSProperties } from 'react';
 import { formatSectionTime } from 'utils/sections/section';
-import people from 'assets/svg/catalog/people.svg';
+import Skeleton from 'react-loading-skeleton';
 
+import people from 'assets/svg/catalog/people.svg';
 import denero from 'assets/img/eggs/denero.png';
 import hug from 'assets/img/eggs/hug.png';
 import hilf from 'assets/img/eggs/hilf.png';
@@ -55,7 +56,7 @@ type Props = {
 const CatalogViewSections = ({ sections }: Props) => {
 	return (
 		<div className={styles.sectionRoot}>
-			{sections.map((section) => {
+			{sections.length > 0 ? sections.map((section) => {
 				return (
 					<div
 						className={styles.sectionItem}
@@ -81,7 +82,7 @@ const CatalogViewSections = ({ sections }: Props) => {
 						</div>
 					</div>
 				);
-			})}
+			}) : <Skeleton height={65} count={3} borderRadius={12}/>}
 		</div>
 	);
 };
