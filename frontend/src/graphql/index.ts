@@ -58,6 +58,7 @@ export type Scalars = {
 };
 
 export type BerkeleytimeUserType = {
+  __typename?: 'BerkeleytimeUserType';
   emailBerkeleytimeUpdate: Maybe<Scalars['Boolean']>;
   emailClassUpdate: Maybe<Scalars['Boolean']>;
   emailEnrollmentOpening: Maybe<Scalars['Boolean']>;
@@ -78,6 +79,7 @@ export type BerkeleytimeUserTypeSchedulesArgs = {
 };
 
 export type CourseType = Node & {
+  __typename?: 'CourseType';
   abbreviation: Scalars['String'];
   berkeleytimeuserSet: Array<BerkeleytimeUserType>;
   courseNumber: Scalars['String'];
@@ -205,6 +207,7 @@ export type CourseTypeSectionSetArgs = {
 };
 
 export type CourseTypeConnection = {
+  __typename?: 'CourseTypeConnection';
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<CourseTypeEdge>>;
   /** Pagination data for this connection. */
@@ -213,6 +216,7 @@ export type CourseTypeConnection = {
 
 /** A Relay edge containing a `CourseType` and its cursor. */
 export type CourseTypeEdge = {
+  __typename?: 'CourseTypeEdge';
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
   /** The item at the end of the edge */
@@ -220,10 +224,12 @@ export type CourseTypeEdge = {
 };
 
 export type CreateSchedule = {
+  __typename?: 'CreateSchedule';
   schedule: Maybe<ScheduleType>;
 };
 
 export type DeleteUser = {
+  __typename?: 'DeleteUser';
   success: Maybe<Scalars['Boolean']>;
 };
 
@@ -232,6 +238,7 @@ export type DeleteUser = {
  * a DjangoObjectType gives us higher flexibility of the data.
  */
 export type EnrollmentData = {
+  __typename?: 'EnrollmentData';
   dateCreated: Maybe<Scalars['Date']>;
   day: Maybe<Scalars['Int']>;
   enrolled: Maybe<Scalars['Int']>;
@@ -244,6 +251,7 @@ export type EnrollmentData = {
 
 /** The return format of both queries  */
 export type EnrollmentInfo = {
+  __typename?: 'EnrollmentInfo';
   course: Maybe<CourseType>;
   data: Maybe<Array<Maybe<EnrollmentData>>>;
   enrolledMax: Maybe<Scalars['Int']>;
@@ -257,10 +265,12 @@ export type EnrollmentInfo = {
 };
 
 export type FormConfigType = {
+  __typename?: 'FormConfigType';
   field: Maybe<Scalars['JSONString']>;
 };
 
 export type GradeType = Node & {
+  __typename?: 'GradeType';
   abbreviation: Scalars['String'];
   average: Scalars['Float'];
   course: CourseType;
@@ -280,6 +290,7 @@ export type GradeType = Node & {
 };
 
 export type GradeTypeConnection = {
+  __typename?: 'GradeTypeConnection';
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<GradeTypeEdge>>;
   /** Pagination data for this connection. */
@@ -288,6 +299,7 @@ export type GradeTypeConnection = {
 
 /** A Relay edge containing a `GradeType` and its cursor. */
 export type GradeTypeEdge = {
+  __typename?: 'GradeTypeEdge';
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
   /** The item at the end of the edge */
@@ -295,6 +307,7 @@ export type GradeTypeEdge = {
 };
 
 export type LetterGradeType = {
+  __typename?: 'LetterGradeType';
   letter: Maybe<Scalars['String']>;
   numerator: Maybe<Scalars['Int']>;
   percent: Maybe<Scalars['Float']>;
@@ -303,10 +316,12 @@ export type LetterGradeType = {
 };
 
 export type Logout = {
+  __typename?: 'Logout';
   success: Maybe<Scalars['Boolean']>;
 };
 
 export type Mutation = {
+  __typename?: 'Mutation';
   createSchedule: Maybe<CreateSchedule>;
   deleteUser: Maybe<DeleteUser>;
   /** Login mutation using graphql_jwt  */
@@ -389,6 +404,7 @@ export type Node = {
 
 /** Login mutation using graphql_jwt  */
 export type ObtainJsonWebToken = {
+  __typename?: 'ObtainJSONWebToken';
   newUser: Maybe<Scalars['Boolean']>;
   payload: Scalars['GenericScalar'];
   refreshExpiresIn: Scalars['Int'];
@@ -397,6 +413,7 @@ export type ObtainJsonWebToken = {
 
 /** The Relay compliant `PageInfo` type, containing data necessary to paginate this connection. */
 export type PageInfo = {
+  __typename?: 'PageInfo';
   /** When paginating forwards, the cursor to continue. */
   endCursor: Maybe<Scalars['String']>;
   /** When paginating forwards, are there more items? */
@@ -408,6 +425,7 @@ export type PageInfo = {
 };
 
 export type PlaylistType = Node & {
+  __typename?: 'PlaylistType';
   category: Scalars['String'];
   courses: CourseTypeConnection;
   /** The ID of the object. */
@@ -446,6 +464,7 @@ export type PlaylistTypeCoursesArgs = {
 };
 
 export type PlaylistTypeConnection = {
+  __typename?: 'PlaylistTypeConnection';
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<PlaylistTypeEdge>>;
   /** Pagination data for this connection. */
@@ -454,6 +473,7 @@ export type PlaylistTypeConnection = {
 
 /** A Relay edge containing a `PlaylistType` and its cursor. */
 export type PlaylistTypeEdge = {
+  __typename?: 'PlaylistTypeEdge';
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
   /** The item at the end of the edge */
@@ -461,6 +481,7 @@ export type PlaylistTypeEdge = {
 };
 
 export type Query = {
+  __typename?: 'Query';
   allCourses: Maybe<CourseTypeConnection>;
   allGrades: Maybe<GradeTypeConnection>;
   allPlaylists: Maybe<PlaylistTypeConnection>;
@@ -612,23 +633,28 @@ export type QuerySectionArgs = {
 };
 
 export type Refresh = {
+  __typename?: 'Refresh';
   payload: Scalars['GenericScalar'];
   refreshExpiresIn: Scalars['Int'];
 };
 
 export type RemoveClass = {
+  __typename?: 'RemoveClass';
   user: Maybe<BerkeleytimeUserType>;
 };
 
 export type RemoveSchedule = {
+  __typename?: 'RemoveSchedule';
   schedule: Maybe<ScheduleType>;
 };
 
 export type SaveClass = {
+  __typename?: 'SaveClass';
   user: Maybe<BerkeleytimeUserType>;
 };
 
 export type ScheduleType = Node & {
+  __typename?: 'ScheduleType';
   dateCreated: Scalars['DateTime'];
   dateModified: Scalars['DateTime'];
   /** The ID of the object. */
@@ -660,6 +686,7 @@ export type ScheduleTypeTimeblocksArgs = {
 };
 
 export type ScheduleTypeConnection = {
+  __typename?: 'ScheduleTypeConnection';
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<ScheduleTypeEdge>>;
   /** Pagination data for this connection. */
@@ -668,6 +695,7 @@ export type ScheduleTypeConnection = {
 
 /** A Relay edge containing a `ScheduleType` and its cursor. */
 export type ScheduleTypeEdge = {
+  __typename?: 'ScheduleTypeEdge';
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
   /** The item at the end of the edge */
@@ -681,6 +709,7 @@ export type SectionSelectionInput = {
 };
 
 export type SectionSelectionType = Node & {
+  __typename?: 'SectionSelectionType';
   course: CourseType;
   /** The ID of the object. */
   id: Scalars['ID'];
@@ -724,6 +753,7 @@ export type SectionSelectionTypeSecondaryArgs = {
 };
 
 export type SectionSelectionTypeConnection = {
+  __typename?: 'SectionSelectionTypeConnection';
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<SectionSelectionTypeEdge>>;
   /** Pagination data for this connection. */
@@ -732,6 +762,7 @@ export type SectionSelectionTypeConnection = {
 
 /** A Relay edge containing a `SectionSelectionType` and its cursor. */
 export type SectionSelectionTypeEdge = {
+  __typename?: 'SectionSelectionTypeEdge';
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
   /** The item at the end of the edge */
@@ -739,6 +770,7 @@ export type SectionSelectionTypeEdge = {
 };
 
 export type SectionType = Node & {
+  __typename?: 'SectionType';
   abbreviation: Scalars['String'];
   associatedSections: SectionTypeConnection;
   ccn: Scalars['String'];
@@ -823,6 +855,7 @@ export type SectionTypeSchedulerSecondarySectionsArgs = {
 };
 
 export type SectionTypeConnection = {
+  __typename?: 'SectionTypeConnection';
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<SectionTypeEdge>>;
   /** Pagination data for this connection. */
@@ -831,6 +864,7 @@ export type SectionTypeConnection = {
 
 /** A Relay edge containing a `SectionType` and its cursor. */
 export type SectionTypeEdge = {
+  __typename?: 'SectionTypeEdge';
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
   /** The item at the end of the edge */
@@ -839,6 +873,7 @@ export type SectionTypeEdge = {
 
 /** Telebears JSON  */
 export type TelebearData = {
+  __typename?: 'TelebearData';
   adjStart: Maybe<Scalars['Date']>;
   phase1End: Maybe<Scalars['Date']>;
   phase1Start: Maybe<Scalars['Date']>;
@@ -854,6 +889,7 @@ export type TimeBlockInput = {
 };
 
 export type TimeBlockType = Node & {
+  __typename?: 'TimeBlockType';
   days: Scalars['String'];
   endTime: Scalars['Time'];
   /** The ID of the object. */
@@ -864,6 +900,7 @@ export type TimeBlockType = Node & {
 };
 
 export type TimeBlockTypeConnection = {
+  __typename?: 'TimeBlockTypeConnection';
   /** Contains the nodes in this connection. */
   edges: Array<Maybe<TimeBlockTypeEdge>>;
   /** Pagination data for this connection. */
@@ -872,6 +909,7 @@ export type TimeBlockTypeConnection = {
 
 /** A Relay edge containing a `TimeBlockType` and its cursor. */
 export type TimeBlockTypeEdge = {
+  __typename?: 'TimeBlockTypeEdge';
   /** A cursor for use in pagination */
   cursor: Scalars['String'];
   /** The item at the end of the edge */
@@ -879,14 +917,17 @@ export type TimeBlockTypeEdge = {
 };
 
 export type UpdateSchedule = {
+  __typename?: 'UpdateSchedule';
   schedule: Maybe<ScheduleType>;
 };
 
 export type UpdateUser = {
+  __typename?: 'UpdateUser';
   user: Maybe<BerkeleytimeUserType>;
 };
 
 export type UserType = {
+  __typename?: 'UserType';
   email: Scalars['String'];
   firstName: Scalars['String'];
   id: Scalars['ID'];
@@ -896,28 +937,29 @@ export type UserType = {
 };
 
 export type Verify = {
+  __typename?: 'Verify';
   payload: Scalars['GenericScalar'];
 };
 
-export type CourseFragment = { title: string, units: string, waitlisted: number, openSeats: number, letterAverage: string, gradeAverage: number, lastUpdated: unknown, id: string, hasEnrollment: boolean, enrolledPercentage: number, enrolledMax: number, courseNumber: string, department: string, description: string, enrolled: number, abbreviation: string, prerequisites: string, playlistSet: { edges: Array<{ node: { category: string, id: string, name: string, semester: string, year: string } }> }, sectionSet: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } };
+export type CourseFragment = { __typename?: 'CourseType', title: string, units: string, waitlisted: number, openSeats: number, letterAverage: string, gradeAverage: number, lastUpdated: unknown, id: string, hasEnrollment: boolean, enrolledPercentage: number, enrolledMax: number, courseNumber: string, department: string, description: string, enrolled: number, abbreviation: string, prerequisites: string, playlistSet: { __typename?: 'PlaylistTypeConnection', edges: Array<{ __typename?: 'PlaylistTypeEdge', node: { __typename?: 'PlaylistType', category: string, id: string, name: string, semester: string, year: string } }> }, sectionSet: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } };
 
-export type CourseOverviewFragment = { id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string };
+export type CourseOverviewFragment = { __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string };
 
-export type FilterFragment = { id: string, name: string, category: string };
+export type FilterFragment = { __typename?: 'PlaylistType', id: string, name: string, category: string };
 
-export type LectureFragment = { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean, associatedSections: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } };
+export type LectureFragment = { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean, associatedSections: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } };
 
-export type ScheduleFragment = { id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, public: boolean, user: { user: { id: string, firstName: string, lastName: string } }, selectedSections: { edges: Array<{ node: { id: string, course: { id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } };
+export type ScheduleFragment = { __typename?: 'ScheduleType', id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, public: boolean, user: { __typename?: 'BerkeleytimeUserType', user: { __typename?: 'UserType', id: string, firstName: string, lastName: string } }, selectedSections: { __typename?: 'SectionSelectionTypeConnection', edges: Array<{ __typename?: 'SectionSelectionTypeEdge', node: { __typename?: 'SectionSelectionType', id: string, course: { __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } };
 
-export type ScheduleOverviewFragment = { id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, selectedSections: { edges: Array<{ node: { course: { abbreviation: string, courseNumber: string, units: string } } }> } };
+export type ScheduleOverviewFragment = { __typename?: 'ScheduleType', id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, selectedSections: { __typename?: 'SectionSelectionTypeConnection', edges: Array<{ __typename?: 'SectionSelectionTypeEdge', node: { __typename?: 'SectionSelectionType', course: { __typename?: 'CourseType', abbreviation: string, courseNumber: string, units: string } } }> } };
 
-export type SchedulerCourseFragment = { id: string, title: string, units: string, waitlisted: number, openSeats: number, enrolled: number, enrolledMax: number, courseNumber: string, department: string, description: string, abbreviation: string, sectionSet: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean, associatedSections: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } };
+export type SchedulerCourseFragment = { __typename?: 'CourseType', id: string, title: string, units: string, waitlisted: number, openSeats: number, enrolled: number, enrolledMax: number, courseNumber: string, department: string, description: string, abbreviation: string, sectionSet: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean, associatedSections: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } };
 
-export type SectionFragment = { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean };
+export type SectionFragment = { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean };
 
-export type SectionSelectionFragment = { id: string, course: { id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } };
+export type SectionSelectionFragment = { __typename?: 'SectionSelectionType', id: string, course: { __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } };
 
-export type UserProfileFragment = { id: string, major: string, emailClassUpdate: boolean, emailGradeUpdate: boolean, emailEnrollmentOpening: boolean, emailBerkeleytimeUpdate: boolean, user: { id: string, username: string, firstName: string, lastName: string, email: string }, savedClasses: Array<{ id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }>, schedules: { edges: Array<{ node: { id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, selectedSections: { edges: Array<{ node: { course: { abbreviation: string, courseNumber: string, units: string } } }> } } }> } };
+export type UserProfileFragment = { __typename?: 'BerkeleytimeUserType', id: string, major: string, emailClassUpdate: boolean, emailGradeUpdate: boolean, emailEnrollmentOpening: boolean, emailBerkeleytimeUpdate: boolean, user: { __typename?: 'UserType', id: string, username: string, firstName: string, lastName: string, email: string }, savedClasses: Array<{ __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }>, schedules: { __typename?: 'ScheduleTypeConnection', edges: Array<{ __typename?: 'ScheduleTypeEdge', node: { __typename?: 'ScheduleType', id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, selectedSections: { __typename?: 'SectionSelectionTypeConnection', edges: Array<{ __typename?: 'SectionSelectionTypeEdge', node: { __typename?: 'SectionSelectionType', course: { __typename?: 'CourseType', abbreviation: string, courseNumber: string, units: string } } }> } } }> } };
 
 export type CreateScheduleMutationVariables = Exact<{
   name: Scalars['String'];
@@ -930,38 +972,38 @@ export type CreateScheduleMutationVariables = Exact<{
 }>;
 
 
-export type CreateScheduleMutation = { createSchedule: { schedule: { id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, public: boolean, user: { user: { id: string, firstName: string, lastName: string } }, selectedSections: { edges: Array<{ node: { id: string, course: { id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } } } };
+export type CreateScheduleMutation = { __typename?: 'Mutation', createSchedule: { __typename?: 'CreateSchedule', schedule: { __typename?: 'ScheduleType', id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, public: boolean, user: { __typename?: 'BerkeleytimeUserType', user: { __typename?: 'UserType', id: string, firstName: string, lastName: string } }, selectedSections: { __typename?: 'SectionSelectionTypeConnection', edges: Array<{ __typename?: 'SectionSelectionTypeEdge', node: { __typename?: 'SectionSelectionType', id: string, course: { __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } } } };
 
 export type DeleteScheduleMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DeleteScheduleMutation = { removeSchedule: { schedule: { id: string } } };
+export type DeleteScheduleMutation = { __typename?: 'Mutation', removeSchedule: { __typename?: 'RemoveSchedule', schedule: { __typename?: 'ScheduleType', id: string } } };
 
 export type DeleteUserMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DeleteUserMutation = { deleteUser: { success: boolean } };
+export type DeleteUserMutation = { __typename?: 'Mutation', deleteUser: { __typename?: 'DeleteUser', success: boolean } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type LogoutMutation = { logout: { success: boolean } };
+export type LogoutMutation = { __typename?: 'Mutation', logout: { __typename?: 'Logout', success: boolean } };
 
 export type SaveCourseMutationVariables = Exact<{
   courseId: Scalars['ID'];
 }>;
 
 
-export type SaveCourseMutation = { saveClass: { user: { id: string, savedClasses: Array<{ id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }> } } };
+export type SaveCourseMutation = { __typename?: 'Mutation', saveClass: { __typename?: 'SaveClass', user: { __typename?: 'BerkeleytimeUserType', id: string, savedClasses: Array<{ __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }> } } };
 
 export type UnsaveCourseMutationVariables = Exact<{
   courseId: Scalars['ID'];
 }>;
 
 
-export type UnsaveCourseMutation = { removeClass: { user: { id: string, savedClasses: Array<{ id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }> } } };
+export type UnsaveCourseMutation = { __typename?: 'Mutation', removeClass: { __typename?: 'RemoveClass', user: { __typename?: 'BerkeleytimeUserType', id: string, savedClasses: Array<{ __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }> } } };
 
 export type UpdateScheduleMutationVariables = Exact<{
   scheduleId: Scalars['ID'];
@@ -973,7 +1015,7 @@ export type UpdateScheduleMutationVariables = Exact<{
 }>;
 
 
-export type UpdateScheduleMutation = { updateSchedule: { schedule: { id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, public: boolean, user: { user: { id: string, firstName: string, lastName: string } }, selectedSections: { edges: Array<{ node: { id: string, course: { id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } } } };
+export type UpdateScheduleMutation = { __typename?: 'Mutation', updateSchedule: { __typename?: 'UpdateSchedule', schedule: { __typename?: 'ScheduleType', id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, public: boolean, user: { __typename?: 'BerkeleytimeUserType', user: { __typename?: 'UserType', id: string, firstName: string, lastName: string } }, selectedSections: { __typename?: 'SectionSelectionTypeConnection', edges: Array<{ __typename?: 'SectionSelectionTypeEdge', node: { __typename?: 'SectionSelectionType', id: string, course: { __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } } } };
 
 export type UpdateUserMutationVariables = Exact<{
   emailBerkeleytimeUpdate: InputMaybe<Scalars['Boolean']>;
@@ -984,14 +1026,14 @@ export type UpdateUserMutationVariables = Exact<{
 }>;
 
 
-export type UpdateUserMutation = { updateUser: { user: { id: string, major: string, emailGradeUpdate: boolean, emailEnrollmentOpening: boolean, emailClassUpdate: boolean, emailBerkeleytimeUpdate: boolean } } };
+export type UpdateUserMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'UpdateUser', user: { __typename?: 'BerkeleytimeUserType', id: string, major: string, emailGradeUpdate: boolean, emailEnrollmentOpening: boolean, emailClassUpdate: boolean, emailBerkeleytimeUpdate: boolean } } };
 
 export type LoginMutationVariables = Exact<{
   token: Scalars['String'];
 }>;
 
 
-export type LoginMutation = { login: { newUser: boolean, refreshExpiresIn: number, payload: unknown, user: { id: string, major: string, emailClassUpdate: boolean, emailGradeUpdate: boolean, emailEnrollmentOpening: boolean, emailBerkeleytimeUpdate: boolean, user: { id: string, username: string, firstName: string, lastName: string, email: string }, savedClasses: Array<{ id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }>, schedules: { edges: Array<{ node: { id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, selectedSections: { edges: Array<{ node: { course: { abbreviation: string, courseNumber: string, units: string } } }> } } }> } } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'ObtainJSONWebToken', newUser: boolean, refreshExpiresIn: number, payload: unknown, user: { __typename?: 'BerkeleytimeUserType', id: string, major: string, emailClassUpdate: boolean, emailGradeUpdate: boolean, emailEnrollmentOpening: boolean, emailBerkeleytimeUpdate: boolean, user: { __typename?: 'UserType', id: string, username: string, firstName: string, lastName: string, email: string }, savedClasses: Array<{ __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }>, schedules: { __typename?: 'ScheduleTypeConnection', edges: Array<{ __typename?: 'ScheduleTypeEdge', node: { __typename?: 'ScheduleType', id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, selectedSections: { __typename?: 'SectionSelectionTypeConnection', edges: Array<{ __typename?: 'SectionSelectionTypeEdge', node: { __typename?: 'SectionSelectionType', course: { __typename?: 'CourseType', abbreviation: string, courseNumber: string, units: string } } }> } } }> } } } };
 
 export type GetCourseForIdQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1000,7 +1042,7 @@ export type GetCourseForIdQueryVariables = Exact<{
 }>;
 
 
-export type GetCourseForIdQuery = { course: { title: string, units: string, waitlisted: number, openSeats: number, letterAverage: string, gradeAverage: number, lastUpdated: unknown, id: string, hasEnrollment: boolean, enrolledPercentage: number, enrolledMax: number, courseNumber: string, department: string, description: string, enrolled: number, abbreviation: string, prerequisites: string, playlistSet: { edges: Array<{ node: { category: string, id: string, name: string, semester: string, year: string } }> }, sectionSet: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } };
+export type GetCourseForIdQuery = { __typename?: 'Query', course: { __typename?: 'CourseType', title: string, units: string, waitlisted: number, openSeats: number, letterAverage: string, gradeAverage: number, lastUpdated: unknown, id: string, hasEnrollment: boolean, enrolledPercentage: number, enrolledMax: number, courseNumber: string, department: string, description: string, enrolled: number, abbreviation: string, prerequisites: string, playlistSet: { __typename?: 'PlaylistTypeConnection', edges: Array<{ __typename?: 'PlaylistTypeEdge', node: { __typename?: 'PlaylistType', category: string, id: string, name: string, semester: string, year: string } }> }, sectionSet: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } };
 
 export type GetCourseForNameQueryVariables = Exact<{
   abbreviation: Scalars['String'];
@@ -1010,26 +1052,26 @@ export type GetCourseForNameQueryVariables = Exact<{
 }>;
 
 
-export type GetCourseForNameQuery = { allCourses: { edges: Array<{ node: { title: string, units: string, waitlisted: number, openSeats: number, letterAverage: string, gradeAverage: number, lastUpdated: unknown, id: string, hasEnrollment: boolean, enrolledPercentage: number, enrolledMax: number, courseNumber: string, department: string, description: string, enrolled: number, abbreviation: string, prerequisites: string, playlistSet: { edges: Array<{ node: { category: string, id: string, name: string, semester: string, year: string } }> }, sectionSet: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } };
+export type GetCourseForNameQuery = { __typename?: 'Query', allCourses: { __typename?: 'CourseTypeConnection', edges: Array<{ __typename?: 'CourseTypeEdge', node: { __typename?: 'CourseType', title: string, units: string, waitlisted: number, openSeats: number, letterAverage: string, gradeAverage: number, lastUpdated: unknown, id: string, hasEnrollment: boolean, enrolledPercentage: number, enrolledMax: number, courseNumber: string, department: string, description: string, enrolled: number, abbreviation: string, prerequisites: string, playlistSet: { __typename?: 'PlaylistTypeConnection', edges: Array<{ __typename?: 'PlaylistTypeEdge', node: { __typename?: 'PlaylistType', category: string, id: string, name: string, semester: string, year: string } }> }, sectionSet: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } };
 
 export type GetCoursesForFilterQueryVariables = Exact<{
   playlists: Scalars['String'];
 }>;
 
 
-export type GetCoursesForFilterQuery = { allCourses: { edges: Array<{ node: { id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string } }> } };
+export type GetCoursesForFilterQuery = { __typename?: 'Query', allCourses: { __typename?: 'CourseTypeConnection', edges: Array<{ __typename?: 'CourseTypeEdge', node: { __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string } }> } };
 
 export type GetFiltersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetFiltersQuery = { allPlaylists: { edges: Array<{ node: { id: string, name: string, category: string } }> } };
+export type GetFiltersQuery = { __typename?: 'Query', allPlaylists: { __typename?: 'PlaylistTypeConnection', edges: Array<{ __typename?: 'PlaylistTypeEdge', node: { __typename?: 'PlaylistType', id: string, name: string, category: string } }> } };
 
 export type GetScheduleForIdQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type GetScheduleForIdQuery = { schedule: { id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, public: boolean, user: { user: { id: string, firstName: string, lastName: string } }, selectedSections: { edges: Array<{ node: { id: string, course: { id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } } };
+export type GetScheduleForIdQuery = { __typename?: 'Query', schedule: { __typename?: 'ScheduleType', id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, public: boolean, user: { __typename?: 'BerkeleytimeUserType', user: { __typename?: 'UserType', id: string, firstName: string, lastName: string } }, selectedSections: { __typename?: 'SectionSelectionTypeConnection', edges: Array<{ __typename?: 'SectionSelectionTypeEdge', node: { __typename?: 'SectionSelectionType', id: string, course: { __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }, primary: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean }, secondary: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } } };
 
 export type GetSchedulerCourseForIdQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -1038,19 +1080,19 @@ export type GetSchedulerCourseForIdQueryVariables = Exact<{
 }>;
 
 
-export type GetSchedulerCourseForIdQuery = { course: { id: string, title: string, units: string, waitlisted: number, openSeats: number, enrolled: number, enrolledMax: number, courseNumber: string, department: string, description: string, abbreviation: string, sectionSet: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean, associatedSections: { edges: Array<{ node: { id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } } };
+export type GetSchedulerCourseForIdQuery = { __typename?: 'Query', course: { __typename?: 'CourseType', id: string, title: string, units: string, waitlisted: number, openSeats: number, enrolled: number, enrolledMax: number, courseNumber: string, department: string, description: string, abbreviation: string, sectionSet: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean, associatedSections: { __typename?: 'SectionTypeConnection', edges: Array<{ __typename?: 'SectionTypeEdge', node: { __typename?: 'SectionType', id: string, ccn: string, kind: string, instructor: string, startTime: unknown, endTime: unknown, enrolled: number, enrolledMax: number, locationName: string, waitlisted: number, waitlistedMax: number, days: string, wordDays: string, disabled: boolean, sectionNumber: string, isPrimary: boolean } }> } } }> } } };
 
 export type GetSemestersQueryVariables = Exact<{
   name: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type GetSemestersQuery = { allPlaylists: { edges: Array<{ node: { id: string, name: string, category: string } }> } };
+export type GetSemestersQuery = { __typename?: 'Query', allPlaylists: { __typename?: 'PlaylistTypeConnection', edges: Array<{ __typename?: 'PlaylistTypeEdge', node: { __typename?: 'PlaylistType', id: string, name: string, category: string } }> } };
 
 export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserQuery = { user: { id: string, major: string, emailClassUpdate: boolean, emailGradeUpdate: boolean, emailEnrollmentOpening: boolean, emailBerkeleytimeUpdate: boolean, user: { id: string, username: string, firstName: string, lastName: string, email: string }, savedClasses: Array<{ id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }>, schedules: { edges: Array<{ node: { id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, selectedSections: { edges: Array<{ node: { course: { abbreviation: string, courseNumber: string, units: string } } }> } } }> } } };
+export type GetUserQuery = { __typename?: 'Query', user: { __typename?: 'BerkeleytimeUserType', id: string, major: string, emailClassUpdate: boolean, emailGradeUpdate: boolean, emailEnrollmentOpening: boolean, emailBerkeleytimeUpdate: boolean, user: { __typename?: 'UserType', id: string, username: string, firstName: string, lastName: string, email: string }, savedClasses: Array<{ __typename?: 'CourseType', id: string, abbreviation: string, courseNumber: string, description: string, title: string, gradeAverage: number, letterAverage: string, openSeats: number, enrolledPercentage: number, enrolled: number, enrolledMax: number, units: string }>, schedules: { __typename?: 'ScheduleTypeConnection', edges: Array<{ __typename?: 'ScheduleTypeEdge', node: { __typename?: 'ScheduleType', id: string, year: string, semester: string, name: string, totalUnits: string, dateCreated: unknown, dateModified: unknown, selectedSections: { __typename?: 'SectionSelectionTypeConnection', edges: Array<{ __typename?: 'SectionSelectionTypeEdge', node: { __typename?: 'SectionSelectionType', course: { __typename?: 'CourseType', abbreviation: string, courseNumber: string, units: string } } }> } } }> } } };
 
 export const SectionFragmentDoc = gql`
     fragment Section on SectionType {

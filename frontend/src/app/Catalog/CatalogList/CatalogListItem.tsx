@@ -7,6 +7,7 @@ import { ReactComponent as BookmarkSaved } from 'assets/svg/catalog/bookmark-sav
 import { ReactComponent as BookmarkUnsaved } from 'assets/svg/catalog/bookmark-unsaved.svg';
 
 import styles from './CatalogList.module.scss';
+import Skeleton from 'react-loading-skeleton';
 
 // TODO: consider importing utils after latest changes merged into master.
 function formatEnrollment(percentage: number) {
@@ -36,7 +37,7 @@ function colorEnrollment(percentage: number) {
 
 type CatalogListItemProps = {
 	data: {
-		course: CourseOverviewFragment;
+		course: CourseOverviewFragment | { __typename: 'Skeleton'; id: number };
 		handleCourseSelect: (course: CourseOverviewFragment) => void;
 		isSelected: boolean;
 	};
@@ -52,7 +53,17 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 
 	const isSaved = user?.savedClasses?.some((savedCourse) => savedCourse?.id === course.id);
 
-	return (
+	return course.__typename === 'Skeleton' ? (
+		<div style={style} className={styles.itemRoot}>
+			<div
+				className={`${styles.itemContainer} ${styles.skeleton} ${
+					isSelected ? styles.selected : ''
+				}`}
+			>
+				<Skeleton height={'100%'} style={{ lineHeight: 1 }} />
+			</div>
+		</div>
+	) : (
 		<div style={style} className={styles.itemRoot} onClick={() => handleCourseSelect(course)}>
 			<div className={`${styles.itemContainer} ${isSelected ? styles.selected : ''}`}>
 				<div className={styles.itemInfo}>
@@ -64,7 +75,7 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 						{user && (
 							<div
 								className={styles.saveIcon}
-								onClick={() => isSaved ? unsaveCourse(course) : saveCourse(course)}
+								onClick={() => (isSaved ? unsaveCourse(course) : saveCourse(course))}
 							>
 								{isSaved ? <BookmarkSaved /> : <BookmarkUnsaved />}
 							</div>

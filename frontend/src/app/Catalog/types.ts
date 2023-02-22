@@ -7,7 +7,7 @@ export type CatalogSlug = {
 	semester?: string;
 }
 
-export type CurrentCourse = CourseFragment & {__typename?: 'CourseType'} | CourseOverviewFragment & {__typename?: 'CourseOverviewFragment'} | null
+export type CurrentCourse = CourseFragment | null;
 
 export type CatalogCategoryKeys =
 	| 'department'

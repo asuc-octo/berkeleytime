@@ -28,5 +28,5 @@ generates:
     config:
       maybeValue: T # Assert non-nullable
       avoidOptionals: true
-      skipTypename: true
+      skipTypename: false
       defaultScalarType: 'unknown'
