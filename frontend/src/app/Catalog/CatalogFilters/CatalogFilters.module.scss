@@ -23,7 +23,8 @@
 		display: flex;
 		grid-area: toggle;
 		z-index: 200;
-		color: black;
+		color: #8a8a8a;
+		font-size: 18px;
 		outline: none;
 		border: none;
 		justify-content: center;
@@ -31,19 +32,14 @@
 		justify-self: center;
 		transition-duration: 0.1s;
 		background: transparent;
-		padding: 0;
+		padding: 10px 10vw;
 		border-radius: 0px 0px 12px 12px;
-
-		img {
-			background: white;
-			border: 1.5px solid #eaeaea;
-			border-top: none;
-			border-radius: 0px 0px 12px 12px;
-			padding: 10px 10vw;
-			color: $bt-blue;
-			&:active {
-				background: $bt-off-white;
-			}
+		border: 1.5px solid #eaeaea;
+		border-top: none;
+		background: white;
+		&:active,
+		&:hover {
+			background: $bt-off-white;
 		}
 	}
 }
@@ -54,7 +50,7 @@
 	@include media(mobile, tablet) {
 		position: absolute;
 		grid-area: modal;
-		top: -36px;
+		top: -40px;
 		width: 100%;
 		height: calc(100vh - 36px);
 		z-index: 50;
@@ -88,7 +84,7 @@
 			background: white;
 			justify-self: center;
 			width: 85%;
-			height: 80%;
+			height: 85%;
 
 			&[data-modal='false'] {
 				display: none;

@@ -4,7 +4,7 @@ import BTSelect from 'components/Custom/Select';
 
 import catalogService from '../service';
 import { ReactComponent as SearchIcon } from 'assets/svg/common/search.svg';
-import filter from 'assets/svg/catalog/filter.svg';
+import { ReactComponent as FilterIcon } from 'assets/svg/catalog/filter.svg';
 import BTInput from 'components/Custom/Input';
 import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, CatalogSlug } from '../types';
 
@@ -113,7 +113,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	return (
 		<div className={styles.root}>
 			<button className={styles.toggle} onClick={() => setOpen((prev) => !prev)}>
-				<img src={filter} />
+				<FilterIcon fill={'red'} width={18} height={18}/>
 			</button>
 			<div ref={modalRef} className={styles.container} data-modal={isOpen}>
 				<div className={styles.wrapper} data-modal={isOpen}>
