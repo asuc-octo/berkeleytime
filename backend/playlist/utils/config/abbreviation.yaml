@@ -111,6 +111,7 @@ CHEM:
 CHICANO:
     - "Chicano Studies"
     - "Chicano Studies Program"
+    - "Chicanx Latinx Studies"
 
 CHINESE:
     - "Chinese"
@@ -264,7 +265,6 @@ ENV SCI:
 
 ETH STD:
     - "Ethnic Studies"
-    - "Chicanx Latinx Studies"
 
 ETH GRP:
     - "Ethnic Studies Graduate Group"
