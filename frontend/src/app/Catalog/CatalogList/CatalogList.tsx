@@ -3,7 +3,6 @@ import CatalogListItem from './CatalogListItem';
 import { CourseOverviewFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
 import { CurrentFilters, FilterOption, SortOption } from '../types';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
-import BTLoader from 'components/Common/BTLoader';
 import useDimensions from 'react-cool-dimensions';
 
 import styles from './CatalogList.module.scss';
@@ -18,18 +17,28 @@ type CatalogListProps = {
 	sortQuery: SortOption;
 };
 
+type Skeleton = { __typename: 'Skeleton'; id: number };
+
 /**
  * Component for course list
  */
 const CatalogList = (props: CatalogListProps) => {
 	const { currentFilters, setCurrentCourse, searchQuery, sortQuery } = props;
-	const [fetchCatalogList, { data, loading }] = useGetCoursesForFilterLazyQuery({});
+	const { observe, height } = useDimensions();
+	const [fetchCatalogList, { data }] = useGetCoursesForFilterLazyQuery({});
 	const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 	const history = useHistory();
-	const { observe, height } = useDimensions();
 
 	const courses = useMemo(() => {
-		if (!data) return null;
+		if (!data)
+			return [...Array(20).keys()].map(
+				(key) =>
+					({
+						__typename: 'Skeleton',
+						id: key
+					} as Skeleton)
+			);
+
 		let courses = data.allCourses.edges.map((edge) => edge.node);
 		courses = searchCourses(courses, searchQuery);
 
@@ -65,19 +74,14 @@ const CatalogList = (props: CatalogListProps) => {
 
 	return (
 		<div ref={observe} className={styles.root}>
-			{loading && (
-				<div className={styles.loader}>
-					<BTLoader />
-				</div>
-			)}
-			{courses && (
+			{height && (
 				<FixedSizeList
 					className={styles.list}
 					height={height}
 					width={'100%'}
 					itemCount={courses.length}
 					itemSize={110}
-					itemKey={(index) => courses[index].id}
+					itemKey={(index) => courses[index]?.id}
 				>
 					{({ index, style }) => (
 						<CatalogListItem

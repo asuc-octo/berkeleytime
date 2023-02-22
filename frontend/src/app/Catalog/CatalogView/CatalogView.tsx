@@ -6,7 +6,7 @@ import launch from 'assets/svg/catalog/launch.svg';
 import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow.svg';
 import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
-import { CourseFragment, CourseOverviewFragment, useGetCourseForNameLazyQuery } from 'graphql';
+import { CourseFragment, useGetCourseForNameLazyQuery } from 'graphql';
 import CatalogViewSections from './CatalogViewSections';
 import { CurrentCourse, CurrentFilters } from 'app/Catalog/types';
 import { useHistory, useParams } from 'react-router';
@@ -18,7 +18,7 @@ import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
 
 interface CatalogViewProps {
-	coursePreview: CourseOverviewFragment | null;
+	coursePreview: CourseFragment | null;
 	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
 }
 
@@ -72,19 +72,17 @@ const CatalogView = (props: CatalogViewProps) => {
 			sections,
 			semesters = null;
 
-		if (course?.__typename === 'CourseType') {
-			if (course.playlistSet) {
-				const { edges } = course.playlistSet;
-				playlists = sortByName(edges.map((e) => e.node).filter((n) => n.category !== 'semester'));
+		if (course?.playlistSet) {
+			const { edges } = course.playlistSet;
+			playlists = sortByName(edges.map((e) => e.node).filter((n) => n.category !== 'semester'));
 
-				semesters = catalogService.sortSemestersByLatest(
-					edges.map((e) => e.node).filter((n) => n.category === 'semester')
-				);
-			}
+			semesters = catalogService.sortSemestersByLatest(
+				edges.map((e) => e.node).filter((n) => n.category === 'semester')
+			);
+		}
 
-			if (course.sectionSet) {
-				sections = sortSections(course.sectionSet.edges.map((e) => e.node));
-			}
+		if (course?.sectionSet) {
+			sections = sortSections(course.sectionSet.edges.map((e) => e.node));
 		}
 
 		return [playlists ?? [], sections ?? [], semesters];
@@ -165,13 +163,7 @@ const CatalogView = (props: CatalogViewProps) => {
 				</div>
 			</div>
 			<section className={styles.pills}>
-				{playlists.length > 0 ? (
-					playlists.map((req) => (
-						<div className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
-							{req?.name}
-						</div>
-					))
-				) : (
+				{loading && (
 					<Skeleton
 						style={{ marginRight: '5px' }}
 						inline
@@ -180,6 +172,15 @@ const CatalogView = (props: CatalogViewProps) => {
 						height={24}
 						borderRadius={12}
 					/>
+				)}
+				{playlists.length > 0 ? (
+					playlists.map((req) => (
+						<div className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
+							{req?.name}
+						</div>
+					))
+				) : (
+					<div>This class has no sections for the selected semester.</div>
 				)}
 			</section>
 			{course.description.length > 0 && (
@@ -199,7 +200,7 @@ const CatalogView = (props: CatalogViewProps) => {
 				)}
 			</p>
 			<h5>Class Times - {semester ?? ''}</h5>
-			<CatalogViewSections sections={sections} />
+			<CatalogViewSections sections={sections} loading={loading} />
 			<h5>Past Offerings</h5>
 			<section className={styles.pills}>
 				{pastSemesters ? (
