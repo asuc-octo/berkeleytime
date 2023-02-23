@@ -1,6 +1,9 @@
 AEROSPC:
     - "Aerospace Studies"
 
+AERO ENG:
+    - "Aerospace Engineering"
+
 AFRICAM:
     - "African American Studies"
 
@@ -108,6 +111,7 @@ CHEM:
 CHICANO:
     - "Chicano Studies"
     - "Chicano Studies Program"
+    - "Chicanx Latinx Studies"
 
 CHINESE:
     - "Chinese"
@@ -505,6 +509,9 @@ MELC:
     - "Middle Eastern Languages and Cultures"
     - "Mid Eastern Lang and Cultures"
 
+MPS:
+    - "Math and Physical Sciences"
+
 MIL AFF:
     - "Military Affairs"
 
@@ -742,6 +749,9 @@ UGIS:
 
 UNKNOWN:
     - "Advanced Doctoral Studies" # every single grade CSV we have ever gotten has had 'UNKNOWN' or 'MISSING' for "Advanced Doctoral Studies"
+
+UKRAINI:
+    - "Ukrainian Language and Lit"
 
 URDU:
     - "Urdu"
