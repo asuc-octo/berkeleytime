@@ -3,13 +3,13 @@ import { formatCatalogItem } from "./formatter";
 import { CourseModel } from "./model";
 import { CourseType } from "./model";
 
-export async function catalog(courseId?: string) {
-    if (courseId) {
-        const course = await CourseModel.findById(courseId);
-        console.log(course);
+export async function catalog(args: {courseId?: string}): Promise<CatalogModule.CatalogItem[] | undefined> {
+    if (args.courseId) {
+        const course = await CourseModel.findOne({identifiers: {$elemMatch: {"cs-course-id": args.courseId}}});
         return [formatCatalogItem(course as CourseType)];
     }
     else {
-        return await (await CourseModel.find()).map(formatCatalogItem);
+        const courses = await CourseModel.find();
+        return courses.map(formatCatalogItem);
     }
 }

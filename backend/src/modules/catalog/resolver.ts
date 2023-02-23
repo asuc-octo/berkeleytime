@@ -3,8 +3,8 @@ import { catalog } from "./controller"
 
 const resolvers: CatalogModule.Resolvers = {
     Query: {
-        catalog(_parent, args: {courseId?: string}) {
-            return catalog(args.courseId)
+        catalog(parent: CatalogModule.Query, args: {courseId: string}) {
+            return catalog(args);
         }
     },  
 }

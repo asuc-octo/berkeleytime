@@ -3,7 +3,7 @@ import { CourseType } from "./model";
 
 export function formatCatalogItem(course: CourseType): CatalogModule.CatalogItem {
     return {
-        courseId: course._id.toString(),
+        courseId: course.identifiers.find((identifier) => identifier.type == "cs-course-id")?.id,
         displayName: course.classDisplayName,
         courseTitle: course.title,
         classTitle: "hello",
