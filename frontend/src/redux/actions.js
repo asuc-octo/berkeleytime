@@ -244,7 +244,6 @@ export function fetchGradeClass(course) {
 }
 
 export function fetchGradeData(classData) {
-  
   const promises = [];
   for (const course of classData) {
     const { sections } = course;
