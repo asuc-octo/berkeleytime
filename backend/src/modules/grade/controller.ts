@@ -4,11 +4,15 @@ import { letterGrades, PNP, semesters } from "./constants";
 
 export async function grades(CourseControlNumber: number, Year: number, Semester: string): Promise<GradeModule.Grade> {
   let grades;
-  if (Year >= 1868 && semesters.has(Semester)) {
+  if (Year >= 2007 && semesters.has(Semester)) {
     grades = await GradeModel.find({CourseControlNbr: CourseControlNumber, "term.year": Year, "term.semester": Semester});
   } else {
     throw new Error("Invalid query parameters");
-  }  
+  }
+
+  if (!grades) {
+    throw new Error("Combination of term and year not found");
+  }
   
   const {possible_grades, totalEnrolled, letterGradeCount, gpaSum} = mongoToGradesDict(grades);
   const averageGPA = round(gpaSum / letterGradeCount, 3);
