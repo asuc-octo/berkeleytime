@@ -17,10 +17,14 @@ const SisClassSchemaObject = {
     displayName: {
       type: String,
     },
-    identifiers: {
-      type: String,
-      id: String,
-    },
+    identifiers: [
+      {
+        type: {
+          type: String,
+        },
+        id: String,
+      },
+    ],
     subjectArea: {
       code: {
         type: String,
