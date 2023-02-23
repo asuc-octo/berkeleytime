@@ -12,9 +12,6 @@ const Footer: FC = () => (
               <H6 bold className="mb-3">
                 Support
               </H6>
-              <A href={{ as_link: '/bugs' }} className="mb-2">
-                Report a Bug
-              </A>
               <A href="mailto:octo.berkeleytime@asuc.org" className="mb-2">
                 Contact Us
               </A>

@@ -84,7 +84,7 @@ const questions = [
       </P>
     ),
   },
-  {
+  /*{
     question: 'How do I apply to join the team?',
     answer: (
       <P>
@@ -93,7 +93,7 @@ const questions = [
         <a href="https://www.facebook.com/berkeleytime/"> Facebook page</a> for recruitment events.
       </P>
     ),
-  },
+  },*/
   {
     question: 'I want to help user test new features!',
     answer: (
@@ -102,7 +102,7 @@ const questions = [
       </P>
     ),
   },
-  {
+  /*{
     question: 'Berkeleytime is down/I found a bug!',
     answer: (
       <P>
@@ -113,7 +113,7 @@ const questions = [
         , and one of our on-call engineers will try to get to it as soon as possible.
       </P>
     ),
-  },
+  },*/
   {
     question: 'Can I access your API for a project I’m working on?',
     answer: (
@@ -124,7 +124,7 @@ const questions = [
       </P>
     ),
   },
-  {
+  /*{
     question: 'How do I give feedback about the product?',
     answer: (
       <P>
@@ -136,7 +136,7 @@ const questions = [
         we&apos;ll respond as soon as we can.
       </P>
     ),
-  },
+  },*/
   {
     question: 'Can Berkeleytime add a feature to review/rate professors and courses?',
     answer: (
