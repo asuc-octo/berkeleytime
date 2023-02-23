@@ -8,7 +8,7 @@ import { ReactComponent as FilterIcon } from 'assets/svg/catalog/filter.svg';
 import BTInput from 'components/Custom/Input';
 import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, CatalogSlug } from '../types';
 
-import { useGetFiltersQuery } from 'graphql';
+import { CourseFragment, useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
 import { useHistory, useParams } from 'react-router';
 
@@ -18,6 +18,7 @@ type CatalogFilterProps = {
 	currentFilters: CurrentFilters;
 	sortQuery: SortOption;
 	searchQuery: string;
+	setCurrentCourse: Dispatch<SetStateAction<CourseFragment | null>>;
 	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
 	setSortQuery: Dispatch<SetStateAction<SortOption>>;
 	setSearchQuery: Dispatch<SetStateAction<string>>;
@@ -29,6 +30,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	const {
 		currentFilters,
 		setCurrentFilters,
+		setCurrentCourse,
 		sortQuery,
 		searchQuery,
 		setSortQuery,
@@ -62,17 +64,17 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	useEffect(() => {
 		const ref = modalRef;
 
-		const listener = (event: MouseEvent) => {
+		const listener = (event: MouseEvent | TouchEvent) => {
 			if (ref.current && isOpen && (event.target as HTMLDivElement)?.contains(ref.current))
 				setOpen(!isOpen);
 		};
 
 		document.addEventListener('click', listener);
-		// document.addEventListener('touchstart', listener);
+		document.addEventListener('touchstart', listener);
 
 		return () => {
 			document.removeEventListener('click', listener);
-			// document.removeEventListener('touchstart', listener);
+			document.removeEventListener('touchstart', listener);
 		};
 	}, [isOpen, modalRef, setOpen]);
 
@@ -111,7 +113,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	};
 
 	return (
-		<div className={styles.root}>
+		<div className={styles.root} data-modal={isOpen}>
 			<button className={styles.toggle} onClick={() => setOpen((prev) => !prev)}>
 				<FilterIcon fill={'red'} width={18} height={18}/>
 			</button>

@@ -32,7 +32,6 @@ const CatalogView = (props: CatalogViewProps) => {
 	}>();
 
 	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
-
 	const legacyId = useSelector((state: any) => {
 		return (
 			state.enrollment?.context?.courses?.find(
@@ -123,7 +122,7 @@ const CatalogView = (props: CatalogViewProps) => {
 	if (!course) return null;
 
 	return (
-		<div className={`${styles.catalogViewRoot}`} data-modal={course !== null}>
+		<div className={`${styles.root}`} data-modal={course !== null}>
 			<button className={styles.modalButton} onClick={() => setCourse(null)}>
 				<BackArrow />
 				Back to Courses
@@ -186,18 +185,16 @@ const CatalogView = (props: CatalogViewProps) => {
 				{course.description !== '' ? course.description : 'This course has no description.'}
 			</ReadMore>
 			<h6>Prerequisites</h6>
-			<p>
-				{loading ? (
-					<Skeleton />
-				) : (
-					<ReadMore>
-						{(course as CourseFragment)?.prerequisites ||
-							'There is no information on the prerequisites of this course.'}
-					</ReadMore>
-				)}
-			</p>
+			{loading ? (
+				<Skeleton />
+			) : (
+				<ReadMore>
+					{(course as CourseFragment)?.prerequisites ||
+						'There is no information on the prerequisites of this course.'}
+				</ReadMore>
+			)}
 			<h5>Class Times - {semester ?? ''}</h5>
-			<CatalogViewSections sections={sections} loading={loading} />
+			<CatalogViewSections sections={sections} />
 
 			{/* TODO: DONT DELETE
       <h5>Past Offerings</h5>

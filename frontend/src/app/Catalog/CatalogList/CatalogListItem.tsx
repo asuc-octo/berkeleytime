@@ -1,4 +1,4 @@
-import { CourseOverviewFragment } from 'graphql';
+import { CourseFragment } from 'graphql';
 import { useSaveCourse, useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { useUser } from 'graphql/hooks/user';
 import { CSSProperties, memo } from 'react';
@@ -37,8 +37,8 @@ function colorEnrollment(percentage: number) {
 
 type CatalogListItemProps = {
 	data: {
-		course: CourseOverviewFragment | { __typename: 'Skeleton'; id: number };
-		handleCourseSelect: (course: CourseOverviewFragment) => void;
+		course: CourseFragment | { __typename: 'Skeleton'; id: number };
+		handleCourseSelect: (course: CourseFragment) => void;
 		isSelected: boolean;
 	};
 	style: CSSProperties;
