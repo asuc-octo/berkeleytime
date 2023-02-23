@@ -17,55 +17,128 @@
 
   .group {
     display: flex;
-    flex-direction: row;
+    justify-content: center;
     width: 100%;
+    position: relative;
+    overflow: hidden;
+    .about-carousel {
+      /* Make the width of the flexbox equal the sum of the width of its items */
+      display: inline-flex;
+      flex-direction: row;
+      justify-content: center;
+      
+      &.about-carousel-slide-left {
+        transition: transform 1s ease;
+        transform: translateX(-20%);
+      }
+      &.about-carousel-slide-right {
+        transition: transform 1s ease;
+        transform: translateX(20%);
+      }
+      
+      .about-carousel-item {
+        display: none;
+        
+        &.about-carousel-active {
+          display: block;
+          transform: translateX(0);
+        }
+        &.about-carousel-active-prev {
+          @extend .about-carousel-active;
+          order: 0;
+        }
+        &.about-carousel-active-first {
+          @extend .about-carousel-active;
+          order: 1;
+        }
+        &.about-carousel-active-second {
+          @extend .about-carousel-active;
+          order: 2;
+        }
+        &.about-carousel-active-third {
+          @extend .about-carousel-active;
+          order: 3;
+        }
+        &.about-carousel-active-next {
+          @extend .about-carousel-active;
+          order: 4;
+        }
 
-    > img {
-      @include desktop {
-        height: 400px;
+        > img {
+          border-radius: 3px;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        @include desktop {
+          height: 400px;
+          width: 711px;
+        }
+
+        @include sm-md {
+          height: 300px;
+          width: 533px;
+        }
+
+        @include xs {
+          height: 200px;
+          width: 356px;
+        }
       }
 
-      @include sm-md {
-        height: 300px;
-      }
-
-      @include xs {
-        height: 200px;
-      }
+      // remove scroll bar
+      -ms-overflow-style: none; /* Internet Explorer 10+ */
+      scrollbar-width: none; /* Firefox */
     }
 
-    @include desktop {
-      > img {
-        padding: 0 10px;
-      }
-
-      :first-child {
-        padding-left: 60px;
-      }
-
-      :last-child {
-        padding-right: 60px;
-      }
+    .about-carousel-arrow {
+      position: absolute;
+      top: 0px;
+      bottom: 0px;
+      display: flex;
+      width: 15%;
+      justify-content: center;
+      align-items: center;
     }
 
-    @include touch {
-      > img {
-        padding: 0 5px;
-      }
-
-      :first-child {
-        padding-left: 20px;
-      }
-
-      :last-child {
-        padding-right: 20px;
-      }
+    .about-carousel-next {
+      @extend .about-carousel-arrow;
+      right: 0px;
     }
 
-    // remove scroll bar
-    overflow-x: scroll;
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
-    scrollbar-width: none; /* Firefox */
+    .about-carousel-prev {
+      @extend .about-carousel-arrow;
+      left: 0px;
+    }
+    
+    .about-carousel-icon {
+      cursor: pointer;
+      display: inline-block;
+
+      transition: opacity .3s;
+
+      padding: 28px;
+      border-radius: 50%;
+
+      background: transparent no-repeat center center;
+      background-color: #000000;
+      background-size: 32px 32px;
+      opacity: .5;
+    }
+
+    .about-carousel-icon:hover {
+      opacity: .9;
+    }
+
+    .about-carousel-prev-icon {
+      @extend .about-carousel-icon;
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='white' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
+    }
+
+    .about-carousel-next-icon {
+      @extend .about-carousel-icon;
+      background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
+    }
   }
 
   // remove scroll bar

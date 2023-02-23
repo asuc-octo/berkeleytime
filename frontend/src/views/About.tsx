@@ -5,16 +5,7 @@ import { H3, P } from 'bt/custom'
 
 import CurrentContributors from '../components/About/CurrentContributors';
 import PastContributors from '../components/About/PastContributors';
-
-import doe from 'assets/img/about/group/doe.jpg'
-import michaels from 'assets/img/about/group/michaels.jpg'
-import retreat from 'assets/img/about/group/retreat.jpg'
-import grace_janet from 'assets/img/about/group/grace_janet.jpg'
-import will from 'assets/img/about/group/will.jpg'
-import jemma from 'assets/img/about/group/jemma.jpg'
-import christina_janet from 'assets/img/about/group/christina_janet.jpg'
-import retreat_silly from 'assets/img/about/group/retreat_silly.png'
-import zoom from 'assets/img/about/group/zoom.png'
+import AboutCarousel from '../components/About/AboutCarousel';
 
 import growth from 'assets/svg/about/growth.svg'
 import curiosity from 'assets/svg/about/curiosity.svg'
@@ -49,17 +40,7 @@ const About: FC = () => (
       </P>
       {/* <Button variant="inverted" link_to="/apply">Join Our Team</Button> */}
     </div>
-    <div className="group mb-5">
-      <img src={retreat_silly} alt="" />
-      <img src={zoom} alt="" />
-      <img src={doe} alt="" />
-      <img src={grace_janet} alt="" />
-      <img src={retreat} alt="" />
-      <img src={christina_janet} alt="" />
-      <img src={michaels} alt="" />
-      <img src={will} alt="" />
-      <img src={jemma} alt="" />
-    </div>
+    <AboutCarousel />
     <div className="values">
       <h5>Our Values</h5>
       <Row>
