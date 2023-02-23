@@ -109,7 +109,7 @@
   white-space: nowrap;
 	height: 34px;
 	padding: 6px 12px;
-	border: 1px solid $bt-border-grey;
+	border: 1.5px solid #eaeaea;
 	border-radius: 50vh !important;
 	background: white;
 	text-align: center;
@@ -181,9 +181,9 @@
 	display: flex;
 	flex-direction: row;
 	// background: #F8F8F8;
-	padding: 10px 20px;
+	padding: 12px 24px;
 	border-radius: 12px !important;
-	border: 1px solid #c7c7c7;
+	border: 1.5px solid #eaeaea;
 	gap: 20px;
 	h5 {
 		font-size: 16px;
@@ -192,10 +192,9 @@
 
 	h6 {
 		font-size: 14px;
-	}
-
-	span {
-		text-transform: capitalize;
+    span {
+      text-transform: capitalize;
+    }
 	}
 }
 
@@ -206,11 +205,26 @@
 	flex: 1;
 }
 
+.sectionStats {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 5px;
+  color: $bt-light-text;
+  margin-top: 5px;
+  font-size: 14px;
+  text-transform: none !important;
+}
+
 .enrolled {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	font-size: 0.9rem;
+	font-size: 14px;
 	font-weight: 600;
-	gap: 10px;
+	gap: 5px;
+
+  img {
+    width: 14px;
+  }
 }
