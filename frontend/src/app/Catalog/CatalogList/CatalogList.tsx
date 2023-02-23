@@ -1,6 +1,6 @@
 import { FixedSizeList } from 'react-window';
 import CatalogListItem from './CatalogListItem';
-import { CourseOverviewFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
+import { CourseFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
 import { CurrentFilters, FilterOption, SortOption } from '../types';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import useDimensions from 'react-cool-dimensions';
@@ -12,7 +12,7 @@ import { sortByAttribute } from 'utils/courses/sorting';
 
 type CatalogListProps = {
 	currentFilters: CurrentFilters;
-	setCurrentCourse: Dispatch<SetStateAction<CourseOverviewFragment | null>>;
+	setCurrentCourse: Dispatch<SetStateAction<CourseFragment | null>>;
 	searchQuery: string;
 	sortQuery: SortOption;
 };
@@ -62,7 +62,7 @@ const CatalogList = (props: CatalogListProps) => {
 		if (playlists) fetchCatalogList({ variables: { playlists } });
 	}, [fetchCatalogList, currentFilters]);
 
-	const handleCourseSelect = (course: CourseOverviewFragment) => {
+	const handleCourseSelect = (course: CourseFragment) => {
 		setCurrentCourse(course);
 		setSelectedCourseId(course.id);
 		history.push(
@@ -86,7 +86,7 @@ const CatalogList = (props: CatalogListProps) => {
 					{({ index, style }) => (
 						<CatalogListItem
 							data={{
-								course: courses[index],
+								course: courses[index] as CourseFragment,
 								handleCourseSelect,
 								isSelected: selectedCourseId === courses[index].id
 							}}
