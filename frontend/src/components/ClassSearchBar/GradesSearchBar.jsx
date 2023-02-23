@@ -22,7 +22,7 @@ class GradesSearchBar extends Component {
       selectPrimary: props.selectPrimary,
       selectSecondary: props.selectSecondary,
     };
-    console.log(this.state)
+
     this.queryCache = {};
 
     this.handleClassSelect = this.handleClassSelect.bind(this);
@@ -61,7 +61,6 @@ class GradesSearchBar extends Component {
   }
 
   handleClassSelect(updatedClass) {
-    console.log(updatedClass)
     const { fetchGradeSelected } = this.props;
     if (updatedClass === null) {
       this.reset();
@@ -89,7 +88,6 @@ class GradesSearchBar extends Component {
   }
 
   handlePrimarySelect(primary) {
-    
     const { sections } = this.props;
     const { selectType } = this.state;
     const secondaryOptions = this.buildSecondaryOptions(
@@ -119,7 +117,7 @@ class GradesSearchBar extends Component {
       label: `${course.abbreviation} ${course.course_number}`,
       course,
     }));
-    
+
     return options;
   }
 
@@ -299,7 +297,7 @@ class GradesSearchBar extends Component {
       selectPrimary,
       selectSecondary,
     } = this.state;
-    
+
     const playlist = {
       courseID: selectedClass,
       instructor: selectType === 'instructor' ? selectPrimary : selectSecondary,

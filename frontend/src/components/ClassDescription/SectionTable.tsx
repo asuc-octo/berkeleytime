@@ -37,13 +37,12 @@ function findInstructor(instr: string | null): CSSProperties {
 }
 
 type Props = {
-  sections: SectionFragment[],
-  arefs: any[]
+  sections: SectionFragment[]
 };
 
-const SectionTable = ({ sections: allSections, arefs}: Props) => {
-  const sections = allSections;
-  
+const SectionTable = ({ sections: allSections }: Props) => {
+  const sections = sortSections(allSections);
+
   return (
     <Table className="table">
       <thead>
@@ -58,10 +57,10 @@ const SectionTable = ({ sections: allSections, arefs}: Props) => {
         </tr>
       </thead>
       <tbody>
-        {sections.map((section, i) => {
+        {sections.map((section) => {
           return (
             <tr key={section.ccn} style={findInstructor(section.instructor)}>
-              {arefs[i] !== "" ? <td><a href={arefs[i]} rel="noopener noreferrer" target="_blank">{section.kind}</a></td>: <td>{section.kind}</td>}
+              <td>{section.kind}</td>
               <td>{section.ccn}</td>
               <td>{section.instructor}</td>
               {section.startTime && section.endTime ? (

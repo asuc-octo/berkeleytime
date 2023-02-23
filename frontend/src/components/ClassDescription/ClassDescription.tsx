@@ -5,8 +5,6 @@ import chart from '../../assets/svg/catalog/chart.svg';
 import book from '../../assets/svg/catalog/book.svg';
 import launch from '../../assets/svg/catalog/launch.svg';
 
-
-
 import {
   applyIndicatorPercent,
   applyIndicatorGrade,
@@ -15,18 +13,11 @@ import {
 import { useGetCourseForNameQuery } from '../../graphql/graphql';
 import { stableSortPlaylists } from 'utils/playlists/playlist';
 import { getLatestSemester, Semester } from 'utils/playlists/semesters';
-import { sortSections } from 'utils/sections/sort';
 import SectionTable from './SectionTable';
 import BTLoader from 'components/Common/BTLoader';
 import { CourseReference, courseToName } from 'utils/courses/course';
-import { enrollReset, fetchEnrollContext, fetchEnrollFromUrl, fetchEnrollSelected, fetchGradeFromUrl, getCourseData, gradeReset } from '../../redux/actions';
+import { fetchEnrollContext } from '../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
-import { Tabs, Tab } from 'react-bootstrap';
-import EnrollmentGraphCard from 'components/GraphCard/EnrollmentGraphCard';
-import GradesGraphCard from 'components/GraphCard/GradesGraphCard';
-import { removeCourse } from 'utils/scheduler/scheduler';
-import axios from 'axios';
-import { responsePathAsArray } from 'graphql';
 
 type Props = {
   course: CourseReference;
@@ -47,7 +38,7 @@ const ClassDescription = ({
     abbreviation: string;
     course_number: string;
   };
- 
+
   const enrollmentContext: RESTCourseInfo[] | undefined = useSelector(
     (state) => (state as any).enrollment.context.courses
   );
@@ -61,7 +52,7 @@ const ClassDescription = ({
   useEffect(() => {
     dispatch(fetchEnrollContext());
   }, [dispatch]);
-  
+
   // End hack
 
   const [readMore, setReadMore] = useState<boolean | null>(false);
@@ -74,28 +65,6 @@ const ClassDescription = ({
       semester: semester?.semester,
     },
   });
-  
-  var dict = new Map([
-    ['Field Work', 'FLD'],
-    ['Session', 'SES'],
-    ['Colloquium', 'COL'],
-    ['Recitation', 'REC'],
-    ['Internship', 'INT'],
-    ['Studio', 'STD'],
-    ['Demonstration', 'dem'],
-    ['Web-based Discussion', 'WBD'],
-    ['Discussion', 'DIS'],
-    ['Tutorial', 'TUT'],
-    ['Clinic', 'CLN'],
-    ['Independent Study', 'IND'],
-    ['Self-paced', 'SLF'],
-    ['Seminar', 'SEM'],
-    ['Lecture', 'LEC'],
-    ['Web-based Lecture', 'WBL'],
-    ['Web-Based Lecture', 'WBL'],
-    ['Directed Group Study', 'GRP'],
-    ['Laboratory', 'LAB'],
-  ]);
 
   if (!data) {
     return (
@@ -126,29 +95,7 @@ const ClassDescription = ({
   }
 
   const playlists = course.playlistSet.edges.map((e) => e?.node!);
-
-  let sections = course.sectionSet.edges.map((e) => e?.node!);
-  let links:any = [];
-  sections = sortSections(sections);
-  for (var i = 0; i < sections.length; i++) {
-    var stre = '';
-    if (semester != null) {
-      var punctuation = ',';
-      var regex = new RegExp('[' + punctuation + ']', 'g');
-      var rmc = courseRef.abbreviation.replace(regex, '');
-      stre = `https://classes.berkeley.edu/content/${semester.year}
-      -${semester.semester}
-      -${rmc}
-      -${courseRef.courseNumber}
-      -${sections[i].sectionNumber}
-      -${dict.get(sections[i].kind)}
-      -${sections[i].sectionNumber}`;
-      stre = stre.replace(/\s+/g, '');
-    }
-    links.push(stre);
-    
-  }
-  
+  const sections = course.sectionSet.edges.map((e) => e?.node!);
 
   const latestSemester = getLatestSemester(playlists);
   const semesterUrl =
@@ -163,14 +110,7 @@ const ClassDescription = ({
         : `/grades`,
     state: { course: course },
   };
-  
-  dispatch(gradeReset())
-  dispatch(fetchGradeFromUrl(`/grades/0-${oldCourseId}-all-all`));
-  dispatch(enrollReset())
-  axios.get(`/api/enrollment/sections/${oldCourseId}/`).then((res) => {
-    dispatch(fetchEnrollFromUrl(`/enrollment/0-${oldCourseId}-${semesterUrl}-${res.data[0].sections[0].section_id}`))
-    })
-  
+
   // TODO: remove
   const toEnrollment = {
     pathname:
@@ -188,8 +128,8 @@ const ClassDescription = ({
     // }
     // Fall 2021 override from brutger@berkeley.edu
     if (courseToName(course) === 'POL SCI 126A') {
-      prereqs =
-        'No prerequisites. This field was modified as requested by the instructor.';
+        prereqs =
+          'No prerequisites. This field was modified as requested by the instructor.';
     }
     return prereqs;
   };
@@ -201,7 +141,7 @@ const ClassDescription = ({
   let prereqs = '';
   let moreDesc: boolean | null = null;
   let morePrereq: boolean | null = null;
-  
+
   // No idea how this works, but this is what
   // handles the 'Read More' functionality.
   if (readMore) {
@@ -342,40 +282,20 @@ const ClassDescription = ({
             </p>
           </section>
         )}
-        <span>&nbsp;</span>
-        <Tabs
-          defaultActiveKey="Classes"
-        >
-          <Tab eventKey="Classes" title="Class times">
-            <section className="table-container description-section">
-              <div>
-                {sections.length === 0 ? (
-                  <div className="table-empty">
-                    This class has no sections for the selected semester.
-                  </div>
-                ) : (
-                  <SectionTable sections={sections} arefs={links} />
-                )}
+        <section>
+          <h5>Class Times</h5>
+        </section>
+        <section className="table-container description-section">
+          <div>
+            {sections.length === 0 ? (
+              <div className="table-empty">
+                This class has no sections for the selected semester.
               </div>
-            </section>
-          </Tab>
-          <Tab eventKey="Grades" title="Grades">
-            <GradesGraphCard
-              id="gradesGraph"
-              title="Grades"
-              updateClassCardGrade={() => {gradeReset()}}
-              isMobile={window.innerWidth < 768 ? true : false}
-            />
-          </Tab>
-          <Tab eventKey="Enrollment" title="Enrollment">
-            <EnrollmentGraphCard
-              id="gradesGraph"
-              title="Enrollment"
-              updateClassCardEnrollment={() => {enrollReset()}}
-              isMobile={window.innerWidth < 768 ? true : false}
-            />
-          </Tab>
-        </Tabs>
+            ) : (
+              <SectionTable sections={sections} />
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );
