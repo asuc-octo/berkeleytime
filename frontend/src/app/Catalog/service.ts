@@ -15,7 +15,7 @@ const SEMESTER_VALUES = {
 };
 
 const SORT_OPTIONS: SortOption[] = [
-	// { value: 'relevance', label: 'Sort By: Relevance' },
+	{ value: 'relevance', label: 'Sort By: Relevance' },
 	{ value: 'average_grade', label: 'Sort By: Average Grade' },
 	{ value: 'department_name', label: 'Sort By: Department Name' },
 	{ value: 'open_seats', label: 'Sort By: Open Seats' },

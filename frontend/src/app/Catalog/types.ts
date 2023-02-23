@@ -1,4 +1,4 @@
-import { CourseFragment, CourseOverviewFragment, FilterFragment } from 'graphql';
+import { FilterFragment } from 'graphql';
 import { GroupBase } from 'react-select';
 
 export type CatalogSlug = {
@@ -6,8 +6,6 @@ export type CatalogSlug = {
 	courseNumber?: string;
 	semester?: string;
 }
-
-export type CurrentCourse = CourseFragment | null;
 
 export type CatalogCategoryKeys =
 	| 'department'

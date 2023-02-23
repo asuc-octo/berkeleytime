@@ -28,5 +28,6 @@ generates:
     config:
       maybeValue: T # Assert non-nullable
       avoidOptionals: true
+      nonOptionalTypename: true
       skipTypename: false
       defaultScalarType: 'unknown'

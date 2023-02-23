@@ -6,10 +6,10 @@ import launch from 'assets/svg/catalog/launch.svg';
 import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow.svg';
 import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
-import { CourseFragment, useGetCourseForNameLazyQuery } from 'graphql';
+import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
 import CatalogViewSections from './CatalogViewSections';
-import { CurrentCourse, CurrentFilters } from 'app/Catalog/types';
-import { useHistory, useParams } from 'react-router';
+import { CurrentFilters } from 'app/Catalog/types';
+import { useParams } from 'react-router';
 import { sortByName } from '../service';
 import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
@@ -22,16 +22,17 @@ interface CatalogViewProps {
 	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
 }
 
+const skeleton = [...Array(8).keys()];
+
 const CatalogView = (props: CatalogViewProps) => {
 	const { coursePreview, setCurrentFilters } = props;
-	const history = useHistory();
 	const { abbreviation, courseNumber, semester } = useParams<{
 		abbreviation: string;
 		courseNumber: string;
 		semester: string;
 	}>();
 
-	const [course, setCourse] = useState<CurrentCourse>(coursePreview);
+	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
 
 	const legacyId = useSelector((state: any) => {
 		return (
@@ -49,6 +50,7 @@ const CatalogView = (props: CatalogViewProps) => {
 			}
 		}
 	});
+
 	useEffect(() => {
 		const [sem, year] = semester?.split(' ') ?? [null, null];
 
@@ -67,28 +69,31 @@ const CatalogView = (props: CatalogViewProps) => {
 		setCourse(coursePreview);
 	}, [coursePreview]);
 
-	const [playlists, sections, pastSemesters] = useMemo(() => {
-		let playlists,
-			sections,
-			semesters = null;
+	const [playlists, sections] = useMemo(() => {
+		let playlists = null;
+		let sections = null;
+		// let semesters = null;
 
 		if (course?.playlistSet) {
 			const { edges } = course.playlistSet;
-			playlists = sortByName(edges.map((e) => e.node).filter((n) => n.category !== 'semester'));
-
-			semesters = catalogService.sortSemestersByLatest(
-				edges.map((e) => e.node).filter((n) => n.category === 'semester')
+			playlists = sortByName(
+				edges.map((e) => e.node as PlaylistType).filter((n) => n.category !== 'semester')
 			);
+			// semesters = catalogService.sortSemestersByLatest(
+			// 	edges.map((e) => e.node).filter((n) => n.category === 'semester')
+			// );
 		}
 
 		if (course?.sectionSet) {
-			sections = sortSections(course.sectionSet.edges.map((e) => e.node));
+			const { edges } = course.sectionSet;
+			sections = sortSections(edges.map((e) => e.node));
 		}
 
-		return [playlists ?? [], sections ?? [], semesters];
+		// return [playlists ?? skeleton, sections ?? [], semesters];
+		return [playlists ?? skeleton, sections ?? null];
 	}, [course]);
 
-	const handlePill = (pillItem: (typeof playlists)[number]) => {
+	const handlePill = (pillItem: PlaylistType) => {
 		setCurrentFilters((prev) => {
 			if (['haas', 'ls', 'engineering', 'university'].includes(pillItem.category)) {
 				const reqs = prev.requirements;
@@ -115,9 +120,11 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
 
-	return course ? (
+	if (!course) return null;
+
+	return (
 		<div className={`${styles.catalogViewRoot}`} data-modal={course !== null}>
-			<button onClick={() => setCourse(null)} className={styles.modalButton}>
+			<button className={styles.modalButton} onClick={() => setCourse(null)}>
 				<BackArrow />
 				Back to Courses
 			</button>
@@ -140,7 +147,7 @@ const CatalogView = (props: CatalogViewProps) => {
 							</a>
 						</div>
 					) : (
-						'N/A'
+						<div>N/A</div>
 					)}
 				</div>
 				<div className={styles.statLine}>
@@ -154,7 +161,7 @@ const CatalogView = (props: CatalogViewProps) => {
 							</a>
 						</div>
 					) : (
-						' N/A '
+						<div>N/A</div>
 					)}
 				</div>
 				<div className={styles.statLine}>
@@ -162,46 +169,38 @@ const CatalogView = (props: CatalogViewProps) => {
 					{formatUnits(course?.units)}
 				</div>
 			</div>
-			<section className={styles.pills}>
-				{loading && (
-					<Skeleton
-						style={{ marginRight: '5px' }}
-						inline
-						count={5}
-						width={80}
-						height={24}
-						borderRadius={12}
-					/>
-				)}
-				{playlists.length > 0 ? (
-					playlists.map((req) => (
-						<div className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
-							{req?.name}
-						</div>
-					))
-				) : (
-					<div>This class has no sections for the selected semester.</div>
-				)}
-			</section>
-			{course.description.length > 0 && (
-				<p className={styles.description}>
-					<ReadMore>{course.description}</ReadMore>
-				</p>
-			)}
-			<h5>Prerequisites</h5>
+			<div className={styles.pills}>
+				<div>
+					{playlists?.map((req) =>
+						typeof req === 'number' ? (
+							<Skeleton key={req} className={styles.pill} width={75} />
+						) : (
+							<span className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
+								{req.name}
+							</span>
+						)
+					)}
+				</div>
+			</div>
+			<ReadMore>
+				{course.description !== '' ? course.description : 'This course has no description.'}
+			</ReadMore>
+			<h6>Prerequisites</h6>
 			<p>
 				{loading ? (
 					<Skeleton />
 				) : (
-					<span>
+					<ReadMore>
 						{(course as CourseFragment)?.prerequisites ||
 							'There is no information on the prerequisites of this course.'}
-					</span>
+					</ReadMore>
 				)}
 			</p>
 			<h5>Class Times - {semester ?? ''}</h5>
 			<CatalogViewSections sections={sections} loading={loading} />
-			<h5>Past Offerings</h5>
+
+			{/* TODO: DONT DELETE
+      <h5>Past Offerings</h5>
 			<section className={styles.pills}>
 				{pastSemesters ? (
 					pastSemesters.map((req) => (
@@ -225,17 +224,15 @@ const CatalogView = (props: CatalogViewProps) => {
 						borderRadius={12}
 					/>
 				)}
-			</section>
+			</section> */}
 		</div>
-	) : (
-		<>{error && <div>A critical error occured loading the data.</div>}</>
 	);
 };
 
 const ReadMore = ({ children }: { children: string }) => {
 	const [isReadMore, setIsReadMore] = useState(true);
 	return (
-		<>
+		<p className={styles.description}>
 			{children.length > 150 ? (
 				<>
 					{isReadMore ? children.slice(0, 150) + '...' : children}
@@ -246,7 +243,7 @@ const ReadMore = ({ children }: { children: string }) => {
 			) : (
 				children
 			)}
-		</>
+		</p>
 	);
 };
 

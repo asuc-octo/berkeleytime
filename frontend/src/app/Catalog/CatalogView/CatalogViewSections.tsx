@@ -50,16 +50,24 @@ function colorEnrollment(percentage: number) {
 }
 
 type Props = {
-	sections: SectionFragment[];
+	sections: SectionFragment[] | null;
 	loading: boolean;
 };
 
 const CatalogViewSections = ({ sections, loading }: Props) => {
+	if (!sections) {
+		return (
+			<Skeleton
+				className={styles.sectionItem}
+				count={3}
+				height={65}
+				style={{ marginBottom: '10px' }}
+			/>
+		);
+	}
+
 	return (
 		<div className={styles.sectionRoot}>
-			{loading && (
-				<Skeleton style={{ marginBottom: '10px' }} height={65} count={5} borderRadius={12} />
-			)}
 			{sections.length > 0 ? (
 				sections.map((section) => (
 					<div
@@ -74,7 +82,7 @@ const CatalogViewSections = ({ sections, loading }: Props) => {
 							</h5>
 							<h6>
 								<span>
-									CCN {section.ccn} - {section?.instructor?.toLowerCase() ?? 'instructor'}
+									{section?.instructor?.toLowerCase() ?? 'instructor'}
 								</span>
 								, {section.wordDays} {formatSectionTime(section)}
 							</h6>
@@ -90,7 +98,7 @@ const CatalogViewSections = ({ sections, loading }: Props) => {
 					</div>
 				))
 			) : (
-				<div>This class has no sections for the selected semester.</div>
+				<div>There are no class sections for this course.</div>
 			)}
 		</div>
 	);
