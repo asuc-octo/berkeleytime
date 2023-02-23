@@ -46,6 +46,7 @@ export function searchCourse(
     );
 
   searches.push(search(query, courseCode, maxPenalty));
+
   return combineQueries(searches);
 }
 

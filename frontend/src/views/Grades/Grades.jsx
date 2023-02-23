@@ -13,7 +13,6 @@ import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset, fetc
 class Grades extends Component {
   constructor(props) {
     super(props);
-    console.log(props)
     this.state = {
       // context: {},
       selectedCourses: this.props.selectedCourses,
@@ -40,13 +39,11 @@ class Grades extends Component {
 
   fillFromUrl() {
     const { gradeReset, fetchGradeFromUrl, history } = this.props;
-    
     try {
       let url = history.location.pathname;
       if (url && (url === '/grades/' || url === '/grades')) {
         gradeReset();
       } else if (url) {
-        console.log(history)
         fetchGradeFromUrl(url, history);
       }
     } catch (err) {
@@ -73,7 +70,6 @@ class Grades extends Component {
   }
 
   addCourse(course) {
-    console.log(course)
     const { fetchGradeClass, selectedCourses, usedColorIds } = this.props;
     for (let selected of selectedCourses) {
       if (selected.id === course.id) {
@@ -107,7 +103,6 @@ class Grades extends Component {
   }
 
   removeCourse(id, color) {
-    console.log(id)
     const { gradeRemoveCourse } = this.props;
     this.refillUrl(id);
     gradeRemoveCourse(id, color);
