@@ -234,7 +234,7 @@ const ReadMore = ({ children }: { children: string }) => {
 				<>
 					{isReadMore ? children.slice(0, 150) + '...' : children}
 					<span onClick={() => setIsReadMore((prev) => !prev)}>
-						{isReadMore ? 'See more' : 'See less'}
+						{isReadMore ? 'see more' : 'see less'}
 					</span>
 				</>
 			) : (

@@ -16,7 +16,7 @@ export function formatTime(date: Date | string): string {
   // Sorry internationals but timezones r weird so this is go
   let hours = date.getUTCHours();
   const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-  const ampm = hours >= 12 ? 'pm' : 'am';
+  const ampm = hours >= 12 ? ' PM' : ' AM';
 
   hours = hours % 12;
   hours = hours || 12;

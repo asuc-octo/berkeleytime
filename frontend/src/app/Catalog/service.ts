@@ -1,4 +1,6 @@
 import { FilterFragment, GetFiltersQuery, PlaylistType } from 'graphql';
+import styles from './CatalogList/CatalogList.module.scss';
+
 import {
 	CatalogCategoryKeys,
 	FilterTemplate,
@@ -195,6 +197,24 @@ export const sortByName = <T extends { name: string }[]>(arr: T) => {
 	return arr.sort((a, b) => a.name.localeCompare(b.name));
 };
 
+function formatEnrollment(percentage: number) {
+	if (percentage === -1) return 'N/A';
+	return `${Math.floor(percentage * 100)}% enrolled`;
+}
+
+function colorEnrollment(percentage: number) {
+	if (percentage === -1) return '';
+
+	const pct = percentage * 100;
+	if (pct < 33) {
+		return styles.A;
+	} else if (pct < 67) {
+		return styles.C;
+	} else {
+		return styles.F;
+	}
+}
+
 export default {
 	FILTER_TEMPLATE,
 	SORT_OPTIONS,
@@ -203,5 +223,7 @@ export default {
 	putFilterOptions,
 	sortByName,
 	sortSemestersByLatest,
-	sortPills
+	sortPills,
+	formatEnrollment,
+	colorEnrollment
 };

@@ -1,6 +1,7 @@
 import { SectionFragment } from 'graphql';
 import { CSSProperties } from 'react';
 import { formatSectionTime } from 'utils/sections/section';
+import catalogService from '../service';
 import Skeleton from 'react-loading-skeleton';
 
 import people from 'assets/svg/catalog/people.svg';
@@ -13,6 +14,8 @@ import kubi from 'assets/img/eggs/kubi.png';
 import garcia from 'assets/img/eggs/garcia.png';
 
 import styles from './CatalogView.module.scss';
+
+const { colorEnrollment, formatEnrollment } = catalogService;
 
 const easterEggImages = new Map<string, string>([
 	['DENERO J', denero],
@@ -36,17 +39,6 @@ function findInstructor(instr: string | null): CSSProperties {
 	}
 
 	return {};
-}
-
-function colorEnrollment(percentage: number) {
-	const pct = percentage * 100;
-	if (pct < 33) {
-		return 'enrollment-first-third';
-	} else if (pct < 67) {
-		return 'enrollment-second-third';
-	} else {
-		return 'enrollment-last-third';
-	}
 }
 
 type Props = {
@@ -83,6 +75,13 @@ const CatalogViewSections = ({ sections }: Props) => {
 								<span>{section?.instructor?.toLowerCase() ?? 'instructor'}</span>,{' '}
 								{section.wordDays} {formatSectionTime(section)}
 							</h6>
+							<span className={styles.sectionStats}>
+								<span className={colorEnrollment(section.enrolled / section.enrolledMax)}>
+									{formatEnrollment(section.enrolled / section.enrolledMax)}
+								</span>
+								<span>• {section.waitlisted} waitlisted</span>
+								<span>• CCN: {section.ccn}</span>
+							</span>
 						</div>
 						<div
 							className={`${colorEnrollment(section.enrolled / section.enrolledMax)} ${
