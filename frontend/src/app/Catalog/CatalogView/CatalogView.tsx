@@ -10,7 +10,6 @@ import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'grap
 import CatalogViewSections from './CatalogViewSections';
 import { CurrentFilters } from 'app/Catalog/types';
 import { useParams } from 'react-router';
-import { sortByName } from '../service';
 import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
 
@@ -76,9 +75,10 @@ const CatalogView = (props: CatalogViewProps) => {
 
 		if (course?.playlistSet) {
 			const { edges } = course.playlistSet;
-			playlists = sortByName(
+			playlists = catalogService.sortPills(
 				edges.map((e) => e.node as PlaylistType).filter((n) => n.category !== 'semester')
 			);
+
 			// semesters = catalogService.sortSemestersByLatest(
 			// 	edges.map((e) => e.node).filter((n) => n.category === 'semester')
 			// );
