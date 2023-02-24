@@ -38,20 +38,20 @@
 		border-top: none;
 		padding: 5px 8px;
 		background: white;
-    font-size: 14px;
+		font-size: 14px;
 
-    input {
-      font-size: 14px;
-    }
+		input {
+			font-size: 14px;
+		}
 
 		button {
 			font-size: 18px;
 			outline: none;
 			color: #8a8a8a;
 			border: none;
-      padding: 5px;
+			padding: 5px;
 			background: white;
-      border-radius: 50%;
+			border-radius: 50%;
 			&:active,
 			&:hover {
 				color: $bt-blue;

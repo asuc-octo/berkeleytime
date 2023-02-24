@@ -8,7 +8,7 @@ class Releases extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			releases: [],
+			releases: []
 		};
 	}
 
@@ -31,9 +31,7 @@ class Releases extends Component {
 								<h3>Keep up-to-date with our releases and bug fixes.</h3>
 								<ButtonToolbar className="releases-heading-button">
 									<a href="/bugs">
-										<button className="btn btn-bt-blue-inverted btn-bt-md">
-                      Give Feedback
-										</button>
+										<button className="btn btn-bt-blue-inverted btn-bt-md">Give Feedback</button>
 									</a>
 								</ButtonToolbar>
 							</div>

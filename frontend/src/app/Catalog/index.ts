@@ -1,3 +1,3 @@
-import Catalog from './Catalog'
+import Catalog from './Catalog';
 
 export default Catalog;

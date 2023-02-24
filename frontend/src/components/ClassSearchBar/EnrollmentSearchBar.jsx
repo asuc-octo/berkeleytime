@@ -1,11 +1,9 @@
 import { Component } from 'react';
-import {
-	Container, Row, Col, Button
-} from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import hash from 'object-hash';
 
 import { fetchEnrollSelected } from '../../redux/actions';
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 import { reactSelectCourseSearch } from 'utils/courses/search';
 import BTSelect from 'components/Custom/Select';
 
@@ -16,7 +14,7 @@ class EnrollmentSearchBar extends Component {
 		this.state = {
 			selectedClass: 0,
 			selectPrimary: this.props.selectPrimary,
-			selectSecondary: this.props.selectSecondary,
+			selectSecondary: this.props.selectSecondary
 		};
 
 		this.queryCache = {};
@@ -42,12 +40,12 @@ class EnrollmentSearchBar extends Component {
 	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (nextProps.selectPrimary !== this.state.selectPrimary) {
 			this.setState({
-				selectPrimary: nextProps.selectPrimary,
+				selectPrimary: nextProps.selectPrimary
 			});
 		}
 		if (nextProps.selectSecondary !== this.state.selectSecondary) {
 			this.setState({
-				selectSecondary: nextProps.selectSecondary,
+				selectSecondary: nextProps.selectSecondary
 			});
 		}
 	}
@@ -57,7 +55,7 @@ class EnrollmentSearchBar extends Component {
 		if (updatedClass === null) {
 			this.reset();
 			this.setState({
-				selectedClass: 0,
+				selectedClass: 0
 			});
 			return;
 		}
@@ -65,7 +63,7 @@ class EnrollmentSearchBar extends Component {
 		this.setState({
 			selectedClass: updatedClass.value,
 			selectPrimary: '',
-			selectSecondary: '',
+			selectSecondary: ''
 		});
 
 		fetchEnrollSelected(updatedClass);
@@ -74,17 +72,13 @@ class EnrollmentSearchBar extends Component {
 	handlePrimarySelect(primary) {
 		this.setState({
 			selectPrimary: primary ? primary.value : '',
-			selectSecondary: primary
-				? { value: 'all', label: 'All Instructors' }
-				: '',
+			selectSecondary: primary ? { value: 'all', label: 'All Instructors' } : ''
 		});
 	}
 
 	handleSecondarySelect(secondary) {
 		this.setState({
-			selectSecondary: secondary
-				? secondary
-				: { value: 'all', label: 'All Instructors' },
+			selectSecondary: secondary ? secondary : { value: 'all', label: 'All Instructors' }
 		});
 	}
 
@@ -95,7 +89,7 @@ class EnrollmentSearchBar extends Component {
 		const options = courses.map((course) => ({
 			value: course.id,
 			label: `${course.abbreviation} ${course.course_number}`,
-			course,
+			course
 		}));
 
 		return options;
@@ -119,7 +113,7 @@ class EnrollmentSearchBar extends Component {
 				map.set(semester, true);
 				ret.push({
 					value: semester,
-					label: semester,
+					label: semester
 				});
 			}
 		}
@@ -128,11 +122,7 @@ class EnrollmentSearchBar extends Component {
 	}
 
 	buildSecondaryOptions(semesters, selectPrimary) {
-		if (
-			semesters.length === 0 ||
-      selectPrimary === undefined ||
-      selectPrimary === ''
-		) {
+		if (semesters.length === 0 || selectPrimary === undefined || selectPrimary === '') {
 			return [];
 		}
 
@@ -147,15 +137,13 @@ class EnrollmentSearchBar extends Component {
 
 		for (var section of sections) {
 			let instructor = `${
-				section.instructor === null || section.instructor === ''
-					? 'None'
-					: section.instructor
+				section.instructor === null || section.instructor === '' ? 'None' : section.instructor
 			} / ${section.section_number}`;
 			ret.push({
 				value: instructor,
 				label: instructor,
 				sectionNumber: instructor.split(' / ')[1],
-				sectionId: section.section_id,
+				sectionId: section.section_id
 			});
 		}
 		return ret;
@@ -206,7 +194,7 @@ class EnrollmentSearchBar extends Component {
 			courseID: selectedClass,
 			instructor: instructor,
 			semester: selectPrimary,
-			sections: sectionId,
+			sections: sectionId
 		};
 
 		playlist.id = hash(playlist);
@@ -217,7 +205,7 @@ class EnrollmentSearchBar extends Component {
 	reset() {
 		this.setState({
 			selectPrimary: '',
-			selectSecondary: '',
+			selectSecondary: ''
 		});
 	}
 
@@ -226,12 +214,9 @@ class EnrollmentSearchBar extends Component {
 		const { selectPrimary, selectSecondary, selectedClass } = this.state;
 		let primaryOptions = this.buildPrimaryOptions(sections);
 		let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
-		let onePrimaryOption =
-      primaryOptions && primaryOptions.length === 1 && selectPrimary;
+		let onePrimaryOption = primaryOptions && primaryOptions.length === 1 && selectPrimary;
 		let oneSecondaryOption =
-      secondaryOptions &&
-      secondaryOptions.length === 1 &&
-      selectSecondary.value;
+			secondaryOptions && secondaryOptions.length === 1 && selectSecondary.value;
 
 		let primaryOption = { value: selectPrimary, label: selectPrimary };
 		let secondaryOption = selectSecondary;
@@ -251,8 +236,8 @@ class EnrollmentSearchBar extends Component {
 			clearIndicator: (provided, state) => ({
 				...provided,
 				marginRight: 0,
-				paddingRight: 0,
-			}),
+				paddingRight: 0
+			})
 		};
 
 		return (
@@ -267,7 +252,7 @@ class EnrollmentSearchBar extends Component {
 							onChange={this.handleClassSelect}
 							filterOption={reactSelectCourseSearch}
 							components={{
-								IndicatorSeparator: () => null,
+								IndicatorSeparator: () => null
 							}}
 							styles={customStyles}
 						/>
@@ -282,7 +267,7 @@ class EnrollmentSearchBar extends Component {
 							isDisabled={!selectedClass}
 							isClearable={false}
 							components={{
-								IndicatorSeparator: () => null,
+								IndicatorSeparator: () => null
 							}}
 							styles={customStyles}
 						/>
@@ -297,7 +282,7 @@ class EnrollmentSearchBar extends Component {
 							isDisabled={!selectedClass}
 							isClearable={false}
 							components={{
-								IndicatorSeparator: () => null,
+								IndicatorSeparator: () => null
 							}}
 							styles={customStyles}
 						/>
@@ -306,11 +291,9 @@ class EnrollmentSearchBar extends Component {
 						<Button
 							className="btn-bt-green"
 							onClick={this.addSelected}
-							disabled={
-								!selectedClass || !(selectPrimary && selectSecondary) || isFull
-							}
+							disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
 						>
-              Add Class
+							Add Class
 						</Button>
 					</Col>
 				</Row>
@@ -319,23 +302,20 @@ class EnrollmentSearchBar extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
 	return {
 		dispatch,
 		fetchEnrollSelected: (updatedClass) => dispatch(fetchEnrollSelected(updatedClass))
-	}
-}
+	};
+};
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	const { sections, selectPrimary, selectSecondary } = state.enrollment;
 	return {
 		sections,
 		selectPrimary,
-		selectSecondary,
+		selectSecondary
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(EnrollmentSearchBar);
+export default connect(mapStateToProps, mapDispatchToProps)(EnrollmentSearchBar);

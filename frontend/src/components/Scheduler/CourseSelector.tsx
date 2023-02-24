@@ -11,7 +11,7 @@ import {
 	removeCourse,
 	Schedule,
 	SchedulerCourseType,
-	SchedulerSectionType,
+	SchedulerSectionType
 } from 'utils/scheduler/scheduler';
 import SchedulerCourse from './Selector/SchedulerCourse';
 import { ScheduleContext } from './ScheduleContext';
@@ -20,22 +20,22 @@ import { unitsToString } from 'utils/courses/units';
 type CourseType = CourseOverviewFragment;
 
 type CourseOptionType = {
-  value: string;
-  label: string;
-  course: CourseType;
+	value: string;
+	label: string;
+	course: CourseType;
 };
 
 type Props = {
-  allCourses: CourseType[];
-  semester: Semester;
-  schedule: Schedule;
-  setSchedule: (newValue: Schedule) => void;
+	allCourses: CourseType[];
+	semester: Semester;
+	schedule: Schedule;
+	setSchedule: (newValue: Schedule) => void;
 
-  /**
-   * Pass this to add the ability to preview a section when a user
-   * hovers over it.
-   */
-  setPreviewSection?: (newSection: SchedulerSectionType | null) => void;
+	/**
+	 * Pass this to add the ability to preview a section when a user
+	 * hovers over it.
+	 */
+	setPreviewSection?: (newSection: SchedulerSectionType | null) => void;
 };
 
 const CourseSelector = ({
@@ -43,7 +43,7 @@ const CourseSelector = ({
 	semester,
 	schedule,
 	setSchedule,
-	setPreviewSection,
+	setPreviewSection
 }: Props) => {
 	// Sort courses
 	const sortedCourses: CourseOptionType[] = useMemo(
@@ -51,7 +51,7 @@ const CourseSelector = ({
 			allCourses.sort(compareDepartmentName).map((course) => ({
 				value: course.id,
 				label: courseToName(course),
-				course,
+				course
 			})),
 		[allCourses]
 	);
@@ -59,7 +59,7 @@ const CourseSelector = ({
 	function addCourse(course: SchedulerCourseType) {
 		setSchedule({
 			...schedule,
-			courses: [course, ...schedule.courses.filter((c) => c.id !== course.id)],
+			courses: [course, ...schedule.courses.filter((c) => c.id !== course.id)]
 		});
 	}
 
@@ -69,25 +69,24 @@ const CourseSelector = ({
 
 	return (
 		<div className="course-selector">
-			<h2>{semester.semester.charAt(0).toUpperCase() + semester.semester.slice(1)} {semester.year} Scheduler</h2>
+			<h2>
+				{semester.semester.charAt(0).toUpperCase() + semester.semester.slice(1)} {semester.year}{' '}
+				Scheduler
+			</h2>
 			<BTSelect
 				isVirtual
 				value={null}
 				name="selectClass"
 				placeholder="Choose a class..."
-				options={sortedCourses.filter(
-					(course) => !hasCourseById(schedule, course.value)
-				)}
+				options={sortedCourses.filter((course) => !hasCourseById(schedule, course.value))}
 				filterOption={reactSelectCourseSearch}
 				onChange={(c: CourseOptionType) => c && addCourse(c.course)}
 			/>
 			<div className="scheduler-units">
-        Scheduled Units: {unitsToString(getUnitsForSchedule(schedule))}
+				Scheduled Units: {unitsToString(getUnitsForSchedule(schedule))}
 			</div>
 			<div>
-				<ScheduleContext.Provider
-					value={{ schedule, setSchedule, setPreviewSection }}
-				>
+				<ScheduleContext.Provider value={{ schedule, setSchedule, setPreviewSection }}>
 					{schedule.courses.map((course) => (
 						<SchedulerCourse
 							key={course.id}

@@ -1,19 +1,13 @@
-import { FC } from 'react'
+import { FC } from 'react';
 
 interface Props {
-  underNavbar?: boolean
+	underNavbar?: boolean;
 }
 
 const FitToViewport: FC<Props> = (props) => {
-	const className = 'fit-to-viewport' + (
-		props.underNavbar ? ' under-navbar' : ''
-	)
+	const className = 'fit-to-viewport' + (props.underNavbar ? ' under-navbar' : '');
 
-	return (
-		<div className={className}>
-			{ props.children }
-		</div>
-	)
-}
+	return <div className={className}>{props.children}</div>;
+};
 
-export default FitToViewport
+export default FitToViewport;

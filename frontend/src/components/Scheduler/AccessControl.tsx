@@ -5,8 +5,8 @@ import { AccessStatus, ACCESS_STATUSES } from 'utils/scheduler/accessStatus';
 import { ReactComponent as ExpandMore } from '../../assets/svg/common/expand.svg';
 
 type ACToggleProps = {
-  visibility: AccessStatus;
-  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
+	visibility: AccessStatus;
+	onClick: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 const ACToggle = forwardRef<HTMLButtonElement, ACToggleProps>(
 	({ visibility, onClick }: ACToggleProps, ref) => {
@@ -24,16 +24,12 @@ const ACToggle = forwardRef<HTMLButtonElement, ACToggleProps>(
 ACToggle.displayName = 'ACToggle';
 
 type Props = {
-  visibility: AccessStatus;
-  setVisibility: (newVisibility: AccessStatus) => void;
-  scheduleId: string;
+	visibility: AccessStatus;
+	setVisibility: (newVisibility: AccessStatus) => void;
+	scheduleId: string;
 };
 
-const AccessControl = ({
-	visibility = 'private',
-	setVisibility,
-	scheduleId,
-}: Props) => {
+const AccessControl = ({ visibility = 'private', setVisibility, scheduleId }: Props) => {
 	const [isShowing, setIsShowing] = useState(false);
 
 	const scheduleUUID = atob(scheduleId).split(':')[1];
@@ -72,9 +68,7 @@ const AccessControl = ({
 						{details.icon}
 						<div className="ml-3">
 							<div className="access-control-menu__name">{details.name}</div>
-							<div className="access-control-menu__desc">
-								{details.description}
-							</div>
+							<div className="access-control-menu__desc">{details.description}</div>
 						</div>
 					</Dropdown.Item>
 				))}

@@ -26,63 +26,46 @@ const sectionToCard = (
 		day: +day,
 		startTime: timeToHour(section.startTime),
 		endTime: timeToHour(section.endTime),
-		card: getCard(section, +day),
+		card: getCard(section, +day)
 	}));
 
 type Props = {
-  schedule: Schedule;
+	schedule: Schedule;
 
-  previewSection?: SchedulerSectionType | null;
+	previewSection?: SchedulerSectionType | null;
 
-  /**
-   * If a set schedule function is passed. This will
-   * be treated as an editable calendar.
-   */
-  setSchedule?: (newSchedule: Schedule) => void;
+	/**
+	 * If a set schedule function is passed. This will
+	 * be treated as an editable calendar.
+	 */
+	setSchedule?: (newSchedule: Schedule) => void;
 };
 
 /**
  * Outputs the calendar from a schedule object.
  */
-const SchedulerCalendar = ({
-	schedule,
-	setSchedule,
-	previewSection = null,
-}: Props) => {
+const SchedulerCalendar = ({ schedule, setSchedule, previewSection = null }: Props) => {
 	const courseCards = schedule.sections
 		.filter((section) => section.startTime && section.endTime)
 		.flatMap((section) =>
 			sectionToCard(section, () => (
-				<CourseCard
-					section={section}
-					schedule={schedule}
-					setSchedule={setSchedule}
-				/>
+				<CourseCard section={section} schedule={schedule} setSchedule={setSchedule} />
 			))
 		);
 
 	const previewCards =
-    previewSection && !schedule.sections.find((s) => s.id === previewSection.id)
-    	? sectionToCard(previewSection, () => (
-    		<CourseCard section={previewSection} schedule={schedule} isPreview />
-    	))
-    	: [];
+		previewSection && !schedule.sections.find((s) => s.id === previewSection.id)
+			? sectionToCard(previewSection, () => (
+					<CourseCard section={previewSection} schedule={schedule} isPreview />
+			  ))
+			: [];
 
 	const allCards: CardData[] = [...courseCards, ...previewCards];
 
 	// See if there is a card on saturday or sunday
-	const days: Set<number> = new Set([
-		1,
-		2,
-		3,
-		4,
-		5,
-		...allCards.map((card) => card.day),
-	]);
+	const days: Set<number> = new Set([1, 2, 3, 4, 5, ...allCards.map((card) => card.day)]);
 
-	return (
-		<CourseCalendar days={[...days].sort((a, b) => a - b)} cards={allCards} />
-	);
+	return <CourseCalendar days={[...days].sort((a, b) => a - b)} cards={allCards} />;
 };
 
 export default SchedulerCalendar;

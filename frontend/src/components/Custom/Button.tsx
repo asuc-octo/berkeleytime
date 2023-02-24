@@ -1,8 +1,5 @@
 import { FC } from 'react';
-import {
-	Button as BootstrapButton,
-	ButtonProps as BootstrapProps,
-} from 'react-bootstrap';
+import { Button as BootstrapButton, ButtonProps as BootstrapProps } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const Button: FC<Props & Omit<BootstrapProps, 'href'>> = ({
@@ -18,7 +15,7 @@ const Button: FC<Props & Omit<BootstrapProps, 'href'>> = ({
 		className: className,
 		size: size,
 		variant: variant ?? 'primary',
-		...props,
+		...props
 	};
 
 	if (typeof href === 'object') {
@@ -37,10 +34,10 @@ const Button: FC<Props & Omit<BootstrapProps, 'href'>> = ({
 };
 
 export interface Props {
-  className?: string;
-  variant?: 'primary' | 'inverted';
-  size?: 'sm';
-  href?: string | { as_link: string };
+	className?: string;
+	variant?: 'primary' | 'inverted';
+	size?: 'sm';
+	href?: string | { as_link: string };
 }
 
 export default Button;

@@ -7,13 +7,13 @@ import {
 	DEFAULT_SCHEDULE,
 	isScheduleEmpty,
 	Schedule,
-	SCHEDULER_LOCALSTORAGE_KEY,
+	SCHEDULER_LOCALSTORAGE_KEY
 } from 'utils/scheduler/scheduler';
 import { Button } from 'bt/custom';
 // import { Button } from 'bt/custom';
 
 type Props = {
-  updatePage: (i: number) => void;
+	updatePage: (i: number) => void;
 };
 
 const Welcome = ({ updatePage }: Props) => {
@@ -25,9 +25,7 @@ const Welcome = ({ updatePage }: Props) => {
 	);
 
 	const savedSchedules = user
-		? getNodes(user.schedules).sort(
-			(a, b) => Date.parse(b.dateCreated) - Date.parse(a.dateCreated)
-		)
+		? getNodes(user.schedules).sort((a, b) => Date.parse(b.dateCreated) - Date.parse(a.dateCreated))
 		: [];
 
 	const resetDraft = () => setSchedule(DEFAULT_SCHEDULE);
@@ -36,23 +34,20 @@ const Welcome = ({ updatePage }: Props) => {
 		<Container className="welcome">
 			<Row>
 				<Col md={{ span: 6, offset: 3 }}>
-					<div className="scheduler-title">
-            Welcome to Berkeleytime&apos;s Scheduler
-					</div>
+					<div className="scheduler-title">Welcome to Berkeleytime&apos;s Scheduler</div>
 					<div className="prompt">
-            Use our scheduler to build your ideal schedule. Search our catalog
-            to add new classes or select from saved ones, and add your own time
-            preferences.
+						Use our scheduler to build your ideal schedule. Search our catalog to add new classes or
+						select from saved ones, and add your own time preferences.
 					</div>
 
 					<div className="buttons">
 						{!isScheduleEmpty(schedule) && (
 							<Button variant="inverted" href="/scheduler/new" className="mr-3">
-                Continue Draft
+								Continue Draft
 							</Button>
 						)}
 						<Button href="/scheduler/new" onClick={resetDraft}>
-              Start
+							Start
 						</Button>
 					</div>
 				</Col>

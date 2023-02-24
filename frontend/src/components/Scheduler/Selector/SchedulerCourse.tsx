@@ -1,7 +1,4 @@
-import {
-	CourseOverviewFragment,
-	useGetSchedulerCourseForIdQuery,
-} from 'graphql';
+import { CourseOverviewFragment, useGetSchedulerCourseForIdQuery } from 'graphql';
 import { useState } from 'react';
 import { courseToName } from 'utils/courses/course';
 import { Semester } from 'utils/playlists/semesters';
@@ -19,36 +16,31 @@ import { useScheduleContext } from '../ScheduleContext';
 import { getNodes } from 'utils/graphql';
 
 type Props = {
-  courseId: string;
+	courseId: string;
 
-  /**
-   * If you have (some) course info. Passing this
-   * parameter will show the info you have so the
-   * user seems something while waiting for the
-   * whole component to load
-   */
-  partialCourse?: CourseOverviewFragment;
+	/**
+	 * If you have (some) course info. Passing this
+	 * parameter will show the info you have so the
+	 * user seems something while waiting for the
+	 * whole component to load
+	 */
+	partialCourse?: CourseOverviewFragment;
 
-  semester: Semester;
+	semester: Semester;
 
-  /**
-   * If not passed, no delete button is shown.
-   */
-  didRemove?: () => void;
+	/**
+	 * If not passed, no delete button is shown.
+	 */
+	didRemove?: () => void;
 };
 
-const SchedulerCourse = ({
-	courseId,
-	partialCourse,
-	semester,
-	didRemove,
-}: Props) => {
+const SchedulerCourse = ({ courseId, partialCourse, semester, didRemove }: Props) => {
 	const { data, loading } = useGetSchedulerCourseForIdQuery({
 		variables: {
 			id: courseId,
 			year: semester.year,
-			semester: semester.semester,
-		},
+			semester: semester.semester
+		}
 	});
 	const [isExpanded, setIsExpanded] = useState(false);
 	const { schedule } = useScheduleContext();
@@ -58,19 +50,13 @@ const SchedulerCourse = ({
 	return (
 		<div className="scheduler-course">
 			<div className="scheduler-course-header">
-				<div
-					className="scheduler-course-square"
-					style={{ backgroundColor: color }}
-				/>
+				<div className="scheduler-course-square" style={{ backgroundColor: color }} />
 				<div className="scheduler-course-title">
 					{partialCourse ? courseToName(partialCourse) : 'Loading...'}
 				</div>
 
 				{didRemove && (
-					<div
-						className="scheduler-course-icon scheduler-course-remove"
-						onClick={didRemove}
-					>
+					<div className="scheduler-course-icon scheduler-course-remove" onClick={didRemove}>
 						<Trash />
 					</div>
 				)}
@@ -86,7 +72,7 @@ const SchedulerCourse = ({
 					>
 						<ExpandMore
 							style={{
-								transform: isExpanded ? 'rotate(-180deg)' : '',
+								transform: isExpanded ? 'rotate(-180deg)' : ''
 							}}
 						/>
 					</div>
@@ -104,22 +90,17 @@ const SchedulerCourse = ({
 										`${data.course.enrolled}/${data.course.enrolledMax} enrolled`,
 										data.course.enrolled / data.course.enrolledMax
 									)}{' '}
-                  &bull;{' '}
+									&bull;{' '}
 								</>
 							)}
-							{data.course.units &&
-                `${unitsToString(parseUnits(data.course.units))} units`}
+							{data.course.units && `${unitsToString(parseUnits(data.course.units))} units`}
 						</>
 					)}
 				</div>
 			</div>
 			{!data?.course ? (
 				<div className="scheduler-status">
-					{loading ? (
-						<BTLoader />
-					) : (
-						"A critical error occured loading this course's data."
-					)}
+					{loading ? <BTLoader /> : "A critical error occured loading this course's data."}
 				</div>
 			) : (
 				<Collapse in={isExpanded}>

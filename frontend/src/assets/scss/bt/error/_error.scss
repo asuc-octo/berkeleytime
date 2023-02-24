@@ -1,56 +1,55 @@
 .viewport-app-404 {
-  height: 60vh;
-  min-height: 600px;
+	height: 60vh;
+	min-height: 600px;
 
-  @include mobile {
-    height: 120vh;
-  }
+	@include mobile {
+		height: 120vh;
+	}
 }
 
 .error {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
-  .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+	.content {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 
-    > h1 {
-      margin-bottom: 20px;
-      font-weight: bold;
-      @include font-size-responsive(60px);
-    }
+		> h1 {
+			margin-bottom: 20px;
+			font-weight: bold;
+			@include font-size-responsive(60px);
+		}
 
-    > h3 {
-      color: $bt-light-text;
-      margin-bottom: 24px;
-      font-weight: bold;
-      @include font-size-responsive(26px);
-    }
+		> h3 {
+			color: $bt-light-text;
+			margin-bottom: 24px;
+			font-weight: bold;
+			@include font-size-responsive(26px);
+		}
 
-    > p {
-      color: $bt-light-text;
-      margin-bottom: 20px;
-      @include font-size-responsive(16px);
-    }
-  }
+		> p {
+			color: $bt-light-text;
+			margin-bottom: 20px;
+			@include font-size-responsive(16px);
+		}
+	}
 
-  .img-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+	.img-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-    > img {
-      width: 100%;
-    }
+		> img {
+			width: 100%;
+		}
 
-    margin-bottom: 20px;
-  }
+		margin-bottom: 20px;
+	}
 }
 
-
 a.btn.btn-bt-primary-inverted.btn-bt-lg {
-    border-width: 2px;
+	border-width: 2px;
 }

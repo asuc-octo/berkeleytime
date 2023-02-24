@@ -3,107 +3,107 @@
 
 // custom BsPrefix for buttons
 .bt-btn {
-  @extend .btn;
+	@extend .btn;
 
-  @include font-size-responsive(16px);
+	@include font-size-responsive(16px);
 }
 
 .bt-btn-sm {
-  @extend .btn-sm;
+	@extend .btn-sm;
 
-  @include font-size-responsive(14px);
+	@include font-size-responsive(14px);
 }
 
 @mixin bt-variant($color, $background, $border, $hover) {
-  color: $color;
-  background-color: $background;
-  border-color: $border;
+	color: $color;
+	background-color: $background;
+	border-color: $border;
 
-  &:hover {
-    color: $color;
-    background-color: $hover;
-    cursor: pointer;
-  }
+	&:hover {
+		color: $color;
+		background-color: $hover;
+		cursor: pointer;
+	}
 }
 
 .bt-btn-primary {
-  @include bt-variant($bt-white, $bt-primary, $bt-primary, $bt-primary-background);
+	@include bt-variant($bt-white, $bt-primary, $bt-primary, $bt-primary-background);
 }
 
 .bt-btn-inverted {
-  @include bt-variant($bt-primary, $bt-white, $bt-border-grey, $bt-button-background);
+	@include bt-variant($bt-primary, $bt-white, $bt-border-grey, $bt-button-background);
 }
 
 .btn-bt-red-inverted {
-  color: $bt-indicator-red;
-  background-color: $bt-white;
-  border-color: $bt-border-grey;
-  border-width: 2px;
+	color: $bt-indicator-red;
+	background-color: $bt-white;
+	border-color: $bt-border-grey;
+	border-width: 2px;
 
-  transition: 0.2s;
+	transition: 0.2s;
 
-  &:hover {
-    color: $bt-indicator-red;
-    background-color: $bt-button-background;
-    border-color: $bt-border-grey;
-  }
+	&:hover {
+		color: $bt-indicator-red;
+		background-color: $bt-button-background;
+		border-color: $bt-border-grey;
+	}
 
-  a {
-    color: inherit;
-  }
+	a {
+		color: inherit;
+	}
 }
 
 .btn-bt-blue-inverted {
-  color: $bt-indicator-blue;
-  background-color: $bt-white;
-  border-color: $bt-border-grey;
-  border-width: 2px;
+	color: $bt-indicator-blue;
+	background-color: $bt-white;
+	border-color: $bt-border-grey;
+	border-width: 2px;
 
-  transition: 0.2s;
+	transition: 0.2s;
 
-  &:hover {
-    color: $bt-indicator-blue;
-    background-color: $bt-button-background;
-    border-color:$bt-border-grey;
-  }
+	&:hover {
+		color: $bt-indicator-blue;
+		background-color: $bt-button-background;
+		border-color: $bt-border-grey;
+	}
 
-  a {
-    color: inherit;
-  }
+	a {
+		color: inherit;
+	}
 }
 
 .btn-bt-lg {
-  font-size: 18px;
-  line-height: 1.5;
-  border-radius: 0.3rem;
+	font-size: 18px;
+	line-height: 1.5;
+	border-radius: 0.3rem;
 
-  @include mobile {
-    font-size: 1rem;
-  }
+	@include mobile {
+		font-size: 1rem;
+	}
 }
 
 .btn-bt-md {
-  font-size: 16px;
-  line-height: 1.5;
-  border-width: 2px;
-  border-radius: 0.3rem;
+	font-size: 16px;
+	line-height: 1.5;
+	border-width: 2px;
+	border-radius: 0.3rem;
 }
 
 .btn-bt-border {
-  height: 35px;
-  background-color: $bt-white;
-  font-size: 16px;
-  border: 0.5px solid $bt-light-border-grey;
-  box-sizing: border-box;
-  border-radius: 4px;
+	height: 35px;
+	background-color: $bt-white;
+	font-size: 16px;
+	border: 0.5px solid $bt-light-border-grey;
+	box-sizing: border-box;
+	border-radius: 4px;
 }
 
 .as-link {
-  background: none !important;
-  border: none;
-  padding: 0 !important;
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
-  }
+	background: none !important;
+	border: none;
+	padding: 0 !important;
+	text-decoration: none;
+	&:hover {
+		text-decoration: underline;
+	}
 }

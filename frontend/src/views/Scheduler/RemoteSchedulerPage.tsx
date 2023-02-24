@@ -5,7 +5,7 @@ import { Redirect, useParams } from 'react-router';
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import RemoteScheduler from '../../components/Scheduler/Editor/RemoteScheduler';
 import { ReduxState } from 'redux/store';
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
 const RemoteSchedulePage = () => {
 	const { isLoggedIn, loading: userLoading } = useUser();
@@ -19,7 +19,9 @@ const RemoteSchedulePage = () => {
 		return (
 			<div className="scheduler viewport-app">
 				<div className="onboard">
-					<p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+					<p className="py-5 px-2 mobile">
+						Unfortunately, the Scheduler does not support mobile devices at this time.
+					</p>
 				</div>
 			</div>
 		);
@@ -42,11 +44,7 @@ const RemoteSchedulePage = () => {
 
 	return (
 		<div className="scheduler viewport-app">
-			<RemoteScheduler
-				scheduleId={scheduleId}
-				schedule={schedule}
-				setRawSchedule={setSchedule}
-			/>
+			<RemoteScheduler scheduleId={scheduleId} schedule={schedule} setRawSchedule={setSchedule} />
 		</div>
 	);
 };

@@ -75,6 +75,7 @@ const Routes = () => (
 								sensitive
 							/>
 						))}
+						<Route component={Error} />
 					</Switch>
 				</Layout>
 			</Route>

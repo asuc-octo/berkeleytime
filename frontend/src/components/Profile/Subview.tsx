@@ -1,9 +1,9 @@
 import { FC, ReactNode } from 'react';
 
 type Props = {
-  title: string;
-  className?: string;
-  widget?: ReactNode;
+	title: string;
+	className?: string;
+	widget?: ReactNode;
 };
 
 const Subview: FC<Props> = ({ title, className, widget, children }) => (

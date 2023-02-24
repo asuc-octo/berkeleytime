@@ -4,11 +4,7 @@ import CourseSelector from 'components/Scheduler/CourseSelector';
 
 import { useGetCoursesForFilterQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
-import {
-	Schedule,
-	SchedulerSectionType,
-	scheduleToICal,
-} from 'utils/scheduler/scheduler';
+import { Schedule, SchedulerSectionType, scheduleToICal } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import AccessControl from './AccessControl';
 import { AccessStatus } from 'utils/scheduler/accessStatus';
@@ -17,87 +13,69 @@ import { getNodes } from 'utils/graphql';
 import { Semester } from 'utils/playlists/semesters';
 
 type Props = {
-  /**
-   * The semester being edited. If not provided, will
-   * assume the latest semester.
-   */
-  semester?: Semester;
+	/**
+	 * The semester being edited. If not provided, will
+	 * assume the latest semester.
+	 */
+	semester?: Semester;
 
-  /**
-   * The users schedule.
-   */
-  schedule: Schedule;
+	/**
+	 * The users schedule.
+	 */
+	schedule: Schedule;
 
-  /**
-   * Called when the schedule should be updated.
-   */
-  setSchedule: (newSchedule: Schedule) => void;
+	/**
+	 * Called when the schedule should be updated.
+	 */
+	setSchedule: (newSchedule: Schedule) => void;
 
-  /**
-   * This is the widget to show next to the title.
-   * It typically represents the schedule's save state.
-   */
-  saveWidget?: ReactNode;
+	/**
+	 * This is the widget to show next to the title.
+	 * It typically represents the schedule's save state.
+	 */
+	saveWidget?: ReactNode;
 
-  /**
-   * If provided, shows access control with the
-   * specified ID.
-   */
-  accessControl?: string;
+	/**
+	 * If provided, shows access control with the
+	 * specified ID.
+	 */
+	accessControl?: string;
 };
 
-const ScheduleEditor = ({
-	schedule,
-	semester,
-	setSchedule,
-	saveWidget,
-	accessControl,
-}: Props) => {
-	const { semester: latestSemester, error: semesterError } = useSemester(
-		semester
-	);
+const ScheduleEditor = ({ schedule, semester, setSchedule, saveWidget, accessControl }: Props) => {
+	const { semester: latestSemester, error: semesterError } = useSemester(semester);
 
 	// Only load the list of filters once we have the latest semester. If we
 	// didn't wait, we'd load all semesters' classes which is way to many.
 	const { data, error: coursesError } = useGetCoursesForFilterQuery({
 		variables: {
-			playlists: latestSemester?.playlistId!,
+			playlists: latestSemester?.playlistId!
 		},
-		skip: !latestSemester,
+		skip: !latestSemester
 	});
 
 	// If the user is hovering over a section. This will store that section
-	const [
-		previewSection,
-		setPreviewSection,
-	] = useState<SchedulerSectionType | null>(null);
+	const [previewSection, setPreviewSection] = useState<SchedulerSectionType | null>(null);
 
 	const setScheduleName = (event: ChangeEvent<HTMLInputElement>) =>
 		setSchedule({
 			...schedule,
-			name: event.target.value,
+			name: event.target.value
 		});
 
 	const setScheduleVisibility = (newAccess: AccessStatus) =>
 		setSchedule({
 			...schedule,
-			access: newAccess,
+			access: newAccess
 		});
 
 	if (!data || !semester) {
-		return (
-			<BTLoader
-				message="Loading courses..."
-				error={semesterError || coursesError}
-				fill
-			/>
-		);
+		return <BTLoader message="Loading courses..." error={semesterError || coursesError} fill />;
 	}
 
 	function exportToCalendar() {
 		const icsData = scheduleToICal(schedule, semester!);
-		const icsURI =
-      `data:text/calendar;charset=utf8,` + encodeURIComponent(icsData);
+		const icsURI = `data:text/calendar;charset=utf8,` + encodeURIComponent(icsData);
 
 		const link = document.createElement('a');
 		link.href = icsURI;
@@ -138,12 +116,8 @@ const ScheduleEditor = ({
 								scheduleId={accessControl}
 							/>
 						)}
-						<Button
-							className="bt-btn-inverted ml-3"
-							size="sm"
-							onClick={exportToCalendar}
-						>
-              Export to Calendar
+						<Button className="bt-btn-inverted ml-3" size="sm" onClick={exportToCalendar}>
+							Export to Calendar
 						</Button>
 					</div>
 				</div>

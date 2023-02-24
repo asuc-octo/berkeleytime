@@ -17,35 +17,33 @@ import { useUser } from '../../graphql/hooks/user';
 import { Redirect } from 'react-router';
 
 const tabs: {
-  key: string;
-  label: string;
-  selectedImage: ReactNode;
-  deselectedImage: ReactNode;
-  component:
-    | ComponentType<{ userProfile: UserProfileFragment }>
-    | ComponentType;
+	key: string;
+	label: string;
+	selectedImage: ReactNode;
+	deselectedImage: ReactNode;
+	component: ComponentType<{ userProfile: UserProfileFragment }> | ComponentType;
 }[] = [
 	{
 		key: 'account',
 		label: 'Your Account',
 		selectedImage: <AccountSelected />,
 		deselectedImage: <Account />,
-		component: AccountSubview,
+		component: AccountSubview
 	},
 	{
 		key: 'notif',
 		label: 'Notifications',
 		selectedImage: <NotifSelected />,
 		deselectedImage: <Notif />,
-		component: NotificationsSubview,
+		component: NotificationsSubview
 	},
 	{
 		key: 'support',
 		label: 'Support',
 		selectedImage: <SupportSelected />,
 		deselectedImage: <Support />,
-		component: SupportSubview,
-	},
+		component: SupportSubview
+	}
 ];
 
 const Profile = () => {

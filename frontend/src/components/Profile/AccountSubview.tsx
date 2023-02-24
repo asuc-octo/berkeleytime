@@ -2,11 +2,7 @@ import { useState } from 'react';
 
 import Property from './Property';
 import ProfileCourseCard from './ProfileCourseCard';
-import {
-	CourseOverviewFragment,
-	ScheduleOverviewFragment,
-	UserProfileFragment,
-} from 'graphql';
+import { CourseOverviewFragment, ScheduleOverviewFragment, UserProfileFragment } from 'graphql';
 
 import MAJORS from './majors.json';
 import { useUpdateUser } from '../../graphql/hooks/user';
@@ -17,7 +13,7 @@ import { Link } from 'react-router-dom';
 import ProfileScheduleCard from './ProfileScheduleCard';
 
 type Props = {
-  userProfile: UserProfileFragment;
+	userProfile: UserProfileFragment;
 };
 
 // Show this many cards before adding a 'show more'
@@ -32,7 +28,7 @@ const AccountSubview = ({ userProfile }: Props) => {
 	//Information has been hardcoded for testing purposes only
 	const majorOptions = MAJORS.map((major) => ({
 		label: major,
-		value: major,
+		value: major
 	}));
 
 	const user = userProfile.user;
@@ -53,18 +49,14 @@ const AccountSubview = ({ userProfile }: Props) => {
 					attribute="Full Name"
 					value={`${user.firstName} ${user.lastName}`}
 				/>
-				<Property
-					options={majorOptions}
-					attribute="bConnected Email"
-					value={user.email}
-				/>
+				<Property options={majorOptions} attribute="bConnected Email" value={user.email} />
 				<Property
 					options={majorOptions}
 					attribute="Major(s)"
 					major={userProfile.major}
 					updateMajor={({ value }: { value: string }) =>
 						updateUser(userProfile, {
-							major: value,
+							major: value
 						})
 					}
 				/>
@@ -73,17 +65,16 @@ const AccountSubview = ({ userProfile }: Props) => {
 			<Subview title="Saved Classes">
 				{savedClasses.length > 0 ? (
 					<div className="profile-card-grid">
-						{(showAllCourses
-							? savedClasses
-							: savedClasses.slice(0, MAX_PROFILE_CARDS)
-						).map((course) => (
-							<ProfileCourseCard key={course.id} course={course} />
-						))}
+						{(showAllCourses ? savedClasses : savedClasses.slice(0, MAX_PROFILE_CARDS)).map(
+							(course) => (
+								<ProfileCourseCard key={course.id} course={course} />
+							)
+						)}
 					</div>
 				) : (
 					<div className="bt-light-text">
-            Click on the bookmark icons in <Link to="/catalog">Catalog</Link> to
-            start saving classes!
+						Click on the bookmark icons in <Link to="/catalog">Catalog</Link> to start saving
+						classes!
 					</div>
 				)}
 
@@ -101,17 +92,15 @@ const AccountSubview = ({ userProfile }: Props) => {
 			<Subview title="Saved Schedules">
 				{savedSchedules.length > 0 ? (
 					<div className="profile-card-grid">
-						{(showAllSchedules
-							? savedSchedules
-							: savedSchedules.slice(0, MAX_PROFILE_CARDS)
-						).map((course) => (
-							<ProfileScheduleCard key={course.id} schedule={course} />
-						))}
+						{(showAllSchedules ? savedSchedules : savedSchedules.slice(0, MAX_PROFILE_CARDS)).map(
+							(course) => (
+								<ProfileScheduleCard key={course.id} schedule={course} />
+							)
+						)}
 					</div>
 				) : (
 					<div className="bt-light-text">
-            You do not have any saved schedules.{' '}
-						<Link to="/scheduler">Build one now.</Link>
+						You do not have any saved schedules. <Link to="/scheduler">Build one now.</Link>
 					</div>
 				)}
 

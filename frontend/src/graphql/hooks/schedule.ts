@@ -1,13 +1,13 @@
 import { Semester } from 'utils/playlists/semesters';
 import { Schedule, serializeSchedule } from 'utils/scheduler/scheduler';
 import {
-  DeleteScheduleMutationOptions,
-  GetUserDocument,
-  GetUserQuery,
-  GetUserQueryVariables,
-  ScheduleOverviewFragment,
-  useCreateScheduleMutation,
-  useDeleteScheduleMutation,
+	DeleteScheduleMutationOptions,
+	GetUserDocument,
+	GetUserQuery,
+	GetUserQueryVariables,
+	ScheduleOverviewFragment,
+	useCreateScheduleMutation,
+	useDeleteScheduleMutation
 } from 'graphql';
 import { wrapMutation } from './graphql';
 
@@ -16,38 +16,36 @@ import { wrapMutation } from './graphql';
  * to update a schedule.
  */
 export const useCreateSchedule = wrapMutation(
-  useCreateScheduleMutation,
-  // @ts-ignore
-  (schedule: Schedule, semester: Semester) => ({
-    variables: serializeSchedule(schedule, semester),
-    update(cache, { data }) {
-      const existingUser = cache.readQuery<GetUserQuery, GetUserQueryVariables>(
-        {
-          query: GetUserDocument,
-        }
-      );
+	useCreateScheduleMutation,
+	// @ts-ignore
+	(schedule: Schedule, semester: Semester) => ({
+		variables: serializeSchedule(schedule, semester),
+		update(cache, { data }) {
+			const existingUser = cache.readQuery<GetUserQuery, GetUserQueryVariables>({
+				query: GetUserDocument
+			});
 
-      if (existingUser?.user) {
-        cache.writeQuery<GetUserQuery, GetUserQueryVariables>({
-          query: GetUserDocument,
-          data: {
-            user: {
-              ...existingUser.user,
-              schedules: {
-                edges: [
-                  ...existingUser.user.schedules.edges,
-                  {
-                    __typename: 'ScheduleTypeEdge',
-                    node: data?.createSchedule?.schedule,
-                  },
-                ],
-              },
-            },
-          },
-        });
-      }
-    },
-  })
+			if (existingUser?.user) {
+				cache.writeQuery<GetUserQuery, GetUserQueryVariables>({
+					query: GetUserDocument,
+					data: {
+						user: {
+							...existingUser.user,
+							schedules: {
+								edges: [
+									...existingUser.user.schedules.edges,
+									{
+										__typename: 'ScheduleTypeEdge',
+										node: data?.createSchedule?.schedule
+									}
+								]
+							}
+						}
+					}
+				});
+			}
+		}
+	})
 );
 
 /**
@@ -56,49 +54,43 @@ export const useCreateSchedule = wrapMutation(
  * schedule id.
  */
 export const useDeleteSchedule = wrapMutation(
-  useDeleteScheduleMutation,
-  (
-    schedule: ScheduleOverviewFragment | string,
-    options?: DeleteScheduleMutationOptions
-  ) => {
-    const scheduleId = typeof schedule === 'string' ? schedule : schedule.id;
+	useDeleteScheduleMutation,
+	(schedule: ScheduleOverviewFragment | string, options?: DeleteScheduleMutationOptions) => {
+		const scheduleId = typeof schedule === 'string' ? schedule : schedule.id;
 
-    return {
-      ...options,
-      variables: {
-        id: scheduleId,
-      },
-      optimisticResponse: {
-        removeSchedule: {
-          schedule: {
-            id: scheduleId,
-          },
-        },
-      },
-      update(cache) {
-        const existingUser = cache.readQuery<
-          GetUserQuery,
-          GetUserQueryVariables
-        >({
-          query: GetUserDocument,
-        });
+		return {
+			...options,
+			variables: {
+				id: scheduleId
+			},
+			optimisticResponse: {
+				removeSchedule: {
+					schedule: {
+						id: scheduleId
+					}
+				}
+			},
+			update(cache) {
+				const existingUser = cache.readQuery<GetUserQuery, GetUserQueryVariables>({
+					query: GetUserDocument
+				});
 
-        if (existingUser?.user) {
-          cache.writeQuery<GetUserQuery, GetUserQueryVariables>({
-            query: GetUserDocument,
-            data: {
-              user: {
-                ...existingUser.user,
-                schedules: {
-                  edges: existingUser.user.schedules.edges.filter(
-                    (edge) => edge?.node?.id !== scheduleId
-                  ),
-                },
-              },
-            },
-          });
-        }
-      },
-    };
-  }
+				if (existingUser?.user) {
+					cache.writeQuery<GetUserQuery, GetUserQueryVariables>({
+						query: GetUserDocument,
+						data: {
+							user: {
+								...existingUser.user,
+								schedules: {
+									edges: existingUser.user.schedules.edges.filter(
+										(edge) => edge?.node?.id !== scheduleId
+									)
+								}
+							}
+						}
+					});
+				}
+			}
+		};
+	}
 );

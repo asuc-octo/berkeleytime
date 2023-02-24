@@ -3,24 +3,24 @@ import { range } from 'utils/range';
 import { dayToLongName, timeToHourString } from 'utils/date';
 
 export type CardData = {
-  key?: string | number;
-  day: number;
-  startTime: number;
-  endTime: number;
-  card: ReactNode;
+	key?: string | number;
+	day: number;
+	startTime: number;
+	endTime: number;
+	card: ReactNode;
 
-  /** **Do not directly provide** */
-  overlapNum?: number;
+	/** **Do not directly provide** */
+	overlapNum?: number;
 
-  /** **Do not directly provide** */
-  overlapIndex?: number;
+	/** **Do not directly provide** */
+	overlapIndex?: number;
 };
 
 type CourseCalendarProps = {
-  days?: number[];
-  startTime?: number;
-  endTime?: number;
-  cards: CardData[];
+	days?: number[];
+	startTime?: number;
+	endTime?: number;
+	cards: CardData[];
 };
 
 const CELL_HEIGHT = 60;
@@ -47,15 +47,15 @@ function calculateOverlaps(cards: CardData[]): CardData[] {
 			finalCards.push(currentOverlap);
 		}
 
-    currentOverlap!.push(c);
-    currrentEndTime = Math.max(c.endTime, currrentEndTime);
+		currentOverlap!.push(c);
+		currrentEndTime = Math.max(c.endTime, currrentEndTime);
 	}
 
 	return finalCards.flatMap((group) =>
 		group.map((item, index) => ({
 			...item,
 			overlapIndex: index,
-			overlapNum: group.length,
+			overlapNum: group.length
 		}))
 	);
 }
@@ -67,15 +67,13 @@ function calculateCellStyle(
 	const visualStartTime = startTime - calendarStartTime;
 	const height = Math.max(MIN_HEIGHT, (endTime - startTime) * CELL_HEIGHT);
 	return {
-		top: visualStartTime * CELL_HEIGHT,
-		height: height,
-		left: `calc(${(overlapIndex / overlapNum) * 100}% + ${
-			overlapIndex * INTER_CELL_PADDING
-		}px)`,
-		width: `calc(${((overlapNum - overlapIndex) / overlapNum) * 100}% - ${
+		'top': visualStartTime * CELL_HEIGHT,
+		'height': height,
+		'left': `calc(${(overlapIndex / overlapNum) * 100}% + ${overlapIndex * INTER_CELL_PADDING}px)`,
+		'width': `calc(${((overlapNum - overlapIndex) / overlapNum) * 100}% - ${
 			(overlapNum - 1) * INTER_CELL_PADDING
 		}px)`,
-		'--calendar-card-lines': Math.max(1, Math.floor(height / 40)),
+		'--calendar-card-lines': Math.max(1, Math.floor(height / 40))
 	} as CSSProperties;
 }
 
@@ -83,7 +81,7 @@ const CourseCalendar = ({
 	days = [1, 2, 3, 4, 5],
 	startTime = 8,
 	endTime = 20,
-	cards = [],
+	cards = []
 }: CourseCalendarProps) => {
 	const hourSlots = range(startTime, endTime);
 	const cardsByDay = days.map((day) =>
@@ -99,10 +97,7 @@ const CourseCalendar = ({
 				<div className="course-calendar__time" />
 				<div className="course-calendar__week">
 					{days.map((dayIndex) => (
-						<div
-							key={dayIndex}
-							className="course-calendar__day course-calendar__header"
-						>
+						<div key={dayIndex} className="course-calendar__day course-calendar__header">
 							<span>{dayToLongName(dayIndex)}</span>
 						</div>
 					))}

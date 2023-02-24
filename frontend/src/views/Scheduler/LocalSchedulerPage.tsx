@@ -1,11 +1,7 @@
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 import BTLoader from 'components/Common/BTLoader';
-import {
-	DEFAULT_SCHEDULE,
-	Schedule,
-	SCHEDULER_LOCALSTORAGE_KEY,
-} from 'utils/scheduler/scheduler';
+import { DEFAULT_SCHEDULE, Schedule, SCHEDULER_LOCALSTORAGE_KEY } from 'utils/scheduler/scheduler';
 import { useUser } from 'graphql/hooks/user';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
 import { useLocalStorageState } from 'utils/hooks';
@@ -14,7 +10,7 @@ import { useHistory } from 'react-router';
 import { useSemester } from 'graphql/hooks/semester';
 import Callout from '../../components/Scheduler/Callout';
 import { ReduxState } from 'redux/store';
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
 const LocalScheduler = () => {
 	const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -27,10 +23,7 @@ const LocalScheduler = () => {
 
 	const { semester, error: semesterError } = useSemester();
 
-	const [
-		createScheduleMutation,
-		{ loading: isSaving, error: creationError },
-	] = useCreateSchedule({
+	const [createScheduleMutation, { loading: isSaving, error: creationError }] = useCreateSchedule({
 		onCompleted: (data) => {
 			if (data?.createSchedule?.schedule) {
 				const scheduleId = data.createSchedule.schedule.id;
@@ -46,7 +39,7 @@ const LocalScheduler = () => {
 					history.push(`/scheduler/${scheduleUUID}`);
 				});
 			}
-		},
+		}
 	});
 
 	const isMobile = useSelector((state: ReduxState) => state.common.mobile);
@@ -55,24 +48,20 @@ const LocalScheduler = () => {
 		return (
 			<div className="scheduler viewport-app">
 				<div className="onboard">
-					<p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+					<p className="py-5 px-2 mobile">
+						Unfortunately, the Scheduler does not support mobile devices at this time.
+					</p>
 				</div>
 			</div>
 		);
 	}
 
 	if (!semester) {
-		return (
-			<BTLoader
-				message="Loading semester information..."
-				error={semesterError}
-				fill
-			/>
-		);
+		return <BTLoader message="Loading semester information..." error={semesterError} fill />;
 	}
 
 	const createSchedule = async () =>
-	// @ts-ignore
+		// @ts-ignore
 		await createScheduleMutation(schedule, semester!);
 
 	const saveButton = (
@@ -83,7 +72,7 @@ const LocalScheduler = () => {
 			disabled={!isLoggedIn}
 			style={{ pointerEvents: !isLoggedIn ? 'none' : undefined }}
 		>
-      Save
+			Save
 		</Button>
 	);
 
@@ -97,18 +86,12 @@ const LocalScheduler = () => {
 					isSaving ? (
 						<span>Saving schedule...</span>
 					) : creationError ? (
-						<Callout
-							type="warning"
-							state="error"
-							message="Could not save schedule."
-						/>
+						<Callout type="warning" state="error" message="Could not save schedule." />
 					) : !isLoggedIn ? (
 						<OverlayTrigger
 							overlay={
 								<Tooltip id="schedule-save-popover">
-									{loadingUser
-										? 'Loading account...'
-										: 'You must be logged in to save.'}
+									{loadingUser ? 'Loading account...' : 'You must be logged in to save.'}
 								</Tooltip>
 							}
 							placement="bottom"

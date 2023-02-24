@@ -2,7 +2,7 @@ import { Component } from 'react';
 
 type BTErrorBoundryProps = {};
 type BTErrorBoundryState = {
-    error: Error | null
+	error: Error | null;
 };
 
 class BTErrorBoundry extends Component<BTErrorBoundryProps, BTErrorBoundryState> {
@@ -25,7 +25,7 @@ class BTErrorBoundry extends Component<BTErrorBoundryProps, BTErrorBoundryState>
 					<p>An error occured.</p>
 					<pre>
 						{this.state.error.message}
-						<br/>
+						<br />
 						{this.state.error.stack}
 					</pre>
 				</div>

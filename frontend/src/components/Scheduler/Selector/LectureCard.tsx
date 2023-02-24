@@ -1,22 +1,10 @@
-import {
-	LectureFragment,
-	SchedulerCourseFragment,
-	SectionFragment,
-} from 'graphql';
+import { LectureFragment, SchedulerCourseFragment, SectionFragment } from 'graphql';
 import { ChangeEvent, CSSProperties } from 'react';
 import { Form } from 'react-bootstrap';
 import cx from 'classnames';
 
-import {
-	hasSectionById,
-	Schedule,
-	SchedulerSectionType,
-} from 'utils/scheduler/scheduler';
-import {
-	formatLocation,
-	formatSectionEnrollment,
-	formatSectionTime,
-} from 'utils/sections/section';
+import { hasSectionById, Schedule, SchedulerSectionType } from 'utils/scheduler/scheduler';
+import { formatLocation, formatSectionEnrollment, formatSectionTime } from 'utils/sections/section';
 import { groupSections } from 'utils/sections/sort';
 import { useScheduleContext } from '../ScheduleContext';
 import { combineNodes } from 'utils/string';
@@ -25,18 +13,13 @@ const MAX_SECTIONS_BEFORE_SCROLL = 8;
 const SCROLL_SECTION_HEIGHT = '280px';
 
 type SectionProps = {
-  sections: SectionFragment[];
-  course: SchedulerCourseFragment;
-  lecture: SectionFragment;
-  isDisabled?: boolean;
+	sections: SectionFragment[];
+	course: SchedulerCourseFragment;
+	lecture: SectionFragment;
+	isDisabled?: boolean;
 };
 
-const SectionGroup = ({
-	sections,
-	course,
-	lecture,
-	isDisabled = false,
-}: SectionProps) => {
+const SectionGroup = ({ sections, course, lecture, isDisabled = false }: SectionProps) => {
 	const { schedule, setSchedule, setPreviewSection } = useScheduleContext();
 
 	const shouldScroll = sections.length > MAX_SECTIONS_BEFORE_SCROLL;
@@ -44,7 +27,7 @@ const SectionGroup = ({
 	return (
 		<section
 			className={cx({
-				'course-card--disabled': isDisabled,
+				'course-card--disabled': isDisabled
 			})}
 		>
 			<h4>{sections[0].kind}</h4>
@@ -52,14 +35,14 @@ const SectionGroup = ({
 				className="course-card-scroll"
 				style={{
 					overflow: shouldScroll ? 'auto' : '',
-					height: shouldScroll ? SCROLL_SECTION_HEIGHT : '',
+					height: shouldScroll ? SCROLL_SECTION_HEIGHT : ''
 				}}
 			>
 				{sections.map((section) => {
 					const currentSection: SchedulerSectionType = {
 						...section,
 						courseId: course.id,
-						lectureId: lecture.id,
+						lectureId: lecture.id
 					};
 
 					const sectionLabel = (
@@ -70,18 +53,18 @@ const SectionGroup = ({
 									section.wordDays,
 									formatSectionTime(section, false),
 									formatLocation(section.locationName),
-									formatSectionEnrollment(section),
+									formatSectionEnrollment(section)
 								],
 								', '
 							)}{' '}
-              &bull; CCN: {section.ccn}
+							&bull; CCN: {section.ccn}
 						</span>
 					);
 
 					function setChecked(event: ChangeEvent<HTMLInputElement>) {
 						const newSchedule: Schedule = {
 							...schedule,
-							sections: schedule.sections.filter((s) => s.id !== section.id),
+							sections: schedule.sections.filter((s) => s.id !== section.id)
 						};
 
 						// If it's not checked, then we'll check it
@@ -104,7 +87,7 @@ const SectionGroup = ({
 								disabled={isDisabled}
 								type="checkbox"
 								style={{
-									opacity: section.disabled ? 0.5 : undefined,
+									opacity: section.disabled ? 0.5 : undefined
 								}}
 								checked={checked}
 								onChange={setChecked}
@@ -121,24 +104,22 @@ const SectionGroup = ({
 };
 
 type Props = {
-  section: LectureFragment;
-  course: SchedulerCourseFragment;
+	section: LectureFragment;
+	course: SchedulerCourseFragment;
 
-  /**
-   * User-readable string identifying the section
-   */
-  sectionId?: string;
-  color: string;
+	/**
+	 * User-readable string identifying the section
+	 */
+	sectionId?: string;
+	color: string;
 };
 
 const LectureCard = ({ section, course, sectionId, color }: Props) => {
-	const associatedSections = section.associatedSections.edges.map(
-		(e) => e?.node!
-	);
+	const associatedSections = section.associatedSections.edges.map((e) => e?.node!);
 
 	const currentSection: SchedulerSectionType = {
 		...section,
-		courseId: course.id,
+		courseId: course.id
 	};
 
 	// Groups sections [sec1, sec2] into 'discussion, 'lecture', etc.
@@ -154,7 +135,7 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
 				...schedule,
 				sections: schedule.sections
 					.filter((s) => s.courseId !== course.id || s.lectureId === section.id)
-					.concat([currentSection]),
+					.concat([currentSection])
 			};
 
 			setSchedule(newSchedule);
@@ -163,7 +144,7 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
 				...schedule,
 				sections: schedule.sections.filter(
 					(s) => !(s.id === section.id || s.lectureId === section.id)
-				),
+				)
 			};
 
 			setSchedule(newSchedule);
@@ -171,10 +152,7 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
 	}
 
 	return (
-		<div
-			className="course-card"
-			style={{ '--card-color': color } as CSSProperties}
-		>
+		<div className="course-card" style={{ '--card-color': color } as CSSProperties}>
 			<section
 				onMouseEnter={() => setPreviewSection?.(currentSection)}
 				onMouseLeave={() => setPreviewSection?.(null)}
@@ -184,7 +162,7 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
 						custom
 						type="checkbox"
 						style={{
-							opacity: section.disabled ? 0.5 : undefined,
+							opacity: section.disabled ? 0.5 : undefined
 						}}
 						checked={checked}
 						onChange={setChecked}
@@ -199,8 +177,7 @@ const LectureCard = ({ section, course, sectionId, color }: Props) => {
 				</h4>
 				<p className="course-card-description">
 					{section.instructor ? section.instructor + ` \u{2022} ` : ''}
-					{section.wordDays}, {formatSectionTime(section)},{' '}
-					{formatLocation(section.locationName)}
+					{section.wordDays}, {formatSectionTime(section)}, {formatLocation(section.locationName)}
 				</p>
 				<p className="course-card-description">
 					{formatSectionEnrollment(section)} &bull; CCN: {section.ccn}

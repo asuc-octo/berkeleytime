@@ -9,7 +9,7 @@ const DAYS = [
 	{ value: 2, label: 'Tuesday' },
 	{ value: 3, label: 'Wednesday' },
 	{ value: 4, label: 'Thursday' },
-	{ value: 5, label: 'Friday' },
+	{ value: 5, label: 'Friday' }
 ];
 
 // Hour ranges for times
@@ -22,27 +22,27 @@ const TIMES = new Array(LAST_TIME - FIRST_TIME)
 	.map((hour): [number, string, string] => [
 		hour,
 		`${((hour - 1) % 12) + 1}`,
-		hour >= 12 ? 'PM' : 'AM',
+		hour >= 12 ? 'PM' : 'AM'
 	])
 	.flatMap(([hour, hourText, ampm]) => [
 		{ value: hour + 0.0, label: `${hourText}:00 ${ampm}` },
 		{ value: hour + 0.25, label: `${hourText}:15 ${ampm}` },
 		{ value: hour + 0.5, label: `${hourText}:30 ${ampm}` },
-		{ value: hour + 0.75, label: `${hourText}:45 ${ampm}` },
+		{ value: hour + 0.75, label: `${hourText}:45 ${ampm}` }
 	]);
 
 type TimeBlock = {
-  id: string;
-  name: string;
-  startTime: number;
-  endTime: number;
-  days: number[];
+	id: string;
+	name: string;
+	startTime: number;
+	endTime: number;
+	days: number[];
 };
 
 let blockIdCounter = 0;
 
 type Props = {
-  createSchedule: () => void;
+	createSchedule: () => void;
 };
 
 const TimePreferences = ({ createSchedule }: Props) => {
@@ -55,7 +55,7 @@ const TimePreferences = ({ createSchedule }: Props) => {
 			name: blockName,
 			startTime: 0,
 			endTime: 0,
-			days: [],
+			days: []
 		};
 		setTimeBlocks([newBlock, ...timeBlocks]);
 		setBlockName('');
@@ -66,10 +66,10 @@ const TimePreferences = ({ createSchedule }: Props) => {
 			<Row noGutters>
 				<Col xs={12} lg={{ span: 4, offset: 4 }}>
 					<H3 bold className="mt-5 mb-2 text-center">
-            2. Add Time Preferences (Optional)
+						2. Add Time Preferences (Optional)
 					</H3>
 					<P className="mb-2 text-center bt-light-text">
-            Add blocks of time you’d prefer not to have classes.
+						Add blocks of time you’d prefer not to have classes.
 					</P>
 					<BTInput
 						className="my-3"
@@ -80,48 +80,27 @@ const TimePreferences = ({ createSchedule }: Props) => {
 					<div className="data-row">
 						<span>Time</span>
 						<span>
-							<BTSelect
-								className="inline-select"
-								options={TIMES}
-								placeholder="Start"
-							/>
+							<BTSelect className="inline-select" options={TIMES} placeholder="Start" />
 							{' to '}
-							<BTSelect
-								className="inline-select"
-								options={TIMES}
-								placeholder="End"
-							/>
+							<BTSelect className="inline-select" options={TIMES} placeholder="End" />
 						</span>
 					</div>
 					<div className="data-row">
 						<span>Day(s)</span>
 						<span>
-							<BTSelect
-								className="select"
-								isMulti
-								options={DAYS}
-								placeholder="Select Day(s)"
-							/>
+							<BTSelect className="select" isMulti options={DAYS} placeholder="Select Day(s)" />
 						</span>
 					</div>
 					<div className="mt-3 text-right">
-						<Button
-							className="bt-btn-inverted bt-lg"
-							onClick={createTimeBlock}
-						>
-              Create Time Block
+						<Button className="bt-btn-inverted bt-lg" onClick={createTimeBlock}>
+							Create Time Block
 						</Button>
 					</div>
 					<div className="blocks">
 						<H6 className="small-caps">Blocks</H6>
 						{timeBlocks.length === 0 ? (
 							<div className="blocks__placeholder">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									width="40"
-									height="40"
-									fill="none"
-								>
+								<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none">
 									<path
 										fill="#8A8A8A"
 										fillRule="evenodd"
@@ -144,7 +123,9 @@ const TimePreferences = ({ createSchedule }: Props) => {
 					</div>
 				</Col>
 				<Col>
-					<Button className="continue" onClick={createSchedule}>Continue</Button>
+					<Button className="continue" onClick={createSchedule}>
+						Continue
+					</Button>
 				</Col>
 			</Row>
 		</Container>

@@ -5,34 +5,29 @@ import cx from 'classnames';
 const TIME_BEFORE_LOADER = 80;
 
 type Props = {
-  /**
-   * Typically the loading indicator doesn't come up
-   * instantly so it doesn't flash for very-fast loads.
-   */
-  showInstantly?: boolean;
+	/**
+	 * Typically the loading indicator doesn't come up
+	 * instantly so it doesn't flash for very-fast loads.
+	 */
+	showInstantly?: boolean;
 
-  /**
-   * If to show a message about what is currently loading.
-   */
-  message?: string;
+	/**
+	 * If to show a message about what is currently loading.
+	 */
+	message?: string;
 
-  /**
-   * An error to show
-   */
-  error?: Error | string | null;
+	/**
+	 * An error to show
+	 */
+	error?: Error | string | null;
 
-  /**
-   * If to fill the page
-   */
-  fill?: boolean;
+	/**
+	 * If to fill the page
+	 */
+	fill?: boolean;
 };
 
-const BTLoader = ({
-	showInstantly = false,
-	message,
-	error,
-	fill = false,
-}: Props) => {
+const BTLoader = ({ showInstantly = false, message, error, fill = false }: Props) => {
 	const [showingLoader, setShowingLoader] = useState(false);
 
 	useEffect(() => {
@@ -47,7 +42,7 @@ const BTLoader = ({
 		return (
 			<div
 				className={cx('bt-loader-wrapper', 'bt-loader--error', {
-					'bt-loader--fill': fill,
+					'bt-loader--fill': fill
 				})}
 			>
 				{typeof error === 'string' ? (
@@ -66,7 +61,7 @@ const BTLoader = ({
 		return (
 			<div
 				className={cx('bt-loader-wrapper', {
-					'bt-loader--fill': fill,
+					'bt-loader--fill': fill
 				})}
 			>
 				<div className="bt-loader">

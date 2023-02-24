@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 
 type CalloutProps = {
-  type?: 'info' | 'warning';
-  state?: 'default' | 'error';
-  message: ReactNode;
+	type?: 'info' | 'warning';
+	state?: 'default' | 'error';
+	message: ReactNode;
 };
 
 const icons = {
@@ -27,14 +27,10 @@ const icons = {
 				d="M18.9785 10C18.9785 15.52 14.7273 20 9.48915 20C4.25101 20 -0.000209808 15.52 -0.000209808 10C-0.000209808 4.48 4.25101 0 9.48915 0C14.7273 0 18.9785 4.48 18.9785 10ZM17.0806 10C17.0806 5.59 13.674 2 9.48915 2C5.30431 2 1.89766 5.59 1.89766 10C1.89766 14.41 5.30431 18 9.48915 18C13.674 18 17.0806 14.41 17.0806 10Z"
 			/>
 		</svg>
-	),
+	)
 };
 
-const Callout = ({
-	type = 'info',
-	state = 'default',
-	message,
-}: CalloutProps) => {
+const Callout = ({ type = 'info', state = 'default', message }: CalloutProps) => {
 	return (
 		<span className={`callout callout--state-${state}`}>
 			{icons[type]}

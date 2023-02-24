@@ -24,8 +24,8 @@ const Login = () => {
 
 	login({
 		variables: {
-			token: id_token,
-		},
+			token: id_token
+		}
 	}).then((result) => {
 		// If the login was successful.
 		if (result.data?.login?.user) {

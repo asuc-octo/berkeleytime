@@ -1,32 +1,27 @@
-import {
-	ComponentType,
-	useState,
-	Dispatch,
-	SetStateAction
-} from 'react';
+import { ComponentType, useState, Dispatch, SetStateAction } from 'react';
 import Welcome from 'components/Scheduler/Onboard/Welcome';
 import SelectClasses from 'components/Scheduler/Onboard/SelectClasses';
 
 import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
 import { ReduxState } from 'redux/store';
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
 const pages: {
-  key: string;
-  component: ComponentType<{
-    updatePage: (i: number) => void;
-    schedule: Schedule;
-    setSchedule: Dispatch<SetStateAction<Schedule>>;
-  }>;
+	key: string;
+	component: ComponentType<{
+		updatePage: (i: number) => void;
+		schedule: Schedule;
+		setSchedule: Dispatch<SetStateAction<Schedule>>;
+	}>;
 }[] = [
 	{
 		key: 'welcome',
-		component: Welcome,
+		component: Welcome
 	},
 	{
 		key: 'select-classes',
-		component: SelectClasses,
-	},
+		component: SelectClasses
+	}
 	// {
 	//   key: 'time-preferences',
 	//   component: TimePreferences,
@@ -38,14 +33,16 @@ const SchedulerOnboard = () => {
 	const PageComponent = pages[pageIndex].component;
 
 	const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
-  
+
 	const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
 	if (isMobile) {
 		return (
 			<div className="scheduler viewport-app">
 				<div className="onboard">
-					<p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+					<p className="py-5 px-2 mobile">
+						Unfortunately, the Scheduler does not support mobile devices at this time.
+					</p>
 				</div>
 			</div>
 		);
@@ -54,11 +51,7 @@ const SchedulerOnboard = () => {
 	return (
 		<div className="scheduler viewport-app">
 			<div className="onboard">
-				<PageComponent
-					updatePage={setPageIndex}
-					schedule={schedule}
-					setSchedule={setSchedule}
-				/>
+				<PageComponent updatePage={setPageIndex} schedule={schedule} setSchedule={setSchedule} />
 			</div>
 		</div>
 	);
