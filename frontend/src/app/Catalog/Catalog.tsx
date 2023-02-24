@@ -16,13 +16,12 @@ const Catalog = () => {
 	const [sortQuery, setSortQuery] = useState<SortOption>(SORT_OPTIONS[0]);
 
 	return (
-		<div className={styles.catalogRoot}>
+		<div className={styles.root}>
 			<CatalogFilters
 				sortQuery={sortQuery}
 				searchQuery={searchQuery}
 				currentFilters={currentFilters}
 				setCurrentFilters={setCurrentFilters}
-				setCurrentCourse={setCurrentCourse}
 				setSearchQuery={setSearchQuery}
 				setSortQuery={setSortQuery}
 			/>

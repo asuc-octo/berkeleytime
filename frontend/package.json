@@ -9,7 +9,7 @@
 	"license": "UNLICENSED",
 	"scripts": {
 		"codegen": "graphql-codegen --config codegen.yml",
-		"build:js": "vite build",
+		"build:js": "vite build --emptyOutDir",
 		"watch:js": "vite",
 		"watch:codegen": "graphql-codegen --config codegen.yml --watch",
 		"start": "npm-run-all codegen -p watch:*",

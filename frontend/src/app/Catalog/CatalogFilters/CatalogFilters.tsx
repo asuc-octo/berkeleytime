@@ -8,7 +8,7 @@ import { ReactComponent as FilterIcon } from 'assets/svg/catalog/filter.svg';
 import BTInput from 'components/Custom/Input';
 import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, CatalogSlug } from '../types';
 
-import { CourseFragment, useGetFiltersQuery } from 'graphql';
+import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
 import { useHistory, useParams } from 'react-router';
 
@@ -18,7 +18,6 @@ type CatalogFilterProps = {
 	currentFilters: CurrentFilters;
 	sortQuery: SortOption;
 	searchQuery: string;
-	setCurrentCourse: Dispatch<SetStateAction<CourseFragment | null>>;
 	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
 	setSortQuery: Dispatch<SetStateAction<SortOption>>;
 	setSearchQuery: Dispatch<SetStateAction<string>>;
@@ -30,7 +29,6 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	const {
 		currentFilters,
 		setCurrentFilters,
-		setCurrentCourse,
 		sortQuery,
 		searchQuery,
 		setSortQuery,
