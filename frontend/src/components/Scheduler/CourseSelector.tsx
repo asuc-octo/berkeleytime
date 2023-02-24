@@ -6,12 +6,12 @@ import { reactSelectCourseSearch } from 'utils/courses/search';
 import { compareDepartmentName } from 'utils/courses/sorting';
 import { Semester } from 'utils/playlists/semesters';
 import {
-  getUnitsForSchedule,
-  hasCourseById,
-  removeCourse,
-  Schedule,
-  SchedulerCourseType,
-  SchedulerSectionType,
+	getUnitsForSchedule,
+	hasCourseById,
+	removeCourse,
+	Schedule,
+	SchedulerCourseType,
+	SchedulerSectionType,
 } from 'utils/scheduler/scheduler';
 import SchedulerCourse from './Selector/SchedulerCourse';
 import { ScheduleContext } from './ScheduleContext';
@@ -39,68 +39,68 @@ type Props = {
 };
 
 const CourseSelector = ({
-  allCourses,
-  semester,
-  schedule,
-  setSchedule,
-  setPreviewSection,
+	allCourses,
+	semester,
+	schedule,
+	setSchedule,
+	setPreviewSection,
 }: Props) => {
-  // Sort courses
-  const sortedCourses: CourseOptionType[] = useMemo(
-    () =>
-      allCourses.sort(compareDepartmentName).map((course) => ({
-        value: course.id,
-        label: courseToName(course),
-        course,
-      })),
-    [allCourses]
-  );
+	// Sort courses
+	const sortedCourses: CourseOptionType[] = useMemo(
+		() =>
+			allCourses.sort(compareDepartmentName).map((course) => ({
+				value: course.id,
+				label: courseToName(course),
+				course,
+			})),
+		[allCourses]
+	);
 
-  function addCourse(course: SchedulerCourseType) {
-    setSchedule({
-      ...schedule,
-      courses: [course, ...schedule.courses.filter((c) => c.id !== course.id)],
-    });
-  }
+	function addCourse(course: SchedulerCourseType) {
+		setSchedule({
+			...schedule,
+			courses: [course, ...schedule.courses.filter((c) => c.id !== course.id)],
+		});
+	}
 
-  function trashCourse(courseId: string) {
-    setSchedule(removeCourse(schedule, courseId));
-  }
+	function trashCourse(courseId: string) {
+		setSchedule(removeCourse(schedule, courseId));
+	}
 
-  return (
-    <div className="course-selector">
-      <h2>{semester.semester.charAt(0).toUpperCase() + semester.semester.slice(1)} {semester.year} Scheduler</h2>
-      <BTSelect
-        isVirtual
-        value={null}
-        name="selectClass"
-        placeholder="Choose a class..."
-        options={sortedCourses.filter(
-          (course) => !hasCourseById(schedule, course.value)
-        )}
-        filterOption={reactSelectCourseSearch}
-        onChange={(c: CourseOptionType) => c && addCourse(c.course)}
-      />
-      <div className="scheduler-units">
+	return (
+		<div className="course-selector">
+			<h2>{semester.semester.charAt(0).toUpperCase() + semester.semester.slice(1)} {semester.year} Scheduler</h2>
+			<BTSelect
+				isVirtual
+				value={null}
+				name="selectClass"
+				placeholder="Choose a class..."
+				options={sortedCourses.filter(
+					(course) => !hasCourseById(schedule, course.value)
+				)}
+				filterOption={reactSelectCourseSearch}
+				onChange={(c: CourseOptionType) => c && addCourse(c.course)}
+			/>
+			<div className="scheduler-units">
         Scheduled Units: {unitsToString(getUnitsForSchedule(schedule))}
-      </div>
-      <div>
-        <ScheduleContext.Provider
-          value={{ schedule, setSchedule, setPreviewSection }}
-        >
-          {schedule.courses.map((course) => (
-            <SchedulerCourse
-              key={course.id}
-              courseId={course.id}
-              partialCourse={course}
-              semester={semester}
-              didRemove={() => trashCourse(course.id)}
-            />
-          ))}
-        </ScheduleContext.Provider>
-      </div>
-    </div>
-  );
+			</div>
+			<div>
+				<ScheduleContext.Provider
+					value={{ schedule, setSchedule, setPreviewSection }}
+				>
+					{schedule.courses.map((course) => (
+						<SchedulerCourse
+							key={course.id}
+							courseId={course.id}
+							partialCourse={course}
+							semester={semester}
+							didRemove={() => trashCourse(course.id)}
+						/>
+					))}
+				</ScheduleContext.Provider>
+			</div>
+		</div>
+	);
 };
 
 export default CourseSelector;

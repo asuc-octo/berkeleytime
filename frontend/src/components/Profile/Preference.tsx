@@ -7,21 +7,21 @@ type PreferenceProps = {
 };
 
 const Preference = ({
-  text,
-  isChecked,
-  onChange = () => {}
+	text,
+	isChecked,
+	onChange = () => {}
 }: PreferenceProps) => {
-  return (
-    <div className="profile-row">
-      <p>{text}</p>
-      <div className="notifications-switch">
-        <Switch
-          checked={isChecked}
-          onChange={onChange}
-        />
-      </div>
-    </div>
-  );
+	return (
+		<div className="profile-row">
+			<p>{text}</p>
+			<div className="notifications-switch">
+				<Switch
+					checked={isChecked}
+					onChange={onChange}
+				/>
+			</div>
+		</div>
+	);
 }
 
 export default Preference;

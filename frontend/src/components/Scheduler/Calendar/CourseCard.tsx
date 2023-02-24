@@ -3,11 +3,11 @@ import { CourseOverviewFragment } from 'graphql';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 import { courseToColor, courseToName } from 'utils/courses/course';
 import {
-  getColorForSection,
-  getCourseForSchedule,
-  removeSection,
-  Schedule,
-  SchedulerSectionType,
+	getColorForSection,
+	getCourseForSchedule,
+	removeSection,
+	Schedule,
+	SchedulerSectionType,
 } from 'utils/scheduler/scheduler';
 import { formatLocation, formatSectionTime } from 'utils/sections/section';
 import cx from 'classnames';
@@ -55,72 +55,72 @@ type Props = {
 };
 
 const CourseCard = ({
-  section,
-  schedule,
-  course = schedule ? getCourseForSchedule(schedule, section) : null,
-  setSchedule,
-  color = schedule
-    ? getColorForSection(schedule, section)
-    : courseToColor(section.courseId),
-  isPreview = false,
-  noPopover = false,
+	section,
+	schedule,
+	course = schedule ? getCourseForSchedule(schedule, section) : null,
+	setSchedule,
+	color = schedule
+		? getColorForSection(schedule, section)
+		: courseToColor(section.courseId),
+	isPreview = false,
+	noPopover = false,
 }: Props) => {
-  const cardTitle = `${courseToName(course)} ${section.kind}`;
-  const cardDescription = combineStrings(
-    [formatLocation(section.locationName), formatSectionTime(section)],
-    ', '
-  );
+	const cardTitle = `${courseToName(course)} ${section.kind}`;
+	const cardDescription = combineStrings(
+		[formatLocation(section.locationName), formatSectionTime(section)],
+		', '
+	);
 
-  const card = (
-    <CalendarCard
-      title={cardTitle}
-      description={cardDescription}
-      color={color}
-      className={cx('calendar-course-card', {
-        'calendar-course-card--preview': isPreview,
-      })}
-    />
-  );
+	const card = (
+		<CalendarCard
+			title={cardTitle}
+			description={cardDescription}
+			color={color}
+			className={cx('calendar-course-card', {
+				'calendar-course-card--preview': isPreview,
+			})}
+		/>
+	);
 
-  if (noPopover || isPreview) {
-    return card;
-  }
+	if (noPopover || isPreview) {
+		return card;
+	}
 
-  const popover = (
-    <Popover id={`popover-${section.id}`}>
-      <div className="course-card-popover">
-        <div>
-          <div
-            className="course-card-popover-square"
-            style={{ background: color }}
-          />
-          <h4>{cardTitle}</h4>
-          {schedule && setSchedule && (
-            <TrashButton
-              onClick={() => {
-                setSchedule(removeSection(schedule, section.id));
-              }}
-            />
-          )}
-        </div>
-        <p>{cardDescription}</p>
-        <p>CCN: {section.ccn}</p>
-        <p>{section.instructor}</p>
-      </div>
-    </Popover>
-  );
+	const popover = (
+		<Popover id={`popover-${section.id}`}>
+			<div className="course-card-popover">
+				<div>
+					<div
+						className="course-card-popover-square"
+						style={{ background: color }}
+					/>
+					<h4>{cardTitle}</h4>
+					{schedule && setSchedule && (
+						<TrashButton
+							onClick={() => {
+								setSchedule(removeSection(schedule, section.id));
+							}}
+						/>
+					)}
+				</div>
+				<p>{cardDescription}</p>
+				<p>CCN: {section.ccn}</p>
+				<p>{section.instructor}</p>
+			</div>
+		</Popover>
+	);
 
-  return (
-    <OverlayTrigger
-      trigger="click"
-      overlay={popover}
-      placement="left"
-      delay={0}
-      rootClose
-    >
-      {card}
-    </OverlayTrigger>
-  );
+	return (
+		<OverlayTrigger
+			trigger="click"
+			overlay={popover}
+			placement="left"
+			delay={0}
+			rootClose
+		>
+			{card}
+		</OverlayTrigger>
+	);
 };
 
 export default CourseCard;

@@ -5,9 +5,9 @@ import CourseSelector from 'components/Scheduler/CourseSelector';
 import { useGetCoursesForFilterQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
 import {
-  Schedule,
-  SchedulerSectionType,
-  scheduleToICal,
+	Schedule,
+	SchedulerSectionType,
+	scheduleToICal,
 } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import AccessControl from './AccessControl';
@@ -47,114 +47,114 @@ type Props = {
 };
 
 const ScheduleEditor = ({
-  schedule,
-  semester,
-  setSchedule,
-  saveWidget,
-  accessControl,
+	schedule,
+	semester,
+	setSchedule,
+	saveWidget,
+	accessControl,
 }: Props) => {
-  const { semester: latestSemester, error: semesterError } = useSemester(
-    semester
-  );
+	const { semester: latestSemester, error: semesterError } = useSemester(
+		semester
+	);
 
-  // Only load the list of filters once we have the latest semester. If we
-  // didn't wait, we'd load all semesters' classes which is way to many.
-  const { data, error: coursesError } = useGetCoursesForFilterQuery({
-    variables: {
-      playlists: latestSemester?.playlistId!,
-    },
-    skip: !latestSemester,
-  });
+	// Only load the list of filters once we have the latest semester. If we
+	// didn't wait, we'd load all semesters' classes which is way to many.
+	const { data, error: coursesError } = useGetCoursesForFilterQuery({
+		variables: {
+			playlists: latestSemester?.playlistId!,
+		},
+		skip: !latestSemester,
+	});
 
-  // If the user is hovering over a section. This will store that section
-  const [
-    previewSection,
-    setPreviewSection,
-  ] = useState<SchedulerSectionType | null>(null);
+	// If the user is hovering over a section. This will store that section
+	const [
+		previewSection,
+		setPreviewSection,
+	] = useState<SchedulerSectionType | null>(null);
 
-  const setScheduleName = (event: ChangeEvent<HTMLInputElement>) =>
-    setSchedule({
-      ...schedule,
-      name: event.target.value,
-    });
+	const setScheduleName = (event: ChangeEvent<HTMLInputElement>) =>
+		setSchedule({
+			...schedule,
+			name: event.target.value,
+		});
 
-  const setScheduleVisibility = (newAccess: AccessStatus) =>
-    setSchedule({
-      ...schedule,
-      access: newAccess,
-    });
+	const setScheduleVisibility = (newAccess: AccessStatus) =>
+		setSchedule({
+			...schedule,
+			access: newAccess,
+		});
 
-  if (!data || !semester) {
-    return (
-      <BTLoader
-        message="Loading courses..."
-        error={semesterError || coursesError}
-        fill
-      />
-    );
-  }
+	if (!data || !semester) {
+		return (
+			<BTLoader
+				message="Loading courses..."
+				error={semesterError || coursesError}
+				fill
+			/>
+		);
+	}
 
-  function exportToCalendar() {
-    const icsData = scheduleToICal(schedule, semester!);
-    const icsURI =
+	function exportToCalendar() {
+		const icsData = scheduleToICal(schedule, semester!);
+		const icsURI =
       `data:text/calendar;charset=utf8,` + encodeURIComponent(icsData);
 
-    const link = document.createElement('a');
-    link.href = icsURI;
-    link.download = `${schedule.name}.ics`;
-    link.click();
-  }
+		const link = document.createElement('a');
+		link.href = icsURI;
+		link.download = `${schedule.name}.ics`;
+		link.click();
+	}
 
-  const allCourses = getNodes(data.allCourses!);
+	const allCourses = getNodes(data.allCourses!);
 
-  return (
-    <Row noGutters>
-      <Col lg={4}>
-        <CourseSelector
-          allCourses={allCourses}
-          semester={semester}
-          schedule={schedule}
-          setSchedule={setSchedule}
-          setPreviewSection={setPreviewSection}
-        />
-      </Col>
-      <Col lg={8}>
-        <div className="scheduler-header">
-          <div>
-            <input
-              type="text"
-              value={schedule.name}
-              onChange={setScheduleName}
-              placeholder="Schedule Name"
-              className="scheduler-name-input mr-3"
-            />
-            {saveWidget}
-          </div>
-          <div>
-            {accessControl && (
-              <AccessControl
-                visibility={schedule.access}
-                setVisibility={setScheduleVisibility}
-                scheduleId={accessControl}
-              />
-            )}
-            <Button
-              className="bt-btn-inverted ml-3"
-              size="sm"
-              onClick={exportToCalendar}
-            >
+	return (
+		<Row noGutters>
+			<Col lg={4}>
+				<CourseSelector
+					allCourses={allCourses}
+					semester={semester}
+					schedule={schedule}
+					setSchedule={setSchedule}
+					setPreviewSection={setPreviewSection}
+				/>
+			</Col>
+			<Col lg={8}>
+				<div className="scheduler-header">
+					<div>
+						<input
+							type="text"
+							value={schedule.name}
+							onChange={setScheduleName}
+							placeholder="Schedule Name"
+							className="scheduler-name-input mr-3"
+						/>
+						{saveWidget}
+					</div>
+					<div>
+						{accessControl && (
+							<AccessControl
+								visibility={schedule.access}
+								setVisibility={setScheduleVisibility}
+								scheduleId={accessControl}
+							/>
+						)}
+						<Button
+							className="bt-btn-inverted ml-3"
+							size="sm"
+							onClick={exportToCalendar}
+						>
               Export to Calendar
-            </Button>
-          </div>
-        </div>
-        <SchedulerCalendar
-          schedule={schedule}
-          setSchedule={setSchedule}
-          previewSection={previewSection}
-        />
-      </Col>
-    </Row>
-  );
+						</Button>
+					</div>
+				</div>
+				<SchedulerCalendar
+					schedule={schedule}
+					setSchedule={setSchedule}
+					previewSection={previewSection}
+				/>
+			</Col>
+		</Row>
+	);
 };
 
 export default ScheduleEditor;

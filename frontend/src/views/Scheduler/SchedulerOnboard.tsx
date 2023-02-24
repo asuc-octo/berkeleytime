@@ -1,8 +1,8 @@
 import {
-  ComponentType,
-  useState,
-  Dispatch,
-  SetStateAction
+	ComponentType,
+	useState,
+	Dispatch,
+	SetStateAction
 } from 'react';
 import Welcome from 'components/Scheduler/Onboard/Welcome';
 import SelectClasses from 'components/Scheduler/Onboard/SelectClasses';
@@ -19,49 +19,49 @@ const pages: {
     setSchedule: Dispatch<SetStateAction<Schedule>>;
   }>;
 }[] = [
-  {
-    key: 'welcome',
-    component: Welcome,
-  },
-  {
-    key: 'select-classes',
-    component: SelectClasses,
-  },
-  // {
-  //   key: 'time-preferences',
-  //   component: TimePreferences,
-  // },
+	{
+		key: 'welcome',
+		component: Welcome,
+	},
+	{
+		key: 'select-classes',
+		component: SelectClasses,
+	},
+	// {
+	//   key: 'time-preferences',
+	//   component: TimePreferences,
+	// },
 ];
 
 const SchedulerOnboard = () => {
-  const [pageIndex, setPageIndex] = useState(0);
-  const PageComponent = pages[pageIndex].component;
+	const [pageIndex, setPageIndex] = useState(0);
+	const PageComponent = pages[pageIndex].component;
 
-  const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
+	const [schedule, setSchedule] = useState<Schedule>(DEFAULT_SCHEDULE);
   
-  const isMobile = useSelector((state: ReduxState) => state.common.mobile);
+	const isMobile = useSelector((state: ReduxState) => state.common.mobile);
 
-  if (isMobile) {
-    return (
-      <div className="scheduler viewport-app">
-        <div className="onboard">
-          <p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
-        </div>
-      </div>
-    );
-  }
+	if (isMobile) {
+		return (
+			<div className="scheduler viewport-app">
+				<div className="onboard">
+					<p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+				</div>
+			</div>
+		);
+	}
 
-  return (
-    <div className="scheduler viewport-app">
-      <div className="onboard">
-        <PageComponent
-          updatePage={setPageIndex}
-          schedule={schedule}
-          setSchedule={setSchedule}
-        />
-      </div>
-    </div>
-  );
+	return (
+		<div className="scheduler viewport-app">
+			<div className="onboard">
+				<PageComponent
+					updatePage={setPageIndex}
+					schedule={schedule}
+					setSchedule={setSchedule}
+				/>
+			</div>
+		</div>
+	);
 };
 
 export default SchedulerOnboard;

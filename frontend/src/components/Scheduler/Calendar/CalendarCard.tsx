@@ -10,29 +10,29 @@ export type Props = HTMLProps<HTMLDivElement> & {
 };
 
 const CalendarCard = forwardRef<HTMLDivElement, Props>(
-  (
-    { title, description, color, style = {}, className = '', ...props },
-    ref
-  ) => {
-    const isLightCard = Color(color).luminosity() > 0.65;
+	(
+		{ title, description, color, style = {}, className = '', ...props },
+		ref
+	) => {
+		const isLightCard = Color(color).luminosity() > 0.65;
 
-    return (
-      <div
-        className={'calendar-card ' + className}
-        style={{
-          background: color,
-          color: isLightCard ? '#535353' : '#FFF',
-          ...style,
-        }}
-        title={title}
-        ref={ref}
-        {...props}
-      >
-        <div className="calendar-card__title">{title}</div>
-        <p className="calendar-card__description">{description}</p>
-      </div>
-    );
-  }
+		return (
+			<div
+				className={'calendar-card ' + className}
+				style={{
+					background: color,
+					color: isLightCard ? '#535353' : '#FFF',
+					...style,
+				}}
+				title={title}
+				ref={ref}
+				{...props}
+			>
+				<div className="calendar-card__title">{title}</div>
+				<p className="calendar-card__description">{description}</p>
+			</div>
+		);
+	}
 );
 
 CalendarCard.displayName = 'CalendarCard';

@@ -8,14 +8,14 @@ const allowedRedirects = new Map([
 ])
 
 const RedirectLink: FC = () => {
-  const params = new URLSearchParams(useLocation().search);
-  const site = params.get("site");
-  if (site != null && allowedRedirects.has(site)) {
+	const params = new URLSearchParams(useLocation().search);
+	const site = params.get("site");
+	if (site != null && allowedRedirects.has(site)) {
   	window.open(allowedRedirects.get(site), '_blank');
-  }
-  const history = useHistory();
-  history.goBack();
-  return null;
+	}
+	const history = useHistory();
+	history.goBack();
+	return null;
 }
 
 export default RedirectLink

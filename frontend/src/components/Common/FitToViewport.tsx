@@ -5,15 +5,15 @@ interface Props {
 }
 
 const FitToViewport: FC<Props> = (props) => {
-  const className = 'fit-to-viewport' + (
-    props.underNavbar ? ' under-navbar' : ''
-  )
+	const className = 'fit-to-viewport' + (
+		props.underNavbar ? ' under-navbar' : ''
+	)
 
-  return (
-    <div className={className}>
-      { props.children }
-    </div>
-  )
+	return (
+		<div className={className}>
+			{ props.children }
+		</div>
+	)
 }
 
 export default FitToViewport

@@ -6,34 +6,34 @@ type BTErrorBoundryState = {
 };
 
 class BTErrorBoundry extends Component<BTErrorBoundryProps, BTErrorBoundryState> {
-    constructor(props: BTErrorBoundryProps) {
-        super(props);
-        this.state = {
-            error: null
-        };
-    }
+	constructor(props: BTErrorBoundryProps) {
+		super(props);
+		this.state = {
+			error: null
+		};
+	}
 
-    static getDerivedStateFromError(error: Error): BTErrorBoundryState {
-        return { error };
-    }
+	static getDerivedStateFromError(error: Error): BTErrorBoundryState {
+		return { error };
+	}
 
-    render() {
-        // TODO: make more production-friendly
-        if (this.state.error !== null) {
-            return (
-                <div>
-                    <p>An error occured.</p>
-                    <pre>
-                        {this.state.error.message}
-                        <br/>
-                        {this.state.error.stack}
-                    </pre>
-                </div>
-            );
-        }
+	render() {
+		// TODO: make more production-friendly
+		if (this.state.error !== null) {
+			return (
+				<div>
+					<p>An error occured.</p>
+					<pre>
+						{this.state.error.message}
+						<br/>
+						{this.state.error.stack}
+					</pre>
+				</div>
+			);
+		}
 
-        return this.props.children;
-    }
+		return this.props.children;
+	}
 }
 
 export default BTErrorBoundry;
