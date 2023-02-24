@@ -5,16 +5,16 @@
 	position: relative;
 	flex-direction: column;
 	border-right: 1.5px solid #eaeaea;
-	height: calc(100% + 37px);
+	height: calc(100% + 48px);
 	overflow: hidden;
 
 	@include media(mobile, tablet) {
-		top: -37px;
+		top: -48px;
 	}
 
 	.list {
 		@include media(mobile, tablet) {
-			margin-top: 37px;
+			margin-top: 48px;
 		}
 	}
 
@@ -56,7 +56,7 @@
 }
 
 .skeleton {
-  padding: 0 !important;
+	padding: 0 !important;
 }
 
 .selected {

@@ -28,24 +28,41 @@
 		display: flex;
 		grid-area: toggle;
 		z-index: 200;
-		color: #8a8a8a;
-		font-size: 18px;
-		outline: none;
-		border: none;
-		justify-content: center;
+		justify-content: space-between;
 		align-items: center;
 		justify-self: center;
 		transition-duration: 0.1s;
 		background: transparent;
-		padding: 10px 10vw;
 		border-radius: 0px 0px 12px 12px;
 		border: 1.5px solid #eaeaea;
 		border-top: none;
+		padding: 5px 8px;
 		background: white;
-		&:active,
-		&:hover {
-			background: $bt-off-white;
+    font-size: 14px;
+
+    input {
+      font-size: 14px;
+    }
+
+		button {
+			font-size: 18px;
+			outline: none;
+			color: #8a8a8a;
+			border: none;
+      padding: 5px;
+			background: white;
+      border-radius: 50%;
+			&:active,
+			&:hover {
+				color: $bt-blue;
+			}
 		}
+	}
+}
+
+.search {
+	@include media(mobile, tablet) {
+		display: none;
 	}
 }
 
@@ -56,7 +73,7 @@
 	@include media(mobile, tablet) {
 		position: absolute;
 		grid-area: modal;
-		top: -40px;
+		top: -48px;
 		width: 100%;
 		height: calc(100vh - 36px);
 		z-index: 50;
@@ -90,7 +107,7 @@
 		border-radius: 12px;
 		background: white;
 		width: 80%;
-		height: 80%;
+		height: min-content;
 
 		&[data-modal='false'] {
 			display: none;
