@@ -14,8 +14,8 @@ class Property extends PureComponent {
 			control: (base) => ({
 				...base,
 				border: 0,
-				boxShadow: 'none',
-			}),
+				boxShadow: 'none'
+			})
 		};
 
 		let body;
@@ -30,13 +30,9 @@ class Property extends PureComponent {
 							isClearable={false}
 							onChange={this.props.updateMajor}
 							placeholder="Select major..."
-							value={
-								this.props.major
-									? { label: this.props.major, value: this.props.major }
-									: null
-							}
+							value={this.props.major ? { label: this.props.major, value: this.props.major } : null}
 							components={{
-								IndicatorSeparator: () => null,
+								IndicatorSeparator: () => null
 							}}
 							styles={style}
 						/>

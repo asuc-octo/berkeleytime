@@ -4,14 +4,14 @@ import { Redirect, useParams } from 'react-router';
 import {
 	deserializeSchedule,
 	formatScheduleError,
-	getUnitsForSchedule,
+	getUnitsForSchedule
 } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
 import { unitsToString } from 'utils/courses/units';
 import { useUser } from 'graphql/hooks/user';
 import { Button } from 'bt/custom';
 import { ReduxState } from 'redux/store';
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
 const ViewSchedule = () => {
 	const { scheduleId: scheduleUUID } = useParams<{ scheduleId?: string }>();
@@ -19,7 +19,7 @@ const ViewSchedule = () => {
 
 	const { data, error } = useGetScheduleForIdQuery({
 		variables: { id: btoa(`ScheduleType:${scheduleUUID}`) },
-		skip: scheduleUUID === undefined,
+		skip: scheduleUUID === undefined
 	});
 
 	const isMobile = useSelector((state: ReduxState) => state.common.mobile);
@@ -28,7 +28,9 @@ const ViewSchedule = () => {
 		return (
 			<div className="scheduler viewport-app">
 				<div className="onboard">
-					<p className="py-5 px-2 mobile">Unfortunately, the Scheduler does not support mobile devices at this time.</p>
+					<p className="py-5 px-2 mobile">
+						Unfortunately, the Scheduler does not support mobile devices at this time.
+					</p>
 				</div>
 			</div>
 		);
@@ -59,25 +61,16 @@ const ViewSchedule = () => {
 					<span>Selected units: {unitsToString(totalUnits)}</span>
 				</div>
 				<div>
-					<input
-						type="text"
-						value={schedule.name}
-						readOnly
-						className="scheduler-name-input mr-3"
-					/>
+					<input type="text" value={schedule.name} readOnly className="scheduler-name-input mr-3" />
 				</div>
 				<div>
 					{scheduleOwner.id === user?.user.id ? (
-						<Button
-							className="bt-btn-primary"
-							size="sm"
-							href={`/scheduler/${scheduleUUID}`}
-						>
-              Edit
+						<Button className="bt-btn-primary" size="sm" href={`/scheduler/${scheduleUUID}`}>
+							Edit
 						</Button>
 					) : (
 						<span className="scheduler-header-strong">
-              by {scheduleOwner.firstName} {scheduleOwner.lastName}
+							by {scheduleOwner.firstName} {scheduleOwner.lastName}
 						</span>
 					)}
 				</div>

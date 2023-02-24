@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import {
-	CourseOverviewFragment,
-	ScheduleOverviewFragment,
-} from 'graphql';
+import { CourseOverviewFragment, ScheduleOverviewFragment } from 'graphql';
 import { semesterToString } from 'utils/playlists/semesters';
 import ScheduleModal from 'components/Scheduler/ScheduleModal';
 import { useDeleteSchedule } from 'graphql/hooks/schedule';
 import ProfileCard from './ProfileCard';
 
 type Props = {
-  schedule: ScheduleOverviewFragment;
+	schedule: ScheduleOverviewFragment;
 };
 
 const ProfileScheduleCard = ({ schedule }: Props) => {
@@ -30,9 +27,7 @@ const ProfileScheduleCard = ({ schedule }: Props) => {
 					setModalId(schedule.id);
 				}}
 				title={schedule.name}
-				subtitle={`${schedule.totalUnits} units \u2022 ${semesterToString(
-					schedule
-				)}`}
+				subtitle={`${schedule.totalUnits} units \u2022 ${semesterToString(schedule)}`}
 				description={courses
 					.map((course) => `${course.abbreviation} ${course.courseNumber}`)
 					.join(' • ')}

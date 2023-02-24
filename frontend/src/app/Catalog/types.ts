@@ -5,7 +5,7 @@ export type CatalogSlug = {
 	abbreviation?: string;
 	courseNumber?: string;
 	semester?: string;
-}
+};
 
 export type CatalogCategoryKeys =
 	| 'department'

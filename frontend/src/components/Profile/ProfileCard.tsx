@@ -2,13 +2,13 @@ import { ComponentProps, ElementType, ReactNode } from 'react';
 import TrashButton from 'components/Common/TrashButton';
 
 type Props<T extends ElementType> = ComponentProps<T> & {
-  removable?: boolean;
-  component: T;
-  title?: ReactNode;
-  subtitle?: ReactNode;
-  description?: ReactNode;
-  aside?: ReactNode;
-  didRemove?: () => void;
+	removable?: boolean;
+	component: T;
+	title?: ReactNode;
+	subtitle?: ReactNode;
+	description?: ReactNode;
+	aside?: ReactNode;
+	didRemove?: () => void;
 };
 
 const ProfileCard = <Component extends ElementType>({
@@ -28,9 +28,7 @@ const ProfileCard = <Component extends ElementType>({
 				<p className="profile-card-info-desc">{subtitle}</p>
 				<div className="profile-card-info-stats">{description}</div>
 			</div>
-			{aside && (
-				<div className="profile-card-sort profile-card-grade">{aside}</div>
-			)}
+			{aside && <div className="profile-card-sort profile-card-grade">{aside}</div>}
 			{removable && (
 				<TrashButton
 					onClick={(e) => {

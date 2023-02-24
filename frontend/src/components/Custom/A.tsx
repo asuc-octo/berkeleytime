@@ -1,6 +1,6 @@
-import { FC } from 'react'
-import { Link } from 'react-router-dom'
-import TextProps, { getClassNames } from './TextProps'
+import { FC } from 'react';
+import { Link } from 'react-router-dom';
+import TextProps, { getClassNames } from './TextProps';
 
 const A: FC<Props> = (props) => {
 	if (typeof props.href === 'object') {
@@ -8,18 +8,18 @@ const A: FC<Props> = (props) => {
 			<Link to={props.href.as_link} className={getClassNames('bt-a', props)}>
 				{props.children}
 			</Link>
-		)
+		);
 	} else {
 		return (
 			<a href={props.href} className={getClassNames('bt-a', props)}>
 				{props.children}
 			</a>
-		)
+		);
 	}
-}
+};
 
 export interface Props extends TextProps {
-  href?: string | { as_link: string }
+	href?: string | { as_link: string };
 }
 
-export default A
+export default A;

@@ -1,5 +1,5 @@
 fragment Filter on PlaylistType {
-  id
-  name
-  category
+	id
+	name
+	category
 }

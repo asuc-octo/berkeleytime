@@ -143,5 +143,5 @@ export {
 	percentileToString,
 	getGradeColor,
 	getEnrollmentDay,
-	applyIndicatorEnrollment,
+	applyIndicatorEnrollment
 };

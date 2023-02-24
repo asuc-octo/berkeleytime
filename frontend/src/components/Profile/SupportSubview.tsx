@@ -6,9 +6,7 @@ const SupportSubview = () => {
 	const [deleteUser, { loading }] = useDeleteUser();
 
 	function deleteAccount() {
-		const didConfirm = window.confirm(
-			`Are you sure you wish to IRREVERSIBLY delete your account?`
-		);
+		const didConfirm = window.confirm(`Are you sure you wish to IRREVERSIBLY delete your account?`);
 		if (didConfirm) {
 			deleteUser();
 		}
@@ -22,11 +20,7 @@ const SupportSubview = () => {
 				{loading ? (
 					<Resource text="Deleting Account..." isDestructive />
 				) : (
-					<Resource
-						text="Delete Account"
-						onClick={deleteAccount}
-						isDestructive
-					/>
+					<Resource text="Delete Account" onClick={deleteAccount} isDestructive />
 				)}
 			</Subview>
 		</div>

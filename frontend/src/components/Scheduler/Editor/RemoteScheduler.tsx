@@ -1,14 +1,7 @@
 import BTLoader from 'components/Common/BTLoader';
-import {
-	useGetScheduleForIdLazyQuery,
-	useUpdateScheduleMutation,
-} from 'graphql';
+import { useGetScheduleForIdLazyQuery, useUpdateScheduleMutation } from 'graphql';
 import { useCallback, useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
-import {
-	deserializeSchedule,
-	Schedule,
-	serializeSchedule,
-} from 'utils/scheduler/scheduler';
+import { deserializeSchedule, Schedule, serializeSchedule } from 'utils/scheduler/scheduler';
 import ScheduleEditor from '../ScheduleEditor';
 import { Semester } from 'utils/playlists/semesters';
 import { debounce } from 'lodash-es';
@@ -21,9 +14,9 @@ import Callout from '../Callout';
 const SCHEDULER_AUTOSAVE_INTERVAL = 500;
 
 type Props = {
-  scheduleId: string;
-  schedule: Schedule;
-  setRawSchedule: Dispatch<SetStateAction<Schedule>>;
+	scheduleId: string;
+	schedule: Schedule;
+	setRawSchedule: Dispatch<SetStateAction<Schedule>>;
 };
 
 const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
@@ -38,10 +31,7 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
 	// Stores the currently pending autosave mutation query.
 	const currentlyPendingUpdate = useRef<Promise<any> | null>(null);
 
-	const [
-		getScheduleForId,
-		{ error: scheduleLoadError },
-	] = useGetScheduleForIdLazyQuery({
+	const [getScheduleForId, { error: scheduleLoadError }] = useGetScheduleForIdLazyQuery({
 		onCompleted: (data) => {
 			if (!data.schedule) {
 				alert(`Couldn't find the given schedule.`);
@@ -54,7 +44,7 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
 				setRawSchedule(schedule);
 				setSemester(data.schedule);
 			}
-		},
+		}
 	});
 
 	useEffect(() => {
@@ -63,8 +53,8 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
 
 		getScheduleForId({
 			variables: {
-				id: scheduleId,
-			},
+				id: scheduleId
+			}
 		});
 
 		// NOTE: potential race condition. Any pending getScheduleForId
@@ -74,10 +64,7 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
 		// usually the requests come back in the same order.
 	}, [scheduleId, getScheduleForId]);
 
-	const [
-		updateScheduleMutation,
-		{ error: saveError },
-	] = useUpdateScheduleMutation();
+	const [updateScheduleMutation, { error: saveError }] = useUpdateScheduleMutation();
 
 	// Call this to save a schedule. This gets renewed when the
 	// scheduleId changes (to clear the save queue).
@@ -89,8 +76,8 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
 			const result = updateScheduleMutation({
 				variables: {
 					scheduleId: id,
-					...serializeSchedule(schedule, semester),
-				},
+					...serializeSchedule(schedule, semester)
+				}
 			});
 
 			currentlyPendingUpdate.current = result;
@@ -106,9 +93,7 @@ const RemoteScheduler = ({ scheduleId, schedule, setRawSchedule }: Props) => {
 	);
 
 	if (!schedule || !semester) {
-		return (
-			<BTLoader error={scheduleLoadError} message="Fetching schedule..." fill />
-		);
+		return <BTLoader error={scheduleLoadError} message="Fetching schedule..." fill />;
 	}
 
 	async function setSchedule(newSchedule: Schedule) {

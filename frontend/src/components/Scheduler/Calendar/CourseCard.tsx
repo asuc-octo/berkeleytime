@@ -7,7 +7,7 @@ import {
 	getCourseForSchedule,
 	removeSection,
 	Schedule,
-	SchedulerSectionType,
+	SchedulerSectionType
 } from 'utils/scheduler/scheduler';
 import { formatLocation, formatSectionTime } from 'utils/sections/section';
 import cx from 'classnames';
@@ -15,43 +15,43 @@ import CalendarCard from './CalendarCard';
 import { combineStrings } from 'utils/string';
 
 type Props = {
-  /**
-   * The course associated with the section. You
-   * don't need to pass this if a `schedule` is
-   * provided.
-   */
-  course?: CourseOverviewFragment | null;
-  section: SchedulerSectionType;
+	/**
+	 * The course associated with the section. You
+	 * don't need to pass this if a `schedule` is
+	 * provided.
+	 */
+	course?: CourseOverviewFragment | null;
+	section: SchedulerSectionType;
 
-  /**
-   * If this course card represents a section from
-   * a schedule, pass the schedule here.
-   */
-  schedule?: Schedule;
+	/**
+	 * If this course card represents a section from
+	 * a schedule, pass the schedule here.
+	 */
+	schedule?: Schedule;
 
-  /**
-   * Allows the user to modify the schedule from
-   * this card.
-   */
-  setSchedule?: (newSchedule: Schedule) => void;
+	/**
+	 * Allows the user to modify the schedule from
+	 * this card.
+	 */
+	setSchedule?: (newSchedule: Schedule) => void;
 
-  /**
-   * CSS hex color of the card, otherwise defaults
-   * to a color determined from the course's title.
-   */
-  color?: string;
+	/**
+	 * CSS hex color of the card, otherwise defaults
+	 * to a color determined from the course's title.
+	 */
+	color?: string;
 
-  /**
-   * Defaults to `false`. Overrides and disables noPopover.
-   * Also disables the dropdown. Use this if the card is
-   * a temporary preview and not a permanent calendar item.
-   */
-  isPreview?: boolean;
+	/**
+	 * Defaults to `false`. Overrides and disables noPopover.
+	 * Also disables the dropdown. Use this if the card is
+	 * a temporary preview and not a permanent calendar item.
+	 */
+	isPreview?: boolean;
 
-  /**
-   * If to not show a popover on this node
-   */
-  noPopover?: boolean;
+	/**
+	 * If to not show a popover on this node
+	 */
+	noPopover?: boolean;
 };
 
 const CourseCard = ({
@@ -59,11 +59,9 @@ const CourseCard = ({
 	schedule,
 	course = schedule ? getCourseForSchedule(schedule, section) : null,
 	setSchedule,
-	color = schedule
-		? getColorForSection(schedule, section)
-		: courseToColor(section.courseId),
+	color = schedule ? getColorForSection(schedule, section) : courseToColor(section.courseId),
 	isPreview = false,
-	noPopover = false,
+	noPopover = false
 }: Props) => {
 	const cardTitle = `${courseToName(course)} ${section.kind}`;
 	const cardDescription = combineStrings(
@@ -77,7 +75,7 @@ const CourseCard = ({
 			description={cardDescription}
 			color={color}
 			className={cx('calendar-course-card', {
-				'calendar-course-card--preview': isPreview,
+				'calendar-course-card--preview': isPreview
 			})}
 		/>
 	);
@@ -90,10 +88,7 @@ const CourseCard = ({
 		<Popover id={`popover-${section.id}`}>
 			<div className="course-card-popover">
 				<div>
-					<div
-						className="course-card-popover-square"
-						style={{ background: color }}
-					/>
+					<div className="course-card-popover-square" style={{ background: color }} />
 					<h4>{cardTitle}</h4>
 					{schedule && setSchedule && (
 						<TrashButton
@@ -111,13 +106,7 @@ const CourseCard = ({
 	);
 
 	return (
-		<OverlayTrigger
-			trigger="click"
-			overlay={popover}
-			placement="left"
-			delay={0}
-			rootClose
-		>
+		<OverlayTrigger trigger="click" overlay={popover} placement="left" delay={0} rootClose>
 			{card}
 		</OverlayTrigger>
 	);

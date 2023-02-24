@@ -1,16 +1,12 @@
-import {
-	formatUnits,
-	applyIndicatorPercent,
-	applyIndicatorGrade,
-} from '../../../utils/utils';
+import { formatUnits, applyIndicatorPercent, applyIndicatorGrade } from '../../../utils/utils';
 import { CourseOverviewFragment } from 'graphql';
 import { Link } from 'react-router-dom';
 import ProfileCard from './../../Profile/ProfileCard';
 
 type Props = {
-  course: CourseOverviewFragment;
-  removable: boolean;
-  remove?: () => void;
+	course: CourseOverviewFragment;
+	removable: boolean;
+	remove?: () => void;
 };
 
 const SchedulerCourseCard = ({ course, removable, remove }: Props) => {
@@ -28,7 +24,7 @@ const SchedulerCourseCard = ({ course, removable, remove }: Props) => {
 								`${course.enrolled}/${course.enrolledMax} enrolled`,
 								course.enrolledPercentage
 							)}
-              &nbsp;•&nbsp;
+							&nbsp;•&nbsp;
 						</span>
 					)}
 					<span>{formatUnits(course.units)}</span>

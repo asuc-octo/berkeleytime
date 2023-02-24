@@ -13,10 +13,7 @@ export const combineStrings = (components: any[], seperator: string): string =>
 /**
  * Analgous version of combineStrings for React nodes
  */
-export const combineNodes = (
-	components: ReactNode[],
-	seperator: ReactNode
-): ReactNode[] =>
+export const combineNodes = (components: ReactNode[], seperator: ReactNode): ReactNode[] =>
 	components
 		.filter(Boolean)
 		.flatMap((item, index) => (index ? [seperator, item] : [item]))
@@ -32,8 +29,7 @@ export function hash(str: string): number {
 
 	for (i = 0, l = str.length; i < l; i++) {
 		hval ^= (str.charCodeAt(i) * 16127) % 255;
-		hval +=
-      (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
+		hval += (hval << 1) + (hval << 4) + (hval << 7) + (hval << 8) + (hval << 24);
 	}
 	return hval >>> 0;
 	// // Alternative hash function to consider:

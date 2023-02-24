@@ -31,60 +31,60 @@ const contributors = [
 			role: 'Product Manager and Backend Engineer',
 			site: 'https://kevwang.dev/',
 			img: kevin_1,
-			silly_img: kevin_2,
+			silly_img: kevin_2
 		},
 		{
 			name: 'Zachary Zollman',
 			role: 'Backend Lead',
 			site: 'https://zacharyzollman.com/',
 			img: zachary_1,
-			silly_img: zachary_2,
+			silly_img: zachary_2
 		},
 		{
 			name: 'Matthew Rowland',
 			role: 'Frontend Lead',
 			img: matthew_1,
-			silly_img: matthew_2,
+			silly_img: matthew_2
 		},
 		{
 			name: 'Henric Zhang',
 			role: 'Frontend Engineer',
 			img: henric_1,
-			silly_img: henric_2,
+			silly_img: henric_2
 		},
 		{
 			name: 'Ethan Ikegami',
 			role: 'Backend Engineer',
 			site: 'https://ethanikegami.com/',
 			img: ethan_1,
-			silly_img: ethan_2,
+			silly_img: ethan_2
 		},
 		{
 			name: 'William Tang',
 			role: 'Backend Engineer',
 			site: 'https://www.linkedin.com/in/william-tang-cal/',
 			img: william_1,
-			silly_img: william_2,
+			silly_img: william_2
 		},
 		{
 			name: 'Levi Kline',
 			role: 'Frontend Engineer',
 			site: 'https://levibkline.com',
 			img: levi_1,
-			silly_img: levi_1,
+			silly_img: levi_1
 		},
 		{
 			name: 'Eric Xu',
 			role: 'Backend Engineer',
 			img: eric_1,
-			silly_img: eric_2,
+			silly_img: eric_2
 		},
 		{
 			name: 'Michelle Tran',
 			role: 'Designer',
 			site: 'https://michelletran.design',
 			img: michelle_1,
-			silly_img: michelle_2,
+			silly_img: michelle_2
 		},
 		{
 			name: 'Joel Jaison',
@@ -92,13 +92,13 @@ const contributors = [
 			img: joel_1,
 			silly_img: joel_1
 		}
-	],
+	]
 ];
 
 const CurrentContributors: FC = () => (
 	<div className="current-contributors mb-5">
 		<H3 bold className="mb-4">
-      Current Team
+			Current Team
 		</H3>
 		{contributors.map((row, i) => (
 			<Row key={i}>

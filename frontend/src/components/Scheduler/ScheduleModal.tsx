@@ -5,18 +5,18 @@ import SchedulerCalendar from './Calendar/SchedulerCalendar';
 import {
 	deserializeSchedule,
 	formatScheduleError,
-	getUnitsForSchedule,
+	getUnitsForSchedule
 } from '../../utils/scheduler/scheduler';
 import { Button } from 'bt/custom';
 import { unitsToString } from 'utils/courses/units';
 
 type ContentProps = {
-  scheduleId: string;
+	scheduleId: string;
 };
 const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
 	const scheduleUUID = atob(scheduleId).split(':')[1];
 	const { data, error } = useGetScheduleForIdQuery({
-		variables: { id: scheduleId },
+		variables: { id: scheduleId }
 	});
 
 	if (!data?.schedule) {
@@ -33,20 +33,11 @@ const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
 					<span>Selected units: {unitsToString(totalUnits)}</span>
 				</div>
 				<div>
-					<input
-						type="text"
-						value={schedule.name}
-						readOnly
-						className="scheduler-name-input mr-3"
-					/>
+					<input type="text" value={schedule.name} readOnly className="scheduler-name-input mr-3" />
 				</div>
 				<div>
-					<Button
-						className="bt-btn-primary"
-						size="sm"
-						href={`/scheduler/${scheduleUUID}`}
-					>
-            Edit
+					<Button className="bt-btn-primary" size="sm" href={`/scheduler/${scheduleUUID}`}>
+						Edit
 					</Button>
 				</div>
 			</div>
@@ -56,18 +47,14 @@ const ScheduleModalContent = ({ scheduleId }: ContentProps) => {
 };
 
 type Props = {
-  scheduleId: string | null;
-  show: boolean;
-  handleClose: () => void;
+	scheduleId: string | null;
+	show: boolean;
+	handleClose: () => void;
 };
 
 const ScheduleModal = ({ scheduleId, show, handleClose }: Props) => {
 	return (
-		<Modal
-			show={show}
-			onHide={handleClose}
-			className="schedule-modal default-modal"
-		>
+		<Modal show={show} onHide={handleClose} className="schedule-modal default-modal">
 			{scheduleId && <ScheduleModalContent scheduleId={scheduleId} />}
 		</Modal>
 	);

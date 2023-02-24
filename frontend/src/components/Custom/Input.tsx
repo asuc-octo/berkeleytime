@@ -1,12 +1,8 @@
-import {
-	DetailedHTMLProps,
-	InputHTMLAttributes,
-	ReactNode,
-} from 'react';
+import { DetailedHTMLProps, InputHTMLAttributes, ReactNode } from 'react';
 
 type Props = {
-  icon?: ReactNode;
-  inputClassName?: string;
+	icon?: ReactNode;
+	inputClassName?: string;
 };
 
 const BTInput = ({
@@ -14,11 +10,7 @@ const BTInput = ({
 	className = '',
 	inputClassName = '',
 	...props
-}: Props &
-  DetailedHTMLProps<
-    InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  >) => {
+}: Props & DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>) => {
 	const iconClass = icon ? ' bt-input--icon' : '';
 
 	return (

@@ -1,9 +1,9 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { H6, A } from 'bt/custom';
 
 const Footer: FC = () => (
-	<footer className="footer py-5">
+	<footer className="py-5">
 		<Container>
 			<Row noGutters>
 				<Col xs={4} lg={{ span: 2, offset: 3 }}>
@@ -12,9 +12,6 @@ const Footer: FC = () => (
 							<H6 bold className="mb-3">
 								Support
 							</H6>
-							<A href={{ as_link: '/bugs' }} className="mb-2">
-								Report a Bug
-							</A>
 							<A href="mailto:octo.berkeleytime@asuc.org" className="mb-2">
 								Contact Us
 							</A>

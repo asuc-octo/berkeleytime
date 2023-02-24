@@ -1,36 +1,33 @@
 import Preference from './Preference';
-import {
-	UpdateUserMutationVariables,
-	UserProfileFragment,
-} from 'graphql';
+import { UpdateUserMutationVariables, UserProfileFragment } from 'graphql';
 import { useUpdateUser } from '../../graphql/hooks/user';
 import Subview from './Subview';
 
 type Props = {
-  userProfile: UserProfileFragment;
+	userProfile: UserProfileFragment;
 };
 
 const NotificationsSubview = ({ userProfile }: Props) => {
 	const updateUser = useUpdateUser();
 
 	// Helper function to trigger an update mutation.
-	const updateProperty = (
-		property: (checked: boolean) => UpdateUserMutationVariables
-	) => (checked: boolean) => updateUser(userProfile, property(checked));
+	const updateProperty =
+		(property: (checked: boolean) => UpdateUserMutationVariables) => (checked: boolean) =>
+			updateUser(userProfile, property(checked));
 
 	return (
 		<Subview title="Email Preferences">
 			<Preference
 				isChecked={userProfile.emailClassUpdate!}
 				onChange={updateProperty((checked) => ({
-					emailClassUpdate: checked,
+					emailClassUpdate: checked
 				}))}
 				text="Class updates in catalog"
 			/>
 			<Preference
 				isChecked={userProfile.emailGradeUpdate!}
 				onChange={updateProperty((checked) => ({
-					emailGradeUpdate: checked,
+					emailGradeUpdate: checked
 				}))}
 				text="Updated grades for saved classes"
 			/>
@@ -44,7 +41,7 @@ const NotificationsSubview = ({ userProfile }: Props) => {
 			<Preference
 				isChecked={userProfile.emailBerkeleytimeUpdate!}
 				onChange={updateProperty((checked) => ({
-					emailBerkeleytimeUpdate: checked,
+					emailBerkeleytimeUpdate: checked
 				}))}
 				text="Updates to Berkeleytime's software"
 			/>

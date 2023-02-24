@@ -1,15 +1,11 @@
-import {
-	formatUnits,
-	applyIndicatorPercent,
-	applyIndicatorGrade,
-} from '../../utils/utils';
+import { formatUnits, applyIndicatorPercent, applyIndicatorGrade } from '../../utils/utils';
 import { CourseOverviewFragment } from 'graphql';
 import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
 import { Link } from 'react-router-dom';
 import ProfileCard from './ProfileCard';
 
 type Props = {
-  course: CourseOverviewFragment;
+	course: CourseOverviewFragment;
 };
 
 const ProfileCourseCard = ({ course }: Props) => {
@@ -29,7 +25,7 @@ const ProfileCourseCard = ({ course }: Props) => {
 								`${course.enrolled}/${course.enrolledMax} enrolled`,
 								course.enrolledPercentage
 							)}
-              &nbsp;•&nbsp;
+							&nbsp;•&nbsp;
 						</span>
 					)}
 					<span>{formatUnits(course.units)}</span>

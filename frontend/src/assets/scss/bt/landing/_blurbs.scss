@@ -1,34 +1,34 @@
 .landing-blurbs {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 
-  margin-bottom: $landing-section-gap;
+	margin-bottom: $landing-section-gap;
 
-  .desc {
-    text-align: center;
-    width: 450px;
+	.desc {
+		text-align: center;
+		width: 450px;
 
-    @include touch {
-      width: 300px;
-    }
-  }
+		@include touch {
+			width: 300px;
+		}
+	}
 
-  .sponsors {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: center;
+	.sponsors {
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: row;
+		justify-content: center;
 
-    img {
-      height: 150px;
-      padding: 10px;
-      object-fit: scale-down;
+		img {
+			height: 150px;
+			padding: 10px;
+			object-fit: scale-down;
 
-      @include touch {
-        height: 100px;
-      }
-    }
-  }
+			@include touch {
+				height: 100px;
+			}
+		}
+	}
 }

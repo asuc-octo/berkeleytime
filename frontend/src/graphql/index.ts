@@ -249,7 +249,7 @@ export type EnrollmentData = {
   waitlistedPercent: Maybe<Scalars['Float']>;
 };
 
-/** The return format of both queries  */
+/** The return format of both queries */
 export type EnrollmentInfo = {
   __typename: 'EnrollmentInfo';
   course: Maybe<CourseType>;
@@ -324,7 +324,7 @@ export type Mutation = {
   __typename: 'Mutation';
   createSchedule: Maybe<CreateSchedule>;
   deleteUser: Maybe<DeleteUser>;
-  /** Login mutation using graphql_jwt  */
+  /** Login mutation using graphql_jwt */
   login: Maybe<ObtainJsonWebToken>;
   logout: Maybe<Logout>;
   refreshToken: Maybe<Refresh>;
@@ -402,7 +402,7 @@ export type Node = {
   id: Scalars['ID'];
 };
 
-/** Login mutation using graphql_jwt  */
+/** Login mutation using graphql_jwt */
 export type ObtainJsonWebToken = {
   __typename: 'ObtainJSONWebToken';
   newUser: Maybe<Scalars['Boolean']>;
@@ -871,7 +871,7 @@ export type SectionTypeEdge = {
   node: Maybe<SectionType>;
 };
 
-/** Telebears JSON  */
+/** Telebears JSON */
 export type TelebearData = {
   __typename: 'TelebearData';
   adjStart: Maybe<Scalars['Date']>;

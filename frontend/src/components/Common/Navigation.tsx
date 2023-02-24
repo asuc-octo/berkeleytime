@@ -9,14 +9,14 @@ import { Button } from 'bt/custom';
 import { useUser } from '../../graphql/hooks/user';
 import LoginModal from '../Login/LoginModal';
 
-type Props = PropsFromRedux
+type Props = PropsFromRedux;
 
 const NavigationLink: FC<
-  {
-    to?: string;
-    onClick?: () => void;
-    isNew?: boolean;
-  } & NavProps
+	{
+		to?: string;
+		onClick?: () => void;
+		isNew?: boolean;
+	} & NavProps
 > = ({ to, children, isNew = false, ...props }) => (
 	<Nav.Link
 		as={to ? Link : undefined}
@@ -43,23 +43,16 @@ const Navigation: FC<Props> = (props) => {
 	}, [location.pathname]);
 
 	return (
-		<Navbar
-			collapseOnSelect={true}
-			fixed="top"
-			expand="lg"
-			bg="white"
-		>
+		<Navbar collapseOnSelect={true} fixed="top" expand="lg" bg="white">
 			<Navbar.Brand as={Link} to="/" className="bt-bold">
-        Berkeleytime
+				Berkeleytime
 			</Navbar.Brand>
 			<Navbar.Toggle aria-controls="responsive-navbar-nav" />
 			<Navbar.Collapse id="responsive-navbar-nav">
 				<Nav className="mr-auto" />
 				<Nav>
 					<NavigationLink to="/catalog">Catalog</NavigationLink>
-					<NavigationLink to="/scheduler">
-            Scheduler
-					</NavigationLink>
+					<NavigationLink to="/scheduler">Scheduler</NavigationLink>
 					{/* {isLoggedIn && (
             <NavigationLink to="/scheduler">Scheduler</NavigationLink>
           )} */}
@@ -74,9 +67,7 @@ const Navigation: FC<Props> = (props) => {
 							<Button href="/logout">Log out</Button>
 						</>
 					) : (
-						<Button onClick={() => setShowLogin(true)}>
-              Log in
-						</Button>
+						<Button onClick={() => setShowLogin(true)}>Log in</Button>
 					)}
 				</Nav>
 			</Navbar.Collapse>
@@ -86,7 +77,7 @@ const Navigation: FC<Props> = (props) => {
 };
 
 const mapState = (state: ReduxState) => ({
-	banner: state.common.banner,
+	banner: state.common.banner
 });
 
 const connector = connect(mapState);

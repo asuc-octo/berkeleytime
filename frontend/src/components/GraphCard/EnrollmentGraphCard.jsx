@@ -15,7 +15,7 @@ class EnrollmentGraphCard extends Component {
 		super(props);
 
 		this.state = {
-			hoveredClass: false,
+			hoveredClass: false
 		};
 
 		this.updateLineHover = this.updateLineHover.bind(this);
@@ -30,16 +30,23 @@ class EnrollmentGraphCard extends Component {
 		const { selectedCourses, enrollmentData } = this.props;
 		if (selectedCourses !== prevProps.selectedCourses) {
 			this.getEnrollmentData();
-
 		}
 		if (enrollmentData !== prevProps.enrollmentData && enrollmentData.length > 0) {
-			this.update(selectedCourses[0], 1)
+			this.update(selectedCourses[0], 1);
 		}
 
 		const latest_point = enrollmentData.map((course) => course.data[course.data.length - 1]);
 		const telebears = enrollmentData.map((course) => course.telebears);
-		const enrolled_info = latest_point.map((course) => [course.enrolled, course.enrolled_max, course.enrolled_percent]);
-		const waitlisted_info = latest_point.map((course) => [course.waitlisted, course.waitlisted_max, course.waitlisted_percent]);
+		const enrolled_info = latest_point.map((course) => [
+			course.enrolled,
+			course.enrolled_max,
+			course.enrolled_percent
+		]);
+		const waitlisted_info = latest_point.map((course) => [
+			course.waitlisted,
+			course.waitlisted_max,
+			course.waitlisted_percent
+		]);
 
 		this.props.updateClassCardEnrollment(latest_point, telebears, enrolled_info, waitlisted_info);
 	}
@@ -74,20 +81,20 @@ class EnrollmentGraphCard extends Component {
 	//   return graphData;
 	// }
 
-
 	update(course, day) {
 		const { enrollmentData } = this.props;
 		if (course && enrollmentData && enrollmentData.length > 0) {
-			const selectedEnrollment = enrollmentData.filter(c => course.id === c.id)[0];
-			const valid = selectedEnrollment && selectedEnrollment.data.filter(d => d.day === day).length;
+			const selectedEnrollment = enrollmentData.filter((c) => course.id === c.id)[0];
+			const valid =
+				selectedEnrollment && selectedEnrollment.data.filter((d) => d.day === day).length;
 			if (valid) {
 				const hoverTotal = {
 					...course,
 					...selectedEnrollment,
-					hoverDay: day,
+					hoverDay: day
 				};
 				this.setState({
-					hoveredClass: hoverTotal,
+					hoveredClass: hoverTotal
 				});
 			}
 		}
@@ -98,7 +105,7 @@ class EnrollmentGraphCard extends Component {
 		const { selectedCourses } = this.props;
 		const selectedClassID = lineData.dataKey;
 		const day = lineData.index;
-		const selectedCourse = selectedCourses.filter(course => selectedClassID === course.id)[0];
+		const selectedCourse = selectedCourses.filter((course) => selectedClassID === course.id)[0];
 		this.update(selectedCourse, day);
 	}
 
@@ -121,14 +128,16 @@ class EnrollmentGraphCard extends Component {
 		const graphEmpty = enrollmentData.length === 0 || selectedCourses.length === 0;
 
 		return (
-
 			<div className="enrollment-graph">
 				<Container fluid>
 					<Row>
-						<Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
-							{isMobile &&
-                      (<div className="enrollment-mobile-heading"> Enrollment </div>)
-							}
+						<Col
+							xs={{ span: 12, order: 2 }}
+							sm={{ span: 12, order: 2 }}
+							md={{ span: 8, order: 1 }}
+							lg={{ span: 8, order: 1 }}
+						>
+							{isMobile && <div className="enrollment-mobile-heading"> Enrollment </div>}
 							<EnrollmentGraph
 								graphData={graphData}
 								enrollmentData={enrollmentData}
@@ -140,30 +149,41 @@ class EnrollmentGraphCard extends Component {
 							/>
 						</Col>
 
-						{ graphEmpty &&
-                    <Col xs={{span: 12, order:1}} sm={{span: 12, order:1}} md={{span: 4, order:2}} lg={{span: 4, order:2}}>
-                    	<GraphEmpty pageType="enrollment" />
-                    </Col>
-						}
+						{graphEmpty && (
+							<Col
+								xs={{ span: 12, order: 1 }}
+								sm={{ span: 12, order: 1 }}
+								md={{ span: 4, order: 2 }}
+								lg={{ span: 4, order: 2 }}
+							>
+								<GraphEmpty pageType="enrollment" />
+							</Col>
+						)}
 
-						{ !isMobile && !graphEmpty &&
-                    <Col md={{span: 4, order:2}} lg={{span: 4, order:2}}>
-                    	{hoveredClass && (
-                    		<EnrollmentInfoCard
-                    			title={hoveredClass.title}
-                    			subtitle={hoveredClass.subtitle}
-                    			semester={hoveredClass.semester}
-                    			instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
-                    			selectedPoint={hoveredClass.data.filter(pt => pt.day === hoveredClass.hoverDay)[0]}
-                    			todayPoint={hoveredClass.data[hoveredClass.data.length - 1]}
-                    			telebears={telebears}
-                    			color={vars.colors[hoveredClass.colorId]}
-                    			enrolledMax={hoveredClass.enrolled_max}
-                    			waitlistedMax={hoveredClass.waitlisted_max}
-                    		/>
-                    	)}
-                    </Col>
-						}
+						{!isMobile && !graphEmpty && (
+							<Col md={{ span: 4, order: 2 }} lg={{ span: 4, order: 2 }}>
+								{hoveredClass && (
+									<EnrollmentInfoCard
+										title={hoveredClass.title}
+										subtitle={hoveredClass.subtitle}
+										semester={hoveredClass.semester}
+										instructor={
+											hoveredClass.instructor === 'all'
+												? 'All Instructors'
+												: hoveredClass.instructor
+										}
+										selectedPoint={
+											hoveredClass.data.filter((pt) => pt.day === hoveredClass.hoverDay)[0]
+										}
+										todayPoint={hoveredClass.data[hoveredClass.data.length - 1]}
+										telebears={telebears}
+										color={vars.colors[hoveredClass.colorId]}
+										enrolledMax={hoveredClass.enrolled_max}
+										waitlistedMax={hoveredClass.waitlisted_max}
+									/>
+								)}
+							</Col>
+						)}
 					</Row>
 				</Container>
 			</div>
@@ -171,13 +191,12 @@ class EnrollmentGraphCard extends Component {
 	}
 }
 
-
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 	dispatch,
-	fetchEnrollData: (selectedCourses) => dispatch(fetchEnrollData(selectedCourses)),
+	fetchEnrollData: (selectedCourses) => dispatch(fetchEnrollData(selectedCourses))
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	const { enrollmentData, graphData, selectedCourses } = state.enrollment;
 	return {
 		enrollmentData,
@@ -186,8 +205,4 @@ const mapStateToProps = state => {
 	};
 };
 
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)(EnrollmentGraphCard);
+export default connect(mapStateToProps, mapDispatchToProps)(EnrollmentGraphCard);

@@ -81,19 +81,19 @@
 }
 
 .pills {
-  display: block;
+	display: block;
 	position: relative;
 	white-space: nowrap;
-  
+
 	div {
 		display: flex;
-    flex-direction: row;
-    white-space: nowrap;
+		flex-direction: row;
+		white-space: nowrap;
 		position: relative;
 		margin: 0px -30px;
-    padding-left: 30px;
+		padding-left: 30px;
 		gap: 5px;
-    overflow-x: auto;
+		overflow-x: auto;
 
 		&::-webkit-scrollbar {
 			display: none;
@@ -106,7 +106,7 @@
 	position: relative;
 	display: flex;
 	align-items: center;
-  white-space: nowrap;
+	white-space: nowrap;
 	height: 34px;
 	padding: 6px 12px;
 	border: 1.5px solid #eaeaea;
@@ -192,9 +192,9 @@
 
 	h6 {
 		font-size: 14px;
-    span {
-      text-transform: capitalize;
-    }
+		span {
+			text-transform: capitalize;
+		}
 	}
 }
 
@@ -206,14 +206,14 @@
 }
 
 .sectionStats {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 5px;
-  color: $bt-light-text;
-  margin-top: 5px;
-  font-size: 14px;
-  text-transform: none !important;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 5px;
+	color: $bt-light-text;
+	margin-top: 5px;
+	font-size: 14px;
+	text-transform: none !important;
 }
 
 .enrolled {
@@ -224,7 +224,7 @@
 	font-weight: 600;
 	gap: 5px;
 
-  img {
-    width: 14px;
-  }
+	img {
+		width: 14px;
+	}
 }

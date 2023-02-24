@@ -1,10 +1,10 @@
 import { Link as RoutingLink } from 'react-router-dom';
 
 type Props = {
-  text: string;
-  link?: string;
-  isDestructive?: boolean;
-  onClick?: () => void;
+	text: string;
+	link?: string;
+	isDestructive?: boolean;
+	onClick?: () => void;
 };
 
 const Resource = ({ text, link, isDestructive = false, onClick }: Props) => {
@@ -13,21 +13,19 @@ const Resource = ({ text, link, isDestructive = false, onClick }: Props) => {
 	const props = !link
 		? {}
 		: isExternal
-			? {
+		? {
 				href: link,
 				target: '_blank',
-				rel: 'noopener noreferrer',
-			}
-			: {
-				to: link,
-			};
+				rel: 'noopener noreferrer'
+		  }
+		: {
+				to: link
+		  };
 
 	return (
 		<div className="profile-row">
 			<Component {...props} onClick={onClick}>
-				<p className={`resource-text-${isDestructive ? 'red' : 'blue'}`}>
-					{text}
-				</p>
+				<p className={`resource-text-${isDestructive ? 'red' : 'blue'}`}>{text}</p>
 			</Component>
 		</div>
 	);
