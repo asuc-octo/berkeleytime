@@ -8,14 +8,21 @@ import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearc
 
 import info from '../../assets/img/images/graphs/info.svg';
 
-import { fetchEnrollContext, fetchEnrollClass, enrollRemoveCourse, enrollReset, updateEnrollData, fetchEnrollFromUrl } from '../../redux/actions';
+import {
+	fetchEnrollContext,
+	fetchEnrollClass,
+	enrollRemoveCourse,
+	enrollReset,
+	updateEnrollData,
+	fetchEnrollFromUrl
+} from '../../redux/actions';
 
 class Enrollment extends Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			additionalInfo: [],
+			additionalInfo: []
 		};
 
 		this.addCourse = this.addCourse.bind(this);
@@ -48,24 +55,25 @@ class Enrollment extends Component {
 	}
 
 	toUrlForm(s) {
-		return s.toLowerCase().split(" ").join('-');
+		return s.toLowerCase().split(' ').join('-');
 	}
 
 	addToUrl(course) {
 		const { history } = this.props;
 		let instructor = course.instructor === 'all' ? 'all' : course.sections[0];
-		let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(course.semester)}-${instructor}`;
+		let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(
+			course.semester
+		)}-${instructor}`;
 		let url = history.location.pathname;
 		if (url && !url.includes(courseUrl)) {
-			url += (url === '/enrollment') ? '/' : '';
-			url += (url === '/enrollment/') ? '' : '&';
+			url += url === '/enrollment' ? '/' : '';
+			url += url === '/enrollment/' ? '' : '&';
 			url += courseUrl;
 			history.replace(url);
 		}
 	}
 
 	addCourse(course) {
-    
 		const { fetchEnrollClass, selectedCourses, usedColorIds } = this.props;
 		for (let selected of selectedCourses) {
 			if (selected.id === course.id) {
@@ -73,7 +81,7 @@ class Enrollment extends Component {
 			}
 		}
 
-		let newColorId = "";
+		let newColorId = '';
 		for (let i = 0; i < 4; i++) {
 			if (!usedColorIds.includes(i.toString())) {
 				newColorId = i.toString();
@@ -88,7 +96,7 @@ class Enrollment extends Component {
 
 	refillUrl(id) {
 		const { selectedCourses, history } = this.props;
-		let updatedCourses = selectedCourses.filter(classInfo => classInfo.id !== id);
+		let updatedCourses = selectedCourses.filter((classInfo) => classInfo.id !== id);
 		let url = '/enrollment/';
 		for (let i = 0; i < updatedCourses.length; i++) {
 			let c = updatedCourses[i];
@@ -106,13 +114,12 @@ class Enrollment extends Component {
 	}
 
 	updateClassCardEnrollment(latest_point, telebears, enrolled_info, waitlisted_info) {
-		var info=[]
-		for(var i=0; i<latest_point.length; i++) {
-			info.push([latest_point[i], telebears[i], enrolled_info[i], waitlisted_info[i]])
+		var info = [];
+		for (var i = 0; i < latest_point.length; i++) {
+			info.push([latest_point[i], telebears[i], enrolled_info[i], waitlisted_info[i]]);
 		}
-		this.setState({ additionalInfo: info })
+		this.setState({ additionalInfo: info });
 	}
-
 
 	render() {
 		const { additionalInfo } = this.state;
@@ -145,21 +152,22 @@ class Enrollment extends Component {
 						updateClassCardEnrollment={this.updateClassCardEnrollment}
 						isMobile={isMobile}
 					/>
-					{!isMobile &&
-            <div className="xlabel">Days After Phase 1</div>
-					}
+					{!isMobile && <div className="xlabel">Days After Phase 1</div>}
 					<div className="disclaimer">
 						<img src={info} className="info" alt="" />
-						<p>We source our historic course and enrollment data directly from Berkeley <a href="https://sis.berkeley.edu/">Student Information System&apos;s</a> Course and Class APIs.</p>
+						<p>
+							We source our historic course and enrollment data directly from Berkeley{' '}
+							<a href="https://sis.berkeley.edu/">Student Information System&apos;s</a> Course and
+							Class APIs.
+						</p>
 					</div>
-
 				</div>
 			</div>
 		);
 	}
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 	dispatch,
 	fetchEnrollContext: () => dispatch(fetchEnrollContext()),
 	fetchEnrollClass: (course) => dispatch(fetchEnrollClass(course)),
@@ -169,7 +177,7 @@ const mapDispatchToProps = dispatch => ({
 	fetchEnrollFromUrl: (url, history) => dispatch(fetchEnrollFromUrl(url, history))
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	const { context, selectedCourses, usedColorIds } = state.enrollment;
 	const { mobile } = state.common;
 
@@ -177,11 +185,8 @@ const mapStateToProps = state => {
 		context,
 		selectedCourses,
 		usedColorIds,
-		isMobile: mobile,
+		isMobile: mobile
 	};
 };
 
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(withRouter(Enrollment));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Enrollment));

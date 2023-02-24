@@ -8,7 +8,13 @@ import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
 import info from '../../assets/img/images/graphs/info.svg';
 
-import { fetchGradeContext, fetchGradeClass, gradeRemoveCourse, gradeReset, fetchGradeFromUrl } from '../../redux/actions';
+import {
+	fetchGradeContext,
+	fetchGradeClass,
+	gradeRemoveCourse,
+	gradeReset,
+	fetchGradeFromUrl
+} from '../../redux/actions';
 
 class Grades extends Component {
 	constructor(props) {
@@ -16,7 +22,7 @@ class Grades extends Component {
 		this.state = {
 			// context: {},
 			selectedCourses: this.props.selectedCourses,
-			additionalInfo: [],
+			additionalInfo: []
 		};
 		this.addCourse = this.addCourse.bind(this);
 		this.removeCourse = this.removeCourse.bind(this);
@@ -39,7 +45,7 @@ class Grades extends Component {
 
 	fillFromUrl() {
 		const { gradeReset, fetchGradeFromUrl, history } = this.props;
-    
+
 		try {
 			let url = history.location.pathname;
 			if (url && (url === '/grades/' || url === '/grades')) {
@@ -54,17 +60,19 @@ class Grades extends Component {
 
 	toUrlForm(s) {
 		s = s.replace('/', '_');
-		return s.toLowerCase().split(" ").join('-');
+		return s.toLowerCase().split(' ').join('-');
 	}
 
 	addToUrl(course) {
 		const { history } = this.props;
 		let instructor = this.toUrlForm(course.instructor);
-		let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(course.semester)}-${instructor}`;
+		let courseUrl = `${course.colorId}-${course.courseID}-${this.toUrlForm(
+			course.semester
+		)}-${instructor}`;
 		let url = history.location.pathname;
 		if (url && !url.includes(courseUrl)) {
-			url += (url === '/grades') ? '/' : '';
-			url += (url === '/grades/') ? '' : '&';
+			url += url === '/grades' ? '/' : '';
+			url += url === '/grades/' ? '' : '&';
 			url += courseUrl;
 			history.replace(url);
 		}
@@ -78,7 +86,7 @@ class Grades extends Component {
 			}
 		}
 
-		let newColorId = "";
+		let newColorId = '';
 		for (let i = 0; i < 4; i++) {
 			if (!usedColorIds.includes(i.toString())) {
 				newColorId = i.toString();
@@ -93,12 +101,14 @@ class Grades extends Component {
 
 	refillUrl(id) {
 		const { selectedCourses, history } = this.props;
-		let updatedCourses = selectedCourses.filter(classInfo => classInfo.id !== id);
+		let updatedCourses = selectedCourses.filter((classInfo) => classInfo.id !== id);
 		let url = '/grades/';
 		for (let i = 0; i < updatedCourses.length; i++) {
 			let c = updatedCourses[i];
 			if (i !== 0) url += '&';
-			url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${this.toUrlForm(c.instructor)}`;
+			url += `${c.colorId}-${c.courseID}-${this.toUrlForm(c.semester)}-${this.toUrlForm(
+				c.instructor
+			)}`;
 		}
 		history.replace(url);
 	}
@@ -110,12 +120,11 @@ class Grades extends Component {
 	}
 
 	updateClassCardGrade(course_letter, course_gpa, section_letter, section_gpa) {
-
-		var info=[]
-		for(var i=0; i<course_letter.length; i++) {
-			info.push([course_letter[i], course_gpa[i], section_letter[i], section_gpa[i]])
+		var info = [];
+		for (var i = 0; i < course_letter.length; i++) {
+			info.push([course_letter[i], course_gpa[i], section_letter[i], section_gpa[i]]);
 		}
-		this.setState({ additionalInfo: info })
+		this.setState({ additionalInfo: info });
 	}
 
 	render() {
@@ -150,19 +159,20 @@ class Grades extends Component {
 						isMobile={isMobile}
 					/>
 
-
 					<div className="disclaimer">
 						<img src={info} className="info" alt="" />
-						<p>We source our course grade data from Berkeley&apos;s official <a href="https://calanswers.berkeley.edu/">CalAnswers</a> database.</p>
+						<p>
+							We source our course grade data from Berkeley&apos;s official{' '}
+							<a href="https://calanswers.berkeley.edu/">CalAnswers</a> database.
+						</p>
 					</div>
-
 				</div>
 			</div>
 		);
 	}
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 	dispatch,
 	fetchGradeContext: () => dispatch(fetchGradeContext()),
 	fetchGradeClass: (course) => dispatch(fetchGradeClass(course)),
@@ -171,7 +181,7 @@ const mapDispatchToProps = dispatch => ({
 	fetchGradeFromUrl: (url, history) => dispatch(fetchGradeFromUrl(url, history))
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	const { context, selectedCourses, usedColorIds, sections } = state.grade;
 	const { mobile } = state.common;
 	return {
@@ -179,12 +189,8 @@ const mapStateToProps = state => {
 		selectedCourses,
 		usedColorIds,
 		sections,
-		isMobile: mobile,
+		isMobile: mobile
 	};
 };
 
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(withRouter(Grades));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Grades));

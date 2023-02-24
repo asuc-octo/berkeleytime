@@ -10,16 +10,16 @@ const Footer: FC = () => (
 					<div className="footer-col-container">
 						<div className="footer-col">
 							<H6 bold className="mb-3">
-                Support
+								Support
 							</H6>
 							<A href={{ as_link: '/bugs' }} className="mb-2">
-                Report a Bug
+								Report a Bug
 							</A>
 							<A href="mailto:octo.berkeleytime@asuc.org" className="mb-2">
-                Contact Us
+								Contact Us
 							</A>
 							<A href={{ as_link: '/faq' }} className="mb-2">
-                FAQ
+								FAQ
 							</A>
 						</div>
 					</div>
@@ -28,19 +28,19 @@ const Footer: FC = () => (
 					<div className="footer-col-container">
 						<div className="footer-col">
 							<H6 bold className="mb-3">
-                Updates
+								Updates
 							</H6>
 							<A href={{ as_link: '/releases' }} className="mb-2">
-                Releases
+								Releases
 							</A>
 							<A href="https://github.com/asuc-octo/berkeleytime" className="mb-2">
-                GitHub
+								GitHub
 							</A>
 							<A href="https://discord.gg/uP2bTPh99U" className="mb-2">
-                Discord
+								Discord
 							</A>
 							<A href="https://facebook.com/berkeleytime" className="mb-2">
-                Facebook
+								Facebook
 							</A>
 						</div>
 					</div>
@@ -50,16 +50,16 @@ const Footer: FC = () => (
 						<div className="footer-col">
 							<H6 className="bt-bold mb-3">About Us</H6>
 							<A href={{ as_link: '/about' }} className="mb-2">
-                Our Team
+								Our Team
 							</A>
 							<A href="https://octo.asuc.org" className="mb-2">
-                ASUC OCTO
+								ASUC OCTO
 							</A>
 							<A href={{ as_link: '/legal/privacy' }} className="mb-2">
-                Privacy Policy
+								Privacy Policy
 							</A>
 							<A href={{ as_link: '/legal/terms' }} className="mb-2">
-                Terms of Service
+								Terms of Service
 							</A>
 						</div>
 					</div>
