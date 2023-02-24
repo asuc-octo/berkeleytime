@@ -3,6 +3,7 @@ import { Container, Row, Col, ButtonToolbar } from 'react-bootstrap';
 import yaml from 'js-yaml';
 
 import Log from '../../components/Releases/Log';
+const url = new URL('../../../public/releases.yaml', import.meta.url).href
 
 class Releases extends Component {
 	constructor(props) {
@@ -13,7 +14,7 @@ class Releases extends Component {
 	}
 
 	componentDidMount() {
-		fetch('/assets/releases.yaml')
+		fetch(url)
 			.then((result) => result.text())
 			.then((data) => this.setState({ releases: yaml.load(data).releases }));
 	}

@@ -15,6 +15,7 @@ export default defineConfig({
 			usePolling: true
 		}
 	},
+	publicDir: path.resolve(__dirname, 'public'),
 	plugins: [
 		react(),
 		svgr(),
