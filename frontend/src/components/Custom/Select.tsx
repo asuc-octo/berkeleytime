@@ -5,8 +5,8 @@ const BTSelect = <
 	IsMulti extends boolean = false,
 	Group extends GroupBase<Option> = GroupBase<Option>
 >(
-	props: Props<Option, IsMulti, Group>
-) => {
+		props: Props<Option, IsMulti, Group>
+	) => {
 	return (
 		<Select
 			{...props}

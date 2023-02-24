@@ -1,7 +1,7 @@
 import {
-  formatUnits,
-  applyIndicatorPercent,
-  applyIndicatorGrade,
+	formatUnits,
+	applyIndicatorPercent,
+	applyIndicatorGrade,
 } from '../../utils/utils';
 import { CourseOverviewFragment } from 'graphql';
 import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
@@ -13,38 +13,38 @@ type Props = {
 };
 
 const ProfileCourseCard = ({ course }: Props) => {
-  const unsaveCourse = useUnsaveCourse();
+	const unsaveCourse = useUnsaveCourse();
 
-  return (
-    <ProfileCard
-      component={Link}
-      to={`/catalog/${course.abbreviation}/${course.courseNumber}`}
-      title={`${course.abbreviation} ${course.courseNumber}`}
-      subtitle={course.title}
-      description={
-        <>
-          {course.enrolledPercentage !== -1 && (
-            <span>
-              {applyIndicatorPercent(
-                `${course.enrolled}/${course.enrolledMax} enrolled`,
-                course.enrolledPercentage
-              )}
+	return (
+		<ProfileCard
+			component={Link}
+			to={`/catalog/${course.abbreviation}/${course.courseNumber}`}
+			title={`${course.abbreviation} ${course.courseNumber}`}
+			subtitle={course.title}
+			description={
+				<>
+					{course.enrolledPercentage !== -1 && (
+						<span>
+							{applyIndicatorPercent(
+								`${course.enrolled}/${course.enrolledMax} enrolled`,
+								course.enrolledPercentage
+							)}
               &nbsp;•&nbsp;
-            </span>
-          )}
-          <span>{formatUnits(course.units)}</span>
-        </>
-      }
-      aside={
-        course.letterAverage && (
-          <div className="profile-card-sort profile-card-grade">
-            {applyIndicatorGrade(course.letterAverage, course.letterAverage)}
-          </div>
-        )
-      }
-      didRemove={() => unsaveCourse(course)}
-    />
-  );
+						</span>
+					)}
+					<span>{formatUnits(course.units)}</span>
+				</>
+			}
+			aside={
+				course.letterAverage && (
+					<div className="profile-card-sort profile-card-grade">
+						{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+					</div>
+				)
+			}
+			didRemove={() => unsaveCourse(course)}
+		/>
+	);
 };
 
 export default ProfileCourseCard;

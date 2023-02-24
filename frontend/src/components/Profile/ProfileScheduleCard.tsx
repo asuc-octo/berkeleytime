@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
-  CourseOverviewFragment,
-  ScheduleOverviewFragment,
+	CourseOverviewFragment,
+	ScheduleOverviewFragment,
 } from 'graphql';
 import { semesterToString } from 'utils/playlists/semesters';
 import ScheduleModal from 'components/Scheduler/ScheduleModal';
@@ -13,38 +13,38 @@ type Props = {
 };
 
 const ProfileScheduleCard = ({ schedule }: Props) => {
-  const courses = schedule.selectedSections.edges
-    .map((section) => section?.node?.course)
-    .filter((c): c is CourseOverviewFragment => c !== undefined);
+	const courses = schedule.selectedSections.edges
+		.map((section) => section?.node?.course)
+		.filter((c): c is CourseOverviewFragment => c !== undefined);
 
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [modalId, setModalId] = useState<string | null>(null);
+	const [showModal, setShowModal] = useState<boolean>(false);
+	const [modalId, setModalId] = useState<string | null>(null);
 
-  const [deleteSchedule] = useDeleteSchedule();
+	const [deleteSchedule] = useDeleteSchedule();
 
-  return (
-    <>
-      <ProfileCard
-        onClick={() => {
-          setShowModal(true);
-          setModalId(schedule.id);
-        }}
-        title={schedule.name}
-        subtitle={`${schedule.totalUnits} units \u2022 ${semesterToString(
-          schedule
-        )}`}
-        description={courses
-          .map((course) => `${course.abbreviation} ${course.courseNumber}`)
-          .join(' • ')}
-        didRemove={() => deleteSchedule(schedule)}
-      />
-      <ScheduleModal
-        scheduleId={modalId}
-        show={showModal}
-        handleClose={() => setShowModal(false)}
-      />
-    </>
-  );
+	return (
+		<>
+			<ProfileCard
+				onClick={() => {
+					setShowModal(true);
+					setModalId(schedule.id);
+				}}
+				title={schedule.name}
+				subtitle={`${schedule.totalUnits} units \u2022 ${semesterToString(
+					schedule
+				)}`}
+				description={courses
+					.map((course) => `${course.abbreviation} ${course.courseNumber}`)
+					.join(' • ')}
+				didRemove={() => deleteSchedule(schedule)}
+			/>
+			<ScheduleModal
+				scheduleId={modalId}
+				show={showModal}
+				handleClose={() => setShowModal(false)}
+			/>
+		</>
+	);
 };
 
 export default ProfileScheduleCard;

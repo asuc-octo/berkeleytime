@@ -20,107 +20,107 @@ type Props = {
 };
 
 const SelectClasses = ({ schedule, setSchedule }: Props) => {
-  const { user } = useUser();
+	const { user } = useUser();
 
-  const savedClasses = ((user && user.savedClasses) || [])
-    .filter((c): c is CourseOverviewFragment => c !== null)
-    .sort(compareDepartmentName);
+	const savedClasses = ((user && user.savedClasses) || [])
+		.filter((c): c is CourseOverviewFragment => c !== null)
+		.sort(compareDepartmentName);
 
-  const {
-    semester: latestSemester,
-    error: semesterError,
-  } = useLatestSemester();
+	const {
+		semester: latestSemester,
+		error: semesterError,
+	} = useLatestSemester();
 
-  // Only load the list of filters once we have the latest semester. If we
-  // didn't wait, we'd load all semesters' classes which is way to many.
-  const { data, error: coursesError } = useGetCoursesForFilterQuery({
-    variables: {
-      playlists: latestSemester?.playlistId!,
-    },
-    skip: !latestSemester?.playlistId,
-  });
+	// Only load the list of filters once we have the latest semester. If we
+	// didn't wait, we'd load all semesters' classes which is way to many.
+	const { data, error: coursesError } = useGetCoursesForFilterQuery({
+		variables: {
+			playlists: latestSemester?.playlistId!,
+		},
+		skip: !latestSemester?.playlistId,
+	});
 
-  const error = semesterError || coursesError;
+	const error = semesterError || coursesError;
 
-  if (!data) {
-    return (
-      <div className="scheduler__status">
-        {error ? (
-          'A critical error occured loading scheduler information.'
-        ) : (
-          <BTLoader />
-        )}
-      </div>
-    );
-  }
+	if (!data) {
+		return (
+			<div className="scheduler__status">
+				{error ? (
+					'A critical error occured loading scheduler information.'
+				) : (
+					<BTLoader />
+				)}
+			</div>
+		);
+	}
 
-  // Get a list of all courses which will be used by the search bar.
-  const allCourses = data.allCourses?.edges.map((e) => e?.node!)!;
+	// Get a list of all courses which will be used by the search bar.
+	const allCourses = data.allCourses?.edges.map((e) => e?.node!)!;
 
-  function trashCourse(courseId: string) {
-    setSchedule(removeCourse(schedule, courseId));
-  }
+	function trashCourse(courseId: string) {
+		setSchedule(removeCourse(schedule, courseId));
+	}
 
-  return (
-    <Container>
-      <Row className="select-classes">
-        <Col md={4} lg={4} xl={4}></Col>
-        <Col md={4} lg={4} xl={4}>
-          <div className="scheduler-heading">1. Select your classes</div>
-          <div className="prompt">
+	return (
+		<Container>
+			<Row className="select-classes">
+				<Col md={4} lg={4} xl={4}></Col>
+				<Col md={4} lg={4} xl={4}>
+					<div className="scheduler-heading">1. Select your classes</div>
+					<div className="prompt">
             Search from the course catalog for the classes you’d like to include
             in your schedule.
-          </div>
-          <CourseSearch
-            allCourses={allCourses}
-            schedule={schedule}
-            setSchedule={setSchedule}
-          />
-          <div className="profile-card-grid">
-            {savedClasses
-              .filter(
-                (course) =>
-                  schedule.courses.filter(
-                    (e: CourseOverviewFragment) => e.id === course.id
-                  ).length === 0
-              )
-              .map((course) => (
-                <div className="profile-card-row" key={course.id}>
-                  <Button
-                    className="add-class"
-                    variant="link"
-                    onClick={() => addCourse(course, schedule, setSchedule)}
-                  >
+					</div>
+					<CourseSearch
+						allCourses={allCourses}
+						schedule={schedule}
+						setSchedule={setSchedule}
+					/>
+					<div className="profile-card-grid">
+						{savedClasses
+							.filter(
+								(course) =>
+									schedule.courses.filter(
+										(e: CourseOverviewFragment) => e.id === course.id
+									).length === 0
+							)
+							.map((course) => (
+								<div className="profile-card-row" key={course.id}>
+									<Button
+										className="add-class"
+										variant="link"
+										onClick={() => addCourse(course, schedule, setSchedule)}
+									>
                     +
-                  </Button>
-                  <SchedulerCourseCard
-                    key={course.id}
-                    course={course}
-                    removable={false}
-                  />
-                </div>
-              ))}
-          </div>
-        </Col>
-        <Col md={4} lg={4} xl={4}>
-          <div className="scheduler-heading">Selected classes</div>
-          <div className="selected-classes">
-            <ScheduleContext.Provider value={{ schedule, setSchedule }}>
-              {schedule.courses.map((course: CourseOverviewFragment) => (
-                <SchedulerCourseCard
-                  key={course.id}
-                  course={course}
-                  removable={true}
-                  remove={() => trashCourse(course.id)}
-                />
-              ))}
-            </ScheduleContext.Provider>
-          </div>
-          <Button className="continue">Continue</Button>
-        </Col>
-      </Row>
-    </Container>
-  );
+									</Button>
+									<SchedulerCourseCard
+										key={course.id}
+										course={course}
+										removable={false}
+									/>
+								</div>
+							))}
+					</div>
+				</Col>
+				<Col md={4} lg={4} xl={4}>
+					<div className="scheduler-heading">Selected classes</div>
+					<div className="selected-classes">
+						<ScheduleContext.Provider value={{ schedule, setSchedule }}>
+							{schedule.courses.map((course: CourseOverviewFragment) => (
+								<SchedulerCourseCard
+									key={course.id}
+									course={course}
+									removable={true}
+									remove={() => trashCourse(course.id)}
+								/>
+							))}
+						</ScheduleContext.Provider>
+					</div>
+					<Button className="continue">Continue</Button>
+				</Col>
+			</Row>
+		</Container>
+	);
 };
 
 export default SelectClasses;

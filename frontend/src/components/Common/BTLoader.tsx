@@ -28,58 +28,58 @@ type Props = {
 };
 
 const BTLoader = ({
-  showInstantly = false,
-  message,
-  error,
-  fill = false,
+	showInstantly = false,
+	message,
+	error,
+	fill = false,
 }: Props) => {
-  const [showingLoader, setShowingLoader] = useState(false);
+	const [showingLoader, setShowingLoader] = useState(false);
 
-  useEffect(() => {
-    const loader = setTimeout(() => {
-      setShowingLoader(true);
-    }, TIME_BEFORE_LOADER);
+	useEffect(() => {
+		const loader = setTimeout(() => {
+			setShowingLoader(true);
+		}, TIME_BEFORE_LOADER);
 
-    return () => clearTimeout(loader);
-  }, []);
+		return () => clearTimeout(loader);
+	}, []);
 
-  if (error) {
-    return (
-      <div
-        className={cx('bt-loader-wrapper', 'bt-loader--error', {
-          'bt-loader--fill': fill,
-        })}
-      >
-        {typeof error === 'string' ? (
-          <p>{error}</p>
-        ) : (
-          <>
-            <p>An unexpected error occured.</p>
-            <p>{error.message}</p>
-          </>
-        )}
-      </div>
-    );
-  }
+	if (error) {
+		return (
+			<div
+				className={cx('bt-loader-wrapper', 'bt-loader--error', {
+					'bt-loader--fill': fill,
+				})}
+			>
+				{typeof error === 'string' ? (
+					<p>{error}</p>
+				) : (
+					<>
+						<p>An unexpected error occured.</p>
+						<p>{error.message}</p>
+					</>
+				)}
+			</div>
+		);
+	}
 
-  if (showingLoader || showInstantly) {
-    return (
-      <div
-        className={cx('bt-loader-wrapper', {
-          'bt-loader--fill': fill,
-        })}
-      >
-        <div className="bt-loader">
-          <div />
-          <div />
-          <div />
-        </div>
-        {message && <p>{message}</p>}
-      </div>
-    );
-  } else {
-    return null;
-  }
+	if (showingLoader || showInstantly) {
+		return (
+			<div
+				className={cx('bt-loader-wrapper', {
+					'bt-loader--fill': fill,
+				})}
+			>
+				<div className="bt-loader">
+					<div />
+					<div />
+					<div />
+				</div>
+				{message && <p>{message}</p>}
+			</div>
+		);
+	} else {
+		return null;
+	}
 };
 
 export default BTLoader;

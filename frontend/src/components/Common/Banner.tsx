@@ -8,31 +8,31 @@ import { closeBanner } from '../../redux/common/actions'
 
 import close from '../../assets/svg/common/close.svg'
 
-interface Props extends PropsFromRedux {}
+type Props = PropsFromRedux
 
 const Banner: FC<Props> = (props) => {
-  const history = useHistory();
-  function redirect(site: string) {
-    history.push("/redirect?site=" + site)
-  }
+	const history = useHistory();
+	function redirect(site: string) {
+		history.push("/redirect?site=" + site)
+	}
 
-  return props.banner ? (
-    <div className="banner">
-      <div className="content">
-        <p>Application extended until Wednesday for UI/UX Design!</p>
-        <Button size="sm" href="https://octo.asuc.org/apply.html">Apply Now</Button>
-      </div>
-      <img src={close} alt="close" onClick={props.closeBanner} />
-    </div>
-  ) : null;
+	return props.banner ? (
+		<div className="banner">
+			<div className="content">
+				<p>Application extended until Wednesday for UI/UX Design!</p>
+				<Button size="sm" href="https://octo.asuc.org/apply.html">Apply Now</Button>
+			</div>
+			<img src={close} alt="close" onClick={props.closeBanner} />
+		</div>
+	) : null;
 }
 
 const mapState = (state: ReduxState) => ({
-  banner: state.common.banner
+	banner: state.common.banner
 })
 
 const mapDispatch = {
-  closeBanner
+	closeBanner
 }
 
 const connector = connect(mapState, mapDispatch)

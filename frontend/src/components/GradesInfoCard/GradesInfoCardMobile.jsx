@@ -7,7 +7,7 @@ class GradesInfoCardMobile extends PureComponent {
 		return item ? item : " ";
 	}
 
-    render() {
+	render() {
 		const {
       		course, subtitle, semester, instructor,
       		courseLetter, courseGPA, sectionLetter,

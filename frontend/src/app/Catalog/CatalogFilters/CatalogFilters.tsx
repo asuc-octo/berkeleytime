@@ -136,7 +136,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 						</button>
 					</div>
 					<BTInput
-            className={styles.search}
+						className={styles.search}
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 						type="search"

@@ -1,7 +1,7 @@
 import {
-  formatUnits,
-  applyIndicatorPercent,
-  applyIndicatorGrade,
+	formatUnits,
+	applyIndicatorPercent,
+	applyIndicatorGrade,
 } from '../../../utils/utils';
 import { CourseOverviewFragment } from 'graphql';
 import { Link } from 'react-router-dom';
@@ -14,37 +14,37 @@ type Props = {
 };
 
 const SchedulerCourseCard = ({ course, removable, remove }: Props) => {
-  return (
-    <ProfileCard
-      component={Link}
-      to={`/scheduler`}
-      title={`${course.abbreviation} ${course.courseNumber}`}
-      subtitle={course.title}
-      description={
-        <>
-          {course.enrolledPercentage !== -1 && (
-            <span>
-              {applyIndicatorPercent(
-                `${course.enrolled}/${course.enrolledMax} enrolled`,
-                course.enrolledPercentage
-              )}
+	return (
+		<ProfileCard
+			component={Link}
+			to={`/scheduler`}
+			title={`${course.abbreviation} ${course.courseNumber}`}
+			subtitle={course.title}
+			description={
+				<>
+					{course.enrolledPercentage !== -1 && (
+						<span>
+							{applyIndicatorPercent(
+								`${course.enrolled}/${course.enrolledMax} enrolled`,
+								course.enrolledPercentage
+							)}
               &nbsp;•&nbsp;
-            </span>
-          )}
-          <span>{formatUnits(course.units)}</span>
-        </>
-      }
-      aside={
-        course.letterAverage && (
-          <div className="profile-card-sort profile-card-grade">
-            {applyIndicatorGrade(course.letterAverage, course.letterAverage)}
-          </div>
-        )
-      }
-      removable={removable}
-      didRemove={remove}
-    />
-  );
+						</span>
+					)}
+					<span>{formatUnits(course.units)}</span>
+				</>
+			}
+			aside={
+				course.letterAverage && (
+					<div className="profile-card-sort profile-card-grade">
+						{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+					</div>
+				)
+			}
+			removable={removable}
+			didRemove={remove}
+		/>
+	);
 };
 
 export default SchedulerCourseCard;

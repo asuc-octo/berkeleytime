@@ -2,16 +2,16 @@ import { PureComponent } from 'react';
 import BTForm from '../../components/Form/Form.jsx';
 
 class EngineeringApp extends PureComponent {
-  render() {
-    return (
-      <div className="bt-form-page">
+	render() {
+		return (
+			<div className="bt-form-page">
 
-        <BTForm name="EngineeringApp" />
+				<BTForm name="EngineeringApp" />
 
-      </div>
+			</div>
 
-    );
-  }
+		);
+	}
 }
 
 
