@@ -7,7 +7,7 @@ import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow
 import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
-import CatalogViewSections from './CatalogViewSections';
+import CatalogViewSections from './__new_SectionTable';
 import { CurrentFilters } from 'app/Catalog/types';
 import { useParams } from 'react-router';
 import { sortSections } from 'utils/sections/sort';
@@ -15,6 +15,7 @@ import Skeleton from 'react-loading-skeleton';
 
 import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
+import SectionTable from './SectionTable';
 
 interface CatalogViewProps {
 	coursePreview: CourseFragment | null;
@@ -194,8 +195,8 @@ const CatalogView = (props: CatalogViewProps) => {
 				</ReadMore>
 			)}
 			<h5>Class Times - {semester ?? ''}</h5>
-			<CatalogViewSections sections={sections} />
-
+			{/* <CatalogViewSections sections={sections} /> */}
+			<SectionTable sections={sections} />
 			{/* TODO: DONT DELETE
       <h5>Past Offerings</h5>
 			<section className={styles.pills}>

@@ -14,7 +14,7 @@
     "watch:codegen": "graphql-codegen --config codegen.yml --watch",
     "start": "npm-run-all codegen -p watch:*",
     "build": "npm-run-all codegen -p build:*",
-    "lint": "eslint .",
+    "lint": "eslint . --fix --ext .jsx --ext .tsx --ext .scss",
     "prod": "serve -s build -p 3000"
   },
   "dependencies": {
