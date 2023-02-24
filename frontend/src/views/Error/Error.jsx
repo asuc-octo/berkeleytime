@@ -20,11 +20,6 @@ function Error() {
 									Back to Courses
 								</Button>
 							</ButtonGroup>
-							<ButtonGroup className="mb-2">
-								<Button className="bt-btn-inverted" size="bt-lg" href={{ as_link: '/bugs' }}>
-									Report a Bug
-								</Button>
-							</ButtonGroup>
 						</ButtonToolbar>
 					</Col>
 				</Row>

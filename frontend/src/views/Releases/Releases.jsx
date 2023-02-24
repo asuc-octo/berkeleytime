@@ -29,11 +29,7 @@ class Releases extends Component {
 							<div className="releases-heading">
 								<h2>Berkeleytime Releases</h2>
 								<h3>Keep up-to-date with our releases and bug fixes.</h3>
-								<ButtonToolbar className="releases-heading-button">
-									<a href="/bugs">
-										<button className="btn btn-bt-blue-inverted btn-bt-md">Give Feedback</button>
-									</a>
-								</ButtonToolbar>
+								<ButtonToolbar className="releases-heading-button" />
 							</div>
 						</Col>
 						<Col lg={3}></Col>
