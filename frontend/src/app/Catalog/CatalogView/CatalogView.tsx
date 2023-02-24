@@ -7,7 +7,6 @@ import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow
 import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
-import CatalogViewSections from './__new_SectionTable';
 import { CurrentFilters } from 'app/Catalog/types';
 import { useParams } from 'react-router';
 import { sortSections } from 'utils/sections/sort';
