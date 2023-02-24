@@ -15,12 +15,11 @@ class GradesGraphCard extends Component {
 		super(props);
 		this.state = {
 			hoveredClass: false,
-			updateMobileHover: true,
+			updateMobileHover: true
 		};
 
 		this.updateBarHover = this.updateBarHover.bind(this);
 		this.updateGraphHover = this.updateGraphHover.bind(this);
-
 	}
 
 	componentDidMount() {
@@ -32,8 +31,12 @@ class GradesGraphCard extends Component {
 		if (selectedCourses !== prevProps.selectedCourses) {
 			this.getGradesData();
 		}
-		if (gradesData !== prevProps.gradesData && gradesData.length > 0 && selectedCourses.length === 1) {
-			this.update(selectedCourses[0], 0)
+		if (
+			gradesData !== prevProps.gradesData &&
+			gradesData.length > 0 &&
+			selectedCourses.length === 1
+		) {
+			this.update(selectedCourses[0], 0);
 		}
 
 		const course_letter = gradesData.map((course) => course.course_letter);
@@ -51,22 +54,21 @@ class GradesGraphCard extends Component {
 	update(course, grade) {
 		const { gradesData } = this.props;
 		if (course && gradesData && gradesData.length > 0) {
-			const selectedGrades = gradesData.filter(c => course.id === c.id)[0];
+			const selectedGrades = gradesData.filter((c) => course.id === c.id)[0];
 			const hoverTotal = {
 				...course,
 				...selectedGrades,
-				hoverGrade: grade,
+				hoverGrade: grade
 			};
 
 			this.setState({
-				hoveredClass: hoverTotal,
+				hoveredClass: hoverTotal
 			});
 		}
 	}
 
 	// Handler function for updating GradesInfoCard on hover
 	updateBarHover(barData) {
-
 		const { selectedCourses } = this.props;
 		const { payload, name, value } = barData;
 
@@ -77,10 +79,10 @@ class GradesGraphCard extends Component {
 			}
 		}
 
-		const selectedCourse = selectedCourses.filter(course => selectedClassID === course.id)[0];
+		const selectedCourse = selectedCourses.filter((course) => selectedClassID === course.id)[0];
 		this.update(selectedCourse, name);
 
-		this.setState({updateMobileHover: false});
+		this.setState({ updateMobileHover: false });
 	}
 
 	// Handler function for updating GradesInfoCard on hover with single course
@@ -98,11 +100,10 @@ class GradesGraphCard extends Component {
 		}
 
 		// Update mobile hover records if there actually is a bar (then we only want updateBarHover to run)
-		this.setState({updateMobileHover: true});
+		this.setState({ updateMobileHover: true });
 	}
 
 	render() {
-    
 		const { hoveredClass } = this.state;
 		const { graphData, gradesData, selectedCourses, isMobile } = this.props;
 		const graphEmpty = gradesData.length === 0 || selectedCourses.length === 0;
@@ -111,10 +112,13 @@ class GradesGraphCard extends Component {
 			<div className="grades-graph">
 				<Container fluid>
 					<Row>
-						<Col xs={{span: 12, order:2}} sm={{span: 12, order:2}} md={{span: 8, order:1}}  lg={{span: 8, order:1}}>
-							{isMobile &&
-                    (<div className="grades-mobile-heading"> Grade Distribution </div>)
-							}
+						<Col
+							xs={{ span: 12, order: 2 }}
+							sm={{ span: 12, order: 2 }}
+							md={{ span: 8, order: 1 }}
+							lg={{ span: 8, order: 1 }}
+						>
+							{isMobile && <div className="grades-mobile-heading"> Grade Distribution </div>}
 							<GradesGraph
 								graphData={graphData}
 								gradesData={gradesData}
@@ -122,7 +126,9 @@ class GradesGraphCard extends Component {
 								updateGraphHover={this.updateGraphHover}
 								course={hoveredClass.course}
 								semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
-								instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
+								instructor={
+									hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor
+								}
 								selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
 								denominator={hoveredClass.denominator}
 								color={vars.colors[hoveredClass.colorId]}
@@ -131,32 +137,43 @@ class GradesGraphCard extends Component {
 							/>
 						</Col>
 
-						{ graphEmpty &&
-                  <Col xs={{span: 12, order:1}} sm={{span: 12, order:1}} md={{span: 4, order:2}} lg={{span: 4, order:2}}>
-                  	<GraphEmpty pageType="grades" />
-                  </Col>
-						}
+						{graphEmpty && (
+							<Col
+								xs={{ span: 12, order: 1 }}
+								sm={{ span: 12, order: 1 }}
+								md={{ span: 4, order: 2 }}
+								lg={{ span: 4, order: 2 }}
+							>
+								<GraphEmpty pageType="grades" />
+							</Col>
+						)}
 
-						{ !isMobile && !graphEmpty &&
-                  <Col md={{span: 4, order:2}} lg={{span: 4, order:2}}>
-                  	{hoveredClass && (
-                  		<GradesInfoCard
-                  			course={hoveredClass.course}
-                  			subtitle={hoveredClass.subtitle}
-                  			semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
-                  			instructor={hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor}
-                  			courseLetter={hoveredClass.course_letter}
-                  			courseGPA={hoveredClass.course_gpa}
-                  			sectionLetter={hoveredClass.section_letter}
-                  			sectionGPA={hoveredClass.section_gpa}
-                  			denominator={hoveredClass.denominator}
-                  			selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
-                  			selectedGrade={hoveredClass.hoverGrade}
-                  			color={vars.colors[hoveredClass.colorId]}
-                  		/>
-                  	)}
-                  </Col>
-						}
+						{!isMobile && !graphEmpty && (
+							<Col md={{ span: 4, order: 2 }} lg={{ span: 4, order: 2 }}>
+								{hoveredClass && (
+									<GradesInfoCard
+										course={hoveredClass.course}
+										subtitle={hoveredClass.subtitle}
+										semester={
+											hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester
+										}
+										instructor={
+											hoveredClass.instructor === 'all'
+												? 'All Instructors'
+												: hoveredClass.instructor
+										}
+										courseLetter={hoveredClass.course_letter}
+										courseGPA={hoveredClass.course_gpa}
+										sectionLetter={hoveredClass.section_letter}
+										sectionGPA={hoveredClass.section_gpa}
+										denominator={hoveredClass.denominator}
+										selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
+										selectedGrade={hoveredClass.hoverGrade}
+										color={vars.colors[hoveredClass.colorId]}
+									/>
+								)}
+							</Col>
+						)}
 					</Row>
 				</Container>
 			</div>
@@ -164,12 +181,12 @@ class GradesGraphCard extends Component {
 	}
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
 	dispatch,
-	fetchGradeData: (selectedCourses) => dispatch(fetchGradeData(selectedCourses)),
+	fetchGradeData: (selectedCourses) => dispatch(fetchGradeData(selectedCourses))
 });
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
 	const { gradesData, graphData, selectedCourses } = state.grade;
 	return {
 		gradesData,
@@ -178,8 +195,4 @@ const mapStateToProps = state => {
 	};
 };
 
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps,
-)(GradesGraphCard);
+export default connect(mapStateToProps, mapDispatchToProps)(GradesGraphCard);
