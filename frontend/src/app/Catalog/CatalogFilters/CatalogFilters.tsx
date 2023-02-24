@@ -114,9 +114,19 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 
 	return (
 		<div className={styles.root} data-modal={isOpen}>
-			<button className={styles.toggle} onClick={() => setOpen((prev) => !prev)}>
-				<FilterIcon fill={'red'} width={18} height={18}/>
-			</button>
+			<div className={styles.toggle}>
+				<BTInput
+					style={{ border: 'none', width: '100%' }}
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					type="search"
+					placeholder="Search for a class..."
+					icon={<SearchIcon />}
+				/>
+				<button onClick={() => setOpen((prev) => !prev)}>
+					<FilterIcon fill={'red'} width={32} height={24} />
+				</button>
+			</div>
 			<div ref={modalRef} className={styles.container} data-modal={isOpen}>
 				<div className={styles.wrapper} data-modal={isOpen}>
 					<div className={styles.header}>
@@ -126,6 +136,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 						</button>
 					</div>
 					<BTInput
+            className={styles.search}
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 						type="search"
