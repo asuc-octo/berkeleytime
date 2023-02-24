@@ -9,11 +9,13 @@ import jemma from 'assets/img/about/group/jemma.jpg';
 import christina_janet from 'assets/img/about/group/christina_janet.jpg';
 import retreat_silly from 'assets/img/about/group/retreat_silly.png';
 import zoom from 'assets/img/about/group/zoom.png';
+
 enum Sliding {
 	Still = 0,
 	Right = 1,
 	Left = 2
 }
+
 const AboutCarousel: FC = () => {
 	const [shownImage, setShownImage] = useState<number>(2);
 

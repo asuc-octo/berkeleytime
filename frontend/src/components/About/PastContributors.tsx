@@ -5,6 +5,7 @@ import yaml from 'js-yaml';
 import { H3, H6 } from 'bt/custom';
 
 import { ReactComponent as Web } from '../../assets/svg/about/web.svg';
+const url = new URL('../../../public/past_contributors.yaml', import.meta.url).href
 
 type Contributor = {
 	name: string;
@@ -21,7 +22,7 @@ const PastContributors: FC = () => {
 	const [sections, setSections] = useState<Section[]>([]);
 
 	useEffect(() => {
-		fetch('/assets/past_contributors.yaml')
+		fetch(url)
 			.then((response) => response.text())
 			.then((text) => setSections(yaml.load(text) ?? []));
 	}, []); // only run once
