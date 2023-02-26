@@ -52,29 +52,6 @@
 	}
 }
 
-$color-primary: white;
-
-
-@keyframes fadeIn {
-  0% {
-    --var1: white;
-  }
-
-  100% {
-    --var1: #aaa;
-  }
-}
-
-@keyframes fadeOut {
-  0% {
-    --var1: #aaa;
-  }
-
-  100% {
-    --var1: white;
-  }
-}
-
 ::-webkit-scrollbar {
 	background-color: rgba(0, 0, 0, 0);
 	width: 14px;
@@ -88,7 +65,6 @@ $color-primary: white;
 
 ::-webkit-scrollbar-thumb {
 	background-color: rgba(0, 0, 0, 0);
-	animation: fadeOut 3s ease-in-out forwards;
 	border-radius: 16px;
 	border: 0px solid #fff;
 }
@@ -103,7 +79,6 @@ $color-primary: white;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	animation: fadeIn 3s ease-in-out forwards;
 	background-color: #a0a0a5;
 	border: 4px solid #f4f4f4;
 }
