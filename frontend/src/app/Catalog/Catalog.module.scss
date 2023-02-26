@@ -4,16 +4,15 @@
 	grid-template-rows: 1fr;
 	grid-template-columns: 1.45fr 1.45fr 2.9fr;
 	position: relative;
-	top: 57px;
-	height: calc(100vh - 58px);
+	padding-top: 57.11px;
+	height: 100vh;
 	align-items: stretch;
-	overflow: hidden;
 
 	@include tablet {
 		grid-template-areas:
 			'filters view'
 			'list view';
-		grid-template-rows: auto 1fr;
+		grid-template-rows: min-content 1fr;
 		grid-template-columns: 1.2fr 2fr;
 	}
 

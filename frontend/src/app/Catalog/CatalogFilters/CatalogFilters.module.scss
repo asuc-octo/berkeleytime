@@ -7,6 +7,8 @@
 	@include media(mobile, tablet) {
 		display: grid;
 		position: relative;
+		border-right: 1.5px solid #eaeaea;
+		border-bottom: 1.5px solid #eaeaea;
 		grid-template-columns: 1fr;
 		grid-template-rows: min-content 1fr;
 		grid-template-areas:
@@ -26,22 +28,19 @@
 
 	@include media(mobile, tablet) {
 		display: flex;
+		width: 100%;
 		grid-area: toggle;
 		z-index: 200;
 		justify-content: space-between;
 		align-items: center;
 		justify-self: center;
-		transition-duration: 0.1s;
-		background: transparent;
-		border-radius: 0px 0px 12px 12px;
-		border: 1.5px solid #eaeaea;
-		border-top: none;
 		padding: 5px 8px;
 		background: white;
 		font-size: 14px;
+		gap: 10px;
 
-		input {
-			font-size: 14px;
+		div {
+			flex: 1;
 		}
 
 		button {
@@ -68,14 +67,15 @@
 
 .container {
 	height: 100%;
-	overflow-y: scroll;
+	overflow-y: overlay;
 
 	@include media(mobile, tablet) {
 		position: absolute;
 		grid-area: modal;
-		top: -48px;
 		width: 100%;
-		height: calc(100vh - 36px);
+		top: 0;
+		// mins size of search bar, minus size of header
+		height: calc(100vh - 47px - 57.11px);
 		z-index: 50;
 		background: hsla(0, 0%, 0%, 0.3);
 		justify-content: center;
@@ -100,7 +100,7 @@
 	border-right: 1.5px solid #eaeaea;
 	height: 100%;
 	font-size: 14px;
-	overflow-y: scroll;
+	overflow-y: overlay;
 
 	@include media(mobile, tablet) {
 		position: absolute;
@@ -123,7 +123,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	font-weight: 600;
 
 	p {
 		font-weight: 600;
@@ -167,16 +166,10 @@
 }
 
 .select {
-	font-size: 14px;
-
 	[class$='-multiValue'] {
 		background: white;
 		border: 1px solid $bt-border-grey;
 		border-radius: 12px;
-	}
-
-	[class$='-placeholder'] {
-		font-weight: 400;
 	}
 
 	[class$='MultiValueGeneric2'] {

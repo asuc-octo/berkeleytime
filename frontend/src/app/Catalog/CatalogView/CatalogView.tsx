@@ -18,13 +18,14 @@ import SectionTable from './SectionTable';
 
 interface CatalogViewProps {
 	coursePreview: CourseFragment | null;
+	setCurrentCourse: Dispatch<SetStateAction<CourseFragment | null>>;
 	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
 }
 
 const skeleton = [...Array(8).keys()];
 
 const CatalogView = (props: CatalogViewProps) => {
-	const { coursePreview, setCurrentFilters } = props;
+	const { coursePreview, setCurrentFilters, setCurrentCourse } = props;
 	const { abbreviation, courseNumber, semester } = useParams<{
 		abbreviation: string;
 		courseNumber: string;
@@ -40,7 +41,7 @@ const CatalogView = (props: CatalogViewProps) => {
 		);
 	});
 
-	const [getCourse, { error, loading }] = useGetCourseForNameLazyQuery({
+	const [getCourse] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
@@ -123,7 +124,13 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={course !== null}>
-			<button className={styles.modalButton} onClick={() => setCourse(null)}>
+			<button
+				className={styles.modalButton}
+				onClick={() => {
+					setCurrentCourse(null);
+					setCourse(null);
+				}}
+			>
 				<BackArrow />
 				Back to Courses
 			</button>
@@ -181,22 +188,17 @@ const CatalogView = (props: CatalogViewProps) => {
 					)}
 				</div>
 			</div>
-			<ReadMore>
-				{course.description !== '' ? course.description : 'This course has no description.'}
+			<ReadMore prereqs={(course as CourseFragment)?.prerequisites}>
+				{course?.description ?? ''}
 			</ReadMore>
-			<h6>Prerequisites</h6>
-			{loading ? (
-				<Skeleton />
-			) : (
-				<ReadMore>
-					{(course as CourseFragment)?.prerequisites ||
-						'There is no information on the prerequisites of this course.'}
-				</ReadMore>
-			)}
 			<h5>Class Times - {semester ?? ''}</h5>
-			{/* <CatalogViewSections sections={sections} /> */}
+			{/*
+			Redesigned catalog sections
+			<CatalogViewSections sections={sections} />
+			*/}
 			<SectionTable sections={sections} />
-			{/* TODO: DONT DELETE
+
+			{/* Good feature whenever we want...
       <h5>Past Offerings</h5>
 			<section className={styles.pills}>
 				{pastSemesters ? (
@@ -226,21 +228,33 @@ const CatalogView = (props: CatalogViewProps) => {
 	);
 };
 
-const ReadMore = ({ children }: { children: string }) => {
-	const [isReadMore, setIsReadMore] = useState(true);
+const ReadMore = ({ children, prereqs }: { children: string; prereqs?: string }) => {
+	const [isRead, setRead] = useState(false);
+
 	return (
-		<p className={styles.description}>
+		<div className={styles.description}>
 			{children.length > 150 ? (
-				<>
-					{isReadMore ? children.slice(0, 150) + '...' : children}
-					<span onClick={() => setIsReadMore((prev) => !prev)}>
-						{isReadMore ? 'see more' : 'see less'}
-					</span>
-				</>
-			) : (
+				<p>
+					{isRead ? children : children.slice(0, 150) + '...'}
+					<span onClick={() => setRead((prev) => !prev)}>{isRead ? 'see less' : 'see more'}</span>
+				</p>
+			) : children !== '' ? (
 				children
+			) : (
+				'There is no description for this course.'
 			)}
-		</p>
+
+			{(isRead || children.length < 150) && (
+				<>
+					<h6>Prerequisites</h6>
+					<p>
+						{prereqs !== ''
+							? prereqs
+							: 'There is no information on the prerequisites of this course.'}
+					</p>
+				</>
+			)}
+		</div>
 	);
 };
 

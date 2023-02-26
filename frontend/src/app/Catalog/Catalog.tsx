@@ -31,7 +31,11 @@ const Catalog = () => {
 				searchQuery={searchQuery}
 				sortQuery={sortQuery}
 			/>
-			<CatalogView coursePreview={currentCourse} setCurrentFilters={setCurrentFilters} />
+			<CatalogView
+				coursePreview={currentCourse}
+				setCurrentFilters={setCurrentFilters}
+				setCurrentCourse={setCurrentCourse}
+			/>
 		</div>
 	);
 };
