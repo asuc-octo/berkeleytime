@@ -21,18 +21,6 @@ td {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-::-webkit-scrollbar {
-	width: 10px;
-}
-::-webkit-scrollbar-track {
-	background: transparent;
-}
-::-webkit-scrollbar-thumb {
-	background-color: rgba(155, 155, 155, 0.5);
-	border-radius: 8px;
-	border: transparent;
-}
-
 a {
 	color: $bt-blue;
 	transition: color 0.2s;
