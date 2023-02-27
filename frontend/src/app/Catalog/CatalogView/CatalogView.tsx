@@ -41,7 +41,7 @@ const CatalogView = (props: CatalogViewProps) => {
 		);
 	});
 
-	const [getCourse] = useGetCourseForNameLazyQuery({
+	const [getCourse, { loading }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
@@ -196,7 +196,11 @@ const CatalogView = (props: CatalogViewProps) => {
 			Redesigned catalog sections
 			<CatalogViewSections sections={sections} />
 			*/}
-			<SectionTable sections={sections} />
+			{sections && sections.length > 0 ? (
+				<SectionTable sections={sections} />
+			) : !loading ? (
+				<span>There are no class times for the selected course.</span>
+			) : null}
 
 			{/* Good feature whenever we want...
       <h5>Past Offerings</h5>
