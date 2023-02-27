@@ -41,14 +41,37 @@ export type EnrollmentInfo = {
 
 export type Grade = {
   __typename?: 'Grade';
-  course_id: Scalars['String'];
+  A: LetterGrade;
+  AMinus: LetterGrade;
+  APlus: LetterGrade;
+  B: LetterGrade;
+  BMinus: LetterGrade;
+  BPlus: LetterGrade;
+  C: LetterGrade;
+  CMinus: LetterGrade;
+  CPlus: LetterGrade;
+  D: LetterGrade;
+  F: LetterGrade;
+  NP: LetterGrade;
+  P: LetterGrade;
+  denominator: Scalars['Int'];
+  section_gpa: Scalars['Float'];
+  section_letter: Scalars['String'];
+};
+
+export type LetterGrade = {
+  __typename?: 'LetterGrade';
+  numerator: Scalars['Int'];
+  percent: Scalars['Float'];
+  percentile_high: Scalars['Float'];
+  percentile_low: Scalars['Float'];
 };
 
 export type Query = {
   __typename?: 'Query';
   Enrollment?: Maybe<Enrollment>;
   User?: Maybe<User>;
-  grades?: Maybe<Array<Maybe<Grade>>>;
+  grades?: Maybe<Grade>;
   schedulesByUser?: Maybe<Array<Maybe<Schedule>>>;
   schedulesByUserAndTerm?: Maybe<Schedule>;
 };
@@ -61,6 +84,13 @@ export type QueryEnrollmentArgs = {
 
 export type QueryUserArgs = {
   email: Scalars['String'];
+};
+
+
+export type QueryGradesArgs = {
+  CourseControlNumber: Scalars['Int'];
+  Semester: Scalars['String'];
+  Year: Scalars['Int'];
 };
 
 
@@ -180,8 +210,10 @@ export type ResolversTypes = {
   CustomEvent: ResolverTypeWrapper<CustomEvent>;
   Enrollment: ResolverTypeWrapper<Enrollment>;
   EnrollmentInfo: ResolverTypeWrapper<EnrollmentInfo>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   Grade: ResolverTypeWrapper<Grade>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  LetterGrade: ResolverTypeWrapper<LetterGrade>;
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -194,8 +226,10 @@ export type ResolversParentTypes = {
   CustomEvent: CustomEvent;
   Enrollment: Enrollment;
   EnrollmentInfo: EnrollmentInfo;
+  Float: Scalars['Float'];
   Grade: Grade;
   Int: Scalars['Int'];
+  LetterGrade: LetterGrade;
   Query: {};
   Schedule: Schedule;
   String: Scalars['String'];
@@ -228,14 +262,37 @@ export type EnrollmentInfoResolvers<ContextType = any, ParentType extends Resolv
 };
 
 export type GradeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Grade'] = ResolversParentTypes['Grade']> = {
-  course_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  A?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  AMinus?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  APlus?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  B?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  BMinus?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  BPlus?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  C?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  CMinus?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  CPlus?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  D?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  F?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  NP?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  P?: Resolver<ResolversTypes['LetterGrade'], ParentType, ContextType>;
+  denominator?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  section_gpa?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  section_letter?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type LetterGradeResolvers<ContextType = any, ParentType extends ResolversParentTypes['LetterGrade'] = ResolversParentTypes['LetterGrade']> = {
+  numerator?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  percent?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  percentile_high?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  percentile_low?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   Enrollment?: Resolver<Maybe<ResolversTypes['Enrollment']>, ParentType, ContextType, RequireFields<QueryEnrollmentArgs, 'classId'>>;
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'email'>>;
-  grades?: Resolver<Maybe<Array<Maybe<ResolversTypes['Grade']>>>, ParentType, ContextType>;
+  grades?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradesArgs, 'CourseControlNumber' | 'Semester' | 'Year'>>;
   schedulesByUser?: Resolver<Maybe<Array<Maybe<ResolversTypes['Schedule']>>>, ParentType, ContextType, RequireFields<QuerySchedulesByUserArgs, 'created_by'>>;
   schedulesByUserAndTerm?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QuerySchedulesByUserAndTermArgs, 'created_by' | 'term'>>;
 };
@@ -278,6 +335,7 @@ export type Resolvers<ContextType = any> = {
   Enrollment?: EnrollmentResolvers<ContextType>;
   EnrollmentInfo?: EnrollmentInfoResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
+  LetterGrade?: LetterGradeResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
