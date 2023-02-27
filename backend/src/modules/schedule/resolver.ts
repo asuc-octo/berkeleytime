@@ -14,8 +14,10 @@ const resolvers: ScheduleModule.Resolvers = {
     removeScheduleByID(_parent, args: {id: string}) {
       return removeSchedule(args.id);
     },
-    createNewSchedule(_parent, args: {created_by: string, term: string, schedule_name: string, is_public: boolean}) {
-      return createSchedule(args.created_by, args.term, args.schedule_name,  args.is_public)
+    createNewSchedule(_parent, args: {created_by: string, term: string, schedule_name?: string | undefined | null, is_public?: boolean | undefined | null}) {
+      
+      return createSchedule(args.created_by, args.term, args.schedule_name ?? "", args.is_public ?? false)
+      
     }
   }
 };
