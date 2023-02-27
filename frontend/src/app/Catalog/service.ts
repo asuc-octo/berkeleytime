@@ -123,25 +123,21 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
 
 	const result = { ...filterItems };
 
-	result['requirements'].options = [
-		{
-			label: 'University Requirements',
-			options: filters['university']?.map((filter) => ({ label: filter.name, value: filter })) || []
-		},
-		{
-			label: 'L&S Breadths',
-			options: filters['ls']?.map((filter) => ({ label: filter.name, value: filter })) || []
-		},
-		{
-			label: 'College of Engineering',
-			options:
-				filters['engineering']?.map((filter) => ({ label: filter.name, value: filter })) || []
-		},
-		{
-			label: 'Haas Breadths',
-			options: filters['haas']?.map((filter) => ({ label: filter.name, value: filter })) || []
-		}
+	const requirements: { label: string; key: CatalogCategoryKeys }[] = [
+		{ label: 'University Requirements', key: 'university' },
+		{ label: 'L&S Breadths', key: 'ls' },
+		{ label: 'College of Engineering', key: 'engineering' },
+		{ label: 'Haas Breadths', key: 'haas' }
 	];
+
+	result['requirements'].options = requirements.map((req) => ({
+		label: req.label,
+		options:
+			filters[req.key]?.map((filter) => ({
+				label: filter.name,
+				value: filter
+			})) || []
+	}));
 
 	Object.entries(result)
 		.filter(([key]) => key !== 'requirements')
