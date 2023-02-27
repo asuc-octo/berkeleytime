@@ -2,6 +2,7 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
   type Schedule {
+    id: ID
     name: String
     created_by: String!
     date_created: String!
@@ -29,7 +30,8 @@ const typedef = gql`
 
   type Mutation {
     removeScheduleByID(id: ID!): ID
-    createNewSchedule(created_by: String!, term: String!, schedule_name: String, is_public: Boolean): Schedule
+    createNewSchedule(created_by: String!, term: String!, schedule_name: String, is_public: Boolean, class_IDs: [String!]!, section_IDs: [String!]!): Schedule
+    setSelectedSections(id: ID!, section_IDs: [String!]!): Schedule
   }
 `;
 

@@ -3,7 +3,8 @@ import { CustomEventType, ScheduleType } from "./model";
 
 export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule {
   return {
-    name: schedule.date_created,
+    id: schedule._id as string,
+    name: schedule.name,
     created_by: schedule.created_by,
     date_created: schedule.date_created,
     last_updated: schedule.last_updated,

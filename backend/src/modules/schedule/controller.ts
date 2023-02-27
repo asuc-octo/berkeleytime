@@ -41,7 +41,7 @@ export async function removeSchedule(scheduleID:string): Promise<string> {
 }
 
 // create a new schedule
-export async function createSchedule(created_by: string, term: string, schedule_name: string, is_public: boolean): Promise<Schedule> {
+export async function createSchedule(created_by: string, term: string, schedule_name: string, is_public: boolean, class_IDs: string[], section_IDs: string[]): Promise<Schedule> {
   // add class_IDs: [string], section_IDs: [string] later
   const today = new Date();
   const dd = String(today.getDate()).padStart(2, '0');
@@ -49,6 +49,15 @@ export async function createSchedule(created_by: string, term: string, schedule_
   const yyyy = today.getFullYear();
   const today_string = yyyy + '/' + mm + '/' + dd;
 
-  const newSchedule = await ScheduleModel.create({name: schedule_name, created_by: created_by, date_created: today_string, last_updated: today_string, term: term, public: is_public})
+  const newSchedule = await ScheduleModel.create({name: schedule_name, created_by: created_by, date_created: today_string, last_updated: today_string, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs})
   return formatSchedule(newSchedule as any)
+}
+
+// update section selection in an existing schedule
+export async function setSections(scheduleID: string, section_IDs: string[]): Promise<Schedule> {
+  const existingSchedule = await ScheduleModel.findByIdAndUpdate(scheduleID, {section_IDs: section_IDs}, {new: true})
+  if (!existingSchedule) {
+    throw new Error("Unable to update existing schedule's section selection")
+  }
+  return formatSchedule(existingSchedule as any)
 }

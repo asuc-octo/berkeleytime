@@ -14,6 +14,7 @@ export const CustomEventSchema = new Schema({
 
 
 export const ScheduleSchema = new Schema({
+  _id: { type: Types.ObjectId, reqired: true },
   name: { type: String, required: false },
   created_by: { type: String, required: true },
   date_created: { type: String, required: true },

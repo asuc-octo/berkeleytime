@@ -71,19 +71,28 @@ export type Mutation = {
   __typename?: 'Mutation';
   createNewSchedule?: Maybe<Schedule>;
   removeScheduleByID?: Maybe<Scalars['ID']>;
+  setSelectedSections?: Maybe<Schedule>;
 };
 
 
 export type MutationCreateNewScheduleArgs = {
+  class_IDs: Array<Scalars['String']>;
   created_by: Scalars['String'];
   is_public?: InputMaybe<Scalars['Boolean']>;
   schedule_name?: InputMaybe<Scalars['String']>;
+  section_IDs: Array<Scalars['String']>;
   term: Scalars['String'];
 };
 
 
 export type MutationRemoveScheduleByIdArgs = {
   id: Scalars['ID'];
+};
+
+
+export type MutationSetSelectedSectionsArgs = {
+  id: Scalars['ID'];
+  section_IDs: Array<Scalars['String']>;
 };
 
 export type Query = {
@@ -129,6 +138,7 @@ export type Schedule = {
   created_by: Scalars['String'];
   custom_events?: Maybe<Array<Maybe<CustomEvent>>>;
   date_created: Scalars['String'];
+  id?: Maybe<Scalars['ID']>;
   last_updated: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   public: Scalars['Boolean'];
@@ -313,8 +323,9 @@ export type LetterGradeResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'created_by' | 'term'>>;
+  createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'class_IDs' | 'created_by' | 'section_IDs' | 'term'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
+  setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -330,6 +341,7 @@ export type ScheduleResolvers<ContextType = any, ParentType extends ResolversPar
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   custom_events?: Resolver<Maybe<Array<Maybe<ResolversTypes['CustomEvent']>>>, ParentType, ContextType>;
   date_created?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   last_updated?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
