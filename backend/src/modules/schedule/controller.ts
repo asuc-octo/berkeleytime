@@ -43,10 +43,10 @@ export async function removeSchedule(scheduleID:string): Promise<string> {
 // create a new schedule
 export async function createSchedule(created_by: string, term: string, schedule_name: string, is_public: boolean): Promise<Schedule> {
   // add class_IDs: [string], section_IDs: [string] later
-  var today = new Date();
-  var dd = String(today.getDate()).padStart(2, '0');
-  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-  var yyyy = today.getFullYear();
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  const yyyy = today.getFullYear();
   const today_string = yyyy + '/' + mm + '/' + dd;
 
   const newSchedule = await ScheduleModel.create({name: schedule_name, created_by: created_by, date_created: today_string, last_updated: today_string, term: term, public: is_public})
