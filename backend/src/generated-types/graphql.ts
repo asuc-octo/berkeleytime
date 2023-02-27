@@ -69,7 +69,16 @@ export type LetterGrade = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createNewSchedule?: Maybe<Schedule>;
   removeScheduleByID?: Maybe<Scalars['ID']>;
+};
+
+
+export type MutationCreateNewScheduleArgs = {
+  created_by: Scalars['String'];
+  is_public: Scalars['Boolean'];
+  schedule_name: Scalars['String'];
+  term: Scalars['String'];
 };
 
 
@@ -304,6 +313,7 @@ export type LetterGradeResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'created_by' | 'is_public' | 'schedule_name' | 'term'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
 };
 

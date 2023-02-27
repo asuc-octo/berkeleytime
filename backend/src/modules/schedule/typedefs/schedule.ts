@@ -29,6 +29,7 @@ const typedef = gql`
 
   type Mutation {
     removeScheduleByID(id: ID!): ID
+    createNewSchedule(created_by: String!, term: String!, schedule_name: String!, is_public: Boolean!): Schedule
   }
 `;
 

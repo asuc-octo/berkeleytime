@@ -1,4 +1,4 @@
-import { getSchedulesByUser, getScheduleByTermAndUser, removeSchedule } from "./controller";
+import { getSchedulesByUser, getScheduleByTermAndUser, removeSchedule, createSchedule } from "./controller";
 import { ScheduleModule } from "./generated-types/module-types";
 
 const resolvers: ScheduleModule.Resolvers = {
@@ -13,6 +13,9 @@ const resolvers: ScheduleModule.Resolvers = {
   Mutation: {
     removeScheduleByID(_parent, args: {id: string}) {
       return removeSchedule(args.id);
+    },
+    createNewSchedule(_parent, args: {created_by: string, term: string, schedule_name: string, is_public: boolean}) {
+      return createSchedule(args.created_by, args.term, args.schedule_name,  args.is_public)
     }
   }
 };
