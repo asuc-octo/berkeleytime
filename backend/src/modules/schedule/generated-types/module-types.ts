@@ -5,20 +5,24 @@ export namespace ScheduleModule {
     Schedule: 'name' | 'created_by' | 'date_created' | 'last_updated' | 'term' | 'public' | 'class_IDs' | 'section_IDs' | 'custom_events';
     CustomEvent: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
     Query: 'schedulesByUser' | 'schedulesByUserAndTerm';
+    Mutation: 'removeScheduleByID';
   };
   
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;
   export type CustomEvent = Pick<Types.CustomEvent, DefinedFields['CustomEvent']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
+  export type Mutation = Pick<Types.Mutation, DefinedFields['Mutation']>;
   
   export type ScheduleResolvers = Pick<Types.ScheduleResolvers, DefinedFields['Schedule'] | '__isTypeOf'>;
   export type CustomEventResolvers = Pick<Types.CustomEventResolvers, DefinedFields['CustomEvent'] | '__isTypeOf'>;
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
+  export type MutationResolvers = Pick<Types.MutationResolvers, DefinedFields['Mutation']>;
   
   export interface Resolvers {
     Schedule?: ScheduleResolvers;
     CustomEvent?: CustomEventResolvers;
     Query?: QueryResolvers;
+    Mutation?: MutationResolvers;
   };
   
   export interface MiddlewareMap {
@@ -50,6 +54,10 @@ export namespace ScheduleModule {
       '*'?: gm.Middleware[];
       schedulesByUser?: gm.Middleware[];
       schedulesByUserAndTerm?: gm.Middleware[];
+    };
+    Mutation?: {
+      '*'?: gm.Middleware[];
+      removeScheduleByID?: gm.Middleware[];
     };
   };
 }

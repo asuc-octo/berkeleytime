@@ -67,6 +67,16 @@ export type LetterGrade = {
   percentile_low: Scalars['Float'];
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  removeScheduleByID?: Maybe<Scalars['ID']>;
+};
+
+
+export type MutationRemoveScheduleByIdArgs = {
+  id: Scalars['ID'];
+};
+
 export type Query = {
   __typename?: 'Query';
   Enrollment?: Maybe<Enrollment>;
@@ -212,8 +222,10 @@ export type ResolversTypes = {
   EnrollmentInfo: ResolverTypeWrapper<EnrollmentInfo>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Grade: ResolverTypeWrapper<Grade>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   LetterGrade: ResolverTypeWrapper<LetterGrade>;
+  Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -228,8 +240,10 @@ export type ResolversParentTypes = {
   EnrollmentInfo: EnrollmentInfo;
   Float: Scalars['Float'];
   Grade: Grade;
+  ID: Scalars['ID'];
   Int: Scalars['Int'];
   LetterGrade: LetterGrade;
+  Mutation: {};
   Query: {};
   Schedule: Schedule;
   String: Scalars['String'];
@@ -289,6 +303,10 @@ export type LetterGradeResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   Enrollment?: Resolver<Maybe<ResolversTypes['Enrollment']>, ParentType, ContextType, RequireFields<QueryEnrollmentArgs, 'classId'>>;
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'email'>>;
@@ -336,6 +354,7 @@ export type Resolvers<ContextType = any> = {
   EnrollmentInfo?: EnrollmentInfoResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
   LetterGrade?: LetterGradeResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

@@ -30,3 +30,12 @@ export async function getScheduleByTermAndUser(userID:string, term:string): Prom
   }
   return formatSchedule(userTermSchedule as any)
 }
+
+// delete a schedule specified by ObjectID
+export async function removeSchedule(scheduleID:string): Promise<string> {
+  const deletedSchedule = await ScheduleModel.findByIdAndDelete(scheduleID)
+  if (!deletedSchedule) {
+    throw new Error("Schedule deletion failed")
+  }
+  return scheduleID
+}

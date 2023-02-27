@@ -26,6 +26,10 @@ const typedef = gql`
     schedulesByUser(created_by: String!): [Schedule]
     schedulesByUserAndTerm(created_by: String!, term: String!): Schedule
   }
+
+  type Mutation {
+    removeScheduleByID(id: ID!): ID
+  }
 `;
 
 export default typedef;
