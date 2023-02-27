@@ -71,6 +71,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   createNewSchedule?: Maybe<Schedule>;
   removeScheduleByID?: Maybe<Scalars['ID']>;
+  setSelectedClasses?: Maybe<Schedule>;
   setSelectedSections?: Maybe<Schedule>;
 };
 
@@ -86,6 +87,12 @@ export type MutationCreateNewScheduleArgs = {
 
 
 export type MutationRemoveScheduleByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationSetSelectedClassesArgs = {
+  class_IDs: Array<Scalars['String']>;
   id: Scalars['ID'];
 };
 
@@ -325,6 +332,7 @@ export type LetterGradeResolvers<ContextType = any, ParentType extends Resolvers
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'class_IDs' | 'created_by' | 'section_IDs' | 'term'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
+  setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'class_IDs' | 'id'>>;
   setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
 };
 

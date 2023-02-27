@@ -1,4 +1,4 @@
-import { getSchedulesByUser, getScheduleByTermAndUser, removeSchedule, createSchedule, setSections } from "./controller";
+import { getSchedulesByUser, getScheduleByTermAndUser, removeSchedule, createSchedule, setSections, setClasses } from "./controller";
 import { ScheduleModule } from "./generated-types/module-types";
 
 const resolvers: ScheduleModule.Resolvers = {
@@ -24,6 +24,9 @@ const resolvers: ScheduleModule.Resolvers = {
     },
     setSelectedSections(_parent, args: {id: string, section_IDs: string[]}) {
       return setSections(args.id, args.section_IDs)
+    },
+    setSelectedClasses(_parent, args: {id: string, class_IDs: string[]}) {
+      return setClasses(args.id, args.class_IDs)
     }
   }
 };

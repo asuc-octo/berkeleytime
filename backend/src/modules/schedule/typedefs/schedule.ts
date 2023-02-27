@@ -32,6 +32,7 @@ const typedef = gql`
     removeScheduleByID(id: ID!): ID
     createNewSchedule(created_by: String!, term: String!, schedule_name: String, is_public: Boolean, class_IDs: [String!]!, section_IDs: [String!]!): Schedule
     setSelectedSections(id: ID!, section_IDs: [String!]!): Schedule
+    setSelectedClasses(id: ID!, class_IDs: [String!]!): Schedule
   }
 `;
 
