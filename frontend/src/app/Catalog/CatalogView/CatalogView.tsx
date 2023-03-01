@@ -41,11 +41,11 @@ const CatalogView = (props: CatalogViewProps) => {
 		);
 	});
 
-	const [getCourse, { loading }] = useGetCourseForNameLazyQuery({
+	const [getCourse, { data, loading }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
-				setCourse((prev) => ({ ...prev, ...course }));
+				setCourse(course);
 			}
 		}
 	});
@@ -65,8 +65,14 @@ const CatalogView = (props: CatalogViewProps) => {
 	}, [getCourse, abbreviation, courseNumber, semester]);
 
 	useEffect(() => {
-		setCourse(coursePreview);
-	}, [coursePreview]);
+		const course = data?.allCourses.edges[0].node;
+
+		if (course && course?.id === coursePreview?.id) {
+			setCourse(course);
+		} else if (coursePreview) {
+			setCourse(coursePreview);
+		}
+	}, [coursePreview, data]);
 
 	const [playlists, sections] = useMemo(() => {
 		let playlists = null;
@@ -120,114 +126,117 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
 
-	if (!course) return null;
-
 	return (
 		<div className={`${styles.root}`} data-modal={course !== null}>
-			<button
-				className={styles.modalButton}
-				onClick={() => {
-					setCurrentCourse(null);
-					setCourse(null);
-				}}
-			>
-				<BackArrow />
-				Back to Courses
-			</button>
-			<h3>
-				{course.abbreviation} {course.courseNumber}
-			</h3>
-			<h6>{course.title}</h6>
-			<div className={styles.stats}>
-				<div className={styles.statLine}>
-					<img src={people} />
-					Enrolled:
-					{course.enrolled !== -1 ? (
-						<div>
-							{applyIndicatorPercent(
-								`${course.enrolled}/${course.enrolledMax}`,
-								course.enrolledPercentage
+			{course && (
+				<>
+					<button
+						className={styles.modalButton}
+						onClick={() => {
+							setCurrentCourse(null);
+							setCourse(null);
+						}}
+					>
+						<BackArrow />
+						Back to Courses
+					</button>
+					<h3>
+						{course.abbreviation} {course.courseNumber}
+					</h3>
+					<h6>{course.title}</h6>
+					<div className={styles.stats}>
+						<div className={styles.statLine}>
+							<img src={people} />
+							Enrolled:
+							{course.enrolled !== -1 ? (
+								<div>
+									{applyIndicatorPercent(
+										`${course.enrolled}/${course.enrolledMax}`,
+										course.enrolledPercentage
+									)}
+									<a href={enrollPath} target="_blank" rel="noreferrer" className={styles.statLink}>
+										<img src={launch} alt="" />
+									</a>
+								</div>
+							) : (
+								<div>N/A</div>
 							)}
-							<a href={enrollPath} target="_blank" rel="noreferrer" className={styles.statLink}>
-								<img src={launch} alt="" />
-							</a>
 						</div>
-					) : (
-						<div>N/A</div>
-					)}
-				</div>
-				<div className={styles.statLine}>
-					<img src={chart} alt="" />
-					Average Grade:
-					{course && course.gradeAverage !== -1 ? (
+						<div className={styles.statLine}>
+							<img src={chart} alt="" />
+							Average Grade:
+							{course.gradeAverage !== -1 ? (
+								<div>
+									{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+									<a href={gradePath} target="_blank" rel="noreferrer" className={styles.statLink}>
+										<img src={launch} alt="" />
+									</a>
+								</div>
+							) : (
+								<div>N/A</div>
+							)}
+						</div>
+						<div className={styles.statLine}>
+							<img src={book} alt="" />
+							{formatUnits(course?.units)}
+						</div>
+					</div>
+					<div className={styles.pills}>
 						<div>
-							{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
-							<a href={gradePath} target="_blank" rel="noreferrer" className={styles.statLink}>
-								<img src={launch} alt="" />
-							</a>
+							{playlists?.map((req) =>
+								typeof req === 'number' ? (
+									<Skeleton key={req} className={styles.pill} width={75} />
+								) : (
+									<span className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
+										{req.name}
+									</span>
+								)
+							)}
 						</div>
-					) : (
-						<div>N/A</div>
-					)}
-				</div>
-				<div className={styles.statLine}>
-					<img src={book} alt="" />
-					{formatUnits(course?.units)}
-				</div>
-			</div>
-			<div className={styles.pills}>
-				<div>
-					{playlists?.map((req) =>
-						typeof req === 'number' ? (
-							<Skeleton key={req} className={styles.pill} width={75} />
-						) : (
-							<span className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
-								{req.name}
-							</span>
-						)
-					)}
-				</div>
-			</div>
-			<ReadMore prereqs={(course as CourseFragment)?.prerequisites}>
-				{course?.description ?? ''}
-			</ReadMore>
-			<h5>Class Times - {semester ?? ''}</h5>
-			{/*
-			Redesigned catalog sections
-			<CatalogViewSections sections={sections} />
-			*/}
-			{sections && sections.length > 0 ? (
-				<SectionTable sections={sections} />
-			) : !loading ? (
-				<span>There are no class times for the selected course.</span>
-			) : null}
+					</div>
+					<ReadMore prereqs={(course as CourseFragment)?.prerequisites}>
+						{course?.description ?? ''}
+					</ReadMore>
+					<h5>Class Times - {semester ?? ''}</h5>
+					{sections && sections.length > 0 ? (
+						<SectionTable sections={sections} />
+					) : !loading ? (
+						<span>There are no class times for the selected course.</span>
+					) : null}
 
-			{/* Good feature whenever we want...
-      <h5>Past Offerings</h5>
-			<section className={styles.pills}>
-				{pastSemesters ? (
-					pastSemesters.map((req) => (
-						<button
-							className={styles.pill}
-							key={req.id}
-							onClick={() =>
-								history.push(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
-							}
-						>
-							{req.name}
-						</button>
-					))
-				) : (
-					<Skeleton
-						style={{ marginRight: '5px' }}
-						inline
-						count={10}
-						width={80}
-						height={28}
-						borderRadius={12}
-					/>
-				)}
-			</section> */}
+					{/*
+					Redesigned catalog sections
+					<CatalogViewSections sections={sections} />
+					*/}
+
+					{/* Good feature whenever we want...
+					<h5>Past Offerings</h5>
+					<section className={styles.pills}>
+						{pastSemesters ? (
+							pastSemesters.map((req) => (
+								<button
+									className={styles.pill}
+									key={req.id}
+									onClick={() =>
+										history.push(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
+									}
+								>
+									{req.name}
+								</button>
+							))
+						) : (
+							<Skeleton
+								style={{ marginRight: '5px' }}
+								inline
+								count={10}
+								width={80}
+								height={28}
+								borderRadius={12}
+							/>
+						)}
+					</section> */}
+				</>
+			)}
 		</div>
 	);
 };

@@ -28,6 +28,7 @@ const Catalog = () => {
 			<CatalogList
 				currentFilters={currentFilters}
 				setCurrentCourse={setCurrentCourse}
+				selectedId={currentCourse?.id ?? null}
 				searchQuery={searchQuery}
 				sortQuery={sortQuery}
 			/>

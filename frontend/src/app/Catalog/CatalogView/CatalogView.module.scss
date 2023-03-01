@@ -1,3 +1,21 @@
+@-webkit-keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
 .root {
 	display: flex;
 	position: relative;
@@ -7,6 +25,8 @@
 	gap: 15px;
 	overflow-y: auto;
 	overflow-x: hidden;
+	-webkit-animation: fadeIn 0.1s;
+	animation: fadeIn 0.1s;
 
 	h3 {
 		font-size: 24px;
@@ -29,7 +49,7 @@
 		color: $bt-light-text;
 	}
 
-	@include mobile {
+	@include media(mobile) {
 		background: white;
 		position: absolute !important;
 		top: 0;
@@ -50,7 +70,7 @@
 
 .modalButton {
 	display: none;
-	@include mobile {
+	@include media(mobile) {
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;

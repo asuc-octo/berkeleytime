@@ -6,13 +6,10 @@
 // md: 768-992  (tablet) (touch)
 // lg: 992-1200 (desktop)
 // xl: 1200+    (widescreen) (desktop)
-$screen-md-min: 768px;
-$screen-lg-min: 1000px;
 
 $breakpoints: (
-	mobile: 0px,
-	tablet: 1000px,
-	desktop: 1024px
+	mobile: 768px,
+	tablet: 1124px,
 );
 
 @mixin media($keys...) {
@@ -23,18 +20,17 @@ $breakpoints: (
 	}
 }
 
-// up to 768px, or xs + sm
 @mixin mobile {
-	@media (max-width: #{$screen-md-min}) {
-		@content;
-	}
+  @include media-breakpoint-down(sm) {
+    @content;
+  }
 }
 
 // between 768px and 992px, or md
 @mixin tablet {
-	@media (max-width: #{$screen-lg-min}) {
-		@content;
-	}
+  @include media-breakpoint-only(md) {
+    @content;
+  }
 }
 
 // up to 576px, or xs

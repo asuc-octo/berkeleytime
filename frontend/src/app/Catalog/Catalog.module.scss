@@ -8,7 +8,7 @@
 	height: 100vh;
 	align-items: stretch;
 
-	@include tablet {
+	@include media(tablet) {
 		grid-template-areas:
 			'filters view'
 			'list view';
@@ -16,7 +16,7 @@
 		grid-template-columns: 1.2fr 2fr;
 	}
 
-	@include mobile {
+	@include media(mobile) {
 		grid-template-areas:
 			'filters'
 			'list';
