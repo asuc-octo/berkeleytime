@@ -11,6 +11,7 @@ import { CurrentFilters } from 'app/Catalog/types';
 import { useParams } from 'react-router';
 import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
+import ReadMore from './ReadMore';
 
 import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
@@ -33,13 +34,12 @@ const CatalogView = (props: CatalogViewProps) => {
 	}>();
 
 	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
-	const legacyId = useSelector((state: any) => {
-		return (
+	const legacyId = useSelector(
+		(state: any) =>
 			state.enrollment?.context?.courses?.find(
 				(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
 			)?.id ?? null
-		);
-	});
+	);
 
 	const [getCourse, { data, loading }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
@@ -194,8 +194,16 @@ const CatalogView = (props: CatalogViewProps) => {
 							)}
 						</div>
 					</div>
-					<ReadMore prereqs={(course as CourseFragment)?.prerequisites}>
+					<ReadMore>
 						{course?.description ?? ''}
+						<>
+							<h6>Prerequisites</h6>
+							<p>
+								{course.prerequisites !== ''
+									? course.prerequisites
+									: 'There is no information on the prerequisites of this course.'}
+							</p>
+						</>
 					</ReadMore>
 					<h5>Class Times - {semester ?? ''}</h5>
 					{sections && sections.length > 0 ? (
@@ -235,36 +243,6 @@ const CatalogView = (props: CatalogViewProps) => {
 							/>
 						)}
 					</section> */}
-				</>
-			)}
-		</div>
-	);
-};
-
-const ReadMore = ({ children, prereqs }: { children: string; prereqs?: string }) => {
-	const [isRead, setRead] = useState(false);
-
-	return (
-		<div className={styles.description}>
-			{children.length > 150 ? (
-				<p>
-					{isRead ? children : children.slice(0, 150) + '...'}
-					<span onClick={() => setRead((prev) => !prev)}>{isRead ? 'see less' : 'see more'}</span>
-				</p>
-			) : children !== '' ? (
-				children
-			) : (
-				'There is no description for this course.'
-			)}
-
-			{(isRead || children.length < 150) && (
-				<>
-					<h6>Prerequisites</h6>
-					<p>
-						{prereqs !== ''
-							? prereqs
-							: 'There is no information on the prerequisites of this course.'}
-					</p>
 				</>
 			)}
 		</div>
