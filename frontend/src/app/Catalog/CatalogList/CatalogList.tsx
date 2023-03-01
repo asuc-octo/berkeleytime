@@ -2,7 +2,7 @@ import { FixedSizeList } from 'react-window';
 import CatalogListItem from './CatalogListItem';
 import { CourseFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
 import { CurrentFilters, FilterOption, SortOption } from '../types';
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { Dispatch, memo, SetStateAction, useEffect, useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';
 
 import styles from './CatalogList.module.scss';
@@ -13,6 +13,7 @@ import { sortByAttribute } from 'utils/courses/sorting';
 type CatalogListProps = {
 	currentFilters: CurrentFilters;
 	setCurrentCourse: Dispatch<SetStateAction<CourseFragment | null>>;
+	selectedId: string | null;
 	searchQuery: string;
 	sortQuery: SortOption;
 };
@@ -23,10 +24,9 @@ type Skeleton = { __typename: 'Skeleton'; id: number };
  * Component for course list
  */
 const CatalogList = (props: CatalogListProps) => {
-	const { currentFilters, setCurrentCourse, searchQuery, sortQuery } = props;
+	const { currentFilters, setCurrentCourse, selectedId, searchQuery, sortQuery } = props;
 	const { observe, height } = useDimensions();
 	const [fetchCatalogList, { data }] = useGetCoursesForFilterLazyQuery({});
-	const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 	const history = useHistory();
 
 	const courses = useMemo(() => {
@@ -64,7 +64,6 @@ const CatalogList = (props: CatalogListProps) => {
 
 	const handleCourseSelect = (course: CourseFragment) => {
 		setCurrentCourse(course);
-		setSelectedCourseId(course.id);
 		history.push(
 			`/catalog/${(currentFilters.semester as FilterOption)?.value?.name}/${course.abbreviation}/${
 				course.courseNumber
@@ -88,7 +87,7 @@ const CatalogList = (props: CatalogListProps) => {
 							data={{
 								course: courses[index] as CourseFragment,
 								handleCourseSelect,
-								isSelected: selectedCourseId === courses[index].id
+								isSelected: selectedId === courses[index].id
 							}}
 							style={style}
 						/>
@@ -99,4 +98,4 @@ const CatalogList = (props: CatalogListProps) => {
 	);
 };
 
-export default CatalogList;
+export default memo(CatalogList);
