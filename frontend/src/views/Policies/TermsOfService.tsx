@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import Description from '../../components/Recruiting/Description';
+import Description from '../../components/Common/Description';
 const url = new URL('../../../public/terms.md', import.meta.url).href
 
 const TermsOfService: FC = () => (
