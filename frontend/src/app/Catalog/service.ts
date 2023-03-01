@@ -40,7 +40,7 @@ const FILTER_TEMPLATE: FilterTemplate = {
 		closeMenuOnSelect: false,
 		isSearchable: false,
 		options: [],
-		placeholder: 'requirements...'
+		placeholder: 'Select requirements...'
 	},
 	units: {
 		name: 'Units',
@@ -49,7 +49,7 @@ const FILTER_TEMPLATE: FilterTemplate = {
 		closeMenuOnSelect: false,
 		isSearchable: false,
 		options: [],
-		placeholder: 'units...'
+		placeholder: 'Specify units...'
 	},
 	department: {
 		name: 'Department',
@@ -58,7 +58,7 @@ const FILTER_TEMPLATE: FilterTemplate = {
 		closeMenuOnSelect: true,
 		isSearchable: true,
 		options: [],
-		placeholder: 'department...'
+		placeholder: 'Choose a department...'
 	},
 	level: {
 		name: 'Class Level',
@@ -67,7 +67,7 @@ const FILTER_TEMPLATE: FilterTemplate = {
 		closeMenuOnSelect: false,
 		isSearchable: false,
 		options: [],
-		placeholder: 'class level...'
+		placeholder: 'Select class levels...'
 	},
 	semester: {
 		name: 'Semesters',
@@ -76,7 +76,7 @@ const FILTER_TEMPLATE: FilterTemplate = {
 		closeMenuOnSelect: true,
 		isSearchable: false,
 		options: [],
-		placeholder: 'semester...'
+		placeholder: 'Specify semester...'
 	}
 };
 
