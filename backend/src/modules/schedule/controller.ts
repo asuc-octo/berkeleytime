@@ -72,7 +72,7 @@ interface partialSchedule {
 }
 
 // update an existing schedule
-export async function editSchedule(schedule_ID: string, created_by: string, term: string, schedule_name: string | undefined | null, class_IDs: string[], section_IDs: string[], is_public?: boolean | undefined | null): Promise<Schedule> {
+export async function editSchedule(schedule_ID: string, created_by: string | undefined | null, term: string | undefined | null, schedule_name: string | undefined | null, class_IDs: string[], section_IDs: string[], is_public?: boolean | undefined | null): Promise<Schedule> {
   const current_time = getTime()
   
   var schedulePartsToUpdate: partialSchedule = { update_time: current_time}
