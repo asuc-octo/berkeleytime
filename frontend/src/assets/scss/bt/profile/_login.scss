@@ -33,13 +33,16 @@
 		}
 	}
 
+	margin: 0 auto !important;
+
 	.modal-dialog {
 		width: 500px;
 		@include mobile {
 			width: 75vw;
 		}
 
-		position: absolute;
+		margin: 0 auto !important;
+
 		align-self: center;
 		top: 25vh;
 

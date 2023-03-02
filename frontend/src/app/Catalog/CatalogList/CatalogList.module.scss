@@ -4,8 +4,8 @@
 	position: relative;
 	flex-direction: column;
 	border-right: 1.5px solid #eaeaea;
-  height: 100%;
-  overflow: hidden;
+	height: 100%;
+	overflow: hidden;
 }
 
 .itemRoot {
@@ -13,7 +13,7 @@
 	flex-direction: row;
 	justify-content: space-between;
 	transition: all 0.15s ease-in-out;
-	padding: 6px 12px;
+	padding: 5px 15px;
 
 	.itemContainer {
 		display: grid;
@@ -22,7 +22,7 @@
 		transition: all 0.15s ease-in-out;
 		width: 100%;
 		border-radius: 8px;
-		padding: 6px 12px;
+		padding: 8px 10px;
 		position: relative;
 
 		@include media(mobile) {
@@ -69,10 +69,27 @@
 	}
 }
 
-.itemContent {
+.list {
+	overflow: overlay !important;
+}
+
+.error {
 	display: flex;
-	flex-direction: column;
-	gap: 5px;
+	padding: 30px;
+	height: 100%;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	color: $bt-light-text;
+}
+
+.itemContent {
+	display: grid;
+	grid-auto-flow: row;
+	justify-content:space-evenly;
+	h6 {
+		justify-self: flex-start;
+	}
 }
 
 .grade {
@@ -115,6 +132,7 @@
 	opacity: 0.5;
 	transition: all 0.15s ease-in-out;
 	color: $bt-light-grey;
+	z-index: 5;
 	&:active {
 		transform: scale(0.9) !important;
 	}

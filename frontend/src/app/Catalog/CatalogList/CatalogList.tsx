@@ -73,7 +73,7 @@ const CatalogList = (props: CatalogListProps) => {
 
 	return (
 		<div ref={observe} className={styles.root}>
-			{height && (
+			{height && courses.length > 0 ? (
 				<FixedSizeList
 					className={styles.list}
 					height={height}
@@ -93,6 +93,8 @@ const CatalogList = (props: CatalogListProps) => {
 						/>
 					)}
 				</FixedSizeList>
+			) : (
+				<div className={styles.error}>There are no courses matching your filters.</div>
 			)}
 		</div>
 	);

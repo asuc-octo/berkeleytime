@@ -53,11 +53,11 @@
 		background: white;
 		position: absolute !important;
 		top: 0;
-		left: 0;
-		width: 100vw;
 		height: 100%;
 		z-index: 300;
-		padding-top: 58px + 30px; // compensate for fixed header
+		width: 100vw;
+		// Add size of fixed header.
+		padding-top: 57.11px + 30px;
 		&[data-modal='false'] {
 			display: none;
 		}
