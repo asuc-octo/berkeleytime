@@ -1,5 +1,5 @@
 import { formatSchedule } from "./formatter";
-import { Schedule } from "../../generated-types/graphql";
+import { Schedule, CustomEvent, InputMaybe } from "../../generated-types/graphql";
 import { ScheduleModel } from "./model";
 import { ObjectID } from "bson";
 
@@ -49,6 +49,8 @@ function getTime(): string {
 
 // create a new schedule
 export async function createSchedule(created_by: string, term: string, schedule_name: string, is_public: boolean, class_IDs: string[], section_IDs: string[]): Promise<Schedule> {
+
+  // args: {arguments: InputMaybe<String>}
   // add class_IDs: [string], section_IDs: [string] later
   
   const current_time = getTime()
@@ -57,9 +59,16 @@ export async function createSchedule(created_by: string, term: string, schedule_
   return formatSchedule(newSchedule as any)
 }
 
+// update an existing schedule
+export async function editSchedule(schedule_ID: string, created_by: string, term: string, schedule_name: string, is_public: boolean, class_IDs: string[], section_IDs: string[]): Promise<Schedule> {
+  const current_time = getTime()
+  const updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {name: schedule_name, created_by: created_by, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs}, {returnDocument: 'after'})
+  return formatSchedule(updatedSchedule as any)
+}
+
 // update section selection in an existing schedule
-export async function setSections(scheduleID: string, section_IDs: string[]): Promise<Schedule> {
-  const existingSchedule = await ScheduleModel.findByIdAndUpdate(scheduleID, {section_IDs: section_IDs, last_updated: getTime()}, {new: true})
+export async function setSections(schedule_ID: string, section_IDs: string[]): Promise<Schedule> {
+  const existingSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {section_IDs: section_IDs, last_updated: getTime()}, {returnDocument: 'after'})
   if (!existingSchedule) {
     throw new Error("Unable to update existing schedule's section selection")
   }
@@ -68,7 +77,7 @@ export async function setSections(scheduleID: string, section_IDs: string[]): Pr
 
 // update class selection in an existing schedule
 export async function setClasses(scheduleID: string, class_IDs: string[]): Promise<Schedule> {
-  const existingSchedule = await ScheduleModel.findByIdAndUpdate(scheduleID, {class_IDs: class_IDs, last_updated: getTime()}, {new: true})
+  const existingSchedule = await ScheduleModel.findByIdAndUpdate(scheduleID, {class_IDs: class_IDs, last_updated: getTime()}, {returnDocument: 'after'})
   if (!existingSchedule) {
     throw new Error("Unable to update existing schedule's class selection")
   }

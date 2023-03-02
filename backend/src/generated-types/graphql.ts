@@ -70,6 +70,7 @@ export type LetterGrade = {
 export type Mutation = {
   __typename?: 'Mutation';
   createNewSchedule?: Maybe<Schedule>;
+  editExistingSchedule?: Maybe<Schedule>;
   removeScheduleByID?: Maybe<Scalars['ID']>;
   setSelectedClasses?: Maybe<Schedule>;
   setSelectedSections?: Maybe<Schedule>;
@@ -79,6 +80,17 @@ export type Mutation = {
 export type MutationCreateNewScheduleArgs = {
   class_IDs: Array<Scalars['String']>;
   created_by: Scalars['String'];
+  is_public?: InputMaybe<Scalars['Boolean']>;
+  schedule_name?: InputMaybe<Scalars['String']>;
+  section_IDs: Array<Scalars['String']>;
+  term: Scalars['String'];
+};
+
+
+export type MutationEditExistingScheduleArgs = {
+  class_IDs: Array<Scalars['String']>;
+  created_by: Scalars['String'];
+  id: Scalars['ID'];
   is_public?: InputMaybe<Scalars['Boolean']>;
   schedule_name?: InputMaybe<Scalars['String']>;
   section_IDs: Array<Scalars['String']>;
@@ -330,6 +342,7 @@ export type LetterGradeResolvers<ContextType = any, ParentType extends Resolvers
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'class_IDs' | 'created_by' | 'section_IDs' | 'term'>>;
+  editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'class_IDs' | 'created_by' | 'id' | 'section_IDs' | 'term'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
   setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'class_IDs' | 'id'>>;
   setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;

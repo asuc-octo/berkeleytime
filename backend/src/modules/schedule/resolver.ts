@@ -1,5 +1,5 @@
 import { Mongoose } from "mongoose";
-import { getSchedulesByUser, getScheduleByID, removeSchedule, createSchedule, setSections, setClasses } from "./controller";
+import { getSchedulesByUser, getScheduleByID, removeSchedule, createSchedule, setSections, setClasses, editSchedule } from "./controller";
 import { ScheduleModule } from "./generated-types/module-types";
 
 const resolvers: ScheduleModule.Resolvers = {
@@ -22,6 +22,9 @@ const resolvers: ScheduleModule.Resolvers = {
       
       return createSchedule(args.created_by, args.term, args.schedule_name ?? "", args.is_public ?? false, args.class_IDs ?? [""], args.section_IDs ?? [""])
       
+    },
+    editExistingSchedule(_parent, args: {id: string, created_by: string, term: string, schedule_name?: string | undefined | null, is_public?: boolean | undefined | null, class_IDs: string[] | null | undefined, section_IDs: string[] | undefined | null}) {
+      return editSchedule(args.id, args.created_by, args.term, args.schedule_name ?? "", args.is_public ?? false, args.class_IDs ?? [""], args.section_IDs ?? [""])
     },
     setSelectedSections(_parent, args: {id: string, section_IDs: string[]}) {
       return setSections(args.id, args.section_IDs)

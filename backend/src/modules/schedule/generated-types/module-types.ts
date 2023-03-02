@@ -5,7 +5,7 @@ export namespace ScheduleModule {
     Schedule: '_id' | 'name' | 'created_by' | 'date_created' | 'last_updated' | 'term' | 'public' | 'class_IDs' | 'section_IDs' | 'custom_events';
     CustomEvent: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
     Query: 'schedulesByUser' | 'scheduleByID';
-    Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'setSelectedSections' | 'setSelectedClasses';
+    Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'editExistingSchedule' | 'setSelectedSections' | 'setSelectedClasses';
   };
   
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;
@@ -60,6 +60,7 @@ export namespace ScheduleModule {
       '*'?: gm.Middleware[];
       removeScheduleByID?: gm.Middleware[];
       createNewSchedule?: gm.Middleware[];
+      editExistingSchedule?: gm.Middleware[];
       setSelectedSections?: gm.Middleware[];
       setSelectedClasses?: gm.Middleware[];
     };
