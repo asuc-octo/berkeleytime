@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Dispatch, memo, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActionMeta } from 'react-select';
 import BTSelect from 'components/Custom/Select';
 
@@ -68,18 +68,16 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 		};
 
 		document.addEventListener('click', listener);
-		document.addEventListener('touchstart', listener);
 
 		return () => {
 			document.removeEventListener('click', listener);
-			document.removeEventListener('touchstart', listener);
 		};
 	}, [isOpen, modalRef, setOpen]);
 
 	const handleFilterReset = useCallback(() => {
 		setSortQuery(SORT_OPTIONS[0]);
 		setSearchQuery('');
-
+		
 		if (filterList) {
 			const semester = filterList.semester.options[0] as FilterOption;
 			setCurrentFilters({
@@ -174,4 +172,4 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	);
 };
 
-export default CatalogFilters;
+export default memo(CatalogFilters);

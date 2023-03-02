@@ -74,7 +74,7 @@
 		grid-area: modal;
 		width: 100%;
 		top: 0;
-		// mins size of search bar, minus size of header
+		// minus size of search bar, minus size of header
 		height: calc(100vh - 47px - 57.11px);
 		z-index: 50;
 		background: hsla(0, 0%, 0%, 0.3);
@@ -171,19 +171,19 @@
 		background: white;
 		border: 1px solid $bt-border-grey;
 		border-radius: 12px;
+
+		:nth-child(2) {
+			border-radius: 12px;
+			color: hsl(0, 0%, 80%);
+		}
+
+		:nth-child(2):hover {
+			background: $bt-button-background;
+			color: $bt-base-text;
+		}
 	}
 
 	[class$='MultiValueGeneric2'] {
 		color: $bt-blue;
-	}
-
-	[class$='-MultiValueRemove'] {
-		border-radius: 12px;
-		color: hsl(0, 0%, 80%);
-	}
-
-	[class$='-MultiValueRemove']:hover {
-		background: $bt-button-background;
-		color: $bt-base-text;
 	}
 }

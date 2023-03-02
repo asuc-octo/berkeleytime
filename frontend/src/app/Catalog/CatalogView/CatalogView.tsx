@@ -8,7 +8,7 @@ import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
 import { CurrentFilters } from 'app/Catalog/types';
-import { useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
@@ -35,6 +35,7 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
 	const [isOpen, setOpen] = useState(false);
+	const history = useHistory();
 
 	const legacyId = useSelector(
 		(state: any) =>
@@ -52,6 +53,12 @@ const CatalogView = (props: CatalogViewProps) => {
 			}
 		}
 	});
+
+	useEffect(() => {
+		if (!abbreviation || !courseNumber) {
+			setOpen(false);
+		}
+	}, [abbreviation, courseNumber]);
 
 	useEffect(() => {
 		const [sem, year] = semester?.split(' ') ?? [null, null];
@@ -138,7 +145,7 @@ const CatalogView = (props: CatalogViewProps) => {
 						onClick={() => {
 							setCurrentCourse(null);
 							setCourse(null);
-							setOpen(false);
+							history.replace(`/catalog/${semester}`);
 						}}
 					>
 						<BackArrow />

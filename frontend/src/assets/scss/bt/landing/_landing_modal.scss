@@ -4,6 +4,7 @@
 	.landing-modal-btn {
 		width: 350px;
 		align-self: center;
+
 		@include mobile {
 			width: 200px;
 			justify-content: center;
@@ -56,6 +57,8 @@
 		@include mobile {
 			width: 75vw !important;
 		}
+
+		margin: 0 auto;
 
 		align-self: center !important;
 		top: 15vh !important;

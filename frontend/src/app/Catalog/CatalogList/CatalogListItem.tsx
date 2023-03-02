@@ -59,7 +59,10 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 						{user && (
 							<div
 								className={styles.saveIcon}
-								onClick={() => (isSaved ? unsaveCourse(course) : saveCourse(course))}
+								onClick={(e) => {
+									e.stopPropagation();
+									isSaved ? unsaveCourse(course) : saveCourse(course);
+								}}
 							>
 								{isSaved ? <BookmarkSaved /> : <BookmarkUnsaved />}
 							</div>
