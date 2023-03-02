@@ -34,6 +34,8 @@ const CatalogView = (props: CatalogViewProps) => {
 	}>();
 
 	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
+	const [isOpen, setOpen] = useState(false);
+
 	const legacyId = useSelector(
 		(state: any) =>
 			state.enrollment?.context?.courses?.find(
@@ -69,8 +71,10 @@ const CatalogView = (props: CatalogViewProps) => {
 
 		if (course && course?.id === coursePreview?.id) {
 			setCourse(course);
+			setOpen(true);
 		} else if (coursePreview) {
 			setCourse(coursePreview);
+			setOpen(true);
 		}
 	}, [coursePreview, data]);
 
@@ -81,9 +85,7 @@ const CatalogView = (props: CatalogViewProps) => {
 
 		if (course?.playlistSet) {
 			const { edges } = course.playlistSet;
-			playlists = catalogService.sortPills(
-				edges.map((e) => e.node as PlaylistType).filter((n) => n.category !== 'semester')
-			);
+			playlists = catalogService.sortPills(edges.map((e) => e.node as PlaylistType));
 
 			// semesters = catalogService.sortSemestersByLatest(
 			// 	edges.map((e) => e.node).filter((n) => n.category === 'semester')
@@ -127,7 +129,7 @@ const CatalogView = (props: CatalogViewProps) => {
 	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
 
 	return (
-		<div className={`${styles.root}`} data-modal={course !== null}>
+		<div className={`${styles.root}`} data-modal={isOpen}>
 			{course && (
 				<>
 					<button
@@ -135,6 +137,7 @@ const CatalogView = (props: CatalogViewProps) => {
 						onClick={() => {
 							setCurrentCourse(null);
 							setCourse(null);
+							setOpen(false);
 						}}
 					>
 						<BackArrow />

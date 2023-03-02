@@ -183,10 +183,11 @@ const SemesterToValue = (semesterFilter: FilterFragment) => {
  * by putting the `units` category at the end of the list
  */
 const sortPills = (playlists: PlaylistType[]) => {
+	const semesters = sortSemestersByLatest(playlists.filter((p) => p.category === 'semester'));
 	const units = sortByName(playlists.filter((p) => p.category === 'units'));
-	const rest = sortByName(playlists.filter((p) => p.category !== 'units'));
+	const rest = sortByName(playlists.filter((p) => !['units', 'semester'].includes(p.category)));
 
-	return rest.concat(units);
+	return rest.concat(units, semesters.slice(0, 4) as PlaylistType[]);
 };
 
 export const sortByName = <T extends { name: string }[]>(arr: T) => {
