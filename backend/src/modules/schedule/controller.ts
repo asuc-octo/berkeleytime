@@ -2,6 +2,8 @@ import { formatSchedule } from "./formatter";
 import { Schedule, CustomEvent, InputMaybe } from "../../generated-types/graphql";
 import { ScheduleModel } from "./model";
 import { ObjectID } from "bson";
+import { isBoolean } from "lodash";
+//import { Schedule } from "./fixture";
 
 // export async function schedules(): Promise<Schedule[]> {
 //   const schedules = await ScheduleModel.find();
@@ -60,9 +62,14 @@ export async function createSchedule(created_by: string, term: string, schedule_
 }
 
 // update an existing schedule
-export async function editSchedule(schedule_ID: string, created_by: string, term: string, schedule_name: string, is_public: boolean, class_IDs: string[], section_IDs: string[]): Promise<Schedule> {
+export async function editSchedule(schedule_ID: string, created_by: string, term: string, schedule_name: string, class_IDs: string[], section_IDs: string[], is_public?: boolean | undefined | null): Promise<Schedule> {
   const current_time = getTime()
-  const updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {name: schedule_name, created_by: created_by, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs}, {returnDocument: 'after'})
+  let updatedSchedule
+  if (isBoolean(is_public)) {
+    updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {name: schedule_name, created_by: created_by, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs}, {returnDocument: 'after'})
+  } else {
+    updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {name: schedule_name, created_by: created_by, last_updated: current_time, term: term, class_IDs: class_IDs, section_IDs: section_IDs}, {returnDocument: 'after'})
+  }
   return formatSchedule(updatedSchedule as any)
 }
 
