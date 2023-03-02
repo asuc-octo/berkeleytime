@@ -61,15 +61,50 @@ export async function createSchedule(created_by: string, term: string, schedule_
   return formatSchedule(newSchedule as any)
 }
 
+interface partialSchedule {
+  schedule_name?: string,
+  created_by?: string,
+  term?: string,
+  class_IDs?: string[],
+  section_IDs?: string[],
+  public?: boolean,
+  update_time?: string
+}
+
 // update an existing schedule
-export async function editSchedule(schedule_ID: string, created_by: string, term: string, schedule_name: string, class_IDs: string[], section_IDs: string[], is_public?: boolean | undefined | null): Promise<Schedule> {
+export async function editSchedule(schedule_ID: string, created_by: string, term: string, schedule_name: string | undefined | null, class_IDs: string[], section_IDs: string[], is_public?: boolean | undefined | null): Promise<Schedule> {
   const current_time = getTime()
+  
+  var schedulePartsToUpdate: partialSchedule = { update_time: current_time}
+
+  if (term) {
+    schedulePartsToUpdate.term = term
+  }
+  if (schedule_name) {
+    schedulePartsToUpdate.schedule_name = schedule_name
+  }
+  if (class_IDs) {
+    schedulePartsToUpdate.class_IDs = class_IDs
+  }
+  if (section_IDs) {
+    schedulePartsToUpdate.section_IDs = section_IDs
+  }
+  if (isBoolean(is_public)) {
+    schedulePartsToUpdate.public = is_public
+  }
+  
+  /** 
   let updatedSchedule
   if (isBoolean(is_public)) {
-    updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {name: schedule_name, created_by: created_by, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs}, {returnDocument: 'after'})
+    schedulePartsToUpdate.public = is_public
+    updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, schedulePartsToUpdate, {returnDocument: 'after'})
+    //updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {name: schedule_name, created_by: created_by, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs}, {returnDocument: 'after'})
   } else {
     updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {name: schedule_name, created_by: created_by, last_updated: current_time, term: term, class_IDs: class_IDs, section_IDs: section_IDs}, {returnDocument: 'after'})
-  }
+  }*/
+
+  const updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, schedulePartsToUpdate, {returnDocument: 'after'})
+
   return formatSchedule(updatedSchedule as any)
 }
 
