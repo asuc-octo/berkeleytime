@@ -1,4 +1,4 @@
-import { Mongoose } from "mongoose";
+// import { Mongoose } from "mongoose";
 import { getSchedulesByUser, getScheduleByID, removeSchedule, createSchedule, setSections, setClasses, editSchedule } from "./controller";
 import { ScheduleModule } from "./generated-types/module-types";
 

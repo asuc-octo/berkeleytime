@@ -1,7 +1,7 @@
-import { ObjectId } from "mongodb";
+// import { ObjectId } from "mongodb";
 import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
 // import { User } from "../user/fixture";
-import { CustomEvent } from "./fixture";
+// import { CustomEvent } from "./fixture";
 
 export const CustomEventSchema = new Schema({
   start_time: { type: String, required: true },
