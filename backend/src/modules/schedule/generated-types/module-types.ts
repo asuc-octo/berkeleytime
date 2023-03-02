@@ -2,9 +2,9 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace ScheduleModule {
   interface DefinedFields {
-    Schedule: 'id' | 'name' | 'created_by' | 'date_created' | 'last_updated' | 'term' | 'public' | 'class_IDs' | 'section_IDs' | 'custom_events';
+    Schedule: '_id' | 'name' | 'created_by' | 'date_created' | 'last_updated' | 'term' | 'public' | 'class_IDs' | 'section_IDs' | 'custom_events';
     CustomEvent: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
-    Query: 'schedulesByUser' | 'schedulesByUserAndTerm';
+    Query: 'schedulesByUser' | 'scheduleByID';
     Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'setSelectedSections' | 'setSelectedClasses';
   };
   
@@ -31,7 +31,7 @@ export namespace ScheduleModule {
     };
     Schedule?: {
       '*'?: gm.Middleware[];
-      id?: gm.Middleware[];
+      _id?: gm.Middleware[];
       name?: gm.Middleware[];
       created_by?: gm.Middleware[];
       date_created?: gm.Middleware[];
@@ -54,7 +54,7 @@ export namespace ScheduleModule {
     Query?: {
       '*'?: gm.Middleware[];
       schedulesByUser?: gm.Middleware[];
-      schedulesByUserAndTerm?: gm.Middleware[];
+      scheduleByID?: gm.Middleware[];
     };
     Mutation?: {
       '*'?: gm.Middleware[];

@@ -107,8 +107,8 @@ export type Query = {
   Enrollment?: Maybe<Enrollment>;
   User?: Maybe<User>;
   grades?: Maybe<Grade>;
+  scheduleByID?: Maybe<Schedule>;
   schedulesByUser?: Maybe<Array<Maybe<Schedule>>>;
-  schedulesByUserAndTerm?: Maybe<Schedule>;
 };
 
 
@@ -129,23 +129,22 @@ export type QueryGradesArgs = {
 };
 
 
+export type QueryScheduleByIdArgs = {
+  id: Scalars['String'];
+};
+
+
 export type QuerySchedulesByUserArgs = {
   created_by: Scalars['String'];
 };
 
-
-export type QuerySchedulesByUserAndTermArgs = {
-  created_by: Scalars['String'];
-  term: Scalars['String'];
-};
-
 export type Schedule = {
   __typename?: 'Schedule';
+  _id?: Maybe<Scalars['ID']>;
   class_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
   created_by: Scalars['String'];
   custom_events?: Maybe<Array<Maybe<CustomEvent>>>;
   date_created: Scalars['String'];
-  id?: Maybe<Scalars['ID']>;
   last_updated: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   public: Scalars['Boolean'];
@@ -340,16 +339,16 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   Enrollment?: Resolver<Maybe<ResolversTypes['Enrollment']>, ParentType, ContextType, RequireFields<QueryEnrollmentArgs, 'classId'>>;
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'email'>>;
   grades?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradesArgs, 'CourseControlNumber' | 'Semester' | 'Year'>>;
+  scheduleByID?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QueryScheduleByIdArgs, 'id'>>;
   schedulesByUser?: Resolver<Maybe<Array<Maybe<ResolversTypes['Schedule']>>>, ParentType, ContextType, RequireFields<QuerySchedulesByUserArgs, 'created_by'>>;
-  schedulesByUserAndTerm?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QuerySchedulesByUserAndTermArgs, 'created_by' | 'term'>>;
 };
 
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
+  _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   class_IDs?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   custom_events?: Resolver<Maybe<Array<Maybe<ResolversTypes['CustomEvent']>>>, ParentType, ContextType>;
   date_created?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   last_updated?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;

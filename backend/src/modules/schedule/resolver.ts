@@ -1,4 +1,5 @@
-import { getSchedulesByUser, getScheduleByTermAndUser, removeSchedule, createSchedule, setSections, setClasses } from "./controller";
+import { Mongoose } from "mongoose";
+import { getSchedulesByUser, getScheduleByID, removeSchedule, createSchedule, setSections, setClasses } from "./controller";
 import { ScheduleModule } from "./generated-types/module-types";
 
 const resolvers: ScheduleModule.Resolvers = {
@@ -6,8 +7,8 @@ const resolvers: ScheduleModule.Resolvers = {
     schedulesByUser(_parent, args: { created_by: string }) {
       return getSchedulesByUser(args.created_by);
     },
-    schedulesByUserAndTerm(_parent, args: { created_by: string, term: string }) {
-      return getScheduleByTermAndUser(args.created_by, args.term);
+    scheduleByID(_parent, args: { id: string }) {
+      return getScheduleByID(args.id);
     }
   },
   Mutation: {

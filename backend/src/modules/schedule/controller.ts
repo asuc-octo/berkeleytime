@@ -1,6 +1,7 @@
 import { formatSchedule } from "./formatter";
 import { Schedule } from "../../generated-types/graphql";
 import { ScheduleModel } from "./model";
+import { ObjectID } from "bson";
 
 // export async function schedules(): Promise<Schedule[]> {
 //   const schedules = await ScheduleModel.find();
@@ -19,16 +20,12 @@ export async function getSchedulesByUser(userID:string): Promise<Schedule[]> {
 }
 
 // get the schedule for a user and a specific term
-export async function getScheduleByTermAndUser(userID:string, term:string): Promise<Schedule> {
-  const userTermSchedule = await ScheduleModel.findOne({created_by: userID, term: term})
-  if (!userTermSchedule) {
-    const userSchedules = await ScheduleModel.find({created_by: userID})
-    if (userSchedules.length == 0) {
-      throw new Error("No schedules found for this user")
-    }
-    throw new Error("No schedules found for this user that are associated with this term")
+export async function getScheduleByID(id:string): Promise<Schedule> {
+  const scheduleFromID = await ScheduleModel.findById({_id: id})
+  if (!scheduleFromID) {
+    throw new Error("No schedules found with this ID")
   }
-  return formatSchedule(userTermSchedule as any)
+  return formatSchedule(scheduleFromID as any)
 }
 
 // delete a schedule specified by ObjectID
@@ -55,7 +52,8 @@ export async function createSchedule(created_by: string, term: string, schedule_
   // add class_IDs: [string], section_IDs: [string] later
   
   const current_time = getTime()
-  const newSchedule = await ScheduleModel.create({name: schedule_name, created_by: created_by, date_created: current_time, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs})
+  const newID = new ObjectID()
+  const newSchedule = await ScheduleModel.create({_id: newID, name: schedule_name, created_by: created_by, date_created: current_time, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs})
   return formatSchedule(newSchedule as any)
 }
 

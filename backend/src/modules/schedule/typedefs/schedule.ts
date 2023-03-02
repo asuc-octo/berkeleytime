@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
   type Schedule {
-    id: ID
+    _id: ID
     name: String
     created_by: String!
     date_created: String!
@@ -25,7 +25,7 @@ const typedef = gql`
 
   type Query {
     schedulesByUser(created_by: String!): [Schedule]
-    schedulesByUserAndTerm(created_by: String!, term: String!): Schedule
+    scheduleByID(id: String!): Schedule
   }
 
   type Mutation {
