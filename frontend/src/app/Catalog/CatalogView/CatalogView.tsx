@@ -48,6 +48,7 @@ const CatalogView = (props: CatalogViewProps) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
 				setCourse(course);
+				setOpen(true);
 			}
 		}
 	});
