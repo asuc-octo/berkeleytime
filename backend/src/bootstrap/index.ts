@@ -13,7 +13,7 @@ export default async (config: Config) => {
   app.use(
     "/graphql",
     expressMiddleware(server, {
-      context: async ({ req }) => ({ token: req.headers.token }),
+      context: async ({ req }) => ({ user: req.user }),
     })
   );
 
