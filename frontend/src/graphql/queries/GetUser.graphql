@@ -1,5 +1,5 @@
 query GetUser {
-  user {
-    ...UserProfile
-  }
+	user {
+		...UserProfile
+	}
 }

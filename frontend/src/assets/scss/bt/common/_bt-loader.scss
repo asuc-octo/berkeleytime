@@ -23,60 +23,60 @@
   */
 
 @keyframes bt-loader-kf {
-  50% {
-    transform: scale(0.75);
-    opacity: 0.2;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+	50% {
+		transform: scale(0.75);
+		opacity: 0.2;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
 }
 
 @mixin bt-loader-dot($i) {
-  display: inline-block;
-  background-color: #579eff;
-  width: 15px;
-  height: 15px;
-  margin: 2px;
-  border-radius: 100%;
-  animation: 0.7s if($i % 2 == 0, 0s, 0.35s) infinite linear bt-loader-kf;
-  animation-fill-mode: both;
+	display: inline-block;
+	background-color: #579eff;
+	width: 15px;
+	height: 15px;
+	margin: 2px;
+	border-radius: 100%;
+	animation: 0.7s if($i % 2 == 0, 0s, 0.35s) infinite linear bt-loader-kf;
+	animation-fill-mode: both;
 }
 
 .bt-loader-wrapper,
 .viewport-app > div.bt-loader-wrapper {
-  &.bt-loader--fill {
-    height: calc(100vh - 58px);
-    flex: 1 0 auto;
-  }
+	&.bt-loader--fill {
+		height: calc(100vh - 58px);
+		flex: 1 0 auto;
+	}
 
-  &.bt-loader--error {
-    p {
-      font-size: 1.5rem;
-    }
-  }
+	&.bt-loader--error {
+		p {
+			font-size: 1.5rem;
+		}
+	}
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
 
-  p {
-    margin-top: 1rem;
-    font-size: 18px;
-    color: $bt-light-text;
-  }
+	p {
+		margin-top: 1rem;
+		font-size: 18px;
+		color: $bt-light-text;
+	}
 }
 
 .bt-loader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-  @for $i from 0 to 3 {
-    > :nth-child(#{$i + 1}) {
-      @include bt-loader-dot($i);
-    }
-  }
+	@for $i from 0 to 3 {
+		> :nth-child(#{$i + 1}) {
+			@include bt-loader-dot($i);
+		}
+	}
 }

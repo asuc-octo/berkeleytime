@@ -1,65 +1,65 @@
 //Account Subview
 .account-view {
-  .personal-edit {
-    position: absolute;
-    right: 0;
-    color: #2f80ed;
-    background-color: Transparent;
-    border: none;
-    font-weight: 500;
-  }
+	.personal-edit {
+		position: absolute;
+		right: 0;
+		color: #2f80ed;
+		background-color: Transparent;
+		border: none;
+		font-weight: 500;
+	}
 
-  .personal-edit:focus {
-    outline: none;
-    box-shadow: none;
-  }
+	.personal-edit:focus {
+		outline: none;
+		box-shadow: none;
+	}
 
-  .major-select {
-    width: 300px;
-    margin-left: -10px; // Account for react-select padding
-  }
+	.major-select {
+		width: 300px;
+		margin-left: -10px; // Account for react-select padding
+	}
 
-  .profile-see-more {
-    color: #2f80ed;
-  }
+	.profile-see-more {
+		color: #2f80ed;
+	}
 
-  .profile-card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-    margin: 1rem 0;
-  }
+	.profile-card-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 12px;
+		margin: 1rem 0;
+	}
 }
 
 .profile-row {
-  display: flex;
+	display: flex;
 
-  .personal-attribute {
-    font-weight: 500;
-    color: #535353;
-    width: 250px;
-    max-width: 30%;
-    flex: 0 0 auto;
+	.personal-attribute {
+		font-weight: 500;
+		color: #535353;
+		width: 250px;
+		max-width: 30%;
+		flex: 0 0 auto;
 
-    .personal-value {
-      .p {
-        @include mobile {
-          width: 90vw;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-    }
-  }
+		.personal-value {
+			.p {
+				@include mobile {
+					width: 90vw;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+			}
+		}
+	}
 
-  @include xs {
-    .personal-attribute {
-      max-width: 100%;
-    }
-    flex-direction: column;
-    height: auto;
-    align-items: flex-start;
-    padding: 8px 0;
-  }
+	@include xs {
+		.personal-attribute {
+			max-width: 100%;
+		}
+		flex-direction: column;
+		height: auto;
+		align-items: flex-start;
+		padding: 8px 0;
+	}
 }

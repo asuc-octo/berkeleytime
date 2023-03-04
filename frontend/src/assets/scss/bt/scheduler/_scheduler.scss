@@ -1,106 +1,106 @@
 .scheduler,
 .scheduler.viewport-app {
-  // I suggest completely overhauling the SCSS lol
-  @media screen and (min-width: 992px) {
-    > .row > div {
-      box-sizing: border-box;
-      position: relative;
+	// I suggest completely overhauling the SCSS lol
+	@media screen and (min-width: 992px) {
+		> .row > div {
+			box-sizing: border-box;
+			position: relative;
 
-      > .course-selector {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        overflow-y: auto;
-      }
-    }
-  }
+			> .course-selector {
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				overflow-y: auto;
+			}
+		}
+	}
 
-  .mobile {
-    margin-bottom: 2rem;
-    font-weight: 400;
-    font-size: 18px;
-    color: #8A8A8A;
-    text-align: center;
-  }
+	.mobile {
+		margin-bottom: 2rem;
+		font-weight: 400;
+		font-size: 18px;
+		color: #8a8a8a;
+		text-align: center;
+	}
 
-  // Force auto-sizing
-  &.scheduler {
-    min-height: 0;
-  }
+	// Force auto-sizing
+	&.scheduler {
+		min-height: 0;
+	}
 
-  .scheduler-units {
-    font-size: 16px;
-    font-weight: 500;
-    color: $bt-base-text;
-    flex: 1;
-  }
+	.scheduler-units {
+		font-size: 16px;
+		font-weight: 500;
+		color: $bt-base-text;
+		flex: 1;
+	}
 
-  &.schedule-standalone-content {
-    .scheduler-header input {
-      text-align: center;
-    }
-  }
+	&.schedule-standalone-content {
+		.scheduler-header input {
+			text-align: center;
+		}
+	}
 
-  .scheduler-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-left: 72px;
-    padding: 1rem;
+	.scheduler-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-left: 72px;
+		padding: 1rem;
 
-    > div {
-      display: flex;
-      align-items: center;
-    }
+		> div {
+			display: flex;
+			align-items: center;
+		}
 
-    > *:not(:last-child) {
-      margin-right: 1rem;
-    }
+		> *:not(:last-child) {
+			margin-right: 1rem;
+		}
 
-    > span,
-    > * > span {
-      font-size: 0.9rem;
-      &:not(.callout) {
-        color: $bt-light-text;
-      }
+		> span,
+		> * > span {
+			font-size: 0.9rem;
+			&:not(.callout) {
+				color: $bt-light-text;
+			}
 
-      &.scheduler-header-strong {
-        color: $bt-base-text;
-        font-weight: 500;
-      }
-    }
+			&.scheduler-header-strong {
+				color: $bt-base-text;
+				font-weight: 500;
+			}
+		}
 
-    .scheduler-name-input {
-      box-shadow: none;
-      border: none;
-      appearance: none;
-      border-radius: 0;
-      font-size: 1.2rem;
-      margin: 0;
-      padding: 0 4px;
-      font-weight: 500;
-      border-bottom: 1px solid $bt-border-grey;
-      background: none;
+		.scheduler-name-input {
+			box-shadow: none;
+			border: none;
+			appearance: none;
+			border-radius: 0;
+			font-size: 1.2rem;
+			margin: 0;
+			padding: 0 4px;
+			font-weight: 500;
+			border-bottom: 1px solid $bt-border-grey;
+			background: none;
 
-      &:focus {
-        border-radius: 0;
-        outline: none;
-        border-color: #2684ff;
-        box-shadow: 0 1px 0px 0px #2684ff;
-      }
-    }
-  }
+			&:focus {
+				border-radius: 0;
+				outline: none;
+				border-color: #2684ff;
+				box-shadow: 0 1px 0px 0px #2684ff;
+			}
+		}
+	}
 
-  .scheduler__status {
-    min-height: 600px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    font-size: 18px;
-    text-align: center;
-    color: $bt-light-text;
-  }
+	.scheduler__status {
+		min-height: 600px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1.5rem;
+		font-size: 18px;
+		text-align: center;
+		color: $bt-light-text;
+	}
 }

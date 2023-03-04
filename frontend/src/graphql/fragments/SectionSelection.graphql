@@ -1,19 +1,19 @@
 fragment SectionSelection on SectionSelectionType {
-  id
+	id
 
-  course {
-    ...CourseOverview
-  }
+	course {
+		...CourseOverview
+	}
 
-  primary {
-    ...Section
-  }
+	primary {
+		...Section
+	}
 
-  secondary {
-    edges {
-      node {
-        ...Section
-      }
-    }
-  }
+	secondary {
+		edges {
+			node {
+				...Section
+			}
+		}
+	}
 }

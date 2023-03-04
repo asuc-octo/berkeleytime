@@ -1,7 +1,7 @@
 mutation DeleteSchedule($id: ID!) {
-  removeSchedule(scheduleId: $id) {
-    schedule {
-      id
-    }
-  }
+	removeSchedule(scheduleId: $id) {
+		schedule {
+			id
+		}
+	}
 }

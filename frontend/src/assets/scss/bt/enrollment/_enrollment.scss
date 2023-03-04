@@ -1,138 +1,134 @@
 .enrollment {
+	padding: 30px;
+	max-width: 100vw;
+	display: flex;
+	flex-direction: column;
 
-  padding: 30px;
-  max-width: 100vw;
-  display: flex;
-  flex-direction: column;
+	@include mobile {
+		padding: 10px;
+	}
 
-  @include mobile {
-    padding: 10px;
-  }
+	.enrollment-mobile-heading {
+		margin: 30px 0px 30px 20px;
+		font-size: 20px;
+		font-weight: 500;
+	}
 
-  .enrollment-mobile-heading {
-    margin: 30px 0px 30px 20px;
-    font-size: 20px;
-    font-weight: 500;
-  }
+	.recharts-surface {
+		@include desktop {
+			height: 410px;
+		}
+	}
 
-  .recharts-surface {
-    @include desktop {
-      height: 410px;
-    }
-  }
+	.enrollment-recharts-container {
+		height: 450px;
 
-  .enrollment-recharts-container {
-    height: 450px;
+		.recharts-responsive-container {
+			position: absolute;
+		}
+	}
 
-    .recharts-responsive-container {
-      position: absolute;
-    }
-  }
+	.css-1myhgat-indicatorContainer {
+		color: $bt-light-border-grey;
+		transition: 0.5s;
+		&:hover {
+			color: #ababab;
+		}
+	}
 
-  .css-1myhgat-indicatorContainer {
-    color: $bt-light-border-grey;
-    transition: .5s;
-    &:hover {
-      color: #ababab;
-    }
-  }
+	.btn-primary:disabled {
+		cursor: default;
+	}
 
-  .btn-primary:disabled {
-      cursor: default;
-  }
+	.graph {
+		margin-top: 20px;
+	}
 
-  .graph {
-    margin-top: 20px;
-  }
+	.css-yk16xz-control:hover {
+		cursor: pointer;
+	}
 
-  .css-yk16xz-control:hover {
-    cursor: pointer;
-  }
+	.xlabel {
+		padding-left: 60px;
+		font-weight: bold;
+		color: $bt-light-text;
+	}
 
-  .xlabel {
-    padding-left: 60px;
-    font-weight: bold;
-    color: $bt-light-text;
+	.disclaimer {
+		.info {
+			width: 15px;
+			margin-bottom: 2px;
+		}
+		padding-left: 55px;
+		padding-top: 5px;
 
-  }
+		@include mobile {
+			padding: 0px 10px 20px 10px;
+			text-align: center;
+		}
 
-  .disclaimer {
-    .info {
-      width: 15px;
-      margin-bottom: 2px;
-    }
-    padding-left: 55px;
-    padding-top: 5px;
+		p {
+			display: inline;
+			margin-left: 5px;
+			color: $bt-light-grey;
+			font-size: 14px;
 
-    @include mobile {
-      padding: 0px 10px 20px 10px;
-      text-align: center;
-    }
+			a {
+				color: $bt-primary;
 
-    p {
-      display: inline;
-      margin-left: 5px;
-      color: $bt-light-grey;
-      font-size: 14px;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
 
-      a {
-        color: $bt-primary;
+	g.recharts-layer.recharts-cartesian-axis.recharts-xAxis.xAxis,
+	g.recharts-layer.recharts-cartesian-axis.recharts-yAxis.yAxis {
+		opacity: 0.5;
+	}
+	.recharts-default-tooltip {
+		border-radius: 4px;
+		border: 1px solid rgb(225, 225, 225);
+	}
 
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-  }
+	.enrollment-search-bar {
+		.fast-option-selected {
+			color: white;
+		}
 
-  g.recharts-layer.recharts-cartesian-axis.recharts-xAxis.xAxis, g.recharts-layer.recharts-cartesian-axis.recharts-yAxis.yAxis {
-    opacity: .5;
-  }
-  .recharts-default-tooltip {
-    border-radius: 4px;
-    border: 1px solid rgb(225, 225, 225);
-}
+		> div > div {
+			padding-left: 5px;
+			padding-right: 5px;
 
-  .enrollment-search-bar {
+			@include touch {
+				padding-top: 10px;
 
-    .fast-option-selected {
-      color: white;
-    }
-
-    > div > div {
-      padding-left: 5px;
-      padding-right: 5px;
-
-      @include touch {
-        padding-top: 10px;
-
-        .btn {
-          width: 100%;
-        }
-      }
-    }
-  }
+				.btn {
+					width: 100%;
+				}
+			}
+		}
+	}
 }
 
 // EnrollmentGraph
 
 .enrollment-graph {
-  margin-top: 20px;
+	margin-top: 20px;
 
-  @include mobile {
-    overflow-x: scroll;
-    margin: 0px 10px 0px 10px;
+	@include mobile {
+		overflow-x: scroll;
+		margin: 0px 10px 0px 10px;
 
-    .recharts-legend-wrapper {
-      left: 65px !important;
-    }
-  }
+		.recharts-legend-wrapper {
+			left: 65px !important;
+		}
+	}
 
-  .enrollment-content {
-
-  }
+	.enrollment-content {
+	}
 }
-
 
 // .enrollment-graph-card {
 //   box-shadow: none;
@@ -171,51 +167,51 @@
 
 // EnrollmentInfoCard
 .card.enrollment-card-info {
-  box-shadow: none;
-  border: none;
+	box-shadow: none;
+	border: none;
 
-  .content {
-      padding: 0px 15px 15px 15px;
+	.content {
+		padding: 0px 15px 15px 15px;
 
-      .content {
-        padding: 0px 15px 15px 15px;
-      }
+		.content {
+			padding: 0px 15px 15px 15px;
+		}
 
-      .class-num {
-          font-weight: bold;
-          font-size: 20px;
-          width: fit-content;
-      }
+		.class-num {
+			font-weight: bold;
+			font-size: 20px;
+			width: fit-content;
+		}
 
-      .class-info {
-          margin-top: 5px;
-          color: #8F8F8F;
-      }
+		.class-info {
+			margin-top: 5px;
+			color: #8f8f8f;
+		}
 
-      .class-title {
-          padding-top: 5px;
-          padding-bottom: 10px;
-      }
+		.class-title {
+			padding-top: 5px;
+			padding-bottom: 10px;
+		}
 
-      .class-stats {
-          padding-bottom: 5px;
-      }
+		.class-stats {
+			padding-bottom: 5px;
+		}
 
-      .class-stat-type {
-        font-size: 15px;
-      }
+		.class-stat-type {
+			font-size: 15px;
+		}
 
-      .class-adjustment-percent {
-        color: #FFA414;
-        font-size: 15px;
-      }
+		.class-adjustment-percent {
+			color: #ffa414;
+			font-size: 15px;
+		}
 
-      .class-stats-left-col {
-        padding-left: 0px;
-      }
+		.class-stats-left-col {
+			padding-left: 0px;
+		}
 
-      .class-stats-name {
-        color: #8F8F8F;
-      }
-  }
+		.class-stats-name {
+			color: #8f8f8f;
+		}
+	}
 }

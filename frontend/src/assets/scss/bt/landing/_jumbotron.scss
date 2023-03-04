@@ -1,149 +1,149 @@
 .landing-jumbo {
-  height: 100vh;
-  min-height: $viewport-min-height;
+	height: 100vh;
+	min-height: $viewport-min-height;
 
-  @include touch {
-    min-height: $touch-viewport-min-height;
-  }
+	@include touch {
+		min-height: $touch-viewport-min-height;
+	}
 
-  .container,
-  .container > .row {
-    // row takes up entire height of jumbotron
-    height: 100%;
-  }
+	.container,
+	.container > .row {
+		// row takes up entire height of jumbotron
+		height: 100%;
+	}
 
-  // if tablet or mobile, heading and svg will be stacked on top of each other
-  @include tablet {
-    .container > .row {
-      > :first-child {
-        // heading
-        height: 40%;
-      }
+	// if tablet or mobile, heading and svg will be stacked on top of each other
+	@include tablet {
+		.container > .row {
+			> :first-child {
+				// heading
+				height: 40%;
+			}
 
-      > :last-child {
-        // svg
-        height: 60%;
-      }
-    }
-  }
+			> :last-child {
+				// svg
+				height: 60%;
+			}
+		}
+	}
 
-  @include mobile {
-    .container > .row {
-      > :first-child {
-        // heading
-        height: 50%;
-      }
+	@include mobile {
+		.container > .row {
+			> :first-child {
+				// heading
+				height: 50%;
+			}
 
-      > :last-child {
-        // svg
-        height: 50%;
-      }
-    }
-  }
+			> :last-child {
+				// svg
+				height: 50%;
+			}
+		}
+	}
 
-  .heading {
-    height: 100%;
+	.heading {
+		height: 100%;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: baseline;
-    text-align: left;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: baseline;
+		text-align: left;
 
-    @include mobile {
-      // start heading right below svg
-      justify-content: flex-start;
-      padding: 20px;
-    }
+		@include mobile {
+			// start heading right below svg
+			justify-content: flex-start;
+			padding: 20px;
+		}
 
-    p {
-      color: $bt-grey-text;
-    }
-  }
+		p {
+			color: $bt-grey-text;
+		}
+	}
 
-  .animation-container {
-    display: flex;
-    flex-direction: column;
+	.animation-container {
+		display: flex;
+		flex-direction: column;
 
-    width: 100%;
-    height: 100%;
+		width: 100%;
+		height: 100%;
 
-    @include tablet {
-      padding-top: 100px;
-    }
+		@include tablet {
+			padding-top: 100px;
+		}
 
-    @include mobile {
-      padding-top: 75px;
-    }
+		@include mobile {
+			padding-top: 75px;
+		}
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
-    svg {
-      @keyframes updown {
-        from {
-          transform: translateY(-8px);
-        }
-        to {
-          transform: translateY(8px);
-        }
-      }
-      @keyframes updownshort {
-        from {
-          transform: translateY(-4px);
-        }
-        to {
-          transform: translateY(4x);
-        }
-      }
-      #left-float {
-        animation: updown 3.5s ease alternate infinite;
-      }
-      #middle-float {
-        animation: updown 3s ease alternate infinite;
-      }
-      #right-float {
-        animation: updown 4.5s ease alternate infinite;
-      }
-      #everything {
-        animation: updownshort 2.5s ease alternate infinite;
-      }
-      #campanile,
-      #hearst-building,
-      #evans,
-      #doe-library,
-      #hearst-pond {
-        animation: updownshort 2.5s ease alternate infinite;
-      }
-      #treee,
-      #treee-2,
-      #other-bush,
-      #ball-bush,
-      #tre {
-        animation: updownshort 2.5s ease alternate infinite;
-      }
-    }
+		svg {
+			@keyframes updown {
+				from {
+					transform: translateY(-8px);
+				}
+				to {
+					transform: translateY(8px);
+				}
+			}
+			@keyframes updownshort {
+				from {
+					transform: translateY(-4px);
+				}
+				to {
+					transform: translateY(4x);
+				}
+			}
+			#left-float {
+				animation: updown 3.5s ease alternate infinite;
+			}
+			#middle-float {
+				animation: updown 3s ease alternate infinite;
+			}
+			#right-float {
+				animation: updown 4.5s ease alternate infinite;
+			}
+			#everything {
+				animation: updownshort 2.5s ease alternate infinite;
+			}
+			#campanile,
+			#hearst-building,
+			#evans,
+			#doe-library,
+			#hearst-pond {
+				animation: updownshort 2.5s ease alternate infinite;
+			}
+			#treee,
+			#treee-2,
+			#other-bush,
+			#ball-bush,
+			#tre {
+				animation: updownshort 2.5s ease alternate infinite;
+			}
+		}
 
-    svg,
-    img {
-      width: 500px;
-      max-width: 100%;
+		svg,
+		img {
+			width: 500px;
+			max-width: 100%;
 
-      @include touch {
-        width: auto;
-        height: 100%;
-        max-width: 70%;
-      }
-    }
+			@include touch {
+				width: auto;
+				height: 100%;
+				max-width: 70%;
+			}
+		}
 
-    .credit {
-      color: $bt-light-text;
-      @include font-size-responsive(14px);
+		.credit {
+			color: $bt-light-text;
+			@include font-size-responsive(14px);
 
-      @include desktop {
-        margin-top: 5px;
-      }
-    }
-  }
+			@include desktop {
+				margin-top: 5px;
+			}
+		}
+	}
 }
