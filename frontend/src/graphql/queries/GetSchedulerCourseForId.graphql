@@ -1,5 +1,5 @@
 query GetSchedulerCourseForId($id: ID!, $year: String, $semester: String) {
-  course(id: $id) {
-    ...SchedulerCourse
-  }
+	course(id: $id) {
+		...SchedulerCourse
+	}
 }

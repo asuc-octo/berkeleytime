@@ -1,55 +1,50 @@
 .banner {
+	.patriotic {
+		background: repeating-linear-gradient(to right, $bt-blue, $bt-indicator-red);
+	}
 
-  .patriotic {
-    background: repeating-linear-gradient(
-      to right,
-      $bt-blue,
-      $bt-indicator-red
-    )
-  }
+	min-height: $banner-height;
 
-  min-height: $banner-height;
+	background-color: $bt-off-white;
 
-  background-color: $bt-off-white;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
 
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+	.content {
+		flex-grow: 1;
 
-  .content {
-    flex-grow: 1;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		gap: 10px;
+		font-size: 14px;
+		width: 100%;
+		min-height: $banner-height;
+		padding: 10px 5px;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    width: 100%;
-    min-height: $banner-height;
-    padding: 10px 5px;
+		> * {
+			margin: 0 5px;
+		}
 
-    > * {
-      margin: 0 5px;
-    }
+		p {
+			text-align: center;
+		}
+	}
 
-    p {
-      text-align: center;
-    }
-  }
+	> img {
+		margin: 0 15px 0 5px;
+		padding: 6px;
+		width: 24px;
+		height: 24px;
+		border-radius: 4px;
+		transition: background-color 0.2s;
+		cursor: pointer;
 
-  > img {
-    margin: 0 15px 0 5px;
-    padding: 6px;
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    transition: background-color .2s;
-    cursor: pointer;
-
-    &:hover {
-      background-color: $bt-light-border-grey;
-    }
-  }
+		&:hover {
+			background-color: $bt-light-border-grey;
+		}
+	}
 }

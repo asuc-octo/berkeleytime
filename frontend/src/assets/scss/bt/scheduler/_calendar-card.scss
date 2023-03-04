@@ -1,90 +1,90 @@
 .calendar-course-card {
-  &:not(.calendar-course-card--preview) {
-    cursor: pointer;
-  }
+	&:not(.calendar-course-card--preview) {
+		cursor: pointer;
+	}
 
-  &.calendar-course-card--preview {
-    // color: var(--mixed-text) !important;
-    opacity: 0.5;
-  }
+	&.calendar-course-card--preview {
+		// color: var(--mixed-text) !important;
+		opacity: 0.5;
+	}
 }
 
 .course-card-popover {
-  font-size: 0.9rem;
+	font-size: 0.9rem;
 
-  .course-card-popover-square {
-    position: absolute;
-    border: 4px;
-    left: 0;
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-    margin-right: 8px;
-  }
+	.course-card-popover-square {
+		position: absolute;
+		border: 4px;
+		left: 0;
+		width: 16px;
+		height: 16px;
+		border-radius: 3px;
+		margin-right: 8px;
+	}
 
-  .btn {
-    position: absolute;
-    right: -8px;
-    top: -10px;
-  }
+	.btn {
+		position: absolute;
+		right: -8px;
+		top: -10px;
+	}
 
-  > * {
-    padding-left: 1.5rem;
-    position: relative;
-  }
+	> * {
+		padding-left: 1.5rem;
+		position: relative;
+	}
 
-  h4 {
-    font-size: 1em;
-    line-height: 1rem;
-    font-weight: 600;
-    margin-right: 4rem;
-  }
+	h4 {
+		font-size: 1em;
+		line-height: 1rem;
+		font-weight: 600;
+		margin-right: 4rem;
+	}
 
-  > p {
-    margin-top: 0.3em;
-    line-height: 1.5;
-    color: $bt-light-text;
-    font-size: 0.8rem;
-  }
+	> p {
+		margin-top: 0.3em;
+		line-height: 1.5;
+		color: $bt-light-text;
+		font-size: 0.8rem;
+	}
 }
 
 .calendar-card {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 
-  line-height: 1.5;
+	line-height: 1.5;
 
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+	padding: 0.5rem 1rem;
+	border-radius: 4px;
 
-  box-shadow: 0 0 0 2px #fff;
+	box-shadow: 0 0 0 2px #fff;
 
-  color: $bt-white-text;
+	color: $bt-white-text;
 
-  .calendar-card__title {
-    font-size: 13px;
-    font-weight: 500;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    display: -webkit-box;
-    -webkit-line-clamp: 1; // Duplicated for fallback
-    -webkit-line-clamp: var(--calendar-card-lines, 1);
-    -webkit-box-orient: vertical;
-    line-height: 1.2;
-    margin-bottom: 1px;
-  }
+	.calendar-card__title {
+		font-size: 13px;
+		font-weight: 500;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: block;
+		display: -webkit-box;
+		-webkit-line-clamp: 1; // Duplicated for fallback
+		-webkit-line-clamp: var(--calendar-card-lines, 1);
+		-webkit-box-orient: vertical;
+		line-height: 1.2;
+		margin-bottom: 1px;
+	}
 
-  .calendar-card__description {
-    margin: 0;
-    font-size: 10px;
-    color: inherit;
-    line-height: inherit;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    line-height: 1.2;
-  }
+	.calendar-card__description {
+		margin: 0;
+		font-size: 10px;
+		color: inherit;
+		line-height: inherit;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		line-height: 1.2;
+	}
 }
