@@ -43,7 +43,7 @@ export const wrapMutation = <
  */
 export const wrapLazyQuery = <
   LazyQuery extends unknown,
-  LazyQueryVariables extends unknown,
+  LazyQueryVariables extends any,
   HookParameters extends any[]
 >(
   lazyQuery: (
