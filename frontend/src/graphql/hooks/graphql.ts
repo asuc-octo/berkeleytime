@@ -6,6 +6,7 @@ import {
   MutationResult,
   MutationTuple,
   QueryTuple,
+  OperationVariables,
 } from '@apollo/client';
 import { useCallback } from 'react';
 
@@ -43,7 +44,7 @@ export const wrapMutation = <
  */
 export const wrapLazyQuery = <
   LazyQuery extends unknown,
-  LazyQueryVariables extends any,
+  LazyQueryVariables extends OperationVariables,
   HookParameters extends any[]
 >(
   lazyQuery: (
