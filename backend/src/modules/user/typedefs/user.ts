@@ -17,7 +17,8 @@ const typedef = gql`
     email_class_update: Boolean,
     email_grade_update: Boolean,
     email_enrollment_opening: Boolean,
-    email_berkeleytime_update: Boolean
+    email_berkeleytime_update: Boolean,
+    refresh_token: String,
   }
 
   type Query {
