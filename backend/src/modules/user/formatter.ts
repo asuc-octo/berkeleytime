@@ -4,7 +4,6 @@ import { UserType } from "./model";
 export function formatUser(user: UserType): UserModule.User {
     return Object.assign({
         id: user._id as string,
-        password: user.password as string,
         is_superuser: user.is_superuser as boolean,
         username: user.username as string,
         first_name: user.first_name as string,
@@ -12,7 +11,6 @@ export function formatUser(user: UserType): UserModule.User {
         email: user.email as string,
         is_staff: user.is_staff as boolean,
         is_active: user.is_active as boolean,
-        date_joined: user.date_joined as string,
     },
         user.last_login === null ? null : { last_login: user.last_login },
         user.major === null ? [null] : { major: user.major },

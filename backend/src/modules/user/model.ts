@@ -1,4 +1,4 @@
-import mongoose, { Schema, InferSchemaType } from "mongoose";
+import mongoose, { Schema, InferSchemaType, Document } from "mongoose";
 
 export const UserSchema = new Schema({
     google_id: { type: String, required: true },
@@ -18,4 +18,4 @@ export const UserSchema = new Schema({
 }, { timestamps: true });
 
 export const UserModel = mongoose.model("user", UserSchema, "user");
-export type UserType = InferSchemaType<typeof UserSchema>;
+export type UserType = Document & InferSchemaType<typeof UserSchema>;
