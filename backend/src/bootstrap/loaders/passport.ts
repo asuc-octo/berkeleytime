@@ -24,7 +24,7 @@ const SCOPE = ['profile', 'email']
 export default async (app: Application) => {
   // init
   app.use(session({
-    secret: process.env.SESSION_SECRET || "keyboard cat",
+    secret: config.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -48,9 +48,9 @@ export default async (app: Application) => {
     accessType: 'offline',
     prompt: 'consent',
   }));
-  // TODO: success and failure redirect route
   app.get(CALLBACK_ROUTE, passport.authenticate('google', {
     failureRedirect: FAILURE_REDIRECT,
+    // failureMessage: "failed",
     successRedirect: SUCCESS_REDIRECT,
   }));
 
@@ -62,8 +62,8 @@ export default async (app: Application) => {
     done(null, user);
   });
   passport.use(new GoogleStrategy.Strategy({
-    clientID: process.env.GOOGLE_CLIENT_ID || "",
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    clientID: config.GOOGLE_CLIENT_ID,
+    clientSecret: config.GOOGLE_CLIENT_SECRET,
     callbackURL: CALLBACK_ROUTE,
     scope: SCOPE,
     state: true,
