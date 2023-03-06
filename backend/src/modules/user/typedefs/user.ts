@@ -2,6 +2,7 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
   type User {
+    id: String!
     last_login: String
     is_superuser: Boolean!
     username: String!

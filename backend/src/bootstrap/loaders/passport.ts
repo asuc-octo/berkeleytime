@@ -84,11 +84,12 @@ export default async (app: Application) => {
         username: profile.displayName,
         first_name: profile.name?.givenName || '',
         last_name: profile.name?.familyName || '',
-        last_login: new Date().toISOString(),
         refresh_token: refreshToken,
       });
-      user.save();
     }
+
+    user.last_login = new Date().toISOString();
+    user.save();
 
     done(null, user);
   }));
