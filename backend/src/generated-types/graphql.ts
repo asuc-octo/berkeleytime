@@ -60,14 +60,12 @@ export type User = {
   email_enrollment_opening?: Maybe<Scalars['Boolean']>;
   email_grade_update?: Maybe<Scalars['Boolean']>;
   first_name: Scalars['String'];
-  id: Scalars['String'];
   is_active: Scalars['Boolean'];
   is_staff: Scalars['Boolean'];
   is_superuser: Scalars['Boolean'];
   last_login?: Maybe<Scalars['String']>;
   last_name: Scalars['String'];
   major?: Maybe<Array<Maybe<Scalars['String']>>>;
-  password: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -196,14 +194,12 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   email_enrollment_opening?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   email_grade_update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   first_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   is_active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   is_staff?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   is_superuser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   last_login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   last_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   major?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

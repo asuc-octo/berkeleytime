@@ -2,8 +2,6 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
   type User {
-    id: String!
-    password: String!
     last_login: String
     is_superuser: Boolean!
     username: String!
@@ -18,7 +16,6 @@ const typedef = gql`
     email_grade_update: Boolean,
     email_enrollment_opening: Boolean,
     email_berkeleytime_update: Boolean,
-    refresh_token: String,
   }
 
   type Query {

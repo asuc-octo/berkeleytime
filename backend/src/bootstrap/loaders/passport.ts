@@ -10,6 +10,7 @@ import session from "express-session";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
 import { UserModel } from "../../modules/user/model";
+import { config } from "../../config";
 
 // routes need to be added as authorized origins/redirect uris in google cloud console
 const LOGIN_ROUTE = "/auth/google";
@@ -27,7 +28,7 @@ export default async (app: Application) => {
     resave: false,
     saveUninitialized: false,
     cookie: {
-      // secure: true,
+      secure: !config.isDev,
       maxAge: 1000 * 60 * 60 // 1 hour
     },
   }));
@@ -79,11 +80,14 @@ export default async (app: Application) => {
     if (!user) {
       user = await new UserModel({
         email,
+        google_id: profile.id,
         username: profile.displayName,
         first_name: profile.name?.givenName || '',
         last_name: profile.name?.familyName || '',
+        last_login: new Date().toISOString(),
         refresh_token: refreshToken,
       });
+      user.save();
     }
 
     done(null, user);

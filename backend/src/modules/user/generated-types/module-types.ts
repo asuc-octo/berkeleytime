@@ -2,7 +2,7 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace UserModule {
   interface DefinedFields {
-    User: 'id' | 'password' | 'last_login' | 'is_superuser' | 'username' | 'first_name' | 'last_name' | 'email' | 'is_staff' | 'is_active' | 'date_joined' | 'major' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
+    User: 'last_login' | 'is_superuser' | 'username' | 'first_name' | 'last_name' | 'email' | 'is_staff' | 'is_active' | 'date_joined' | 'major' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
     Query: 'User';
   };
   
@@ -23,8 +23,6 @@ export namespace UserModule {
     };
     User?: {
       '*'?: gm.Middleware[];
-      id?: gm.Middleware[];
-      password?: gm.Middleware[];
       last_login?: gm.Middleware[];
       is_superuser?: gm.Middleware[];
       username?: gm.Middleware[];
