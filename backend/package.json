@@ -61,7 +61,7 @@
     "helmet": "^3.22.0",
     "lodash": "^4.17.21",
     "mongodb": "^4.10.0",
-    "mongoose": "^6.6.5",
+    "mongoose": "^6.8.0",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
     "reflect-metadata": "^0.1.13"
