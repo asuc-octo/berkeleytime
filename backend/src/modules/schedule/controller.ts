@@ -1,19 +1,13 @@
 import { formatSchedule } from "./formatter";
-import { Schedule, CustomEvent, InputMaybe } from "../../generated-types/graphql";
+import { Schedule } from "../../generated-types/graphql";
 import { ScheduleModel } from "./model";
 import { ObjectID } from "bson";
 import { isBoolean } from "lodash";
-//import { Schedule } from "./fixture";
+import { minimumViableSchedule, partialSchedule } from "./partial-schedules";
 
-// export async function schedules(): Promise<Schedule[]> {
-//   const schedules = await ScheduleModel.find();
-//   // return schedules
-//   // return null as any as ScheduleModule.Schedule;
-//   return schedules.map(formatSchedule);
-// }
 
 // get the schedules for a user
-export async function getSchedulesByUser(userID:string): Promise<Schedule[]> {
+export async function getSchedulesByUser(userID: string): Promise<Schedule[]> {
   const userSchedules = await ScheduleModel.find({created_by: userID})
   if (userSchedules.length == 0) {
     throw new Error("No schedules found for this user")
@@ -22,7 +16,7 @@ export async function getSchedulesByUser(userID:string): Promise<Schedule[]> {
 }
 
 // get the schedule for a user and a specific term
-export async function getScheduleByID(id:string): Promise<Schedule> {
+export async function getScheduleByID(id: string): Promise<Schedule> {
   const scheduleFromID = await ScheduleModel.findById({_id: id})
   if (!scheduleFromID) {
     throw new Error("No schedules found with this ID")
@@ -31,7 +25,7 @@ export async function getScheduleByID(id:string): Promise<Schedule> {
 }
 
 // delete a schedule specified by ObjectID
-export async function removeSchedule(scheduleID:string): Promise<string> {
+export async function removeSchedule(scheduleID: string): Promise<string> {
   const deletedSchedule = await ScheduleModel.findByIdAndDelete(scheduleID)
   if (!deletedSchedule) {
     throw new Error("Schedule deletion failed")
@@ -40,22 +34,8 @@ export async function removeSchedule(scheduleID:string): Promise<string> {
 }
 
 
-interface minimumViableSchedule {
-  _id: ObjectID,
-  created_by: string,
-  term: string,
-  name?: string,
-  class_IDs?: string[],
-  primary_section_IDs?: string[],
-  secondary_section_IDs?: string[],
-  public?: boolean,
-}
-
 // create a new schedule
 export async function createSchedule(created_by: string, term: string, schedule_name: string | undefined | null, is_public: boolean, class_IDs: string[] | undefined | null, primary_section_IDs: string[], secondary_section_IDs: string[]): Promise<Schedule> {
-
-  // args: {arguments: InputMaybe<String>}
-  // add class_IDs: [string], section_IDs: [string] later
   
   const newID = new ObjectID()
 
@@ -83,15 +63,7 @@ export async function createSchedule(created_by: string, term: string, schedule_
   return formatSchedule(newSchedule as any)
 }
 
-interface partialSchedule {
-  name?: string,
-  created_by?: string,
-  term?: string,
-  class_IDs?: string[],
-  primary_section_IDs?: string[],
-  secondary_section_IDs?: string[],
-  public?: boolean,
-}
+
 
 // update an existing schedule
 export async function editSchedule(schedule_ID: string, created_by: string | undefined | null, term: string | undefined | null, schedule_name: string | undefined | null, class_IDs: string[], primary_section_IDs: string[], secondary_section_IDs: string[], is_public?: boolean | undefined | null): Promise<Schedule> {
@@ -118,16 +90,6 @@ export async function editSchedule(schedule_ID: string, created_by: string | und
   if (isBoolean(is_public)) {
     schedulePartsToUpdate.public = is_public
   }
-  
-  /** 
-  let updatedSchedule
-  if (isBoolean(is_public)) {
-    schedulePartsToUpdate.public = is_public
-    updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, schedulePartsToUpdate, {returnDocument: 'after'})
-    //updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {name: schedule_name, created_by: created_by, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs}, {returnDocument: 'after'})
-  } else {
-    updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {name: schedule_name, created_by: created_by, last_updated: current_time, term: term, class_IDs: class_IDs, section_IDs: section_IDs}, {returnDocument: 'after'})
-  }*/
 
   const updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, schedulePartsToUpdate, {returnDocument: 'after'})
 
