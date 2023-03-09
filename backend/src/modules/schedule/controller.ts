@@ -62,7 +62,7 @@ interface minimumViableSchedule {
 }
 
 // create a new schedule
-export async function createSchedule(created_by: string, term: string, schedule_name: string, is_public: boolean, class_IDs: string[], section_IDs: string[]): Promise<Schedule> {
+export async function createSchedule(created_by: string, term: string, schedule_name: string | undefined | null, is_public: boolean, class_IDs: string[] | undefined | null, section_IDs: string[] | undefined | null): Promise<Schedule> {
 
   // args: {arguments: InputMaybe<String>}
   // add class_IDs: [string], section_IDs: [string] later

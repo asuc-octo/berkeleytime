@@ -18,12 +18,12 @@ const resolvers: ScheduleModule.Resolvers = {
     // consider returning ID instead of Schedule
     // make arrays optional
     // include CustomEvent array?
-    createNewSchedule(_parent, args: {created_by: string, term: string, schedule_name?: string | undefined | null, is_public?: boolean | undefined | null, class_IDs: string[] | null | undefined, section_IDs: string[] | undefined | null}) {
+    createNewSchedule(_parent, args: {created_by: string, term: string, schedule_name?: string | undefined | null, is_public?: boolean | undefined | null, class_IDs?: string[] | undefined | null, section_IDs?: string[] | undefined | null}) {
       
       return createSchedule(args.created_by, args.term, args.schedule_name ?? "", args.is_public ?? false, args.class_IDs ?? [""], args.section_IDs ?? [""])
       
     },
-    editExistingSchedule(_parent, args: {id: string, created_by?: string | undefined | null, term?: string | undefined | null, schedule_name?: string | undefined | null, is_public?: boolean | undefined | null, class_IDs: string[] | null | undefined, section_IDs: string[] | undefined | null}) {
+    editExistingSchedule(_parent, args: {id: string, created_by?: string | undefined | null, term?: string | undefined | null, schedule_name?: string | undefined | null, is_public?: boolean | undefined | null, class_IDs?: string[] | null | undefined, section_IDs?: string[] | undefined | null}) {
       return editSchedule(args.id, args.created_by, args.term, args.schedule_name, args.class_IDs ?? [""], args.section_IDs ?? [""], args.is_public)
     },
     setSelectedSections(_parent, args: {id: string, section_IDs: string[]}) {

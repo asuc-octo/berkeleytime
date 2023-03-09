@@ -78,22 +78,22 @@ export type Mutation = {
 
 
 export type MutationCreateNewScheduleArgs = {
-  class_IDs: Array<Scalars['String']>;
+  class_IDs?: InputMaybe<Array<Scalars['String']>>;
   created_by: Scalars['String'];
   is_public?: InputMaybe<Scalars['Boolean']>;
   schedule_name?: InputMaybe<Scalars['String']>;
-  section_IDs: Array<Scalars['String']>;
+  section_IDs?: InputMaybe<Array<Scalars['String']>>;
   term: Scalars['String'];
 };
 
 
 export type MutationEditExistingScheduleArgs = {
-  class_IDs: Array<Scalars['String']>;
+  class_IDs?: InputMaybe<Array<Scalars['String']>>;
   created_by?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
   is_public?: InputMaybe<Scalars['Boolean']>;
   schedule_name?: InputMaybe<Scalars['String']>;
-  section_IDs: Array<Scalars['String']>;
+  section_IDs?: InputMaybe<Array<Scalars['String']>>;
   term?: InputMaybe<Scalars['String']>;
 };
 
@@ -341,8 +341,8 @@ export type LetterGradeResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'class_IDs' | 'created_by' | 'section_IDs' | 'term'>>;
-  editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'class_IDs' | 'id' | 'section_IDs'>>;
+  createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'created_by' | 'term'>>;
+  editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'id'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
   setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'class_IDs' | 'id'>>;
   setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
