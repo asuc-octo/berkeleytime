@@ -27,12 +27,7 @@
 @import 'bt/landing/blurbs';
 @import 'bt/landing/landing_modal';
 
-// catalog
-@import 'bt/catalog/catalog';
-@import 'bt/catalog/filter';
-@import 'bt/catalog/modal';
-@import 'bt/catalog/results';
-@import 'bt/catalog/card';
+// Catalog
 @import 'bt/catalog/description';
 
 // Grades & Enrollment
@@ -74,9 +69,6 @@
 // Join page
 @import 'bt/join';
 @import 'bt/about/position';
-
-// Apidocs
-@import 'bt/apidocs/apidocs';
 
 // Apply
 @import 'bt/positions';

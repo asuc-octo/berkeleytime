@@ -1,32 +1,32 @@
 fragment UserProfile on BerkeleytimeUserType {
-  # Basic user information
-  id
-  major
-  user {
-    id
-    username
-    firstName
-    lastName
-    email
-  }
+	# Basic user information
+	id
+	major
+	user {
+		id
+		username
+		firstName
+		lastName
+		email
+	}
 
-  # Notification fields
-  emailClassUpdate
-  emailGradeUpdate
-  emailEnrollmentOpening
-  emailBerkeleytimeUpdate
+	# Notification fields
+	emailClassUpdate
+	emailGradeUpdate
+	emailEnrollmentOpening
+	emailBerkeleytimeUpdate
 
-  # Saved classes
-  savedClasses {
-    ...CourseOverview
-  }
+	# Saved classes
+	savedClasses {
+		...CourseOverview
+	}
 
-  # Schedule
-  schedules {
-    edges {
-      node {
-        ...ScheduleOverview
-      }
-    }
-  }
+	# Schedule
+	schedules {
+		edges {
+			node {
+				...ScheduleOverview
+			}
+		}
+	}
 }

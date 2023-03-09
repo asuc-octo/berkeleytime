@@ -11,80 +11,80 @@ p,
 a,
 button,
 td {
-  font-family: 'Inter', sans-serif;
-  font-style: normal;
-  font-weight: normal;
-  color: $bt-base-text;
-  margin: 0;
+	font-family: 'Inter', sans-serif;
+	font-style: normal;
+	font-weight: normal;
+	color: $bt-base-text;
+	margin: 0;
 
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 a {
-  color: $bt-blue;
-  transition: color 0.2s;
+	color: $bt-blue;
+	transition: color 0.2s;
 
-  &:hover {
-    text-decoration: none;
-  }
+	&:hover {
+		text-decoration: none;
+	}
 }
 
 // responsively scale font sizes (replace with $responsive)
 @mixin font-size-responsive($size) {
-  font-size: $size;
+	font-size: $size;
 
-  @if $size <= 24px {
-    @include tablet {
-      font-size: $size - 2px;
-    }
-    @include mobile {
-      font-size: $size - 4px;
-    }
-  } @else if $size <= 25px {
-    @include tablet {
-      font-size: $size - 3px;
-    }
-    @include mobile {
-      font-size: $size - 5px;
-    }
-  } @else {
-    @include tablet {
-      font-size: $size - 3px;
-    }
-    @include mobile {
-      font-size: $size - 6px;
-    }
-  }
+	@if $size <= 24px {
+		@include tablet {
+			font-size: $size - 2px;
+		}
+		@include mobile {
+			font-size: $size - 4px;
+		}
+	} @else if $size <= 25px {
+		@include tablet {
+			font-size: $size - 3px;
+		}
+		@include mobile {
+			font-size: $size - 5px;
+		}
+	} @else {
+		@include tablet {
+			font-size: $size - 3px;
+		}
+		@include mobile {
+			font-size: $size - 6px;
+		}
+	}
 }
 
 @mixin font-size-responsive-larger($size) {
-  @include mobile {
-    font-size: $size - 2px;
-  }
-  font-size: $size;
+	@include mobile {
+		font-size: $size - 2px;
+	}
+	font-size: $size;
 }
 
 .bt-h3 {
-  @include font-size-responsive(26px);
+	@include font-size-responsive(26px);
 }
 
 .bt-h6 {
-  @include font-size-responsive(18px);
+	@include font-size-responsive(18px);
 }
 
 .bt-p {
-  @include font-size-responsive(16px);
+	@include font-size-responsive(16px);
 }
 
 .bt-a {
-  @include font-size-responsive(16px);
+	@include font-size-responsive(16px);
 }
 
 .bt-bold {
-  font-weight: 600;
+	font-weight: 600;
 }
 
 .bt-light-bold {
-  font-weight: 500;
+	font-weight: 500;
 }
