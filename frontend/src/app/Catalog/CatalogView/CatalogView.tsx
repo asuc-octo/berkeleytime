@@ -16,6 +16,7 @@ import ReadMore from './ReadMore';
 import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
 import SectionTable from './SectionTable';
+import { getLatestSemester, Semester } from 'utils/playlists/semesters';
 
 interface CatalogViewProps {
 	coursePreview: CourseFragment | null;
@@ -24,6 +25,28 @@ interface CatalogViewProps {
 }
 
 const skeleton = [...Array(8).keys()];
+
+var dict = new Map([
+	['Field Work', 'FLD'],
+	['Session', 'SES'],
+	['Colloquium', 'COL'],
+	['Recitation', 'REC'],
+	['Internship', 'INT'],
+	['Studio', 'STD'],
+	['Demonstration', 'dem'],
+	['Web-based Discussion', 'WBD'],
+	['Discussion', 'DIS'],
+	['Tutorial', 'TUT'],
+	['Clinic', 'CLN'],
+	['Independent Study', 'IND'],
+	['Self-paced', 'SLF'],
+	['Seminar', 'SEM'],
+	['Lecture', 'LEC'],
+	['Web-based Lecture', 'WBL'],
+	['Web-Based Lecture', 'WBL'],
+	['Directed Group Study', 'GRP'],
+	['Laboratory', 'LAB'],
+  ]);
 
 const CatalogView = (props: CatalogViewProps) => {
 	const { coursePreview, setCurrentFilters, setCurrentCourse } = props;
@@ -105,6 +128,30 @@ const CatalogView = (props: CatalogViewProps) => {
 			sections = sortSections(edges.map((e) => e.node));
 		}
 
+		console.log(semester)
+		if (false && sections !== null) {
+			sections = sortSections(sections);
+			for (var i = 0; i < sections.length; i++) {
+				var stre = '';
+				let temp = semester.split(' ');
+				var punctuation = ',';
+				var regex = new RegExp('[' + punctuation + ']', 'g');
+				var rmc = courseRef.abbreviation.replace(regex, '');
+				stre = `https://classes.berkeley.edu/content/${semester[1]}
+				-${semester[0]}
+				-${rmc}
+				-${courseRef.courseNumber}
+				-${sections[i].sectionNumber}
+				-${dict.get(sections[i].kind)}
+				-${sections[i].sectionNumber}`;
+				stre = stre.replace(/\s+/g, '');
+				
+				links.push(stre);
+			}
+		}
+
+
+
 		// return [playlists ?? skeleton, sections ?? [], semesters];
 		return [playlists ?? skeleton, sections ?? null];
 	}, [course]);
@@ -135,6 +182,14 @@ const CatalogView = (props: CatalogViewProps) => {
 		: `/enrollment`;
 
 	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
+
+	// const playlists = course?.playlistSet.edges.map((e) => e?.node!);
+
+	// let sections = course?.sectionSet.edges.map((e) => e?.node!);
+	let links:any = [];
+	console.log(sections)
+	
+	
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>

@@ -7,7 +7,7 @@ import CurrentContributors from '../components/About/CurrentContributors';
 import PastContributors from '../components/About/PastContributors';
 import AboutCarousel from '../components/About/AboutCarousel';
 
-import growth from 'assets/svg/about/growth.svg';
+import growth from '../assets/svg/about/growth.svg';
 import curiosity from 'assets/svg/about/curiosity.svg';
 import passion from 'assets/svg/about/passion.svg';
 
