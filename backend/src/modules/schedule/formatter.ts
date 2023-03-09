@@ -6,8 +6,6 @@ export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule 
     _id: schedule._id as string,
     name: schedule.name,
     created_by: schedule.created_by,
-    date_created: schedule.date_created,
-    last_updated: schedule.last_updated,
     term: schedule.term,
     public: schedule.public,
     class_IDs: schedule.class_IDs,

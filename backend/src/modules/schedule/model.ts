@@ -17,8 +17,6 @@ export const ScheduleSchema = new Schema({
   _id: { type: Types.ObjectId, reqired: true },
   name: { type: String, required: false },
   created_by: { type: String, required: true },
-  date_created: { type: String, required: true },
-  last_updated: { type: String, required: true },
   term: { type: String, required: true },
   public: { type: Boolean, required: true },
   class_IDs: { type: [String], required: false },

@@ -158,8 +158,6 @@ export type Schedule = {
   class_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
   created_by: Scalars['String'];
   custom_events?: Maybe<Array<Maybe<CustomEvent>>>;
-  date_created: Scalars['String'];
-  last_updated: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   primary_section_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
   public: Scalars['Boolean'];
@@ -364,8 +362,6 @@ export type ScheduleResolvers<ContextType = any, ParentType extends ResolversPar
   class_IDs?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   custom_events?: Resolver<Maybe<Array<Maybe<ResolversTypes['CustomEvent']>>>, ParentType, ContextType>;
-  date_created?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  last_updated?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   primary_section_IDs?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;

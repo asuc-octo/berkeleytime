@@ -2,8 +2,6 @@ export const Schedule = {
     _id: "ididididid",
     name: "test-name",
     created_by: "test-user",
-    date_created: "test-created",
-    last_updated: "test-updated",
     term: "test-term",
     public: "test-false",
     class_IDs: "test-ID",

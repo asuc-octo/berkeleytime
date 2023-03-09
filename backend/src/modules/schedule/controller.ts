@@ -39,27 +39,16 @@ export async function removeSchedule(scheduleID:string): Promise<string> {
   return scheduleID
 }
 
-// get current time stamp
-function getTime(): string {
-  const today = new Date()
-  const dd = String(today.getDate()).padStart(2, '0')
-  const mm = String(today.getMonth() + 1).padStart(2, '0') //January is 0!
-  const yyyy = today.getFullYear()
-  const today_string = yyyy + '/' + mm + '/' + dd
-  return today_string
-}
 
 interface minimumViableSchedule {
   _id: ObjectID,
   created_by: string,
   term: string,
-  schedule_name?: string,
+  name?: string,
   class_IDs?: string[],
   primary_section_IDs?: string[],
   secondary_section_IDs?: string[],
   public?: boolean,
-  last_updated?: string,
-  date_created?: string,
 }
 
 // create a new schedule
@@ -68,12 +57,11 @@ export async function createSchedule(created_by: string, term: string, schedule_
   // args: {arguments: InputMaybe<String>}
   // add class_IDs: [string], section_IDs: [string] later
   
-  const current_time = getTime()
   const newID = new ObjectID()
 
   const schedulePartsToCreate: minimumViableSchedule = { _id: newID, created_by: created_by, term: term }
   if (schedule_name) {
-    schedulePartsToCreate.schedule_name = schedule_name
+    schedulePartsToCreate.name = schedule_name
   }
 
   if (class_IDs) {
@@ -89,8 +77,6 @@ export async function createSchedule(created_by: string, term: string, schedule_
   }
 
   schedulePartsToCreate.public = is_public
-  schedulePartsToCreate.last_updated = current_time
-  schedulePartsToCreate.date_created = current_time
 
   const newSchedule = await ScheduleModel.create(schedulePartsToCreate)
   // const newSchedule = await ScheduleModel.create({_id: newID, name: schedule_name, created_by: created_by, date_created: current_time, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs})
@@ -98,27 +84,25 @@ export async function createSchedule(created_by: string, term: string, schedule_
 }
 
 interface partialSchedule {
-  schedule_name?: string,
+  name?: string,
   created_by?: string,
   term?: string,
   class_IDs?: string[],
   primary_section_IDs?: string[],
   secondary_section_IDs?: string[],
   public?: boolean,
-  last_updated?: string
 }
 
 // update an existing schedule
 export async function editSchedule(schedule_ID: string, created_by: string | undefined | null, term: string | undefined | null, schedule_name: string | undefined | null, class_IDs: string[], primary_section_IDs: string[], secondary_section_IDs: string[], is_public?: boolean | undefined | null): Promise<Schedule> {
-  const current_time = getTime()
   
-  const schedulePartsToUpdate: partialSchedule = { last_updated: current_time}
+  const schedulePartsToUpdate: partialSchedule = {}
 
   if (term) {
     schedulePartsToUpdate.term = term
   }
   if (schedule_name) {
-    schedulePartsToUpdate.schedule_name = schedule_name
+    schedulePartsToUpdate.name = schedule_name
   }
   if (class_IDs) {
     schedulePartsToUpdate.class_IDs = class_IDs
@@ -152,7 +136,7 @@ export async function editSchedule(schedule_ID: string, created_by: string | und
 
 // update section selection in an existing schedule
 export async function setSections(schedule_ID: string, section_IDs: string[]): Promise<Schedule> {
-  const existingSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {section_IDs: section_IDs, last_updated: getTime()}, {returnDocument: 'after'})
+  const existingSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {section_IDs: section_IDs}, {returnDocument: 'after'})
   if (!existingSchedule) {
     throw new Error("Unable to update existing schedule's section selection")
   }
@@ -161,7 +145,7 @@ export async function setSections(schedule_ID: string, section_IDs: string[]): P
 
 // update class selection in an existing schedule
 export async function setClasses(scheduleID: string, class_IDs: string[]): Promise<Schedule> {
-  const existingSchedule = await ScheduleModel.findByIdAndUpdate(scheduleID, {class_IDs: class_IDs, last_updated: getTime()}, {returnDocument: 'after'})
+  const existingSchedule = await ScheduleModel.findByIdAndUpdate(scheduleID, {class_IDs: class_IDs}, {returnDocument: 'after'})
   if (!existingSchedule) {
     throw new Error("Unable to update existing schedule's class selection")
   }

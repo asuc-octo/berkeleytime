@@ -5,8 +5,6 @@ const typedef = gql`
     _id: ID
     name: String
     created_by: String!
-    date_created: String!
-    last_updated: String!
     term: String!
     public: Boolean!
     class_IDs: [String]
