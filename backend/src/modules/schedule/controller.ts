@@ -49,6 +49,18 @@ function getTime(): string {
   return today_string
 }
 
+interface minimumViableSchedule {
+  _id: ObjectID,
+  created_by: string,
+  term: string,
+  schedule_name?: string,
+  class_IDs?: string[],
+  section_IDs?: string[],
+  public?: boolean,
+  last_updated?: string,
+  date_created?: string,
+}
+
 // create a new schedule
 export async function createSchedule(created_by: string, term: string, schedule_name: string, is_public: boolean, class_IDs: string[], section_IDs: string[]): Promise<Schedule> {
 
@@ -57,7 +69,26 @@ export async function createSchedule(created_by: string, term: string, schedule_
   
   const current_time = getTime()
   const newID = new ObjectID()
-  const newSchedule = await ScheduleModel.create({_id: newID, name: schedule_name, created_by: created_by, date_created: current_time, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs})
+
+  const schedulePartsToCreate: minimumViableSchedule = { _id: newID, created_by: created_by, term: term }
+  if (schedule_name) {
+    schedulePartsToCreate.schedule_name = schedule_name
+  }
+
+  if (class_IDs) {
+    schedulePartsToCreate.class_IDs = class_IDs
+  }
+
+  if (section_IDs) {
+    schedulePartsToCreate.section_IDs = section_IDs
+  }
+
+  schedulePartsToCreate.public = is_public
+  schedulePartsToCreate.last_updated = current_time
+  schedulePartsToCreate.date_created = current_time
+
+  const newSchedule = await ScheduleModel.create(schedulePartsToCreate)
+  // const newSchedule = await ScheduleModel.create({_id: newID, name: schedule_name, created_by: created_by, date_created: current_time, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs})
   return formatSchedule(newSchedule as any)
 }
 

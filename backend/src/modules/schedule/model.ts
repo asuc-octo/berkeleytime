@@ -24,7 +24,7 @@ export const ScheduleSchema = new Schema({
   class_IDs: { type: [String], required: false },
   section_IDs: { type: [String], required: false },
   custom_events: { type: [CustomEventSchema], required: false }
-});
+}, { timestamps: true });
 
 export const CustomEventModel = mongoose.model("customEvent", CustomEventSchema, "customEvent");
 export type CustomEventType = InferSchemaType<typeof CustomEventSchema>;
