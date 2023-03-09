@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { Row, Col } from 'react-bootstrap';
 
 import { H3 } from 'bt/custom';
@@ -12,7 +12,7 @@ import michelle_2 from 'assets/img/about/2022-23/michelle_2.jpg';
 import william_1 from 'assets/img/about/2022-23/william_1.jpg';
 import william_2 from 'assets/img/about/2022-23/william_2.jpg';
 import levi_1 from 'assets/img/about/2022-23/levi_1.jpg';
-import zachary_1 from 'assets/img/about/2022-23/zachary_1.jpeg';
+import zachary_1 from 'assets/img/about/2022-23/zachary_1.jpg';
 import zachary_2 from 'assets/img/about/2022-23/zachary_2.jpg';
 import henric_1 from 'assets/img/about/2022-23/henric_1.jpg';
 import henric_2 from 'assets/img/about/2022-23/henric_2.jpg';
@@ -23,6 +23,14 @@ import kevin_2 from 'assets/img/about/2022-23/kevin_2.jpg';
 import eric_1 from 'assets/img/about/2022-23/eric_1.jpg';
 import eric_2 from 'assets/img/about/2022-23/eric_2.jpg';
 import joel_1 from 'assets/img/about/2022-23/joel_1.jpg';
+import alexander_1 from 'assets/img/about/2022-23/alexander_1.jpg';
+import rachel_1 from 'assets/img/about/2022-23/rachel_1.jpg';
+import carissa_1 from 'assets/img/about/2022-23/carissa_1.jpg';
+import joanne_1 from 'assets/img/about/2022-23/joanne_1.jpg';
+import joanne_2 from 'assets/img/about/2022-23/joanne_2.jpg';
+import jaden_1 from 'assets/img/about/2022-23/jaden_1.jpg';
+import max_1 from 'assets/img/about/2022-23/max_1.jpg';
+import michael_1 from 'assets/img/about/2022-23/michael_1.jpg';
 
 const contributors = [
 	[
@@ -43,6 +51,7 @@ const contributors = [
 		{
 			name: 'Matthew Rowland',
 			role: 'Frontend Lead',
+			site: 'https://www.linkedin.com/in/matthew-rowland-dev/',
 			img: matthew_1,
 			silly_img: matthew_2
 		},
@@ -51,6 +60,18 @@ const contributors = [
 			role: 'Frontend Engineer',
 			img: henric_1,
 			silly_img: henric_2
+		},
+		{
+			name: 'Jaden Moore',
+			role: 'Frontend Engineer',
+			site: 'https://www.jdyn.dev',
+			img: jaden_1
+		},
+		{
+			name: 'Alexander Lew',
+			role: 'Frontend Engineer',
+			site: 'https://www.qxbytes.com',
+			img: alexander_1
 		},
 		{
 			name: 'Ethan Ikegami',
@@ -67,6 +88,16 @@ const contributors = [
 			silly_img: william_2
 		},
 		{
+			name: 'Max Wang',
+			role: 'Backend Engineer',
+			img: max_1
+		},
+		{
+			name: 'Michael Khaykin',
+			role: 'Backend Engineer',
+			img: michael_1
+		},
+		{
 			name: 'Levi Kline',
 			role: 'Frontend Engineer',
 			site: 'https://levibkline.com',
@@ -76,6 +107,7 @@ const contributors = [
 		{
 			name: 'Eric Xu',
 			role: 'Backend Engineer',
+			site: 'https://www.linkedin.com/in/e-xu-at-berkeley',
 			img: eric_1,
 			silly_img: eric_2
 		},
@@ -85,6 +117,24 @@ const contributors = [
 			site: 'https://michelletran.design',
 			img: michelle_1,
 			silly_img: michelle_2
+		},
+		{
+			name: 'Carissa Cui',
+			role: 'Designer',
+			site: 'https://www.carissacui.com',
+			img: carissa_1
+		},
+		{
+			name: 'Joanne Chuang',
+			role: 'Designer',
+			img: joanne_1,
+			silly_img: joanne_2
+		},
+		{
+			name: 'Rachel Hua',
+			role: 'Designer',
+			site: 'https://www.linkedin.com/in/byrachelhua/',
+			img: rachel_1
 		},
 		{
 			name: 'Joel Jaison',
@@ -106,7 +156,7 @@ const CurrentContributors: FC = () => (
 					<Col key={member.name} xs={6} md={3} className="contributor-card">
 						<div className="headshot">
 							<img className="serious" src={member.img} alt={member.name} />
-							<img src={member.silly_img} alt={member.name} />
+							<img src={member.silly_img ? member.silly_img : member.img} alt={member.name} />
 						</div>
 						<div className="name">
 							<p className="bt-light-bold">{member.name}</p>
