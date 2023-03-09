@@ -1,9 +1,9 @@
 query GetFilters {
-  allPlaylists {
-    edges {
-      node {
-        ...Filter
-      }
-    }
-  }
+	allPlaylists {
+		edges {
+			node {
+				...Filter
+			}
+		}
+	}
 }

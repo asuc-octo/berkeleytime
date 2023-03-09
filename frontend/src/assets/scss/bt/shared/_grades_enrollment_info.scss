@@ -1,87 +1,86 @@
+.grades-info,
+.enrollment-info {
+	display: flex;
+	flex-direction: column;
 
+	.info-icon {
+		padding-left: 5px;
+		width: 25px;
+	}
+	.opaque {
+		opacity: 1 !important;
+	}
 
+	.info-text {
+		opacity: 1 !important;
+		line-height: 1.6;
+		color: $bt-grey-text;
+		font-weight: lighter;
+	}
 
-.grades-info, .enrollment-info {
-  display: flex;
-  flex-direction: column;
+	.header {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 
-  .info-icon {
-    padding-left: 5px;
-    width: 25px;
-  }
-  .opaque {
-    opacity: 1 !important;
-  }
+		margin-bottom: 5px;
 
-  .info-text {
-    opacity: 1 !important;
-    line-height: 1.6;
-    color: $bt-grey-text;
-    font-weight: lighter;
-  }
+		.square {
+			width: 16px;
+			height: 16px;
+			border-radius: 3px;
+			margin-right: 8px;
+			margin-bottom: 4px;
+		}
 
+		.course {
+			font-weight: bold;
+			color: $bt-base-text;
+			font-size: 18px;
+		}
+	}
 
-  .header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+	.title,
+	.info {
+		font-size: 16px;
+		color: $bt-grey-text;
+	}
 
-    margin-bottom: 5px;
+	.title {
+		margin-bottom: 5px;
+	}
 
-    .square {
-      width: 16px;
-      height: 16px;
-      border-radius: 3px;
-      margin-right: 8px;
-      margin-bottom: 4px;
-    }
+	.info {
+		margin-bottom: 30px;
+	}
 
-    .course {
-      font-weight: bold;
-      color: $bt-base-text;
-      font-size: 18px;
-    }
-  }
+	h6 {
+		font-size: 16px;
+		font-weight: bold;
+		margin-bottom: 5px;
+	}
 
-  .title, .info {
-    font-size: 16px;
-    color: $bt-grey-text;
-  }
+	.stat-section {
+		.date {
+			font-weight: bold;
+			padding-bottom: 5px;
+		}
+		.text {
+			padding-right: 8px;
+		}
+		.waitlisted-stat {
+			margin-top: 5px;
+			margin-bottom: 20px;
+		}
+	}
 
-  .title {
-    margin-bottom: 5px;
-  }
+	span {
+		margin-right: 5px;
+	}
 
-  .info {
-    margin-bottom: 30px;
-  }
-
-  h6 {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-
-  .stat-section {
-    .date {
-      font-weight: bold;
-      padding-bottom: 5px;
-    }
-    .text {
-      padding-right: 8px;
-    }
-    .waitlisted-stat {
-      margin-top: 5px;
-      margin-bottom: 20px;
-    }
-
-  }
-
-  span {
-    margin-right: 5px;
-  }
-
-  .course-average, .section-average, .percentile {
-    margin-bottom: 10px;
-  }
+	.course-average,
+	.section-average,
+	.percentile {
+		margin-bottom: 10px;
+	}
 }

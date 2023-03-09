@@ -1,30 +1,30 @@
 import { useCallback } from 'react';
 import { getNodes } from 'utils/graphql';
 import {
-  DeleteUserMutationHookResult,
-  GetUserDocument,
-  GetUserQuery,
-  GetUserQueryVariables,
-  LoginMutationHookResult,
-  LogoutMutationHookResult,
-  UpdateUserMutationVariables,
-  useDeleteUserMutation,
-  useGetUserQuery,
-  useLoginMutation,
-  useLogoutMutation,
-  UserProfileFragment,
-  useUpdateUserMutation,
-} from '../graphql';
+	DeleteUserMutationHookResult,
+	GetUserDocument,
+	GetUserQuery,
+	GetUserQueryVariables,
+	LoginMutationHookResult,
+	LogoutMutationHookResult,
+	UpdateUserMutationVariables,
+	useDeleteUserMutation,
+	useGetUserQuery,
+	useLoginMutation,
+	useLogoutMutation,
+	UserProfileFragment,
+	useUpdateUserMutation
+} from 'graphql';
 
-export type UserInfo = {
-  /**
-   * This may change once the user query is loaded. This will
-   * be false while the user's login state is undetermined.
-   */
-  isLoggedIn: boolean;
-  loading: boolean;
-  /** This is null while loading, or if the user isn't logged in. */
-  user: UserProfileFragment | null;
+type UserInfo = {
+	/**
+	 * This may change once the user query is loaded. This will
+	 * be false while the user's login state is undetermined.
+	 */
+	isLoggedIn: boolean;
+	loading: boolean;
+	/** This is null while loading, or if the user isn't logged in. */
+	user: UserProfileFragment | null;
 };
 
 /**
@@ -37,65 +37,63 @@ export type UserInfo = {
  * const { user, isLoggedIn, loading } = useUser();
  */
 export const useUser = (): UserInfo => {
-  const { data, loading } = useGetUserQuery({
-    errorPolicy: 'all',
-  });
+	const { data, loading } = useGetUserQuery({
+		errorPolicy: 'all'
+	});
 
-  return {
-    isLoggedIn: !!data?.user,
-    loading,
-    user: data?.user ?? null,
-  };
+	return {
+		isLoggedIn: !!data?.user,
+		loading,
+		user: data?.user ?? null
+	};
 };
 
 /**
  * Returns a function which logs in the user
  */
 export const useLogin = (): LoginMutationHookResult => {
-  return useLoginMutation({
-    update(cache, { data }) {
-      const user = data?.login?.user;
-      cache.writeQuery({
-        query: GetUserDocument,
-        data: { user },
-      });
-    },
-  });
+	return useLoginMutation({
+		update(cache, { data }) {
+			const user = data?.login?.user;
+			cache.writeQuery({
+				query: GetUserDocument,
+				data: { user }
+			});
+		}
+	});
 };
 
 /**
  * Returns a function which logs out
  */
 export const useLogout = (): LogoutMutationHookResult => {
-  return useLogoutMutation({
-    update(cache) {
-      const existingUser = cache.readQuery<GetUserQuery, GetUserQueryVariables>(
-        {
-          query: GetUserDocument,
-        }
-      );
+	return useLogoutMutation({
+		update(cache) {
+			const existingUser = cache.readQuery<GetUserQuery, GetUserQueryVariables>({
+				query: GetUserDocument
+			});
 
-      // Ensure there is no user in the cache after a log out
-      cache.writeQuery({
-        query: GetUserDocument,
-        data: {
-          user: null,
-        },
-      });
+			// Ensure there is no user in the cache after a log out
+			cache.writeQuery({
+				query: GetUserDocument,
+				data: {
+					user: null
+				}
+			});
 
-      // Invalidate all the schedules for the user (if they are private)
-      if (existingUser?.user) {
-        getNodes(existingUser.user.schedules).forEach((schedule) =>
-          cache.modify({
-            id: cache.identify(schedule),
-            fields(_fieldValue, details) {
-              return details.DELETE;
-            },
-          })
-        );
-      }
-    },
-  });
+			// Invalidate all the schedules for the user (if they are private)
+			if (existingUser?.user) {
+				getNodes(existingUser.user.schedules).forEach((schedule) =>
+					cache.modify({
+						id: cache.identify(schedule),
+						fields(_fieldValue, details) {
+							return details.DELETE;
+						}
+					})
+				);
+			}
+		}
+	});
 };
 
 /**
@@ -103,17 +101,17 @@ export const useLogout = (): LogoutMutationHookResult => {
  * confirmation prompt before executing.
  */
 export const useDeleteUser = (): DeleteUserMutationHookResult => {
-  return useDeleteUserMutation({
-    update(cache) {
-      // Ensure there is no user in the cache after a log out
-      cache.writeQuery({
-        query: GetUserDocument,
-        data: {
-          user: null,
-        },
-      });
-    },
-  });
+	return useDeleteUserMutation({
+		update(cache) {
+			// Ensure there is no user in the cache after a log out
+			cache.writeQuery({
+				query: GetUserDocument,
+				data: {
+					user: null
+				}
+			});
+		}
+	});
 };
 
 /**
@@ -122,26 +120,24 @@ export const useDeleteUser = (): DeleteUserMutationHookResult => {
  * mutation.
  */
 export const useUpdateUser = () => {
-  const [updateUser] = useUpdateUserMutation();
-  const optimisticUpdateUser = useCallback(
-    (user: UserProfileFragment, variables: UpdateUserMutationVariables) =>
-      updateUser({
-        variables: variables,
-        optimisticResponse: {
-          __typename: 'Mutation',
-          updateUser: {
-            __typename: 'UpdateUser',
-            user: {
-              ...user,
-              ...Object.fromEntries(
-                Object.entries(variables).filter(([k, v]) => v !== null)
-              ),
-            },
-          },
-        },
-      }),
-    [updateUser]
-  );
+	const [updateUser] = useUpdateUserMutation();
+	const optimisticUpdateUser = useCallback(
+		(user: UserProfileFragment, variables: UpdateUserMutationVariables) =>
+			updateUser({
+				variables: variables,
+				optimisticResponse: {
+					__typename: 'Mutation',
+					updateUser: {
+						__typename: 'UpdateUser',
+						user: {
+							...user,
+							...Object.fromEntries(Object.entries(variables).filter(([k, v]) => v !== null))
+						}
+					}
+				}
+			}),
+		[updateUser]
+	);
 
-  return optimisticUpdateUser;
+	return optimisticUpdateUser;
 };

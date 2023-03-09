@@ -1,27 +1,27 @@
 .landing-mission {
-  margin-bottom: $landing-section-gap;
+	margin-bottom: $landing-section-gap;
 
-  img {
-    width: 100%;
-    object-fit: scale-down;
-  }
+	img {
+		width: 100%;
+		object-fit: scale-down;
+	}
 
-  .mission {
-    width: 100%;
-    height: 100%;
-    @extend .py-4;
+	.mission {
+		width: 100%;
+		height: 100%;
+		@extend .py-4;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: baseline;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: baseline;
 
-    @include mobile {
-      align-items: center;
-    }
+		@include mobile {
+			align-items: center;
+		}
 
-    p {
-      max-width: 300px;
-    }
-  }
+		p {
+			max-width: 300px;
+		}
+	}
 }

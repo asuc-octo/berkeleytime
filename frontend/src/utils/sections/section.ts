@@ -1,44 +1,44 @@
-import { SectionFragment } from 'graphql/graphql';
+import { SectionFragment } from 'graphql';
 import { ReactNode } from 'react';
 import { formatTime } from 'utils/date';
 import { applyIndicatorPercent } from 'utils/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type SectionType =
-  | 'Clinic'
-  | 'Colloquium'
-  | 'Conversation'
-  | 'Demonstration'
-  | 'Directed Group Study'
-  | 'Discussion'
-  | 'Field Work'
-  | 'Independent Study'
-  | 'Internship'
-  | 'Laboratory'
-  | 'Lecture'
-  | 'Listening'
-  | 'Practicum'
-  | 'Reading'
-  | 'Recitation'
-  | 'Research'
-  | 'Self-paced'
-  | 'Seminar'
-  | 'Session'
-  | 'Simulcast'
-  | 'Studio'
-  | 'Supplementary'
-  | 'Tutorial'
-  | 'Voluntary'
-  | 'Web-Based Discussion'
-  | 'Web-Based Lecture'
-  | 'Workshop';
+	| 'Clinic'
+	| 'Colloquium'
+	| 'Conversation'
+	| 'Demonstration'
+	| 'Directed Group Study'
+	| 'Discussion'
+	| 'Field Work'
+	| 'Independent Study'
+	| 'Internship'
+	| 'Laboratory'
+	| 'Lecture'
+	| 'Listening'
+	| 'Practicum'
+	| 'Reading'
+	| 'Recitation'
+	| 'Research'
+	| 'Self-paced'
+	| 'Seminar'
+	| 'Session'
+	| 'Simulcast'
+	| 'Studio'
+	| 'Supplementary'
+	| 'Tutorial'
+	| 'Voluntary'
+	| 'Web-Based Discussion'
+	| 'Web-Based Lecture'
+	| 'Workshop';
 
 export const formatLocation = (location: string): string => {
-  if (location === 'Internet/Online') {
-    return 'Online';
-  } else {
-    return location;
-  }
+	if (location === 'Internet/Online') {
+		return 'Online';
+	} else {
+		return location;
+	}
 };
 
 /**
@@ -52,26 +52,23 @@ export const formatLocation = (location: string): string => {
  * formatSecctionTime(someSectionWithNoTime, false)
  * // ""
  */
-export const formatSectionTime = (
-  section: SectionFragment,
-  showNoTime: boolean = true
-): string =>
-  section.startTime && section.endTime
-    ? `${formatTime(section.startTime)} \u{2013} ${formatTime(section.endTime)}`
-    : showNoTime
-    ? `no time`
-    : '';
+export const formatSectionTime = (section: SectionFragment, showNoTime = true): string =>
+	section.startTime && section.endTime
+		? `${formatTime(section.startTime)} \u{2013} ${formatTime(section.endTime)}`
+		: showNoTime
+		? `no time`
+		: '';
 
 export const formatSectionEnrollment = (section: SectionFragment): ReactNode =>
-  section.enrolled !== null &&
-  section.enrolledMax !== null &&
-  section.enrolled !== undefined &&
-  section.enrolledMax !== undefined
-    ? applyIndicatorPercent(
-        `${section.enrolled}/${section.enrolledMax} enrolled`,
-        section.enrolled / section.enrolledMax
-      )
-    : 'Enrollment N/A';
+	section.enrolled !== null &&
+	section.enrolledMax !== null &&
+	section.enrolled !== undefined &&
+	section.enrolledMax !== undefined
+		? applyIndicatorPercent(
+				`${section.enrolled}/${section.enrolledMax} enrolled`,
+				section.enrolled / section.enrolledMax
+		  )
+		: 'Enrollment N/A';
 
 /**
  * Checks if the section is the 'enrollment' section.
@@ -82,4 +79,4 @@ export const formatSectionEnrollment = (section: SectionFragment): ReactNode =>
  * // true
  */
 export const isEnrollmentSection = (section: SectionFragment): boolean =>
-  /^999[A-Z]?$/.test(section.sectionNumber);
+	/^999[A-Z]?$/.test(section.sectionNumber);

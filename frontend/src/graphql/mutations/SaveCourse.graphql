@@ -1,10 +1,10 @@
 mutation SaveCourse($courseId: ID!) {
-  saveClass(classId: $courseId) {
-    user {
-      id
-      savedClasses {
-        ...CourseOverview
-      }
-    }
-  }
+	saveClass(classId: $courseId) {
+		user {
+			id
+			savedClasses {
+				...CourseOverview
+			}
+		}
+	}
 }
