@@ -7,6 +7,7 @@ import vars from '../../variables/Variables';
 class ClassCardList extends PureComponent {
 	render() {
 		const { selectedCourses, removeCourse, additionalInfo, type, isMobile } = this.props;
+		
 
 		return (
 			<Container fluid className="class-card-list">

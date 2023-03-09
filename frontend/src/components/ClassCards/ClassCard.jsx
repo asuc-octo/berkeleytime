@@ -40,7 +40,6 @@ function ClassCard(props) {
 				</div>
 				<div className="class-card-title">{title}</div>
 				<div className="class-card-options">{`${semester} • ${faculty}`}</div>
-
 				{isMobile ? <ClassCardMobile additionalInfo={additionalInfo} type={type} /> : null}
 			</div>
 		</Col>
