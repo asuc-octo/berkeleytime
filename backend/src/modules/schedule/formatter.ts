@@ -11,7 +11,8 @@ export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule 
     term: schedule.term,
     public: schedule.public,
     class_IDs: schedule.class_IDs,
-    section_IDs: schedule.section_IDs,
+    primary_section_IDs: schedule.primary_section_IDs,
+    secondary_section_IDs: schedule.secondary_section_IDs,
     custom_events: schedule.custom_events.map(formatCustomEvents)
     
   };

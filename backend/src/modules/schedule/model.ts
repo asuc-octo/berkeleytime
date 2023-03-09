@@ -22,7 +22,8 @@ export const ScheduleSchema = new Schema({
   term: { type: String, required: true },
   public: { type: Boolean, required: true },
   class_IDs: { type: [String], required: false },
-  section_IDs: { type: [String], required: false },
+  primary_section_IDs: { type: [String], required: false },
+  secondary_section_IDs: { type: [String], required: false },
   custom_events: { type: [CustomEventSchema], required: false }
 }, { timestamps: true });
 

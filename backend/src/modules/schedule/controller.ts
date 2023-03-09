@@ -55,14 +55,15 @@ interface minimumViableSchedule {
   term: string,
   schedule_name?: string,
   class_IDs?: string[],
-  section_IDs?: string[],
+  primary_section_IDs?: string[],
+  secondary_section_IDs?: string[],
   public?: boolean,
   last_updated?: string,
   date_created?: string,
 }
 
 // create a new schedule
-export async function createSchedule(created_by: string, term: string, schedule_name: string | undefined | null, is_public: boolean, class_IDs: string[] | undefined | null, section_IDs: string[] | undefined | null): Promise<Schedule> {
+export async function createSchedule(created_by: string, term: string, schedule_name: string | undefined | null, is_public: boolean, class_IDs: string[] | undefined | null, primary_section_IDs: string[], secondary_section_IDs: string[]): Promise<Schedule> {
 
   // args: {arguments: InputMaybe<String>}
   // add class_IDs: [string], section_IDs: [string] later
@@ -79,8 +80,12 @@ export async function createSchedule(created_by: string, term: string, schedule_
     schedulePartsToCreate.class_IDs = class_IDs
   }
 
-  if (section_IDs) {
-    schedulePartsToCreate.section_IDs = section_IDs
+  if (primary_section_IDs) {
+    schedulePartsToCreate.primary_section_IDs = primary_section_IDs
+  }
+
+  if (secondary_section_IDs) {
+    schedulePartsToCreate.secondary_section_IDs = secondary_section_IDs
   }
 
   schedulePartsToCreate.public = is_public
@@ -97,16 +102,17 @@ interface partialSchedule {
   created_by?: string,
   term?: string,
   class_IDs?: string[],
-  section_IDs?: string[],
+  primary_section_IDs?: string[],
+  secondary_section_IDs?: string[],
   public?: boolean,
-  update_time?: string
+  last_updated?: string
 }
 
 // update an existing schedule
-export async function editSchedule(schedule_ID: string, created_by: string | undefined | null, term: string | undefined | null, schedule_name: string | undefined | null, class_IDs: string[], section_IDs: string[], is_public?: boolean | undefined | null): Promise<Schedule> {
+export async function editSchedule(schedule_ID: string, created_by: string | undefined | null, term: string | undefined | null, schedule_name: string | undefined | null, class_IDs: string[], primary_section_IDs: string[], secondary_section_IDs: string[], is_public?: boolean | undefined | null): Promise<Schedule> {
   const current_time = getTime()
   
-  const schedulePartsToUpdate: partialSchedule = { update_time: current_time}
+  const schedulePartsToUpdate: partialSchedule = { last_updated: current_time}
 
   if (term) {
     schedulePartsToUpdate.term = term
@@ -117,9 +123,14 @@ export async function editSchedule(schedule_ID: string, created_by: string | und
   if (class_IDs) {
     schedulePartsToUpdate.class_IDs = class_IDs
   }
-  if (section_IDs) {
-    schedulePartsToUpdate.section_IDs = section_IDs
+  if (primary_section_IDs) {
+    schedulePartsToUpdate.primary_section_IDs = primary_section_IDs
   }
+
+  if (secondary_section_IDs) {
+    schedulePartsToUpdate.secondary_section_IDs = secondary_section_IDs
+  }
+
   if (isBoolean(is_public)) {
     schedulePartsToUpdate.public = is_public
   }

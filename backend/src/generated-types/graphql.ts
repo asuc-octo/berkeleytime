@@ -81,8 +81,9 @@ export type MutationCreateNewScheduleArgs = {
   class_IDs?: InputMaybe<Array<Scalars['String']>>;
   created_by: Scalars['String'];
   is_public?: InputMaybe<Scalars['Boolean']>;
+  primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   schedule_name?: InputMaybe<Scalars['String']>;
-  section_IDs?: InputMaybe<Array<Scalars['String']>>;
+  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   term: Scalars['String'];
 };
 
@@ -92,8 +93,9 @@ export type MutationEditExistingScheduleArgs = {
   created_by?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
   is_public?: InputMaybe<Scalars['Boolean']>;
+  primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   schedule_name?: InputMaybe<Scalars['String']>;
-  section_IDs?: InputMaybe<Array<Scalars['String']>>;
+  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   term?: InputMaybe<Scalars['String']>;
 };
 
@@ -159,8 +161,9 @@ export type Schedule = {
   date_created: Scalars['String'];
   last_updated: Scalars['String'];
   name?: Maybe<Scalars['String']>;
+  primary_section_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
   public: Scalars['Boolean'];
-  section_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
+  secondary_section_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
   term: Scalars['String'];
 };
 
@@ -364,8 +367,9 @@ export type ScheduleResolvers<ContextType = any, ParentType extends ResolversPar
   date_created?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   last_updated?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  primary_section_IDs?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  section_IDs?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  secondary_section_IDs?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   term?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

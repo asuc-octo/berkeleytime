@@ -10,7 +10,8 @@ const typedef = gql`
     term: String!
     public: Boolean!
     class_IDs: [String]
-    section_IDs: [String]
+    primary_section_IDs: [String]
+    secondary_section_IDs: [String]
     custom_events: [CustomEvent]
   }
 
@@ -30,8 +31,8 @@ const typedef = gql`
 
   type Mutation {
     removeScheduleByID(id: ID!): ID
-    createNewSchedule(created_by: String!, term: String!, schedule_name: String, is_public: Boolean, class_IDs: [String!], section_IDs: [String!]): Schedule
-    editExistingSchedule(id: ID!, created_by: String, term: String, schedule_name: String, is_public: Boolean, class_IDs: [String!], section_IDs: [String!]): Schedule
+    createNewSchedule(created_by: String!, term: String!, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
+    editExistingSchedule(id: ID!, created_by: String, term: String, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
     setSelectedSections(id: ID!, section_IDs: [String!]!): Schedule
     setSelectedClasses(id: ID!, class_IDs: [String!]!): Schedule
   }

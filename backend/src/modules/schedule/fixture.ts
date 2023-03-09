@@ -7,7 +7,8 @@ export const Schedule = {
     term: "test-term",
     public: "test-false",
     class_IDs: "test-ID",
-    section_IDs: ["test-section-ID"],
+    primary_section_IDs: ["test-primary-section-ID"],
+    secondary_section_IDs: ["test-secondary-section-ID"],
     custom_events: ["test-custom-event"],
 }
 
