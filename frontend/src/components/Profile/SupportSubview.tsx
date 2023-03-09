@@ -16,7 +16,6 @@ const SupportSubview = () => {
 		<div className="support-view">
 			<Subview title="Resources">
 				<Resource text="Contact Us" link="mailto:octo.berkeleytime@asuc.org" />
-				<Resource text="Report a bug" link="/bugs" />
 				{loading ? (
 					<Resource text="Deleting Account..." isDestructive />
 				) : (
