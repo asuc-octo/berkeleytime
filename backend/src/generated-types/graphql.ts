@@ -59,29 +59,29 @@ export type LetterGrade = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  UpdateEmailPreferences?: Maybe<User>;
-  UpdateMajor?: Maybe<User>;
+  UpdateUserEmailPreferences?: Maybe<User>;
   UpdateUserInfo?: Maybe<User>;
+  UpdateUserMajor?: Maybe<User>;
 };
 
 
-export type MutationUpdateEmailPreferencesArgs = {
-  email_berkeleytime_update: Scalars['Boolean'];
-  email_class_update: Scalars['Boolean'];
-  email_enrollment_opening: Scalars['Boolean'];
-  email_grade_update: Scalars['Boolean'];
-};
-
-
-export type MutationUpdateMajorArgs = {
-  major: Array<Scalars['String']>;
+export type MutationUpdateUserEmailPreferencesArgs = {
+  email_berkeleytime_update?: InputMaybe<Scalars['Boolean']>;
+  email_class_update?: InputMaybe<Scalars['Boolean']>;
+  email_enrollment_opening?: InputMaybe<Scalars['Boolean']>;
+  email_grade_update?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationUpdateUserInfoArgs = {
-  first_name: Scalars['String'];
-  last_name: Scalars['String'];
-  username: Scalars['String'];
+  first_name?: InputMaybe<Scalars['String']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  username?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateUserMajorArgs = {
+  major: Array<Scalars['String']>;
 };
 
 export type Query = {
@@ -110,6 +110,7 @@ export type QueryGradesArgs = {
 
 export type User = {
   __typename?: 'User';
+  date_joined: Scalars['String'];
   email: Scalars['String'];
   email_berkeleytime_update: Scalars['Boolean'];
   email_class_update: Scalars['Boolean'];
@@ -265,9 +266,9 @@ export type LetterGradeResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  UpdateEmailPreferences?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateEmailPreferencesArgs, 'email_berkeleytime_update' | 'email_class_update' | 'email_enrollment_opening' | 'email_grade_update'>>;
-  UpdateMajor?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateMajorArgs, 'major'>>;
-  UpdateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserInfoArgs, 'first_name' | 'last_name' | 'username'>>;
+  UpdateUserEmailPreferences?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserEmailPreferencesArgs>>;
+  UpdateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserInfoArgs>>;
+  UpdateUserMajor?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserMajorArgs, 'major'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -277,6 +278,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  date_joined?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email_berkeleytime_update?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   email_class_update?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
