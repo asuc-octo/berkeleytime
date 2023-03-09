@@ -5,6 +5,7 @@ export const UserSchema = new Schema({
         type: String,
         trim: true,
         required: true,
+        select: false,
     },
     email: {
         type: String,
@@ -67,7 +68,13 @@ export const UserSchema = new Schema({
         type: Boolean,
         required: true,
         default: false,
-    }
+    },
+    refresh_token: {
+        type: String,
+        trim: true,
+        required: false,
+        select: false,
+    },
 }, { timestamps: true });
 
 export const UserModel = mongoose.model("user", UserSchema, "user");

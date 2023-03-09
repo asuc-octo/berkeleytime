@@ -55,7 +55,7 @@ const resolvers: UserModule.Resolvers = {
                 args.email_grade_update,
                 args.email_enrollment_opening,
                 args.email_berkeleytime_update
-            )
+            );
             return getUserByEmail(contextValue.user.email);
         }),
     }

@@ -75,7 +75,7 @@ export default async (app: Application) => {
       return done(null, false, { message: 'No email found' });
     }
 
-    let user = await UserModel.findOne({ email } );
+    let user = await UserModel.findOne({ email });
 
     if (!user) {
       user = await new UserModel({
@@ -88,7 +88,7 @@ export default async (app: Application) => {
       });
     }
 
-    user.last_login = new Date().toISOString();
+    user.last_login = new Date();
     user.save();
 
     done(null, user);
