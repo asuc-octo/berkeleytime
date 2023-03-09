@@ -1,3 +1,5 @@
+import { Schema } from "mongoose";
+
 /**
  * This function converts a mongo schema to a diff format
  * i.e. {a: String, b: Number} -> {a: [String], b: [Number]}
@@ -41,3 +43,16 @@ type NestedObjectToList<T> = {
     ? NestedObjectToList<T[K]>
     : T[K];
 };
+
+export function createHistorySchema<T extends KeyValueMap>(schemaObj: T, ref: string): Schema {
+  return new Schema({
+    _id: { type: Schema.Types.ObjectId, required: true },
+    collectionName: String,
+    collectionId: { type: Schema.Types.ObjectId, ref: ref },
+    diff: schemaToDiff(schemaObj),
+    version: Number,
+    createdAt: Date,
+    updatedAt: Date,
+    __v: Number,
+  });
+}

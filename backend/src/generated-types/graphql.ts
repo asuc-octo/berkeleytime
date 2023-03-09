@@ -16,13 +16,16 @@ export type Scalars = {
 
 export type CatalogItem = {
   __typename?: 'CatalogItem';
+  classNum: Scalars['String'];
   classTitle?: Maybe<Scalars['String']>;
-  courseId?: Maybe<Scalars['String']>;
-  courseTitle?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
-  enrolled: Scalars['Float'];
-  letterAverage: Scalars['String'];
-  units: Scalars['String'];
+  courseNum: Scalars['String'];
+  courseTitle: Scalars['String'];
+  enrolledCount: Scalars['Int'];
+  gradeAverage?: Maybe<Scalars['Float']>;
+  maxEnrollment: Scalars['Int'];
+  maxUnits: Scalars['Float'];
+  minUnits: Scalars['Float'];
+  subject: Scalars['String'];
 };
 
 export type Class = {
@@ -68,7 +71,14 @@ export type EnrollmentInfo = {
 
 export type Grade = {
   __typename?: 'Grade';
-  course_id: Scalars['String'];
+  average?: Maybe<Scalars['Float']>;
+  distribution?: Maybe<Array<Maybe<GradeDistributionItem>>>;
+};
+
+export type GradeDistributionItem = {
+  __typename?: 'GradeDistributionItem';
+  count: Scalars['Int'];
+  letter: Scalars['String'];
 };
 
 export type Instructor = {
@@ -82,7 +92,8 @@ export type Query = {
   Enrollment?: Maybe<Enrollment>;
   User?: Maybe<User>;
   catalog?: Maybe<Array<Maybe<CatalogItem>>>;
-  grades?: Maybe<Array<Maybe<Grade>>>;
+  grade?: Maybe<Grade>;
+  ping: Scalars['String'];
 };
 
 
@@ -97,7 +108,15 @@ export type QueryUserArgs = {
 
 
 export type QueryCatalogArgs = {
-  courseId?: InputMaybe<Scalars['String']>;
+  term: Term;
+};
+
+
+export type QueryGradeArgs = {
+  classNum?: InputMaybe<Scalars['String']>;
+  courseNum: Scalars['String'];
+  subject: Scalars['String'];
+  term?: InputMaybe<Term>;
 };
 
 export type Section = {
@@ -122,10 +141,20 @@ export type SectionTimes = {
   start: Scalars['String'];
 };
 
+export type Semester =
+  | 'Fall'
+  | 'Spring'
+  | 'Summer';
+
 export type SubjectArea = {
   __typename?: 'SubjectArea';
   code: Scalars['String'];
   description: Scalars['String'];
+};
+
+export type Term = {
+  semester: Semester;
+  year: Scalars['Int'];
 };
 
 export type User = {
@@ -225,13 +254,16 @@ export type ResolversTypes = {
   EnrollmentInfo: ResolverTypeWrapper<EnrollmentInfo>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Grade: ResolverTypeWrapper<Grade>;
+  GradeDistributionItem: ResolverTypeWrapper<GradeDistributionItem>;
   Instructor: ResolverTypeWrapper<Instructor>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Query: ResolverTypeWrapper<{}>;
   Section: ResolverTypeWrapper<Section>;
   SectionTimes: ResolverTypeWrapper<SectionTimes>;
+  Semester: Semester;
   String: ResolverTypeWrapper<Scalars['String']>;
   SubjectArea: ResolverTypeWrapper<SubjectArea>;
+  Term: Term;
   User: ResolverTypeWrapper<User>;
 };
 
@@ -245,6 +277,7 @@ export type ResolversParentTypes = {
   EnrollmentInfo: EnrollmentInfo;
   Float: Scalars['Float'];
   Grade: Grade;
+  GradeDistributionItem: GradeDistributionItem;
   Instructor: Instructor;
   Int: Scalars['Int'];
   Query: {};
@@ -252,17 +285,21 @@ export type ResolversParentTypes = {
   SectionTimes: SectionTimes;
   String: Scalars['String'];
   SubjectArea: SubjectArea;
+  Term: Term;
   User: User;
 };
 
 export type CatalogItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogItem'] = ResolversParentTypes['CatalogItem']> = {
+  classNum?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   classTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  courseId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  courseTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  displayName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  enrolled?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  letterAverage?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  units?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  courseNum?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  courseTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  enrolledCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  gradeAverage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  maxEnrollment?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  maxUnits?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  minUnits?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -308,7 +345,14 @@ export type EnrollmentInfoResolvers<ContextType = any, ParentType extends Resolv
 };
 
 export type GradeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Grade'] = ResolversParentTypes['Grade']> = {
-  course_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  average?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  distribution?: Resolver<Maybe<Array<Maybe<ResolversTypes['GradeDistributionItem']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GradeDistributionItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['GradeDistributionItem'] = ResolversParentTypes['GradeDistributionItem']> = {
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  letter?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -321,8 +365,9 @@ export type InstructorResolvers<ContextType = any, ParentType extends ResolversP
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   Enrollment?: Resolver<Maybe<ResolversTypes['Enrollment']>, ParentType, ContextType, RequireFields<QueryEnrollmentArgs, 'classId'>>;
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'email'>>;
-  catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, Partial<QueryCatalogArgs>>;
-  grades?: Resolver<Maybe<Array<Maybe<ResolversTypes['Grade']>>>, ParentType, ContextType>;
+  catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
+  grade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradeArgs, 'courseNum' | 'subject'>>;
+  ping?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
 export type SectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Section'] = ResolversParentTypes['Section']> = {
@@ -380,6 +425,7 @@ export type Resolvers<ContextType = any> = {
   Enrollment?: EnrollmentResolvers<ContextType>;
   EnrollmentInfo?: EnrollmentInfoResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
+  GradeDistributionItem?: GradeDistributionItemResolvers<ContextType>;
   Instructor?: InstructorResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Section?: SectionResolvers<ContextType>;

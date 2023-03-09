@@ -9,7 +9,7 @@ export namespace CatalogModule {
     SubjectArea: 'code' | 'description';
     Instructor: 'name' | 'id';
     Query: 'catalog';
-    CatalogItem: 'courseId' | 'displayName' | 'courseTitle' | 'classTitle' | 'letterAverage' | 'enrolled' | 'units';
+    CatalogItem: 'subject' | 'courseNum' | 'courseTitle' | 'classNum' | 'classTitle' | 'enrolledCount' | 'maxEnrollment' | 'minUnits' | 'maxUnits' | 'gradeAverage';
   };
   
   export type Course = Pick<Types.Course, DefinedFields['Course']>;
@@ -20,6 +20,7 @@ export namespace CatalogModule {
   export type SectionTimes = Pick<Types.SectionTimes, DefinedFields['SectionTimes']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   export type CatalogItem = Pick<Types.CatalogItem, DefinedFields['CatalogItem']>;
+  export type Term = Types.Term;
   
   export type CourseResolvers = Pick<Types.CourseResolvers, DefinedFields['Course'] | '__isTypeOf'>;
   export type ClassResolvers = Pick<Types.ClassResolvers, DefinedFields['Class'] | '__isTypeOf'>;
@@ -105,13 +106,16 @@ export namespace CatalogModule {
     };
     CatalogItem?: {
       '*'?: gm.Middleware[];
-      courseId?: gm.Middleware[];
-      displayName?: gm.Middleware[];
+      subject?: gm.Middleware[];
+      courseNum?: gm.Middleware[];
       courseTitle?: gm.Middleware[];
+      classNum?: gm.Middleware[];
       classTitle?: gm.Middleware[];
-      letterAverage?: gm.Middleware[];
-      enrolled?: gm.Middleware[];
-      units?: gm.Middleware[];
+      enrolledCount?: gm.Middleware[];
+      maxEnrollment?: gm.Middleware[];
+      minUnits?: gm.Middleware[];
+      maxUnits?: gm.Middleware[];
+      gradeAverage?: gm.Middleware[];
     };
   };
 }

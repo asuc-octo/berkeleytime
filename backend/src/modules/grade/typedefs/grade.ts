@@ -1,13 +1,18 @@
 import { gql } from "graphql-tag";
 
-//super basic schema for testing lmao
 const typedef = gql`
   type Grade {
-    course_id: String!
+    average: Float
+    distribution: [GradeDistributionItem]
+  }
+
+  type GradeDistributionItem {
+    letter: String!
+    count: Int!
   }
 
   type Query {
-    grades: [Grade]
+    grade(subject: String!, courseNum: String!, classNum: String, term: Term): Grade
   }
 `;
 

@@ -56,17 +56,23 @@ type Instructor {
 }
 
 type Query {
-    catalog(courseId: String): [CatalogItem]
+    catalog(term: Term!): [CatalogItem]
 }
 
 type CatalogItem {
-    courseId: String
-    displayName: String
-    courseTitle: String
-    classTitle: String
-    letterAverage: String!
-    enrolled: Float!
-    units: String!
+    subject: String!
+    courseNum: String!
+    courseTitle: String!
+    classes: [CatalogClass]!
+    gradeAverage: Float
 }
 
+type CatalogClass {
+    classNum: String!
+    classTitle: String
+    enrolledCount: Int!
+    maxEnrollment: Int!
+    minUnits: Float!
+    maxUnits: Float!
+}
 `;

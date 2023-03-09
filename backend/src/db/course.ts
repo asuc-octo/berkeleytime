@@ -1,6 +1,7 @@
-import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
+import mongoose, { Schema, InferSchemaType } from "mongoose";
+import { createHistorySchema } from "../utils/history";
 
-export const CourseSchema = new Schema({
+const CourseSchemaObject = {
     _id: Schema.Types.ObjectId,
     _created: Date,
     _updated: Date,
@@ -193,7 +194,14 @@ export const CourseSchema = new Schema({
     transcriptTitle: String,
     updatedDate: String,
     workloadHours: Number,
-})
+}
+
+const CourseSchema = new Schema(CourseSchemaObject);
 
 export const CourseModel = mongoose.model("sis_course", CourseSchema, "sis_course");
 export type CourseType = InferSchemaType<typeof CourseSchema>;
+
+const CourseHistorySchema = createHistorySchema(CourseSchemaObject, "sis_course");
+
+export const CourseHistoryModel = mongoose.model("sis_course_history", CourseHistorySchema, "sis_course_history");
+export type CourseHistoryType = InferSchemaType<typeof CourseHistorySchema>;
