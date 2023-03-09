@@ -9,7 +9,8 @@ export namespace CatalogModule {
     SubjectArea: 'code' | 'description';
     Instructor: 'name' | 'id';
     Query: 'catalog';
-    CatalogItem: 'subject' | 'courseNum' | 'courseTitle' | 'classNum' | 'classTitle' | 'enrolledCount' | 'maxEnrollment' | 'minUnits' | 'maxUnits' | 'gradeAverage';
+    CatalogItem: 'subject' | 'courseNum' | 'courseTitle' | 'classes' | 'gradeAverage';
+    CatalogClass: 'classNum' | 'classTitle' | 'enrolledCount' | 'maxEnrollment' | 'minUnits' | 'maxUnits';
   };
   
   export type Course = Pick<Types.Course, DefinedFields['Course']>;
@@ -21,6 +22,7 @@ export namespace CatalogModule {
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   export type CatalogItem = Pick<Types.CatalogItem, DefinedFields['CatalogItem']>;
   export type Term = Types.Term;
+  export type CatalogClass = Pick<Types.CatalogClass, DefinedFields['CatalogClass']>;
   
   export type CourseResolvers = Pick<Types.CourseResolvers, DefinedFields['Course'] | '__isTypeOf'>;
   export type ClassResolvers = Pick<Types.ClassResolvers, DefinedFields['Class'] | '__isTypeOf'>;
@@ -30,6 +32,7 @@ export namespace CatalogModule {
   export type InstructorResolvers = Pick<Types.InstructorResolvers, DefinedFields['Instructor'] | '__isTypeOf'>;
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   export type CatalogItemResolvers = Pick<Types.CatalogItemResolvers, DefinedFields['CatalogItem'] | '__isTypeOf'>;
+  export type CatalogClassResolvers = Pick<Types.CatalogClassResolvers, DefinedFields['CatalogClass'] | '__isTypeOf'>;
   
   export interface Resolvers {
     Course?: CourseResolvers;
@@ -40,6 +43,7 @@ export namespace CatalogModule {
     Instructor?: InstructorResolvers;
     Query?: QueryResolvers;
     CatalogItem?: CatalogItemResolvers;
+    CatalogClass?: CatalogClassResolvers;
   };
   
   export interface MiddlewareMap {
@@ -109,13 +113,17 @@ export namespace CatalogModule {
       subject?: gm.Middleware[];
       courseNum?: gm.Middleware[];
       courseTitle?: gm.Middleware[];
+      classes?: gm.Middleware[];
+      gradeAverage?: gm.Middleware[];
+    };
+    CatalogClass?: {
+      '*'?: gm.Middleware[];
       classNum?: gm.Middleware[];
       classTitle?: gm.Middleware[];
       enrolledCount?: gm.Middleware[];
       maxEnrollment?: gm.Middleware[];
       minUnits?: gm.Middleware[];
       maxUnits?: gm.Middleware[];
-      gradeAverage?: gm.Middleware[];
     };
   };
 }
