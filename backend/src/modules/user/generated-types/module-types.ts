@@ -2,19 +2,23 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace UserModule {
   interface DefinedFields {
-    User: 'last_login' | 'is_superuser' | 'username' | 'first_name' | 'last_name' | 'email' | 'is_staff' | 'is_active' | 'date_joined' | 'major' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
+    User: 'email' | 'username' | 'first_name' | 'last_name' | 'major' | 'last_login' | 'is_staff' | 'is_active' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
     Query: 'User';
+    Mutation: 'UpdateUserInfo' | 'UpdateMajor' | 'UpdateEmailPreferences';
   };
   
   export type User = Pick<Types.User, DefinedFields['User']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
+  export type Mutation = Pick<Types.Mutation, DefinedFields['Mutation']>;
   
   export type UserResolvers = Pick<Types.UserResolvers, DefinedFields['User'] | '__isTypeOf'>;
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
+  export type MutationResolvers = Pick<Types.MutationResolvers, DefinedFields['Mutation']>;
   
   export interface Resolvers {
     User?: UserResolvers;
     Query?: QueryResolvers;
+    Mutation?: MutationResolvers;
   };
   
   export interface MiddlewareMap {
@@ -23,16 +27,14 @@ export namespace UserModule {
     };
     User?: {
       '*'?: gm.Middleware[];
-      last_login?: gm.Middleware[];
-      is_superuser?: gm.Middleware[];
+      email?: gm.Middleware[];
       username?: gm.Middleware[];
       first_name?: gm.Middleware[];
       last_name?: gm.Middleware[];
-      email?: gm.Middleware[];
+      major?: gm.Middleware[];
+      last_login?: gm.Middleware[];
       is_staff?: gm.Middleware[];
       is_active?: gm.Middleware[];
-      date_joined?: gm.Middleware[];
-      major?: gm.Middleware[];
       email_class_update?: gm.Middleware[];
       email_grade_update?: gm.Middleware[];
       email_enrollment_opening?: gm.Middleware[];
@@ -41,6 +43,12 @@ export namespace UserModule {
     Query?: {
       '*'?: gm.Middleware[];
       User?: gm.Middleware[];
+    };
+    Mutation?: {
+      '*'?: gm.Middleware[];
+      UpdateUserInfo?: gm.Middleware[];
+      UpdateMajor?: gm.Middleware[];
+      UpdateEmailPreferences?: gm.Middleware[];
     };
   };
 }
