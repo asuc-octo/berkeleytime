@@ -2,46 +2,35 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace CatalogModule {
   interface DefinedFields {
-    Course: 'id' | 'title' | 'gradeAverage' | 'letterAverage' | 'classes' | 'crossListing' | 'prereqs' | 'units' | 'displayName';
-    Class: 'course' | 'displayName' | 'number' | 'subjectArea' | 'term' | 'title' | 'description' | 'instructors' | 'sections';
-    Section: 'instructors' | 'class' | 'course' | 'number' | 'ccn' | 'type' | 'location' | 'instructionMode' | 'associatedSections' | 'times' | 'primary';
-    SectionTimes: 'days' | 'start' | 'end';
-    SubjectArea: 'code' | 'description';
-    Instructor: 'name' | 'id';
-    Query: 'catalog';
-    CatalogItem: 'subject' | 'courseNum' | 'courseTitle' | 'classes' | 'gradeAverage';
-    CatalogClass: 'classNum' | 'classTitle' | 'enrolledCount' | 'maxEnrollment' | 'minUnits' | 'maxUnits';
+    Query: 'catalog' | 'course' | 'class' | 'section';
+    Course: 'classes' | 'crossListing' | 'department' | 'description' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'raw';
+    Class: 'course' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'sections' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'raw';
+    Section: 'class' | 'course' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'location' | 'notes' | 'number' | 'primary' | 'timeStart' | 'timeEnd' | 'type' | 'waitlistCount' | 'waitlistMax' | 'raw';
+    CatalogItem: 'subject' | 'number' | 'title' | 'classes' | 'gradeAverage';
+    CatalogClass: 'number' | 'title' | 'enrollCount' | 'enrollMax' | 'unitsMin' | 'unitsMax';
   };
   
-  export type Course = Pick<Types.Course, DefinedFields['Course']>;
-  export type Class = Pick<Types.Class, DefinedFields['Class']>;
-  export type SubjectArea = Pick<Types.SubjectArea, DefinedFields['SubjectArea']>;
-  export type Instructor = Pick<Types.Instructor, DefinedFields['Instructor']>;
-  export type Section = Pick<Types.Section, DefinedFields['Section']>;
-  export type SectionTimes = Pick<Types.SectionTimes, DefinedFields['SectionTimes']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   export type CatalogItem = Pick<Types.CatalogItem, DefinedFields['CatalogItem']>;
   export type Term = Types.Term;
+  export type Course = Pick<Types.Course, DefinedFields['Course']>;
+  export type Class = Pick<Types.Class, DefinedFields['Class']>;
+  export type Section = Pick<Types.Section, DefinedFields['Section']>;
+  export type JSONObject = Types.JsonObject;
   export type CatalogClass = Pick<Types.CatalogClass, DefinedFields['CatalogClass']>;
   
+  export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   export type CourseResolvers = Pick<Types.CourseResolvers, DefinedFields['Course'] | '__isTypeOf'>;
   export type ClassResolvers = Pick<Types.ClassResolvers, DefinedFields['Class'] | '__isTypeOf'>;
   export type SectionResolvers = Pick<Types.SectionResolvers, DefinedFields['Section'] | '__isTypeOf'>;
-  export type SectionTimesResolvers = Pick<Types.SectionTimesResolvers, DefinedFields['SectionTimes'] | '__isTypeOf'>;
-  export type SubjectAreaResolvers = Pick<Types.SubjectAreaResolvers, DefinedFields['SubjectArea'] | '__isTypeOf'>;
-  export type InstructorResolvers = Pick<Types.InstructorResolvers, DefinedFields['Instructor'] | '__isTypeOf'>;
-  export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   export type CatalogItemResolvers = Pick<Types.CatalogItemResolvers, DefinedFields['CatalogItem'] | '__isTypeOf'>;
   export type CatalogClassResolvers = Pick<Types.CatalogClassResolvers, DefinedFields['CatalogClass'] | '__isTypeOf'>;
   
   export interface Resolvers {
+    Query?: QueryResolvers;
     Course?: CourseResolvers;
     Class?: ClassResolvers;
     Section?: SectionResolvers;
-    SectionTimes?: SectionTimesResolvers;
-    SubjectArea?: SubjectAreaResolvers;
-    Instructor?: InstructorResolvers;
-    Query?: QueryResolvers;
     CatalogItem?: CatalogItemResolvers;
     CatalogClass?: CatalogClassResolvers;
   };
@@ -50,80 +39,81 @@ export namespace CatalogModule {
     '*'?: {
       '*'?: gm.Middleware[];
     };
+    Query?: {
+      '*'?: gm.Middleware[];
+      catalog?: gm.Middleware[];
+      course?: gm.Middleware[];
+      class?: gm.Middleware[];
+      section?: gm.Middleware[];
+    };
     Course?: {
       '*'?: gm.Middleware[];
-      id?: gm.Middleware[];
-      title?: gm.Middleware[];
-      gradeAverage?: gm.Middleware[];
-      letterAverage?: gm.Middleware[];
       classes?: gm.Middleware[];
       crossListing?: gm.Middleware[];
+      department?: gm.Middleware[];
+      description?: gm.Middleware[];
+      gradeAverage?: gm.Middleware[];
+      gradingBasis?: gm.Middleware[];
+      level?: gm.Middleware[];
+      number?: gm.Middleware[];
       prereqs?: gm.Middleware[];
-      units?: gm.Middleware[];
-      displayName?: gm.Middleware[];
+      subject?: gm.Middleware[];
+      subjectName?: gm.Middleware[];
+      title?: gm.Middleware[];
+      raw?: gm.Middleware[];
     };
     Class?: {
       '*'?: gm.Middleware[];
       course?: gm.Middleware[];
-      displayName?: gm.Middleware[];
-      number?: gm.Middleware[];
-      subjectArea?: gm.Middleware[];
-      term?: gm.Middleware[];
-      title?: gm.Middleware[];
       description?: gm.Middleware[];
-      instructors?: gm.Middleware[];
+      enrollCount?: gm.Middleware[];
+      enrollMax?: gm.Middleware[];
+      number?: gm.Middleware[];
       sections?: gm.Middleware[];
+      session?: gm.Middleware[];
+      status?: gm.Middleware[];
+      title?: gm.Middleware[];
+      unitsMax?: gm.Middleware[];
+      unitsMin?: gm.Middleware[];
+      waitlistCount?: gm.Middleware[];
+      waitlistMax?: gm.Middleware[];
+      raw?: gm.Middleware[];
     };
     Section?: {
       '*'?: gm.Middleware[];
-      instructors?: gm.Middleware[];
       class?: gm.Middleware[];
       course?: gm.Middleware[];
-      number?: gm.Middleware[];
-      ccn?: gm.Middleware[];
-      type?: gm.Middleware[];
-      location?: gm.Middleware[];
-      instructionMode?: gm.Middleware[];
-      associatedSections?: gm.Middleware[];
-      times?: gm.Middleware[];
-      primary?: gm.Middleware[];
-    };
-    SectionTimes?: {
-      '*'?: gm.Middleware[];
       days?: gm.Middleware[];
-      start?: gm.Middleware[];
-      end?: gm.Middleware[];
-    };
-    SubjectArea?: {
-      '*'?: gm.Middleware[];
-      code?: gm.Middleware[];
-      description?: gm.Middleware[];
-    };
-    Instructor?: {
-      '*'?: gm.Middleware[];
-      name?: gm.Middleware[];
-      id?: gm.Middleware[];
-    };
-    Query?: {
-      '*'?: gm.Middleware[];
-      catalog?: gm.Middleware[];
+      enrollCount?: gm.Middleware[];
+      enrollMax?: gm.Middleware[];
+      instructors?: gm.Middleware[];
+      location?: gm.Middleware[];
+      notes?: gm.Middleware[];
+      number?: gm.Middleware[];
+      primary?: gm.Middleware[];
+      timeStart?: gm.Middleware[];
+      timeEnd?: gm.Middleware[];
+      type?: gm.Middleware[];
+      waitlistCount?: gm.Middleware[];
+      waitlistMax?: gm.Middleware[];
+      raw?: gm.Middleware[];
     };
     CatalogItem?: {
       '*'?: gm.Middleware[];
       subject?: gm.Middleware[];
-      courseNum?: gm.Middleware[];
-      courseTitle?: gm.Middleware[];
+      number?: gm.Middleware[];
+      title?: gm.Middleware[];
       classes?: gm.Middleware[];
       gradeAverage?: gm.Middleware[];
     };
     CatalogClass?: {
       '*'?: gm.Middleware[];
-      classNum?: gm.Middleware[];
-      classTitle?: gm.Middleware[];
-      enrolledCount?: gm.Middleware[];
-      maxEnrollment?: gm.Middleware[];
-      minUnits?: gm.Middleware[];
-      maxUnits?: gm.Middleware[];
+      number?: gm.Middleware[];
+      title?: gm.Middleware[];
+      enrollCount?: gm.Middleware[];
+      enrollMax?: gm.Middleware[];
+      unitsMin?: gm.Middleware[];
+      unitsMax?: gm.Middleware[];
     };
   };
 }

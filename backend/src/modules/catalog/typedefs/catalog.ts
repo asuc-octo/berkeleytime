@@ -1,78 +1,82 @@
 import { gql } from "graphql-tag";
 
 export default gql`
-type Course { 
-    id: String!
-    title: String!
-    gradeAverage: Float!
-    letterAverage: String!
+type Query {
+    catalog(term: Term!): [CatalogItem]
+    course(term: Term!, subject: String!, number: String!): Course
+    class(term: Term!, subject: String!, courseNumber: String!, classNumber: String!): Class
+    section(term: Term!, subject: String!, courseNumber: String!, classNumber: String!, sectionNumber: String!): Section
+}
+
+type Course {
     classes: [Class]!
-    crossListing: [Course]
-    prereqs: String
-    units: String
-    displayName: String!
+    crossListing: [Course]!
+    department: String!
+    description: String!
+    gradeAverage: Float
+    gradingBasis: String!
+    level: String!
+    number: String!
+    prereqs: String!
+    subject: String!
+    subjectName: String!
+    title: String!
+    
+    raw: JSONObject!
 }
 
 type Class {
     course: Course!
-    displayName: String!
-    number: String!
-    subjectArea: SubjectArea!
-    term: String!
-    title: String!
     description: String
-    instructors: [Instructor]!
+    enrollCount: Int!
+    enrollMax: Int!
+    number: String!
     sections: [Section]!
+    session: String!
+    status: String!
+    title: String
+    unitsMax: Float!
+    unitsMin: Float!
+    waitlistCount: Int!
+    waitlistMax: Int!
+
+    raw: JSONObject!
 }
 
 type Section {
-    instructors: [Instructor]!
     class: Class!
     course: Course!
+    days: [Boolean]
+    enrollCount: Int!
+    enrollMax: Int!
+    instructors: [String]!
+    location: String
+    notes: String
     number: String!
-    ccn: String!
-    type: String!
-    location: String!
-    instructionMode: String!
-    associatedSections: [Section]
-    times: SectionTimes!
     primary: Boolean!
-}
+    timeStart: String
+    timeEnd: String
+    type: String!
+    waitlistCount: Int!
+    waitlistMax: Int!
 
-type SectionTimes {
-    days: [String]!
-    start: String!
-    end: String!
-}
-
-type SubjectArea {
-    code: String!
-    description: String!
-}
-
-type Instructor {
-    name: String!
-    id: String!
-}
-
-type Query {
-    catalog(term: Term!): [CatalogItem]
+    raw: JSONObject!
 }
 
 type CatalogItem {
     subject: String!
-    courseNum: String!
-    courseTitle: String!
+    number: String!
+    title: String!
     classes: [CatalogClass]!
     gradeAverage: Float
 }
 
 type CatalogClass {
-    classNum: String!
-    classTitle: String
-    enrolledCount: Int!
-    maxEnrollment: Int!
-    minUnits: Float!
-    maxUnits: Float!
+    number: String!
+    title: String
+    enrollCount: Int!
+    enrollMax: Int!
+    unitsMin: Float!
+    unitsMax: Float!
 }
 `;

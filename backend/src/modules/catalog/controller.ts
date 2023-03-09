@@ -34,8 +34,8 @@ export async function getCatalog(term: Term): Promise<CatalogItem[]> {
             // @ts-ignore
             catalog[key] = {
                 subject: c.course?.subjectArea?.code as string,
-                courseNum: c.course?.catalogNumber?.formatted as string,
-                courseTitle: c.course?.title as string,
+                number: c.course?.catalogNumber?.formatted as string,
+                title: c.course?.title as string,
                 classes: [],
                 // @ts-ignore
                 gradeAverage: await getAverage(gradesMap[key]),
@@ -43,12 +43,12 @@ export async function getCatalog(term: Term): Promise<CatalogItem[]> {
         }
         // @ts-ignore
         catalog[key].classes.push({
-            classNum: c.number as string,
-            classTitle: c.classTitle,
-            enrolledCount: c.aggregateEnrollmentStatus?.enrolledCount as number,
-            maxEnrollment: c.aggregateEnrollmentStatus?.maxEnroll as number,
-            minUnits: c.allowedUnits?.minimum as number,
-            maxUnits: c.allowedUnits?.maximum as number,
+            number: c.number as string,
+            title: c.classTitle,
+            enrollCount: c.aggregateEnrollmentStatus?.enrolledCount as number,
+            enrollMax: c.aggregateEnrollmentStatus?.maxEnroll as number,
+            unitsMin: c.allowedUnits?.minimum as number,
+            unitsMax: c.allowedUnits?.maximum as number,
         })
     }
 

@@ -1,6 +1,9 @@
 import { gql } from "graphql-tag";
 
 export default gql`
+scalar JSON
+scalar JSONObject
+
 input Term {
     year: Int!
     semester: Semester!
