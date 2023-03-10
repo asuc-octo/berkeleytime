@@ -1,9 +1,9 @@
 export function secure(resolver: any) {
-  return (parent: any, args: any, context: any, info: any) => {
-    if (!context.user) {
+  return (parent: any, args: any, contextValue: any, info: any) => {
+    if (!contextValue.user) {
       throw new Error("Not authenticated");
     }
-    return resolver(parent, args, context, info);
+    return resolver(parent, args, contextValue, info);
   };
 }
 
