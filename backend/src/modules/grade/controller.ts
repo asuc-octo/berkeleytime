@@ -61,7 +61,7 @@ export async function getDistribution(grades: GradeType[]) {
   const distribution: { [key: string]: number } = Object.values(calanswersToLetter)
     .reduce((acc, letter) => ({ ...acc, [letter]: 0 }), {});
 
-  grades.forEach(g => {
+  for (const g of grades) {
     const name = g.GradeNm as string;
     const count = g.EnrollmentCnt as number;
 
@@ -69,7 +69,7 @@ export async function getDistribution(grades: GradeType[]) {
       const letter = calanswersToLetter[name];
       distribution[letter] += count;
     }
-  })
+  }
 
   return Object.entries(distribution).map(([letter, count]) => ({ letter, count }));
 }
@@ -78,7 +78,7 @@ export async function getAverage(grades: GradeType[]) {
   let total = 0
   let totalWeighted = 0
 
-  grades.forEach(g => {
+  for (const g of grades) {
     const name = g.GradeNm as string;
     const count = g.EnrollmentCnt as number;
 
@@ -86,7 +86,7 @@ export async function getAverage(grades: GradeType[]) {
       total += count;
       totalWeighted += count * letterWeights[name];
     }
-  })
+  }
 
   return total > 0 ? totalWeighted / total : null;
 }

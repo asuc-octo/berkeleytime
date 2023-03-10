@@ -3,26 +3,29 @@ import { gql } from "graphql-tag";
 export default gql`
 type Query {
     catalog(term: Term!): [CatalogItem]
-    course(term: Term!, subject: String!, number: String!): Course
+    course(term: Term!, subject: String!, courseNumber: String!): Course
     class(term: Term!, subject: String!, courseNumber: String!, classNumber: String!): Class
     section(term: Term!, subject: String!, courseNumber: String!, classNumber: String!, sectionNumber: String!): Section
 }
 
 type Course {
+    allClasses: [Class]!
     classes: [Class]!
-    crossListing: [Course]!
-    department: String!
+    crossListing: [Course]
     description: String!
+    fromDate: String!
     gradeAverage: Float
     gradingBasis: String!
     level: String!
     number: String!
-    prereqs: String!
+    prereqs: String
     subject: String!
     subjectName: String!
     title: String!
+    toDate: String!
     
     raw: JSONObject!
+    lastUpdated: ISODate!
 }
 
 type Class {
@@ -31,7 +34,9 @@ type Class {
     enrollCount: Int!
     enrollMax: Int!
     number: String!
+    primarySection: Section!
     sections: [Section]!
+    semester: Semester!
     session: String!
     status: String!
     title: String
@@ -39,29 +44,34 @@ type Class {
     unitsMin: Float!
     waitlistCount: Int!
     waitlistMax: Int!
-    lastUpdated: String!
-
+    year: Int!
+    
     raw: JSONObject!
+    lastUpdated: ISODate!
 }
 
 type Section {
+    ccn: Int!
     class: Class!
     course: Course!
-    days: [Boolean]
+    dateEnd: String
+    dateStart: String
+    days: [Boolean!]!
     enrollCount: Int!
     enrollMax: Int!
     instructors: [String]!
+    kind: String!
     location: String
     notes: String
     number: String!
     primary: Boolean!
-    timeStart: String
     timeEnd: String
-    type: String!
+    timeStart: String
     waitlistCount: Int!
     waitlistMax: Int!
 
     raw: JSONObject!
+    lastUpdated: ISODate!
 }
 
 type CatalogItem {
@@ -71,6 +81,7 @@ type CatalogItem {
     description: String!
     classes: [CatalogClass]!
     gradeAverage: Float
+
     lastUpdated: ISODate!
 }
 
@@ -80,8 +91,9 @@ type CatalogClass {
     description: String
     enrollCount: Int!
     enrollMax: Int!
-    lastUpdated: ISODate!
-    unitsMin: Float!
     unitsMax: Float!
+    unitsMin: Float!
+
+    lastUpdated: ISODate!
 }
 `;

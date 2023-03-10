@@ -3,11 +3,11 @@ import * as gm from "graphql-modules";
 export namespace CatalogModule {
   interface DefinedFields {
     Query: 'catalog' | 'course' | 'class' | 'section';
-    Course: 'classes' | 'crossListing' | 'department' | 'description' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'raw';
-    Class: 'course' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'sections' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'lastUpdated' | 'raw';
-    Section: 'class' | 'course' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'location' | 'notes' | 'number' | 'primary' | 'timeStart' | 'timeEnd' | 'type' | 'waitlistCount' | 'waitlistMax' | 'raw';
+    Course: 'allClasses' | 'classes' | 'crossListing' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'toDate' | 'raw' | 'lastUpdated';
+    Class: 'course' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'primarySection' | 'sections' | 'semester' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'year' | 'raw' | 'lastUpdated';
+    Section: 'ccn' | 'class' | 'course' | 'dateEnd' | 'dateStart' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'kind' | 'location' | 'notes' | 'number' | 'primary' | 'timeEnd' | 'timeStart' | 'waitlistCount' | 'waitlistMax' | 'raw' | 'lastUpdated';
     CatalogItem: 'subject' | 'number' | 'title' | 'description' | 'classes' | 'gradeAverage' | 'lastUpdated';
-    CatalogClass: 'number' | 'title' | 'description' | 'enrollCount' | 'enrollMax' | 'lastUpdated' | 'unitsMin' | 'unitsMax';
+    CatalogClass: 'number' | 'title' | 'description' | 'enrollCount' | 'enrollMax' | 'unitsMax' | 'unitsMin' | 'lastUpdated';
   };
   
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
@@ -17,8 +17,9 @@ export namespace CatalogModule {
   export type Class = Pick<Types.Class, DefinedFields['Class']>;
   export type Section = Pick<Types.Section, DefinedFields['Section']>;
   export type JSONObject = Types.JsonObject;
-  export type CatalogClass = Pick<Types.CatalogClass, DefinedFields['CatalogClass']>;
   export type ISODate = Types.IsoDate;
+  export type Semester = Types.Semester;
+  export type CatalogClass = Pick<Types.CatalogClass, DefinedFields['CatalogClass']>;
   
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   export type CourseResolvers = Pick<Types.CourseResolvers, DefinedFields['Course'] | '__isTypeOf'>;
@@ -49,10 +50,11 @@ export namespace CatalogModule {
     };
     Course?: {
       '*'?: gm.Middleware[];
+      allClasses?: gm.Middleware[];
       classes?: gm.Middleware[];
       crossListing?: gm.Middleware[];
-      department?: gm.Middleware[];
       description?: gm.Middleware[];
+      fromDate?: gm.Middleware[];
       gradeAverage?: gm.Middleware[];
       gradingBasis?: gm.Middleware[];
       level?: gm.Middleware[];
@@ -61,7 +63,9 @@ export namespace CatalogModule {
       subject?: gm.Middleware[];
       subjectName?: gm.Middleware[];
       title?: gm.Middleware[];
+      toDate?: gm.Middleware[];
       raw?: gm.Middleware[];
+      lastUpdated?: gm.Middleware[];
     };
     Class?: {
       '*'?: gm.Middleware[];
@@ -70,7 +74,9 @@ export namespace CatalogModule {
       enrollCount?: gm.Middleware[];
       enrollMax?: gm.Middleware[];
       number?: gm.Middleware[];
+      primarySection?: gm.Middleware[];
       sections?: gm.Middleware[];
+      semester?: gm.Middleware[];
       session?: gm.Middleware[];
       status?: gm.Middleware[];
       title?: gm.Middleware[];
@@ -78,27 +84,32 @@ export namespace CatalogModule {
       unitsMin?: gm.Middleware[];
       waitlistCount?: gm.Middleware[];
       waitlistMax?: gm.Middleware[];
-      lastUpdated?: gm.Middleware[];
+      year?: gm.Middleware[];
       raw?: gm.Middleware[];
+      lastUpdated?: gm.Middleware[];
     };
     Section?: {
       '*'?: gm.Middleware[];
+      ccn?: gm.Middleware[];
       class?: gm.Middleware[];
       course?: gm.Middleware[];
+      dateEnd?: gm.Middleware[];
+      dateStart?: gm.Middleware[];
       days?: gm.Middleware[];
       enrollCount?: gm.Middleware[];
       enrollMax?: gm.Middleware[];
       instructors?: gm.Middleware[];
+      kind?: gm.Middleware[];
       location?: gm.Middleware[];
       notes?: gm.Middleware[];
       number?: gm.Middleware[];
       primary?: gm.Middleware[];
-      timeStart?: gm.Middleware[];
       timeEnd?: gm.Middleware[];
-      type?: gm.Middleware[];
+      timeStart?: gm.Middleware[];
       waitlistCount?: gm.Middleware[];
       waitlistMax?: gm.Middleware[];
       raw?: gm.Middleware[];
+      lastUpdated?: gm.Middleware[];
     };
     CatalogItem?: {
       '*'?: gm.Middleware[];
@@ -117,9 +128,9 @@ export namespace CatalogModule {
       description?: gm.Middleware[];
       enrollCount?: gm.Middleware[];
       enrollMax?: gm.Middleware[];
-      lastUpdated?: gm.Middleware[];
-      unitsMin?: gm.Middleware[];
       unitsMax?: gm.Middleware[];
+      unitsMin?: gm.Middleware[];
+      lastUpdated?: gm.Middleware[];
     };
   };
 }
