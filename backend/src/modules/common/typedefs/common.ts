@@ -4,6 +4,8 @@ export default gql`
 scalar JSON
 scalar JSONObject
 
+scalar ISODate
+
 input Term {
     year: Int!
     semester: Semester!

@@ -39,6 +39,7 @@ type Class {
     unitsMin: Float!
     waitlistCount: Int!
     waitlistMax: Int!
+    lastUpdated: String!
 
     raw: JSONObject!
 }
@@ -70,6 +71,7 @@ type CatalogItem {
     description: String!
     classes: [CatalogClass]!
     gradeAverage: Float
+    lastUpdated: ISODate!
 }
 
 type CatalogClass {
@@ -78,6 +80,7 @@ type CatalogClass {
     description: String
     enrollCount: Int!
     enrollMax: Int!
+    lastUpdated: ISODate!
     unitsMin: Float!
     unitsMax: Float!
 }

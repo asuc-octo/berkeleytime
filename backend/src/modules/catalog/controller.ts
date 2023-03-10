@@ -39,6 +39,7 @@ export async function getCatalog(term: Term): Promise<CatalogItem[]> {
             fromDate: { $lte: getTermStartMonth(term) },
         },
         {
+            _updated: 1,
             identifiers: 1,
             title: 1,
             description: 1,
@@ -88,6 +89,7 @@ export async function getCatalog(term: Term): Promise<CatalogItem[]> {
             description: c.description as string,
             classes: [],
             gradeAverage: getAverage(gradesMap[key]),
+            lastUpdated: c._updated,
         }
     })
 
@@ -104,6 +106,7 @@ export async function getCatalog(term: Term): Promise<CatalogItem[]> {
             description: c.classDescription,
             enrollCount: c.aggregateEnrollmentStatus?.enrolledCount as number,
             enrollMax: c.aggregateEnrollmentStatus?.maxEnroll as number,
+            lastUpdated: c._updated,
             unitsMin: c.allowedUnits?.minimum as number,
             unitsMax: c.allowedUnits?.maximum as number,
         })

@@ -17,9 +17,10 @@ export namespace CommonModule {
   export type Semester = DefinedEnumValues['Semester'];
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   
-  export type Scalars = Pick<Types.Scalars, 'JSON' | 'JSONObject'>;
+  export type Scalars = Pick<Types.Scalars, 'JSON' | 'JSONObject' | 'ISODate'>;
   export type JsonScalarConfig = Types.JsonScalarConfig;
   export type JsonObjectScalarConfig = Types.JsonObjectScalarConfig;
+  export type IsoDateScalarConfig = Types.IsoDateScalarConfig;
   
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   
@@ -27,6 +28,7 @@ export namespace CommonModule {
     Query?: QueryResolvers;
     JSON?: Types.Resolvers['JSON'];
     JSONObject?: Types.Resolvers['JSONObject'];
+    ISODate?: Types.Resolvers['ISODate'];
   };
   
   export interface MiddlewareMap {

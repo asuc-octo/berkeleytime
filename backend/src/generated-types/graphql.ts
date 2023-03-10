@@ -12,14 +12,17 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  ISODate: any;
   JSON: any;
   JSONObject: any;
 };
 
 export type CatalogClass = {
   __typename?: 'CatalogClass';
+  description?: Maybe<Scalars['String']>;
   enrollCount: Scalars['Int'];
   enrollMax: Scalars['Int'];
+  lastUpdated: Scalars['ISODate'];
   number: Scalars['String'];
   title?: Maybe<Scalars['String']>;
   unitsMax: Scalars['Float'];
@@ -29,7 +32,9 @@ export type CatalogClass = {
 export type CatalogItem = {
   __typename?: 'CatalogItem';
   classes: Array<Maybe<CatalogClass>>;
+  description: Scalars['String'];
   gradeAverage?: Maybe<Scalars['Float']>;
+  lastUpdated: Scalars['ISODate'];
   number: Scalars['String'];
   subject: Scalars['String'];
   title: Scalars['String'];
@@ -41,6 +46,7 @@ export type Class = {
   description?: Maybe<Scalars['String']>;
   enrollCount: Scalars['Int'];
   enrollMax: Scalars['Int'];
+  lastUpdated: Scalars['String'];
   number: Scalars['String'];
   raw: Scalars['JSONObject'];
   sections: Array<Maybe<Section>>;
@@ -262,6 +268,7 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Grade: ResolverTypeWrapper<Grade>;
   GradeDistributionItem: ResolverTypeWrapper<GradeDistributionItem>;
+  ISODate: ResolverTypeWrapper<Scalars['ISODate']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
@@ -283,6 +290,7 @@ export type ResolversParentTypes = {
   Float: Scalars['Float'];
   Grade: Grade;
   GradeDistributionItem: GradeDistributionItem;
+  ISODate: Scalars['ISODate'];
   Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
@@ -294,8 +302,10 @@ export type ResolversParentTypes = {
 };
 
 export type CatalogClassResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogClass'] = ResolversParentTypes['CatalogClass']> = {
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unitsMax?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -305,7 +315,9 @@ export type CatalogClassResolvers<ContextType = any, ParentType extends Resolver
 
 export type CatalogItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogItem'] = ResolversParentTypes['CatalogItem']> = {
   classes?: Resolver<Array<Maybe<ResolversTypes['CatalogClass']>>, ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   gradeAverage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
+  lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -317,6 +329,7 @@ export type ClassResolvers<ContextType = any, ParentType extends ResolversParent
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  lastUpdated?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   sections?: Resolver<Array<Maybe<ResolversTypes['Section']>>, ParentType, ContextType>;
@@ -358,6 +371,10 @@ export type GradeDistributionItemResolvers<ContextType = any, ParentType extends
   letter?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
+
+export interface IsoDateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['ISODate'], any> {
+  name: 'ISODate';
+}
 
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
@@ -424,6 +441,7 @@ export type Resolvers<ContextType = any> = {
   Course?: CourseResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
   GradeDistributionItem?: GradeDistributionItemResolvers<ContextType>;
+  ISODate?: GraphQLScalarType;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   Query?: QueryResolvers<ContextType>;
@@ -432,5 +450,6 @@ export type Resolvers<ContextType = any> = {
 };
 
 
+export type IsoDate = Scalars["ISODate"];
 export type Json = Scalars["JSON"];
 export type JsonObject = Scalars["JSONObject"];

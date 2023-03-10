@@ -4,10 +4,10 @@ export namespace CatalogModule {
   interface DefinedFields {
     Query: 'catalog' | 'course' | 'class' | 'section';
     Course: 'classes' | 'crossListing' | 'department' | 'description' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'raw';
-    Class: 'course' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'sections' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'raw';
+    Class: 'course' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'sections' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'lastUpdated' | 'raw';
     Section: 'class' | 'course' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'location' | 'notes' | 'number' | 'primary' | 'timeStart' | 'timeEnd' | 'type' | 'waitlistCount' | 'waitlistMax' | 'raw';
-    CatalogItem: 'subject' | 'number' | 'title' | 'classes' | 'gradeAverage';
-    CatalogClass: 'number' | 'title' | 'enrollCount' | 'enrollMax' | 'unitsMin' | 'unitsMax';
+    CatalogItem: 'subject' | 'number' | 'title' | 'description' | 'classes' | 'gradeAverage' | 'lastUpdated';
+    CatalogClass: 'number' | 'title' | 'description' | 'enrollCount' | 'enrollMax' | 'lastUpdated' | 'unitsMin' | 'unitsMax';
   };
   
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
@@ -18,6 +18,7 @@ export namespace CatalogModule {
   export type Section = Pick<Types.Section, DefinedFields['Section']>;
   export type JSONObject = Types.JsonObject;
   export type CatalogClass = Pick<Types.CatalogClass, DefinedFields['CatalogClass']>;
+  export type ISODate = Types.IsoDate;
   
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   export type CourseResolvers = Pick<Types.CourseResolvers, DefinedFields['Course'] | '__isTypeOf'>;
@@ -77,6 +78,7 @@ export namespace CatalogModule {
       unitsMin?: gm.Middleware[];
       waitlistCount?: gm.Middleware[];
       waitlistMax?: gm.Middleware[];
+      lastUpdated?: gm.Middleware[];
       raw?: gm.Middleware[];
     };
     Section?: {
@@ -103,15 +105,19 @@ export namespace CatalogModule {
       subject?: gm.Middleware[];
       number?: gm.Middleware[];
       title?: gm.Middleware[];
+      description?: gm.Middleware[];
       classes?: gm.Middleware[];
       gradeAverage?: gm.Middleware[];
+      lastUpdated?: gm.Middleware[];
     };
     CatalogClass?: {
       '*'?: gm.Middleware[];
       number?: gm.Middleware[];
       title?: gm.Middleware[];
+      description?: gm.Middleware[];
       enrollCount?: gm.Middleware[];
       enrollMax?: gm.Middleware[];
+      lastUpdated?: gm.Middleware[];
       unitsMin?: gm.Middleware[];
       unitsMax?: gm.Middleware[];
     };
