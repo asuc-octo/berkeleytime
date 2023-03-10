@@ -57,3 +57,9 @@ export async function updateUserEmailPreferences(
 
     await user.save();
 }
+
+export async function deleteUser(email: string) {
+    const user = await getUserModel(email);
+
+    await user.deleteOne();
+}

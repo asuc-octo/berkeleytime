@@ -59,6 +59,7 @@ export type LetterGrade = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  DeleteUser?: Maybe<User>;
   UpdateUserEmailPreferences?: Maybe<User>;
   UpdateUserInfo?: Maybe<User>;
   UpdateUserMajor?: Maybe<User>;
@@ -81,7 +82,7 @@ export type MutationUpdateUserInfoArgs = {
 
 
 export type MutationUpdateUserMajorArgs = {
-  major: Array<Scalars['String']>;
+  major?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type Query = {
@@ -266,9 +267,10 @@ export type LetterGradeResolvers<ContextType = any, ParentType extends Resolvers
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  DeleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   UpdateUserEmailPreferences?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserEmailPreferencesArgs>>;
   UpdateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserInfoArgs>>;
-  UpdateUserMajor?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserMajorArgs, 'major'>>;
+  UpdateUserMajor?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserMajorArgs>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {

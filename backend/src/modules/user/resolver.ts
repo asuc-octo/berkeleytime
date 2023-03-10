@@ -2,7 +2,8 @@ import {
     getUserByEmail,
     updateUserInfo,
     updateUserMajor,
-    updateUserEmailPreferences
+    updateUserEmailPreferences,
+    deleteUser
 } from "./controller";
 import { UserModule } from "./generated-types/module-types";
 import { secure } from "../../utils/secure";
@@ -57,6 +58,12 @@ const resolvers: UserModule.Resolvers = {
                 args.email_berkeleytime_update
             );
             return getUserByEmail(contextValue.user.email);
+        }),
+
+        DeleteUser: secure(async (_parent: any, _args: any, contextValue: any) => {
+            const user = getUserByEmail(contextValue.user.email);
+            await deleteUser(contextValue.user.email);
+            return user;
         }),
     }
 };

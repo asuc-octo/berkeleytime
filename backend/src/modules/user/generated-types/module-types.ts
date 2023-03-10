@@ -4,7 +4,7 @@ export namespace UserModule {
   interface DefinedFields {
     User: 'email' | 'username' | 'first_name' | 'last_name' | 'major' | 'last_login' | 'date_joined' | 'is_staff' | 'is_active' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
     Query: 'User';
-    Mutation: 'UpdateUserInfo' | 'UpdateUserMajor' | 'UpdateUserEmailPreferences';
+    Mutation: 'UpdateUserInfo' | 'UpdateUserMajor' | 'UpdateUserEmailPreferences' | 'DeleteUser';
   };
   
   export type User = Pick<Types.User, DefinedFields['User']>;
@@ -50,6 +50,7 @@ export namespace UserModule {
       UpdateUserInfo?: gm.Middleware[];
       UpdateUserMajor?: gm.Middleware[];
       UpdateUserEmailPreferences?: gm.Middleware[];
+      DeleteUser?: gm.Middleware[];
     };
   };
 }
