@@ -5,12 +5,14 @@ export const UserSchema = new Schema({
         type: String,
         trim: true,
         required: true,
+        immutable: true,
         select: false,
     },
     email: {
         type: String,
         trim: true,
         required: true,
+        immutable: true,
     },
     username: {
         type: String,
