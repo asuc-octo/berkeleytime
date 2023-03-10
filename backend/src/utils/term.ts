@@ -11,3 +11,17 @@ export function stringToTerm(term: string): Term {
         semester: semester as Term["semester"],
     };
 }
+
+/**
+ * Gets the last day of the month that a term starts in.
+ * Useful for finding the course that corresponds to a class.
+ */
+export function getTermStartMonth(term: Term) {
+    const startDates = {
+        "Fall": `${term.year}-08-31`,
+        "Spring": `${term.year}-01-31`,
+        "Summer": `${term.year}-05-31`,
+    }
+
+    return startDates[term.semester];
+}

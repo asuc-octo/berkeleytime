@@ -67,6 +67,7 @@ type CatalogItem {
     subject: String!
     number: String!
     title: String!
+    description: String!
     classes: [CatalogClass]!
     gradeAverage: Float
 }
@@ -74,6 +75,7 @@ type CatalogItem {
 type CatalogClass {
     number: String!
     title: String
+    description: String
     enrollCount: Int!
     enrollMax: Int!
     unitsMin: Float!

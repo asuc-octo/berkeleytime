@@ -1,10 +1,9 @@
-// @ts-nocheck
-import { GradeModel } from "../../db/grade";
+import { GradeModel, GradeType } from "../../db/grade";
 import { Term } from "../../generated-types/graphql";
 import { omitBy, isNil, sum } from "lodash";
 import { GraphQLError } from "graphql";
 
-const calanswersToLetter = {
+const calanswersToLetter: { [key: string]: string } = {
   "A+": "A+",
   "A": "A",
   "A-": "A-",
@@ -22,7 +21,7 @@ const calanswersToLetter = {
   "Not Pass": "NP",
 }
 
-const letterWeights = {
+const letterWeights: { [key: string]: number } = {
   "A+": 4.0,
   "A": 4.0,
   "A-": 3.7,
@@ -57,24 +56,37 @@ export async function getCombinedGrades(subject: string, courseNum: string, sect
   }
 }
 
-export async function getDistribution(grades) {
+export async function getDistribution(grades: GradeType[]) {
   // distribution is a map of letter -> count
-  let distribution = Object.values(calanswersToLetter)
+  const distribution: { [key: string]: number } = Object.values(calanswersToLetter)
     .reduce((acc, letter) => ({ ...acc, [letter]: 0 }), {});
-  
-  for (const grade of grades) {
-    if (grade.GradeNm != undefined && grade.GradeNm in calanswersToLetter) {
-      const letter = calanswersToLetter[grade.GradeNm]; 
-      distribution[letter] += grade.EnrollmentCnt;
-    }
-  }
 
-  return Object.entries(distribution).map(([letter, count]) => ({ letter, count: count as number }));
+  grades.forEach(g => {
+    const name = g.GradeNm as string;
+    const count = g.EnrollmentCnt as number;
+
+    if (name in calanswersToLetter) {
+      const letter = calanswersToLetter[name];
+      distribution[letter] += count;
+    }
+  })
+
+  return Object.entries(distribution).map(([letter, count]) => ({ letter, count }));
 }
 
-export async function getAverage(grades) {
-  const total = sum(grades.map(g => g.GradeNm in letterWeights ? g.EnrollmentCnt : 0));
-  const totalWeighted = sum(grades.map(g => g.EnrollmentCnt * (g.GradeNm in letterWeights ? letterWeights[g.GradeNm] : 0)));
+export async function getAverage(grades: GradeType[]) {
+  let total = 0
+  let totalWeighted = 0
+
+  grades.forEach(g => {
+    const name = g.GradeNm as string;
+    const count = g.EnrollmentCnt as number;
+
+    if (name in letterWeights) {
+      total += count;
+      totalWeighted += count * letterWeights[name];
+    }
+  })
 
   return total > 0 ? totalWeighted / total : null;
 }
