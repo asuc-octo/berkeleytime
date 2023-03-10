@@ -25,10 +25,12 @@ export default async (app: Application) => {
   // init
   app.use(session({
     secret: config.SESSION_SECRET,
+    name: 'sessionId',
     resave: false,
     saveUninitialized: false,
     cookie: {
       secure: !config.isDev,
+      httpOnly: true,
       maxAge: 1000 * 60 * 60 // 1 hour
     },
   }));

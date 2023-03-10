@@ -14,6 +14,7 @@ const env = (name: string): string => {
 
 export interface Config {
   port: number;
+  url: string;
   graphqlPath: string;
   isDev: boolean;
   mongoDB: {
@@ -27,6 +28,7 @@ export interface Config {
 // All your secrets, keys go here
 export const config: Config = {
   port: +env("PORT"),
+  url: env("URL"),
   graphqlPath: env("GRAPHQL_PATH"),
   isDev: env("NODE_ENV") === "development",
   mongoDB: {
