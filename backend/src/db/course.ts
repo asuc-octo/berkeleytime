@@ -181,7 +181,7 @@ const CourseSchemaObject = {
         description: String,
     },
     studentLearningOutcomes: [String], // coverage: 1.5%
-    subjectArea: {
+    subjectArea: { // use classSubjectArea instead, since that is consistent with the other API data
         code: String,
         description: String,
     },

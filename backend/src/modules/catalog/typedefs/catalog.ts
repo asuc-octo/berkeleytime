@@ -6,6 +6,8 @@ type Query {
     course(term: Term!, subject: String!, courseNumber: String!): Course
     class(term: Term!, subject: String!, courseNumber: String!, classNumber: String!): Class
     section(term: Term!, subject: String!, courseNumber: String!, classNumber: String!, sectionNumber: String!): Section
+    courseList: [CourseListItem]
+    classes(subject: String!, courseNumber: String!): [Class]
 }
 
 type Course {
@@ -56,10 +58,10 @@ type Section {
     course: Course!
     dateEnd: String
     dateStart: String
-    days: [Boolean!]!
+    days: [Boolean!]
     enrollCount: Int!
     enrollMax: Int!
-    instructors: [String]!
+    instructors: [Instructor]
     kind: String!
     location: String
     notes: String
@@ -72,6 +74,11 @@ type Section {
 
     raw: JSONObject!
     lastUpdated: ISODate!
+}
+
+type Instructor {
+    familyName: String!
+    givenName: String!
 }
 
 type CatalogItem {
@@ -95,5 +102,10 @@ type CatalogClass {
     unitsMin: Float!
 
     lastUpdated: ISODate!
+}
+
+type CourseListItem {
+    subject: String!
+    number: String!
 }
 `;

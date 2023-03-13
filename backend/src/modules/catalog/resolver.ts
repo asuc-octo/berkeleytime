@@ -1,12 +1,14 @@
 import { CatalogModule } from "./generated-types/module-types";
-import { getCatalog, getClass, getCourse, getSection } from "./controller"
+import { getCatalog, getClass, getClasses, getCourse, getCourseList, getSection } from "./controller"
 
 const resolvers: CatalogModule.Resolvers = {
     Query: {
         catalog: (_, args) => getCatalog(args),
         course: (_, args) => getCourse(args),
         class: (_, args) => getClass(args),
-        section: (_, args) => getSection(args)
+        section: (_, args) => getSection(args),
+        courseList: getCourseList,
+        classes: (_, args) => getClasses(args),
     },
 
     Class: {
@@ -14,9 +16,11 @@ const resolvers: CatalogModule.Resolvers = {
         primarySection: (parent) => getSection(parent.primarySection as any),
         sections: (parent) => parent.sections.map((section) => getSection(section as any)),
     },
+
     Section: {
         class: (parent) => getClass(parent.class as any),
     },
+
     Course: {
         allClasses: (parent) => parent.allClasses.map((cls) => getClass(cls as any)),
         classes: (parent) => parent.classes.map((cls) => getClass(cls as any)),

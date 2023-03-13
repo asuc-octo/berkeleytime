@@ -9,36 +9,45 @@ import { formatClass, formatCourse, formatSection } from "./formatter";
 import { getCourseKey, getCsCourseId } from "../../utils/course";
 
 export async function getCatalog(args: { term: Term }) {
-    const classes = await ClassModel.find({
-        "session.term.name": termToString(args.term),
-        "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },
-    }).lean()
+    const classes = await ClassModel
+        .find({
+            "session.term.name": termToString(args.term),
+            "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },
+        })
+        .lean()
 
     const csCourseIds = new Set(classes.map(c => getCsCourseId(c.course as CourseType)))
-    const courses = await CourseModel.find(
-        {
-            identifiers: {
-                $elemMatch: {
-                    type: "cs-course-id",
-                    id: { $in: Array.from(csCourseIds) }
-                }
+    const courses = await CourseModel
+        .find(
+            {
+                identifiers: {
+                    $elemMatch: {
+                        type: "cs-course-id",
+                        id: { $in: Array.from(csCourseIds) }
+                    }
+                },
+                /* 
+                    The SIS toDate is unreliable so we can only
+                    filter by fromDate and then sort to find the
+                    most recent course.
+                */
+                fromDate: { $lte: getTermStartMonth(args.term) },
             },
-            /* 
-                The SIS toDate is unreliable so we can only
-                filter by fromDate and then sort to find the
-                most recent course.
-            */
-            fromDate: { $lte: getTermStartMonth(args.term) },
-        },
-        {
-            _updated: 1,
-            identifiers: 1,
-            title: 1,
-            description: 1,
-            subjectArea: 1,
-            catalogNumber: 1
-        }
-    ).sort({ fromDate: -1 }).lean()
+            {
+                _updated: 1,
+                identifiers: 1,
+                title: 1,
+                description: 1,
+                classSubjectArea: 1,
+                catalogNumber: 1
+            }
+        )
+        .sort({
+            "classSubjectArea.code": 1,
+            "catalogNumber.formatted": 1,
+            fromDate: -1
+        })
+        .lean()
 
     const grades = await GradeModel.find(
         {
@@ -75,13 +84,9 @@ export async function getCatalog(args: { term: Term }) {
             continue
 
         catalog[id] = {
-            subject: c.subjectArea?.code as string,
-            number: c.catalogNumber?.formatted as string,
-            title: c.title as string,
-            description: c.description as string,
             classes: [],
             gradeAverage: await getAverage(gradesMap[key]),
-            lastUpdated: c._updated,
+            ...formatCourse(c, args.term),
         }
     }
 
@@ -92,11 +97,7 @@ export async function getCatalog(args: { term: Term }) {
             throw new Error(`Class ${c.course?.subjectArea?.code} ${c.course?.catalogNumber?.formatted}`
                 + ` has a course id ${id} that doesn't exist for the ${args.term.semester} ${args.term.year} term.`)
         }
-        catalog[id].classes.push({
-            ...formatClass(c, args.term),
-
-            lastUpdated: c._updated,
-        })
+        catalog[id].classes.push(formatClass(c, args.term))
     }
 
     return Object.values(catalog)
@@ -154,13 +155,7 @@ export async function getClass(args: {
         }
     ).lean()
 
-    const primarySection = sections.find(s => s.association?.primary) as SectionType
-
-    return {
-        primarySection: { term: args.term, ccn: primarySection.id as number },
-        sections: sections.map(s => ({ term: args.term, ccn: s.id as number })),
-        ...formatClass(cls, args.term)
-    }
+    return formatClass(cls, args.term, sections)
 }
 
 
@@ -208,8 +203,6 @@ export async function getSection(args: {
 export async function getCourse(args: {
     term: Term, subject?: string, courseNumber?: string, csCourseId?: string, displayName?: string
 }): Promise<any> {
-    const termStr = termToString(args.term)
-
     const filter: any = {
         /* 
             The SIS toDate is unreliable so we can only
@@ -220,7 +213,7 @@ export async function getCourse(args: {
     }
 
     if (args.subject != undefined && args.courseNumber != undefined) {
-        filter["subjectArea.code"] = args.subject
+        filter["classSubjectArea.code"] = args.subject
         filter["catalogNumber.formatted"] = args.courseNumber
     } else if (args.csCourseId != undefined) {
         filter["identifiers"] = {
@@ -241,10 +234,10 @@ export async function getCourse(args: {
         throw new Error("Course not found")
     }
 
-    const subject = course?.subjectArea?.code as string
+    const subject = course?.classSubjectArea?.code as string
     const courseNumber = course?.catalogNumber?.formatted as string
 
-    const classesData = await ClassModel.find(
+    const classData = await ClassModel.find(
         {
             "course.subjectArea.code": subject,
             "course.catalogNumber.formatted": courseNumber,
@@ -255,19 +248,55 @@ export async function getCourse(args: {
         }
     ).lean()
 
-    const allClasses = classesData.map(c => {
-        const term = stringToTerm(c.session?.term?.name as string)
-        return {
-            term,
-            subject,
-            courseNumber,
-            classNumber: c.number as string,
-        }
-    })
+    const allClasses = classData.map(c => ({
+        term: stringToTerm(c.session?.term?.name as string),
+        subject,
+        courseNumber,
+        classNumber: c.number as string,
+    }))
 
     return {
         allClasses,
         classes: allClasses.filter(c => c.term.year == args.term.year && c.term.semester == args.term.semester),
         ...formatCourse(course, args.term),
     }
+}
+
+export async function getCourseList() {
+    return await CourseModel.aggregate()
+        .group({ _id: { subject: "$classSubjectArea.code", number: "$catalogNumber.formatted" } })
+        .sort({ "_id.subject": 1, "_id.number": 1 })
+        .project({ _id: 0, subject: "$_id.subject", number: "$_id.number" })
+}
+
+export async function getClasses(args: { subject: string, courseNumber: string }): Promise<any> {
+    const classes = await ClassModel
+        .find({
+            "course.subjectArea.code": args.subject,
+            "course.catalogNumber.formatted": args.courseNumber,
+        })
+        .lean()
+
+    const sections = await SectionModel
+        .find({
+            "class.course.subjectArea.code": args.subject,
+            "class.course.catalogNumber.formatted": args.courseNumber,
+        })
+        .lean()
+
+    const sectionMap: any = {}
+    sections.forEach(s => {
+        const displayName = s.class?.displayName as string
+        if (sectionMap[displayName] == undefined) {
+            sectionMap[displayName] = []
+        }
+        sectionMap[displayName].push(s)
+    })
+
+    return classes.map(c => {
+        const term = stringToTerm(c.session?.term?.name as string)
+        const classSections = sectionMap[c.displayName as string] as SectionType[]
+
+        return formatClass(c, term, classSections)
+    })
 }

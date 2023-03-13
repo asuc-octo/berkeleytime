@@ -4,7 +4,8 @@ import { CourseType } from "../db/course";
  * Used to map between courses and grades
  */
 export function getCourseKey(course: CourseType) {
-    return `${course.subjectArea?.description} ${course.catalogNumber?.formatted}`;
+    const subjectArea = course.classSubjectArea?.description ?? course.subjectArea?.description;
+    return `${subjectArea} ${course.catalogNumber?.formatted}`;
 }
 
 export function getCsCourseId(course: CourseType) {
