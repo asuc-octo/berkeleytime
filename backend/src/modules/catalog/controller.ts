@@ -1,5 +1,5 @@
 import { CatalogItem, Term } from "../../generated-types/graphql";
-import { ClassModel } from "../../db/class";
+import { ClassModel, ClassType } from "../../db/class";
 import { getTermStartMonth, stringToTerm, termToString } from "../../utils/term";
 import { GradeModel, GradeType } from "../../db/grade";
 import { getAverage } from "../grade/controller";
@@ -7,8 +7,11 @@ import { CourseModel, CourseType } from "../../db/course";
 import { SectionModel, SectionType } from "../../db/section";
 import { formatClass, formatCourse, formatSection } from "./formatter";
 import { getCourseKey, getCsCourseId } from "../../utils/course";
+import { isNil } from "lodash";
+import { GraphQLResolveInfo } from "graphql";
+import { getChildren } from "../../utils/graphql";
 
-export async function getCatalog(args: { term: Term }) {
+export async function getCatalog(args: { term: Term }, info: GraphQLResolveInfo) {
     const classes = await ClassModel
         .find({
             "session.term.name": termToString(args.term),
@@ -49,28 +52,33 @@ export async function getCatalog(args: { term: Term }) {
         })
         .lean()
 
-    const grades = await GradeModel.find(
-        {
-            /* 
-                No filters because an appropriately large filter 
-                is actually significantly slower than no filter.
-            */
-        },
-        {
-            CourseSubjectShortNm: 1,
-            CourseNumber: 1,
-            GradeNm: 1,
-            EnrollmentCnt: 1
-        }
-    ).lean()
-
     /* Map grades to course keys for easy lookup */
     const gradesMap: { [key: string]: GradeType[] } = {}
     courses.forEach(c => gradesMap[getCourseKey(c)] = [])
-    for (const g of grades) {
-        const key = `${g.CourseSubjectShortNm as string} ${g.CourseNumber as string}`
-        if (key in gradesMap) {
-            gradesMap[key].push(g)
+
+    const children = getChildren(info)
+
+    if (children.includes("gradeAverage")) {
+        const grades = await GradeModel.find(
+            {
+                /* 
+                    No filters because an appropriately large filter 
+                    is actually significantly slower than no filter.
+                */
+            },
+            {
+                CourseSubjectShortNm: 1,
+                CourseNumber: 1,
+                GradeNm: 1,
+                EnrollmentCnt: 1
+            }
+        ).lean()
+        
+        for (const g of grades) {
+            const key = `${g.CourseSubjectShortNm as string} ${g.CourseNumber as string}`
+            if (key in gradesMap) {
+                gradesMap[key].push(g)
+            }
         }
     }
 
@@ -97,7 +105,7 @@ export async function getCatalog(args: { term: Term }) {
             throw new Error(`Class ${c.course?.subjectArea?.code} ${c.course?.catalogNumber?.formatted}`
                 + ` has a course id ${id} that doesn't exist for the ${args.term.semester} ${args.term.year} term.`)
         }
-        catalog[id].classes.push(formatClass(c, args.term))
+        catalog[id].classes.push(formatClass(c))
     }
 
     return Object.values(catalog)
@@ -105,8 +113,8 @@ export async function getCatalog(args: { term: Term }) {
 
 
 export async function getClass(args: {
-    term: Term, subject?: string, courseNumber?: string, csCourseId?: string, classNumber: string
-}): Promise<any> {
+    subject?: string, courseNumber?: string, csCourseId?: string, term: Term, classNumber: string
+}, info: GraphQLResolveInfo): Promise<any> {
 
     const termStr = termToString(args.term)
 
@@ -136,31 +144,56 @@ export async function getClass(args: {
         throw new Error("Class not found")
     }
 
+    return processClass(cls, info)
+}
+
+export async function processClass(cls: ClassType, info: GraphQLResolveInfo): Promise<any> {
     const csCourseId = getCsCourseId(cls.course as CourseType)
 
+    const children = getChildren(info)
 
-    const sections = await SectionModel.find(
-        {
-            "class.course.identifiers": {
-                $elemMatch: {
-                    type: "cs-course-id",
-                    id: csCourseId
-                }
-            },
-            "class.session.term.name": termStr,
-        },
-        {
-            id: 1,
-            association: 1
-        }
-    ).lean()
+    let sections = null
+    let primarySection = null
 
-    return formatClass(cls, args.term, sections)
+    if (children.includes("sections")) {
+        sections = await SectionModel
+            .find({
+                "class.course.identifiers": {
+                    $elemMatch: {
+                        type: "cs-course-id",
+                        id: csCourseId
+                    }
+                },
+                "class.session.term.name": cls.session?.term?.name,
+            })
+            .lean()
+    }
+
+    if (children.includes("primarySection")) {
+        primarySection = await SectionModel
+            .findOne({
+                "class.course.identifiers": {
+                    $elemMatch: {
+                        type: "cs-course-id",
+                        id: csCourseId
+                    }
+                },
+                "class.session.term.name": cls.session?.term?.name,
+                "association.primary": true
+            })
+            .lean()
+    }
+
+    return {
+        sections: sections?.map(formatSection),
+        primarySection: primarySection != null ? formatSection(primarySection) : null,
+        ...formatClass(cls)
+    }
 }
 
 
 export async function getSection(args: {
-    term: Term, subject?: string, courseNumber?: string, csCourseId?: string, classNumber?: string, sectionNumber?: string, ccn?: number
+    subject?: string, courseNumber?: string, csCourseId?: string, term: Term, classNumber?: string, sectionNumber?: string, ccn?: number
 }): Promise<any> {
 
     const termStr = termToString(args.term)
@@ -196,20 +229,25 @@ export async function getSection(args: {
         throw new Error("Section not found")
     }
 
-    return formatSection(section, args.term)
+    return formatSection(section)
 }
 
 
 export async function getCourse(args: {
-    term: Term, subject?: string, courseNumber?: string, csCourseId?: string, displayName?: string
-}): Promise<any> {
-    const filter: any = {
+    subject?: string, courseNumber?: string, term?: Term | null, csCourseId?: string, displayName?: string
+}, info: GraphQLResolveInfo): Promise<any> {
+    const filter: any = {}
+
+    if (!isNil(args.term)) {
         /* 
             The SIS toDate is unreliable so we can only
             filter by fromDate and then sort to find the
-            most recent course.
+            most recent course. 
+
+            If no term is specified, we return the most
+            recent course.
         */
-        fromDate: { $lte: getTermStartMonth(args.term) },
+        filter["fromDate"] = { $lte: getTermStartMonth(args.term) }
     }
 
     if (args.subject != undefined && args.courseNumber != undefined) {
@@ -237,27 +275,20 @@ export async function getCourse(args: {
     const subject = course?.classSubjectArea?.code as string
     const courseNumber = course?.catalogNumber?.formatted as string
 
-    const classData = await ClassModel.find(
-        {
-            "course.subjectArea.code": subject,
-            "course.catalogNumber.formatted": courseNumber,
-        },
-        {
-            "session.term.name": 1,
-            "number": 1,
-        }
-    ).lean()
+    const children = getChildren(info)
 
-    const allClasses = classData.map(c => ({
-        term: stringToTerm(c.session?.term?.name as string),
-        subject,
-        courseNumber,
-        classNumber: c.number as string,
-    }))
+    let classes = null;
+    if (children.includes("classes")) {
+        classes = await ClassModel
+            .find({
+                "course.subjectArea.code": subject,
+                "course.catalogNumber.formatted": courseNumber,
+            })
+            .lean()
+    }
 
     return {
-        allClasses,
-        classes: allClasses.filter(c => c.term.year == args.term.year && c.term.semester == args.term.semester),
+        classes,
         ...formatCourse(course, args.term),
     }
 }
@@ -267,36 +298,4 @@ export async function getCourseList() {
         .group({ _id: { subject: "$classSubjectArea.code", number: "$catalogNumber.formatted" } })
         .sort({ "_id.subject": 1, "_id.number": 1 })
         .project({ _id: 0, subject: "$_id.subject", number: "$_id.number" })
-}
-
-export async function getClasses(args: { subject: string, courseNumber: string }): Promise<any> {
-    const classes = await ClassModel
-        .find({
-            "course.subjectArea.code": args.subject,
-            "course.catalogNumber.formatted": args.courseNumber,
-        })
-        .lean()
-
-    const sections = await SectionModel
-        .find({
-            "class.course.subjectArea.code": args.subject,
-            "class.course.catalogNumber.formatted": args.courseNumber,
-        })
-        .lean()
-
-    const sectionMap: any = {}
-    sections.forEach(s => {
-        const displayName = s.class?.displayName as string
-        if (sectionMap[displayName] == undefined) {
-            sectionMap[displayName] = []
-        }
-        sectionMap[displayName].push(s)
-    })
-
-    return classes.map(c => {
-        const term = stringToTerm(c.session?.term?.name as string)
-        const classSections = sectionMap[c.displayName as string] as SectionType[]
-
-        return formatClass(c, term, classSections)
-    })
 }

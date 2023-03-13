@@ -3,16 +3,14 @@ import { gql } from "graphql-tag";
 export default gql`
 type Query {
     catalog(term: Term!): [CatalogItem]
-    course(term: Term!, subject: String!, courseNumber: String!): Course
-    class(term: Term!, subject: String!, courseNumber: String!, classNumber: String!): Class
-    section(term: Term!, subject: String!, courseNumber: String!, classNumber: String!, sectionNumber: String!): Section
+    course(subject: String!, courseNumber: String!, term: Term): Course
+    class(subject: String!, courseNumber: String!, term: Term!, classNumber: String!): Class
+    section(subject: String!, courseNumber: String!, term: Term!, classNumber: String!, sectionNumber: String!): Section
     courseList: [CourseListItem]
-    classes(subject: String!, courseNumber: String!): [Class]
 }
 
 type Course {
-    allClasses: [Class]!
-    classes: [Class]!
+    classes(term: Term): [Class]!
     crossListing: [Course]
     description: String!
     fromDate: String!

@@ -3,6 +3,7 @@ import { CourseType } from "../../db/course";
 import { SectionType } from "../../db/section";
 import { Term } from "../../generated-types/graphql";
 import { getCsCourseId } from "../../utils/course";
+import { stringToTerm } from "../../utils/term";
 
 export function formatMetadata(data: any) {
     return {
@@ -11,16 +12,14 @@ export function formatMetadata(data: any) {
     }
 }
 
-export function formatClass(cls: ClassType, term: Term, sections?: SectionType[]) {
-    const primarySection = sections?.find(s => s.association?.primary) as SectionType
+export function formatClass(cls: ClassType) {
+    const term = stringToTerm(cls.session?.term?.name as string)
 
     return {
         course: { term, csCourseId: getCsCourseId(cls.course as CourseType) },
         description: cls.classDescription,
         enrollCount: cls.aggregateEnrollmentStatus?.enrolledCount as number,
         enrollMax: cls.aggregateEnrollmentStatus?.maxEnroll as number,
-        primarySection: primarySection ? { term, ccn: primarySection.id as number } : null,
-        sections: sections?.map(s => ({ term, ccn: s.id as number })) ?? [],
         number: cls.number as string,
         semester: term.semester,
         session: cls.session?.name as string,
@@ -35,7 +34,9 @@ export function formatClass(cls: ClassType, term: Term, sections?: SectionType[]
     }
 }
 
-export function formatSection(section: SectionType, term: Term) {
+export function formatSection(section: SectionType) {
+    const term = stringToTerm(section.class?.session?.term?.name as string)
+
     /* All of the section data we have only have one meeting time so this is safe to do */
     const meeting = section.meetings != undefined ? section.meetings[0] : null;
     const instructors = meeting?.assignedInstructors?.
@@ -45,10 +46,6 @@ export function formatSection(section: SectionType, term: Term) {
             let nameInfo = i.instructor?.names?.find(n => n.type?.code === "PRI")
             if (nameInfo == undefined) {
                 nameInfo = i.instructor?.names?.find(n => n.type?.code === "PRF")
-            }
-
-            if (nameInfo?.familyName == undefined) {
-                console.log(i)
             }
 
             return { givenName: nameInfo?.givenName, familyName: nameInfo?.familyName }
@@ -87,7 +84,7 @@ export function formatSection(section: SectionType, term: Term) {
     }
 }
 
-export function formatCourse(course: CourseType, term: Term) {
+export function formatCourse(course: CourseType, term?: Term | null) {
     return {
         crossListing: course.crossListing?.courses?.map(c => ({ term, displayName: c, })),
         description: course.description as string,

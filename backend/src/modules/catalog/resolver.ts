@@ -1,30 +1,38 @@
 import { CatalogModule } from "./generated-types/module-types";
-import { getCatalog, getClass, getClasses, getCourse, getCourseList, getSection } from "./controller"
+import { getCatalog, getClass, getCourse, getCourseList, getSection, processClass } from "./controller"
+import { isNil } from "lodash";
+import { ClassType } from "../../db/class";
+import { termToString } from "../../utils/term";
+import { getChildren } from "../../utils/graphql";
 
 const resolvers: CatalogModule.Resolvers = {
     Query: {
-        catalog: (_, args) => getCatalog(args),
-        course: (_, args) => getCourse(args),
-        class: (_, args) => getClass(args),
+        catalog: (_, args, __, info) => getCatalog(args, info),
+        course: (_, args, __, info) => getCourse(args, info),
+        class: (_, args, __, info) => getClass(args, info),
         section: (_, args) => getSection(args),
         courseList: getCourseList,
-        classes: (_, args) => getClasses(args),
     },
 
     Class: {
-        course: (parent) => getCourse(parent.course as any),
-        primarySection: (parent) => getSection(parent.primarySection as any),
-        sections: (parent) => parent.sections.map((section) => getSection(section as any)),
+        course: (parent, _, __, info) => getCourse(parent.course as any, info),
     },
 
     Section: {
-        class: (parent) => getClass(parent.class as any),
+        class: (parent, _, __, info) => getClass(parent.class as any, info),
     },
 
     Course: {
-        allClasses: (parent) => parent.allClasses.map((cls) => getClass(cls as any)),
-        classes: (parent) => parent.classes.map((cls) => getClass(cls as any)),
-        crossListing: (parent) => parent.crossListing?.map((course) => getCourse(course as any)) ?? [],
+        classes: (parent, { term }, _, info) => {
+            /* Get all classes if no term is specified, otherwise get only classes in that term */
+            return parent.classes
+                .filter(c => {
+                    const cls = c as any as ClassType
+                    return isNil(term) || (cls.session?.term?.name == termToString(term))
+                })
+                .map(c => processClass(c as any as ClassType, info))
+        },
+        crossListing: (parent, _, __, info) => parent.crossListing?.map((course) => getCourse(course as any, info)) ?? [],
     }
 }
 

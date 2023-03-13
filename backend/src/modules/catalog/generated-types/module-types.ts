@@ -2,8 +2,8 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace CatalogModule {
   interface DefinedFields {
-    Query: 'catalog' | 'course' | 'class' | 'section' | 'courseList' | 'classes';
-    Course: 'allClasses' | 'classes' | 'crossListing' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'toDate' | 'raw' | 'lastUpdated';
+    Query: 'catalog' | 'course' | 'class' | 'section' | 'courseList';
+    Course: 'classes' | 'crossListing' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'toDate' | 'raw' | 'lastUpdated';
     Class: 'course' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'primarySection' | 'sections' | 'semester' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'year' | 'raw' | 'lastUpdated';
     Section: 'ccn' | 'class' | 'course' | 'dateEnd' | 'dateStart' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'kind' | 'location' | 'notes' | 'number' | 'primary' | 'timeEnd' | 'timeStart' | 'waitlistCount' | 'waitlistMax' | 'raw' | 'lastUpdated';
     Instructor: 'familyName' | 'givenName';
@@ -56,11 +56,9 @@ export namespace CatalogModule {
       class?: gm.Middleware[];
       section?: gm.Middleware[];
       courseList?: gm.Middleware[];
-      classes?: gm.Middleware[];
     };
     Course?: {
       '*'?: gm.Middleware[];
-      allClasses?: gm.Middleware[];
       classes?: gm.Middleware[];
       crossListing?: gm.Middleware[];
       description?: gm.Middleware[];
