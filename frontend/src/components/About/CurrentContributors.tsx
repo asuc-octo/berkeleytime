@@ -56,6 +56,13 @@ const contributors = [
 			silly_img: matthew_2
 		},
 		{
+			name: 'Michelle Tran',
+			role: 'Design Lead',
+			site: 'https://michelletran.design',
+			img: michelle_1,
+			silly_img: michelle_2
+		},
+		{
 			name: 'Henric Zhang',
 			role: 'Frontend Engineer',
 			img: henric_1,
@@ -110,13 +117,6 @@ const contributors = [
 			site: 'https://www.linkedin.com/in/e-xu-at-berkeley',
 			img: eric_1,
 			silly_img: eric_2
-		},
-		{
-			name: 'Michelle Tran',
-			role: 'Designer',
-			site: 'https://michelletran.design',
-			img: michelle_1,
-			silly_img: michelle_2
 		},
 		{
 			name: 'Carissa Cui',
