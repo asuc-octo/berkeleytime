@@ -1,7 +1,5 @@
 import { GraphQLScalarType, Kind } from "graphql";
 import GraphQLJSON, { GraphQLJSONObject } from "graphql-type-json";
-import { stringToTerm, termToString } from "../../utils/term";
-
 
 const resolvers = {
     Query: {
