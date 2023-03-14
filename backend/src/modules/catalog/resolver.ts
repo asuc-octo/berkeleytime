@@ -1,5 +1,5 @@
 import { CatalogModule } from "./generated-types/module-types";
-import { getCatalog, getClass, getClassById, getClassSections, getCourse, getCourseById, getCourseClasses, getCourseList, getCourseSections, getCrossListings, getPrimarySection, getSection } from "./controller"
+import { getCatalog, getClass, getClassById, getClassSections, getCourse, getCourseById, getCourseClasses, getCourseList, getCrossListings, getPrimarySection, getSection } from "./controller"
 
 const resolvers: CatalogModule.Resolvers = {
     Query: {

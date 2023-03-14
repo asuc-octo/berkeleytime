@@ -227,26 +227,6 @@ export function getCrossListings(displayNames: string[], term?: Term | null) {
     })
 }
 
-export function getCourseSections(subject: string, courseNumber: string, term?: Term | null, primary?: boolean | null) {
-    const filter: any = {
-        "class.course.subjectArea.code": subject,
-        "class.course.catalogNumber.formatted": courseNumber,
-    }
-
-    if (!isNil(term)) {
-        filter["class.session.term.name"] = termToString(term)
-    }
-
-    if (primary) {
-        filter["association.primary"] = true
-    }
-
-    return SectionModel
-        .find(filter)
-        .lean()
-        .then(s => s.map(formatSection))
-}
-
 export function getSection(subject: string, courseNumber: string, term: Term, classNumber: string, sectionNumber: string) {
     return SectionModel
         .findOne({
