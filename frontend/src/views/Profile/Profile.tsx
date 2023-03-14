@@ -2,13 +2,10 @@ import { ComponentType, ReactNode, useState } from 'react';
 import { Container, Button } from 'react-bootstrap';
 
 import AccountSubview from '../../components/Profile/AccountSubview';
-import NotificationsSubview from '../../components/Profile/NotificationsSubview';
 import SupportSubview from '../../components/Profile/SupportSubview';
 
 import { ReactComponent as Account } from '../../assets/svg/profile/account.svg';
 import { ReactComponent as AccountSelected } from '../../assets/svg/profile/account_selected.svg';
-import { ReactComponent as Notif } from '../../assets/svg/profile/notif.svg';
-import { ReactComponent as NotifSelected } from '../../assets/svg/profile/notif_selected.svg';
 import { ReactComponent as Support } from '../../assets/svg/profile/support.svg';
 import { ReactComponent as SupportSelected } from '../../assets/svg/profile/support_selected.svg';
 import { UserProfileFragment } from 'graphql';
@@ -29,13 +26,6 @@ const tabs: {
 		selectedImage: <AccountSelected />,
 		deselectedImage: <Account />,
 		component: AccountSubview
-	},
-	{
-		key: 'notif',
-		label: 'Notifications',
-		selectedImage: <NotifSelected />,
-		deselectedImage: <Notif />,
-		component: NotificationsSubview
 	},
 	{
 		key: 'support',
