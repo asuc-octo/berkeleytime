@@ -99,6 +99,14 @@ export type CourseListItem = {
   subject: Scalars['String'];
 };
 
+export type EnrollmentDay = {
+  __typename?: 'EnrollmentDay';
+  enrollCount: Scalars['Int'];
+  enrollMax: Scalars['Int'];
+  waitlistCount: Scalars['Int'];
+  waitlistMax: Scalars['Int'];
+};
+
 export type Grade = {
   __typename?: 'Grade';
   average?: Maybe<Scalars['Float']>;
@@ -181,6 +189,7 @@ export type Section = {
   days?: Maybe<Array<Scalars['Boolean']>>;
   enrollCount: Scalars['Int'];
   enrollMax: Scalars['Int'];
+  enrollmentHistory?: Maybe<Array<Maybe<EnrollmentDay>>>;
   instructors?: Maybe<Array<Maybe<Instructor>>>;
   kind: Scalars['String'];
   lastUpdated: Scalars['ISODate'];
@@ -300,6 +309,7 @@ export type ResolversTypes = {
   Class: ResolverTypeWrapper<Class>;
   Course: ResolverTypeWrapper<Course>;
   CourseListItem: ResolverTypeWrapper<CourseListItem>;
+  EnrollmentDay: ResolverTypeWrapper<EnrollmentDay>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Grade: ResolverTypeWrapper<Grade>;
   GradeDistributionItem: ResolverTypeWrapper<GradeDistributionItem>;
@@ -324,6 +334,7 @@ export type ResolversParentTypes = {
   Class: Class;
   Course: Course;
   CourseListItem: CourseListItem;
+  EnrollmentDay: EnrollmentDay;
   Float: Scalars['Float'];
   Grade: Grade;
   GradeDistributionItem: GradeDistributionItem;
@@ -410,6 +421,14 @@ export type CourseListItemResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type EnrollmentDayResolvers<ContextType = any, ParentType extends ResolversParentTypes['EnrollmentDay'] = ResolversParentTypes['EnrollmentDay']> = {
+  enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  waitlistCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  waitlistMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GradeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Grade'] = ResolversParentTypes['Grade']> = {
   average?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   distribution?: Resolver<Maybe<Array<Maybe<ResolversTypes['GradeDistributionItem']>>>, ParentType, ContextType>;
@@ -460,6 +479,7 @@ export type SectionResolvers<ContextType = any, ParentType extends ResolversPare
   days?: Resolver<Maybe<Array<ResolversTypes['Boolean']>>, ParentType, ContextType>;
   enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  enrollmentHistory?: Resolver<Maybe<Array<Maybe<ResolversTypes['EnrollmentDay']>>>, ParentType, ContextType>;
   instructors?: Resolver<Maybe<Array<Maybe<ResolversTypes['Instructor']>>>, ParentType, ContextType>;
   kind?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
@@ -501,6 +521,7 @@ export type Resolvers<ContextType = any> = {
   Class?: ClassResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
   CourseListItem?: CourseListItemResolvers<ContextType>;
+  EnrollmentDay?: EnrollmentDayResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
   GradeDistributionItem?: GradeDistributionItemResolvers<ContextType>;
   ISODate?: GraphQLScalarType;

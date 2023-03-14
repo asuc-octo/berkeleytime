@@ -12,6 +12,7 @@ type Query {
 type Course {
     classes(term: Term): [Class]!
     crossListing: [Course]
+    sections(term: Term, primary: Boolean): [Section]!
 
     description: String!
     fromDate: String!
@@ -55,6 +56,7 @@ type Class {
 type Section {
     class: Class!
     course: Course!
+    enrollmentHistory: [EnrollmentDay]
 
     ccn: Int!
     dateEnd: String
@@ -80,6 +82,13 @@ type Section {
 type Instructor {
     familyName: String!
     givenName: String!
+}
+
+type EnrollmentDay {
+    enrollCount: Int!
+    enrollMax: Int!
+    waitlistCount: Int!
+    waitlistMax: Int!
 }
 
 type CatalogItem {

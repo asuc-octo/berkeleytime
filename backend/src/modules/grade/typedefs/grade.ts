@@ -1,6 +1,6 @@
 import { gql } from "graphql-tag";
 
-const typedef = gql`
+export default gql`
   type Grade {
     average: Float
     distribution: [GradeDistributionItem]
@@ -15,5 +15,3 @@ const typedef = gql`
     grade(subject: String!, courseNum: String!, classNum: String, term: Term): Grade
   }
 `;
-
-export default typedef;

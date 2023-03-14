@@ -5,8 +5,9 @@ export namespace CatalogModule {
     Query: 'catalog' | 'course' | 'class' | 'section' | 'courseList';
     Course: 'classes' | 'crossListing' | 'sections' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'toDate' | 'raw' | 'lastUpdated';
     Class: 'course' | 'primarySection' | 'sections' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'semester' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'year' | 'raw' | 'lastUpdated';
-    Section: 'class' | 'course' | 'ccn' | 'dateEnd' | 'dateStart' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'kind' | 'location' | 'notes' | 'number' | 'primary' | 'timeEnd' | 'timeStart' | 'waitlistCount' | 'waitlistMax' | 'raw' | 'lastUpdated';
+    Section: 'class' | 'course' | 'enrollmentHistory' | 'ccn' | 'dateEnd' | 'dateStart' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'kind' | 'location' | 'notes' | 'number' | 'primary' | 'timeEnd' | 'timeStart' | 'waitlistCount' | 'waitlistMax' | 'raw' | 'lastUpdated';
     Instructor: 'familyName' | 'givenName';
+    EnrollmentDay: 'enrollCount' | 'enrollMax' | 'waitlistCount' | 'waitlistMax';
     CatalogItem: 'subject' | 'number' | 'title' | 'description' | 'classes' | 'gradeAverage' | 'lastUpdated';
     CatalogClass: 'number' | 'title' | 'description' | 'enrollCount' | 'enrollMax' | 'unitsMax' | 'unitsMin' | 'lastUpdated';
     CourseListItem: 'subject' | 'number';
@@ -22,6 +23,7 @@ export namespace CatalogModule {
   export type JSONObject = Types.JsonObject;
   export type ISODate = Types.IsoDate;
   export type Semester = Types.Semester;
+  export type EnrollmentDay = Pick<Types.EnrollmentDay, DefinedFields['EnrollmentDay']>;
   export type Instructor = Pick<Types.Instructor, DefinedFields['Instructor']>;
   export type CatalogClass = Pick<Types.CatalogClass, DefinedFields['CatalogClass']>;
   
@@ -30,6 +32,7 @@ export namespace CatalogModule {
   export type ClassResolvers = Pick<Types.ClassResolvers, DefinedFields['Class'] | '__isTypeOf'>;
   export type SectionResolvers = Pick<Types.SectionResolvers, DefinedFields['Section'] | '__isTypeOf'>;
   export type InstructorResolvers = Pick<Types.InstructorResolvers, DefinedFields['Instructor'] | '__isTypeOf'>;
+  export type EnrollmentDayResolvers = Pick<Types.EnrollmentDayResolvers, DefinedFields['EnrollmentDay'] | '__isTypeOf'>;
   export type CatalogItemResolvers = Pick<Types.CatalogItemResolvers, DefinedFields['CatalogItem'] | '__isTypeOf'>;
   export type CatalogClassResolvers = Pick<Types.CatalogClassResolvers, DefinedFields['CatalogClass'] | '__isTypeOf'>;
   export type CourseListItemResolvers = Pick<Types.CourseListItemResolvers, DefinedFields['CourseListItem'] | '__isTypeOf'>;
@@ -40,6 +43,7 @@ export namespace CatalogModule {
     Class?: ClassResolvers;
     Section?: SectionResolvers;
     Instructor?: InstructorResolvers;
+    EnrollmentDay?: EnrollmentDayResolvers;
     CatalogItem?: CatalogItemResolvers;
     CatalogClass?: CatalogClassResolvers;
     CourseListItem?: CourseListItemResolvers;
@@ -101,6 +105,7 @@ export namespace CatalogModule {
       '*'?: gm.Middleware[];
       class?: gm.Middleware[];
       course?: gm.Middleware[];
+      enrollmentHistory?: gm.Middleware[];
       ccn?: gm.Middleware[];
       dateEnd?: gm.Middleware[];
       dateStart?: gm.Middleware[];
@@ -124,6 +129,13 @@ export namespace CatalogModule {
       '*'?: gm.Middleware[];
       familyName?: gm.Middleware[];
       givenName?: gm.Middleware[];
+    };
+    EnrollmentDay?: {
+      '*'?: gm.Middleware[];
+      enrollCount?: gm.Middleware[];
+      enrollMax?: gm.Middleware[];
+      waitlistCount?: gm.Middleware[];
+      waitlistMax?: gm.Middleware[];
     };
     CatalogItem?: {
       '*'?: gm.Middleware[];
