@@ -12,6 +12,7 @@ type Query {
 type Course {
     classes(term: Term): [Class]!
     crossListing: [Course]
+
     description: String!
     fromDate: String!
     gradeAverage: Float
@@ -30,12 +31,13 @@ type Course {
 
 type Class {
     course: Course!
+    primarySection: Section!
+    sections: [Section]!
+
     description: String
     enrollCount: Int!
     enrollMax: Int!
     number: String!
-    primarySection: Section!
-    sections: [Section]!
     semester: Semester!
     session: String!
     status: String!
@@ -51,9 +53,10 @@ type Class {
 }
 
 type Section {
-    ccn: Int!
     class: Class!
     course: Course!
+
+    ccn: Int!
     dateEnd: String
     dateStart: String
     days: [Boolean!]

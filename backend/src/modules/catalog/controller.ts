@@ -1,20 +1,29 @@
 import { CatalogItem, Term } from "../../generated-types/graphql";
-import { ClassModel, ClassType } from "../../db/class";
-import { getTermStartMonth, stringToTerm, termToString } from "../../utils/term";
+import { ClassModel } from "../../db/class";
+import { getTermStartMonth, termToString } from "../../utils/term";
 import { GradeModel, GradeType } from "../../db/grade";
 import { getAverage } from "../grade/controller";
 import { CourseModel, CourseType } from "../../db/course";
-import { SectionModel, SectionType } from "../../db/section";
+import { SectionModel } from "../../db/section";
 import { formatClass, formatCourse, formatSection } from "./formatter";
 import { getCourseKey, getCsCourseId } from "../../utils/course";
 import { isNil } from "lodash";
 import { GraphQLResolveInfo } from "graphql";
 import { getChildren } from "../../utils/graphql";
 
-export async function getCatalog(args: { term: Term }, info: GraphQLResolveInfo) {
+function matchCsCourseId(id: any) {
+    return {
+        $elemMatch: {
+            type: "cs-course-id",
+            id,
+        },
+    }
+}
+
+export async function getCatalog(term: Term, info: GraphQLResolveInfo): Promise<CatalogItem[]> {
     const classes = await ClassModel
         .find({
-            "session.term.name": termToString(args.term),
+            "session.term.name": termToString(term),
             "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },
         })
         .lean()
@@ -23,18 +32,13 @@ export async function getCatalog(args: { term: Term }, info: GraphQLResolveInfo)
     const courses = await CourseModel
         .find(
             {
-                identifiers: {
-                    $elemMatch: {
-                        type: "cs-course-id",
-                        id: { $in: Array.from(csCourseIds) }
-                    }
-                },
+                identifiers: matchCsCourseId({ $in: Array.from(csCourseIds) }),
                 /* 
                     The SIS toDate is unreliable so we can only
                     filter by fromDate and then sort to find the
                     most recent course.
                 */
-                fromDate: { $lte: getTermStartMonth(args.term) },
+                fromDate: { $lte: getTermStartMonth(term) },
             },
             {
                 _updated: 1,
@@ -82,7 +86,7 @@ export async function getCatalog(args: { term: Term }, info: GraphQLResolveInfo)
         }
     }
 
-    const catalog: { [key: string]: CatalogItem } = {}
+    const catalog: any = {}
     for (const c of courses) {
         const key = getCourseKey(c)
         const id = getCsCourseId(c)
@@ -92,9 +96,9 @@ export async function getCatalog(args: { term: Term }, info: GraphQLResolveInfo)
             continue
 
         catalog[id] = {
+            ...formatCourse(c, term),
             classes: [],
             gradeAverage: await getAverage(gradesMap[key]),
-            ...formatCourse(c, args.term),
         }
     }
 
@@ -103,7 +107,7 @@ export async function getCatalog(args: { term: Term }, info: GraphQLResolveInfo)
 
         if (!(id in catalog)) {
             throw new Error(`Class ${c.course?.subjectArea?.code} ${c.course?.catalogNumber?.formatted}`
-                + ` has a course id ${id} that doesn't exist for the ${args.term.semester} ${args.term.year} term.`)
+                + ` has a course id ${id} that doesn't exist for the ${term.semester} ${term.year} term.`)
         }
         catalog[id].classes.push(formatClass(c))
     }
@@ -111,190 +115,165 @@ export async function getCatalog(args: { term: Term }, info: GraphQLResolveInfo)
     return Object.values(catalog)
 }
 
+export function getClass(subject: string, courseNumber: string, term: Term, classNumber: string) {
+    return ClassModel
+        .findOne({
+            "course.subjectArea.code": subject,
+            "course.catalogNumber.formatted": courseNumber,
+            "session.term.name": termToString(term),
+            "number": classNumber,
+        })
+        .lean()
+        .then(formatClass)
+}
 
-export async function getClass(args: {
-    subject?: string, courseNumber?: string, csCourseId?: string, term: Term, classNumber: string
-}, info: GraphQLResolveInfo): Promise<any> {
+export function getClassById(id: string, term: Term, classNumber: string) {
+    return ClassModel
+        .findOne({
+            "course.identifiers": matchCsCourseId(id),
+            "session.term.name": termToString(term),
+            "number": classNumber,
+        })
+        .lean()
+        .then(formatClass)
+}
 
-    const termStr = termToString(args.term)
+export function getPrimarySection(id: string, term: Term, classNumber: string) {
+    return SectionModel
+        .findOne({
+            "class.course.identifiers": matchCsCourseId(id),
+            "class.session.term.name": termToString(term),
+            "class.number": classNumber,
+            "association.primary": true
+        })
+        .lean()
+        .then(formatSection)
+}
 
+export function getClassSections(id: string, term: Term, classNumber: string) {
+    return SectionModel
+        .find({
+            "class.course.identifiers": matchCsCourseId(id),
+            "class.session.term.name": termToString(term),
+            "class.number": classNumber
+        })
+        .lean()
+        .then(s => s.map(formatSection))
+}
+
+export function getCourse(subject: string, courseNumber: string, term?: Term | null) {
     const filter: any = {
-        "session.term.name": termStr,
-        "number": args.classNumber
+        "classSubjectArea.code": subject,
+        "catalogNumber.formatted": courseNumber
     }
 
-    if (args.subject != undefined && args.courseNumber != undefined) {
-        filter["course.subjectArea.code"] = args.subject
-        filter["course.catalogNumber.formatted"] = args.courseNumber
-    } else if (args.csCourseId != undefined) {
-        filter["course.identifiers"] = {
-            $elemMatch: {
-                type: "cs-course-id",
-                id: args.csCourseId
-            }
-        }
-    } else {
-        throw new Error("Class query requires either a subject and course number or a cs-course-id")
+    if (!isNil(term)) {
+        filter.fromDate = { $lte: getTermStartMonth(term) }
     }
 
-
-    const cls = await ClassModel.findOne(filter).lean()
-
-    if (cls == null) {
-        throw new Error("Class not found")
-    }
-
-    return processClass(cls, info)
+    return CourseModel
+        .findOne(filter)
+        .sort({ fromDate: -1 })
+        .lean()
+        .then(c => formatCourse(c, term))
 }
 
-export async function processClass(cls: ClassType, info: GraphQLResolveInfo): Promise<any> {
-    const csCourseId = getCsCourseId(cls.course as CourseType)
-
-    const children = getChildren(info)
-
-    let sections = null
-    let primarySection = null
-
-    if (children.includes("sections")) {
-        sections = await SectionModel
-            .find({
-                "class.course.identifiers": {
-                    $elemMatch: {
-                        type: "cs-course-id",
-                        id: csCourseId
-                    }
-                },
-                "class.session.term.name": cls.session?.term?.name,
-            })
-            .lean()
-    }
-
-    if (children.includes("primarySection")) {
-        primarySection = await SectionModel
-            .findOne({
-                "class.course.identifiers": {
-                    $elemMatch: {
-                        type: "cs-course-id",
-                        id: csCourseId
-                    }
-                },
-                "class.session.term.name": cls.session?.term?.name,
-                "association.primary": true
-            })
-            .lean()
-    }
-
-    return {
-        sections: sections?.map(formatSection),
-        primarySection: primarySection != null ? formatSection(primarySection) : null,
-        ...formatClass(cls)
-    }
-}
-
-
-export async function getSection(args: {
-    subject?: string, courseNumber?: string, csCourseId?: string, term: Term, classNumber?: string, sectionNumber?: string, ccn?: number
-}): Promise<any> {
-
-    const termStr = termToString(args.term)
-
+export function getCourseById(id: string, term?: Term | null) {
     const filter: any = {
-        "class.session.term.name": termStr,
+        identifiers: matchCsCourseId(id)
     }
 
-    if (args.ccn != undefined) {
-        filter["id"] = args.ccn
-    } else if (args.classNumber != undefined && args.sectionNumber != undefined) {
-        if (args.subject != undefined && args.courseNumber != undefined) {
-            filter["class.course.subjectArea.code"] = args.subject
-            filter["class.course.catalogNumber.formatted"] = args.courseNumber
-        } else if (args.csCourseId != undefined) {
-            filter["class.course.identifiers"] = {
-                $elemMatch: {
-                    type: "cs-course-id",
-                    id: args.csCourseId
-                }
-            }
-        } else {
-            throw new Error("Section query missing subject and course number or cs-course-id")
-        }
-    } else {
-        throw new Error("Class query missing ccn or class and section number")
+    if (!isNil(term)) {
+        filter.fromDate = { $lte: getTermStartMonth(term) }
     }
 
-
-    const section = await SectionModel.findOne(filter).lean()
-
-    if (section == null) {
-        throw new Error("Section not found")
-    }
-
-    return formatSection(section)
+    return CourseModel
+        .findOne(filter)
+        .sort({ fromDate: -1 })
+        .lean()
+        .then(c => formatCourse(c, term))
 }
 
-
-export async function getCourse(args: {
-    subject?: string, courseNumber?: string, term?: Term | null, csCourseId?: string, displayName?: string
-}, info: GraphQLResolveInfo): Promise<any> {
-    const filter: any = {}
-
-    if (!isNil(args.term)) {
-        /* 
-            The SIS toDate is unreliable so we can only
-            filter by fromDate and then sort to find the
-            most recent course. 
-
-            If no term is specified, we return the most
-            recent course.
-        */
-        filter["fromDate"] = { $lte: getTermStartMonth(args.term) }
+export function getCourseClasses(id: string, term?: Term | null) {
+    const filter: any = {
+        "course.identifiers": matchCsCourseId(id)
     }
 
-    if (args.subject != undefined && args.courseNumber != undefined) {
-        filter["classSubjectArea.code"] = args.subject
-        filter["catalogNumber.formatted"] = args.courseNumber
-    } else if (args.csCourseId != undefined) {
-        filter["identifiers"] = {
-            $elemMatch: {
-                type: "cs-course-id",
-                id: args.csCourseId
-            }
+    if (!isNil(term)) {
+        filter["session.term.name"] = termToString(term)
+    }
+
+    return ClassModel
+        .find(filter)
+        .lean()
+        .then(c => c.map(formatClass))
+}
+
+export function getCrossListings(displayNames: string[], term?: Term | null) {
+    return displayNames.map(name => {
+        const filter: any = {
+            displayName: name
         }
-    } else if (args.displayName != undefined) {
-        filter["displayName"] = args.displayName
-    } else {
-        throw new Error("Course query requires either a subject and course number, a cs-course-id, or a display name")
-    }
 
-    const course = await CourseModel.findOne(filter).sort({ fromDate: -1 }).lean()
+        if (!isNil(term)) {
+            filter.fromDate = { $lte: getTermStartMonth(term) }
+        }
 
-    if (course == null) {
-        throw new Error("Course not found")
-    }
-
-    const subject = course?.classSubjectArea?.code as string
-    const courseNumber = course?.catalogNumber?.formatted as string
-
-    const children = getChildren(info)
-
-    let classes = null;
-    if (children.includes("classes")) {
-        classes = await ClassModel
-            .find({
-                "course.subjectArea.code": subject,
-                "course.catalogNumber.formatted": courseNumber,
-            })
+        return CourseModel
+            .findOne(filter)
+            .sort({ fromDate: -1 })
             .lean()
-    }
-
-    return {
-        classes,
-        ...formatCourse(course, args.term),
-    }
+            .then(c => formatCourse(c, term))
+    })
 }
 
-export async function getCourseList() {
-    return await CourseModel.aggregate()
+export function getCourseSections(subject: string, courseNumber: string, term?: Term | null, primary?: boolean | null) {
+    const filter: any = {
+        "class.course.subjectArea.code": subject,
+        "class.course.catalogNumber.formatted": courseNumber,
+    }
+
+    if (!isNil(term)) {
+        filter["class.session.term.name"] = termToString(term)
+    }
+
+    if (primary) {
+        filter["association.primary"] = true
+    }
+
+    return SectionModel
+        .find(filter)
+        .lean()
+        .then(s => s.map(formatSection))
+}
+
+export function getSection(subject: string, courseNumber: string, term: Term, classNumber: string, sectionNumber: string) {
+    return SectionModel
+        .findOne({
+            "class.course.subjectArea.code": subject,
+            "class.course.catalogNumber.formatted": courseNumber,
+            "class.session.term.name": termToString(term),
+            "class.number": classNumber,
+            "number": sectionNumber
+        })
+        .lean()
+        .then(formatSection)
+}
+
+export function getSectionById(id: string, term: Term, classNumber: string, sectionNumber: string) {
+    return SectionModel
+        .findOne({
+            "class.course.identifiers": matchCsCourseId(id),
+            "class.session.term.name": termToString(term),
+            "class.number": classNumber,
+            "number": sectionNumber
+        })
+        .lean()
+        .then(formatSection)
+}
+
+export function getCourseList(): any {
+    return CourseModel.aggregate()
         .group({ _id: { subject: "$classSubjectArea.code", number: "$catalogNumber.formatted" } })
         .sort({ "_id.subject": 1, "_id.number": 1 })
         .project({ _id: 0, subject: "$_id.subject", number: "$_id.number" })

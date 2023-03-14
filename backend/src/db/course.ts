@@ -75,7 +75,7 @@ const CourseSchemaObject = {
     },
     departmentNicknames: String,
     description: String,
-    displayName: String,
+    displayName: String, // use classDisplayName instead, since that is consistent with the other API data
     finalExam: {
         code: String, // coverage: 99.7%
         description: String, // coverage: 99.7%

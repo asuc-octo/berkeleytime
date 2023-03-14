@@ -3,9 +3,9 @@ import * as gm from "graphql-modules";
 export namespace CatalogModule {
   interface DefinedFields {
     Query: 'catalog' | 'course' | 'class' | 'section' | 'courseList';
-    Course: 'classes' | 'crossListing' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'toDate' | 'raw' | 'lastUpdated';
-    Class: 'course' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'primarySection' | 'sections' | 'semester' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'year' | 'raw' | 'lastUpdated';
-    Section: 'ccn' | 'class' | 'course' | 'dateEnd' | 'dateStart' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'kind' | 'location' | 'notes' | 'number' | 'primary' | 'timeEnd' | 'timeStart' | 'waitlistCount' | 'waitlistMax' | 'raw' | 'lastUpdated';
+    Course: 'classes' | 'crossListing' | 'sections' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'toDate' | 'raw' | 'lastUpdated';
+    Class: 'course' | 'primarySection' | 'sections' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'semester' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'year' | 'raw' | 'lastUpdated';
+    Section: 'class' | 'course' | 'ccn' | 'dateEnd' | 'dateStart' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'kind' | 'location' | 'notes' | 'number' | 'primary' | 'timeEnd' | 'timeStart' | 'waitlistCount' | 'waitlistMax' | 'raw' | 'lastUpdated';
     Instructor: 'familyName' | 'givenName';
     CatalogItem: 'subject' | 'number' | 'title' | 'description' | 'classes' | 'gradeAverage' | 'lastUpdated';
     CatalogClass: 'number' | 'title' | 'description' | 'enrollCount' | 'enrollMax' | 'unitsMax' | 'unitsMin' | 'lastUpdated';
@@ -61,6 +61,7 @@ export namespace CatalogModule {
       '*'?: gm.Middleware[];
       classes?: gm.Middleware[];
       crossListing?: gm.Middleware[];
+      sections?: gm.Middleware[];
       description?: gm.Middleware[];
       fromDate?: gm.Middleware[];
       gradeAverage?: gm.Middleware[];
@@ -78,12 +79,12 @@ export namespace CatalogModule {
     Class?: {
       '*'?: gm.Middleware[];
       course?: gm.Middleware[];
+      primarySection?: gm.Middleware[];
+      sections?: gm.Middleware[];
       description?: gm.Middleware[];
       enrollCount?: gm.Middleware[];
       enrollMax?: gm.Middleware[];
       number?: gm.Middleware[];
-      primarySection?: gm.Middleware[];
-      sections?: gm.Middleware[];
       semester?: gm.Middleware[];
       session?: gm.Middleware[];
       status?: gm.Middleware[];
@@ -98,9 +99,9 @@ export namespace CatalogModule {
     };
     Section?: {
       '*'?: gm.Middleware[];
-      ccn?: gm.Middleware[];
       class?: gm.Middleware[];
       course?: gm.Middleware[];
+      ccn?: gm.Middleware[];
       dateEnd?: gm.Middleware[];
       dateStart?: gm.Middleware[];
       days?: gm.Middleware[];

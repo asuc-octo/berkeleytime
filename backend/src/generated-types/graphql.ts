@@ -75,6 +75,7 @@ export type Course = {
   number: Scalars['String'];
   prereqs?: Maybe<Scalars['String']>;
   raw: Scalars['JSONObject'];
+  sections: Array<Maybe<Section>>;
   subject: Scalars['String'];
   subjectName: Scalars['String'];
   title: Scalars['String'];
@@ -83,6 +84,12 @@ export type Course = {
 
 
 export type CourseClassesArgs = {
+  term?: InputMaybe<Term>;
+};
+
+
+export type CourseSectionsArgs = {
+  primary?: InputMaybe<Scalars['Boolean']>;
   term?: InputMaybe<Term>;
 };
 
@@ -389,6 +396,7 @@ export type CourseResolvers<ContextType = any, ParentType extends ResolversParen
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   prereqs?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
+  sections?: Resolver<Array<Maybe<ResolversTypes['Section']>>, ParentType, ContextType, Partial<CourseSectionsArgs>>;
   subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   subjectName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
