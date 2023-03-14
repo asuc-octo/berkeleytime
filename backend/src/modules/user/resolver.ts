@@ -1,11 +1,12 @@
 import { getByEmail } from "./controller";
 import { UserModule } from "./generated-types/module-types";
+import { secure } from "../../utils/secure";
 
 const resolvers: UserModule.Resolvers = {
     Query: {
-        User(_parent, args: { email: string }) {
+        User: secure((_parent: any, args: { email: string }) => {
             return getByEmail(args.email);
-        },
+        }),
     },
 };
 
