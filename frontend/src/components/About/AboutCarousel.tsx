@@ -66,14 +66,23 @@ const AboutCarousel = () => {
 
 	const getCarouselItemClass = (idx: number) => {
 		let classes = 'about-carousel-item ';
-		if (idx === shownImage) {
-			classes += 'about-carousel-active-second ';
+		if (idx === wrap(shownImage - 2)) {
+			classes += 'about-carousel-active-prev ';
 		} else if (idx === wrap(shownImage - 1)) {
 			classes += 'about-carousel-active-first ';
+			if (sliding === Sliding.Right) {
+				classes += 'focus-in ';
+			}
+		} else if (idx === shownImage) {
+			classes += 'about-carousel-active-second ';
+			if (sliding !== Sliding.Still) {
+				classes += 'focus-out ';
+			}
 		} else if (idx === wrap(shownImage + 1)) {
 			classes += 'about-carousel-active-third ';
-		} else if (idx === wrap(shownImage - 2)) {
-			classes += 'about-carousel-active-prev ';
+			if (sliding === Sliding.Left) {
+				classes += 'focus-in ';
+			}
 		} else if (idx === wrap(shownImage + 2)) {
 			classes += 'about-carousel-active-next ';
 		}
@@ -92,7 +101,9 @@ const AboutCarousel = () => {
 
 	return (
 		<div className="group mb-5">
-			<div className={getCarouselClass()} onTransitionEnd={triggerSwap}>
+			<div className={getCarouselClass()} onTransitionEnd={e => {
+				if (e.target === e.currentTarget) triggerSwap();
+			}}>
 				{images.map((imgVal, index) => (
 					<div key={imgVal.alt} className={getCarouselItemClass(index)}>
 						<img src={imgVal.img} alt={imgVal.alt} />
