@@ -64,12 +64,48 @@ export const current: Contributors = {
 			}
 		},
 		{
+			name: 'Jaden Moore',
+			role: 'Frontend Engineer',
+			site: 'https://www.jdyn.dev/',
+			img: {
+				base: path('2022-23/jaden_1.jpg'),
+				silly: undefined
+			}
+		},
+		{
+			name: 'Alexander Lew',
+			role: 'Frontend Engineer',
+			site: 'https://www.qxbytes.com/',
+			img: {
+				base: path('2022-23/alexander_1.jpg'),
+				silly: undefined
+			}
+		},
+		{
+			name: 'Joel Jaison',
+			role: 'Frontend Engineer',
+			site: null,
+			img: {
+				base: path('2022-23/joel_1.jpg'),
+				silly: undefined
+			}
+		},
+		{
+			name: 'Levi Kline',
+			role: 'Frontend Engineer',
+			site: 'https://levibkline.com',
+			img: {
+				base: path('2022-23/levi_1.jpg'),
+				silly: undefined
+			}
+		},
+		{
 			name: 'Ethan Ikegami',
 			role: 'Backend Engineer',
 			site: 'https://ethanikegami.com/',
 			img: {
 				base: path('2022-23/ethan_1.jpg'),
-				silly: '2022-23/ethan_2.jpg'
+				silly: path('2022-23/ethan_2.jpg')
 			}
 		},
 		{
@@ -82,11 +118,20 @@ export const current: Contributors = {
 			}
 		},
 		{
-			name: 'Levi Kline',
-			role: 'Frontend Engineer',
-			site: 'https://levibkline.com',
+			name: 'Max Wang',
+			role: 'Backend Engineer',
+			site: null,
 			img: {
-				base: path('2022-23/levi_1.jpg'),
+				base: path('2022-23/max_1.jpg'),
+				silly: undefined
+			}
+		},
+		{
+			name: 'Michael Khaykin',
+			role: 'Backend Engineer',
+			site: null,
+			img: {
+				base: path('2022-23/michael_1.jpg'),
 				silly: undefined
 			}
 		},
@@ -100,11 +145,29 @@ export const current: Contributors = {
 			}
 		},
 		{
-			name: 'Joel Jaison',
-			role: 'Frontend Engineer',
+			name: 'Carissa Cui',
+			role: 'Designer',
+			site: 'https://www.carissacui.com/',
+			img: {
+				base: path('2022-23/carissa_1.jpg'),
+				silly: undefined
+			}
+		},
+		{
+			name: 'Joanne Chuang',
+			role: 'Designer',
 			site: null,
 			img: {
-				base: path('2022-23/joel_1.jpg'),
+				base: path('2022-23/joanne_1.jpg'),
+				silly: path('2022-23/joanne_2.jpg')
+			}
+		},
+		{
+			name: 'Rachel Hua',
+			role: 'Designer',
+			site: 'https://www.linkedin.com/in/byrachelhua/',
+			img: {
+				base: path('2022-23/rachel_1.jpg'),
 				silly: undefined
 			}
 		}
@@ -116,9 +179,29 @@ export const past: Contributors[] = [
 		name: 'Class of 2024',
 		items: [
 			{
+				name: 'Kelly Ma',
+				role: 'Design Lead',
+				site: 'https://kellymadesign.com'
+			},
+			{
 				name: 'Shuming Xu',
 				role: 'Backend Engineer',
 				site: 'https://shumingxu.com/'
+			},
+			{
+				name: 'Alex Zhang',
+				role: 'Backend Engineer',
+				site: null
+			},
+			{
+				name: 'Nikhil Jha',
+				role: 'Backend Engineer',
+				site: null
+			},
+			{
+				name: 'Nikhil Ograin',
+				role: 'Backend Engineer',
+				site: null
 			},
 			{
 				name: 'Vihan Bhargava',
@@ -139,6 +222,11 @@ export const past: Contributors[] = [
 				name: 'Annie Pan',
 				role: 'Designer',
 				site: 'http://anniexpan.com/'
+			},
+			{
+				name: 'Cici Wei',
+				role: 'Designer',
+				site: null
 			},
 			{
 				name: 'Alex Xi',
