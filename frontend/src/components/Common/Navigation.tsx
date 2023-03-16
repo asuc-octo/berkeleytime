@@ -5,9 +5,9 @@ import { Navbar, Nav, NavProps } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
 import { ReduxState } from '../../redux/store';
 import { Button } from 'bt/custom';
+import { ReactComponent as GoogleIcon } from '../../assets/svg/profile/google.svg';
 
 import { useUser } from '../../graphql/hooks/user';
-import LoginModal from '../Login/LoginModal';
 
 type Props = PropsFromRedux;
 
@@ -67,11 +67,16 @@ const Navigation: FC<Props> = (props) => {
 							<Button href="/logout">Log out</Button>
 						</>
 					) : (
-						<Button onClick={() => setShowLogin(true)}>Log in</Button>
+						<Button 
+              onClick={() => {
+                window.location.href = '/api/login/';
+              }}
+            >
+              <GoogleIcon className="mr-2" /> Log in
+            </Button>
 					)}
 				</Nav>
 			</Navbar.Collapse>
-			<LoginModal showLogin={showLogin} hideLogin={() => setShowLogin(false)} />
 		</Navbar>
 	);
 };
