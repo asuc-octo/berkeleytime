@@ -67,13 +67,13 @@ const Navigation: FC<Props> = (props) => {
 							<Button href="/logout">Log out</Button>
 						</>
 					) : (
-						<Button 
-              onClick={() => {
-                window.location.href = '/api/login/';
-              }}
-            >
-              <GoogleIcon className="mr-2" /> Log in
-            </Button>
+						<Button
+							onClick={() => {
+								window.location.href = '/api/login/';
+							}}
+						>
+							<GoogleIcon className="mr-2" /> Log in
+						</Button>
 					)}
 				</Nav>
 			</Navbar.Collapse>
