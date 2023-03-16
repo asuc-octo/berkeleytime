@@ -100,14 +100,14 @@ const AboutCarousel = () => {
 				))}
 			</div>
 			<div className="about-carousel-prev">
-				<span
+				<button
 					onClick={() => changeImage(Sliding.Right)}
 					className="about-carousel-prev-icon"
 					aria-hidden="true"
 				/>
 			</div>
 			<div className="about-carousel-next">
-				<span
+				<button
 					onClick={() => changeImage(Sliding.Left)}
 					className="about-carousel-next-icon"
 					aria-hidden="true"
