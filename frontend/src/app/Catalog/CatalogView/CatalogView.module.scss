@@ -37,10 +37,6 @@
 		color: $bt-base-text;
 		font-weight: 700;
 		font-size: 18px;
-
-		span {
-			color: $bt-blue;
-		}
 	}
 
 	h6 {
@@ -210,10 +206,8 @@
 .sectionItem {
 	display: flex;
 	flex-direction: row;
-	// background: #F8F8F8;
-	padding: 12px 24px;
-	border-radius: 12px !important;
-	border: 1.5px solid #eaeaea;
+	padding: 6px 12px;
+	border-top: 1.5px solid #eaeaea;
 	gap: 20px;
 	h5 {
 		font-size: 16px;
@@ -222,9 +216,6 @@
 
 	h6 {
 		font-size: 14px;
-		span {
-			text-transform: capitalize;
-		}
 	}
 }
 
@@ -233,6 +224,12 @@
 	gap: 5px;
 	flex-direction: column;
 	flex: 1;
+
+	div {
+		font-size: 14px;
+		color: $bt-light-text;
+		text-transform: capitalize;
+	}
 }
 
 .sectionStats {
