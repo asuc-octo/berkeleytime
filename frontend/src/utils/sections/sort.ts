@@ -1,5 +1,4 @@
 import { SectionFragment } from 'graphql';
-import { groupBy } from 'lodash-es';
 import { stringToDate } from 'utils/date';
 import { isEnrollmentSection } from './section';
 
@@ -60,7 +59,11 @@ export function sortSections(sections: SectionFragment[]): SectionFragment[] {
  * Sorts a list of sections into ([type, [sections]])
  */
 export function groupSections(sections: SectionFragment[]) {
-	return Object.entries(groupBy(sections, (s) => s.kind))
+	const groups = sections.reduce(
+		(r, v) => ({ ...r, [v.kind]: [...(r[v.kind] ?? []), v] }),
+		{} as { [key: string]: SectionFragment[] }
+	);
+	return Object.entries(groups)
 		.sort((a, b) => (SECTION_TYPE_ORDER[a[0]] ?? Infinity) - SECTION_TYPE_ORDER[b[0]])
 		.map(([category, sections]) => ({
 			category,
