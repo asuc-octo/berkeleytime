@@ -11,9 +11,7 @@ export type Contributors = {
 	}[];
 };
 
-const BASE_PATH = 'assets/img/about/';
-
-const path = (path: string) => BASE_PATH + path;
+const path = (path: string) => new URL(`../assets/img/about/2022-23/${path}`, import.meta.url).href;
 
 export const current: Contributors = {
 	name: 'Current Team',
@@ -23,8 +21,8 @@ export const current: Contributors = {
 			role: 'Product Manager and Backend Engineer',
 			site: 'https://kevwang.dev/',
 			img: {
-				base: path('2022-23/kevin_1.jpg'),
-				silly: path('2022-23/kevin_2.jpg')
+				base: path('kevin_1.jpg'),
+				silly: path('kevin_2.jpg')
 			}
 		},
 		{
@@ -32,17 +30,17 @@ export const current: Contributors = {
 			role: 'Backend Lead',
 			site: 'https://zacharyzollman.com/',
 			img: {
-				base: path('2022-23/zachary_1.jpg'),
-				silly: path('2022-23/zachary_2.jpg')
+				base: path('zachary_1.jpg'),
+				silly: path('zachary_2.jpg')
 			}
 		},
 		{
 			name: 'Matthew Rowland',
 			role: 'Frontend Lead',
-			site: null,
+			site: 'https://www.linkedin.com/in/matthew-rowland-dev/',
 			img: {
-				base: path('2022-23/matthew_1.jpg'),
-				silly: path('2022-23/matthew_2.jpg')
+				base: path('matthew_1.jpg'),
+				silly: path('matthew_2.jpg')
 			}
 		},
 		{
@@ -50,8 +48,8 @@ export const current: Contributors = {
 			role: 'Design Lead',
 			site: 'https://michelletran.design',
 			img: {
-				base: path('2022-23/michelle_1.jpg'),
-				silly: path('2022-23/michelle_2.jpg')
+				base: path('michelle_1.jpg'),
+				silly: path('michelle_2.jpg')
 			}
 		},
 		{
@@ -59,8 +57,8 @@ export const current: Contributors = {
 			role: 'Frontend Engineer',
 			site: null,
 			img: {
-				base: path('2022-23/henric_1.jpg'),
-				silly: path('2022-23/henric_2.jpg')
+				base: path('henric_1.jpg'),
+				silly: path('henric_2.jpg')
 			}
 		},
 		{
@@ -68,25 +66,16 @@ export const current: Contributors = {
 			role: 'Frontend Engineer',
 			site: 'https://www.jdyn.dev/',
 			img: {
-				base: path('2022-23/jaden_1.jpg'),
+				base: path('jaden_1.jpg'),
 				silly: undefined
 			}
 		},
 		{
 			name: 'Alexander Lew',
 			role: 'Frontend Engineer',
-			site: 'https://www.qxbytes.com/',
+			site: 'https://www.qxbytes.com',
 			img: {
-				base: path('2022-23/alexander_1.jpg'),
-				silly: undefined
-			}
-		},
-		{
-			name: 'Joel Jaison',
-			role: 'Frontend Engineer',
-			site: null,
-			img: {
-				base: path('2022-23/joel_1.jpg'),
+				base: path('alexander_1.jpg'),
 				silly: undefined
 			}
 		},
@@ -95,17 +84,44 @@ export const current: Contributors = {
 			role: 'Frontend Engineer',
 			site: 'https://levibkline.com',
 			img: {
-				base: path('2022-23/levi_1.jpg'),
+				base: path('levi_1.jpg'),
 				silly: undefined
 			}
 		},
 		{
-			name: 'Ethan Ikegami',
-			role: 'Backend Engineer',
-			site: 'https://ethanikegami.com/',
+			name: 'Joel Jaison',
+			role: 'Frontend Engineer',
+			site: null,
 			img: {
-				base: path('2022-23/ethan_1.jpg'),
-				silly: path('2022-23/ethan_2.jpg')
+				base: path('joel_1.jpg'),
+				silly: path('joel_1.jpg')
+			}
+		},
+		{
+			name: 'Eric Xu',
+			role: 'Backend Engineer',
+			site: 'https://www.linkedin.com/in/e-xu-at-berkeley',
+			img: {
+				base: path('eric_1.jpg'),
+				silly: path('eric_2.jpg')
+			}
+		},
+		{
+			name: 'Max Wang',
+			role: 'Backend Engineer',
+			img: {
+				base: path('max_1.jpg'),
+				silly: undefined
+			},
+			site: null
+		},
+		{
+			name: 'Michael Khaykin',
+			role: 'Backend Engineer',
+			site: null,
+			img: {
+				base: path('michael_1.jpg'),
+				silly: undefined
 			}
 		},
 		{
@@ -113,43 +129,25 @@ export const current: Contributors = {
 			role: 'Backend Engineer',
 			site: 'https://www.linkedin.com/in/william-tang-cal/',
 			img: {
-				base: path('2022-23/william_1.jpg'),
-				silly: path('2022-23/william_2.jpg')
+				base: path('william_1.jpg'),
+				silly: path('william_2.jpg')
 			}
 		},
 		{
-			name: 'Max Wang',
+			name: 'Ethan Ikegami',
 			role: 'Backend Engineer',
-			site: null,
+			site: 'https://ethanikegami.com/',
 			img: {
-				base: path('2022-23/max_1.jpg'),
-				silly: undefined
-			}
-		},
-		{
-			name: 'Michael Khaykin',
-			role: 'Backend Engineer',
-			site: null,
-			img: {
-				base: path('2022-23/michael_1.jpg'),
-				silly: undefined
-			}
-		},
-		{
-			name: 'Eric Xu',
-			role: 'Backend Engineer',
-			site: null,
-			img: {
-				base: path('2022-23/eric_1.jpg'),
-				silly: path('2022-23/eric_2.jpg')
+				base: path('ethan_1.jpg'),
+				silly: path('ethan_2.jpg')
 			}
 		},
 		{
 			name: 'Carissa Cui',
 			role: 'Designer',
-			site: 'https://www.carissacui.com/',
+			site: 'https://www.carissacui.com',
 			img: {
-				base: path('2022-23/carissa_1.jpg'),
+				base: path('carissa_1.jpg'),
 				silly: undefined
 			}
 		},
@@ -158,8 +156,8 @@ export const current: Contributors = {
 			role: 'Designer',
 			site: null,
 			img: {
-				base: path('2022-23/joanne_1.jpg'),
-				silly: path('2022-23/joanne_2.jpg')
+				base: path('joanne_1.jpg'),
+				silly: path('joanne_2.jpg')
 			}
 		},
 		{
@@ -167,7 +165,7 @@ export const current: Contributors = {
 			role: 'Designer',
 			site: 'https://www.linkedin.com/in/byrachelhua/',
 			img: {
-				base: path('2022-23/rachel_1.jpg'),
+				base: path('rachel_1.jpg'),
 				silly: undefined
 			}
 		}
