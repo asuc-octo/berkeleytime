@@ -1,7 +1,10 @@
 import { SectionFragment } from 'graphql';
 import { CSSProperties } from 'react';
-import { Table } from 'react-bootstrap';
+import { formatSectionTime } from 'utils/sections/section';
+import catalogService from '../service';
+import Skeleton from 'react-loading-skeleton';
 
+import people from 'assets/svg/catalog/people.svg';
 import denero from 'assets/img/eggs/denero.png';
 import hug from 'assets/img/eggs/hug.png';
 import hilf from 'assets/img/eggs/hilf.png';
@@ -9,7 +12,10 @@ import sahai from 'assets/img/eggs/sahai.png';
 import scott from 'assets/img/eggs/scott.png';
 import kubi from 'assets/img/eggs/kubi.png';
 import garcia from 'assets/img/eggs/garcia.png';
-import { formatSectionTime } from 'utils/sections/section';
+
+import styles from './CatalogView.module.scss';
+
+const { colorEnrollment, formatEnrollment } = catalogService;
 
 const easterEggImages = new Map<string, string>([
 	['DENERO J', denero],
@@ -27,7 +33,7 @@ function findInstructor(instr: string | null): CSSProperties {
 	for (const [name, eggUrl] of easterEggImages) {
 		if (instr.includes(name)) {
 			return {
-				'--section-cursor': `url("${eggUrl}")`
+				cursor: `url("${eggUrl}"), pointer`
 			} as CSSProperties;
 		}
 	}
@@ -39,49 +45,59 @@ type Props = {
 	sections: SectionFragment[] | null;
 };
 
-const SectionTable = ({ sections }: Props) => {
+const CatalogViewSections = ({ sections }: Props) => {
+	if (!sections) {
+		return (
+			<Skeleton
+				className={styles.sectionItem}
+				count={3}
+				height={65}
+				style={{ marginBottom: '10px' }}
+			/>
+		);
+	}
+
 	return (
-		<section className="table-container description-section">
-			<div>
-				<Table className="table">
-					<thead>
-						<tr>
-							<th style={{ width: '75px' }}>Type</th>
-							<th style={{ width: '50px' }}>CCN</th>
-							<th style={{ width: '100px' }}>Instructor</th>
-							<th style={{ width: '130px' }}>Time</th>
-							<th style={{ width: '85px' }}>Location</th>
-							<th style={{ width: '75px' }}>Enrolled</th>
-							<th style={{ width: '75px' }}>Waitlist</th>
-						</tr>
-					</thead>
-					<tbody>
-						{sections?.map((section) => {
-							return (
-								<tr key={section.ccn} style={findInstructor(section.instructor)}>
-									<td>{section.kind}</td>
-									<td>{section.ccn}</td>
-									<td>{section.instructor}</td>
-									{section.startTime && section.endTime ? (
-										<td>
-											{section.wordDays} {formatSectionTime(section)}
-										</td>
-									) : (
-										<td></td>
-									)}
-									<td>{section.locationName}</td>
-									<td>
-										{section.enrolled}/{section.enrolledMax}
-									</td>
-									<td>{section.waitlisted}</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</Table>
-			</div>
-		</section>
+		<div className={styles.sectionRoot}>
+			{sections.length > 0 ? (
+				sections.map((section) => (
+					<div
+						className={styles.sectionItem}
+						style={findInstructor(section.instructor)}
+						key={section.ccn}
+					>
+						<div className={styles.sectionInfo}>
+							<h5>
+								<span>{section.kind}</span> •{' '}
+								{section.locationName ? section.locationName : 'Unknown Location'}
+							</h5>
+							<h6>
+								{section.wordDays} {formatSectionTime(section)}
+							</h6>
+							<div>{section?.instructor?.toLowerCase() ?? 'No Instructor'}</div>
+							<span className={styles.sectionStats}>
+								{/* <span className={colorEnrollment(section.enrolled / section.enrolledMax)}>
+									{formatEnrollment(section.enrolled / section.enrolledMax)}
+								</span> */}
+								<span>{section.waitlisted} Waitlisted</span>
+								<span>• CCN: {section.ccn}</span>
+							</span>
+						</div>
+						<div
+							className={`${colorEnrollment(section.enrolled / section.enrolledMax)} ${
+								styles.enrolled
+							}`}
+						>
+							<img src={people} />
+							{section.enrolled}/{section.enrolledMax}
+						</div>
+					</div>
+				))
+			) : (
+				<div>There are no class sections for this course.</div>
+			)}
+		</div>
 	);
 };
 
-export default SectionTable;
+export default CatalogViewSections;
