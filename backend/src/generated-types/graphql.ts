@@ -57,6 +57,16 @@ export type LetterGrade = {
   percentile_low: Scalars['Float'];
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  UserChangeFirstName?: Maybe<User>;
+};
+
+
+export type MutationUserChangeFirstNameArgs = {
+  first_name: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   Enrollment?: Maybe<Enrollment>;
@@ -90,6 +100,7 @@ export type User = {
   email_enrollment_opening?: Maybe<Scalars['Boolean']>;
   email_grade_update?: Maybe<Scalars['Boolean']>;
   first_name: Scalars['String'];
+  id: Scalars['String'];
   is_active: Scalars['Boolean'];
   is_staff: Scalars['Boolean'];
   is_superuser: Scalars['Boolean'];
@@ -175,6 +186,7 @@ export type ResolversTypes = {
   Grade: ResolverTypeWrapper<Grade>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   LetterGrade: ResolverTypeWrapper<LetterGrade>;
+  Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   User: ResolverTypeWrapper<User>;
@@ -189,10 +201,15 @@ export type ResolversParentTypes = {
   Grade: Grade;
   Int: Scalars['Int'];
   LetterGrade: LetterGrade;
+  Mutation: {};
   Query: {};
   String: Scalars['String'];
   User: User;
 };
+
+export type AuthDirectiveArgs = { };
+
+export type AuthDirectiveResolver<Result, Parent, ContextType = any, Args = AuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type EnrollmentResolvers<ContextType = any, ParentType extends ResolversParentTypes['Enrollment'] = ResolversParentTypes['Enrollment']> = {
   classId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -237,6 +254,10 @@ export type LetterGradeResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  UserChangeFirstName?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUserChangeFirstNameArgs, 'first_name'>>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   Enrollment?: Resolver<Maybe<ResolversTypes['Enrollment']>, ParentType, ContextType, RequireFields<QueryEnrollmentArgs, 'classId'>>;
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'email'>>;
@@ -251,6 +272,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   email_enrollment_opening?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   email_grade_update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   first_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   is_active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   is_staff?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   is_superuser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
@@ -266,7 +288,11 @@ export type Resolvers<ContextType = any> = {
   EnrollmentInfo?: EnrollmentInfoResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
   LetterGrade?: LetterGradeResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 
+export type DirectiveResolvers<ContextType = any> = {
+  auth?: AuthDirectiveResolver<any, any, ContextType>;
+};

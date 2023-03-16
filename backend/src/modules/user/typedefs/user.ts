@@ -1,6 +1,8 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
+  directive @auth on OBJECT
+
   type User {
     id: String!
     last_login: String
@@ -19,8 +21,12 @@ const typedef = gql`
     email_berkeleytime_update: Boolean,
   }
 
-  type Query {
+  type Query @auth {
     User(email: String!): User
+  }
+
+  type Mutation @auth {
+    UserChangeFirstName(first_name: String!): User
   }
 `;
 

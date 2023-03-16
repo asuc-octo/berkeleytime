@@ -2,19 +2,23 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace UserModule {
   interface DefinedFields {
-    User: 'last_login' | 'is_superuser' | 'username' | 'first_name' | 'last_name' | 'email' | 'is_staff' | 'is_active' | 'date_joined' | 'major' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
+    User: 'id' | 'last_login' | 'is_superuser' | 'username' | 'first_name' | 'last_name' | 'email' | 'is_staff' | 'is_active' | 'date_joined' | 'major' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
     Query: 'User';
+    Mutation: 'UserChangeFirstName';
   };
   
   export type User = Pick<Types.User, DefinedFields['User']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
+  export type Mutation = Pick<Types.Mutation, DefinedFields['Mutation']>;
   
   export type UserResolvers = Pick<Types.UserResolvers, DefinedFields['User'] | '__isTypeOf'>;
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
+  export type MutationResolvers = Pick<Types.MutationResolvers, DefinedFields['Mutation']>;
   
   export interface Resolvers {
     User?: UserResolvers;
     Query?: QueryResolvers;
+    Mutation?: MutationResolvers;
   };
   
   export interface MiddlewareMap {
@@ -23,6 +27,7 @@ export namespace UserModule {
     };
     User?: {
       '*'?: gm.Middleware[];
+      id?: gm.Middleware[];
       last_login?: gm.Middleware[];
       is_superuser?: gm.Middleware[];
       username?: gm.Middleware[];
@@ -41,6 +46,10 @@ export namespace UserModule {
     Query?: {
       '*'?: gm.Middleware[];
       User?: gm.Middleware[];
+    };
+    Mutation?: {
+      '*'?: gm.Middleware[];
+      UserChangeFirstName?: gm.Middleware[];
     };
   };
 }

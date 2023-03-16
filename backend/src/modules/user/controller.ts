@@ -11,3 +11,8 @@ export async function getByEmail(email: string): Promise<User> {
 
     return formatUser(user as UserType);
 }
+
+// for testing
+export async function changeFirstName(email: string, first_name: string) {
+    await UserModel.findOneAndUpdate({ email }, { first_name }, { new: true });
+}

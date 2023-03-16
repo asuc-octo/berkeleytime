@@ -1,5 +1,5 @@
 import { ApolloServer } from "@apollo/server";
-import { buildSchema } from "../../utils/buildSchema";
+import { buildSchema } from "../graphql/buildSchema";
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 export default async () => {
