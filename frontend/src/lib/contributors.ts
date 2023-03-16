@@ -46,6 +46,15 @@ export const current: Contributors = {
 			}
 		},
 		{
+			name: 'Michelle Tran',
+			role: 'Design Lead',
+			site: 'https://michelletran.design',
+			img: {
+				base: path('2022-23/michelle_1.jpg'),
+				silly: path('2022-23/michelle_2.jpg')
+			}
+		},
+		{
 			name: 'Henric Zhang',
 			role: 'Frontend Engineer',
 			site: null,
@@ -88,15 +97,6 @@ export const current: Contributors = {
 			img: {
 				base: path('2022-23/eric_1.jpg'),
 				silly: path('2022-23/eric_2.jpg')
-			}
-		},
-		{
-			name: 'Michelle Tran',
-			role: 'Designer',
-			site: 'https://michelletran.design',
-			img: {
-				base: path('2022-23/michelle_1.jpg'),
-				silly: path('2022-23/michelle_2.jpg')
 			}
 		},
 		{
