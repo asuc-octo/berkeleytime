@@ -40,13 +40,11 @@ const Berkeleytime = () => {
 		if (localStorage.getItem(key) === null) {
 			localStorage.setItem(key, key);
 		}
-	}, [dispatch]);
 
-	return (
-		<div ref={observe} className="app">
-			<Routes />
-		</div>
-	);
+		observe(document.getElementById('root'));
+	}, [dispatch, observe]);
+
+	return <Routes />;
 };
 
 export default memo(Berkeleytime);

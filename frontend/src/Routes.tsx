@@ -1,10 +1,9 @@
-/*eslint max-len: ["error", { "code": 180 }]*/
 import { lazy, Suspense } from 'react';
 import { Switch, Route, RouteProps, Redirect } from 'react-router-dom';
 import BTLoader from 'components/Common/BTLoader';
 
 import Catalog from './app/Catalog';
-import Landing from './views/Landing';
+import Home from 'app/Home';
 import Error from './views/Error/Error';
 import Layout from 'components/Common/Layout';
 
@@ -25,7 +24,7 @@ const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
 const RedirectLink = lazy(() => import('./views/RedirectLink'));
 
 const routes: Array<RouteProps> = [
-	{ path: '/landing', component: Landing },
+	{ path: '/', component: Home },
 	{ path: '/catalog', component: Catalog, exact: false },
 	{ path: '/grades', component: Grades, exact: false },
 	{ path: '/enrollment', component: Enrollment, exact: false },
@@ -54,7 +53,7 @@ const Routes = () => (
 		}
 	>
 		<Switch>
-			<Redirect from="/" to="/landing" exact />
+			<Redirect from="/landing" to="/" exact />
 			<Redirect from="/s/:scheduleId" to="/schedule/:scheduleId" />
 
 			<Route path="/catalog/:semester?/:abbreviation?/:courseNumber?" exact={false}>
