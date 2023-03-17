@@ -1,0 +1,37 @@
+.root {
+	height: 100vh;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	background: linear-gradient(8deg, #d8a2c4 10.21%, #b4b1d8 52.23%);
+}
+
+.container {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	width: 100%;
+	// max-width: 1024px !important;
+	margin: 0 auto;
+}
+
+.hero {
+	display: flex;
+	position: relative;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+	flex-grow: 1;
+	flex-direction: row;
+	overflow: hidden;
+	height: 100vh;
+}
+
+.heroWrapper {
+	display: flex;
+
+	h1 {
+		color: white;
+	}
+}
