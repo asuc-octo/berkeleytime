@@ -64,7 +64,7 @@ export const current: Contributors = {
 		{
 			name: 'Jaden Moore',
 			role: 'Frontend Engineer',
-			site: 'https://www.jdyn.dev/',
+			site: null,
 			img: {
 				base: path('jaden_1.jpg'),
 				silly: undefined
