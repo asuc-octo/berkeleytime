@@ -20,13 +20,17 @@ function matchCsCourseId(id: any) {
     }
 }
 
-export async function getCatalog(term: Term, info: GraphQLResolveInfo): Promise<CatalogItem[]> {
+export async function getCatalog(term: Term, info: GraphQLResolveInfo): Promise<CatalogItem[] | null> {
     const classes = await ClassModel
         .find({
             "session.term.name": termToString(term),
             "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },
         })
         .lean()
+
+    if (classes.length === 0) {
+        return null
+    }
 
     const csCourseIds = new Set(classes.map(c => getCsCourseId(c.course as CourseType)))
     const courses = await CourseModel
