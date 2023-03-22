@@ -1,137 +1,94 @@
-import { GradeModel, GradeType } from "./model";
-import { GradeModule } from "./generated-types/module-types";
-import { letterGrades, PNP, semesters } from "./constants";
+import { GradeModel, GradeType } from "../../db/grade";
+import { Term } from "../../generated-types/graphql";
+import { omitBy, isNil } from "lodash";
 
-export async function grades(CourseControlNumber: number, Year: number, Semester: string): Promise<GradeModule.Grade> {
-  let grades;
-  if (Year >= 2007 && semesters.has(Semester)) {
-    grades = await GradeModel.find({CourseControlNbr: CourseControlNumber, "term.year": Year, "term.semester": Semester});
-  } else {
-    throw new Error("Invalid query parameters");
-  }
-
-  if (!grades) {
-    throw new Error("Combination of term and year not found");
-  }
-  
-  const {possible_grades, totalEnrolled, letterGradeCount, gpaSum} = mongoToGradesDict(grades);
-  const averageGPA = round(gpaSum / letterGradeCount, 3);
-  const gradesResponse = initializeGradeSchema(averageGPA, totalEnrolled);
-  return updateGradeSchema(gradesResponse, possible_grades, totalEnrolled, letterGradeCount);
+const calanswersToLetter: { [key: string]: string } = {
+    "A+": "A+",
+    "A": "A",
+    "A-": "A-",
+    "B+": "B+",
+    "B": "B",
+    "B-": "B-",
+    "C+": "C+",
+    "C": "C",
+    "C-": "C-",
+    "D+": "D+",
+    "D": "D",
+    "D-": "D-",
+    "F": "F",
+    "Pass": "P",
+    "Not Pass": "NP",
 }
 
-function mongoToGradesDict(grades: GradeType[]) {
-  let totalEnrolled = 0, letterGradeCount = 0, gpaSum = 0;
-  const possible_grades: { [key: string]: number } = {};
+const letterWeights: { [key: string]: number } = {
+    "A+": 4.0,
+    "A": 4.0,
+    "A-": 3.7,
+    "B+": 3.3,
+    "B": 3.0,
+    "B-": 2.7,
+    "C+": 2.3,
+    "C": 2.0,
+    "C-": 1.7,
+    "D+": 1.3,
+    "D": 1.0,
+    "D-": 0.7,
+    "F": 0
+}
 
-  grades.map((grade)=> {
-    if (grade.EnrollmentCnt && grade.GradeNm) {
-      let gradeNm = grade.GradeNm;
-      if (grade.GradeNm == "D-" || grade.GradeNm == "D+") {
-        gradeNm = "D";
-      }
+export async function getCombinedGrades(subject: string, courseNum: string, sectionNum?: string | null, term?: Term | null) {
+    const filter = omitBy({
+        "CourseSubjectShortNm": subject,
+        "CourseNumber": courseNum,
+        "SectionNbr": sectionNum,
+        "term.year": term?.year,
+        "term.semester": term?.semester,
+    }, isNil)
 
-      if (gradeNm in letterGrades || PNP.has(gradeNm)) {
-        if (gradeNm in possible_grades) {
-          possible_grades[gradeNm] += grade.EnrollmentCnt;
-        } else {
-          possible_grades[gradeNm] = grade.EnrollmentCnt;
+    const projection = {
+        GradeNm: 1,
+        EnrollmentCnt: 1
+    }
+
+    const grades = await GradeModel.find(filter, projection).lean()
+
+    return {
+        average: await getAverage(grades),
+        distribution: await getDistribution(grades),
+    }
+}
+
+export async function getDistribution(grades: GradeType[]) {
+    // distribution is a map of letter -> count
+    const distribution: { [key: string]: number } = Object.values(calanswersToLetter)
+        .reduce((acc, letter) => ({ ...acc, [letter]: 0 }), {});
+
+    for (const g of grades) {
+        const name = g.GradeNm as string;
+        const count = g.EnrollmentCnt as number;
+
+        if (name in calanswersToLetter) {
+            const letter = calanswersToLetter[name];
+            distribution[letter] += count;
         }
-        if (gradeNm in letterGrades) {
-          gpaSum += (grade.EnrollmentCnt * letterGrades[grade.GradeNm as keyof typeof letterGrades]);
-          letterGradeCount += grade.EnrollmentCnt;
+    }
+
+    return Object.entries(distribution).map(([letter, count]) => ({ letter, count }));
+}
+
+export async function getAverage(grades: GradeType[]) {
+    let total = 0
+    let totalWeighted = 0
+
+    for (const g of grades) {
+        const name = g.GradeNm as string;
+        const count = g.EnrollmentCnt as number;
+
+        if (name in letterWeights) {
+            total += count;
+            totalWeighted += count * letterWeights[name];
         }
-        totalEnrolled += grade.EnrollmentCnt;
-      }
-    }
-  })
-
-  return {possible_grades, totalEnrolled, letterGradeCount, gpaSum};
-}
-
-function updateGradeSchema(gradesResponse: GradeModule.Grade, possible_grades: { [key: string]: number }, totalEnrolled: number, letterGradeCount: number): GradeModule.Grade {
-  let starting_percentile = 1;
-  Object.keys(possible_grades).map((grade) => {
-    let keyInGradeResponse = grade.replace("+", "Plus").replace("-", "Minus");
-    if (grade === "Pass") {
-      keyInGradeResponse = "P";
-    }
-    if (grade === "Not Pass") {
-      keyInGradeResponse = "NP";
     }
 
-    const percentage = possible_grades[grade] / totalEnrolled;
-    const gradeResponse = gradesResponse[keyInGradeResponse as keyof GradeModule.Grade] as GradeModule.LetterGrade;
-    if (grade in letterGrades) {
-      const percentile = possible_grades[grade] / letterGradeCount;
-      const percentile_low = starting_percentile - percentile;
-      gradeResponse.percent = round(percentage, 2);
-      gradeResponse.numerator = possible_grades[grade];
-      gradeResponse.percentile_high = round(starting_percentile, 2);
-      gradeResponse.percentile_low = percentile_low < 0 ? 0 : round(percentile_low, 2);
-      starting_percentile = percentile_low;
-    } else {
-      gradeResponse.percent = round(percentage, 2);
-      gradeResponse.numerator = possible_grades[grade];
-      gradeResponse.percentile_high = 0;
-      gradeResponse.percentile_low = 0;
-    }
-  })
-  return gradesResponse;
-}
-
-function round(value: number, decimals: number) {
-  decimals = 10 ** decimals;
-  return Math.round(value * decimals) / decimals;
-}
-
-function initializeGradeSchema(averageGPA: number, totalEnrolled: number): GradeModule.Grade {
-  const gradesResponse: GradeModule.Grade = {
-    APlus: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    A: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    AMinus: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    BPlus: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    B: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    BMinus: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    CPlus: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    C: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    CMinus: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    D: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    F: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    P: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    NP: {percent: 0, numerator: 0, percentile_high: 0, percentile_low: 0},
-    section_gpa: averageGPA,
-    section_letter: gpaToGrade(averageGPA),
-    denominator: totalEnrolled
-  };
-
-  return gradesResponse;
-}
-
-function gpaToGrade(gpa: number) {
-  if (gpa >= 4.0) {
-    return "A+";
-  } else if (gpa >= 3.7) {
-    return "A-";
-  } else if (gpa >= 3.3) {
-    return "B+";
-  } else if (gpa >= 3.0) {
-    return "B";
-  } else if (gpa >= 2.7) {
-    return "B-";
-  } else if (gpa >= 2.3) {
-    return "C+";
-  } else if (gpa >= 2.0) {
-    return "C";
-  } else if (gpa >= 1.7) {
-    return "C-";
-  } else if (gpa >= 1.3) {
-    return "D+";
-  } else if (gpa >= 1.0) {
-    return "D";
-  } else if (gpa >= 0.7) {
-    return "D-";
-  } else {
-    return "F";
-  }
+    return total > 0 ? totalWeighted / total : null;
 }

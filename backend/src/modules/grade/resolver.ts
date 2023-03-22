@@ -1,11 +1,11 @@
-import { grades } from "./controller";
+import { getCombinedGrades } from "./controller";
 import { GradeModule } from "./generated-types/module-types";
 
 const resolvers: GradeModule.Resolvers = {
   Query: {
-    grades(_parent, args: { CourseControlNumber: number, Year: number, Semester: string }) {
-      return grades(args.CourseControlNumber, args.Year, args.Semester);
-    },
+    grade: (_, { subject, courseNum, classNum, term }) => {
+      return getCombinedGrades(subject, courseNum, classNum, term)
+    }
   },
 };
 
