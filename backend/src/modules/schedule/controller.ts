@@ -1,6 +1,6 @@
 import { formatSchedule } from "./formatter";
 import { Schedule } from "../../generated-types/graphql";
-import { ScheduleModel } from "./model";
+import { ScheduleModel } from "../../db/schedule";
 import { ObjectID } from "bson";
 import { isBoolean } from "lodash";
 import { minimumViableSchedule, partialSchedule } from "./partial-schedules";
