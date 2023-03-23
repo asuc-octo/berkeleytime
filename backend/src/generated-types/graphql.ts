@@ -229,6 +229,7 @@ export type Term = {
   year: Scalars['Int'];
 };
 
+/** TEST */
 export type User = {
   __typename?: 'User';
   date_joined: Scalars['String'];
