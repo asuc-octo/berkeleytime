@@ -43,7 +43,7 @@
 				&.about-carousel-active {
 					display: block;
 					transform: translateX(0) scale(0.9);
-					filter: brightness(0.25);
+					filter: brightness(0.35);
 				}
 				&.about-carousel-active-prev {
 					@extend .about-carousel-active;
@@ -73,7 +73,7 @@
 				}
 				&.focus-out {
 					transform: scale(0.9);
-					filter: brightness(0.25);
+					filter: brightness(0.35);
 				}
 
 				> img {
