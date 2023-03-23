@@ -1,6 +1,6 @@
 import { H3 } from 'bt/custom';
 import { current } from '../../lib/contributors';
-import { Globe } from "iconoir-react";
+import { Globe } from 'iconoir-react';
 
 const CurrentContributors = () => (
 	<div className="current-contributors mb-5">
@@ -18,7 +18,7 @@ const CurrentContributors = () => (
 						<p className="bt-light-bold">{name}</p>
 						{site ? (
 							<a href={site}>
-								<Globe width={16} height={16} color={"#8A8A8A"} />
+								<Globe width={16} height={16} color={'#8A8A8A'} />
 							</a>
 						) : null}
 					</div>
