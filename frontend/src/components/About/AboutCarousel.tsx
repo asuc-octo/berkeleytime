@@ -7,7 +7,7 @@ import retreat from 'assets/img/about/group/retreat.jpg';
 import grace_janet from 'assets/img/about/group/grace_janet.jpg';
 import will from 'assets/img/about/group/will.jpg';
 import jemma from 'assets/img/about/group/jemma.jpg';
-import christina_janet from 'asåsets/img/about/group/christina_janet.jpg';
+import christina_janet from 'assets/img/about/group/christina_janet.jpg';
 import retreat_silly from 'assets/img/about/group/retreat_silly.png';
 import zoom from 'assets/img/about/group/zoom.png';
 
