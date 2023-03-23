@@ -21,7 +21,7 @@ export async function getScheduleByID(id: string): Promise<Schedule> {
   if (!scheduleFromID) {
     throw new Error("No schedules found with this ID")
   }
-  return formatSchedule(scheduleFromID as any)
+  return formatSchedule(scheduleFromID)
 }
 
 // delete a schedule specified by ObjectID
@@ -58,7 +58,7 @@ export async function createSchedule(created_by: string, term: string, schedule_
 
   const newSchedule = await ScheduleModel.create(schedulePartsToCreate)
   // const newSchedule = await ScheduleModel.create({_id: newID, name: schedule_name, created_by: created_by, date_created: current_time, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs})
-  return formatSchedule(newSchedule as any)
+  return formatSchedule(newSchedule)
 }
 
 
@@ -90,8 +90,10 @@ export async function editSchedule(schedule_ID: string, created_by: string | und
   }
 
   const updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, schedulePartsToUpdate, {returnDocument: 'after'})
-
-  return formatSchedule(updatedSchedule as any)
+  if (!updatedSchedule) {
+    throw new Error("Unable to update existing schedule")
+  }
+  return formatSchedule(updatedSchedule)
 }
 
 // update section selection in an existing schedule
@@ -100,7 +102,7 @@ export async function setSections(schedule_ID: string, section_IDs: string[]): P
   if (!existingSchedule) {
     throw new Error("Unable to update existing schedule's section selection")
   }
-  return formatSchedule(existingSchedule as any)
+  return formatSchedule(existingSchedule)
 }
 
 // update class selection in an existing schedule
@@ -109,5 +111,5 @@ export async function setClasses(scheduleID: string, class_IDs: string[]): Promi
   if (!existingSchedule) {
     throw new Error("Unable to update existing schedule's class selection")
   }
-  return formatSchedule(existingSchedule as any)
+  return formatSchedule(existingSchedule)
 }
