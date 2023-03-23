@@ -30,5 +30,7 @@ jobs:
           **/generated-types/*.ts
 
     - if: steps.test-diff.outputs.files_changed == 'true'
-      run: exit 1
+      run: |
+        echo "Run 'npm run generate' to fix!"
+        exit 1
 
