@@ -2,7 +2,7 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace CatalogModule {
   interface DefinedFields {
-    Query: 'catalog' | 'course' | 'class' | 'section' | 'courseList';
+    Query: 'course' | 'class' | 'section' | 'catalog' | 'courseList';
     Course: 'classes' | 'crossListing' | 'sections' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'toDate' | 'raw' | 'lastUpdated';
     Class: 'course' | 'primarySection' | 'sections' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'semester' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'year' | 'raw' | 'lastUpdated';
     Section: 'class' | 'course' | 'enrollmentHistory' | 'ccn' | 'dateEnd' | 'dateStart' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'kind' | 'location' | 'notes' | 'number' | 'primary' | 'timeEnd' | 'timeStart' | 'waitlistCount' | 'waitlistMax' | 'raw' | 'lastUpdated';
@@ -14,11 +14,11 @@ export namespace CatalogModule {
   };
   
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
-  export type CatalogItem = Pick<Types.CatalogItem, DefinedFields['CatalogItem']>;
-  export type Term = Types.Term;
   export type Course = Pick<Types.Course, DefinedFields['Course']>;
+  export type Term = Types.Term;
   export type Class = Pick<Types.Class, DefinedFields['Class']>;
   export type Section = Pick<Types.Section, DefinedFields['Section']>;
+  export type CatalogItem = Pick<Types.CatalogItem, DefinedFields['CatalogItem']>;
   export type CourseListItem = Pick<Types.CourseListItem, DefinedFields['CourseListItem']>;
   export type JSONObject = Types.JsonObject;
   export type ISODate = Types.IsoDate;
@@ -55,10 +55,10 @@ export namespace CatalogModule {
     };
     Query?: {
       '*'?: gm.Middleware[];
-      catalog?: gm.Middleware[];
       course?: gm.Middleware[];
       class?: gm.Middleware[];
       section?: gm.Middleware[];
+      catalog?: gm.Middleware[];
       courseList?: gm.Middleware[];
     };
     Course?: {

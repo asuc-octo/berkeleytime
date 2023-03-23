@@ -40,6 +40,7 @@ export type CatalogItem = {
   title: Scalars['String'];
 };
 
+/** Data for a specific class in a specific semester. There may be more than one Class for a given Course in a given semester. */
 export type Class = {
   __typename?: 'Class';
   course: Course;
@@ -62,6 +63,7 @@ export type Class = {
   year: Scalars['Int'];
 };
 
+/** Info shared between Classes within and across semesters. */
 export type Course = {
   __typename?: 'Course';
   classes: Array<Maybe<Class>>;
@@ -83,11 +85,13 @@ export type Course = {
 };
 
 
+/** Info shared between Classes within and across semesters. */
 export type CourseClassesArgs = {
   term?: InputMaybe<Term>;
 };
 
 
+/** Info shared between Classes within and across semesters. */
 export type CourseSectionsArgs = {
   primary?: InputMaybe<Scalars['Boolean']>;
   term?: InputMaybe<Term>;
@@ -128,9 +132,19 @@ export type Instructor = {
 export type Query = {
   __typename?: 'Query';
   User?: Maybe<User>;
+  /**
+   * Get info about all courses and their corresponding classes for a given semester.
+   *
+   * Used primarily in the catalog page.
+   */
   catalog?: Maybe<Array<Maybe<CatalogItem>>>;
   class?: Maybe<Class>;
   course?: Maybe<Course>;
+  /**
+   * Get a list of all course names across all semesters.
+   *
+   * Useful for searching for courses.
+   */
   courseList?: Maybe<Array<Maybe<CourseListItem>>>;
   grade?: Maybe<Grade>;
   ping: Scalars['String'];
@@ -179,6 +193,7 @@ export type QuerySectionArgs = {
   term: Term;
 };
 
+/** Sections are each associated with one Class.  */
 export type Section = {
   __typename?: 'Section';
   ccn: Scalars['Int'];
