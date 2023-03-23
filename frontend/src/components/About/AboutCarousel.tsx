@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { NavArrowLeft, NavArrowRight } from 'iconoir-react';
 
 import doe from 'assets/img/about/group/doe.jpg';
 import michaels from 'assets/img/about/group/michaels.jpg';
@@ -110,20 +111,20 @@ const AboutCarousel = () => {
 					</div>
 				))}
 			</div>
-			<div className="about-carousel-prev">
-				<button
-					onClick={() => changeImage(Sliding.Right)}
-					className="about-carousel-prev-icon"
-					aria-hidden="true"
-				/>
-			</div>
-			<div className="about-carousel-next">
-				<button
-					onClick={() => changeImage(Sliding.Left)}
-					className="about-carousel-next-icon"
-					aria-hidden="true"
-				/>
-			</div>
+			<button
+				onClick={() => changeImage(Sliding.Right)}
+				className="about-carousel-prev"
+				aria-hidden="true"
+			>
+				<NavArrowLeft />
+			</button>
+			<button
+				onClick={() => changeImage(Sliding.Left)}
+				className="about-carousel-next"
+				aria-hidden="true"
+			>
+				<NavArrowRight />
+			</button>
 		</div>
 	);
 };

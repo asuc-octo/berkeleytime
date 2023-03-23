@@ -1,7 +1,6 @@
 import { H3, H6 } from 'bt/custom';
 import { past } from '../../lib/contributors';
-
-import { ReactComponent as Web } from '../../assets/svg/about/web.svg';
+import { Globe } from "iconoir-react";
 
 const PastContributors = () => (
 	<div>
@@ -20,7 +19,7 @@ const PastContributors = () => (
 								<p className="bt-light-bold">{member.name}</p>
 								{member.site ? (
 									<a href={member.site}>
-										<Web />
+										<Globe width={16} height={16} color={"#8A8A8A"} />
 									</a>
 								) : null}
 							</div>
