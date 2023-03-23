@@ -18,17 +18,17 @@ export async function updateUserInfo(
     first_name: string | undefined,
     last_name: string | undefined
 ) {
-    await UserModel.findOneAndUpdate({ email }, {
+    await UserModel.updateOne({ email }, {
         username,
         first_name,
         last_name,
-    }, { lean: true });
+    });
 }
 
 export async function updateUserMajor(email: string, major: string[] | undefined) {
-    await UserModel.findOneAndUpdate({ email }, {
+    await UserModel.updateOne({ email }, {
         major,
-    }, { lean: true });
+    });
 }
 
 export async function updateUserEmailPreferences(
@@ -38,12 +38,12 @@ export async function updateUserEmailPreferences(
     email_enrollment_opening: boolean | undefined,
     email_berkeleytime_update: boolean | undefined
 ) {
-    await UserModel.findOneAndUpdate({ email }, {
+    await UserModel.updateOne({ email }, {
         email_class_update,
         email_grade_update,
         email_enrollment_opening,
         email_berkeleytime_update,
-    }, { lean: true });
+    });
 }
 
 export async function deleteUser(email: string) {
