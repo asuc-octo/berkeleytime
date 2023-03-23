@@ -23,7 +23,7 @@ const typedef = gql`
     User(email: String!): User
   }
 
-  type Mutation {
+  type Mutation @auth {
     UpdateUserInfo(username: String, first_name: String, last_name: String): User
     UpdateUserMajor(major: [String!]): User
     UpdateUserEmailPreferences(email_class_update: Boolean, email_grade_update: Boolean, email_enrollment_opening: Boolean, email_berkeleytime_update: Boolean): User

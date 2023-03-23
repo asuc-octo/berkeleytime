@@ -14,9 +14,9 @@ export async function getUserByEmail(email: string): Promise<User> {
 
 export async function updateUserInfo(
     email: string,
-    username: string,
-    first_name: string,
-    last_name: string
+    username: string | undefined,
+    first_name: string | undefined,
+    last_name: string | undefined
 ) {
     await UserModel.findOneAndUpdate({ email }, {
         username,
@@ -25,7 +25,7 @@ export async function updateUserInfo(
     }, { lean: true });
 }
 
-export async function updateUserMajor(email: string, major: string[]) {
+export async function updateUserMajor(email: string, major: string[] | undefined) {
     await UserModel.findOneAndUpdate({ email }, {
         major,
     }, { lean: true });
@@ -33,10 +33,10 @@ export async function updateUserMajor(email: string, major: string[]) {
 
 export async function updateUserEmailPreferences(
     email: string,
-    email_class_update: boolean,
-    email_grade_update: boolean,
-    email_enrollment_opening: boolean,
-    email_berkeleytime_update: boolean
+    email_class_update: boolean | undefined,
+    email_grade_update: boolean | undefined,
+    email_enrollment_opening: boolean | undefined,
+    email_berkeleytime_update: boolean | undefined
 ) {
     await UserModel.findOneAndUpdate({ email }, {
         email_class_update,
