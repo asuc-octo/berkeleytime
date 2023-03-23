@@ -5,6 +5,7 @@ import useDimensions from 'react-cool-dimensions';
 import easterEgg from 'utils/easterEgg';
 import Routes from './Routes';
 import { fetchEnrollContext } from 'redux/actions';
+import { IconoirProvider } from 'iconoir-react';
 
 const Berkeleytime = () => {
 	const dispatch = useDispatch();
@@ -44,7 +45,9 @@ const Berkeleytime = () => {
 
 	return (
 		<div ref={observe} className="app">
-			<Routes />
+			<IconoirProvider iconProps={{ strokeWidth: 2 }}>
+				<Routes />
+			</IconoirProvider>
 		</div>
 	);
 };
