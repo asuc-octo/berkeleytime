@@ -1,7 +1,6 @@
 import { ObjectID } from "bson";
 
 export interface minimumViableSchedule {
-    _id: ObjectID,
     created_by: string,
     term: string,
     name?: string,

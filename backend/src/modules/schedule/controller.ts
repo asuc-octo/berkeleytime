@@ -36,10 +36,8 @@ export async function removeSchedule(scheduleID: string): Promise<string> {
 
 // create a new schedule
 export async function createSchedule(created_by: string, term: string, schedule_name: string | undefined | null, is_public: boolean, class_IDs: string[] | undefined | null, primary_section_IDs: string[], secondary_section_IDs: string[]): Promise<Schedule> {
-  
-  const newID = new ObjectID()
 
-  const schedulePartsToCreate: minimumViableSchedule = { _id: newID, created_by: created_by, term: term }
+  const schedulePartsToCreate: minimumViableSchedule = { created_by: created_by, term: term }
   if (schedule_name) {
     schedulePartsToCreate.name = schedule_name
   }

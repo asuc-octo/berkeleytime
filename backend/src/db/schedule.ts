@@ -1,4 +1,4 @@
-import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
+import mongoose, { Schema, InferSchemaType, Types, Document } from "mongoose";
 
 export const CustomEventSchema = new Schema({
   start_time: { type: String, required: true },
@@ -11,7 +11,6 @@ export const CustomEventSchema = new Schema({
 
 
 export const ScheduleSchema = new Schema({
-  _id: { type: Types.ObjectId, reqired: true },
   name: { type: String, required: false },
   created_by: { type: String, required: true },
   term: { type: String, required: true },
@@ -23,6 +22,6 @@ export const ScheduleSchema = new Schema({
 }, { timestamps: true });
 
 export const CustomEventModel = mongoose.model("customEvent", CustomEventSchema, "customEvent");
-export type CustomEventType = InferSchemaType<typeof CustomEventSchema>;
+export type CustomEventType = Document & InferSchemaType<typeof CustomEventSchema>;
 export const ScheduleModel = mongoose.model("schedule", ScheduleSchema, "schedule");
-export type ScheduleType = InferSchemaType<typeof ScheduleSchema>;
+export type ScheduleType = Document & InferSchemaType<typeof ScheduleSchema>;
