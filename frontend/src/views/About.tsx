@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { Leaf, LightBulbOn, EmojiTalkingHappy } from "iconoir-react";
+import { Leaf, LightBulbOn, EmojiTalkingHappy } from 'iconoir-react';
 
 import { H3, P } from 'bt/custom';
 
@@ -27,9 +27,12 @@ const About: FC = () => (
 				<Col xs={12} md={4} className="value-col">
 					<div className="value">
 						<div className="value-content">
-							<Leaf width={60} height={60} color={"#2F80ED"} />
+							<Leaf width={60} height={60} color={'#2F80ED'} />
 							<h6>Growth</h6>
-							<p>You’ll grow your technical skills as you tackle real challenging design and engineering problems.</p>
+							<p>
+								You’ll grow your technical skills as you tackle real challenging design and
+								engineering problems.
+							</p>
 						</div>
 					</div>
 				</Col>
@@ -37,9 +40,12 @@ const About: FC = () => (
 				<Col xs={12} md={4} className="value-col">
 					<div className="value">
 						<div className="value-content">
-							<LightBulbOn width={60} height={60} color={"#2F80ED"} />
+							<LightBulbOn width={60} height={60} color={'#2F80ED'} />
 							<h6>Curiosity</h6>
-							<p>We value team members that are curious about solving difficult problems and seek out solutions independently.</p>
+							<p>
+								We value team members that are curious about solving difficult problems and seek out
+								solutions independently.
+							</p>
 						</div>
 					</div>
 				</Col>
@@ -47,9 +53,12 @@ const About: FC = () => (
 				<Col xs={12} md={4} className="value-col">
 					<div className="value">
 						<div className="value-content">
-							<EmojiTalkingHappy width={60} height={60} color={"#2F80ED"} />
+							<EmojiTalkingHappy width={60} height={60} color={'#2F80ED'} />
 							<h6>Passion</h6>
-							<p>Genuine commitment and dedication are critical to moving the Berkeleytime product forward.</p>
+							<p>
+								Genuine commitment and dedication are critical to moving the Berkeleytime product
+								forward.
+							</p>
 						</div>
 					</div>
 				</Col>
