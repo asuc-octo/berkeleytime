@@ -1,9 +1,6 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-  """
-  TEST DOCSTRING - WILL CHANGE GENERATED TYPES FILES
-  """
   type User {
     id: String!
     password: String!

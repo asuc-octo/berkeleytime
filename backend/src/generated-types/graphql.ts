@@ -229,7 +229,6 @@ export type Term = {
   year: Scalars['Int'];
 };
 
-/** TEST DOCSTRING - WILL CHANGE GENERATED TYPES FILES */
 export type User = {
   __typename?: 'User';
   date_joined: Scalars['String'];
