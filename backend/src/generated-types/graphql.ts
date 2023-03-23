@@ -131,9 +131,13 @@ export type Instructor = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  /** Delete user account. */
   DeleteUser?: Maybe<User>;
+  /** Mutate email preferences. */
   UpdateUserEmailPreferences?: Maybe<User>;
+  /** Mutate username, first name, and last name. */
   UpdateUserInfo?: Maybe<User>;
+  /** Mutate major. */
   UpdateUserMajor?: Maybe<User>;
 };
 
@@ -159,6 +163,7 @@ export type MutationUpdateUserMajorArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  /** Query for user info. */
   User?: Maybe<User>;
   /**
    * Get info about all courses and their corresponding classes for a given semester.
@@ -252,6 +257,7 @@ export type Term = {
   year: Scalars['Int'];
 };
 
+/** User accout info. */
 export type User = {
   __typename?: 'User';
   date_joined: Scalars['String'];

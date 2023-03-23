@@ -3,6 +3,9 @@ import { gql } from "graphql-tag";
 const typedef = gql`
   directive @auth on OBJECT
 
+  """
+  User accout info.
+  """
   type User {
     email: String!
     username: String!
@@ -20,13 +23,31 @@ const typedef = gql`
   }
 
   type Query @auth {
+    """
+    Query for user info.
+    """
     User: User
   }
 
   type Mutation @auth {
+    """
+    Mutate username, first name, and last name.
+    """
     UpdateUserInfo(username: String, first_name: String, last_name: String): User
+
+    """
+    Mutate major.
+    """
     UpdateUserMajor(major: [String!]): User
+
+    """
+    Mutate email preferences.
+    """
     UpdateUserEmailPreferences(email_class_update: Boolean, email_grade_update: Boolean, email_enrollment_opening: Boolean, email_berkeleytime_update: Boolean): User
+
+    """
+    Delete user account.
+    """
     DeleteUser: User
   }
 `;
