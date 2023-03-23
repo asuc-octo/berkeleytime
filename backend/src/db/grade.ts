@@ -1,17 +1,12 @@
-import mongoose, { Schema, InferSchemaType, Types } from "mongoose";
+import mongoose, { Schema, InferSchemaType } from "mongoose";
 
-export const GradeSchema = new Schema({
-    _id: { type: Types.ObjectId, required: true },
-    _created: String,
-    _updated: String,
+const GradeSchema = new Schema({
+    _id: Schema.Types.ObjectId,
+    _created: Date,
+    _updated: Date,
     _version: Number,
-    term: {
-        year: Number,
-        month: Number,
-        semester: String,
-    },
     CourseControlNbr: Number,
-    CourseNbr: String,
+    CourseNumber: String,
     CourseSubjectShortNm: String,
     CourseTitleNm: String,
     EnrollmentCnt: Number,
@@ -20,8 +15,13 @@ export const GradeSchema = new Schema({
     GradeSubtypeDesc: String,
     GradeTypeDesc: String,
     InstructorName: [String],
-    SectionNbr: Number
-});
+    SectionNbr: String,
+    term: {
+        month: Number,
+        semester: String,
+        year: Number,
+    },
+})
 
 export const GradeModel = mongoose.model("calanswers_grade", GradeSchema, "calanswers_grade");
 export type GradeType = InferSchemaType<typeof GradeSchema>;
