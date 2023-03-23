@@ -276,19 +276,19 @@ export type Schedule = {
   /** The ObjectID associated with the schedule record */
   _id?: Maybe<Scalars['ID']>;
   /** Identifiers (probably cs-course-ids) for the classes the user has added to their schedule. */
-  class_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
+  class_IDs?: Maybe<Array<Scalars['String']>>;
   /** Identifier (probably email) for the user who created the schedule (such as oski@bereley.edu). */
   created_by: Scalars['String'];
   /** Custom events, such as club meetings, that the user has added to their schedule. */
-  custom_events?: Maybe<Array<Maybe<CustomEvent>>>;
+  custom_events?: Maybe<Array<CustomEvent>>;
   /** The name of the schedule, such as "Oski's Fall schedule <3" */
   name?: Maybe<Scalars['String']>;
   /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
-  primary_section_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
+  primary_section_IDs?: Maybe<Array<Scalars['String']>>;
   /** Whether the user would like the schedule to be viewable by others. */
   public: Scalars['Boolean'];
   /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
-  secondary_section_IDs?: Maybe<Array<Maybe<Scalars['String']>>>;
+  secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
   /** Term corresponding to the schedule, such as "Fall 1986" */
   term: Scalars['String'];
 };
@@ -615,13 +615,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  class_IDs?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  class_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  custom_events?: Resolver<Maybe<Array<Maybe<ResolversTypes['CustomEvent']>>>, ParentType, ContextType>;
+  custom_events?: Resolver<Maybe<Array<ResolversTypes['CustomEvent']>>, ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  primary_section_IDs?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  primary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  secondary_section_IDs?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
+  secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   term?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
