@@ -25,19 +25,19 @@ const typedef = gql`
     """
     Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
     """
-    class_IDs: [String]
+    class_IDs: [String!]
     """
     Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule.
     """
-    primary_section_IDs: [String]
+    primary_section_IDs: [String!]
     """
     Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule.
     """
-    secondary_section_IDs: [String]
+    secondary_section_IDs: [String!]
     """
     Custom events, such as club meetings, that the user has added to their schedule.
     """
-    custom_events: [CustomEvent]
+    custom_events: [CustomEvent!]
   }
 
   type CustomEvent {
