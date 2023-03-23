@@ -20,7 +20,7 @@ const typedef = gql`
   }
 
   type Query @auth {
-    User(email: String!): User
+    User: User
   }
 
   type Mutation @auth {

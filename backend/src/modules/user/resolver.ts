@@ -10,8 +10,8 @@ import { UserModule } from "./generated-types/module-types";
 const resolvers: UserModule.Resolvers = {
     Query: {
         // must be logged in to query for user, but can query for any user
-        User(_parent, args) {
-            return getUserByEmail(args.email);
+        User(_parent, _, contextValue) {
+            return getUserByEmail(contextValue.user.email);
         },
     },
     Mutation: {
