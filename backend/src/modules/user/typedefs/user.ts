@@ -1,9 +1,6 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-  """
-  TEST
-  """
   type User {
     id: String!
     password: String!
