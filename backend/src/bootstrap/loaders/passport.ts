@@ -33,6 +33,7 @@ export default async (app: Application) => {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 // 1 hour
     },
+    rolling: true,
   }));
   app.use(passport.initialize());
   app.use(passport.session());

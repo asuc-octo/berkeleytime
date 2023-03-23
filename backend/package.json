@@ -58,6 +58,7 @@
     "graphql": "^16.6.0",
     "graphql-modules": "^2.1.0",
     "graphql-tools": "^8.0.0",
+    "graphql-type-json": "^0.3.2",
     "helmet": "^3.22.0",
     "lodash": "^4.17.21",
     "mongodb": "^4.10.0",
