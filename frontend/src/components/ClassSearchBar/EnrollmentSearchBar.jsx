@@ -4,7 +4,7 @@ import hash from 'object-hash';
 
 import { fetchEnrollSelected } from '../../redux/actions';
 import { connect } from 'react-redux';
-import { reactSelectCourseSearch } from 'utils/courses/search';
+import { reactSelectCourseSearch } from 'lib/courses/search';
 import BTSelect from 'components/Custom/Select';
 
 class EnrollmentSearchBar extends Component {
