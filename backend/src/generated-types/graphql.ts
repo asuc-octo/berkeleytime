@@ -161,7 +161,7 @@ export type MutationCreateNewScheduleArgs = {
   primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   schedule_name?: InputMaybe<Scalars['String']>;
   secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  term: Scalars['String'];
+  term: Term;
 };
 
 
@@ -173,7 +173,7 @@ export type MutationEditExistingScheduleArgs = {
   primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   schedule_name?: InputMaybe<Scalars['String']>;
   secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  term?: InputMaybe<Scalars['String']>;
+  term?: InputMaybe<Term>;
 };
 
 

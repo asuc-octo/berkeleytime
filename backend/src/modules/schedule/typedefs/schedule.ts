@@ -1,4 +1,5 @@
 import { gql } from "graphql-tag";
+import { Term } from "../../../generated-types/graphql";
 
 const typedef = gql`
   type Schedule {
@@ -68,11 +69,11 @@ const typedef = gql`
     """
     Takes in schedule fields, creates a new schedule record in the database, and returns the schedule.
     """
-    createNewSchedule(created_by: String!, term: String!, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
+    createNewSchedule(created_by: String!, term: Term!, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
     """
     Takes in schedule fields, finds the schedule record in the database corresponding to the provided ID, updates the record, and returns the updated schedule.
     """
-    editExistingSchedule(id: ID!, created_by: String, term: String, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
+    editExistingSchedule(id: ID!, created_by: String, term: Term, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
     """
     For the schedule specified by the ID, modifies the section ID field and returns the updated schedule.
     """
