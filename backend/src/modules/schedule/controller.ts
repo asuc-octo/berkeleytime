@@ -38,23 +38,12 @@ export async function removeSchedule(scheduleID: string): Promise<string> {
 export async function createSchedule(created_by: string, term: string, schedule_name: string | undefined | null, is_public: boolean, class_IDs: string[] | undefined | null, primary_section_IDs: string[], secondary_section_IDs: string[]): Promise<Schedule> {
 
   const schedulePartsToCreate: minimumViableSchedule = { created_by: created_by, term: term }
-  if (schedule_name) {
-    schedulePartsToCreate.name = schedule_name
-  }
-
-  if (class_IDs) {
-    schedulePartsToCreate.class_IDs = class_IDs
-  }
-
-  if (primary_section_IDs) {
-    schedulePartsToCreate.primary_section_IDs = primary_section_IDs
-  }
-
-  if (secondary_section_IDs) {
-    schedulePartsToCreate.secondary_section_IDs = secondary_section_IDs
-  }
-
-  schedulePartsToCreate.public = is_public
+  
+  schedulePartsToCreate.name = schedule_name ? schedule_name : undefined
+  schedulePartsToCreate.class_IDs = class_IDs ? class_IDs : undefined
+  schedulePartsToCreate.primary_section_IDs = primary_section_IDs ? primary_section_IDs : undefined
+  schedulePartsToCreate.secondary_section_IDs = secondary_section_IDs ? secondary_section_IDs : undefined
+  schedulePartsToCreate.public = is_public ? is_public : undefined
 
   const newSchedule = await ScheduleModel.create(schedulePartsToCreate)
   // const newSchedule = await ScheduleModel.create({_id: newID, name: schedule_name, created_by: created_by, date_created: current_time, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs})
@@ -68,26 +57,12 @@ export async function editSchedule(schedule_ID: string, created_by: string | und
   
   const schedulePartsToUpdate: partialSchedule = {}
 
-  if (term) {
-    schedulePartsToUpdate.term = term
-  }
-  if (schedule_name) {
-    schedulePartsToUpdate.name = schedule_name
-  }
-  if (class_IDs) {
-    schedulePartsToUpdate.class_IDs = class_IDs
-  }
-  if (primary_section_IDs) {
-    schedulePartsToUpdate.primary_section_IDs = primary_section_IDs
-  }
-
-  if (secondary_section_IDs) {
-    schedulePartsToUpdate.secondary_section_IDs = secondary_section_IDs
-  }
-
-  if (isBoolean(is_public)) {
-    schedulePartsToUpdate.public = is_public
-  }
+  schedulePartsToUpdate.term = term ? term : undefined
+  schedulePartsToUpdate.name = schedule_name ? schedule_name : undefined
+  schedulePartsToUpdate.class_IDs = class_IDs ? class_IDs : undefined
+  schedulePartsToUpdate.primary_section_IDs = primary_section_IDs ? primary_section_IDs : undefined
+  schedulePartsToUpdate.secondary_section_IDs = secondary_section_IDs ? secondary_section_IDs : undefined
+  schedulePartsToUpdate.public = is_public ? is_public : undefined
 
   const updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, schedulePartsToUpdate, {returnDocument: 'after'})
   if (!updatedSchedule) {
