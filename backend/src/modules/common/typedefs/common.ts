@@ -6,6 +6,9 @@ scalar JSONObject
 
 scalar ISODate
 
+"""
+The combination of year and season that corresponds to a specific term. Both year and season/semester are required.
+"""
 input Term {
     year: Int!
     semester: Semester!
