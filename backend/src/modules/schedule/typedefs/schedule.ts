@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
 
-  type OutputTerm {
+  type TermOutput {
     year: Int!
     semester: String!
   }
@@ -24,7 +24,7 @@ const typedef = gql`
     """
     Term corresponding to the schedule, such as "Fall 1986"
     """
-    term: OutputTerm!
+    term: TermOutput!
     """
     Whether the user would like the schedule to be viewable by others.
     """
@@ -75,11 +75,11 @@ const typedef = gql`
     """
     Takes in schedule fields, creates a new schedule record in the database, and returns the schedule.
     """
-    createNewSchedule(created_by: String!, term: Term!, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
+    createNewSchedule(created_by: String!, term: TermInput!, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
     """
     Takes in schedule fields, finds the schedule record in the database corresponding to the provided ID, updates the record, and returns the updated schedule.
     """
-    editExistingSchedule(id: ID!, created_by: String, term: Term, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
+    editExistingSchedule(id: ID!, created_by: String, term: TermInput, schedule_name: String, is_public: Boolean, class_IDs: [String!], primary_section_IDs: [String!], secondary_section_IDs: [String!]): Schedule
     """
     For the schedule specified by the ID, modifies the section ID field and returns the updated schedule.
     """

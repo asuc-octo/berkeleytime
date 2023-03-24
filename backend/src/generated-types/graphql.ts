@@ -87,14 +87,14 @@ export type Course = {
 
 /** Info shared between Classes within and across semesters. */
 export type CourseClassesArgs = {
-  term?: InputMaybe<Term>;
+  term?: InputMaybe<TermInput>;
 };
 
 
 /** Info shared between Classes within and across semesters. */
 export type CourseSectionsArgs = {
   primary?: InputMaybe<Scalars['Boolean']>;
-  term?: InputMaybe<Term>;
+  term?: InputMaybe<TermInput>;
 };
 
 export type CourseListItem = {
@@ -161,7 +161,7 @@ export type MutationCreateNewScheduleArgs = {
   primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   schedule_name?: InputMaybe<Scalars['String']>;
   secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  term: Term;
+  term: TermInput;
 };
 
 
@@ -173,7 +173,7 @@ export type MutationEditExistingScheduleArgs = {
   primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   schedule_name?: InputMaybe<Scalars['String']>;
   secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  term?: InputMaybe<Term>;
+  term?: InputMaybe<TermInput>;
 };
 
 
@@ -191,12 +191,6 @@ export type MutationSetSelectedClassesArgs = {
 export type MutationSetSelectedSectionsArgs = {
   id: Scalars['ID'];
   section_IDs: Array<Scalars['String']>;
-};
-
-export type OutputTerm = {
-  __typename?: 'OutputTerm';
-  semester: Scalars['String'];
-  year: Scalars['Int'];
 };
 
 export type Query = {
@@ -232,7 +226,7 @@ export type QueryUserArgs = {
 
 
 export type QueryCatalogArgs = {
-  term: Term;
+  term: TermInput;
 };
 
 
@@ -240,14 +234,14 @@ export type QueryClassArgs = {
   classNumber: Scalars['String'];
   courseNumber: Scalars['String'];
   subject: Scalars['String'];
-  term: Term;
+  term: TermInput;
 };
 
 
 export type QueryCourseArgs = {
   courseNumber: Scalars['String'];
   subject: Scalars['String'];
-  term?: InputMaybe<Term>;
+  term?: InputMaybe<TermInput>;
 };
 
 
@@ -255,7 +249,7 @@ export type QueryGradeArgs = {
   classNum?: InputMaybe<Scalars['String']>;
   courseNum: Scalars['String'];
   subject: Scalars['String'];
-  term?: InputMaybe<Term>;
+  term?: InputMaybe<TermInput>;
 };
 
 
@@ -274,7 +268,7 @@ export type QuerySectionArgs = {
   courseNumber: Scalars['String'];
   sectionNumber: Scalars['String'];
   subject: Scalars['String'];
-  term: Term;
+  term: TermInput;
 };
 
 export type Schedule = {
@@ -296,7 +290,7 @@ export type Schedule = {
   /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
   secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
   /** Term corresponding to the schedule, such as "Fall 1986" */
-  term: OutputTerm;
+  term: TermOutput;
 };
 
 /** Sections are each associated with one Class.  */
@@ -331,8 +325,14 @@ export type Semester =
   | 'Summer';
 
 /** The combination of year and season that corresponds to a specific term. Both year and season/semester are required. */
-export type Term = {
+export type TermInput = {
   semester: Semester;
+  year: Scalars['Int'];
+};
+
+export type TermOutput = {
+  __typename?: 'TermOutput';
+  semester: Scalars['String'];
   year: Scalars['Int'];
 };
 
@@ -443,13 +443,13 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
   Mutation: ResolverTypeWrapper<{}>;
-  OutputTerm: ResolverTypeWrapper<OutputTerm>;
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
   Section: ResolverTypeWrapper<Section>;
   Semester: Semester;
   String: ResolverTypeWrapper<Scalars['String']>;
-  Term: Term;
+  TermInput: TermInput;
+  TermOutput: ResolverTypeWrapper<TermOutput>;
   User: ResolverTypeWrapper<User>;
 };
 
@@ -473,12 +473,12 @@ export type ResolversParentTypes = {
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
   Mutation: {};
-  OutputTerm: OutputTerm;
   Query: {};
   Schedule: Schedule;
   Section: Section;
   String: Scalars['String'];
-  Term: Term;
+  TermInput: TermInput;
+  TermOutput: TermOutput;
   User: User;
 };
 
@@ -609,12 +609,6 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
 };
 
-export type OutputTermResolvers<ContextType = any, ParentType extends ResolversParentTypes['OutputTerm'] = ResolversParentTypes['OutputTerm']> = {
-  semester?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  year?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'email'>>;
   catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
@@ -637,7 +631,7 @@ export type ScheduleResolvers<ContextType = any, ParentType extends ResolversPar
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   primary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
-  term?: Resolver<ResolversTypes['OutputTerm'], ParentType, ContextType>;
+  term?: Resolver<ResolversTypes['TermOutput'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -663,6 +657,12 @@ export type SectionResolvers<ContextType = any, ParentType extends ResolversPare
   timeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   waitlistCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   waitlistMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type TermOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['TermOutput'] = ResolversParentTypes['TermOutput']> = {
+  semester?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  year?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -701,10 +701,10 @@ export type Resolvers<ContextType = any> = {
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
-  OutputTerm?: OutputTermResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
   Section?: SectionResolvers<ContextType>;
+  TermOutput?: TermOutputResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 

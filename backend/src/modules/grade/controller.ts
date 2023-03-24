@@ -1,5 +1,5 @@
 import { GradeModel, GradeType } from "../../db/grade";
-import { Term } from "../../generated-types/graphql";
+import { TermInput } from "../../generated-types/graphql";
 import { omitBy, isNil } from "lodash";
 
 const calanswersToLetter: { [key: string]: string } = {
@@ -36,7 +36,7 @@ const letterWeights: { [key: string]: number } = {
     "F": 0
 }
 
-export async function getCombinedGrades(subject: string, courseNum: string, sectionNum?: string | null, term?: Term | null) {
+export async function getCombinedGrades(subject: string, courseNum: string, sectionNum?: string | null, term?: TermInput | null) {
     const filter = omitBy({
         "CourseSubjectShortNm": subject,
         "CourseNumber": courseNum,

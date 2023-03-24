@@ -16,7 +16,7 @@ export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule 
   };
 }
 
-function formatTerm(semester: string, year: number): ScheduleModule.OutputTerm {
+function formatTerm(semester: string, year: number): ScheduleModule.TermOutput {
   return {
     semester: semester,
     year: year,

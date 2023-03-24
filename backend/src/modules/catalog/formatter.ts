@@ -1,7 +1,7 @@
 import { ClassType } from "../../db/class";
 import { CourseType } from "../../db/course";
 import { SectionType } from "../../db/section";
-import { Term } from "../../generated-types/graphql";
+import { TermInput } from "../../generated-types/graphql";
 import { getCsCourseId } from "../../utils/course";
 import { stringToTerm } from "../../utils/term";
 
@@ -113,7 +113,7 @@ export function formatSection(section: SectionType | null): any {
     }
 }
 
-export function formatCourse(course: CourseType | null, term?: Term | null): any {
+export function formatCourse(course: CourseType | null, term?: TermInput | null): any {
     if (course == null) return null
 
     return {

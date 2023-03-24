@@ -1,5 +1,5 @@
 import { formatSchedule } from "./formatter";
-import { OutputTerm, Schedule } from "../../generated-types/graphql";
+import { TermOutput, Schedule } from "../../generated-types/graphql";
 import { ScheduleModel } from "../../db/schedule";
 import { minimumViableSchedule, partialSchedule } from "./partial-schedules";
 
@@ -33,7 +33,7 @@ export async function removeSchedule(scheduleID: string): Promise<string> {
 
 
 // create a new schedule
-export async function createSchedule(created_by: string, term: OutputTerm, schedule_name: string | undefined | null, is_public: boolean | null | undefined, class_IDs: string[] | undefined | null, primary_section_IDs: string[] | undefined | null, secondary_section_IDs: string[] | undefined | null): Promise<Schedule> {
+export async function createSchedule(created_by: string, term: TermOutput, schedule_name: string | undefined | null, is_public: boolean | null | undefined, class_IDs: string[] | undefined | null, primary_section_IDs: string[] | undefined | null, secondary_section_IDs: string[] | undefined | null): Promise<Schedule> {
 
   const schedulePartsToCreate: minimumViableSchedule = { created_by: created_by, term: term }
   
@@ -51,7 +51,7 @@ export async function createSchedule(created_by: string, term: OutputTerm, sched
 
 
 // update an existing schedule
-export async function editSchedule(schedule_ID: string, created_by: string | undefined | null, term: OutputTerm | undefined | null, schedule_name: string | undefined | null, is_public: boolean | undefined | null, class_IDs: string[] | undefined | null, primary_section_IDs: string[] | undefined | null, secondary_section_IDs: string[] | undefined | null): Promise<Schedule> {
+export async function editSchedule(schedule_ID: string, created_by: string | undefined | null, term: TermOutput | undefined | null, schedule_name: string | undefined | null, is_public: boolean | undefined | null, class_IDs: string[] | undefined | null, primary_section_IDs: string[] | undefined | null, secondary_section_IDs: string[] | undefined | null): Promise<Schedule> {
   
   const schedulePartsToUpdate: partialSchedule = {}
 

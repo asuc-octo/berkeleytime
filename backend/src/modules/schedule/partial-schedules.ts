@@ -1,8 +1,8 @@
-import { OutputTerm } from "../../generated-types/graphql";
+import { TermOutput } from "../../generated-types/graphql";
 
 export interface minimumViableSchedule {
     created_by: string,
-    term: OutputTerm,
+    term: TermOutput,
     name?: string,
     class_IDs?: string[],
     primary_section_IDs?: string[],
@@ -13,7 +13,7 @@ export interface minimumViableSchedule {
 export interface partialSchedule {
     name?: string,
     created_by?: string,
-    term?: OutputTerm,
+    term?: TermOutput,
     class_IDs?: string[],
     primary_section_IDs?: string[],
     secondary_section_IDs?: string[],

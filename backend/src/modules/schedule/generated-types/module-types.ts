@@ -2,28 +2,28 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace ScheduleModule {
   interface DefinedFields {
-    OutputTerm: 'year' | 'semester';
+    TermOutput: 'year' | 'semester';
     Schedule: '_id' | 'name' | 'created_by' | 'term' | 'is_public' | 'class_IDs' | 'primary_section_IDs' | 'secondary_section_IDs' | 'custom_events';
     CustomEvent: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
     Query: 'schedulesByUser' | 'scheduleByID';
     Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'editExistingSchedule' | 'setSelectedSections' | 'setSelectedClasses';
   };
   
-  export type OutputTerm = Pick<Types.OutputTerm, DefinedFields['OutputTerm']>;
+  export type TermOutput = Pick<Types.TermOutput, DefinedFields['TermOutput']>;
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;
   export type CustomEvent = Pick<Types.CustomEvent, DefinedFields['CustomEvent']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   export type Mutation = Pick<Types.Mutation, DefinedFields['Mutation']>;
-  export type Term = Types.Term;
+  export type TermInput = Types.TermInput;
   
-  export type OutputTermResolvers = Pick<Types.OutputTermResolvers, DefinedFields['OutputTerm'] | '__isTypeOf'>;
+  export type TermOutputResolvers = Pick<Types.TermOutputResolvers, DefinedFields['TermOutput'] | '__isTypeOf'>;
   export type ScheduleResolvers = Pick<Types.ScheduleResolvers, DefinedFields['Schedule'] | '__isTypeOf'>;
   export type CustomEventResolvers = Pick<Types.CustomEventResolvers, DefinedFields['CustomEvent'] | '__isTypeOf'>;
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   export type MutationResolvers = Pick<Types.MutationResolvers, DefinedFields['Mutation']>;
   
   export interface Resolvers {
-    OutputTerm?: OutputTermResolvers;
+    TermOutput?: TermOutputResolvers;
     Schedule?: ScheduleResolvers;
     CustomEvent?: CustomEventResolvers;
     Query?: QueryResolvers;
@@ -34,7 +34,7 @@ export namespace ScheduleModule {
     '*'?: {
       '*'?: gm.Middleware[];
     };
-    OutputTerm?: {
+    TermOutput?: {
       '*'?: gm.Middleware[];
       year?: gm.Middleware[];
       semester?: gm.Middleware[];
