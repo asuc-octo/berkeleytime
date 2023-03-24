@@ -1,4 +1,17 @@
+import { Int32 } from "mongodb";
 import mongoose, { Schema, InferSchemaType, Types, Document } from "mongoose";
+
+export const TermSchema = new Schema({
+  year: { 
+    type: Number,
+    required: true,
+  },
+  semester: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+});
 
 export const CustomEventSchema = new Schema({
   start_time: { 
@@ -50,7 +63,7 @@ export const ScheduleSchema = new Schema({
     alias: "creator"
   },
   term: {
-    type: String,
+    type: TermSchema,
     required: true
   },
   is_public: {
@@ -80,6 +93,8 @@ export const ScheduleSchema = new Schema({
   }
 }, { timestamps: true });
 
+export type TermType = Document & InferSchemaType<typeof TermSchema>;
+export const TermModel = mongoose.model("outputTerm", TermSchema, "outputTerm");
 export const CustomEventModel = mongoose.model("customEvent", CustomEventSchema, "customEvent");
 export type CustomEventType = Document & InferSchemaType<typeof CustomEventSchema>;
 export const ScheduleModel = mongoose.model("schedule", ScheduleSchema, "schedule");

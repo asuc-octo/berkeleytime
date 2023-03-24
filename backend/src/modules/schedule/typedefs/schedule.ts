@@ -1,18 +1,12 @@
 import { gql } from "graphql-tag";
-import { Term } from "../../../generated-types/graphql";
 
 const typedef = gql`
 
   type OutputTerm {
     year: Int!
-    semester: Semester!
+    semester: String!
   }
 
-  enum Semester {
-    Fall
-    Spring
-    Summer
-  }
 
   type Schedule {
     """

@@ -1,10 +1,7 @@
 import { formatSchedule } from "./formatter";
-import { Schedule, Term } from "../../generated-types/graphql";
+import { OutputTerm, Schedule } from "../../generated-types/graphql";
 import { ScheduleModel } from "../../db/schedule";
-import { ObjectID } from "bson";
-import { isBoolean } from "lodash";
 import { minimumViableSchedule, partialSchedule } from "./partial-schedules";
-import { termToString } from "../../utils/term";
 
 
 // get the schedules for a user
@@ -36,9 +33,9 @@ export async function removeSchedule(scheduleID: string): Promise<string> {
 
 
 // create a new schedule
-export async function createSchedule(created_by: string, term: Term, schedule_name: string | undefined | null, is_public: boolean | null | undefined, class_IDs: string[] | undefined | null, primary_section_IDs: string[] | undefined | null, secondary_section_IDs: string[] | undefined | null): Promise<Schedule> {
+export async function createSchedule(created_by: string, term: OutputTerm, schedule_name: string | undefined | null, is_public: boolean | null | undefined, class_IDs: string[] | undefined | null, primary_section_IDs: string[] | undefined | null, secondary_section_IDs: string[] | undefined | null): Promise<Schedule> {
 
-  const schedulePartsToCreate: minimumViableSchedule = { created_by: created_by, term: termToString(term) }
+  const schedulePartsToCreate: minimumViableSchedule = { created_by: created_by, term: term }
   
   schedulePartsToCreate.name = schedule_name ? schedule_name : undefined
   schedulePartsToCreate.class_IDs = class_IDs ? class_IDs : undefined
@@ -54,11 +51,11 @@ export async function createSchedule(created_by: string, term: Term, schedule_na
 
 
 // update an existing schedule
-export async function editSchedule(schedule_ID: string, created_by: string | undefined | null, term: Term | undefined | null, schedule_name: string | undefined | null, is_public: boolean | undefined | null, class_IDs: string[] | undefined | null, primary_section_IDs: string[] | undefined | null, secondary_section_IDs: string[] | undefined | null): Promise<Schedule> {
+export async function editSchedule(schedule_ID: string, created_by: string | undefined | null, term: OutputTerm | undefined | null, schedule_name: string | undefined | null, is_public: boolean | undefined | null, class_IDs: string[] | undefined | null, primary_section_IDs: string[] | undefined | null, secondary_section_IDs: string[] | undefined | null): Promise<Schedule> {
   
   const schedulePartsToUpdate: partialSchedule = {}
 
-  schedulePartsToUpdate.term = term ? termToString(term) : undefined
+  schedulePartsToUpdate.term = term ? term : undefined
   schedulePartsToUpdate.name = schedule_name ? schedule_name : undefined
   schedulePartsToUpdate.class_IDs = class_IDs ? class_IDs : undefined
   schedulePartsToUpdate.primary_section_IDs = primary_section_IDs ? primary_section_IDs : undefined

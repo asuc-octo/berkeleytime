@@ -195,7 +195,7 @@ export type MutationSetSelectedSectionsArgs = {
 
 export type OutputTerm = {
   __typename?: 'OutputTerm';
-  semester: Semester;
+  semester: Scalars['String'];
   year: Scalars['Int'];
 };
 
@@ -609,7 +609,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type OutputTermResolvers<ContextType = any, ParentType extends ResolversParentTypes['OutputTerm'] = ResolversParentTypes['OutputTerm']> = {
-  semester?: Resolver<ResolversTypes['Semester'], ParentType, ContextType>;
+  semester?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   year?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };

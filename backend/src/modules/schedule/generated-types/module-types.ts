@@ -9,12 +9,7 @@ export namespace ScheduleModule {
     Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'editExistingSchedule' | 'setSelectedSections' | 'setSelectedClasses';
   };
   
-  interface DefinedEnumValues {
-    Semester: 'Fall' | 'Spring' | 'Summer';
-  };
-  
   export type OutputTerm = Pick<Types.OutputTerm, DefinedFields['OutputTerm']>;
-  export type Semester = DefinedEnumValues['Semester'];
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;
   export type CustomEvent = Pick<Types.CustomEvent, DefinedFields['CustomEvent']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
