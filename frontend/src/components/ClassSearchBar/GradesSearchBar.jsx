@@ -5,7 +5,7 @@ import hash from 'object-hash';
 import { connect } from 'react-redux';
 
 import { fetchGradeSelected } from '../../redux/actions';
-import { reactSelectCourseSearch } from 'utils/courses/search';
+import { reactSelectCourseSearch } from 'lib/courses/search';
 import BTSelect from 'components/Custom/Select';
 
 const sortOptions = [

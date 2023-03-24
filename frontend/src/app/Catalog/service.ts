@@ -1,4 +1,6 @@
-import { FilterFragment, GetFiltersQuery, PlaylistType } from 'graphql';
+import { FilterFragment, GetFiltersQuery, PlaylistType, CourseOverviewFragment } from 'graphql';
+import Fuse from 'fuse.js';
+
 import styles from './CatalogList/CatalogList.module.scss';
 
 import {
@@ -9,6 +11,9 @@ import {
 	SortOption,
 	CurrentFilters
 } from './types';
+import { laymanTerms } from 'lib/courses/search';
+import { normalizeSearchTerm } from 'utils/search';
+import { courseToName } from 'lib/courses/course';
 
 const SEMESTER_VALUES = {
 	spring: 0.0,
@@ -151,6 +156,44 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
 
 	return result;
 };
+
+/**
+ * Applies search query over list of courses
+ */
+export function searchCatalog(courses: CourseOverviewFragment[], rawQuery: string): CourseOverviewFragment[] {
+	if (!rawQuery || rawQuery === '' || rawQuery === null) return courses;
+
+	const options = {
+		includeScore: true,
+		shouldSort: true,
+		threshold: 0.25,
+		keys: [
+			{ name: 'title', weight: 1 },
+			{ name: 'abbreviation', weight: 1 },
+			{ name: 'abbreviations', weight: 1 },
+			{ name: 'courseNumber', weight: 2 },
+			{ name: 'fullCourseCode', weight: 1 }
+		]
+	};
+
+	const courseInfo = courses.map((course) => {
+		const { title, abbreviation, courseNumber } = course;
+
+		const abbreviations =
+			laymanTerms[abbreviation.toLowerCase()]?.map((abbr) => `${abbr}${courseNumber}`) ?? [];
+
+		return {
+			title,
+			abbreviation,
+			courseNumber,
+			fullCourseCode: courseToName(course),
+			abbreviations
+		};
+	});
+
+	const fuse = new Fuse(courseInfo, options);
+	return fuse.search(normalizeSearchTerm(rawQuery)).map((res) => courses[res.refIndex]);
+}
 
 /**
  *

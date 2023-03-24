@@ -7,8 +7,8 @@ import useDimensions from 'react-cool-dimensions';
 
 import styles from './CatalogList.module.scss';
 import { useHistory } from 'react-router';
-import { searchCourses } from 'utils/courses/search';
-import { sortByAttribute } from 'utils/courses/sorting';
+import { searchCatalog } from '../service';
+import { sortByAttribute } from 'lib/courses/sorting';
 
 type CatalogListProps = {
 	currentFilters: CurrentFilters;
@@ -40,7 +40,7 @@ const CatalogList = (props: CatalogListProps) => {
 			);
 
 		let courses = data.allCourses.edges.map((edge) => edge.node);
-		courses = searchCourses(courses, searchQuery);
+		courses = searchCatalog(courses, searchQuery);
 
 		//TODO: Very big problem to inspect - server is returning duplicate entries of same courses.
 		//			Here we filter the duplicates to ensure catalog list consistency.

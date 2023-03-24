@@ -35,7 +35,7 @@ export type CurrentFilters = {
 	requirements: FilterOption[] | null;
 };
 
-type CatalogSortKeys =
+export type CatalogSortKeys =
 	| 'relevance'
 	| 'average_grade'
 	| 'department_name'
