@@ -330,6 +330,7 @@ export type Semester =
   | 'Spring'
   | 'Summer';
 
+/** The combination of year and season that corresponds to a specific term. Both year and season/semester are required. */
 export type Term = {
   semester: Semester;
   year: Scalars['Int'];
