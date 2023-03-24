@@ -3,7 +3,7 @@ export const Schedule = {
     name: "test-name",
     created_by: "test-user",
     term: "test-term",
-    public: "test-false",
+    is_public: "test-false",
     class_IDs: "test-ID",
     primary_section_IDs: ["test-primary-section-ID"],
     secondary_section_IDs: ["test-secondary-section-ID"],

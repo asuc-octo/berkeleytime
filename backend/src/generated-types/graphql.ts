@@ -281,12 +281,12 @@ export type Schedule = {
   created_by: Scalars['String'];
   /** Custom events, such as club meetings, that the user has added to their schedule. */
   custom_events?: Maybe<Array<CustomEvent>>;
+  /** Whether the user would like the schedule to be viewable by others. */
+  is_public: Scalars['Boolean'];
   /** The name of the schedule, such as "Oski's Fall schedule <3" */
   name?: Maybe<Scalars['String']>;
   /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
   primary_section_IDs?: Maybe<Array<Scalars['String']>>;
-  /** Whether the user would like the schedule to be viewable by others. */
-  public: Scalars['Boolean'];
   /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
   secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
   /** Term corresponding to the schedule, such as "Fall 1986" */
@@ -618,9 +618,9 @@ export type ScheduleResolvers<ContextType = any, ParentType extends ResolversPar
   class_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   custom_events?: Resolver<Maybe<Array<ResolversTypes['CustomEvent']>>, ParentType, ContextType>;
+  is_public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   primary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
-  public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   term?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;

@@ -43,7 +43,7 @@ export async function createSchedule(created_by: string, term: string, schedule_
   schedulePartsToCreate.class_IDs = class_IDs ? class_IDs : undefined
   schedulePartsToCreate.primary_section_IDs = primary_section_IDs ? primary_section_IDs : undefined
   schedulePartsToCreate.secondary_section_IDs = secondary_section_IDs ? secondary_section_IDs : undefined
-  schedulePartsToCreate.public = is_public ? is_public : undefined
+  schedulePartsToCreate.is_public = is_public ? is_public : undefined
 
   const newSchedule = await ScheduleModel.create(schedulePartsToCreate)
   // const newSchedule = await ScheduleModel.create({_id: newID, name: schedule_name, created_by: created_by, date_created: current_time, last_updated: current_time, term: term, public: is_public, class_IDs: class_IDs, section_IDs: section_IDs})
@@ -62,7 +62,7 @@ export async function editSchedule(schedule_ID: string, created_by: string | und
   schedulePartsToUpdate.class_IDs = class_IDs ? class_IDs : undefined
   schedulePartsToUpdate.primary_section_IDs = primary_section_IDs ? primary_section_IDs : undefined
   schedulePartsToUpdate.secondary_section_IDs = secondary_section_IDs ? secondary_section_IDs : undefined
-  schedulePartsToUpdate.public = is_public ? is_public : undefined
+  schedulePartsToUpdate.is_public = is_public ? is_public : undefined
 
   const updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, schedulePartsToUpdate, {returnDocument: 'after'})
   if (!updatedSchedule) {

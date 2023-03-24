@@ -7,7 +7,7 @@ export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule 
     name: schedule.name,
     created_by: schedule.created_by,
     term: schedule.term,
-    public: schedule.public,
+    is_public: schedule.is_public,
     class_IDs: schedule.class_IDs,
     primary_section_IDs: schedule.primary_section_IDs,
     secondary_section_IDs: schedule.secondary_section_IDs,

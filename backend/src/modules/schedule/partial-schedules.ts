@@ -7,7 +7,7 @@ export interface minimumViableSchedule {
     class_IDs?: string[],
     primary_section_IDs?: string[],
     secondary_section_IDs?: string[],
-    public?: boolean,
+    is_public?: boolean,
   }
 
 export interface partialSchedule {
@@ -17,5 +17,5 @@ export interface partialSchedule {
     class_IDs?: string[],
     primary_section_IDs?: string[],
     secondary_section_IDs?: string[],
-    public?: boolean,
+    is_public?: boolean,
   }

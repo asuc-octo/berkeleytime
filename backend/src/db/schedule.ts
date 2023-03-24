@@ -1,24 +1,83 @@
 import mongoose, { Schema, InferSchemaType, Types, Document } from "mongoose";
 
 export const CustomEventSchema = new Schema({
-  start_time: { type: String, required: true },
-  end_time: { type: String, required: true },
-  title: { type: String, required: false },
-  location: { type: String, required: false },
-  description: { type: String, required: false },
-  days_of_week: { type: String, required: false }
+  start_time: { 
+    type: String,
+    required: true,
+    trim: true,
+    alias: "start"
+  },
+  end_time: {
+    type: String,
+    required: true,
+    trim: true,
+    alias: "end"
+  },
+  title: {
+    type: String,
+    required: false,
+    alias: "name"
+  },
+  location: {
+    type: String,
+    required: false,
+    trim: true,
+    alias: "place"
+  },
+  description: {
+    type: String,
+    required: false
+  },
+  days_of_week: {
+    type: String,
+    required: false,
+    trim: true,
+    alias: "days"
+  }
 });
 
 
 export const ScheduleSchema = new Schema({
-  name: { type: String, required: false },
-  created_by: { type: String, required: true },
-  term: { type: String, required: true },
-  public: { type: Boolean, required: true },
-  class_IDs: { type: [String], required: false },
-  primary_section_IDs: { type: [String], required: false },
-  secondary_section_IDs: { type: [String], required: false },
-  custom_events: { type: [CustomEventSchema], required: false }
+  name: {
+    type: String,
+    required: false
+  },
+  created_by: {
+    type: String,
+    required: true,
+    trim: true,
+    immutable: true,
+    alias: "creator"
+  },
+  term: {
+    type: String,
+    required: true
+  },
+  is_public: {
+    type: Boolean,
+    required: true,
+    alias: "public",
+    default: false,
+  },
+  class_IDs: {
+    type: [String],
+    trim: true,
+    required: false
+  },
+  primary_section_IDs: {
+    type: [String],
+    trim: true,
+    required: false
+  },
+  secondary_section_IDs: {
+    type: [String],
+    trim: true,
+    required: false
+  },
+  custom_events: {
+    type: [CustomEventSchema],
+    required: false
+  }
 }, { timestamps: true });
 
 export const CustomEventModel = mongoose.model("customEvent", CustomEventSchema, "customEvent");

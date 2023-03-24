@@ -21,7 +21,7 @@ const typedef = gql`
     """
     Whether the user would like the schedule to be viewable by others.
     """
-    public: Boolean!
+    is_public: Boolean!
     """
     Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
     """
