@@ -59,7 +59,6 @@ export const ScheduleSchema = new Schema({
     type: String,
     required: true,
     trim: true,
-    immutable: true,
     alias: "creator"
   },
   term: {
