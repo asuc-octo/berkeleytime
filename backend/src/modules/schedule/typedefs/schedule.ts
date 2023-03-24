@@ -2,6 +2,18 @@ import { gql } from "graphql-tag";
 import { Term } from "../../../generated-types/graphql";
 
 const typedef = gql`
+
+  type OutputTerm {
+    year: Int!
+    semester: Semester!
+  }
+
+  enum Semester {
+    Fall
+    Spring
+    Summer
+  }
+
   type Schedule {
     """
     The ObjectID associated with the schedule record
@@ -18,7 +30,7 @@ const typedef = gql`
     """
     Term corresponding to the schedule, such as "Fall 1986"
     """
-    term: String!
+    term: OutputTerm!
     """
     Whether the user would like the schedule to be viewable by others.
     """

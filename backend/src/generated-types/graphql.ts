@@ -193,6 +193,12 @@ export type MutationSetSelectedSectionsArgs = {
   section_IDs: Array<Scalars['String']>;
 };
 
+export type OutputTerm = {
+  __typename?: 'OutputTerm';
+  semester: Semester;
+  year: Scalars['Int'];
+};
+
 export type Query = {
   __typename?: 'Query';
   User?: Maybe<User>;
@@ -290,7 +296,7 @@ export type Schedule = {
   /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
   secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
   /** Term corresponding to the schedule, such as "Fall 1986" */
-  term: Scalars['String'];
+  term: OutputTerm;
 };
 
 /** Sections are each associated with one Class.  */
@@ -436,6 +442,7 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
   Mutation: ResolverTypeWrapper<{}>;
+  OutputTerm: ResolverTypeWrapper<OutputTerm>;
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
   Section: ResolverTypeWrapper<Section>;
@@ -465,6 +472,7 @@ export type ResolversParentTypes = {
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
   Mutation: {};
+  OutputTerm: OutputTerm;
   Query: {};
   Schedule: Schedule;
   Section: Section;
@@ -600,6 +608,12 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
 };
 
+export type OutputTermResolvers<ContextType = any, ParentType extends ResolversParentTypes['OutputTerm'] = ResolversParentTypes['OutputTerm']> = {
+  semester?: Resolver<ResolversTypes['Semester'], ParentType, ContextType>;
+  year?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'email'>>;
   catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
@@ -622,7 +636,7 @@ export type ScheduleResolvers<ContextType = any, ParentType extends ResolversPar
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   primary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
-  term?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  term?: Resolver<ResolversTypes['OutputTerm'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -686,6 +700,7 @@ export type Resolvers<ContextType = any> = {
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
+  OutputTerm?: OutputTermResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
   Section?: SectionResolvers<ContextType>;

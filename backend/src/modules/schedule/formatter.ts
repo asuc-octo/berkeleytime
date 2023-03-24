@@ -1,12 +1,13 @@
 import { ScheduleModule } from "./generated-types/module-types";
 import { CustomEventType, ScheduleType } from "../../db/schedule";
+import { stringToTerm } from "../../utils/term";
 
 export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule {
   return {
     _id: schedule._id as string,
     name: schedule.name,
     created_by: schedule.created_by,
-    term: schedule.term,
+    term: stringToTerm(schedule.term),
     is_public: schedule.is_public,
     class_IDs: schedule.class_IDs,
     primary_section_IDs: schedule.primary_section_IDs,
