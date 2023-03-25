@@ -9,7 +9,7 @@ export function reactSelectCourseSearch(option: FilterOption, query: string): bo
 	const { abbreviation, course_number } = option.data.course;
 
 	const abbreviations =
-		laymanTerms[abbreviation.toLowerCase()]?.map((abbr) => `${abbr}${course_number}`) ?? [];
+		laymanTerms[abbreviation.toLowerCase()]?.map((abbr) => `${abbr} ${course_number}`) ?? [];
 
 	const search = {
 		title: option.label,
