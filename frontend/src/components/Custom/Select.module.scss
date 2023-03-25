@@ -1,0 +1,21 @@
+.root {
+	[class$='-option'] {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		transition-duration: 0.1s;		
+	}
+
+	[class$='-option--is-focused'] {
+		background: none;
+	}
+
+	[class$='-option--is-selected'] {
+		background: #2684ff;
+	}
+
+	[class$='-option']:hover {
+		transition-delay: 60ms;
+		background: #deebff;
+	}
+}

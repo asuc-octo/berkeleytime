@@ -6,7 +6,7 @@ type CompareFn = (courseA: CourseOverviewFragment, courseB: CourseOverviewFragme
 /**
  * Comparator for department name. Essentially alphabetical order.
  */
-const compareDepartmentName: CompareFn = (courseA, courseB) => {
+export const compareDepartmentName: CompareFn = (courseA, courseB) => {
 	const courseATitle = `${courseA.abbreviation} ${courseA.courseNumber}`;
 	const courseBTitle = `${courseB.abbreviation} ${courseB.courseNumber}`;
 	return courseATitle.localeCompare(courseBTitle);
