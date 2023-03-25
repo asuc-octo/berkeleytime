@@ -1,5 +1,5 @@
 import {
-    getUserByEmail,
+    getUserById,
     updateUserInfo,
     deleteUser,
 } from "./controller";
@@ -7,21 +7,17 @@ import { UserModule } from "./generated-types/module-types";
 
 const resolvers: UserModule.Resolvers = {
     Query: {
-        // must be logged in to query for user, but can query for any user
         User(_, __, contextValue) {
-            return getUserByEmail(contextValue.user.email);
+            return getUserById(contextValue.user._id);
         },
     },
     Mutation: {
-        UpdateUserInfo: async (_, args, contextValue) => {
-            await updateUserInfo(contextValue.user.email, args);
-            return getUserByEmail(contextValue.user.email);
+        UpdateUserInfo(_, args, contextValue) {
+            return updateUserInfo(contextValue.user._id, args.newUserInfo);
         },
 
-        DeleteUser: async (_, __, contextValue) => {
-            const user = getUserByEmail(contextValue.user.email);
-            await deleteUser(contextValue.user.email);
-            return user;
+        DeleteUser(_, __, contextValue) {
+            return deleteUser(contextValue.user._id);
         },
     }
 };

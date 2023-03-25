@@ -47,7 +47,7 @@ const typedef = gql`
     """
     Mutate user info.
     """
-    UpdateUserInfo(input: UserInput): User
+    UpdateUserInfo(newUserInfo: UserInput!): User
 
     """
     Delete user account.

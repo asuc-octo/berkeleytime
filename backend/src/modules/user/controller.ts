@@ -1,21 +1,30 @@
-import { MutationUpdateUserInfoArgs, User } from "../../generated-types/graphql";
+import { ObjectId } from "mongodb";
+import { UserInput } from "../../generated-types/graphql";
 import { formatUser } from "./formatter";
 import { UserModel, UserType } from "./model";
 
-export async function getUserByEmail(email: string): Promise<User> {
-    const user = await UserModel.findOne({ email });
-
+function resolveAndFormat(user: UserType | null) {
     if (!user) {
         throw new Error("User not found");
     }
 
-    return formatUser(user as UserType);
+    return formatUser(user);
 }
 
-export async function updateUserInfo(email: string, input: MutationUpdateUserInfoArgs ) {
-    await UserModel.updateOne({ email }, input);
+export async function getUserById(id: ObjectId) {
+    const user = await UserModel.findById(id).lean();
+
+    return resolveAndFormat(user as UserType);
 }
 
-export async function deleteUser(email: string) {
-    await UserModel.deleteOne({ email });
+export async function updateUserInfo(id: ObjectId, newUserInfo:  UserInput) {
+    const user = await UserModel.findByIdAndUpdate(id, newUserInfo, { new: true, lean: true });
+
+    return resolveAndFormat(user);
+}
+
+export async function deleteUser(id: ObjectId) {
+    const user = await UserModel.findByIdAndDelete(id, { lean: true });
+
+    return resolveAndFormat(user);
 }

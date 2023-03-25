@@ -139,7 +139,7 @@ export type Mutation = {
 
 
 export type MutationUpdateUserInfoArgs = {
-  input?: InputMaybe<UserInput>;
+  newUserInfo: UserInput;
 };
 
 export type Query = {
@@ -503,7 +503,7 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   DeleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  UpdateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserInfoArgs>>;
+  UpdateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserInfoArgs, 'newUserInfo'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
