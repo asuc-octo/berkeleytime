@@ -1,33 +1,38 @@
-import { combineQueries, search } from 'utils/search';
 import { FilterOption } from 'app/Catalog/types';
-
-/**
- * Searches for a single course
- * @return a number (lower is better) representing the quality of the match
- */
-function searchCourse(query: string, courseCode: string, maxPenalty?: number): number | null {
-	const laymanArray: string[][] = [];
-	Object.keys(laymanTerms).forEach((key) => {
-		laymanTerms[key].forEach((replacement) => [laymanArray.push([key, replacement])]);
-	});
-
-	const searches = laymanArray
-		.filter(([source]) => courseCode.indexOf(source) > -1)
-		.map(([source, replacement]) =>
-			search(query, courseCode.replace(source, replacement), maxPenalty)
-		);
-
-	searches.push(search(query, courseCode, maxPenalty));
-
-	return combineQueries(searches);
-}
+import Fuse from 'fuse.js';
 
 /**
  * Runs {@link searchCourse} but for react-select
  */
 export function reactSelectCourseSearch(option: FilterOption, query: string): boolean {
 	if (!query || query === '' || query === null) return true;
-	return searchCourse(query, option.label.toLowerCase(), 0.2) !== null;
+	const { abbreviation, course_number } = option.data.course;
+
+	const abbreviations =
+		laymanTerms[abbreviation.toLowerCase()]?.map((abbr) => `${abbr}${course_number}`) ?? [];
+
+	const search = {
+		title: option.label,
+		abbreviation,
+		courseNumber: course_number,
+		abbreviations
+	};
+
+	const test = new Fuse([search], {
+		threshold: 0.001,
+		shouldSort: true,
+		includeMatches: false,
+		findAllMatches: false,
+		ignoreLocation: false,
+		keys: [
+			{ name: 'title', weight: 1 },
+			{ name: 'abbreviation', weight: 1 },
+			{ name: 'courseNumber', weight: 1 },
+			{ name: 'abbreviations', weight: 1 }
+		]
+	}).search(query);
+
+	return test.length > 0;
 }
 
 export const laymanTerms: {

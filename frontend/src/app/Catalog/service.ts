@@ -160,7 +160,10 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
 /**
  * Applies search query over list of courses
  */
-export function searchCatalog(courses: CourseOverviewFragment[], rawQuery: string): CourseOverviewFragment[] {
+export function searchCatalog(
+	courses: CourseOverviewFragment[],
+	rawQuery: string
+): CourseOverviewFragment[] {
 	if (!rawQuery || rawQuery === '' || rawQuery === null) return courses;
 
 	const options = {
@@ -192,7 +195,7 @@ export function searchCatalog(courses: CourseOverviewFragment[], rawQuery: strin
 	});
 
 	const fuse = new Fuse(courseInfo, options);
-	return fuse.search(normalizeSearchTerm(rawQuery)).map((res) => courses[res.refIndex]);
+	return fuse.search(rawQuery.trim().toLowerCase()).map((res) => courses[res.refIndex]);
 }
 
 /**
