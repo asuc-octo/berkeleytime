@@ -22,6 +22,20 @@ const typedef = gql`
     email_berkeleytime_update: Boolean!
   }
 
+  """
+  User input type for mutations.
+  """
+  input UserInput {
+    username: String
+    first_name: String
+    last_name: String
+    major: [String!]
+    email_class_update: Boolean
+    email_grade_update: Boolean
+    email_enrollment_opening: Boolean
+    email_berkeleytime_update: Boolean
+  }
+
   type Query @auth {
     """
     Query for user info.
@@ -31,19 +45,9 @@ const typedef = gql`
 
   type Mutation @auth {
     """
-    Mutate username, first name, and last name.
+    Mutate user info.
     """
-    UpdateUserInfo(username: String, first_name: String, last_name: String): User
-
-    """
-    Mutate major.
-    """
-    UpdateUserMajor(major: [String!]): User
-
-    """
-    Mutate email preferences.
-    """
-    UpdateUserEmailPreferences(email_class_update: Boolean, email_grade_update: Boolean, email_enrollment_opening: Boolean, email_berkeleytime_update: Boolean): User
+    UpdateUserInfo(input: UserInput): User
 
     """
     Delete user account.

@@ -4,10 +4,15 @@ export namespace UserModule {
   interface DefinedFields {
     User: 'email' | 'username' | 'first_name' | 'last_name' | 'major' | 'last_login' | 'date_joined' | 'is_staff' | 'is_active' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
     Query: 'User';
-    Mutation: 'UpdateUserInfo' | 'UpdateUserMajor' | 'UpdateUserEmailPreferences' | 'DeleteUser';
+    Mutation: 'UpdateUserInfo' | 'DeleteUser';
+  };
+  
+  interface DefinedInputFields {
+    UserInput: 'username' | 'first_name' | 'last_name' | 'major' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
   };
   
   export type User = Pick<Types.User, DefinedFields['User']>;
+  export type UserInput = Pick<Types.UserInput, DefinedInputFields['UserInput']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   export type Mutation = Pick<Types.Mutation, DefinedFields['Mutation']>;
   
@@ -48,8 +53,6 @@ export namespace UserModule {
     Mutation?: {
       '*'?: gm.Middleware[];
       UpdateUserInfo?: gm.Middleware[];
-      UpdateUserMajor?: gm.Middleware[];
-      UpdateUserEmailPreferences?: gm.Middleware[];
       DeleteUser?: gm.Middleware[];
     };
   };

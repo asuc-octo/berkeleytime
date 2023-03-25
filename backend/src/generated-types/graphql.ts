@@ -133,32 +133,13 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Delete user account. */
   DeleteUser?: Maybe<User>;
-  /** Mutate email preferences. */
-  UpdateUserEmailPreferences?: Maybe<User>;
-  /** Mutate username, first name, and last name. */
+  /** Mutate user info. */
   UpdateUserInfo?: Maybe<User>;
-  /** Mutate major. */
-  UpdateUserMajor?: Maybe<User>;
-};
-
-
-export type MutationUpdateUserEmailPreferencesArgs = {
-  email_berkeleytime_update?: InputMaybe<Scalars['Boolean']>;
-  email_class_update?: InputMaybe<Scalars['Boolean']>;
-  email_enrollment_opening?: InputMaybe<Scalars['Boolean']>;
-  email_grade_update?: InputMaybe<Scalars['Boolean']>;
 };
 
 
 export type MutationUpdateUserInfoArgs = {
-  first_name?: InputMaybe<Scalars['String']>;
-  last_name?: InputMaybe<Scalars['String']>;
-  username?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateUserMajorArgs = {
-  major?: InputMaybe<Array<Scalars['String']>>;
+  input?: InputMaybe<UserInput>;
 };
 
 export type Query = {
@@ -275,6 +256,18 @@ export type User = {
   username: Scalars['String'];
 };
 
+/** User input type for mutations. */
+export type UserInput = {
+  email_berkeleytime_update?: InputMaybe<Scalars['Boolean']>;
+  email_class_update?: InputMaybe<Scalars['Boolean']>;
+  email_enrollment_opening?: InputMaybe<Scalars['Boolean']>;
+  email_grade_update?: InputMaybe<Scalars['Boolean']>;
+  first_name?: InputMaybe<Scalars['String']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  major?: InputMaybe<Array<Scalars['String']>>;
+  username?: InputMaybe<Scalars['String']>;
+};
+
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -366,6 +359,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Term: Term;
   User: ResolverTypeWrapper<User>;
+  UserInput: UserInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -391,6 +385,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Term: Term;
   User: User;
+  UserInput: UserInput;
 };
 
 export type AuthDirectiveArgs = { };
@@ -508,9 +503,7 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   DeleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  UpdateUserEmailPreferences?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserEmailPreferencesArgs>>;
   UpdateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserInfoArgs>>;
-  UpdateUserMajor?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, Partial<MutationUpdateUserMajorArgs>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
