@@ -13,7 +13,13 @@ export default async (config: Config) => {
   app.use(
     "/graphql",
     expressMiddleware(server, {
-      context: async ({ req }) => ({ user: req.user }),
+      context: async ({ req }) => ({
+        user: {
+          ...req.user,
+          isAuthenticated: req.isAuthenticated(),
+          logout: (callback: (err: any) => void) => req.logout(callback),
+        },
+      }),
     })
   );
 

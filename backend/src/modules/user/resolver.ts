@@ -17,7 +17,15 @@ const resolvers: UserModule.Resolvers = {
         },
 
         DeleteUser(_, __, contextValue) {
-            return deleteUser(contextValue.user._id);
+            const res = deleteUser(contextValue.user._id);
+
+            contextValue.user.logout((err: Error) => {
+                if (err) {
+                    throw err;
+                }
+            });
+
+            return res;
         },
     }
 };

@@ -35,7 +35,7 @@ export default function authDirectiveTransformer(schema: GraphQLSchema) {
         const { resolve = defaultFieldResolver } = fieldConfig;
 
         fieldConfig.resolve = async function (_parent: any, args: any, contextValue: any, info: any) {
-          if (!contextValue.user) {
+          if (!contextValue.user.isAuthenticated) {
             throw new Error('Not authenticated');
           }
 

@@ -13,8 +13,9 @@ import { UserModel } from "../../modules/user/model";
 import { config } from "../../config";
 
 // routes need to be added as authorized origins/redirect uris in google cloud console
-const LOGIN_ROUTE = "/auth/google";
-const CALLBACK_ROUTE = "/auth/google/callback";
+const LOGIN_ROUTE = "/login";
+const CALLBACK_ROUTE = "/login/callback";
+const LOGOUT_ROUTE = "/logout";
 
 const SUCCESS_REDIRECT = "/graphql";
 const FAILURE_REDIRECT = "/fail";
@@ -56,6 +57,15 @@ export default async (app: Application) => {
     // failureMessage: "failed",
     successRedirect: SUCCESS_REDIRECT,
   }));
+  app.post(LOGOUT_ROUTE, (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        res.redirect(FAILURE_REDIRECT);
+      } else {
+        res.redirect(SUCCESS_REDIRECT);
+      }
+    });
+  });
 
   // config
   passport.serializeUser((user, done) => {
@@ -87,7 +97,7 @@ export default async (app: Application) => {
         username: profile.displayName,
         first_name: profile.name?.givenName || '',
         last_name: profile.name?.familyName || '',
-        refresh_token: refreshToken,
+        // refresh_token: refreshToken, <-------------- currently not needed.
       });
     }
 
@@ -97,4 +107,3 @@ export default async (app: Application) => {
     done(null, user);
   }));
 }
-
