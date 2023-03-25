@@ -12,7 +12,6 @@ import {
 	CurrentFilters
 } from './types';
 import { laymanTerms } from 'lib/courses/search';
-import { normalizeSearchTerm } from 'utils/search';
 import { courseToName } from 'lib/courses/course';
 
 const SEMESTER_VALUES = {
