@@ -17,7 +17,14 @@ export async function getUserById(id: ObjectId) {
     return resolveAndFormat(user as UserType);
 }
 
-export async function updateUserInfo(id: ObjectId, newUserInfo:  UserInput) {
+export async function updateUserInfo(id: ObjectId, newUserInfo: UserInput) {
+    // remove explicitly set null values
+    for (const key in newUserInfo) {
+        if (newUserInfo[key as  keyof UserInput] === null) {
+            delete newUserInfo[key as keyof UserInput];
+        }
+    }
+
     const user = await UserModel.findByIdAndUpdate(id, newUserInfo, { new: true, lean: true });
 
     return resolveAndFormat(user);
