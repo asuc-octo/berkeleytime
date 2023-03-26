@@ -172,10 +172,21 @@ export function searchCatalog(
 		keys: [
 			{ name: 'title', weight: 1 },
 			{ name: 'abbreviation', weight: 1 },
-			{ name: 'abbreviations', weight: 1 },
-			{ name: 'courseNumber', weight: 2 },
+			{ name: 'abbreviations', weight: 2 },
+			{ name: 'courseNumber', weight: 1 },
 			{ name: 'fullCourseCode', weight: 1 }
-		]
+		],
+		// The fuse types are wrong for this fn
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		sortFn: (itemA: any, itemB: any) => {
+			// Sort first by sort score
+			if (itemA.score - itemB.score) return itemA.score - itemB.score;
+
+			// if the score is the same, sort by the course number
+			const a = itemA.item[3].v;
+			const b = itemB.item[3].v;
+			return a.toLowerCase().localeCompare(b.toLowerCase());
+		}
 	};
 
 	const courseInfo = courses.map((course) => {
