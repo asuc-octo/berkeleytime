@@ -1,10 +1,15 @@
 import { FilterOption } from 'app/Catalog/types';
 import Fuse from 'fuse.js';
+import { FilterOptionOption } from 'react-select/dist/declarations/src/filters';
 
 /**
  * Runs {@link searchCourse} but for react-select
  */
-export function reactSelectCourseSearch(option: FilterOption, query: string): boolean {
+export function reactSelectCourseSearch(
+	// TODO: The types here are very bad because interacting with poorly written JSX
+	option: FilterOptionOption<FilterOption & {course: any}>,
+	query: string
+): boolean {
 	if (!query || query === '' || query === null) return true;
 	const { abbreviation, course_number } = option.data.course;
 
@@ -18,7 +23,7 @@ export function reactSelectCourseSearch(option: FilterOption, query: string): bo
 		abbreviations
 	};
 
-	const test = new Fuse([search], {
+	const fuse = new Fuse([search], {
 		threshold: 0.001,
 		shouldSort: true,
 		includeMatches: false,
@@ -32,7 +37,7 @@ export function reactSelectCourseSearch(option: FilterOption, query: string): bo
 		]
 	}).search(query);
 
-	return test.length > 0;
+	return fuse.length > 0;
 }
 
 export const laymanTerms: {
