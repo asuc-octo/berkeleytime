@@ -1,5 +1,5 @@
 import { UserModule } from "./generated-types/module-types";
-import { UserType } from "./model";
+import { UserType } from "../../db/user";
 
 export function formatUser(user: UserType): UserModule.User {
     return {

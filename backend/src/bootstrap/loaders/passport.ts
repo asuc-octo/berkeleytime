@@ -9,7 +9,7 @@ import type { Application } from "express";
 import session from "express-session";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
-import { UserModel } from "../../modules/user/model";
+import { UserModel } from "../../db/user";
 import { config } from "../../config";
 
 // routes need to be added as authorized origins/redirect uris in google cloud console

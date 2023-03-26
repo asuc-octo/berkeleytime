@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { UserInput } from "../../generated-types/graphql";
 import { formatUser } from "./formatter";
-import { UserModel, UserType } from "./model";
+import { UserModel, UserType } from "../../db/user";
 
 function resolveAndFormat(user: UserType | null) {
     if (!user) {
