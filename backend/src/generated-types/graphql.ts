@@ -132,9 +132,9 @@ export type Instructor = {
 export type Mutation = {
   __typename?: 'Mutation';
   /** Delete user account. */
-  DeleteUser?: Maybe<User>;
+  deleteUser?: Maybe<User>;
   /** Mutate user info. */
-  UpdateUserInfo?: Maybe<User>;
+  updateUserInfo?: Maybe<User>;
 };
 
 
@@ -144,8 +144,6 @@ export type MutationUpdateUserInfoArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  /** Query for user info. */
-  User?: Maybe<User>;
   /**
    * Get info about all courses and their corresponding classes for a given semester.
    *
@@ -163,6 +161,8 @@ export type Query = {
   grade?: Maybe<Grade>;
   ping: Scalars['String'];
   section?: Maybe<Section>;
+  /** Query for user info. */
+  user?: Maybe<User>;
 };
 
 
@@ -502,12 +502,11 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  DeleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  UpdateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserInfoArgs, 'newUserInfo'>>;
+  deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  updateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserInfoArgs, 'newUserInfo'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
   class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassArgs, 'classNumber' | 'courseNumber' | 'subject' | 'term'>>;
   course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCourseArgs, 'courseNumber' | 'subject'>>;
@@ -515,6 +514,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   grade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradeArgs, 'courseNum' | 'subject'>>;
   ping?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   section?: Resolver<Maybe<ResolversTypes['Section']>, ParentType, ContextType, RequireFields<QuerySectionArgs, 'classNumber' | 'courseNumber' | 'sectionNumber' | 'subject' | 'term'>>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
 export type SectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Section'] = ResolversParentTypes['Section']> = {

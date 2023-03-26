@@ -3,8 +3,8 @@ import * as gm from "graphql-modules";
 export namespace UserModule {
   interface DefinedFields {
     User: 'email' | 'username' | 'first_name' | 'last_name' | 'major' | 'last_login' | 'date_joined' | 'is_staff' | 'is_active' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
-    Query: 'User';
-    Mutation: 'UpdateUserInfo' | 'DeleteUser';
+    Query: 'user';
+    Mutation: 'updateUserInfo' | 'deleteUser';
   };
   
   interface DefinedInputFields {
@@ -48,12 +48,12 @@ export namespace UserModule {
     };
     Query?: {
       '*'?: gm.Middleware[];
-      User?: gm.Middleware[];
+      user?: gm.Middleware[];
     };
     Mutation?: {
       '*'?: gm.Middleware[];
-      UpdateUserInfo?: gm.Middleware[];
-      DeleteUser?: gm.Middleware[];
+      updateUserInfo?: gm.Middleware[];
+      deleteUser?: gm.Middleware[];
     };
   };
 }

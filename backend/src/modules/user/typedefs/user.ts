@@ -1,7 +1,7 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-  directive @auth on OBJECT
+  directive @auth on OBJECT | FIELD_DEFINITION
 
   """
   User accout info.
@@ -36,23 +36,23 @@ const typedef = gql`
     email_berkeleytime_update: Boolean
   }
 
-  type Query @auth {
+  type Query {
     """
     Query for user info.
     """
-    User: User
+    user: User @auth
   }
 
   type Mutation @auth {
     """
     Mutate user info.
     """
-    UpdateUserInfo(newUserInfo: UserInput!): User
+    updateUserInfo(newUserInfo: UserInput!): User
 
     """
     Delete user account.
     """
-    DeleteUser: User
+    deleteUser: User
   }
 `;
 

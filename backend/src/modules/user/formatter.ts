@@ -4,7 +4,7 @@ import { UserType } from "./model";
 export function formatUser(user: UserType): UserModule.User {
     return {
         ...user,
-        last_login: user.last_login.toString(),
-        date_joined: user.createdAt.toString(),
+        last_login: user.last_login.toISOString(),
+        date_joined: user.createdAt.toISOString(),
     };
 }
