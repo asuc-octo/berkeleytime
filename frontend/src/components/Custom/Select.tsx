@@ -104,10 +104,10 @@ const BTSelect = <
 				className={styles.root}
 				onMenuClose={() => set(false)}
 				onMenuOpen={() => set(true)}
-				// components={{
-				// 	MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,
-				// 	Option: BTOption as ComponentType<OptionProps<Option, IsMulti, Group>>
-				// }}
+				components={{
+					MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,
+					Option: BTOption as ComponentType<OptionProps<Option, IsMulti, Group>>
+				}}
 			/>
 		</ListContext.Provider>
 	);
@@ -117,4 +117,4 @@ BTSelect.defaultProps = {
 	filterOption: createFilter({ ignoreAccents: false })
 };
 
-export default memo(BTSelect);
+export default BTSelect;
