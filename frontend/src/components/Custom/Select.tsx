@@ -9,7 +9,7 @@ import {
 	useCallback,
 	createContext,
 	useContext,
-	MutableRefObject,
+	MutableRefObject
 } from 'react';
 import Select, { components, GroupBase, MenuListProps, OptionProps, Props } from 'react-select';
 import { VariableSizeList as List } from 'react-window';
@@ -34,7 +34,6 @@ const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function Me
 	const list: MutableRefObject<List | null> = useRef(null);
 	const elements = Children.toArray(children);
 	const { getSize, isOpen } = useContext(ListContext);
-
 	useEffect(() => {
 		list?.current?.resetAfterIndex(0);
 		if (list?.current && isOpen) list.current.scrollToItem(options.indexOf(value) + 3);
@@ -52,7 +51,6 @@ const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function Me
 			}}
 		>
 			{({ index, style }) => {
-				// const OptionComponent = cloneElement(elements[index] as ReactElement, { index });
 				return <div style={style}>{elements[index]}</div>;
 			}}
 		</List>
@@ -60,28 +58,30 @@ const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function Me
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const BTOption: ComponentType<OptionProps<any, any, any>> | undefined = memo(
-	function Option(props): JSX.Element {
-		const { children, innerProps, ...rest } = props;
-		const { onMouseMove, onMouseOver, ...innerRest } = innerProps;
-		const { setSize } = useContext(ListContext);
-		const root: MutableRefObject<HTMLDivElement | null> = useRef(null);
+const BTOption: ComponentType<OptionProps<any, any, any>> | undefined = memo(function Option(
+	props
+) {
+	const { children, innerProps, ...rest } = props;
+	const { onMouseMove, onMouseOver, ...innerRest } = innerProps;
+	const { setSize } = useContext(ListContext);
+	const root: MutableRefObject<HTMLDivElement | null> = useRef(null);
+	useEffect(() => {
+		if (root.current) {
+			// The IDs take the form: react-select-191-option-407
+			// Here we regex everything after the last hyphen to obtain the index of the item in the list.
+			const index = innerProps?.id?.match('(?<=-)[^-]*$') ?? null;
+			if (index) setSize(parseInt(index[0], 10), root.current.getBoundingClientRect().height);
+		}
+	}, [root, innerProps?.id, setSize]);
 
-		// useEffect(() => {
-		// 	if (root.current) setSize(index, root.current.getBoundingClientRect().height);
-		// }, [index, setSize]);
+	const newProps = { ...rest, innerProps: innerRest };
 
-		const newProps = { ...rest, innerProps: innerRest };
-
-		// console.log(props);
-
-		return (
-			<div ref={root}>
-				<components.Option {...newProps}>{children}</components.Option>
-			</div>
-		);
-	}
-);
+	return (
+		<div ref={root}>
+			<components.Option {...newProps}>{children}</components.Option>
+		</div>
+	);
+});
 
 const BTSelect = <
 	Option,
@@ -102,11 +102,12 @@ const BTSelect = <
 			<Select
 				{...props}
 				className={styles.root}
-				options={props.options}
-				filterOption={props.filterOption}
 				onMenuClose={() => set(false)}
 				onMenuOpen={() => set(true)}
-				components={{ MenuList: BTMenuList, Option: BTOption }}
+				// components={{
+				// 	MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,
+				// 	Option: BTOption as ComponentType<OptionProps<Option, IsMulti, Group>>
+				// }}
 			/>
 		</ListContext.Provider>
 	);
