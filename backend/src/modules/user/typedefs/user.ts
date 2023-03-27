@@ -1,8 +1,6 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-  directive @auth on OBJECT | FIELD_DEFINITION
-
   """
   User accout info.
   """
@@ -43,16 +41,16 @@ const typedef = gql`
     user: User @auth
   }
 
-  type Mutation @auth {
+  type Mutation {
     """
     Mutate user info.
     """
-    updateUserInfo(newUserInfo: UserInput!): User
+    updateUserInfo(newUserInfo: UserInput!): User @auth
 
     """
     Delete user account.
     """
-    deleteUser: User
+    deleteUser: User @auth
   }
 `;
 

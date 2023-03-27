@@ -20,7 +20,7 @@ export async function getUserById(id: ObjectId) {
 
 export async function updateUserInfo(id: ObjectId, newUserInfo: UserInput) {
     // remove explicitly set null values
-    newUserInfo = omitBy(newUserInfo, (key) => key == null);
+    newUserInfo = omitBy(newUserInfo, (value) => value == null);
 
     const user = await UserModel.findByIdAndUpdate(id, newUserInfo, { new: true, lean: true });
 

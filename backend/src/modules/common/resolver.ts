@@ -1,7 +1,8 @@
 import { GraphQLScalarType, Kind } from "graphql";
 import GraphQLJSON, { GraphQLJSONObject } from "graphql-type-json";
+import type { CommonModule } from "./generated-types/module-types";
 
-const resolvers = {
+const resolvers: CommonModule.Resolvers = {
     Query: {
         ping: () => {
             return "pong";
