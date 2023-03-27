@@ -4,29 +4,32 @@ import {
 	ComponentType,
 	memo,
 	useState,
-	cloneElement,
 	useEffect,
 	useRef,
 	useCallback,
 	createContext,
 	useContext,
-	MutableRefObject
+	MutableRefObject,
 } from 'react';
 import Select, { components, GroupBase, MenuListProps, OptionProps, Props } from 'react-select';
 import { VariableSizeList as List } from 'react-window';
 import { createFilter } from 'react-select';
 
 import styles from './Select.module.scss';
-import { ReactElement } from 'react-markdown/lib/react-markdown';
 
 const ListContext = createContext<{
 	getSize: (index: number) => number;
 	setSize: (index: number, size: number) => void;
 	isOpen: boolean;
-}>({});
+}>({
+	getSize: (_) => 0,
+	setSize: (_, __) => 0,
+	isOpen: false
+});
 
-const MenuList: ComponentType<MenuListProps> = memo(function MenuList(props) {
-	const { options, getValue, children, maxHeight } = props;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function MenuList(props) {
+	const { options, getValue, children } = props;
 	const [value] = getValue();
 	const list: MutableRefObject<List | null> = useRef(null);
 	const elements = Children.toArray(children);
@@ -39,7 +42,7 @@ const MenuList: ComponentType<MenuListProps> = memo(function MenuList(props) {
 
 	return (
 		<List
-			height={175}
+			height={200}
 			itemCount={elements?.length ?? 0}
 			itemSize={getSize}
 			ref={list}
@@ -49,32 +52,36 @@ const MenuList: ComponentType<MenuListProps> = memo(function MenuList(props) {
 			}}
 		>
 			{({ index, style }) => {
-				const OptionComponent = cloneElement(elements[index] as ReactElement, { index });
-
-				return <div style={style}>{OptionComponent}</div>;
+				// const OptionComponent = cloneElement(elements[index] as ReactElement, { index });
+				return <div style={style}>{elements[index]}</div>;
 			}}
 		</List>
 	);
 });
 
-const Option: ComponentType<OptionProps & { index: number }> = memo(function Option(props) {
-	const { children, innerProps, index, ...rest } = props;
-	const { onMouseMove, onMouseOver, ...innerRest } = innerProps;
-	const { setSize } = useContext(ListContext);
-	const root: MutableRefObject<HTMLDivElement | null> = useRef(null);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const BTOption: ComponentType<OptionProps<any, any, any>> | undefined = memo(
+	function Option(props): JSX.Element {
+		const { children, innerProps, ...rest } = props;
+		const { onMouseMove, onMouseOver, ...innerRest } = innerProps;
+		const { setSize } = useContext(ListContext);
+		const root: MutableRefObject<HTMLDivElement | null> = useRef(null);
 
-	useEffect(() => {
-		if (root.current) setSize(index, root.current.getBoundingClientRect().height);
-	}, [index, setSize]);
+		// useEffect(() => {
+		// 	if (root.current) setSize(index, root.current.getBoundingClientRect().height);
+		// }, [index, setSize]);
 
-	const newProps = { ...rest, innerProps: innerRest };
+		const newProps = { ...rest, innerProps: innerRest };
 
-	return (
-		<div ref={root}>
-			<components.Option {...newProps}>{children}</components.Option>
-		</div>
-	);
-});
+		// console.log(props);
+
+		return (
+			<div ref={root}>
+				<components.Option {...newProps}>{children}</components.Option>
+			</div>
+		);
+	}
+);
 
 const BTSelect = <
 	Option,
@@ -99,7 +106,7 @@ const BTSelect = <
 				filterOption={props.filterOption}
 				onMenuClose={() => set(false)}
 				onMenuOpen={() => set(true)}
-				components={{ MenuList, Option }}
+				components={{ MenuList: BTMenuList, Option: BTOption }}
 			/>
 		</ListContext.Provider>
 	);

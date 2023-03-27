@@ -26,7 +26,7 @@ type Skeleton = { __typename: 'Skeleton'; id: number };
 const CatalogList = (props: CatalogListProps) => {
 	const { currentFilters, setCurrentCourse, selectedId, searchQuery, sortQuery } = props;
 	const { observe, height } = useDimensions();
-	const [fetchCatalogList, { data }] = useGetCoursesForFilterLazyQuery({});
+	const [fetchCatalogList, { data, loading, called }] = useGetCoursesForFilterLazyQuery({});
 	const history = useHistory();
 
 	const courses = useMemo(() => {
@@ -73,6 +73,9 @@ const CatalogList = (props: CatalogListProps) => {
 
 	return (
 		<div ref={observe} className={styles.root}>
+			<div className={styles.status}>
+				{called && !loading && courses?.length > 0 && <span>{courses.length} Results</span>}
+			</div>
 			{height && courses.length > 0 ? (
 				<FixedSizeList
 					className={styles.list}

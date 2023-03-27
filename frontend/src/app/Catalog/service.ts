@@ -165,15 +165,16 @@ export function searchCatalog(
 ): CourseOverviewFragment[] {
 	if (!rawQuery || rawQuery === '' || rawQuery === null) return courses;
 
-	const options = {
+	const options: Fuse.IFuseOptions<any> = {
 		includeScore: true,
 		shouldSort: true,
-		threshold: 0.25,
+		threshold: 0.08,
+		// ignoreLocation: false,
 		keys: [
 			{ name: 'title', weight: 1 },
-			{ name: 'abbreviation', weight: 1 },
+			{ name: 'abbreviation', weight: 1.5 },
 			{ name: 'abbreviations', weight: 2 },
-			{ name: 'courseNumber', weight: 1 },
+			{ name: 'courseNumber', weight: 1.2 },
 			{ name: 'fullCourseCode', weight: 1 }
 		],
 		// The fuse types are wrong for this fn
