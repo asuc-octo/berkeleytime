@@ -153,7 +153,10 @@ export function fetchGradeData(classData) {
 				});
 				dispatch(updateGradeData(gradesData));
 			},
-			(error) => console.log('An error occurred.', error)
+			(error) => {
+				console.log('An error occurred.', error)
+				return false;
+			}
 		);
 }
 
@@ -260,7 +263,7 @@ export function fetchGradeFromUrl(url, history) {
 						}
 					});
 				},
-				(error) => console.log('An error occurred.', error)
+				(error) => {console.log('An error occurred.', error)}
 			)
 			.then(() => {
 				if (success) {
@@ -296,6 +299,7 @@ export function fetchGradeFromUrl(url, history) {
 export function fetchEnrollContext() {
 	return async (dispatch, getState) => {
 		// Avoid fetching enrollment data twice.
+		
 		if (getState().enrollment.context?.courses) {
 			return;
 		}

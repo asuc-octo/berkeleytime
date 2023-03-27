@@ -12,16 +12,31 @@ import { useHistory, useParams } from 'react-router';
 import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
-
+import { Tabs, Tab, Col } from 'react-bootstrap';
 import styles from './CatalogView.module.scss';
-import { useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector, MapStateToProps } from 'react-redux';
 import SectionTable from './SectionTable';
 import { getLatestSemester, Semester } from 'utils/playlists/semesters';
+import EnrollmentGraphCard from 'components/GraphCard/EnrollmentGraphCard';
+import GradesGraphCard from 'components/GraphCard/GradesGraphCard';
+import { gradeReset, enrollReset, fetchGradeContext, fetchEnrollContext, fetchGradeFromUrl, fetchEnrollFromUrl, fetchGradeData, fetchEnrollData } from 'redux/actions';
+import GradesGraph from 'components/Graphs/GradesGraph';
+import axios from 'axios';
+import BTLoader from 'components/Common/BTLoader';
+import store from 'redux/store';
+import EnrollmentGraph from 'components/Graphs/EnrollmentGraph';
 
 interface CatalogViewProps {
 	coursePreview: CourseFragment | null;
 	setCurrentCourse: Dispatch<SetStateAction<CourseFragment | null>>;
 	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
+	gradesData:any;
+	enrollmentData:any;
+	gradesGraphData:any;
+	enrollGraphData:any;
+	gradesSelectedCourses:any;
+	enrollSelectedCourses:any;
+	enrollContext:any;
 }
 
 const skeleton = [...Array(8).keys()];
@@ -49,23 +64,33 @@ var dict = new Map([
   ]);
 
 const CatalogView = (props: CatalogViewProps) => {
-	const { coursePreview, setCurrentFilters, setCurrentCourse } = props;
+
+	const { coursePreview, setCurrentFilters, setCurrentCourse, gradesData, enrollmentData, gradesGraphData, enrollGraphData, gradesSelectedCourses, enrollSelectedCourses, enrollContext } = props;
 	const { abbreviation, courseNumber, semester } = useParams<{
 		abbreviation: string;
 		courseNumber: string;
 		semester: string;
 	}>();
 
+	const dispatch = useDispatch();
+
 	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
 	const [isOpen, setOpen] = useState(false);
+
 	const history = useHistory();
 
-	const legacyId = useSelector(
+	var legacyId = useSelector(
 		(state: any) =>
 			state.enrollment?.context?.courses?.find(
 				(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
 			)?.id ?? null
 	);
+
+	const enrollPath = legacyId
+		? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
+		: `/enrollment`;
+
+	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
 
 	const [getCourse, { data, loading }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
@@ -108,8 +133,64 @@ const CatalogView = (props: CatalogViewProps) => {
 			setOpen(true);
 		}
 	}, [coursePreview, data]);
+	
+	
+	useEffect(() => {
+		if (course !== null) {	
+			if (false && legacyId !== null) {		
+				dispatch(gradeReset())
+				dispatch(enrollReset())
+				dispatch(fetchEnrollContext());
+				dispatch(fetchGradeContext());
+				// let temp = semester.split(' ');
+				// dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
+				// axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
+				// 	dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
+				// 	});	
+			} else {
+				dispatch(gradeReset())
+				dispatch(enrollReset())
+				dispatch(fetchEnrollContext());
+				dispatch(fetchGradeContext());
+			}
+		}
+	}, [course?.courseNumber]);
 
-	const [playlists, sections] = useMemo(() => {
+	useEffect(() => {
+		legacyId = (store.getState() as any).enrollment?.context?.courses?.find(
+			(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
+		)?.id ?? null
+		
+		if (legacyId !== null) {
+			let temp = semester.split(' ');
+			dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
+			axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
+				dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
+				});
+		}
+		
+	}, [enrollContext])
+
+	useEffect(() => {
+		if (course !== null) {
+			if (gradesSelectedCourses?.length == 1) {
+				dispatch(fetchGradeData(gradesSelectedCourses));
+			}
+		}
+	}, [gradesSelectedCourses])
+
+	useEffect(() => {
+		if (course !== null) {
+			if (enrollSelectedCourses?.length == 1) {
+				dispatch(fetchEnrollData(enrollSelectedCourses));
+			}
+		}
+	}, [enrollSelectedCourses])
+
+
+	  
+
+	const [playlists, sections, links] = useMemo(() => {
 		let playlists = null;
 		let sections = null;
 		// let semesters = null;
@@ -128,33 +209,31 @@ const CatalogView = (props: CatalogViewProps) => {
 			sections = sortSections(edges.map((e) => e.node));
 		}
 
-		console.log(semester)
-		if (false && sections !== null) {
+		let links:any = [];
+		if (sections !== null) {
 			sections = sortSections(sections);
 			for (var i = 0; i < sections.length; i++) {
 				var stre = '';
 				let temp = semester.split(' ');
 				var punctuation = ',';
 				var regex = new RegExp('[' + punctuation + ']', 'g');
-				var rmc = courseRef.abbreviation.replace(regex, '');
-				stre = `https://classes.berkeley.edu/content/${semester[1]}
-				-${semester[0]}
+				var rmc = abbreviation.replace(regex, '');
+				stre = `https://classes.berkeley.edu/content/${temp[1]}
+				-${temp[0]}
 				-${rmc}
-				-${courseRef.courseNumber}
+				-${courseNumber}
 				-${sections[i].sectionNumber}
 				-${dict.get(sections[i].kind)}
 				-${sections[i].sectionNumber}`;
 				stre = stre.replace(/\s+/g, '');
-				
 				links.push(stre);
 			}
 		}
-
-
-
-		// return [playlists ?? skeleton, sections ?? [], semesters];
-		return [playlists ?? skeleton, sections ?? null];
+		
+		return [playlists ?? skeleton, sections ?? null, links ?? null];
 	}, [course]);
+
+	
 
 	const handlePill = (pillItem: PlaylistType) => {
 		setCurrentFilters((prev) => {
@@ -177,19 +256,115 @@ const CatalogView = (props: CatalogViewProps) => {
 		});
 	};
 
-	const enrollPath = legacyId
-		? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
-		: `/enrollment`;
-
-	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
-
-	// const playlists = course?.playlistSet.edges.map((e) => e?.node!);
-
-	// let sections = course?.sectionSet.edges.map((e) => e?.node!);
-	let links:any = [];
-	console.log(sections)
 	
+
+
+	const [hoveredClass, setHoveredClass] = useState<any>(false);
+	const [updateMobileHover, setUpdateMobileHover] = useState<any>(true);
 	
+
+	function update(course:any, grade:any) {
+		const gradesData = (store.getState() as any).grade.gradesData;
+		if (course && gradesData && gradesData.length > 0) {
+			const selectedGrades = gradesData.filter((c:any) => course.id === c.id)[0];
+			const hoverTotal = {
+				...course,
+				...selectedGrades,
+				hoverGrade: grade
+			};
+
+			setHoveredClass(hoverTotal);
+		}
+	}
+
+	// Handler function for updating GradesInfoCard on hover with single course
+	function updateGraphHover(data:any) {
+		const { isTooltipActive, activeLabel } = data;
+		const selectedCourses = (store.getState() as any).grade.selectedCourses;
+
+		const noBarMobile = updateMobileHover && window.innerWidth < 768;
+
+		// Update the selected course if no bar is clicked if in mobile
+		if (isTooltipActive && (selectedCourses.length === 1 || noBarMobile)) {
+			const selectedCourse = selectedCourses[0];
+			const grade = activeLabel;
+			update(selectedCourse, grade);
+		}
+
+		// Update mobile hover records if there actually is a bar (then we only want updateBarHover to run)
+		setUpdateMobileHover({ updateMobileHover: true });
+	}
+
+	const [tab, setTab] = useState<Number>(0)
+	const openTab = () => {
+													
+		if (tab == 0) {
+			return (
+				<>
+					<nav className={styles.tabContainer}>
+						<button className={styles.tabButtonAct} onClick={() => setTab(0)}>{`Class Times - ${semester ?? ''}`}</button>
+						<button className={styles.tabButton} onClick={() => setTab(1)}>Grades</button>
+						<button className={styles.tabButton} onClick={() => setTab(2)}>Enrollment</button>
+					</nav>
+					{sections && sections.length > 0 ? (
+						<div className={styles.gradesBox}>
+							<SectionTable links={links} sections={sections} />
+						</div>
+					) : !loading ? (
+						<span className={styles.gradesBox} >There are no class times for the selected course.</span>
+					) : null}
+				</>
+			)
+		} else if (tab == 1) {
+			return (
+				<>
+					<nav className={styles.tabContainer}>
+						<button className={styles.tabButton} onClick={() => setTab(0)}>{`Class Times - ${semester ?? ''}`}</button>
+						<button className={styles.tabButtonAct} onClick={() => setTab(1)}>Grades</button>
+						<button className={styles.tabButton} onClick={() => setTab(2)}>Enrollment</button>
+					</nav>
+					{gradesData?.length > 0 ? 
+						<div className={styles.gradesBox}>
+							<GradesGraph
+								graphData={gradesGraphData}
+								gradesData={gradesData}
+								updateBarHover={null}
+								updateGraphHover={updateGraphHover}
+								course={course?.abbreviation+' '+course?.courseNumber}
+								semester={'All Semesters'}
+								instructor={'All Instructors'}
+								selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
+								denominator={hoveredClass.denominator}
+								color={0}
+								isMobile={window.innerWidth < 768 ? true : false}
+								graphEmpty={false}
+							/>
+						</div>
+						:
+						<div>no grade data found</div>
+					}
+				</>
+			)
+		} else {
+			return (
+				<>	
+					<nav className={styles.tabContainer}>
+						<button className={styles.tabButton} onClick={() => setTab(0)}>{`Class Times - ${semester ?? ''}`}</button>
+						<button className={styles.tabButton} onClick={() => setTab(1)}>Grades</button>
+						<button className={styles.tabButtonAct} onClick={() => setTab(2)}>Enrollment</button>
+					</nav>
+					<div className={styles.gradesBox}>
+						<EnrollmentGraphCard
+							id="gradesGraph"
+							title="Enrollment"
+							updateClassCardEnrollment={() => {enrollReset()}}
+							isMobile={window.innerWidth < 768 ? true : false}
+						/>
+					</div>
+				</>
+			)
+		}
+	}
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
@@ -271,48 +446,69 @@ const CatalogView = (props: CatalogViewProps) => {
 							</p>
 						</>
 					</ReadMore>
-					<h5>Class Times - {semester ?? ''}</h5>
-					{sections && sections.length > 0 ? (
-						<SectionTable sections={sections} />
-					) : !loading ? (
-						<span>There are no class times for the selected course.</span>
-					) : null}
+					{loading ? 
+						<BTLoader></BTLoader> 
+						:
+						<div>
+						
+							{openTab()}
 
-					{/*
-					Redesigned catalog sections
-					<CatalogViewSections sections={sections} />
-					*/}
-
-					{/* Good feature whenever we want...
-					<h5>Past Offerings</h5>
-					<section className={styles.pills}>
-						{pastSemesters ? (
-							pastSemesters.map((req) => (
-								<button
-									className={styles.pill}
-									key={req.id}
-									onClick={() =>
-										history.push(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
-									}
-								>
-									{req.name}
-								</button>
-							))
-						) : (
-							<Skeleton
-								style={{ marginRight: '5px' }}
-								inline
-								count={10}
-								width={80}
-								height={28}
-								borderRadius={12}
-							/>
-						)}
-					</section> */}
+							{/*
+							Redesigned catalog sections
+							<CatalogViewSections sections={sections} />
+							*/
+							/* Good feature whenever we want...
+							<h5>Past Offerings</h5>
+							<section className={styles.pills}>
+								{pastSemesters ? (
+									pastSemesters.map((req) => (
+										<button
+											className={styles.pill}
+											key={req.id}
+											onClick={() =>
+												history.push(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
+											}
+										>
+											{req.name}
+										</button>
+									))
+								) : (
+									<Skeleton
+										style={{ marginRight: '5px' }}
+										inline
+										count={10}
+										width={80}
+										height={28}
+										borderRadius={12}
+									/>
+								)}
+							</section> */}
+						</div>
+					}
 				</>
 			)}
 		</div>
 	);
 };
 
-export default memo(CatalogView);
+const mapStateToProps = (state:any) => {
+	const gradesData = state.grade.gradesData 
+	const enrollmentData = state.enrollment.enrollmentData
+	const gradesGraphData = state.grade.graphData 
+	const enrollGraphData = state.enrollment.graphData 
+	const gradesSelectedCourses = state.grade.selectedCourses
+	const enrollSelectedCourses = state.enrollment.selectedCourses
+	const enrollContext = state.enrollment.context.courses
+	return {
+		gradesData,
+		enrollmentData,
+		gradesGraphData,
+		enrollGraphData,
+		gradesSelectedCourses,
+		enrollSelectedCourses,
+		enrollContext
+	};
+};
+
+export default connect(mapStateToProps)(memo(CatalogView));
+
