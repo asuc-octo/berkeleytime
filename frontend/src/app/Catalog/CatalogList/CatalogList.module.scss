@@ -69,6 +69,17 @@
 	}
 }
 
+.status {
+	display: flex;
+	flex-direction: column;
+	color: $bt-light-text;
+	justify-content: flex-start;
+	align-items: center;
+	font-size: 14px;
+	padding: 6px 23px 6px 23px;
+	border-bottom: 1.5px solid #eaeaea;
+}
+
 .list {
 	overflow: overlay !important;
 }
@@ -86,7 +97,7 @@
 .itemContent {
 	display: grid;
 	grid-auto-flow: row;
-	justify-content:space-evenly;
+	justify-content: space-evenly;
 	h6 {
 		justify-self: flex-start;
 	}
