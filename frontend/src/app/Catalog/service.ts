@@ -1,18 +1,18 @@
-import { FilterFragment, GetFiltersQuery, PlaylistType, CourseOverviewFragment } from 'graphql';
 import Fuse from 'fuse.js';
-
-import styles from './CatalogList/CatalogList.module.scss';
-
+import { FilterFragment, GetFiltersQuery, PlaylistType, CourseOverviewFragment } from 'graphql';
+import { laymanTerms } from 'lib/courses/search';
+import { courseToName } from 'lib/courses/course';
 import {
 	CatalogCategoryKeys,
 	FilterTemplate,
 	CatalogFilterKeys,
 	FilterOptions,
 	SortOption,
-	CurrentFilters
+	CurrentFilters,
+	CourseInfo
 } from './types';
-import { laymanTerms } from 'lib/courses/search';
-import { courseToName } from 'lib/courses/course';
+
+import styles from './CatalogList/CatalogList.module.scss';
 
 const SEMESTER_VALUES = {
 	spring: 0.0,
@@ -114,6 +114,7 @@ const processFilterData = (data?: GetFiltersQuery) => {
 
 	return filters;
 };
+
 /**
  *
  * @param filterItems an empty filter template
@@ -157,19 +158,20 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
 };
 
 /**
- * Applies search query over list of courses
+ *
+ * @param courses an array of `CourseOverviewFragment`
+ * @param rawQuery A string to search for within the `courses` array
+ * @description Applies `rawQuery` over a list of courses and returns the best matches
+ * within `courses`
+ * @returns an array of CourseOverviewFragment
  */
-export function searchCatalog(
-	courses: CourseOverviewFragment[],
-	rawQuery: string
-): CourseOverviewFragment[] {
+export function searchCatalog(courses: CourseOverviewFragment[], rawQuery: string) {
 	if (!rawQuery || rawQuery === '' || rawQuery === null) return courses;
 
-	const options: Fuse.IFuseOptions<any> = {
+	const options: Fuse.IFuseOptions<CourseInfo> = {
 		includeScore: true,
 		shouldSort: true,
 		threshold: 0.08,
-		// ignoreLocation: false,
 		keys: [
 			{ name: 'title', weight: 1 },
 			{ name: 'abbreviation', weight: 1.5 },
@@ -177,13 +179,13 @@ export function searchCatalog(
 			{ name: 'courseNumber', weight: 1.2 },
 			{ name: 'fullCourseCode', weight: 1 }
 		],
-		// The fuse types are wrong for this fn
+		// The fuse types are wrong for this sort fn
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		sortFn: (itemA: any, itemB: any) => {
 			// Sort first by sort score
 			if (itemA.score - itemB.score) return itemA.score - itemB.score;
 
-			// if the score is the same, sort by the course number
+			// if the scores are the same, sort by the course number
 			const a = itemA.item[3].v;
 			const b = itemB.item[3].v;
 			return a.toLowerCase().localeCompare(b.toLowerCase());
@@ -237,7 +239,7 @@ const SemesterToValue = (semesterFilter: FilterFragment) => {
 
 /**
  * @description sorts the playlists alphabetically, and
- * by putting the `units` category at the end of the list
+ * by putting the `units` followed by the semester category at the end of the list
  */
 const sortPills = (playlists: PlaylistType[]) => {
 	const semesters = sortSemestersByLatest(playlists.filter((p) => p.category === 'semester'));
@@ -247,9 +249,8 @@ const sortPills = (playlists: PlaylistType[]) => {
 	return rest.concat(units, semesters.slice(0, 4) as PlaylistType[]);
 };
 
-export const sortByName = <T extends { name: string }[]>(arr: T) => {
-	return arr.sort((a, b) => a.name.localeCompare(b.name));
-};
+export const sortByName = <T extends { name: string }[]>(arr: T) =>
+	arr.sort((a, b) => a.name.localeCompare(b.name));
 
 function formatEnrollment(percentage: number) {
 	if (percentage === -1) return 'N/A';

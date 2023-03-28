@@ -56,3 +56,11 @@ export type FilterTemplate = {
 		placeholder: string;
 	};
 };
+
+export type CourseInfo = {
+	title: string;
+	abbreviation: string;
+	courseNumber: string;
+	fullCourseCode: string;
+	abbreviations: string[];
+};
