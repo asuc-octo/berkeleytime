@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
 	Children,
@@ -27,13 +28,13 @@ const ListContext = createContext<{
 	isOpen: false
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function MenuList(props) {
-	const { options, getValue, children } = props;
+	const { options, getValue, children, maxHeight } = props;
 	const [value] = getValue();
 	const list: MutableRefObject<List | null> = useRef(null);
 	const elements = Children.toArray(children);
 	const { getSize, isOpen } = useContext(ListContext);
+
 	useEffect(() => {
 		list?.current?.resetAfterIndex(0);
 		if (list?.current && isOpen) list.current.scrollToItem(options.indexOf(value) + 3);
@@ -41,12 +42,15 @@ const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function Me
 
 	return (
 		<List
-			height={200}
+			height={maxHeight}
 			itemCount={elements?.length ?? 0}
 			itemSize={getSize}
 			ref={list}
 			width={'100%'}
 			onItemsRendered={() => {
+				list?.current?.resetAfterIndex(0);
+			}}
+			onScroll={() => {
 				list?.current?.resetAfterIndex(0);
 			}}
 		>
@@ -57,7 +61,6 @@ const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function Me
 	);
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const BTOption: ComponentType<OptionProps<any, any, any>> | undefined = memo(function Option(
 	props
 ) {
@@ -69,6 +72,7 @@ const BTOption: ComponentType<OptionProps<any, any, any>> | undefined = memo(fun
 		if (root.current) {
 			// The IDs take the form: react-select-191-option-407
 			// Here we regex everything after the last hyphen to obtain the index of the item in the list.
+			// The alternative is using `cloneElement` with the index but this seems reliable.
 			const index = innerProps?.id?.match('(?<=-)[^-]*$') ?? null;
 			if (index) setSize(parseInt(index[0], 10), root.current.getBoundingClientRect().height);
 		}
@@ -92,7 +96,7 @@ const BTSelect = <
 ) => {
 	const sizes: MutableRefObject<Record<number, number>> = useRef({});
 	const [isOpen, set] = useState(false);
-	const getSize = useCallback((index: number) => sizes.current[index] || 100, []);
+	const getSize = useCallback((index: number) => sizes.current[index] || 35, []);
 	const setSize = useCallback((index: number, size: number) => {
 		sizes.current = { ...sizes.current, [index]: size };
 	}, []);
