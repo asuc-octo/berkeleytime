@@ -8,7 +8,7 @@ CURRENT_YEAR = '2023'
 CURRENT_SEMESTER_DISPLAY = 'Fall 2023'
 
 # SIS API Keys
-SIS_TERM_ID = 2228
+SIS_TERM_ID = 2238
 
 TELEBEARS = {
     'phase1_start': datetime.datetime(2023, 4, 17),
