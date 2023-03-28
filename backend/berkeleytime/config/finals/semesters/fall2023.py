@@ -9,7 +9,7 @@ MWF_FINALS = {
     datetime.time(9, 0): FINAL_TIMES["Thursday7-10PM"],
     datetime.time(10, 0): FINAL_TIMES["Monday8-11AM"],
     datetime.time(11, 0): FINAL_TIMES["Monday11:30-2:30PM"],
-    datetime.time(12, 0): FINAL_TIMES["Thursday11:30-2:30PM"],
+    datetime.time(12, 0): FINAL_TIMES["Friday11:30-2:30PM"],
     datetime.time(13, 0): FINAL_TIMES["Wednesday7-10PM"],
     datetime.time(14, 0): FINAL_TIMES["Thursday3-6PM"],
     datetime.time(15, 0): FINAL_TIMES["Tuesday7-10PM"],
