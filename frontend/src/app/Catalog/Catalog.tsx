@@ -12,8 +12,8 @@ const { SORT_OPTIONS, INITIAL_FILTERS } = catalogService;
 const Catalog = () => {
 	const [currentFilters, setCurrentFilters] = useState<CurrentFilters>(INITIAL_FILTERS);
 	const [currentCourse, setCurrentCourse] = useState<CourseFragment | null>(null);
-	const [searchQuery, setSearchQuery] = useState('');
 	const [sortQuery, setSortQuery] = useState<SortOption>(SORT_OPTIONS[0]);
+	const [searchQuery, setSearchQuery] = useState('');
 
 	return (
 		<div className={styles.root}>
