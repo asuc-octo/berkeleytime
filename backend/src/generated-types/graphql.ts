@@ -155,25 +155,13 @@ export type Mutation = {
 
 
 export type MutationCreateNewScheduleArgs = {
-  class_IDs?: InputMaybe<Array<Scalars['String']>>;
-  created_by: Scalars['String'];
-  is_public?: InputMaybe<Scalars['Boolean']>;
-  primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  schedule_name?: InputMaybe<Scalars['String']>;
-  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  term: TermInput;
+  main_schedule: ScheduleInput;
 };
 
 
 export type MutationEditExistingScheduleArgs = {
-  class_IDs?: InputMaybe<Array<Scalars['String']>>;
-  created_by?: InputMaybe<Scalars['String']>;
   id: Scalars['ID'];
-  is_public?: InputMaybe<Scalars['Boolean']>;
-  primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  schedule_name?: InputMaybe<Scalars['String']>;
-  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  term?: InputMaybe<TermInput>;
+  main_schedule: ScheduleInput;
 };
 
 
@@ -291,6 +279,16 @@ export type Schedule = {
   secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
   /** Term corresponding to the schedule, such as "Fall 1986" */
   term: TermOutput;
+};
+
+export type ScheduleInput = {
+  class_IDs?: InputMaybe<Array<Scalars['String']>>;
+  created_by: Scalars['String'];
+  is_public?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+  primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
+  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
+  term: TermInput;
 };
 
 /** Sections are each associated with one Class.  */
@@ -445,6 +443,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
+  ScheduleInput: ScheduleInput;
   Section: ResolverTypeWrapper<Section>;
   Semester: Semester;
   String: ResolverTypeWrapper<Scalars['String']>;
@@ -475,6 +474,7 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   Schedule: Schedule;
+  ScheduleInput: ScheduleInput;
   Section: Section;
   String: Scalars['String'];
   TermInput: TermInput;
@@ -602,8 +602,8 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'created_by' | 'term'>>;
-  editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'id'>>;
+  createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'main_schedule'>>;
+  editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'id' | 'main_schedule'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
   setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'class_IDs' | 'id'>>;
   setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;

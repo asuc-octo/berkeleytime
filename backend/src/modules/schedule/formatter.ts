@@ -6,11 +6,11 @@ export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule 
     _id: schedule._id as string,
     name: schedule.name,
     created_by: schedule.created_by,
-    term: formatTerm(schedule.term.semester, schedule.term.year),
     is_public: schedule.is_public,
     class_IDs: schedule.class_IDs,
     primary_section_IDs: schedule.primary_section_IDs,
     secondary_section_IDs: schedule.secondary_section_IDs,
+    term: formatTerm(schedule.term.semester, schedule.term.year),
     custom_events: schedule.custom_events ? schedule.custom_events.map(formatCustomEvents) : undefined
     
   };

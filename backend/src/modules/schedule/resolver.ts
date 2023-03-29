@@ -1,6 +1,6 @@
 import { getSchedulesByUser, getScheduleByID, removeSchedule, createSchedule, setSections, setClasses, editSchedule } from "./controller";
 import { ScheduleModule } from "./generated-types/module-types";
-import { TermInput } from "../../generated-types/graphql";
+import { ScheduleInput, TermInput } from "../../generated-types/graphql";
 
 const resolvers: ScheduleModule.Resolvers = {
   Query: {
@@ -15,11 +15,11 @@ const resolvers: ScheduleModule.Resolvers = {
     removeScheduleByID(_parent, args: {id: string}) {
       return removeSchedule(args.id);
     },
-    createNewSchedule(_parent, args: {created_by: string, term: TermInput, schedule_name?: string | undefined | null, is_public?: boolean | undefined | null, class_IDs?: string[] | undefined | null, primary_section_IDs?: string[] | undefined | null, secondary_section_IDs?: string[] | undefined | null}) {
-      return createSchedule(args.created_by, args.term, args.schedule_name, args.is_public, args.class_IDs, args.primary_section_IDs, args.secondary_section_IDs)
+    createNewSchedule(_parent, args: {main_schedule: ScheduleInput}) {
+      return createSchedule(args.main_schedule)
     },
-    editExistingSchedule(_parent, args: {id: string, created_by?: string | undefined | null, term?: TermInput | undefined | null, schedule_name?: string | undefined | null, is_public?: boolean | undefined | null, class_IDs?: string[] | null | undefined, primary_section_IDs?: string[] | undefined | null, secondary_section_IDs?: string[] | undefined | null}) {
-      return editSchedule(args.id, args.created_by, args.term, args.schedule_name, args.is_public, args.class_IDs, args.primary_section_IDs, args.secondary_section_IDs)
+    editExistingSchedule(_parent, args: {id: string, main_schedule: ScheduleInput}) {
+      return editSchedule(args.id, args.main_schedule)
     },
     setSelectedSections(_parent, args: {id: string, section_IDs: string[]}) {
       return setSections(args.id, args.section_IDs)

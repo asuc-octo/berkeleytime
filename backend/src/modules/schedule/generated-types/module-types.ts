@@ -9,12 +9,17 @@ export namespace ScheduleModule {
     Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'editExistingSchedule' | 'setSelectedSections' | 'setSelectedClasses';
   };
   
+  interface DefinedInputFields {
+    ScheduleInput: 'name' | 'created_by' | 'class_IDs' | 'primary_section_IDs' | 'secondary_section_IDs' | 'is_public' | 'term';
+  };
+  
   export type TermOutput = Pick<Types.TermOutput, DefinedFields['TermOutput']>;
+  export type ScheduleInput = Pick<Types.ScheduleInput, DefinedInputFields['ScheduleInput']>;
+  export type TermInput = Types.TermInput;
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;
   export type CustomEvent = Pick<Types.CustomEvent, DefinedFields['CustomEvent']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   export type Mutation = Pick<Types.Mutation, DefinedFields['Mutation']>;
-  export type TermInput = Types.TermInput;
   
   export type TermOutputResolvers = Pick<Types.TermOutputResolvers, DefinedFields['TermOutput'] | '__isTypeOf'>;
   export type ScheduleResolvers = Pick<Types.ScheduleResolvers, DefinedFields['Schedule'] | '__isTypeOf'>;

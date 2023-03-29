@@ -61,10 +61,6 @@ export const ScheduleSchema = new Schema({
     trim: true,
     alias: "creator"
   },
-  term: {
-    type: TermSchema,
-    required: true
-  },
   is_public: {
     type: Boolean,
     required: true,
@@ -85,6 +81,10 @@ export const ScheduleSchema = new Schema({
     type: [String],
     trim: true,
     required: false
+  },
+  term: {
+    type: TermSchema,
+    required: true
   },
   custom_events: {
     type: [CustomEventSchema],
