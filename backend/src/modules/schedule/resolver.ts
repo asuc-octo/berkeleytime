@@ -1,6 +1,6 @@
 import { getSchedulesByUser, getScheduleByID, removeSchedule, createSchedule, setSections, setClasses, editSchedule } from "./controller";
 import { ScheduleModule } from "./generated-types/module-types";
-import { ScheduleInput, TermInput } from "../../generated-types/graphql";
+import { ScheduleInput } from "../../generated-types/graphql";
 
 const resolvers: ScheduleModule.Resolvers = {
   Query: {

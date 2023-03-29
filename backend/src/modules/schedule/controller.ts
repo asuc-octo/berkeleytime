@@ -1,7 +1,6 @@
 import { formatSchedule } from "./formatter";
-import { TermOutput, Schedule, TermInput, ScheduleInput } from "../../generated-types/graphql";
+import { Schedule, TermInput, ScheduleInput } from "../../generated-types/graphql";
 import { ScheduleModel } from "../../db/schedule";
-import { minimumViableSchedule, partialSchedule } from "./partial-schedules";
 
 
 // get the schedules for a user
@@ -53,15 +52,6 @@ export async function createSchedule(main_schedule: ScheduleInput): Promise<Sche
 
 // update an existing schedule
 export async function editSchedule(schedule_ID: string, main_schedule: ScheduleInput): Promise<Schedule> {
-  
-  // const schedulePartsToUpdate: partialSchedule = {}
-
-  // schedulePartsToUpdate.term = term ? term : undefined
-  // schedulePartsToUpdate.name = schedule_name ? schedule_name : undefined
-  // schedulePartsToUpdate.class_IDs = class_IDs ? class_IDs : undefined
-  // schedulePartsToUpdate.primary_section_IDs = primary_section_IDs ? primary_section_IDs : undefined
-  // schedulePartsToUpdate.secondary_section_IDs = secondary_section_IDs ? secondary_section_IDs : undefined
-  // schedulePartsToUpdate.is_public = is_public ? is_public : undefined
 
   const updatedSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, main_schedule, {returnDocument: 'after'})
   if (!updatedSchedule) {

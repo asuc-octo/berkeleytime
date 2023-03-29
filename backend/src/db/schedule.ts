@@ -1,5 +1,4 @@
-import { Int32 } from "mongodb";
-import mongoose, { Schema, InferSchemaType, Types, Document } from "mongoose";
+import mongoose, { Schema, InferSchemaType, Document } from "mongoose";
 
 export const TermSchema = new Schema({
   year: { 
