@@ -1,7 +1,7 @@
 import mongoose, { Schema, InferSchemaType, Document } from "mongoose";
 
 export const TermSchema = new Schema({
-  year: { 
+  year: {
     type: Number,
     required: true,
   },
@@ -10,7 +10,7 @@ export const TermSchema = new Schema({
     required: true,
     trim: true,
   },
-});
+}, { _id : false });
 
 export const CustomEventSchema = new Schema({
   start_time: { 
