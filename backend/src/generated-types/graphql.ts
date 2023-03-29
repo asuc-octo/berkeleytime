@@ -113,6 +113,15 @@ export type CustomEvent = {
   title?: Maybe<Scalars['String']>;
 };
 
+export type CustomEventInput = {
+  days_of_week?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['String']>;
+  end_time: Scalars['String'];
+  location?: InputMaybe<Scalars['String']>;
+  start_time: Scalars['String'];
+  title?: InputMaybe<Scalars['String']>;
+};
+
 export type EnrollmentDay = {
   __typename?: 'EnrollmentDay';
   enrollCount: Scalars['Int'];
@@ -284,6 +293,7 @@ export type Schedule = {
 export type ScheduleInput = {
   class_IDs?: InputMaybe<Array<Scalars['String']>>;
   created_by: Scalars['String'];
+  custom_events?: InputMaybe<Array<CustomEventInput>>;
   is_public?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
@@ -430,6 +440,7 @@ export type ResolversTypes = {
   Course: ResolverTypeWrapper<Course>;
   CourseListItem: ResolverTypeWrapper<CourseListItem>;
   CustomEvent: ResolverTypeWrapper<CustomEvent>;
+  CustomEventInput: CustomEventInput;
   EnrollmentDay: ResolverTypeWrapper<EnrollmentDay>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Grade: ResolverTypeWrapper<Grade>;
@@ -461,6 +472,7 @@ export type ResolversParentTypes = {
   Course: Course;
   CourseListItem: CourseListItem;
   CustomEvent: CustomEvent;
+  CustomEventInput: CustomEventInput;
   EnrollmentDay: EnrollmentDay;
   Float: Scalars['Float'];
   Grade: Grade;

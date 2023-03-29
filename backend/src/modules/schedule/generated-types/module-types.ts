@@ -10,10 +10,12 @@ export namespace ScheduleModule {
   };
   
   interface DefinedInputFields {
-    ScheduleInput: 'name' | 'created_by' | 'class_IDs' | 'primary_section_IDs' | 'secondary_section_IDs' | 'is_public' | 'term';
+    CustomEventInput: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
+    ScheduleInput: 'name' | 'created_by' | 'class_IDs' | 'primary_section_IDs' | 'secondary_section_IDs' | 'is_public' | 'term' | 'custom_events';
   };
   
   export type TermOutput = Pick<Types.TermOutput, DefinedFields['TermOutput']>;
+  export type CustomEventInput = Pick<Types.CustomEventInput, DefinedInputFields['CustomEventInput']>;
   export type ScheduleInput = Pick<Types.ScheduleInput, DefinedInputFields['ScheduleInput']>;
   export type TermInput = Types.TermInput;
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;

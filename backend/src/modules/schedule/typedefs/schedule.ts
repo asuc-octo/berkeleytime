@@ -7,6 +7,15 @@ const typedef = gql`
     semester: String!
   }
 
+  input CustomEventInput {
+    start_time: String!
+    end_time: String!
+    title: String
+    location: String
+    description: String
+    days_of_week: String
+  }
+
   input ScheduleInput {
     name: String
     created_by: String!,
@@ -14,7 +23,8 @@ const typedef = gql`
     primary_section_IDs: [String!],
     secondary_section_IDs: [String!],
     is_public: Boolean,
-    term: TermInput!
+    term: TermInput!,
+    custom_events: [CustomEventInput!]
   }
 
   type Schedule {
