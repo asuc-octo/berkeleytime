@@ -64,6 +64,8 @@ const typedef = gql`
     Custom events, such as club meetings, that the user has added to their schedule.
     """
     custom_events: [CustomEvent!]
+    created: String!
+    revised: String!
   }
 
   type CustomEvent {

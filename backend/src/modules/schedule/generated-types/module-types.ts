@@ -3,7 +3,7 @@ import * as gm from "graphql-modules";
 export namespace ScheduleModule {
   interface DefinedFields {
     TermOutput: 'year' | 'semester';
-    Schedule: '_id' | 'name' | 'created_by' | 'term' | 'is_public' | 'class_IDs' | 'primary_section_IDs' | 'secondary_section_IDs' | 'custom_events';
+    Schedule: '_id' | 'name' | 'created_by' | 'term' | 'is_public' | 'class_IDs' | 'primary_section_IDs' | 'secondary_section_IDs' | 'custom_events' | 'created' | 'revised';
     CustomEvent: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
     Query: 'schedulesByUser' | 'scheduleByID';
     Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'editExistingSchedule' | 'setSelectedSections' | 'setSelectedClasses';
@@ -57,6 +57,8 @@ export namespace ScheduleModule {
       primary_section_IDs?: gm.Middleware[];
       secondary_section_IDs?: gm.Middleware[];
       custom_events?: gm.Middleware[];
+      created?: gm.Middleware[];
+      revised?: gm.Middleware[];
     };
     CustomEvent?: {
       '*'?: gm.Middleware[];

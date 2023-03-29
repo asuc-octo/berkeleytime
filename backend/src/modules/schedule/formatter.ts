@@ -11,8 +11,9 @@ export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule 
     primary_section_IDs: schedule.primary_section_IDs,
     secondary_section_IDs: schedule.secondary_section_IDs,
     term: formatTerm(schedule.term.semester, schedule.term.year),
-    custom_events: schedule.custom_events ? schedule.custom_events.map(formatCustomEvents) : undefined
-    
+    custom_events: schedule.custom_events ? schedule.custom_events.map(formatCustomEvents) : undefined,
+    created: schedule.createdAt.toISOString(),
+    revised: schedule.updatedAt.toISOString(),
   };
 }
 

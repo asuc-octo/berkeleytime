@@ -274,6 +274,7 @@ export type Schedule = {
   _id?: Maybe<Scalars['ID']>;
   /** Identifiers (probably cs-course-ids) for the classes the user has added to their schedule. */
   class_IDs?: Maybe<Array<Scalars['String']>>;
+  created: Scalars['String'];
   /** Identifier (probably email) for the user who created the schedule (such as oski@bereley.edu). */
   created_by: Scalars['String'];
   /** Custom events, such as club meetings, that the user has added to their schedule. */
@@ -284,6 +285,7 @@ export type Schedule = {
   name?: Maybe<Scalars['String']>;
   /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
   primary_section_IDs?: Maybe<Array<Scalars['String']>>;
+  revised: Scalars['String'];
   /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
   secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
   /** Term corresponding to the schedule, such as "Fall 1986" */
@@ -637,11 +639,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   class_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  created?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   custom_events?: Resolver<Maybe<Array<ResolversTypes['CustomEvent']>>, ParentType, ContextType>;
   is_public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   primary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  revised?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   term?: Resolver<ResolversTypes['TermOutput'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
