@@ -12,52 +12,65 @@ import {
 	useContext,
 	MutableRefObject
 } from 'react';
-import Select, { components, GroupBase, MenuListProps, OptionProps, Props } from 'react-select';
+import Select, {
+	components,
+	GroupBase,
+	GroupProps,
+	MenuListProps,
+	OptionProps,
+	Props
+} from 'react-select';
 import { VariableSizeList as List } from 'react-window';
 import { createFilter } from 'react-select';
 
 import styles from './Select.module.scss';
+import { FilterOption } from 'app/Catalog/types';
 
 const ListContext = createContext<{
 	getSize: (index: number) => number;
 	setSize: (index: number, size: number) => void;
-	isOpen: boolean;
 }>({
 	getSize: (_) => 0,
-	setSize: (_, __) => 0,
-	isOpen: false
+	setSize: (_, __) => 0
 });
 
 const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function MenuList(props) {
 	const { options, getValue, children, maxHeight } = props;
+	const { menuIsOpen } = props.selectProps;
 	const [value] = getValue();
 	const list: MutableRefObject<List | null> = useRef(null);
 	const elements = Children.toArray(children);
-	const { getSize, isOpen } = useContext(ListContext);
+	const sizes: MutableRefObject<Record<number, number>> = useRef({});
+	const getSize = useCallback((index: number) => sizes.current[index] || 35, []);
+	const setSize = useCallback((index: number, size: number) => {
+		sizes.current = { ...sizes.current, [index]: size };
+	}, []);
 
 	useEffect(() => {
 		list?.current?.resetAfterIndex(0);
-		if (list?.current && isOpen) list.current.scrollToItem(options.indexOf(value) + 3);
-	}, [isOpen, options, value]);
+		if (list?.current && menuIsOpen) list.current.scrollToItem(options.indexOf(value) + 3);
+	}, [options, menuIsOpen, value]);
+
+	const reset = () => {
+		list?.current?.resetAfterIndex(0);
+	};
 
 	return (
-		<List
-			height={maxHeight}
-			itemCount={elements?.length ?? 0}
-			itemSize={getSize}
-			ref={list}
-			width={'100%'}
-			onItemsRendered={() => {
-				list?.current?.resetAfterIndex(0);
-			}}
-			onScroll={() => {
-				list?.current?.resetAfterIndex(0);
-			}}
-		>
-			{({ index, style }) => {
-				return <div style={style}>{elements[index]}</div>;
-			}}
-		</List>
+		<ListContext.Provider value={{ setSize, getSize }}>
+			<List
+				height={150}
+				itemCount={elements.length}
+				itemSize={getSize}
+				ref={list}
+				width={'100%'}
+				onItemsRendered={reset}
+				onScroll={reset}
+			>
+				{({ index, style }) => {
+					return <div style={style}>{elements[index]}</div>;
+				}}
+			</List>
+		</ListContext.Provider>
 	);
 });
 
@@ -87,6 +100,19 @@ const BTOption: ComponentType<OptionProps<any, any, any>> | undefined = memo(fun
 	);
 });
 
+const BTGroup: ComponentType<GroupProps<any, any, any>> | undefined = (props) => {
+	const { children, ...rest } = props;
+	// console.log(props.label);
+	// console.log(props.options);
+	console.log(props.children);
+	return (
+		<div className={styles.group}>
+			<div style={{ background: 'green' }}>{props.label}</div>
+			{/* {children} */}
+		</div>
+	);
+};
+
 const BTSelect = <
 	Option,
 	IsMulti extends boolean = false,
@@ -94,26 +120,16 @@ const BTSelect = <
 >(
 	props: Props<Option, IsMulti, Group>
 ) => {
-	const sizes: MutableRefObject<Record<number, number>> = useRef({});
-	const [isOpen, set] = useState(false);
-	const getSize = useCallback((index: number) => sizes.current[index] || 35, []);
-	const setSize = useCallback((index: number, size: number) => {
-		sizes.current = { ...sizes.current, [index]: size };
-	}, []);
-
 	return (
-		<ListContext.Provider value={{ setSize, getSize, isOpen }}>
-			<Select
-				{...props}
-				className={styles.root}
-				onMenuClose={() => set(false)}
-				onMenuOpen={() => set(true)}
-				components={{
-					MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,
-					Option: BTOption as ComponentType<OptionProps<Option, IsMulti, Group>>
-				}}
-			/>
-		</ListContext.Provider>
+		<Select
+			{...props}
+			className={styles.root}
+			components={{
+				MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,
+				Option: BTOption as ComponentType<OptionProps<Option, IsMulti, Group>>,
+				Group: BTGroup as ComponentType<GroupProps<Option, IsMulti, Group>>
+			}}
+		/>
 	);
 };
 
