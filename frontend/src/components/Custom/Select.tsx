@@ -4,7 +4,6 @@ import {
 	Children,
 	ComponentType,
 	memo,
-	useState,
 	useEffect,
 	useRef,
 	useCallback,
@@ -24,7 +23,6 @@ import { VariableSizeList as List } from 'react-window';
 import { createFilter } from 'react-select';
 
 import styles from './Select.module.scss';
-import { FilterOption } from 'app/Catalog/types';
 
 const ListContext = createContext<{
 	getSize: (index: number) => number;
@@ -54,6 +52,11 @@ const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function Me
 	const reset = () => {
 		list?.current?.resetAfterIndex(0);
 	};
+
+	// If we are dealing with a nested 'group select', just use the default component.
+	// with no custom virtualization
+	if (options.every(({ options }) => typeof options === 'object'))
+		return <components.MenuList {...props} />;
 
 	return (
 		<ListContext.Provider value={{ setSize, getSize }}>
@@ -100,19 +103,6 @@ const BTOption: ComponentType<OptionProps<any, any, any>> | undefined = memo(fun
 	);
 });
 
-const BTGroup: ComponentType<GroupProps<any, any, any>> | undefined = (props) => {
-	const { children, ...rest } = props;
-	// console.log(props.label);
-	// console.log(props.options);
-	console.log(props.children);
-	return (
-		<div className={styles.group}>
-			<div style={{ background: 'green' }}>{props.label}</div>
-			{/* {children} */}
-		</div>
-	);
-};
-
 const BTSelect = <
 	Option,
 	IsMulti extends boolean = false,
@@ -126,8 +116,7 @@ const BTSelect = <
 			className={styles.root}
 			components={{
 				MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,
-				Option: BTOption as ComponentType<OptionProps<Option, IsMulti, Group>>,
-				Group: BTGroup as ComponentType<GroupProps<Option, IsMulti, Group>>
+				Option: BTOption as ComponentType<OptionProps<Option, IsMulti, Group>>
 			}}
 		/>
 	);
