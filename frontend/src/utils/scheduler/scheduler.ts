@@ -176,7 +176,7 @@ export const serializeSchedule = (schedule: Schedule, semester: Semester): Backe
  */
 export function scheduleToICal(schedule: Schedule, semester: Semester): string {
 	const SEMESTER_START = new Date(2023, 7, 23);
-	const LAST_COURSE_DAY = new Date(2023, 11, 8);
+	const LAST_COURSE_DAY = new Date(2023, 11, 1);
 
 	const dateToICal = (date: Date) => date.toISOString().replace(/[-:Z]|\.\d+/g, '');
 
