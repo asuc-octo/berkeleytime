@@ -1,4 +1,4 @@
-import { CatalogItem, Term } from "../../generated-types/graphql";
+import { CatalogItem, TermInput } from "../../generated-types/graphql";
 import { ClassModel } from "../../db/class";
 import { getTermStartMonth, termToString } from "../../utils/term";
 import { GradeModel, GradeType } from "../../db/grade";
@@ -20,7 +20,7 @@ function matchCsCourseId(id: any) {
     }
 }
 
-export async function getCatalog(term: Term, info: GraphQLResolveInfo): Promise<CatalogItem[] | null> {
+export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Promise<CatalogItem[] | null> {
     const classes = await ClassModel
         .find({
             "session.term.name": termToString(term),
@@ -119,7 +119,7 @@ export async function getCatalog(term: Term, info: GraphQLResolveInfo): Promise<
     return Object.values(catalog)
 }
 
-export function getClass(subject: string, courseNumber: string, term: Term, classNumber: string) {
+export function getClass(subject: string, courseNumber: string, term: TermInput, classNumber: string) {
     return ClassModel
         .findOne({
             "course.subjectArea.code": subject,
@@ -131,7 +131,7 @@ export function getClass(subject: string, courseNumber: string, term: Term, clas
         .then(formatClass)
 }
 
-export function getClassById(id: string, term: Term, classNumber: string) {
+export function getClassById(id: string, term: TermInput, classNumber: string) {
     return ClassModel
         .findOne({
             "course.identifiers": matchCsCourseId(id),
@@ -142,7 +142,7 @@ export function getClassById(id: string, term: Term, classNumber: string) {
         .then(formatClass)
 }
 
-export function getPrimarySection(id: string, term: Term, classNumber: string) {
+export function getPrimarySection(id: string, term: TermInput, classNumber: string) {
     return SectionModel
         .findOne({
             "class.course.identifiers": matchCsCourseId(id),
@@ -154,7 +154,7 @@ export function getPrimarySection(id: string, term: Term, classNumber: string) {
         .then(formatSection)
 }
 
-export function getClassSections(id: string, term: Term, classNumber: string) {
+export function getClassSections(id: string, term: TermInput, classNumber: string) {
     return SectionModel
         .find({
             "class.course.identifiers": matchCsCourseId(id),
@@ -165,7 +165,7 @@ export function getClassSections(id: string, term: Term, classNumber: string) {
         .then(s => s.map(formatSection))
 }
 
-export function getCourse(subject: string, courseNumber: string, term?: Term | null) {
+export function getCourse(subject: string, courseNumber: string, term?: TermInput | null) {
     const filter: any = {
         "classSubjectArea.code": subject,
         "catalogNumber.formatted": courseNumber
@@ -182,7 +182,7 @@ export function getCourse(subject: string, courseNumber: string, term?: Term | n
         .then(c => formatCourse(c, term))
 }
 
-export function getCourseById(id: string, term?: Term | null) {
+export function getCourseById(id: string, term?: TermInput | null) {
     const filter: any = {
         identifiers: matchCsCourseId(id)
     }
@@ -198,7 +198,7 @@ export function getCourseById(id: string, term?: Term | null) {
         .then(c => formatCourse(c, term))
 }
 
-export function getCourseClasses(id: string, term?: Term | null) {
+export function getCourseClasses(id: string, term?: TermInput | null) {
     const filter: any = {
         "course.identifiers": matchCsCourseId(id)
     }
@@ -213,7 +213,7 @@ export function getCourseClasses(id: string, term?: Term | null) {
         .then(c => c.map(formatClass))
 }
 
-export function getCrossListings(displayNames: string[], term?: Term | null) {
+export function getCrossListings(displayNames: string[], term?: TermInput | null) {
     return displayNames.map(name => {
         const filter: any = {
             displayName: name
@@ -231,7 +231,7 @@ export function getCrossListings(displayNames: string[], term?: Term | null) {
     })
 }
 
-export function getSection(subject: string, courseNumber: string, term: Term, classNumber: string, sectionNumber: string) {
+export function getSection(subject: string, courseNumber: string, term: TermInput, classNumber: string, sectionNumber: string) {
     return SectionModel
         .findOne({
             "class.course.subjectArea.code": subject,
@@ -244,7 +244,7 @@ export function getSection(subject: string, courseNumber: string, term: Term, cl
         .then(formatSection)
 }
 
-export function getSectionById(id: string, term: Term, classNumber: string, sectionNumber: string) {
+export function getSectionById(id: string, term: TermInput, classNumber: string, sectionNumber: string) {
     return SectionModel
         .findOne({
             "class.course.identifiers": matchCsCourseId(id),

@@ -34,8 +34,9 @@ Type safety is also set up within modules, see the [documentation](https://www.t
 .
 ├── src                        # Where your source code lives
 │   ├── bootstrap              # Bootstrapping and loading of the API dependencies (Express, Apollo, Database, ...)
+│   ├── db                     # Mongo schemas, models and types
 │   ├── generated-types        # Generated types from codegen
-│   ├── modules                # Business logic of the app divided by domain (eg: User, Post, Todo)
+│   ├── modules                # Business logic of the app divided by domain (such as User and Catalog)
 │   ├── tests                  # Where all our testing strategy lives
 │   ├── utils                  # Collection of utils function that we use in the project
 │   ├── config.ts              # Config of the app, sourced by environment variables
@@ -67,7 +68,6 @@ Type safety is also set up within modules, see the [documentation](https://www.t
 │           ├── controller.ts         # Your crud controller methods
 │           ├── fixture.ts            # Object used for testing (can ignore)
 │           ├── formatter.ts          # Formats your db models to your controller/gql models
-│           ├── model.ts              # Mongo schemas, models and types
 │           ├── resolver.ts           # Your resolver
 │           ├── schema.ts             # Your gql schemas (and potentially typscript interfaces associated to the schemas)
 │           └── service.ts            # Business logic of your app

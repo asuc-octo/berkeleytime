@@ -12,6 +12,6 @@ export default gql`
   }
 
   type Query {
-    grade(subject: String!, courseNum: String!, classNum: String, term: Term): Grade
+    grade(subject: String!, courseNum: String!, classNum: String, term: TermInput): Grade
   }
 `;

@@ -2,16 +2,16 @@ import { gql } from "graphql-tag";
 
 export default gql`
 type Query {
-    course(subject: String!, courseNumber: String!, term: Term): Course
-    class(subject: String!, courseNumber: String!, term: Term!, classNumber: String!): Class
-    section(subject: String!, courseNumber: String!, term: Term!, classNumber: String!, sectionNumber: String!): Section
+    course(subject: String!, courseNumber: String!, term: TermInput): Course
+    class(subject: String!, courseNumber: String!, term: TermInput!, classNumber: String!): Class
+    section(subject: String!, courseNumber: String!, term: TermInput!, classNumber: String!, sectionNumber: String!): Section
 
     """
     Get info about all courses and their corresponding classes for a given semester. 
     
     Used primarily in the catalog page.
     """
-    catalog(term: Term!): [CatalogItem]
+    catalog(term: TermInput!): [CatalogItem]
 
     """
     Get a list of all course names across all semesters. 
@@ -25,9 +25,9 @@ type Query {
 Info shared between Classes within and across semesters.
 """
 type Course {
-    classes(term: Term): [Class]!
+    classes(term: TermInput): [Class]!
     crossListing: [Course]
-    sections(term: Term, primary: Boolean): [Section]!
+    sections(term: TermInput, primary: Boolean): [Section]!
 
     description: String!
     fromDate: String!
