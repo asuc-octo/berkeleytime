@@ -147,6 +147,9 @@ COM LIT:
 COMPSCI:
     - "Computer Science"
 
+CPH:
+    - "Computational Precision Health"
+
 CRIT TH:
     - "Critical Theory"
     - "Critical Theory Graduate Group"
@@ -205,6 +208,143 @@ ALTAIC:
 
 EAEURST:
     - "East European Studies"
+
+EAPAFST:
+    - "African Studies EAP"
+EAPAGSC:
+    - "Agricultural Sciences EAP"
+EAPAMST:
+    - "American Studies EAP"
+EAPANTH:
+    - "Anthropology EAP"
+EAPARAB:
+    - "Arabic EAP"
+EAPARCH:
+    - "Architecture EAP"
+EAPARCOL:
+    - "Archaeology EAP"
+EAPARTHS:
+    - "Art History EAP"
+EAPARTST:
+    - "Art Studio EAP"
+EAPASST:
+    - "Asian Studies EAP"
+EAPBIOE:
+    - "Bioengineering EAP"
+EAPBIOL:
+    - "Biological Sciences EAP"
+EAPBUSA:
+    - "Business Administration EAP"
+EAPCELT:
+    - "Celtic Studies EAP"
+EAPCHEM:
+    - "Chemistry EAP"
+EAPCHIN:
+    - "Chinese EAP"
+EAPCIVE:
+    - "Civil Engineering EAP"
+EAPCLASS:
+    - "Classics EAP"
+EAPCLIT:
+    - "Comparative Literature EAP"
+EAPCOMM:
+    - "Communication EAP"
+EAPCPS:
+    - "Computer Science EAP"
+EAPDA:
+    - "Dramatic Arts  EAP"
+EAPDAN:
+    - "Danish EAP"
+EAPDANCE:
+    - "Dance EAP"
+EAPDEV:
+    - "Development Studies EAP"
+EAPDUTCH:
+    - "Dutch  EAP"
+EAPEARTH:
+    - "Earth and Space Sciences  EAP"
+EAPECON:
+    - "Economics EAP"
+EAPED:
+    - "Education EAP"
+EAPEE:
+    - "Electrical Engineering EAP"
+EAPENGL:
+    - "English EAP"
+EAPENGR:
+    - "Engineering EAP"
+EAPENVS:
+    - "Environmental Studies EAP"
+EAPETHST:
+    - "Ethnic Studies EAP"
+EAPEURS:
+    - "European Studies EAP"
+EAPFILM:
+    - "Film and Media Studies EAP"
+EAPFR:
+    - "French EAP"
+EAPGEOG:
+    - "Geography EAP"
+EAPGER:
+    - "German EAP"
+EAPHINDI:
+    - "Hindi EAP"
+EAPHIST:
+    - "History EAP"
+EAPHLTHS:
+    - "Health Sciences EAP"
+EAPINTL:
+    - "International Studies EAP"
+EAPITAL:
+    - "Italian EAP"
+EAPJAPAN:
+    - "Japanese EAP"
+EAPKOR:
+    - "Korean EAP"
+EAPLATAS:
+    - "Latin American Studies EAP"
+EAPLATIN:
+    - "Latin EAP"
+EAPLEGST:
+    - "Legal Studies EAP"
+EAPLING:
+    - "Linguistics EAP"
+EAPMATH:
+    - "Mathematics EAP"
+EAPME:
+    - "Mechanical Engineering EAP"
+EAPMUS:
+    - "Music EAP"
+EAPNEST:
+    - "Near East Studies EAP"
+EAPPA:
+    - "Physical Activities EAP"
+EAPPHIL:
+    - "Philosophy EAP"
+EAPPHYS:
+    - "Physics EAP"
+EAPPOLS:
+    - "Political Science EAP"
+EAPPSY:
+    - "Psychology EAP"
+EAPRGST:
+    - "Religious Studies EAP"
+EAPSCAND:
+    - "Scandinavian EAP"
+EAPSLAVC:
+    - "Slavic Studies EAP"
+EAPSOC:
+    - "Sociology EAP"
+EAPSPAN:
+    - "Spanish EAP"
+EAPSTAT:
+    - "Statistics EAP"
+EAPSWED:
+    - "Swedish EAP"
+EAPTHAI:
+    - "Thai EAP"
+EAPURBS:
+    - "Urban Studies EAP"
 
 ECON:
     - "Economics"
