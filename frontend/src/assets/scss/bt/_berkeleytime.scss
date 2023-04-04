@@ -11,7 +11,7 @@
 	// grades, and enrollment. When smaller than desktop, we no longer attempt to match the
 	// height of the viewport b/c we change to mobile view.
 	.viewport-app {
-		padding-top: $bt-navbar-height;
+		// padding-top: $bt-navbar-height;
 
 		// The reason for this, but WebKit (Chrome + Safari) won't allow child
 		// element's height: 100% to work if the parent has a min-height but the
