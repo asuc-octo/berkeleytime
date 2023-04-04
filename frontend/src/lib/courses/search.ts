@@ -7,14 +7,16 @@ import { FilterOptionOption } from 'react-select/dist/declarations/src/filters';
  */
 export function reactSelectCourseSearch(
 	// TODO: The types here are very bad because interacting with poorly written JSX
-	option: FilterOptionOption<FilterOption & {course: any}>,
+	option: FilterOptionOption<FilterOption & { course: any }>,
 	query: string
 ): boolean {
 	if (!query || query === '' || query === null) return true;
 	const { abbreviation, course_number } = option.data.course;
 
 	const abbreviations =
-		laymanTerms[abbreviation.toLowerCase()]?.map((abbr) => `${abbr} ${course_number}`) ?? [];
+		laymanTerms[abbreviation.toLowerCase()]?.reduce((acc, abbr) => {
+			return [...acc, ...[`${abbr}${course_number}`, `${abbr} ${course_number}`]];
+		}, [] as string[]) ?? [];
 
 	const search = {
 		title: option.label,
@@ -24,7 +26,7 @@ export function reactSelectCourseSearch(
 	};
 
 	const fuse = new Fuse([search], {
-		threshold: 0.001,
+		threshold: 0.01,
 		shouldSort: true,
 		includeMatches: false,
 		findAllMatches: false,

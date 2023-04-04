@@ -196,7 +196,9 @@ export const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: strin
 		const { title, abbreviation, courseNumber } = course;
 
 		const abbreviations =
-			laymanTerms[abbreviation.toLowerCase()]?.map((abbr) => `${abbr}${courseNumber}`) ?? [];
+			laymanTerms[abbreviation.toLowerCase()]?.reduce((acc, abbr) => {
+				return [...acc, ...[`${abbr}${courseNumber}`, `${abbr} ${courseNumber}`]];
+			}, [] as string[]) ?? [];
 
 		return {
 			title,
@@ -209,7 +211,7 @@ export const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: strin
 
 	const fuse = new Fuse(courseInfo, options);
 	return fuse.search(rawQuery.trim().toLowerCase()).map((res) => courses[res.refIndex]);
-}
+};
 
 /**
  *
