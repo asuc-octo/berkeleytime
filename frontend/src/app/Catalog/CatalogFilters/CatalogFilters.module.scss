@@ -75,7 +75,7 @@
 		width: 100%;
 		top: 0;
 		// minus size of search bar, minus size of header
-		height: calc(100vh - 47px - 57.11px);
+		height: calc(100vh - 47px);
 		z-index: 50;
 		background: hsla(0, 0%, 0%, 0.3);
 		justify-content: center;
