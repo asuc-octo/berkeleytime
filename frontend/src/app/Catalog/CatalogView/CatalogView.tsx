@@ -138,19 +138,19 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
+			<button
+				className={styles.modalButton}
+				onClick={() => {
+					setCurrentCourse(null);
+					setCourse(null);
+					history.replace(`/catalog/${semester}`);
+				}}
+			>
+				<BackArrow />
+				Back to Courses
+			</button>
 			{course && (
 				<>
-					<button
-						className={styles.modalButton}
-						onClick={() => {
-							setCurrentCourse(null);
-							setCourse(null);
-							history.replace(`/catalog/${semester}`);
-						}}
-					>
-						<BackArrow />
-						Back to Courses
-					</button>
 					<h3>
 						{course.abbreviation} {course.courseNumber}
 					</h3>
@@ -178,7 +178,7 @@ const CatalogView = (props: CatalogViewProps) => {
 							Average Grade:
 							{course.gradeAverage !== -1 ? (
 								<div>
-									{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+									{applyIndicatorGrade(course.letterAverage)}
 									<a href={gradePath} target="_blank" rel="noreferrer" className={styles.statLink}>
 										<img src={launch} alt="" />
 									</a>

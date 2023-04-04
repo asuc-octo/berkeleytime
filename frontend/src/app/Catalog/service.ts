@@ -165,7 +165,7 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
  * within `courses`
  * @returns an array of CourseOverviewFragment
  */
-export function searchCatalog(courses: CourseOverviewFragment[], rawQuery: string) {
+export const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: string) => {
 	if (!rawQuery || rawQuery === '' || rawQuery === null) return courses;
 
 	const options: Fuse.IFuseOptions<CourseInfo> = {
