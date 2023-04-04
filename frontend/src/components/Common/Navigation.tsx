@@ -43,7 +43,7 @@ const Navigation: FC<Props> = (props) => {
 	}, [location.pathname]);
 
 	return (
-		<Navbar collapseOnSelect={true} fixed="top" expand="lg" bg="white">
+		<Navbar collapseOnSelect={true} expand="lg" bg="white">
 			<Navbar.Brand as={Link} to="/" className="bt-bold">
 				Berkeleytime
 			</Navbar.Brand>
