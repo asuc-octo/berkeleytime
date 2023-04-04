@@ -64,11 +64,12 @@ const CatalogList = (props: CatalogListProps) => {
 
 	const handleCourseSelect = (course: CourseFragment) => {
 		setCurrentCourse(course);
-		history.push(
-			`/catalog/${(currentFilters.semester as FilterOption)?.value?.name}/${course.abbreviation}/${
-				course.courseNumber
-			}`
-		);
+		history.push({
+			pathname: `/catalog/${(currentFilters.semester as FilterOption)?.value?.name}/${
+				course.abbreviation
+			}/${course.courseNumber}`,
+			search: location.search
+		});
 	};
 
 	return (
