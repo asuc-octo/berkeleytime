@@ -72,24 +72,27 @@ const CatalogViewSections = ({ sections }: Props) => {
 								{section.locationName ? section.locationName : 'Unknown Location'}
 							</h5>
 							<h6>
-								{section.wordDays} {formatSectionTime(section)},{' '}
-								{section?.instructor?.toLowerCase() ?? 'No Instructor'}
+								{section.instructor ? section.instructor.toLowerCase() : 'Instructor not specified.'}
 							</h6>
 							<span className={styles.sectionStats}>
-								{/* <span className={colorEnrollment(section.enrolled / section.enrolledMax)}>
+								<span className={colorEnrollment(section.enrolled / section.enrolledMax)}>
 									{formatEnrollment(section.enrolled / section.enrolledMax)}
-								</span> */}
-								<span>{section.ccn}</span>
-								<span>• {section.waitlisted} Waitlisted</span>
+								</span>
+								<span>• {section.waitlisted} Waitlisted</span>• <span>CCN {section.ccn}</span>
 							</span>
 						</div>
-						<div
-							className={`${colorEnrollment(section.enrolled / section.enrolledMax)} ${
-								styles.enrolled
-							}`}
-						>
-							<img src={people} />
-							{section.enrolled}/{section.enrolledMax}
+						<div className={styles.sectionContent}>
+							<div
+								className={`${colorEnrollment(section.enrolled / section.enrolledMax)} ${
+									styles.enrolled
+								}`}
+							>
+								<img src={people} />
+								{section.enrolled}/{section.enrolledMax}
+							</div>
+							<span>
+								{section.wordDays} {formatSectionTime(section)}
+							</span>
 						</div>
 					</div>
 				))

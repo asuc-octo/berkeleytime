@@ -23,7 +23,7 @@
 	flex-direction: column;
 	padding: 30px;
 	gap: 15px;
-	overflow-y: auto;
+	overflow-y: overlay;
 	overflow-x: hidden;
 	-webkit-animation: fadeIn 0.1s;
 	animation: fadeIn 0.1s;
@@ -214,9 +214,10 @@
 	padding: 12px 24px;
 	border-radius: 12px !important;
 	border: 1.5px solid #eaeaea;
-	gap: 20px;
+	gap: 30px;
 	h5 {
 		font-size: 16px;
+		min-height: 21px;
 		margin: 0;
 	}
 
@@ -230,12 +231,25 @@
 
 .sectionInfo {
 	display: flex;
-	gap: 5px;
+	gap: 6px;
 	flex-direction: column;
 	flex: 1;
 
 	h6 {
 		text-transform: capitalize;
+	}
+}
+
+.sectionContent {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	font-size: 14px;
+	gap: 6px;
+
+	span {
+		color: $bt-light-text;
+		text-align: right;
 	}
 }
 
@@ -252,7 +266,7 @@
 
 .enrolled {
 	display: flex;
-	justify-content: center;
+	justify-content: flex-end;
 	align-items: center;
 	font-size: 14px;
 	font-weight: 600;
