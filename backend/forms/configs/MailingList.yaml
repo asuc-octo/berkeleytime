@@ -1,9 +1,0 @@
-info:
-  unique_name: "MailingList"
-  public_name: "Mailing List"
-  description: "N/A"
-  googlesheet_link: "https://docs.google.com/spreadsheets/d/1s5ey_jvoxqpyLe6BJqo3s3lyEKwWN5En7JuKxrYoByY/edit"
-questions:
-  - title: "Email Address"
-    type: "short"
-    format: "email"
