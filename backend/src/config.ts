@@ -14,19 +14,27 @@ const env = (name: string): string => {
 
 export interface Config {
   port: number;
+  url: string;
   graphqlPath: string;
   isDev: boolean;
   mongoDB: {
     uri: string;
   };
+  SESSION_SECRET: string;
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
 }
 
 // All your secrets, keys go here
 export const config: Config = {
   port: +env("PORT"),
+  url: env("URL"),
   graphqlPath: env("GRAPHQL_PATH"),
   isDev: env("NODE_ENV") === "development",
   mongoDB: {
     uri: env("MONGODB_URI"),
   },
+  SESSION_SECRET: env("SESSION_SECRET"),
+  GOOGLE_CLIENT_ID: env("GOOGLE_CLIENT_ID"),
+  GOOGLE_CLIENT_SECRET: env("GOOGLE_CLIENT_SECRET"),
 };

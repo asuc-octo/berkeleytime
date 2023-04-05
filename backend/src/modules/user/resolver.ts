@@ -1,12 +1,33 @@
-import { getByEmail } from "./controller";
+import {
+    getUserById,
+    updateUserInfo,
+    deleteUser,
+} from "./controller";
 import { UserModule } from "./generated-types/module-types";
 
 const resolvers: UserModule.Resolvers = {
     Query: {
-        User(_parent, args: { email: string }) {
-            return getByEmail(args.email);
+        user(_, __, contextValue) {
+            return getUserById(contextValue.user._id);
         },
     },
+    Mutation: {
+        updateUserInfo(_, args, contextValue) {
+            return updateUserInfo(contextValue.user._id, args.newUserInfo);
+        },
+
+        deleteUser(_, __, contextValue) {
+            const res = deleteUser(contextValue.user._id);
+
+            contextValue.user.logout((err: Error) => {
+                if (err) {
+                    throw err;
+                }
+            });
+
+            return res;
+        },
+    }
 };
 
 export default resolvers;

@@ -1,13 +1,34 @@
-import { User } from "../../generated-types/graphql";
+import { ObjectId } from "mongodb";
+import { UserInput } from "../../generated-types/graphql";
 import { formatUser } from "./formatter";
-import { UserModel, UserType } from "./model";
+import { UserModel, UserType } from "../../db/user";
+import { omitBy } from "lodash";
 
-export async function getByEmail(email: string): Promise<User> {
-    const user = await UserModel.findOne({ email });
-
+function resolveAndFormat(user: UserType | null) {
     if (!user) {
         throw new Error("User not found");
     }
 
-    return formatUser(user as UserType);
+    return formatUser(user);
+}
+
+export async function getUserById(id: ObjectId) {
+    const user = await UserModel.findById(id).lean();
+
+    return resolveAndFormat(user as UserType);
+}
+
+export async function updateUserInfo(id: ObjectId, newUserInfo: UserInput) {
+    // remove explicitly set null values
+    newUserInfo = omitBy(newUserInfo, (value) => value == null);
+
+    const user = await UserModel.findByIdAndUpdate(id, newUserInfo, { new: true, lean: true });
+
+    return resolveAndFormat(user);
+}
+
+export async function deleteUser(id: ObjectId) {
+    const user = await UserModel.findByIdAndDelete(id, { lean: true });
+
+    return resolveAndFormat(user);
 }

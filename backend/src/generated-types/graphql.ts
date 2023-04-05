@@ -152,6 +152,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Takes in schedule fields, creates a new schedule record in the database, and returns the schedule. */
   createNewSchedule?: Maybe<Schedule>;
+  /** Delete user account. */
+  deleteUser?: Maybe<User>;
   /** Takes in schedule fields, finds the schedule record in the database corresponding to the provided ID, updates the record, and returns the updated schedule. */
   editExistingSchedule?: Maybe<Schedule>;
   /** Takes in a schedule's ObjectID, deletes the schedule with that ID, and returns the ID. */
@@ -160,6 +162,8 @@ export type Mutation = {
   setSelectedClasses?: Maybe<Schedule>;
   /** For the schedule specified by the ID, modifies the section ID field and returns the updated schedule. */
   setSelectedSections?: Maybe<Schedule>;
+  /** Mutate user info. */
+  updateUserInfo?: Maybe<User>;
 };
 
 
@@ -190,9 +194,13 @@ export type MutationSetSelectedSectionsArgs = {
   section_IDs: Array<Scalars['String']>;
 };
 
+
+export type MutationUpdateUserInfoArgs = {
+  newUserInfo: UserInput;
+};
+
 export type Query = {
   __typename?: 'Query';
-  User?: Maybe<User>;
   /**
    * Get info about all courses and their corresponding classes for a given semester.
    *
@@ -214,11 +222,8 @@ export type Query = {
   /** Takes in a user's email and returns all the schedules they created. */
   schedulesByUser?: Maybe<Array<Maybe<Schedule>>>;
   section?: Maybe<Section>;
-};
-
-
-export type QueryUserArgs = {
-  email: Scalars['String'];
+  /** Query for user info. */
+  user?: Maybe<User>;
 };
 
 
@@ -346,24 +351,34 @@ export type TermOutput = {
   year: Scalars['Int'];
 };
 
+/** User accout info. */
 export type User = {
   __typename?: 'User';
   date_joined: Scalars['String'];
   email: Scalars['String'];
-  email_berkeleytime_update?: Maybe<Scalars['Boolean']>;
-  email_class_update?: Maybe<Scalars['Boolean']>;
-  email_enrollment_opening?: Maybe<Scalars['Boolean']>;
-  email_grade_update?: Maybe<Scalars['Boolean']>;
+  email_berkeleytime_update: Scalars['Boolean'];
+  email_class_update: Scalars['Boolean'];
+  email_enrollment_opening: Scalars['Boolean'];
+  email_grade_update: Scalars['Boolean'];
   first_name: Scalars['String'];
-  id: Scalars['String'];
   is_active: Scalars['Boolean'];
   is_staff: Scalars['Boolean'];
-  is_superuser: Scalars['Boolean'];
-  last_login?: Maybe<Scalars['String']>;
+  last_login: Scalars['String'];
   last_name: Scalars['String'];
-  major?: Maybe<Array<Maybe<Scalars['String']>>>;
-  password: Scalars['String'];
+  major: Array<Scalars['String']>;
   username: Scalars['String'];
+};
+
+/** User input type for mutations. */
+export type UserInput = {
+  email_berkeleytime_update?: InputMaybe<Scalars['Boolean']>;
+  email_class_update?: InputMaybe<Scalars['Boolean']>;
+  email_enrollment_opening?: InputMaybe<Scalars['Boolean']>;
+  email_grade_update?: InputMaybe<Scalars['Boolean']>;
+  first_name?: InputMaybe<Scalars['String']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  major?: InputMaybe<Array<Scalars['String']>>;
+  username?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -463,6 +478,7 @@ export type ResolversTypes = {
   TermInput: TermInput;
   TermOutput: ResolverTypeWrapper<TermOutput>;
   User: ResolverTypeWrapper<User>;
+  UserInput: UserInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -494,7 +510,12 @@ export type ResolversParentTypes = {
   TermInput: TermInput;
   TermOutput: TermOutput;
   User: User;
+  UserInput: UserInput;
 };
+
+export type AuthDirectiveArgs = { };
+
+export type AuthDirectiveResolver<Result, Parent, ContextType = any, Args = AuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type CatalogClassResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogClass'] = ResolversParentTypes['CatalogClass']> = {
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -617,14 +638,15 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'main_schedule'>>;
+  deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'id' | 'main_schedule'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
   setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'class_IDs' | 'id'>>;
   setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
+  updateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserInfoArgs, 'newUserInfo'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  User?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'email'>>;
   catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
   class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassArgs, 'classNumber' | 'courseNumber' | 'subject' | 'term'>>;
   course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCourseArgs, 'courseNumber' | 'subject'>>;
@@ -634,6 +656,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   scheduleByID?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QueryScheduleByIdArgs, 'id'>>;
   schedulesByUser?: Resolver<Maybe<Array<Maybe<ResolversTypes['Schedule']>>>, ParentType, ContextType, RequireFields<QuerySchedulesByUserArgs, 'created_by'>>;
   section?: Resolver<Maybe<ResolversTypes['Section']>, ParentType, ContextType, RequireFields<QuerySectionArgs, 'classNumber' | 'courseNumber' | 'sectionNumber' | 'subject' | 'term'>>;
+  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
@@ -685,19 +708,16 @@ export type TermOutputResolvers<ContextType = any, ParentType extends ResolversP
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   date_joined?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email_berkeleytime_update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  email_class_update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  email_enrollment_opening?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
-  email_grade_update?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  email_berkeleytime_update?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  email_class_update?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  email_enrollment_opening?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  email_grade_update?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   first_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   is_active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   is_staff?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  is_superuser?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  last_login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  last_login?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   last_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  major?: Resolver<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
-  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  major?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -724,6 +744,9 @@ export type Resolvers<ContextType = any> = {
   User?: UserResolvers<ContextType>;
 };
 
+export type DirectiveResolvers<ContextType = any> = {
+  auth?: AuthDirectiveResolver<any, any, ContextType>;
+};
 
 export type IsoDate = Scalars["ISODate"];
 export type Json = Scalars["JSON"];
