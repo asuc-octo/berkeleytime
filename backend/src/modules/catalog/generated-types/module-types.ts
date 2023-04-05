@@ -15,7 +15,7 @@ export namespace CatalogModule {
   
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   export type Course = Pick<Types.Course, DefinedFields['Course']>;
-  export type Term = Types.Term;
+  export type TermInput = Types.TermInput;
   export type Class = Pick<Types.Class, DefinedFields['Class']>;
   export type Section = Pick<Types.Section, DefinedFields['Section']>;
   export type CatalogItem = Pick<Types.CatalogItem, DefinedFields['CatalogItem']>;

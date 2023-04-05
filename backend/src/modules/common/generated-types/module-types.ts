@@ -10,10 +10,10 @@ export namespace CommonModule {
   };
   
   interface DefinedInputFields {
-    Term: 'year' | 'semester';
+    TermInput: 'year' | 'semester';
   };
   
-  export type Term = Pick<Types.Term, DefinedInputFields['Term']>;
+  export type TermInput = Pick<Types.TermInput, DefinedInputFields['TermInput']>;
   export type Semester = DefinedEnumValues['Semester'];
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   

@@ -10,7 +10,7 @@ export namespace GradeModule {
   export type Grade = Pick<Types.Grade, DefinedFields['Grade']>;
   export type GradeDistributionItem = Pick<Types.GradeDistributionItem, DefinedFields['GradeDistributionItem']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
-  export type Term = Types.Term;
+  export type TermInput = Types.TermInput;
   
   export type GradeResolvers = Pick<Types.GradeResolvers, DefinedFields['Grade'] | '__isTypeOf'>;
   export type GradeDistributionItemResolvers = Pick<Types.GradeDistributionItemResolvers, DefinedFields['GradeDistributionItem'] | '__isTypeOf'>;
