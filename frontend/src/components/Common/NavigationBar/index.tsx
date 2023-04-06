@@ -3,13 +3,15 @@ import { useLocation } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavProps } from 'react-bootstrap';
 import { connect, ConnectedProps } from 'react-redux';
-import { ReduxState } from '../../redux/store';
+import { ReduxState } from '../../../redux/store';
 import { Button } from 'bt/custom';
-import { ReactComponent as GoogleIcon } from '../../assets/svg/profile/google.svg';
+import { ReactComponent as GoogleIcon } from '../../../assets/svg/profile/google.svg';
 
-import { useUser } from '../../graphql/hooks/user';
+import { useUser } from '../../../graphql/hooks/user';
 
-type Props = PropsFromRedux;
+interface NavigationProps extends PropsFromRedux {
+  standalone?: boolean
+}
 
 const NavigationLink: FC<
 	{
@@ -31,7 +33,7 @@ const NavigationLink: FC<
 	</Nav.Link>
 );
 
-const Navigation: FC<Props> = (props) => {
+const Navigation: FC<NavigationProps> = ({ standalone }) => {
 	const [showLogin, setShowLogin] = useState(false);
 
 	const location = useLocation();
