@@ -227,13 +227,14 @@
 
 .sectionInfo {
 	display: flex;
-	gap: 6px;
 	flex-direction: column;
 	flex: 1;
+}
 
-	h6 {
-		text-transform: capitalize;
-	}
+.instructor {
+	font-size: 14px;
+	color: $bt-light-grey;
+	text-transform: capitalize;
 }
 
 .sectionContent {
@@ -241,7 +242,6 @@
 	flex-direction: column;
 	justify-content: flex-start;
 	font-size: 14px;
-	gap: 6px;
 
 	span {
 		color: $bt-light-text;
@@ -255,7 +255,7 @@
 	flex-wrap: wrap;
 	gap: 5px;
 	color: $bt-light-text;
-	margin-top: 5px;
+	margin-top: 12px;
 	font-size: 14px;
 	text-transform: none !important;
 }

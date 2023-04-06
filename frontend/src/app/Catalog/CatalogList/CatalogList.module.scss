@@ -92,9 +92,14 @@
 	}
 }
 
-.grade {
+.gradeWrapper {
 	display: flex;
-	justify-content: flex-start;
+	flex-direction: column;
+	font-weight: 700;
+
+	span {
+		line-height: 20px;
+	}
 }
 
 .A {
