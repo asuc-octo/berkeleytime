@@ -17,7 +17,7 @@ import styles from './CatalogView.module.scss';
 
 const { colorEnrollment, formatEnrollment } = catalogService;
 
-const easterEggImages = new Map<string, string>([
+const easterEggImages = new Map([
 	['DENERO J', denero],
 	['HUG J', hug],
 	['SAHAI A', sahai],
@@ -41,11 +41,11 @@ function findInstructor(instr: string | null): CSSProperties {
 	return {};
 }
 
-type Props = {
+interface Props {
 	sections: SectionFragment[] | null;
-};
+}
 
-const CatalogViewSections = ({ sections }: Props) => {
+const SectionTable = ({ sections }: Props) => {
 	if (!sections) {
 		return (
 			<Skeleton
@@ -60,42 +60,44 @@ const CatalogViewSections = ({ sections }: Props) => {
 	return (
 		<div className={styles.sectionRoot}>
 			{sections.length > 0 ? (
-				sections.map((section) => (
-					<div
-						className={styles.sectionItem}
-						style={findInstructor(section.instructor)}
-						key={section.ccn}
-					>
-						<div className={styles.sectionInfo}>
-							<h5>
-								<span>{section.kind}</span> •{' '}
-								{section.locationName ? section.locationName : 'Unknown Location'}
-							</h5>
-							<h6>
-								{section.instructor ? section.instructor.toLowerCase() : 'Instructor not specified.'}
-							</h6>
-							<span className={styles.sectionStats}>
-								<span className={colorEnrollment(section.enrolled / section.enrolledMax)}>
-									{formatEnrollment(section.enrolled / section.enrolledMax)}
+				sections.map((section) => {
+					const colorStyle = colorEnrollment(section.enrolled / section.enrolledMax);
+
+					return (
+						<div
+							className={styles.sectionItem}
+							style={findInstructor(section.instructor)}
+							key={section.ccn}
+						>
+							<div className={styles.sectionInfo}>
+								<h5>
+									<span>{section.kind}</span> • {section.locationName ?? 'Unknown Location'}
+								</h5>
+								<span className={styles.instructor}>
+									{section.instructor
+										? section.instructor.toLowerCase()
+										: 'Instructor not specified.'}
 								</span>
-								<span>• {section.waitlisted} Waitlisted</span>• <span>CCN {section.ccn}</span>
-							</span>
-						</div>
-						<div className={styles.sectionContent}>
-							<div
-								className={`${colorEnrollment(section.enrolled / section.enrolledMax)} ${
-									styles.enrolled
-								}`}
-							>
-								<img src={people} />
-								{section.enrolled}/{section.enrolledMax}
+								<div className={styles.sectionStats}>
+									<span className={colorStyle}>
+										{formatEnrollment(section.enrolled / section.enrolledMax)}
+									</span>
+									<span>• {section.waitlisted} Waitlisted</span>
+									<span>• CCN {section.ccn}</span>
+								</div>
 							</div>
-							<span>
-								{section.wordDays} {formatSectionTime(section)}
-							</span>
+							<div className={styles.sectionContent}>
+								<div className={`${colorStyle} ${styles.enrolled}`}>
+									<img src={people} />
+									{section.enrolled}/{section.enrolledMax}
+								</div>
+								<span>
+									{section.wordDays} {formatSectionTime(section)}
+								</span>
+							</div>
 						</div>
-					</div>
-				))
+					);
+				})
 			) : (
 				<div>There are no class sections for this course.</div>
 			)}
@@ -103,4 +105,4 @@ const CatalogViewSections = ({ sections }: Props) => {
 	);
 };
 
-export default CatalogViewSections;
+export default SectionTable;

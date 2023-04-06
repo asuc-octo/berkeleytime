@@ -10,7 +10,7 @@ import Berkeleytime from './Berkeleytime';
 import store from './redux/store';
 import client from './graphql/client';
 import Banner from 'components/Common/Banner';
-
+	
 import 'assets/scss/berkeleytime.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
 
