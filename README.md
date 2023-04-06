@@ -7,6 +7,8 @@ A course discovery and planning tool which combines all of UC Berkeley's academi
 Berkeleytime was created by [Yuxin Zhu](http://yuxinzhu.com/) and [Noah Gilmore](https://noahgilmore.com) and is maintained by [the ASUC Office of the CTO](https://octo.asuc.org/).
 # Getting started
 
+Create an `.env` file with the keys in `.env.template` populated accordingly.
+
 Start Docker before running these in repo root
 
 ```{bash}

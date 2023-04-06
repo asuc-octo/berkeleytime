@@ -25,8 +25,6 @@ services:
       - start
     networks:
       - bt
-    ports:
-      - 3000:3000 # local dev seems to use ws://localhost:3000/ws to listen for source code changes and refresh
     restart: always
     volumes:
       - ./frontend/src:/frontend/src
