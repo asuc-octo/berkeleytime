@@ -53,7 +53,7 @@
 		z-index: 300;
 		width: 100vw;
 		// Add size of fixed header.
-		padding-top: 57.11px + 30px;
+		padding-top: 30px;
 		&[data-modal='false'] {
 			display: none;
 		}
