@@ -21,7 +21,10 @@ const initialState = {
 export default function enrollment(state = initialState, action) {
 	switch (action.type) {
 		case ENROLL_RESET: {
-			return initialState;
+			return {
+				...initialState,
+				context: state.context
+			};
 		}
 		case UPDATE_ENROLL_CONTEXT: {
 			const { data } = action.payload;
