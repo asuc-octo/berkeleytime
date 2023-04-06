@@ -21,6 +21,7 @@ const Berkeleytime = () => {
 	});
 
 	useEffect(() => {
+		observe(document.getElementById('root'));
 		// Fetch enrollment context early on for catalog and enrollment page.
 		dispatch(fetchEnrollContext());
 
@@ -40,13 +41,9 @@ const Berkeleytime = () => {
 		if (localStorage.getItem(key) === null) {
 			localStorage.setItem(key, key);
 		}
-	}, [dispatch]);
+	}, [dispatch, observe]);
 
-	return (
-		<div ref={observe} className="app">
-			<Routes />
-		</div>
-	);
+	return <Routes />;
 };
 
 export default memo(Berkeleytime);
