@@ -112,7 +112,7 @@ type EnrollmentDay {
     waitlistMax: Int!
 }
 
-type CatalogItem {
+type CatalogItem @cacheControl(maxAge: 3000) {
     subject: String!
     number: String!
     title: String!
@@ -123,7 +123,7 @@ type CatalogItem {
     lastUpdated: ISODate!
 }
 
-type CatalogClass {
+type CatalogClass @cacheControl(inheritMaxAge: true) {
     number: String!
     title: String
     description: String

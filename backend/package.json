@@ -50,6 +50,9 @@
   },
   "dependencies": {
     "@apollo/server": "^4.1.0",
+    "@apollo/server-plugin-response-cache": "^4.1.2",
+    "@apollo/utils.keyvadapter": "^2.0.2",
+    "@keyv/redis": "^2.5.7",
     "@types/mongoose": "^5.7.16",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -60,6 +63,7 @@
     "graphql-tools": "^8.0.0",
     "graphql-type-json": "^0.3.2",
     "helmet": "^3.22.0",
+    "keyv": "^4.5.2",
     "lodash": "^4.17.21",
     "mongodb": "^4.10.0",
     "mongoose": "^6.8.0",

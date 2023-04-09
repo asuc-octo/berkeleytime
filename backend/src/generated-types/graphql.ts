@@ -17,6 +17,10 @@ export type Scalars = {
   JSONObject: any;
 };
 
+export type CacheControlScope =
+  | 'PRIVATE'
+  | 'PUBLIC';
+
 export type CatalogClass = {
   __typename?: 'CatalogClass';
   description?: Maybe<Scalars['String']>;
@@ -451,6 +455,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CacheControlScope: CacheControlScope;
   CatalogClass: ResolverTypeWrapper<CatalogClass>;
   CatalogItem: ResolverTypeWrapper<CatalogItem>;
   Class: ResolverTypeWrapper<Class>;
@@ -516,6 +521,14 @@ export type ResolversParentTypes = {
 export type AuthDirectiveArgs = { };
 
 export type AuthDirectiveResolver<Result, Parent, ContextType = any, Args = AuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type CacheControlDirectiveArgs = {
+  inheritMaxAge?: Maybe<Scalars['Boolean']>;
+  maxAge?: Maybe<Scalars['Int']>;
+  scope?: Maybe<CacheControlScope>;
+};
+
+export type CacheControlDirectiveResolver<Result, Parent, ContextType = any, Args = CacheControlDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type CatalogClassResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogClass'] = ResolversParentTypes['CatalogClass']> = {
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -746,6 +759,7 @@ export type Resolvers<ContextType = any> = {
 
 export type DirectiveResolvers<ContextType = any> = {
   auth?: AuthDirectiveResolver<any, any, ContextType>;
+  cacheControl?: CacheControlDirectiveResolver<any, any, ContextType>;
 };
 
 export type IsoDate = Scalars["ISODate"];

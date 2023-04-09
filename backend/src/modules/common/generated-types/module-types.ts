@@ -7,6 +7,7 @@ export namespace CommonModule {
   
   interface DefinedEnumValues {
     Semester: 'Fall' | 'Spring' | 'Summer';
+    CacheControlScope: 'PUBLIC' | 'PRIVATE';
   };
   
   interface DefinedInputFields {
@@ -16,6 +17,7 @@ export namespace CommonModule {
   export type TermInput = Pick<Types.TermInput, DefinedInputFields['TermInput']>;
   export type Semester = DefinedEnumValues['Semester'];
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
+  export type CacheControlScope = DefinedEnumValues['CacheControlScope'];
   
   export type Scalars = Pick<Types.Scalars, 'JSON' | 'JSONObject' | 'ISODate'>;
   export type JsonScalarConfig = Types.JsonScalarConfig;
