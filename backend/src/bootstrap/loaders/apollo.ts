@@ -14,6 +14,17 @@ export default async () => {
   return new ApolloServer({
     schema,
     cache: faultTolerantCache,
-    plugins: [responseCachePlugin(), ApolloServerPluginCacheControl({ calculateHttpHeaders: false })],
+    plugins: [responseCachePlugin(), 
+      ApolloServerPluginCacheControl({ calculateHttpHeaders: false }),
+      {
+      async requestDidStart() {
+        return {
+          async willSendResponse(requestContext) {
+            requestContext.response.http.headers.set('Cache-Control', 'no-cache');
+          }
+        };
+      }
+    }
+    ],
   });
 };
