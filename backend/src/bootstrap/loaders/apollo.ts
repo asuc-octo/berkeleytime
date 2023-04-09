@@ -4,6 +4,7 @@ import Keyv from "keyv";
 import { KeyvAdapter } from "@apollo/utils.keyvadapter";
 import responseCachePlugin from '@apollo/server-plugin-response-cache';
 import { ErrorsAreMissesCache } from "@apollo/utils.keyvaluecache";
+import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
 
 export default async () => {
   const schema = buildSchema();
@@ -13,6 +14,6 @@ export default async () => {
   return new ApolloServer({
     schema,
     cache: faultTolerantCache,
-    plugins: [responseCachePlugin()],
+    plugins: [responseCachePlugin(), ApolloServerPluginCacheControl({ calculateHttpHeaders: false })],
   });
 };
