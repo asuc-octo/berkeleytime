@@ -50,7 +50,7 @@ class GradesInfoCard extends PureComponent {
 				</div>
 				<h6>
 					Section Average
-					<a data-tooltip-id="percentileInfo" data-tooltip-html={sectionAvgText}>
+					<a data-tooltip-id="sectionAvg" data-tooltip-html={sectionAvgText}>
 						<img src={info} className="info-icon" alt="" />
 					</a>
 					<ReactTooltip id="sectionAvg" />
