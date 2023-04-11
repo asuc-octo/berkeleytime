@@ -9,8 +9,10 @@ import type { Application } from "express";
 import session from "express-session";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
+import RedisStore from "connect-redis";
 import { UserModel } from "../../db/user";
 import { config } from "../../config";
+import { redisInstance } from "./redis";
 
 // routes need to be added as authorized origins/redirect uris in google cloud console
 const LOGIN_ROUTE = "/login";
@@ -22,11 +24,17 @@ const FAILURE_REDIRECT = "/fail";
 
 const SCOPE = ['profile', 'email']
 
+const CACHE_PREFIX = 'user-session:';
+
 export default async (app: Application) => {
   // init
   app.use(session({
     secret: config.SESSION_SECRET,
     name: 'sessionId',
+    store: new RedisStore({
+      client: redisInstance,
+      prefix: CACHE_PREFIX,
+    }),
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -57,7 +65,7 @@ export default async (app: Application) => {
     // failureMessage: "failed",
     successRedirect: SUCCESS_REDIRECT,
   }));
-  app.post(LOGOUT_ROUTE, (req, res) => {
+  app.get(LOGOUT_ROUTE, (req, res) => {
     req.logout((err) => {
       if (err) {
         res.redirect(FAILURE_REDIRECT);

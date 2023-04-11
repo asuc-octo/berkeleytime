@@ -1,30 +1,31 @@
 import { ApolloServer } from "@apollo/server";
-import { buildSchema } from "../graphql/buildSchema";
-import Keyv from "keyv";
-import { KeyvAdapter } from "@apollo/utils.keyvadapter";
 import responseCachePlugin from '@apollo/server-plugin-response-cache';
-import { ErrorsAreMissesCache } from "@apollo/utils.keyvaluecache";
+import { buildSchema } from "../graphql/buildSchema";
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
+import { getKeyvCache } from "./redis";
+
+const CACHE_NAMESPACE = "gql-queries"
 
 export default async () => {
   const schema = buildSchema();
-  const redisCache = new KeyvAdapter(new Keyv("redis://localhost:6379"))
-  const faultTolerantCache = new ErrorsAreMissesCache(redisCache)
+  const cache = await getKeyvCache(CACHE_NAMESPACE);
 
   return new ApolloServer({
     schema,
-    cache: faultTolerantCache,
-    plugins: [responseCachePlugin(), 
-      ApolloServerPluginCacheControl({ calculateHttpHeaders: false }),
-      {
-      async requestDidStart() {
-        return {
-          async willSendResponse(requestContext) {
-            requestContext.response.http.headers.set('Cache-Control', 'no-cache');
-          }
-        };
+    cache,
+    plugins: [
+      ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
+      responseCachePlugin(),
+      ApolloServerPluginCacheControl({ calculateHttpHeaders: false }), {
+        async requestDidStart() {
+          return {
+            async willSendResponse(requestContext) {
+              requestContext.response.http.headers.set('Cache-Control', 'no-cache');
+            }
+          };
+        }
       }
-    }
     ],
   });
 };
