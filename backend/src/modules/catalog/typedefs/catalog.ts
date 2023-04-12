@@ -106,6 +106,7 @@ type Instructor {
 }
 
 type EnrollmentDay {
+    daysElapsed: Int!
     enrollCount: Int!
     enrollMax: Int!
     waitlistCount: Int!

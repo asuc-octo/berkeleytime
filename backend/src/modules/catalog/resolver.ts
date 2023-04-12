@@ -1,5 +1,5 @@
 import { CatalogModule } from "./generated-types/module-types";
-import { getCatalog, getClass, getClassById, getClassSections, getCourse, getCourseById, getCourseClasses, getCourseList, getCrossListings, getPrimarySection, getSection } from "./controller"
+import { getCatalog, getClass, getClassById, getClassSections, getCourse, getCourseById, getCourseClasses, getCourseList, getCrossListings, getPrimarySection, getSection, getEnrollment } from "./controller"
 
 const resolvers: CatalogModule.Resolvers = {
     Query: {
@@ -38,6 +38,9 @@ const resolvers: CatalogModule.Resolvers = {
         course: (parent) => {
             const c = parent.course as any
             return getCourseById(c.id, c.term)
+        },
+        enrollmentHistory: (parent) => {
+            return getEnrollment(parent.ccn, (parent.class as any).term)
         }
     },
 
