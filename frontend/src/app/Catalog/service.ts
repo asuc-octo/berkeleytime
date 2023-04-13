@@ -1,4 +1,5 @@
 import { FilterFragment, GetFiltersQuery, PlaylistType } from 'graphql';
+import { sortSections } from 'utils/sections/sort';
 import styles from './CatalogList/CatalogList.module.scss';
 
 import {
@@ -110,6 +111,62 @@ const processFilterData = (data?: GetFiltersQuery) => {
 
 	return filters;
 };
+
+/**
+ * @param sections The sections of the course. Every item in sections gets mapped to a url
+ * @param semester The semester of the course. String form. Used in url
+ * @param abbreviation The course abbreviation of the course. String form. Used in url
+ * @param courseNumber The course number of the course. String form. Used in url
+ * @returns A list of links to the official UC Berkeley catalog for each course listed on the catalog table
+ */
+const getLinks = (sections: any, semester: string, abbreviation: string, courseNumber: string) => {
+
+	var dict = new Map([
+		['Field Work', 'FLD'],
+		['Session', 'SES'],
+		['Colloquium', 'COL'],
+		['Recitation', 'REC'],
+		['Internship', 'INT'],
+		['Studio', 'STD'],
+		['Demonstration', 'dem'],
+		['Web-based Discussion', 'WBD'],
+		['Discussion', 'DIS'],
+		['Tutorial', 'TUT'],
+		['Clinic', 'CLN'],
+		['Independent Study', 'IND'],
+		['Self-paced', 'SLF'],
+		['Seminar', 'SEM'],
+		['Lecture', 'LEC'],
+		['Web-based Lecture', 'WBL'],
+		['Web-Based Lecture', 'WBL'],
+		['Directed Group Study', 'GRP'],
+		['Laboratory', 'LAB'],
+	  ]);
+
+	let links:string[] = [];
+	if (sections !== null) {
+		sections = sortSections(sections);
+		for (var i = 0; i < sections.length; i++) {
+			var stre = '';
+			let temp = semester.split(' ');
+			var punctuation = ',';
+			var regex = new RegExp('[' + punctuation + ']', 'g');
+			var rmc = abbreviation.replace(regex, '');
+			stre = `https://classes.berkeley.edu/content/${temp[1]}
+			-${temp[0]}
+			-${rmc}
+			-${courseNumber}
+			-${sections[i].sectionNumber}
+			-${dict.get(sections[i].kind)}
+			-${sections[i].sectionNumber}`;
+			stre = stre.replace(/\s+/g, '');
+			links.push(stre);
+		}
+	}
+	return links
+}
+
+
 /**
  *
  * @param filterItems an empty filter template
@@ -217,6 +274,7 @@ export default {
 	SORT_OPTIONS,
 	INITIAL_FILTERS,
 	processFilterData,
+	getLinks,
 	putFilterOptions,
 	sortByName,
 	sortSemestersByLatest,
