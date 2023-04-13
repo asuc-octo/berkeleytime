@@ -1,7 +1,7 @@
 @-webkit-keyframes fadeIn {
 	from {
 		opacity: 0;
-	}
+	}	
 	to {
 		opacity: 1;
 	}
@@ -57,7 +57,7 @@
 		z-index: 300;
 		width: 100vw;
 		// Add size of fixed header.
-		padding-top: 30px;
+		padding-top: 57.11px + 30px;
 		&[data-modal='false'] {
 			display: none;
 		}
@@ -66,6 +66,7 @@
 			display: flex;
 		}
 	}
+
 }
 
 .modalButton {
@@ -108,6 +109,49 @@
 		font-weight: 700;
 		color: $bt-base-text;
 	}
+
+}
+
+.gradesBox {
+	margin-top: 1%;
+}
+
+.tabContainer {
+	margin-right: -30px;
+    margin-left: -30px;
+    padding-left: 30px;
+	white-space: nowrap;
+	overflow: scroll;
+}
+
+.tabButton {
+	width: auto;
+	text-overflow: ellipsis;
+	margin-right: 3%;
+	background-color: white;
+	border-width: 0px;
+    border-top: thin;
+    border-left: thin;
+    border-right: thin;
+	border-bottom: 5px solid white;
+}
+
+.tabButtonAct {
+	width: auto;
+	text-overflow: ellipsis;
+	background-color: white;
+	margin-right: 3%;
+    border-top: thin;
+    border-left: thin;
+    border-right: thin;
+	border-bottom: 5px solid #579EFF;
+	border-width: medium;
+}
+
+
+
+.tabButton:hover {
+	background-color: #D3D3D3;
 }
 
 .pills {

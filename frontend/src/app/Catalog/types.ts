@@ -56,3 +56,40 @@ export type FilterTemplate = {
 		placeholder: string;
 	};
 };
+
+export type State = {
+	grade: GradeState;
+	enrollment: EnrollmentState;
+	authReducer: any;
+	common: any;
+}
+
+export type GradeState = {
+	context: GradeContext,
+	selectedCourses: any[],
+	gradesData: any[],
+	graphData: any[],
+	sections: any[],
+	selectPrimary: string;
+	selectSecondary: string;
+	usedColorIds: Number[];
+}
+
+export type GradeContext = {
+	courses: any[];
+}
+
+export type EnrollmentState = {
+	context: EnrollmentContext,
+	selectedCourses: any[],
+	enrollmentData: any[],
+	graphData: any[],
+	sections: any[],
+	selectPrimary: string;
+	selectSecondary: string;
+	usedColorIds: Number[];
+}
+
+export type EnrollmentContext = {
+	courses: any[];
+}

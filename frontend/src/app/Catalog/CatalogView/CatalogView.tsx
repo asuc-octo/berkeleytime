@@ -14,8 +14,13 @@ import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
 
 import styles from './CatalogView.module.scss';
-import { useSelector } from 'react-redux';
-import SectionTable from './SectionTable';
+import { useDispatch, useSelector } from 'react-redux';
+import BTLoader from 'components/Common/BTLoader';
+import { enrollReset, fetchEnrollContext, fetchEnrollData, fetchEnrollFromUrl, fetchGradeContext, fetchGradeData, fetchGradeFromUrl, gradeReset } from 'redux/actions';
+import axios from 'axios';
+import store from 'redux/store';
+import CatalogTabs from './CatalogTabs';
+import { State } from '../types';
 
 interface CatalogViewProps {
 	coursePreview: CourseFragment | null;
@@ -36,6 +41,8 @@ const CatalogView = (props: CatalogViewProps) => {
 	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
 	const [isOpen, setOpen] = useState(false);
 	const history = useHistory();
+
+	const dispatch = useDispatch();
 
 	const legacyId = useSelector(
 		(state: any) =>
@@ -86,7 +93,63 @@ const CatalogView = (props: CatalogViewProps) => {
 		}
 	}, [coursePreview, data]);
 
-	const [playlists, sections] = useMemo(() => {
+	const gradesData = useSelector((state: State) => state.grade?.gradesData ?? null);
+	
+	const enrollmentData = useSelector((state: State) => state.enrollment?.enrollmentData ?? null);
+	
+	const gradesGraphData = useSelector((state: State) => state.grade.graphData ?? null);
+	
+	const enrollGraphData = useSelector((state: State) => state.enrollment.graphData ?? null);
+	
+	const gradesSelectedCourses = useSelector((state: State) => state.grade.selectedCourses ?? null);
+	
+	const enrollSelectedCourses = useSelector((state: State) => state.enrollment.selectedCourses ?? null);
+	
+	const enrollContext = useSelector((state: State) => state.enrollment.context.courses ?? null);
+
+	useEffect(() => {
+		if (course !== null) {
+			if (legacyId !== null) {	
+				setTab(0)	
+				dispatch(gradeReset())
+				dispatch(enrollReset())
+				dispatch(fetchEnrollContext());
+				dispatch(fetchGradeContext());
+				
+				let legacyId = (store.getState() as any).enrollment?.context?.courses?.find(
+					(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
+				)?.id ?? null
+				
+				if (legacyId !== null) {
+					let temp = semester.split(' ');
+					dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
+					axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
+						dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
+						});
+				}
+			}
+		}
+	}, [course?.courseNumber]);
+	
+
+	useEffect(() => {
+		//console.log(gradesSelectedCourses)
+		if (course !== null) {
+			if (gradesSelectedCourses?.length == 1) {
+				dispatch(fetchGradeData(gradesSelectedCourses));
+			}
+		}
+	}, [gradesSelectedCourses])
+
+	useEffect(() => {
+		if (course !== null) {
+			if (enrollSelectedCourses?.length == 1) {
+				dispatch(fetchEnrollData(enrollSelectedCourses));
+			}
+		}
+	}, [enrollSelectedCourses])
+
+	const [playlists, sections, links] = useMemo(() => {
 		let playlists = null;
 		let sections = null;
 		// let semesters = null;
@@ -105,9 +168,13 @@ const CatalogView = (props: CatalogViewProps) => {
 			sections = sortSections(edges.map((e) => e.node));
 		}
 
+		let links:string[] = catalogService.getLinks(sections, semester, abbreviation, courseNumber);
+
 		// return [playlists ?? skeleton, sections ?? [], semesters];
-		return [playlists ?? skeleton, sections ?? null];
+		return [playlists ?? skeleton, sections ?? null, links ?? null];
 	}, [course]);
+
+	const [tab, setTab] = useState<Number>(0);
 
 	const handlePill = (pillItem: PlaylistType) => {
 		setCurrentFilters((prev) => {
@@ -134,7 +201,7 @@ const CatalogView = (props: CatalogViewProps) => {
 		? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
 		: `/enrollment`;
 
-	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
+	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;	
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
@@ -216,13 +283,22 @@ const CatalogView = (props: CatalogViewProps) => {
 							</p>
 						</>
 					</ReadMore>
-					<h5>Class Times - {semester ?? ''}</h5>
-					{sections && sections.length > 0 ? (
-						<SectionTable sections={sections} />
-					) : !loading ? (
-						<span>There are no class times for the selected course.</span>
-					) : null}
-
+					{loading ? 
+						<BTLoader></BTLoader> 
+						:
+						<div>
+							{<CatalogTabs 
+								tab={tab} 
+								semester={semester} 
+								course={course} 
+								sections={sections} 
+								links={links} 
+								loading={loading} 
+								gradesGraphData={gradesGraphData} 
+								gradesData={gradesData} 
+								setTab={setTab} />}
+						</div>
+					}
 					{/*
 					Redesigned catalog sections
 					<CatalogViewSections sections={sections} />
