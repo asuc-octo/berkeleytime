@@ -95,19 +95,23 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	const gradesData = useSelector((state: State) => state.grade?.gradesData ?? null);
 	
+	//may need in the future if graphs are rewritten
 	const enrollmentData = useSelector((state: State) => state.enrollment?.enrollmentData ?? null);
 	
 	const gradesGraphData = useSelector((state: State) => state.grade.graphData ?? null);
 	
+	//may need in the future if graphs are rewritten
 	const enrollGraphData = useSelector((state: State) => state.enrollment.graphData ?? null);
 	
 	const gradesSelectedCourses = useSelector((state: State) => state.grade.selectedCourses ?? null);
 	
 	const enrollSelectedCourses = useSelector((state: State) => state.enrollment.selectedCourses ?? null);
 	
+	//may need in the future if graphs are rewritten
 	const enrollContext = useSelector((state: State) => state.enrollment.context.courses ?? null);
 
 	useEffect(() => {
+		console.log(courseNumber)
 		if (course !== null) {
 			if (legacyId !== null) {	
 				setTab(0)	
@@ -116,6 +120,20 @@ const CatalogView = (props: CatalogViewProps) => {
 				dispatch(fetchEnrollContext());
 				dispatch(fetchGradeContext());
 				
+				if (legacyId !== null) {
+					let temp = semester.split(' ');
+					dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
+					axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
+						dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
+						});
+				}
+			} else {
+				setTab(0)	
+				dispatch(gradeReset())
+				dispatch(enrollReset())
+				dispatch(fetchEnrollContext());
+				dispatch(fetchGradeContext());
+
 				let legacyId = (store.getState() as any).enrollment?.context?.courses?.find(
 					(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
 				)?.id ?? null
