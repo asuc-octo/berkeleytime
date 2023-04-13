@@ -30,19 +30,21 @@ export default function grade(state = initialState, action) {
 		}
 		case GRADE_ADD_COURSE: {
 			const { formattedCourse } = action.payload;
-			return Object.assign({}, state, {
+			return {
+				...state,
 				selectedCourses: [...state.selectedCourses, formattedCourse],
 				usedColorIds: [...state.usedColorIds, formattedCourse.colorId]
-			});
+			};
 		}
 		case GRADE_REMOVE_COURSE: {
 			const { id, color } = action.payload;
 			let updatedCourses = state.selectedCourses.filter((classInfo) => classInfo.id !== id);
 			let updatedColors = state.usedColorIds.filter((c) => c !== color);
-			return Object.assign({}, state, {
+			return {
+				...state,
 				selectedCourses: updatedCourses,
 				usedColorIds: updatedColors
-			});
+			};
 		}
 		case UPDATE_GRADE_DATA: {
 			const { gradesData } = action.payload;
