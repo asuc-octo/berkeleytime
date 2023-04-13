@@ -12,7 +12,6 @@ import { useHistory, useParams } from 'react-router';
 import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
-
 import styles from './CatalogView.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import BTLoader from 'components/Common/BTLoader';
@@ -30,19 +29,22 @@ interface CatalogViewProps {
 
 const skeleton = [...Array(8).keys()];
 
+
 const CatalogView = (props: CatalogViewProps) => {
-	const { coursePreview, setCurrentFilters, setCurrentCourse } = props;
+
+	const { coursePreview, setCurrentFilters, setCurrentCourse} = props;
 	const { abbreviation, courseNumber, semester } = useParams<{
 		abbreviation: string;
 		courseNumber: string;
 		semester: string;
 	}>();
 
+	const dispatch = useDispatch();
+
 	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
 	const [isOpen, setOpen] = useState(false);
-	const history = useHistory();
 
-	const dispatch = useDispatch();
+	const history = useHistory();
 
 	const legacyId = useSelector(
 		(state: any) =>
@@ -50,6 +52,12 @@ const CatalogView = (props: CatalogViewProps) => {
 				(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
 			)?.id ?? null
 	);
+
+	const enrollPath = legacyId
+		? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
+		: `/enrollment`;
+
+	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
 
 	const [getCourse, { data, loading }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
@@ -92,6 +100,29 @@ const CatalogView = (props: CatalogViewProps) => {
 			setOpen(true);
 		}
 	}, [coursePreview, data]);
+	
+	
+	useEffect(() => {
+		if (course !== null) {	
+			if (false && legacyId !== null) {		
+				dispatch(gradeReset())
+				dispatch(enrollReset())
+				dispatch(fetchEnrollContext());
+				dispatch(fetchGradeContext());
+				// let temp = semester.split(' ');
+				// dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
+				// axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
+				// 	dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
+				// 	});	
+			} else {
+				dispatch(gradeReset())
+				dispatch(enrollReset())
+				dispatch(fetchEnrollContext());
+				dispatch(fetchGradeContext());
+			}
+		}
+	}, [course?.courseNumber]);
+
 
 	const gradesData = useSelector((state: State) => state.grade?.gradesData ?? null);
 	
@@ -167,6 +198,7 @@ const CatalogView = (props: CatalogViewProps) => {
 		}
 	}, [enrollSelectedCourses])
 
+
 	const [playlists, sections, links] = useMemo(() => {
 		let playlists = null;
 		let sections = null;
@@ -185,6 +217,7 @@ const CatalogView = (props: CatalogViewProps) => {
 			const { edges } = course.sectionSet;
 			sections = sortSections(edges.map((e) => e.node));
 		}
+
 
 		let links:string[] = catalogService.getLinks(sections, semester, abbreviation, courseNumber);
 
@@ -214,12 +247,6 @@ const CatalogView = (props: CatalogViewProps) => {
 			};
 		});
 	};
-
-	const enrollPath = legacyId
-		? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
-		: `/enrollment`;
-
-	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;	
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
@@ -305,6 +332,7 @@ const CatalogView = (props: CatalogViewProps) => {
 						<BTLoader></BTLoader> 
 						:
 						<div>
+						
 							{<CatalogTabs 
 								tab={tab} 
 								semester={semester} 
@@ -315,43 +343,45 @@ const CatalogView = (props: CatalogViewProps) => {
 								gradesGraphData={gradesGraphData} 
 								gradesData={gradesData} 
 								setTab={setTab} />}
+
+							{/*
+							Redesigned catalog sections
+							<CatalogViewSections sections={sections} />
+							*/
+							/* Good feature whenever we want...
+							<h5>Past Offerings</h5>
+							<section className={styles.pills}>
+								{pastSemesters ? (
+									pastSemesters.map((req) => (
+										<button
+											className={styles.pill}
+											key={req.id}
+											onClick={() =>
+												history.push(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
+											}
+										>
+											{req.name}
+										</button>
+									))
+								) : (
+									<Skeleton
+										style={{ marginRight: '5px' }}
+										inline
+										count={10}
+										width={80}
+										height={28}
+										borderRadius={12}
+									/>
+								)}
+							</section> */}
 						</div>
 					}
-					{/*
-					Redesigned catalog sections
-					<CatalogViewSections sections={sections} />
-					*/}
-
-					{/* Good feature whenever we want...
-					<h5>Past Offerings</h5>
-					<section className={styles.pills}>
-						{pastSemesters ? (
-							pastSemesters.map((req) => (
-								<button
-									className={styles.pill}
-									key={req.id}
-									onClick={() =>
-										history.push(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
-									}
-								>
-									{req.name}
-								</button>
-							))
-						) : (
-							<Skeleton
-								style={{ marginRight: '5px' }}
-								inline
-								count={10}
-								width={80}
-								height={28}
-								borderRadius={12}
-							/>
-						)}
-					</section> */}
 				</>
 			)}
 		</div>
 	);
 };
 
-export default memo(CatalogView);
+
+export default (memo(CatalogView));
+

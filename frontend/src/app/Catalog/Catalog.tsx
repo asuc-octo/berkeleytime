@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CurrentFilters, SortOption } from './types';
 import catalogService from './service';
 import styles from './Catalog.module.scss';
