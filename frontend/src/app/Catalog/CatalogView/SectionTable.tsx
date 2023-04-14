@@ -73,7 +73,7 @@ const SectionTable = ({ sections }: Props) => {
 							<div className={styles.sectionInfo}>
 								<h5>{section.kind}</h5>
 								<span className={styles.instructor}>
-									<User width={16} height={24} />
+									<User width={16} />
 									{section.instructor
 										? section.instructor.toLowerCase()
 										: 'Instructor not specified.'}
@@ -87,6 +87,10 @@ const SectionTable = ({ sections }: Props) => {
 								</div>
 							</div>
 							<div className={styles.sectionContent}>
+								<div className={`${colorStyle} ${styles.enrolled}`}>
+									<Group width={16} height={24} />
+									{section.enrolled}/{section.enrolledMax}
+								</div>
 								<span>
 									<PinAlt width={16} height={24} />
 									{section.locationName ?? 'Unknown Location'}
@@ -95,10 +99,6 @@ const SectionTable = ({ sections }: Props) => {
 									<Clock width={16} height={24} />
 									{section.wordDays} {formatSectionTime(section)}
 								</span>
-								<div className={`${colorStyle} ${styles.enrolled}`}>
-									<Group width={16} height={24} />
-									{section.enrolled}/{section.enrolledMax}
-								</div>
 							</div>
 						</div>
 					);
