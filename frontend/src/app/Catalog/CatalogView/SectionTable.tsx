@@ -14,6 +14,7 @@ import kubi from 'assets/img/eggs/kubi.png';
 import garcia from 'assets/img/eggs/garcia.png';
 
 import styles from './CatalogView.module.scss';
+import { Clock, Group, PinAlt, User } from 'iconoir-react';
 
 const { colorEnrollment, formatEnrollment } = catalogService;
 
@@ -70,10 +71,9 @@ const SectionTable = ({ sections }: Props) => {
 							key={section.ccn}
 						>
 							<div className={styles.sectionInfo}>
-								<h5>
-									<span>{section.kind}</span> • {section.locationName ?? 'Unknown Location'}
-								</h5>
+								<h5>{section.kind}</h5>
 								<span className={styles.instructor}>
+									<User width={16} height={24} />
 									{section.instructor
 										? section.instructor.toLowerCase()
 										: 'Instructor not specified.'}
@@ -87,13 +87,18 @@ const SectionTable = ({ sections }: Props) => {
 								</div>
 							</div>
 							<div className={styles.sectionContent}>
-								<div className={`${colorStyle} ${styles.enrolled}`}>
-									<img src={people} />
-									{section.enrolled}/{section.enrolledMax}
-								</div>
 								<span>
+									<PinAlt width={16} height={24} />
+									{section.locationName ?? 'Unknown Location'}
+								</span>
+								<span>
+									<Clock width={16} height={24} />
 									{section.wordDays} {formatSectionTime(section)}
 								</span>
+								<div className={`${colorStyle} ${styles.enrolled}`}>
+									<Group width={16} height={24} />
+									{section.enrolled}/{section.enrolledMax}
+								</div>
 							</div>
 						</div>
 					);

@@ -208,7 +208,7 @@
 	flex-direction: row;
 	// background: #F8F8F8;
 	padding: 12px 24px;
-	border-radius: 12px !important;
+	border-radius: 16px !important;
 	border: 1.5px solid #eaeaea;
 	gap: 30px;
 	h5 {
@@ -235,6 +235,10 @@
 	font-size: 14px;
 	color: $bt-light-grey;
 	text-transform: capitalize;
+	align-items: flex-end;
+	line-height: 20px;
+	gap: 4px;
+	color: $bt-light-text;
 }
 
 .sectionContent {
@@ -244,6 +248,11 @@
 	font-size: 14px;
 
 	span {
+		display: inline-flex;
+		justify-content: flex-end;
+		align-items: flex-end;
+		line-height: 20px;
+		gap: 4px;
 		color: $bt-light-text;
 		text-align: right;
 	}
