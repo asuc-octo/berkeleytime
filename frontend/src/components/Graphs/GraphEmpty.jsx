@@ -24,36 +24,20 @@ class GraphEmpty extends PureComponent {
 						<div>
 							<div className="bt-h6">
 								Course Average
-								<span data-tip={courseAvgText} data-for="courseAvg">
+								<a data-tooltip-id="courseAvg" data-tooltip-html={courseAvgText}>
 									<img src={info} className="info-icon" alt="" />
-								</span>
-								<ReactTooltip
-									id="courseAvg"
-									type="light"
-									html={true}
-									border={true}
-									borderColor="#C4C4C4"
-									className="opaque"
-									arrowColor="#FFFFFF"
-								/>
+								</a>
+								<ReactTooltip id="courseAvg" />
 							</div>
 							<div className="course-average">
 								<span className="bt-h6">No Data</span>
 							</div>
 							<div className="bt-h6">
 								Section Average
-								<span data-tip={sectionAvgText} data-for="sectionAvg">
+								<a data-tooltip-id="sectionAvg" data-tooltip-html={sectionAvgText}>
 									<img src={info} className="info-icon" alt="" />
-								</span>
-								<ReactTooltip
-									id="sectionAvg"
-									type="light"
-									html={true}
-									border={true}
-									borderColor="#C4C4C4"
-									className="opaque"
-									arrowColor="#FFFFFF"
-								/>
+								</a>
+								<ReactTooltip id="sectionAvg" />
 							</div>
 							<div className="section-average">
 								<span className="bt-h6">No Data</span>
