@@ -24,13 +24,11 @@ export function reactSelectCourseSearch(
 		courseNumber: course_number,
 		abbreviations
 	};
-
+	
 	const fuse = new Fuse([search], {
 		threshold: 0.01,
-		shouldSort: true,
+		shouldSort: false,
 		includeMatches: false,
-		findAllMatches: false,
-		ignoreLocation: false,
 		keys: [
 			{ name: 'title', weight: 1 },
 			{ name: 'abbreviation', weight: 1 },
