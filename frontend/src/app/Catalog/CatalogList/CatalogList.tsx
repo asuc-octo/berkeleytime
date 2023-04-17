@@ -44,7 +44,6 @@ const CatalogList = (props: CatalogListProps) => {
 		let catalogList = data.allCourses.edges
 			.map((edge) => edge.node)
 			.sort(sortByAttribute(sortQuery.value));
-
 		const catalogIndex = CatalogService.buildCourseIndex(catalogList);
 
 		//TODO: Very big problem to inspect - server is returning duplicate entries of same courses.
@@ -58,7 +57,7 @@ const CatalogList = (props: CatalogListProps) => {
 	}, [data, sortQuery]);
 
 	const courses = useMemo(() => {
-		if (catalogIndex)
+		if (catalogIndex && searchQuery)
 			return catalogIndex
 				.search(searchQuery.trim().toLowerCase())
 				.map((res) => catalogList[res.refIndex]);
