@@ -165,12 +165,22 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
  * within `courses`
  * @returns an array of CourseOverviewFragment
  */
-export const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: string) => {
-	if (!rawQuery || rawQuery === '' || rawQuery === null) return courses;
+// export const searchCatalog = (
+// 	courses: CourseOverviewFragment[],
+// 	rawQuery: string,
+// 	searchTerms: readonly CourseInfo[] | null
+// ) => {
+// 	if (!rawQuery || rawQuery === '' || rawQuery === null || !searchTerms) return courses;
 
+// 	return fuse.search(rawQuery.trim().toLowerCase()).map((res) => courses[res.refIndex]);
+// };
+
+const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 	const options: Fuse.IFuseOptions<CourseInfo> = {
 		includeScore: true,
 		shouldSort: true,
+		findAllMatches: false,
+		ignoreLocation: true,
 		threshold: 0.08,
 		keys: [
 			{ name: 'title', weight: 1 },
@@ -192,7 +202,7 @@ export const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: strin
 		}
 	};
 
-	const courseInfo = courses.map((course) => {
+	const searchTerms = courses.map((course) => {
 		const { title, abbreviation, courseNumber } = course;
 
 		const abbreviations =
@@ -209,8 +219,7 @@ export const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: strin
 		};
 	});
 
-	const fuse = new Fuse(courseInfo, options);
-	return fuse.search(rawQuery.trim().toLowerCase()).map((res) => courses[res.refIndex]);
+	return new Fuse(searchTerms, options);
 };
 
 /**
@@ -282,5 +291,6 @@ export default {
 	sortSemestersByLatest,
 	sortPills,
 	formatEnrollment,
-	colorEnrollment
+	colorEnrollment,
+	buildCourseIndex
 };

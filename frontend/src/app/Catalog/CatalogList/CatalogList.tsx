@@ -4,10 +4,9 @@ import { CourseFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
 import { CurrentFilters, FilterOption, SortOption } from '../types';
 import { Dispatch, memo, SetStateAction, useEffect, useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';
-
 import styles from './CatalogList.module.scss';
 import { useHistory } from 'react-router';
-import { searchCatalog } from '../service';
+import CatalogService from '../service';
 import { sortByAttribute } from 'lib/courses/sorting';
 
 type CatalogListProps = {
@@ -29,37 +28,52 @@ const CatalogList = (props: CatalogListProps) => {
 	const [fetchCatalogList, { data, loading, called }] = useGetCoursesForFilterLazyQuery({});
 	const history = useHistory();
 
-	const courses = useMemo(() => {
+	const { catalogList, catalogIndex } = useMemo(() => {
 		if (!data)
-			return [...Array(20).keys()].map(
-				(key) =>
-					({
-						__typename: 'Skeleton',
-						id: key
-					} as Skeleton)
-			);
+			return {
+				catalogList: [...Array(20).keys()].map(
+					(key) =>
+						({
+							__typename: 'Skeleton',
+							id: key
+						} as Skeleton)
+				),
+				searchTerms: null
+			};
 
-		let courses = data.allCourses.edges.map((edge) => edge.node);
-		courses = searchCatalog(courses, searchQuery);
+		let catalogList = data.allCourses.edges
+			.map((edge) => edge.node)
+			.sort(sortByAttribute(sortQuery.value));
+
+		const catalogIndex = CatalogService.buildCourseIndex(catalogList);
 
 		//TODO: Very big problem to inspect - server is returning duplicate entries of same courses.
 		//			Here we filter the duplicates to ensure catalog list consistency.
-		courses = courses.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i);
+		catalogList = catalogList.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i);
 
 		// Inspect one case of duplication:
 		// console.log(courses.filter((v, i, a) => v.id === 'Q291cnNlVHlwZTo0NDc1'));
 
-		return courses.sort(sortByAttribute(sortQuery.value));
-	}, [data, searchQuery, sortQuery]);
+		return { catalogList, catalogIndex };
+	}, [data, sortQuery]);
+
+	const courses = useMemo(() => {
+		if (catalogIndex)
+			return catalogIndex
+				.search(searchQuery.trim().toLowerCase())
+				.map((res) => catalogList[res.refIndex]);
+
+		return catalogList;
+	}, [catalogIndex, catalogList, searchQuery]);
 
 	useEffect(() => {
-		const playlists = Object.values(currentFilters ?? {})
+		const playlistString = Object.values(currentFilters ?? {})
 			.filter((val) => val !== null)
 			.map((item) => (Array.isArray(item) ? item.map((v) => v.value.id) : item?.value.id))
 			.flat()
 			.join(',');
 
-		if (playlists) fetchCatalogList({ variables: { playlists } });
+		if (playlistString) fetchCatalogList({ variables: { playlists: playlistString } });
 	}, [fetchCatalogList, currentFilters]);
 
 	const handleCourseSelect = (course: CourseFragment) => {
