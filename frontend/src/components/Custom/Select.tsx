@@ -61,7 +61,7 @@ const BTMenuList: ComponentType<MenuListProps<any, any, any>> = memo(function Me
 	return (
 		<ListContext.Provider value={{ setSize, getSize }}>
 			<List
-				height={150}
+				height={200}
 				itemCount={elements.length}
 				itemSize={getSize}
 				ref={list}
