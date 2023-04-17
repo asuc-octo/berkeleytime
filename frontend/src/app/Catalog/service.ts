@@ -157,24 +157,6 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
 	return result;
 };
 
-/**
- *
- * @param courses an array of `CourseOverviewFragment`
- * @param rawQuery A string to search for within the `courses` array
- * @description Applies `rawQuery` over a list of courses and returns the best matches
- * within `courses`
- * @returns an array of CourseOverviewFragment
- */
-// export const searchCatalog = (
-// 	courses: CourseOverviewFragment[],
-// 	rawQuery: string,
-// 	searchTerms: readonly CourseInfo[] | null
-// ) => {
-// 	if (!rawQuery || rawQuery === '' || rawQuery === null || !searchTerms) return courses;
-
-// 	return fuse.search(rawQuery.trim().toLowerCase()).map((res) => courses[res.refIndex]);
-// };
-
 const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 	const options: Fuse.IFuseOptions<CourseInfo> = {
 		includeScore: true,
