@@ -14,7 +14,14 @@ import ReadMore from './ReadMore';
 import styles from './CatalogView.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import BTLoader from 'components/Common/BTLoader';
-import { enrollReset, fetchEnrollData, fetchEnrollFromUrl, fetchGradeData, fetchGradeFromUrl, gradeReset } from 'redux/actions';
+import {
+	enrollReset,
+	fetchEnrollData,
+	fetchEnrollFromUrl,
+	fetchGradeData,
+	fetchGradeFromUrl,
+	gradeReset
+} from 'redux/actions';
 import axios from 'axios';
 import CatalogTabs from './CatalogTabs';
 import catalogService from '../service';
@@ -28,10 +35,8 @@ interface CatalogViewProps {
 
 const skeleton = [...Array(8).keys()];
 
-
 const CatalogView = (props: CatalogViewProps) => {
-
-	const { coursePreview, setCurrentFilters, setCurrentCourse} = props;
+	const { coursePreview, setCurrentFilters, setCurrentCourse } = props;
 	const { abbreviation, courseNumber, semester } = useParams<{
 		abbreviation: string;
 		courseNumber: string;
@@ -99,15 +104,17 @@ const CatalogView = (props: CatalogViewProps) => {
 			setOpen(true);
 		}
 	}, [coursePreview, data]);
-	
+
 	const gradesSelectedCourses = useSelector((state: State) => state.grade.selectedCourses ?? null);
-	
-	const enrollSelectedCourses = useSelector((state: State) => state.enrollment.selectedCourses ?? null);
+
+	const enrollSelectedCourses = useSelector(
+		(state: State) => state.enrollment.selectedCourses ?? null
+	);
 
 	useEffect(() => {
-		dispatch(gradeReset())
-	 	dispatch(enrollReset())
-	}, [course])
+		dispatch(gradeReset());
+		dispatch(enrollReset());
+	}, [course]);
 
 	useEffect(() => {
 		if (course?.courseNumber !== null && legacyId !== null) {
@@ -115,7 +122,11 @@ const CatalogView = (props: CatalogViewProps) => {
 			if (enrollSelectedCourses?.length == 0 && gradesSelectedCourses?.length == 0) {
 				dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
 				axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
-					dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
+					dispatch(
+						fetchEnrollFromUrl(
+							`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`
+						)
+					);
 				});
 			}
 			if (enrollSelectedCourses?.length == 1) {
@@ -125,8 +136,7 @@ const CatalogView = (props: CatalogViewProps) => {
 				dispatch(fetchGradeData(gradesSelectedCourses));
 			}
 		}
-	}, [course, legacyId, gradesSelectedCourses, enrollSelectedCourses])
-
+	}, [course, legacyId, gradesSelectedCourses, enrollSelectedCourses]);
 
 	const [playlists, sections] = useMemo(() => {
 		let playlists = null;
@@ -252,19 +262,20 @@ const CatalogView = (props: CatalogViewProps) => {
 							</p>
 						</>
 					</ReadMore>
-					{loading ? 
-						<BTLoader></BTLoader> 
-						:
+					{loading ? (
+						<BTLoader></BTLoader>
+					) : (
 						<div>
-						
-							{<CatalogTabs
-								semester={semester} 
-								course={course} 
-								sections={sections}
-								loading={loading}
-								abbreviation={abbreviation}
-								courseNumber={courseNumber} 
-							 />}
+							{
+								<CatalogTabs
+									semester={semester}
+									course={course}
+									sections={sections}
+									loading={loading}
+									abbreviation={abbreviation}
+									courseNumber={courseNumber}
+								/>
+							}
 
 							{/*
 							Redesigned catalog sections
@@ -297,13 +308,11 @@ const CatalogView = (props: CatalogViewProps) => {
 								)}
 							</section> */}
 						</div>
-					}
+					)}
 				</>
 			)}
 		</div>
 	);
 };
 
-
-export default (memo(CatalogView));
-
+export default memo(CatalogView);
