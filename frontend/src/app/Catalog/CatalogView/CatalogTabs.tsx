@@ -1,29 +1,35 @@
 import EnrollmentGraphCard from 'components/GraphCard/EnrollmentGraphCard';
 import GradesGraph from 'components/Graphs/GradesGraph';
-import { SectionFragment } from 'graphql';
+import { CourseFragment, SectionFragment } from 'graphql';
+import catalogService from '../service';
 import { useState } from 'react';
 import { enrollReset } from 'redux/actions';
 import store from 'redux/store';
 import styles from './CatalogView.module.scss';
 import SectionTable from './SectionTable';
+import { useSelector } from 'react-redux';
+import { State } from '../types';
 
 interface CatalogTabsProps {
-	tab: Number;
 	semester: string;
-	course: any;
+	course: CourseFragment | null;
 	sections: SectionFragment[] | null;
-	links: string[];
 	loading: boolean;
-	gradesGraphData: any;
-	gradesData: any;
-	setTab: Function;
+	abbreviation: string;
+	courseNumber: string;
 }
 
 const CatalogTabs = (props: CatalogTabsProps) => {
-	const { tab, semester, course, sections, links, loading, gradesGraphData, gradesData, setTab } = props;
+	const { semester, course, sections, loading, abbreviation, courseNumber } = props;
 
 	const [hoveredClass, setHoveredClass] = useState<any>(false);
 	const [updateMobileHover, setUpdateMobileHover] = useState<any>(true);
+	const [tab, setTab] = useState<number>(0);
+
+	const gradesGraphData = useSelector((state: State) => state.grade.graphData ?? null);
+	const gradesData = useSelector((state: State) => state.grade?.gradesData ?? null);
+
+	const links:string[] = catalogService.getLinks(sections, semester, abbreviation, courseNumber);
 	
 
 	function update(course:any, grade:any) {

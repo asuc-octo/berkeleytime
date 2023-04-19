@@ -4,7 +4,6 @@ import chart from 'assets/svg/catalog/chart.svg';
 import book from 'assets/svg/catalog/book.svg';
 import launch from 'assets/svg/catalog/launch.svg';
 import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow.svg';
-import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
 import { CurrentFilters } from 'app/Catalog/types';
@@ -15,10 +14,10 @@ import ReadMore from './ReadMore';
 import styles from './CatalogView.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import BTLoader from 'components/Common/BTLoader';
-import { enrollReset, fetchEnrollContext, fetchEnrollData, fetchEnrollFromUrl, fetchGradeContext, fetchGradeData, fetchGradeFromUrl, gradeReset } from 'redux/actions';
+import { enrollReset, fetchEnrollData, fetchEnrollFromUrl, fetchGradeData, fetchGradeFromUrl, gradeReset } from 'redux/actions';
 import axios from 'axios';
-import store from 'redux/store';
 import CatalogTabs from './CatalogTabs';
+import catalogService from '../service';
 import { State } from '../types';
 
 interface CatalogViewProps {
@@ -101,105 +100,35 @@ const CatalogView = (props: CatalogViewProps) => {
 		}
 	}, [coursePreview, data]);
 	
-	
-	useEffect(() => {
-		if (course !== null) {	
-			if (false && legacyId !== null) {		
-				dispatch(gradeReset())
-				dispatch(enrollReset())
-				dispatch(fetchEnrollContext());
-				dispatch(fetchGradeContext());
-				// let temp = semester.split(' ');
-				// dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
-				// axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
-				// 	dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
-				// 	});	
-			} else {
-				dispatch(gradeReset())
-				dispatch(enrollReset())
-				dispatch(fetchEnrollContext());
-				dispatch(fetchGradeContext());
-			}
-		}
-	}, [course?.courseNumber]);
-
-
-	const gradesData = useSelector((state: State) => state.grade?.gradesData ?? null);
-	
-	//may need in the future if graphs are rewritten
-	const enrollmentData = useSelector((state: State) => state.enrollment?.enrollmentData ?? null);
-	
-	const gradesGraphData = useSelector((state: State) => state.grade.graphData ?? null);
-	
-	//may need in the future if graphs are rewritten
-	const enrollGraphData = useSelector((state: State) => state.enrollment.graphData ?? null);
-	
 	const gradesSelectedCourses = useSelector((state: State) => state.grade.selectedCourses ?? null);
 	
 	const enrollSelectedCourses = useSelector((state: State) => state.enrollment.selectedCourses ?? null);
-	
-	//may need in the future if graphs are rewritten
-	const enrollContext = useSelector((state: State) => state.enrollment.context.courses ?? null);
 
 	useEffect(() => {
-		console.log(courseNumber)
-		if (course !== null) {
-			if (legacyId !== null) {	
-				setTab(0)	
-				dispatch(gradeReset())
-				dispatch(enrollReset())
-				dispatch(fetchEnrollContext());
-				dispatch(fetchGradeContext());
-				
-				if (legacyId !== null) {
-					let temp = semester.split(' ');
-					dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
-					axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
-						dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
-						});
-				}
-			} else {
-				setTab(0)	
-				dispatch(gradeReset())
-				dispatch(enrollReset())
-				dispatch(fetchEnrollContext());
-				dispatch(fetchGradeContext());
+		dispatch(gradeReset())
+	 	dispatch(enrollReset())
+	}, [course])
 
-				let legacyId = (store.getState() as any).enrollment?.context?.courses?.find(
-					(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
-				)?.id ?? null
-				
-				if (legacyId !== null) {
-					let temp = semester.split(' ');
-					dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
-					axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
-						dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
-						});
-				}
+	useEffect(() => {
+		if (course?.courseNumber !== null && legacyId !== null) {
+			const temp = semester.split(' ');
+			if (enrollSelectedCourses?.length == 0 && gradesSelectedCourses?.length == 0) {
+				dispatch(fetchGradeFromUrl(`/grades/0-${legacyId}-all-all`));
+				axios.get(`/api/enrollment/sections/${legacyId}/`).then((res) => {
+					dispatch(fetchEnrollFromUrl(`/enrollment/0-${legacyId}-${temp[0]}-${temp[1]}-${res.data[0].sections[0].section_id}`))
+				});
 			}
-		}
-	}, [course?.courseNumber]);
-	
-
-	useEffect(() => {
-		//console.log(gradesSelectedCourses)
-		if (course !== null) {
+			if (enrollSelectedCourses?.length == 1) {
+				dispatch(fetchEnrollData(enrollSelectedCourses));
+			}
 			if (gradesSelectedCourses?.length == 1) {
 				dispatch(fetchGradeData(gradesSelectedCourses));
 			}
 		}
-	}, [gradesSelectedCourses])
-
-	useEffect(() => {
-		if (course !== null) {
-			if (enrollSelectedCourses?.length == 1) {
-				dispatch(fetchEnrollData(enrollSelectedCourses));
-			}
-		}
-	}, [enrollSelectedCourses])
+	}, [course, legacyId, gradesSelectedCourses, enrollSelectedCourses])
 
 
-	const [playlists, sections, links] = useMemo(() => {
+	const [playlists, sections] = useMemo(() => {
 		let playlists = null;
 		let sections = null;
 		// let semesters = null;
@@ -218,14 +147,9 @@ const CatalogView = (props: CatalogViewProps) => {
 			sections = sortSections(edges.map((e) => e.node));
 		}
 
-
-		let links:string[] = catalogService.getLinks(sections, semester, abbreviation, courseNumber);
-
 		// return [playlists ?? skeleton, sections ?? [], semesters];
-		return [playlists ?? skeleton, sections ?? null, links ?? null];
+		return [playlists ?? skeleton, sections ?? null];
 	}, [course]);
-
-	const [tab, setTab] = useState<Number>(0);
 
 	const handlePill = (pillItem: PlaylistType) => {
 		setCurrentFilters((prev) => {
@@ -333,16 +257,14 @@ const CatalogView = (props: CatalogViewProps) => {
 						:
 						<div>
 						
-							{<CatalogTabs 
-								tab={tab} 
+							{<CatalogTabs
 								semester={semester} 
 								course={course} 
-								sections={sections} 
-								links={links} 
-								loading={loading} 
-								gradesGraphData={gradesGraphData} 
-								gradesData={gradesData} 
-								setTab={setTab} />}
+								sections={sections}
+								loading={loading}
+								abbreviation={abbreviation}
+								courseNumber={courseNumber} 
+							 />}
 
 							{/*
 							Redesigned catalog sections
