@@ -6,7 +6,7 @@ import { FilterOptionOption } from 'react-select/dist/declarations/src/filters';
  * Runs {@link searchCourse} but for react-select
  */
 export function reactSelectCourseSearch(
-	// TODO: The types here are very bad because interacting with poorly written JSX
+	// TODO: The types here are very bad because interacting with old JSX
 	option: FilterOptionOption<FilterOption & { course: any }>,
 	query: string
 ): boolean {
@@ -22,18 +22,20 @@ export function reactSelectCourseSearch(
 		title: option.label,
 		abbreviation,
 		courseNumber: course_number,
-		abbreviations
+		abbreviations,
+		fullCourse: `${abbreviation} ${course_number}`
 	};
-	
+
 	const fuse = new Fuse([search], {
-		threshold: 0.01,
+		threshold: 0.2,
 		shouldSort: false,
 		includeMatches: false,
 		keys: [
 			{ name: 'title', weight: 1 },
 			{ name: 'abbreviation', weight: 1 },
 			{ name: 'courseNumber', weight: 1 },
-			{ name: 'abbreviations', weight: 1 }
+			{ name: 'abbreviations', weight: 1 },
+			{ name: 'fullCourse', weight: 1 }
 		]
 	}).search(query);
 
