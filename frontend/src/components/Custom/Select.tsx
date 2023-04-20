@@ -9,20 +9,16 @@ import {
 	useCallback,
 	createContext,
 	useContext,
-	MutableRefObject
+	MutableRefObject,
+	useState
 } from 'react';
-import Select, {
-	components,
-	GroupBase,
-	GroupProps,
-	MenuListProps,
-	OptionProps,
-	Props
-} from 'react-select';
+import Select, { components, GroupBase, MenuListProps, OptionProps, Props } from 'react-select';
 import { VariableSizeList as List } from 'react-window';
 import { createFilter } from 'react-select';
 
 import styles from './Select.module.scss';
+import Fuse from 'fuse.js';
+import { laymanTerms } from 'lib/courses/search';
 
 const ListContext = createContext<{
 	getSize: (index: number) => number;
@@ -110,9 +106,68 @@ const BTSelect = <
 >(
 	props: Props<Option, IsMulti, Group>
 ) => {
+	const [dynamicOptions, setDynamic] = useState(props.options);
+
+	const handleInputChange = (value: string, { action }: { action: string }) => {
+		if (action === 'input-change') {
+			const { options } = props;
+			if (!value || value === '' || value === null) return;
+
+			if (options) {
+				const fuseOptions: Fuse.IFuseOptions<any> = {
+					includeScore: true,
+					shouldSort: true,
+					findAllMatches: false,
+					ignoreLocation: true,
+					threshold: 0.25,
+					keys: [
+						{ name: 'abbreviation', weight: 1.5 },
+						{ name: 'abbreviations', weight: 2 },
+						{ name: 'courseNumber', weight: 1.2 },
+						{ name: 'fullCourseCode', weight: 1 }
+					],
+					// The fuse types are wrong for this sort fn
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					sortFn: (itemA: any, itemB: any) => {
+						// Sort first by sort score
+						if (itemA.score - itemB.score) return itemA.score - itemB.score;
+
+						// if the scores are the same, sort by the course number
+						const a = itemA.item[3].v;
+						const b = itemB.item[3].v;
+						return a.toLowerCase().localeCompare(b.toLowerCase());
+					}
+				};
+
+				const courseInfo = options.map((option) => {
+					const { abbreviation, course_number } = (option as any).course;
+					const abbreviations =
+						laymanTerms[abbreviation.toLowerCase()]?.reduce((acc, abbr) => {
+							return [...acc, ...[`${abbr}${course_number}`, `${abbr} ${course_number}`]];
+						}, [] as string[]) ?? [];
+
+					return {
+						abbreviation,
+						courseNumber: course_number,
+						fullCourseCode: `${abbreviation} ${course_number}`,
+						abbreviations
+					};
+				});
+
+				const fuse = new Fuse(courseInfo, fuseOptions);
+				setDynamic(fuse.search(value.trim().toLowerCase()).map((res) => options[res.refIndex]));
+			}
+		} else if (action === 'menu-close') {
+			setDynamic(props.options);
+		}
+	};
+
 	return (
 		<Select
 			{...props}
+			options={dynamicOptions}
+			onInputChange={handleInputChange}
+			filterOption={null}
 			className={styles.root}
 			components={{
 				MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,

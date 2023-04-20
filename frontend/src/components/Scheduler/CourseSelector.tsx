@@ -2,7 +2,6 @@ import BTSelect from 'components/Custom/Select';
 import { CourseOverviewFragment } from 'graphql';
 import { useMemo } from 'react';
 import { courseToName } from 'lib/courses/course';
-import { reactSelectCourseSearch } from 'lib/courses/search';
 import { compareDepartmentName } from 'lib/courses/sorting';
 import { Semester } from 'utils/playlists/semesters';
 import {
@@ -79,7 +78,6 @@ const CourseSelector = ({
 				name="selectClass"
 				placeholder="Choose a class..."
 				options={sortedCourses.filter((course) => !hasCourseById(schedule, course.value))}
-				filterOption={reactSelectCourseSearch}
 				onChange={(c: CourseOptionType) => c && addCourse(c.course)}
 			/>
 			<div className="scheduler-units">

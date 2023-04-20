@@ -165,11 +165,11 @@ const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 		ignoreLocation: true,
 		threshold: 0.25,
 		keys: [
-			{ name: 'title', weight: 1 },
+			{ name: 'title', weight: 3 },
 			{ name: 'abbreviation', weight: 1.5 },
 			{ name: 'abbreviations', weight: 2 },
-			{ name: 'courseNumber', weight: 1.2 },
-			{ name: 'fullCourseCode', weight: 1 }
+			{ name: 'courseNumber', weight: 1 },
+			{ name: 'fullCourseCode', weight: 4 }
 		],
 		// The fuse types are wrong for this sort fn
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
