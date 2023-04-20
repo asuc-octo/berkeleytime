@@ -104,9 +104,13 @@ const BTSelect = <
 	IsMulti extends boolean = false,
 	Group extends GroupBase<Option> = GroupBase<Option>
 >(
-	props: Props<Option, IsMulti, Group>
+	props: Props<Option, IsMulti, Group> & { courseSearch?: boolean }
 ) => {
 	const [dynamicOptions, setDynamic] = useState(props.options);
+
+	useEffect(() => {
+		setDynamic(props.options);
+	}, [props.options]);
 
 	const handleInputChange = (value: string, { action }: { action: string }) => {
 		if (action === 'input-change') {
@@ -165,8 +169,8 @@ const BTSelect = <
 		<Select
 			{...props}
 			options={dynamicOptions}
-			onInputChange={handleInputChange}
-			filterOption={null}
+			onInputChange={props.courseSearch ? handleInputChange : props.onInputChange}
+			filterOption={props.courseSearch ? null : props.filterOption}
 			className={styles.root}
 			components={{
 				MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,
@@ -177,7 +181,8 @@ const BTSelect = <
 };
 
 BTSelect.defaultProps = {
-	filterOption: createFilter({ ignoreAccents: false })
+	filterOption: createFilter({ ignoreAccents: false }),
+	courseSearch: false
 };
 
 export default BTSelect;
