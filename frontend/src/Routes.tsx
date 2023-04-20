@@ -24,7 +24,6 @@ const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
 const RedirectLink = lazy(() => import('./views/RedirectLink'));
 
 const routes: Array<RouteProps> = [
-	{ path: '/', component: Home },
 	{ path: '/catalog', component: Catalog, exact: false },
 	{ path: '/grades', component: Grades, exact: false },
 	{ path: '/enrollment', component: Enrollment, exact: false },
@@ -60,6 +59,10 @@ const Routes = () => (
 				<Layout noFooter>
 					<Catalog />
 				</Layout>
+			</Route>
+
+			<Route path="/" exact>
+				<Home />
 			</Route>
 
 			<Route>

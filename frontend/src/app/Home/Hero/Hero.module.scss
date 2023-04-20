@@ -1,0 +1,49 @@
+.root {
+	height: 100vh;
+
+  padding: 29px 0;
+
+  background: linear-gradient(to top right, #CFADD4, #B5B2D9);
+
+  .container {
+    max-width: 1200px;
+    width: 100%;
+
+    margin: 0 auto;
+
+    .header {
+      font-size: 48px;
+      color: white;
+
+      max-width: 512px;
+
+      margin-bottom: 24px;
+    }
+
+    .description {
+      font-size: 16px;
+      color: white;
+
+      max-width: 512px;
+
+      margin-bottom: 48px;
+    }
+
+    .button {
+      background-color: #9D92B7;
+
+      height: 48px;
+
+      display: inline-flex;
+      align-items: center;
+
+      padding: 0 24px;
+
+      border-radius: 8px;
+
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+    }
+  }
+}

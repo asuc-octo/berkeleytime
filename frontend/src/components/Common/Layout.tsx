@@ -1,4 +1,4 @@
-import Navigation from 'components/Common/NavigationBar';
+import Navigation from 'components/Common/Navigation';
 import Footer from 'components/Common/Footer';
 import { ReactNode } from 'react';
 
@@ -8,12 +8,12 @@ interface LayoutProps {
 	children: ReactNode;
 }
 
-const Layout = ({ children, noFooter, standalone }: LayoutProps) => {
+const Layout = ({ children, noFooter }: LayoutProps) => {
 	return (
 		<>
-			<Navigation standalone={standalone} />
+			<Navigation />
 			{children}
-			{!noFooter && <Footer standalone={standalone} />}
+			{!noFooter && <Footer />}
 		</>
 	);
 };
