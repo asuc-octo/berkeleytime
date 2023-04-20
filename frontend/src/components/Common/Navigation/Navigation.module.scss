@@ -2,14 +2,48 @@
   display: flex;
   align-items: center;
 
-  padding: 0 56px;
+  padding: 0 24px;
+
+  height: 64px;
 
   &:not(.standalone) {
-    height: 58px;
+
   }
 
   &.standalone {
 
+  }
+
+  .menu {
+    display: flex;
+    gap: 4px;
+
+    .item, .button {
+      font-size: 16px;
+      font-weight: 500;
+      color: white;
+
+      display: flex;
+      align-items: center;
+
+      height: 40px;
+  
+      border-radius: 4px;
+  
+      padding: 0 16px;
+    }
+
+    .button {
+      background-color: rgba(black, 0.1);
+
+      &:hover {
+        background-color: rgba(black, 0.2);
+      }
+    }
+
+    .item:hover {
+      background-color: rgba(black, 0.1);
+    }
   }
 
   .brand {

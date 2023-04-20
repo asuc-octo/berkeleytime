@@ -1,9 +1,18 @@
 .root {
 	height: 100vh;
 
-  padding: 29px 0;
-
   background: linear-gradient(to top right, #CFADD4, #B5B2D9);
+
+  position: relative;
+
+  .wave {
+    position: absolute;
+
+    width: 100%;
+
+    bottom: 0;
+    left: 0;
+  }
 
   .container {
     max-width: 1200px;
@@ -17,7 +26,7 @@
 
       max-width: 512px;
 
-      margin-bottom: 24px;
+      margin: 64px 0 16px;
     }
 
     .description {
@@ -26,11 +35,11 @@
 
       max-width: 512px;
 
-      margin-bottom: 48px;
+      margin-bottom: 32px;
     }
 
     .button {
-      background-color: #9D92B7;
+      background-color: rgba(black, 0.1);
 
       height: 48px;
 
@@ -44,6 +53,10 @@
       font-size: 16px;
       font-weight: 700;
       color: white;
+
+      &:hover {
+        background-color: rgba(black, 0.2);
+      }
     }
   }
 }

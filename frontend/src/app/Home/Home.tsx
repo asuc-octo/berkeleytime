@@ -1,4 +1,4 @@
-import Footer from "../../components/Common/Footer";
+import Footer from "../../components/Common/Footer/Footer";
 import Hero from "./Hero";
 
 const Home = () => {
