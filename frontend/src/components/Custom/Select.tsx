@@ -172,6 +172,7 @@ const BTSelect = <
 			onInputChange={props.courseSearch ? handleInputChange : props.onInputChange}
 			filterOption={props.courseSearch ? null : props.filterOption}
 			className={styles.root}
+			menuPlacement="auto"
 			components={{
 				MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,
 				Option: BTOption as ComponentType<OptionProps<Option, IsMulti, Group>>
