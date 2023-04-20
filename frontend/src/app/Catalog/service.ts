@@ -163,7 +163,7 @@ const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 		shouldSort: true,
 		findAllMatches: false,
 		ignoreLocation: true,
-		threshold: 0.08,
+		threshold: 0.25,
 		keys: [
 			{ name: 'title', weight: 1 },
 			{ name: 'abbreviation', weight: 1.5 },

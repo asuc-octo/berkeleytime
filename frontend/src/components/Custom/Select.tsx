@@ -89,7 +89,7 @@ const BTOption: ComponentType<OptionProps<any, any, any>> | undefined = memo(fun
 			// The IDs take the form: react-select-191-option-407
 			// Here we regex everything after the last hyphen to obtain the index of the item in the list.
 			// The alternative is using `cloneElement` with the index but this seems reliable.
-			const index = innerProps?.id?.match('(?<=-)[^-]*$') ?? null;
+			const index = innerProps?.id?.match(/\d+(?=[^\d]*$)/) ?? null;
 			if (index) setSize(parseInt(index[0], 10), root.current.getBoundingClientRect().height);
 		}
 	}, [root, innerProps?.id, setSize]);
