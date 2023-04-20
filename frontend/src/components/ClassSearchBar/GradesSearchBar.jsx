@@ -331,6 +331,7 @@ class GradesSearchBar extends Component {
 				<Row style={{ marginBottom: 10 }}>
 					<Col lg={3}>
 						<BTSelect
+							courseSearch
 							name="selectClass"
 							placeholder="Choose a class..."
 							options={this.buildCoursesOptions(classes)}

@@ -244,6 +244,7 @@ class EnrollmentSearchBar extends Component {
 				<Row style={{ marginBottom: 10 }}>
 					<Col lg={4}>
 						<BTSelect
+							courseSearch
 							name="selectClass"
 							placeholder="Choose a class..."
 							// value={selectedClass}
