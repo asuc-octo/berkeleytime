@@ -118,7 +118,6 @@ const BTSelect = <
 					includeScore: true,
 					shouldSort: true,
 					findAllMatches: false,
-					ignoreLocation: true,
 					threshold: 0.25,
 					keys: [
 						{ name: 'abbreviation', weight: 1.5 },
