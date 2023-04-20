@@ -17,7 +17,7 @@ const Navigation: FC<Props> = ({ standalone }) => {
 	const { isLoggedIn } = useUser();
 
 	return (
-		<div className={standalone ? styles.root : `${styles.root} ${styles.standalone}`}>
+		<div className={standalone ? `${styles.root} ${styles.standalone}` : styles.root}>
 			<Link className={styles.brand} to="/">Berkeleytime</Link>
 
 			{/*<div className={styles.icon}>
