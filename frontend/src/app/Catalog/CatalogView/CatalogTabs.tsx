@@ -8,7 +8,6 @@ import styles from './CatalogView.module.scss';
 import SectionTable from './SectionTable';
 import { useSelector } from 'react-redux';
 import { State } from '../types';
-import { current } from 'lib/contributors';
 import BTLoader from 'components/Common/BTLoader';
 
 interface CatalogTabsProps {
@@ -18,30 +17,6 @@ interface CatalogTabsProps {
 	loading: boolean;
 	abbreviation: string;
 	courseNumber: string;
-}
-
-const tabs = [
-	{
-		title: 'Class Times'
-	},
-	{
-		title: 'Grades'
-	},
-	{
-		title: 'Enrollment'
-	}
-];
-
-{
-	/* <button className={styles.tabButtonAct} onClick={() => setTab(0)}>{`Class Times - ${
-	semester ?? ''
-}`}</button>
-<button className={styles.tabButton} onClick={() => setTab(1)}>
-	Grades
-</button>
-<button className={styles.tabButton} onClick={() => setTab(2)}>
-	Enrollment
-</button> */
 }
 
 const CatalogTabs = (props: CatalogTabsProps) => {
@@ -57,11 +32,9 @@ const CatalogTabs = (props: CatalogTabsProps) => {
 
 	const links: string[] = catalogService.getLinks(sections, semester, abbreviation, courseNumber);
 
-	console.log('rerender');
-
 	function update(course: CourseFragment, grade: GradeType) {
 		if (course && gradesData && gradesData.length > 0) {
-			const selectedGrades = gradesData.filter((c: any) => course.id === c.id)[0];
+			const selectedGrades = gradesData.filter((c: CourseFragment) => course.id === c.id)[0];
 			const hoverTotal = {
 				...course,
 				...selectedGrades,

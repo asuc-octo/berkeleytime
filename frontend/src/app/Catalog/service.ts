@@ -1,4 +1,4 @@
-import { FilterFragment, GetFiltersQuery, PlaylistType } from 'graphql';
+import { FilterFragment, GetFiltersQuery, PlaylistType, SectionFragment } from 'graphql';
 import { sortSections } from 'utils/sections/sort';
 import styles from './CatalogList/CatalogList.module.scss';
 
@@ -119,9 +119,15 @@ const processFilterData = (data?: GetFiltersQuery) => {
  * @param courseNumber The course number of the course. String form. Used in url
  * @returns A list of links to the official UC Berkeley catalog for each course listed on the catalog table
  */
-const getLinks = (sections: any, semester: string, abbreviation: string, courseNumber: string) => {
+const getLinks = (
+	sections: SectionFragment[] | null,
+	semester: string,
+	abbreviation: string,
+	courseNumber: string
+) => {
+	if (!sections) return [];
 
-	var dict = new Map([
+	const dict = new Map([
 		['Field Work', 'FLD'],
 		['Session', 'SES'],
 		['Colloquium', 'COL'],
@@ -140,32 +146,31 @@ const getLinks = (sections: any, semester: string, abbreviation: string, courseN
 		['Web-based Lecture', 'WBL'],
 		['Web-Based Lecture', 'WBL'],
 		['Directed Group Study', 'GRP'],
-		['Laboratory', 'LAB'],
-	  ]);
+		['Laboratory', 'LAB']
+	]);
 
-	let links:string[] = [];
-	if (sections !== null) {
+	const links: string[] = [];
+
+	if (sections) {
 		sections = sortSections(sections);
-		for (var i = 0; i < sections.length; i++) {
-			var stre = '';
-			let temp = semester.split(' ');
-			var punctuation = ',';
-			var regex = new RegExp('[' + punctuation + ']', 'g');
-			var rmc = abbreviation.replace(regex, '');
-			stre = `https://classes.berkeley.edu/content/${temp[1]}
+		for (let i = 0; i < sections.length; i++) {
+			const temp = semester.split(' ');
+			const regex = new RegExp('[' + ',' + ']', 'g');
+			const rmc = abbreviation.replace(regex, '');
+
+			const res = `https://classes.berkeley.edu/content/${temp[1]}
 			-${temp[0]}
 			-${rmc}
 			-${courseNumber}
 			-${sections[i].sectionNumber}
 			-${dict.get(sections[i].kind)}
-			-${sections[i].sectionNumber}`;
-			stre = stre.replace(/\s+/g, '');
-			links.push(stre);
+			-${sections[i].sectionNumber}`.replace(/\s+/g, '');
+
+			links.push(res);
 		}
 	}
-	return links
-}
-
+	return links;
+};
 
 /**
  *
