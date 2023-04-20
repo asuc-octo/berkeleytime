@@ -2,11 +2,7 @@ import { FC } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { H6, A } from '../../../bt/custom';
 
-interface FooterProps {
-  standalone?: boolean
-}
-
-const Footer: FC<FooterProps> = ({ standalone }) => (
+const Footer: FC = () => (
 	<footer className="py-5">
 		<Container>
 			<Row noGutters>

@@ -1,0 +1,26 @@
+.root {
+  display: flex;
+  align-items: center;
+
+  padding: 0 56px;
+
+  &:not(.standalone) {
+    height: 58px;
+  }
+
+  &.standalone {
+
+  }
+
+  .brand {
+    margin-right: auto;
+
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .menu {
+    display: flex;
+  }
+}
