@@ -14,19 +14,20 @@ import { UserModel } from "../../db/user";
 import { config } from "../../config";
 import { redisInstance } from "./redis";
 
-// routes need to be added as authorized origins/redirect uris in google cloud console
 const LOGIN_ROUTE = "/login";
-const CALLBACK_ROUTE = "/login/callback";
+const LOGIN_REDIRECT_ROUTE = "/login/redirect";
 const LOGOUT_ROUTE = "/logout";
 
-const SUCCESS_REDIRECT = "/graphql";
-const FAILURE_REDIRECT = "/fail";
+// route need to be added as authorized redirect uris in google cloud console
+const LOGIN_REDIRECT = config.backendPath + LOGIN_REDIRECT_ROUTE; // must be prefixed with backend path
+const SUCCESS_REDIRECT = config.backendPath + "/graphql";
+const FAILURE_REDIRECT = config.backendPath + "/fail";
 
 const SCOPE = ['profile', 'email']
 
 const CACHE_PREFIX = 'user-session:';
 
-export default async (app: Application) => {
+export default (app: Application) => {
   // init
   app.use(session({
     secret: config.SESSION_SECRET,
@@ -60,7 +61,7 @@ export default async (app: Application) => {
     accessType: 'offline',
     prompt: 'consent',
   }));
-  app.get(CALLBACK_ROUTE, passport.authenticate('google', {
+  app.get(LOGIN_REDIRECT_ROUTE, passport.authenticate('google', {
     failureRedirect: FAILURE_REDIRECT,
     // failureMessage: "failed",
     successRedirect: SUCCESS_REDIRECT,
@@ -85,7 +86,7 @@ export default async (app: Application) => {
   passport.use(new GoogleStrategy.Strategy({
     clientID: config.GOOGLE_CLIENT_ID,
     clientSecret: config.GOOGLE_CLIENT_SECRET,
-    callbackURL: CALLBACK_ROUTE,
+    callbackURL: LOGIN_REDIRECT,
     scope: SCOPE,
     state: true,
   }, async (accessToken, refreshToken, profile, done) => {

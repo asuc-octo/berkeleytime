@@ -3,6 +3,7 @@ import KeyvRedis from "@keyv/redis";
 import { KeyvAdapter } from "@apollo/utils.keyvadapter";
 import { ErrorsAreMissesCache } from "@apollo/utils.keyvaluecache";
 import { Redis } from "ioredis";
+import { config } from "../../config";
 
 export let redisInstance: Redis;
 
@@ -21,7 +22,7 @@ export async function getKeyvCache(namespace: string) {
 
 async function init() {
   if (!redisInstance) {
-    redisInstance = new Redis("redis://localhost:6379");
+    redisInstance = new Redis(config.redis.uri);
   }
 }
 

@@ -15,9 +15,13 @@ const env = (name: string): string => {
 export interface Config {
   port: number;
   url: string;
+  backendPath: string;
   graphqlPath: string;
   isDev: boolean;
   mongoDB: {
+    uri: string;
+  };
+  redis: {
     uri: string;
   };
   SESSION_SECRET: string;
@@ -29,10 +33,14 @@ export interface Config {
 export const config: Config = {
   port: +env("PORT"),
   url: env("URL"),
+  backendPath: env("BACKEND_PATH"),
   graphqlPath: env("GRAPHQL_PATH"),
   isDev: env("NODE_ENV") === "development",
   mongoDB: {
     uri: env("MONGODB_URI"),
+  },
+  redis: {
+    uri: env("REDIS_URI"),
   },
   SESSION_SECRET: env("SESSION_SECRET"),
   GOOGLE_CLIENT_ID: env("GOOGLE_CLIENT_ID"),

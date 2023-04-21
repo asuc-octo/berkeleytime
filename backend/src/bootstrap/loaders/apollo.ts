@@ -11,7 +11,7 @@ export default async () => {
   const schema = buildSchema();
   const cache = await getKeyvCache(CACHE_NAMESPACE);
 
-  return new ApolloServer({
+  const server = new ApolloServer({
     schema,
     cache,
     plugins: [
@@ -28,4 +28,7 @@ export default async () => {
       }
     ],
   });
+  await server.start();
+
+  return server;
 };
