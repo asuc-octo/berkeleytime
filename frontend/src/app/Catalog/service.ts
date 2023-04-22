@@ -1,6 +1,6 @@
 import Fuse from 'fuse.js';
 import { FilterFragment, GetFiltersQuery, PlaylistType, CourseOverviewFragment } from 'graphql';
-import { laymanTerms } from 'lib/courses/search';
+import { laymanTerms } from 'lib/courses/course';
 import { courseToName } from 'lib/courses/course';
 import {
 	CatalogCategoryKeys,
