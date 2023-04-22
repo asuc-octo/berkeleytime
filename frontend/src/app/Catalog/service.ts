@@ -161,14 +161,14 @@ const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 	const options: Fuse.IFuseOptions<CourseInfo> = {
 		includeScore: true,
 		shouldSort: true,
-		findAllMatches: false,
+		findAllMatches: true,
 		threshold: 0.25,
 		keys: [
-			{ name: 'title', weight: 3 },
-			{ name: 'abbreviation', weight: 1.5 },
-			{ name: 'abbreviations', weight: 2 },
+			{ name: 'title', weight: 1 },
+			{ name: 'abbreviation', weight: 1 },
+			{ name: 'abbreviations', weight: 1 },
 			{ name: 'courseNumber', weight: 1 },
-			{ name: 'fullCourseCode', weight: 4 }
+			{ name: 'fullCourseCode', weight: 1 }
 		],
 		// The fuse types are wrong for this sort fn
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -188,7 +188,16 @@ const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 
 		const abbreviations =
 			laymanTerms[abbreviation.toLowerCase()]?.reduce((acc, abbr) => {
-				return [...acc, ...[`${abbr}${courseNumber}`, `${abbr} ${courseNumber}`]];
+				// Here we test if the first character in the courseNumber is a LETTER
+				// If so, we remove it and add it as an abbreviation.
+				const containsPrefix = /[a-zA-Z]/.test(courseNumber.charAt(0));
+				const abbrCouseNumber = courseNumber.slice(1);
+
+				return [
+					...acc,
+					...[`${abbr}${courseNumber}`, `${abbr} ${courseNumber}`],
+					...(containsPrefix ? [`${abbr}${abbrCouseNumber}`, `${abbr} ${abbrCouseNumber}`] : [])
+				];
 			}, [] as string[]) ?? [];
 
 		return {

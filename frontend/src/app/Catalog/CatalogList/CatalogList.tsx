@@ -1,6 +1,6 @@
 import { FixedSizeList } from 'react-window';
 import CatalogListItem from './CatalogListItem';
-import { CourseFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
+import { CourseFragment, CourseOverviewFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
 import { CurrentFilters, FilterOption, SortOption } from '../types';
 import { Dispatch, memo, SetStateAction, useEffect, useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';
@@ -15,6 +15,7 @@ type CatalogListProps = {
 	selectedId: string | null;
 	searchQuery: string;
 	sortQuery: SortOption;
+	sortDir: boolean;
 };
 
 type Skeleton = { __typename: 'Skeleton'; id: number };
@@ -23,7 +24,7 @@ type Skeleton = { __typename: 'Skeleton'; id: number };
  * Component for course list
  */
 const CatalogList = (props: CatalogListProps) => {
-	const { currentFilters, setCurrentCourse, selectedId, searchQuery, sortQuery } = props;
+	const { currentFilters, setCurrentCourse, selectedId, searchQuery, sortQuery, sortDir } = props;
 	const { observe, height } = useDimensions();
 	const [fetchCatalogList, { data, loading, called }] = useGetCoursesForFilterLazyQuery({});
 	const history = useHistory();
@@ -41,9 +42,8 @@ const CatalogList = (props: CatalogListProps) => {
 				searchTerms: null
 			};
 
-		let catalogList = data.allCourses.edges
-			.map((edge) => edge.node)
-			.sort(sortByAttribute(sortQuery.value));
+		let catalogList = data.allCourses.edges.map((edge) => edge.node);
+
 		const catalogIndex = CatalogService.buildCourseIndex(catalogList);
 
 		//TODO: Very big problem to inspect - server is returning duplicate entries of same courses.
@@ -54,16 +54,24 @@ const CatalogList = (props: CatalogListProps) => {
 		// console.log(courses.filter((v, i, a) => v.id === 'Q291cnNlVHlwZTo0NDc1'));
 
 		return { catalogList, catalogIndex };
-	}, [data, sortQuery]);
+	}, [data]);
 
 	const courses = useMemo(() => {
-		if (catalogIndex && searchQuery)
-			return catalogIndex
+		if (catalogIndex && searchQuery) {
+			const result = catalogIndex
 				.search(searchQuery.trim().toLowerCase())
-				.map((res) => catalogList[res.refIndex]);
+				.map((res) => catalogList[res.refIndex])
+				.sort(sortByAttribute(sortQuery.value));
 
-		return catalogList;
-	}, [catalogIndex, catalogList, searchQuery]);
+			return sortDir ? result.reverse() : result;
+		}
+
+		const copy = [...catalogList] as CourseOverviewFragment[];
+
+		return sortDir
+			? copy.sort(sortByAttribute(sortQuery.value)).reverse()
+			: copy.sort(sortByAttribute(sortQuery.value));
+	}, [catalogIndex, catalogList, searchQuery, sortDir, sortQuery.value]);
 
 	useEffect(() => {
 		const playlistString = Object.values(currentFilters ?? {})

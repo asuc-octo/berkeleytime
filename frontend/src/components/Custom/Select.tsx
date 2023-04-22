@@ -122,11 +122,12 @@ const BTSelect = <
 					includeScore: true,
 					shouldSort: true,
 					findAllMatches: false,
-					threshold: 0.25,
+					distance: 10,
+					threshold: 0.2,
 					keys: [
-						{ name: 'abbreviation', weight: 1.5 },
-						{ name: 'abbreviations', weight: 2 },
-						{ name: 'courseNumber', weight: 1.2 },
+						{ name: 'abbreviation', weight: 2 },
+						{ name: 'abbreviations', weight: 1 },
+						{ name: 'courseNumber', weight: 1 },
 						{ name: 'fullCourseCode', weight: 1 }
 					],
 					// The fuse types are wrong for this sort fn
@@ -171,7 +172,7 @@ const BTSelect = <
 			options={dynamicOptions}
 			onInputChange={props.courseSearch ? handleInputChange : props.onInputChange}
 			filterOption={props.courseSearch ? null : props.filterOption}
-			className={styles.root}
+			className={`${styles.root} ${props.className}`}
 			menuPlacement="auto"
 			components={{
 				MenuList: BTMenuList as ComponentType<MenuListProps<Option, IsMulti, Group>>,
