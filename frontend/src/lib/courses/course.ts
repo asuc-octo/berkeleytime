@@ -53,6 +53,7 @@ export const laymanTerms: {
 	'dev eng': ['eveng'],
 	'dev std': ['devstd'],
 	'datasci': ['ds', 'data'],
+	'data': ['ds', 'data'],
 	'ea lang': ['ealang'],
 	'env des': ['ed'],
 	'el eng': ['ee', 'electrical engineering'],
