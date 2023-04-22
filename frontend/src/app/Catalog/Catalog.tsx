@@ -16,6 +16,7 @@ const Catalog = () => {
 	const [sortQuery, setSortQuery] = useState<SortOption>(SORT_OPTIONS[0]);
 	const [searchQuery, setSearchQuery] = useState('');
 	const location = useLocation();
+	const [sortDir, setDir] = useState(false);
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
@@ -29,12 +30,15 @@ const Catalog = () => {
 				searchQuery={searchQuery}
 				currentFilters={currentFilters}
 				setCurrentFilters={setCurrentFilters}
+				setDir={setDir}
+				sortDir={sortDir}
 				setSearchQuery={setSearchQuery}
 				setSortQuery={setSortQuery}
 			/>
 			<CatalogList
 				currentFilters={currentFilters}
 				setCurrentCourse={setCurrentCourse}
+				sortDir={sortDir}
 				selectedId={currentCourse?.id ?? null}
 				searchQuery={searchQuery}
 				sortQuery={sortQuery}

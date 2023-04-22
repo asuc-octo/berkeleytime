@@ -59,9 +59,23 @@
 	}
 }
 
-.search {
+.searchContainer {
+	display: inline-flex;
+	gap: 8px;
 	@include media(mobile, tablet) {
 		display: none;
+	}
+	
+	>div {
+		flex: 1;
+	}
+
+	>button {
+		flex-shrink: 1;
+		outline: none;
+		border: 1px solid #C7C7C7;
+		border-radius: 4px;
+		background: transparent;
 	}
 }
 
