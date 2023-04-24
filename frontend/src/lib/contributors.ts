@@ -37,7 +37,7 @@ export const current: Contributors = {
 		{
 			name: 'Matthew Rowland',
 			role: 'Frontend Lead',
-			site: null,
+			site: 'https://www.linkedin.com/in/matthew-rowland-dev/',
 			img: {
 				base: path('matthew_1.jpg'),
 				silly: path('matthew_2.jpg')
@@ -53,40 +53,13 @@ export const current: Contributors = {
 			}
 		},
 		{
-			name: 'Carissa Cui',
-			role: 'Designer',
-			site: 'https://www.carissacui.com',
-			img: {
-				base: path('carissa_1.jpg'),
-				silly: undefined
-			}
-		},
-		{
-			name: 'Joanne Chuang',
-			role: 'Designer',
+			name: 'Henric Zhang',
+			role: 'Frontend Engineer',
 			site: null,
 			img: {
-				base: path('joanne_1.jpg'),
-				silly: undefined
+				base: path('henric_1.jpg'),
+				silly: path('henric_2.jpg')
 			}
-		},
-		{
-			name: 'Rachel Hua',
-			role: 'Designer',
-			site: 'https://www.linkedin.com/in/byrachelhua/',
-			img: {
-				base: path('rachel_1.jpg'),
-				silly: undefined
-			}
-		},
-		{
-			name: 'Max Wang',
-			role: 'Backend Engineer',
-			img: {
-				base: path('max_1.jpg'),
-				silly: undefined
-			},
-			site: null
 		},
 		{
 			name: 'Jaden Moore',
@@ -95,15 +68,6 @@ export const current: Contributors = {
 			img: {
 				base: path('jaden_1.jpg'),
 				silly: undefined
-			}
-		},
-		{
-			name: 'Eric Xu',
-			role: 'Backend Engineer',
-			site: null,
-			img: {
-				base: path('eric_1.jpg'),
-				silly: path('eric_2.jpg')
 			}
 		},
 		{
@@ -116,20 +80,11 @@ export const current: Contributors = {
 			}
 		},
 		{
-			name: 'Henric Zhang',
+			name: 'Levi Kline',
 			role: 'Frontend Engineer',
-			site: null,
+			site: 'https://levibkline.com',
 			img: {
-				base: path('henric_1.jpg'),
-				silly: path('henric_2.jpg')
-			}
-		},
-		{
-			name: 'Michael Khaykin',
-			role: 'Backend Engineer',
-			site: null,
-			img: {
-				base: path('michael_1.jpg'),
+				base: path('levi_1.jpg'),
 				silly: undefined
 			}
 		},
@@ -140,6 +95,33 @@ export const current: Contributors = {
 			img: {
 				base: path('joel_1.jpg'),
 				silly: path('joel_1.jpg')
+			}
+		},
+		{
+			name: 'Eric Xu',
+			role: 'Backend Engineer',
+			site: 'https://www.linkedin.com/in/e-xu-at-berkeley',
+			img: {
+				base: path('eric_1.jpg'),
+				silly: path('eric_2.jpg')
+			}
+		},
+		{
+			name: 'Max Wang',
+			role: 'Backend Engineer',
+			img: {
+				base: path('max_1.jpg'),
+				silly: undefined
+			},
+			site: null
+		},
+		{
+			name: 'Michael Khaykin',
+			role: 'Backend Engineer',
+			site: null,
+			img: {
+				base: path('michael_1.jpg'),
+				silly: undefined
 			}
 		},
 		{
@@ -161,11 +143,29 @@ export const current: Contributors = {
 			}
 		},
 		{
-			name: 'Levi Kline',
-			role: 'Frontend Engineer',
-			site: 'https://levibkline.com',
+			name: 'Carissa Cui',
+			role: 'Designer',
+			site: 'https://www.carissacui.com',
 			img: {
-				base: path('levi_1.jpg'),
+				base: path('carissa_1.jpg'),
+				silly: undefined
+			}
+		},
+		{
+			name: 'Joanne Chuang',
+			role: 'Designer',
+			site: null,
+			img: {
+				base: path('joanne_1.jpg'),
+				silly: path('joanne_2.jpg')
+			}
+		},
+		{
+			name: 'Rachel Hua',
+			role: 'Designer',
+			site: 'https://www.linkedin.com/in/byrachelhua/',
+			img: {
+				base: path('rachel_1.jpg'),
 				silly: undefined
 			}
 		}
@@ -177,9 +177,29 @@ export const past: Contributors[] = [
 		name: 'Class of 2024',
 		items: [
 			{
+				name: 'Kelly Ma',
+				role: 'Design Lead',
+				site: 'https://kellymadesign.com'
+			},
+			{
 				name: 'Shuming Xu',
 				role: 'Backend Engineer',
 				site: 'https://shumingxu.com/'
+			},
+			{
+				name: 'Alex Zhang',
+				role: 'Backend Engineer',
+				site: null
+			},
+			{
+				name: 'Nikhil Jha',
+				role: 'Backend Engineer',
+				site: null
+			},
+			{
+				name: 'Nikhil Ograin',
+				role: 'Backend Engineer',
+				site: null
 			},
 			{
 				name: 'Vihan Bhargava',
@@ -200,6 +220,11 @@ export const past: Contributors[] = [
 				name: 'Annie Pan',
 				role: 'Designer',
 				site: 'http://anniexpan.com/'
+			},
+			{
+				name: 'Cici Wei',
+				role: 'Designer',
+				site: null
 			},
 			{
 				name: 'Alex Xi',

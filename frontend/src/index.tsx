@@ -11,6 +11,7 @@ import client from './graphql/client';
 
 import 'assets/scss/berkeleytime.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
+import Banner from 'components/Common/Banner';
 
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
@@ -20,6 +21,7 @@ root.render(
 			<BrowserRouter>
 				<ScrollToTop />
 				<LogPageView />
+				<Banner />
 				<Berkeleytime />
 			</BrowserRouter>
 		</Provider>

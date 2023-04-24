@@ -16,7 +16,10 @@
 
   .menu {
     display: flex;
-    gap: 4px;
+    align-items: center;
+    gap: 16px;
+
+    height: 100%;
 
     .item, .button {
       font-size: 16px;
@@ -25,11 +28,17 @@
 
       display: flex;
       align-items: center;
+    }
 
+    .item {
+      height: 100%;
+    }
+
+    .button {
       height: 40px;
-  
+
       border-radius: 4px;
-  
+
       padding: 0 16px;
     }
 

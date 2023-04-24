@@ -19,10 +19,7 @@ const Banner: FC<Props> = (props) => {
 	return props.banner ? (
 		<div className="banner">
 			<div className="content">
-				<p>Application extended until Wednesday for UI/UX Design!</p>
-				<Button size="sm" href="https://octo.asuc.org/apply.html">
-					Apply Now
-				</Button>
+				<p>Fall 2023 catalog + scheduler released!</p>
 			</div>
 			<img src={close} alt="close" onClick={props.closeBanner} />
 		</div>
