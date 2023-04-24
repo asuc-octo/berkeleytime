@@ -2,6 +2,55 @@
 .app {
 	position: relative;
 	background-color: $bt-white;
+
+	// we change navbar's position to absolute when the banner is open
+	// so the container needs to be positioned relatively
+	position: relative;
+
+	// A viewport app sits under the navbar and takes up as much vertical space as the viewport
+	// and has a minimum height of 800px (including navbar). Viewport apps include catalog,
+	// grades, and enrollment. When smaller than desktop, we no longer attempt to match the
+	// height of the viewport b/c we change to mobile view.
+	.viewport-app {
+		// padding-top: $bt-navbar-height;
+
+		// The reason for this, but WebKit (Chrome + Safari) won't allow child
+		// element's height: 100% to work if the parent has a min-height but the
+		// height is *not* an absolute size.
+		// (see https://bugs.webkit.org/show_bug.cgi?id=26559)
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+
+		min-height: $viewport-min-height;
+
+		> div {
+			// Effective height: 100%
+			flex: 1;
+
+			@include touch {
+				align-content: flex-start;
+			}
+		}
+
+		@include touch {
+			height: auto;
+		}
+	}
+
+	.fit-to-viewport {
+		height: 100vh;
+		min-height: $viewport-min-height;
+
+		@include touch {
+			height: auto;
+			min-height: $touch-viewport-min-height;
+		}
+	}
+
+	.under-navbar {
+		padding-top: $bt-navbar-height;
+	}
 }
 
 ::-webkit-scrollbar {

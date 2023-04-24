@@ -4,7 +4,7 @@
 	grid-template-rows: 1fr;
 	grid-template-columns: 0.5fr 0.5fr 1fr;
 	position: relative;
-	height: 100vh;
+	height: calc(100vh - 57.11px);
 	align-items: stretch;
 	overflow: hidden;
 	

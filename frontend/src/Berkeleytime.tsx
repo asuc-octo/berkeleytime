@@ -5,6 +5,7 @@ import useDimensions from 'react-cool-dimensions';
 import easterEgg from 'utils/easterEgg';
 import Routes from './Routes';
 import { fetchEnrollContext } from 'redux/actions';
+import { IconoirProvider } from 'iconoir-react';
 
 const Berkeleytime = () => {
 	const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const Berkeleytime = () => {
 		// Fetch enrollment context early on for catalog and enrollment page.
 		dispatch(fetchEnrollContext());
 
-		const bannerType = 'sp23recruitment3'; // should match value in ./redux/common/reducer.ts
+		const bannerType = 'fa23catalog'; // should match value in ./redux/common/reducer.ts
 		if (localStorage.getItem('bt-hide-banner') !== bannerType) {
 			dispatch(openBanner());
 		}
@@ -44,7 +45,13 @@ const Berkeleytime = () => {
 		observe(document.getElementById('root'));
 	}, [dispatch, observe]);
 
-	return <Routes />;
+	return (
+		<div ref={observe} className="app">
+			<IconoirProvider iconProps={{ strokeWidth: 2 }}>
+				<Routes />
+			</IconoirProvider>
+		</div>
+	);
 };
 
 export default memo(Berkeleytime);

@@ -27,7 +27,7 @@ function findInstructor(instr: string | null): CSSProperties {
 	for (const [name, eggUrl] of easterEggImages) {
 		if (instr.includes(name)) {
 			return {
-				'--section-cursor': `url("${eggUrl}")`
+				cursor: `url("${eggUrl}"), pointer`
 			} as CSSProperties;
 		}
 	}
