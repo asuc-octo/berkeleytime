@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import Navigation from "../../../components/Common/Navigation";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Clock } from "iconoir-react";
 
-import styles from "./Hero.module.scss";
+import styles from "./HomeHero.module.scss";
 
 import wave from "./wave.svg";
 
@@ -24,17 +25,17 @@ const steps: Step[] = [
 	{ text: "Dawn", colors: [ "#CFADD4", "#B5B2D9" ], image: dawn },
 	{ text: "Sunrise", colors: [ "#D3A4BF", "#EEC9C1" ], image: sunrise },
 	{ text: "Morning", colors: [ "#DCD6C4", "#C8DCD9" ], image: morning },
-	{ text: "Afternoon", colors: [ "#2377B5", "#B7D4FF" ], image: afternoon },
+	{ text: "Afternoon", colors: [ "#3b82f6", "#0ea5e9" ], image: afternoon },
 	{ text: "Sunset", colors: [ "#D25950", "#EE8A1F" ], image: sunset },
 	{ text: "Dusk", colors: [ "#10101B", "#202036" ], reverse: true, image: dusk }
 ];
 
-const Hero = () => {
+const HomeHero = () => {
 	const root = useRef<HTMLDivElement>(null);
 	const [ date, setDate ] = useState(new Date());
 
 	const step = useMemo(() => {
-		return steps[Math.floor((date.getHours() + 6) / 24 * 5)];
+		return steps[Math.floor(date.getHours() / 24 * 5)];
 	}, [ date ]);
 
 	useEffect(() => {
@@ -56,13 +57,15 @@ const Hero = () => {
 			<Navigation standalone={true} />
 
 			<div className={styles.container}>
-				<img className={styles.campanile} src={step.image} />
-
 				<div className={styles.clock}>
+					<Clock height={24} width={24} />
+
 					<p className={styles.time}>{ date.toLocaleTimeString(undefined, { hour: "numeric", minute: "numeric", second: "numeric" }) }</p>
 
 					<p className={styles.period}>{ step.text }</p>
 				</div>
+
+				<img className={styles.campanile} src={step.image} />
 
 				<p className={styles.header}>Welcome to Berkeleytime!</p>
 
@@ -76,4 +79,4 @@ const Hero = () => {
 	);
 };
 
-export default Hero;
+export default HomeHero;

@@ -1,13 +1,14 @@
-import Footer from "../../components/Common/Footer/Footer";
-import Hero from "./Hero";
+import HomeHero from "./HomeHero";
+import HomeFeature from "./HomeFeature";
+import styles from "./home.module.scss";
 
 const Home = () => {
 	return (
-		<>
-			<Hero />
+		<div className={styles.root}>
+			<HomeHero />
 
-			<Footer />
-		</>
+			<HomeFeature />
+		</div>
 	);
 };
 

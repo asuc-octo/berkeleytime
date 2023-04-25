@@ -19,6 +19,7 @@
 	},
 	"dependencies": {
 		"@apollo/client": "^3.2.5",
+		"@fontsource/inter": "^4.5.15",
 		"axios": "^1.2.6",
 		"bootstrap": "^4.5.2",
 		"color": "^3.1.3",

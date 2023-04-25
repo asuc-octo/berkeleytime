@@ -4,22 +4,18 @@ import { ReactNode } from 'react';
 
 interface LayoutProps {
 	noFooter?: boolean;
-  standalone?: boolean;
+  noNavigation?: boolean;
 	children: ReactNode;
 }
 
-const Layout = ({ children, noFooter }: LayoutProps) => {
+const Layout = ({ children, noFooter, noNavigation }: LayoutProps) => {
 	return (
 		<>
-			<Navigation />
+			{!noNavigation && <Navigation />}
 			{children}
 			{!noFooter && <Footer />}
 		</>
 	);
-};
-
-Layout.defaultProps = {
-	noFooter: false
 };
 
 export default Layout;
