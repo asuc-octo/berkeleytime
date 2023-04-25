@@ -1,17 +1,114 @@
 .root {
-  display: flex;
-  align-items: center;
-
-  padding: 0 24px;
+  border-bottom: 1px solid #e2e8f0;
 
   height: 64px;
 
-  &:not(.standalone) {
+  padding: 0 24px;
 
+  display: flex;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+
+    .wrapper {
+      padding-top: 14px;
+    }
+
+    &:not(.open) .menu {
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    align-items: center;
+    justify-content: space-between;
+
+    .icon {
+      display: none;
+    }
+  }
+
+  .wrapper {
+    color: #0f172a;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .brand {
+      color: #0f172a;
+    }
+  }
+
+  &.open {
+    position: fixed;
+
+    gap: 24px;
+
+    height: 100vh;
+    width: 100%;
+
+    z-index: 999;
+
+    background-color: white;
+
+    .menu {
+      flex-grow: 1;
+
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+
+      padding-bottom: 24px;
+
+      .button {
+        margin-top: auto;
+
+        justify-content: space-between;
+      }
+
+      .item {
+        height: 40px;
+
+        &:hover::before {
+          display: none;
+        }
+
+        &:global(.active)::before {
+          height: 100%;
+          width: 4px;
+
+          left: -24px;
+        }
+      }
+    }
   }
 
   &.standalone {
+    border-bottom: none;
 
+    .wrapper, .wrapper .brand {
+      color: white;
+    }
+
+    .menu .item {
+      color: white;
+
+      &:hover::before {
+        top: 0;
+
+        background-color: white;
+      }
+    }
+
+    .menu .button {
+      background-color: rgba(black, 0.1);
+    }
+  }
+
+  .brand {
+    font-size: 24px;
+    font-weight: 700;
   }
 
   .menu {
@@ -24,46 +121,53 @@
     .item, .button {
       font-size: 16px;
       font-weight: 500;
-      color: white;
 
       display: flex;
       align-items: center;
     }
 
     .item {
+      color: #0f172a;
+
       height: 100%;
-    }
 
-    .button {
-      height: 40px;
+      position: relative;
 
-      border-radius: 4px;
+      &:hover::before, &:global(.active)::before {
+        content: "";
 
-      padding: 0 16px;
-    }
+        position: absolute;
 
-    .button {
-      background-color: rgba(black, 0.1);
+        height: 4px;
+        width: 100%;
 
-      &:hover {
-        background-color: rgba(black, 0.2);
+        left: 0;
+        bottom: 0;
+      }
+
+      &:hover::before {
+        background-color: #0f172a;
+      }
+
+      &:global(.active) {
+        color: #2f80ed;
+
+        &::before {
+          background-color: #2f80ed;
+        }
       }
     }
 
-    .item:hover {
-      background-color: rgba(black, 0.1);
+    .button {
+      color: white;
+
+      background-color: #2f80ed;
+
+      height: 40px;
+
+      padding: 0 16px;
+
+      border-radius: 4px;
     }
-  }
-
-  .brand {
-    margin-right: auto;
-
-    font-size: 24px;
-    font-weight: 700;
-    color: white;
-  }
-
-  .menu {
-    display: flex;
   }
 }

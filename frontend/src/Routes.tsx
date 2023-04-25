@@ -62,7 +62,9 @@ const Routes = () => (
 			</Route>
 
 			<Route path="/" exact>
-				<Home />
+				<Layout noNavigation>
+					<Home />
+				</Layout>
 			</Route>
 
 			<Route>

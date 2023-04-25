@@ -13,6 +13,11 @@ import 'assets/scss/berkeleytime.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Banner from 'components/Common/Banner';
 
+import "@fontsource/inter";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/700.css";
+import "@fontsource/inter/900.css";
+
 const root = createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
