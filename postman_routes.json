@@ -1387,7 +1387,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://gateway.api.berkeley.edu/sis/v3/courses?cs-course-id={{courseId}}&page-number=1&page-size=10",
+					"raw": "https://gateway.api.berkeley.edu/sis/v4/courses?cs-course-id={{courseId}}&page-number=1&page-size=10",
 					"protocol": "https",
 					"host": [
 						"gateway",
