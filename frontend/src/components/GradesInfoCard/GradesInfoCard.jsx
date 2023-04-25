@@ -27,7 +27,7 @@ class GradesInfoCard extends PureComponent {
 		var sectionAvgText =
 			'<span class="info-text"}>Section average refers to the average of all sections that <br />have been filtered for using the specified options.</span>';
 		var percentileText =
-			'<span class="info-text"}>Detailed information about the percentile range of students <br />who received the corresponding grade, along with the exact number<br /> and percent of students out of the total.</span>';
+			'<span class="info-text"}>Detailed information about the percentile range of students who <br /> received the corresponding grade (out of students who took the class for a grade), <br />  along with the exact number and percentage (out of all students).</span>';
 
 		return (
 			<div className="grades-info">
