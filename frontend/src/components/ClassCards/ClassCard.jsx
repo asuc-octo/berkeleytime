@@ -38,7 +38,7 @@ function ClassCard(props) {
 						</svg>
 					</div>
 				</div>
-				<div className="class-card-title">{title}</div>
+				<div className="class-card-title" title={title}>{title}</div>
 				<div className="class-card-options">{`${semester} • ${faculty}`}</div>
 				{isMobile ? <ClassCardMobile additionalInfo={additionalInfo} type={type} /> : null}
 			</div>

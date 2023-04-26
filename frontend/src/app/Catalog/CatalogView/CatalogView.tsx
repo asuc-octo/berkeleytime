@@ -262,26 +262,19 @@ const CatalogView = (props: CatalogViewProps) => {
 							</p>
 						</>
 					</ReadMore>
-					{loading ? (
-						<BTLoader></BTLoader>
-					) : (
-						<div>
-							{
-								<CatalogTabs
-									semester={semester}
-									course={course}
-									sections={sections}
-									loading={loading}
-									abbreviation={abbreviation}
-									courseNumber={courseNumber}
-								/>
-							}
-
-							{/*
+					<CatalogTabs
+						semester={semester}
+						course={course}
+						sections={sections}
+						loading={loading}
+						abbreviation={abbreviation}
+						courseNumber={courseNumber}
+					/>
+					{/*
 							Redesigned catalog sections
 							<CatalogViewSections sections={sections} />
 							*/
-							/* Good feature whenever we want...
+					/* Good feature whenever we want...
 							<h5>Past Offerings</h5>
 							<section className={styles.pills}>
 								{pastSemesters ? (
@@ -307,8 +300,6 @@ const CatalogView = (props: CatalogViewProps) => {
 									/>
 								)}
 							</section> */}
-						</div>
-					)}
 				</>
 			)}
 		</div>
