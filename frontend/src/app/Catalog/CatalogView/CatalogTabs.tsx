@@ -1,14 +1,14 @@
 import EnrollmentGraphCard from 'components/GraphCard/EnrollmentGraphCard';
 import GradesGraph from 'components/Graphs/GradesGraph';
-import { CourseFragment, SectionFragment } from 'graphql';
+import { CourseFragment, GradeType, SectionFragment } from 'graphql';
 import catalogService from '../service';
 import { useState } from 'react';
 import { enrollReset } from 'redux/actions';
-import store from 'redux/store';
 import styles from './CatalogView.module.scss';
 import SectionTable from './SectionTable';
 import { useSelector } from 'react-redux';
 import { State } from '../types';
+import BTLoader from 'components/Common/BTLoader';
 
 interface CatalogTabsProps {
 	semester: string;
@@ -22,19 +22,19 @@ interface CatalogTabsProps {
 const CatalogTabs = (props: CatalogTabsProps) => {
 	const { semester, course, sections, loading, abbreviation, courseNumber } = props;
 
-	const [hoveredClass, setHoveredClass] = useState<any>(false);
-	const [updateMobileHover, setUpdateMobileHover] = useState<any>(true);
+	const [hoveredClass, setHoveredClass] = useState<boolean>(false);
+	const [updateMobileHover, setUpdateMobileHover] = useState<boolean>(true);
 	const [tab, setTab] = useState<number>(0);
 
 	const gradesGraphData = useSelector((state: State) => state.grade.graphData ?? null);
 	const gradesData = useSelector((state: State) => state.grade?.gradesData ?? null);
+	const selectedCourses = useSelector((state: State) => state.grade.selectedCourses ?? null);
 
 	const links: string[] = catalogService.getLinks(sections, semester, abbreviation, courseNumber);
 
-	function update(course: any, grade: any) {
-		const gradesData = (store.getState() as any).grade.gradesData;
+	function update(course: CourseFragment, grade: GradeType) {
 		if (course && gradesData && gradesData.length > 0) {
-			const selectedGrades = gradesData.filter((c: any) => course.id === c.id)[0];
+			const selectedGrades = gradesData.filter((c: CourseFragment) => course.id === c.id)[0];
 			const hoverTotal = {
 				...course,
 				...selectedGrades,
@@ -48,8 +48,6 @@ const CatalogTabs = (props: CatalogTabsProps) => {
 	// Handler function for updating GradesInfoCard on hover with single course
 	function updateGraphHover(data: any) {
 		const { isTooltipActive, activeLabel } = data;
-		const selectedCourses = (store.getState() as any).grade.selectedCourses;
-
 		const noBarMobile = updateMobileHover && window.innerWidth < 768;
 
 		// Update the selected course if no bar is clicked if in mobile
@@ -63,46 +61,25 @@ const CatalogTabs = (props: CatalogTabsProps) => {
 		setUpdateMobileHover({ updateMobileHover: true });
 	}
 
-	if (tab == 0) {
-		return (
-			<div>
-				<nav className={styles.tabContainer}>
-					<button className={styles.tabButtonAct} onClick={() => setTab(0)}>{`Class Times - ${
-						semester ?? ''
-					}`}</button>
-					<button className={styles.tabButton} onClick={() => setTab(1)}>
-						Grades
-					</button>
-					<button className={styles.tabButton} onClick={() => setTab(2)}>
-						Enrollment
-					</button>
-				</nav>
-				{sections && sections.length > 0 ? (
+	const renderTabs = (currentTab: number) => {
+		if (loading) {
+			return <BTLoader />;
+		}
+
+		switch (currentTab) {
+			case 0:
+				return (
 					<div className={styles.gradesBox}>
-						<SectionTable links={links} sections={sections} />
+						{sections && sections.length > 0 ? (
+							<SectionTable links={links} sections={sections} />
+						) : (
+							'There are no class times for the selected course.'
+						)}
 					</div>
-				) : !loading ? (
-					<span className={styles.gradesBox}>
-						There are no class times for the selected course.
-					</span>
-				) : null}
-			</div>
-		);
-	} else if (tab == 1) {
-		return (
-			<>
-				<nav className={styles.tabContainer}>
-					<button className={styles.tabButton} onClick={() => setTab(0)}>{`Class Times - ${
-						semester ?? ''
-					}`}</button>
-					<button className={styles.tabButtonAct} onClick={() => setTab(1)}>
-						Grades
-					</button>
-					<button className={styles.tabButton} onClick={() => setTab(2)}>
-						Enrollment
-					</button>
-				</nav>
-				{gradesData?.length > 0 ? (
+				);
+
+			case 1:
+				return gradesData?.length > 0 ? (
 					<div className={styles.gradesBox}>
 						<GradesGraph
 							graphData={gradesGraphData}
@@ -121,36 +98,37 @@ const CatalogTabs = (props: CatalogTabsProps) => {
 					</div>
 				) : (
 					<div>no grade data found</div>
-				)}
-			</>
-		);
-	} else {
-		return (
-			<>
-				<nav className={styles.tabContainer}>
-					<button className={styles.tabButton} onClick={() => setTab(0)}>{`Class Times - ${
-						semester ?? ''
-					}`}</button>
-					<button className={styles.tabButton} onClick={() => setTab(1)}>
-						Grades
+				);
+			case 2:
+				return (
+					<div className={styles.gradesBox}>
+						<EnrollmentGraphCard
+							id="gradesGraph"
+							title="Enrollment"
+							updateClassCardEnrollment={enrollReset}
+							isMobile={window.innerWidth < 768 ? true : false}
+						/>
+					</div>
+				);
+		}
+	};
+
+	return (
+		<div>
+			<nav className={styles.tabContainer}>
+				{['Class Times', 'Grades', 'Enrollment'].map((title, index) => (
+					<button
+						key={title}
+						className={`${styles.tabButton} ${tab === index && styles.selected}`}
+						onClick={() => setTab(index)}
+					>
+						{title}
 					</button>
-					<button className={styles.tabButtonAct} onClick={() => setTab(2)}>
-						Enrollment
-					</button>
-				</nav>
-				<div className={styles.gradesBox}>
-					<EnrollmentGraphCard
-						id="gradesGraph"
-						title="Enrollment"
-						updateClassCardEnrollment={() => {
-							enrollReset();
-						}}
-						isMobile={window.innerWidth < 768 ? true : false}
-					/>
-				</div>
-			</>
-		);
-	}
+				))}
+			</nav>
+			{renderTabs(tab)}
+		</div>
+	);
 };
 
 export default CatalogTabs;
