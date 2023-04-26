@@ -267,11 +267,13 @@ export function getCourseList(): any {
 export async function getEnrollment(ccn: number, term: TermInput) {
     const section = await SectionModel.findOne({"id": ccn, "class.session.term.name": termToString(term)}).lean()
     const sectionObjectId = section?._id.toString()
-
-    // no idea why but the {$exists: true} part just does not work. If $exists works eventually, we should update the code to use it
-    // const diffs = await SectionHistoryModel.find({collectionId: new ObjectId(sectionObjectId), "diff.enrollmentStatus.enrolledCount": {$exists: true}}).lean()
-
+    
     const diffs = await SectionHistoryModel.find({collectionId: new ObjectId(sectionObjectId)}).lean()
+    
+    // no idea why but none of these attempts work. If they work eventually, we should update the code to use it
+    // const diffs = await SectionHistoryModel.find({collectionId: new ObjectId(sectionObjectId), "diff.enrollmentHistory": {$exists: true}}, {strictQuery: 'throw'}).lean();
+    // const diffs = await SectionHistoryModel.find({collectionId: new ObjectId(sectionObjectId), "diff.enrollmentHistory": {$ne: null}}).lean();
+    // const diffs = await SectionHistoryModel.where("collectionId", new ObjectId(sectionObjectId)).where("diff.enrollmentHistory").ne(null).lean();
 
     const enrollmentHistory = new Array<EnrollmentDay>
 
@@ -283,8 +285,8 @@ export async function getEnrollment(ccn: number, term: TermInput) {
     var maxEnroll = 0
     var maxWaitlist = 0
     
-    // grabs the maxEnroll and maxWaitlist
-    // probably a better way to do this
+    // grabs the maxEnroll and maxWaitlist by looping over every diff
+    // could probably do this with max() and a good filter but this has the added benefit of grabbing a usable firstDay
     diffs.map((diff) => {
         if ("enrollmentStatus" in diff.diff) {
             if ("maxEnroll" in diff.diff.enrollmentStatus) {
@@ -310,16 +312,20 @@ export async function getEnrollment(ccn: number, term: TermInput) {
 
     var prevDay = firstDay
 
-    // interpolates missing dates
+    // helper function that interpolates missing dates.
+    // pushes enrollmentDay objects on every day between prevDay and currDay with the given enrollment and waitlist counts.
+    
+    // useful eg. when enrollment counts don't change over a weekend or when no enrollment is happening, 
+    // but the dates still need to be added to make the graphs look right;
+
+    // pretty basic for loop, could definitely use some optimization
     function fillGaps(currDay: Date, prevDay: Date, prevEnrollCount: number, prevWaitlistCount: number) {
         let dayGap = daysElapsed(currDay, prevDay)
-
-        console.log("dg", dayGap)
         let startingDE = daysElapsed(prevDay, firstDay)
-        console.log("sde", startingDE)
+
         for (let i = 1; i < dayGap; i++) {
 
-            // replace all prevEnrollCount and prevWaitlistCount with null if you want to let rechart interpolate 
+            // replace all prevEnrollCount and prevWaitlistCount with null if you want to let rechart interpolate
             enrollmentHistory.push({
                 daysElapsed: startingDE + i,
                 enrollCount: prevEnrollCount, 
@@ -336,15 +342,20 @@ export async function getEnrollment(ccn: number, term: TermInput) {
         return Math.round((currDay.getTime() - prevDay.getTime()) / (1000 * 60 * 60 * 24))
     }
 
+    // main loop; just iterates over every document, picks out and pushes relevant data
     diffs.map((diff) => {
+        // really dislike needing this if statement, but nothing else seems to work...
         if ("enrollmentStatus" in diff.diff) {
             
+            // fills in possible missing dates...
             if ("enrolledCount" in diff.diff.enrollmentStatus) {
                 fillGaps(new Date(diff.createdAt), prevDay, prevEnrollCount, prevWaitlistCount)
 
                 prevEnrollCount = diff.diff.enrollmentStatus.enrolledCount[1]
+                // Mongoose Date objects can be converted to javascript Date objects, very nice
                 prevDay = new Date(diff.createdAt)
             }
+
             if ("waitlistedCount" in diff.diff.enrollmentStatus) {
                 fillGaps(new Date(diff.createdAt), prevDay, prevEnrollCount, prevWaitlistCount)
 
@@ -352,6 +363,10 @@ export async function getEnrollment(ccn: number, term: TermInput) {
                 prevDay = new Date(diff.createdAt)
             }
 
+            // ...before adding the current date
+
+            // prevEnrollCount and prevWaitlistCount are pretty bad variable names here, 
+            // but they make fillGaps() a bit more readable to work
             enrollmentHistory.push({
                 daysElapsed: daysElapsed(prevDay, firstDay), 
                 enrollCount: prevEnrollCount, 
