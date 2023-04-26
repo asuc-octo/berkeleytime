@@ -35,7 +35,7 @@ const HomeHero = () => {
 	const [ date, setDate ] = useState(new Date());
 
 	const step = useMemo(() => {
-		return steps[Math.floor(date.getHours() / 24 * 5)];
+		return steps[Math.floor((date.getHours() - 0) / 24 * 6)];
 	}, [ date ]);
 
 	useEffect(() => {

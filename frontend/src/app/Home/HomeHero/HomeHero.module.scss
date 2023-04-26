@@ -19,6 +19,8 @@
     left: 0;
 
     z-index: 2;
+
+    filter: drop-shadow(0 -16px 0 rgba(white, 0.1));
   }
 
   .container {
@@ -39,7 +41,7 @@
       position: absolute;
 
       right: 272px;
-      bottom: 144px;
+      bottom: 192px;
 
       text-align: right;
 
@@ -64,7 +66,7 @@
       position: absolute;
   
       right: 24px;
-      top: 64px;
+      top: 0px;
 
       @media screen and (max-width: 768px) {
         opacity: 0.5;
@@ -74,7 +76,7 @@
     .header {
       font-size: 56px;
       color: white;
-      font-weight: 900;
+      font-weight: 700;
       line-height: 64px;
 
       position: relative;
@@ -96,7 +98,7 @@
     }
 
     .button {
-      background-color: rgba(black, 0.1);
+      background-color: rgba(white, 0.1);
 
       position: relative;
 
