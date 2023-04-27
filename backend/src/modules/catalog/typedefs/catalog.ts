@@ -24,7 +24,7 @@ type Query {
 """
 Info shared between Classes within and across semesters.
 """
-type Course {
+type Course @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     classes(term: TermInput): [Class]!
     crossListing: [Course]
     sections(term: TermInput, primary: Boolean): [Section]!
@@ -48,7 +48,7 @@ type Course {
 """
 Data for a specific class in a specific semester. There may be more than one Class for a given Course in a given semester.
 """
-type Class {
+type Class @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     course: Course!
     primarySection: Section!
     sections: [Section]!
@@ -74,7 +74,7 @@ type Class {
 """
 Sections are each associated with one Class. 
 """
-type Section {
+type Section @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     class: Class!
     course: Course!
     enrollmentHistory: [EnrollmentDay]
@@ -83,8 +83,8 @@ type Section {
     dateEnd: String
     dateStart: String
     days: [Boolean!]
-    enrollCount: Int!
-    enrollMax: Int!
+    enrollCount: Int! @cacheControl(maxAge: 60 * 60)
+    enrollMax: Int! @cacheControl(maxAge: 60 * 60)
     instructors: [Instructor]
     kind: String!
     location: String
@@ -93,8 +93,8 @@ type Section {
     primary: Boolean!
     timeEnd: String
     timeStart: String
-    waitlistCount: Int!
-    waitlistMax: Int!
+    waitlistCount: Int! @cacheControl(maxAge: 60 * 60)
+    waitlistMax: Int! @cacheControl(maxAge: 60 * 60)
 
     raw: JSONObject!
     lastUpdated: ISODate!
@@ -112,7 +112,7 @@ type EnrollmentDay {
     waitlistMax: Int!
 }
 
-type CatalogItem @cacheControl(maxAge: 3000) {
+type CatalogItem @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     subject: String!
     number: String!
     title: String!
@@ -127,12 +127,12 @@ type CatalogClass @cacheControl(inheritMaxAge: true) {
     number: String!
     title: String
     description: String
-    enrollCount: Int!
-    enrollMax: Int!
+    enrollCount: Int! @cacheControl(maxAge: 60 * 60)
+    enrollMax: Int! @cacheControl(maxAge: 60 * 60)
     unitsMax: Float!
     unitsMin: Float!
 
-    lastUpdated: ISODate!
+    lastUpdated: ISODate! @cacheControl(maxAge: 60 * 60)
 }
 
 type CourseListItem {
