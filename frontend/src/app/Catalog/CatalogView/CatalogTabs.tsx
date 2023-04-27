@@ -97,7 +97,7 @@ const CatalogTabs = (props: CatalogTabsProps) => {
 						/>
 					</div>
 				) : (
-					<div>no grade data found</div>
+					<div>There is no grade data found for the selected course.</div>
 				);
 			case 2:
 				return (
