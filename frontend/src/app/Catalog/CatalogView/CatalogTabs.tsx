@@ -28,7 +28,9 @@ const CatalogTabs = (props: CatalogTabsProps) => {
 
 	const gradesGraphData = useSelector((state: State) => state.grade.graphData ?? null);
 	const gradesData = useSelector((state: State) => state.grade?.gradesData ?? null);
+	const enrollmentData = useSelector((state: State) => state.enrollment?.enrollmentData ?? null);
 	const selectedCourses = useSelector((state: State) => state.grade.selectedCourses ?? null);
+	const enrollselectedCourses = useSelector((state: State) => state.enrollment.selectedCourses ?? null);
 
 	const links: string[] = catalogService.getLinks(sections, semester, abbreviation, courseNumber);
 
@@ -101,14 +103,19 @@ const CatalogTabs = (props: CatalogTabsProps) => {
 				);
 			case 2:
 				return (
-					<div className={styles.gradesBox}>
-						<EnrollmentGraphCard
-							id="gradesGraph"
-							title="Enrollment"
-							updateClassCardEnrollment={enrollReset}
-							isMobile={window.innerWidth < 768 ? true : false}
-						/>
-					</div>
+					enrollselectedCourses?.length > 0 ? (
+						<div className={styles.gradesBox}>
+							`<EnrollmentGraphCard
+								id="gradesGraph"
+								title="Enrollment"
+								updateClassCardEnrollment={enrollReset}
+								isMobile={window.innerWidth < 768 ? true : false}
+							/>
+						</div>
+					) : (
+						<div>There is no enrollment data found for the selected course.</div>
+					)
+					
 				);
 		}
 	};

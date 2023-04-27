@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import BTLoader from 'components/Common/BTLoader';
 import {
 	enrollReset,
+	fetchEnrollContext,
 	fetchEnrollData,
 	fetchEnrollFromUrl,
 	fetchGradeData,
@@ -129,14 +130,14 @@ const CatalogView = (props: CatalogViewProps) => {
 					);
 				});
 			}
-			if (enrollSelectedCourses?.length == 1) {
-				dispatch(fetchEnrollData(enrollSelectedCourses));
-			}
+			// if (enrollSelectedCourses?.length == 1) {
+			// 	dispatch(fetchEnrollData(enrollSelectedCourses));
+			// }
 			if (gradesSelectedCourses?.length == 1) {
 				dispatch(fetchGradeData(gradesSelectedCourses));
 			}
 		}
-	}, [course, legacyId, gradesSelectedCourses, enrollSelectedCourses]);
+	}, [ legacyId, gradesSelectedCourses, enrollSelectedCourses, semester]);
 
 	const [playlists, sections] = useMemo(() => {
 		let playlists = null;
