@@ -54,8 +54,8 @@ type Class @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     sections: [Section]!
 
     description: String
-    enrollCount: Int!
-    enrollMax: Int!
+    enrollCount: Int! @cacheControl(maxAge: 60 * 60)
+    enrollMax: Int! @cacheControl(maxAge: 60 * 60)
     number: String!
     semester: Semester!
     session: String!
@@ -63,8 +63,8 @@ type Class @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     title: String
     unitsMax: Float!
     unitsMin: Float!
-    waitlistCount: Int!
-    waitlistMax: Int!
+    waitlistCount: Int! @cacheControl(maxAge: 60 * 60)
+    waitlistMax: Int! @cacheControl(maxAge: 60 * 60)
     year: Int!
     
     raw: JSONObject!
@@ -100,12 +100,12 @@ type Section @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     lastUpdated: ISODate!
 }
 
-type Instructor {
+type Instructor @cacheControl(inheritMaxAge: true) {
     familyName: String!
     givenName: String!
 }
 
-type EnrollmentDay {
+type EnrollmentDay @cacheControl(inheritMaxAge: true) {
     enrollCount: Int!
     enrollMax: Int!
     waitlistCount: Int!
@@ -135,7 +135,7 @@ type CatalogClass @cacheControl(inheritMaxAge: true) {
     lastUpdated: ISODate! @cacheControl(maxAge: 60 * 60)
 }
 
-type CourseListItem {
+type CourseListItem @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     subject: String!
     number: String!
 }
