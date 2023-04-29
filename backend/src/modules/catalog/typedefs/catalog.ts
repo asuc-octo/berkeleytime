@@ -7,15 +7,15 @@ type Query {
     section(subject: String!, courseNumber: String!, term: TermInput!, classNumber: String!, sectionNumber: String!): Section
 
     """
-    Get info about all courses and their corresponding classes for a given semester. 
-    
+    Get info about all courses and their corresponding classes for a given semester.
+
     Used primarily in the catalog page.
     """
     catalog(term: TermInput!): [CatalogItem]
 
     """
-    Get a list of all course names across all semesters. 
-    
+    Get a list of all course names across all semesters.
+
     Useful for searching for courses.
     """
     courseList: [CourseListItem]
@@ -23,8 +23,10 @@ type Query {
 
 """
 Info shared between Classes within and across semesters.
+
+Cached for 48 hours.
 """
-type Course @cacheControl(maxAge: 60 * 60 * 24 * 2) {
+type Course @cacheControl(maxAge: 172800) {
     classes(term: TermInput): [Class]!
     crossListing: [Course]
     sections(term: TermInput, primary: Boolean): [Section]!
@@ -40,22 +42,24 @@ type Course @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     subjectName: String!
     title: String!
     toDate: String!
-    
+
     raw: JSONObject!
     lastUpdated: ISODate!
 }
 
 """
 Data for a specific class in a specific semester. There may be more than one Class for a given Course in a given semester.
+
+Cached for 48 hours.
 """
-type Class @cacheControl(maxAge: 60 * 60 * 24 * 2) {
+type Class @cacheControl(maxAge: 172800) {
     course: Course!
     primarySection: Section!
     sections: [Section]!
 
     description: String
-    enrollCount: Int! @cacheControl(maxAge: 60 * 60)
-    enrollMax: Int! @cacheControl(maxAge: 60 * 60)
+    enrollCount: Int! @cacheControl(maxAge: 3600)
+    enrollMax: Int! @cacheControl(maxAge: 3600)
     number: String!
     semester: Semester!
     session: String!
@@ -63,18 +67,20 @@ type Class @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     title: String
     unitsMax: Float!
     unitsMin: Float!
-    waitlistCount: Int! @cacheControl(maxAge: 60 * 60)
-    waitlistMax: Int! @cacheControl(maxAge: 60 * 60)
+    waitlistCount: Int! @cacheControl(maxAge: 3600)
+    waitlistMax: Int! @cacheControl(maxAge: 3600)
     year: Int!
-    
+
     raw: JSONObject!
     lastUpdated: ISODate!
 }
 
 """
-Sections are each associated with one Class. 
+Sections are each associated with one Class.
+
+Cached for 48 hours.
 """
-type Section @cacheControl(maxAge: 60 * 60 * 24 * 2) {
+type Section @cacheControl(maxAge: 172800) {
     class: Class!
     course: Course!
     enrollmentHistory: [EnrollmentDay]
@@ -83,8 +89,8 @@ type Section @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     dateEnd: String
     dateStart: String
     days: [Boolean!]
-    enrollCount: Int! @cacheControl(maxAge: 60 * 60)
-    enrollMax: Int! @cacheControl(maxAge: 60 * 60)
+    enrollCount: Int! @cacheControl(maxAge: 3600)
+    enrollMax: Int! @cacheControl(maxAge: 3600)
     instructors: [Instructor]
     kind: String!
     location: String
@@ -93,8 +99,8 @@ type Section @cacheControl(maxAge: 60 * 60 * 24 * 2) {
     primary: Boolean!
     timeEnd: String
     timeStart: String
-    waitlistCount: Int! @cacheControl(maxAge: 60 * 60)
-    waitlistMax: Int! @cacheControl(maxAge: 60 * 60)
+    waitlistCount: Int! @cacheControl(maxAge: 3600)
+    waitlistMax: Int! @cacheControl(maxAge: 3600)
 
     raw: JSONObject!
     lastUpdated: ISODate!
@@ -112,7 +118,10 @@ type EnrollmentDay @cacheControl(inheritMaxAge: true) {
     waitlistMax: Int!
 }
 
-type CatalogItem @cacheControl(maxAge: 60 * 60 * 24 * 2) {
+"""
+Cached for 48 hours.
+"""
+type CatalogItem @cacheControl(maxAge: 172800) {
     subject: String!
     number: String!
     title: String!
@@ -127,15 +136,18 @@ type CatalogClass @cacheControl(inheritMaxAge: true) {
     number: String!
     title: String
     description: String
-    enrollCount: Int! @cacheControl(maxAge: 60 * 60)
-    enrollMax: Int! @cacheControl(maxAge: 60 * 60)
+    enrollCount: Int! @cacheControl(maxAge: 3600)
+    enrollMax: Int! @cacheControl(maxAge: 3600)
     unitsMax: Float!
     unitsMin: Float!
 
-    lastUpdated: ISODate! @cacheControl(maxAge: 60 * 60)
+    lastUpdated: ISODate! @cacheControl(maxAge: 3600)
 }
 
-type CourseListItem @cacheControl(maxAge: 60 * 60 * 24 * 2) {
+"""
+Cached for 48 hours.
+"""
+type CourseListItem @cacheControl(maxAge: 172800) {
     subject: String!
     number: String!
 }

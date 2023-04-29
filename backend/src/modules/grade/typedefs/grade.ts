@@ -1,7 +1,10 @@
 import { gql } from "graphql-tag";
 
 export default gql`
-  type Grade @cacheControl(maxAge: 60 * 60 * 24 * 2) {
+  """
+  Cached for 48 hours.
+  """
+  type Grade @cacheControl(maxAge: 172800) {
     average: Float
     distribution: [GradeDistributionItem]
   }

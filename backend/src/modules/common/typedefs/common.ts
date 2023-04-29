@@ -3,6 +3,12 @@ import { gql } from "graphql-tag";
 export default gql`
 directive @auth on OBJECT | FIELD_DEFINITION
 
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+  inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+
 scalar JSON
 scalar JSONObject
 
@@ -29,11 +35,5 @@ type Query {
 enum CacheControlScope {
     PUBLIC
     PRIVATE
-  }
-  
-  directive @cacheControl(
-    maxAge: Int
-    scope: CacheControlScope
-    inheritMaxAge: Boolean
-  ) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+}
 `
