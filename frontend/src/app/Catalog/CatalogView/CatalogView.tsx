@@ -89,15 +89,10 @@ const CatalogView = (props: CatalogViewProps) => {
 	const [playlists, sections] = useMemo(() => {
 		let playlists = null;
 		let sections = null;
-		// let semesters = null;
 
 		if (course?.playlistSet) {
 			const { edges } = course.playlistSet;
 			playlists = catalogService.sortPills(edges.map((e) => e.node as PlaylistType));
-
-			// semesters = catalogService.sortSemestersByLatest(
-			// 	edges.map((e) => e.node).filter((n) => n.category === 'semester')
-			// );
 		}
 
 		if (course?.sectionSet) {
@@ -105,7 +100,6 @@ const CatalogView = (props: CatalogViewProps) => {
 			sections = sortSections(edges.map((e) => e.node));
 		}
 
-		// return [playlists ?? skeleton, sections ?? [], semesters];
 		return [playlists ?? skeleton, sections ?? null];
 	}, [course]);
 
