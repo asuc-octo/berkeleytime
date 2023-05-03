@@ -29,49 +29,30 @@ const CatalogList = (props: CatalogListProps) => {
 	const [fetchCatalogList, { data, loading, called }] = useGetCoursesForFilterLazyQuery({});
 	const history = useHistory();
 
-	const { catalogList, catalogIndex } = useMemo(() => {
+	const courses = useMemo(() => {
 		if (!data)
-			return {
-				catalogList: [...Array(20).keys()].map(
-					(key) =>
-						({
-							__typename: 'Skeleton',
-							id: key
-						} as Skeleton)
-				),
-				searchTerms: null
-			};
+			return [...Array(20).keys()].map(
+				(key) =>
+					({
+						__typename: 'Skeleton',
+						id: key
+					} as Skeleton)
+			);
 
-		let catalogList = data.allCourses.edges.map((edge) => edge.node);
-
-		const catalogIndex = CatalogService.buildCourseIndex(catalogList);
+		let courseResults = CatalogService.searchCatalog(
+			data.allCourses.edges.map((edge) => edge.node),
+			searchQuery
+		).sort(sortByAttribute(sortQuery.value));
 
 		//TODO: Very big problem to inspect - server is returning duplicate entries of same courses.
 		//			Here we filter the duplicates to ensure catalog list consistency.
-		catalogList = catalogList.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i);
+		courseResults = courseResults.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i);
 
 		// Inspect one case of duplication:
 		// console.log(courses.filter((v, i, a) => v.id === 'Q291cnNlVHlwZTo0NDc1'));
 
-		return { catalogList, catalogIndex };
-	}, [data]);
-
-	const courses = useMemo(() => {
-		if (catalogIndex && searchQuery) {
-			const result = catalogIndex
-				.search(searchQuery.trim().toLowerCase())
-				.map((res) => catalogList[res.refIndex])
-				.sort(sortByAttribute(sortQuery.value));
-
-			return sortDir ? result.reverse() : result;
-		}
-
-		const copy = [...catalogList] as CourseOverviewFragment[];
-
-		return sortDir
-			? copy.sort(sortByAttribute(sortQuery.value)).reverse()
-			: copy.sort(sortByAttribute(sortQuery.value));
-	}, [catalogIndex, catalogList, searchQuery, sortDir, sortQuery.value]);
+		return sortDir ? courseResults.reverse() : courseResults;
+	}, [data, searchQuery, sortDir, sortQuery.value]);
 
 	useEffect(() => {
 		const playlistString = Object.values(currentFilters ?? {})

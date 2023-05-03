@@ -157,7 +157,17 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
 	return result;
 };
 
-const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
+/**
+ *
+ * @param courses an array of `CourseOverviewFragment`
+ * @param rawQuery A string to search for within the `courses` array
+ * @description Applies `rawQuery` over a list of courses and returns the best matches
+ * within `courses`
+ * @returns an array of CourseOverviewFragment
+ */
+const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: string) => {
+	if (!rawQuery || rawQuery === '' || rawQuery === null) return courses;
+
 	const options: Fuse.IFuseOptions<CourseInfo> = {
 		includeScore: true,
 		shouldSort: true,
@@ -165,9 +175,9 @@ const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 		threshold: 0.25,
 		keys: [
 			{ name: 'title', weight: 1 },
-			{ name: 'abbreviation', weight: 1 },
-			{ name: 'abbreviations', weight: 1 },
-			{ name: 'courseNumber', weight: 1 },
+			{ name: 'abbreviation', weight: 1.5 },
+			{ name: 'abbreviations', weight: 2 },
+			{ name: 'courseNumber', weight: 1.2 },
 			{ name: 'fullCourseCode', weight: 1 }
 		],
 		// The fuse types are wrong for this sort fn
@@ -183,7 +193,7 @@ const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 		}
 	};
 
-	const searchTerms = courses.map((course) => {
+	const courseInfo = courses.map((course) => {
 		const { title, abbreviation, courseNumber } = course;
 
 		const abbreviations =
@@ -209,7 +219,8 @@ const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 		};
 	});
 
-	return new Fuse(searchTerms, options);
+	const fuse = new Fuse(courseInfo, options);
+	return fuse.search(rawQuery.trim().toLowerCase()).map((res) => courses[res.refIndex]);
 };
 
 /**
@@ -282,5 +293,5 @@ export default {
 	sortPills,
 	formatEnrollment,
 	colorEnrollment,
-	buildCourseIndex
+	searchCatalog
 };
