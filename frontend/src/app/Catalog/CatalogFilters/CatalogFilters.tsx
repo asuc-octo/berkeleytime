@@ -171,7 +171,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 							onChange={(newValue) => setSortQuery(newValue as SortOption)}
 						/>
 						<button onClick={() => setDir((prev) => !prev)}>
-							{sortDir ? <SortUp /> : <SortDown />}
+							{sortDir ? <SortUp color="#8A8A8A" /> : <SortDown color="#8A8A8A" />}
 						</button>
 					</div>
 

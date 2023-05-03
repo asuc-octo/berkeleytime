@@ -1,5 +1,11 @@
 import Fuse from 'fuse.js';
-import { FilterFragment, GetFiltersQuery, PlaylistType, CourseOverviewFragment } from 'graphql';
+import {
+	FilterFragment,
+	GetFiltersQuery,
+	PlaylistType,
+	CourseOverviewFragment,
+	CourseFragment
+} from 'graphql';
 import { laymanTerms } from 'lib/courses/course';
 import { courseToName } from 'lib/courses/course';
 import {
@@ -282,6 +288,32 @@ function colorEnrollment(percentage: number) {
 	}
 }
 
+const descending = (courses: CourseOverviewFragment[], sortQuery: SortOption) => {
+	switch (sortQuery.value) {
+		case 'average_grade': {
+			return [
+				...courses.filter((course) => course.gradeAverage === -1 || course.gradeAverage === null),
+				...courses.filter((course) => course.gradeAverage !== -1 && course.gradeAverage !== null)
+			].reverse();
+		}
+		case 'enrolled_percentage': {
+			return [
+				...courses.filter((course) => course.enrolledPercentage === -1),
+				...courses.filter((course) => course.enrolledPercentage !== -1)
+			].reverse();
+		}
+		case 'open_seats': {
+			return [
+				...courses.filter((course) => course.openSeats === -1),
+				...courses.filter((course) => course.openSeats !== -1)
+			].reverse();
+		}
+		default: {
+			return courses.reverse();
+		}
+	}
+};
+
 export default {
 	FILTER_TEMPLATE,
 	SORT_OPTIONS,
@@ -293,5 +325,6 @@ export default {
 	sortPills,
 	formatEnrollment,
 	colorEnrollment,
-	searchCatalog
+	searchCatalog,
+	descending
 };
