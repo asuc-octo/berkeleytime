@@ -1,6 +1,6 @@
 import { FixedSizeList } from 'react-window';
 import CatalogListItem from './CatalogListItem';
-import { CourseFragment, CourseOverviewFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
+import { CourseFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
 import { CurrentFilters, FilterOption, SortOption } from '../types';
 import { Dispatch, memo, SetStateAction, useEffect, useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';
@@ -51,8 +51,8 @@ const CatalogList = (props: CatalogListProps) => {
 		// Inspect one case of duplication:
 		// console.log(courses.filter((v, i, a) => v.id === 'Q291cnNlVHlwZTo0NDc1'));
 
-		return sortDir ? courseResults.reverse() : courseResults;
-	}, [data, searchQuery, sortDir, sortQuery.value]);
+		return sortDir ? CatalogService.descending(courseResults, sortQuery) : courseResults;
+	}, [data, searchQuery, sortDir, sortQuery]);
 
 	useEffect(() => {
 		const playlistString = Object.values(currentFilters ?? {})
