@@ -15,7 +15,8 @@ import {
 	FilterOptions,
 	SortOption,
 	CurrentFilters,
-	CourseInfo
+	CourseInfo,
+	CatalogSortKeys
 } from './types';
 
 import styles from './CatalogList/CatalogList.module.scss';
@@ -289,28 +290,27 @@ function colorEnrollment(percentage: number) {
 }
 
 const descending = (courses: CourseOverviewFragment[], sortQuery: SortOption) => {
-	switch (sortQuery.value) {
-		case 'average_grade': {
+	const keys: Record<CatalogSortKeys, keyof CourseOverviewFragment> = {
+		average_grade: 'gradeAverage',
+		enrolled_percentage: 'enrolledPercentage',
+		open_seats: 'openSeats',
+		department_name: 'title',
+		relevance: 'title'
+	};
+
+	const { value } = sortQuery;
+	const param = keys[value];
+
+	switch (value) {
+		case 'average_grade':
+		case 'enrolled_percentage':
+		case 'open_seats':
 			return [
-				...courses.filter((course) => course.gradeAverage === -1 || course.gradeAverage === null),
-				...courses.filter((course) => course.gradeAverage !== -1 && course.gradeAverage !== null)
+				...courses.filter((course) => course[param] === -1 || course[param] === null),
+				...courses.filter((course) => course[param] !== -1 && course[param] !== null)
 			].reverse();
-		}
-		case 'enrolled_percentage': {
-			return [
-				...courses.filter((course) => course.enrolledPercentage === -1),
-				...courses.filter((course) => course.enrolledPercentage !== -1)
-			].reverse();
-		}
-		case 'open_seats': {
-			return [
-				...courses.filter((course) => course.openSeats === -1),
-				...courses.filter((course) => course.openSeats !== -1)
-			].reverse();
-		}
-		default: {
+		default:
 			return courses.reverse();
-		}
 	}
 };
 
