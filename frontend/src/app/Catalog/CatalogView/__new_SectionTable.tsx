@@ -1,7 +1,6 @@
 import { SectionFragment } from 'graphql';
 import { CSSProperties } from 'react';
 import { formatSectionTime } from 'utils/sections/section';
-import catalogService from '../service';
 import Skeleton from 'react-loading-skeleton';
 
 import people from 'assets/svg/catalog/people.svg';
@@ -14,8 +13,7 @@ import kubi from 'assets/img/eggs/kubi.png';
 import garcia from 'assets/img/eggs/garcia.png';
 
 import styles from './CatalogView.module.scss';
-
-const { colorEnrollment, formatEnrollment } = catalogService;
+import { colorEnrollment, formatEnrollment } from '../service';
 
 const easterEggImages = new Map<string, string>([
 	['DENERO J', denero],

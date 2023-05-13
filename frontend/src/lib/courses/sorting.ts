@@ -55,7 +55,7 @@ const compareEnrollmentPercentage: CompareFn = (courseA, courseB) => {
 /**
  * Returns comparator based on the sort
  */
-export function sortByAttribute(sortAttribute: CatalogSortKeys) {
+export function byAttribute(sortAttribute: CatalogSortKeys) {
 	switch (sortAttribute) {
 		case 'relevance':
 			return compareRelevance;

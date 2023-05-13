@@ -1,11 +1,5 @@
 import Fuse from 'fuse.js';
-import {
-	FilterFragment,
-	GetFiltersQuery,
-	PlaylistType,
-	CourseOverviewFragment,
-	CourseFragment
-} from 'graphql';
+import { FilterFragment, GetFiltersQuery, PlaylistType, CourseOverviewFragment } from 'graphql';
 import { laymanTerms } from 'lib/courses/course';
 import { courseToName } from 'lib/courses/course';
 import {
@@ -14,9 +8,9 @@ import {
 	CatalogFilterKeys,
 	FilterOptions,
 	SortOption,
-	CurrentFilters,
 	CourseInfo,
-	CatalogSortKeys
+	CatalogSortKeys,
+	CatalogFilters
 } from './types';
 
 import styles from './CatalogList/CatalogList.module.scss';
@@ -27,7 +21,7 @@ const SEMESTER_VALUES = {
 	fall: 0.2
 };
 
-const SORT_OPTIONS: SortOption[] = [
+export const SORT_OPTIONS: SortOption[] = [
 	{ value: 'relevance', label: 'Sort By: Relevance' },
 	{ value: 'average_grade', label: 'Sort By: Average Grade' },
 	{ value: 'department_name', label: 'Sort By: Department Name' },
@@ -35,7 +29,7 @@ const SORT_OPTIONS: SortOption[] = [
 	{ value: 'enrolled_percentage', label: 'Sort By: Percent Enrolled' }
 ];
 
-const INITIAL_FILTERS: CurrentFilters = {
+export const DEFAULT_FILTERS: CatalogFilters = {
 	department: null,
 	semester: null,
 	units: null,
@@ -43,7 +37,7 @@ const INITIAL_FILTERS: CurrentFilters = {
 	requirements: null
 };
 
-const FILTER_TEMPLATE: FilterTemplate = {
+export const FILTER_TEMPLATE: FilterTemplate = {
 	requirements: {
 		name: 'Requirements',
 		isClearable: true,
@@ -96,9 +90,7 @@ const FILTER_TEMPLATE: FilterTemplate = {
  * @returns An object where the keys are filter categories and the values are
  * a sorted array of `FilterFragments` or null if no data was passed.
  */
-const processFilterData = (data?: GetFiltersQuery) => {
-	if (!data) return null;
-
+const processFilterData = (data: GetFiltersQuery) => {
 	const filters = data.allPlaylists.edges
 		.map((edge) => edge.node)
 		.reduce((prev, filter) => {
@@ -122,6 +114,14 @@ const processFilterData = (data?: GetFiltersQuery) => {
 	return filters;
 };
 
+export const buildPlaylist = (filters: CatalogFilters) => {
+	return Object.values(filters ?? {})
+		.filter((val) => val !== null)
+		.map((item) => (Array.isArray(item) ? item.map((v) => v.value.id) : item?.value.id))
+		.flat()
+		.join(',');
+};
+
 /**
  *
  * @param filterItems an empty filter template
@@ -130,8 +130,10 @@ const processFilterData = (data?: GetFiltersQuery) => {
  * appropriate filter options from the server.
  * @returns a `FilterTemplate` with populated `options`
  */
-const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions | null) => {
-	if (!filters) return null;
+export const putFilterOptions = (filterItems: FilterTemplate, data?: GetFiltersQuery | null) => {
+	if (!data) return null;
+
+	const filters = processFilterData(data);
 
 	const result = { ...filterItems };
 
@@ -164,17 +166,7 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
 	return result;
 };
 
-/**
- *
- * @param courses an array of `CourseOverviewFragment`
- * @param rawQuery A string to search for within the `courses` array
- * @description Applies `rawQuery` over a list of courses and returns the best matches
- * within `courses`
- * @returns an array of CourseOverviewFragment
- */
-const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: string) => {
-	if (!rawQuery || rawQuery === '' || rawQuery === null) return courses;
-
+export const buildCourseIndex = (courses: CourseOverviewFragment[]) => {
 	const options: Fuse.IFuseOptions<CourseInfo> = {
 		includeScore: true,
 		shouldSort: true,
@@ -200,7 +192,7 @@ const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: string) => {
 		}
 	};
 
-	const courseInfo = courses.map((course) => {
+	const searchTerms = courses.map((course) => {
 		const { title, abbreviation, courseNumber } = course;
 
 		const abbreviations =
@@ -226,8 +218,16 @@ const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: string) => {
 		};
 	});
 
-	const fuse = new Fuse(courseInfo, options);
-	return fuse.search(rawQuery.trim().toLowerCase()).map((res) => courses[res.refIndex]);
+	return new Fuse(searchTerms, options);
+};
+
+export const searchCatalog = (
+	courseIndex: Fuse<CourseInfo> | null,
+	query: string,
+	courses: CourseOverviewFragment[]
+) => {
+	if (!query || query === '' || query === null || !courseIndex) return courses;
+	return courseIndex.search(query.trim().toLowerCase()).map((res) => courses[res.refIndex]);
 };
 
 /**
@@ -260,7 +260,7 @@ const SemesterToValue = (semesterFilter: FilterFragment) => {
  * @description sorts the playlists alphabetically, and
  * by putting the `units` followed by the semester category at the end of the list
  */
-const sortPills = (playlists: PlaylistType[]) => {
+export const sortPills = (playlists: PlaylistType[]) => {
 	const semesters = sortSemestersByLatest(playlists.filter((p) => p.category === 'semester'));
 	const units = sortByName(playlists.filter((p) => p.category === 'units'));
 	const rest = sortByName(playlists.filter((p) => !['units', 'semester'].includes(p.category)));
@@ -271,12 +271,12 @@ const sortPills = (playlists: PlaylistType[]) => {
 export const sortByName = <T extends { name: string }[]>(arr: T) =>
 	arr.sort((a, b) => a.name.localeCompare(b.name));
 
-function formatEnrollment(percentage: number) {
+export function formatEnrollment(percentage: number) {
 	if (percentage === -1) return 'N/A';
 	return `${Math.floor(percentage * 100)}% enrolled`;
 }
 
-function colorEnrollment(percentage: number) {
+export function colorEnrollment(percentage: number) {
 	if (percentage === -1) return '';
 
 	const pct = percentage * 100;
@@ -289,7 +289,7 @@ function colorEnrollment(percentage: number) {
 	}
 }
 
-const descending = (courses: CourseOverviewFragment[], sortQuery: SortOption) => {
+export const flipCourses = (courses: CourseOverviewFragment[], sortQuery: SortOption) => {
 	const keys: Record<CatalogSortKeys, keyof CourseOverviewFragment> = {
 		average_grade: 'gradeAverage',
 		enrolled_percentage: 'enrolledPercentage',
@@ -301,30 +301,20 @@ const descending = (courses: CourseOverviewFragment[], sortQuery: SortOption) =>
 	const { value } = sortQuery;
 	const param = keys[value];
 
+	let result = [];
+
 	switch (value) {
 		case 'average_grade':
 		case 'enrolled_percentage':
 		case 'open_seats':
-			return [
+			result = [
 				...courses.filter((course) => course[param] === -1 || course[param] === null),
 				...courses.filter((course) => course[param] !== -1 && course[param] !== null)
-			].reverse();
+			];
+			break;
 		default:
-			return courses.reverse();
+			result = courses;
 	}
-};
 
-export default {
-	FILTER_TEMPLATE,
-	SORT_OPTIONS,
-	INITIAL_FILTERS,
-	processFilterData,
-	putFilterOptions,
-	sortByName,
-	sortSemestersByLatest,
-	sortPills,
-	formatEnrollment,
-	colorEnrollment,
-	searchCatalog,
-	descending
+	return result.reverse();
 };
