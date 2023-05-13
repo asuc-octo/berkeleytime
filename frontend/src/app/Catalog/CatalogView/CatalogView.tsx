@@ -1,13 +1,11 @@
-import { Dispatch, memo, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import people from 'assets/svg/catalog/people.svg';
 import chart from 'assets/svg/catalog/chart.svg';
 import book from 'assets/svg/catalog/book.svg';
 import launch from 'assets/svg/catalog/launch.svg';
 import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow.svg';
-import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
-import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
-import { CurrentFilters } from 'app/Catalog/types';
+import { PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
 import { useHistory, useParams } from 'react-router';
 import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
@@ -16,26 +14,20 @@ import ReadMore from './ReadMore';
 import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
 import SectionTable from './SectionTable';
-
-interface CatalogViewProps {
-	coursePreview: CourseFragment | null;
-	setCurrentCourse: Dispatch<SetStateAction<CourseFragment | null>>;
-	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
-}
+import useCatalog from '../useCatalog';
+import { sortPills } from '../service';
 
 const skeleton = [...Array(8).keys()];
 
-const CatalogView = (props: CatalogViewProps) => {
-	const { coursePreview, setCurrentFilters, setCurrentCourse } = props;
+const CatalogView = () => {
+	const [{ course }, dispatch] = useCatalog();
+	const [isOpen, setOpen] = useState(false);
+	const history = useHistory();
 	const { abbreviation, courseNumber, semester } = useParams<{
 		abbreviation: string;
 		courseNumber: string;
 		semester: string;
 	}>();
-
-	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
-	const [isOpen, setOpen] = useState(false);
-	const history = useHistory();
 
 	const legacyId = useSelector(
 		(state: any) =>
@@ -48,20 +40,16 @@ const CatalogView = (props: CatalogViewProps) => {
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
-				setCourse(course);
+				dispatch({ type: 'setCourse', course });
 				setOpen(true);
 			}
 		}
 	});
 
 	useEffect(() => {
-		if (!abbreviation || !courseNumber) {
-			setOpen(false);
-		}
-	}, [abbreviation, courseNumber]);
-
-	useEffect(() => {
 		const [sem, year] = semester?.split(' ') ?? [null, null];
+
+		if (!abbreviation || !courseNumber) setOpen(false);
 
 		const variables = {
 			abbreviation: abbreviation ?? null,
@@ -75,54 +63,28 @@ const CatalogView = (props: CatalogViewProps) => {
 	}, [getCourse, abbreviation, courseNumber, semester]);
 
 	useEffect(() => {
-		const course = data?.allCourses.edges[0].node;
+		const newCourse = data?.allCourses.edges[0].node;
 
-		if (course && course?.id === coursePreview?.id) {
-			setCourse(course);
+		if (newCourse && newCourse?.id === course?.id) {
+			dispatch({ type: 'setCourse', course: newCourse });
 			setOpen(true);
-		} else if (coursePreview) {
-			setCourse(coursePreview);
+		} else if (course) {
+			dispatch({ type: 'setCourse', course });
 			setOpen(true);
 		}
-	}, [coursePreview, data]);
+	}, [course, data, dispatch]);
 
 	const [playlists, sections] = useMemo(() => {
 		let playlists = null;
 		let sections = null;
 
-		if (course?.playlistSet) {
-			const { edges } = course.playlistSet;
-			playlists = catalogService.sortPills(edges.map((e) => e.node as PlaylistType));
-		}
+		if (course?.playlistSet)
+			playlists = sortPills(course.playlistSet.edges.map((e) => e.node as PlaylistType));
 
-		if (course?.sectionSet) {
-			const { edges } = course.sectionSet;
-			sections = sortSections(edges.map((e) => e.node));
-		}
+		if (course?.sectionSet) sections = sortSections(course.sectionSet.edges.map((e) => e.node));
 
-		return [playlists ?? skeleton, sections ?? null];
+		return [playlists ?? skeleton, sections];
 	}, [course]);
-
-	const handlePill = (pillItem: PlaylistType) => {
-		setCurrentFilters((prev) => {
-			if (['haas', 'ls', 'engineering', 'university'].includes(pillItem.category)) {
-				const reqs = prev.requirements;
-				if (reqs?.find((el) => el.label === pillItem.name)) {
-					return prev;
-				}
-
-				return {
-					...prev,
-					requirements: [...(reqs ?? []), { label: pillItem.name, value: pillItem }]
-				};
-			}
-
-			return {
-				...prev,
-				[pillItem.category]: { label: pillItem.name, value: pillItem }
-			};
-		});
-	};
 
 	const enrollPath = legacyId
 		? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
@@ -135,8 +97,7 @@ const CatalogView = (props: CatalogViewProps) => {
 			<button
 				className={styles.modalButton}
 				onClick={() => {
-					setCurrentCourse(null);
-					setCourse(null);
+					dispatch({ type: 'setCourse', course: null });
 					history.replace(`/catalog/${semester}`);
 				}}
 			>
@@ -192,7 +153,11 @@ const CatalogView = (props: CatalogViewProps) => {
 								typeof req === 'number' ? (
 									<Skeleton key={req} className={styles.pill} width={75} />
 								) : (
-									<span className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
+									<span
+										className={styles.pill}
+										key={req.id}
+										onClick={() => dispatch({ type: 'setPill', pillItem: req })}
+									>
 										{req.name}
 									</span>
 								)

@@ -27,7 +27,7 @@ export type FilterOptions = {
 	[category in CatalogCategoryKeys]: FilterFragment[];
 };
 
-export type CurrentFilters = {
+export type CatalogFilters = {
 	department: FilterOption | null;
 	level: FilterOption[] | null;
 	units: FilterOption[] | null;

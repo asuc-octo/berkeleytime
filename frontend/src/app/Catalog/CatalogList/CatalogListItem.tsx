@@ -5,12 +5,10 @@ import { CSSProperties, memo } from 'react';
 import { areEqual } from 'react-window';
 import { ReactComponent as BookmarkSaved } from 'assets/svg/catalog/bookmark-saved.svg';
 import { ReactComponent as BookmarkUnsaved } from 'assets/svg/catalog/bookmark-unsaved.svg';
-import catalogService from '../service';
-
-const { colorEnrollment, formatEnrollment } = catalogService;
 
 import styles from './CatalogList.module.scss';
 import Skeleton from 'react-loading-skeleton';
+import { colorEnrollment, formatEnrollment } from '../service';
 
 function formatUnits(units: string) {
 	return `${units} Unit${units === '1.0' || units === '1' ? '' : 's'}`
