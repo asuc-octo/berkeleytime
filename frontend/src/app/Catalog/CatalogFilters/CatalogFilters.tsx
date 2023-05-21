@@ -1,4 +1,13 @@
-import { Dispatch, memo, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+	Dispatch,
+	memo,
+	SetStateAction,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState
+} from 'react';
 import { ActionMeta } from 'react-select';
 import BTSelect from 'components/Custom/Select';
 
@@ -13,6 +22,7 @@ import BTLoader from 'components/Common/BTLoader';
 import { useHistory, useParams } from 'react-router';
 
 import styles from './CatalogFilters.module.scss';
+import { SortDown, SortUp } from 'iconoir-react';
 
 type CatalogFilterProps = {
 	currentFilters: CurrentFilters;
@@ -21,6 +31,8 @@ type CatalogFilterProps = {
 	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
 	setSortQuery: Dispatch<SetStateAction<SortOption>>;
 	setSearchQuery: Dispatch<SetStateAction<string>>;
+	setDir: Dispatch<SetStateAction<boolean>>;
+	sortDir: boolean;
 };
 
 const { SORT_OPTIONS, FILTER_TEMPLATE, INITIAL_FILTERS } = catalogService;
@@ -32,7 +44,9 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 		sortQuery,
 		searchQuery,
 		setSortQuery,
-		setSearchQuery
+		setSearchQuery,
+		setDir,
+		sortDir
 	} = props;
 
 	const { data, loading, error } = useGetFiltersQuery();
@@ -77,14 +91,15 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	const handleFilterReset = useCallback(() => {
 		setSortQuery(SORT_OPTIONS[0]);
 		setSearchQuery('');
-		
+
 		if (filterList) {
 			const semester = filterList.semester.options[0] as FilterOption;
 			setCurrentFilters({
 				...INITIAL_FILTERS,
 				semester
 			});
-			history.push(`/catalog/${semester.value.name}`);
+
+			history.push({ pathname: `/catalog/${semester.value.name}` });
 		}
 	}, [filterList, history, setCurrentFilters, setSearchQuery, setSortQuery]);
 
@@ -100,11 +115,12 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 
 		// Update the url slug if semester filter changes.
 		if (key === 'semester') {
-			history.push(
-				`/catalog/${(newValue as FilterOption)?.value?.name}`
+			history.push({
+				pathname: `/catalog/${(newValue as FilterOption)?.value?.name}`
 					.concat(slug?.abbreviation ? `/${slug.abbreviation}` : '')
-					.concat(slug?.courseNumber ? `/${slug.courseNumber}` : '')
-			);
+					.concat(slug?.courseNumber ? `/${slug.courseNumber}` : ''),
+				search: location.search
+			});
 		}
 	};
 
@@ -114,7 +130,10 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 				<BTInput
 					style={{ border: 'none', width: '100%' }}
 					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.target.value)}
+					onChange={(e) => {
+						history.replace({ pathname: location.pathname, search: `q=${e.target.value}` });
+						setSearchQuery(e.target.value);
+					}}
 					type="search"
 					placeholder="Search for a class..."
 					icon={<SearchIcon />}
@@ -132,26 +151,35 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 						</button>
 					</div>
 					<BTInput
-						className={styles.search}
 						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
+						onChange={(e) => {
+							history.replace({ pathname: location.pathname, search: `q=${e.target.value}` });
+							setSearchQuery(e.target.value);
+						}}
 						type="search"
 						placeholder="Search for a class..."
 						icon={<SearchIcon />}
 					/>
-					<BTSelect
-						value={sortQuery}
-						isClearable={false}
-						options={SORT_OPTIONS}
-						isSearchable={false}
-						onChange={(newValue) => setSortQuery(newValue as SortOption)}
-					/>
+
+					<div className={styles.searchContainer}>
+						<BTSelect
+							className={styles.sort}
+							value={sortQuery}
+							isClearable={false}
+							options={SORT_OPTIONS}
+							isSearchable={false}
+							onChange={(newValue) => setSortQuery(newValue as SortOption)}
+						/>
+						<button onClick={() => setDir((prev) => !prev)}>
+							{sortDir ? <SortUp color="#8A8A8A" /> : <SortDown color="#8A8A8A" />}
+						</button>
+					</div>
+
 					{filterList &&
 						Object.entries(filterList).map(([key, filter]) => (
 							<div className={styles.item} key={key}>
 								<p>{filter.name}</p>
 								<BTSelect
-									className={styles.select}
 									name={key}
 									value={currentFilters[key as CatalogFilterKeys]}
 									isClearable={filter.isClearable}
