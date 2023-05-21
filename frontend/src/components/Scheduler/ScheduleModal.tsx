@@ -8,7 +8,7 @@ import {
 	getUnitsForSchedule
 } from '../../utils/scheduler/scheduler';
 import { Button } from 'bt/custom';
-import { unitsToString } from 'utils/courses/units';
+import { unitsToString } from 'lib/courses/units';
 
 type ContentProps = {
 	scheduleId: string;

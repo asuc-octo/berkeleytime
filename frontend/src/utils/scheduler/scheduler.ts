@@ -4,10 +4,10 @@ import {
 	ScheduleFragment,
 	SectionFragment
 } from 'graphql';
-import { addUnits, parseUnits, Units, unitsToString, ZERO_UNITS } from 'utils/courses/units';
+import { addUnits, parseUnits, Units, unitsToString, ZERO_UNITS } from 'lib/courses/units';
 import { Semester, semesterToString } from 'utils/playlists/semesters';
 import { getNodes } from '../graphql';
-import { courseToColor, courseToName, COURSE_PALETTE } from 'utils/courses/course';
+import { courseToColor, courseToName, COURSE_PALETTE } from 'lib/courses/course';
 import { AccessStatus } from './accessStatus';
 import { dayToICalDay, reinterpretDateAsUTC, stringToDate } from 'utils/date';
 import { addWeeks, isBefore, min, setDay } from 'date-fns';
