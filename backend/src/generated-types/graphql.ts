@@ -24,8 +24,7 @@ export type CacheControlScope =
 export type CatalogClass = {
   __typename?: 'CatalogClass';
   description?: Maybe<Scalars['String']>;
-  enrollCount: Scalars['Int'];
-  enrollMax: Scalars['Int'];
+  enrollment?: Maybe<EnrollmentData>;
   lastUpdated: Scalars['ISODate'];
   number: Scalars['String'];
   title?: Maybe<Scalars['String']>;
@@ -54,8 +53,7 @@ export type Class = {
   __typename?: 'Class';
   course: Course;
   description?: Maybe<Scalars['String']>;
-  enrollCount: Scalars['Int'];
-  enrollMax: Scalars['Int'];
+  enrollment?: Maybe<EnrollmentData>;
   lastUpdated: Scalars['ISODate'];
   number: Scalars['String'];
   primarySection: Section;
@@ -67,8 +65,6 @@ export type Class = {
   title?: Maybe<Scalars['String']>;
   unitsMax: Scalars['Float'];
   unitsMin: Scalars['Float'];
-  waitlistCount: Scalars['Int'];
-  waitlistMax: Scalars['Int'];
   year: Scalars['Int'];
 };
 
@@ -144,8 +140,8 @@ export type CustomEventInput = {
   title?: InputMaybe<Scalars['String']>;
 };
 
-export type EnrollmentDay = {
-  __typename?: 'EnrollmentDay';
+export type EnrollmentData = {
+  __typename?: 'EnrollmentData';
   enrollCount: Scalars['Int'];
   enrollMax: Scalars['Int'];
   waitlistCount: Scalars['Int'];
@@ -341,12 +337,11 @@ export type Section = {
   ccn: Scalars['Int'];
   class: Class;
   course: Course;
+  currentEnrollment?: Maybe<EnrollmentData>;
   dateEnd?: Maybe<Scalars['String']>;
   dateStart?: Maybe<Scalars['String']>;
   days?: Maybe<Array<Scalars['Boolean']>>;
-  enrollCount: Scalars['Int'];
-  enrollMax: Scalars['Int'];
-  enrollmentHistory?: Maybe<Array<Maybe<EnrollmentDay>>>;
+  enrollmentHistory?: Maybe<Array<Maybe<EnrollmentData>>>;
   instructors?: Maybe<Array<Maybe<Instructor>>>;
   kind: Scalars['String'];
   lastUpdated: Scalars['ISODate'];
@@ -357,8 +352,6 @@ export type Section = {
   raw: Scalars['JSONObject'];
   timeEnd?: Maybe<Scalars['String']>;
   timeStart?: Maybe<Scalars['String']>;
-  waitlistCount: Scalars['Int'];
-  waitlistMax: Scalars['Int'];
 };
 
 export type Semester =
@@ -486,7 +479,7 @@ export type ResolversTypes = {
   CourseListItem: ResolverTypeWrapper<CourseListItem>;
   CustomEvent: ResolverTypeWrapper<CustomEvent>;
   CustomEventInput: CustomEventInput;
-  EnrollmentDay: ResolverTypeWrapper<EnrollmentDay>;
+  EnrollmentData: ResolverTypeWrapper<EnrollmentData>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Grade: ResolverTypeWrapper<Grade>;
   GradeDistributionItem: ResolverTypeWrapper<GradeDistributionItem>;
@@ -519,7 +512,7 @@ export type ResolversParentTypes = {
   CourseListItem: CourseListItem;
   CustomEvent: CustomEvent;
   CustomEventInput: CustomEventInput;
-  EnrollmentDay: EnrollmentDay;
+  EnrollmentData: EnrollmentData;
   Float: Scalars['Float'];
   Grade: Grade;
   GradeDistributionItem: GradeDistributionItem;
@@ -555,8 +548,7 @@ export type CacheControlDirectiveResolver<Result, Parent, ContextType = any, Arg
 
 export type CatalogClassResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogClass'] = ResolversParentTypes['CatalogClass']> = {
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  enrollment?: Resolver<Maybe<ResolversTypes['EnrollmentData']>, ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -579,8 +571,7 @@ export type CatalogItemResolvers<ContextType = any, ParentType extends Resolvers
 export type ClassResolvers<ContextType = any, ParentType extends ResolversParentTypes['Class'] = ResolversParentTypes['Class']> = {
   course?: Resolver<ResolversTypes['Course'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  enrollment?: Resolver<Maybe<ResolversTypes['EnrollmentData']>, ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   primarySection?: Resolver<ResolversTypes['Section'], ParentType, ContextType>;
@@ -592,8 +583,6 @@ export type ClassResolvers<ContextType = any, ParentType extends ResolversParent
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unitsMax?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   unitsMin?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  waitlistCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  waitlistMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   year?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -634,7 +623,7 @@ export type CustomEventResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type EnrollmentDayResolvers<ContextType = any, ParentType extends ResolversParentTypes['EnrollmentDay'] = ResolversParentTypes['EnrollmentDay']> = {
+export type EnrollmentDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['EnrollmentData'] = ResolversParentTypes['EnrollmentData']> = {
   enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   waitlistCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -714,12 +703,11 @@ export type SectionResolvers<ContextType = any, ParentType extends ResolversPare
   ccn?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   class?: Resolver<ResolversTypes['Class'], ParentType, ContextType>;
   course?: Resolver<ResolversTypes['Course'], ParentType, ContextType>;
+  currentEnrollment?: Resolver<Maybe<ResolversTypes['EnrollmentData']>, ParentType, ContextType>;
   dateEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   dateStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   days?: Resolver<Maybe<Array<ResolversTypes['Boolean']>>, ParentType, ContextType>;
-  enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  enrollmentHistory?: Resolver<Maybe<Array<Maybe<ResolversTypes['EnrollmentDay']>>>, ParentType, ContextType>;
+  enrollmentHistory?: Resolver<Maybe<Array<Maybe<ResolversTypes['EnrollmentData']>>>, ParentType, ContextType>;
   instructors?: Resolver<Maybe<Array<Maybe<ResolversTypes['Instructor']>>>, ParentType, ContextType>;
   kind?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
@@ -730,8 +718,6 @@ export type SectionResolvers<ContextType = any, ParentType extends ResolversPare
   raw?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   timeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  waitlistCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  waitlistMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -765,7 +751,7 @@ export type Resolvers<ContextType = any> = {
   Course?: CourseResolvers<ContextType>;
   CourseListItem?: CourseListItemResolvers<ContextType>;
   CustomEvent?: CustomEventResolvers<ContextType>;
-  EnrollmentDay?: EnrollmentDayResolvers<ContextType>;
+  EnrollmentData?: EnrollmentDataResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
   GradeDistributionItem?: GradeDistributionItemResolvers<ContextType>;
   ISODate?: GraphQLScalarType;

@@ -58,8 +58,7 @@ type Class @cacheControl(maxAge: 172800) {
     sections: [Section]!
 
     description: String
-    enrollCount: Int! @cacheControl(maxAge: 3600)
-    enrollMax: Int! @cacheControl(maxAge: 3600)
+    enrollment: EnrollmentData
     number: String!
     semester: Semester!
     session: String!
@@ -67,8 +66,6 @@ type Class @cacheControl(maxAge: 172800) {
     title: String
     unitsMax: Float!
     unitsMin: Float!
-    waitlistCount: Int! @cacheControl(maxAge: 3600)
-    waitlistMax: Int! @cacheControl(maxAge: 3600)
     year: Int!
 
     raw: JSONObject!
@@ -83,14 +80,13 @@ Cached for 48 hours.
 type Section @cacheControl(maxAge: 172800) {
     class: Class!
     course: Course!
-    enrollmentHistory: [EnrollmentDay]
+    enrollmentHistory: [EnrollmentData]
 
     ccn: Int!
     dateEnd: String
     dateStart: String
     days: [Boolean!]
-    enrollCount: Int! @cacheControl(maxAge: 3600)
-    enrollMax: Int! @cacheControl(maxAge: 3600)
+    currentEnrollment: EnrollmentData
     instructors: [Instructor]
     kind: String!
     location: String
@@ -99,8 +95,6 @@ type Section @cacheControl(maxAge: 172800) {
     primary: Boolean!
     timeEnd: String
     timeStart: String
-    waitlistCount: Int! @cacheControl(maxAge: 3600)
-    waitlistMax: Int! @cacheControl(maxAge: 3600)
 
     raw: JSONObject!
     lastUpdated: ISODate!
@@ -111,7 +105,7 @@ type Instructor @cacheControl(inheritMaxAge: true) {
     givenName: String!
 }
 
-type EnrollmentDay @cacheControl(inheritMaxAge: true) {
+type EnrollmentData @cacheControl(maxAge: 3600) {
     enrollCount: Int!
     enrollMax: Int!
     waitlistCount: Int!
@@ -136,12 +130,11 @@ type CatalogClass @cacheControl(inheritMaxAge: true) {
     number: String!
     title: String
     description: String
-    enrollCount: Int! @cacheControl(maxAge: 3600)
-    enrollMax: Int! @cacheControl(maxAge: 3600)
+    enrollment: EnrollmentData
     unitsMax: Float!
     unitsMin: Float!
 
-    lastUpdated: ISODate! @cacheControl(maxAge: 3600)
+    lastUpdated: ISODate!
 }
 
 """
