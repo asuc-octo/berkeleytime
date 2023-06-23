@@ -7,7 +7,6 @@ import { ReactComponent as BookmarkSaved } from 'assets/svg/catalog/bookmark-sav
 import { ReactComponent as BookmarkUnsaved } from 'assets/svg/catalog/bookmark-unsaved.svg';
 
 import styles from './CatalogList.module.scss';
-import Skeleton from 'react-loading-skeleton';
 import { colorEnrollment, formatEnrollment } from '../service';
 
 function formatUnits(units: string) {
@@ -19,7 +18,7 @@ function formatUnits(units: string) {
 
 type CatalogListItemProps = {
 	data: {
-		course: CourseFragment | { __typename: 'Skeleton'; id: number };
+		course: CourseFragment;
 		handleCourseSelect: (course: CourseFragment) => void;
 		isSelected: boolean;
 	};
@@ -35,17 +34,7 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 
 	const isSaved = user?.savedClasses?.some((savedCourse) => savedCourse?.id === course.id);
 
-	return course.__typename === 'Skeleton' ? (
-		<div style={style} className={styles.itemRoot}>
-			<div
-				className={`${styles.itemContainer} ${styles.skeleton} ${
-					isSelected ? styles.selected : ''
-				}`}
-			>
-				<Skeleton height={'100%'} style={{ lineHeight: 1 }} />
-			</div>
-		</div>
-	) : (
+	return (
 		<div style={style} className={styles.itemRoot} onClick={() => handleCourseSelect(course)}>
 			<div className={`${styles.itemContainer} ${isSelected ? styles.selected : ''}`}>
 				<div className={styles.itemInfo}>
