@@ -1,4 +1,4 @@
-import { useReducer, createContext, Dispatch, useContext, useEffect } from 'react';
+import { useReducer, createContext, Dispatch, useContext } from 'react';
 import { DEFAULT_FILTERS, SORT_OPTIONS, buildCourseIndex } from './service';
 import { CatalogFilters, CourseInfo, SortOption } from './types';
 import { CourseFragment, CourseOverviewFragment, PlaylistType } from 'graphql';
@@ -46,10 +46,6 @@ export const CatalogDispatch = createContext<Dispatch<CatalogAction>>(
 export const CatalogProvider = ({ children }: { children: React.ReactNode }) => {
 	const [catalog, dispatch] = useReducer(catalogReducer, initialCatalog);
 
-	useEffect(() => {
-		dispatch({ type: 'search' });
-	}, [catalog.allCourses, catalog.filters]);
-
 	return (
 		<Context.Provider value={catalog}>
 			<CatalogDispatch.Provider value={dispatch}>{children}</CatalogDispatch.Provider>
@@ -58,7 +54,7 @@ export const CatalogProvider = ({ children }: { children: React.ReactNode }) => 
 };
 
 function catalogReducer(catalog: CatalogContext, action: CatalogAction): CatalogContext {
-	const { allCourses, courses, sortQuery, sortDir, searchQuery } = catalog;
+	const { courses, sortQuery, sortDir, searchQuery } = catalog;
 
 	switch (action.type) {
 		case 'sortDir': {
@@ -80,10 +76,7 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 
 		case 'search': {
 			const query = action.query ?? searchQuery;
-			const { value } = sortQuery;
-			const courses = searchCatalog(catalog.courseIndex, query, allCourses).sort(
-				byAttribute(value)
-			);
+			const courses = setSearch(catalog, query);
 
 			return {
 				...catalog,
@@ -115,10 +108,16 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 			const newCourses = action.courses.filter(
 				(v, i, a) => a.findIndex((t) => t.id === v.id) === i
 			);
-			return {
+
+			const payload = {
 				...catalog,
 				allCourses: newCourses,
 				courseIndex: buildCourseIndex(newCourses)
+			};
+
+			return {
+				...payload,
+				courses: setSearch(payload)
 			};
 		}
 
@@ -172,5 +171,12 @@ function useCatalog(): [CatalogContext, Dispatch<CatalogAction>] {
 export function useCatalogDispatch(): Dispatch<CatalogAction> {
 	return useContext(CatalogDispatch);
 }
+
+const setSearch = (catalog: CatalogContext, query: string | null = null) => {
+	const { courseIndex, searchQuery, allCourses, sortQuery } = catalog;
+	return searchCatalog(courseIndex, query ?? searchQuery, allCourses).sort(
+		byAttribute(sortQuery.value)
+	);
+};
 
 export default useCatalog;

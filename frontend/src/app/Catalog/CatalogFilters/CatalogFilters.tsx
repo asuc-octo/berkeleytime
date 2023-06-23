@@ -19,16 +19,16 @@ const CatalogFilters = () => {
 		onCompleted: (data) => setTemplate(putFilterOptions(FILTER_TEMPLATE, data))
 	});
 
-	const [isOpen, setOpen] = useState(false);
 	const history = useHistory();
 	const location = useLocation();
 	const slug = useParams<CatalogSlug>();
+	const [isOpen, setOpen] = useState(false);
 	const modalRef = useRef<HTMLDivElement>(null);
 	const [{ sortDir, sortQuery, searchQuery, filters }, dispatch] = useCatalog();
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
-		if (params.has('q')) dispatch({ type: 'search', query: params.get('q') ?? '' });
+		dispatch({ type: 'search', query: params.get('q') ?? '' });
 	}, [dispatch, location.search]);
 
 	useEffect(() => {

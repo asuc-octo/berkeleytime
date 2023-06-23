@@ -7,6 +7,7 @@ import styles from './CatalogList.module.scss';
 import { useHistory } from 'react-router';
 import useCatalog from '../useCatalog';
 import { buildPlaylist } from '../service';
+import Skeleton from 'react-loading-skeleton';
 
 const CatalogList = () => {
 	const history = useHistory();
@@ -40,7 +41,7 @@ const CatalogList = () => {
 			<div className={styles.status}>
 				{called && !loading && courses?.length > 0 && <span>{courses.length} Results</span>}
 			</div>
-			{height && courses.length > 0 ? (
+			{height && courses.length > 0 && (
 				<FixedSizeList
 					className={styles.list}
 					height={height}
@@ -60,7 +61,16 @@ const CatalogList = () => {
 						/>
 					)}
 				</FixedSizeList>
-			) : (
+			)}
+			{loading &&
+				[...Array(20).keys()].map((key) => (
+					<div key={key} className={styles.itemRoot}>
+						<div className={styles.itemContainer} style={{padding: 0}}>
+							<Skeleton height={'100px'} style={{ lineHeight: 1 }} />
+						</div>
+					</div>
+				))}
+			{!loading && called && courses.length === 0 && (
 				<div className={styles.error}>There are no courses matching your filters.</div>
 			)}
 		</div>
