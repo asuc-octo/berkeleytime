@@ -23,6 +23,7 @@ const ViewSchedule = lazy(() => import('./views/Scheduler/ViewSchedule'));
 const PrivacyPolicy = lazy(() => import('./views/Policies/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
 const RedirectLink = lazy(() => import('./views/RedirectLink'));
+const Apply = lazy(() => import('./views/Apply'));
 
 const routes: Array<RouteProps> = [
 	{ path: '/landing', component: Landing },
@@ -42,7 +43,8 @@ const routes: Array<RouteProps> = [
 	{ path: '/error', component: Error },
 	{ path: '/legal/privacy', component: PrivacyPolicy },
 	{ path: '/legal/terms', component: TermsOfService },
-	{ path: '/redirect', component: RedirectLink, exact: false }
+	{ path: '/redirect', component: RedirectLink, exact: false },
+	{ path: '/apply', component: Apply },
 ];
 
 const Routes = () => (
