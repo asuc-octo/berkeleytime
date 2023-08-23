@@ -19,7 +19,8 @@ const Banner: FC<Props> = (props) => {
 	return props.banner ? (
 		<div className="banner">
 			<div className="content">
-				<p>Fall 2023 catalog + scheduler released!</p>
+				<p>Berkeleytime is looking for student designers and developers to join our team!</p>
+				<Button size="sm" href="https://berkeleytime.com/apply">Apply Now</Button>
 			</div>
 			<img src={close} alt="close" onClick={props.closeBanner} />
 		</div>
