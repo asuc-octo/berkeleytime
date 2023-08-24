@@ -44,7 +44,7 @@ const routes: Array<RouteProps> = [
 	{ path: '/legal/privacy', component: PrivacyPolicy },
 	{ path: '/legal/terms', component: TermsOfService },
 	{ path: '/redirect', component: RedirectLink, exact: false },
-	{ path: '/apply', component: Apply },
+	{ path: '/apply', component: Apply, sensitive: false },
 ];
 
 const Routes = () => (
@@ -74,7 +74,7 @@ const Routes = () => (
 								path={route.path}
 								component={route.component}
 								exact={route.exact ?? true} // force exact=true unless specified false
-								sensitive
+								sensitive={route.sensitive ?? true} // force sensitive=true unless specified false
 							/>
 						))}
 						<Route component={Error} />
