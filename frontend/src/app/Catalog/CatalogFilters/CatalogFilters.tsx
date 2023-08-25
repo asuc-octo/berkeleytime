@@ -10,7 +10,7 @@ import BTLoader from 'components/Common/BTLoader';
 import { useHistory, useLocation, useParams } from 'react-router';
 import styles from './CatalogFilters.module.scss';
 import { SortDown, SortUp } from 'iconoir-react';
-import useCatalog from '../useCatalog';
+import useCatalog, { CatalogActions } from '../useCatalog';
 import { FILTER_TEMPLATE, SORT_OPTIONS, putFilterOptions } from '../service';
 
 const CatalogFilters = () => {
@@ -28,7 +28,7 @@ const CatalogFilters = () => {
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
-		dispatch({ type: 'search', query: params.get('q') ?? '' });
+		dispatch({ type: CatalogActions.Search, query: params.get('q') ?? '' });
 	}, [dispatch, location.search]);
 
 	useEffect(() => {
@@ -37,7 +37,7 @@ const CatalogFilters = () => {
 			const semester = options.find(({ label }) => label === slug?.semester) ?? null;
 
 			dispatch({
-				type: 'filter',
+				type: CatalogActions.Filter,
 				filters: {
 					semester: semester ?? options[0]
 				}
@@ -63,7 +63,7 @@ const CatalogFilters = () => {
 	const handleFilterReset = () => {
 		if (template) {
 			const semester = template.semester.options[0] as FilterOption;
-			dispatch({ type: 'reset', filters: { semester } });
+			dispatch({ type: CatalogActions.Reset, filters: { semester } });
 			history.push({ pathname: `/catalog/${semester.value.name}` });
 		}
 	};
@@ -72,7 +72,7 @@ const CatalogFilters = () => {
 		newValue: FilterOption | readonly FilterOption[] | null,
 		meta: ActionMeta<FilterOption>
 	) => {
-		dispatch({ type: 'filter', filters: { [meta.name as CatalogFilterKeys]: newValue } });
+		dispatch({ type: CatalogActions.Filter, filters: { [meta.name as CatalogFilterKeys]: newValue } });
 		// Update the url slug if semester filter changes.
 		if (meta.name === 'semester') {
 			history.push({
@@ -92,7 +92,7 @@ const CatalogFilters = () => {
 					value={searchQuery}
 					onChange={(e) => {
 						history.replace({ pathname: location.pathname, search: `q=${e.target.value}` });
-						dispatch({ type: 'search', query: e.target.value });
+						dispatch({ type: CatalogActions.Search, query: e.target.value });
 					}}
 					type="search"
 					placeholder="Search for a class..."
@@ -114,7 +114,7 @@ const CatalogFilters = () => {
 						value={searchQuery}
 						onChange={(e) => {
 							history.replace({ pathname: location.pathname, search: `q=${e.target.value}` });
-							dispatch({ type: 'search', query: e.target.value });
+							dispatch({ type:  CatalogActions.Search, query: e.target.value });
 						}}
 						type="search"
 						placeholder="Search for a class..."
@@ -128,9 +128,9 @@ const CatalogFilters = () => {
 							isClearable={false}
 							options={SORT_OPTIONS}
 							isSearchable={false}
-							onChange={(newValue) => dispatch({ type: 'sort', query: newValue as SortOption })}
+							onChange={(newValue) => dispatch({ type: CatalogActions.Sort, query: newValue as SortOption })}
 						/>
-						<button onClick={() => dispatch({ type: 'sortDir' })}>
+						<button onClick={() => dispatch({ type: CatalogActions.SortDir })}>
 							{sortDir === 'DESC' ? <SortUp color="#8A8A8A" /> : <SortDown color="#8A8A8A" />}
 						</button>
 					</div>

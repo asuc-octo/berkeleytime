@@ -70,8 +70,8 @@ const CatalogViewSections = ({ sections }: Props) => {
 								{section.locationName ? section.locationName : 'Unknown Location'}
 							</h5>
 							<h6>
-								<span>{section?.instructor?.toLowerCase() ?? 'instructor'}</span>,{' '}
-								{section.wordDays} {formatSectionTime(section)}
+								<span>{section?.instructor?.toLowerCase() ?? 'instructor'}</span>
+								<div>{section.wordDays} {formatSectionTime(section)}</div>
 							</h6>
 							<span className={styles.sectionStats}>
 								<span className={colorEnrollment(section.enrolled / section.enrolledMax)}>
