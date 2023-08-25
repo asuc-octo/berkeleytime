@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { memo, useEffect, useMemo, useState } from 'react';
 import people from 'assets/svg/catalog/people.svg';
 import chart from 'assets/svg/catalog/chart.svg';
@@ -14,8 +15,9 @@ import ReadMore from './ReadMore';
 import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
 import SectionTable from './SectionTable';
-import useCatalog from '../useCatalog';
+import useCatalog, { CatalogActions } from '../useCatalog';
 import { sortPills } from '../service';
+import CatalogViewSections from './__new_SectionTable';
 
 const skeleton = [...Array(8).keys()];
 
@@ -40,7 +42,7 @@ const CatalogView = () => {
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
-				dispatch({ type: 'setCourse', course });
+				dispatch({ type: CatalogActions.SetCourse, course });
 				setOpen(true);
 			}
 		}
@@ -66,10 +68,10 @@ const CatalogView = () => {
 		const newCourse = data?.allCourses.edges[0].node;
 
 		if (newCourse && newCourse?.id === course?.id) {
-			dispatch({ type: 'setCourse', course: newCourse });
+			dispatch({ type: CatalogActions.SetCourse, course: newCourse });
 			setOpen(true);
 		} else if (course) {
-			dispatch({ type: 'setCourse', course });
+			dispatch({ type: CatalogActions.SetCourse, course });
 			setOpen(true);
 		}
 	}, [course, data, dispatch]);
@@ -97,7 +99,7 @@ const CatalogView = () => {
 			<button
 				className={styles.modalButton}
 				onClick={() => {
-					dispatch({ type: 'setCourse', course: null });
+					dispatch({ type: CatalogActions.SetCourse, course: null });
 					history.replace(`/catalog/${semester}`);
 				}}
 			>
@@ -156,7 +158,7 @@ const CatalogView = () => {
 									<span
 										className={styles.pill}
 										key={req.id}
-										onClick={() => dispatch({ type: 'setPill', pillItem: req })}
+										onClick={() => dispatch({ type: CatalogActions.SetPill, pillItem: req })}
 									>
 										{req.name}
 									</span>
@@ -176,16 +178,16 @@ const CatalogView = () => {
 						</>
 					</ReadMore>
 					<h5>Class Times - {semester ?? ''}</h5>
-					{sections && sections.length > 0 ? (
+					{/* {sections && sections.length > 0 ? (
 						<SectionTable sections={sections} />
 					) : !loading ? (
 						<span>There are no class times for the selected course.</span>
-					) : null}
+					) : null} */}
 
-					{/*
-					Redesigned catalog sections
+
+					{/* Redesigned catalog sections */}
 					<CatalogViewSections sections={sections} />
-					*/}
+
 
 					{/* Good feature whenever we want...
 					<h5>Past Offerings</h5>

@@ -272,7 +272,7 @@ export const sortByName = <T extends { name: string }[]>(arr: T) =>
 	arr.sort((a, b) => a.name.localeCompare(b.name));
 
 export function formatEnrollment(percentage: number) {
-	if (percentage === -1) return 'N/A';
+	if (percentage === -1 || isNaN(percentage)) return 'N/A';
 	return `${Math.floor(percentage * 100)}% enrolled`;
 }
 
@@ -289,7 +289,7 @@ export function colorEnrollment(percentage: number) {
 	}
 }
 
-export const flipCourses = (courses: CourseOverviewFragment[], sortQuery: SortOption) => {
+export const flipCourseList = (courses: CourseOverviewFragment[], sortQuery: SortOption) => {
 	const keys: Record<CatalogSortKeys, keyof CourseOverviewFragment> = {
 		average_grade: 'gradeAverage',
 		enrolled_percentage: 'enrolledPercentage',

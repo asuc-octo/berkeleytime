@@ -2,14 +2,16 @@ import { useReducer, createContext, Dispatch, useContext } from 'react';
 import { DEFAULT_FILTERS, SORT_OPTIONS, buildCourseIndex } from './service';
 import { CatalogFilters, CourseInfo, SortOption } from './types';
 import { CourseFragment, CourseOverviewFragment, PlaylistType } from 'graphql';
-import { searchCatalog, flipCourses } from './service';
+import { searchCatalog, flipCourseList } from './service';
 import { byAttribute } from 'lib/courses/sorting';
 import Fuse from 'fuse.js';
+
+type SortDir = 'ASC' | 'DESC';
 
 type CatalogContext = {
 	filters: CatalogFilters;
 	sortQuery: SortOption;
-	sortDir: 'ASC' | 'DESC';
+	sortDir: SortDir;
 	searchQuery: string;
 	allCourses: CourseOverviewFragment[];
 	courses: CourseOverviewFragment[];
@@ -17,15 +19,26 @@ type CatalogContext = {
 	courseIndex: Fuse<CourseInfo> | null;
 };
 
+export enum CatalogActions {
+	SortDir = 'sortDir',
+	SetCourse = 'setCourse',
+	Search = 'search',
+	Sort = 'sort',
+	Filter = 'filter',
+	SetCourseList = 'setCourseList',
+	Reset = 'reset',
+	SetPill = 'setPill'
+}
+
 type CatalogAction =
-	| { type: 'sortDir' }
-	| { type: 'setCourse'; course: CatalogContext['course'] }
-	| { type: 'search'; query?: CatalogContext['searchQuery'] }
-	| { type: 'sort'; query: CatalogContext['sortQuery'] }
-	| { type: 'filter'; filters: Partial<CatalogContext['filters']> }
-	| { type: 'setCourses'; courses: CatalogContext['courses'] }
-	| { type: 'reset'; filters?: Partial<CatalogContext['filters']> }
-	| { type: 'setPill'; pillItem: PlaylistType };
+	| { type: CatalogActions.SortDir }
+	| { type: CatalogActions.SetCourse; course: CatalogContext['course'] }
+	| { type: CatalogActions.Search; query?: CatalogContext['searchQuery'] }
+	| { type: CatalogActions.Sort; query: CatalogContext['sortQuery'] }
+	| { type: CatalogActions.Filter; filters: Partial<CatalogContext['filters']> }
+	| { type: CatalogActions.SetCourseList; allCourses: CatalogContext['courses'] }
+	| { type: CatalogActions.Reset; filters?: Partial<CatalogContext['filters']> }
+	| { type: CatalogActions.SetPill; pillItem: PlaylistType };
 
 const initialCatalog: CatalogContext = {
 	filters: DEFAULT_FILTERS,
@@ -57,43 +70,38 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 	const { courses, sortQuery, sortDir, searchQuery } = catalog;
 
 	switch (action.type) {
-		case 'sortDir': {
+		case CatalogActions.SortDir: {
 			const newDir = sortDir === 'ASC' ? 'DESC' : 'ASC';
 
 			return {
 				...catalog,
 				sortDir: newDir,
-				courses: flipCourses(courses, sortQuery)
+				courses: flipCourseList(courses, sortQuery)
 			};
 		}
-
-		case 'setCourse': {
+		case CatalogActions.SetCourse: {
 			return {
 				...catalog,
 				course: action.course
 			};
 		}
-
-		case 'search': {
+		case CatalogActions.Search: {
 			const query = action.query ?? searchQuery;
 			const courses = setSearch(catalog, query);
-
 			return {
 				...catalog,
 				searchQuery: query,
 				courses
 			};
 		}
-
-		case 'sort': {
+		case CatalogActions.Sort: {
 			return {
 				...catalog,
 				sortQuery: action.query,
 				courses: courses.sort(byAttribute(action.query.value))
 			};
 		}
-
-		case 'filter': {
+		case CatalogActions.Filter: {
 			return {
 				...catalog,
 				filters: {
@@ -102,17 +110,16 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 				}
 			};
 		}
-
-		case 'setCourses': {
-			// Here we filter to ensure there are no duplicate course entries, since it was occurring.
-			const newCourses = action.courses.filter(
+		case CatalogActions.SetCourseList: {
+			// Here we filter to ensure there are no duplicate course entries.
+			const allCourses = action.allCourses.filter(
 				(v, i, a) => a.findIndex((t) => t.id === v.id) === i
 			);
 
 			const payload = {
 				...catalog,
-				allCourses: newCourses,
-				courseIndex: buildCourseIndex(newCourses)
+				allCourses,
+				courseIndex: buildCourseIndex(allCourses)
 			};
 
 			return {
@@ -120,34 +127,26 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 				courses: setSearch(payload)
 			};
 		}
-
-		case 'reset': {
+		case CatalogActions.Reset: {
 			return {
-				...catalog,
-				searchQuery: '',
-				sortQuery: SORT_OPTIONS[0],
-				sortDir: 'ASC',
+				...initialCatalog,
+				allCourses: catalog.allCourses,
 				filters: { ...DEFAULT_FILTERS, ...action.filters }
 			};
 		}
-
-		case 'setPill': {
+		case CatalogActions.SetPill: {
 			const { filters } = catalog;
 			const { pillItem } = action;
-			let result: Partial<CatalogFilters> = {};
-			if (['haas', 'ls', 'engineering', 'university'].includes(pillItem.category)) {
-				if (filters.requirements) {
-					const reqs = filters.requirements;
-					if (reqs?.find((el) => el.label === pillItem.name)) return catalog;
+			const newItem = { label: pillItem.name, value: pillItem };
 
-					result = {
-						requirements: [...filters.requirements, { label: pillItem.name, value: pillItem }]
-					};
-				}
+			let result: Partial<CatalogFilters> = {};
+			const requirements = ['haas', 'ls', 'engineering', 'university'];
+			if (requirements.includes(pillItem.category)) {
+				if (filters.requirements?.find((value) => value.label === pillItem.name)) return catalog;
+
+				result = { requirements: [...(filters.requirements ?? []), newItem] };
 			} else {
-				result = {
-					[pillItem.category]: { label: pillItem.name, value: pillItem }
-				};
+				result = { [pillItem.category]: newItem };
 			}
 
 			return {
@@ -158,19 +157,17 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 				}
 			};
 		}
-
 		default:
 			return catalog;
 	}
 }
 
-function useCatalog(): [CatalogContext, Dispatch<CatalogAction>] {
-	return [useContext(Context), useContext(CatalogDispatch)];
-}
+const useCatalog = (): [CatalogContext, Dispatch<CatalogAction>] => [
+	useContext(Context),
+	useContext(CatalogDispatch)
+];
 
-export function useCatalogDispatch(): Dispatch<CatalogAction> {
-	return useContext(CatalogDispatch);
-}
+export const useCatalogDispatch = (): Dispatch<CatalogAction> => useContext(CatalogDispatch);
 
 const setSearch = (catalog: CatalogContext, query: string | null = null) => {
 	const { courseIndex, searchQuery, allCourses, sortQuery } = catalog;
