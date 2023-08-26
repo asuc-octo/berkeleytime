@@ -178,7 +178,19 @@ export function scheduleToICal(schedule: Schedule, semester: Semester): string {
 	const SEMESTER_START = new Date(2023, 7, 23);
 	const LAST_COURSE_DAY = new Date(2023, 11, 1);
 
-	const dateToICal = (date: Date) => date.toISOString().replace(/[-:Z]|\.\d+/g, '');
+	const dateToICal = (date: Date) => {
+		    // Function to pad a number with leading zeros
+			const pad = (n: number) => n < 10 ? '0' + n : n;
+
+			const year = date.getUTCFullYear();
+			const month = pad(date.getUTCMonth() + 1); // Months are zero-indexed
+			const day = pad(date.getUTCDate());
+			const hours = pad(date.getUTCHours());
+			const minutes = pad(date.getUTCMinutes());
+			const seconds = pad(date.getUTCSeconds());
+
+			return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
+	}
 
 	const stringToICal = (str: string) =>
 		str.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
@@ -209,12 +221,19 @@ export function scheduleToICal(schedule: Schedule, semester: Semester): string {
 			const endTime = stringToDate(section.endTime);
 
 			const startDateTime = new Date(firstCourseDay);
-			startDateTime.setUTCHours(startTime.getUTCHours());
-			startDateTime.setUTCMinutes(startTime.getUTCMinutes());
+			// Only attempt to set the time if the time is valid.
+			// In many courses, the section.startTime and section.endTime can be `null`.
+			// In this case, we don't specify a time.
+			if (!isNaN(startTime.getTime())) {
+				startDateTime.setUTCHours(startTime.getUTCHours());
+				startDateTime.setUTCMinutes(startTime.getUTCMinutes());
+			}
 
 			const endDateTime = new Date(firstCourseDay);
-			endDateTime.setUTCHours(endTime.getUTCHours());
-			endDateTime.setUTCMinutes(endTime.getUTCMinutes());
+			if (!isNaN(endTime.getTime())) {
+				endDateTime.setUTCHours(endTime.getUTCHours());
+				endDateTime.setUTCMinutes(endTime.getUTCMinutes());
+			}
 
 			const days = section.days.split('').map((day) => dayToICalDay(+day));
 
