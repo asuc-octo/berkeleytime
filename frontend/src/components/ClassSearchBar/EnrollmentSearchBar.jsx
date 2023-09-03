@@ -13,7 +13,8 @@ class EnrollmentSearchBar extends Component {
 		this.state = {
 			selectedClass: 0,
 			selectPrimary: this.props.selectPrimary,
-			selectSecondary: this.props.selectSecondary
+			selectSecondary: this.props.selectSecondary,
+			selectedClassValue: undefined
 		};
 
 		this.queryCache = {};
@@ -29,13 +30,6 @@ class EnrollmentSearchBar extends Component {
 		this.reset = this.reset.bind(this);
 	}
 
-	componentDidMount() {
-		let { fromCatalog } = this.props;
-		if (fromCatalog) {
-			this.handleClassSelect({ value: fromCatalog.id, addSelected: true });
-		}
-	}
-
 	UNSAFE_componentWillReceiveProps(nextProps) {
 		if (nextProps.selectPrimary !== this.state.selectPrimary) {
 			this.setState({
@@ -46,6 +40,23 @@ class EnrollmentSearchBar extends Component {
 			this.setState({
 				selectSecondary: nextProps.selectSecondary
 			});
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		const { selectedCourses, fetchEnrollSelected } = this.props;
+
+		if (
+			prevProps.selectedCourses != selectedCourses &&
+			Array.isArray(selectedCourses) &&
+			selectedCourses.length > 0
+		) {
+			const course = selectedCourses[selectedCourses.length - 1];
+			const payload = { value: course.courseID, label: course.course, course };
+
+			fetchEnrollSelected(payload);
+
+			this.setState({ selectedClassValue: payload, selectedClass: payload.value });
 		}
 	}
 
@@ -210,7 +221,7 @@ class EnrollmentSearchBar extends Component {
 
 	render() {
 		const { classes, isFull, sections, isMobile } = this.props;
-		const { selectPrimary, selectSecondary, selectedClass } = this.state;
+		const { selectPrimary, selectSecondary, selectedClass, selectedClassValue } = this.state;
 		let primaryOptions = this.buildPrimaryOptions(sections);
 		let secondaryOptions = this.buildSecondaryOptions(sections, selectPrimary);
 		let onePrimaryOption = primaryOptions && primaryOptions.length === 1 && selectPrimary;
@@ -247,7 +258,7 @@ class EnrollmentSearchBar extends Component {
 							courseSearch
 							name="selectClass"
 							placeholder="Choose a class..."
-							// value={selectedClass}
+							value={selectedClassValue}
 							options={this.buildCoursesOptions(classes)}
 							onChange={this.handleClassSelect}
 							components={{
@@ -309,11 +320,12 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-	const { sections, selectPrimary, selectSecondary } = state.enrollment;
+	const { sections, selectPrimary, selectSecondary, selectedCourses } = state.enrollment;
 	return {
 		sections,
 		selectPrimary,
-		selectSecondary
+		selectSecondary,
+		selectedCourses
 	};
 };
 

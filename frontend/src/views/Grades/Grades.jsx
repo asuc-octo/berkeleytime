@@ -129,7 +129,6 @@ class Grades extends Component {
 
 	render() {
 		const { context, selectedCourses, isMobile } = this.props;
-		let { location } = this.props;
 		const { additionalInfo } = this.state;
 		let courses = context.courses;
 
@@ -139,7 +138,6 @@ class Grades extends Component {
 					<GradesSearchBar
 						classes={courses}
 						addCourse={this.addCourse}
-						fromCatalog={location.state ? location.state.course : false}
 						isFull={selectedCourses.length === 4}
 						isMobile={isMobile}
 					/>
