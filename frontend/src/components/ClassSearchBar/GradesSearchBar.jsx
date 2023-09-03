@@ -66,10 +66,9 @@ class GradesSearchBar extends Component {
 			const course = selectedCourses[selectedCourses.length - 1];
 			const payload = { value: course.courseID, label: course.course, course };
 
-			this.setState({ selectedClass: payload.value });
 			fetchGradeSelected(payload);
 
-			this.setState({ selectedClassValue: payload })
+			this.setState({ selectedClassValue: payload, selectedClass: payload.value });
 		}
 	}
 
