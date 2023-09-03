@@ -124,7 +124,6 @@ class Enrollment extends Component {
 	render() {
 		const { additionalInfo } = this.state;
 		const { context, selectedCourses, isMobile } = this.props;
-		let { location } = this.props;
 		let courses = context.courses;
 
 		return (
@@ -133,7 +132,6 @@ class Enrollment extends Component {
 					<EnrollmentSearchBar
 						classes={courses}
 						addCourse={this.addCourse}
-						fromCatalog={location.state ? location.state.course : false}
 						isFull={selectedCourses.length === 4}
 						isMobile={isMobile}
 					/>
