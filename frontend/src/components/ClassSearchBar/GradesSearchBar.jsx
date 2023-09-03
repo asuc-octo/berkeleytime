@@ -19,7 +19,8 @@ class GradesSearchBar extends Component {
 			selectedClass: 0,
 			selectType: 'instructor',
 			selectPrimary: props.selectPrimary,
-			selectSecondary: props.selectSecondary
+			selectSecondary: props.selectSecondary,
+			selectedClassValue: undefined
 		};
 		this.queryCache = {};
 
@@ -36,13 +37,9 @@ class GradesSearchBar extends Component {
 	}
 
 	componentDidMount() {
-		const { fromCatalog } = this.props;
 		this.setState({
 			selectType: 'instructor'
 		});
-		if (fromCatalog) {
-			this.handleClassSelect({ value: fromCatalog.id, addSelected: true });
-		}
 	}
 
 	UNSAFE_componentWillReceiveProps(nextProps) {
@@ -55,6 +52,24 @@ class GradesSearchBar extends Component {
 			this.setState({
 				selectSecondary: nextProps.selectSecondary
 			});
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		const { selectedCourses, fetchGradeSelected } = this.props;
+
+		if (
+			prevProps.selectedCourses != selectedCourses &&
+			Array.isArray(selectedCourses) &&
+			selectedCourses.length > 0
+		) {
+			const course = selectedCourses[selectedCourses.length - 1];
+			const payload = { value: course.courseID, label: course.course, course };
+
+			this.setState({ selectedClass: payload.value });
+			fetchGradeSelected(payload);
+
+			this.setState({ selectedClassValue: payload })
 		}
 	}
 
@@ -71,7 +86,12 @@ class GradesSearchBar extends Component {
 		}
 
 		this.setState({
-			selectedClass: updatedClass.value
+			selectedClass: updatedClass.value,
+			selectedClassValue: {
+				value: updatedClass.value,
+				label: updatedClass.label,
+				updatedClass
+			}
 		});
 
 		fetchGradeSelected(updatedClass);
@@ -285,7 +305,7 @@ class GradesSearchBar extends Component {
 
 	render() {
 		const { classes, isFull, isMobile } = this.props;
-		const { selectType, selectPrimary, selectSecondary, selectedClass } = this.state;
+		const { selectType, selectPrimary, selectSecondary, selectedClass, selectedClassValue } = this.state;
 		const { sections } = this.props;
 		const primaryOptions = this.buildPrimaryOptions(sections, selectType);
 		const secondaryOptions = this.buildSecondaryOptions(sections, selectType, selectPrimary);
@@ -332,6 +352,7 @@ class GradesSearchBar extends Component {
 					<Col lg={3}>
 						<BTSelect
 							courseSearch
+							value={selectedClassValue}
 							name="selectClass"
 							placeholder="Choose a class..."
 							options={this.buildCoursesOptions(classes)}
@@ -409,11 +430,12 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-	const { sections, selectPrimary, selectSecondary } = state.grade;
+	const { sections, selectPrimary, selectSecondary, selectedCourses } = state.grade;
 	return {
 		sections,
 		selectPrimary,
-		selectSecondary
+		selectSecondary,
+		selectedCourses
 	};
 };
 
