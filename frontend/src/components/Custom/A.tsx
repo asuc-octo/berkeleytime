@@ -1,8 +1,12 @@
-import { FC } from 'react';
+import { PropsWithChildren } from 'react';
 import { Link } from 'react-router-dom';
 import TextProps, { getClassNames } from './TextProps';
 
-const A: FC<Props> = (props) => {
+export interface Props extends TextProps {
+	href?: string | { as_link: string };
+}
+
+export default function A(props: PropsWithChildren<Props>) {
 	if (typeof props.href === 'object') {
 		return (
 			<Link to={props.href.as_link} className={getClassNames('bt-a', props)}>
@@ -16,10 +20,4 @@ const A: FC<Props> = (props) => {
 			</a>
 		);
 	}
-};
-
-export interface Props extends TextProps {
-	href?: string | { as_link: string };
 }
-
-export default A;

@@ -19,7 +19,7 @@ import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, CatalogSlu
 
 import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import styles from './CatalogFilters.module.scss';
 import { SortDown, SortUp } from 'iconoir-react';
@@ -52,7 +52,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 	const { data, loading, error } = useGetFiltersQuery();
 	const [isOpen, setOpen] = useState(false);
 	const filters = useMemo(() => catalogService.processFilterData(data), [data]);
-	const history = useHistory();
+	const navigate = useNavigate();
 	const slug = useParams<CatalogSlug>();
 	const modalRef = useRef<HTMLDivElement>(null);
 
@@ -99,9 +99,9 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 				semester
 			});
 
-			history.push({ pathname: `/catalog/${semester.value.name}` });
+			navigate({ pathname: `/catalog/${semester.value.name}` });
 		}
-	}, [filterList, history, setCurrentFilters, setSearchQuery, setSortQuery]);
+	}, [filterList, navigate, setCurrentFilters, setSearchQuery, setSortQuery]);
 
 	const handleFilterChange = (
 		newValue: FilterOption | readonly FilterOption[] | null,
@@ -115,7 +115,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 
 		// Update the url slug if semester filter changes.
 		if (key === 'semester') {
-			history.push({
+			navigate({
 				pathname: `/catalog/${(newValue as FilterOption)?.value?.name}`
 					.concat(slug?.abbreviation ? `/${slug.abbreviation}` : '')
 					.concat(slug?.courseNumber ? `/${slug.courseNumber}` : ''),
@@ -131,7 +131,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 					style={{ border: 'none', width: '100%' }}
 					value={searchQuery}
 					onChange={(e) => {
-						history.replace({ pathname: location.pathname, search: `q=${e.target.value}` });
+						navigate({ pathname: location.pathname, search: `q=${e.target.value}` });
 						setSearchQuery(e.target.value);
 					}}
 					type="search"
@@ -153,7 +153,7 @@ const CatalogFilters = (props: CatalogFilterProps) => {
 					<BTInput
 						value={searchQuery}
 						onChange={(e) => {
-							history.replace({ pathname: location.pathname, search: `q=${e.target.value}` });
+							navigate({ pathname: location.pathname, search: `q=${e.target.value}` });
 							setSearchQuery(e.target.value);
 						}}
 						type="search"

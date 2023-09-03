@@ -2,7 +2,7 @@ import { PureComponent } from 'react';
 import { Container, Row } from 'react-bootstrap';
 
 import ClassCard from './ClassCard';
-import vars from '../../variables/Variables';
+import vars from '../../utils/variables';
 
 class ClassCardList extends PureComponent {
 	render() {

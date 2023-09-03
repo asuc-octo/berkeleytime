@@ -1,24 +1,37 @@
-import Navigation from 'components/Common/Navigation';
-import Footer from 'components/Common/Footer';
-import { ReactNode } from 'react';
+import { Suspense, useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import ReactGA from 'react-ga';
+import Banner from './Banner';
+import Navigation from './Navigation';
+import BTLoader from './BTLoader';
 
-interface LayoutProps {
-	noFooter?: boolean;
-	children: ReactNode;
-}
+ReactGA.initialize('UA-35316609-1');
 
-const Layout = ({ children, noFooter }: LayoutProps) => {
+export default function Root() {
+	const location = useLocation();
+
+	useEffect(() => {
+		// Scroll to top
+		window.scrollTo({ top: 0 });
+
+		// Log page view
+		ReactGA.set({ page: window.location.pathname });
+		ReactGA.pageview(window.location.pathname);
+	}, [location.pathname]);
+
 	return (
 		<>
+			<Banner />
 			<Navigation />
-			{children}
-			{!noFooter && <Footer />}
+			<Suspense
+				fallback={
+					<div className="viewport-app">
+						<BTLoader fill />
+					</div>
+				}
+			>
+				<Outlet />
+			</Suspense>
 		</>
 	);
-};
-
-Layout.defaultProps = {
-	noFooter: false
-};
-
-export default Layout;
+}
