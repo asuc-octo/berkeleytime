@@ -1,10 +1,10 @@
-import { Component } from 'react';
+import { Component as ReactComponent } from 'react';
 import { Container, Row, Col, ButtonToolbar } from 'react-bootstrap';
-import releases from '../../lib/releases';
+import releases from '../lib/releases';
 
-import Log from '../../components/Releases/Log';
+import Log from '../components/Releases/Log';
 
-class Releases extends Component {
+export class Component extends ReactComponent {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -41,5 +41,3 @@ class Releases extends Component {
 		);
 	}
 }
-
-export default Releases;

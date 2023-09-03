@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
 import { connect } from 'react-redux';
-import vars from '../../variables/Variables';
+import vars from '../../utils/variables';
 
 import GradesGraph from '../Graphs/GradesGraph';
 import GraphEmpty from '../Graphs/GraphEmpty';
