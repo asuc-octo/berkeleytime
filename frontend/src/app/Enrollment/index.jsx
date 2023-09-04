@@ -160,6 +160,7 @@ export function Component() {
 					updateClassCardEnrollment={updateClassCardEnrollment}
 					isMobile={isMobile}
 				/>
+
 				{!isMobile && <div className="xlabel">Days After Phase 1</div>}
 				<div className="disclaimer">
 					<img src={info} className="info" alt="" />
