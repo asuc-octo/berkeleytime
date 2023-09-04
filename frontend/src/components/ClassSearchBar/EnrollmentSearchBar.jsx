@@ -265,7 +265,7 @@ export default function EnrollmentSearchBar({
 					<Button
 						className="btn-bt-green"
 						onClick={addSelected}
-						disabled={!selectedClass || !(selectPrimary && selectSecondary) || isFull}
+						disabled={!selectedClass || !(localSelectPrimary && localSelectSecondary) || isFull}
 					>
 						Add Class
 					</Button>
