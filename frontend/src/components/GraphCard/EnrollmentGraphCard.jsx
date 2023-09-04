@@ -21,7 +21,7 @@ export default function EnrollmentGraphCard({ isMobile, updateClassCardEnrollmen
 
 	const update = useCallback(
 		(course, day) => {
-			if (!course || enrollmentData || enrollmentData.length > 0) return;
+			if (!course || !enrollmentData || enrollmentData.length === 0) return;
 
 			const selectedEnrollment = enrollmentData.filter((c) => course.id === c.id)[0];
 			const valid =
@@ -34,6 +34,7 @@ export default function EnrollmentGraphCard({ isMobile, updateClassCardEnrollmen
 				...selectedEnrollment,
 				hoverDay: day
 			};
+
 			setHoveredClass(hoverTotal);
 		},
 		[enrollmentData]
