@@ -125,7 +125,7 @@ ROOT_URLCONF = 'berkeleytime.urls'
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
 
 # CORS configs
-CORS_ALLOWED_ORIGINS_REGEXES = [
+CORS_ALLOWED_ORIGIN_REGEXES = [
     r'^http\:\/\/(?:localhost|127\.0\.0\.1)\:\d+$'
 ]
 
