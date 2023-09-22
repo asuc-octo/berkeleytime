@@ -106,6 +106,9 @@ INSTALLED_APPS = [
 
 # Middlewares
 MIDDLEWARE = [
+    # corsheaders middleware needs to go above everything else if possible
+    'corsheaders.middleware.CorsMiddleware',
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -113,7 +116,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 # Root URLconf file
@@ -123,9 +125,7 @@ ROOT_URLCONF = 'berkeleytime.urls'
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
 
 # CORS configs
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # https://stackoverflow.com/questions/14058453/making-python-loggers-output-all-messages-to-stdout-in-addition-to-log-file
