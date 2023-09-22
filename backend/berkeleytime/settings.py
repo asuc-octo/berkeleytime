@@ -126,7 +126,7 @@ WSGI_APPLICATION = 'berkeleytime.wsgi.application'
 
 # CORS configs
 CORS_ALLOWED_ORIGINS_REGEXES = [
-    r'http://(?:localhost|127\.0\.0\.1)\:\d+'
+    r'^http\:\/\/(?:localhost|127\.0\.0\.1)\:\d+$'
 ]
 
 
