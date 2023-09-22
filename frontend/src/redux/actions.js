@@ -16,6 +16,8 @@ import {
 	UPDATE_ENROLL_SELECTED
 } from './actionTypes';
 
+axios.defaults.baseURL = 'https://cors.berkeleytime.com';
+
 // update grade list
 const updateGradeContext = (data) => ({
 	type: UPDATE_GRADE_CONTEXT,

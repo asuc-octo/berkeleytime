@@ -108,7 +108,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     # corsheaders middleware needs to go above everything else if possible
     'corsheaders.middleware.CorsMiddleware',
-    
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -125,6 +125,9 @@ ROOT_URLCONF = 'berkeleytime.urls'
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
 
 # CORS configs
+CORS_ALLOWED_ORIGINS_REGEXES = [
+    r'http://(?:localhost|127\.0\.0\.1)\:\d+'
+]
 CORS_ALLOW_ALL_ORIGINS = True
 
 
