@@ -14,6 +14,7 @@ const {
   GITLAB_DOMAIN,
   GITLAB_PROJECT_BT_ACCESS_TOKEN,
   DISCORD_WEBHOOK_URL,
+  QUOTES_API_KEY,
 } = process.env;
 
 const quoteCache = {};
@@ -56,7 +57,11 @@ const inspire = async () => {
         data: {
           contents: { quotes },
         },
-      } = await axios.get(`https://quotes.rest/qod.json?category=inspire`);
+      } = await axios.get(`https://quotes.rest/qod.json?category=inspire`, {
+        headers: {
+          Authorization: `Bearer ${QUOTES_API_KEY}`,
+        },
+      });
       const { quote, author } = quotes[0];
       if (quote && author) {
         console.log(`Retrieve quote success: `, quotes[0]);

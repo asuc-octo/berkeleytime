@@ -7,7 +7,7 @@ import {
 	getUnitsForSchedule
 } from 'utils/scheduler/scheduler';
 import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
-import { unitsToString } from 'utils/courses/units';
+import { unitsToString } from 'lib/courses/units';
 import { useUser } from 'graphql/hooks/user';
 import { Button } from 'bt/custom';
 import { ReduxState } from 'redux/store';

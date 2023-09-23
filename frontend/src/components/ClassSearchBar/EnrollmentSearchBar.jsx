@@ -4,7 +4,6 @@ import hash from 'object-hash';
 
 import { fetchEnrollSelected } from '../../redux/actions';
 import { connect } from 'react-redux';
-import { reactSelectCourseSearch } from 'utils/courses/search';
 import BTSelect from 'components/Custom/Select';
 
 class EnrollmentSearchBar extends Component {
@@ -245,12 +244,12 @@ class EnrollmentSearchBar extends Component {
 				<Row style={{ marginBottom: 10 }}>
 					<Col lg={4}>
 						<BTSelect
+							courseSearch
 							name="selectClass"
 							placeholder="Choose a class..."
 							// value={selectedClass}
 							options={this.buildCoursesOptions(classes)}
 							onChange={this.handleClassSelect}
-							filterOption={reactSelectCourseSearch}
 							components={{
 								IndicatorSeparator: () => null
 							}}
