@@ -5,7 +5,6 @@ import hash from 'object-hash';
 import { connect } from 'react-redux';
 
 import { fetchGradeSelected } from '../../redux/actions';
-import { reactSelectCourseSearch } from 'utils/courses/search';
 import BTSelect from 'components/Custom/Select';
 
 const sortOptions = [
@@ -332,11 +331,11 @@ class GradesSearchBar extends Component {
 				<Row style={{ marginBottom: 10 }}>
 					<Col lg={3}>
 						<BTSelect
+							courseSearch
 							name="selectClass"
 							placeholder="Choose a class..."
 							options={this.buildCoursesOptions(classes)}
 							onChange={this.handleClassSelect}
-							filterOption={reactSelectCourseSearch}
 							components={{
 								IndicatorSeparator: () => null
 							}}

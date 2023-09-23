@@ -10,7 +10,7 @@ import { useUser } from '../../../graphql/hooks/user';
 import { useGetCoursesForFilterQuery } from 'graphql';
 import useLatestSemester from 'graphql/hooks/latestSemester';
 import { addCourse } from './onboard';
-import { compareDepartmentName } from 'utils/courses/sorting';
+import { compareDepartmentName } from 'lib/courses/sorting';
 import { Schedule, removeCourse } from 'utils/scheduler/scheduler';
 
 type Props = {
