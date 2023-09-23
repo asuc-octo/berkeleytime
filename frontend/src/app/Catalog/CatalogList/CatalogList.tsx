@@ -4,11 +4,10 @@ import { CourseFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
 import { CurrentFilters, FilterOption, SortOption } from '../types';
 import { Dispatch, memo, SetStateAction, useEffect, useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';
-
 import styles from './CatalogList.module.scss';
 import { useHistory } from 'react-router';
-import { searchCourses } from 'utils/courses/search';
-import { sortByAttribute } from 'utils/courses/sorting';
+import CatalogService from '../service';
+import { sortByAttribute } from 'lib/courses/sorting';
 
 type CatalogListProps = {
 	currentFilters: CurrentFilters;
@@ -16,6 +15,7 @@ type CatalogListProps = {
 	selectedId: string | null;
 	searchQuery: string;
 	sortQuery: SortOption;
+	sortDir: boolean;
 };
 
 type Skeleton = { __typename: 'Skeleton'; id: number };
@@ -24,9 +24,9 @@ type Skeleton = { __typename: 'Skeleton'; id: number };
  * Component for course list
  */
 const CatalogList = (props: CatalogListProps) => {
-	const { currentFilters, setCurrentCourse, selectedId, searchQuery, sortQuery } = props;
+	const { currentFilters, setCurrentCourse, selectedId, searchQuery, sortQuery, sortDir } = props;
 	const { observe, height } = useDimensions();
-	const [fetchCatalogList, { data }] = useGetCoursesForFilterLazyQuery({});
+	const [fetchCatalogList, { data, loading, called }] = useGetCoursesForFilterLazyQuery({});
 	const history = useHistory();
 
 	const courses = useMemo(() => {
@@ -39,40 +39,46 @@ const CatalogList = (props: CatalogListProps) => {
 					} as Skeleton)
 			);
 
-		let courses = data.allCourses.edges.map((edge) => edge.node);
-		courses = searchCourses(courses, searchQuery);
+		let courseResults = CatalogService.searchCatalog(
+			data.allCourses.edges.map((edge) => edge.node),
+			searchQuery
+		).sort(sortByAttribute(sortQuery.value));
 
 		//TODO: Very big problem to inspect - server is returning duplicate entries of same courses.
 		//			Here we filter the duplicates to ensure catalog list consistency.
-		courses = courses.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i);
+		courseResults = courseResults.filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i);
 
 		// Inspect one case of duplication:
 		// console.log(courses.filter((v, i, a) => v.id === 'Q291cnNlVHlwZTo0NDc1'));
 
-		return courses.sort(sortByAttribute(sortQuery.value));
-	}, [data, searchQuery, sortQuery]);
+		return sortDir ? CatalogService.descending(courseResults, sortQuery) : courseResults;
+	}, [data, searchQuery, sortDir, sortQuery]);
 
 	useEffect(() => {
-		const playlists = Object.values(currentFilters ?? {})
+		const playlistString = Object.values(currentFilters ?? {})
 			.filter((val) => val !== null)
 			.map((item) => (Array.isArray(item) ? item.map((v) => v.value.id) : item?.value.id))
 			.flat()
 			.join(',');
 
-		if (playlists) fetchCatalogList({ variables: { playlists } });
+		if (playlistString) fetchCatalogList({ variables: { playlists: playlistString } });
 	}, [fetchCatalogList, currentFilters]);
 
 	const handleCourseSelect = (course: CourseFragment) => {
 		setCurrentCourse(course);
-		history.push(
-			`/catalog/${(currentFilters.semester as FilterOption)?.value?.name}/${course.abbreviation}/${
-				course.courseNumber
-			}`
-		);
+		history.push({
+			pathname: `/catalog/${(currentFilters.semester as FilterOption)?.value?.name}/${
+				course.abbreviation
+			}/${course.courseNumber}`,
+			search: location.search
+		});
 	};
 
 	return (
 		<div ref={observe} className={styles.root}>
+			<div className={styles.status}>
+				{called && !loading && courses?.length > 0 && <span>{courses.length} Results</span>}
+			</div>
 			{height && courses.length > 0 ? (
 				<FixedSizeList
 					className={styles.list}
