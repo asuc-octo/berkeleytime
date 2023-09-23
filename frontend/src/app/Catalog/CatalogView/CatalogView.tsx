@@ -134,7 +134,7 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
-			<Meta title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'} />
+			<Meta title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'} description={course?.description} />
 			<button
 				className={styles.modalButton}
 				onClick={() => {
