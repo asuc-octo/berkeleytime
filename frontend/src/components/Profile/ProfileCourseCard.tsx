@@ -34,7 +34,7 @@ const ProfileCourseCard = ({ course }: Props) => {
 			aside={
 				course.letterAverage && (
 					<div className="profile-card-sort profile-card-grade">
-						{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+						{applyIndicatorGrade(course.letterAverage)}
 					</div>
 				)
 			}

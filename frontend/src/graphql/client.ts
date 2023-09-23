@@ -7,7 +7,6 @@ const httpLink = new HttpLink({
 
 // Explore ways to transform API responses before reaching the components
 // to minimize the amount of edge -> node drilling.
-
 // const transformRepsonseLink = new ApolloLink((operation, forward) => {
 // 	return forward(operation).map((response) => {
 // 		if (response.data) {
