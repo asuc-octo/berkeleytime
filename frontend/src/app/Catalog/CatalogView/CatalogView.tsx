@@ -16,7 +16,7 @@ import ReadMore from './ReadMore';
 import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
 import SectionTable from './SectionTable';
-import { courseToName } from 'utils/courses/course';
+import { courseToName } from 'lib/courses/course';
 import Meta from 'components/Common/Meta';
 
 interface CatalogViewProps {
@@ -134,7 +134,7 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
-			<Meta title={course ? `Catalog | ${courseToName(course)} - ${course.description}` : 'Catalog'} />
+			<Meta title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'} />
 			<button
 				className={styles.modalButton}
 				onClick={() => {
