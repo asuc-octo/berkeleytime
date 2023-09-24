@@ -229,12 +229,15 @@
 .instructor {
 	display: flex;
 	gap: 5px;
-	align-items: center;
 	font-size: 14px;
 	color: $bt-light-grey;
 	text-transform: capitalize;
 	gap: 4px;
 	color: $bt-light-text;
+
+	svg {
+		overflow: visible;
+	}
 }
 
 .sectionContent {
@@ -263,6 +266,10 @@
 	margin-top: 12px;
 	font-size: 14px;
 	text-transform: none !important;
+	div {
+		display: flex;
+		gap: 4px;
+	}
 }
 
 .enrolled {
@@ -270,7 +277,6 @@
 	justify-content: flex-end;
 	align-items: center;
 	font-size: 14px;
-	font-weight: 600;
 	gap: 5px;
 
 	img {
