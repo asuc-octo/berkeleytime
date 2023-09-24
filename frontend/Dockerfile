@@ -4,7 +4,7 @@ WORKDIR /frontend
 COPY package.json .
 RUN npm install
 COPY . .
-ENTRYPOINT npm start
+ENTRYPOINT npm dev
 
 FROM dev AS prod
 RUN npm install -g serve
