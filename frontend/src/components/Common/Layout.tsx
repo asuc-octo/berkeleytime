@@ -28,16 +28,8 @@ export default function RootLayout({ footer }: LayoutProps) {
 		<>
 			<Banner />
 			<Navigation />
-			<Suspense
-				fallback={
-					<div className="viewport-app">
-						<BTLoader fill />
-					</div>
-				}
-			>
-				<Outlet />
-				{footer && <Footer />}
-			</Suspense>
+			<Outlet />
+			{footer && <Footer />}
 		</>
 	);
 }
