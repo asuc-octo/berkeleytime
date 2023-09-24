@@ -4,6 +4,7 @@ import Catalog from './app/Catalog';
 import Landing from './views/Landing';
 import Error from './views/Error';
 import Layout from 'components/Common/Layout';
+import BTLoader from 'components/Common/BTLoader';
 
 const Grades = () => import('./app/Grades');
 const Enrollment = () => import('./app/Enrollment');
@@ -64,5 +65,14 @@ const router = createBrowserRouter([
 ]);
 
 export default function Routes() {
-	return <RouterProvider router={router} />;
+	return (
+		<RouterProvider
+			router={router}
+			fallbackElement={
+				<div className="viewport-app">
+					<BTLoader fill />
+				</div>
+			}
+		/>
+	);
 }
