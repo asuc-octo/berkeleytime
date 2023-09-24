@@ -73,12 +73,12 @@ const SectionTable = ({ sections }: Props) => {
 								<h6>{section.kind}</h6>
 								<span className={styles.instructor}>
 									<User width={14} />
-									{section.instructor?.toLowerCase() || 'unknown'}
+									{section.instructor?.toLowerCase() || 'Unknown instructor'}
 								</span>
 								<div className={styles.sectionStats}>
 									<div>
 										<PinAlt width={14} />
-										{section.locationName || 'Unknown'}
+										{section.locationName || 'Unknown location'}
 										{' • '}
 									</div>
 									<div>
@@ -91,7 +91,7 @@ const SectionTable = ({ sections }: Props) => {
 								<div className={`${color} ${styles.enrolled}`}>
 									<Group width={14} />
 									{section.enrolled}/{section.enrolledMax} (
-									{formatEnrollment(section.enrolled / section.enrolledMax)})
+									{formatEnrollment(section.enrolled / section.enrolledMax)}) enrolled
 								</div>
 								<span>{section.waitlisted} Waitlisted</span>
 							</div>
