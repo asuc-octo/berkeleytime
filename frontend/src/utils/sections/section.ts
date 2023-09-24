@@ -56,7 +56,7 @@ export const formatSectionTime = (section: SectionFragment, showNoTime = true): 
 	section.startTime && section.endTime
 		? `${formatTime(section.startTime)} \u{2013} ${formatTime(section.endTime)}`
 		: showNoTime
-		? `Unknown`
+		? `Unknown time`
 		: '';
 
 export const formatSectionEnrollment = (section: SectionFragment): ReactNode =>
