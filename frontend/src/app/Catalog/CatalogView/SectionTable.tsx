@@ -84,9 +84,7 @@ const SectionTable = ({ sections }: Props) => {
 									<div>
 										<Clock width={14} />
 										{section.wordDays} {formatSectionTime(section)}
-										{/* {' • '} */}
 									</div>
-									{/* <div>{section.waitlisted} WL</div> */}
 								</div>
 							</div>
 							<div className={styles.sectionContent}>
@@ -95,6 +93,7 @@ const SectionTable = ({ sections }: Props) => {
 									{section.enrolled}/{section.enrolledMax} (
 									{formatEnrollment(section.enrolled / section.enrolledMax)})
 								</div>
+								<span>{section.waitlisted} Waitlisted</span>
 							</div>
 						</div>
 					);
