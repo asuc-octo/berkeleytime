@@ -3,7 +3,6 @@ import { createBrowserRouter, Navigate, RouterProvider, useParams } from 'react-
 import Catalog from './app/Catalog';
 import Landing from './views/Landing';
 import Error from './views/Error';
-import FooterLayout from 'components/Common/FooterLayout';
 import Layout from 'components/Common/Layout';
 
 const Grades = () => import('./app/Grades');
@@ -30,33 +29,34 @@ function ScheduleRedirect() {
 
 const router = createBrowserRouter([
 	{
-		Component: Layout,
+		element: <Layout />,
 		ErrorBoundary: Error,
 		children: [
-			{
-				Component: FooterLayout,
-				children: [
-					{ path: '/', Component: Landing },
-					{ path: '/landing', element: <Navigate to="/" replace /> },
-					{ path: '/s/:scheduleId', Component: ScheduleRedirect },
-					{ path: '/grades/*', lazy: Grades },
-					{ path: '/enrollment/*', lazy: Enrollment },
-					{ path: '/about', lazy: About },
-					{ path: '/releases', lazy: Releases },
-					{ path: '/faq', lazy: Faq },
-					{ path: '/profile', lazy: Profile },
-					{ path: '/oauth2callback', lazy: Login },
-					{ path: '/logout', lazy: Logout },
-					{ path: '/scheduler', lazy: SchedulerOnboard },
-					{ path: '/scheduler/:scheduleId', lazy: RemoteScheduler },
-					{ path: '/schedule/:scheduleId', lazy: ViewSchedule },
-					{ path: '/error', Component: Error },
-					{ path: '/legal/privacy', lazy: PrivacyPolicy },
-					{ path: '/legal/terms', lazy: TermsOfService },
-					{ path: '/redirect', lazy: RedirectLink },
-					{ path: '/apply', lazy: Apply }
-				]
-			},
+			{ path: '/', index: true, Component: Landing },
+			{ path: '/landing', element: <Navigate to="/" replace /> },
+			{ path: '/s/:scheduleId', Component: ScheduleRedirect },
+			{ path: '/grades/*', lazy: Grades },
+			{ path: '/enrollment/*', lazy: Enrollment },
+			{ path: '/about', lazy: About },
+			{ path: '/releases', lazy: Releases },
+			{ path: '/faq', lazy: Faq },
+			{ path: '/profile', lazy: Profile },
+			{ path: '/oauth2callback', lazy: Login },
+			{ path: '/logout', lazy: Logout },
+			{ path: '/scheduler', lazy: SchedulerOnboard },
+			{ path: '/scheduler/:scheduleId', lazy: RemoteScheduler },
+			{ path: '/schedule/:scheduleId', lazy: ViewSchedule },
+			{ path: '/error', Component: Error },
+			{ path: '/legal/privacy', lazy: PrivacyPolicy },
+			{ path: '/legal/terms', lazy: TermsOfService },
+			{ path: '/redirect', lazy: RedirectLink },
+			{ path: '/apply', lazy: Apply }
+		]
+	},
+	{
+		element: <Layout footer={false} />,
+		ErrorBoundary: Error,
+		children: [
 			{ path: '/catalog/:semester?/:abbreviation?/:courseNumber?', Component: Catalog },
 			{ path: '/scheduler/new', lazy: LocalScheduler }
 		]

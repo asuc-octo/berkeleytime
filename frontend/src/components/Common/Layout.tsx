@@ -4,10 +4,15 @@ import ReactGA from 'react-ga';
 import Banner from './Banner';
 import Navigation from './Navigation';
 import BTLoader from './BTLoader';
+import Footer from './Footer';
 
 ReactGA.initialize('UA-35316609-1');
 
-export default function Root() {
+interface LayoutProps {
+	footer?: boolean;
+}
+
+export default function RootLayout({ footer }: LayoutProps) {
 	const location = useLocation();
 
 	useEffect(() => {
@@ -31,7 +36,12 @@ export default function Root() {
 				}
 			>
 				<Outlet />
+				{footer && <Footer />}
 			</Suspense>
 		</>
 	);
 }
+
+RootLayout.defaultProps = {
+	footer: true
+};
