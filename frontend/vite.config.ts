@@ -11,7 +11,10 @@ export default defineConfig({
 	server: {
 		host: true,
 		port: 3000,
-		open: true
+		open: true,
+		watch: {
+			usePolling: true
+		}
 	},
 	publicDir: path.resolve(__dirname, 'public'),
 	plugins: [
