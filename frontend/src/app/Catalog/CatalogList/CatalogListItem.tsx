@@ -74,7 +74,7 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 				</div>
 				<div className={styles.itemStats}>
 					<span className={colorEnrollment(course.enrolledPercentage)}>
-						{formatEnrollment(course.enrolledPercentage)}
+						{formatEnrollment(course.enrolledPercentage)} enrolled
 					</span>
 					<span> • {course.units ? formatUnits(course.units) : 'N/A'}</span>
 				</div>

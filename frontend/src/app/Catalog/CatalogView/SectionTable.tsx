@@ -76,26 +76,25 @@ const SectionTable = ({ sections }: Props) => {
 									{section.instructor?.toLowerCase() || 'unknown'}
 								</span>
 								<div className={styles.sectionStats}>
-									<span className={color}>
-										{formatEnrollment(section.enrolled / section.enrolledMax)}
-									</span>
-									<span>• {section.waitlisted} Waitlisted</span>
-									{/* <span>• CCN {section.ccn}</span> */}
+									<div>
+										<PinAlt width={14} />
+										{section.locationName || 'Unknown'}
+										{' • '}
+									</div>
+									<div>
+										<Clock width={14} />
+										{section.wordDays} {formatSectionTime(section)}
+										{/* {' • '} */}
+									</div>
+									{/* <div>{section.waitlisted} WL</div> */}
 								</div>
 							</div>
 							<div className={styles.sectionContent}>
 								<div className={`${color} ${styles.enrolled}`}>
-									<Group width={16} height={24} />
-									{section.enrolled}/{section.enrolledMax}
+									<Group width={14} />
+									{section.enrolled}/{section.enrolledMax} (
+									{formatEnrollment(section.enrolled / section.enrolledMax)})
 								</div>
-								<span>
-									<PinAlt width={16} height={24} />
-									{section.locationName || 'Unknown'}
-								</span>
-								<span>
-									<Clock width={16} height={24} />
-									{section.wordDays} {formatSectionTime(section)}
-								</span>
 							</div>
 						</div>
 					);
