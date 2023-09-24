@@ -2,7 +2,7 @@ import { ApolloClient, HttpLink } from '@apollo/client';
 import { cache } from './cache';
 
 const httpLink = new HttpLink({
-	uri: '/api/graphql'
+	uri: import.meta.env.PROD ? '/api/graphql' : 'https://staging.berkeleytime.com/api/graphql'
 });
 
 // Explore ways to transform API responses before reaching the components
