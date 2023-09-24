@@ -4,7 +4,6 @@ import { formatSectionTime } from 'utils/sections/section';
 import catalogService from '../service';
 import Skeleton from 'react-loading-skeleton';
 
-import people from 'assets/svg/catalog/people.svg';
 import denero from 'assets/img/eggs/denero.png';
 import hug from 'assets/img/eggs/hug.png';
 import hilf from 'assets/img/eggs/hilf.png';
@@ -12,9 +11,9 @@ import sahai from 'assets/img/eggs/sahai.png';
 import scott from 'assets/img/eggs/scott.png';
 import kubi from 'assets/img/eggs/kubi.png';
 import garcia from 'assets/img/eggs/garcia.png';
+import { Clock, Group, PinAlt, User } from 'iconoir-react';
 
 import styles from './CatalogView.module.scss';
-import { Clock, Group, PinAlt, User } from 'iconoir-react';
 
 const { colorEnrollment, formatEnrollment } = catalogService;
 
@@ -62,7 +61,7 @@ const SectionTable = ({ sections }: Props) => {
 		<div className={styles.sectionRoot}>
 			{sections.length > 0 ? (
 				sections.map((section) => {
-					const colorStyle = colorEnrollment(section.enrolled / section.enrolledMax);
+					const color = colorEnrollment(section.enrolled / section.enrolledMax);
 
 					return (
 						<div
@@ -71,29 +70,27 @@ const SectionTable = ({ sections }: Props) => {
 							key={section.ccn}
 						>
 							<div className={styles.sectionInfo}>
-								<h5>{section.kind}</h5>
+								<h6>{section.kind}</h6>
 								<span className={styles.instructor}>
-									<User width={16} />
-									{section.instructor
-										? section.instructor.toLowerCase()
-										: 'Instructor not specified.'}
+									<User width={14} />
+									{section.instructor?.toLowerCase() || 'unknown'}
 								</span>
 								<div className={styles.sectionStats}>
-									<span className={colorStyle}>
+									<span className={color}>
 										{formatEnrollment(section.enrolled / section.enrolledMax)}
 									</span>
 									<span>• {section.waitlisted} Waitlisted</span>
-									<span>• CCN {section.ccn}</span>
+									{/* <span>• CCN {section.ccn}</span> */}
 								</div>
 							</div>
 							<div className={styles.sectionContent}>
-								<div className={`${colorStyle} ${styles.enrolled}`}>
+								<div className={`${color} ${styles.enrolled}`}>
 									<Group width={16} height={24} />
 									{section.enrolled}/{section.enrolledMax}
 								</div>
 								<span>
 									<PinAlt width={16} height={24} />
-									{section.locationName ?? 'Unknown Location'}
+									{section.locationName || 'Unknown'}
 								</span>
 								<span>
 									<Clock width={16} height={24} />
