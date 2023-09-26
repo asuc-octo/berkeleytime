@@ -1,5 +1,4 @@
-import { FC } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // We must have an allowlist of redirects to prevent an attacker from arbitrarily opening external sites.
 const allowedRedirects = new Map([
@@ -10,15 +9,13 @@ const allowedRedirects = new Map([
 	]
 ]);
 
-const RedirectLink: FC = () => {
+export function Component() {
 	const params = new URLSearchParams(useLocation().search);
 	const site = params.get('site');
 	if (site != null && allowedRedirects.has(site)) {
 		window.open(allowedRedirects.get(site), '_blank');
 	}
-	const history = useHistory();
-	history.goBack();
+	const navigate = useNavigate();
+	navigate(-1);
 	return null;
-};
-
-export default RedirectLink;
+}
