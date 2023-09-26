@@ -90,8 +90,9 @@ const SectionTable = ({ sections }: Props) => {
 							<div className={styles.sectionContent}>
 								<div className={`${color} ${styles.enrolled}`}>
 									<Group width={14} />
-									{section.enrolled}/{section.enrolledMax} (
-									{formatEnrollment(section.enrolled / section.enrolledMax)}) enrolled
+									{section.enrolled}/{section.enrolledMax} {' '}
+									{/* ({formatEnrollment(section.enrolled / section.enrolledMax)}) */}
+									enrolled
 								</div>
 								<span>{section.waitlisted} Waitlisted</span>
 							</div>
