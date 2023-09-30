@@ -148,8 +148,21 @@ export type Instructor = {
   givenName: Scalars['String'];
 };
 
+/** Each message */
+export type Message = {
+  __typename?: 'Message';
+  body: Scalars['String'];
+  timestamp: Scalars['ISODate'];
+};
+
+export type MessageInput = {
+  body: Scalars['String'];
+  created_by: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createMessage?: Maybe<Message>;
   /** Takes in schedule fields, creates a new schedule record in the database, and returns the schedule. */
   createNewSchedule?: Maybe<Schedule>;
   /** Delete user account. */
@@ -164,6 +177,11 @@ export type Mutation = {
   setSelectedSections?: Maybe<Schedule>;
   /** Mutate user info. */
   updateUserInfo?: Maybe<User>;
+};
+
+
+export type MutationCreateMessageArgs = {
+  message: MessageInput;
 };
 
 
@@ -201,6 +219,7 @@ export type MutationUpdateUserInfoArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  allMessages?: Maybe<Array<Maybe<Message>>>;
   /**
    * Get info about all courses and their corresponding classes for a given semester.
    *
@@ -224,6 +243,11 @@ export type Query = {
   section?: Maybe<Section>;
   /** Query for user info. */
   user?: Maybe<User>;
+};
+
+
+export type QueryAllMessagesArgs = {
+  created_by?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -468,6 +492,8 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
+  Message: ResolverTypeWrapper<Message>;
+  MessageInput: MessageInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
@@ -501,6 +527,8 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
+  Message: Message;
+  MessageInput: MessageInput;
   Mutation: {};
   Query: {};
   Schedule: Schedule;
@@ -636,7 +664,14 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
   name: 'JSONObject';
 }
 
+export type MessageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']> = {
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  timestamp?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  createMessage?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<MutationCreateMessageArgs, 'message'>>;
   createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'main_schedule'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'id' | 'main_schedule'>>;
@@ -647,6 +682,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  allMessages?: Resolver<Maybe<Array<Maybe<ResolversTypes['Message']>>>, ParentType, ContextType, Partial<QueryAllMessagesArgs>>;
   catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
   class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassArgs, 'classNumber' | 'courseNumber' | 'subject' | 'term'>>;
   course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCourseArgs, 'courseNumber' | 'subject'>>;
@@ -736,6 +772,7 @@ export type Resolvers<ContextType = any> = {
   Instructor?: InstructorResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
+  Message?: MessageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
