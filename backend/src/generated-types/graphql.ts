@@ -148,6 +148,19 @@ export type Instructor = {
   givenName: Scalars['String'];
 };
 
+/** Message schema for graphql  */
+export type Message = {
+  __typename?: 'Message';
+  message: Scalars['String'];
+  receiver: Scalars['String'];
+  sender: Scalars['String'];
+};
+
+export type MessageInput = {
+  sender?: InputMaybe<Scalars['String']>;
+};
+
+/** Outlines the mutation functions, their parameters, and their return types */
 export type Mutation = {
   __typename?: 'Mutation';
   /** Takes in schedule fields, creates a new schedule record in the database, and returns the schedule. */
@@ -158,6 +171,7 @@ export type Mutation = {
   editExistingSchedule?: Maybe<Schedule>;
   /** Takes in a schedule's ObjectID, deletes the schedule with that ID, and returns the ID. */
   removeScheduleByID?: Maybe<Scalars['ID']>;
+  sendMessage?: Maybe<Message>;
   /** For the schedule specified by the ID, modifies the class ID field and returns the updated schedule. */
   setSelectedClasses?: Maybe<Schedule>;
   /** For the schedule specified by the ID, modifies the section ID field and returns the updated schedule. */
@@ -167,38 +181,53 @@ export type Mutation = {
 };
 
 
+/** Outlines the mutation functions, their parameters, and their return types */
 export type MutationCreateNewScheduleArgs = {
   main_schedule: ScheduleInput;
 };
 
 
+/** Outlines the mutation functions, their parameters, and their return types */
 export type MutationEditExistingScheduleArgs = {
   id: Scalars['ID'];
   main_schedule: ScheduleInput;
 };
 
 
+/** Outlines the mutation functions, their parameters, and their return types */
 export type MutationRemoveScheduleByIdArgs = {
   id: Scalars['ID'];
 };
 
 
+/** Outlines the mutation functions, their parameters, and their return types */
+export type MutationSendMessageArgs = {
+  message: Scalars['String'];
+  receiver: Scalars['String'];
+  sender: Scalars['String'];
+};
+
+
+/** Outlines the mutation functions, their parameters, and their return types */
 export type MutationSetSelectedClassesArgs = {
   class_IDs: Array<Scalars['String']>;
   id: Scalars['ID'];
 };
 
 
+/** Outlines the mutation functions, their parameters, and their return types */
 export type MutationSetSelectedSectionsArgs = {
   id: Scalars['ID'];
   section_IDs: Array<Scalars['String']>;
 };
 
 
+/** Outlines the mutation functions, their parameters, and their return types */
 export type MutationUpdateUserInfoArgs = {
   newUserInfo: UserInput;
 };
 
+/** Outlines the query functions, their parameters, and their return types */
 export type Query = {
   __typename?: 'Query';
   /**
@@ -215,6 +244,7 @@ export type Query = {
    * Useful for searching for courses.
    */
   courseList?: Maybe<Array<Maybe<CourseListItem>>>;
+  getMessages?: Maybe<Array<Maybe<Message>>>;
   grade?: Maybe<Grade>;
   ping: Scalars['String'];
   /** Takes in a schedule's ObjectID and returns a specific schedule. */
@@ -227,11 +257,13 @@ export type Query = {
 };
 
 
+/** Outlines the query functions, their parameters, and their return types */
 export type QueryCatalogArgs = {
   term: TermInput;
 };
 
 
+/** Outlines the query functions, their parameters, and their return types */
 export type QueryClassArgs = {
   classNumber: Scalars['String'];
   courseNumber: Scalars['String'];
@@ -240,6 +272,7 @@ export type QueryClassArgs = {
 };
 
 
+/** Outlines the query functions, their parameters, and their return types */
 export type QueryCourseArgs = {
   courseNumber: Scalars['String'];
   subject: Scalars['String'];
@@ -247,6 +280,13 @@ export type QueryCourseArgs = {
 };
 
 
+/** Outlines the query functions, their parameters, and their return types */
+export type QueryGetMessagesArgs = {
+  input: MessageInput;
+};
+
+
+/** Outlines the query functions, their parameters, and their return types */
 export type QueryGradeArgs = {
   classNum?: InputMaybe<Scalars['String']>;
   courseNum: Scalars['String'];
@@ -255,16 +295,19 @@ export type QueryGradeArgs = {
 };
 
 
+/** Outlines the query functions, their parameters, and their return types */
 export type QueryScheduleByIdArgs = {
   id: Scalars['String'];
 };
 
 
+/** Outlines the query functions, their parameters, and their return types */
 export type QuerySchedulesByUserArgs = {
   created_by: Scalars['String'];
 };
 
 
+/** Outlines the query functions, their parameters, and their return types */
 export type QuerySectionArgs = {
   classNumber: Scalars['String'];
   courseNumber: Scalars['String'];
@@ -351,7 +394,7 @@ export type TermOutput = {
   year: Scalars['Int'];
 };
 
-/** User accout info. */
+/** User account info. */
 export type User = {
   __typename?: 'User';
   date_joined: Scalars['String'];
@@ -468,6 +511,8 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
+  Message: ResolverTypeWrapper<Message>;
+  MessageInput: MessageInput;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
@@ -501,6 +546,8 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
+  Message: Message;
+  MessageInput: MessageInput;
   Mutation: {};
   Query: {};
   Schedule: Schedule;
@@ -636,11 +683,19 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
   name: 'JSONObject';
 }
 
+export type MessageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  receiver?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  sender?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'main_schedule'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'id' | 'main_schedule'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
+  sendMessage?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<MutationSendMessageArgs, 'message' | 'receiver' | 'sender'>>;
   setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'class_IDs' | 'id'>>;
   setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
   updateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserInfoArgs, 'newUserInfo'>>;
@@ -651,6 +706,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassArgs, 'classNumber' | 'courseNumber' | 'subject' | 'term'>>;
   course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCourseArgs, 'courseNumber' | 'subject'>>;
   courseList?: Resolver<Maybe<Array<Maybe<ResolversTypes['CourseListItem']>>>, ParentType, ContextType>;
+  getMessages?: Resolver<Maybe<Array<Maybe<ResolversTypes['Message']>>>, ParentType, ContextType, RequireFields<QueryGetMessagesArgs, 'input'>>;
   grade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradeArgs, 'courseNum' | 'subject'>>;
   ping?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   scheduleByID?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QueryScheduleByIdArgs, 'id'>>;
@@ -736,6 +792,7 @@ export type Resolvers<ContextType = any> = {
   Instructor?: InstructorResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
+  Message?: MessageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;

@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
   """
-  User accout info.
+  User account info.
   """
   type User {
     email: String!
