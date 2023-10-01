@@ -1,17 +1,13 @@
-import { formatChatMessages, formatIndividualMessages} from "./formatter";
+import { formatIndividualMessages} from "./formatter";
 import { Message } from "../../generated-types/graphql";
-import { ChatModel, MessageModel} from "../../db/chat";
+import { MessageModel} from "../../db/chat";
 
 export async function getAllMessages(): Promise<Message[]> {
-    const chats = await ChatModel.find({})
-    if (chats.length == 0) {
+    const messages = await MessageModel.find({})
+    if (messages.length == 0) {
         throw new Error("No messages found!")
     }
-    const messages: Message[] = []
-    chats.map(formatChatMessages).forEach((messages) => {
-        messages.concat(messages)
-    })
-    return messages
+    return messages.map(formatIndividualMessages)
 } 
 
 export async function getAllMessagesByUser(userID: string): Promise<Message[]> {
