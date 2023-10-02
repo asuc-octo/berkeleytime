@@ -148,6 +148,18 @@ export type Instructor = {
   givenName: Scalars['String'];
 };
 
+export type Message = {
+  __typename?: 'Message';
+  text: Scalars['String'];
+  sender: Scalars['String'];
+  timestamp: Scalars['ISODate'];
+}
+
+export type MessageInput = {
+  text: Scalars['String'];
+  sender: Scalars['String'];
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   /** Takes in schedule fields, creates a new schedule record in the database, and returns the schedule. */
@@ -164,6 +176,8 @@ export type Mutation = {
   setSelectedSections?: Maybe<Schedule>;
   /** Mutate user info. */
   updateUserInfo?: Maybe<User>;
+  /** Create new message */
+  createMessage?: Maybe<Message>;
 };
 
 
@@ -199,6 +213,10 @@ export type MutationUpdateUserInfoArgs = {
   newUserInfo: UserInput;
 };
 
+export type MutationCreateMessagesArgs = {
+  message: MessageInput;
+}
+
 export type Query = {
   __typename?: 'Query';
   /**
@@ -224,6 +242,8 @@ export type Query = {
   section?: Maybe<Section>;
   /** Query for user info. */
   user?: Maybe<User>;
+  /** Query for messages */
+  messageByUser?: Maybe<Array<Maybe<Message>>>;
 };
 
 
@@ -272,6 +292,10 @@ export type QuerySectionArgs = {
   subject: Scalars['String'];
   term: TermInput;
 };
+
+export type QueryMessageByUserArgs = {
+  sender?: InputMaybe<Scalars['String']>;
+}
 
 export type Schedule = {
   __typename?: 'Schedule';
@@ -479,6 +503,8 @@ export type ResolversTypes = {
   TermOutput: ResolverTypeWrapper<TermOutput>;
   User: ResolverTypeWrapper<User>;
   UserInput: UserInput;
+  Message: Message;
+  MessageInput: MessageInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -511,6 +537,8 @@ export type ResolversParentTypes = {
   TermOutput: TermOutput;
   User: User;
   UserInput: UserInput;
+  Message: Message;
+  MessageInput: MessageInput;
 };
 
 export type AuthDirectiveArgs = { };
@@ -644,6 +672,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'class_IDs' | 'id'>>;
   setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
   updateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserInfoArgs, 'newUserInfo'>>;
+  createMessage?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<MutationCreateMessagesArgs, 'message'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -657,6 +686,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   schedulesByUser?: Resolver<Maybe<Array<Maybe<ResolversTypes['Schedule']>>>, ParentType, ContextType, RequireFields<QuerySchedulesByUserArgs, 'created_by'>>;
   section?: Resolver<Maybe<ResolversTypes['Section']>, ParentType, ContextType, RequireFields<QuerySectionArgs, 'classNumber' | 'courseNumber' | 'sectionNumber' | 'subject' | 'term'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  messageByUser?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, Partial<QueryMessageByUserArgs>>;
 };
 
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
@@ -722,6 +752,14 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MessageResolvers<ContextType = any, ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']> = {
+
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  timestamp?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
+  sender?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type Resolvers<ContextType = any> = {
   CatalogClass?: CatalogClassResolvers<ContextType>;
   CatalogItem?: CatalogItemResolvers<ContextType>;
@@ -742,6 +780,7 @@ export type Resolvers<ContextType = any> = {
   Section?: SectionResolvers<ContextType>;
   TermOutput?: TermOutputResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  Message?: MessageResolvers<ContextType>;
 };
 
 export type DirectiveResolvers<ContextType = any> = {
