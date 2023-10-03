@@ -1,6 +1,6 @@
-import HomeHero from "./HomeHero";
-import HomeFeature from "./HomeFeature";
-import styles from "./home.module.scss";
+import HomeHero from './HomeHero';
+import HomeFeature from './HomeFeature';
+import styles from './home.module.scss';
 
 const Home = () => {
 	return (
