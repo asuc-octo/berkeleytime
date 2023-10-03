@@ -15,7 +15,7 @@ import { Clock, Group, PinAlt, User } from 'iconoir-react';
 
 import styles from './CatalogView.module.scss';
 
-const { colorEnrollment, formatEnrollment } = catalogService;
+const { colorEnrollment } = catalogService;
 
 const easterEggImages = new Map([
 	['DENERO J', denero],
