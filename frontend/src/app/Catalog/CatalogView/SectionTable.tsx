@@ -73,28 +73,26 @@ const SectionTable = ({ sections }: Props) => {
 								<h6>{section.kind}</h6>
 								<span className={styles.instructor}>
 									<User width={14} />
-									{section.instructor?.toLowerCase() || 'Unknown instructor'}
+									{section.instructor?.toLowerCase() || 'unknown'}
 								</span>
 								<div className={styles.sectionStats}>
-									<div>
-										<PinAlt width={14} />
-										{section.locationName || 'Unknown location'}
-										{' • '}
+									<div className={`${color} ${styles.enrolled}`}>
+										<Group width={16} height={24} />
+										{section.enrolled}/{section.enrolledMax}
 									</div>
-									<div>
-										<Clock width={14} />
-										{section.wordDays} {formatSectionTime(section)}
-									</div>
+									<div className={styles.enrolled}>• {section.waitlisted} Waitlisted</div>
+									{/* <span>• CCN {section.ccn}</span> */}
 								</div>
 							</div>
 							<div className={styles.sectionContent}>
-								<div className={`${color} ${styles.enrolled}`}>
-									<Group width={14} />
-									{section.enrolled}/{section.enrolledMax} {' '}
-									{/* ({formatEnrollment(section.enrolled / section.enrolledMax)}) */}
-									enrolled
-								</div>
-								<span>{section.waitlisted} Waitlisted</span>
+								<span>
+									<PinAlt width={16} height={24} />
+									{section.locationName || 'Unknown'}
+								</span>
+								<span>
+									<Clock width={16} height={24} />
+									{section.wordDays} {formatSectionTime(section)}
+								</span>
 							</div>
 						</div>
 					);

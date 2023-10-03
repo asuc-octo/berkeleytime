@@ -89,10 +89,15 @@ const CatalogView = (props: CatalogViewProps) => {
 	const [playlists, sections] = useMemo(() => {
 		let playlists = null;
 		let sections = null;
+		// let semesters = null;
 
 		if (course?.playlistSet) {
 			const { edges } = course.playlistSet;
 			playlists = catalogService.sortPills(edges.map((e) => e.node as PlaylistType));
+
+			// semesters = catalogService.sortSemestersByLatest(
+			// 	edges.map((e) => e.node).filter((n) => n.category === 'semester')
+			// );
 		}
 
 		if (course?.sectionSet) {
@@ -100,6 +105,7 @@ const CatalogView = (props: CatalogViewProps) => {
 			sections = sortSections(edges.map((e) => e.node));
 		}
 
+		// return [playlists ?? skeleton, sections ?? [], semesters];
 		return [playlists ?? skeleton, sections ?? null];
 	}, [course]);
 
@@ -132,19 +138,19 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
-			<button
-				className={styles.modalButton}
-				onClick={() => {
-					setCurrentCourse(null);
-					setCourse(null);
-					history.replace(`/catalog/${semester}`);
-				}}
-			>
-				<BackArrow />
-				Back to Courses
-			</button>
 			{course && (
 				<>
+					<button
+						className={styles.modalButton}
+						onClick={() => {
+							setCurrentCourse(null);
+							setCourse(null);
+							history.replace(`/catalog/${semester}`);
+						}}
+					>
+						<BackArrow />
+						Back to Courses
+					</button>
 					<h3>
 						{course.abbreviation} {course.courseNumber}
 					</h3>
