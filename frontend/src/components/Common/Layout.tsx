@@ -1,7 +1,6 @@
 import { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import ReactGA from 'react-ga';
-import Banner from './Banner';
 import Navigation from './Navigation';
 import BTLoader from './BTLoader';
 import Footer from './Footer';
@@ -26,7 +25,6 @@ export default function RootLayout({ footer }: LayoutProps) {
 
 	return (
 		<>
-			<Banner />
 			<Navigation />
 			<Outlet />
 			{footer && <Footer />}
