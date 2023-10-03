@@ -92,6 +92,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'berkeleytime',
     'catalog',
     'enrollment',
@@ -105,6 +106,9 @@ INSTALLED_APPS = [
 
 # Middlewares
 MIDDLEWARE = [
+    # corsheaders middleware needs to go above everything else if possible
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -119,6 +123,11 @@ ROOT_URLCONF = 'berkeleytime.urls'
 
 # WSGI app object to use with runserver
 WSGI_APPLICATION = 'berkeleytime.wsgi.application'
+
+# CORS configs
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^http\:\/\/(?:localhost|127\.0\.0\.1)\:\d+$'
+]
 
 
 # https://stackoverflow.com/questions/14058453/making-python-loggers-output-all-messages-to-stdout-in-addition-to-log-file
