@@ -35,7 +35,7 @@ export type CurrentFilters = {
 	requirements: FilterOption[] | null;
 };
 
-type CatalogSortKeys =
+export type CatalogSortKeys =
 	| 'relevance'
 	| 'average_grade'
 	| 'department_name'
@@ -55,4 +55,12 @@ export type FilterTemplate = {
 		options: (FilterOption | GroupBase<FilterOption>)[];
 		placeholder: string;
 	};
+};
+
+export type CourseInfo = {
+	title: string;
+	abbreviation: string;
+	courseNumber: string;
+	fullCourseCode: string;
+	abbreviations: string[];
 };

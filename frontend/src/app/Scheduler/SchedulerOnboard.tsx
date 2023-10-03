@@ -28,7 +28,7 @@ const pages: {
 	// },
 ];
 
-const SchedulerOnboard = () => {
+export function Component() {
 	const [pageIndex, setPageIndex] = useState(0);
 	const PageComponent = pages[pageIndex].component;
 
@@ -55,6 +55,4 @@ const SchedulerOnboard = () => {
 			</div>
 		</div>
 	);
-};
-
-export default SchedulerOnboard;
+}

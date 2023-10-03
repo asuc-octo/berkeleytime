@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 
 type Props = {
 	title: string;
@@ -6,14 +6,14 @@ type Props = {
 	widget?: ReactNode;
 };
 
-const Subview: FC<Props> = ({ title, className, widget, children }) => (
-	<div className={'profile-subview ' + (className ?? '')}>
-		<div className="profile-subview-title">
-			<h3>{title}</h3>
-			{widget}
+export default function Subview({ title, className, widget, children }: PropsWithChildren<Props>) {
+	return (
+		<div className={'profile-subview ' + (className ?? '')}>
+			<div className="profile-subview-title">
+				<h3>{title}</h3>
+				{widget}
+			</div>
+			<div className="profile-subview-content">{children}</div>
 		</div>
-		<div className="profile-subview-content">{children}</div>
-	</div>
-);
-
-export default Subview;
+	);
+}

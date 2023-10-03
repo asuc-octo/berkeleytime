@@ -1,9 +1,6 @@
-import { FC } from 'react';
+import { PropsWithChildren } from 'react';
 import TextProps, { getClassNames } from './TextProps';
 
-const H6: FC<TextProps> = (props) => {
+export default function H6(props: PropsWithChildren<TextProps>) {
 	return <h6 className={getClassNames('bt-h6', props)}>{props.children}</h6>;
-};
-
-export type { TextProps as Props };
-export default H6;
+}

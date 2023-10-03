@@ -6,20 +6,20 @@ import { useUser } from 'graphql/hooks/user';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
 import { useLocalStorageState } from 'utils/hooks';
 import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { useSemester } from 'graphql/hooks/semester';
 import Callout from '../../components/Scheduler/Callout';
 import { ReduxState } from 'redux/store';
 import { useSelector } from 'react-redux';
 
-const LocalScheduler = () => {
+export function Component() {
 	const [schedule, setSchedule] = useLocalStorageState<Schedule>(
 		SCHEDULER_LOCALSTORAGE_KEY,
 		DEFAULT_SCHEDULE
 	);
 
 	const { isLoggedIn, loading: loadingUser } = useUser();
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const { semester, error: semesterError } = useSemester();
 
@@ -36,7 +36,7 @@ const LocalScheduler = () => {
 
 				// Defer this to the next tick
 				setTimeout(() => {
-					history.push(`/scheduler/${scheduleUUID}`);
+					navigate(`/scheduler/${scheduleUUID}`);
 				});
 			}
 		}
@@ -105,6 +105,4 @@ const LocalScheduler = () => {
 			/>
 		</div>
 	);
-};
-
-export default LocalScheduler;
+}

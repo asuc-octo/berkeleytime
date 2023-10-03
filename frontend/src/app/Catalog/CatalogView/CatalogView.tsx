@@ -8,7 +8,7 @@ import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
 import { CurrentFilters } from 'app/Catalog/types';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router-dom';
 import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
@@ -35,7 +35,7 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
 	const [isOpen, setOpen] = useState(false);
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const legacyId = useSelector(
 		(state: any) =>
@@ -89,15 +89,10 @@ const CatalogView = (props: CatalogViewProps) => {
 	const [playlists, sections] = useMemo(() => {
 		let playlists = null;
 		let sections = null;
-		// let semesters = null;
 
 		if (course?.playlistSet) {
 			const { edges } = course.playlistSet;
 			playlists = catalogService.sortPills(edges.map((e) => e.node as PlaylistType));
-
-			// semesters = catalogService.sortSemestersByLatest(
-			// 	edges.map((e) => e.node).filter((n) => n.category === 'semester')
-			// );
 		}
 
 		if (course?.sectionSet) {
@@ -105,7 +100,6 @@ const CatalogView = (props: CatalogViewProps) => {
 			sections = sortSections(edges.map((e) => e.node));
 		}
 
-		// return [playlists ?? skeleton, sections ?? [], semesters];
 		return [playlists ?? skeleton, sections ?? null];
 	}, [course]);
 
@@ -138,19 +132,19 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
+			<button
+				className={styles.modalButton}
+				onClick={() => {
+					setCurrentCourse(null);
+					setCourse(null);
+					navigate(`/catalog/${semester}`, { replace: true });
+				}}
+			>
+				<BackArrow />
+				Back to Courses
+			</button>
 			{course && (
 				<>
-					<button
-						className={styles.modalButton}
-						onClick={() => {
-							setCurrentCourse(null);
-							setCourse(null);
-							history.replace(`/catalog/${semester}`);
-						}}
-					>
-						<BackArrow />
-						Back to Courses
-					</button>
 					<h3>
 						{course.abbreviation} {course.courseNumber}
 					</h3>
@@ -178,7 +172,7 @@ const CatalogView = (props: CatalogViewProps) => {
 							Average Grade:
 							{course.gradeAverage !== -1 ? (
 								<div>
-									{applyIndicatorGrade(course.letterAverage, course.letterAverage)}
+									{applyIndicatorGrade(course.letterAverage)}
 									<a href={gradePath} target="_blank" rel="noreferrer" className={styles.statLink}>
 										<img src={launch} alt="" />
 									</a>
@@ -237,7 +231,7 @@ const CatalogView = (props: CatalogViewProps) => {
 									className={styles.pill}
 									key={req.id}
 									onClick={() =>
-										history.push(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
+										navigate(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
 									}
 								>
 									{req.name}

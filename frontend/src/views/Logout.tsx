@@ -1,10 +1,10 @@
 import BTLoader from 'components/Common/BTLoader';
-import { useLogout, useUser } from '../../graphql/hooks/user';
+import { useLogout, useUser } from '../graphql/hooks/user';
 import { useEffect } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
-const Logout = () => {
-	const history = useHistory();
+export function Component() {
+	const navigate = useNavigate();
 	const [logout, { error }] = useLogout();
 	const { isLoggedIn } = useUser();
 
@@ -16,9 +16,9 @@ const Logout = () => {
 	// If the logout was successful go to the previous page.
 	useEffect(() => {
 		if (!isLoggedIn) {
-			history.goBack();
+			navigate(-1);
 		}
-	}, [isLoggedIn, history]);
+	}, [isLoggedIn, navigate]);
 
 	return (
 		<div className="logout viewport-app">
@@ -33,6 +33,4 @@ const Logout = () => {
 			</div>
 		</div>
 	);
-};
-
-export default Logout;
+}

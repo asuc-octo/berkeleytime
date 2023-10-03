@@ -1,20 +1,19 @@
-import { useHistory } from 'react-router';
-import { useLocation } from 'react-router-dom';
-import { useLogin } from '../../graphql/hooks/user';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useLogin } from '../graphql/hooks/user';
 import BTLoader from 'components/Common/BTLoader';
 
 function useQuery() {
 	return new URLSearchParams(useLocation().search);
 }
 
-const Login = () => {
+export function Component() {
 	const [login, { loading }] = useLogin();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const query = useQuery();
 
 	const id_token = query.get('id_token');
 	if (!id_token) {
-		history.push('/error');
+		navigate('/error');
 		return null;
 	}
 
@@ -29,11 +28,9 @@ const Login = () => {
 	}).then((result) => {
 		// If the login was successful.
 		if (result.data?.login?.user) {
-			history.push('/profile');
+			navigate('/profile');
 		}
 	});
 
 	return null;
-};
-
-export default Login;
+}

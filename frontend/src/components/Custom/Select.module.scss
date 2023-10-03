@@ -1,0 +1,46 @@
+.root {
+	[class$='-option'] {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		transition-duration: 0.1s;		
+	}
+
+	[class$='-option--is-focused'] {
+		background: none;
+	}
+
+	[class$='-option--is-selected'] {
+		background: #2684ff;
+	}
+
+	[class$='-option']:hover {
+		transition-delay: 60ms;
+		background: #deebff;
+	}
+
+	[class$='-multiValue'] {
+		background: white;
+		border: 1px solid $bt-border-grey;
+		border-radius: 12px;
+
+		:nth-child(2) {
+			border-radius: 12px;
+			color: hsl(0, 0%, 80%);
+		}
+
+		:nth-child(2):hover {
+			background: $bt-button-background;
+			color: $bt-base-text;
+		}
+	}
+
+	[class$='MultiValueGeneric2'] {
+		color: $bt-blue;
+	}
+}
+
+.group {
+	display: flex;
+	flex-direction: column;
+}

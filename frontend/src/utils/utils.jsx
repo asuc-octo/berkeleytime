@@ -23,7 +23,7 @@ function applyIndicatorPercent(text, percentage) {
  * @param {string} text text in the paragraph tag
  * @param {string | null} grade grade, either as a string (ex. "B+") or null
  */
-function applyIndicatorGrade(text, grade) {
+function applyIndicatorGrade(grade) {
 	if (grade === null) {
 		return <span>N/A</span>;
 	}
@@ -37,7 +37,7 @@ function applyIndicatorGrade(text, grade) {
 		theme = 'bt-indicator-orange';
 	}
 
-	return <span className={theme}>{text}</span>;
+	return <span className={theme}>{grade}</span>;
 }
 
 /**

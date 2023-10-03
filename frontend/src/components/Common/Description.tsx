@@ -1,51 +1,58 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import Markdown from 'react-markdown';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-export default class Description extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			body: ''
-		};
-	}
-
-	componentDidMount() {
-		fetch(this.props.bodyURL)
-			.then((response) => response.text())
-			.then((text) => this.setState({ body: text }));
-	}
-
-	render() {
-		const { body } = this.state;
-		const { title, link, linkName } = this.props;
-
-		return (
-			<div className="positions">
-				<Container>
-					<Row>
-						<Col lg={2}></Col>
-						<Col lg={8}>
-							<div className="positions-heading">
-								<h2>{title}</h2>
-							</div>
-							<Markdown escapeHTML={false} className="positions-body">
-								{body}
-							</Markdown>
-						</Col>
-						<Col lg={2}></Col>
-						<LinkBar link={link} linkName={linkName} />
-					</Row>
-				</Container>
-			</div>
-		);
-	}
+interface DescriptionProps {
+	title: string;
+	bodyURL: string;
 }
 
-export function LinkBar(props) {
-	const { link, linkName } = props;
+interface LinkBarProps {
+	link: string;
+	linkName: string;
+}
 
+export default function Description({
+	title,
+	link,
+	linkName,
+	bodyURL
+}: LinkBarProps & DescriptionProps) {
+	const [body, setBody] = useState('');
+
+	useEffect(() => {
+		const initialize = async () => {
+			const response = await fetch(bodyURL);
+			const text = await response.text();
+			setBody(text);
+		};
+
+		initialize();
+	}, [bodyURL]);
+
+	return (
+		<div className="positions">
+			<Container>
+				<Row>
+					<Col lg={2}></Col>
+					<Col lg={8}>
+						<div className="positions-heading">
+							<h2>{title}</h2>
+						</div>
+						<Markdown escapeHTML={false} className="positions-body">
+							{body}
+						</Markdown>
+					</Col>
+					<Col lg={2}></Col>
+					<LinkBar link={link} linkName={linkName} />
+				</Row>
+			</Container>
+		</div>
+	);
+}
+
+export function LinkBar({ link, linkName }: LinkBarProps) {
 	return (
 		<div className="positions-bar">
 			<Button className="position-button" variant="bt-primary" size="bt-md" as={Link} to={link}>

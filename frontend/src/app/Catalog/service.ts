@@ -1,14 +1,25 @@
-import { FilterFragment, GetFiltersQuery, PlaylistType } from 'graphql';
-import styles from './CatalogList/CatalogList.module.scss';
-
+import Fuse from 'fuse.js';
+import {
+	FilterFragment,
+	GetFiltersQuery,
+	PlaylistType,
+	CourseOverviewFragment,
+	CourseFragment
+} from 'graphql';
+import { laymanTerms } from 'lib/courses/course';
+import { courseToName } from 'lib/courses/course';
 import {
 	CatalogCategoryKeys,
 	FilterTemplate,
 	CatalogFilterKeys,
 	FilterOptions,
 	SortOption,
-	CurrentFilters
+	CurrentFilters,
+	CourseInfo,
+	CatalogSortKeys
 } from './types';
+
+import styles from './CatalogList/CatalogList.module.scss';
 
 const SEMESTER_VALUES = {
 	spring: 0.0,
@@ -110,6 +121,7 @@ const processFilterData = (data?: GetFiltersQuery) => {
 
 	return filters;
 };
+
 /**
  *
  * @param filterItems an empty filter template
@@ -154,6 +166,72 @@ const putFilterOptions = (filterItems: FilterTemplate, filters?: FilterOptions |
 
 /**
  *
+ * @param courses an array of `CourseOverviewFragment`
+ * @param rawQuery A string to search for within the `courses` array
+ * @description Applies `rawQuery` over a list of courses and returns the best matches
+ * within `courses`
+ * @returns an array of CourseOverviewFragment
+ */
+const searchCatalog = (courses: CourseOverviewFragment[], rawQuery: string) => {
+	if (!rawQuery || rawQuery === '' || rawQuery === null) return courses;
+
+	const options: Fuse.IFuseOptions<CourseInfo> = {
+		includeScore: true,
+		shouldSort: true,
+		findAllMatches: true,
+		threshold: 0.25,
+		keys: [
+			{ name: 'title', weight: 1 },
+			{ name: 'abbreviation', weight: 1.5 },
+			{ name: 'abbreviations', weight: 2 },
+			{ name: 'courseNumber', weight: 1.2 },
+			{ name: 'fullCourseCode', weight: 1 }
+		],
+		// The fuse types are wrong for this sort fn
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		sortFn: (itemA: any, itemB: any) => {
+			// Sort first by sort score
+			if (itemA.score - itemB.score) return itemA.score - itemB.score;
+
+			// if the scores are the same, sort by the course number
+			const a = itemA.item[3].v;
+			const b = itemB.item[3].v;
+			return a.toLowerCase().localeCompare(b.toLowerCase());
+		}
+	};
+
+	const courseInfo = courses.map((course) => {
+		const { title, abbreviation, courseNumber } = course;
+
+		const abbreviations =
+			laymanTerms[abbreviation.toLowerCase()]?.reduce((acc, abbr) => {
+				// Here we test if the first character in the courseNumber is a LETTER
+				// If so, we remove it and add it as an abbreviation.
+				const containsPrefix = /[a-zA-Z]/.test(courseNumber.charAt(0));
+				const abbrCouseNumber = courseNumber.slice(1);
+
+				return [
+					...acc,
+					...[`${abbr}${courseNumber}`, `${abbr} ${courseNumber}`],
+					...(containsPrefix ? [`${abbr}${abbrCouseNumber}`, `${abbr} ${abbrCouseNumber}`] : [])
+				];
+			}, [] as string[]) ?? [];
+
+		return {
+			title,
+			abbreviation,
+			courseNumber,
+			fullCourseCode: courseToName(course),
+			abbreviations
+		};
+	});
+
+	const fuse = new Fuse(courseInfo, options);
+	return fuse.search(rawQuery.trim().toLowerCase()).map((res) => courses[res.refIndex]);
+};
+
+/**
+ *
  * @param semesters
  * @returns The semester filters sorted by their year and semester.
  * @description Sorts all semester filters by their year and semester,
@@ -180,7 +258,7 @@ const SemesterToValue = (semesterFilter: FilterFragment) => {
 
 /**
  * @description sorts the playlists alphabetically, and
- * by putting the `units` category at the end of the list
+ * by putting the `units` followed by the semester category at the end of the list
  */
 const sortPills = (playlists: PlaylistType[]) => {
 	const semesters = sortSemestersByLatest(playlists.filter((p) => p.category === 'semester'));
@@ -190,9 +268,8 @@ const sortPills = (playlists: PlaylistType[]) => {
 	return rest.concat(units, semesters.slice(0, 4) as PlaylistType[]);
 };
 
-export const sortByName = <T extends { name: string }[]>(arr: T) => {
-	return arr.sort((a, b) => a.name.localeCompare(b.name));
-};
+export const sortByName = <T extends { name: string }[]>(arr: T) =>
+	arr.sort((a, b) => a.name.localeCompare(b.name));
 
 function formatEnrollment(percentage: number) {
 	if (percentage === -1) return 'N/A';
@@ -212,6 +289,31 @@ function colorEnrollment(percentage: number) {
 	}
 }
 
+const descending = (courses: CourseOverviewFragment[], sortQuery: SortOption) => {
+	const keys: Record<CatalogSortKeys, keyof CourseOverviewFragment> = {
+		average_grade: 'gradeAverage',
+		enrolled_percentage: 'enrolledPercentage',
+		open_seats: 'openSeats',
+		department_name: 'title',
+		relevance: 'title'
+	};
+
+	const { value } = sortQuery;
+	const param = keys[value];
+
+	switch (value) {
+		case 'average_grade':
+		case 'enrolled_percentage':
+		case 'open_seats':
+			return [
+				...courses.filter((course) => course[param] === -1 || course[param] === null),
+				...courses.filter((course) => course[param] !== -1 && course[param] !== null)
+			].reverse();
+		default:
+			return courses.reverse();
+	}
+};
+
 export default {
 	FILTER_TEMPLATE,
 	SORT_OPTIONS,
@@ -222,5 +324,7 @@ export default {
 	sortSemestersByLatest,
 	sortPills,
 	formatEnrollment,
-	colorEnrollment
+	colorEnrollment,
+	searchCatalog,
+	descending
 };

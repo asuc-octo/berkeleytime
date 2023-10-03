@@ -1,7 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { percentileToString } from '../../utils/utils';
 
-import vars from '../../variables/Variables';
+import vars from '../../utils/variables';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
 
 const EmptyLabel = (props) => {

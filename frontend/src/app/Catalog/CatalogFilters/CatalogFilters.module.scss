@@ -59,9 +59,23 @@
 	}
 }
 
-.search {
+.searchContainer {
+	display: inline-flex;
+	gap: 8px;
 	@include media(mobile, tablet) {
 		display: none;
+	}
+	
+	>div {
+		flex: 1;
+	}
+
+	>button {
+		flex-shrink: 1;
+		outline: none;
+		border: 1px solid #C7C7C7;
+		border-radius: 4px;
+		background: transparent;
 	}
 }
 
@@ -163,27 +177,5 @@
 		&:hover {
 			background: hsla(0, 0%, 92.2%, 0.6196078431);
 		}
-	}
-}
-
-.select {
-	[class$='-multiValue'] {
-		background: white;
-		border: 1px solid $bt-border-grey;
-		border-radius: 12px;
-
-		:nth-child(2) {
-			border-radius: 12px;
-			color: hsl(0, 0%, 80%);
-		}
-
-		:nth-child(2):hover {
-			background: $bt-button-background;
-			color: $bt-base-text;
-		}
-	}
-
-	[class$='MultiValueGeneric2'] {
-		color: $bt-blue;
 	}
 }

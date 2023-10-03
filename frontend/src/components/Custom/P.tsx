@@ -1,9 +1,6 @@
-import { FC } from 'react';
+import { PropsWithChildren } from 'react';
 import TextProps, { getClassNames } from './TextProps';
 
-const P: FC<TextProps> = (props) => {
+export default function P(props: PropsWithChildren<TextProps>) {
 	return <p className={getClassNames('bt-p', props)}>{props.children}</p>;
-};
-
-export type { TextProps as Props };
-export default P;
+}

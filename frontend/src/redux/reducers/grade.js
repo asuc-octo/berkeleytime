@@ -6,7 +6,7 @@ import {
 	GRADE_REMOVE_COURSE,
 	GRADE_RESET
 } from '../actionTypes';
-import vars from '../../variables/Variables';
+import vars from '../../utils/variables';
 
 const initialState = {
 	context: {},
