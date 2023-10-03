@@ -32,7 +32,7 @@ const router = createBrowserRouter([
 		element: <Layout />,
 		ErrorBoundary: Error,
 		children: [
-			{ path: '/', index: true, Component: Landing },
+			{ path: '/', index: true, Component: Home },
 			{ path: '/landing', element: <Navigate to="/" replace /> },
 			{ path: '/s/:scheduleId', Component: ScheduleRedirect },
 			{ path: '/grades/*', lazy: Grades },

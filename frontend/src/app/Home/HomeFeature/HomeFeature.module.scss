@@ -1,0 +1,132 @@
+.root {
+	// max-width: 1110px;
+	padding-left: min(10%, 60px);
+	padding-right: min(10%, 60px);
+	margin: auto;
+}
+
+.section {
+    margin-bottom: 150px;
+}
+.panelLeft {
+	flex: 3;
+	position: relative;
+}
+.panelRight {
+	display: flex;
+
+	flex: 2;
+	flex-direction: column;
+	justify-content: center;
+	row-gap: 32px;
+	
+}
+.image {
+	border-radius: 24px;
+	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+	width: 100%;
+	object-fit: scale-down;
+	padding: 24px;
+}
+.scheduler1 {
+	position: absolute;
+	width: 30%;
+}
+.scheduler2 {
+	position: absolute;
+	right: 0px;
+	width: calc(70% - 15px);
+}
+
+.panelRight > a > button {
+	padding: 25px 30px;
+	color: white;
+	background: #467ee5;
+	border-radius: 10px;
+	border: none;
+}
+.content {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 19px;
+	letter-spacing: 0.02em;
+
+	color: #434343;
+}
+.header {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 30px;
+	line-height: 36px;
+	letter-spacing: 0.02em;
+
+	color: #434343;
+}
+.panel > img {
+    width: 100%;
+}
+.newBadge {
+	background: #DE5F18;
+	border-radius: 7px;
+	padding: 13px 17px;
+
+	font-style: normal;
+	font-weight: 700;
+	font-size: 12px;
+	line-height: 90%;
+
+	letter-spacing: 0.02em;
+	text-transform: capitalize;
+
+	color: #FFFFFF;
+}
+
+
+.inMemory {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+
+    max-width: 450px;
+    margin: auto;
+}
+.inMemory > h3 {
+    font-family: 'Inter';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 24px;
+	line-height: 150%;
+
+	letter-spacing: 0.02em;
+	text-transform: capitalize;
+
+	color: #434343;
+}
+.inMemory > p {
+    font-family: 'Inter';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 14px;
+	line-height: 150%;
+
+	letter-spacing: 0.02em;
+
+	color: #434343;
+}
+
+@media screen and (max-width: 768px) {
+	.section {
+		display: block;
+	}
+}
+@media screen and (min-width: 768px) {
+	.section {
+		display: flex;
+		column-gap: 24px;
+	}
+}
+
