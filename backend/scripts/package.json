@@ -16,6 +16,9 @@
   },
   "homepage": "https://github.com/asuc-octo/berkeleytime#readme",
   "dependencies": {
+    "config": "^3.3.9",
+    "dotenv": "^16.3.1",
+    "mongoose": "^7.6.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   }
