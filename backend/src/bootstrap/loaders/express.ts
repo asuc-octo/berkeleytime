@@ -1,5 +1,4 @@
 import { type Application, json } from "express";
-import cookieParser from 'cookie-parser';
 import cors from "cors";
 import helmet from "helmet";
 import type { ApolloServer } from "@apollo/server";
@@ -11,7 +10,6 @@ import { config } from "../../config";
 export default async (app: Application, server: ApolloServer) => {
   // Body parser only needed during POST on the graphQL path
   app.use(json());
-  app.use(cookieParser());
 
   // Cors configuration
   app.use(cors({
