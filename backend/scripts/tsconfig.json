@@ -4,7 +4,6 @@
     "module": "commonjs",
     "lib": ["es2018", "esnext.asynciterable"],
     "outDir": "build",
-    "rootDir": "src",
     "strict": true,
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
@@ -17,5 +16,5 @@
     "strictPropertyInitialization": false
   },
   "exclude": ["node_modules", "**/*.test.ts"],
-  "include": ["./src/**/*"]
+  "include": ["**/*.ts"]
 }
