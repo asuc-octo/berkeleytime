@@ -12,13 +12,15 @@ import GoogleStrategy from "passport-google-oauth20";
 import { UserModel } from "../../db/user";
 import { config } from "../../config";
 
-// routes need to be added as authorized origins/redirect uris in google cloud console
 const LOGIN_ROUTE = "/login";
-const CALLBACK_ROUTE = "/login/callback";
+const LOGIN_REDIRECT_ROUTE = "/login/redirect";
 const LOGOUT_ROUTE = "/logout";
 
-const SUCCESS_REDIRECT = "/graphql";
-const FAILURE_REDIRECT = "/fail";
+// route need to be added as authorized origins/redirect uris in google cloud console
+const LOGIN_REDIRECT = config.backendPath + "/login/redirect";
+
+const SUCCESS_REDIRECT = config.backendPath + config.graphqlPath;
+const FAILURE_REDIRECT = config.backendPath + "/fail";
 
 const SCOPE = ['profile', 'email']
 
@@ -32,7 +34,8 @@ export default async (app: Application) => {
     cookie: {
       secure: !config.isDev,
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 // 1 hour
+      maxAge: 1000 * 60 * 60, // 1 hour
+      sameSite: 'lax',
     },
     rolling: true,
   }));
@@ -52,7 +55,7 @@ export default async (app: Application) => {
     accessType: 'offline',
     prompt: 'consent',
   }));
-  app.get(CALLBACK_ROUTE, passport.authenticate('google', {
+  app.get(LOGIN_REDIRECT_ROUTE, passport.authenticate('google', {
     failureRedirect: FAILURE_REDIRECT,
     // failureMessage: "failed",
     successRedirect: SUCCESS_REDIRECT,
@@ -77,7 +80,7 @@ export default async (app: Application) => {
   passport.use(new GoogleStrategy.Strategy({
     clientID: config.GOOGLE_CLIENT_ID,
     clientSecret: config.GOOGLE_CLIENT_SECRET,
-    callbackURL: CALLBACK_ROUTE,
+    callbackURL: LOGIN_REDIRECT,
     scope: SCOPE,
     state: true,
   }, async (accessToken, refreshToken, profile, done) => {

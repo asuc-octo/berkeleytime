@@ -5,8 +5,11 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 export default async () => {
   const schema = buildSchema();
 
-  return new ApolloServer({
+  const server = new ApolloServer({
     schema,
-    plugins: [ApolloServerPluginLandingPageLocalDefault({ includeCookies: true })]
+    plugins: [ApolloServerPluginLandingPageLocalDefault({ includeCookies: true })],
   });
+  await server.start();
+
+  return server;
 };
