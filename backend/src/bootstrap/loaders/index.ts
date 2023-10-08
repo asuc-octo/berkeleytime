@@ -1,25 +1,26 @@
-import type { Application } from "express";
-import type { ApolloServer } from "@apollo/server";
+import { type Application, Router } from "express";
+import { config } from "../../config";
 
 // loaders
 import apolloLoader from "./apollo";
 import expressLoader from "./express";
 import mongooseLoader from "./mongoose";
-import passportLoader from './passport';
 
-export default async (app: Application): Promise<ApolloServer> => {
-  // Load everything related to express
-  console.log("Booting up express...");
-  await expressLoader(app);
+export default async (root: Application): Promise<void> => {
+  const app = Router() as Application;
 
-  console.log("Booting up passport...");
-  await passportLoader(app);
-
-  // Connect to mongoose
+  // connect to mongoose
   console.log("Booting up mongo...");
   await mongooseLoader();
 
-  // load apollo server config
-  console.log("Booting up apollo...");
-  return apolloLoader();
+  // load apollo server config. must be loaded before express
+  console.log("Loading apollo...");
+  const server = await apolloLoader();
+
+  // load everything related to express. depends on apollo
+  console.log("Loading express...");
+  await expressLoader(app, server);
+
+  // append backend path to all routes
+  root.use(config.backendPath, app);
 };
