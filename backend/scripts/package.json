@@ -25,6 +25,8 @@
   "devDependencies": {
     "@types/config": "^3.3.1",
     "@types/node": "^20.8.3",
-    "openapi-typescript": "^5.4.1"
+    "openapi-typescript": "^5.4.1",
+    "ts2typebox": "^1.5.0",
+    "typebox": "^0.0.1"
   }
 }

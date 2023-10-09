@@ -30,3 +30,5 @@ const classSchema = new Schema<ClassSuccessResponse>({
 });
 
 const ClassModel = mongoose.model<ClassSuccessResponse>("Class", classSchema);
+
+export default ClassModel;

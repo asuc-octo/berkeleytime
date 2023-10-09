@@ -11,4 +11,5 @@ do
     echo "Updating $targetFile schema file..."
     echo "Fetching schema from ${swaggerFilePaths[$targetFile]}"
     npx openapi-typescript ${swaggerFilePaths[$targetFile]} -o ./common/types/api/$targetFile-schema.d.ts
+    npx ts2typebox -i ./common/types/api/$targetFile-schema.d.ts -o ./common/types/typebox/$targetFile-validation-schema.d.ts
 done
