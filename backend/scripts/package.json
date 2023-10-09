@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Berkeleytime backend scripts",
   "scripts": {
-    "update-schemas": "./update-schemas.sh"
+    "update-schemas": "chmod +x update-schema.sh && ./update-schema.sh"
   },
   "repository": {
     "type": "git",

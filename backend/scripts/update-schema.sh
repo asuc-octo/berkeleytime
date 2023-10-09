@@ -1,4 +1,5 @@
-#!/opt/homebrew/bin/bash
+#!/usr/bin/env bash
+# The above line will use the first `bash` in the PATH of the system used to run this script.
 
 # This script is used to update the <api>-schema.d.ts files in ./common/types/ directory
 
