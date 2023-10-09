@@ -11,11 +11,11 @@ CURRENT_SEMESTER_DISPLAY = 'Spring 2024'
 SIS_TERM_ID = 2242
 
 TELEBEARS = {
-    'phase1_start': datetime.datetime(2023, 10, 24),
-    'phase1_end': datetime.datetime(2023, 11, 5),
-    'phase2_start': datetime.datetime(2023, 11, 22),
-    'phase2_end': datetime.datetime(2023, 1, 7),
-    'adj_start': datetime.datetime(2023, 1, 8),
+    'phase1_start': datetime.datetime(2024, 10, 24),
+    'phase1_end': datetime.datetime(2024, 11, 5),
+    'phase2_start': datetime.datetime(2024, 11, 22),
+    'phase2_end': datetime.datetime(2024, 1, 7),
+    'adj_start': datetime.datetime(2024, 1, 8),
 }
 
 INSTRUCTION = {
