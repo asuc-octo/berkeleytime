@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Berkeleytime backend scripts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "update-schemas": "./update-schemas.sh"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@types/config": "^3.3.1",
-    "@types/node": "^20.8.3"
+    "@types/node": "^20.8.3",
+    "openapi-typescript": "^5.4.1"
   }
 }
