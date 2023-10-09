@@ -22,7 +22,7 @@ from berkeleytime.config.semesters import (
     fall2022,
     spring2023,
     fall2023,
-    spring2023
+    spring2024
 )
 
 GRADE_POINT = {
@@ -111,7 +111,7 @@ PAST_SEMESTERS_TELEBEARS_JSON = {
     'fall 2022': fall2022.TELEBEARS_JSON,
     'spring 2023': spring2023.TELEBEARS_JSON,
     'fall 2023': fall2023.TELEBEARS_JSON,
-    'spring 2023': spring2023.TELEBEARS_JSON
+    'spring 2024': spring2024.TELEBEARS_JSON
 }
 
 PAST_SEMESTERS_TELEBEARS = {
@@ -137,7 +137,7 @@ PAST_SEMESTERS_TELEBEARS = {
     'fall 2022': fall2022.TELEBEARS,
     'spring 2023': spring2023.TELEBEARS,
     'fall 2023': fall2023.TELEBEARS,
-    'spring 2023': spring2023.TELEBEARS_JSON
+    'spring 2024': spring2024.TELEBEARS_JSON
 }
 
 # Classes with special characters
