@@ -27,7 +27,7 @@ export default function authDirectiveTransformer(schema: GraphQLSchema) {
       return undefined;
     },
     [MapperKind.OBJECT_FIELD]: (fieldConfig, _fieldName, typeName) => {
-      // chcek if @auth is on field or if field is of type that has @auth
+      // check if @auth is on field or if field is of type that has @auth
       const authDirective = getDirective(schema, fieldConfig, DIRECTIVE_NAME)?.[0] ?? typeDirectiveArgumentMaps[typeName];
 
       // if @auth is on field or type, add a resolver to check if user is authenticated

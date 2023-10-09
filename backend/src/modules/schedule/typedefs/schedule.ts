@@ -81,11 +81,11 @@ const typedef = gql`
     """
     Takes in a user's email and returns all the schedules they created.
     """
-    schedulesByUser(created_by: String!): [Schedule]
+    schedulesByUser(created_by: String!): [Schedule] @auth
     """
     Takes in a schedule's ObjectID and returns a specific schedule.
     """
-    scheduleByID(id: String!): Schedule
+    scheduleByID(id: String!): Schedule @auth
   }
 
   type Mutation {
