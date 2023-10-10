@@ -11,16 +11,16 @@ CURRENT_SEMESTER_DISPLAY = 'Spring 2024'
 SIS_TERM_ID = 2242
 
 TELEBEARS = {
-    'phase1_start': datetime.datetime(2024, 9, 16), #oct 16th
-    'phase1_end': datetime.datetime(2024, 10, 5),   # nov 5th   
-    'phase2_start': datetime.datetime(2024, 10, 14), #nov 14th
-    'phase2_end': datetime.datetime(2024, 0, 7),    #jan 7th
-    'adj_start': datetime.datetime(2024, 0, 8),     #jan 8th
+    'phase1_start': datetime.datetime(2024, 10, 16), #oct 16th
+    'phase1_end': datetime.datetime(2024, 11, 5),   # nov 5th   
+    'phase2_start': datetime.datetime(2024, 11, 14), #nov 14th
+    'phase2_end': datetime.datetime(2024, 1, 7),    #jan 7th
+    'adj_start': datetime.datetime(2024, 1, 8),     #jan 8th
 }
 
 INSTRUCTION = {
-    'instruction_start': datetime.datetime(2024, 0, 16, 00, 00),    # jan 16th
-    'instruction_end': datetime.datetime(2024, 3, 26, 00, 00)       #april 26th
+    'instruction_start': datetime.datetime(2024, 1, 16, 00, 00),    # jan 16th
+    'instruction_end': datetime.datetime(2024, 4, 26, 00, 00)       #april 26th
 }
 
 # Please don't edit anything below this line unless you know what you are doing
