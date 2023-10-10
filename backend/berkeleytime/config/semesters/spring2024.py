@@ -1,5 +1,5 @@
 """Configurations for Spring 2024."""
-# from berkeleytime.config.finals.semesters.spring2024 import *
+from berkeleytime.config.finals.semesters.spring2024 import *
 
 import datetime
 
