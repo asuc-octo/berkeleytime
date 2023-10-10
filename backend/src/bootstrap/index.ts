@@ -3,6 +3,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import loaders from "./loaders";
 import { Config } from "../config";
 import http from "http";
+import { createClient } from "redis";
 
 export default async (config: Config) => {
   const app = express();
@@ -18,7 +19,7 @@ export default async (config: Config) => {
           ...req.user,
           isAuthenticated: req.isAuthenticated(),
           logout: (callback: (err: any) => void) => req.logout(callback),
-        },
+        }
       }),
     })
   );
