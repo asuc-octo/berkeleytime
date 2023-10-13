@@ -1,5 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { percentileToString } from '../../utils/utils';
+import { useMemo } from 'react';
 
 import vars from '../../utils/variables';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
@@ -55,26 +56,43 @@ const PercentageLabel = (props) => {
 	);
 };
 
-export default function GradesGraph({
-	graphData,
-	gradesData,
-	updateBarHover,
-	updateGraphHover,
-	course,
-	semester,
-	instructor,
-	selectedPercentiles,
-	denominator,
-	color,
-	isMobile,
-	graphEmpty
-}) {
+export default function GradesGraph(props) {
+	const {
+		gradesData,
+		updateBarHover,
+		updateGraphHover,
+		course,
+		semester,
+		instructor,
+		selectedPercentiles,
+		denominator,
+		color,
+		isMobile
+	} = props;
+
 	let numClasses = gradesData.length;
 
+	const graphData = useMemo(
+		() =>
+			['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F', 'P', 'NP'].map(
+				(letterGrade) => {
+					const ret = {
+						name: letterGrade
+					};
+					for (const grade of gradesData) {
+						ret[grade.id] = (grade[letterGrade].numerator / grade.denominator) * 100;
+					}
+					return ret;
+				}
+			),
+		[gradesData]
+	);
+
+	const graphEmpty = gradesData.length === 0;
+
 	return (
-		<div>
+		<div className="grades-graph">
 			{!isMobile ? (
-				// desktop or wide viewport
 				<ResponsiveContainer width="100%" height={400}>
 					<BarChart
 						data={graphData}
@@ -82,10 +100,10 @@ export default function GradesGraph({
 						margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
 					>
 						<XAxis dataKey="name" type="category" interval={0} />
-						{!graphEmpty ? (
-							<YAxis type="number" unit="%" />
+						{graphEmpty ? (
+							<YAxis type="number" unit="%" domain={[0, 100]} fontSize="14px" />
 						) : (
-							<YAxis type="number" unit="%" domain={[0, 100]} />
+							<YAxis type="number" unit="%" fontSize="14px" />
 						)}
 
 						<Tooltip
@@ -99,7 +117,7 @@ export default function GradesGraph({
 									key={i}
 									name={`${item.title} • ${item.semester} • ${item.instructor}`}
 									dataKey={item.id}
-									fill={vars.colors[item.colorId]}
+									fill={color ? color : vars.colors[item.colorId]}
 									onMouseEnter={updateBarHover}
 									radius={[4, 4, 0, 0]}
 								/>
@@ -107,15 +125,11 @@ export default function GradesGraph({
 					</BarChart>
 				</ResponsiveContainer>
 			) : (
-				// mobile or narrow viewport
 				<ResponsiveContainer width="95%" height={!graphEmpty ? 200 + numClasses * 400 : 600}>
 					<BarChart
 						data={graphData}
 						onMouseMove={updateGraphHover}
 						layout="vertical"
-						// barSize={30}
-						// barCategoryGap={40}
-						// barGap={4}
 						margin={{ left: -30, bottom: 50 }}
 					>
 						{!graphEmpty ? (
