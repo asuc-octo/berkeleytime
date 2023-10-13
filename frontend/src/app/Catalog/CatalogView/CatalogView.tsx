@@ -7,14 +7,14 @@ import launch from 'assets/svg/catalog/launch.svg';
 import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow.svg';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
-import { useHistory, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
 
 import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
-import SectionTable from './SectionTable';
+// import SectionTable from './SectionTable';
 import useCatalog, { CatalogActions } from '../useCatalog';
 import { sortPills } from '../service';
 import CatalogViewSections from './__new_SectionTable';
@@ -24,7 +24,7 @@ const skeleton = [...Array(8).keys()];
 const CatalogView = () => {
 	const [{ course }, dispatch] = useCatalog();
 	const [isOpen, setOpen] = useState(false);
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { abbreviation, courseNumber, semester } = useParams<{
 		abbreviation: string;
 		courseNumber: string;
@@ -38,7 +38,7 @@ const CatalogView = () => {
 			)?.id ?? null
 	);
 
-	const [getCourse, { data, loading }] = useGetCourseForNameLazyQuery({
+	const [getCourse, { data }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
@@ -61,7 +61,15 @@ const CatalogView = () => {
 		};
 
 		// Only fetch the course if every parameter has a value.
-		if (Object.values(variables).every((value) => value !== null)) getCourse({ variables });
+		if (Object.values(variables).every((value) => value !== null))
+			getCourse({
+				variables: variables as {
+					abbreviation: string;
+					courseNumber: string;
+					semester: string;
+					year: string;
+				}
+			});
 	}, [getCourse, abbreviation, courseNumber, semester]);
 
 	useEffect(() => {
@@ -89,7 +97,7 @@ const CatalogView = () => {
 	}, [course]);
 
 	const enrollPath = legacyId
-		? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
+		? `/enrollment/0-${legacyId}-${semester?.replace(' ', '-')}-all`
 		: `/enrollment`;
 
 	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
@@ -100,7 +108,7 @@ const CatalogView = () => {
 				className={styles.modalButton}
 				onClick={() => {
 					dispatch({ type: CatalogActions.SetCourse, course: null });
-					history.replace(`/catalog/${semester}`);
+					navigate(`/catalog/${semester}`, { replace: true });
 				}}
 			>
 				<BackArrow />
@@ -184,10 +192,8 @@ const CatalogView = () => {
 						<span>There are no class times for the selected course.</span>
 					) : null} */}
 
-
 					{/* Redesigned catalog sections */}
 					<CatalogViewSections sections={sections} />
-
 
 					{/* Good feature whenever we want...
 					<h5>Past Offerings</h5>

@@ -18,7 +18,7 @@ export type CatalogCategoryKeys =
 	| 'university'
 	| 'requirements';
 
-export type CatalogFilterKeys = Exclude<
+export type CatalogFilterKey = Exclude<
 	CatalogCategoryKeys,
 	'haas' | 'ls' | 'engineering' | 'university'
 >;
@@ -46,7 +46,7 @@ export type SortOption = { value: CatalogSortKeys; label: string };
 export type FilterOption = { value: FilterFragment; label: string };
 
 export type FilterTemplate = {
-	[key in CatalogFilterKeys]: {
+	[key in CatalogFilterKey]: {
 		name: string;
 		isClearable: boolean;
 		isMulti: boolean;
