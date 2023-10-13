@@ -67,49 +67,42 @@ export const CatalogProvider = ({ children }: { children: React.ReactNode }) => 
 };
 
 function catalogReducer(catalog: CatalogContext, action: CatalogAction): CatalogContext {
-	const { courses, sortQuery, sortDir, searchQuery } = catalog;
+	const { courses, sortQuery, sortDir, searchQuery, filters } = catalog;
 
 	switch (action.type) {
-		case CatalogActions.SortDir: {
-			const newDir = sortDir === 'ASC' ? 'DESC' : 'ASC';
-
+		case CatalogActions.SortDir:
 			return {
 				...catalog,
-				sortDir: newDir,
+				sortDir: sortDir === 'ASC' ? 'DESC' : 'ASC',
 				courses: flipCourseList(courses, sortQuery)
 			};
-		}
-		case CatalogActions.SetCourse: {
+		case CatalogActions.SetCourse:
 			return {
 				...catalog,
 				course: action.course
 			};
-		}
 		case CatalogActions.Search: {
-			const query = action.query ?? searchQuery;
-			const courses = setSearch(catalog, query);
+			const newQuery = action.query ?? searchQuery;
 			return {
 				...catalog,
-				searchQuery: query,
-				courses
+				searchQuery: newQuery,
+				courses: setSearch(catalog, newQuery)
 			};
 		}
-		case CatalogActions.Sort: {
+		case CatalogActions.Sort:
 			return {
 				...catalog,
 				sortQuery: action.query,
 				courses: courses.sort(byAttribute(action.query.value))
 			};
-		}
-		case CatalogActions.Filter: {
+		case CatalogActions.Filter:
 			return {
 				...catalog,
 				filters: {
-					...catalog.filters,
+					...filters,
 					...action.filters
 				}
 			};
-		}
 		case CatalogActions.SetCourseList: {
 			// Here we filter to ensure there are no duplicate course entries.
 			const allCourses = action.allCourses.filter(
@@ -135,25 +128,24 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 			};
 		}
 		case CatalogActions.SetPill: {
-			const { filters } = catalog;
 			const { pillItem } = action;
 			const newItem = { label: pillItem.name, value: pillItem };
 
-			let result: Partial<CatalogFilters> = {};
+			let newFilter: Partial<CatalogFilters> = {};
 			const requirements = ['haas', 'ls', 'engineering', 'university'];
 			if (requirements.includes(pillItem.category)) {
 				if (filters.requirements?.find((value) => value.label === pillItem.name)) return catalog;
 
-				result = { requirements: [...(filters.requirements ?? []), newItem] };
+				newFilter = { requirements: [...(filters.requirements ?? []), newItem] };
 			} else {
-				result = { [pillItem.category]: newItem };
+				newFilter = { [pillItem.category]: newItem };
 			}
 
 			return {
 				...catalog,
 				filters: {
 					...filters,
-					...result
+					...newFilter
 				}
 			};
 		}
@@ -162,10 +154,10 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 	}
 }
 
-const useCatalog = (): [CatalogContext, Dispatch<CatalogAction>] => [
-	useContext(Context),
-	useContext(CatalogDispatch)
-];
+const useCatalog = (): [
+	Omit<CatalogContext, 'courseIndex' | 'allCourses'>,
+	Dispatch<CatalogAction>
+] => [useContext(Context), useContext(CatalogDispatch)];
 
 export const useCatalogDispatch = (): Dispatch<CatalogAction> => useContext(CatalogDispatch);
 
