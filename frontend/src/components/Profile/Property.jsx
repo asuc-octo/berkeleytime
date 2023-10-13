@@ -1,67 +1,55 @@
-import { PureComponent } from 'react';
+import { useMemo } from 'react';
 import Select from 'react-select';
 
-class Property extends PureComponent {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
+const style = {
+	control: (base) => ({
+		...base,
+		border: 0,
+		boxShadow: 'none'
+	})
+};
 
-	render() {
-		const { attribute, value, options } = this.props;
+export default function Property({ attribute, value, options, updateMajor, major }) {
+	const body = useMemo(() => {
+		if (attribute === 'Full Name') {
+			return (
+				<div className="personal-value">
+					<p>{value}</p>
+				</div>
+			);
+		}
 
-		const style = {
-			control: (base) => ({
-				...base,
-				border: 0,
-				boxShadow: 'none'
-			})
-		};
-
-		let body;
-		switch (attribute) {
-			case 'Major(s)':
-				body = (
-					<div className="major-select">
-						<Select
-							options={options}
-							name="major-selector"
-							isSearchable={true}
-							isClearable={false}
-							onChange={this.props.updateMajor}
-							placeholder="Select major..."
-							value={this.props.major ? { label: this.props.major, value: this.props.major } : null}
-							components={{
-								IndicatorSeparator: () => null
-							}}
-							styles={style}
-						/>
-					</div>
-				);
-				break;
-			case 'Full Name':
-				body = (
-					<div className="personal-value">
-						<p>{value}</p>
-						{/* <button className="personal-edit">edit</button> */}
-					</div>
-				);
-				break;
-			default:
-				body = (
-					<div className="personal-value">
-						<p>{value}</p>
-					</div>
-				);
+		if (attribute === 'Major(s)') {
+			return (
+				<div className="major-select">
+					<Select
+						options={options}
+						name="major-selector"
+						isSearchable={true}
+						isClearable={false}
+						onChange={updateMajor}
+						placeholder="Select major..."
+						value={major ? { label: major, value: major } : null}
+						components={{
+							IndicatorSeparator: () => null
+						}}
+						styles={style}
+					/>
+				</div>
+			);
 		}
 
 		return (
-			<div className="profile-row">
-				<p className="personal-attribute">{attribute}</p>
-				{body}
+			<div className="personal-value">
+				<p>{value}</p>
 			</div>
 		);
-	}
-}
+	}, [attribute, options, value, major, updateMajor]);
 
-export default Property;
+	return (
+		<div className="profile-row">
+			<p className="personal-attribute">{attribute}</p>
+			{body}
+		</div>
+	);
+}

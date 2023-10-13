@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 
@@ -6,30 +5,32 @@ import { H3, P, Button } from 'bt/custom';
 
 import QuestionCard from 'components/Faq/QuestionCard';
 
-const Faq: FC = () => (
-	<div className="faq">
-		<Container className="mt-5">
-			<Row className="mb-5">
-				<Col xs={12} lg={{ span: 6, offset: 3 }} className="faq-heading">
-					<H3 bold className="mb-3">
-						Frequently Asked Questions
-					</H3>
-					<P className="mb-3">Answering your most commonly asked questions.</P>
-					<Button variant="inverted" href="mailto: octo.berkeleytime@asuc.org">
-						Contact Us
-					</Button>
-				</Col>
-			</Row>
-			<Row>
-				<Col xs={12} lg={{ span: 6, offset: 3 }}>
-					{questions.map((item, index) => (
-						<QuestionCard key={index} question={item.question} answer={item.answer} />
-					))}
-				</Col>
-			</Row>
-		</Container>
-	</div>
-);
+export function Component() {
+	return (
+		<div className="faq">
+			<Container className="mt-5">
+				<Row className="mb-5">
+					<Col xs={12} lg={{ span: 6, offset: 3 }} className="faq-heading">
+						<H3 bold className="mb-3">
+							Frequently Asked Questions
+						</H3>
+						<P className="mb-3">Answering your most commonly asked questions.</P>
+						<Button variant="inverted" href="mailto: octo.berkeleytime@asuc.org">
+							Contact Us
+						</Button>
+					</Col>
+				</Row>
+				<Row>
+					<Col xs={12} lg={{ span: 6, offset: 3 }}>
+						{questions.map((item, index) => (
+							<QuestionCard key={index} question={item.question} answer={item.answer} />
+						))}
+					</Col>
+				</Row>
+			</Container>
+		</div>
+	);
+}
 
 const questions = [
 	{
@@ -153,5 +154,3 @@ const questions = [
 		)
 	}
 ];
-
-export default Faq;

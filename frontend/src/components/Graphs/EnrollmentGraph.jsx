@@ -10,7 +10,7 @@ import {
 	ResponsiveContainer
 } from 'recharts';
 
-import vars from '../../variables/Variables';
+import vars from '../../utils/variables';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
 
 const EmptyLabel = (props) => {
