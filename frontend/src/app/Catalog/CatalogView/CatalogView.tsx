@@ -198,7 +198,7 @@ const CatalogView = () => {
 									className={styles.pill}
 									key={req.id}
 									onClick={() =>
-										history.push(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
+										navigate(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
 									}
 								>
 									{req.name}
