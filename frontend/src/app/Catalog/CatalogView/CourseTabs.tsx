@@ -1,23 +1,49 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Tabs from '@radix-ui/react-tabs';
 import useCatalog from '../useCatalog';
 import CatalogViewSections from './__new_SectionTable';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { sortSections } from 'utils/sections/sort';
-
 import styles from './CatalogView.module.scss';
-// import GradesGraph from 'components/Graphs/GradesGraph';
+import GradesGraph from 'components/Graphs/GradesGraph';
+import { fetchCatalogGrades, fetchLegacyGradeObjects } from 'redux/actions';
+import { useSelector } from 'react-redux';
 
 type TabKey = 'times' | 'grades' | 'enrollment';
 
 const CourseTabs = () => {
 	const [value, setValue] = useState<TabKey>('times');
 	const [{ course }] = useCatalog();
+	const [graphData, setGraphData] = useState<any[]>([]);
 
 	const sections = useMemo(
 		() => (course?.sectionSet ? sortSections(course.sectionSet.edges.map((e) => e.node)) : []),
 		[course]
 	);
+
+	const legacyId = useSelector(
+		(state: any) =>
+			state.grade?.context?.courses?.find((c: any) => {
+				return c.course_number === course?.courseNumber;
+			})?.id || null
+	);
+
+	useEffect(() => {
+		if (!course || !legacyId) return;
+
+		const fetchGraph = async () => {
+			const gradeObjects = await fetchLegacyGradeObjects(legacyId);
+
+			const res = await fetchCatalogGrades([
+				{ ...course, sections: gradeObjects.map((s: any) => s.grade_id) }
+			]);
+
+			return setGraphData(res);
+		};
+
+		fetchGraph();
+	}, [course, legacyId]);
 
 	return (
 		<Tabs.Root onValueChange={(key) => setValue(key as TabKey)} value={value}>
@@ -45,7 +71,13 @@ const CourseTabs = () => {
 				<CatalogViewSections sections={sections} />
 			</Tabs.Content>
 			<Tabs.Content value="grades" className={styles.tabContent}>
-				hi
+				<div className={styles.tabGraph}>
+					<GradesGraph
+						gradesData={graphData}
+						course={course}
+						color="#4EA6FB"
+					/>
+				</div>
 			</Tabs.Content>
 		</Tabs.Root>
 	);

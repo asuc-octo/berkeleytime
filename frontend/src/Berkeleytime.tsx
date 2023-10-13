@@ -4,7 +4,7 @@ import { openBanner, enterMobile, exitMobile, openLandingModal } from './redux/c
 import useDimensions from 'react-cool-dimensions';
 import easterEgg from 'utils/easterEgg';
 import Routes from './Routes';
-import { fetchEnrollContext } from 'redux/actions';
+import { fetchEnrollContext, fetchGradeContext } from 'redux/actions';
 import { IconoirProvider } from 'iconoir-react';
 
 const Berkeleytime = () => {
@@ -24,6 +24,7 @@ const Berkeleytime = () => {
 	useEffect(() => {
 		// Fetch enrollment context early on for catalog and enrollment page.
 		dispatch(fetchEnrollContext());
+		dispatch(fetchGradeContext());
 
 		const bannerType = 'fa23recruitment'; // should match value in ./redux/common/reducer.ts
 		if (localStorage.getItem('bt-hide-banner') !== bannerType) {

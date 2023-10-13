@@ -11,7 +11,7 @@ import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 import { fetchGradeData } from '../../redux/actions';
 
 export default function GradesGraphCard({ isMobile, updateClassCardGrade }) {
-	const { gradesData, graphData, selectedCourses } = useSelector((state) => state.grade);
+	const { gradesData, selectedCourses } = useSelector((state) => state.grade);
 	const [hoveredClass, setHoveredClass] = useState(false);
 	const [updateMobileHover, setUpdateMobileHover] = useState(true);
 	const dispatch = useDispatch();
@@ -106,7 +106,6 @@ export default function GradesGraphCard({ isMobile, updateClassCardGrade }) {
 					>
 						{isMobile && <div className="grades-mobile-heading"> Grade Distribution </div>}
 						<GradesGraph
-							graphData={graphData}
 							gradesData={gradesData}
 							updateBarHover={updateBarHover}
 							updateGraphHover={updateGraphHover}
@@ -117,7 +116,6 @@ export default function GradesGraphCard({ isMobile, updateClassCardGrade }) {
 							}
 							selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
 							denominator={hoveredClass.denominator}
-							color={vars.colors[hoveredClass.colorId]}
 							isMobile={isMobile}
 							graphEmpty={graphEmpty}
 						/>

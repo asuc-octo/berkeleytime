@@ -16,7 +16,9 @@ import {
 	UPDATE_ENROLL_SELECTED
 } from './actionTypes';
 
-axios.defaults.baseURL = import.meta.env.PROD ? axios.defaults.baseURL : 'https://staging.berkeleytime.com';
+axios.defaults.baseURL = import.meta.env.PROD
+	? axios.defaults.baseURL
+	: 'https://staging.berkeleytime.com';
 
 // update grade list
 const updateGradeContext = (data) => ({
@@ -159,6 +161,28 @@ export function fetchGradeData(classData) {
 		);
 }
 
+export async function fetchCatalogGrades(classData) {
+	const promises = [];
+	for (const course of classData) {
+		const { sections } = course;
+		const url = `/api/grades/sections/${sections.join('&')}/`;
+		promises.push(axios.get(url));
+	}
+
+	const result = await axios.all(promises);
+
+	const test = result.map((res, i) => {
+		let gradesData = res.data;
+		gradesData['id'] = classData[i].id;
+		gradesData['instructor'] = classData[i].instructor = 'All Instructors';
+		gradesData['semester'] = classData[i].semester = 'All Semesters';
+		gradesData['colorId'] = classData[i].colorId;
+		return gradesData;
+	});
+
+	return test;
+}
+
 export function fetchGradeSelected(updatedClass) {
 	const url = `/api/grades/course_grades/${updatedClass.value}/`;
 	return (dispatch) =>
@@ -172,6 +196,12 @@ export function fetchGradeSelected(updatedClass) {
 			},
 			(error) => console.log('An error occurred.', error)
 		);
+}
+
+export async function fetchLegacyGradeObjects(id) {
+	const url = `/api/grades/course_grades/${id}/`;
+	const res = await axios.get(url);
+	return res.data;
 }
 
 export function fetchGradeFromUrl(url, navigate) {
