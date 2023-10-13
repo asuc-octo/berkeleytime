@@ -5,7 +5,7 @@ import { memo, useEffect } from 'react';
 import useDimensions from 'react-cool-dimensions';
 import styles from './CatalogList.module.scss';
 import { useNavigate } from 'react-router';
-import useCatalog, { CatalogActions } from '../useCatalog';
+import useCatalog from '../useCatalog';
 import { buildPlaylist } from '../service';
 import Skeleton from 'react-loading-skeleton';
 
@@ -17,7 +17,7 @@ const CatalogList = () => {
 	const [fetchCatalogList, { loading, called }] = useGetCoursesForFilterLazyQuery({
 		onCompleted: (data) =>
 			dispatch({
-				type: CatalogActions.SetCourseList,
+				type: 'setCourseList',
 				allCourses: data.allCourses.edges.map((edge) => edge.node)
 			})
 	});
@@ -28,7 +28,7 @@ const CatalogList = () => {
 	}, [fetchCatalogList, filters]);
 
 	const handleCourseSelect = (course: CourseFragment) => {
-		dispatch({ type: CatalogActions.SetCourse, course });
+		dispatch({ type: 'setCourse', course });
 		if (filters.semester) {
 			const { name } = filters.semester.value;
 			const { abbreviation, courseNumber } = course;
