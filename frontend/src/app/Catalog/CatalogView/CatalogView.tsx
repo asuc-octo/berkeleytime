@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
 import { useSelector } from 'react-redux';
-import useCatalog, { CatalogActions } from '../useCatalog';
+import useCatalog from '../useCatalog';
 import { sortPills } from '../service';
 import CourseTabs from './CourseTabs';
 
@@ -40,7 +40,7 @@ const CatalogView = () => {
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
-				dispatch({ type: CatalogActions.SetCourse, course });
+				dispatch({ type: 'setCourse', course });
 				setOpen(true);
 			}
 		}
@@ -74,10 +74,10 @@ const CatalogView = () => {
 		const newCourse = data?.allCourses.edges[0].node;
 
 		if (newCourse && newCourse?.id === course?.id) {
-			dispatch({ type: CatalogActions.SetCourse, course: newCourse });
+			dispatch({ type: 'setCourse', course: newCourse });
 			setOpen(true);
 		} else if (course) {
-			dispatch({ type: CatalogActions.SetCourse, course });
+			dispatch({ type: 'setCourse', course });
 			setOpen(true);
 		}
 	}, [course, data, dispatch]);
@@ -102,7 +102,7 @@ const CatalogView = () => {
 			<button
 				className={styles.modalButton}
 				onClick={() => {
-					dispatch({ type: CatalogActions.SetCourse, course: null });
+					dispatch({ type: 'setCourse', course: null });
 					navigate(`/catalog/${semester}`, { replace: true });
 				}}
 			>
@@ -161,7 +161,7 @@ const CatalogView = () => {
 									<span
 										className={styles.pill}
 										key={req.id}
-										onClick={() => dispatch({ type: CatalogActions.SetPill, pillItem: req })}
+										onClick={() => dispatch({ type: 'setPill', pillItem: req })}
 									>
 										{req.name}
 									</span>

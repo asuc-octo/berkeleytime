@@ -1,5 +1,7 @@
 import { FilterFragment } from 'graphql';
 import { GroupBase } from 'react-select';
+import { CourseFragment, CourseOverviewFragment, PlaylistType } from 'graphql';
+import Fuse from 'fuse.js';
 
 export type CatalogSlug = {
 	abbreviation?: string;
@@ -64,3 +66,28 @@ export type CourseInfo = {
 	fullCourseCode: string;
 	abbreviations: string[];
 };
+
+export type SortDir = 'ASC' | 'DESC';
+
+export type CatalogContext = {
+	filters: CatalogFilters;
+	sortQuery: SortOption;
+	sortDir: SortDir;
+	searchQuery: string;
+	allCourses: CourseOverviewFragment[];
+	courses: CourseOverviewFragment[];
+	course: CourseFragment | null;
+	courseIndex: Fuse<CourseInfo> | null;
+};
+
+export type CatalogAction =
+	| { type: 'sortDir' }
+	| { type: 'setCourse'; course: CatalogContext['course'] }
+	| { type: 'search'; query?: CatalogContext['searchQuery'] }
+	| { type: 'sort'; query: CatalogContext['sortQuery'] }
+	| { type: 'filter'; filters: Partial<CatalogContext['filters']> }
+	| { type: 'setCourseList'; allCourses: CatalogContext['courses'] }
+	| { type: 'reset'; filters?: Partial<CatalogContext['filters']> }
+	| { type: 'setPill'; pillItem: PlaylistType };
+
+export type CatalogActions = CatalogAction[keyof CatalogAction];

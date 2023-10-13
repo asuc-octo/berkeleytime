@@ -10,7 +10,7 @@ import BTLoader from 'components/Common/BTLoader';
 import { useNavigate, useLocation, useParams } from 'react-router';
 import styles from './CatalogFilters.module.scss';
 import { SortDown, SortUp } from 'iconoir-react';
-import useCatalog, { CatalogActions as Actions } from '../useCatalog';
+import useCatalog from '../useCatalog';
 import { FILTER_TEMPLATE, SORT_OPTIONS, putFilterOptions } from '../service';
 
 const CatalogFilters = () => {
@@ -28,7 +28,7 @@ const CatalogFilters = () => {
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
-		dispatch({ type: Actions.Search, query: params.get('q') ?? '' });
+		dispatch({ type: 'search', query: params.get('q') ?? '' });
 	}, [dispatch, location.search]);
 
 	useEffect(() => {
@@ -37,7 +37,7 @@ const CatalogFilters = () => {
 			const semester = options.find(({ label }) => label === slug?.semester) ?? null;
 
 			dispatch({
-				type: Actions.Filter,
+				type: 'filter',
 				filters: { semester: semester ?? options[0] }
 			});
 		}
@@ -61,7 +61,7 @@ const CatalogFilters = () => {
 	const handleFilterReset = () => {
 		if (template) {
 			const semester = template.semester.options[0] as FilterOption;
-			dispatch({ type: Actions.Reset, filters: { semester } });
+			dispatch({ type: 'reset', filters: { semester } });
 			navigate({ pathname: `/catalog/${semester.value.name}` });
 		}
 	};
@@ -71,7 +71,7 @@ const CatalogFilters = () => {
 		meta: ActionMeta<FilterOption>
 	) => {
 		dispatch({
-			type: Actions.Filter,
+			type: 'filter',
 			filters: { [meta.name as CatalogFilterKey]: newValue }
 		});
 		// Update the url slug if semester filter changes.
@@ -99,7 +99,7 @@ const CatalogFilters = () => {
 							{ pathname: location.pathname, search: `q=${e.target.value}` },
 							{ replace: true }
 						);
-						dispatch({ type: Actions.Search, query: e.target.value });
+						dispatch({ type: 'search', query: e.target.value });
 					}}
 					type="search"
 					placeholder="Search for a class..."
@@ -124,7 +124,7 @@ const CatalogFilters = () => {
 								{ pathname: location.pathname, search: `q=${e.target.value}` },
 								{ replace: true }
 							);
-							dispatch({ type: Actions.Search, query: e.target.value });
+							dispatch({ type: 'search', query: e.target.value });
 						}}
 						type="search"
 						placeholder="Search for a class..."
@@ -139,10 +139,10 @@ const CatalogFilters = () => {
 							options={SORT_OPTIONS}
 							isSearchable={false}
 							onChange={(newValue) =>
-								dispatch({ type: Actions.Sort, query: newValue as SortOption })
+								dispatch({ type: 'sort', query: newValue as SortOption })
 							}
 						/>
-						<button onClick={() => dispatch({ type: Actions.SortDir })}>
+						<button onClick={() => dispatch({ type: 'sortDir' })}>
 							{sortDir === 'DESC' ? <SortUp color="#8A8A8A" /> : <SortDown color="#8A8A8A" />}
 						</button>
 					</div>
