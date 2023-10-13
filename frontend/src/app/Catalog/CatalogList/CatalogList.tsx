@@ -4,19 +4,22 @@ import { CourseFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
 import { memo, useEffect } from 'react';
 import useDimensions from 'react-cool-dimensions';
 import styles from './CatalogList.module.scss';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 import useCatalog, { CatalogActions } from '../useCatalog';
 import { buildPlaylist } from '../service';
 import Skeleton from 'react-loading-skeleton';
 
 const CatalogList = () => {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { observe, height } = useDimensions();
 	const [{ course, courses, filters }, dispatch] = useCatalog();
 
 	const [fetchCatalogList, { loading, called }] = useGetCoursesForFilterLazyQuery({
 		onCompleted: (data) =>
-			dispatch({ type: CatalogActions.SetCourseList, allCourses: data.allCourses.edges.map((edge) => edge.node) })
+			dispatch({
+				type: CatalogActions.SetCourseList,
+				allCourses: data.allCourses.edges.map((edge) => edge.node)
+			})
 	});
 
 	useEffect(() => {
@@ -29,7 +32,7 @@ const CatalogList = () => {
 		if (filters.semester) {
 			const { name } = filters.semester.value;
 			const { abbreviation, courseNumber } = course;
-			history.push({
+			navigate({
 				pathname: `/catalog/${name}/${abbreviation}/${courseNumber}`,
 				search: location.search
 			});
@@ -65,7 +68,7 @@ const CatalogList = () => {
 			{loading &&
 				[...Array(20).keys()].map((key) => (
 					<div key={key} className={styles.itemRoot}>
-						<div className={styles.itemContainer} style={{padding: 0}}>
+						<div className={styles.itemContainer} style={{ padding: 0 }}>
 							<Skeleton height={'100px'} style={{ lineHeight: 1 }} />
 						</div>
 					</div>

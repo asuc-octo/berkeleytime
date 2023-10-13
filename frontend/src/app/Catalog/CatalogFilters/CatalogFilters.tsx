@@ -4,13 +4,13 @@ import BTSelect from 'components/Custom/Select';
 import { ReactComponent as SearchIcon } from 'assets/svg/common/search.svg';
 import { ReactComponent as FilterIcon } from 'assets/svg/catalog/filter.svg';
 import BTInput from 'components/Custom/Input';
-import { FilterOption, SortOption, CatalogFilterKeys, CatalogSlug, FilterTemplate } from '../types';
+import { FilterOption, SortOption, CatalogFilterKey, CatalogSlug, FilterTemplate } from '../types';
 import { useGetFiltersQuery } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
-import { useHistory, useLocation, useParams } from 'react-router';
+import { useNavigate, useLocation, useParams } from 'react-router';
 import styles from './CatalogFilters.module.scss';
 import { SortDown, SortUp } from 'iconoir-react';
-import useCatalog, { CatalogActions } from '../useCatalog';
+import useCatalog, { CatalogActions as Actions } from '../useCatalog';
 import { FILTER_TEMPLATE, SORT_OPTIONS, putFilterOptions } from '../service';
 
 const CatalogFilters = () => {
@@ -19,7 +19,7 @@ const CatalogFilters = () => {
 		onCompleted: (data) => setTemplate(putFilterOptions(FILTER_TEMPLATE, data))
 	});
 
-	const history = useHistory();
+	const navigate = useNavigate();
 	const location = useLocation();
 	const slug = useParams<CatalogSlug>();
 	const [isOpen, setOpen] = useState(false);
@@ -28,7 +28,7 @@ const CatalogFilters = () => {
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
-		dispatch({ type: CatalogActions.Search, query: params.get('q') ?? '' });
+		dispatch({ type: Actions.Search, query: params.get('q') ?? '' });
 	}, [dispatch, location.search]);
 
 	useEffect(() => {
@@ -37,10 +37,8 @@ const CatalogFilters = () => {
 			const semester = options.find(({ label }) => label === slug?.semester) ?? null;
 
 			dispatch({
-				type: CatalogActions.Filter,
-				filters: {
-					semester: semester ?? options[0]
-				}
+				type: Actions.Filter,
+				filters: { semester: semester ?? options[0] }
 			});
 		}
 	}, [template, slug?.semester, dispatch]);
@@ -63,8 +61,8 @@ const CatalogFilters = () => {
 	const handleFilterReset = () => {
 		if (template) {
 			const semester = template.semester.options[0] as FilterOption;
-			dispatch({ type: CatalogActions.Reset, filters: { semester } });
-			history.push({ pathname: `/catalog/${semester.value.name}` });
+			dispatch({ type: Actions.Reset, filters: { semester } });
+			navigate({ pathname: `/catalog/${semester.value.name}` });
 		}
 	};
 
@@ -72,13 +70,19 @@ const CatalogFilters = () => {
 		newValue: FilterOption | readonly FilterOption[] | null,
 		meta: ActionMeta<FilterOption>
 	) => {
-		dispatch({ type: CatalogActions.Filter, filters: { [meta.name as CatalogFilterKeys]: newValue } });
+		dispatch({
+			type: Actions.Filter,
+			filters: { [meta.name as CatalogFilterKey]: newValue }
+		});
 		// Update the url slug if semester filter changes.
 		if (meta.name === 'semester') {
-			history.push({
-				pathname: `/catalog/${(newValue as FilterOption)?.value?.name}`
-					.concat(slug?.abbreviation ? `/${slug.abbreviation}` : '')
-					.concat(slug?.courseNumber ? `/${slug.courseNumber}` : ''),
+			navigate({
+				pathname:
+					`/catalog/${(newValue as FilterOption)?.value?.name}` + slug?.abbreviation
+						? `/${slug.abbreviation}`
+						: '' + slug?.courseNumber
+						? `/${slug.courseNumber}`
+						: '',
 				search: location.search
 			});
 		}
@@ -91,8 +95,11 @@ const CatalogFilters = () => {
 					style={{ border: 'none', width: '100%' }}
 					value={searchQuery}
 					onChange={(e) => {
-						history.replace({ pathname: location.pathname, search: `q=${e.target.value}` });
-						dispatch({ type: CatalogActions.Search, query: e.target.value });
+						navigate(
+							{ pathname: location.pathname, search: `q=${e.target.value}` },
+							{ replace: true }
+						);
+						dispatch({ type: Actions.Search, query: e.target.value });
 					}}
 					type="search"
 					placeholder="Search for a class..."
@@ -113,8 +120,11 @@ const CatalogFilters = () => {
 					<BTInput
 						value={searchQuery}
 						onChange={(e) => {
-							history.replace({ pathname: location.pathname, search: `q=${e.target.value}` });
-							dispatch({ type:  CatalogActions.Search, query: e.target.value });
+							navigate(
+								{ pathname: location.pathname, search: `q=${e.target.value}` },
+								{ replace: true }
+							);
+							dispatch({ type: Actions.Search, query: e.target.value });
 						}}
 						type="search"
 						placeholder="Search for a class..."
@@ -128,9 +138,11 @@ const CatalogFilters = () => {
 							isClearable={false}
 							options={SORT_OPTIONS}
 							isSearchable={false}
-							onChange={(newValue) => dispatch({ type: CatalogActions.Sort, query: newValue as SortOption })}
+							onChange={(newValue) =>
+								dispatch({ type: Actions.Sort, query: newValue as SortOption })
+							}
 						/>
-						<button onClick={() => dispatch({ type: CatalogActions.SortDir })}>
+						<button onClick={() => dispatch({ type: Actions.SortDir })}>
 							{sortDir === 'DESC' ? <SortUp color="#8A8A8A" /> : <SortDown color="#8A8A8A" />}
 						</button>
 					</div>
@@ -141,7 +153,7 @@ const CatalogFilters = () => {
 								<p>{filter.name}</p>
 								<BTSelect
 									name={key}
-									value={filters[key as CatalogFilterKeys]}
+									value={filters[key as CatalogFilterKey]}
 									isClearable={filter.isClearable}
 									isMulti={filter.isMulti}
 									closeMenuOnSelect={filter.closeMenuOnSelect}

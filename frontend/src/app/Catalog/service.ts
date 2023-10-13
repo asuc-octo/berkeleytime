@@ -5,7 +5,7 @@ import { courseToName } from 'lib/courses/course';
 import {
 	CatalogCategoryKeys,
 	FilterTemplate,
-	CatalogFilterKeys,
+	CatalogFilterKey,
 	FilterOptions,
 	SortOption,
 	CourseInfo,
@@ -156,7 +156,7 @@ export const putFilterOptions = (filterItems: FilterTemplate, data?: GetFiltersQ
 	Object.entries(result)
 		.filter(([key]) => key !== 'requirements')
 		.map(([k]) => {
-			const key = k as CatalogFilterKeys;
+			const key = k as CatalogFilterKey;
 			result[key].options = filters[key].map((filter) => ({
 				label: filter.name,
 				value: filter
