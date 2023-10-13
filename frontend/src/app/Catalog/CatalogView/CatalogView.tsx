@@ -8,16 +8,14 @@ import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
 import { useNavigate, useParams } from 'react-router';
-import { sortSections } from 'utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
-
-import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
-// import SectionTable from './SectionTable';
 import useCatalog, { CatalogActions } from '../useCatalog';
 import { sortPills } from '../service';
-import CatalogViewSections from './__new_SectionTable';
+import CourseTabs from './CourseTabs';
+
+import styles from './CatalogView.module.scss';
 
 const skeleton = [...Array(8).keys()];
 
@@ -84,16 +82,13 @@ const CatalogView = () => {
 		}
 	}, [course, data, dispatch]);
 
-	const [playlists, sections] = useMemo(() => {
+	const playlists = useMemo(() => {
 		let playlists = null;
-		let sections = null;
 
 		if (course?.playlistSet)
 			playlists = sortPills(course.playlistSet.edges.map((e) => e.node as PlaylistType));
 
-		if (course?.sectionSet) sections = sortSections(course.sectionSet.edges.map((e) => e.node));
-
-		return [playlists ?? skeleton, sections];
+		return playlists ?? skeleton;
 	}, [course]);
 
 	const enrollPath = legacyId
@@ -185,7 +180,7 @@ const CatalogView = () => {
 							</p>
 						</>
 					</ReadMore>
-					<h5>Class Times - {semester ?? ''}</h5>
+					<CourseTabs />
 					{/* {sections && sections.length > 0 ? (
 						<SectionTable sections={sections} />
 					) : !loading ? (
@@ -193,7 +188,7 @@ const CatalogView = () => {
 					) : null} */}
 
 					{/* Redesigned catalog sections */}
-					<CatalogViewSections sections={sections} />
+					{/* <CatalogViewSections sections={sections} /> */}
 
 					{/* Good feature whenever we want...
 					<h5>Past Offerings</h5>

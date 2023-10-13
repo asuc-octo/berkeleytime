@@ -258,3 +258,36 @@
 		width: 14px;
 	}
 }
+
+.tabList {
+	display: flex;
+	flex-direction: row;
+	gap: 30px;
+	border-bottom: 1.5px solid #eaeaea;
+	margin: 0 -30px;
+	padding: 0 30px;
+}
+
+.tabContent {
+	display: flex;
+	flex-direction: column;
+	padding-top: 30px;
+}
+
+.tab {
+	display: flex;
+	align-items: center;
+	outline: none;
+	border: none;
+	background: transparent;
+	padding: 5px 0;
+	font-size: 16px;
+	margin-bottom: -1.5px;
+	color: $bt-light-text;
+	border-bottom: 3px solid transparent;
+}
+
+.active {
+	border-bottom: 3px solid #2f80ed;
+	color: $bt-base-text;
+}
