@@ -59,7 +59,9 @@ export default function EnrollmentGraph(props) {
 		fontSize: '12px'
 	};
 
-	const graphEmpty = enrollmentData !== null && enrollmentData.length === 0;
+	const isEmpty =
+		(enrollmentData !== null && enrollmentData.length === 0) ||
+		(selectedCourses !== null && selectedCourses.length === 0);
 
 	const graphData = useMemo(() => {
 		if (!enrollmentData || enrollmentData.length <= 0) return [];
@@ -89,7 +91,7 @@ export default function EnrollmentGraph(props) {
 				<ResponsiveContainer width={isMobile ? 500 : '100%'} height={400}>
 					<LineChart
 						data={graphData}
-						onMouseMove={updateGraphHover}
+						// onMouseMove={updateGraphHover}
 						margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
 					>
 						<XAxis dataKey="name" interval={19} />
@@ -104,10 +106,10 @@ export default function EnrollmentGraph(props) {
 						<Tooltip
 							formatter={(value) => `${value}%`}
 							labelFormatter={(label) => `Day ${label - 1}`}
-							cursor={graphEmpty ? false : true}
+							cursor={isEmpty ? false : true}
 						/>
 
-						{!graphEmpty &&
+						{!isEmpty &&
 							enrollmentData.map((item, i) => (
 								<Line
 									key={i}
@@ -117,11 +119,11 @@ export default function EnrollmentGraph(props) {
 									stroke={color ? color : vars.colors[item.colorId]}
 									strokeWidth={3}
 									dot={false}
-									activeDot={{ onMouseOver: updateLineHover }}
+									// activeDot={{ onMouseOver: updateLineHover }}
 									connectNulls
 								/>
 							))}
-						{!graphEmpty && (
+						{!isEmpty && (
 							<ReferenceLine
 								x={enrollmentData[0].telebears.phase2_start_day}
 								stroke="black"
@@ -132,7 +134,7 @@ export default function EnrollmentGraph(props) {
 								</Label>
 							</ReferenceLine>
 						)}
-						{!graphEmpty && (
+						{!isEmpty && (
 							<ReferenceLine
 								x={enrollmentData[0].telebears.adj_start_day}
 								stroke="black"
@@ -151,7 +153,7 @@ export default function EnrollmentGraph(props) {
 				</ResponsiveContainer>
 			</div>
 
-			{graphEmpty && (
+			{isEmpty && (
 				<EmptyLabel>
 					You have not added any <br /> classes yet.
 				</EmptyLabel>
