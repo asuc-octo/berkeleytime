@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import vars from '../../utils/variables';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
 
-const EmptyLabel = (props) => {
+const EmptyLabel = () => {
 	return (
 		<div className="graph-empty">
 			<div className="graph-empty-content">

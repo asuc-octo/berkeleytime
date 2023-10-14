@@ -16,6 +16,7 @@ const initialCatalog: CatalogContext = {
 };
 
 const Context = createContext<CatalogContext>(initialCatalog);
+
 export const CatalogDispatch = createContext<Dispatch<CatalogAction>>(
 	(() => null) as Dispatch<CatalogAction>
 );

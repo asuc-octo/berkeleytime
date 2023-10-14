@@ -16,6 +16,7 @@ import { sortPills } from '../service';
 import CourseTabs from './CourseTabs';
 
 import styles from './CatalogView.module.scss';
+import { CatalogSlug } from '../types';
 
 const skeleton = [...Array(8).keys()];
 
@@ -23,11 +24,7 @@ const CatalogView = () => {
 	const [{ course }, dispatch] = useCatalog();
 	const [isOpen, setOpen] = useState(false);
 	const navigate = useNavigate();
-	const { abbreviation, courseNumber, semester } = useParams<{
-		abbreviation: string;
-		courseNumber: string;
-		semester: string;
-	}>();
+	const { abbreviation, courseNumber, semester } = useParams<CatalogSlug>();
 
 	const legacyId = useSelector(
 		(state: any) =>
