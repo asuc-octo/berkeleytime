@@ -77,12 +77,9 @@ const CatalogFilters = () => {
 		// Update the url slug if semester filter changes.
 		if (meta.name === 'semester') {
 			navigate({
-				pathname:
-					`/catalog/${(newValue as FilterOption)?.value?.name}` + slug?.abbreviation
-						? `/${slug.abbreviation}`
-						: '' + slug?.courseNumber
-						? `/${slug.courseNumber}`
-						: '',
+				pathname: `/catalog/${(newValue as FilterOption)?.value?.name}`
+					.concat(slug?.abbreviation ? `/${slug.abbreviation}` : '')
+					.concat(slug?.courseNumber ? `/${slug.courseNumber}` : ''),
 				search: location.search
 			});
 		}

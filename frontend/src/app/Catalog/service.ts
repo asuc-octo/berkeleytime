@@ -289,6 +289,13 @@ export function colorEnrollment(percentage: number) {
 	}
 }
 
+/**
+ * This function takes in a list of courses, and effectively inverts the list to
+ * replicate a sort by ascending or descending order.
+ *
+ * If the list was in asceding order, it will be returned in descending order and vice versa.
+ * The list will be flipped by the appropriate field based on the provided sort query.
+ */
 export const flipCourseList = (courses: CourseOverviewFragment[], sortQuery: SortOption) => {
 	const keys: Record<CatalogSortKeys, keyof CourseOverviewFragment> = {
 		average_grade: 'gradeAverage',
