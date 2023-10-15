@@ -17,14 +17,13 @@ import { useSelector } from 'react-redux';
 import EnrollmentGraph from 'components/Graphs/EnrollmentGraph';
 import { useParams } from 'react-router-dom';
 import { CatalogSlug } from '../types';
-import { set } from 'date-fns';
 
 type TabKey = 'times' | 'grades' | 'enrollment';
 
 const CourseTabs = () => {
 	const [value, setValue] = useState<TabKey>('times');
 	const [{ course }] = useCatalog();
-	const [gradeData, setGradeData] = useState<any[]>([]);
+	const [gradeData, setGradeData] = useState<any[] | null>([]);
 	const [enrollmentData, setEnrollmentData] = useState<any[] | null>(null);
 	const { abbreviation, courseNumber, semester } = useParams<CatalogSlug>();
 
@@ -49,6 +48,8 @@ const CourseTabs = () => {
 
 	useEffect(() => {
 		if (!course) return;
+		setGradeData(null);
+		setEnrollmentData(null);
 
 		const fetchGrades = async () => {
 			if (!legacyGradeId) return;
@@ -62,9 +63,7 @@ const CourseTabs = () => {
 		};
 
 		const fetchEnrollment = async () => {
-			if (!semester || !legacyEnrollmentId)
-				return setEnrollmentData(null);
-
+			if (!semester || !legacyEnrollmentId) return setEnrollmentData(null);
 
 			const objects = await fetchLegacyEnrollmentObjects(legacyEnrollmentId);
 			const [sem, year] = semester.split(' ') ?? [null, null];
@@ -73,8 +72,7 @@ const CourseTabs = () => {
 				(o: any) => o.semester === sem?.toLowerCase() && o.year === year
 			);
 
-			if (currentSection === undefined)
-				return setEnrollmentData(null);
+			if (currentSection === undefined) return setEnrollmentData(null);
 
 			const res = await fetchCatalogEnrollment([
 				{ ...course, sections: [currentSection.sections[0].section_id] }
@@ -114,7 +112,7 @@ const CourseTabs = () => {
 			</Tabs.Content>
 			<Tabs.Content value="grades" className={styles.tabContent}>
 				<div className={styles.tabGraph}>
-					<GradesGraph gradesData={gradeData} course={course} color="#4EA6FB" />
+					<GradesGraph gradeData={gradeData} course={course} color="#4EA6FB" />
 				</div>
 			</Tabs.Content>
 			<Tabs.Content value="enrollment" className={styles.tabContent}>

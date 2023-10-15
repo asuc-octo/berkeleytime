@@ -8,6 +8,7 @@ import { ReactComponent as BookmarkUnsaved } from 'assets/svg/catalog/bookmark-u
 
 import styles from './CatalogList.module.scss';
 import { colorEnrollment, formatEnrollment } from '../service';
+import useCatalog from '../useCatalog';
 
 function formatUnits(units: string) {
 	return `${units} Unit${units === '1.0' || units === '1' ? '' : 's'}`
@@ -27,6 +28,7 @@ type CatalogListItemProps = {
 
 const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 	const { course, handleCourseSelect, isSelected } = data;
+	const [{ course: currentCourse }] = useCatalog();
 
 	const { user } = useUser();
 	const saveCourse = useSaveCourse();
@@ -35,7 +37,14 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 	const isSaved = user?.savedClasses?.some((savedCourse) => savedCourse?.id === course.id);
 
 	return (
-		<div style={style} className={styles.itemRoot} onClick={() => handleCourseSelect(course)}>
+		<div
+			style={style}
+			className={styles.itemRoot}
+			onClick={() => {
+				if (currentCourse?.id === course.id) return;
+				handleCourseSelect(course);
+			}}
+		>
 			<div className={`${styles.itemContainer} ${isSelected ? styles.selected : ''}`}>
 				<div className={styles.itemInfo}>
 					<div className={styles.itemContent}>

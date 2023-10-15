@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { openBanner, enterMobile, exitMobile, openLandingModal } from './redux/common/actions';
 import useDimensions from 'react-cool-dimensions';
@@ -53,4 +53,4 @@ const Berkeleytime = () => {
 	);
 };
 
-export default memo(Berkeleytime);
+export default Berkeleytime;
