@@ -3,23 +3,9 @@ import { percentileToString } from '../../utils/utils';
 import { useMemo } from 'react';
 
 import vars from '../../utils/variables';
-import emptyImage from '../../assets/img/images/graphs/empty.svg';
 import { CourseFragment } from 'graphql';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { CategoricalChartFunc } from 'recharts/types/chart/generateCategoricalChart';
-
-const EmptyLabel = () => {
-	return (
-		<div className="graph-empty">
-			<div className="graph-empty-content">
-				<img className="graph-empty-image" src={emptyImage} alt="empty state" />
-				<h3 className="graph-empty-heading">
-					You have not added any <br /> classes yet.
-				</h3>
-			</div>
-		</div>
-	);
-};
 
 const MobileTooltip = (props) => {
 	const { active, payload, label } = props;
@@ -135,60 +121,4 @@ export default function GradesGraph(props: GradesGraphProps) {
 			</ResponsiveContainer>
 		</div>
 	);
-	// return (
-	// 	<ResponsiveContainer width="95%" height={!graphEmpty ? 200 + 1 * 400 : 600}>
-	// 		<BarChart
-	// 			data={graphData ?? []}
-	// 			onMouseMove={updateGraphHover}
-	// 			layout="vertical"
-	// 			margin={{ left: -30, bottom: 50 }}
-	// 		>
-	// 			{!graphEmpty ? (
-	// 				<XAxis type="number" unit="%" />
-	// 			) : (
-	// 				<XAxis type="number" unit="%" domain={[0, 100]} />
-	// 			)}
-	// 			<YAxis dataKey="name" type="category" interval={0} />
-	// 			{!graphEmpty ? (
-	// 				<Tooltip
-	// 					content={
-	// 						<MobileTooltip
-	// 							course={course}
-	// 							semester={semester}
-	// 							instructor={instructor}
-	// 							selectedPercentiles={selectedPercentiles}
-	// 							color={color}
-	// 							denominator={denominator}
-	// 						/>
-	// 					}
-	// 				/>
-	// 			) : null}
-	// 			{gradeData && gradeData.map((item, i) => (
-	// 				<Bar
-	// 					key={i}
-	// 					name={`${item.title} • ${item.semester} • ${item.instructor}`}
-	// 					dataKey={item.id}
-	// 					fill={vars.colors[item.colorId ?? 0]}
-	// 					onMouseEnter={updateBarHover}
-	// 					label={<PercentageLabel />}
-	// 					radius={[0, 4, 4, 0]}
-	// 				/>
-	// 			))}
-	// 			<Legend
-	// 				wrapperStyle={{
-	// 					paddingTop: 20,
-	// 					paddingLeft: 10,
-	// 					paddingRight: 10,
-	// 					paddingBottom: 10
-	// 				}}
-	// 				layout="vertical"
-	// 				verticalAlign="top"
-	// 				iconType="circle"
-	// 			/>
-	// 		</BarChart>
-	// 	</ResponsiveContainer>
-	// );
-
-	// 	{graphEmpty && <EmptyLabel />}
-	// );
 }

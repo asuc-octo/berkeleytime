@@ -14,7 +14,7 @@ import {
 import vars from '../../utils/variables';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
 
-const EmptyLabel = ({ children }) => {
+export const EmptyLabel = ({ children }) => {
 	return (
 		<div className="graph-empty">
 			<div className="graph-empty-content">
@@ -155,11 +155,7 @@ export default function EnrollmentGraph(props) {
 				</LineChart>
 			</ResponsiveContainer>
 
-			{isEmpty && (
-				<EmptyLabel>
-					You have not added any <br /> classes yet.
-				</EmptyLabel>
-			)}
+			{enrollmentData?.length == 0 && <EmptyLabel>No data for the selected semester.</EmptyLabel>}
 		</div>
 	);
 }

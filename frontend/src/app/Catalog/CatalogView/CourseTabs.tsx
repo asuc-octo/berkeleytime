@@ -72,7 +72,7 @@ const CourseTabs = () => {
 				(o: any) => o.semester === sem?.toLowerCase() && o.year === year
 			);
 
-			if (currentSection === undefined) return setEnrollmentData(null);
+			if (currentSection === undefined) return setEnrollmentData([]);
 
 			const res = await fetchCatalogEnrollment([
 				{ ...course, sections: [currentSection.sections[0].section_id] }
