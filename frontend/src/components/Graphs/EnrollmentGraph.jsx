@@ -51,21 +51,25 @@ function getYTickRange(limit) {
 	return arr;
 }
 
+const labelStyle = {
+	textAnchor: 'middle',
+	fontSize: '12px'
+};
+
 export default function EnrollmentGraph(props) {
 	const { enrollmentData, updateLineHover, updateGraphHover, isMobile, selectedCourses, color } =
 		props;
-	const labelStyle = {
-		textAnchor: 'middle',
-		fontSize: '12px'
-	};
 
 	const isEmpty =
-		(enrollmentData !== null && enrollmentData.length === 0) ||
-		(selectedCourses !== null && selectedCourses.length === 0);
+		enrollmentData === null ||
+		enrollmentData.length === 0 ||
+		selectedCourses === null ||
+		selectedCourses.length === 0;
 
 	const graphData = useMemo(() => {
 		if (!enrollmentData || enrollmentData.length <= 0) return [];
 		const days = [...Array(200).keys()];
+
 		return days.map((day) => {
 			const ret = {
 				name: day
@@ -87,71 +91,69 @@ export default function EnrollmentGraph(props) {
 
 	return (
 		<div className="grades-graph">
-			<div className="enrollment-recharts-container">
-				<ResponsiveContainer width={isMobile ? 500 : '100%'} height={400}>
-					<LineChart
-						data={graphData}
-						// onMouseMove={updateGraphHover}
-						margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
-					>
-						<XAxis dataKey="name" interval={19} />
-						<YAxis
-							fontSize={14}
-							type="number"
-							unit="%"
-							domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
-							ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}
-						/>
+			<ResponsiveContainer width={isMobile ? 500 : '100%'} height={400}>
+				<LineChart
+					data={graphData}
+					// onMouseMove={updateGraphHover}
+					margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
+				>
+					<XAxis dataKey="name" interval={19} />
+					<YAxis
+						fontSize={14}
+						type="number"
+						unit="%"
+						domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
+						ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}
+					/>
 
-						<Tooltip
-							formatter={(value) => `${value}%`}
-							labelFormatter={(label) => `Day ${label - 1}`}
-							cursor={isEmpty ? false : true}
-						/>
+					<Tooltip
+						formatter={(value) => `${value}%`}
+						labelFormatter={(label) => `Day ${label - 1}`}
+						cursor={isEmpty ? false : true}
+					/>
 
-						{!isEmpty &&
-							enrollmentData.map((item, i) => (
-								<Line
-									key={i}
-									name={`${item.title} • ${item.section_name}`}
-									type="monotone"
-									dataKey={item.id}
-									stroke={color ? color : vars.colors[item.colorId]}
-									strokeWidth={3}
-									dot={false}
-									// activeDot={{ onMouseOver: updateLineHover }}
-									connectNulls
-								/>
-							))}
-						{!isEmpty && (
-							<ReferenceLine
-								x={enrollmentData[0].telebears.phase2_start_day}
-								stroke="black"
-								strokeDasharray="3 3"
-							>
-								<Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-									{`Phase II Start (${selectedCourses[0].semester})`}
-								</Label>
-							</ReferenceLine>
-						)}
-						{!isEmpty && (
-							<ReferenceLine
-								x={enrollmentData[0].telebears.adj_start_day}
-								stroke="black"
-								strokeDasharray="3 3"
-							>
-								<Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-									{`Adjustment Start (${selectedCourses[0].semester})`}
-								</Label>
-							</ReferenceLine>
-						)}
+					{!isEmpty &&
+						enrollmentData.map((item, i) => (
+							<Line
+								key={i}
+								name={`${item.title} • ${item.section_name}`}
+								type="monotone"
+								dataKey={item.id}
+								stroke={color ? color : vars.colors[item.colorId]}
+								strokeWidth={3}
+								dot={false}
+								// activeDot={{ onMouseOver: updateLineHover }}
+								connectNulls
+							/>
+						))}
+					{!isEmpty && (
+						<ReferenceLine
+							x={enrollmentData[0].telebears.phase2_start_day}
+							stroke="black"
+							strokeDasharray="3 3"
+						>
+							<Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+								{`Phase II Start (${selectedCourses[0].semester})`}
+							</Label>
+						</ReferenceLine>
+					)}
+					{!isEmpty && (
+						<ReferenceLine
+							x={enrollmentData[0].telebears.adj_start_day}
+							stroke="black"
+							strokeDasharray="3 3"
+						>
+							<Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+								{`Adjustment Start (${selectedCourses[0].semester})`}
+							</Label>
+						</ReferenceLine>
+					)}
 
-						{isMobile && (
-							<Legend height={10} horizontalAlign="left" layout="vertical" iconType="circle" />
-						)}
-					</LineChart>
-				</ResponsiveContainer>
-			</div>
+					{isMobile && (
+						<Legend height={10} horizontalAlign="left" layout="vertical" iconType="circle" />
+					)}
+				</LineChart>
+			</ResponsiveContainer>
 
 			{isEmpty && (
 				<EmptyLabel>
@@ -161,22 +163,3 @@ export default function EnrollmentGraph(props) {
 		</div>
 	);
 }
-
-// <ReferenceLine
-//   x={enrollmentData[0].telebears.phase2_start_day}
-//   stroke="black"
-//   strokeDasharray="3 3"
-// >
-//   <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-//     {`Phase II Start (${enrollmentData[0].telebears.semester})`}
-//   </Label>
-// </ReferenceLine>
-// <ReferenceLine
-//   x={enrollmentData[0].telebears.adj_start_day}
-//   stroke="black"
-//   strokeDasharray="3 3"
-// >
-//   <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-//     {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
-//   </Label>
-// </ReferenceLine>

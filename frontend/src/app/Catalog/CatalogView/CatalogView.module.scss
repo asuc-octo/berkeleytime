@@ -23,7 +23,7 @@
 	flex-direction: column;
 	padding: 30px;
 	gap: 15px;
-	overflow-y: auto;
+	overflow-y: overlay;
 	overflow-x: hidden;
 	-webkit-animation: fadeIn 0.1s;
 	animation: fadeIn 0.1s;
@@ -262,7 +262,7 @@
 .tabList {
 	display: flex;
 	flex-direction: row;
-	gap: 30px;
+	// gap: 30px;
 	border-bottom: 1.5px solid #eaeaea;
 	margin: 0 -30px;
 	padding: 0 30px;
@@ -288,7 +288,16 @@
 	font-size: 16px;
 	margin-bottom: -1.5px;
 	color: $bt-light-text;
+	padding: 5px 15px;
 	border-bottom: 3px solid transparent;
+	transition-duration: 0.2s;
+	border-radius: 8px 8px 0px 0px ;
+}
+
+.tab:hover {
+	cursor: pointer;
+	color: $bt-base-text;
+	background: #F8F8F8;
 }
 
 .active {
