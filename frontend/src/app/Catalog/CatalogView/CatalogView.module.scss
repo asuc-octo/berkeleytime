@@ -37,10 +37,6 @@
 		color: $bt-base-text;
 		font-weight: 700;
 		font-size: 18px;
-
-		span {
-			color: $bt-blue;
-		}
 	}
 
 	h6 {
@@ -210,29 +206,59 @@
 .sectionItem {
 	display: flex;
 	flex-direction: row;
-	// background: #F8F8F8;
-	padding: 12px 24px;
-	border-radius: 12px !important;
+	padding: 12px;
+	border-radius: 16px;
 	border: 1.5px solid #eaeaea;
-	gap: 20px;
-	h5 {
-		font-size: 16px;
-		margin: 0;
-	}
+	gap: 30px;
 
 	h6 {
-		font-size: 14px;
-		span {
-			text-transform: capitalize;
-		}
+		font-size: 16px;
+		min-height: 21px;
+		margin: 0;
+		font-weight: bold;
+		color: $bt-base-text;
 	}
 }
 
 .sectionInfo {
 	display: flex;
-	gap: 5px;
 	flex-direction: column;
 	flex: 1;
+
+	h6 {
+		display: flex;
+		align-items: center;
+		min-height: 24px;
+	}
+}
+
+.instructor {
+	display: flex;
+	gap: 5px;
+	align-items: center;
+	font-size: 14px;
+	color: $bt-light-grey;
+	text-transform: capitalize;
+	gap: 4px;
+	min-height: 24px;
+	color: $bt-light-text;
+}
+
+.sectionContent {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	font-size: 14px;
+
+	span {
+		display: inline-flex;
+		justify-content: flex-end;
+		align-items: center;
+		line-height: 20px;
+		gap: 4px;
+		color: $bt-light-text;
+		text-align: right;
+	}
 }
 
 .sectionStats {
@@ -241,14 +267,14 @@
 	flex-wrap: wrap;
 	gap: 5px;
 	color: $bt-light-text;
-	margin-top: 5px;
+	margin-top: 12px;
 	font-size: 14px;
 	text-transform: none !important;
 }
 
 .enrolled {
 	display: flex;
-	justify-content: center;
+	justify-content: flex-end;
 	align-items: center;
 	font-size: 14px;
 	font-weight: 600;

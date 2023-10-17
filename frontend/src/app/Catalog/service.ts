@@ -273,7 +273,11 @@ export const sortByName = <T extends { name: string }[]>(arr: T) =>
 
 export function formatEnrollment(percentage: number) {
 	if (percentage === -1 || isNaN(percentage)) return 'N/A';
-	return `${Math.floor(percentage * 100)}% enrolled`;
+	/*
+		Take the min of the percentage and 100 to prevent
+		absurd percentages from being displayed (e.g. 1000% enrolled)
+	*/
+	return `${Math.min(Math.floor(percentage * 100), 100)}%`;
 }
 
 export function colorEnrollment(percentage: number) {

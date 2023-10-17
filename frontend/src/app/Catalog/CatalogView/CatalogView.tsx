@@ -96,18 +96,17 @@ const CatalogView = () => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
-			<button
-				className={styles.modalButton}
-				onClick={() => {
-					dispatch({ type: 'setCourse', course: null });
-					navigate(`/catalog/${semester}`, { replace: true });
-				}}
-			>
-				<BackArrow />
-				Back to Courses
-			</button>
 			{course && (
 				<>
+					<button
+						className={styles.modalButton}
+						onClick={() => {
+							navigate(`/catalog/${semester}`);
+						}}
+					>
+						<BackArrow />
+						Back to Courses
+					</button>
 					<h3>
 						{course.abbreviation} {course.courseNumber}
 					</h3>
