@@ -1,6 +1,8 @@
 import { SectionFragment } from 'graphql';
 import { CSSProperties } from 'react';
-import { Table } from 'react-bootstrap';
+import { formatSectionTime } from 'utils/sections/section';
+import catalogService from '../service';
+import Skeleton from 'react-loading-skeleton';
 
 import denero from 'assets/img/eggs/denero.png';
 import hug from 'assets/img/eggs/hug.png';
@@ -9,9 +11,13 @@ import sahai from 'assets/img/eggs/sahai.png';
 import scott from 'assets/img/eggs/scott.png';
 import kubi from 'assets/img/eggs/kubi.png';
 import garcia from 'assets/img/eggs/garcia.png';
-import { formatSectionTime } from 'utils/sections/section';
+import { Clock, Group, PinAlt, User } from 'iconoir-react';
 
-const easterEggImages = new Map<string, string>([
+import styles from './CatalogView.module.scss';
+
+const { colorEnrollment } = catalogService;
+
+const easterEggImages = new Map([
 	['DENERO J', denero],
 	['HUG J', hug],
 	['SAHAI A', sahai],
@@ -35,52 +41,66 @@ function findInstructor(instr: string | null): CSSProperties {
 	return {};
 }
 
-type Props = {
+interface Props {
 	sections: SectionFragment[] | null;
-};
+}
 
 const SectionTable = ({ sections }: Props) => {
+	if (!sections) {
+		return (
+			<Skeleton
+				className={styles.sectionItem}
+				count={3}
+				height={65}
+				style={{ marginBottom: '10px' }}
+			/>
+		);
+	}
+
 	return (
-		<section className="table-container description-section">
-			<div>
-				<Table className="table">
-					<thead>
-						<tr>
-							<th style={{ width: '75px' }}>Type</th>
-							<th style={{ width: '50px' }}>CCN</th>
-							<th style={{ width: '100px' }}>Instructor</th>
-							<th style={{ width: '130px' }}>Time</th>
-							<th style={{ width: '85px' }}>Location</th>
-							<th style={{ width: '75px' }}>Enrolled</th>
-							<th style={{ width: '75px' }}>Waitlist</th>
-						</tr>
-					</thead>
-					<tbody>
-						{sections?.map((section) => {
-							return (
-								<tr key={section.ccn} style={findInstructor(section.instructor)}>
-									<td>{section.kind}</td>
-									<td>{section.ccn}</td>
-									<td>{section.instructor}</td>
-									{section.startTime && section.endTime ? (
-										<td>
-											{section.wordDays} {formatSectionTime(section)}
-										</td>
-									) : (
-										<td></td>
-									)}
-									<td>{section.locationName}</td>
-									<td>
+		<div className={styles.sectionRoot}>
+			{sections.length > 0 ? (
+				sections.map((section) => {
+					const color = colorEnrollment(section.enrolled / section.enrolledMax);
+
+					return (
+						<div
+							className={styles.sectionItem}
+							style={findInstructor(section.instructor)}
+							key={section.ccn}
+						>
+							<div className={styles.sectionInfo}>
+								<h6>{section.kind}</h6>
+								<span className={styles.instructor}>
+									<User width={14} />
+									{section.instructor?.toLowerCase() || 'unknown'}
+								</span>
+								<div className={styles.sectionStats}>
+									<div className={`${color} ${styles.enrolled}`}>
+										<Group width={16} height={24} />
 										{section.enrolled}/{section.enrolledMax}
-									</td>
-									<td>{section.waitlisted}</td>
-								</tr>
-							);
-						})}
-					</tbody>
-				</Table>
-			</div>
-		</section>
+									</div>
+									<div className={styles.enrolled}>• {section.waitlisted} Waitlisted</div>
+									{/* <span>• CCN {section.ccn}</span> */}
+								</div>
+							</div>
+							<div className={styles.sectionContent}>
+								<span>
+									<PinAlt width={16} height={24} />
+									{section.locationName || 'Unknown'}
+								</span>
+								<span>
+									<Clock width={16} height={24} />
+									{section.wordDays} {formatSectionTime(section)}
+								</span>
+							</div>
+						</div>
+					);
+				})
+			) : (
+				<div>There are no class sections for this course.</div>
+			)}
+		</div>
 	);
 };
 

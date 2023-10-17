@@ -22,6 +22,7 @@ const Berkeleytime = () => {
 	});
 
 	useEffect(() => {
+		observe(document.getElementById('root'));
 		// Fetch enrollment context early on for catalog and enrollment page.
 		dispatch(fetchEnrollContext());
 		dispatch(fetchGradeContext());
@@ -42,15 +43,9 @@ const Berkeleytime = () => {
 		if (localStorage.getItem(key) === null) {
 			localStorage.setItem(key, key);
 		}
-	}, [dispatch]);
+	}, [dispatch, observe]);
 
-	return (
-		<div ref={observe} className="app">
-			<IconoirProvider iconProps={{ strokeWidth: 2 }}>
-				<Routes />
-			</IconoirProvider>
-		</div>
-	);
+	return <Routes />;
 };
 
 export default Berkeleytime;

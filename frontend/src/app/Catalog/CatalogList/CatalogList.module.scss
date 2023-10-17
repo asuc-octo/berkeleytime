@@ -103,9 +103,13 @@
 	}
 }
 
-.grade {
+.gradeWrapper {
 	display: flex;
-	justify-content: center;
+	flex-direction: column;
+
+	span {
+		line-height: 20px;
+	}
 }
 
 .A {

@@ -51,7 +51,7 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 						<h6>{`${course.abbreviation} ${course.courseNumber}`}</h6>
 						<p>{course.title}</p>
 					</div>
-					<div>
+					<div className={styles.gradeWrapper}>
 						{user && (
 							<div
 								className={styles.saveIcon}
@@ -63,14 +63,14 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 								{isSaved ? <BookmarkSaved /> : <BookmarkUnsaved />}
 							</div>
 						)}
-						<span className={`${styles.grade} ${styles[course.letterAverage[0]]}`}>
+						<span className={`${styles[course.letterAverage[0]]}`}>
 							{course.letterAverage !== '' ? course.letterAverage : ''}
 						</span>
 					</div>
 				</div>
 				<div className={styles.itemStats}>
 					<span className={colorEnrollment(course.enrolledPercentage)}>
-						{formatEnrollment(course.enrolledPercentage)}
+						{formatEnrollment(course.enrolledPercentage)} enrolled
 					</span>
 					<span> • {course.units ? formatUnits(course.units) : 'N/A'}</span>
 				</div>
