@@ -9,10 +9,11 @@ import Footer from './Footer';
 ReactGA.initialize('UA-35316609-1');
 
 interface LayoutProps {
+	navbar?: boolean;
 	footer?: boolean;
 }
 
-export default function RootLayout({ footer }: LayoutProps) {
+export default function RootLayout({ navbar, footer }: LayoutProps) {
 	const location = useLocation();
 
 	useEffect(() => {
@@ -27,7 +28,7 @@ export default function RootLayout({ footer }: LayoutProps) {
 	return (
 		<>
 			<Banner />
-			<Navigation />
+			{navbar && <Navigation/>}
 			<Outlet />
 			{footer && <Footer />}
 		</>

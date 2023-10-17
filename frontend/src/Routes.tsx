@@ -29,11 +29,18 @@ function ScheduleRedirect() {
 
 const router = createBrowserRouter([
 	{
-		element: <Layout />,
+		element: <Layout navbar={false} footer={false} />,
 		ErrorBoundary: Error,
 		children: [
 			{ path: '/', index: true, Component: Home },
 			{ path: '/landing', element: <Navigate to="/" replace /> },
+		]
+	},
+	{
+		element: <Layout navbar={true}/>,
+		ErrorBoundary: Error,
+		children: [
+			
 			{ path: '/s/:scheduleId', Component: ScheduleRedirect },
 			{ path: '/grades/*', lazy: Grades },
 			{ path: '/enrollment/*', lazy: Enrollment },
