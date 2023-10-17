@@ -1,9 +1,11 @@
 import { CatalogModule } from "./generated-types/module-types";
 import { getCatalog, getClass, getClassById, getClassSections, getCourse, getCourseById, getCourseClasses, getCourseList, getCrossListings, getPrimarySection, getSection } from "./controller"
+import { cache } from "../../redis";
+import { getChildren } from "../../utils/graphql";
 
 const resolvers: CatalogModule.Resolvers = {
     Query: {
-        catalog: (_, args, __, info) => getCatalog(args.term, info),
+        catalog: (_, args, __, info) => cache(getCatalog, args.term, getChildren(info).includes("gradeAverage")),
         course: (_, args) => getCourse(args.subject, args.courseNumber, args.term),
         class: (_, args) => getClass(args.subject, args.courseNumber, args.term, args.classNumber),
         section: (_, args) => getSection(args.subject, args.courseNumber, args.term, args.classNumber, args.sectionNumber),
