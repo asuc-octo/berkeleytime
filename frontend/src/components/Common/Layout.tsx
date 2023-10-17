@@ -1,4 +1,4 @@
-import { Suspense, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Outlet, useLocation, useNavigation } from 'react-router-dom';
 import ReactGA from 'react-ga';
 import Banner from './Banner';
