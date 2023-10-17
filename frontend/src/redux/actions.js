@@ -174,7 +174,7 @@ export function fetchGradeSelected(updatedClass) {
 		);
 }
 
-export function fetchGradeFromUrl(url, history) {
+export function fetchGradeFromUrl(url, navigate) {
 	const toUrlForm = (s) => s.replace('/', '_').toLowerCase().split(' ').join('-');
 	const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 	let courseUrls = url.split('/')[2].split('&');
@@ -258,7 +258,7 @@ export function fetchGradeFromUrl(url, history) {
 							return formattedCourse;
 						} catch (err) {
 							success = false;
-							history.push('/error');
+							navigate('/error');
 						}
 					});
 				},
@@ -371,7 +371,7 @@ export function fetchEnrollSelected(updatedClass) {
 		);
 }
 
-export function fetchEnrollFromUrl(url, history) {
+export function fetchEnrollFromUrl(url, navigate) {
 	const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 	let courseUrls = url.split('/')[2].split('&');
 	const urlData = [];
@@ -426,7 +426,7 @@ export function fetchEnrollFromUrl(url, history) {
 							return formattedCourse;
 						} catch (err) {
 							success = false;
-							history.push('/error');
+							navigate('/error');
 						}
 					});
 				},

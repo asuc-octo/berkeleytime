@@ -1,17 +1,17 @@
 import { ComponentType, ReactNode, useState } from 'react';
 import { Container, Button } from 'react-bootstrap';
 
-import AccountSubview from '../../components/Profile/AccountSubview';
-import SupportSubview from '../../components/Profile/SupportSubview';
+import AccountSubview from '../components/Profile/AccountSubview';
+import SupportSubview from '../components/Profile/SupportSubview';
 
-import { ReactComponent as Account } from '../../assets/svg/profile/account.svg';
-import { ReactComponent as AccountSelected } from '../../assets/svg/profile/account_selected.svg';
-import { ReactComponent as Support } from '../../assets/svg/profile/support.svg';
-import { ReactComponent as SupportSelected } from '../../assets/svg/profile/support_selected.svg';
+import { ReactComponent as Account } from '../assets/svg/profile/account.svg';
+import { ReactComponent as AccountSelected } from '../assets/svg/profile/account_selected.svg';
+import { ReactComponent as Support } from '../assets/svg/profile/support.svg';
+import { ReactComponent as SupportSelected } from '../assets/svg/profile/support_selected.svg';
 import { UserProfileFragment } from 'graphql';
 import BTLoader from 'components/Common/BTLoader';
-import { useUser } from '../../graphql/hooks/user';
-import { Redirect } from 'react-router';
+import { useUser } from '../graphql/hooks/user';
+import { Navigate } from 'react-router-dom';
 
 const tabs: {
 	key: string;
@@ -36,7 +36,7 @@ const tabs: {
 	}
 ];
 
-const Profile = () => {
+export function Component() {
 	const [tabIndex, setTabIndex] = useState(0);
 	const { isLoggedIn, user, loading } = useUser();
 
@@ -44,7 +44,7 @@ const Profile = () => {
 
 	// If we're not logged in, redirect.
 	if (!loading && !isLoggedIn) {
-		return <Redirect to="/" />;
+		return <Navigate to="/" replace />;
 	}
 
 	return (
@@ -72,6 +72,4 @@ const Profile = () => {
 			</Container>
 		</div>
 	);
-};
-
-export default Profile;
+}
