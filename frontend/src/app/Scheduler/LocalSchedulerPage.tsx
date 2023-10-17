@@ -39,6 +39,8 @@ export function Component() {
 			: undefined
 	);
 
+    console.log(semester)
+
 	useEffect(() => {
 		const hasSemester = searchParams.has('semester');
 		if (!hasSemester) return;
