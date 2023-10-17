@@ -21,17 +21,13 @@ import ProfileScheduleCard from './../../Profile/ProfileScheduleCard';
 import { useGetSemestersQuery } from 'graphql';
 import { useSemester } from 'graphql/hooks/semester';
 
-type Props = {
-	updatePage: (i: number) => void;
-};
-
 const SEMESTER_VALUES: { [label: string]: number } = {
 	spring: 0.0,
 	summer: 0.1,
 	fall: 0.2
 };
 
-const Welcome = ({ updatePage }: Props) => {
+const Welcome = () => {
 	const { user } = useUser();
 
 	const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -40,7 +36,7 @@ const Welcome = ({ updatePage }: Props) => {
 	);
 
 	const savedSchedules = user
-		? getNodes(user.schedules).sort((a, b) => Date.parse(b.dateCreated) - Date.parse(a.dateCreated))
+		? getNodes(user.schedules).sort((a, b) => Date.parse(b.dateCreated as string) - Date.parse(a.dateCreated as string))
 		: [];
 
 	const resetDraft = () => setSchedule(DEFAULT_SCHEDULE);
