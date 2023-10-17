@@ -327,10 +327,10 @@
 	background: transparent;
 	padding: 5px 0;
 	font-size: 16px;
-	margin-bottom: -1.5px;
+	margin-bottom: -1px;
 	color: $bt-light-text;
 	padding: 5px 15px;
-	border-bottom: 3px solid transparent;
+	border-bottom: 1.5px solid transparent;
 	transition-duration: 0.2s;
 	border-radius: 8px 8px 0px 0px ;
 }
@@ -339,9 +339,10 @@
 	cursor: pointer;
 	color: $bt-base-text;
 	background: #F8F8F8;
+	border-bottom: 1.5px solid #eaeaea;
 }
 
 .active {
-	border-bottom: 3px solid #2f80ed;
+	border-bottom: 1.5px solid #2f80ed !important;
 	color: $bt-base-text;
 }
