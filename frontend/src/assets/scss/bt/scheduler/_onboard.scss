@@ -30,9 +30,9 @@
 			font-weight: 600;
 		}
 
-        .semester-selector {
-            border: 1px solid #C7C7C7;
-        }
+		.semester-selector {
+			border: 1px solid #c7c7c7;
+		}
 
 		.saved-schedules {
 			margin-top: 3rem;
@@ -49,13 +49,18 @@
 				text-align: initial !important;
 			}
 		}
-        
-        .buttons {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
+
+		.buttons {
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			gap: 1rem;
+
+			.dropdown {
+				width: 10rem;
+				flex: none;
+			}
+		}
 	}
 
 	.select-classes {
