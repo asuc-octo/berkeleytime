@@ -1,19 +1,29 @@
-import { Container, Row, Col } from 'react-bootstrap';
-import { useUser } from '../../../graphql/hooks/user';
-import ProfileScheduleCard from './../../Profile/ProfileScheduleCard';
+import { Button } from 'bt/custom';
+import BTSelect from 'components/Custom/Select';
+import { useState } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
 import { getNodes } from 'utils/graphql';
 import { useLocalStorageState } from 'utils/hooks';
+import { Semester, playlistToSemester, semesterToString } from 'utils/playlists/semesters';
 import {
 	DEFAULT_SCHEDULE,
-	isScheduleEmpty,
+	SCHEDULER_LOCALSTORAGE_KEY,
 	Schedule,
-	SCHEDULER_LOCALSTORAGE_KEY
+	isScheduleEmpty
 } from 'utils/scheduler/scheduler';
-import { Button } from 'bt/custom';
-// import { Button } from 'bt/custom';
+import { useUser } from '../../../graphql/hooks/user';
+import ProfileScheduleCard from './../../Profile/ProfileScheduleCard';
+import { useGetSemestersQuery } from 'graphql';
+import { useSemester } from 'graphql/hooks/semester';
 
 type Props = {
 	updatePage: (i: number) => void;
+};
+
+const SEMESTER_VALUES: { [label: string]: number } = {
+	spring: 0.0,
+	summer: 0.1,
+	fall: 0.2
 };
 
 const Welcome = ({ updatePage }: Props) => {
@@ -29,6 +39,31 @@ const Welcome = ({ updatePage }: Props) => {
 		: [];
 
 	const resetDraft = () => setSchedule(DEFAULT_SCHEDULE);
+
+	const SemesterToValue = (semester: Semester) => {
+		return parseInt(semester.year, 10) + SEMESTER_VALUES[semester.semester];
+	};
+
+	const sortSemestersByLatest = (semester: Semester[]) => {
+		return semester.sort((a, b) => SemesterToValue(b) - SemesterToValue(a));
+	};
+
+	const { data, loading, error } = useGetSemestersQuery({});
+
+	const allSemesterStrings = data
+		? sortSemestersByLatest(
+				getNodes(data.allPlaylists).map((semester) => playlistToSemester(semester))
+		  ).map((semester) => semesterToString(semester))
+		: [];
+
+	const { semester, error: semesterError } = useSemester();
+
+	const latestSemester =
+		allSemesterStrings.length > 0 ? allSemesterStrings[0] : semesterToString(semester);
+
+	const [selectedSemesterString, setSelectedSemesterString] = useState(latestSemester);
+
+    console.log(allSemesterStrings, selectedSemesterString, latestSemester)
 
 	return (
 		<Container className="welcome">
@@ -46,7 +81,20 @@ const Welcome = ({ updatePage }: Props) => {
 								Continue Draft
 							</Button>
 						)}
-						<Button href="/scheduler/new" onClick={resetDraft}>
+						<BTSelect
+							value={null}
+							closeMenuOnSelect={true}
+                            isSearchable={false}
+							options={allSemesterStrings}
+							onChange={(newValue) => {
+								newValue && setSelectedSemesterString(newValue);
+							}}
+							defaultValue={latestSemester}
+						/>
+						<Button
+							href={`/scheduler/new/${selectedSemesterString.toLowerCase().replace(' ', '-')}`}
+							onClick={resetDraft}
+						>
 							Start
 						</Button>
 					</div>
