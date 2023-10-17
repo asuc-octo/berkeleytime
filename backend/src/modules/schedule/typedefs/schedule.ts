@@ -81,7 +81,7 @@ const typedef = gql`
     """
     Takes in a user's email and returns all the schedules they created.
     """
-    schedulesByUser(created_by: String!): [Schedule]
+    schedulesByUser(created_by: String!): [Schedule] @auth
     """
     Takes in a schedule's ObjectID and returns a specific schedule.
     """
@@ -92,23 +92,23 @@ const typedef = gql`
     """
     Takes in a schedule's ObjectID, deletes the schedule with that ID, and returns the ID.
     """
-    removeScheduleByID(id: ID!): ID
+    removeScheduleByID(id: ID!): ID @auth
     """
     Takes in schedule fields, creates a new schedule record in the database, and returns the schedule.
     """
-    createNewSchedule(main_schedule: ScheduleInput!): Schedule
+    createNewSchedule(main_schedule: ScheduleInput!): Schedule @auth
     """
     Takes in schedule fields, finds the schedule record in the database corresponding to the provided ID, updates the record, and returns the updated schedule.
     """
-    editExistingSchedule(id: ID!, main_schedule: ScheduleInput!): Schedule
+    editExistingSchedule(id: ID!, main_schedule: ScheduleInput!): Schedule @auth
     """
     For the schedule specified by the ID, modifies the section ID field and returns the updated schedule.
     """
-    setSelectedSections(id: ID!, section_IDs: [String!]!): Schedule
+    setSelectedSections(id: ID!, section_IDs: [String!]!): Schedule @auth
     """
     For the schedule specified by the ID, modifies the class ID field and returns the updated schedule.
     """
-    setSelectedClasses(id: ID!, class_IDs: [String!]!): Schedule
+    setSelectedClasses(id: ID!, class_IDs: [String!]!): Schedule @auth
   }
 `;
 
