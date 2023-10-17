@@ -21,14 +21,7 @@ function matchCsCourseId(id: any) {
     }
 }
 
-export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Promise<CatalogItem[] | null> {
-
-    const children = getChildren(info)
-
-    const cacheData = await redis.get("getCatalog", [termToString(term), children.includes("gradeAverage").toString()]);
-    if(cacheData){
-        return cacheData;
-    }
+export async function getCatalog(term: TermInput, gradeAverageIncluded: boolean): Promise<CatalogItem[] | null> {
 
     let classes = await ClassModel
         .find({
@@ -74,7 +67,7 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
     const gradesMap: { [key: string]: GradeType[] } = {}
     courses.forEach(c => gradesMap[getCourseKey(c)] = [])
 
-    if (children.includes("gradeAverage")) {
+    if (gradeAverageIncluded) {
         const grades = await GradeModel.find(
             {
                 /* 
@@ -127,8 +120,6 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
     }
 
     const ans = Object.values(catalog);
-    
-    redis.set('getCatalog', [termToString(term), children.includes("gradeAverage").toString()], ans);
 
     return ans as CatalogItem[];
 }

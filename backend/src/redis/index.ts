@@ -6,6 +6,7 @@ class RedisConnection {
 
     async load() {
         this.client = createClient({ url: config.REDIS_URI });
+        await this.client.connect();
         this.client.on('error', (err) => console.log('Redis Client Error', err));
     };
     isActive() : boolean {
@@ -34,7 +35,22 @@ class RedisConnection {
     }
 }
 
-let redis = new RedisConnection();
+const redis = new RedisConnection();
 
-export {redis};
+async function cache(controller : Function, ...args: any[]) {
+    
+    const cacheData = await redis.get("getCatalog", args.map((v) => JSON.stringify(v)));
+    if(cacheData){
+        return cacheData;
+    }
+
+    const resp = await controller(...args);
+
+    redis.set("getCatalog", args.map((v) => JSON.stringify(v)), resp);
+
+    return resp;
+
+}
+
+export { redis, cache };
 
