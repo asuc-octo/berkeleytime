@@ -58,7 +58,7 @@ const router = createBrowserRouter([
 		ErrorBoundary: Error,
 		children: [
 			{ path: '/catalog/:semester?/:abbreviation?/:courseNumber?', Component: Catalog },
-			{ path: '/scheduler/new', lazy: LocalScheduler }
+			{ path: '/scheduler/new/:semester', lazy: LocalScheduler }
 		]
 	}
 ]);
