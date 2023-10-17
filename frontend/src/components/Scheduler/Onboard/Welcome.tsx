@@ -4,7 +4,12 @@ import { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { getNodes } from 'utils/graphql';
 import { useLocalStorageState } from 'utils/hooks';
-import { Semester, playlistToSemester, semesterToString } from 'utils/playlists/semesters';
+import {
+	Semester,
+	playlistToSemester,
+	semesterToString,
+	stringToSemester
+} from 'utils/playlists/semesters';
 import {
 	DEFAULT_SCHEDULE,
 	SCHEDULER_LOCALSTORAGE_KEY,
@@ -50,20 +55,19 @@ const Welcome = ({ updatePage }: Props) => {
 
 	const { data, loading, error } = useGetSemestersQuery({});
 
-	const allSemesterStrings = data
-		? sortSemestersByLatest(
-				getNodes(data.allPlaylists).map((semester) => playlistToSemester(semester))
-		  ).map((semester) => semesterToString(semester))
-		: [];
+	const allSemesters: { label: string; value: Semester }[] = [];
 
-	const { semester, error: semesterError } = useSemester();
+	if (data) {
+		sortSemestersByLatest(
+			getNodes(data.allPlaylists).map((semester) => playlistToSemester(semester))
+		).map((semester) => allSemesters.push({ label: semesterToString(semester), value: semester }));
+	}
 
-	const latestSemester =
-		allSemesterStrings.length > 0 ? allSemesterStrings[0] : semesterToString(semester);
+	const { semester, error: semesterError } = useSemester(allSemesters[0] && allSemesters[0].value);
 
-	const [selectedSemesterString, setSelectedSemesterString] = useState(latestSemester);
+	const latestSemester = { label: semesterToString(semester), value: semester as Semester };
 
-	console.log(allSemesterStrings, selectedSemesterString, latestSemester);
+	const [selectedSemester, setSelectedSemester] = useState(latestSemester);
 
 	return (
 		<Container className="welcome">
@@ -82,19 +86,18 @@ const Welcome = ({ updatePage }: Props) => {
 							</Button>
 						)}
 						<BTSelect
-							value={null}
+							className="dropdown"
+							value={selectedSemester}
 							closeMenuOnSelect={true}
 							isSearchable={false}
-							options={allSemesterStrings}
+							options={allSemesters}
 							onChange={(newValue) => {
-								newValue && setSelectedSemesterString(newValue);
+								newValue && setSelectedSemester(newValue);
 							}}
 							defaultValue={latestSemester}
 						/>
 						<Button
-							href={`/scheduler/new/?semester=${selectedSemesterString
-								.toLowerCase()
-								.replace(' ', '-')}`}
+							href={`/scheduler/new/?semester=${selectedSemester.label}`}
 							onClick={resetDraft}
 						>
 							Start

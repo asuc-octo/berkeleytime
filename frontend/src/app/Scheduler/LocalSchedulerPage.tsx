@@ -2,16 +2,15 @@ import BTLoader from 'components/Common/BTLoader';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
 import { useSemester } from 'graphql/hooks/semester';
 import { useUser } from 'graphql/hooks/user';
+import { useEffect } from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReduxState } from 'redux/store';
 import { useLocalStorageState } from 'utils/hooks';
-import { Semester, stringToSemester } from 'utils/playlists/semesters';
 import { DEFAULT_SCHEDULE, SCHEDULER_LOCALSTORAGE_KEY, Schedule } from 'utils/scheduler/scheduler';
 import Callout from '../../components/Scheduler/Callout';
 import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
-import { useEffect } from 'react';
 
 export function Component() {
 	const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -24,9 +23,19 @@ export function Component() {
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
+	const stringToSemester = (string: string) => {
+		const [semester, year] = string.trim().toLowerCase().split(' ');
+		return {
+			semester,
+			year
+		};
+	};
+
+    console.log(searchParams.get('semester'))
+
 	const { semester, error: semesterError } = useSemester(
-		semesterString
-			? stringToSemester(semesterString.replace('-', ' '), semesterString.replace('-', ' '))
+		searchParams.has('semester') && searchParams.get('semester')
+			? stringToSemester(searchParams.get('semester')!)
 			: undefined
 	);
 
