@@ -1,5 +1,5 @@
-import { Suspense, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useLocation, useNavigation } from 'react-router-dom';
 import ReactGA from 'react-ga';
 // import Banner from './Banner';
 import Navigation from './Navigation';
@@ -13,6 +13,7 @@ interface LayoutProps {
 }
 
 export default function RootLayout({ footer }: LayoutProps) {
+	const navigate = useNavigation();
 	const location = useLocation();
 
 	useEffect(() => {
@@ -28,7 +29,13 @@ export default function RootLayout({ footer }: LayoutProps) {
 		<>
 			{/* <Banner /> */}
 			<Navigation />
-			<Outlet />
+			{navigate.state == 'loading' ? (
+				<div className="viewport-app">
+					<BTLoader />
+				</div>
+			) : (
+				<Outlet />
+			)}
 			{footer && <Footer />}
 		</>
 	);
