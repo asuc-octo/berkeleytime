@@ -5,7 +5,9 @@ import type { ApolloServer } from "@apollo/server";
 import apolloLoader from "./apollo";
 import expressLoader from "./express";
 import mongooseLoader from "./mongoose";
+import redisLoader from "./redis";
 import passportLoader from './passport';
+import { RedisClientType } from "redis";
 
 export default async (app: Application): Promise<ApolloServer> => {
   // Load everything related to express
@@ -18,6 +20,10 @@ export default async (app: Application): Promise<ApolloServer> => {
   // Connect to mongoose
   console.log("Booting up mongo...");
   await mongooseLoader();
+
+  // Connect to redis
+  console.log("Booting up redis...");
+  await redisLoader();
 
   // load apollo server config
   console.log("Booting up apollo...");

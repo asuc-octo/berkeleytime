@@ -137,3 +137,15 @@ export function formatCourse(course: CourseType | null, term?: TermInput | null)
         ...formatMetadata(course),
     }
 }
+
+export function formatCatalogItem(course: CourseType | null, term?: TermInput) : any {
+    if (course == null) return null
+
+    return {
+        description: course.description as string,
+        number: course.catalogNumber?.formatted as string,
+        subject: course.classSubjectArea?.code as string,
+        title: course.title as string,
+        lastUpdated: course._updated as Date,
+    }
+}
