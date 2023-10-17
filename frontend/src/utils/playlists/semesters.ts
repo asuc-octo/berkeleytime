@@ -35,9 +35,9 @@ export type SemesterWithPlaylist = Semester & { playlistId: string };
 export function getLatestSemester(playlists: FilterablePlaylist[]): SemesterWithPlaylist | null {
 	const semesterPlaylists = playlists
 		.filter(
-			(p) =>
-				p.category === 'semester' &&
-				(process.env.NODE_ENV !== 'development' || p.name === 'Fall 2020')
+			(p) => p.category === 'semester'
+			//  &&
+			// (process.env.NODE_ENV !== 'development' || p.name === 'Fall 2020')
 		)
 		.sort((a, b) => playlistToTimeComparable(b) - playlistToTimeComparable(a));
 
@@ -59,8 +59,8 @@ export function playlistToSemester(playlist: FilterablePlaylist): SemesterWithPl
 /**
  * Convert a string to a semester.
  */
-function stringToSemester(string: string, playlistId: string): SemesterWithPlaylist;
-function stringToSemester(string: string, playlistId?: string): Semester {
+export function stringToSemester(string: string, playlistId: string): SemesterWithPlaylist;
+export function stringToSemester(string: string, playlistId?: string): Semester {
 	const [semester, year] = string.trim().toLowerCase().split(' ');
 	return {
 		semester,
