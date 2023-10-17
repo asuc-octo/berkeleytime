@@ -1,7 +1,7 @@
 import { SectionFragment } from 'graphql';
 import { CSSProperties } from 'react';
 import { formatSectionTime } from 'utils/sections/section';
-import catalogService from '../service';
+import { colorEnrollment, formatEnrollment } from '../service';
 import Skeleton from 'react-loading-skeleton';
 
 import denero from 'assets/img/eggs/denero.png';
@@ -14,8 +14,7 @@ import garcia from 'assets/img/eggs/garcia.png';
 import { Clock, Group, PinAlt, User } from 'iconoir-react';
 
 import styles from './CatalogView.module.scss';
-
-const { colorEnrollment } = catalogService;
+import clsx from 'clsx';
 
 const easterEggImages = new Map([
 	['DENERO J', denero],
@@ -62,37 +61,46 @@ const SectionTable = ({ sections }: Props) => {
 			{sections.length > 0 ? (
 				sections.map((section) => {
 					const color = colorEnrollment(section.enrolled / section.enrolledMax);
-
+					const enrolledPercent = formatEnrollment(section.enrolled / section.enrolledMax);
 					return (
 						<div
 							className={styles.sectionItem}
 							style={findInstructor(section.instructor)}
 							key={section.ccn}
 						>
-							<div className={styles.sectionInfo}>
-								<h6>{section.kind}</h6>
-								<span className={styles.instructor}>
-									<User width={14} />
-									{section.instructor?.toLowerCase() || 'unknown'}
-								</span>
-								<div className={styles.sectionStats}>
-									<div className={`${color} ${styles.enrolled}`}>
+							<div className={styles.sectionContainer}>
+								<div className={styles.sectionLeft}>
+									<h6>{section.kind}</h6>
+									<span className={styles.instructor}>
+										<span>
+											<User width={16} height={24} />
+										</span>
+										{section.instructor?.toLowerCase() || 'unknown'}
+									</span>
+								</div>
+
+								<div className={styles.sectionRight}>
+									<span className={clsx(color, styles.enrolled)}>
 										<Group width={16} height={24} />
 										{section.enrolled}/{section.enrolledMax}
-									</div>
-									<div className={styles.enrolled}>• {section.waitlisted} Waitlisted</div>
-									{/* <span>• CCN {section.ccn}</span> */}
+									</span>
+
+									<span>
+										<PinAlt width={16} height={24} />
+										{section.locationName || 'Unknown'}
+									</span>
+
+									<span>
+										<Clock width={16} height={24} />
+										{section.wordDays} {formatSectionTime(section)}
+									</span>
 								</div>
 							</div>
-							<div className={styles.sectionContent}>
-								<span>
-									<PinAlt width={16} height={24} />
-									{section.locationName || 'Unknown'}
-								</span>
-								<span>
-									<Clock width={16} height={24} />
-									{section.wordDays} {formatSectionTime(section)}
-								</span>
+
+							<div className={styles.separator} />
+							<div className={styles.sectionFooter}>
+								<div className={clsx(color, styles.enrolled)}>{enrolledPercent} Enrolled</div>
+								<div className={styles.enrolled}>• {section.waitlisted} Waitlisted</div>
 							</div>
 						</div>
 					);

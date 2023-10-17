@@ -22,8 +22,9 @@
 	grid-area: view;
 	flex-direction: column;
 	padding: 30px;
+	padding-right: 20px;
 	gap: 15px;
-	overflow-y: overlay;
+	overflow-y: scroll;
 	overflow-x: hidden;
 	-webkit-animation: fadeIn 0.1s;
 	animation: fadeIn 0.1s;
@@ -205,11 +206,11 @@
 
 .sectionItem {
 	display: flex;
-	flex-direction: row;
-	padding: 12px;
+	flex-direction: column;
+	padding: 12px 16px;
 	border-radius: 16px;
 	border: 1.5px solid #eaeaea;
-	gap: 30px;
+	gap: 10px;
 
 	h6 {
 		font-size: 16px;
@@ -220,10 +221,24 @@
 	}
 }
 
-.sectionInfo {
+.sectionContainer {
+	display: flex;
+	gap: 10px;
+	flex-direction: row;
+}
+
+.separator {
+	height: 1.5px;
+	width: calc(100% + 32px);
+	margin: 0px -16px;
+	background: #eaeaea;
+}
+
+.sectionLeft {
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+	font-weight: 500;
 
 	h6 {
 		display: flex;
@@ -232,19 +247,7 @@
 	}
 }
 
-.instructor {
-	display: flex;
-	gap: 5px;
-	align-items: center;
-	font-size: 14px;
-	color: $bt-light-grey;
-	text-transform: capitalize;
-	gap: 4px;
-	min-height: 24px;
-	color: $bt-light-text;
-}
-
-.sectionContent {
+.sectionRight {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -257,19 +260,31 @@
 		line-height: 20px;
 		gap: 4px;
 		color: $bt-light-text;
+		font-weight: 500;
 		text-align: right;
 	}
 }
 
-.sectionStats {
+.sectionFooter {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 5px;
 	color: $bt-light-text;
-	margin-top: 12px;
 	font-size: 14px;
 	text-transform: none !important;
+}
+
+
+.instructor {
+	font-size: 14px;
+	text-transform: capitalize;
+	min-height: 24px;
+	color: $bt-light-text;
+
+	span {
+		margin-right: 5px;
+	}
 }
 
 .enrolled {
@@ -277,7 +292,7 @@
 	justify-content: flex-end;
 	align-items: center;
 	font-size: 14px;
-	font-weight: 600;
+	font-weight: 500;
 	gap: 5px;
 
 	img {

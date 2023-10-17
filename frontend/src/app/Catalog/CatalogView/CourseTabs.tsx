@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Tabs from '@radix-ui/react-tabs';
 import useCatalog from '../useCatalog';
-import CatalogViewSections from './__new_SectionTable';
+import CatalogViewSections from './SectionTable';
 import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { sortSections } from 'utils/sections/sort';
