@@ -210,7 +210,7 @@
 	padding: 12px 16px;
 	border-radius: 16px;
 	border: 1.5px solid #eaeaea;
-	gap: 10px;
+	gap: 40px;
 
 	h6 {
 		font-size: 16px;
@@ -223,14 +223,14 @@
 
 .sectionContainer {
 	display: flex;
-	gap: 10px;
-	flex-direction: row;
+	flex-direction: column;
 }
 
 .separator {
 	height: 1.5px;
-	width: calc(100% + 32px);
-	margin: 0px -16px;
+	// width: calc(100% + 32px);
+	// margin: 0px -16px;
+	width: 100%;
 	background: #eaeaea;
 }
 
@@ -266,15 +266,27 @@
 }
 
 .sectionFooter {
+	// display: grid;
+  // grid-template-columns: 1fr 1fr 1fr;
+	// grid-template-rows: 1fr;
 	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
+	justify-content: first baseline;
 	gap: 5px;
 	color: $bt-light-text;
 	font-size: 14px;
 	text-transform: none !important;
-}
 
+	span {
+		display: inline-flex;
+		justify-content: flex-start;;
+		align-items: center;
+		line-height: 20px;
+		gap: 4px;
+		color: $bt-light-text;
+		font-weight: 500;
+		text-align: right;
+	}
+}
 
 .instructor {
 	font-size: 14px;
@@ -289,10 +301,10 @@
 
 .enrolled {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: flex-start;
 	align-items: center;
 	font-size: 14px;
-	font-weight: 500;
+	// font-weight: 500;
 	gap: 5px;
 
 	img {
@@ -332,13 +344,13 @@
 	padding: 5px 15px;
 	border-bottom: 1.5px solid transparent;
 	transition-duration: 0.2s;
-	border-radius: 8px 8px 0px 0px ;
+	border-radius: 8px 8px 0px 0px;
 }
 
 .tab:hover {
 	cursor: pointer;
 	color: $bt-base-text;
-	background: #F8F8F8;
+	background: #f8f8f8;
 	border-bottom: 1.5px solid #eaeaea;
 }
 

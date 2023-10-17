@@ -1,5 +1,5 @@
 import { SectionFragment } from 'graphql';
-import { CSSProperties } from 'react';
+import { CSSProperties, useMemo } from 'react';
 import { formatSectionTime } from 'utils/sections/section';
 import { colorEnrollment, formatEnrollment } from '../service';
 import Skeleton from 'react-loading-skeleton';
@@ -45,11 +45,21 @@ interface Props {
 }
 
 const SectionTable = ({ sections }: Props) => {
-	if (!sections) {
+	const [lectures, discussions, labs] = useMemo(() => {
+		if (!sections) return [null, null, null];
+
+		const lectures = sections.filter((section) => section.kind === 'Lecture');
+		const discussions = sections.filter((section) => section.kind === 'Discussion');
+		const labs = sections.filter((section) => section.kind === 'Laboratory');
+
+		return [lectures, discussions, labs];
+	}, [sections]);
+
+	if (!sections || sections.length === 0) {
 		return (
 			<Skeleton
 				className={styles.sectionItem}
-				count={3}
+				count={6}
 				height={65}
 				style={{ marginBottom: '10px' }}
 			/>
@@ -58,7 +68,61 @@ const SectionTable = ({ sections }: Props) => {
 
 	return (
 		<div className={styles.sectionRoot}>
-			{sections.length > 0 ? (
+			<div className={styles.sectionItem}>
+				<h5>Lectures</h5>
+				{lectures &&
+					lectures.map((section) => {
+						const color = colorEnrollment(section.enrolled / section.enrolledMax);
+
+						return (
+							<div className={styles.sectionContainer} key={section.ccn}>
+								<h6>{section.locationName || 'Unknown Location'}</h6>
+								<div className={styles.sectionFooter}>
+									<span>
+										<Clock width={16} height={24} />
+										{section.wordDays} {formatSectionTime(section)}
+									</span>
+									•
+									<span className={clsx(color, styles.enrolled)}>
+										<Group width={16} height={24} />
+										{section.enrolled}/{section.enrolledMax} Enrolled
+									</span>
+									•<span className={clsx(styles.enrolled)}>CCN: {section.ccn}</span>
+								</div>
+							</div>
+						);
+					})}
+			</div>
+			<div className={styles.sectionItem}>
+				<h5>Discussions</h5>
+				{discussions &&
+					discussions.map((section) => {
+						const color = colorEnrollment(section.enrolled / section.enrolledMax);
+
+						return (
+							<>
+								<div className={styles.sectionContainer} key={section.ccn}>
+									<h6>{section.locationName || 'Unknown Location'}</h6>
+									<div className={styles.sectionFooter}>
+										<span>
+											<Clock width={16} height={24} />
+											{section.wordDays} {formatSectionTime(section)}
+										</span>
+										•
+										<span className={color}>
+											<Group width={16} height={24} />
+											{section.enrolled}/{section.enrolledMax} Enrolled
+										</span>
+										•<span>CCN: {section.ccn}</span>
+									</div>
+								</div>
+								{/* <div className={styles.separator} /> */}
+							</>
+						);
+					})}
+			</div>
+
+			{/* {sections.length > 0 ? (
 				sections.map((section) => {
 					const color = colorEnrollment(section.enrolled / section.enrolledMax);
 					const enrolledPercent = formatEnrollment(section.enrolled / section.enrolledMax);
@@ -77,6 +141,7 @@ const SectionTable = ({ sections }: Props) => {
 										</span>
 										{section.instructor?.toLowerCase() || 'unknown'}
 									</span>
+									<span className={styles.instructor}>{section.waitlisted} Waitlisted</span>
 								</div>
 
 								<div className={styles.sectionRight}>
@@ -96,18 +161,12 @@ const SectionTable = ({ sections }: Props) => {
 									</span>
 								</div>
 							</div>
-
-							<div className={styles.separator} />
-							<div className={styles.sectionFooter}>
-								<div className={clsx(color, styles.enrolled)}>{enrolledPercent} Enrolled</div>
-								<div className={styles.enrolled}>• {section.waitlisted} Waitlisted</div>
-							</div>
 						</div>
 					);
 				})
 			) : (
 				<div>There are no class sections for this course.</div>
-			)}
+			)} */}
 		</div>
 	);
 };
