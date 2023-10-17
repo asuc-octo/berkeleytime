@@ -1,23 +1,16 @@
 .root {
 	height: 100vh;
-
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.075'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), linear-gradient(var(--angle, to top right), var(--start), var(--stop));
-
   position: relative;
-
   display: flex;
   flex-direction: column;
-
   overflow: hidden;
 
   .wave {
     position: absolute;
-
     width: 100%;
-
-    bottom: 0;
+    bottom: 0px;
     left: 0;
-
     z-index: 2;
 
     filter: drop-shadow(0 -16px 0 rgba(white, 0.1));
@@ -26,22 +19,63 @@
   .container {
     max-width: 1200px;
     width: 100%;
-
-    flex-grow: 1;
-
-    padding: 64px 24px 0;
-    
+    height: 100%;
+    // flex-grow: 1;
+    padding: 0px 72px;
     position: relative;
-
     z-index: 1;
-
     margin: 0 auto;
+
+    .content
+    {
+      display: flex;
+      flex-direction: column;
+      align-items: start;
+      justify-content: center;
+      height: 50%;
+      margin-top: 64px;
+      max-width: 475px;
+      row-gap: 20px;
+
+
+      .header {
+        font-size: 52px;
+        color: white;
+        font-weight: 700;
+        line-height: 58px;
+        letter-spacing: 0.5px;
+        position: relative;
+      }
+  
+      .description {
+        font-size: 16px;
+        color: white;
+        position: relative;
+      }
+  
+      .button {
+        background-color: rgba(white, 0.2);
+        position: relative;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        padding: 28px 16px;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+        color: white;
+  
+        &:hover {
+          background-color: rgba(black, 0.2);
+        }
+      }
+    }
 
     .clock {
       position: absolute;
 
-      right: 272px;
-      bottom: 192px;
+      right: 320px;
+      bottom: 170px;
 
       text-align: right;
 
@@ -65,7 +99,7 @@
     img.campanile {
       position: absolute;
   
-      right: 24px;
+      right: 72px;
       top: 0px;
 
       @media screen and (max-width: 768px) {
@@ -73,51 +107,6 @@
       }
     }
 
-    .header {
-      font-size: 56px;
-      color: white;
-      font-weight: 700;
-      line-height: 64px;
-
-      position: relative;
-
-      max-width: 512px;
-
-      margin-bottom: 32px;
-    }
-
-    .description {
-      font-size: 16px;
-      color: white;
-
-      max-width: 512px;
-
-      margin-bottom: 32px;
-
-      position: relative;
-    }
-
-    .button {
-      background-color: rgba(white, 0.1);
-
-      position: relative;
-
-      height: 40px;
-
-      display: inline-flex;
-      align-items: center;
-
-      padding: 0 16px;
-
-      border-radius: 4px;
-
-      font-size: 16px;
-      font-weight: 500;
-      color: white;
-
-      &:hover {
-        background-color: rgba(black, 0.2);
-      }
-    }
+    
   }
 }

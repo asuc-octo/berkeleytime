@@ -3,9 +3,10 @@ import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavProps } from 'react-bootstrap';
 import { Button } from 'bt/custom';
-import { ReactComponent as GoogleIcon } from '../../assets/svg/profile/google.svg';
+import { ReactComponent as GoogleIcon } from '../../../assets/svg/profile/google.svg';
+import styles from "./Navigation.module.scss"
 
-import { useUser } from '../../graphql/hooks/user';
+import { useUser } from '../../../graphql/hooks/user';
 
 function NavigationLink({
 	to,
@@ -34,7 +35,7 @@ function NavigationLink({
 	);
 }
 
-export default function Navigation() {
+export default function Navigation({ landing }: { landing?: boolean }) {
 	const [, setShowLogin] = useState(false);
 
 	const location = useLocation();
@@ -46,7 +47,11 @@ export default function Navigation() {
 	}, [location.pathname]);
 
 	return (
-		<Navbar collapseOnSelect={true} expand="lg" bg="white">
+		<Navbar
+			collapseOnSelect={true}
+			expand="lg"
+			className={`${landing && styles.navbarDark} navbar-dark`}
+		>
 			<Navbar.Brand as={Link} to="/" className="bt-bold">
 				Berkeleytime
 			</Navbar.Brand>

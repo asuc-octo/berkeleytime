@@ -1,0 +1,96 @@
+.wave
+  {
+    // background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 250'><path fill='#0ea5e9' fill-opacity='1' d='M0,160L80,138.7C160,117,320,75,480,96C640,117,800,203,960,213.3C1120,224,1280,160,1360,128L1440,96L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z'></path></svg>");
+    width: 100%;
+    left: 0;
+    z-index: 2;
+    position: relative;
+
+    filter: drop-shadow(0 -16px 0 rgba(gray, 0.1));
+  }
+
+.root
+{
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.075'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"), linear-gradient(var(--angle, to top right), var(--start), var(--stop));
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-top: -48px;
+  
+ 
+
+  .container
+  {
+    max-width: 1200px;
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
+    padding: 48px 32px;
+    position: relative;
+    z-index: 1;
+    margin: 0 auto
+    // border: 1px solid red;
+  }
+
+ 
+
+  
+
+  .accordian
+  {
+    width:100%;
+    max-width: 600px;
+    // border: solid 1px red;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    row-gap: 14px;
+
+    .title
+    {
+    font-size: 52px;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    position: relative;
+    }
+
+    .section
+    {
+      position: relative;
+        cursor: pointer;
+        .header
+        {
+            display: flex;
+            font-size: 20px;
+            color: white;
+            p
+            {
+              flex: 1;
+              color: white;
+            }
+            span {
+              font-size: 28px;
+            }
+        }
+   
+    }
+    .section::after
+    {
+        content: "";
+        display: block;
+        border: 1px solid rgb(255,255,255,0.4);
+    }
+
+    .content
+    {
+      // position: absolute;
+      width: 100%;
+      height: 150px;
+      background-color: white;
+      border-radius: 6px;
+
+    }
+
+  }
+}
