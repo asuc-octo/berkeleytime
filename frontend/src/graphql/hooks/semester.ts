@@ -20,12 +20,16 @@ export const useSemester = (
 	loading: boolean;
 	error: ApolloError | undefined;
 } => {
+    console.log(semester)
+
 	const { data, loading, error } = useGetSemestersQuery({
 		variables: {
 			name: semester && semesterToString(semester)
 		},
 		skip: !!semester?.playlistId
 	});
+
+    console.log(data)
 
 	let latestSemester: SemesterWithPlaylist | null = null;
 
@@ -36,10 +40,10 @@ export const useSemester = (
 	}
 
 	// Overriding the latest semester because the dev db has data from 2020
-	if (process.env.NODE_ENV === 'development' && latestSemester) {
-		latestSemester.semester = 'fall';
-		latestSemester.year = '2020';
-	}
+	// if (process.env.NODE_ENV === 'development' && latestSemester) {
+	// 	latestSemester.semester = 'fall';
+	// 	latestSemester.year = '2020';
+	// }
 
 	return { semester: latestSemester, loading, error };
 };
