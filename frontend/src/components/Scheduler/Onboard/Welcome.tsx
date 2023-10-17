@@ -63,7 +63,7 @@ const Welcome = ({ updatePage }: Props) => {
 
 	const [selectedSemesterString, setSelectedSemesterString] = useState(latestSemester);
 
-    console.log(allSemesterStrings, selectedSemesterString, latestSemester)
+	console.log(allSemesterStrings, selectedSemesterString, latestSemester);
 
 	return (
 		<Container className="welcome">
@@ -84,7 +84,7 @@ const Welcome = ({ updatePage }: Props) => {
 						<BTSelect
 							value={null}
 							closeMenuOnSelect={true}
-                            isSearchable={false}
+							isSearchable={false}
 							options={allSemesterStrings}
 							onChange={(newValue) => {
 								newValue && setSelectedSemesterString(newValue);
@@ -92,7 +92,9 @@ const Welcome = ({ updatePage }: Props) => {
 							defaultValue={latestSemester}
 						/>
 						<Button
-							href={`/scheduler/new/${selectedSemesterString.toLowerCase().replace(' ', '-')}`}
+							href={`/scheduler/new/?semester=${selectedSemesterString
+								.toLowerCase()
+								.replace(' ', '-')}`}
 							onClick={resetDraft}
 						>
 							Start

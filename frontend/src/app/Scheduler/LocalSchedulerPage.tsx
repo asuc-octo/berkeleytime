@@ -4,13 +4,14 @@ import { useSemester } from 'graphql/hooks/semester';
 import { useUser } from 'graphql/hooks/user';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ReduxState } from 'redux/store';
 import { useLocalStorageState } from 'utils/hooks';
 import { Semester, stringToSemester } from 'utils/playlists/semesters';
 import { DEFAULT_SCHEDULE, SCHEDULER_LOCALSTORAGE_KEY, Schedule } from 'utils/scheduler/scheduler';
 import Callout from '../../components/Scheduler/Callout';
 import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
+import { useEffect } from 'react';
 
 export function Component() {
 	const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -21,13 +22,20 @@ export function Component() {
 	const { isLoggedIn, loading: loadingUser } = useUser();
 	const navigate = useNavigate();
 
-	const { semester: semesterString } = useParams<{ semester: string }>();
+	const [searchParams, setSearchParams] = useSearchParams();
 
 	const { semester, error: semesterError } = useSemester(
-		semesterString ? stringToSemester(semesterString.replace('-', ' '), semesterString.replace('-', ' ')) : undefined
+		semesterString
+			? stringToSemester(semesterString.replace('-', ' '), semesterString.replace('-', ' '))
+			: undefined
 	);
 
-    console.log(semesterString, semester)
+	useEffect(() => {
+		const hasSemester = searchParams.has('semester');
+		if (!hasSemester) return;
+		searchParams.delete('semester');
+		setSearchParams(searchParams);
+	}, [searchParams, setSearchParams]);
 
 	const [createScheduleMutation, { loading: isSaving, error: creationError }] = useCreateSchedule({
 		onCompleted: (data) => {
