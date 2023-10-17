@@ -5,7 +5,7 @@ import { CurrentFilters, FilterOption, SortOption } from '../types';
 import { Dispatch, memo, SetStateAction, useEffect, useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';
 import styles from './CatalogList.module.scss';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import CatalogService from '../service';
 import { sortByAttribute } from 'lib/courses/sorting';
 
@@ -27,7 +27,7 @@ const CatalogList = (props: CatalogListProps) => {
 	const { currentFilters, setCurrentCourse, selectedId, searchQuery, sortQuery, sortDir } = props;
 	const { observe, height } = useDimensions();
 	const [fetchCatalogList, { data, loading, called }] = useGetCoursesForFilterLazyQuery({});
-	const history = useHistory();
+	const navigate = useNavigate();
 
 	const courses = useMemo(() => {
 		if (!data)
@@ -66,7 +66,7 @@ const CatalogList = (props: CatalogListProps) => {
 
 	const handleCourseSelect = (course: CourseFragment) => {
 		setCurrentCourse(course);
-		history.push({
+		navigate({
 			pathname: `/catalog/${(currentFilters.semester as FilterOption)?.value?.name}/${
 				course.abbreviation
 			}/${course.courseNumber}`,

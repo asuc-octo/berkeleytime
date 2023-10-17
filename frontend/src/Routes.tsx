@@ -1,90 +1,68 @@
-/*eslint max-len: ["error", { "code": 180 }]*/
-import { lazy, Suspense } from 'react';
-import { Switch, Route, RouteProps, Redirect } from 'react-router-dom';
-import BTLoader from 'components/Common/BTLoader';
+import { createBrowserRouter, Navigate, RouterProvider, useParams } from 'react-router-dom';
 
 import Catalog from './app/Catalog';
 import Landing from './views/Landing';
-import Error from './views/Error/Error';
+import Error from './views/Error';
 import Layout from 'components/Common/Layout';
 
-const Grades = lazy(() => import('./views/Grades/Grades'));
-const Enrollment = lazy(() => import('./views/Enrollment/Enrollment'));
-const About = lazy(() => import('./views/About'));
-const Releases = lazy(() => import('./views/Releases/Releases'));
-const Faq = lazy(() => import('./views/Faq'));
-const Profile = lazy(() => import('./views/Profile/Profile'));
-const Login = lazy(() => import('./views/Login/Login'));
-const Logout = lazy(() => import('./views/Profile/Logout'));
-const SchedulerOnboard = lazy(() => import('./views/Scheduler/SchedulerOnboard'));
-const LocalScheduler = lazy(() => import('./views/Scheduler/LocalSchedulerPage'));
-const RemoteScheduler = lazy(() => import('./views/Scheduler/RemoteSchedulerPage'));
-const ViewSchedule = lazy(() => import('./views/Scheduler/ViewSchedule'));
-const PrivacyPolicy = lazy(() => import('./views/Policies/PrivacyPolicy'));
-const TermsOfService = lazy(() => import('./views/Policies/TermsOfService'));
-const RedirectLink = lazy(() => import('./views/RedirectLink'));
-const Apply = lazy(() => import('./views/Apply'));
+const Grades = () => import('./app/Grades');
+const Enrollment = () => import('./app/Enrollment');
+const About = () => import('./views/About');
+const Releases = () => import('./views/Releases');
+const Faq = () => import('./views/Faq');
+const Profile = () => import('./views/Profile');
+const Login = () => import('./views/Login');
+const Logout = () => import('./views/Logout');
+const SchedulerOnboard = () => import('./app/Scheduler/SchedulerOnboard');
+const LocalScheduler = () => import('./app/Scheduler/LocalSchedulerPage');
+const RemoteScheduler = () => import('./app/Scheduler/RemoteSchedulerPage');
+const ViewSchedule = () => import('./app/Scheduler/ViewSchedule');
+const PrivacyPolicy = () => import('./views/PrivacyPolicy');
+const TermsOfService = () => import('./views/TermsOfService');
+const RedirectLink = () => import('./views/RedirectLink');
+// const Apply = () => import('./views/Apply');
 
-const routes: Array<RouteProps> = [
-	{ path: '/landing', component: Landing },
-	{ path: '/catalog', component: Catalog, exact: false },
-	{ path: '/grades', component: Grades, exact: false },
-	{ path: '/enrollment', component: Enrollment, exact: false },
-	{ path: '/about', component: About },
-	{ path: '/releases', component: Releases },
-	{ path: '/faq', component: Faq },
-	{ path: '/profile', component: Profile },
-	{ path: '/oauth2callback', component: Login },
-	{ path: '/logout', component: Logout },
-	{ path: '/scheduler', component: SchedulerOnboard },
-	{ path: '/scheduler/new', component: LocalScheduler },
-	{ path: '/scheduler/:scheduleId', component: RemoteScheduler },
-	{ path: '/schedule/:scheduleId', component: ViewSchedule },
-	{ path: '/error', component: Error },
-	{ path: '/legal/privacy', component: PrivacyPolicy },
-	{ path: '/legal/terms', component: TermsOfService },
-	{ path: '/redirect', component: RedirectLink, exact: false },
-	{ path: '/apply', component: Apply, sensitive: false },
-];
+function ScheduleRedirect() {
+	const { scheduleId } = useParams();
+	return <Navigate to={`/schedule/${scheduleId}`} replace />;
+}
 
-const Routes = () => (
-	<Suspense
-		fallback={
-			<div className="viewport-app">
-				<BTLoader fill />
-			</div>
-		}
-	>
-		<Switch>
-			<Redirect from="/" to="/landing" exact />
-			<Redirect from="/s/:scheduleId" to="/schedule/:scheduleId" />
+const router = createBrowserRouter([
+	{
+		element: <Layout />,
+		ErrorBoundary: Error,
+		children: [
+			{ path: '/', index: true, Component: Landing },
+			{ path: '/landing', element: <Navigate to="/" replace /> },
+			{ path: '/s/:scheduleId', Component: ScheduleRedirect },
+			{ path: '/grades/*', lazy: Grades },
+			{ path: '/enrollment/*', lazy: Enrollment },
+			{ path: '/about', lazy: About },
+			{ path: '/releases', lazy: Releases },
+			{ path: '/faq', lazy: Faq },
+			{ path: '/profile', lazy: Profile },
+			{ path: '/oauth2callback', lazy: Login },
+			{ path: '/logout', lazy: Logout },
+			{ path: '/scheduler', lazy: SchedulerOnboard },
+			{ path: '/scheduler/:scheduleId', lazy: RemoteScheduler },
+			{ path: '/schedule/:scheduleId', lazy: ViewSchedule },
+			{ path: '/error', Component: Error },
+			{ path: '/legal/privacy', lazy: PrivacyPolicy },
+			{ path: '/legal/terms', lazy: TermsOfService },
+			{ path: '/redirect', lazy: RedirectLink },
+			// { path: '/apply', lazy: Apply }
+		]
+	},
+	{
+		element: <Layout footer={false} />,
+		ErrorBoundary: Error,
+		children: [
+			{ path: '/catalog/:semester?/:abbreviation?/:courseNumber?', Component: Catalog },
+			{ path: '/scheduler/new', lazy: LocalScheduler }
+		]
+	}
+]);
 
-			<Route path="/catalog/:semester?/:abbreviation?/:courseNumber?" exact={false}>
-				<Layout noFooter>
-					<Catalog />
-				</Layout>
-			</Route>
-
-			<Route>
-				<Layout>
-					<Switch>
-						{routes.map((route) => (
-							<Route
-								key={route.path as string}
-								path={route.path}
-								component={route.component}
-								exact={route.exact ?? true} // force exact=true unless specified false
-								sensitive={route.sensitive ?? true} // force sensitive=true unless specified false
-							/>
-						))}
-						<Route component={Error} />
-					</Switch>
-				</Layout>
-			</Route>
-
-			<Route component={Error} />
-		</Switch>
-	</Suspense>
-);
-
-export default Routes;
+export default function Routes() {
+	return <RouterProvider router={router} />;
+}
