@@ -177,41 +177,6 @@ const CatalogView = () => {
 						</>
 					</ReadMore>
 					<CourseTabs />
-					{/* {sections && sections.length > 0 ? (
-						<SectionTable sections={sections} />
-					) : !loading ? (
-						<span>There are no class times for the selected course.</span>
-					) : null} */}
-
-					{/* Redesigned catalog sections */}
-					{/* <CatalogViewSections sections={sections} /> */}
-
-					{/* Good feature whenever we want...
-					<h5>Past Offerings</h5>
-					<section className={styles.pills}>
-						{pastSemesters ? (
-							pastSemesters.map((req) => (
-								<button
-									className={styles.pill}
-									key={req.id}
-									onClick={() =>
-										navigate(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
-									}
-								>
-									{req.name}
-								</button>
-							))
-						) : (
-							<Skeleton
-								style={{ marginRight: '5px' }}
-								inline
-								count={10}
-								width={80}
-								height={28}
-								borderRadius={12}
-							/>
-						)}
-					</section> */}
 				</>
 			)}
 		</div>
