@@ -52,7 +52,7 @@ export function getLatestSemester(playlists: FilterablePlaylist[]): SemesterWith
 /**
  * Converts playlist to semester
  */
-function playlistToSemester(playlist: FilterablePlaylist): SemesterWithPlaylist {
+export function playlistToSemester(playlist: FilterablePlaylist): SemesterWithPlaylist {
 	return stringToSemester(playlist.name, playlist.id);
 }
 
