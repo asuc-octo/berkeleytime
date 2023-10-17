@@ -5,11 +5,12 @@ import { GradeModel, GradeType } from "../../db/grade";
 import { getAverage } from "../grade/controller";
 import { CourseModel, CourseType } from "../../db/course";
 import { SectionModel } from "../../db/section";
-import { formatClass, formatCourse, formatSection } from "./formatter";
+import { formatClass, formatCourse, formatSection, formatCatalogItem } from "./formatter";
 import { getCourseKey, getCsCourseId } from "../../utils/course";
 import { isNil } from "lodash";
 import { GraphQLResolveInfo } from "graphql";
 import { getChildren } from "../../utils/graphql";
+import { redis } from "../../redis";
 
 function matchCsCourseId(id: any) {
     return {
@@ -21,7 +22,15 @@ function matchCsCourseId(id: any) {
 }
 
 export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Promise<CatalogItem[] | null> {
-    const classes = await ClassModel
+
+    const children = getChildren(info)
+
+    const cacheData = await redis.get("getCatalog", [termToString(term), children.includes("gradeAverage").toString()]);
+    if(cacheData){
+        return cacheData;
+    }
+
+    let classes = await ClassModel
         .find({
             "session.term.name": termToString(term),
             "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },
@@ -33,6 +42,7 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
     }
 
     const csCourseIds = new Set(classes.map(c => getCsCourseId(c.course as CourseType)))
+
     const courses = await CourseModel
         .find(
             {
@@ -64,8 +74,6 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
     const gradesMap: { [key: string]: GradeType[] } = {}
     courses.forEach(c => gradesMap[getCourseKey(c)] = [])
 
-    const children = getChildren(info)
-
     if (children.includes("gradeAverage")) {
         const grades = await GradeModel.find(
             {
@@ -91,6 +99,7 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
     }
 
     const catalog: any = {}
+
     for (const c of courses) {
         const key = getCourseKey(c)
         const id = getCsCourseId(c)
@@ -100,10 +109,11 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
             continue
 
         catalog[id] = {
-            ...formatCourse(c, term),
+            ...formatCatalogItem(c, term),
             classes: [],
             gradeAverage: await getAverage(gradesMap[key]),
         }
+
     }
 
     for (const c of classes) {
@@ -116,7 +126,11 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
         catalog[id].classes.push(formatClass(c))
     }
 
-    return Object.values(catalog)
+    const ans = Object.values(catalog);
+    
+    redis.set('getCatalog', [termToString(term), children.includes("gradeAverage").toString()], ans);
+
+    return ans as CatalogItem[];
 }
 
 export function getClass(subject: string, courseNumber: string, term: TermInput, classNumber: string) {
