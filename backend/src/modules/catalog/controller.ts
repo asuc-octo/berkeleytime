@@ -8,9 +8,6 @@ import { SectionModel } from "../../db/section";
 import { formatClass, formatCourse, formatSection, formatCatalogItem } from "./formatter";
 import { getCourseKey, getCsCourseId } from "../../utils/course";
 import { isNil } from "lodash";
-import { GraphQLResolveInfo } from "graphql";
-import { getChildren } from "../../utils/graphql";
-import { redis } from "../../redis";
 
 function matchCsCourseId(id: any) {
     return {

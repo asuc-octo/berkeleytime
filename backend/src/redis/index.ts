@@ -1,6 +1,15 @@
 import { RedisClientType, createClient } from "redis";
 import { config } from "../config";
 
+const REDIS_FIELD_DELIMITER = "@@";
+
+type RedisStoreFormat = {
+    isArray: boolean,
+    fields: string[],
+    jsonFields: number[],
+    data: any[],
+}
+
 class RedisConnection {
     client: RedisClientType|null = null;
 
@@ -17,38 +26,86 @@ class RedisConnection {
     }
 
     async get(controller:string, parameters:string[]) : Promise<any> {
-        if(!this.client) return null;
-        const res = await this.client.get(`${controller}/${parameters.join("/")}`);
+        if(!this.client) return null
+
+        const res = await this.client.get(`${controller}/${parameters.join("/")}`)
         if(res){
-            const parsed = JSON.parse(res, function(k, v) { 
-                // make sure dates are actually a date so ApolloGQL is happy
-                if (k == "lastUpdated") return new Date(v);
-                return v;
-            } );
-            return parsed;
+            // cache hit
+            const schema:RedisStoreFormat = JSON.parse(res)
+            const lastUpdatedInd = schema.fields.indexOf("lastUpdated")
+            const parsedData = schema.data.map((d:any) => {
+                // generate GraphQL object map from array of values
+                const valuesParsed:any[] = d!.split(REDIS_FIELD_DELIMITER)
+                if(lastUpdatedInd > -1) valuesParsed[lastUpdatedInd] = new Date(valuesParsed[lastUpdatedInd])
+                schema.jsonFields.forEach((i:number) => valuesParsed[i] = JSON.parse(valuesParsed[i], (k, v) => {
+                    if(k == "lastUpdated") return new Date(v) // TO DO: other date-like fields?
+                    return v
+                }))
+               return schema.fields.reduce((map, val:string, index:number) => {
+                        return {
+                            ...map,
+                            [val]: valuesParsed[index],
+                        }
+                    }, {})
+            })
+            if (!schema.isArray) return parsedData[0]
+            return parsedData
         }
         return null;
     }
 
     set(controller:string, parameters:string[], data:any) {
-        if(this.client) this.client.set(`${controller}/${parameters.join("/")}`, JSON.stringify(data));
+        if(!this.client) return;
+
+        // convert non-arrays to array for data field and remember for .get
+        const isArray = Array.isArray(data)
+        if (!isArray) data = [data] 
+
+        // Object fields need to be JSON.stringified
+        const indexJsonFields:number[] = []; // saved for .get
+        const nameJsonFields:string[] = []; // for processing
+        Object.keys(data[0]).forEach((k:string, index:number) => {
+            if (data[0][k].toString == Object.prototype.toString) {
+                nameJsonFields.push(k)
+                indexJsonFields.push(index)
+            }
+        });
+
+        // 
+        const schemaData =  data.map((val:any) => {
+            // store each item in array as a object with only values
+            nameJsonFields.forEach((k:string) => {
+                // stringify each Object fields
+                val[k] = JSON.stringify(val[k])
+            })
+            return Object.values(val).join(REDIS_FIELD_DELIMITER)
+        })
+
+
+        const schema : RedisStoreFormat = {
+            isArray: isArray,
+            fields: Object.keys(data[0]),
+            jsonFields: indexJsonFields,
+            data: schemaData,
+        }
+
+        this.client.set(`${controller}/${parameters.join("/")}`, JSON.stringify(schema))
     }
 }
 
 const redis = new RedisConnection();
 
 async function cache(controller : Function, ...args: any[]) {
-    
-    const cacheData = await redis.get("getCatalog", args.map((v) => JSON.stringify(v)));
+
+    const cacheData = await redis.get("getCatalog", args.map((v) => JSON.stringify(v)))
     if(cacheData){
+        // cache hit
         return cacheData;
     }
 
-    const resp = await controller(...args);
-
-    redis.set("getCatalog", args.map((v) => JSON.stringify(v)), resp);
-
-    return resp;
+    const resp = await controller(...args)
+    redis.set("getCatalog", args.map((v) => JSON.stringify(v)), resp)
+    return resp
 
 }
 
