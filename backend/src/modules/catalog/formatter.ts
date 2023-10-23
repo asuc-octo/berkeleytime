@@ -1,6 +1,6 @@
-import { ClassType } from "../../db/class";
-import { CourseType } from "../../db/course";
-import { SectionType } from "../../db/section";
+import { ClassType } from "../../models/class";
+import { CourseType } from "../../models/course";
+import { SectionType } from "../../models/section";
 import { TermInput } from "../../generated-types/graphql";
 import { getCsCourseId } from "../../utils/course";
 import { stringToTerm } from "../../utils/term";
@@ -85,8 +85,8 @@ export function formatSection(section: SectionType | null): any {
         },
 
         ccn: section.id as number,
-        dateEnd: meeting?.endDate as string,
-        dateStart: meeting?.startDate as string,
+        dateEnd: meeting?.endDate,
+        dateStart: meeting?.startDate,
         days: meeting != null ? [
             meeting.meetsSunday,
             meeting.meetsMonday,
@@ -124,7 +124,7 @@ export function formatCourse(course: CourseType | null, term?: TermInput | null)
         },
         
         description: course.description as string,
-        fromDate: course.fromDate as string,
+        fromDate: course.fromDate,
         gradingBasis: course.gradingBasis?.description as string,
         level: course.academicCareer?.description as string,
         number: course.catalogNumber?.formatted as string,
@@ -132,7 +132,7 @@ export function formatCourse(course: CourseType | null, term?: TermInput | null)
         subject: course.classSubjectArea?.code as string,
         subjectName: course.classSubjectArea?.description as string,
         title: course.title as string,
-        toDate: course.toDate as string,
+        toDate: course.toDate,
 
         ...formatMetadata(course),
     }
