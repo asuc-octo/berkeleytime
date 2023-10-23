@@ -1,45 +1,81 @@
 import styles from './HomeFooter.module.scss';
-import { useRef, useLayoutEffect, useState } from 'react';
-import wave from './wave.svg';
 
-
-interface Step {
-	text: string;
-	colors: [string, string];
-	reverse?: boolean;
-	image: string;
-}
-
-const HomeFooter = ({ step }: { step: Step }) => {
-	const [accordian, setAccordian] = useState([0])
-	const root = useRef<HTMLDivElement>(null);
-
-	useLayoutEffect(() => {
-		root.current?.style.setProperty('--start', step.colors[0]);
-		root.current?.style.setProperty('--stop', step.colors[1]);
-
-		if (step.reverse) root.current?.style.setProperty('--angle', 'to bottom right');
-		else root.current?.style.removeProperty('--angle');
-	}, [step]);
-
+const HomeFooter = () => {
 	return (
-		<>
-			<img className={styles.wave} src={wave} />
-			<div className={styles.root} ref={root}>
-				<div className={styles.container}>
-					<div className={styles.accordian}>
-						<h1 className={styles.title}>Get Involved</h1>
-						<div className={styles.section} id="accordian#0">
-							<div className={styles.header}>
-								<p>Join Our Team</p>
-								<span>+</span>
-							</div>
-							<div className={styles.content}></div>
-						</div>
-					</div>
+		<div className={styles.root}>
+			<div className={styles.container}>
+				<div className={styles.footerColumn}>
+					<h6>SOCIAL</h6>
+					<ul>
+						<li>
+							<a href="https://www.instagram.com/" target="_blank">
+								Instagram
+							</a>
+						</li>
+						<li>
+							<a href="https://discord.gg/uP2bTPh99U">Discord</a>
+						</li>
+						<li>
+							<a href="https://facebook.com/berkeleytime">Facebook</a>
+						</li>
+						<li>
+							<a href="https://github.com/asuc-octo/berkeleytime">GitHub</a>
+						</li>
+					</ul>
+				</div>
+				<div className={styles.footerColumn}>
+					<h6>GET STARTED</h6>
+					<ul>
+						<li>
+							<a href="/catalog">Catalog</a>
+						</li>
+						<li>
+							<a href="/grades">Grades</a>
+						</li>
+						<li>
+							<a href="/enrollment">Enrollment</a>
+						</li>
+						<li>
+							<a href="/scheduler">Scheduler</a>
+						</li>
+					</ul>
+				</div>
+				<div className={styles.footerColumn}>
+					<h6>SUPPORT</h6>
+					<ul>
+						<li>
+							<a>Report a Bug</a>
+						</li>
+						<li>
+							<a href="mailto:octo.berkeleytime@asuc.org">Contact Us</a>
+						</li>
+						<li>
+							<a href="/releases">Releases</a>
+						</li>
+						<li>
+							<a href="/faq">FAQ</a>
+						</li>
+					</ul>
+				</div>
+				<div className={styles.footerColumn}>
+					<h6>ABOUT US</h6>
+					<ul>
+						<li>
+							<a href="/about">Our Team</a>
+						</li>
+						<li>
+							<a href="https://octo.asuc.org">ASUC OCTO</a>
+						</li>
+						<li>
+							<a href="/legal/privacy">Privacy Policy</a>
+						</li>
+						<li>
+							<a href="/legal/terms">Terms of Service</a>
+						</li>
+					</ul>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 
