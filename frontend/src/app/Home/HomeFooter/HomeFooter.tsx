@@ -1,10 +1,42 @@
 import { Discord, Facebook, GitHub, Instagram } from 'iconoir-react';
+import asuc_logo from '../../../assets/img/landing/asuc_logo.png';
+import stf_logo from '../../../assets/img/landing/stf_logo.jpeg';
+import ocf_logo from '../../../assets/img/landing/ocf_logo.png';
 import styles from './HomeFooter.module.scss';
 
 const HomeFooter = () => {
 	return (
 		<div className={styles.root}>
-			<div className={styles.container}>
+			<div className={styles.blurb}>
+				<h4>In Memory Of Courtney Brousseau</h4>
+				<p>
+					Berkeley Alum, ASUC Student Union Board of Directors Chair, ASUC Chief Communications
+					Officer, and Berkeley Mobile Product Manager
+				</p>
+			</div>
+			<div className={styles.blurb}>
+				<h4>Supported By</h4>
+				<div className={styles.sponsors}>
+					<a href="https://techfund.berkeley.edu/home">
+						<img className="landing-sponsors-img" src={stf_logo} alt="stf" />
+					</a>
+					<a href="https://asuc.org">
+						<img className="landing-sponsors-img" src={asuc_logo} alt="asuc" />
+					</a>
+					<a href="https://www.ocf.berkeley.edu">
+						{' '}
+						{/* https://www.ocf.berkeley.edu/docs/services/vhost/badges */}
+						<img
+							className="landing-sponsors-img"
+							src={ocf_logo}
+							alt="Hosted by the OCF"
+							style={{ border: 0 }}
+						/>
+					</a>
+				</div>
+			</div>
+
+			<div className={styles.footer}>
 				<div className={styles.footerColumn}>
 					<h6>GET STARTED</h6>
 					<ul>
