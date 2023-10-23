@@ -37,16 +37,25 @@ export const current: Contributors = {
 		{
 			name: 'Michelle Tran',
 			role: 'Design Lead',
-			site: 'https://michelletran.design',
+			site: 'michelletran.cargo.site',
 			img: {
 				base: path('michelle_1.jpg'),
 				silly: path('michelle_2.jpg')
 			}
 		},
 		{
+			name: 'Max Wang',
+			role: 'Backend Lead',
+			img: {
+				base: path('max_1.jpg'),
+				silly: undefined
+			},
+			site: null
+		},
+		{
 			name: 'Jaden Moore',
 			role: 'Frontend Engineer',
-			site: null,
+			site: 'https://github.com/Jdyn',
 			img: {
 				base: path('jaden_1.jpg'),
 				silly: undefined
@@ -60,15 +69,6 @@ export const current: Contributors = {
 				base: path('eric_1.jpg'),
 				silly: path('eric_2.jpg')
 			}
-		},
-		{
-			name: 'Max Wang',
-			role: 'Backend Engineer',
-			img: {
-				base: path('max_1.jpg'),
-				silly: undefined
-			},
-			site: null
 		},
 		{
 			name: 'Michael Khaykin',
@@ -87,7 +87,56 @@ export const current: Contributors = {
 				base: path('rachel_1.jpg'),
 				silly: undefined
 			}
-		}
+		},
+		{
+			name: 'Nyx Iskandar',
+			role: 'Frontend Engineer',
+			site: 'https://xyntechx.com',
+			img: {
+				base: path('rachel_1.jpg'),
+				silly: undefined
+			}
+		},
+		{
+			name: 'Ethan Chng',
+			role: 'Designer',
+			site: 'www.ethanchng.com',
+		},
+		{
+			name: 'Kara Rizzardi',
+			role: 'Frontend Engineer',
+			site: 'https://www.kararizzardi.com/',
+		},
+		{
+			name: 'Advay Ratan',
+			role: 'Frontend Engineer',
+			site: 'https://advayratan.com/',
+		},
+		{
+			name: 'Daniel Li',
+			role: 'Backend Engineer',
+			site: null,
+		},
+		{
+			name: 'Kartavya Sharma',
+			role: 'Backend Engineer',
+			site: 'https://www.kartavyas.com',
+		},
+		{
+			name: 'Mary Tran',
+			role: 'Designer',
+			site: 'https://www.linkedin.com/in/mary-tran-b19246260/',
+		},
+		{
+			name: 'Mary Tran',
+			role: 'Designer',
+			site: 'https://www.linkedin.com/in/mary-tran-b19246260/',
+		},
+		{
+			name: 'Clara Tu',
+			role: 'Frontend Engineer',
+			site: 'https://www.linkedin.com/in/claratu/',
+		},
 	]
 };
 
@@ -124,11 +173,6 @@ export const past: Contributors[] = [
 				name: 'Shuming Xu',
 				role: 'Backend Engineer',
 				site: 'https://shumingxu.com/'
-			},
-			{
-				name: 'Alex Zhang',
-				role: 'Backend Engineer',
-				site: null
 			},
 			{
 				name: 'Nikhil Jha',
@@ -215,6 +259,11 @@ export const past: Contributors[] = [
 				role: 'Designer',
 				site: null,
 			},
+			{
+				name: 'Alex Zhang',
+				role: 'Backend Engineer',
+				site: 'https://www.nociza.com/me'
+			},
 		]
 	},
 	{
@@ -223,7 +272,7 @@ export const past: Contributors[] = [
 			{
 				name: 'Hiroshi Usui',
 				role: 'Backend Lead',
-				site: 'https://i-am.2se.xyz/'
+				site: null
 			},
 			{
 				name: 'Danji Liu',
