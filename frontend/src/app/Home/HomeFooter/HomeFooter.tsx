@@ -1,28 +1,10 @@
+import { Discord, Facebook, GitHub, Instagram } from 'iconoir-react';
 import styles from './HomeFooter.module.scss';
 
 const HomeFooter = () => {
 	return (
 		<div className={styles.root}>
 			<div className={styles.container}>
-				<div className={styles.footerColumn}>
-					<h6>SOCIAL</h6>
-					<ul>
-						<li>
-							<a href="https://www.instagram.com/" target="_blank">
-								Instagram
-							</a>
-						</li>
-						<li>
-							<a href="https://discord.gg/uP2bTPh99U">Discord</a>
-						</li>
-						<li>
-							<a href="https://facebook.com/berkeleytime">Facebook</a>
-						</li>
-						<li>
-							<a href="https://github.com/asuc-octo/berkeleytime">GitHub</a>
-						</li>
-					</ul>
-				</div>
 				<div className={styles.footerColumn}>
 					<h6>GET STARTED</h6>
 					<ul>
@@ -71,6 +53,31 @@ const HomeFooter = () => {
 						</li>
 						<li>
 							<a href="/legal/terms">Terms of Service</a>
+						</li>
+					</ul>
+				</div>{' '}
+				<div className={styles.footerColumn}>
+					<h6>SOCIAL</h6>
+					<ul>
+						<li>
+							<a href="https://www.instagram.com/" target="_blank">
+								<Instagram />
+							</a>
+						</li>
+						<li>
+							<a href="https://discord.gg/uP2bTPh99U">
+								<Discord />
+							</a>
+						</li>
+						<li>
+							<a href="https://facebook.com/berkeleytime">
+								<Facebook />
+							</a>
+						</li>
+						<li>
+							<a href="https://github.com/asuc-octo/berkeleytime">
+								<GitHub />
+							</a>
 						</li>
 					</ul>
 				</div>
