@@ -1,5 +1,5 @@
 import { ScheduleModule } from "./generated-types/module-types";
-import { CustomEventType, ScheduleType } from "../../db/schedule";
+import { CustomEventType, ScheduleType } from "../../models/schedule";
 
 export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule {
   return {

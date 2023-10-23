@@ -1,10 +1,10 @@
 import { CatalogItem, TermInput } from "../../generated-types/graphql";
-import { ClassModel } from "../../db/class";
+import { ClassModel, ClassType } from "../../models/class";
 import { getTermStartMonth, termToString } from "../../utils/term";
-import { GradeModel, GradeType } from "../../db/grade";
+import { GradeModel, GradeType } from "../../models/grade";
 import { getAverage } from "../grade/controller";
-import { CourseModel, CourseType } from "../../db/course";
-import { SectionModel } from "../../db/section";
+import { CourseModel, CourseType } from "../../models/course";
+import { SectionModel } from "../../models/section";
 import { formatClass, formatCourse, formatSection } from "./formatter";
 import { getCourseKey, getCsCourseId } from "../../utils/course";
 import { isNil } from "lodash";
