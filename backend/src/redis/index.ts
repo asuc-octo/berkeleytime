@@ -1,7 +1,8 @@
 import { RedisClientType, createClient } from "redis";
 import { config } from "../config";
+import { performance } from "perf_hooks";
 
-const REDIS_FIELD_DELIMITER = "@@";
+const REDIS_FIELD_DELIMITER = "@@"
 
 type RedisStoreFormat = {
     isArray: boolean,
@@ -11,24 +12,25 @@ type RedisStoreFormat = {
 }
 
 class RedisConnection {
-    client: RedisClientType|null = null;
+    client: RedisClientType|null = null
 
     async load() {
-        this.client = createClient({ url: config.REDIS_URI });
-        await this.client.connect();
-        this.client.on('error', (err) => console.log('Redis Client Error', err));
+        this.client = createClient({ url: config.REDIS_URI })
+        await this.client.connect()
+        this.client.on('error', (err) => console.log('Redis Client Error', err))
     };
     isActive() : boolean {
-        return this.client != null;
+        return this.client != null
     }
     quit() {
-        this.client?.quit();
+        this.client?.quit()
     }
 
     async get(controller:string, parameters:string[]) : Promise<any> {
         if(!this.client) return null
 
         const res = await this.client.get(`${controller}/${parameters.join("/")}`)
+
         if(res){
             // cache hit
             const schema:RedisStoreFormat = JSON.parse(res)
@@ -41,7 +43,7 @@ class RedisConnection {
                     if(k == "lastUpdated") return new Date(v) // TO DO: other date-like fields?
                     return v
                 }))
-               return schema.fields.reduce((map, val:string, index:number) => {
+                return schema.fields.reduce((map, val:string, index:number) => {
                         return {
                             ...map,
                             [val]: valuesParsed[index],
@@ -51,41 +53,39 @@ class RedisConnection {
             if (!schema.isArray) return parsedData[0]
             return parsedData
         }
-        return null;
+        return null
     }
 
     set(controller:string, parameters:string[], data:any) {
-        if(!this.client) return;
+        if(!this.client) return
 
         // convert non-arrays to array for data field and remember for .get
         const isArray = Array.isArray(data)
         if (!isArray) data = [data] 
 
         // Object fields need to be JSON.stringified
-        const indexJsonFields:number[] = []; // saved for .get
-        const nameJsonFields:string[] = []; // for processing
+        const jsonFields:any[] = [] // saved for .get, [index, name]
         Object.keys(data[0]).forEach((k:string, index:number) => {
-            if (data[0][k].toString == Object.prototype.toString) {
-                nameJsonFields.push(k)
-                indexJsonFields.push(index)
+            if (data[0][k] instanceof Object && !(data[0][k] instanceof Date)) {
+                jsonFields.push([index, k])
             }
-        });
+        })
 
-        // 
         const schemaData =  data.map((val:any) => {
+            const valuesList = Object.values(val)
             // store each item in array as a object with only values
-            nameJsonFields.forEach((k:string) => {
+            jsonFields.forEach((t:any[]) => {
                 // stringify each Object fields
-                val[k] = JSON.stringify(val[k])
+                valuesList[t[0]] = JSON.stringify(val[t[1]])
             })
-            return Object.values(val).join(REDIS_FIELD_DELIMITER)
+            return valuesList.join(REDIS_FIELD_DELIMITER)
         })
 
 
         const schema : RedisStoreFormat = {
             isArray: isArray,
             fields: Object.keys(data[0]),
-            jsonFields: indexJsonFields,
+            jsonFields: jsonFields.map((t:any[]) => t[0]),
             data: schemaData,
         }
 
@@ -93,14 +93,14 @@ class RedisConnection {
     }
 }
 
-const redis = new RedisConnection();
+const redis = new RedisConnection()
 
 async function cache(controller : Function, ...args: any[]) {
 
     const cacheData = await redis.get("getCatalog", args.map((v) => JSON.stringify(v)))
     if(cacheData){
         // cache hit
-        return cacheData;
+        return cacheData
     }
 
     const resp = await controller(...args)
@@ -109,5 +109,5 @@ async function cache(controller : Function, ...args: any[]) {
 
 }
 
-export { redis, cache };
+export { redis, cache }
 
