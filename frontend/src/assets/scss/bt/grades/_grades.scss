@@ -40,6 +40,28 @@
 		}
 	}
 
+	.grades-recharts-container {
+		height: 450px;
+
+		.recharts-responsive-container {
+			position: absolute;
+		}
+	}
+
+	.grades-recharts-container-mobile {
+		height: 600px;
+
+		.recharts-responsive-container {
+			position: absolute;
+		}
+	}
+
+	.xlabel {
+		padding-left: 60px;
+		font-weight: bold;
+		color: $bt-light-text;
+	}
+
 	.disclaimer {
 		.info {
 			width: 15px;
