@@ -66,7 +66,7 @@ export async function editSchedule(schedule_ID: string, main_schedule: ScheduleI
 
 // update section selection in an existing schedule
 export async function setSections(schedule_ID: string, section_IDs: string[]): Promise<Schedule> {
-  const existingSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {section_IDs: section_IDs}, {returnDocument: 'after'})
+  const existingSchedule = await ScheduleModel.findByIdAndUpdate(schedule_ID, {primary_section_IDs: section_IDs}, {returnDocument: 'after'})
   if (!existingSchedule) {
     throw new Error("Unable to update existing schedule's section selection")
   }
