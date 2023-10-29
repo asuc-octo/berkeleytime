@@ -92,7 +92,7 @@ export default function EnrollmentGraph({
 							enrollmentData.map((item, i) => (
 								<Line
 									key={i}
-									name={`${item.title} • ${item.section_name}`}
+									name={`${item.title}`}
 									type="monotone"
 									dataKey={item.id}
 									stroke={vars.colors[item.colorId]}
