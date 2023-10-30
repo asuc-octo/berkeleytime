@@ -2,7 +2,6 @@ import BTLoader from 'components/Common/BTLoader';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
 import { useSemester } from 'graphql/hooks/semester';
 import { useUser } from 'graphql/hooks/user';
-import { useEffect } from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -23,7 +22,10 @@ export function Component() {
 
 	const [searchParams, setSearchParams] = useSearchParams();
 
-	const stringToSemester = (string: string) => {
+	const stringToSemester = (string: string | null) => {
+        if (!string) {
+            return undefined
+        }
 		const [semester, year] = string.trim().toLowerCase().split(' ');
 		return {
 			semester,
@@ -31,22 +33,18 @@ export function Component() {
 		};
 	};
 
-    console.log(searchParams.get('semester'))
-
 	const { semester, error: semesterError } = useSemester(
 		searchParams.has('semester') && searchParams.get('semester')
-			? stringToSemester(searchParams.get('semester')!)
+			? stringToSemester(searchParams.get('semester'))
 			: undefined
 	);
 
-    console.log(semester)
-
-	useEffect(() => {
-		const hasSemester = searchParams.has('semester');
-		if (!hasSemester) return;
-		searchParams.delete('semester');
-		setSearchParams(searchParams);
-	}, [searchParams, setSearchParams]);
+	// useEffect(() => {
+	// 	const hasSemester = searchParams.has('semester');
+	// 	if (!hasSemester) return;
+	// 	searchParams.delete('semester');
+	// 	setSearchParams(searchParams);
+	// }, [searchParams, setSearchParams]);
 
 	const [createScheduleMutation, { loading: isSaving, error: creationError }] = useCreateSchedule({
 		onCompleted: (data) => {
