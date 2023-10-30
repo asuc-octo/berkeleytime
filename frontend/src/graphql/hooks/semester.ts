@@ -30,7 +30,6 @@ export const useSemester = (
 	if (semester?.playlistId) {
 		latestSemester = semester as SemesterWithPlaylist;
 	} else if (data?.allPlaylists && data.allPlaylists.edges.length >= 1) {
-        console.log('entered second block')
 		if (semester) {
 			latestSemester = getNodes(data.allPlaylists)
 				.map((node) => playlistToSemester(node))
@@ -40,9 +39,7 @@ export const useSemester = (
 		} else {
 			latestSemester = getLatestSemester(getNodes(data.allPlaylists));
 		}
-	} else {
-        console.log('entered else')
-    }
+	}
 
 	return { semester: latestSemester, loading, error };
 };
