@@ -20,11 +20,18 @@ export default async (app: Application, server: ApolloServer) => {
   // Sets various HTTP headers to help protect our app
   app.use(helmet());
 
+  app.use((req, res, next) => {
+    console.log("DEBUGGING",req)
+    next()
+  })
+
   // load authentication
   passportLoader(app);
 
   app.use(
+  
     config.graphqlPath,
+    
     expressMiddleware(server, {
       context: async ({ req }) => ({
         user: {
