@@ -1,4 +1,6 @@
-const releases = [
+export type ReleaseType = { date: string; whatsNew: string[]; fixes: string[] };
+
+const releases: ReleaseType[] = [
 	{
 		date: 'Jan 24, 2021',
 		whatsNew: [

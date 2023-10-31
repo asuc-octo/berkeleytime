@@ -1,4 +1,6 @@
-function Log({ date, whatsNew, fixes }) {
+import { ReleaseType } from 'lib/releases';
+
+export default function Log({ date, whatsNew, fixes }: ReleaseType) {
 	return (
 		<div className="releases-log">
 			<div className="releases-log-date">
@@ -31,5 +33,3 @@ function Log({ date, whatsNew, fixes }) {
 		</div>
 	);
 }
-
-export default Log;
