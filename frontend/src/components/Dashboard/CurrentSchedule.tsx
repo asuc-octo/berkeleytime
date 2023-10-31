@@ -1,6 +1,9 @@
-/* eslint-disable */
+import { CurrentScheduleProps } from './type';
 
-function CurrentSchedule({ current }) {
+/**
+ * @audit this file is not used
+ */
+function CurrentSchedule({ current }: CurrentScheduleProps) {
 	return (
 		<div className="card dashboard-card">
 			<div className="dashboard-container">
@@ -10,7 +13,7 @@ function CurrentSchedule({ current }) {
 				<div className="dashboard-schedule-list">
 					<h5>{current.semester}</h5>
 					{current.classes.map((currentClass) => (
-						<p>
+						<p key={currentClass.name}>
 							{currentClass.name} <span>{currentClass.units} Units</span>
 						</p>
 					))}
