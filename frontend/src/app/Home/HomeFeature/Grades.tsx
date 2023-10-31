@@ -11,7 +11,7 @@ const Grades = () => {
 					<div className={styles.grades1}>
 						<img src={grades1} className={styles.image} alt="" />
 					</div>
-					<div className={styles.grades}>
+					<div className={styles.gradesRight}>
 						<div className={styles.grades2}>
 							<img src={grades2} className={styles.image} alt="" />
 						</div>

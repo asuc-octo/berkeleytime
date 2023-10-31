@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavProps } from 'react-bootstrap';
 import { Button } from 'bt/custom';
 import { ReactComponent as GoogleIcon } from '../../../assets/svg/profile/google.svg';
-import styles from "./Navigation.module.scss"
+import styles from './Navigation.module.scss';
 
 import { useUser } from '../../../graphql/hooks/user';
 
@@ -50,7 +50,7 @@ export default function Navigation({ landing }: { landing?: boolean }) {
 		<Navbar
 			collapseOnSelect={true}
 			expand="lg"
-			className={`${landing && styles.navbarDark} navbar-dark`}
+			className={`${landing && 'navbar-dark'}`}
 		>
 			<Navbar.Brand as={Link} to="/" className="bt-bold">
 				Berkeleytime

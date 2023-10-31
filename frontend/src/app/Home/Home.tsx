@@ -4,10 +4,9 @@ import Catalog from './HomeFeature/Catalog';
 import Grades from './HomeFeature/Grades';
 import HomeFooter from './HomeFooter/HomeFooter';
 import styles from './home.module.scss';
-import wave from './wave.svg';
+import Navigation from '../../components/Common/Navigation';
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-
 
 import dawn from './campanile/dawn.svg';
 import sunrise from './campanile/sunrise.svg';
@@ -32,8 +31,6 @@ const steps: Step[] = [
 	{ text: 'Dusk', colors: ['#10101B', '#202036'], reverse: true, image: dusk }
 ];
 
-
-
 const Home = () => {
 	const [date, setDate] = useState(new Date());
 
@@ -48,13 +45,15 @@ const Home = () => {
 	}, []);
 
 	return (
-		<div className={styles.root}>
-			<HomeHero step={step} date={date}/>
-			<Scheduler />
-			<Catalog />
-			<Grades />
-			<HomeFooter step={step}/>
-		</div>
+		<>
+			<div className={styles.root}>
+				<HomeHero step={step} date={date} />
+				<Scheduler />
+				<Catalog />
+				<Grades />
+				<HomeFooter step={step} />
+			</div>
+		</>
 	);
 };
 
