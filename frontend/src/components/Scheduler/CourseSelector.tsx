@@ -73,6 +73,7 @@ const CourseSelector = ({
 				Scheduler
 			</h2>
 			<BTSelect
+				courseSearch
 				isVirtual
 				value={null}
 				name="selectClass"
