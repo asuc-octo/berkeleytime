@@ -1,12 +1,11 @@
 import { Link } from 'react-router-dom';
-import Navigation from '../../../components/Common/Navigation';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Clock } from 'iconoir-react';
 
 import styles from './HomeHero.module.scss';
+import Navigation from '../../../components/Common/Navigation';
 
 import wave from './wave.svg';
-
 
 interface Step {
 	text: string;
@@ -15,7 +14,7 @@ interface Step {
 	image: string;
 }
 
-const HomeHero = ({step, date} : {step: Step, date: Date}) => {
+const HomeHero = ({ step, date }: { step: Step; date: Date }) => {
 	const root = useRef<HTMLDivElement>(null);
 
 	useLayoutEffect(() => {
@@ -27,39 +26,43 @@ const HomeHero = ({step, date} : {step: Step, date: Date}) => {
 	}, [step]);
 
 	return (
-		<div className={styles.root} ref={root}>
+		<>
+
+			<div className={styles.root} ref={root}>
 			<Navigation landing={true} />
-			<div className={styles.container}>
-				<div className={styles.content}>
-					<p className={styles.header}>Welcome to Berkeleytime!</p>
 
-					<p className={styles.description}>
-						Berkeleytime is a platform built, maintained, and run by students, just like you!
-					</p>
+				<div className={styles.container}>
+					<div className={styles.content}>
+						<p className={styles.header}>Welcome to Berkeleytime!</p>
 
-					<Link to="/catalog" className={styles.button}>
-						Explore courses
-					</Link>
+						<p className={styles.description}>
+							Berkeleytime is a platform built, maintained, and run by students, just like you!
+						</p>
+
+						<Link to="/catalog" className={styles.button}>
+							Explore courses
+						</Link>
+					</div>
+					<div className={styles.clock}>
+						<Clock height={24} width={24} />
+
+						<p className={styles.time}>
+							{date.toLocaleTimeString(undefined, {
+								hour: 'numeric',
+								minute: 'numeric',
+								second: 'numeric'
+							})}
+						</p>
+
+						<p className={styles.period}>{step.text}</p>
+					</div>
+
+					<img className={styles.campanile} src={step.image} />
 				</div>
-				<div className={styles.clock}>
-					<Clock height={24} width={24} />
 
-					<p className={styles.time}>
-						{date.toLocaleTimeString(undefined, {
-							hour: 'numeric',
-							minute: 'numeric',
-							second: 'numeric'
-						})}
-					</p>
-
-					<p className={styles.period}>{step.text}</p>
-				</div>
-
-				<img className={styles.campanile} src={step.image} />
+				<img className={styles.wave} src={wave} />
 			</div>
-
-			<img className={styles.wave} src={wave} />
-		</div>
+		</>
 	);
 };
 
