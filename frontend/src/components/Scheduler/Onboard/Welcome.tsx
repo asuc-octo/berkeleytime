@@ -1,26 +1,24 @@
 import { Button } from 'bt/custom';
 import BTSelect from 'components/Custom/Select';
-import { useState } from 'react';
+import { useGetSemestersQuery } from 'graphql';
+import { useEffect, useMemo, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { getNodes } from 'utils/graphql';
 import { useLocalStorageState } from 'utils/hooks';
 import {
-	Semester,
-	playlistToSemester,
-	semesterToString,
-	stringToSemester
+    Semester,
+    playlistToSemester,
+    semesterToString
 } from 'utils/playlists/semesters';
 import {
-	DEFAULT_SCHEDULE,
-	SCHEDULER_LOCALSTORAGE_KEY,
-	Schedule,
-	isScheduleEmpty
+    DEFAULT_SCHEDULE,
+    SCHEDULER_LOCALSTORAGE_KEY,
+    Schedule,
+    isScheduleEmpty
 } from 'utils/scheduler/scheduler';
 import { useUser } from '../../../graphql/hooks/user';
 import ProfileScheduleCard from './../../Profile/ProfileScheduleCard';
-import { useGetSemestersQuery } from 'graphql';
-import { useSemester } from 'graphql/hooks/semester';
-import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const SEMESTER_VALUES: { [label: string]: number } = {
 	spring: 0.0,
@@ -46,25 +44,26 @@ const Welcome = () => {
 		return parseInt(semester.year, 10) + SEMESTER_VALUES[semester.semester];
 	};
 
-	const sortSemestersByLatest = (semester: Semester[]) => {
-		return semester.sort((a, b) => SemesterToValue(b) - SemesterToValue(a));
-	};
-
 	const { data } = useGetSemestersQuery({});
 
-	const allSemesters: { label: string; value: Semester }[] = [];
+	type Option = { label: string; value: Semester };
 
-	if (data) {
-		sortSemestersByLatest(
-			getNodes(data.allPlaylists).map((semester) => playlistToSemester(semester))
-		).map((semester) => allSemesters.push({ label: semesterToString(semester), value: semester }));
-	}
+	const allSemesters = useMemo((): Option[] => {
+		return data
+			? getNodes(data.allPlaylists)
+					.map((semester) => playlistToSemester(semester))
+					.sort((a, b) => SemesterToValue(b) - SemesterToValue(a))
+					.map((semester) => ({ label: semesterToString(semester), value: semester }))
+			: [];
+	}, [data]);
 
-	const latestSemester = allSemesters[0];
-
-	const [selectedSemester, setSelectedSemester] = useState(latestSemester);
+	const [selectedSemester, setSelectedSemester] = useState<Option | null>(null);
 
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		setSelectedSemester(allSemesters[0]);
+	}, [allSemesters]);
 
 	return (
 		<Container className="welcome">
@@ -91,13 +90,13 @@ const Welcome = () => {
 							onChange={(newValue) => {
 								newValue && setSelectedSemester(newValue);
 							}}
-							defaultValue={latestSemester && latestSemester}
+							defaultValue={allSemesters[0]}
 						/>
 						<Button
 							onClick={() => {
 								setSchedule(DEFAULT_SCHEDULE);
 								navigate(
-									`/scheduler/new/${latestSemester ? '?semester=' + selectedSemester.label : ''}`
+									`/scheduler/new/${selectedSemester ? '?semester=' + selectedSemester.label : ''}`
 								);
 							}}
 						>
