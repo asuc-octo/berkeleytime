@@ -20,6 +20,7 @@ import { useUser } from '../../../graphql/hooks/user';
 import ProfileScheduleCard from './../../Profile/ProfileScheduleCard';
 import { useGetSemestersQuery } from 'graphql';
 import { useSemester } from 'graphql/hooks/semester';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const SEMESTER_VALUES: { [label: string]: number } = {
 	spring: 0.0,
@@ -36,10 +37,10 @@ const Welcome = () => {
 	);
 
 	const savedSchedules = user
-		? getNodes(user.schedules).sort((a, b) => Date.parse(b.dateCreated as string) - Date.parse(a.dateCreated as string))
+		? getNodes(user.schedules).sort(
+				(a, b) => Date.parse(b.dateCreated as string) - Date.parse(a.dateCreated as string)
+		  )
 		: [];
-
-	const resetDraft = () => setSchedule(DEFAULT_SCHEDULE);
 
 	const SemesterToValue = (semester: Semester) => {
 		return parseInt(semester.year, 10) + SEMESTER_VALUES[semester.semester];
@@ -49,7 +50,7 @@ const Welcome = () => {
 		return semester.sort((a, b) => SemesterToValue(b) - SemesterToValue(a));
 	};
 
-	const { data, loading, error } = useGetSemestersQuery({});
+	const { data } = useGetSemestersQuery({});
 
 	const allSemesters: { label: string; value: Semester }[] = [];
 
@@ -59,11 +60,11 @@ const Welcome = () => {
 		).map((semester) => allSemesters.push({ label: semesterToString(semester), value: semester }));
 	}
 
-	const { semester, error: semesterError } = useSemester(allSemesters[0] && allSemesters[0].value);
-
-	const latestSemester = { label: semesterToString(semester), value: semester as Semester };
+	const latestSemester = allSemesters[0];
 
 	const [selectedSemester, setSelectedSemester] = useState(latestSemester);
+
+	const navigate = useNavigate();
 
 	return (
 		<Container className="welcome">
@@ -90,11 +91,15 @@ const Welcome = () => {
 							onChange={(newValue) => {
 								newValue && setSelectedSemester(newValue);
 							}}
-							defaultValue={latestSemester}
+							defaultValue={latestSemester && latestSemester}
 						/>
 						<Button
-							href={`/scheduler/new/?semester=${selectedSemester.label}`}
-							onClick={resetDraft}
+							onClick={() => {
+								setSchedule(DEFAULT_SCHEDULE);
+								navigate(
+									`/scheduler/new/${latestSemester ? '?semester=' + selectedSemester.label : ''}`
+								);
+							}}
 						>
 							Start
 						</Button>
