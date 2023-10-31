@@ -1,8 +1,10 @@
-/* eslint-disable */
-
 import jemma from 'assets/img/about/2020-21/michael_1.jpg';
+import { ProfileProps } from './type';
 
-function Profile({ profile }) {
+/**
+ * @audit this file is not used
+ */
+function Profile({ profile }: ProfileProps) {
 	return (
 		<div className="card dashboard-card">
 			<div className="dashboard-container">
@@ -16,7 +18,7 @@ function Profile({ profile }) {
 					<div className="dashboard-profile-info-section">
 						<h4>Major(s)</h4>
 						{profile.majors.map((major) => (
-							<p>{major}</p>
+							<p key={major}>{major}</p>
 						))}
 					</div>
 					<div className="dashboard-profile-info-section">
