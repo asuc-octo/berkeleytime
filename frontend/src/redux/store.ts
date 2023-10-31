@@ -6,6 +6,7 @@ import enrollment from './reducers/enrollment';
 import authReducer from './auth/reducer';
 
 import { commonReducer } from './common/reducer';
+import { TypedUseSelectorHook, useSelector } from 'react-redux';
 
 const reducer = combineReducers({
 	grade,
@@ -15,6 +16,8 @@ const reducer = combineReducers({
 });
 
 export type ReduxState = ReturnType<typeof reducer>;
+
+export const useReduxSelector: TypedUseSelectorHook<ReduxState> = useSelector
 
 const composeEnhancers =
 	(window && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
