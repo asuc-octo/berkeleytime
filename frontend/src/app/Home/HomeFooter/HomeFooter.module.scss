@@ -1,11 +1,13 @@
 .root {
 	width: 100%;
 	display: flex;
+	flex-wrap: wrap;
 	flex-direction: column;
 
 	.info {
 		display: flex;
 		min-height: 18vh;
+		width: 100%;
 		flex-direction: row;
 		justify-content: space-between;
 		margin: 45px auto;
@@ -58,6 +60,7 @@
 		margin: 45px auto;
 		text-align: center;
 		color: #383838;
+		width: 45vw;
 
 		.sponsors {
 			display: flex;
@@ -71,16 +74,16 @@
 				object-fit: scale-down;
 			}
 		}
-	}
 
-	.blurb h4 {
-		font-weight: bold;
-		margin-bottom: 10px;
-	}
+		h4 {
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
 
-	.blurb h1 {
-		font-weight: bold;
-		margin-bottom: 10px;
+		h1 {
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
 	}
 
 	.footer {
@@ -92,6 +95,7 @@
 			text-align: left;
 			margin: 10px 30px;
 		}
+
 		.footerColumn h6 {
 			font-weight: bold;
 			margin-bottom: 8px;
@@ -113,6 +117,30 @@
 		.footerColumn a:hover {
 			color: #2f80ed;
 			transition: color 0.2s;
+		}
+	}
+
+	@media only screen and (max-width: 700px) {
+		margin: 45px auto;
+		flex-direction: column;
+
+		.infoBlock {
+			width: auto;
+			margin: 15px 25px;
+		}
+
+		.blurb {
+			margin: 35px auto;
+			width: 85vw;
+		}
+
+		.footer {
+			margin: 45px 0;
+			flex-direction: column;
+		}
+
+		.info {
+			flex-direction: column;
 		}
 	}
 }

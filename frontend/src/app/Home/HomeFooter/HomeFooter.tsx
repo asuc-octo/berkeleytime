@@ -11,11 +11,11 @@ const HomeFooter = () => {
 				<div className={styles.infoBlock}>
 					<h2>What We Do</h2>
 					<p>
-						We're a small group of student volunteers at UC Berkeley that actively builds, improves,
-						and maintains Berkeleytime.
+						We're a small group of student volunteers at UC Berkeley who actively build, improve,
+						and maintain Berkeleytime.
 					</p>
 					<p>
-						<a>
+						<a href="/about">
 							Read More <ArrowRight width={'1.15em'} height={'1.15em'} />
 						</a>
 					</p>
