@@ -98,7 +98,7 @@ export default function EnrollmentGraph({
 									stroke={vars.colors[item.colorId]}
 									strokeWidth={3}
 									dot={false}
-									activeDot={{ onMouseOver: updateLineHover }}
+									activeDot={{ onMouseOver: (_, e) => updateLineHover(e.dataKey, e.payload.name) }}
 									connectNulls
 								/>
 							))}
