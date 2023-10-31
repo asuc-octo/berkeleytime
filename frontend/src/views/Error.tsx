@@ -1,8 +1,8 @@
-import { Container, Row, Col, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
-import empty_graph from '../assets/img/images/empty-graph.png';
 import { Button } from 'bt/custom';
+import { ButtonGroup, ButtonToolbar, Col, Container, Row } from 'react-bootstrap';
+import empty_graph from '../assets/img/images/empty-graph.png';
 
-function Error() {
+export default function Error() {
 	return (
 		<div className="error viewport-app-404">
 			<Container>
@@ -16,7 +16,7 @@ function Error() {
 						<p>Here are a couple of things you can do.</p>
 						<ButtonToolbar>
 							<ButtonGroup className="mr-3 mb-2">
-								<Button className="bt-btn-primary" size="bt-lg" href={{ as_link: '/catalog' }}>
+								<Button className="bt-btn-primary" href={{ as_link: '/catalog' }}>
 									Back to Courses
 								</Button>
 							</ButtonGroup>
@@ -27,5 +27,3 @@ function Error() {
 		</div>
 	);
 }
-
-export default Error;
