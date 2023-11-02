@@ -57,3 +57,20 @@ services:
     restart: always
     networks:
       - bt
+  minio:
+    image: 'minio/minio:latest'
+    ports:
+      - '9000:9000'
+      - '9090:9090'
+    environment:
+      MINIO_ROOT_USER: 'root'
+      MINIO_ROOT_PASSWORD: 'password'
+    networks:
+      - bt
+    volumes:
+      - 'minio:/data/minio'
+    command: minio server /data/minio --console-address ":9090"
+volumes:
+  minio:
+    driver: local
+
