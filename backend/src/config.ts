@@ -24,6 +24,11 @@ export interface Config {
   SESSION_SECRET: string;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
+  S3_ENDPOINT: string,
+  S3_PORT: number,
+  S3_ACCESS_KEY_ID: string,
+  S3_SECRET_ACCESS_KEY: string,
+  S3_MONGO_BACKUP_BUCKET: string,
 }
 
 // All your secrets, keys go here
@@ -39,4 +44,9 @@ export const config: Config = {
   SESSION_SECRET: env("SESSION_SECRET"),
   GOOGLE_CLIENT_ID: env("GOOGLE_CLIENT_ID"),
   GOOGLE_CLIENT_SECRET: env("GOOGLE_CLIENT_SECRET"),
+  S3_ENDPOINT: env("S3_ENDPOINT"),
+  S3_PORT: parseInt(env("S3_PORT")),
+  S3_ACCESS_KEY_ID: env("S3_ACCESS_KEY_ID"),
+  S3_SECRET_ACCESS_KEY: env("S3_SECRET_ACCESS_KEY"),
+  S3_MONGO_BACKUP_BUCKET: env("S3_MONGO_BACKUP_BUCKET"),
 };
