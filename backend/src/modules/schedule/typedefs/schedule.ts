@@ -16,10 +16,16 @@ const typedef = gql`
     days_of_week: String
   }
 
+  input CourseInput {
+    class_ID: String!
+    primary_section_ID: String
+    secondary_section_IDs: [String!]
+  }
+
   input ScheduleInput {
     name: String
     created_by: String!,
-    courses: [Course!],
+    courses: [CourseInput!],
     is_public: Boolean,
     term: TermInput!,
     custom_events: [CustomEventInput!]
@@ -70,7 +76,7 @@ const typedef = gql`
     """
     Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule.
     """
-    secondary_section_ID: [String]
+    secondary_section_IDs: [String!]
   }
 
   type CustomEvent {
@@ -109,7 +115,7 @@ const typedef = gql`
     """
     For the schedule specified by the ID, modifies the courses field and returns the updated schedule.
     """
-    setSelectedClasses(id: ID!, courses: [Course!]!): Schedule @auth
+    setSelectedClasses(id: ID!, courses: [CourseInput!]!): Schedule @auth
   }
 `;
 
