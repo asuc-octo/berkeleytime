@@ -7,7 +7,7 @@ export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule 
     name: schedule.name,
     created_by: schedule.created_by,
     is_public: schedule.is_public,
-    courses: schedule.courses,
+    courses: schedule.courses ? schedule.courses.map(formatCourse) : undefined,
     term: formatTerm(schedule.term.semester, schedule.term.year),
     custom_events: schedule.custom_events ? schedule.custom_events.map(formatCustomEvents) : undefined,
     created: schedule.createdAt.toISOString(),
@@ -33,4 +33,10 @@ function formatCustomEvents(customEvent: CustomEventType): ScheduleModule.Custom
     }
 }
 
-function formatCourse(course: )
+function formatCourse(course: CourseType): ScheduleModule.Course{
+  return {
+    class_ID: course.class_ID,
+    primary_section_ID: course.primary_section_ID,
+    secondary_section_IDs: course.secondary_section_IDs,
+  }
+}
