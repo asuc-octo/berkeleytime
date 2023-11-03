@@ -66,21 +66,22 @@ export const ScheduleSchema = new Schema({
     alias: "public",
     default: false,
   },
-  class_IDs: {
-    type: [String],
-    trim: true,
-    required: false
-  },
-  primary_section_IDs: {
-    type: [String],
-    trim: true,
-    required: false
-  },
-  secondary_section_IDs: {
-    type: [String],
-    trim: true,
-    required: false
-  },
+  courses: [
+    {
+      class_ID: {
+        type: String,
+        trim: true,
+      },
+      primary_section_ID: {
+        type: String,
+        trim: true,
+      },
+      secondary_section_ID: {
+        type: [String],
+        trim: true,
+      }
+    }
+  ],
   term: {
     type: TermSchema,
     required: true

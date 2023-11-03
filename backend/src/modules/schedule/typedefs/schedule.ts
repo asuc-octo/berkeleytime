@@ -19,9 +19,7 @@ const typedef = gql`
   input ScheduleInput {
     name: String
     created_by: String!,
-    class_IDs: [String!],
-    primary_section_IDs: [String!],
-    secondary_section_IDs: [String!],
+    courses: [Course!],
     is_public: Boolean,
     term: TermInput!,
     custom_events: [CustomEventInput!]
@@ -49,23 +47,30 @@ const typedef = gql`
     """
     is_public: Boolean!
     """
-    Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
+    Courses, see the Course type below
     """
-    class_IDs: [String!]
-    """
-    Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule.
-    """
-    primary_section_IDs: [String!]
-    """
-    Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule.
-    """
-    secondary_section_IDs: [String!]
+    courses: [Course!]
     """
     Custom events, such as club meetings, that the user has added to their schedule.
     """
     custom_events: [CustomEvent!]
     created: String!
     revised: String!
+  }
+
+  type Course {
+    """
+    Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
+    """
+    class_ID: String!
+    """
+    Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule.
+    """
+    primary_section_ID: String
+    """
+    Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule.
+    """
+    secondary_section_ID: [String]
   }
 
   type CustomEvent {
@@ -102,13 +107,9 @@ const typedef = gql`
     """
     editExistingSchedule(id: ID!, main_schedule: ScheduleInput!): Schedule @auth
     """
-    For the schedule specified by the ID, modifies the section ID field and returns the updated schedule.
+    For the schedule specified by the ID, modifies the courses field and returns the updated schedule.
     """
-    setSelectedSections(id: ID!, section_IDs: [String!]!): Schedule @auth
-    """
-    For the schedule specified by the ID, modifies the class ID field and returns the updated schedule.
-    """
-    setSelectedClasses(id: ID!, class_IDs: [String!]!): Schedule @auth
+    setSelectedClasses(id: ID!, courses: [Course!]!): Schedule @auth
   }
 `;
 
