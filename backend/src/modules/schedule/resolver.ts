@@ -1,6 +1,6 @@
 import { getSchedulesByUser, getScheduleByID, removeSchedule, createSchedule, setClasses, editSchedule } from "./controller";
 import { ScheduleModule } from "./generated-types/module-types";
-import { ScheduleInput, ScheduleCourseInput } from "../../generated-types/graphql";
+import { ScheduleInput, SelectedCourseInput } from "../../generated-types/graphql";
 
 const resolvers: ScheduleModule.Resolvers = {
   Query: {
@@ -21,7 +21,7 @@ const resolvers: ScheduleModule.Resolvers = {
     editExistingSchedule(_parent, args: {id: string, main_schedule: ScheduleInput}) {
       return editSchedule(args.id, args.main_schedule)
     },
-    setSelectedClasses(_parent, args: {id: string, courses: ScheduleCourseInput[]}) {
+    setSelectedClasses(_parent, args: {id: string, courses: SelectedCourseInput[]}) {
       return setClasses(args.id, args.courses)
     }
   }

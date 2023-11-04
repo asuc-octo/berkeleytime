@@ -16,7 +16,7 @@ const typedef = gql`
     days_of_week: String
   }
 
-  input ScheduleCourseInput {
+  input SelectedCourseInput {
     class_ID: String!
     primary_section_ID: String
     secondary_section_IDs: [String!]
@@ -25,7 +25,7 @@ const typedef = gql`
   input ScheduleInput {
     name: String
     created_by: String!,
-    courses: [ScheduleCourseInput!],
+    courses: [SelectedCourseInput!],
     is_public: Boolean,
     term: TermInput!,
     custom_events: [CustomEventInput!]
@@ -53,9 +53,9 @@ const typedef = gql`
     """
     is_public: Boolean!
     """
-    Courses, see the ScheduleCourse type below
+    Courses, see the SelectedCourse type below
     """
-    courses: [ScheduleCourse!]
+    courses: [SelectedCourse!]
     """
     Custom events, such as club meetings, that the user has added to their schedule.
     """
@@ -64,7 +64,7 @@ const typedef = gql`
     revised: String!
   }
 
-  type ScheduleCourse {
+  type SelectedCourse {
     """
     Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
     """
@@ -115,7 +115,7 @@ const typedef = gql`
     """
     For the schedule specified by the ID, modifies the courses field and returns the updated schedule.
     """
-    setSelectedClasses(id: ID!, courses: [ScheduleCourseInput!]!): Schedule @auth
+    setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!): Schedule @auth
   }
 `;
 

@@ -182,7 +182,7 @@ export type MutationRemoveScheduleByIdArgs = {
 
 
 export type MutationSetSelectedClassesArgs = {
-  courses: Array<ScheduleCourseInput>;
+  courses: Array<SelectedCourseInput>;
   id: Scalars['ID'];
 };
 
@@ -269,8 +269,8 @@ export type Schedule = {
   __typename?: 'Schedule';
   /** The ObjectID associated with the schedule record */
   _id?: Maybe<Scalars['ID']>;
-  /** Courses, see the ScheduleCourse type below */
-  courses?: Maybe<Array<ScheduleCourse>>;
+  /** Courses, see the SelectedCourse type below */
+  courses?: Maybe<Array<SelectedCourse>>;
   created: Scalars['String'];
   /** Identifier (probably email) for the user who created the schedule (such as oski@bereley.edu). */
   created_by: Scalars['String'];
@@ -285,24 +285,8 @@ export type Schedule = {
   term: TermOutput;
 };
 
-export type ScheduleCourse = {
-  __typename?: 'ScheduleCourse';
-  /** Identifiers (probably cs-course-ids) for the classes the user has added to their schedule. */
-  class_ID: Scalars['String'];
-  /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
-  primary_section_ID?: Maybe<Scalars['String']>;
-  /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
-  secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
-};
-
-export type ScheduleCourseInput = {
-  class_ID: Scalars['String'];
-  primary_section_ID?: InputMaybe<Scalars['String']>;
-  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-};
-
 export type ScheduleInput = {
-  courses?: InputMaybe<Array<ScheduleCourseInput>>;
+  courses?: InputMaybe<Array<SelectedCourseInput>>;
   created_by: Scalars['String'];
   custom_events?: InputMaybe<Array<CustomEventInput>>;
   is_public?: InputMaybe<Scalars['Boolean']>;
@@ -334,6 +318,22 @@ export type Section = {
   timeStart?: Maybe<Scalars['String']>;
   waitlistCount: Scalars['Int'];
   waitlistMax: Scalars['Int'];
+};
+
+export type SelectedCourse = {
+  __typename?: 'SelectedCourse';
+  /** Identifiers (probably cs-course-ids) for the classes the user has added to their schedule. */
+  class_ID: Scalars['String'];
+  /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
+  primary_section_ID?: Maybe<Scalars['String']>;
+  /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
+  secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
+};
+
+export type SelectedCourseInput = {
+  class_ID: Scalars['String'];
+  primary_section_ID?: InputMaybe<Scalars['String']>;
+  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type Semester =
@@ -473,10 +473,10 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   Schedule: ResolverTypeWrapper<Schedule>;
-  ScheduleCourse: ResolverTypeWrapper<ScheduleCourse>;
-  ScheduleCourseInput: ScheduleCourseInput;
   ScheduleInput: ScheduleInput;
   Section: ResolverTypeWrapper<Section>;
+  SelectedCourse: ResolverTypeWrapper<SelectedCourse>;
+  SelectedCourseInput: SelectedCourseInput;
   Semester: Semester;
   String: ResolverTypeWrapper<Scalars['String']>;
   TermInput: TermInput;
@@ -508,10 +508,10 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   Schedule: Schedule;
-  ScheduleCourse: ScheduleCourse;
-  ScheduleCourseInput: ScheduleCourseInput;
   ScheduleInput: ScheduleInput;
   Section: Section;
+  SelectedCourse: SelectedCourse;
+  SelectedCourseInput: SelectedCourseInput;
   String: Scalars['String'];
   TermInput: TermInput;
   TermOutput: TermOutput;
@@ -666,7 +666,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  courses?: Resolver<Maybe<Array<ResolversTypes['ScheduleCourse']>>, ParentType, ContextType>;
+  courses?: Resolver<Maybe<Array<ResolversTypes['SelectedCourse']>>, ParentType, ContextType>;
   created?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   custom_events?: Resolver<Maybe<Array<ResolversTypes['CustomEvent']>>, ParentType, ContextType>;
@@ -674,13 +674,6 @@ export type ScheduleResolvers<ContextType = any, ParentType extends ResolversPar
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   revised?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   term?: Resolver<ResolversTypes['TermOutput'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ScheduleCourseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ScheduleCourse'] = ResolversParentTypes['ScheduleCourse']> = {
-  class_ID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  primary_section_ID?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -706,6 +699,13 @@ export type SectionResolvers<ContextType = any, ParentType extends ResolversPare
   timeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   waitlistCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   waitlistMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SelectedCourseResolvers<ContextType = any, ParentType extends ResolversParentTypes['SelectedCourse'] = ResolversParentTypes['SelectedCourse']> = {
+  class_ID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  primary_section_ID?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -749,8 +749,8 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
-  ScheduleCourse?: ScheduleCourseResolvers<ContextType>;
   Section?: SectionResolvers<ContextType>;
+  SelectedCourse?: SelectedCourseResolvers<ContextType>;
   TermOutput?: TermOutputResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };

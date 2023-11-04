@@ -1,5 +1,5 @@
 import { ScheduleModule } from "./generated-types/module-types";
-import { CustomEventType, ScheduleType, ScheduleCourseType } from "../../db/schedule";
+import { CustomEventType, ScheduleType, SelectedCourseType } from "../../db/schedule";
 
 export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule {
   return {
@@ -33,7 +33,7 @@ function formatCustomEvents(customEvent: CustomEventType): ScheduleModule.Custom
     }
 }
 
-function formatCourse(course: ScheduleCourseType): ScheduleModule.ScheduleCourse{
+function formatCourse(course: SelectedCourseType): ScheduleModule.SelectedCourse{
   return {
     class_ID: course.class_ID,
     primary_section_ID: course.primary_section_ID,
