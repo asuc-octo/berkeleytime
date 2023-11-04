@@ -1,5 +1,5 @@
 import { formatSchedule } from "./formatter";
-import { Schedule, ScheduleInput, CustomEventInput, CourseInput } from "../../generated-types/graphql";
+import { Schedule, ScheduleInput, CustomEventInput, ScheduleCourseInput } from "../../generated-types/graphql";
 import { ScheduleModel } from "../../db/schedule";
 import { omitBy } from "lodash";
 
@@ -65,7 +65,7 @@ export async function editSchedule(schedule_ID: string, main_schedule: ScheduleI
 }
 
 // update class selection in an existing schedule
-export async function setClasses(scheduleID: string, courses: CourseInput[]): Promise<Schedule> {
+export async function setClasses(scheduleID: string, courses: ScheduleCourseInput[]): Promise<Schedule> {
   const existingSchedule = await ScheduleModel.findByIdAndUpdate(scheduleID, {courses: courses}, {returnDocument: 'after'})
   if (!existingSchedule) {
     throw new Error("Unable to update existing schedule's class selection")

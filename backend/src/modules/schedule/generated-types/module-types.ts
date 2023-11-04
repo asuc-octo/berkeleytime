@@ -4,7 +4,7 @@ export namespace ScheduleModule {
   interface DefinedFields {
     TermOutput: 'year' | 'semester';
     Schedule: '_id' | 'name' | 'created_by' | 'term' | 'is_public' | 'courses' | 'custom_events' | 'created' | 'revised';
-    Course: 'class_ID' | 'primary_section_ID' | 'secondary_section_IDs';
+    ScheduleCourse: 'class_ID' | 'primary_section_ID' | 'secondary_section_IDs';
     CustomEvent: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
     Query: 'schedulesByUser' | 'scheduleByID';
     Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'editExistingSchedule' | 'setSelectedClasses';
@@ -12,24 +12,24 @@ export namespace ScheduleModule {
   
   interface DefinedInputFields {
     CustomEventInput: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
-    CourseInput: 'class_ID' | 'primary_section_ID' | 'secondary_section_IDs';
+    ScheduleCourseInput: 'class_ID' | 'primary_section_ID' | 'secondary_section_IDs';
     ScheduleInput: 'name' | 'created_by' | 'courses' | 'is_public' | 'term' | 'custom_events';
   };
   
   export type TermOutput = Pick<Types.TermOutput, DefinedFields['TermOutput']>;
   export type CustomEventInput = Pick<Types.CustomEventInput, DefinedInputFields['CustomEventInput']>;
-  export type CourseInput = Pick<Types.CourseInput, DefinedInputFields['CourseInput']>;
+  export type ScheduleCourseInput = Pick<Types.ScheduleCourseInput, DefinedInputFields['ScheduleCourseInput']>;
   export type ScheduleInput = Pick<Types.ScheduleInput, DefinedInputFields['ScheduleInput']>;
   export type TermInput = Types.TermInput;
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;
-  export type Course = Pick<Types.Course, DefinedFields['Course']>;
+  export type ScheduleCourse = Pick<Types.ScheduleCourse, DefinedFields['ScheduleCourse']>;
   export type CustomEvent = Pick<Types.CustomEvent, DefinedFields['CustomEvent']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   export type Mutation = Pick<Types.Mutation, DefinedFields['Mutation']>;
   
   export type TermOutputResolvers = Pick<Types.TermOutputResolvers, DefinedFields['TermOutput'] | '__isTypeOf'>;
   export type ScheduleResolvers = Pick<Types.ScheduleResolvers, DefinedFields['Schedule'] | '__isTypeOf'>;
-  export type CourseResolvers = Pick<Types.CourseResolvers, DefinedFields['Course'] | '__isTypeOf'>;
+  export type ScheduleCourseResolvers = Pick<Types.ScheduleCourseResolvers, DefinedFields['ScheduleCourse'] | '__isTypeOf'>;
   export type CustomEventResolvers = Pick<Types.CustomEventResolvers, DefinedFields['CustomEvent'] | '__isTypeOf'>;
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   export type MutationResolvers = Pick<Types.MutationResolvers, DefinedFields['Mutation']>;
@@ -37,7 +37,7 @@ export namespace ScheduleModule {
   export interface Resolvers {
     TermOutput?: TermOutputResolvers;
     Schedule?: ScheduleResolvers;
-    Course?: CourseResolvers;
+    ScheduleCourse?: ScheduleCourseResolvers;
     CustomEvent?: CustomEventResolvers;
     Query?: QueryResolvers;
     Mutation?: MutationResolvers;
@@ -64,7 +64,7 @@ export namespace ScheduleModule {
       created?: gm.Middleware[];
       revised?: gm.Middleware[];
     };
-    Course?: {
+    ScheduleCourse?: {
       '*'?: gm.Middleware[];
       class_ID?: gm.Middleware[];
       primary_section_ID?: gm.Middleware[];
