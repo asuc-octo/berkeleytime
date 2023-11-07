@@ -2,6 +2,8 @@
  * A bunch of utility functions
  */
 
+import { TelebearsType } from 'redux/enrollment/types';
+
 /**
  * Returns a paragraph tag styled with color with respect to percentage
  * @param {string} text text in the paragraph tag
@@ -99,7 +101,7 @@ function getGradeColor(grade: string | undefined) {
  *  TODO: remove the any's
  *
  */
-function getEnrollmentDay(selectedPoint: any, telebears: any) {
+function getEnrollmentDay(selectedPoint: any, telebears: TelebearsType) {
 	let period = '';
 	let daysAfterPeriodStarts = 0;
 	if (selectedPoint.day < telebears.phase2_start_day) {
