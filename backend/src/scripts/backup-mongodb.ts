@@ -35,14 +35,15 @@ const error = async (client : Minio.Client, toDelete : string[]) => {
 
     console.log("RUNNING MONGODUMP\n---------------------\n")
 
-    const dumpedFiles:string[][] = [];
+    const dumpedFiles:string[] = [];
     
     const fileFinder = new RegExp(/(?:writing )(.*)(?: to )(.*)\n/)
     dump.stderr.on('data', (data) => {
         // mongodump output goes by default to stderr
         const matches = data.toString().match(fileFinder)
         if (matches != null) {
-            dumpedFiles.push([matches[1], matches[2]])
+            dumpedFiles.push(matches[1] + ".bson")
+            dumpedFiles.push(matches[1] + ".metadata.json")
         }
         console.log(data.toString())
     });
@@ -57,14 +58,14 @@ const error = async (client : Minio.Client, toDelete : string[]) => {
         const folderName = (new Date()).getTime().toString()
         console.log(`--------------------------\nSAVING BACKUP TO: ${folderName} \n\n`)
         let errored = false
-        dumpedFiles.forEach((file) => {
+        dumpedFiles.forEach((file:string) => {
             const fileStream = Fs.createReadStream(file[1])
-            Fs.stat(file[1], (err, stats) => {
+            Fs.stat(file, (err, stats) => {
                 if (err) {
                     errored = true
                     return
                 }
-                const name = `${folderName}/${file[0]}`
+                const name = `${folderName}/${file}`
                 client.putObject(config.S3_MONGO_BACKUP_BUCKET, name, fileStream, stats.size, (err:any, objInfo:any) => {
                     puts++
                     if (err) {
