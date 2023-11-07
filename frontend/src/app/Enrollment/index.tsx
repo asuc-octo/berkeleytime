@@ -16,7 +16,7 @@ import {
 	fetchEnrollClass,
 	fetchEnrollContext,
 	fetchEnrollFromUrl
-} from '../../redux/enrollment/actions';
+} from 'redux/enrollment/actions';
 import { EnrollmentStatusType, TelebearsType } from 'redux/enrollment/types';
 
 const toUrlForm = (string: string) => {

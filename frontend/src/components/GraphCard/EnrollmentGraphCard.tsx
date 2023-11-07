@@ -10,7 +10,7 @@ import GraphEmpty from '../Graphs/GraphEmpty.jsx';
 
 import { EnrollmentDataType, EnrollmentStatusType, TelebearsType } from 'redux/enrollment/types';
 import { useReduxSelector } from 'redux/store';
-import { fetchEnrollData } from '../../redux/enrollment/actions';
+import { fetchEnrollData } from 'redux/enrollment/actions';
 import { FormattedCourseType } from 'redux/types';
 
 export default function EnrollmentGraphCard({

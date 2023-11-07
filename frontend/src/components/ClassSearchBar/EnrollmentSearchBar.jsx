@@ -2,9 +2,86 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import hash from 'object-hash';
 
-import { fetchEnrollSelected } from '../../redux/actions';
+import { fetchEnrollSelected } from 'redux/enrollment/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import BTSelect from 'components/Custom/Select';
+
+/** typed portions
+ * 
+ * const buildCoursesOptions = (courses: CourseSnapshotType[]) => {
+	if (!courses) {
+		return [];
+	}
+	const options = courses.map((course) => ({
+		value: course.id,
+		label: `${course.abbreviation} ${course.course_number}`,
+		course
+	}));
+
+	return options;
+};
+
+const capitalize = (string: string) => {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
+const getSectionSemester = (section: SectionType) => {
+	return `${capitalize(section.semester)} ${section.year}`;
+};
+
+const buildPrimaryOptions = (sections: SectionType[]) => {
+	const ret = [];
+	const map = new Map();
+
+	for (const section of sections) {
+		const semester = getSectionSemester(section);
+		if (!map.has(semester)) {
+			map.set(semester, true);
+			ret.push({
+				value: semester,
+				label: semester
+			});
+		}
+	}
+
+	return ret;
+};
+
+const buildSecondaryOptions = (semesters: SectionType[], selectPrimary: string) => {
+	if (semesters.length === 0 || selectPrimary === undefined || selectPrimary === '') {
+		return [];
+	}
+
+	const ret = [];
+
+	const sections = semesters.filter((semester) => getSectionSemester(semester) === selectPrimary)[0]
+		.sections;
+	if (sections.length > 1) {
+		ret.push({ value: 'all', label: 'All Instructors' });
+	}
+
+	for (const section of sections) {
+		const instructor = `${
+			section.instructor === null || section.instructor === '' ? 'None' : section.instructor
+		} / ${section.section_number}`;
+		ret.push({
+			value: instructor,
+			label: instructor,
+			sectionNumber: instructor.split(' / ')[1],
+			sectionId: section.section_id
+		});
+	}
+	return ret;
+};
+
+const customStyles = {
+	clearIndicator: (provided: Record<string, string | number>): Record<string, string | number> => ({
+		...provided,
+		marginRight: 0,
+		paddingRight: 0
+	})
+};
+ */
 
 const buildCoursesOptions = (courses) => {
 	if (!courses) {
