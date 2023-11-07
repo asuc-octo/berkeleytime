@@ -610,8 +610,6 @@ var grades = [
 	{ name: 'F', classA: 0, classB: 2 }
 ];
 
-var possibleGrades = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F', 'P', 'NP'];
-
 var colors = ['#4EA6FB', '#6AE086', '#ED5186', '#F9E152'];
 
 const vars = {
@@ -634,7 +632,7 @@ const vars = {
 	optionsEnrollment,
 	responsiveEnrollment,
 	grades,
-	possibleGrades
+
 };
 
 export default vars;
