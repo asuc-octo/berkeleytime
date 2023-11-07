@@ -1,4 +1,4 @@
-import { CourseType } from "../db/course";
+import { CourseType } from "../models/course";
 
 /**
  * Used to map between courses and grades

@@ -9,7 +9,7 @@ import type { Application } from "express";
 import session from "express-session";
 import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
-import { UserModel } from "../../db/user";
+import { UserModel } from "../../models/user";
 import { config } from "../../config";
 
 const LOGIN_ROUTE = "/login";

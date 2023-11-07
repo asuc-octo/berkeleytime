@@ -1,6 +1,6 @@
 import { formatSchedule } from "./formatter";
 import { Schedule, ScheduleInput, CustomEventInput, SelectedCourseInput } from "../../generated-types/graphql";
-import { ScheduleModel } from "../../db/schedule";
+import { ScheduleModel } from "../../models/schedule";
 import { omitBy } from "lodash";
 
 

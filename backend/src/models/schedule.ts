@@ -1,6 +1,6 @@
 import mongoose, { Schema, InferSchemaType, Document } from "mongoose";
 
-export const TermSchema = new Schema({
+export const termSchema = new Schema({
   year: {
     type: Number,
     required: true,
@@ -12,7 +12,7 @@ export const TermSchema = new Schema({
   },
 }, { _id : false });
 
-export const CustomEventSchema = new Schema({
+export const customEventSchema = new Schema({
   start_time: { 
     type: String,
     required: true,
@@ -66,7 +66,7 @@ export const SelectedCourseSchema = new Schema({
   }
 });
 
-export const ScheduleSchema = new Schema({
+export const scheduleSchema = new Schema({
   name: {
     type: String,
     required: false
@@ -88,11 +88,11 @@ export const ScheduleSchema = new Schema({
     required: true,
   },
   term: {
-    type: TermSchema,
+    type: termSchema,
     required: true
   },
   custom_events: {
-    type: [CustomEventSchema],
+    type: [customEventSchema],
     required: false
   }
 }, { timestamps: true });

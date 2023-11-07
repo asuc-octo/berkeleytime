@@ -1,4 +1,4 @@
-import { GradeModel, GradeType } from "../../db/grade";
+import { GradeModel, GradeType } from "../../models/grade";
 import { TermInput } from "../../generated-types/graphql";
 import { omitBy, isNil } from "lodash";
 
