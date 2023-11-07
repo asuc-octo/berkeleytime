@@ -4,3 +4,5 @@ data/
 .env
 coverage/
 .DS_Store
+key.pem
+cert.pem
