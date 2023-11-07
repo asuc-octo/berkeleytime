@@ -6,9 +6,11 @@ import { expressMiddleware } from "@apollo/server/express4";
 
 import passportLoader from "./passport";
 import { config } from "../../config";
+import cookieParser from "cookie-parser"; // Add this line
 
 export default async (app: Application, server: ApolloServer) => {
   // Body parser only needed during POST on the graphQL path
+
   app.use(json());
 
   // Cors configuration
@@ -19,11 +21,6 @@ export default async (app: Application, server: ApolloServer) => {
 
   // Sets various HTTP headers to help protect our app
   app.use(helmet());
-
-  app.use((req, res, next) => {
-    console.log("DEBUGGING",req)
-    next()
-  })
 
   // load authentication
   passportLoader(app);

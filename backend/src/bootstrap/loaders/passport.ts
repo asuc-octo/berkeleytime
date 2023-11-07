@@ -23,14 +23,7 @@ const SUCCESS_REDIRECT = config.backendPath + config.graphqlPath;
 const FAILURE_REDIRECT = config.backendPath + "/fail";
 
 const SCOPE = ['profile', 'email']
-const setSameSite = (req, res, next) => {
-  const userAgent = req.headers['user-agent'];
-  const isChromeBrowser = userAgent.includes('Chrome');
-  const sameSite = isChromeBrowser ? 'lax' : 'none';
 
-  req.session.cookie.sameSite = sameSite;
-  next();
-};
 
 
 export default async (app: Application) => {
@@ -42,13 +35,13 @@ export default async (app: Application) => {
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: !config.isDev,
+      secure: true,
       httpOnly: true,
       maxAge: 1000 * 60 * 60, // 1 hour
+      sameSite: "none"
     },
     rolling: true,
   }));
-  app.use(setSameSite);
 
   app.use(passport.initialize());
   app.use(passport.session());
