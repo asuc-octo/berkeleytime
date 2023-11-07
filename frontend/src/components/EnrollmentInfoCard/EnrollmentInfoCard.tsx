@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { getEnrollmentDay, applyIndicatorEnrollment } from '../../utils/utils';
+import { TelebearsType } from 'redux/enrollment/types';
 
 export default function EnrollmentInfoCard({
 	title,
@@ -11,6 +12,21 @@ export default function EnrollmentInfoCard({
 	color,
 	enrolledMax,
 	waitlistedMax
+}: {
+	title: string;
+	subtitle: string;
+	semester: string;
+	instructor: string;
+	selectedPoint: {
+		enrolled: number;
+		enrolled_percent: number;
+		waitlisted: number;
+		waitlisted_percent: number;
+	};
+	telebears: TelebearsType;
+	color: string;
+	enrolledMax: number;
+	waitlistedMax: number;
 }) {
 	const { period, daysAfterPeriodStarts } = useMemo(
 		() => getEnrollmentDay(selectedPoint, telebears),
