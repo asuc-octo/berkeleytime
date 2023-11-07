@@ -10,7 +10,7 @@ import {
 	ResponsiveContainer
 } from 'recharts';
 
-import vars from '../../variables/Variables';
+import vars from '../../utils/variables';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
 
 const EmptyLabel = (props) => {
@@ -92,13 +92,13 @@ export default function EnrollmentGraph({
 							enrollmentData.map((item, i) => (
 								<Line
 									key={i}
-									name={`${item.title} • ${item.section_name}`}
+									name={`${item.title}`}
 									type="monotone"
 									dataKey={item.id}
 									stroke={vars.colors[item.colorId]}
 									strokeWidth={3}
 									dot={false}
-									activeDot={{ onMouseOver: updateLineHover }}
+									activeDot={{ onMouseOver: (_, e) => updateLineHover(e.dataKey, e.payload.name) }}
 									connectNulls
 								/>
 							))}
