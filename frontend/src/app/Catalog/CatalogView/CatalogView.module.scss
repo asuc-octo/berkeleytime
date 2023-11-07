@@ -207,6 +207,18 @@
 .sectionContainer {
 	display: flex;
 	flex-direction: column;
+
+	& > p {
+		text-transform: capitalize;
+		font-size: 14px;
+		color: $bt-light-text;
+	}
+
+	& > h6 {
+		display: flex;
+		gap: 4px;
+		align-items: flex-start;
+	}
 }
 
 .separator {
@@ -263,9 +275,11 @@
 	text-transform: none !important;
 	border-bottom: 1.5px solid #eaeaea;
 	padding-bottom: 5px;
+	flex-wrap: wrap;
+
 	span {
 		display: inline-flex;
-		justify-content: flex-start;;
+		justify-content: flex-start;
 		align-items: center;
 		line-height: 20px;
 		gap: 4px;

@@ -112,7 +112,7 @@ const CourseTabs = () => {
 			</Tabs.Content>
 			<Tabs.Content value="grades" className={styles.tabContent}>
 				<div className={styles.tabGraph}>
-					<GradesGraph gradeData={gradeData} course={course} color="#4EA6FB" />
+					<GradesGraph gradesData={gradeData} course={course} color="#4EA6FB" />
 				</div>
 			</Tabs.Content>
 			<Tabs.Content value="enrollment" className={styles.tabContent}>

@@ -1,8 +1,7 @@
 import { SectionFragment } from 'graphql';
-import { Clock, Group } from 'iconoir-react';
+import { Clock, Group, User } from 'iconoir-react';
 import { colorEnrollment } from '../service';
 import { formatSectionTime } from 'utils/sections/section';
-
 
 import denero from 'assets/img/eggs/denero.png';
 import hug from 'assets/img/eggs/hug.png';
@@ -47,8 +46,18 @@ const SectionTableItem = ({ section }: SectionTableItem) => {
 	const color = colorEnrollment(section.enrolled / section.enrolledMax);
 
 	return (
-		<div className={styles.sectionContainer} key={section.ccn}>
-			<h6>{section.locationName || 'Unknown Location'}</h6>
+		<div
+			className={styles.sectionContainer}
+			style={findInstructor(section.instructor)}
+			key={section.ccn}
+		>
+			<h6>
+				{/* <PinAlt width={16} height={16} /> */}
+				{section.locationName || 'Unknown Location'}
+			</h6>
+			<p>
+				<User width={16} height={24} /> {section.instructor?.toLowerCase() || 'unknown instructor'}
+			</p>
 			<div className={styles.sectionFooter}>
 				<span>
 					<Clock width={16} height={24} />
