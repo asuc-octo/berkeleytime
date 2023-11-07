@@ -4,11 +4,11 @@ import 'react-tooltip/dist/react-tooltip.css';
 import { percentileToString, getGradeColor } from '../../utils/utils';
 import info from '../../assets/img/images/graphs/info.svg';
 
-var courseAvgText =
+const courseAvgText =
 	'<span class="info-text">Course average refers to the average of all <br />sections available across all instructors.</span>';
-var sectionAvgText =
+const sectionAvgText =
 	'<span class="info-text">Section average refers to the average of all sections that <br />have been filtered for using the specified options.</span>';
-var percentileText =
+const percentileText =
 	'<span class="info-text">Percentile refers to the percentile range out of students who <br />received a letter grade, while the count and percentage <br />also include students who received P/NP grades.</span>';
 
 export default function GradesInfoCard({
@@ -24,6 +24,23 @@ export default function GradesInfoCard({
 	selectedGrade,
 	denominator,
 	color
+}: {
+	course: string;
+	subtitle: string;
+	semester: string;
+	instructor: string;
+	courseLetter: string;
+	courseGPA: number;
+	sectionLetter: string;
+	sectionGPA: number;
+	selectedPercentiles: {
+		numerator: number;
+		percentile_low: number;
+		percentile_high: number;
+	};
+	selectedGrade: string;
+	denominator: number;
+	color: string;
 }) {
 	return (
 		<div className="grades-info">
