@@ -1,42 +1,23 @@
-import { FC } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-// import { Button } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'bt/custom';
-import { ReduxState } from '../../redux/store';
 import { closeBanner } from '../../redux/common/actions';
 
 import close from '../../assets/svg/common/close.svg';
+import { ReduxState } from 'redux/store';
 
-type Props = PropsFromRedux;
+export default function Banner() {
+	const { banner } = useSelector((state: ReduxState) => state.common);
+	const dispatch = useDispatch();
 
-const Banner: FC<Props> = (props) => {
-	const history = useHistory();
-	function redirect(site: string) {
-		history.push('/redirect?site=' + site);
-	}
-
-	return props.banner ? (
+	return banner ? (
 		<div className="banner">
 			<div className="content">
 				<p>Berkeleytime is looking for student designers and developers to join our team!</p>
-				<Button size="sm" href="https://berkeleytime.com/apply">Apply Now</Button>
+				<Button size="sm" href="https://berkeleytime.com/apply">
+					Apply Now
+				</Button>
 			</div>
-			<img src={close} alt="close" onClick={props.closeBanner} />
+			<img src={close} alt="close" onClick={() => dispatch(closeBanner())} />
 		</div>
 	) : null;
-};
-
-const mapState = (state: ReduxState) => ({
-	banner: state.common.banner
-});
-
-const mapDispatch = {
-	closeBanner
-};
-
-const connector = connect(mapState, mapDispatch);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-export default connector(Banner);
+}

@@ -1,38 +1,41 @@
-import { FC, useState, useEffect } from 'react';
-import { useLocation } from 'react-router';
+import { useState, useEffect, PropsWithChildren } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavProps } from 'react-bootstrap';
-import { connect, ConnectedProps } from 'react-redux';
-import { ReduxState } from '../../redux/store';
 import { Button } from 'bt/custom';
 import { ReactComponent as GoogleIcon } from '../../assets/svg/profile/google.svg';
 
 import { useUser } from '../../graphql/hooks/user';
 
-type Props = PropsFromRedux;
-
-const NavigationLink: FC<
+function NavigationLink({
+	to,
+	children,
+	isNew = false,
+	...props
+}: PropsWithChildren<
 	{
 		to?: string;
 		onClick?: () => void;
 		isNew?: boolean;
 	} & NavProps
-> = ({ to, children, isNew = false, ...props }) => (
-	<Nav.Link
-		as={to ? Link : undefined}
-		to={to}
-		className={'bt-bold ' + (isNew ? 'is-new' : '')}
-		// eventKey required for collapseOnselect
-		// https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
-		eventKey={to}
-		{...props}
-	>
-		{children}
-	</Nav.Link>
-);
+>) {
+	return (
+		<Nav.Link
+			as={to ? Link : undefined}
+			to={to}
+			className={'bt-bold ' + (isNew ? 'is-new' : '')}
+			// eventKey required for collapseOnselect
+			// https://stackoverflow.com/questions/54859515/react-bootstrap-navbar-collapse-not-working/56485081#56485081
+			eventKey={to}
+			{...props}
+		>
+			{children}
+		</Nav.Link>
+	);
+}
 
-const Navigation: FC<Props> = (props) => {
-	const [showLogin, setShowLogin] = useState(false);
+export default function Navigation() {
+	const [, setShowLogin] = useState(false);
 
 	const location = useLocation();
 	const { isLoggedIn } = useUser();
@@ -79,14 +82,4 @@ const Navigation: FC<Props> = (props) => {
 			</Navbar.Collapse>
 		</Navbar>
 	);
-};
-
-const mapState = (state: ReduxState) => ({
-	banner: state.common.banner
-});
-
-const connector = connect(mapState);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-export default connector(Navigation);
+}
