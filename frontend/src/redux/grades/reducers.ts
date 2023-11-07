@@ -1,6 +1,5 @@
-import vars from '../../utils/variables';
+import { GRADE } from './types';
 import {
-	GRADE,
 	GRADE_ADD_COURSE,
 	GRADE_REMOVE_COURSE,
 	GRADE_RESET,
@@ -9,7 +8,7 @@ import {
 	UPDATE_GRADE_CONTEXT,
 	UPDATE_GRADE_DATA,
 	UPDATE_GRADE_SELECTED
-} from '../actionTypes';
+} from './types';
 
 const initialState: GradeState = {
 	context: { courses: [] },
@@ -52,11 +51,10 @@ export default function grade(state = initialState, action: GradeAction): GradeS
 		}
 		case UPDATE_GRADE_DATA: {
 			const { gradesData } = action.payload;
-			const graphData = vars.possibleGrades.map((letterGrade) => ({
+			const graphData = Object.values(GRADE).map((letterGrade) => ({
 				name: letterGrade,
 				...gradesData.reduce((grades, grade) => {
-					grades[grade.id] =
-						(grade[letterGrade as keyof typeof GRADE].numerator / grade.denominator) * 100;
+					grades[grade.id] = (grade[letterGrade].numerator / grade.denominator) * 100;
 					return grades;
 				}, {} as Record<string, number>)
 			}));

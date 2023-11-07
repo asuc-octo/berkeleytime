@@ -7,7 +7,7 @@ import {
 	ENROLL_RESET,
 	EnrollAction,
 	EnrollmentState
-} from '../actionTypes';
+} from './types';
 
 const initialState: EnrollmentState = {
 	context: { courses: [] },
