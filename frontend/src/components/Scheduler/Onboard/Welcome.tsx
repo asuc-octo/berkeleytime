@@ -1,22 +1,32 @@
-import { Container, Row, Col } from 'react-bootstrap';
-import { useUser } from '../../../graphql/hooks/user';
-import ProfileScheduleCard from './../../Profile/ProfileScheduleCard';
+import { Button } from 'bt/custom';
+import BTSelect from 'components/Custom/Select';
+import { useGetSemestersQuery } from 'graphql';
+import { useEffect, useMemo, useState } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { getNodes } from 'utils/graphql';
 import { useLocalStorageState } from 'utils/hooks';
 import {
-	DEFAULT_SCHEDULE,
-	isScheduleEmpty,
-	Schedule,
-	SCHEDULER_LOCALSTORAGE_KEY
+    Semester,
+    playlistToSemester,
+    semesterToString
+} from 'utils/playlists/semesters';
+import {
+    DEFAULT_SCHEDULE,
+    SCHEDULER_LOCALSTORAGE_KEY,
+    Schedule,
+    isScheduleEmpty
 } from 'utils/scheduler/scheduler';
-import { Button } from 'bt/custom';
-// import { Button } from 'bt/custom';
+import { useUser } from '../../../graphql/hooks/user';
+import ProfileScheduleCard from './../../Profile/ProfileScheduleCard';
 
-type Props = {
-	updatePage: (i: number) => void;
+const SEMESTER_VALUES: { [label: string]: number } = {
+	spring: 0.0,
+	summer: 0.1,
+	fall: 0.2
 };
 
-const Welcome = ({ updatePage }: Props) => {
+const Welcome = () => {
 	const { user } = useUser();
 
 	const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -25,10 +35,35 @@ const Welcome = ({ updatePage }: Props) => {
 	);
 
 	const savedSchedules = user
-		? getNodes(user.schedules).sort((a, b) => Date.parse(b.dateCreated) - Date.parse(a.dateCreated))
+		? getNodes(user.schedules).sort(
+				(a, b) => Date.parse(b.dateCreated as string) - Date.parse(a.dateCreated as string)
+		  )
 		: [];
 
-	const resetDraft = () => setSchedule(DEFAULT_SCHEDULE);
+	const SemesterToValue = (semester: Semester) => {
+		return parseInt(semester.year, 10) + SEMESTER_VALUES[semester.semester];
+	};
+
+	const { data } = useGetSemestersQuery({});
+
+	type Option = { label: string; value: Semester };
+
+	const allSemesters = useMemo((): Option[] => {
+		return data
+			? getNodes(data.allPlaylists)
+					.map((semester) => playlistToSemester(semester))
+					.sort((a, b) => SemesterToValue(b) - SemesterToValue(a))
+					.map((semester) => ({ label: semesterToString(semester), value: semester }))
+			: [];
+	}, [data]);
+
+	const [selectedSemester, setSelectedSemester] = useState<Option | null>(null);
+
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		setSelectedSemester(allSemesters[0]);
+	}, [allSemesters]);
 
 	return (
 		<Container className="welcome">
@@ -46,7 +81,25 @@ const Welcome = ({ updatePage }: Props) => {
 								Continue Draft
 							</Button>
 						)}
-						<Button href="/scheduler/new" onClick={resetDraft}>
+						<BTSelect
+							className="dropdown"
+							value={selectedSemester}
+							closeMenuOnSelect={true}
+							isSearchable={false}
+							options={allSemesters}
+							onChange={(newValue) => {
+								newValue && setSelectedSemester(newValue);
+							}}
+							defaultValue={allSemesters[0]}
+						/>
+						<Button
+							onClick={() => {
+								setSchedule(DEFAULT_SCHEDULE);
+								navigate(
+									`/scheduler/new/${selectedSemester ? '?semester=' + selectedSemester.label : ''}`
+								);
+							}}
+						>
 							Start
 						</Button>
 					</div>

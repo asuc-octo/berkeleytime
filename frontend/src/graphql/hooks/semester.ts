@@ -1,8 +1,9 @@
-import { useGetSemestersQuery } from 'graphql';
 import { ApolloError } from '@apollo/client';
+import { useGetSemestersQuery } from 'graphql';
 import { getNodes } from 'utils/graphql';
 import {
 	getLatestSemester,
+	playlistToSemester,
 	Semester,
 	semesterToString,
 	SemesterWithPlaylist
@@ -21,9 +22,6 @@ export const useSemester = (
 	error: ApolloError | undefined;
 } => {
 	const { data, loading, error } = useGetSemestersQuery({
-		variables: {
-			name: semester && semesterToString(semester)
-		},
 		skip: !!semester?.playlistId
 	});
 
@@ -32,13 +30,15 @@ export const useSemester = (
 	if (semester?.playlistId) {
 		latestSemester = semester as SemesterWithPlaylist;
 	} else if (data?.allPlaylists && data.allPlaylists.edges.length >= 1) {
-		latestSemester = getLatestSemester(getNodes(data.allPlaylists));
-	}
-
-	// Overriding the latest semester because the dev db has data from 2020
-	if (process.env.NODE_ENV === 'development' && latestSemester) {
-		latestSemester.semester = 'fall';
-		latestSemester.year = '2020';
+		if (semester) {
+			latestSemester = getNodes(data.allPlaylists)
+				.map((node) => playlistToSemester(node))
+				.filter((s) => {
+					return semesterToString(s) === semesterToString(semester);
+				})[0];
+		} else {
+			latestSemester = getLatestSemester(getNodes(data.allPlaylists));
+		}
 	}
 
 	return { semester: latestSemester, loading, error };

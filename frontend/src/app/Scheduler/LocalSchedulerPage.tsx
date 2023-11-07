@@ -1,16 +1,15 @@
-import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-
 import BTLoader from 'components/Common/BTLoader';
-import { DEFAULT_SCHEDULE, Schedule, SCHEDULER_LOCALSTORAGE_KEY } from 'utils/scheduler/scheduler';
-import { useUser } from 'graphql/hooks/user';
 import { useCreateSchedule } from 'graphql/hooks/schedule';
-import { useLocalStorageState } from 'utils/hooks';
-import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
-import { useNavigate } from 'react-router-dom';
 import { useSemester } from 'graphql/hooks/semester';
-import Callout from '../../components/Scheduler/Callout';
-import { ReduxState } from 'redux/store';
+import { useUser } from 'graphql/hooks/user';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ReduxState } from 'redux/store';
+import { useLocalStorageState } from 'utils/hooks';
+import { DEFAULT_SCHEDULE, SCHEDULER_LOCALSTORAGE_KEY, Schedule } from 'utils/scheduler/scheduler';
+import Callout from '../../components/Scheduler/Callout';
+import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
 
 export function Component() {
 	const [schedule, setSchedule] = useLocalStorageState<Schedule>(
@@ -21,7 +20,31 @@ export function Component() {
 	const { isLoggedIn, loading: loadingUser } = useUser();
 	const navigate = useNavigate();
 
-	const { semester, error: semesterError } = useSemester();
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const stringToSemester = (string: string | null) => {
+        if (!string) {
+            return undefined
+        }
+		const [semester, year] = string.trim().toLowerCase().split(' ');
+		return {
+			semester,
+			year
+		};
+	};
+
+	const { semester, error: semesterError } = useSemester(
+		searchParams.has('semester') && searchParams.get('semester')
+			? stringToSemester(searchParams.get('semester'))
+			: undefined
+	);
+
+	// useEffect(() => {
+	// 	const hasSemester = searchParams.has('semester');
+	// 	if (!hasSemester) return;
+	// 	searchParams.delete('semester');
+	// 	setSearchParams(searchParams);
+	// }, [searchParams, setSearchParams]);
 
 	const [createScheduleMutation, { loading: isSaving, error: creationError }] = useCreateSchedule({
 		onCompleted: (data) => {
@@ -60,9 +83,7 @@ export function Component() {
 		return <BTLoader message="Loading semester information..." error={semesterError} fill />;
 	}
 
-	const createSchedule = async () =>
-		// @ts-ignore
-		await createScheduleMutation(schedule, semester!);
+	const createSchedule = async () => await createScheduleMutation(schedule, semester!);
 
 	const saveButton = (
 		<Button
