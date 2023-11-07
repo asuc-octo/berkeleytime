@@ -4,11 +4,13 @@ import {
 	UPDATE_ENROLL_DATA,
 	UPDATE_ENROLL_SELECTED,
 	ENROLL_REMOVE_COURSE,
-	ENROLL_RESET
+	ENROLL_RESET,
+	EnrollAction,
+	EnrollmentState
 } from '../actionTypes';
 
-const initialState = {
-	context: {},
+const initialState: EnrollmentState = {
+	context: { courses: [] },
 	selectedCourses: [],
 	enrollmentData: [],
 	graphData: [],
@@ -18,7 +20,7 @@ const initialState = {
 	usedColorIds: []
 };
 
-export default function enrollment(state = initialState, action) {
+export default function enrollment(state = initialState, action: EnrollAction) {
 	switch (action.type) {
 		case ENROLL_RESET: {
 			return {
@@ -51,23 +53,18 @@ export default function enrollment(state = initialState, action) {
 		case UPDATE_ENROLL_DATA: {
 			const { enrollmentData } = action.payload;
 			const days = [...Array(200).keys()];
-			const graphData = days.map((day) => {
-				const ret = {
-					name: day
-				};
-				for (const enrollment of enrollmentData) {
+			const graphData = days.map((day) => ({
+				name: day,
+				...enrollmentData.reduce((enrollmentTimes, enrollment) => {
 					const validTimes = enrollment.data.filter((time) => time.day >= 0);
-					const enrollmentTimes = {};
-					for (const validTime of validTimes) {
-						enrollmentTimes[validTime.day] = validTime;
-					}
-
-					if (day in enrollmentTimes) {
-						ret[enrollment.id] = (enrollmentTimes[day].enrolled_percent * 100).toFixed(1);
-					}
-				}
-				return ret;
-			});
+					validTimes.forEach((validTime) => {
+						if (validTime.day === day) {
+							enrollmentTimes[enrollment.id] = (validTime.enrolled_percent * 100).toFixed(1);
+						}
+					});
+					return enrollmentTimes;
+				}, {} as Record<string, string>)
+			}));
 			return {
 				...state,
 				enrollmentData,
@@ -96,11 +93,3 @@ export default function enrollment(state = initialState, action) {
 			return state;
 	}
 }
-//
-// capitalize(str) {
-//   return str.charAt(0).toUpperCase() + str.slice(1);
-// }
-//
-// getSectionSemester(section) {
-//   return `${this.capitalize(section.semester)} ${section.year}`;
-// }
