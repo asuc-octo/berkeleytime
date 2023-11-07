@@ -106,7 +106,7 @@ export default function GradesGraphCard({ isMobile, updateClassCardGrade }) {
 					>
 						{isMobile && <div className="grades-mobile-heading"> Grade Distribution </div>}
 						<GradesGraph
-							gradeData={gradesData}
+							gradesData={gradesData}
 							updateBarHover={updateBarHover}
 							updateGraphHover={updateGraphHover}
 							course={hoveredClass.course}
