@@ -23,8 +23,7 @@ export function commonReducer(state = initialState, action: CommonAction): Commo
 				banner: true
 			};
 		case CLOSE_BANNER:
-			const bannerType = 'fa23recruitment';
-			localStorage.setItem('bt-hide-banner', bannerType);
+			localStorage.setItem('bt-hide-banner', 'fa23recruitment');
 			return {
 				...state,
 				banner: false
@@ -35,8 +34,7 @@ export function commonReducer(state = initialState, action: CommonAction): Commo
 				landingModal: true
 			};
 		case CLOSE_LANDING_MODAL:
-			const modalType = 'sp22scheduler';
-			localStorage.setItem('bt-hide-landing-modal', modalType);
+			localStorage.setItem('bt-hide-landing-modal', 'sp22scheduler');
 			return {
 				...state,
 				landingModal: false
