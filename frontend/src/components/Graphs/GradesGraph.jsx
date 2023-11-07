@@ -72,23 +72,23 @@ export default function GradesGraph(props) {
 
 	let numClasses = gradesData?.length || 0;
 
-	const graphData = useMemo(
-		() =>
-			['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F', 'P', 'NP'].map(
-				(letterGrade) => {
-					const ret = {
-						name: letterGrade
-					};
-					for (const grade of gradesData) {
-						ret[grade.id] = (grade[letterGrade].numerator / grade.denominator) * 100;
-					}
-					return ret;
-				}
-			),
-		[gradesData]
-	);
+	const graphData = useMemo(() => {
+		if (!gradesData) return null;
 
-	const graphEmpty = gradesData?.length === 0;
+		return ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F', 'P', 'NP'].map(
+			(letterGrade) => {
+				const ret = {
+					name: letterGrade
+				};
+				for (const grade of gradesData) {
+					ret[grade.id] = (grade[letterGrade].numerator / grade.denominator) * 100;
+				}
+				return ret;
+			}
+		);
+	}, [gradesData]);
+
+	const graphEmpty = gradesData && gradesData.length === 0;
 
 	return (
 		<div className="grades-graph">
@@ -112,6 +112,7 @@ export default function GradesGraph(props) {
 						/>
 
 						{!graphEmpty &&
+							gradesData &&
 							gradesData.map((item, i) => (
 								<Bar
 									key={i}
@@ -152,17 +153,18 @@ export default function GradesGraph(props) {
 								}
 							/>
 						) : null}
-						{gradesData.map((item, i) => (
-							<Bar
-								key={i}
-								name={`${item.title} • ${item.semester} • ${item.instructor}`}
-								dataKey={item.id}
-								fill={vars.colors[item.colorId]}
-								onMouseEnter={updateBarHover}
-								label={<PercentageLabel />}
-								radius={[0, 4, 4, 0]}
-							/>
-						))}
+						{gradesData &&
+							gradesData.map((item, i) => (
+								<Bar
+									key={i}
+									name={`${item.title} • ${item.semester} • ${item.instructor}`}
+									dataKey={item.id}
+									fill={vars.colors[item.colorId]}
+									onMouseEnter={updateBarHover}
+									label={<PercentageLabel />}
+									radius={[0, 4, 4, 0]}
+								/>
+							))}
 						<Legend
 							wrapperStyle={{
 								paddingTop: 20,
