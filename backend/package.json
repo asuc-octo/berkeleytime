@@ -11,7 +11,8 @@
     "coverage": "jest --coverage",
     "generate": "graphql-codegen --config codegen.ts",
     "lint": "tsc --noEmit && eslint --ext .ts,.tsx .",
-    "backup:mongodb": "node ./build/scripts/backup-mongodb.js"
+    "backup:mongodb": "node ./build/scripts/backup-mongodb.js",
+    "download:mongodb": "node ./build/scripts/download-mongodb.js"
   },
   "repository": {
     "type": "git",

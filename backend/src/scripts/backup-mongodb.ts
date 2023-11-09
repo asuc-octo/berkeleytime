@@ -42,8 +42,8 @@ const error = async (client : Minio.Client, toDelete : string[]) => {
         // mongodump output goes by default to stderr
         const matches = data.toString().match(fileFinder)
         if (matches != null) {
-            dumpedFiles.push(matches[1] + ".bson")
-            dumpedFiles.push(matches[1] + ".metadata.json")
+            dumpedFiles.push(matches[2])
+            dumpedFiles.push(matches[2].substring(0, matches[2].length - 5) + ".metadata.json")
         }
         console.log(data.toString())
     });
@@ -59,7 +59,7 @@ const error = async (client : Minio.Client, toDelete : string[]) => {
         console.log(`--------------------------\nSAVING BACKUP TO: ${folderName} \n\n`)
         let errored = false
         dumpedFiles.forEach((file:string) => {
-            const fileStream = Fs.createReadStream(file[1])
+            const fileStream = Fs.createReadStream(file)
             Fs.stat(file, (err, stats) => {
                 if (err) {
                     errored = true
