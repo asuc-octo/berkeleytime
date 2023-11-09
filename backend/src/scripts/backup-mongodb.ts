@@ -4,15 +4,34 @@ import * as Fs from "fs";
 import { config } from "../config";
 
 const ensureBucketExists = async (client : Minio.Client) => {
-    const exists = await client.bucketExists(config.S3_MONGO_BACKUP_BUCKET)
+    const exists = await client.bucketExists(config.s3.mongo_backup_bucket)
     if (!exists) {
-        const res = await client.makeBucket(config.S3_MONGO_BACKUP_BUCKET)
-        console.log(`Bucket ${config.S3_MONGO_BACKUP_BUCKET} created`)
+        const res = await client.makeBucket(config.s3.mongo_backup_bucket)
+        console.log(`Bucket ${config.s3.mongo_backup_bucket} created`)
     } 
+    const lifecycleConfig = {
+        Rule: [
+          {
+            ID: 'Transition and Expiration Rule',
+            Status: 'Enabled',
+            Filter: {
+              Prefix: '',
+            },
+            Expiration: {
+              Days: '7',
+            },
+          },
+        ],
+      }
+      
+    const err = await client.setBucketLifecycle(config.s3.mongo_backup_bucket, lifecycleConfig)
+    if (err != null) {
+        console.error("Could not set bucket lifecycle")
+    }
 }
 
 const error = async (client : Minio.Client, toDelete : string[]) => {
-    client.removeObjects(config.S3_MONGO_BACKUP_BUCKET, toDelete, (e) => {
+    client.removeObjects(config.s3.mongo_backup_bucket, toDelete, (e) => {
         if (e) {
             console.error("Unable to delete incorrect objects. Please do so manually.")
         }
@@ -22,11 +41,11 @@ const error = async (client : Minio.Client, toDelete : string[]) => {
 (async () => {
 
     const client = new Minio.Client({
-        endPoint: config.S3_ENDPOINT,
-        port: config.S3_PORT,
-        useSSL: config.S3_ENDPOINT != "minio",
-        accessKey: config.S3_ACCESS_KEY_ID,
-        secretKey: config.S3_SECRET_ACCESS_KEY,
+        endPoint: config.s3.endpoint,
+        port: config.s3.port,
+        useSSL: config.s3.endpoint != "minio",
+        accessKey: config.s3.access_key_id,
+        secretKey: config.s3.secret_access_key,
     })
 
     await ensureBucketExists(client)
@@ -66,7 +85,7 @@ const error = async (client : Minio.Client, toDelete : string[]) => {
                     return
                 }
                 const name = `${folderName}/${file}`
-                client.putObject(config.S3_MONGO_BACKUP_BUCKET, name, fileStream, stats.size, (err:any, objInfo:any) => {
+                client.putObject(config.s3.mongo_backup_bucket, name, fileStream, stats.size, (err:any, objInfo:any) => {
                     puts++
                     if (err) {
                         console.error(err) // err should be null
