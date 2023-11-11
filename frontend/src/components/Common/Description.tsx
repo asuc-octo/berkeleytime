@@ -5,16 +5,18 @@ import { Link } from 'react-router-dom';
 
 interface DescriptionProps {
 	title: string;
+	subtitle?: string;
 	bodyURL: string;
 }
 
 interface LinkBarProps {
-	link: string;
-	linkName: string;
+	link?: string;
+	linkName?: string;
 }
 
 export default function Description({
 	title,
+	subtitle,
 	link,
 	linkName,
 	bodyURL
@@ -39,13 +41,14 @@ export default function Description({
 					<Col lg={8}>
 						<div className="positions-heading">
 							<h2>{title}</h2>
+							<h3>{subtitle}</h3>
 						</div>
 						<Markdown escapeHTML={false} className="positions-body">
 							{body}
 						</Markdown>
 					</Col>
 					<Col lg={2}></Col>
-					<LinkBar link={link} linkName={linkName} />
+					{link && linkName && <LinkBar link={link} linkName={linkName} />}
 				</Row>
 			</Container>
 		</div>
