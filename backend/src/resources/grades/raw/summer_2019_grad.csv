@@ -1,0 +1,1015 @@
+Grade Sort Nbr,Enrollment Cnt,% Grades Receivedof Enrollment,Letter Grd Cnt,Course Control Nbr,Instructor Name,Average Grade,Course Subject Short Nm,Course Number,Section Nbr,Grade Subtype Desc,Grade Type Desc,Grade Nm,Course Title Nm
+1,1,,,10581,Mark van der Laan,,Public Health,299,007,A,Letter Grade,A+,Independnt Research
+1,1,,,11340,Peng Ding,,Statistics,299,009,A,Letter Grade,A+,Research
+1,1,,,11349,Martin Wainwright,,Statistics,299,018,A,Letter Grade,A+,Research
+1,2,,,11533,Gregory La Blanc,,Evening & Weekend MBA,296,006,A,Letter Grade,A+,Special Topics
+1,1,,,11945,Jennifer Cohen; Mary Breen,,Executive MBA,296,002,A,Letter Grade,A+,Topics In Bus Adm
+1,1,,,11947,Alison Meyer,,Executive MBA,296,004,A,Letter Grade,A+,Topics In Bus Adm
+1,1,,,11948,Bryce Hoffman; Steven Rotkoff; Whitney Hischier,,Executive MBA,296,005,A,Letter Grade,A+,Topics In Bus Adm
+1,2,,,11949,Sara Beckman,,Executive MBA,296,006,A,Letter Grade,A+,Topics In Bus Adm
+1,5,,,11974,Bum Chul Kwon,,Data Science,W209,002,A,Letter Grade,A+,Data Viz/Comm
+1,3,,,11975,Bum Chul Kwon,,Data Science,W209,003,A,Letter Grade,A+,Data Viz/Comm
+1,13,,,12123,Anke Hemmerling; Karen Sokal-Gutierrez,,Public Health,292,001,A,Letter Grade,A+,M.P.H. Seminar
+1,1,,,12621,Evan Miller,,Chemistry,N299,038,A,Letter Grade,A+,Research
+1,9,,,13146,Shachar Kariv; Steven Tadelis,,Evening & Weekend MBA,211,001,A,Letter Grade,A+,Game Theory
+1,3,,,13152,Holly Schroth,,Evening & Weekend MBA,252,001,A,Letter Grade,A+,"Negot, Conflict Res"
+1,2,,,13160,Eric Reiner; Eric Reiner; Manik Varma,,Financial Engineering,230D,001,A,Letter Grade,A+,Deriv: Quant Meth
+1,2,,,13161,Richard Stanton,,Financial Engineering,230I,001,A,Letter Grade,A+,Fixed Income Markts
+1,2,,,13239,Lucas Davis,,Executive MBA,200S,001,A,Letter Grade,A+,Data And Decisions
+1,6,,,13240,Shachar Kariv,,Executive MBA,201A,001,A,Letter Grade,A+,Managerial Econ
+1,11,,,13241,Xiao-Jun Zhang,,Executive MBA,202A,001,A,Letter Grade,A+,Financial Acct
+1,8,,,13267,Laurent El Ghaoui,,Financial Engineering,230P,001,A,Letter Grade,A+,Financial Data Sci
+1,6,,,13365,Eileen Marrinan; Paige Mueller,,Real Estate Development,210,001,A,Letter Grade,A+,Intro To Rdev Econ
+1,4,,,13366,Allison Arieff; Amy Leedham,,Real Estate Development,200,1,A,Letter Grade,A+,Sustainable Rdev
+1,1,,,13591,Christina Shannon,,Economics,204,001,A,Letter Grade,A+,Math Tools For Econ
+1,5,,,14783,Carrie Strohl,,Education,236A,001,A,Letter Grade,A+,Science Educ Elem
+1,7,,,14815,Candice Benge; Caroline Grunewald; Daniel Acland,,Public Affairs,215,001,A,Letter Grade,A+,Econ For Pol Makers
+1,2,,,14816,Larry Rosenthal,,Public Affairs,245,001,A,Letter Grade,A+,Inferential Stats
+1,1,,,14817,Anne Campbell Washington; Brent Copen,,Public Affairs,265,001,A,Letter Grade,A+,Fin Mgmt & Budget
+1,1,,,14818,Daniel Mulhern; Laura Andersen,,Public Affairs,283,001,A,Letter Grade,A+,Leading People
+1,3,,,14819,Jane Mauldon; Kira Sargatzke,,Public Affairs,285,001,A,Letter Grade,A+,Ethical Issues
+1,25,,,14820,Theodore Achilles,,Public Affairs,287,001,A,Letter Grade,A+,Strategic Planning
+1,2,,,14821,Anne Campbell Washington; Randall Rentschler,,Public Affairs,225,001,A,Letter Grade,A+,Policy Comm
+1,2,,,14822,Candice Benge; Sarah Anzia,,Public Affairs,235,001,A,Letter Grade,A+,Research Methods
+1,9,,,14824,Candice Benge; Rucker Johnson,,Public Affairs,245,002,A,Letter Grade,A+,Inferential Stats
+1,1,,,14833,Erika Weissinger; Jane Mauldon,,Public Affairs,280,001,A,Letter Grade,A+,The Eightfold Path
+1,1,,,14834,Anne Campbell Washington; Edward Helme,,Public Affairs,290,1,A,Letter Grade,A+,Spec Topics Pub Aff
+1,2,,,14837,Erika Weissinger; Jane Mauldon,,Public Affairs,280,002,A,Letter Grade,A+,The Eightfold Path
+1,3,,,14842,Michael Rivera,,Data Science,W201,001,A,Letter Grade,A+,Res Dsgn Data Analy
+1,3,,,14843,Michael Rivera,,Data Science,W201,002,A,Letter Grade,A+,Res Dsgn Data Analy
+1,1,,,14845,Corey Jackson,,Data Science,W201,004,A,Letter Grade,A+,Res Dsgn Data Analy
+1,1,,,14852,Gunnar Kleemann,,Data Science,W203,005,A,Letter Grade,A+,Stat For Data Sci
+1,14,,,14853,Doris Schioberg,,Data Science,W205,001,A,Letter Grade,A+,Fund. Data Eng
+1,14,,,14854,Doris Schioberg,,Data Science,W205,002,A,Letter Grade,A+,Fund. Data Eng
+1,15,,,14855,Kevin Crook,,Data Science,W205,003,A,Letter Grade,A+,Fund. Data Eng
+1,15,,,14856,Kevin Crook,,Data Science,W205,004,A,Letter Grade,A+,Fund. Data Eng
+1,4,,,14857,Yacov Salomon,,Data Science,W207,001,A,Letter Grade,A+,Applied Mach Learn
+1,2,,,14858,Amit Bhattacharyya,,Data Science,W207,002,A,Letter Grade,A+,Applied Mach Learn
+1,1,,,14859,Todd Holloway,,Data Science,W207,003,A,Letter Grade,A+,Applied Mach Learn
+1,1,,,14860,Amit Bhattacharyya; Noah Gift,,Data Science,W207,004,A,Letter Grade,A+,Applied Mach Learn
+1,1,,,14861,Amit Bhattacharyya; Noah Gift,,Data Science,W207,005,A,Letter Grade,A+,Applied Mach Learn
+1,11,,,14862,Ilyas Ustun,,Data Science,W207,006,A,Letter Grade,A+,Applied Mach Learn
+1,2,,,14866,Morgan Ames,,Data Science,W231,001,A,Letter Grade,A+,Behind The Data
+1,3,,,14868,Douglas Hughes,,Data Science,W241,002,A,Letter Grade,A+,Exp & Causal Infer
+1,6,,,14871,Kyle Hamilton,,Data Science,W261,001,A,Letter Grade,A+,Mach Lrn At Scale
+1,2,,,14872,Kyle Hamilton,,Data Science,W261,002,A,Letter Grade,A+,Mach Lrn At Scale
+1,1,,,14878,Gerald Benoit,,Data Science,W200,001,A,Letter Grade,A+,Python Fundamentals
+1,2,,,14879,Gerald Benoit,,Data Science,W200,002,A,Letter Grade,A+,Python Fundamentals
+1,6,,,14880,Christopher Llop,,Data Science,W200,003,A,Letter Grade,A+,Python Fundamentals
+1,3,,,14881,Daniel Cer,,Data Science,W266,001,A,Letter Grade,A+,Nlp Deep Learning
+1,13,,,14882,Helen Martin; Mark Mims,,Data Science,W205,005,A,Letter Grade,A+,Fund. Data Eng
+1,2,,,14883,James Kunz; Michael Tamir,,Data Science,W266,002,A,Letter Grade,A+,Nlp Deep Learning
+1,1,,,14887,Morgan Ames,,Data Science,W231,002,A,Letter Grade,A+,Behind The Data
+1,1,,,14888,Douglas Hughes,,Data Science,W241,003,A,Letter Grade,A+,Exp & Causal Infer
+1,2,,,14889,Joachim Rahmfeld,,Data Science,W266,003,A,Letter Grade,A+,Nlp Deep Learning
+1,3,,,14900,Kyle Hamilton,,Data Science,W261,003,A,Letter Grade,A+,Mach Lrn At Scale
+1,4,,,14904,David Steier; Juanjie Joyce Shen,,Data Science,W210,004,A,Letter Grade,A+,Capstone
+1,2,,,14906,Gunnar Kleemann,,Data Science,W200,004,A,Letter Grade,A+,Python Fundamentals
+1,15,,,14907,Kevin Crook,,Data Science,W205,006,A,Letter Grade,A+,Fund. Data Eng
+1,15,,,14908,Kevin Crook,,Data Science,W205,007,A,Letter Grade,A+,Fund. Data Eng
+1,4,,,14910,Maria Helen Maras,,Information and Cybersecurity,W200,001,A,Letter Grade,A+,Cybersec In Context
+1,3,,,14911,Fattaneh Bayatbabolghani,,Information and Cybersecurity,W202,001,A,Letter Grade,A+,Cryptography
+1,1,,,14929,Carl Jacobsen; Glen Ozawa,,Optometry,432,001,A,Letter Grade,A+,Clinical Topics
+1,3,,,14930,Christina Wilmer,,Optometry,440A,001,A,Letter Grade,A+,Adv Optom Clinic
+1,3,,,14931,Christina Wilmer,,Optometry,440A,002,A,Letter Grade,A+,Adv Optom Clinic
+1,3,,,14932,Christina Wilmer,,Optometry,441A,001,A,Letter Grade,A+,Specialty Clinics
+1,3,,,14933,Christina Wilmer,,Optometry,441A,002,A,Letter Grade,A+,Specialty Clinics
+1,5,,,14953,Erika Brown; Inderpreet Hayer; Robin Flagg,,Public Health,W200E,001,A,Letter Grade,A+,Hpm Breadth
+1,21,,,14954,Brigid Cakouros; Jessica Watterson,,Public Health,W204,001,A,Letter Grade,A+,Mass Communication
+1,3,,,14955,Casey Brown; Cindy Leung; Emily Altman,,Public Health,W206,001,A,Letter Grade,A+,Mat&Child Nutrition
+1,8,,,14956,Michael Bates; Olivia Solomon,,Public Health,250A,001,A,Letter Grade,A+,Epidemiolog Meth I
+1,10,,,14982,Emily Polk; Irina Titova; Kimberly MacPherson,,Public Health,W227A,001,A,Letter Grade,A+,Health Care Finance
+1,1,,,14997,Patrick Mulkern,,Social Welfare,250T,001,A,Letter Grade,A+,Sw Practice In Schl
+1,7,,,15000,Christine Scudder,,Social Welfare,W232,001,A,Letter Grade,A+,Soc Work And Educ
+1,5,,,15313,Soraya Sablo-Sutton,,Education,272B,001,A,Letter Grade,A+,School Data Analys
+1,1,,,15929,Peter Goodson,,Executive MBA,236M,2,A,Letter Grade,A+,Turnarounds
+1,2,,,15930,Shachar Kariv; Steven Tadelis,,Executive MBA,211,1,A,Letter Grade,A+,Game Theory
+1,7,,,15931,Peter Goodson,,Evening & Weekend MBA,236M,1,A,Letter Grade,A+,Turnarounds
+1,9,,,15932,Peter Goodson,,Evening & Weekend MBA,236M,2,A,Letter Grade,A+,Turnarounds
+1,3,,,15951,David Steier; Juanjie Joyce Shen,,Data Science,W210,005,A,Letter Grade,A+,Capstone
+1,3,,,15952,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,006,A,Letter Grade,A+,Capstone
+1,3,,,15954,Kyle Hamilton,,Data Science,W261,004,A,Letter Grade,A+,Mach Lrn At Scale
+1,2,,,15955,James York-Winegar; Kyle Hamilton,,Data Science,W261,005,A,Letter Grade,A+,Mach Lrn At Scale
+1,11,,,15961,Ilyas Ustun,,Data Science,W207,007,A,Letter Grade,A+,Applied Mach Learn
+1,1,,,15973,Anna Wisniewska,,Information and Cybersecurity,W204,001,A,Letter Grade,A+,Software Security
+1,1,,,15974,Clarence Chio; Daniel Gillick,,Information and Cybersecurity,W207,001,A,Letter Grade,A+,Ml For Cybersec
+1,1,,,15975,Sajad Khorsandroo,,Information and Cybersecurity,W210,001,A,Letter Grade,A+,Network Security
+1,3,,,15976,Sebastian Goodwin,,Information and Cybersecurity,W220,001,A,Letter Grade,A+,Managing Cyber Risk
+1,1,,,15977,Daniel Aranki,,Information and Cybersecurity,W233,001,A,Letter Grade,A+,Privacy Engineering
+1,2,,,15978,Maria Helen Maras,,Information and Cybersecurity,W242,001,A,Letter Grade,A+,Gov'T & Nat'L Sec
+1,5,,,16022,Anne Campbell Washington; Lawrence Magid,,Public Affairs,290,3,A,Letter Grade,A+,Spec Topics Pub Aff
+1,6,,,16023,Anne Campbell Washington; Austin Land; Hector Cardenas Suarez,,Public Affairs,290,4,A,Letter Grade,A+,Spec Topics Pub Aff
+1,3,,,16024,Anne Campbell Washington; Nidhi Hegde,,Public Affairs,290,5,A,Letter Grade,A+,Spec Topics Pub Aff
+1,3,,,16064,Anne Campbell Washington; Austin Land; Hector Cardenas Suarez,,Public Affairs,290,7,A,Letter Grade,A+,Spec Topics Pub Aff
+1,1,,,16117,Anne Campbell Washington; Saurabh Mishra,,Public Affairs,290,8,A,Letter Grade,A+,Spec Topics Pub Aff
+1,1,,,16123,Jocelyne Guilbault,,Music,299,002,A,Letter Grade,A+,Special Study
+1,4,,,16167,Anne Campbell Washington; Jane Mauldon,,Public Affairs,290,11,A,Letter Grade,A+,Spec Topics Pub Aff
+1,2,,,16168,Randall Rentschler,,Public Affairs,290,12,A,Letter Grade,A+,Spec Topics Pub Aff
+2,3,,,10575,Arthur Reingold,,Public Health,299,001,A,Letter Grade,A,Independnt Research
+2,1,,,10597,Evan Vandommelen-Gonzalez,,Public Health,299,023,A,Letter Grade,A,Independnt Research
+2,1,,,10968,Jay Keasling,,Chemical Engineering,299,005,A,Letter Grade,A,Research Chem Engin
+2,1,,,10986,Kimberly MacPherson,,Evening & Weekend MBA,293,004,A,Letter Grade,A,Individual Study
+2,1,,,11105,Stephen Hinshaw,,Psychology,299,102,A,Letter Grade,A,Research
+2,1,,,11112,Qing Zhou,,Psychology,299,109,A,Letter Grade,A,Research
+2,1,,,11114,Robert Levenson,,Psychology,299,111,A,Letter Grade,A,Research
+2,4,,,11338,Bin Yu,,Statistics,299,007,A,Letter Grade,A,Research
+2,1,,,11348,Michael Jordan,,Statistics,299,017,A,Letter Grade,A,Research
+2,1,,,11360,Bruno Olshausen,,Vision Science,299,004,A,Letter Grade,A,Res Vision Science
+2,1,,,11370,John Flannery,,Vision Science,299,014,A,Letter Grade,A,Res Vision Science
+2,1,,,11371,Charles Briggs,,Anthropology,299,001,A,Letter Grade,A,Directed Research
+2,16,,,11533,Gregory La Blanc,,Evening & Weekend MBA,296,006,A,Letter Grade,A,Special Topics
+2,2,,,11568,Christopher Calott,,Architecture,209,001,A,Letter Grade,A,Spec Top Arch Des
+2,1,,,11736,Michael Mascuch,,Rhetoric,299,002,A,Letter Grade,A,Directed Research
+2,2,,,11944,Steven Huff,,Executive MBA,296,001,A,Letter Grade,A,Topics In Bus Adm
+2,10,,,11945,Jennifer Cohen; Mary Breen,,Executive MBA,296,002,A,Letter Grade,A,Topics In Bus Adm
+2,1,,,11947,Alison Meyer,,Executive MBA,296,004,A,Letter Grade,A,Topics In Bus Adm
+2,4,,,11948,Bryce Hoffman; Steven Rotkoff; Whitney Hischier,,Executive MBA,296,005,A,Letter Grade,A,Topics In Bus Adm
+2,8,,,11949,Sara Beckman,,Executive MBA,296,006,A,Letter Grade,A,Topics In Bus Adm
+2,1,,,11962,Ula Taylor,,African American Studies,299,001,A,Letter Grade,A,Ind Stdy/Res
+2,5,,,11973,Fereshteh Amini,,Data Science,W209,001,A,Letter Grade,A,Data Viz/Comm
+2,7,,,11974,Bum Chul Kwon,,Data Science,W209,002,A,Letter Grade,A,Data Viz/Comm
+2,5,,,11975,Bum Chul Kwon,,Data Science,W209,003,A,Letter Grade,A,Data Viz/Comm
+2,11,,,12123,Anke Hemmerling; Karen Sokal-Gutierrez,,Public Health,292,001,A,Letter Grade,A,M.P.H. Seminar
+2,1,,,12400,Inez Fung,,Earth & Planetary Science,280,011,A,Letter Grade,A,Research
+2,2,,,12595,Christopher Chang,,Chemistry,N299,012,A,Letter Grade,A,Research
+2,1,,,12609,Martin Head-Gordon,,Chemistry,N299,026,A,Letter Grade,A,Research
+2,1,,,12617,Eric Neuscamman,,Chemistry,N299,034,A,Letter Grade,A,Research
+2,1,,,12641,Evan Williams,,Chemistry,N299,058,A,Letter Grade,A,Research
+2,1,,,12647,Omar Yaghi,,Chemistry,N299,064,A,Letter Grade,A,Research
+2,1,,,12648,Dean Toste,,Chemistry,N299,065,A,Letter Grade,A,Research
+2,1,,,12836,Gillian Hart,,Geography,N296,018,A,Letter Grade,A,Diss Research
+2,2,,,12945,Rajiv Ball,,Evening & Weekend MBA,290T,002,A,Letter Grade,A,Spec Top Inn/Desgn
+2,4,,,13127,Henry Chesbrough,,Executive MBA,293,002,A,Letter Grade,A,Individual Study
+2,2,,,13128,Adam Leipzig,,Executive MBA,293,003,A,Letter Grade,A,Individual Study
+2,2,,,13130,Sara Beckman,,Executive MBA,293,005,A,Letter Grade,A,Individual Study
+2,1,,,13131,Gregory La Blanc,,Executive MBA,293,006,A,Letter Grade,A,Individual Study
+2,16,,,13146,Shachar Kariv; Steven Tadelis,,Evening & Weekend MBA,211,001,A,Letter Grade,A,Game Theory
+2,2,,,13148,Jennifer Herbert-Creek,,Evening & Weekend MBA,236G,11,A,Letter Grade,A,Dsg Fin Mdls Th Wrk
+2,8,,,13152,Holly Schroth,,Evening & Weekend MBA,252,001,A,Letter Grade,A,"Negot, Conflict Res"
+2,18,,,13160,Eric Reiner; Eric Reiner; Manik Varma,,Financial Engineering,230D,001,A,Letter Grade,A,Deriv: Quant Meth
+2,15,,,13161,Richard Stanton,,Financial Engineering,230I,001,A,Letter Grade,A,Fixed Income Markts
+2,11,,,13238,Mark Rittenberg,,Executive MBA,200C,001,A,Letter Grade,A,Communications
+2,14,,,13239,Lucas Davis,,Executive MBA,200S,001,A,Letter Grade,A,Data And Decisions
+2,12,,,13240,Shachar Kariv,,Executive MBA,201A,001,A,Letter Grade,A,Managerial Econ
+2,9,,,13241,Xiao-Jun Zhang,,Executive MBA,202A,001,A,Letter Grade,A,Financial Acct
+2,9,,,13243,Veselina Dinova,,Executive MBA,222,001,A,Letter Grade,A,Fin Info Analysis
+2,6,,,13262,Thomas Mertens,,Executive MBA,231,1,A,Letter Grade,A,Corporate Finance
+2,21,,,13267,Laurent El Ghaoui,,Financial Engineering,230P,001,A,Letter Grade,A,Financial Data Sci
+2,12,,,13365,Eileen Marrinan; Paige Mueller,,Real Estate Development,210,001,A,Letter Grade,A,Intro To Rdev Econ
+2,17,,,13366,Allison Arieff; Amy Leedham,,Real Estate Development,200,1,A,Letter Grade,A,Sustainable Rdev
+2,4,,,13591,Christina Shannon,,Economics,204,001,A,Letter Grade,A,Math Tools For Econ
+2,12,,,14783,Carrie Strohl,,Education,236A,001,A,Letter Grade,A,Science Educ Elem
+2,17,,,14784,Elizabeth Zumpe; Tina Trujillo,,Education,262A,001,A,Letter Grade,A,Urbschldship/Mgt 1
+2,17,,,14785,Thomas Green,,Education,262H,001,A,Letter Grade,A,Urbschldship/Mgt 2
+2,24,,,14786,Luz Cazares; Soraya Sablo-Sutton,,Education,266C,001,A,Letter Grade,A,School Site Finance
+2,17,,,14787,Thomas Green; Travis Bristol,,Education,271E,001,A,Letter Grade,A,Teach/Lrn Ed Lead 1
+2,17,,,14788,Jabari Mahiri; Rebecca Cheung,,Education,271F,001,A,Letter Grade,A,Teach/Lrn Ed Lead 2
+2,41,,,14789,Nives Wetzel De Cediel,,Education,392C,001,A,Letter Grade,A,Art Integration
+2,11,,,14790,Nives Wetzel De Cediel,,Education,460A,001,A,Letter Grade,A,School Site Mgt. I
+2,12,,,14801,Soraya Sablo-Sutton,,Education,460A,002,A,Letter Grade,A,School Site Mgt. I
+2,38,,,14813,Elisa Salasin; Jacob Disston; Nathan Gong,,Education,231A,001,A,Letter Grade,A,"Teaching, Learning"
+2,40,,,14814,Anne Campbell Washington; Jane Mauldon,,Public Affairs,201,001,A,Letter Grade,A,Policy Challenges
+2,21,,,14815,Candice Benge; Caroline Grunewald; Daniel Acland,,Public Affairs,215,001,A,Letter Grade,A,Econ For Pol Makers
+2,5,,,14816,Larry Rosenthal,,Public Affairs,245,001,A,Letter Grade,A,Inferential Stats
+2,8,,,14817,Anne Campbell Washington; Brent Copen,,Public Affairs,265,001,A,Letter Grade,A,Fin Mgmt & Budget
+2,15,,,14818,Daniel Mulhern; Laura Andersen,,Public Affairs,283,001,A,Letter Grade,A,Leading People
+2,9,,,14819,Jane Mauldon; Kira Sargatzke,,Public Affairs,285,001,A,Letter Grade,A,Ethical Issues
+2,25,,,14820,Theodore Achilles,,Public Affairs,287,001,A,Letter Grade,A,Strategic Planning
+2,5,,,14821,Anne Campbell Washington; Randall Rentschler,,Public Affairs,225,001,A,Letter Grade,A,Policy Comm
+2,18,,,14822,Candice Benge; Sarah Anzia,,Public Affairs,235,001,A,Letter Grade,A,Research Methods
+2,5,,,14824,Candice Benge; Rucker Johnson,,Public Affairs,245,002,A,Letter Grade,A,Inferential Stats
+2,1,,,14825,Anne Campbell Washington; Randall Rentschler,,Public Affairs,225,002,A,Letter Grade,A,Policy Comm
+2,5,,,14832,Anne Campbell Washington; Jane Mauldon,,Public Affairs,205,001,A,Letter Grade,A,Policy Frameworks
+2,9,,,14833,Erika Weissinger; Jane Mauldon,,Public Affairs,280,001,A,Letter Grade,A,The Eightfold Path
+2,5,,,14834,Anne Campbell Washington; Edward Helme,,Public Affairs,290,1,A,Letter Grade,A,Spec Topics Pub Aff
+2,5,,,14836,Steven Raphael; Steven Raphael,,Public Affairs,260,001,A,Letter Grade,A,Inferential Stats 2
+2,7,,,14837,Erika Weissinger; Jane Mauldon,,Public Affairs,280,002,A,Letter Grade,A,The Eightfold Path
+2,6,,,14842,Michael Rivera,,Data Science,W201,001,A,Letter Grade,A,Res Dsgn Data Analy
+2,6,,,14843,Michael Rivera,,Data Science,W201,002,A,Letter Grade,A,Res Dsgn Data Analy
+2,12,,,14844,Corey Jackson,,Data Science,W201,003,A,Letter Grade,A,Res Dsgn Data Analy
+2,12,,,14845,Corey Jackson,,Data Science,W201,004,A,Letter Grade,A,Res Dsgn Data Analy
+2,13,,,14846,Michael Rivera,,Data Science,W201,005,A,Letter Grade,A,Res Dsgn Data Analy
+2,12,,,14847,Michael Rivera,,Data Science,W201,006,A,Letter Grade,A,Res Dsgn Data Analy
+2,2,,,14848,Eric Matthew Penner,,Data Science,W203,001,A,Letter Grade,A,Stat For Data Sci
+2,1,,,14849,Eric Matthew Penner,,Data Science,W203,002,A,Letter Grade,A,Stat For Data Sci
+2,3,,,14850,Paul Laskowski,,Data Science,W203,003,A,Letter Grade,A,Stat For Data Sci
+2,4,,,14852,Gunnar Kleemann,,Data Science,W203,005,A,Letter Grade,A,Stat For Data Sci
+2,6,,,14857,Yacov Salomon,,Data Science,W207,001,A,Letter Grade,A,Applied Mach Learn
+2,10,,,14858,Amit Bhattacharyya,,Data Science,W207,002,A,Letter Grade,A,Applied Mach Learn
+2,13,,,14859,Todd Holloway,,Data Science,W207,003,A,Letter Grade,A,Applied Mach Learn
+2,14,,,14860,Amit Bhattacharyya; Noah Gift,,Data Science,W207,004,A,Letter Grade,A,Applied Mach Learn
+2,11,,,14861,Amit Bhattacharyya; Noah Gift,,Data Science,W207,005,A,Letter Grade,A,Applied Mach Learn
+2,2,,,14862,Ilyas Ustun,,Data Science,W207,006,A,Letter Grade,A,Applied Mach Learn
+2,4,,,14863,Alberto Todeschini; Stanislav Kelman,,Data Science,W210,001,A,Letter Grade,A,Capstone
+2,4,,,14864,Alberto Todeschini; Stanislav Kelman,,Data Science,W210,002,A,Letter Grade,A,Capstone
+2,3,,,14865,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,003,A,Letter Grade,A,Capstone
+2,6,,,14866,Morgan Ames,,Data Science,W231,001,A,Letter Grade,A,Behind The Data
+2,5,,,14867,Micah Gell-Redman,,Data Science,W241,001,A,Letter Grade,A,Exp & Causal Infer
+2,8,,,14868,Douglas Hughes,,Data Science,W241,002,A,Letter Grade,A,Exp & Causal Infer
+2,9,,,14869,Dmitry Rekesh,,Data Science,W251,001,A,Letter Grade,A,Deep Learning Cloud
+2,9,,,14870,Darragh Hanley; Dmitry Rekesh,,Data Science,W251,002,A,Letter Grade,A,Deep Learning Cloud
+2,5,,,14871,Kyle Hamilton,,Data Science,W261,001,A,Letter Grade,A,Mach Lrn At Scale
+2,7,,,14872,Kyle Hamilton,,Data Science,W261,002,A,Letter Grade,A,Mach Lrn At Scale
+2,7,,,14873,Gerard Kelly; Ying Yau,,Data Science,W271,001,A,Letter Grade,A,Adv Data Sci Stats
+2,8,,,14878,Gerald Benoit,,Data Science,W200,001,A,Letter Grade,A,Python Fundamentals
+2,5,,,14879,Gerald Benoit,,Data Science,W200,002,A,Letter Grade,A,Python Fundamentals
+2,5,,,14880,Christopher Llop,,Data Science,W200,003,A,Letter Grade,A,Python Fundamentals
+2,1,,,14881,Daniel Cer,,Data Science,W266,001,A,Letter Grade,A,Nlp Deep Learning
+2,1,,,14882,Helen Martin; Mark Mims,,Data Science,W205,005,A,Letter Grade,A,Fund. Data Eng
+2,9,,,14883,James Kunz; Michael Tamir,,Data Science,W266,002,A,Letter Grade,A,Nlp Deep Learning
+2,7,,,14887,Morgan Ames,,Data Science,W231,002,A,Letter Grade,A,Behind The Data
+2,11,,,14888,Douglas Hughes,,Data Science,W241,003,A,Letter Grade,A,Exp & Causal Infer
+2,4,,,14889,Joachim Rahmfeld,,Data Science,W266,003,A,Letter Grade,A,Nlp Deep Learning
+2,4,,,14898,Mark Butler,,Data Science,W266,004,A,Letter Grade,A,Nlp Deep Learning
+2,3,,,14899,Siddhartha Jonnalagadda,,Data Science,W266,005,A,Letter Grade,A,Nlp Deep Learning
+2,5,,,14900,Kyle Hamilton,,Data Science,W261,003,A,Letter Grade,A,Mach Lrn At Scale
+2,3,,,14902,Daniel Hedblom,,Data Science,W241,005,A,Letter Grade,A,Exp & Causal Infer
+2,4,,,14903,Micah Gell-Redman,,Data Science,W241,006,A,Letter Grade,A,Exp & Causal Infer
+2,12,,,14904,David Steier; Juanjie Joyce Shen,,Data Science,W210,004,A,Letter Grade,A,Capstone
+2,6,,,14905,Mark Labovitz,,Data Science,W203,006,A,Letter Grade,A,Stat For Data Sci
+2,7,,,14906,Gunnar Kleemann,,Data Science,W200,004,A,Letter Grade,A,Python Fundamentals
+2,3,,,14910,Maria Helen Maras,,Information and Cybersecurity,W200,001,A,Letter Grade,A,Cybersec In Context
+2,2,,,14911,Fattaneh Bayatbabolghani,,Information and Cybersecurity,W202,001,A,Letter Grade,A,Cryptography
+2,12,,,14929,Carl Jacobsen; Glen Ozawa,,Optometry,432,001,A,Letter Grade,A,Clinical Topics
+2,15,,,14930,Christina Wilmer,,Optometry,440A,001,A,Letter Grade,A,Adv Optom Clinic
+2,15,,,14931,Christina Wilmer,,Optometry,440A,002,A,Letter Grade,A,Adv Optom Clinic
+2,15,,,14932,Christina Wilmer,,Optometry,441A,001,A,Letter Grade,A,Specialty Clinics
+2,15,,,14933,Christina Wilmer,,Optometry,441A,002,A,Letter Grade,A,Specialty Clinics
+2,26,,,14953,Erika Brown; Inderpreet Hayer; Robin Flagg,,Public Health,W200E,001,A,Letter Grade,A,Hpm Breadth
+2,22,,,14954,Brigid Cakouros; Jessica Watterson,,Public Health,W204,001,A,Letter Grade,A,Mass Communication
+2,35,,,14955,Casey Brown; Cindy Leung; Emily Altman,,Public Health,W206,001,A,Letter Grade,A,Mat&Child Nutrition
+2,23,,,14956,Michael Bates; Olivia Solomon,,Public Health,250A,001,A,Letter Grade,A,Epidemiolog Meth I
+2,40,,,14957,Amy Slater; David Paolo; Jodi Halpern; Madelena Ng; Sharada Narayan,,Public Health,W289,001,A,Letter Grade,A,Interdis Health
+2,17,,,14979,Eric Gebbie,,Public Health,W257,001,A,Letter Grade,A,Pub Health Prepare
+2,22,,,14982,Emily Polk; Irina Titova; Kimberly MacPherson,,Public Health,W227A,001,A,Letter Grade,A,Health Care Finance
+2,7,,,14997,Patrick Mulkern,,Social Welfare,250T,001,A,Letter Grade,A,Sw Practice In Schl
+2,8,,,15000,Christine Scudder,,Social Welfare,W232,001,A,Letter Grade,A,Soc Work And Educ
+2,5,,,15313,Soraya Sablo-Sutton,,Education,272B,001,A,Letter Grade,A,School Data Analys
+2,12,,,15337,Thomas Green,,Education,272B,002,A,Letter Grade,A,School Data Analys
+2,16,,,15790,Sonal Patel,,Education,237,001,A,Letter Grade,A,Teach Lang Arts
+2,3,,,15929,Peter Goodson,,Executive MBA,236M,2,A,Letter Grade,A,Turnarounds
+2,7,,,15930,Shachar Kariv; Steven Tadelis,,Executive MBA,211,1,A,Letter Grade,A,Game Theory
+2,3,,,15932,Peter Goodson,,Evening & Weekend MBA,236M,2,A,Letter Grade,A,Turnarounds
+2,9,,,15933,Sahar Yousef,,Evening & Weekend MBA,257,1,A,Letter Grade,A,Topics In Mors
+2,1,,,15934,Mary Breen; Steven Huff,,Evening & Weekend MBA,267,1,A,Letter Grade,A,Topics In Marketing
+2,3,,,15936,Jennifer Cohen,,Evening & Weekend MBA,292N,2,A,Letter Grade,A,Topics In Ssl
+2,5,,,15938,Jennifer Herbert-Creek,,Evening & Weekend MBA,236H,11,A,Letter Grade,A,Fin Statement Model
+2,7,,,15951,David Steier; Juanjie Joyce Shen,,Data Science,W210,005,A,Letter Grade,A,Capstone
+2,13,,,15953,Dmitry Rekesh; Prabhakar Attaluri,,Data Science,W251,003,A,Letter Grade,A,Deep Learning Cloud
+2,4,,,15954,Kyle Hamilton,,Data Science,W261,004,A,Letter Grade,A,Mach Lrn At Scale
+2,4,,,15955,James York-Winegar; Kyle Hamilton,,Data Science,W261,005,A,Letter Grade,A,Mach Lrn At Scale
+2,4,,,15956,James York-Winegar; Kyle Hamilton,,Data Science,W261,006,A,Letter Grade,A,Mach Lrn At Scale
+2,4,,,15961,Ilyas Ustun,,Data Science,W207,007,A,Letter Grade,A,Applied Mach Learn
+2,6,,,15973,Anna Wisniewska,,Information and Cybersecurity,W204,001,A,Letter Grade,A,Software Security
+2,2,,,15974,Clarence Chio; Daniel Gillick,,Information and Cybersecurity,W207,001,A,Letter Grade,A,Ml For Cybersec
+2,2,,,15975,Sajad Khorsandroo,,Information and Cybersecurity,W210,001,A,Letter Grade,A,Network Security
+2,6,,,15976,Sebastian Goodwin,,Information and Cybersecurity,W220,001,A,Letter Grade,A,Managing Cyber Risk
+2,10,,,15977,Daniel Aranki,,Information and Cybersecurity,W233,001,A,Letter Grade,A,Privacy Engineering
+2,3,,,15978,Maria Helen Maras,,Information and Cybersecurity,W242,001,A,Letter Grade,A,Gov'T & Nat'L Sec
+2,1,,,16004,Dean Toste,,Chemistry,N299,066,A,Letter Grade,A,Research
+2,9,,,16021,Anne Campbell Washington; Elizabeth Linos,,Public Affairs,290,2,A,Letter Grade,A,Spec Topics Pub Aff
+2,5,,,16022,Anne Campbell Washington; Lawrence Magid,,Public Affairs,290,3,A,Letter Grade,A,Spec Topics Pub Aff
+2,13,,,16023,Anne Campbell Washington; Austin Land; Hector Cardenas Suarez,,Public Affairs,290,4,A,Letter Grade,A,Spec Topics Pub Aff
+2,8,,,16024,Anne Campbell Washington; Nidhi Hegde,,Public Affairs,290,5,A,Letter Grade,A,Spec Topics Pub Aff
+2,18,,,16025,Anne Campbell Washington; Doy Charnsupharindr,,Public Affairs,290,6,A,Letter Grade,A,Spec Topics Pub Aff
+2,5,,,16027,Steven Weber,,Information and Cybersecurity,W289,101,A,Letter Grade,A,Public Int Cybersec
+2,14,,,16028,Richard Stanton,,Financial Engineering,230I,2,A,Letter Grade,A,Fixed Income Markts
+2,4,,,16045,Susanna Elm,,History,299,001,A,Letter Grade,A,Directed Reading
+2,3,,,16054,Eva Harris,,Public Health,299,032,A,Letter Grade,A,Independnt Research
+2,10,,,16064,Anne Campbell Washington; Austin Land; Hector Cardenas Suarez,,Public Affairs,290,7,A,Letter Grade,A,Spec Topics Pub Aff
+2,1,,,16075,Myra Melford,,Music,299,1,A,Letter Grade,A,Special Study
+2,9,,,16117,Anne Campbell Washington; Saurabh Mishra,,Public Affairs,290,8,A,Letter Grade,A,Spec Topics Pub Aff
+2,11,,,16118,Anne Campbell Washington; Steven Falk,,Public Affairs,290,9,A,Letter Grade,A,Spec Topics Pub Aff
+2,1,,,16136,Gregory Aponte,,Nutritional Science & Tox,299,013,A,Letter Grade,A,Nst Research
+2,1,,,16137,Edmund Campion,,Music,299,003,A,Letter Grade,A,Special Study
+2,1,,,16145,Kathleen Ryan,,Plant & Microbial Biology,299,051,A,Letter Grade,A,Graduate Research
+2,1,,,16147,Lara Kueppers,,Energy and Resources,299,004,A,Letter Grade,A,Indiv Research
+2,2,,,16166,Anne Campbell Washington; Steven Raphael,,Public Affairs,290,10,A,Letter Grade,A,Spec Topics Pub Aff
+2,9,,,16167,Anne Campbell Washington; Jane Mauldon,,Public Affairs,290,11,A,Letter Grade,A,Spec Topics Pub Aff
+2,6,,,16168,Randall Rentschler,,Public Affairs,290,12,A,Letter Grade,A,Spec Topics Pub Aff
+2,1,,,16204,Mary Ann Smart,,Music,299,004,A,Letter Grade,A,Special Study
+3,1,,,11529,Bryce Hoffman; Steven Rotkoff; Whitney Hischier,,Evening & Weekend MBA,296,002,A,Letter Grade,A-,Special Topics
+3,9,,,11533,Gregory La Blanc,,Evening & Weekend MBA,296,006,A,Letter Grade,A-,Special Topics
+3,15,,,11568,Christopher Calott,,Architecture,209,001,A,Letter Grade,A-,Spec Top Arch Des
+3,4,,,11944,Steven Huff,,Executive MBA,296,001,A,Letter Grade,A-,Topics In Bus Adm
+3,2,,,11945,Jennifer Cohen; Mary Breen,,Executive MBA,296,002,A,Letter Grade,A-,Topics In Bus Adm
+3,9,,,11947,Alison Meyer,,Executive MBA,296,004,A,Letter Grade,A-,Topics In Bus Adm
+3,7,,,11948,Bryce Hoffman; Steven Rotkoff; Whitney Hischier,,Executive MBA,296,005,A,Letter Grade,A-,Topics In Bus Adm
+3,4,,,11949,Sara Beckman,,Executive MBA,296,006,A,Letter Grade,A-,Topics In Bus Adm
+3,2,,,11950,Julia Kramer; Rajiv Ball,,Executive MBA,296,007,A,Letter Grade,A-,Topics In Bus Adm
+3,4,,,11973,Fereshteh Amini,,Data Science,W209,001,A,Letter Grade,A-,Data Viz/Comm
+3,4,,,12945,Rajiv Ball,,Evening & Weekend MBA,290T,002,A,Letter Grade,A-,Spec Top Inn/Desgn
+3,1,,,13127,Henry Chesbrough,,Executive MBA,293,002,A,Letter Grade,A-,Individual Study
+3,2,,,13128,Adam Leipzig,,Executive MBA,293,003,A,Letter Grade,A-,Individual Study
+3,1,,,13130,Sara Beckman,,Executive MBA,293,005,A,Letter Grade,A-,Individual Study
+3,8,,,13146,Shachar Kariv; Steven Tadelis,,Evening & Weekend MBA,211,001,A,Letter Grade,A-,Game Theory
+3,10,,,13148,Jennifer Herbert-Creek,,Evening & Weekend MBA,236G,11,A,Letter Grade,A-,Dsg Fin Mdls Th Wrk
+3,21,,,13152,Holly Schroth,,Evening & Weekend MBA,252,001,A,Letter Grade,A-,"Negot, Conflict Res"
+3,22,,,13160,Eric Reiner; Eric Reiner; Manik Varma,,Financial Engineering,230D,001,A,Letter Grade,A-,Deriv: Quant Meth
+3,10,,,13161,Richard Stanton,,Financial Engineering,230I,001,A,Letter Grade,A-,Fixed Income Markts
+3,35,,,13238,Mark Rittenberg,,Executive MBA,200C,001,A,Letter Grade,A-,Communications
+3,15,,,13239,Lucas Davis,,Executive MBA,200S,001,A,Letter Grade,A-,Data And Decisions
+3,17,,,13240,Shachar Kariv,,Executive MBA,201A,001,A,Letter Grade,A-,Managerial Econ
+3,16,,,13241,Xiao-Jun Zhang,,Executive MBA,202A,001,A,Letter Grade,A-,Financial Acct
+3,24,,,13243,Veselina Dinova,,Executive MBA,222,001,A,Letter Grade,A-,Fin Info Analysis
+3,5,,,13262,Thomas Mertens,,Executive MBA,231,1,A,Letter Grade,A-,Corporate Finance
+3,2,,,13264,Peter Goodson,,Executive MBA,236M,1,A,Letter Grade,A-,Turnarounds
+3,14,,,13267,Laurent El Ghaoui,,Financial Engineering,230P,001,A,Letter Grade,A-,Financial Data Sci
+3,3,,,13365,Eileen Marrinan; Paige Mueller,,Real Estate Development,210,001,A,Letter Grade,A-,Intro To Rdev Econ
+3,2,,,13366,Allison Arieff; Amy Leedham,,Real Estate Development,200,1,A,Letter Grade,A-,Sustainable Rdev
+3,3,,,13591,Christina Shannon,,Economics,204,001,A,Letter Grade,A-,Math Tools For Econ
+3,1,,,14813,Elisa Salasin; Jacob Disston; Nathan Gong,,Education,231A,001,A,Letter Grade,A-,"Teaching, Learning"
+3,1,,,14814,Anne Campbell Washington; Jane Mauldon,,Public Affairs,201,001,A,Letter Grade,A-,Policy Challenges
+3,14,,,14815,Candice Benge; Caroline Grunewald; Daniel Acland,,Public Affairs,215,001,A,Letter Grade,A-,Econ For Pol Makers
+3,5,,,14816,Larry Rosenthal,,Public Affairs,245,001,A,Letter Grade,A-,Inferential Stats
+3,11,,,14818,Daniel Mulhern; Laura Andersen,,Public Affairs,283,001,A,Letter Grade,A-,Leading People
+3,9,,,14819,Jane Mauldon; Kira Sargatzke,,Public Affairs,285,001,A,Letter Grade,A-,Ethical Issues
+3,2,,,14821,Anne Campbell Washington; Randall Rentschler,,Public Affairs,225,001,A,Letter Grade,A-,Policy Comm
+3,11,,,14822,Candice Benge; Sarah Anzia,,Public Affairs,235,001,A,Letter Grade,A-,Research Methods
+3,11,,,14824,Candice Benge; Rucker Johnson,,Public Affairs,245,002,A,Letter Grade,A-,Inferential Stats
+3,3,,,14834,Anne Campbell Washington; Edward Helme,,Public Affairs,290,1,A,Letter Grade,A-,Spec Topics Pub Aff
+3,3,,,14836,Steven Raphael; Steven Raphael,,Public Affairs,260,001,A,Letter Grade,A-,Inferential Stats 2
+3,3,,,14837,Erika Weissinger; Jane Mauldon,,Public Affairs,280,002,A,Letter Grade,A-,The Eightfold Path
+3,1,,,14844,Corey Jackson,,Data Science,W201,003,A,Letter Grade,A-,Res Dsgn Data Analy
+3,1,,,14848,Eric Matthew Penner,,Data Science,W203,001,A,Letter Grade,A-,Stat For Data Sci
+3,3,,,14850,Paul Laskowski,,Data Science,W203,003,A,Letter Grade,A-,Stat For Data Sci
+3,2,,,14852,Gunnar Kleemann,,Data Science,W203,005,A,Letter Grade,A-,Stat For Data Sci
+3,1,,,14854,Doris Schioberg,,Data Science,W205,002,A,Letter Grade,A-,Fund. Data Eng
+3,4,,,14857,Yacov Salomon,,Data Science,W207,001,A,Letter Grade,A-,Applied Mach Learn
+3,2,,,14858,Amit Bhattacharyya,,Data Science,W207,002,A,Letter Grade,A-,Applied Mach Learn
+3,1,,,14859,Todd Holloway,,Data Science,W207,003,A,Letter Grade,A-,Applied Mach Learn
+3,1,,,14860,Amit Bhattacharyya; Noah Gift,,Data Science,W207,004,A,Letter Grade,A-,Applied Mach Learn
+3,3,,,14861,Amit Bhattacharyya; Noah Gift,,Data Science,W207,005,A,Letter Grade,A-,Applied Mach Learn
+3,2,,,14863,Alberto Todeschini; Stanislav Kelman,,Data Science,W210,001,A,Letter Grade,A-,Capstone
+3,10,,,14864,Alberto Todeschini; Stanislav Kelman,,Data Science,W210,002,A,Letter Grade,A-,Capstone
+3,3,,,14865,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,003,A,Letter Grade,A-,Capstone
+3,1,,,14866,Morgan Ames,,Data Science,W231,001,A,Letter Grade,A-,Behind The Data
+3,1,,,14868,Douglas Hughes,,Data Science,W241,002,A,Letter Grade,A-,Exp & Causal Infer
+3,1,,,14869,Dmitry Rekesh,,Data Science,W251,001,A,Letter Grade,A-,Deep Learning Cloud
+3,1,,,14871,Kyle Hamilton,,Data Science,W261,001,A,Letter Grade,A-,Mach Lrn At Scale
+3,2,,,14872,Kyle Hamilton,,Data Science,W261,002,A,Letter Grade,A-,Mach Lrn At Scale
+3,3,,,14874,Ying Yau,,Data Science,W271,002,A,Letter Grade,A-,Adv Data Sci Stats
+3,2,,,14878,Gerald Benoit,,Data Science,W200,001,A,Letter Grade,A-,Python Fundamentals
+3,1,,,14879,Gerald Benoit,,Data Science,W200,002,A,Letter Grade,A-,Python Fundamentals
+3,1,,,14880,Christopher Llop,,Data Science,W200,003,A,Letter Grade,A-,Python Fundamentals
+3,3,,,14883,James Kunz; Michael Tamir,,Data Science,W266,002,A,Letter Grade,A-,Nlp Deep Learning
+3,1,,,14887,Morgan Ames,,Data Science,W231,002,A,Letter Grade,A-,Behind The Data
+3,3,,,14888,Douglas Hughes,,Data Science,W241,003,A,Letter Grade,A-,Exp & Causal Infer
+3,3,,,14889,Joachim Rahmfeld,,Data Science,W266,003,A,Letter Grade,A-,Nlp Deep Learning
+3,3,,,14898,Mark Butler,,Data Science,W266,004,A,Letter Grade,A-,Nlp Deep Learning
+3,1,,,14904,David Steier; Juanjie Joyce Shen,,Data Science,W210,004,A,Letter Grade,A-,Capstone
+3,2,,,14905,Mark Labovitz,,Data Science,W203,006,A,Letter Grade,A-,Stat For Data Sci
+3,1,,,14906,Gunnar Kleemann,,Data Science,W200,004,A,Letter Grade,A-,Python Fundamentals
+3,2,,,14910,Maria Helen Maras,,Information and Cybersecurity,W200,001,A,Letter Grade,A-,Cybersec In Context
+3,2,,,14911,Fattaneh Bayatbabolghani,,Information and Cybersecurity,W202,001,A,Letter Grade,A-,Cryptography
+3,24,,,14927,Christina Wilmer; Debora Chen; Harry Green; Kuniyoshi Kanai; Linh Le; Pam Satjawatcharaphong,,Optometry,430A,001,A,Letter Grade,A-,Optometry Clinics
+3,24,,,14928,Christina Wilmer,,Optometry,430A,002,A,Letter Grade,A-,Optometry Clinics
+3,17,,,14929,Carl Jacobsen; Glen Ozawa,,Optometry,432,001,A,Letter Grade,A-,Clinical Topics
+3,32,,,14930,Christina Wilmer,,Optometry,440A,001,A,Letter Grade,A-,Adv Optom Clinic
+3,32,,,14931,Christina Wilmer,,Optometry,440A,002,A,Letter Grade,A-,Adv Optom Clinic
+3,32,,,14932,Christina Wilmer,,Optometry,441A,001,A,Letter Grade,A-,Specialty Clinics
+3,32,,,14933,Christina Wilmer,,Optometry,441A,002,A,Letter Grade,A-,Specialty Clinics
+3,21,,,14953,Erika Brown; Inderpreet Hayer; Robin Flagg,,Public Health,W200E,001,A,Letter Grade,A-,Hpm Breadth
+3,4,,,14954,Brigid Cakouros; Jessica Watterson,,Public Health,W204,001,A,Letter Grade,A-,Mass Communication
+3,4,,,14955,Casey Brown; Cindy Leung; Emily Altman,,Public Health,W206,001,A,Letter Grade,A-,Mat&Child Nutrition
+3,16,,,14956,Michael Bates; Olivia Solomon,,Public Health,250A,001,A,Letter Grade,A-,Epidemiolog Meth I
+3,6,,,14957,Amy Slater; David Paolo; Jodi Halpern; Madelena Ng; Sharada Narayan,,Public Health,W289,001,A,Letter Grade,A-,Interdis Health
+3,12,,,14982,Emily Polk; Irina Titova; Kimberly MacPherson,,Public Health,W227A,001,A,Letter Grade,A-,Health Care Finance
+3,4,,,14997,Patrick Mulkern,,Social Welfare,250T,001,A,Letter Grade,A-,Sw Practice In Schl
+3,2,,,15000,Christine Scudder,,Social Welfare,W232,001,A,Letter Grade,A-,Soc Work And Educ
+3,1,,,15313,Soraya Sablo-Sutton,,Education,272B,001,A,Letter Grade,A-,School Data Analys
+3,7,,,15929,Peter Goodson,,Executive MBA,236M,2,A,Letter Grade,A-,Turnarounds
+3,11,,,15930,Shachar Kariv; Steven Tadelis,,Executive MBA,211,1,A,Letter Grade,A-,Game Theory
+3,7,,,15931,Peter Goodson,,Evening & Weekend MBA,236M,1,A,Letter Grade,A-,Turnarounds
+3,6,,,15932,Peter Goodson,,Evening & Weekend MBA,236M,2,A,Letter Grade,A-,Turnarounds
+3,21,,,15933,Sahar Yousef,,Evening & Weekend MBA,257,1,A,Letter Grade,A-,Topics In Mors
+3,4,,,15934,Mary Breen; Steven Huff,,Evening & Weekend MBA,267,1,A,Letter Grade,A-,Topics In Marketing
+3,4,,,15938,Jennifer Herbert-Creek,,Evening & Weekend MBA,236H,11,A,Letter Grade,A-,Fin Statement Model
+3,3,,,15951,David Steier; Juanjie Joyce Shen,,Data Science,W210,005,A,Letter Grade,A-,Capstone
+3,6,,,15952,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,006,A,Letter Grade,A-,Capstone
+3,2,,,15973,Anna Wisniewska,,Information and Cybersecurity,W204,001,A,Letter Grade,A-,Software Security
+3,3,,,15974,Clarence Chio; Daniel Gillick,,Information and Cybersecurity,W207,001,A,Letter Grade,A-,Ml For Cybersec
+3,4,,,15975,Sajad Khorsandroo,,Information and Cybersecurity,W210,001,A,Letter Grade,A-,Network Security
+3,2,,,15976,Sebastian Goodwin,,Information and Cybersecurity,W220,001,A,Letter Grade,A-,Managing Cyber Risk
+3,3,,,15978,Maria Helen Maras,,Information and Cybersecurity,W242,001,A,Letter Grade,A-,Gov'T & Nat'L Sec
+3,6,,,16021,Anne Campbell Washington; Elizabeth Linos,,Public Affairs,290,2,A,Letter Grade,A-,Spec Topics Pub Aff
+3,1,,,16022,Anne Campbell Washington; Lawrence Magid,,Public Affairs,290,3,A,Letter Grade,A-,Spec Topics Pub Aff
+3,9,,,16023,Anne Campbell Washington; Austin Land; Hector Cardenas Suarez,,Public Affairs,290,4,A,Letter Grade,A-,Spec Topics Pub Aff
+3,4,,,16024,Anne Campbell Washington; Nidhi Hegde,,Public Affairs,290,5,A,Letter Grade,A-,Spec Topics Pub Aff
+3,13,,,16028,Richard Stanton,,Financial Engineering,230I,2,A,Letter Grade,A-,Fixed Income Markts
+3,2,,,16166,Anne Campbell Washington; Steven Raphael,,Public Affairs,290,10,A,Letter Grade,A-,Spec Topics Pub Aff
+3,4,,,16167,Anne Campbell Washington; Jane Mauldon,,Public Affairs,290,11,A,Letter Grade,A-,Spec Topics Pub Aff
+3,1,,,16168,Randall Rentschler,,Public Affairs,290,12,A,Letter Grade,A-,Spec Topics Pub Aff
+4,3,,,11529,Bryce Hoffman; Steven Rotkoff; Whitney Hischier,,Evening & Weekend MBA,296,002,B,Letter Grade,B+,Special Topics
+4,11,,,11533,Gregory La Blanc,,Evening & Weekend MBA,296,006,B,Letter Grade,B+,Special Topics
+4,8,,,11568,Christopher Calott,,Architecture,209,001,B,Letter Grade,B+,Spec Top Arch Des
+4,3,,,11944,Steven Huff,,Executive MBA,296,001,B,Letter Grade,B+,Topics In Bus Adm
+4,3,,,11947,Alison Meyer,,Executive MBA,296,004,B,Letter Grade,B+,Topics In Bus Adm
+4,12,,,11948,Bryce Hoffman; Steven Rotkoff; Whitney Hischier,,Executive MBA,296,005,B,Letter Grade,B+,Topics In Bus Adm
+4,2,,,11949,Sara Beckman,,Executive MBA,296,006,B,Letter Grade,B+,Topics In Bus Adm
+4,2,,,11950,Julia Kramer; Rajiv Ball,,Executive MBA,296,007,B,Letter Grade,B+,Topics In Bus Adm
+4,3,,,12945,Rajiv Ball,,Evening & Weekend MBA,290T,002,B,Letter Grade,B+,Spec Top Inn/Desgn
+4,1,,,13128,Adam Leipzig,,Executive MBA,293,003,B,Letter Grade,B+,Individual Study
+4,1,,,13146,Shachar Kariv; Steven Tadelis,,Evening & Weekend MBA,211,001,B,Letter Grade,B+,Game Theory
+4,2,,,13148,Jennifer Herbert-Creek,,Evening & Weekend MBA,236G,11,B,Letter Grade,B+,Dsg Fin Mdls Th Wrk
+4,16,,,13152,Holly Schroth,,Evening & Weekend MBA,252,001,B,Letter Grade,B+,"Negot, Conflict Res"
+4,36,,,13160,Eric Reiner; Eric Reiner; Manik Varma,,Financial Engineering,230D,001,B,Letter Grade,B+,Deriv: Quant Meth
+4,9,,,13161,Richard Stanton,,Financial Engineering,230I,001,B,Letter Grade,B+,Fixed Income Markts
+4,20,,,13238,Mark Rittenberg,,Executive MBA,200C,001,B,Letter Grade,B+,Communications
+4,15,,,13239,Lucas Davis,,Executive MBA,200S,001,B,Letter Grade,B+,Data And Decisions
+4,15,,,13240,Shachar Kariv,,Executive MBA,201A,001,B,Letter Grade,B+,Managerial Econ
+4,28,,,13241,Xiao-Jun Zhang,,Executive MBA,202A,001,B,Letter Grade,B+,Financial Acct
+4,10,,,13243,Veselina Dinova,,Executive MBA,222,001,B,Letter Grade,B+,Fin Info Analysis
+4,9,,,13262,Thomas Mertens,,Executive MBA,231,1,B,Letter Grade,B+,Corporate Finance
+4,3,,,13264,Peter Goodson,,Executive MBA,236M,1,B,Letter Grade,B+,Turnarounds
+4,23,,,13267,Laurent El Ghaoui,,Financial Engineering,230P,001,B,Letter Grade,B+,Financial Data Sci
+4,4,,,13365,Eileen Marrinan; Paige Mueller,,Real Estate Development,210,001,B,Letter Grade,B+,Intro To Rdev Econ
+4,2,,,13366,Allison Arieff; Amy Leedham,,Real Estate Development,200,1,B,Letter Grade,B+,Sustainable Rdev
+4,6,,,13591,Christina Shannon,,Economics,204,001,B,Letter Grade,B+,Math Tools For Econ
+4,8,,,14815,Candice Benge; Caroline Grunewald; Daniel Acland,,Public Affairs,215,001,B,Letter Grade,B+,Econ For Pol Makers
+4,5,,,14816,Larry Rosenthal,,Public Affairs,245,001,B,Letter Grade,B+,Inferential Stats
+4,4,,,14817,Anne Campbell Washington; Brent Copen,,Public Affairs,265,001,B,Letter Grade,B+,Fin Mgmt & Budget
+4,15,,,14822,Candice Benge; Sarah Anzia,,Public Affairs,235,001,B,Letter Grade,B+,Research Methods
+4,5,,,14824,Candice Benge; Rucker Johnson,,Public Affairs,245,002,B,Letter Grade,B+,Inferential Stats
+4,1,,,14833,Erika Weissinger; Jane Mauldon,,Public Affairs,280,001,B,Letter Grade,B+,The Eightfold Path
+4,1,,,14834,Anne Campbell Washington; Edward Helme,,Public Affairs,290,1,B,Letter Grade,B+,Spec Topics Pub Aff
+4,1,,,14837,Erika Weissinger; Jane Mauldon,,Public Affairs,280,002,B,Letter Grade,B+,The Eightfold Path
+4,5,,,14848,Eric Matthew Penner,,Data Science,W203,001,B,Letter Grade,B+,Stat For Data Sci
+4,4,,,14849,Eric Matthew Penner,,Data Science,W203,002,B,Letter Grade,B+,Stat For Data Sci
+4,5,,,14850,Paul Laskowski,,Data Science,W203,003,B,Letter Grade,B+,Stat For Data Sci
+4,3,,,14852,Gunnar Kleemann,,Data Science,W203,005,B,Letter Grade,B+,Stat For Data Sci
+4,1,,,14853,Doris Schioberg,,Data Science,W205,001,B,Letter Grade,B+,Fund. Data Eng
+4,1,,,14857,Yacov Salomon,,Data Science,W207,001,B,Letter Grade,B+,Applied Mach Learn
+4,1,,,14859,Todd Holloway,,Data Science,W207,003,B,Letter Grade,B+,Applied Mach Learn
+4,2,,,14863,Alberto Todeschini; Stanislav Kelman,,Data Science,W210,001,B,Letter Grade,B+,Capstone
+4,1,,,14864,Alberto Todeschini; Stanislav Kelman,,Data Science,W210,002,B,Letter Grade,B+,Capstone
+4,5,,,14865,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,003,B,Letter Grade,B+,Capstone
+4,1,,,14868,Douglas Hughes,,Data Science,W241,002,B,Letter Grade,B+,Exp & Causal Infer
+4,1,,,14871,Kyle Hamilton,,Data Science,W261,001,B,Letter Grade,B+,Mach Lrn At Scale
+4,2,,,14872,Kyle Hamilton,,Data Science,W261,002,B,Letter Grade,B+,Mach Lrn At Scale
+4,3,,,14873,Gerard Kelly; Ying Yau,,Data Science,W271,001,B,Letter Grade,B+,Adv Data Sci Stats
+4,5,,,14874,Ying Yau,,Data Science,W271,002,B,Letter Grade,B+,Adv Data Sci Stats
+4,2,,,14879,Gerald Benoit,,Data Science,W200,002,B,Letter Grade,B+,Python Fundamentals
+4,1,,,14880,Christopher Llop,,Data Science,W200,003,B,Letter Grade,B+,Python Fundamentals
+4,1,,,14881,Daniel Cer,,Data Science,W266,001,B,Letter Grade,B+,Nlp Deep Learning
+4,1,,,14882,Helen Martin; Mark Mims,,Data Science,W205,005,B,Letter Grade,B+,Fund. Data Eng
+4,1,,,14883,James Kunz; Michael Tamir,,Data Science,W266,002,B,Letter Grade,B+,Nlp Deep Learning
+4,1,,,14887,Morgan Ames,,Data Science,W231,002,B,Letter Grade,B+,Behind The Data
+4,3,,,14889,Joachim Rahmfeld,,Data Science,W266,003,B,Letter Grade,B+,Nlp Deep Learning
+4,5,,,14899,Siddhartha Jonnalagadda,,Data Science,W266,005,B,Letter Grade,B+,Nlp Deep Learning
+4,2,,,14900,Kyle Hamilton,,Data Science,W261,003,B,Letter Grade,B+,Mach Lrn At Scale
+4,1,,,14902,Daniel Hedblom,,Data Science,W241,005,B,Letter Grade,B+,Exp & Causal Infer
+4,2,,,14905,Mark Labovitz,,Data Science,W203,006,B,Letter Grade,B+,Stat For Data Sci
+4,37,,,14927,Christina Wilmer; Debora Chen; Harry Green; Kuniyoshi Kanai; Linh Le; Pam Satjawatcharaphong,,Optometry,430A,001,B,Letter Grade,B+,Optometry Clinics
+4,37,,,14928,Christina Wilmer,,Optometry,430A,002,B,Letter Grade,B+,Optometry Clinics
+4,13,,,14929,Carl Jacobsen; Glen Ozawa,,Optometry,432,001,B,Letter Grade,B+,Clinical Topics
+4,17,,,14930,Christina Wilmer,,Optometry,440A,001,B,Letter Grade,B+,Adv Optom Clinic
+4,17,,,14931,Christina Wilmer,,Optometry,440A,002,B,Letter Grade,B+,Adv Optom Clinic
+4,17,,,14932,Christina Wilmer,,Optometry,441A,001,B,Letter Grade,B+,Specialty Clinics
+4,17,,,14933,Christina Wilmer,,Optometry,441A,002,B,Letter Grade,B+,Specialty Clinics
+4,8,,,14953,Erika Brown; Inderpreet Hayer; Robin Flagg,,Public Health,W200E,001,B,Letter Grade,B+,Hpm Breadth
+4,3,,,14955,Casey Brown; Cindy Leung; Emily Altman,,Public Health,W206,001,B,Letter Grade,B+,Mat&Child Nutrition
+4,19,,,14956,Michael Bates; Olivia Solomon,,Public Health,250A,001,B,Letter Grade,B+,Epidemiolog Meth I
+4,4,,,14957,Amy Slater; David Paolo; Jodi Halpern; Madelena Ng; Sharada Narayan,,Public Health,W289,001,B,Letter Grade,B+,Interdis Health
+4,2,,,14979,Eric Gebbie,,Public Health,W257,001,B,Letter Grade,B+,Pub Health Prepare
+4,3,,,14982,Emily Polk; Irina Titova; Kimberly MacPherson,,Public Health,W227A,001,B,Letter Grade,B+,Health Care Finance
+4,1,,,15790,Sonal Patel,,Education,237,001,B,Letter Grade,B+,Teach Lang Arts
+4,10,,,15929,Peter Goodson,,Executive MBA,236M,2,B,Letter Grade,B+,Turnarounds
+4,13,,,15930,Shachar Kariv; Steven Tadelis,,Executive MBA,211,1,B,Letter Grade,B+,Game Theory
+4,7,,,15931,Peter Goodson,,Evening & Weekend MBA,236M,1,B,Letter Grade,B+,Turnarounds
+4,6,,,15932,Peter Goodson,,Evening & Weekend MBA,236M,2,B,Letter Grade,B+,Turnarounds
+4,7,,,15934,Mary Breen; Steven Huff,,Evening & Weekend MBA,267,1,B,Letter Grade,B+,Topics In Marketing
+4,4,,,15938,Jennifer Herbert-Creek,,Evening & Weekend MBA,236H,11,B,Letter Grade,B+,Fin Statement Model
+4,2,,,15952,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,006,B,Letter Grade,B+,Capstone
+4,2,,,15954,Kyle Hamilton,,Data Science,W261,004,B,Letter Grade,B+,Mach Lrn At Scale
+4,2,,,15956,James York-Winegar; Kyle Hamilton,,Data Science,W261,006,B,Letter Grade,B+,Mach Lrn At Scale
+4,1,,,15973,Anna Wisniewska,,Information and Cybersecurity,W204,001,B,Letter Grade,B+,Software Security
+4,3,,,15974,Clarence Chio; Daniel Gillick,,Information and Cybersecurity,W207,001,B,Letter Grade,B+,Ml For Cybersec
+4,3,,,15975,Sajad Khorsandroo,,Information and Cybersecurity,W210,001,B,Letter Grade,B+,Network Security
+4,1,,,15977,Daniel Aranki,,Information and Cybersecurity,W233,001,B,Letter Grade,B+,Privacy Engineering
+4,1,,,15978,Maria Helen Maras,,Information and Cybersecurity,W242,001,B,Letter Grade,B+,Gov'T & Nat'L Sec
+4,6,,,16021,Anne Campbell Washington; Elizabeth Linos,,Public Affairs,290,2,B,Letter Grade,B+,Spec Topics Pub Aff
+4,3,,,16022,Anne Campbell Washington; Lawrence Magid,,Public Affairs,290,3,B,Letter Grade,B+,Spec Topics Pub Aff
+4,8,,,16028,Richard Stanton,,Financial Engineering,230I,2,B,Letter Grade,B+,Fixed Income Markts
+4,1,,,16167,Anne Campbell Washington; Jane Mauldon,,Public Affairs,290,11,B,Letter Grade,B+,Spec Topics Pub Aff
+5,13,,,11533,Gregory La Blanc,,Evening & Weekend MBA,296,006,B,Letter Grade,B,Special Topics
+5,1,,,11948,Bryce Hoffman; Steven Rotkoff; Whitney Hischier,,Executive MBA,296,005,B,Letter Grade,B,Topics In Bus Adm
+5,2,,,11949,Sara Beckman,,Executive MBA,296,006,B,Letter Grade,B,Topics In Bus Adm
+5,2,,,11950,Julia Kramer; Rajiv Ball,,Executive MBA,296,007,B,Letter Grade,B,Topics In Bus Adm
+5,2,,,12945,Rajiv Ball,,Evening & Weekend MBA,290T,002,B,Letter Grade,B,Spec Top Inn/Desgn
+5,1,,,13148,Jennifer Herbert-Creek,,Evening & Weekend MBA,236G,11,B,Letter Grade,B,Dsg Fin Mdls Th Wrk
+5,10,,,13152,Holly Schroth,,Evening & Weekend MBA,252,001,B,Letter Grade,B,"Negot, Conflict Res"
+5,15,,,13160,Eric Reiner; Eric Reiner; Manik Varma,,Financial Engineering,230D,001,B,Letter Grade,B,Deriv: Quant Meth
+5,7,,,13161,Richard Stanton,,Financial Engineering,230I,001,B,Letter Grade,B,Fixed Income Markts
+5,16,,,13239,Lucas Davis,,Executive MBA,200S,001,B,Letter Grade,B,Data And Decisions
+5,17,,,13240,Shachar Kariv,,Executive MBA,201A,001,B,Letter Grade,B,Managerial Econ
+5,3,,,13241,Xiao-Jun Zhang,,Executive MBA,202A,001,B,Letter Grade,B,Financial Acct
+5,4,,,13243,Veselina Dinova,,Executive MBA,222,001,B,Letter Grade,B,Fin Info Analysis
+5,5,,,13262,Thomas Mertens,,Executive MBA,231,1,B,Letter Grade,B,Corporate Finance
+5,1,,,13264,Peter Goodson,,Executive MBA,236M,1,B,Letter Grade,B,Turnarounds
+5,20,,,13267,Laurent El Ghaoui,,Financial Engineering,230P,001,B,Letter Grade,B,Financial Data Sci
+5,1,,,14813,Elisa Salasin; Jacob Disston; Nathan Gong,,Education,231A,001,B,Letter Grade,B,"Teaching, Learning"
+5,1,,,14815,Candice Benge; Caroline Grunewald; Daniel Acland,,Public Affairs,215,001,B,Letter Grade,B,Econ For Pol Makers
+5,3,,,14816,Larry Rosenthal,,Public Affairs,245,001,B,Letter Grade,B,Inferential Stats
+5,2,,,14817,Anne Campbell Washington; Brent Copen,,Public Affairs,265,001,B,Letter Grade,B,Fin Mgmt & Budget
+5,1,,,14820,Theodore Achilles,,Public Affairs,287,001,B,Letter Grade,B,Strategic Planning
+5,1,,,14821,Anne Campbell Washington; Randall Rentschler,,Public Affairs,225,001,B,Letter Grade,B,Policy Comm
+5,5,,,14822,Candice Benge; Sarah Anzia,,Public Affairs,235,001,B,Letter Grade,B,Research Methods
+5,3,,,14848,Eric Matthew Penner,,Data Science,W203,001,B,Letter Grade,B,Stat For Data Sci
+5,7,,,14849,Eric Matthew Penner,,Data Science,W203,002,B,Letter Grade,B,Stat For Data Sci
+5,2,,,14850,Paul Laskowski,,Data Science,W203,003,B,Letter Grade,B,Stat For Data Sci
+5,2,,,14852,Gunnar Kleemann,,Data Science,W203,005,B,Letter Grade,B,Stat For Data Sci
+5,1,,,14857,Yacov Salomon,,Data Science,W207,001,B,Letter Grade,B,Applied Mach Learn
+5,1,,,14858,Amit Bhattacharyya,,Data Science,W207,002,B,Letter Grade,B,Applied Mach Learn
+5,8,,,14863,Alberto Todeschini; Stanislav Kelman,,Data Science,W210,001,B,Letter Grade,B,Capstone
+5,1,,,14867,Micah Gell-Redman,,Data Science,W241,001,B,Letter Grade,B,Exp & Causal Infer
+5,2,,,14872,Kyle Hamilton,,Data Science,W261,002,B,Letter Grade,B,Mach Lrn At Scale
+5,2,,,14873,Gerard Kelly; Ying Yau,,Data Science,W271,001,B,Letter Grade,B,Adv Data Sci Stats
+5,4,,,14874,Ying Yau,,Data Science,W271,002,B,Letter Grade,B,Adv Data Sci Stats
+5,1,,,14881,Daniel Cer,,Data Science,W266,001,B,Letter Grade,B,Nlp Deep Learning
+5,1,,,14900,Kyle Hamilton,,Data Science,W261,003,B,Letter Grade,B,Mach Lrn At Scale
+5,3,,,14902,Daniel Hedblom,,Data Science,W241,005,B,Letter Grade,B,Exp & Causal Infer
+5,2,,,14903,Micah Gell-Redman,,Data Science,W241,006,B,Letter Grade,B,Exp & Causal Infer
+5,1,,,14927,Christina Wilmer; Debora Chen; Harry Green; Kuniyoshi Kanai; Linh Le; Pam Satjawatcharaphong,,Optometry,430A,001,B,Letter Grade,B,Optometry Clinics
+5,1,,,14928,Christina Wilmer,,Optometry,430A,002,B,Letter Grade,B,Optometry Clinics
+5,19,,,14929,Carl Jacobsen; Glen Ozawa,,Optometry,432,001,B,Letter Grade,B,Clinical Topics
+5,1,,,14930,Christina Wilmer,,Optometry,440A,001,B,Letter Grade,B,Adv Optom Clinic
+5,1,,,14931,Christina Wilmer,,Optometry,440A,002,B,Letter Grade,B,Adv Optom Clinic
+5,1,,,14932,Christina Wilmer,,Optometry,441A,001,B,Letter Grade,B,Specialty Clinics
+5,1,,,14933,Christina Wilmer,,Optometry,441A,002,B,Letter Grade,B,Specialty Clinics
+5,8,,,14953,Erika Brown; Inderpreet Hayer; Robin Flagg,,Public Health,W200E,001,B,Letter Grade,B,Hpm Breadth
+5,2,,,14954,Brigid Cakouros; Jessica Watterson,,Public Health,W204,001,B,Letter Grade,B,Mass Communication
+5,2,,,14955,Casey Brown; Cindy Leung; Emily Altman,,Public Health,W206,001,B,Letter Grade,B,Mat&Child Nutrition
+5,13,,,14956,Michael Bates; Olivia Solomon,,Public Health,250A,001,B,Letter Grade,B,Epidemiolog Meth I
+5,3,,,14957,Amy Slater; David Paolo; Jodi Halpern; Madelena Ng; Sharada Narayan,,Public Health,W289,001,B,Letter Grade,B,Interdis Health
+5,4,,,14982,Emily Polk; Irina Titova; Kimberly MacPherson,,Public Health,W227A,001,B,Letter Grade,B,Health Care Finance
+5,18,,,15929,Peter Goodson,,Executive MBA,236M,2,B,Letter Grade,B,Turnarounds
+5,1,,,15930,Shachar Kariv; Steven Tadelis,,Executive MBA,211,1,B,Letter Grade,B,Game Theory
+5,5,,,15931,Peter Goodson,,Evening & Weekend MBA,236M,1,B,Letter Grade,B,Turnarounds
+5,3,,,15932,Peter Goodson,,Evening & Weekend MBA,236M,2,B,Letter Grade,B,Turnarounds
+5,1,,,15933,Sahar Yousef,,Evening & Weekend MBA,257,1,B,Letter Grade,B,Topics In Mors
+5,1,,,15955,James York-Winegar; Kyle Hamilton,,Data Science,W261,005,B,Letter Grade,B,Mach Lrn At Scale
+5,1,,,15956,James York-Winegar; Kyle Hamilton,,Data Science,W261,006,B,Letter Grade,B,Mach Lrn At Scale
+5,1,,,15974,Clarence Chio; Daniel Gillick,,Information and Cybersecurity,W207,001,B,Letter Grade,B,Ml For Cybersec
+5,6,,,16028,Richard Stanton,,Financial Engineering,230I,2,B,Letter Grade,B,Fixed Income Markts
+6,2,,,11533,Gregory La Blanc,,Evening & Weekend MBA,296,006,B,Letter Grade,B-,Special Topics
+6,2,,,11944,Steven Huff,,Executive MBA,296,001,B,Letter Grade,B-,Topics In Bus Adm
+6,1,,,11947,Alison Meyer,,Executive MBA,296,004,B,Letter Grade,B-,Topics In Bus Adm
+6,3,,,11948,Bryce Hoffman; Steven Rotkoff; Whitney Hischier,,Executive MBA,296,005,B,Letter Grade,B-,Topics In Bus Adm
+6,2,,,13152,Holly Schroth,,Evening & Weekend MBA,252,001,B,Letter Grade,B-,"Negot, Conflict Res"
+6,1,,,13161,Richard Stanton,,Financial Engineering,230I,001,B,Letter Grade,B-,Fixed Income Markts
+6,5,,,13239,Lucas Davis,,Executive MBA,200S,001,B,Letter Grade,B-,Data And Decisions
+6,6,,,13243,Veselina Dinova,,Executive MBA,222,001,B,Letter Grade,B-,Fin Info Analysis
+6,7,,,13267,Laurent El Ghaoui,,Financial Engineering,230P,001,B,Letter Grade,B-,Financial Data Sci
+6,3,,,13591,Christina Shannon,,Economics,204,001,B,Letter Grade,B-,Math Tools For Econ
+6,1,,,14834,Anne Campbell Washington; Edward Helme,,Public Affairs,290,1,B,Letter Grade,B-,Spec Topics Pub Aff
+6,1,,,14848,Eric Matthew Penner,,Data Science,W203,001,B,Letter Grade,B-,Stat For Data Sci
+6,1,,,14849,Eric Matthew Penner,,Data Science,W203,002,B,Letter Grade,B-,Stat For Data Sci
+6,1,,,14852,Gunnar Kleemann,,Data Science,W203,005,B,Letter Grade,B-,Stat For Data Sci
+6,1,,,14861,Amit Bhattacharyya; Noah Gift,,Data Science,W207,005,B,Letter Grade,B-,Applied Mach Learn
+6,3,,,14865,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,003,B,Letter Grade,B-,Capstone
+6,1,,,14900,Kyle Hamilton,,Data Science,W261,003,B,Letter Grade,B-,Mach Lrn At Scale
+6,1,,,14903,Micah Gell-Redman,,Data Science,W241,006,B,Letter Grade,B-,Exp & Causal Infer
+6,1,,,14927,Christina Wilmer; Debora Chen; Harry Green; Kuniyoshi Kanai; Linh Le; Pam Satjawatcharaphong,,Optometry,430A,001,B,Letter Grade,B-,Optometry Clinics
+6,1,,,14928,Christina Wilmer,,Optometry,430A,002,B,Letter Grade,B-,Optometry Clinics
+6,2,,,14929,Carl Jacobsen; Glen Ozawa,,Optometry,432,001,B,Letter Grade,B-,Clinical Topics
+6,1,,,14954,Brigid Cakouros; Jessica Watterson,,Public Health,W204,001,B,Letter Grade,B-,Mass Communication
+6,2,,,14956,Michael Bates; Olivia Solomon,,Public Health,250A,001,B,Letter Grade,B-,Epidemiolog Meth I
+6,2,,,14957,Amy Slater; David Paolo; Jodi Halpern; Madelena Ng; Sharada Narayan,,Public Health,W289,001,B,Letter Grade,B-,Interdis Health
+6,2,,,14982,Emily Polk; Irina Titova; Kimberly MacPherson,,Public Health,W227A,001,B,Letter Grade,B-,Health Care Finance
+6,1,,,15933,Sahar Yousef,,Evening & Weekend MBA,257,1,B,Letter Grade,B-,Topics In Mors
+6,1,,,15934,Mary Breen; Steven Huff,,Evening & Weekend MBA,267,1,B,Letter Grade,B-,Topics In Marketing
+6,1,,,15951,David Steier; Juanjie Joyce Shen,,Data Science,W210,005,B,Letter Grade,B-,Capstone
+6,2,,,15952,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,006,B,Letter Grade,B-,Capstone
+6,2,,,15956,James York-Winegar; Kyle Hamilton,,Data Science,W261,006,B,Letter Grade,B-,Mach Lrn At Scale
+6,1,,,15961,Ilyas Ustun,,Data Science,W207,007,B,Letter Grade,B-,Applied Mach Learn
+6,1,,,15974,Clarence Chio; Daniel Gillick,,Information and Cybersecurity,W207,001,B,Letter Grade,B-,Ml For Cybersec
+6,3,,,16028,Richard Stanton,,Financial Engineering,230I,2,B,Letter Grade,B-,Fixed Income Markts
+7,1,,,13152,Holly Schroth,,Evening & Weekend MBA,252,001,C,Letter Grade,C+,"Negot, Conflict Res"
+7,3,,,13161,Richard Stanton,,Financial Engineering,230I,001,C,Letter Grade,C+,Fixed Income Markts
+7,1,,,13243,Veselina Dinova,,Executive MBA,222,001,C,Letter Grade,C+,Fin Info Analysis
+7,2,,,14956,Michael Bates; Olivia Solomon,,Public Health,250A,001,C,Letter Grade,C+,Epidemiolog Meth I
+7,1,,,15952,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,006,C,Letter Grade,C+,Capstone
+7,1,,,15955,James York-Winegar; Kyle Hamilton,,Data Science,W261,005,C,Letter Grade,C+,Mach Lrn At Scale
+7,1,,,15956,James York-Winegar; Kyle Hamilton,,Data Science,W261,006,C,Letter Grade,C+,Mach Lrn At Scale
+7,1,,,16028,Richard Stanton,,Financial Engineering,230I,2,C,Letter Grade,C+,Fixed Income Markts
+8,1,,,11973,Fereshteh Amini,,Data Science,W209,001,C,Letter Grade,C,Data Viz/Comm
+8,1,,,13152,Holly Schroth,,Evening & Weekend MBA,252,001,C,Letter Grade,C,"Negot, Conflict Res"
+8,1,,,13161,Richard Stanton,,Financial Engineering,230I,001,C,Letter Grade,C,Fixed Income Markts
+8,2,,,13591,Christina Shannon,,Economics,204,001,C,Letter Grade,C,Math Tools For Econ
+8,1,,,14864,Alberto Todeschini; Stanislav Kelman,,Data Science,W210,002,C,Letter Grade,C,Capstone
+8,1,,,14871,Kyle Hamilton,,Data Science,W261,001,C,Letter Grade,C,Mach Lrn At Scale
+8,1,,,14874,Ying Yau,,Data Science,W271,002,C,Letter Grade,C,Adv Data Sci Stats
+8,1,,,14903,Micah Gell-Redman,,Data Science,W241,006,C,Letter Grade,C,Exp & Causal Infer
+8,1,,,14906,Gunnar Kleemann,,Data Science,W200,004,C,Letter Grade,C,Python Fundamentals
+8,2,,,14911,Fattaneh Bayatbabolghani,,Information and Cybersecurity,W202,001,C,Letter Grade,C,Cryptography
+8,1,,,14953,Erika Brown; Inderpreet Hayer; Robin Flagg,,Public Health,W200E,001,C,Letter Grade,C,Hpm Breadth
+8,1,,,14955,Casey Brown; Cindy Leung; Emily Altman,,Public Health,W206,001,C,Letter Grade,C,Mat&Child Nutrition
+8,1,,,14956,Michael Bates; Olivia Solomon,,Public Health,250A,001,C,Letter Grade,C,Epidemiolog Meth I
+8,2,,,14982,Emily Polk; Irina Titova; Kimberly MacPherson,,Public Health,W227A,001,C,Letter Grade,C,Health Care Finance
+9,1,,,14898,Mark Butler,,Data Science,W266,004,C,Letter Grade,C-,Nlp Deep Learning
+9,1,,,14906,Gunnar Kleemann,,Data Science,W200,004,C,Letter Grade,C-,Python Fundamentals
+13,1,,,14848,Eric Matthew Penner,,Data Science,W203,001,F,Letter Grade,F,Stat For Data Sci
+13,1,,,14865,Alberto Todeschini; Hossein Vahabi,,Data Science,W210,003,F,Letter Grade,F,Capstone
+13,1,,,14881,Daniel Cer,,Data Science,W266,001,F,Letter Grade,F,Nlp Deep Learning
+13,1,,,14899,Siddhartha Jonnalagadda,,Data Science,W266,005,F,Letter Grade,F,Nlp Deep Learning
+13,1,,,14905,Mark Labovitz,,Data Science,W203,006,F,Letter Grade,F,Stat For Data Sci
+13,1,,,15954,Kyle Hamilton,,Data Science,W261,004,F,Letter Grade,F,Mach Lrn At Scale
+20,5,,,15252,William Fernholz,,Law,208.9S,001,Credit,Non-Letter Grade,High Honors,"Fundamntls,U S Law"
+20,2,,,15254,James Higa,,Law,206.5S,003,Credit,Non-Letter Grade,High Honors,Llm Lgl  Research And Writing
+20,2,,,15255,Basil Williams,,Law,206.5S,004,Credit,Non-Letter Grade,High Honors,Llm Lgl  Research And Writing
+20,1,,,15256,Laurel Kilgour,,Law,206.5S,005,Credit,Non-Letter Grade,High Honors,Llm Lgl  Research And Writing
+20,8,,,15257,Sean Farhang,,Law,200S,001,Credit,Non-Letter Grade,High Honors,Civil Procedure
+20,6,,,15258,Madison Farricker; Richard Davis,,Law,201S,001,Credit,Non-Letter Grade,High Honors,Torts
+20,16,,,15259,Abbye Atkinson,,Law,202S,001,Credit,Non-Letter Grade,High Honors,Contracts
+20,7,,,15260,Jodi Collova,,Law,208.9S,002,Credit,Non-Letter Grade,High Honors,"Fundamntls,U S Law"
+20,3,,,15261,Bruce Budner,,Law,210.1S,001,Credit,Non-Letter Grade,High Honors,"Legl Eth,Pract Law"
+20,3,,,15262,Kristen Holmquist,,Law,220.6S,001,Credit,Non-Letter Grade,High Honors,Constitutional Law
+20,2,,,15263,Amy Lerman,,Law,220S,001,Credit,Non-Letter Grade,High Honors,Plcy Polit&Prob Sol
+20,1,,,15264,Ashutosh Bhagwat,,Law,223S,001,Credit,Non-Letter Grade,High Honors,Principles Of Admin Law
+20,4,,,15265,Andrea Roth,,Law,241S,001,Credit,Non-Letter Grade,High Honors,Evidence
+20,8,,,15268,Steven Solomon,,Law,248.5S,001,Credit,Non-Letter Grade,High Honors,Mergers&Acquisition
+20,3,,,15269,Adam Badawi,,Law,250S,001,Credit,Non-Letter Grade,High Honors,Business Assoc
+20,8,,,15270,Stavros Gkantinis,,Law,250S,002,Credit,Non-Letter Grade,High Honors,Business Assoc
+20,6,,,15271,Reza Dibadj,,Law,251.5S,001,Credit,Non-Letter Grade,High Honors,Corp Finance
+20,5,,,15272,Talha Syed,,Law,252.2S,001,Credit,Non-Letter Grade,High Honors,Antitrust Law
+20,2,,,15273,Robert Bartlett,,Law,255.5S,001,Credit,Non-Letter Grade,High Honors,Securities Regulat
+20,4,,,15277,Katerina Linos; Toni Mendicino,,Law,261.1S,001,Credit,Non-Letter Grade,High Honors,Int'L Business Tran
+20,2,,,15279,Arthur Haubenstock,,Law,270.4S,001,Credit,Non-Letter Grade,High Honors,Renewable Energy Law
+20,1,,,15281,Eric Biber,,Law,271S,001,Credit,Non-Letter Grade,High Honors,Found. Environ Law
+20,3,,,15282,Peter Menell,,Law,275.3S,001,Credit,Non-Letter Grade,High Honors,Intellectual Property Law
+20,5,,,15284,Paul Schwartz,,Law,276PS,001,Credit,Non-Letter Grade,High Honors,Info Privacy Law
+20,5,,,15285,Robert Merges,,Law,277WS,001,Credit,Non-Letter Grade,High Honors,Patent Law
+20,3,,,15286,Ben Depoorter,,Law,278.3S,001,Credit,Non-Letter Grade,High Honors,Copyright Law
+20,4,,,15288,Sonia Katyal; Sonia Katyal,,Law,278.1S,001,Credit,Non-Letter Grade,High Honors,Trademark Law And Branding
+20,6,,,15293,Lois Schwartz,,Law,210.1S,002,Credit,Non-Letter Grade,High Honors,"Legl Eth,Pract Law"
+20,1,,,15334,Saira Mohamed,,Law,263.2S,001,Credit,Non-Letter Grade,High Honors,Intl Hum Rts2:Mass
+20,3,,,15680,Delida Costin,,Law,206.5S,006,Credit,Non-Letter Grade,High Honors,Llm Lgl  Research And Writing
+20,2,,,15681,Charles Rice,,Law,206.5S,007,Credit,Non-Letter Grade,High Honors,Llm Lgl  Research And Writing
+20,3,,,15682,Laurel Simmons,,Law,206.5S,008,Credit,Non-Letter Grade,High Honors,Llm Lgl  Research And Writing
+21,7,,,15252,William Fernholz,,Law,208.9S,001,Credit,Non-Letter Grade,Honors,"Fundamntls,U S Law"
+21,3,,,15254,James Higa,,Law,206.5S,003,Credit,Non-Letter Grade,Honors,Llm Lgl  Research And Writing
+21,4,,,15255,Basil Williams,,Law,206.5S,004,Credit,Non-Letter Grade,Honors,Llm Lgl  Research And Writing
+21,2,,,15256,Laurel Kilgour,,Law,206.5S,005,Credit,Non-Letter Grade,Honors,Llm Lgl  Research And Writing
+21,11,,,15257,Sean Farhang,,Law,200S,001,Credit,Non-Letter Grade,Honors,Civil Procedure
+21,9,,,15258,Madison Farricker; Richard Davis,,Law,201S,001,Credit,Non-Letter Grade,Honors,Torts
+21,15,,,15259,Abbye Atkinson,,Law,202S,001,Credit,Non-Letter Grade,Honors,Contracts
+21,11,,,15260,Jodi Collova,,Law,208.9S,002,Credit,Non-Letter Grade,Honors,"Fundamntls,U S Law"
+21,4,,,15261,Bruce Budner,,Law,210.1S,001,Credit,Non-Letter Grade,Honors,"Legl Eth,Pract Law"
+21,4,,,15262,Kristen Holmquist,,Law,220.6S,001,Credit,Non-Letter Grade,Honors,Constitutional Law
+21,2,,,15263,Amy Lerman,,Law,220S,001,Credit,Non-Letter Grade,Honors,Plcy Polit&Prob Sol
+21,2,,,15264,Ashutosh Bhagwat,,Law,223S,001,Credit,Non-Letter Grade,Honors,Principles Of Admin Law
+21,7,,,15265,Andrea Roth,,Law,241S,001,Credit,Non-Letter Grade,Honors,Evidence
+21,13,,,15268,Steven Solomon,,Law,248.5S,001,Credit,Non-Letter Grade,Honors,Mergers&Acquisition
+21,4,,,15269,Adam Badawi,,Law,250S,001,Credit,Non-Letter Grade,Honors,Business Assoc
+21,12,,,15270,Stavros Gkantinis,,Law,250S,002,Credit,Non-Letter Grade,Honors,Business Assoc
+21,9,,,15271,Reza Dibadj,,Law,251.5S,001,Credit,Non-Letter Grade,Honors,Corp Finance
+21,9,,,15272,Talha Syed,,Law,252.2S,001,Credit,Non-Letter Grade,Honors,Antitrust Law
+21,3,,,15273,Robert Bartlett,,Law,255.5S,001,Credit,Non-Letter Grade,Honors,Securities Regulat
+21,7,,,15277,Katerina Linos; Toni Mendicino,,Law,261.1S,001,Credit,Non-Letter Grade,Honors,Int'L Business Tran
+21,3,,,15279,Arthur Haubenstock,,Law,270.4S,001,Credit,Non-Letter Grade,Honors,Renewable Energy Law
+21,1,,,15281,Eric Biber,,Law,271S,001,Credit,Non-Letter Grade,Honors,Found. Environ Law
+21,4,,,15282,Peter Menell,,Law,275.3S,001,Credit,Non-Letter Grade,Honors,Intellectual Property Law
+21,11,,,15284,Paul Schwartz,,Law,276PS,001,Credit,Non-Letter Grade,Honors,Info Privacy Law
+21,8,,,15285,Robert Merges,,Law,277WS,001,Credit,Non-Letter Grade,Honors,Patent Law
+21,5,,,15286,Ben Depoorter,,Law,278.3S,001,Credit,Non-Letter Grade,Honors,Copyright Law
+21,7,,,15288,Sonia Katyal; Sonia Katyal,,Law,278.1S,001,Credit,Non-Letter Grade,Honors,Trademark Law And Branding
+21,8,,,15293,Lois Schwartz,,Law,210.1S,002,Credit,Non-Letter Grade,Honors,"Legl Eth,Pract Law"
+21,2,,,15334,Saira Mohamed,,Law,263.2S,001,Credit,Non-Letter Grade,Honors,Intl Hum Rts2:Mass
+21,4,,,15680,Delida Costin,,Law,206.5S,006,Credit,Non-Letter Grade,Honors,Llm Lgl  Research And Writing
+21,3,,,15681,Charles Rice,,Law,206.5S,007,Credit,Non-Letter Grade,Honors,Llm Lgl  Research And Writing
+21,4,,,15682,Laurel Simmons,,Law,206.5S,008,Credit,Non-Letter Grade,Honors,Llm Lgl  Research And Writing
+22,11,,,15252,William Fernholz,,Law,208.9S,001,Credit,Non-Letter Grade,Pass,"Fundamntls,U S Law"
+22,4,,,15254,James Higa,,Law,206.5S,003,Credit,Non-Letter Grade,Pass,Llm Lgl  Research And Writing
+22,6,,,15255,Basil Williams,,Law,206.5S,004,Credit,Non-Letter Grade,Pass,Llm Lgl  Research And Writing
+22,3,,,15256,Laurel Kilgour,,Law,206.5S,005,Credit,Non-Letter Grade,Pass,Llm Lgl  Research And Writing
+22,17,,,15257,Sean Farhang,,Law,200S,001,Credit,Non-Letter Grade,Pass,Civil Procedure
+22,14,,,15258,Madison Farricker; Richard Davis,,Law,201S,001,Credit,Non-Letter Grade,Pass,Torts
+22,16,,,15259,Abbye Atkinson,,Law,202S,001,Credit,Non-Letter Grade,Pass,Contracts
+22,17,,,15260,Jodi Collova,,Law,208.9S,002,Credit,Non-Letter Grade,Pass,"Fundamntls,U S Law"
+22,7,,,15261,Bruce Budner,,Law,210.1S,001,Credit,Non-Letter Grade,Pass,"Legl Eth,Pract Law"
+22,7,,,15262,Kristen Holmquist,,Law,220.6S,001,Credit,Non-Letter Grade,Pass,Constitutional Law
+22,1,,,15263,Amy Lerman,,Law,220S,001,Credit,Non-Letter Grade,Pass,Plcy Polit&Prob Sol
+22,1,,,15264,Ashutosh Bhagwat,,Law,223S,001,Credit,Non-Letter Grade,Pass,Principles Of Admin Law
+22,9,,,15265,Andrea Roth,,Law,241S,001,Credit,Non-Letter Grade,Pass,Evidence
+22,20,,,15268,Steven Solomon,,Law,248.5S,001,Credit,Non-Letter Grade,Pass,Mergers&Acquisition
+22,3,,,15269,Adam Badawi,,Law,250S,001,Credit,Non-Letter Grade,Pass,Business Assoc
+22,20,,,15270,Stavros Gkantinis,,Law,250S,002,Credit,Non-Letter Grade,Pass,Business Assoc
+22,15,,,15271,Reza Dibadj,,Law,251.5S,001,Credit,Non-Letter Grade,Pass,Corp Finance
+22,11,,,15272,Talha Syed,,Law,252.2S,001,Credit,Non-Letter Grade,Pass,Antitrust Law
+22,5,,,15273,Robert Bartlett,,Law,255.5S,001,Credit,Non-Letter Grade,Pass,Securities Regulat
+22,11,,,15277,Katerina Linos; Toni Mendicino,,Law,261.1S,001,Credit,Non-Letter Grade,Pass,Int'L Business Tran
+22,6,,,15279,Arthur Haubenstock,,Law,270.4S,001,Credit,Non-Letter Grade,Pass,Renewable Energy Law
+22,2,,,15281,Eric Biber,,Law,271S,001,Credit,Non-Letter Grade,Pass,Found. Environ Law
+22,6,,,15282,Peter Menell,,Law,275.3S,001,Credit,Non-Letter Grade,Pass,Intellectual Property Law
+22,15,,,15284,Paul Schwartz,,Law,276PS,001,Credit,Non-Letter Grade,Pass,Info Privacy Law
+22,14,,,15285,Robert Merges,,Law,277WS,001,Credit,Non-Letter Grade,Pass,Patent Law
+22,8,,,15286,Ben Depoorter,,Law,278.3S,001,Credit,Non-Letter Grade,Pass,Copyright Law
+22,11,,,15288,Sonia Katyal; Sonia Katyal,,Law,278.1S,001,Credit,Non-Letter Grade,Pass,Trademark Law And Branding
+22,13,,,15293,Lois Schwartz,,Law,210.1S,002,Credit,Non-Letter Grade,Pass,"Legl Eth,Pract Law"
+22,1,,,15680,Delida Costin,,Law,206.5S,006,Credit,Non-Letter Grade,Pass,Llm Lgl  Research And Writing
+22,5,,,15681,Charles Rice,,Law,206.5S,007,Credit,Non-Letter Grade,Pass,Llm Lgl  Research And Writing
+22,6,,,15682,Laurel Simmons,,Law,206.5S,008,Credit,Non-Letter Grade,Pass,Llm Lgl  Research And Writing
+24,1,,,15251,Daniel Farber,,Law,206.3S,001,Credit,Non-Letter Grade,Credit,Adv Writing & Lgl Scholarshp
+24,14,,,15253,Rose Goldberg; Rose Goldberg,,Law,206.5S,002,Credit,Non-Letter Grade,Credit,Llm Lgl  Research And Writing
+24,14,,,15266,Jay Finkelstein,,Law,245.9S,001,Credit,Non-Letter Grade,Credit,Intl Busness Negoti
+24,16,,,15267,Jessica Notini; Jessica Notini,,Law,245S,001,Credit,Non-Letter Grade,Credit,Negotiations
+24,21,,,15275,Nadine Stocklin; Nadine Stocklin,,Law,256S,001,Credit,Non-Letter Grade,Credit,Transactional Drafting
+24,20,,,15276,Charles Reichmann,,Law,256S,002,Credit,Non-Letter Grade,Credit,Transactional Drafting
+24,29,,,15278,Neil Popovic,,Law,261.2S,001,Credit,Non-Letter Grade,Credit,Int'L Arbitration
+24,10,,,15280,Daniel Farber,,Law,271.1S,001,Credit,Non-Letter Grade,Credit,Intl Environ Law
+24,19,,,15283,James Dempsey,,Law,276.1S,001,Credit,Non-Letter Grade,Credit,Cybersecurity
+24,19,,,15287,Jessica Notini; Jessica Notini,,Law,245S,002,Credit,Non-Letter Grade,Credit,Negotiations
+24,5,,,15290,Mallika Kaur,,Law,242S,001,Credit,Non-Letter Grade,Credit,Public Speaking
+24,32,,,15291,Todd Smithline; Todd Smithline,,Law,275.2S,001,Credit,Non-Letter Grade,Credit,Video Game Law
+24,16,,,15292,Charles Reichmann,,Law,206.5S,001,Credit,Non-Letter Grade,Credit,Llm Lgl  Research And Writing
+24,13,,,15295,Rafael Gomez,,Law,278.75S,001,Credit,Non-Letter Grade,Credit,Entertainment Law
+24,31,,,15296,Herbert Fockler,,Law,255.11S,001,Credit,Non-Letter Grade,Credit,Venture Capital In Practice
+24,45,,,15298,Hilary Kivitz,,Law,247.6S,001,Credit,Non-Letter Grade,Credit,Blockchain For Lawyers
+24,16,,,15299,Annik Hirshen,,Law,297C,001,Credit,Non-Letter Grade,Credit,Law Practice Field Study
+24,1,,,15300,Jodi Collova,,Law,299,001,Credit,Non-Letter Grade,Credit,Indiv Res Project
+24,1,,,15302,Prasad Krishnamurthy,,Law,299F,001,Credit,Non-Letter Grade,Credit,Jsd Independent Study Iv
+24,47,,,15696,Adam Sterling; Adam Sterling,,Law,255.11S,002,Credit,Non-Letter Grade,Credit,Venture Capital In Practice
+24,38,,,15787,Hana Ivanhoe; Hana Ivanhoe,,Law,262S,001,Credit,Non-Letter Grade,Credit,Anti-Corruption Compliance
+24,4,,,15980,Daniel Farber,,Law,299,002,Credit,Non-Letter Grade,Credit,Indiv Res Project
+24,2,,,16138,Catherine Albiston,,Law,602,1,Credit,Non-Letter Grade,Credit,"Indiv Study, Jsp Dr"
+25,1,,,10142,Bernhard Boser,,Electrical Engineering,299,014,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10149,Ronald Fearing,,Electrical Engineering,299,021,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10161,Laura Waller,,Electrical Engineering,299,034,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10170,Seth Sanders,,Electrical Engineering,299,043,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10173,Claire Tomlin,,Electrical Engineering,299,047,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10181,Anant Sahai,,Electrical Engineering,299,055,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10189,Sanjit Seshia,,Electrical Engineering,299,063,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10194,Shimon Lustig,,Electrical Engineering,299,068,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,3,,,10200,Vladimir Stojanovic,,Electrical Engineering,299,076,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10369,Pieter Abbeel,,Computer Science,299,001,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10377,Trevor Darrell,,Computer Science,299,009,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10385,Michael Jordan,,Computer Science,299,017,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10390,John Kubiatowicz,,Computer Science,299,022,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10392,Jitendra Malik,,Computer Science,299,024,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10399,Sylvia Ratnasamy,,Computer Science,299,031,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,2,,,10403,Alistair Sinclair,,Computer Science,299,035,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,2,,,10405,Ion Stoica,,Computer Science,299,037,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10419,Kenneth Goldberg,,Computer Science,299,053,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10420,Xiaodong Song,,Computer Science,299,057,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,10428,Kurt Keutzer,,Computer Science,299,067,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,2,,,10541,Michael DeWeese,,Physics,299,001,Credit,Non-Letter Grade,Satisfactory,Research
+25,2,,,10542,Marjorie Shapiro,,Physics,299,002,Credit,Non-Letter Grade,Satisfactory,Research
+25,1,,,10543,Steven Louie,,Physics,299,003,Credit,Non-Letter Grade,Satisfactory,Research
+25,1,,,10544,Stuart Bale,,Physics,299,004,Credit,Non-Letter Grade,Satisfactory,Research
+25,1,,,10546,Raphael Bousso,,Physics,299,006,Credit,Non-Letter Grade,Satisfactory,Research
+25,1,,,10547,Ehud Altman,,Physics,299,007,Credit,Non-Letter Grade,Satisfactory,Research
+25,1,,,10548,Ori Ganor,,Physics,299,008,Credit,Non-Letter Grade,Satisfactory,Research
+25,1,,,10549,John Clarke,,Physics,299,009,Credit,Non-Letter Grade,Satisfactory,Research
+25,5,,,10575,Arthur Reingold,,Public Health,299,001,Credit,Non-Letter Grade,Satisfactory,Independnt Research
+25,1,,,10579,Sandrine Dudoit,,Public Health,299,005,Credit,Non-Letter Grade,Satisfactory,Independnt Research
+25,2,,,10582,Alan Hubbard,,Public Health,299,008,Credit,Non-Letter Grade,Satisfactory,Independnt Research
+25,1,,,10585,Mahasin Mujahid,,Public Health,299,011,Credit,Non-Letter Grade,Satisfactory,Independnt Research
+25,1,,,10586,Martyn Smith,,Public Health,299,012,Credit,Non-Letter Grade,Satisfactory,Independnt Research
+25,1,,,10700,Charles Marshall,,Integrative Biology,299,001,Credit,Non-Letter Grade,Satisfactory,Graduate Research
+25,1,,,10850,Raja Sengupta,,Civil & Environmental Eng,299,002,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,10851,Claudia Ostertag,,Civil & Environmental Eng,299,003,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,10853,Iris Tommelein,,Civil & Environmental Eng,299,005,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,10857,Ashok Gadgil,,Civil & Environmental Eng,299,009,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,10864,Alice Agogino,,Mechanical Engineering,299,001,Credit,Non-Letter Grade,Satisfactory,Indiv Stud Research
+25,1,,,10876,Costas Grigoropoulos,,Mechanical Engineering,299,013,Credit,Non-Letter Grade,Satisfactory,Indiv Stud Research
+25,1,,,10877,Simo Makiharju,,Mechanical Engineering,299,014,Credit,Non-Letter Grade,Satisfactory,Indiv Stud Research
+25,1,,,10885,Liwei Lin,,Mechanical Engineering,299,022,Credit,Non-Letter Grade,Satisfactory,Indiv Stud Research
+25,2,,,10888,Philip Marcus,,Mechanical Engineering,299,025,Credit,Non-Letter Grade,Satisfactory,Indiv Stud Research
+25,1,,,10889,Sara McMains,,Mechanical Engineering,299,026,Credit,Non-Letter Grade,Satisfactory,Indiv Stud Research
+25,1,,,10902,Masayoshi Tomizuka,,Mechanical Engineering,299,039,Credit,Non-Letter Grade,Satisfactory,Indiv Stud Research
+25,2,,,10914,Masayoshi Tomizuka,,Mechanical Engineering,299,051,Credit,Non-Letter Grade,Satisfactory,Indiv Stud Research
+25,22,,,10983,Mary Breen,,Evening & Weekend MBA,293,001,Credit,Non-Letter Grade,Satisfactory,Individual Study
+25,3,,,10984,Mary Breen,,Evening & Weekend MBA,293,002,Credit,Non-Letter Grade,Satisfactory,Individual Study
+25,2,,,11076,Benjamin Handel,,Economics,299,001,Credit,Non-Letter Grade,Satisfactory,Independent Study
+25,1,,,11085,Philipp Strack,,Economics,299,010,Credit,Non-Letter Grade,Satisfactory,Independent Study
+25,1,,,11102,Frederico Finan,,Economics,299,027,Credit,Non-Letter Grade,Satisfactory,Independent Study
+25,1,,,11253,Roger Falcone,,Applied Science & Tech,299,003,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,11254,Kristin Ceder-Persson,,Applied Science & Tech,299,004,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,11258,Mohammad Mofrad,,Applied Science & Tech,299,008,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,11334,Elizabeth Purdom,,Statistics,299,003,Credit,Non-Letter Grade,Satisfactory,Research
+25,1,,,11337,Haiyan Huang,,Statistics,299,006,Credit,Non-Letter Grade,Satisfactory,Research
+25,3,,,11399,Jie Yao,,Materials Science & Eng,299,001,Credit,Non-Letter Grade,Satisfactory,Ind Study/Research
+25,1,,,11400,Mark Asta,,Materials Science & Eng,299,002,Credit,Non-Letter Grade,Satisfactory,Ind Study/Research
+25,1,,,11401,Gerbrand Ceder,,Materials Science & Eng,299,003,Credit,Non-Letter Grade,Satisfactory,Ind Study/Research
+25,1,,,11404,Matthew Sherburne,,Materials Science & Eng,299,006,Credit,Non-Letter Grade,Satisfactory,Ind Study/Research
+25,2,,,11530,Laura Kray,,Evening & Weekend MBA,296,003,Credit,Non-Letter Grade,Satisfactory,Special Topics
+25,1,,,11539,John Radke,,Landscape Arch & Env Plan,299,001,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,11541,Kristina Hill,,Landscape Arch & Env Plan,299,003,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,3,,,11663,Xin Guo,,Industrial Eng & Ops Rsch,299,004,Credit,Non-Letter Grade,Satisfactory,Ind Study Or Resch
+25,3,,,11664,Dorit Hochbaum,,Industrial Eng & Ops Rsch,299,005,Credit,Non-Letter Grade,Satisfactory,Ind Study Or Resch
+25,1,,,11665,Philip Kaminsky,,Industrial Eng & Ops Rsch,299,006,Credit,Non-Letter Grade,Satisfactory,Ind Study Or Resch
+25,1,,,11666,Robert Leachman,,Industrial Eng & Ops Rsch,299,007,Credit,Non-Letter Grade,Satisfactory,Ind Study Or Resch
+25,1,,,11668,Shmuel Oren,,Industrial Eng & Ops Rsch,299,009,Credit,Non-Letter Grade,Satisfactory,Ind Study Or Resch
+25,1,,,11671,Anil Aswani,,Industrial Eng & Ops Rsch,299,012,Credit,Non-Letter Grade,Satisfactory,Ind Study Or Resch
+25,7,,,11672,Zuo-Jun Shen,,Industrial Eng & Ops Rsch,299,013,Credit,Non-Letter Grade,Satisfactory,Ind Study Or Resch
+25,1,,,11678,Coye Cheshire,,Information,299,003,Credit,Non-Letter Grade,Satisfactory,Individual Study
+25,2,,,11814,Michael Iarocci,,Spanish,298,001,Credit,Non-Letter Grade,Satisfactory,Spec Study Grad Stu
+25,4,,,11946,Laura Kray,,Executive MBA,296,003,Credit,Non-Letter Grade,Satisfactory,Topics In Bus Adm
+25,1,,,11957,Michael Cohen,,African American Studies,299,001,Credit,Non-Letter Grade,Satisfactory,Ind Stdy/Res
+25,1,,,11961,Michael Cohen,,African American Studies,299,002,Credit,Non-Letter Grade,Satisfactory,Ind Stdy/Res
+25,1,,,11967,Peter Zinoman,,Asian Studies,299,002,Credit,Non-Letter Grade,Satisfactory,Independent Study
+25,1,,,11968,Ann Swidler,,Asian Studies,299,003,Credit,Non-Letter Grade,Satisfactory,Independent Study
+25,1,,,12003,Michael Frenklach,,Mechanical Engineering,297,012,Credit,Non-Letter Grade,Satisfactory,Eng Field Studies
+25,2,,,12012,Liwei Lin,,Mechanical Engineering,297,022,Credit,Non-Letter Grade,Satisfactory,Eng Field Studies
+25,1,,,12013,Fai Ma,,Mechanical Engineering,297,023,Credit,Non-Letter Grade,Satisfactory,Eng Field Studies
+25,3,,,12029,Masayoshi Tomizuka,,Mechanical Engineering,297,039,Credit,Non-Letter Grade,Satisfactory,Eng Field Studies
+25,1,,,12033,Koushil Sreenath,,Mechanical Engineering,297,043,Credit,Non-Letter Grade,Satisfactory,Eng Field Studies
+25,2,,,12108,Joan Walker,,Civil & Environmental Eng,297,002,Credit,Non-Letter Grade,Satisfactory,Fld Studies In Cee
+25,2,,,12111,Michael Cassidy,,Civil & Environmental Eng,297,005,Credit,Non-Letter Grade,Satisfactory,Fld Studies In Cee
+25,2,,,12112,Filippos Filippou,,Civil & Environmental Eng,297,006,Credit,Non-Letter Grade,Satisfactory,Fld Studies In Cee
+25,2,,,12115,Arpad Horvath,,Civil & Environmental Eng,297,009,Credit,Non-Letter Grade,Satisfactory,Fld Studies In Cee
+25,3,,,12116,Scott Moura,,Civil & Environmental Eng,297,010,Credit,Non-Letter Grade,Satisfactory,Fld Studies In Cee
+25,1,,,12117,Mark Hansen,,Civil & Environmental Eng,297,011,Credit,Non-Letter Grade,Satisfactory,Fld Studies In Cee
+25,1,,,12118,Tracy Becker,,Civil & Environmental Eng,297,012,Credit,Non-Letter Grade,Satisfactory,Fld Studies In Cee
+25,1,,,12120,Juana Maria Rodriguez,,Theater Dance & Perf Stds,299,001,Credit,Non-Letter Grade,Satisfactory,Special Study
+25,1,,,12138,Danika Cooper,,Landscape Arch & Env Plan,297,003,Credit,Non-Letter Grade,Satisfactory,Supervised Fld Stud
+25,1,,,12139,John Radke,,Landscape Arch & Env Plan,297,004,Credit,Non-Letter Grade,Satisfactory,Supervised Fld Stud
+25,1,,,12151,Mark Csikszentmihalyi,,Chinese,298,003,Credit,Non-Letter Grade,Satisfactory,Dir Stu For Grad St
+25,1,,,12152,Andrew Jones,,Chinese,298,004,Credit,Non-Letter Grade,Satisfactory,Dir Stu For Grad St
+25,1,,,12210,Daniel Kammen,,Energy and Resources,299,001,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,12211,Duncan Callaway,,Energy and Resources,299,002,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,12225,Mary Ann Doane,,Film,298,001,Credit,Non-Letter Grade,Satisfactory,Special Study
+25,2,,,12273,John Corzine,,Optometry,499,003,Credit,Non-Letter Grade,Satisfactory,Independent Study
+25,2,,,12274,John Corzine,,Optometry,499,004,Credit,Non-Letter Grade,Satisfactory,Independent Study
+25,2,,,12305,Karl Britto,,Comparative Literature,299,002,Credit,Non-Letter Grade,Satisfactory,Directed Research
+25,1,,,12307,Pieter Abbeel,,Computer Science,297,002,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,4,,,12312,Peter Bartlett,,Computer Science,297,012,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,2,,,12314,John Canny,,Computer Science,297,016,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12315,Alessandro Chiesa,,Computer Science,297,018,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12317,David Culler,,Computer Science,297,022,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,5,,,12318,Trevor Darrell,,Computer Science,297,024,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12323,Alexei Efros,,Computer Science,297,034,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12324,Armando Fox,,Computer Science,297,036,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12331,Moritz Hardt,,Computer Science,297,052,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12336,Michael Jordan,,Computer Science,297,062,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,3,,,12343,Sergey Levine,,Computer Science,297,076,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12345,Jitendra Malik,,Computer Science,297,080,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,2,,,12347,Yi-Ren Ng,,Computer Science,297,084,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12349,Yi Ma,,Computer Science,297,088,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12359,Stuart Russell,,Computer Science,297,108,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12360,Koushik Sen,,Computer Science,297,110,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12361,Sanjit Seshia,,Computer Science,297,112,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,2,,,12362,Scott Shenker,,Computer Science,297,114,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12366,Yun Song,,Computer Science,297,122,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,5,,,12367,Ion Stoica,,Computer Science,297,124,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12372,David Wagner,,Computer Science,297,134,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,1,,,12373,John Wawrzynek,,Computer Science,297,136,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,4,,,12378,Xiaodong Song,,Computer Science,297,141,Credit,Non-Letter Grade,Satisfactory,Field Studies In Cs
+25,2,,,12389,Charles Blanton,,English,299,001,Credit,Non-Letter Grade,Satisfactory,Special Study
+25,1,,,12480,Christopher Ansell,,Political Science,299,002,Credit,Non-Letter Grade,Satisfactory,Spec Study Pol Sci
+25,19,,,12526,Renee Chow,,Architecture,N299,001,Credit,Non-Letter Grade,Satisfactory,Individual Study
+25,1,,,12540,Jeremy Magruder,,Ag & Resource Econ & Pol,N602,001,Credit,Non-Letter Grade,Satisfactory,"Ind Study, Doctorat"
+25,4,,,12541,Jeffrey Perloff,,Ag & Resource Econ & Pol,N602,002,Credit,Non-Letter Grade,Satisfactory,"Ind Study, Doctorat"
+25,1,,,12601,Matthew Francis,,Chemistry,N299,018,Credit,Non-Letter Grade,Satisfactory,Research
+25,1,,,12663,Roya Maboudian,,Chemical Engineering,N299,022,Credit,Non-Letter Grade,Satisfactory,Research Chem Engin
+25,1,,,12718,Mark Wilson,,Education,N299,001,Credit,Non-Letter Grade,Satisfactory,Special Study
+25,1,,,12719,Sophia Rabe-Hesketh,,Education,N299,002,Credit,Non-Letter Grade,Satisfactory,Special Study
+25,1,,,12722,Derek Van Rheenen,,Education,N299,005,Credit,Non-Letter Grade,Satisfactory,Special Study
+25,2,,,12723,Daniel Perlstein,,Education,N299,006,Credit,Non-Letter Grade,Satisfactory,Special Study
+25,1,,,12724,Anne Cunningham Carson,,Education,N299,007,Credit,Non-Letter Grade,Satisfactory,Special Study
+25,1,,,12765,Lynn Huntsinger,,"Env Sci, Policy, & Mgmt",N299,019,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,2,,,12814,Debarati Sanyal,,French,N299,001,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,12908,Barbara Spackman,,Italian Studies,N299,001,Credit,Non-Letter Grade,Satisfactory,Directed Research
+25,1,,,12999,Venkatacha Anantharam,,Electrical Engineering,297,002,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13004,Alexandre Bayen,,Electrical Engineering,297,007,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13005,Jeffrey Bokor,,Electrical Engineering,297,008,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13010,Thomas Courtade,,Electrical Engineering,297,013,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,2,,,13012,Laurent El Ghaoui,,Electrical Engineering,297,015,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13013,Ronald Fearing,,Electrical Engineering,297,016,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13016,Tsu-Jae Liu,,Electrical Engineering,297,019,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13021,Rikky Muller,,Electrical Engineering,297,024,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,3,,,13023,Ali Niknejad,,Electrical Engineering,297,026,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13029,Borivoje Nikolic,,Electrical Engineering,297,032,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13033,Jan Rabaey,,Electrical Engineering,297,036,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,2,,,13034,Kannan Ramchandran,,Electrical Engineering,297,037,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,2,,,13039,Alberto Sangiovanni-Vincentelli,,Electrical Engineering,297,042,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,2,,,13043,Vladimir Stojanovic,,Electrical Engineering,297,046,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13048,Laura Waller,,Electrical Engineering,297,051,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13049,Elad Alon,,Electrical Engineering,297,001,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13052,Bin Yu,,Electrical Engineering,297,056,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,1,,,13053,Ming-Chiang Wu,,Electrical Engineering,297,053,Credit,Non-Letter Grade,Satisfactory,Field Study In Ee
+25,25,,,13096,John Chuang; Rebecca Andersen,,Information,293,001,Credit,Non-Letter Grade,Satisfactory,Info Mgmt Practicum
+25,2,,,13118,Gregory Merrill,,Social Welfare,401,001,Credit,Non-Letter Grade,Satisfactory,Field Practicum
+25,13,,,13119,Adityanand Guntuboyina,,Statistics,601,001,Credit,Non-Letter Grade,Satisfactory,Individual Study
+25,24,,,13126,Mary Breen,,Executive MBA,293,001,Credit,Non-Letter Grade,Satisfactory,Individual Study
+25,63,,,13158,Peter Johnson,,Business Admin-MBA,293C,001,Credit,Non-Letter Grade,Satisfactory,Curriclr Pract Trng
+25,86,,,13162,Linda Kreitzman,,Financial Engineering,230T,001,Credit,Non-Letter Grade,Satisfactory,Topics In Fin Eng
+25,3,,,13165,Candace Yano,,Business Admin-PhD,602C,001,Credit,Non-Letter Grade,Satisfactory,Curriclr Pract Trng
+25,15,,,13345,-,,Environmental Design,253,001,Credit,Non-Letter Grade,Satisfactory,Urb Place Thes Std
+25,1,,,13431,Eliot Quataert,,Astronomy,N298,002,Credit,Non-Letter Grade,Satisfactory,Directed Group Stud
+25,1,,,13432,Jessica Lu,,Astronomy,N298,003,Credit,Non-Letter Grade,Satisfactory,Directed Group Stud
+25,2,,,13591,Christina Shannon,,Economics,204,001,Credit,Non-Letter Grade,Satisfactory,Math Tools For Econ
+25,1,,,14532,Lin Lin,,Mathematics,N295,001,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,14540,Elisabeth Sadoulet,,Ag & Resource Econ & Pol,N299,001,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,2,,,14697,MASSIMILIANO FRATONI,,Nuclear Engineering,N299,001,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,14698,Per Peterson,,Nuclear Engineering,N299,002,Credit,Non-Letter Grade,Satisfactory,Individual Research
+25,1,,,15000,Christine Scudder,,Social Welfare,W232,001,Credit,Non-Letter Grade,Satisfactory,Soc Work And Educ
+25,15,,,15001,Maria Gallegos-Diaz,,Social Welfare,272,101,Credit,Non-Letter Grade,Satisfactory,Human Svcs In Mex
+25,1,,,15872,Phillip Messersmith,,Materials Science & Eng,299,006,Credit,Non-Letter Grade,Satisfactory,Ind Study/Research
+25,1,,,15909,Isha Ray,,Energy and Resources,299,003,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,15914,David Harding,,Sociology,296,004,Credit,Non-Letter Grade,Satisfactory,Dir Diss Research
+25,5,,,15915,Ian Holmes,,Bioengineering,299,001,Credit,Non-Letter Grade,Satisfactory,Indiv Stud Research
+25,1,,,15950,Peter Zinoman,,South & SE Asian Studies,290D,001,Credit,Non-Letter Grade,Satisfactory,Malay/Indonesian
+25,1,,,15959,Joshua Blumenstock,,Information,293,002,Credit,Non-Letter Grade,Satisfactory,Info Mgmt Practicum
+25,2,,,16045,Susanna Elm,,History,299,001,Credit,Non-Letter Grade,Satisfactory,Directed Reading
+25,1,,,16053,Gregory Barton,,Molecular & Cell Biology,602,001,Credit,Non-Letter Grade,Satisfactory,Study For Doctoral
+25,13,,,16055,Robin Flagg,,Public Health,297,001,Credit,Non-Letter Grade,Satisfactory,Pb Hlth Field Study
+25,1,,,16070,Eric Paulos,,Computer Science,299,90,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,16073,Bjorn Hartmann,,Computer Science,299,083,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,16074,Jack Gallant,,Computer Science,299,084,Credit,Non-Letter Grade,Satisfactory,Indiv Research
+25,1,,,16076,Gerard Roland,,Economics,299,028,Credit,Non-Letter Grade,Satisfactory,Independent Study
+25,1,,,16078,Tyrone Hayes,,Integrative Biology,299,005,Credit,Non-Letter Grade,Satisfactory,Graduate Research
+25,1,,,16084,Edward Miguel,,Economics,299,030,Credit,Non-Letter Grade,Satisfactory,Independent Study
+25,2,,,16086,Ruth Collier,,Political Science,299,004,Credit,Non-Letter Grade,Satisfactory,Spec Study Pol Sci
+25,1,,,16087,Sarah Anzia,,Political Science,299,005,Credit,Non-Letter Grade,Satisfactory,Spec Study Pol Sci
+25,1,,,16088,Paul Pierson,,Political Science,299,006,Credit,Non-Letter Grade,Satisfactory,Spec Study Pol Sci
+25,1,,,16160,Wendy Brown,,Political Science,299,007,Credit,Non-Letter Grade,Satisfactory,Spec Study Pol Sci
+25,1,,,16163,Raja Sengupta,,Civil & Environmental Eng,297,013,Credit,Non-Letter Grade,Satisfactory,Fld Studies In Cee
+25,1,,,16193,J Pena,,Anc Hist & Medit Archae,299,001,Credit,Non-Letter Grade,Satisfactory,Superv Indep Study
+25,1,,,16194,J Pena,,Anc Hist & Medit Archae,299,002,Credit,Non-Letter Grade,Satisfactory,Superv Indep Study
+25,1,,,16203,Robert Ritchie,,Materials Science & Eng,299,010,Credit,Non-Letter Grade,Satisfactory,Ind Study/Research
+25,1,,,16210,Michael Riemer,,Civil & Environmental Eng,299,013,Credit,Non-Letter Grade,Satisfactory,Individual Research
+26,2,,,15257,Sean Farhang,,Law,200S,001,No Credit,Non-Letter Grade,No Credit,Civil Procedure
+26,1,,,15259,Abbye Atkinson,,Law,202S,001,No Credit,Non-Letter Grade,No Credit,Contracts
+26,1,,,15260,Jodi Collova,,Law,208.9S,002,No Credit,Non-Letter Grade,No Credit,"Fundamntls,U S Law"
+26,1,,,15265,Andrea Roth,,Law,241S,001,No Credit,Non-Letter Grade,No Credit,Evidence
+26,1,,,15270,Stavros Gkantinis,,Law,250S,002,No Credit,Non-Letter Grade,No Credit,Business Assoc
+26,1,,,15293,Lois Schwartz,,Law,210.1S,002,No Credit,Non-Letter Grade,No Credit,"Legl Eth,Pract Law"
+26,1,,,15682,Laurel Simmons,,Law,206.5S,008,No Credit,Non-Letter Grade,No Credit,Llm Lgl  Research And Writing
+27,1,,,15283,James Dempsey,,Law,276.1S,001,No Credit,Non-Letter Grade,Not Pass,Cybersecurity
+27,1,,,15291,Todd Smithline; Todd Smithline,,Law,275.2S,001,No Credit,Non-Letter Grade,Not Pass,Video Game Law
+27,1,,,15787,Hana Ivanhoe; Hana Ivanhoe,,Law,262S,001,No Credit,Non-Letter Grade,Not Pass,Anti-Corruption Compliance
+28,1,,,16203,Robert Ritchie,,Materials Science & Eng,299,010,No Credit,Non-Letter Grade,Unsatisfactory,Ind Study/Research
+30,1,,,10575,Arthur Reingold,,Public Health,299,001,Administrative Code,Administrative Code,Incomplete,Independnt Research
+30,2,,,12526,Renee Chow,,Architecture,N299,001,Administrative Code,Administrative Code,Incomplete,Individual Study
+30,1,,,13131,Gregory La Blanc,,Executive MBA,293,006,Administrative Code,Administrative Code,Incomplete,Individual Study
+30,1,,,13132,Homa Bahrami,,Executive MBA,293,007,Administrative Code,Administrative Code,Incomplete,Individual Study
+30,2,,,13158,Peter Johnson,,Business Admin-MBA,293C,001,Administrative Code,Administrative Code,Incomplete,Curriclr Pract Trng
+30,1,,,13238,Mark Rittenberg,,Executive MBA,200C,001,Administrative Code,Administrative Code,Incomplete,Communications
+30,1,,,14783,Carrie Strohl,,Education,236A,001,Administrative Code,Administrative Code,Incomplete,Science Educ Elem
+30,1,,,14813,Elisa Salasin; Jacob Disston; Nathan Gong,,Education,231A,001,Administrative Code,Administrative Code,Incomplete,"Teaching, Learning"
+30,1,,,14819,Jane Mauldon; Kira Sargatzke,,Public Affairs,285,001,Administrative Code,Administrative Code,Incomplete,Ethical Issues
+30,1,,,14821,Anne Campbell Washington; Randall Rentschler,,Public Affairs,225,001,Administrative Code,Administrative Code,Incomplete,Policy Comm
+30,1,,,14824,Candice Benge; Rucker Johnson,,Public Affairs,245,002,Administrative Code,Administrative Code,Incomplete,Inferential Stats
+30,1,,,14902,Daniel Hedblom,,Data Science,W241,005,Administrative Code,Administrative Code,Incomplete,Exp & Causal Infer
+30,9,,,14953,Erika Brown; Inderpreet Hayer; Robin Flagg,,Public Health,W200E,001,Administrative Code,Administrative Code,Incomplete,Hpm Breadth
+30,1,,,14979,Eric Gebbie,,Public Health,W257,001,Administrative Code,Administrative Code,Incomplete,Pub Health Prepare
+30,5,,,14982,Emily Polk; Irina Titova; Kimberly MacPherson,,Public Health,W227A,001,Administrative Code,Administrative Code,Incomplete,Health Care Finance
+30,1,,,15790,Sonal Patel,,Education,237,001,Administrative Code,Administrative Code,Incomplete,Teach Lang Arts
+30,2,,,15953,Dmitry Rekesh; Prabhakar Attaluri,,Data Science,W251,003,Administrative Code,Administrative Code,Incomplete,Deep Learning Cloud
+30,1,,,16153,Winfried Kudszus,,German,602,001,Administrative Code,Administrative Code,Incomplete,Ind Doct Study
+31,1,,,15284,Paul Schwartz,,Law,276PS,001,Administrative Code,Administrative Code,In Progress,Info Privacy Law
+31,1,,,15298,Hilary Kivitz,,Law,247.6S,001,Administrative Code,Administrative Code,In Progress,Blockchain For Lawyers
+33,3,,,10301,Alastair Iles; Dara O'Rourke; John Harte; Justin Brashares; Lynn Huntsinger; Miguel Altieri; Wayne Getz,,"Env Sci, Policy, & Mgmt",299,001,Administrative Code,Administrative Code,Missing,Individual Research
+33,1,,,10545,ALESSANDRA LANZARA,,Physics,299,005,Administrative Code,Administrative Code,Missing,Research
+33,1,,,10964,Keith Alexander,,Chemical Engineering,299,001,Administrative Code,Administrative Code,Missing,Research Chem Engin
+33,1,,,11255,Xiang Zhang,,Applied Science & Tech,299,005,Administrative Code,Administrative Code,Missing,Individual Research
+33,1,,,11345,Jasjeet Sekhon,,Statistics,299,014,Administrative Code,Administrative Code,Missing,Research
+33,1,,,11346,Michael Mahoney,,Statistics,299,015,Administrative Code,Administrative Code,Missing,Research
+33,1,,,11366,Christine Wildsoet,,Vision Science,299,010,Administrative Code,Administrative Code,Missing,Res Vision Science
+33,1,,,11540,Harrison Fraker,,Landscape Arch & Env Plan,299,002,Administrative Code,Administrative Code,Missing,Individual Research
+33,2,,,12006,Roberto Horowitz,,Mechanical Engineering,297,015,Administrative Code,Administrative Code,Missing,Eng Field Studies
+33,2,,,12136,Harrison Fraker,,Landscape Arch & Env Plan,297,001,Administrative Code,Administrative Code,Missing,Supervised Fld Stud
+33,1,,,12137,Iryna Dronova,,Landscape Arch & Env Plan,297,002,Administrative Code,Administrative Code,Missing,Supervised Fld Stud
+33,1,,,12406,James Rector III,,Earth & Planetary Science,280,018,Administrative Code,Administrative Code,Missing,Research
+33,2,,,12528,-,,Architecture,N299,003,Administrative Code,Administrative Code,Missing,Individual Study
+33,7,,,13327,-,,City & Regional Planning,N299,001,Administrative Code,Administrative Code,Missing,Ind Stdy Or Res
+33,1,,,13722,-,,Linguistics,N299,001,Administrative Code,Administrative Code,Missing,Special Ind Study
+33,2,,,14534,Jon Wilkening,,Mathematics,N297,001,Administrative Code,Administrative Code,Missing,Gnrl Acad Intrnship
+33,5,,,14774,-,,Grad Professional Dev Pgm,350,001,Administrative Code,Administrative Code,Missing,Prep Future Faculty
+33,9,,,15937,Arman Zand,,Evening & Weekend MBA,296,11,Administrative Code,Administrative Code,Missing,Special Topics
+33,1,,,16056,Daryl Chrzan,,Materials Science & Eng,299,007,Administrative Code,Administrative Code,Missing,Ind Study/Research
+33,1,,,16077,Bryan Graham,,Economics,299,029,Administrative Code,Administrative Code,Missing,Independent Study
+33,1,,,16124,Andres Rodriguez-clare,,Economics,602,001,Administrative Code,Administrative Code,Missing,Individual Study
+33,1,,,16150,Peidong Yang,,Chemistry,N299,064,Administrative Code,Administrative Code,Missing,Research
+33,1,,,16209,Nicholas Mathew,,Music,299,006,Administrative Code,Administrative Code,Missing,Special Study
+34,1,,,10301,Alastair Iles; Dara O'Rourke; John Harte; Justin Brashares; Lynn Huntsinger; Miguel Altieri; Wayne Getz,,"Env Sci, Policy, & Mgmt",299,001,Administrative Code,Administrative Code,Withdrawn,Individual Research
+34,1,,,11947,Alison Meyer,,Executive MBA,296,004,Administrative Code,Administrative Code,Withdrawn,Topics In Bus Adm
+34,1,,,11973,Fereshteh Amini,,Data Science,W209,001,Administrative Code,Administrative Code,Withdrawn,Data Viz/Comm
+34,1,,,11975,Bum Chul Kwon,,Data Science,W209,003,Administrative Code,Administrative Code,Withdrawn,Data Viz/Comm
+34,2,,,14816,Larry Rosenthal,,Public Affairs,245,001,Administrative Code,Administrative Code,Withdrawn,Inferential Stats
+34,1,,,14818,Daniel Mulhern; Laura Andersen,,Public Affairs,283,001,Administrative Code,Administrative Code,Withdrawn,Leading People
+34,3,,,14819,Jane Mauldon; Kira Sargatzke,,Public Affairs,285,001,Administrative Code,Administrative Code,Withdrawn,Ethical Issues
+34,1,,,14821,Anne Campbell Washington; Randall Rentschler,,Public Affairs,225,001,Administrative Code,Administrative Code,Withdrawn,Policy Comm
+34,1,,,14824,Candice Benge; Rucker Johnson,,Public Affairs,245,002,Administrative Code,Administrative Code,Withdrawn,Inferential Stats
+34,4,,,14832,Anne Campbell Washington; Jane Mauldon,,Public Affairs,205,001,Administrative Code,Administrative Code,Withdrawn,Policy Frameworks
+34,1,,,14834,Anne Campbell Washington; Edward Helme,,Public Affairs,290,1,Administrative Code,Administrative Code,Withdrawn,Spec Topics Pub Aff
+34,1,,,14836,Steven Raphael; Steven Raphael,,Public Affairs,260,001,Administrative Code,Administrative Code,Withdrawn,Inferential Stats 2
+34,1,,,14837,Erika Weissinger; Jane Mauldon,,Public Affairs,280,002,Administrative Code,Administrative Code,Withdrawn,The Eightfold Path
+34,2,,,14852,Gunnar Kleemann,,Data Science,W203,005,Administrative Code,Administrative Code,Withdrawn,Stat For Data Sci
+34,1,,,14858,Amit Bhattacharyya,,Data Science,W207,002,Administrative Code,Administrative Code,Withdrawn,Applied Mach Learn
+34,1,,,14862,Ilyas Ustun,,Data Science,W207,006,Administrative Code,Administrative Code,Withdrawn,Applied Mach Learn
+34,1,,,14873,Gerard Kelly; Ying Yau,,Data Science,W271,001,Administrative Code,Administrative Code,Withdrawn,Adv Data Sci Stats
+34,1,,,14953,Erika Brown; Inderpreet Hayer; Robin Flagg,,Public Health,W200E,001,Administrative Code,Administrative Code,Withdrawn,Hpm Breadth
+34,2,,,14982,Emily Polk; Irina Titova; Kimberly MacPherson,,Public Health,W227A,001,Administrative Code,Administrative Code,Withdrawn,Health Care Finance
+34,1,,,15932,Peter Goodson,,Evening & Weekend MBA,236M,2,Administrative Code,Administrative Code,Withdrawn,Turnarounds
+34,1,,,15938,Jennifer Herbert-Creek,,Evening & Weekend MBA,236H,11,Administrative Code,Administrative Code,Withdrawn,Fin Statement Model
+34,2,,,15976,Sebastian Goodwin,,Information and Cybersecurity,W220,001,Administrative Code,Administrative Code,Withdrawn,Managing Cyber Risk
+34,1,,,15977,Daniel Aranki,,Information and Cybersecurity,W233,001,Administrative Code,Administrative Code,Withdrawn,Privacy Engineering
+34,1,,,16025,Anne Campbell Washington; Doy Charnsupharindr,,Public Affairs,290,6,Administrative Code,Administrative Code,Withdrawn,Spec Topics Pub Aff
+34,3,,,16064,Anne Campbell Washington; Austin Land; Hector Cardenas Suarez,,Public Affairs,290,7,Administrative Code,Administrative Code,Withdrawn,Spec Topics Pub Aff
+34,3,,,16118,Anne Campbell Washington; Steven Falk,,Public Affairs,290,9,Administrative Code,Administrative Code,Withdrawn,Spec Topics Pub Aff
+34,1,,,16166,Anne Campbell Washington; Steven Raphael,,Public Affairs,290,10,Administrative Code,Administrative Code,Withdrawn,Spec Topics Pub Aff
+34,2,,,16167,Anne Campbell Washington; Jane Mauldon,,Public Affairs,290,11,Administrative Code,Administrative Code,Withdrawn,Spec Topics Pub Aff
+34,1,,,16168,Randall Rentschler,,Public Affairs,290,12,Administrative Code,Administrative Code,Withdrawn,Spec Topics Pub Aff
