@@ -15,6 +15,13 @@
 			text-align: center;
 			color: $bt-base-text;
 		}
+
+		h3 {
+			font-size: 16px;
+			text-align: center;
+			color: $bt-light-text;
+			margin-top: -12px;
+		}
 	}
 
 	.positions-body {
@@ -24,6 +31,13 @@
 		text-align: left;
 
 		strong {
+			color: inherit;
+		}
+
+		h2 {
+			margin-top: 48px;
+			font-weight: bold;
+			font-size: 20px;
 			color: inherit;
 		}
 
@@ -56,21 +70,17 @@
 		}
 
 		ul {
-			margin-top: 13px;
-			padding-left: 0;
-			list-style-type: none;
-			color: inherit;
-			margin-bottom: 15px;
+			font-size: 16px;
+			line-height: 150%;
+			color: $bt-grey-text;
+			padding-left: 0px;
+			margin-bottom: 16px;
+			list-style-position: outside;
+			margin-left: 28px;
+		}
 
-			li {
-				text-indent: -22px;
-				margin-top: 5px;
-			}
-
-			li:before {
-				content: '-';
-				padding-right: 15px;
-			}
+		li {
+			margin: 8pt 0;
 		}
 	}
 
