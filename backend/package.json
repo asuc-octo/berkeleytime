@@ -11,7 +11,8 @@
     "coverage": "jest --coverage",
     "generate": "graphql-codegen --config codegen.ts",
     "lint": "tsc --noEmit && eslint --ext .ts,.tsx .",
-    "update:catalog": "node ./build/scripts/update-catalog.js"
+    "update:catalog": "node ./build/scripts/update-catalog.js",
+    "update:grades": "node ./build/scripts/update-grades.js"
   },
   "repository": {
     "type": "git",
