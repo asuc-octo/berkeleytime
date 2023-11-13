@@ -10,8 +10,7 @@
     "test": "jest --watch",
     "coverage": "jest --coverage",
     "generate": "graphql-codegen --config codegen.ts",
-    "lint": "tsc --noEmit && eslint --ext .ts,.tsx .",
-    "update:catalog": "node ./build/scripts/update-catalog.js"
+    "lint": "tsc --noEmit && eslint --ext .ts,.tsx ."
   },
   "repository": {
     "type": "git",
