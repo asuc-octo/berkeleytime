@@ -97,11 +97,11 @@ export const scheduleSchema = new Schema({
   }
 }, { timestamps: true });
 
-export type TermType = Document & InferSchemaType<typeof TermSchema>;
-export const TermModel = mongoose.model("outputTerm", TermSchema, "outputTerm");
-export const CustomEventModel = mongoose.model("customEvent", CustomEventSchema, "customEvent");
-export type CustomEventType = Document & InferSchemaType<typeof CustomEventSchema>;
+export type TermType = Document & InferSchemaType<typeof termSchema>;
+export const TermModel = mongoose.model("outputTerm", termSchema, "outputTerm");
+export const CustomEventModel = mongoose.model("customEvent", customEventSchema, "customEvent");
+export type CustomEventType = Document & InferSchemaType<typeof customEventSchema>;
 export const SelectedCourseModel = mongoose.model("course", SelectedCourseSchema, "course");
 export type SelectedCourseType = Document & InferSchemaType<typeof SelectedCourseSchema>;
-export const ScheduleModel = mongoose.model("schedule", ScheduleSchema, "schedule");
-export type ScheduleType = Document & InferSchemaType<typeof ScheduleSchema>;
+export const ScheduleModel = mongoose.model("schedule", scheduleSchema, "schedule");
+export type ScheduleType = Document & InferSchemaType<typeof scheduleSchema>;
