@@ -1,8 +1,7 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { percentileToString } from '../../utils/utils';
-
-import vars from '../../utils/variables';
+import { Bar, BarChart, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import colors from 'utils/colors';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
+import { percentileToString } from '../../utils/utils';
 
 const EmptyLabel = (props) => {
 	return (
@@ -99,7 +98,7 @@ export default function GradesGraph({
 									key={i}
 									name={`${item.title} • ${item.semester} • ${item.instructor}`}
 									dataKey={item.id}
-									fill={vars.colors[item.colorId]}
+									fill={colors[item.colorId]}
 									onMouseEnter={updateBarHover}
 									radius={[4, 4, 0, 0]}
 								/>
@@ -143,7 +142,7 @@ export default function GradesGraph({
 								key={i}
 								name={`${item.title} • ${item.semester} • ${item.instructor}`}
 								dataKey={item.id}
-								fill={vars.colors[item.colorId]}
+								fill={colors[item.colorId]}
 								onMouseEnter={updateBarHover}
 								label={<PercentageLabel />}
 								radius={[0, 4, 4, 0]}

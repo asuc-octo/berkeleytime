@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEnrollData } from 'redux/enrollment/actions';
-import vars from '../../utils/variables';
+import colors from 'utils/colors.js';
 import EnrollmentInfoCard from '../EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 import EnrollmentGraph from '../Graphs/EnrollmentGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
@@ -141,7 +141,7 @@ export default function EnrollmentGraphCard({ isMobile, updateClassCardEnrollmen
 									}
 									todayPoint={hoveredClass.data[hoveredClass.data.length - 1]}
 									telebears={telebears}
-									color={vars.colors[hoveredClass.colorId]}
+									color={colors[hoveredClass.colorId]}
 									enrolledMax={hoveredClass.enrolled_max}
 									waitlistedMax={hoveredClass.waitlisted_max}
 								/>

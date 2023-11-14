@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchGradeData } from 'redux/grades/actions';
-import vars from '../../utils/variables';
+import colors from 'utils/colors';
 import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 import GradesGraph from '../Graphs/GradesGraph';
 import GraphEmpty from '../Graphs/GraphEmpty';
@@ -114,7 +114,7 @@ export default function GradesGraphCard({ isMobile, updateClassCardGrade }) {
 							}
 							selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
 							denominator={hoveredClass.denominator}
-							color={vars.colors[hoveredClass.colorId]}
+							color={colors[hoveredClass.colorId]}
 							isMobile={isMobile}
 							graphEmpty={graphEmpty}
 						/>
@@ -150,7 +150,7 @@ export default function GradesGraphCard({ isMobile, updateClassCardGrade }) {
 									denominator={hoveredClass.denominator}
 									selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
 									selectedGrade={hoveredClass.hoverGrade}
-									color={vars.colors[hoveredClass.colorId]}
+									color={colors[hoveredClass.colorId]}
 								/>
 							)}
 						</Col>
