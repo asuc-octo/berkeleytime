@@ -1,43 +1,42 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ClassCardList from '../../components/ClassCards/ClassCardList';
-import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
+import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
 import info from '../../assets/img/images/graphs/info.svg';
 
 import {
-	fetchGradeClass,
 	fetchGradeContext,
-	fetchGradeFromUrl,
+	fetchGradeClass,
 	gradeRemoveCourse,
-	gradeReset
-} from 'redux/grades/actions';
-import { useReduxSelector } from 'redux/store';
-import { UnformattedCourseType } from 'redux/types';
+	gradeReset,
+	fetchGradeFromUrl
+} from '../../redux/actions';
 
-const toUrlForm = (string: string) => {
-	return string.replace('/', '_').toLowerCase().split(' ').join('-');
+const toUrlForm = (s) => {
+	s = s.replace('/', '_');
+	return s.toLowerCase().split(' ').join('-');
 };
 
 export function Component() {
-	const [additionalInfo, setAdditionalInfo] = useState<[string, number, string, number][]>([]);
+	const [additionalInfo, setAdditionalInfo] = useState([]);
 
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	const { context, selectedCourses, usedColorIds } = useReduxSelector((state) => state.grade);
-	const { mobile: isMobile } = useReduxSelector((state) => state.common);
+	const { context, selectedCourses, usedColorIds } = useSelector((state) => state.grade);
+	const { mobile: isMobile } = useSelector((state) => state.common);
 
 	const dispatch = useDispatch();
 
 	const addToUrl = useCallback(
-		(course: UnformattedCourseType) => {
-			const instructor = toUrlForm(course.instructor);
+		(course) => {
+			let instructor = toUrlForm(course.instructor);
 
-			const courseUrl = `${course.colorId}-${course.courseID}-${toUrlForm(
+			let courseUrl = `${course.colorId}-${course.courseID}-${toUrlForm(
 				course.semester
 			)}-${instructor}`;
 
@@ -55,8 +54,8 @@ export function Component() {
 	);
 
 	const addCourse = useCallback(
-		(course: UnformattedCourseType) => {
-			for (const selected of selectedCourses) {
+		(course) => {
+			for (let selected of selectedCourses) {
 				if (selected.id === course.id) {
 					return;
 				}
@@ -78,24 +77,21 @@ export function Component() {
 	);
 
 	const refillUrl = useCallback(
-		(id: string) => {
-			const updatedCourses = selectedCourses.filter((classInfo) => classInfo.id !== id);
-			const url =
-				'/grades/' +
-				[
-					updatedCourses.map((course) => {
-						return `${course.colorId}-${course.courseID}-${toUrlForm(course.semester)}-${toUrlForm(
-							course.instructor
-						)}`;
-					})
-				].join('&');
+		(id) => {
+			let updatedCourses = selectedCourses.filter((classInfo) => classInfo.id !== id);
+			let url = '/grades/';
+			for (let i = 0; i < updatedCourses.length; i++) {
+				let c = updatedCourses[i];
+				if (i !== 0) url += '&';
+				url += `${c.colorId}-${c.courseID}-${toUrlForm(c.semester)}-${toUrlForm(c.instructor)}`;
+			}
 			navigate(url, { replace: true });
 		},
 		[navigate, selectedCourses]
 	);
 
 	const removeCourse = useCallback(
-		(id: string, color: string) => {
+		(id, color) => {
 			refillUrl(id);
 			dispatch(gradeRemoveCourse(id, color));
 		},
@@ -103,22 +99,11 @@ export function Component() {
 	);
 
 	const updateClassCardGrade = useCallback(
-		(
-			course_letter: string[],
-			course_gpa: number[],
-			section_letter: string[],
-			section_gpa: number[]
-		) => {
-			const info = course_letter.map(
-				(_, i) =>
-					[course_letter[i], course_gpa[i], section_letter[i], section_gpa[i]] as [
-						string,
-						number,
-						string,
-						number
-					]
-			);
-
+		(course_letter, course_gpa, section_letter, section_gpa) => {
+			var info = [];
+			for (var i = 0; i < course_letter.length; i++) {
+				info.push([course_letter[i], course_gpa[i], section_letter[i], section_gpa[i]]);
+			}
 			setAdditionalInfo(info);
 		},
 		[]
@@ -127,7 +112,7 @@ export function Component() {
 	useEffect(() => {
 		const fillFromUrl = () => {
 			try {
-				const url = location.pathname;
+				let url = location.pathname;
 
 				if (url && (url === '/grades/' || url === '/grades')) {
 					dispatch(gradeReset());
@@ -142,7 +127,7 @@ export function Component() {
 		dispatch(fetchGradeContext());
 		dispatch(gradeReset());
 		fillFromUrl();
-	}, [dispatch, location.pathname, navigate]);
+	}, []);
 
 	return (
 		<div className="viewport-app">
