@@ -60,7 +60,7 @@ export default async (app: Application) => {
     // failureMessage: "failed",
     successRedirect: SUCCESS_REDIRECT,
   }));
-  app.get(LOGOUT_ROUTE, (req, res) => {
+  app.post(LOGOUT_ROUTE, (req, res) => {
     req.logout((err) => {
       if (err) {
         res.redirect(FAILURE_REDIRECT);
