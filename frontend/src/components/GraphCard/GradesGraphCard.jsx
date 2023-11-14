@@ -1,35 +1,18 @@
-import { HTMLAttributes, useCallback, useEffect, useMemo, useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import vars from '../../utils/variables';
 
-import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 import GradesGraph from '../Graphs/GradesGraph';
 import GraphEmpty from '../Graphs/GraphEmpty';
+import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 
-import { fetchGradeData } from 'redux/grades/actions';
-import { GRADE, GradesDataType } from 'redux/grades/types';
-import { useReduxSelector } from 'redux/store';
-import { FormattedCourseType } from 'redux/types';
+import { fetchGradeData } from '../../redux/actions';
 
-export default function GradesGraphCard({
-	isMobile,
-	updateClassCardGrade,
-	...rest
-}: {
-	isMobile: boolean;
-	updateClassCardGrade: (
-		course_letter: string[],
-		course_gpa: number[],
-		section_letter: string[],
-		section_gpa: number[]
-	) => void;
-} & HTMLAttributes<HTMLDivElement>) {
-	const { gradesData, graphData, selectedCourses } = useReduxSelector((state) => state.grade);
-	const [hoveredClass, setHoveredClass] = useState<
-		FormattedCourseType & GradesDataType & { hoverGrade: GRADE }
-	>();
+export default function GradesGraphCard({ isMobile, updateClassCardGrade }) {
+	const { gradesData, graphData, selectedCourses } = useSelector((state) => state.grade);
+	const [hoveredClass, setHoveredClass] = useState(false);
 	const [updateMobileHover, setUpdateMobileHover] = useState(true);
 	const dispatch = useDispatch();
 
@@ -38,7 +21,7 @@ export default function GradesGraphCard({
 	}, [selectedCourses, dispatch]);
 
 	const update = useCallback(
-		(course: FormattedCourseType, grade: GRADE) => {
+		(course, grade) => {
 			if (!course || !gradesData || gradesData.length === 0) return;
 
 			const selectedGrades = gradesData.filter((c) => course.id === c.id)[0];
@@ -55,7 +38,7 @@ export default function GradesGraphCard({
 
 	useEffect(() => {
 		if (gradesData.length > 0 && selectedCourses.length === 1) {
-			update(selectedCourses[0], GRADE.P);
+			update(selectedCourses[0], 0);
 		}
 
 		const course_letter = gradesData.map((course) => course.course_letter);
@@ -67,7 +50,7 @@ export default function GradesGraphCard({
 
 	// Handler function for updating GradesInfoCard on hover
 	const updateBarHover = useCallback(
-		(barData: { payload: Record<string, number>; name: GRADE; value: number }) => {
+		(barData) => {
 			const { payload, name, value } = barData;
 
 			let selectedClassID = '';
@@ -88,7 +71,7 @@ export default function GradesGraphCard({
 
 	// Handler function for updating GradesInfoCard on hover with single course
 	const updateGraphHover = useCallback(
-		(data: { isTooltipActive: boolean; activeLabel: GRADE }) => {
+		(data) => {
 			const { isTooltipActive, activeLabel } = data;
 
 			const noBarMobile = updateMobileHover && isMobile;
@@ -112,7 +95,7 @@ export default function GradesGraphCard({
 	);
 
 	return (
-		<div className="grades-graph" {...rest}>
+		<div className="grades-graph">
 			<Container fluid>
 				<Row>
 					<Col
@@ -122,24 +105,22 @@ export default function GradesGraphCard({
 						lg={{ span: 8, order: 1 }}
 					>
 						{isMobile && <div className="grades-mobile-heading"> Grade Distribution </div>}
-						{hoveredClass && (
-							<GradesGraph
-								graphData={graphData}
-								gradesData={gradesData}
-								updateBarHover={updateBarHover}
-								updateGraphHover={updateGraphHover}
-								course={hoveredClass.course}
-								semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
-								instructor={
-									hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor
-								}
-								selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
-								denominator={hoveredClass.denominator}
-								color={vars.colors[parseInt(hoveredClass.colorId)]}
-								isMobile={isMobile}
-								graphEmpty={graphEmpty}
-							/>
-						)}
+						<GradesGraph
+							graphData={graphData}
+							gradesData={gradesData}
+							updateBarHover={updateBarHover}
+							updateGraphHover={updateGraphHover}
+							course={hoveredClass.course}
+							semester={hoveredClass.semester === 'all' ? 'All Semesters' : hoveredClass.semester}
+							instructor={
+								hoveredClass.instructor === 'all' ? 'All Instructors' : hoveredClass.instructor
+							}
+							selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
+							denominator={hoveredClass.denominator}
+							color={vars.colors[hoveredClass.colorId]}
+							isMobile={isMobile}
+							graphEmpty={graphEmpty}
+						/>
 					</Col>
 
 					{graphEmpty && (
@@ -172,7 +153,7 @@ export default function GradesGraphCard({
 									denominator={hoveredClass.denominator}
 									selectedPercentiles={hoveredClass[hoveredClass.hoverGrade]}
 									selectedGrade={hoveredClass.hoverGrade}
-									color={vars.colors[parseInt(hoveredClass.colorId)]}
+									color={vars.colors[hoveredClass.colorId]}
 								/>
 							)}
 						</Col>
