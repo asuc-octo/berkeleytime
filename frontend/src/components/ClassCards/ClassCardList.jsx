@@ -1,7 +1,6 @@
 import { Container, Row } from 'react-bootstrap';
-
+import colors from 'utils/colors';
 import ClassCard from './ClassCard';
-import vars from '../../utils/variables';
 
 export default function ClassCardList({
 	selectedCourses,
@@ -19,7 +18,7 @@ export default function ClassCardList({
 						id={item.id}
 						course={item.course}
 						title={item.title}
-						fill={vars.colors[item.colorId]}
+						fill={colors[item.colorId]}
 						semester={item.semester === 'all' ? 'All Semesters' : item.semester}
 						faculty={item.instructor === 'all' ? 'All Instructors' : item.instructor}
 						removeCourse={removeCourse}

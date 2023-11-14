@@ -1,16 +1,15 @@
 import {
-	LineChart,
-	XAxis,
-	YAxis,
-	Tooltip,
-	Line,
-	Legend,
-	ReferenceLine,
-	Label,
-	ResponsiveContainer
+    Label,
+    Legend,
+    Line,
+    LineChart,
+    ReferenceLine,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
 } from 'recharts';
-
-import vars from '../../utils/variables';
+import colors from 'utils/colors';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
 
 const EmptyLabel = (props) => {
@@ -95,7 +94,7 @@ export default function EnrollmentGraph({
 									name={`${item.title} • ${item.section_name}`}
 									type="monotone"
 									dataKey={item.id}
-									stroke={vars.colors[item.colorId]}
+									stroke={colors[item.colorId]}
 									strokeWidth={3}
 									dot={false}
 									activeDot={{ onMouseOver: updateLineHover }}
