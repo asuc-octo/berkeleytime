@@ -158,10 +158,8 @@ export type Mutation = {
   editExistingSchedule?: Maybe<Schedule>;
   /** Takes in a schedule's ObjectID, deletes the schedule with that ID, and returns the ID. */
   removeScheduleByID?: Maybe<Scalars['ID']>;
-  /** For the schedule specified by the ID, modifies the class ID field and returns the updated schedule. */
+  /** For the schedule specified by the ID, modifies the courses field and returns the updated schedule. */
   setSelectedClasses?: Maybe<Schedule>;
-  /** For the schedule specified by the ID, modifies the section ID field and returns the updated schedule. */
-  setSelectedSections?: Maybe<Schedule>;
   /** Mutate user info. */
   updateUserInfo?: Maybe<User>;
 };
@@ -184,14 +182,8 @@ export type MutationRemoveScheduleByIdArgs = {
 
 
 export type MutationSetSelectedClassesArgs = {
-  class_IDs: Array<Scalars['String']>;
+  courses: Array<SelectedCourseInput>;
   id: Scalars['ID'];
-};
-
-
-export type MutationSetSelectedSectionsArgs = {
-  id: Scalars['ID'];
-  section_IDs: Array<Scalars['String']>;
 };
 
 
@@ -277,8 +269,8 @@ export type Schedule = {
   __typename?: 'Schedule';
   /** The ObjectID associated with the schedule record */
   _id?: Maybe<Scalars['ID']>;
-  /** Identifiers (probably cs-course-ids) for the classes the user has added to their schedule. */
-  class_IDs?: Maybe<Array<Scalars['String']>>;
+  /** Courses, see the SelectedCourse type below */
+  courses?: Maybe<Array<SelectedCourse>>;
   created: Scalars['String'];
   /** Identifier (probably email) for the user who created the schedule (such as oski@bereley.edu). */
   created_by: Scalars['String'];
@@ -288,23 +280,17 @@ export type Schedule = {
   is_public: Scalars['Boolean'];
   /** The name of the schedule, such as "Oski's Fall schedule <3" */
   name?: Maybe<Scalars['String']>;
-  /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
-  primary_section_IDs?: Maybe<Array<Scalars['String']>>;
   revised: Scalars['String'];
-  /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
-  secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
   /** Term corresponding to the schedule, such as "Fall 1986" */
   term: TermOutput;
 };
 
 export type ScheduleInput = {
-  class_IDs?: InputMaybe<Array<Scalars['String']>>;
+  courses?: InputMaybe<Array<SelectedCourseInput>>;
   created_by: Scalars['String'];
   custom_events?: InputMaybe<Array<CustomEventInput>>;
   is_public?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
-  primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   term: TermInput;
 };
 
@@ -332,6 +318,22 @@ export type Section = {
   timeStart?: Maybe<Scalars['String']>;
   waitlistCount: Scalars['Int'];
   waitlistMax: Scalars['Int'];
+};
+
+export type SelectedCourse = {
+  __typename?: 'SelectedCourse';
+  /** Identifiers (probably cs-course-ids) for the classes the user has added to their schedule. */
+  class_ID: Scalars['String'];
+  /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
+  primary_section_ID?: Maybe<Scalars['String']>;
+  /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
+  secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
+};
+
+export type SelectedCourseInput = {
+  class_ID: Scalars['String'];
+  primary_section_ID?: InputMaybe<Scalars['String']>;
+  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type Semester =
@@ -473,6 +475,8 @@ export type ResolversTypes = {
   Schedule: ResolverTypeWrapper<Schedule>;
   ScheduleInput: ScheduleInput;
   Section: ResolverTypeWrapper<Section>;
+  SelectedCourse: ResolverTypeWrapper<SelectedCourse>;
+  SelectedCourseInput: SelectedCourseInput;
   Semester: Semester;
   String: ResolverTypeWrapper<Scalars['String']>;
   TermInput: TermInput;
@@ -506,6 +510,8 @@ export type ResolversParentTypes = {
   Schedule: Schedule;
   ScheduleInput: ScheduleInput;
   Section: Section;
+  SelectedCourse: SelectedCourse;
+  SelectedCourseInput: SelectedCourseInput;
   String: Scalars['String'];
   TermInput: TermInput;
   TermOutput: TermOutput;
@@ -641,8 +647,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'id' | 'main_schedule'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
-  setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'class_IDs' | 'id'>>;
-  setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
+  setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'courses' | 'id'>>;
   updateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserInfoArgs, 'newUserInfo'>>;
 };
 
@@ -661,15 +666,13 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  class_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  courses?: Resolver<Maybe<Array<ResolversTypes['SelectedCourse']>>, ParentType, ContextType>;
   created?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   custom_events?: Resolver<Maybe<Array<ResolversTypes['CustomEvent']>>, ParentType, ContextType>;
   is_public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  primary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   revised?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   term?: Resolver<ResolversTypes['TermOutput'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -696,6 +699,13 @@ export type SectionResolvers<ContextType = any, ParentType extends ResolversPare
   timeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   waitlistCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   waitlistMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SelectedCourseResolvers<ContextType = any, ParentType extends ResolversParentTypes['SelectedCourse'] = ResolversParentTypes['SelectedCourse']> = {
+  class_ID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  primary_section_ID?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -740,6 +750,7 @@ export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
   Section?: SectionResolvers<ContextType>;
+  SelectedCourse?: SelectedCourseResolvers<ContextType>;
   TermOutput?: TermOutputResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };

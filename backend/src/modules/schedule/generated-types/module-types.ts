@@ -3,28 +3,33 @@ import * as gm from "graphql-modules";
 export namespace ScheduleModule {
   interface DefinedFields {
     TermOutput: 'year' | 'semester';
-    Schedule: '_id' | 'name' | 'created_by' | 'term' | 'is_public' | 'class_IDs' | 'primary_section_IDs' | 'secondary_section_IDs' | 'custom_events' | 'created' | 'revised';
+    Schedule: '_id' | 'name' | 'created_by' | 'term' | 'is_public' | 'courses' | 'custom_events' | 'created' | 'revised';
+    SelectedCourse: 'class_ID' | 'primary_section_ID' | 'secondary_section_IDs';
     CustomEvent: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
     Query: 'schedulesByUser' | 'scheduleByID';
-    Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'editExistingSchedule' | 'setSelectedSections' | 'setSelectedClasses';
+    Mutation: 'removeScheduleByID' | 'createNewSchedule' | 'editExistingSchedule' | 'setSelectedClasses';
   };
   
   interface DefinedInputFields {
     CustomEventInput: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
-    ScheduleInput: 'name' | 'created_by' | 'class_IDs' | 'primary_section_IDs' | 'secondary_section_IDs' | 'is_public' | 'term' | 'custom_events';
+    SelectedCourseInput: 'class_ID' | 'primary_section_ID' | 'secondary_section_IDs';
+    ScheduleInput: 'name' | 'created_by' | 'courses' | 'is_public' | 'term' | 'custom_events';
   };
   
   export type TermOutput = Pick<Types.TermOutput, DefinedFields['TermOutput']>;
   export type CustomEventInput = Pick<Types.CustomEventInput, DefinedInputFields['CustomEventInput']>;
+  export type SelectedCourseInput = Pick<Types.SelectedCourseInput, DefinedInputFields['SelectedCourseInput']>;
   export type ScheduleInput = Pick<Types.ScheduleInput, DefinedInputFields['ScheduleInput']>;
   export type TermInput = Types.TermInput;
   export type Schedule = Pick<Types.Schedule, DefinedFields['Schedule']>;
+  export type SelectedCourse = Pick<Types.SelectedCourse, DefinedFields['SelectedCourse']>;
   export type CustomEvent = Pick<Types.CustomEvent, DefinedFields['CustomEvent']>;
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
   export type Mutation = Pick<Types.Mutation, DefinedFields['Mutation']>;
   
   export type TermOutputResolvers = Pick<Types.TermOutputResolvers, DefinedFields['TermOutput'] | '__isTypeOf'>;
   export type ScheduleResolvers = Pick<Types.ScheduleResolvers, DefinedFields['Schedule'] | '__isTypeOf'>;
+  export type SelectedCourseResolvers = Pick<Types.SelectedCourseResolvers, DefinedFields['SelectedCourse'] | '__isTypeOf'>;
   export type CustomEventResolvers = Pick<Types.CustomEventResolvers, DefinedFields['CustomEvent'] | '__isTypeOf'>;
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   export type MutationResolvers = Pick<Types.MutationResolvers, DefinedFields['Mutation']>;
@@ -32,6 +37,7 @@ export namespace ScheduleModule {
   export interface Resolvers {
     TermOutput?: TermOutputResolvers;
     Schedule?: ScheduleResolvers;
+    SelectedCourse?: SelectedCourseResolvers;
     CustomEvent?: CustomEventResolvers;
     Query?: QueryResolvers;
     Mutation?: MutationResolvers;
@@ -53,12 +59,16 @@ export namespace ScheduleModule {
       created_by?: gm.Middleware[];
       term?: gm.Middleware[];
       is_public?: gm.Middleware[];
-      class_IDs?: gm.Middleware[];
-      primary_section_IDs?: gm.Middleware[];
-      secondary_section_IDs?: gm.Middleware[];
+      courses?: gm.Middleware[];
       custom_events?: gm.Middleware[];
       created?: gm.Middleware[];
       revised?: gm.Middleware[];
+    };
+    SelectedCourse?: {
+      '*'?: gm.Middleware[];
+      class_ID?: gm.Middleware[];
+      primary_section_ID?: gm.Middleware[];
+      secondary_section_IDs?: gm.Middleware[];
     };
     CustomEvent?: {
       '*'?: gm.Middleware[];
@@ -79,7 +89,6 @@ export namespace ScheduleModule {
       removeScheduleByID?: gm.Middleware[];
       createNewSchedule?: gm.Middleware[];
       editExistingSchedule?: gm.Middleware[];
-      setSelectedSections?: gm.Middleware[];
       setSelectedClasses?: gm.Middleware[];
     };
   };
