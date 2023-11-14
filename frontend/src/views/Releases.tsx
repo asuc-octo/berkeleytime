@@ -1,4 +1,4 @@
-import { Container, Row, Col, ButtonToolbar } from 'react-bootstrap';
+import { ButtonToolbar, Col, Container, Row } from 'react-bootstrap';
 import releases from '../lib/releases';
 
 import Log from '../components/Releases/Log';

@@ -1,11 +1,11 @@
+import { IconoirProvider } from 'iconoir-react';
 import { memo, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { openBanner, enterMobile, exitMobile, openLandingModal } from './redux/common/actions';
 import useDimensions from 'react-cool-dimensions';
+import { useDispatch } from 'react-redux';
+import { fetchEnrollContext } from 'redux/enrollment/actions';
 import easterEgg from 'utils/easterEgg';
 import Routes from './Routes';
-import { fetchEnrollContext } from 'redux/actions';
-import { IconoirProvider } from 'iconoir-react';
+import { enterMobile, exitMobile, openBanner, openLandingModal } from './redux/common/actions';
 
 const Berkeleytime = () => {
 	const dispatch = useDispatch();

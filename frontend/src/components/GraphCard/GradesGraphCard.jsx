@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-
+import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { fetchGradeData } from 'redux/grades/actions';
 import vars from '../../utils/variables';
-
+import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
 import GradesGraph from '../Graphs/GradesGraph';
 import GraphEmpty from '../Graphs/GraphEmpty';
-import GradesInfoCard from '../GradesInfoCard/GradesInfoCard';
-
-import { fetchGradeData } from '../../redux/actions';
 
 export default function GradesGraphCard({ isMobile, updateClassCardGrade }) {
 	const { gradesData, graphData, selectedCourses } = useSelector((state) => state.grade);

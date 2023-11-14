@@ -1,15 +1,17 @@
+import { GRADE } from './types';
 import {
-	UPDATE_GRADE_CONTEXT,
 	GRADE_ADD_COURSE,
-	UPDATE_GRADE_DATA,
-	UPDATE_GRADE_SELECTED,
 	GRADE_REMOVE_COURSE,
-	GRADE_RESET
-} from '../actionTypes';
-import vars from '../../utils/variables';
+	GRADE_RESET,
+	GradeAction,
+	GradeState,
+	UPDATE_GRADE_CONTEXT,
+	UPDATE_GRADE_DATA,
+	UPDATE_GRADE_SELECTED
+} from './types';
 
-const initialState = {
-	context: {},
+const initialState: GradeState = {
+	context: { courses: [] },
 	selectedCourses: [],
 	gradesData: [],
 	graphData: [],
@@ -19,10 +21,13 @@ const initialState = {
 	usedColorIds: []
 };
 
-export default function grade(state = initialState, action) {
+export default function grade(state = initialState, action: GradeAction): GradeState {
 	switch (action.type) {
 		case GRADE_RESET: {
-			return initialState;
+			return {
+				...initialState,
+				context: state.context
+			};
 		}
 		case UPDATE_GRADE_CONTEXT: {
 			const { data } = action.payload;
@@ -37,8 +42,8 @@ export default function grade(state = initialState, action) {
 		}
 		case GRADE_REMOVE_COURSE: {
 			const { id, color } = action.payload;
-			let updatedCourses = state.selectedCourses.filter((classInfo) => classInfo.id !== id);
-			let updatedColors = state.usedColorIds.filter((c) => c !== color);
+			const updatedCourses = state.selectedCourses.filter((classInfo) => classInfo.id !== id);
+			const updatedColors = state.usedColorIds.filter((c) => c !== color);
 			return Object.assign({}, state, {
 				selectedCourses: updatedCourses,
 				usedColorIds: updatedColors
@@ -46,15 +51,13 @@ export default function grade(state = initialState, action) {
 		}
 		case UPDATE_GRADE_DATA: {
 			const { gradesData } = action.payload;
-			const graphData = vars.possibleGrades.map((letterGrade) => {
-				const ret = {
-					name: letterGrade
-				};
-				for (const grade of gradesData) {
-					ret[grade.id] = (grade[letterGrade].numerator / grade.denominator) * 100;
-				}
-				return ret;
-			});
+			const graphData = Object.values(GRADE).map((letterGrade) => ({
+				name: letterGrade,
+				...gradesData.reduce((grades, grade) => {
+					grades[grade.id] = (grade[letterGrade].numerator / grade.denominator) * 100;
+					return grades;
+				}, {} as Record<string, number>)
+			}));
 			return {
 				...state,
 				gradesData,

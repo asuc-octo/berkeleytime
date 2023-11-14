@@ -1,6 +1,9 @@
-/* eslint-disable */
+import { PastScheduleProps } from './type';
 
-function PastSchedule({ past }) {
+/**
+ * @audit this file is not used
+ */
+function PastSchedule({ past }: PastScheduleProps) {
 	return (
 		<div className="card dashboard-card">
 			<div className="dashboard-container">
@@ -8,10 +11,10 @@ function PastSchedule({ past }) {
 					<b>Past Semesters</b>
 				</h4>
 				{past.map((semester) => (
-					<div className="dashboard-schedule-list">
+					<div className="dashboard-schedule-list" key={semester.semester}>
 						<h5>{semester.semester}</h5>
 						{semester.classes.map((pastClass) => (
-							<p>
+							<p key={pastClass.name}>
 								{pastClass.name} <span>{pastClass.units} Units</span>
 							</p>
 						))}
