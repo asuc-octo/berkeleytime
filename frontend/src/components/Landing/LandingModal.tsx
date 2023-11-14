@@ -5,8 +5,8 @@ import closeIcon from 'assets/svg/common/close.svg';
 import schedulerImg from '../../assets/img/landing/scheduler.png';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { ReduxState } from 'redux/store';
-import { closeLandingModal } from 'redux/common/actions';
+import { ReduxState } from '../../redux/store';
+import { closeLandingModal } from '../../redux/common/actions';
 
 const modal_info = {
 	subtitle: 'NEW!',

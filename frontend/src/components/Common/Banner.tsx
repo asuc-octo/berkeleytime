@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'bt/custom';
-import { closeBanner } from 'redux/common/actions';
+import { closeBanner } from '../../redux/common/actions';
 
 import close from '../../assets/svg/common/close.svg';
 import { ReduxState } from 'redux/store';
