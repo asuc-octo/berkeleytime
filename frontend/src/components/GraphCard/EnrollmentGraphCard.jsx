@@ -1,37 +1,18 @@
-import { HTMLAttributes, useCallback, useEffect, useMemo, useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import vars from '../../utils/variables';
 
-import EnrollmentInfoCard from '../EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 import EnrollmentGraph from '../Graphs/EnrollmentGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
+import EnrollmentInfoCard from '../EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 
-import { EnrollmentDataType, EnrollmentStatusType, TelebearsType } from 'redux/enrollment/types';
-import { useReduxSelector } from 'redux/store';
-import { fetchEnrollData } from '../../redux/enrollment/actions';
-import { FormattedCourseType } from 'redux/types';
+import { fetchEnrollData } from '../../redux/actions';
 
-export default function EnrollmentGraphCard({
-	isMobile,
-	updateClassCardEnrollment,
-	...rest
-}: {
-	isMobile: boolean;
-	updateClassCardEnrollment: (
-		latest_point: EnrollmentStatusType[],
-		telebears: TelebearsType[],
-		enrolled_info: number[][],
-		waitlisted_info: number[][]
-	) => void;
-} & HTMLAttributes<HTMLDivElement>) {
-	const [hoveredClass, setHoveredClass] = useState<
-		FormattedCourseType & EnrollmentDataType & { hoverDay: number }
-	>();
-	const { enrollmentData, graphData, selectedCourses } = useReduxSelector(
-		(state) => state.enrollment
-	);
+export default function EnrollmentGraphCard({ isMobile, updateClassCardEnrollment }) {
+	const [hoveredClass, setHoveredClass] = useState(false);
+	const { enrollmentData, graphData, selectedCourses } = useSelector((state) => state.enrollment);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -39,7 +20,7 @@ export default function EnrollmentGraphCard({
 	}, [selectedCourses, dispatch]);
 
 	const update = useCallback(
-		(course: FormattedCourseType, day: number) => {
+		(course, day) => {
 			if (!course || !enrollmentData || enrollmentData.length === 0) return;
 
 			const selectedEnrollment = enrollmentData.filter((c) => course.id === c.id)[0];
@@ -64,9 +45,7 @@ export default function EnrollmentGraphCard({
 			update(selectedCourses[0], 1);
 		}
 
-		const latest_point: EnrollmentStatusType[] = enrollmentData.map(
-			(course) => course.data[course.data.length - 1]
-		);
+		const latest_point = enrollmentData.map((course) => course.data[course.data.length - 1]);
 		const telebears = enrollmentData.map((course) => course.telebears);
 		const enrolled_info = latest_point.map((course) => [
 			course.enrolled,
@@ -84,25 +63,33 @@ export default function EnrollmentGraphCard({
 
 	// Handler function for updating EnrollmentInfoCard on hover
 	const updateLineHover = useCallback(
-		({ dataKey: selectedClassID, index: day }: { dataKey: string; index: number }) => {
-			update(selectedCourses.filter((course) => selectedClassID === course.id)[0], day);
+		(lineData) => {
+			const selectedClassID = lineData.dataKey;
+			const day = lineData.index;
+			const selectedCourse = selectedCourses.filter((course) => selectedClassID === course.id)[0];
+			update(selectedCourse, day);
 		},
 		[selectedCourses, update]
 	);
 
 	// Handler function for updating EnrollmentInfoCard on hover with single course
 	const updateGraphHover = useCallback(
-		({ isTooltipActive, activeLabel: day }: { isTooltipActive: boolean; activeLabel: number }) => {
+		(data) => {
+			const { isTooltipActive, activeLabel } = data;
+
 			if (!isTooltipActive || selectedCourses.length !== 1) return;
 
 			const selectedCourse = selectedCourses[0];
-
+			const day = activeLabel;
 			update(selectedCourse, day);
 		},
 		[selectedCourses, update]
 	);
 
-	const telebears = useMemo(() => enrollmentData[0].telebears, [enrollmentData]);
+	const telebears = useMemo(
+		() => (enrollmentData.length ? enrollmentData[0].telebears : {}),
+		[enrollmentData]
+	);
 
 	const graphEmpty = useMemo(
 		() => enrollmentData.length === 0 || selectedCourses.length === 0,
@@ -110,7 +97,7 @@ export default function EnrollmentGraphCard({
 	);
 
 	return (
-		<div className="enrollment-graph" {...rest}>
+		<div className="enrollment-graph">
 			<Container fluid>
 				<Row>
 					<Col
@@ -146,7 +133,6 @@ export default function EnrollmentGraphCard({
 						<Col md={{ span: 4, order: 2 }} lg={{ span: 4, order: 2 }}>
 							{hoveredClass && (
 								<EnrollmentInfoCard
-									// {...hoveredClass}
 									title={hoveredClass.title}
 									subtitle={hoveredClass.subtitle}
 									semester={hoveredClass.semester}
@@ -156,8 +142,9 @@ export default function EnrollmentGraphCard({
 									selectedPoint={
 										hoveredClass.data.filter((pt) => pt.day === hoveredClass.hoverDay)[0]
 									}
+									todayPoint={hoveredClass.data[hoveredClass.data.length - 1]}
 									telebears={telebears}
-									color={vars.colors[parseInt(hoveredClass.colorId)]}
+									color={vars.colors[hoveredClass.colorId]}
 									enrolledMax={hoveredClass.enrolled_max}
 									waitlistedMax={hoveredClass.waitlisted_max}
 								/>

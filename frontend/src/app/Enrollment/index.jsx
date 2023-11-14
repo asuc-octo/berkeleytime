@@ -1,35 +1,30 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
+import { useDispatch, useSelector } from 'react-redux';
 import ClassCardList from '../../components/ClassCards/ClassCardList';
-import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar.jsx';
 import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard';
+import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar';
 
 import info from '../../assets/img/images/graphs/info.svg';
 
-import { useCallback, useEffect, useState } from 'react';
-import type { UnformattedCourseType } from 'redux/types';
-import { useReduxSelector } from 'redux/store';
 import {
+	fetchEnrollContext,
+	fetchEnrollClass,
 	enrollRemoveCourse,
 	enrollReset,
-	fetchEnrollClass,
-	fetchEnrollContext,
 	fetchEnrollFromUrl
-} from '../../redux/enrollment/actions';
-import { EnrollmentStatusType, TelebearsType } from 'redux/enrollment/types';
+} from '../../redux/actions';
+import { useCallback, useEffect, useState } from 'react';
 
-const toUrlForm = (string: string) => {
-	return string.toLowerCase().split(' ').join('-');
+const toUrlForm = (s) => {
+	return s.toLowerCase().split(' ').join('-');
 };
 
 export function Component() {
-	const [additionalInfo, setAdditionalInfo] = useState<
-		[EnrollmentStatusType, TelebearsType, number[], number[]][]
-	>([]);
+	const [additionalInfo, setAdditionalInfo] = useState([]);
 
-	const { context, selectedCourses, usedColorIds } = useReduxSelector((state) => state.enrollment);
-	const { mobile: isMobile } = useReduxSelector((state) => state.common);
+	const { context, selectedCourses, usedColorIds } = useSelector((state) => state.enrollment);
+	const { mobile: isMobile } = useSelector((state) => state.common);
 
 	const dispatch = useDispatch();
 	const location = useLocation();
@@ -38,7 +33,7 @@ export function Component() {
 	useEffect(() => {
 		const fillFromUrl = () => {
 			try {
-				const url = location.pathname;
+				let url = location.pathname;
 
 				if (url && (url === '/enrollment/' || url === '/enrollment')) {
 					dispatch(enrollReset());
@@ -53,13 +48,13 @@ export function Component() {
 		dispatch(fetchEnrollContext());
 		dispatch(enrollReset());
 		fillFromUrl();
-	}, [dispatch, location.pathname, navigate]);
+	}, []);
 
 	const addToUrl = useCallback(
-		(course: UnformattedCourseType) => {
-			const instructor = course.instructor === 'all' ? 'all' : course.sections[0];
+		(course) => {
+			let instructor = course.instructor === 'all' ? 'all' : course.sections[0];
 
-			const courseUrl = `${course.colorId}-${course.courseID}-${toUrlForm(
+			let courseUrl = `${course.colorId}-${course.courseID}-${toUrlForm(
 				course.semester
 			)}-${instructor}`;
 
@@ -77,8 +72,8 @@ export function Component() {
 	);
 
 	const addCourse = useCallback(
-		(course: UnformattedCourseType) => {
-			for (const selected of selectedCourses) {
+		(course) => {
+			for (let selected of selectedCourses) {
 				if (selected.id === course.id) {
 					return;
 				}
@@ -102,16 +97,16 @@ export function Component() {
 	);
 
 	const refillUrl = useCallback(
-		(id: string) => {
-			const updatedCourses = selectedCourses.filter((classInfo) => classInfo.id !== id);
+		(id) => {
+			let updatedCourses = selectedCourses.filter((classInfo) => classInfo.id !== id);
 
 			let url = '/enrollment/';
 
 			for (let i = 0; i < updatedCourses.length; i++) {
-				const course = updatedCourses[i];
+				let c = updatedCourses[i];
 				if (i !== 0) url += '&';
-				const instructor = course.instructor === 'all' ? 'all' : course.sections[0];
-				url += `${course.colorId}-${course.courseID}-${toUrlForm(course.semester)}-${instructor}`;
+				let instructor = c.instructor === 'all' ? 'all' : c.sections[0];
+				url += `${c.colorId}-${c.courseID}-${toUrlForm(c.semester)}-${instructor}`;
 			}
 
 			navigate(url, { replace: true });
@@ -120,7 +115,7 @@ export function Component() {
 	);
 
 	const removeCourse = useCallback(
-		(id: string, color: string) => {
+		(id, color) => {
 			refillUrl(id);
 			dispatch(enrollRemoveCourse(id, color));
 		},
@@ -128,21 +123,12 @@ export function Component() {
 	);
 
 	const updateClassCardEnrollment = useCallback(
-		(
-			latest_point: EnrollmentStatusType[],
-			telebears: TelebearsType[],
-			enrolled_info: number[][],
-			waitlisted_info: number[][]
-		) => {
-			const info = latest_point.map(
-				(_, i) =>
-					[latest_point[i], telebears[i], enrolled_info[i], waitlisted_info[i]] as [
-						EnrollmentStatusType,
-						TelebearsType,
-						number[],
-						number[]
-					]
-			);
+		(latest_point, telebears, enrolled_info, waitlisted_info) => {
+			var info = [];
+
+			for (var i = 0; i < latest_point.length; i++) {
+				info.push([latest_point[i], telebears[i], enrolled_info[i], waitlisted_info[i]]);
+			}
 
 			setAdditionalInfo(info);
 		},
@@ -158,7 +144,6 @@ export function Component() {
 					fromCatalog={location.state ? location.state.course : false}
 					isFull={selectedCourses.length === 4}
 					isMobile={isMobile}
-					sectionNumber={'qwq'}
 				/>
 
 				<ClassCardList
