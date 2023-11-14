@@ -1,14 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-
+import { Col, Container, Row } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { fetchEnrollData } from 'redux/enrollment/actions';
 import vars from '../../utils/variables';
-
+import EnrollmentInfoCard from '../EnrollmentInfoCard/EnrollmentInfoCard.jsx';
 import EnrollmentGraph from '../Graphs/EnrollmentGraph.jsx';
 import GraphEmpty from '../Graphs/GraphEmpty.jsx';
-import EnrollmentInfoCard from '../EnrollmentInfoCard/EnrollmentInfoCard.jsx';
-
-import { fetchEnrollData } from '../../redux/actions';
 
 export default function EnrollmentGraphCard({ isMobile, updateClassCardEnrollment }) {
 	const [hoveredClass, setHoveredClass] = useState(false);

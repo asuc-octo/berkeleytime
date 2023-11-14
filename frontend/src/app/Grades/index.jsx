@@ -1,20 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-
 import { useDispatch, useSelector } from 'react-redux';
-import ClassCardList from '../../components/ClassCards/ClassCardList';
-import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
-import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
-
-import info from '../../assets/img/images/graphs/info.svg';
-
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
-	fetchGradeContext,
-	fetchGradeClass,
-	gradeRemoveCourse,
-	gradeReset,
-	fetchGradeFromUrl
-} from '../../redux/actions';
+    fetchGradeClass,
+    fetchGradeContext,
+    fetchGradeFromUrl,
+    gradeRemoveCourse,
+    gradeReset
+} from 'redux/grades/actions';
+import info from '../../assets/img/images/graphs/info.svg';
+import ClassCardList from '../../components/ClassCards/ClassCardList';
+import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
+import GradesGraphCard from '../../components/GraphCard/GradesGraphCard';
 
 const toUrlForm = (s) => {
 	s = s.replace('/', '_');

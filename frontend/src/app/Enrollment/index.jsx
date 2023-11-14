@@ -1,20 +1,17 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-
-import { useDispatch, useSelector } from 'react-redux';
-import ClassCardList from '../../components/ClassCards/ClassCardList';
-import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard';
-import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar';
-
-import info from '../../assets/img/images/graphs/info.svg';
-
-import {
-	fetchEnrollContext,
-	fetchEnrollClass,
-	enrollRemoveCourse,
-	enrollReset,
-	fetchEnrollFromUrl
-} from '../../redux/actions';
 import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+    enrollRemoveCourse,
+    enrollReset,
+    fetchEnrollClass,
+    fetchEnrollContext,
+    fetchEnrollFromUrl
+} from 'redux/enrollment/actions';
+import info from '../../assets/img/images/graphs/info.svg';
+import ClassCardList from '../../components/ClassCards/ClassCardList';
+import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearchBar';
+import EnrollmentGraphCard from '../../components/GraphCard/EnrollmentGraphCard';
 
 const toUrlForm = (s) => {
 	return s.toLowerCase().split(' ').join('-');

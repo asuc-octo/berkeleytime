@@ -1,12 +1,11 @@
+import closeIcon from 'assets/svg/common/close.svg';
+import { Button, H3, P } from 'bt/custom';
 import { useCallback, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
-import { H3, P, Button } from 'bt/custom';
-import closeIcon from 'assets/svg/common/close.svg';
-import schedulerImg from '../../assets/img/landing/scheduler.png';
-
 import { useDispatch, useSelector } from 'react-redux';
-import { ReduxState } from '../../redux/store';
-import { closeLandingModal } from '../../redux/common/actions';
+import { closeLandingModal } from 'redux/common/actions';
+import { ReduxState } from 'redux/store';
+import schedulerImg from '../../assets/img/landing/scheduler.png';
 
 const modal_info = {
 	subtitle: 'NEW!',

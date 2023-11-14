@@ -1,9 +1,8 @@
-import { useSelector, useDispatch } from 'react-redux';
 import { Button } from 'bt/custom';
-import { closeBanner } from '../../redux/common/actions';
-
-import close from '../../assets/svg/common/close.svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { closeBanner } from 'redux/common/actions';
 import { ReduxState } from 'redux/store';
+import close from '../../assets/svg/common/close.svg';
 
 export default function Banner() {
 	const { banner } = useSelector((state: ReduxState) => state.common);
