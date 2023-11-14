@@ -4,7 +4,7 @@ import hash from 'object-hash';
 
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchGradeSelected } from 'redux/grades/actions';
+import { fetchGradeSelected } from '../../redux/actions';
 import BTSelect from 'components/Custom/Select';
 
 const sortOptions = [
