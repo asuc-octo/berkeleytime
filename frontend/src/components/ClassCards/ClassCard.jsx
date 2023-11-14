@@ -1,36 +1,22 @@
 import { Col } from 'react-bootstrap';
 
 import ClassCardMobile from './ClassCardMobile';
-import { EnrollmentStatusType, TelebearsType } from 'redux/enrollment/types';
 
-function ClassCard({
-	id,
-	course,
-	title,
-	fill,
-	semester,
-	instructor,
-	removeCourse,
-	colorId,
-	additionalInfo,
-	type,
-	isMobile
-}: {
-	id: string;
-	course: string;
-	title: string;
-	fill: string;
-	semester: string;
-	instructor: string;
-	removeCourse: (id: string, color: string) => void;
-	colorId: string;
-	additionalInfo:
-		| [string, number, string, number]
-		| [EnrollmentStatusType, TelebearsType, number[], number[]]
-		| undefined;
-	type: 'grades' | 'enrollment';
-	isMobile: boolean;
-}) {
+function ClassCard(props) {
+	const {
+		id,
+		course,
+		title,
+		fill,
+		semester,
+		faculty,
+		removeCourse,
+		colorId,
+		additionalInfo,
+		type,
+		isMobile
+	} = props;
+
 	return (
 		<Col md={4} lg={3} xl={3} className="class-card-column">
 			<div className="class-card">
@@ -52,10 +38,8 @@ function ClassCard({
 						</svg>
 					</div>
 				</div>
-				<div className="class-card-title" title={title}>
-					{title}
-				</div>
-				<div className="class-card-options">{`${semester} • ${instructor}`}</div>
+				<div className="class-card-title" title={title}>{title}</div>
+				<div className="class-card-options">{`${semester} • ${faculty}`}</div>
 
 				{isMobile ? <ClassCardMobile additionalInfo={additionalInfo} type={type} /> : null}
 			</div>
