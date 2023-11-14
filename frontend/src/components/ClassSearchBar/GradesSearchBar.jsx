@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
-import hash from 'object-hash';
-
-import { useDispatch, useSelector } from 'react-redux';
-
-import { fetchGradeSelected } from '../../redux/actions';
 import BTSelect from 'components/Custom/Select';
+import hash from 'object-hash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, Col, Container, Row } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchGradeSelected } from 'redux/grades/actions';
 
 const sortOptions = [
 	{ value: 'instructor', label: 'By Instructor' },

@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
 import hash from 'object-hash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 
-import { fetchEnrollSelected } from '../../redux/actions';
-import { useDispatch, useSelector } from 'react-redux';
 import BTSelect from 'components/Custom/Select';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchEnrollSelected } from 'redux/enrollment/actions';
 
 const buildCoursesOptions = (courses) => {
 	if (!courses) {
