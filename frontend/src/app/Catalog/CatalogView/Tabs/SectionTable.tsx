@@ -2,7 +2,7 @@ import { SectionFragment } from 'graphql';
 import { useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 
-import styles from './CatalogView.module.scss';
+import styles from '../CatalogView.module.scss';
 import SectionTableItem from './SectionTableItem';
 
 interface Props {

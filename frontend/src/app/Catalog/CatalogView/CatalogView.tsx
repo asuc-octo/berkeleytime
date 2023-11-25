@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import people from 'assets/svg/catalog/people.svg';
 import chart from 'assets/svg/catalog/chart.svg';
 import book from 'assets/svg/catalog/book.svg';
@@ -13,7 +12,7 @@ import ReadMore from './ReadMore';
 import { useSelector } from 'react-redux';
 import useCatalog from '../useCatalog';
 import { sortPills } from '../service';
-import CourseTabs from './CourseTabs';
+import CourseTabs from './Tabs';
 
 import styles from './CatalogView.module.scss';
 import { CatalogSlug } from '../types';
@@ -24,13 +23,14 @@ const skeleton = [...Array(8).keys()];
 
 const CatalogView = () => {
 	const [{ course }, dispatch] = useCatalog();
-	const [isOpen, setOpen] = useState(false);
 	const navigate = useNavigate();
 	const { abbreviation, courseNumber, semester } = useParams<CatalogSlug>();
 
 	const legacyId = useSelector(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(state: any) =>
 			state.enrollment?.context?.courses?.find(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
 			)?.id ?? null
 	);
@@ -40,15 +40,12 @@ const CatalogView = () => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
 				dispatch({ type: 'setCourse', course });
-				setOpen(true);
 			}
 		}
 	});
 
 	useEffect(() => {
 		const [sem, year] = semester?.split(' ') ?? [null, null];
-
-		if (!abbreviation || !courseNumber) setOpen(false);
 
 		const variables = {
 			abbreviation: abbreviation ?? null,
@@ -74,10 +71,8 @@ const CatalogView = () => {
 
 		if (newCourse && newCourse?.id === course?.id) {
 			dispatch({ type: 'setCourse', course: newCourse });
-			setOpen(true);
 		} else if (course) {
 			dispatch({ type: 'setCourse', course });
-			setOpen(true);
 		}
 	}, [course, data, dispatch]);
 
@@ -97,7 +92,7 @@ const CatalogView = () => {
 	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
 
 	return (
-		<div className={`${styles.root}`} data-modal={isOpen}>
+		<div className={`${styles.root}`} data-modal={typeof courseNumber === 'string'}>
 			<Meta
 				title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'}
 				description={course?.description}
@@ -109,7 +104,7 @@ const CatalogView = () => {
 				}}
 			>
 				<BackArrow />
-				Back to Courses
+				Close
 			</button>
 			{course && (
 				<>

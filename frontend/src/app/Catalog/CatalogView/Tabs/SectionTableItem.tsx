@@ -1,6 +1,6 @@
 import { SectionFragment } from 'graphql';
 import { Clock, Group, User } from 'iconoir-react';
-import { colorEnrollment } from '../service';
+import { colorEnrollment } from '../../service';
 import { formatSectionTime } from 'utils/sections/section';
 
 import denero from 'assets/img/eggs/denero.png';
@@ -11,7 +11,7 @@ import scott from 'assets/img/eggs/scott.png';
 import kubi from 'assets/img/eggs/kubi.png';
 import garcia from 'assets/img/eggs/garcia.png';
 
-import styles from './CatalogView.module.scss';
+import styles from '../CatalogView.module.scss';
 import { CSSProperties } from 'react';
 
 const easterEggImages = new Map([

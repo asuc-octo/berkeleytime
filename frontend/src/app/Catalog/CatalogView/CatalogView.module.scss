@@ -57,34 +57,32 @@
 		padding-right: 10px;
 		// Add size of fixed header.
 		padding-top: 30px;
-		&[data-modal='false'] {
-			display: none;
-		}
 
-		[data-modal='true'] {
-			display: flex;
-		}
+	}
+
+	&[data-modal='false'] {
+		display: none;
+	}
+
+	&[data-modal='true'] {
+		display: flex;
 	}
 }
 
 .modalButton {
-	display: none;
-	@include media(mobile) {
-		display: flex;
-		justify-content: flex-start;
-		align-items: center;
-		text-align: center;
-		border: none;
-		background: none;
-		line-height: 20px;
-		color: $bt-grey-text;
-		gap: 10px;
-		padding: 0;
-		margin-bottom: 15px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	text-align: center;
+	border: none;
+	background: none;
+	line-height: 20px;
+	color: $bt-grey-text;
+	gap: 10px;
+	padding: 0;
 
-		&:hover {
-			color: #2f80ed;
-		}
+	&:hover {
+		color: #2f80ed;
 	}
 }
 
@@ -243,7 +241,8 @@
 	}
 
 	.sectionRight {
-		& > h6, span {
+		& > h6,
+		span {
 			justify-content: flex-start !important;
 			text-align: left !important;
 		}
