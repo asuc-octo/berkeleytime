@@ -116,13 +116,13 @@ export default function EnrollmentGraph(props) {
 						enrollmentData.map((item, i) => (
 							<Line
 								key={i}
-								name={`${item.title} • ${item.section_name}`}
+								name={`${item.title}`}
 								type="monotone"
 								dataKey={item.id}
-								stroke={color ? color : vars.colors[item.colorId]}
+								stroke={vars.colors[item.colorId]}
 								strokeWidth={3}
 								dot={false}
-								// activeDot={{ onMouseOver: updateLineHover }}
+								activeDot={{ onMouseOver: (_, e) => updateLineHover(e.dataKey, e.payload.name) }}
 								connectNulls
 							/>
 						))}

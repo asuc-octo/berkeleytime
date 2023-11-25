@@ -161,7 +161,11 @@ export function Component() {
 					isMobile={isMobile}
 				/>
 
-				{!isMobile && <div className="xlabel">Days After Phase 1</div>}
+				{!isMobile && (
+					<div className="xlabel">
+						% of Class Filled <span style={{ fontWeight: 'normal' }}>vs</span> Days After Phase 1
+					</div>
+				)}
 				<div className="disclaimer">
 					<img src={info} className="info" alt="" />
 					<p>

@@ -155,6 +155,11 @@ export function Component() {
 					isMobile={isMobile}
 				/>
 
+				{!isMobile && (
+					<div className="xlabel">
+						% of Students <span style={{ fontWeight: 'normal' }}>vs</span> Grade Received
+					</div>
+				)}
 				<div className="disclaimer">
 					<img src={info} className="info" alt="" />
 					<p>

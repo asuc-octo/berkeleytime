@@ -63,9 +63,7 @@ export default function EnrollmentGraphCard({ isMobile, updateClassCardEnrollmen
 
 	// Handler function for updating EnrollmentInfoCard on hover
 	const updateLineHover = useCallback(
-		(lineData) => {
-			const selectedClassID = lineData.dataKey;
-			const day = lineData.index;
+		(selectedClassID, day) => {
 			const selectedCourse = selectedCourses.filter((course) => selectedClassID === course.id)[0];
 			update(selectedCourse, day);
 		},

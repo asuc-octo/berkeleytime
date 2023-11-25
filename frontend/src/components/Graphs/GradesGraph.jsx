@@ -93,92 +93,99 @@ export default function GradesGraph(props) {
 	return (
 		<div className="grades-graph">
 			{!isMobile ? (
-				<ResponsiveContainer width="100%" height={400}>
-					<BarChart
-						data={graphData}
-						onMouseMove={updateGraphHover}
-						margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
-					>
-						<XAxis dataKey="name" type="category" interval={0} />
-						{graphEmpty ? (
-							<YAxis type="number" unit="%" domain={[0, 100]} fontSize="14px" />
-						) : (
-							<YAxis type="number" unit="%" fontSize="14px" />
-						)}
+				// desktop or wide viewport
+				<div className="grades-recharts-container">
+					<ResponsiveContainer width="100%" height={400}>
+						<BarChart
+							data={graphData}
+							onMouseMove={updateGraphHover}
+							margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
+						>
+							<XAxis dataKey="name" type="category" interval={0} />
+							{!graphEmpty ? (
+								<YAxis type="number" unit="%" />
+							) : (
+								<YAxis type="number" unit="%" domain={[0, 100]} />
+							)}
 
-						<Tooltip
-							formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-							cursor={graphEmpty ? { fill: '#fff' } : { fill: '#EAEAEA' }}
-						/>
+							<Tooltip
+								formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+								cursor={graphEmpty ? { fill: '#fff' } : { fill: '#EAEAEA' }}
+							/>
 
-						{!graphEmpty &&
-							gradesData &&
-							gradesData.map((item, i) => (
+							{!graphEmpty &&
+								gradesData.map((item, i) => (
+									<Bar
+										key={i}
+										name={`${item.title} • ${item.semester} • ${item.instructor}`}
+										dataKey={item.id}
+										fill={vars.colors[item.colorId]}
+										onMouseEnter={updateBarHover}
+										radius={[4, 4, 0, 0]}
+									/>
+								))}
+						</BarChart>
+					</ResponsiveContainer>
+				</div>
+			) : (
+				// mobile or narrow viewport
+				<div className="grades-recharts-container-mobile">
+					<ResponsiveContainer width="95%" height={!graphEmpty ? 200 + numClasses * 400 : 600}>
+						<BarChart
+							data={graphData}
+							onMouseMove={updateGraphHover}
+							layout="vertical"
+							// barSize={30}
+							// barCategoryGap={40}
+							// barGap={4}
+							margin={{ left: -30, bottom: 50 }}
+						>
+							{!graphEmpty ? (
+								<XAxis type="number" unit="%" />
+							) : (
+								<XAxis type="number" unit="%" domain={[0, 100]} />
+							)}
+							<YAxis dataKey="name" type="category" interval={0} />
+							{!graphEmpty ? (
+								<Tooltip
+									content={
+										<MobileTooltip
+											course={course}
+											semester={semester}
+											instructor={instructor}
+											selectedPercentiles={selectedPercentiles}
+											color={color}
+											denominator={denominator}
+										/>
+									}
+								/>
+							) : null}
+							{gradesData.map((item, i) => (
 								<Bar
 									key={i}
 									name={`${item.title} • ${item.semester} • ${item.instructor}`}
 									dataKey={item.id}
 									fill={color ? color : vars.colors[item.colorId]}
 									onMouseEnter={updateBarHover}
-									radius={[4, 4, 0, 0]}
-								/>
-							))}
-					</BarChart>
-				</ResponsiveContainer>
-			) : (
-				<ResponsiveContainer width="95%" height={!graphEmpty ? 200 + numClasses * 400 : 600}>
-					<BarChart
-						data={graphData}
-						onMouseMove={updateGraphHover}
-						layout="vertical"
-						margin={{ left: -30, bottom: 50 }}
-					>
-						{!graphEmpty ? (
-							<XAxis type="number" unit="%" />
-						) : (
-							<XAxis type="number" unit="%" domain={[0, 100]} />
-						)}
-						<YAxis dataKey="name" type="category" interval={0} />
-						{!graphEmpty ? (
-							<Tooltip
-								content={
-									<MobileTooltip
-										course={course}
-										semester={semester}
-										instructor={instructor}
-										selectedPercentiles={selectedPercentiles}
-										color={color}
-										denominator={denominator}
-									/>
-								}
-							/>
-						) : null}
-						{gradesData &&
-							gradesData.map((item, i) => (
-								<Bar
-									key={i}
-									name={`${item.title} • ${item.semester} • ${item.instructor}`}
-									dataKey={item.id}
-									fill={vars.colors[item.colorId]}
-									onMouseEnter={updateBarHover}
 									label={<PercentageLabel />}
 									radius={[0, 4, 4, 0]}
 								/>
 							))}
-						<Legend
-							wrapperStyle={{
-								paddingTop: 20,
-								paddingLeft: 10,
-								paddingRight: 10,
-								paddingBottom: 10
-							}}
-							layout="vertical"
-							verticalAlign="top"
-							iconSize="10"
-							iconType="circle"
-						/>
-					</BarChart>
-				</ResponsiveContainer>
+							<Legend
+								wrapperStyle={{
+									paddingTop: 20,
+									paddingLeft: 10,
+									paddingRight: 10,
+									paddingBottom: 10
+								}}
+								layout="vertical"
+								verticalAlign="top"
+								iconSize="10"
+								iconType="circle"
+							/>
+						</BarChart>
+					</ResponsiveContainer>
+				</div>
 			)}
 
 			{graphEmpty && <EmptyLabel />}

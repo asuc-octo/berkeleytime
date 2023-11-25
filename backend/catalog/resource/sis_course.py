@@ -13,7 +13,7 @@ class SISCourseResource:
         'app_id': settings.SIS_COURSE_APP_ID,
         'app_key': settings.SIS_COURSE_APP_KEY
     }
-    url = 'https://apis.berkeley.edu/sis/v4/courses?page-number=%s&page-size=%s&status-code=ACTIVE'
+    url = 'https://gateway.api.berkeley.edu/sis/v4/courses?page-number=%s&page-size=%s&status-code=ACTIVE'
 
     def get(self, page_number=0, page_size=100):
         """Return a generator of response chunks starting at start_index."""
