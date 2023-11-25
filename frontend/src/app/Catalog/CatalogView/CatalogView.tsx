@@ -17,6 +17,8 @@ import CourseTabs from './CourseTabs';
 
 import styles from './CatalogView.module.scss';
 import { CatalogSlug } from '../types';
+import Meta from 'components/Common/Meta';
+import { courseToName } from 'lib/courses/course';
 
 const skeleton = [...Array(8).keys()];
 
@@ -96,6 +98,16 @@ const CatalogView = () => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
+			<Meta title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'} description={course?.description} />
+			<button
+				className={styles.modalButton}
+				onClick={() => {
+					navigate(`/catalog/${semester}`, { replace: true });
+				}}
+			>
+				<BackArrow />
+				Back to Courses
+			</button>
 			{course && (
 				<>
 					<button
