@@ -33,28 +33,28 @@ const SectionTable = ({ sections }: Props) => {
 
 	return (
 		<div className={styles.sectionRoot}>
-			<div className={styles.sectionItem}>
+			<div className={styles.sections}>
 				<h5>Lectures</h5>
 				{lectures && lectures.length > 0 ? (
 					lectures.map((section) => <SectionTableItem key={section.id} section={section} />)
 				) : (
-					<p>No lectures available.</p>
+					<span>No lectures available.</span>
 				)}
 			</div>
-			<div className={styles.sectionItem}>
+			<div className={styles.sections}>
 				<h5>Discussions</h5>
 				{discussions && discussions.length > 0 ? (
 					discussions.map((section) => <SectionTableItem key={section.id} section={section} />)
 				) : (
-					<p>No discussions available.</p>
+					<span>No discussions available.</span>
 				)}
 			</div>
-			<div className={styles.sectionItem}>
+			<div className={styles.sections}>
 				<h5>Labs</h5>
 				{labs && labs.length > 0 ? (
 					labs.map((section) => <SectionTableItem key={section.id} section={section} />)
 				) : (
-					<p>No labs available.</p>
+					<span>No labs available.</span>
 				)}
 			</div>
 		</div>

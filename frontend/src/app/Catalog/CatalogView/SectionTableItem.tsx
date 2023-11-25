@@ -47,28 +47,26 @@ const SectionTableItem = ({ section }: SectionTableItem) => {
 
 	return (
 		<div
-			className={styles.sectionContainer}
+			className={styles.sectionItem}
 			style={findInstructor(section.instructor)}
 			key={section.ccn}
 		>
-			<h6>
-				{/* <PinAlt width={16} height={16} /> */}
-				{section.locationName || 'Unknown Location'}
-			</h6>
-			<p>
-				<User width={16} height={24} /> {section.instructor?.toLowerCase() || 'unknown instructor'}
-			</p>
-			<div className={styles.sectionFooter}>
+			<div className={styles.sectionLeft}>
+				<h6>{section.locationName || 'Unknown Location'}</h6>
+				<span>
+					<User width={16} height={24} />{' '}
+					{section.instructor?.toLowerCase() || 'unknown instructor'}
+				</span>
+			</div>
+			<div className={styles.sectionRight}>
+				<h6 className={color}>
+					<Group width={16} height={24} />
+					{section.enrolled}/{section.enrolledMax} Enrolled
+				</h6>
 				<span>
 					<Clock width={16} height={24} />
 					{section.wordDays} {formatSectionTime(section)}
 				</span>
-				•
-				<span className={color}>
-					<Group width={16} height={24} />
-					{section.enrolled}/{section.enrolledMax} Enrolled
-				</span>
-				•<span>CCN: {section.ccn}</span>
 			</div>
 		</div>
 	);

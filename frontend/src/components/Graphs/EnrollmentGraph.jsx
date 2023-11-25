@@ -119,7 +119,7 @@ export default function EnrollmentGraph(props) {
 								name={`${item.title}`}
 								type="monotone"
 								dataKey={item.id}
-								stroke={vars.colors[item.colorId]}
+								stroke={color ? color : vars.colors[item.colorId]}
 								strokeWidth={3}
 								dot={false}
 								activeDot={{ onMouseOver: (_, e) => updateLineHover(e.dataKey, e.payload.name) }}

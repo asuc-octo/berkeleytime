@@ -198,64 +198,11 @@
 	}
 }
 
-.sectionRoot {
+.sections {
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
-}
-
-.sectionContainer {
-	display: flex;
-	flex-direction: column;
-
-	& > p {
-		text-transform: capitalize;
-		font-size: 14px;
-		color: $bt-light-text;
-	}
-
-	& > h6 {
-		display: flex;
-		gap: 4px;
-		align-items: flex-start;
-	}
-}
-
-.separator {
-	height: 1.5px;
-	// width: calc(100% + 32px);
-	// margin: 0px -16px;
-	width: 100%;
-	background: #eaeaea;
-}
-
-.sectionLeft {
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	font-weight: 500;
-
-	h6 {
-		display: flex;
-		align-items: center;
-		min-height: 24px;
-	}
-}
-
-.sectionRight {
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-	font-size: 16px;
-}
-
-.sectionItem {
-	display: flex;
-	flex-direction: column;
-	padding: 12px 16px;
 	border-radius: 16px;
-	border: 1.5px solid #eaeaea;
-	gap: 30px;
+	gap: 10px;
 
 	h6 {
 		font-size: 16px;
@@ -263,6 +210,74 @@
 		margin: 0;
 		font-weight: 500;
 		color: $bt-base-text;
+	}
+
+	p {
+		margin: 0;
+		font-size: 16px;
+		font-weight: 500;
+		color: $bt-base-text;
+	}
+}
+
+.sectionRoot {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.sectionItem {
+	display: flex;
+	flex-direction: row;
+	border: 1.5px solid #eaeaea;
+	padding: 12px 16px;
+	border-radius: 12px;
+}
+
+.sectionLeft {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+
+	h6 {
+		display: flex;
+		align-items: center;
+		font-weight: 700;
+		min-height: 24px;
+	}
+
+	span {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		text-transform: capitalize;
+		color: $bt-light-text;
+		font-weight: 400;
+		font-size: 14px;
+		text-align: right;
+	}
+}
+
+.sectionRight {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	font-size: 16px;
+
+	h6,
+	span {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 4px;
+		font-size: 14px;
+		color: $bt-light-text;
+		font-weight: 400;
+		text-align: right;
+	}
+
+	& > h6 {
+		font-size: 14px;
 	}
 }
 
@@ -273,7 +288,6 @@
 	color: $bt-light-text;
 	font-size: 14px;
 	text-transform: none !important;
-	border-bottom: 1.5px solid #eaeaea;
 	padding-bottom: 5px;
 	flex-wrap: wrap;
 
@@ -359,4 +373,5 @@
 .active {
 	border-bottom: 1.5px solid #2f80ed !important;
 	color: $bt-base-text;
+	background: #f8f8f8;
 }
