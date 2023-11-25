@@ -21,7 +21,6 @@
     "types": ["vite/client"]
 	},
 	"include": ["src"],
-	"types": ["vite/client"],
 	"references": [
 		{
 			"path": "./tsconfig.vite.json"

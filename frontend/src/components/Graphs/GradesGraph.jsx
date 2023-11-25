@@ -88,7 +88,7 @@ export default function GradesGraph(props) {
 		);
 	}, [gradesData]);
 
-	const graphEmpty = gradesData && gradesData.length === 0;
+	const isLoaded = gradesData && graphData;
 
 	return (
 		<div className="grades-graph">
@@ -102,24 +102,26 @@ export default function GradesGraph(props) {
 							margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
 						>
 							<XAxis dataKey="name" type="category" interval={0} />
-							{!graphEmpty ? (
+							{isLoaded ? (
 								<YAxis type="number" unit="%" />
 							) : (
 								<YAxis type="number" unit="%" domain={[0, 100]} />
 							)}
 
-							<Tooltip
-								formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-								cursor={graphEmpty ? { fill: '#fff' } : { fill: '#EAEAEA' }}
-							/>
+							{isLoaded && (
+								<Tooltip
+									formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+									cursor={{ fill: '#EAEAEA' }}
+								/>
+							)}
 
-							{!graphEmpty &&
+							{isLoaded &&
 								gradesData.map((item, i) => (
 									<Bar
 										key={i}
 										name={`${item.title} • ${item.semester} • ${item.instructor}`}
 										dataKey={item.id}
-										fill={vars.colors[item.colorId]}
+										fill={color ? color : vars.colors[item.colorId]}
 										onMouseEnter={updateBarHover}
 										radius={[4, 4, 0, 0]}
 									/>
@@ -130,7 +132,7 @@ export default function GradesGraph(props) {
 			) : (
 				// mobile or narrow viewport
 				<div className="grades-recharts-container-mobile">
-					<ResponsiveContainer width="95%" height={!graphEmpty ? 200 + numClasses * 400 : 600}>
+					<ResponsiveContainer width="95%" height={isLoaded ? 200 + numClasses * 400 : 600}>
 						<BarChart
 							data={graphData}
 							onMouseMove={updateGraphHover}
@@ -140,13 +142,13 @@ export default function GradesGraph(props) {
 							// barGap={4}
 							margin={{ left: -30, bottom: 50 }}
 						>
-							{!graphEmpty ? (
+							{isLoaded ? (
 								<XAxis type="number" unit="%" />
 							) : (
 								<XAxis type="number" unit="%" domain={[0, 100]} />
 							)}
 							<YAxis dataKey="name" type="category" interval={0} />
-							{!graphEmpty ? (
+							{isLoaded ? (
 								<Tooltip
 									content={
 										<MobileTooltip
@@ -188,7 +190,7 @@ export default function GradesGraph(props) {
 				</div>
 			)}
 
-			{graphEmpty && <EmptyLabel />}
+			{!isLoaded && <EmptyLabel />}
 		</div>
 	);
 }
