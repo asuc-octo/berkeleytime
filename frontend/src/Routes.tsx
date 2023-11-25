@@ -19,7 +19,6 @@ const RemoteScheduler = () => import('./app/Scheduler/RemoteSchedulerPage');
 const ViewSchedule = () => import('./app/Scheduler/ViewSchedule');
 const PrivacyPolicy = () => import('./views/PrivacyPolicy');
 const TermsOfService = () => import('./views/TermsOfService');
-const RedirectLink = () => import('./views/RedirectLink');
 // const Apply = () => import('./views/Apply');
 
 function ScheduleRedirect() {
@@ -48,8 +47,7 @@ const router = createBrowserRouter([
 			{ path: '/schedule/:scheduleId', lazy: ViewSchedule },
 			{ path: '/error', Component: Error },
 			{ path: '/legal/privacy', lazy: PrivacyPolicy },
-			{ path: '/legal/terms', lazy: TermsOfService },
-			{ path: '/redirect', lazy: RedirectLink },
+			{ path: '/legal/terms', lazy: TermsOfService }
 			// { path: '/apply', lazy: Apply }
 		]
 	},
