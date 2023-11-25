@@ -98,7 +98,10 @@ const CatalogView = () => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
-			<Meta title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'} description={course?.description} />
+			<Meta
+				title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'}
+				description={course?.description}
+			/>
 			<button
 				className={styles.modalButton}
 				onClick={() => {
@@ -110,15 +113,6 @@ const CatalogView = () => {
 			</button>
 			{course && (
 				<>
-					<button
-						className={styles.modalButton}
-						onClick={() => {
-							navigate(`/catalog/${semester}`);
-						}}
-					>
-						<BackArrow />
-						Back to Courses
-					</button>
 					<h3>
 						{course.abbreviation} {course.courseNumber}
 					</h3>
