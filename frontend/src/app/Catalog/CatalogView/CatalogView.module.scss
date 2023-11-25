@@ -53,6 +53,8 @@
 		height: 100%;
 		z-index: 300;
 		width: 100vw;
+		padding: 20px;
+		padding-right: 10px;
 		// Add size of fixed header.
 		padding-top: 30px;
 		&[data-modal='false'] {
@@ -232,6 +234,20 @@
 	border: 1.5px solid #eaeaea;
 	padding: 12px 16px;
 	border-radius: 12px;
+	gap: 10px;
+}
+
+@include media(mobile) {
+	.sectionItem {
+		flex-direction: column;
+	}
+
+	.sectionRight {
+		& > h6, span {
+			justify-content: flex-start !important;
+			text-align: left !important;
+		}
+	}
 }
 
 .sectionLeft {
@@ -261,7 +277,7 @@
 .sectionRight {
 	display: flex;
 	flex-direction: column;
-	justify-content: flex-end;
+	justify-content: flex-start;
 	font-size: 16px;
 
 	h6,
@@ -281,53 +297,6 @@
 	}
 }
 
-.sectionFooter {
-	display: flex;
-	justify-content: first baseline;
-	gap: 5px;
-	color: $bt-light-text;
-	font-size: 14px;
-	text-transform: none !important;
-	padding-bottom: 5px;
-	flex-wrap: wrap;
-
-	span {
-		display: inline-flex;
-		justify-content: flex-start;
-		align-items: center;
-		line-height: 20px;
-		gap: 4px;
-		color: $bt-light-text;
-		font-weight: 400;
-		font-size: 14px;
-		text-align: right;
-	}
-}
-
-.instructor {
-	font-size: 14px;
-	text-transform: capitalize;
-	min-height: 24px;
-	color: $bt-light-text;
-
-	span {
-		margin-right: 5px;
-	}
-}
-
-.enrolled {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	font-size: 14px;
-	// font-weight: 500;
-	gap: 5px;
-
-	img {
-		width: 14px;
-	}
-}
-
 .tabList {
 	display: flex;
 	flex-direction: row;
@@ -344,7 +313,7 @@
 }
 
 .tabGraph {
-	margin: 0 -20px 0 -25px;
+	margin: 0 -10px 0 -15px;
 }
 
 .tab {
