@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Tabs from '@radix-ui/react-tabs';
-import useCatalog from '../useCatalog';
+import useCatalog from '../../useCatalog';
 import CatalogViewSections from './SectionTable';
 import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { sortSections } from 'utils/sections/sort';
-import styles from './CatalogView.module.scss';
+import styles from '../CatalogView.module.scss';
 import GradesGraph from 'components/Graphs/GradesGraph';
 import {
 	fetchCatalogGrades,
@@ -16,7 +16,7 @@ import {
 import { useSelector } from 'react-redux';
 import EnrollmentGraph from 'components/Graphs/EnrollmentGraph';
 import { useParams } from 'react-router-dom';
-import { CatalogSlug } from '../types';
+import { CatalogSlug } from '../../types';
 
 type TabKey = 'times' | 'grades' | 'enrollment';
 
