@@ -36,9 +36,6 @@ export default function Footer() {
 								<A href="https://discord.gg/uP2bTPh99U" className="mb-2">
 									Discord
 								</A>
-								<A href="https://facebook.com/berkeleytime" className="mb-2">
-									Facebook
-								</A>
 							</div>
 						</div>
 					</Col>
