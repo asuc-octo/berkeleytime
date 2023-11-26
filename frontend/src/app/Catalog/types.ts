@@ -78,6 +78,7 @@ export type CatalogContext = {
 	courses: CourseOverviewFragment[];
 	course: CourseFragment | null;
 	courseIndex: Fuse<CourseInfo> | null;
+	recentCourses: CourseFragment[];
 };
 
 export type CatalogAction =
@@ -88,6 +89,8 @@ export type CatalogAction =
 	| { type: 'filter'; filters: Partial<CatalogContext['filters']> }
 	| { type: 'setCourseList'; allCourses: CatalogContext['courses'] }
 	| { type: 'reset'; filters?: Partial<CatalogContext['filters']> }
-	| { type: 'setPill'; pillItem: PlaylistType };
+	| { type: 'setPill'; pillItem: PlaylistType }
+	| { type: 'clearRecents' };
+
 
 export type CatalogActions = CatalogAction[keyof CatalogAction];

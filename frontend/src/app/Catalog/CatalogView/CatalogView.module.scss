@@ -343,3 +343,62 @@
 	color: $bt-base-text;
 	background: #f8f8f8;
 }
+
+.saveRoot {
+	display: flex;
+	flex-direction: row;
+	padding: 0 20px;
+	gap: 20px;
+}
+
+.saveContainer {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+.header {
+	// margin-bottom: 20px;
+	display: flex;
+	justify-content: space-between;
+	flex-direction: row;
+	align-items: baseline;
+	gap: 30px;
+	padding: 6px 23px;
+
+	span {
+		font-size: 20px;
+		font-weight: 600;
+	}
+
+	border-bottom: 1.5px solid #eaeaea;
+
+	button {
+		color: #2f80ed;
+		transition: 0.2s;
+		border: none;
+		background: none;
+		padding: 0 8px;
+		border-radius: 4px;
+		font-size: 14px;
+		&:hover {
+			background: hsla(0, 0%, 92.2%, 0.6196078431);
+		}
+	}
+}
+
+.seperator {
+	display: flex;
+	height: 100%;
+	width: 1px;
+	background: #eaeaea;
+}
+
+.emptyView {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: $bt-light-text;
+	padding: 20px 0;
+	text-align: center;
+}
