@@ -351,6 +351,12 @@
 	gap: 20px;
 }
 
+@include media(mobile) {
+	.saveRoot {
+		display: none;
+	}
+}
+
 .saveContainer {
 	display: flex;
 	flex-direction: column;
