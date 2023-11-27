@@ -5,7 +5,7 @@ import book from 'assets/svg/catalog/book.svg';
 import launch from 'assets/svg/catalog/launch.svg';
 import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow.svg';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
-import { PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
+import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
 import { useNavigate, useParams } from 'react-router';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
@@ -15,14 +15,36 @@ import { sortPills } from '../service';
 import CourseTabs from './Tabs';
 
 import styles from './CatalogView.module.scss';
-import { CatalogSlug } from '../types';
+import { CatalogSlug, FilterOption } from '../types';
 import Meta from 'components/Common/Meta';
 import { courseToName } from 'lib/courses/course';
+import { useUser } from 'graphql/hooks/user';
+import CatalogListItem from '../CatalogList/CatalogListItem';
 
 const skeleton = [...Array(8).keys()];
 
+// Debug saved courses with dummy array since logging in doesn't work in DEV.
+// const dummy = [
+// 	{
+// 		id: 'Q291cnNlVHlwZToyMTcxOQ==',
+// 		abbreviation: 'MATH',
+// 		courseNumber: '56',
+// 		description:
+// 			'This is a first course in Linear Algebra. Core topics include: algebra and geometry of vectors and matrices; systems of linear equations and Gaussian elimination; eigenvalues and eigenvectors; Gram-Schmidt and least squares; symmetric matrices and quadratic forms; singular value decomposition and other factorizations. Time permitting, additional topics may include: Markov chains and Perron-Frobenius, dimensionality reduction, or linear programming. This course differs from Math 54 in that it does not cover Differential Equations, but focuses on Linear Algebra motivated by first applications in Data Science and Statistics.',
+// 		title: 'Linear Algebra ',
+// 		gradeAverage: -1,
+// 		letterAverage: 'A',
+// 		openSeats: 0,
+// 		enrolledPercentage: 1,
+// 		enrolled: 292,
+// 		enrolledMax: 292,
+// 		units: '4.0',
+// 		__typename: 'CourseType'
+// 	}
+// ];
+
 const CatalogView = () => {
-	const [{ course }, dispatch] = useCatalog();
+	const [{ course, filters, recentCourses }, dispatch] = useCatalog();
 	const navigate = useNavigate();
 	const { abbreviation, courseNumber, semester } = useParams<CatalogSlug>();
 
@@ -44,26 +66,29 @@ const CatalogView = () => {
 		}
 	});
 
+	const { user } = useUser();
+	const savedClasses = useMemo(() => user?.savedClasses ?? [], [user?.savedClasses]);
+
 	useEffect(() => {
-		const [sem, year] = semester?.split(' ') ?? [null, null];
+		const [sem, year] = semester?.split(' ') ?? [undefined, undefined];
+
+		type coursePayload = {
+			abbreviation: string;
+			courseNumber: string;
+			semester: string;
+			year: string;
+		};
 
 		const variables = {
-			abbreviation: abbreviation ?? null,
-			courseNumber: courseNumber ?? null,
-			semester: sem?.toLowerCase() ?? null,
+			abbreviation: abbreviation,
+			courseNumber: courseNumber,
+			semester: sem?.toLowerCase(),
 			year: year
 		};
 
 		// Only fetch the course if every parameter has a value.
-		if (Object.values(variables).every((value) => value !== null))
-			getCourse({
-				variables: variables as {
-					abbreviation: string;
-					courseNumber: string;
-					semester: string;
-					year: string;
-				}
-			});
+		if (Object.values(variables).every((value) => value !== undefined))
+			getCourse({ variables: variables as coursePayload });
 	}, [getCourse, abbreviation, courseNumber, semester]);
 
 	useEffect(() => {
@@ -92,22 +117,23 @@ const CatalogView = () => {
 	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
 
 	return (
-		<div className={`${styles.root}`} data-modal={typeof courseNumber === 'string'}>
+		<>
 			<Meta
 				title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'}
 				description={course?.description}
 			/>
-			<button
-				className={styles.modalButton}
-				onClick={() => {
-					navigate(`/catalog/${semester}`, { replace: true });
-				}}
-			>
-				<BackArrow />
-				Close
-			</button>
-			{course && (
-				<>
+			{course ? (
+				<div className={`${styles.root}`} data-modal={typeof courseNumber === 'string'}>
+					<button
+						className={styles.modalButton}
+						onClick={() => {
+							navigate(`/catalog/${semester}`, { replace: true });
+							dispatch({ type: 'setCourse', course: null });
+						}}
+					>
+						<BackArrow />
+						Close
+					</button>
 					<h3>
 						{course.abbreviation} {course.courseNumber}
 					</h3>
@@ -178,9 +204,75 @@ const CatalogView = () => {
 						</>
 					</ReadMore>
 					<CourseTabs />
-				</>
+				</div>
+			) : (
+				<div className={styles.saveRoot}>
+					<div className={styles.saveContainer}>
+						<div className={styles.header}>
+							<span>Recent</span>
+							<button onClick={() => dispatch({ type: 'clearRecents' })}>Clear</button>
+						</div>
+						{recentCourses.length > 0 ? (
+							<div>
+								{recentCourses.map((course) => (
+									<CatalogListItem
+										simple
+										key={course.id}
+										data={{
+											course: course as CourseFragment,
+											handleCourseSelect: (course) => {
+												dispatch({ type: 'setCourse', course });
+												navigate({
+													pathname: `/catalog/${(filters.semester as FilterOption)?.value?.name}/${
+														course.abbreviation
+													}/${course.courseNumber}`,
+													search: location.search
+												});
+											},
+											isSelected: false
+										}}
+									/>
+								))}
+							</div>
+						) : (
+							<div className={styles.emptyView}>Recently viewed courses will appear here!</div>
+						)}
+					</div>
+					<div className={styles.saveContainer}>
+						<div className={styles.header}>
+							<span>Saved</span>
+						</div>
+						{savedClasses.length > 0 ? (
+							<div>
+								{savedClasses.map((course) => (
+									<CatalogListItem
+										simple
+										key={course.id}
+										data={{
+											course: course as CourseFragment,
+											handleCourseSelect: (course) => {
+												dispatch({ type: 'setCourse', course });
+												navigate({
+													pathname: `/catalog/${(filters.semester as FilterOption)?.value?.name}/${
+														course.abbreviation
+													}/${course.courseNumber}`,
+													search: location.search
+												});
+											},
+											isSelected: false
+										}}
+									/>
+								))}
+							</div>
+						) : (
+							<div className={styles.emptyView}>
+								Click on the bookmarks in the course list while signed-in to save courses!
+							</div>
+						)}
+					</div>
+				</div>
 			)}
-		</div>
+		</>
 	);
 };
 

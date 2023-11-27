@@ -23,10 +23,11 @@ type CatalogListItemProps = {
 		handleCourseSelect: (course: CourseFragment) => void;
 		isSelected: boolean;
 	};
-	style: CSSProperties;
+	style?: CSSProperties;
+	simple?: boolean;
 };
 
-const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
+const CatalogListItem = ({ style, data, simple }: CatalogListItemProps) => {
 	const { course, handleCourseSelect, isSelected } = data;
 	const [{ course: currentCourse }] = useCatalog();
 
@@ -63,20 +64,28 @@ const CatalogListItem = ({ style, data }: CatalogListItemProps) => {
 								{isSaved ? <BookmarkSaved /> : <BookmarkUnsaved />}
 							</div>
 						)}
-						<span className={`${styles[course.letterAverage[0]]}`}>
-							{course.letterAverage !== '' ? course.letterAverage : ''}
-						</span>
+						{!simple && (
+							<span className={`${styles[course.letterAverage[0]]}`}>
+								{course.letterAverage !== '' ? course.letterAverage : ''}
+							</span>
+						)}
 					</div>
 				</div>
-				<div className={styles.itemStats}>
-					<span className={colorEnrollment(course.enrolledPercentage)}>
-						{formatEnrollment(course.enrolledPercentage)} enrolled
-					</span>
-					<span> • {course.units ? formatUnits(course.units) : 'N/A'}</span>
-				</div>
+				{!simple && (
+					<div className={styles.itemStats}>
+						<span className={colorEnrollment(course.enrolledPercentage)}>
+							{formatEnrollment(course.enrolledPercentage)} enrolled
+						</span>
+						<span> • {course.units ? formatUnits(course.units) : 'N/A'}</span>
+					</div>
+				)}
 			</div>
 		</div>
 	);
+};
+
+CatalogListItem.defaultProps = {
+	simple: false
 };
 
 export default memo(CatalogListItem, areEqual);

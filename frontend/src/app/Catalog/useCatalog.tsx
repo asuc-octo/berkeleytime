@@ -3,6 +3,12 @@ import { DEFAULT_FILTERS, SORT_OPTIONS, buildCourseIndex } from './service';
 import { CatalogFilters, CatalogContext, CatalogAction } from './types';
 import { searchCatalog, flipCourseList } from './service';
 import { byAttribute } from 'lib/courses/sorting';
+import { CourseFragment } from 'graphql';
+
+const getRecents = (): CourseFragment[] => {
+	const recents = localStorage.getItem('recentlyViewedCourses');
+	return recents ? JSON.parse(recents) : [];
+};
 
 const initialCatalog: CatalogContext = {
 	filters: DEFAULT_FILTERS,
@@ -12,7 +18,8 @@ const initialCatalog: CatalogContext = {
 	courses: [],
 	allCourses: [],
 	courseIndex: null,
-	course: null
+	course: null,
+	recentCourses: getRecents()
 };
 
 const Context = createContext<CatalogContext>(initialCatalog);
@@ -41,11 +48,15 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 				sortDir: sortDir === 'ASC' ? 'DESC' : 'ASC',
 				courses: flipCourseList(courses, sortQuery)
 			};
-		case 'setCourse':
+		case 'setCourse': {
+			const recentCourses = setRecentlyViewed(action.course);
+
 			return {
 				...catalog,
-				course: action.course
+				course: action.course,
+				recentCourses
 			};
+		}
 		case 'search': {
 			const newQuery = action.query ?? searchQuery;
 			return {
@@ -114,6 +125,13 @@ function catalogReducer(catalog: CatalogContext, action: CatalogAction): Catalog
 				}
 			};
 		}
+		case 'clearRecents': {
+			localStorage.removeItem('recentlyViewedCourses');
+			return {
+				...catalog,
+				recentCourses: []
+			};
+		}
 		default:
 			return catalog;
 	}
@@ -131,6 +149,24 @@ const setSearch = (catalog: CatalogContext, query: string | null = null) => {
 	return searchCatalog(courseIndex, query ?? searchQuery, allCourses).sort(
 		byAttribute(sortQuery.value)
 	);
+};
+
+const setRecentlyViewed = (course: CourseFragment | null): CourseFragment[] => {
+	let recents = getRecents();
+
+	if (!course) return recents;
+
+	// If the course was already viewed, don't add it.
+	if (recents.find((c) => c.id === course.id)) return recents;
+	recents = [course, ...recents];
+
+	// Limit the size;
+	const maxSize = 25;
+	recents = recents.slice(-maxSize);
+
+	localStorage.setItem('recentlyViewedCourses', JSON.stringify(recents));
+
+	return recents;
 };
 
 export default useCatalog;
