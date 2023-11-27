@@ -210,7 +210,7 @@ const CatalogView = () => {
 					<div className={styles.saveContainer}>
 						<div className={styles.header}>
 							<span>Recent</span>
-							<button onClick={() => dispatch({ type: 'clearRecents' })}>clear</button>
+							<button onClick={() => dispatch({ type: 'clearRecents' })}>Clear</button>
 						</div>
 						{recentCourses.length > 0 ? (
 							<div>
