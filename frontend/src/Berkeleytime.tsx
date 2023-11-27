@@ -5,7 +5,6 @@ import useDimensions from 'react-cool-dimensions';
 import easterEgg from 'utils/easterEgg';
 import Routes from './Routes';
 import { fetchEnrollContext, fetchGradeContext } from 'redux/actions';
-import { IconoirProvider } from 'iconoir-react';
 
 const Berkeleytime = () => {
 	const dispatch = useDispatch();
