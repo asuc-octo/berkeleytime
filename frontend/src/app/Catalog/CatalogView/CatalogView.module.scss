@@ -57,7 +57,6 @@
 		padding-right: 10px;
 		// Add size of fixed header.
 		padding-top: 30px;
-
 	}
 
 	&[data-modal='false'] {
@@ -348,7 +347,8 @@
 	display: flex;
 	flex-direction: row;
 	padding: 0 20px;
-	gap: 20px;
+	grid-area: view;
+	overflow: hidden;
 }
 
 @include media(mobile) {
@@ -361,6 +361,18 @@
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	margin: 20px 0px;
+
+	&:first-child {
+		padding-right: 10px;
+		// border-right: 1.5px solid #eaeaea;
+	}
+
+	&:last-child {
+		padding-left: 10px;
+	}
 }
 
 .header {
@@ -386,7 +398,7 @@
 		background: none;
 		padding: 0 8px;
 		border-radius: 4px;
-		font-size: 14px;
+		font-size: 16px;
 		&:hover {
 			background: hsla(0, 0%, 92.2%, 0.6196078431);
 		}
@@ -395,8 +407,8 @@
 
 .seperator {
 	display: flex;
-	height: 100%;
-	width: 1px;
+	width: 1.5px;
+	margin: 20px 0px;
 	background: #eaeaea;
 }
 
