@@ -209,7 +209,7 @@ const CatalogView = () => {
 				<div className={styles.saveRoot}>
 					<div className={styles.saveContainer}>
 						<div className={styles.header}>
-							<span>Recents</span>
+							<span>Recent</span>
 							<button onClick={() => dispatch({ type: 'clearRecents' })}>clear</button>
 						</div>
 						{recentCourses.length > 0 ? (
@@ -238,7 +238,6 @@ const CatalogView = () => {
 							<div className={styles.emptyView}>Recently viewed courses will appear here!</div>
 						)}
 					</div>
-					<div className={styles.seperator} />
 					<div className={styles.saveContainer}>
 						<div className={styles.header}>
 							<span>Saved</span>
