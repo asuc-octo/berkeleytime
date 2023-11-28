@@ -21,6 +21,9 @@ export interface Config {
   mongoDB: {
     uri: string;
   };
+  redis: {
+    uri: string;
+  };
   sis: {
     CLASS_APP_ID: string;
     CLASS_APP_KEY: string;
@@ -41,6 +44,9 @@ export const config: Config = {
   isDev: env("NODE_ENV") === "development",
   mongoDB: {
     uri: env("MONGODB_URI"),
+  },
+  redis: {
+    uri: env("REDIS_URI"),
   },
   sis: {
     CLASS_APP_ID: env("SIS_CLASS_APP_ID"),

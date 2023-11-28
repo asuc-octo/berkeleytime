@@ -12,6 +12,11 @@ import GoogleStrategy from "passport-google-oauth20";
 import { UserModel } from "../../models/user";
 import { config } from "../../config";
 
+//redis
+import RedisStore from "connect-redis"
+const CACHE_PREFIX = 'user-session:';
+import { redisInstance } from "./redis";
+
 const LOGIN_ROUTE = "/login";
 const LOGIN_REDIRECT_ROUTE = "/login/redirect";
 const LOGOUT_ROUTE = "/logout";
@@ -30,6 +35,7 @@ export default async (app: Application) => {
     secret: config.SESSION_SECRET,
     name: 'sessionId',
     resave: false,
+    store: new RedisStore({ client: redisInstance, prefix: CACHE_PREFIX}),
     saveUninitialized: false,
     cookie: {
       secure: !config.isDev,
