@@ -5,10 +5,15 @@ import { config } from "../../config";
 import apolloLoader from "./apollo";
 import expressLoader from "./express";
 import mongooseLoader from "./mongoose";
+import redisLoader from './redis';
 
 export default async (root: Application): Promise<void> => {
   const app = Router() as Application;
 
+  // Connect to redis
+  console.log("Booting up redis...");
+  await redisLoader();
+  
   // connect to mongoose
   console.log("Booting up mongo...");
   await mongooseLoader();
