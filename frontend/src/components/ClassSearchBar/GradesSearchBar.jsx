@@ -150,9 +150,12 @@ const customStyles = {
 };
 
 export default function GradesSearchBar({ fromCatalog, addCourse, isFull, isMobile, classes }) {
-	const { sections, selectPrimary, selectSecondary } = useSelector((state) => state.grade);
+	const { sections, selectPrimary, selectSecondary, selectedCourses } = useSelector(
+		(state) => state.grade
+	);
 	const [localSelectPrimary, setLocalSelectPrimary] = useState(selectPrimary);
 	const [localSelectSecondary, setLocalSelectSecondary] = useState(selectSecondary);
+	const [selectedClassVal, setSelectedClassVal] = useState(undefined);
 	const [selectedClass, setSelectedClass] = useState(0);
 	const [selectType, setSelectType] = useState('instructor');
 	const dispatch = useDispatch();
@@ -168,6 +171,7 @@ export default function GradesSearchBar({ fromCatalog, addCourse, isFull, isMobi
 			}
 
 			setSelectedClass(updatedClass.value);
+			setSelectedClassVal(updatedClass);
 			dispatch(fetchGradeSelected(updatedClass));
 		},
 		[dispatch]
@@ -183,6 +187,13 @@ export default function GradesSearchBar({ fromCatalog, addCourse, isFull, isMobi
 
 	useEffect(() => setLocalSelectPrimary(selectPrimary), [selectPrimary]);
 	useEffect(() => setLocalSelectSecondary(selectSecondary), [selectSecondary]);
+	useEffect(() => {
+		if (selectedCourses && selectedCourses.length > 0) {
+			const course = selectedCourses[selectedCourses.length - 1];
+			const payload = { value: course.courseID, label: course.course, course };
+			handleClassSelect(payload);
+		}
+	}, [selectedCourses]);
 
 	const handleSortSelect = (sortBy) => {
 		setSelectType(sortBy.value);
@@ -301,6 +312,7 @@ export default function GradesSearchBar({ fromCatalog, addCourse, isFull, isMobi
 						courseSearch
 						name="selectClass"
 						placeholder="Choose a class..."
+						value={selectedClassVal}
 						options={buildCoursesOptions(classes)}
 						onChange={handleClassSelect}
 						components={{
