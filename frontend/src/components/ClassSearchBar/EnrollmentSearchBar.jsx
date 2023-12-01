@@ -89,9 +89,12 @@ export default function EnrollmentSearchBar({
 	fromCatalog
 }) {
 	const [selectedClass, setSelectedClass] = useState(0);
-	const { sections, selectPrimary, selectSecondary } = useSelector((state) => state.enrollment);
+	const { sections, selectPrimary, selectSecondary, selectedCourses } = useSelector(
+		(state) => state.enrollment
+	);
 	const [localSelectPrimary, setLocalSelectPrimary] = useState(selectPrimary);
 	const [localSelectSecondary, setLocalSelectSecondary] = useState(selectSecondary);
+	const [selectedClassVal, setSelectedClassVal] = useState(undefined);
 	const dispatch = useDispatch();
 
 	const handleClassSelect = useCallback(
@@ -103,6 +106,7 @@ export default function EnrollmentSearchBar({
 			}
 
 			setSelectedClass(updatedClass.value);
+			setSelectedClassVal(updatedClass);
 			setLocalSelectPrimary('');
 			setLocalSelectSecondary('');
 			dispatch(fetchEnrollSelected(updatedClass));
@@ -117,6 +121,13 @@ export default function EnrollmentSearchBar({
 
 	useEffect(() => setLocalSelectPrimary(selectPrimary), [selectPrimary]);
 	useEffect(() => setLocalSelectSecondary(selectSecondary), [selectSecondary]);
+	useEffect(() => {
+		if (selectedCourses && selectedCourses.length > 0) {
+			const course = selectedCourses[selectedCourses.length - 1];
+			const payload = { value: course.courseID, label: course.course, course };
+			handleClassSelect(payload);
+		}
+	}, [selectedCourses]);
 
 	const handlePrimarySelect = (primary) => {
 		setLocalSelectPrimary(primary ? primary.value : '');
@@ -222,7 +233,7 @@ export default function EnrollmentSearchBar({
 						courseSearch
 						name="selectClass"
 						placeholder="Choose a class..."
-						// value={selectedClass}
+						value={selectedClassVal}
 						options={buildCoursesOptions(classes)}
 						onChange={handleClassSelect}
 						components={{
