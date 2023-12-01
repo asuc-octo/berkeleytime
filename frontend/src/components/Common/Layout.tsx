@@ -5,6 +5,7 @@ import ReactGA from 'react-ga';
 import Navigation from './Navigation';
 import BTLoader from './BTLoader';
 import Footer from './Footer';
+import Meta from './Meta';
 
 ReactGA.initialize('UA-35316609-1');
 
@@ -29,6 +30,7 @@ export default function RootLayout({ footer }: LayoutProps) {
 		<>
 			{/* <Banner /> */}
 			<Navigation />
+			<Meta title="Berkeleytime" />
 			{navigate.state == 'loading' ? (
 				<div className="viewport-app">
 					<BTLoader />

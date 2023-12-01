@@ -7,6 +7,8 @@ import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearc
 
 import info from '../../assets/img/images/graphs/info.svg';
 
+import Meta from 'components/Common/Meta';
+
 import {
 	fetchEnrollContext,
 	fetchEnrollClass,
@@ -19,6 +21,10 @@ import { useCallback, useEffect, useState } from 'react';
 const toUrlForm = (s) => {
 	return s.toLowerCase().split(' ').join('-');
 };
+
+const formatMetaTitle = (selectedCourses) =>
+	`Enrollment ${selectedCourses.length > 0 ? `| ${selectedCourses.map((c) => ` ${c.course}`)}` : ''}`;
+
 
 export function Component() {
 	const [additionalInfo, setAdditionalInfo] = useState([]);
@@ -137,6 +143,7 @@ export function Component() {
 
 	return (
 		<div className="viewport-app">
+			<Meta title={formatMetaTitle(selectedCourses)} />
 			<div className="enrollment">
 				<EnrollmentSearchBar
 					classes={context.courses}

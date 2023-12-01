@@ -8,6 +8,8 @@ import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
 import info from '../../assets/img/images/graphs/info.svg';
 
+import Meta from 'components/Common/Meta';
+
 import {
 	fetchGradeContext,
 	fetchGradeClass,
@@ -20,6 +22,9 @@ const toUrlForm = (s) => {
 	s = s.replace('/', '_');
 	return s.toLowerCase().split(' ').join('-');
 };
+
+const formatMetaTitle = (selectedCourses) =>
+	`Grades ${selectedCourses.length > 0 ? `| ${selectedCourses.map((c) => ` ${c.course}`)}` : ''}`;
 
 export function Component() {
 	const [additionalInfo, setAdditionalInfo] = useState([]);
@@ -131,6 +136,8 @@ export function Component() {
 
 	return (
 		<div className="viewport-app">
+			<Meta title={formatMetaTitle(selectedCourses)} />
+
 			<div className="grades">
 				<GradesSearchBar
 					classes={context.courses}
