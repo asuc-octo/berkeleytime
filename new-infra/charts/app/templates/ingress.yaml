@@ -1,0 +1,31 @@
+# from: ingress-controller
+# to: service
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{ { .Chart.Name } }-ingress"
+  annotations: |-
+    {{- if .Values.ingress.annotations }}
+      {{ toYaml .Values.ingress.annotations | indent 4 }}
+    {{- end }}
+spec:
+  tls:
+    - hosts: |-
+        {{ for $host := .Values.ingress.hosts }}
+        - {{ $host }}
+        {{- end }}
+      secretName: bt-tls
+  rules: |-
+    {{ for $host, $path, $name, $port := .Values.ingress.rules }}
+    - host: {{ $host }}
+      http:
+        paths:
+          - path: {{ $path }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $name }}
+                port:
+                  number: {{ $port }}
+    {{- end }}

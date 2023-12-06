@@ -1,0 +1,14 @@
+# from: ingress
+# to: deployment
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{ { .Chart.Name } }-service"
+  namespace: { { .Release.Namespace } }
+spec:
+  ports:
+    - name: http
+      port: { { .Values.service.port } }
+      targetPort: { { .Values.service.targetPort } }
+      protocol: TCP
