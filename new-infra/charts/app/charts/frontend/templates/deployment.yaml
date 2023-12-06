@@ -1,0 +1,20 @@
+# from: service
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: "{ { .Chart.Name } }-frontend"
+  name: "{ { .Chart.Name } }-frontend"
+  namespace: { { .Release.Namespace } }
+spec:
+  replicas: { { .Values.replicaCount } }
+  selector:
+    matchLabels:
+      component: "{ { .Chart.Name } }-frontend"
+  template:
+    metadata:
+      labels:
+        component: "{ { .Chart.Name } }-frontend"
+    spec:
+      containers:
