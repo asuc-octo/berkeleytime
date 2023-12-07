@@ -1,0 +1,30 @@
+# from: service
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    component: {{ .Chart.Name }}-backend
+  name: {{ .Chart.Name }}-backend
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      component: {{ .Chart.Name }}-backend
+  template:
+    metadata:
+      labels:
+        component: {{ .Chart.Name }}-backend
+    spec:
+      containers:
+---
+# to: deployment
+# from: ingress
+
+{{ include "app.service" | replace "XXXXend" "backend" }}
+---
+# to: service
+# from: ingress-controller
+
+{{ include "app.ingress" | replace "XXXXend" "backend" }}

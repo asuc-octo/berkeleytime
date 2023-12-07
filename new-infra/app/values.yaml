@@ -1,0 +1,19 @@
+frontend:
+  replicas: 1
+  service:
+    port:
+    targetPort:
+  ingress:
+    annotations:
+    hosts:
+    rules:
+
+backend:
+  replicas: 2
+  service:
+    port:
+    targetPort:
+  ingress:
+    annotations:
+    hosts:
+    rules:
