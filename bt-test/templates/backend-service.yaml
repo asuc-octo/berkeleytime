@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bt-backend
+spec:
+  selector:
+    app: bt-backend
+  ports:
+    - name: http-bt-port
+      protocol: TCP
+      port: 80
+      targetPort: 5000
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bt-backend
+spec:
+  replicas: {{ .Values.backend.replicas }}
+  selector:
+    matchLabels:
+      app: bt-backend
+  template:
+    metadata:
+      labels:
+        app: bt-backend
+    spec:
+      containers:
+        - command:
+            - npm
+            - run
+            - dev
+          image: {{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}
+          imagePullPolicy: IfNotPresent
+          name: bt-backend
+          envFrom:
+            - configMapRef:
+                name: bt-backend-env-config
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bt-backend-env-config
+data:
+  .env: |-
+{{- range .Values.environmentVariables }}
+  {{ .name }}={{ .value }}
+{{- end }}
