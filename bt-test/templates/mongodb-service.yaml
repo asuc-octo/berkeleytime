@@ -16,7 +16,7 @@ kind: Deployment
 metadata:
   name: mongodb
 spec:
-  replicas: { { .Values.mongodb.replicas } }
+  replicas: 1
   selector:
     matchLabels:
       app: mongodb
@@ -35,6 +35,6 @@ spec:
               mountPath: /data/db
       restartPolicy: Always
       volumes:
-        - name: db-volume
+        - name: mongodb-data
           hostPath:
-            path: { { .Values.mongodb.dbpath } }
+            path: ./db

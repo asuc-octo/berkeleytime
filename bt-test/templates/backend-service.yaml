@@ -48,7 +48,16 @@ kind: ConfigMap
 metadata:
   name: bt-backend-env-config
 data:
-  .env: |-
-{{- range .Values.environmentVariables }}
-  {{ .name }}={{ .value }}
-{{- end }}
+  .env: |
+    PORT=5001
+    URL=http://localhost:5001
+    BACKEND_PATH=/api
+    GRAPHQL_PATH=/graphql
+    NODE_ENV=development
+    MONGODB_URI=mongodb://mongodb:27017/bt
+    REDIS_URI=redis://redis:6379
+
+    SIS_CLASS_APP_ID=
+    SIS_CLASS_APP_KEY=
+    SIS_COURSE_APP_ID=
+    SIS_COURSE_APP_KEY=
