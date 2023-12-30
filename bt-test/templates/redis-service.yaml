@@ -16,7 +16,7 @@ kind: Deployment
 metadata:
   name: redis
 spec:
-  replicas: { { .Values.backend.replicas } }
+  replicas: 1
   selector:
     matchLabels:
       app: redis
