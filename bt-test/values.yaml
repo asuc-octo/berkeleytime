@@ -1,0 +1,45 @@
+environmentVariables:
+  - name: PORT
+    value: "5001"
+  - name: URL
+    value: "http://localhost:5001"
+  - name: BACKEND_PATH
+    value: "/api"
+  - name: GRAPHQL_PATH
+    value: "/graphql"
+  - name: NODE_ENV
+    value: "development"
+  - name: MONGODB_URI
+    value: "mongodb://mongodb:27017/bt"
+  - name: REDIS_URI
+    value: "redis://redis:6379"
+  - name: SIS_CLASS_APP_ID
+    value: ""
+  - name: SIS_CLASS_APP_KEY
+    value: ""
+  - name: SIS_COURSE_APP_ID
+    value: ""
+  - name: SIS_COURSE_APP_KEY
+    value: ""
+  - name: GOOGLE_CLIENT_ID
+    value: ""
+  - name: GOOGLE_CLIENT_SECRET
+    value: ""
+  - name: SESSION_SECRET
+    value: ""
+backend:
+  replicas: 2
+  image:
+    repository: berkeleytime-backend
+    tag: latest
+  envFile: .env
+  sourceCodePath: ./backend/src
+redis:
+  replicas: 1
+  image:
+    tag: 6
+mongodb:
+  replicas: 1
+  dbPath: ./db
+  image:
+    tag: 5

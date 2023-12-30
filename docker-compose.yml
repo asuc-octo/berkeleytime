@@ -15,7 +15,6 @@ services:
     restart: always
     volumes:
       - ./.env:/backend/.env
-      - ./backend/src:/backend/src
   frontend:
     build:
       context: frontend
