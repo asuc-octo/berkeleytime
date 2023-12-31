@@ -6,15 +6,20 @@ backend:
   envFile: .env
   sourceCodePath: ./backend/src
 redis:
+  replicas: 1
   image:
     tag: 6
-mongodb:
-  image:
-    tag: 5
-nginx:
-  image:
-    tag: 5
 frontend:
   image:
     repository: berkeleytime-frontend
     tag: latest
+mongo:
+  replicas: 1
+  image:
+    tag: 6
+  path: "/home/chengmingli/home/berkeleytime/db"
+nginx:
+  replicas: 1
+  image:
+    tag: 1.21
+  path: "/home/chengmingli/home/berkeleytime/nginx.conf"
