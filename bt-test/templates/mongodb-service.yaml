@@ -16,7 +16,7 @@ kind: Deployment
 metadata:
   name: mongodb
 spec:
-  replicas: 1
+  replicas: {{ .Values.mongo.replicas }}
   selector:
     matchLabels:
       app: mongodb
@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: mongo:{ { .Values.mongodb.image.tag } }
+          image: mongo:{{ .Values.mongo.image.tag }}
           ports:
             - containerPort: 27017
           volumeMounts:
@@ -37,4 +37,4 @@ spec:
       volumes:
         - name: mongodb-data
           hostPath:
-            path: ./db
+            path: {{ .Values.mongo.path }}
