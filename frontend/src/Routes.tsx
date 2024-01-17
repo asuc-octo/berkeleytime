@@ -20,7 +20,7 @@ const ViewSchedule = () => import('./app/Scheduler/ViewSchedule');
 const PrivacyPolicy = () => import('./views/PrivacyPolicy');
 const TermsOfService = () => import('./views/TermsOfService');
 const RedirectLink = () => import('./views/RedirectLink');
-// const Apply = () => import('./views/Apply');
+const Apply = () => import('./views/Apply');
 
 function ScheduleRedirect() {
 	const { scheduleId } = useParams();
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
 			{ path: '/legal/privacy', lazy: PrivacyPolicy },
 			{ path: '/legal/terms', lazy: TermsOfService },
 			{ path: '/redirect', lazy: RedirectLink },
-			// { path: '/apply', lazy: Apply }
+			{ path: '/apply', lazy: Apply }
 		]
 	},
 	{
