@@ -1,18 +1,24 @@
 frontend:
+  port: 3000
   replicas: 1
+  image:
+    repository: docker.io/maxmwang/bt-new-infra-frontend
+    tag: latest
   service:
-    port:
-    targetPort:
+    port: 3000
   ingress:
     annotations:
     hosts:
     rules:
 
 backend:
+  port: 5000
   replicas: 2
+  image:
+    repository: docker.io/maxmwang/bt-new-infra-backend
+    tag: latest
   service:
-    port:
-    targetPort:
+    port: 5000
   ingress:
     annotations:
     hosts:
