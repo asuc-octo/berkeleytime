@@ -18,13 +18,40 @@ spec:
         component: {{ .Chart.Name }}-frontend
     spec:
       containers:
+        - name: {{ .Chart.Name }}-frontend-container
+          image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
+          command: ["npm", "run", "prod"]
+          ports:
+            - containerPort: {{ .Values.frontend.port }}
 ---
 # to: deployment
 # from: ingress
 
-{{ include "app.service" | replace "XXXXend" "frontend" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-frontend-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.frontend.service.port }}
+      targetPort: {{ .Values.frontend.port }}
+      protocol: TCP
 ---
 # to: service
 # from: ingress-controller
 
-{{ include "app.ingress" | replace "XXXXend" "frontend" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}-frontend-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{/* TODO: add annotations */}}
+spec:
+  defaultBackend:
+    service:
+      name: {{ .Chart.Name }}-frontend-service
+      port:
+        number: {{ .Values.frontend.service.port }}

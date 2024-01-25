@@ -4,27 +4,83 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    component: {{ .Chart.Name }}-backend
-  name: {{ .Chart.Name }}-backend
+    component: {{ .Chart.Name }}-backend-deployment
+  name: {{ .Chart.Name }}-backend-deployment
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.backend.replicas }}
   selector:
     matchLabels:
-      component: {{ .Chart.Name }}-backend
+      component: {{ .Chart.Name }}-backend-deployment
   template:
     metadata:
       labels:
-        component: {{ .Chart.Name }}-backend
+        component: {{ .Chart.Name }}-backend-deployment
     spec:
       containers:
+        - name: {{ .Chart.Name }}-backend-container
+          image: {{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}
+          command: ["npm", "run", "start"]
+          ports:
+            - containerPort: {{ .Values.backend.port }}
+          env:
+            - name: PORT
+              value: "5001"
+            - name: URL
+              value: "http://localhost:5001"
+            - name: BACKEND_PATH
+              value: "/api"
+            - name: GRAPHQL_PATH
+              value: "/graphql"
+            - name: NODE_ENV
+              value: "development"
+            - name: MONGODB_URI
+              value: "mongodb://mongodb:27017/bt"
+            - name: REDIS_URI
+              value: "redis://redis:6379"
+            - name: SIS_CLASS_APP_ID
+              value: "_"
+            - name: SIS_CLASS_APP_KEY
+              value: "_"
+            - name: SIS_COURSE_APP_ID
+              value: "_"
+            - name: SIS_COURSE_APP_KEY
+              value: "_"
+            - name: GOOGLE_CLIENT_ID
+              value: "_"
+            - name: GOOGLE_CLIENT_SECRET
+              value: "_"
+            - name: SESSION_SECRET
+              value: "_"
 ---
 # to: deployment
 # from: ingress
 
-{{ include "app.service" | replace "XXXXend" "backend" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}-backend-service
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.backend.service.port }}
+      targetPort: {{ .Values.backend.port }}
+      protocol: TCP
 ---
 # to: service
 # from: ingress-controller
 
-{{ include "app.ingress" | replace "XXXXend" "backend" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}-backend-ingress
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{/* TODO: add annotations */}}
+spec:
+  defaultBackend:
+    service:
+      name: {{ .Chart.Name }}-backend-service
+      port:
+        number: {{ .Values.backend.service.port }}
