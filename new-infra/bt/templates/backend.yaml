@@ -4,6 +4,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
+    # deployment labels
     component: {{ .Chart.Name }}-backend-deployment
   name: {{ .Chart.Name }}-backend-deployment
   namespace: {{ .Release.Namespace }}
@@ -15,6 +16,7 @@ spec:
   template:
     metadata:
       labels:
+        # pod labels
         component: {{ .Chart.Name }}-backend-deployment
     spec:
       containers:
