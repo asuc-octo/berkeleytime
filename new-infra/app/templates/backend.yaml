@@ -62,6 +62,8 @@ metadata:
   name: {{ .Chart.Name }}-backend-service
   namespace: {{ .Release.Namespace }}
 spec:
+  selector:
+    component: {{ .Chart.Name }}-backend-deployment
   ports:
     - name: http
       port: {{ .Values.backend.service.port }}
@@ -79,8 +81,14 @@ metadata:
   annotations:
     {{/* TODO: add annotations */}}
 spec:
-  defaultBackend:
-    service:
-      name: {{ .Chart.Name }}-backend-service
-      port:
-        number: {{ .Values.backend.service.port }}
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+        - path: /api
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Chart.Name }}-backend-service
+              port:
+                number: {{ .Values.backend.service.port }}

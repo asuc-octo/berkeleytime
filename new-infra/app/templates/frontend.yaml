@@ -4,18 +4,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    component: {{ .Chart.Name }}-frontend
-  name: {{ .Chart.Name }}-frontend
+    component: {{ .Chart.Name }}-frontend-deployment
+  name: {{ .Chart.Name }}-frontend-deployment
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.frontend.replicas }}
   selector:
     matchLabels:
-      component: {{ .Chart.Name }}-frontend
+      component: {{ .Chart.Name }}-frontend-deployment
   template:
     metadata:
       labels:
-        component: {{ .Chart.Name }}-frontend
+        component: {{ .Chart.Name }}-frontend-deployment
     spec:
       containers:
         - name: {{ .Chart.Name }}-frontend-container
@@ -33,6 +33,8 @@ metadata:
   name: {{ .Chart.Name }}-frontend-service
   namespace: {{ .Release.Namespace }}
 spec:
+  selector:
+    component: {{ .Chart.Name }}-frontend-deployment
   ports:
     - name: http
       port: {{ .Values.frontend.service.port }}
@@ -50,8 +52,14 @@ metadata:
   annotations:
     {{/* TODO: add annotations */}}
 spec:
-  defaultBackend:
-    service:
-      name: {{ .Chart.Name }}-frontend-service
-      port:
-        number: {{ .Values.frontend.service.port }}
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ .Chart.Name }}-frontend-service
+              port:
+                number: {{ .Values.frontend.service.port }}
