@@ -35,6 +35,7 @@ metadata:
   name: {{ .Chart.Name }}-frontend-service
   namespace: {{ .Release.Namespace }}
 spec:
+  type: ClusterIP
   selector:
     component: {{ .Chart.Name }}-frontend-deployment
   ports:

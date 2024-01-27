@@ -64,6 +64,7 @@ metadata:
   name: {{ .Chart.Name }}-backend-service
   namespace: {{ .Release.Namespace }}
 spec:
+  type: ClusterIP
   selector:
     component: {{ .Chart.Name }}-backend-deployment
   ports:
