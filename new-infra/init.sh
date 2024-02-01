@@ -3,7 +3,7 @@
 # install ingress-nginx with helm
 helm upgrade --install ingress-nginx ingress-nginx \
     --repo https://kubernetes.github.io/ingress-nginx \
-    --namespace ingress-nginx --create-namespace        # using namespace=bt-base requires changing chart values (through --set or --values)
+    --namespace bt-base --create-namespace        # using namespace=bt-base requires changing chart values (through --set or --values)
 
 # install app with helm. run in /new-infra
 helm install bt \
