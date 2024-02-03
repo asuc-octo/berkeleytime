@@ -1,0 +1,18 @@
+.root {
+  height: 32px;
+  border-radius: 4px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 100ms ease-in-out;
+  gap: 8px;
+  background-color: var(--blue-500);
+  color: white;
+
+  &:hover {
+    background-color: var(--blue-600);
+  }
+}

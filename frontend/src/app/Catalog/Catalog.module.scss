@@ -1,26 +1,31 @@
 .root {
-	display: grid;
-	grid-template-areas: 'filters list view';
-	grid-template-rows: 1fr;
-	grid-template-columns: 0.5fr 0.5fr 1fr;
-	position: relative;
-	height: calc(100vh - 57.11px);
-	align-items: stretch;
-	overflow: hidden;
-	
-	@include media(tablet) {
-		grid-template-areas:
-			'filters view'
-			'list view';
-		grid-template-rows: min-content 1fr;
-		grid-template-columns: 1.2fr 2fr;
-	}
+  display: flex;
+  flex-grow: 1;
+  overflow: clip;
+  height: 0;
 
-	@include media(mobile) {
-		grid-template-areas:
-			'filters'
-			'list';
-		grid-template-rows: min-content 1fr;
-		grid-template-columns: 1fr;
-	}
+  .placeholder {
+    height: 100vh;
+  }
+
+  .panel {
+    width: 384px;
+    border-right: 1px solid var(--slate-200);
+    flex-shrink: 0;
+    overflow: auto;
+  }
+
+  .body {
+    flex-grow: 1;
+    overflow: auto;
+
+    .header {
+      padding: 0 12px;
+      display: flex;
+      position: sticky;
+      margin-top: 256px;
+      top: 0;
+      border-bottom: 1px solid var(--slate-200);
+    }
+  }
 }
