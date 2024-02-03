@@ -1,9 +1,0 @@
-query GetCoursesForFilter($playlists: String!) {
-	allCourses(inPlaylists: $playlists) {
-		edges {
-			node {
-				...CourseOverview
-			}
-		}
-	}
-}
