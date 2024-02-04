@@ -1,5 +1,4 @@
 .root {
-	min-height: 100vh;
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -16,6 +15,10 @@
 		z-index: 2;
 		filter: drop-shadow(0 -8px 0 rgba(white, 0.1));
 	}
+  
+  @media (width > 768px) {
+	  min-height: 100vh;
+  }
 
 	.container {
 		max-width: 1280px;
@@ -27,17 +30,33 @@
 		z-index: 1;
 
 		.text {
-			max-width: 592px;
-      margin-top: 96px;
+      margin: 96px 0 192px;
+      position: relative;
+      z-index: 2;
+
+      @media (width <= 992px) {
+        margin-top: 64px;
+      }
+
+      @media (width > 992px) {
+			  max-width: 592px;
+      }
 
 			.heading {
 				font-size: 48px;
         margin-bottom: 16px;
 				color: white;
-				font-weight: 700;
+				font-weight: 660;
+        font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
+        letter-spacing: -1%;
 				line-height: 1.25;
 				letter-spacing: 0.5px;
 				position: relative;
+
+        @media (width <= 768px) {
+          font-size: 32px;
+          line-height: 1.5;
+        }
 			}
 
 			.description {
@@ -60,7 +79,7 @@
 
         .input {
           height: 56px;
-          padding: 0 80px 0 16px;
+          padding: 0 92px 0 16px;
           border-radius: 4px;
           box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
           border: none;
@@ -82,6 +101,11 @@
 			font-size: 16px;
 			line-height: 1.5;
       color: rgb(255 255 255 / 65%);
+      z-index: 1;
+
+      @media (width <= 992px) {
+        display: none;
+      }
 
 			p.heading {
 				font-weight: 500;
@@ -96,9 +120,15 @@
 
 		img.campanile {
 			position: absolute;
-
+      z-index: 1;
 			right: 24px;
 			top: 0;
+
+      @media (width <= 992px) {
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0.25;
+      }
 		}
 	}
 }
