@@ -4,15 +4,18 @@
   flex-shrink: 0;
   align-items: center;
   position: relative;
+  height: 57px;
 
   .brand {
     font-size: 24px;
-    line-height: 1;
-    font-weight: 660;
+    line-height: 1.5;
+    font-weight: 580;
+    font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
     letter-spacing: -1%;
     color: var(--blue-500);
     cursor: pointer;
     transition: all 100ms ease-in-out;
+    margin-right: auto;
 
     &:hover {
       color: var(--blue-600);
@@ -22,15 +25,14 @@
   .menu {
     display: flex;
     margin-right: 12px;
-    margin-left: auto;
     z-index: 1;
   }
 
-  &:not(.transparent) {
+  &:not(.invert) {
     border-bottom: 1px solid var(--slate-200);
   }
 
-  &.transparent {
+  &.invert {
     .brand {
       color: white;
 
@@ -56,7 +58,7 @@
       color: var(--sky-500);
 
       &:hover {
-        background-color: rgb(255 255 255 / 75%);
+        background-color: rgb(255 255 255 / 85%);
       }
     }
   }

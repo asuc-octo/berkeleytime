@@ -1,7 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { ArrowRight, Clock } from "iconoir-react";
-import { Link } from "react-router-dom";
 
 import Button from "@/components/Button";
 import Header from "@/components/Header";
@@ -96,7 +95,7 @@ export default function Hero() {
 
   return (
     <div className={styles.root} ref={root}>
-      <Header transparent />
+      <Header invert />
       <div className={styles.container}>
         <div className={styles.text}>
           <h1 className={styles.heading}>
@@ -111,7 +110,7 @@ export default function Hero() {
               className={styles.input}
               type="text"
               autoFocus
-              placeholder="Search for classes for Spring 2024..."
+              placeholder="Search for classes..."
             />
             <Button className={styles.button}>
               Go

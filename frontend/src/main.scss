@@ -1,12 +1,3 @@
-body {
-  font-family: "Inter", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
-  font-variation-settings:
-    "slnt" 0;
-}
-
 body, p, h1, h2, h3 {
   margin: 0;
 }
@@ -297,4 +288,12 @@ a {
   --rose-800: #9f1239;
   --rose-900: #881337;
   --rose-950: #4c0519;
+
+  font-family: Inter, sans-serif;
+}
+
+@supports (font-variation-settings: normal) {
+  :root { 
+    font-family: InterVariable, sans-serif; 
+  }
 }

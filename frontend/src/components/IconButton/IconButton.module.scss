@@ -1,0 +1,27 @@
+.root {
+  height: 32px;
+  width: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 100ms ease-in-out;
+  background-color: var(--slate-100);
+  color: var(--slate-500);
+
+  &:hover {
+    background-color: var(--slate-200);
+    color: var(--slate-900);
+  }
+
+  &.invert {
+    color: rgb(255 255 255 / 65%);
+    background-color: rgb(255 255 255 / 10%);
+
+    &:hover {
+      background-color: rgb(255 255 255 / 20%);
+      color: white;
+    }
+  }
+}
