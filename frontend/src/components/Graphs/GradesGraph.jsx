@@ -1,5 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { percentileToString } from '../../utils/utils';
+import { useMemo } from 'react';
 
 import vars from '../../utils/variables';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
@@ -55,24 +56,42 @@ const PercentageLabel = (props) => {
 	);
 };
 
-export default function GradesGraph({
-	graphData,
-	gradesData,
-	updateBarHover,
-	updateGraphHover,
-	course,
-	semester,
-	instructor,
-	selectedPercentiles,
-	denominator,
-	color,
-	isMobile,
-	graphEmpty
-}) {
-	let numClasses = gradesData.length;
+export default function GradesGraph(props) {
+	const {
+		gradesData,
+		updateBarHover,
+		updateGraphHover,
+		course,
+		semester,
+		instructor,
+		selectedPercentiles,
+		denominator,
+		color,
+		isMobile
+	} = props;
+
+	let numClasses = gradesData?.length || 0;
+
+	const graphData = useMemo(() => {
+		if (!gradesData) return null;
+
+		return ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D', 'F', 'P', 'NP'].map(
+			(letterGrade) => {
+				const ret = {
+					name: letterGrade
+				};
+				for (const grade of gradesData) {
+					ret[grade.id] = (grade[letterGrade].numerator / grade.denominator) * 100;
+				}
+				return ret;
+			}
+		);
+	}, [gradesData]);
+
+	const isLoaded = gradesData && graphData;
 
 	return (
-		<div>
+		<div className="grades-graph">
 			{!isMobile ? (
 				// desktop or wide viewport
 				<div className="grades-recharts-container">
@@ -83,24 +102,26 @@ export default function GradesGraph({
 							margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
 						>
 							<XAxis dataKey="name" type="category" interval={0} />
-							{!graphEmpty ? (
+							{isLoaded ? (
 								<YAxis type="number" unit="%" />
 							) : (
 								<YAxis type="number" unit="%" domain={[0, 100]} />
 							)}
 
-							<Tooltip
-								formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
-								cursor={graphEmpty ? { fill: '#fff' } : { fill: '#EAEAEA' }}
-							/>
+							{isLoaded && (
+								<Tooltip
+									formatter={(value, name) => [`${Math.round(value * 10) / 10}%`, name]}
+									cursor={{ fill: '#EAEAEA' }}
+								/>
+							)}
 
-							{!graphEmpty &&
+							{isLoaded &&
 								gradesData.map((item, i) => (
 									<Bar
 										key={i}
 										name={`${item.title} • ${item.semester} • ${item.instructor}`}
 										dataKey={item.id}
-										fill={vars.colors[item.colorId]}
+										fill={color ? color : vars.colors[item.colorId]}
 										onMouseEnter={updateBarHover}
 										radius={[4, 4, 0, 0]}
 									/>
@@ -111,7 +132,7 @@ export default function GradesGraph({
 			) : (
 				// mobile or narrow viewport
 				<div className="grades-recharts-container-mobile">
-					<ResponsiveContainer width="95%" height={!graphEmpty ? 200 + numClasses * 400 : 600}>
+					<ResponsiveContainer width="95%" height={isLoaded ? 200 + numClasses * 400 : 600}>
 						<BarChart
 							data={graphData}
 							onMouseMove={updateGraphHover}
@@ -121,13 +142,13 @@ export default function GradesGraph({
 							// barGap={4}
 							margin={{ left: -30, bottom: 50 }}
 						>
-							{!graphEmpty ? (
+							{isLoaded ? (
 								<XAxis type="number" unit="%" />
 							) : (
 								<XAxis type="number" unit="%" domain={[0, 100]} />
 							)}
 							<YAxis dataKey="name" type="category" interval={0} />
-							{!graphEmpty ? (
+							{isLoaded ? (
 								<Tooltip
 									content={
 										<MobileTooltip
@@ -146,7 +167,7 @@ export default function GradesGraph({
 									key={i}
 									name={`${item.title} • ${item.semester} • ${item.instructor}`}
 									dataKey={item.id}
-									fill={vars.colors[item.colorId]}
+									fill={color ? color : vars.colors[item.colorId]}
 									onMouseEnter={updateBarHover}
 									label={<PercentageLabel />}
 									radius={[0, 4, 4, 0]}
@@ -169,7 +190,7 @@ export default function GradesGraph({
 				</div>
 			)}
 
-			{graphEmpty && <EmptyLabel />}
+			{!isLoaded && <EmptyLabel />}
 		</div>
 	);
 }

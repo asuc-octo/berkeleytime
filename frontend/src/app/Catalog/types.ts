@@ -1,5 +1,7 @@
 import { FilterFragment } from 'graphql';
 import { GroupBase } from 'react-select';
+import { CourseFragment, CourseOverviewFragment, PlaylistType } from 'graphql';
+import Fuse from 'fuse.js';
 
 export type CatalogSlug = {
 	abbreviation?: string;
@@ -18,7 +20,7 @@ export type CatalogCategoryKeys =
 	| 'university'
 	| 'requirements';
 
-export type CatalogFilterKeys = Exclude<
+export type CatalogFilterKey = Exclude<
 	CatalogCategoryKeys,
 	'haas' | 'ls' | 'engineering' | 'university'
 >;
@@ -27,7 +29,7 @@ export type FilterOptions = {
 	[category in CatalogCategoryKeys]: FilterFragment[];
 };
 
-export type CurrentFilters = {
+export type CatalogFilters = {
 	department: FilterOption | null;
 	level: FilterOption[] | null;
 	units: FilterOption[] | null;
@@ -46,7 +48,7 @@ export type SortOption = { value: CatalogSortKeys; label: string };
 export type FilterOption = { value: FilterFragment; label: string };
 
 export type FilterTemplate = {
-	[key in CatalogFilterKeys]: {
+	[key in CatalogFilterKey]: {
 		name: string;
 		isClearable: boolean;
 		isMulti: boolean;
@@ -64,3 +66,31 @@ export type CourseInfo = {
 	fullCourseCode: string;
 	abbreviations: string[];
 };
+
+export type SortDir = 'ASC' | 'DESC';
+
+export type CatalogContext = {
+	filters: CatalogFilters;
+	sortQuery: SortOption;
+	sortDir: SortDir;
+	searchQuery: string;
+	allCourses: CourseOverviewFragment[];
+	courses: CourseOverviewFragment[];
+	course: CourseFragment | null;
+	courseIndex: Fuse<CourseInfo> | null;
+	recentCourses: CourseFragment[];
+};
+
+export type CatalogAction =
+	| { type: 'sortDir' }
+	| { type: 'setCourse'; course: CatalogContext['course'] }
+	| { type: 'search'; query?: CatalogContext['searchQuery'] }
+	| { type: 'sort'; query: CatalogContext['sortQuery'] }
+	| { type: 'filter'; filters: Partial<CatalogContext['filters']> }
+	| { type: 'setCourseList'; allCourses: CatalogContext['courses'] }
+	| { type: 'reset'; filters?: Partial<CatalogContext['filters']> }
+	| { type: 'setPill'; pillItem: PlaylistType }
+	| { type: 'clearRecents' };
+
+
+export type CatalogActions = CatalogAction[keyof CatalogAction];

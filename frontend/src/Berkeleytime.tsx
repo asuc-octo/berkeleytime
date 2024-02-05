@@ -1,11 +1,10 @@
-import { memo, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { openBanner, enterMobile, exitMobile, openLandingModal } from './redux/common/actions';
 import useDimensions from 'react-cool-dimensions';
 import easterEgg from 'utils/easterEgg';
 import Routes from './Routes';
-import { fetchEnrollContext } from 'redux/actions';
-import { IconoirProvider } from 'iconoir-react';
+import { fetchEnrollContext, fetchGradeContext } from 'redux/actions';
 
 const Berkeleytime = () => {
 	const dispatch = useDispatch();
@@ -22,8 +21,10 @@ const Berkeleytime = () => {
 	});
 
 	useEffect(() => {
+		observe(document.getElementById('root'));
 		// Fetch enrollment context early on for catalog and enrollment page.
 		dispatch(fetchEnrollContext());
+		dispatch(fetchGradeContext());
 
 		const bannerType = 'sp24recruitment'; // should match value in ./redux/common/reducer.ts
 		if (localStorage.getItem('bt-hide-banner') !== bannerType) {
@@ -41,15 +42,9 @@ const Berkeleytime = () => {
 		if (localStorage.getItem(key) === null) {
 			localStorage.setItem(key, key);
 		}
-	}, [dispatch]);
+	}, [dispatch, observe]);
 
-	return (
-		<div ref={observe} className="app">
-			<IconoirProvider iconProps={{ strokeWidth: 2 }}>
-				<Routes />
-			</IconoirProvider>
-		</div>
-	);
+	return <Routes />;
 };
 
-export default memo(Berkeleytime);
+export default Berkeleytime;
