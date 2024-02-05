@@ -5,13 +5,32 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    gap: 96px;
 
     &:not(:last-child) {
       margin-bottom: 96px;
     }
 
+    .gallery {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      position: relative;
+
+      .calendar {
+        width: calc(100% - 128px);
+      }
+
+      .schedule {
+        width: 256px;
+        margin-left: auto;
+        margin-top: -128px;
+      }
+    }
+
     .text {
       width: 512px;
+      flex-shrink: 0;
 
       .link {
         display: flex;

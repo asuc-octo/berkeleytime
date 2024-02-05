@@ -4,12 +4,18 @@ import { Link } from "react-router-dom";
 import Container from "@/components/Container";
 
 import styles from "./Features.module.scss";
+import calendar from "./calendar.png";
+import schedule from "./schedule.png";
 
 export default function Features() {
   return (
     <div className={styles.root}>
       <Container>
         <div className={styles.row}>
+          <div className={styles.gallery}>
+            <img src={calendar} className={styles.calendar} />
+            <img src={schedule} className={styles.schedule} />
+          </div>
           <div className={styles.text}>
             <div className={styles.badge}>New</div>
             <h3 className={styles.heading}>Simple schedule planning</h3>

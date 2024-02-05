@@ -1,0 +1,20 @@
+.root {
+  font-size: 14px;
+  line-height: 1;
+  height: 32px;
+  border-radius: 16px;
+  background-color: var(--slate-100);
+  color: var(--slate-200);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 12px;
+
+  .value {
+    color: var(--slate-500);
+
+    &:nth-child(2) {
+      color: var(--red-600);
+    }
+  }
+}

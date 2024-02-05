@@ -1,13 +1,32 @@
 import { IconoirProvider } from "iconoir-react";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  RouterProvider,
+  createBrowserRouter,
+  redirect,
+} from "react-router-dom";
 
+import About from "@/app/About";
 import Catalog from "@/app/Catalog";
 import Landing from "@/app/Landing";
 import Layout from "@/app/Layout";
 
 const router = createBrowserRouter([
   {
-    element: <Layout header={false} />,
+    path: "/catalog/:semester?/:subject?/:courseNumber?",
+    loader: ({
+      params: { year, semester, subject, courseNumber, classNumber },
+    }) => {
+      let path = "/courses";
+      if (year) path += `/${year}`;
+      if (semester) path += `/${semester}`;
+      if (subject) path += `/${subject}`;
+      if (courseNumber) path += `/${courseNumber}`;
+      if (classNumber) path += `/${classNumber}`;
+      return redirect(path);
+    },
+  },
+  {
+    element: <Layout header={false} footer={false} />,
     children: [
       {
         element: <Landing />,
@@ -17,13 +36,19 @@ const router = createBrowserRouter([
   },
   {
     element: <Layout />,
+    children: [
+      {
+        element: <About />,
+        path: "/about",
+      },
+    ],
   },
   {
     element: <Layout footer={false} />,
     children: [
       {
         element: <Catalog />,
-        path: "/catalog",
+        path: "/courses/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
       },
     ],
   },
