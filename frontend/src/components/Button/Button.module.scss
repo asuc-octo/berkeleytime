@@ -15,4 +15,14 @@
   &:hover {
     background-color: var(--blue-600);
   }
+
+  &.secondary {
+    background-color: var(--slate-100);
+    color: var(--slate-500);
+
+    &:hover {
+      background-color: var(--slate-200);
+      color: var(--slate-900);
+    }
+  }
 }

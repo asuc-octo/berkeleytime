@@ -16,18 +16,18 @@
 
     .link {
       font-size: 14px;
-      color: white;
+      color: var(--slate-900); // white;
       transition: all 100ms ease-in-out;
       font-weight: 500;
 
       &:hover {
-        color: rgb(255 255 255 / 75%);
+        color: var(--slate-500); // rgb(255 255 255 / 75%);
       }
     }
 
     .label {
       font-size: 12px;
-      color: rgb(255 255 255 / 65%);
+      color: var(--slate-500); // rgb(255 255 255 / 65%);
     }
   }
 
@@ -43,15 +43,15 @@
     .description {
       font-size: 16px;
       margin-top: 16px;
-      color: rgb(255 255 255 / 65%);
+      color: var(--slate-500); // rgb(255 255 255 / 65%);
 
       .link {
-        color: var(--blue-500);
+        color: var(--slate-900);
         transition: all 100ms ease-in-out;
         font-weight: 500;
 
         &:hover {
-          color: var(--blue-600);
+          color: var(--slate-500);
         }
       }
     }

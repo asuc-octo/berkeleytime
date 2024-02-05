@@ -32,7 +32,7 @@ export default function Header({ invert }: HeaderProps) {
       ) : (
         <>
           <div className={styles.menu}>
-            <NavLink to="/catalog">
+            <NavLink to="/courses">
               {({ isActive }) => (
                 <MenuItem active={isActive} className={styles.item}>
                   Courses

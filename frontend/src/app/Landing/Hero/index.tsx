@@ -110,7 +110,7 @@ export default function Hero() {
               className={styles.input}
               type="text"
               autoFocus
-              placeholder="Search for classes..."
+              placeholder="Search for courses..."
             />
             <Button className={styles.button}>
               Go
