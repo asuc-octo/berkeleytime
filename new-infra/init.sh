@@ -14,10 +14,20 @@ helm install bt \
 helm uninstall bt \
     --namespace=bt
 
+# creates the PV and PVC
+kubectl apply -f mongo-PV-PVC.yaml -n bt
+
+# delete PV
+kubectl delete pv bt-mongodb-pv
+
+# delete PVC
+kubectl delete pvc bt-mongodb-pv-claim -n bt
+
 # install mongodb with helm
-helm upgrade --install mongodb oci://registry-1.docker.io/bitnamicharts/mongodb \
-    --namespace=bt --create-namespace \
-    --values=./mongodb/values.yaml
+helm install mongo \
+    --set persistence.existingClaim=bt-mongodb-pv-claim,persistence.mountPath="./db" \
+    --namespace=bt \
+    oci://registry-1.docker.io/bitnamicharts/mongodb
 
 # install redis with helm
 helm upgrade --install redis oci://registry-1.docker.io/bitnamicharts/redis \
