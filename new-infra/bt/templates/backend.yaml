@@ -37,9 +37,9 @@ spec:
             - name: NODE_ENV
               value: "development"
             - name: MONGODB_URI
-              value: "mongodb://mongodb:27017/bt"
+              value: "mongo-db.bt.svc.cluster.local:27017"
             - name: REDIS_URI
-              value: "redis://redis:6379"
+              value: "redis-master.bt.svc.cluster.local:6379"
             - name: SIS_CLASS_APP_ID
               value: "_"
             - name: SIS_CLASS_APP_KEY
