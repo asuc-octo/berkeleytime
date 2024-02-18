@@ -1,0 +1,8 @@
+replica:
+  replicaCount: 1
+  persistence:
+    enabled: true
+
+master:
+  persistence:
+    enabled: true

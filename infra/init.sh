@@ -25,12 +25,12 @@ kubectl delete pv bt-mongodb-pv
 
 # install mongodb with helm, replace CHARTNAME with the name of the chart
 helm install mongo \
-    --set nameOverride="db",persistence.existingClaim=bt-mongodb-pv-claim,persistence.mountPath="./db" \
+    --values mongodb/values.yaml \
     --namespace=bt --create-namespace \
     oci://registry-1.docker.io/bitnamicharts/mongodb
 
 # install redis with helm
 helm install redis \
-    --set replica.replicaCount=0,master.persistence.enabled=false,replica.persistence.enabled=false \
+    --values redis/values.yaml \
     --namespace=bt --create-namespace \
     oci://registry-1.docker.io/bitnamicharts/redis
