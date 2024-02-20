@@ -1,0 +1,36 @@
+host: berkeleytime.com
+port: 80
+
+mongoUri: mongodb://bt-prod-mongo-svc.bt.svc.cluster.local:27017
+redisUri: redis://bt-prod-redis-master.bt.svc.cluster.local:6379
+nodeEnv: production
+
+issuer: letsencrypt-staging
+
+frontend:
+  replicas: 2
+
+  port: 3000
+  path: /
+  command: ["npm", "run", "prod"]
+
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-frontend
+    tag: latest
+
+backend:
+  replicas: 2
+
+  port: 5001
+  path: /api
+  command: ["npm", "run", "start"]
+
+  image:
+    registry: docker.io
+    repository: octoberkeleytime/bt-backend
+    tag: latest
+
+updater:
+  schedule: 0 0 * * *
+  suspend: false

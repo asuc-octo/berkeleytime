@@ -1,0 +1,21 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Values.issuerName }}
+  labels:
+    app.kubernetes.io/name: base
+    helm.sh/chart: {{ include "bt-certs.chart" . }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  acme:
+    email: {{ .Values.acme.email }}
+    server: {{ .Values.acme.server }}
+    privateKeySecretRef:
+      name: {{ .Values.issuerName }}
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: {{ .Values.acme.cfApiTokenSecretName }}
+              key: api-token

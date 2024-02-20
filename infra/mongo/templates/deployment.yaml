@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "bt-mongo.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "bt-mongo.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "bt-mongo.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: mongo
+          image: {{ .Values.image }}
+          args: [ "--dbpath", {{ .Values.mountPath | quote }}, "--port", {{ .Values.port | quote }} ]
+          livenessProbe:
+            exec:
+              command: [ "mongosh", "--eval", "db.adminCommand('ping')" ]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command: [ "mongosh", "--eval", "db.adminCommand('ping')" ]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+            - name: mongo-data-dir
+              mountPath: {{ .Values.mountPath }}
+      volumes:
+        - name: mongo-data-dir
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pvc
