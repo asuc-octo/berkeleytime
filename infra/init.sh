@@ -14,12 +14,13 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 # ===================
 
 helm install bt-sealed-secrets bitnami-labs/sealed-secrets --version 2.15.0 --namespace=bt --create-namespace
-helm install bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.9.1 --namespace=bt
 
 # see https://cert-manager.io/docs/installation/helm/#3-install-customresourcedefinitions
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.1/cert-manager.crds.yaml
 helm dependencies build ./certs
 helm install bt-certs ./certs --namespace=bt
+
+helm install bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.9.1 --namespace=bt
 
 # ==========
 # PRODUCTION
