@@ -1,0 +1,5 @@
+image: mongo:7.0.5-jammy
+mountPath: /data/db
+port: 27017
+storage: 10Gi
+hostPath: /data/prod/db

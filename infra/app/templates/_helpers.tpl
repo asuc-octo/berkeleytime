@@ -1,0 +1,33 @@
+{{/*
+Chart name and version
+*/}}
+{{- define "bt-app.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Labels applied to all resources.
+*/}}
+{{- define "bt-app.labels" -}}
+helm.sh/chart: {{ include "bt-app.chart" . }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
+
+{{- define "bt-app.backendLabels" -}}
+app.kubernetes.io/name: bt-backend
+{{ include "bt-app.labels" . }}
+{{- end -}}
+
+{{- define "bt-app.frontendLabels" -}}
+app.kubernetes.io/name: bt-frontend
+{{ include "bt-app.labels" . }}
+{{- end -}}
+
+{{- define "bt-app.backendName" -}}
+{{ .Release.Name }}-backend
+{{- end -}}
+
+{{- define "bt-app.frontendName" -}}
+{{ .Release.Name }}-frontend
+{{- end -}}
