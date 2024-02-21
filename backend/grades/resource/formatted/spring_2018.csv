@@ -375,7 +375,6 @@ COMPSCI,9E,35352,001,Productive Unix Use,Carol Marshall; Paul Hilfinger,under,0,
 COMPSCI,9F,35353,001,Programmers' C++,Carol Marshall; Paul Hilfinger,under,0,0,0,0,0,0,0,0,0,0,0,0,0,18,6
 COMPSCI,9G,35354,001,Programmers' Java,Carol Marshall; Paul Hilfinger,under,0,0,0,0,0,0,0,0,0,0,0,0,0,7,3
 COMPSCI,9H,35355,001,Programmers' Python,Carol Marshall; Paul Hilfinger,under,0,0,0,0,0,0,0,0,0,0,0,0,0,20,3
-DATA,C100,37227,001,Princ&Tech Data Sci,Fernando Perez; Joseph Gonzalez,under,28,53,135,130,74,55,31,13,11,0,16,0,6,29,7
 CY PLAN,113B,21847,001,Commty & Econ Dev,Carolina Reid; Jeffrey Garnand,under,6,80,32,18,7,2,0,0,0,0,0,0,0,4,0
 CY PLAN,114,21598,001,Intro Urb Reg Trans,Daniel Chatman; Ruoying Xu,under,5,11,12,16,6,2,2,1,0,0,0,0,0,5,2
 CY PLAN,116,21599,001,Urban Plng Process,Miriam Chion,under,10,13,4,2,0,0,0,0,0,0,0,0,0,0,0
@@ -384,6 +383,7 @@ CY PLAN,118AC,21600,001,The Urban Comm,Jason Luger; Vincent Agoe,under,11,29,18,
 CY PLAN,120,21606,001,Com Plan/Pb Pol Dis,Alison Moore; Victor Pineda,under,0,26,14,11,3,1,0,0,1,0,0,0,0,1,0
 CY PLAN,180,21607,001,Research Sem Urb St,Daniel Lindheim,under,0,4,7,4,2,0,0,0,0,0,0,0,1,0,0
 CY PLAN,190,15536,001,Adv Topcs Urban Stu,Deborah Mckoy; Sonrisa Cooper,under,3,13,2,1,0,0,0,0,0,0,0,0,0,2,0
+DATA,C100,37227,001,Princ&Tech Data Sci,Fernando Perez; Joseph Gonzalez,under,28,53,135,130,74,55,31,13,11,0,16,0,6,29,7
 DEMOG,180,41045,001,Social Networks,Dennis Feehan,under,2,10,10,1,2,0,1,0,0,0,1,0,0,5,2
 DEMOG,C175,31761,001,Econ Demography,Ellen Langer; Joshua Goldstein; Leslie Root,under,0,7,8,5,6,9,1,2,4,0,0,0,0,8,1
 DES INV,190,15543,002,Spec Topics Des Inv,Yim Lee Au,under,4,3,5,0,0,0,0,0,0,0,0,0,0,0,0
