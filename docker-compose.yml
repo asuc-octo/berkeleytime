@@ -56,7 +56,8 @@ services:
       - 6379:6379
     restart: always
     networks:
-      - bt
+      - bt   
+  # LOCAL S3 STORAGE - FOR TESTING MONGODB BACKUP SCRIPT
   minio:
     image: 'minio/minio:latest'
     ports:

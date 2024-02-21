@@ -9,6 +9,9 @@ const ensureBucketExists = async (client : Minio.Client) => {
         const res = await client.makeBucket(config.s3.mongo_backup_bucket)
         console.log(`Bucket ${config.s3.mongo_backup_bucket} created`)
     } 
+    const bucketLifeCycleExists = await client.getBucketLifecycle(config.s3.mongo_backup_bucket);
+    if (bucketLifeCycleExists) return;
+
     const lifecycleConfig = {
         Rule: [
           {
