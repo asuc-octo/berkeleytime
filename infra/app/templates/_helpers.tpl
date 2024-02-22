@@ -31,3 +31,7 @@ app.kubernetes.io/name: bt-frontend
 {{- define "bt-app.frontendName" -}}
 {{ .Release.Name }}-frontend
 {{- end -}}
+
+{{- define "bt-app.cronJobName" -}}
+{{ .Release.Name }}-cronjob
+{{- end -}}
