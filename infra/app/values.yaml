@@ -34,3 +34,4 @@ backend:
 updater:
   schedule: 0 0 * * *
   suspend: false
+  command: ["npm", "run", "update:catalog"]
