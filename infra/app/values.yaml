@@ -32,6 +32,6 @@ backend:
     tag: latest
 
 updater:
-  schedule: 0 0 * * *
+  schedule: "0 0 * * *"
   suspend: false
   command: ["npm", "run", "update:catalog"]

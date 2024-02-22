@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "bt-app.backendName" . }}
+  name: {{ include "bt-app.cronJobName" . }}
   labels:
     {{- include "bt-app.backendLabels" . | nindent 4 }}
 spec:
