@@ -1,0 +1,5 @@
+issuerName: letsencrypt-staging
+acme:
+  email: octo.berkeleytime@asuc.org
+  server: https://acme-staging-v02.api.letsencrypt.org/directory
+  cfApiTokenSecretName: cloudflare-api-token-secret
