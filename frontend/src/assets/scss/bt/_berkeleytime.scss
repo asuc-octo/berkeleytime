@@ -53,11 +53,10 @@
 }
 
 ::-webkit-scrollbar {
-	background-color: rgba(0, 0, 0, 0);
+	background-color: #fff;
 	width: 14px;
 	height: 14px;
 	z-index: 999999;
-	display: none;
 }
 
 ::-webkit-scrollbar-track {
