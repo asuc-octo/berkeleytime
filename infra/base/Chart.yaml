@@ -1,6 +1,6 @@
 apiVersion: v2
-name: bt-certs
-description: A Helm chart for cert-manager and its Issuer resource
+name: bt-base
+description: A Helm chart for resources used by the entire cluster.
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -22,8 +22,3 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "2.0.0-alpha"
-
-dependencies:
-- name: "cert-manager"
-  version: "1.14.1"
-  repository: "https://charts.jetstack.io"

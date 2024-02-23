@@ -7,6 +7,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo add bitnami-labs https://bitnami-labs.github.io/sealed-secrets/
 helm repo add cert-manager https://charts.jetstack.io
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add metallb https://metallb.github.io/metallb
 
 
 # ===================
@@ -14,13 +15,11 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 # ===================
 
 helm install bt-sealed-secrets bitnami-labs/sealed-secrets --version 2.15.0 --namespace=bt --create-namespace
-
-# see https://cert-manager.io/docs/installation/helm/#3-install-customresourcedefinitions
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.1/cert-manager.crds.yaml
-helm dependencies build ./certs
-helm install bt-certs ./certs --namespace=bt
-
+helm install bt-metallb metallb/metallb --version 0.14.3 --namespace=bt
+helm install bt-cert-manager cert-manager/cert-manager --set installCRDs=true --version 1.14.1 --namespace=bt
 helm install bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.9.1 --namespace=bt
+
+helm install bt-base ./base --namespace=bt
 
 # ==========
 # PRODUCTION
