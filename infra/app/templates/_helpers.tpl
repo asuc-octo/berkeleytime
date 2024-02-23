@@ -15,12 +15,12 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{- define "bt-app.backendLabels" -}}
-app.kubernetes.io/name: bt-backend
+app.kubernetes.io/name: backend
 {{ include "bt-app.labels" . }}
 {{- end -}}
 
 {{- define "bt-app.frontendLabels" -}}
-app.kubernetes.io/name: bt-frontend
+app.kubernetes.io/name: frontend
 {{ include "bt-app.labels" . }}
 {{- end -}}
 
