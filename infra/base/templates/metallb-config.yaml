@@ -2,6 +2,8 @@ apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
   name: {{ .Release.Name }}-pool
+  labels:
+    {{- include "bt-base.labels" . | nindent 4 }}
 spec:
   addresses:
   - {{ .Values.ipAddressRange }}
@@ -12,3 +14,5 @@ apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
 metadata:
   name: {{ .Release.Name }}-l2
+  labels:
+    {{- include "bt-base.labels" . | nindent 4 }}
