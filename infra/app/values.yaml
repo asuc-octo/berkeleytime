@@ -5,7 +5,7 @@ mongoUri: mongodb://bt-prod-mongo-svc.bt.svc.cluster.local:27017
 redisUri: redis://bt-prod-redis-master.bt.svc.cluster.local:6379
 nodeEnv: production
 
-issuer: letsencrypt-staging
+issuer: letsencrypt-prod
 
 frontend:
   replicas: 2
