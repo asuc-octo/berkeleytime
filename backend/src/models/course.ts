@@ -146,5 +146,5 @@ const courseSchemaObject = {
 }
 
 export const courseSchema = new Schema(courseSchemaObject, schemaOptions);
-export const CourseModel = mongoose.model('Course', courseSchema)
+export const CourseModel = mongoose.model('Course', courseSchema, 'course')
 export type CourseType = InferSchemaType<typeof courseSchema>
