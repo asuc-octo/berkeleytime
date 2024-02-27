@@ -10,4 +10,4 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.mongo.persistence.size }}
+      storage: {{ .Values.mongodb.persistence.size }}

@@ -26,13 +26,13 @@ helm install bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.9.1 --name
 # PRODUCTION
 # ==========
 
-helm install bt-prod-mongo ./mongo --namespace=bt
+helm install bt-prod-mongo ./mongo --namespace=bt --set hostPath=/dev/prod/db,mongodb.persistence.existingClaim=bt-prod-mongo-pvc
 
 helm dependencies build ./redis
 helm install bt-prod-redis ./redis --namespace=bt
 
 helm install bt-prod-app ./app --namespace=bt \
     --set host=stanfurdtime.com \
-    --set mongoUri=mongodb://bt-prod-mongo-svc.bt.svc.cluster.local:27017 \
+    --set mongoUri=mongodb://bt-prod-mongo-mongodb.bt.svc.cluster.local:27017 \
     --set redisUri=redis://bt-prod-redis-master.bt.svc.cluster.local:6379 \
     --set nodeEnv=development
