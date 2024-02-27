@@ -4,4 +4,4 @@ redis:
     enabled: false
   master:
     persistence:
-      enabled: false  
+      enabled: false
