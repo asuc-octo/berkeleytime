@@ -86,5 +86,5 @@ const classSchemaObject = {
 }
 
 export const classSchema = new Schema(classSchemaObject, schemaOptions);
-export const ClassModel = mongoose.model('Class', classSchema);
+export const ClassModel = mongoose.model('Class', classSchema, 'class');
 export type ClassType = InferSchemaType<typeof classSchema>;
