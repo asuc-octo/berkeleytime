@@ -1,5 +1,13 @@
-image: mongo:7.0.5-jammy
-mountPath: /data/db
-port: 27017
-storage: 10Gi
+# path in host machine. should depend on environment and be different for each mongo pod.
 hostPath: /data/prod/db
+
+mongodb:
+  image:
+    tag: 7.0.5
+
+  persistence:
+    existingClaim: bt-prod-mongo-pvc
+
+    # path in pod. should be same for all mongo pods.
+    mountPath: /data/db
+    size: 10Gi
