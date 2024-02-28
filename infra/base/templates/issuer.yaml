@@ -3,10 +3,7 @@ kind: Issuer
 metadata:
   name: {{ .Values.issuerName }}
   labels:
-    app.kubernetes.io/name: base
-    helm.sh/chart: {{ include "bt-certs.chart" . }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "bt-base.labels" . | nindent 4 }}
 spec:
   acme:
     email: {{ .Values.acme.email }}
