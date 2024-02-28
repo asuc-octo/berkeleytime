@@ -24,6 +24,6 @@ version: 0.1.0
 appVersion: "2.0.0-alpha"
 
 dependencies:
-- name: "redis"
-  version: "18.14.0"
-  repository: "https://charts.bitnami.com/bitnami"
+  - name: "redis"
+    version: "18.14.0"
+    repository: "https://charts.bitnami.com/bitnami"
