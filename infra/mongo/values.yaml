@@ -5,6 +5,9 @@ mongodb:
   image:
     tag: 7.0.5
 
+  auth:
+    enabled: false
+
   persistence:
     existingClaim: bt-prod-mongo-pvc
 
