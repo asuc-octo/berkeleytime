@@ -1,12 +1,28 @@
 .root {
   padding: 64px 0;
   display: flex;
-  border-top: 1px solid var(--gray-200);
+  border-top: 1px solid var(--slate-200);
   gap: 64px;
   line-height: 1;
 
   @media (width <= 992px) {
     flex-direction: column;
+  }
+
+  &.invert {
+    border-color: var(--neutral-700);
+
+    .group .description, .column .label {
+      color: var(--neutral-400);
+    }
+
+    .column .link, .group .description .link {
+      color: white;
+
+      &:hover {
+        color: var(--neutral-300);
+      }
+    }
   }
 
   .column {
@@ -60,7 +76,6 @@
       font-size: 24px;
       font-weight: 580;
       font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
-      letter-spacing: -1%;
       color: var(--blue-500);
       cursor: pointer;
       transition: all 100ms ease-in-out;
@@ -68,18 +83,6 @@
   
       &:hover {
         color: var(--blue-600);
-      }
-    }
-  }
-
-  &.invert {
-    border-color: rgb(255 255 255 / 10%);
-    
-    .brand {
-      color: white;
-
-      &:hover {
-        color: rgb(255 255 255 / 75%);
       }
     }
   }

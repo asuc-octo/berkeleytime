@@ -14,8 +14,9 @@
 		filter: drop-shadow(0 -8px 0 rgba(white, 0.1));
 	}
   
-  @media (width > 768px) {
-	  min-height: 100vh;
+  @media (width > 992px) {
+	  height: 100dvh;
+    max-height: 992px;
   }
 
 	.container {
@@ -46,9 +47,7 @@
 				color: white;
 				font-weight: 660;
         font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
-        letter-spacing: -1%;
 				line-height: 1.25;
-				letter-spacing: 0.5px;
 				position: relative;
 
         @media (width <= 768px) {
@@ -120,7 +119,7 @@
 			position: absolute;
       z-index: 1;
 			right: 24px;
-			top: 0;
+      top: 0;
 
       @media (width <= 992px) {
         left: 50%;

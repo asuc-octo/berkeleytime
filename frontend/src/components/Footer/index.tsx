@@ -86,7 +86,7 @@ export default function Footer({ invert }: FooterProps) {
         </div>
         <div className={styles.column}>
           <p className={styles.label}>Organization</p>
-          <Link to="/catalog" className={styles.link}>
+          <Link to="/about" className={styles.link}>
             About us
           </Link>
           <Link to="/scheduler" className={styles.link}>
