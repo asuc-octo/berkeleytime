@@ -1,4 +1,4 @@
-import { ArrowRight } from "iconoir-react";
+import { Minus, Plus } from "iconoir-react";
 
 import Container from "@/components/Container";
 import Footer from "@/components/Footer";
@@ -9,69 +9,47 @@ export default function Organization() {
   return (
     <div className={styles.root}>
       <Container>
-        <div className={styles.info}>
-          <div className={styles.infoBlock}>
-            <h2>What We Do</h2>
-            <p>
-              We're a small group of student volunteers at UC Berkeley who
-              actively build, improve, and maintain Berkeleytime.
+        <h3 className={styles.heading}>Get involved</h3>
+        <div className={styles.accordion}>
+          <details className={styles.details}>
+            <summary className={styles.summary}>
+              <h3 className={styles.title}>Join our team</h3>
+              <Plus height={24} width={24} />
+              <Minus height={24} width={24} />
+            </summary>
+            <p className={styles.content}>
+              Become part of a dynamic and innovative group dedicated to helping
+              students navigate Berkeley! Roles on the Berkeleytime team include
+              backend & frontend development, product design, user research, and
+              marketing. We are always looking for passionate and talented
+              students.
             </p>
-            <p>
-              <a href="/about">
-                Read More <ArrowRight width={"1.15em"} height={"1.15em"} />
-              </a>
+          </details>
+          <details className={styles.details}>
+            <summary className={styles.summary}>
+              <h3 className={styles.title}>Contribute</h3>
+              <Plus height={24} width={24} />
+              <Minus height={24} width={24} />
+            </summary>
+            <p className={styles.description}>
+              Become part of a dynamic and innovative group dedicated to helping
+              students navigate Berkeley! Roles on the Berkeleytime team include
+              backend & frontend development, product design, user research, and
+              marketing. We are always looking for passionate and talented
+              students.
             </p>
-          </div>
-          <div className={styles.infoBlock}>
-            <h2>Get Involved</h2>
-            <p>
-              Berkeleytime is maintained by students just like you! If you're
-              looking to make a difference - we're looking for you.
+          </details>
+          <details className={styles.details}>
+            <summary className={styles.summary}>
+              <h3 className={styles.title}>Provide feedback</h3>
+              <Plus height={24} width={24} />
+              <Minus height={24} width={24} />
+            </summary>
+            <p className={styles.description}>
+              Berkeleytime is an open-source project. If you are interested in
+              contributing to the project, check out our
             </p>
-            <p>
-              <a>
-                Learn More <ArrowRight width={"1.15em"} height={"1.15em"} />
-              </a>
-            </p>
-          </div>
-          <div className={styles.infoBlock}>
-            <h2>Have Feedback?</h2>
-            <p>
-              We'd love to hear it! User feedback helps us continually improve
-              Berkeleytime. We want to know what you think.
-            </p>
-            <p>
-              <a>
-                Reach Out <ArrowRight width={"1.15em"} height={"1.15em"} />
-              </a>
-            </p>
-          </div>
-        </div>
-        <div className={styles.blurb}>
-          <h4>In Memory Of Courtney Brousseau</h4>
-          <p>
-            Berkeley Alum, ASUC Student Union Board of Directors Chair, ASUC
-            Chief Communications Officer, and Berkeley Mobile Product Manager
-          </p>
-        </div>
-        <div className={styles.blurb}>
-          <h4>Supported By</h4>
-          {/*<div className={styles.sponsors}>
-          <a href="https://techfund.berkeley.edu/home">
-            <img className="landing-sponsors-img" src={stf_logo} alt="stf" />
-          </a>
-          <a href="https://asuc.org">
-            <img className="landing-sponsors-img" src={asuc_logo} alt="asuc" />
-          </a>
-          <a href="https://www.ocf.berkeley.edu">
-            <img
-              className="landing-sponsors-img"
-              src={ocf_logo}
-              alt="Hosted by the OCF"
-              style={{ border: 0 }}
-            />
-          </a>
-        </div>*/}
+          </details>
         </div>
       </Container>
       <Footer invert />
