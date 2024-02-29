@@ -58,7 +58,7 @@ const courseSchemaObject = {
     gradingBasis: descriptor,
     blindGrading: Boolean,
     status: descriptor,
-    fromDate: Date,
+    fromDate: String,
     toDate: Date,
     createdDate: Date,
     updatedDate: Date,
