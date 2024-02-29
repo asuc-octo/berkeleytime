@@ -5,6 +5,7 @@ import http from "http";
 
 export default async (config: Config) => {
   const app = express();
+  app.set('trust proxy', 1);
 
   await loaders(app);
 
