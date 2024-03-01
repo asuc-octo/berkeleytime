@@ -14,6 +14,13 @@
   color: #383838;
 }
 
+.log_col {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
 .log {
   flex: 0 0 50%;
   max-width: 50%;
