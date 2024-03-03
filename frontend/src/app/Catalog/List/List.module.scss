@@ -1,0 +1,19 @@
+.root {
+  width: 384px;
+  border-right: 1px solid var(--slate-200);
+  flex-shrink: 0;
+  overflow: auto;
+  background-color: var(--slate-50);
+
+  .view {
+    position: relative;
+
+    .body {
+      padding: 0 12px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+  }
+}

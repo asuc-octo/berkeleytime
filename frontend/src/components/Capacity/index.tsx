@@ -25,7 +25,7 @@ export default function Capacity({
 
   return (
     <div className={styles.root}>
-      <span className={styles.value}>{waitlisted}</span> /{" "}
+      <span className={styles.value}>{waitlisted ?? 0}</span> /{" "}
       <span className={styles.value} style={{ color }}>
         {enrolled}
       </span>{" "}
