@@ -1,10 +1,11 @@
 import classNames from "classnames";
-import { ArrowRight, Menu } from "iconoir-react";
+import { ArrowRight, Menu, User } from "iconoir-react";
 import { Link, NavLink } from "react-router-dom";
 
 import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
+import { useAccount } from "@/hooks/useAccount";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 
 import styles from "./Header.module.scss";
@@ -15,6 +16,7 @@ interface HeaderProps {
 
 export default function Header({ invert }: HeaderProps) {
   const { width } = useWindowDimensions();
+  const { account, signIn, signOut } = useAccount();
 
   return (
     <div
@@ -68,10 +70,17 @@ export default function Header({ invert }: HeaderProps) {
               )}
             </NavLink>
           </div>
-          <Button as="a" href="/sign-in" className={styles.button}>
-            Sign in
-            <ArrowRight />
-          </Button>
+          {account ? (
+            <Button onClick={() => signOut()} className={styles.button}>
+              {account.email}
+              <User />
+            </Button>
+          ) : (
+            <Button onClick={() => signIn()} className={styles.button}>
+              Sign in
+              <ArrowRight />
+            </Button>
+          )}
         </>
       )}
     </div>

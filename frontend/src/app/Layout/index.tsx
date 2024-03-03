@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import LoadingIndicator from "@/components/LoadingIndicator";
 
+import AccountProvider from "./AccountProvider";
 import styles from "./Layout.module.scss";
 
 interface LayoutProps {
@@ -16,16 +17,18 @@ export default function Layout({ header = true, footer = true }: LayoutProps) {
   const { state } = useNavigation();
 
   return (
-    <div className={styles.root}>
-      {header && <Header />}
-      {state === "loading" ? (
-        <Boundary>
-          <LoadingIndicator />
-        </Boundary>
-      ) : (
-        <Outlet />
-      )}
-      {footer && <Footer />}
-    </div>
+    <AccountProvider>
+      <div className={styles.root}>
+        {header && <Header />}
+        {state === "loading" ? (
+          <Boundary>
+            <LoadingIndicator />
+          </Boundary>
+        ) : (
+          <Outlet />
+        )}
+        {footer && <Footer />}
+      </div>
+    </AccountProvider>
   );
 }
