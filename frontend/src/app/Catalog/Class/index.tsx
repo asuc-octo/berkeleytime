@@ -1,11 +1,10 @@
 import { useMemo } from "react";
 
 import { useQuery } from "@apollo/client";
-import { ArrowSeparateVertical, Bookmark, Plus, Xmark } from "iconoir-react";
+import { Bookmark, Plus, Xmark } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import AverageGrade from "@/components/AverageGrade";
-import Button from "@/components/Button";
 import Capacity from "@/components/Capacity";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
@@ -61,9 +60,12 @@ export default function Class({
   const currentClass = useMemo(() => data?.class, [data?.class]);
 
   const units = useMemo(() => {
-    const { unitsMin, unitsMax } = currentClass ?? partialClass;
+    const { unitsMin: minimum, unitsMax: maximum } =
+      currentClass ?? partialClass;
 
-    return unitsMin === unitsMax ? unitsMin : `${unitsMin} - ${unitsMax}`;
+    return maximum === minimum
+      ? `${minimum} ${minimum === 1 ? "unit" : "units"}`
+      : `${minimum} - ${maximum} units`;
   }, [currentClass, partialClass]);
 
   return (
@@ -72,7 +74,8 @@ export default function Class({
         <div className={styles.details}>
           <div className={styles.text}>
             <h1 className={styles.heading}>
-              {currentSubject} {currentCourseNumber}
+              {currentClass?.course?.subjectName ?? currentSubject}{" "}
+              {currentCourseNumber}
             </h1>
             <p className={styles.description}>
               {currentClass?.title ?? currentCourse.title}
@@ -98,10 +101,10 @@ export default function Class({
           </div>
         </div>
         <div className={styles.information}>
-          <Button secondary>
+          {/*<Button secondary>
             <ArrowSeparateVertical />
             {currentSemester} {currentYear}
-          </Button>
+            </Button>*/}
           <AverageGrade
             averageGrade={
               currentClass?.course?.gradeAverage ?? currentCourse.gradeAverage
@@ -129,7 +132,11 @@ export default function Class({
           </div>
           <div className={styles.detail}>
             <div className={styles.title}>Instructor</div>
-            <div className={styles.description}>CISSE A</div>
+            {/*currentClass?.primarySection.instructors.map((instructor) => (
+              <div key={instructor.familyName} className={styles.description}>
+                {instructor.givenName} {instructor.familyName}
+              </div>
+            ))*/}
           </div>
         </div>
         <div className={styles.menu}>
