@@ -34,28 +34,28 @@ export default function Header({ invert }: HeaderProps) {
       ) : (
         <>
           <div className={styles.menu}>
-            <NavLink to="/courses">
+            <NavLink to="/catalog">
               {({ isActive }) => (
                 <MenuItem active={isActive} className={styles.item}>
                   Courses
                 </MenuItem>
               )}
             </NavLink>
-            <NavLink to="/enrollment">
+            <NavLink to="/schedules">
               {({ isActive }) => (
                 <MenuItem active={isActive} className={styles.item}>
                   My schedules
                 </MenuItem>
               )}
             </NavLink>
-            <NavLink to="/schedules">
+            <NavLink to="/grades">
               {({ isActive }) => (
                 <MenuItem active={isActive} className={styles.item}>
                   Grades
                 </MenuItem>
               )}
             </NavLink>
-            <NavLink to="/grades">
+            <NavLink to="/enrollment">
               {({ isActive }) => (
                 <MenuItem active={isActive} className={styles.item}>
                   Enrollment

@@ -6,6 +6,8 @@ import Catalog from "@/app/Catalog";
 import Landing from "@/app/Landing";
 import Layout from "@/app/Layout";
 
+import Schedules from "./app/Schedules";
+
 const router = createBrowserRouter([
   {
     element: <Layout header={false} footer={false} />,
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
       {
         element: <Catalog />,
         path: "/catalog/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
+      },
+      {
+        element: <Schedules />,
+        path: "/schedules",
       },
     ],
   },

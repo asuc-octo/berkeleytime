@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Fuse from "fuse.js";
+import { Wind } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import Boundary from "@/components/Boundary";
 import { ICatalogCourse, Semester } from "@/lib/api";
 import { abbreviations } from "@/lib/course";
 
@@ -145,8 +145,17 @@ export default function List({
 
   return (
     <div className={styles.root} ref={ref}>
-      {courses.length === 0 ? (
-        <Boundary>Wow</Boundary>
+      {items.length === 0 ? (
+        <div className={styles.empty}>
+          <Wind width={32} height={32} />
+          <div className={styles.text}>
+            <p className={styles.heading}>No courses found</p>
+            <p className={styles.description}>
+              Unfortunately, no courses could be found matching your search.
+              Please try again with a different query.
+            </p>
+          </div>
+        </div>
       ) : (
         <div
           className={styles.view}
