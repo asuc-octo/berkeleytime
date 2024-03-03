@@ -10,6 +10,12 @@
       align-items: center;
       gap: 12px;
       padding: 16px 24px 0;
+
+      .units {
+        font-size: 14px;
+        color: var(--slate-500);
+        line-height: 1;
+      }
     }
 
     .row {

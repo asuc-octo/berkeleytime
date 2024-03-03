@@ -1,13 +1,92 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
+import Fuse from "fuse.js";
+import { useSearchParams } from "react-router-dom";
 
-// import Fuse from "fuse.js";
 import Boundary from "@/components/Boundary";
 import { ICatalogCourse, Semester } from "@/lib/api";
+import { abbreviations } from "@/lib/course";
 
 import Course from "./Course";
 import styles from "./List.module.scss";
+
+const initializeFuse = (courses: ICatalogCourse[]) => {
+  const list = courses.map((course) => {
+    const { title, subject, number, classes } = course;
+
+    // For courses like W54, prefer the number and add an abbreviation
+    const containsPrefix = /^[a-zA-Z].*/.test(number);
+    const alternateNumber = number.slice(1);
+
+    const term = subject.toLowerCase();
+
+    const alternateNames = abbreviations[term]?.reduce(
+      (acc, abbreviation) => {
+        // Add alternate names for abbreviations
+        const abbreviations = [
+          `${abbreviation}${number}`,
+          `${abbreviation} ${number}`,
+        ];
+
+        if (containsPrefix) {
+          abbreviations.push(
+            `${abbreviation}${alternateNumber}`,
+            `${abbreviation} ${alternateNumber}`
+          );
+        }
+
+        return [...acc, ...abbreviations];
+      },
+      // Add alternate names
+      containsPrefix
+        ? [
+            `${subject}${number}`,
+            `${subject} ${alternateNumber}`,
+            `${subject}${alternateNumber}`,
+          ]
+        : []
+    );
+
+    return {
+      title,
+      subject,
+      number,
+      name: `${subject} ${number}`,
+      alternateNames,
+      classes,
+    };
+  });
+
+  const options = {
+    includeScore: true,
+    shouldSort: true,
+    findAllMatches: true,
+    threshold: 0.25,
+    keys: [
+      { name: "number", weight: 1.2 },
+      "name",
+      "title",
+      "classes.title",
+      {
+        name: "alternateNames",
+        weight: 2,
+      },
+      { name: "subject", weight: 1.5 },
+    ],
+    // Fuse types are wrong for sortFn
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    sortFn: (a: any, b: any) => {
+      // First, sort by score
+      if (a.score - b.score) return a.score - b.score;
+
+      // Otherwise, sort by number
+      return a.item[0].v.toLowerCase().localeCompare(b.item[0].v.toLowerCase());
+    },
+  };
+
+  return new Fuse(list, options);
+};
 
 interface ECourse extends ICatalogCourse {
   expanded: boolean;
@@ -25,8 +104,14 @@ export default function List({
   currentYear,
 }: ListProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [searchParams] = useSearchParams();
 
+  // Note: The combined name property will be included in filteredCourses
   const [filteredCourses, setFilteredCourses] = useState<ECourse[]>([]);
+
+  const query = useMemo(() => searchParams.get("query"), [searchParams]);
+
+  const fuse = useMemo(() => initializeFuse(courses), [courses]);
 
   const virtualizer = useVirtualizer({
     count: filteredCourses.length,
@@ -44,22 +129,15 @@ export default function List({
   };
 
   useEffect(() => {
-    /*const options = {
-      includeScore: true,
-      keys: ["author.tags.value"],
-    };
+    const _filteredCourses = query
+      ? fuse.search(query).map(({ refIndex: index }) => ({
+          ...courses[index],
+          expanded: false,
+        }))
+      : courses.map((course) => ({ ...course, expanded: false }));
 
-    const fuse = new Fuse(courses, options);
-
-    const result = fuse.search(query);*/
-
-    setFilteredCourses(
-      courses.map((course) => ({
-        ...course,
-        expanded: false,
-      }))
-    );
-  }, [courses]);
+    setFilteredCourses(_filteredCourses);
+  }, [query, fuse, courses]);
 
   const items = virtualizer.getVirtualItems();
 

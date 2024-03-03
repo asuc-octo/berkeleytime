@@ -16,8 +16,34 @@ export interface ICatalogClass {
   number: string;
 }
 
+export interface IInstructor {
+  familyName: string;
+  givenName: string;
+}
+
+export interface ISection {
+  ccn: number;
+  dateEnd: string;
+  dateStart: string;
+  days: boolean[];
+  enrollCount: number;
+  enrollMax: number;
+  instructors: IInstructor[];
+  kind: string;
+  location: string;
+  notes: string;
+  number: string;
+  primary: boolean;
+  timeEnd: string;
+  timeStart: string;
+  waitlistCount: number;
+  waitlistMax: number;
+}
+
 export interface IClass extends ICatalogClass {
-  course: Omit<ICatalogCourse, "classes">;
+  course: ICourse;
+  primarySection: ISection;
+  sections: ISection[];
 }
 
 export interface ICatalogCourse {
@@ -28,9 +54,63 @@ export interface ICatalogCourse {
   classes: ICatalogClass[];
 }
 
+export interface ICourse extends Omit<ICatalogCourse, "classes"> {
+  subjectName: string;
+  prereqs?: string;
+  gradingBasis: string;
+}
+
 export interface IAccount {
   email: string;
 }
+
+/*
+
+
+      primarySection {
+        ccn
+        dateEnd
+        dateStart
+        days
+        enrollCount
+        enrollMax
+        instructors {
+          familyName
+          givenName
+        }
+        kind
+        location
+        notes
+        primary
+        timeEnd
+        timeStart
+        waitlistCount
+        waitlistMax
+        number
+      }
+      sections {
+        ccn
+        dateEnd
+        dateStart
+        days
+        enrollCount
+        enrollMax
+        instructors {
+          familyName
+          givenName
+        }
+        kind
+        location
+        notes
+        primary
+        timeEnd
+        timeStart
+        waitlistCount
+        waitlistMax
+        number
+      }
+
+*/
 
 export const GET_CLASS = gql`
   query GetClass(
@@ -58,6 +138,9 @@ export const GET_CLASS = gql`
         title
         description
         gradeAverage
+        gradingBasis
+        subjectName
+        prereqs
       }
     }
   }
