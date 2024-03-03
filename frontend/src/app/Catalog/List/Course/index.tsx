@@ -7,8 +7,8 @@ import {
 } from "iconoir-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-import AverageGrade from "@/components/AverageGrade";
-import Capacity from "@/components/Capacity";
+import AverageGrade from "@/app/Catalog/AverageGrade";
+import Capacity from "@/app/Catalog/Capacity";
 import { ICatalogCourse, Semester } from "@/lib/api";
 
 import styles from "./Course.module.scss";

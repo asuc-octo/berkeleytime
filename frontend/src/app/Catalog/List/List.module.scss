@@ -5,6 +5,29 @@
   overflow: auto;
   background-color: var(--slate-50);
 
+  .empty {
+    color: var(--slate-500);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+    gap: 16px;
+    font-size: 16px;
+
+    .heading {
+      font-weight: 500;
+      color: var(--slate-900);
+      margin-bottom: 8px;
+    }
+
+    .description {
+      line-height: 1.5;
+    }
+  }
+
   .view {
     position: relative;
 

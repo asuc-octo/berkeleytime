@@ -4,8 +4,8 @@ import { useQuery } from "@apollo/client";
 import { Bookmark, Plus, Xmark } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import AverageGrade from "@/components/AverageGrade";
-import Capacity from "@/components/Capacity";
+import AverageGrade from "@/app/Catalog/AverageGrade";
+import Capacity from "@/app/Catalog/Capacity";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
 import {
