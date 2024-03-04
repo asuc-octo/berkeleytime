@@ -111,10 +111,13 @@ export default function Class({
             }
           />
           <Capacity
-            enrolled={currentClass?.enrollCount ?? partialClass.enrollCount}
+            count={currentClass?.enrollCount ?? partialClass.enrollCount}
             capacity={currentClass?.enrollMax ?? partialClass.enrollMax}
-            waitlisted={
+            waitlistCount={
               currentClass?.waitlistCount ?? partialClass.waitlistCount
+            }
+            waitlistCapacity={
+              currentClass?.waitlistMax ?? partialClass.waitlistMax
             }
           />
           <div className={styles.units}>{units}</div>

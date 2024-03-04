@@ -6,11 +6,13 @@ export default function Calendar() {
       <div className={styles.header}>
         <div className={styles.timeZone}>PST</div>
         <div className={styles.week}>
+          <div className={styles.day}>Sunday</div>
           <div className={styles.day}>Monday</div>
           <div className={styles.day}>Tuesday</div>
           <div className={styles.day}>Wednesday</div>
           <div className={styles.day}>Thursday</div>
           <div className={styles.day}>Friday</div>
+          <div className={styles.day}>Saturday</div>
         </div>
       </div>
       <div className={styles.view}>
@@ -24,7 +26,7 @@ export default function Calendar() {
           ))}
         </div>
         <div className={styles.week}>
-          {[...Array(5)].map((_, day) => (
+          {[...Array(7)].map((_, day) => (
             <div key={day} className={styles.day}>
               {[...Array(24)].map((_, hour) => (
                 <div key={hour} className={styles.hour}></div>

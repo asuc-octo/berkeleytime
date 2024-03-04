@@ -44,21 +44,51 @@ const Course = forwardRef<
 
     const single = useMemo(() => classes.length === 1, [classes]);
 
-    const { waitlisted, enrolled, capacity, minimum, maximum } = useMemo(
+    const {
+      courseCount,
+      courseCapacity,
+      courseWaitlistCount,
+      courseWaitlistCapacity,
+      courseMinimum,
+      courseMaximum,
+    } = useMemo(
       () =>
         classes.reduce(
           (
-            { waitlisted, enrolled, capacity, minimum, maximum },
-            { enrollCount, enrollMax, unitsMax, unitsMin }
+            {
+              courseCount,
+              courseCapacity,
+              courseWaitlistCount,
+              courseWaitlistCapacity,
+              courseMinimum,
+              courseMaximum,
+            },
+            {
+              // waitlistCount,
+              // waitlistMax,
+              enrollCount,
+              enrollMax,
+              unitsMax,
+              unitsMin,
+            }
           ) => ({
-            // waitlisted: waitlisted + waitlistCount,
-            waitlisted,
-            enrolled: enrolled + enrollCount,
-            capacity: capacity + enrollMax,
-            minimum: Math.min(minimum, unitsMin),
-            maximum: Math.max(maximum, unitsMax),
+            // courseWaitlistCount: courseWaitlistCount + waitlistCount,
+            // courseWaitlistCapacity: courseWaitlistCapacity + waitlistMax,
+            courseWaitlistCount,
+            courseWaitlistCapacity,
+            courseCount: courseCount + enrollCount,
+            courseCapacity: courseCapacity + enrollMax,
+            courseMinimum: Math.min(courseMinimum, unitsMin),
+            courseMaximum: Math.max(courseMaximum, unitsMax),
           }),
-          { waitlisted: 0, enrolled: 0, capacity: 0, minimum: 10, maximum: 0 }
+          {
+            courseCount: 0,
+            courseCapacity: 0,
+            courseWaitlistCount: 0,
+            courseWaitlistCapacity: 0,
+            courseMinimum: 10,
+            courseMaximum: 0,
+          }
         ),
       [classes]
     );
@@ -88,14 +118,17 @@ const Course = forwardRef<
               <div className={styles.row}>
                 <AverageGrade averageGrade={gradeAverage} />
                 <Capacity
-                  waitlisted={waitlisted}
-                  enrolled={enrolled}
-                  capacity={capacity}
+                  count={courseCount}
+                  capacity={courseCapacity}
+                  waitlistCount={courseWaitlistCount}
+                  waitlistCapacity={courseWaitlistCapacity}
                 />
                 <div className={styles.units}>
-                  {maximum === minimum
-                    ? `${minimum} ${minimum === 1 ? "unit" : "units"}`
-                    : `${minimum} - ${maximum} units`}
+                  {courseMinimum === courseMaximum
+                    ? `${courseMinimum} ${
+                        courseMinimum === 1 ? "unit" : "units"
+                      }`
+                    : `${courseMinimum} - ${courseMaximum} units`}
                 </div>
               </div>
             </div>
@@ -115,9 +148,10 @@ const Course = forwardRef<
                 title: classTitle,
                 unitsMax,
                 unitsMin,
-                enrollCount: enrolled,
-                enrollMax: capacity,
-                waitlistCount: waitlisted,
+                enrollCount,
+                enrollMax,
+                waitlistCount,
+                waitlistMax,
                 number: classNumber,
               }) => (
                 <Link
@@ -135,9 +169,10 @@ const Course = forwardRef<
                     </p>
                     <div className={styles.row}>
                       <Capacity
-                        waitlisted={waitlisted}
-                        enrolled={enrolled}
-                        capacity={capacity}
+                        count={enrollCount}
+                        capacity={enrollMax}
+                        waitlistCount={waitlistCount}
+                        waitlistCapacity={waitlistMax}
                       />
                       <div className={styles.units}>
                         {unitsMax === unitsMin
