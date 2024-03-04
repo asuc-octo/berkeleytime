@@ -1,3 +1,4 @@
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { IconoirProvider } from "iconoir-react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
@@ -5,8 +6,8 @@ import About from "@/app/About";
 import Catalog from "@/app/Catalog";
 import Landing from "@/app/Landing";
 import Layout from "@/app/Layout";
-
-import Schedules from "./app/Schedules";
+import Schedules from "@/app/Schedules";
+import AccountProvider from "@/components/AccountProvider";
 
 const router = createBrowserRouter([
   {
@@ -51,7 +52,11 @@ export default function App() {
         height: 16,
       }}
     >
-      <RouterProvider router={router} />
+      <AccountProvider>
+        <Tooltip.Provider delayDuration={0}>
+          <RouterProvider router={router} />
+        </Tooltip.Provider>
+      </AccountProvider>
     </IconoirProvider>
   );
 }

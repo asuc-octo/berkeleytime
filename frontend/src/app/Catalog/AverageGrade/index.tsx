@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 
+import * as Tooltip from "@radix-ui/react-tooltip";
+
 import styles from "./AverageGrade.module.scss";
 
 interface AverageGradeProps {
@@ -52,8 +54,25 @@ export default function AverageGrade({ averageGrade }: AverageGradeProps) {
   );
 
   return (
-    <div className={styles.root} style={{ color }}>
-      {text}
-    </div>
+    <Tooltip.Root disableHoverableContent>
+      <Tooltip.Trigger asChild>
+        <div className={styles.trigger} style={{ color }}>
+          {text}
+        </div>
+      </Tooltip.Trigger>
+      <Tooltip.Portal>
+        <Tooltip.Content asChild side="bottom" sideOffset={8}>
+          <div className={styles.content}>
+            <Tooltip.Arrow className={styles.arrow} />
+            <p className={styles.title}>Average grade</p>
+            <p className={styles.description}>
+              Students have received a <span style={{ color }}>{text}</span> in
+              this course on average based on performance across all semesters
+              this course has been offered.
+            </p>
+          </div>
+        </Tooltip.Content>
+      </Tooltip.Portal>
+    </Tooltip.Root>
   );
 }

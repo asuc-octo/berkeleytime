@@ -13,6 +13,7 @@ export interface ICatalogClass {
   enrollCount: number;
   enrollMax: number;
   waitlistCount: number;
+  waitlistMax: number;
   number: string;
 }
 

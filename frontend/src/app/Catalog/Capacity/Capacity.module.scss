@@ -1,20 +1,57 @@
-.root {
+.trigger {
   font-size: 14px;
   line-height: 1;
   height: 32px;
   border-radius: 16px;
   background-color: var(--slate-100);
-  color: var(--slate-200);
+  color: var(--slate-500);
   display: flex;
   align-items: center;
-  gap: 4px;
   padding: 0 12px;
+  user-select: none;
 
   .value {
     color: var(--slate-500);
+  }
+}
 
-    &:nth-child(2) {
-      color: var(--red-600);
+.content {
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--neutral-900);
+  box-shadow: 0 4px 64px var(--gray-200);
+  width: 256px;
+  animation: fadeIn 100ms ease-in;
+
+  .arrow {
+    fill: var(--neutral-900);
+  }
+
+  .divider {
+    height: 1px;
+    background-color: var(--neutral-700);
+    margin: 12px 0;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--neutral-400);
+
+    .key {
+      font-weight: 500;
+      color: white;
     }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
