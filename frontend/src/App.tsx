@@ -9,6 +9,7 @@ import About from "@/app/About";
 import Catalog from "@/app/Catalog";
 import Landing from "@/app/Landing";
 import Layout from "@/app/Layout";
+import FAQ from "@/app/FAQ";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,15 @@ const router = createBrowserRouter([
       {
         element: <Catalog />,
         path: "/courses/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
+      },
+    ],
+  },
+  {
+    element: <Layout footer={false} />,
+    children: [
+      {
+        element: <FAQ />,
+        path: "/faq",
       },
     ],
   },
