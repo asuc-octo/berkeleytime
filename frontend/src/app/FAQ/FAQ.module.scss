@@ -1,0 +1,61 @@
+.root {
+  display: flex;
+  flex-direction: column;
+
+  .container {
+    margin-top: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .text {
+    width: 512px;
+    flex-shrink: 0;
+    margin-left: auto;
+    margin-right: auto;
+
+    .link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--blue-500);
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1;
+      transition: all 100ms ease-in-out;
+
+      &:hover {
+        color: var(--blue-600);
+      }
+    }
+
+    .heading {
+      font-size: 32px;
+      font-weight: 660;
+      font-feature-settings:
+        "cv05" on,
+        "cv13" on,
+        "ss07" on,
+        "cv12" on,
+        "cv06" on;
+      line-height: 1.25;
+      letter-spacing: -1%;
+      margin-bottom: 16px;
+      color: var(--slate-900);
+    }
+
+    .description {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 32px;
+      color: var(--slate-500);
+    }
+  }
+
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+}
