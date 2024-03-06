@@ -21,6 +21,12 @@ export interface Config {
   mongoDB: {
     uri: string;
   };
+  sis: {
+    CLASS_APP_ID: string;
+    CLASS_APP_KEY: string;
+    COURSE_APP_ID: string;
+    COURSE_APP_KEY: string;
+  };
   SESSION_SECRET: string;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
@@ -42,6 +48,12 @@ export const config: Config = {
   isDev: env("NODE_ENV") === "development",
   mongoDB: {
     uri: env("MONGODB_URI"),
+  },
+  sis: {
+    CLASS_APP_ID: env("SIS_CLASS_APP_ID"),
+    CLASS_APP_KEY: env("SIS_CLASS_APP_KEY"),
+    COURSE_APP_ID: env("SIS_COURSE_APP_ID"),
+    COURSE_APP_KEY: env("SIS_COURSE_APP_KEY"),
   },
   SESSION_SECRET: env("SESSION_SECRET"),
   GOOGLE_CLIENT_ID: env("GOOGLE_CLIENT_ID"),

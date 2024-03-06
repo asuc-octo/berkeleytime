@@ -1,6 +1,6 @@
 import mongoose, { Schema, InferSchemaType, Document } from "mongoose";
 
-export const UserSchema = new Schema({
+export const userSchema = new Schema({
     google_id: {
         type: String,
         trim: true,
@@ -79,5 +79,5 @@ export const UserSchema = new Schema({
     },
 }, { timestamps: true });
 
-export const UserModel = mongoose.model("user", UserSchema, "user");
-export type UserType = Document & InferSchemaType<typeof UserSchema>;
+export const UserModel = mongoose.model("user", userSchema, "user");
+export type UserType = Document & InferSchemaType<typeof userSchema>;

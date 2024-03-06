@@ -1,5 +1,5 @@
 import { ScheduleModule } from "./generated-types/module-types";
-import { CustomEventType, ScheduleType } from "../../db/schedule";
+import { CustomEventType, ScheduleType, SelectedCourseType } from "../../models/schedule";
 
 export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule {
   return {
@@ -7,9 +7,7 @@ export function formatSchedule(schedule: ScheduleType): ScheduleModule.Schedule 
     name: schedule.name,
     created_by: schedule.created_by,
     is_public: schedule.is_public,
-    class_IDs: schedule.class_IDs,
-    primary_section_IDs: schedule.primary_section_IDs,
-    secondary_section_IDs: schedule.secondary_section_IDs,
+    courses: schedule.courses.map(formatCourse),
     term: formatTerm(schedule.term.semester, schedule.term.year),
     custom_events: schedule.custom_events ? schedule.custom_events.map(formatCustomEvents) : undefined,
     created: schedule.createdAt.toISOString(),
@@ -33,4 +31,12 @@ function formatCustomEvents(customEvent: CustomEventType): ScheduleModule.Custom
         description: customEvent.description,
         days_of_week: customEvent.days_of_week
     }
+}
+
+function formatCourse(course: SelectedCourseType): ScheduleModule.SelectedCourse{
+  return {
+    class_ID: course.class_ID,
+    primary_section_ID: course.primary_section_ID,
+    secondary_section_IDs: course.secondary_section_IDs,
+  }
 }
