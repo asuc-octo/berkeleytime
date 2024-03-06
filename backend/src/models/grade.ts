@@ -1,6 +1,6 @@
 import mongoose, { Schema, InferSchemaType } from "mongoose";
 
-const GradeSchema = new Schema({
+const gradeSchema = new Schema({
     _id: Schema.Types.ObjectId,
     _created: Date,
     _updated: Date,
@@ -23,5 +23,5 @@ const GradeSchema = new Schema({
     },
 })
 
-export const GradeModel = mongoose.model("calanswers_grade", GradeSchema, "calanswers_grade");
-export type GradeType = InferSchemaType<typeof GradeSchema>;
+export const GradeModel = mongoose.model("calanswers_grade", gradeSchema, "calanswers_grade");
+export type GradeType = InferSchemaType<typeof gradeSchema>;

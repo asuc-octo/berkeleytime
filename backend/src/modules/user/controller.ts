@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { UserInput } from "../../generated-types/graphql";
 import { formatUser } from "./formatter";
-import { UserModel, UserType } from "../../db/user";
+import { UserModel, UserType } from "../../models/user";
 import { omitBy } from "lodash";
 
 function resolveAndFormat(user: UserType | null) {
@@ -24,11 +24,11 @@ export async function updateUserInfo(id: ObjectId, newUserInfo: UserInput) {
 
     const user = await UserModel.findByIdAndUpdate(id, newUserInfo, { new: true, lean: true });
 
-    return resolveAndFormat(user);
+    return resolveAndFormat(user as UserType);
 }
 
 export async function deleteUser(id: ObjectId) {
     const user = await UserModel.findByIdAndDelete(id, { lean: true });
 
-    return resolveAndFormat(user);
+    return resolveAndFormat(user as UserType);
 }
