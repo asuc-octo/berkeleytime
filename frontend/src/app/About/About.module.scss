@@ -12,10 +12,19 @@ $bt-light-grey: #A0A0A0;
     .aboutOurTeam {
         text-align: center;
 
+        margin-top: 48px;
+        margin-bottom: 48px;
+
+        h1 {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
         p {
             color: $bt-light-text;
             line-height: 1.75;
             width: 500px;
+            margin-bottom: 16px;
 
             @media (max-width: 768px) {
                 width: 300px;
@@ -50,6 +59,12 @@ $bt-light-grey: #A0A0A0;
                 display: none;
                 transition: filter 1s ease, transform 1s ease;
 
+                >img {
+                    max-width: 100%; // Ensure image does not exceed the container width
+                    height: auto; // Maintain aspect ratio
+                    object-fit: cover; // Cover the container fully
+                }
+
                 &.aboutCarouselActive {
                     display: block;
                     transform: translateX(0) scale(0.9);
@@ -58,9 +73,8 @@ $bt-light-grey: #A0A0A0;
 
                 &.aboutCarouselActivePrev {
                     @extend .aboutCarouselActive;
+                    order: 0;
                 }
-
-                order: 0;
 
                 &.aboutCarouselActiveFirst {
                     @extend .aboutCarouselActive;
@@ -84,12 +98,12 @@ $bt-light-grey: #A0A0A0;
                     order: 4;
                 }
 
-                &.focus-in {
+                &.focusIn {
                     transform: scale(1);
                     filter: brightness(1);
                 }
 
-                &.focus-out {
+                &.focusOut {
                     transform: scale(0.9);
                     filter: brightness(0.35);
                 }
@@ -102,24 +116,19 @@ $bt-light-grey: #A0A0A0;
                 }
 
                 @media (min-width: 1024px) {
-                    .aboutCarouselItem {
-                        height: 400px;
-                        width: 711px;
-                    }
+                    height: 400px;
+                    width: 711px;
                 }
 
-                @media (min-width: 768px) and (max-width: 1023px) {
-                    .aboutCarouselItem {
-                        height: 300px;
-                        width: 533px;
-                    }
+
+                @media (min-width: 768px) and (max-width: 1023) {
+                    height: 300px;
+                    width: 533px;
                 }
 
                 @media (max-width: 767px) {
-                    .aboutCarouselItem {
-                        height: 200px;
-                        width: 356px;
-                    }
+                    height: 200px;
+                    width: 356px;
                 }
             }
 
@@ -197,7 +206,7 @@ $bt-light-grey: #A0A0A0;
 
             font-weight: bold;
             font-size: 24px;
-            width: 100%;
+
 
             @media (max-width: 768px) {
                 // Mobile
@@ -220,14 +229,10 @@ $bt-light-grey: #A0A0A0;
                 }
             }
 
-
-
-
-
-
             .value {
                 height: 100%;
                 padding: 0 20px;
+                width: 600px;
 
                 .valueContent {
                     height: 100%;

@@ -1,12 +1,9 @@
 
-//import { Row, Col } from 'react-bootstrap';
 import { Leaf, LightBulbOn, EmojiTalkingHappy } from 'iconoir-react';
 import Airtable from 'airtable';
-
 import { useState, useEffect } from 'react';
+import Contributors from './Contributors';
 
-
-//import { H3, P } from 'bt/custom';
 
 //import CurrentContributors from '../components/About/CurrentContributors';
 //import PastContributors from '../components/About/PastContributors';
@@ -15,9 +12,25 @@ import AboutCarousel from './AboutCarousel';
 
 import styles from "./About.module.scss"
 
+export interface contributorStructure {
+  name: string;
+  gradYr: number;
+  role: string;
+  img: {
+    seriousBase64: string,
+    sillyBase64: string | null,
+  };
+  websiteURL: string;
+  isAlumni: boolean
+};
+
 export default function About() {
 
-  const currentTeam: { name: string; date: string, pictureBase64: any }[] = [];
+
+
+
+  const [currContributors, setCurrContributors] = useState<contributorStructure[]>([]);
+  const [alumniContributors, setAlumniContributors] = useState<contributorStructure[]>([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -82,19 +95,31 @@ export default function About() {
     }).eachPage(async function page(records: ReadonlyArray<any>, fetchNextPage) { // Mark this function as async
       // Map over records to create an array of promises
       const promises = records.map(async record => {
-        const pictureUrl = record.get("Picture")[0].url;
-        const pictureBase64 = await convertURLToBase64(pictureUrl); // Await the conversion
+        const seriousPicUrl = record.get("SeriousPicture")?.[0]?.url ?? null;
+        const sillyPicUrl = record.get("SillyPicture")?.[0]?.url ?? null;
+        console.log(sillyPicUrl)
+        const seriousBase64 = await convertURLToBase64(seriousPicUrl) as string;
+        const sillyBase64 = sillyPicUrl ? await convertURLToBase64(sillyPicUrl) as string : null;
+        const gradYear = record.get("GradYear") // Await the conversion
+
         return {
           name: record.get("Name"),
-          date: record.get("Date"),
-          pictureBase64 // This will be a base64 string
+          gradYr: gradYear,
+          role: record.get("Role"),
+          img: {
+            seriousBase64: seriousBase64,
+            sillyBase64: sillyBase64,
+          }, // This will be a base64 string
+          websiteURL: record.get("Website"),
+          isAlumni: gradYear < (new Date().getFullYear()),
         };
       });
 
       // Wait for all promises to resolve
-      const teamMembers = await Promise.all(promises);
+      const teamMember = await Promise.all(promises);
       // Push each team member into the currentTeam array
-      teamMembers.forEach(member => currentTeam.push(member));
+      setCurrContributors(prevCurr => [...prevCurr, ...teamMember.filter(member => !member.isAlumni)]);
+      setAlumniContributors(prevAlumni => [...prevAlumni, ...teamMember.filter(member => member.isAlumni)]);
 
       fetchNextPage();
     }, function done(err) {
@@ -103,21 +128,25 @@ export default function About() {
 
   }
 
-  console.log(currentTeam)
+
+  //console.log(allMembers)
+  // console.log(currContributors)
+  //console.log(alumniContributors)
 
   return (
     <div className={styles.about}>
       <div className={styles.aboutOurTeam}>
-        <h1 className="mb-2 bold">
+        <h1>
           About Our Team
         </h1>
-        <p className="mb-3">
+        <p>
           We&apos;re a small group of student volunteers at UC Berkeley, dedicated to simplifying
           the course discovery experience. We actively build, improve and maintain Berkeleytime.
         </p>
         {/* <Button variant="inverted" link_to="/apply">Join Our Team</Button> */}
       </div>
-      {/* <AboutCarousel /> */}
+
+      <AboutCarousel />
       <div className={styles.values}>
         <h5>Our Values</h5>
         <div className={styles.valueCol}>
@@ -131,7 +160,6 @@ export default function About() {
               </p>
             </div>
           </div>
-
           <div className={styles.value}>
             <div className={styles.valueContent}>
               <LightBulbOn width={60} height={60} color={'#2F80ED'} />
@@ -155,6 +183,10 @@ export default function About() {
           </div>
         </div>
       </div>
+      <Contributors
+        currContributors={currContributors}
+        alumniContributors={alumniContributors}
+      />
       {/* <CurrentContributors />
       <PastContributors /> */}
     </div>
