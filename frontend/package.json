@@ -20,12 +20,16 @@
 		"airtable": "^0.12.2",
 		"bt": "^0.0.1",
 		"classnames": "^2.5.1",
+		"glider": "^0.1.0",
 		"iconoir-react": "^7.4.0",
 		"moment": "^2.30.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-glider": "^4.0.2",
+		"react-multi-carousel": "^2.8.4",
 		"react-router": "^6.21.3",
-		"react-router-dom": "^6.21.3"
+		"react-router-dom": "^6.21.3",
+		"swiper": "^11.0.7"
 	},
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "^4.3.0",
@@ -40,7 +44,7 @@
 		"eslint-plugin-react-refresh": "^0.4.5",
 		"g-sheets-api": "^2.2.0",
 		"prettier": "^3.2.4",
-		"sass": "^1.70.0",
+		"sass": "^1.71.1",
 		"typescript": "^5.3.3",
 		"vite": "^5.0.12"
 	}
