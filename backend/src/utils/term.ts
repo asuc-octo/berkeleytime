@@ -25,3 +25,14 @@ export function getTermStartMonth(term: TermInput) {
 
     return startDates[term.semester];
 }
+
+/**
+ * Gets the approximate term a given input date falls in
+ * Used for seed database script
+ */
+export function dateToTerm(date: Date) {
+    const month = date.getMonth()
+    if (month < 5) return "Spring"
+    if (month < 7) return "Summer"
+    return "Fall"
+}
