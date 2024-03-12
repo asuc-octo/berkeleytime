@@ -8,6 +8,7 @@ import { SISResponse } from '../utils/sis';
 import { MongooseBulkWriteOptions } from 'mongoose';
 import { ClassModel, ClassType } from '../models/class';
 import { SectionModel, SectionType } from '../models/section';
+import { performance } from 'perf_hooks';
 
 const SIS_COURSE_URL = 'https://gateway.api.berkeley.edu/sis/v4/courses';
 const SIS_CLASS_URL = 'https://gateway.api.berkeley.edu/sis/v1/classes';
@@ -164,6 +165,9 @@ const updateSections = async () => {
 
 (async () => {
     try {
+
+        const startTime = performance.now()
+
         await mongooseLoader();
 
         console.log("\n=== UPDATE COURSES ===")
@@ -174,6 +178,11 @@ const updateSections = async () => {
 
         console.log("\n=== UPDATE SECTIONS ===")
         await updateSections();
+
+        const endTime = performance.now()
+        const seconds = Math.round(endTime - startTime) / 1000
+        console.log(`Script took ${seconds}s to complete`)
+
     } catch (err) {
         console.error(err);
         process.exit(1);

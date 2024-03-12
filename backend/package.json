@@ -13,7 +13,8 @@
     "lint": "tsc --noEmit && eslint --ext .ts,.tsx .",
     "backup:mongodb": "node ./build/scripts/backup-mongodb.js",
     "download:mongodb": "node ./build/scripts/download-mongodb.js",
-    "update:catalog": "node ./build/scripts/update-catalog.js"
+    "update:catalog": "node ./build/scripts/update-catalog.js",
+    "seed:mongodb": "node ./build/scripts/seed-database.js"
   },
   "repository": {
     "type": "git",
