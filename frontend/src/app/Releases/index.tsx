@@ -1,4 +1,3 @@
-import Release from "./Release";
 import styles from "./Releases.module.scss";
 import log from "./log.json"
 
