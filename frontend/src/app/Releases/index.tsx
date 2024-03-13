@@ -5,7 +5,7 @@ import log from "./log.json"
 const Releases = () => {
 
   const releases = log.releases;
-  console.log(releases)
+  // console.log(releases)
 
   return (
     <div className={styles.root}>
