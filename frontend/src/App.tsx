@@ -42,6 +42,10 @@ const router = createBrowserRouter([
         element: <About />,
         path: "/about",
       },
+      {
+        element: <Releases />,
+        path: "/releases",
+      },
     ],
   },
   {
@@ -50,15 +54,6 @@ const router = createBrowserRouter([
       {
         element: <Catalog />,
         path: "/courses/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
-      },
-    ],
-  },
-  {
-    element: <Layout />,
-    children: [
-      {
-        element: <Releases />,
-        path: "/releases",
       },
     ],
   },
