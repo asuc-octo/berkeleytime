@@ -9,6 +9,7 @@ import About from "@/app/About";
 import Catalog from "@/app/Catalog";
 import Landing from "@/app/Landing";
 import Layout from "@/app/Layout";
+import Resources from "@/app/Resources";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         element: <About />,
         path: "/about",
+      },
+      {
+        element: <Resources />,
+        path: "/resources",
       },
     ],
   },
