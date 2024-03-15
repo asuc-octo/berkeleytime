@@ -17,18 +17,18 @@ export default function Calendar() {
       </div>
       <div className={styles.view}>
         <div className={styles.sideBar}>
-          {[...Array(23)].map((_, hour) => (
+          {[...Array(17)].map((_, hour) => (
             <div key={hour} className={styles.hour}>
-              {hour + 1 < 12
-                ? `${hour + 1} AM`
-                : `${hour === 11 ? 12 : hour - 11} PM`}
+              {hour + 7 < 12
+                ? `${hour + 7} AM`
+                : `${hour + 7 === 12 ? 12 : hour - 5} PM`}
             </div>
           ))}
         </div>
         <div className={styles.week}>
           {[...Array(7)].map((_, day) => (
             <div key={day} className={styles.day}>
-              {[...Array(24)].map((_, hour) => (
+              {[...Array(18)].map((_, hour) => (
                 <div key={hour} className={styles.hour}></div>
               ))}
             </div>

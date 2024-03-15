@@ -163,7 +163,7 @@ const Course = forwardRef<
                   }}
                 >
                   <div className={styles.text}>
-                    <p className={styles.title}>Lecture</p>
+                    <p className={styles.title}>Lecture {classNumber}</p>
                     <p className={styles.description}>
                       {classTitle ?? courseTitle}
                     </p>

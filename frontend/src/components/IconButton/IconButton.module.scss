@@ -9,6 +9,14 @@
   transition: all 100ms ease-in-out;
   background-color: var(--slate-100);
   color: var(--slate-500);
+  user-select: none;
+
+  &:disabled {
+    cursor: not-allowed;
+    background-color: var(--slate-50);
+    color: var(--slate-400);
+    pointer-events: none;
+  }
 
   &:hover {
     background-color: var(--slate-200);

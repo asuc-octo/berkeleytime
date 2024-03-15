@@ -8,6 +8,7 @@
     background-color: white;
     position: relative;
     padding: 0 16px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 2.5%);
 
     .class {
       padding: 16px 0;
@@ -18,10 +19,6 @@
 
       &:not(:last-child) {
         border-bottom: 1px solid var(--slate-200);
-      }
-
-      &:hover .icon, &:hover .text .title {
-        color: var(--slate-900);
       }
     }
 
@@ -35,16 +32,15 @@
       font-size: 14px;
 
       .heading {
-        font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
-        font-weight: 660;
+        font-weight: 700;
         color: var(--slate-900);
-        margin-bottom: 8px;
+        margin-bottom: 4px;
       }
 
       .title {
-        color: var(--slate-500);
+        color: var(--slate-900);
         font-weight: 500;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
       }
 
       .description {
@@ -61,6 +57,7 @@
 
         .units {
           font-size: 14px;
+          user-select: none;
           color: var(--slate-500);
         }
       }

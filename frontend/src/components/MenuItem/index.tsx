@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { HTMLAttributes, ReactNode } from "react";
 
 import classNames from "classnames";
 
@@ -14,9 +14,11 @@ export default function MenuItem({
   active,
   children,
   className,
-}: MenuItemProps) {
+  ...props
+}: MenuItemProps & HTMLAttributes<HTMLButtonElement>) {
   return (
-    <div
+    <button
+      {...props}
       className={classNames(
         styles.root,
         {
@@ -26,6 +28,6 @@ export default function MenuItem({
       )}
     >
       {children}
-    </div>
+    </button>
   );
 }

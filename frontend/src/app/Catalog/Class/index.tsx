@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
 import { Bookmark, Plus, Xmark } from "iconoir-react";
@@ -17,6 +17,19 @@ import {
 } from "@/lib/api";
 
 import styles from "./Class.module.scss";
+import Overview from "./Overview";
+import Sections from "./Sections";
+
+const views = [
+  {
+    text: "Overview",
+    Component: Overview,
+  },
+  {
+    text: "Sections",
+    Component: Sections,
+  },
+];
 
 interface ClassProps {
   currentCourse: ICatalogCourse;
@@ -36,6 +49,7 @@ export default function Class({
   currentSubject,
 }: ClassProps) {
   const [searchParams] = useSearchParams();
+  const [view, setView] = useState(0);
 
   const { data } = useQuery<{ class: IClass }>(GET_CLASS, {
     variables: {
@@ -68,14 +82,15 @@ export default function Class({
       : `${minimum} - ${maximum} units`;
   }, [currentClass, partialClass]);
 
+  const Component = useMemo(() => views[view].Component, [view]);
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.details}>
           <div className={styles.text}>
             <h1 className={styles.heading}>
-              {currentClass?.course?.subjectName ?? currentSubject}{" "}
-              {currentCourseNumber}
+              {currentSubject} {currentCourseNumber}
             </h1>
             <p className={styles.description}>
               {currentClass?.title ?? currentCourse.title}
@@ -143,13 +158,20 @@ export default function Class({
           </div>
         </div>
         <div className={styles.menu}>
-          <MenuItem active>Overview</MenuItem>
-          <MenuItem>Sections</MenuItem>
-          <MenuItem>Grades</MenuItem>
-          <MenuItem>Enrollment</MenuItem>
+          {views.map(({ text }, index) => (
+            <MenuItem
+              key={index}
+              active={index === view}
+              onClick={() => setView(index)}
+            >
+              {text}
+            </MenuItem>
+          ))}
         </div>
       </div>
-      <div className={styles.placeholder} />
+      <div className={styles.view}>
+        <Component />
+      </div>
     </div>
   );
 }

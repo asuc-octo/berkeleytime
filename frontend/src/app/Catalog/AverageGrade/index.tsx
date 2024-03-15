@@ -61,7 +61,12 @@ export default function AverageGrade({ averageGrade }: AverageGradeProps) {
         </div>
       </Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Content asChild side="bottom" sideOffset={8}>
+        <Tooltip.Content
+          asChild
+          side="bottom"
+          sideOffset={8}
+          collisionPadding={8}
+        >
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>Average grade</p>
