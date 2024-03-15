@@ -57,12 +57,13 @@ export default function Schedules() {
               <>
                 <div className={styles.group}>
                   <p className={styles.label}>Lectures</p>
-                  <div className={styles.section}>
-                    <div
-                      className={classNames(styles.radioButton, styles.active)}
-                    />
+                  <div className={classNames(styles.section, styles.active)}>
+                    <div className={styles.radioButton} />
                     <div className={styles.text}>
-                      <p className={styles.title}>Lecture 001</p>
+                      <p className={styles.title}>
+                        <span className={styles.important}>Lecture 001</span>{" "}
+                        (CCN: 23546)
+                      </p>
                     </div>
                   </div>
                   <div className={styles.section}>
