@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import * as Tooltip from "@radix-ui/react-tooltip";
+import { User } from "iconoir-react";
 
 import styles from "./Capacity.module.scss";
 
@@ -37,14 +38,22 @@ export default function Capacity({
   return (
     <Tooltip.Root disableHoverableContent>
       <Tooltip.Trigger asChild>
-        <p className={styles.trigger}>
-          <span style={{ color }}>{count.toLocaleString()}</span>
-          &nbsp;/&nbsp;
-          {capacity.toLocaleString()}
-        </p>
+        <div className={styles.trigger}>
+          <User />
+          <p className={styles.text}>
+            <span style={{ color }}>{count.toLocaleString()}</span>
+            &nbsp;/&nbsp;
+            {capacity.toLocaleString()}
+          </p>
+        </div>
       </Tooltip.Trigger>
       <Tooltip.Portal>
-        <Tooltip.Content asChild side="bottom" sideOffset={8}>
+        <Tooltip.Content
+          asChild
+          side="bottom"
+          sideOffset={8}
+          collisionPadding={8}
+        >
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <div className={styles.row}>

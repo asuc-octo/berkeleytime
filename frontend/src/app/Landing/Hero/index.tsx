@@ -57,10 +57,10 @@ export default function Hero() {
   );
 
   const step = useMemo(() => {
-    const date = new Date(milliseconds);
-    const index = Math.floor(((date.getHours() - 0) / 24) * 6);
+    // const date = new Date(milliseconds);
+    // const index = Math.floor(((date.getHours() - 0) / 24) * 6);
     return steps[3];
-  }, [milliseconds]);
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(

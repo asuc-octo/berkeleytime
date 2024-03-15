@@ -1,6 +1,12 @@
 .root {
   flex-grow: 1;
   overflow: auto;
+  display: flex;
+  flex-direction: column;
+
+  .view {
+    flex-grow: 1;
+  }
 
   .header {
     border-bottom: 1px solid var(--slate-200);
@@ -14,6 +20,7 @@
       .units {
         font-size: 14px;
         color: var(--slate-500);
+        user-select: none;
         line-height: 1;
       }
     }
@@ -72,8 +79,8 @@
 
         .heading {
           font-size: 24px;
-          font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
           line-height: 1.25;
+          font-weight: 700;
           margin-bottom: 8px;
         }
 

@@ -1,17 +1,21 @@
 .trigger {
-  font-size: 14px;
-  line-height: 1;
   height: 32px;
   border-radius: 16px;
   background-color: var(--slate-100);
   color: var(--slate-500);
   display: flex;
   align-items: center;
+  gap: 8px;
   padding: 0 12px;
   user-select: none;
 
-  .value {
-    color: var(--slate-500);
+  .text {
+    font-size: 14px;
+    line-height: 1;
+
+    .value {
+      color: var(--slate-500);
+    }
   }
 }
 
