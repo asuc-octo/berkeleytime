@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import classNames from "classnames";
 import {
@@ -17,15 +17,73 @@ import Capacity from "../Catalog/Capacity";
 import Calendar from "./Calendar";
 import Map from "./Map";
 import styles from "./Schedules.module.scss";
+import { Event } from "./types";
+
+const placeholderEvent = [
+  {
+    days: [false, true, false, true, false, true, false],
+    startTime: "12:00",
+    endTime: "14:00",
+    kind: "Lecture",
+    color: "var(--pink-500)",
+    placeholder: true,
+    id: 2,
+  },
+];
+
+const events: Event[] = [
+  {
+    days: [false, true, false, true, false, true, false],
+    startTime: "11:00",
+    endTime: "13:00",
+    kind: "Lecture",
+    color: "var(--purple-500)",
+    id: 0,
+  },
+  {
+    days: [false, true, false, true, false, true, false],
+    startTime: "13:00",
+    endTime: "15:00",
+    kind: "Lecture",
+    color: "var(--green-500)",
+    id: 3,
+  },
+  {
+    days: [false, true, false, true, false, true, false],
+    startTime: "13:00",
+    endTime: "15:00",
+    kind: "Lecture",
+    color: "var(--green-500)",
+    id: 4,
+  },
+  {
+    days: [false, false, true, false, true, false, false],
+    startTime: "15:00",
+    endTime: "18:00",
+    kind: "Discussion",
+    color: "var(--violet-500)",
+    id: 1,
+  },
+];
 
 export default function Schedules() {
   const [tab, setTab] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const [hovered, setHovered] = useState(false);
+
+  const updatedEvents = useMemo(
+    () => (hovered ? [...events, ...placeholderEvent] : events),
+    [hovered]
+  );
 
   return (
     <div className={styles.root}>
       <div className={styles.sideBar}>
-        <div className={styles.course}>
+        <div
+          className={styles.course}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
           <div className={styles.border} />
           <div className={styles.body}>
             <div
@@ -102,7 +160,7 @@ export default function Schedules() {
         </div>
         {tab === 0 ? (
           <div className={styles.sections}>
-            <Calendar />
+            <Calendar events={updatedEvents} />
           </div>
         ) : (
           <div className={styles.map}>
