@@ -13,6 +13,7 @@
     font-size: 12px;
     color: var(--slate-400);
     line-height: 1;
+    z-index: 2;
 
     .timeZone {
       height: 32px;
@@ -40,6 +41,7 @@
 
   .view {
     display: flex;
+    z-index: 1;
 
     .week {
       flex-grow: 1;
@@ -48,6 +50,48 @@
 
       .day {
         border-left: 1px solid var(--slate-100);
+        position: relative;
+
+        .line {
+          position: absolute;
+          z-index: 1;
+          left: -1px;
+          width: calc(100% + 1px);
+          height: 1px;
+          background-color: var(--red-500);
+        }
+
+        .event {
+          position: absolute;
+          left: 4px;
+          z-index: 2;
+          width: calc(100% - 8px);
+          padding: 8px;
+          border-radius: 4px;
+          font-size: 12px;
+
+          &:first-child {
+            height: 128px;
+            background-color: var(--blue-500);
+            top: 24px;
+          }
+
+          &:nth-child(2) {
+            height: 128px;
+            background-color: var(--purple-500);
+            top: 256px;
+          }
+
+          .heading {
+            font-weight: 500;
+            color: white;
+          }
+
+          .description {
+            margin-top: 4px;
+            color: rgb(255 255 255 / 75%);
+          }
+        }
 
         .hour {
           height: 64px;
@@ -67,6 +111,22 @@
       width: 64px;
       display: flex;
       flex-direction: column;
+      position: relative;
+
+      .time {
+        position: absolute;
+        z-index: 1;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 12px;
+        color: white;
+        line-height: 1;
+        border-radius: 4px;
+        right: 0;
+        background-color: var(--red-500);
+      }
 
       .hour {
         height: 0;

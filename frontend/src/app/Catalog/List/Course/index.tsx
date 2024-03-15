@@ -42,7 +42,7 @@ const Course = forwardRef<
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
-    const single = useMemo(() => classes.length === 1, [classes]);
+    const isolated = useMemo(() => classes.length === 1, [classes]);
 
     const {
       courseCount,
@@ -94,7 +94,7 @@ const Course = forwardRef<
     );
 
     const handleClick = () => {
-      if (single) {
+      if (isolated) {
         navigate({
           pathname: `/catalog/${year}/${semester}/${subject}/${courseNumber}/${classes[0].number}`,
           search: searchParams.toString(),
@@ -114,7 +114,9 @@ const Course = forwardRef<
               <p className={styles.heading}>
                 {subject} {courseNumber}
               </p>
-              <p className={styles.description}>{courseTitle}</p>
+              <p className={styles.description}>
+                {isolated ? classes[0].title : courseTitle}
+              </p>
               <div className={styles.row}>
                 <AverageGrade averageGrade={gradeAverage} />
                 <Capacity
@@ -133,7 +135,7 @@ const Course = forwardRef<
               </div>
             </div>
             <div className={styles.icon}>
-              {single ? (
+              {isolated ? (
                 <ArrowRight />
               ) : expanded ? (
                 <ArrowUnionVertical />
