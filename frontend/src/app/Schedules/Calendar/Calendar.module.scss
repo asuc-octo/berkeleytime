@@ -63,38 +63,31 @@
 
         .event {
           position: absolute;
-          left: 4px;
           z-index: 2;
-          width: calc(100% - 8px);
           padding: 8px;
           border-radius: 4px;
+          background-color: var(--blue-500);
           font-size: 12px;
-
-          &:first-child {
-            height: 128px;
-            background-color: var(--blue-500);
-            top: 24px;
-          }
-
-          &:nth-child(2) {
-            height: 128px;
-            background-color: var(--purple-500);
-            top: 256px;
-          }
 
           .heading {
             font-weight: 500;
             color: white;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
           }
 
           .description {
             margin-top: 4px;
             color: rgb(255 255 255 / 75%);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
           }
         }
 
         .hour {
-          height: 64px;
+          height: 60px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -130,7 +123,7 @@
 
       .hour {
         height: 0;
-        margin-top: 64px;
+        margin-top: 60px;
         padding: 0 12px;
         font-size: 12px;
         color: var(--slate-400);
