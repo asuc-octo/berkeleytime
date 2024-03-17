@@ -110,9 +110,14 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
         const id = getCsCourseId(c.course as CourseType)
 
         if (!(id in catalog)) {
-            throw new Error(`Class ${c.course?.subjectArea?.code} ${c.course?.catalogNumber?.formatted}`
-                + ` has a course id ${id} that doesn't exist for the ${term.semester} ${term.year} term.`)
+            // throw new Error(`Class ${c.course?.subjectArea?.code} ${c.course?.catalogNumber?.formatted}`
+            //     + ` has a course id ${id} that doesn't exist for the ${term.semester} ${term.year} term.`)
+
+            // TODO: log
+
+            continue;
         }
+        
         catalog[id].classes.push(formatClass(c))
     }
 
