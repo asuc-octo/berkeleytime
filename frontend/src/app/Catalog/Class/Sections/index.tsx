@@ -1,4 +1,4 @@
-import Capacity from "../../Capacity";
+import Capacity from "../../../../components/Capacity";
 import styles from "./Sections.module.scss";
 
 export default function Sections() {

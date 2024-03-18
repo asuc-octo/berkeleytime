@@ -17,30 +17,47 @@
       align-items: flex-start;
       cursor: pointer;
 
+      &:hover .column .icon {
+        color: var(--slate-900);
+      }
+
+      .column {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex-shrink: 0;
+
+        .icon {
+          color: var(--slate-500);
+          transition: all 100ms ease-in-out;
+        }
+
+        .bookmark {
+          color: var(--blue-500);
+        }
+      }
+
       &:not(:last-child) {
         border-bottom: 1px solid var(--slate-200);
       }
-    }
-
-    .icon {
-      flex-shrink: 0;
-      color: var(--slate-500);
     }
 
     .text {
       flex-grow: 1;
       font-size: 14px;
 
+      .heading, .title {
+        color: var(--slate-900);
+        margin-bottom: 8px;
+        line-height: 1;
+      }
+
       .heading {
         font-weight: 700;
-        color: var(--slate-900);
-        margin-bottom: 4px;
       }
 
       .title {
-        color: var(--slate-900);
         font-weight: 500;
-        margin-bottom: 4px;
       }
 
       .description {
