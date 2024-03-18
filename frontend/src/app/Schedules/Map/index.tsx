@@ -6,6 +6,7 @@ import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
 import {
   ArrowSeparateVertical,
   Position,
+  Walking,
   ZoomIn,
   ZoomOut,
 } from "iconoir-react";
@@ -92,13 +93,21 @@ export default function Map() {
         for (let index = 0; index < route[0].legs.length; index++) {
           const { steps } = route[0].legs[index];
 
-          new mapboxgl.Marker()
+          const start = document.createElement("div");
+          start.className = "marker";
+          start.textContent = (index + 1).toLocaleString();
+
+          new mapboxgl.Marker(start)
             .setLngLat(steps[0].maneuver.location)
             .addTo(map);
 
           if (index !== route[0].legs.length - 1) continue;
 
-          new mapboxgl.Marker()
+          const end = document.createElement("div");
+          end.className = "marker";
+          end.textContent = (index + 2).toLocaleString();
+
+          new mapboxgl.Marker(end)
             .setLngLat(steps[steps.length - 1].maneuver.location)
             .addTo(map);
         }
@@ -156,7 +165,44 @@ export default function Map() {
         </IconButton>
       </div>
       <div className={styles.map} id="map" />
-      <div className={styles.sideBar}></div>
+      <div className={styles.sideBar}>
+        <div className={styles.waypoint}>
+          <div className={styles.number}>1</div>
+          <div className={styles.text}>
+            <p className={styles.label}>8:30 AM</p>
+            <p className={styles.heading}>STAT 154</p>
+            <p className={styles.description}>Dwinelle Hall 117</p>
+          </div>
+        </div>
+        <div className={styles.leg}>
+          <Walking />
+          <div className={styles.value}>
+            <span className={styles.distance}>5 min.</span> (0.5 mi.)
+          </div>
+        </div>
+        <div className={styles.waypoint}>
+          <div className={styles.number}>2</div>
+          <div className={styles.text}>
+            <p className={styles.label}>8:30 AM</p>
+            <p className={styles.heading}>STAT 154</p>
+            <p className={styles.description}>Dwinelle Hall 117</p>
+          </div>
+        </div>
+        <div className={styles.leg}>
+          <Walking />
+          <div className={styles.value}>
+            <span className={styles.distance}>5 min.</span> (0.5 mi.)
+          </div>
+        </div>
+        <div className={styles.waypoint}>
+          <div className={styles.number}>3</div>
+          <div className={styles.text}>
+            <p className={styles.label}>8:30 AM</p>
+            <p className={styles.heading}>STAT 154</p>
+            <p className={styles.description}>Dwinelle Hall 117</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

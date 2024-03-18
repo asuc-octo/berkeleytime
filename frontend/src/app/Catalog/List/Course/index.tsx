@@ -7,8 +7,8 @@ import {
 } from "iconoir-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-import AverageGrade from "@/app/Catalog/AverageGrade";
-import Capacity from "@/app/Catalog/Capacity";
+import AverageGrade from "@/components/AverageGrade";
+import Capacity from "@/components/Capacity";
 import { ICatalogCourse, Semester } from "@/lib/api";
 
 import styles from "./Course.module.scss";
@@ -115,7 +115,7 @@ const Course = forwardRef<
                 {subject} {courseNumber}
               </p>
               <p className={styles.description}>
-                {isolated ? classes[0].title : courseTitle}
+                {isolated && classes[0].title ? classes[0].title : courseTitle}
               </p>
               <div className={styles.row}>
                 <AverageGrade averageGrade={gradeAverage} />
@@ -134,14 +134,19 @@ const Course = forwardRef<
                 </div>
               </div>
             </div>
-            <div className={styles.icon}>
-              {isolated ? (
-                <ArrowRight />
-              ) : expanded ? (
-                <ArrowUnionVertical />
-              ) : (
-                <ArrowSeparateVertical />
-              )}
+            <div className={styles.column}>
+              <div className={styles.icon}>
+                {isolated ? (
+                  <ArrowRight />
+                ) : expanded ? (
+                  <ArrowUnionVertical />
+                ) : (
+                  <ArrowSeparateVertical />
+                )}
+              </div>
+              {/*<div className={styles.bookmark}>
+                  <Bookmark />
+                </div>*/}
             </div>
           </div>
           {expanded &&
@@ -183,8 +188,13 @@ const Course = forwardRef<
                       </div>
                     </div>
                   </div>
-                  <div className={styles.icon}>
-                    <ArrowRight />
+                  <div className={styles.column}>
+                    <div className={styles.icon}>
+                      <ArrowRight />
+                    </div>
+                    {/*<div className={styles.bookmark}>
+                        <Bookmark />
+                      </div>*/}
                   </div>
                 </Link>
               )

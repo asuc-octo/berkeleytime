@@ -70,11 +70,18 @@ export default function AverageGrade({ averageGrade }: AverageGradeProps) {
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>Average grade</p>
-            <p className={styles.description}>
-              Students have received a <span style={{ color }}>{text}</span> in
-              this course on average based on performance across all semesters
-              this course has been offered.
-            </p>
+            {averageGrade ? (
+              <p className={styles.description}>
+                Students have received a <span style={{ color }}>{text}</span>{" "}
+                in this course on average based on performance across all
+                semesters this course has been offered.
+              </p>
+            ) : (
+              <p className={styles.description}>
+                Either this course has not been previously offered, or the
+                average grade is not available.
+              </p>
+            )}
           </div>
         </Tooltip.Content>
       </Tooltip.Portal>

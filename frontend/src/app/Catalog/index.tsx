@@ -24,7 +24,7 @@ export default function Catalog() {
   } = useParams();
 
   // TODO: Fetch available years
-  const currentYear = useMemo(() => (year && parseInt(year)) || 2023, [year]);
+  const currentYear = useMemo(() => (year && parseInt(year)) || 2022, [year]);
 
   // TODO: Fetch available semesters
   const currentSemester = useMemo(
@@ -32,7 +32,7 @@ export default function Catalog() {
       semester
         ? ((semester[0].toUpperCase() +
             semester.slice(1).toLowerCase()) as Semester)
-        : Semester.Fall,
+        : Semester.Spring,
     [semester]
   );
 

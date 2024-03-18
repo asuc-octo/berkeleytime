@@ -16,7 +16,7 @@
 
       .border {
         width: 8px;
-        background-color: var(--blue-500);
+        background-color: var(--purple-500);
         border-radius: 8px 0 0 8px;
       }
 
@@ -138,13 +138,8 @@
           .heading {
             font-weight: 700;
             color: var(--slate-900);
-            margin-bottom: 4px;
-          }
-    
-          .title {
-            color: var(--slate-900);
-            font-weight: 500;
-            margin-bottom: 4px;
+            margin-bottom: 8px;
+            line-height: 1;
           }
     
           .description {

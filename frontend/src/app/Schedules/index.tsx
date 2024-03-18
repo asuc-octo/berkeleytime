@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import classNames from "classnames";
 import {
@@ -12,77 +12,112 @@ import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
 
-import AverageGrade from "../Catalog/AverageGrade";
-import Capacity from "../Catalog/Capacity";
+import AverageGrade from "../../components/AverageGrade";
+import Capacity from "../../components/Capacity";
 import Calendar from "./Calendar";
+import { getY } from "./Calendar/calendar";
 import Map from "./Map";
 import styles from "./Schedules.module.scss";
-import { Event } from "./types";
+import { IEvent } from "./types";
 
-const placeholderEvent = [
+const exampleEventPreview: IEvent = {
+  days: [false, true, false, true, false, true, false],
+  startTime: "12:00",
+  endTime: "13:59",
+  kind: "Lecture",
+  color: "var(--pink-500)",
+  name: "AFRICAM 279",
+  preview: true,
+  id: 0,
+};
+
+const exampleEvents: IEvent[] = [
   {
-    days: [false, true, false, true, false, true, false],
-    startTime: "12:00",
-    endTime: "14:00",
-    kind: "Lecture",
-    color: "var(--pink-500)",
-    placeholder: true,
-    id: 2,
+    days: [true, true, true, true, true, true, true],
+    startTime: "6:00",
+    endTime: "8:59",
+    kind: "Custom event",
+    name: "Sleep",
+    color: "var(--neutral-500)",
+    id: 1,
   },
-];
-
-const events: Event[] = [
   {
     days: [false, true, false, true, false, true, false],
     startTime: "11:00",
-    endTime: "13:00",
-    kind: "Lecture",
-    color: "var(--purple-500)",
-    id: 0,
-  },
-  {
-    days: [false, true, false, true, false, true, false],
-    startTime: "13:00",
-    endTime: "15:00",
-    kind: "Lecture",
-    color: "var(--green-500)",
+    endTime: "12:59",
+    kind: "COM LIT R1A",
+    color: "var(--orange-500)",
+    name: "AFRICAM 279",
     id: 3,
   },
   {
     days: [false, true, false, true, false, true, false],
     startTime: "13:00",
-    endTime: "15:00",
+    endTime: "14:59",
+    kind: "Lecture",
+    color: "var(--yellow-500)",
+    name: "AFRICAM 279",
+    id: 4,
+  },
+  {
+    days: [false, true, false, true, false, true, false],
+    startTime: "13:00",
+    endTime: "14:59",
     kind: "Lecture",
     color: "var(--green-500)",
-    id: 4,
+    name: "AFRICAM 279",
+    id: 5,
   },
   {
     days: [false, false, true, false, true, false, false],
     startTime: "15:00",
-    endTime: "18:00",
+    endTime: "17:59",
     kind: "Discussion",
     color: "var(--violet-500)",
-    id: 1,
+    name: "AFRICAM 279",
+    id: 6,
+  },
+  {
+    days: [true, true, true, true, true, true, true],
+    startTime: "22:00",
+    endTime: "23:59",
+    kind: "Custom event",
+    name: "Sleep",
+    color: "var(--neutral-500)",
+    id: 7,
   },
 ];
 
 export default function Schedules() {
   const [tab, setTab] = useState(0);
   const [expanded, setExpanded] = useState(false);
-  const [hovered, setHovered] = useState(false);
+  const [boundary, setBoundary] = useState<HTMLDivElement | null>(null);
+  const [events, setEvents] = useState(exampleEvents);
 
-  const updatedEvents = useMemo(
-    () => (hovered ? [...events, ...placeholderEvent] : events),
-    [hovered]
-  );
+  const handleMouseEnter = () => {
+    setEvents((events) => [...events, exampleEventPreview]);
+
+    const top = getY(exampleEventPreview.startTime);
+    const bottom = getY(exampleEventPreview.endTime);
+
+    boundary?.scrollTo({
+      // Does not account for the height of the header
+      top: top + (bottom - top) / 2 - boundary.clientHeight / 2,
+      behavior: "smooth",
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setEvents((events) => events.filter((event) => !event.preview));
+  };
 
   return (
     <div className={styles.root}>
       <div className={styles.sideBar}>
         <div
           className={styles.course}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           <div className={styles.border} />
           <div className={styles.body}>
@@ -143,11 +178,11 @@ export default function Schedules() {
         <div className={styles.header}>
           <div className={styles.menu}>
             <MenuItem active={tab === 0} onClick={() => setTab(0)}>
-              Sections
+              Schedule
             </MenuItem>
             {/*<MenuItem>Exams</MenuItem>*/}
             <MenuItem active={tab === 1} onClick={() => setTab(1)}>
-              Map
+              Itinerary
             </MenuItem>
           </div>
           <Button>
@@ -159,8 +194,11 @@ export default function Schedules() {
           </IconButton>
         </div>
         {tab === 0 ? (
-          <div className={styles.sections}>
-            <Calendar events={updatedEvents} />
+          <div
+            className={styles.sections}
+            ref={(element) => setBoundary(element)}
+          >
+            <Calendar boundary={boundary} events={events} />
           </div>
         ) : (
           <div className={styles.map}>

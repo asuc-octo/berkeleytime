@@ -1,10 +1,12 @@
 import { MouseEvent, useMemo, useRef, useState } from "react";
 
-import { Event } from "../types";
+import { IEvent } from "../types";
 import styles from "./Calendar.module.scss";
+import Event from "./Event";
+import { getY } from "./calendar";
 
 const adjustAttachedEvents = (
-  relevantEvents: Event[],
+  relevantEvents: IEvent[],
   attachedEvents: number[],
   minutes: number[][],
   positions: Record<number, [number, number]>
@@ -36,17 +38,13 @@ const adjustAttachedEvents = (
   }
 };
 
-const getY = (time: string) => {
-  const [hour, minute] = time.split(":");
-  return (parseInt(hour) - 6) * 60 + parseInt(minute);
-};
-
 interface CalendarProps {
-  events: Event[];
+  events: IEvent[];
+  boundary: HTMLDivElement | null;
 }
 
-export default function Calendar({ events }: CalendarProps) {
-  const ref = useRef<HTMLDivElement>(null);
+export default function Calendar({ events, boundary }: CalendarProps) {
+  const viewRef = useRef<HTMLDivElement>(null);
   const [y, setY] = useState<number | null>(null);
 
   const days = useMemo(
@@ -99,7 +97,6 @@ export default function Calendar({ events }: CalendarProps) {
 
           for (let i = top; i < top + height; i++) {
             minutes[i].push(event.id);
-            console.log(minutes[i]);
           }
         }
 
@@ -117,7 +114,7 @@ export default function Calendar({ events }: CalendarProps) {
   );
 
   const currentTime = useMemo(() => {
-    if (!ref.current || !y) return;
+    if (!viewRef.current || !y) return;
 
     const hour = (Math.floor(y / 60) + 6) % 12 || 12;
     const minute = Math.floor(y % 60);
@@ -126,13 +123,13 @@ export default function Calendar({ events }: CalendarProps) {
   }, [y]);
 
   const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (!viewRef.current) return;
 
     const y = Math.max(
       15,
       Math.min(
-        event.clientY - ref.current.getBoundingClientRect().top,
-        ref.current.clientHeight - 15
+        event.clientY - viewRef.current.getBoundingClientRect().top,
+        viewRef.current.clientHeight - 15
       )
     );
 
@@ -159,7 +156,7 @@ export default function Calendar({ events }: CalendarProps) {
       </div>
       <div
         className={styles.view}
-        ref={ref}
+        ref={viewRef}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -183,41 +180,9 @@ export default function Calendar({ events }: CalendarProps) {
               {[...Array(18)].map((_, hour) => (
                 <div key={hour} className={styles.hour}></div>
               ))}
-              {events.map(
-                (
-                  {
-                    kind,
-                    startTime,
-                    columns,
-                    position,
-                    endTime,
-                    color,
-                    placeholder,
-                  },
-                  index
-                ) => {
-                  const top = getY(startTime);
-                  const height = getY(endTime) - top;
-
-                  return (
-                    <div
-                      key={index}
-                      className={styles.event}
-                      style={{
-                        top: `${top}px`,
-                        backgroundColor: color,
-                        opacity: placeholder ? 0.25 : 1,
-                        height: `${height}px`,
-                        width: `calc((100% - 8px) / ${columns})`,
-                        left: `calc(4px + (((100% - 8px) / ${columns}) * ${position})`,
-                      }}
-                    >
-                      <div className={styles.heading}>AFRICAM 294</div>
-                      <div className={styles.description}>{kind}</div>
-                    </div>
-                  );
-                }
-              )}
+              {events.map((event) => (
+                <Event key={event.id} {...event} boundary={boundary} />
+              ))}
               {y && <div className={styles.line} style={{ top: `${y}px` }} />}
             </div>
           ))}
