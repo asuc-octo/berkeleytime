@@ -131,4 +131,10 @@
   color: white;
   font-weight: 700;
   font-size: 14px;
+
+  &:global(.marker-red) {
+    background-color: var(--red-500);
+    width: 8px;
+    height: 8px;
+  }
 }
