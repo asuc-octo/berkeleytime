@@ -15,6 +15,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
+import { buildings } from "@/lib/location";
 
 import styles from "./Map.module.scss";
 
@@ -124,6 +125,22 @@ export default function Map() {
         map.removeLayer("directions-destination-point");
         map.removeLayer("directions-origin-label");
         map.removeLayer("directions-destination-label");
+
+        for (const building in buildings) {
+          const { location } = buildings[building];
+
+          if (!location) continue;
+
+          const el = document.createElement("div");
+          el.className = "marker marker-red";
+
+          new mapboxgl.Marker(el).setLngLat(location).addTo(map);
+        }
+
+        console.log(
+          Object.values(buildings).filter((building) => building.location)
+            .length
+        );
       });
 
       directions.setOrigin([37.871545326906684, -122.26222372689105].reverse());
