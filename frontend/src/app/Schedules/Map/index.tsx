@@ -141,6 +141,35 @@ export default function Map() {
           Object.values(buildings).filter((building) => building.location)
             .length
         );
+
+        map.addSource("campus", {
+          type: "geojson",
+          data: "/geojson/campus.geojson",
+        });
+
+        map.addLayer({
+          id: "campus-fill",
+          type: "line",
+          source: "campus",
+          layout: {},
+          paint: {
+            "line-width": 1,
+            "line-color": "#3b82f6",
+            "line-opacity": 0.5,
+            "line-dasharray": [2, 2],
+          },
+        });
+
+        map.addLayer({
+          id: "campus-line",
+          type: "fill",
+          source: "campus",
+          layout: {},
+          paint: {
+            "fill-color": "#3b82f6",
+            "fill-opacity": 0.05,
+          },
+        });
       });
 
       directions.setOrigin([37.871545326906684, -122.26222372689105].reverse());
