@@ -16,6 +16,7 @@
 	},
 	"dependencies": {
 		"@apollo/client": "^3.9.5",
+		"@floating-ui/dom": "^1.6.3",
 		"@mapbox/mapbox-gl-directions": "^4.3.0",
 		"@radix-ui/react-tooltip": "^1.0.7",
 		"@tanstack/react-virtual": "^3.1.3",

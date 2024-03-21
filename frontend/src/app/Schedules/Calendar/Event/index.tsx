@@ -9,7 +9,7 @@ import styles from "./Event.module.scss";
 interface EventProps {
   columns: number;
   position: number;
-  boundary: HTMLDivElement | null;
+  boundary: Element | null;
 }
 
 export default function Event({

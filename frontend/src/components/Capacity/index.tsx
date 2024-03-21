@@ -28,6 +28,10 @@ export default function Capacity({
   waitlistCount,
   waitlistCapacity,
 }: CapacityProps) {
+  // waitlistCount and waitlistCapacity are not guaranteed to be defined
+  waitlistCount = waitlistCount ?? 0;
+  waitlistCapacity = waitlistCapacity ?? 0;
+
   const color = useMemo(() => getColor(count, capacity), [count, capacity]);
 
   const waitlistColor = useMemo(
@@ -66,7 +70,10 @@ export default function Capacity({
                 </span>
                 &nbsp;(
                 <span style={{ color }}>
-                  {Math.round((count / capacity) * 100).toLocaleString()}%
+                  {capacity === 0
+                    ? 0
+                    : Math.round((count / capacity) * 100).toLocaleString()}
+                  %
                 </span>
                 )
               </p>
@@ -76,15 +83,17 @@ export default function Capacity({
               <p className={styles.key}>Waitlisted</p>
               <p>
                 <span style={{ color: waitlistColor }}>
-                  {waitlistCount?.toLocaleString() ?? 0}
+                  {waitlistCount.toLocaleString()}
                 </span>
                 &nbsp;/&nbsp;
-                {waitlistCapacity?.toLocaleString() ?? 0}
+                {waitlistCapacity.toLocaleString()}
                 &nbsp;(
                 <span style={{ color: waitlistColor }}>
-                  {Math.round(
-                    (waitlistCount / waitlistCapacity) * 100
-                  ).toLocaleString()}
+                  {waitlistCapacity === 0
+                    ? 0
+                    : Math.round(
+                        (waitlistCount / waitlistCapacity) * 100
+                      ).toLocaleString()}
                   %
                 </span>
                 )
