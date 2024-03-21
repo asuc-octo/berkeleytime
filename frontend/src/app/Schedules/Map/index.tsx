@@ -1,5 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import {
+  autoUpdate,
+  computePosition,
+  flip,
+  offset,
+  shift,
+} from "@floating-ui/dom";
 // @ts-expect-error - MapboxDirections does not provide types
 import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
 import "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions.css";
@@ -29,9 +36,19 @@ const OFFSET: [number, number] = [-156, 0];
 
 mapboxgl.accessToken = TOKEN;
 
-export default function Map() {
+interface MapProps {
+  boundary: Element | null;
+}
+
+export default function Map({ boundary }: MapProps) {
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
+
+  const waypoints = useMemo(() => {
+    return Object.keys(buildings)
+      .filter((key) => ["Haas Faculty Wing", "Pimentel", "Cory"].includes(key))
+      .map((key) => buildings[key]);
+  }, []);
 
   const handleClick = () => {
     // Calculate the center based on the markers and center the map
@@ -46,144 +63,177 @@ export default function Map() {
   };
 
   useEffect(() => {
+    if (!boundary) return;
+
+    let destructor: (() => void) | null = null;
+
     const map = new mapboxgl.Map({
-      container: "map", // container ID
-      style: "mapbox://styles/mathhulk/clbznbvgs000314k8gtwa9q60", // style URL
-      center: [-122.2592173, 37.8721508], // starting position [lng, lat]
-      zoom: DEFAULT_ZOOM, // starting zoom
+      container: "map",
+      style: "mapbox://styles/mathhulk/clbznbvgs000314k8gtwa9q60",
+      center: [-122.2592173, 37.8721508],
+      zoom: DEFAULT_ZOOM,
       minZoom: MIN_ZOOM,
       maxZoom: MAX_ZOOM,
     });
 
-    map.on("load", () => {
-      const directions = new MapboxDirections({
-        styles: [
-          {
-            id: "directions-route-line-casing",
-            type: "line",
-            source: "directions",
-            layout: {
-              "line-cap": "round",
-              "line-join": "round",
-            },
-            paint: {
-              "line-color": "#3b82f6",
-              "line-width": 4,
-            },
-            filter: [
-              "all",
-              ["in", "$type", "LineString"],
-              ["in", "route", "selected"],
-            ],
-          },
-        ],
-        accessToken: TOKEN,
-        unit: "imperial",
-        profile: "mapbox/walking",
-        controls: {
-          inputs: false,
-          instructions: false,
-          profileSwitcher: false,
-        },
-        interactive: false,
-        instructions: false,
-      });
-
-      // @ts-expect-error - MapboxDirections does not provide types
-      directions.on("route", ({ route }) => {
-        for (let index = 0; index < route[0].legs.length; index++) {
-          const { steps } = route[0].legs[index];
-
-          const start = document.createElement("div");
-          start.className = "marker";
-          start.textContent = (index + 1).toLocaleString();
-
-          new mapboxgl.Marker(start)
-            .setLngLat(steps[0].maneuver.location)
-            .addTo(map);
-
-          if (index !== route[0].legs.length - 1) continue;
-
-          const end = document.createElement("div");
-          end.className = "marker";
-          end.textContent = (index + 2).toLocaleString();
-
-          new mapboxgl.Marker(end)
-            .setLngLat(steps[steps.length - 1].maneuver.location)
-            .addTo(map);
-        }
-
-        map.panTo(route[0].legs[0].steps[0].maneuver.location, {
-          offset: OFFSET,
-        });
-
-        // Remove unnecessary layers
-        map.removeLayer("directions-route-line");
-        map.removeLayer("directions-waypoint-point-casing");
-        map.removeLayer("directions-waypoint-point");
-        map.removeLayer("directions-origin-point");
-        map.removeLayer("directions-destination-point");
-        map.removeLayer("directions-origin-label");
-        map.removeLayer("directions-destination-label");
-
-        for (const building in buildings) {
-          const { location } = buildings[building];
-
-          if (!location) continue;
-
-          const el = document.createElement("div");
-          el.className = "marker marker-red";
-
-          new mapboxgl.Marker(el).setLngLat(location).addTo(map);
-        }
-
-        console.log(
-          Object.values(buildings).filter((building) => building.location)
-            .length
-        );
-
-        map.addSource("campus", {
-          type: "geojson",
-          data: "/geojson/campus.geojson",
-        });
-
-        map.addLayer({
-          id: "campus-fill",
+    const directions = new MapboxDirections({
+      /*styles: [
+        {
+          id: "directions-route-line-casing",
           type: "line",
-          source: "campus",
-          layout: {},
-          paint: {
-            "line-width": 1,
-            "line-color": "#3b82f6",
-            "line-opacity": 0.5,
-            "line-dasharray": [2, 2],
+          source: "directions",
+          layout: {
+            "line-cap": "round",
+            "line-join": "round",
           },
+          paint: {
+            "line-color": "#3b82f6",
+            "line-width": 4,
+          },
+          filter: [
+            "all",
+            ["in", "$type", "LineString"],
+            ["in", "route", "selected"],
+          ],
+        },
+      ],*/
+      accessToken: TOKEN,
+      unit: "imperial",
+      profile: "mapbox/walking",
+      /*controls: {
+        inputs: false,
+        instructions: false,
+        profileSwitcher: false,
+      },
+      interactive: false,
+      instructions: false,*/
+    });
+
+    // directions.setOrigin(waypoints[0].location);
+    // directions.setDestination(waypoints[2].location);
+
+    map.addControl(directions);
+
+    // @ts-expect-error - MapboxDirections does not provide types
+    directions.on("route", ({ route }) => {
+      console.log(route);
+
+      /*for (let index = 0; index < route[0].legs.length; index++) {
+        const { steps } = route[0].legs[index];
+
+        const start = document.createElement("div");
+        start.className = "marker";
+        start.textContent = (index + 1).toLocaleString();
+
+        const tooltip = document.createElement("div");
+        tooltip.className = "tooltip";
+        tooltip.textContent = "Stop";
+
+        new mapboxgl.Marker(start)
+          .setLngLat(steps[0].maneuver.location)
+          .addTo(map);
+
+        const showTooltip = () => {
+          document.body.appendChild(tooltip);
+
+          destructor = autoUpdate(
+            start,
+            tooltip,
+            () => {
+              computePosition(start, tooltip, {
+                placement: "top",
+                middleware: [
+                  flip(),
+                  offset(8),
+                  shift({ padding: 8, boundary }),
+                ],
+              }).then(({ x, y }) => {
+                Object.assign(tooltip.style, {
+                  left: `${x}px`,
+                  top: `${y}px`,
+                });
+              });
+            },
+            {
+              animationFrame: true,
+            }
+          );
+        };
+
+        const hideTooltip = () => {
+          tooltip.remove();
+
+          destructor?.();
+        };
+
+        [
+          ["mouseenter", showTooltip],
+          ["mouseleave", hideTooltip],
+          ["focus", showTooltip],
+          ["blur", hideTooltip],
+        ].forEach(([event, listener]) => {
+          start.addEventListener(
+            event as keyof HTMLElementEventMap,
+            listener as () => void
+          );
         });
 
-        map.addLayer({
-          id: "campus-line",
-          type: "fill",
-          source: "campus",
-          layout: {},
-          paint: {
-            "fill-color": "#3b82f6",
-            "fill-opacity": 0.05,
-          },
-        });
+        if (index !== route[0].legs.length - 1) continue;
+
+        const end = document.createElement("div");
+        end.className = "marker";
+        end.textContent = (index + 2).toLocaleString();
+
+        new mapboxgl.Marker(end)
+          .setLngLat(steps[steps.length - 1].maneuver.location)
+          .addTo(map);
+      }
+
+      map.panTo(route[0].legs[0].steps[0].maneuver.location, {
+        offset: OFFSET,
       });
 
-      directions.setOrigin([37.871545326906684, -122.26222372689105].reverse());
+      // Remove unnecessary layers
+      /*map.removeLayer("directions-route-line");
+      map.removeLayer("directions-waypoint-point-casing");
+      map.removeLayer("directions-waypoint-point");
+      map.removeLayer("directions-origin-point");
+      map.removeLayer("directions-destination-point");
+      map.removeLayer("directions-origin-label");
+      map.removeLayer("directions-destination-label");
 
-      directions.addWaypoint(
-        1,
-        [37.87070827953252, -122.2582083180739].reverse()
-      );
+      console.log(map.getStyle().layers);*/
+    });
 
-      directions.setDestination(
-        [37.873703864492775, -122.25764403596905].reverse()
-      );
+    map.on("load", async () => {
+      map.addSource("campus", {
+        type: "geojson",
+        data: "/geojson/campus.geojson",
+      });
 
-      map.addControl(directions, "top-left");
+      map.addLayer({
+        id: "campus-fill",
+        type: "line",
+        source: "campus",
+        layout: {},
+        paint: {
+          "line-width": 1,
+          "line-color": "#3b82f6",
+          "line-opacity": 0.5,
+          "line-dasharray": [2, 2],
+        },
+      });
+
+      map.addLayer({
+        id: "campus-line",
+        type: "fill",
+        source: "campus",
+        layout: {},
+        paint: {
+          "fill-color": "#3b82f6",
+          "fill-opacity": 0.05,
+        },
+      });
     });
 
     map.on("zoomend", () => {
@@ -191,7 +241,7 @@ export default function Map() {
     });
 
     setMap(map);
-  }, []);
+  }, [boundary, waypoints]);
 
   return (
     <div className={styles.root}>

@@ -138,3 +138,23 @@
     height: 8px;
   }
 }
+
+:global(.tooltip) {
+  position: absolute;
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--neutral-900);
+  // box-shadow: 0 4px 64px var(--gray-200);
+  width: 256px;
+  animation: fadeIn 100ms ease-in;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

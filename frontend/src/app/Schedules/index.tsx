@@ -193,18 +193,16 @@ export default function Schedules() {
             <MoreVert />
           </IconButton>
         </div>
-        {tab === 0 ? (
-          <div
-            className={styles.sections}
-            ref={(element) => setBoundary(element)}
-          >
+        <div
+          className={styles.boundary}
+          ref={(element) => setBoundary(element)}
+        >
+          {tab === 0 ? (
             <Calendar boundary={boundary} events={events} />
-          </div>
-        ) : (
-          <div className={styles.map}>
-            <Map />
-          </div>
-        )}
+          ) : (
+            <Map boundary={boundary} />
+          )}
+        </div>
       </div>
     </div>
   );

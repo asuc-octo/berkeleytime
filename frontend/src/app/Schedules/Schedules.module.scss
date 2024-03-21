@@ -184,14 +184,9 @@
       }
     }
 
-    .sections {
+    .boundary {
       flex-grow: 1;
       overflow: auto;
-    }
-
-    .map {
-      flex-grow: 1;
-      overflow: hidden;
     }
   }
 }

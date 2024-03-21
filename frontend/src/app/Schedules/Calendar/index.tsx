@@ -40,7 +40,7 @@ const adjustAttachedEvents = (
 
 interface CalendarProps {
   events: IEvent[];
-  boundary: HTMLDivElement | null;
+  boundary: Element | null;
 }
 
 export default function Calendar({ events, boundary }: CalendarProps) {
