@@ -1,0 +1,254 @@
+:root {
+  --primary-text: #000000;
+  --secondary-text: #8a8a8a;
+  --line-color: #C7C7C7;
+  --medium-bold: 500;
+}
+
+
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  background-color: var(--slate-50);
+  // background-color: inherit;
+  align-items: center;
+
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  color: #383838;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  height: 20vh;
+  width: 100%;
+  padding-left: 5%;
+  padding-top: 6vh;
+}
+
+.header h2 {
+  font-weight: 700;
+  font-size: 80px;
+  text-align: center;
+  color: var(--primary-text);
+}
+
+.header h3 {
+  font-weight: var(--medium-bold);
+  font-size: 28px;
+  text-align: center;
+  color: var(--secondary-text);
+  margin-top: 26px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 100%;
+  padding-left: 5%;
+}
+
+.body h2 {
+  font-size: 20;
+}
+
+.grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  margin-left: -25px; /* offset .card margin */
+  margin-top: 2.5vh;
+  margin-bottom: 5vh;
+
+  width: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: space-between;
+
+  height: 260px;
+  width: 470px;
+  padding: 24px;
+  margin: 25px;
+
+  background-color: #FFFFFF;
+  border: solid var(--line-color) 1px;
+  border-radius: 8px;
+}
+
+.card .icon {
+  height: 25px;
+  width: 25px;
+  border-radius: 4px;
+  background-color: #2F80ED;
+}
+
+.card h2, h3 {
+  font-weight: var(--medium-bold);
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--primary-text);
+}
+
+.card p {
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--secondary-text);
+}
+
+.card .text {
+  min-height: 60%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  // border: solid black 1px;
+}
+
+.card .text * {
+  margin-bottom: 8px;
+}
+
+.card .buttons {
+  display: flex;
+  flex-direction: row;
+}
+
+.card button {
+  font-weight: var(--medium-bold);
+  font-size: 14;
+  // line-height: 20px;
+  letter-spacing: -0.1px;
+
+  // height: 45px;
+  width: 105px;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-right: 8px;
+}
+
+.light {
+  background-color: #FFFFFF;
+  color: #2F80ED;
+  border: solid var(--line-color) 1px;
+}
+
+.dark {
+  background-color: #2F80ED;
+  color: #FFFFFF;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  // align-items: start;
+  height: 30vh;
+  width: 100%;
+  padding: 0 5%;
+}
+
+.footer h2 {
+  font-size: 20;
+  color: var(--primary-text);
+}
+
+.footer p {
+  font-size: 14;
+  color: var(--secondary-text);
+}
+
+.footer button {
+  font-weight: var(--medium-bold);
+  font-size: 14;
+  // line-height: 20px;
+  letter-spacing: -0.1px;
+
+  // height: 45px;
+  width: 150px;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-right: 8px;
+}
+
+.footer .left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 40%;
+  height: 20vh;
+}
+
+.footer .right {
+  width: 40%;
+  height: 20vh;
+
+  border: solid black 1px;
+}
+
+
+
+.hr {
+  height: 2px;
+  width: 95%;
+  border-radius: 1px;
+  background-color: var(--line-color);
+  margin: 5vh 0;
+}
+
+
+// .log_col {
+//   display: flex;
+//   flex-direction: column;
+//   width: 100%;
+//   align-items: center;
+// }
+//
+// .log {
+//   flex: 0 0 50%;
+//   max-width: 50%;
+//   margin-bottom: 48px;
+//   box-sizing: border-box;
+//   display: block;
+// }
+//
+// .log h2 {
+//   font-size: 16px;
+//   margin-bottom: 12px;
+//   line-height: 150%;
+// }
+//
+// .log h3 {
+//   font-weight: 700;
+//   font-size: 18px;
+//   line-height: 150%;
+//   margin-bottom: 18px;
+// }
+//
+// .log ul {
+//   font-size: 16px;
+//   line-height: 150%;
+//   color: #535353;
+//   padding-left: 0;
+//   margin-bottom: 16px;
+//   list-style-position: outside;
+//   margin-left: 28px;
+// }
+//
+// .log li {
+//   margin: 8pt 0;
+// }
+//
