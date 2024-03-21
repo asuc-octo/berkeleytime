@@ -5,15 +5,14 @@
   --medium-bold: 500;
 }
 
-
 .root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
   margin: 0;
-  background-color: var(--slate-50);
-  // background-color: inherit;
+  // background-color: var(--slate-50);
+  background-color: inherit;
   align-items: center;
 
   font-family: Inter, sans-serif;
@@ -199,8 +198,6 @@
   border: solid black 1px;
 }
 
-
-
 .hr {
   height: 2px;
   width: 95%;
@@ -208,47 +205,3 @@
   background-color: var(--line-color);
   margin: 5vh 0;
 }
-
-
-// .log_col {
-//   display: flex;
-//   flex-direction: column;
-//   width: 100%;
-//   align-items: center;
-// }
-//
-// .log {
-//   flex: 0 0 50%;
-//   max-width: 50%;
-//   margin-bottom: 48px;
-//   box-sizing: border-box;
-//   display: block;
-// }
-//
-// .log h2 {
-//   font-size: 16px;
-//   margin-bottom: 12px;
-//   line-height: 150%;
-// }
-//
-// .log h3 {
-//   font-weight: 700;
-//   font-size: 18px;
-//   line-height: 150%;
-//   margin-bottom: 18px;
-// }
-//
-// .log ul {
-//   font-size: 16px;
-//   line-height: 150%;
-//   color: #535353;
-//   padding-left: 0;
-//   margin-bottom: 16px;
-//   list-style-position: outside;
-//   margin-left: 28px;
-// }
-//
-// .log li {
-//   margin: 8pt 0;
-// }
-//
