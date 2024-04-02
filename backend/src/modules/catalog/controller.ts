@@ -11,7 +11,7 @@ import { isNil } from "lodash";
 import { GraphQLResolveInfo } from "graphql";
 import { getChildren } from "../../utils/graphql";
 
-function matchCsCourseId(id: any) {
+export function matchCsCourseId(id: any) {
     return {
         $elemMatch: {
             type: "cs-course-id",
@@ -261,4 +261,11 @@ export function getCourseList(): any {
         .group({ _id: { subject: "$classSubjectArea.code", number: "$catalogNumber.formatted" } })
         .sort({ "_id.subject": 1, "_id.number": 1 })
         .project({ _id: 0, subject: "$_id.subject", number: "$_id.number" })
+}
+
+export function getCourseJSONList(): any {
+    return CourseModel.aggregate()
+        .group({ _id: { subject: "$classSubjectArea.code", number: "$catalogNumber.formatted" } })
+        .sort({ "_id.subject": 1, "_id.number": 1 })
+        .project({ _id: 0, subject: "$_id.subject", number: "$_id.number", classString: { $concat: ["$_id.subject", " ", "$_id.number"] } })
 }

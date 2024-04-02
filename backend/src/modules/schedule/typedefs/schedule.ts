@@ -53,9 +53,9 @@ const typedef = gql`
     """
     is_public: Boolean!
     """
-    Courses, see the SelectedCourse type below
+    Classes, see the Class type below
     """
-    courses: [SelectedCourse!]
+    classes: [Class!]
     """
     Custom events, such as club meetings, that the user has added to their schedule.
     """
@@ -77,6 +77,94 @@ const typedef = gql`
     Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule.
     """
     secondary_section_IDs: [String!]
+  }
+
+  type Course {
+    classes(term: TermInput): [Class]!
+    crossListing: [Course]
+    sections(term: TermInput, primary: Boolean): [Section]!
+
+    description: String!
+    fromDate: String!
+    gradeAverage: Float
+    gradingBasis: String!
+    level: String!
+    number: String!
+    prereqs: String
+    subject: String!
+    subjectName: String!
+    title: String!
+    toDate: String!
+    
+    raw: JSONObject!
+    lastUpdated: ISODate!
+}
+
+  """
+  Data for a specific class in a specific semester. There may be more than one Class for a given Course in a given semester.
+  """
+  type Class {
+      course: Course!
+      primarySection: Section!
+      sections: [Section]!
+
+      description: String
+      enrollCount: Int!
+      enrollMax: Int!
+      number: String!
+      semester: Semester!
+      session: String!
+      status: String!
+      title: String
+      unitsMax: Float!
+      unitsMin: Float!
+      waitlistCount: Int!
+      waitlistMax: Int!
+      year: Int!
+      
+      raw: JSONObject!
+      lastUpdated: ISODate!
+  }
+
+  """
+  Sections are each associated with one Class. 
+  """
+  type Section {
+      class: Class!
+      course: Course!
+      enrollmentHistory: [EnrollmentDay]
+
+      ccn: Int!
+      dateEnd: String
+      dateStart: String
+      days: [Boolean!]
+      enrollCount: Int!
+      enrollMax: Int!
+      instructors: [Instructor]
+      kind: String!
+      location: String
+      notes: String
+      number: String!
+      primary: Boolean!
+      timeEnd: String
+      timeStart: String
+      waitlistCount: Int!
+      waitlistMax: Int!
+
+      raw: JSONObject!
+      lastUpdated: ISODate!
+  }
+
+  type Instructor {
+      familyName: String!
+      givenName: String!
+  }
+
+  type EnrollmentDay {
+      enrollCount: Int!
+      enrollMax: Int!
+      waitlistCount: Int!
+      waitlistMax: Int!
   }
 
   type CustomEvent {

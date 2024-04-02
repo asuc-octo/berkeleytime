@@ -2,7 +2,7 @@ import * as Types from "../../../generated-types/graphql";
 import * as gm from "graphql-modules";
 export namespace CatalogModule {
   interface DefinedFields {
-    Query: 'course' | 'class' | 'section' | 'catalog' | 'courseList';
+    Query: 'course' | 'class' | 'section' | 'catalog' | 'courseList' | 'courseJSON';
     Course: 'classes' | 'crossListing' | 'sections' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'level' | 'number' | 'prereqs' | 'subject' | 'subjectName' | 'title' | 'toDate' | 'raw' | 'lastUpdated';
     Class: 'course' | 'primarySection' | 'sections' | 'description' | 'enrollCount' | 'enrollMax' | 'number' | 'semester' | 'session' | 'status' | 'title' | 'unitsMax' | 'unitsMin' | 'waitlistCount' | 'waitlistMax' | 'year' | 'raw' | 'lastUpdated';
     Section: 'class' | 'course' | 'enrollmentHistory' | 'ccn' | 'dateEnd' | 'dateStart' | 'days' | 'enrollCount' | 'enrollMax' | 'instructors' | 'kind' | 'location' | 'notes' | 'number' | 'primary' | 'timeEnd' | 'timeStart' | 'waitlistCount' | 'waitlistMax' | 'raw' | 'lastUpdated';
@@ -11,6 +11,7 @@ export namespace CatalogModule {
     CatalogItem: 'subject' | 'number' | 'title' | 'description' | 'classes' | 'gradeAverage' | 'lastUpdated';
     CatalogClass: 'number' | 'title' | 'description' | 'enrollCount' | 'enrollMax' | 'unitsMax' | 'unitsMin' | 'lastUpdated';
     CourseListItem: 'subject' | 'number';
+    CourseJSONItem: 'classString';
   };
   
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
@@ -20,6 +21,7 @@ export namespace CatalogModule {
   export type Section = Pick<Types.Section, DefinedFields['Section']>;
   export type CatalogItem = Pick<Types.CatalogItem, DefinedFields['CatalogItem']>;
   export type CourseListItem = Pick<Types.CourseListItem, DefinedFields['CourseListItem']>;
+  export type CourseJSONItem = Pick<Types.CourseJsonItem, DefinedFields['CourseJSONItem']>;
   export type JSONObject = Types.JsonObject;
   export type ISODate = Types.IsoDate;
   export type Semester = Types.Semester;
@@ -36,6 +38,7 @@ export namespace CatalogModule {
   export type CatalogItemResolvers = Pick<Types.CatalogItemResolvers, DefinedFields['CatalogItem'] | '__isTypeOf'>;
   export type CatalogClassResolvers = Pick<Types.CatalogClassResolvers, DefinedFields['CatalogClass'] | '__isTypeOf'>;
   export type CourseListItemResolvers = Pick<Types.CourseListItemResolvers, DefinedFields['CourseListItem'] | '__isTypeOf'>;
+  export type CourseJSONItemResolvers = Pick<Types.CourseJsonItemResolvers, DefinedFields['CourseJSONItem'] | '__isTypeOf'>;
   
   export interface Resolvers {
     Query?: QueryResolvers;
@@ -47,6 +50,7 @@ export namespace CatalogModule {
     CatalogItem?: CatalogItemResolvers;
     CatalogClass?: CatalogClassResolvers;
     CourseListItem?: CourseListItemResolvers;
+    CourseJSONItem?: CourseJSONItemResolvers;
   };
   
   export interface MiddlewareMap {
@@ -60,6 +64,7 @@ export namespace CatalogModule {
       section?: gm.Middleware[];
       catalog?: gm.Middleware[];
       courseList?: gm.Middleware[];
+      courseJSON?: gm.Middleware[];
     };
     Course?: {
       '*'?: gm.Middleware[];
@@ -162,6 +167,10 @@ export namespace CatalogModule {
       '*'?: gm.Middleware[];
       subject?: gm.Middleware[];
       number?: gm.Middleware[];
+    };
+    CourseJSONItem?: {
+      '*'?: gm.Middleware[];
+      classString?: gm.Middleware[];
     };
   };
 }

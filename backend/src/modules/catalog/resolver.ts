@@ -1,5 +1,5 @@
 import { CatalogModule } from "./generated-types/module-types";
-import { getCatalog, getClass, getClassById, getClassSections, getCourse, getCourseById, getCourseClasses, getCourseList, getCrossListings, getPrimarySection, getSection } from "./controller"
+import { getCatalog, getClass, getClassById, getClassSections, getCourse, getCourseById, getCourseClasses, getCourseList, getCrossListings, getPrimarySection, getSection, getCourseJSONList } from "./controller"
 
 const resolvers: CatalogModule.Resolvers = {
     Query: {
@@ -8,6 +8,7 @@ const resolvers: CatalogModule.Resolvers = {
         class: (_, args) => getClass(args.subject, args.courseNumber, args.term, args.classNumber),
         section: (_, args) => getSection(args.subject, args.courseNumber, args.term, args.classNumber, args.sectionNumber),
         courseList: getCourseList,
+        courseJSON: getCourseJSONList,
     },
 
     /*

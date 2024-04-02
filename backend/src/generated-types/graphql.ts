@@ -97,6 +97,11 @@ export type CourseSectionsArgs = {
   term?: InputMaybe<TermInput>;
 };
 
+export type CourseJsonItem = {
+  __typename?: 'CourseJSONItem';
+  classString: Scalars['String'];
+};
+
 export type CourseListItem = {
   __typename?: 'CourseListItem';
   number: Scalars['String'];
@@ -201,6 +206,7 @@ export type Query = {
   catalog?: Maybe<Array<Maybe<CatalogItem>>>;
   class?: Maybe<Class>;
   course?: Maybe<Course>;
+  courseJSON?: Maybe<Array<Maybe<CourseJsonItem>>>;
   /**
    * Get a list of all course names across all semesters.
    *
@@ -269,8 +275,8 @@ export type Schedule = {
   __typename?: 'Schedule';
   /** The ObjectID associated with the schedule record */
   _id?: Maybe<Scalars['ID']>;
-  /** Courses, see the SelectedCourse type below */
-  courses?: Maybe<Array<SelectedCourse>>;
+  /** Classes, see the Class type below */
+  classes?: Maybe<Array<Class>>;
   created: Scalars['String'];
   /** Identifier (probably email) for the user who created the schedule (such as oski@bereley.edu). */
   created_by: Scalars['String'];
@@ -457,6 +463,7 @@ export type ResolversTypes = {
   CatalogItem: ResolverTypeWrapper<CatalogItem>;
   Class: ResolverTypeWrapper<Class>;
   Course: ResolverTypeWrapper<Course>;
+  CourseJSONItem: ResolverTypeWrapper<CourseJsonItem>;
   CourseListItem: ResolverTypeWrapper<CourseListItem>;
   CustomEvent: ResolverTypeWrapper<CustomEvent>;
   CustomEventInput: CustomEventInput;
@@ -492,6 +499,7 @@ export type ResolversParentTypes = {
   CatalogItem: CatalogItem;
   Class: Class;
   Course: Course;
+  CourseJSONItem: CourseJsonItem;
   CourseListItem: CourseListItem;
   CustomEvent: CustomEvent;
   CustomEventInput: CustomEventInput;
@@ -588,6 +596,11 @@ export type CourseResolvers<ContextType = any, ParentType extends ResolversParen
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type CourseJsonItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CourseJSONItem'] = ResolversParentTypes['CourseJSONItem']> = {
+  classString?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type CourseListItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CourseListItem'] = ResolversParentTypes['CourseListItem']> = {
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -655,6 +668,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
   class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassArgs, 'classNumber' | 'courseNumber' | 'subject' | 'term'>>;
   course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCourseArgs, 'courseNumber' | 'subject'>>;
+  courseJSON?: Resolver<Maybe<Array<Maybe<ResolversTypes['CourseJSONItem']>>>, ParentType, ContextType>;
   courseList?: Resolver<Maybe<Array<Maybe<ResolversTypes['CourseListItem']>>>, ParentType, ContextType>;
   grade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradeArgs, 'courseNum' | 'subject'>>;
   ping?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -666,7 +680,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  courses?: Resolver<Maybe<Array<ResolversTypes['SelectedCourse']>>, ParentType, ContextType>;
+  classes?: Resolver<Maybe<Array<ResolversTypes['Class']>>, ParentType, ContextType>;
   created?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   custom_events?: Resolver<Maybe<Array<ResolversTypes['CustomEvent']>>, ParentType, ContextType>;
@@ -737,6 +751,7 @@ export type Resolvers<ContextType = any> = {
   CatalogItem?: CatalogItemResolvers<ContextType>;
   Class?: ClassResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
+  CourseJSONItem?: CourseJsonItemResolvers<ContextType>;
   CourseListItem?: CourseListItemResolvers<ContextType>;
   CustomEvent?: CustomEventResolvers<ContextType>;
   EnrollmentDay?: EnrollmentDayResolvers<ContextType>;

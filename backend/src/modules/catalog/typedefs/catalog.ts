@@ -19,6 +19,8 @@ type Query {
     Useful for searching for courses.
     """
     courseList: [CourseListItem]
+
+    courseJSON: [CourseJSONItem]
 }
 
 """
@@ -138,5 +140,9 @@ type CatalogClass {
 type CourseListItem {
     subject: String!
     number: String!
+}
+
+type CourseJSONItem {
+    classString: String!
 }
 `;
