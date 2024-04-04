@@ -11,6 +11,7 @@ CURRENT_SEMESTER_DISPLAY = 'Fall 2024'
 SIS_TERM_ID = 2248
 
 TELEBEARS = {
+    'catalog_release': datetime.datetime(2024, 4, 1),
     'phase1_start': datetime.datetime(2024, 4, 22),
     'phase1_end': datetime.datetime(2024, 6, 21),
     'phase2_start': datetime.datetime(2024, 7, 22),
@@ -39,4 +40,4 @@ TELEBEARS_JSON = {
     'adj_start_day': (TELEBEARS['adj_start'] - TELEBEARS['phase1_start']).days + 1,
 }
 
-TELEBEARS_ALREADY_STARTED = datetime.datetime.now() >= TELEBEARS['phase1_start']
+TELEBEARS_ALREADY_STARTED = datetime.datetime.now() >= TELEBEARS['catalog_release']
