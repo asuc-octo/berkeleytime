@@ -7,7 +7,7 @@ import { stringToTerm } from "../../utils/term";
 
 export function formatMetadata(data: any) {
     return {
-        lastUpdated: data._updated as Date,
+        lastUpdated: (!data._updated) ? data._updatedAt as Date : data._updated as Date,
         raw: data,
     }
 }
