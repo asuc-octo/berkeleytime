@@ -15,7 +15,7 @@ const SIS_SECTION_URL = 'https://gateway.api.berkeley.edu/sis/v1/classes/section
 
 const semToTermId = (s: SemesterType) => {
     // term-id is computed by dropping the century digit of the year, then adding the term code
-    const termMap: { [key: string] : number} = {'Fall': 8, 'Spring': 2, 'Summer': 5}
+    const termMap: { [key: string]: number } = { 'Fall': 8, 'Spring': 2, 'Summer': 5 }
     return `${Math.floor(s.year / 1000)}${s.year % 100}${termMap[s.term]}`
 }
 
@@ -31,13 +31,13 @@ const queryPages = async <T>(url: string, params: any, headers: any, field: stri
         let resp: AxiosResponse<SISResponse<T>>;
 
         try {
-            resp = await axios.get(url, { params: { 'page-number': page, ...params}, headers });
+            resp = await axios.get(url, { params: { 'page-number': page, ...params }, headers });
         } catch (err) {
             if (axios.isAxiosError(err) && err.response?.status === 404) {
                 break;
             } else {
                 console.log(`Unexpected err querying SIS API. Error: ${err}.`)
-                
+
                 if (retries > 0) {
                     retries--;
                     console.log(`Retrying...`)
@@ -45,7 +45,7 @@ const queryPages = async <T>(url: string, params: any, headers: any, field: stri
                 } else {
                     console.log(`Too many errors querying SIS API for courses. Terminating update...`)
                     throw err;
-                } 
+                }
             }
         }
 
@@ -71,7 +71,7 @@ const updateCourses = async () => {
     const courses = await queryPages<CourseType>(SIS_COURSE_URL, params, headers, 'courses');
 
     console.log("Updating database with new course data...")
-    
+
     const bulkOps = courses.map(c => ({
         replaceOne: {
             filter: { classDisplayName: c.classDisplayName },
@@ -95,7 +95,7 @@ const updateClasses = async () => {
 
     const activeSemesters = await SemesterModel.find({ active: true }).lean();
     const classes: ClassType[] = [];
-    
+
     for (const s of activeSemesters) {
         console.log(`Updating classses for ${s.term} ${s.year}...`)
 
@@ -132,7 +132,7 @@ const updateSections = async () => {
 
     const activeSemesters = await SemesterModel.find({ active: true }).lean();
     const sections: SectionType[] = [];
-    
+
     for (const s of activeSemesters) {
         console.log(`Updating sections for ${s.term} ${s.year}...`)
 
