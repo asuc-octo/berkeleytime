@@ -27,4 +27,4 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
 
-        ssh -o StrictHostKeyChecking=no -p root@hozer-51.ocf.berkeley.edu "echo 'SSH connection established!'"
+        ssh -o StrictHostKeyChecking=no -p 22 root@hozer-51.ocf.berkeley.edu "echo 'SSH connection established!'"
