@@ -10,13 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH into Hozer
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: hozer-51.ocf.berkeley.edu
-          username: root
-          key: ${{ secrets.SSH_KEY }}
-          script: | 
+      - name: SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh -i ~/.ssh/id_rsa root@hozer-51.ocf.berkeley.edu << EOF
             cd /berkeleytime
             git checkout master
             git pull
@@ -28,3 +27,4 @@ jobs:
             docker push octoberkeleytime/bt-frontend:latest
             kubectl rollout restart deployment bt-staging-app-backend
             kubectl rollout restart deployment bt-staging-app-frontend
+          EOF
