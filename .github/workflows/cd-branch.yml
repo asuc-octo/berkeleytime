@@ -14,10 +14,12 @@ jobs:
       options: --privileged
 
     steps:
-    - name: Install SSH client
+    - name: SSH into server
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY  }}
       run: |
-        apt-get update
-        apt-get install -y openssh-client
-    - name: Run SSH command
-      run: |
-        ssh -i ${{ secrets.SSH_KEY }} root@hozer-51.ocf.berkeley.edu "echo test"
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+        ssh -o StrictHostKeyChecking=no -p root@hozer-51.ocf.berkeley.edu "echo 'SSH connection established!'"
