@@ -45,6 +45,7 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
                 fromDate: { $lte: getTermStartMonth(term) },
             },
             {
+                _updatedAt: 1,
                 _updated: 1,
                 identifiers: 1,
                 title: 1,
