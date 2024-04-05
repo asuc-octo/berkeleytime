@@ -9,7 +9,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    container:
+      image: ubuntu:latest
+      options: --privileged
+
     steps:
+    - name: Install SSH client
+      run: |
+        apt-get update
+        apt-get install -y openssh-client
     - name: Run SSH command
       run: |
         ssh -i ${{ secrets.SSH_KEY }} root@hozer-51.ocf.berkeley.edu "echo test"
