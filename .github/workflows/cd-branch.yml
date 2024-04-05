@@ -10,26 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh -i ~/.ssh/id_rsa root@hozer-51.ocf.berkeley.edu << EOF
-            cd /berkeleytime
-            git checkout ${{ github.event.pull_request.head.sha }}
-            git pull
-            docker compose up --build -d
-            docker tag berkeleytime-backend octoberkeleytime/bt-backend:${{ github.event.pull_request.head.sha }}
-            docker tag berkeleytime-frontend octoberkeleytime/bt-frontend:${{ github.event.pull_request.head.sha }}
-            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker push octoberkeleytime/bt-backend:${{ github.event.pull_request.head.sha }}
-            docker push octoberkeleytime/bt-frontend:${{ github.event.pull_request.head.sha }}
-            helm install bt-dev-app ./app --namespace=bt \
-              --set host=${{ github.event.pull_request.head.sha }}.stanfurdtime.com \
-              --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
-              --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
-              --set nodeEnv=development \
-              --set frontend.image.tag=${{ github.event.pull_request.head.sha }} \
-              --set backend.image.tag=${{ github.event.pull_request.head.sha }}
-          EOF
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Install SSH client
+      run: apt-get update && apt-get install -y openssh-client
+
+    - name: Run SSH command
+      run: |
+        ssh -i ${{ secrets.SSH_KEY }} root@hozer-51.ocf.berkeley.edu "echo test"
