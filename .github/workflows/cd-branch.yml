@@ -11,7 +11,7 @@ jobs:
 
     steps:
     - name: Setup SSH Key
-      uses: webfactory/ssh-agent
+      uses: webfactory/ssh-agent@v0.9.0
       with:
         ssh-private-key: ${{ secrets.SSH_KEY }}
     - name: SSH into Hozer
