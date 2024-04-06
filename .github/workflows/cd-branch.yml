@@ -9,21 +9,27 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    container:
-      image: ubuntu:latest
-      options: --privileged
-
     steps:
-    - name: Install OpenSSH client
-      run: |
-        apt-get update
-        apt-get install -y openssh-client
-
-    - name: SSH into server
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY  }}
-      run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-        chmod 600 ~/.ssh/id_ed25519
-        ssh -o StrictHostKeyChecking=no -p 22 root@hozer-51.ocf.berkeley.edu "echo 'SSH connection established!'"
+      - name: SSH into Hozer
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: hozer-51.ocf.berkeley.edu
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          script: | 
+            cd /berkeleytime
+            git checkout ${{ github.event.pull_request.head.sha }}
+            git pull
+            docker compose up --build -d
+            docker tag berkeleytime-backend octoberkeleytime/bt-backend:${{ github.event.pull_request.head.sha }}
+            docker tag berkeleytime-frontend octoberkeleytime/bt-frontend:${{ github.event.pull_request.head.sha }}
+            docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            docker push octoberkeleytime/bt-backend:${{ github.event.pull_request.head.sha }}
+            docker push octoberkeleytime/bt-frontend:${{ github.event.pull_request.head.sha }}
+            helm install bt-dev-app ./app --namespace=bt \
+              --set host=${{ github.event.pull_request.head.sha }}.stanfurdtime.com \
+              --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+              --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
+              --set nodeEnv=development \
+              --set frontend.image.tag=${{ github.event.pull_request.head.sha }} \
+              --set backend.image.tag=${{ github.event.pull_request.head.sha }}
