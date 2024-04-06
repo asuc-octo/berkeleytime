@@ -16,4 +16,4 @@ jobs:
         ssh-private-key: ${{ secrets.SSH_KEY }}
     - name: SSH into Hozer
       run: |
-        ssh root@hozer-51.ocf.berkeley.edu "echo 'test'"
+        ssh root@hozer-51.ocf.berkeley.edu "cd /berkeleytime"
