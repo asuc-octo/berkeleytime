@@ -1,0 +1,26 @@
+name: 
+  Build Backend
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build Docker Image
+        run: docker build -t berkeleytime-backend .
+
+      - name: Save Docker Image as Tarball
+        run: docker save berkeleytime-backend:latest -o berkeleytime-backend.tar
+
+      - name: Upload Docker Image as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: backend
+          path: berkeleytime-backend.tar
