@@ -10,10 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Setup SSH Key
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_KEY }}
-    - name: SSH into Hozer
-      run: |
-        ssh root@hozer-51.ocf.berkeley.edu "cd /berkeleytime"
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+    - name: SSH into server
+      run: sshpass -p ${{ secrets.SSH_PASSWORD }} ssh root@hozer-51.ocf.berkeley.edu 'echo hello'
