@@ -13,8 +13,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: echo
+        run: pwd
+
       - name: Build Docker Image
-        run: docker build -t berkeleytime-frontend .
+        run: docker build -t berkeleytime-frontend ./frontend/
 
       - name: Save Docker Image as Tarball
         run: docker save berkeleytime-frontend:latest -o berkeleytime-frontend.tar
