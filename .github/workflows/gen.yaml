@@ -15,21 +15,18 @@ jobs:
         with:
           node-version: 12
 
-      - name: cd into /backend
-        run: cd backend
-
-      - name: npm install
-        run: npm install
-
-      - name: gen
-        run: npm run generate
+      - name: npm install and gen
+        working-directory: ./backend
+        run: |
+          npm install
+          npm run generate
 
       - name: test diff
         uses: tj-actions/verify-changed-files@v14
         id: test-diff
         with:
           files: |
-            **/generated-types/*.ts
+            ./backend/**/generated-types/*.ts
 
       - if: steps.test-diff.outputs.files_changed == 'true'
         run: |
