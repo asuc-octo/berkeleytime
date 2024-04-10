@@ -10,7 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install sshpass
-      run: sudo apt-get install -y sshpass
-    - name: SSH into server
-      run: sshpass -p ${{ secrets.SSH_PASSWORD }} ssh root@hozer-51.ocf.berkeley.edu 'echo hello'
+    - name: executing remote ssh commands using ssh key
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: hozer-51.ocf.berkeley.edu
+        username: root
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        script: whoami
