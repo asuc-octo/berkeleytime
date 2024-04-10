@@ -13,9 +13,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: cd into /backend
-        run: cd backend
-      - name: npm install
-        run: npm install
-      - name: lint
-        run: npm run lint
+      - name: npm install and lint
+        working-directory: ./backend
+        run: |
+          npm install
+          npm run lint
