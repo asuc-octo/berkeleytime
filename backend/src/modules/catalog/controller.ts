@@ -37,7 +37,7 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
         .find(
             {
                 identifiers: matchCsCourseId({ $in: Array.from(csCourseIds) }),
-                /* 
+                /*
                     The SIS toDate is unreliable so we can only
                     filter by fromDate and then sort to find the
                     most recent course.
@@ -69,8 +69,8 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
     if (children.includes("gradeAverage")) {
         const grades = await GradeModel.find(
             {
-                /* 
-                    No filters because an appropriately large filter 
+                /*
+                    No filters because an appropriately large filter
                     is actually significantly slower than no filter.
                 */
             },
@@ -81,7 +81,7 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
                 EnrollmentCnt: 1
             }
         ).lean()
-        
+
         for (const g of grades) {
             const key = `${g.CourseSubjectShortNm as string} ${g.CourseNumber as string}`
             if (key in gradesMap) {
@@ -113,11 +113,10 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
             // throw new Error(`Class ${c.course?.subjectArea?.code} ${c.course?.catalogNumber?.formatted}`
             //     + ` has a course id ${id} that doesn't exist for the ${term.semester} ${term.year} term.`)
 
-            // TODO: log
-
+            // TODO(production): log
             continue;
         }
-        
+
         catalog[id].classes.push(formatClass(c))
     }
 
