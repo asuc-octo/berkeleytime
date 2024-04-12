@@ -2,20 +2,18 @@ name:
   Deploy to Dev
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-  workflow_run:
-    workflows:
-      - "Build Frontend"
-      - "Build Backend"
-    types:
-      - completed
+    repository_dispatch:
+      types: [trigger-workflow]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Echo Params
+      run: |
+        echo "Subdomain: ${{ github.event.client_payload.param1 }}"
+        echo "Time to Live: ${{ github.event.client_payload.param2 }}"
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@v1.0.3
       with:
