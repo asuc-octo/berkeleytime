@@ -4,6 +4,12 @@ name:
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows:
+      - "Build Frontend"
+      - "Build Backend"
+    types:
+      - completed
 
 jobs:
   deploy:
