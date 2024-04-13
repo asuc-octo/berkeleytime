@@ -5,7 +5,7 @@ import Fuse from "fuse.js";
 import { Wind } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import { ICatalogCourse, Semester } from "@/lib/api";
+import { ICatalogCourse } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 import Course from "./Course";
@@ -88,28 +88,24 @@ const initializeFuse = (courses: ICatalogCourse[]) => {
   return new Fuse(list, options);
 };
 
-interface ECourse extends ICatalogCourse {
-  expanded: boolean;
-}
-
 interface ListProps {
   courses: ICatalogCourse[];
-  currentSemester: Semester;
-  currentYear: number;
+  setClass: (course: ICatalogCourse, number: string) => void;
 }
 
-export default function List({
-  courses,
-  currentSemester,
-  currentYear,
-}: ListProps) {
+export default function List({ courses, setClass }: ListProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // Note: The combined name property will be included in filteredCourses
-  const [filteredCourses, setFilteredCourses] = useState<ECourse[]>([]);
+  const currentQuery = useMemo(
+    () => searchParams.get("query") ?? "",
+    [searchParams]
+  );
 
-  const query = useMemo(() => searchParams.get("query"), [searchParams]);
+  // Note: The combined name (subject + number) property will be included in filteredCourses
+  const [filteredCourses, setFilteredCourses] = useState<ICatalogCourse[]>([]);
+
+  const [expandedCourses, setExpandedCourses] = useState<boolean[]>([]);
 
   const fuse = useMemo(() => initializeFuse(courses), [courses]);
 
@@ -117,27 +113,33 @@ export default function List({
     count: filteredCourses.length,
     getScrollElement: () => ref.current,
     estimateSize: () => 136,
-    paddingStart: 12,
+    paddingStart: 72,
   });
 
   const setExpanded = (index: number, expanded: boolean) => {
-    setFilteredCourses((filteredCourses) => {
-      const _filteredCourses = structuredClone(filteredCourses);
-      _filteredCourses[index].expanded = expanded;
-      return _filteredCourses;
+    setExpandedCourses((expandedCourses) => {
+      const _expandedCourses = structuredClone(expandedCourses);
+      _expandedCourses[index] = expanded;
+      return _expandedCourses;
     });
   };
 
+  const handleQueryChange = (value: string) => {
+    if (value) searchParams.set("query", value);
+    else searchParams.delete("query");
+    setSearchParams(searchParams);
+  };
+
   useEffect(() => {
-    const _filteredCourses = query
-      ? fuse.search(query).map(({ refIndex: index }) => ({
-          ...courses[index],
-          expanded: false,
-        }))
-      : courses.map((course) => ({ ...course, expanded: false }));
+    const _filteredCourses = currentQuery
+      ? fuse.search(currentQuery).map(({ refIndex }) => courses[refIndex])
+      : courses;
 
     setFilteredCourses(_filteredCourses);
-  }, [query, fuse, courses]);
+
+    // Close courses when filtered courses change
+    setExpandedCourses(new Array(_filteredCourses.length).fill(false));
+  }, [currentQuery, fuse, courses]);
 
   const items = virtualizer.getVirtualItems();
 
@@ -145,42 +147,61 @@ export default function List({
 
   return (
     <div className={styles.root} ref={ref}>
-      {items.length === 0 ? (
-        <div className={styles.empty}>
-          <Wind width={32} height={32} />
-          <div className={styles.text}>
-            <p className={styles.heading}>No courses found</p>
-            <p className={styles.description}>
-              Unfortunately, no courses could be found matching your search.
-              Please try again with a different query.
-            </p>
+      <div
+        className={styles.view}
+        style={{
+          height: totalSize,
+        }}
+      >
+        <div className={styles.header}>
+          <div className={styles.group}>
+            <input
+              className={styles.input}
+              type="text"
+              autoFocus
+              value={currentQuery}
+              onChange={(event) => handleQueryChange(event.target.value)}
+              placeholder="Search courses..."
+            />
+            <div className={styles.count}>
+              {filteredCourses.length.toLocaleString()}
+            </div>
           </div>
         </div>
-      ) : (
-        <div
-          className={styles.view}
-          style={{
-            height: totalSize,
-          }}
-        >
+        {items.length === 0 ? (
+          <div className={styles.placeholder}>
+            <Wind width={32} height={32} />
+            <div className={styles.text}>
+              <p className={styles.heading}>No courses found</p>
+              <p className={styles.description}>
+                Unfortunately, no courses could be found matching your search.
+                Please try again with a different query.
+              </p>
+            </div>
+          </div>
+        ) : (
           <div
             className={styles.body}
             style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
           >
-            {items.map(({ key, index }) => (
-              <Course
-                {...filteredCourses[index]}
-                semester={currentSemester}
-                year={currentYear}
-                data-index={index}
-                key={key}
-                ref={virtualizer.measureElement}
-                setExpanded={(expanded) => setExpanded(index, expanded)}
-              />
-            ))}
+            {items.map(({ key, index }) => {
+              const course = filteredCourses[index];
+
+              return (
+                <Course
+                  {...course}
+                  data-index={index}
+                  key={key}
+                  ref={virtualizer.measureElement}
+                  expanded={expandedCourses[index]}
+                  setExpanded={(expanded) => setExpanded(index, expanded)}
+                  setClass={(number) => setClass(course, number)}
+                />
+              );
+            })}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

@@ -1,17 +1,15 @@
 .root {
   padding: 24px;
-  background-color: var(--slate-50);
-  min-height: 100%;
   font-size: 14px;
 
   .label {
     margin-top: 24px;
-    color: var(--slate-400);
+    color: var(--label-color);
     line-height: 1;
   }
 
   .description {
-    color: var(--slate-500);
+    color: var(--paragraph-color);
     margin-top: 8px;
     line-height: 1.5;
   }

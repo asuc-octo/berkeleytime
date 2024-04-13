@@ -2,17 +2,17 @@
   border-radius: 4px;
   height: 32px;
   padding: 0 12px;
-  background-color: var(--neutral-900);
-  box-shadow: 0 4px 64px var(--gray-200);
+  background-color: var(--tooltip-color);
   animation: fadeIn 100ms ease-in;
   font-size: 14px;
   line-height: 1;
   color: white;
   display: flex;
   align-items: center;
+  z-index: 998;
 
   .arrow {
-    fill: var(--neutral-900);
+    fill: var(--tooltip-color);
   }
 }
 

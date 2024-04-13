@@ -26,13 +26,17 @@
 .content {
   border-radius: 4px;
   padding: 12px;
-  background-color: var(--neutral-900);
+  background-color: var(--background-color);
   width: 256px;
   animation: fadeIn 100ms ease-in;
   z-index: 3;
 
+  @media (prefers-color-scheme: dark) {
+    border: 1px solid var(--border-color);
+  }
+
   .arrow {
-    fill: var(--neutral-900);
+    fill: var(--background-color);
   }
 
   .divider {

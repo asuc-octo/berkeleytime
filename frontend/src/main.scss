@@ -290,11 +290,47 @@ a {
   --rose-900: #881337;
   --rose-950: #4c0519;
 
+  --foreground-color: white;
+  --background-color: var(--slate-50);
+
+  --border-color: var(--slate-200);
+
+  --heading-color: var(--slate-900);
+  --paragraph-color: var(--slate-500);
+  --label-color: var(--slate-400);
+
+  --button-color: var(--slate-100);
+  --button-hover-color: var(--slate-200);
+  --button-active-color: var(--slate-300);
+
+  --tooltip-color: var(--neutral-900);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-color: var(--neutral-950);
+    --background-color: var(--neutral-900);
+
+    --border-color: var(--neutral-800);
+
+    --heading-color: white;
+    --paragraph-color: var(--neutral-400);
+    --label-color: var(--neutral-500);
+
+    --button-color: var(--neutral-800);
+    --button-hover-color: var(--neutral-700);
+    --button-active-color: var(--neutral-600);
+
+    --tooltip-color: var(--neutral-800);
+  }
+}
+
+body {
   font-family: Inter, sans-serif;
 }
 
 @supports (font-variation-settings: normal) {
-  :root { 
+  body { 
     font-family: InterVariable, sans-serif; 
   }
 }

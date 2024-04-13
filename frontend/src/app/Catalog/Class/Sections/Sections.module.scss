@@ -1,5 +1,5 @@
 .root {
-  background-color: var(--slate-50);
+  background-color: var(--background-color);
   min-height: 100%;
   padding: 24px 24px 24px 12px;
   display: flex;
@@ -12,32 +12,22 @@
 
     .section {
       padding: 24px;
-      background-color: white;
+      background-color: var(--foreground-color);
       border-radius: 8px;
       box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
       margin-bottom: 24px;
-      border: 1px solid var(--slate-200);
+      border: 1px solid var(--border-color);
   
       .header {
         display: flex;
         margin-bottom: 24px;
         gap: 12px;
 
-        .lock {
-          height: 32px;
-          width: 32px;
-          border-radius: 16px;
-          display: grid;
-          place-items: center;
-          background-color: var(--red-50);
-          color: var(--red-500);
-        }
-
         .text {
           flex-grow: 1;
 
           .title {
-            color: var(--slate-900);
+            color: var(--heading-color);
             font-size: 14px;
             margin-bottom: 8px;
             line-height: 1;
@@ -64,7 +54,7 @@
       padding: 0 12px;
       font-size: 14px;
       font-weight: 500;
-      color: var(--slate-500);
+      color: var(--paragraph-color);
       width: fit-content;
 
       &:hover {
@@ -72,7 +62,7 @@
       }
 
       &:first-child {
-        color: var(--slate-900);
+        color: var(--heading-color);
         position: relative;
 
         &::after {

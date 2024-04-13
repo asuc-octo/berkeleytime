@@ -1,5 +1,5 @@
 .trigger {
-  color: var(--slate-500);
+  color: var(--paragraph-color);
 }
 
 .root {
@@ -22,14 +22,13 @@
   width: 256px;
   border-radius: 4px;
   padding: 12px;
-  background-color: var(--neutral-900);
-  box-shadow: 0 4px 64px var(--gray-200);
+  background-color: var(--tooltip-color);
   animation: fadeIn 100ms ease-in;
   color: var(--neutral-400);
   font-size: 14px;
 
   .arrow {
-    fill: var(--neutral-900);
+    fill: var(--tooltip-color);
   }
 
   .map {

@@ -1,16 +1,16 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { useQuery } from "@apollo/client";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Boundary from "@/components/Boundary";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import { GET_COURSES, ICatalogCourse, Semester } from "@/lib/api";
 
+import Filters from "../../components/Filters";
+import List from "../../components/List";
 import styles from "./Catalog.module.scss";
 import Class from "./Class";
-import Filters from "./Filters";
-import List from "./List";
 
 // TODO: Search by CCN and instructor
 
@@ -22,6 +22,8 @@ export default function Catalog() {
     courseNumber: currentCourseNumber,
     classNumber: currentClassNumber,
   } = useParams();
+
+  const navigate = useNavigate();
 
   // TODO: Fetch available years
   const currentYear = useMemo(() => (year && parseInt(year)) || 2024, [year]);
@@ -36,6 +38,8 @@ export default function Catalog() {
     [semester]
   );
 
+  const currentSubject = useMemo(() => subject?.toUpperCase(), [subject]);
+
   const { loading, error, data } = useQuery<{ catalog: ICatalogCourse[] }>(
     GET_COURSES,
     {
@@ -47,9 +51,6 @@ export default function Catalog() {
       },
     }
   );
-
-  // TODO: Fetch available subjects
-  const currentSubject = useMemo(() => subject?.toUpperCase(), [subject]);
 
   const courses = useMemo(() => data?.catalog ?? [], [data?.catalog]);
 
@@ -64,6 +65,15 @@ export default function Catalog() {
     [courses, currentSubject, currentCourseNumber, currentClassNumber]
   );
 
+  const setClass = useCallback(
+    (course: ICatalogCourse, number: string) => {
+      navigate(
+        `/catalog/${currentYear}/${currentSemester}/${course.subject}/${course.number}/${number}`
+      );
+    },
+    [navigate, currentYear, currentSemester]
+  );
+
   return loading || error ? (
     <Boundary>
       <LoadingIndicator />
@@ -71,11 +81,7 @@ export default function Catalog() {
   ) : (
     <div className={styles.root}>
       <Filters />
-      <List
-        courses={courses}
-        currentSemester={currentSemester}
-        currentYear={currentYear}
-      />
+      <List courses={courses} setClass={setClass} />
       {currentClassNumber &&
       currentCourseNumber &&
       currentSubject &&

@@ -1,7 +1,7 @@
 .root {
   padding: 64px 0;
   display: flex;
-  border-top: 1px solid var(--slate-200);
+  border-top: 1px solid var(--border-color);
   gap: 64px;
   line-height: 1;
 
@@ -37,13 +37,13 @@
       font-weight: 500;
 
       &:hover {
-        color: var(--slate-500); // rgb(255 255 255 / 75%);
+        color: var(--paragraph-color); // rgb(255 255 255 / 75%);
       }
     }
 
     .label {
       font-size: 12px;
-      color: var(--slate-500); // rgb(255 255 255 / 65%);
+      color: var(--paragraph-color); // rgb(255 255 255 / 65%);
     }
   }
 
@@ -59,15 +59,15 @@
     .description {
       font-size: 16px;
       margin-top: 16px;
-      color: var(--slate-500); // rgb(255 255 255 / 65%);
+      color: var(--paragraph-color); // rgb(255 255 255 / 65%);
 
       .link {
-        color: var(--slate-900);
+        color: var(--heading-color);
         transition: all 100ms ease-in-out;
         font-weight: 500;
 
         &:hover {
-          color: var(--slate-500);
+          color: var(--paragraph-color);
         }
       }
     }

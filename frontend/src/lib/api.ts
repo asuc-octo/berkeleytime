@@ -7,7 +7,7 @@ export enum Semester {
 }
 
 export interface ICatalogClass {
-  title: string;
+  title: string | null;
   unitsMax: number;
   unitsMin: number;
   enrollCount: number;
@@ -24,19 +24,24 @@ export interface IInstructor {
 
 export interface ISection {
   ccn: string;
-  dateEnd: string;
-  dateStart: string;
-  days: boolean[];
+  class: {
+    number: number;
+  };
+  course: {
+    subject: string;
+    number: string;
+  };
+  days: boolean[] | null;
   enrollCount: number;
   enrollMax: number;
-  instructors: IInstructor[];
+  instructors: IInstructor[] | null;
   kind: string;
-  location: string;
-  notes: string;
+  location: string | null;
+  notes: string | null;
   number: string;
   primary: boolean;
-  timeEnd: string;
-  timeStart: string;
+  timeEnd: string | null;
+  timeStart: string | null;
   waitlistCount: number;
   waitlistMax: number;
 }
@@ -45,7 +50,7 @@ export interface IClass extends ICatalogClass {
   course: ICourse;
   primarySection: ISection;
   sections: ISection[];
-  description: string;
+  description: string | null;
   notes: string;
 }
 
@@ -53,13 +58,13 @@ export interface ICatalogCourse {
   title: string;
   subject: string;
   number: string;
-  gradeAverage?: number;
+  gradeAverage: number | null;
   classes: ICatalogClass[];
 }
 
-export interface ICourse extends Omit<ICatalogCourse, "classes" | "number"> {
+export interface ICourse extends Omit<ICatalogCourse, "classes"> {
   subjectName: string;
-  prereqs?: string;
+  prereqs: string | null;
   gradingBasis: string;
   description: string;
 }
@@ -95,10 +100,19 @@ export const GET_CLASS = gql`
         description
         gradeAverage
         gradingBasis
+        subject
         subjectName
         prereqs
+        number
       }
       primarySection {
+        course {
+          subject
+          number
+        }
+        class {
+          number
+        }
         ccn
         dateEnd
         dateStart
@@ -120,6 +134,13 @@ export const GET_CLASS = gql`
         number
       }
       sections {
+        course {
+          subject
+          number
+        }
+        class {
+          number
+        }
         ccn
         dateEnd
         dateStart

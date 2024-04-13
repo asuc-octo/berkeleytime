@@ -2,7 +2,8 @@ import { useMemo, useRef } from "react";
 
 import * as Tooltip from "@radix-ui/react-tooltip";
 
-import { IEvent } from "../../types";
+import { ISection } from "@/lib/api";
+
 import { getY } from "../calendar";
 import styles from "./Event.module.scss";
 
@@ -15,19 +16,18 @@ interface EventProps {
 export default function Event({
   columns,
   position,
-  preview,
-  startTime,
-  endTime,
-  color,
+  timeStart,
+  timeEnd,
   boundary,
-  name,
+  course,
+  class: class_,
   kind,
-}: EventProps & IEvent) {
+}: EventProps & ISection) {
   const triggerRef = useRef<HTMLDivElement>(null);
 
-  const top = useMemo(() => getY(startTime), [startTime]);
+  const top = useMemo(() => getY(timeStart!), [timeStart]);
 
-  const height = useMemo(() => getY(endTime) - top + 1, [top, endTime]);
+  const height = useMemo(() => getY(timeEnd!) - top + 1, [top, timeEnd]);
 
   return (
     <Tooltip.Root>
@@ -37,14 +37,16 @@ export default function Event({
           className={styles.trigger}
           style={{
             top: `${top}px`,
-            backgroundColor: color,
-            opacity: preview ? 0.25 : 1,
+            backgroundColor: "var(--red-500)",
+            // opacity: preview ? 0.25 : 1,
             height: `${height}px`,
             width: `calc((100% - 8px) / ${columns})`,
             left: `calc(4px + (((100% - 8px) / ${columns}) * ${position})`,
           }}
         >
-          <div className={styles.heading}>{name}</div>
+          <div className={styles.heading}>
+            {course.subject} {course.number} {class_.number}
+          </div>
           <div className={styles.description}>{kind}</div>
         </div>
       </Tooltip.Trigger>
