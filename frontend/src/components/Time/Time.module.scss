@@ -1,0 +1,74 @@
+.trigger {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--slate-500);
+  width: fit-content;
+}
+
+.calendar, .content {
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--neutral-900);
+  box-shadow: 0 4px 64px var(--gray-200);
+  animation: fadeIn 100ms ease-in;
+  color: var(--neutral-400);
+  font-size: 14px;
+}
+
+.calendar {
+  display: flex;
+  gap: 4px;
+
+  .day {
+    width: 24px;
+    height: 188px;
+    position: relative;
+
+    .label {
+      text-align: center;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .event {
+      width: 100%;
+      border-radius: 1px;
+      background-color: white;
+      position: absolute;
+      left: 0;
+    }
+  }
+
+  .divider {
+    width: 1px;
+    background-color: var(--neutral-700);
+  }
+}
+
+.content {
+  max-width: 256px;
+
+  .arrow {
+    fill: var(--neutral-900);
+  }
+
+  .title {
+    font-weight: 500;
+    color: white;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .description {
+    line-height: 1.5;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

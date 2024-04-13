@@ -1,19 +1,89 @@
 .root {
   background-color: var(--slate-50);
-  height: 100%;
-  padding: 24px;
+  min-height: 100%;
+  padding: 24px 24px 24px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
 
-  .section {
-    padding: 24px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-    margin-bottom: 24px;
-    border: 1px solid var(--slate-200);
+  .view {
+    flex-grow: 1;
+    height: 200vh;
 
-    .header {
+    .section {
+      padding: 24px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+      margin-bottom: 24px;
+      border: 1px solid var(--slate-200);
+  
+      .header {
+        display: flex;
+        margin-bottom: 24px;
+        gap: 12px;
+
+        .lock {
+          height: 32px;
+          width: 32px;
+          border-radius: 16px;
+          display: grid;
+          place-items: center;
+          background-color: var(--red-50);
+          color: var(--red-500);
+        }
+
+        .text {
+          flex-grow: 1;
+
+          .title {
+            color: var(--slate-900);
+            font-size: 14px;
+            margin-bottom: 8px;
+            line-height: 1;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  .menu {
+    position: sticky;
+    top: 24px;
+    width: 128px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .item {
+      height: 32px;
+      border-radius: 4px;
       display: flex;
-      justify-content: space-between;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--slate-500);
+      width: fit-content;
+
+      &:hover {
+        background-color: var(--slate-100);
+      }
+
+      &:first-child {
+        color: var(--slate-900);
+        position: relative;
+
+        &::after {
+          content: '';
+          width: 2px;
+          height: 100%;
+          background-color: var(--blue-500);
+          position: absolute;
+          left: -12px;
+        }
+      }
     }
   }
 }

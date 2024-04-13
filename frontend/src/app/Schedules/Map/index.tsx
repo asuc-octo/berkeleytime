@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   autoUpdate,
@@ -43,6 +43,7 @@ interface MapProps {
 export default function Map({ boundary }: MapProps) {
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [map, setMap] = useState<mapboxgl.Map | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
 
   const waypoints = useMemo(() => {
     return Object.keys(buildings)
@@ -63,12 +64,12 @@ export default function Map({ boundary }: MapProps) {
   };
 
   useEffect(() => {
-    if (!boundary) return;
+    if (!boundary || !mapRef.current) return;
 
     let destructor: (() => void) | null = null;
 
     const map = new mapboxgl.Map({
-      container: "map",
+      container: mapRef.current,
       style: "mapbox://styles/mathhulk/clbznbvgs000314k8gtwa9q60",
       center: [-122.2592173, 37.8721508],
       zoom: DEFAULT_ZOOM,
@@ -241,6 +242,10 @@ export default function Map({ boundary }: MapProps) {
     });
 
     setMap(map);
+
+    return () => {
+      map.remove();
+    };
   }, [boundary, waypoints]);
 
   return (
@@ -260,7 +265,7 @@ export default function Map({ boundary }: MapProps) {
           <Position />
         </IconButton>
       </div>
-      <div className={styles.map} id="map" />
+      <div className={styles.map} ref={mapRef} />
       <div className={styles.sideBar}>
         <div className={styles.waypoint}>
           <div className={styles.number}>1</div>

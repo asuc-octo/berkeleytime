@@ -6,7 +6,7 @@ import { Wind } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
 import { ICatalogCourse, Semester } from "@/lib/api";
-import { abbreviations } from "@/lib/course";
+import { subjects } from "@/lib/course";
 
 import Course from "./Course";
 import styles from "./List.module.scss";
@@ -21,7 +21,7 @@ const initializeFuse = (courses: ICatalogCourse[]) => {
 
     const term = subject.toLowerCase();
 
-    const alternateNames = abbreviations[term]?.reduce(
+    const alternateNames = subjects[term]?.abbreviations.reduce(
       (acc, abbreviation) => {
         // Add alternate names for abbreviations
         const abbreviations = [

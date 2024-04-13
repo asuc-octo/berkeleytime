@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { Bookmark, Plus, Xmark } from "iconoir-react";
+import { Bookmark, CalendarPlus, Xmark } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import AverageGrade from "@/components/AverageGrade";
+import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
@@ -29,6 +30,18 @@ const views = [
     text: "Sections",
     Component: Sections,
   },
+  {
+    text: "Grades",
+    Component: () => null,
+  },
+  {
+    text: "Enrollment",
+    Component: () => null,
+  },
+  {
+    text: "Discussion",
+    Component: () => null,
+  },
 ];
 
 interface ClassProps {
@@ -50,6 +63,8 @@ export default function Class({
 }: ClassProps) {
   const [searchParams] = useSearchParams();
   const [view, setView] = useState(0);
+
+  // TODO: Query for enrollment and grades data in the background
 
   const { data } = useQuery<{ class: IClass }>(GET_CLASS, {
     variables: {
@@ -84,6 +99,8 @@ export default function Class({
 
   const Component = useMemo(() => views[view].Component, [view]);
 
+  console.log(currentClass?.primarySection);
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
@@ -98,7 +115,7 @@ export default function Class({
           </div>
           <div className={styles.group}>
             <IconButton>
-              <Plus />
+              <CalendarPlus />
             </IconButton>
             <IconButton>
               <Bookmark />
@@ -116,10 +133,6 @@ export default function Class({
           </div>
         </div>
         <div className={styles.information}>
-          {/*<Button secondary>
-            <ArrowSeparateVertical />
-            {currentSemester} {currentYear}
-            </Button>*/}
           <AverageGrade
             averageGrade={
               currentClass?.course?.gradeAverage ?? currentCourse.gradeAverage
@@ -136,26 +149,7 @@ export default function Class({
             }
           />
           <div className={styles.units}>{units}</div>
-        </div>
-        <div className={styles.row}>
-          <div className={styles.detail}>
-            <div className={styles.title}>Time</div>
-            <div className={styles.description}>TuTh 6:30 PM - 7:59 PM</div>
-          </div>
-          <div className={styles.detail}>
-            <div className={styles.title}>Location</div>
-            <div className={styles.description}>
-              Anthro/Art Practice Bldg 160
-            </div>
-          </div>
-          <div className={styles.detail}>
-            <div className={styles.title}>Instructor</div>
-            {/*currentClass?.primarySection.instructors.map((instructor) => (
-              <div key={instructor.familyName} className={styles.description}>
-                {instructor.givenName} {instructor.familyName}
-              </div>
-            ))*/}
-          </div>
+          {currentClass && <CCN ccn={currentClass.primarySection.ccn} />}
         </div>
         <div className={styles.menu}>
           {views.map(({ text }, index) => (
@@ -170,7 +164,7 @@ export default function Class({
         </div>
       </div>
       <div className={styles.view}>
-        <Component />
+        <Component currentClass={currentClass} />
       </div>
     </div>
   );

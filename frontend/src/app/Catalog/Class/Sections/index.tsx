@@ -1,25 +1,54 @@
+import { Lock } from "iconoir-react";
+
+import CCN from "@/components/CCN";
+import Details from "@/components/Details";
+import { IClass } from "@/lib/api";
+
 import Capacity from "../../../../components/Capacity";
 import styles from "./Sections.module.scss";
 
-export default function Sections() {
+interface SectionsProps {
+  currentClass?: IClass;
+}
+
+export default function Sections({ currentClass }: SectionsProps) {
   return (
     <div className={styles.root}>
-      <div className={styles.section}>
-        <div className={styles.header}>
-          <div className={styles.text}>
-            <div className={styles.title}>Section 1</div>
-            <div className={styles.description}>Instructor: John Doe</div>
-          </div>
-          <Capacity
-            count={10}
-            capacity={20}
-            waitlistCount={5}
-            waitlistCapacity={10}
-          />
-        </div>
+      <div className={styles.menu}>
+        <div className={styles.item}>Discussions</div>
+        <div className={styles.item}>Labs</div>
       </div>
-      <div className={styles.section}></div>
-      <div className={styles.section}></div>
+      <div className={styles.view}>
+        {currentClass?.sections.map((section) => (
+          <div className={styles.section}>
+            <div className={styles.header}>
+              <div className={styles.text}>
+                <p className={styles.title}>
+                  {section.kind === "Laboratory" ? "Lab" : section.kind}{" "}
+                  {section.number}
+                </p>
+                <CCN ccn={section.ccn} />
+              </div>
+              <div className={styles.lock}>
+                <Lock />
+              </div>
+              <Capacity
+                count={section.enrollCount}
+                capacity={section.enrollMax}
+                waitlistCount={section.waitlistCount}
+                waitlistCapacity={section.waitlistMax}
+              />
+            </div>
+            <Details
+              days={section.days ?? []}
+              timeStart={section.timeStart}
+              timeEnd={section.timeEnd}
+              location={section.location}
+              instructors={section.instructors ?? []}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
