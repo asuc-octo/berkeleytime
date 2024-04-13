@@ -1,8 +1,8 @@
 .trigger {
   height: 32px;
   border-radius: 16px;
-  background-color: var(--slate-100);
-  color: var(--slate-500);
+  background-color: var(--button-color);
+  color: var(--paragraph-color);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -14,7 +14,7 @@
     line-height: 1;
 
     .value {
-      color: var(--slate-500);
+      color: var(--paragraph-color);
     }
   }
 }
@@ -22,13 +22,13 @@
 .content {
   border-radius: 4px;
   padding: 12px;
-  background-color: var(--neutral-900);
-  box-shadow: 0 4px 64px var(--gray-200);
+  background-color: var(--tooltip-color);
   width: 256px;
   animation: fadeIn 100ms ease-in;
+  z-index: 998;
 
   .arrow {
-    fill: var(--neutral-900);
+    fill: var(--tooltip-color);
   }
 
   .divider {

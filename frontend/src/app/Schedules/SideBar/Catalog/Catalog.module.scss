@@ -1,0 +1,23 @@
+.overlay {
+  background-color: rgb(255 255 255 / 80%);
+  inset: 0;
+  position: fixed;
+  z-index: 988;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: rgb(0 0 0 / 80%);
+  }
+}
+
+.content {
+  height: 100dvh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 989;
+  display: flex;
+
+  .close {
+    margin: 12px;
+  }
+}

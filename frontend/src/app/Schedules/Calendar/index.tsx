@@ -1,74 +1,78 @@
 import { MouseEvent, useMemo, useRef, useState } from "react";
 
-import { IEvent } from "../types";
+import { ISection } from "@/lib/api";
+
 import styles from "./Calendar.module.scss";
 import Event from "./Event";
 import { getY } from "./calendar";
 
+const getId = (section: ISection) =>
+  `${section.course.subject} ${section.course.number} ${section.class.number} ${section.number}`;
+
 const adjustAttachedEvents = (
-  relevantEvents: IEvent[],
-  attachedEvents: number[],
-  minutes: number[][],
-  positions: Record<number, [number, number]>
+  relevantSections: ISection[],
+  attachedSections: string[],
+  minutes: string[][],
+  positions: Record<string, [number, number]>
 ) => {
-  const adjustedEvents: number[] = [];
+  const adjustedSections: string[] = [];
 
-  const adjustEvent = (eventId: number) => {
-    if (adjustedEvents.includes(eventId)) return;
+  const adjustSection = (id: string) => {
+    if (adjustedSections.includes(id)) return;
 
-    adjustedEvents.push(eventId);
+    adjustedSections.push(id);
 
-    positions[eventId][1]++;
+    positions[id][1]++;
 
-    const event = relevantEvents.find(({ id }) => id === eventId);
-    if (!event) return;
+    const section = relevantSections.find((section) => id === getId(section));
+    if (!section) return;
 
-    const top = getY(event.startTime);
-    const height = getY(event.endTime) - top;
+    const top = getY(section.timeStart!);
+    const height = getY(section.timeEnd!) - top;
 
     for (let i = top; i < top + height; i++) {
-      for (const eventId of minutes[i]) {
-        adjustEvent(eventId);
+      for (const id of minutes[i]) {
+        adjustSection(id);
       }
     }
   };
 
-  for (const eventId of attachedEvents) {
-    adjustEvent(eventId);
+  for (const id of attachedSections) {
+    adjustSection(id);
   }
 };
 
 interface CalendarProps {
-  events: IEvent[];
+  sections: ISection[];
   boundary: Element | null;
 }
 
-export default function Calendar({ events, boundary }: CalendarProps) {
+export default function Calendar({ sections, boundary }: CalendarProps) {
   const viewRef = useRef<HTMLDivElement>(null);
   const [y, setY] = useState<number | null>(null);
 
   const days = useMemo(
     () =>
       [...Array(7)].map((_, day) => {
-        const positions: Record<number, [number, number]> = {};
-        const minutes: number[][] = [...Array(60 * 18)].map(() => []);
+        const positions: Record<string, [number, number]> = {};
+        const minutes: string[][] = [...Array(60 * 18)].map(() => []);
 
-        const relevantEvents = events
+        const relevantSections = sections
           // Filter events for the current day
-          .filter((event) => event.days[day])
+          .filter((section) => section.days?.[day])
           // Sort events by start time
-          .sort((a, b) => getY(a.startTime) - getY(b.startTime));
+          .sort((a, b) => getY(a.timeStart!) - getY(b.timeStart!));
 
-        for (const event of relevantEvents) {
-          const top = getY(event.startTime);
-          const height = getY(event.endTime) - top;
+        for (const section of relevantSections) {
+          const top = getY(section.timeStart!);
+          const height = getY(section.timeEnd!) - top;
 
-          const attachedEvents = minutes[top];
+          const attachedSections = minutes[top];
 
           let position = 0;
 
           while (
-            attachedEvents.findIndex(
+            attachedSections.findIndex(
               (eventId) => positions[eventId][0] === position
             ) !== -1
           ) {
@@ -76,41 +80,45 @@ export default function Calendar({ events, boundary }: CalendarProps) {
           }
 
           if (
-            attachedEvents.length > 0 &&
+            attachedSections.length > 0 &&
             Math.max(
               position,
-              ...attachedEvents.map((eventId) => positions[eventId][0])
+              ...attachedSections.map((eventId) => positions[eventId][0])
             ) === position
           ) {
             adjustAttachedEvents(
-              relevantEvents,
-              attachedEvents,
+              relevantSections,
+              attachedSections,
               minutes,
               positions
             );
           }
 
-          positions[event.id] = [
+          const id = getId(section);
+
+          positions[id] = [
             position,
-            attachedEvents.length === 0 ? 1 : positions[attachedEvents[0]][1],
+            attachedSections.length === 0
+              ? 1
+              : positions[attachedSections[0]][1],
           ];
 
           for (let i = top; i < top + height; i++) {
-            minutes[i].push(event.id);
+            minutes[i].push(id);
           }
         }
 
-        return relevantEvents.map((event) => {
-          const [position, columns] = positions[event.id];
+        return relevantSections.map((section) => {
+          const [position, columns] = positions[getId(section)];
 
           return {
-            ...event,
+            ...section,
             position,
             columns,
           };
         });
       }),
-    [events]
+    [sections]
   );
 
   const currentTime = useMemo(() => {
@@ -181,7 +189,7 @@ export default function Calendar({ events, boundary }: CalendarProps) {
                 <div key={hour} className={styles.hour}></div>
               ))}
               {events.map((event) => (
-                <Event key={event.id} {...event} boundary={boundary} />
+                <Event key={getId(event)} {...event} boundary={boundary} />
               ))}
               {y && <div className={styles.line} style={{ top: `${y}px` }} />}
             </div>

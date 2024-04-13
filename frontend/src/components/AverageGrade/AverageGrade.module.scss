@@ -7,15 +7,15 @@
 .content {
   border-radius: 4px;
   padding: 12px;
-  background-color: var(--neutral-900);
-  box-shadow: 0 4px 64px var(--gray-200);
+  background-color: var(--tooltip-color);
   color: var(--neutral-400);
   max-width: 256px;
   font-size: 14px;
   animation: fadeIn 100ms ease-in;
+  z-index: 998;
 
   .arrow {
-    fill: var(--neutral-900);
+    fill: var(--tooltip-color);
   }
 
   .title {

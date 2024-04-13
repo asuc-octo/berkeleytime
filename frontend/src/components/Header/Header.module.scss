@@ -28,7 +28,7 @@
   }
 
   &:not(.invert) {
-    border-bottom: 1px solid var(--slate-200);
+    border-bottom: 1px solid var(--border-color);
   }
 
   &.invert {

@@ -7,20 +7,17 @@
   justify-content: center;
   cursor: pointer;
   transition: all 100ms ease-in-out;
-  background-color: var(--slate-100);
-  color: var(--slate-500);
   user-select: none;
-
-  &:disabled {
-    cursor: not-allowed;
-    background-color: var(--slate-50);
-    color: var(--slate-400);
-    pointer-events: none;
-  }
+  background-color: var(--button-color);
+  color: var(--paragraph-color);
 
   &:hover {
-    background-color: var(--slate-200);
-    color: var(--slate-900);
+    background-color: var(--button-hover-color);
+    color: var(--heading-color);
+  }
+
+  &:active {
+    background-color: var(--button-active-color);
   }
 
   &.invert {
@@ -30,6 +27,10 @@
     &:hover {
       background-color: rgb(255 255 255 / 20%);
       color: white;
+    }
+
+    &:active {
+      background-color: rgb(255 255 255 / 30%);
     }
   }
 }

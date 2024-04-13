@@ -1,5 +1,5 @@
 .root {
-  background-color: var(--slate-50);
+  background-color: var(--background-color);
   height: 100%;
   position: relative;
 
@@ -14,20 +14,18 @@
     left: 24px;
     z-index: 1;
     padding: 12px;
-    border: 1px solid var(--slate-200);
-    background-color: white;
+    border: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
     border-radius: 8px;
-    box-shadow: 0 4px 64px var(--gray-200);
     display: flex;
     gap: 8px;
   }
 
   .sideBar {
     width: 256px;
-    background-color: white;
+    background-color: var(--foreground-color);
     border-radius: 8px;
-    box-shadow: 0 4px 64px var(--gray-200);
-    border: 1px solid var(--slate-200);
+    border: 1px solid var(--border-color);
     flex-shrink: 0;
     padding: 16px;
     position: absolute;
@@ -45,7 +43,7 @@
       width: fit-content;
       border-radius: 16px;
       padding: 0 12px;
-      color: var(--slate-500);
+      color: var(--paragraph-color);
       margin: 24px 0;
       position: relative;
 
@@ -72,7 +70,7 @@
     .waypoint {
       display: flex;
       gap: 12px;
-      color: var(--slate-500);
+      color: var(--paragraph-color);
       position: relative;
 
       &:not(:last-child)::after {
@@ -108,7 +106,7 @@
 
         .heading {
           font-weight: 700;
-          color: var(--slate-900);
+          color: var(--heading-color);
           margin-top: 4px;
         }
 
@@ -143,8 +141,7 @@
   position: absolute;
   border-radius: 4px;
   padding: 12px;
-  background-color: var(--neutral-900);
-  // box-shadow: 0 4px 64px var(--gray-200);
+  background-color: var(--background-color);
   width: 256px;
   animation: fadeIn 100ms ease-in;
   color: white;

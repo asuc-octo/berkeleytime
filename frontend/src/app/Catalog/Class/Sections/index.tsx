@@ -1,5 +1,3 @@
-import { Lock } from "iconoir-react";
-
 import CCN from "@/components/CCN";
 import Details from "@/components/Details";
 import { IClass } from "@/lib/api";
@@ -28,9 +26,6 @@ export default function Sections({ currentClass }: SectionsProps) {
                   {section.number}
                 </p>
                 <CCN ccn={section.ccn} />
-              </div>
-              <div className={styles.lock}>
-                <Lock />
               </div>
               <Capacity
                 count={section.enrollCount}

@@ -5,7 +5,7 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import styles from "./AverageGrade.module.scss";
 
 interface AverageGradeProps {
-  averageGrade?: number;
+  averageGrade: number | null;
 }
 
 export default function AverageGrade({ averageGrade }: AverageGradeProps) {
@@ -44,7 +44,7 @@ export default function AverageGrade({ averageGrade }: AverageGradeProps) {
   const color = useMemo(
     () =>
       !averageGrade
-        ? "var(--gray-500)"
+        ? "var(--paragraph-color)"
         : averageGrade > 3.5
           ? "var(--green-500)"
           : averageGrade > 2.5

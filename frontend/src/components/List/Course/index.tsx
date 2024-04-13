@@ -5,19 +5,17 @@ import {
   ArrowSeparateVertical,
   ArrowUnionVertical,
 } from "iconoir-react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
-import { ICatalogCourse, Semester } from "@/lib/api";
+import { ICatalogCourse } from "@/lib/api";
 
 import styles from "./Course.module.scss";
 
 interface CourseProps {
   expanded: boolean;
   setExpanded: (expanded: boolean) => void;
-  semester: Semester;
-  year: number;
+  setClass: (number: string) => void;
 }
 
 const Course = forwardRef<
@@ -30,18 +28,14 @@ const Course = forwardRef<
       subject,
       classes,
       number: courseNumber,
-      semester,
-      year,
       gradeAverage,
       expanded,
       setExpanded,
+      setClass,
       ...props
     },
     ref
   ) => {
-    const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
-
     const isolated = useMemo(() => classes.length === 1, [classes]);
 
     const {
@@ -93,23 +87,16 @@ const Course = forwardRef<
       [classes]
     );
 
-    const handleClick = () => {
-      if (isolated) {
-        navigate({
-          pathname: `/catalog/${year}/${semester}/${subject}/${courseNumber}/${classes[0].number}`,
-          search: searchParams.toString(),
-        });
-
-        return;
-      }
-
-      setExpanded(!expanded);
+    const handleClick = (number?: string) => {
+      if (number) setClass(number);
+      else if (isolated) setClass("001");
+      else setExpanded(!expanded);
     };
 
     return (
       <div className={styles.root} ref={ref} {...props}>
         <div className={styles.course}>
-          <div className={styles.class} onClick={handleClick}>
+          <div className={styles.class} onClick={() => handleClick()}>
             <div className={styles.text}>
               <p className={styles.heading}>
                 {subject} {courseNumber}
@@ -144,35 +131,29 @@ const Course = forwardRef<
                   <ArrowSeparateVertical />
                 )}
               </div>
-              {/*<div className={styles.bookmark}>
-                  <Bookmark />
-                </div>*/}
             </div>
           </div>
           {expanded &&
             classes.map(
               ({
-                title: classTitle,
                 unitsMax,
                 unitsMin,
                 enrollCount,
                 enrollMax,
                 waitlistCount,
                 waitlistMax,
+                title: classTitle,
                 number: classNumber,
               }) => (
-                <Link
+                <div
                   className={styles.class}
                   key={classNumber}
-                  to={{
-                    pathname: `/catalog/${year}/${semester}/${subject}/${courseNumber}/${classNumber}`,
-                    search: searchParams.toString(),
-                  }}
+                  onClick={() => handleClick(classNumber)}
                 >
                   <div className={styles.text}>
-                    <p className={styles.title}>Lecture {classNumber}</p>
+                    <p className={styles.title}>Class {classNumber}</p>
                     <p className={styles.description}>
-                      {classTitle ?? courseTitle}
+                      {classTitle || courseTitle}
                     </p>
                     <div className={styles.row}>
                       <Capacity
@@ -192,11 +173,8 @@ const Course = forwardRef<
                     <div className={styles.icon}>
                       <ArrowRight />
                     </div>
-                    {/*<div className={styles.bookmark}>
-                        <Bookmark />
-                      </div>*/}
                   </div>
-                </Link>
+                </div>
               )
             )}
         </div>

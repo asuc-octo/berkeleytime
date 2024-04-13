@@ -6,13 +6,13 @@
     font-size: 14px;
 
     .title {
-      color: var(--slate-400);
+      color: var(--label-color);
       line-height: 1;
       margin-bottom: 8px;
     }
 
     .description {
-      color: var(--slate-500);
+      color: var(--paragraph-color);
       line-height: 1.5;
 
       a {
@@ -26,7 +26,7 @@
     }
 
     &:not(:last-child) {
-      border-right: 1px solid var(--slate-200);
+      border-right: 1px solid var(--border-color);
     }
 
     &:first-child {
