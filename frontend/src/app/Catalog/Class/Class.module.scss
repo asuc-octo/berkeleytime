@@ -1,11 +1,11 @@
 .root {
   flex-grow: 1;
-  overflow: auto;
   display: flex;
   flex-direction: column;
 
   .view {
     flex-grow: 1;
+    overflow: auto;
   }
 
   .header {
@@ -15,51 +15,13 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 16px 24px 0;
+      padding: 16px 24px 12px;
+      font-size: 14px;
+      line-height: 1;
 
       .units {
-        font-size: 14px;
         color: var(--slate-500);
         user-select: none;
-        line-height: 1;
-      }
-    }
-
-    .row {
-      display: flex;
-      padding: 24px 24px 12px;
-
-      .detail {
-        flex: 1;
-        font-size: 14px;
-
-        .title {
-          color: var(--slate-500);
-          line-height: 1;
-          margin-bottom: 8px;
-        }
-
-        .description {
-          color: var(--slate-600);
-          line-height: 1.5;
-          font-weight: 500;
-        }
-
-        &:not(:last-child) {
-          border-right: 1px solid var(--slate-200);
-        }
-
-        &:first-child {
-          padding-right: 16px;
-        }
-
-        &:nth-child(2) {
-          padding: 0 16px;
-        }
-
-        &:last-child {
-          padding-left: 16px;
-        }
       }
     }
 

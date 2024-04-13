@@ -23,7 +23,7 @@ export interface IInstructor {
 }
 
 export interface ISection {
-  ccn: number;
+  ccn: string;
   dateEnd: string;
   dateStart: string;
   days: boolean[];
@@ -45,6 +45,8 @@ export interface IClass extends ICatalogClass {
   course: ICourse;
   primarySection: ISection;
   sections: ISection[];
+  description: string;
+  notes: string;
 }
 
 export interface ICatalogCourse {
@@ -55,19 +57,47 @@ export interface ICatalogCourse {
   classes: ICatalogClass[];
 }
 
-export interface ICourse extends Omit<ICatalogCourse, "classes"> {
+export interface ICourse extends Omit<ICatalogCourse, "classes" | "number"> {
   subjectName: string;
   prereqs?: string;
   gradingBasis: string;
+  description: string;
 }
 
 export interface IAccount {
   email: string;
 }
 
-/*
-
-
+export const GET_CLASS = gql`
+  query GetClass(
+    $term: TermInput!
+    $subject: String!
+    $courseNumber: String!
+    $classNumber: String!
+  ) {
+    class(
+      term: $term
+      subject: $subject
+      courseNumber: $courseNumber
+      classNumber: $classNumber
+    ) {
+      title
+      description
+      enrollCount
+      enrollMax
+      unitsMax
+      unitsMin
+      waitlistCount
+      waitlistMax
+      number
+      course {
+        title
+        description
+        gradeAverage
+        gradingBasis
+        subjectName
+        prereqs
+      }
       primarySection {
         ccn
         dateEnd
@@ -109,39 +139,6 @@ export interface IAccount {
         waitlistCount
         waitlistMax
         number
-      }
-
-*/
-
-export const GET_CLASS = gql`
-  query GetClass(
-    $term: TermInput!
-    $subject: String!
-    $courseNumber: String!
-    $classNumber: String!
-  ) {
-    class(
-      term: $term
-      subject: $subject
-      courseNumber: $courseNumber
-      classNumber: $classNumber
-    ) {
-      title
-      description
-      enrollCount
-      enrollMax
-      unitsMax
-      unitsMin
-      waitlistCount
-      waitlistMax
-      number
-      course {
-        title
-        description
-        gradeAverage
-        gradingBasis
-        subjectName
-        prereqs
       }
     }
   }

@@ -24,7 +24,7 @@ export default function Catalog() {
   } = useParams();
 
   // TODO: Fetch available years
-  const currentYear = useMemo(() => (year && parseInt(year)) || 2022, [year]);
+  const currentYear = useMemo(() => (year && parseInt(year)) || 2024, [year]);
 
   // TODO: Fetch available semesters
   const currentSemester = useMemo(

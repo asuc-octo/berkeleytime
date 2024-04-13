@@ -1,0 +1,44 @@
+.root {
+  display: flex;
+
+  .column {
+    flex: 1;
+    font-size: 14px;
+
+    .title {
+      color: var(--slate-400);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      color: var(--slate-500);
+      line-height: 1.5;
+
+      a {
+        color: var(--blue-500);
+        font-weight: 500;
+
+        &:hover {
+          color: var(--blue-600);
+        }
+      }
+    }
+
+    &:not(:last-child) {
+      border-right: 1px solid var(--slate-200);
+    }
+
+    &:first-child {
+      padding-right: 16px;
+    }
+
+    &:nth-child(2) {
+      padding: 0 16px;
+    }
+
+    &:last-child {
+      padding-left: 16px;
+    }
+  }
+}
