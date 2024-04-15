@@ -25,10 +25,12 @@ export default function Details({
         <p className={styles.title}>Time</p>
         <Time days={days} timeStart={timeStart} timeEnd={timeEnd} />
       </div>
+      <div className={styles.divider} />
       <div className={styles.column}>
         <p className={styles.title}>Location</p>
         <Location location={location} />
       </div>
+      <div className={styles.divider} />
       <div className={styles.column}>
         <p className={styles.title}>
           {instructors?.length > 1 ? "Instructors" : "Instructor"}
