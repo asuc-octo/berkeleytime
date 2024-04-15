@@ -1,6 +1,5 @@
 .root {
   width: 384px;
-  border-right: 1px solid var(--border-color);
   flex-shrink: 0;
   overflow: auto;
   padding: 12px;
@@ -8,6 +7,21 @@
   flex-direction: column;
   background-color: var(--foreground-color);
   gap: 12px;
+
+  &:not(.block) {
+    border-right: 1px solid var(--border-color);
+  }
+
+  &.block {
+    width: 100%;
+  }
+
+  &.responsive {
+    padding-top: 72px;
+    position: absolute;
+    height: 100%;
+    z-index: 1;
+  }
 
   .row {
     display: flex;

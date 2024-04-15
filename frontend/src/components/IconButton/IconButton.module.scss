@@ -1,6 +1,7 @@
 .root {
   height: 32px;
   width: 32px;
+  flex-shrink: 0;
   border-radius: 4px;
   display: flex;
   align-items: center;

@@ -20,7 +20,7 @@ export default function SideBar({ classes, setClasses }: SideBarProps) {
 
   const setClass = useCallback(
     async (course: ICatalogCourse, number: string) => {
-      const { data } = await apolloClient.query({
+      const { data } = await apolloClient.query<{ class: IClass }>({
         query: GET_CLASS,
         variables: {
           term: {

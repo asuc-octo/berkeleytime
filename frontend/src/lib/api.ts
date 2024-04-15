@@ -67,6 +67,7 @@ export interface ICourse extends Omit<ICatalogCourse, "classes"> {
   prereqs: string | null;
   gradingBasis: string;
   description: string;
+  sections: ISection[];
 }
 
 export interface IAccount {

@@ -48,6 +48,13 @@ export default function Header({ invert }: HeaderProps) {
                 </MenuItem>
               )}
             </NavLink>
+            <NavLink to="/plan">
+              {({ isActive }) => (
+                <MenuItem active={isActive} className={styles.item}>
+                  My plan
+                </MenuItem>
+              )}
+            </NavLink>
             <NavLink to="/grades">
               {({ isActive }) => (
                 <MenuItem active={isActive} className={styles.item}>

@@ -16,8 +16,31 @@
   top: 0;
   z-index: 989;
   display: flex;
+  flex-direction: column;
 
-  .close {
-    margin: 12px;
+  @media (width <= 992px) {
+    width: 100%;
+  }
+
+  .body {
+    flex-grow: 1;
+    height: 0;
+    overflow: clip;
+  }
+
+  .header {
+    border-width: 0 1px 1px 0;
+    border-color: var(--border-color);
+    border-style: solid;
+    padding: 12px;
+    background-color: var(--foreground-color);
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--heading-color);
+    font-weight: 500;
   }
 }

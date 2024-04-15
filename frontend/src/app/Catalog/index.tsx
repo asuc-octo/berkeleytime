@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from "react";
 
 import { useQuery } from "@apollo/client";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import Boundary from "@/components/Boundary";
+import Browser from "@/components/Browser";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { GET_COURSES, ICatalogCourse, Semester } from "@/lib/api";
 
-import Filters from "../../components/Filters";
-import List from "../../components/List";
 import styles from "./Catalog.module.scss";
 import Class from "./Class";
 
@@ -24,6 +24,8 @@ export default function Catalog() {
   } = useParams();
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { width } = useWindowDimensions();
 
   // TODO: Fetch available years
   const currentYear = useMemo(() => (year && parseInt(year)) || 2024, [year]);
@@ -67,12 +69,28 @@ export default function Catalog() {
 
   const setClass = useCallback(
     (course: ICatalogCourse, number: string) => {
-      navigate(
-        `/catalog/${currentYear}/${currentSemester}/${course.subject}/${course.number}/${number}`
-      );
+      navigate({
+        pathname: `/catalog/${currentYear}/${currentSemester}/${course.subject}/${course.number}/${number}`,
+        search: searchParams.toString(),
+      });
     },
-    [navigate, currentYear, currentSemester]
+    [navigate, currentYear, currentSemester, searchParams]
   );
+
+  const currentClass = useMemo(
+    () =>
+      currentClassNumber &&
+      currentCourseNumber &&
+      currentSubject &&
+      currentCourse,
+    [currentClassNumber, currentCourseNumber, currentSubject, currentCourse]
+  );
+
+  // The browser will be responsive at 1400px
+  const responsive = useMemo(() => width <= 1400, [width]);
+
+  // The screen will be separated into views at 992px
+  const block = useMemo(() => width <= 992, [width]);
 
   return loading || error ? (
     <Boundary>
@@ -80,19 +98,20 @@ export default function Catalog() {
     </Boundary>
   ) : (
     <div className={styles.root}>
-      <Filters />
-      <List courses={courses} setClass={setClass} />
-      {currentClassNumber &&
-      currentCourseNumber &&
-      currentSubject &&
-      currentCourse ? (
+      <Browser
+        courses={courses}
+        setClass={setClass}
+        responsive={responsive}
+        block={block}
+      />
+      {currentClass ? (
         <Class
-          currentCourse={currentCourse}
+          currentCourse={currentCourse!}
           currentSemester={currentSemester}
           currentYear={currentYear}
-          currentClassNumber={currentClassNumber}
-          currentCourseNumber={currentCourseNumber}
-          currentSubject={currentSubject}
+          currentClassNumber={currentClassNumber!}
+          currentCourseNumber={currentCourseNumber!}
+          currentSubject={currentSubject!}
         />
       ) : (
         <></>

@@ -10,6 +10,7 @@ input, button {
 
 input {
   width: 100%;
+  padding: unset;
 
   &:focus {
     outline: none;
@@ -308,8 +309,8 @@ a {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-color: var(--neutral-950);
-    --background-color: var(--neutral-900);
+    --foreground-color: var(--neutral-900);
+    --background-color: var(--neutral-950);
 
     --border-color: var(--neutral-800);
 

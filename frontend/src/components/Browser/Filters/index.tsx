@@ -1,10 +1,21 @@
+import classNames from "classnames";
 import { ArrowSeparateVertical } from "iconoir-react";
 
 import styles from "./Filters.module.scss";
 
-export default function Filters() {
+interface FiltersProps {
+  responsive: boolean;
+  block?: boolean;
+}
+
+export default function Filters({ responsive, block }: FiltersProps) {
   return (
-    <div className={styles.root}>
+    <div
+      className={classNames(styles.root, {
+        [styles.responsive]: responsive,
+        [styles.block]: block,
+      })}
+    >
       <div className={styles.row}>
         <div className={styles.select}>
           <div className={styles.text}>
