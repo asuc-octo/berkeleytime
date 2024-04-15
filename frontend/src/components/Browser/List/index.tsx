@@ -1,10 +1,19 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
+import classNames from "classnames";
 import Fuse from "fuse.js";
-import { Wind } from "iconoir-react";
+import { Filter, FilterSolid, Xmark } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
+import IconButton from "@/components/IconButton";
 import { ICatalogCourse } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
@@ -91,10 +100,21 @@ const initializeFuse = (courses: ICatalogCourse[]) => {
 interface ListProps {
   courses: ICatalogCourse[];
   setClass: (course: ICatalogCourse, number: string) => void;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  open: boolean;
+  responsive: boolean;
+  block?: boolean;
 }
 
-export default function List({ courses, setClass }: ListProps) {
-  const ref = useRef<HTMLDivElement>(null);
+export default function List({
+  courses,
+  setClass,
+  open,
+  responsive,
+  block,
+  setOpen,
+}: ListProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const currentQuery = useMemo(
@@ -111,7 +131,7 @@ export default function List({ courses, setClass }: ListProps) {
 
   const virtualizer = useVirtualizer({
     count: filteredCourses.length,
-    getScrollElement: () => ref.current,
+    getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
   });
@@ -146,7 +166,13 @@ export default function List({ courses, setClass }: ListProps) {
   const totalSize = virtualizer.getTotalSize();
 
   return (
-    <div className={styles.root} ref={ref}>
+    <div
+      className={classNames(styles.root, {
+        [styles.block]: block,
+        [styles.responsive]: responsive,
+      })}
+      ref={rootRef}
+    >
       <div
         className={styles.view}
         style={{
@@ -161,21 +187,25 @@ export default function List({ courses, setClass }: ListProps) {
               autoFocus
               value={currentQuery}
               onChange={(event) => handleQueryChange(event.target.value)}
-              placeholder="Search courses..."
+              placeholder="Search Spring 2024 courses..."
             />
             <div className={styles.count}>
               {filteredCourses.length.toLocaleString()}
             </div>
+            {responsive && (
+              <IconButton onClick={() => setOpen(!open)}>
+                {open ? <FilterSolid /> : <Filter />}
+              </IconButton>
+            )}
           </div>
         </div>
         {items.length === 0 ? (
           <div className={styles.placeholder}>
-            <Wind width={32} height={32} />
+            <Xmark width={32} height={32} />
             <div className={styles.text}>
               <p className={styles.heading}>No courses found</p>
               <p className={styles.description}>
-                Unfortunately, no courses could be found matching your search.
-                Please try again with a different query.
+                Try again with a different query or by broadening your search.
               </p>
             </div>
           </div>

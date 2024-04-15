@@ -9,6 +9,8 @@ import Layout from "@/app/Layout";
 import Schedules from "@/app/Schedules";
 import AccountProvider from "@/components/AccountProvider";
 
+import Plan from "./app/Plan";
+
 const router = createBrowserRouter([
   {
     element: <Layout header={false} footer={false} />,
@@ -38,6 +40,10 @@ const router = createBrowserRouter([
       {
         element: <Schedules />,
         path: "/schedules",
+      },
+      {
+        element: <Plan />,
+        path: "/plan",
       },
     ],
   },

@@ -105,7 +105,7 @@ const Course = forwardRef<
                 {isolated && classes[0].title ? classes[0].title : courseTitle}
               </p>
               <div className={styles.row}>
-                <AverageGrade averageGrade={gradeAverage} />
+                <AverageGrade gradeAverage={gradeAverage} />
                 <Capacity
                   count={courseCount}
                   capacity={courseCapacity}

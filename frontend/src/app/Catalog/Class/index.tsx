@@ -66,7 +66,7 @@ export default function Class({
 
   // TODO: Query for enrollment and grades data in the background
 
-  const { data } = useQuery<{ class: IClass }>(GET_CLASS, {
+  const { data: classData } = useQuery<{ class: IClass }>(GET_CLASS, {
     variables: {
       term: {
         semester: currentSemester,
@@ -86,7 +86,7 @@ export default function Class({
     [currentCourse, currentClassNumber]
   );
 
-  const currentClass = useMemo(() => data?.class, [data?.class]);
+  const currentClass = useMemo(() => classData?.class, [classData?.class]);
 
   const units = useMemo(() => {
     const { unitsMin: minimum, unitsMax: maximum } =
@@ -98,8 +98,6 @@ export default function Class({
   }, [currentClass, partialClass]);
 
   const Component = useMemo(() => views[view].Component, [view]);
-
-  console.log(currentClass?.primarySection);
 
   return (
     <div className={styles.root}>
@@ -134,7 +132,7 @@ export default function Class({
         </div>
         <div className={styles.information}>
           <AverageGrade
-            averageGrade={
+            gradeAverage={
               currentClass?.course?.gradeAverage ?? currentCourse.gradeAverage
             }
           />

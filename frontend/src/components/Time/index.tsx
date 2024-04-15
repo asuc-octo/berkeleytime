@@ -27,35 +27,35 @@ const getTime = (start: string, end: string) => {
 
 interface TimeProps {
   days: boolean[];
-  start: string;
-  end: string;
+  timeStart: string | null;
+  timeEnd: string | null;
 }
 
-export default function Time({ days, start, end }: TimeProps) {
+export default function Time({ days, timeStart, timeEnd }: TimeProps) {
   const bottom = useMemo(() => {
-    if (!end) return;
+    if (!timeEnd) return;
 
-    const [hours, minutes] = end.split(":").map((value) => parseInt(value));
+    const [hours, minutes] = timeEnd.split(":").map((value) => parseInt(value));
 
     return 170 - ((hours - 6) * 10 + minutes / 6);
-  }, [end]);
+  }, [timeEnd]);
 
   const height = useMemo(() => {
-    if (!start || !end) return;
+    if (!timeStart || !timeEnd) return;
 
-    const [startHours, startMinutes] = start
+    const [startHours, startMinutes] = timeStart
       .split(":")
       .map((value) => parseInt(value));
 
-    const [endHours, endMinutes] = end
+    const [endHours, endMinutes] = timeEnd
       .split(":")
       .map((value) => parseInt(value));
 
     return (endHours - startHours) * 10 + (endMinutes - startMinutes) / 6;
-  }, [start, end]);
+  }, [timeStart, timeEnd]);
 
   const time = useMemo(() => {
-    if (!days?.some((day) => day)) return;
+    if (!days?.some((day) => day) || !timeStart || !timeEnd) return;
 
     return (
       days
@@ -68,9 +68,9 @@ export default function Time({ days, start, end }: TimeProps) {
         )
         .join("") +
       ", " +
-      getTime(start, end)
+      getTime(timeStart, timeEnd)
     );
-  }, [days, start, end]);
+  }, [days, timeStart, timeEnd]);
 
   return time ? (
     <Tooltip.Root disableHoverableContent>

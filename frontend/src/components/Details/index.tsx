@@ -6,9 +6,9 @@ import styles from "./Details.module.scss";
 
 interface DetailsProps {
   days: boolean[];
-  timeStart: string;
-  timeEnd: string;
-  location: string;
+  timeStart: string | null;
+  timeEnd: string | null;
+  location: string | null;
   instructors: IInstructor[];
 }
 
@@ -23,7 +23,7 @@ export default function Details({
     <div className={styles.root}>
       <div className={styles.column}>
         <p className={styles.title}>Time</p>
-        <Time days={days} start={timeStart} end={timeEnd} />
+        <Time days={days} timeStart={timeStart} timeEnd={timeEnd} />
       </div>
       <div className={styles.column}>
         <p className={styles.title}>Location</p>

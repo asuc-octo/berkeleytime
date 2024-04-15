@@ -5,9 +5,9 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Xmark } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import Filters from "@/components/Filters";
+import Browser from "@/components/Browser";
 import IconButton from "@/components/IconButton";
-import List from "@/components/List";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { GET_COURSES, ICatalogCourse } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
@@ -27,6 +27,7 @@ export default function Catalog({
 }: CatalogProps) {
   const [open, setOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const { width } = useWindowDimensions();
 
   const { data } = useQuery<{ catalog: ICatalogCourse[] }>(GET_COURSES, {
     variables: {
@@ -57,19 +58,31 @@ export default function Catalog({
     setSearchParams(searchParams);
   };
 
+  // The browser will be responsive at 992px
+  const block = useMemo(() => width <= 992, [width]);
+
   return (
     <Dialog.Root onOpenChange={handleOpenChange} open={open}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className={styles.overlay} />
         <Dialog.Content className={styles.content}>
-          <Filters />
-          {courses && <List courses={courses} setClass={handleClass} />}
-          <Dialog.Close asChild>
-            <IconButton className={styles.close}>
-              <Xmark />
-            </IconButton>
-          </Dialog.Close>
+          <div className={styles.header}>
+            Add a class
+            <Dialog.Close asChild>
+              <IconButton className={styles.close}>
+                <Xmark />
+              </IconButton>
+            </Dialog.Close>
+          </div>
+          <div className={styles.body}>
+            <Browser
+              courses={courses}
+              setClass={handleClass}
+              responsive={block}
+              block={block}
+            />
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

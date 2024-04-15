@@ -3,6 +3,13 @@
   display: flex;
   flex-direction: column;
 
+  @media (width <= 992px) {
+    position: absolute;
+    inset: 0;
+    background-color: var(--foreground-color);
+    z-index: 3;
+  }
+
   .view {
     flex-grow: 1;
     overflow: auto;
