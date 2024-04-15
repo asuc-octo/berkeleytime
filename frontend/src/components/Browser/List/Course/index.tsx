@@ -8,6 +8,7 @@ import {
 
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
+import Units from "@/components/Units";
 import { ICatalogCourse } from "@/lib/api";
 
 import styles from "./Course.module.scss";
@@ -112,13 +113,7 @@ const Course = forwardRef<
                   waitlistCount={courseWaitlistCount}
                   waitlistCapacity={courseWaitlistCapacity}
                 />
-                <div className={styles.units}>
-                  {courseMinimum === courseMaximum
-                    ? `${courseMinimum} ${
-                        courseMinimum === 1 ? "unit" : "units"
-                      }`
-                    : `${courseMinimum} - ${courseMaximum} units`}
-                </div>
+                <Units unitsMin={courseMinimum} unitsMax={courseMaximum} />
               </div>
             </div>
             <div className={styles.column}>
@@ -162,11 +157,7 @@ const Course = forwardRef<
                         waitlistCount={waitlistCount}
                         waitlistCapacity={waitlistMax}
                       />
-                      <div className={styles.units}>
-                        {unitsMax === unitsMin
-                          ? `${unitsMin} ${unitsMin === 1 ? "unit" : "units"}`
-                          : `${unitsMin} - ${unitsMax} units`}
-                      </div>
+                      <Units unitsMin={unitsMin} unitsMax={unitsMax} />
                     </div>
                   </div>
                   <div className={styles.column}>

@@ -1,5 +1,19 @@
 .root {
   display: flex;
+  gap: 16px;
+
+  @media (width <= 992px) {
+    flex-direction: column;
+  }
+
+  .divider {
+    width: 1px;
+    background-color: var(--border-color);
+
+    @media (width <= 992px) {
+      display: none;
+    }
+  }
 
   .column {
     flex: 1;
@@ -23,22 +37,6 @@
           color: var(--blue-600);
         }
       }
-    }
-
-    &:not(:last-child) {
-      border-right: 1px solid var(--border-color);
-    }
-
-    &:first-child {
-      padding-right: 16px;
-    }
-
-    &:nth-child(2) {
-      padding: 0 16px;
-    }
-
-    &:last-child {
-      padding-left: 16px;
     }
   }
 }

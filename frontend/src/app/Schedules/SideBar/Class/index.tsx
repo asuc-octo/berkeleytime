@@ -2,6 +2,7 @@ import classNames from "classnames";
 import { ArrowSeparateVertical, ArrowUnionVertical } from "iconoir-react";
 
 import CCN from "@/components/CCN";
+import Units from "@/components/Units";
 import { IClass } from "@/lib/api";
 
 import styles from "./Class.module.scss";
@@ -35,11 +36,7 @@ export default function Class({
             </p>
             <p className={styles.description}>{title ?? course.title}</p>
             <div className={styles.row}>
-              <p className={styles.units}>
-                {unitsMin === unitsMax
-                  ? `${unitsMax} ${unitsMax === 1 ? "unit" : "units"}`
-                  : `${unitsMin} - ${unitsMax} units`}
-              </p>
+              <Units unitsMin={unitsMin} unitsMax={unitsMax} />
               <CCN ccn={primarySection.ccn} />
             </div>
           </div>

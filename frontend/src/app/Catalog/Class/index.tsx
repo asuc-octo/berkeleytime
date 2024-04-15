@@ -1,14 +1,16 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { Bookmark, CalendarPlus, Xmark } from "iconoir-react";
+import { BookmarkSolid, CalendarPlus, Heart, Xmark } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import AverageGrade from "@/components/AverageGrade";
+import Button from "@/components/Button";
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
+import Units from "@/components/Units";
 import {
   GET_CLASS,
   ICatalogClass,
@@ -36,10 +38,6 @@ const views = [
   },
   {
     text: "Enrollment",
-    Component: () => null,
-  },
-  {
-    text: "Discussion",
     Component: () => null,
   },
 ];
@@ -88,49 +86,42 @@ export default function Class({
 
   const currentClass = useMemo(() => classData?.class, [classData?.class]);
 
-  const units = useMemo(() => {
-    const { unitsMin: minimum, unitsMax: maximum } =
-      currentClass ?? partialClass;
-
-    return maximum === minimum
-      ? `${minimum} ${minimum === 1 ? "unit" : "units"}`
-      : `${minimum} - ${maximum} units`;
-  }, [currentClass, partialClass]);
-
   const Component = useMemo(() => views[view].Component, [view]);
 
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <div className={styles.details}>
-          <div className={styles.text}>
-            <h1 className={styles.heading}>
-              {currentSubject} {currentCourseNumber}
-            </h1>
-            <p className={styles.description}>
-              {currentClass?.title ?? currentCourse.title}
-            </p>
-          </div>
-          <div className={styles.group}>
+        <div className={styles.group}>
+          <div className={styles.row}>
+            <Button secondary>
+              <Heart />
+              23
+            </Button>
+            <IconButton>
+              <BookmarkSolid />
+            </IconButton>
             <IconButton>
               <CalendarPlus />
             </IconButton>
-            <IconButton>
-              <Bookmark />
-            </IconButton>
-            <Link
-              to={{
-                pathname: `/catalog/${currentYear}/${currentSemester}`,
-                search: searchParams.toString(),
-              }}
-            >
-              <IconButton>
-                <Xmark />
-              </IconButton>
-            </Link>
           </div>
+          <Link
+            to={{
+              pathname: `/catalog/${currentYear}/${currentSemester}`,
+              search: searchParams.toString(),
+            }}
+          >
+            <IconButton>
+              <Xmark />
+            </IconButton>
+          </Link>
         </div>
-        <div className={styles.information}>
+        <h1 className={styles.heading}>
+          {currentSubject} {currentCourseNumber}
+        </h1>
+        <p className={styles.description}>
+          {currentClass?.title ?? partialClass.title ?? currentCourse.title}
+        </p>
+        <div className={styles.row}>
           <AverageGrade
             gradeAverage={
               currentClass?.course?.gradeAverage ?? currentCourse.gradeAverage
@@ -146,20 +137,23 @@ export default function Class({
               currentClass?.waitlistMax ?? partialClass.waitlistMax
             }
           />
-          <div className={styles.units}>{units}</div>
+          <Units
+            unitsMax={currentClass?.unitsMax ?? partialClass.unitsMax}
+            unitsMin={currentClass?.unitsMin ?? partialClass.unitsMin}
+          />
           {currentClass && <CCN ccn={currentClass.primarySection.ccn} />}
         </div>
-        <div className={styles.menu}>
-          {views.map(({ text }, index) => (
-            <MenuItem
-              key={index}
-              active={index === view}
-              onClick={() => setView(index)}
-            >
-              {text}
-            </MenuItem>
-          ))}
-        </div>
+      </div>
+      <div className={styles.menu}>
+        {views.map(({ text }, index) => (
+          <MenuItem
+            key={index}
+            active={index === view}
+            onClick={() => setView(index)}
+          >
+            {text}
+          </MenuItem>
+        ))}
       </div>
       <div className={styles.view}>
         <Component currentClass={currentClass} />
