@@ -27,10 +27,10 @@ export default function Catalog() {
   const [searchParams] = useSearchParams();
   const { width } = useWindowDimensions();
 
-  // TODO: Fetch available years
+  // TODO: Select year
   const currentYear = useMemo(() => (year && parseInt(year)) || 2024, [year]);
 
-  // TODO: Fetch available semesters
+  // TODO: Select semester
   const currentSemester = useMemo(
     () =>
       semester
@@ -42,6 +42,7 @@ export default function Catalog() {
 
   const currentSubject = useMemo(() => subject?.toUpperCase(), [subject]);
 
+  // TODO: Error state, loading state
   const { loading, error, data } = useQuery<{ catalog: ICatalogCourse[] }>(
     GET_COURSES,
     {
@@ -102,6 +103,8 @@ export default function Catalog() {
         courses={courses}
         setClass={setClass}
         responsive={responsive}
+        semester={currentSemester}
+        year={currentYear}
         block={block}
       />
       {currentClass ? (

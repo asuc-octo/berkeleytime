@@ -6,7 +6,6 @@ export default defineConfig({
   server: {
     host: true,
     port: 3000,
-    open: true,
   },
   resolve: {
     alias: {
@@ -16,6 +15,5 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: "../build",
-    sourcemap: false,
   },
 });

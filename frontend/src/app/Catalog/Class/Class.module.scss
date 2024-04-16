@@ -18,13 +18,13 @@
   .header {
     padding: 24px 24px 12px;
 
-    .group {
+    .row {
       display: flex;
       justify-content: space-between;
       margin-bottom: 24px;
     }
 
-    .row {
+    .group {
       display: flex;
       align-items: center;
       gap: 12px;

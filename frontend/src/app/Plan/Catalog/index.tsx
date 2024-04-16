@@ -68,7 +68,7 @@ export default function Catalog({
         <Dialog.Overlay className={styles.overlay} />
         <Dialog.Content className={styles.content}>
           <div className={styles.header}>
-            Add a course to this schedule
+            Add a course to this semester
             <Dialog.Close asChild>
               <IconButton className={styles.close}>
                 <Xmark />
@@ -77,9 +77,9 @@ export default function Catalog({
           </div>
           <div className={styles.body}>
             <Browser
+              courses={courses}
               semester={Semester.Spring}
               year={2024}
-              courses={courses}
               setClass={handleClass}
               responsive={block}
               block={block}
