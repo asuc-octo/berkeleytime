@@ -8,6 +8,7 @@ export default async () => {
   const server = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginLandingPageLocalDefault({ includeCookies: true })],
+    introspection: true, // TODO(production): disable introspection upon final deployment
   });
   await server.start();
 
