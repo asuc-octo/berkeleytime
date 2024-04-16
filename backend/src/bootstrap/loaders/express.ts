@@ -12,10 +12,13 @@ export default async (app: Application, server: ApolloServer) => {
   app.use(json());
 
   // Cors configuration
-  app.use(cors({
-    origin: config.url,
-    credentials: true,
-  }));
+  app.use(
+    cors({
+      // Allow requests from the local frontend (should be the only requirement)
+      origin: [config.url, "http://localhost:3000"],
+      credentials: true,
+    })
+  );
 
   // Sets various HTTP headers to help protect our app
   app.use(helmet());

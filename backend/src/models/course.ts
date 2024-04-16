@@ -58,7 +58,7 @@ const courseSchemaObject = {
     gradingBasis: descriptor,
     blindGrading: Boolean,
     status: descriptor,
-    fromDate: Date,
+    fromDate: String,
     toDate: Date,
     createdDate: Date,
     updatedDate: Date,
@@ -146,5 +146,5 @@ const courseSchemaObject = {
 }
 
 export const courseSchema = new Schema(courseSchemaObject, schemaOptions);
-export const CourseModel = mongoose.model('Course', courseSchema)
+export const CourseModel = mongoose.model('Course', courseSchema, 'course')
 export type CourseType = InferSchemaType<typeof courseSchema>
