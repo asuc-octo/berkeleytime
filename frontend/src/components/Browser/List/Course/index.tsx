@@ -90,7 +90,7 @@ const Course = forwardRef<
 
     const handleClick = (number?: string) => {
       if (number) setClass(number);
-      else if (isolated) setClass("001");
+      else if (isolated) setClass(classes[0].number);
       else setExpanded(!expanded);
     };
 

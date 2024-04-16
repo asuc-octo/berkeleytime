@@ -5,9 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-    "build": "tsc && vite build",
-    "lint": "eslint --ext .tsx,.ts src/ --report-unused-disable-directives"
-  },
+		"build": "tsc && vite build",
+		"lint": "eslint --ext .tsx,.ts src/ --report-unused-disable-directives",
+		"start": "serve -s build -p 3000"
+	},
 	"dependencies": {
 		"@apollo/client": "^3.9.5",
 		"@floating-ui/dom": "^1.6.3",
@@ -41,6 +42,7 @@
 		"prettier": "^3.2.4",
 		"sass": "^1.70.0",
 		"typescript": "^5.3.3",
-		"vite": "^5.0.12"
+		"vite": "^5.0.12",
+		"serve": "^14.2.1"
 	}
 }

@@ -1,7 +1,13 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { BookmarkSolid, CalendarPlus, Heart, Xmark } from "iconoir-react";
+import {
+  ArrowUpRight,
+  BookmarkSolid,
+  CalendarPlus,
+  Heart,
+  Xmark,
+} from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import AverageGrade from "@/components/AverageGrade";
@@ -91,8 +97,8 @@ export default function Class({
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <div className={styles.group}>
-          <div className={styles.row}>
+        <div className={styles.row}>
+          <div className={styles.group}>
             <Button secondary>
               <Heart />
               23
@@ -104,16 +110,25 @@ export default function Class({
               <CalendarPlus />
             </IconButton>
           </div>
-          <Link
-            to={{
-              pathname: `/catalog/${currentYear}/${currentSemester}`,
-              search: searchParams.toString(),
-            }}
-          >
-            <IconButton>
-              <Xmark />
+          <div className={styles.group}>
+            <IconButton
+              as="a"
+              href={`https://classes.berkeley.edu/content/${currentYear}-${currentSemester.toLowerCase()}-${currentSubject.toLowerCase()}-${currentCourseNumber}-${currentClassNumber}-lec-001`}
+              target="_blank"
+            >
+              <ArrowUpRight />
             </IconButton>
-          </Link>
+            <Link
+              to={{
+                pathname: `/catalog/${currentYear}/${currentSemester}`,
+                search: searchParams.toString(),
+              }}
+            >
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Link>
+          </div>
         </div>
         <h1 className={styles.heading}>
           {currentSubject} {currentCourseNumber}
@@ -121,7 +136,7 @@ export default function Class({
         <p className={styles.description}>
           {currentClass?.title ?? partialClass.title ?? currentCourse.title}
         </p>
-        <div className={styles.row}>
+        <div className={styles.group}>
           <AverageGrade
             gradeAverage={
               currentClass?.course?.gradeAverage ?? currentCourse.gradeAverage
