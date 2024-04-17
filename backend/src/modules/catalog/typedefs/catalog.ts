@@ -115,7 +115,7 @@ type EnrollmentDay @cacheControl(maxAge: 1) {
 type CatalogItem @cacheControl(maxAge: 1) {
     subject: String!
     number: String!
-    title: String! @cacheControl(maxAge: 30)
+    title: String!
     description: String!
     classes: [CatalogClass]!
     gradeAverage: Float
