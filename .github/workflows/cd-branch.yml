@@ -22,7 +22,7 @@ jobs:
     - name: Tag Docker Image
       run: docker tag berkeleytime-backend ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:${{ github.sha }}
     - name: Push Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:${{ github.sha }}
     - name: Echo Params
       run: |
         echo "Subdomain: ${{ github.event.client_payload.param1 }}"
