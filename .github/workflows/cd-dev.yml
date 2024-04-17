@@ -17,12 +17,18 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: Build Docker Image
+    - name: Build Backend Image
       run: docker build -t berkeleytime-backend ./backend/
-    - name: Tag Docker Image
+    - name: Tag Backend Image
       run: docker tag berkeleytime-backend ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:${{ github.sha }}
-    - name: Push Docker Image
+    - name: Push Backend Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:${{ github.sha }}
+    - name: Build Frontend Image
+      run: docker build -t berkeleytime-frontend ./frontend/
+    - name: Tag Frontend Image
+      run: docker tag berkeleytime-frontend ${{ secrets.DOCKER_USERNAME }}/berkeleytime-frontend:${{ github.sha }}
+    - name: Push Frontend Image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/berkeleytime-frontend:${{ github.sha }}
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@v1.0.3
       with:
