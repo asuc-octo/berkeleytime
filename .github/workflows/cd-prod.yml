@@ -1,5 +1,5 @@
 name: 
-  Deploy to Staging
+  Deploy to Prod
 
 on:
   repository_dispatch:
