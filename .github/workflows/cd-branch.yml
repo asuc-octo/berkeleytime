@@ -10,6 +10,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build Docker Image
+      run: docker build -t berkeleytime-backend ./backend/
+    - name: Tag Docker Image
+      run: docker tag berkeleytime-backend ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:${{ github.sha }}
+    - name: Push Docker Image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend
     - name: Echo Params
       run: |
         echo "Subdomain: ${{ github.event.client_payload.param1 }}"
@@ -21,4 +34,10 @@ jobs:
         username: root
         key: ${{ secrets.SSH_KEY }}
         port: 22
-        script: whoami
+        script: |
+          helm install bt-dev-app-${{ github.sha }} ./app --namespace=bt \
+            --set host=${{ github.event.client_payload.param1 }}.stanfurdtime.com \
+            --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+            --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
+            --set nodeEnv=development
+          helm release ttl bt-dev-app-${{ github.sha }} --set='${{ github.event.client_payload.param2 }}'
