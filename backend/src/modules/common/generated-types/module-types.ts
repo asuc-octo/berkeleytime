@@ -6,6 +6,7 @@ export namespace CommonModule {
   };
   
   interface DefinedEnumValues {
+    CacheControlScope: 'PUBLIC' | 'PRIVATE';
     Semester: 'Fall' | 'Spring' | 'Summer';
   };
   
@@ -13,6 +14,7 @@ export namespace CommonModule {
     TermInput: 'year' | 'semester';
   };
   
+  export type CacheControlScope = DefinedEnumValues['CacheControlScope'];
   export type TermInput = Pick<Types.TermInput, DefinedInputFields['TermInput']>;
   export type Semester = DefinedEnumValues['Semester'];
   export type Query = Pick<Types.Query, DefinedFields['Query']>;

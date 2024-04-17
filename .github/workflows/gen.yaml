@@ -1,5 +1,4 @@
-name:
-  Codegen Test
+name: Codegen Test
 
 on:
   push:
@@ -9,28 +8,27 @@ jobs:
   Codegen:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: install node v12
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12
+      - name: install node v12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
 
-    - name: npm install
-      run: npm install
+      - name: npm install and gen
+        working-directory: ./backend
+        run: |
+          npm install
+          npm run generate
 
-    - name: gen
-      run: npm run generate
+      - name: test diff
+        uses: tj-actions/verify-changed-files@v14
+        id: test-diff
+        with:
+          files: |
+            ./backend/**/generated-types/*.ts
 
-    - name: test diff
-      uses: tj-actions/verify-changed-files@v14
-      id: test-diff
-      with:
-        files: |
-          **/generated-types/*.ts
-
-    - if: steps.test-diff.outputs.files_changed == 'true'
-      run: |
-        echo "Run 'npm run generate' to fix!"
-        exit 1
-
+      - if: steps.test-diff.outputs.files_changed == 'true'
+        run: |
+          echo "Run 'npm run generate' to fix!"
+          exit 1

@@ -1,6 +1,17 @@
 import { gql } from "graphql-tag";
 
 export default gql`
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
+directive @cacheControl(
+  maxAge: Int
+  scope: CacheControlScope
+  inheritMaxAge: Boolean
+) on FIELD_DEFINITION | OBJECT | INTERFACE | UNION
+
 directive @auth on OBJECT | FIELD_DEFINITION
 
 scalar JSON
@@ -23,6 +34,6 @@ enum Semester {
 }
 
 type Query {
-    ping: String!
+    ping: String! @deprecated(reason: "test")
 }
 `

@@ -1,6 +1,5 @@
-name: 
-  Linting
-  
+name: Linting
+
 on:
   push:
   pull_request:
@@ -9,12 +8,13 @@ jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: install node v12
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12
-    - name: npm install
-      run: npm install
-    - name: lint
-      run: npm run lint
+      - uses: actions/checkout@v1
+      - name: install node v12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: npm install and lint
+        working-directory: ./backend
+        run: |
+          npm install
+          npm run lint
