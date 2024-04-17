@@ -1,10 +1,10 @@
 import { CatalogModule } from "./generated-types/module-types";
-import { getCatalog, getClass, getClassById, getClassSections, getCourse, getCourseById, getCourseClasses, getCourseList, getCrossListings, getPrimarySection, getSection } from "./controller"
+import { getCatalog, getClass, getClassById, getClassSections, getCourse, getCourseById, getCourseClasses, getCourseList, getCourseSections, getCrossListings, getPrimarySection, getSection } from "./controller"
 
 const resolvers: CatalogModule.Resolvers = {
     Query: {
         catalog: (_, args, __, info) => getCatalog(args.term, info),
-        course: (_, args) => getCourse(args.subject, args.courseNumber, args.term),
+        course: (_, args, __, info) => getCourse(args.subject, args.courseNumber, args.term, info),
         class: (_, args) => getClass(args.subject, args.courseNumber, args.term, args.classNumber),
         section: (_, args) => getSection(args.subject, args.courseNumber, args.term, args.classNumber, args.sectionNumber),
         courseList: getCourseList,
@@ -49,6 +49,10 @@ const resolvers: CatalogModule.Resolvers = {
         crossListing: (parent) => {
             const cl = parent.crossListing as any
             return getCrossListings(cl.displayNames, cl.term)
+        },
+        sections: (parent, { term }) => {
+            const c = parent.classes as any
+            return getCourseSections(c, term)
         }
     }
 }

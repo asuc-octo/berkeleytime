@@ -11,23 +11,23 @@ type Query {
     
     Used primarily in the catalog page.
     """
-    catalog(term: TermInput!): [CatalogItem]
+    catalog(term: TermInput!): [CatalogItem!]
 
     """
     Get a list of all course names across all semesters. 
     
     Useful for searching for courses.
     """
-    courseList: [CourseListItem]
+    courseList: [CourseListItem!]
 }
 
 """
 Info shared between Classes within and across semesters.
 """
-type Course @cacheControl(maxAge: 1) {
-    classes(term: TermInput): [Class]!
-    crossListing: [Course]
-    sections(term: TermInput, primary: Boolean): [Section]!
+type Course {
+    classes(term: TermInput): [Class!]!
+    crossListing: [Course!]
+    sections(term: TermInput, primary: Boolean): [Section!]!
 
     description: String!
     fromDate: String!
@@ -48,10 +48,10 @@ type Course @cacheControl(maxAge: 1) {
 """
 Data for a specific class in a specific semester. There may be more than one Class for a given Course in a given semester.
 """
-type Class @cacheControl(maxAge: 1) {
+type Class {
     course: Course!
     primarySection: Section!
-    sections: [Section]!
+    sections: [Section!]!
 
     description: String
     enrollCount: Int!
@@ -74,10 +74,10 @@ type Class @cacheControl(maxAge: 1) {
 """
 Sections are each associated with one Class. 
 """
-type Section @cacheControl(maxAge: 1) {
+type Section {
     class: Class!
     course: Course!
-    enrollmentHistory: [EnrollmentDay]
+    enrollmentHistory: [EnrollmentDay!]
 
     ccn: Int!
     dateEnd: String
@@ -85,7 +85,7 @@ type Section @cacheControl(maxAge: 1) {
     days: [Boolean!]
     enrollCount: Int!
     enrollMax: Int!
-    instructors: [Instructor]
+    instructors: [Instructor!]
     kind: String!
     location: String
     notes: String
@@ -100,30 +100,30 @@ type Section @cacheControl(maxAge: 1) {
     lastUpdated: ISODate!
 }
 
-type Instructor @cacheControl(maxAge: 1) {
+type Instructor {
     familyName: String!
     givenName: String!
 }
 
-type EnrollmentDay @cacheControl(maxAge: 1) {
+type EnrollmentDay {
     enrollCount: Int!
     enrollMax: Int!
     waitlistCount: Int!
     waitlistMax: Int!
 }
 
-type CatalogItem @cacheControl(maxAge: 1) {
+type CatalogItem {
     subject: String!
     number: String!
     title: String!
     description: String!
-    classes: [CatalogClass]!
+    classes: [CatalogClass!]!
     gradeAverage: Float
 
     lastUpdated: ISODate!
 }
 
-type CatalogClass @cacheControl(maxAge: 1) {
+type CatalogClass {
     number: String!
     title: String
     description: String
@@ -135,7 +135,7 @@ type CatalogClass @cacheControl(maxAge: 1) {
     lastUpdated: ISODate!
 }
 
-type CourseListItem @cacheControl(maxAge: 1) {
+type CourseListItem {
     subject: String!
     number: String!
 }
