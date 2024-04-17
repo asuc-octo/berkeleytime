@@ -24,7 +24,7 @@ type Query {
 """
 Info shared between Classes within and across semesters.
 """
-type Course {
+type Course @cacheControl(maxAge: 1) {
     classes(term: TermInput): [Class]!
     crossListing: [Course]
     sections(term: TermInput, primary: Boolean): [Section]!
@@ -48,7 +48,7 @@ type Course {
 """
 Data for a specific class in a specific semester. There may be more than one Class for a given Course in a given semester.
 """
-type Class {
+type Class @cacheControl(maxAge: 1) {
     course: Course!
     primarySection: Section!
     sections: [Section]!
@@ -74,7 +74,7 @@ type Class {
 """
 Sections are each associated with one Class. 
 """
-type Section {
+type Section @cacheControl(maxAge: 1) {
     class: Class!
     course: Course!
     enrollmentHistory: [EnrollmentDay]
@@ -100,19 +100,19 @@ type Section {
     lastUpdated: ISODate!
 }
 
-type Instructor {
+type Instructor @cacheControl(maxAge: 1) {
     familyName: String!
     givenName: String!
 }
 
-type EnrollmentDay {
+type EnrollmentDay @cacheControl(maxAge: 1) {
     enrollCount: Int!
     enrollMax: Int!
     waitlistCount: Int!
     waitlistMax: Int!
 }
 
-type CatalogItem {
+type CatalogItem @cacheControl(maxAge: 1) {
     subject: String!
     number: String!
     title: String!
@@ -123,7 +123,7 @@ type CatalogItem {
     lastUpdated: ISODate!
 }
 
-type CatalogClass {
+type CatalogClass @cacheControl(maxAge: 1) {
     number: String!
     title: String
     description: String
@@ -135,7 +135,7 @@ type CatalogClass {
     lastUpdated: ISODate!
 }
 
-type CourseListItem {
+type CourseListItem @cacheControl(maxAge: 1) {
     subject: String!
     number: String!
 }
