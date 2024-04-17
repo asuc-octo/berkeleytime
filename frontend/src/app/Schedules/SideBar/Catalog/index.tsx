@@ -7,7 +7,6 @@ import { useSearchParams } from "react-router-dom";
 
 import Browser from "@/components/Browser";
 import IconButton from "@/components/IconButton";
-import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { GET_COURSES, ICatalogCourse, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
@@ -27,7 +26,6 @@ export default function Catalog({
 }: CatalogProps) {
   const [open, setOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { width } = useWindowDimensions();
 
   const { data } = useQuery<{ catalog: ICatalogCourse[] }>(GET_COURSES, {
     variables: {
@@ -49,7 +47,7 @@ export default function Catalog({
     setSearchParams(searchParams);
   };
 
-  const handleClass = (course: ICatalogCourse, number: string) => {
+  const handleClick = (course: ICatalogCourse, number: string) => {
     setClass(course, number);
 
     setOpen(false);
@@ -57,9 +55,6 @@ export default function Catalog({
     searchParams.delete("query");
     setSearchParams(searchParams);
   };
-
-  // The browser will be responsive at 992px
-  const block = useMemo(() => width <= 992, [width]);
 
   return (
     <Dialog.Root onOpenChange={handleOpenChange} open={open}>
@@ -77,12 +72,11 @@ export default function Catalog({
           </div>
           <div className={styles.body}>
             <Browser
-              semester={Semester.Spring}
-              year={2024}
+              currentSemester={Semester.Spring}
+              currentYear={2024}
               courses={courses}
-              setClass={handleClass}
-              responsive={block}
-              block={block}
+              onClick={handleClick}
+              responsive={false}
             />
           </div>
         </Dialog.Content>

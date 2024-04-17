@@ -4,6 +4,7 @@ import classNames from "classnames";
 import Fuse from "fuse.js";
 import { useSearchParams } from "react-router-dom";
 
+import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { ICatalogCourse, Semester } from "@/lib/api";
 import { subjects } from "@/lib/course";
 
@@ -89,25 +90,24 @@ const initializeFuse = (courses: ICatalogCourse[]) => {
 
 interface BrowserProps {
   courses: ICatalogCourse[];
-  setClass: (course: ICatalogCourse, number: string) => void;
-  responsive: boolean;
-  block?: boolean;
-  semester: Semester;
-  year: number;
+  onClick: (course: ICatalogCourse, number: string) => void;
+  responsive?: boolean;
+  currentSemester: Semester;
+  currentYear: number;
 }
 
 export default function Browser({
   courses,
-  setClass,
-  responsive,
-  semester,
-  year,
-  block,
+  onClick,
+  responsive = true,
+  currentSemester,
+  currentYear,
 }: BrowserProps) {
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const [filteredCourses, setFilteredCourses] = useState<ICatalogCourse[]>([]);
   const [expandedCourses, setExpandedCourses] = useState<boolean[]>([]);
+  const { width } = useWindowDimensions();
 
   const fuse = useMemo(() => initializeFuse(courses), [courses]);
 
@@ -135,22 +135,27 @@ export default function Browser({
     setExpandedCourses(new Array(_filteredCourses.length).fill(false));
   }, [currentQuery, fuse, courses]);
 
+  const block = useMemo(() => width <= 992, [width]);
+
+  const overlay = useMemo(
+    () => responsive && width <= 1400,
+    [width, responsive]
+  );
+
   return (
     <div className={classNames(styles.root, { [styles.block]: block })}>
-      {(open || !responsive) && (
-        <Filters responsive={responsive} block={block} />
-      )}
+      {(open || !overlay) && <Filters overlay={overlay} block={block} />}
       <List
-        courses={filteredCourses}
-        setClass={setClass}
+        currentCourses={filteredCourses}
+        onClick={onClick}
         setOpen={setOpen}
-        semester={semester}
+        currentSemester={currentSemester}
         expandedCourses={expandedCourses}
         setExpanded={setExpanded}
         currentQuery={currentQuery}
-        year={year}
+        currentYear={currentYear}
         open={open}
-        responsive={responsive}
+        overlay={overlay}
         block={block}
       />
     </div>

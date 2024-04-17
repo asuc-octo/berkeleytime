@@ -6,11 +6,11 @@ input, button {
   font-family: unset;
   border: unset;
   background-color: unset;
+  padding: unset;
 }
 
 input {
   width: 100%;
-  padding: unset;
 
   &:focus {
     outline: none;
