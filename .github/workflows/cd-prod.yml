@@ -17,12 +17,18 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-    - name: Build Docker Image
+    - name: Build Backend Image
       run: docker build -t berkeleytime-backend ./backend/
-    - name: Tag Docker Image
-      run: docker tag berkeleytime-backend ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:${{ github.sha }}
-    - name: Push Docker Image
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:${{ github.sha }}
+    - name: Tag Backend Image
+      run: docker tag berkeleytime-backend ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:prod
+    - name: Push Backend Image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:prod
+    - name: Build Frontend Image
+      run: docker build -t berkeleytime-frontend ./frontend/
+    - name: Tag Frontend Image
+      run: docker tag berkeleytime-frontend ${{ secrets.DOCKER_USERNAME }}/berkeleytime-frontend:prod
+    - name: Push Frontend Image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/berkeleytime-frontend:prod
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -31,8 +37,5 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          helm install bt-prod-app-${{ github.sha }} ./app --namespace=bt \
-            --set host=prod.stanfurdtime.com \
-            --set mongoUri=mongodb://bt-prod-mongo-mongodb.bt.svc.cluster.local:27017/bt \
-            --set redisUri=redis://bt-prod-redis-master.bt.svc.cluster.local:6379 \
-            --set nodeEnv=development
+            kubectl rollout restart deployment bt-prod-app-backend
+            kubectl rollout restart deployment bt-prod-app-frontend
