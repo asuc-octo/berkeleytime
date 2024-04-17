@@ -12,26 +12,26 @@ import Course from "./Course";
 import styles from "./List.module.scss";
 
 interface ListProps {
-  courses: ICatalogCourse[];
-  setClass: (course: ICatalogCourse, number: string) => void;
+  currentCourses: ICatalogCourse[];
+  onClick: (course: ICatalogCourse, number: string) => void;
   setOpen: Dispatch<SetStateAction<boolean>>;
   open: boolean;
-  responsive: boolean;
-  block?: boolean;
-  semester: Semester;
-  year: number;
+  overlay: boolean;
+  block: boolean;
+  currentSemester: Semester;
+  currentYear: number;
   currentQuery: string;
   expandedCourses: boolean[];
   setExpanded: (index: number, expanded: boolean) => void;
 }
 
 export default function List({
-  courses,
-  setClass,
-  semester,
-  year,
+  currentCourses,
+  onClick,
+  currentSemester,
+  currentYear,
   open,
-  responsive,
+  overlay,
   block,
   setOpen,
   currentQuery,
@@ -42,7 +42,7 @@ export default function List({
   const [searchParams, setSearchParams] = useSearchParams();
 
   const virtualizer = useVirtualizer({
-    count: courses.length,
+    count: currentCourses.length,
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
@@ -64,7 +64,7 @@ export default function List({
     <div
       className={classNames(styles.root, {
         [styles.block]: block,
-        [styles.responsive]: responsive,
+        [styles.overlay]: overlay,
       })}
       ref={rootRef}
     >
@@ -82,12 +82,12 @@ export default function List({
               autoFocus
               value={currentQuery}
               onChange={(event) => handleQueryChange(event.target.value)}
-              placeholder={`Search ${semester} ${year} courses...`}
+              placeholder={`Search ${currentSemester} ${currentYear} courses...`}
             />
             <div className={styles.count}>
-              {courses.length.toLocaleString()}
+              {currentCourses.length.toLocaleString()}
             </div>
-            {responsive && (
+            {overlay && (
               <IconButton onClick={() => setOpen(!open)}>
                 {open ? <FilterSolid /> : <Filter />}
               </IconButton>
@@ -110,7 +110,7 @@ export default function List({
             style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
           >
             {items.map(({ key, index }) => {
-              const course = courses[index];
+              const course = currentCourses[index];
 
               return (
                 <Course
@@ -120,7 +120,7 @@ export default function List({
                   ref={virtualizer.measureElement}
                   expanded={expandedCourses[index]}
                   setExpanded={(expanded) => setExpanded(index, expanded)}
-                  setClass={(number) => setClass(course, number)}
+                  setClass={(number) => onClick(course, number)}
                 />
               );
             })}

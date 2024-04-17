@@ -52,6 +52,9 @@ export interface IClass extends ICatalogClass {
   sections: ISection[];
   description: string | null;
   notes: string;
+  year: number;
+  semester: Semester;
+  session: string;
 }
 
 export interface ICatalogCourse {
@@ -67,12 +70,65 @@ export interface ICourse extends Omit<ICatalogCourse, "classes"> {
   prereqs: string | null;
   gradingBasis: string;
   description: string;
+  classes: IClass[];
   sections: ISection[];
 }
 
 export interface IAccount {
   email: string;
 }
+
+export const GET_COURSE = gql`
+  query GetCourse($subject: String!, $courseNumber: String!) {
+    course(subject: $subject, courseNumber: $courseNumber) {
+      title
+      crossListing {
+        subject
+        number
+      }
+      classes {
+        year
+        semester
+        number
+      }
+      level
+      description
+      gradeAverage
+      gradingBasis
+      subjectName
+      prereqs
+      number
+      sections {
+        course {
+          subject
+          number
+        }
+        class {
+          number
+        }
+        ccn
+        dateEnd
+        dateStart
+        days
+        enrollCount
+        enrollMax
+        instructors {
+          familyName
+          givenName
+        }
+        kind
+        location
+        notes
+        primary
+        timeEnd
+        timeStart
+        waitlistCount
+        waitlistMax
+        number
+      }
+    }
+  }
+`;
 
 export const GET_CLASS = gql`
   query GetClass(
@@ -103,8 +159,14 @@ export const GET_CLASS = gql`
         gradingBasis
         subject
         subjectName
+        level
         prereqs
         number
+        classes {
+          year
+          semester
+          number
+        }
       }
       primarySection {
         course {

@@ -1,11 +1,13 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
+import * as Select from "@radix-ui/react-select";
 import {
-  ArrowUpRight,
+  ArrowSeparateVertical,
   BookmarkSolid,
   CalendarPlus,
   Heart,
+  OpenNewWindow,
   Xmark,
 } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -49,7 +51,7 @@ const views = [
 ];
 
 interface ClassProps {
-  currentCourse: ICatalogCourse;
+  partialCourse: ICatalogCourse;
   currentSemester: Semester;
   currentYear: number;
   currentClassNumber: string;
@@ -58,7 +60,7 @@ interface ClassProps {
 }
 
 export default function Class({
-  currentCourse,
+  partialCourse,
   currentSemester,
   currentYear,
   currentClassNumber,
@@ -70,7 +72,7 @@ export default function Class({
 
   // TODO: Query for enrollment and grades data in the background
 
-  const { data: classData } = useQuery<{ class: IClass }>(GET_CLASS, {
+  const { data } = useQuery<{ class: IClass }>(GET_CLASS, {
     variables: {
       term: {
         semester: currentSemester,
@@ -84,13 +86,13 @@ export default function Class({
 
   const partialClass = useMemo(
     () =>
-      currentCourse.classes.find(
+      partialCourse.classes.find(
         (class_) => class_.number === currentClassNumber
       ) as ICatalogClass,
-    [currentCourse, currentClassNumber]
+    [partialCourse, currentClassNumber]
   );
 
-  const currentClass = useMemo(() => classData?.class, [classData?.class]);
+  const currentClass = useMemo(() => data?.class, [data?.class]);
 
   const Component = useMemo(() => views[view].Component, [view]);
 
@@ -111,12 +113,39 @@ export default function Class({
             </IconButton>
           </div>
           <div className={styles.group}>
+            <Select.Root defaultValue={`${currentSemester} ${currentYear}`}>
+              <Select.Trigger asChild>
+                <Button secondary>
+                  <Select.Value />
+                  <Select.Icon asChild>
+                    <ArrowSeparateVertical />
+                  </Select.Icon>
+                </Button>
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Content
+                  position="popper"
+                  className={styles.content}
+                  align="end"
+                >
+                  {currentClass?.course?.classes.map(
+                    ({ year, semester }, index) => (
+                      <Select.Item key={index} value={`${semester} ${year}`}>
+                        <Select.ItemText>
+                          {semester} {year}
+                        </Select.ItemText>
+                      </Select.Item>
+                    )
+                  )}
+                </Select.Content>
+              </Select.Portal>
+            </Select.Root>
             <IconButton
               as="a"
               href={`https://classes.berkeley.edu/content/${currentYear}-${currentSemester.toLowerCase()}-${currentSubject.toLowerCase()}-${currentCourseNumber}-${currentClassNumber}-lec-001`}
               target="_blank"
             >
-              <ArrowUpRight />
+              <OpenNewWindow />
             </IconButton>
             <Link
               to={{
@@ -134,12 +163,12 @@ export default function Class({
           {currentSubject} {currentCourseNumber}
         </h1>
         <p className={styles.description}>
-          {currentClass?.title ?? partialClass.title ?? currentCourse.title}
+          {currentClass?.title ?? partialClass.title ?? partialCourse.title}
         </p>
         <div className={styles.group}>
           <AverageGrade
             gradeAverage={
-              currentClass?.course?.gradeAverage ?? currentCourse.gradeAverage
+              currentClass?.course?.gradeAverage ?? partialCourse.gradeAverage
             }
           />
           <Capacity

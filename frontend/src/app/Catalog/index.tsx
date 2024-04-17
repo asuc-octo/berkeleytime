@@ -6,7 +6,6 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Boundary from "@/components/Boundary";
 import Browser from "@/components/Browser";
 import LoadingIndicator from "@/components/LoadingIndicator";
-import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { GET_COURSES, ICatalogCourse, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
@@ -25,7 +24,6 @@ export default function Catalog() {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { width } = useWindowDimensions();
 
   // TODO: Select year
   const currentYear = useMemo(() => (year && parseInt(year)) || 2024, [year]);
@@ -57,7 +55,7 @@ export default function Catalog() {
 
   const courses = useMemo(() => data?.catalog ?? [], [data?.catalog]);
 
-  const currentCourse = useMemo(
+  const partialCourse = useMemo(
     () =>
       courses.find(
         (course) =>
@@ -83,15 +81,9 @@ export default function Catalog() {
       currentClassNumber &&
       currentCourseNumber &&
       currentSubject &&
-      currentCourse,
-    [currentClassNumber, currentCourseNumber, currentSubject, currentCourse]
+      partialCourse,
+    [currentClassNumber, currentCourseNumber, currentSubject, partialCourse]
   );
-
-  // The browser will be responsive at 1400px
-  const responsive = useMemo(() => width <= 1400, [width]);
-
-  // The screen will be separated into views at 992px
-  const block = useMemo(() => width <= 992, [width]);
 
   return loading || error ? (
     <Boundary>
@@ -101,15 +93,13 @@ export default function Catalog() {
     <div className={styles.root}>
       <Browser
         courses={courses}
-        setClass={setClass}
-        responsive={responsive}
-        semester={currentSemester}
-        year={currentYear}
-        block={block}
+        onClick={setClass}
+        currentSemester={currentSemester}
+        currentYear={currentYear}
       />
-      {currentClass ? (
+      {currentClass && partialCourse ? (
         <Class
-          currentCourse={currentCourse!}
+          partialCourse={partialCourse}
           currentSemester={currentSemester}
           currentYear={currentYear}
           currentClassNumber={currentClassNumber!}
