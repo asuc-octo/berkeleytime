@@ -30,6 +30,7 @@ export interface Config {
   SESSION_SECRET: string;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
+  redisUri: string;
 }
 
 // All your secrets, keys go here
@@ -51,4 +52,5 @@ export const config: Config = {
   SESSION_SECRET: env("SESSION_SECRET"),
   GOOGLE_CLIENT_ID: env("GOOGLE_CLIENT_ID"),
   GOOGLE_CLIENT_SECRET: env("GOOGLE_CLIENT_SECRET"),
+  redisUri: env("REDIS_URI"),
 };
