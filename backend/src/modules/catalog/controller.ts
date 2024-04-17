@@ -155,17 +155,46 @@ export function getPrimarySection(id: string, term: TermInput, classNumber: stri
 }
 
 export function getClassSections(id: string, term: TermInput, classNumber: string) {
+    // for associated sections with a lecture. Lecture assumed to be of form 00x
     return SectionModel
         .find({
             "class.course.identifiers": matchCsCourseId(id),
             "class.session.term.name": termToString(term),
-            "class.number": classNumber
+            $or: [
+                {"class.number": {$regex: new RegExp("^"+classNumber[classNumber.length-1])}},
+                {"class.number": "999"}
+            ]
         })
         .lean()
         .then(s => s.map(formatSection))
 }
 
-export function getCourse(subject: string, courseNumber: string, term?: TermInput | null) {
+async function getCourseFromFilter(filter: any, term?: TermInput | null, info?: GraphQLResolveInfo | null) {
+
+    const course = await CourseModel
+        .findOne(filter)
+        .sort({ fromDate: -1 })
+        .lean()
+        .then(c => formatCourse(c, term))
+
+    if (info && getChildren(info).includes("gradeAverage")) {
+
+        const grades : GradeType[] = []
+        const gradesQuery = await GradeModel.find({
+            "CourseSubjectShortNm": course.raw.classSubjectArea?.description ?? course.raw.subjectArea?.description,
+            "CourseNumber": course.raw.catalogNumber?.formatted
+        }, {GradeNm: 1, EnrollmentCnt: 1})
+        for (const grade of gradesQuery) {
+            grades.push(grade)
+        }
+        course.gradeAverage = await getAverage(grades)
+
+    }
+
+    return course
+}
+
+export function getCourse(subject: string, courseNumber: string, term?: TermInput | null, info?: GraphQLResolveInfo) {
     const filter: any = {
         "classSubjectArea.code": subject,
         "catalogNumber.formatted": courseNumber
@@ -175,11 +204,7 @@ export function getCourse(subject: string, courseNumber: string, term?: TermInpu
         filter.fromDate = { $lte: getTermStartMonth(term) }
     }
 
-    return CourseModel
-        .findOne(filter)
-        .sort({ fromDate: -1 })
-        .lean()
-        .then(c => formatCourse(c, term))
+    return getCourseFromFilter(filter, term, info)
 }
 
 export function getCourseById(id: string, term?: TermInput | null) {
@@ -191,11 +216,7 @@ export function getCourseById(id: string, term?: TermInput | null) {
         filter.fromDate = { $lte: getTermStartMonth(term) }
     }
 
-    return CourseModel
-        .findOne(filter)
-        .sort({ fromDate: -1 })
-        .lean()
-        .then(c => formatCourse(c, term))
+    return getCourseFromFilter(filter, term)
 }
 
 export function getCourseClasses(id: string, term?: TermInput | null) {
@@ -211,6 +232,20 @@ export function getCourseClasses(id: string, term?: TermInput | null) {
         .find(filter)
         .lean()
         .then(c => c.map(formatClass))
+}
+
+export function getCourseSections(id: string, term?: TermInput | null) {
+    const filter: any = {
+        "class.course.identifiers": matchCsCourseId(id),
+    }
+
+    if (!isNil(term)) {
+        filter["class.session.term.name"] = termToString(term)
+    }
+    return SectionModel
+        .find(filter)
+        .lean()
+        .then(s => s.map(formatSection))
 }
 
 export function getCrossListings(displayNames: string[], term?: TermInput | null) {
