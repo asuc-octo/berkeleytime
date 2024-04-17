@@ -23,10 +23,6 @@ jobs:
       run: docker tag berkeleytime-backend ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:${{ github.sha }}
     - name: Push Docker Image
       run: docker push ${{ secrets.DOCKER_USERNAME }}/berkeleytime-backend:${{ github.sha }}
-    - name: Echo Params
-      run: |
-        echo "Subdomain: ${{ github.event.client_payload.param1 }}"
-        echo "Time to Live: ${{ github.event.client_payload.param2 }}"
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@v1.0.3
       with:
