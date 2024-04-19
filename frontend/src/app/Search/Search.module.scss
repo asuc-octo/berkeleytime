@@ -1,0 +1,99 @@
+.root {
+  .body {
+    display: flex;
+    gap: 48px;
+    padding: 48px 0;
+
+    .sideBar {
+      width: 288px;
+      flex-shrink: 0;
+    }
+
+    .view {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+
+      .course {
+        border-radius: 8px;
+        padding: 16px;
+        background-color: var(--foreground-color);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 1px 2px rgba(0 0 0 / 5%);
+        display: flex;
+        flex-direction: column;
+
+        .title {
+          font-size: 14px;
+          color: var(--heading-color);
+          font-weight: 700;
+          margin-bottom: 8px;
+          line-height: 1;
+        }
+
+        .description {
+          font-size: 14px;
+          color: var(--paragraph-color);
+          line-height: 1.5;
+          margin-bottom: 12px;
+        }
+
+        .row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-top: auto;
+
+          .badge {
+            font-size: 14px;
+            line-height: 1;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-500);
+            background-color: var(--button-color);
+            padding: 0 12px;
+            border-radius: 16px;
+          }
+        }
+      }
+    }
+  }
+
+  .header {
+    background: linear-gradient(to top right, var(--blue-500), var(--sky-500));
+    display: flex;
+    flex-direction: column;
+
+    .container {
+      padding: 64px 12px;
+      flex-grow: 1;
+      display: grid;
+      place-items: center;
+
+      .form {
+        position: relative;
+        width: 640px;
+        max-width: 100%;
+        background-color: white;
+        padding: 0 16px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
+
+        .input {
+          font-size: 16px;
+          color: var(--slate-900);
+          height: 56px;
+
+          &::placeholder {
+            color: var(--slate-500);
+          }
+        }
+      }
+    }
+  }
+}

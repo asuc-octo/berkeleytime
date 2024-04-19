@@ -67,22 +67,18 @@
       .form {
         position: relative;
         max-width: 448px;
-
-        .button {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-        }
+        background-color: white;
+        padding: 0 16px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
 
         .input {
-          height: 56px;
-          padding: 0 92px 0 16px;
-          border-radius: 4px;
-          box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
-          border: none;
-          background-color: white;
           font-size: 16px;
           color: var(--slate-900);
+          height: 56px;
 
           &::placeholder {
             color: var(--slate-500);

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 
 import * as Tooltip from "@radix-ui/react-tooltip";
 
@@ -87,7 +87,7 @@ export default function Time({ days, timeStart, timeEnd }: TimeProps) {
           <div className={styles.calendar}>
             <Tooltip.Arrow className={styles.arrow} />
             {days.map((day, index) => (
-              <>
+              <Fragment key={index}>
                 {index > 0 && <div className={styles.divider} />}
                 <div className={styles.day}>
                   <div className={styles.label}>
@@ -100,7 +100,7 @@ export default function Time({ days, timeStart, timeEnd }: TimeProps) {
                     />
                   )}
                 </div>
-              </>
+              </Fragment>
             ))}
           </div>
         </Tooltip.Content>

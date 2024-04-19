@@ -11,8 +11,9 @@
     width: 0;
 
     .header {
-      padding: 0 12px;
+      padding: 12px;
       border-bottom: 1px solid var(--border-color);
+      background-color: var(--foreground-color);
       display: flex;
       align-items: center;
       flex-shrink: 0;

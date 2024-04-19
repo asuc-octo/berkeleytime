@@ -23,6 +23,7 @@
 
   .header {
     padding: 24px 24px 12px;
+    background-color: var(--foreground-color);
 
     .row {
       display: flex;
@@ -55,7 +56,8 @@
   .menu {
     display: flex;
     border-bottom: 1px solid var(--border-color);
-    padding: 0 12px;
+    background-color: var(--foreground-color);
+    padding: 0 12px 12px;
     align-items: center;
   }
 }

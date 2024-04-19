@@ -34,48 +34,24 @@ export default function Header({ invert }: HeaderProps) {
       ) : (
         <>
           <div className={styles.menu}>
-            <NavLink to="/catalog">
-              {({ isActive }) => (
-                <MenuItem active={isActive} className={styles.item}>
-                  Courses
-                </MenuItem>
-              )}
-            </NavLink>
-            <NavLink to="/schedules">
-              {({ isActive }) => (
-                <MenuItem active={isActive} className={styles.item}>
-                  My schedules
-                </MenuItem>
-              )}
-            </NavLink>
-            <NavLink to="/plan">
-              {({ isActive }) => (
-                <MenuItem active={isActive} className={styles.item}>
-                  My plan
-                </MenuItem>
-              )}
-            </NavLink>
-            <NavLink to="/grades">
-              {({ isActive }) => (
-                <MenuItem active={isActive} className={styles.item}>
-                  Grades
-                </MenuItem>
-              )}
-            </NavLink>
-            <NavLink to="/enrollment">
-              {({ isActive }) => (
-                <MenuItem active={isActive} className={styles.item}>
-                  Enrollment
-                </MenuItem>
-              )}
-            </NavLink>
-            <NavLink to="/resources">
-              {({ isActive }) => (
-                <MenuItem active={isActive} className={styles.item}>
-                  Resources
-                </MenuItem>
-              )}
-            </NavLink>
+            <MenuItem as={NavLink} to="/catalog" className={styles.item}>
+              Courses
+            </MenuItem>
+            <MenuItem as={NavLink} to="/schedules" className={styles.item}>
+              My schedules
+            </MenuItem>
+            <MenuItem as={NavLink} to="/plan" className={styles.item}>
+              My plan
+            </MenuItem>
+            <MenuItem as={NavLink} to="/grades" className={styles.item}>
+              Grades
+            </MenuItem>
+            <MenuItem as={NavLink} to="/enrollment" className={styles.item}>
+              Enrollment
+            </MenuItem>
+            <MenuItem as={NavLink} to="/resources" className={styles.item}>
+              Resources
+            </MenuItem>
           </div>
           {account ? (
             <Button onClick={() => signOut()} className={styles.button}>

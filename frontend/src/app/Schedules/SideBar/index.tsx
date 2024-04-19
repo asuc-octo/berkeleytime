@@ -52,7 +52,7 @@ export default function SideBar({ classes, setClasses }: SideBarProps) {
 
   return (
     <div className={styles.root}>
-      <Catalog setClass={setClass} semester="Spring" year={2024}>
+      <Catalog onClick={setClass} semester="Spring" year={2024}>
         <Button>Add class</Button>
       </Catalog>
       {classes.map((_class, index) => (

@@ -138,8 +138,8 @@ export default function Browser({
   const block = useMemo(() => width <= 992, [width]);
 
   const overlay = useMemo(
-    () => responsive && width <= 1400,
-    [width, responsive]
+    () => (responsive && width <= 1400) || block,
+    [width, responsive, block]
   );
 
   return (
