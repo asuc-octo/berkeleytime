@@ -1,14 +1,11 @@
 .root {
   display: flex;
-  padding: 0 12px;
   flex-shrink: 0;
   align-items: center;
   position: relative;
-  height: 57px;
 
   .brand {
     font-size: 24px;
-    line-height: 1.5;
     font-weight: 580;
     font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
     color: var(--blue-500);
@@ -29,9 +26,13 @@
 
   &:not(.invert) {
     border-bottom: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    padding: 12px;
   }
 
   &.invert {
+    padding: 12px 12px 0;
+
     .brand {
       color: white;
 

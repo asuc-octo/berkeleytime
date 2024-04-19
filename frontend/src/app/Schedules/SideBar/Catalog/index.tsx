@@ -12,14 +12,14 @@ import { GET_COURSES, ICatalogCourse, Semester } from "@/lib/api";
 import styles from "./Catalog.module.scss";
 
 interface CatalogProps {
-  setClass: (course: ICatalogCourse, number: string) => void;
+  onClick: (course: ICatalogCourse, number: string) => void;
   children: JSX.Element;
   semester: string;
   year: number;
 }
 
 export default function Catalog({
-  setClass,
+  onClick,
   children,
   semester,
   year,
@@ -48,7 +48,7 @@ export default function Catalog({
   };
 
   const handleClick = (course: ICatalogCourse, number: string) => {
-    setClass(course, number);
+    onClick(course, number);
 
     setOpen(false);
 

@@ -7,7 +7,7 @@
   animation: fadeIn 250ms ease-in-out forwards;
 
   @media (prefers-color-scheme: dark) {
-    background-color: rgb(0 0 0 / 80%);
+    background-color: #000000cc;
   }
 }
 
@@ -46,6 +46,10 @@
     line-height: 1;
     color: var(--heading-color);
     font-weight: 500;
+
+    @media (width <= 992px) {
+      border-width: 0 0 1px;
+    }
   }
 }
 

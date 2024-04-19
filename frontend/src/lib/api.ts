@@ -96,36 +96,9 @@ export const GET_COURSE = gql`
       gradeAverage
       gradingBasis
       subjectName
+      subject
       prereqs
       number
-      sections {
-        course {
-          subject
-          number
-        }
-        class {
-          number
-        }
-        ccn
-        dateEnd
-        dateStart
-        days
-        enrollCount
-        enrollMax
-        instructors {
-          familyName
-          givenName
-        }
-        kind
-        location
-        notes
-        primary
-        timeEnd
-        timeStart
-        waitlistCount
-        waitlistMax
-        number
-      }
     }
   }
 `;

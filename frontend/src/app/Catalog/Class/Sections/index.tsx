@@ -18,7 +18,7 @@ export default function Sections({ currentClass }: SectionsProps) {
       </div>
       <div className={styles.view}>
         {currentClass?.sections.map((section) => (
-          <div className={styles.section}>
+          <div className={styles.section} key={section.ccn}>
             <div className={styles.header}>
               <div className={styles.text}>
                 <p className={styles.title}>

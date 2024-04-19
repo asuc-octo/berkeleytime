@@ -120,7 +120,7 @@ export default function List({
                   ref={virtualizer.measureElement}
                   expanded={expandedCourses[index]}
                   setExpanded={(expanded) => setExpanded(index, expanded)}
-                  setClass={(number) => onClick(course, number)}
+                  onClick={(number) => onClick(course, number)}
                 />
               );
             })}

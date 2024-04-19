@@ -66,7 +66,7 @@ export default function Catalog() {
     [courses, currentSubject, currentCourseNumber, currentClassNumber]
   );
 
-  const setClass = useCallback(
+  const handleClick = useCallback(
     (course: ICatalogCourse, number: string) => {
       navigate({
         pathname: `/catalog/${currentYear}/${currentSemester}/${course.subject}/${course.number}/${number}`,
@@ -93,7 +93,7 @@ export default function Catalog() {
     <div className={styles.root}>
       <Browser
         courses={courses}
-        onClick={setClass}
+        onClick={handleClick}
         currentSemester={currentSemester}
         currentYear={currentYear}
       />

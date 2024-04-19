@@ -6,10 +6,10 @@ import About from "@/app/About";
 import Catalog from "@/app/Catalog";
 import Landing from "@/app/Landing";
 import Layout from "@/app/Layout";
+import Plan from "@/app/Plan";
 import Schedules from "@/app/Schedules";
+import Search from "@/app/Search";
 import AccountProvider from "@/components/AccountProvider";
-
-import Plan from "./app/Plan";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +18,10 @@ const router = createBrowserRouter([
       {
         element: <Landing />,
         index: true,
+      },
+      {
+        element: <Search />,
+        path: "search",
       },
     ],
   },
