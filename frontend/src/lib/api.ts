@@ -25,7 +25,7 @@ export interface IInstructor {
 export interface ISection {
   ccn: string;
   class: {
-    number: number;
+    number: string;
   };
   course: {
     subject: string;
@@ -82,10 +82,6 @@ export const GET_COURSE = gql`
   query GetCourse($subject: String!, $courseNumber: String!) {
     course(subject: $subject, courseNumber: $courseNumber) {
       title
-      crossListing {
-        subject
-        number
-      }
       classes {
         year
         semester
@@ -146,9 +142,6 @@ export const GET_CLASS = gql`
           subject
           number
         }
-        class {
-          number
-        }
         ccn
         dateEnd
         dateStart
@@ -172,9 +165,6 @@ export const GET_CLASS = gql`
       sections {
         course {
           subject
-          number
-        }
-        class {
           number
         }
         ccn

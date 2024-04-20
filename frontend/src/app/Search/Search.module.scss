@@ -84,10 +84,26 @@
         gap: 16px;
         box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
 
-        .input {
+        .placeholder {
+          color: var(--slate-500);
+          position: absolute;
+          top: 50%;
+          left: 16px;
+          transform: translateY(-50%);
+          pointer-events: none;
           font-size: 16px;
+          line-height: 1;
+        }
+
+        .input:not(:placeholder-shown) + .placeholder {
+          display: none;
+        }
+
+        .input {
           color: var(--slate-900);
           height: 56px;
+          font-size: 16px;
+          line-height: 1.5;
 
           &::placeholder {
             color: var(--slate-500);

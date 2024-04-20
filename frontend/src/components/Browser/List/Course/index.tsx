@@ -16,7 +16,7 @@ import styles from "./Course.module.scss";
 interface CourseProps {
   expanded: boolean;
   setExpanded: (expanded: boolean) => void;
-  onClick: (number: string) => void;
+  onCourseSelect: (number: string) => void;
 }
 
 const Course = forwardRef<
@@ -32,7 +32,7 @@ const Course = forwardRef<
       gradeAverage,
       expanded,
       setExpanded,
-      onClick,
+      onCourseSelect,
       ...props
     },
     ref
@@ -89,8 +89,8 @@ const Course = forwardRef<
     );
 
     const handleClick = (number?: string) => {
-      if (number) onClick(number);
-      else if (isolated) onClick(classes[0].number);
+      if (number) onCourseSelect(number);
+      else if (isolated) onCourseSelect(classes[0].number);
       else setExpanded(!expanded);
     };
 

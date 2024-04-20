@@ -45,7 +45,7 @@ export default function Event({
           }}
         >
           <div className={styles.heading}>
-            {course.subject} {course.number} {class_.number}
+            {course.subject} {course.number} {class_?.number ?? "001"}
           </div>
           <div className={styles.description}>{kind}</div>
         </div>

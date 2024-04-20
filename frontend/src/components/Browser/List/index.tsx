@@ -2,8 +2,8 @@ import { Dispatch, SetStateAction, useRef } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
-import { Filter, FilterSolid, Xmark } from "iconoir-react";
-import { useSearchParams } from "react-router-dom";
+import { ArrowRight, Filter, FilterSolid, Sparks, Xmark } from "iconoir-react";
+import { Link, useSearchParams } from "react-router-dom";
 
 import IconButton from "@/components/IconButton";
 import { ICatalogCourse, Semester } from "@/lib/api";
@@ -13,7 +13,7 @@ import styles from "./List.module.scss";
 
 interface ListProps {
   currentCourses: ICatalogCourse[];
-  onClick: (course: ICatalogCourse, number: string) => void;
+  onCourseSelect: (course: ICatalogCourse, number: string) => void;
   setOpen: Dispatch<SetStateAction<boolean>>;
   open: boolean;
   overlay: boolean;
@@ -27,7 +27,7 @@ interface ListProps {
 
 export default function List({
   currentCourses,
-  onClick,
+  onCourseSelect,
   currentSemester,
   currentYear,
   open,
@@ -46,6 +46,7 @@ export default function List({
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
+    paddingEnd: 72,
   });
 
   const handleQueryChange = (value: string) => {
@@ -75,7 +76,7 @@ export default function List({
         }}
       >
         <div className={styles.header}>
-          <div className={styles.group}>
+          <div className={styles.form}>
             <input
               className={styles.input}
               type="text"
@@ -84,7 +85,7 @@ export default function List({
               onChange={(event) => handleQueryChange(event.target.value)}
               placeholder={`Search ${currentSemester} ${currentYear} courses...`}
             />
-            <div className={styles.count}>
+            <div className={styles.label}>
               {currentCourses.length.toLocaleString()}
             </div>
             {overlay && (
@@ -120,12 +121,19 @@ export default function List({
                   ref={virtualizer.measureElement}
                   expanded={expandedCourses[index]}
                   setExpanded={(expanded) => setExpanded(index, expanded)}
-                  onClick={(number) => onClick(course, number)}
+                  onCourseSelect={(number) => onCourseSelect(course, number)}
                 />
               );
             })}
           </div>
         )}
+        <div className={styles.footer}>
+          <Link to="/search" className={styles.button}>
+            <Sparks />
+            <p className={styles.text}>Try a super search</p>
+            <ArrowRight />
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -199,9 +199,7 @@ export default function Class({
           </MenuItem>
         ))}
       </div>
-      <div className={styles.view}>
-        <Component currentClass={currentClass} />
-      </div>
+      <Component currentClass={currentClass} />
     </div>
   );
 }

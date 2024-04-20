@@ -8,17 +8,13 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  overflow: auto;
 
   @media (width <= 992px) {
     position: absolute;
     inset: 0;
-    background-color: var(--foreground-color);
+    background-color: var(--background-color);
     z-index: 3;
-  }
-
-  .view {
-    flex-grow: 1;
-    overflow: auto;
   }
 
   .header {
@@ -57,7 +53,7 @@
     display: flex;
     border-bottom: 1px solid var(--border-color);
     background-color: var(--foreground-color);
-    padding: 0 12px 12px;
+    padding: 12px;
     align-items: center;
   }
 }

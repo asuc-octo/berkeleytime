@@ -26,7 +26,7 @@ const getTime = (start: string, end: string) => {
 };
 
 interface TimeProps {
-  days: boolean[];
+  days: boolean[] | null;
   timeStart: string | null;
   timeEnd: string | null;
 }
@@ -72,7 +72,7 @@ export default function Time({ days, timeStart, timeEnd }: TimeProps) {
     );
   }, [days, timeStart, timeEnd]);
 
-  return time ? (
+  return time && days ? (
     <Tooltip.Root disableHoverableContent>
       <Tooltip.Trigger asChild>
         <p className={styles.trigger}>{time}</p>

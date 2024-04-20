@@ -1,11 +1,12 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { Link, MoreVert } from "iconoir-react";
 
 import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
-import { IClass } from "@/lib/api";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
+import { IClass, ISection } from "@/lib/api";
 
 import Calendar from "./Calendar";
 import Map from "./Map";
@@ -16,15 +17,19 @@ export default function Schedules() {
   const [tab, setTab] = useState(0);
   const [boundary, setBoundary] = useState<HTMLDivElement | null>(null);
   const [classes, setClasses] = useState<IClass[]>([]);
-
-  const sections = useMemo(
-    () => classes.map((_class) => _class.primarySection),
-    [classes]
-  );
+  const [selectedSections, setSelectedSections] = useState<ISection[]>([]);
+  const { width } = useWindowDimensions();
 
   return (
     <div className={styles.root}>
-      <SideBar classes={classes} setClasses={setClasses} />
+      {width > 992 && (
+        <SideBar
+          classes={classes}
+          setClasses={setClasses}
+          selectedSections={selectedSections}
+          setSelectedSections={setSelectedSections}
+        />
+      )}
       <div className={styles.view}>
         <div className={styles.header}>
           <div className={styles.menu}>
@@ -49,7 +54,7 @@ export default function Schedules() {
           ref={(element) => setBoundary(element)}
         >
           {tab === 0 ? (
-            <Calendar boundary={boundary} sections={sections} />
+            <Calendar boundary={boundary} sections={selectedSections} />
           ) : (
             <Map boundary={boundary} />
           )}

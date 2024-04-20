@@ -90,7 +90,7 @@ const initializeFuse = (courses: ICatalogCourse[]) => {
 
 interface BrowserProps {
   courses: ICatalogCourse[];
-  onClick: (course: ICatalogCourse, number: string) => void;
+  onCourseSelect: (course: ICatalogCourse, number: string) => void;
   responsive?: boolean;
   currentSemester: Semester;
   currentYear: number;
@@ -98,7 +98,7 @@ interface BrowserProps {
 
 export default function Browser({
   courses,
-  onClick,
+  onCourseSelect,
   responsive = true,
   currentSemester,
   currentYear,
@@ -147,7 +147,7 @@ export default function Browser({
       {(open || !overlay) && <Filters overlay={overlay} block={block} />}
       <List
         currentCourses={filteredCourses}
-        onClick={onClick}
+        onCourseSelect={onCourseSelect}
         setOpen={setOpen}
         currentSemester={currentSemester}
         expandedCourses={expandedCourses}
