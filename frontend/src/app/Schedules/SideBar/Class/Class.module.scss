@@ -95,19 +95,26 @@
     }
   }
 
-  .header {
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
+  &:not(.disabled) .header {
     cursor: pointer;
-    transition: all 100ms ease-in-out;
+
+    .icon {
+      color: var(--paragraph-color);
+    }
 
     &:hover .icon {
       color: var(--heading-color);
     }
+  }
+
+  .header {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: all 100ms ease-in-out;
 
     .icon {
-      color: var(--paragraph-color);
+      color: var(--label-color);
       flex-shrink: 0;
     }
 

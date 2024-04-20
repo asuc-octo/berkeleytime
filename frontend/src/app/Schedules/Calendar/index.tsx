@@ -7,7 +7,7 @@ import Event from "./Event";
 import { getY } from "./calendar";
 
 const getId = (section: ISection) =>
-  `${section.course.subject} ${section.course.number} ${section.class.number} ${section.number}`;
+  `${section.course.subject} ${section.course.number} ${section.class?.number ?? "001"} ${section.number}`;
 
 const adjustAttachedEvents = (
   relevantSections: ISection[],

@@ -63,8 +63,11 @@ export default function Search() {
             <input
               className={styles.input}
               value={input}
+              // Required to display the placeholder conditionally
+              placeholder=""
               onChange={(event) => setInput(event.target.value)}
             />
+            <p className={styles.placeholder}>Search for a course</p>
             <Button className={styles.button}>
               Search
               <ArrowRight />

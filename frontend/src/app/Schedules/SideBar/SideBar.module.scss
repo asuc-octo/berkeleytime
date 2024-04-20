@@ -4,4 +4,8 @@
   flex-shrink: 0;
   background-color: var(--background-color);
   padding: 12px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }

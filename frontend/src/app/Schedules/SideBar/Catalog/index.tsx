@@ -12,14 +12,14 @@ import { GET_COURSES, ICatalogCourse, Semester } from "@/lib/api";
 import styles from "./Catalog.module.scss";
 
 interface CatalogProps {
-  onClick: (course: ICatalogCourse, number: string) => void;
+  onCourseSelect: (course: ICatalogCourse, number: string) => void;
   children: JSX.Element;
   semester: string;
   year: number;
 }
 
 export default function Catalog({
-  onClick,
+  onCourseSelect,
   children,
   semester,
   year,
@@ -47,8 +47,8 @@ export default function Catalog({
     setSearchParams(searchParams);
   };
 
-  const handleClick = (course: ICatalogCourse, number: string) => {
-    onClick(course, number);
+  const handleCourseSelect = (course: ICatalogCourse, number: string) => {
+    onCourseSelect(course, number);
 
     setOpen(false);
 
@@ -75,7 +75,7 @@ export default function Catalog({
               currentSemester={Semester.Spring}
               currentYear={2024}
               courses={courses}
-              onClick={handleClick}
+              onCourseSelect={handleCourseSelect}
               responsive={false}
             />
           </div>
