@@ -3,7 +3,7 @@ interface Subject {
   name: string;
 }
 
-// TODO: https://guide.berkeley.edu/courses/#C
+// TODO: https://guide.berkeley.edu/courses
 
 export const subjects: Record<string, Subject> = {
   astron: {

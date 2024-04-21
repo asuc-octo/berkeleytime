@@ -55,13 +55,13 @@ export default function Catalog() {
 
   const courses = useMemo(() => data?.catalog ?? [], [data?.catalog]);
 
-  const partialCourse = useMemo(
+  const partialCurrentCourse = useMemo(
     () =>
       courses.find(
-        (course) =>
-          course.subject === currentSubject &&
-          course.number === currentCourseNumber &&
-          course.classes.some((class_) => class_.number === currentClassNumber)
+        ({ subject, number, classes }) =>
+          subject === currentSubject &&
+          number === currentCourseNumber &&
+          classes.some((class_) => class_.number === currentClassNumber)
       ),
     [courses, currentSubject, currentCourseNumber, currentClassNumber]
   );
@@ -76,13 +76,18 @@ export default function Catalog() {
     [navigate, currentYear, currentSemester, searchParams]
   );
 
-  const currentClass = useMemo(
+  const open = useMemo(
     () =>
       currentClassNumber &&
       currentCourseNumber &&
       currentSubject &&
-      partialCourse,
-    [currentClassNumber, currentCourseNumber, currentSubject, partialCourse]
+      partialCurrentCourse,
+    [
+      currentClassNumber,
+      currentCourseNumber,
+      currentSubject,
+      partialCurrentCourse,
+    ]
   );
 
   return loading || error ? (
@@ -97,9 +102,9 @@ export default function Catalog() {
         currentSemester={currentSemester}
         currentYear={currentYear}
       />
-      {currentClass && partialCourse ? (
+      {open ? (
         <Class
-          partialCourse={partialCourse}
+          partialCurrentCourse={partialCurrentCourse!}
           currentSemester={currentSemester}
           currentYear={currentYear}
           currentClassNumber={currentClassNumber!}
