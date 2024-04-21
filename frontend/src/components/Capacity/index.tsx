@@ -16,27 +16,30 @@ const getColor = (count: number, capacity: number) => {
 };
 
 interface CapacityProps {
-  count: number;
-  capacity: number;
+  enrollCount: number;
+  enrollMax: number;
   waitlistCount: number;
-  waitlistCapacity: number;
+  waitlistMax: number;
 }
 
 export default function Capacity({
-  count,
-  capacity,
+  enrollCount,
+  enrollMax,
   waitlistCount,
-  waitlistCapacity,
+  waitlistMax,
 }: CapacityProps) {
-  // waitlistCount and waitlistCapacity are not guaranteed to be defined
+  // TODO: waitlistCount, waitlistMax
   waitlistCount = waitlistCount ?? 0;
-  waitlistCapacity = waitlistCapacity ?? 0;
+  waitlistMax = waitlistMax ?? 0;
 
-  const color = useMemo(() => getColor(count, capacity), [count, capacity]);
+  const color = useMemo(
+    () => getColor(enrollCount, enrollMax),
+    [enrollCount, enrollMax]
+  );
 
   const waitlistColor = useMemo(
-    () => getColor(waitlistCount, waitlistCapacity),
-    [waitlistCount, waitlistCapacity]
+    () => getColor(waitlistCount, waitlistMax),
+    [waitlistCount, waitlistMax]
   );
 
   return (
@@ -45,9 +48,9 @@ export default function Capacity({
         <div className={styles.trigger}>
           <User />
           <p className={styles.text}>
-            <span style={{ color }}>{count.toLocaleString()}</span>
+            <span style={{ color }}>{enrollCount.toLocaleString()}</span>
             &nbsp;/&nbsp;
-            {capacity.toLocaleString()}
+            {enrollMax.toLocaleString()}
           </p>
         </div>
       </Tooltip.Trigger>
@@ -63,16 +66,18 @@ export default function Capacity({
             <div className={styles.row}>
               <p className={styles.key}>Enrolled</p>
               <p>
-                <span style={{ color }}>{count.toLocaleString()}</span>
+                <span style={{ color }}>{enrollCount.toLocaleString()}</span>
                 &nbsp;/&nbsp;
                 <span className={styles.value}>
-                  {capacity.toLocaleString()}
+                  {enrollMax.toLocaleString()}
                 </span>
                 &nbsp;(
                 <span style={{ color }}>
-                  {capacity === 0
+                  {enrollMax === 0
                     ? 0
-                    : Math.round((count / capacity) * 100).toLocaleString()}
+                    : Math.round(
+                        (enrollCount / enrollMax) * 100
+                      ).toLocaleString()}
                   %
                 </span>
                 )
@@ -86,13 +91,13 @@ export default function Capacity({
                   {waitlistCount.toLocaleString()}
                 </span>
                 &nbsp;/&nbsp;
-                {waitlistCapacity.toLocaleString()}
+                {waitlistMax.toLocaleString()}
                 &nbsp;(
                 <span style={{ color: waitlistColor }}>
-                  {waitlistCapacity === 0
+                  {waitlistMax === 0
                     ? 0
                     : Math.round(
-                        (waitlistCount / waitlistCapacity) * 100
+                        (waitlistCount / waitlistMax) * 100
                       ).toLocaleString()}
                   %
                 </span>

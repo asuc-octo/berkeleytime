@@ -1,9 +1,8 @@
 import { useState } from "react";
 
-import { Link, MoreVert } from "iconoir-react";
+import { ShareIos } from "iconoir-react";
 
 import Button from "@/components/Button";
-import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { IClass, ISection } from "@/lib/api";
@@ -42,12 +41,9 @@ export default function Schedules() {
             </MenuItem>
           </div>
           <Button>
-            <Link />
             Share
+            <ShareIos />
           </Button>
-          <IconButton>
-            <MoreVert />
-          </IconButton>
         </div>
         <div
           className={styles.boundary}

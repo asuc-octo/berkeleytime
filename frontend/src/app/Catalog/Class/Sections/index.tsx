@@ -1,20 +1,28 @@
 import { useMemo } from "react";
 
-import { FrameAltEmpty } from "iconoir-react";
+import { FrameAltEmpty, OpenNewWindow } from "iconoir-react";
 
 import CCN from "@/components/CCN";
 import Details from "@/components/Details";
+import IconButton from "@/components/IconButton";
 import LoadingIndicator from "@/components/LoadingIndicator";
-import { IClass } from "@/lib/api";
+import { IClass, Semester } from "@/lib/api";
+import { getExternalLink } from "@/lib/section";
 
 import Capacity from "../../../../components/Capacity";
 import styles from "./Sections.module.scss";
 
 interface SectionsProps {
   currentClass?: IClass;
+  currentYear: number;
+  currentSemester: Semester;
 }
 
-export default function Sections({ currentClass }: SectionsProps) {
+export default function Sections({
+  currentClass,
+  currentYear,
+  currentSemester,
+}: SectionsProps) {
   const types = useMemo(
     () =>
       Array.from(
@@ -29,9 +37,8 @@ export default function Sections({ currentClass }: SectionsProps) {
         <FrameAltEmpty width={32} height={32} />
         <p className={styles.title}>No associated sections</p>
         <p className={styles.description}>
-          This class does not have any associated sections. However, please
-          refer to the class syllabus or instructor for the most accurate
-          information regarding class requirements.
+          Please refer to the class syllabus or instructor for the most accurate
+          information regarding class attendance requirements.
         </p>
       </div>
     ) : (
@@ -55,11 +62,27 @@ export default function Sections({ currentClass }: SectionsProps) {
                   <CCN ccn={section.ccn} />
                 </div>
                 <Capacity
-                  count={section.enrollCount}
-                  capacity={section.enrollMax}
+                  enrollCount={section.enrollCount}
+                  enrollMax={section.enrollMax}
                   waitlistCount={section.waitlistCount}
-                  waitlistCapacity={section.waitlistMax}
+                  waitlistMax={section.waitlistMax}
                 />
+                {currentClass && (
+                  <IconButton
+                    as="a"
+                    href={getExternalLink(
+                      currentYear,
+                      currentSemester,
+                      currentClass.course.subject,
+                      currentClass.course.number,
+                      section.number,
+                      section.kind
+                    )}
+                    target="_blank"
+                  >
+                    <OpenNewWindow />
+                  </IconButton>
+                )}
               </div>
               <Details
                 days={section.days ?? []}

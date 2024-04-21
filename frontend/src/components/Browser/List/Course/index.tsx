@@ -108,10 +108,10 @@ const Course = forwardRef<
               <div className={styles.row}>
                 <AverageGrade gradeAverage={gradeAverage} />
                 <Capacity
-                  count={courseCount}
-                  capacity={courseCapacity}
+                  enrollCount={courseCount}
+                  enrollMax={courseCapacity}
                   waitlistCount={courseWaitlistCount}
-                  waitlistCapacity={courseWaitlistCapacity}
+                  waitlistMax={courseWaitlistCapacity}
                 />
                 <Units unitsMin={courseMinimum} unitsMax={courseMaximum} />
               </div>
@@ -152,10 +152,10 @@ const Course = forwardRef<
                     </p>
                     <div className={styles.row}>
                       <Capacity
-                        count={enrollCount}
-                        capacity={enrollMax}
+                        enrollCount={enrollCount}
+                        enrollMax={enrollMax}
                         waitlistCount={waitlistCount}
-                        waitlistCapacity={waitlistMax}
+                        waitlistMax={waitlistMax}
                       />
                       <Units unitsMin={unitsMin} unitsMax={unitsMax} />
                     </div>

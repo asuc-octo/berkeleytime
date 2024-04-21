@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import * as Select from "@radix-ui/react-select";
 import {
-  ArrowSeparateVertical,
   BookmarkSolid,
   CalendarPlus,
   Heart,
@@ -26,6 +24,7 @@ import {
   IClass,
   Semester,
 } from "@/lib/api";
+import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
 import Overview from "./Overview";
@@ -51,7 +50,7 @@ const views = [
 ];
 
 interface ClassProps {
-  partialCourse: ICatalogCourse;
+  partialCurrentCourse: ICatalogCourse;
   currentSemester: Semester;
   currentYear: number;
   currentClassNumber: string;
@@ -60,7 +59,7 @@ interface ClassProps {
 }
 
 export default function Class({
-  partialCourse,
+  partialCurrentCourse,
   currentSemester,
   currentYear,
   currentClassNumber,
@@ -84,12 +83,12 @@ export default function Class({
     },
   });
 
-  const partialClass = useMemo(
+  const partialCurrentClass = useMemo(
     () =>
-      partialCourse.classes.find(
+      partialCurrentCourse.classes.find(
         (class_) => class_.number === currentClassNumber
       ) as ICatalogClass,
-    [partialCourse, currentClassNumber]
+    [partialCurrentCourse, currentClassNumber]
   );
 
   const currentClass = useMemo(() => data?.class, [data?.class]);
@@ -113,6 +112,7 @@ export default function Class({
             </IconButton>
           </div>
           <div className={styles.group}>
+            {/* TODO: Previously offered
             <Select.Root defaultValue={`${currentSemester} ${currentYear}`}>
               <Select.Trigger asChild>
                 <Button secondary>
@@ -139,14 +139,23 @@ export default function Class({
                   )}
                 </Select.Content>
               </Select.Portal>
-            </Select.Root>
-            <IconButton
-              as="a"
-              href={`https://classes.berkeley.edu/content/${currentYear}-${currentSemester.toLowerCase()}-${currentSubject.toLowerCase()}-${currentCourseNumber}-${currentClassNumber}-lec-001`}
-              target="_blank"
-            >
-              <OpenNewWindow />
-            </IconButton>
+                </Select.Root>*/}
+            {currentClass && (
+              <IconButton
+                as="a"
+                href={getExternalLink(
+                  currentYear,
+                  currentSemester,
+                  currentSubject,
+                  currentCourseNumber,
+                  currentClass.primarySection.number,
+                  currentClass.primarySection.kind
+                )}
+                target="_blank"
+              >
+                <OpenNewWindow />
+              </IconButton>
+            )}
             <Link
               to={{
                 pathname: `/catalog/${currentYear}/${currentSemester}`,
@@ -163,27 +172,32 @@ export default function Class({
           {currentSubject} {currentCourseNumber}
         </h1>
         <p className={styles.description}>
-          {currentClass?.title ?? partialClass.title ?? partialCourse.title}
+          {currentClass?.title ??
+            partialCurrentClass.title ??
+            partialCurrentCourse.title}
         </p>
         <div className={styles.group}>
           <AverageGrade
             gradeAverage={
-              currentClass?.course?.gradeAverage ?? partialCourse.gradeAverage
+              currentClass?.course?.gradeAverage ??
+              partialCurrentCourse.gradeAverage
             }
           />
           <Capacity
-            count={currentClass?.enrollCount ?? partialClass.enrollCount}
-            capacity={currentClass?.enrollMax ?? partialClass.enrollMax}
-            waitlistCount={
-              currentClass?.waitlistCount ?? partialClass.waitlistCount
+            enrollCount={
+              currentClass?.enrollCount ?? partialCurrentClass.enrollCount
             }
-            waitlistCapacity={
-              currentClass?.waitlistMax ?? partialClass.waitlistMax
+            enrollMax={currentClass?.enrollMax ?? partialCurrentClass.enrollMax}
+            waitlistCount={
+              currentClass?.waitlistCount ?? partialCurrentClass.waitlistCount
+            }
+            waitlistMax={
+              currentClass?.waitlistMax ?? partialCurrentClass.waitlistMax
             }
           />
           <Units
-            unitsMax={currentClass?.unitsMax ?? partialClass.unitsMax}
-            unitsMin={currentClass?.unitsMin ?? partialClass.unitsMin}
+            unitsMax={currentClass?.unitsMax ?? partialCurrentClass.unitsMax}
+            unitsMin={currentClass?.unitsMin ?? partialCurrentClass.unitsMin}
           />
           {currentClass && <CCN ccn={currentClass.primarySection.ccn} />}
         </div>
@@ -199,7 +213,11 @@ export default function Class({
           </MenuItem>
         ))}
       </div>
-      <Component currentClass={currentClass} />
+      <Component
+        currentClass={currentClass}
+        currentYear={currentYear}
+        currentSemester={currentSemester}
+      />
     </div>
   );
 }
