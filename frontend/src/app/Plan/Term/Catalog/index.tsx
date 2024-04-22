@@ -75,7 +75,7 @@ export default function Catalog({
               courses={courses}
               currentSemester={Semester.Spring}
               currentYear={2024}
-              onCourseSelect={handleClick}
+              onClassSelect={handleClick}
               responsive={false}
             />
           </div>

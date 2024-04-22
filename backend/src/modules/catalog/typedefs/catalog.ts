@@ -119,6 +119,8 @@ type CatalogItem {
     description: String!
     classes: [CatalogClass!]!
     gradeAverage: Float
+    gradingBasis: String!
+    level: String!
 
     lastUpdated: ISODate!
 }
@@ -129,8 +131,11 @@ type CatalogClass {
     description: String
     enrollCount: Int!
     enrollMax: Int!
+    waitlistCount: Int!
+    waitlistMax: Int!
     unitsMax: Float!
     unitsMin: Float!
+    primarySection: Section!
 
     lastUpdated: ISODate!
 }

@@ -1,4 +1,4 @@
-import { HTMLAttributes, forwardRef, useMemo } from "react";
+import { forwardRef, useMemo } from "react";
 
 import {
   ArrowRight,
@@ -17,12 +17,10 @@ interface CourseProps {
   expanded: boolean;
   setExpanded: (expanded: boolean) => void;
   onCourseSelect: (number: string) => void;
+  index: number;
 }
 
-const Course = forwardRef<
-  HTMLDivElement,
-  CourseProps & ICatalogCourse & HTMLAttributes<HTMLDivElement>
->(
+const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
   (
     {
       title: courseTitle,
@@ -33,7 +31,7 @@ const Course = forwardRef<
       expanded,
       setExpanded,
       onCourseSelect,
-      ...props
+      index,
     },
     ref
   ) => {
@@ -95,7 +93,7 @@ const Course = forwardRef<
     };
 
     return (
-      <div className={styles.root} ref={ref} {...props}>
+      <div className={styles.root} ref={ref} data-index={index}>
         <div className={styles.course}>
           <div className={styles.class} onClick={() => handleClick()}>
             <div className={styles.text}>

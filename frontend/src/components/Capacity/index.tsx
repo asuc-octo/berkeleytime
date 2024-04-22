@@ -28,10 +28,6 @@ export default function Capacity({
   waitlistCount,
   waitlistMax,
 }: CapacityProps) {
-  // TODO: waitlistCount, waitlistMax
-  waitlistCount = waitlistCount ?? 0;
-  waitlistMax = waitlistMax ?? 0;
-
   const color = useMemo(
     () => getColor(enrollCount, enrollMax),
     [enrollCount, enrollMax]
