@@ -98,7 +98,7 @@ export default function Catalog() {
     <div className={styles.root}>
       <Browser
         courses={courses}
-        onCourseSelect={handleClick}
+        onClassSelect={handleClick}
         currentSemester={currentSemester}
         currentYear={currentYear}
       />

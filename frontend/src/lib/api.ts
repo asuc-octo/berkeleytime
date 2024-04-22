@@ -61,6 +61,7 @@ export interface ICatalogCourse {
   title: string;
   subject: string;
   number: string;
+  description: string | null;
   gradeAverage: number | null;
   classes: ICatalogClass[];
 }
@@ -197,14 +198,14 @@ export const GET_COURSES = gql`
       subject
       number
       title
-      description
       gradeAverage
       classes {
         number
         title
-        description
         enrollCount
         enrollMax
+        waitlistCount
+        waitlistMax
         unitsMax
         unitsMin
       }

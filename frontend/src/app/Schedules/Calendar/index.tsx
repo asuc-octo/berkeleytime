@@ -1,14 +1,15 @@
 import { MouseEvent, useMemo, useRef, useState } from "react";
 
 import { ISection } from "@/lib/api";
+import { getY } from "@/lib/schedule";
 
 import styles from "./Calendar.module.scss";
 import Event from "./Event";
-import { getY } from "./calendar";
 
 const getId = (section: ISection) =>
-  `${section.course.subject} ${section.course.number} ${section.class?.number ?? "001"} ${section.number}`;
+  `${section.course.subject} ${section.course.number} ${section.class.number} ${section.number}`;
 
+// You have to trust me on this math
 const adjustAttachedEvents = (
   relevantSections: ISection[],
   attachedSections: string[],
@@ -43,13 +44,22 @@ const adjustAttachedEvents = (
 };
 
 interface CalendarProps {
-  sections: ISection[];
-  boundary: Element | null;
+  selectedSections: ISection[];
+  currentSection: ISection | null;
 }
 
-export default function Calendar({ sections, boundary }: CalendarProps) {
+export default function Calendar({
+  selectedSections,
+  currentSection,
+}: CalendarProps) {
   const viewRef = useRef<HTMLDivElement>(null);
   const [y, setY] = useState<number | null>(null);
+
+  const sections = useMemo(
+    () =>
+      currentSection ? [...selectedSections, currentSection] : selectedSections,
+    [selectedSections, currentSection]
+  );
 
   const days = useMemo(
     () =>
@@ -58,11 +68,12 @@ export default function Calendar({ sections, boundary }: CalendarProps) {
         const minutes: string[][] = [...Array(60 * 18)].map(() => []);
 
         const relevantSections = sections
-          // Filter events for the current day
-          .filter((section) => section.days?.[day])
-          // Sort events by start time
+          // Filter sections for the current day which have a time specified
+          .filter((section) => section.days?.[day] && section.timeStart)
+          // Sort sections by when they start
           .sort((a, b) => getY(a.timeStart!) - getY(b.timeStart!));
 
+        // Maintain an array of sections that are attached to each minute
         for (const section of relevantSections) {
           const top = getY(section.timeStart!);
           const height = getY(section.timeEnd!) - top;
@@ -114,11 +125,12 @@ export default function Calendar({ sections, boundary }: CalendarProps) {
           return {
             ...section,
             position,
+            active: section.ccn !== currentSection?.ccn,
             columns,
           };
         });
       }),
-    [sections]
+    [sections, currentSection]
   );
 
   const currentTime = useMemo(() => {
@@ -130,7 +142,7 @@ export default function Calendar({ sections, boundary }: CalendarProps) {
     return `${hour}:${minute < 10 ? `0${minute}` : minute}`;
   }, [y]);
 
-  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+  const updateY = (event: MouseEvent<HTMLDivElement>) => {
     if (!viewRef.current) return;
 
     const y = Math.max(
@@ -142,10 +154,6 @@ export default function Calendar({ sections, boundary }: CalendarProps) {
     );
 
     setY(y);
-  };
-
-  const handleMouseLeave = () => {
-    setY(null);
   };
 
   return (
@@ -165,8 +173,9 @@ export default function Calendar({ sections, boundary }: CalendarProps) {
       <div
         className={styles.view}
         ref={viewRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        onMouseMove={updateY}
+        onMouseOver={updateY}
+        onMouseOut={() => setY(null)}
       >
         <div className={styles.sideBar}>
           {currentTime && y && (
@@ -189,7 +198,7 @@ export default function Calendar({ sections, boundary }: CalendarProps) {
                 <div key={hour} className={styles.hour}></div>
               ))}
               {events.map((event) => (
-                <Event key={getId(event)} {...event} boundary={boundary} />
+                <Event key={getId(event)} {...event} />
               ))}
               {y && <div className={styles.line} style={{ top: `${y}px` }} />}
             </div>

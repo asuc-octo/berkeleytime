@@ -116,7 +116,7 @@ export default function List({
               return (
                 <Course
                   {...course}
-                  data-index={index}
+                  index={index}
                   key={key}
                   ref={virtualizer.measureElement}
                   expanded={expandedCourses[index]}

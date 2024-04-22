@@ -1,10 +1,15 @@
-.trigger {
+.root {
   position: absolute;
   z-index: 2;
   padding: 8px;
   border-radius: 4px;
   background-color: var(--blue-500);
   font-size: 12px;
+  opacity: 0.5;
+  
+  &.active {
+    opacity: 1;
+  }
 
   .heading {
     font-weight: 500;
@@ -20,50 +25,5 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-  }
-}
-
-.content {
-  border-radius: 4px;
-  padding: 12px;
-  background-color: var(--background-color);
-  width: 256px;
-  animation: fadeIn 100ms ease-in;
-  z-index: 3;
-
-  @media (prefers-color-scheme: dark) {
-    border: 1px solid var(--border-color);
-  }
-
-  .arrow {
-    fill: var(--background-color);
-  }
-
-  .divider {
-    height: 1px;
-    background-color: var(--neutral-700);
-    margin: 12px 0;
-  }
-
-  .row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    line-height: 1;
-    color: var(--neutral-400);
-
-    .key {
-      font-weight: 500;
-      color: white;
-    }
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }

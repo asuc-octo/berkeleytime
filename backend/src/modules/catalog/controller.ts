@@ -1,5 +1,5 @@
 import { CatalogItem, TermInput } from "../../generated-types/graphql";
-import { ClassModel, ClassType } from "../../models/class";
+import { ClassModel } from "../../models/class";
 import { getTermStartMonth, termToString } from "../../utils/term";
 import { GradeModel, GradeType } from "../../models/grade";
 import { getAverage } from "../grade/controller";
@@ -33,6 +33,7 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
     }
 
     const csCourseIds = new Set(classes.map(c => getCsCourseId(c.course as CourseType)))
+
     const courses = await CourseModel
         .find(
             {
@@ -50,6 +51,8 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
                 identifiers: 1,
                 title: 1,
                 description: 1,
+                gradingBasis: 1,
+                academicCareer: 1,
                 classSubjectArea: 1,
                 catalogNumber: 1
             }
@@ -90,8 +93,17 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
             }
         }
     }
+    
+    const sections = await SectionModel
+      .find({
+          "class.course.identifiers": matchCsCourseId({ $in: Array.from(csCourseIds) }),
+          "class.session.term.name": termToString(term),
+          "association.primary": true
+      })
+      .lean()
 
     const catalog: any = {}
+
     for (const c of courses) {
         const key = getCourseKey(c)
         const id = getCsCourseId(c)
@@ -119,6 +131,40 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
         }
 
         catalog[id].classes.push(formatClass(c))
+    }
+
+    for (const s of sections) {
+      if (!s.class) continue;
+
+      const id = getCsCourseId(s.class.course as CourseType)
+
+      if (!(id in catalog)) {
+          // throw new Error(`Section ${s.class.course?.subjectArea?.code} ${s.class.course?.catalogNumber?.formatted}`
+          //     + ` has a course id ${id} that doesn't exist for the ${term.semester} ${term.year} term.`)
+
+          // TODO(production): log
+          continue;
+      }
+
+      const index = catalog[id].classes.findIndex((c: any) => c.number === s.class?.number);
+
+      if (index === -1) continue;
+
+      const primarySection = formatSection(s);
+
+      if (!primarySection.ccn) continue;
+
+      catalog[id].classes[index].primarySection = primarySection;
+    }
+
+    for (const id in catalog) {
+        catalog[id].classes = catalog[id].classes.filter((c: any) => c.primarySection?.ccn)
+
+        if (catalog[id].classes.length === 0) {
+            console.log("delete")
+
+            delete catalog[id]
+        }
     }
 
     return Object.values(catalog)
