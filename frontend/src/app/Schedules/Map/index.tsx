@@ -33,6 +33,7 @@ export default function Map({ selectedSections }: MapProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const directionsRef = useRef<MapboxDirections | null>(null);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
 
   const waypoints = useMemo(
     () =>
@@ -47,6 +48,8 @@ export default function Map({ selectedSections }: MapProps) {
 
   const update = useCallback(() => {
     if (!directionsRef.current) return;
+
+    markersRef.current.forEach((marker) => marker.remove());
 
     const length = directionsRef.current.getWaypoints().length;
 
@@ -131,9 +134,11 @@ export default function Map({ selectedSections }: MapProps) {
           tooltip.className = "tooltip";
           tooltip.textContent = "Stop";*/
 
-          new mapboxgl.Marker(start)
+          const originMarker = new mapboxgl.Marker(start)
             .setLngLat(steps[0].maneuver.location)
             .addTo(map);
+
+          markersRef.current.push(originMarker);
 
           /*const showTooltip = () => {
             document.body.appendChild(tooltip);
@@ -181,17 +186,19 @@ export default function Map({ selectedSections }: MapProps) {
               event as keyof HTMLElementEventMap,
               listener as () => void
             );
-          });
+          });*/
 
-          if (index !== route[0].legs.length - 1) continue;*/
+          if (index !== route[0].legs.length - 1) continue;
 
           const end = document.createElement("div");
           end.className = "marker";
           end.textContent = (index + 2).toLocaleString();
 
-          new mapboxgl.Marker(end)
+          const destinationMarker = new mapboxgl.Marker(end)
             .setLngLat(steps[steps.length - 1].maneuver.location)
             .addTo(map);
+
+          markersRef.current.push(destinationMarker);
         }
 
         map.panTo(route[0].legs[0].steps[0].maneuver.location, {
