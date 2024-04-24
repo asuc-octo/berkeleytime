@@ -25,6 +25,7 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
         .find({
             "session.term.name": termToString(term),
             "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },
+            "anyPrintInScheduleOfClasses": true
         })
         .lean()
 
