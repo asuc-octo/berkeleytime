@@ -12,7 +12,7 @@ frontend:
 
   port: 3000
   path: /
-  command: ["npm", "run", "prod"]
+  command: ["npm", "run", "start"]
 
   image:
     registry: docker.io
