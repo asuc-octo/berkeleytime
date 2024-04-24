@@ -5,11 +5,11 @@ import Time from "../Time";
 import styles from "./Details.module.scss";
 
 interface DetailsProps {
-  days: boolean[];
+  days: boolean[] | null;
   timeStart: string | null;
   timeEnd: string | null;
   location: string | null;
-  instructors: IInstructor[];
+  instructors: IInstructor[] | null;
 }
 
 export default function Details({
@@ -33,7 +33,9 @@ export default function Details({
       <div className={styles.divider} />
       <div className={styles.column}>
         <p className={styles.title}>
-          {instructors?.length > 1 ? "Instructors" : "Instructor"}
+          {instructors && instructors?.length > 1
+            ? "Instructors"
+            : "Instructor"}
         </p>
         <p
           className={styles.description}
