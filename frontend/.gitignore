@@ -1,4 +1,4 @@
-build/
+dist/
 node_modules/
 tmpaddon
 
@@ -7,6 +7,3 @@ tmpaddon
 
 .vscode/*
 !.vscode/launch.json
-stats.html
-
-src/assets/scss/berkeleytime.css
