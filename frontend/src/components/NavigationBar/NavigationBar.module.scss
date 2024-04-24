@@ -51,6 +51,15 @@
       &:hover {
         color: white;
       }
+
+      &:global(.active) {
+        color: white;
+
+        &::before {
+          top: -12px;
+          background-color: white;
+        }
+      }
     }
 
     .button {

@@ -15,6 +15,9 @@ export interface ICatalogClass {
   waitlistCount: number;
   waitlistMax: number;
   number: string;
+  primarySection: {
+    kind: string;
+  };
 }
 
 export interface IInstructor {
@@ -87,6 +90,8 @@ export const GET_COURSE = gql`
         year
         semester
         number
+        unitsMax
+        unitsMin
       }
       level
       description
@@ -208,6 +213,9 @@ export const GET_COURSES = gql`
         waitlistMax
         unitsMax
         unitsMin
+        primarySection {
+          kind
+        }
       }
     }
   }

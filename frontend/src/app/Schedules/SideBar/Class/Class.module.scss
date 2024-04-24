@@ -34,26 +34,19 @@
     }
   }
 
-  &:not(.disabled) .header {
-    cursor: pointer;
-
-    .icon {
-      color: var(--paragraph-color);
-    }
-
-    &:hover .icon {
-      color: var(--heading-color);
-    }
-  }
-
   .header {
     display: flex;
+    cursor: pointer;
     gap: 12px;
     align-items: flex-start;
     transition: all 100ms ease-in-out;
 
+    &:hover .icon {
+      color: var(--heading-color);
+    }
+
     .icon {
-      color: var(--label-color);
+      color: var(--paragraph-color);
       flex-shrink: 0;
     }
 

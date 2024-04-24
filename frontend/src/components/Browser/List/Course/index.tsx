@@ -10,13 +10,14 @@ import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { ICatalogCourse } from "@/lib/api";
+import { kinds } from "@/lib/section";
 
 import styles from "./Course.module.scss";
 
 interface CourseProps {
   expanded: boolean;
   setExpanded: (expanded: boolean) => void;
-  onCourseSelect: (number: string) => void;
+  onClassSelect: (number: string) => void;
   index: number;
 }
 
@@ -30,7 +31,7 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
       gradeAverage,
       expanded,
       setExpanded,
-      onCourseSelect,
+      onClassSelect,
       index,
     },
     ref
@@ -57,18 +58,16 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
               courseMaximum,
             },
             {
-              // waitlistCount,
-              // waitlistMax,
+              waitlistCount,
+              waitlistMax,
               enrollCount,
               enrollMax,
               unitsMax,
               unitsMin,
             }
           ) => ({
-            // courseWaitlistCount: courseWaitlistCount + waitlistCount,
-            // courseWaitlistCapacity: courseWaitlistCapacity + waitlistMax,
-            courseWaitlistCount,
-            courseWaitlistCapacity,
+            courseWaitlistCount: courseWaitlistCount + waitlistCount,
+            courseWaitlistCapacity: courseWaitlistCapacity + waitlistMax,
             courseCount: courseCount + enrollCount,
             courseCapacity: courseCapacity + enrollMax,
             courseMinimum: Math.min(courseMinimum, unitsMin),
@@ -87,8 +86,8 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
     );
 
     const handleClick = (number?: string) => {
-      if (number) onCourseSelect(number);
-      else if (isolated) onCourseSelect(classes[0].number);
+      if (number) onClassSelect(number);
+      else if (isolated) onClassSelect(classes[0].number);
       else setExpanded(!expanded);
     };
 
@@ -137,6 +136,7 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
                 waitlistMax,
                 title: classTitle,
                 number: classNumber,
+                primarySection: { kind },
               }) => (
                 <div
                   className={styles.class}
@@ -144,7 +144,9 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
                   onClick={() => handleClick(classNumber)}
                 >
                   <div className={styles.text}>
-                    <p className={styles.title}>Class {classNumber}</p>
+                    <p className={styles.title}>
+                      {kinds[kind]?.name ?? kind} {classNumber}
+                    </p>
                     <p className={styles.description}>
                       {classTitle || courseTitle}
                     </p>

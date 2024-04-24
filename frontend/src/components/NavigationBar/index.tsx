@@ -8,13 +8,13 @@ import MenuItem from "@/components/MenuItem";
 import { useAccount } from "@/hooks/useAccount";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 
-import styles from "./Header.module.scss";
+import styles from "./NavigationBar.module.scss";
 
-interface HeaderProps {
+interface NavigationBarProps {
   invert?: boolean;
 }
 
-export default function Header({ invert }: HeaderProps) {
+export default function NavigationBar({ invert }: NavigationBarProps) {
   const { width } = useWindowDimensions();
   const { account, signIn, signOut } = useAccount();
 
@@ -35,7 +35,7 @@ export default function Header({ invert }: HeaderProps) {
         <>
           <div className={styles.menu}>
             <MenuItem as={NavLink} to="/catalog" className={styles.item}>
-              Courses
+              Catalog
             </MenuItem>
             <MenuItem as={NavLink} to="/schedules" className={styles.item}>
               My schedules
@@ -43,14 +43,8 @@ export default function Header({ invert }: HeaderProps) {
             <MenuItem as={NavLink} to="/plan" className={styles.item}>
               My plan
             </MenuItem>
-            <MenuItem as={NavLink} to="/grades" className={styles.item}>
-              Grades
-            </MenuItem>
-            <MenuItem as={NavLink} to="/enrollment" className={styles.item}>
-              Enrollment
-            </MenuItem>
-            <MenuItem as={NavLink} to="/resources" className={styles.item}>
-              Resources
+            <MenuItem as={NavLink} to="/explore" className={styles.item}>
+              Explore
             </MenuItem>
           </div>
           {account ? (

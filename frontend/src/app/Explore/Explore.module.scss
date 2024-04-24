@@ -11,8 +11,9 @@
 
     .view {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
       gap: 12px;
+      flex-grow: 1;
 
       .course {
         border-radius: 8px;
@@ -84,17 +85,6 @@
         gap: 16px;
         box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
 
-        .placeholder {
-          color: var(--slate-500);
-          position: absolute;
-          top: 50%;
-          left: 16px;
-          transform: translateY(-50%);
-          pointer-events: none;
-          font-size: 16px;
-          line-height: 1;
-        }
-
         .input:not(:placeholder-shown) + .placeholder {
           display: none;
         }
@@ -103,7 +93,7 @@
           color: var(--slate-900);
           height: 56px;
           font-size: 16px;
-          line-height: 1.5;
+          line-height: 1;
 
           &::placeholder {
             color: var(--slate-500);

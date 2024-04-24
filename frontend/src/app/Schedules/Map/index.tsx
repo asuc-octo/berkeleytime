@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 // @ts-expect-error - MapboxDirections does not provide types
 import MapboxDirections from "@mapbox/mapbox-gl-directions/dist/mapbox-gl-directions";
@@ -9,6 +9,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
+import usePrefersColorScheme from "@/hooks/usePrefersColorScheme";
 import { ISection } from "@/lib/api";
 import { buildings } from "@/lib/location";
 
@@ -20,7 +21,7 @@ const TOKEN =
 const MAX_ZOOM = 18;
 const MIN_ZOOM = 14;
 const DEFAULT_ZOOM = 15.5;
-const OFFSET: [number, number] = [-156, 0];
+// const OFFSET: [number, number] = [-156, 0];
 
 mapboxgl.accessToken = TOKEN;
 
@@ -29,11 +30,14 @@ interface MapProps {
 }
 
 export default function Map({ selectedSections }: MapProps) {
-  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+  const colorScheme = usePrefersColorScheme();
+
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
-  const directionsRef = useRef<MapboxDirections | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
+
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
+  const [directions, setDirections] = useState<MapboxDirections | null>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
 
   const waypoints = useMemo(
     () =>
@@ -46,35 +50,17 @@ export default function Map({ selectedSections }: MapProps) {
     [selectedSections]
   );
 
-  const update = useCallback(() => {
-    if (!directionsRef.current) return;
-
-    markersRef.current.forEach((marker) => marker.remove());
-
-    const length = directionsRef.current.getWaypoints().length;
-
-    for (let index = 0; index < length; index++) {
-      directionsRef.current.removeWaypoint(index);
-    }
-
-    if (waypoints.length < 2) return;
-
-    directionsRef.current.setOrigin(waypoints[0]);
-    directionsRef.current.setDestination(waypoints[waypoints.length - 1]);
-
-    for (let index = 1; index < waypoints.length - 1; index++) {
-      directionsRef.current.addWaypoint(index, waypoints[index]);
-    }
-  }, [waypoints]);
-
-  const initialize = useCallback(() => {
+  useEffect(() => {
     if (!containerRef.current) return;
 
     // let destructor: (() => void) | null = null;
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
-      style: "mapbox://styles/mathhulk/clbznbvgs000314k8gtwa9q60",
+      style:
+        colorScheme === "dark"
+          ? "mapbox://styles/mathhulk/clvblbtkd005k01rd1n28b2xt"
+          : "mapbox://styles/mathhulk/clbznbvgs000314k8gtwa9q60",
       center: [-122.2592173, 37.8721508],
       zoom: DEFAULT_ZOOM,
       minZoom: MIN_ZOOM,
@@ -116,8 +102,6 @@ export default function Map({ selectedSections }: MapProps) {
       });
 
       map.addControl(directions);
-
-      update();
 
       // @ts-expect-error - MapboxDirections does not provide types
       directions.on("route", ({ route }) => {
@@ -201,9 +185,7 @@ export default function Map({ selectedSections }: MapProps) {
           markersRef.current.push(destinationMarker);
         }
 
-        map.panTo(route[0].legs[0].steps[0].maneuver.location, {
-          offset: OFFSET,
-        });
+        map.jumpTo({ center: [-122.2592173, 37.8721508] });
 
         // Remove unnecessary layers
         map.removeLayer("directions-route-line");
@@ -244,7 +226,7 @@ export default function Map({ selectedSections }: MapProps) {
         },
       });
 
-      directionsRef.current = directions;
+      setDirections(directions);
     });
 
     map.on("zoomend", () => {
@@ -252,19 +234,32 @@ export default function Map({ selectedSections }: MapProps) {
     });
 
     mapRef.current = map;
-  }, [update]);
 
-  useEffect(() => {
-    if (mapRef.current && directionsRef.current) update();
-    else initialize();
-  }, [initialize, update]);
-
-  useEffect(() => {
-    // Remove the map before unmounting
     return () => {
       mapRef.current?.remove();
     };
-  }, []);
+  }, [colorScheme]);
+
+  useEffect(() => {
+    if (!directions) return;
+
+    markersRef.current.forEach((marker) => marker.remove());
+
+    const length = directions.getWaypoints().length;
+
+    for (let index = 0; index < length; index++) {
+      directions.removeWaypoint(index);
+    }
+
+    if (waypoints.length < 2) return;
+
+    directions.setOrigin(waypoints[0]);
+    directions.setDestination(waypoints[waypoints.length - 1]);
+
+    for (let index = 1; index < waypoints.length - 1; index++) {
+      directions.addWaypoint(index, waypoints[index]);
+    }
+  }, [waypoints, directions]);
 
   return (
     <div className={styles.root}>
