@@ -91,7 +91,7 @@ export default function Class({
     [partialCurrentCourse, currentClassNumber]
   );
 
-  const currentClass = useMemo(() => data?.class, [data?.class]);
+  const currentClass = useMemo(() => data?.class, [data]);
 
   const Component = useMemo(() => views[view].Component, [view]);
 
@@ -112,34 +112,6 @@ export default function Class({
             </IconButton>
           </div>
           <div className={styles.group}>
-            {/* TODO: Previously offered
-            <Select.Root defaultValue={`${currentSemester} ${currentYear}`}>
-              <Select.Trigger asChild>
-                <Button secondary>
-                  <Select.Value />
-                  <Select.Icon asChild>
-                    <ArrowSeparateVertical />
-                  </Select.Icon>
-                </Button>
-              </Select.Trigger>
-              <Select.Portal>
-                <Select.Content
-                  position="popper"
-                  className={styles.content}
-                  align="end"
-                >
-                  {currentClass?.course?.classes.map(
-                    ({ year, semester }, index) => (
-                      <Select.Item key={index} value={`${semester} ${year}`}>
-                        <Select.ItemText>
-                          {semester} {year}
-                        </Select.ItemText>
-                      </Select.Item>
-                    )
-                  )}
-                </Select.Content>
-              </Select.Portal>
-                </Select.Root>*/}
             {currentClass && (
               <IconButton
                 as="a"

@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-import classNames from "classnames";
 import { ArrowSeparateVertical, ArrowUnionVertical } from "iconoir-react";
 
 import AverageGrade from "@/components/AverageGrade";
@@ -55,11 +54,7 @@ export default function Class({
   };
 
   return (
-    <div
-      className={classNames(styles.root, {
-        [styles.disabled]: groups.length === 0,
-      })}
-    >
+    <div className={styles.root}>
       <div className={styles.border} />
       <div className={styles.body}>
         <div

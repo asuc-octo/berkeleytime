@@ -41,7 +41,7 @@ export default function SideBar({
 
         return (
           <Class
-            key={`${class_.course.subject} ${class_.course.number} ${class_.number}`}
+            key={class_.primarySection.ccn}
             {...class_}
             expanded={expanded[index]}
             onExpandedChange={(expanded) => onExpandedChange(index, expanded)}

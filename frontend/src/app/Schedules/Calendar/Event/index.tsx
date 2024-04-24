@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 
+import * as HoverCard from "@radix-ui/react-hover-card";
 import classNames from "classnames";
 
 import { ISection } from "@/lib/api";
@@ -28,23 +29,35 @@ export default function Event({
 
   const height = useMemo(() => getY(timeEnd!) - top + 1, [top, timeEnd]);
 
+  // TODO: Hover card content
   return (
-    <div
-      className={classNames(styles.root, { [styles.active]: active })}
-      style={{
-        top: `${top}px`,
-        backgroundColor: "var(--red-500)",
-        height: `${height}px`,
-        width: `calc((100% - 8px) / ${columns})`,
-        left: `calc(4px + (((100% - 8px) / ${columns}) * ${position})`,
-      }}
-    >
-      <div className={styles.heading}>
-        {course.subject} {course.number}
-      </div>
-      <div className={styles.description}>
-        {kinds[kind]?.name ?? kind} {number}
-      </div>
-    </div>
+    <HoverCard.Root openDelay={0} closeDelay={100}>
+      <HoverCard.Trigger asChild>
+        <div
+          className={classNames(styles.trigger, { [styles.active]: active })}
+          style={{
+            top: `${top + 1}px`,
+            backgroundColor: "var(--red-500)",
+            height: `${height - 2}px`,
+            width: `calc((100% - 4px - ${columns - 1} * 2px) / ${columns})`,
+            left: `calc(2px + calc((100% - 4px - ${columns - 1} * 2px) / ${columns}) * ${position} + 2px * ${position})`,
+          }}
+        >
+          <div className={styles.heading}>
+            {course.subject} {course.number}
+          </div>
+          <div className={styles.description}>
+            {kinds[kind]?.name ?? kind} {number}
+          </div>
+        </div>
+      </HoverCard.Trigger>
+      <HoverCard.Portal>
+        <HoverCard.Content asChild collisionPadding={8} sideOffset={8}>
+          <div className={styles.content}>
+            <HoverCard.Arrow className={styles.arrow} />
+          </div>
+        </HoverCard.Content>
+      </HoverCard.Portal>
+    </HoverCard.Root>
   );
 }

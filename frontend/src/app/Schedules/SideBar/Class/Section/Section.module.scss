@@ -1,24 +1,23 @@
 .root {
   display: flex;
+  align-items: center;
   gap: 12px;
   cursor: pointer;
 
-  &:hover .text .title {
+  &:hover .title {
     color: var(--heading-color);
   }
 
-  &.active {
-    .text .title {
-      color: var(--heading-color);
-    }
+  &.active .title {
+    color: var(--heading-color);
+  }
 
-    .radioButton {
-      border-color: var(--blue-500);
+  &.active .radioButton {
+    border-color: var(--blue-500);
 
-      &::after {
-        opacity: 1;
-        background-color: var(--blue-500);
-      }
+    &::after {
+      opacity: 1;
+      background-color: var(--blue-500);
     }
   }
 
@@ -43,25 +42,16 @@
     }
   }
 
-  .text {
-    flex-grow: 1;
+  .time {
+    margin-left: auto;
+    line-height: 1;
+  }
 
-    .row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 4px;
-      font-size: 14px;
-      color: var(--paragraph-color);
-      line-height: 1;
-    }
-
-    .title {
-      font-size: 14px;
-      line-height: 1;
-      color: var(--paragraph-color);
-      font-weight: 500;
-      transition: all 100ms ease-in-out;
-    }
+  .title {
+    font-size: 14px;
+    line-height: 1;
+    color: var(--paragraph-color);
+    font-weight: 500;
+    transition: all 100ms ease-in-out;
   }
 }

@@ -1,19 +1,31 @@
-import { useRef } from "react";
+import { MouseEvent, useRef, useState } from "react";
 
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { Hashtag } from "iconoir-react";
+import { ClipboardCheck, Hashtag, PasteClipboard } from "iconoir-react";
 
 import styles from "./CCN.module.scss";
 
 interface CCNProps {
   ccn: string;
+  tooltip?: false;
 }
 
-export default function CCN({ ccn }: CCNProps) {
+export default function CCN({ ccn, tooltip }: CCNProps) {
   const textRef = useRef<HTMLSpanElement>(null);
 
-  const copy = () => {
+  const [over, setOver] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const [timeoutId, setTimeoutId] = useState<ReturnType<
+    typeof setTimeout
+  > | null>(null);
+
+  const handleClick = (event: MouseEvent) => {
+    event.stopPropagation();
+
     if (!textRef.current) return;
+
+    if (timeoutId) clearTimeout(timeoutId);
 
     const selection = window.getSelection();
     const range = document.createRange();
@@ -22,13 +34,29 @@ export default function CCN({ ccn }: CCNProps) {
     selection?.addRange(range);
 
     navigator.clipboard.writeText(ccn);
+
+    setCopied(true);
+
+    const _timeoutId = setTimeout(() => setCopied(false), 1000);
+    setTimeoutId(_timeoutId);
   };
 
   return (
-    <Tooltip.Root disableHoverableContent>
+    <Tooltip.Root disableHoverableContent open={tooltip}>
       <Tooltip.Trigger asChild>
-        <div className={styles.trigger} onClick={copy}>
-          <Hashtag />
+        <div
+          className={styles.trigger}
+          onClick={handleClick}
+          onMouseOver={() => setOver(true)}
+          onMouseOut={() => setOver(false)}
+        >
+          {copied ? (
+            <ClipboardCheck />
+          ) : over ? (
+            <PasteClipboard />
+          ) : (
+            <Hashtag />
+          )}
           <span ref={textRef}>{ccn}</span>
         </div>
       </Tooltip.Trigger>

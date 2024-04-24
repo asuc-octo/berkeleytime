@@ -5,23 +5,21 @@
   width: fit-content;
 }
 
-.calendar, .content {
+.content {
   border-radius: 4px;
   padding: 12px;
   background-color: var(--tooltip-color);
-  animation: fadeIn 100ms ease-in;
+  animation: fadeIn 100ms ease-in-out forwards;
   color: var(--neutral-400);
   font-size: 14px;
   z-index: 998;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
 
   .arrow {
     fill: var(--tooltip-color);
   }
-}
-
-.calendar {
-  display: flex;
-  gap: 4px;
 
   .day {
     width: 24px;
@@ -49,25 +47,7 @@
   }
 }
 
-.content {
-  max-width: 256px;
-
-  .title {
-    font-weight: 500;
-    color: white;
-    margin-bottom: 8px;
-    line-height: 1;
-  }
-
-  .description {
-    line-height: 1.5;
-  }
-}
-
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
   to {
     opacity: 1;
   }

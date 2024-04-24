@@ -2,7 +2,13 @@ import { Dispatch, SetStateAction, useRef } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
-import { ArrowRight, Filter, FilterSolid, Sparks, Xmark } from "iconoir-react";
+import {
+  ArrowRight,
+  Filter,
+  FilterSolid,
+  FrameAltEmpty,
+  Sparks,
+} from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import IconButton from "@/components/IconButton";
@@ -13,7 +19,7 @@ import styles from "./List.module.scss";
 
 interface ListProps {
   currentCourses: ICatalogCourse[];
-  onCourseSelect: (course: ICatalogCourse, number: string) => void;
+  onClassSelect: (course: ICatalogCourse, number: string) => void;
   setOpen: Dispatch<SetStateAction<boolean>>;
   open: boolean;
   overlay: boolean;
@@ -27,7 +33,7 @@ interface ListProps {
 
 export default function List({
   currentCourses,
-  onCourseSelect,
+  onClassSelect,
   currentSemester,
   currentYear,
   open,
@@ -46,7 +52,7 @@ export default function List({
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
-    paddingEnd: 72,
+    paddingEnd: 60,
   });
 
   const handleQueryChange = (value: string) => {
@@ -97,11 +103,12 @@ export default function List({
         </div>
         {items.length === 0 ? (
           <div className={styles.placeholder}>
-            <Xmark width={32} height={32} />
+            <FrameAltEmpty width={32} height={32} />
             <div className={styles.text}>
               <p className={styles.heading}>No courses found</p>
               <p className={styles.description}>
-                Try again with a different query or by broadening your search.
+                Find more courses by broadening your search or entering a
+                different query.
               </p>
             </div>
           </div>
@@ -121,16 +128,16 @@ export default function List({
                   ref={virtualizer.measureElement}
                   expanded={expandedCourses[index]}
                   setExpanded={(expanded) => setExpanded(index, expanded)}
-                  onCourseSelect={(number) => onCourseSelect(course, number)}
+                  onClassSelect={(number) => onClassSelect(course, number)}
                 />
               );
             })}
           </div>
         )}
         <div className={styles.footer}>
-          <Link to="/search" className={styles.button}>
+          <Link to="/explore" className={styles.button}>
             <Sparks />
-            <p className={styles.text}>Try a super search</p>
+            <p className={styles.text}>Try exploring courses</p>
             <ArrowRight />
           </Link>
         </div>

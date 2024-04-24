@@ -1,11 +1,19 @@
-import { Fragment, useMemo } from "react";
+import {
+  Fragment,
+  HTMLAttributes,
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+} from "react";
 
 import * as Tooltip from "@radix-ui/react-tooltip";
+import classNames from "classnames";
 
 import styles from "./Time.module.scss";
 
-const getTime = (start: string, end: string) => {
-  if (!start || !end) return "To be determined";
+const getTime = (start: string | null, end: string | null) => {
+  if (!start || !end) return;
 
   const [startHours, startMinutes] = start
     .split(":")
@@ -13,7 +21,7 @@ const getTime = (start: string, end: string) => {
 
   const [endHours, endMinutes] = end.split(":").map((value) => parseInt(value));
 
-  if (startHours === 0 && endHours === 0) return "To be determined";
+  if (startHours === 0) return;
 
   let time = `${startHours % 12 || 12}`;
   if (startMinutes > 0) time += `:${startMinutes.toString().padStart(2, "0")}`;
@@ -29,9 +37,22 @@ interface TimeProps {
   days: boolean[] | null;
   timeStart: string | null;
   timeEnd: string | null;
+  tooltip?: false;
 }
 
-export default function Time({ days, timeStart, timeEnd }: TimeProps) {
+const Time = forwardRef<
+  HTMLElement,
+  TimeProps & HTMLAttributes<HTMLParagraphElement>
+>(({ days, timeStart, timeEnd, tooltip, className, ...props }, ref) => {
+  const rootRef = useRef<HTMLButtonElement>(null);
+
+  // Explicitly cast the ref to the correct type
+  useImperativeHandle(
+    ref,
+    () => rootRef.current as unknown as HTMLParagraphElement
+  );
+
+  // TODO: Use getY with a multiple instead
   const bottom = useMemo(() => {
     if (!timeEnd) return;
 
@@ -40,6 +61,7 @@ export default function Time({ days, timeStart, timeEnd }: TimeProps) {
     return 170 - ((hours - 6) * 10 + minutes / 6);
   }, [timeEnd]);
 
+  // TODO: Use getY with a multiple instead
   const height = useMemo(() => {
     if (!timeStart || !timeEnd) return;
 
@@ -54,8 +76,10 @@ export default function Time({ days, timeStart, timeEnd }: TimeProps) {
     return (endHours - startHours) * 10 + (endMinutes - startMinutes) / 6;
   }, [timeStart, timeEnd]);
 
-  const time = useMemo(() => {
-    if (!days?.some((day) => day) || !timeStart || !timeEnd) return;
+  const value = useMemo(() => {
+    const time = getTime(timeStart, timeEnd);
+
+    if (!days?.some((day) => day) || !time) return;
 
     return (
       days
@@ -68,14 +92,16 @@ export default function Time({ days, timeStart, timeEnd }: TimeProps) {
         )
         .join("") +
       ", " +
-      getTime(timeStart, timeEnd)
+      time
     );
   }, [days, timeStart, timeEnd]);
 
-  return time && days ? (
-    <Tooltip.Root disableHoverableContent>
-      <Tooltip.Trigger asChild>
-        <p className={styles.trigger}>{time}</p>
+  return value ? (
+    <Tooltip.Root disableHoverableContent open={tooltip}>
+      <Tooltip.Trigger asChild ref={rootRef}>
+        <p className={classNames(styles.trigger, className)} {...props}>
+          {value}
+        </p>
       </Tooltip.Trigger>
       <Tooltip.Portal>
         <Tooltip.Content
@@ -84,9 +110,9 @@ export default function Time({ days, timeStart, timeEnd }: TimeProps) {
           sideOffset={8}
           collisionPadding={8}
         >
-          <div className={styles.calendar}>
+          <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
-            {days.map((day, index) => (
+            {days!.map((day, index) => (
               <Fragment key={index}>
                 {index > 0 && <div className={styles.divider} />}
                 <div className={styles.day}>
@@ -107,26 +133,12 @@ export default function Time({ days, timeStart, timeEnd }: TimeProps) {
       </Tooltip.Portal>
     </Tooltip.Root>
   ) : (
-    <Tooltip.Root disableHoverableContent>
-      <Tooltip.Trigger asChild>
-        <p className={styles.trigger}>To be determined</p>
-      </Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content
-          asChild
-          side="bottom"
-          sideOffset={8}
-          collisionPadding={8}
-        >
-          <div className={styles.content}>
-            <Tooltip.Arrow className={styles.arrow} />
-            <p className={styles.title}>Time</p>
-            <p className={styles.description}>
-              The time for this class has not been determined yet.
-            </p>
-          </div>
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+    <p className={classNames(styles.trigger, className)} {...props}>
+      To be determined
+    </p>
   );
-}
+});
+
+Time.displayName = "Time";
+
+export default Time;

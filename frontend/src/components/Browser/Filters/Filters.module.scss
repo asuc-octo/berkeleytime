@@ -2,11 +2,10 @@
   width: 384px;
   flex-shrink: 0;
   overflow: auto;
-  padding: 12px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   background-color: var(--foreground-color);
-  gap: 12px;
 
   &:not(.block) {
     border-right: 1px solid var(--border-color);
@@ -21,5 +20,50 @@
     position: absolute;
     height: 100%;
     z-index: 1;
+  }
+
+  .label {
+    font-size: 14px;
+    color: var(--label-color);
+    line-height: 1;
+    margin-bottom: 12px;
+
+    &:not(:first-child) {
+      margin-top: 24px;
+    }
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    & + .row {
+      margin-top: 12px;
+    }
+
+    .description {
+      font-size: 14px;
+      color: var(--paragraph-color);
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .checkbox {
+      width: 16px;
+      height: 16px;
+      display: grid;
+      place-items: center;
+      border-radius: 4px;
+
+      &[data-state="checked"] {
+        background-color: var(--blue-500);
+        color: white;
+      }
+
+      &[data-state="unchecked"] {
+        border: 2px solid var(--border-color);
+      }
+    }
   }
 }

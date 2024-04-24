@@ -16,7 +16,7 @@ const initializeFuse = (courses: ICatalogCourse[]) => {
   const list = courses.map((course) => {
     const { title, subject, number, classes } = course;
 
-    // For courses like W54, prefer the number and add an abbreviation
+    // For prefixed courses, prefer the number and add an abbreviation with the prefix
     const containsPrefix = /^[a-zA-Z].*/.test(number);
     const alternateNumber = number.slice(1);
 
@@ -74,7 +74,7 @@ const initializeFuse = (courses: ICatalogCourse[]) => {
       },
       { name: "subject", weight: 1.5 },
     ],
-    // Fuse types are wrong for sortFn
+    // TODO: Fuse types are wrong for sortFn
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     sortFn: (a: any, b: any) => {
       // First, sort by score
@@ -98,7 +98,7 @@ interface BrowserProps {
 
 export default function Browser({
   courses,
-  onClassSelect: onCourseSelect,
+  onClassSelect,
   responsive = true,
   currentSemester,
   currentYear,
@@ -147,7 +147,7 @@ export default function Browser({
       {(open || !overlay) && <Filters overlay={overlay} block={block} />}
       <List
         currentCourses={filteredCourses}
-        onCourseSelect={onCourseSelect}
+        onClassSelect={onClassSelect}
         setOpen={setOpen}
         currentSemester={currentSemester}
         expandedCourses={expandedCourses}

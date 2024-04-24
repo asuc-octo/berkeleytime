@@ -1,9 +1,11 @@
+import { MessageText } from "iconoir-react";
 import { Outlet, useNavigation } from "react-router";
 
 import Boundary from "@/components/Boundary";
+import Button from "@/components/Button";
 import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import NavigationBar from "@/components/NavigationBar";
 
 import styles from "./Layout.module.scss";
 
@@ -17,7 +19,7 @@ export default function Layout({ header = true, footer = true }: LayoutProps) {
 
   return (
     <div className={styles.root}>
-      {header && <Header />}
+      {header && <NavigationBar />}
       {state === "loading" ? (
         <Boundary>
           <LoadingIndicator />
@@ -26,6 +28,17 @@ export default function Layout({ header = true, footer = true }: LayoutProps) {
         <Outlet />
       )}
       {footer && <Footer />}
+      <div className={styles.trigger}>
+        <Button
+          as="a"
+          href="https://forms.gle/zeAUQAHrMcrRJyhK6"
+          target="_blank"
+          className={styles.button}
+        >
+          <MessageText />
+          Provide feedback
+        </Button>
+      </div>
     </div>
   );
 }

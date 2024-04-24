@@ -23,7 +23,6 @@ export default function Section({
   timeEnd,
   timeStart,
   days,
-  instructors,
 }: SectionProps & ISection) {
   return (
     <div
@@ -36,20 +35,15 @@ export default function Section({
       onMouseOut={() => onSectionMouseOut()}
     >
       <div className={styles.radioButton} />
-      <div className={styles.text}>
-        <div className={styles.row}>
-          <p className={styles.title}>{number}</p>
-          <CCN ccn={ccn} />
-        </div>
-        <div className={styles.row}>
-          <Time timeEnd={timeEnd} timeStart={timeStart} days={days} />
-        </div>
-        <div className={styles.row}>
-          {instructors && instructors.length > 0
-            ? `${instructors[0].givenName} ${instructors[0].familyName}`
-            : "To be determined"}
-        </div>
-      </div>
+      <p className={styles.title}>{number}</p>
+      <CCN ccn={ccn} tooltip={false} />
+      <Time
+        timeEnd={timeEnd}
+        timeStart={timeStart}
+        days={days}
+        tooltip={false}
+        className={styles.time}
+      />
     </div>
   );
 }

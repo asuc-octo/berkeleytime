@@ -4,11 +4,11 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import About from "@/app/About";
 import Catalog from "@/app/Catalog";
+import Explore from "@/app/Explore";
 import Landing from "@/app/Landing";
-import Layout from "@/app/Layout";
+import Layout from "@/components/Layout";
 import Plan from "@/app/Plan";
 import Schedules from "@/app/Schedules";
-import Search from "@/app/Search";
 import AccountProvider from "@/components/AccountProvider";
 
 const router = createBrowserRouter([
@@ -20,8 +20,8 @@ const router = createBrowserRouter([
         index: true,
       },
       {
-        element: <Search />,
-        path: "search",
+        element: <Explore />,
+        path: "explore",
       },
     ],
   },
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
     children: [
       {
         element: <About />,
-        path: "/about",
+        path: "about",
       },
     ],
   },
@@ -39,15 +39,15 @@ const router = createBrowserRouter([
     children: [
       {
         element: <Catalog />,
-        path: "/catalog/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
+        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
       },
       {
         element: <Schedules />,
-        path: "/schedules",
+        path: "schedules",
       },
       {
         element: <Plan />,
-        path: "/plan",
+        path: "plan",
       },
     ],
   },

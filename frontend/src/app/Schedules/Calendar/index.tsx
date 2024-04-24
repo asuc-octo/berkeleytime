@@ -69,7 +69,12 @@ export default function Calendar({
 
         const relevantSections = sections
           // Filter sections for the current day which have a time specified
-          .filter((section) => section.days?.[day] && section.timeStart)
+          .filter(
+            (section) =>
+              section.days?.[day] &&
+              section.timeStart &&
+              getY(section.timeStart) > 0
+          )
           // Sort sections by when they start
           .sort((a, b) => getY(a.timeStart!) - getY(b.timeStart!));
 

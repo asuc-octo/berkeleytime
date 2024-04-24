@@ -3,7 +3,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowRight, Clock } from "iconoir-react";
 
 import Button from "@/components/Button";
-import Header from "@/components/Header";
+import NavigationBar from "@/components/NavigationBar";
 
 import styles from "./Hero.module.scss";
 import afternoon from "./afternoon.svg";
@@ -95,7 +95,7 @@ export default function Hero() {
 
   return (
     <div className={styles.root} ref={root}>
-      <Header invert />
+      <NavigationBar invert />
       <div className={styles.container}>
         <div className={styles.text}>
           <h1 className={styles.heading}>

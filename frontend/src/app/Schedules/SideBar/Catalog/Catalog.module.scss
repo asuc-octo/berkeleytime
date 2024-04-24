@@ -1,14 +1,10 @@
 .overlay {
-  background-color: rgb(255 255 255 / 80%);
+  background-color: var(--background-color);
   inset: 0;
   position: fixed;
   z-index: 988;
   opacity: 0;
   animation: fadeIn 250ms ease-in-out forwards;
-
-  @media (prefers-color-scheme: dark) {
-    background-color: #000000cc;
-  }
 }
 
 .content {
@@ -25,6 +21,7 @@
   @media (width <= 992px) {
     width: 100%;
   }
+
 
   .body {
     flex-grow: 1;
@@ -54,13 +51,13 @@
 }
 
 @keyframes fadeIn {
-  100% {
-    opacity: 1;
+  to {
+    opacity: 0.75;
   }
 }
 
 @keyframes slideIn {
-  100% {
+  to {
     transform: translateX(0);
   }
 }
