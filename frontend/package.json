@@ -7,7 +7,7 @@
 		"dev": "vite",
 		"build": "tsc && vite build",
 		"lint": "eslint --ext .tsx,.ts src/ --report-unused-disable-directives",
-		"start": "serve -s build -p 3000"
+		"start": "serve -s ../build -p 3000"
 	},
 	"dependencies": {
 		"@apollo/client": "^3.9.5",
