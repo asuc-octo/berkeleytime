@@ -6,15 +6,16 @@
 
   .trigger {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    border-radius: 4px;
+    bottom: 128px;
+    right: 0;
+    border-radius: 4px 0 0 4px;
     z-index: 979;
     overflow: hidden;
     pointer-events: none;
 
     .button {
       padding: 0 16px;
+      border-radius: 4px 0 0 4px;
       gap: 16px;
       height: 48px;
       transform: translateX(calc(100% - 48px));

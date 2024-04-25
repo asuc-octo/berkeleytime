@@ -5,9 +5,7 @@ import App from "./App";
 import "./main.scss";
 
 const client = new ApolloClient({
-  uri: import.meta.env.DEV
-    ? "http://localhost:8080/api/graphql"
-    : "https://stanfurdtime.com/api/graphql",
+  uri: "http://192.168.86.22:8080/api/graphql",
   cache: new InMemoryCache(),
 });
 

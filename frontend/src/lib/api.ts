@@ -15,9 +15,7 @@ export interface ICatalogClass {
   waitlistCount: number;
   waitlistMax: number;
   number: string;
-  primarySection: {
-    kind: string;
-  };
+  primarySection: ISection;
 }
 
 export interface IInstructor {
@@ -51,7 +49,6 @@ export interface ISection {
 
 export interface IClass extends ICatalogClass {
   course: ICourse;
-  primarySection: ISection;
   sections: ISection[];
   description: string | null;
   notes: string;
@@ -67,12 +64,13 @@ export interface ICatalogCourse {
   description: string | null;
   gradeAverage: number | null;
   classes: ICatalogClass[];
+  level: string;
+  gradingBasis: string;
 }
 
-export interface ICourse extends Omit<ICatalogCourse, "classes"> {
+export interface ICourse extends ICatalogCourse {
   subjectName: string;
   prereqs: string | null;
-  gradingBasis: string;
   description: string;
   classes: IClass[];
   sections: ISection[];
@@ -204,6 +202,8 @@ export const GET_COURSES = gql`
       number
       title
       gradeAverage
+      level
+      gradingBasis
       classes {
         number
         title
@@ -215,6 +215,10 @@ export const GET_COURSES = gql`
         unitsMin
         primarySection {
           kind
+          instructors {
+            familyName
+            givenName
+          }
         }
       }
     }

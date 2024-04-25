@@ -1,26 +1,20 @@
-import { Dispatch, SetStateAction, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
-import {
-  ArrowRight,
-  Filter,
-  FilterSolid,
-  FrameAltEmpty,
-  Sparks,
-} from "iconoir-react";
+import { ArrowRight, FrameAltEmpty, Sparks } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import IconButton from "@/components/IconButton";
 import { ICatalogCourse, Semester } from "@/lib/api";
 
+import Header from "../Header";
 import Course from "./Course";
 import styles from "./List.module.scss";
 
 interface ListProps {
-  currentCourses: ICatalogCourse[];
+  includedCourses: ICatalogCourse[];
   onClassSelect: (course: ICatalogCourse, number: string) => void;
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  onOpenChange: (open: boolean) => void;
   open: boolean;
   overlay: boolean;
   block: boolean;
@@ -32,36 +26,32 @@ interface ListProps {
 }
 
 export default function List({
-  currentCourses,
+  includedCourses,
   onClassSelect,
   currentSemester,
   currentYear,
   open,
   overlay,
   block,
-  setOpen,
+  onOpenChange,
   currentQuery,
   expandedCourses,
   setExpanded,
 }: ListProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const virtualizer = useVirtualizer({
-    count: currentCourses.length,
+    count: includedCourses.length,
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
     paddingEnd: 60,
   });
 
-  const handleQueryChange = (value: string) => {
-    if (value) searchParams.set("query", value);
-    else searchParams.delete("query");
-    setSearchParams(searchParams);
-
+  useEffect(() => {
     rootRef.current?.scrollTo({ top: 0 });
-  };
+  }, [searchParams]);
 
   const items = virtualizer.getVirtualItems();
 
@@ -69,11 +59,10 @@ export default function List({
 
   return (
     <div
+      ref={rootRef}
       className={classNames(styles.root, {
         [styles.block]: block,
-        [styles.overlay]: overlay,
       })}
-      ref={rootRef}
     >
       <div
         className={styles.view}
@@ -81,34 +70,24 @@ export default function List({
           height: totalSize,
         }}
       >
-        <div className={styles.header}>
-          <div className={styles.form}>
-            <input
-              className={styles.input}
-              type="text"
-              autoFocus
-              value={currentQuery}
-              onChange={(event) => handleQueryChange(event.target.value)}
-              placeholder={`Search ${currentSemester} ${currentYear} courses...`}
-            />
-            <div className={styles.label}>
-              {currentCourses.length.toLocaleString()}
-            </div>
-            {overlay && (
-              <IconButton onClick={() => setOpen(!open)}>
-                {open ? <FilterSolid /> : <Filter />}
-              </IconButton>
-            )}
-          </div>
-        </div>
+        <Header
+          currentSemester={currentSemester}
+          currentYear={currentYear}
+          includedCourses={includedCourses}
+          currentQuery={currentQuery}
+          open={open}
+          overlay={overlay}
+          autoFocus
+          onOpenChange={onOpenChange}
+        />
         {items.length === 0 ? (
           <div className={styles.placeholder}>
             <FrameAltEmpty width={32} height={32} />
             <div className={styles.text}>
               <p className={styles.heading}>No courses found</p>
               <p className={styles.description}>
-                Find more courses by broadening your search or entering a
-                different query.
+                Find courses by broadening your search or entering a different
+                query.
               </p>
             </div>
           </div>
@@ -118,7 +97,7 @@ export default function List({
             style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
           >
             {items.map(({ key, index }) => {
-              const course = currentCourses[index];
+              const course = includedCourses[index];
 
               return (
                 <Course

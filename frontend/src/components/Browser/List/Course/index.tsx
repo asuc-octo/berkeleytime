@@ -10,7 +10,6 @@ import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { ICatalogCourse } from "@/lib/api";
-import { kinds } from "@/lib/section";
 
 import styles from "./Course.module.scss";
 
@@ -145,7 +144,7 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
                 >
                   <div className={styles.text}>
                     <p className={styles.title}>
-                      {kinds[kind]?.name ?? kind} {classNumber}
+                      {kind} {classNumber}
                     </p>
                     <p className={styles.description}>
                       {classTitle || courseTitle}

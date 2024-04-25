@@ -45,9 +45,7 @@ export default function Sections({
       <div className={styles.root}>
         <div className={styles.menu}>
           {types.map((type) => (
-            <div className={styles.item}>
-              {type === "Laboratory" ? "Lab" : "Discussion"}s
-            </div>
+            <div className={styles.item}>{type}</div>
           ))}
         </div>
         <div className={styles.view}>
@@ -56,8 +54,7 @@ export default function Sections({
               <div className={styles.header}>
                 <div className={styles.text}>
                   <p className={styles.title}>
-                    {section.kind === "Laboratory" ? "Lab" : section.kind}{" "}
-                    {section.number}
+                    {section.kind} {section.number}
                   </p>
                   <CCN ccn={section.ccn} />
                 </div>

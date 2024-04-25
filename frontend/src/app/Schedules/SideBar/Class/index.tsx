@@ -6,7 +6,6 @@ import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass, ISection } from "@/lib/api";
-import { kinds } from "@/lib/section";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
@@ -35,7 +34,7 @@ export default function Class({
   onSectionMouseOver,
   onSectionMouseOut,
 }: ClassProps & IClass) {
-  const groups = useMemo(
+  const kinds = useMemo(
     () => Array.from(new Set(sections.map((section) => section.kind))),
     [sections]
   );
@@ -83,9 +82,7 @@ export default function Class({
         </div>
         {expanded && (
           <div className={styles.group}>
-            <p className={styles.label}>
-              {kinds[primarySection.kind]?.name ?? primarySection.kind}
-            </p>
+            <p className={styles.label}>{primarySection.kind}</p>
             <Section
               active={selectedSections.some(
                 (selectedSection) => selectedSection.ccn === primarySection.ccn
@@ -97,14 +94,14 @@ export default function Class({
           </div>
         )}
         {expanded &&
-          groups.map((group) => {
+          kinds.map((kind) => {
             const sortedSections = sections
-              .filter((section) => section.kind === group)
+              .filter((section) => section.kind === kind)
               .sort((a, b) => a.number.localeCompare(b.number));
 
             return (
-              <div className={styles.group} key={group}>
-                <p className={styles.label}>{kinds[group]?.name ?? group}</p>
+              <div className={styles.group} key={kind}>
+                <p className={styles.label}>{kind}</p>
                 {sortedSections.map((section) => {
                   const active = selectedSections.some(
                     (selectedSection) => selectedSection.ccn === section.ccn
