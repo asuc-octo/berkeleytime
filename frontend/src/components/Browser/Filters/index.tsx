@@ -1,15 +1,172 @@
+import { useMemo, useState } from "react";
+
 import * as Checkbox from "@radix-ui/react-checkbox";
 import classNames from "classnames";
-import { Check } from "iconoir-react";
+import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
+import { useSearchParams } from "react-router-dom";
 
+import { ICatalogCourse, Semester } from "@/lib/api";
+import { kindAbbreviations } from "@/lib/section";
+
+import Header from "../Header";
+import { getFilteredCourses, getLevel } from "../browser";
 import styles from "./Filters.module.scss";
 
 interface FiltersProps {
   overlay: boolean;
   block: boolean;
+  includedCourses: ICatalogCourse[];
+  excludedCourses: ICatalogCourse[];
+  currentKinds: string[];
+  currentUnits: string[];
+  currentLevels: string[];
+  onOpenChange: (open: boolean) => void;
+  open: boolean;
+  currentSemester: Semester;
+  currentYear: number;
+  currentQuery: string;
 }
 
-export default function Filters({ overlay, block }: FiltersProps) {
+export default function Filters({
+  overlay,
+  block,
+  includedCourses,
+  excludedCourses,
+  currentKinds,
+  currentLevels,
+  currentUnits,
+  onOpenChange,
+  open,
+  currentSemester,
+  currentYear,
+  currentQuery,
+}: FiltersProps) {
+  const [expanded, setExpanded] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const filteredLevels = useMemo(() => {
+    const courses =
+      currentLevels.length === 0
+        ? includedCourses
+        : getFilteredCourses(excludedCourses, currentKinds, currentUnits, [])
+            .includedCourses;
+
+    return courses.reduce(
+      (acc, course) => {
+        if (!["Undergraduate", "Graduate"].includes(course.level)) return acc;
+
+        const level = getLevel(course.level, course.number);
+
+        acc[level] += 1;
+
+        return acc;
+      },
+      { "Lower Division": 0, "Upper Division": 0, Graduate: 0 } as Record<
+        string,
+        number
+      >
+    );
+  }, [
+    excludedCourses,
+    includedCourses,
+    currentUnits,
+    currentKinds,
+    currentLevels,
+  ]);
+
+  const filteredKinds = useMemo(() => {
+    const filteredKinds = Object.keys(kindAbbreviations).reduce(
+      (acc, kind) => {
+        acc[kind] = 0;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const courses =
+      currentKinds.length === 0
+        ? includedCourses
+        : getFilteredCourses(excludedCourses, [], currentUnits, currentLevels)
+            .includedCourses;
+
+    for (const course of courses) {
+      const kind = course.classes[0].primarySection.kind;
+
+      if (!kindAbbreviations[kind]) continue;
+
+      filteredKinds[kind] += 1;
+    }
+
+    return filteredKinds;
+  }, [
+    excludedCourses,
+    includedCourses,
+    currentKinds,
+    currentUnits,
+    currentLevels,
+  ]);
+
+  const filteredUnits = useMemo(() => {
+    const filteredUnits = ["5+", "4", "3", "2", "1", "0"].reduce(
+      (acc, units) => {
+        acc[units] = 0;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const courses =
+      currentUnits.length === 0
+        ? includedCourses
+        : getFilteredCourses(excludedCourses, currentKinds, [], currentLevels)
+            .includedCourses;
+
+    for (const course of courses) {
+      const { unitsMin, unitsMax } = course.classes.reduce(
+        (acc, { unitsMax, unitsMin }) => ({
+          unitsMin: Math.floor(Math.min(5, Math.min(acc.unitsMin, unitsMin))),
+          unitsMax: Math.floor(Math.min(5, Math.max(acc.unitsMax, unitsMax))),
+        }),
+        { unitsMax: 0, unitsMin: Infinity }
+      );
+
+      [...Array(unitsMax - unitsMin || 1)].forEach((_, index) => {
+        const units = unitsMin + index;
+
+        filteredUnits[units === 5 ? "5+" : `${units}`] += 1;
+      });
+    }
+
+    return filteredUnits;
+  }, [
+    excludedCourses,
+    includedCourses,
+    currentUnits,
+    currentKinds,
+    currentLevels,
+  ]);
+
+  const handleDynamicChange = (
+    name: string,
+    current: string[],
+    value: string,
+    checked: boolean
+  ) => {
+    if (checked) {
+      searchParams.set(name, [...current, value].join(","));
+    } else {
+      const filtered = current.filter((parameter) => parameter !== value);
+
+      if (filtered.length > 0) {
+        searchParams.set(name, filtered.join(","));
+      } else {
+        searchParams.delete(name);
+      }
+    }
+
+    setSearchParams(searchParams);
+  };
+
   return (
     <div
       className={classNames(styles.root, {
@@ -17,77 +174,148 @@ export default function Filters({ overlay, block }: FiltersProps) {
         [styles.block]: block,
       })}
     >
-      <p className={styles.label}>Units</p>
-      <div className={styles.row}>
-        <Checkbox.Root className={styles.checkbox} defaultChecked id="c1">
-          <Checkbox.Indicator asChild>
-            <Check width={12} height={12} />
-          </Checkbox.Indicator>
-        </Checkbox.Root>
-        <label className={styles.description} htmlFor="c1">
-          4 units
-        </label>
-      </div>
-      <div className={styles.row}>
-        <Checkbox.Root className={styles.checkbox} defaultChecked id="c1">
-          <Checkbox.Indicator asChild>
-            <Check width={12} height={12} />
-          </Checkbox.Indicator>
-        </Checkbox.Root>
-        <label className={styles.description} htmlFor="c1">
-          3 units
-        </label>
-      </div>
-      <div className={styles.row}>
-        <Checkbox.Root className={styles.checkbox} defaultChecked id="c1">
-          <Checkbox.Indicator asChild>
-            <Check width={12} height={12} />
-          </Checkbox.Indicator>
-        </Checkbox.Root>
-        <label className={styles.description} htmlFor="c1">
-          2 units
-        </label>
-      </div>
-      <div className={styles.row}>
-        <Checkbox.Root className={styles.checkbox} defaultChecked id="c1">
-          <Checkbox.Indicator asChild>
-            <Check width={12} height={12} />
-          </Checkbox.Indicator>
-        </Checkbox.Root>
-        <label className={styles.description} htmlFor="c1">
-          1 unit
-        </label>
-      </div>
-      <p className={styles.label}>Level</p>
-      <div className={styles.row}>
-        <Checkbox.Root className={styles.checkbox} defaultChecked id="c1">
-          <Checkbox.Indicator asChild>
-            <Check width={12} height={12} />
-          </Checkbox.Indicator>
-        </Checkbox.Root>
-        <label className={styles.description} htmlFor="c1">
-          Lower division
-        </label>
-      </div>
-      <div className={styles.row}>
-        <Checkbox.Root className={styles.checkbox} defaultChecked id="c1">
-          <Checkbox.Indicator asChild>
-            <Check width={12} height={12} />
-          </Checkbox.Indicator>
-        </Checkbox.Root>
-        <label className={styles.description} htmlFor="c1">
-          Upper division
-        </label>
-      </div>
-      <div className={styles.row}>
-        <Checkbox.Root className={styles.checkbox} defaultChecked id="c1">
-          <Checkbox.Indicator asChild>
-            <Check width={12} height={12} />
-          </Checkbox.Indicator>
-        </Checkbox.Root>
-        <label className={styles.description} htmlFor="c1">
-          Graduate
-        </label>
+      {open && overlay && (
+        <Header
+          onOpenChange={onOpenChange}
+          open={true}
+          className={styles.header}
+          includedCourses={includedCourses}
+          currentSemester={currentSemester}
+          currentYear={currentYear}
+          currentQuery={currentQuery}
+          overlay={overlay}
+        />
+      )}
+      <div className={styles.body}>
+        <p className={styles.label}>Quick</p>
+        <div className={styles.filter}>
+          <Checkbox.Root className={styles.checkbox} id="0">
+            <Checkbox.Indicator asChild>
+              <Check width={12} height={12} />
+            </Checkbox.Indicator>
+          </Checkbox.Root>
+          <label className={styles.text} htmlFor="0">
+            <span className={styles.value}>Open</span> (2,000)
+          </label>
+        </div>
+        <div className={styles.filter}>
+          <Checkbox.Root className={styles.checkbox} id="0">
+            <Checkbox.Indicator asChild>
+              <Check width={12} height={12} />
+            </Checkbox.Indicator>
+          </Checkbox.Root>
+          <label className={styles.text} htmlFor="0">
+            <span className={styles.value}>Bookmarked</span> (10)
+          </label>
+        </div>
+        <div className={styles.filter}>
+          <Checkbox.Root className={styles.checkbox} id="0">
+            <Checkbox.Indicator asChild>
+              <Check width={12} height={12} />
+            </Checkbox.Indicator>
+          </Checkbox.Root>
+          <label className={styles.text} htmlFor="0">
+            <span className={styles.value}>Satisfies requirements</span> (10)
+          </label>
+        </div>
+        <p className={styles.label}>Level</p>
+        {Object.keys(filteredLevels).map((level) => {
+          const active = currentLevels.includes(level);
+
+          return (
+            <div className={styles.filter}>
+              <Checkbox.Root
+                className={styles.checkbox}
+                checked={active}
+                id={`level-${level}`}
+                onCheckedChange={(checked) =>
+                  handleDynamicChange(
+                    "levels",
+                    currentLevels,
+                    level,
+                    checked as boolean
+                  )
+                }
+              >
+                <Checkbox.Indicator asChild>
+                  <Check width={12} height={12} />
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+              <label className={styles.text} htmlFor={`level-${level}`}>
+                <span className={styles.value}>{level}</span>
+                {!active && ` (${filteredLevels[level].toLocaleString()})`}
+              </label>
+            </div>
+          );
+        })}
+        <p className={styles.label}>Units</p>
+        {["5+", "4", "3", "2", "1", "0"].map((units) => {
+          const active = currentUnits.includes(units);
+
+          return (
+            <div className={styles.filter}>
+              <Checkbox.Root
+                className={styles.checkbox}
+                checked={active}
+                id={`units-${units}`}
+                onCheckedChange={(checked) =>
+                  handleDynamicChange(
+                    "units",
+                    currentUnits,
+                    units,
+                    checked as boolean
+                  )
+                }
+              >
+                <Checkbox.Indicator asChild>
+                  <Check width={12} height={12} />
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+              <label className={styles.text} htmlFor={`units-${units}`}>
+                <span className={styles.value}>
+                  {units} {units === "1" ? "unit" : "units"}
+                </span>
+                {!active && ` (${filteredUnits[units].toLocaleString()})`}
+              </label>
+            </div>
+          );
+        })}
+        <p className={styles.label}>Kind</p>
+        {Object.keys(filteredKinds)
+          .slice(0, expanded ? undefined : 5)
+          .map((kind) => {
+            const active = currentKinds.includes(kind);
+
+            return (
+              <div className={styles.filter}>
+                <Checkbox.Root
+                  className={styles.checkbox}
+                  checked={active}
+                  id={`kind-${kind}`}
+                  onCheckedChange={(checked) =>
+                    handleDynamicChange(
+                      "kinds",
+                      currentKinds,
+                      kind,
+                      checked as boolean
+                    )
+                  }
+                >
+                  <Checkbox.Indicator asChild>
+                    <Check width={12} height={12} />
+                  </Checkbox.Indicator>
+                </Checkbox.Root>
+                <label className={styles.text} htmlFor={`kind-${kind}`}>
+                  <span className={styles.value}>{kind}</span>
+                  {!active && ` (${filteredKinds[kind].toLocaleString()})`}
+                </label>
+              </div>
+            );
+          })}
+        <div className={styles.button} onClick={() => setExpanded(!expanded)}>
+          {expanded ? <NavArrowUp /> : <NavArrowDown />}
+          {expanded ? "View less" : "View more"}
+        </div>
       </div>
     </div>
   );

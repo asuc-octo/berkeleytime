@@ -5,7 +5,6 @@ import classNames from "classnames";
 
 import { ISection } from "@/lib/api";
 import { getY } from "@/lib/schedule";
-import { kinds } from "@/lib/section";
 
 import styles from "./Event.module.scss";
 
@@ -47,7 +46,7 @@ export default function Event({
             {course.subject} {course.number}
           </div>
           <div className={styles.description}>
-            {kinds[kind]?.name ?? kind} {number}
+            {kind} {number}
           </div>
         </div>
       </HoverCard.Trigger>

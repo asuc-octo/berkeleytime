@@ -101,8 +101,8 @@ type Section {
 }
 
 type Instructor {
-    familyName: String!
-    givenName: String!
+    familyName: String
+    givenName: String
 }
 
 type EnrollmentDay {

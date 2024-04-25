@@ -7,7 +7,7 @@ import { CourseModel, CourseType } from "../../models/course";
 import { SectionModel } from "../../models/section";
 import { formatClass, formatCourse, formatSection } from "./formatter";
 import { getCourseKey, getCsCourseId } from "../../utils/course";
-import { isNil } from "lodash";
+import { isNil, some } from "lodash";
 import { GraphQLResolveInfo } from "graphql";
 import { getChildren } from "../../utils/graphql";
 
@@ -24,8 +24,8 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
     const classes = await ClassModel
         .find({
             "session.term.name": termToString(term),
-            "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },
-            "anyPrintInScheduleOfClasses": true
+            // "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },
+            anyPrintInScheduleOfClasses: true
         })
         .lean()
 
@@ -44,7 +44,7 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
                     filter by fromDate and then sort to find the
                     most recent course.
                 */
-                fromDate: { $lte: getTermStartMonth(term) },
+                // fromDate: { $lte: getTermStartMonth(term) },
             },
             {
                 _updatedAt: 1,
@@ -162,8 +162,6 @@ export async function getCatalog(term: TermInput, info: GraphQLResolveInfo): Pro
         catalog[id].classes = catalog[id].classes.filter((c: any) => c.primarySection?.ccn)
 
         if (catalog[id].classes.length === 0) {
-            console.log("delete")
-
             delete catalog[id]
         }
     }

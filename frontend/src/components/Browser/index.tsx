@@ -7,10 +7,12 @@ import { useSearchParams } from "react-router-dom";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { ICatalogCourse, Semester } from "@/lib/api";
 import { subjects } from "@/lib/course";
+import { kindAbbreviations } from "@/lib/section";
 
 import styles from "./Browser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
+import { getFilteredCourses } from "./browser";
 
 const initializeFuse = (courses: ICatalogCourse[]) => {
   const list = courses.map((course) => {
@@ -61,7 +63,7 @@ const initializeFuse = (courses: ICatalogCourse[]) => {
 
   const options = {
     includeScore: true,
-    findAllMatches: true,
+    ignoreLocation: true,
     threshold: 0.25,
     keys: [
       { name: "number", weight: 1.2 },
@@ -105,15 +107,65 @@ export default function Browser({
 }: BrowserProps) {
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
-  const [filteredCourses, setFilteredCourses] = useState<ICatalogCourse[]>([]);
+  const [currentCourses, setCurrentCourses] = useState<ICatalogCourse[]>([]);
   const [expandedCourses, setExpandedCourses] = useState<boolean[]>([]);
   const { width } = useWindowDimensions();
 
-  const fuse = useMemo(() => initializeFuse(courses), [courses]);
+  // Layout
+  const block = useMemo(() => width <= 992, [width]);
 
+  const overlay = useMemo(
+    () => (responsive && width <= 1400) || block,
+    [width, responsive, block]
+  );
+
+  const filters = useMemo(() => open || !overlay, [open, overlay]);
+
+  // Filtering
   const currentQuery = useMemo(
     () => searchParams.get("query") ?? "",
     [searchParams]
+  );
+
+  const currentKinds = useMemo(() => {
+    const parameter = searchParams.get("kinds");
+
+    return (
+      parameter?.split(",").filter((kind) => kindAbbreviations[kind]) ?? []
+    );
+  }, [searchParams]);
+
+  const currentUnits = useMemo(() => {
+    const parameter = searchParams.get("units");
+
+    return (
+      parameter
+        ?.split(",")
+        .filter((unit) => ["5+", "4", "3", "2", "1", "0"].includes(unit)) ?? []
+    );
+  }, [searchParams]);
+
+  const currentLevels = useMemo(() => {
+    const parameter = searchParams.get("levels");
+
+    return (
+      parameter
+        ?.split(",")
+        .filter((level) =>
+          ["Lower Division", "Upper Division", "Graduate"].includes(level)
+        ) ?? []
+    );
+  }, [searchParams]);
+
+  const { includedCourses, excludedCourses } = useMemo(
+    () =>
+      getFilteredCourses(courses, currentKinds, currentUnits, currentLevels),
+    [courses, currentKinds, currentUnits, currentLevels]
+  );
+
+  const fuse = useMemo(
+    () => initializeFuse(includedCourses),
+    [includedCourses]
   );
 
   const setExpanded = (index: number, expanded: boolean) => {
@@ -125,30 +177,47 @@ export default function Browser({
   };
 
   useEffect(() => {
-    const _filteredCourses = currentQuery
-      ? fuse.search(currentQuery).map(({ refIndex }) => courses[refIndex])
-      : courses;
+    const _currentCourses = currentQuery
+      ? fuse
+          .search(currentQuery)
+          .map(({ refIndex }) => includedCourses[refIndex])
+      : includedCourses;
 
-    setFilteredCourses(_filteredCourses);
+    setCurrentCourses(_currentCourses);
 
-    // Close courses when filtered courses change
-    setExpandedCourses(new Array(_filteredCourses.length).fill(false));
-  }, [currentQuery, fuse, courses]);
+    // Collapse courses when filtered courses change
+    setExpandedCourses(new Array(_currentCourses.length).fill(false));
+  }, [currentQuery, fuse, includedCourses]);
 
-  const block = useMemo(() => width <= 992, [width]);
-
-  const overlay = useMemo(
-    () => (responsive && width <= 1400) || block,
-    [width, responsive, block]
+  console.log(
+    courses.reduce(
+      (acc, course) => acc.add(course.gradingBasis),
+      new Set<string>()
+    )
   );
 
   return (
     <div className={classNames(styles.root, { [styles.block]: block })}>
-      {(open || !overlay) && <Filters overlay={overlay} block={block} />}
+      {filters && (
+        <Filters
+          overlay={overlay}
+          block={block}
+          includedCourses={includedCourses}
+          excludedCourses={excludedCourses}
+          currentKinds={currentKinds}
+          currentUnits={currentUnits}
+          currentLevels={currentLevels}
+          onOpenChange={setOpen}
+          open={open}
+          currentSemester={currentSemester}
+          currentYear={currentYear}
+          currentQuery={currentQuery}
+        />
+      )}
       <List
-        currentCourses={filteredCourses}
+        includedCourses={currentCourses}
         onClassSelect={onClassSelect}
-        setOpen={setOpen}
+        onOpenChange={setOpen}
         currentSemester={currentSemester}
         expandedCourses={expandedCourses}
         setExpanded={setExpanded}

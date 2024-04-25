@@ -2,9 +2,6 @@
   width: 384px;
   flex-shrink: 0;
   overflow: auto;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
   background-color: var(--foreground-color);
 
   &:not(.block) {
@@ -16,53 +13,100 @@
   }
 
   &.overlay {
-    padding-top: 72px;
     position: absolute;
     height: 100%;
-    z-index: 1;
-  }
+    z-index: 2;
 
-  .label {
-    font-size: 14px;
-    color: var(--label-color);
-    line-height: 1;
-    margin-bottom: 12px;
+    .header {
+      padding: 12px 12px 24px;
+    }
 
-    &:not(:first-child) {
-      margin-top: 24px;
+    .body {
+      padding-top: 0;
     }
   }
 
-  .row {
+  .body {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    padding: 24px;
 
-    & + .row {
-      margin-top: 12px;
-    }
-
-    .description {
+    .button {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       font-size: 14px;
-      color: var(--paragraph-color);
-      font-weight: 500;
+      color: var(--blue-500);
       line-height: 1;
+      cursor: pointer;
+      font-weight: 500;
+      margin-top: 12px;
+      transition: all 100ms ease-in-out;
+
+      &:hover {
+        color: var(--blue-600);
+      }
     }
 
-    .checkbox {
-      width: 16px;
-      height: 16px;
-      display: grid;
-      place-items: center;
-      border-radius: 4px;
+    .label {
+      font-size: 14px;
+      color: var(--label-color);
+      line-height: 1;
+      margin-bottom: 12px;
 
-      &[data-state="checked"] {
-        background-color: var(--blue-500);
-        color: white;
+      &:not(:first-child) {
+        margin-top: 24px;
+      }
+    }
+
+    .filter {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      & + .filter {
+        margin-top: 12px;
       }
 
-      &[data-state="unchecked"] {
-        border: 2px solid var(--border-color);
+      &:hover .text .value {
+        color: var(--heading-color);
+      }
+
+      &:hover .checkbox:not([data-state="checked"]) {
+        border-color: var(--heading-color);
+      }
+
+      .text {
+        font-size: 14px;
+        color: var(--label-color);
+        line-height: 1;
+        flex-grow: 1;
+
+        .value {
+          font-weight: 500;
+          color: var(--paragraph-color);
+        }
+      }
+
+      .checkbox {
+        width: 16px;
+        height: 16px;
+        display: grid;
+        place-items: center;
+        border-radius: 4px;
+
+        &[data-state="checked"] {
+          background-color: var(--blue-500);
+          color: white;
+
+          & + .text .value {
+            color: var(--heading-color);
+          }
+        }
+
+        &[data-state="unchecked"] {
+          border: 2px solid var(--paragraph-color);
+        }
       }
     }
   }
