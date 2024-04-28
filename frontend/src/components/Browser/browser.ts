@@ -1,5 +1,13 @@
 import { ICatalogCourse } from "@/lib/api";
 
+export enum SortBy {
+  Relevance = "Relevance",
+  Units = "Units",
+  AverageGrade = "Average grade",
+  OpenSeats = "Open seats",
+  PercentOpenSeats = "Percent open seats",
+}
+
 export const getLevel = (level: string, number: string) => {
   if (level !== "Undergraduate") return level;
 
@@ -39,8 +47,8 @@ export const getFilteredCourses = (
       // Filter by units
       const { unitsMin, unitsMax } = course.classes.reduce(
         (acc, { unitsMax, unitsMin }) => ({
-          unitsMin: Math.floor(Math.min(acc.unitsMin, unitsMin)),
-          unitsMax: Math.floor(Math.max(acc.unitsMax, unitsMax)),
+          unitsMin: Math.min(5, Math.floor(Math.min(acc.unitsMin, unitsMin))),
+          unitsMax: Math.min(Math.floor(Math.max(acc.unitsMax, unitsMax))),
         }),
         { unitsMax: 0, unitsMin: Infinity }
       );
@@ -50,7 +58,7 @@ export const getFilteredCourses = (
           const units = unitsMin + index;
 
           return currentUnits.includes(
-            unitsMin + index >= 5 ? "5+" : `${units}`
+            unitsMin + index === 5 ? "5+" : `${units}`
           );
         }
       );

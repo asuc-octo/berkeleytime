@@ -72,7 +72,7 @@
         color: var(--heading-color);
       }
 
-      &:hover .checkbox:not([data-state="checked"]) {
+      &:hover .checkbox:not([data-state="checked"]), &:hover .radio:not([data-state="checked"]) {
         border-color: var(--heading-color);
       }
 
@@ -85,6 +85,39 @@
         .value {
           font-weight: 500;
           color: var(--paragraph-color);
+        }
+      }
+
+      .radio {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        border: 2px solid var(--paragraph-color);
+        position: relative;
+
+        &::after {
+          content: "";
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: var(--blue-500);
+          opacity: 0;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+
+        &[data-state="checked"] {
+          border-color: var(--blue-500);
+
+          &::after {
+            opacity: 1;
+          }
+
+          & + .text .value {
+            color: var(--heading-color);
+          }
         }
       }
 

@@ -12,7 +12,7 @@ import { kindAbbreviations } from "@/lib/section";
 import styles from "./Browser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
-import { getFilteredCourses } from "./browser";
+import { SortBy, getFilteredCourses } from "./browser";
 
 const initializeFuse = (courses: ICatalogCourse[]) => {
   const list = courses.map((course) => {
@@ -157,6 +157,18 @@ export default function Browser({
     );
   }, [searchParams]);
 
+  const currentSortBy = useMemo(() => {
+    const parameter = searchParams.get("sortBy");
+
+    if (
+      !Object.values(SortBy).includes(parameter as SortBy) ||
+      parameter === SortBy.Relevance
+    )
+      return;
+
+    return parameter as SortBy;
+  }, [searchParams]);
+
   const { includedCourses, excludedCourses } = useMemo(
     () =>
       getFilteredCourses(courses, currentKinds, currentUnits, currentLevels),
@@ -177,17 +189,71 @@ export default function Browser({
   };
 
   useEffect(() => {
-    const _currentCourses = currentQuery
+    let _currentCourses = currentQuery
       ? fuse
           .search(currentQuery)
           .map(({ refIndex }) => includedCourses[refIndex])
       : includedCourses;
 
+    // Courses are by default sorted by relevance and number
+    if (currentSortBy) {
+      _currentCourses = _currentCourses.sort((a, b) => {
+        if (currentSortBy === SortBy.AverageGrade) {
+          return b.gradeAverage === a.gradeAverage
+            ? 0
+            : b.gradeAverage === null
+              ? -1
+              : a.gradeAverage === null
+                ? 1
+                : b.gradeAverage - a.gradeAverage;
+        }
+
+        if (currentSortBy === SortBy.Units) {
+          const getUnits = (course: ICatalogCourse) =>
+            course.classes.reduce(
+              (acc, { unitsMax }) => Math.max(acc, unitsMax),
+              0
+            );
+
+          return getUnits(b) - getUnits(a);
+        }
+
+        if (currentSortBy === SortBy.OpenSeats) {
+          const getOpenSeats = (course: ICatalogCourse) =>
+            course.classes.reduce(
+              (acc, { enrollCount, enrollMax }) =>
+                acc + (enrollMax - enrollCount),
+              0
+            );
+
+          return getOpenSeats(b) - getOpenSeats(a);
+        }
+
+        if (currentSortBy === SortBy.PercentOpenSeats) {
+          const getPercentOpenSeats = (course: ICatalogCourse) => {
+            const { enrollCount, enrollMax } = course.classes.reduce(
+              (acc, { enrollCount, enrollMax }) => ({
+                enrollCount: acc.enrollCount + enrollCount,
+                enrollMax: acc.enrollMax + enrollMax,
+              }),
+              { enrollCount: 0, enrollMax: 0 }
+            );
+
+            return enrollMax === 0 ? 0 : (enrollMax - enrollCount) / enrollMax;
+          };
+
+          return getPercentOpenSeats(b) - getPercentOpenSeats(a);
+        }
+
+        return 0;
+      });
+    }
+
     setCurrentCourses(_currentCourses);
 
     // Collapse courses when filtered courses change
     setExpandedCourses(new Array(_currentCourses.length).fill(false));
-  }, [currentQuery, fuse, includedCourses]);
+  }, [currentQuery, fuse, includedCourses, currentSortBy]);
 
   console.log(
     courses.reduce(
@@ -212,6 +278,7 @@ export default function Browser({
           currentSemester={currentSemester}
           currentYear={currentYear}
           currentQuery={currentQuery}
+          currentSortBy={currentSortBy}
         />
       )}
       <List
