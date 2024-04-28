@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import * as Checkbox from "@radix-ui/react-checkbox";
+import * as RadioGroup from "@radix-ui/react-radio-group";
 import classNames from "classnames";
 import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
@@ -9,7 +10,7 @@ import { ICatalogCourse, Semester } from "@/lib/api";
 import { kindAbbreviations } from "@/lib/section";
 
 import Header from "../Header";
-import { getFilteredCourses, getLevel } from "../browser";
+import { SortBy, getFilteredCourses, getLevel } from "../browser";
 import styles from "./Filters.module.scss";
 
 interface FiltersProps {
@@ -25,6 +26,7 @@ interface FiltersProps {
   currentSemester: Semester;
   currentYear: number;
   currentQuery: string;
+  currentSortBy?: SortBy;
 }
 
 export default function Filters({
@@ -40,6 +42,7 @@ export default function Filters({
   currentSemester,
   currentYear,
   currentQuery,
+  currentSortBy,
 }: FiltersProps) {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -124,8 +127,8 @@ export default function Filters({
     for (const course of courses) {
       const { unitsMin, unitsMax } = course.classes.reduce(
         (acc, { unitsMax, unitsMin }) => ({
-          unitsMin: Math.floor(Math.min(5, Math.min(acc.unitsMin, unitsMin))),
-          unitsMax: Math.floor(Math.min(5, Math.max(acc.unitsMax, unitsMax))),
+          unitsMin: Math.min(5, Math.floor(Math.min(acc.unitsMin, unitsMin))),
+          unitsMax: Math.min(Math.floor(Math.max(acc.unitsMax, unitsMax))),
         }),
         { unitsMax: 0, unitsMin: Infinity }
       );
@@ -167,6 +170,12 @@ export default function Filters({
     setSearchParams(searchParams);
   };
 
+  const handleValueChange = (value: string) => {
+    if (value === SortBy.Relevance) searchParams.delete("sortBy");
+    else searchParams.set("sortBy", value);
+    setSearchParams(searchParams);
+  };
+
   return (
     <div
       className={classNames(styles.root, {
@@ -187,37 +196,26 @@ export default function Filters({
         />
       )}
       <div className={styles.body}>
-        <p className={styles.label}>Quick</p>
-        <div className={styles.filter}>
-          <Checkbox.Root className={styles.checkbox} id="0">
-            <Checkbox.Indicator asChild>
-              <Check width={12} height={12} />
-            </Checkbox.Indicator>
-          </Checkbox.Root>
-          <label className={styles.text} htmlFor="0">
-            <span className={styles.value}>Open</span> (2,000)
-          </label>
-        </div>
-        <div className={styles.filter}>
-          <Checkbox.Root className={styles.checkbox} id="0">
-            <Checkbox.Indicator asChild>
-              <Check width={12} height={12} />
-            </Checkbox.Indicator>
-          </Checkbox.Root>
-          <label className={styles.text} htmlFor="0">
-            <span className={styles.value}>Bookmarked</span> (10)
-          </label>
-        </div>
-        <div className={styles.filter}>
-          <Checkbox.Root className={styles.checkbox} id="0">
-            <Checkbox.Indicator asChild>
-              <Check width={12} height={12} />
-            </Checkbox.Indicator>
-          </Checkbox.Root>
-          <label className={styles.text} htmlFor="0">
-            <span className={styles.value}>Satisfies requirements</span> (10)
-          </label>
-        </div>
+        <p className={styles.label}>Sort by</p>
+        <RadioGroup.Root
+          onValueChange={handleValueChange}
+          value={currentSortBy ?? SortBy.Relevance}
+        >
+          {Object.values(SortBy).map((sortBy) => (
+            <div className={styles.filter}>
+              <RadioGroup.Item
+                className={styles.radio}
+                id={`sortBy-${sortBy}`}
+                value={sortBy}
+              >
+                <RadioGroup.Indicator />
+              </RadioGroup.Item>
+              <label className={styles.text} htmlFor={`sortBy-${sortBy}`}>
+                <span className={styles.value}>{sortBy}</span>
+              </label>
+            </div>
+          ))}
+        </RadioGroup.Root>
         <p className={styles.label}>Level</p>
         {Object.keys(filteredLevels).map((level) => {
           const active = currentLevels.includes(level);
