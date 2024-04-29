@@ -1,0 +1,70 @@
+.root {
+  padding: 24px;
+
+  .label {
+    font-size: 14px;
+    line-height: 1;
+    margin-bottom: 12px;
+    color: var(--label-color);
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    .divider {
+      height: 1px;
+      background-color: var(--border-color);
+    }
+  
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-size: 14px;
+      line-height: 1.5;
+      gap: 24px;
+      color: var(--paragraph-color);
+
+      .description {
+        white-space: nowrap;
+      }
+  
+      .title {
+        font-weight: 500;
+        transition: all 100ms ease-in-out;
+
+        &.active {
+          color: var(--heading-color);
+        }
+      }
+    }
+  }
+
+  .chart {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+
+    .bar {
+      height: 16px;
+      border-radius: 2px;
+      overflow: hidden;
+      background-color: var(--border-color);
+      transition: all 100ms ease-in-out;
+
+      .progress {
+        height: 100%;
+      }
+
+      &:first-child {
+        border-radius: 8px 2px 2px 8px;
+      }
+
+      &:last-child {
+        border-radius: 2px 8px 8px 2px;
+      }
+    }
+  }
+}
