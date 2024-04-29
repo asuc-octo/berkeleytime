@@ -27,6 +27,7 @@ import {
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
+import Enrollment from "./Enrollment";
 import Overview from "./Overview";
 import Sections from "./Sections";
 
@@ -45,7 +46,7 @@ const views = [
   },
   {
     text: "Enrollment",
-    Component: () => null,
+    Component: Enrollment,
   },
 ];
 
