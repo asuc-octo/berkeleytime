@@ -17,16 +17,15 @@ interface EventProps {
 export default function Event({
   columns,
   position,
-  timeStart,
-  timeEnd,
+  meetings: [{ startTime, endTime }],
   course,
-  kind,
+  component,
   number,
   active,
 }: EventProps & ISection) {
-  const top = useMemo(() => getY(timeStart!), [timeStart]);
+  const top = useMemo(() => getY(startTime!), [startTime]);
 
-  const height = useMemo(() => getY(timeEnd!) - top + 1, [top, timeEnd]);
+  const height = useMemo(() => getY(endTime!) - top + 1, [top, endTime]);
 
   // TODO: Hover card content
   return (
@@ -46,7 +45,7 @@ export default function Event({
             {course.subject} {course.number}
           </div>
           <div className={styles.description}>
-            {kind} {number}
+            {component} {number}
           </div>
         </div>
       </HoverCard.Trigger>

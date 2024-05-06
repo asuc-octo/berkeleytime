@@ -5,15 +5,15 @@ import classNames from "classnames";
 import { ArrowRight, FrameAltEmpty, Sparks } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { ICatalogCourse, Semester } from "@/lib/api";
+import { ICourse, Semester } from "@/lib/api";
 
 import Header from "../Header";
 import Course from "./Course";
 import styles from "./List.module.scss";
 
 interface ListProps {
-  includedCourses: ICatalogCourse[];
-  onClassSelect: (course: ICatalogCourse, number: string) => void;
+  includedCourses: ICourse[];
+  onClassSelect: (course: ICourse, number: string) => void;
   onOpenChange: (open: boolean) => void;
   open: boolean;
   overlay: boolean;

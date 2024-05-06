@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import { ICatalogCourse, Semester } from "@/lib/api";
+import { ICourse, Semester } from "@/lib/api";
 import { kindAbbreviations } from "@/lib/section";
 
 import Header from "../Header";
@@ -16,8 +16,8 @@ import styles from "./Filters.module.scss";
 interface FiltersProps {
   overlay: boolean;
   block: boolean;
-  includedCourses: ICatalogCourse[];
-  excludedCourses: ICatalogCourse[];
+  includedCourses: ICourse[];
+  excludedCourses: ICourse[];
   currentKinds: string[];
   currentUnits: string[];
   currentLevels: string[];
@@ -56,9 +56,10 @@ export default function Filters({
 
     return courses.reduce(
       (acc, course) => {
-        if (!["Undergraduate", "Graduate"].includes(course.level)) return acc;
+        if (!["Undergraduate", "Graduate"].includes(course.academicCareer))
+          return acc;
 
-        const level = getLevel(course.level, course.number);
+        const level = getLevel(course.academicCareer, course.number);
 
         acc[level] += 1;
 
@@ -93,7 +94,7 @@ export default function Filters({
             .includedCourses;
 
     for (const course of courses) {
-      const kind = course.classes[0].primarySection.kind;
+      const kind = course.classes[0].primarySection.component;
 
       if (!kindAbbreviations[kind]) continue;
 

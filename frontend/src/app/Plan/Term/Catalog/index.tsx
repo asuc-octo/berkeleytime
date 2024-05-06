@@ -7,12 +7,12 @@ import { useSearchParams } from "react-router-dom";
 
 import Browser from "@/components/Browser";
 import IconButton from "@/components/IconButton";
-import { GET_COURSES, ICatalogCourse, Semester } from "@/lib/api";
+import { GET_COURSES, ICourse, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
 
 interface CatalogProps {
-  onClick: (course: ICatalogCourse, number: string) => void;
+  onClick: (course: ICourse, number: string) => void;
   children: JSX.Element;
   semester: string;
   year: number;
@@ -27,7 +27,7 @@ export default function Catalog({
   const [open, setOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const { data } = useQuery<{ catalog: ICatalogCourse[] }>(GET_COURSES, {
+  const { data } = useQuery<{ catalog: ICourse[] }>(GET_COURSES, {
     variables: {
       term: {
         semester,
@@ -47,7 +47,7 @@ export default function Catalog({
     setSearchParams(searchParams);
   };
 
-  const handleClick = (course: ICatalogCourse, number: string) => {
+  const handleClick = (course: ICourse, number: string) => {
     onClick(course, number);
 
     setOpen(false);

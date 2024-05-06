@@ -35,15 +35,15 @@ const getTime = (start: string | null, end: string | null) => {
 
 interface TimeProps {
   days: boolean[] | null;
-  timeStart: string | null;
-  timeEnd: string | null;
+  startTime: string | null;
+  endTime: string | null;
   tooltip?: false;
 }
 
 const Time = forwardRef<
   HTMLElement,
   TimeProps & HTMLAttributes<HTMLParagraphElement>
->(({ days, timeStart, timeEnd, tooltip, className, ...props }, ref) => {
+>(({ days, startTime, endTime, tooltip, className, ...props }, ref) => {
   const rootRef = useRef<HTMLButtonElement>(null);
 
   // Explicitly cast the ref to the correct type
@@ -54,30 +54,30 @@ const Time = forwardRef<
 
   // TODO: Use getY with a multiple instead
   const bottom = useMemo(() => {
-    if (!timeEnd) return;
+    if (!endTime) return;
 
-    const [hours, minutes] = timeEnd.split(":").map((value) => parseInt(value));
+    const [hours, minutes] = endTime.split(":").map((value) => parseInt(value));
 
     return 170 - ((hours - 6) * 10 + minutes / 6);
-  }, [timeEnd]);
+  }, [endTime]);
 
   // TODO: Use getY with a multiple instead
   const height = useMemo(() => {
-    if (!timeStart || !timeEnd) return;
+    if (!startTime || !endTime) return;
 
-    const [startHours, startMinutes] = timeStart
+    const [startHours, startMinutes] = startTime
       .split(":")
       .map((value) => parseInt(value));
 
-    const [endHours, endMinutes] = timeEnd
+    const [endHours, endMinutes] = endTime
       .split(":")
       .map((value) => parseInt(value));
 
     return (endHours - startHours) * 10 + (endMinutes - startMinutes) / 6;
-  }, [timeStart, timeEnd]);
+  }, [startTime, endTime]);
 
   const value = useMemo(() => {
-    const time = getTime(timeStart, timeEnd);
+    const time = getTime(startTime, endTime);
 
     if (!days?.some((day) => day) || !time) return;
 
@@ -94,7 +94,7 @@ const Time = forwardRef<
       ", " +
       time
     );
-  }, [days, timeStart, timeEnd]);
+  }, [days, startTime, endTime]);
 
   return value ? (
     <Tooltip.Root disableHoverableContent open={tooltip}>

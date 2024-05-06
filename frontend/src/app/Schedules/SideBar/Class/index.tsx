@@ -35,20 +35,26 @@ export default function Class({
   onSectionMouseOut,
 }: ClassProps & IClass) {
   const kinds = useMemo(
-    () => Array.from(new Set(sections.map((section) => section.kind))),
+    () => Array.from(new Set(sections.map((section) => section.component))),
     [sections]
   );
 
   // TODO: Fix temporary hack to set the class number
   const handleSectionSelect = (section: ISection) => {
     const clonedSection = structuredClone(section);
+
+    // @ts-expect-error - Hack to set the class number
     clonedSection.class = { number };
+
     onSectionSelect(clonedSection);
   };
 
   const handleSectionMouseOver = (section: ISection) => {
     const clonedSection = structuredClone(section);
+
+    // @ts-expect-error - Hack to set the class number
     clonedSection.class = { number };
+
     onSectionMouseOver(clonedSection);
   };
 
@@ -82,7 +88,7 @@ export default function Class({
         </div>
         {expanded && (
           <div className={styles.group}>
-            <p className={styles.label}>{primarySection.kind}</p>
+            <p className={styles.label}>{primarySection.component}</p>
             <Section
               active={selectedSections.some(
                 (selectedSection) => selectedSection.ccn === primarySection.ccn
@@ -96,7 +102,7 @@ export default function Class({
         {expanded &&
           kinds.map((kind) => {
             const sortedSections = sections
-              .filter((section) => section.kind === kind)
+              .filter((section) => section.component === kind)
               .sort((a, b) => a.number.localeCompare(b.number));
 
             return (

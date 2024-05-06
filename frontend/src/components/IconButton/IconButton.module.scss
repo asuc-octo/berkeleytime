@@ -9,29 +9,15 @@
   cursor: pointer;
   transition: all 100ms ease-in-out;
   user-select: none;
-  background-color: var(--button-color);
+  border: 1px solid var(--border-color);
   color: var(--paragraph-color);
 
   &:hover {
-    background-color: var(--button-hover-color);
+    background-color: var(--button-color);
     color: var(--heading-color);
   }
 
   &:active {
-    background-color: var(--button-active-color);
-  }
-
-  &.invert {
-    color: rgb(255 255 255 / 65%);
-    background-color: rgb(255 255 255 / 10%);
-
-    &:hover {
-      background-color: rgb(255 255 255 / 20%);
-      color: white;
-    }
-
-    &:active {
-      background-color: rgb(255 255 255 / 30%);
-    }
+    background-color: var(--button-hover-color);
   }
 }

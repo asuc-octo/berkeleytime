@@ -38,28 +38,15 @@ export async function getCatalog(
     classes.map((c) => getCsCourseId(c.course as CourseType))
   );
 
-  const courses = await CourseModel.find(
-    {
-      identifiers: matchCsCourseId({ $in: Array.from(csCourseIds) }),
-      /*
+  const courses = await CourseModel.find({
+    identifiers: matchCsCourseId({ $in: Array.from(csCourseIds) }),
+    /*
                     The SIS toDate is unreliable so we can only
                     filter by fromDate and then sort to find the
                     most recent course.
                 */
-      // fromDate: { $lte: getTermStartMonth(term) },
-    },
-    {
-      _updatedAt: 1,
-      _updated: 1,
-      identifiers: 1,
-      title: 1,
-      description: 1,
-      gradingBasis: 1,
-      academicCareer: 1,
-      classSubjectArea: 1,
-      catalogNumber: 1,
-    }
-  )
+    // fromDate: { $lte: getTermStartMonth(term) },
+  })
     .sort({
       "classSubjectArea.code": 1,
       "catalogNumber.formatted": 1,
@@ -326,7 +313,23 @@ export function getCourseSections(id: string, term?: TermInput | null) {
     .then((s) => s.map(formatSection));
 }
 
-export function getCrossListings(
+export function getRequiredCourses(csCourseIds: string[]) {
+  return csCourseIds.map((csCourseId) =>
+    CourseModel.findOne({
+      identifiers: matchCsCourseId(csCourseId),
+      /*
+                  The SIS toDate is unreliable so we can only
+                  filter by fromDate and then sort to find the
+                  most recent course.
+              */
+      // fromDate: { $lte: getTermStartMonth(term) },
+    })
+      .lean()
+      .then(formatCourse)
+  );
+}
+
+export function getCrossListing(
   displayNames: string[],
   term?: TermInput | null
 ) {

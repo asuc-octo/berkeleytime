@@ -42,8 +42,8 @@ export default function Map({ selectedSections }: MapProps) {
   const waypoints = useMemo(
     () =>
       selectedSections
-        .filter((section) => section.location)
-        .map(({ location }) => {
+        .filter((section) => section.meetings[0].location)
+        .map(({ meetings: [{ location }] }) => {
           const building = location!.split(" ").slice(0, -1).join(" ");
           return buildings[building].location;
         }),

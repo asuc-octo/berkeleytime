@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Plugins, Sortable } from "@shopify/draggable";
 
-import { ICatalogCourse, Semester } from "@/lib/api";
+import { ICourse, Semester } from "@/lib/api";
 
 import styles from "./Plan.module.scss";
 import Term from "./Term";
@@ -10,7 +10,7 @@ import Term from "./Term";
 const defaultTerms: {
   semester: Semester;
   year: number;
-  courses: ICatalogCourse[];
+  courses: ICourse[];
 }[] = [
   {
     semester: Semester.Fall,
@@ -53,7 +53,7 @@ export default function Plan() {
   const containerRefs = useRef<HTMLElement[]>([]);
   const [terms, setTerms] = useState(defaultTerms);
 
-  const handleClick = (course: ICatalogCourse, index: number) => {
+  const handleClick = (course: ICourse, index: number) => {
     setTerms((terms) => {
       const _terms = structuredClone(terms);
       _terms[index].courses.splice(0, 0, course);

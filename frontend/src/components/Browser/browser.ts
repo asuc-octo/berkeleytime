@@ -1,4 +1,4 @@
-import { ICatalogCourse } from "@/lib/api";
+import { ICourse } from "@/lib/api";
 
 export enum SortBy {
   Relevance = "Relevance",
@@ -19,7 +19,7 @@ export const getLevel = (level: string, number: string) => {
 };
 
 export const getFilteredCourses = (
-  courses: ICatalogCourse[],
+  courses: ICourse[],
   currentKinds: string[],
   currentUnits: string[],
   currentLevels: string[]
@@ -27,7 +27,7 @@ export const getFilteredCourses = (
   return courses.reduce(
     (acc, course) => {
       // Filter by kind
-      const kind = course.classes[0].primarySection.kind;
+      const kind = course.classes[0].primarySection.component;
 
       if (currentKinds.length > 0 && !currentKinds.includes(kind)) {
         acc.excludedCourses.push(course);
@@ -36,7 +36,7 @@ export const getFilteredCourses = (
       }
 
       // Filter by level
-      const level = getLevel(course.level, course.number);
+      const level = getLevel(course.academicCareer, course.number);
 
       if (currentLevels.length > 0 && !currentLevels.includes(level)) {
         acc.excludedCourses.push(course);
@@ -74,8 +74,8 @@ export const getFilteredCourses = (
       return acc;
     },
     { includedCourses: [], excludedCourses: [] } as {
-      includedCourses: ICatalogCourse[];
-      excludedCourses: ICatalogCourse[];
+      includedCourses: ICourse[];
+      excludedCourses: ICourse[];
     }
   );
 };

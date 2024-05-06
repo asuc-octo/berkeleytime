@@ -28,8 +28,8 @@ const adjustAttachedEvents = (
     const section = relevantSections.find((section) => id === getId(section));
     if (!section) return;
 
-    const top = getY(section.timeStart!);
-    const height = getY(section.timeEnd!) - top;
+    const top = getY(section.meetings[0].startTime);
+    const height = getY(section.meetings[0].endTime) - top;
 
     for (let i = top; i < top + height; i++) {
       for (const id of minutes[i]) {
@@ -71,17 +71,20 @@ export default function Calendar({
           // Filter sections for the current day which have a time specified
           .filter(
             (section) =>
-              section.days?.[day] &&
-              section.timeStart &&
-              getY(section.timeStart) > 0
+              section.meetings[0].days[day] &&
+              section.meetings[0].startTime &&
+              getY(section.meetings[0].startTime) > 0
           )
           // Sort sections by when they start
-          .sort((a, b) => getY(a.timeStart!) - getY(b.timeStart!));
+          .sort(
+            (a, b) =>
+              getY(a.meetings[0].startTime) - getY(b.meetings[0].startTime)
+          );
 
         // Maintain an array of sections that are attached to each minute
         for (const section of relevantSections) {
-          const top = getY(section.timeStart!);
-          const height = getY(section.timeEnd!) - top;
+          const top = getY(section.meetings[0].startTime);
+          const height = getY(section.meetings[0].endTime) - top;
 
           const attachedSections = minutes[top];
 

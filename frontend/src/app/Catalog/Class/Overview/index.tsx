@@ -12,15 +12,17 @@ export default function Overview({ currentClass }: OverviewProps) {
 
   return (
     <div className={styles.root}>
-      <Details {...currentClass.primarySection} />
+      <Details {...currentClass.primarySection.meetings[0]} />
       <p className={styles.label}>Description</p>
       <p className={styles.description}>
         {currentClass.description ?? currentClass.course.description}
       </p>
-      {currentClass.course.prereqs && (
+      {currentClass.course.requirements && (
         <>
           <p className={styles.label}>Prerequisites</p>
-          <p className={styles.description}>{currentClass.course.prereqs}</p>
+          <p className={styles.description}>
+            {currentClass.course.requirements}
+          </p>
         </>
       )}
     </div>

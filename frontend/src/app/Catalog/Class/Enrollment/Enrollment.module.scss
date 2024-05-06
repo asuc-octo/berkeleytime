@@ -1,5 +1,7 @@
 .root {
   padding: 24px;
+  flex-grow: 1;
+  background-color: var(--foreground-color);
 
   .label {
     font-size: 14px;
@@ -12,6 +14,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-bottom: 24px;
     
     .divider {
       height: 1px;
@@ -27,8 +30,14 @@
       gap: 24px;
       color: var(--paragraph-color);
 
+      @media (width <= 992px) {
+        flex-direction: column;
+        gap: 8px;
+      }
+
       .description {
         white-space: nowrap;
+        transition: all 100ms ease-in-out;
       }
   
       .title {
@@ -45,13 +54,13 @@
   .chart {
     display: flex;
     gap: 4px;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 
     .bar {
       height: 16px;
       border-radius: 2px;
       overflow: hidden;
-      background-color: var(--border-color);
+      background-color: var(--button-color);
       transition: all 100ms ease-in-out;
 
       .progress {
