@@ -5,7 +5,7 @@ import { Plus } from "iconoir-react";
 import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import Units from "@/components/Units";
-import { ICatalogCourse, Semester } from "@/lib/api";
+import { ICourse, Semester } from "@/lib/api";
 
 import Catalog from "./Catalog";
 import Course from "./Course";
@@ -14,8 +14,8 @@ import styles from "./Semester.module.scss";
 interface TermProps {
   semester: Semester;
   year: number;
-  courses: ICatalogCourse[];
-  onClick: (course: ICatalogCourse) => void;
+  courses: ICourse[];
+  onClick: (course: ICourse) => void;
 }
 
 const Term = forwardRef<HTMLDivElement, TermProps>(

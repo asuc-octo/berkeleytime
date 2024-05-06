@@ -1,5 +1,5 @@
 import Button from "@/components/Button";
-import { ICatalogCourse, IClass, ISection } from "@/lib/api";
+import { IClass, ICourse, ISection } from "@/lib/api";
 
 import Catalog from "./Catalog";
 import Class from "./Class";
@@ -9,7 +9,7 @@ interface SideBarProps {
   classes: IClass[];
   selectedSections: ISection[];
   expanded: boolean[];
-  onClassSelect: (course: ICatalogCourse, number: string) => void;
+  onClassSelect: (course: ICourse, number: string) => void;
   onSectionSelect: (section: ISection) => void;
   onSectionMouseOver: (section: ISection) => void;
   onSectionMouseOut: () => void;

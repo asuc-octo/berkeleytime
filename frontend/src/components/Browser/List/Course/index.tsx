@@ -9,7 +9,7 @@ import {
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
-import { ICatalogCourse } from "@/lib/api";
+import { ICourse } from "@/lib/api";
 
 import styles from "./Course.module.scss";
 
@@ -20,7 +20,7 @@ interface CourseProps {
   index: number;
 }
 
-const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
+const Course = forwardRef<HTMLDivElement, CourseProps & ICourse>(
   (
     {
       title: courseTitle,
@@ -57,10 +57,12 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
               courseMaximum,
             },
             {
-              waitlistCount,
-              waitlistMax,
-              enrollCount,
-              enrollMax,
+              primarySection: {
+                waitlistCount,
+                waitlistMax,
+                enrollCount,
+                enrollMax,
+              },
               unitsMax,
               unitsMin,
             }
@@ -77,7 +79,7 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
             courseCapacity: 0,
             courseWaitlistCount: 0,
             courseWaitlistCapacity: 0,
-            courseMinimum: 10,
+            courseMinimum: Infinity,
             courseMaximum: 0,
           }
         ),
@@ -129,13 +131,15 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
               ({
                 unitsMax,
                 unitsMin,
-                enrollCount,
-                enrollMax,
-                waitlistCount,
-                waitlistMax,
                 title: classTitle,
                 number: classNumber,
-                primarySection: { kind },
+                primarySection: {
+                  enrollCount,
+                  enrollMax,
+                  waitlistCount,
+                  waitlistMax,
+                  component,
+                },
               }) => (
                 <div
                   className={styles.class}
@@ -144,7 +148,7 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICatalogCourse>(
                 >
                   <div className={styles.text}>
                     <p className={styles.title}>
-                      {kind} {classNumber}
+                      {component} {classNumber}
                     </p>
                     <p className={styles.description}>
                       {classTitle || courseTitle}

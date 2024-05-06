@@ -6,7 +6,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Boundary from "@/components/Boundary";
 import Browser from "@/components/Browser";
 import LoadingIndicator from "@/components/LoadingIndicator";
-import { GET_COURSES, ICatalogCourse, Semester } from "@/lib/api";
+import { GET_COURSES, ICourse, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
 import Class from "./Class";
@@ -41,7 +41,7 @@ export default function Catalog() {
   const currentSubject = useMemo(() => subject?.toUpperCase(), [subject]);
 
   // TODO: Error state, loading state
-  const { loading, error, data } = useQuery<{ catalog: ICatalogCourse[] }>(
+  const { loading, error, data } = useQuery<{ catalog: ICourse[] }>(
     GET_COURSES,
     {
       variables: {
@@ -67,7 +67,7 @@ export default function Catalog() {
   );
 
   const handleClick = useCallback(
-    (course: ICatalogCourse, number: string) => {
+    (course: ICourse, number: string) => {
       navigate({
         pathname: `/catalog/${currentYear}/${currentSemester}/${course.subject}/${course.number}/${number}`,
         search: searchParams.toString(),

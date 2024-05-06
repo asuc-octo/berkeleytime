@@ -6,16 +6,16 @@ import styles from "./Details.module.scss";
 
 interface DetailsProps {
   days: boolean[] | null;
-  timeStart: string | null;
-  timeEnd: string | null;
+  startTime: string | null;
+  endTime: string | null;
   location: string | null;
   instructors: IInstructor[] | null;
 }
 
 export default function Details({
   days,
-  timeStart,
-  timeEnd,
+  startTime,
+  endTime,
   location,
   instructors,
 }: DetailsProps) {
@@ -23,7 +23,7 @@ export default function Details({
     <div className={styles.root}>
       <div className={styles.column}>
         <p className={styles.title}>Time</p>
-        <Time days={days} timeStart={timeStart} timeEnd={timeEnd} />
+        <Time days={days} startTime={startTime} endTime={endTime} />
       </div>
       <div className={styles.divider} />
       <div className={styles.column}>

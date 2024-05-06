@@ -6,18 +6,6 @@ export enum Semester {
   Summer = "Summer",
 }
 
-export interface ICatalogClass {
-  title: string | null;
-  unitsMax: number;
-  unitsMin: number;
-  enrollCount: number;
-  enrollMax: number;
-  waitlistCount: number;
-  waitlistMax: number;
-  number: string;
-  primarySection: ISection;
-}
-
 export interface IInstructor {
   familyName: string;
   givenName: string;
@@ -25,55 +13,69 @@ export interface IInstructor {
 
 export interface ISection {
   ccn: string;
-  class: {
-    number: string;
-  };
-  course: {
-    subject: string;
-    number: string;
-  };
-  days: boolean[] | null;
+  class: IClass;
+  course: ICourse;
   enrollCount: number;
   enrollMax: number;
-  instructors: IInstructor[] | null;
-  kind: string;
-  location: string | null;
-  notes: string | null;
+  component: string;
   number: string;
   primary: boolean;
-  timeEnd: string | null;
-  timeStart: string | null;
   waitlistCount: number;
   waitlistMax: number;
+  online: boolean;
+  open: boolean;
+  meetings: IMeeting[];
+  reservations: IReservation[];
+  startDate: string;
+  endDate: string;
 }
 
-export interface IClass extends ICatalogClass {
+export interface IReservation {
+  enrollCount: number;
+  enrollMax: number;
+  group: string;
+}
+
+export interface IMeeting {
+  days: boolean[];
+  endTime: string;
+  location: string;
+  startTime: string;
+  instructors: IInstructor[];
+}
+
+export interface IClass {
   course: ICourse;
+  primarySection: ISection;
   sections: ISection[];
+  session: string;
+  gradingBasis: string;
+  finalExam: string;
   description: string | null;
-  notes: string;
   year: number;
   semester: Semester;
-  session: string;
+  title: string | null;
+  unitsMax: number;
+  unitsMin: number;
+  number: string;
 }
 
-export interface ICatalogCourse {
+export interface ICourse {
+  classes: IClass[];
+  crossListing: ICourse[];
+  sections: ISection[];
+  requiredCourses: ICourse[];
+  requirements: string | null;
+  description: string;
+  fromDate: string;
+  gradeAverage: number | null;
+  gradingBasis: string;
+  finalExam: string;
+  academicCareer: string;
   title: string;
   subject: string;
   number: string;
-  description: string | null;
-  gradeAverage: number | null;
-  classes: ICatalogClass[];
-  level: string;
-  gradingBasis: string;
-}
-
-export interface ICourse extends ICatalogCourse {
-  subjectName: string;
-  prereqs: string | null;
-  description: string;
-  classes: IClass[];
-  sections: ISection[];
+  toDate: string;
 }
 
 export interface IAccount {
@@ -91,13 +93,16 @@ export const GET_COURSE = gql`
         unitsMax
         unitsMin
       }
-      level
+      academicCareer
       description
       gradeAverage
       gradingBasis
-      subjectName
       subject
-      prereqs
+      requirements
+      requiredCourses {
+        subject
+        number
+      }
       number
     }
   }
@@ -118,12 +123,8 @@ export const GET_CLASS = gql`
     ) {
       title
       description
-      enrollCount
-      enrollMax
       unitsMax
       unitsMin
-      waitlistCount
-      waitlistMax
       number
       course {
         title
@@ -131,9 +132,12 @@ export const GET_CLASS = gql`
         gradeAverage
         gradingBasis
         subject
-        subjectName
-        level
-        prereqs
+        academicCareer
+        requirements
+        requiredCourses {
+          subject
+          number
+        }
         number
         classes {
           year
@@ -147,21 +151,20 @@ export const GET_CLASS = gql`
           number
         }
         ccn
-        dateEnd
-        dateStart
-        days
         enrollCount
         enrollMax
-        instructors {
-          familyName
-          givenName
+        meetings {
+          days
+          location
+          endTime
+          startTime
+          instructors {
+            familyName
+            givenName
+          }
         }
-        kind
-        location
-        notes
+        component
         primary
-        timeEnd
-        timeStart
         waitlistCount
         waitlistMax
         number
@@ -172,21 +175,20 @@ export const GET_CLASS = gql`
           number
         }
         ccn
-        dateEnd
-        dateStart
-        days
         enrollCount
         enrollMax
-        instructors {
-          familyName
-          givenName
+        meetings {
+          days
+          endTime
+          startTime
+          location
+          instructors {
+            familyName
+            givenName
+          }
         }
-        kind
-        location
-        notes
         primary
-        timeEnd
-        timeStart
+        component
         waitlistCount
         waitlistMax
         number
@@ -202,23 +204,23 @@ export const GET_COURSES = gql`
       number
       title
       gradeAverage
-      level
-      gradingBasis
+      academicCareer
       classes {
         number
         title
-        enrollCount
-        enrollMax
-        waitlistCount
-        waitlistMax
         unitsMax
+        gradingBasis
+        finalExam
+        session
         unitsMin
         primarySection {
-          kind
-          instructors {
-            familyName
-            givenName
-          }
+          component
+          online
+          open
+          enrollCount
+          enrollMax
+          waitlistCount
+          waitlistMax
         }
       }
     }

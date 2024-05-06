@@ -26,7 +26,7 @@ export default function Sections({
   const types = useMemo(
     () =>
       Array.from(
-        new Set(currentClass?.sections.map((section) => section.kind))
+        new Set(currentClass?.sections.map((section) => section.component))
       ),
     [currentClass]
   );
@@ -54,7 +54,7 @@ export default function Sections({
               <div className={styles.header}>
                 <div className={styles.text}>
                   <p className={styles.title}>
-                    {section.kind} {section.number}
+                    {section.component} {section.number}
                   </p>
                   <CCN ccn={section.ccn} />
                 </div>
@@ -73,7 +73,7 @@ export default function Sections({
                       currentClass.course.subject,
                       currentClass.course.number,
                       section.number,
-                      section.kind
+                      section.component
                     )}
                     target="_blank"
                   >
@@ -82,11 +82,11 @@ export default function Sections({
                 )}
               </div>
               <Details
-                days={section.days ?? []}
-                timeStart={section.timeStart}
-                timeEnd={section.timeEnd}
-                location={section.location}
-                instructors={section.instructors ?? []}
+                days={section.meetings[0].days}
+                startTime={section.meetings[0].startTime}
+                endTime={section.meetings[0].endTime}
+                location={section.meetings[0].location}
+                instructors={section.meetings[0].instructors}
               />
             </div>
           ))}

@@ -3,7 +3,7 @@ import { Book } from "iconoir-react";
 
 import AverageGrade from "@/components/AverageGrade";
 import Units from "@/components/Units";
-import { ICatalogCourse } from "@/lib/api";
+import { ICourse } from "@/lib/api";
 
 import styles from "./Course.module.scss";
 
@@ -12,7 +12,7 @@ export default function Course({
   number,
   title,
   gradeAverage,
-}: ICatalogCourse) {
+}: ICourse) {
   return (
     <div className={classNames(styles.root, "draggable")}>
       <div className={styles.body}>

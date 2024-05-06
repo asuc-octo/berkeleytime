@@ -24,16 +24,17 @@
   }
 
   &.secondary {
-    background-color: var(--button-color);
+    border: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
     color: var(--paragraph-color);
 
     &:hover {
-      background-color: var(--button-hover-color);
+      background-color: var(--button-color);
       color: var(--heading-color);
     }
 
     &:active {
-      background-color: var(--button-active-color);
+      background-color: var(--button-hover-color);
     }
   }
 }

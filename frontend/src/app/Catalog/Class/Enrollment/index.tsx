@@ -112,52 +112,20 @@ const getColor = (count: number, capacity: number) => {
     */
 
 const reservedSeats = [
-  /*{
+  {
     title: "Students with Enrollment Permission",
-    current: 1,
-    total: 2,
+    current: 5,
+    total: 12,
   },
   {
     title: "Art History Majors",
-    current: 2,
+    current: 0,
     total: 2,
   },
   {
     title: "Only Art Practice Undergraduates",
-    current: 24,
-    total: 30,
-  },*/
-  {
-    title: "Architecture Majors with 7 or more Terms in Attendance",
-    current: 52,
-    total: 52,
-  },
-  {
-    title: "Architecture Majors with 5 or more Terms in Attendance",
-    current: 49,
-    total: 50,
-  },
-  {
-    title:
-      "College of Environmental Design Students with 5 or more Terms in Attendance",
-    current: 6,
-    total: 16,
-  },
-  {
-    title:
-      "Sustainable Environmental Design Majors with 5 or more Terms in Attendance",
-    current: 12,
-    total: 12,
-  },
-  {
-    title: "Students with 7 or more Terms in Attendance",
-    current: 2,
-    total: 10,
-  },
-  {
-    title: "Students with Enrollment Permission",
-    current: 0,
-    total: 10,
+    current: 3,
+    total: 2,
   },
 ];
 
@@ -194,6 +162,7 @@ export default function Enrollment() {
       <div className={styles.wrapper}>
         {reservedSeats.map(({ title, current, total }, index) => {
           const color = getColor(current, total);
+          const opacity = !currentTitle || title === currentTitle ? 1 : 0.25;
 
           return (
             <Fragment key={title}>
@@ -210,7 +179,7 @@ export default function Enrollment() {
                 >
                   {title}
                 </p>
-                <p className={styles.description}>
+                <p className={styles.description} style={{ opacity }}>
                   <span style={{ color }}>{current}</span> / {total} (
                   <span style={{ color }}>
                     {((current / total) * 100).toLocaleString()}%
@@ -222,6 +191,7 @@ export default function Enrollment() {
           );
         })}
       </div>
+      <p className={styles.label}>Over time</p>
     </div>
   );
 }

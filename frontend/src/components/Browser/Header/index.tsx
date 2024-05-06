@@ -5,13 +5,13 @@ import { Filter, FilterSolid } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
 import IconButton from "@/components/IconButton";
-import { ICatalogCourse, Semester } from "@/lib/api";
+import { ICourse, Semester } from "@/lib/api";
 
 import styles from "./Header.module.scss";
 
 interface HeaderProps {
   currentQuery: string;
-  includedCourses: ICatalogCourse[];
+  includedCourses: ICourse[];
   open: boolean;
   overlay: boolean;
   onOpenChange: (open: boolean) => void;

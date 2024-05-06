@@ -17,13 +17,7 @@ import Capacity from "@/components/Capacity";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
 import Units from "@/components/Units";
-import {
-  GET_CLASS,
-  ICatalogClass,
-  ICatalogCourse,
-  IClass,
-  Semester,
-} from "@/lib/api";
+import { GET_CLASS, IClass, ICourse, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -51,7 +45,7 @@ const views = [
 ];
 
 interface ClassProps {
-  partialCurrentCourse: ICatalogCourse;
+  partialCurrentCourse: ICourse;
   currentSemester: Semester;
   currentYear: number;
   currentClassNumber: string;
@@ -88,7 +82,7 @@ export default function Class({
     () =>
       partialCurrentCourse.classes.find(
         (class_) => class_.number === currentClassNumber
-      ) as ICatalogClass,
+      ) as IClass,
     [partialCurrentCourse, currentClassNumber]
   );
 
@@ -122,7 +116,7 @@ export default function Class({
                   currentSubject,
                   currentCourseNumber,
                   currentClass.primarySection.number,
-                  currentClass.primarySection.kind
+                  currentClass.primarySection.component
                 )}
                 target="_blank"
               >
@@ -158,14 +152,20 @@ export default function Class({
           />
           <Capacity
             enrollCount={
-              currentClass?.enrollCount ?? partialCurrentClass.enrollCount
+              currentClass?.primarySection.enrollCount ??
+              partialCurrentClass.primarySection.enrollCount
             }
-            enrollMax={currentClass?.enrollMax ?? partialCurrentClass.enrollMax}
+            enrollMax={
+              currentClass?.primarySection.enrollMax ??
+              partialCurrentClass.primarySection.enrollMax
+            }
             waitlistCount={
-              currentClass?.waitlistCount ?? partialCurrentClass.waitlistCount
+              currentClass?.primarySection.waitlistCount ??
+              partialCurrentClass.primarySection.waitlistCount
             }
             waitlistMax={
-              currentClass?.waitlistMax ?? partialCurrentClass.waitlistMax
+              currentClass?.primarySection.waitlistMax ??
+              partialCurrentClass.primarySection.waitlistMax
             }
           />
           <Units

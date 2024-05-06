@@ -6,7 +6,7 @@ import { ShareIos } from "iconoir-react";
 import Button from "@/components/Button";
 import MenuItem from "@/components/MenuItem";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import { GET_CLASS, ICatalogCourse, IClass, ISection } from "@/lib/api";
+import { GET_CLASS, IClass, ICourse, ISection } from "@/lib/api";
 import { getY } from "@/lib/schedule";
 
 import Calendar from "./Calendar";
@@ -48,7 +48,7 @@ export default function Schedules() {
                 selectedSection.course.subject === section.course.subject &&
                 selectedSection.course.number === section.course.number &&
                 selectedSection.class.number === section.class.number &&
-                selectedSection.kind == section.kind
+                selectedSection.component == section.component
               )
           ),
           section,
@@ -63,10 +63,10 @@ export default function Schedules() {
       if (tab === 1) return;
 
       // Jump to the section
-      if (section.timeStart && section.timeEnd) {
-        const top = getY(section.timeStart);
+      if (section.meetings[0].startTime && section.meetings[0].endTime) {
+        const top = getY(section.meetings[0].startTime);
 
-        const offset = (getY(section.timeEnd) - top) / 2;
+        const offset = (getY(section.meetings[0].endTime) - top) / 2;
 
         bodyRef.current?.scrollTo({
           top: top + offset - bodyRef.current.clientHeight / 2,
@@ -88,7 +88,7 @@ export default function Schedules() {
   );
 
   const handleClassSelect = useCallback(
-    async (course: ICatalogCourse, number: string) => {
+    async (course: ICourse, number: string) => {
       // Fetch the selected class
       const { data } = await apolloClient.query<{ class: IClass }>({
         query: GET_CLASS,
@@ -130,25 +130,27 @@ export default function Schedules() {
 
       const { primarySection, sections } = data.class;
 
-      // TODO: Fix temporary hack to set the class number
       const clonedPrimarySection = structuredClone(primarySection);
+
+      // @ts-expect-error - Hack to set the class number
       clonedPrimarySection.class = { number };
 
       // Add the primary section to selected sections
       setSelectedSections((sections) => [...sections, clonedPrimarySection]);
 
       const kinds = Array.from(
-        new Set(sections.map((section) => section.kind))
+        new Set(sections.map((section) => section.component))
       );
 
       // Add the first section of each kind to selected sections
       for (const kind of kinds) {
         const section = sections
-          .filter((section) => section.kind === kind)
+          .filter((section) => section.component === kind)
           .sort((a, b) => a.number.localeCompare(b.number))[0];
 
-        // TODO: Fix temporary hack to set the class number
         const clonedSection = structuredClone(section);
+
+        // @ts-expect-error - Hack to set the class number
         clonedSection.class = { number };
 
         setSelectedSections((sections) => [...sections, clonedSection]);

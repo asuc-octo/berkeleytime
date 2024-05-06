@@ -5,7 +5,7 @@ import Fuse from "fuse.js";
 import { useSearchParams } from "react-router-dom";
 
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import { ICatalogCourse, Semester } from "@/lib/api";
+import { ICourse, Semester } from "@/lib/api";
 import { subjects } from "@/lib/course";
 import { kindAbbreviations } from "@/lib/section";
 
@@ -14,7 +14,7 @@ import Filters from "./Filters";
 import List from "./List";
 import { SortBy, getFilteredCourses } from "./browser";
 
-const initializeFuse = (courses: ICatalogCourse[]) => {
+const initializeFuse = (courses: ICourse[]) => {
   const list = courses.map((course) => {
     const { title, subject, number, classes } = course;
 
@@ -91,8 +91,8 @@ const initializeFuse = (courses: ICatalogCourse[]) => {
 };
 
 interface BrowserProps {
-  courses: ICatalogCourse[];
-  onClassSelect: (course: ICatalogCourse, number: string) => void;
+  courses: ICourse[];
+  onClassSelect: (course: ICourse, number: string) => void;
   responsive?: boolean;
   currentSemester: Semester;
   currentYear: number;
@@ -107,7 +107,7 @@ export default function Browser({
 }: BrowserProps) {
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
-  const [currentCourses, setCurrentCourses] = useState<ICatalogCourse[]>([]);
+  const [currentCourses, setCurrentCourses] = useState<ICourse[]>([]);
   const [expandedCourses, setExpandedCourses] = useState<boolean[]>([]);
   const { width } = useWindowDimensions();
 
@@ -209,7 +209,7 @@ export default function Browser({
         }
 
         if (currentSortBy === SortBy.Units) {
-          const getUnits = (course: ICatalogCourse) =>
+          const getUnits = (course: ICourse) =>
             course.classes.reduce(
               (acc, { unitsMax }) => Math.max(acc, unitsMax),
               0
@@ -219,9 +219,9 @@ export default function Browser({
         }
 
         if (currentSortBy === SortBy.OpenSeats) {
-          const getOpenSeats = (course: ICatalogCourse) =>
+          const getOpenSeats = (course: ICourse) =>
             course.classes.reduce(
-              (acc, { enrollCount, enrollMax }) =>
+              (acc, { primarySection: { enrollCount, enrollMax } }) =>
                 acc + (enrollMax - enrollCount),
               0
             );
@@ -230,9 +230,9 @@ export default function Browser({
         }
 
         if (currentSortBy === SortBy.PercentOpenSeats) {
-          const getPercentOpenSeats = (course: ICatalogCourse) => {
+          const getPercentOpenSeats = (course: ICourse) => {
             const { enrollCount, enrollMax } = course.classes.reduce(
-              (acc, { enrollCount, enrollMax }) => ({
+              (acc, { primarySection: { enrollCount, enrollMax } }) => ({
                 enrollCount: acc.enrollCount + enrollCount,
                 enrollMax: acc.enrollMax + enrollMax,
               }),
