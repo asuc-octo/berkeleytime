@@ -1,79 +1,42 @@
 .root {
   padding: 24px;
   flex-grow: 1;
-  background-color: var(--foreground-color);
+  display: flex;
+  flex-direction: column;
 
-  .label {
-    font-size: 14px;
-    line-height: 1;
-    margin-bottom: 12px;
-    color: var(--label-color);
-  }
-
-  .wrapper {
+  .legend {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 24px;
-    
-    .divider {
-      height: 1px;
-      background-color: var(--border-color);
-    }
-  
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+    gap: 24px;
+    justify-content: center;
+
+    .label {
       font-size: 14px;
-      line-height: 1.5;
-      gap: 24px;
+      line-height: 1;
       color: var(--paragraph-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
 
-      @media (width <= 992px) {
-        flex-direction: column;
-        gap: 8px;
+      .icon {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        background-color: currentColor;
       }
 
-      .description {
-        white-space: nowrap;
-        transition: all 100ms ease-in-out;
-      }
-  
-      .title {
-        font-weight: 500;
-        transition: all 100ms ease-in-out;
-
-        &.active {
-          color: var(--heading-color);
-        }
+      &:first-child {
+        color: var(--blue-500);
       }
     }
   }
 
   .chart {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 20px;
+    height: 384px;
 
-    .bar {
-      height: 16px;
-      border-radius: 2px;
-      overflow: hidden;
-      background-color: var(--button-color);
-      transition: all 100ms ease-in-out;
-
-      .progress {
-        height: 100%;
-      }
-
-      &:first-child {
-        border-radius: 8px 2px 2px 8px;
-      }
-
-      &:last-child {
-        border-radius: 2px 8px 8px 2px;
-      }
+    .label {
+      font-size: 12px;
+      color: var(--label-color);
+      font-weight: 400;
     }
   }
 }

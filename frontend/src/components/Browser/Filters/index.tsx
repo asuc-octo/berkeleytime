@@ -18,6 +18,7 @@ interface FiltersProps {
   block: boolean;
   includedCourses: ICourse[];
   excludedCourses: ICourse[];
+  currentCourses: ICourse[];
   currentKinds: string[];
   currentUnits: string[];
   currentLevels: string[];
@@ -34,6 +35,7 @@ export default function Filters({
   block,
   includedCourses,
   excludedCourses,
+  currentCourses,
   currentKinds,
   currentLevels,
   currentUnits,
@@ -189,7 +191,7 @@ export default function Filters({
           onOpenChange={onOpenChange}
           open={true}
           className={styles.header}
-          includedCourses={includedCourses}
+          currentCourses={currentCourses}
           currentSemester={currentSemester}
           currentYear={currentYear}
           currentQuery={currentQuery}

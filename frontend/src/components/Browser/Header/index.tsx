@@ -11,7 +11,7 @@ import styles from "./Header.module.scss";
 
 interface HeaderProps {
   currentQuery: string;
-  includedCourses: ICourse[];
+  currentCourses: ICourse[];
   open: boolean;
   overlay: boolean;
   onOpenChange: (open: boolean) => void;
@@ -25,7 +25,7 @@ const Header = forwardRef<HTMLInputElement, HeaderProps>(
   (
     {
       currentQuery,
-      includedCourses,
+      currentCourses,
       open,
       overlay,
       onOpenChange,
@@ -67,7 +67,7 @@ const Header = forwardRef<HTMLInputElement, HeaderProps>(
             onFocus={() => overlay && open && onOpenChange(false)}
           />
           <div className={styles.label}>
-            {includedCourses.length.toLocaleString()}
+            {currentCourses.length.toLocaleString()}
           </div>
           {overlay && (
             <IconButton onClick={() => onOpenChange(!open)}>

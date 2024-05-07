@@ -1,197 +1,140 @@
-import { Fragment, useState } from "react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
-import classNames from "classnames";
+import { IClass } from "@/lib/api";
 
 import styles from "./Enrollment.module.scss";
+import Reservations from "./Reservations";
 
-const getColor = (count: number, capacity: number) => {
-  const percentage = count / capacity;
-
-  return percentage >= 0.75
-    ? "var(--red-500)"
-    : percentage > 0.5
-      ? "var(--yellow-500)"
-      : "var(--green-500)";
-};
-
-/*
-
-    "seatReservations": [
-      {
-        "number": 1,
-        "requirementGroup": {
-          "code": "000534",
-          "description": "Architecture Majors with 7 or more Terms in Attendance"
-        },
-        "fromDate": {
-          "$date": "2023-10-06T00:00:00.000Z"
-        },
-        "maxEnroll": 52,
-        "enrolledCount": 52,
-        "_id": {
-          "$oid": "661f506533427e1efaf6c504"
-        }
-      },
-      {
-        "number": 2,
-        "requirementGroup": {
-          "code": "000533",
-          "description": "Architecture Majors with 5 or more Terms in Attendance"
-        },
-        "fromDate": {
-          "$date": "2023-10-06T00:00:00.000Z"
-        },
-        "maxEnroll": 50,
-        "enrolledCount": 49,
-        "_id": {
-          "$oid": "661f506533427e1efaf6c505"
-        }
-      },
-      {
-        "number": 6,
-        "requirementGroup": {
-          "code": "000531",
-          "description": "College of Environmental Design Students with 5 or more Terms in Attendance"
-        },
-        "fromDate": {
-          "$date": "2023-11-20T00:00:00.000Z"
-        },
-        "maxEnroll": 16,
-        "enrolledCount": 6,
-        "_id": {
-          "$oid": "661f506533427e1efaf6c506"
-        }
-      },
-      {
-        "number": 4,
-        "requirementGroup": {
-          "code": "000545",
-          "description": "Sustainable Environmental Design Majors with 5 or more Terms in Attendance"
-        },
-        "fromDate": {
-          "$date": "2023-10-06T00:00:00.000Z"
-        },
-        "maxEnroll": 12,
-        "enrolledCount": 12,
-        "_id": {
-          "$oid": "661f506533427e1efaf6c507"
-        }
-      },
-      {
-        "number": 5,
-        "requirementGroup": {
-          "code": "000054",
-          "description": "Students with 7 or more Terms in Attendance"
-        },
-        "fromDate": {
-          "$date": "2023-11-20T00:00:00.000Z"
-        },
-        "maxEnroll": 10,
-        "enrolledCount": 2,
-        "_id": {
-          "$oid": "661f506533427e1efaf6c508"
-        }
-      },
-      {
-        "number": 3,
-        "requirementGroup": {
-          "code": "000055",
-          "description": "Students with Enrollment Permission"
-        },
-        "fromDate": {
-          "$date": "2023-10-06T00:00:00.000Z"
-        },
-        "maxEnroll": 10,
-        "enrolledCount": 0,
-        "_id": {
-          "$oid": "661f506533427e1efaf6c509"
-        }
-      }
-    ]
-
-    */
-
-const reservedSeats = [
+const data = [
   {
-    title: "Students with Enrollment Permission",
-    current: 5,
-    total: 12,
+    name: "Page A",
+    uv: 0,
+    pv: 0,
+    amt: 1,
   },
   {
-    title: "Art History Majors",
-    current: 0,
-    total: 2,
+    name: "Page B",
+    uv: 2000,
+    pv: 2500,
+    amt: 2,
   },
   {
-    title: "Only Art Practice Undergraduates",
-    current: 3,
-    total: 2,
+    name: "Page C",
+    uv: 2500,
+    pv: 2700,
+    amt: 3,
+  },
+  {
+    name: "Page D",
+    uv: 2800,
+    pv: 2850,
+    amt: 4,
+  },
+  {
+    name: "Page E",
+    uv: 2900,
+    pv: 3000,
+    amt: 5,
+  },
+  {
+    name: "Page F",
+    uv: 3000,
+    pv: 3000,
+    amt: 6,
+  },
+  {
+    name: "Page G",
+    uv: 3010,
+    pv: 3010,
+    amt: 7,
   },
 ];
 
-export default function Enrollment() {
-  const [currentTitle, setCurrentTitle] = useState<string | null>(null);
+interface EnrollmentProps {
+  currentClass?: IClass;
+}
 
+export default function Enrollment({ currentClass }: EnrollmentProps) {
   return (
     <div className={styles.root}>
-      <p className={styles.label}>Reserved seats</p>
+      <div className={styles.legend}>
+        <div className={styles.label}>
+          <div className={styles.icon} />
+          Spring 2024
+        </div>
+        <div className={styles.label}>
+          <div className={styles.icon} />
+          Average
+        </div>
+      </div>
       <div className={styles.chart}>
-        {reservedSeats.map(({ current, total, title }) => {
-          const backgroundColor = getColor(current, total);
-          const opacity = !currentTitle || title === currentTitle ? 1 : 0.25;
-
-          return (
-            <div
-              className={styles.bar}
-              key={title}
-              onMouseOver={() => setCurrentTitle(title)}
-              onMouseOut={() => setCurrentTitle(null)}
-              style={{ opacity, flex: total }}
-            >
-              <div
-                className={styles.progress}
-                style={{
-                  backgroundColor,
-                  width: `${(current / total) * 100}%`,
-                }}
-              />
-            </div>
-          );
-        })}
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            width={500}
+            height={300}
+            data={data}
+            margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
+          >
+            <CartesianGrid
+              horizontal={false}
+              stroke="var(--border-color)"
+              strokeDasharray="4 4"
+            />
+            <Tooltip />
+            <ReferenceLine
+              x={3}
+              stroke="var(--label-color)"
+              label="Max PV PAGE"
+            />
+            <ReferenceLine
+              y={2900}
+              label="Spring 2024 enrollment limit"
+              stroke="var(--label-color)"
+            />
+            <XAxis
+              dataKey="amt"
+              stroke="var(--label-color)"
+              tickMargin={8}
+              label={<div className={styles.label} />}
+            />
+            <YAxis
+              stroke="var(--label-color)"
+              tickFormatter={(value) => value.toLocaleString()}
+              tickMargin={8}
+              label={<div className={styles.label} />}
+            />
+            <Line
+              type="monotone"
+              dataKey="uv"
+              stroke="var(--paragraph-color)"
+              dot={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="pv"
+              stroke="var(--blue-500)"
+              activeDot={{ r: 8 }}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
-      <div className={styles.wrapper}>
-        {reservedSeats.map(({ title, current, total }, index) => {
-          const color = getColor(current, total);
-          const opacity = !currentTitle || title === currentTitle ? 1 : 0.25;
-
-          return (
-            <Fragment key={title}>
-              {index !== 0 && <div className={styles.divider} />}
-              <div
-                className={styles.row}
-                onMouseOver={() => setCurrentTitle(title)}
-                onMouseOut={() => setCurrentTitle(null)}
-              >
-                <p
-                  className={classNames(styles.title, {
-                    [styles.active]: title === currentTitle,
-                  })}
-                >
-                  {title}
-                </p>
-                <p className={styles.description} style={{ opacity }}>
-                  <span style={{ color }}>{current}</span> / {total} (
-                  <span style={{ color }}>
-                    {((current / total) * 100).toLocaleString()}%
-                  </span>
-                  )
-                </p>
-              </div>
-            </Fragment>
-          );
-        })}
-      </div>
-      <p className={styles.label}>Over time</p>
+      {currentClass && (
+        <Reservations
+          enrollCount={currentClass.primarySection.enrollCount}
+          enrollMax={currentClass.primarySection.enrollMax}
+          reservations={currentClass.primarySection.reservations}
+        />
+      )}
     </div>
   );
 }
