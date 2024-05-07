@@ -94,84 +94,82 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICourse>(
 
     return (
       <div className={styles.root} ref={ref} data-index={index}>
-        <div className={styles.course}>
-          <div className={styles.class} onClick={() => handleClick()}>
-            <div className={styles.text}>
-              <p className={styles.heading}>
-                {subject} {courseNumber}
-              </p>
-              <p className={styles.description}>
-                {isolated && classes[0].title ? classes[0].title : courseTitle}
-              </p>
-              <div className={styles.row}>
-                <AverageGrade gradeAverage={gradeAverage} />
-                <Capacity
-                  enrollCount={courseCount}
-                  enrollMax={courseCapacity}
-                  waitlistCount={courseWaitlistCount}
-                  waitlistMax={courseWaitlistCapacity}
-                />
-                <Units unitsMin={courseMinimum} unitsMax={courseMaximum} />
-              </div>
-            </div>
-            <div className={styles.column}>
-              <div className={styles.icon}>
-                {isolated ? (
-                  <ArrowRight />
-                ) : expanded ? (
-                  <ArrowUnionVertical />
-                ) : (
-                  <ArrowSeparateVertical />
-                )}
-              </div>
+        <div className={styles.class} onClick={() => handleClick()}>
+          <div className={styles.text}>
+            <p className={styles.heading}>
+              {subject} {courseNumber}
+            </p>
+            <p className={styles.description}>
+              {isolated && classes[0].title ? classes[0].title : courseTitle}
+            </p>
+            <div className={styles.row}>
+              <AverageGrade gradeAverage={gradeAverage} />
+              <Capacity
+                enrollCount={courseCount}
+                enrollMax={courseCapacity}
+                waitlistCount={courseWaitlistCount}
+                waitlistMax={courseWaitlistCapacity}
+              />
+              <Units unitsMin={courseMinimum} unitsMax={courseMaximum} />
             </div>
           </div>
-          {expanded &&
-            classes.map(
-              ({
-                unitsMax,
-                unitsMin,
-                title: classTitle,
-                number: classNumber,
-                primarySection: {
-                  enrollCount,
-                  enrollMax,
-                  waitlistCount,
-                  waitlistMax,
-                  component,
-                },
-              }) => (
-                <div
-                  className={styles.class}
-                  key={classNumber}
-                  onClick={() => handleClick(classNumber)}
-                >
-                  <div className={styles.text}>
-                    <p className={styles.title}>
-                      {component} {classNumber}
-                    </p>
-                    <p className={styles.description}>
-                      {classTitle || courseTitle}
-                    </p>
-                    <div className={styles.row}>
-                      <Capacity
-                        enrollCount={enrollCount}
-                        enrollMax={enrollMax}
-                        waitlistCount={waitlistCount}
-                        waitlistMax={waitlistMax}
-                      />
-                      <Units unitsMin={unitsMin} unitsMax={unitsMax} />
-                    </div>
-                  </div>
-                  <div className={styles.column}>
-                    <div className={styles.icon}>
-                      <ArrowRight />
-                    </div>
+          <div className={styles.column}>
+            <div className={styles.icon}>
+              {isolated ? (
+                <ArrowRight />
+              ) : expanded ? (
+                <ArrowUnionVertical />
+              ) : (
+                <ArrowSeparateVertical />
+              )}
+            </div>
+          </div>
+        </div>
+        {expanded &&
+          classes.map(
+            ({
+              unitsMax,
+              unitsMin,
+              title: classTitle,
+              number: classNumber,
+              primarySection: {
+                enrollCount,
+                enrollMax,
+                waitlistCount,
+                waitlistMax,
+                component,
+              },
+            }) => (
+              <div
+                className={styles.class}
+                key={classNumber}
+                onClick={() => handleClick(classNumber)}
+              >
+                <div className={styles.text}>
+                  <p className={styles.title}>
+                    {component} {classNumber}
+                  </p>
+                  <p className={styles.description}>
+                    {classTitle || courseTitle}
+                  </p>
+                  <div className={styles.row}>
+                    <Capacity
+                      enrollCount={enrollCount}
+                      enrollMax={enrollMax}
+                      waitlistCount={waitlistCount}
+                      waitlistMax={waitlistMax}
+                    />
+                    <Units unitsMin={unitsMin} unitsMax={unitsMax} />
                   </div>
                 </div>
-              )
-            )}
-        </div>
+                <div className={styles.column}>
+                  <div className={styles.icon}>
+                    <ArrowRight />
+                  </div>
+                </div>
+              </div>
+            )
+          )}
       </div>
     );
   }

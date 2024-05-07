@@ -12,7 +12,7 @@ import Course from "./Course";
 import styles from "./List.module.scss";
 
 interface ListProps {
-  includedCourses: ICourse[];
+  currentCourses: ICourse[];
   onClassSelect: (course: ICourse, number: string) => void;
   onOpenChange: (open: boolean) => void;
   open: boolean;
@@ -26,7 +26,7 @@ interface ListProps {
 }
 
 export default function List({
-  includedCourses,
+  currentCourses: currentCourses,
   onClassSelect,
   currentSemester,
   currentYear,
@@ -42,11 +42,12 @@ export default function List({
   const [searchParams] = useSearchParams();
 
   const virtualizer = useVirtualizer({
-    count: includedCourses.length,
+    count: currentCourses.length,
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
-    paddingEnd: 60,
+    paddingEnd: 72,
+    gap: 12,
   });
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function List({
         <Header
           currentSemester={currentSemester}
           currentYear={currentYear}
-          includedCourses={includedCourses}
+          currentCourses={currentCourses}
           currentQuery={currentQuery}
           open={open}
           overlay={overlay}
@@ -97,7 +98,7 @@ export default function List({
             style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
           >
             {items.map(({ key, index }) => {
-              const course = includedCourses[index];
+              const course = currentCourses[index];
 
               return (
                 <Course

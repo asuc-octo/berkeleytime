@@ -1,10 +1,13 @@
 import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
+import classNames from "classnames";
 import {
+  Bookmark,
   BookmarkSolid,
   CalendarPlus,
   Heart,
+  HeartSolid,
   OpenNewWindow,
   Xmark,
 } from "iconoir-react";
@@ -22,6 +25,7 @@ import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
 import Enrollment from "./Enrollment";
+import Grades from "./Grades";
 import Overview from "./Overview";
 import Sections from "./Sections";
 
@@ -36,7 +40,7 @@ const views = [
   },
   {
     text: "Grades",
-    Component: () => null,
+    Component: Grades,
   },
   {
     text: "Enrollment",
@@ -90,17 +94,29 @@ export default function Class({
 
   const Component = useMemo(() => views[view].Component, [view]);
 
+  const [liked, setLiked] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+
   return (
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.row}>
           <div className={styles.group}>
-            <Button secondary>
-              <Heart />
+            <Button
+              secondary
+              className={classNames(styles.like, { [styles.active]: liked })}
+              onClick={() => setLiked(!liked)}
+            >
+              {liked ? <HeartSolid /> : <Heart />}
               23
             </Button>
-            <IconButton>
-              <BookmarkSolid />
+            <IconButton
+              className={classNames(styles.bookmark, {
+                [styles.active]: bookmarked,
+              })}
+              onClick={() => setBookmarked(!bookmarked)}
+            >
+              {bookmarked ? <BookmarkSolid /> : <Bookmark />}
             </IconButton>
             <IconButton>
               <CalendarPlus />

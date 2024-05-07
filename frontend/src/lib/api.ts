@@ -150,6 +150,11 @@ export const GET_CLASS = gql`
           subject
           number
         }
+        reservations {
+          enrollCount
+          enrollMax
+          group
+        }
         ccn
         enrollCount
         enrollMax

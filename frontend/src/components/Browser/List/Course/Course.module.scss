@@ -1,72 +1,68 @@
 .root {
-  padding-bottom: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  flex-shrink: 0;
+  background-color: var(--foreground-color);
+  position: relative;
+  padding: 0 16px;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 2.5%);
 
-  .course {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    flex-shrink: 0;
-    background-color: var(--foreground-color);
-    position: relative;
-    padding: 0 16px;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 2.5%);
+  .class {
+    padding: 16px 0;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
 
-    .class {
-      padding: 16px 0;
+    &:hover .column .icon {
+      color: var(--heading-color);
+    }
+
+    .column {
       display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      cursor: pointer;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
 
-      &:hover .column .icon {
-        color: var(--heading-color);
-      }
-
-      .column {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        flex-shrink: 0;
-
-        .icon {
-          color: var(--paragraph-color);
-          transition: all 100ms ease-in-out;
-        }
-      }
-
-      &:not(:last-child) {
-        border-bottom: 1px solid var(--border-color);
+      .icon {
+        color: var(--paragraph-color);
+        transition: all 100ms ease-in-out;
       }
     }
 
-    .text {
-      flex-grow: 1;
-      font-size: 14px;
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--border-color);
+    }
+  }
 
-      .heading, .title {
-        color: var(--heading-color);
-        margin-bottom: 8px;
-        line-height: 1;
-      }
+  .text {
+    flex-grow: 1;
+    font-size: 14px;
 
-      .heading {
-        font-weight: 700;
-      }
+    .heading, .title {
+      color: var(--heading-color);
+      margin-bottom: 8px;
+      line-height: 1;
+    }
 
-      .title {
-        font-weight: 500;
-      }
+    .heading {
+      font-weight: 700;
+    }
 
-      .description {
-        color: var(--paragraph-color);
-        line-height: 1.5;
-      }
+    .title {
+      font-weight: 500;
+    }
 
-      .row {
-        display: flex;
-        gap: 12px;
-        margin-top: 12px;
-        align-items: center;
-      }
+    .description {
+      color: var(--paragraph-color);
+      line-height: 1.5;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+      align-items: center;
     }
   }
 }

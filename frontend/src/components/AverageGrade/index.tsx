@@ -46,10 +46,10 @@ export default function AverageGrade({ gradeAverage }: AverageGradeProps) {
       !gradeAverage
         ? "var(--paragraph-color)"
         : gradeAverage > 3.5
-          ? "var(--green-500)"
+          ? "var(--emerald-500)"
           : gradeAverage > 2.5
-            ? "var(--yellow-500)"
-            : "var(--red-500)",
+            ? "var(--amber-500)"
+            : "var(--rose-500)",
     [gradeAverage]
   );
 

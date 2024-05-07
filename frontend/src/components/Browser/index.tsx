@@ -269,6 +269,7 @@ export default function Browser({
           overlay={overlay}
           block={block}
           includedCourses={includedCourses}
+          currentCourses={currentCourses}
           excludedCourses={excludedCourses}
           currentKinds={currentKinds}
           currentUnits={currentUnits}
@@ -282,7 +283,7 @@ export default function Browser({
         />
       )}
       <List
-        includedCourses={currentCourses}
+        currentCourses={currentCourses}
         onClassSelect={onClassSelect}
         onOpenChange={setOpen}
         currentSemester={currentSemester}

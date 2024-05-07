@@ -9,10 +9,10 @@ const getColor = (count: number, capacity: number) => {
   const percentage = count / capacity;
 
   return percentage >= 0.75
-    ? "var(--red-500)"
+    ? "var(--rose-500)"
     : percentage > 0.5
-      ? "var(--yellow-500)"
-      : "var(--green-500)";
+      ? "var(--amber-500)"
+      : "var(--emerald-500)";
 };
 
 interface CapacityProps {
