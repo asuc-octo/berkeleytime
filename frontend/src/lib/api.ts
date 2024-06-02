@@ -6,6 +6,76 @@ export enum Semester {
   Summer = "Summer",
 }
 
+export enum Component {
+  Workshop = "WOR",
+  WebBasedDiscussion = "WBD",
+  Clinic = "CLN",
+  Practicum = "PRA",
+  DirectedGroupStudy = "GRP",
+  Discussion = "DIS",
+  Voluntary = "VOL",
+  Tutorial = "TUT",
+  FieldWork = "FLD",
+  Lecture = "LEC",
+  Supplementary = "SUP",
+  Laboratory = "LAB",
+  Session = "SES",
+  Studio = "STD",
+  SelfPaced = "SLF",
+  Colloquium = "COL",
+  WebBasedLecture = "WBL",
+  IndependentStudy = "IND",
+  Internship = "INT",
+  Reading = "REA",
+  Recitation = "REC",
+  Seminar = "SEM",
+}
+
+export const components: Record<Component, string> = {
+  [Component.Lecture]: "Lecture",
+  [Component.Seminar]: "Seminar",
+  [Component.IndependentStudy]: "Independent Study",
+  [Component.DirectedGroupStudy]: "Directed Group Study",
+  [Component.Studio]: "Studio",
+  [Component.Laboratory]: "Laboratory",
+  [Component.Workshop]: "Workshop",
+  [Component.WebBasedDiscussion]: "Web-Based Discussion",
+  [Component.Clinic]: "Clinic",
+  [Component.Practicum]: "Practicum",
+  [Component.Discussion]: "Discussion",
+  [Component.Voluntary]: "Voluntary",
+  [Component.Tutorial]: "Tutorial",
+  [Component.FieldWork]: "Field Work",
+  [Component.Supplementary]: "Supplementary",
+  [Component.Session]: "Session",
+  [Component.SelfPaced]: "Self-paced",
+  [Component.Colloquium]: "Colloquium",
+  [Component.WebBasedLecture]: "Web-Based Lecture",
+  [Component.Internship]: "Internship",
+  [Component.Reading]: "Reading",
+  [Component.Recitation]: "Recitation",
+};
+
+export enum AcademicCareer {
+  Undergraduate = "UGRD",
+  Graduate = "GRAD",
+  Extension = "UCBX",
+}
+
+export const academicCareers: Record<AcademicCareer, string> = {
+  [AcademicCareer.Undergraduate]: "Undergraduate",
+  [AcademicCareer.Graduate]: "Graduate",
+  [AcademicCareer.Extension]: "Extension",
+};
+
+export enum FinalExam {
+  Written = "Y",
+  Common = "C",
+  None = "N",
+  Alternate = "A",
+  Undecided = "D",
+}
+
 export interface IInstructor {
   familyName: string;
   givenName: string;
@@ -17,7 +87,7 @@ export interface ISection {
   course: ICourse;
   enrollCount: number;
   enrollMax: number;
-  component: string;
+  component: Component;
   number: string;
   primary: boolean;
   waitlistCount: number;
@@ -71,7 +141,7 @@ export interface ICourse {
   gradeAverage: number | null;
   gradingBasis: string;
   finalExam: string;
-  academicCareer: string;
+  academicCareer: AcademicCareer;
   title: string;
   subject: string;
   number: string;

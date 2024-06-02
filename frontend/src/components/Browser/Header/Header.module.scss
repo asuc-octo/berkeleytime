@@ -21,12 +21,8 @@
     padding: 0 16px;
 
     &:has(.input:focus) {
-      outline: 4px solid var(--blue-200);
+      outline: 4px solid color-mix(in srgb, var(--blue-500) 20%, transparent);
       border-color: var(--blue-500);
-
-      @media (prefers-color-scheme: dark) {
-        outline: 4px solid var(--blue-900);
-      }
     }
 
     .label {

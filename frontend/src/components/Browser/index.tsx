@@ -5,14 +5,13 @@ import Fuse from "fuse.js";
 import { useSearchParams } from "react-router-dom";
 
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import { ICourse, Semester } from "@/lib/api";
+import { Component, ICourse, Semester } from "@/lib/api";
 import { subjects } from "@/lib/course";
-import { kindAbbreviations } from "@/lib/section";
 
 import styles from "./Browser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
-import { SortBy, getFilteredCourses } from "./browser";
+import { Level, SortBy, Unit, getFilteredCourses } from "./browser";
 
 const initializeFuse = (courses: ICourse[]) => {
   const list = courses.map((course) => {
@@ -127,35 +126,36 @@ export default function Browser({
     [searchParams]
   );
 
-  const currentKinds = useMemo(() => {
-    const parameter = searchParams.get("kinds");
-
-    return (
-      parameter?.split(",").filter((kind) => kindAbbreviations[kind]) ?? []
-    );
-  }, [searchParams]);
-
-  const currentUnits = useMemo(() => {
-    const parameter = searchParams.get("units");
-
-    return (
-      parameter
+  const currentComponents = useMemo(
+    () =>
+      (searchParams
+        .get("components")
         ?.split(",")
-        .filter((unit) => ["5+", "4", "3", "2", "1", "0"].includes(unit)) ?? []
-    );
-  }, [searchParams]);
+        .filter((component) =>
+          Object.values(Component).includes(component as Component)
+        ) ?? []) as Component[],
+    [searchParams]
+  );
 
-  const currentLevels = useMemo(() => {
-    const parameter = searchParams.get("levels");
-
-    return (
-      parameter
+  const currentUnits = useMemo(
+    () =>
+      (searchParams
+        .get("units")
         ?.split(",")
-        .filter((level) =>
-          ["Lower Division", "Upper Division", "Graduate"].includes(level)
-        ) ?? []
-    );
-  }, [searchParams]);
+        .filter((unit) => Object.values(Unit).includes(unit as Unit)) ??
+        []) as Unit[],
+    [searchParams]
+  );
+
+  const currentLevels = useMemo(
+    () =>
+      (searchParams
+        .get("levels")
+        ?.split(",")
+        .filter((level) => Object.values(Level).includes(level as Level)) ??
+        []) as Level[],
+    [searchParams]
+  );
 
   const currentSortBy = useMemo(() => {
     const parameter = searchParams.get("sortBy");
@@ -171,8 +171,13 @@ export default function Browser({
 
   const { includedCourses, excludedCourses } = useMemo(
     () =>
-      getFilteredCourses(courses, currentKinds, currentUnits, currentLevels),
-    [courses, currentKinds, currentUnits, currentLevels]
+      getFilteredCourses(
+        courses,
+        currentComponents,
+        currentUnits,
+        currentLevels
+      ),
+    [courses, currentComponents, currentUnits, currentLevels]
   );
 
   const fuse = useMemo(
@@ -271,7 +276,7 @@ export default function Browser({
           includedCourses={includedCourses}
           currentCourses={currentCourses}
           excludedCourses={excludedCourses}
-          currentKinds={currentKinds}
+          currentComponents={currentComponents}
           currentUnits={currentUnits}
           currentLevels={currentLevels}
           onOpenChange={setOpen}

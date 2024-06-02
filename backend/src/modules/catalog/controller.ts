@@ -1,4 +1,4 @@
-import { CatalogItem, TermInput } from "../../generated-types/graphql";
+import { Course, TermInput } from "../../generated-types/graphql";
 import { ClassModel } from "../../models/class";
 import { getTermStartMonth, termToString } from "../../utils/term";
 import { GradeModel, GradeType } from "../../models/grade";
@@ -7,7 +7,7 @@ import { CourseModel, CourseType } from "../../models/course";
 import { SectionModel } from "../../models/section";
 import { formatClass, formatCourse, formatSection } from "./formatter";
 import { getCourseKey, getCsCourseId } from "../../utils/course";
-import { isNil, some } from "lodash";
+import { isNil } from "lodash";
 import { GraphQLResolveInfo } from "graphql";
 import { getChildren } from "../../utils/graphql";
 
@@ -23,7 +23,7 @@ function matchCsCourseId(id: any) {
 export async function getCatalog(
   term: TermInput,
   info: GraphQLResolveInfo
-): Promise<CatalogItem[] | null> {
+): Promise<Course[] | null> {
   const classes = await ClassModel.find({
     "session.term.name": termToString(term),
     // "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },

@@ -6,11 +6,10 @@ import classNames from "classnames";
 import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import { ICourse, Semester } from "@/lib/api";
-import { kindAbbreviations } from "@/lib/section";
+import { Component, ICourse, Semester, components } from "@/lib/api";
 
 import Header from "../Header";
-import { SortBy, getFilteredCourses, getLevel } from "../browser";
+import { Level, SortBy, Unit, getFilteredCourses, getLevel } from "../browser";
 import styles from "./Filters.module.scss";
 
 interface FiltersProps {
@@ -19,9 +18,9 @@ interface FiltersProps {
   includedCourses: ICourse[];
   excludedCourses: ICourse[];
   currentCourses: ICourse[];
-  currentKinds: string[];
-  currentUnits: string[];
-  currentLevels: string[];
+  currentComponents: Component[];
+  currentUnits: Unit[];
+  currentLevels: Level[];
   onOpenChange: (open: boolean) => void;
   open: boolean;
   currentSemester: Semester;
@@ -36,7 +35,7 @@ export default function Filters({
   includedCourses,
   excludedCourses,
   currentCourses,
-  currentKinds,
+  currentComponents,
   currentLevels,
   currentUnits,
   onOpenChange,
@@ -53,61 +52,62 @@ export default function Filters({
     const courses =
       currentLevels.length === 0
         ? includedCourses
-        : getFilteredCourses(excludedCourses, currentKinds, currentUnits, [])
-            .includedCourses;
+        : getFilteredCourses(
+            excludedCourses,
+            currentComponents,
+            currentUnits,
+            []
+          ).includedCourses;
 
     return courses.reduce(
       (acc, course) => {
-        if (!["Undergraduate", "Graduate"].includes(course.academicCareer))
-          return acc;
-
         const level = getLevel(course.academicCareer, course.number);
 
         acc[level] += 1;
 
         return acc;
       },
-      { "Lower Division": 0, "Upper Division": 0, Graduate: 0 } as Record<
-        string,
-        number
-      >
+      {
+        "Lower Division": 0,
+        "Upper Division": 0,
+        Graduate: 0,
+        Extension: 0,
+      } as Record<Level, number>
     );
   }, [
     excludedCourses,
     includedCourses,
     currentUnits,
-    currentKinds,
+    currentComponents,
     currentLevels,
   ]);
 
-  const filteredKinds = useMemo(() => {
-    const filteredKinds = Object.keys(kindAbbreviations).reduce(
-      (acc, kind) => {
-        acc[kind] = 0;
+  const filteredComponents = useMemo(() => {
+    const filteredComponents = Object.keys(components).reduce(
+      (acc, component) => {
+        acc[component] = 0;
         return acc;
       },
       {} as Record<string, number>
     );
 
     const courses =
-      currentKinds.length === 0
+      currentComponents.length === 0
         ? includedCourses
         : getFilteredCourses(excludedCourses, [], currentUnits, currentLevels)
             .includedCourses;
 
     for (const course of courses) {
-      const kind = course.classes[0].primarySection.component;
+      const { component } = course.classes[0].primarySection;
 
-      if (!kindAbbreviations[kind]) continue;
-
-      filteredKinds[kind] += 1;
+      filteredComponents[component] += 1;
     }
 
-    return filteredKinds;
+    return filteredComponents;
   }, [
     excludedCourses,
     includedCourses,
-    currentKinds,
+    currentComponents,
     currentUnits,
     currentLevels,
   ]);
@@ -124,8 +124,12 @@ export default function Filters({
     const courses =
       currentUnits.length === 0
         ? includedCourses
-        : getFilteredCourses(excludedCourses, currentKinds, [], currentLevels)
-            .includedCourses;
+        : getFilteredCourses(
+            excludedCourses,
+            currentComponents,
+            [],
+            currentLevels
+          ).includedCourses;
 
     for (const course of courses) {
       const { unitsMin, unitsMax } = course.classes.reduce(
@@ -148,7 +152,7 @@ export default function Filters({
     excludedCourses,
     includedCourses,
     currentUnits,
-    currentKinds,
+    currentComponents,
     currentLevels,
   ]);
 
@@ -220,8 +224,8 @@ export default function Filters({
           ))}
         </RadioGroup.Root>
         <p className={styles.label}>Level</p>
-        {Object.keys(filteredLevels).map((level) => {
-          const active = currentLevels.includes(level);
+        {Object.values(Level).map((level) => {
+          const active = currentLevels.includes(level as Level);
 
           return (
             <div className={styles.filter}>
@@ -250,20 +254,20 @@ export default function Filters({
           );
         })}
         <p className={styles.label}>Units</p>
-        {["5+", "4", "3", "2", "1", "0"].map((units) => {
-          const active = currentUnits.includes(units);
+        {Object.values(Unit).map((unit) => {
+          const active = currentUnits.includes(unit);
 
           return (
             <div className={styles.filter}>
               <Checkbox.Root
                 className={styles.checkbox}
                 checked={active}
-                id={`units-${units}`}
+                id={`units-${unit}`}
                 onCheckedChange={(checked) =>
                   handleDynamicChange(
                     "units",
                     currentUnits,
-                    units,
+                    unit,
                     checked as boolean
                   )
                 }
@@ -272,32 +276,32 @@ export default function Filters({
                   <Check width={12} height={12} />
                 </Checkbox.Indicator>
               </Checkbox.Root>
-              <label className={styles.text} htmlFor={`units-${units}`}>
+              <label className={styles.text} htmlFor={`units-${unit}`}>
                 <span className={styles.value}>
-                  {units} {units === "1" ? "unit" : "units"}
+                  {unit} {unit === Unit.One ? "unit" : "units"}
                 </span>
-                {!active && ` (${filteredUnits[units].toLocaleString()})`}
+                {!active && ` (${filteredUnits[unit].toLocaleString()})`}
               </label>
             </div>
           );
         })}
         <p className={styles.label}>Kind</p>
-        {Object.keys(filteredKinds)
+        {Object.keys(filteredComponents)
           .slice(0, expanded ? undefined : 5)
-          .map((kind) => {
-            const active = currentKinds.includes(kind);
+          .map((component) => {
+            const active = currentComponents.includes(component as Component);
 
             return (
               <div className={styles.filter}>
                 <Checkbox.Root
                   className={styles.checkbox}
                   checked={active}
-                  id={`kind-${kind}`}
+                  id={`component-${component}`}
                   onCheckedChange={(checked) =>
                     handleDynamicChange(
-                      "kinds",
-                      currentKinds,
-                      kind,
+                      "components",
+                      currentComponents,
+                      component,
                       checked as boolean
                     )
                   }
@@ -306,9 +310,15 @@ export default function Filters({
                     <Check width={12} height={12} />
                   </Checkbox.Indicator>
                 </Checkbox.Root>
-                <label className={styles.text} htmlFor={`kind-${kind}`}>
-                  <span className={styles.value}>{kind}</span>
-                  {!active && ` (${filteredKinds[kind].toLocaleString()})`}
+                <label
+                  className={styles.text}
+                  htmlFor={`component-${component}`}
+                >
+                  <span className={styles.value}>
+                    {components[component as Component]}
+                  </span>
+                  {!active &&
+                    ` (${filteredComponents[component].toLocaleString()})`}
                 </label>
               </div>
             );

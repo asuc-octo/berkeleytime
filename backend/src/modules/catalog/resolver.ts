@@ -14,7 +14,6 @@ import {
   getRequiredCourses,
   getSection,
 } from "./controller";
-import { getCsCourseId } from "../../utils/course";
 
 const resolvers: CatalogModule.Resolvers = {
   Query: {
@@ -86,6 +85,7 @@ const resolvers: CatalogModule.Resolvers = {
     },
   },
 
+  // @ts-expect-error - Not sure how to type this
   Session: {
     R: "1",
     S: "12W",

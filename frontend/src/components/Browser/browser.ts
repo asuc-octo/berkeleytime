@@ -1,4 +1,4 @@
-import { ICourse } from "@/lib/api";
+import { AcademicCareer, Component, ICourse, academicCareers } from "@/lib/api";
 
 export enum SortBy {
   Relevance = "Relevance",
@@ -8,28 +8,45 @@ export enum SortBy {
   PercentOpenSeats = "Percent open seats",
 }
 
-export const getLevel = (level: string, number: string) => {
-  if (level !== "Undergraduate") return level;
+export enum Level {
+  LowerDivision = "Lower Division",
+  UpperDivision = "Upper Division",
+  Graduate = "Graduate",
+  Extension = "Extension",
+}
 
-  return level === "Undergraduate"
+export enum Unit {
+  FivePlus = "5+",
+  Four = "4",
+  Three = "3",
+  Two = "2",
+  One = "1",
+  Zero = "0",
+}
+
+export const getLevel = (academicCareer: AcademicCareer, number: string) => {
+  return academicCareer === AcademicCareer.Undergraduate
     ? number.match(/(\d)\d\d/)
-      ? "Upper Division"
-      : "Lower Division"
-    : level;
+      ? Level.UpperDivision
+      : Level.LowerDivision
+    : (academicCareers[academicCareer] as Level);
 };
 
 export const getFilteredCourses = (
   courses: ICourse[],
-  currentKinds: string[],
-  currentUnits: string[],
-  currentLevels: string[]
+  currentComponents: Component[],
+  currentUnits: Unit[],
+  currentLevels: Level[]
 ) => {
   return courses.reduce(
     (acc, course) => {
-      // Filter by kind
-      const kind = course.classes[0].primarySection.component;
+      // Filter by component
+      const { component } = course.classes[0].primarySection;
 
-      if (currentKinds.length > 0 && !currentKinds.includes(kind)) {
+      if (
+        currentComponents.length > 0 &&
+        !currentComponents.includes(component)
+      ) {
         acc.excludedCourses.push(course);
 
         return acc;
@@ -58,7 +75,7 @@ export const getFilteredCourses = (
           const units = unitsMin + index;
 
           return currentUnits.includes(
-            unitsMin + index === 5 ? "5+" : `${units}`
+            unitsMin + index === 5 ? Unit.FivePlus : (`${units}` as Unit)
           );
         }
       );
