@@ -1,0 +1,54 @@
+.root {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    display: flex;
+    padding: 12px;
+    position: relative;
+    align-items: center;
+    gap: 12px;
+
+    .tabs {
+      display: flex;
+      margin-right: auto;
+    }
+
+    .group {
+      display: flex;
+      align-items: center;
+      width: 372px;
+      gap: 12px;
+
+      .separator {
+        border-left: 1px solid var(--border-color);
+        height: 24px;
+      }
+
+      .heading {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--heading-color);
+        margin-right: auto;
+      }
+    }
+  }
+
+  .body {
+    flex-grow: 1;
+    display: flex;
+    overflow: clip;
+    height: 0;
+
+    .view {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      width: 0;
+      overflow: auto;
+    }
+  }
+}

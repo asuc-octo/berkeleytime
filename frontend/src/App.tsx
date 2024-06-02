@@ -6,10 +6,11 @@ import About from "@/app/About";
 import Catalog from "@/app/Catalog";
 import Explore from "@/app/Explore";
 import Landing from "@/app/Landing";
-import Layout from "@/components/Layout";
 import Plan from "@/app/Plan";
+import Schedule from "@/app/Schedule";
 import Schedules from "@/app/Schedules";
 import AccountProvider from "@/components/AccountProvider";
+import Layout from "@/components/Layout";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,15 @@ const router = createBrowserRouter([
       {
         element: <About />,
         path: "about",
+      },
+    ],
+  },
+  {
+    element: <Layout footer={false} header={false} />,
+    children: [
+      {
+        element: <Schedule />,
+        path: "schedules/:scheduleId",
       },
     ],
   },
