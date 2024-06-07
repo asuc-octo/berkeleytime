@@ -243,6 +243,8 @@ export const GET_CLASS = gql`
         waitlistCount
         waitlistMax
         number
+        startDate
+        endDate
       }
       sections {
         course {
@@ -267,6 +269,8 @@ export const GET_CLASS = gql`
         waitlistCount
         waitlistMax
         number
+        startDate
+        endDate
       }
     }
   }

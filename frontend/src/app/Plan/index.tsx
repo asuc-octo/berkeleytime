@@ -104,8 +104,6 @@ export default function Plan() {
     };
   }, []);
 
-  console.log(terms);
-
   return (
     <div className={styles.root}>
       <div className={styles.sideBar}></div>

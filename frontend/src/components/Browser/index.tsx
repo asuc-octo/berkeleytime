@@ -260,13 +260,6 @@ export default function Browser({
     setExpandedCourses(new Array(_currentCourses.length).fill(false));
   }, [currentQuery, fuse, includedCourses, currentSortBy]);
 
-  console.log(
-    courses.reduce(
-      (acc, course) => acc.add(course.gradingBasis),
-      new Set<string>()
-    )
-  );
-
   return (
     <div className={classNames(styles.root, { [styles.block]: block })}>
       {filters && (

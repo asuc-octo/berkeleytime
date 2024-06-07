@@ -1,0 +1,125 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  min-width: 1080px;
+
+  .header {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    background-color: var(--background-color);
+    z-index: 1;
+    font-size: 12px;
+    color: var(--label-color);
+    line-height: 1;
+    z-index: 2;
+
+    .timeZone {
+      height: 32px;
+      width: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 12px;
+      border-right: 1px solid var(--border-color);
+      position: sticky;
+      left: 0;
+      background-color: var(--background-color);
+    }
+
+    .week {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      flex-grow: 1;
+    
+      .day {
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:not(:last-child) {
+          border-right: 1px solid var(--border-color);
+        }
+      }
+    }
+  }
+
+  .view {
+    display: flex;
+    z-index: 1;
+
+    .week {
+      flex-grow: 1;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+
+      .day {
+        position: relative;
+
+        &:not(:last-child) {
+          border-right: 1px solid var(--border-color);
+        }
+
+        .line {
+          position: absolute;
+          z-index: 1;
+          left: -1px;
+          width: calc(100% + 1px);
+          height: 1px;
+          background-color: var(--red-500);
+        }
+
+        .hour {
+          height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:not(:first-child) {
+            border-top: 1px solid var(--border-color);
+          }
+        }
+      }
+    }
+
+    .sideBar {
+      flex-shrink: 0;
+      width: 64px;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background-color: var(--background-color);
+      border-right: 1px solid var(--border-color);
+
+      .time {
+        position: absolute;
+        z-index: 1;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        font-size: 12px;
+        color: white;
+        line-height: 1;
+        border-radius: 4px;
+        right: 0;
+        background-color: var(--red-500);
+      }
+
+      .hour {
+        height: 0;
+        margin-top: 60px;
+        padding: 0 12px;
+        font-size: 12px;
+        color: var(--label-color);
+        text-align: right;
+        transform: translateY(-6px);
+      }
+    }
+  }
+}
