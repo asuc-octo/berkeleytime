@@ -11,6 +11,7 @@ import { getY } from "@/lib/schedule";
 
 import Calendar from "./Calendar";
 import Map from "./Map";
+import Week from "./Schedule";
 import styles from "./Schedule.module.scss";
 import SideBar from "./SideBar";
 
@@ -59,10 +60,12 @@ export default function Schedule() {
 
   const handleSectionMouseOver = useCallback(
     (section: ISection) => {
-      if (tab === 1) return;
-
       // Jump to the section
-      if (section.meetings[0].startTime && section.meetings[0].endTime) {
+      if (
+        tab === 0 &&
+        section.meetings[0].startTime &&
+        section.meetings[0].endTime
+      ) {
         const top = getY(section.meetings[0].startTime);
 
         const offset = (getY(section.meetings[0].endTime) - top) / 2;
@@ -181,7 +184,10 @@ export default function Schedule() {
             Schedule
           </MenuItem>
           <MenuItem active={tab === 1} onClick={() => setTab(1)}>
-            Itinerary
+            Calendar
+          </MenuItem>
+          <MenuItem active={tab === 2} onClick={() => setTab(2)}>
+            Map
           </MenuItem>
         </div>
         <Button>
@@ -202,6 +208,11 @@ export default function Schedule() {
         />
         <div className={styles.view} ref={bodyRef} id="boundary">
           {tab === 0 ? (
+            <Week
+              selectedSections={selectedSections}
+              currentSection={currentSection}
+            />
+          ) : tab === 1 ? (
             <Calendar
               selectedSections={selectedSections}
               currentSection={currentSection}

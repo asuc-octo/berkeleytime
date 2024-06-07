@@ -36,8 +36,8 @@ export default function Section({
       <p className={styles.title}>{number}</p>
       <CCN ccn={ccn} tooltip={false} />
       <Time
-        endTime={startTime}
-        startTime={endTime}
+        endTime={endTime}
+        startTime={startTime}
         days={days}
         tooltip={false}
         className={styles.time}

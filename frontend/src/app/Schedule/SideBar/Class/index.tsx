@@ -6,6 +6,7 @@ import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { IClass, ISection } from "@/lib/api";
+import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
 import Section from "./Section";
@@ -60,7 +61,12 @@ export default function Class({
 
   return (
     <div className={styles.root}>
-      <div className={styles.border} />
+      <div
+        className={styles.border}
+        style={{
+          backgroundColor: getColor(`${course.subject} ${course.number}`),
+        }}
+      />
       <div className={styles.body}>
         <div
           className={styles.header}

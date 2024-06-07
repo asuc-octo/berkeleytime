@@ -1,47 +1,12 @@
-import { MouseEvent, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
+
+import moment from "moment";
 
 import { ISection } from "@/lib/api";
-import { getY } from "@/lib/schedule";
 
-import styles from "./Calendar.module.scss";
-import Event from "./Event";
-
-const getId = (section: ISection) =>
-  `${section.course.subject} ${section.course.number} ${section.class.number} ${section.number}`;
-
-// You have to trust me on this math
-const adjustAttachedEvents = (
-  relevantSections: ISection[],
-  attachedSections: string[],
-  minutes: string[][],
-  positions: Record<string, [number, number]>
-) => {
-  const adjustedSections: string[] = [];
-
-  const adjustSection = (id: string) => {
-    if (adjustedSections.includes(id)) return;
-
-    adjustedSections.push(id);
-
-    positions[id][1]++;
-
-    const section = relevantSections.find((section) => id === getId(section));
-    if (!section) return;
-
-    const top = getY(section.meetings[0].startTime);
-    const height = getY(section.meetings[0].endTime) - top;
-
-    for (let i = top; i < top + height; i++) {
-      for (const id of minutes[i]) {
-        adjustSection(id);
-      }
-    }
-  };
-
-  for (const id of attachedSections) {
-    adjustSection(id);
-  }
-};
+import styles from "./Semester.module.scss";
+import Week from "./Week";
+import { IDay } from "./semester";
 
 interface CalendarProps {
   selectedSections: ISection[];
@@ -52,122 +17,68 @@ export default function Calendar({
   selectedSections,
   currentSection,
 }: CalendarProps) {
-  const viewRef = useRef<HTMLDivElement>(null);
-  const [y, setY] = useState<number | null>(null);
-
   const sections = useMemo(
     () =>
       currentSection ? [...selectedSections, currentSection] : selectedSections,
     [selectedSections, currentSection]
   );
 
-  const days = useMemo(
-    () =>
-      [...Array(7)].map((_, day) => {
-        const positions: Record<string, [number, number]> = {};
-        const minutes: string[][] = [...Array(60 * 18)].map(() => []);
+  const [first] = useState(() => moment("2024-01-01"));
+  const [last] = useState(() => moment("2024-05-31"));
 
-        const relevantSections = sections
-          // Filter sections for the current day which have a time specified
-          .filter(
-            (section) =>
-              section.meetings[0].days[day] &&
-              section.meetings[0].startTime &&
-              getY(section.meetings[0].startTime) > 0
-          )
-          // Sort sections by when they start
-          .sort(
-            (a, b) =>
-              getY(a.meetings[0].startTime) - getY(b.meetings[0].startTime)
-          );
+  const [start] = useState(() => {
+    const current = moment("2024-01-01");
+    current.subtract(current.day(), "days");
+    return current;
+  });
 
-        // Maintain an array of sections that are attached to each minute
-        for (const section of relevantSections) {
-          const top = getY(section.meetings[0].startTime);
-          const height = getY(section.meetings[0].endTime) - top;
+  const [stop] = useState(() => {
+    const stop = moment("2024-05-31");
+    stop.add(6 - stop.day(), "days");
+    return stop;
+  });
 
-          const attachedSections = minutes[top];
+  const weeks = useMemo(() => {
+    const weeks: IDay[][] = [];
 
-          let position = 0;
+    const current = moment(start);
 
-          while (
-            attachedSections.findIndex(
-              (eventId) => positions[eventId][0] === position
-            ) !== -1
-          ) {
-            position++;
-          }
+    while (current.isSameOrBefore(stop)) {
+      const week = [];
 
-          if (
-            attachedSections.length > 0 &&
-            Math.max(
-              position,
-              ...attachedSections.map((eventId) => positions[eventId][0])
-            ) === position
-          ) {
-            adjustAttachedEvents(
-              relevantSections,
-              attachedSections,
-              minutes,
-              positions
-            );
-          }
+      for (let i = 0; i < 7; i++) {
+        const day = {
+          date: moment(current),
+          events: sections
+            .filter(
+              ({ startDate, endDate, meetings }) =>
+                current.isSameOrAfter(startDate) &&
+                current.isSameOrBefore(endDate) &&
+                meetings[0]?.days[current.day()]
+            )
+            .sort((a, b) =>
+              a.meetings[0].startTime.localeCompare(b.meetings[0].startTime)
+            )
+            .map((section) => ({
+              ...section,
+              active: section.ccn === currentSection?.ccn,
+            })),
+        };
 
-          const id = getId(section);
+        week.push(day);
 
-          positions[id] = [
-            position,
-            attachedSections.length === 0
-              ? 1
-              : positions[attachedSections[0]][1],
-          ];
+        current.add(1, "days");
+      }
 
-          for (let i = top; i < top + height; i++) {
-            minutes[i].push(id);
-          }
-        }
+      weeks.push(week);
+    }
 
-        return relevantSections.map((section) => {
-          const [position, columns] = positions[getId(section)];
-
-          return {
-            ...section,
-            position,
-            active: section.ccn !== currentSection?.ccn,
-            columns,
-          };
-        });
-      }),
-    [sections, currentSection]
-  );
-
-  const currentTime = useMemo(() => {
-    if (!viewRef.current || !y) return;
-
-    const hour = (Math.floor(y / 60) + 6) % 12 || 12;
-    const minute = Math.floor(y % 60);
-
-    return `${hour}:${minute < 10 ? `0${minute}` : minute}`;
-  }, [y]);
-
-  const updateY = (event: MouseEvent<HTMLDivElement>) => {
-    if (!viewRef.current) return;
-
-    const y = Math.max(
-      15,
-      Math.min(
-        event.clientY - viewRef.current.getBoundingClientRect().top,
-        viewRef.current.clientHeight - 15
-      )
-    );
-
-    setY(y);
-  };
+    return weeks;
+  }, [sections, currentSection, start, stop]);
 
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <div className={styles.timeZone}>PST</div>
         <div className={styles.week}>
           <div className={styles.day}>Sunday</div>
           <div className={styles.day}>Monday</div>
@@ -178,40 +89,19 @@ export default function Calendar({
           <div className={styles.day}>Saturday</div>
         </div>
       </div>
-      <div
-        className={styles.view}
-        ref={viewRef}
-        onMouseMove={updateY}
-        onMouseOver={updateY}
-        onMouseOut={() => setY(null)}
-      >
-        <div className={styles.sideBar}>
-          {currentTime && y && (
-            <div className={styles.time} style={{ top: `${y - 11.5}px` }}>
-              {currentTime}
-            </div>
-          )}
-          {[...Array(17)].map((_, hour) => (
-            <div key={hour} className={styles.hour}>
-              {hour + 7 < 12
-                ? `${hour + 7} AM`
-                : `${hour + 7 === 12 ? 12 : hour - 5} PM`}
-            </div>
-          ))}
-        </div>
-        <div className={styles.week}>
-          {days.map((events, day) => (
-            <div key={day} className={styles.day}>
-              {[...Array(18)].map((_, hour) => (
-                <div key={hour} className={styles.hour}></div>
-              ))}
-              {events.map((event) => (
-                <Event key={getId(event)} {...event} />
-              ))}
-              {y && <div className={styles.line} style={{ top: `${y}px` }} />}
-            </div>
-          ))}
-        </div>
+      <div className={styles.view}>
+        {weeks.map((days, index) => {
+          return (
+            <Week
+              key={index}
+              days={days}
+              finals={index === 18}
+              dead={index === 17}
+              first={first}
+              last={last}
+            />
+          );
+        })}
       </div>
     </div>
   );
