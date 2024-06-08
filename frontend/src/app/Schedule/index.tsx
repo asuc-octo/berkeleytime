@@ -1,17 +1,23 @@
 import { useCallback, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
-import { ArrowLeft, ShareIos } from "iconoir-react";
+import {
+  ArrowLeft,
+  Copy,
+  EditPencil,
+  ShareIos,
+  ViewColumns2,
+} from "iconoir-react";
 
 import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
+import Week from "@/components/Week";
 import { GET_CLASS, IClass, ICourse, ISection } from "@/lib/api";
 import { getY } from "@/lib/schedule";
 
 import Calendar from "./Calendar";
 import Map from "./Map";
-import Week from "./Schedule";
 import styles from "./Schedule.module.scss";
 import SideBar from "./SideBar";
 
@@ -27,6 +33,8 @@ export default function Schedule() {
 
   const [selectedSections, setSelectedSections] = useState<ISection[]>([]);
   const [currentSection, setCurrentSection] = useState<ISection | null>(null);
+
+  console.log(JSON.stringify(selectedSections));
 
   const handleSectionSelect = useCallback(
     (section: ISection) => {
@@ -177,6 +185,9 @@ export default function Schedule() {
             <ArrowLeft />
           </IconButton>
           <p className={styles.heading}>Untitled Spring 2024 schedule</p>
+          <IconButton>
+            <EditPencil />
+          </IconButton>
           <div className={styles.separator} />
         </div>
         <div className={styles.tabs}>
@@ -190,6 +201,14 @@ export default function Schedule() {
             Map
           </MenuItem>
         </div>
+        <Button secondary>
+          <ViewColumns2 />
+          Compare
+        </Button>
+        <Button secondary>
+          <Copy />
+          Clone
+        </Button>
         <Button>
           Share
           <ShareIos />

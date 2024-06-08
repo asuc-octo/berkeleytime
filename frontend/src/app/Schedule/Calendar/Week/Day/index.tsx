@@ -2,7 +2,7 @@ import classNames from "classnames";
 
 import { getColor } from "@/lib/section";
 
-import { IDay } from "../../semester";
+import { IDay } from "../../calendar";
 import styles from "./Day.module.scss";
 
 const parseTime = (time: string) => {

@@ -4,9 +4,9 @@ import moment from "moment";
 
 import { ISection } from "@/lib/api";
 
-import styles from "./Semester.module.scss";
+import styles from "./Calendar.module.scss";
 import Week from "./Week";
-import { IDay } from "./semester";
+import { IDay, IEvent } from "./calendar";
 
 interface CalendarProps {
   selectedSections: ISection[];
@@ -17,12 +17,6 @@ export default function Calendar({
   selectedSections,
   currentSection,
 }: CalendarProps) {
-  const sections = useMemo(
-    () =>
-      currentSection ? [...selectedSections, currentSection] : selectedSections,
-    [selectedSections, currentSection]
-  );
-
   const [first] = useState(() => moment("2024-01-01"));
   const [last] = useState(() => moment("2024-05-31"));
 
@@ -38,6 +32,56 @@ export default function Calendar({
     return stop;
   });
 
+  const events = useMemo(
+    () =>
+      (currentSection
+        ? [...selectedSections, currentSection]
+        : selectedSections
+      ).reduce((events, section) => {
+        const {
+          startDate,
+          endDate,
+          meetings,
+          exams,
+          course: { subject, number },
+          ccn,
+        } = section;
+
+        for (const exam of exams) {
+          const { date, startTime, endTime } = exam;
+
+          events.push({
+            date,
+            subject: subject,
+            number: number,
+            active: currentSection?.ccn === ccn,
+            startTime,
+            endTime,
+            startDate,
+            endDate,
+          });
+        }
+
+        for (const meeting of meetings) {
+          const { days, startTime, endTime } = meeting;
+
+          events.push({
+            startDate,
+            endDate,
+            subject: subject,
+            number: number,
+            active: currentSection?.ccn === ccn,
+            days,
+            startTime,
+            endTime,
+          });
+        }
+
+        return events;
+      }, [] as IEvent[]),
+    [selectedSections, currentSection]
+  );
+
   const weeks = useMemo(() => {
     const weeks: IDay[][] = [];
 
@@ -49,20 +93,14 @@ export default function Calendar({
       for (let i = 0; i < 7; i++) {
         const day = {
           date: moment(current),
-          events: sections
+          events: events
             .filter(
-              ({ startDate, endDate, meetings }) =>
+              ({ startDate, endDate, date, days }) =>
                 current.isSameOrAfter(startDate) &&
                 current.isSameOrBefore(endDate) &&
-                meetings[0]?.days[current.day()]
+                (moment(date).isSame(current, "day") || days?.[current.day()])
             )
-            .sort((a, b) =>
-              a.meetings[0].startTime.localeCompare(b.meetings[0].startTime)
-            )
-            .map((section) => ({
-              ...section,
-              active: section.ccn === currentSection?.ccn,
-            })),
+            .sort((a, b) => a.startTime.localeCompare(b.startTime)),
         };
 
         week.push(day);
@@ -74,7 +112,7 @@ export default function Calendar({
     }
 
     return weeks;
-  }, [sections, currentSection, start, stop]);
+  }, [events, start, stop]);
 
   return (
     <div className={styles.root}>

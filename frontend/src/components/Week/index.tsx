@@ -4,7 +4,7 @@ import { ISection } from "@/lib/api";
 import { getY } from "@/lib/schedule";
 
 import Event from "./Event";
-import styles from "./Schedule.module.scss";
+import styles from "./Week.module.scss";
 
 const getId = (section: ISection) =>
   `${section.course.subject} ${section.course.number} ${section.class.number} ${section.number}`;
@@ -43,17 +43,28 @@ const adjustAttachedEvents = (
   }
 };
 
-interface CalendarProps {
+interface WeekProps {
   selectedSections: ISection[];
-  currentSection: ISection | null;
+  currentSection?: ISection | null;
+  y?: number | null;
+  updateY?: (y: number | null) => void;
 }
 
-export default function Schedule({
+export default function Week({
   selectedSections,
   currentSection,
-}: CalendarProps) {
+  y: remoteY,
+  updateY: updateRemoteY,
+}: WeekProps) {
   const viewRef = useRef<HTMLDivElement>(null);
-  const [y, setY] = useState<number | null>(null);
+  const [localY, setLocalY] = useState<number | null>(null);
+
+  const y = useMemo(() => localY ?? remoteY, [localY, remoteY]);
+
+  const updateLocalY = (y: number | null) => {
+    setLocalY(y);
+    updateRemoteY?.(y);
+  };
 
   const sections = useMemo(
     () =>
@@ -161,7 +172,7 @@ export default function Schedule({
       )
     );
 
-    setY(y);
+    updateLocalY(y);
   };
 
   return (
@@ -183,7 +194,7 @@ export default function Schedule({
         ref={viewRef}
         onMouseMove={updateY}
         onMouseOver={updateY}
-        onMouseOut={() => setY(null)}
+        onMouseOut={() => updateLocalY(null)}
       >
         <div className={styles.sideBar}>
           {currentTime && y && (
