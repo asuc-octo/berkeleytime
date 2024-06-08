@@ -1,0 +1,54 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  .header {
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    background-color: var(--foreground-color);
+
+    .group {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      flex: 1;
+      gap: 12px;
+
+      &:not(:last-child) {
+        border-right: 1px solid var(--border-color);
+      }
+
+      .paragraph {
+        font-size: 12px;
+        line-height: 1;
+        color: var(--paragraph-color);
+      }
+
+      .heading {
+        font-size: 14px;
+        font-weight: 500;
+        padding: 0 12px;
+        line-height: 1;
+        color: var(--heading-color);
+        flex-grow: 1;
+      }
+    }
+  }
+
+  .body {
+    display: flex;
+    grid-template-columns: 1fr 1fr;
+    flex-grow: 1;
+    height: 0;
+
+    .view {
+      flex: 1;
+      overflow: auto;
+
+      &:not(:last-child) {
+        border-right: 1px solid var(--border-color);
+      }
+    }
+  }
+}

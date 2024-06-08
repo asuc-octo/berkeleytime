@@ -81,6 +81,14 @@ export interface IInstructor {
   givenName: string;
 }
 
+export interface IExam {
+  date: string;
+  location: string;
+  final: boolean;
+  startTime: string;
+  endTime: string;
+}
+
 export interface ISection {
   ccn: string;
   class: IClass;
@@ -98,6 +106,7 @@ export interface ISection {
   reservations: IReservation[];
   startDate: string;
   endDate: string;
+  exams: IExam[];
 }
 
 export interface IReservation {
@@ -254,6 +263,13 @@ export const GET_CLASS = gql`
         ccn
         enrollCount
         enrollMax
+        exams {
+          date
+          final
+          location
+          startTime
+          endTime
+        }
         meetings {
           days
           endTime

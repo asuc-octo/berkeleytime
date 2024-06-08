@@ -54,6 +54,7 @@
     .week {
       flex-grow: 1;
       display: grid;
+      z-index: 1;
       grid-template-columns: repeat(7, 1fr);
 
       .day {

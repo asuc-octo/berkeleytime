@@ -9,6 +9,7 @@ import Landing from "@/app/Landing";
 import Plan from "@/app/Plan";
 import Schedule from "@/app/Schedule";
 import Schedules from "@/app/Schedules";
+import Compare from "@/app/Schedules/Compare";
 import AccountProvider from "@/components/AccountProvider";
 import Layout from "@/components/Layout";
 
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         element: <Schedule />,
         path: "schedules/:scheduleId",
+      },
+      {
+        element: <Compare />,
+        path: "schedules/compare/:leftScheduleId?/:rightScheduleId?",
       },
     ],
   },

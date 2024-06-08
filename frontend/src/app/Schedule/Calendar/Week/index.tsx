@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { ArrowDown } from "iconoir-react";
 import moment from "moment";
 
-import { IDay } from "../semester";
+import { IDay } from "../calendar";
 import Day from "./Day";
 import styles from "./Week.module.scss";
 
