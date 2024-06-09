@@ -247,6 +247,13 @@ export const GET_CLASS = gql`
             givenName
           }
         }
+        exams {
+          date
+          final
+          location
+          startTime
+          endTime
+        }
         component
         primary
         waitlistCount

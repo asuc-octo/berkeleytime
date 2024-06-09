@@ -64,7 +64,7 @@ export default function Class({
       <div
         className={styles.border}
         style={{
-          backgroundColor: getColor(`${course.subject} ${course.number}`),
+          backgroundColor: getColor(course.subject, course.number),
         }}
       />
       <div className={styles.body}>

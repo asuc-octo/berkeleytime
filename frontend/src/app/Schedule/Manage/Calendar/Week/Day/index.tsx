@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 import classNames from "classnames";
 
 import { getColor } from "@/lib/section";
@@ -24,32 +26,29 @@ export default function Day({ date, events, active }: DayProps) {
     <div key={date.format("YYYY-MM-DD")} className={styles.root}>
       {active && (
         <div className={styles.date}>
-          {date.format("D") === "1" && (
-            <p className={styles.month}>{date.format("MMMM")}</p>
-          )}
+          {date.format("D") === "1" && date.format("MMMM")}
           <p className={styles.number}>{date.format("D")}</p>
         </div>
       )}
-      {events.map((event) => (
-        <div
-          className={classNames(styles.event, {
-            [styles.active]: event.active,
-          })}
-          style={{
-            backgroundColor: getColor(
-              event.course.subject,
-              event.course.number
-            ),
-          }}
-        >
-          <div className={styles.time}>
-            {parseTime(event.meetings[0].startTime)}
+      {events.map((event, index) => {
+        const color = getColor(event.subject, event.number);
+
+        return (
+          <div
+            className={classNames(styles.event, {
+              [styles.active]: event.active,
+              [styles.exam]: event.date,
+            })}
+            key={index}
+            style={{ "--color": color } as CSSProperties}
+          >
+            <div className={styles.time}>{parseTime(event.startTime)}</div>
+            <div className={styles.course}>
+              {event.subject} {event.number}
+            </div>
           </div>
-          <div className={styles.course}>
-            {event.course.subject} {event.course.number}
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

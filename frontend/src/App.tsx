@@ -7,11 +7,13 @@ import Catalog from "@/app/Catalog";
 import Explore from "@/app/Explore";
 import Landing from "@/app/Landing";
 import Plan from "@/app/Plan";
-import Schedule from "@/app/Schedule";
+import Compare from "@/app/Schedule/Compare";
+import Manage from "@/app/Schedule/Manage";
 import Schedules from "@/app/Schedules";
-import Compare from "@/app/Schedules/Compare";
 import AccountProvider from "@/components/AccountProvider";
 import Layout from "@/components/Layout";
+
+import Schedule from "./app/Schedule";
 
 const router = createBrowserRouter([
   {
@@ -42,10 +44,16 @@ const router = createBrowserRouter([
       {
         element: <Schedule />,
         path: "schedules/:scheduleId",
-      },
-      {
-        element: <Compare />,
-        path: "schedules/compare/:leftScheduleId?/:rightScheduleId?",
+        children: [
+          {
+            element: <Manage />,
+            index: true,
+          },
+          {
+            element: <Compare />,
+            path: "compare/:comparedScheduleId?",
+          },
+        ],
       },
     ],
   },

@@ -6,26 +6,47 @@
 
   .header {
     display: flex;
+    flex-direction: column;
     border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     background-color: var(--background-color);
     z-index: 1;
     font-size: 12px;
-    color: var(--label-color);
     line-height: 1;
     z-index: 2;
+
+    .legend {
+      display: flex;
+      padding: 0 12px;
+      height: 32px;
+      gap: 12px;
+      align-items: center;
+      background-color: var(--slate-100);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--paragraph-color);
+
+      .timezone {
+        margin-left: auto;
+      }
+
+      .category {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+    }
 
     .week {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
+      color: var(--label-color);
       flex-grow: 1;
     
       .day {
         height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: grid;
+        place-items: center;
 
         &:not(:last-child) {
           border-right: 1px solid var(--border-color);

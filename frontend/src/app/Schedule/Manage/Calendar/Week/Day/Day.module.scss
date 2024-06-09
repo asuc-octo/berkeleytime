@@ -20,35 +20,47 @@
     gap: 8px;
     height: 24px;
     white-space: nowrap;
+    color: white;
+
+    &:not(.exam) {
+      border: 1px dashed var(--color);
+    }
+
+    &.exam {
+      background-color: var(--color);
+
+      .time {
+        color: rgb(255 255 255 / 75%);
+      }
+
+      .course {
+        color: white;
+      }
+    }
 
     &.active {
       opacity: 0.5;
     }
     
     .time {
-      color: rgb(255 255 255 / 75%);
       font-size: 8px;
+      color: var(--label-color);
     }
 
     .course {
-      color: white;
       font-weight: 500;
       text-overflow: ellipsis;
       overflow: hidden;
+      color: var(--color);
     }
   }
 
   .date {
     display: flex;
-
-    .month {
-      color: var(--heading-color);
-      font-weight: 500;
-    }
+    color: var(--label-color);
 
     .number {
       margin-left: auto;
-      color: var(--label-color);
     }
   }
 }
