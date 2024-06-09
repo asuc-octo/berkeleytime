@@ -293,36 +293,38 @@ a {
 
   --foreground-color: white;
   --background-color: var(--slate-50);
+  --backdrop-color: var(--slate-100);
 
-  --border-color: var(--slate-200);
+  --border-color: rgb(0 0 0 / 10%);
 
   --heading-color: var(--slate-900);
   --paragraph-color: var(--slate-500);
   --label-color: var(--slate-400);
 
-  --button-color: var(--slate-100);
-  --button-hover-color: var(--slate-200);
-  --button-active-color: var(--slate-300);
+  --button-color: white;
+  --button-hover-color: var(--slate-100);
+  --button-active-color: var(--slate-200);
 
   --tooltip-color: var(--neutral-900);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-color: var(--neutral-900);
-    --background-color: var(--neutral-950);
+    --foreground-color: var(--zinc-800);
+    --background-color: var(--zinc-900);
+    --backdrop-color: var(--zinc-950);
 
-    --border-color: var(--neutral-800);
+    --border-color: var(--zinc-700);
 
     --heading-color: white;
-    --paragraph-color: var(--neutral-400);
-    --label-color: var(--neutral-500);
+    --paragraph-color: var(--zinc-400);
+    --label-color: var(--zinc-500);
 
-    --button-color: var(--neutral-800);
-    --button-hover-color: var(--neutral-700);
-    --button-active-color: var(--neutral-600);
+    --button-color: var(--zinc-800);
+    --button-hover-color: var(--zinc-700);
+    --button-active-color: var(--zinc-600);
 
-    --tooltip-color: var(--neutral-800);
+    --tooltip-color: var(--zinc-950);
   }
 }
 

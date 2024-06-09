@@ -28,7 +28,6 @@
       .heading {
         font-size: 14px;
         font-weight: 500;
-        padding: 0 12px;
         line-height: 1;
         color: var(--heading-color);
         flex-grow: 1;
@@ -38,16 +37,39 @@
 
   .body {
     display: flex;
-    grid-template-columns: 1fr 1fr;
     flex-grow: 1;
     height: 0;
 
-    .view {
+    .panel {
+      display: flex;
+      flex-direction: column;
       flex: 1;
-      overflow: auto;
+      width: 0;
 
       &:not(:last-child) {
         border-right: 1px solid var(--border-color);
+      }
+
+      .context {
+        display: flex;
+        justify-content: space-between;
+        height: 32px;
+        flex-shrink: 0;
+        padding: 0 12px;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--backdrop-color);
+
+        .data {
+          font-size: 12px;
+          color: var(--paragraph-color);
+          line-height: 1;
+        }
+      }
+
+      .view {
+        overflow: auto;
+        flex-grow: 1;
       }
     }
   }

@@ -7,11 +7,11 @@
   }
 
   &.dead {
-    background-color: var(--slate-100);
+    background-color: var(--backdrop-color);
   }
 
   &.finals {
-    background-color: white;
+    background-color: var(--foreground-color);
   }
 
   .header {
