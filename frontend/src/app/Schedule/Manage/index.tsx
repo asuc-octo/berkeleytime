@@ -185,7 +185,7 @@ export default function Manage() {
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.group}>
-          <IconButton>
+          <IconButton as={Link} to="../schedules">
             <ArrowLeft />
           </IconButton>
           <p className={styles.heading}>Untitled Spring 2024 schedule</p>

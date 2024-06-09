@@ -2,14 +2,13 @@ import { forwardRef } from "react";
 
 import { Plus } from "iconoir-react";
 
-import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import Units from "@/components/Units";
 import { ICourse, Semester } from "@/lib/api";
 
 import Catalog from "./Catalog";
 import Course from "./Course";
-import styles from "./Semester.module.scss";
+import styles from "./Term.module.scss";
 
 interface TermProps {
   semester: Semester;
@@ -23,26 +22,22 @@ const Term = forwardRef<HTMLDivElement, TermProps>(
     return (
       <div className={styles.root}>
         <div className={styles.header}>
-          <p className={styles.title}>
+          <p className={styles.term}>
             {semester} {year}
           </p>
-          <Units unitsMin={12} unitsMax={20} />
-          <IconButton>
-            <Plus />
-          </IconButton>
+          <Units unitsMin={12} unitsMax={20}>
+            {(units) => <p className={styles.units}>{units}</p>}
+          </Units>
+          <Catalog semester={Semester.Spring} year={2024} onClick={onClick}>
+            <IconButton>
+              <Plus />
+            </IconButton>
+          </Catalog>
         </div>
         <div className={styles.body} ref={ref}>
           {courses.map((course) => (
             <Course key={`${course.subject} ${course.number}`} {...course} />
           ))}
-        </div>
-        <div className={styles.footer}>
-          <Catalog semester={Semester.Spring} year={2024} onClick={onClick}>
-            <Button secondary>
-              <Plus />
-              Add class
-            </Button>
-          </Catalog>
         </div>
       </div>
     );
