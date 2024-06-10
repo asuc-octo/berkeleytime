@@ -4,6 +4,7 @@ import { DataTransferBoth, Xmark } from "iconoir-react";
 import { Link, useOutletContext } from "react-router-dom";
 
 import IconButton from "@/components/IconButton";
+import Tooltip from "@/components/Tooltip";
 import Units from "@/components/Units";
 import Week from "@/components/Week";
 
@@ -81,9 +82,13 @@ export default function Compare() {
           <IconButton>
             <DataTransferBoth />
           </IconButton>
-          <IconButton as={Link} to="../">
-            <Xmark />
-          </IconButton>
+          <Tooltip content="Close">
+            <Link to="../">
+              <IconButton>
+                <Xmark />
+              </IconButton>
+            </Link>
+          </Tooltip>
         </div>
       </div>
       <div className={styles.body}>

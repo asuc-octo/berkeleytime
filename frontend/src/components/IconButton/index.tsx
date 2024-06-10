@@ -1,29 +1,22 @@
-import { ComponentPropsWithRef, ElementType, ReactNode } from "react";
+import { ComponentPropsWithoutRef, ReactNode, forwardRef } from "react";
 
 import classNames from "classnames";
 
 import styles from "./IconButton.module.scss";
 
-interface IconButtonProps<T = ElementType> {
+interface IconButtonProps {
   children: ReactNode;
   className?: string;
   invert?: boolean;
-  as?: T;
+  active?: boolean;
 }
 
-export default function IconButton<T extends ElementType = "button">({
-  active,
-  children,
-  className,
-  invert,
-  as,
-  ...props
-}: IconButtonProps<T> &
-  Omit<ComponentPropsWithRef<T>, keyof IconButtonProps<T>>) {
-  const Component = as ?? "button";
-
+const IconButton = forwardRef<
+  HTMLButtonElement,
+  IconButtonProps & ComponentPropsWithoutRef<"button">
+>(({ active, children, className, invert, ...props }, forwardedRef) => {
   return (
-    <Component
+    <button
       className={classNames(
         styles.root,
         {
@@ -32,9 +25,14 @@ export default function IconButton<T extends ElementType = "button">({
         },
         className
       )}
+      ref={forwardedRef}
       {...props}
     >
       {children}
-    </Component>
+    </button>
   );
-}
+});
+
+IconButton.displayName = "IconButton";
+
+export default IconButton;

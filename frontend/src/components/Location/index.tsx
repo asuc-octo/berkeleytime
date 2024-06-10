@@ -1,7 +1,5 @@
 import { useMemo } from "react";
 
-import * as Tooltip from "@radix-ui/react-tooltip";
-
 import { buildings } from "@/lib/location";
 
 import styles from "./Location.module.scss";
@@ -30,26 +28,6 @@ export default function Location({ location }: LocationProps) {
       {building.name + " " + room}
     </a>
   ) : (
-    <Tooltip.Root disableHoverableContent>
-      <Tooltip.Trigger asChild>
-        <p className={styles.trigger}>To be determined</p>
-      </Tooltip.Trigger>
-      <Tooltip.Portal>
-        <Tooltip.Content
-          asChild
-          side="bottom"
-          sideOffset={8}
-          collisionPadding={8}
-        >
-          <div className={styles.content}>
-            <Tooltip.Arrow className={styles.arrow} />
-            <p className={styles.title}>Location</p>
-            <p className={styles.description}>
-              The location for this class has not been determined yet.
-            </p>
-          </div>
-        </Tooltip.Content>
-      </Tooltip.Portal>
-    </Tooltip.Root>
+    <p className={styles.placeholder}>To be determined</p>
   );
 }

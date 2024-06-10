@@ -6,8 +6,10 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
+  GridPlus,
   Heart,
   HeartSolid,
+  OpenInWindow,
   OpenNewWindow,
   Xmark,
 } from "iconoir-react";
@@ -19,6 +21,7 @@ import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
+import Tooltip from "@/components/Tooltip";
 import Units from "@/components/Units";
 import { GET_CLASS, IClass, ICourse, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
@@ -102,53 +105,76 @@ export default function Class({
       <div className={styles.header}>
         <div className={styles.row}>
           <div className={styles.group}>
-            <Button
-              secondary
-              className={classNames(styles.like, { [styles.active]: liked })}
-              onClick={() => setLiked(!liked)}
+            <Tooltip content={liked ? "Remove like" : "Like course"}>
+              <Button
+                secondary
+                className={classNames(styles.like, { [styles.active]: liked })}
+                onClick={() => setLiked(!liked)}
+              >
+                {liked ? <HeartSolid /> : <Heart />}
+                23
+              </Button>
+            </Tooltip>
+            <Tooltip
+              content={bookmarked ? "Remove bookmark" : "Bookmark course"}
             >
-              {liked ? <HeartSolid /> : <Heart />}
-              23
-            </Button>
-            <IconButton
-              className={classNames(styles.bookmark, {
-                [styles.active]: bookmarked,
-              })}
-              onClick={() => setBookmarked(!bookmarked)}
-            >
-              {bookmarked ? <BookmarkSolid /> : <Bookmark />}
-            </IconButton>
-            <IconButton>
-              <CalendarPlus />
-            </IconButton>
+              <IconButton
+                className={classNames(styles.bookmark, {
+                  [styles.active]: bookmarked,
+                })}
+                onClick={() => setBookmarked(!bookmarked)}
+              >
+                {bookmarked ? <BookmarkSolid /> : <Bookmark />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="Add class to schedule">
+              <IconButton>
+                <CalendarPlus />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="Add course to plan">
+              <IconButton>
+                <GridPlus />
+              </IconButton>
+            </Tooltip>
           </div>
           <div className={styles.group}>
-            {currentClass && (
-              <IconButton
-                as="a"
-                href={getExternalLink(
-                  currentYear,
-                  currentSemester,
-                  currentSubject,
-                  currentCourseNumber,
-                  currentClass.primarySection.number,
-                  currentClass.primarySection.component
-                )}
-                target="_blank"
-              >
-                <OpenNewWindow />
-              </IconButton>
-            )}
-            <Link
-              to={{
-                pathname: `/catalog/${currentYear}/${currentSemester}`,
-                search: searchParams.toString(),
-              }}
-            >
+            <Tooltip content="Open course">
               <IconButton>
-                <Xmark />
+                <OpenInWindow />
               </IconButton>
-            </Link>
+            </Tooltip>
+            {currentClass && (
+              <Tooltip content="Open on the Berkeley Academic Guide">
+                <a
+                  href={getExternalLink(
+                    currentYear,
+                    currentSemester,
+                    currentSubject,
+                    currentCourseNumber,
+                    currentClass.primarySection.number,
+                    currentClass.primarySection.component
+                  )}
+                  target="_blank"
+                >
+                  <IconButton>
+                    <OpenNewWindow />
+                  </IconButton>
+                </a>
+              </Tooltip>
+            )}
+            <Tooltip content="Close">
+              <Link
+                to={{
+                  pathname: `/catalog/${currentYear}/${currentSemester}`,
+                  search: searchParams.toString(),
+                }}
+              >
+                <IconButton>
+                  <Xmark />
+                </IconButton>
+              </Link>
+            </Tooltip>
           </div>
         </div>
         <h1 className={styles.heading}>

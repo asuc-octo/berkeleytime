@@ -9,7 +9,7 @@ import {
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
-import { ICourse } from "@/lib/api";
+import { ICourse, components } from "@/lib/api";
 
 import styles from "./Course.module.scss";
 
@@ -147,7 +147,7 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICourse>(
               >
                 <div className={styles.text}>
                   <p className={styles.title}>
-                    {component} {classNumber}
+                    {components[component]} {classNumber}
                   </p>
                   <p className={styles.description}>
                     {classTitle || courseTitle}
