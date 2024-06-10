@@ -5,7 +5,7 @@ import { ArrowSeparateVertical, ArrowUnionVertical } from "iconoir-react";
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
-import { IClass, ISection } from "@/lib/api";
+import { IClass, ISection, components } from "@/lib/api";
 import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -94,7 +94,9 @@ export default function Class({
         </div>
         {expanded && (
           <div className={styles.group}>
-            <p className={styles.label}>{primarySection.component}</p>
+            <p className={styles.label}>
+              {components[primarySection.component]}
+            </p>
             <Section
               active={selectedSections.some(
                 (selectedSection) => selectedSection.ccn === primarySection.ccn

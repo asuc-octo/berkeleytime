@@ -1,4 +1,4 @@
-.trigger {
+.placeholder {
   color: var(--paragraph-color);
 }
 
@@ -16,48 +16,8 @@
   }
 }
 
-.root, .trigger {
+.root, .placeholder {
   font-size: 14px;
   line-height: 1.5;
   width: fit-content;
-}
-
-.content {
-  width: 256px;
-  border-radius: 4px;
-  padding: 12px;
-  background-color: var(--tooltip-color);
-  animation: fadeIn 100ms ease-in;
-  color: var(--neutral-400);
-  font-size: 14px;
-
-  .arrow {
-    fill: var(--tooltip-color);
-  }
-
-  .map {
-    aspect-ratio: 3 / 2;
-    border-radius: 2px;
-    margin-bottom: 16px;
-  }
-
-  .title {
-    font-weight: 500;
-    color: white;
-    margin-bottom: 8px;
-    line-height: 1;
-  }
-
-  .description {
-    line-height: 1.5;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }

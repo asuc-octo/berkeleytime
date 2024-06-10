@@ -29,15 +29,12 @@ export default function Layout({ header = true, footer = true }: LayoutProps) {
       )}
       {footer && <Footer />}
       <div className={styles.trigger}>
-        <Button
-          as="a"
-          href="https://forms.gle/zeAUQAHrMcrRJyhK6"
-          target="_blank"
-          className={styles.button}
-        >
-          <MessageText />
-          Provide feedback
-        </Button>
+        <a href="https://forms.gle/zeAUQAHrMcrRJyhK6" target="_blank">
+          <Button className={styles.button}>
+            <MessageText />
+            Provide feedback
+          </Button>
+        </a>
       </div>
     </div>
   );

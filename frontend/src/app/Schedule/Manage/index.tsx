@@ -13,6 +13,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
+import Tooltip from "@/components/Tooltip";
 import Week from "@/components/Week";
 import { GET_CLASS, IClass, ICourse, ISection } from "@/lib/api";
 import { getY } from "@/lib/schedule";
@@ -185,13 +186,19 @@ export default function Manage() {
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.group}>
-          <IconButton as={Link} to="../schedules">
-            <ArrowLeft />
-          </IconButton>
+          <Tooltip content="Back to schedules">
+            <Link to="../schedules">
+              <IconButton>
+                <ArrowLeft />
+              </IconButton>
+            </Link>
+          </Tooltip>
           <p className={styles.heading}>Untitled Spring 2024 schedule</p>
-          <IconButton>
-            <EditPencil />
-          </IconButton>
+          <Tooltip content="Edit name">
+            <IconButton>
+              <EditPencil />
+            </IconButton>
+          </Tooltip>
           <div className={styles.separator} />
         </div>
         <div className={styles.tabs}>
@@ -205,10 +212,12 @@ export default function Manage() {
             Map
           </MenuItem>
         </div>
-        <Button secondary as={Link} to="compare">
-          <ViewColumns2 />
-          Compare
-        </Button>
+        <Link to="compare">
+          <Button secondary>
+            <ViewColumns2 />
+            Compare
+          </Button>
+        </Link>
         <Button secondary>
           <Copy />
           Clone
