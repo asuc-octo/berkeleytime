@@ -29,8 +29,16 @@
     .label {
       font-size: 14px;
       line-height: 1;
+      display: flex;
       color: var(--label-color);
-      margin-left: 28px;
+
+      .component {
+        margin-left: 28px;
+      }
+
+      .time {
+        margin-left: auto;
+      }
     }
   }
 

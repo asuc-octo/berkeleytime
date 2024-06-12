@@ -323,6 +323,9 @@ export const GET_COURSES = gql`
           enrollMax
           waitlistCount
           waitlistMax
+          meetings {
+            days
+          }
         }
       }
     }

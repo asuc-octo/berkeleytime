@@ -47,8 +47,8 @@ export default function CCN({ ccn, tooltip }: CCNProps) {
         <div
           className={styles.trigger}
           onClick={handleClick}
-          onMouseOver={() => setOver(true)}
-          onMouseOut={() => setOver(false)}
+          onMouseEnter={() => setOver(true)}
+          onMouseLeave={() => setOver(false)}
         >
           {copied ? (
             <ClipboardCheck />

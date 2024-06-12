@@ -5,7 +5,7 @@ import { ArrowSeparateVertical, ArrowUnionVertical } from "iconoir-react";
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
-import { IClass, ISection, components } from "@/lib/api";
+import { Component, IClass, ISection, components } from "@/lib/api";
 import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -35,10 +35,13 @@ export default function Class({
   onSectionMouseOver,
   onSectionMouseOut,
 }: ClassProps & IClass) {
-  const kinds = useMemo(
-    () => Array.from(new Set(sections.map((section) => section.component))),
-    [sections]
-  );
+  const groups = useMemo(() => {
+    const sortedSections = structuredClone(sections).sort((a, b) =>
+      a.number.localeCompare(b.number)
+    );
+
+    return Object.groupBy(sortedSections, (section) => section.component);
+  }, [sections]);
 
   // TODO: Fix temporary hack to set the class number
   const handleSectionSelect = (section: ISection) => {
@@ -94,9 +97,12 @@ export default function Class({
         </div>
         {expanded && (
           <div className={styles.group}>
-            <p className={styles.label}>
-              {components[primarySection.component]}
-            </p>
+            <div className={styles.label}>
+              <p className={styles.component}>
+                {components[primarySection.component]}
+              </p>
+              <p className={styles.time}>Time</p>
+            </div>
             <Section
               active={selectedSections.some(
                 (selectedSection) => selectedSection.ccn === primarySection.ccn
@@ -108,15 +114,16 @@ export default function Class({
           </div>
         )}
         {expanded &&
-          kinds.map((kind) => {
-            const sortedSections = sections
-              .filter((section) => section.component === kind)
-              .sort((a, b) => a.number.localeCompare(b.number));
+          Object.keys(groups).map((component) => {
+            const group = component as Component;
 
             return (
-              <div className={styles.group} key={kind}>
-                <p className={styles.label}>{kind}</p>
-                {sortedSections.map((section) => {
+              <div className={styles.group} key={component}>
+                <div className={styles.label}>
+                  <p className={styles.component}>{components[group]}</p>
+                  <p className={styles.time}>Time</p>
+                </div>
+                {groups[group]?.map((section) => {
                   const active = selectedSections.some(
                     (selectedSection) => selectedSection.ccn === section.ccn
                   );
