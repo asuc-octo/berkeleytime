@@ -11,7 +11,7 @@ import { subjects } from "@/lib/course";
 import styles from "./Browser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
-import { Level, SortBy, Unit, getFilteredCourses } from "./browser";
+import { Day, Level, SortBy, Unit, getFilteredCourses } from "./browser";
 
 const initializeFuse = (courses: ICourse[]) => {
   const list = courses.map((course) => {
@@ -157,6 +157,16 @@ export default function Browser({
     [searchParams]
   );
 
+  const currentDays = useMemo(
+    () =>
+      (searchParams
+        .get("days")
+        ?.split(",")
+        .filter((day) => Object.values(Day).includes(day as Day)) ??
+        []) as Day[],
+    [searchParams]
+  );
+
   const currentSortBy = useMemo(() => {
     const parameter = searchParams.get("sortBy");
 
@@ -175,9 +185,10 @@ export default function Browser({
         courses,
         currentComponents,
         currentUnits,
-        currentLevels
+        currentLevels,
+        currentDays
       ),
-    [courses, currentComponents, currentUnits, currentLevels]
+    [courses, currentComponents, currentUnits, currentLevels, currentDays]
   );
 
   const fuse = useMemo(
@@ -272,6 +283,7 @@ export default function Browser({
           currentComponents={currentComponents}
           currentUnits={currentUnits}
           currentLevels={currentLevels}
+          currentDays={currentDays}
           onOpenChange={setOpen}
           open={open}
           currentSemester={currentSemester}

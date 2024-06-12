@@ -9,7 +9,14 @@ import { useSearchParams } from "react-router-dom";
 import { Component, ICourse, Semester, components } from "@/lib/api";
 
 import Header from "../Header";
-import { Level, SortBy, Unit, getFilteredCourses, getLevel } from "../browser";
+import {
+  Day,
+  Level,
+  SortBy,
+  Unit,
+  getFilteredCourses,
+  getLevel,
+} from "../browser";
 import styles from "./Filters.module.scss";
 
 interface FiltersProps {
@@ -26,6 +33,7 @@ interface FiltersProps {
   currentSemester: Semester;
   currentYear: number;
   currentQuery: string;
+  currentDays: Day[];
   currentSortBy?: SortBy;
 }
 
@@ -38,6 +46,7 @@ export default function Filters({
   currentComponents,
   currentLevels,
   currentUnits,
+  currentDays,
   onOpenChange,
   open,
   currentSemester,
@@ -56,7 +65,8 @@ export default function Filters({
             excludedCourses,
             currentComponents,
             currentUnits,
-            []
+            [],
+            currentDays
           ).includedCourses;
 
     return courses.reduce(
@@ -80,6 +90,7 @@ export default function Filters({
     currentUnits,
     currentComponents,
     currentLevels,
+    currentDays,
   ]);
 
   const filteredComponents = useMemo(() => {
@@ -94,8 +105,13 @@ export default function Filters({
     const courses =
       currentComponents.length === 0
         ? includedCourses
-        : getFilteredCourses(excludedCourses, [], currentUnits, currentLevels)
-            .includedCourses;
+        : getFilteredCourses(
+            excludedCourses,
+            [],
+            currentUnits,
+            currentLevels,
+            currentDays
+          ).includedCourses;
 
     for (const course of courses) {
       const { component } = course.classes[0].primarySection;
@@ -110,15 +126,73 @@ export default function Filters({
     currentComponents,
     currentUnits,
     currentLevels,
+    currentDays,
+  ]);
+
+  const filteredDays = useMemo(() => {
+    const filteredDays = Object.values(Day).reduce(
+      (acc, day) => {
+        acc[day] = 0;
+        return acc;
+      },
+      {} as Record<Day, number>
+    );
+
+    const courses =
+      currentDays.length === 0
+        ? includedCourses
+        : getFilteredCourses(
+            excludedCourses,
+            currentComponents,
+            currentUnits,
+            currentLevels,
+            []
+          ).includedCourses;
+
+    for (const course of courses) {
+      const days = course.classes.reduce(
+        (acc, { primarySection: { meetings } }) => {
+          const days = meetings?.[0]?.days;
+
+          if (!days) return acc;
+
+          return [
+            acc[0] || days[0],
+            acc[1] || days[1],
+            acc[2] || days[2],
+            acc[3] || days[3],
+            acc[4] || days[4],
+            acc[5] || days[5],
+            acc[6] || days[6],
+          ];
+        },
+        [] as boolean[]
+      );
+
+      for (const index in days) {
+        if (!days[index]) continue;
+
+        filteredDays[index as Day] += 1;
+      }
+    }
+
+    return filteredDays;
+  }, [
+    excludedCourses,
+    includedCourses,
+    currentComponents,
+    currentUnits,
+    currentLevels,
+    currentDays,
   ]);
 
   const filteredUnits = useMemo(() => {
-    const filteredUnits = ["5+", "4", "3", "2", "1", "0"].reduce(
+    const filteredUnits = Object.values(Unit).reduce(
       (acc, units) => {
         acc[units] = 0;
         return acc;
       },
-      {} as Record<string, number>
+      {} as Record<Unit, number>
     );
 
     const courses =
@@ -128,7 +202,8 @@ export default function Filters({
             excludedCourses,
             currentComponents,
             [],
-            currentLevels
+            currentLevels,
+            currentDays
           ).includedCourses;
 
     for (const course of courses) {
@@ -143,7 +218,9 @@ export default function Filters({
       [...Array(unitsMax - unitsMin || 1)].forEach((_, index) => {
         const units = unitsMin + index;
 
-        filteredUnits[units === 5 ? "5+" : `${units}`] += 1;
+        filteredUnits[
+          units === 5 ? Unit.FivePlus : (units.toString() as Unit)
+        ] += 1;
       });
     }
 
@@ -154,12 +231,13 @@ export default function Filters({
     currentUnits,
     currentComponents,
     currentLevels,
+    currentDays,
   ]);
 
   const handleDynamicChange = (
     name: string,
-    current: string[],
-    value: string,
+    current: (string | number)[],
+    value: string | number,
     checked: boolean
   ) => {
     if (checked) {
@@ -327,6 +405,36 @@ export default function Filters({
           {expanded ? <NavArrowUp /> : <NavArrowDown />}
           {expanded ? "View less" : "View more"}
         </div>
+        <p className={styles.label}>Day</p>
+        {Object.entries(Day).map(([key, day]) => {
+          const active = currentDays.includes(day);
+
+          return (
+            <div className={styles.filter}>
+              <Checkbox.Root
+                className={styles.checkbox}
+                checked={active}
+                id={`day-${day}`}
+                onCheckedChange={(checked) =>
+                  handleDynamicChange(
+                    "days",
+                    currentDays,
+                    day,
+                    checked as boolean
+                  )
+                }
+              >
+                <Checkbox.Indicator asChild>
+                  <Check width={12} height={12} />
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+              <label className={styles.text} htmlFor={`day-${day}`}>
+                <span className={styles.value}>{key}</span>
+                {!active && ` (${filteredDays[day].toLocaleString()})`}
+              </label>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
