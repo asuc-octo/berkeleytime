@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { ApolloProvider } from '@apollo/client';
+import { IconoirProvider } from 'iconoir-react';
 
 import Berkeleytime from './Berkeleytime';
 import store from './redux/store';

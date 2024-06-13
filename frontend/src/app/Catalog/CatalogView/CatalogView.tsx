@@ -1,153 +1,139 @@
-import { Dispatch, memo, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo } from 'react';
 import people from 'assets/svg/catalog/people.svg';
 import chart from 'assets/svg/catalog/chart.svg';
 import book from 'assets/svg/catalog/book.svg';
 import launch from 'assets/svg/catalog/launch.svg';
 import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow.svg';
-import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
 import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
-import { CurrentFilters } from 'app/Catalog/types';
-import { useNavigate, useParams } from 'react-router-dom';
-import { sortSections } from 'utils/sections/sort';
+import { useNavigate, useParams } from 'react-router';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
+import { useSelector } from 'react-redux';
+import useCatalog from '../useCatalog';
+import { sortPills } from '../service';
+import CourseTabs from './Tabs';
 
 import styles from './CatalogView.module.scss';
-import { useSelector } from 'react-redux';
-import SectionTable from './SectionTable';
-import { courseToName } from 'lib/courses/course';
+import { CatalogSlug, FilterOption } from '../types';
 import Meta from 'components/Common/Meta';
-
-interface CatalogViewProps {
-	coursePreview: CourseFragment | null;
-	setCurrentCourse: Dispatch<SetStateAction<CourseFragment | null>>;
-	setCurrentFilters: Dispatch<SetStateAction<CurrentFilters>>;
-}
+import { courseToName } from 'lib/courses/course';
+import { useUser } from 'graphql/hooks/user';
+import CatalogListItem from '../CatalogList/CatalogListItem';
 
 const skeleton = [...Array(8).keys()];
 
-const CatalogView = (props: CatalogViewProps) => {
-	const { coursePreview, setCurrentFilters, setCurrentCourse } = props;
-	const { abbreviation, courseNumber, semester } = useParams<{
-		abbreviation: string;
-		courseNumber: string;
-		semester: string;
-	}>();
+// Debug saved courses with dummy array since logging in doesn't work in DEV.
+// const dummy = [
+// 	{
+// 		id: 'Q291cnNlVHlwZToyMTcxOQ==',
+// 		abbreviation: 'MATH',
+// 		courseNumber: '56',
+// 		description:
+// 			'This is a first course in Linear Algebra. Core topics include: algebra and geometry of vectors and matrices; systems of linear equations and Gaussian elimination; eigenvalues and eigenvectors; Gram-Schmidt and least squares; symmetric matrices and quadratic forms; singular value decomposition and other factorizations. Time permitting, additional topics may include: Markov chains and Perron-Frobenius, dimensionality reduction, or linear programming. This course differs from Math 54 in that it does not cover Differential Equations, but focuses on Linear Algebra motivated by first applications in Data Science and Statistics.',
+// 		title: 'Linear Algebra ',
+// 		gradeAverage: -1,
+// 		letterAverage: 'A',
+// 		openSeats: 0,
+// 		enrolledPercentage: 1,
+// 		enrolled: 292,
+// 		enrolledMax: 292,
+// 		units: '4.0',
+// 		__typename: 'CourseType'
+// 	}
+// ];
 
-	const [course, setCourse] = useState<CourseFragment | null>(coursePreview);
-	const [isOpen, setOpen] = useState(false);
+const CatalogView = () => {
+	const [{ course, filters, recentCourses }, dispatch] = useCatalog();
 	const navigate = useNavigate();
+	const { abbreviation, courseNumber, semester } = useParams<CatalogSlug>();
 
 	const legacyId = useSelector(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		(state: any) =>
 			state.enrollment?.context?.courses?.find(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(c: any) => c.abbreviation === abbreviation && c.course_number === courseNumber
 			)?.id ?? null
 	);
 
-	const [getCourse, { data, loading }] = useGetCourseForNameLazyQuery({
+	const [getCourse, { data }] = useGetCourseForNameLazyQuery({
 		onCompleted: (data) => {
 			const course = data.allCourses.edges[0].node;
 			if (course) {
-				setCourse(course);
-				setOpen(true);
+				dispatch({ type: 'setCourse', course });
 			}
 		}
 	});
 
-	useEffect(() => {
-		if (!abbreviation || !courseNumber) {
-			setOpen(false);
-		}
-	}, [abbreviation, courseNumber]);
+	const { user } = useUser();
+	const savedClasses = useMemo(() => user?.savedClasses ?? [], [user?.savedClasses]);
 
 	useEffect(() => {
-		const [sem, year] = semester?.split(' ') ?? [null, null];
+		const [sem, year] = semester?.split(' ') ?? [undefined, undefined];
+
+		type coursePayload = {
+			abbreviation: string;
+			courseNumber: string;
+			semester: string;
+			year: string;
+		};
 
 		const variables = {
-			abbreviation: abbreviation ?? null,
-			courseNumber: courseNumber ?? null,
-			semester: sem?.toLowerCase() ?? null,
+			abbreviation: abbreviation,
+			courseNumber: courseNumber,
+			semester: sem?.toLowerCase(),
 			year: year
 		};
 
 		// Only fetch the course if every parameter has a value.
-		if (Object.values(variables).every((value) => value !== null)) getCourse({ variables });
+		if (Object.values(variables).every((value) => value !== undefined))
+			getCourse({ variables: variables as coursePayload });
 	}, [getCourse, abbreviation, courseNumber, semester]);
 
 	useEffect(() => {
-		const course = data?.allCourses.edges[0].node;
+		const newCourse = data?.allCourses.edges[0].node;
 
-		if (course && course?.id === coursePreview?.id) {
-			setCourse(course);
-			setOpen(true);
-		} else if (coursePreview) {
-			setCourse(coursePreview);
-			setOpen(true);
+		if (newCourse && newCourse?.id === course?.id) {
+			dispatch({ type: 'setCourse', course: newCourse });
+		} else if (course) {
+			dispatch({ type: 'setCourse', course });
 		}
-	}, [coursePreview, data]);
+	}, [course, data, dispatch]);
 
-	const [playlists, sections] = useMemo(() => {
+	const playlists = useMemo(() => {
 		let playlists = null;
-		let sections = null;
 
-		if (course?.playlistSet) {
-			const { edges } = course.playlistSet;
-			playlists = catalogService.sortPills(edges.map((e) => e.node as PlaylistType));
-		}
+		if (course?.playlistSet)
+			playlists = sortPills(course.playlistSet.edges.map((e) => e.node as PlaylistType));
 
-		if (course?.sectionSet) {
-			const { edges } = course.sectionSet;
-			sections = sortSections(edges.map((e) => e.node));
-		}
-
-		return [playlists ?? skeleton, sections ?? null];
+		return playlists ?? skeleton;
 	}, [course]);
 
-	const handlePill = (pillItem: PlaylistType) => {
-		setCurrentFilters((prev) => {
-			if (['haas', 'ls', 'engineering', 'university'].includes(pillItem.category)) {
-				const reqs = prev.requirements;
-				if (reqs?.find((el) => el.label === pillItem.name)) {
-					return prev;
-				}
-
-				return {
-					...prev,
-					requirements: [...(reqs ?? []), { label: pillItem.name, value: pillItem }]
-				};
-			}
-
-			return {
-				...prev,
-				[pillItem.category]: { label: pillItem.name, value: pillItem }
-			};
-		});
-	};
-
 	const enrollPath = legacyId
-		? `/enrollment/0-${legacyId}-${semester.replace(' ', '-')}-all`
+		? `/enrollment/0-${legacyId}-${semester?.replace(' ', '-')}-all`
 		: `/enrollment`;
 
 	const gradePath = legacyId ? `/grades/0-${legacyId}-all-all` : `/grades`;
 
 	return (
-		<div className={`${styles.root}`} data-modal={isOpen}>
-			<Meta title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'} description={course?.description} />
-			<button
-				className={styles.modalButton}
-				onClick={() => {
-					setCurrentCourse(null);
-					setCourse(null);
-					navigate(`/catalog/${semester}`, { replace: true });
-				}}
-			>
-				<BackArrow />
-				Back to Courses
-			</button>
-			{course && (
-				<>
+		<>
+			<Meta
+				title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'}
+				description={course?.description}
+			/>
+			{course ? (
+				<div className={`${styles.root}`} data-modal={typeof courseNumber === 'string'}>
+					<button
+						className={styles.modalButton}
+						onClick={() => {
+							navigate(`/catalog/${semester}`, { replace: true });
+							dispatch({ type: 'setCourse', course: null });
+						}}
+					>
+						<BackArrow />
+						Close
+					</button>
 					<h3>
 						{course.abbreviation} {course.courseNumber}
 					</h3>
@@ -195,7 +181,11 @@ const CatalogView = (props: CatalogViewProps) => {
 								typeof req === 'number' ? (
 									<Skeleton key={req} className={styles.pill} width={75} />
 								) : (
-									<span className={styles.pill} key={req.id} onClick={() => handlePill(req)}>
+									<span
+										className={styles.pill}
+										key={req.id}
+										onClick={() => dispatch({ type: 'setPill', pillItem: req })}
+									>
 										{req.name}
 									</span>
 								)
@@ -213,47 +203,76 @@ const CatalogView = (props: CatalogViewProps) => {
 							</p>
 						</>
 					</ReadMore>
-					<h5>Class Times - {semester ?? ''}</h5>
-					{sections && sections.length > 0 ? (
-						<SectionTable sections={sections} />
-					) : !loading ? (
-						<span>There are no class times for the selected course.</span>
-					) : null}
-
-					{/*
-					Redesigned catalog sections
-					<CatalogViewSections sections={sections} />
-					*/}
-
-					{/* Good feature whenever we want...
-					<h5>Past Offerings</h5>
-					<section className={styles.pills}>
-						{pastSemesters ? (
-							pastSemesters.map((req) => (
-								<button
-									className={styles.pill}
-									key={req.id}
-									onClick={() =>
-										navigate(`/catalog/${req.name}/${course.abbreviation}/${course.courseNumber}`)
-									}
-								>
-									{req.name}
-								</button>
-							))
+					<CourseTabs />
+				</div>
+			) : (
+				<div className={styles.saveRoot}>
+					<div className={styles.saveContainer}>
+						<div className={styles.header}>
+							<span>Recent</span>
+							<button onClick={() => dispatch({ type: 'clearRecents' })}>Clear</button>
+						</div>
+						{recentCourses.length > 0 ? (
+							<div>
+								{recentCourses.map((course) => (
+									<CatalogListItem
+										simple
+										key={course.id}
+										data={{
+											course: course as CourseFragment,
+											handleCourseSelect: (course) => {
+												dispatch({ type: 'setCourse', course });
+												navigate({
+													pathname: `/catalog/${(filters.semester as FilterOption)?.value?.name}/${
+														course.abbreviation
+													}/${course.courseNumber}`,
+													search: location.search
+												});
+											},
+											isSelected: false
+										}}
+									/>
+								))}
+							</div>
 						) : (
-							<Skeleton
-								style={{ marginRight: '5px' }}
-								inline
-								count={10}
-								width={80}
-								height={28}
-								borderRadius={12}
-							/>
+							<div className={styles.emptyView}>Recently viewed courses will appear here!</div>
 						)}
-					</section> */}
-				</>
+					</div>
+					<div className={styles.saveContainer}>
+						<div className={styles.header}>
+							<span>Saved</span>
+						</div>
+						{savedClasses.length > 0 ? (
+							<div>
+								{savedClasses.map((course) => (
+									<CatalogListItem
+										simple
+										key={course.id}
+										data={{
+											course: course as CourseFragment,
+											handleCourseSelect: (course) => {
+												dispatch({ type: 'setCourse', course });
+												navigate({
+													pathname: `/catalog/${(filters.semester as FilterOption)?.value?.name}/${
+														course.abbreviation
+													}/${course.courseNumber}`,
+													search: location.search
+												});
+											},
+											isSelected: false
+										}}
+									/>
+								))}
+							</div>
+						) : (
+							<div className={styles.emptyView}>
+								Click on the bookmarks in the course list while signed-in to save courses!
+							</div>
+						)}
+					</div>
+				</div>
 			)}
-		</div>
+		</>
 	);
 };
 

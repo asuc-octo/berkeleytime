@@ -16,7 +16,9 @@ import {
 	UPDATE_ENROLL_SELECTED
 } from './actionTypes';
 
-axios.defaults.baseURL = import.meta.env.PROD ? axios.defaults.baseURL : 'https://staging.berkeleytime.com';
+axios.defaults.baseURL = import.meta.env.PROD
+	? axios.defaults.baseURL
+	: 'https://staging.berkeleytime.com';
 
 // update grade list
 const updateGradeContext = (data) => ({
@@ -159,6 +161,28 @@ export function fetchGradeData(classData) {
 		);
 }
 
+export async function fetchCatalogGrades(classData) {
+	const promises = [];
+	for (const course of classData) {
+		const { sections } = course;
+		const url = `/api/grades/sections/${sections.join('&')}/`;
+		promises.push(axios.get(url));
+	}
+
+	const result = await axios.all(promises);
+
+	const test = result.map((res, i) => {
+		let gradesData = res.data;
+		gradesData['id'] = classData[i].id;
+		gradesData['instructor'] = classData[i].instructor = 'All Instructors';
+		gradesData['semester'] = classData[i].semester = 'All Semesters';
+		gradesData['colorId'] = classData[i].colorId;
+		return gradesData;
+	});
+
+	return test;
+}
+
 export function fetchGradeSelected(updatedClass) {
 	const url = `/api/grades/course_grades/${updatedClass.value}/`;
 	return (dispatch) =>
@@ -172,6 +196,12 @@ export function fetchGradeSelected(updatedClass) {
 			},
 			(error) => console.log('An error occurred.', error)
 		);
+}
+
+export async function fetchLegacyGradeObjects(id) {
+	const url = `/api/grades/course_grades/${id}/`;
+	const res = await axios.get(url);
+	return res.data;
 }
 
 export function fetchGradeFromUrl(url, navigate) {
@@ -356,19 +386,45 @@ export function fetchEnrollData(classData) {
 		);
 }
 
+export async function fetchCatalogEnrollment(classData) {
+	const promises = [];
+	for (const course of classData) {
+		const { instructor, courseID, semester, sections } = course;
+		let url;
+		if (instructor === 'all') {
+			const [sem, year] = semester.split(' ');
+			url = `/api/enrollment/aggregate/${courseID}/${sem.toLowerCase()}/${year}/`;
+		} else {
+			url = `/api/enrollment/data/${sections[0]}/`;
+		}
+		promises.push(axios.get(url));
+	}
+
+	const result = await axios.all(promises);
+
+	return result.map((res, i) => {
+		let enrollmentData = res.data;
+		enrollmentData['id'] = classData[i].id;
+		enrollmentData['colorId'] = classData[i].colorId;
+		return enrollmentData;
+	});
+}
+
 export function fetchEnrollSelected(updatedClass) {
 	const url = `/api/enrollment/sections/${updatedClass.value}/`;
 	return (dispatch) =>
 		axios.get(url).then(
 			(res) => {
 				dispatch(updatedEnrollSelected(res.data));
-				// if (updatedClass.addSelected) {
-				//   this.addSelected();
-				//   this.handleClassSelect({value: updatedClass.value, addSelected: false});
-				// }
 			},
 			(error) => console.log('An error occurred.', error)
 		);
+}
+
+export async function fetchLegacyEnrollmentObjects(courseId) {
+	const url = `/api/enrollment/sections/${courseId}/`;
+	const result = await axios.get(url);
+	return result.data;
 }
 
 export function fetchEnrollFromUrl(url, navigate) {

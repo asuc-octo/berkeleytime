@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import {
 	LineChart,
 	XAxis,
@@ -13,14 +14,12 @@ import {
 import vars from '../../utils/variables';
 import emptyImage from '../../assets/img/images/graphs/empty.svg';
 
-const EmptyLabel = (props) => {
+export const EmptyLabel = ({ children }) => {
 	return (
 		<div className="graph-empty">
 			<div className="graph-empty-content">
 				<img className="graph-empty-image" src={emptyImage} alt="empty state" />
-				<h3 className="graph-empty-heading">
-					You have not added any <br /> classes yet.
-				</h3>
+				<h3 className="graph-empty-heading">{children}</h3>
 			</div>
 		</div>
 	);
@@ -52,106 +51,111 @@ function getYTickRange(limit) {
 	return arr;
 }
 
-export default function EnrollmentGraph({
-	graphData,
-	enrollmentData,
-	updateLineHover,
-	updateGraphHover,
-	isMobile,
-	graphEmpty,
-	selectedCourses
-}) {
-	const labelStyle = {
-		textAnchor: 'middle',
-		fontSize: '12px'
-	};
+const labelStyle = {
+	textAnchor: 'middle',
+	fontSize: '12px'
+};
+
+export default function EnrollmentGraph(props) {
+	const { enrollmentData, updateLineHover, updateGraphHover, isMobile, selectedCourses, color } =
+		props;
+
+	const isEmpty =
+		enrollmentData === null ||
+		enrollmentData.length === 0 ||
+		selectedCourses === null ||
+		selectedCourses.length === 0;
+
+	const graphData = useMemo(() => {
+		if (!enrollmentData || enrollmentData.length <= 0) return [];
+		const days = [...Array(200).keys()];
+
+		return days.map((day) => {
+			const ret = {
+				name: day
+			};
+			for (const enrollment of enrollmentData) {
+				const validTimes = enrollment.data.filter((time) => time.day >= 0);
+				const enrollmentTimes = {};
+				for (const validTime of validTimes) {
+					enrollmentTimes[validTime.day] = validTime;
+				}
+
+				if (day in enrollmentTimes) {
+					ret[enrollment.id] = (enrollmentTimes[day].enrolled_percent * 100).toFixed(1);
+				}
+			}
+			return ret;
+		});
+	}, [enrollmentData]);
+
 	return (
-		<div>
-			<div className="enrollment-recharts-container">
-				<ResponsiveContainer width={isMobile ? 500 : '100%'} height={400}>
-					<LineChart
-						data={graphData}
-						onMouseMove={updateGraphHover}
-						margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
-					>
-						<XAxis dataKey="name" interval={19} />
-						<YAxis
-							type="number"
-							unit="%"
-							domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
-							ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}
-						/>
+		<div className="grades-graph">
+			<ResponsiveContainer width={isMobile ? 500 : '100%'} height={400}>
+				<LineChart
+					data={graphData}
+					// onMouseMove={updateGraphHover}
+					margin={{ top: 0, right: 0, left: -15, bottom: 0 }}
+				>
+					<XAxis dataKey="name" interval={19} />
+					<YAxis
+						fontSize={14}
+						type="number"
+						unit="%"
+						domain={[0, Math.max(getLargestEnrollment(graphData), 100)]}
+						ticks={getYTickRange(Math.max(getLargestEnrollment(graphData), 100))}
+					/>
 
-						<Tooltip
-							formatter={(value) => `${value}%`}
-							labelFormatter={(label) => `Day ${label - 1}`}
-							cursor={graphEmpty ? false : true}
-						/>
+					<Tooltip
+						formatter={(value) => `${value}%`}
+						labelFormatter={(label) => `Day ${label - 1}`}
+						cursor={isEmpty ? false : true}
+					/>
 
-						{!graphEmpty &&
-							enrollmentData.map((item, i) => (
-								<Line
-									key={i}
-									name={`${item.title}`}
-									type="monotone"
-									dataKey={item.id}
-									stroke={vars.colors[item.colorId]}
-									strokeWidth={3}
-									dot={false}
-									activeDot={{ onMouseOver: (_, e) => updateLineHover(e.dataKey, e.payload.name) }}
-									connectNulls
-								/>
-							))}
-						{!graphEmpty && (
-							<ReferenceLine
-								x={enrollmentData[0].telebears.phase2_start_day}
-								stroke="black"
-								strokeDasharray="3 3"
-							>
-								<Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-									{`Phase II Start (${selectedCourses[0].semester})`}
-								</Label>
-							</ReferenceLine>
-						)}
-						{!graphEmpty && (
-							<ReferenceLine
-								x={enrollmentData[0].telebears.adj_start_day}
-								stroke="black"
-								strokeDasharray="3 3"
-							>
-								<Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-									{`Adjustment Start (${selectedCourses[0].semester})`}
-								</Label>
-							</ReferenceLine>
-						)}
+					{!isEmpty &&
+						enrollmentData.map((item, i) => (
+							<Line
+								key={i}
+								name={`${item.title}`}
+								type="monotone"
+								dataKey={item.id}
+								stroke={color ? color : vars.colors[item.colorId]}
+								strokeWidth={3}
+								dot={false}
+								activeDot={{ onMouseOver: (_, e) => updateLineHover(e.dataKey, e.payload.name) }}
+								connectNulls
+							/>
+						))}
+					{!isEmpty && (
+						<ReferenceLine
+							x={enrollmentData[0].telebears.phase2_start_day}
+							stroke="black"
+							strokeDasharray="3 3"
+						>
+							<Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+								{`Phase II Start (${selectedCourses[0].semester})`}
+							</Label>
+						</ReferenceLine>
+					)}
+					{!isEmpty && (
+						<ReferenceLine
+							x={enrollmentData[0].telebears.adj_start_day}
+							stroke="black"
+							strokeDasharray="3 3"
+						>
+							<Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
+								{`Adjustment Start (${selectedCourses[0].semester})`}
+							</Label>
+						</ReferenceLine>
+					)}
 
-						{isMobile && (
-							<Legend height={10} horizontalAlign="left" layout="vertical" iconType="circle" />
-						)}
-					</LineChart>
-				</ResponsiveContainer>
-			</div>
+					{isMobile && (
+						<Legend height={10} horizontalAlign="left" layout="vertical" iconType="circle" />
+					)}
+				</LineChart>
+			</ResponsiveContainer>
 
-			{graphEmpty && <EmptyLabel />}
+			{enrollmentData?.length == 0 && <EmptyLabel>No data for the selected semester.</EmptyLabel>}
 		</div>
 	);
 }
-
-// <ReferenceLine
-//   x={enrollmentData[0].telebears.phase2_start_day}
-//   stroke="black"
-//   strokeDasharray="3 3"
-// >
-//   <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-//     {`Phase II Start (${enrollmentData[0].telebears.semester})`}
-//   </Label>
-// </ReferenceLine>
-// <ReferenceLine
-//   x={enrollmentData[0].telebears.adj_start_day}
-//   stroke="black"
-//   strokeDasharray="3 3"
-// >
-//   <Label angle={-90} position="insideLeft" style={labelStyle} offset={10}>
-//     {`Adjustment Start (${enrollmentData[0].telebears.semester})`}
-//   </Label>
-// </ReferenceLine>
