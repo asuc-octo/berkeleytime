@@ -35,6 +35,7 @@ const CourseSelector = ({ allCourses, schedule, setSchedule }: Props) => {
 	return (
 		<div className="course-selector">
 			<BTSelect
+				courseSearch
 				value={null}
 				name="selectClass"
 				placeholder="Search for a class..."
