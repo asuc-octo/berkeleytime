@@ -25,7 +25,5 @@ controller:
     # enable-opentracing: "true"
     # datadog-collector-host: $HOST_IP
 tcp:
-  2222: default/bt-gitlab:2222::PROXY
-  5432: default/bt-psql-staging:5432::PROXY
-  6379: default/bt-redis-staging-master:6379::PROXY
-  27017: default/bt-mdb-staging-0-external:27017::PROXY
+  5000: default/bt-gitlab-tcp:5000
+  10000: default/bt-gitlab-tcp:10000
