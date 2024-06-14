@@ -104,6 +104,11 @@ def grade_json(request, grade_ids):
             else:
                 numerator = sections.aggregate(Sum(grade)).get(grade + '__sum', 0)
             actual_total += numerator
+
+            # FERPA compliance
+            if numerator == percentile_total:
+                return render_to_empty_json()
+
             percent = numerator / percentile_total if percentile_total > 0 else 0.0
             grade_entry['percent'] = round(percent, 2)
             grade_entry['numerator'] = numerator
