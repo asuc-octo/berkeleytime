@@ -22,7 +22,7 @@ def grade_context(long_form=False):
     if cached:
         rtn = cached
     else:
-        courses = Course.objects.filter(grade__isnull=False).distinct().order_by('abbreviation', 'course_number')
+        courses = Course.objects.filter(grade__isnull=False).filter(enrolled_gt=10).distinct().order_by('abbreviation', 'course_number')
         if long_form:
             rtn = courses.values('id', 'abbreviation', 'course_number', 'title')
         else:
@@ -91,7 +91,7 @@ def grade_json(request, grade_ids):
         actual_total = 0
         rtn = {}
         grade_ids = grade_ids.split('&')
-        sections = Grade.objects.filter(id__in=grade_ids)
+        sections = Grade.objects.filter(id__in=grade_ids).filter(graded_total__gt=10)
         course = Course.objects.get(id=sections.values_list('course', flat=True)[0])
         percentile_total = sections.aggregate(Sum('graded_total'))['graded_total__sum']
 
@@ -104,6 +104,11 @@ def grade_json(request, grade_ids):
             else:
                 numerator = sections.aggregate(Sum(grade)).get(grade + '__sum', 0)
             actual_total += numerator
+
+            # FERPA compliance
+            if numerator == percentile_total:
+                return render_to_empty_json()
+
             percent = numerator / percentile_total if percentile_total > 0 else 0.0
             grade_entry['percent'] = round(percent, 2)
             grade_entry['numerator'] = numerator
