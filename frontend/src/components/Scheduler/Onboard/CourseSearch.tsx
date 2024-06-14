@@ -1,9 +1,9 @@
-import BTSelect from 'components/Custom/Select';
+import BTSelect from '../../../components/Custom/Select';
 import { CourseOverviewFragment } from 'graphql';
 import { Dispatch, SetStateAction, useMemo } from 'react';
-import { courseToName } from 'lib/courses/course';
-import { compareDepartmentName } from 'lib/courses/sorting';
-import { hasCourseById, Schedule } from 'utils/scheduler/scheduler';
+import { courseToName } from '../../../lib/courses/course';
+import { compareDepartmentName } from '../../../lib/courses/sorting';
+import { hasCourseById, Schedule } from '../../../utils/scheduler/scheduler';
 import { addCourse } from './onboard';
 
 type CourseType = CourseOverviewFragment;

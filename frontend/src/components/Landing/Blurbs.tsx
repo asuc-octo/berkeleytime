@@ -1,4 +1,4 @@
-import { H3, P } from 'bt/custom';
+import { H3, P } from '../../bt/custom';
 
 import asuc_logo from '../../assets/img/landing/asuc_logo.png';
 import stf_logo from '../../assets/img/landing/stf_logo.jpeg';

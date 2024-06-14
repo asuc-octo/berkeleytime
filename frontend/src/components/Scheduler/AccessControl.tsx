@@ -1,6 +1,6 @@
 import { forwardRef, MouseEvent, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
-import { AccessStatus, ACCESS_STATUSES } from 'utils/scheduler/accessStatus';
+import { AccessStatus, ACCESS_STATUSES } from '../../utils/scheduler/accessStatus';
 
 import { ReactComponent as ExpandMore } from '../../assets/svg/common/expand.svg';
 

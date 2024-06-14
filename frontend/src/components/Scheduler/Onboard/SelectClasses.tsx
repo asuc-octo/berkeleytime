@@ -1,17 +1,17 @@
 import { Dispatch, SetStateAction } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
-import BTLoader from 'components/Common/BTLoader';
-import CourseSearch from 'components/Scheduler/Onboard/CourseSearch';
-import SchedulerCourseCard from 'components/Scheduler/Onboard/SchedulerCourseCard';
+import BTLoader from '../../../components/Common/BTLoader';
+import CourseSearch from '../../../components/Scheduler/Onboard/CourseSearch';
+import SchedulerCourseCard from '../../../components/Scheduler/Onboard/SchedulerCourseCard';
 
 import { ScheduleContext } from '../ScheduleContext';
 import { CourseOverviewFragment } from 'graphql';
 import { useUser } from '../../../graphql/hooks/user';
 import { useGetCoursesForFilterQuery } from 'graphql';
-import useLatestSemester from 'graphql/hooks/latestSemester';
+import useLatestSemester from '../../../graphql/hooks/latestSemester';
 import { addCourse } from './onboard';
-import { compareDepartmentName } from 'lib/courses/sorting';
-import { Schedule, removeCourse } from 'utils/scheduler/scheduler';
+import { compareDepartmentName } from '../../../lib/courses/sorting';
+import { Schedule, removeCourse } from '../../../utils/scheduler/scheduler';
 
 type Props = {
 	// updatePage: (i: number) => void;

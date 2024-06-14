@@ -1,4 +1,4 @@
-import { H3 } from 'bt/custom';
+import { H3 } from '../../bt/custom';
 import { current } from '../../lib/contributors';
 import { Globe } from 'iconoir-react';
 

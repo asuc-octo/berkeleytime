@@ -1,5 +1,5 @@
 import { SectionFragment } from 'graphql';
-import { stringToDate } from 'utils/date';
+import { stringToDate } from '../../utils/date';
 import { isEnrollmentSection } from './section';
 
 // Specify an ordering for section types.

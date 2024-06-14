@@ -1,5 +1,5 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import { H6, A } from 'bt/custom';
+import { H6, A } from '../../bt/custom';
 
 export default function Footer() {
 	return (

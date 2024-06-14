@@ -1,13 +1,17 @@
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-import BTLoader from 'components/Common/BTLoader';
-import { DEFAULT_SCHEDULE, Schedule, SCHEDULER_LOCALSTORAGE_KEY } from 'utils/scheduler/scheduler';
-import { useUser } from 'graphql/hooks/user';
-import { useCreateSchedule } from 'graphql/hooks/schedule';
-import { useLocalStorageState } from 'utils/hooks';
+import BTLoader from '../../components/Common/BTLoader';
+import {
+	DEFAULT_SCHEDULE,
+	Schedule,
+	SCHEDULER_LOCALSTORAGE_KEY
+} from '../../utils/scheduler/scheduler';
+import { useUser } from '../../graphql/hooks/user';
+import { useCreateSchedule } from '../../graphql/hooks/schedule';
+import { useLocalStorageState } from '../../utils/hooks';
 import ScheduleEditor from '../../components/Scheduler/ScheduleEditor';
 import { useNavigate } from 'react-router-dom';
-import { useSemester } from 'graphql/hooks/semester';
+import { useSemester } from '../../graphql/hooks/semester';
 import Callout from '../../components/Scheduler/Callout';
 import { ReduxState } from 'redux/store';
 import { useSelector } from 'react-redux';

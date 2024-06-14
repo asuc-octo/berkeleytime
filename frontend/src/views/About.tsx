@@ -1,7 +1,7 @@
 import { Row, Col } from 'react-bootstrap';
 import { Leaf, LightBulbOn, EmojiTalkingHappy } from 'iconoir-react';
 
-import { H3, P } from 'bt/custom';
+import { H3, P } from '../bt/custom';
 
 import CurrentContributors from '../components/About/CurrentContributors';
 import PastContributors from '../components/About/PastContributors';

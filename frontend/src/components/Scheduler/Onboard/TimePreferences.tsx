@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import { Button, P, H3, H6 } from 'bt/custom';
-import BTSelect from 'components/Custom/Select';
-import BTInput from 'components/Custom/Input';
+import { Button, P, H3, H6 } from '../../../bt/custom';
+import BTSelect from '../../../components/Custom/Select';
+import BTInput from '../../../components/Custom/Input';
 
 const DAYS = [
 	{ value: 1, label: 'Monday' },

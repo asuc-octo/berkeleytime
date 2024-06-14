@@ -1,6 +1,6 @@
 import { formatUnits, applyIndicatorPercent, applyIndicatorGrade } from '../../utils/utils';
 import { CourseOverviewFragment } from 'graphql';
-import { useUnsaveCourse } from 'graphql/hooks/saveCourse';
+import { useUnsaveCourse } from '../../graphql/hooks/saveCourse';
 import { Link } from 'react-router-dom';
 import ProfileCard from './ProfileCard';
 

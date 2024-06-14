@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { Modal } from 'react-bootstrap';
-import { H3, P, Button } from 'bt/custom';
-import closeIcon from 'assets/svg/common/close.svg';
+import { H3, P, Button } from '../../bt/custom';
+import closeIcon from '../../assets/svg/common/close.svg';
 import schedulerImg from '../../assets/img/landing/scheduler.png';
 
 import { useDispatch, useSelector } from 'react-redux';

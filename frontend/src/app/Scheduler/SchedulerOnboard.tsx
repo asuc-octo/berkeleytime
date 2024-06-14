@@ -1,8 +1,8 @@
 import { ComponentType, useState, Dispatch, SetStateAction } from 'react';
-import Welcome from 'components/Scheduler/Onboard/Welcome';
-import SelectClasses from 'components/Scheduler/Onboard/SelectClasses';
+import Welcome from '../../components/Scheduler/Onboard/Welcome';
+import SelectClasses from '../../components/Scheduler/Onboard/SelectClasses';
 
-import { DEFAULT_SCHEDULE, Schedule } from 'utils/scheduler/scheduler';
+import { DEFAULT_SCHEDULE, Schedule } from '../../utils/scheduler/scheduler';
 import { ReduxState } from 'redux/store';
 import { useSelector } from 'react-redux';
 

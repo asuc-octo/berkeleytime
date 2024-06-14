@@ -18,7 +18,7 @@ import { createFilter } from 'react-select';
 
 import styles from './Select.module.scss';
 import Fuse from 'fuse.js';
-import { laymanTerms } from 'lib/courses/course';
+import { laymanTerms } from '../../lib/courses/course';
 
 const ListContext = createContext<{
 	getSize: (index: number) => number;

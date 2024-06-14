@@ -1,6 +1,6 @@
 import { Container, Row, Col, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 
-import { Button, H3, P } from 'bt/custom';
+import { Button, H3, P } from '../../bt/custom';
 import { ReactComponent as Logo } from '../../assets/svg/landing/main.svg';
 
 export default function Jumbotron() {

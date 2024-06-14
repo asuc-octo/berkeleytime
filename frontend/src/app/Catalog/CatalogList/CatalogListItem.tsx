@@ -1,10 +1,10 @@
 import { CourseFragment } from 'graphql';
-import { useSaveCourse, useUnsaveCourse } from 'graphql/hooks/saveCourse';
-import { useUser } from 'graphql/hooks/user';
+import { useSaveCourse, useUnsaveCourse } from '../../../graphql/hooks/saveCourse';
+import { useUser } from '../../../graphql/hooks/user';
 import { CSSProperties, memo } from 'react';
 import { areEqual } from 'react-window';
-import { ReactComponent as BookmarkSaved } from 'assets/svg/catalog/bookmark-saved.svg';
-import { ReactComponent as BookmarkUnsaved } from 'assets/svg/catalog/bookmark-unsaved.svg';
+import { ReactComponent as BookmarkSaved } from '../../../assets/svg/catalog/bookmark-saved.svg';
+import { ReactComponent as BookmarkUnsaved } from '../../../assets/svg/catalog/bookmark-unsaved.svg';
 import catalogService from '../service';
 
 const { colorEnrollment, formatEnrollment } = catalogService;

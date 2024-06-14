@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import jemma from 'assets/img/about/2020-21/michael_1.jpg';
+import jemma from '../../assets/img/about/2020-21/michael_1.jpg';
 
 function Profile({ profile }) {
 	return (

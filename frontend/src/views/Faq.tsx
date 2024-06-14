@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 
-import { H3, P, Button } from 'bt/custom';
+import { H3, P, Button } from '../bt/custom';
 
-import QuestionCard from 'components/Faq/QuestionCard';
+import QuestionCard from '../components/Faq/QuestionCard';
 
 export function Component() {
 	return (

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { Schedule, SchedulerSectionType } from 'utils/scheduler/scheduler';
+import { Schedule, SchedulerSectionType } from '../../utils/scheduler/scheduler';
 
 type ContextType = {
 	schedule: Schedule;

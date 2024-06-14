@@ -9,16 +9,16 @@ import {
 	useState
 } from 'react';
 import { ActionMeta } from 'react-select';
-import BTSelect from 'components/Custom/Select';
+import BTSelect from '../../../components/Custom/Select';
 
 import catalogService from '../service';
-import { ReactComponent as SearchIcon } from 'assets/svg/common/search.svg';
-import { ReactComponent as FilterIcon } from 'assets/svg/catalog/filter.svg';
-import BTInput from 'components/Custom/Input';
+import { ReactComponent as SearchIcon } from '../../../assets/svg/common/search.svg';
+import { ReactComponent as FilterIcon } from '../../../assets/svg/catalog/filter.svg';
+import BTInput from '../../../components/Custom/Input';
 import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, CatalogSlug } from '../types';
 
 import { useGetFiltersQuery } from 'graphql';
-import BTLoader from 'components/Common/BTLoader';
+import BTLoader from '../../../components/Common/BTLoader';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import styles from './CatalogFilters.module.scss';

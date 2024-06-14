@@ -2,7 +2,7 @@ import { useState, useEffect, PropsWithChildren } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavProps } from 'react-bootstrap';
-import { Button } from 'bt/custom';
+import { Button } from '../../bt/custom';
 import { ReactComponent as GoogleIcon } from '../../assets/svg/profile/google.svg';
 
 import { useUser } from '../../graphql/hooks/user';

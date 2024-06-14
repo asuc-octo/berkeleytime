@@ -1,6 +1,6 @@
 import { Row, Col } from 'react-bootstrap';
 
-import { H3, H6, P } from 'bt/custom';
+import { H3, H6, P } from '../../bt/custom';
 
 import course from '../../assets/svg/landing/courses.svg';
 import grade from '../../assets/svg/landing/grades.svg';

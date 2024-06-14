@@ -1,19 +1,19 @@
 import { CourseOverviewFragment, useGetSchedulerCourseForIdQuery } from 'graphql';
 import { useState } from 'react';
-import { courseToName } from 'lib/courses/course';
-import { Semester } from 'utils/playlists/semesters';
+import { courseToName } from '../../../lib/courses/course';
+import { Semester } from '../../../utils/playlists/semesters';
 
 import { ReactComponent as Trash } from '../../../assets/svg/common/trash.svg';
 import LectureCard from './LectureCard';
 import BTLoader from '../../Common/BTLoader';
-import { applyIndicatorPercent } from 'utils/utils';
-import { parseUnits, unitsToString } from 'lib/courses/units';
+import { applyIndicatorPercent } from '../../../utils/utils';
+import { parseUnits, unitsToString } from '../../../lib/courses/units';
 
 import { ReactComponent as ExpandMore } from '../../../assets/svg/common/expand.svg';
 import { Collapse } from 'react-bootstrap';
-import { getColorForCourse } from 'utils/scheduler/scheduler';
+import { getColorForCourse } from '../../../utils/scheduler/scheduler';
 import { useScheduleContext } from '../ScheduleContext';
-import { getNodes } from 'utils/graphql';
+import { getNodes } from '../../../utils/graphql';
 
 type Props = {
 	courseId: string;

@@ -6,8 +6,8 @@ import {
 	CourseOverviewFragment,
 	CourseFragment
 } from 'graphql';
-import { laymanTerms } from 'lib/courses/course';
-import { courseToName } from 'lib/courses/course';
+import { laymanTerms } from '../../lib/courses/course';
+import { courseToName } from '../../lib/courses/course';
 import {
 	CatalogCategoryKeys,
 	FilterTemplate,

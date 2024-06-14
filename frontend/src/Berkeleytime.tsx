@@ -4,7 +4,7 @@ import { openBanner, enterMobile, exitMobile, openLandingModal } from './redux/c
 import useDimensions from 'react-cool-dimensions';
 import easterEgg from './utils/easterEgg';
 import Routes from './Routes';
-import { fetchEnrollContext } from 'redux/actions';
+import { fetchEnrollContext } from './redux/actions';
 import { IconoirProvider } from 'iconoir-react';
 
 const Berkeleytime = () => {

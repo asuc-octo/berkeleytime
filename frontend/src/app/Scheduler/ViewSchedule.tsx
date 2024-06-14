@@ -1,15 +1,15 @@
 import { useGetScheduleForIdQuery } from 'graphql';
-import BTLoader from 'components/Common/BTLoader';
+import BTLoader from '../../components/Common/BTLoader';
 import { Navigate, useParams } from 'react-router-dom';
 import {
 	deserializeSchedule,
 	formatScheduleError,
 	getUnitsForSchedule
-} from 'utils/scheduler/scheduler';
-import SchedulerCalendar from 'components/Scheduler/Calendar/SchedulerCalendar';
-import { unitsToString } from 'lib/courses/units';
-import { useUser } from 'graphql/hooks/user';
-import { Button } from 'bt/custom';
+} from '../../utils/scheduler/scheduler';
+import SchedulerCalendar from '../../components/Scheduler/Calendar/SchedulerCalendar';
+import { unitsToString } from '../../lib/courses/units';
+import { useUser } from '../../graphql/hooks/user';
+import { Button } from '../../bt/custom';
 import { ReduxState } from 'redux/store';
 import { useSelector } from 'react-redux';
 

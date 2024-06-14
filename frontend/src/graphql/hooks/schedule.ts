@@ -1,5 +1,5 @@
-import { Semester } from 'utils/playlists/semesters';
-import { Schedule, serializeSchedule } from 'utils/scheduler/scheduler';
+import { Semester } from '../../utils/playlists/semesters';
+import { Schedule, serializeSchedule } from '../../utils/scheduler/scheduler';
 import {
 	DeleteScheduleMutationOptions,
 	GetUserDocument,
