@@ -2,7 +2,7 @@ import { memo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { openBanner, enterMobile, exitMobile, openLandingModal } from './redux/common/actions';
 import useDimensions from 'react-cool-dimensions';
-import easterEgg from 'utils/easterEgg';
+import easterEgg from './utils/easterEgg';
 import Routes from './Routes';
 import { fetchEnrollContext } from 'redux/actions';
 import { IconoirProvider } from 'iconoir-react';

@@ -6,7 +6,7 @@ import Berkeleytime from './Berkeleytime';
 import store from './redux/store';
 import client from './graphql/client';
 
-import './assets/scss/berkeleytime.scss';
+import 'assets/scss/berkeleytime.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 createRoot(document.getElementById('root') as HTMLElement).render(
