@@ -30,8 +30,7 @@ export default defineConfig({
 	],
 	resolve: {
 		alias: {
-			'~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
-			'*': './src/*'
+			'~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap')
 		}
 	},
 	build: {

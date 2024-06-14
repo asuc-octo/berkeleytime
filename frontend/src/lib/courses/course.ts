@@ -1,5 +1,5 @@
 import { CourseFragment } from 'graphql';
-import { hash } from 'utils/string';
+import { hash } from '../../utils/string';
 
 type CourseReference = {
 	abbreviation: string;

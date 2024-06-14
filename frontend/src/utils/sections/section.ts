@@ -1,7 +1,7 @@
 import { SectionFragment } from 'graphql';
 import { ReactNode } from 'react';
-import { formatTime } from 'utils/date';
-import { applyIndicatorPercent } from 'utils/utils';
+import { formatTime } from '../../utils/date';
+import { applyIndicatorPercent } from '../../utils/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 type SectionType =

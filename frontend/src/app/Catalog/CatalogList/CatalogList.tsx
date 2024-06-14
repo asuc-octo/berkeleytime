@@ -7,7 +7,7 @@ import useDimensions from 'react-cool-dimensions';
 import styles from './CatalogList.module.scss';
 import { useNavigate } from 'react-router-dom';
 import CatalogService from '../service';
-import { sortByAttribute } from 'lib/courses/sorting';
+import { sortByAttribute } from '../../../lib/courses/sorting';
 
 type CatalogListProps = {
 	currentFilters: CurrentFilters;

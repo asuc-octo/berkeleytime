@@ -1,5 +1,5 @@
 import { CourseOverviewFragment } from 'graphql';
-import { CatalogSortKeys } from 'app/Catalog/types';
+import { CatalogSortKeys } from '../../app/Catalog/types';
 
 type CompareFn = (courseA: CourseOverviewFragment, courseB: CourseOverviewFragment) => number;
 

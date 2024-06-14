@@ -1,17 +1,17 @@
 import { SectionFragment } from 'graphql';
 import { CSSProperties } from 'react';
-import { formatSectionTime } from 'utils/sections/section';
+import { formatSectionTime } from '../../../utils/sections/section';
 import catalogService from '../service';
 import Skeleton from 'react-loading-skeleton';
 
-import people from 'assets/svg/catalog/people.svg';
-import denero from 'assets/img/eggs/denero.png';
-import hug from 'assets/img/eggs/hug.png';
-import hilf from 'assets/img/eggs/hilf.png';
-import sahai from 'assets/img/eggs/sahai.png';
-import scott from 'assets/img/eggs/scott.png';
-import kubi from 'assets/img/eggs/kubi.png';
-import garcia from 'assets/img/eggs/garcia.png';
+import people from '../../../assets/svg/catalog/people.svg';
+import denero from '../../../assets/img/eggs/denero.png';
+import hug from '../../../assets/img/eggs/hug.png';
+import hilf from '../../../assets/img/eggs/hilf.png';
+import sahai from '../../../assets/img/eggs/sahai.png';
+import scott from '../../../assets/img/eggs/scott.png';
+import kubi from '../../../assets/img/eggs/kubi.png';
+import garcia from '../../../assets/img/eggs/garcia.png';
 
 import styles from './CatalogView.module.scss';
 

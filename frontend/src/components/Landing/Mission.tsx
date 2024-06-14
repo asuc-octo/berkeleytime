@@ -1,8 +1,8 @@
 import { Container, Row, Col } from 'react-bootstrap';
 
-import { H3, P, Button } from 'bt/custom';
+import { H3, P, Button } from '../../bt/custom';
 
-import doe from 'assets/img/about/group/doe.jpg';
+import doe from '../../assets/img/about/group/doe.jpg';
 
 export default function Mission() {
 	return (

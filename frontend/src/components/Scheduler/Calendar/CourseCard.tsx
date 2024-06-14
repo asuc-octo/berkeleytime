@@ -1,18 +1,18 @@
-import TrashButton from 'components/Common/TrashButton';
+import TrashButton from '../../../components/Common/TrashButton';
 import { CourseOverviewFragment } from 'graphql';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
-import { courseToColor, courseToName } from 'lib/courses/course';
+import { courseToColor, courseToName } from '../../../lib/courses/course';
 import {
 	getColorForSection,
 	getCourseForSchedule,
 	removeSection,
 	Schedule,
 	SchedulerSectionType
-} from 'utils/scheduler/scheduler';
-import { formatLocation, formatSectionTime } from 'utils/sections/section';
+} from '../../../utils/scheduler/scheduler';
+import { formatLocation, formatSectionTime } from '../../../utils/sections/section';
 import cx from 'classnames';
 import CalendarCard from './CalendarCard';
-import { combineStrings } from 'utils/string';
+import { combineStrings } from '../../../utils/string';
 
 type Props = {
 	/**

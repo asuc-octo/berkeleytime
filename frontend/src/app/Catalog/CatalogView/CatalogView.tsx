@@ -1,23 +1,23 @@
 import { Dispatch, memo, SetStateAction, useEffect, useMemo, useState } from 'react';
-import people from 'assets/svg/catalog/people.svg';
-import chart from 'assets/svg/catalog/chart.svg';
-import book from 'assets/svg/catalog/book.svg';
-import launch from 'assets/svg/catalog/launch.svg';
-import { ReactComponent as BackArrow } from 'assets/img/images/catalog/backarrow.svg';
+import people from '../../../assets/svg/catalog/people.svg';
+import chart from '../../../assets/svg/catalog/chart.svg';
+import book from '../../../assets/svg/catalog/book.svg';
+import launch from '../../../assets/svg/catalog/launch.svg';
+import { ReactComponent as BackArrow } from '../../../assets/img/images/catalog/backarrow.svg';
 import catalogService from '../service';
-import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from 'utils/utils';
+import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from '../../../utils/utils';
 import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
-import { CurrentFilters } from 'app/Catalog/types';
+import { CurrentFilters } from '../../../app/Catalog/types';
 import { useNavigate, useParams } from 'react-router-dom';
-import { sortSections } from 'utils/sections/sort';
+import { sortSections } from '../../../utils/sections/sort';
 import Skeleton from 'react-loading-skeleton';
 import ReadMore from './ReadMore';
 
 import styles from './CatalogView.module.scss';
 import { useSelector } from 'react-redux';
 import SectionTable from './SectionTable';
-import { courseToName } from 'lib/courses/course';
-import Meta from 'components/Common/Meta';
+import { courseToName } from '../../../lib/courses/course';
+import Meta from '../../../components/Common/Meta';
 
 interface CatalogViewProps {
 	coursePreview: CourseFragment | null;
@@ -134,7 +134,10 @@ const CatalogView = (props: CatalogViewProps) => {
 
 	return (
 		<div className={`${styles.root}`} data-modal={isOpen}>
-			<Meta title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'} description={course?.description} />
+			<Meta
+				title={course ? `Catalog | ${courseToName(course)}` : 'Catalog'}
+				description={course?.description}
+			/>
 			<button
 				className={styles.modalButton}
 				onClick={() => {

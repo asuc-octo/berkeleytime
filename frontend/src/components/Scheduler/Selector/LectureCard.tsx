@@ -3,11 +3,15 @@ import { ChangeEvent, CSSProperties } from 'react';
 import { Form } from 'react-bootstrap';
 import cx from 'classnames';
 
-import { hasSectionById, Schedule, SchedulerSectionType } from 'utils/scheduler/scheduler';
-import { formatLocation, formatSectionEnrollment, formatSectionTime } from 'utils/sections/section';
-import { groupSections } from 'utils/sections/sort';
+import { hasSectionById, Schedule, SchedulerSectionType } from '../../../utils/scheduler/scheduler';
+import {
+	formatLocation,
+	formatSectionEnrollment,
+	formatSectionTime
+} from '../../../utils/sections/section';
+import { groupSections } from '../../../utils/sections/sort';
 import { useScheduleContext } from '../ScheduleContext';
-import { combineNodes } from 'utils/string';
+import { combineNodes } from '../../../utils/string';
 
 const MAX_SECTIONS_BEFORE_SCROLL = 8;
 const SCROLL_SECTION_HEIGHT = '280px';

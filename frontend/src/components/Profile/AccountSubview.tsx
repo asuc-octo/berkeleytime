@@ -6,7 +6,7 @@ import { CourseOverviewFragment, ScheduleOverviewFragment, UserProfileFragment }
 
 import MAJORS from './majors.json';
 import { useUpdateUser } from '../../graphql/hooks/user';
-import { compareDepartmentName } from 'lib/courses/sorting';
+import { compareDepartmentName } from '../../lib/courses/sorting';
 import { Button } from 'react-bootstrap';
 import Subview from './Subview';
 import { Link } from 'react-router-dom';

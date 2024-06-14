@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLogin } from '../graphql/hooks/user';
-import BTLoader from 'components/Common/BTLoader';
+import BTLoader from '../components/Common/BTLoader';
 
 function useQuery() {
 	return new URLSearchParams(useLocation().search);

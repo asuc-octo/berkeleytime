@@ -1,4 +1,4 @@
-import { capitalize } from 'bt/utils';
+import { capitalize } from '../../bt/utils';
 import { FilterFragment } from 'graphql';
 
 type FilterablePlaylist = FilterFragment;

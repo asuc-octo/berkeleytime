@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Collapse } from 'react-bootstrap';
 
-import { P } from 'bt/custom';
+import { P } from '../../bt/custom';
 
 interface Props {
 	question: string;

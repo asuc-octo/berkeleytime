@@ -4,7 +4,7 @@ import hash from 'object-hash';
 
 import { fetchEnrollSelected } from '../../redux/actions';
 import { useDispatch, useSelector } from 'react-redux';
-import BTSelect from 'components/Custom/Select';
+import BTSelect from '../../components/Custom/Select';
 
 const buildCoursesOptions = (courses) => {
 	if (!courses) {

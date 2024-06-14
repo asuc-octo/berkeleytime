@@ -1,4 +1,4 @@
-import BTLoader from 'components/Common/BTLoader';
+import BTLoader from '../components/Common/BTLoader';
 import { useLogout, useUser } from '../graphql/hooks/user';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';

@@ -7,7 +7,7 @@ import EnrollmentSearchBar from '../../components/ClassSearchBar/EnrollmentSearc
 
 import info from '../../assets/img/images/graphs/info.svg';
 
-import Meta from 'components/Common/Meta';
+import Meta from '../../components/Common/Meta';
 
 import {
 	fetchEnrollContext,
@@ -23,8 +23,9 @@ const toUrlForm = (s) => {
 };
 
 const formatMetaTitle = (selectedCourses) =>
-	`Enrollment ${selectedCourses.length > 0 ? `| ${selectedCourses.map((c) => ` ${c.course}`)}` : ''}`;
-
+	`Enrollment ${
+		selectedCourses.length > 0 ? `| ${selectedCourses.map((c) => ` ${c.course}`)}` : ''
+	}`;
 
 export function Component() {
 	const [additionalInfo, setAdditionalInfo] = useState([]);

@@ -8,7 +8,7 @@ import GradesSearchBar from '../../components/ClassSearchBar/GradesSearchBar';
 
 import info from '../../assets/img/images/graphs/info.svg';
 
-import Meta from 'components/Common/Meta';
+import Meta from '../../components/Common/Meta';
 
 import {
 	fetchGradeContext,

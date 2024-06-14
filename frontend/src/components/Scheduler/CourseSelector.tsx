@@ -1,9 +1,9 @@
-import BTSelect from 'components/Custom/Select';
+import BTSelect from '../../components/Custom/Select';
 import { CourseOverviewFragment } from 'graphql';
 import { useMemo } from 'react';
-import { courseToName } from 'lib/courses/course';
-import { compareDepartmentName } from 'lib/courses/sorting';
-import { Semester } from 'utils/playlists/semesters';
+import { courseToName } from '../../lib/courses/course';
+import { compareDepartmentName } from '../../lib/courses/sorting';
+import { Semester } from '../../utils/playlists/semesters';
 import {
 	getUnitsForSchedule,
 	hasCourseById,
@@ -11,10 +11,10 @@ import {
 	Schedule,
 	SchedulerCourseType,
 	SchedulerSectionType
-} from 'utils/scheduler/scheduler';
+} from '../../utils/scheduler/scheduler';
 import SchedulerCourse from './Selector/SchedulerCourse';
 import { ScheduleContext } from './ScheduleContext';
-import { unitsToString } from 'lib/courses/units';
+import { unitsToString } from '../../lib/courses/units';
 
 type CourseType = CourseOverviewFragment;
 

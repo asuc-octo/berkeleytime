@@ -1,10 +1,14 @@
-import BTLoader from 'components/Common/BTLoader';
+import BTLoader from '../../../components/Common/BTLoader';
 import { useGetScheduleForIdLazyQuery, useUpdateScheduleMutation } from 'graphql';
 import { useCallback, useEffect, useRef, useState, Dispatch, SetStateAction } from 'react';
-import { deserializeSchedule, Schedule, serializeSchedule } from 'utils/scheduler/scheduler';
+import {
+	deserializeSchedule,
+	Schedule,
+	serializeSchedule
+} from '../../../utils/scheduler/scheduler';
 import ScheduleEditor from '../ScheduleEditor';
-import { Semester } from 'utils/playlists/semesters';
-import debounce from 'utils/debounce';
+import { Semester } from '../../../utils/playlists/semesters';
+import debounce from '../../../utils/debounce';
 import Callout from '../Callout';
 
 // This is NOT a loop. Rather it combines all

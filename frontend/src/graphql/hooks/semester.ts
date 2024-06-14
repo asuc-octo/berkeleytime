@@ -1,12 +1,12 @@
 import { useGetSemestersQuery } from 'graphql';
 import { ApolloError } from '@apollo/client';
-import { getNodes } from 'utils/graphql';
+import { getNodes } from '../../utils/graphql';
 import {
 	getLatestSemester,
 	Semester,
 	semesterToString,
 	SemesterWithPlaylist
-} from 'utils/playlists/semesters';
+} from '../../utils/playlists/semesters';
 
 /**
  * Gets the latest semester or a populated semester. Does not run a query if the

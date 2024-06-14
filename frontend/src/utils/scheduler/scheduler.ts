@@ -4,12 +4,12 @@ import {
 	ScheduleFragment,
 	SectionFragment
 } from 'graphql';
-import { addUnits, parseUnits, Units, unitsToString, ZERO_UNITS } from 'lib/courses/units';
-import { Semester, semesterToString } from 'utils/playlists/semesters';
+import { addUnits, parseUnits, Units, unitsToString, ZERO_UNITS } from '../../lib/courses/units';
+import { Semester, semesterToString } from '../../utils/playlists/semesters';
 import { getNodes } from '../graphql';
-import { courseToColor, courseToName, COURSE_PALETTE } from 'lib/courses/course';
+import { courseToColor, courseToName, COURSE_PALETTE } from '../../lib/courses/course';
 import { AccessStatus } from './accessStatus';
-import { dayToICalDay, reinterpretDateAsUTC, stringToDate } from 'utils/date';
+import { dayToICalDay, reinterpretDateAsUTC, stringToDate } from '../../utils/date';
 import { addWeeks, isBefore, min, setDay } from 'date-fns';
 
 // Update the version when the scheduler schema changes.
@@ -179,18 +179,18 @@ export function scheduleToICal(schedule: Schedule, semester: Semester): string {
 	const LAST_COURSE_DAY = new Date(2024, 11, 6);
 
 	const dateToICal = (date: Date) => {
-		    // Function to pad a number with leading zeros
-			const pad = (n: number) => n < 10 ? '0' + n : n;
+		// Function to pad a number with leading zeros
+		const pad = (n: number) => (n < 10 ? '0' + n : n);
 
-			const year = date.getUTCFullYear();
-			const month = pad(date.getUTCMonth() + 1); // Months are zero-indexed
-			const day = pad(date.getUTCDate());
-			const hours = pad(date.getUTCHours());
-			const minutes = pad(date.getUTCMinutes());
-			const seconds = pad(date.getUTCSeconds());
+		const year = date.getUTCFullYear();
+		const month = pad(date.getUTCMonth() + 1); // Months are zero-indexed
+		const day = pad(date.getUTCDate());
+		const hours = pad(date.getUTCHours());
+		const minutes = pad(date.getUTCMinutes());
+		const seconds = pad(date.getUTCSeconds());
 
-			return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
-	}
+		return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
+	};
 
 	const stringToICal = (str: string) =>
 		str.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');

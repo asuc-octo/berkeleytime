@@ -1,4 +1,4 @@
-import BTLoader from 'components/Common/BTLoader';
+import BTLoader from '../../components/Common/BTLoader';
 import { useGetScheduleForIdQuery } from 'graphql';
 import { Modal } from 'react-bootstrap';
 import SchedulerCalendar from './Calendar/SchedulerCalendar';
@@ -7,8 +7,8 @@ import {
 	formatScheduleError,
 	getUnitsForSchedule
 } from '../../utils/scheduler/scheduler';
-import { Button } from 'bt/custom';
-import { unitsToString } from 'lib/courses/units';
+import { Button } from '../../bt/custom';
+import { unitsToString } from '../../lib/courses/units';
 
 type ContentProps = {
 	scheduleId: string;
