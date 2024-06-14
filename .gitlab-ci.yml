@@ -92,5 +92,3 @@ deploy-prod:
     - kubectl rollout restart deploy/bt-frontend-prod
     - kubectl rollout status --timeout=1200s deploy/bt-backend-prod
     - kubectl rollout status --timeout=1200s deploy/bt-frontend-prod
-
-
