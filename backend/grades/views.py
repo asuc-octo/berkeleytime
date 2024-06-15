@@ -22,7 +22,7 @@ def grade_context(long_form=False):
     if cached:
         rtn = cached
     else:
-        courses = Course.objects.filter(grade__isnull=False).filter(enrolled_gt=10).distinct().order_by('abbreviation', 'course_number')
+        courses = Course.objects.filter(grade__isnull=False).filter(enrolled__gt=10).distinct().order_by('abbreviation', 'course_number')
         if long_form:
             rtn = courses.values('id', 'abbreviation', 'course_number', 'title')
         else:
