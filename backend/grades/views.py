@@ -103,33 +103,33 @@ def grade_json(request, grade_ids):
                                         Coalesce(F('np'), Value(0), output_field=IntegerField()))
         sections = sections.filter(total_students__gt=10)
 
-        noGradedFilter = Q(graded_total__gt=0) & (Q(
-                a1=F('graded_total')
+        noGradedFilter = Q(
+                a1=F('total_students')
             ) | Q(
-                a2=F('graded_total')
+                a2=F('total_students')
             ) | Q(
-                a3=F('graded_total')
+                a3=F('total_students')
             ) | Q(
-                b1=F('graded_total')
+                b1=F('total_students')
             ) | Q(
-                b2=F('graded_total')
+                b2=F('total_students')
             ) | Q(
-                b3=F('graded_total')
+                b3=F('total_students')
             ) | Q(
-                c1=F('graded_total')
+                c1=F('total_students')
             ) | Q(
-                c2=F('graded_total')
+                c2=F('total_students')
             ) | Q(
-                c3=F('graded_total')
+                c3=F('total_students')
             ) | Q(
-                d1=F('graded_total')
+                d1=F('total_students')
             ) | Q(
-                d2=F('graded_total')
+                d2=F('total_students')
             ) | Q(
-                d3=F('graded_total')
+                d3=F('total_students')
             ) | Q(
-                f=F('graded_total')
-            ))
+                f=F('total_students')
+            )
         sections = sections.exclude(noGradedFilter)
         sections = sections.exclude(Q(graded_total=0) & ((Q(np=0) & Q(p__gt=0)) | Q(np__gt=0) & Q(p=0)))
 
