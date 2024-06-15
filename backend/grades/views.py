@@ -129,6 +129,7 @@ def grade_json(request, grade_ids):
             ).exclude(
                 f=F('graded_total')
             )
+        sections = sections.exclude(Q(graded_total=0) & Q(np=0) & Q(p__gt=0)).exclude(Q(graded_total=0) & Q(np__gt=0) & Q(p=0))
 
         course = Course.objects.get(id=sections.values_list('course', flat=True)[0])
         percentile_total = sections.aggregate(Sum('graded_total'))['graded_total__sum']
