@@ -1,7 +1,8 @@
 import traceback
 
 from django.core.cache import cache
-from django.db.models import Sum
+from django.db.models import Sum, F, Q,Value,IntegerField
+from django.db.models.functions import Coalesce
 from django.shortcuts import render
 
 from berkeleytime.utils import render_to_json, render_to_empty_json, render_to_empty_json_with_status_code
@@ -91,7 +92,44 @@ def grade_json(request, grade_ids):
         actual_total = 0
         rtn = {}
         grade_ids = grade_ids.split('&')
-        sections = Grade.objects.filter(id__in=grade_ids).filter(graded_total__gt=10)
+
+
+        sections = Grade.objects.filter(id__in=grade_ids)
+
+        # FERPA compliance
+        sections = sections.annotate(total_students=
+                                        Coalesce(F('graded_total'), Value(0), output_field=IntegerField()) +
+                                        Coalesce(F('p'), Value(0), output_field=IntegerField()) +
+                                        Coalesce(F('np'), Value(0), output_field=IntegerField()))
+        sections = sections.filter(total_students__gt=10)
+        sections = sections.exclude(
+                a1=F('graded_total')
+            ).exclude(
+                a2=F('graded_total')
+            ).exclude(
+                a3=F('graded_total')
+            ).exclude(
+                b1=F('graded_total')
+            ).exclude(
+                b2=F('graded_total')
+            ).exclude(
+                b3=F('graded_total')
+            ).exclude(
+                c1=F('graded_total')
+            ).exclude(
+                c2=F('graded_total')
+            ).exclude(
+                c3=F('graded_total')
+            ).exclude(
+                d1=F('graded_total')
+            ).exclude(
+                d2=F('graded_total')
+            ).exclude(
+                d3=F('graded_total')
+            ).exclude(
+                f=F('graded_total')
+            )
+
         course = Course.objects.get(id=sections.values_list('course', flat=True)[0])
         percentile_total = sections.aggregate(Sum('graded_total'))['graded_total__sum']
 
@@ -104,10 +142,6 @@ def grade_json(request, grade_ids):
             else:
                 numerator = sections.aggregate(Sum(grade)).get(grade + '__sum', 0)
             actual_total += numerator
-
-            # FERPA compliance
-            if numerator == percentile_total:
-                return render_to_empty_json()
 
             percent = numerator / percentile_total if percentile_total > 0 else 0.0
             grade_entry['percent'] = round(percent, 2)
