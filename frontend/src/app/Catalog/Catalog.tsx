@@ -5,7 +5,7 @@ import styles from './Catalog.module.scss';
 import CatalogFilters from './CatalogFilters';
 import CatalogList from './CatalogList';
 import CatalogView from './CatalogView';
-import { CourseFragment } from 'graphql';
+import { CourseFragment } from '../../graphql';
 import { useLocation } from 'react-router-dom';
 
 const { SORT_OPTIONS, INITIAL_FILTERS } = catalogService;

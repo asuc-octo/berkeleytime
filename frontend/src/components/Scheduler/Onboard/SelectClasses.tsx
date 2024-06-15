@@ -5,9 +5,9 @@ import CourseSearch from '../../../components/Scheduler/Onboard/CourseSearch';
 import SchedulerCourseCard from '../../../components/Scheduler/Onboard/SchedulerCourseCard';
 
 import { ScheduleContext } from '../ScheduleContext';
-import { CourseOverviewFragment } from 'graphql';
+import { CourseOverviewFragment } from '../../../graphql';
 import { useUser } from '../../../graphql/hooks/user';
-import { useGetCoursesForFilterQuery } from 'graphql';
+import { useGetCoursesForFilterQuery } from '../../../graphql';
 import useLatestSemester from '../../../graphql/hooks/latestSemester';
 import { addCourse } from './onboard';
 import { compareDepartmentName } from '../../../lib/courses/sorting';

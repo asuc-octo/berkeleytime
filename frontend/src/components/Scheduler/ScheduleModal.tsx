@@ -1,5 +1,5 @@
 import BTLoader from '../../components/Common/BTLoader';
-import { useGetScheduleForIdQuery } from 'graphql';
+import { useGetScheduleForIdQuery } from '../../graphql';
 import { Modal } from 'react-bootstrap';
 import SchedulerCalendar from './Calendar/SchedulerCalendar';
 import {

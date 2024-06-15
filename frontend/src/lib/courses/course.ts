@@ -1,4 +1,4 @@
-import { CourseFragment } from 'graphql';
+import { CourseFragment } from '../../graphql';
 import { hash } from '../../utils/string';
 
 type CourseReference = {

@@ -1,4 +1,4 @@
-import { SectionFragment } from 'graphql';
+import { SectionFragment } from '../../../graphql';
 import { CSSProperties } from 'react';
 import { formatSectionTime } from '../../../utils/sections/section';
 import catalogService from '../service';

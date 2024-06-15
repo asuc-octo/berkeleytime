@@ -1,5 +1,5 @@
 import BTSelect from '../../../components/Custom/Select';
-import { CourseOverviewFragment } from 'graphql';
+import { CourseOverviewFragment } from '../../../graphql';
 import { Dispatch, SetStateAction, useMemo } from 'react';
 import { courseToName } from '../../../lib/courses/course';
 import { compareDepartmentName } from '../../../lib/courses/sorting';

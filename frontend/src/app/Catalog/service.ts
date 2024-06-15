@@ -5,7 +5,7 @@ import {
 	PlaylistType,
 	CourseOverviewFragment,
 	CourseFragment
-} from 'graphql';
+} from '../../graphql';
 import { laymanTerms } from '../../lib/courses/course';
 import { courseToName } from '../../lib/courses/course';
 import {

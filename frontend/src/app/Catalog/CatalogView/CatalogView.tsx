@@ -6,7 +6,7 @@ import launch from '../../../assets/svg/catalog/launch.svg';
 import { ReactComponent as BackArrow } from '../../../assets/img/images/catalog/backarrow.svg';
 import catalogService from '../service';
 import { applyIndicatorPercent, applyIndicatorGrade, formatUnits } from '../../../utils/utils';
-import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from 'graphql';
+import { CourseFragment, PlaylistType, useGetCourseForNameLazyQuery } from '../../../graphql';
 import { CurrentFilters } from '../../../app/Catalog/types';
 import { useNavigate, useParams } from 'react-router-dom';
 import { sortSections } from '../../../utils/sections/sort';

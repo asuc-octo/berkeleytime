@@ -1,4 +1,4 @@
-import { useGetSemestersQuery } from 'graphql';
+import { useGetSemestersQuery } from '../../graphql';
 import { getLatestSemester, SemesterWithPlaylist } from '../../utils/playlists/semesters';
 import { useState } from 'react';
 import { ApolloError } from '@apollo/client';

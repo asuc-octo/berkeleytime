@@ -1,4 +1,4 @@
-import { CourseFragment } from 'graphql';
+import { CourseFragment } from '../../../graphql';
 import { useSaveCourse, useUnsaveCourse } from '../../../graphql/hooks/saveCourse';
 import { useUser } from '../../../graphql/hooks/user';
 import { CSSProperties, memo } from 'react';

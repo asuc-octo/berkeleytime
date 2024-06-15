@@ -1,4 +1,4 @@
-import { useGetSemestersQuery } from 'graphql';
+import { useGetSemestersQuery } from '../../graphql';
 import { ApolloError } from '@apollo/client';
 import { getNodes } from '../../utils/graphql';
 import {

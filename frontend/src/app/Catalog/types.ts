@@ -1,4 +1,4 @@
-import { FilterFragment } from 'graphql';
+import { FilterFragment } from '../../graphql';
 import { GroupBase } from 'react-select';
 
 export type CatalogSlug = {
