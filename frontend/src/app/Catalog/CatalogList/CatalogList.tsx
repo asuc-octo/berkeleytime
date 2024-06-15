@@ -1,6 +1,6 @@
 import { FixedSizeList } from 'react-window';
 import CatalogListItem from './CatalogListItem';
-import { CourseFragment, useGetCoursesForFilterLazyQuery } from 'graphql';
+import { CourseFragment, useGetCoursesForFilterLazyQuery } from '../../../graphql';
 import { CurrentFilters, FilterOption, SortOption } from '../types';
 import { Dispatch, memo, SetStateAction, useEffect, useMemo } from 'react';
 import useDimensions from 'react-cool-dimensions';

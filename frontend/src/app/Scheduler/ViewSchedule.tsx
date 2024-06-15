@@ -1,4 +1,4 @@
-import { useGetScheduleForIdQuery } from 'graphql';
+import { useGetScheduleForIdQuery } from '../../graphql';
 import BTLoader from '../../components/Common/BTLoader';
 import { Navigate, useParams } from 'react-router-dom';
 import {

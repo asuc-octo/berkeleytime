@@ -1,4 +1,4 @@
-import { LectureFragment, SchedulerCourseFragment, SectionFragment } from 'graphql';
+import { LectureFragment, SchedulerCourseFragment, SectionFragment } from '../../../graphql';
 import { ChangeEvent, CSSProperties } from 'react';
 import { Form } from 'react-bootstrap';
 import cx from 'classnames';

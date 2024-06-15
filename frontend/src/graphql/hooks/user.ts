@@ -14,7 +14,7 @@ import {
 	useLogoutMutation,
 	UserProfileFragment,
 	useUpdateUserMutation
-} from 'graphql';
+} from '../../graphql';
 
 type UserInfo = {
 	/**

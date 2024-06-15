@@ -3,7 +3,7 @@ import {
 	CreateScheduleMutationVariables,
 	ScheduleFragment,
 	SectionFragment
-} from 'graphql';
+} from '../../graphql';
 import { addUnits, parseUnits, Units, unitsToString, ZERO_UNITS } from '../../lib/courses/units';
 import { Semester, semesterToString } from '../../utils/playlists/semesters';
 import { getNodes } from '../graphql';

@@ -2,7 +2,7 @@ import { ChangeEvent, ReactNode, useState } from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
 import CourseSelector from '../../components/Scheduler/CourseSelector';
 
-import { useGetCoursesForFilterQuery } from 'graphql';
+import { useGetCoursesForFilterQuery } from '../../graphql';
 import BTLoader from '../../components/Common/BTLoader';
 import { Schedule, SchedulerSectionType, scheduleToICal } from '../../utils/scheduler/scheduler';
 import SchedulerCalendar from '../../components/Scheduler/Calendar/SchedulerCalendar';

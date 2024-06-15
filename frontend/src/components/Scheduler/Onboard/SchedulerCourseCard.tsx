@@ -1,5 +1,5 @@
 import { formatUnits, applyIndicatorPercent, applyIndicatorGrade } from '../../../utils/utils';
-import { CourseOverviewFragment } from 'graphql';
+import { CourseOverviewFragment } from '../../../graphql';
 import { Link } from 'react-router-dom';
 import ProfileCard from './../../Profile/ProfileCard';
 

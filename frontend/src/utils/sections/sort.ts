@@ -1,4 +1,4 @@
-import { SectionFragment } from 'graphql';
+import { SectionFragment } from '../../graphql';
 import { stringToDate } from '../../utils/date';
 import { isEnrollmentSection } from './section';
 

@@ -17,7 +17,7 @@ import { ReactComponent as FilterIcon } from '../../../assets/svg/catalog/filter
 import BTInput from '../../../components/Custom/Input';
 import { CurrentFilters, FilterOption, SortOption, CatalogFilterKeys, CatalogSlug } from '../types';
 
-import { useGetFiltersQuery } from 'graphql';
+import { useGetFiltersQuery } from '../../../graphql';
 import BTLoader from '../../../components/Common/BTLoader';
 import { useNavigate, useParams } from 'react-router-dom';
 
