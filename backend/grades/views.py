@@ -102,34 +102,36 @@ def grade_json(request, grade_ids):
                                         Coalesce(F('p'), Value(0), output_field=IntegerField()) +
                                         Coalesce(F('np'), Value(0), output_field=IntegerField()))
         sections = sections.filter(total_students__gt=10)
-        sections = sections.exclude(
+
+        noGradedFilter = Q(graded_total__gt=0) & (Q(
                 a1=F('graded_total')
-            ).exclude(
+            ) | Q(
                 a2=F('graded_total')
-            ).exclude(
+            ) | Q(
                 a3=F('graded_total')
-            ).exclude(
+            ) | Q(
                 b1=F('graded_total')
-            ).exclude(
+            ) | Q(
                 b2=F('graded_total')
-            ).exclude(
+            ) | Q(
                 b3=F('graded_total')
-            ).exclude(
+            ) | Q(
                 c1=F('graded_total')
-            ).exclude(
+            ) | Q(
                 c2=F('graded_total')
-            ).exclude(
+            ) | Q(
                 c3=F('graded_total')
-            ).exclude(
+            ) | Q(
                 d1=F('graded_total')
-            ).exclude(
+            ) | Q(
                 d2=F('graded_total')
-            ).exclude(
+            ) | Q(
                 d3=F('graded_total')
-            ).exclude(
+            ) | Q(
                 f=F('graded_total')
-            )
-        sections = sections.exclude(Q(graded_total=0) & Q(np=0) & Q(p__gt=0)).exclude(Q(graded_total=0) & Q(np__gt=0) & Q(p=0))
+            ))
+        sections = sections.exclude(noGradedFilter)
+        sections = sections.exclude(Q(graded_total=0) & ((Q(np=0) & Q(p__gt=0)) | Q(np__gt=0) & Q(p=0)))
 
         course = Course.objects.get(id=sections.values_list('course', flat=True)[0])
         percentile_total = sections.aggregate(Sum('graded_total'))['graded_total__sum']
