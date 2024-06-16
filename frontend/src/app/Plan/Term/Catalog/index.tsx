@@ -71,13 +71,15 @@ export default function Catalog({
             </Dialog.Close>
           </div>
           <div className={styles.body}>
-            <Browser
-              courses={courses}
-              currentSemester={Semester.Spring}
-              currentYear={2024}
-              onClassSelect={handleClick}
-              responsive={false}
-            />
+            {open && (
+              <Browser
+                courses={courses}
+                currentSemester={Semester.Spring}
+                currentYear={2024}
+                onClassSelect={handleClick}
+                responsive={false}
+              />
+            )}
           </div>
         </Dialog.Content>
       </Dialog.Portal>
