@@ -36,7 +36,6 @@ export default async (app: Application) => {
       httpOnly: true,
       maxAge: 1000 * 60 * 60, // 1 hour
       sameSite: 'lax',
-      domain: 'stanfurdtime.com',
     },
     rolling: true,
   }));
@@ -102,7 +101,6 @@ export default async (app: Application) => {
         first_name: profile.name?.givenName || '',
         last_name: profile.name?.familyName || '',
         // refresh_token: refreshToken, <-------------- currently not needed.
-        refresh_token: '',
       });
     }
 
