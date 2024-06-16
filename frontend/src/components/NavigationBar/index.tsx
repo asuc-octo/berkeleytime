@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client";
 import classNames from "classnames";
 import { ArrowRight, Menu, User } from "iconoir-react";
 import { Link, NavLink } from "react-router-dom";
@@ -5,8 +6,8 @@ import { Link, NavLink } from "react-router-dom";
 import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
-import { useAccount } from "@/hooks/useAccount";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
+import { AccountResponse, GET_ACCOUNT, signIn, signOut } from "@/lib/api";
 
 import styles from "./NavigationBar.module.scss";
 
@@ -16,7 +17,8 @@ interface NavigationBarProps {
 
 export default function NavigationBar({ invert }: NavigationBarProps) {
   const { width } = useWindowDimensions();
-  const { account, signIn, signOut } = useAccount();
+
+  const { data: account } = useQuery<AccountResponse>(GET_ACCOUNT);
 
   return (
     <div
@@ -49,7 +51,7 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
           </div>
           {account ? (
             <Button onClick={() => signOut()} className={styles.button}>
-              {account.email}
+              {account.user.email}
               <User />
             </Button>
           ) : (
