@@ -94,7 +94,7 @@ export default async (app: Application) => {
     let user = await UserModel.findOne({ email });
 
     if (!user) {
-      user = await new UserModel({
+      user = new UserModel({
         email,
         google_id: profile.id,
         username: profile.displayName,
@@ -105,8 +105,8 @@ export default async (app: Application) => {
     }
 
     user.last_login = new Date();
-    user.save();
+    const doc = await user.save();
 
-    done(null, user);
+    done(null, doc);
   }));
 }
