@@ -159,6 +159,17 @@ export interface ICourse {
 
 export interface IAccount {
   email: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface ISchedule {
+  _id: string;
+  name: string;
+  term: {
+    year: number;
+    semester: Semester;
+  };
 }
 
 export const GET_COURSE = gql`
@@ -332,10 +343,100 @@ export const GET_COURSES = gql`
   }
 `;
 
+export interface AccountResponse {
+  user: IAccount;
+}
+
 export const GET_ACCOUNT = gql`
   query GetAccount {
     user {
       email
+      first_name
+      last_name
     }
   }
 `;
+
+export interface GetScheduleResponse {
+  scheduleByID: ISchedule;
+}
+
+export const GET_SCHEDULE = gql`
+  query GetSchedule($id: String!) {
+    scheduleByID(id: $id) {
+      _id
+      name
+      term {
+        year
+        semester
+      }
+    }
+  }
+`;
+
+export const DELETE_SCHEDULE = gql`
+  mutation DeleteSchedule($id: ID!) {
+    removeScheduleByID(id: $id)
+  }
+`;
+
+export interface CreateScheduleResponse {
+  createNewSchedule: ISchedule;
+}
+
+export const CREATE_SCHEDULE = gql`
+  mutation CreateSchedule(
+    $name: String!
+    $term: TermInput!
+    $createdBy: String!
+  ) {
+    createNewSchedule(
+      main_schedule: {
+        courses: []
+        created_by: $createdBy
+        name: $name
+        custom_events: []
+        is_public: false
+        term: $term
+      }
+    ) {
+      _id
+      name
+      term {
+        year
+        semester
+      }
+    }
+  }
+`;
+
+export interface GetSchedulesResponse {
+  schedulesByUser: ISchedule[];
+}
+
+export const GET_SCHEDULES = gql`
+  query GetSchedules($createdBy: String!) {
+    schedulesByUser(created_by: $createdBy) {
+      _id
+      name
+      term {
+        year
+        semester
+      }
+    }
+  }
+`;
+
+export const signIn = (redirectURI?: string) => {
+  redirectURI =
+    redirectURI ?? window.location.pathname + window.location.search;
+
+  window.location.href = `${window.location.origin}/api/login?redirect_uri=${redirectURI}`;
+};
+
+export const signOut = async (redirectURI?: string) => {
+  redirectURI =
+    redirectURI ?? window.location.pathname + window.location.search;
+
+  window.location.href = `${window.location.origin}/api/logout?redirect_uri=${redirectURI}`;
+};

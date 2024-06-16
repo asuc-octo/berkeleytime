@@ -10,7 +10,6 @@ import Plan from "@/app/Plan";
 import Compare from "@/app/Schedule/Compare";
 import Manage from "@/app/Schedule/Manage";
 import Schedules from "@/app/Schedules";
-import AccountProvider from "@/components/AccountProvider";
 import Layout from "@/components/Layout";
 
 import Schedule from "./app/Schedule";
@@ -85,11 +84,9 @@ export default function App() {
         height: 16,
       }}
     >
-      <AccountProvider>
-        <Tooltip.Provider delayDuration={0}>
-          <RouterProvider router={router} />
-        </Tooltip.Provider>
-      </AccountProvider>
+      <Tooltip.Provider delayDuration={0}>
+        <RouterProvider router={router} />
+      </Tooltip.Provider>
     </IconoirProvider>
   );
 }
