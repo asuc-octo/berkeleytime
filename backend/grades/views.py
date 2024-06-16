@@ -103,7 +103,7 @@ def grade_json(request, grade_ids):
                                         Coalesce(F('np'), Value(0), output_field=IntegerField()))
         sections = sections.filter(total_students__gt=10)
 
-        noGradedFilter = Q(
+        allSameGradeFilter = Q(
                 a1=F('total_students')
             ) | Q(
                 a2=F('total_students')
@@ -129,9 +129,12 @@ def grade_json(request, grade_ids):
                 d3=F('total_students')
             ) | Q(
                 f=F('total_students')
+            ) | Q(
+                p=F('total_students')
+            ) | Q(
+                np=F('total_students')
             )
-        sections = sections.exclude(noGradedFilter)
-        sections = sections.exclude(Q(graded_total=0) & ((Q(np=0) & Q(p__gt=0)) | Q(np__gt=0) & Q(p=0)))
+        sections = sections.exclude(allSameGradeFilter)
 
         course = Course.objects.get(id=sections.values_list('course', flat=True)[0])
         percentile_total = sections.aggregate(Sum('graded_total'))['graded_total__sum']
