@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 
 import { useQuery } from "@apollo/client";
 
@@ -6,32 +6,26 @@ import AccountContext from "@/contexts/AccountContext";
 import { GET_ACCOUNT } from "@/lib/api";
 
 interface AccountProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export default function AccountProvider({ children }: AccountProviderProps) {
-  const { loading, error, data, client } = useQuery(GET_ACCOUNT);
+  const { loading, error, data } = useQuery(GET_ACCOUNT);
 
-  const signIn = () => {
+  const signIn = (redirectURI?: string) => {
     if (loading) return;
 
-    window.location.href =
-      "https://stanfurdtime.com/api/login?redirect_uri=http://localhost:3000/";
+    redirectURI =
+      redirectURI ?? window.location.pathname + window.location.search;
+
+    window.location.href = `${window.location.origin}/api/login?redirect_uri=${redirectURI}`;
   };
 
-  const signOut = async () => {
-    try {
-      await fetch("https://stanfurdtime.com/api/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+  const signOut = async (redirectURI?: string) => {
+    redirectURI =
+      redirectURI ?? window.location.pathname + window.location.search;
 
-      // Clear the Apollo GraphQL cache for the user query
-      client.resetStore();
-    } catch (error) {
-      // TOOD: Handle error
-      console.error(error);
-    }
+    window.location.href = `${window.location.origin}/api/logout?redirect_uri=${redirectURI}`;
   };
 
   const account = useMemo(() => data?.user, [data]);
