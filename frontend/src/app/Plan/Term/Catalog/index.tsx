@@ -1,20 +1,19 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
-import { useQuery } from "@apollo/client";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Xmark } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
 import Browser from "@/components/Browser";
 import IconButton from "@/components/IconButton";
-import { GET_COURSES, ICourse, Semester } from "@/lib/api";
+import { ICourse, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
 
 interface CatalogProps {
   onClick: (course: ICourse, number: string) => void;
   children: JSX.Element;
-  semester: string;
+  semester: Semester;
   year: number;
 }
 
@@ -26,17 +25,6 @@ export default function Catalog({
 }: CatalogProps) {
   const [open, setOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const { data } = useQuery<{ catalog: ICourse[] }>(GET_COURSES, {
-    variables: {
-      term: {
-        semester,
-        year,
-      },
-    },
-  });
-
-  const courses = useMemo(() => data?.catalog ?? [], [data?.catalog]);
 
   const handleOpenChange = (open: boolean) => {
     setOpen(open);
@@ -71,15 +59,12 @@ export default function Catalog({
             </Dialog.Close>
           </div>
           <div className={styles.body}>
-            {open && (
-              <Browser
-                courses={courses}
-                currentSemester={Semester.Spring}
-                currentYear={2024}
-                onClassSelect={handleClick}
-                responsive={false}
-              />
-            )}
+            <Browser
+              semester={semester}
+              year={year}
+              onClassSelect={handleClick}
+              responsive={false}
+            />
           </div>
         </Dialog.Content>
       </Dialog.Portal>

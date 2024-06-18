@@ -10,6 +10,7 @@ import { getCourseKey, getCsCourseId } from "../../utils/course";
 import { isNil } from "lodash";
 import { GraphQLResolveInfo } from "graphql";
 import { getChildren } from "../../utils/graphql";
+import { performance } from "perf_hooks";
 
 function matchCsCourseId(id: any) {
   return {
@@ -24,11 +25,16 @@ export async function getCatalog(
   term: TermInput,
   info: GraphQLResolveInfo
 ): Promise<Course[] | null> {
+  const start = performance.now();
+
   const classes = await ClassModel.find({
     "session.term.name": termToString(term),
     // "aggregateEnrollmentStatus.maxEnroll": { $gt: 0 },
     anyPrintInScheduleOfClasses: true,
   }).lean();
+
+  const clTime = performance.now();
+  console.log("Classes query time: ", clTime - start);
 
   if (classes.length === 0) {
     return null;
@@ -53,6 +59,9 @@ export async function getCatalog(
       fromDate: -1,
     })
     .lean();
+
+  const coTime = performance.now();
+  console.log("Courses query time: ", coTime - clTime);
 
   /* Map grades to course keys for easy lookup */
   const gradesMap: { [key: string]: GradeType[] } = {};
@@ -86,6 +95,9 @@ export async function getCatalog(
     }
   }
 
+  const grTime = performance.now();
+  console.log("Grades query time: ", grTime - coTime);
+
   const sections = await SectionModel.find({
     "class.course.identifiers": matchCsCourseId({
       $in: Array.from(csCourseIds),
@@ -93,6 +105,9 @@ export async function getCatalog(
     "class.session.term.name": termToString(term),
     "association.primary": true,
   }).lean();
+
+  const seTime = performance.now();
+  console.log("Sections query time: ", seTime - grTime);
 
   const catalog: any = {};
 
@@ -106,7 +121,7 @@ export async function getCatalog(
     catalog[id] = {
       ...formatCourse(c, term),
       classes: [],
-      gradeAverage: await getAverage(gradesMap[key]),
+      gradeAverage: getAverage(gradesMap[key]),
     };
   }
 
@@ -159,6 +174,9 @@ export async function getCatalog(
       delete catalog[id];
     }
   }
+
+  const end = performance.now();
+  console.log("Total time: ", end - start);
 
   return Object.values(catalog);
 }

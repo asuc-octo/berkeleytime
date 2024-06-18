@@ -19,6 +19,8 @@ interface HeaderProps {
   currentYear: number;
   className?: string;
   autoFocus?: boolean;
+  setCurrentQuery: (query: string) => void;
+  persistent?: boolean;
 }
 
 const Header = forwardRef<HTMLInputElement, HeaderProps>(
@@ -33,15 +35,23 @@ const Header = forwardRef<HTMLInputElement, HeaderProps>(
       currentYear,
       className,
       autoFocus,
+      setCurrentQuery,
+      persistent,
     },
     ref
   ) => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const handleQueryChange = (value: string) => {
-      if (value) searchParams.set("query", value);
-      else searchParams.delete("query");
-      setSearchParams(searchParams);
+      if (persistent) {
+        if (value) searchParams.set("query", value);
+        else searchParams.delete("query");
+        setSearchParams(searchParams);
+
+        return;
+      }
+
+      setCurrentQuery(value);
     };
 
     return (

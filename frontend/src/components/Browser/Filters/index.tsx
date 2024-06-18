@@ -34,7 +34,14 @@ interface FiltersProps {
   currentYear: number;
   currentQuery: string;
   currentDays: Day[];
-  currentSortBy?: SortBy;
+  currentSortBy: SortBy;
+  setCurrentSortBy: (sortBy: SortBy) => void;
+  setCurrentQuery: (query: string) => void;
+  setCurrentComponents: (components: Component[]) => void;
+  setCurrentUnits: (units: Unit[]) => void;
+  setCurrentLevels: (levels: Level[]) => void;
+  setCurrentDays: (days: Day[]) => void;
+  persistent?: boolean;
 }
 
 export default function Filters({
@@ -53,6 +60,13 @@ export default function Filters({
   currentYear,
   currentQuery,
   currentSortBy,
+  setCurrentSortBy,
+  setCurrentQuery,
+  setCurrentComponents,
+  setCurrentUnits,
+  setCurrentLevels,
+  setCurrentDays,
+  persistent,
 }: FiltersProps) {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -234,31 +248,49 @@ export default function Filters({
     currentDays,
   ]);
 
-  const handleDynamicChange = (
+  const update = <T,>(
     name: string,
-    current: (string | number)[],
-    value: string | number,
+    state: T[],
+    setState: (state: T[]) => void,
+    value: T,
     checked: boolean
   ) => {
-    if (checked) {
-      searchParams.set(name, [...current, value].join(","));
-    } else {
-      const filtered = current.filter((parameter) => parameter !== value);
-
-      if (filtered.length > 0) {
-        searchParams.set(name, filtered.join(","));
+    if (persistent) {
+      if (checked) {
+        searchParams.set(name, [...state, value].join(","));
       } else {
-        searchParams.delete(name);
+        const filtered = state.filter((parameter) => parameter !== value);
+
+        if (filtered.length > 0) {
+          searchParams.set(name, filtered.join(","));
+        } else {
+          searchParams.delete(name);
+        }
       }
+
+      setSearchParams(searchParams);
+
+      return;
     }
 
-    setSearchParams(searchParams);
+    setState(
+      checked
+        ? [...state, value]
+        : state.filter((parameter) => parameter !== value)
+    );
   };
 
-  const handleValueChange = (value: string) => {
-    if (value === SortBy.Relevance) searchParams.delete("sortBy");
-    else searchParams.set("sortBy", value);
-    setSearchParams(searchParams);
+  const handleValueChange = (value: SortBy) => {
+    if (persistent) {
+      if (value === SortBy.Relevance) searchParams.delete("sortBy");
+      else searchParams.set("sortBy", value);
+      setSearchParams(searchParams);
+
+      return;
+    }
+
+    console.log(value);
+    setCurrentSortBy(value);
   };
 
   return (
@@ -278,13 +310,14 @@ export default function Filters({
           currentYear={currentYear}
           currentQuery={currentQuery}
           overlay={overlay}
+          setCurrentQuery={setCurrentQuery}
         />
       )}
       <div className={styles.body}>
         <p className={styles.label}>Sort by</p>
         <RadioGroup.Root
           onValueChange={handleValueChange}
-          value={currentSortBy ?? SortBy.Relevance}
+          value={currentSortBy}
         >
           {Object.values(SortBy).map((sortBy) => (
             <div className={styles.filter}>
@@ -312,9 +345,10 @@ export default function Filters({
                 checked={active}
                 id={`level-${level}`}
                 onCheckedChange={(checked) =>
-                  handleDynamicChange(
+                  update(
                     "levels",
                     currentLevels,
+                    setCurrentLevels,
                     level,
                     checked as boolean
                   )
@@ -342,9 +376,10 @@ export default function Filters({
                 checked={active}
                 id={`units-${unit}`}
                 onCheckedChange={(checked) =>
-                  handleDynamicChange(
+                  update(
                     "units",
                     currentUnits,
+                    setCurrentUnits,
                     unit,
                     checked as boolean
                   )
@@ -376,10 +411,11 @@ export default function Filters({
                   checked={active}
                   id={`component-${component}`}
                   onCheckedChange={(checked) =>
-                    handleDynamicChange(
+                    update(
                       "components",
                       currentComponents,
-                      component,
+                      setCurrentComponents,
+                      component as Component,
                       checked as boolean
                     )
                   }
@@ -416,9 +452,10 @@ export default function Filters({
                 checked={active}
                 id={`day-${day}`}
                 onCheckedChange={(checked) =>
-                  handleDynamicChange(
+                  update(
                     "days",
                     currentDays,
+                    setCurrentDays,
                     day,
                     checked as boolean
                   )

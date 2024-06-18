@@ -12,18 +12,8 @@
     width: 100%;
   }
 
-  &.overlay {
-    position: absolute;
-    height: 100%;
-    z-index: 2;
-
-    .header {
-      padding: 12px 12px 24px;
-    }
-
-    .body {
-      padding-top: 0;
-    }
+  &.overlay .body {
+    padding-top: 12px;
   }
 
   .body {

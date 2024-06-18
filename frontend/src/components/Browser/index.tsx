@@ -1,11 +1,18 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
+import { useQuery } from "@apollo/client";
 import classNames from "classnames";
 import Fuse from "fuse.js";
 import { useSearchParams } from "react-router-dom";
 
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import { Component, ICourse, Semester } from "@/lib/api";
+import {
+  Component,
+  GET_COURSES,
+  GetCoursesResponse,
+  ICourse,
+  Semester,
+} from "@/lib/api";
 import { subjects } from "@/lib/course";
 
 import styles from "./Browser.module.scss";
@@ -90,27 +97,33 @@ const initializeFuse = (courses: ICourse[]) => {
 };
 
 interface BrowserProps {
-  courses: ICourse[];
   onClassSelect: (course: ICourse, number: string) => void;
   responsive?: boolean;
-  currentSemester: Semester;
-  currentYear: number;
+  semester: Semester;
+  year: number;
+  persistent?: boolean;
 }
 
 export default function Browser({
-  courses,
   onClassSelect,
   responsive = true,
-  currentSemester,
-  currentYear,
+  semester: currentSemester,
+  year: currentYear,
+  persistent,
 }: BrowserProps) {
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
-  const [currentCourses, setCurrentCourses] = useState<ICourse[]>([]);
-  const [expandedCourses, setExpandedCourses] = useState<boolean[]>([]);
   const { width } = useWindowDimensions();
 
-  // Layout
+  const [expandedCourses, setExpandedCourses] = useState<boolean[]>([]);
+
+  const [localQuery, setLocalQuery] = useState<string>("");
+  const [localComponents, setLocalComponents] = useState<Component[]>([]);
+  const [localUnits, setLocalUnits] = useState<Unit[]>([]);
+  const [localLevels, setLocalLevels] = useState<Level[]>([]);
+  const [localDays, setLocalDays] = useState<Day[]>([]);
+  const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
+
   const block = useMemo(() => width <= 992, [width]);
 
   const overlay = useMemo(
@@ -118,66 +131,82 @@ export default function Browser({
     [width, responsive, block]
   );
 
-  const filters = useMemo(() => open || !overlay, [open, overlay]);
+  const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSES, {
+    variables: {
+      term: {
+        semester: currentSemester,
+        year: currentYear,
+      },
+    },
+  });
 
-  // Filtering
+  const courses = useMemo(() => data?.catalog ?? [], [data?.catalog]);
+
   const currentQuery = useMemo(
-    () => searchParams.get("query") ?? "",
-    [searchParams]
+    () => (persistent ? searchParams.get("query") ?? "" : localQuery),
+    [searchParams, localQuery, persistent]
   );
 
   const currentComponents = useMemo(
     () =>
-      (searchParams
-        .get("components")
-        ?.split(",")
-        .filter((component) =>
-          Object.values(Component).includes(component as Component)
-        ) ?? []) as Component[],
-    [searchParams]
+      persistent
+        ? ((searchParams
+            .get("components")
+            ?.split(",")
+            .filter((component) =>
+              Object.values(Component).includes(component as Component)
+            ) ?? []) as Component[])
+        : localComponents,
+    [searchParams, localComponents, persistent]
   );
 
   const currentUnits = useMemo(
     () =>
-      (searchParams
-        .get("units")
-        ?.split(",")
-        .filter((unit) => Object.values(Unit).includes(unit as Unit)) ??
-        []) as Unit[],
-    [searchParams]
+      persistent
+        ? ((searchParams
+            .get("units")
+            ?.split(",")
+            .filter((unit) => Object.values(Unit).includes(unit as Unit)) ??
+            []) as Unit[])
+        : localUnits,
+    [searchParams, localUnits, persistent]
   );
 
   const currentLevels = useMemo(
     () =>
-      (searchParams
-        .get("levels")
-        ?.split(",")
-        .filter((level) => Object.values(Level).includes(level as Level)) ??
-        []) as Level[],
-    [searchParams]
+      persistent
+        ? ((searchParams
+            .get("levels")
+            ?.split(",")
+            .filter((level) => Object.values(Level).includes(level as Level)) ??
+            []) as Level[])
+        : localLevels,
+    [searchParams, localLevels, persistent]
   );
 
   const currentDays = useMemo(
     () =>
-      (searchParams
-        .get("days")
-        ?.split(",")
-        .filter((day) => Object.values(Day).includes(day as Day)) ??
-        []) as Day[],
-    [searchParams]
+      persistent
+        ? ((searchParams
+            .get("days")
+            ?.split(",")
+            .filter((day) => Object.values(Day).includes(day as Day)) ??
+            []) as Day[])
+        : localDays,
+    [searchParams, localDays, persistent]
   );
 
   const currentSortBy = useMemo(() => {
-    const parameter = searchParams.get("sortBy");
+    if (persistent) {
+      const parameter = searchParams.get("sortBy") as SortBy;
 
-    if (
-      !Object.values(SortBy).includes(parameter as SortBy) ||
-      parameter === SortBy.Relevance
-    )
-      return;
+      return Object.values(SortBy).includes(parameter)
+        ? parameter
+        : SortBy.Relevance;
+    }
 
-    return parameter as SortBy;
-  }, [searchParams]);
+    return localSortBy;
+  }, [searchParams, localSortBy, persistent]);
 
   const { includedCourses, excludedCourses } = useMemo(
     () =>
@@ -204,16 +233,16 @@ export default function Browser({
     });
   };
 
-  useEffect(() => {
-    let _currentCourses = currentQuery
+  const currentCourses = useMemo(() => {
+    let filteredCourses = currentQuery
       ? fuse
           .search(currentQuery)
           .map(({ refIndex }) => includedCourses[refIndex])
       : includedCourses;
 
-    // Courses are by default sorted by relevance and number
     if (currentSortBy) {
-      _currentCourses = _currentCourses.sort((a, b) => {
+      // Clone the courses to avoid sorting in-place
+      filteredCourses = structuredClone(filteredCourses).sort((a, b) => {
         if (currentSortBy === SortBy.AverageGrade) {
           return b.gradeAverage === a.gradeAverage
             ? 0
@@ -261,50 +290,77 @@ export default function Browser({
           return getPercentOpenSeats(b) - getPercentOpenSeats(a);
         }
 
+        // Courses are by default sorted by relevance and number
         return 0;
       });
     }
 
-    setCurrentCourses(_currentCourses);
-
-    // Collapse courses when filtered courses change
-    setExpandedCourses(new Array(_currentCourses.length).fill(false));
+    return filteredCourses;
   }, [currentQuery, fuse, includedCourses, currentSortBy]);
+
+  // Update local and persistent filters
+  const updateState = <T,>(setState: (state: T) => void, state: T) => {
+    setState(state);
+    setExpandedCourses([]);
+  };
 
   return (
     <div className={classNames(styles.root, { [styles.block]: block })}>
-      {filters && (
+      {(open || !overlay) && (
         <Filters
           overlay={overlay}
           block={block}
-          includedCourses={includedCourses}
+          open={open}
+          onOpenChange={setOpen}
+          persistent={persistent}
+          // Manage courses
+          currentSortBy={currentSortBy}
           currentCourses={currentCourses}
+          includedCourses={includedCourses}
           excludedCourses={excludedCourses}
+          // Current term
+          currentYear={currentYear}
+          currentSemester={currentSemester}
+          // Current filters
+          currentQuery={currentQuery}
           currentComponents={currentComponents}
           currentUnits={currentUnits}
           currentLevels={currentLevels}
           currentDays={currentDays}
-          onOpenChange={setOpen}
-          open={open}
-          currentSemester={currentSemester}
-          currentYear={currentYear}
-          currentQuery={currentQuery}
-          currentSortBy={currentSortBy}
+          // Update local filters
+          setCurrentQuery={(query) => updateState(setLocalQuery, query)}
+          setCurrentUnits={(units) => updateState(setLocalUnits, units)}
+          setCurrentLevels={(levels) => updateState(setLocalLevels, levels)}
+          setCurrentDays={(days) => updateState(setLocalDays, days)}
+          setCurrentSortBy={(sortBy) => updateState(setLocalSortBy, sortBy)}
+          setCurrentComponents={(components) =>
+            updateState(setLocalComponents, components)
+          }
         />
       )}
-      <List
-        currentCourses={currentCourses}
-        onClassSelect={onClassSelect}
-        onOpenChange={setOpen}
-        currentSemester={currentSemester}
-        expandedCourses={expandedCourses}
-        setExpanded={setExpanded}
-        currentQuery={currentQuery}
-        currentYear={currentYear}
-        open={open}
-        overlay={overlay}
-        block={block}
-      />
+      {(!open || !overlay) && (
+        <List
+          overlay={overlay}
+          block={block}
+          open={open}
+          onOpenChange={setOpen}
+          persistent={persistent}
+          // API response
+          loading={loading && !data?.catalog}
+          // Manage courses
+          onClassSelect={onClassSelect}
+          currentCourses={currentCourses}
+          setExpanded={setExpanded}
+          expandedCourses={expandedCourses}
+          // Current term
+          currentYear={currentYear}
+          currentSemester={currentSemester}
+          // Current filters
+          currentQuery={currentQuery}
+          // Update local filters
+          setCurrentQuery={(query) => updateState(setLocalQuery, query)}
+        />
+      )}
     </div>
   );
 }

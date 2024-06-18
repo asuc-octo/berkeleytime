@@ -310,6 +310,10 @@ export const GET_CLASS = gql`
   }
 `;
 
+export interface GetCoursesResponse {
+  catalog: ICourse[];
+}
+
 export const GET_COURSES = gql`
   query GetCourses($term: TermInput!) {
     catalog(term: $term) {
