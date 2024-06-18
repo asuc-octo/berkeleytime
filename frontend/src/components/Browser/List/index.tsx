@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { ArrowRight, FrameAltEmpty, Sparks } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
+import LoadingIndicator from "@/components/LoadingIndicator";
 import { ICourse, Semester } from "@/lib/api";
 
 import Header from "../Header";
@@ -23,6 +24,9 @@ interface ListProps {
   currentQuery: string;
   expandedCourses: boolean[];
   setExpanded: (index: number, expanded: boolean) => void;
+  setCurrentQuery: (query: string) => void;
+  persistent?: boolean;
+  loading: boolean;
 }
 
 export default function List({
@@ -37,6 +41,9 @@ export default function List({
   currentQuery,
   expandedCourses,
   setExpanded,
+  setCurrentQuery,
+  persistent,
+  loading,
 }: ListProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
@@ -80,8 +87,21 @@ export default function List({
           overlay={overlay}
           autoFocus
           onOpenChange={onOpenChange}
+          setCurrentQuery={setCurrentQuery}
+          persistent={persistent}
         />
-        {items.length === 0 ? (
+        {loading ? (
+          <div className={styles.placeholder}>
+            <LoadingIndicator size={32} />
+            <div className={styles.text}>
+              <p className={styles.heading}>Fetching courses...</p>
+              <p className={styles.description}>
+                Search for, filter, and sort courses to narrow down your
+                results.
+              </p>
+            </div>
+          </div>
+        ) : items.length === 0 ? (
           <div className={styles.placeholder}>
             <FrameAltEmpty width={32} height={32} />
             <div className={styles.text}>

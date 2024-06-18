@@ -21,7 +21,6 @@
 
     &:has(.input:focus) {
       outline: 4px solid color-mix(in srgb, var(--blue-500) 25%, transparent);
-      border-color: var(--blue-500);
     }
 
     .label {

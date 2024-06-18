@@ -4,7 +4,7 @@ import { useApolloClient } from "@apollo/client";
 import {
   ArrowLeft,
   Copy,
-  EditPencil,
+  Settings,
   ShareIos,
   ViewColumns2,
 } from "iconoir-react";
@@ -194,9 +194,9 @@ export default function Manage() {
             </Link>
           </Tooltip>
           <p className={styles.heading}>Untitled Spring 2024 schedule</p>
-          <Tooltip content="Edit name">
+          <Tooltip content="Settings">
             <IconButton>
-              <EditPencil />
+              <Settings />
             </IconButton>
           </Tooltip>
           <div className={styles.separator} />

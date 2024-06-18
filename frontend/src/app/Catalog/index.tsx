@@ -1,12 +1,9 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
-import { useQuery } from "@apollo/client";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import Boundary from "@/components/Boundary";
 import Browser from "@/components/Browser";
-import LoadingIndicator from "@/components/LoadingIndicator";
-import { GET_COURSES, ICourse, Semester } from "@/lib/api";
+import { ICourse, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
 import Class from "./Class";
@@ -25,6 +22,9 @@ export default function Catalog() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const [partialCurrentCourse, setPartialCurrentCourse] =
+    useState<ICourse | null>(null);
+
   // TODO: Select year
   const currentYear = useMemo(() => (year && parseInt(year)) || 2024, [year]);
 
@@ -40,34 +40,10 @@ export default function Catalog() {
 
   const currentSubject = useMemo(() => subject?.toUpperCase(), [subject]);
 
-  // TODO: Error state, loading state
-  const { loading, error, data } = useQuery<{ catalog: ICourse[] }>(
-    GET_COURSES,
-    {
-      variables: {
-        term: {
-          semester: currentSemester,
-          year: currentYear,
-        },
-      },
-    }
-  );
-
-  const courses = useMemo(() => data?.catalog ?? [], [data?.catalog]);
-
-  const partialCurrentCourse = useMemo(
-    () =>
-      courses.find(
-        ({ subject, number, classes }) =>
-          subject === currentSubject &&
-          number === currentCourseNumber &&
-          classes.some((class_) => class_.number === currentClassNumber)
-      ),
-    [courses, currentSubject, currentCourseNumber, currentClassNumber]
-  );
-
   const handleClick = useCallback(
     (course: ICourse, number: string) => {
+      setPartialCurrentCourse(course);
+
       navigate({
         pathname: `/catalog/${currentYear}/${currentSemester}/${course.subject}/${course.number}/${number}`,
         search: searchParams.toString(),
@@ -76,35 +52,16 @@ export default function Catalog() {
     [navigate, currentYear, currentSemester, searchParams]
   );
 
-  const open = useMemo(
-    () =>
-      currentClassNumber &&
-      currentCourseNumber &&
-      currentSubject &&
-      partialCurrentCourse,
-    [
-      currentClassNumber,
-      currentCourseNumber,
-      currentSubject,
-      partialCurrentCourse,
-    ]
-  );
-
-  return loading || error ? (
-    <Boundary>
-      <LoadingIndicator />
-    </Boundary>
-  ) : (
+  return (
     <div className={styles.root}>
       <Browser
-        courses={courses}
         onClassSelect={handleClick}
-        currentSemester={currentSemester}
-        currentYear={currentYear}
+        semester={currentSemester}
+        year={currentYear}
       />
-      {open ? (
+      {currentClassNumber && currentCourseNumber && currentSubject ? (
         <Class
-          partialCurrentCourse={partialCurrentCourse!}
+          partialCurrentCourse={partialCurrentCourse}
           currentSemester={currentSemester}
           currentYear={currentYear}
           currentClassNumber={currentClassNumber!}
