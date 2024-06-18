@@ -7,4 +7,6 @@ RUN curl -s https://deb.nodesource.com/setup_16.x | bash -
 RUN echo "deb https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN echo "deb http://apt.kubernetes.io/ kubernetes-xenial-unstable main" > /etc/apt/sources.list.d/kubernetes.list
 RUN apt update
-RUN apt install -y google-cloud-sdk kubeadm nodejs
+RUN apt install -y kubeadm
+RUN apt install -y nodejs
+RUN apt install -y google-cloud-sdk=372.0.0-0 kubeadm nodejs
