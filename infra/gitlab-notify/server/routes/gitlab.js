@@ -25,16 +25,16 @@ const webhookClient = new Discord.WebhookClient(
 );
 
 const router = express.Router();
-const transporter = nodemailer.createTransport({
-  host: "smtp.sendgrid.net",
-  port: 587,
-  secure: false,
-  auth: {
-    user: USERNAME_BT_GITLAB_SENDGRID_SMTP,
-    pass: PASSWORD_BT_GITLAB_SENDGRID_SMTP,
-  },
-});
-await transporter.verify();
+// const transporter = nodemailer.createTransport({
+//   host: "smtp.sendgrid.net",
+//   port: 587,
+//   secure: false,
+//   auth: {
+//     user: USERNAME_BT_GITLAB_SENDGRID_SMTP,
+//     pass: PASSWORD_BT_GITLAB_SENDGRID_SMTP,
+//   },
+// });
+// await transporter.verify();
 
 const today = () => {
   const ts = new Date(Date.now());
