@@ -11,24 +11,23 @@ type Query {
     
     Used primarily in the catalog page.
     """
-    catalog(term: TermInput!): [CatalogItem]
+    catalog(term: TermInput!): [CatalogItem!]
 
     """
     Get a list of all course names across all semesters. 
     
     Useful for searching for courses.
     """
-    courseList: [CourseListItem]
+    courseList: [CourseListItem!]
 }
 
 """
 Info shared between Classes within and across semesters.
 """
 type Course @cacheControl(maxAge: 1) {
-    classes(term: TermInput): [Class]!
-    crossListing: [Course]
-    sections(term: TermInput, primary: Boolean): [Section]!
-
+    classes(term: TermInput): [Class!]!
+    crossListing: [Course!]
+    sections(term: TermInput, primary: Boolean): [Section!]!
     description: String!
     fromDate: String!
     gradeAverage: Float
@@ -51,7 +50,7 @@ Data for a specific class in a specific semester. There may be more than one Cla
 type Class @cacheControl(maxAge: 1) {
     course: Course!
     primarySection: Section!
-    sections: [Section]!
+    sections: [Section!]!
 
     description: String
     enrollCount: Int!
@@ -77,7 +76,7 @@ Sections are each associated with one Class.
 type Section @cacheControl(maxAge: 1) {
     class: Class!
     course: Course!
-    enrollmentHistory: [EnrollmentDay]
+    enrollmentHistory: [EnrollmentDay!]
 
     ccn: Int!
     dateEnd: String
@@ -85,7 +84,7 @@ type Section @cacheControl(maxAge: 1) {
     days: [Boolean!]
     enrollCount: Int!
     enrollMax: Int!
-    instructors: [Instructor]
+    instructors: [Instructor!]
     kind: String!
     location: String
     notes: String
@@ -117,7 +116,7 @@ type CatalogItem @cacheControl(maxAge: 1) {
     number: String!
     title: String!
     description: String!
-    classes: [CatalogClass]!
+    classes: [CatalogClass!]!
     gradeAverage: Float
 
     lastUpdated: ISODate!

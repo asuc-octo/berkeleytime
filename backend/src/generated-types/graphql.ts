@@ -35,7 +35,7 @@ export type CatalogClass = {
 
 export type CatalogItem = {
   __typename?: 'CatalogItem';
-  classes: Array<Maybe<CatalogClass>>;
+  classes: Array<CatalogClass>;
   description: Scalars['String'];
   gradeAverage?: Maybe<Scalars['Float']>;
   lastUpdated: Scalars['ISODate'];
@@ -55,7 +55,7 @@ export type Class = {
   number: Scalars['String'];
   primarySection: Section;
   raw: Scalars['JSONObject'];
-  sections: Array<Maybe<Section>>;
+  sections: Array<Section>;
   semester: Semester;
   session: Scalars['String'];
   status: Scalars['String'];
@@ -70,8 +70,8 @@ export type Class = {
 /** Info shared between Classes within and across semesters. */
 export type Course = {
   __typename?: 'Course';
-  classes: Array<Maybe<Class>>;
-  crossListing?: Maybe<Array<Maybe<Course>>>;
+  classes: Array<Class>;
+  crossListing?: Maybe<Array<Course>>;
   description: Scalars['String'];
   fromDate: Scalars['String'];
   gradeAverage?: Maybe<Scalars['Float']>;
@@ -81,7 +81,7 @@ export type Course = {
   number: Scalars['String'];
   prereqs?: Maybe<Scalars['String']>;
   raw: Scalars['JSONObject'];
-  sections: Array<Maybe<Section>>;
+  sections: Array<Section>;
   subject: Scalars['String'];
   subjectName: Scalars['String'];
   title: Scalars['String'];
@@ -202,7 +202,7 @@ export type Query = {
    *
    * Used primarily in the catalog page.
    */
-  catalog?: Maybe<Array<Maybe<CatalogItem>>>;
+  catalog?: Maybe<Array<CatalogItem>>;
   class?: Maybe<Class>;
   course?: Maybe<Course>;
   /**
@@ -210,7 +210,7 @@ export type Query = {
    *
    * Useful for searching for courses.
    */
-  courseList?: Maybe<Array<Maybe<CourseListItem>>>;
+  courseList?: Maybe<Array<CourseListItem>>;
   grade?: Maybe<Grade>;
   /** @deprecated test */
   ping: Scalars['String'];
@@ -310,8 +310,8 @@ export type Section = {
   days?: Maybe<Array<Scalars['Boolean']>>;
   enrollCount: Scalars['Int'];
   enrollMax: Scalars['Int'];
-  enrollmentHistory?: Maybe<Array<Maybe<EnrollmentDay>>>;
-  instructors?: Maybe<Array<Maybe<Instructor>>>;
+  enrollmentHistory?: Maybe<Array<EnrollmentDay>>;
+  instructors?: Maybe<Array<Instructor>>;
   kind: Scalars['String'];
   lastUpdated: Scalars['ISODate'];
   location?: Maybe<Scalars['String']>;
@@ -550,7 +550,7 @@ export type CatalogClassResolvers<ContextType = any, ParentType extends Resolver
 };
 
 export type CatalogItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogItem'] = ResolversParentTypes['CatalogItem']> = {
-  classes?: Resolver<Array<Maybe<ResolversTypes['CatalogClass']>>, ParentType, ContextType>;
+  classes?: Resolver<Array<ResolversTypes['CatalogClass']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   gradeAverage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
@@ -569,7 +569,7 @@ export type ClassResolvers<ContextType = any, ParentType extends ResolversParent
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   primarySection?: Resolver<ResolversTypes['Section'], ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
-  sections?: Resolver<Array<Maybe<ResolversTypes['Section']>>, ParentType, ContextType>;
+  sections?: Resolver<Array<ResolversTypes['Section']>, ParentType, ContextType>;
   semester?: Resolver<ResolversTypes['Semester'], ParentType, ContextType>;
   session?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -583,8 +583,8 @@ export type ClassResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type CourseResolvers<ContextType = any, ParentType extends ResolversParentTypes['Course'] = ResolversParentTypes['Course']> = {
-  classes?: Resolver<Array<Maybe<ResolversTypes['Class']>>, ParentType, ContextType, Partial<CourseClassesArgs>>;
-  crossListing?: Resolver<Maybe<Array<Maybe<ResolversTypes['Course']>>>, ParentType, ContextType>;
+  classes?: Resolver<Array<ResolversTypes['Class']>, ParentType, ContextType, Partial<CourseClassesArgs>>;
+  crossListing?: Resolver<Maybe<Array<ResolversTypes['Course']>>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   fromDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   gradeAverage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
@@ -594,7 +594,7 @@ export type CourseResolvers<ContextType = any, ParentType extends ResolversParen
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   prereqs?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
-  sections?: Resolver<Array<Maybe<ResolversTypes['Section']>>, ParentType, ContextType, Partial<CourseSectionsArgs>>;
+  sections?: Resolver<Array<ResolversTypes['Section']>, ParentType, ContextType, Partial<CourseSectionsArgs>>;
   subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   subjectName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -666,10 +666,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
+  catalog?: Resolver<Maybe<Array<ResolversTypes['CatalogItem']>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
   class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassArgs, 'classNumber' | 'courseNumber' | 'subject' | 'term'>>;
   course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCourseArgs, 'courseNumber' | 'subject'>>;
-  courseList?: Resolver<Maybe<Array<Maybe<ResolversTypes['CourseListItem']>>>, ParentType, ContextType>;
+  courseList?: Resolver<Maybe<Array<ResolversTypes['CourseListItem']>>, ParentType, ContextType>;
   grade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradeArgs, 'courseNum' | 'subject'>>;
   ping?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   scheduleByID?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QueryScheduleByIdArgs, 'id'>>;
@@ -700,8 +700,8 @@ export type SectionResolvers<ContextType = any, ParentType extends ResolversPare
   days?: Resolver<Maybe<Array<ResolversTypes['Boolean']>>, ParentType, ContextType>;
   enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  enrollmentHistory?: Resolver<Maybe<Array<Maybe<ResolversTypes['EnrollmentDay']>>>, ParentType, ContextType>;
-  instructors?: Resolver<Maybe<Array<Maybe<ResolversTypes['Instructor']>>>, ParentType, ContextType>;
+  enrollmentHistory?: Resolver<Maybe<Array<ResolversTypes['EnrollmentDay']>>, ParentType, ContextType>;
+  instructors?: Resolver<Maybe<Array<ResolversTypes['Instructor']>>, ParentType, ContextType>;
   kind?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
