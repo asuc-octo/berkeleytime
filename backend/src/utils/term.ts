@@ -23,5 +23,6 @@ export function getTermStartMonth(term: TermInput) {
         "Summer": `${term.year}-05-31`,
     }
 
+    // @ts-expect-error - We know that the key exists
     return startDates[term.semester];
 }
