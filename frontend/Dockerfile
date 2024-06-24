@@ -8,6 +8,7 @@ ENTRYPOINT npm start
 
 FROM dev AS prod
 RUN npm install -g serve
-RUN npm run build || (cat /root/.npm/_logs/2024-06-24T00_52_43_746Z-debug.log && false)
+RUN node -v
+RUN npm run build
 RUN rm -rf node_modules
 ENTRYPOINT npm run prod
