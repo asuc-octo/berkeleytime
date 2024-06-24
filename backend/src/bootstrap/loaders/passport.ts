@@ -11,6 +11,8 @@ import passport from "passport";
 import GoogleStrategy from "passport-google-oauth20";
 import { UserModel } from "../../models/user";
 import { config } from "../../config";
+import type { RedisClientType } from "redis";
+import RedisStore from "connect-redis";
 
 const LOGIN_ROUTE = "/login";
 const LOGIN_REDIRECT_ROUTE = "/login/redirect";
@@ -23,7 +25,9 @@ const FAILURE_REDIRECT = config.backendPath + "/fail";
 
 const SCOPE = ["profile", "email"];
 
-export default async (app: Application) => {
+const CACHE_PREFIX = "user-session:";
+
+export default async (app: Application, redis: RedisClientType) => {
   // init
   app.use(
     session({
@@ -37,6 +41,10 @@ export default async (app: Application) => {
         maxAge: 1000 * 60 * 60, // 1 hour
         sameSite: "lax",
       },
+      store: new RedisStore({
+        client: redis,
+        prefix: CACHE_PREFIX,
+      }),
       rolling: true,
     })
   );
