@@ -80,7 +80,7 @@ const updateCourses = async () => {
         }
     }));
 
-    const options = { strict: 'throw' } as unknown as MongooseBulkWriteOptions;
+    const options = { } as MongooseBulkWriteOptions;
 
     const res = await CourseModel.bulkWrite(bulkOps, options);
 
@@ -117,7 +117,7 @@ const updateClasses = async () => {
         }
     }));
 
-    const options = { strict: 'throw' } as unknown as MongooseBulkWriteOptions;
+    const options = { } as MongooseBulkWriteOptions;
 
     const res = await ClassModel.bulkWrite(bulkOps, options);
 
@@ -154,7 +154,7 @@ const updateSections = async () => {
         }
     }));
 
-    const options = { strict: 'throw' } as unknown as MongooseBulkWriteOptions;
+    const options = { } as MongooseBulkWriteOptions;
 
     const res = await SectionModel.bulkWrite(bulkOps, options);
 
