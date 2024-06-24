@@ -8,8 +8,6 @@ import { ICourse, Semester } from "@/lib/api";
 import styles from "./Catalog.module.scss";
 import Class from "./Class";
 
-// TODO: Search by CCN and instructor
-
 export default function Catalog() {
   const {
     year,
@@ -58,6 +56,7 @@ export default function Catalog() {
         onClassSelect={handleClick}
         semester={currentSemester}
         year={currentYear}
+        persistent
       />
       {currentClassNumber && currentCourseNumber && currentSubject ? (
         <Class

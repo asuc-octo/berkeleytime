@@ -6,9 +6,6 @@ import { getY } from "@/lib/schedule";
 import Event from "./Event";
 import styles from "./Week.module.scss";
 
-const getId = (section: ISection) =>
-  `${section.course.subject} ${section.course.number} ${section.class.number} ${section.number}`;
-
 // You have to trust me on this math
 const adjustAttachedEvents = (
   relevantSections: ISection[],
@@ -25,7 +22,7 @@ const adjustAttachedEvents = (
 
     positions[id][1]++;
 
-    const section = relevantSections.find((section) => id === getId(section));
+    const section = relevantSections.find((section) => id === section.ccn);
     if (!section) return;
 
     const top = getY(section.meetings[0].startTime);
@@ -125,9 +122,7 @@ export default function Week({
             );
           }
 
-          const id = getId(section);
-
-          positions[id] = [
+          positions[section.ccn] = [
             position,
             attachedSections.length === 0
               ? 1
@@ -135,12 +130,12 @@ export default function Week({
           ];
 
           for (let i = top; i < top + height; i++) {
-            minutes[i].push(id);
+            minutes[i].push(section.ccn);
           }
         }
 
         return relevantSections.map((section) => {
-          const [position, columns] = positions[getId(section)];
+          const [position, columns] = positions[section.ccn];
 
           return {
             ...section,
@@ -218,7 +213,7 @@ export default function Week({
                 <div key={hour} className={styles.hour}></div>
               ))}
               {events.map((event) => (
-                <Event key={getId(event)} {...event} />
+                <Event key={event.ccn} {...event} />
               ))}
               {y && <div className={styles.line} style={{ top: `${y}px` }} />}
             </div>

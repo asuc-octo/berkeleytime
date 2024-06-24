@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { Xmark } from "iconoir-react";
@@ -12,7 +12,7 @@ import styles from "./Catalog.module.scss";
 
 interface CatalogProps {
   onClick: (course: ICourse, number: string) => void;
-  children: JSX.Element;
+  children: ReactNode;
   semester: Semester;
   year: number;
 }

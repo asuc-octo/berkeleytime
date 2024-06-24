@@ -171,7 +171,9 @@ export function formatCourse(
 
     requirements: course.preparation?.requiredText,
     description: course.description as string,
+    primaryComponent: course.primaryInstructionMethod?.code as string,
     fromDate: course.fromDate,
+    finalExam: course.finalExam?.description as string,
     gradingBasis: course.gradingBasis?.description as string,
     academicCareer: course.academicCareer?.code as string,
     number: course.catalogNumber?.formatted as string,

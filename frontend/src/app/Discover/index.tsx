@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useQuery } from "@apollo/client";
 import { ArrowRight, Calendar } from "iconoir-react";
 
 import AverageGrade from "@/components/AverageGrade";
@@ -9,15 +9,32 @@ import Container from "@/components/Container";
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 import Units from "@/components/Units";
-import { GET_COURSE, ICourse, Semester } from "@/lib/api";
+import {
+  GET_COURSE,
+  GET_COURSES,
+  GetCoursesResponse,
+  ICourse,
+  Semester,
+} from "@/lib/api";
 
-import styles from "./Explore.module.scss";
+import styles from "./Discover.module.scss";
 import Placeholder from "./Placeholder";
 
-export default function Explore() {
+const score = {
+  [Semester.Fall]: 4,
+  [Semester.Summer]: 3,
+  [Semester.Spring]: 2,
+  [Semester.Winter]: 1,
+};
+
+export default function Discover() {
   const [input, setInput] = useState("");
   const [courses, setCourses] = useState<ICourse[]>([]);
   const apolloClient = useApolloClient();
+
+  const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
+
+  console.log(data);
 
   const getCourse = async (name: string) => {
     const [subject, courseNumber] = name.split(" ");
@@ -83,12 +100,6 @@ export default function Explore() {
           <div className={styles.view}>
             {courses
               .sort((a, b) => {
-                const score = {
-                  [Semester.Fall]: 3,
-                  [Semester.Summer]: 2,
-                  [Semester.Spring]: 1,
-                };
-
                 const getTerm = (course: ICourse) => {
                   return [...course.classes].sort(
                     (a, b) =>
@@ -102,12 +113,6 @@ export default function Explore() {
                 );
               })
               .map((course) => {
-                const score = {
-                  [Semester.Fall]: 3,
-                  [Semester.Summer]: 2,
-                  [Semester.Spring]: 1,
-                };
-
                 const { year, semester } = [...course.classes].sort(
                   (a, b) =>
                     a.year - b.year || score[a.semester] - score[b.semester]

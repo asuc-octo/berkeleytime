@@ -128,7 +128,7 @@ export type Course = {
   classes: Array<Class>;
   crossListing: Array<Course>;
   description: Scalars['String'];
-  finalExam: CourseFinalExam;
+  finalExam?: Maybe<CourseFinalExam>;
   fromDate: Scalars['String'];
   gradeAverage?: Maybe<Scalars['Float']>;
   gradingBasis: CourseGradingBasis;
@@ -304,7 +304,7 @@ export type Query = {
    *
    * Useful for searching for courses.
    */
-  courseList?: Maybe<Array<CourseListItem>>;
+  courseList?: Maybe<Array<Course>>;
   grade?: Maybe<Grade>;
   /** @deprecated test */
   ping: Scalars['String'];
@@ -444,7 +444,8 @@ export type SelectedCourseInput = {
 export type Semester =
   | 'Fall'
   | 'Spring'
-  | 'Summer';
+  | 'Summer'
+  | 'Winter';
 
 export type Session =
   /** Session A */
@@ -688,7 +689,7 @@ export type CourseResolvers<ContextType = any, ParentType extends ResolversParen
   classes?: Resolver<Array<ResolversTypes['Class']>, ParentType, ContextType, Partial<CourseClassesArgs>>;
   crossListing?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  finalExam?: Resolver<ResolversTypes['CourseFinalExam'], ParentType, ContextType>;
+  finalExam?: Resolver<Maybe<ResolversTypes['CourseFinalExam']>, ParentType, ContextType>;
   fromDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   gradeAverage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   gradingBasis?: Resolver<ResolversTypes['CourseGradingBasis'], ParentType, ContextType>;
@@ -791,7 +792,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   catalog?: Resolver<Maybe<Array<ResolversTypes['Course']>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
   class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassArgs, 'classNumber' | 'courseNumber' | 'subject' | 'term'>>;
   course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCourseArgs, 'courseNumber' | 'subject'>>;
-  courseList?: Resolver<Maybe<Array<ResolversTypes['CourseListItem']>>, ParentType, ContextType>;
+  courseList?: Resolver<Maybe<Array<ResolversTypes['Course']>>, ParentType, ContextType>;
   grade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradeArgs, 'courseNum' | 'subject'>>;
   ping?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   scheduleByID?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QueryScheduleByIdArgs, 'id'>>;
