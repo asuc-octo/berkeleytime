@@ -3,11 +3,12 @@ import cors from "cors";
 import helmet from "helmet";
 import type { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
+import { RedisClientType } from "redis";
 
 import passportLoader from "./passport";
 import { config } from "../../config";
 
-export default async (app: Application, server: ApolloServer) => {
+export default async (app: Application, server: ApolloServer, redis: RedisClientType) => {
   // Body parser only needed during POST on the graphQL path
   app.use(json());
 
@@ -24,7 +25,7 @@ export default async (app: Application, server: ApolloServer) => {
   app.use(helmet());
 
   // load authentication
-  passportLoader(app);
+  passportLoader(app, redis);
 
   app.use(
     config.graphqlPath,
