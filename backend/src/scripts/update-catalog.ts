@@ -1,12 +1,12 @@
 import mongooseLoader from "../bootstrap/loaders/mongoose";
 import { CourseModel, CourseType } from "../models/course";
-import { config } from "../config";
 
 import { SISResponse } from "../utils/sis";
 import { ClassModel, ClassType } from "../models/class";
 import { SectionModel, SectionType } from "../models/section";
 import { URLSearchParams } from "url";
 import { TermType, TermModel } from "../models/term";
+import { config } from "../config";
 
 const SIS_COURSE_URL = "https://gateway.api.berkeley.edu/sis/v4/courses";
 
@@ -15,12 +15,9 @@ const SIS_CLASS_URL = "https://gateway.api.berkeley.edu/sis/v1/classes";
 const SIS_SECTION_URL =
   "https://gateway.api.berkeley.edu/sis/v1/classes/sections";
 
-const headers = {
-  app_id: config.sis.COURSE_APP_ID,
-  app_key: config.sis.COURSE_APP_KEY,
-};
-
 const queryPages = async <V>(
+  id: string,
+  key: string,
   url: string,
   field: string,
   params?: Record<string, string>
@@ -43,7 +40,10 @@ const queryPages = async <V>(
       });
 
       const response = await fetch(`${url}${_params}`, {
-        headers,
+        headers: {
+          app_id: id,
+          app_key: key,
+        },
       });
 
       if (response.status === 404) break;
@@ -84,9 +84,15 @@ const queryPages = async <V>(
 const updateCourses = async () => {
   console.log("Updating database with new course data...");
 
-  const courses = await queryPages<CourseType>(SIS_COURSE_URL, "courses", {
-    "status-code": "ACTIVE",
-  });
+  const courses = await queryPages<CourseType>(
+    config.sis.COURSE_APP_ID,
+    config.sis.COURSE_APP_KEY,
+    SIS_COURSE_URL,
+    "courses",
+    {
+      "status-code": "ACTIVE",
+    }
+  );
 
   const operations = courses.map((course) => ({
     replaceOne: {
@@ -111,9 +117,15 @@ const updateClasses = async (currentTerms: TermType[]) => {
   for (const term of currentTerms) {
     console.log(`Updating classses for ${term.name}...`);
 
-    const termClasses = await queryPages<ClassType>(SIS_CLASS_URL, "classes", {
-      "term-id": term.id,
-    });
+    const termClasses = await queryPages<ClassType>(
+      config.sis.CLASS_APP_ID,
+      config.sis.CLASS_APP_KEY,
+      SIS_CLASS_URL,
+      "classes",
+      {
+        "term-id": term.id,
+      }
+    );
 
     classes.push(...termClasses);
   }
@@ -144,6 +156,8 @@ const updateSections = async (currentTerms: TermType[]) => {
     console.log(`Updating sections for ${term.name}...`);
 
     const termClasses = await queryPages<SectionType>(
+      config.sis.CLASS_APP_ID,
+      config.sis.CLASS_APP_KEY,
       SIS_SECTION_URL,
       "classSections",
       { "term-id": term.id }
@@ -174,7 +188,12 @@ const updateSections = async (currentTerms: TermType[]) => {
 const updateTerms = async () => {
   console.log("Updating database with new term data...");
 
-  const terms = await queryPages<TermType>(SIS_COURSE_URL, "terms");
+  const terms = await queryPages<TermType>(
+    config.sis.TERM_APP_ID,
+    config.sis.TERM_APP_KEY,
+    SIS_COURSE_URL,
+    "terms"
+  );
 
   const operations = terms.map((term) => ({
     replaceOne: {

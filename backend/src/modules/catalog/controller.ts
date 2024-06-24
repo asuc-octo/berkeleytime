@@ -1,5 +1,5 @@
 import { CatalogItem, TermInput } from "../../generated-types/graphql";
-import { ClassModel, ClassType } from "../../models/class";
+import { ClassModel } from "../../models/class";
 import { getTermStartMonth, termToString } from "../../utils/term";
 import { GradeModel, GradeType } from "../../models/grade";
 import { getAverage } from "../grade/controller";
