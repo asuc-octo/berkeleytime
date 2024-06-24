@@ -16,6 +16,9 @@ jobs:
       - name: echo
         run: pwd
 
+      - name: node
+        run: node -v
+
       - name: Build Docker Image
         run: docker build -t berkeleytime-frontend ./frontend/
 
