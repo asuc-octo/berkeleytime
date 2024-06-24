@@ -29,7 +29,7 @@ export default gql`
 
     Useful for searching for courses.
     """
-    courseList: [CourseListItem!]
+    courseList: [Course!]
   }
 
   """
@@ -46,7 +46,7 @@ export default gql`
     fromDate: String!
     gradeAverage: Float
     gradingBasis: CourseGradingBasis!
-    finalExam: CourseFinalExam!
+    finalExam: CourseFinalExam
     academicCareer: AcademicCareer!
     number: String!
     subject: String!

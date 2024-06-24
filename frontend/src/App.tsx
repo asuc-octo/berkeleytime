@@ -4,7 +4,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import About from "@/app/About";
 import Catalog from "@/app/Catalog";
-import Explore from "@/app/Explore";
+import Discover from "@/app/Discover";
 import Landing from "@/app/Landing";
 import Plan from "@/app/Plan";
 import Compare from "@/app/Schedule/Compare";
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
         index: true,
       },
       {
-        element: <Explore />,
+        element: <Discover />,
         path: "explore",
       },
     ],

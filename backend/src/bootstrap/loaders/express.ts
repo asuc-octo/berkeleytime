@@ -3,11 +3,14 @@ import cors from "cors";
 import helmet from "helmet";
 import type { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
+import compression from "compression";
 
 import passportLoader from "./passport";
 import { config } from "../../config";
 
 export default async (app: Application, server: ApolloServer) => {
+  app.use(compression());
+
   // Body parser only needed during POST on the graphQL path
   app.use(json());
 

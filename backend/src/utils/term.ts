@@ -21,6 +21,7 @@ export function getTermStartMonth(term: TermInput) {
         "Fall": `${term.year}-08-31`,
         "Spring": `${term.year}-01-31`,
         "Summer": `${term.year}-05-31`,
+        "Winter": `${term.year}-11-30`,
     }
 
     return startDates[term.semester];

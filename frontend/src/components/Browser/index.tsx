@@ -8,8 +8,8 @@ import { useSearchParams } from "react-router-dom";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import {
   Component,
-  GET_COURSES,
-  GetCoursesResponse,
+  GET_CLASSES,
+  GetClassesResponse,
   ICourse,
   Semester,
 } from "@/lib/api";
@@ -131,7 +131,7 @@ export default function Browser({
     [width, responsive, block]
   );
 
-  const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSES, {
+  const { data, loading } = useQuery<GetClassesResponse>(GET_CLASSES, {
     variables: {
       term: {
         semester: currentSemester,

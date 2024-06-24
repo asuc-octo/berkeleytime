@@ -4,6 +4,7 @@ export enum Semester {
   Fall = "Fall",
   Spring = "Spring",
   Summer = "Summer",
+  Winter = "Winter",
 }
 
 export enum Component {
@@ -145,11 +146,12 @@ export interface ICourse {
   sections: ISection[];
   requiredCourses: ICourse[];
   requirements: string | null;
+  primaryComponent: Component;
   description: string;
   fromDate: string;
   gradeAverage: number | null;
   gradingBasis: string;
-  finalExam: string;
+  finalExam: string | null;
   academicCareer: AcademicCareer;
   title: string;
   subject: string;
@@ -176,24 +178,23 @@ export const GET_COURSE = gql`
   query GetCourse($subject: String!, $courseNumber: String!) {
     course(subject: $subject, courseNumber: $courseNumber) {
       title
-      classes {
-        year
-        semester
-        number
-        unitsMax
-        unitsMin
-      }
-      academicCareer
       description
+      subject
+      number
+      academicCareer
       gradeAverage
       gradingBasis
-      subject
+      finalExam
       requirements
       requiredCourses {
         subject
         number
       }
-      number
+      classes {
+        year
+        semester
+        number
+      }
     }
   }
 `;
@@ -216,19 +217,20 @@ export const GET_CLASS = gql`
       unitsMax
       unitsMin
       number
+      gradingBasis
+      finalExam
       course {
         title
         description
         gradeAverage
-        gradingBasis
         subject
+        number
         academicCareer
         requirements
         requiredCourses {
           subject
           number
         }
-        number
         classes {
           year
           semester
@@ -266,7 +268,6 @@ export const GET_CLASS = gql`
           endTime
         }
         component
-        primary
         waitlistCount
         waitlistMax
         number
@@ -298,7 +299,6 @@ export const GET_CLASS = gql`
             givenName
           }
         }
-        primary
         component
         waitlistCount
         waitlistMax
@@ -311,11 +311,33 @@ export const GET_CLASS = gql`
 `;
 
 export interface GetCoursesResponse {
-  catalog: ICourse[];
+  courseList: ICourse[];
 }
 
 export const GET_COURSES = gql`
-  query GetCourses($term: TermInput!) {
+  query GetCourses {
+    courseList {
+      subject
+      number
+      title
+      gradeAverage
+      academicCareer
+      finalExam
+      gradingBasis
+      classes {
+        year
+        semester
+      }
+    }
+  }
+`;
+
+export interface GetClassesResponse {
+  catalog: ICourse[];
+}
+
+export const GET_CLASSES = gql`
+  query GetClasses($term: TermInput!) {
     catalog(term: $term) {
       subject
       number
@@ -326,10 +348,10 @@ export const GET_COURSES = gql`
         number
         title
         unitsMax
-        gradingBasis
-        finalExam
         session
         unitsMin
+        finalExam
+        gradingBasis
         primarySection {
           component
           online

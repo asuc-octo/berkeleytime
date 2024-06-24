@@ -29,7 +29,6 @@ export namespace CatalogModule {
   export type TermInput = Types.TermInput;
   export type Class = Pick<Types.Class, DefinedFields['Class']>;
   export type Section = Pick<Types.Section, DefinedFields['Section']>;
-  export type CourseListItem = Pick<Types.CourseListItem, DefinedFields['CourseListItem']>;
   export type CourseGradingBasis = DefinedEnumValues['CourseGradingBasis'];
   export type CourseFinalExam = DefinedEnumValues['CourseFinalExam'];
   export type AcademicCareer = DefinedEnumValues['AcademicCareer'];
@@ -45,6 +44,7 @@ export namespace CatalogModule {
   export type Exam = Pick<Types.Exam, DefinedFields['Exam']>;
   export type Reservation = Pick<Types.Reservation, DefinedFields['Reservation']>;
   export type Instructor = Pick<Types.Instructor, DefinedFields['Instructor']>;
+  export type CourseListItem = Pick<Types.CourseListItem, DefinedFields['CourseListItem']>;
   
   export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
   export type CourseResolvers = Pick<Types.CourseResolvers, DefinedFields['Course'] | '__isTypeOf'>;

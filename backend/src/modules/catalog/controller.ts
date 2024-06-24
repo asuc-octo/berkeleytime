@@ -401,14 +401,106 @@ export function getSectionById(
     .then(formatSection);
 }
 
-export function getCourseList(): any {
-  return CourseModel.aggregate()
-    .group({
-      _id: {
-        subject: "$classSubjectArea.code",
-        number: "$catalogNumber.formatted",
+export async function getCourseList(
+  info: GraphQLResolveInfo
+): Promise<Course[] | null> {
+  const start = performance.now();
+
+  let courses = await CourseModel.aggregate([
+    {
+      $match: {
+        printInCatalog: true,
+        "status.code": "ACTIVE",
+        "catalogNumber.prefix": "",
       },
-    })
-    .sort({ "_id.subject": 1, "_id.number": 1 })
-    .project({ _id: 0, subject: "$_id.subject", number: "$_id.number" });
+    },
+    {
+      $sort: {
+        "classSubjectArea.code": 1,
+        "catalogNumber.formatted": 1,
+        fromDate: -1,
+      },
+    },
+    {
+      $group: {
+        _id: "$displayName",
+        document: { $first: "$$ROOT" },
+      },
+    },
+    {
+      $replaceRoot: { newRoot: "$document" },
+    },
+  ]);
+
+  const csDisplayNames = courses.map((c) => c.displayName);
+
+  const coTime = performance.now();
+  console.log("Courses query time: ", coTime - start);
+
+  const classes = await ClassModel.find({
+    "course.displayName": {
+      $in: csDisplayNames,
+    },
+    anyPrintInScheduleOfClasses: true,
+  }).lean();
+
+  courses = courses.reduce((acc, c) => {
+    const cl = classes
+      .filter(
+        (cl) => getCsCourseId(cl.course as CourseType) === getCsCourseId(c)
+      )
+      .map(formatClass);
+
+    if (cl.length === 0) return acc;
+
+    acc.push({
+      ...formatCourse(c),
+      classes: cl,
+    });
+
+    return acc;
+  }, []);
+
+  const clTime = performance.now();
+  console.log("Classes query time: ", clTime - coTime);
+
+  /* Map grades to course keys for easy lookup */
+  const gradesMap: { [key: string]: GradeType[] } = {};
+  courses.forEach((c) => (gradesMap[getCourseKey(c)] = []));
+
+  const children = getChildren(info);
+
+  if (children.includes("gradeAverage")) {
+    const grades = await GradeModel.find(
+      {
+        /*
+                    No filters because an appropriately large filter
+                    is actually significantly slower than no filter.
+                */
+      },
+      {
+        CourseSubjectShortNm: 1,
+        CourseNumber: 1,
+        GradeNm: 1,
+        EnrollmentCnt: 1,
+      }
+    ).lean();
+
+    for (const g of grades) {
+      const key = `${g.CourseSubjectShortNm as string} ${
+        g.CourseNumber as string
+      }`;
+      if (key in gradesMap) {
+        gradesMap[key].push(g);
+      }
+    }
+  }
+
+  const grTime = performance.now();
+  console.log("Grades query time: ", grTime - clTime);
+
+  return courses.map((c) => ({
+    ...c,
+    gradeAverage: getAverage(gradesMap[getCourseKey(c)]),
+  }));
 }

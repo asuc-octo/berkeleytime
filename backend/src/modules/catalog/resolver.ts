@@ -30,7 +30,7 @@ const resolvers: CatalogModule.Resolvers = {
         args.classNumber,
         args.sectionNumber
       ),
-    courseList: getCourseList,
+    courseList: (_, __, ___, info) => getCourseList(info),
   },
 
   /*

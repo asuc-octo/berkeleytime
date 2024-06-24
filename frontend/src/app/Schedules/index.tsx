@@ -1,4 +1,5 @@
 import { Reference, gql, useMutation, useQuery } from "@apollo/client";
+import { ClockRotateRight } from "iconoir-react";
 import { Link } from "react-router-dom";
 
 import Button from "@/components/Button";
@@ -11,6 +12,8 @@ import {
   GET_SCHEDULES,
   GetSchedulesResponse,
 } from "@/lib/api";
+
+import styles from "./Schedules.module.scss";
 
 export default function Schedules() {
   const { data: account } = useQuery<AccountResponse>(GET_ACCOUNT);
@@ -81,18 +84,29 @@ export default function Schedules() {
   });
 
   return (
-    <>
-      <Button onClick={() => createSchedule()}>Create schedule</Button>
-      {schedules?.schedulesByUser.map((schedule) => (
-        <div key={schedule._id}>
-          <Link to={schedule._id}>{schedule.name}</Link>
-          <Button
-            onClick={() => deleteSchedule({ variables: { id: schedule._id } })}
-          >
-            Delete
-          </Button>
+    <div className={styles.root}>
+      <div className={styles.menu}></div>
+      <div className={styles.view}>
+        <div className={styles.header}>
+          <div className={styles.icon}>
+            <ClockRotateRight />
+          </div>
+          <p className={styles.title}>Jump back in</p>
         </div>
-      ))}
-    </>
+        <Button onClick={() => createSchedule()}>Create schedule</Button>
+        {schedules?.schedulesByUser.map((schedule) => (
+          <div key={schedule._id}>
+            <Link to={schedule._id}>{schedule.name}</Link>
+            <Button
+              onClick={() =>
+                deleteSchedule({ variables: { id: schedule._id } })
+              }
+            >
+              Delete
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

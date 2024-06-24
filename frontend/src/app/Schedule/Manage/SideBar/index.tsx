@@ -4,7 +4,7 @@ import { Plus } from "iconoir-react";
 
 import Button from "@/components/Button";
 import Units from "@/components/Units";
-import { IClass, ICourse, ISection } from "@/lib/api";
+import { IClass, ICourse, ISection, Semester } from "@/lib/api";
 
 import Catalog from "./Catalog";
 import Class from "./Class";
@@ -55,7 +55,11 @@ export default function SideBar({
             </Units>
           </div>
         </div>
-        <Catalog onClassSelect={onClassSelect} semester="Spring" year={2024}>
+        <Catalog
+          onClassSelect={onClassSelect}
+          semester={Semester.Spring}
+          year={2024}
+        >
           <Button className={styles.button}>
             Add class
             <Plus />

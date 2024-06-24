@@ -77,8 +77,8 @@ export default function AverageGrade({ gradeAverage }: AverageGradeProps) {
                 <span style={{ color }}>
                   {text} ({gradeAverage.toLocaleString()})
                 </span>{" "}
-                in this course on average based on performance across all
-                semesters this course has been offered.
+                in this course on average across all semesters this course has
+                been offered.
               </p>
             ) : (
               <p className={styles.description}>
