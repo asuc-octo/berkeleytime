@@ -154,7 +154,7 @@ const updateSections = async () => {
         }
     }));
 
-    const options = { strict: 'throw' } as MongooseBulkWriteOptions;
+    const options = { strict: 'throw' } as unknown as MongooseBulkWriteOptions;
 
     const res = await SectionModel.bulkWrite(bulkOps, options);
 
