@@ -1,183 +1,224 @@
-import mongooseLoader from '../bootstrap/loaders/mongoose';
-import { CourseModel, CourseType } from '../models/course';
-import { SemesterModel, SemesterType } from '../models/semester';
+import mongooseLoader from "../bootstrap/loaders/mongoose";
+import { CourseModel, CourseType } from "../models/course";
 import { config } from "../config";
 
-import axios, { AxiosResponse } from 'axios';
-import { SISResponse } from '../utils/sis';
-import { MongooseBulkWriteOptions } from 'mongoose';
-import { ClassModel, ClassType } from '../models/class';
-import { SectionModel, SectionType } from '../models/section';
+import { SISResponse } from "../utils/sis";
+import { ClassModel, ClassType } from "../models/class";
+import { SectionModel, SectionType } from "../models/section";
+import { URLSearchParams } from "url";
+import { TermType, TermModel } from "../models/term";
 
-const SIS_COURSE_URL = 'https://gateway.api.berkeley.edu/sis/v4/courses';
-const SIS_CLASS_URL = 'https://gateway.api.berkeley.edu/sis/v1/classes';
-const SIS_SECTION_URL = 'https://gateway.api.berkeley.edu/sis/v1/classes/sections';
+const SIS_COURSE_URL = "https://gateway.api.berkeley.edu/sis/v4/courses";
 
-const semToTermId = (s: SemesterType) => {
-    // term-id is computed by dropping the century digit of the year, then adding the term code
-    const termMap: { [key: string] : number} = {'Fall': 8, 'Spring': 2, 'Summer': 5}
-    return `${Math.floor(s.year / 1000)}${s.year % 100}${termMap[s.term]}`
-}
+const SIS_CLASS_URL = "https://gateway.api.berkeley.edu/sis/v1/classes";
 
-const queryPages = async <T>(url: string, params: any, headers: any, field: string, retries: number = 3) => {
-    let page = 1
-    const values: T[] = []
+const SIS_SECTION_URL =
+  "https://gateway.api.berkeley.edu/sis/v1/classes/sections";
 
-    console.log("Querying SIS API pages...")
-    console.log(`URL: ${url}`)
-    console.log(`Params: ${JSON.stringify(params)}`)
-    console.log(`Headers: ${JSON.stringify(headers)}`)
-    while (true) {
-        let resp: AxiosResponse<SISResponse<T>>;
+const headers = {
+  app_id: config.sis.COURSE_APP_ID,
+  app_key: config.sis.COURSE_APP_KEY,
+};
 
-        try {
-            resp = await axios.get(url, { params: { 'page-number': page, ...params}, headers });
-        } catch (err) {
-            if (axios.isAxiosError(err) && err.response?.status === 404) {
-                break;
-            } else {
-                console.log(`Unexpected err querying SIS API. Error: ${err}.`)
-                
-                if (retries > 0) {
-                    retries--;
-                    console.log(`Retrying...`)
-                    continue;
-                } else {
-                    console.log(`Too many errors querying SIS API for courses. Terminating update...`)
-                    throw err;
-                } 
-            }
-        }
+const queryPages = async <V>(
+  url: string,
+  field: string,
+  params?: Record<string, string>
+) => {
+  let page = 1;
+  let retries = 3;
 
-        values.push(...resp.data.apiResponse.response[field]);
-        page++;
+  const values: V[] = [];
+
+  console.log("Querying SIS API pages...");
+  console.log(`URL: ${url}`);
+  if (params) console.log(`Params: ${params}`);
+
+  while (retries > 0) {
+    try {
+      const _params = new URLSearchParams({
+        "page-number": page.toString(),
+        "page-size": "100",
+        ...params,
+      });
+
+      const response = await fetch(`${url}${_params}`, {
+        headers,
+      });
+
+      if (response.status === 404) break;
+
+      if (response.status !== 200) throw new Error(response.statusText);
+
+      const data = (await response.json()) as SISResponse<V>;
+
+      values.push(...data.apiResponse.response[field]);
+    } catch (error) {
+      console.log(`Unexpected error querying SIS API. Error: ${error}`);
+
+      if (retries === 0) {
+        console.log(`Too many errors querying SIS API. Terminating update...`);
+
+        throw error;
+      }
+
+      retries--;
+
+      console.log(`Retrying...`);
+
+      continue;
     }
 
-    console.log(`Completed querying SIS API. Received ${values.length} objects in ${page - 1} pages.`)
+    page++;
+  }
 
-    return values;
-}
+  console.log(
+    `Finished querying SIS API. Received ${values.length} objects in ${
+      page - 1
+    } pages.`
+  );
+
+  return values;
+};
 
 const updateCourses = async () => {
-    const headers = {
-        'app_id': config.sis.COURSE_APP_ID,
-        'app_key': config.sis.COURSE_APP_KEY,
-    }
-    const params = {
-        'status-code': 'ACTIVE',
-        'page-size': 100,
-    }
+  console.log("Updating database with new course data...");
 
-    const courses = await queryPages<CourseType>(SIS_COURSE_URL, params, headers, 'courses');
+  const courses = await queryPages<CourseType>(SIS_COURSE_URL, "courses", {
+    "status-code": "ACTIVE",
+  });
 
-    console.log("Updating database with new course data...")
-    
-    const bulkOps = courses.map(c => ({
-        replaceOne: {
-            filter: { classDisplayName: c.classDisplayName },
-            replacement: c,
-            upsert: true,
-        }
-    }));
+  const operations = courses.map((course) => ({
+    replaceOne: {
+      filter: { classDisplayName: course.classDisplayName },
+      replacement: course,
+      upsert: true,
+    },
+  }));
 
-    const options = { } as MongooseBulkWriteOptions;
+  const { upsertedCount, modifiedCount } = await CourseModel.bulkWrite(
+    operations
+  );
 
-    const res = await CourseModel.bulkWrite(bulkOps, options);
+  console.log(
+    `Completed updating database with new course data. Created ${upsertedCount} and updated ${modifiedCount} course objects.`
+  );
+};
 
-    console.log(`Completed updating database with new course data. Created ${res.upsertedCount} and updated ${res.modifiedCount} course objects.`)
-}
+const updateClasses = async (currentTerms: TermType[]) => {
+  const classes: ClassType[] = [];
 
-const updateClasses = async () => {
-    const headers = {
-        'app_id': config.sis.CLASS_APP_ID,
-        'app_key': config.sis.CLASS_APP_KEY,
-    }
+  for (const term of currentTerms) {
+    console.log(`Updating classses for ${term.name}...`);
 
-    const activeSemesters = await SemesterModel.find({ active: true }).lean();
-    const classes: ClassType[] = [];
-    
-    for (const s of activeSemesters) {
-        console.log(`Updating classses for ${s.term} ${s.year}...`)
+    const termClasses = await queryPages<ClassType>(SIS_CLASS_URL, "classes", {
+      "term-id": term.id,
+    });
 
-        const params = {
-            'term-id': semToTermId(s),
-            'page-size': 100,
-        }
+    classes.push(...termClasses);
+  }
 
-        const semesterClasses = await queryPages<ClassType>(SIS_CLASS_URL, params, headers, 'classes');
-        classes.push(...semesterClasses);
-    }
+  console.log("Updating database with new class data...");
 
-    console.log("Updating database with new class data...")
-    const bulkOps = classes.map(c => ({
-        replaceOne: {
-            filter: { displayName: c.displayName },
-            replacement: c,
-            upsert: true,
-        }
-    }));
+  const operations = classes.map((_class) => ({
+    replaceOne: {
+      filter: { displayName: _class.displayName },
+      replacement: _class,
+      upsert: true,
+    },
+  }));
 
-    const options = { } as MongooseBulkWriteOptions;
+  const { upsertedCount, modifiedCount } = await ClassModel.bulkWrite(
+    operations
+  );
 
-    const res = await ClassModel.bulkWrite(bulkOps, options);
+  console.log(
+    `Completed updating database with new class data. Created ${upsertedCount} and updated ${modifiedCount} class objects.`
+  );
+};
 
-    console.log(`Completed updating database with new class data. Created ${res.upsertedCount} and updated ${res.modifiedCount} class objects.`)
-}
+const updateSections = async (currentTerms: TermType[]) => {
+  const sections: SectionType[] = [];
 
-const updateSections = async () => {
-    const headers = {
-        'app_id': config.sis.CLASS_APP_ID,
-        'app_key': config.sis.CLASS_APP_KEY,
-    }
+  for (const term of currentTerms) {
+    console.log(`Updating sections for ${term.name}...`);
 
-    const activeSemesters = await SemesterModel.find({ active: true }).lean();
-    const sections: SectionType[] = [];
-    
-    for (const s of activeSemesters) {
-        console.log(`Updating sections for ${s.term} ${s.year}...`)
+    const termClasses = await queryPages<SectionType>(
+      SIS_SECTION_URL,
+      "classSections",
+      { "term-id": term.id }
+    );
 
-        const params = {
-            'term-id': semToTermId(s),
-            'page-size': 100,
-        }
+    sections.push(...termClasses);
+  }
 
-        const semesterClasses = await queryPages<SectionType>(SIS_SECTION_URL, params, headers, 'classSections');
-        sections.push(...semesterClasses);
-    }
+  console.log("Updating database with new section data...");
 
-    console.log("Updating database with new section data...")
-    const bulkOps = sections.map(s => ({
-        replaceOne: {
-            filter: { displayName: s.displayName },
-            replacement: s,
-            upsert: true,
-        }
-    }));
+  const operations = sections.map((section) => ({
+    replaceOne: {
+      filter: { displayName: section.displayName },
+      replacement: section,
+      upsert: true,
+    },
+  }));
 
-    const options = { } as MongooseBulkWriteOptions;
+  const { upsertedCount, modifiedCount } = await SectionModel.bulkWrite(
+    operations
+  );
 
-    const res = await SectionModel.bulkWrite(bulkOps, options);
+  console.log(
+    `Completed updating database with new section data. Created ${upsertedCount} and updated ${modifiedCount} section objects.`
+  );
+};
 
-    console.log(`Completed updating database with new section data. Created ${res.upsertedCount} and updated ${res.modifiedCount} section objects.`)
+const updateTerms = async () => {
+  console.log("Updating database with new term data...");
 
-}
+  const terms = await queryPages<TermType>(SIS_COURSE_URL, "terms");
 
-(async () => {
-    try {
-        await mongooseLoader();
+  const operations = terms.map((term) => ({
+    replaceOne: {
+      filter: { name: term.name },
+      replacement: term,
+      upsert: true,
+    },
+  }));
 
-        console.log("\n=== UPDATE COURSES ===")
-        await updateCourses();
+  const { upsertedCount, modifiedCount } = await TermModel.bulkWrite(
+    operations
+  );
 
-        console.log("\n=== UPDATE CLASSES ===")
-        await updateClasses();
+  console.log(
+    `Completed updating database with new course data. Created ${upsertedCount} and updated ${modifiedCount} course objects.`
+  );
+};
 
-        console.log("\n=== UPDATE SECTIONS ===")
-        await updateSections();
-    } catch (err) {
-        console.error(err);
-        process.exit(1);
-    }
+const initialize = async () => {
+  try {
+    await mongooseLoader();
 
-    process.exit(0);
-})();
+    console.log("\n=== UPDATE TERMS ===");
+    await updateTerms();
+
+    console.log("\n=== UPDATE COURSES ===");
+    await updateCourses();
+
+    const currentTerms = await TermModel.find({
+      temporalPosition: "Current",
+    }).lean();
+
+    console.log("\n=== UPDATE CLASSES ===");
+    await updateClasses(currentTerms);
+
+    console.log("\n=== UPDATE SECTIONS ===");
+    await updateSections(currentTerms);
+  } catch (error) {
+    console.error(error);
+
+    process.exit(1);
+  }
+
+  process.exit(0);
+};
+
+initialize();
