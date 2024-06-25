@@ -31,6 +31,7 @@ enum Semester {
     Fall
     Spring
     Summer
+    Winter
 }
 
 type Query {

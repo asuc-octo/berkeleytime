@@ -1,0 +1,42 @@
+.root {
+  padding: 24px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  .legend {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+
+    .label {
+      font-size: 14px;
+      line-height: 1;
+      color: var(--paragraph-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .icon {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        background-color: currentColor;
+      }
+
+      &:first-child {
+        color: var(--blue-500);
+      }
+    }
+  }
+
+  .chart {
+    height: 384px;
+
+    .label {
+      font-size: 12px;
+      color: var(--label-color);
+      font-weight: 400;
+    }
+  }
+}

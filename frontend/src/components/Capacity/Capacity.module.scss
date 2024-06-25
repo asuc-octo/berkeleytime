@@ -1,0 +1,61 @@
+.trigger {
+  height: 32px;
+  border-radius: 16px;
+  background-color: var(--button-hover-color);
+  color: var(--paragraph-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  user-select: none;
+
+  .text {
+    font-size: 14px;
+    line-height: 1;
+
+    .value {
+      color: var(--paragraph-color);
+    }
+  }
+}
+
+.content {
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--tooltip-color);
+  width: 256px;
+  animation: fadeIn 100ms ease-in;
+  z-index: 998;
+
+  .arrow {
+    fill: var(--tooltip-color);
+  }
+
+  .divider {
+    height: 1px;
+    background-color: var(--neutral-700);
+    margin: 12px 0;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    line-height: 1;
+    color: var(--neutral-400);
+
+    .key {
+      font-weight: 500;
+      color: white;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

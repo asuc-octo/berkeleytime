@@ -1,0 +1,42 @@
+.root {
+  display: flex;
+  gap: 16px;
+
+  @media (width <= 992px) {
+    flex-direction: column;
+  }
+
+  .divider {
+    width: 1px;
+    background-color: var(--border-color);
+
+    @media (width <= 992px) {
+      display: none;
+    }
+  }
+
+  .column {
+    flex: 1;
+    font-size: 14px;
+
+    .title {
+      color: var(--label-color);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      color: var(--paragraph-color);
+      line-height: 1.5;
+
+      a {
+        color: var(--blue-500);
+        font-weight: 500;
+
+        &:hover {
+          color: var(--blue-600);
+        }
+      }
+    }
+  }
+}
