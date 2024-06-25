@@ -60,7 +60,7 @@ export default function Catalog() {
       />
       {currentClassNumber && currentCourseNumber && currentSubject ? (
         <Class
-          partialCurrentCourse={partialCurrentCourse}
+          partialCurrentCourse={partialCurrentCourse ?? ({} as ICourse)}
           currentSemester={currentSemester}
           currentYear={currentYear}
           currentClassNumber={currentClassNumber!}

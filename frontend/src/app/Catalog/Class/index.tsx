@@ -52,7 +52,7 @@ const views = [
 ];
 
 interface ClassProps {
-  partialCurrentCourse: ICourse | null;
+  partialCurrentCourse: ICourse;
   currentSemester: Semester;
   currentYear: number;
   currentClassNumber: string;
@@ -87,9 +87,9 @@ export default function Class({
 
   const partialCurrentClass = useMemo(
     () =>
-      partialCurrentCourse?.classes.find(
+      partialCurrentCourse.classes.find(
         (class_) => class_.number === currentClassNumber
-      ),
+      ) as IClass,
     [partialCurrentCourse, currentClassNumber]
   );
 
