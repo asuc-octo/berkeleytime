@@ -189,8 +189,8 @@ const updateTerms = async () => {
   console.log("Updating database with new term data...");
 
   const terms = await queryPages<TermType>(
-    config.sis.TERM_APP_ID,
-    config.sis.TERM_APP_KEY,
+    config.sis.COURSE_APP_ID,
+    config.sis.COURSE_APP_KEY,
     SIS_COURSE_URL,
     "terms"
   );

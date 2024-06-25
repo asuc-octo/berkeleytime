@@ -1,27 +1,14 @@
 {
   "name": "backend",
-  "main": "src/main.ts",
+	"private": true,
   "scripts": {
     "start": "tsx src/main.ts",
     "dev": "tsx watch src/main.ts",
     "build": "tsc --noEmit",
-    "test": "jest --watch",
-    "coverage": "jest --coverage",
+    "lint": "eslint --ext .tsx,.ts src/ --report-unused-disable-directives",
     "generate": "graphql-codegen --config codegen.ts",
-    "lint": "tsc --noEmit && eslint --ext .ts,.tsx .",
     "update:catalog": "node ./build/scripts/update-catalog.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Rieranthony/ts-graphql-starter.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Rieranthony/ts-graphql-starter/issues"
-  },
-  "homepage": "https://github.com/Rieranthony/ts-graphql-starter#readme",
   "devDependencies": {
     "@babel/eslint-parser": "^7.24.7",
     "@graphql-codegen/cli": "5.0.2",
@@ -32,16 +19,12 @@
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",
     "@types/express-session": "^1.18.0",
-    "@types/helmet": "0.0.48",
-    "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.5",
     "@types/node": "^20.14.8",
     "@types/passport-google-oauth20": "^2.0.16",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.14.1",
     "eslint": "^8.56.0",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.5",
     "typescript": "^5.5.2"
   },
   "dependencies": {
