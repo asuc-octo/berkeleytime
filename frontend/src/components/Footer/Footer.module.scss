@@ -1,0 +1,89 @@
+.root {
+  padding: 64px 0;
+  display: flex;
+  border-top: 1px solid var(--border-color);
+  gap: 64px;
+  line-height: 1;
+
+  @media (width <= 992px) {
+    flex-direction: column;
+  }
+
+  &.invert {
+    border-color: var(--neutral-700);
+
+    .group .description, .column .label {
+      color: var(--neutral-400);
+    }
+
+    .column .link, .group .description .link {
+      color: white;
+
+      &:hover {
+        color: var(--neutral-300);
+      }
+    }
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .link {
+      font-size: 14px;
+      color: var(--slate-900); // white;
+      transition: all 100ms ease-in-out;
+      font-weight: 500;
+
+      &:hover {
+        color: var(--paragraph-color); // rgb(255 255 255 / 75%);
+      }
+    }
+
+    .label {
+      font-size: 12px;
+      color: var(--paragraph-color); // rgb(255 255 255 / 65%);
+    }
+  }
+
+  .group {
+    flex-grow: 1;
+
+    .row {
+      display: flex;
+      margin-top: 24px;
+      gap: 12px;
+    }
+
+    .description {
+      font-size: 16px;
+      margin-top: 16px;
+      color: var(--paragraph-color); // rgb(255 255 255 / 65%);
+
+      .link {
+        color: var(--heading-color);
+        transition: all 100ms ease-in-out;
+        font-weight: 500;
+
+        &:hover {
+          color: var(--paragraph-color);
+        }
+      }
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 580;
+      font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
+      color: var(--blue-500);
+      cursor: pointer;
+      transition: all 100ms ease-in-out;
+      margin-right: auto;
+  
+      &:hover {
+        color: var(--blue-600);
+      }
+    }
+  }
+}

@@ -1,0 +1,157 @@
+.root {
+  padding: 96px 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 96px;
+
+  @media (768px < width <= 1200px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .row {
+    @media (width > 1200px) {
+      display: flex;
+      gap: 96px;
+    }
+
+    .gallery {
+      flex-grow: 1;
+      position: relative;
+
+      @media (width <= 1200px) {
+        display: none;
+      }
+
+      .image {
+        padding: 16px;
+        border-radius: 8px;
+        border: 1px solid var(--slate-200);
+        background-color: white;
+        box-shadow: 0 4px 32px rgb(0 0 0 / 5%);
+        position: absolute;
+      }
+
+      .graph {
+        bottom: 0;
+        left: 0;
+        max-width: calc(100% - 96px);
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      .enrollment1 {
+        top: 0;
+        right: 64px;
+        max-width: 256px;
+      }
+
+      .enrollment2 {
+        bottom: 64px;
+        right: 0;
+        max-width: 256px;
+      }
+
+      .grades1 {
+        top: 0;
+        right: 64px;
+        max-width: 160px;
+      }
+
+      .grades2 {
+        bottom: 64px;
+        right: 0;
+        max-width: 160px;
+      }
+
+      .calendar {
+        max-width: calc(100% - 96px);
+        top: 0;
+        left: 0;
+      }
+
+      .schedule {
+        width: 100%;
+        max-width: 256px;
+        right: 0;
+        bottom: 0;
+      }
+
+      .filters {
+        max-width: 256px;
+        top: 0;
+        left: 0;
+      }
+
+      .courses {
+        max-width: 256px;
+        width: 100%;
+        left: 96px;
+        bottom: 0;
+      }
+
+      .course {
+        width: calc(100% - 192px);
+        right: 0;
+        top: 64px;
+      }
+    }
+
+    .text {
+      @media (width > 1200px) {
+        padding: 192px 0;
+        width: 512px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .link {
+        display: flex;
+        width: fit-content;
+        align-items: center;
+        gap: 8px;
+        color: var(--blue-500);
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1;
+        transition: all 100ms ease-in-out;
+
+        &:hover {
+          color: var(--blue-600);
+        }
+      }
+
+      .description {
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 32px;
+        color: var(--slate-500);
+      }
+
+      .heading {
+        font-size: 32px;
+        font-weight: 660;
+        font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
+        line-height: 1.25;
+        margin-bottom: 16px;
+        color: var(--slate-900);
+      }
+
+      .badge {
+        height: 24px;
+        border-radius: 4px;
+        padding: 0 8px;
+        display: flex;
+        align-items: center;
+        background-color: var(--orange-500);
+        width: max-content;
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1;
+        margin-bottom: 16px;
+      }
+    }
+  }
+}

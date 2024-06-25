@@ -1,0 +1,74 @@
+.root {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  position: relative;
+
+  .brand {
+    font-size: 24px;
+    font-weight: 580;
+    font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
+    color: var(--blue-500);
+    cursor: pointer;
+    transition: all 100ms ease-in-out;
+    margin-right: auto;
+
+    &:hover {
+      color: var(--blue-600);
+    }
+  }
+
+  .menu {
+    display: flex;
+    margin-right: 12px;
+    z-index: 1;
+  }
+
+  &:not(.invert) {
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    padding: 12px;
+  }
+
+  &.invert {
+    padding: 12px 12px 0;
+
+    .brand {
+      color: white;
+
+      &:hover {
+        color: rgb(255 255 255 / 75%);
+      }
+    }
+
+    .item {
+      color: rgb(255 255 255 / 65%);
+
+      &::after {
+        background-color: rgb(255 255 255 / 10%);
+      }
+
+      &:hover {
+        color: white;
+      }
+
+      &:global(.active) {
+        color: white;
+
+        &::before {
+          top: -12px;
+          background-color: white;
+        }
+      }
+    }
+
+    .button {
+      background-color: white;
+      color: var(--sky-500);
+
+      &:hover {
+        background-color: rgb(255 255 255 / 85%);
+      }
+    }
+  }
+}

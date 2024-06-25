@@ -1,0 +1,71 @@
+.content {
+  width: 128px;
+  background-color: red;
+  height: 128px;
+}
+
+.root {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+
+  @media (width <= 992px) {
+    position: absolute;
+    inset: 0;
+    background-color: var(--background-color);
+    z-index: 3;
+  }
+
+  .header {
+    padding: 24px 24px 12px;
+    background-color: var(--foreground-color);
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .bookmark.active {
+        color: var(--blue-500);
+        border-color: color-mix(in srgb, currentColor 10%, transparent);
+        background-color: color-mix(in srgb, currentColor 10%, transparent);
+      }
+
+      .like.active {
+        color: var(--rose-500);
+        border-color: color-mix(in srgb, currentColor 10%, transparent);
+        background-color: color-mix(in srgb, currentColor 10%, transparent);
+      }
+    }
+
+    .heading {
+      font-size: 24px;
+      line-height: 1.25;
+      font-weight: 700;
+      color: var(--heading-color);
+      margin-bottom: 8px;
+    }
+
+    .description {
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--paragraph-color);
+      margin-bottom: 16px;
+    }
+  }
+
+  .menu {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    padding: 12px;
+    align-items: center;
+  }
+}

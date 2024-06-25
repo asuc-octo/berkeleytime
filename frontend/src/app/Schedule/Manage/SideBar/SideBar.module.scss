@@ -1,0 +1,45 @@
+.root {
+  width: 384px;
+  border-right: 1px solid var(--border-color);
+  flex-shrink: 0;
+  background-color: var(--background-color);
+  overflow: auto;
+  padding-bottom: 12px;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+    position: sticky;
+    top: 0;
+    background: linear-gradient(to bottom, var(--background-color) 44px, transparent);
+    z-index: 2;
+
+    .button {
+      height: 48px;
+      padding: 0 16px;
+      justify-content: space-between;
+    }
+
+    .context {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .data {
+        font-size: 12px;
+        color: var(--paragraph-color);
+        line-height: 1;
+      }
+    }
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 12px;
+    z-index: 1;
+  }
+}

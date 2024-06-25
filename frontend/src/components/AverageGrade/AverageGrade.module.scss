@@ -1,0 +1,40 @@
+.trigger {
+  font-size: 14px;
+  line-height: 1;
+  user-select: none;
+}
+
+.content {
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--tooltip-color);
+  color: var(--neutral-400);
+  max-width: 256px;
+  font-size: 14px;
+  animation: fadeIn 100ms ease-in;
+  z-index: 998;
+
+  .arrow {
+    fill: var(--tooltip-color);
+  }
+
+  .title {
+    font-weight: 500;
+    color: white;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .description {
+    line-height: 1.5;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
