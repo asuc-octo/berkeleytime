@@ -7,7 +7,7 @@ export namespace CommonModule {
   
   interface DefinedEnumValues {
     CacheControlScope: 'PUBLIC' | 'PRIVATE';
-    Semester: 'Fall' | 'Spring' | 'Summer';
+    Semester: 'Fall' | 'Spring' | 'Summer' | 'Winter';
   };
   
   interface DefinedInputFields {

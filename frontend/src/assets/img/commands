@@ -1,6 +1,0 @@
-# convert png to jpg
-mogrify -format jpg *.png
-
-# compress jpg
-# ! OVERWRITES ORIGINAL !
-jpegoptim --size=50 *.jpg

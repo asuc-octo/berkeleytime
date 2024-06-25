@@ -1,0 +1,38 @@
+.root {
+  max-width: 1280px;
+  width: 100%;
+  margin: 24px auto;
+  display: flex;
+  align-items: flex-start;
+
+  .menu {
+    width: 384px;
+    border-right: 1px solid var(--border-color);
+    height: 384px;
+  }
+
+  .view {
+    padding: 0 24px;
+
+    .header {
+      display: flex;
+      gap: 12px;
+
+      .icon {
+        height: 32px;
+        width: 32px;
+        border-radius: 16px;
+        background-color: var(--orange-100);
+        display: grid;
+        place-items: center;
+        color: var(--orange-500);
+      }
+
+      .title {
+        font-size: 14px;
+        text-transform: uppercase;
+        color: var(--paragraph-color);
+      }
+    }
+  }
+}

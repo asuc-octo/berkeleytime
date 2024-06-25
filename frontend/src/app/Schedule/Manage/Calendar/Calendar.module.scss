@@ -1,0 +1,63 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background-color);
+  min-width: 1080px;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    font-size: 12px;
+    line-height: 1;
+    z-index: 2;
+
+    .legend {
+      display: flex;
+      padding: 0 12px;
+      height: 32px;
+      gap: 12px;
+      align-items: center;
+      background-color: var(--backdrop-color);
+      border-bottom: 1px solid var(--border-color);
+      color: var(--paragraph-color);
+
+      .timezone {
+        margin-left: auto;
+      }
+
+      .category {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+    }
+
+    .week {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      color: var(--label-color);
+      background-color: var(--background-color);
+      flex-grow: 1;
+    
+      .day {
+        height: 32px;
+        display: grid;
+        place-items: center;
+
+        &:not(:last-child) {
+          border-right: 1px solid var(--border-color);
+        }
+      }
+    }
+  }
+
+  .view {
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+  }
+}
