@@ -2,8 +2,6 @@ import mongoose, { InferSchemaType, Schema } from 'mongoose';
 import { schemaOptions } from './common';
 import { descriptor, identifier } from '../utils/sis';
 
-const t = (_: any) => true;
-
 // source: https://developers.api.berkeley.edu/api/100/interactive-docs
 const minimalCourse = {
     identifiers: [identifier],

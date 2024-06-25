@@ -140,7 +140,7 @@ export default async (app: Application, redis: RedisClientType) => {
         clientSecret: config.GOOGLE_CLIENT_SECRET,
         callbackURL: LOGIN_REDIRECT,
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (_, __, profile, done) => {
         const email = profile.emails?.[0].value;
 
         // null check for type safety
