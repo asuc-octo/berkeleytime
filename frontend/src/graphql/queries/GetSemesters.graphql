@@ -1,9 +1,0 @@
-query GetSemesters($name: String) {
-	allPlaylists(category: "semester", name: $name) {
-		edges {
-			node {
-				...Filter
-			}
-		}
-	}
-}

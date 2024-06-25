@@ -4,7 +4,7 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { ApolloServerPluginCacheControl } from '@apollo/server/plugin/cacheControl';
 import { KeyValueCache, KeyValueCacheSetOptions } from '@apollo/utils.keyvaluecache';
 import responseCachePlugin from '@apollo/server-plugin-response-cache';
-import { RedisClientType, createClient } from 'redis';
+import { RedisClientType } from 'redis';
 
 class RedisCache implements KeyValueCache {
   client: RedisClientType;

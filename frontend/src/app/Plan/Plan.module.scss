@@ -1,0 +1,30 @@
+.root {
+  flex-grow: 1;
+  height: 0;
+  overflow: clip;
+  display: flex;
+
+  .sideBar {
+    width: 384px;
+    border-right: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    overflow: auto;
+    flex-shrink: 0;
+  }
+
+  .view {
+    flex-grow: 1;
+    background-color: var(--background-color);
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    .body {
+      display: flex;
+      align-items: flex-start;
+      padding: 24px;
+      gap: 24px;
+      height: 100%;
+      width: max-content;
+    }
+  }
+}
