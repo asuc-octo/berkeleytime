@@ -14,7 +14,7 @@ Postgres data:
 1. `make postgres` - start up the postgres container
 2. `curl -O https://storage.googleapis.com/berkeleytime/public/bt_seed.sql.gz` - download the database as a GZip file
 3. `gzip -d bt_seed.sql.gz` - unzip this file
-4. `cat bt_seed.sql | docker exec -i bt_postgres psql -U bt -d bt_main` - see Postgres container with the data.
+4. `cat bt_seed.sql | docker exec -i bt_postgres psql -U bt -d bt_main` - see Postgres container with the data
 
 Before starting the server, make sure the `DATABASE_URL` entry in your `.env.dev` is `postgres://bt:bt@postgres:5432/bt_main` so that the backend connects to the local DB.
 
