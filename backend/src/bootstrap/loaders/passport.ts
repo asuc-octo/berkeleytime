@@ -26,6 +26,7 @@ const SCOPE = ['profile', 'email']
 
 export default async (app: Application) => {
   // init
+  app.use('trust proxy')
   app.use(session({
     secret: config.SESSION_SECRET,
     name: 'sessionId',
