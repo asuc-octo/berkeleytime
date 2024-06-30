@@ -10,7 +10,7 @@ import {
   Component,
   GET_CLASSES,
   GetClassesResponse,
-  ICourse,
+  IClass,
   Semester,
 } from "@/lib/api";
 import { subjects } from "@/lib/course";
@@ -18,11 +18,11 @@ import { subjects } from "@/lib/course";
 import styles from "./Browser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
-import { Day, Level, SortBy, Unit, getFilteredCourses } from "./browser";
+import { Day, Level, SortBy, Unit, getFilteredClasses } from "./browser";
 
-const initializeFuse = (courses: ICourse[]) => {
-  const list = courses.map((course) => {
-    const { title, subject, number, classes } = course;
+const initializeFuse = (classes: IClass[]) => {
+  const list = classes.map((_class) => {
+    const { title, subject, number } = _class.course;
 
     // For prefixed courses, prefer the number and add an abbreviation with the prefix
     const containsPrefix = /^[a-zA-Z].*/.test(number);
@@ -58,12 +58,11 @@ const initializeFuse = (courses: ICourse[]) => {
     );
 
     return {
-      title,
+      title: _class.title ?? title,
       subject,
       number,
       name: `${subject} ${number}`,
       alternateNames,
-      classes,
     };
   });
 
@@ -75,7 +74,6 @@ const initializeFuse = (courses: ICourse[]) => {
       { name: "number", weight: 1.2 },
       "name",
       "title",
-      "classes.title",
       {
         name: "alternateNames",
         weight: 2,
@@ -97,7 +95,7 @@ const initializeFuse = (courses: ICourse[]) => {
 };
 
 interface BrowserProps {
-  onClassSelect: (course: ICourse, number: string) => void;
+  onSelect: (_class: IClass) => void;
   responsive?: boolean;
   semester: Semester;
   year: number;
@@ -105,7 +103,7 @@ interface BrowserProps {
 }
 
 export default function Browser({
-  onClassSelect,
+  onSelect,
   responsive = true,
   semester: currentSemester,
   year: currentYear,
@@ -114,8 +112,6 @@ export default function Browser({
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const { width } = useWindowDimensions();
-
-  const [expandedCourses, setExpandedCourses] = useState<boolean[]>([]);
 
   const [localQuery, setLocalQuery] = useState<string>("");
   const [localComponents, setLocalComponents] = useState<Component[]>([]);
@@ -140,7 +136,27 @@ export default function Browser({
     },
   });
 
-  const courses = useMemo(() => data?.catalog ?? [], [data?.catalog]);
+  const classes = useMemo(
+    () =>
+      data?.catalog.reduce((acc, course) => {
+        const classes = course.classes.map(
+          (_class) =>
+            ({
+              ..._class,
+              course: {
+                subject: course.subject,
+                number: course.number,
+                title: course.title,
+                gradeAverage: course.gradeAverage,
+                academicCareer: course.academicCareer,
+              },
+            }) as IClass
+        );
+
+        return [...acc, ...classes];
+      }, [] as IClass[]) ?? [],
+    [data?.catalog]
+  );
 
   const currentQuery = useMemo(
     () => (persistent ? searchParams.get("query") ?? "" : localQuery),
@@ -208,101 +224,71 @@ export default function Browser({
     return localSortBy;
   }, [searchParams, localSortBy, persistent]);
 
-  const { includedCourses, excludedCourses } = useMemo(
+  const { includedClasses, excludedClasses } = useMemo(
     () =>
-      getFilteredCourses(
-        courses,
+      getFilteredClasses(
+        classes,
         currentComponents,
         currentUnits,
         currentLevels,
         currentDays
       ),
-    [courses, currentComponents, currentUnits, currentLevels, currentDays]
+    [classes, currentComponents, currentUnits, currentLevels, currentDays]
   );
 
   const fuse = useMemo(
-    () => initializeFuse(includedCourses),
-    [includedCourses]
+    () => initializeFuse(includedClasses),
+    [includedClasses]
   );
 
-  const setExpanded = (index: number, expanded: boolean) => {
-    setExpandedCourses((expandedCourses) => {
-      const _expandedCourses = structuredClone(expandedCourses);
-      _expandedCourses[index] = expanded;
-      return _expandedCourses;
-    });
-  };
-
-  const currentCourses = useMemo(() => {
-    let filteredCourses = currentQuery
+  const currentClasses = useMemo(() => {
+    let filteredClasses = currentQuery
       ? fuse
           .search(currentQuery)
-          .map(({ refIndex }) => includedCourses[refIndex])
-      : includedCourses;
+          .map(({ refIndex }) => includedClasses[refIndex])
+      : includedClasses;
 
     if (currentSortBy) {
       // Clone the courses to avoid sorting in-place
-      filteredCourses = structuredClone(filteredCourses).sort((a, b) => {
+      filteredClasses = structuredClone(filteredClasses).sort((a, b) => {
         if (currentSortBy === SortBy.AverageGrade) {
-          return b.gradeAverage === a.gradeAverage
+          return b.course.gradeAverage === a.course.gradeAverage
             ? 0
-            : b.gradeAverage === null
+            : b.course.gradeAverage === null
               ? -1
-              : a.gradeAverage === null
+              : a.course.gradeAverage === null
                 ? 1
-                : b.gradeAverage - a.gradeAverage;
+                : b.course.gradeAverage - a.course.gradeAverage;
         }
 
         if (currentSortBy === SortBy.Units) {
-          const getUnits = (course: ICourse) =>
-            course.classes.reduce(
-              (acc, { unitsMax }) => Math.max(acc, unitsMax),
-              0
-            );
-
-          return getUnits(b) - getUnits(a);
+          return b.unitsMax - a.unitsMax;
         }
 
         if (currentSortBy === SortBy.OpenSeats) {
-          const getOpenSeats = (course: ICourse) =>
-            course.classes.reduce(
-              (acc, { primarySection: { enrollCount, enrollMax } }) =>
-                acc + (enrollMax - enrollCount),
-              0
-            );
+          const getOpenSeats = ({
+            primarySection: { enrollCount, enrollMax },
+          }: IClass) => enrollMax - enrollCount;
 
           return getOpenSeats(b) - getOpenSeats(a);
         }
 
         if (currentSortBy === SortBy.PercentOpenSeats) {
-          const getPercentOpenSeats = (course: ICourse) => {
-            const { enrollCount, enrollMax } = course.classes.reduce(
-              (acc, { primarySection: { enrollCount, enrollMax } }) => ({
-                enrollCount: acc.enrollCount + enrollCount,
-                enrollMax: acc.enrollMax + enrollMax,
-              }),
-              { enrollCount: 0, enrollMax: 0 }
-            );
-
-            return enrollMax === 0 ? 0 : (enrollMax - enrollCount) / enrollMax;
-          };
+          const getPercentOpenSeats = ({
+            primarySection: { enrollCount, enrollMax },
+          }: IClass) =>
+            enrollMax === 0 ? 0 : (enrollMax - enrollCount) / enrollMax;
 
           return getPercentOpenSeats(b) - getPercentOpenSeats(a);
         }
 
-        // Courses are by default sorted by relevance and number
+        // Classes are by default sorted by relevance and number
         return 0;
       });
     }
 
-    return filteredCourses;
-  }, [currentQuery, fuse, includedCourses, currentSortBy]);
-
-  // Update local and persistent filters
-  const updateState = <T,>(setState: (state: T) => void, state: T) => {
-    setState(state);
-    setExpandedCourses([]);
-  };
+    return filteredClasses;
+  }, [currentQuery, fuse, includedClasses, currentSortBy]);
 
   return (
     <div className={classNames(styles.root, { [styles.block]: block })}>
@@ -315,9 +301,9 @@ export default function Browser({
           persistent={persistent}
           // Manage courses
           currentSortBy={currentSortBy}
-          currentCourses={currentCourses}
-          includedCourses={includedCourses}
-          excludedCourses={excludedCourses}
+          currentClasses={currentClasses}
+          includedClasses={includedClasses}
+          excludedClasses={excludedClasses}
           // Current term
           currentYear={currentYear}
           currentSemester={currentSemester}
@@ -328,14 +314,12 @@ export default function Browser({
           currentLevels={currentLevels}
           currentDays={currentDays}
           // Update local filters
-          setCurrentQuery={(query) => updateState(setLocalQuery, query)}
-          setCurrentUnits={(units) => updateState(setLocalUnits, units)}
-          setCurrentLevels={(levels) => updateState(setLocalLevels, levels)}
-          setCurrentDays={(days) => updateState(setLocalDays, days)}
-          setCurrentSortBy={(sortBy) => updateState(setLocalSortBy, sortBy)}
-          setCurrentComponents={(components) =>
-            updateState(setLocalComponents, components)
-          }
+          setCurrentQuery={setLocalQuery}
+          setCurrentUnits={setLocalUnits}
+          setCurrentLevels={setLocalLevels}
+          setCurrentDays={setLocalDays}
+          setCurrentSortBy={setLocalSortBy}
+          setCurrentComponents={setLocalComponents}
         />
       )}
       {(!open || !overlay) && (
@@ -348,17 +332,15 @@ export default function Browser({
           // API response
           loading={loading && !data?.catalog}
           // Manage courses
-          onClassSelect={onClassSelect}
-          currentCourses={currentCourses}
-          setExpanded={setExpanded}
-          expandedCourses={expandedCourses}
+          onSelect={onSelect}
+          currentClasses={currentClasses}
           // Current term
           currentYear={currentYear}
           currentSemester={currentSemester}
           // Current filters
           currentQuery={currentQuery}
           // Update local filters
-          setCurrentQuery={(query) => updateState(setLocalQuery, query)}
+          setCurrentQuery={setLocalQuery}
         />
       )}
     </div>

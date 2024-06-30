@@ -1,4 +1,4 @@
-import { AcademicCareer, Component, ICourse, academicCareers } from "@/lib/api";
+import { AcademicCareer, Component, IClass, academicCareers } from "@/lib/api";
 
 export enum SortBy {
   Relevance = "Relevance",
@@ -42,21 +42,21 @@ export const getLevel = (academicCareer: AcademicCareer, number: string) => {
     : (academicCareers[academicCareer] as Level);
 };
 
-export const getFilteredCourses = (
-  courses: ICourse[],
+export const getFilteredClasses = (
+  classes: IClass[],
   currentComponents: Component[],
   currentUnits: Unit[],
   currentLevels: Level[],
   currentDays: Day[]
 ) => {
-  return courses.reduce(
-    (acc, course) => {
+  return classes.reduce(
+    (acc, _class) => {
       // Filter by component
       if (currentComponents.length > 0) {
-        const { component } = course.classes[0].primarySection;
+        const { component } = _class.primarySection;
 
         if (!currentComponents.includes(component)) {
-          acc.excludedCourses.push(course);
+          acc.excludedClasses.push(_class);
 
           return acc;
         }
@@ -64,10 +64,13 @@ export const getFilteredCourses = (
 
       // Filter by level
       if (currentLevels.length > 0) {
-        const level = getLevel(course.academicCareer, course.number);
+        const level = getLevel(
+          _class.course.academicCareer,
+          _class.course.number
+        );
 
         if (!currentLevels.includes(level)) {
-          acc.excludedCourses.push(course);
+          acc.excludedClasses.push(_class);
 
           return acc;
         }
@@ -75,13 +78,8 @@ export const getFilteredCourses = (
 
       // Filter by units
       if (currentUnits.length > 0) {
-        const { unitsMin, unitsMax } = course.classes.reduce(
-          (acc, { unitsMax, unitsMin }) => ({
-            unitsMin: Math.min(5, Math.floor(Math.min(acc.unitsMin, unitsMin))),
-            unitsMax: Math.min(Math.floor(Math.max(acc.unitsMax, unitsMax))),
-          }),
-          { unitsMax: 0, unitsMin: Infinity }
-        );
+        const unitsMin = Math.floor(_class.unitsMin);
+        const unitsMax = Math.floor(_class.unitsMax);
 
         const includesUnits = [...Array(unitsMax - unitsMin || 1)].some(
           (_, index) => {
@@ -94,7 +92,7 @@ export const getFilteredCourses = (
         );
 
         if (!includesUnits) {
-          acc.excludedCourses.push(course);
+          acc.excludedClasses.push(_class);
 
           return acc;
         }
@@ -102,27 +100,24 @@ export const getFilteredCourses = (
 
       // Filter by days
       if (currentDays.length > 0) {
-        const includesDays = currentDays.some((day) =>
-          course.classes.some(
-            ({ primarySection: { meetings } }) =>
-              meetings?.[0]?.days[parseInt(day)]
-          )
+        const includesDays = currentDays.some(
+          (day) => _class.primarySection.meetings?.[0]?.days[parseInt(day)]
         );
 
         if (!includesDays) {
-          acc.excludedCourses.push(course);
+          acc.excludedClasses.push(_class);
 
           return acc;
         }
       }
 
-      acc.includedCourses.push(course);
+      acc.includedClasses.push(_class);
 
       return acc;
     },
-    { includedCourses: [], excludedCourses: [] } as {
-      includedCourses: ICourse[];
-      excludedCourses: ICourse[];
+    { includedClasses: [], excludedClasses: [] } as {
+      includedClasses: IClass[];
+      excludedClasses: IClass[];
     }
   );
 };

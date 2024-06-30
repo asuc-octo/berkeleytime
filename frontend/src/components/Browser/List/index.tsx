@@ -6,15 +6,15 @@ import { ArrowRight, FrameAltEmpty, Sparks } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import LoadingIndicator from "@/components/LoadingIndicator";
-import { ICourse, Semester } from "@/lib/api";
+import { IClass, Semester } from "@/lib/api";
 
 import Header from "../Header";
-import Course from "./Course";
+import Class from "./Class";
 import styles from "./List.module.scss";
 
 interface ListProps {
-  currentCourses: ICourse[];
-  onClassSelect: (course: ICourse, number: string) => void;
+  currentClasses: IClass[];
+  onSelect: (_class: IClass) => void;
   onOpenChange: (open: boolean) => void;
   open: boolean;
   overlay: boolean;
@@ -22,16 +22,14 @@ interface ListProps {
   currentSemester: Semester;
   currentYear: number;
   currentQuery: string;
-  expandedCourses: boolean[];
-  setExpanded: (index: number, expanded: boolean) => void;
   setCurrentQuery: (query: string) => void;
   persistent?: boolean;
   loading: boolean;
 }
 
 export default function List({
-  currentCourses: currentCourses,
-  onClassSelect,
+  currentClasses,
+  onSelect,
   currentSemester,
   currentYear,
   open,
@@ -39,8 +37,6 @@ export default function List({
   block,
   onOpenChange,
   currentQuery,
-  expandedCourses,
-  setExpanded,
   setCurrentQuery,
   persistent,
   loading,
@@ -49,7 +45,7 @@ export default function List({
   const [searchParams] = useSearchParams();
 
   const virtualizer = useVirtualizer({
-    count: currentCourses.length,
+    count: currentClasses.length,
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
@@ -81,7 +77,7 @@ export default function List({
         <Header
           currentSemester={currentSemester}
           currentYear={currentYear}
-          currentCourses={currentCourses}
+          currentClasses={currentClasses}
           currentQuery={currentQuery}
           open={open}
           overlay={overlay}
@@ -118,17 +114,15 @@ export default function List({
             style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
           >
             {items.map(({ key, index }) => {
-              const course = currentCourses[index];
+              const _class = currentClasses[index];
 
               return (
-                <Course
-                  {...course}
+                <Class
+                  {..._class}
                   index={index}
                   key={key}
                   ref={virtualizer.measureElement}
-                  expanded={expandedCourses[index]}
-                  setExpanded={(expanded) => setExpanded(index, expanded)}
-                  onClassSelect={(number) => onClassSelect(course, number)}
+                  onClick={() => onSelect(_class)}
                 />
               );
             })}

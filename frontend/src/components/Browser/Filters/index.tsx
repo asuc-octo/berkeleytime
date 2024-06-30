@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import { Component, ICourse, Semester, components } from "@/lib/api";
+import { Component, IClass, Semester, components } from "@/lib/api";
 
 import Header from "../Header";
 import {
@@ -14,7 +14,7 @@ import {
   Level,
   SortBy,
   Unit,
-  getFilteredCourses,
+  getFilteredClasses,
   getLevel,
 } from "../browser";
 import styles from "./Filters.module.scss";
@@ -22,9 +22,9 @@ import styles from "./Filters.module.scss";
 interface FiltersProps {
   overlay: boolean;
   block: boolean;
-  includedCourses: ICourse[];
-  excludedCourses: ICourse[];
-  currentCourses: ICourse[];
+  includedClasses: IClass[];
+  excludedClasses: IClass[];
+  currentClasses: IClass[];
   currentComponents: Component[];
   currentUnits: Unit[];
   currentLevels: Level[];
@@ -47,9 +47,9 @@ interface FiltersProps {
 export default function Filters({
   overlay,
   block,
-  includedCourses,
-  excludedCourses,
-  currentCourses,
+  includedClasses,
+  excludedClasses,
+  currentClasses,
   currentComponents,
   currentLevels,
   currentUnits,
@@ -72,20 +72,23 @@ export default function Filters({
   const [searchParams, setSearchParams] = useSearchParams();
 
   const filteredLevels = useMemo(() => {
-    const courses =
+    const classes =
       currentLevels.length === 0
-        ? includedCourses
-        : getFilteredCourses(
-            excludedCourses,
+        ? includedClasses
+        : getFilteredClasses(
+            excludedClasses,
             currentComponents,
             currentUnits,
             [],
             currentDays
-          ).includedCourses;
+          ).includedClasses;
 
-    return courses.reduce(
-      (acc, course) => {
-        const level = getLevel(course.academicCareer, course.number);
+    return classes.reduce(
+      (acc, _class) => {
+        const level = getLevel(
+          _class.course.academicCareer,
+          _class.course.number
+        );
 
         acc[level] += 1;
 
@@ -99,8 +102,8 @@ export default function Filters({
       } as Record<Level, number>
     );
   }, [
-    excludedCourses,
-    includedCourses,
+    excludedClasses,
+    includedClasses,
     currentUnits,
     currentComponents,
     currentLevels,
@@ -116,27 +119,27 @@ export default function Filters({
       {} as Record<string, number>
     );
 
-    const courses =
+    const classes =
       currentComponents.length === 0
-        ? includedCourses
-        : getFilteredCourses(
-            excludedCourses,
+        ? includedClasses
+        : getFilteredClasses(
+            excludedClasses,
             [],
             currentUnits,
             currentLevels,
             currentDays
-          ).includedCourses;
+          ).includedClasses;
 
-    for (const course of courses) {
-      const { component } = course.classes[0].primarySection;
+    for (const _class of classes) {
+      const { component } = _class.primarySection;
 
       filteredComponents[component] += 1;
     }
 
     return filteredComponents;
   }, [
-    excludedCourses,
-    includedCourses,
+    excludedClasses,
+    includedClasses,
     currentComponents,
     currentUnits,
     currentLevels,
@@ -152,36 +155,19 @@ export default function Filters({
       {} as Record<Day, number>
     );
 
-    const courses =
+    const classes =
       currentDays.length === 0
-        ? includedCourses
-        : getFilteredCourses(
-            excludedCourses,
+        ? includedClasses
+        : getFilteredClasses(
+            excludedClasses,
             currentComponents,
             currentUnits,
             currentLevels,
             []
-          ).includedCourses;
+          ).includedClasses;
 
-    for (const course of courses) {
-      const days = course.classes.reduce(
-        (acc, { primarySection: { meetings } }) => {
-          const days = meetings?.[0]?.days;
-
-          if (!days) return acc;
-
-          return [
-            acc[0] || days[0],
-            acc[1] || days[1],
-            acc[2] || days[2],
-            acc[3] || days[3],
-            acc[4] || days[4],
-            acc[5] || days[5],
-            acc[6] || days[6],
-          ];
-        },
-        [] as boolean[]
-      );
+    for (const _class of classes) {
+      const days = _class.primarySection.meetings?.[0]?.days;
 
       for (const index in days) {
         if (!days[index]) continue;
@@ -192,8 +178,8 @@ export default function Filters({
 
     return filteredDays;
   }, [
-    excludedCourses,
-    includedCourses,
+    excludedClasses,
+    includedClasses,
     currentComponents,
     currentUnits,
     currentLevels,
@@ -209,25 +195,20 @@ export default function Filters({
       {} as Record<Unit, number>
     );
 
-    const courses =
+    const classes =
       currentUnits.length === 0
-        ? includedCourses
-        : getFilteredCourses(
-            excludedCourses,
+        ? includedClasses
+        : getFilteredClasses(
+            excludedClasses,
             currentComponents,
             [],
             currentLevels,
             currentDays
-          ).includedCourses;
+          ).includedClasses;
 
-    for (const course of courses) {
-      const { unitsMin, unitsMax } = course.classes.reduce(
-        (acc, { unitsMax, unitsMin }) => ({
-          unitsMin: Math.min(5, Math.floor(Math.min(acc.unitsMin, unitsMin))),
-          unitsMax: Math.min(Math.floor(Math.max(acc.unitsMax, unitsMax))),
-        }),
-        { unitsMax: 0, unitsMin: Infinity }
-      );
+    for (const _class of classes) {
+      const unitsMin = Math.floor(_class.unitsMin);
+      const unitsMax = Math.floor(_class.unitsMax);
 
       [...Array(unitsMax - unitsMin || 1)].forEach((_, index) => {
         const units = unitsMin + index;
@@ -240,8 +221,8 @@ export default function Filters({
 
     return filteredUnits;
   }, [
-    excludedCourses,
-    includedCourses,
+    excludedClasses,
+    includedClasses,
     currentUnits,
     currentComponents,
     currentLevels,
@@ -305,7 +286,7 @@ export default function Filters({
           onOpenChange={onOpenChange}
           open={true}
           className={styles.header}
-          currentCourses={currentCourses}
+          currentClasses={currentClasses}
           currentSemester={currentSemester}
           currentYear={currentYear}
           currentQuery={currentQuery}
@@ -314,6 +295,37 @@ export default function Filters({
         />
       )}
       <div className={styles.body}>
+        <p className={styles.label}>Quick filters</p>
+        <div className={styles.filter}>
+          <Checkbox.Root className={styles.checkbox}>
+            <Checkbox.Indicator asChild>
+              <Check width={12} height={12} />
+            </Checkbox.Indicator>
+          </Checkbox.Root>
+          <label className={styles.text}>
+            <span className={styles.value}>Open</span>
+          </label>
+        </div>
+        <div className={styles.filter}>
+          <Checkbox.Root className={styles.checkbox}>
+            <Checkbox.Indicator asChild>
+              <Check width={12} height={12} />
+            </Checkbox.Indicator>
+          </Checkbox.Root>
+          <label className={styles.text}>
+            <span className={styles.value}>Online</span>
+          </label>
+        </div>
+        <div className={styles.filter}>
+          <Checkbox.Root className={styles.checkbox}>
+            <Checkbox.Indicator asChild>
+              <Check width={12} height={12} />
+            </Checkbox.Indicator>
+          </Checkbox.Root>
+          <label className={styles.text}>
+            <span className={styles.value}>Bookmarked</span>
+          </label>
+        </div>
         <p className={styles.label}>Sort by</p>
         <RadioGroup.Root
           onValueChange={handleValueChange}
