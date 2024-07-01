@@ -1,0 +1,61 @@
+.root {
+  background-color: var(--background-color);
+  position: relative;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+
+  .container {
+    flex-grow: 1;
+  }
+
+  .menu {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    z-index: 1;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    border-radius: 8px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .overlay {
+    width: 384px;
+    top: 0;
+    right: 0;
+    position: absolute;
+    background: linear-gradient(to left, var(--background-color), transparent);
+    height: 100%;
+    padding: 24px;
+    pointer-events: none;
+
+    .panel {
+      background-color: var(--foreground-color);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      pointer-events: all;
+      height: 100%;
+    }
+  }
+}
+
+.marker {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--blue-500);
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  border: 1px solid var(--blue-600);
+}
+
+:global(.mapboxgl-control-container) {
+  display: none;
+}

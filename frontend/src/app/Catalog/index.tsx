@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 import Browser from "@/components/Browser";
-import { ICourse, Semester } from "@/lib/api";
+import { IClass, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
 import Class from "./Class";
@@ -20,8 +20,9 @@ export default function Catalog() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const [partialCurrentCourse, setPartialCurrentCourse] =
-    useState<ICourse | null>(null);
+  const [partialCurrentClass, setPartialCurrentClass] = useState<IClass | null>(
+    null
+  );
 
   // TODO: Select year
   const currentYear = useMemo(() => (year && parseInt(year)) || 2024, [year]);
@@ -39,11 +40,11 @@ export default function Catalog() {
   const currentSubject = useMemo(() => subject?.toUpperCase(), [subject]);
 
   const handleClick = useCallback(
-    (course: ICourse, number: string) => {
-      setPartialCurrentCourse(course);
+    (_class: IClass) => {
+      setPartialCurrentClass(_class);
 
       navigate({
-        pathname: `/catalog/${currentYear}/${currentSemester}/${course.subject}/${course.number}/${number}`,
+        pathname: `/catalog/${currentYear}/${currentSemester}/${_class.course.subject}/${_class.course.number}/${_class.number}`,
         search: searchParams.toString(),
       });
     },
@@ -53,14 +54,14 @@ export default function Catalog() {
   return (
     <div className={styles.root}>
       <Browser
-        onClassSelect={handleClick}
+        onSelect={handleClick}
         semester={currentSemester}
         year={currentYear}
         persistent
       />
       {currentClassNumber && currentCourseNumber && currentSubject ? (
         <Class
-          partialCurrentCourse={partialCurrentCourse}
+          partialCurrentClass={partialCurrentClass}
           currentSemester={currentSemester}
           currentYear={currentYear}
           currentClassNumber={currentClassNumber!}

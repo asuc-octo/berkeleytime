@@ -1,4 +1,7 @@
-import { AcademicCareer, Component, ICourse, academicCareers } from "@/lib/api";
+import Fuse from "fuse.js";
+
+import { AcademicCareer, Component, IClass, academicCareers } from "@/lib/api";
+import { subjects } from "@/lib/course";
 
 export enum SortBy {
   Relevance = "Relevance",
@@ -42,21 +45,37 @@ export const getLevel = (academicCareer: AcademicCareer, number: string) => {
     : (academicCareers[academicCareer] as Level);
 };
 
-export const getFilteredCourses = (
-  courses: ICourse[],
+export const getFilteredClasses = (
+  classes: IClass[],
   currentComponents: Component[],
   currentUnits: Unit[],
   currentLevels: Level[],
-  currentDays: Day[]
+  currentDays: Day[],
+  currentOpen: boolean,
+  currentOnline: boolean
 ) => {
-  return courses.reduce(
-    (acc, course) => {
+  return classes.reduce(
+    (acc, _class) => {
+      // Filter by open
+      if (currentOpen && !_class.primarySection.open) {
+        acc.excludedClasses.push(_class);
+
+        return acc;
+      }
+
+      // Filter by online
+      if (currentOnline && !_class.primarySection.online) {
+        acc.excludedClasses.push(_class);
+
+        return acc;
+      }
+
       // Filter by component
       if (currentComponents.length > 0) {
-        const { component } = course.classes[0].primarySection;
+        const { component } = _class.primarySection;
 
         if (!currentComponents.includes(component)) {
-          acc.excludedCourses.push(course);
+          acc.excludedClasses.push(_class);
 
           return acc;
         }
@@ -64,10 +83,13 @@ export const getFilteredCourses = (
 
       // Filter by level
       if (currentLevels.length > 0) {
-        const level = getLevel(course.academicCareer, course.number);
+        const level = getLevel(
+          _class.course.academicCareer,
+          _class.course.number
+        );
 
         if (!currentLevels.includes(level)) {
-          acc.excludedCourses.push(course);
+          acc.excludedClasses.push(_class);
 
           return acc;
         }
@@ -75,13 +97,8 @@ export const getFilteredCourses = (
 
       // Filter by units
       if (currentUnits.length > 0) {
-        const { unitsMin, unitsMax } = course.classes.reduce(
-          (acc, { unitsMax, unitsMin }) => ({
-            unitsMin: Math.min(5, Math.floor(Math.min(acc.unitsMin, unitsMin))),
-            unitsMax: Math.min(Math.floor(Math.max(acc.unitsMax, unitsMax))),
-          }),
-          { unitsMax: 0, unitsMin: Infinity }
-        );
+        const unitsMin = Math.floor(_class.unitsMin);
+        const unitsMax = Math.floor(_class.unitsMax);
 
         const includesUnits = [...Array(unitsMax - unitsMin || 1)].some(
           (_, index) => {
@@ -94,7 +111,7 @@ export const getFilteredCourses = (
         );
 
         if (!includesUnits) {
-          acc.excludedCourses.push(course);
+          acc.excludedClasses.push(_class);
 
           return acc;
         }
@@ -102,27 +119,99 @@ export const getFilteredCourses = (
 
       // Filter by days
       if (currentDays.length > 0) {
-        const includesDays = currentDays.some((day) =>
-          course.classes.some(
-            ({ primarySection: { meetings } }) =>
-              meetings?.[0]?.days[parseInt(day)]
-          )
+        const includesDays = currentDays.some(
+          (day) => _class.primarySection.meetings?.[0]?.days[parseInt(day)]
         );
 
         if (!includesDays) {
-          acc.excludedCourses.push(course);
+          acc.excludedClasses.push(_class);
 
           return acc;
         }
       }
 
-      acc.includedCourses.push(course);
+      acc.includedClasses.push(_class);
 
       return acc;
     },
-    { includedCourses: [], excludedCourses: [] } as {
-      includedCourses: ICourse[];
-      excludedCourses: ICourse[];
+    { includedClasses: [], excludedClasses: [] } as {
+      includedClasses: IClass[];
+      excludedClasses: IClass[];
     }
   );
+};
+
+export const initialize = (classes: IClass[]) => {
+  const list = classes.map((_class) => {
+    const { title, subject, number } = _class.course;
+
+    // For prefixed courses, prefer the number and add an abbreviation with the prefix
+    const containsPrefix = /^[a-zA-Z].*/.test(number);
+    const alternateNumber = number.slice(1);
+
+    const term = subject.toLowerCase();
+
+    const alternateNames = subjects[term]?.abbreviations.reduce(
+      (acc, abbreviation) => {
+        // Add alternate names for abbreviations
+        const abbreviations = [
+          `${abbreviation}${number}`,
+          `${abbreviation} ${number}`,
+        ];
+
+        if (containsPrefix) {
+          abbreviations.push(
+            `${abbreviation}${alternateNumber}`,
+            `${abbreviation} ${alternateNumber}`
+          );
+        }
+
+        return [...acc, ...abbreviations];
+      },
+      // Add alternate names
+      containsPrefix
+        ? [
+            `${subject}${number}`,
+            `${subject} ${alternateNumber}`,
+            `${subject}${alternateNumber}`,
+          ]
+        : [`${subject}${number}`]
+    );
+
+    return {
+      title: _class.title ?? title,
+      // subject,
+      // number,
+      name: `${subject} ${number}`,
+      alternateNames,
+    };
+  });
+
+  // Attempt to increase performance by dropping unnecessary fields
+  const options = {
+    includeScore: true,
+    // ignoreLocation: true,
+    threshold: 0.25,
+    keys: [
+      // { name: "number", weight: 1.2 },
+      "name",
+      "title",
+      {
+        name: "alternateNames",
+        weight: 2,
+      },
+      // { name: "subject", weight: 1.5 },
+    ],
+    // TODO: Fuse types are wrong for sortFn
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // sortFn: (a: any, b: any) => {
+    //   // First, sort by score
+    //   if (a.score - b.score) return a.score - b.score;
+
+    //   // Otherwise, sort by number
+    //   return a.item[0].v.toLowerCase().localeCompare(b.item[0].v.toLowerCase());
+    // },
+  };
+
+  return new Fuse(list, options);
 };

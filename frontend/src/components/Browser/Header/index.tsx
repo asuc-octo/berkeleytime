@@ -5,13 +5,13 @@ import { Filter, FilterSolid } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
 import IconButton from "@/components/IconButton";
-import { ICourse, Semester } from "@/lib/api";
+import { IClass, Semester } from "@/lib/api";
 
 import styles from "./Header.module.scss";
 
 interface HeaderProps {
   currentQuery: string;
-  currentCourses: ICourse[];
+  currentClasses: IClass[];
   open: boolean;
   overlay: boolean;
   onOpenChange: (open: boolean) => void;
@@ -27,7 +27,7 @@ const Header = forwardRef<HTMLInputElement, HeaderProps>(
   (
     {
       currentQuery,
-      currentCourses,
+      currentClasses,
       open,
       overlay,
       onOpenChange,
@@ -46,7 +46,7 @@ const Header = forwardRef<HTMLInputElement, HeaderProps>(
       if (persistent) {
         if (value) searchParams.set("query", value);
         else searchParams.delete("query");
-        setSearchParams(searchParams);
+        setSearchParams(searchParams, { replace: true });
 
         return;
       }
@@ -71,13 +71,13 @@ const Header = forwardRef<HTMLInputElement, HeaderProps>(
             ref={ref}
             value={currentQuery}
             onChange={(event) => handleQueryChange(event.target.value)}
-            placeholder={`Search ${currentSemester} ${currentYear} courses...`}
+            placeholder={`Search ${currentSemester} ${currentYear} classes...`}
             autoFocus={autoFocus}
             // TODO: onFocus could not be passed down from the parent
             onFocus={() => overlay && open && onOpenChange(false)}
           />
           <div className={styles.label}>
-            {currentCourses.length.toLocaleString()}
+            {currentClasses.length.toLocaleString()}
           </div>
           {overlay && (
             <IconButton onClick={() => onOpenChange(!open)}>

@@ -6,13 +6,13 @@ import About from "@/app/About";
 import Catalog from "@/app/Catalog";
 import Discover from "@/app/Discover";
 import Landing from "@/app/Landing";
+import Map from "@/app/Map";
 import Plan from "@/app/Plan";
+import Schedule from "@/app/Schedule";
 import Compare from "@/app/Schedule/Compare";
 import Manage from "@/app/Schedule/Manage";
 import Schedules from "@/app/Schedules";
 import Layout from "@/components/Layout";
-
-import Schedule from "./app/Schedule";
 
 const router = createBrowserRouter([
   {
@@ -26,20 +26,6 @@ const router = createBrowserRouter([
         element: <Discover />,
         path: "explore",
       },
-    ],
-  },
-  {
-    element: <Layout />,
-    children: [
-      {
-        element: <About />,
-        path: "about",
-      },
-    ],
-  },
-  {
-    element: <Layout footer={false} header={false} />,
-    children: [
       {
         element: <Schedule />,
         path: "schedules/:scheduleId",
@@ -57,6 +43,15 @@ const router = createBrowserRouter([
     ],
   },
   {
+    element: <Layout />,
+    children: [
+      {
+        element: <About />,
+        path: "about",
+      },
+    ],
+  },
+  {
     element: <Layout footer={false} />,
     children: [
       {
@@ -70,6 +65,10 @@ const router = createBrowserRouter([
       {
         element: <Plan />,
         path: "plan",
+      },
+      {
+        element: <Map />,
+        path: "map",
       },
     ],
   },

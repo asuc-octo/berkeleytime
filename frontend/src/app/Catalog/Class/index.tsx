@@ -23,7 +23,7 @@ import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
 import Tooltip from "@/components/Tooltip";
 import Units from "@/components/Units";
-import { GET_CLASS, IClass, ICourse, Semester } from "@/lib/api";
+import { GET_CLASS, IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -52,7 +52,7 @@ const views = [
 ];
 
 interface ClassProps {
-  partialCurrentCourse: ICourse | null;
+  partialCurrentClass: IClass | null;
   currentSemester: Semester;
   currentYear: number;
   currentClassNumber: string;
@@ -61,7 +61,7 @@ interface ClassProps {
 }
 
 export default function Class({
-  partialCurrentCourse,
+  partialCurrentClass,
   currentSemester,
   currentYear,
   currentClassNumber,
@@ -84,14 +84,6 @@ export default function Class({
       classNumber: currentClassNumber,
     },
   });
-
-  const partialCurrentClass = useMemo(
-    () =>
-      partialCurrentCourse?.classes.find(
-        (class_) => class_.number === currentClassNumber
-      ),
-    [partialCurrentCourse, currentClassNumber]
-  );
 
   const currentClass = useMemo(() => data?.class, [data]);
 
@@ -182,37 +174,37 @@ export default function Class({
         </h1>
         <p className={styles.description}>
           {currentClass?.title ??
-            partialCurrentClass.title ??
-            partialCurrentCourse.title}
+            partialCurrentClass?.title ??
+            partialCurrentClass?.course.title}
         </p>
         <div className={styles.group}>
           <AverageGrade
             gradeAverage={
               currentClass?.course?.gradeAverage ??
-              partialCurrentCourse.gradeAverage
+              partialCurrentClass?.course.gradeAverage
             }
           />
           <Capacity
             enrollCount={
               currentClass?.primarySection.enrollCount ??
-              partialCurrentClass.primarySection.enrollCount
+              partialCurrentClass?.primarySection.enrollCount
             }
             enrollMax={
               currentClass?.primarySection.enrollMax ??
-              partialCurrentClass.primarySection.enrollMax
+              partialCurrentClass?.primarySection.enrollMax
             }
             waitlistCount={
               currentClass?.primarySection.waitlistCount ??
-              partialCurrentClass.primarySection.waitlistCount
+              partialCurrentClass?.primarySection.waitlistCount
             }
             waitlistMax={
               currentClass?.primarySection.waitlistMax ??
-              partialCurrentClass.primarySection.waitlistMax
+              partialCurrentClass?.primarySection.waitlistMax
             }
           />
           <Units
-            unitsMax={currentClass?.unitsMax ?? partialCurrentClass.unitsMax}
-            unitsMin={currentClass?.unitsMin ?? partialCurrentClass.unitsMin}
+            unitsMax={currentClass?.unitsMax ?? partialCurrentClass?.unitsMax}
+            unitsMin={currentClass?.unitsMin ?? partialCurrentClass?.unitsMin}
           />
           {currentClass && <CCN ccn={currentClass.primarySection.ccn} />}
         </div>
