@@ -165,7 +165,7 @@ export function formatCourse(
 
     requiredCourses: Array.isArray(course.preparation?.requiredCourses)
       ? course.preparation?.requiredCourses.map((c) =>
-          getCsCourseId(c as CourseType)
+          getCsCourseId(c as unknown as CourseType)
         )
       : [],
 

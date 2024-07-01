@@ -4,17 +4,19 @@ export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  ISODate: any;
-  JSON: any;
-  JSONObject: any;
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  ISODate: { input: any; output: any; }
+  JSON: { input: any; output: any; }
+  JSONObject: { input: any; output: any; }
 };
 
 export type AcademicCareer =
@@ -33,20 +35,20 @@ export type CacheControlScope =
 export type Class = {
   __typename?: 'Class';
   course: Course;
-  description?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']['output']>;
   finalExam: ClassFinalExam;
   gradingBasis: ClassGradingBasis;
-  lastUpdated: Scalars['ISODate'];
-  number: Scalars['String'];
+  lastUpdated: Scalars['ISODate']['output'];
+  number: Scalars['String']['output'];
   primarySection: Section;
-  raw: Scalars['JSONObject'];
+  raw: Scalars['JSONObject']['output'];
   sections: Array<Section>;
   semester: Semester;
   session: Session;
-  title?: Maybe<Scalars['String']>;
-  unitsMax: Scalars['Float'];
-  unitsMin: Scalars['Float'];
-  year: Scalars['Int'];
+  title?: Maybe<Scalars['String']['output']>;
+  unitsMax: Scalars['Float']['output'];
+  unitsMin: Scalars['Float']['output'];
+  year: Scalars['Int']['output'];
 };
 
 export type ClassFinalExam =
@@ -127,20 +129,20 @@ export type Course = {
   academicCareer: AcademicCareer;
   classes: Array<Class>;
   crossListing: Array<Course>;
-  description: Scalars['String'];
+  description: Scalars['String']['output'];
   finalExam?: Maybe<CourseFinalExam>;
-  fromDate: Scalars['String'];
-  gradeAverage?: Maybe<Scalars['Float']>;
+  fromDate: Scalars['String']['output'];
+  gradeAverage?: Maybe<Scalars['Float']['output']>;
   gradingBasis: CourseGradingBasis;
-  lastUpdated: Scalars['ISODate'];
-  number: Scalars['String'];
-  raw: Scalars['JSONObject'];
+  lastUpdated: Scalars['ISODate']['output'];
+  number: Scalars['String']['output'];
+  raw: Scalars['JSONObject']['output'];
   requiredCourses: Array<Course>;
-  requirements?: Maybe<Scalars['String']>;
+  requirements?: Maybe<Scalars['String']['output']>;
   sections: Array<Section>;
-  subject: Scalars['String'];
-  title: Scalars['String'];
-  toDate: Scalars['String'];
+  subject: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  toDate: Scalars['String']['output'];
 };
 
 
@@ -152,7 +154,7 @@ export type CourseClassesArgs = {
 
 /** Info shared between Classes within and across semesters. */
 export type CourseSectionsArgs = {
-  primary?: InputMaybe<Scalars['Boolean']>;
+  primary?: InputMaybe<Scalars['Boolean']['input']>;
   term?: InputMaybe<TermInput>;
 };
 
@@ -177,73 +179,73 @@ export type CourseGradingBasis =
 
 export type CourseListItem = {
   __typename?: 'CourseListItem';
-  number: Scalars['String'];
-  subject: Scalars['String'];
+  number: Scalars['String']['output'];
+  subject: Scalars['String']['output'];
 };
 
 export type CustomEvent = {
   __typename?: 'CustomEvent';
-  days_of_week?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  end_time: Scalars['String'];
-  location?: Maybe<Scalars['String']>;
-  start_time: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
+  days_of_week?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  end_time: Scalars['String']['output'];
+  location?: Maybe<Scalars['String']['output']>;
+  start_time: Scalars['String']['output'];
+  title?: Maybe<Scalars['String']['output']>;
 };
 
 export type CustomEventInput = {
-  days_of_week?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['String']>;
-  end_time: Scalars['String'];
-  location?: InputMaybe<Scalars['String']>;
-  start_time: Scalars['String'];
-  title?: InputMaybe<Scalars['String']>;
+  days_of_week?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  end_time: Scalars['String']['input'];
+  location?: InputMaybe<Scalars['String']['input']>;
+  start_time: Scalars['String']['input'];
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type EnrollmentDay = {
   __typename?: 'EnrollmentDay';
-  enrollCount: Scalars['Int'];
-  enrollMax: Scalars['Int'];
-  waitlistCount: Scalars['Int'];
-  waitlistMax: Scalars['Int'];
+  enrollCount: Scalars['Int']['output'];
+  enrollMax: Scalars['Int']['output'];
+  waitlistCount: Scalars['Int']['output'];
+  waitlistMax: Scalars['Int']['output'];
 };
 
 export type Exam = {
   __typename?: 'Exam';
-  date: Scalars['String'];
-  endTime: Scalars['String'];
-  final: Scalars['Boolean'];
-  location: Scalars['String'];
-  startTime: Scalars['String'];
+  date: Scalars['String']['output'];
+  endTime: Scalars['String']['output'];
+  final: Scalars['Boolean']['output'];
+  location: Scalars['String']['output'];
+  startTime: Scalars['String']['output'];
 };
 
 export type Grade = {
   __typename?: 'Grade';
-  average?: Maybe<Scalars['Float']>;
+  average?: Maybe<Scalars['Float']['output']>;
   distribution?: Maybe<Array<Maybe<GradeDistributionItem>>>;
 };
 
 export type GradeDistributionItem = {
   __typename?: 'GradeDistributionItem';
-  count: Scalars['Int'];
-  letter: Scalars['String'];
+  count: Scalars['Int']['output'];
+  letter: Scalars['String']['output'];
 };
 
 export type Instructor = {
   __typename?: 'Instructor';
-  familyName?: Maybe<Scalars['String']>;
-  givenName?: Maybe<Scalars['String']>;
+  familyName?: Maybe<Scalars['String']['output']>;
+  givenName?: Maybe<Scalars['String']['output']>;
 };
 
 export type Meeting = {
   __typename?: 'Meeting';
-  days?: Maybe<Array<Scalars['Boolean']>>;
-  endDate: Scalars['String'];
-  endTime: Scalars['String'];
+  days?: Maybe<Array<Scalars['Boolean']['output']>>;
+  endDate: Scalars['String']['output'];
+  endTime: Scalars['String']['output'];
   instructors: Array<Instructor>;
-  location?: Maybe<Scalars['String']>;
-  startDate: Scalars['String'];
-  startTime: Scalars['String'];
+  location?: Maybe<Scalars['String']['output']>;
+  startDate: Scalars['String']['output'];
+  startTime: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -255,7 +257,7 @@ export type Mutation = {
   /** Takes in schedule fields, finds the schedule record in the database corresponding to the provided ID, updates the record, and returns the updated schedule. */
   editExistingSchedule?: Maybe<Schedule>;
   /** Takes in a schedule's ObjectID, deletes the schedule with that ID, and returns the ID. */
-  removeScheduleByID?: Maybe<Scalars['ID']>;
+  removeScheduleByID?: Maybe<Scalars['ID']['output']>;
   /** For the schedule specified by the ID, modifies the courses field and returns the updated schedule. */
   setSelectedClasses?: Maybe<Schedule>;
   /** Mutate user info. */
@@ -269,19 +271,19 @@ export type MutationCreateNewScheduleArgs = {
 
 
 export type MutationEditExistingScheduleArgs = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['input'];
   main_schedule: ScheduleInput;
 };
 
 
 export type MutationRemoveScheduleByIdArgs = {
-  id: Scalars['ID'];
+  id: Scalars['ID']['input'];
 };
 
 
 export type MutationSetSelectedClassesArgs = {
   courses: Array<SelectedCourseInput>;
-  id: Scalars['ID'];
+  id: Scalars['ID']['input'];
 };
 
 
@@ -307,12 +309,14 @@ export type Query = {
   courseList?: Maybe<Array<Course>>;
   grade?: Maybe<Grade>;
   /** @deprecated test */
-  ping: Scalars['String'];
+  ping: Scalars['String']['output'];
   /** Takes in a schedule's ObjectID and returns a specific schedule. */
   scheduleByID?: Maybe<Schedule>;
   /** Takes in a user's email and returns all the schedules they created. */
   schedulesByUser?: Maybe<Array<Maybe<Schedule>>>;
   section?: Maybe<Section>;
+  /** Query for terms. */
+  terms?: Maybe<Array<Maybe<Term>>>;
   /** Query for user info. */
   user?: Maybe<User>;
 };
@@ -324,127 +328,131 @@ export type QueryCatalogArgs = {
 
 
 export type QueryClassArgs = {
-  classNumber: Scalars['String'];
-  courseNumber: Scalars['String'];
-  subject: Scalars['String'];
+  classNumber: Scalars['String']['input'];
+  courseNumber: Scalars['String']['input'];
+  subject: Scalars['String']['input'];
   term: TermInput;
 };
 
 
 export type QueryCourseArgs = {
-  courseNumber: Scalars['String'];
-  subject: Scalars['String'];
+  courseNumber: Scalars['String']['input'];
+  subject: Scalars['String']['input'];
   term?: InputMaybe<TermInput>;
 };
 
 
 export type QueryGradeArgs = {
-  classNum?: InputMaybe<Scalars['String']>;
-  courseNum: Scalars['String'];
-  subject: Scalars['String'];
+  classNum?: InputMaybe<Scalars['String']['input']>;
+  courseNum: Scalars['String']['input'];
+  subject: Scalars['String']['input'];
   term?: InputMaybe<TermInput>;
 };
 
 
 export type QueryScheduleByIdArgs = {
-  id: Scalars['String'];
+  id: Scalars['String']['input'];
 };
 
 
 export type QuerySchedulesByUserArgs = {
-  created_by: Scalars['String'];
+  created_by: Scalars['String']['input'];
 };
 
 
 export type QuerySectionArgs = {
-  classNumber: Scalars['String'];
-  courseNumber: Scalars['String'];
-  sectionNumber: Scalars['String'];
-  subject: Scalars['String'];
+  classNumber: Scalars['String']['input'];
+  courseNumber: Scalars['String']['input'];
+  sectionNumber: Scalars['String']['input'];
+  subject: Scalars['String']['input'];
   term: TermInput;
 };
 
 export type Reservation = {
   __typename?: 'Reservation';
-  enrollCount: Scalars['Int'];
-  enrollMax: Scalars['Int'];
-  group: Scalars['String'];
+  enrollCount: Scalars['Int']['output'];
+  enrollMax: Scalars['Int']['output'];
+  group: Scalars['String']['output'];
 };
 
 export type Schedule = {
   __typename?: 'Schedule';
   /** The ObjectID associated with the schedule record */
-  _id?: Maybe<Scalars['ID']>;
+  _id?: Maybe<Scalars['ID']['output']>;
   /** Courses, see the SelectedCourse type below */
   courses?: Maybe<Array<SelectedCourse>>;
-  created: Scalars['String'];
+  created: Scalars['String']['output'];
   /** Identifier (probably email) for the user who created the schedule (such as oski@bereley.edu). */
-  created_by: Scalars['String'];
+  created_by: Scalars['String']['output'];
   /** Custom events, such as club meetings, that the user has added to their schedule. */
   custom_events?: Maybe<Array<CustomEvent>>;
   /** Whether the user would like the schedule to be viewable by others. */
-  is_public: Scalars['Boolean'];
+  is_public: Scalars['Boolean']['output'];
   /** The name of the schedule, such as "Oski's Fall schedule <3" */
-  name?: Maybe<Scalars['String']>;
-  revised: Scalars['String'];
+  name?: Maybe<Scalars['String']['output']>;
+  revised: Scalars['String']['output'];
   /** Term corresponding to the schedule, such as "Fall 1986" */
   term: TermOutput;
 };
 
 export type ScheduleInput = {
   courses?: InputMaybe<Array<SelectedCourseInput>>;
-  created_by: Scalars['String'];
+  created_by: Scalars['String']['input'];
   custom_events?: InputMaybe<Array<CustomEventInput>>;
-  is_public?: InputMaybe<Scalars['Boolean']>;
-  name?: InputMaybe<Scalars['String']>;
+  is_public?: InputMaybe<Scalars['Boolean']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
   term: TermInput;
 };
 
 /** Sections are each associated with one Class. */
 export type Section = {
   __typename?: 'Section';
-  ccn: Scalars['Int'];
+  ccn: Scalars['Int']['output'];
   class: Class;
   component: Component;
   course: Course;
-  endDate: Scalars['String'];
-  enrollCount: Scalars['Int'];
-  enrollMax: Scalars['Int'];
+  endDate: Scalars['String']['output'];
+  enrollCount: Scalars['Int']['output'];
+  enrollMax: Scalars['Int']['output'];
   enrollmentHistory?: Maybe<Array<EnrollmentDay>>;
   exams: Array<Exam>;
-  lastUpdated: Scalars['ISODate'];
+  lastUpdated: Scalars['ISODate']['output'];
   meetings: Array<Meeting>;
-  number: Scalars['String'];
-  online: Scalars['Boolean'];
-  open: Scalars['Boolean'];
-  primary: Scalars['Boolean'];
-  raw: Scalars['JSONObject'];
+  number: Scalars['String']['output'];
+  online: Scalars['Boolean']['output'];
+  open: Scalars['Boolean']['output'];
+  primary: Scalars['Boolean']['output'];
+  raw: Scalars['JSONObject']['output'];
   reservations?: Maybe<Array<Reservation>>;
-  startDate: Scalars['String'];
-  waitlistCount: Scalars['Int'];
-  waitlistMax: Scalars['Int'];
+  startDate: Scalars['String']['output'];
+  waitlistCount: Scalars['Int']['output'];
+  waitlistMax: Scalars['Int']['output'];
 };
 
 export type SelectedCourse = {
   __typename?: 'SelectedCourse';
   /** Identifiers (probably cs-course-ids) for the classes the user has added to their schedule. */
-  class_ID: Scalars['String'];
+  class_ID: Scalars['String']['output'];
   /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
-  primary_section_ID?: Maybe<Scalars['String']>;
+  primary_section_ID?: Maybe<Scalars['String']['output']>;
   /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
-  secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
+  secondary_section_IDs?: Maybe<Array<Scalars['String']['output']>>;
 };
 
 export type SelectedCourseInput = {
-  class_ID: Scalars['String'];
-  primary_section_ID?: InputMaybe<Scalars['String']>;
-  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
+  class_ID: Scalars['String']['input'];
+  primary_section_ID?: InputMaybe<Scalars['String']['input']>;
+  secondary_section_IDs?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type Semester =
+  | 'F'
   | 'Fall'
+  | 'P'
+  | 'S'
   | 'Spring'
   | 'Summer'
+  | 'W'
   | 'Winter';
 
 export type Session =
@@ -465,46 +473,54 @@ export type Session =
   /** 12-Week Summer Session */
   | 'S';
 
+/** Term */
+export type Term = {
+  __typename?: 'Term';
+  active: Scalars['Boolean']['output'];
+  semester: Semester;
+  year: Scalars['String']['output'];
+};
+
 /** The combination of year and season that corresponds to a specific term. Both year and season/semester are required. */
 export type TermInput = {
   semester: Semester;
-  year: Scalars['Int'];
+  year: Scalars['Int']['input'];
 };
 
 export type TermOutput = {
   __typename?: 'TermOutput';
-  semester: Scalars['String'];
-  year: Scalars['Int'];
+  semester: Scalars['String']['output'];
+  year: Scalars['Int']['output'];
 };
 
 /** User account info. */
 export type User = {
   __typename?: 'User';
-  date_joined: Scalars['String'];
-  email: Scalars['String'];
-  email_berkeleytime_update: Scalars['Boolean'];
-  email_class_update: Scalars['Boolean'];
-  email_enrollment_opening: Scalars['Boolean'];
-  email_grade_update: Scalars['Boolean'];
-  first_name: Scalars['String'];
-  is_active: Scalars['Boolean'];
-  is_staff: Scalars['Boolean'];
-  last_login: Scalars['String'];
-  last_name: Scalars['String'];
-  major: Array<Scalars['String']>;
-  username: Scalars['String'];
+  date_joined: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  email_berkeleytime_update: Scalars['Boolean']['output'];
+  email_class_update: Scalars['Boolean']['output'];
+  email_enrollment_opening: Scalars['Boolean']['output'];
+  email_grade_update: Scalars['Boolean']['output'];
+  first_name: Scalars['String']['output'];
+  is_active: Scalars['Boolean']['output'];
+  is_staff: Scalars['Boolean']['output'];
+  last_login: Scalars['String']['output'];
+  last_name: Scalars['String']['output'];
+  major: Array<Scalars['String']['output']>;
+  username: Scalars['String']['output'];
 };
 
 /** User input type for mutations. */
 export type UserInput = {
-  email_berkeleytime_update?: InputMaybe<Scalars['Boolean']>;
-  email_class_update?: InputMaybe<Scalars['Boolean']>;
-  email_enrollment_opening?: InputMaybe<Scalars['Boolean']>;
-  email_grade_update?: InputMaybe<Scalars['Boolean']>;
-  first_name?: InputMaybe<Scalars['String']>;
-  last_name?: InputMaybe<Scalars['String']>;
-  major?: InputMaybe<Array<Scalars['String']>>;
-  username?: InputMaybe<Scalars['String']>;
+  email_berkeleytime_update?: InputMaybe<Scalars['Boolean']['input']>;
+  email_class_update?: InputMaybe<Scalars['Boolean']['input']>;
+  email_enrollment_opening?: InputMaybe<Scalars['Boolean']['input']>;
+  email_grade_update?: InputMaybe<Scalars['Boolean']['input']>;
+  first_name?: InputMaybe<Scalars['String']['input']>;
+  last_name?: InputMaybe<Scalars['String']['input']>;
+  major?: InputMaybe<Array<Scalars['String']['input']>>;
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -574,10 +590,12 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+
+
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   AcademicCareer: AcademicCareer;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CacheControlScope: CacheControlScope;
   Class: ResolverTypeWrapper<Class>;
   ClassFinalExam: ClassFinalExam;
@@ -591,15 +609,15 @@ export type ResolversTypes = {
   CustomEventInput: CustomEventInput;
   EnrollmentDay: ResolverTypeWrapper<EnrollmentDay>;
   Exam: ResolverTypeWrapper<Exam>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
+  Float: ResolverTypeWrapper<Scalars['Float']['output']>;
   Grade: ResolverTypeWrapper<Grade>;
   GradeDistributionItem: ResolverTypeWrapper<GradeDistributionItem>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
-  ISODate: ResolverTypeWrapper<Scalars['ISODate']>;
+  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  ISODate: ResolverTypeWrapper<Scalars['ISODate']['output']>;
   Instructor: ResolverTypeWrapper<Instructor>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  JSON: ResolverTypeWrapper<Scalars['JSON']>;
-  JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
+  JSON: ResolverTypeWrapper<Scalars['JSON']['output']>;
+  JSONObject: ResolverTypeWrapper<Scalars['JSONObject']['output']>;
   Meeting: ResolverTypeWrapper<Meeting>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
@@ -611,7 +629,8 @@ export type ResolversTypes = {
   SelectedCourseInput: SelectedCourseInput;
   Semester: Semester;
   Session: Session;
-  String: ResolverTypeWrapper<Scalars['String']>;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Term: ResolverTypeWrapper<Term>;
   TermInput: TermInput;
   TermOutput: ResolverTypeWrapper<TermOutput>;
   User: ResolverTypeWrapper<User>;
@@ -620,7 +639,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Boolean: Scalars['Boolean'];
+  Boolean: Scalars['Boolean']['output'];
   Class: Class;
   Course: Course;
   CourseListItem: CourseListItem;
@@ -628,15 +647,15 @@ export type ResolversParentTypes = {
   CustomEventInput: CustomEventInput;
   EnrollmentDay: EnrollmentDay;
   Exam: Exam;
-  Float: Scalars['Float'];
+  Float: Scalars['Float']['output'];
   Grade: Grade;
   GradeDistributionItem: GradeDistributionItem;
-  ID: Scalars['ID'];
-  ISODate: Scalars['ISODate'];
+  ID: Scalars['ID']['output'];
+  ISODate: Scalars['ISODate']['output'];
   Instructor: Instructor;
-  Int: Scalars['Int'];
-  JSON: Scalars['JSON'];
-  JSONObject: Scalars['JSONObject'];
+  Int: Scalars['Int']['output'];
+  JSON: Scalars['JSON']['output'];
+  JSONObject: Scalars['JSONObject']['output'];
   Meeting: Meeting;
   Mutation: {};
   Query: {};
@@ -646,7 +665,8 @@ export type ResolversParentTypes = {
   Section: Section;
   SelectedCourse: SelectedCourse;
   SelectedCourseInput: SelectedCourseInput;
-  String: Scalars['String'];
+  String: Scalars['String']['output'];
+  Term: Term;
   TermInput: TermInput;
   TermOutput: TermOutput;
   User: User;
@@ -658,8 +678,8 @@ export type AuthDirectiveArgs = { };
 export type AuthDirectiveResolver<Result, Parent, ContextType = any, Args = AuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type CacheControlDirectiveArgs = {
-  inheritMaxAge?: Maybe<Scalars['Boolean']>;
-  maxAge?: Maybe<Scalars['Int']>;
+  inheritMaxAge?: Maybe<Scalars['Boolean']['input']>;
+  maxAge?: Maybe<Scalars['Int']['input']>;
   scope?: Maybe<CacheControlScope>;
 };
 
@@ -798,6 +818,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   scheduleByID?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QueryScheduleByIdArgs, 'id'>>;
   schedulesByUser?: Resolver<Maybe<Array<Maybe<ResolversTypes['Schedule']>>>, ParentType, ContextType, RequireFields<QuerySchedulesByUserArgs, 'created_by'>>;
   section?: Resolver<Maybe<ResolversTypes['Section']>, ParentType, ContextType, RequireFields<QuerySectionArgs, 'classNumber' | 'courseNumber' | 'sectionNumber' | 'subject' | 'term'>>;
+  terms?: Resolver<Maybe<Array<Maybe<ResolversTypes['Term']>>>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
@@ -852,6 +873,13 @@ export type SelectedCourseResolvers<ContextType = any, ParentType extends Resolv
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type TermResolvers<ContextType = any, ParentType extends ResolversParentTypes['Term'] = ResolversParentTypes['Term']> = {
+  active?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  semester?: Resolver<ResolversTypes['Semester'], ParentType, ContextType>;
+  year?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type TermOutputResolvers<ContextType = any, ParentType extends ResolversParentTypes['TermOutput'] = ResolversParentTypes['TermOutput']> = {
   semester?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   year?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -895,6 +923,7 @@ export type Resolvers<ContextType = any> = {
   Schedule?: ScheduleResolvers<ContextType>;
   Section?: SectionResolvers<ContextType>;
   SelectedCourse?: SelectedCourseResolvers<ContextType>;
+  Term?: TermResolvers<ContextType>;
   TermOutput?: TermOutputResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
