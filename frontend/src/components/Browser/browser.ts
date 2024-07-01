@@ -50,10 +50,26 @@ export const getFilteredClasses = (
   currentComponents: Component[],
   currentUnits: Unit[],
   currentLevels: Level[],
-  currentDays: Day[]
+  currentDays: Day[],
+  currentOpen: boolean,
+  currentOnline: boolean
 ) => {
   return classes.reduce(
     (acc, _class) => {
+      // Filter by open
+      if (currentOpen && !_class.primarySection.open) {
+        acc.excludedClasses.push(_class);
+
+        return acc;
+      }
+
+      // Filter by online
+      if (currentOnline && !_class.primarySection.online) {
+        acc.excludedClasses.push(_class);
+
+        return acc;
+      }
+
       // Filter by component
       if (currentComponents.length > 0) {
         const { component } = _class.primarySection;

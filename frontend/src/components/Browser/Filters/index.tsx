@@ -35,12 +35,16 @@ interface FiltersProps {
   currentQuery: string;
   currentDays: Day[];
   currentSortBy: SortBy;
+  currentOpen: boolean;
+  currentOnline: boolean;
   setCurrentSortBy: (sortBy: SortBy) => void;
   setCurrentQuery: (query: string) => void;
   setCurrentComponents: (components: Component[]) => void;
   setCurrentUnits: (units: Unit[]) => void;
   setCurrentLevels: (levels: Level[]) => void;
   setCurrentDays: (days: Day[]) => void;
+  setCurrentOpen: (open: boolean) => void;
+  setCurrentOnline: (online: boolean) => void;
   persistent?: boolean;
 }
 
@@ -60,12 +64,16 @@ export default function Filters({
   currentYear,
   currentQuery,
   currentSortBy,
+  currentOpen,
+  currentOnline,
   setCurrentSortBy,
   setCurrentQuery,
   setCurrentComponents,
   setCurrentUnits,
   setCurrentLevels,
   setCurrentDays,
+  setCurrentOpen,
+  setCurrentOnline,
   persistent,
 }: FiltersProps) {
   const [expanded, setExpanded] = useState(false);
@@ -80,7 +88,9 @@ export default function Filters({
             currentComponents,
             currentUnits,
             [],
-            currentDays
+            currentDays,
+            currentOpen,
+            currentOnline
           ).includedClasses;
 
     return classes.reduce(
@@ -108,6 +118,8 @@ export default function Filters({
     currentComponents,
     currentLevels,
     currentDays,
+    currentOpen,
+    currentOnline,
   ]);
 
   const filteredComponents = useMemo(() => {
@@ -127,7 +139,9 @@ export default function Filters({
             [],
             currentUnits,
             currentLevels,
-            currentDays
+            currentDays,
+            currentOpen,
+            currentOnline
           ).includedClasses;
 
     for (const _class of classes) {
@@ -144,6 +158,8 @@ export default function Filters({
     currentUnits,
     currentLevels,
     currentDays,
+    currentOpen,
+    currentOnline,
   ]);
 
   const filteredDays = useMemo(() => {
@@ -163,7 +179,9 @@ export default function Filters({
             currentComponents,
             currentUnits,
             currentLevels,
-            []
+            [],
+            currentOpen,
+            currentOnline
           ).includedClasses;
 
     for (const _class of classes) {
@@ -184,6 +202,8 @@ export default function Filters({
     currentUnits,
     currentLevels,
     currentDays,
+    currentOpen,
+    currentOnline,
   ]);
 
   const filteredUnits = useMemo(() => {
@@ -203,7 +223,9 @@ export default function Filters({
             currentComponents,
             [],
             currentLevels,
-            currentDays
+            currentDays,
+            currentOpen,
+            currentOnline
           ).includedClasses;
 
     for (const _class of classes) {
@@ -227,9 +249,38 @@ export default function Filters({
     currentComponents,
     currentLevels,
     currentDays,
+    currentOpen,
+    currentOnline,
   ]);
 
-  const update = <T,>(
+  const amountOpen = useMemo(
+    () => includedClasses.filter((_class) => _class.primarySection.open).length,
+    [includedClasses]
+  );
+
+  const amountOnline = useMemo(
+    () =>
+      includedClasses.filter((_class) => _class.primarySection.online).length,
+    [includedClasses]
+  );
+
+  const updateBoolean = (
+    name: string,
+    setState: (state: boolean) => void,
+    value: boolean
+  ) => {
+    if (persistent) {
+      if (value) searchParams.set(name, "");
+      else searchParams.delete(name);
+      setSearchParams(searchParams);
+
+      return;
+    }
+
+    setState(value);
+  };
+
+  const updateArray = <T,>(
     name: string,
     state: T[],
     setState: (state: T[]) => void,
@@ -297,23 +348,37 @@ export default function Filters({
       <div className={styles.body}>
         <p className={styles.label}>Quick filters</p>
         <div className={styles.filter}>
-          <Checkbox.Root className={styles.checkbox}>
+          <Checkbox.Root
+            className={styles.checkbox}
+            onCheckedChange={(value) =>
+              updateBoolean("open", setCurrentOpen, value as boolean)
+            }
+            id="open"
+          >
             <Checkbox.Indicator asChild>
               <Check width={12} height={12} />
             </Checkbox.Indicator>
           </Checkbox.Root>
-          <label className={styles.text}>
+          <label className={styles.text} htmlFor="open">
             <span className={styles.value}>Open</span>
+            {!currentOpen && ` (${amountOpen.toLocaleString()})`}
           </label>
         </div>
         <div className={styles.filter}>
-          <Checkbox.Root className={styles.checkbox}>
+          <Checkbox.Root
+            id="online"
+            className={styles.checkbox}
+            onCheckedChange={(value) =>
+              updateBoolean("online", setCurrentOnline, value as boolean)
+            }
+          >
             <Checkbox.Indicator asChild>
               <Check width={12} height={12} />
             </Checkbox.Indicator>
           </Checkbox.Root>
-          <label className={styles.text}>
+          <label className={styles.text} htmlFor="online">
             <span className={styles.value}>Online</span>
+            {!currentOnline && ` (${amountOnline.toLocaleString()})`}
           </label>
         </div>
         <div className={styles.filter}>
@@ -357,7 +422,7 @@ export default function Filters({
                 checked={active}
                 id={`level-${level}`}
                 onCheckedChange={(checked) =>
-                  update(
+                  updateArray(
                     "levels",
                     currentLevels,
                     setCurrentLevels,
@@ -388,7 +453,7 @@ export default function Filters({
                 checked={active}
                 id={`units-${unit}`}
                 onCheckedChange={(checked) =>
-                  update(
+                  updateArray(
                     "units",
                     currentUnits,
                     setCurrentUnits,
@@ -423,7 +488,7 @@ export default function Filters({
                   checked={active}
                   id={`component-${component}`}
                   onCheckedChange={(checked) =>
-                    update(
+                    updateArray(
                       "components",
                       currentComponents,
                       setCurrentComponents,
@@ -464,7 +529,7 @@ export default function Filters({
                 checked={active}
                 id={`day-${day}`}
                 onCheckedChange={(checked) =>
-                  update(
+                  updateArray(
                     "days",
                     currentDays,
                     setCurrentDays,

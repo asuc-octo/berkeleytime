@@ -50,6 +50,8 @@ export default function Browser({
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localDays, setLocalDays] = useState<Day[]>([]);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
+  const [localOpen, setLocalOpen] = useState<boolean>(false);
+  const [localOnline, setLocalOnline] = useState<boolean>(false);
 
   const block = useMemo(() => width <= 992, [width]);
 
@@ -155,6 +157,16 @@ export default function Browser({
     return localSortBy;
   }, [searchParams, localSortBy, persistent]);
 
+  const currentOpen = useMemo(
+    () => (persistent ? searchParams.has("open") : localOpen),
+    [searchParams, localOpen, persistent]
+  );
+
+  const currentOnline = useMemo(
+    () => (persistent ? searchParams.has("online") : localOnline),
+    [searchParams, localOnline, persistent]
+  );
+
   const { includedClasses, excludedClasses } = useMemo(
     () =>
       getFilteredClasses(
@@ -162,10 +174,22 @@ export default function Browser({
         currentComponents,
         currentUnits,
         currentLevels,
-        currentDays
+        currentDays,
+        currentOpen,
+        currentOnline
       ),
-    [classes, currentComponents, currentUnits, currentLevels, currentDays]
+    [
+      classes,
+      currentComponents,
+      currentUnits,
+      currentLevels,
+      currentDays,
+      currentOpen,
+      currentOnline,
+    ]
   );
+
+  console.log(currentOpen);
 
   const index = useMemo(() => initialize(includedClasses), [includedClasses]);
 
@@ -243,6 +267,8 @@ export default function Browser({
           currentUnits={currentUnits}
           currentLevels={currentLevels}
           currentDays={currentDays}
+          currentOpen={currentOpen}
+          currentOnline={currentOnline}
           // Update local filters
           setCurrentQuery={setLocalQuery}
           setCurrentUnits={setLocalUnits}
@@ -250,6 +276,8 @@ export default function Browser({
           setCurrentDays={setLocalDays}
           setCurrentSortBy={setLocalSortBy}
           setCurrentComponents={setLocalComponents}
+          setCurrentOpen={setLocalOpen}
+          setCurrentOnline={setLocalOnline}
         />
       )}
       {(!open || !overlay) && (
