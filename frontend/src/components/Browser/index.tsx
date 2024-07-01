@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
 import classNames from "classnames";
-import Fuse from "fuse.js";
 import { useSearchParams } from "react-router-dom";
 
 import useWindowDimensions from "@/hooks/useWindowDimensions";
@@ -13,86 +12,18 @@ import {
   IClass,
   Semester,
 } from "@/lib/api";
-import { subjects } from "@/lib/course";
 
 import styles from "./Browser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
-import { Day, Level, SortBy, Unit, getFilteredClasses } from "./browser";
-
-const initializeFuse = (classes: IClass[]) => {
-  const list = classes.map((_class) => {
-    const { title, subject, number } = _class.course;
-
-    // For prefixed courses, prefer the number and add an abbreviation with the prefix
-    const containsPrefix = /^[a-zA-Z].*/.test(number);
-    const alternateNumber = number.slice(1);
-
-    const term = subject.toLowerCase();
-
-    const alternateNames = subjects[term]?.abbreviations.reduce(
-      (acc, abbreviation) => {
-        // Add alternate names for abbreviations
-        const abbreviations = [
-          `${abbreviation}${number}`,
-          `${abbreviation} ${number}`,
-        ];
-
-        if (containsPrefix) {
-          abbreviations.push(
-            `${abbreviation}${alternateNumber}`,
-            `${abbreviation} ${alternateNumber}`
-          );
-        }
-
-        return [...acc, ...abbreviations];
-      },
-      // Add alternate names
-      containsPrefix
-        ? [
-            `${subject}${number}`,
-            `${subject} ${alternateNumber}`,
-            `${subject}${alternateNumber}`,
-          ]
-        : [`${subject}${number}`]
-    );
-
-    return {
-      title: _class.title ?? title,
-      subject,
-      number,
-      name: `${subject} ${number}`,
-      alternateNames,
-    };
-  });
-
-  const options = {
-    includeScore: true,
-    ignoreLocation: true,
-    threshold: 0.25,
-    keys: [
-      { name: "number", weight: 1.2 },
-      "name",
-      "title",
-      {
-        name: "alternateNames",
-        weight: 2,
-      },
-      { name: "subject", weight: 1.5 },
-    ],
-    // TODO: Fuse types are wrong for sortFn
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    sortFn: (a: any, b: any) => {
-      // First, sort by score
-      if (a.score - b.score) return a.score - b.score;
-
-      // Otherwise, sort by number
-      return a.item[0].v.toLowerCase().localeCompare(b.item[0].v.toLowerCase());
-    },
-  };
-
-  return new Fuse(list, options);
-};
+import {
+  Day,
+  Level,
+  SortBy,
+  Unit,
+  getFilteredClasses,
+  initialize,
+} from "./browser";
 
 interface BrowserProps {
   onSelect: (_class: IClass) => void;
@@ -236,15 +167,14 @@ export default function Browser({
     [classes, currentComponents, currentUnits, currentLevels, currentDays]
   );
 
-  const fuse = useMemo(
-    () => initializeFuse(includedClasses),
-    [includedClasses]
-  );
+  const index = useMemo(() => initialize(includedClasses), [includedClasses]);
 
   const currentClasses = useMemo(() => {
     let filteredClasses = currentQuery
-      ? fuse
-          .search(currentQuery)
+      ? index
+          // Limit query because Fuse performance decreases linearly by
+          // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
+          .search(currentQuery.slice(0, 24))
           .map(({ refIndex }) => includedClasses[refIndex])
       : includedClasses;
 
@@ -288,7 +218,7 @@ export default function Browser({
     }
 
     return filteredClasses;
-  }, [currentQuery, fuse, includedClasses, currentSortBy]);
+  }, [currentQuery, index, includedClasses, currentSortBy]);
 
   return (
     <div className={classNames(styles.root, { [styles.block]: block })}>

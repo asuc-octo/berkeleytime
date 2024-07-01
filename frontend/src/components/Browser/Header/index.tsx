@@ -46,7 +46,7 @@ const Header = forwardRef<HTMLInputElement, HeaderProps>(
       if (persistent) {
         if (value) searchParams.set("query", value);
         else searchParams.delete("query");
-        setSearchParams(searchParams);
+        setSearchParams(searchParams, { replace: true });
 
         return;
       }
