@@ -171,7 +171,7 @@ export function formatCourse(
 
     requirements: course.preparation?.requiredText,
     description: course.description as string,
-    primaryComponent: course.primaryInstructionMethod?.code as string,
+    primaryInstructionMethod: course.primaryInstructionMethod?.code as string,
     fromDate: course.fromDate,
     finalExam: course.finalExam?.description as string,
     gradingBasis: course.gradingBasis?.description as string,
@@ -180,6 +180,10 @@ export function formatCourse(
     subject: course.classSubjectArea?.code as string,
     title: course.title as string,
     toDate: course.toDate,
+    typicallyOffered:
+      // @ts-expect-error - The model was typed incorrectly
+      course.formatsOffered?.typicallyOffered?.terms?.termNames ??
+      course.formatsOffered?.typicallyOffered?.terms,
 
     ...formatMetadata(course),
   };

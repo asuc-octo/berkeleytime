@@ -143,6 +143,7 @@ export type Course = {
   subject: Scalars['String']['output'];
   title: Scalars['String']['output'];
   toDate: Scalars['String']['output'];
+  typicallyOffered?: Maybe<Array<Scalars['String']['output']>>;
 };
 
 
@@ -722,6 +723,7 @@ export type CourseResolvers<ContextType = any, ParentType extends ResolversParen
   subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   toDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  typicallyOffered?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

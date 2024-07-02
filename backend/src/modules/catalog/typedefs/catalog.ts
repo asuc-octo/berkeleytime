@@ -51,7 +51,9 @@ export default gql`
     number: String!
     subject: String!
     title: String!
+    primaryInstructionMethod: InstructionMethod!
     toDate: String!
+    typicallyOffered: [String!]
 
     raw: JSONObject!
     lastUpdated: ISODate!
@@ -241,6 +243,74 @@ export default gql`
 
     "Supplementary"
     SUP
+
+    "Laboratory"
+    LAB
+
+    "Session"
+    SES
+
+    "Studio"
+    STD
+
+    "Self-paced"
+    SLF
+
+    "Colloquium"
+    COL
+
+    "Web-Based Lecture"
+    WBL
+
+    "Independent Study"
+    IND
+
+    "Internship"
+    INT
+
+    "Reading"
+    REA
+
+    "Recitation"
+    REC
+
+    "Seminar"
+    SEM
+  }
+
+  enum InstructionMethod {
+    "Unknown"
+    UNK
+
+    "Demonstration"
+    DEM
+
+    "Conversation"
+    CON
+
+    "Workshop"
+    WOR
+
+    "Web-Based Discussion"
+    WBD
+
+    "Clinic"
+    CLC
+
+    "Directed Group Study"
+    GRP
+
+    "Discussion"
+    DIS
+
+    "Tutorial"
+    TUT
+
+    "Field Work"
+    FLD
+
+    "Lecture"
+    LEC
 
     "Laboratory"
     LAB

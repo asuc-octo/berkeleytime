@@ -3,7 +3,7 @@ import * as gm from "graphql-modules";
 export namespace CatalogModule {
   interface DefinedFields {
     Query: 'course' | 'class' | 'section' | 'catalog' | 'courseList';
-    Course: 'classes' | 'crossListing' | 'sections' | 'requiredCourses' | 'requirements' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'finalExam' | 'academicCareer' | 'number' | 'subject' | 'title' | 'toDate' | 'raw' | 'lastUpdated';
+    Course: 'classes' | 'crossListing' | 'sections' | 'requiredCourses' | 'requirements' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'finalExam' | 'academicCareer' | 'number' | 'subject' | 'title' | 'toDate' | 'typicallyOffered' | 'raw' | 'lastUpdated';
     Class: 'course' | 'primarySection' | 'sections' | 'session' | 'gradingBasis' | 'finalExam' | 'description' | 'title' | 'number' | 'semester' | 'year' | 'unitsMax' | 'unitsMin' | 'raw' | 'lastUpdated';
     Section: 'class' | 'course' | 'enrollmentHistory' | 'ccn' | 'number' | 'primary' | 'component' | 'meetings' | 'exams' | 'startDate' | 'endDate' | 'online' | 'open' | 'reservations' | 'enrollCount' | 'waitlistCount' | 'enrollMax' | 'waitlistMax' | 'raw' | 'lastUpdated';
     Reservation: 'enrollCount' | 'enrollMax' | 'group';
@@ -99,6 +99,7 @@ export namespace CatalogModule {
       subject?: gm.Middleware[];
       title?: gm.Middleware[];
       toDate?: gm.Middleware[];
+      typicallyOffered?: gm.Middleware[];
       raw?: gm.Middleware[];
       lastUpdated?: gm.Middleware[];
     };

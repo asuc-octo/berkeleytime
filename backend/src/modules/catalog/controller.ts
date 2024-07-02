@@ -406,7 +406,7 @@ export async function getCourseList(
 ): Promise<Course[] | null> {
   const start = performance.now();
 
-  let courses = await CourseModel.aggregate([
+  const courses = await CourseModel.aggregate([
     {
       $match: {
         printInCatalog: true,
@@ -432,37 +432,8 @@ export async function getCourseList(
     },
   ]);
 
-  const csDisplayNames = courses.map((c) => c.displayName);
-
-  const coTime = performance.now();
-  console.log("Courses query time: ", coTime - start);
-
-  const classes = await ClassModel.find({
-    "course.displayName": {
-      $in: csDisplayNames,
-    },
-    anyPrintInScheduleOfClasses: true,
-  }).lean();
-
-  courses = courses.reduce((acc, c) => {
-    const cl = classes
-      .filter(
-        (cl) => getCsCourseId(cl.course as CourseType) === getCsCourseId(c)
-      )
-      .map(formatClass);
-
-    if (cl.length === 0) return acc;
-
-    acc.push({
-      ...formatCourse(c),
-      classes: cl,
-    });
-
-    return acc;
-  }, []);
-
   const clTime = performance.now();
-  console.log("Classes query time: ", clTime - coTime);
+  console.log("Courses query time: ", clTime - start);
 
   /* Map grades to course keys for easy lookup */
   const gradesMap: { [key: string]: GradeType[] } = {};
@@ -500,7 +471,7 @@ export async function getCourseList(
   console.log("Grades query time: ", grTime - clTime);
 
   return courses.map((c) => ({
-    ...c,
+    ...formatCourse(c),
     gradeAverage: getAverage(gradesMap[getCourseKey(c)]),
   }));
 }
