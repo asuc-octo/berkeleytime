@@ -3,7 +3,7 @@ import * as gm from "graphql-modules";
 export namespace CatalogModule {
   interface DefinedFields {
     Query: 'course' | 'class' | 'section' | 'catalog' | 'courseList';
-    Course: 'classes' | 'crossListing' | 'sections' | 'requiredCourses' | 'requirements' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'finalExam' | 'academicCareer' | 'number' | 'subject' | 'title' | 'toDate' | 'typicallyOffered' | 'raw' | 'lastUpdated';
+    Course: 'classes' | 'crossListing' | 'sections' | 'requiredCourses' | 'requirements' | 'description' | 'fromDate' | 'gradeAverage' | 'gradingBasis' | 'finalExam' | 'academicCareer' | 'number' | 'subject' | 'title' | 'primaryInstructionMethod' | 'toDate' | 'typicallyOffered' | 'raw' | 'lastUpdated';
     Class: 'course' | 'primarySection' | 'sections' | 'session' | 'gradingBasis' | 'finalExam' | 'description' | 'title' | 'number' | 'semester' | 'year' | 'unitsMax' | 'unitsMin' | 'raw' | 'lastUpdated';
     Section: 'class' | 'course' | 'enrollmentHistory' | 'ccn' | 'number' | 'primary' | 'component' | 'meetings' | 'exams' | 'startDate' | 'endDate' | 'online' | 'open' | 'reservations' | 'enrollCount' | 'waitlistCount' | 'enrollMax' | 'waitlistMax' | 'raw' | 'lastUpdated';
     Reservation: 'enrollCount' | 'enrollMax' | 'group';
@@ -22,6 +22,7 @@ export namespace CatalogModule {
     ClassGradingBasis: 'ESU' | 'SUS' | 'OPT' | 'PNP' | 'BMT' | 'GRD' | 'IOP';
     Session: 'R' | 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
     Component: 'WOR' | 'WBD' | 'CLN' | 'PRA' | 'GRP' | 'DIS' | 'VOL' | 'TUT' | 'FLD' | 'LEC' | 'SUP' | 'LAB' | 'SES' | 'STD' | 'SLF' | 'COL' | 'WBL' | 'IND' | 'INT' | 'REA' | 'REC' | 'SEM';
+    InstructionMethod: 'UNK' | 'DEM' | 'CON' | 'WOR' | 'WBD' | 'CLC' | 'GRP' | 'DIS' | 'TUT' | 'FLD' | 'LEC' | 'LAB' | 'SES' | 'STD' | 'SLF' | 'COL' | 'WBL' | 'IND' | 'INT' | 'REA' | 'REC' | 'SEM';
   };
   
   export type Query = Pick<Types.Query, DefinedFields['Query']>;
@@ -32,6 +33,7 @@ export namespace CatalogModule {
   export type CourseGradingBasis = DefinedEnumValues['CourseGradingBasis'];
   export type CourseFinalExam = DefinedEnumValues['CourseFinalExam'];
   export type AcademicCareer = DefinedEnumValues['AcademicCareer'];
+  export type InstructionMethod = DefinedEnumValues['InstructionMethod'];
   export type JSONObject = Types.JsonObject;
   export type ISODate = Types.IsoDate;
   export type Session = DefinedEnumValues['Session'];
@@ -98,6 +100,7 @@ export namespace CatalogModule {
       number?: gm.Middleware[];
       subject?: gm.Middleware[];
       title?: gm.Middleware[];
+      primaryInstructionMethod?: gm.Middleware[];
       toDate?: gm.Middleware[];
       typicallyOffered?: gm.Middleware[];
       raw?: gm.Middleware[];

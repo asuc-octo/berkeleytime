@@ -136,6 +136,7 @@ export type Course = {
   gradingBasis: CourseGradingBasis;
   lastUpdated: Scalars['ISODate']['output'];
   number: Scalars['String']['output'];
+  primaryInstructionMethod: InstructionMethod;
   raw: Scalars['JSONObject']['output'];
   requiredCourses: Array<Course>;
   requirements?: Maybe<Scalars['String']['output']>;
@@ -231,6 +232,52 @@ export type GradeDistributionItem = {
   count: Scalars['Int']['output'];
   letter: Scalars['String']['output'];
 };
+
+export type InstructionMethod =
+  /** Clinic */
+  | 'CLC'
+  /** Colloquium */
+  | 'COL'
+  /** Conversation */
+  | 'CON'
+  /** Demonstration */
+  | 'DEM'
+  /** Discussion */
+  | 'DIS'
+  /** Field Work */
+  | 'FLD'
+  /** Directed Group Study */
+  | 'GRP'
+  /** Independent Study */
+  | 'IND'
+  /** Internship */
+  | 'INT'
+  /** Laboratory */
+  | 'LAB'
+  /** Lecture */
+  | 'LEC'
+  /** Reading */
+  | 'REA'
+  /** Recitation */
+  | 'REC'
+  /** Seminar */
+  | 'SEM'
+  /** Session */
+  | 'SES'
+  /** Self-paced */
+  | 'SLF'
+  /** Studio */
+  | 'STD'
+  /** Tutorial */
+  | 'TUT'
+  /** Unknown */
+  | 'UNK'
+  /** Web-Based Discussion */
+  | 'WBD'
+  /** Web-Based Lecture */
+  | 'WBL'
+  /** Workshop */
+  | 'WOR';
 
 export type Instructor = {
   __typename?: 'Instructor';
@@ -615,6 +662,7 @@ export type ResolversTypes = {
   GradeDistributionItem: ResolverTypeWrapper<GradeDistributionItem>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   ISODate: ResolverTypeWrapper<Scalars['ISODate']['output']>;
+  InstructionMethod: InstructionMethod;
   Instructor: ResolverTypeWrapper<Instructor>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']['output']>;
@@ -716,6 +764,7 @@ export type CourseResolvers<ContextType = any, ParentType extends ResolversParen
   gradingBasis?: Resolver<ResolversTypes['CourseGradingBasis'], ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  primaryInstructionMethod?: Resolver<ResolversTypes['InstructionMethod'], ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
   requiredCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
   requirements?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
