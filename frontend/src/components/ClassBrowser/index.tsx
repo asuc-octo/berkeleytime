@@ -13,7 +13,7 @@ import {
   Semester,
 } from "@/lib/api";
 
-import styles from "./Browser.module.scss";
+import styles from "./ClassBrowser.module.scss";
 import Filters from "./Filters";
 import List from "./List";
 import {
@@ -25,7 +25,7 @@ import {
   initialize,
 } from "./browser";
 
-interface BrowserProps {
+interface ClassBrowserProps {
   onSelect: (_class: IClass) => void;
   responsive?: boolean;
   semester: Semester;
@@ -33,13 +33,13 @@ interface BrowserProps {
   persistent?: boolean;
 }
 
-export default function Browser({
+export default function ClassBrowser({
   onSelect,
   responsive = true,
   semester: currentSemester,
   year: currentYear,
   persistent,
-}: BrowserProps) {
+}: ClassBrowserProps) {
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const { width } = useWindowDimensions();

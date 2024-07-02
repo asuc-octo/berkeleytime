@@ -7,6 +7,31 @@ export enum Semester {
   Winter = "Winter",
 }
 
+export enum InstructionMethod {
+  Unknown = "UNK",
+  DirectedGroupStudy = "GRP",
+  Workshop = "WOR",
+  WebBasedDiscussion = "WBD",
+  Tutorial = "TUT",
+  Seminar = "SEM",
+  FieldWork = "FLD",
+  Recitation = "REC",
+  IndependentStudy = "IND",
+  Session = "SES",
+  Colloquium = "COL",
+  Clinic = "CLC",
+  Studio = "STD",
+  Lecture = "LEC",
+  Reading = "REA",
+  Internship = "INT",
+  Discussion = "DIS",
+  Demonstration = "DEM",
+  Conversation = "CON",
+  SelfPaced = "SLF",
+  WebBasedLecture = "WBL",
+  Laboratory = "LAB",
+}
+
 export enum Component {
   Workshop = "WOR",
   WebBasedDiscussion = "WBD",
@@ -31,6 +56,31 @@ export enum Component {
   Recitation = "REC",
   Seminar = "SEM",
 }
+
+export const instructionMethods: Record<InstructionMethod, string> = {
+  [InstructionMethod.Lecture]: "Lecture",
+  [InstructionMethod.Seminar]: "Seminar",
+  [InstructionMethod.IndependentStudy]: "Independent Study",
+  [InstructionMethod.DirectedGroupStudy]: "Directed Group Study",
+  [InstructionMethod.Studio]: "Studio",
+  [InstructionMethod.Laboratory]: "Laboratory",
+  [InstructionMethod.Workshop]: "Workshop",
+  [InstructionMethod.WebBasedDiscussion]: "Web-Based Discussion",
+  [InstructionMethod.Clinic]: "Clinic",
+  [InstructionMethod.Discussion]: "Discussion",
+  [InstructionMethod.Tutorial]: "Tutorial",
+  [InstructionMethod.FieldWork]: "Field Work",
+  [InstructionMethod.Session]: "Session",
+  [InstructionMethod.SelfPaced]: "Self-paced",
+  [InstructionMethod.Colloquium]: "Colloquium",
+  [InstructionMethod.WebBasedLecture]: "Web-Based Lecture",
+  [InstructionMethod.Internship]: "Internship",
+  [InstructionMethod.Reading]: "Reading",
+  [InstructionMethod.Recitation]: "Recitation",
+  [InstructionMethod.Unknown]: "Unknown",
+  [InstructionMethod.Demonstration]: "Demonstration",
+  [InstructionMethod.Conversation]: "Conversation",
+};
 
 export const components: Record<Component, string> = {
   [Component.Lecture]: "Lecture",
@@ -146,7 +196,7 @@ export interface ICourse {
   sections: ISection[];
   requiredCourses: ICourse[];
   requirements: string | null;
-  primaryComponent: Component;
+  primaryInstructionMethod: InstructionMethod;
   description: string;
   fromDate: string;
   gradeAverage: number | null;
@@ -157,6 +207,7 @@ export interface ICourse {
   subject: string;
   number: string;
   toDate: string;
+  typicallyOffered: Semester[] | null;
 }
 
 export interface IAccount {
@@ -324,10 +375,8 @@ export const GET_COURSES = gql`
       academicCareer
       finalExam
       gradingBasis
-      classes {
-        year
-        semester
-      }
+      typicallyOffered
+      primaryInstructionMethod
     }
   }
 `;

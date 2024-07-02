@@ -4,7 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Xmark } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import Browser from "@/components/Browser";
+import ClassBrowser from "@/components/ClassBrowser";
 import IconButton from "@/components/IconButton";
 import { ICourse, Semester } from "@/lib/api";
 
@@ -54,7 +54,7 @@ export default function Catalog({ onClassSelect, children }: CatalogProps) {
             </Dialog.Close>
           </div>
           <div className={styles.body}>
-            <Browser
+            <ClassBrowser
               semester={Semester.Spring}
               year={2024}
               onClassSelect={handleClassSelect}

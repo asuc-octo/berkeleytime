@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import Browser from "@/components/Browser";
+import ClassBrowser from "@/components/ClassBrowser";
 import { IClass, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
@@ -53,7 +53,7 @@ export default function Catalog() {
 
   return (
     <div className={styles.root}>
-      <Browser
+      <ClassBrowser
         onSelect={handleClick}
         semester={currentSemester}
         year={currentYear}

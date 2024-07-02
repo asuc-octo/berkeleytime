@@ -4,25 +4,18 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Xmark } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import Browser from "@/components/Browser";
+import CourseBrowser from "@/components/CourseBrowser";
 import IconButton from "@/components/IconButton";
-import { ICourse, Semester } from "@/lib/api";
+import { ICourse } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
 
 interface CatalogProps {
-  onClick: (course: ICourse, number: string) => void;
+  onClick: (course: ICourse) => void;
   children: ReactNode;
-  semester: Semester;
-  year: number;
 }
 
-export default function Catalog({
-  onClick,
-  children,
-  semester,
-  year,
-}: CatalogProps) {
+export default function Catalog({ onClick, children }: CatalogProps) {
   const [open, setOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -35,8 +28,8 @@ export default function Catalog({
     setSearchParams(searchParams);
   };
 
-  const handleClick = (course: ICourse, number: string) => {
-    onClick(course, number);
+  const handleClick = (course: ICourse) => {
+    onClick(course);
 
     setOpen(false);
 
@@ -59,12 +52,7 @@ export default function Catalog({
             </Dialog.Close>
           </div>
           <div className={styles.body}>
-            <Browser
-              semester={semester}
-              year={year}
-              onClassSelect={handleClick}
-              responsive={false}
-            />
+            <CourseBrowser onSelect={handleClick} responsive={false} />
           </div>
         </Dialog.Content>
       </Dialog.Portal>
