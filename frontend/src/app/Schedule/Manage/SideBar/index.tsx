@@ -4,7 +4,7 @@ import { Plus } from "iconoir-react";
 
 import Button from "@/components/Button";
 import Units from "@/components/Units";
-import { IClass, ICourse, ISection, Semester } from "@/lib/api";
+import { IClass, ISection, Semester } from "@/lib/api";
 
 import Catalog from "./Catalog";
 import Class from "./Class";
@@ -14,7 +14,7 @@ interface SideBarProps {
   classes: IClass[];
   selectedSections: ISection[];
   expanded: boolean[];
-  onClassSelect: (course: ICourse, number: string) => void;
+  onSelect: (_class: IClass) => void;
   onSectionSelect: (section: ISection) => void;
   onSectionMouseOver: (section: ISection) => void;
   onSectionMouseOut: () => void;
@@ -24,7 +24,7 @@ interface SideBarProps {
 export default function SideBar({
   classes,
   selectedSections,
-  onClassSelect,
+  onSelect,
   expanded,
   onSectionSelect,
   onSectionMouseOver,
@@ -55,11 +55,7 @@ export default function SideBar({
             </Units>
           </div>
         </div>
-        <Catalog
-          onClassSelect={onClassSelect}
-          semester={Semester.Spring}
-          year={2024}
-        >
+        <Catalog onSelect={onSelect} semester={Semester.Spring} year={2024}>
           <Button className={styles.button}>
             Add class
             <Plus />

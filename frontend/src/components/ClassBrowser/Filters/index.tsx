@@ -396,31 +396,37 @@ export default function Filters({
           onValueChange={handleValueChange}
           value={currentSortBy}
         >
-          {Object.values(SortBy).map((sortBy) => (
-            <div className={styles.filter}>
-              <RadioGroup.Item
-                className={styles.radio}
-                id={`sortBy-${sortBy}`}
-                value={sortBy}
-              >
-                <RadioGroup.Indicator />
-              </RadioGroup.Item>
-              <label className={styles.text} htmlFor={`sortBy-${sortBy}`}>
-                <span className={styles.value}>{sortBy}</span>
-              </label>
-            </div>
-          ))}
+          {Object.values(SortBy).map((sortBy) => {
+            const key = `sortBy-${sortBy}`;
+
+            return (
+              <div className={styles.filter} key={key}>
+                <RadioGroup.Item
+                  className={styles.radio}
+                  id={key}
+                  value={sortBy}
+                >
+                  <RadioGroup.Indicator />
+                </RadioGroup.Item>
+                <label className={styles.text} htmlFor={key}>
+                  <span className={styles.value}>{sortBy}</span>
+                </label>
+              </div>
+            );
+          })}
         </RadioGroup.Root>
         <p className={styles.label}>Level</p>
         {Object.values(Level).map((level) => {
           const active = currentLevels.includes(level as Level);
 
+          const key = `level-${level}`;
+
           return (
-            <div className={styles.filter}>
+            <div className={styles.filter} key={key}>
               <Checkbox.Root
                 className={styles.checkbox}
                 checked={active}
-                id={`level-${level}`}
+                id={key}
                 onCheckedChange={(checked) =>
                   updateArray(
                     "levels",
@@ -435,7 +441,7 @@ export default function Filters({
                   <Check width={12} height={12} />
                 </Checkbox.Indicator>
               </Checkbox.Root>
-              <label className={styles.text} htmlFor={`level-${level}`}>
+              <label className={styles.text} htmlFor={key}>
                 <span className={styles.value}>{level}</span>
                 {!active && ` (${filteredLevels[level].toLocaleString()})`}
               </label>
@@ -446,12 +452,14 @@ export default function Filters({
         {Object.values(Unit).map((unit) => {
           const active = currentUnits.includes(unit);
 
+          const key = `units-${unit}`;
+
           return (
-            <div className={styles.filter}>
+            <div className={styles.filter} key={key}>
               <Checkbox.Root
                 className={styles.checkbox}
                 checked={active}
-                id={`units-${unit}`}
+                id={key}
                 onCheckedChange={(checked) =>
                   updateArray(
                     "units",
@@ -466,7 +474,7 @@ export default function Filters({
                   <Check width={12} height={12} />
                 </Checkbox.Indicator>
               </Checkbox.Root>
-              <label className={styles.text} htmlFor={`units-${unit}`}>
+              <label className={styles.text} htmlFor={key}>
                 <span className={styles.value}>
                   {unit} {unit === Unit.One ? "unit" : "units"}
                 </span>
@@ -481,12 +489,14 @@ export default function Filters({
           .map((component) => {
             const active = currentComponents.includes(component as Component);
 
+            const key = `component-${component}`;
+
             return (
-              <div className={styles.filter}>
+              <div className={styles.filter} key={key}>
                 <Checkbox.Root
                   className={styles.checkbox}
                   checked={active}
-                  id={`component-${component}`}
+                  id={key}
                   onCheckedChange={(checked) =>
                     updateArray(
                       "components",
@@ -501,10 +511,7 @@ export default function Filters({
                     <Check width={12} height={12} />
                   </Checkbox.Indicator>
                 </Checkbox.Root>
-                <label
-                  className={styles.text}
-                  htmlFor={`component-${component}`}
-                >
+                <label className={styles.text} htmlFor={key}>
                   <span className={styles.value}>
                     {components[component as Component]}
                   </span>
@@ -519,15 +526,17 @@ export default function Filters({
           {expanded ? "View less" : "View more"}
         </div>
         <p className={styles.label}>Day</p>
-        {Object.entries(Day).map(([key, day]) => {
+        {Object.entries(Day).map(([property, day]) => {
           const active = currentDays.includes(day);
 
+          const key = `day-${day}`;
+
           return (
-            <div className={styles.filter}>
+            <div className={styles.filter} key={key}>
               <Checkbox.Root
                 className={styles.checkbox}
                 checked={active}
-                id={`day-${day}`}
+                id={key}
                 onCheckedChange={(checked) =>
                   updateArray(
                     "days",
@@ -542,8 +551,8 @@ export default function Filters({
                   <Check width={12} height={12} />
                 </Checkbox.Indicator>
               </Checkbox.Root>
-              <label className={styles.text} htmlFor={`day-${day}`}>
-                <span className={styles.value}>{key}</span>
+              <label className={styles.text} htmlFor={key}>
+                <span className={styles.value}>{property}</span>
                 {!active && ` (${filteredDays[day].toLocaleString()})`}
               </label>
             </div>

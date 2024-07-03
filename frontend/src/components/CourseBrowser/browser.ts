@@ -4,6 +4,7 @@ import {
   AcademicCareer,
   ICourse,
   InstructionMethod,
+  Semester,
   academicCareers,
 } from "@/lib/api";
 import { subjects } from "@/lib/course";
@@ -31,7 +32,8 @@ export const getLevel = (academicCareer: AcademicCareer, number: string) => {
 export const getFilteredCourses = (
   courses: ICourse[],
   currentInstructionMethods: InstructionMethod[],
-  currentLevels: Level[]
+  currentLevels: Level[],
+  currentSemesters: Semester[]
 ) => {
   return courses.reduce(
     (acc, course) => {
@@ -39,6 +41,18 @@ export const getFilteredCourses = (
       if (
         currentInstructionMethods.length > 0 &&
         !currentInstructionMethods.includes(course.primaryInstructionMethod)
+      ) {
+        acc.excludedCourses.push(course);
+
+        return acc;
+      }
+
+      // Filter by semester
+      if (
+        currentSemesters.length > 0 &&
+        currentSemesters.every(
+          (semester) => !course.typicallyOffered?.includes(semester)
+        )
       ) {
         acc.excludedCourses.push(course);
 

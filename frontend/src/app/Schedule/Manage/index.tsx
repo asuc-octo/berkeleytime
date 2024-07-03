@@ -15,7 +15,7 @@ import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
 import Tooltip from "@/components/Tooltip";
 import Week from "@/components/Week";
-import { GET_CLASS, IClass, ICourse, ISection } from "@/lib/api";
+import { GET_CLASS, IClass, ISection } from "@/lib/api";
 import { getY } from "@/lib/schedule";
 
 import { ScheduleContextType } from "../schedule";
@@ -102,8 +102,8 @@ export default function Manage() {
     [setCurrentSection, selectedSections, tab]
   );
 
-  const handleClassSelect = useCallback(
-    async (course: ICourse, number: string) => {
+  const handleSelect = useCallback(
+    async (_class: IClass) => {
       // Fetch the selected class
       const { data } = await apolloClient.query<{ class: IClass }>({
         query: GET_CLASS,
@@ -112,9 +112,9 @@ export default function Manage() {
             semester: "Spring",
             year: 2024,
           },
-          subject: course.subject,
-          courseNumber: course.number,
-          classNumber: number,
+          subject: _class.course.subject,
+          courseNumber: _class.course.number,
+          classNumber: _class.number,
         },
       });
 
@@ -122,10 +122,10 @@ export default function Manage() {
 
       // Move existing classes to the top rather than duplicating them
       const index = classes.findIndex(
-        (class_) =>
-          class_.course.subject === course.subject &&
-          class_.course.number === course.number &&
-          class_.number === number
+        ({ course, number }) =>
+          course.subject === _class.course.subject &&
+          course.number === _class.course.number &&
+          number === _class.number
       );
 
       setExpanded((expandedClasses) => {
@@ -143,7 +143,7 @@ export default function Manage() {
       // Add new classes to the top expanded
       if (index !== -1) return;
 
-      const { primarySection, sections } = data.class;
+      const { primarySection, sections, number } = data.class;
 
       const clonedPrimarySection = structuredClone(primarySection);
 
@@ -232,7 +232,7 @@ export default function Manage() {
           classes={classes}
           selectedSections={selectedSections}
           expanded={expanded}
-          onClassSelect={handleClassSelect}
+          onSelect={handleSelect}
           onSectionSelect={handleSectionSelect}
           onExpandedChange={handleExpandedChange}
           onSectionMouseOver={handleSectionMouseOver}

@@ -6,7 +6,12 @@ import classNames from "classnames";
 import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import { ICourse, InstructionMethod, instructionMethods } from "@/lib/api";
+import {
+  ICourse,
+  InstructionMethod,
+  Semester,
+  instructionMethods,
+} from "@/lib/api";
 
 import Header from "../Header";
 import { Level, SortBy, getFilteredCourses, getLevel } from "../browser";
@@ -20,6 +25,7 @@ interface FiltersProps {
   currentCourses: ICourse[];
   currentInstructionMethods: InstructionMethod[];
   currentLevels: Level[];
+  currentSemesters: Semester[];
   onOpenChange: (open: boolean) => void;
   open: boolean;
   currentQuery: string;
@@ -28,6 +34,7 @@ interface FiltersProps {
   setCurrentQuery: (query: string) => void;
   setCurrentInstructionMethods: (components: InstructionMethod[]) => void;
   setCurrentLevels: (levels: Level[]) => void;
+  setCurrentSemesters: (semesters: Semester[]) => void;
   persistent?: boolean;
 }
 
@@ -39,6 +46,8 @@ export default function Filters({
   currentCourses,
   currentInstructionMethods,
   currentLevels,
+  currentSemesters,
+  setCurrentSemesters,
   onOpenChange,
   open,
   currentQuery,
@@ -56,8 +65,12 @@ export default function Filters({
     const courses =
       currentLevels.length === 0
         ? includedCourses
-        : getFilteredCourses(excludedCourses, currentInstructionMethods, [])
-            .includedCourses;
+        : getFilteredCourses(
+            excludedCourses,
+            currentInstructionMethods,
+            [],
+            currentSemesters
+          ).includedCourses;
 
     return courses.reduce(
       (acc, course) => {
@@ -81,6 +94,36 @@ export default function Filters({
     currentLevels,
   ]);
 
+  const filteredSemesters = useMemo(() => {
+    const filteredSemesters = Object.keys(Semester).reduce(
+      (acc, semester) => {
+        acc[semester] = 0;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const courses =
+      currentSemesters.length === 0
+        ? includedCourses
+        : getFilteredCourses(
+            excludedCourses,
+            currentInstructionMethods,
+            currentLevels,
+            []
+          ).includedCourses;
+
+    for (const course of courses) {
+      if (!course.typicallyOffered) continue;
+
+      for (const semester of course.typicallyOffered) {
+        filteredSemesters[semester] += 1;
+      }
+    }
+
+    return filteredSemesters;
+  }, [excludedCourses, includedCourses, currentSemesters]);
+
   const filteredInstructionMethods = useMemo(() => {
     const filteredInstructionMethods = Object.keys(instructionMethods).reduce(
       (acc, component) => {
@@ -93,8 +136,12 @@ export default function Filters({
     const courses =
       currentInstructionMethods.length === 0
         ? includedCourses
-        : getFilteredCourses(excludedCourses, [], currentLevels)
-            .includedCourses;
+        : getFilteredCourses(
+            excludedCourses,
+            [],
+            currentLevels,
+            currentSemesters
+          ).includedCourses;
 
     for (const course of courses) {
       const { primaryInstructionMethod } = course;
@@ -151,7 +198,6 @@ export default function Filters({
       return;
     }
 
-    console.log(value);
     setCurrentSortBy(value);
   };
 
@@ -179,31 +225,37 @@ export default function Filters({
           onValueChange={handleValueChange}
           value={currentSortBy}
         >
-          {Object.values(SortBy).map((sortBy) => (
-            <div className={styles.filter}>
-              <RadioGroup.Item
-                className={styles.radio}
-                id={`sortBy-${sortBy}`}
-                value={sortBy}
-              >
-                <RadioGroup.Indicator />
-              </RadioGroup.Item>
-              <label className={styles.text} htmlFor={`sortBy-${sortBy}`}>
-                <span className={styles.value}>{sortBy}</span>
-              </label>
-            </div>
-          ))}
+          {Object.values(SortBy).map((sortBy) => {
+            const key = `sortBy-${sortBy}`;
+
+            return (
+              <div className={styles.filter} key={key}>
+                <RadioGroup.Item
+                  className={styles.radio}
+                  id={key}
+                  value={sortBy}
+                >
+                  <RadioGroup.Indicator />
+                </RadioGroup.Item>
+                <label className={styles.text} htmlFor={key}>
+                  <span className={styles.value}>{sortBy}</span>
+                </label>
+              </div>
+            );
+          })}
         </RadioGroup.Root>
         <p className={styles.label}>Level</p>
         {Object.values(Level).map((level) => {
           const active = currentLevels.includes(level as Level);
 
+          const key = `level-${level}`;
+
           return (
-            <div className={styles.filter}>
+            <div className={styles.filter} key={key}>
               <Checkbox.Root
                 className={styles.checkbox}
                 checked={active}
-                id={`level-${level}`}
+                id={key}
                 onCheckedChange={(checked) =>
                   update(
                     "levels",
@@ -218,9 +270,43 @@ export default function Filters({
                   <Check width={12} height={12} />
                 </Checkbox.Indicator>
               </Checkbox.Root>
-              <label className={styles.text} htmlFor={`level-${level}`}>
+              <label className={styles.text} htmlFor={key}>
                 <span className={styles.value}>{level}</span>
                 {!active && ` (${filteredLevels[level].toLocaleString()})`}
+              </label>
+            </div>
+          );
+        })}
+        <p className={styles.label}>Semester</p>
+        {Object.values(Semester).map((semester) => {
+          const active = currentSemesters.includes(semester as Semester);
+
+          const key = `semester-${semester}`;
+
+          return (
+            <div className={styles.filter} key={key}>
+              <Checkbox.Root
+                className={styles.checkbox}
+                checked={active}
+                id={key}
+                onCheckedChange={(checked) =>
+                  update(
+                    "semesters",
+                    currentSemesters,
+                    setCurrentSemesters,
+                    semester,
+                    checked as boolean
+                  )
+                }
+              >
+                <Checkbox.Indicator asChild>
+                  <Check width={12} height={12} />
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+              <label className={styles.text} htmlFor={key}>
+                <span className={styles.value}>{semester}</span>
+                {!active &&
+                  ` (${filteredSemesters[semester].toLocaleString()})`}
               </label>
             </div>
           );
@@ -233,12 +319,14 @@ export default function Filters({
               instructionMethod as InstructionMethod
             );
 
+            const key = `instruction-method-${instructionMethod}`;
+
             return (
-              <div className={styles.filter}>
+              <div className={styles.filter} key={key}>
                 <Checkbox.Root
                   className={styles.checkbox}
                   checked={active}
-                  id={`instruction-method-${instructionMethod}`}
+                  id={key}
                   onCheckedChange={(checked) =>
                     update(
                       "components",
@@ -253,10 +341,7 @@ export default function Filters({
                     <Check width={12} height={12} />
                   </Checkbox.Indicator>
                 </Checkbox.Root>
-                <label
-                  className={styles.text}
-                  htmlFor={`instruction-method-${instructionMethod}`}
-                >
+                <label className={styles.text} htmlFor={key}>
                   <span className={styles.value}>
                     {instructionMethods[instructionMethod as InstructionMethod]}
                   </span>

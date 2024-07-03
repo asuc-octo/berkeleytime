@@ -6,18 +6,18 @@ import { useSearchParams } from "react-router-dom";
 
 import ClassBrowser from "@/components/ClassBrowser";
 import IconButton from "@/components/IconButton";
-import { ICourse, Semester } from "@/lib/api";
+import { IClass, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
 
 interface CatalogProps {
-  onClassSelect: (course: ICourse, number: string) => void;
+  onSelect: (_class: IClass) => void;
   children: JSX.Element;
   semester: string;
   year: number;
 }
 
-export default function Catalog({ onClassSelect, children }: CatalogProps) {
+export default function Catalog({ onSelect, children }: CatalogProps) {
   const [open, setOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -30,8 +30,8 @@ export default function Catalog({ onClassSelect, children }: CatalogProps) {
     setSearchParams(searchParams);
   };
 
-  const handleClassSelect = (course: ICourse, number: string) => {
-    onClassSelect(course, number);
+  const handleSelect = (_class: IClass) => {
+    onSelect(_class);
 
     setOpen(false);
 
@@ -57,7 +57,7 @@ export default function Catalog({ onClassSelect, children }: CatalogProps) {
             <ClassBrowser
               semester={Semester.Spring}
               year={2024}
-              onClassSelect={handleClassSelect}
+              onSelect={handleSelect}
               responsive={false}
             />
           </div>

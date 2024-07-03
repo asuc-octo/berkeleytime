@@ -10,6 +10,7 @@ import {
   GetCoursesResponse,
   ICourse,
   InstructionMethod,
+  Semester,
 } from "@/lib/api";
 
 import styles from "./CourseBrowser.module.scss";
@@ -21,12 +22,14 @@ interface CourseBrowserProps {
   onSelect: (course: ICourse) => void;
   responsive?: boolean;
   persistent?: boolean;
+  defaultSemesters?: Semester[];
 }
 
 export default function CourseBrowser({
   onSelect,
   responsive = true,
   persistent,
+  defaultSemesters,
 }: CourseBrowserProps) {
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
@@ -38,6 +41,9 @@ export default function CourseBrowser({
   >([]);
   const [localLevels, setLocalLevels] = useState<Level[]>([]);
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
+  const [localSemesters, setLocalSemesters] = useState<Semester[]>(
+    defaultSemesters ?? []
+  );
 
   const block = useMemo(() => width <= 992, [width]);
 
@@ -94,9 +100,28 @@ export default function CourseBrowser({
     return localSortBy;
   }, [searchParams, localSortBy, persistent]);
 
+  const currentSemesters = useMemo(
+    () =>
+      persistent
+        ? ((searchParams
+            .get("semesters")
+            ?.split(",")
+            .filter((semester) =>
+              Object.values(Semester).includes(semester as Semester)
+            ) ?? []) as Semester[])
+        : localSemesters,
+    [searchParams, persistent, localSemesters]
+  );
+
   const { includedCourses, excludedCourses } = useMemo(
-    () => getFilteredCourses(courses, currentInstructionMethods, currentLevels),
-    [courses, currentInstructionMethods, currentLevels]
+    () =>
+      getFilteredCourses(
+        courses,
+        currentInstructionMethods,
+        currentLevels,
+        currentSemesters
+      ),
+    [courses, currentInstructionMethods, currentLevels, currentSemesters]
   );
 
   const index = useMemo(() => initialize(includedCourses), [includedCourses]);
@@ -149,11 +174,13 @@ export default function CourseBrowser({
           currentQuery={currentQuery}
           currentInstructionMethods={currentInstructionMethods}
           currentLevels={currentLevels}
+          currentSemesters={currentSemesters}
           // Update local filters
           setCurrentQuery={setLocalQuery}
           setCurrentLevels={setLocalLevels}
           setCurrentSortBy={setLocalSortBy}
           setCurrentInstructionMethods={setLocalInstructionMethods}
+          setCurrentSemesters={setLocalSemesters}
         />
       )}
       {(!open || !overlay) && (

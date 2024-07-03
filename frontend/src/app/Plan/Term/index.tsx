@@ -28,7 +28,7 @@ const Term = forwardRef<HTMLDivElement, TermProps>(
           <Units unitsMin={12} unitsMax={20}>
             {(units) => <p className={styles.units}>{units}</p>}
           </Units>
-          <Catalog onClick={onClick}>
+          <Catalog onClick={onClick} semester={semester} year={year}>
             <IconButton>
               <Plus />
             </IconButton>

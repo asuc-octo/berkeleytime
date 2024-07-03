@@ -42,10 +42,13 @@
     align-items: center;
     flex-shrink: 0;
     justify-content: space-between;
-    font-size: 14px;
-    line-height: 1;
-    color: var(--heading-color);
-    font-weight: 500;
+
+    .title {
+      font-size: 14px;
+      line-height: 1;
+      color: var(--heading-color);
+      font-weight: 500;
+    }
   }
 }
 
