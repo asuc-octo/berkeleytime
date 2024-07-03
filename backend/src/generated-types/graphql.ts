@@ -403,11 +403,6 @@ export type QueryScheduleByIdArgs = {
 };
 
 
-export type QuerySchedulesByUserArgs = {
-  created_by: Scalars['String']['input'];
-};
-
-
 export type QuerySectionArgs = {
   classNumber: Scalars['String']['input'];
   courseNumber: Scalars['String']['input'];
@@ -445,7 +440,6 @@ export type Schedule = {
 
 export type ScheduleInput = {
   courses?: InputMaybe<Array<SelectedCourseInput>>;
-  created_by: Scalars['String']['input'];
   custom_events?: InputMaybe<Array<CustomEventInput>>;
   is_public?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
@@ -867,7 +861,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   grade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradeArgs, 'courseNum' | 'subject'>>;
   ping?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   scheduleByID?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QueryScheduleByIdArgs, 'id'>>;
-  schedulesByUser?: Resolver<Maybe<Array<Maybe<ResolversTypes['Schedule']>>>, ParentType, ContextType, RequireFields<QuerySchedulesByUserArgs, 'created_by'>>;
+  schedulesByUser?: Resolver<Maybe<Array<Maybe<ResolversTypes['Schedule']>>>, ParentType, ContextType>;
   section?: Resolver<Maybe<ResolversTypes['Section']>, ParentType, ContextType, RequireFields<QuerySectionArgs, 'classNumber' | 'courseNumber' | 'sectionNumber' | 'subject' | 'term'>>;
   terms?: Resolver<Maybe<Array<Maybe<ResolversTypes['Term']>>>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;

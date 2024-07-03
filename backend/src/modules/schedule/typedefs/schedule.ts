@@ -1,7 +1,6 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-
   type TermOutput {
     year: Int!
     semester: String!
@@ -24,10 +23,9 @@ const typedef = gql`
 
   input ScheduleInput {
     name: String
-    created_by: String!,
-    courses: [SelectedCourseInput!],
-    is_public: Boolean,
-    term: TermInput!,
+    courses: [SelectedCourseInput!]
+    is_public: Boolean
+    term: TermInput!
     custom_events: [CustomEventInput!]
   }
 
@@ -92,7 +90,7 @@ const typedef = gql`
     """
     Takes in a user's email and returns all the schedules they created.
     """
-    schedulesByUser(created_by: String!): [Schedule] @auth
+    schedulesByUser: [Schedule] @auth
     """
     Takes in a schedule's ObjectID and returns a specific schedule.
     """
@@ -115,7 +113,8 @@ const typedef = gql`
     """
     For the schedule specified by the ID, modifies the courses field and returns the updated schedule.
     """
-    setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!): Schedule @auth
+    setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!): Schedule
+      @auth
   }
 `;
 

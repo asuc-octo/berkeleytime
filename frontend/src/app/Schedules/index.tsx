@@ -4,11 +4,9 @@ import { Link } from "react-router-dom";
 
 import Button from "@/components/Button";
 import {
-  AccountResponse,
   CREATE_SCHEDULE,
   CreateScheduleResponse,
   DELETE_SCHEDULE,
-  GET_ACCOUNT,
   GET_SCHEDULES,
   GetSchedulesResponse,
 } from "@/lib/api";
@@ -16,13 +14,7 @@ import {
 import styles from "./Schedules.module.scss";
 
 export default function Schedules() {
-  const { data: account } = useQuery<AccountResponse>(GET_ACCOUNT);
-
-  const { data: schedules } = useQuery<GetSchedulesResponse>(GET_SCHEDULES, {
-    variables: {
-      createdBy: account?.user.email,
-    },
-  });
+  const { data: schedules } = useQuery<GetSchedulesResponse>(GET_SCHEDULES);
 
   const [createSchedule] = useMutation<CreateScheduleResponse>(
     CREATE_SCHEDULE,
@@ -33,33 +25,46 @@ export default function Schedules() {
           year: 2024,
           semester: "Spring",
         },
-        createdBy: account?.user.email,
       },
       update(cache, { data }) {
         const schedule = data?.createNewSchedule;
 
         if (!schedule) return;
 
-        cache.modify({
-          fields: {
-            schedulesByUser(existingSchedules = []) {
-              const ref = cache.writeFragment({
-                data: schedule,
-                fragment: gql`
-                  fragment NewSchedule on Schedule {
-                    _id
-                    name
-                    term {
-                      year
-                      semester
-                    }
-                  }
-                `,
-              });
+        const queryResult = cache.readQuery({
+          query: GET_SCHEDULES,
+        });
 
-              return [...existingSchedules, ref];
+        // Initialize the cache
+        if (queryResult) {
+          cache.modify({
+            fields: {
+              schedulesByUser: (existingSchedules = []) => {
+                const ref = cache.writeFragment({
+                  data: schedule,
+                  fragment: gql`
+                    fragment NewSchedule on Schedule {
+                      _id
+                      name
+                      term {
+                        year
+                        semester
+                      }
+                    }
+                  `,
+                });
+
+                return [...existingSchedules, ref];
+              },
             },
-          },
+          });
+
+          return;
+        }
+
+        cache.writeQuery({
+          query: GET_SCHEDULES,
+          data: { schedulesByUser: [schedule] },
         });
       },
     }

@@ -460,15 +460,10 @@ export interface CreateScheduleResponse {
 }
 
 export const CREATE_SCHEDULE = gql`
-  mutation CreateSchedule(
-    $name: String!
-    $term: TermInput!
-    $createdBy: String!
-  ) {
+  mutation CreateSchedule($name: String!, $term: TermInput!) {
     createNewSchedule(
       main_schedule: {
         courses: []
-        created_by: $createdBy
         name: $name
         custom_events: []
         is_public: false
@@ -490,8 +485,8 @@ export interface GetSchedulesResponse {
 }
 
 export const GET_SCHEDULES = gql`
-  query GetSchedules($createdBy: String!) {
-    schedulesByUser(created_by: $createdBy) {
+  query GetSchedules {
+    schedulesByUser {
       _id
       name
       term {

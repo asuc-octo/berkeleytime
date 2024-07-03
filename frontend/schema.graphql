@@ -83,7 +83,7 @@ type Query {
   """
   Takes in a user's email and returns all the schedules they created.
   """
-  schedulesByUser(created_by: String!): [Schedule]
+  schedulesByUser: [Schedule!]
 
   """
   Takes in a schedule's ObjectID and returns a specific schedule.
@@ -675,7 +675,6 @@ input SelectedCourseInput {
 
 input ScheduleInput {
   name: String
-  created_by: String!
   courses: [SelectedCourseInput!]
   is_public: Boolean
   term: TermInput!
