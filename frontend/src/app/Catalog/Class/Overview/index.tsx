@@ -1,28 +1,44 @@
+import { useMemo } from "react";
+
+import { useQuery } from "@apollo/client";
+
 import Details from "@/components/Details";
-import { IClass } from "@/lib/api";
+import useCatalog from "@/hooks/useCatalog";
+import { GET_CLASS, IClass } from "@/lib/api";
 
 import styles from "./Overview.module.scss";
 
-interface OverviewProps {
-  currentClass?: IClass;
-}
+export default function Overview() {
+  const { subject, courseNumber, classNumber, semester, year } = useCatalog();
 
-export default function Overview({ currentClass }: OverviewProps) {
-  if (!currentClass) return null;
+  // TODO: Handle loading state
+  const { data } = useQuery<{ class: IClass }>(GET_CLASS, {
+    variables: {
+      term: {
+        semester,
+        year,
+      },
+      subject,
+      courseNumber,
+      classNumber,
+    },
+  });
+
+  // Because Overview will only be rendered when data loaded, we do
+  // not need to worry about loading or error states for right now
+  const _class = useMemo(() => data?.class as IClass, [data]);
 
   return (
     <div className={styles.root}>
-      <Details {...currentClass.primarySection.meetings[0]} />
+      <Details {..._class.primarySection.meetings[0]} />
       <p className={styles.label}>Description</p>
       <p className={styles.description}>
-        {currentClass.description ?? currentClass.course.description}
+        {_class.description ?? _class.course.description}
       </p>
-      {currentClass.course.requirements && (
+      {_class.course.requirements && (
         <>
           <p className={styles.label}>Prerequisites</p>
-          <p className={styles.description}>
-            {currentClass.course.requirements}
-          </p>
+          <p className={styles.description}>{_class.course.requirements}</p>
         </>
       )}
     </div>

@@ -1,12 +1,11 @@
-import { useMemo, useState } from "react";
+import { Dispatch, useMemo } from "react";
 
 import * as Checkbox from "@radix-ui/react-checkbox";
 import * as RadioGroup from "@radix-ui/react-radio-group";
 import classNames from "classnames";
-import { Check, NavArrowDown, NavArrowUp } from "iconoir-react";
-import { useSearchParams } from "react-router-dom";
+import { Check } from "iconoir-react";
 
-import { Component, IClass, Semester, components } from "@/lib/api";
+import { Component, componentMap } from "@/lib/api";
 
 import Header from "../Header";
 import {
@@ -17,80 +16,44 @@ import {
   getFilteredClasses,
   getLevel,
 } from "../browser";
+import useBrowser from "../useBrowser";
 import styles from "./Filters.module.scss";
 
-interface FiltersProps {
-  overlay: boolean;
-  block: boolean;
-  includedClasses: IClass[];
-  excludedClasses: IClass[];
-  currentClasses: IClass[];
-  currentComponents: Component[];
-  currentUnits: Unit[];
-  currentLevels: Level[];
-  onOpenChange: (open: boolean) => void;
-  open: boolean;
-  currentSemester: Semester;
-  currentYear: number;
-  currentQuery: string;
-  currentDays: Day[];
-  currentSortBy: SortBy;
-  currentOpen: boolean;
-  currentOnline: boolean;
-  setCurrentSortBy: (sortBy: SortBy) => void;
-  setCurrentQuery: (query: string) => void;
-  setCurrentComponents: (components: Component[]) => void;
-  setCurrentUnits: (units: Unit[]) => void;
-  setCurrentLevels: (levels: Level[]) => void;
-  setCurrentDays: (days: Day[]) => void;
-  setCurrentOpen: (open: boolean) => void;
-  setCurrentOnline: (online: boolean) => void;
-  persistent?: boolean;
-}
-
-export default function Filters({
-  overlay,
-  block,
-  includedClasses,
-  excludedClasses,
-  currentClasses,
-  currentComponents,
-  currentLevels,
-  currentUnits,
-  currentDays,
-  onOpenChange,
-  open,
-  currentSemester,
-  currentYear,
-  currentQuery,
-  currentSortBy,
-  currentOpen,
-  currentOnline,
-  setCurrentSortBy,
-  setCurrentQuery,
-  setCurrentComponents,
-  setCurrentUnits,
-  setCurrentLevels,
-  setCurrentDays,
-  setCurrentOpen,
-  setCurrentOnline,
-  persistent,
-}: FiltersProps) {
-  const [expanded, setExpanded] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
+export default function Filters() {
+  const {
+    includedClasses,
+    excludedClasses,
+    components,
+    updateComponents,
+    units,
+    updateUnits,
+    levels,
+    updateLevels,
+    days,
+    updateDays,
+    open,
+    updateOpen,
+    online,
+    updateOnline,
+    sortBy,
+    updateSortBy,
+    overlay,
+    block,
+    expanded,
+  } = useBrowser();
 
   const filteredLevels = useMemo(() => {
     const classes =
-      currentLevels.length === 0
+      levels.length === 0
         ? includedClasses
         : getFilteredClasses(
             excludedClasses,
-            currentComponents,
-            currentUnits,
+            components,
+            units,
             [],
-            currentDays,
-            currentOpen,
-            currentOnline
+            days,
+            open,
+            online
           ).includedClasses;
 
     return classes.reduce(
@@ -114,16 +77,16 @@ export default function Filters({
   }, [
     excludedClasses,
     includedClasses,
-    currentUnits,
-    currentComponents,
-    currentLevels,
-    currentDays,
-    currentOpen,
-    currentOnline,
+    units,
+    components,
+    levels,
+    days,
+    open,
+    online,
   ]);
 
   const filteredComponents = useMemo(() => {
-    const filteredComponents = Object.keys(components).reduce(
+    const filteredComponents = Object.keys(componentMap).reduce(
       (acc, component) => {
         acc[component] = 0;
         return acc;
@@ -132,16 +95,16 @@ export default function Filters({
     );
 
     const classes =
-      currentComponents.length === 0
+      components.length === 0
         ? includedClasses
         : getFilteredClasses(
             excludedClasses,
             [],
-            currentUnits,
-            currentLevels,
-            currentDays,
-            currentOpen,
-            currentOnline
+            units,
+            levels,
+            days,
+            open,
+            online
           ).includedClasses;
 
     for (const _class of classes) {
@@ -154,12 +117,12 @@ export default function Filters({
   }, [
     excludedClasses,
     includedClasses,
-    currentComponents,
-    currentUnits,
-    currentLevels,
-    currentDays,
-    currentOpen,
-    currentOnline,
+    components,
+    units,
+    levels,
+    days,
+    open,
+    online,
   ]);
 
   const filteredDays = useMemo(() => {
@@ -172,16 +135,16 @@ export default function Filters({
     );
 
     const classes =
-      currentDays.length === 0
+      days.length === 0
         ? includedClasses
         : getFilteredClasses(
             excludedClasses,
-            currentComponents,
-            currentUnits,
-            currentLevels,
+            components,
+            units,
+            levels,
             [],
-            currentOpen,
-            currentOnline
+            open,
+            online
           ).includedClasses;
 
     for (const _class of classes) {
@@ -198,12 +161,12 @@ export default function Filters({
   }, [
     excludedClasses,
     includedClasses,
-    currentComponents,
-    currentUnits,
-    currentLevels,
-    currentDays,
-    currentOpen,
-    currentOnline,
+    components,
+    units,
+    levels,
+    days,
+    open,
+    online,
   ]);
 
   const filteredUnits = useMemo(() => {
@@ -216,16 +179,16 @@ export default function Filters({
     );
 
     const classes =
-      currentUnits.length === 0
+      units.length === 0
         ? includedClasses
         : getFilteredClasses(
             excludedClasses,
-            currentComponents,
+            components,
             [],
-            currentLevels,
-            currentDays,
-            currentOpen,
-            currentOnline
+            levels,
+            days,
+            open,
+            online
           ).includedClasses;
 
     for (const _class of classes) {
@@ -245,12 +208,12 @@ export default function Filters({
   }, [
     excludedClasses,
     includedClasses,
-    currentUnits,
-    currentComponents,
-    currentLevels,
-    currentDays,
-    currentOpen,
-    currentOnline,
+    units,
+    components,
+    levels,
+    days,
+    open,
+    online,
   ]);
 
   const amountOpen = useMemo(
@@ -264,95 +227,33 @@ export default function Filters({
     [includedClasses]
   );
 
-  const updateBoolean = (
-    name: string,
-    setState: (state: boolean) => void,
-    value: boolean
-  ) => {
-    if (persistent) {
-      if (value) searchParams.set(name, "");
-      else searchParams.delete(name);
-      setSearchParams(searchParams);
-
-      return;
-    }
-
-    setState(value);
-  };
-
   const updateArray = <T,>(
-    name: string,
     state: T[],
-    setState: (state: T[]) => void,
+    setState: Dispatch<T[]>,
     value: T,
     checked: boolean
   ) => {
-    if (persistent) {
-      if (checked) {
-        searchParams.set(name, [...state, value].join(","));
-      } else {
-        const filtered = state.filter((parameter) => parameter !== value);
-
-        if (filtered.length > 0) {
-          searchParams.set(name, filtered.join(","));
-        } else {
-          searchParams.delete(name);
-        }
-      }
-
-      setSearchParams(searchParams);
-
-      return;
-    }
-
     setState(
       checked
         ? [...state, value]
-        : state.filter((parameter) => parameter !== value)
+        : state.filter((previousValue) => previousValue !== value)
     );
-  };
-
-  const handleValueChange = (value: SortBy) => {
-    if (persistent) {
-      if (value === SortBy.Relevance) searchParams.delete("sortBy");
-      else searchParams.set("sortBy", value);
-      setSearchParams(searchParams);
-
-      return;
-    }
-
-    console.log(value);
-    setCurrentSortBy(value);
   };
 
   return (
     <div
       className={classNames(styles.root, {
-        [styles.overlay]: overlay,
         [styles.block]: block,
+        [styles.overlay]: overlay,
       })}
     >
-      {open && overlay && (
-        <Header
-          onOpenChange={onOpenChange}
-          open={true}
-          className={styles.header}
-          currentClasses={currentClasses}
-          currentSemester={currentSemester}
-          currentYear={currentYear}
-          currentQuery={currentQuery}
-          overlay={overlay}
-          setCurrentQuery={setCurrentQuery}
-        />
-      )}
+      {expanded && overlay && <Header />}
       <div className={styles.body}>
         <p className={styles.label}>Quick filters</p>
         <div className={styles.filter}>
           <Checkbox.Root
             className={styles.checkbox}
-            onCheckedChange={(value) =>
-              updateBoolean("open", setCurrentOpen, value as boolean)
-            }
+            onCheckedChange={(value) => updateOpen(value as boolean)}
             id="open"
           >
             <Checkbox.Indicator asChild>
@@ -361,16 +262,14 @@ export default function Filters({
           </Checkbox.Root>
           <label className={styles.text} htmlFor="open">
             <span className={styles.value}>Open</span>
-            {!currentOpen && ` (${amountOpen.toLocaleString()})`}
+            {!open && ` (${amountOpen.toLocaleString()})`}
           </label>
         </div>
         <div className={styles.filter}>
           <Checkbox.Root
             id="online"
             className={styles.checkbox}
-            onCheckedChange={(value) =>
-              updateBoolean("online", setCurrentOnline, value as boolean)
-            }
+            onCheckedChange={(value) => updateOnline(value as boolean)}
           >
             <Checkbox.Indicator asChild>
               <Check width={12} height={12} />
@@ -378,7 +277,7 @@ export default function Filters({
           </Checkbox.Root>
           <label className={styles.text} htmlFor="online">
             <span className={styles.value}>Online</span>
-            {!currentOnline && ` (${amountOnline.toLocaleString()})`}
+            {!online && ` (${amountOnline.toLocaleString()})`}
           </label>
         </div>
         <div className={styles.filter}>
@@ -393,8 +292,8 @@ export default function Filters({
         </div>
         <p className={styles.label}>Sort by</p>
         <RadioGroup.Root
-          onValueChange={handleValueChange}
-          value={currentSortBy}
+          onValueChange={(value) => updateSortBy(value as SortBy)}
+          value={sortBy}
         >
           {Object.values(SortBy).map((sortBy) => {
             const key = `sortBy-${sortBy}`;
@@ -417,7 +316,7 @@ export default function Filters({
         </RadioGroup.Root>
         <p className={styles.label}>Level</p>
         {Object.values(Level).map((level) => {
-          const active = currentLevels.includes(level as Level);
+          const active = levels.includes(level as Level);
 
           const key = `level-${level}`;
 
@@ -428,13 +327,7 @@ export default function Filters({
                 checked={active}
                 id={key}
                 onCheckedChange={(checked) =>
-                  updateArray(
-                    "levels",
-                    currentLevels,
-                    setCurrentLevels,
-                    level,
-                    checked as boolean
-                  )
+                  updateArray(levels, updateLevels, level, checked as boolean)
                 }
               >
                 <Checkbox.Indicator asChild>
@@ -450,7 +343,7 @@ export default function Filters({
         })}
         <p className={styles.label}>Units</p>
         {Object.values(Unit).map((unit) => {
-          const active = currentUnits.includes(unit);
+          const active = units.includes(unit);
 
           const key = `units-${unit}`;
 
@@ -461,13 +354,7 @@ export default function Filters({
                 checked={active}
                 id={key}
                 onCheckedChange={(checked) =>
-                  updateArray(
-                    "units",
-                    currentUnits,
-                    setCurrentUnits,
-                    unit,
-                    checked as boolean
-                  )
+                  updateArray(units, updateUnits, unit, checked as boolean)
                 }
               >
                 <Checkbox.Indicator asChild>
@@ -485,9 +372,9 @@ export default function Filters({
         })}
         <p className={styles.label}>Kind</p>
         {Object.keys(filteredComponents)
-          .slice(0, expanded ? undefined : 5)
+          // .slice(0, expanded ? undefined : 5)
           .map((component) => {
-            const active = currentComponents.includes(component as Component);
+            const active = components.includes(component as Component);
 
             const key = `component-${component}`;
 
@@ -499,9 +386,8 @@ export default function Filters({
                   id={key}
                   onCheckedChange={(checked) =>
                     updateArray(
-                      "components",
-                      currentComponents,
-                      setCurrentComponents,
+                      components,
+                      updateComponents,
                       component as Component,
                       checked as boolean
                     )
@@ -513,7 +399,7 @@ export default function Filters({
                 </Checkbox.Root>
                 <label className={styles.text} htmlFor={key}>
                   <span className={styles.value}>
-                    {components[component as Component]}
+                    {componentMap[component as Component]}
                   </span>
                   {!active &&
                     ` (${filteredComponents[component].toLocaleString()})`}
@@ -521,13 +407,13 @@ export default function Filters({
               </div>
             );
           })}
-        <div className={styles.button} onClick={() => setExpanded(!expanded)}>
+        {/*<div className={styles.button} onClick={() => setExpanded(!expanded)}>
           {expanded ? <NavArrowUp /> : <NavArrowDown />}
           {expanded ? "View less" : "View more"}
-        </div>
+        </div>*/}
         <p className={styles.label}>Day</p>
         {Object.entries(Day).map(([property, day]) => {
-          const active = currentDays.includes(day);
+          const active = days.includes(day);
 
           const key = `day-${day}`;
 
@@ -538,13 +424,7 @@ export default function Filters({
                 checked={active}
                 id={key}
                 onCheckedChange={(checked) =>
-                  updateArray(
-                    "days",
-                    currentDays,
-                    setCurrentDays,
-                    day,
-                    checked as boolean
-                  )
+                  updateArray(days, updateDays, day, checked as boolean)
                 }
               >
                 <Checkbox.Indicator asChild>

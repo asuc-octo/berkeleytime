@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import classNames from "classnames";
 import {
   Bookmark,
@@ -9,88 +10,103 @@ import {
   GridPlus,
   Heart,
   HeartSolid,
+  MoreVert,
   OpenInWindow,
   OpenNewWindow,
   Xmark,
 } from "iconoir-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, NavLink, Outlet, useSearchParams } from "react-router-dom";
 
 import AverageGrade from "@/components/AverageGrade";
+import Boundary from "@/components/Boundary";
 import Button from "@/components/Button";
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
+import CourseDrawer from "@/components/CourseDrawer";
 import IconButton from "@/components/IconButton";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import MenuItem from "@/components/MenuItem";
 import Tooltip from "@/components/Tooltip";
 import Units from "@/components/Units";
-import { GET_CLASS, IClass, Semester } from "@/lib/api";
+import useCatalog from "@/hooks/useCatalog";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
+import { GET_CLASS, IClass } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
-import Enrollment from "./Enrollment";
-import Grades from "./Grades";
-import Overview from "./Overview";
-import Sections from "./Sections";
 
-const views = [
-  {
-    text: "Overview",
-    Component: Overview,
-  },
-  {
-    text: "Sections",
-    Component: Sections,
-  },
-  {
-    text: "Grades",
-    Component: Grades,
-  },
-  {
-    text: "Enrollment",
-    Component: Enrollment,
-  },
-];
-
-interface ClassProps {
-  partialCurrentClass: IClass | null;
-  currentSemester: Semester;
-  currentYear: number;
-  currentClassNumber: string;
-  currentCourseNumber: string;
-  currentSubject: string;
-}
-
-export default function Class({
-  partialCurrentClass,
-  currentSemester,
-  currentYear,
-  currentClassNumber,
-  currentCourseNumber,
-  currentSubject,
-}: ClassProps) {
+export default function Class() {
   const [searchParams] = useSearchParams();
-  const [view, setView] = useState(0);
 
-  // TODO: Query for enrollment and grades data in the background
+  const { width } = useWindowDimensions();
 
-  const { data } = useQuery<{ class: IClass }>(GET_CLASS, {
+  const { subject, courseNumber, classNumber, semester, year, partialClass } =
+    useCatalog();
+
+  // Because Class will only be rendered when partialClass or _class has been set,
+  // we can render accordingly and not worry about loading or error states
+  const { data, loading } = useQuery<{ class: IClass }>(GET_CLASS, {
     variables: {
       term: {
-        semester: currentSemester,
-        year: currentYear,
+        semester,
+        year,
       },
-      subject: currentSubject,
-      courseNumber: currentCourseNumber,
-      classNumber: currentClassNumber,
+      subject,
+      courseNumber,
+      classNumber,
     },
   });
 
-  const currentClass = useMemo(() => data?.class, [data]);
+  const _class = useMemo(() => data?.class, [data]);
 
-  const Component = useMemo(() => views[view].Component, [view]);
+  const gradeAverage = useMemo(
+    () =>
+      (_class?.course.gradeAverage ??
+        partialClass?.course.gradeAverage) as number,
+    [_class, partialClass]
+  );
+
+  const enrollCount = useMemo(
+    () =>
+      (_class?.primarySection.enrollCount ??
+        partialClass?.primarySection.enrollCount) as number,
+    [_class, partialClass]
+  );
+
+  const enrollMax = useMemo(
+    () =>
+      (_class?.primarySection.enrollMax ??
+        partialClass?.primarySection.enrollMax) as number,
+    [_class, partialClass]
+  );
+
+  const waitlistCount = useMemo(
+    () =>
+      (_class?.primarySection.waitlistCount ??
+        partialClass?.primarySection.waitlistCount) as number,
+    [_class, partialClass]
+  );
+
+  const waitlistMax = useMemo(
+    () =>
+      (_class?.primarySection.waitlistMax ??
+        partialClass?.primarySection.waitlistMax) as number,
+    [_class, partialClass]
+  );
+
+  const unitsMax = useMemo(
+    () => (_class?.unitsMax ?? partialClass?.unitsMax) as number,
+    [_class, partialClass]
+  );
+
+  const unitsMin = useMemo(
+    () => (_class?.unitsMin ?? partialClass?.unitsMin) as number,
+    [_class, partialClass]
+  );
 
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [course, setCourse] = useState(false);
 
   return (
     <div className={styles.root}>
@@ -119,46 +135,89 @@ export default function Class({
                 {bookmarked ? <BookmarkSolid /> : <Bookmark />}
               </IconButton>
             </Tooltip>
-            <Tooltip content="Add class to schedule">
-              <IconButton>
-                <CalendarPlus />
-              </IconButton>
-            </Tooltip>
-            <Tooltip content="Add course to plan">
-              <IconButton>
-                <GridPlus />
-              </IconButton>
-            </Tooltip>
+            <CourseDrawer
+              subject={subject}
+              number={courseNumber}
+              open={course}
+              onOpenChange={setCourse}
+            />
+            {width > 992 ? (
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <IconButton>
+                    <MoreVert />
+                  </IconButton>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content
+                    className={styles.dropdown}
+                    sideOffset={8}
+                    alignOffset={-5}
+                    align="start"
+                  >
+                    <DropdownMenu.Item
+                      className={styles.item}
+                      onClick={() => setCourse(true)}
+                    >
+                      <OpenInWindow />
+                      View course
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item className={styles.item}>
+                      <CalendarPlus />
+                      Add class to schedule
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item className={styles.item}>
+                      <GridPlus />
+                      Add course to plan
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
+            ) : (
+              <>
+                <Tooltip content="Add class to schedule">
+                  <IconButton>
+                    <CalendarPlus />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip content="Add course to plan">
+                  <IconButton>
+                    <GridPlus />
+                  </IconButton>
+                </Tooltip>
+                <CourseDrawer subject={subject} number={courseNumber}>
+                  <Tooltip content="Open course">
+                    <IconButton>
+                      <OpenInWindow />
+                    </IconButton>
+                  </Tooltip>
+                </CourseDrawer>
+              </>
+            )}
           </div>
           <div className={styles.group}>
-            <Tooltip content="Open course">
-              <IconButton>
-                <OpenInWindow />
-              </IconButton>
-            </Tooltip>
-            {currentClass && (
-              <Tooltip content="Open on the Berkeley Academic Guide">
-                <a
+            {_class && (
+              <Tooltip content="Berkeley Academic Guide">
+                <IconButton
+                  as="a"
                   href={getExternalLink(
-                    currentYear,
-                    currentSemester,
-                    currentSubject,
-                    currentCourseNumber,
-                    currentClass.primarySection.number,
-                    currentClass.primarySection.component
+                    year,
+                    semester,
+                    subject,
+                    courseNumber,
+                    _class.primarySection.number,
+                    _class.primarySection.component
                   )}
                   target="_blank"
                 >
-                  <IconButton>
-                    <OpenNewWindow />
-                  </IconButton>
-                </a>
+                  <OpenNewWindow />
+                </IconButton>
               </Tooltip>
             )}
             <Tooltip content="Close">
               <Link
                 to={{
-                  pathname: `/catalog/${currentYear}/${currentSemester}`,
+                  pathname: `/catalog/${year}/${semester}`,
                   search: searchParams.toString(),
                 }}
               >
@@ -170,61 +229,54 @@ export default function Class({
           </div>
         </div>
         <h1 className={styles.heading}>
-          {currentSubject} {currentCourseNumber}
+          {subject} {courseNumber} #{classNumber}
         </h1>
         <p className={styles.description}>
-          {currentClass?.title ??
-            partialCurrentClass?.title ??
-            partialCurrentClass?.course.title}
+          {_class?.title ?? partialClass?.title ?? partialClass?.course.title}
         </p>
         <div className={styles.group}>
-          <AverageGrade
-            gradeAverage={
-              currentClass?.course?.gradeAverage ??
-              partialCurrentClass?.course.gradeAverage
-            }
-          />
+          <AverageGrade gradeAverage={gradeAverage} />
           <Capacity
-            enrollCount={
-              currentClass?.primarySection.enrollCount ??
-              partialCurrentClass?.primarySection.enrollCount
-            }
-            enrollMax={
-              currentClass?.primarySection.enrollMax ??
-              partialCurrentClass?.primarySection.enrollMax
-            }
-            waitlistCount={
-              currentClass?.primarySection.waitlistCount ??
-              partialCurrentClass?.primarySection.waitlistCount
-            }
-            waitlistMax={
-              currentClass?.primarySection.waitlistMax ??
-              partialCurrentClass?.primarySection.waitlistMax
-            }
+            enrollCount={enrollCount}
+            enrollMax={enrollMax}
+            waitlistCount={waitlistCount}
+            waitlistMax={waitlistMax}
           />
-          <Units
-            unitsMax={currentClass?.unitsMax ?? partialCurrentClass?.unitsMax}
-            unitsMin={currentClass?.unitsMin ?? partialCurrentClass?.unitsMin}
-          />
-          {currentClass && <CCN ccn={currentClass.primarySection.ccn} />}
+          <Units unitsMax={unitsMax} unitsMin={unitsMin} />
+          {_class && <CCN ccn={_class.primarySection.ccn} />}
         </div>
       </div>
       <div className={styles.menu}>
-        {views.map(({ text }, index) => (
-          <MenuItem
-            key={index}
-            active={index === view}
-            onClick={() => setView(index)}
-          >
-            {text}
-          </MenuItem>
-        ))}
+        <NavLink to="." end>
+          {({ isActive }) => <MenuItem active={isActive}>Overview</MenuItem>}
+        </NavLink>
+        <NavLink to="sections">
+          {({ isActive }) => <MenuItem active={isActive}>Sections</MenuItem>}
+        </NavLink>
+        <NavLink to="enrollment">
+          {({ isActive }) => <MenuItem active={isActive}>Enrollment</MenuItem>}
+        </NavLink>
+        <NavLink to="grades">
+          {({ isActive }) => <MenuItem active={isActive}>Grades</MenuItem>}
+        </NavLink>
       </div>
-      <Component
-        currentClass={currentClass}
-        currentYear={currentYear}
-        currentSemester={currentSemester}
-      />
+      {_class ? (
+        <Suspense
+          fallback={
+            <Boundary>
+              <LoadingIndicator />
+            </Boundary>
+          }
+        >
+          <Outlet />
+        </Suspense>
+      ) : loading ? (
+        <Boundary>
+          <LoadingIndicator />
+        </Boundary>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

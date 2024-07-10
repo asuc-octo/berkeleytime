@@ -1,38 +1,52 @@
-import { ComponentPropsWithoutRef, ReactNode, forwardRef } from "react";
+import { ElementType, ReactNode, forwardRef } from "react";
 
 import classNames from "classnames";
 
+import {
+  PolymorphicComponentPropsWithRef,
+  PolymorphicRef,
+} from "@/lib/polymorphism";
+
 import styles from "./Button.module.scss";
 
-interface ButtonProps {
+interface Props {
   children: ReactNode;
   className?: string;
   secondary?: boolean;
   active?: boolean;
 }
 
-const Button = forwardRef<
-  HTMLButtonElement,
-  ButtonProps & Omit<ComponentPropsWithoutRef<"button">, keyof ButtonProps>
->(({ active, children, className, secondary, ...props }, forwardedRef) => {
-  return (
-    <button
-      ref={forwardedRef}
-      className={classNames(
-        styles.root,
-        {
-          [styles.active]: active,
-          [styles.secondary]: secondary,
-        },
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-});
+type ButtonProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
+  C,
+  Props
+>;
+
+const Button = forwardRef(
+  <C extends ElementType = "button">(
+    { active, children, className, secondary, ...props }: ButtonProps<C>,
+    ref: PolymorphicRef<C>
+  ) => {
+    return (
+      <button
+        ref={ref}
+        className={classNames(
+          styles.root,
+          {
+            [styles.active]: active,
+            [styles.secondary]: secondary,
+          },
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
+);
 
 Button.displayName = "Button";
 
-export default Button;
+export default Button as <T extends ElementType = "button">(
+  props: ButtonProps<T>
+) => ReactNode | null;

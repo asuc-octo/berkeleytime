@@ -5,7 +5,7 @@ import { ArrowSeparateVertical, ArrowUnionVertical } from "iconoir-react";
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
-import { Component, IClass, ISection, components } from "@/lib/api";
+import { Component, IClass, ISection, componentMap } from "@/lib/api";
 import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -99,7 +99,7 @@ export default function Class({
           <div className={styles.group}>
             <div className={styles.label}>
               <p className={styles.component}>
-                {components[primarySection.component]}
+                {componentMap[primarySection.component]}
               </p>
               <p className={styles.time}>Time</p>
             </div>
@@ -120,7 +120,7 @@ export default function Class({
             return (
               <div className={styles.group} key={component}>
                 <div className={styles.label}>
-                  <p className={styles.component}>{components[group]}</p>
+                  <p className={styles.component}>{componentMap[group]}</p>
                   <p className={styles.time}>Time</p>
                 </div>
                 {groups[group]?.map((section) => {

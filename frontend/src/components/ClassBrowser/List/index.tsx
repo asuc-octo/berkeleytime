@@ -6,46 +6,25 @@ import { ArrowRight, FrameAltEmpty, Sparks } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import LoadingIndicator from "@/components/LoadingIndicator";
-import { IClass, Semester } from "@/lib/api";
+import { IClass } from "@/lib/api";
 
 import Header from "../Header";
+import useBrowser from "../useBrowser";
 import Class from "./Class";
 import styles from "./List.module.scss";
 
 interface ListProps {
-  currentClasses: IClass[];
-  onSelect: (_class: IClass) => void;
-  onOpenChange: (open: boolean) => void;
-  open: boolean;
-  overlay: boolean;
-  block: boolean;
-  currentSemester: Semester;
-  currentYear: number;
-  currentQuery: string;
-  setCurrentQuery: (query: string) => void;
-  persistent?: boolean;
-  loading: boolean;
+  onClassSelect: (_class: IClass) => void;
 }
 
-export default function List({
-  currentClasses,
-  onSelect,
-  currentSemester,
-  currentYear,
-  open,
-  overlay,
-  block,
-  onOpenChange,
-  currentQuery,
-  setCurrentQuery,
-  persistent,
-  loading,
-}: ListProps) {
+export default function List({ onClassSelect }: ListProps) {
+  const { classes, loading, block, overlay } = useBrowser();
+
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
 
   const virtualizer = useVirtualizer({
-    count: currentClasses.length,
+    count: classes.length,
     getScrollElement: () => rootRef.current,
     estimateSize: () => 136,
     paddingStart: 72,
@@ -66,6 +45,7 @@ export default function List({
       ref={rootRef}
       className={classNames(styles.root, {
         [styles.block]: block,
+        [styles.overlay]: overlay,
       })}
     >
       <div
@@ -74,19 +54,8 @@ export default function List({
           height: totalSize,
         }}
       >
-        <Header
-          currentSemester={currentSemester}
-          currentYear={currentYear}
-          currentClasses={currentClasses}
-          currentQuery={currentQuery}
-          open={open}
-          overlay={overlay}
-          autoFocus
-          onOpenChange={onOpenChange}
-          setCurrentQuery={setCurrentQuery}
-          persistent={persistent}
-        />
-        {loading ? (
+        <Header autoFocus />
+        {loading && items.length === 0 ? (
           <div className={styles.placeholder}>
             <LoadingIndicator size={32} />
             <div className={styles.text}>
@@ -114,7 +83,7 @@ export default function List({
             style={{ transform: `translateY(${items[0]?.start ?? 0}px)` }}
           >
             {items.map(({ key, index }) => {
-              const _class = currentClasses[index];
+              const _class = classes[index];
 
               return (
                 <Class
@@ -122,7 +91,7 @@ export default function List({
                   index={index}
                   key={key}
                   ref={virtualizer.measureElement}
-                  onClick={() => onSelect(_class)}
+                  onClick={() => onClassSelect(_class)}
                 />
               );
             })}

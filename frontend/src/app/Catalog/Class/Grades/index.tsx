@@ -2,11 +2,10 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  LabelList,
   Legend,
   ResponsiveContainer,
-  Tooltip,
   XAxis,
-  YAxis,
 } from "recharts";
 
 import styles from "./Grades.module.scss";
@@ -54,13 +53,26 @@ export default function Grades() {
     <div className={styles.root}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart width={730} height={250} data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="grade" />
-          <YAxis />
-          <Tooltip />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="grade" fill="var(--label-color)" tickMargin={8} />
           <Legend />
-          <Bar dataKey="percentage" fill="#8884d8" />
-          <Bar dataKey="average" fill="#82ca9d" />
+          <Bar dataKey="percentage" fill="var(--blue-500)">
+            <LabelList
+              dataKey="percentage"
+              position="insideTop"
+              offset={16}
+              fontSize={12}
+              fill="var(--label-color)"
+            />
+          </Bar>
+          <Bar dataKey="average" fill="var(--label-color)">
+            <LabelList
+              dataKey="average"
+              position="top"
+              fontSize={12}
+              fill="var(--label-color)"
+            />
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

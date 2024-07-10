@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 import * as Dialog from "@radix-ui/react-dialog";
 import { Xmark } from "iconoir-react";
@@ -11,13 +11,13 @@ import { IClass, Semester } from "@/lib/api";
 import styles from "./Catalog.module.scss";
 
 interface CatalogProps {
-  onSelect: (_class: IClass) => void;
-  children: JSX.Element;
+  onClassSelect: (_class: IClass) => void;
+  children: ReactNode;
   semester: string;
   year: number;
 }
 
-export default function Catalog({ onSelect, children }: CatalogProps) {
+export default function Catalog({ onClassSelect, children }: CatalogProps) {
   const [open, setOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -30,8 +30,8 @@ export default function Catalog({ onSelect, children }: CatalogProps) {
     setSearchParams(searchParams);
   };
 
-  const handleSelect = (_class: IClass) => {
-    onSelect(_class);
+  const handleClassSelect = (_class: IClass) => {
+    onClassSelect(_class);
 
     setOpen(false);
 
@@ -57,7 +57,7 @@ export default function Catalog({ onSelect, children }: CatalogProps) {
             <ClassBrowser
               semester={Semester.Spring}
               year={2024}
-              onSelect={handleSelect}
+              onClassSelect={handleClassSelect}
               responsive={false}
             />
           </div>

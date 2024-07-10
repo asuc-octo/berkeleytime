@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import * as HoverCard from "@radix-ui/react-hover-card";
 import classNames from "classnames";
 
-import { ISection, components } from "@/lib/api";
+import { ISection, componentMap } from "@/lib/api";
 import { getY } from "@/lib/schedule";
 import { getColor } from "@/lib/section";
 
@@ -46,7 +46,7 @@ export default function Event({
             {course.subject} {course.number}
           </div>
           <div className={styles.description}>
-            {components[component]} {number}
+            {componentMap[component]} {number}
           </div>
         </div>
       </HoverCard.Trigger>

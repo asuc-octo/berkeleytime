@@ -1,58 +1,25 @@
-import { forwardRef } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
 import classNames from "classnames";
 import { Filter, FilterSolid } from "iconoir-react";
-import { useSearchParams } from "react-router-dom";
 
 import IconButton from "@/components/IconButton";
-import { IClass, Semester } from "@/lib/api";
 
+import useBrowser from "../useBrowser";
 import styles from "./Header.module.scss";
 
-interface HeaderProps {
-  currentQuery: string;
-  currentClasses: IClass[];
-  open: boolean;
-  overlay: boolean;
-  onOpenChange: (open: boolean) => void;
-  currentSemester: Semester;
-  currentYear: number;
-  className?: string;
-  autoFocus?: boolean;
-  setCurrentQuery: (query: string) => void;
-  persistent?: boolean;
-}
-
-const Header = forwardRef<HTMLInputElement, HeaderProps>(
-  (
-    {
-      currentQuery,
-      currentClasses,
-      open,
+const Header = forwardRef<HTMLInputElement, ComponentPropsWithoutRef<"input">>(
+  ({ className, ...props }, ref) => {
+    const {
       overlay,
-      onOpenChange,
-      currentSemester,
-      currentYear,
-      className,
-      autoFocus,
-      setCurrentQuery,
-      persistent,
-    },
-    ref
-  ) => {
-    const [searchParams, setSearchParams] = useSearchParams();
-
-    const handleQueryChange = (value: string) => {
-      if (persistent) {
-        if (value) searchParams.set("query", value);
-        else searchParams.delete("query");
-        setSearchParams(searchParams, { replace: true });
-
-        return;
-      }
-
-      setCurrentQuery(value);
-    };
+      query,
+      updateQuery,
+      expanded,
+      setExpanded,
+      classes,
+      semester,
+      year,
+    } = useBrowser();
 
     return (
       <div
@@ -69,19 +36,16 @@ const Header = forwardRef<HTMLInputElement, HeaderProps>(
             className={styles.input}
             type="text"
             ref={ref}
-            value={currentQuery}
-            onChange={(event) => handleQueryChange(event.target.value)}
-            placeholder={`Search ${currentSemester} ${currentYear} classes...`}
-            autoFocus={autoFocus}
-            // TODO: onFocus could not be passed down from the parent
-            onFocus={() => overlay && open && onOpenChange(false)}
+            value={query}
+            onChange={(event) => updateQuery(event.target.value)}
+            placeholder={`Search ${semester} ${year} classes...`}
+            onFocus={() => setExpanded(false)}
+            {...props}
           />
-          <div className={styles.label}>
-            {currentClasses.length.toLocaleString()}
-          </div>
+          <div className={styles.label}>{classes.length.toLocaleString()}</div>
           {overlay && (
-            <IconButton onClick={() => onOpenChange(!open)}>
-              {open ? <FilterSolid /> : <Filter />}
+            <IconButton onClick={() => setExpanded(!expanded)}>
+              {expanded ? <FilterSolid /> : <Filter />}
             </IconButton>
           )}
         </div>

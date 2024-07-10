@@ -57,7 +57,7 @@ export enum Component {
   Seminar = "SEM",
 }
 
-export const instructionMethods: Record<InstructionMethod, string> = {
+export const instructionMethodMap: Record<InstructionMethod, string> = {
   [InstructionMethod.Lecture]: "Lecture",
   [InstructionMethod.Seminar]: "Seminar",
   [InstructionMethod.IndependentStudy]: "Independent Study",
@@ -82,7 +82,7 @@ export const instructionMethods: Record<InstructionMethod, string> = {
   [InstructionMethod.Conversation]: "Conversation",
 };
 
-export const components: Record<Component, string> = {
+export const componentMap: Record<Component, string> = {
   [Component.Lecture]: "Lecture",
   [Component.Seminar]: "Seminar",
   [Component.IndependentStudy]: "Independent Study",
@@ -223,6 +223,10 @@ export interface ISchedule {
     year: number;
     semester: Semester;
   };
+}
+
+export interface GetCourseResponse {
+  course: ICourse;
 }
 
 export const GET_COURSE = gql`

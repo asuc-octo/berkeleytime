@@ -1,3 +1,6 @@
+import { useMemo } from "react";
+
+import { useQuery } from "@apollo/client";
 import {
   CartesianGrid,
   Line,
@@ -9,12 +12,13 @@ import {
   YAxis,
 } from "recharts";
 
-import { IClass } from "@/lib/api";
+import useCatalog from "@/hooks/useCatalog";
+import { GET_CLASS, IClass } from "@/lib/api";
 
 import styles from "./Enrollment.module.scss";
 import Reservations from "./Reservations";
 
-const data = [
+const series = [
   {
     name: "Page A",
     uv: 0,
@@ -59,11 +63,26 @@ const data = [
   },
 ];
 
-interface EnrollmentProps {
-  currentClass?: IClass;
-}
+export default function Enrollment() {
+  const { subject, courseNumber, classNumber, semester, year } = useCatalog();
 
-export default function Enrollment({ currentClass }: EnrollmentProps) {
+  // TODO: Handle loading state
+  const { data } = useQuery<{ class: IClass }>(GET_CLASS, {
+    variables: {
+      term: {
+        semester,
+        year,
+      },
+      subject,
+      courseNumber,
+      classNumber,
+    },
+  });
+
+  // Because Sections will only be rendered when data loaded, we do
+  // not need to worry about loading or error states for right now
+  const _class = useMemo(() => data?.class as IClass, [data]);
+
   return (
     <div className={styles.root}>
       <div className={styles.legend}>
@@ -81,7 +100,7 @@ export default function Enrollment({ currentClass }: EnrollmentProps) {
           <LineChart
             width={500}
             height={300}
-            data={data}
+            data={series}
             margin={{ top: 8, right: 8, bottom: 8, left: 8 }}
           >
             <CartesianGrid
@@ -128,13 +147,11 @@ export default function Enrollment({ currentClass }: EnrollmentProps) {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      {currentClass && (
-        <Reservations
-          enrollCount={currentClass.primarySection.enrollCount}
-          enrollMax={currentClass.primarySection.enrollMax}
-          reservations={currentClass.primarySection.reservations}
-        />
-      )}
+      <Reservations
+        enrollCount={_class.primarySection.enrollCount}
+        enrollMax={_class.primarySection.enrollMax}
+        reservations={_class.primarySection.reservations}
+      />
     </div>
   );
 }

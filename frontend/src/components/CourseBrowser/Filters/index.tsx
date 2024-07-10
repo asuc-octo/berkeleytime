@@ -10,7 +10,7 @@ import {
   ICourse,
   InstructionMethod,
   Semester,
-  instructionMethods,
+  instructionMethodMap,
 } from "@/lib/api";
 
 import Header from "../Header";
@@ -125,7 +125,7 @@ export default function Filters({
   }, [excludedCourses, includedCourses, currentSemesters]);
 
   const filteredInstructionMethods = useMemo(() => {
-    const filteredInstructionMethods = Object.keys(instructionMethods).reduce(
+    const filteredInstructionMethods = Object.keys(instructionMethodMap).reduce(
       (acc, component) => {
         acc[component] = 0;
         return acc;
@@ -343,7 +343,11 @@ export default function Filters({
                 </Checkbox.Root>
                 <label className={styles.text} htmlFor={key}>
                   <span className={styles.value}>
-                    {instructionMethods[instructionMethod as InstructionMethod]}
+                    {
+                      instructionMethodMap[
+                        instructionMethod as InstructionMethod
+                      ]
+                    }
                   </span>
                   {!active &&
                     ` (${filteredInstructionMethods[instructionMethod].toLocaleString()})`}

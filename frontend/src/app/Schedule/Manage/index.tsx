@@ -102,8 +102,8 @@ export default function Manage() {
     [setCurrentSection, selectedSections, tab]
   );
 
-  const handleSelect = useCallback(
-    async (_class: IClass) => {
+  const handleClassSelect = useCallback(
+    async (selectedClass: IClass) => {
       // Fetch the selected class
       const { data } = await apolloClient.query<{ class: IClass }>({
         query: GET_CLASS,
@@ -112,9 +112,9 @@ export default function Manage() {
             semester: "Spring",
             year: 2024,
           },
-          subject: _class.course.subject,
-          courseNumber: _class.course.number,
-          classNumber: _class.number,
+          subject: selectedClass.course.subject,
+          courseNumber: selectedClass.course.number,
+          classNumber: selectedClass.number,
         },
       });
 
@@ -123,9 +123,9 @@ export default function Manage() {
       // Move existing classes to the top rather than duplicating them
       const index = classes.findIndex(
         ({ course, number }) =>
-          course.subject === _class.course.subject &&
-          course.number === _class.course.number &&
-          number === _class.number
+          course.subject === selectedClass.course.subject &&
+          course.number === selectedClass.course.number &&
+          number === selectedClass.number
       );
 
       setExpanded((expandedClasses) => {
@@ -232,7 +232,7 @@ export default function Manage() {
           classes={classes}
           selectedSections={selectedSections}
           expanded={expanded}
-          onSelect={handleSelect}
+          onClassSelect={handleClassSelect}
           onSectionSelect={handleSectionSelect}
           onExpandedChange={handleExpandedChange}
           onSectionMouseOver={handleSectionMouseOver}

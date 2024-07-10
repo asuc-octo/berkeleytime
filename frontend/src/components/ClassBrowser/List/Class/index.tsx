@@ -42,7 +42,7 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
       >
         <div className={styles.text}>
           <p className={styles.heading}>
-            {subject} {courseNumber} {number}
+            {subject} {courseNumber} #{number}
           </p>
           <p className={styles.description}>{title ?? courseTitle}</p>
           <div className={styles.row}>

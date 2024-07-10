@@ -24,9 +24,10 @@ import {
   getFilteredClasses,
   initialize,
 } from "./browser";
+import BrowserContext from "./browserContext";
 
 interface ClassBrowserProps {
-  onSelect: (_class: IClass) => void;
+  onClassSelect: (_class: IClass) => void;
   responsive?: boolean;
   semester: Semester;
   year: number;
@@ -34,14 +35,14 @@ interface ClassBrowserProps {
 }
 
 export default function ClassBrowser({
-  onSelect,
+  onClassSelect,
   responsive = true,
   semester: currentSemester,
   year: currentYear,
   persistent,
 }: ClassBrowserProps) {
-  const [open, setOpen] = useState(false);
-  const [searchParams] = useSearchParams();
+  const [expanded, setExpanded] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const { width } = useWindowDimensions();
 
   const [localQuery, setLocalQuery] = useState<string>("");
@@ -72,6 +73,7 @@ export default function ClassBrowser({
   const classes = useMemo(
     () =>
       data?.catalog.reduce((acc, course) => {
+        // Map each class to minimal representation for filtering
         const classes = course.classes.map(
           (_class) =>
             ({
@@ -86,17 +88,18 @@ export default function ClassBrowser({
             }) as IClass
         );
 
+        // Combine all classes into a single array
         return [...acc, ...classes];
       }, [] as IClass[]) ?? [],
     [data?.catalog]
   );
 
-  const currentQuery = useMemo(
+  const query = useMemo(
     () => (persistent ? searchParams.get("query") ?? "" : localQuery),
     [searchParams, localQuery, persistent]
   );
 
-  const currentComponents = useMemo(
+  const components = useMemo(
     () =>
       persistent
         ? ((searchParams
@@ -109,7 +112,7 @@ export default function ClassBrowser({
     [searchParams, localComponents, persistent]
   );
 
-  const currentUnits = useMemo(
+  const units = useMemo(
     () =>
       persistent
         ? ((searchParams
@@ -121,7 +124,7 @@ export default function ClassBrowser({
     [searchParams, localUnits, persistent]
   );
 
-  const currentLevels = useMemo(
+  const levels = useMemo(
     () =>
       persistent
         ? ((searchParams
@@ -133,7 +136,7 @@ export default function ClassBrowser({
     [searchParams, localLevels, persistent]
   );
 
-  const currentDays = useMemo(
+  const days = useMemo(
     () =>
       persistent
         ? ((searchParams
@@ -145,7 +148,7 @@ export default function ClassBrowser({
     [searchParams, localDays, persistent]
   );
 
-  const currentSortBy = useMemo(() => {
+  const sortBy = useMemo(() => {
     if (persistent) {
       const parameter = searchParams.get("sortBy") as SortBy;
 
@@ -157,12 +160,12 @@ export default function ClassBrowser({
     return localSortBy;
   }, [searchParams, localSortBy, persistent]);
 
-  const currentOpen = useMemo(
+  const open = useMemo(
     () => (persistent ? searchParams.has("open") : localOpen),
     [searchParams, localOpen, persistent]
   );
 
-  const currentOnline = useMemo(
+  const online = useMemo(
     () => (persistent ? searchParams.has("online") : localOnline),
     [searchParams, localOnline, persistent]
   );
@@ -171,41 +174,31 @@ export default function ClassBrowser({
     () =>
       getFilteredClasses(
         classes,
-        currentComponents,
-        currentUnits,
-        currentLevels,
-        currentDays,
-        currentOpen,
-        currentOnline
+        components,
+        units,
+        levels,
+        days,
+        open,
+        online
       ),
-    [
-      classes,
-      currentComponents,
-      currentUnits,
-      currentLevels,
-      currentDays,
-      currentOpen,
-      currentOnline,
-    ]
+    [classes, components, units, levels, days, open, online]
   );
-
-  console.log(currentOpen);
 
   const index = useMemo(() => initialize(includedClasses), [includedClasses]);
 
-  const currentClasses = useMemo(() => {
-    let filteredClasses = currentQuery
+  const filteredClasses = useMemo(() => {
+    let filteredClasses = query
       ? index
           // Limit query because Fuse performance decreases linearly by
           // n (field length) * m (pattern length) * l (maximum Levenshtein distance)
-          .search(currentQuery.slice(0, 24))
+          .search(query.slice(0, 24))
           .map(({ refIndex }) => includedClasses[refIndex])
       : includedClasses;
 
-    if (currentSortBy) {
+    if (sortBy) {
       // Clone the courses to avoid sorting in-place
       filteredClasses = structuredClone(filteredClasses).sort((a, b) => {
-        if (currentSortBy === SortBy.AverageGrade) {
+        if (sortBy === SortBy.AverageGrade) {
           return b.course.gradeAverage === a.course.gradeAverage
             ? 0
             : b.course.gradeAverage === null
@@ -215,11 +208,11 @@ export default function ClassBrowser({
                 : b.course.gradeAverage - a.course.gradeAverage;
         }
 
-        if (currentSortBy === SortBy.Units) {
+        if (sortBy === SortBy.Units) {
           return b.unitsMax - a.unitsMax;
         }
 
-        if (currentSortBy === SortBy.OpenSeats) {
+        if (sortBy === SortBy.OpenSeats) {
           const getOpenSeats = ({
             primarySection: { enrollCount, enrollMax },
           }: IClass) => enrollMax - enrollCount;
@@ -227,7 +220,7 @@ export default function ClassBrowser({
           return getOpenSeats(b) - getOpenSeats(a);
         }
 
-        if (currentSortBy === SortBy.PercentOpenSeats) {
+        if (sortBy === SortBy.PercentOpenSeats) {
           const getPercentOpenSeats = ({
             primarySection: { enrollCount, enrollMax },
           }: IClass) =>
@@ -242,65 +235,110 @@ export default function ClassBrowser({
     }
 
     return filteredClasses;
-  }, [currentQuery, index, includedClasses, currentSortBy]);
+  }, [query, index, includedClasses, sortBy]);
+
+  const updateArray = <T,>(
+    key: string,
+    setState: (state: T[]) => void,
+    state: T[]
+  ) => {
+    if (persistent) {
+      if (state.length > 0) {
+        const value = state.join(",");
+        searchParams.set(key, value);
+      } else {
+        searchParams.delete(key);
+      }
+
+      setSearchParams(searchParams);
+
+      return;
+    }
+
+    setState(state);
+  };
+
+  const updateBoolean = (
+    key: string,
+    setState: (state: boolean) => void,
+    value: boolean
+  ) => {
+    if (persistent) {
+      if (value) searchParams.set(key, "");
+      else searchParams.delete(key);
+      setSearchParams(searchParams);
+
+      return;
+    }
+
+    setState(value);
+  };
+
+  const updateSortBy = (value: SortBy) => {
+    if (persistent) {
+      if (value === SortBy.Relevance) searchParams.delete("sortBy");
+      else searchParams.set("sortBy", value);
+      setSearchParams(searchParams);
+
+      return;
+    }
+
+    setLocalSortBy(value);
+  };
+
+  const updateQuery = (query: string) => {
+    if (persistent) {
+      if (query) searchParams.set("query", query);
+      else searchParams.delete("query");
+      setSearchParams(searchParams);
+
+      return;
+    }
+
+    setLocalQuery(query);
+  };
 
   return (
-    <div className={classNames(styles.root, { [styles.block]: block })}>
-      {(open || !overlay) && (
-        <Filters
-          overlay={overlay}
-          block={block}
-          open={open}
-          onOpenChange={setOpen}
-          persistent={persistent}
-          // Manage courses
-          currentSortBy={currentSortBy}
-          currentClasses={currentClasses}
-          includedClasses={includedClasses}
-          excludedClasses={excludedClasses}
-          // Current term
-          currentYear={currentYear}
-          currentSemester={currentSemester}
-          // Current filters
-          currentQuery={currentQuery}
-          currentComponents={currentComponents}
-          currentUnits={currentUnits}
-          currentLevels={currentLevels}
-          currentDays={currentDays}
-          currentOpen={currentOpen}
-          currentOnline={currentOnline}
-          // Update local filters
-          setCurrentQuery={setLocalQuery}
-          setCurrentUnits={setLocalUnits}
-          setCurrentLevels={setLocalLevels}
-          setCurrentDays={setLocalDays}
-          setCurrentSortBy={setLocalSortBy}
-          setCurrentComponents={setLocalComponents}
-          setCurrentOpen={setLocalOpen}
-          setCurrentOnline={setLocalOnline}
-        />
-      )}
-      {(!open || !overlay) && (
-        <List
-          overlay={overlay}
-          block={block}
-          open={open}
-          onOpenChange={setOpen}
-          persistent={persistent}
-          // API response
-          loading={loading && !data?.catalog}
-          // Manage courses
-          onSelect={onSelect}
-          currentClasses={currentClasses}
-          // Current term
-          currentYear={currentYear}
-          currentSemester={currentSemester}
-          // Current filters
-          currentQuery={currentQuery}
-          // Update local filters
-          setCurrentQuery={setLocalQuery}
-        />
-      )}
-    </div>
+    <BrowserContext.Provider
+      value={{
+        overlay,
+        block,
+        expanded,
+        sortBy,
+        classes: filteredClasses,
+        includedClasses,
+        excludedClasses,
+        year: currentYear,
+        semester: currentSemester,
+        query,
+        components,
+        units,
+        levels,
+        days,
+        online,
+        open,
+        updateQuery,
+        updateComponents: (components) =>
+          updateArray("components", setLocalComponents, components),
+        updateUnits: (units) => updateArray("units", setLocalUnits, units),
+        updateLevels: (levels) => updateArray("levels", setLocalLevels, levels),
+        updateDays: (days) => updateArray("days", setLocalDays, days),
+        updateSortBy,
+        updateOpen: (open) => updateBoolean("open", setLocalOpen, open),
+        updateOnline: (online) =>
+          updateBoolean("online", setLocalOnline, online),
+        setExpanded,
+        loading,
+      }}
+    >
+      <div
+        className={classNames(styles.root, {
+          [styles.block]: block,
+        })}
+      >
+        {(expanded || !overlay) && <Filters />}
+        {(!expanded || !overlay) && <List onClassSelect={onClassSelect} />}
+      </div>
+    </BrowserContext.Provider>
   );
 }

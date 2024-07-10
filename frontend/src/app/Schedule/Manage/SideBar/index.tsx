@@ -14,7 +14,7 @@ interface SideBarProps {
   classes: IClass[];
   selectedSections: ISection[];
   expanded: boolean[];
-  onSelect: (_class: IClass) => void;
+  onClassSelect: (_class: IClass) => void;
   onSectionSelect: (section: ISection) => void;
   onSectionMouseOver: (section: ISection) => void;
   onSectionMouseOut: () => void;
@@ -24,7 +24,7 @@ interface SideBarProps {
 export default function SideBar({
   classes,
   selectedSections,
-  onSelect,
+  onClassSelect,
   expanded,
   onSectionSelect,
   onSectionMouseOver,
@@ -55,7 +55,11 @@ export default function SideBar({
             </Units>
           </div>
         </div>
-        <Catalog onSelect={onSelect} semester={Semester.Spring} year={2024}>
+        <Catalog
+          onClassSelect={onClassSelect}
+          semester={Semester.Spring}
+          year={2024}
+        >
           <Button className={styles.button}>
             Add class
             <Plus />

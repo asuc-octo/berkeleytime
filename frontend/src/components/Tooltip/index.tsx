@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, forwardRef } from "react";
 
 import {
   Arrow,
@@ -6,6 +6,7 @@ import {
   Portal,
   Root,
   TooltipContentProps,
+  TooltipTriggerProps,
   Trigger,
 } from "@radix-ui/react-tooltip";
 
@@ -16,31 +17,45 @@ interface TooltipProps {
   content: string;
 }
 
-export default function Tooltip({
-  content,
-  children,
-  sideOffset = 8,
-  collisionPadding = 8,
-  side = "bottom",
-  ...props
-}: TooltipContentProps & Omit<TooltipProps, "asChild">) {
-  return (
-    <Root disableHoverableContent>
-      <Trigger asChild>{children}</Trigger>
-      <Portal>
-        <Content
-          asChild
-          side={side}
-          sideOffset={sideOffset}
-          collisionPadding={collisionPadding}
-          {...props}
-        >
-          <div className={styles.content}>
-            <Arrow className={styles.arrow} />
-            {content}
-          </div>
-        </Content>
-      </Portal>
-    </Root>
-  );
-}
+const Tooltip = forwardRef<
+  HTMLButtonElement,
+  TooltipProps &
+    // TODO: Determine which props should be customizable
+    Pick<TooltipContentProps, "sideOffset" | "side" | "collisionPadding"> &
+    Omit<TooltipTriggerProps, "asChild">
+>(
+  (
+    {
+      content,
+      children,
+      sideOffset = 8,
+      collisionPadding = 8,
+      side = "bottom",
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <Root disableHoverableContent>
+        <Trigger {...props} ref={ref} asChild>
+          {children}
+        </Trigger>
+        <Portal>
+          <Content
+            asChild
+            side={side}
+            sideOffset={sideOffset}
+            collisionPadding={collisionPadding}
+          >
+            <div className={styles.content}>
+              <Arrow className={styles.arrow} />
+              {content}
+            </div>
+          </Content>
+        </Portal>
+      </Root>
+    );
+  }
+);
+
+export default Tooltip;
