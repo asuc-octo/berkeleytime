@@ -1,19 +1,14 @@
 import { Dispatch, SetStateAction, Suspense, useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import classNames from "classnames";
 import {
   Bookmark,
   BookmarkSolid,
-  CalendarPlus,
   Collapse,
   Expand,
-  GridPlus,
   Heart,
   HeartSolid,
-  MoreVert,
-  OpenInWindow,
   OpenNewWindow,
   Xmark,
 } from "iconoir-react";
@@ -32,7 +27,6 @@ import MenuItem from "@/components/MenuItem";
 import Tooltip from "@/components/Tooltip";
 import Units from "@/components/Units";
 import CatalogContext from "@/contexts/CatalogContext";
-import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { GET_CLASS, IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
@@ -62,7 +56,6 @@ export default function Class({
   onClose,
 }: ClassProps) {
   const [searchParams] = useSearchParams();
-  const { width } = useWindowDimensions();
 
   const { data, loading } = useQuery<{ class: IClass }>(GET_CLASS, {
     variables: {
@@ -163,7 +156,7 @@ export default function Class({
                 open={course}
                 onOpenChange={setCourse}
               />
-              {width > 992 ? (
+              {/* {width > 992 ? (
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
                     <IconButton>
@@ -215,7 +208,7 @@ export default function Class({
                     </Tooltip>
                   </CourseDrawer>
                 </>
-              )}
+              )} */}
             </div>
             <div className={styles.group}>
               {_class && (

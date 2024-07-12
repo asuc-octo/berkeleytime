@@ -35,8 +35,6 @@
   }
 
   @media (width > 992px) {
-    display: flex;
-    
     &:not(.expanded) .panel {
       display: none;
     }

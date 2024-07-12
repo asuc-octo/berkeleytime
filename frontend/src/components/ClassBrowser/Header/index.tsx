@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { Filter, FilterSolid } from "iconoir-react";
+import { Filter, FilterSolid, Search } from "iconoir-react";
 
 import IconButton from "@/components/IconButton";
 
@@ -25,10 +25,14 @@ export default function Header() {
       })}
     >
       <div className={styles.group}>
+        <label htmlFor="search" className={styles.icon}>
+          <Search />
+        </label>
         <input
           className={styles.input}
           type="text"
           value={query}
+          name="search"
           onChange={(event) => updateQuery(event.target.value)}
           placeholder={`Search ${semester} ${year} classes...`}
           onFocus={() => setExpanded(false)}

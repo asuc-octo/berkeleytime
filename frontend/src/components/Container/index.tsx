@@ -9,10 +9,11 @@ interface ContainerProps extends ComponentPropsWithoutRef<"div"> {
 }
 
 const Container = forwardRef<HTMLDivElement, ContainerProps>(
-  ({ children, className, size = "large", ...props }) => {
+  ({ children, className, size = "large", ...props }, ref) => {
     return (
       <div
         {...props}
+        ref={ref}
         className={classNames(styles.root, className, {
           [styles.small]: size === "small",
           [styles.medium]: size === "medium",
