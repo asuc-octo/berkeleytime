@@ -1,14 +1,30 @@
-import { ReactNode } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
 
 import classNames from "classnames";
 
 import styles from "./Container.module.scss";
 
-interface ContainerProps {
-  children?: ReactNode;
-  className?: string;
+interface ContainerProps extends ComponentPropsWithoutRef<"div"> {
+  size?: "small" | "medium" | "large";
 }
 
-export default function Container({ children, className }: ContainerProps) {
-  return <div className={classNames(styles.root, className)}>{children}</div>;
-}
+const Container = forwardRef<HTMLDivElement, ContainerProps>(
+  ({ children, className, size = "large", ...props }) => {
+    return (
+      <div
+        {...props}
+        className={classNames(styles.root, className, {
+          [styles.small]: size === "small",
+          [styles.medium]: size === "medium",
+          [styles.large]: size === "large",
+        })}
+      >
+        {children}
+      </div>
+    );
+  }
+);
+
+Container.displayName = "Container";
+
+export default Container;

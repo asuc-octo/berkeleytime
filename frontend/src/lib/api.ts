@@ -214,6 +214,7 @@ export interface IAccount {
   email: string;
   first_name: string;
   last_name: string;
+  staff: boolean;
 }
 
 export interface ISchedule {
@@ -253,6 +254,10 @@ export const GET_COURSE = gql`
     }
   }
 `;
+
+export interface GetClassResponse {
+  class: IClass;
+}
 
 export const GET_CLASS = gql`
   query GetClass(

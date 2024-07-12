@@ -48,7 +48,7 @@ export default function Course({ subject, number }: CourseProps) {
           <div className={styles.group}>
             <Tooltip content={liked ? "Remove like" : "Like course"}>
               <Button
-                secondary
+                variant="outline"
                 className={classNames(styles.like, { [styles.active]: liked })}
                 onClick={() => setLiked(!liked)}
               >

@@ -5,7 +5,7 @@ import classNames from "classnames";
 import styles from "./Placeholder.module.scss";
 
 const values = [
-  "Explore courses...",
+  "Discover courses...",
   "Computational methods for science and engineering",
   "Environmental policy and resource management",
   "Bioinformatics and computational biology",

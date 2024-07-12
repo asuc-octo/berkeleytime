@@ -213,12 +213,12 @@ export default function Manage() {
           </MenuItem>
         </div>
         <Link to="compare">
-          <Button secondary>
+          <Button variant="outline">
             <ViewColumns2 />
             Compare
           </Button>
         </Link>
-        <Button secondary>
+        <Button variant="outline">
           <Copy />
           Clone
         </Button>

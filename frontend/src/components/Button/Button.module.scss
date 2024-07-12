@@ -11,22 +11,24 @@
   cursor: pointer;
   transition: all 100ms ease-in-out;
   gap: 8px;
-  background-color: var(--blue-500);
-  color: white;
   user-select: none;
 
-  &:hover {
-    background-color: var(--blue-600);
+  &.solid {
+    background-color: var(--blue-500);
+    color: white;
+
+    &:hover {
+      background-color: var(--blue-600);
+    }
+  
+    &:active {
+      background-color: var(--blue-700);
+    }
   }
 
-  &:active {
-    background-color: var(--blue-700);
-  }
-
-  &.secondary {
+  &.outline {
     border: 1px solid var(--border-color);
     color: var(--paragraph-color);
-    background-color: var(--button-color);
 
     &:hover {
       background-color: var(--button-hover-color);

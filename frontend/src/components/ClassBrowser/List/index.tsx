@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 
 import { useVirtualizer } from "@tanstack/react-virtual";
-import classNames from "classnames";
 import { ArrowRight, FrameAltEmpty, Sparks } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -18,7 +17,7 @@ interface ListProps {
 }
 
 export default function List({ onClassSelect }: ListProps) {
-  const { classes, loading, block, overlay } = useBrowser();
+  const { classes, loading } = useBrowser();
 
   const rootRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
@@ -41,20 +40,14 @@ export default function List({ onClassSelect }: ListProps) {
   const totalSize = virtualizer.getTotalSize();
 
   return (
-    <div
-      ref={rootRef}
-      className={classNames(styles.root, {
-        [styles.block]: block,
-        [styles.overlay]: overlay,
-      })}
-    >
+    <div ref={rootRef} className={styles.root}>
       <div
         className={styles.view}
         style={{
           height: totalSize,
         }}
       >
-        <Header autoFocus />
+        <Header />
         {loading && items.length === 0 ? (
           <div className={styles.placeholder}>
             <LoadingIndicator size={32} />
@@ -98,9 +91,9 @@ export default function List({ onClassSelect }: ListProps) {
           </div>
         )}
         <div className={styles.footer}>
-          <Link to="/explore" className={styles.button}>
+          <Link to="/discover" className={styles.button}>
             <Sparks />
-            <p className={styles.text}>Try exploring courses</p>
+            <p className={styles.text}>Try discovering courses</p>
             <ArrowRight />
           </Link>
         </div>

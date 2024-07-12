@@ -37,9 +37,7 @@ export default function Filters() {
     updateOnline,
     sortBy,
     updateSortBy,
-    overlay,
-    block,
-    expanded,
+    responsive,
   } = useBrowser();
 
   const filteredLevels = useMemo(() => {
@@ -243,11 +241,10 @@ export default function Filters() {
   return (
     <div
       className={classNames(styles.root, {
-        [styles.block]: block,
-        [styles.overlay]: overlay,
+        [styles.responsive]: responsive,
       })}
     >
-      {expanded && overlay && <Header />}
+      <Header />
       <div className={styles.body}>
         <p className={styles.label}>Quick filters</p>
         <div className={styles.filter}>

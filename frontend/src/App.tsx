@@ -5,15 +5,16 @@ import { IconoirProvider } from "iconoir-react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import Catalog from "@/app/Catalog";
+import Enrollment from "@/app/Enrollment";
+import Grades from "@/app/Grades";
 import Landing from "@/app/Landing";
-import BaseLayout from "@/components/BaseLayout";
 import Layout from "@/components/Layout";
 
 const About = lazy(() => import("@/app/About"));
-const Enrollment = lazy(() => import("@/app/Catalog/Class/Enrollment"));
-const Grades = lazy(() => import("@/app/Catalog/Class/Grades"));
-const Overview = lazy(() => import("@/app/Catalog/Class/Overview"));
-const Sections = lazy(() => import("@/app/Catalog/Class/Sections"));
+const CatalogEnrollment = lazy(() => import("@/app/Catalog/Class/Enrollment"));
+const CatalogGrades = lazy(() => import("@/app/Catalog/Class/Grades"));
+const CatalogOverview = lazy(() => import("@/app/Catalog/Class/Overview"));
+const CatalogSections = lazy(() => import("@/app/Catalog/Class/Sections"));
 const Discover = lazy(() => import("@/app/Discover"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
@@ -21,85 +22,98 @@ const Compare = lazy(() => import("@/app/Schedule/Compare"));
 const Manage = lazy(() => import("@/app/Schedule/Manage"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 const Map = lazy(() => import("@/app/Map"));
+const Account = lazy(() => import("@/app/Account"));
+const Dashboard = lazy(() => import("@/app/Dashboard"));
 
 const router = createBrowserRouter([
+  {
+    element: <Dashboard />,
+    path: "dashboard",
+  },
+  {
+    element: <Layout header={false} footer={false} />,
+    children: [
+      {
+        element: <Landing />,
+        index: true,
+      },
+      {
+        element: <Discover />,
+        path: "discover",
+      },
+      {
+        element: <Schedule />,
+        path: "schedules/:scheduleId",
+        children: [
+          {
+            element: <Manage />,
+            index: true,
+          },
+          {
+            element: <Compare />,
+            path: "compare/:comparedScheduleId?",
+          },
+        ],
+      },
+      {
+        element: <Map />,
+        path: "map",
+      },
+    ],
+  },
   {
     element: <Layout />,
     children: [
       {
-        element: <BaseLayout header={false} footer={false} />,
+        element: <About />,
+        path: "about",
+      },
+      {
+        element: <Account />,
+        path: "account",
+      },
+    ],
+  },
+  {
+    element: <Layout footer={false} />,
+    children: [
+      {
+        element: <Grades />,
+        path: "grades",
+      },
+      {
+        element: <Enrollment />,
+        path: "enrollment",
+      },
+      {
+        element: <Catalog />,
+        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
         children: [
           {
-            element: <Landing />,
+            element: <CatalogOverview />,
             index: true,
           },
           {
-            element: <Discover />,
-            path: "explore",
+            element: <CatalogSections />,
+            path: "sections",
           },
           {
-            element: <Schedule />,
-            path: "schedules/:scheduleId",
-            children: [
-              {
-                element: <Manage />,
-                index: true,
-              },
-              {
-                element: <Compare />,
-                path: "compare/:comparedScheduleId?",
-              },
-            ],
+            element: <CatalogEnrollment />,
+            path: "enrollment",
           },
           {
-            element: <Map />,
-            path: "map",
+            element: <CatalogGrades />,
+            path: "grades",
           },
         ],
       },
       {
-        element: <BaseLayout />,
-        children: [
-          {
-            element: <About />,
-            path: "about",
-          },
-        ],
+        element: <Schedules />,
+        path: "schedules",
       },
       {
-        element: <BaseLayout footer={false} />,
-        children: [
-          {
-            element: <Catalog />,
-            path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
-            children: [
-              {
-                element: <Overview />,
-                index: true,
-              },
-              {
-                element: <Sections />,
-                path: "sections",
-              },
-              {
-                element: <Enrollment />,
-                path: "enrollment",
-              },
-              {
-                element: <Grades />,
-                path: "grades",
-              },
-            ],
-          },
-          {
-            element: <Schedules />,
-            path: "schedules",
-          },
-          {
-            element: <Plan />,
-            path: "plan",
-          },
-        ],
+        element: <Plan />,
+        path: "plan",
       },
     ],
   },

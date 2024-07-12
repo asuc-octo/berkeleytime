@@ -1,32 +1,29 @@
-import {
-  ComponentPropsWithRef,
-  ElementType,
-  ReactNode,
-  forwardRef,
-} from "react";
+import { ElementType, ReactElement, ReactNode, forwardRef } from "react";
 
 import classNames from "classnames";
 
+import {
+  PolymorphicComponentPropsWithRef,
+  PolymorphicRef,
+} from "@/lib/polymorphism";
+
 import styles from "./MenuItem.module.scss";
 
-interface MenuItemProps<T = ElementType> {
+interface Props {
   active?: boolean;
   children: ReactNode;
   className?: string;
-  as?: T;
 }
+
+type MenuItemProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
+  C,
+  Props
+>;
 
 const MenuItem = forwardRef(
   <T extends ElementType = "button">(
-    {
-      active,
-      children,
-      className,
-      as,
-      ...props
-    }: MenuItemProps<T> &
-      Omit<ComponentPropsWithRef<T>, keyof MenuItemProps<T>>,
-    ref: ComponentPropsWithRef<T>["ref"]
+    { active, children, className, as, ...props }: MenuItemProps<T>,
+    ref: PolymorphicRef<T>
   ) => {
     const Component = as ?? "button";
 
@@ -50,4 +47,6 @@ const MenuItem = forwardRef(
 
 MenuItem.displayName = "MenuItem";
 
-export default MenuItem;
+export default MenuItem as <T extends ElementType = "button">(
+  props: MenuItemProps<T>
+) => ReactElement | null;

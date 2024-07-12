@@ -4,7 +4,6 @@ import { useQuery } from "@apollo/client";
 import classNames from "classnames";
 import { useSearchParams } from "react-router-dom";
 
-import useWindowDimensions from "@/hooks/useWindowDimensions";
 import {
   Component,
   GET_CLASSES,
@@ -43,7 +42,6 @@ export default function ClassBrowser({
 }: ClassBrowserProps) {
   const [expanded, setExpanded] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const { width } = useWindowDimensions();
 
   const [localQuery, setLocalQuery] = useState<string>("");
   const [localComponents, setLocalComponents] = useState<Component[]>([]);
@@ -53,13 +51,6 @@ export default function ClassBrowser({
   const [localSortBy, setLocalSortBy] = useState<SortBy>(SortBy.Relevance);
   const [localOpen, setLocalOpen] = useState<boolean>(false);
   const [localOnline, setLocalOnline] = useState<boolean>(false);
-
-  const block = useMemo(() => width <= 992, [width]);
-
-  const overlay = useMemo(
-    () => (responsive && width <= 1400) || block,
-    [width, responsive, block]
-  );
 
   const { data, loading } = useQuery<GetClassesResponse>(GET_CLASSES, {
     variables: {
@@ -301,9 +292,8 @@ export default function ClassBrowser({
   return (
     <BrowserContext.Provider
       value={{
-        overlay,
-        block,
         expanded,
+        responsive,
         sortBy,
         classes: filteredClasses,
         includedClasses,
@@ -333,11 +323,12 @@ export default function ClassBrowser({
     >
       <div
         className={classNames(styles.root, {
-          [styles.block]: block,
+          [styles.responsive]: responsive,
+          [styles.expanded]: expanded,
         })}
       >
-        {(expanded || !overlay) && <Filters />}
-        {(!expanded || !overlay) && <List onClassSelect={onClassSelect} />}
+        <Filters />
+        <List onClassSelect={onClassSelect} />
       </div>
     </BrowserContext.Provider>
   );

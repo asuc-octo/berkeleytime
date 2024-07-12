@@ -1,16 +1,24 @@
 import { useCallback, useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
+import classNames from "classnames";
+import { Xmark } from "iconoir-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import Boundary from "@/components/Boundary";
 import ClassBrowser from "@/components/ClassBrowser";
-import LoadingIndicator from "@/components/LoadingIndicator";
-import { GET_CLASS, IClass, Semester } from "@/lib/api";
+import IconButton from "@/components/IconButton";
+import {
+  GET_CLASS,
+  GET_COURSE,
+  GetClassResponse,
+  GetCourseResponse,
+  IClass,
+  Semester,
+} from "@/lib/api";
 
-import CatalogContext from "../../contexts/CatalogContext";
 import styles from "./Catalog.module.scss";
 import Class from "./Class";
+import Dashboard from "./Dashboard";
 
 export default function Catalog() {
   const {
@@ -24,6 +32,8 @@ export default function Catalog() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  const [expanded, setExpanded] = useState(true);
+  const [open, setOpen] = useState(false);
   const [partialClass, setPartialClass] = useState<IClass | null>(null);
 
   // TODO: Select year
@@ -47,7 +57,11 @@ export default function Catalog() {
     [currentSubject]
   );
 
-  const { data, loading, error } = useQuery<{ class: IClass }>(GET_CLASS, {
+  const {
+    data: classData,
+    loading: classLoading,
+    error: classError,
+  } = useQuery<GetClassResponse>(GET_CLASS, {
     variables: {
       term: {
         semester,
@@ -60,11 +74,22 @@ export default function Catalog() {
     skip: !subject || !courseNumber || !classNumber,
   });
 
-  const _class = useMemo(() => data?.class, [data]);
+  // Fetch the course to for directing to the correct term
+  const { loading: courseLoading, error: courseError } =
+    useQuery<GetCourseResponse>(GET_COURSE, {
+      variables: {
+        subject,
+        courseNumber,
+      },
+      skip: !subject || !courseNumber || !classNumber,
+    });
+
+  const _class = useMemo(() => classData?.class, [classData]);
 
   const handleClassSelect = useCallback(
     (selectedClass: IClass) => {
       setPartialClass(selectedClass);
+      setOpen(true);
 
       navigate({
         pathname: `/catalog/${year}/${semester}/${selectedClass.course.subject}/${selectedClass.course.number}/${selectedClass.number}`,
@@ -75,35 +100,55 @@ export default function Catalog() {
   );
 
   return (
-    <div className={styles.root}>
-      <ClassBrowser
-        onClassSelect={handleClassSelect}
-        semester={semester}
-        year={year}
-        persistent
-      />
-      {courseNumber && classNumber && subject && (_class || partialClass) ? (
-        <CatalogContext.Provider
-          value={{
-            year,
-            semester,
-            subject,
-            courseNumber,
-            classNumber,
-            partialClass,
-          }}
-        >
-          <Class />
-        </CatalogContext.Provider>
-      ) : loading ? (
-        <Boundary>
-          <LoadingIndicator />
-        </Boundary>
-      ) : error ? (
-        <></>
-      ) : (
-        <></>
-      )}
+    <div
+      className={classNames(styles.root, {
+        [styles.expanded]: expanded,
+        [styles.open]: open,
+      })}
+    >
+      <div className={styles.panel}>
+        <div className={styles.header}>
+          <p className={styles.title}>
+            {semester} {year} catalog
+          </p>
+          <IconButton onClick={() => setOpen(true)}>
+            <Xmark />
+          </IconButton>
+        </div>
+        <div className={styles.body}>
+          <ClassBrowser
+            onClassSelect={handleClassSelect}
+            semester={semester}
+            year={year}
+            persistent
+          />
+        </div>
+      </div>
+      <div className={styles.view}>
+        {courseNumber && classNumber && subject && (_class || partialClass) ? (
+          <Class
+            subject={subject}
+            courseNumber={courseNumber}
+            classNumber={classNumber}
+            partialClass={partialClass}
+            year={year}
+            semester={semester}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            onClose={() => setOpen(false)}
+          />
+        ) : classLoading || courseLoading ? (
+          <>{/* Loading */}</>
+        ) : classError || courseError ? (
+          <>{/* Error */}</>
+        ) : (
+          <Dashboard
+            expanded={expanded}
+            setExpanded={setExpanded}
+            setOpen={setOpen}
+          />
+        )}
+      </div>
     </div>
   );
 }

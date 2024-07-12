@@ -10,10 +10,7 @@ import {
 import styles from "./Button.module.scss";
 
 interface Props {
-  children: ReactNode;
-  className?: string;
-  secondary?: boolean;
-  active?: boolean;
+  variant?: "solid" | "outline";
 }
 
 type ButtonProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
@@ -23,7 +20,13 @@ type ButtonProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
 
 const Button = forwardRef(
   <C extends ElementType = "button">(
-    { active, children, className, secondary, ...props }: ButtonProps<C>,
+    {
+      active,
+      children,
+      className,
+      variant = "solid",
+      ...props
+    }: ButtonProps<C>,
     ref: PolymorphicRef<C>
   ) => {
     return (
@@ -32,8 +35,8 @@ const Button = forwardRef(
         className={classNames(
           styles.root,
           {
-            [styles.active]: active,
-            [styles.secondary]: secondary,
+            [styles.solid]: variant === "solid",
+            [styles.outline]: variant === "outline",
           },
           className
         )}

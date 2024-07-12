@@ -7,7 +7,7 @@
   height: 100%;
   font-size: 16px;
   line-height: 1.5;
-  padding: 24px;
+  padding: 24px 0;
   text-align: center;
 
   .heading {
@@ -25,7 +25,7 @@
 
 .root {
   background-color: var(--background-color);
-  padding: 24px 24px 24px 12px;
+  padding: 24px 0 0;
   display: flex;
   gap: 24px;
 

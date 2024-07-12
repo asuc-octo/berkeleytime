@@ -1,4 +1,4 @@
-import { ElementType, ReactElement, ReactNode, forwardRef } from "react";
+import { ElementType, ReactElement, forwardRef } from "react";
 
 import classNames from "classnames";
 
@@ -10,10 +10,8 @@ import {
 import styles from "./IconButton.module.scss";
 
 interface Props {
-  children: ReactNode;
-  className?: string;
+  variant?: "outline";
   invert?: boolean;
-  active?: boolean;
 }
 
 type IconButtonProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
@@ -23,7 +21,14 @@ type IconButtonProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
 
 const IconButton = forwardRef(
   <C extends ElementType = "button">(
-    { active, children, className, invert, as, ...props }: IconButtonProps<C>,
+    {
+      children,
+      className,
+      invert,
+      as,
+      variant = "outline",
+      ...props
+    }: IconButtonProps<C>,
     ref: PolymorphicRef<C>
   ) => {
     const Component = as || "button";
@@ -33,8 +38,8 @@ const IconButton = forwardRef(
         className={classNames(
           styles.root,
           {
-            [styles.active]: active,
             [styles.invert]: invert,
+            [styles.outline]: variant === "outline",
           },
           className
         )}

@@ -4,11 +4,7 @@
   overflow: auto;
   background-color: var(--background-color);
 
-  &:not(.block) {
-    border-right: 1px solid var(--border-color);
-  }
-
-  &.block {
+  @media (width <= 992px) {
     width: 100%;
   }
 

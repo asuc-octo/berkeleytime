@@ -123,9 +123,9 @@ export default function List({
           </div>
         )}
         <div className={styles.footer}>
-          <Link to="/explore" className={styles.button}>
+          <Link to="/discover" className={styles.button}>
             <Sparks />
-            <p className={styles.text}>Try exploring courses</p>
+            <p className={styles.text}>Try discovering courses</p>
             <ArrowRight />
           </Link>
         </div>

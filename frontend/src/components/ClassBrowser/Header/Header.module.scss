@@ -5,8 +5,28 @@
   z-index: 1;
   background: linear-gradient(to bottom, var(--background-color), transparent);
 
-  &.overlay .group {
-    padding-right: 8px;
+  @media (width <= 992px) {
+    .group {
+      padding-right: 8px;
+    }
+  }
+
+  @media (width <= 1400px) {
+    &.responsive .group {
+      padding-right: 8px;
+    }
+  }
+
+  @media (width > 992px) {
+    &:not(.responsive) .group > :last-child {
+      display: none;
+    }
+  }
+
+  @media (width > 1400px) {
+    .group > :last-child {
+      display: none;
+    }
   }
 
   .group {

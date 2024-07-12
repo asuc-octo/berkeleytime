@@ -301,7 +301,7 @@ a {
   --paragraph-color: var(--slate-500);
   --label-color: var(--slate-400);
 
-  --button-color: white;
+  // --button-color: white;
   --button-hover-color: var(--slate-100);
   --button-active-color: var(--slate-200);
 
@@ -320,7 +320,7 @@ a {
     --paragraph-color: var(--zinc-400);
     --label-color: var(--zinc-500);
 
-    --button-color: var(--zinc-800);
+    // --button-color: var(--zinc-800);
     --button-hover-color: var(--zinc-700);
     --button-active-color: var(--zinc-600);
 
@@ -330,6 +330,7 @@ a {
 
 body {
   font-family: Inter, sans-serif;
+  background-color: var(--background-color);
 }
 
 @supports (font-variation-settings: normal) {

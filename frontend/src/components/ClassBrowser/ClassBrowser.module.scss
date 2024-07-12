@@ -3,7 +3,23 @@
   height: 100%;
   display: flex;
 
-  &.block {
-    width: 100%;
+  @media (width <= 992px) {
+    &:not(.expanded) > :first-child {
+      display: none;
+    }
+
+    &.expanded > :last-child {
+      display: none;
+    }
+  }
+
+  @media (width <= 1400px) {
+    &:not(.expanded).responsive > :first-child {
+      display: none;
+    }
+
+    &.expanded.responsive > :last-child {
+      display: none;
+    }
   }
 }

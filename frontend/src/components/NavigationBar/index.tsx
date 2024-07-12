@@ -36,17 +36,23 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
       ) : (
         <>
           <div className={styles.menu}>
+            <MenuItem as={NavLink} to="/discover" className={styles.item}>
+              Discover
+            </MenuItem>
             <MenuItem as={NavLink} to="/catalog" className={styles.item}>
               Catalog
+            </MenuItem>
+            <MenuItem as={NavLink} to="/enrollment" className={styles.item}>
+              Enrollment
+            </MenuItem>
+            <MenuItem as={NavLink} to="/grades" className={styles.item}>
+              Grades
             </MenuItem>
             <MenuItem as={NavLink} to="/schedules" className={styles.item}>
               My schedules
             </MenuItem>
             <MenuItem as={NavLink} to="/plan" className={styles.item}>
               My plan
-            </MenuItem>
-            <MenuItem as={NavLink} to="/explore" className={styles.item}>
-              Explore
             </MenuItem>
           </div>
           {account ? (

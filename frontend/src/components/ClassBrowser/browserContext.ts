@@ -5,8 +5,7 @@ import { Component, IClass, Semester } from "@/lib/api";
 import { Day, Level, SortBy, Unit } from "./browser";
 
 export interface BrowserContextType {
-  overlay: boolean;
-  block: boolean;
+  responsive: boolean;
   expanded: boolean;
   setExpanded: Dispatch<SetStateAction<boolean>>;
   classes: IClass[];

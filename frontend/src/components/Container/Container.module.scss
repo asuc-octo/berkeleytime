@@ -1,6 +1,18 @@
 .root {
-	max-width: 1280px;
 	width: 100%;
 	margin: 0 auto;
 	padding: 0 24px;
+  min-height: 100%;
+
+  &.large {
+    max-width: 1280px;
+  }
+
+  &.medium {
+    max-width: 1152px;
+  }
+
+  &.small {
+    max-width: 1024px;
+  }
 }

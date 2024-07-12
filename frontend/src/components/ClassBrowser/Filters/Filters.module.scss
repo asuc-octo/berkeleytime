@@ -1,20 +1,8 @@
 .root {
-  width: 384px;
+  width: 288px;
   flex-shrink: 0;
   overflow: auto;
   background-color: var(--foreground-color);
-
-  &:not(.block) {
-    border-right: 1px solid var(--border-color);
-  }
-
-  &.block {
-    width: 100%;
-  }
-
-  &.overlay .body {
-    padding-top: 12px;
-  }
 
   .body {
     display: flex;
@@ -42,7 +30,6 @@
       font-size: 14px;
       color: var(--label-color);
       line-height: 1;
-      margin-bottom: 12px;
 
       &:not(:first-child) {
         margin-top: 24px;
@@ -53,10 +40,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
-
-      & + .filter {
-        margin-top: 12px;
-      }
+      margin-top: 12px;
 
       &:hover .text .value {
         color: var(--heading-color);
@@ -130,6 +114,38 @@
         &[data-state="unchecked"] {
           border: 2px solid var(--paragraph-color);
         }
+      }
+    }
+  }
+
+  @media (width > 992px) {
+    border-right: 1px solid var(--border-color);
+
+    &:not(.responsive) > :first-child {
+      display: none;
+    }
+  }
+
+  @media (width > 1400px) {
+    > :first-child {
+      display: none;
+    }
+  }
+
+  @media (width <= 992px) {
+    width: 100%;
+
+    .body {
+      padding-top: 12px;
+    }
+  }
+
+  @media (992px < width <= 1400px) {
+    &.responsive {
+      width: 384px;
+      
+      .body {
+        padding-top: 12px;
       }
     }
   }
