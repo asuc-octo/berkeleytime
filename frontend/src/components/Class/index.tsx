@@ -225,7 +225,7 @@ export default function Class({
             {_class && <CCN ccn={_class.primarySection.ccn} />}
           </div>
           {dialog ? (
-            <Tabs.List className={styles.menu}>
+            <Tabs.List className={styles.menu} defaultValue="overview">
               <Tabs.Trigger value="overview" asChild>
                 <MenuItem>Overview</MenuItem>
               </Tabs.Trigger>

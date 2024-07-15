@@ -1,5 +1,6 @@
-import { ReactNode, forwardRef, useMemo } from "react";
+import { ReactNode, forwardRef } from "react";
 
+import { useQuery } from "@apollo/client";
 import {
   Content,
   DialogTriggerProps,
@@ -10,25 +11,50 @@ import {
 } from "@radix-ui/react-dialog";
 
 import Course from "@/components/Course";
-import { ICourse } from "@/lib/api";
+import { GET_COURSE, GetCourseResponse, ICourse } from "@/lib/api";
 
 import styles from "./CourseDrawer.module.scss";
 
-interface BaseCourseDrawerProps {
+interface Props {
   subject: string;
   number: string;
   partialCourse?: ICourse | null;
-  children?: ReactNode;
+}
+
+function Body({ subject, number }: Props) {
+  const { data, loading } = useQuery<GetCourseResponse>(GET_COURSE, {
+    variables: {
+      subject,
+      courseNumber: number,
+    },
+  });
+
+  return data ? (
+    <Course
+      subject={subject}
+      number={number}
+      partialCourse={data.course}
+      dialog
+    />
+  ) : loading ? (
+    <></>
+  ) : (
+    <></>
+  );
+}
+
+interface BaseCourseDrawerProps extends Props {
+  onOpenChange?: (open: boolean) => void;
 }
 
 export interface ControlledCourseDrawerProps extends BaseCourseDrawerProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  children?: never;
 }
 
 export interface DefaultCourseDrawerProps extends BaseCourseDrawerProps {
-  open?: never;
-  onOpenChange?: never;
+  open?: boolean;
+  children: ReactNode;
 }
 
 export type CourseDrawerProps =
@@ -44,11 +70,9 @@ const CourseDrawer = forwardRef<
     { subject, children, number, partialCourse, open, onOpenChange, ...props },
     ref
   ) => {
-    const trigger = useMemo(() => open === undefined, [open]);
-
     return (
       <Root onOpenChange={onOpenChange} open={open}>
-        {trigger && (
+        {children && (
           <Trigger {...props} asChild ref={ref}>
             {children}
           </Trigger>
@@ -60,11 +84,10 @@ const CourseDrawer = forwardRef<
             // TODO: Automatically focus a relevant element
             onOpenAutoFocus={(event) => event.preventDefault()}
           >
-            <Course
+            <Body
               subject={subject}
               number={number}
               partialCourse={partialCourse}
-              dialog
             />
           </Content>
         </Portal>

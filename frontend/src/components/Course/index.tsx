@@ -66,7 +66,7 @@ interface CourseProps {
   dialog?: boolean;
 }
 
-export default function Class({
+export default function Course({
   subject,
   number,
   partialCourse,
@@ -150,7 +150,7 @@ export default function Class({
             <AverageGrade gradeAverage={course.gradeAverage} />
           </div>
           {dialog ? (
-            <Tabs.List className={styles.menu}>
+            <Tabs.List className={styles.menu} defaultValue="overview">
               <Tabs.Trigger value="overview" asChild>
                 <MenuItem>Overview</MenuItem>
               </Tabs.Trigger>

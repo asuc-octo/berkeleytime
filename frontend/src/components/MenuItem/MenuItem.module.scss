@@ -11,11 +11,11 @@
   transition: all 100ms ease-in-out;
   z-index: 1;
 
-  &:global(.active), &:hover {
+  &:global(.active), &:hover, &[data-state="active"] {
     color: var(--heading-color);
   }
 
-  &:global(.active)::before {
+  &:global(.active)::before, &[data-state="active"]::before {
     opacity: 1;
   }
 

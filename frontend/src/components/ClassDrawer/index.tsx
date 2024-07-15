@@ -1,5 +1,6 @@
-import { ReactNode, forwardRef, useMemo } from "react";
+import { ReactNode, forwardRef } from "react";
 
+import { useQuery } from "@apollo/client";
 import {
   Content,
   DialogTriggerProps,
@@ -10,28 +11,68 @@ import {
 } from "@radix-ui/react-dialog";
 
 import Class from "@/components/Class";
-import { IClass, Semester } from "@/lib/api";
+import { GET_CLASS, GetClassResponse, IClass, Semester } from "@/lib/api";
 
 import styles from "./ClassDrawer.module.scss";
 
-interface BaseClassDrawerProps {
-  year: number;
-  semester: Semester;
+interface Props {
   subject: string;
   courseNumber: string;
   classNumber: string;
+  semester: Semester;
+  year: number;
   partialClass?: IClass | null;
-  children?: ReactNode;
+}
+
+function Body({
+  subject,
+  courseNumber,
+  classNumber,
+  semester,
+  year,
+  partialClass,
+}: Props) {
+  const { data, loading } = useQuery<GetClassResponse>(GET_CLASS, {
+    variables: {
+      subject,
+      courseNumber,
+      classNumber,
+      term: {
+        semester,
+        year,
+      },
+    },
+  });
+
+  return data ? (
+    <Class
+      subject={subject}
+      courseNumber={courseNumber}
+      classNumber={classNumber}
+      semester={semester}
+      year={year}
+      partialClass={partialClass}
+      dialog
+    />
+  ) : loading ? (
+    <></>
+  ) : (
+    <></>
+  );
+}
+
+interface BaseClassDrawerProps extends Props {
+  onOpenChange?: (open: boolean) => void;
+}
+
+export interface DefaultClassDrawerProps extends BaseClassDrawerProps {
+  open?: boolean;
+  children: ReactNode;
 }
 
 export interface ControlledClassDrawerProps extends BaseClassDrawerProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export interface DefaultClassDrawerProps extends BaseClassDrawerProps {
-  open?: never;
-  onOpenChange?: never;
+  children?: never;
 }
 
 export type ClassDrawerProps =
@@ -58,11 +99,9 @@ const ClassDrawer = forwardRef<
     },
     ref
   ) => {
-    const trigger = useMemo(() => open === undefined, [open]);
-
     return (
       <Root onOpenChange={onOpenChange} open={open}>
-        {trigger && (
+        {children && (
           <Trigger {...props} asChild ref={ref}>
             {children}
           </Trigger>
@@ -74,14 +113,13 @@ const ClassDrawer = forwardRef<
             // TODO: Automatically focus a relevant element
             onOpenAutoFocus={(event) => event.preventDefault()}
           >
-            <Class
+            <Body
               subject={subject}
               courseNumber={courseNumber}
               classNumber={classNumber}
               semester={semester}
               year={year}
               partialClass={partialClass}
-              dialog
             />
           </Content>
         </Portal>
