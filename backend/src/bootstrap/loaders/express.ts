@@ -9,7 +9,11 @@ import { RedisClientType } from "redis";
 import passportLoader from "./passport";
 import { config } from "../../config";
 
-export default async (app: Application, server: ApolloServer, redis: RedisClientType) => {
+export default async (
+  app: Application,
+  server: ApolloServer,
+  redis: RedisClientType
+) => {
   app.use(compression());
 
   // Body parser only needed during POST on the graphQL path
@@ -19,7 +23,7 @@ export default async (app: Application, server: ApolloServer, redis: RedisClient
   app.use(
     cors({
       // Allow requests from the local frontend (should be the only requirement)
-      origin: [config.url, "http://localhost:3000"],
+      origin: [config.url, "http://localhost:8080", "http://localhost:5173"],
       credentials: true,
     })
   );

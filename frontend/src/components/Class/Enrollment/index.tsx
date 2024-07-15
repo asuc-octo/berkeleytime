@@ -12,9 +12,9 @@ import {
   YAxis,
 } from "recharts";
 
-import useCatalog from "@/hooks/useCatalog";
 import { GET_CLASS, IClass } from "@/lib/api";
 
+import useClass from "../useClass";
 import styles from "./Enrollment.module.scss";
 import Reservations from "./Reservations";
 
@@ -64,7 +64,7 @@ const series = [
 ];
 
 export default function Enrollment() {
-  const { subject, courseNumber, classNumber, semester, year } = useCatalog();
+  const { subject, courseNumber, classNumber, semester, year } = useClass();
 
   // TODO: Handle loading state
   const { data } = useQuery<{ class: IClass }>(GET_CLASS, {

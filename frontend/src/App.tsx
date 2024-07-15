@@ -1,5 +1,6 @@
 import { lazy } from "react";
 
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { IconoirProvider } from "iconoir-react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -11,10 +12,10 @@ import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 
 const About = lazy(() => import("@/app/About"));
-const CatalogEnrollment = lazy(() => import("@/app/Catalog/Class/Enrollment"));
-const CatalogGrades = lazy(() => import("@/app/Catalog/Class/Grades"));
-const CatalogOverview = lazy(() => import("@/app/Catalog/Class/Overview"));
-const CatalogSections = lazy(() => import("@/app/Catalog/Class/Sections"));
+const CatalogEnrollment = lazy(() => import("@/components/Class/Enrollment"));
+const CatalogGrades = lazy(() => import("@/components/Class/Grades"));
+const CatalogOverview = lazy(() => import("@/components/Class/Overview"));
+const CatalogSections = lazy(() => import("@/components/Class/Sections"));
 const Discover = lazy(() => import("@/app/Discover"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
@@ -119,18 +120,25 @@ const router = createBrowserRouter([
   },
 ]);
 
+const client = new ApolloClient({
+  uri: "http://192.168.86.21:8080/api/graphql",
+  cache: new InMemoryCache(),
+});
+
 export default function App() {
   return (
-    <IconoirProvider
-      iconProps={{
-        strokeWidth: 2,
-        width: 16,
-        height: 16,
-      }}
-    >
-      <Tooltip.Provider delayDuration={0}>
-        <RouterProvider router={router} />
-      </Tooltip.Provider>
-    </IconoirProvider>
+    <ApolloProvider client={client}>
+      <IconoirProvider
+        iconProps={{
+          strokeWidth: 2,
+          width: 16,
+          height: 16,
+        }}
+      >
+        <Tooltip.Provider delayDuration={0}>
+          <RouterProvider router={router} />
+        </Tooltip.Provider>
+      </IconoirProvider>
+    </ApolloProvider>
   );
 }

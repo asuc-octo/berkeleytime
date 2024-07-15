@@ -141,7 +141,7 @@ export const getFilteredClasses = (
   );
 };
 
-export const initialize = (classes: IClass[]) => {
+export const getIndex = (classes: IClass[]) => {
   const list = classes.map((_class) => {
     const { title, subject, number } = _class.course;
 

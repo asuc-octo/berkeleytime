@@ -21,7 +21,7 @@ import {
   SortBy,
   Unit,
   getFilteredClasses,
-  initialize,
+  getIndex,
 } from "./browser";
 import BrowserContext from "./browserContext";
 
@@ -175,7 +175,7 @@ export default function ClassBrowser({
     [classes, components, units, levels, days, open, online]
   );
 
-  const index = useMemo(() => initialize(includedClasses), [includedClasses]);
+  const index = useMemo(() => getIndex(includedClasses), [includedClasses]);
 
   const filteredClasses = useMemo(() => {
     let filteredClasses = query

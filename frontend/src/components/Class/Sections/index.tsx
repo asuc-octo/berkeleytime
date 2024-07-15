@@ -9,14 +9,14 @@ import Capacity from "@/components/Capacity";
 import Details from "@/components/Details";
 import IconButton from "@/components/IconButton";
 import Tooltip from "@/components/Tooltip";
-import useCatalog from "@/hooks/useCatalog";
 import { Component, GET_CLASS, IClass, componentMap } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
+import useClass from "../useClass";
 import styles from "./Sections.module.scss";
 
 export default function Sections() {
-  const { subject, courseNumber, classNumber, semester, year } = useCatalog();
+  const { subject, courseNumber, classNumber, semester, year } = useClass();
 
   const viewRef = useRef<HTMLDivElement>(null);
   const [group, setGroup] = useState<Component | null>(null);

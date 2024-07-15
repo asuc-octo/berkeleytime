@@ -3,13 +3,13 @@ import { useMemo } from "react";
 import { useQuery } from "@apollo/client";
 
 import Details from "@/components/Details";
-import useCatalog from "@/hooks/useCatalog";
 import { GET_CLASS, IClass } from "@/lib/api";
 
+import useClass from "../useClass";
 import styles from "./Overview.module.scss";
 
 export default function Overview() {
-  const { subject, courseNumber, classNumber, semester, year } = useCatalog();
+  const { subject, courseNumber, classNumber, semester, year } = useClass();
 
   // TODO: Handle loading state
   const { data } = useQuery<{ class: IClass }>(GET_CLASS, {

@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { Xmark } from "iconoir-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
+import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import IconButton from "@/components/IconButton";
 import {
@@ -17,7 +18,6 @@ import {
 } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
-import Class from "./Class";
 import Dashboard from "./Dashboard";
 
 export default function Catalog() {
@@ -109,7 +109,7 @@ export default function Catalog() {
       <div className={styles.panel}>
         <div className={styles.header}>
           <p className={styles.title}>
-            {semester} {year} catalog
+            {semester} {year}
           </p>
           <IconButton onClick={() => setOpen(true)}>
             <Xmark />
@@ -134,7 +134,7 @@ export default function Catalog() {
             year={year}
             semester={semester}
             expanded={expanded}
-            setExpanded={setExpanded}
+            onExpandedChange={setExpanded}
             onClose={() => setOpen(false)}
           />
         ) : classLoading || courseLoading ? (

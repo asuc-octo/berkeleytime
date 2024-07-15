@@ -2,15 +2,16 @@ import { createContext } from "react";
 
 import { IClass, Semester } from "@/lib/api";
 
-export interface CatalogContextType {
+export interface ClassContextType {
   year: number;
   semester: Semester;
   subject: string;
   courseNumber: string;
   classNumber: string;
-  partialClass: IClass | null;
+  partialClass?: IClass | null;
+  dialog?: boolean;
 }
 
-const CatalogContext = createContext<CatalogContextType | null>(null);
+const ClassContext = createContext<ClassContextType | null>(null);
 
-export default CatalogContext;
+export default ClassContext;

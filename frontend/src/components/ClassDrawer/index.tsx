@@ -9,39 +9,53 @@ import {
   Trigger,
 } from "@radix-ui/react-dialog";
 
-import Course from "@/components/Course";
-import { ICourse } from "@/lib/api";
+import Class from "@/components/Class";
+import { IClass, Semester } from "@/lib/api";
 
-import styles from "./CourseDrawer.module.scss";
+import styles from "./ClassDrawer.module.scss";
 
-interface BaseCourseDrawerProps {
+interface BaseClassDrawerProps {
+  year: number;
+  semester: Semester;
   subject: string;
-  number: string;
-  partialCourse?: ICourse | null;
+  courseNumber: string;
+  classNumber: string;
+  partialClass?: IClass | null;
   children?: ReactNode;
 }
 
-export interface ControlledCourseDrawerProps extends BaseCourseDrawerProps {
+export interface ControlledClassDrawerProps extends BaseClassDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export interface DefaultCourseDrawerProps extends BaseCourseDrawerProps {
+export interface DefaultClassDrawerProps extends BaseClassDrawerProps {
   open?: never;
   onOpenChange?: never;
 }
 
-export type CourseDrawerProps =
-  | ControlledCourseDrawerProps
-  | DefaultCourseDrawerProps;
+export type ClassDrawerProps =
+  | ControlledClassDrawerProps
+  | DefaultClassDrawerProps;
 
 // TODO: Determine if this component would be better suited in the global context
-const CourseDrawer = forwardRef<
+const ClassDrawer = forwardRef<
   HTMLButtonElement,
-  CourseDrawerProps & Omit<DialogTriggerProps, "asChild">
+  ClassDrawerProps & Omit<DialogTriggerProps, "asChild">
 >(
   (
-    { subject, children, number, partialCourse, open, onOpenChange, ...props },
+    {
+      subject,
+      children,
+      courseNumber,
+      classNumber,
+      semester,
+      year,
+      partialClass,
+      open,
+      onOpenChange,
+      ...props
+    },
     ref
   ) => {
     const trigger = useMemo(() => open === undefined, [open]);
@@ -60,10 +74,13 @@ const CourseDrawer = forwardRef<
             // TODO: Automatically focus a relevant element
             onOpenAutoFocus={(event) => event.preventDefault()}
           >
-            <Course
+            <Class
               subject={subject}
-              number={number}
-              partialCourse={partialCourse}
+              courseNumber={courseNumber}
+              classNumber={classNumber}
+              semester={semester}
+              year={year}
+              partialClass={partialClass}
               dialog
             />
           </Content>
@@ -73,4 +90,4 @@ const CourseDrawer = forwardRef<
   }
 );
 
-export default CourseDrawer;
+export default ClassDrawer;
