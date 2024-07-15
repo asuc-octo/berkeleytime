@@ -4,7 +4,7 @@ WORKDIR /backend
 RUN  apt-get update \
   && apt-get install -y wget \
   && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu1804-arm64-100.9.0.deb && \
+RUN apt-get update && wget https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu1804-x86_64-100.9.5.deb && \
     apt-get -y install ./mongodb-database-tools-*100.9.0.deb && \
     rm -f mongodb-database-tools-*.deb
 COPY package.json .
