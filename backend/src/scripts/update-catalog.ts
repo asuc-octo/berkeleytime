@@ -33,7 +33,7 @@ const queryPages = async <T>(
     params: any,
     headers: any,
     field: string,
-    retries: number = 3,
+    retries = 3,
 ) => {
     let page = 1;
     const values: T[] = [];
