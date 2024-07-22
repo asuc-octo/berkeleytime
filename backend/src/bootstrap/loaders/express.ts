@@ -3,25 +3,32 @@ import cors from "cors";
 import helmet from "helmet";
 import type { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
+import compression from "compression";
+import { RedisClientType } from "redis";
 
 import passportLoader from "./passport";
 import { config } from "../../config";
 
-export default async (app: Application, server: ApolloServer) => {
+export default async (app: Application, server: ApolloServer, redis: RedisClientType) => {
+  app.use(compression());
+
   // Body parser only needed during POST on the graphQL path
   app.use(json());
 
   // Cors configuration
-  app.use(cors({
-    origin: config.url,
-    credentials: true,
-  }));
+  app.use(
+    cors({
+      // Allow requests from the local frontend (should be the only requirement)
+      origin: [config.url, "http://localhost:3000"],
+      credentials: true,
+    })
+  );
 
   // Sets various HTTP headers to help protect our app
   app.use(helmet());
 
   // load authentication
-  passportLoader(app);
+  passportLoader(app, redis);
 
   app.use(
     config.graphqlPath,

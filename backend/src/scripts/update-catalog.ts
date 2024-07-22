@@ -11,17 +11,21 @@ import { SectionModel, SectionType } from "../models/section";
 
 const SIS_COURSE_URL = "https://gateway.api.berkeley.edu/sis/v4/courses";
 const SIS_CLASS_URL = "https://gateway.api.berkeley.edu/sis/v1/classes";
-const SIS_SECTION_URL =
-    "https://gateway.api.berkeley.edu/sis/v1/classes/sections";
+const SIS_SECTION_URL = "https://gateway.api.berkeley.edu/sis/v1/classes/sections";
 
 type StrictOption = boolean | "throw";
 
 const bulkWriteOptions: { strict?: StrictOption } = { strict: "throw" };
 
 const semToTermId = (s: SemesterType) => {
-    // term-id is computed by dropping the century digit of the year, then adding the term code
-    const termMap: { [key: string]: number } = { Fall: 8, Spring: 2, Summer: 5 };
-    return `${Math.floor(s.year / 1000)}${s.year % 100}${termMap[s.term]}`;
+  // term-id is computed by dropping the century digit of the year, then adding the term code
+  const termMap: { [key: string]: number } = {
+    Fall: 8,
+    Spring: 2,
+    Summer: 5,
+    Winter: 11,
+  };
+  return `${Math.floor(s.year / 1000)}${s.year % 100}${termMap[s.term]}`;
 };
 
 const queryPages = async <T>(
@@ -201,21 +205,21 @@ const updateSections = async () => {
 };
 
 (async () => {
-    try {
-        await mongooseLoader();
+  try {
+    await mongooseLoader();
 
-        console.log("\n=== UPDATE COURSES ===");
-        await updateCourses();
+    console.log("\n=== UPDATE COURSES ===");
+    await updateCourses();
 
-        console.log("\n=== UPDATE CLASSES ===");
-        await updateClasses();
+    console.log("\n=== UPDATE CLASSES ===");
+    await updateClasses();
 
-        console.log("\n=== UPDATE SECTIONS ===");
-        await updateSections();
-    } catch (err) {
-        console.error(err);
-        process.exit(1);
-    }
+    console.log("\n=== UPDATE SECTIONS ===");
+    await updateSections();
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
 
-    process.exit(0);
+  process.exit(0);
 })();

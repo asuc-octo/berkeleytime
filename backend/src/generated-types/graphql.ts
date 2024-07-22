@@ -17,69 +17,128 @@ export type Scalars = {
   JSONObject: any;
 };
 
-export type CatalogClass = {
-  __typename?: 'CatalogClass';
-  description?: Maybe<Scalars['String']>;
-  enrollCount: Scalars['Int'];
-  enrollMax: Scalars['Int'];
-  lastUpdated: Scalars['ISODate'];
-  number: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  unitsMax: Scalars['Float'];
-  unitsMin: Scalars['Float'];
-};
+export type AcademicCareer =
+  /** Graduate */
+  | 'GRAD'
+  /** UC Extension */
+  | 'UCBX'
+  /** Undergraduate */
+  | 'UGRD';
 
-export type CatalogItem = {
-  __typename?: 'CatalogItem';
-  classes: Array<Maybe<CatalogClass>>;
-  description: Scalars['String'];
-  gradeAverage?: Maybe<Scalars['Float']>;
-  lastUpdated: Scalars['ISODate'];
-  number: Scalars['String'];
-  subject: Scalars['String'];
-  title: Scalars['String'];
-};
+export type CacheControlScope =
+  | 'PRIVATE'
+  | 'PUBLIC';
 
 /** Data for a specific class in a specific semester. There may be more than one Class for a given Course in a given semester. */
 export type Class = {
   __typename?: 'Class';
   course: Course;
   description?: Maybe<Scalars['String']>;
-  enrollCount: Scalars['Int'];
-  enrollMax: Scalars['Int'];
+  finalExam: ClassFinalExam;
+  gradingBasis: ClassGradingBasis;
   lastUpdated: Scalars['ISODate'];
   number: Scalars['String'];
   primarySection: Section;
   raw: Scalars['JSONObject'];
-  sections: Array<Maybe<Section>>;
+  sections: Array<Section>;
   semester: Semester;
-  session: Scalars['String'];
-  status: Scalars['String'];
+  session: Session;
   title?: Maybe<Scalars['String']>;
   unitsMax: Scalars['Float'];
   unitsMin: Scalars['Float'];
-  waitlistCount: Scalars['Int'];
-  waitlistMax: Scalars['Int'];
   year: Scalars['Int'];
 };
+
+export type ClassFinalExam =
+  /** Alernate Method */
+  | 'A'
+  /** Common Final */
+  | 'C'
+  /** No */
+  | 'N'
+  /** Yes */
+  | 'Y';
+
+export type ClassGradingBasis =
+  /** Multi-Term Course: Not Graded */
+  | 'BMT'
+  /** Elective Satisfactory/Unsat */
+  | 'ESU'
+  /** Graded */
+  | 'GRD'
+  /** Instructor Option */
+  | 'IOP'
+  /** Student Option */
+  | 'OPT'
+  /** Pass/Not Pass */
+  | 'PNP'
+  /** Satisfactory/Unsatisfactory */
+  | 'SUS';
+
+export type Component =
+  /** Clinic */
+  | 'CLN'
+  /** Colloquium */
+  | 'COL'
+  /** Discussion */
+  | 'DIS'
+  /** Field Work */
+  | 'FLD'
+  /** Directed Group Study */
+  | 'GRP'
+  /** Independent Study */
+  | 'IND'
+  /** Internship */
+  | 'INT'
+  /** Laboratory */
+  | 'LAB'
+  /** Lecture */
+  | 'LEC'
+  /** Practicum */
+  | 'PRA'
+  /** Reading */
+  | 'REA'
+  /** Recitation */
+  | 'REC'
+  /** Seminar */
+  | 'SEM'
+  /** Session */
+  | 'SES'
+  /** Self-paced */
+  | 'SLF'
+  /** Studio */
+  | 'STD'
+  /** Supplementary */
+  | 'SUP'
+  /** Tutorial */
+  | 'TUT'
+  /** Voluntary */
+  | 'VOL'
+  /** Web-Based Discussion */
+  | 'WBD'
+  /** Web-Based Lecture */
+  | 'WBL'
+  /** Workshop */
+  | 'WOR';
 
 /** Info shared between Classes within and across semesters. */
 export type Course = {
   __typename?: 'Course';
-  classes: Array<Maybe<Class>>;
-  crossListing?: Maybe<Array<Maybe<Course>>>;
+  academicCareer: AcademicCareer;
+  classes: Array<Class>;
+  crossListing: Array<Course>;
   description: Scalars['String'];
+  finalExam?: Maybe<CourseFinalExam>;
   fromDate: Scalars['String'];
   gradeAverage?: Maybe<Scalars['Float']>;
-  gradingBasis: Scalars['String'];
+  gradingBasis: CourseGradingBasis;
   lastUpdated: Scalars['ISODate'];
-  level: Scalars['String'];
   number: Scalars['String'];
-  prereqs?: Maybe<Scalars['String']>;
   raw: Scalars['JSONObject'];
-  sections: Array<Maybe<Section>>;
+  requiredCourses: Array<Course>;
+  requirements?: Maybe<Scalars['String']>;
+  sections: Array<Section>;
   subject: Scalars['String'];
-  subjectName: Scalars['String'];
   title: Scalars['String'];
   toDate: Scalars['String'];
 };
@@ -96,6 +155,25 @@ export type CourseSectionsArgs = {
   primary?: InputMaybe<Scalars['Boolean']>;
   term?: InputMaybe<TermInput>;
 };
+
+export type CourseFinalExam =
+  /** Alternative method of final assessment */
+  | 'A'
+  /** Common Final Exam */
+  | 'C'
+  /** To be decided by the instructor when the class is offered */
+  | 'D'
+  /** No final exam */
+  | 'N'
+  /** Written final exam conducted during the scheduled final exam period */
+  | 'Y';
+
+export type CourseGradingBasis =
+  | 'completedNotation'
+  | 'graded'
+  | 'letter'
+  | 'passFail'
+  | 'satisfactory';
 
 export type CourseListItem = {
   __typename?: 'CourseListItem';
@@ -130,6 +208,15 @@ export type EnrollmentDay = {
   waitlistMax: Scalars['Int'];
 };
 
+export type Exam = {
+  __typename?: 'Exam';
+  date: Scalars['String'];
+  endTime: Scalars['String'];
+  final: Scalars['Boolean'];
+  location: Scalars['String'];
+  startTime: Scalars['String'];
+};
+
 export type Grade = {
   __typename?: 'Grade';
   average?: Maybe<Scalars['Float']>;
@@ -144,8 +231,19 @@ export type GradeDistributionItem = {
 
 export type Instructor = {
   __typename?: 'Instructor';
-  familyName: Scalars['String'];
-  givenName: Scalars['String'];
+  familyName?: Maybe<Scalars['String']>;
+  givenName?: Maybe<Scalars['String']>;
+};
+
+export type Meeting = {
+  __typename?: 'Meeting';
+  days?: Maybe<Array<Scalars['Boolean']>>;
+  endDate: Scalars['String'];
+  endTime: Scalars['String'];
+  instructors: Array<Instructor>;
+  location?: Maybe<Scalars['String']>;
+  startDate: Scalars['String'];
+  startTime: Scalars['String'];
 };
 
 export type Mutation = {
@@ -158,10 +256,8 @@ export type Mutation = {
   editExistingSchedule?: Maybe<Schedule>;
   /** Takes in a schedule's ObjectID, deletes the schedule with that ID, and returns the ID. */
   removeScheduleByID?: Maybe<Scalars['ID']>;
-  /** For the schedule specified by the ID, modifies the class ID field and returns the updated schedule. */
+  /** For the schedule specified by the ID, modifies the courses field and returns the updated schedule. */
   setSelectedClasses?: Maybe<Schedule>;
-  /** For the schedule specified by the ID, modifies the section ID field and returns the updated schedule. */
-  setSelectedSections?: Maybe<Schedule>;
   /** Mutate user info. */
   updateUserInfo?: Maybe<User>;
 };
@@ -184,14 +280,8 @@ export type MutationRemoveScheduleByIdArgs = {
 
 
 export type MutationSetSelectedClassesArgs = {
-  class_IDs: Array<Scalars['String']>;
+  courses: Array<SelectedCourseInput>;
   id: Scalars['ID'];
-};
-
-
-export type MutationSetSelectedSectionsArgs = {
-  id: Scalars['ID'];
-  section_IDs: Array<Scalars['String']>;
 };
 
 
@@ -206,7 +296,7 @@ export type Query = {
    *
    * Used primarily in the catalog page.
    */
-  catalog?: Maybe<Array<Maybe<CatalogItem>>>;
+  catalog?: Maybe<Array<Course>>;
   class?: Maybe<Class>;
   course?: Maybe<Course>;
   /**
@@ -214,8 +304,9 @@ export type Query = {
    *
    * Useful for searching for courses.
    */
-  courseList?: Maybe<Array<Maybe<CourseListItem>>>;
+  courseList?: Maybe<Array<Course>>;
   grade?: Maybe<Grade>;
+  /** @deprecated test */
   ping: Scalars['String'];
   /** Takes in a schedule's ObjectID and returns a specific schedule. */
   scheduleByID?: Maybe<Schedule>;
@@ -273,12 +364,19 @@ export type QuerySectionArgs = {
   term: TermInput;
 };
 
+export type Reservation = {
+  __typename?: 'Reservation';
+  enrollCount: Scalars['Int'];
+  enrollMax: Scalars['Int'];
+  group: Scalars['String'];
+};
+
 export type Schedule = {
   __typename?: 'Schedule';
   /** The ObjectID associated with the schedule record */
   _id?: Maybe<Scalars['ID']>;
-  /** Identifiers (probably cs-course-ids) for the classes the user has added to their schedule. */
-  class_IDs?: Maybe<Array<Scalars['String']>>;
+  /** Courses, see the SelectedCourse type below */
+  courses?: Maybe<Array<SelectedCourse>>;
   created: Scalars['String'];
   /** Identifier (probably email) for the user who created the schedule (such as oski@bereley.edu). */
   created_by: Scalars['String'];
@@ -288,56 +386,84 @@ export type Schedule = {
   is_public: Scalars['Boolean'];
   /** The name of the schedule, such as "Oski's Fall schedule <3" */
   name?: Maybe<Scalars['String']>;
-  /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
-  primary_section_IDs?: Maybe<Array<Scalars['String']>>;
   revised: Scalars['String'];
-  /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
-  secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
   /** Term corresponding to the schedule, such as "Fall 1986" */
   term: TermOutput;
 };
 
 export type ScheduleInput = {
-  class_IDs?: InputMaybe<Array<Scalars['String']>>;
+  courses?: InputMaybe<Array<SelectedCourseInput>>;
   created_by: Scalars['String'];
   custom_events?: InputMaybe<Array<CustomEventInput>>;
   is_public?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
-  primary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
-  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
   term: TermInput;
 };
 
-/** Sections are each associated with one Class.  */
+/** Sections are each associated with one Class. */
 export type Section = {
   __typename?: 'Section';
   ccn: Scalars['Int'];
   class: Class;
+  component: Component;
   course: Course;
-  dateEnd?: Maybe<Scalars['String']>;
-  dateStart?: Maybe<Scalars['String']>;
-  days?: Maybe<Array<Scalars['Boolean']>>;
+  endDate: Scalars['String'];
   enrollCount: Scalars['Int'];
   enrollMax: Scalars['Int'];
-  enrollmentHistory?: Maybe<Array<Maybe<EnrollmentDay>>>;
-  instructors?: Maybe<Array<Maybe<Instructor>>>;
-  kind: Scalars['String'];
+  enrollmentHistory?: Maybe<Array<EnrollmentDay>>;
+  exams: Array<Exam>;
   lastUpdated: Scalars['ISODate'];
-  location?: Maybe<Scalars['String']>;
-  notes?: Maybe<Scalars['String']>;
+  meetings: Array<Meeting>;
   number: Scalars['String'];
+  online: Scalars['Boolean'];
+  open: Scalars['Boolean'];
   primary: Scalars['Boolean'];
   raw: Scalars['JSONObject'];
-  timeEnd?: Maybe<Scalars['String']>;
-  timeStart?: Maybe<Scalars['String']>;
+  reservations?: Maybe<Array<Reservation>>;
+  startDate: Scalars['String'];
   waitlistCount: Scalars['Int'];
   waitlistMax: Scalars['Int'];
+};
+
+export type SelectedCourse = {
+  __typename?: 'SelectedCourse';
+  /** Identifiers (probably cs-course-ids) for the classes the user has added to their schedule. */
+  class_ID: Scalars['String'];
+  /** Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule. */
+  primary_section_ID?: Maybe<Scalars['String']>;
+  /** Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule. */
+  secondary_section_IDs?: Maybe<Array<Scalars['String']>>;
+};
+
+export type SelectedCourseInput = {
+  class_ID: Scalars['String'];
+  primary_section_ID?: InputMaybe<Scalars['String']>;
+  secondary_section_IDs?: InputMaybe<Array<Scalars['String']>>;
 };
 
 export type Semester =
   | 'Fall'
   | 'Spring'
-  | 'Summer';
+  | 'Summer'
+  | 'Winter';
+
+export type Session =
+  /** Session A */
+  | 'A'
+  /** Session B */
+  | 'B'
+  /** Session C */
+  | 'C'
+  /** Session D */
+  | 'D'
+  /** Session E */
+  | 'E'
+  /** Session F */
+  | 'F'
+  /** Regular Academic Session */
+  | 'R'
+  /** 12-Week Summer Session */
+  | 'S';
 
 /** The combination of year and season that corresponds to a specific term. Both year and season/semester are required. */
 export type TermInput = {
@@ -450,15 +576,21 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AcademicCareer: AcademicCareer;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  CatalogClass: ResolverTypeWrapper<CatalogClass>;
-  CatalogItem: ResolverTypeWrapper<CatalogItem>;
+  CacheControlScope: CacheControlScope;
   Class: ResolverTypeWrapper<Class>;
+  ClassFinalExam: ClassFinalExam;
+  ClassGradingBasis: ClassGradingBasis;
+  Component: Component;
   Course: ResolverTypeWrapper<Course>;
+  CourseFinalExam: CourseFinalExam;
+  CourseGradingBasis: CourseGradingBasis;
   CourseListItem: ResolverTypeWrapper<CourseListItem>;
   CustomEvent: ResolverTypeWrapper<CustomEvent>;
   CustomEventInput: CustomEventInput;
   EnrollmentDay: ResolverTypeWrapper<EnrollmentDay>;
+  Exam: ResolverTypeWrapper<Exam>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Grade: ResolverTypeWrapper<Grade>;
   GradeDistributionItem: ResolverTypeWrapper<GradeDistributionItem>;
@@ -468,12 +600,17 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
+  Meeting: ResolverTypeWrapper<Meeting>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
+  Reservation: ResolverTypeWrapper<Reservation>;
   Schedule: ResolverTypeWrapper<Schedule>;
   ScheduleInput: ScheduleInput;
   Section: ResolverTypeWrapper<Section>;
+  SelectedCourse: ResolverTypeWrapper<SelectedCourse>;
+  SelectedCourseInput: SelectedCourseInput;
   Semester: Semester;
+  Session: Session;
   String: ResolverTypeWrapper<Scalars['String']>;
   TermInput: TermInput;
   TermOutput: ResolverTypeWrapper<TermOutput>;
@@ -484,14 +621,13 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
-  CatalogClass: CatalogClass;
-  CatalogItem: CatalogItem;
   Class: Class;
   Course: Course;
   CourseListItem: CourseListItem;
   CustomEvent: CustomEvent;
   CustomEventInput: CustomEventInput;
   EnrollmentDay: EnrollmentDay;
+  Exam: Exam;
   Float: Scalars['Float'];
   Grade: Grade;
   GradeDistributionItem: GradeDistributionItem;
@@ -501,11 +637,15 @@ export type ResolversParentTypes = {
   Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
+  Meeting: Meeting;
   Mutation: {};
   Query: {};
+  Reservation: Reservation;
   Schedule: Schedule;
   ScheduleInput: ScheduleInput;
   Section: Section;
+  SelectedCourse: SelectedCourse;
+  SelectedCourseInput: SelectedCourseInput;
   String: Scalars['String'];
   TermInput: TermInput;
   TermOutput: TermOutput;
@@ -517,66 +657,49 @@ export type AuthDirectiveArgs = { };
 
 export type AuthDirectiveResolver<Result, Parent, ContextType = any, Args = AuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
-export type CatalogClassResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogClass'] = ResolversParentTypes['CatalogClass']> = {
-  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
-  number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  unitsMax?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  unitsMin?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+export type CacheControlDirectiveArgs = {
+  inheritMaxAge?: Maybe<Scalars['Boolean']>;
+  maxAge?: Maybe<Scalars['Int']>;
+  scope?: Maybe<CacheControlScope>;
 };
 
-export type CatalogItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['CatalogItem'] = ResolversParentTypes['CatalogItem']> = {
-  classes?: Resolver<Array<Maybe<ResolversTypes['CatalogClass']>>, ParentType, ContextType>;
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  gradeAverage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
-  number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
+export type CacheControlDirectiveResolver<Result, Parent, ContextType = any, Args = CacheControlDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type ClassResolvers<ContextType = any, ParentType extends ResolversParentTypes['Class'] = ResolversParentTypes['Class']> = {
   course?: Resolver<ResolversTypes['Course'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  finalExam?: Resolver<ResolversTypes['ClassFinalExam'], ParentType, ContextType>;
+  gradingBasis?: Resolver<ResolversTypes['ClassGradingBasis'], ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   primarySection?: Resolver<ResolversTypes['Section'], ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
-  sections?: Resolver<Array<Maybe<ResolversTypes['Section']>>, ParentType, ContextType>;
+  sections?: Resolver<Array<ResolversTypes['Section']>, ParentType, ContextType>;
   semester?: Resolver<ResolversTypes['Semester'], ParentType, ContextType>;
-  session?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  session?: Resolver<ResolversTypes['Session'], ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   unitsMax?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   unitsMin?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  waitlistCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  waitlistMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   year?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CourseResolvers<ContextType = any, ParentType extends ResolversParentTypes['Course'] = ResolversParentTypes['Course']> = {
-  classes?: Resolver<Array<Maybe<ResolversTypes['Class']>>, ParentType, ContextType, Partial<CourseClassesArgs>>;
-  crossListing?: Resolver<Maybe<Array<Maybe<ResolversTypes['Course']>>>, ParentType, ContextType>;
+  academicCareer?: Resolver<ResolversTypes['AcademicCareer'], ParentType, ContextType>;
+  classes?: Resolver<Array<ResolversTypes['Class']>, ParentType, ContextType, Partial<CourseClassesArgs>>;
+  crossListing?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  finalExam?: Resolver<Maybe<ResolversTypes['CourseFinalExam']>, ParentType, ContextType>;
   fromDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   gradeAverage?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
-  gradingBasis?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  gradingBasis?: Resolver<ResolversTypes['CourseGradingBasis'], ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
-  level?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  prereqs?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
-  sections?: Resolver<Array<Maybe<ResolversTypes['Section']>>, ParentType, ContextType, Partial<CourseSectionsArgs>>;
+  requiredCourses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType>;
+  requirements?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  sections?: Resolver<Array<ResolversTypes['Section']>, ParentType, ContextType, Partial<CourseSectionsArgs>>;
   subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  subjectName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   toDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -606,6 +729,15 @@ export type EnrollmentDayResolvers<ContextType = any, ParentType extends Resolve
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type ExamResolvers<ContextType = any, ParentType extends ResolversParentTypes['Exam'] = ResolversParentTypes['Exam']> = {
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  endTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  final?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  location?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  startTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type GradeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Grade'] = ResolversParentTypes['Grade']> = {
   average?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   distribution?: Resolver<Maybe<Array<Maybe<ResolversTypes['GradeDistributionItem']>>>, ParentType, ContextType>;
@@ -623,8 +755,8 @@ export interface IsoDateScalarConfig extends GraphQLScalarTypeConfig<ResolversTy
 }
 
 export type InstructorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Instructor'] = ResolversParentTypes['Instructor']> = {
-  familyName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  givenName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  familyName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  givenName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -636,21 +768,31 @@ export interface JsonObjectScalarConfig extends GraphQLScalarTypeConfig<Resolver
   name: 'JSONObject';
 }
 
+export type MeetingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Meeting'] = ResolversParentTypes['Meeting']> = {
+  days?: Resolver<Maybe<Array<ResolversTypes['Boolean']>>, ParentType, ContextType>;
+  endDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  endTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  instructors?: Resolver<Array<ResolversTypes['Instructor']>, ParentType, ContextType>;
+  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  startDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  startTime?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createNewSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationCreateNewScheduleArgs, 'main_schedule'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   editExistingSchedule?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationEditExistingScheduleArgs, 'id' | 'main_schedule'>>;
   removeScheduleByID?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveScheduleByIdArgs, 'id'>>;
-  setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'class_IDs' | 'id'>>;
-  setSelectedSections?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedSectionsArgs, 'id' | 'section_IDs'>>;
+  setSelectedClasses?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<MutationSetSelectedClassesArgs, 'courses' | 'id'>>;
   updateUserInfo?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserInfoArgs, 'newUserInfo'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  catalog?: Resolver<Maybe<Array<Maybe<ResolversTypes['CatalogItem']>>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
+  catalog?: Resolver<Maybe<Array<ResolversTypes['Course']>>, ParentType, ContextType, RequireFields<QueryCatalogArgs, 'term'>>;
   class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassArgs, 'classNumber' | 'courseNumber' | 'subject' | 'term'>>;
   course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCourseArgs, 'courseNumber' | 'subject'>>;
-  courseList?: Resolver<Maybe<Array<Maybe<ResolversTypes['CourseListItem']>>>, ParentType, ContextType>;
+  courseList?: Resolver<Maybe<Array<ResolversTypes['Course']>>, ParentType, ContextType>;
   grade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradeArgs, 'courseNum' | 'subject'>>;
   ping?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   scheduleByID?: Resolver<Maybe<ResolversTypes['Schedule']>, ParentType, ContextType, RequireFields<QueryScheduleByIdArgs, 'id'>>;
@@ -659,17 +801,22 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
+export type ReservationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Reservation'] = ResolversParentTypes['Reservation']> = {
+  enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  group?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ScheduleResolvers<ContextType = any, ParentType extends ResolversParentTypes['Schedule'] = ResolversParentTypes['Schedule']> = {
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-  class_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
+  courses?: Resolver<Maybe<Array<ResolversTypes['SelectedCourse']>>, ParentType, ContextType>;
   created?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   created_by?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   custom_events?: Resolver<Maybe<Array<ResolversTypes['CustomEvent']>>, ParentType, ContextType>;
   is_public?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  primary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   revised?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   term?: Resolver<ResolversTypes['TermOutput'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -677,25 +824,31 @@ export type ScheduleResolvers<ContextType = any, ParentType extends ResolversPar
 export type SectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Section'] = ResolversParentTypes['Section']> = {
   ccn?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   class?: Resolver<ResolversTypes['Class'], ParentType, ContextType>;
+  component?: Resolver<ResolversTypes['Component'], ParentType, ContextType>;
   course?: Resolver<ResolversTypes['Course'], ParentType, ContextType>;
-  dateEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  dateStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  days?: Resolver<Maybe<Array<ResolversTypes['Boolean']>>, ParentType, ContextType>;
+  endDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   enrollCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   enrollMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  enrollmentHistory?: Resolver<Maybe<Array<Maybe<ResolversTypes['EnrollmentDay']>>>, ParentType, ContextType>;
-  instructors?: Resolver<Maybe<Array<Maybe<ResolversTypes['Instructor']>>>, ParentType, ContextType>;
-  kind?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  enrollmentHistory?: Resolver<Maybe<Array<ResolversTypes['EnrollmentDay']>>, ParentType, ContextType>;
+  exams?: Resolver<Array<ResolversTypes['Exam']>, ParentType, ContextType>;
   lastUpdated?: Resolver<ResolversTypes['ISODate'], ParentType, ContextType>;
-  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  meetings?: Resolver<Array<ResolversTypes['Meeting']>, ParentType, ContextType>;
   number?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  online?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  open?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   primary?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   raw?: Resolver<ResolversTypes['JSONObject'], ParentType, ContextType>;
-  timeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  timeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  reservations?: Resolver<Maybe<Array<ResolversTypes['Reservation']>>, ParentType, ContextType>;
+  startDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   waitlistCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   waitlistMax?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SelectedCourseResolvers<ContextType = any, ParentType extends ResolversParentTypes['SelectedCourse'] = ResolversParentTypes['SelectedCourse']> = {
+  class_ID?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  primary_section_ID?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  secondary_section_IDs?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -723,29 +876,32 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
-  CatalogClass?: CatalogClassResolvers<ContextType>;
-  CatalogItem?: CatalogItemResolvers<ContextType>;
   Class?: ClassResolvers<ContextType>;
   Course?: CourseResolvers<ContextType>;
   CourseListItem?: CourseListItemResolvers<ContextType>;
   CustomEvent?: CustomEventResolvers<ContextType>;
   EnrollmentDay?: EnrollmentDayResolvers<ContextType>;
+  Exam?: ExamResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
   GradeDistributionItem?: GradeDistributionItemResolvers<ContextType>;
   ISODate?: GraphQLScalarType;
   Instructor?: InstructorResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
+  Meeting?: MeetingResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Reservation?: ReservationResolvers<ContextType>;
   Schedule?: ScheduleResolvers<ContextType>;
   Section?: SectionResolvers<ContextType>;
+  SelectedCourse?: SelectedCourseResolvers<ContextType>;
   TermOutput?: TermOutputResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 
 export type DirectiveResolvers<ContextType = any> = {
   auth?: AuthDirectiveResolver<any, any, ContextType>;
+  cacheControl?: CacheControlDirectiveResolver<any, any, ContextType>;
 };
 
 export type IsoDate = Scalars["ISODate"];

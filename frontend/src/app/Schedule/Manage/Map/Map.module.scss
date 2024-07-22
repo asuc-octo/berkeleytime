@@ -1,0 +1,157 @@
+.root {
+  background-color: var(--background-color);
+  height: 100%;
+  position: relative;
+
+  .container {
+    height: 100%;
+    width: 100%;
+  }
+
+  .toolBar {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 1;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    border-radius: 8px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .sideBar {
+    width: 256px;
+    background-color: var(--foreground-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    flex-shrink: 0;
+    padding: 16px;
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    max-height: calc(100% - 48px);
+    overflow: auto;
+
+    .leg {
+      height: 32px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background-color: var(--slate-100);
+      width: fit-content;
+      border-radius: 16px;
+      padding: 0 12px;
+      color: var(--paragraph-color);
+      margin: 24px 0;
+      position: relative;
+
+      &::after {
+        left: 14px;
+        bottom: -24px;
+        width: 4px;
+        border-right: 4px dashed var(--slate-100);
+        height: 24px;
+        content: "";
+        position: absolute;
+      }
+
+      .value {
+        font-size: 14px;
+        line-height: 1;
+
+        .distance {
+          color: var(--red-500);
+        }
+      }
+    }
+
+    .waypoint {
+      display: flex;
+      gap: 12px;
+      color: var(--paragraph-color);
+      position: relative;
+
+      &:not(:last-child)::after {
+        left: 14px;
+        top: 32px;
+        width: 4px;
+        border-right: 4px dashed var(--slate-100);
+        height: calc(100% - 8px);
+        content: "";
+        position: absolute;
+      }
+
+      .number {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: var(--blue-500);
+        display: flex;
+        font-weight: 700;
+        font-size: 14px;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+
+      .text {
+        flex-grow: 1;
+        font-size: 14px;
+        
+        .label {
+          font-size: 12px;
+        }
+
+        .heading {
+          font-weight: 700;
+          color: var(--heading-color);
+          margin-top: 4px;
+        }
+
+        .description {
+          margin-top: 4px;
+        }
+      }
+    }
+  }
+}
+
+:global(.marker) {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--blue-500);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+
+  &:global(.marker-red) {
+    background-color: var(--red-500);
+    width: 8px;
+    height: 8px;
+  }
+}
+
+:global(.tooltip) {
+  position: absolute;
+  border-radius: 4px;
+  padding: 12px;
+  background-color: var(--background-color);
+  width: 256px;
+  animation: fadeIn 100ms ease-in;
+  color: white;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,128 @@
+.root {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+  background: linear-gradient(var(--landing-gradient-angle, to top right), var(--landing-gradient-start), var(--landing-gradient-stop));
+
+	.wave {
+		position: absolute;
+		width: 100%;
+		bottom: 0px;
+		left: 0;
+		z-index: 2;
+		filter: drop-shadow(0 -8px 0 rgba(white, 0.1));
+	}
+  
+  @media (width > 992px) {
+	  height: 100dvh;
+    max-height: 992px;
+  }
+
+	.container {
+		max-width: 1280px;
+		width: 100%;
+    flex-grow: 1;
+		margin: 0 auto;
+		padding: 0px 24px;
+		position: relative;
+		z-index: 1;
+
+		.text {
+      margin: 96px 0 192px;
+      position: relative;
+      z-index: 2;
+
+      @media (width <= 992px) {
+        margin-top: 64px;
+      }
+
+      @media (width > 992px) {
+			  max-width: 592px;
+      }
+
+			.heading {
+				font-size: 48px;
+        margin-bottom: 16px;
+				color: white;
+				font-weight: 660;
+        font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
+				line-height: 1.25;
+				position: relative;
+
+        @media (width <= 768px) {
+          font-size: 32px;
+          line-height: 1.5;
+        }
+			}
+
+			.description {
+				font-size: 24px;
+				color: rgb(255 255 255 / 65%);
+        line-height: 1.5;
+        font-weight: 500;
+        margin-bottom: 64px;
+			}
+
+      .form {
+        position: relative;
+        max-width: 448px;
+        background-color: white;
+        padding: 0 16px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 4px 8px rgba(0 0 0 / 10%);
+
+        .input {
+          font-size: 16px;
+          color: var(--slate-900);
+          height: 56px;
+
+          &::placeholder {
+            color: var(--slate-500);
+          }
+        }
+      }
+		}
+
+		.clock {
+			position: absolute;
+			right: 272px;
+			bottom: 128px;
+			text-align: right;
+			font-size: 16px;
+			line-height: 1.5;
+      color: rgb(255 255 255 / 65%);
+      z-index: 1;
+
+      @media (width <= 992px) {
+        display: none;
+      }
+
+			p.heading {
+				font-weight: 500;
+				color: white;
+				margin-top: 16px;
+			}
+
+			p.description {
+				margin-top: 4px;
+			}
+		}
+
+		img.campanile {
+			position: absolute;
+      z-index: 1;
+			right: 24px;
+      top: 0;
+
+      @media (width <= 992px) {
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0.25;
+      }
+		}
+	}
+}
