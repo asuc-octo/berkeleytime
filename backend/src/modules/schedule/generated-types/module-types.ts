@@ -13,7 +13,7 @@ export namespace ScheduleModule {
   interface DefinedInputFields {
     CustomEventInput: 'start_time' | 'end_time' | 'title' | 'location' | 'description' | 'days_of_week';
     SelectedCourseInput: 'class_ID' | 'primary_section_ID' | 'secondary_section_IDs';
-    ScheduleInput: 'name' | 'created_by' | 'courses' | 'is_public' | 'term' | 'custom_events';
+    ScheduleInput: 'name' | 'courses' | 'is_public' | 'term' | 'custom_events';
   };
   
   export type TermOutput = Pick<Types.TermOutput, DefinedFields['TermOutput']>;

@@ -1,5 +1,0 @@
-query GetUser {
-	user {
-		...UserProfile
-	}
-}
