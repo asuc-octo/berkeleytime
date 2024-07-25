@@ -1,0 +1,18 @@
+{
+  "name": "datapuller",
+  "private": true,
+  "scripts": {
+    "build": "tsc --noEmit",
+    "course": "tsx src/course.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "eslint": "^8.56.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@repo/common": "*",
+    "dotenv": "^16.4.5",
+    "tslog": "^4.9.3"
+  }
+}

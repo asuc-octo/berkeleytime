@@ -1,0 +1,13 @@
+{
+  "name": "@repo/eslint-config",
+  "private": true,
+  "files": [
+    "index.cjs"
+  ],
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-only-warn": "^1.1.0"
+  }
+}
