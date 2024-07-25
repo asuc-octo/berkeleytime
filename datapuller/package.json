@@ -1,0 +1,28 @@
+{
+  "name": "datapuller",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf ./build && tsc",
+    "course": "node --enable-source-maps ./build/course.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "@typescript-eslint/eslint-plugin": "^7.17.0",
+    "@typescript-eslint/parser": "^7.17.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "rimraf": "^4.0.1"
+  },
+  "dependencies": {
+    "berkeleytime-mongo-models": "maxmwang/berkeleytime-mongo-models#main",
+    "dotenv": "^16.4.5",
+    "tslog": "^4.9.3",
+    "typescript": "^5.5.4"
+  }
+}
