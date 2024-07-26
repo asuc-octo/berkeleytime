@@ -3,9 +3,9 @@ name: Lint
 on:
   workflow_dispatch:
   push:
-    branches: ["main"]
+    branches: ["main", "gql"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "gql"]
 
 jobs:
   build:
