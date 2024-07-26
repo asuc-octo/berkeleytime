@@ -6,12 +6,24 @@
   "ui": "stream",
   "tasks": {
     "build": {
+      "dependsOn": [
+        "generate"
+      ],
       "outputs": [
         "dist/**"
       ]
     },
+    "generate": {
+      "outputs": [
+        "generated-types/**"
+      ]
+    },
     "lint": {},
-    "start": {},
+    "start": {
+      "dependsOn": [
+        "generate"
+      ]
+    },
     "dev": {
       "cache": false,
       "persistent": true

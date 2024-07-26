@@ -1,72 +1,37 @@
-import * as gm from "graphql-modules";
-
 import * as Types from "../../../generated-types/graphql";
-
+import * as gm from "graphql-modules";
 export namespace UserModule {
   interface DefinedFields {
-    User:
-      | "email"
-      | "username"
-      | "first_name"
-      | "last_name"
-      | "major"
-      | "last_login"
-      | "date_joined"
-      | "is_staff"
-      | "is_active"
-      | "email_class_update"
-      | "email_grade_update"
-      | "email_enrollment_opening"
-      | "email_berkeleytime_update";
-    Query: "user";
-    Mutation: "updateUserInfo" | "deleteUser";
-  }
-
+    User: 'email' | 'username' | 'first_name' | 'last_name' | 'major' | 'last_login' | 'date_joined' | 'is_staff' | 'is_active' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
+    Query: 'user';
+    Mutation: 'updateUserInfo' | 'deleteUser';
+  };
+  
   interface DefinedInputFields {
-    UserInput:
-      | "username"
-      | "first_name"
-      | "last_name"
-      | "major"
-      | "email_class_update"
-      | "email_grade_update"
-      | "email_enrollment_opening"
-      | "email_berkeleytime_update";
-  }
-
-  export type User = Pick<Types.User, DefinedFields["User"]>;
-  export type UserInput = Pick<
-    Types.UserInput,
-    DefinedInputFields["UserInput"]
-  >;
-  export type Query = Pick<Types.Query, DefinedFields["Query"]>;
-  export type Mutation = Pick<Types.Mutation, DefinedFields["Mutation"]>;
-
-  export type UserResolvers = Pick<
-    Types.UserResolvers,
-    DefinedFields["User"] | "__isTypeOf"
-  >;
-  export type QueryResolvers = Pick<
-    Types.QueryResolvers,
-    DefinedFields["Query"]
-  >;
-  export type MutationResolvers = Pick<
-    Types.MutationResolvers,
-    DefinedFields["Mutation"]
-  >;
-
+    UserInput: 'username' | 'first_name' | 'last_name' | 'major' | 'email_class_update' | 'email_grade_update' | 'email_enrollment_opening' | 'email_berkeleytime_update';
+  };
+  
+  export type User = Pick<Types.User, DefinedFields['User']>;
+  export type UserInput = Pick<Types.UserInput, DefinedInputFields['UserInput']>;
+  export type Query = Pick<Types.Query, DefinedFields['Query']>;
+  export type Mutation = Pick<Types.Mutation, DefinedFields['Mutation']>;
+  
+  export type UserResolvers = Pick<Types.UserResolvers, DefinedFields['User'] | '__isTypeOf'>;
+  export type QueryResolvers = Pick<Types.QueryResolvers, DefinedFields['Query']>;
+  export type MutationResolvers = Pick<Types.MutationResolvers, DefinedFields['Mutation']>;
+  
   export interface Resolvers {
     User?: UserResolvers;
     Query?: QueryResolvers;
     Mutation?: MutationResolvers;
-  }
-
+  };
+  
   export interface MiddlewareMap {
-    "*"?: {
-      "*"?: gm.Middleware[];
+    '*'?: {
+      '*'?: gm.Middleware[];
     };
     User?: {
-      "*"?: gm.Middleware[];
+      '*'?: gm.Middleware[];
       email?: gm.Middleware[];
       username?: gm.Middleware[];
       first_name?: gm.Middleware[];
@@ -82,13 +47,13 @@ export namespace UserModule {
       email_berkeleytime_update?: gm.Middleware[];
     };
     Query?: {
-      "*"?: gm.Middleware[];
+      '*'?: gm.Middleware[];
       user?: gm.Middleware[];
     };
     Mutation?: {
-      "*"?: gm.Middleware[];
+      '*'?: gm.Middleware[];
       updateUserInfo?: gm.Middleware[];
       deleteUser?: gm.Middleware[];
     };
-  }
+  };
 }
