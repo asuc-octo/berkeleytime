@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Lint, generate types, and build
+    name: Lint and Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -35,10 +35,7 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint
-
-      - name: Generate types
-        run: npm run generate
+        run: npx turbo run lint
 
       - name: Build
-        run: npm run build
+        run: npx turbo run build
