@@ -1,0 +1,32 @@
+name: 
+  Build Frontend
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: echo
+        run: pwd
+
+      - name: node
+        run: node -v
+
+      - name: Build Docker Image
+        run: docker build -t berkeleytime-frontend ./frontend/
+
+      - name: Save Docker Image as Tarball
+        run: docker save berkeleytime-frontend:latest -o berkeleytime-frontend.tar
+
+      - name: Upload Docker Image as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend
+          path: berkeleytime-frontend.tar

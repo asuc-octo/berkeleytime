@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "bt-app.cronJobName" . }}
+  labels:
+    {{- include "bt-app.backendLabels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.updater.schedule }}
+  suspend: {{ .Values.updater.suspend }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: backend-cron-job
+              image: {{ printf "%s/%s:%s" .Values.backend.image.registry .Values.backend.image.repository .Values.backend.image.tag }}
+              command: {{ .Values.updater.command | toJson }}
+              ports:
+                - containerPort: {{ .Values.backend.port }}
+              env:
+                - name: PORT
+                  value: {{ .Values.backend.port | quote }}
+                - name: URL
+                  value: "http://localhost:5001"
+                - name: BACKEND_PATH
+                  value: {{ .Values.backend.path }}
+                - name: GRAPHQL_PATH
+                  value: "/graphql"
+                - name: NODE_ENV
+                  value: {{ .Values.nodeEnv }}
+                - name: MONGODB_URI
+                  value: {{ .Values.mongoUri }}
+                - name: REDIS_URI
+                  value: {{ .Values.redisUri }}
+                - name: SIS_CLASS_APP_ID
+                  value: "_"
+                - name: SIS_CLASS_APP_KEY
+                  value: "_"
+                - name: SIS_COURSE_APP_ID
+                  value: "_"
+                - name: SIS_COURSE_APP_KEY
+                  value: "_"
+                - name: GOOGLE_CLIENT_ID
+                  value: "_"
+                - name: GOOGLE_CLIENT_SECRET
+                  value: "_"
+                - name: SESSION_SECRET
+                  value: "_"
+          restartPolicy: OnFailure

@@ -8,6 +8,7 @@ ENTRYPOINT npm start
 
 FROM dev AS prod
 RUN npm install -g serve
+RUN node -v
 RUN npm run build
 RUN rm -rf node_modules
 ENTRYPOINT npm run prod

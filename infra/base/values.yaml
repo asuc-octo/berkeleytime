@@ -1,0 +1,6 @@
+issuerName: letsencrypt-prod
+acme:
+  email: octo.berkeleytime@asuc.org
+  server: https://acme-v02.api.letsencrypt.org/directory
+  cfApiTokenSecretName: cloudflare-api-token-secret
+ipAddressRange: 169.229.226.51-169.229.226.51
