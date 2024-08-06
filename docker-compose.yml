@@ -5,8 +5,8 @@ networks:
 services:
   backend:
     build:
-      context: backend
-    entrypoint: npm run dev
+      context: .
+      target: backend-dev
     depends_on:
       - redis
       - mongodb
@@ -14,21 +14,18 @@ services:
       - bt
     restart: always
     volumes:
-      - ./.env:/backend/.env
-      - ./backend/src:/backend/src
+      - ./.env:/backend/apps/backend/.env
+      - ./apps/backend/src:/backend/apps/backend/src
   frontend:
     build:
-      context: frontend
-      target: dev
-    command:
-      - npm
-      - start
+      context: .
+      target: frontend-dev
     networks:
       - bt
     restart: always
     volumes:
-      - ./frontend/src:/frontend/src
-      - ./frontend/public:/frontend/public
+      - ./apps/frontend/src:/frontend/apps/frontend/src
+      - ./apps/frontend/public:/frontend/apps/frontend/public
   mongodb:
     image: mongo:5
     networks:
