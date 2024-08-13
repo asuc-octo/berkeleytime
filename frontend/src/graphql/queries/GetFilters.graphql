@@ -1,9 +1,0 @@
-query GetFilters {
-	allPlaylists {
-		edges {
-			node {
-				...Filter
-			}
-		}
-	}
-}

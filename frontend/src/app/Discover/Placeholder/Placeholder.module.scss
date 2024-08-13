@@ -1,0 +1,10 @@
+.root {
+  color: var(--slate-500);
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 16px;
+  line-height: 1;
+}

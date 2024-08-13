@@ -1,5 +1,0 @@
-query GetCourseForId($id: ID!, $year: String, $semester: String) {
-	course(id: $id) {
-		...Course
-	}
-}
