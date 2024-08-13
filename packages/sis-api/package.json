@@ -1,0 +1,18 @@
+{
+  "name": "@repo/sis-api",
+  "type": "module",
+  "scripts": {
+    "build": "tsx src/index.ts"
+  },
+  "exports": {
+    "./courses": "./dist/courses.ts",
+    "./classes": "./dist/classes.ts",
+    "./terms": "./dist/terms.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4",
+    "swagger-typescript-api": "^13.0.21"
+  }
+}

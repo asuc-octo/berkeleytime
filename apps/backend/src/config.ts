@@ -34,8 +34,6 @@ export interface Config {
   redisUri: string;
 }
 
-console.log(env("MONGODB_URI"));
-
 // All your secrets, keys go here
 export const config: Config = {
   port: +env("PORT"),

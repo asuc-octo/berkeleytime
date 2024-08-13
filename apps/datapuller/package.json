@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@repo/common": "*",
+    "@repo/sis-api": "*",
     "dotenv": "^16.4.5",
     "tslog": "^4.9.3"
   }
