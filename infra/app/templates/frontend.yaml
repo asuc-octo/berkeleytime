@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bt-app.frontendName" . }}
+  labels:
+    {{- include "bt-app.frontendLabels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.frontend.replicas }}
+  selector:
+    matchLabels:
+      {{- include "bt-app.frontendLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "bt-app.frontendLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: frontend
+          image: {{ printf "%s/%s:%s" .Values.frontend.image.registry .Values.frontend.image.repository .Values.frontend.image.tag }}
+          command: {{ .Values.frontend.command | toJson }}
+          ports:
+            - containerPort: {{ .Values.frontend.port }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bt-app.frontendName" . }}-svc
+  labels:
+    {{- include "bt-app.frontendLabels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "bt-app.frontendLabels" . | nindent 4 }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.port }}
+      targetPort: {{ .Values.frontend.port }}
