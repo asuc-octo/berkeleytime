@@ -11,7 +11,7 @@ const specs = await fs.promises.readdir(path.resolve(process.cwd(), "./specs"));
 for (const spec of specs) {
   const name = spec.split(".")[0];
 
-  await generateApi({
+  generateApi({
     name: `${name}.ts`,
     output: path.resolve(process.cwd(), "./dist"),
     input: path.resolve(process.cwd(), "./specs", spec),
