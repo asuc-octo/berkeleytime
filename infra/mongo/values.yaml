@@ -14,8 +14,3 @@ mongodb:
     # path in pod. should be same for all mongo pods.
     mountPath: /data/db
     size: 10Gi
-
-  # expose mongodb on node port for development
-  service:
-    nodePorts:
-      mongodb: 37017
