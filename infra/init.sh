@@ -22,29 +22,56 @@ helm install bt-ingress-nginx ingress-nginx/ingress-nginx --version 4.9.1 --name
 helm install bt-base ./base --namespace=bt
 
 # ==========
+# DEPENDENCIES
+# ==========
+
+helm dependencies build ./mongo
+helm dependencies build ./redis
+
+# ==========
 # PRODUCTION
 # ==========
 
 helm install bt-prod-mongo ./mongo --namespace=bt
 
-helm dependencies build ./redis
 helm install bt-prod-redis ./redis --namespace=bt
 
 helm install bt-prod-app ./app --namespace=bt \
     --set host=stanfurdtime.com
 
 # ==========
+# STAGING
+# ==========
+
+
+helm install bt-stage-mongo ./mongo --namespace=bt \
+    --set mongodb.commonLabels.env=stage \
+    --set hostPath=/data/stage/db \
+    --set mongodb.persistence.existingClaim=bt-stage-mongo-pvc
+
+helm install bt-stage-redis ./redis --namespace=bt \
+    --set redis.commonLabels.env=stage
+
+helm install bt-stage-app ./app --namespace=bt \
+    --set commonLabels.env=stage \
+    --set host=staging.stanfurdtime.com \
+    --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+    --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379 \
+
+# ==========
 # DEVELOPMENT
 # ==========
 
 helm install bt-dev-mongo ./mongo --namespace=bt \
+    --set mongodb.commonLabels.env=dev \
     --set hostPath=/data/dev/db \
     --set mongodb.persistence.existingClaim=bt-dev-mongo-pvc
 
-helm dependencies build ./redis
-helm install bt-dev-redis ./redis --namespace=bt
+helm install bt-dev-redis ./redis --namespace=bt \
+    --set redis.commonLabels.env=dev
 
 helm install bt-dev-app ./app --namespace=bt \
+    --set commonLabels.env=dev \
     --set host=dev1.stanfurdtime.com \
     --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \

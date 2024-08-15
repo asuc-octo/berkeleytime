@@ -1,3 +1,6 @@
+commonLabels:
+  env: prod
+
 host: berkeleytime.com
 port: 80
 
@@ -17,7 +20,7 @@ frontend:
   image:
     registry: docker.io
     repository: octoberkeleytime/bt-frontend
-    tag: latest
+    tag: prod
 
 backend:
   replicas: 2
@@ -29,7 +32,7 @@ backend:
   image:
     registry: docker.io
     repository: octoberkeleytime/bt-backend
-    tag: latest
+    tag: prod
 
 updater:
   schedule: "0 0 * * *"

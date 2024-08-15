@@ -1,7 +1,12 @@
 redis:
+  commonLabels:
+    env: prod
+
   architecture: standalone
+
   auth:
     enabled: false
+
   master:
     persistence:
       enabled: false

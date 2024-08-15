@@ -12,6 +12,9 @@ Labels applied to all resources.
 helm.sh/chart: {{ include "bt-app.chart" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- range $key, $val := .Values.commonLabels }}
+{{ $key }}: {{ $val | quote }}
+{{- end -}}
 {{- end -}}
 
 {{- define "bt-app.backendLabels" -}}
