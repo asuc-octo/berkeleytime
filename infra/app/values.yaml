@@ -1,7 +1,7 @@
 host: berkeleytime.com
 port: 80
 
-mongoUri: mongodb://bt-prod-mongo-svc.bt.svc.cluster.local:27017
+mongoUri: mongodb://bt-prod-mongo-svc.bt.svc.cluster.local:27017/bt
 redisUri: redis://bt-prod-redis-master.bt.svc.cluster.local:6379
 nodeEnv: production
 
