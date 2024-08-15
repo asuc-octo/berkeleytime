@@ -14,6 +14,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Set vars
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -22,13 +26,13 @@ jobs:
 
       - name: Build Images with Tags
         run: |
-          docker build --target backend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:$SHORT_SHA" .
-          docker build --target frontend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:$SHORT_SHA" .
+          docker build --target backend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" .
+          docker build --target frontend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" .
 
       - name: Push Images to Docker Hub
         run: |
-          docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:$SHORT_SHA"
-          docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:$SHORT_SHA"
+          docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}"
+          docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}"
 
       - name: SSH and Helm Install
         uses: appleboy/ssh-action@v1.0.3
@@ -38,8 +42,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ./infra
-            helm install bt-dev-app-$SHORT_SHA ./app --namespace=bt \
-              --set host=$SHORT_SHA.stanfurdtime.com \
+            helm install bt-dev-app-${{ env.sha_short }} ./app --namespace=bt \
+              --set host=${{ env.sha_short }}.stanfurdtime.com \
               --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
               --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
               --set nodeEnv=development
