@@ -3,9 +3,6 @@ name: Deploy to Dev
 on:
   workflow_dispatch:
 
-env:
-  SHORT_SHA: $(git rev-parse --short HEAD)
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -42,6 +39,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ./infra
+            helm uninstall bt-dev-app-${{ env.sha_short }} || true
             helm install bt-dev-app-${{ env.sha_short }} ./app --namespace=bt \
               --set host=${{ env.sha_short }}.stanfurdtime.com \
               --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
