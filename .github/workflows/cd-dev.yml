@@ -1,0 +1,41 @@
+name: Deploy to Dev
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Images with Tags
+        run: |
+          docker build --target backend-dev --tag ${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ github.sha }} .
+          docker build --target frontend-dev --tag ${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ github.sha }} .
+
+      - name: Push Images to Docker Hub
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ github.sha }}
+
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            helm install bt-dev-app-${{ github.sha }} ./app --namespace=bt \
+              --set host=${{ github.sha }}.stanfurdtime.com \
+              --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+              --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
+              --set nodeEnv=development
