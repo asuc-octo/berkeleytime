@@ -26,7 +26,7 @@ helm install bt-base ./base --namespace=bt
 # ==========
 
 helm install bt-prod-mongo ./mongo --namespace=bt \
-    --set hostPath=/dev/prod/db \
+    --set hostPath=/data/prod/db \
     --set mongodb.persistence.existingClaim=bt-prod-mongo-pvc
 
 helm dependencies build ./redis
@@ -36,4 +36,21 @@ helm install bt-prod-app ./app --namespace=bt \
     --set host=stanfurdtime.com \
     --set mongoUri=mongodb://bt-prod-mongo-mongodb.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-prod-redis-master.bt.svc.cluster.local:6379 \
+    --set nodeEnv=production
+
+# ==========
+# DEVELOPMENT
+# ==========
+
+helm install bt-dev-mongo ./mongo --namespace=bt \
+    --set hostPath=/data/dev/db \
+    --set mongodb.persistence.existingClaim=bt-dev-mongo-pvc
+
+helm dependencies build ./redis
+helm install bt-dev-redis ./redis --namespace=bt
+
+helm install bt-dev-app ./app --namespace=bt \
+    --set host=dev1.stanfurdtime.com \
+    --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+    --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
     --set nodeEnv=development
