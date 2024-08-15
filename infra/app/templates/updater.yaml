@@ -1,9 +1,11 @@
+{{ if not (eq .Values.env "dev") }}
+# do not run CronJob in dev environment
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "bt-app.cronJobName" . }}
+  name: {{ include "bt-app.updaterName" . }}
   labels:
-    {{- include "bt-app.backendLabels" . | nindent 4 }}
+    {{- include "bt-app.updaterLabels" . | nindent 4 }}
 spec:
   schedule: {{ .Values.updater.schedule }}
   suspend: {{ .Values.updater.suspend }}
@@ -47,3 +49,4 @@ spec:
                 - name: SESSION_SECRET
                   value: "_"
           restartPolicy: OnFailure
+{{ end }}

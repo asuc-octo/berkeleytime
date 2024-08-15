@@ -1,5 +1,5 @@
-commonLabels:
-  env: prod
+env: prod
+ttl: 86400
 
 host: berkeleytime.com
 port: 80

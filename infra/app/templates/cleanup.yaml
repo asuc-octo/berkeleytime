@@ -1,0 +1,17 @@
+{{ if eq .Values.env "dev" }}
+# only run cleanup job in dev environment
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "bt-app.cleanupName" . }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  template:
+    spec:
+      containers:
+        - name: cleanup
+          image: busybox
+          command: ['sh', '-c', 'sleep {{ .Values.ttl }}'; helm uninstall {{ .Release.Name }}']
+      restartPolicy: Never
+{{ end }}

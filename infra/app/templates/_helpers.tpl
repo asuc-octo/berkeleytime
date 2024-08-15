@@ -12,9 +12,7 @@ Labels applied to all resources.
 helm.sh/chart: {{ include "bt-app.chart" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- range $key, $val := .Values.commonLabels }}
-{{ $key }}: {{ $val | quote }}
-{{- end -}}
+env: {{ .Values.env }}
 {{- end -}}
 
 {{- define "bt-app.backendLabels" -}}
@@ -27,6 +25,11 @@ app.kubernetes.io/name: frontend
 {{ include "bt-app.labels" . }}
 {{- end -}}
 
+{{- define "bt-app.updaterLabels" -}}
+app.kubernetes.io/name: updater
+{{ include "bt-app.labels" . }}
+{{- end -}}
+
 {{- define "bt-app.backendName" -}}
 {{ .Release.Name }}-backend
 {{- end -}}
@@ -35,6 +38,10 @@ app.kubernetes.io/name: frontend
 {{ .Release.Name }}-frontend
 {{- end -}}
 
-{{- define "bt-app.cronJobName" -}}
-{{ .Release.Name }}-cronjob
+{{- define "bt-app.updaterName" -}}
+{{ .Release.Name }}-updater
+{{- end -}}
+
+{{- define "bt-app.cleanupName" -}}
+{{ .Release.Name }}-cleanup
 {{- end -}}

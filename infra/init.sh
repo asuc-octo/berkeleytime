@@ -53,7 +53,7 @@ helm install bt-stage-redis ./redis --namespace=bt \
     --set redis.commonLabels.env=stage
 
 helm install bt-stage-app ./app --namespace=bt \
-    --set commonLabels.env=stage \
+    --set env=stage \
     --set host=staging.stanfurdtime.com \
     --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379 \
@@ -71,7 +71,9 @@ helm install bt-dev-redis ./redis --namespace=bt \
     --set redis.commonLabels.env=dev
 
 helm install bt-dev-app ./app --namespace=bt \
-    --set commonLabels.env=dev \
+    --set env=dev \
+    --set frontend.image.tag=dev1 \
+    --set backend.image.tag=dev1 \
     --set host=dev1.stanfurdtime.com \
     --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \

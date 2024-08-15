@@ -41,8 +41,11 @@ jobs:
             cd ./infra
             helm uninstall bt-dev-app-${{ env.sha_short }} || true
             helm install bt-dev-app-${{ env.sha_short }} ./app --namespace=bt \
+              --set env=dev \
+              --set ttl=86400 \
+              --set frontend.image.tag=${{ env.sha_short }} \
+              --set backend.image.tag=${{ env.sha_short }} \
               --set host=${{ env.sha_short }}.stanfurdtime.com \
-              --set commonLabels.env=dev \
               --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
               --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
               --set nodeEnv=development
