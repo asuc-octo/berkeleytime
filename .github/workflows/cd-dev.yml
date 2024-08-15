@@ -27,13 +27,14 @@ jobs:
           docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ github.sha }}"
           docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ github.sha }}"
 
-      - name: executing remote ssh commands using ssh key
+      - name: SSH and Helm Install
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
           username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
+            cd ./infra
             helm install bt-dev-app-${{ github.sha }} ./app --namespace=bt \
               --set host=${{ github.sha }}.stanfurdtime.com \
               --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
