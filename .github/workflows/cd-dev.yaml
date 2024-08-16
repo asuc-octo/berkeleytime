@@ -98,7 +98,7 @@ jobs:
 
       - name: Push Image to Docker Hub
         run: |
-          docker load "bt-backend-${{ env.sha_short }}.tar" "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}"
+          docker import "bt-backend-${{ env.sha_short }}.tar" "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}"
           docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}"
 
   push-frontend:
@@ -128,7 +128,7 @@ jobs:
 
       - name: Push Image to Docker Hub
         run: |
-          docker load "bt-frontend-${{ env.sha_short }}.tar" "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}"
+          docker import "bt-frontend-${{ env.sha_short }}.tar" "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}"
           docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}"
 
   deploy:
