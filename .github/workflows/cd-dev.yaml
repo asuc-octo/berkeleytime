@@ -85,7 +85,7 @@ jobs:
 
   deploy:
     name: Deploy with SSH
-    needs: [push-backend, push-frontend]
+    needs: [build-push-backend, build-push-frontend]
     runs-on: ubuntu-latest
 
     steps:
