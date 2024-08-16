@@ -2,6 +2,12 @@ name: Deploy to Dev
 
 on:
   workflow_dispatch:
+    inputs:
+      ttl:
+        description: "Deployment time to live in seconds"
+        required: true
+        type: number
+        default: 86400
 
 jobs:
   deploy:
@@ -42,7 +48,7 @@ jobs:
             helm uninstall bt-dev-app-${{ env.sha_short }} || true
             helm install bt-dev-app-${{ env.sha_short }} ./app --namespace=bt \
               --set env=dev \
-              --set ttl=86400 \
+              --set ttl=${{ inputs.ttl }} \
               --set frontend.image.tag=${{ env.sha_short }} \
               --set backend.image.tag=${{ env.sha_short }} \
               --set host=${{ env.sha_short }}.stanfurdtime.com \
