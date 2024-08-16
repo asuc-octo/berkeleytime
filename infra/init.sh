@@ -9,7 +9,6 @@ helm repo add cert-manager https://charts.jetstack.io
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo add metallb https://metallb.github.io/metallb
 
-
 # ===================
 # BASE INFRASTRUCTURE
 # ===================
@@ -43,7 +42,6 @@ helm install bt-prod-app ./app --namespace=bt \
 # STAGING
 # ==========
 
-
 helm install bt-stage-mongo ./mongo --namespace=bt \
     --set mongodb.commonLabels.env=stage \
     --set hostPath=/data/stage/db \
@@ -54,6 +52,8 @@ helm install bt-stage-redis ./redis --namespace=bt \
 
 helm install bt-stage-app ./app --namespace=bt \
     --set env=stage \
+    --set frontend.image.tag=latest \
+    --set backend.image.tag=latest \
     --set host=staging.stanfurdtime.com \
     --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
     --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379 \
