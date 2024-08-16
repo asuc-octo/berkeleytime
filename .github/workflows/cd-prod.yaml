@@ -14,6 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
 
+    steps:
+      - name: Pass
+        run: echo "Passed check"
+
   build-backend:
     name: Build Backend Image
     needs: branch-check
