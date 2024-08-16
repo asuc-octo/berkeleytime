@@ -9,8 +9,18 @@ env:
   artifact-retention-days: 7
 
 jobs:
+  branch-check:
+    name: Check Branch
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Pass
+        run: echo "Passed check"
+
   build-backend:
     name: Build Backend Image
+    needs: branch-check
     runs-on: ubuntu-latest
 
     steps:
@@ -32,6 +42,7 @@ jobs:
 
   build-frontend:
     name: Build Frontend Image
+    needs: branch-check
     runs-on: ubuntu-latest
 
     steps:
