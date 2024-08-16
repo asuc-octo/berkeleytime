@@ -23,7 +23,7 @@ jobs:
 
       - name: Set vars
         id: vars
-        run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+        run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV >> $GITHUB_OUTPUT
 
       - name: Build Image with Tag
         run: |
@@ -48,7 +48,7 @@ jobs:
 
       - name: Set vars
         id: vars
-        run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+        run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV >> $GITHUB_OUTPUT
 
       - name: Build Image with Tag
         run: |
@@ -69,6 +69,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Receive and Forward sha_short
+        run: echo "sha_short=${{ needs.build-backend.outputs.sha_short }}" >> $GITHUB_ENV >> $GITHUB_OUTPUT
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -91,6 +94,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Receive and Forward sha_short
+        run: echo "sha_short=${{ needs.build-frontend.outputs.sha_short }}" >> $GITHUB_ENV >> $GITHUB_OUTPUT
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -113,6 +119,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Receive sha_short
+        run: echo "sha_short=${{ needs.push-backend.outputs.sha_short }}" >> $GITHUB_ENV
+
       - name: SSH and Helm Install
         uses: appleboy/ssh-action@v1.0.3
         with:
