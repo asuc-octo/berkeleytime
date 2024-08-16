@@ -1,17 +1,22 @@
-name: Deploy to Staging
+name: Deploy to Production
 
-concurrency: stage
+concurrency: prod
 
 on:
-  push:
-    branches: [master]
+  workflow_dispatch:
 
 env:
   artifact-retention-days: 7
 
 jobs:
+  branch-check:
+    name: Check Branch
+    runs-on: ubuntu-latest
+    environment: prod
+
   build-backend:
     name: Build Backend Image
+    needs: branch-check
     runs-on: ubuntu-latest
 
     steps:
@@ -20,19 +25,20 @@ jobs:
 
       - name: Build Image with Tag
         run: |
-          docker build --target backend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:latest" .
-          docker save "${{ secrets.DOCKER_USERNAME }}/bt-backend:latest" --output "bt-backend-latest.tar"
+          docker build --target backend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:prod" .
+          docker save "${{ secrets.DOCKER_USERNAME }}/bt-backend:prod" --output "bt-backend-prod.tar"
 
       - name: Upload Image as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "bt-backend-latest.tar"
-          path: "bt-backend-latest.tar"
+          name: "bt-backend-prod.tar"
+          path: "bt-backend-prod.tar"
           retention-days: ${{ env.artifact-retention-days }}
           overwrite: true
 
   build-frontend:
     name: Build Frontend Image
+    needs: branch-check
     runs-on: ubuntu-latest
 
     steps:
@@ -41,14 +47,14 @@ jobs:
 
       - name: Build Image with Tag
         run: |
-          docker build --target frontend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:latest" .
-          docker save "${{ secrets.DOCKER_USERNAME }}/bt-frontend:latest" --output "bt-frontend-latest.tar"
+          docker build --target frontend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:prod" .
+          docker save "${{ secrets.DOCKER_USERNAME }}/bt-frontend:prod" --output "bt-frontend-prod.tar"
 
       - name: Upload Image as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "bt-frontend-latest.tar"
-          path: "bt-frontend-latest.tar"
+          name: "bt-frontend-prod.tar"
+          path: "bt-frontend-prod.tar"
           retention-days: ${{ env.artifact-retention-days }}
           overwrite: true
 
@@ -67,12 +73,12 @@ jobs:
       - name: Download Artifact as Image
         uses: actions/download-artifact@v4
         with:
-          name: "bt-backend-latest.tar"
+          name: "bt-backend-prod.tar"
 
       - name: Push Image to Docker Hub
         run: |
-          docker import "bt-backend-latest.tar" "${{ secrets.DOCKER_USERNAME }}/bt-backend:latest"
-          docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:latest"
+          docker import "bt-backend-prod.tar" "${{ secrets.DOCKER_USERNAME }}/bt-backend:prod"
+          docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:prod"
 
   push-frontend:
     name: Push Frontend Image
@@ -89,12 +95,12 @@ jobs:
       - name: Download Artifact as Image
         uses: actions/download-artifact@v4
         with:
-          name: "bt-frontend-latest.tar"
+          name: "bt-frontend-prod.tar"
 
       - name: Push Image to Docker Hub
         run: |
-          docker import "bt-frontend-latest.tar" "${{ secrets.DOCKER_USERNAME }}/bt-frontend:latest"
-          docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:latest"
+          docker import "bt-frontend-prod.tar" "${{ secrets.DOCKER_USERNAME }}/bt-frontend:prod"
+          docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:prod"
 
   deploy:
     name: Deploy with SSH
@@ -110,15 +116,10 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ./infra
-            if helm status bt-stage-app ; then
-              kubectl rollout restart bt-stage-app-backend
-              kubectl rollout restart bt-stage-app-frontend
+            if helm status bt-prod-app ; then
+              kubectl rollout restart bt-prod-app-backend
+              kubectl rollout restart bt-prod-app-frontend
             else
-              helm install bt-stage-app ./app --namespace=bt \
-                --set env=stage \
-                --set frontend.image.tag=latest \
-                --set backend.image.tag=latest \
-                --set host=staging.stanfurdtime.com \
-                --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
-                --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379 \
+              helm install bt-prod-app ./app --namespace=bt \
+                --set host=stanfurdtime.com
             fi

@@ -31,7 +31,7 @@ jobs:
 
       - name: Build Image with Tag
         run: |
-          docker build --target backend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" .
+          docker build --target backend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" .
           docker save "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" --output "bt-backend-${{ env.sha_short }}.tar"
 
       - name: Upload Image as Artifact
@@ -60,7 +60,7 @@ jobs:
 
       - name: Build Image with Tag
         run: |
-          docker build --target frontend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" .
+          docker build --target frontend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" .
           docker save "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" --output "bt-frontend-${{ env.sha_short }}.tar"
 
       - name: Upload Image as Artifact
