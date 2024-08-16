@@ -28,7 +28,7 @@ jobs:
       - name: Build Image with Tag
         run: |
           docker build --target backend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" .
-          docker save "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" --output "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}.tar"
+          docker save "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" --output "bt-backend:${{ env.sha_short }}.tar"
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -43,8 +43,8 @@ jobs:
       - name: Upload Image as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}.tar
-          path: ${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}.tar
+          name: "bt-backend:${{ env.sha_short }}.tar"
+          path: "bt-backend:${{ env.sha_short }}.tar"
           retention-days: env.artifact-retention-days
           overwrite: true
 
@@ -63,7 +63,7 @@ jobs:
       - name: Build Image with Tag
         run: |
           docker build --target frontend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" .
-          docker save "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" --output "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}.tar"
+          docker save "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" --output "bt-frontend:${{ env.sha_short }}.tar"
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -78,8 +78,8 @@ jobs:
       - name: Upload Image as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}.tar
-          path: ${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}.tar
+          name: "bt-frontend:${{ env.sha_short }}.tar"
+          path: "bt-frontend:${{ env.sha_short }}.tar"
           retention-days: env.artifact-retention-days
           overwrite: true
 
