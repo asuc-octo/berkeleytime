@@ -23,7 +23,9 @@ jobs:
 
       - name: Set vars
         id: vars
-        run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV >> $GITHUB_OUTPUT
+        run: |
+          echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+          echo "sha_short=${{ env.sha_short }}" >> $GITHUB_OUTPUT
 
       - name: Build Image with Tag
         run: |
@@ -48,7 +50,9 @@ jobs:
 
       - name: Set vars
         id: vars
-        run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV >> $GITHUB_OUTPUT
+        run: |
+          echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+          echo "sha_short=${{ env.sha_short }}" >> $GITHUB_OUTPUT
 
       - name: Build Image with Tag
         run: |
@@ -70,7 +74,9 @@ jobs:
 
     steps:
       - name: Receive and Forward sha_short
-        run: echo "sha_short=${{ needs.build-backend.outputs.sha_short }}" >> $GITHUB_ENV >> $GITHUB_OUTPUT
+        run: |
+          echo "sha_short=${{ needs.build-backend.outputs.sha_short }}" >> $GITHUB_ENV
+          echo "sha_short=${{ env.sha_short }}" >> $GITHUB_OUTPUT
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -95,7 +101,9 @@ jobs:
 
     steps:
       - name: Receive and Forward sha_short
-        run: echo "sha_short=${{ needs.build-frontend.outputs.sha_short }}" >> $GITHUB_ENV >> $GITHUB_OUTPUT
+        run: |
+          echo "sha_short=${{ needs.build-frontend.outputs.sha_short }}" >> $GITHUB_ENV
+          echo "sha_short=${{ env.sha_short }}" >> $GITHUB_OUTPUT
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
