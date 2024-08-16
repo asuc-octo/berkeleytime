@@ -16,6 +16,8 @@ jobs:
   build-backend:
     name: Build Backend Image
     runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.vars.outputs.sha_short }}
 
     steps:
       - name: Checkout Repository
@@ -43,6 +45,8 @@ jobs:
   build-frontend:
     name: Build Frontend Image
     runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.vars.outputs.sha_short }}
 
     steps:
       - name: Checkout Repository
@@ -71,9 +75,12 @@ jobs:
     name: Push Backend Image
     needs: build-backend
     runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.vars.outputs.sha_short }}
 
     steps:
       - name: Receive and Forward sha_short
+        id: vars
         run: |
           echo "sha_short=${{ needs.build-backend.outputs.sha_short }}" >> $GITHUB_ENV
           echo "sha_short=${{ needs.build-backend.outputs.sha_short }}" >> $GITHUB_OUTPUT
@@ -98,9 +105,12 @@ jobs:
     name: Push Frontend Image
     needs: build-frontend
     runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.vars.outputs.sha_short }}
 
     steps:
       - name: Receive and Forward sha_short
+        id: vars
         run: |
           echo "sha_short=${{ needs.build-frontend.outputs.sha_short }}" >> $GITHUB_ENV
           echo "sha_short=${{ needs.build-frontend.outputs.sha_short }}" >> $GITHUB_OUTPUT
