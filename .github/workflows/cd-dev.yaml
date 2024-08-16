@@ -10,7 +10,8 @@ on:
         default: 86400
 
 jobs:
-  deploy:
+  build-backend:
+    name: Build Backend Image
     runs-on: ubuntu-latest
 
     steps:
@@ -21,22 +22,94 @@ jobs:
         id: vars
         run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
 
+      - name: Build Image with Tag
+        run: |
+          docker build --target backend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" .
+          docker save "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" --output bt-backend.tar
+
+      - name: Upload Image as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bt-backend.tar
+          path: bt-backend.tar
+          retention-days: 3
+          overwrite: true
+
+  build-frontend:
+    name: Build Frontend Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set vars
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
+
+      - name: Build Image with Tag
+        run: |
+          docker build --target frontend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" .
+          docker save "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" --output bt-frontend.tar
+
+      - name: Upload Image as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bt-frontend.tar
+          path: bt-frontend.tar
+          retention-days: 3
+          overwrite: true
+
+  push-backend:
+    name: Push Backend Image
+    needs: build-backend
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Images with Tags
-        run: |
-          docker build --target backend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" .
-          docker build --target frontend-dev --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" .
+      - name: Download Artifact as Image
+        uses: actions/download-artifact@v2
+        with:
+          name: bt-backend.tar
 
-      - name: Push Images to Docker Hub
+      - name: Push Image to Docker Hub
         run: |
+          docker load bt-backend.tar "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}"
           docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}"
+
+  push-frontend:
+    name: Push Frontend Image
+    needs: build-frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Download Artifact as Image
+        uses: actions/download-artifact@v2
+        with:
+          name: bt-frontend.tar
+
+      - name: Push Image to Docker Hub
+        run: |
+          docker load bt-frontend.tar "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}"
           docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}"
 
+  deploy:
+    name: Deploy with SSH
+    needs: [push-backend, push-frontend]
+    runs-on: ubuntu-latest
+
+    steps:
       - name: SSH and Helm Install
         uses: appleboy/ssh-action@v1.0.3
         with:
