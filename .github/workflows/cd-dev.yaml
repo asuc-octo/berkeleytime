@@ -1,5 +1,9 @@
 name: Deploy to Development
 
+concurrency:
+  group: dev-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
     inputs:
@@ -135,6 +139,7 @@ jobs:
     name: Deploy with SSH
     needs: [push-backend, push-frontend]
     runs-on: ubuntu-latest
+    environment: development
 
     steps:
       - name: Receive sha_short
