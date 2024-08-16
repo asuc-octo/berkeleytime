@@ -9,15 +9,6 @@ env:
   artifact-retention-days: 7
 
 jobs:
-  branch-check:
-    name: Check Branch
-    runs-on: ubuntu-latest
-    environment: prod
-
-    steps:
-      - name: Pass
-        run: echo "Passed check"
-
   build-backend:
     name: Build Backend Image
     needs: branch-check
@@ -66,6 +57,7 @@ jobs:
     name: Push Backend Image
     needs: build-backend
     runs-on: ubuntu-latest
+    environment: prod
 
     steps:
       - name: Login to Docker Hub
