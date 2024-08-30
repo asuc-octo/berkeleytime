@@ -116,7 +116,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ga
+          username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
             cd ./infra
