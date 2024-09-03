@@ -12,14 +12,11 @@ export default function Banner() {
 	return banner ? (
 		<div className="banner">
 			<div className="content">
-				<p>
-					Berkeleytime is recruiting passionate developers, designers, researchers and more for Fall
-					2024!
-				</p>
+				<p>Berkeleytime is recruiting passionate designers and developers for Spring 2024!</p>
 				<Button
 					size="sm"
 					target="_blank"
-					href="https://airtable.com/appllQy6crmpquCOQ/shrnGwxvaCi7onxaC"
+					href="https://airtable.com/appwLrpVsPSL5ocm5/pagHbhRgcTbYO2Fj1/form"
 				>
 					Apply Now
 				</Button>
