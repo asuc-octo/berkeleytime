@@ -19,7 +19,7 @@ export default function Banner() {
 				<Button
 					size="sm"
 					target="_blank"
-					href="https://airtable.com/appllQy6crmpquCOQ/shrnGwxvaCi7onxaC"
+					href="https://airtable.com/appllQy6crmpquCOQ/pag5ngU9hgKJt5eAs/form"
 				>
 					Apply Now
 				</Button>
