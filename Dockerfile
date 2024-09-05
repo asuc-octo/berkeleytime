@@ -17,7 +17,7 @@ COPY --from=backend-builder /backend/out/full/ .
 ENTRYPOINT npx turbo run dev --filter=backend
 
 FROM backend-dev AS backend-prod
-ENTRYPOINT npx turbo run start --filter=backend
+ENTRYPOINT npx turbo run start --filter=backend --env-mode=loose
 
 # frontend
 FROM base AS frontend-builder
@@ -36,4 +36,4 @@ COPY --from=frontend-builder /frontend/out/full/ .
 ENTRYPOINT npx turbo run dev --filter=frontend
 
 FROM frontend-dev AS frontend-prod
-ENTRYPOINT npx turbo run start --filter=frontend
+ENTRYPOINT npx turbo run start --filter=frontend --env-mode=loose
