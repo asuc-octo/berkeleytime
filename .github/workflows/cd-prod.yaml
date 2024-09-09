@@ -63,7 +63,7 @@ jobs:
 
   push-backend:
     name: Push Backend Image
-    needs: build-backend
+    needs: branch-check
     runs-on: ubuntu-latest
     environment: prod
 
@@ -86,7 +86,7 @@ jobs:
 
   push-frontend:
     name: Push Frontend Image
-    needs: build-frontend
+    needs: branch-check
     runs-on: ubuntu-latest
 
     steps:
