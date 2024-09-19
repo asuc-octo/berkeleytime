@@ -93,6 +93,6 @@ jobs:
               --set frontend.image.tag=${{ env.sha_short }} \
               --set backend.image.tag=${{ env.sha_short }} \
               --set host=${{ env.sha_short }}.stanfurdtime.com \
-              --set mongoUri=mongodb://bt-dev-mongo-svc.bt.svc.cluster.local:27017/bt \
+              --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
               --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
               --set nodeEnv=development
