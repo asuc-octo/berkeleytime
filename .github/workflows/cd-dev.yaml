@@ -129,7 +129,7 @@ jobs:
           name: "bt-backend-${{ env.sha_short }}.tar"
           path: "bt-backend-${{ env.sha_short }}.tar"
           retention-days: ${{ env.artifact-retention-days }}
-          compression: 0
+          compression-level: 0
           overwrite: true
 
   build-frontend:
@@ -161,7 +161,7 @@ jobs:
           name: "bt-frontend-${{ env.sha_short }}.tar"
           path: "bt-frontend-${{ env.sha_short }}.tar"
           retention-days: ${{ env.artifact-retention-days }}
-          compression: 0
+          compression-level: 0
           overwrite: true
 
   push-backend:
