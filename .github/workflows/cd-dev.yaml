@@ -34,11 +34,13 @@ jobs:
           echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
 
       - name: Build Image with Tag
+        id: build
         run: |
           docker build --platform=linux/amd64 --target backend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" .
           docker save "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ env.sha_short }}" --output "bt-backend-${{ env.sha_short }}.tar"
 
       - name: Upload Image as Artifact
+        if: steps.build.conclusion == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: "bt-backend-${{ env.sha_short }}.tar"
@@ -63,11 +65,13 @@ jobs:
           echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
 
       - name: Build Image with Tag
+        id: build
         run: |
           docker build --platform=linux/amd64 --target frontend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" .
           docker save "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ env.sha_short }}" --output "bt-frontend-${{ env.sha_short }}.tar"
 
       - name: Upload Image as Artifact
+        if: steps.build.conclusion == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: "bt-frontend-${{ env.sha_short }}.tar"
