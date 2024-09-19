@@ -4,7 +4,7 @@ ttl: 86400 # in seconds
 host: berkeleytime.com
 port: 80
 
-mongoUri: mongodb://bt-prod-mongo-svc.bt.svc.cluster.local:27017/bt
+mongoUri: mongodb://bt-prod-mongo-mongodb.bt.svc.cluster.local:27017/bt
 redisUri: redis://bt-prod-redis-master.bt.svc.cluster.local:6379
 nodeEnv: production
 
@@ -15,7 +15,6 @@ frontend:
 
   port: 3000
   path: /
-  command: ["npm", "run", "start"]
 
   image:
     registry: docker.io
@@ -27,7 +26,6 @@ backend:
 
   port: 5001
   path: /api
-  command: ["npm", "run", "start"]
 
   image:
     registry: docker.io
