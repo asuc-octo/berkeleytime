@@ -244,7 +244,7 @@ export const past: Contributors[] = [
 			{
 				name: 'Hiroshi Usui',
 				role: 'Backend Lead',
-				site: 'https://i-am.2se.xyz/'
+				site: null
 			},
 			{
 				name: 'Danji Liu',
