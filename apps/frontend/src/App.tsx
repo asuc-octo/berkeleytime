@@ -1,8 +1,6 @@
 import { lazy } from "react";
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import * as Tooltip from "@radix-ui/react-tooltip";
-import { IconoirProvider } from "iconoir-react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 import Catalog from "@/app/Catalog";
@@ -10,6 +8,7 @@ import Enrollment from "@/app/Enrollment";
 import Grades from "@/app/Grades";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
+import ThemeProvider from "@/components/ThemeProvider";
 
 const About = lazy(() => import("@/app/About"));
 const CatalogEnrollment = lazy(() => import("@/components/Class/Enrollment"));
@@ -128,17 +127,9 @@ const client = new ApolloClient({
 export default function App() {
   return (
     <ApolloProvider client={client}>
-      <IconoirProvider
-        iconProps={{
-          strokeWidth: 2,
-          width: 16,
-          height: 16,
-        }}
-      >
-        <Tooltip.Provider delayDuration={0}>
-          <RouterProvider router={router} />
-        </Tooltip.Provider>
-      </IconoirProvider>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </ApolloProvider>
   );
 }
