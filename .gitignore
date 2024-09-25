@@ -20,7 +20,10 @@ build/docker-compose.yml
 config.statuspage.json
 *.cert
 *.key
+dist/
 db/
 mdb.archive
 bt_seed.sql
 bt_seed.sql.gz
+.turbo
+generated-types/

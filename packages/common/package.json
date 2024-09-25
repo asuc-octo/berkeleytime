@@ -1,0 +1,14 @@
+{
+  "name": "@repo/common",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "mongoose": "^8.5.1"
+  }
+}

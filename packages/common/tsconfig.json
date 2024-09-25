@@ -1,0 +1,7 @@
+{
+  "extends": "@repo/typescript-config/vite.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+  },
+  "include": ["src"]
+}

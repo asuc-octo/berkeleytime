@@ -1,0 +1,25 @@
+.root {
+  position: relative;
+  height: 100%;
+  display: flex;
+
+  @media (width <= 992px) {
+    &:not(.expanded) > :first-child {
+      display: none;
+    }
+
+    &.expanded > :last-child {
+      display: none;
+    }
+  }
+
+  @media (width <= 1400px) {
+    &:not(.expanded).responsive > :first-child {
+      display: none;
+    }
+
+    &.expanded.responsive > :last-child {
+      display: none;
+    }
+  }
+}
