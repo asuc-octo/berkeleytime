@@ -12,11 +12,17 @@
   &.invert {
     border-color: var(--neutral-700);
 
-    .group .description, .column .label {
+    .icon-button {
       color: var(--neutral-400);
     }
 
-    .column .link, .group .description .link {
+    .group .description,
+    .column .label {
+      color: var(--neutral-400);
+    }
+
+    .column .link,
+    .group .description .link {
       color: white;
 
       &:hover {
@@ -75,12 +81,17 @@
     .brand {
       font-size: 24px;
       font-weight: 580;
-      font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
+      font-feature-settings:
+        "cv05" on,
+        "cv13" on,
+        "ss07" on,
+        "cv12" on,
+        "cv06" on;
       color: var(--blue-500);
       cursor: pointer;
       transition: all 100ms ease-in-out;
       margin-right: auto;
-  
+
       &:hover {
         color: var(--blue-600);
       }

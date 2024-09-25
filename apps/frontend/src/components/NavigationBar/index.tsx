@@ -30,7 +30,7 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
         Berkeleytime
       </Link>
       {width <= 992 ? (
-        <IconButton invert={invert}>
+        <IconButton className={styles.iconButton}>
           <Menu />
         </IconButton>
       ) : (
