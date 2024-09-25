@@ -50,32 +50,21 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
                 </MenuItem>
               )}
             </NavLink>
-            <NavLink to="/plan">
+            <NavLink to="/about">
               {({ isActive }) => (
                 <MenuItem className={styles.item} active={isActive}>
-                  My plan
-                </MenuItem>
-              )}
-            </NavLink>
-            <NavLink to="/explore">
-              {({ isActive }) => (
-                <MenuItem className={styles.item} active={isActive}>
-                  Explore
+                  About
                 </MenuItem>
               )}
             </NavLink>
           </div>
-          {account ? (
-            <Button onClick={() => signOut()} className={styles.button}>
-              {account.user.email}
-              <User />
-            </Button>
-          ) : (
-            <Button onClick={() => signIn()} className={styles.button}>
-              Sign in
-              <ArrowRight />
-            </Button>
-          )}
+          <Button
+            onClick={() => (account ? signOut() : signIn())}
+            className={styles.button}
+          >
+            {account ? account.user.email : "Sign in"}
+            {account ? <User /> : <ArrowRight />}
+          </Button>
         </>
       )}
     </div>

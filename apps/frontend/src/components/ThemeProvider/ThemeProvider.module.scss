@@ -262,42 +262,74 @@
   --rose-800: #9f1239;
   --rose-900: #881337;
   --rose-950: #4c0519;
+
+  --light-foreground-color: white;
+  --light-background-color: var(--slate-50);
+  --light-backdrop-color: var(--slate-100);
+
+  --light-border-color: rgb(0 0 0 / 10%);
+
+  --light-heading-color: var(--slate-900);
+  --light-paragraph-color: var(--slate-500);
+  --light-label-color: var(--slate-400);
+
+  // --light-button-color: white;
+  --light-button-hover-color: var(--slate-100);
+  --light-button-active-color: var(--slate-200);
+
+  --light-tooltip-color: var(--neutral-900);
+
+  --dark-foreground-color: var(--zinc-800);
+  --dark-background-color: var(--zinc-900);
+  --dark-backdrop-color: var(--zinc-950);
+
+  --dark-border-color: var(--zinc-700);
+
+  --dark-heading-color: white;
+  --dark-paragraph-color: var(--zinc-400);
+  --dark-label-color: var(--zinc-500);
+
+  // --dark-button-color: var(--zinc-800);
+  --dark-button-hover-color: var(--zinc-700);
+  --dark-button-active-color: var(--zinc-600);
+
+  --dark-tooltip-color: var(--zinc-950);
 }
 
 @mixin light-theme {
-  --foreground-color: white;
-  --background-color: var(--slate-50);
-  --backdrop-color: var(--slate-100);
+  --foreground-color: var(--light-foreground-color);
+  --background-color: var(--light-background-color);
+  --backdrop-color: var(--light-backdrop-color);
 
-  --border-color: rgb(0 0 0 / 10%);
+  --border-color: var(--light-border-color);
 
-  --heading-color: var(--slate-900);
-  --paragraph-color: var(--slate-500);
-  --label-color: var(--slate-400);
+  --heading-color: var(--light-heading-color);
+  --paragraph-color: var(--light-paragraph-color);
+  --label-color: var(--light-label-color);
 
-  // --button-color: white;
-  --button-hover-color: var(--slate-100);
-  --button-active-color: var(--slate-200);
+  // --button-color: var(--light-button-color);
+  --button-hover-color: var(--light-button-hover-color);
+  --button-active-color: var(--light-button-active-color);
 
-  --tooltip-color: var(--neutral-900);
+  --tooltip-color: var(--light-tooltip-color);
 }
 
 @mixin dark-theme {
-  --foreground-color: var(--zinc-800);
-  --background-color: var(--zinc-900);
-  --backdrop-color: var(--zinc-950);
+  --foreground-color: var(--dark-foreground-color);
+  --background-color: var(--dark-background-color);
+  --backdrop-color: var(--dark-backdrop-color);
 
-  --border-color: var(--zinc-700);
+  --border-color: var(--dark-border-color);
 
-  --heading-color: white;
-  --paragraph-color: var(--zinc-400);
-  --label-color: var(--zinc-500);
+  --heading-color: var(--dark-heading-color);
+  --paragraph-color: var(--dark-paragraph-color);
+  --label-color: var(--dark-label-color);
 
-  // --button-color: var(--zinc-800);
-  --button-hover-color: var(--zinc-700);
-  --button-active-color: var(--zinc-600);
+  // --button-color: var(--dark-button-color);
+  --button-hover-color: var(--dark-button-hover-color);
+  --button-active-color: var(--dark-button-active-color);
 
-  --tooltip-color: var(--zinc-950);
+  --tooltip-color: var(--dark-tooltip-color);
 }
 
 .root {
