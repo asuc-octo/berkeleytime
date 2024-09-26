@@ -16,6 +16,7 @@ spec:
           containers:
             - name: backend-cron-job
               image: {{ printf "%s/%s:%s" .Values.backend.image.registry .Values.backend.image.repository .Values.backend.image.tag }}
+              imagePullPolicy: Always
               command: {{ .Values.updater.command | toJson }}
               ports:
                 - containerPort: {{ .Values.backend.port }}
