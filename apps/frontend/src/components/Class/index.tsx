@@ -241,18 +241,26 @@ export default function Class({
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
-              <MenuItem as={NavLink} to={{ pathname: ".", search }} end>
-                Overview
-              </MenuItem>
-              <MenuItem as={NavLink} to={{ pathname: "sections", search }}>
-                Sections
-              </MenuItem>
-              <MenuItem as={NavLink} to={{ pathname: "enrollment", search }}>
-                Enrollment
-              </MenuItem>
-              <MenuItem as={NavLink} to={{ pathname: "grades", search }}>
-                Grades
-              </MenuItem>
+              <NavLink to={{ pathname: ".", search }} end>
+                {({ isActive }) => (
+                  <MenuItem active={isActive}>Overview</MenuItem>
+                )}
+              </NavLink>
+              <NavLink to={{ pathname: "sections", search }}>
+                {({ isActive }) => (
+                  <MenuItem active={isActive}>Sections</MenuItem>
+                )}
+              </NavLink>
+              <NavLink to={{ pathname: "enrollment", search }}>
+                {({ isActive }) => (
+                  <MenuItem active={isActive}>Enrollment</MenuItem>
+                )}
+              </NavLink>
+              <NavLink to={{ pathname: "grades", search }}>
+                {({ isActive }) => (
+                  <MenuItem active={isActive}>Grades</MenuItem>
+                )}
+              </NavLink>
             </div>
           )}
         </Container>

@@ -1,8 +1,16 @@
 import classNames from "classnames";
-import { Discord, Facebook, Github, Instagram } from "iconoir-react";
+import {
+  Discord,
+  Facebook,
+  Github,
+  HalfMoon,
+  Instagram,
+  SunLight,
+} from "iconoir-react";
 import { Link } from "react-router-dom";
 
 import Container from "@/components/Container";
+import useTheme from "@/hooks/useTheme";
 
 import IconButton from "../IconButton";
 import styles from "./Footer.module.scss";
@@ -12,6 +20,8 @@ interface FooterProps {
 }
 
 export default function Footer({ invert }: FooterProps) {
+  const { theme, setTheme } = useTheme();
+
   return (
     <Container>
       <div
@@ -35,26 +45,46 @@ export default function Footer({ invert }: FooterProps) {
             project
           </p>
           <div className={styles.row}>
-            <a href="https://www.instagram.com/" target="_blank">
-              <IconButton invert={invert}>
-                <Instagram />
-              </IconButton>
-            </a>
-            <a href="https://discord.gg/uP2bTPh99U" target="_blank">
-              <IconButton invert={invert}>
-                <Discord />
-              </IconButton>
-            </a>
-            <a href="https://facebook.com/berkeleytime" target="_blank">
-              <IconButton invert={invert}>
-                <Facebook />
-              </IconButton>
-            </a>
-            <a href="https://github.com/asuc-octo/berkeleytime" target="_blank">
-              <IconButton invert={invert}>
-                <Github />
-              </IconButton>
-            </a>
+            <IconButton
+              className={styles.iconButton}
+              onClick={() =>
+                setTheme((theme) => (theme === "dark" ? "light" : "dark"))
+              }
+            >
+              {theme === "dark" ? <SunLight /> : <HalfMoon />}
+            </IconButton>
+            <IconButton
+              className={styles.iconButton}
+              as="a"
+              href="https://www.instagram.com/"
+              target="_blank"
+            >
+              <Instagram />
+            </IconButton>
+            <IconButton
+              className={styles.iconButton}
+              as="a"
+              href="https://discord.gg/uP2bTPh99U"
+              target="_blank"
+            >
+              <Discord />
+            </IconButton>
+            <IconButton
+              className={styles.iconButton}
+              href="https://facebook.com/berkeleytime"
+              target="_blank"
+              as="a"
+            >
+              <Facebook />
+            </IconButton>
+            <IconButton
+              className={styles.iconButton}
+              href="https://github.com/asuc-octo/berkeleytime"
+              target="_blank"
+              as="a"
+            >
+              <Github />
+            </IconButton>
           </div>
         </div>
         <div className={styles.column}>

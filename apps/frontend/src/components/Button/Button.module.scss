@@ -2,31 +2,39 @@
   height: 32px;
   border-radius: 4px;
   padding: 0 12px;
-  display: flex;
+  display: inline-flex;
   flex-shrink: 0;
   align-items: center;
   font-size: 14px;
   font-weight: 500;
   line-height: 1;
   cursor: pointer;
-  transition: all 100ms ease-in-out;
   gap: 8px;
   user-select: none;
+  transition:
+    border-color 100ms ease-in-out,
+    background-color 100ms ease-in-out,
+    color 100ms ease-in-out;
 
-  &.solid {
+  &[data-disabled] {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  &[data-variant="solid"] {
     background-color: var(--blue-500);
     color: white;
 
     &:hover {
       background-color: var(--blue-600);
     }
-  
+
     &:active {
       background-color: var(--blue-700);
     }
   }
 
-  &.outline {
+  &[data-variant="outline"] {
     border: 1px solid var(--border-color);
     color: var(--paragraph-color);
 

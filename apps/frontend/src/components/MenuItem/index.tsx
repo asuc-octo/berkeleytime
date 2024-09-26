@@ -1,4 +1,4 @@
-import { ElementType, ReactElement, ReactNode, forwardRef } from "react";
+import { ElementType, ReactNode, forwardRef } from "react";
 
 import classNames from "classnames";
 
@@ -11,8 +11,7 @@ import styles from "./MenuItem.module.scss";
 
 interface Props {
   active?: boolean;
-  children: ReactNode;
-  className?: string;
+  disabled?: boolean;
 }
 
 type MenuItemProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
@@ -21,16 +20,16 @@ type MenuItemProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
 >;
 
 const MenuItem = forwardRef(
-  <T extends ElementType = "button">(
-    { active, children, className, as, ...props }: MenuItemProps<T>,
-    ref: PolymorphicRef<T>
+  <C extends ElementType = "button">(
+    { active, children, className, disabled, as, ...props }: MenuItemProps<C>,
+    ref: PolymorphicRef<C>
   ) => {
-    const Component = as ?? "button";
+    const Component = as || "button";
 
     return (
       <Component
         ref={ref}
-        {...props}
+        data-disabled={disabled}
         className={classNames(
           styles.root,
           {
@@ -38,6 +37,7 @@ const MenuItem = forwardRef(
           },
           className
         )}
+        {...props}
       >
         {children}
       </Component>
@@ -49,4 +49,4 @@ MenuItem.displayName = "MenuItem";
 
 export default MenuItem as <T extends ElementType = "button">(
   props: MenuItemProps<T>
-) => ReactElement | null;
+) => ReactNode | null;

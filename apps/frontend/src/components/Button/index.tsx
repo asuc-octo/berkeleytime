@@ -11,6 +11,7 @@ import styles from "./Button.module.scss";
 
 interface Props {
   variant?: "solid" | "outline";
+  disabled?: boolean;
 }
 
 type ButtonProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
@@ -24,6 +25,7 @@ const Button = forwardRef(
       active,
       children,
       className,
+      disabled,
       variant = "solid",
       ...props
     }: ButtonProps<C>,
@@ -32,14 +34,9 @@ const Button = forwardRef(
     return (
       <button
         ref={ref}
-        className={classNames(
-          styles.root,
-          {
-            [styles.solid]: variant === "solid",
-            [styles.outline]: variant === "outline",
-          },
-          className
-        )}
+        data-variant={variant}
+        data-disabled={disabled}
+        className={classNames(styles.root, className)}
         {...props}
       >
         {children}

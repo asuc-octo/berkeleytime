@@ -14,9 +14,14 @@ import styles from "./Layout.module.scss";
 interface LayoutProps {
   header?: boolean;
   footer?: boolean;
+  feedback?: boolean;
 }
 
-export default function Layout({ header = true, footer = true }: LayoutProps) {
+export default function Layout({
+  header = true,
+  footer = true,
+  feedback,
+}: LayoutProps) {
   return (
     <div className={styles.root}>
       <div className={styles.view}>
@@ -32,17 +37,19 @@ export default function Layout({ header = true, footer = true }: LayoutProps) {
         </Suspense>
       </div>
       {footer && <Footer />}
-      <div className={styles.feedback}>
-        <Button
-          as="a"
-          href="https://forms.gle/zeAUQAHrMcrRJyhK6"
-          target="_blank"
-          className={styles.button}
-        >
-          <MessageText />
-          Provide feedback
-        </Button>
-      </div>
+      {feedback && (
+        <div className={styles.feedback}>
+          <Button
+            as="a"
+            href="https://forms.gle/zeAUQAHrMcrRJyhK6"
+            target="_blank"
+            className={styles.button}
+          >
+            <MessageText />
+            Provide feedback
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

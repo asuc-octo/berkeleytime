@@ -30,42 +30,41 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
         Berkeleytime
       </Link>
       {width <= 992 ? (
-        <IconButton invert={invert}>
+        <IconButton className={styles.iconButton}>
           <Menu />
         </IconButton>
       ) : (
         <>
           <div className={styles.menu}>
-            <MenuItem as={NavLink} to="/discover" className={styles.item}>
-              Discover
-            </MenuItem>
-            <MenuItem as={NavLink} to="/catalog" className={styles.item}>
-              Catalog
-            </MenuItem>
-            <MenuItem as={NavLink} to="/enrollment" className={styles.item}>
-              Enrollment
-            </MenuItem>
-            <MenuItem as={NavLink} to="/grades" className={styles.item}>
-              Grades
-            </MenuItem>
-            <MenuItem as={NavLink} to="/schedules" className={styles.item}>
-              My schedules
-            </MenuItem>
-            <MenuItem as={NavLink} to="/plan" className={styles.item}>
-              My plan
-            </MenuItem>
+            <NavLink to="/catalog">
+              {({ isActive }) => (
+                <MenuItem className={styles.item} active={isActive}>
+                  Catalog
+                </MenuItem>
+              )}
+            </NavLink>
+            <NavLink to="/schedules">
+              {({ isActive }) => (
+                <MenuItem className={styles.item} active={isActive}>
+                  My schedules
+                </MenuItem>
+              )}
+            </NavLink>
+            <NavLink to="/about">
+              {({ isActive }) => (
+                <MenuItem className={styles.item} active={isActive}>
+                  About
+                </MenuItem>
+              )}
+            </NavLink>
           </div>
-          {account ? (
-            <Button onClick={() => signOut()} className={styles.button}>
-              {account.user.email}
-              <User />
-            </Button>
-          ) : (
-            <Button onClick={() => signIn()} className={styles.button}>
-              Sign in
-              <ArrowRight />
-            </Button>
-          )}
+          <Button
+            onClick={() => (account ? signOut() : signIn())}
+            className={styles.button}
+          >
+            {account ? account.user.email : "Sign in"}
+            {account ? <User /> : <ArrowRight />}
+          </Button>
         </>
       )}
     </div>
