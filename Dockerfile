@@ -1,40 +1,45 @@
 FROM node:alpine AS base
+RUN ["npm", "install", "-g", "turbo@latest"]
 
 # backend
 FROM base AS backend-builder
 WORKDIR /backend
 COPY . .
-RUN npx turbo prune backend --docker
+RUN ["turbo", "prune", "backend", "--docker"]
 
 FROM base AS backend-dev
 WORKDIR /backend
 
 COPY --from=backend-builder /backend/out/json/ .
 COPY --from=backend-builder /backend/out/package-lock.json ./package-lock.json
-RUN npm install
+RUN ["npm", "install"]
 
 COPY --from=backend-builder /backend/out/full/ .
-ENTRYPOINT npx turbo run dev --filter=backend
+ENTRYPOINT ["turbo", "run", "dev", "--filter=backend"]
 
 FROM backend-dev AS backend-prod
-ENTRYPOINT npx turbo run start --filter=backend --env-mode=loose
+ENTRYPOINT ["turbo", "run", "start", "--filter=backend", "--env-mode=loose"]
 
 # frontend
 FROM base AS frontend-builder
 WORKDIR /frontend
 COPY . .
-RUN npx turbo prune frontend --docker
+RUN ["turbo", "prune", "frontend", "--docker"]
 
 FROM base AS frontend-dev
 WORKDIR /frontend
 
 COPY --from=frontend-builder /frontend/out/json/ .
 COPY --from=frontend-builder /frontend/out/package-lock.json ./package-lock.json
-RUN npm install
+RUN ["npm", "install"]
 
 COPY --from=frontend-builder /frontend/out/full/ .
-ENTRYPOINT npx turbo run dev --filter=frontend
+ENTRYPOINT ["turbo", "run", "dev", "--filter=frontend"]
 
 FROM frontend-dev AS frontend-prod
-RUN npx turbo run build --filter=frontend --env-mode=loose
-ENTRYPOINT npx turbo run start --filter=frontend
+WORKDIR /frontend
+
+RUN ["turbo", "run", "build", "--filter=frontend", "--env-mode=loose"]
+
+COPY /apps/frontend/dist ./apps/frontend/dist
+ENTRYPOINT ["turbo", "run", "start", "--filter=frontend"]
