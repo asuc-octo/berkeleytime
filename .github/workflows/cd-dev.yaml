@@ -35,6 +35,7 @@ jobs:
     needs: [compute-sha]
     with:
       tag: ${{ needs.compute-sha.outputs.sha_short }}
+    secrets: inherit
 
   deploy:
     name: Deploy with SSH
