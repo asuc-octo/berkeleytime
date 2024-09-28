@@ -1,5 +1,5 @@
 env: prod
-ttl: 86400 # in seconds
+ttl: 24 # in hours
 
 host: berkeleytime.com
 port: 80

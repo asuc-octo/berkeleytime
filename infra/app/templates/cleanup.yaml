@@ -11,6 +11,6 @@ spec:
       containers:
         - name: cleanup
           image: alpine/helm
-          command: ['sh', '-c', 'sleep {{ .Values.ttl }}; helm uninstall {{ .Release.Name }}']
+          command: ['sh', '-c', 'sleep ${{{{ .Values.ttl }} * 60 * 60 }}; helm uninstall {{ .Release.Name }}']
       restartPolicy: Never
 {{ end }}
