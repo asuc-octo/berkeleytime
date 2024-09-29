@@ -25,7 +25,7 @@ jobs:
 
       - name: Build and Push Image with Tag
         run: |
-          docker build --platform=linux/amd64 --target backend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ inputs.tag }}" .
+          docker build --no-cache --platform=linux/amd64 --target backend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ inputs.tag }}" .
           docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:${{ inputs.tag }}"
 
   build-push-frontend:
@@ -44,5 +44,5 @@ jobs:
 
       - name: Build and Push Image with Tag
         run: |
-          docker build --platform=linux/amd64 --target frontend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ inputs.tag }}" .
+          docker build --no-cache --platform=linux/amd64 --target frontend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ inputs.tag }}" .
           docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:${{ inputs.tag }}"
