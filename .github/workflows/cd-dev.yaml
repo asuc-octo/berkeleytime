@@ -27,7 +27,7 @@ jobs:
       - name: Set vars
         id: vars
         run: |
-          echo "sha_short=\"$(git rev-parse --short ${{ github.sha }})\"" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
 
   build-push:
     name: Build and Push Images
@@ -56,8 +56,8 @@ jobs:
             helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} ./app --namespace=bt \
               --set env=dev \
               --set ttl=${{ inputs.ttl }} \
-              --set frontend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
-              --set backend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
+              --set-string frontend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
+              --set-string backend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
               --set host=${{ needs.compute-sha.outputs.sha_short }}.stanfurdtime.com \
               --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
               --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
