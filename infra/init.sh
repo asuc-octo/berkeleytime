@@ -72,7 +72,7 @@ helm install bt-dev-redis ./redis --namespace=bt \
 
 helm install bt-dev-app ./app --namespace=bt \
     --set env=dev \
-    --set ttl=86400 \
+    --set ttl=24 \
     --set frontend.image.tag=dev1 \
     --set backend.image.tag=dev1 \
     --set host=dev1.stanfurdtime.com \

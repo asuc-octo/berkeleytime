@@ -31,8 +31,9 @@ jobs:
           echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
 
   build-push:
-    uses: ./.github/workflows/cd.yaml
+    name: Build and Push Images
     needs: [compute-sha]
+    uses: ./.github/workflows/cd.yaml
     with:
       tag: ${{ needs.compute-sha.outputs.sha_short }}
     secrets: inherit
