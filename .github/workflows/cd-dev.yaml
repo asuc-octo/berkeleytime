@@ -27,8 +27,7 @@ jobs:
       - name: Set vars
         id: vars
         run: |
-          echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_ENV
-          echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
+          echo "sha_short=\"$(git rev-parse --short ${{ github.sha }})\"" >> $GITHUB_OUTPUT
 
   build-push:
     name: Build and Push Images
