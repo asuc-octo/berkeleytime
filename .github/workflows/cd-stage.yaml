@@ -4,50 +4,19 @@ concurrency: stage
 
 on:
   push:
-    branches: [master]
+    branches: [master, gql]
 
 jobs:
-  build-push-backend:
-    name: Build and Push Backend Image
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and Push Image with Tag
-        run: |
-          docker build --platform=linux/amd64 --target backend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-backend:latest" .
-          docker push "${{ secrets.DOCKER_USERNAME }}/bt-backend:latest"
-
-  build-push-frontend:
-    name: Build and Push Frontend Image
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and Push Image with Tag
-        run: |
-          docker build --platform=linux/amd64 --target frontend-prod --tag "${{ secrets.DOCKER_USERNAME }}/bt-frontend:latest" .
-          docker push "${{ secrets.DOCKER_USERNAME }}/bt-frontend:latest"
+  build-push:
+    name: Build and Push Images
+    uses: ./.github/workflows/cd.yaml
+    with:
+      tag: latest
+    secrets: inherit
 
   deploy:
     name: Deploy with SSH
-    needs: [build-push-backend, build-push-frontend]
+    needs: [build-push]
     runs-on: ubuntu-latest
     environment: staging
 
