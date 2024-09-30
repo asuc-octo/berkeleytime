@@ -27,6 +27,8 @@ export interface Config {
     CLASS_APP_KEY: string;
     COURSE_APP_ID: string;
     COURSE_APP_KEY: string;
+    TERM_APP_ID: string;
+    TERM_APP_KEY: string;
   };
   SESSION_SECRET: string;
   GOOGLE_CLIENT_ID: string;
@@ -49,6 +51,8 @@ export const config: Config = {
     CLASS_APP_KEY: env("SIS_CLASS_APP_KEY"),
     COURSE_APP_ID: env("SIS_COURSE_APP_ID"),
     COURSE_APP_KEY: env("SIS_COURSE_APP_KEY"),
+    TERM_APP_ID: env("SIS_TERM_APP_ID"),
+    TERM_APP_KEY: env("SIS_TERM_APP_KEY"),
   },
   SESSION_SECRET: env("SESSION_SECRET"),
   GOOGLE_CLIENT_ID: env("GOOGLE_CLIENT_ID"),

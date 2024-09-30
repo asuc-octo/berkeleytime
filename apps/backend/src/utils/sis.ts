@@ -22,13 +22,20 @@ export const identifier = {
   toDate: Date,
 };
 
-export interface SISResponse<V> {
-  apiResponse: {
-    correlationId?: string;
-    httpStatus: {
-      code?: string;
-      description?: string;
-    };
-    response: Record<string, V[]>;
+export interface APIResponse<V> {
+  correlationId?: string;
+  httpStatus: {
+    code?: string;
+    description?: string;
   };
+  response: Record<string, V[]>;
+}
+
+export type SISResponse<V> = APIResponse<V> & {
+  apiResponse?: never;
+};
+
+export interface DeprecatedSISResponse<V> {
+  apiResponse: APIResponse<V>;
+  response?: never;
 }

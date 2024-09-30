@@ -13,14 +13,73 @@ import {
 
 import mongooseLoader from "../bootstrap/loaders/mongoose";
 import { config } from "../config";
-import { SISResponse } from "../utils/sis";
+import { DeprecatedSISResponse, SISResponse } from "../utils/sis";
 
 const SIS_COURSE_URL = "https://gateway.api.berkeley.edu/sis/v4/courses";
 
 const SIS_CLASS_URL = "https://gateway.api.berkeley.edu/sis/v1/classes";
 
+const SIS_TERM_URL = "https://gateway.api.berkeley.edu/sis/v2/terms";
+
 const SIS_SECTION_URL =
   "https://gateway.api.berkeley.edu/sis/v1/classes/sections";
+
+const queryPage = async <V>(
+  id: string,
+  key: string,
+  url: string,
+  field: string,
+  params?: Record<string, string>
+) => {
+  let retries = 3;
+
+  console.log("Querying SIS API page...");
+  console.log(`URL: ${url}`);
+  if (params) console.log(`Params: ${params.toString()}`);
+
+  while (retries > 0) {
+    try {
+      const _params = new URLSearchParams({
+        "page-number": "1",
+        "page-size": "100",
+        ...params,
+      });
+
+      const response = await fetch(`${url}?${_params}`, {
+        headers: {
+          app_id: id,
+          app_key: key,
+        },
+      });
+
+      if (response.status !== 200) throw new Error(response.statusText);
+
+      const data = (await response.json()) as
+        | DeprecatedSISResponse<V>
+        | SISResponse<V>;
+
+      return data.apiResponse
+        ? data.apiResponse.response[field]
+        : data.response[field];
+    } catch (error) {
+      console.log(`Unexpected error querying SIS API. Error: "${error}"`);
+
+      if (retries === 0) {
+        console.log(`Too many errors querying SIS API. Terminating update...`);
+
+        break;
+      }
+
+      retries--;
+
+      console.log(`Retrying...`);
+
+      continue;
+    }
+  }
+
+  return [];
+};
 
 const queryPages = async <V>(
   id: string,
@@ -53,20 +112,32 @@ const queryPages = async <V>(
         },
       });
 
-      if (response.status === 404) break;
-
       if (response.status !== 200) throw new Error(response.statusText);
 
-      const data = (await response.json()) as SISResponse<V>;
+      const data = (await response.json()) as
+        | DeprecatedSISResponse<V>
+        | SISResponse<V>;
 
-      values.push(...data.apiResponse.response[field]);
+      const _values = data.apiResponse
+        ? data.apiResponse.response[field]
+        : data.response[field];
+
+      values.push(..._values);
+
+      if (_values.length < 100) {
+        console.log(
+          `No more data found on page ${page}. Terminating update...`
+        );
+
+        break;
+      }
     } catch (error) {
-      console.log(`Unexpected error querying SIS API. Error: ${error}`);
+      console.log(`Unexpected error querying SIS API. Error: "${error}"`);
 
       if (retries === 0) {
         console.log(`Too many errors querying SIS API. Terminating update...`);
 
-        throw error;
+        break;
       }
 
       retries--;
@@ -81,7 +152,7 @@ const queryPages = async <V>(
 
   console.log(
     `Finished querying SIS API. Received ${values.length} objects in ${
-      page - 1
+      page
     } pages.`
   );
 
@@ -192,12 +263,38 @@ const updateSections = async (currentTerms: TermType[]) => {
 const updateTerms = async () => {
   console.log("Updating database with new term data...");
 
-  const terms = await queryPages<TermType>(
-    config.sis.COURSE_APP_ID,
-    config.sis.COURSE_APP_KEY,
-    SIS_COURSE_URL,
-    "terms"
+  // Get the next term
+  const terms = await queryPage<TermType>(
+    config.sis.TERM_APP_ID,
+    config.sis.TERM_APP_KEY,
+    SIS_TERM_URL,
+    "terms",
+    {
+      "temporal-position": "Next",
+    }
   );
+
+  // Get all previous terms
+  let currentTerm: TermType | undefined = terms[0];
+
+  while (currentTerm) {
+    console.log(currentTerm.name);
+
+    [currentTerm] = await queryPage<TermType>(
+      config.sis.TERM_APP_ID,
+      config.sis.TERM_APP_KEY,
+      SIS_TERM_URL,
+      "terms",
+      {
+        "temporal-position": "Previous",
+        "as-of-date": currentTerm.beginDate as unknown as string,
+      }
+    );
+
+    if (currentTerm) terms.push(currentTerm);
+  }
+
+  console.log("Updating database with new term data...");
 
   const operations = terms.map((term) => ({
     replaceOne: {
@@ -211,7 +308,7 @@ const updateTerms = async () => {
     await TermModel.bulkWrite(operations);
 
   console.log(
-    `Completed updating database with new course data. Created ${upsertedCount} and updated ${modifiedCount} course objects.`
+    `Completed updating database with new term data. Created ${upsertedCount} and updated ${modifiedCount} term objects.`
   );
 };
 

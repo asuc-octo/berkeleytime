@@ -1,11 +1,9 @@
 export const descriptor = {
   code: {
     type: String,
-    required: true,
   },
   description: {
     type: String,
-    required: true,
   },
   formalDescription: String,
   active: Boolean,
