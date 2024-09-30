@@ -46,7 +46,7 @@ const queryPages = async <V>(
         ...params,
       });
 
-      const response = await fetch(`${url}${_params}`, {
+      const response = await fetch(`${url}?${_params}`, {
         headers: {
           app_id: id,
           app_key: key,

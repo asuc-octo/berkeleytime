@@ -1,34 +1,39 @@
 .root {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-  background: linear-gradient(var(--landing-gradient-angle, to top right), var(--landing-gradient-start), var(--landing-gradient-stop));
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: linear-gradient(
+    var(--landing-gradient-angle, to top right),
+    var(--landing-gradient-start),
+    var(--landing-gradient-stop)
+  );
 
-	.wave {
-		position: absolute;
-		width: 100%;
-		bottom: 0px;
-		left: 0;
-		z-index: 2;
-		filter: drop-shadow(0 -8px 0 rgba(white, 0.1));
-	}
-  
+  .wave {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    left: 0;
+    z-index: 2;
+    filter: drop-shadow(0 -8px 0 rgb(255 255 255 / 10%));
+    color: var(--background-color);
+  }
+
   @media (width > 992px) {
-	  height: 100dvh;
+    height: 100dvh;
     max-height: 992px;
   }
 
-	.container {
-		max-width: 1280px;
-		width: 100%;
+  .container {
+    max-width: 1280px;
+    width: 100%;
     flex-grow: 1;
-		margin: 0 auto;
-		padding: 0px 24px;
-		position: relative;
-		z-index: 1;
+    margin: 0 auto;
+    padding: 0px 24px;
+    position: relative;
+    z-index: 1;
 
-		.text {
+    .text {
       margin: 96px 0 192px;
       position: relative;
       z-index: 2;
@@ -38,31 +43,36 @@
       }
 
       @media (width > 992px) {
-			  max-width: 592px;
+        max-width: 592px;
       }
 
-			.heading {
-				font-size: 48px;
+      .heading {
+        font-size: 48px;
         margin-bottom: 16px;
-				color: white;
-				font-weight: 660;
-        font-feature-settings: 'cv05' on, 'cv13' on, 'ss07' on, 'cv12' on, 'cv06' on;
-				line-height: 1.25;
-				position: relative;
+        color: var(--dark-heading-color);
+        font-weight: 660;
+        font-feature-settings:
+          "cv05" on,
+          "cv13" on,
+          "ss07" on,
+          "cv12" on,
+          "cv06" on;
+        line-height: 1.25;
+        position: relative;
 
         @media (width <= 768px) {
           font-size: 32px;
           line-height: 1.5;
         }
-			}
+      }
 
-			.description {
-				font-size: 24px;
-				color: rgb(255 255 255 / 65%);
+      .description {
+        font-size: 24px;
+        color: var(--blue-200);
         line-height: 1.5;
         font-weight: 500;
         margin-bottom: 64px;
-			}
+      }
 
       .form {
         position: relative;
@@ -85,37 +95,37 @@
           }
         }
       }
-		}
+    }
 
-		.clock {
-			position: absolute;
-			right: 272px;
-			bottom: 128px;
-			text-align: right;
-			font-size: 16px;
-			line-height: 1.5;
-      color: rgb(255 255 255 / 65%);
+    .clock {
+      position: absolute;
+      right: 272px;
+      bottom: 128px;
+      text-align: right;
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--blue-200);
       z-index: 1;
 
       @media (width <= 992px) {
         display: none;
       }
 
-			p.heading {
-				font-weight: 500;
-				color: white;
-				margin-top: 16px;
-			}
+      p.heading {
+        font-weight: 500;
+        color: white;
+        margin-top: 16px;
+      }
 
-			p.description {
-				margin-top: 4px;
-			}
-		}
+      p.description {
+        margin-top: 4px;
+      }
+    }
 
-		img.campanile {
-			position: absolute;
+    img.campanile {
+      position: absolute;
       z-index: 1;
-			right: 24px;
+      right: 24px;
       top: 0;
 
       @media (width <= 992px) {
@@ -123,6 +133,6 @@
         transform: translateX(-50%);
         opacity: 0.25;
       }
-		}
-	}
+    }
+  }
 }

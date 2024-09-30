@@ -31,25 +31,25 @@
     }
   }
 
+  .link {
+    color: var(--heading-color);
+    transition: all 100ms ease-in-out;
+    font-weight: 500;
+    font-size: 16px;
+
+    &:hover {
+      color: var(--paragraph-color);
+    }
+  }
+
   .column {
     display: flex;
     flex-direction: column;
     gap: 16px;
 
-    .link {
-      font-size: 14px;
-      color: var(--slate-900); // white;
-      transition: all 100ms ease-in-out;
-      font-weight: 500;
-
-      &:hover {
-        color: var(--paragraph-color); // rgb(255 255 255 / 75%);
-      }
-    }
-
     .label {
       font-size: 12px;
-      color: var(--paragraph-color); // rgb(255 255 255 / 65%);
+      color: var(--label-color);
     }
   }
 
@@ -65,17 +65,7 @@
     .description {
       font-size: 16px;
       margin-top: 16px;
-      color: var(--paragraph-color); // rgb(255 255 255 / 65%);
-
-      .link {
-        color: var(--heading-color);
-        transition: all 100ms ease-in-out;
-        font-weight: 500;
-
-        &:hover {
-          color: var(--paragraph-color);
-        }
-      }
+      color: var(--paragraph-color);
     }
 
     .brand {

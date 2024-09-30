@@ -7,7 +7,7 @@
     "build": "tsc --noEmit",
     "lint": "eslint --ext .tsx,.ts src/ --report-unused-disable-directives",
     "generate": "graphql-codegen --config codegen.ts",
-    "update:catalog": "node ./build/scripts/update-catalog.js"
+    "update:catalog": "tsx ./src/scripts/update-catalog.ts"
   },
   "devDependencies": {
     "@babel/core": "^7.24.9",

@@ -1,14 +1,14 @@
 import Features from "./Features";
 import Hero from "./Hero";
 import styles from "./Landing.module.scss";
-import HomeFooter from "./Organization";
+import Organization from "./Organization";
 
 const Home = () => {
   return (
     <div className={styles.root}>
       <Hero />
       <Features />
-      <HomeFooter />
+      <Organization />
     </div>
   );
 };

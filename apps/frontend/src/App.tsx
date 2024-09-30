@@ -31,15 +31,20 @@ const router = createBrowserRouter([
     path: "dashboard",
   },
   {
+    element: <Layout header={false} />,
+    children: [
+      {
+        element: <Discover />,
+        path: "discover",
+      },
+    ],
+  },
+  {
     element: <Layout header={false} footer={false} />,
     children: [
       {
         element: <Landing />,
         index: true,
-      },
-      {
-        element: <Discover />,
-        path: "discover",
       },
       {
         element: <Schedule />,
