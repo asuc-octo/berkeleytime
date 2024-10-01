@@ -1,6 +1,25 @@
 FROM node:alpine AS base
 RUN ["npm", "install", "-g", "turbo@latest"]
 
+# datapuller
+FROM base AS datapuller-builder
+WORKDIR /datapuller
+COPY . .
+RUN ["turbo", "prune", "datapuller", "--docker"]
+
+FROM base AS datapuller-dev
+WORKDIR /datapuller
+
+COPY --from=datapuller-builder /datapuller/out/json/ .
+COPY --from=datapuller-builder /datapuller/out/package-lock.json ./package-lock.json
+RUN ["npm", "install"]
+
+COPY --from=datapuller-builder /datapuller/out/full/ .
+ENTRYPOINT ["turbo", "run", "course", "--filter=datapuller"]
+
+FROM datapuller-dev AS datapuller-prod
+ENTRYPOINT ["turbo", "run", "course", "--filter=datapuller", "--env-mode=loose"]
+
 # backend
 FROM base AS backend-builder
 WORKDIR /backend

@@ -14,6 +14,9 @@
         "dist/**"
       ]
     },
+    "course": {
+      "cache": false
+    },
     "generate": {
       "outputs": [
         "generated-types/**"
