@@ -316,29 +316,21 @@ const initialize = async () => {
   try {
     await mongooseLoader();
 
-    // console.log("\n=== UPDATE TERMS ===");
-    // await updateTerms();
+    console.log("\n=== UPDATE TERMS ===");
+    await updateTerms();
 
-    // console.log("\n=== UPDATE COURSES ===");
-    // await updateCourses();
+    console.log("\n=== UPDATE COURSES ===");
+    await updateCourses();
 
-    // const currentTerms = await TermModel.find({
-    //   temporalPosition: "Current",
-    // }).lean();
-
-    // Find the 8 most recent semesters
-    const recentTerms = await TermModel.find({
-      temporalPosition: "Previous",
-    })
-      .sort({ beginDate: -1 })
-      .limit(8)
-      .lean();
+    const currentTerms = await TermModel.find({
+      temporalPosition: "Current",
+    }).lean();
 
     console.log("\n=== UPDATE CLASSES ===");
-    await updateClasses(recentTerms);
+    await updateClasses(currentTerms);
 
     console.log("\n=== UPDATE SECTIONS ===");
-    await updateSections(recentTerms);
+    await updateSections(currentTerms);
   } catch (error) {
     console.error(error);
 
