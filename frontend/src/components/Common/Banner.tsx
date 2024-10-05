@@ -1,30 +1,29 @@
-import { useSelector, useDispatch } from 'react-redux';
 import { Button } from '../../bt/custom';
-import { closeBanner } from '../../redux/common/actions';
 
 import close from '../../assets/svg/common/close.svg';
-import { ReduxState } from 'redux/store';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Banner() {
-	const { banner } = useSelector((state: ReduxState) => state.common);
-	const dispatch = useDispatch();
+	const [open, setOpen] = useState(() => localStorage.getItem('csd-survey-fa-24') !== '1');
 
-	return banner ? (
+	const closeBanner = () => {
+		setOpen(false);
+		localStorage.setItem('csd-survey-fa-24', '1');
+	};
+
+	return open ? (
 		<div className="banner">
 			<div className="content">
 				<p>
-					Berkeleytime is recruiting passionate developers, designers, researchers and more for Fall
-					2024!
+					Help shape the future of Berkeleytime and tell us about your experience with course
+					enrollment at UC Berkeley!
 				</p>
-				<Button
-					size="sm"
-					target="_blank"
-					href="https://airtable.com/appllQy6crmpquCOQ/pag5ngU9hgKJt5eAs/form"
-				>
-					Apply Now
-				</Button>
+				<Link to="/survey">
+					<Button size="sm">Take the Survey</Button>
+				</Link>
 			</div>
-			<img src={close} alt="close" onClick={() => dispatch(closeBanner())} />
+			<img src={close} alt="close" onClick={() => closeBanner()} />
 		</div>
 	) : null;
 }

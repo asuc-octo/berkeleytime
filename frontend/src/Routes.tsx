@@ -52,6 +52,14 @@ const router = createBrowserRouter([
 			{ path: '/legal/privacy', lazy: PrivacyPolicy },
 			{ path: '/legal/terms', lazy: TermsOfService },
 			{ path: '/redirect', lazy: RedirectLink },
+			{
+				path: '/survey',
+				loader: () => {
+					window.location.href = 'https://berkeley.qualtrics.com/jfe/form/SV_0rDr0SJfMuPZvRs';
+
+					return null;
+				}
+			}
 			// { path: '/apply', lazy: Apply },
 			// { path: '/infosesh', lazy: InfoSesh },
 			// { path: '/chats', lazy: Chats },
