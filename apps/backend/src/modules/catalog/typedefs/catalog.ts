@@ -130,6 +130,9 @@ export default gql`
 
     "Common Final"
     C
+
+    "Last Class Meeting"
+    L
   }
 
   enum ClassGradingBasis {
