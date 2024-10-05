@@ -109,7 +109,7 @@ export default function Manage() {
         query: GET_CLASS,
         variables: {
           term: {
-            semester: "Spring",
+            semester: "Fall",
             year: 2024,
           },
           subject: selectedClass.course.subject,
@@ -193,7 +193,7 @@ export default function Manage() {
               </IconButton>
             </Link>
           </Tooltip>
-          <p className={styles.heading}>Untitled Spring 2024 schedule</p>
+          <p className={styles.heading}>Untitled Fall 2024 schedule</p>
           <Tooltip content="Settings">
             <IconButton>
               <Settings />

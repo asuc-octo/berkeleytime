@@ -74,8 +74,8 @@ export default function Compare() {
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.group}>
-          <p className={styles.heading}>Untitled Spring 2024 schedule</p>
-          <p className={styles.paragraph}>Spring 2024</p>
+          <p className={styles.heading}>Untitled Fall 2024 schedule</p>
+          <p className={styles.paragraph}>Fall 2024</p>
         </div>
         <div className={styles.group}>
           <p className={styles.heading}>No schedule selected</p>
@@ -94,7 +94,7 @@ export default function Compare() {
       <div className={styles.body}>
         <div className={styles.panel}>
           <div className={styles.context}>
-            <div className={styles.data}>Spring 2024</div>
+            <div className={styles.data}>Fall 2024</div>
             <div className={styles.data}>
               {classes.length === 1 ? "1 class" : `${classes.length} classes`},{" "}
               <Units unitsMin={minimum} unitsMax={maximum}>
@@ -120,7 +120,7 @@ export default function Compare() {
         </div>
         <div className={styles.panel}>
           <div className={styles.context}>
-            <div className={styles.data}>Spring 2024</div>
+            <div className={styles.data}>Fall 2024</div>
             <div className={styles.data}>
               {classes.length === 1 ? "1 class" : `${classes.length} classes`},{" "}
               <Units unitsMin={12} unitsMax={20}>

@@ -86,16 +86,16 @@ const resolvers: CatalogModule.Resolvers = {
   },
 
   // @ts-expect-error - Not sure how to type this
-  Session: {
-    R: "1",
-    S: "12W",
-    A: "6W1",
-    B: "10W",
-    C: "8W",
-    D: "6W2",
-    E: "3W1",
-    F: "3W2",
-  },
+  // Session: {
+  //   R: "1",
+  //   S: "12W",
+  //   A: "6W1",
+  //   B: "10W",
+  //   C: "8W",
+  //   D: "6W2",
+  //   E: "3W1",
+  //   F: "3W2",
+  // },
 
   CourseFinalExam: {
     D: "To be decided by the instructor when the class is offered",

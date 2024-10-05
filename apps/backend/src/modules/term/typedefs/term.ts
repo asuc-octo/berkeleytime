@@ -3,16 +3,38 @@ import { gql } from "graphql-tag";
 const typedef = gql`
   enum Semester {
     # Summer
-    S
+    Summer
 
     # Fall
-    F
+    Fall
 
     # Spring
-    P
+    Spring
 
     # Winter
-    W
+    Winter
+  }
+
+  enum TemporalPosition {
+    # Past
+    Past
+
+    # Current
+    Current
+
+    # Future
+    Future
+  }
+
+  """
+  Session
+  """
+  type Session {
+    temporalPosition: TemporalPosition!
+    # id: Int!
+    name: String!
+    startDate: String
+    endDate: String
   }
 
   """
@@ -20,8 +42,11 @@ const typedef = gql`
   """
   type Term {
     semester: Semester!
-    year: String!
-    active: Boolean!
+    year: Int!
+    temporalPosition: TemporalPosition!
+    startDate: String
+    endDate: String
+    sessions: [Session!]!
   }
 
   type Query {
@@ -29,6 +54,11 @@ const typedef = gql`
     Query for terms.
     """
     terms: [Term]
+
+    """
+    Query for a term.
+    """
+    term(year: Int!, semester: Semester!): Term
   }
 `;
 

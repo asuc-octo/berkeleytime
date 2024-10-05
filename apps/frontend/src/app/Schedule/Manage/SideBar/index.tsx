@@ -47,7 +47,7 @@ export default function SideBar({
     <div className={styles.root}>
       <div className={styles.header}>
         <div className={styles.context}>
-          <div className={styles.data}>Spring 2024</div>
+          <div className={styles.data}>Fall 2024</div>
           <div className={styles.data}>
             {classes.length === 1 ? "1 class" : `${classes.length} classes`},{" "}
             <Units unitsMin={minimum} unitsMax={maximum}>
@@ -57,7 +57,7 @@ export default function SideBar({
         </div>
         <Catalog
           onClassSelect={onClassSelect}
-          semester={Semester.Spring}
+          semester={Semester.Fall}
           year={2024}
         >
           <Button className={styles.button}>

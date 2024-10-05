@@ -55,7 +55,7 @@ export default function Catalog({ onClassSelect, children }: CatalogProps) {
           </div>
           <div className={styles.body}>
             <ClassBrowser
-              semester={Semester.Spring}
+              semester={Semester.Fall}
               year={2024}
               onClassSelect={handleClassSelect}
               responsive={false}

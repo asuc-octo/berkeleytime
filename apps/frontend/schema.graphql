@@ -7,6 +7,11 @@ directive @cacheControl(
 directive @auth on OBJECT | FIELD_DEFINITION
 
 """
+Indicates exactly one field must be supplied and this field must not be `null`.
+"""
+directive @oneOf on INPUT_OBJECT
+
+"""
 User account info.
 """
 type User {
@@ -83,12 +88,22 @@ type Query {
   """
   Takes in a user's email and returns all the schedules they created.
   """
-  schedulesByUser: [Schedule!]
+  schedulesByUser: [Schedule]
 
   """
   Takes in a schedule's ObjectID and returns a specific schedule.
   """
   scheduleByID(id: String!): Schedule
+
+  """
+  Query for terms.
+  """
+  terms: [Term]
+
+  """
+  Query for a term.
+  """
+  term(year: Int!, semester: Semester!): Term
 }
 
 type Mutation {
@@ -146,16 +161,16 @@ type Course {
   fromDate: String!
   gradeAverage: Float
   gradingBasis: CourseGradingBasis!
-  finalExam: CourseFinalExam!
+  finalExam: CourseFinalExam
   academicCareer: AcademicCareer!
   number: String!
   subject: String!
   title: String!
-  toDate: String!
-  raw: JSONObject!
   primaryInstructionMethod: InstructionMethod!
+  toDate: String!
+  typicallyOffered: [String!]
+  raw: JSONObject!
   lastUpdated: ISODate!
-  typicallyOffered: [Semester!]
 }
 
 enum AcademicCareer {
@@ -246,6 +261,11 @@ enum ClassFinalExam {
   Alernate Method
   """
   A
+
+  """
+  Common Final
+  """
+  C
 }
 
 enum ClassGradingBasis {
@@ -285,46 +305,14 @@ enum ClassGradingBasis {
   IOP
 }
 
-enum Session {
-  """
-  Regular Academic Session
-  """
-  R
-
-  """
-  12-Week Summer Session
-  """
-  S
-
-  """
-  Session A
-  """
-  A
-
-  """
-  Session B
-  """
-  B
-
-  """
-  Session C
-  """
-  C
-
-  """
-  Session D
-  """
-  D
-
-  """
-  Session E
-  """
-  E
-
-  """
-  Session F
-  """
-  F
+"""
+Session
+"""
+type Session {
+  temporalPosition: TemporalPosition!
+  name: String!
+  startDate: String
+  endDate: String
 }
 
 """
@@ -589,7 +577,7 @@ type Meeting {
   endTime: String!
   startDate: String!
   endDate: String!
-  location: String!
+  location: String
   instructors: [Instructor!]!
 }
 
@@ -647,9 +635,9 @@ input TermInput {
 }
 
 enum Semester {
+  Summer
   Fall
   Spring
-  Summer
   Winter
 }
 
@@ -744,4 +732,22 @@ type CustomEvent {
   location: String
   description: String
   days_of_week: String
+}
+
+enum TemporalPosition {
+  Past
+  Current
+  Future
+}
+
+"""
+Term
+"""
+type Term {
+  semester: Semester!
+  year: Int!
+  temporalPosition: TemporalPosition!
+  startDate: String
+  endDate: String
+  sessions: [Session!]!
 }

@@ -276,6 +276,9 @@ export default gql`
 
     "Seminar"
     SEM
+
+    "Demonstration"
+    DEM
   }
 
   enum InstructionMethod {

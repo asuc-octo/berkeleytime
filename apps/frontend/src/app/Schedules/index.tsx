@@ -23,7 +23,7 @@ export default function Schedules() {
         name: "Untitled schedule",
         term: {
           year: 2024,
-          semester: "Spring",
+          semester: "Fall",
         },
       },
       update(cache, { data }) {

@@ -5,16 +5,20 @@ import classNames from "classnames";
 import { Xmark } from "iconoir-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
+import Boundary from "@/components/Boundary";
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
 import IconButton from "@/components/IconButton";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import {
   GET_CLASS,
   GET_COURSE,
+  GET_TERMS,
   GetClassResponse,
   GetCourseResponse,
+  GetTermsResponse,
   IClass,
-  Semester,
+  TemporalPosition,
 } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
@@ -36,20 +40,27 @@ export default function Catalog() {
   const [open, setOpen] = useState(false);
   const [partialClass, setPartialClass] = useState<IClass | null>(null);
 
-  // TODO: Select year
-  const year = useMemo(
-    () => (currentYear && parseInt(currentYear)) || 2024,
-    [currentYear]
-  );
+  const { data, loading } = useQuery<GetTermsResponse>(GET_TERMS);
 
-  // TODO: Select semester
-  const semester = useMemo(
+  const terms = useMemo(() => data?.terms, [data]);
+
+  const selectedTerm = useMemo(() => {
+    if (!currentYear || !currentSemester) return;
+
+    const semester =
+      currentSemester[0].toUpperCase() + currentSemester.slice(1);
+
+    return terms?.find(
+      (term) =>
+        term.year === parseInt(currentYear) && term.semester === semester
+    );
+  }, [terms, currentYear, currentSemester]);
+
+  const currentTerm = useMemo(
     () =>
-      currentSemester
-        ? ((currentSemester[0].toUpperCase() +
-            currentSemester.slice(1).toLowerCase()) as Semester)
-        : Semester.Spring,
-    [currentSemester]
+      selectedTerm ??
+      terms?.find((term) => term.temporalPosition === TemporalPosition.Current),
+    [terms]
   );
 
   const subject = useMemo(
@@ -64,14 +75,14 @@ export default function Catalog() {
   } = useQuery<GetClassResponse>(GET_CLASS, {
     variables: {
       term: {
-        semester,
-        year,
+        semester: currentTerm?.semester,
+        year: currentTerm?.year,
       },
       subject,
       courseNumber,
       classNumber,
     },
-    skip: !subject || !courseNumber || !classNumber,
+    skip: !subject || !courseNumber || !classNumber || !currentTerm,
   });
 
   // Fetch the course to for directing to the correct term
@@ -81,25 +92,31 @@ export default function Catalog() {
         subject,
         courseNumber,
       },
-      skip: !subject || !courseNumber || !classNumber,
+      skip: !subject || !courseNumber,
     });
 
   const _class = useMemo(() => classData?.class, [classData]);
 
   const handleClassSelect = useCallback(
     (selectedClass: IClass) => {
+      if (!currentTerm) return;
+
       setPartialClass(selectedClass);
       setOpen(true);
 
       navigate({
-        pathname: `/catalog/${year}/${semester}/${selectedClass.course.subject}/${selectedClass.course.number}/${selectedClass.number}`,
+        pathname: `/catalog/${currentTerm.year}/${currentTerm.semester}/${selectedClass.course.subject}/${selectedClass.course.number}/${selectedClass.number}`,
         search: searchParams.toString(),
       });
     },
-    [navigate, currentYear, currentSemester, searchParams]
+    [navigate, currentYear, currentSemester, searchParams, currentTerm]
   );
 
-  return (
+  return loading ? (
+    <Boundary>
+      <LoadingIndicator size={32} />
+    </Boundary>
+  ) : currentTerm ? (
     <div
       className={classNames(styles.root, {
         [styles.expanded]: expanded,
@@ -109,7 +126,7 @@ export default function Catalog() {
       <div className={styles.panel}>
         <div className={styles.header}>
           <p className={styles.title}>
-            {semester} {year}
+            {currentTerm.semester} {currentTerm.year}
           </p>
           <IconButton onClick={() => setOpen(true)}>
             <Xmark />
@@ -118,8 +135,8 @@ export default function Catalog() {
         <div className={styles.body}>
           <ClassBrowser
             onClassSelect={handleClassSelect}
-            semester={semester}
-            year={year}
+            semester={currentTerm.semester}
+            year={currentTerm.year}
             persistent
           />
         </div>
@@ -131,8 +148,8 @@ export default function Catalog() {
             courseNumber={courseNumber}
             classNumber={classNumber}
             partialClass={partialClass}
-            year={year}
-            semester={semester}
+            year={currentTerm.year}
+            semester={currentTerm.semester}
             expanded={expanded}
             onExpandedChange={setExpanded}
             onClose={() => setOpen(false)}
@@ -150,5 +167,7 @@ export default function Catalog() {
         )}
       </div>
     </div>
+  ) : (
+    <>{/* Error */}</>
   );
 }

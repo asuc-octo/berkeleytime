@@ -88,7 +88,7 @@ export default function Enrollment() {
       <div className={styles.legend}>
         <div className={styles.label}>
           <div className={styles.icon} />
-          Spring 2024
+          Fall 2024
         </div>
         <div className={styles.label}>
           <div className={styles.icon} />
@@ -116,7 +116,7 @@ export default function Enrollment() {
             />
             <ReferenceLine
               y={2900}
-              label="Spring 2024 enrollment limit"
+              label="Fall 2024 enrollment limit"
               stroke="var(--label-color)"
             />
             <XAxis
