@@ -38,8 +38,8 @@ jobs:
           script: |
             cd ./infra
             if helm status bt-prod-app ; then
-              kubectl rollout restart bt-prod-app-backend
-              kubectl rollout restart bt-prod-app-frontend
+              kubectl rollout restart deployment bt-prod-app-backend
+              kubectl rollout restart deployment bt-prod-app-frontend
             else
               helm install bt-prod-app ./app --namespace=bt \
                 --set host=stanfurdtime.com
