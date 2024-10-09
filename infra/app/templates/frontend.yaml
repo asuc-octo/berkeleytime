@@ -17,7 +17,7 @@ spec:
       containers:
         - name: frontend
           image: {{ printf "%s/%s:%s" .Values.frontend.image.registry .Values.frontend.image.repository .Values.frontend.image.tag }}
-          command: {{ .Values.frontend.command | toJson }}
+          imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.frontend.port }}
 

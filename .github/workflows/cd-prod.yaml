@@ -1,0 +1,46 @@
+name: Deploy to Production
+
+concurrency: prod
+
+on:
+  workflow_dispatch:
+
+jobs:
+  branch-check:
+    name: Environment Check
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Pass
+        run: echo "Passed check"
+
+  build-push:
+    name: Build and Push Images
+    needs: [branch-check]
+    uses: ./.github/workflows/cd.yaml
+    with:
+      tag: prod
+    secrets: inherit
+
+  deploy:
+    name: Deploy with SSH
+    needs: [build-push]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH and Helm Install
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ./infra
+            if helm status bt-prod-app ; then
+              kubectl rollout restart bt-prod-app-backend
+              kubectl rollout restart bt-prod-app-frontend
+            else
+              helm install bt-prod-app ./app --namespace=bt \
+                --set host=stanfurdtime.com
+            fi
