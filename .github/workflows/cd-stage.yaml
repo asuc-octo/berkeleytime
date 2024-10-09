@@ -30,8 +30,8 @@ jobs:
           script: |
             cd ./infra
             if helm status bt-stage-app ; then
-              kubectl rollout restart bt-stage-app-backend
-              kubectl rollout restart bt-stage-app-frontend
+              kubectl rollout restart deployment bt-stage-app-backend
+              kubectl rollout restart deployment bt-stage-app-frontend
             else
               helm install bt-stage-app ./app --namespace=bt \
                 --set env=stage \
