@@ -39,5 +39,5 @@ jobs:
                 --set backend.image.tag=latest \
                 --set host=staging.stanfurdtime.com \
                 --set mongoUri=mongodb://bt-stage-mongo-mongodb.bt.svc.cluster.local:27017/bt \
-                --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379 \
+                --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379
             fi
