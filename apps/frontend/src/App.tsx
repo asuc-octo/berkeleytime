@@ -23,13 +23,8 @@ const Manage = lazy(() => import("@/app/Schedule/Manage"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 const Map = lazy(() => import("@/app/Map"));
 const Account = lazy(() => import("@/app/Account"));
-const Dashboard = lazy(() => import("@/app/Dashboard"));
 
 const router = createBrowserRouter([
-  {
-    element: <Dashboard />,
-    path: "dashboard",
-  },
   {
     element: <Layout header={false} />,
     children: [

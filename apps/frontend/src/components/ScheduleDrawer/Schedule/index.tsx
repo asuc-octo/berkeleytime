@@ -23,7 +23,7 @@ export default function Schedule({
 }: ScheduleProps) {
   const { data } = useQuery<GetSchedulesResponse>(GET_SCHEDULES);
 
-  const schedules = useMemo(() => data?.schedulesByUser ?? [], [data]);
+  const schedules = useMemo(() => data?.schedules ?? [], [data]);
 
   const filteredSchedules = useMemo(
     () =>

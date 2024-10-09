@@ -1,53 +1,53 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
 export const customEventSchema = new Schema({
-  start_time: {
+  startTime: {
     type: String,
     required: true,
     trim: true,
-    alias: "start",
   },
-  end_time: {
+  endTime: {
     type: String,
     required: true,
     trim: true,
-    alias: "end",
   },
   title: {
     type: String,
-    required: false,
-    alias: "name",
+    required: true,
   },
   location: {
     type: String,
     required: false,
     trim: true,
-    alias: "place",
   },
   description: {
     type: String,
     required: false,
   },
-  days_of_week: {
-    type: String,
-    required: false,
+  days: {
+    type: [Boolean],
+    required: true,
     trim: true,
-    alias: "days",
   },
 });
 
-export const SelectedCourseSchema = new Schema({
-  class_ID: {
+export const selectedClassSchema = new Schema({
+  subject: {
     type: String,
     trim: true,
     required: true,
   },
-  primary_section_ID: {
+  courseNumber: {
     type: String,
     trim: true,
-    required: false,
+    required: true,
   },
-  secondary_section_IDs: {
+  classNumber: {
+    type: String,
+    trim: true,
+    required: true,
+  },
+  sections: {
     type: [String],
     trim: true,
     required: false,
@@ -58,23 +58,22 @@ export const scheduleSchema = new Schema(
   {
     name: {
       type: String,
-      required: false,
+      required: true,
     },
-    created_by: {
+    createdBy: {
       type: String,
       required: true,
       trim: true,
-      alias: "creator",
     },
-    is_public: {
+    public: {
       type: Boolean,
       required: true,
-      alias: "public",
       default: false,
     },
-    courses: {
-      type: [SelectedCourseSchema],
+    classes: {
+      type: [selectedClassSchema],
       required: true,
+      default: [],
     },
     term: {
       type: {
@@ -90,31 +89,26 @@ export const scheduleSchema = new Schema(
       },
       required: true,
     },
-    custom_events: {
+    events: {
       type: [customEventSchema],
-      required: false,
+      required: true,
+      default: [],
     },
   },
-  { timestamps: true }
+  {
+    timestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
+  }
 );
 
-export const CustomEventModel = mongoose.model(
-  "customEvent",
-  customEventSchema,
-  "customEvent"
-);
 export type CustomEventType = Document &
   InferSchemaType<typeof customEventSchema>;
-export const SelectedCourseModel = mongoose.model(
-  "course",
-  SelectedCourseSchema,
-  "course"
-);
-export type SelectedCourseType = Document &
-  InferSchemaType<typeof SelectedCourseSchema>;
-export const ScheduleModel = mongoose.model(
-  "schedule",
-  scheduleSchema,
-  "schedule"
-);
+
+export type SelectedClassType = Document &
+  InferSchemaType<typeof selectedClassSchema>;
+
+export const ScheduleModel = mongoose.model("schedule", scheduleSchema);
+
 export type ScheduleType = Document & InferSchemaType<typeof scheduleSchema>;

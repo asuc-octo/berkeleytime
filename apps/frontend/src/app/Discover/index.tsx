@@ -6,6 +6,7 @@ import { ArrowRight, Calendar } from "iconoir-react";
 import AverageGrade from "@/components/AverageGrade";
 import Button from "@/components/Button";
 import Container from "@/components/Container";
+import CourseDrawer from "@/components/CourseDrawer";
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 import Units from "@/components/Units";
@@ -127,20 +128,26 @@ export default function Discover() {
                 );
 
                 return (
-                  <div className={styles.course} key={course.number}>
-                    <p className={styles.title}>
-                      {course.subject} {course.number}
-                    </p>
-                    <p className={styles.description}>{course.title}</p>
-                    <div className={styles.row}>
-                      <AverageGrade gradeAverage={course.gradeAverage} />
-                      <div className={styles.badge}>
-                        <Calendar />
-                        {semester} {year}
+                  <CourseDrawer
+                    subject={course.subject}
+                    number={course.number}
+                    key={course.number}
+                  >
+                    <div className={styles.course}>
+                      <p className={styles.title}>
+                        {course.subject} {course.number}
+                      </p>
+                      <p className={styles.description}>{course.title}</p>
+                      <div className={styles.row}>
+                        <AverageGrade gradeAverage={course.gradeAverage} />
+                        <div className={styles.badge}>
+                          <Calendar />
+                          {semester} {year}
+                        </div>
+                        <Units unitsMax={unitsMax} unitsMin={unitsMin} />
                       </div>
-                      <Units unitsMax={unitsMax} unitsMin={unitsMin} />
                     </div>
-                  </div>
+                  </CourseDrawer>
                 );
               })}
           </div>

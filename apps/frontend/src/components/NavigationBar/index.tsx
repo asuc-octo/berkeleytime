@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { useQuery } from "@apollo/client";
 import classNames from "classnames";
 import { ArrowRight, Menu, User } from "iconoir-react";
@@ -7,7 +9,7 @@ import Button from "@/components/Button";
 import IconButton from "@/components/IconButton";
 import MenuItem from "@/components/MenuItem";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
-import { AccountResponse, GET_ACCOUNT, signIn, signOut } from "@/lib/api";
+import { GET_USER, UserResponse, signIn, signOut } from "@/lib/api";
 
 import styles from "./NavigationBar.module.scss";
 
@@ -18,7 +20,9 @@ interface NavigationBarProps {
 export default function NavigationBar({ invert }: NavigationBarProps) {
   const { width } = useWindowDimensions();
 
-  const { data: account } = useQuery<AccountResponse>(GET_ACCOUNT);
+  const { data } = useQuery<UserResponse>(GET_USER);
+
+  const user = useMemo(() => data?.user, [data]);
 
   return (
     <div
@@ -59,11 +63,11 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
             </NavLink>
           </div>
           <Button
-            onClick={() => (account ? signOut() : signIn())}
+            onClick={() => (user ? signOut() : signIn())}
             className={styles.button}
           >
-            {account ? account.user.email : "Sign in"}
-            {account ? <User /> : <ArrowRight />}
+            {user ? user.email : "Sign in"}
+            {user ? <User /> : <ArrowRight />}
           </Button>
         </>
       )}

@@ -155,14 +155,11 @@ export default async (app: Application, redis: RedisClientType) => {
           user = new UserModel({
             email,
             google_id: profile.id,
-            username: profile.displayName,
-            first_name: profile.name?.givenName || "",
-            last_name: profile.name?.familyName || "",
+            name: profile.displayName,
             // refresh_token: refreshToken, <-------------- currently not needed.
           });
         }
 
-        user.last_login = new Date();
         const doc = await user.save();
 
         done(null, doc);

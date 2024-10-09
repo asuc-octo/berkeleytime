@@ -1,55 +1,34 @@
-import {
-  CustomEventType,
-  ScheduleType,
-  SelectedCourseType,
-} from "@repo/common";
+import { ClassModel, ScheduleType } from "@repo/common";
 
+import { formatClass } from "../catalog/formatter";
 import { ScheduleModule } from "./generated-types/module-types";
 
-export function formatSchedule(
-  schedule: ScheduleType
-): ScheduleModule.Schedule {
+export const formatSchedule = async (schedule: ScheduleType) => {
+  const classes = [];
+
+  for (const selectedClass of schedule.classes) {
+    const _class = await ClassModel.findOne({
+      number: selectedClass.classNumber,
+      "course.subjectArea.code": selectedClass.subject,
+      "course.catalogNumber.formatted": selectedClass.courseNumber,
+      "session.term.name": `${schedule.term.year} ${schedule.term.semester}`,
+    });
+
+    if (!_class) continue;
+
+    classes.push({
+      class: formatClass(_class),
+      selectedSections: selectedClass.sections,
+    });
+  }
+
   return {
     _id: schedule._id as string,
     name: schedule.name,
-    created_by: schedule.created_by,
-    is_public: schedule.is_public,
-    courses: schedule.courses.map(formatCourse),
-    term: formatTerm(schedule.term.semester, schedule.term.year),
-    custom_events: schedule.custom_events
-      ? schedule.custom_events.map(formatCustomEvents)
-      : undefined,
-    created: schedule.createdAt.toISOString(),
-    revised: schedule.updatedAt.toISOString(),
-  };
-}
-
-function formatTerm(semester: string, year: number): ScheduleModule.TermOutput {
-  return {
-    semester: semester,
-    year: year,
-  };
-}
-
-function formatCustomEvents(
-  customEvent: CustomEventType
-): ScheduleModule.CustomEvent {
-  return {
-    start_time: customEvent.start_time,
-    end_time: customEvent.end_time,
-    title: customEvent.title,
-    location: customEvent.location,
-    description: customEvent.description,
-    days_of_week: customEvent.days_of_week,
-  };
-}
-
-function formatCourse(
-  course: SelectedCourseType
-): ScheduleModule.SelectedCourse {
-  return {
-    class_ID: course.class_ID,
-    primary_section_ID: course.primary_section_ID,
-    secondary_section_IDs: course.secondary_section_IDs,
-  };
-}
+    createdBy: schedule.createdBy,
+    public: schedule.public,
+    classes,
+    term: schedule.term,
+    events: schedule.events,
+  } as ScheduleModule.Schedule;
+};

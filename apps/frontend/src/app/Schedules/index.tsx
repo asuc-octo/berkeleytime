@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { Reference, gql, useMutation, useQuery } from "@apollo/client";
 import { ClockRotateRight } from "iconoir-react";
 import { Link } from "react-router-dom";
@@ -7,6 +9,7 @@ import {
   CREATE_SCHEDULE,
   CreateScheduleResponse,
   DELETE_SCHEDULE,
+  DeleteScheduleResponse,
   GET_SCHEDULES,
   GetSchedulesResponse,
 } from "@/lib/api";
@@ -14,79 +17,80 @@ import {
 import styles from "./Schedules.module.scss";
 
 export default function Schedules() {
-  const { data: schedules } = useQuery<GetSchedulesResponse>(GET_SCHEDULES);
+  const { data } = useQuery<GetSchedulesResponse>(GET_SCHEDULES);
+
+  const schedules = useMemo(() => data?.schedules, [data]);
 
   const [createSchedule] = useMutation<CreateScheduleResponse>(
     CREATE_SCHEDULE,
     {
       variables: {
-        name: "Untitled schedule",
-        term: {
-          year: 2024,
-          semester: "Fall",
+        schedule: {
+          name: "Untitled schedule",
+          classes: [
+            {
+              subject: "COMPSCI",
+              courseNumber: "61B",
+              classNumber: "001",
+              sections: [],
+            },
+          ],
+          term: {
+            year: 2024,
+            semester: "Fall",
+          },
         },
       },
       update(cache, { data }) {
-        const schedule = data?.createNewSchedule;
+        const schedule = data?.createSchedule;
 
         if (!schedule) return;
 
-        const queryResult = cache.readQuery({
-          query: GET_SCHEDULES,
-        });
-
-        // Initialize the cache
-        if (queryResult) {
-          cache.modify({
-            fields: {
-              schedulesByUser: (existingSchedules = []) => {
-                const ref = cache.writeFragment({
-                  data: schedule,
-                  fragment: gql`
-                    fragment NewSchedule on Schedule {
-                      _id
-                      name
-                      term {
-                        year
-                        semester
-                      }
+        cache.modify({
+          fields: {
+            schedules: (existingSchedules = []) => {
+              const ref = cache.writeFragment({
+                data: schedule,
+                fragment: gql`
+                  fragment NewSchedule on Schedule {
+                    _id
+                    name
+                    term {
+                      year
+                      semester
                     }
-                  `,
-                });
+                  }
+                `,
+              });
 
-                return [...existingSchedules, ref];
-              },
+              return [...existingSchedules, ref];
             },
-          });
-
-          return;
-        }
-
-        cache.writeQuery({
-          query: GET_SCHEDULES,
-          data: { schedulesByUser: [schedule] },
+          },
         });
       },
     }
   );
 
-  const [deleteSchedule] = useMutation(DELETE_SCHEDULE, {
-    update(cache, { data }) {
-      const id = data?.removeScheduleByID;
+  const [deleteSchedule] = useMutation<DeleteScheduleResponse>(
+    DELETE_SCHEDULE,
+    {
+      update(cache, { data }) {
+        const id = data?.deleteSchedule;
 
-      if (!id) return;
+        if (!id) return;
 
-      cache.modify({
-        fields: {
-          schedulesByUser(existingSchedules = [], { readField }) {
-            return existingSchedules.filter(
-              (scheduleRef: Reference) => id !== readField("_id", scheduleRef)
-            );
+        cache.modify({
+          fields: {
+            schedules(existingSchedules = [], { readField }) {
+              return existingSchedules.filter(
+                (scheduleRef: Reference) => id !== readField("_id", scheduleRef)
+              );
+            },
           },
-        },
-      });
-    },
-  });
+        });
+      },
+    }
+  );
 
   return (
     <div className={styles.root}>
@@ -99,7 +103,7 @@ export default function Schedules() {
           <p className={styles.title}>Jump back in</p>
         </div>
         <Button onClick={() => createSchedule()}>Create schedule</Button>
-        {schedules?.schedulesByUser.map((schedule) => (
+        {schedules?.map((schedule) => (
           <div key={schedule._id}>
             <Link to={schedule._id}>{schedule.name}</Link>
             <Button
