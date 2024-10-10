@@ -1,3 +1,6 @@
+import { Semester } from "../../generated-types/graphql";
+import { getTerm } from "../term/controller";
+import { TermModule } from "../term/generated-types/module-types";
 import {
   createSchedule,
   deleteSchedule,
@@ -5,6 +8,7 @@ import {
   getSchedules,
   updateSchedule,
 } from "./controller";
+import { IntermediateSchedule } from "./formatter";
 import { ScheduleModule } from "./generated-types/module-types";
 
 const resolvers: ScheduleModule.Resolvers = {
@@ -21,6 +25,17 @@ const resolvers: ScheduleModule.Resolvers = {
       return schedule as unknown as ScheduleModule.Schedule;
     },
   },
+
+  Schedule: {
+    term: async (parent: IntermediateSchedule | ScheduleModule.Schedule) => {
+      if (parent.term) return parent.term;
+
+      const term = await getTerm(parent.year, parent.semester as Semester);
+
+      return term as unknown as TermModule.Term;
+    },
+  },
+
   Mutation: {
     deleteSchedule: async (_, { id }, context) => {
       return await deleteSchedule(context, id);
