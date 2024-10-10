@@ -58,10 +58,19 @@ export const getClassesByCourse = async (
 };
 
 export const getAssociatedCourses = async (courses: string[]) => {
-  const queries = courses.map((course) => ({
-    "subjectArea.code": course.split(" ")[0],
-    "catalogNumber.formatted": course.split(" ")[1],
-  }));
+  console.log(courses);
+
+  const queries = courses.map((course) => {
+    const split = course.split(" ");
+
+    const subject = split.slice(0, -1).join(" ");
+    const number = split[split.length - 1];
+
+    return {
+      "subjectArea.code": subject,
+      "catalogNumber.formatted": number,
+    };
+  });
 
   const associatedCourses = await CourseModel.find({
     $or: queries,
@@ -69,7 +78,22 @@ export const getAssociatedCourses = async (courses: string[]) => {
     .sort({ fromDate: -1 })
     .lean();
 
-  return associatedCourses.map(formatCourse);
+  console.log(associatedCourses);
+
+  return (
+    associatedCourses
+      // TODO: Properly filter out duplicates in the query
+      .filter(
+        (course, index) =>
+          associatedCourses.findIndex(
+            (associatedCourse) =>
+              associatedCourse.subjectArea?.code === course.subjectArea?.code &&
+              course.catalogNumber?.formatted ===
+                associatedCourse.catalogNumber?.formatted
+          ) === index
+      )
+      .map(formatCourse)
+  );
 };
 
 export const getCourses = async (info: GraphQLResolveInfo) => {

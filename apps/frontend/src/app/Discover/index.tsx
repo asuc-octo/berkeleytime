@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
 
-import { useApolloClient, useQuery } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { ArrowRight, Calendar } from "iconoir-react";
 
 import AverageGrade from "@/components/AverageGrade";
@@ -10,13 +10,7 @@ import CourseDrawer from "@/components/CourseDrawer";
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 import Units from "@/components/Units";
-import {
-  GET_COURSE,
-  GET_COURSES,
-  GetCoursesResponse,
-  ICourse,
-  Semester,
-} from "@/lib/api";
+import { GET_COURSE, ICourse, Semester } from "@/lib/api";
 
 import styles from "./Discover.module.scss";
 import Placeholder from "./Placeholder";
@@ -32,10 +26,6 @@ export default function Discover() {
   const [input, setInput] = useState("");
   const [courses, setCourses] = useState<ICourse[]>([]);
   const apolloClient = useApolloClient();
-
-  const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
-
-  console.log(data);
 
   const getCourse = async (name: string) => {
     const [subject, courseNumber] = name.split(" ");

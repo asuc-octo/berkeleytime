@@ -25,10 +25,14 @@ export function formatCourse(course: CourseType) {
     classes: null,
     crossListing: course.crossListing?.courses ?? [],
     requiredCourses:
-      course.preparation?.requiredCourses.map?.(
-        (course) =>
-          `${course.subjectArea?.code} ${course.catalogNumber?.formatted}`
-      ) ?? [],
+      course.preparation?.requiredCourses.map?.((course) => {
+        const split = course.displayName?.split(" ") as string[];
+
+        const subject = split.slice(0, -1).join(" ");
+        const number = split[split.length - 1];
+
+        return `${subject} ${number}`;
+      }) ?? [],
 
     requirements: course.preparation?.requiredText,
     description: course.description as string,
