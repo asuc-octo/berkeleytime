@@ -9,22 +9,33 @@ import { ScheduleModule } from "./generated-types/module-types";
 
 const resolvers: ScheduleModule.Resolvers = {
   Query: {
-    schedules(_parent, _args, context) {
-      return getSchedules(context);
+    schedules: async (_, _arguments, context) => {
+      const schedules = await getSchedules(context);
+
+      return schedules as unknown as ScheduleModule.Schedule[];
     },
-    schedule(_parent, { id }, context) {
-      return getSchedule(context, id);
+
+    schedule: async (_, { id }, context) => {
+      const schedule = await getSchedule(context, id);
+
+      return schedule as unknown as ScheduleModule.Schedule;
     },
   },
   Mutation: {
-    deleteSchedule(_parent, { id }, context) {
-      return deleteSchedule(context, id);
+    deleteSchedule: async (_, { id }, context) => {
+      return await deleteSchedule(context, id);
     },
-    createSchedule(_parent, { schedule }, context) {
-      return createSchedule(context, schedule);
+
+    createSchedule: async (_, { schedule: input }, context) => {
+      const schedule = await createSchedule(context, input);
+
+      return schedule as unknown as ScheduleModule.Schedule;
     },
-    updateSchedule(_parent, { id, schedule }, context) {
-      return updateSchedule(context, id, schedule);
+
+    updateSchedule: async (_, { id, schedule: input }, context) => {
+      const schedule = updateSchedule(context, id, input);
+
+      return schedule as unknown as ScheduleModule.Schedule;
     },
   },
 };

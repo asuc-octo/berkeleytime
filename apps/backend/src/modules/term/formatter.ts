@@ -1,14 +1,13 @@
-import { TermType } from "@repo/common";
+import { SessionType, TermType } from "@repo/common";
 
 import { TermModule } from "./generated-types/module-types";
 
 export const formatDate = (date?: Date | null) => date?.toISOString();
 
-export const formatSession = (session: TermType["sessions"][0]) => {
+export const formatSession = (session: SessionType) => {
   const { name, beginDate, endDate, temporalPosition } = session;
 
   return {
-    // id,
     name,
     startDate: beginDate?.toISOString(),
     endDate: endDate?.toISOString(),

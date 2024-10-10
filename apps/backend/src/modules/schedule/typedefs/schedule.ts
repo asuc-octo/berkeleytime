@@ -1,11 +1,6 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-  type TermOutput {
-    year: Int!
-    semester: String!
-  }
-
   type SelectedClass {
     class: Class!
     selectedSections: [String!]
@@ -24,7 +19,9 @@ const typedef = gql`
     _id: ID
     name: String!
     createdBy: String!
-    term: TermOutput!
+    year: Int!
+    semester: String!
+    term: Term!
     public: Boolean!
     classes: [SelectedClass!]
     events: [Event!]
