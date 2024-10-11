@@ -59,6 +59,7 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
           </div>
           <Button
             onClick={() => (user ? signOut() : signIn())}
+            variant="solid"
             className={styles.button}
           >
             {user ? user.email : "Sign in"}

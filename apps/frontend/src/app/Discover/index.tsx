@@ -78,7 +78,7 @@ export default function Discover() {
               onChange={(event) => setInput(event.target.value)}
             />
             <Placeholder className={styles.placeholder} />
-            <Button className={styles.button}>
+            <Button className={styles.button} variant="solid">
               Search
               <ArrowRight />
             </Button>

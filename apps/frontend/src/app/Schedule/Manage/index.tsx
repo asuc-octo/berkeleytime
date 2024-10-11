@@ -211,16 +211,16 @@ export default function Manage() {
           </MenuItem>
         </div>
         <Link to="compare">
-          <Button variant="outline">
+          <Button>
             <ViewColumns2 />
             Compare
           </Button>
         </Link>
-        <Button variant="outline">
+        <Button>
           <Copy />
           Clone
         </Button>
-        <Button>
+        <Button variant="solid">
           Share
           <ShareIos />
         </Button>

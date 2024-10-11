@@ -61,7 +61,7 @@ export default function SideBar({
           semester={Semester.Fall}
           year={2024}
         >
-          <Button className={styles.button}>
+          <Button className={styles.button} variant="solid">
             Add class
             <Plus />
           </Button>

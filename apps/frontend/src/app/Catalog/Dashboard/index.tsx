@@ -29,12 +29,12 @@ export default function Dashboard({
     <div className={styles.root}>
       <Container size="sm">
         <div className={styles.header}>
-          <Button variant="outline">
+          <Button>
             <ArrowSeparateVertical />
             Switch terms
           </Button>
           <div className={styles.toggle}>
-            <Button onClick={() => setOpen(false)}>
+            <Button variant="solid" onClick={() => setOpen(false)}>
               Search
               <Search />
             </Button>
