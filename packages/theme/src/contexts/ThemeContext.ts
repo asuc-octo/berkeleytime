@@ -7,6 +7,4 @@ export interface ThemeContextType {
   setTheme: Dispatch<SetStateAction<Theme>>;
 }
 
-const ThemeContext = createContext<ThemeContextType | null>(null);
-
-export default ThemeContext;
+export const ThemeContext = createContext<ThemeContextType | null>(null);

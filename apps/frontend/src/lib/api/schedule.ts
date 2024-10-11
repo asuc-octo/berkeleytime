@@ -38,6 +38,12 @@ export const GET_SCHEDULE = gql`
     schedule(id: $id) {
       _id
       name
+      classes {
+        class {
+          title
+        }
+        selectedSections
+      }
       term {
         year
         semester

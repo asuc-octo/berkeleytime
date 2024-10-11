@@ -1,8 +1,8 @@
 import { useContext } from "react";
 
-import ThemeContext from "@/context/ThemeContext";
+import { ThemeContext } from "@repo/theme";
 
-const useTheme = () => {
+export const useTheme = () => {
   const themeContext = useContext(ThemeContext);
 
   if (!themeContext) {
@@ -11,5 +11,3 @@ const useTheme = () => {
 
   return themeContext;
 };
-
-export default useTheme;

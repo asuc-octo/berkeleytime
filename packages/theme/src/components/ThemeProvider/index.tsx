@@ -3,15 +3,15 @@ import { ReactNode, useEffect, useState } from "react";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { IconoirProvider } from "iconoir-react";
 
-import ThemeContext, { Theme } from "@/context/ThemeContext";
+import { Theme, ThemeContext } from "@repo/theme";
 
 import styles from "./ThemeProvider.module.scss";
 
-interface ThemeProviderProps {
+export interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export default function ThemeProvider({ children }: ThemeProviderProps) {
+export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
     () => localStorage.getItem("theme") as Theme
   );

@@ -8,7 +8,6 @@ import Enrollment from "@/app/Enrollment";
 import Grades from "@/app/Grades";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
-import ThemeProvider from "@/components/ThemeProvider";
 
 const About = lazy(() => import("@/app/About"));
 const CatalogEnrollment = lazy(() => import("@/components/Class/Enrollment"));

@@ -12,12 +12,12 @@ import {
 
 import styles from "./Tooltip.module.scss";
 
-interface TooltipProps {
+export interface TooltipProps {
   children: ReactNode;
   content: string;
 }
 
-const Tooltip = forwardRef<
+export const Tooltip = forwardRef<
   HTMLButtonElement,
   TooltipProps &
     // TODO: Determine which props should be customizable
@@ -57,5 +57,3 @@ const Tooltip = forwardRef<
     );
   }
 );
-
-export default Tooltip;
