@@ -9,10 +9,7 @@ import {
   Search,
 } from "iconoir-react";
 
-import Button from "@/components/Button";
-import Container from "@/components/Container";
-import IconButton from "@/components/IconButton";
-import Tooltip from "@/components/Tooltip";
+import { Button, Container, IconButton, Tooltip } from "@repo/theme";
 
 import Carousel from "./Carousel";
 import styles from "./Dashboard.module.scss";
@@ -30,7 +27,7 @@ export default function Dashboard({
 }: DashboardProps) {
   return (
     <div className={styles.root}>
-      <Container size="small">
+      <Container size="sm">
         <div className={styles.header}>
           <Button variant="outline">
             <ArrowSeparateVertical />

@@ -5,8 +5,7 @@ import classNames from "classnames";
 import {
   PolymorphicComponentPropsWithRef,
   PolymorphicRef,
-} from "@/lib/polymorphism";
-
+} from "../../lib/polymorphism";
 import styles from "./IconButton.module.scss";
 
 interface Props {
@@ -14,12 +13,10 @@ interface Props {
   disabled?: boolean;
 }
 
-type IconButtonProps<C extends ElementType> = PolymorphicComponentPropsWithRef<
-  C,
-  Props
->;
+export type IconButtonProps<C extends ElementType> =
+  PolymorphicComponentPropsWithRef<C, Props>;
 
-const IconButton = forwardRef(
+const PolymorphicComponent = forwardRef(
   <C extends ElementType = "button">(
     {
       children,
@@ -36,6 +33,7 @@ const IconButton = forwardRef(
     return (
       <Component
         data-disabled={disabled}
+        disabled={disabled}
         data-variant={variant}
         className={classNames(styles.root, className)}
         ref={ref}
@@ -47,8 +45,10 @@ const IconButton = forwardRef(
   }
 );
 
-IconButton.displayName = "IconButton";
+PolymorphicComponent.displayName = "IconButton";
 
-export default IconButton as <T extends ElementType = "button">(
+export const IconButton = PolymorphicComponent as <
+  T extends ElementType = "button",
+>(
   props: IconButtonProps<T>
 ) => ReactNode | null;

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 
-const usePrefersColorScheme = () => {
-  const [value, setValue] = useState<string | null>(
+import { Theme } from "@repo/theme";
+
+export const usePrefersColorScheme = () => {
+  const [value, setValue] = useState<Exclude<Theme, null>>(
     window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
   );
 
@@ -18,5 +20,3 @@ const usePrefersColorScheme = () => {
 
   return value;
 };
-
-export default usePrefersColorScheme;

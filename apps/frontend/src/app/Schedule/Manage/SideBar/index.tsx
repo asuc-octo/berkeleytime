@@ -2,7 +2,8 @@ import { useMemo } from "react";
 
 import { Plus } from "iconoir-react";
 
-import Button from "@/components/Button";
+import { Button } from "@repo/theme";
+
 import Units from "@/components/Units";
 import { IClass, ISection, Semester } from "@/lib/api";
 

@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { ArrowRight, NavArrowLeft, NavArrowRight } from "iconoir-react";
 import { Link, To } from "react-router-dom";
 
-import IconButton from "@/components/IconButton";
+import { IconButton } from "@repo/theme";
 
 import styles from "./Carousel.module.scss";
 

@@ -3,9 +3,9 @@ import { FormEvent, useState } from "react";
 import { useApolloClient } from "@apollo/client";
 import { ArrowRight, Calendar } from "iconoir-react";
 
+import { Button, Container } from "@repo/theme";
+
 import AverageGrade from "@/components/AverageGrade";
-import Button from "@/components/Button";
-import Container from "@/components/Container";
 import CourseDrawer from "@/components/CourseDrawer";
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";

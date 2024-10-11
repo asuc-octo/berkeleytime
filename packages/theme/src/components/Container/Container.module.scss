@@ -1,18 +1,18 @@
 .root {
-	width: 100%;
-	margin: 0 auto;
-	padding: 0 24px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
   min-height: 100%;
 
-  &.large {
+  &[data-size="lg"] {
     max-width: 1280px;
   }
 
-  &.medium {
+  &[data-size="md"] {
     max-width: 1152px;
   }
 
-  &.small {
+  &[data-size="sm"] {
     max-width: 1024px;
   }
 }

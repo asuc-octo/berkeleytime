@@ -4,8 +4,8 @@ import { useQuery } from "@apollo/client";
 import { Outlet } from "react-router";
 import { useNavigate, useParams } from "react-router-dom";
 
-import Boundary from "@/components/Boundary";
-import LoadingIndicator from "@/components/LoadingIndicator";
+import { Boundary, LoadingIndicator } from "@repo/theme";
+
 import { GET_SCHEDULE, GetScheduleResponse, IClass, ISection } from "@/lib/api";
 
 import { ScheduleContextType } from "./schedule";
@@ -39,7 +39,7 @@ export default function Schedule() {
     />
   ) : (
     <Boundary>
-      <LoadingIndicator size={32} />
+      <LoadingIndicator size="lg" />
     </Boundary>
   );
 }

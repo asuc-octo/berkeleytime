@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Position, ZoomIn, ZoomOut } from "iconoir-react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import IconButton from "@/components/IconButton";
-import usePrefersColorScheme from "@/hooks/usePrefersColorScheme";
+import { IconButton, usePrefersColorScheme, useTheme } from "@repo/theme";
+
 import { buildings } from "@/lib/location";
 
 import styles from "./Map.module.scss";
@@ -21,7 +21,11 @@ const DEFAULT_ZOOM = 15.5;
 mapboxgl.accessToken = TOKEN;
 
 export default function Map() {
-  const colorScheme = usePrefersColorScheme();
+  const { theme } = useTheme();
+
+  const scheme = usePrefersColorScheme();
+
+  const currentTheme = useMemo(() => theme ?? scheme, [theme, scheme]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -34,7 +38,7 @@ export default function Map() {
     const map = new mapboxgl.Map({
       container: containerRef.current,
       style:
-        colorScheme === "dark"
+        currentTheme === "dark"
           ? "mapbox://styles/mathhulk/clvblbtkd005k01rd1n28b2xt"
           : "mapbox://styles/mathhulk/clbznbvgs000314k8gtwa9q60",
       center: [-122.2592173, 37.8721508],
@@ -95,7 +99,7 @@ export default function Map() {
     return () => {
       mapRef.current?.remove();
     };
-  }, [colorScheme]);
+  }, [currentTheme]);
 
   return (
     <div className={styles.root}>

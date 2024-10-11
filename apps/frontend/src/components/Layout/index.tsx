@@ -3,12 +3,11 @@ import { Suspense } from "react";
 import { MessageText } from "iconoir-react";
 import { Outlet } from "react-router";
 
-import Button from "@/components/Button";
+import { Boundary, Button, LoadingIndicator } from "@repo/theme";
+
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 
-import Boundary from "../Boundary";
-import LoadingIndicator from "../LoadingIndicator";
 import styles from "./Layout.module.scss";
 
 interface LayoutProps {

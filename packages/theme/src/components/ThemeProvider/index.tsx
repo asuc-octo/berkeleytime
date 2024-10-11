@@ -12,7 +12,7 @@ export interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
+  const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") as Theme
   );
 
@@ -38,7 +38,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         }}
       >
         <TooltipProvider delayDuration={0}>
-          <ThemeContext.Provider value={{ theme, setTheme }}>
+          <ThemeContext.Provider value={{ theme: theme, setTheme }}>
             {children}
           </ThemeContext.Provider>
         </TooltipProvider>

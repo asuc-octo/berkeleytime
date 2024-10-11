@@ -10,10 +10,8 @@ import {
 } from "iconoir-react";
 import { Link, useOutletContext } from "react-router-dom";
 
-import Button from "@/components/Button";
-import IconButton from "@/components/IconButton";
-import MenuItem from "@/components/MenuItem";
-import Tooltip from "@/components/Tooltip";
+import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
+
 import Week from "@/components/Week";
 import { GET_CLASS, IClass, ISection } from "@/lib/api";
 import { getY } from "@/lib/schedule";

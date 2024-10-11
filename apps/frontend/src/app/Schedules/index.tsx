@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 
-import Container from "@/components/Container";
+import { Container } from "@repo/theme";
+
 import useSchedules from "@/hooks/useSchedules";
 import useUser from "@/hooks/useUser";
 

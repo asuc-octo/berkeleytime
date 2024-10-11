@@ -7,9 +7,13 @@ import { ArrowSeparateVertical, Walking, ZoomIn, ZoomOut } from "iconoir-react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import Button from "@/components/Button";
-import IconButton from "@/components/IconButton";
-import usePrefersColorScheme from "@/hooks/usePrefersColorScheme";
+import {
+  Button,
+  IconButton,
+  usePrefersColorScheme,
+  useTheme,
+} from "@repo/theme";
+
 import { ISection } from "@/lib/api";
 import { buildings } from "@/lib/location";
 
@@ -30,7 +34,11 @@ interface MapProps {
 }
 
 export default function Map({ selectedSections }: MapProps) {
-  const colorScheme = usePrefersColorScheme();
+  const { theme } = useTheme();
+
+  const scheme = usePrefersColorScheme();
+
+  const currentTheme = useMemo(() => theme ?? scheme, [theme, scheme]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -58,7 +66,7 @@ export default function Map({ selectedSections }: MapProps) {
     const map = new mapboxgl.Map({
       container: containerRef.current,
       style:
-        colorScheme === "dark"
+        currentTheme === "dark"
           ? "mapbox://styles/mathhulk/clvblbtkd005k01rd1n28b2xt"
           : "mapbox://styles/mathhulk/clbznbvgs000314k8gtwa9q60",
       center: [-122.2592173, 37.8721508],
@@ -238,7 +246,7 @@ export default function Map({ selectedSections }: MapProps) {
     return () => {
       mapRef.current?.remove();
     };
-  }, [colorScheme]);
+  }, [currentTheme]);
 
   useEffect(() => {
     if (!directions) return;

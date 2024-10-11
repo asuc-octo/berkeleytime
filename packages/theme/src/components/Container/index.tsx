@@ -4,21 +4,18 @@ import classNames from "classnames";
 
 import styles from "./Container.module.scss";
 
-interface ContainerProps extends ComponentPropsWithoutRef<"div"> {
-  size?: "small" | "medium" | "large";
+export interface ContainerProps extends ComponentPropsWithoutRef<"div"> {
+  size?: "sm" | "md" | "lg";
 }
 
-const Container = forwardRef<HTMLDivElement, ContainerProps>(
-  ({ children, className, size = "large", ...props }, ref) => {
+export const Container = forwardRef<HTMLDivElement, ContainerProps>(
+  ({ children, className, size = "md", ...props }, ref) => {
     return (
       <div
         {...props}
         ref={ref}
-        className={classNames(styles.root, className, {
-          [styles.small]: size === "small",
-          [styles.medium]: size === "medium",
-          [styles.large]: size === "large",
-        })}
+        data-size={size}
+        className={classNames(styles.root, className)}
       >
         {children}
       </div>
@@ -27,5 +24,3 @@ const Container = forwardRef<HTMLDivElement, ContainerProps>(
 );
 
 Container.displayName = "Container";
-
-export default Container;

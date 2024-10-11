@@ -1,11 +1,19 @@
-import { ReactNode } from "react";
+import { ComponentPropsWithoutRef, forwardRef } from "react";
+
+import classNames from "classnames";
 
 import styles from "./Boundary.module.scss";
 
-interface BoundaryProps {
-  children: ReactNode;
-}
+export type BoundaryProps = ComponentPropsWithoutRef<"div">;
 
-export default function Boundary({ children }: BoundaryProps) {
-  return <div className={styles.root}>{children}</div>;
-}
+export const Boundary = forwardRef<HTMLDivElement, BoundaryProps>(
+  ({ children, className, ...props }, ref) => {
+    return (
+      <div {...props} className={classNames(styles.root, className)} ref={ref}>
+        {children}
+      </div>
+    );
+  }
+);
+
+Boundary.displayName = "Boundary";

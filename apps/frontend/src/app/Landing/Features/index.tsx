@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { ArrowRight } from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import Container from "@/components/Container";
+import { Container } from "@repo/theme";
 
 import styles from "./Features.module.scss";
 import calendar from "./calendar.png";
