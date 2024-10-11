@@ -42,7 +42,7 @@ export const selectedClassSchema = new Schema({
     trim: true,
     required: true,
   },
-  classNumber: {
+  number: {
     type: String,
     trim: true,
     required: true,
@@ -75,19 +75,14 @@ export const scheduleSchema = new Schema(
       required: true,
       default: [],
     },
-    term: {
-      type: {
-        year: {
-          type: Number,
-          required: true,
-        },
-        semester: {
-          type: String,
-          required: true,
-          trim: true,
-        },
-      },
+    year: {
+      type: Number,
       required: true,
+    },
+    semester: {
+      type: String,
+      required: true,
+      trim: true,
     },
     events: {
       type: [customEventSchema],
@@ -96,10 +91,7 @@ export const scheduleSchema = new Schema(
     },
   },
   {
-    timestamps: {
-      createdAt: "createdAt",
-      updatedAt: "updatedAt",
-    },
+    timestamps: true,
   }
 );
 

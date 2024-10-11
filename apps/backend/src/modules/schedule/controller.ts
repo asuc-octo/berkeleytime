@@ -59,7 +59,8 @@ export const updateSchedule = async (
 ) => {
   const schedule = await ScheduleModel.findOneAndUpdate(
     { _id: id, createdBy: context.user._id },
-    input
+    input,
+    { new: true }
   );
 
   if (!schedule) throw new Error("Not found");

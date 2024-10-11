@@ -23,13 +23,13 @@ const typedef = gql`
     semester: String!
     term: Term!
     public: Boolean!
-    classes: [SelectedClass!]
-    events: [Event!]
+    classes: [SelectedClass!]!
+    events: [Event!]!
   }
 
   type Query {
     schedules: [Schedule] @auth
-    schedule(id: String!): Schedule
+    schedule(id: ID!): Schedule
   }
 
   input EventInput {
@@ -44,7 +44,7 @@ const typedef = gql`
   input SelectedClassInput {
     subject: String!
     courseNumber: String!
-    classNumber: String!
+    number: String!
     sections: [String!]!
   }
 
@@ -57,7 +57,8 @@ const typedef = gql`
 
   input CreateScheduleInput {
     name: String!
-    term: TermInput!
+    year: Int!
+    semester: String!
     events: [EventInput!]
     classes: [SelectedClassInput!]
     public: Boolean
