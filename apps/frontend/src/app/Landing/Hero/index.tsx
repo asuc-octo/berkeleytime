@@ -2,7 +2,8 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 
 import { ArrowRight, Clock } from "iconoir-react";
 
-import Button from "@/components/Button";
+import { Button } from "@repo/theme";
+
 import NavigationBar from "@/components/NavigationBar";
 
 import styles from "./Hero.module.scss";
@@ -112,7 +113,7 @@ export default function Hero() {
               autoFocus
               placeholder="Search for courses..."
             />
-            <Button className={styles.button}>
+            <Button className={styles.button} variant="solid">
               Go
               <ArrowRight />
             </Button>

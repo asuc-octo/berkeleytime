@@ -16,16 +16,19 @@ import {
 } from "iconoir-react";
 import { Link, NavLink, Outlet, useSearchParams } from "react-router-dom";
 
+import {
+  Boundary,
+  Container,
+  IconButton,
+  LoadingIndicator,
+  MenuItem,
+  Tooltip,
+} from "@repo/theme";
+
 import AverageGrade from "@/components/AverageGrade";
-import Boundary from "@/components/Boundary";
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
-import Container from "@/components/Container";
 import CourseDrawer from "@/components/CourseDrawer";
-import IconButton from "@/components/IconButton";
-import LoadingIndicator from "@/components/LoadingIndicator";
-import MenuItem from "@/components/MenuItem";
-import Tooltip from "@/components/Tooltip";
 import Units from "@/components/Units";
 import { GET_CLASS, GetClassResponse, IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
@@ -133,7 +136,7 @@ export default function Class({
   return (
     <Root dialog={dialog}>
       <div className={styles.header}>
-        <Container size="small">
+        <Container size="sm">
           <div className={styles.row}>
             <div className={styles.group}>
               {!dialog && (
@@ -265,7 +268,7 @@ export default function Class({
           )}
         </Container>
       </div>
-      <Container size="small">
+      <Container size="sm">
         {data ? (
           <ClassContext.Provider
             value={{

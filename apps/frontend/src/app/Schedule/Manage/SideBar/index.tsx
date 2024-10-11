@@ -2,7 +2,8 @@ import { useMemo } from "react";
 
 import { Plus } from "iconoir-react";
 
-import Button from "@/components/Button";
+import { Button } from "@repo/theme";
+
 import Units from "@/components/Units";
 import { IClass, ISection, Semester } from "@/lib/api";
 
@@ -60,7 +61,7 @@ export default function SideBar({
           semester={Semester.Fall}
           year={2024}
         >
-          <Button className={styles.button}>
+          <Button className={styles.button} variant="solid">
             Add class
             <Plus />
           </Button>

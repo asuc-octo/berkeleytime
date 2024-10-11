@@ -3,12 +3,13 @@ import { lazy } from "react";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
+import { ThemeProvider } from "@repo/theme";
+
 import Catalog from "@/app/Catalog";
 import Enrollment from "@/app/Enrollment";
 import Grades from "@/app/Grades";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
-import ThemeProvider from "@/components/ThemeProvider";
 
 const About = lazy(() => import("@/app/About"));
 const CatalogEnrollment = lazy(() => import("@/components/Class/Enrollment"));
@@ -22,7 +23,6 @@ const Compare = lazy(() => import("@/app/Schedule/Compare"));
 const Manage = lazy(() => import("@/app/Schedule/Manage"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 const Map = lazy(() => import("@/app/Map"));
-const Account = lazy(() => import("@/app/Account"));
 
 const router = createBrowserRouter([
   {
@@ -67,10 +67,6 @@ const router = createBrowserRouter([
       {
         element: <About />,
         path: "about",
-      },
-      {
-        element: <Account />,
-        path: "account",
       },
     ],
   },

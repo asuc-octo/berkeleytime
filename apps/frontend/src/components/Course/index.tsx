@@ -7,13 +7,16 @@ import classNames from "classnames";
 import { Bookmark, BookmarkSolid, CalendarPlus, Xmark } from "iconoir-react";
 import { NavLink, Outlet, useSearchParams } from "react-router-dom";
 
+import {
+  Boundary,
+  Container,
+  IconButton,
+  LoadingIndicator,
+  MenuItem,
+  Tooltip,
+} from "@repo/theme";
+
 import AverageGrade from "@/components/AverageGrade";
-import Boundary from "@/components/Boundary";
-import Container from "@/components/Container";
-import IconButton from "@/components/IconButton";
-import LoadingIndicator from "@/components/LoadingIndicator";
-import MenuItem from "@/components/MenuItem";
-import Tooltip from "@/components/Tooltip";
 import { GET_COURSE, GetCourseResponse, ICourse } from "@/lib/api";
 
 import styles from "./Class.module.scss";
@@ -93,7 +96,7 @@ export default function Course({
   return (
     <Root dialog={dialog}>
       <div className={styles.header}>
-        <Container size="small">
+        <Container size="sm">
           <div className={styles.row}>
             <div className={styles.group}>
               <Tooltip
@@ -190,7 +193,7 @@ export default function Course({
           )}
         </Container>
       </div>
-      <Container size="small">
+      <Container size="sm">
         {data ? (
           <ClassContext.Provider
             value={{

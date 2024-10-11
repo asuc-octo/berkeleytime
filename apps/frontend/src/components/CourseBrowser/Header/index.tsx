@@ -4,7 +4,8 @@ import classNames from "classnames";
 import { Filter, FilterSolid } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import IconButton from "@/components/IconButton";
+import { IconButton } from "@repo/theme";
+
 import { ICourse } from "@/lib/api";
 
 import styles from "./Header.module.scss";

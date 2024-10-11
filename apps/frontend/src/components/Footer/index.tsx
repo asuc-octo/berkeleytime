@@ -9,10 +9,8 @@ import {
 } from "iconoir-react";
 import { Link } from "react-router-dom";
 
-import Container from "@/components/Container";
-import useTheme from "@/hooks/useTheme";
+import { Container, IconButton, useTheme } from "@repo/theme";
 
-import IconButton from "../IconButton";
 import styles from "./Footer.module.scss";
 
 interface FooterProps {

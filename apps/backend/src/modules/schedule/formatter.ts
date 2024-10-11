@@ -13,10 +13,10 @@ export const formatSchedule = async (schedule: ScheduleType) => {
 
   for (const selectedClass of schedule.classes) {
     const _class = await ClassModel.findOne({
-      number: selectedClass.classNumber,
+      number: selectedClass.number,
       "course.subjectArea.code": selectedClass.subject,
       "course.catalogNumber.formatted": selectedClass.courseNumber,
-      "session.term.name": `${schedule.term.year} ${schedule.term.semester}`,
+      "session.term.name": `${schedule.year} ${schedule.semester}`,
     }).lean();
 
     if (!_class) continue;
@@ -33,8 +33,8 @@ export const formatSchedule = async (schedule: ScheduleType) => {
     createdBy: schedule.createdBy,
     public: schedule.public,
     classes,
-    year: schedule.term.year,
-    semester: schedule.term.semester,
+    year: schedule.year,
+    semester: schedule.semester,
     term: null,
     events: schedule.events,
   } as IntermediateSchedule;

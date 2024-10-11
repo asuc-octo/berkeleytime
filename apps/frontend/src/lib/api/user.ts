@@ -5,10 +5,6 @@ export interface IUser {
   student: boolean;
 }
 
-export interface UserResponse {
-  user: IUser;
-}
-
 export const GET_USER = gql`
   query GetUser {
     user {

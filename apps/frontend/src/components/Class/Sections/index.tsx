@@ -4,11 +4,11 @@ import { useQuery } from "@apollo/client";
 import classNames from "classnames";
 import { FrameAltEmpty, OpenNewWindow } from "iconoir-react";
 
+import { IconButton, Tooltip } from "@repo/theme";
+
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import Details from "@/components/Details";
-import IconButton from "@/components/IconButton";
-import Tooltip from "@/components/Tooltip";
 import { Component, GET_CLASS, IClass, componentMap } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 

@@ -1,0 +1,28 @@
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.root {
+  aspect-ratio: 1;
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--paragraph-color) var(--paragraph-color)
+    var(--paragraph-color) transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+
+  &[data-size="md"] {
+    width: 16px;
+    height: 16px;
+  }
+
+  &[data-size="lg"] {
+    width: 32px;
+    height: 32px;
+  }
+}

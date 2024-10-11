@@ -5,11 +5,10 @@ import classNames from "classnames";
 import { Xmark } from "iconoir-react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import Boundary from "@/components/Boundary";
+import { Boundary, IconButton, LoadingIndicator } from "@repo/theme";
+
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
-import IconButton from "@/components/IconButton";
-import LoadingIndicator from "@/components/LoadingIndicator";
 import {
   GET_CLASS,
   GET_COURSE,
@@ -114,7 +113,7 @@ export default function Catalog() {
 
   return loading ? (
     <Boundary>
-      <LoadingIndicator size={32} />
+      <LoadingIndicator size="lg" />
     </Boundary>
   ) : currentTerm ? (
     <div

@@ -1,14 +1,25 @@
 import { gql } from "@apollo/client";
 
 import { IClass } from "../api";
-import { Semester } from "./term";
+import { ITerm, Semester } from "./term";
 
-export interface ISelectedClass {
+export type ScheduleIdentifier = string & {
+  readonly __brand: unique symbol;
+};
+
+export interface IScheduleClass {
   class: IClass;
   selectedSections: string[];
 }
 
-export interface ICustomEvent {
+export interface IScheduleClassInput {
+  subject: string;
+  courseNumber: string;
+  number: string;
+  sections: string[];
+}
+
+export interface IScheduleEvent {
   startTime: string;
   endTime: string;
   title: string;
@@ -17,16 +28,24 @@ export interface ICustomEvent {
   days: boolean[];
 }
 
-export interface ISchedule {
-  _id: string;
+export interface IScheduleInput {
   name: string;
-  classes: ISelectedClass[];
-  events: ICustomEvent[];
+  year: number;
+  semester: Semester;
+  classes?: IScheduleClassInput[];
+  events?: IScheduleEvent[];
+  public?: boolean;
+}
+
+export interface ISchedule {
+  _id: ScheduleIdentifier;
+  name: string;
+  classes: IScheduleClass[];
+  events: IScheduleEvent[];
   createdBy: string;
-  term: {
-    year: number;
-    semester: Semester;
-  };
+  term: ITerm;
+  year: number;
+  semester: Semester;
 }
 
 export interface GetScheduleResponse {
@@ -34,20 +53,53 @@ export interface GetScheduleResponse {
 }
 
 export const GET_SCHEDULE = gql`
-  query GetSchedule($id: String!) {
+  query GetSchedule($id: ID!) {
     schedule(id: $id) {
       _id
       name
-      term {
-        year
-        semester
+      public
+      createdBy
+      year
+      semester
+      classes {
+        class {
+          subject
+          courseNumber
+          number
+        }
+        selectedSections
+      }
+    }
+  }
+`;
+
+export interface UpdateScheduleResponse {
+  updateSchedule: ISchedule;
+}
+
+export const UPDATE_SCHEDULE = gql`
+  mutation UpdateSchedule($id: ID!, $schedule: UpdateScheduleInput!) {
+    updateSchedule(id: $id, schedule: $schedule) {
+      _id
+      name
+      public
+      year
+      createdBy
+      semester
+      classes {
+        class {
+          subject
+          courseNumber
+          number
+        }
+        selectedSections
       }
     }
   }
 `;
 
 export interface DeleteScheduleResponse {
-  deleteSchedule: string;
+  deleteSchedule: ScheduleIdentifier;
 }
 
 export const DELETE_SCHEDULE = gql`
@@ -65,9 +117,17 @@ export const CREATE_SCHEDULE = gql`
     createSchedule(schedule: $schedule) {
       _id
       name
-      term {
-        year
-        semester
+      public
+      year
+      createdBy
+      semester
+      classes {
+        class {
+          subject
+          courseNumber
+          number
+        }
+        selectedSections
       }
     }
   }
@@ -82,15 +142,15 @@ export const GET_SCHEDULES = gql`
     schedules {
       _id
       name
+      year
+      semester
       classes {
         class {
-          title
+          subject
+          courseNumber
+          number
         }
         selectedSections
-      }
-      term {
-        year
-        semester
       }
     }
   }

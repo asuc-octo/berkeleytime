@@ -35,7 +35,7 @@ class RedisCache implements KeyValueCache {
 const armor = new ApolloArmor({
   maxDepth: {
     enabled: true,
-    n: 4,
+    n: 5,
   },
 });
 

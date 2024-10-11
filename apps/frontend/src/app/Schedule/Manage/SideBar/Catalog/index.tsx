@@ -4,8 +4,9 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Xmark } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
+import { IconButton } from "@repo/theme";
+
 import ClassBrowser from "@/components/ClassBrowser";
-import IconButton from "@/components/IconButton";
 import { IClass, Semester } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";

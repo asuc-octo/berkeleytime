@@ -1,6 +1,7 @@
 import { Minus, Plus } from "iconoir-react";
 
-import Container from "@/components/Container";
+import { Container } from "@repo/theme";
+
 import Footer from "@/components/Footer";
 
 import styles from "./Organization.module.scss";

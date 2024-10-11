@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { Filter, FilterSolid, Search } from "iconoir-react";
 
-import IconButton from "@/components/IconButton";
+import { IconButton } from "@repo/theme";
 
 import useBrowser from "../useBrowser";
 import styles from "./Header.module.scss";
