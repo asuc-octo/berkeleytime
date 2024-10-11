@@ -1,6 +1,6 @@
 import { ComponentProps, forwardRef } from "react";
 
-import * as Primitive from "@radix-ui/react-alert-dialog";
+import * as Primitive from "@radix-ui/react-dialog";
 import classNames from "classnames";
 
 import styles from "./Dialog.module.scss";
@@ -23,8 +23,7 @@ const Content = forwardRef<
 
 export const Dialog = {
   Root: Primitive.Root,
-  Cancel: Primitive.Cancel,
-  Action: Primitive.Action,
+  Close: Primitive.Close,
   Title: Primitive.Title,
   Description: Primitive.Description,
   Content,
