@@ -44,8 +44,8 @@ const typedef = gql`
     semester: Semester!
     year: Int!
     temporalPosition: TemporalPosition!
-    startDate: String
-    endDate: String
+    startDate: String!
+    endDate: String!
     sessions: [Session!]!
   }
 

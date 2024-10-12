@@ -28,7 +28,7 @@ export default function Layout({
         <Suspense
           fallback={
             <Boundary>
-              <LoadingIndicator />
+              <LoadingIndicator size="lg" />
             </Boundary>
           }
         >

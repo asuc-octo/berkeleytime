@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 import { ICourse } from "../api";
-import { Semester } from "./term";
+import { ITerm, Semester } from "./term";
 
 export enum InstructionMethod {
   Unknown = "UNK",
@@ -137,13 +137,24 @@ export interface IExam {
 }
 
 export interface ISection {
+  // Identifiers
+  year: number;
+  semester: Semester;
+  subject: string;
+  courseNumber: string;
+  classNumber: string;
+  number: string;
   ccn: string;
-  class: IClass;
+
+  // Relationships
   course: ICourse;
+  class: IClass;
+  term: ITerm;
+
+  // Attributes
   enrollCount: number;
   enrollMax: number;
   component: Component;
-  number: string;
   primary: boolean;
   waitlistCount: number;
   waitlistMax: number;
@@ -171,19 +182,27 @@ export interface IMeeting {
 }
 
 export interface IClass {
+  // Identifiers
+  year: number;
+  semester: Semester;
+  subject: string;
+  courseNumber: string;
+  number: string;
+
+  // Relationships
   course: ICourse;
   primarySection: ISection;
   sections: ISection[];
+  term: ITerm;
+
+  // Attributes
   session: string;
   gradingBasis: string;
   finalExam: string;
   description: string | null;
-  year: number;
-  semester: Semester;
   title: string | null;
   unitsMax: number;
   unitsMin: number;
-  number: string;
 }
 
 export interface GetClassResponse {
@@ -192,55 +211,47 @@ export interface GetClassResponse {
 
 export const GET_CLASS = gql`
   query GetClass(
-    $term: TermInput!
+    $year: Int!
+    $semester: Semester!
     $subject: String!
     $courseNumber: String!
-    $classNumber: String!
+    $number: String!
   ) {
     class(
-      term: $term
+      year: $year
+      semester: $semester
       subject: $subject
       courseNumber: $courseNumber
-      classNumber: $classNumber
+      number: $number
     ) {
+      year
+      semester
+      subject
+      courseNumber
+      number
       title
       description
       unitsMax
       unitsMin
-      number
       gradingBasis
       finalExam
       course {
         title
         description
         gradeAverage
-        subject
-        number
         academicCareer
         requirements
-        requiredCourses {
-          subject
-          number
-        }
-        classes {
-          year
-          semester
-          number
-        }
       }
       primarySection {
-        course {
-          subject
-          number
-        }
+        number
+        ccn
+        enrollCount
+        enrollMax
         reservations {
           enrollCount
           enrollMax
           group
         }
-        ccn
-        enrollCount
-        enrollMax
         meetings {
           days
           location
@@ -261,15 +272,11 @@ export const GET_CLASS = gql`
         component
         waitlistCount
         waitlistMax
-        number
         startDate
         endDate
       }
       sections {
-        course {
-          subject
-          number
-        }
+        number
         ccn
         enrollCount
         enrollMax
@@ -293,7 +300,6 @@ export const GET_CLASS = gql`
         component
         waitlistCount
         waitlistMax
-        number
         startDate
         endDate
       }

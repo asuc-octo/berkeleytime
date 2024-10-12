@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import { useApolloClient } from "@apollo/client";
 import {
@@ -8,69 +8,146 @@ import {
   ShareIos,
   ViewColumns2,
 } from "iconoir-react";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
 
 import Week from "@/components/Week";
-import { GET_CLASS, IClass, ISection } from "@/lib/api";
+import { useUpdateSchedule } from "@/hooks/schedules/useUpdateSchedule";
+import { GET_CLASS, GetClassResponse, ISchedule, ISection } from "@/lib/api";
 import { getY } from "@/lib/schedule";
 
-import { ScheduleContextType } from "../schedule";
 import Calendar from "./Calendar";
 import styles from "./Manage.module.scss";
 import Map from "./Map";
 import SideBar from "./SideBar";
 
-export default function Manage() {
-  const {
-    selectedSections,
-    setSelectedSections,
-    classes,
-    setClasses,
-    expanded,
-    setExpanded,
-  } = useOutletContext<ScheduleContextType>();
+interface ManageProps {
+  schedule: ISchedule;
+}
 
-  const [currentSection, setCurrentSection] = useState<ISection | null>(null);
+export default function Manage({ schedule }: ManageProps) {
   const apolloClient = useApolloClient();
+  const [updateSchedule] = useUpdateSchedule();
+
+  const [expanded, setExpanded] = useState<boolean[]>([]);
+  const [currentSection, setCurrentSection] = useState<ISection | null>(null);
   const [tab, setTab] = useState(0);
+
+  const selectedSections = useMemo(
+    () =>
+      schedule.classes.flatMap(({ selectedSections, class: _class }) =>
+        selectedSections.reduce((acc, section) => {
+          const _section =
+            _class.primarySection.ccn === section
+              ? _class.primarySection
+              : _class.sections.find(
+                  (currentSection) => currentSection.ccn === section
+                );
+
+          return _section ? [...acc, _section] : acc;
+        }, [] as ISection[])
+      ),
+    [schedule]
+  );
 
   // Radix and Floating UI reference the boundary by id
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
   const handleSectionSelect = useCallback(
-    (section: ISection) => {
-      // Clear the current section
+    (
+      subject: string,
+      courseNumber: string,
+      classNumber: string,
+      number: string
+    ) => {
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      // Find the associated class
+      const selectedClass = _schedule.classes.find(
+        (selectedClass) =>
+          selectedClass.class.subject === subject &&
+          selectedClass.class.courseNumber === courseNumber &&
+          selectedClass.class.number === classNumber
+      );
+
+      if (!selectedClass) return;
+
+      // Find the associated section
+      const section = selectedClass.class.sections.find(
+        (section) => section.number === number
+      );
+
+      if (!section) return;
+
       setCurrentSection(null);
 
-      setSelectedSections((selectedSections) => {
-        // Ignore selected sections
-        const ignored = selectedSections.some(
-          (selectedSection) => selectedSection.ccn === section.ccn
-        );
+      // Filter out selected sections from the same component
+      const selectedSections = selectedClass.selectedSections.filter(
+        (selectedSection) => {
+          const currentSection = selectedClass.class.sections.find(
+            (section) => section.ccn === selectedSection
+          );
 
-        if (ignored) return selectedSections;
+          return !currentSection || currentSection !== section;
+        }
+      );
 
-        return [
-          ...selectedSections.filter(
-            (selectedSection) =>
-              !(
-                selectedSection.course.subject === section.course.subject &&
-                selectedSection.course.number === section.course.number &&
-                selectedSection.class.number === section.class.number &&
-                selectedSection.component == section.component
-              )
+      // Add the selected section
+      selectedClass.selectedSections = [...selectedSections, section.ccn];
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          classes: _schedule.classes.map(
+            ({
+              selectedSections,
+              class: { number, subject, courseNumber },
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sections: selectedSections,
+            })
           ),
-          section,
-        ];
-      });
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
     },
-    [setSelectedSections, setCurrentSection]
+    [setCurrentSection]
   );
 
   const handleSectionMouseOver = useCallback(
-    (section: ISection) => {
+    (
+      subject: string,
+      courseNumber: string,
+      classNumber: string,
+      number: string
+    ) => {
+      const selectedClass = schedule.classes.find(
+        (selectedClass) =>
+          selectedClass.class.subject === subject &&
+          selectedClass.class.courseNumber === courseNumber &&
+          selectedClass.class.number === classNumber
+      );
+
+      if (!selectedClass) return;
+
+      const section =
+        selectedClass.class.primarySection.number === number
+          ? selectedClass.class.primarySection
+          : selectedClass.class.sections.find(
+              (section) => section.number === number
+            );
+
+      if (!section) return;
+
       // Jump to the section
       if (
         tab === 0 &&
@@ -87,89 +164,137 @@ export default function Manage() {
         });
       }
 
+      const selectedSections = schedule.classes.flatMap(
+        (selectedClass) => selectedClass.selectedSections
+      );
+
       // Ignore selected sections
-      if (
-        selectedSections.some(
-          (selectedSection) => selectedSection.ccn === section.ccn
-        )
-      )
-        return;
+      if (selectedSections.includes(section.ccn)) return;
 
       setCurrentSection(section);
     },
-    [setCurrentSection, selectedSections, tab]
+    [setCurrentSection, tab]
   );
 
   const handleClassSelect = useCallback(
-    async (selectedClass: IClass) => {
+    async (subject: string, courseNumber: string, number: string) => {
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      const existingClass = _schedule.classes.find(
+        (selectedClass) =>
+          selectedClass.class.subject === subject &&
+          selectedClass.class.courseNumber === courseNumber &&
+          selectedClass.class.number === number
+      );
+
+      // Move existing classes to the top rather than duplicating them
+      if (existingClass) {
+        const index = _schedule.classes.findIndex(
+          (selectedClass) =>
+            selectedClass.class.subject === subject &&
+            selectedClass.class.courseNumber === courseNumber &&
+            number === selectedClass.class.number
+        );
+
+        if (index === -1) return;
+
+        setExpanded((expandedClasses) => {
+          const _expandedClasses = structuredClone(expandedClasses);
+          _expandedClasses.splice(index, 1);
+          return [true, ...expandedClasses];
+        });
+
+        _schedule.classes.splice(index, 1);
+        _schedule.classes = [existingClass, ..._schedule.classes];
+
+        // Update the schedule
+        updateSchedule(
+          schedule._id,
+          {
+            classes: _schedule.classes.map(
+              ({
+                selectedSections,
+                class: { number, subject, courseNumber },
+              }) => ({
+                subject,
+                courseNumber,
+                number,
+                sections: selectedSections,
+              })
+            ),
+          },
+          {
+            optimisticResponse: {
+              updateSchedule: _schedule,
+            },
+          }
+        );
+
+        return;
+      }
+
       // Fetch the selected class
-      const { data } = await apolloClient.query<{ class: IClass }>({
+      const { data } = await apolloClient.query<GetClassResponse>({
         query: GET_CLASS,
         variables: {
-          term: {
-            semester: "Fall",
-            year: 2024,
-          },
-          subject: selectedClass.course.subject,
-          courseNumber: selectedClass.course.number,
-          classNumber: selectedClass.number,
+          year: schedule.year,
+          semester: schedule.semester,
+          subject,
+          courseNumber,
+          number,
         },
       });
 
+      // TODO: Error
       if (!data) return;
 
-      // Move existing classes to the top rather than duplicating them
-      const index = classes.findIndex(
-        ({ course, number }) =>
-          course.subject === selectedClass.course.subject &&
-          course.number === selectedClass.course.number &&
-          number === selectedClass.number
-      );
+      const _class = data.class;
 
-      setExpanded((expandedClasses) => {
-        const _expandedClasses = structuredClone(expandedClasses);
-        if (index !== -1) _expandedClasses.splice(index, 1);
-        return [true, ...expandedClasses];
-      });
-
-      setClasses((classes) => {
-        const _classes = structuredClone(classes);
-        if (index !== -1) _classes.splice(index, 1);
-        return [data.class, ...classes];
-      });
-
-      // Add new classes to the top expanded
-      if (index !== -1) return;
-
-      const { primarySection, sections, number } = data.class;
-
-      const clonedPrimarySection = structuredClone(primarySection);
-
-      // @ts-expect-error - Hack to set the class number
-      clonedPrimarySection.class = { number };
-
-      // Add the primary section to selected sections
-      setSelectedSections((sections) => [...sections, clonedPrimarySection]);
+      const selectedSections = [_class.primarySection.ccn];
 
       const kinds = Array.from(
-        new Set(sections.map((section) => section.component))
+        new Set(_class.sections.map((section) => section.component))
       );
 
       // Add the first section of each kind to selected sections
       for (const kind of kinds) {
-        const section = sections
+        const section = _class.sections
           .filter((section) => section.component === kind)
           .sort((a, b) => a.number.localeCompare(b.number))[0];
 
-        const clonedSection = structuredClone(section);
-
-        // @ts-expect-error - Hack to set the class number
-        clonedSection.class = { number };
-
-        setSelectedSections((sections) => [...sections, clonedSection]);
+        selectedSections.push(section.ccn);
       }
+
+      _schedule.classes.push({
+        class: _class,
+        selectedSections,
+      });
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          classes: _schedule.classes.map(
+            ({
+              class: { subject, courseNumber, number },
+              selectedSections,
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sections: selectedSections,
+            })
+          ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
     },
-    [apolloClient, setClasses, classes, setSelectedSections, setExpanded]
+    [apolloClient, setExpanded]
   );
 
   const handleExpandedChange = (index: number, expanded: boolean) => {
@@ -191,7 +316,7 @@ export default function Manage() {
               </IconButton>
             </Link>
           </Tooltip>
-          <p className={styles.heading}>Untitled Fall 2024 schedule</p>
+          <p className={styles.heading}>{schedule.name}</p>
           <Tooltip content="Settings">
             <IconButton>
               <Settings />
@@ -206,9 +331,9 @@ export default function Manage() {
           <MenuItem active={tab === 1} onClick={() => setTab(1)}>
             Calendar
           </MenuItem>
-          <MenuItem active={tab === 2} onClick={() => setTab(2)}>
+          {/* <MenuItem active={tab === 2} onClick={() => setTab(2)}>
             Map
-          </MenuItem>
+          </MenuItem> */}
         </div>
         <Link to="compare">
           <Button>
@@ -227,8 +352,7 @@ export default function Manage() {
       </div>
       <div className={styles.body}>
         <SideBar
-          classes={classes}
-          selectedSections={selectedSections}
+          schedule={schedule}
           expanded={expanded}
           onClassSelect={handleClassSelect}
           onSectionSelect={handleSectionSelect}
@@ -244,6 +368,7 @@ export default function Manage() {
             />
           ) : tab === 1 ? (
             <Calendar
+              term={schedule.term}
               selectedSections={selectedSections}
               currentSection={currentSection}
             />

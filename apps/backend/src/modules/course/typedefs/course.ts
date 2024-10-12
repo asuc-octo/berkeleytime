@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 
 export default gql`
   type Query {
-    course(subject: String!, courseNumber: String!): Course
+    course(subject: String!, number: String!): Course
     courses: [Course!]!
   }
 

@@ -9,8 +9,8 @@ import { CourseModule } from "./generated-types/module-types";
 
 const resolvers: CourseModule.Resolvers = {
   Query: {
-    course: async (_, { subject, courseNumber }, _context, info) => {
-      const course = await getCourse(subject, courseNumber, info);
+    course: async (_, { subject, number }, _context, info) => {
+      const course = await getCourse(subject, number, info);
 
       return course as unknown as CourseModule.Course;
     },

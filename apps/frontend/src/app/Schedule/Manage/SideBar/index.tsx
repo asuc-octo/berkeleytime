@@ -5,26 +5,38 @@ import { Plus } from "iconoir-react";
 import { Button } from "@repo/theme";
 
 import Units from "@/components/Units";
-import { IClass, ISection, Semester } from "@/lib/api";
+import { ISchedule, Semester } from "@/lib/api";
 
 import Catalog from "./Catalog";
 import Class from "./Class";
 import styles from "./SideBar.module.scss";
 
 interface SideBarProps {
-  classes: IClass[];
-  selectedSections: ISection[];
+  schedule: ISchedule;
   expanded: boolean[];
-  onClassSelect: (_class: IClass) => void;
-  onSectionSelect: (section: ISection) => void;
-  onSectionMouseOver: (section: ISection) => void;
+  onClassSelect: (
+    subject: string,
+    courseNumber: string,
+    number: string
+  ) => void;
+  onSectionSelect: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    number: string
+  ) => void;
+  onSectionMouseOver: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    number: string
+  ) => void;
   onSectionMouseOut: () => void;
   onExpandedChange: (index: number, expanded: boolean) => void;
 }
 
 export default function SideBar({
-  classes,
-  selectedSections,
+  schedule,
   onClassSelect,
   expanded,
   onSectionSelect,
@@ -34,14 +46,14 @@ export default function SideBar({
 }: SideBarProps) {
   const [minimum, maximum] = useMemo(
     () =>
-      classes.reduce(
-        ([minimum, maximum], { unitsMax, unitsMin }) => [
+      schedule.classes.reduce(
+        ([minimum, maximum], { class: { unitsMax, unitsMin } }) => [
           minimum + unitsMin,
           maximum + unitsMax,
         ],
         [0, 0]
       ),
-    [classes]
+    [schedule]
   );
 
   return (
@@ -50,7 +62,10 @@ export default function SideBar({
         <div className={styles.context}>
           <div className={styles.data}>Fall 2024</div>
           <div className={styles.data}>
-            {classes.length === 1 ? "1 class" : `${classes.length} classes`},{" "}
+            {schedule.classes.length === 1
+              ? "1 class"
+              : `${schedule.classes.length} classes`}
+            ,{" "}
             <Units unitsMin={minimum} unitsMax={maximum}>
               {(units) => units}
             </Units>
@@ -68,24 +83,16 @@ export default function SideBar({
         </Catalog>
       </div>
       <div className={styles.body}>
-        {classes.map((class_, index) => {
-          const filteredSections = selectedSections.filter(
-            (section) =>
-              section.course.number === class_.course.number &&
-              section.class.number === class_.number &&
-              section.course.subject === class_.course.subject
-          );
-
+        {schedule.classes.map((selectedClass, index) => {
           return (
             <Class
-              key={class_.primarySection.ccn}
-              {...class_}
+              key={selectedClass.class.primarySection.ccn}
+              {...selectedClass}
               expanded={expanded[index]}
               onExpandedChange={(expanded) => onExpandedChange(index, expanded)}
               onSectionSelect={onSectionSelect}
               onSectionMouseOver={onSectionMouseOver}
               onSectionMouseOut={onSectionMouseOut}
-              selectedSections={filteredSections}
             />
           );
         })}

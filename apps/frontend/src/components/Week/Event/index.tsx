@@ -19,7 +19,8 @@ export default function Event({
   columns,
   position,
   meetings: [{ startTime, endTime }],
-  course,
+  subject,
+  courseNumber,
   component,
   number,
   active,
@@ -36,14 +37,14 @@ export default function Event({
           className={classNames(styles.trigger, { [styles.active]: active })}
           style={{
             top: `${top + 1}px`,
-            backgroundColor: getColor(course.subject, course.number),
+            backgroundColor: getColor(subject, courseNumber),
             height: `${height - 2}px`,
             width: `calc((100% - 4px - ${columns - 1} * 2px) / ${columns})`,
             left: `calc(2px + calc((100% - 4px - ${columns - 1} * 2px) / ${columns}) * ${position} + 2px * ${position})`,
           }}
         >
           <div className={styles.heading}>
-            {course.subject} {course.number}
+            {subject} {courseNumber}
           </div>
           <div className={styles.description}>
             {componentMap[component]} {number}

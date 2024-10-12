@@ -5,7 +5,7 @@ import { ArrowSeparateVertical, ArrowUnionVertical } from "iconoir-react";
 import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
-import { Component, IClass, ISection, componentMap } from "@/lib/api";
+import { Component, IClass, componentMap } from "@/lib/api";
 import { getColor } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -14,60 +14,46 @@ import Section from "./Section";
 interface ClassProps {
   expanded: boolean;
   onExpandedChange: (expanded: boolean) => void;
-  selectedSections: ISection[];
-  onSectionSelect: (section: ISection) => void;
-  onSectionMouseOver: (section: ISection) => void;
+  class: IClass;
+  selectedSections: string[];
+  onSectionSelect: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    number: string
+  ) => void;
+  onSectionMouseOver: (
+    subject: string,
+    courseNumber: string,
+    classNumber: string,
+    number: string
+  ) => void;
   onSectionMouseOut: () => void;
 }
 
 export default function Class({
   expanded,
   onExpandedChange,
-  title,
-  course,
-  unitsMin,
-  unitsMax,
-  primarySection,
-  sections,
-  number,
+  class: _class,
   selectedSections,
   onSectionSelect,
   onSectionMouseOver,
   onSectionMouseOut,
-}: ClassProps & IClass) {
+}: ClassProps) {
   const groups = useMemo(() => {
-    const sortedSections = structuredClone(sections).sort((a, b) =>
+    const sortedSections = _class.sections.toSorted((a, b) =>
       a.number.localeCompare(b.number)
     );
 
     return Object.groupBy(sortedSections, (section) => section.component);
-  }, [sections]);
-
-  // TODO: Fix temporary hack to set the class number
-  const handleSectionSelect = (section: ISection) => {
-    const clonedSection = structuredClone(section);
-
-    // @ts-expect-error - Hack to set the class number
-    clonedSection.class = { number };
-
-    onSectionSelect(clonedSection);
-  };
-
-  const handleSectionMouseOver = (section: ISection) => {
-    const clonedSection = structuredClone(section);
-
-    // @ts-expect-error - Hack to set the class number
-    clonedSection.class = { number };
-
-    onSectionMouseOver(clonedSection);
-  };
+  }, [_class]);
 
   return (
     <div className={styles.root}>
       <div
         className={styles.border}
         style={{
-          backgroundColor: getColor(course.subject, course.number),
+          backgroundColor: getColor(_class.subject, _class.courseNumber),
         }}
       />
       <div className={styles.body}>
@@ -80,18 +66,20 @@ export default function Class({
           </div>
           <div className={styles.text}>
             <p className={styles.heading}>
-              {course.subject} {course.number}
+              {_class.subject} {_class.courseNumber}
             </p>
-            <p className={styles.description}>{title ?? course.title}</p>
+            <p className={styles.description}>
+              {_class.title ?? _class.course.title}
+            </p>
             <div className={styles.row}>
-              <AverageGrade gradeAverage={course.gradeAverage} />
+              <AverageGrade gradeAverage={_class.course.gradeAverage} />
               <Capacity
-                enrollCount={primarySection.enrollCount}
-                enrollMax={primarySection.enrollMax}
-                waitlistCount={primarySection.waitlistCount}
-                waitlistMax={primarySection.waitlistMax}
+                enrollCount={_class.primarySection.enrollCount}
+                enrollMax={_class.primarySection.enrollMax}
+                waitlistCount={_class.primarySection.waitlistCount}
+                waitlistMax={_class.primarySection.waitlistMax}
               />
-              <Units unitsMin={unitsMin} unitsMax={unitsMax} />
+              <Units unitsMin={_class.unitsMin} unitsMax={_class.unitsMax} />
             </div>
           </div>
         </div>
@@ -99,16 +87,21 @@ export default function Class({
           <div className={styles.group}>
             <div className={styles.label}>
               <p className={styles.component}>
-                {componentMap[primarySection.component]}
+                {componentMap[_class.primarySection.component]}
               </p>
               <p className={styles.time}>Time</p>
             </div>
             <Section
-              active={selectedSections.some(
-                (selectedSection) => selectedSection.ccn === primarySection.ccn
-              )}
-              {...primarySection}
-              onSectionMouseOver={() => handleSectionMouseOver(primarySection)}
+              active
+              {..._class.primarySection}
+              onSectionMouseOver={() =>
+                onSectionMouseOver(
+                  _class.subject,
+                  _class.courseNumber,
+                  _class.number,
+                  _class.primarySection.number
+                )
+              }
               onSectionMouseOut={onSectionMouseOut}
             />
           </div>
@@ -125,15 +118,29 @@ export default function Class({
                 </div>
                 {groups[group]?.map((section) => {
                   const active = selectedSections.some(
-                    (selectedSection) => selectedSection.ccn === section.ccn
+                    (selectedSection) => selectedSection === section.ccn
                   );
 
                   return (
                     <Section
                       active={active}
                       onSectionMouseOut={onSectionMouseOut}
-                      onSectionMouseOver={() => handleSectionMouseOver(section)}
-                      onSectionSelect={() => handleSectionSelect(section)}
+                      onSectionMouseOver={() =>
+                        onSectionMouseOver(
+                          _class.subject,
+                          _class.courseNumber,
+                          _class.number,
+                          section.number
+                        )
+                      }
+                      onSectionSelect={() =>
+                        onSectionSelect(
+                          _class.subject,
+                          _class.courseNumber,
+                          _class.number,
+                          section.number
+                        )
+                      }
                       {...section}
                       key={section.ccn}
                     />

@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSchedule } from "@/hooks/schedules/useSchedule";
 import { ScheduleIdentifier } from "@/lib/api";
 
+import Manage from "./Manage";
+
 export default function Schedule() {
   const { scheduleId } = useParams();
 
@@ -12,5 +14,5 @@ export default function Schedule() {
     onError: () => navigate("/schedules"),
   });
 
-  return schedule ? schedule.name : <></>;
+  return schedule ? <Manage schedule={schedule} /> : <></>;
 }

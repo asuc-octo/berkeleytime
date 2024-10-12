@@ -84,6 +84,14 @@ export const scheduleSchema = new Schema(
       required: true,
       trim: true,
     },
+    beginDate: {
+      type: Date,
+      required: true,
+    },
+    endDate: {
+      type: Date,
+      required: true,
+    },
     events: {
       type: [customEventSchema],
       required: true,

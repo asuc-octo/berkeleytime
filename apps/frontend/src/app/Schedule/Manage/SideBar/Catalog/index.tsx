@@ -12,7 +12,11 @@ import { IClass, Semester } from "@/lib/api";
 import styles from "./Catalog.module.scss";
 
 interface CatalogProps {
-  onClassSelect: (_class: IClass) => void;
+  onClassSelect: (
+    subject: string,
+    courseNumber: string,
+    number: string
+  ) => void;
   children: ReactNode;
   semester: string;
   year: number;
@@ -32,7 +36,7 @@ export default function Catalog({ onClassSelect, children }: CatalogProps) {
   };
 
   const handleClassSelect = (_class: IClass) => {
-    onClassSelect(_class);
+    onClassSelect(_class.subject, _class.courseNumber, _class.number);
 
     setOpen(false);
 

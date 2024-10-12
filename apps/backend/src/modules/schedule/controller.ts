@@ -1,4 +1,4 @@
-import { ScheduleModel } from "@repo/common";
+import { ScheduleModel, TermModel } from "@repo/common";
 
 import {
   CreateScheduleInput,
@@ -44,6 +44,12 @@ export const createSchedule = async (
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
+  const term = await TermModel.findOne({
+    name: `${input.year} ${input.semester}`,
+  });
+
+  if (!term) throw new Error("Invalid term");
+
   const schedule = await ScheduleModel.create({
     ...input,
     createdBy: context.user._id,
@@ -57,6 +63,24 @@ export const updateSchedule = async (
   id: string,
   input: UpdateScheduleInput
 ) => {
+  if (!context.user._id) throw new Error("Unauthorized");
+
+  // Filter out duplicates
+  if (input.classes) {
+    input.classes = input.classes.filter(
+      (selectedClass, index) =>
+        selectedClass &&
+        index ===
+          input.classes?.findIndex(
+            (currentClass) =>
+              currentClass &&
+              currentClass.subject === selectedClass.subject &&
+              currentClass.courseNumber === selectedClass.courseNumber &&
+              currentClass.number === selectedClass.number
+          )
+    );
+  }
+
   const schedule = await ScheduleModel.findOneAndUpdate(
     { _id: id, createdBy: context.user._id },
     input,

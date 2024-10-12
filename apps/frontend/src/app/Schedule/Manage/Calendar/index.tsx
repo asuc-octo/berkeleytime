@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { MinusSquareDashed, MinusSquareSolid } from "iconoir-react";
 import moment from "moment";
 
-import { ISection } from "@/lib/api";
+import { ISection, ITerm } from "@/lib/api";
 
 import styles from "./Calendar.module.scss";
 import Week from "./Week";
@@ -12,23 +12,25 @@ import { IDay, IEvent } from "./calendar";
 interface CalendarProps {
   selectedSections: ISection[];
   currentSection: ISection | null;
+  term: ITerm;
 }
 
 export default function Calendar({
   selectedSections,
   currentSection,
+  term,
 }: CalendarProps) {
-  const [first] = useState(() => moment("2024-01-01"));
-  const [last] = useState(() => moment("2024-05-31"));
+  const [first] = useState(() => moment(term.startDate));
+  const [last] = useState(() => moment(term.endDate));
 
   const [start] = useState(() => {
-    const current = moment("2024-01-01");
+    const current = first;
     current.subtract(current.day(), "days");
     return current;
   });
 
   const [stop] = useState(() => {
-    const stop = moment("2024-05-31");
+    const stop = last;
     stop.add(6 - stop.day(), "days");
     return stop;
   });
@@ -44,7 +46,8 @@ export default function Calendar({
           endDate,
           meetings,
           exams,
-          course: { subject, number },
+          subject,
+          courseNumber: number,
           ccn,
         } = section;
 
@@ -54,8 +57,8 @@ export default function Calendar({
           events.push({
             startDate,
             endDate,
-            subject: subject,
-            number: number,
+            subject,
+            number,
             active: currentSection?.ccn === ccn,
             days,
             startTime,

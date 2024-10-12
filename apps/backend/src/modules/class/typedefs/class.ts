@@ -3,17 +3,19 @@ import { gql } from "graphql-tag";
 export default gql`
   type Query {
     class(
-      term: TermInput!
+      year: Int!
+      semester: Semester!
       subject: String!
       courseNumber: String!
-      classNumber: String!
+      number: String!
     ): Class
     section(
-      term: TermInput!
+      year: Int!
+      semester: Semester!
       subject: String!
       courseNumber: String!
       classNumber: String!
-      sectionNumber: String!
+      number: String!
     ): Section
   }
 
@@ -22,8 +24,6 @@ export default gql`
     subject: String!
     courseNumber: String!
     number: String!
-
-    "Term"
     year: Int!
     semester: Semester!
     session: String!
@@ -89,11 +89,9 @@ export default gql`
     courseNumber: String!
     classNumber: String!
     number: String!
-
-    "Term"
     year: Int!
     semester: Semester!
-    session: String!
+    ccn: Int!
 
     "Relationships"
     class: Class!
@@ -101,7 +99,7 @@ export default gql`
     term: Term!
 
     "Attributes"
-    ccn: Int!
+    session: String!
     primary: Boolean!
     enrollmentHistory: [EnrollmentDay!]
     component: Component!

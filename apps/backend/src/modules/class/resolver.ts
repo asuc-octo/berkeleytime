@@ -15,14 +15,14 @@ const resolvers: ClassModule.Resolvers = {
   Query: {
     class: async (
       _,
-      { subject, courseNumber, classNumber, term: { year, semester } }
+      { subject, courseNumber, number, year, semester }
     ) => {
       const _class = await getClass(
         year,
         semester,
         subject,
         courseNumber,
-        classNumber
+        number
       );
 
       return _class as unknown as ClassModule.Class;
@@ -34,8 +34,8 @@ const resolvers: ClassModule.Resolvers = {
         subject,
         courseNumber,
         classNumber,
-        sectionNumber,
-        term: { year, semester },
+        number,
+        year, semester
       }
     ) => {
       const section = await getSection(
@@ -44,7 +44,7 @@ const resolvers: ClassModule.Resolvers = {
         subject,
         courseNumber,
         classNumber,
-        sectionNumber
+        number
       );
 
       return section as unknown as ClassModule.Section;

@@ -38,11 +38,14 @@ export interface IScheduleInput {
 }
 
 export interface ISchedule {
+  __typename: "Schedule";
   _id: ScheduleIdentifier;
   name: string;
   classes: IScheduleClass[];
   events: IScheduleEvent[];
   createdBy: string;
+  beginDate: string;
+  endDate: string;
   term: ITerm;
   year: number;
   semester: Semester;
@@ -61,11 +64,82 @@ export const GET_SCHEDULE = gql`
       createdBy
       year
       semester
+      term {
+        startDate
+        endDate
+      }
       classes {
         class {
           subject
+          unitsMax
+          unitsMin
           courseNumber
           number
+          course {
+            title
+          }
+          primarySection {
+            courseNumber
+            classNumber
+            subject
+            number
+            startDate
+            endDate
+            ccn
+            component
+            enrollCount
+            enrollMax
+            waitlistCount
+            waitlistMax
+            meetings {
+              days
+              location
+              endTime
+              startTime
+              instructors {
+                familyName
+                givenName
+              }
+            }
+            exams {
+              date
+              final
+              location
+              startTime
+              endTime
+            }
+          }
+          sections {
+            number
+            courseNumber
+            classNumber
+            subject
+            ccn
+            component
+            enrollCount
+            startDate
+            endDate
+            enrollMax
+            waitlistCount
+            waitlistMax
+            meetings {
+              days
+              location
+              endTime
+              startTime
+              instructors {
+                familyName
+                givenName
+              }
+            }
+            exams {
+              date
+              final
+              location
+              startTime
+              endTime
+            }
+          }
         }
         selectedSections
       }
