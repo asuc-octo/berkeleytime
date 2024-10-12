@@ -19,8 +19,8 @@ const CatalogSections = lazy(() => import("@/components/Class/Sections"));
 const Discover = lazy(() => import("@/app/Discover"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
-const Compare = lazy(() => import("@/app/Schedule/Compare"));
-const Manage = lazy(() => import("@/app/Schedule/Manage"));
+const Compare = lazy(() => import("@/app/Schedule/Comparison"));
+const Manage = lazy(() => import("@/app/Schedule/Editor"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 const Map = lazy(() => import("@/app/Map"));
 
@@ -51,7 +51,7 @@ const router = createBrowserRouter([
           },
           {
             element: <Compare />,
-            path: "compare/:comparedScheduleId?",
+            path: "compare/:comparisonId?",
           },
         ],
       },

@@ -1,16 +1,16 @@
 import { QueryHookOptions, useQuery } from "@apollo/client";
 
 import {
-  GET_SCHEDULE,
-  GetScheduleResponse,
+  READ_SCHEDULE,
+  ReadScheduleResponse,
   ScheduleIdentifier,
 } from "@/lib/api";
 
-export const useSchedule = (
+export const useReadSchedule = (
   id: ScheduleIdentifier,
-  options?: Omit<QueryHookOptions<GetScheduleResponse>, "variables">
+  options?: Omit<QueryHookOptions<ReadScheduleResponse>, "variables">
 ) => {
-  const query = useQuery<GetScheduleResponse>(GET_SCHEDULE, {
+  const query = useQuery<ReadScheduleResponse>(READ_SCHEDULE, {
     ...options,
     variables: {
       id,

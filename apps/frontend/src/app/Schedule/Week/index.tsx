@@ -1,8 +1,8 @@
 import { MouseEvent, useMemo, useRef, useState } from "react";
 
-import { IClass, ISection } from "@/lib/api";
-import { getY } from "@/lib/schedule";
+import { ISection } from "@/lib/api";
 
+import { getY } from "../schedule";
 import Event from "./Event";
 import styles from "./Week.module.scss";
 
@@ -45,7 +45,6 @@ interface WeekProps {
   currentSection?: ISection | null;
   y?: number | null;
   updateY?: (y: number | null) => void;
-  classes?: IClass[];
 }
 
 export default function Week({

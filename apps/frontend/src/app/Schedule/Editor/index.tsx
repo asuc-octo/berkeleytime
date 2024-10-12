@@ -12,21 +12,21 @@ import { Link } from "react-router-dom";
 
 import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
 
-import Week from "@/components/Week";
-import { useUpdateSchedule } from "@/hooks/schedules/useUpdateSchedule";
-import { GET_CLASS, GetClassResponse, ISchedule, ISection } from "@/lib/api";
-import { getY } from "@/lib/schedule";
+import Week from "@/app/Schedule/Week";
+import { useUpdateSchedule } from "@/hooks/api";
+import useSchedule from "@/hooks/useSchedule";
+import { GET_CLASS, GetClassResponse, ISection } from "@/lib/api";
 
+import { getY } from "../schedule";
+import { getSelectedSections } from "../schedule";
 import Calendar from "./Calendar";
 import styles from "./Manage.module.scss";
 import Map from "./Map";
 import SideBar from "./SideBar";
 
-interface ManageProps {
-  schedule: ISchedule;
-}
+export default function Editor() {
+  const { schedule } = useSchedule();
 
-export default function Manage({ schedule }: ManageProps) {
   const apolloClient = useApolloClient();
   const [updateSchedule] = useUpdateSchedule();
 
@@ -35,19 +35,7 @@ export default function Manage({ schedule }: ManageProps) {
   const [tab, setTab] = useState(0);
 
   const selectedSections = useMemo(
-    () =>
-      schedule.classes.flatMap(({ selectedSections, class: _class }) =>
-        selectedSections.reduce((acc, section) => {
-          const _section =
-            _class.primarySection.ccn === section
-              ? _class.primarySection
-              : _class.sections.find(
-                  (currentSection) => currentSection.ccn === section
-                );
-
-          return _section ? [...acc, _section] : acc;
-        }, [] as ISection[])
-      ),
+    () => getSelectedSections(schedule),
     [schedule]
   );
 

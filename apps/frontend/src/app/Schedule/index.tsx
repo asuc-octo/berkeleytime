@@ -1,18 +1,23 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 
-import { useSchedule } from "@/hooks/schedules/useSchedule";
+import ScheduleContext from "@/contexts/ScheduleContext";
+import { useReadSchedule } from "@/hooks/api";
 import { ScheduleIdentifier } from "@/lib/api";
-
-import Manage from "./Manage";
 
 export default function Schedule() {
   const { scheduleId } = useParams();
 
   const navigate = useNavigate();
 
-  const { data: schedule } = useSchedule(scheduleId as ScheduleIdentifier, {
+  const { data: schedule } = useReadSchedule(scheduleId as ScheduleIdentifier, {
     onError: () => navigate("/schedules"),
   });
 
-  return schedule ? <Manage schedule={schedule} /> : <></>;
+  return schedule ? (
+    <ScheduleContext.Provider value={{ schedule }}>
+      <Outlet />
+    </ScheduleContext.Provider>
+  ) : (
+    <></>
+  );
 }

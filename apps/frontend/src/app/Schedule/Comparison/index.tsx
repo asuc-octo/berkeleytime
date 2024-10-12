@@ -1,34 +1,49 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { DataTransferBoth, Xmark } from "iconoir-react";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { IconButton, Tooltip } from "@repo/theme";
 
+import Week from "@/app/Schedule/Week";
 import Units from "@/components/Units";
-import Week from "@/components/Week";
+import { useReadSchedule } from "@/hooks/api";
+import useSchedule from "@/hooks/useSchedule";
+import { ScheduleIdentifier } from "@/lib/api";
 
-import { ScheduleContextType } from "../schedule";
-import styles from "./Compare.module.scss";
+import { getSelectedSections, getUnits } from "../schedule";
+import styles from "./Comparison.module.scss";
 
-export default function Compare() {
-  const { selectedSections, classes } = useOutletContext<ScheduleContextType>();
+export default function Comparison() {
+  const { schedule } = useSchedule();
+
+  const { comparisonId } = useParams();
+
+  const { data: comparison } = useReadSchedule(
+    comparisonId as ScheduleIdentifier
+  );
+
+  const [minimum, maximum] = useMemo(() => getUnits(schedule), [schedule]);
+
+  const [comparisonMinimum, comparisonMaximum] = useMemo(
+    () => getUnits(comparison),
+    [comparison]
+  );
+
+  const selectedSections = useMemo(
+    () => getSelectedSections(schedule),
+    [schedule]
+  );
+
+  const selectedComparisonSections = useMemo(
+    () => getSelectedSections(comparison),
+    [comparison]
+  );
+
   const [y, setY] = useState<number | null>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
   const [current, setCurrent] = useState<number | null>(null);
-
-  const [minimum, maximum] = useMemo(
-    () =>
-      classes.reduce(
-        ([minimum, maximum], { unitsMax, unitsMin }) => [
-          minimum + unitsMin,
-          maximum + unitsMax,
-        ],
-        [0, 0]
-      ),
-    [classes]
-  );
 
   useEffect(() => {
     if (!leftRef.current || !rightRef.current) return;
@@ -96,7 +111,10 @@ export default function Compare() {
           <div className={styles.context}>
             <div className={styles.data}>Fall 2024</div>
             <div className={styles.data}>
-              {classes.length === 1 ? "1 class" : `${classes.length} classes`},{" "}
+              {schedule.classes.length === 1
+                ? "1 class"
+                : `${schedule.classes.length} classes`}
+              ,{" "}
               <Units unitsMin={minimum} unitsMax={maximum}>
                 {(units) => units}
               </Units>
@@ -110,20 +128,20 @@ export default function Compare() {
               setCurrent((previous) => (previous === 0 ? null : previous))
             }
           >
-            <Week
-              selectedSections={selectedSections}
-              y={y}
-              classes={classes}
-              updateY={setY}
-            />
+            <Week selectedSections={selectedSections} y={y} updateY={setY} />
           </div>
         </div>
         <div className={styles.panel}>
           <div className={styles.context}>
             <div className={styles.data}>Fall 2024</div>
             <div className={styles.data}>
-              {classes.length === 1 ? "1 class" : `${classes.length} classes`},{" "}
-              <Units unitsMin={12} unitsMax={20}>
+              {comparison
+                ? comparison.classes.length === 1
+                  ? "1 class"
+                  : `${comparison.classes.length} classes`
+                : "No classes"}
+              ,{" "}
+              <Units unitsMin={comparisonMinimum} unitsMax={comparisonMaximum}>
                 {(units) => units}
               </Units>
             </div>
@@ -136,7 +154,11 @@ export default function Compare() {
               setCurrent((previous) => (previous === 1 ? null : previous))
             }
           >
-            <Week selectedSections={[]} y={y} updateY={setY} />
+            <Week
+              selectedSections={selectedComparisonSections}
+              y={y}
+              updateY={setY}
+            />
           </div>
         </div>
       </div>

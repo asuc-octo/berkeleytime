@@ -13,10 +13,7 @@ import { ClassModule } from "./generated-types/module-types";
 
 const resolvers: ClassModule.Resolvers = {
   Query: {
-    class: async (
-      _,
-      { subject, courseNumber, number, year, semester }
-    ) => {
+    class: async (_, { subject, courseNumber, number, year, semester }) => {
       const _class = await getClass(
         year,
         semester,
@@ -30,13 +27,7 @@ const resolvers: ClassModule.Resolvers = {
 
     section: async (
       _,
-      {
-        subject,
-        courseNumber,
-        classNumber,
-        number,
-        year, semester
-      }
+      { subject, courseNumber, classNumber, number, year, semester }
     ) => {
       const section = await getSection(
         year,

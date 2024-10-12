@@ -51,12 +51,12 @@ export interface ISchedule {
   semester: Semester;
 }
 
-export interface GetScheduleResponse {
+export interface ReadScheduleResponse {
   schedule: ISchedule;
 }
 
-export const GET_SCHEDULE = gql`
-  query GetSchedule($id: ID!) {
+export const READ_SCHEDULE = gql`
+  query ReadSchedule($id: ID!) {
     schedule(id: $id) {
       _id
       name
@@ -207,12 +207,12 @@ export const CREATE_SCHEDULE = gql`
   }
 `;
 
-export interface GetSchedulesResponse {
+export interface ReadSchedulesResponse {
   schedules: ISchedule[];
 }
 
-export const GET_SCHEDULES = gql`
-  query GetSchedules {
+export const READ_SCHEDULES = gql`
+  query ReadSchedules {
     schedules {
       _id
       name

@@ -4,9 +4,9 @@ import * as HoverCard from "@radix-ui/react-hover-card";
 import classNames from "classnames";
 
 import { ISection, componentMap } from "@/lib/api";
-import { getY } from "@/lib/schedule";
 import { getColor } from "@/lib/section";
 
+import { getY } from "../../schedule";
 import styles from "./Event.module.scss";
 
 interface EventProps {

@@ -7,6 +7,7 @@ import { Button } from "@repo/theme";
 import Units from "@/components/Units";
 import { ISchedule, Semester } from "@/lib/api";
 
+import { getUnits } from "../../schedule";
 import Catalog from "./Catalog";
 import Class from "./Class";
 import styles from "./SideBar.module.scss";
@@ -44,17 +45,7 @@ export default function SideBar({
   onSectionMouseOut,
   onExpandedChange,
 }: SideBarProps) {
-  const [minimum, maximum] = useMemo(
-    () =>
-      schedule.classes.reduce(
-        ([minimum, maximum], { class: { unitsMax, unitsMin } }) => [
-          minimum + unitsMin,
-          maximum + unitsMax,
-        ],
-        [0, 0]
-      ),
-    [schedule]
-  );
+  const [minimum, maximum] = useMemo(() => getUnits(schedule), [schedule]);
 
   return (
     <div className={styles.root}>
