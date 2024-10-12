@@ -17,6 +17,14 @@ export type IntermediateClass = Omit<
   sections: null;
 };
 
+export const formatDate = (date?: string | number | Date | null) => {
+  if (!date) return date;
+
+  if (date instanceof Date) return date.toISOString();
+
+  return new Date(date).toISOString();
+};
+
 export const formatClass = (_class: ClassType) => {
   const [year, semester] = _class.session?.term?.name?.split(" ") as string[];
 
@@ -76,8 +84,8 @@ export const formatSection = (section: SectionType) => {
 
     component: section.component?.code as string,
 
-    endDate: section?.endDate?.toISOString() as string,
-    startDate: section?.startDate?.toISOString() as string,
+    endDate: formatDate(section?.endDate),
+    startDate: formatDate(section?.startDate),
 
     meetings: section.meetings?.map((m) => ({
       days: [
@@ -90,10 +98,10 @@ export const formatSection = (section: SectionType) => {
         m.meetsSaturday,
       ],
 
-      endDate: m.endDate?.toISOString() as string,
+      endDate: formatDate(m.endDate),
       endTime: m.endTime,
       location: m.location?.description,
-      startDate: m.startDate?.toISOString() as string,
+      startDate: formatDate(m.startDate),
       startTime: m.startTime,
 
       instructors: m?.assignedInstructors
@@ -117,7 +125,7 @@ export const formatSection = (section: SectionType) => {
     })),
 
     exams: section.exams?.map((e) => ({
-      date: e.date?.toISOString() as string,
+      date: formatDate(e.date),
       endTime: e.endTime,
       location: e.location?.description as string,
       startTime: e.startTime,

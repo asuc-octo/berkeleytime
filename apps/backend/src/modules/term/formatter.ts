@@ -1,16 +1,15 @@
 import { SessionType, TermType } from "@repo/common";
 
+import { formatDate } from "../class/formatter";
 import { TermModule } from "./generated-types/module-types";
-
-export const formatDate = (date?: Date | null) => date?.toISOString();
 
 export const formatSession = (session: SessionType) => {
   const { name, beginDate, endDate, temporalPosition } = session;
 
   return {
     name,
-    startDate: beginDate?.toISOString(),
-    endDate: endDate?.toISOString(),
+    startDate: formatDate(beginDate),
+    endDate: formatDate(endDate),
     temporalPosition: temporalPosition as TermModule.TemporalPosition,
   } as TermModule.Session;
 };
@@ -25,7 +24,7 @@ export const formatTerm = (term: TermType) => {
     year: parseInt(year),
     temporalPosition: temporalPosition as TermModule.TemporalPosition,
     sessions: sessions.map(formatSession),
-    startDate: beginDate?.toISOString(),
-    endDate: endDate?.toISOString(),
+    startDate: formatDate(beginDate),
+    endDate: formatDate(endDate),
   } as TermModule.Term;
 };

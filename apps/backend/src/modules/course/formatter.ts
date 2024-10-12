@@ -6,6 +6,7 @@ import {
   CourseGradingBasis,
   InstructionMethod,
 } from "../../generated-types/graphql";
+import { formatDate } from "../class/formatter";
 import { CourseModule } from "./generated-types/module-types";
 
 export type IntermediateCourse = Omit<
@@ -38,12 +39,12 @@ export function formatCourse(course: CourseType) {
     description: course.description as string,
     primaryInstructionMethod: course.primaryInstructionMethod
       ?.code as InstructionMethod,
-    fromDate: course.fromDate as string,
+    fromDate: formatDate(course.fromDate),
     finalExam: course.finalExam?.description as CourseFinalExam,
     gradingBasis: course.gradingBasis?.description as CourseGradingBasis,
     academicCareer: course.academicCareer?.code as AcademicCareer,
     title: course.title as string,
-    toDate: course.toDate?.toISOString?.() as string,
+    toDate: formatDate(course.toDate),
     typicallyOffered:
       // @ts-expect-error - The model was typed incorrectly
       course.formatsOffered?.typicallyOffered?.terms?.termNames ??
