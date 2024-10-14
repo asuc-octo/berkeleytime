@@ -10,18 +10,17 @@ CURRENT_SEMESTER_DISPLAY = 'Spring 2025'
 # SIS API Keys
 SIS_TERM_ID = 2252
 
-# TODO: https://registrar.berkeley.edu/calendar/
 TELEBEARS = {
-    'phase1_start': datetime.datetime(2024, 10, 16), #oct 16th
-    'phase1_end': datetime.datetime(2024, 11, 5),   # nov 5th
-    'phase2_start': datetime.datetime(2024, 11, 14), #nov 14th
-    'phase2_end': datetime.datetime(2025, 1, 7),    #jan 7th
-    'adj_start': datetime.datetime(2025, 1, 8),     #jan 8th
+    'phase1_start': datetime.datetime(2024, 10, 28), # oct 28th
+    'phase1_end': datetime.datetime(2024, 11, 17),   # nov 17th
+    'phase2_start': datetime.datetime(2024, 11, 25), # nov 25th
+    'phase2_end': datetime.datetime(2025, 1, 12),    # jan 12th
+    'adj_start': datetime.datetime(2025, 1, 13),     # jan 13th
 }
 
 INSTRUCTION = {
-    'instruction_start': datetime.datetime(2025, 1, 16, 00, 00),    # jan 16th
-    'instruction_end': datetime.datetime(2025, 4, 26, 00, 00)       #april 26th
+    'instruction_start': datetime.datetime(2025, 1, 21, 00, 00),    # jan 21th
+    'instruction_end': datetime.datetime(2025, 5, 2, 00, 00)       # may 2th
 }
 
 # Please don't edit anything below this line unless you know what you are doing

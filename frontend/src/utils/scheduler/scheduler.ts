@@ -176,7 +176,7 @@ export const serializeSchedule = (schedule: Schedule, semester: Semester): Backe
  */
 export function scheduleToICal(schedule: Schedule, semester: Semester): string {
 	const SEMESTER_START = new Date(2025, 0, 14);
-	const LAST_COURSE_DAY = new Date(2025, 4, 9);
+	const LAST_COURSE_DAY = new Date(2025, 4, 16);
 
 	const dateToICal = (date: Date) => {
 		// Function to pad a number with leading zeros
