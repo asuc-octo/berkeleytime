@@ -24,7 +24,7 @@ from berkeleytime.config.semesters import (
     fall2023,
     spring2024,
     fall2024,
-    sprint2025,
+    spring2025,
 )
 
 GRADE_POINT = {
