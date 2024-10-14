@@ -118,7 +118,7 @@ PAST_SEMESTERS_TELEBEARS_JSON = {
     'fall 2023': fall2023.TELEBEARS_JSON,
     'spring 2024': spring2024.TELEBEARS_JSON,
     'fall 2024': fall2024.TELEBEARS_JSON,
-    'spring 2025': sprint2025.TELEBEARS_JSON,
+    'spring 2025': spring2025.TELEBEARS_JSON,
 }
 
 PAST_SEMESTERS_TELEBEARS = {
@@ -146,7 +146,7 @@ PAST_SEMESTERS_TELEBEARS = {
     'fall 2023': fall2023.TELEBEARS,
     'spring 2024': spring2024.TELEBEARS,
     'fall 2024': fall2024.TELEBEARS,
-    'spring 2025': sprint2025.TELEBEARS,
+    'spring 2025': spring2025.TELEBEARS,
 }
 
 # Classes with special characters
