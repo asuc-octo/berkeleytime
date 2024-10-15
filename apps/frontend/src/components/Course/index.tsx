@@ -1,15 +1,21 @@
 import { ReactNode, Suspense, useMemo, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { DialogClose } from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
-import { Bookmark, BookmarkSolid, CalendarPlus, Xmark } from "iconoir-react";
-import { NavLink, Outlet, useSearchParams } from "react-router-dom";
+import {
+  Bookmark,
+  BookmarkSolid,
+  Expand,
+  GridPlus,
+  Xmark,
+} from "iconoir-react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
   Boundary,
   Container,
+  Dialog,
   IconButton,
   LoadingIndicator,
   MenuItem,
@@ -17,6 +23,7 @@ import {
 } from "@repo/theme";
 
 import AverageGrade from "@/components/AverageGrade";
+import CourseContext from "@/contexts/CourseContext";
 import { GET_COURSE, GetCourseResponse, ICourse } from "@/lib/api";
 
 import styles from "./Class.module.scss";
@@ -24,7 +31,6 @@ import Classes from "./Classes";
 import Enrollment from "./Enrollment";
 import Grades from "./Grades";
 import Overview from "./Overview";
-import ClassContext from "./context";
 
 interface BodyProps {
   children: ReactNode;
@@ -62,20 +68,33 @@ function Root({ dialog, children }: RootProps) {
   );
 }
 
-interface CourseProps {
-  subject: string;
-  number: string;
-  partialCourse?: ICourse | null;
+interface BaseProps {
   dialog?: boolean;
 }
+
+interface ControlledProps extends BaseProps {
+  course: ICourse;
+  subject?: never;
+  number?: never;
+}
+
+interface UncontrolledProps extends BaseProps {
+  course?: never;
+  subject: string;
+  number: string;
+}
+
+export type CourseProps = ControlledProps | UncontrolledProps;
 
 export default function Course({
   subject,
   number,
-  partialCourse,
   dialog,
+  course: providedCourse,
 }: CourseProps) {
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  // TODO: Bookmarks
   const [bookmarked, setBookmarked] = useState(false);
 
   const { data, loading } = useQuery<GetCourseResponse>(GET_COURSE, {
@@ -83,16 +102,23 @@ export default function Course({
       subject,
       number,
     },
+    // Allow course to be provided
+    skip: !!providedCourse,
   });
 
-  // TODO: Properly type a partial ICourse
-  const course = useMemo(
-    () => (data?.course ?? partialCourse) as ICourse,
-    [data]
-  );
+  const course = useMemo(() => providedCourse ?? data?.course, [data]);
 
-  const search = useMemo(() => searchParams.toString(), [searchParams]);
+  // TODO: Loading state
+  if (loading) {
+    return <></>;
+  }
 
+  // TODO: Error state
+  if (!course) {
+    return <></>;
+  }
+
+  // TODO: Differentiate between class and course
   return (
     <Root dialog={dialog}>
       <div className={styles.header}>
@@ -111,36 +137,27 @@ export default function Course({
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
               </Tooltip>
-              <Tooltip content="Add class to schedule">
+              <Tooltip content="Add course to plan">
                 <IconButton>
-                  <CalendarPlus />
+                  <GridPlus />
                 </IconButton>
               </Tooltip>
             </div>
             <div className={styles.group}>
-              {/* <Tooltip content="Berkeley Academic Guide">
-                <IconButton
-                  as="a"
-                  href={getExternalLink(
-                    year,
-                    semester,
-                    subject,
-                    courseNumber,
-                    _class.primarySection.number,
-                    _class.primarySection.component
-                  )}
-                  target="_blank"
-                >
-                  <OpenNewWindow />
-                </IconButton>
-              </Tooltip> */}
+              {dialog && (
+                <Tooltip content="Expand">
+                  <IconButton as={Link} to={`/courses/${subject}/${number}`}>
+                    <Expand />
+                  </IconButton>
+                </Tooltip>
+              )}
               {dialog && (
                 <Tooltip content="Close">
-                  <DialogClose asChild>
+                  <Dialog.Close asChild>
                     <IconButton>
                       <Xmark />
                     </IconButton>
-                  </DialogClose>
+                  </Dialog.Close>
                 </Tooltip>
               )}
             </div>
@@ -169,22 +186,22 @@ export default function Course({
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
-              <NavLink to={{ pathname: ".", search }} end>
+              <NavLink to={{ ...location, pathname: "." }} end>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Overview</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "classes", search }}>
+              <NavLink to={{ ...location, pathname: "classes" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Classes</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "enrollment", search }}>
+              <NavLink to={{ ...location, pathname: "enrollment" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Enrollment</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "grades", search }}>
+              <NavLink to={{ ...location, pathname: "grades" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Grades</MenuItem>
                 )}
@@ -194,35 +211,26 @@ export default function Course({
         </Container>
       </div>
       <Container size="sm">
-        {data ? (
-          <ClassContext.Provider
-            value={{
-              subject,
-              number,
-              partialCourse,
-              dialog,
-            }}
-          >
-            <Body dialog={dialog}>
-              <Tabs.Content value="overview" asChild>
-                <Overview />
-              </Tabs.Content>
-              <Tabs.Content value="classes" asChild>
-                <Classes />
-              </Tabs.Content>
-              <Tabs.Content value="enrollment" asChild>
-                <Enrollment />
-              </Tabs.Content>
-              <Tabs.Content value="grades" asChild>
-                <Grades />
-              </Tabs.Content>
-            </Body>
-          </ClassContext.Provider>
-        ) : loading ? (
-          <>{/* TODO: Loading */}</>
-        ) : (
-          <>{/* TODO: Error */}</>
-        )}
+        <CourseContext.Provider
+          value={{
+            course,
+          }}
+        >
+          <Body dialog={dialog}>
+            <Tabs.Content value="overview" asChild>
+              <Overview />
+            </Tabs.Content>
+            <Tabs.Content value="classes" asChild>
+              <Classes />
+            </Tabs.Content>
+            <Tabs.Content value="enrollment" asChild>
+              <Enrollment />
+            </Tabs.Content>
+            <Tabs.Content value="grades" asChild>
+              <Grades />
+            </Tabs.Content>
+          </Body>
+        </CourseContext.Provider>
       </Container>
     </Root>
   );

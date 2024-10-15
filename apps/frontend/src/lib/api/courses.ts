@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-import { AcademicCareer, IClass, InstructionMethod } from "../api";
-import { Semester } from "./term";
+import { AcademicCareer, IClass, InstructionMethod } from ".";
+import { Semester } from "./terms";
 
 export interface ICourse {
   // Identifiers
@@ -33,7 +33,7 @@ export interface GetCourseResponse {
 
 export const GET_COURSE = gql`
   query GetCourse($subject: String!, $number: String!) {
-    course(subject: $subject, number: $courseNumber) {
+    course(subject: $subject, number: $number) {
       subject
       number
       title
@@ -57,12 +57,12 @@ export const GET_COURSE = gql`
 `;
 
 export interface GetCoursesResponse {
-  courseList: ICourse[];
+  courses: ICourse[];
 }
 
 export const GET_COURSES = gql`
   query GetCourses {
-    courseList {
+    courses {
       subject
       number
       title

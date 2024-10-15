@@ -29,11 +29,11 @@ export interface ITerm {
   endDate?: string;
 }
 
-export interface GetTermsResponse {
+export interface ReadTermsResponse {
   terms: ITerm[];
 }
 
-export const GET_TERMS = gql`
+export const READ_TERMS = gql`
   query GetTerms {
     terms {
       year
@@ -51,11 +51,11 @@ export const GET_TERMS = gql`
   }
 `;
 
-export interface GetTermResponse {
+export interface ReadTermResponse {
   term: ITerm;
 }
 
-export const GET_TERM = gql`
+export const READ_TERM = gql`
   query GetTerm($year: Int!, $semester: Semester!) {
     term(year: $year, semester: $semester) {
       year

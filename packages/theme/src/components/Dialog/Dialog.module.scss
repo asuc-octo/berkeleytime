@@ -34,11 +34,11 @@ body:not([data-theme]) {
   z-index: 988;
 
   &[data-state="open"] {
-    animation: fadeIn 250ms ease-in-out forwards;
+    animation: fadeIn 250ms ease-in;
   }
 
   &[data-state="closed"] {
-    animation: fadeOut 250ms ease-in-out forwards;
+    animation: fadeOut 250ms ease-out;
   }
 }
 
@@ -48,21 +48,21 @@ body:not([data-theme]) {
 }
 
 @keyframes fadeIn {
-  0% {
+  from {
     opacity: 0;
   }
 
-  100% {
+  to {
     opacity: 1;
   }
 }
 
 @keyframes fadeOut {
-  0% {
+  from {
     opacity: 1;
   }
 
-  100% {
+  to {
     opacity: 0;
   }
 }

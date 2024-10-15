@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 import { IClass } from "../api";
-import { ITerm, Semester } from "./term";
+import { ITerm, Semester } from "./terms";
 
 export type ScheduleIdentifier = string & {
   readonly __brand: unique symbol;

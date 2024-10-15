@@ -11,11 +11,22 @@ import Grades from "@/app/Grades";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 
+const Class = {
+  Enrollment: lazy(() => import("@/components/Class/Enrollment")),
+  Grades: lazy(() => import("@/components/Class/Grades")),
+  Overview: lazy(() => import("@/components/Class/Overview")),
+  Sections: lazy(() => import("@/components/Class/Sections")),
+};
+
+const Course = {
+  Root: lazy(() => import("@/app/Course")),
+  Enrollment: lazy(() => import("@/components/Course/Enrollment")),
+  Grades: lazy(() => import("@/components/Course/Grades")),
+  Overview: lazy(() => import("@/components/Course/Overview")),
+  Classes: lazy(() => import("@/components/Course/Classes")),
+};
+
 const About = lazy(() => import("@/app/About"));
-const CatalogEnrollment = lazy(() => import("@/components/Class/Enrollment"));
-const CatalogGrades = lazy(() => import("@/components/Class/Grades"));
-const CatalogOverview = lazy(() => import("@/components/Class/Overview"));
-const CatalogSections = lazy(() => import("@/components/Class/Sections"));
 const Discover = lazy(() => import("@/app/Discover"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
@@ -26,17 +37,12 @@ const Map = lazy(() => import("@/app/Map"));
 
 const router = createBrowserRouter([
   {
-    element: <Layout header={false} />,
+    element: <Layout header={false} footer={false} />,
     children: [
       {
         element: <Discover />,
         path: "discover",
       },
-    ],
-  },
-  {
-    element: <Layout header={false} footer={false} />,
-    children: [
       {
         element: <Landing />,
         index: true,
@@ -82,23 +88,45 @@ const router = createBrowserRouter([
         path: "enrollment",
       },
       {
-        element: <Catalog />,
-        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
+        element: <Course.Root />,
+        path: "courses/:subject/:number",
         children: [
           {
-            element: <CatalogOverview />,
+            element: <Course.Overview />,
             index: true,
           },
           {
-            element: <CatalogSections />,
-            path: "sections",
+            element: <Course.Classes />,
+            path: "classes",
           },
           {
-            element: <CatalogEnrollment />,
+            element: <Course.Enrollment />,
             path: "enrollment",
           },
           {
-            element: <CatalogGrades />,
+            element: <Course.Grades />,
+            path: "grades",
+          },
+        ],
+      },
+      {
+        element: <Catalog />,
+        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?",
+        children: [
+          {
+            element: <Class.Overview />,
+            index: true,
+          },
+          {
+            element: <Class.Sections />,
+            path: "sections",
+          },
+          {
+            element: <Class.Enrollment />,
+            path: "enrollment",
+          },
+          {
+            element: <Class.Grades />,
             path: "grades",
           },
         ],

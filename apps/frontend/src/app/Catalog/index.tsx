@@ -1,121 +1,105 @@
 import { useCallback, useMemo, useState } from "react";
 
-import { useQuery } from "@apollo/client";
 import classNames from "classnames";
 import { Xmark } from "iconoir-react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import { Boundary, IconButton, LoadingIndicator } from "@repo/theme";
+import { IconButton } from "@repo/theme";
 
 import Class from "@/components/Class";
 import ClassBrowser from "@/components/ClassBrowser";
-import {
-  GET_CLASS,
-  GET_COURSE,
-  GET_TERMS,
-  GetClassResponse,
-  GetCourseResponse,
-  GetTermsResponse,
-  IClass,
-  TemporalPosition,
-} from "@/lib/api";
+import { useReadTerms } from "@/hooks/api";
+import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import { Semester, TemporalPosition } from "@/lib/api";
 
 import styles from "./Catalog.module.scss";
 import Dashboard from "./Dashboard";
 
 export default function Catalog() {
   const {
-    year: currentYear,
-    semester: currentSemester,
-    subject: currentSubject,
+    year: providedYear,
+    semester: providedSemester,
+    subject: providedSubject,
     courseNumber,
-    classNumber,
+    number,
   } = useParams();
 
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
 
   const [expanded, setExpanded] = useState(true);
   const [open, setOpen] = useState(false);
-  const [partialClass, setPartialClass] = useState<IClass | null>(null);
 
-  const { data, loading } = useQuery<GetTermsResponse>(GET_TERMS);
+  const { data: terms, loading: termsLoading } = useReadTerms();
 
-  const terms = useMemo(() => data?.terms, [data]);
+  const semester = useMemo(() => {
+    if (!providedSemester) return null;
 
-  const selectedTerm = useMemo(() => {
-    if (!currentYear || !currentSemester) return;
+    return providedSemester[0].toUpperCase() + providedSemester.slice(1);
+  }, [providedSemester]);
 
-    const semester =
-      currentSemester[0].toUpperCase() + currentSemester.slice(1);
+  const year = useMemo(() => {
+    if (!providedYear) return null;
 
-    return terms?.find(
-      (term) =>
-        term.year === parseInt(currentYear) && term.semester === semester
+    return parseInt(providedYear) || null;
+  }, [providedYear]);
+
+  const term = useMemo(() => {
+    if (!terms) return null;
+
+    const currentTerm = terms?.find(
+      (term) => term.temporalPosition === TemporalPosition.Current
     );
-  }, [terms, currentYear, currentSemester]);
 
-  const currentTerm = useMemo(
-    () =>
-      selectedTerm ??
-      terms?.find((term) => term.temporalPosition === TemporalPosition.Current),
-    [terms]
-  );
+    // Default to the current term
+    return (
+      terms?.find((term) => term.year === year && term.semester === semester) ??
+      currentTerm
+    );
+  }, [terms, year, semester]);
 
   const subject = useMemo(
-    () => currentSubject?.toUpperCase(),
-    [currentSubject]
+    () => providedSubject?.toUpperCase(),
+    [providedSubject]
   );
 
-  const {
-    data: classData,
-    loading: classLoading,
-    error: classError,
-  } = useQuery<GetClassResponse>(GET_CLASS, {
-    variables: {
-      term: {
-        semester: currentTerm?.semester,
-        year: currentTerm?.year,
-      },
-      subject,
-      courseNumber,
-      classNumber,
-    },
-    skip: !subject || !courseNumber || !classNumber || !currentTerm,
-  });
+  const { data: _class, loading: classLoading } = useReadClass(
+    term?.year as number,
+    term?.semester as Semester,
+    subject as string,
+    courseNumber as string,
+    number as string,
+    {
+      skip: !subject || !courseNumber || !number || !term,
+    }
+  );
 
-  // Fetch the course to for directing to the correct term
-  const { loading: courseLoading, error: courseError } =
-    useQuery<GetCourseResponse>(GET_COURSE, {
-      variables: {
-        subject,
-        courseNumber,
-      },
-      skip: !subject || !courseNumber,
-    });
+  const handleSelect = useCallback(
+    (subject: string, courseNumber: string, number: string) => {
+      if (!term) return;
 
-  const _class = useMemo(() => classData?.class, [classData]);
-
-  const handleClassSelect = useCallback(
-    (selectedClass: IClass) => {
-      if (!currentTerm) return;
-
-      setPartialClass(selectedClass);
       setOpen(true);
 
       navigate({
-        pathname: `/catalog/${currentTerm.year}/${currentTerm.semester}/${selectedClass.course.subject}/${selectedClass.course.number}/${selectedClass.number}`,
-        search: searchParams.toString(),
+        ...location,
+        pathname: `/catalog/${term.year}/${term.semester}/${subject}/${courseNumber}/${number}`,
       });
     },
-    [navigate, currentYear, currentSemester, searchParams, currentTerm]
+    [navigate, year, semester, location, term]
   );
 
-  return loading ? (
-    <Boundary>
-      <LoadingIndicator size="lg" />
-    </Boundary>
-  ) : currentTerm ? (
+  // TODO: Loading state
+  if (termsLoading) {
+    return <></>;
+  }
+
+  // TODO: Error state
+  if (!term) {
+    return <></>;
+  }
+
+  // TODO: Class error state, class loading state
+  return (
     <div
       className={classNames(styles.root, {
         [styles.expanded]: expanded,
@@ -125,7 +109,7 @@ export default function Catalog() {
       <div className={styles.panel}>
         <div className={styles.header}>
           <p className={styles.title}>
-            {currentTerm.semester} {currentTerm.year}
+            {term.semester} {term.year}
           </p>
           <IconButton onClick={() => setOpen(true)}>
             <Xmark />
@@ -133,30 +117,23 @@ export default function Catalog() {
         </div>
         <div className={styles.body}>
           <ClassBrowser
-            onClassSelect={handleClassSelect}
-            semester={currentTerm.semester}
-            year={currentTerm.year}
+            onSelect={handleSelect}
+            semester={term.semester}
+            year={term.year}
             persistent
           />
         </div>
       </div>
       <div className={styles.view}>
-        {courseNumber && classNumber && subject && (_class || partialClass) ? (
+        {classLoading ? (
+          <></>
+        ) : _class ? (
           <Class
-            subject={subject}
-            courseNumber={courseNumber}
-            classNumber={classNumber}
-            partialClass={partialClass}
-            year={currentTerm.year}
-            semester={currentTerm.semester}
+            class={_class}
             expanded={expanded}
             onExpandedChange={setExpanded}
             onClose={() => setOpen(false)}
           />
-        ) : classLoading || courseLoading ? (
-          <>{/* Loading */}</>
-        ) : classError || courseError ? (
-          <>{/* Error */}</>
         ) : (
           <Dashboard
             expanded={expanded}
@@ -166,7 +143,5 @@ export default function Catalog() {
         )}
       </div>
     </div>
-  ) : (
-    <>{/* Error */}</>
   );
 }

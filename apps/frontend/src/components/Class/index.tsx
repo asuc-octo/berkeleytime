@@ -1,6 +1,5 @@
 import { ReactNode, Suspense, useMemo, useState } from "react";
 
-import { useQuery } from "@apollo/client";
 import { DialogClose } from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
@@ -8,13 +7,13 @@ import {
   Bookmark,
   BookmarkSolid,
   CalendarPlus,
-  Collapse,
-  Expand,
-  OpenInWindow,
+  OpenBook,
   OpenNewWindow,
+  SidebarCollapse,
+  SidebarExpand,
   Xmark,
 } from "iconoir-react";
-import { Link, NavLink, Outlet, useSearchParams } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 
 import {
   Boundary,
@@ -30,7 +29,9 @@ import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import CourseDrawer from "@/components/CourseDrawer";
 import Units from "@/components/Units";
-import { GET_CLASS, GetClassResponse, IClass, Semester } from "@/lib/api";
+import ClassContext from "@/contexts/ClassContext";
+import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import { IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
 import styles from "./Class.module.scss";
@@ -38,7 +39,6 @@ import Enrollment from "./Enrollment";
 import Grades from "./Grades";
 import Overview from "./Overview";
 import Sections from "./Sections";
-import ClassContext from "./context";
 
 interface BodyProps {
   children: ReactNode;
@@ -76,62 +76,79 @@ function Root({ dialog, children }: RootProps) {
   );
 }
 
-interface BaseClassProps {
+interface ControlledProps {
+  class: IClass;
+  year?: never;
+  semester?: never;
+  subject?: never;
+  courseNumber?: never;
+  number?: never;
+}
+
+interface UncontrolledProps {
+  class?: never;
   year: number;
   semester: Semester;
   subject: string;
   courseNumber: string;
-  classNumber: string;
-  partialClass?: IClass | null;
+  number: string;
 }
 
-interface CatalogClassProps extends BaseClassProps {
+interface CatalogClassProps {
   dialog?: never;
   expanded: boolean;
   onExpandedChange: (expanded: boolean) => void;
   onClose: () => void;
 }
 
-interface DialogClassProps extends BaseClassProps {
+interface DialogClassProps {
   dialog: true;
   expanded?: never;
   onExpandedChange?: never;
   onClose?: never;
 }
 
-type ClassProps = CatalogClassProps | DialogClassProps;
+type ClassProps = (CatalogClassProps | DialogClassProps) &
+  (ControlledProps | UncontrolledProps);
 
 export default function Class({
   year,
   semester,
   subject,
   courseNumber,
-  classNumber,
-  partialClass,
+  number,
+  class: providedClass,
   expanded,
   onExpandedChange,
   onClose,
   dialog,
 }: ClassProps) {
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
+
+  // TODO: Bookmarks
   const [bookmarked, setBookmarked] = useState(false);
 
-  const { data, loading } = useQuery<GetClassResponse>(GET_CLASS, {
-    variables: {
-      term: {
-        semester,
-        year,
-      },
-      subject,
-      courseNumber,
-      classNumber,
-    },
-  });
+  const { data, loading } = useReadClass(
+    year as number,
+    semester as Semester,
+    subject as string,
+    courseNumber as string,
+    number as string,
+    {
+      // Allow class to be provided
+      skip: !!providedClass,
+    }
+  );
 
-  // TODO: Properly type a partial IClass
-  const _class = useMemo(() => (data?.class ?? partialClass) as IClass, [data]);
+  const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
 
-  const search = useMemo(() => searchParams.toString(), [searchParams]);
+  if (loading) {
+    return <></>;
+  }
+
+  if (!_class) {
+    return <></>;
+  }
 
   return (
     <Root dialog={dialog}>
@@ -142,7 +159,7 @@ export default function Class({
               {!dialog && (
                 <Tooltip content={expanded ? "Expand" : "Collapse"}>
                   <IconButton onClick={() => onExpandedChange(!expanded)}>
-                    {expanded ? <Expand /> : <Collapse />}
+                    {expanded ? <SidebarCollapse /> : <SidebarExpand />}
                   </IconButton>
                 </Tooltip>
               )}
@@ -165,21 +182,35 @@ export default function Class({
               </Tooltip>
             </div>
             <div className={styles.group}>
-              <CourseDrawer subject={subject} number={courseNumber}>
-                <Tooltip content="Open course">
-                  <IconButton>
-                    <OpenInWindow />
+              {dialog ? (
+                <Tooltip content="View course">
+                  <IconButton
+                    as={Link}
+                    to={`/courses/${_class.subject}/${_class.courseNumber}`}
+                  >
+                    <OpenBook />
                   </IconButton>
                 </Tooltip>
-              </CourseDrawer>
+              ) : (
+                <CourseDrawer
+                  subject={_class.subject}
+                  number={_class.courseNumber}
+                >
+                  <Tooltip content="View course">
+                    <IconButton>
+                      <OpenBook />
+                    </IconButton>
+                  </Tooltip>
+                </CourseDrawer>
+              )}
               <Tooltip content="Berkeley Academic Guide">
                 <IconButton
                   as="a"
                   href={getExternalLink(
-                    year,
-                    semester,
-                    subject,
-                    courseNumber,
+                    _class.year,
+                    _class.semester,
+                    _class.subject,
+                    _class.courseNumber,
                     _class.primarySection.number,
                     _class.primarySection.component
                   )}
@@ -188,6 +219,18 @@ export default function Class({
                   <OpenNewWindow />
                 </IconButton>
               </Tooltip>
+              {dialog && (
+                <Tooltip content="Expand">
+                  <DialogClose asChild>
+                    <IconButton
+                      as={Link}
+                      to={`/catalog/${_class.year}/${_class.semester}/${_class.subject}/${_class.courseNumber}/${_class.number}`}
+                    >
+                      <Xmark />
+                    </IconButton>
+                  </DialogClose>
+                </Tooltip>
+              )}
               <Tooltip content="Close">
                 {dialog ? (
                   <DialogClose asChild>
@@ -199,8 +242,8 @@ export default function Class({
                   <IconButton
                     as={Link}
                     to={{
+                      ...location,
                       pathname: `/catalog/${year}/${semester}`,
-                      search: searchParams.toString(),
                     }}
                     onClick={() => onClose()}
                   >
@@ -211,7 +254,7 @@ export default function Class({
             </div>
           </div>
           <h1 className={styles.heading}>
-            {subject} {courseNumber} #{classNumber}
+            {_class.subject} {_class.courseNumber} {_class.number}
           </h1>
           <p className={styles.description}>
             {_class.title || _class.course.title}
@@ -244,22 +287,22 @@ export default function Class({
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
-              <NavLink to={{ pathname: ".", search }} end>
+              <NavLink to={{ ...location, pathname: "." }} end>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Overview</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "sections", search }}>
+              <NavLink to={{ ...location, pathname: "sections" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Sections</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "enrollment", search }}>
+              <NavLink to={{ ...location, pathname: "enrollment" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Enrollment</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "grades", search }}>
+              <NavLink to={{ ...location, pathname: "grades" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Grades</MenuItem>
                 )}
@@ -269,38 +312,26 @@ export default function Class({
         </Container>
       </div>
       <Container size="sm">
-        {data ? (
-          <ClassContext.Provider
-            value={{
-              year,
-              semester,
-              subject,
-              courseNumber,
-              classNumber,
-              partialClass,
-              dialog,
-            }}
-          >
-            <Body dialog={dialog}>
-              <Tabs.Content value="overview" asChild>
-                <Overview />
-              </Tabs.Content>
-              <Tabs.Content value="sections" asChild>
-                <Sections />
-              </Tabs.Content>
-              <Tabs.Content value="enrollment" asChild>
-                <Enrollment />
-              </Tabs.Content>
-              <Tabs.Content value="grades" asChild>
-                <Grades />
-              </Tabs.Content>
-            </Body>
-          </ClassContext.Provider>
-        ) : loading ? (
-          <>{/* TODO: Loading */}</>
-        ) : (
-          <>{/* TODO: Error */}</>
-        )}
+        <ClassContext.Provider
+          value={{
+            class: _class,
+          }}
+        >
+          <Body dialog={dialog}>
+            <Tabs.Content value="overview" asChild>
+              <Overview />
+            </Tabs.Content>
+            <Tabs.Content value="sections" asChild>
+              <Sections />
+            </Tabs.Content>
+            <Tabs.Content value="enrollment" asChild>
+              <Enrollment />
+            </Tabs.Content>
+            <Tabs.Content value="grades" asChild>
+              <Grades />
+            </Tabs.Content>
+          </Body>
+        </ClassContext.Provider>
       </Container>
     </Root>
   );

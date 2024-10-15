@@ -1,10 +1,9 @@
 import { ReactNode, useState } from "react";
 
-import * as Dialog from "@radix-ui/react-dialog";
 import { Xmark } from "iconoir-react";
 import { useSearchParams } from "react-router-dom";
 
-import { IconButton } from "@repo/theme";
+import { Dialog, IconButton } from "@repo/theme";
 
 import CourseBrowser from "@/components/CourseBrowser";
 import { ICourse, Semester } from "@/lib/api";
@@ -48,30 +47,27 @@ export default function Catalog({
   return (
     <Dialog.Root onOpenChange={handleOpenChange} open={open}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content}>
-          <div className={styles.header}>
-            <Dialog.Title asChild>
-              <p className={styles.title}>
-                Add a course to {semester} {year}
-              </p>
-            </Dialog.Title>
-            <Dialog.Close asChild>
-              <IconButton className={styles.close}>
-                <Xmark />
-              </IconButton>
-            </Dialog.Close>
-          </div>
-          <div className={styles.body}>
-            <CourseBrowser
-              onSelect={handleClick}
-              responsive={false}
-              defaultSemesters={[semester]}
-            />
-          </div>
-        </Dialog.Content>
-      </Dialog.Portal>
+      <Dialog.Content className={styles.content}>
+        <div className={styles.header}>
+          <Dialog.Title asChild>
+            <p className={styles.title}>
+              Add a course to {semester} {year}
+            </p>
+          </Dialog.Title>
+          <Dialog.Close asChild>
+            <IconButton className={styles.close}>
+              <Xmark />
+            </IconButton>
+          </Dialog.Close>
+        </div>
+        <div className={styles.body}>
+          <CourseBrowser
+            onSelect={handleClick}
+            responsive={false}
+            defaultSemesters={[semester]}
+          />
+        </div>
+      </Dialog.Content>
     </Dialog.Root>
   );
 }

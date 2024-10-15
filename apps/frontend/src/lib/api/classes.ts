@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-import { ICourse } from "../api";
-import { ITerm, Semester } from "./term";
+import { ICourse } from ".";
+import { ITerm, Semester } from "./terms";
 
 export enum InstructionMethod {
   Unknown = "UNK",
@@ -205,11 +205,11 @@ export interface IClass {
   unitsMin: number;
 }
 
-export interface GetClassResponse {
+export interface ReadClassResponse {
   class: IClass;
 }
 
-export const GET_CLASS = gql`
+export const READ_CLASS = gql`
   query GetClass(
     $year: Int!
     $semester: Semester!

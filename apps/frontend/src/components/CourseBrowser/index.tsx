@@ -54,7 +54,7 @@ export default function CourseBrowser({
 
   const { data, loading } = useQuery<GetCoursesResponse>(GET_COURSES);
 
-  const courses = useMemo(() => data?.courseList ?? [], [data?.courseList]);
+  const courses = useMemo(() => data?.courses ?? [], [data?.courses]);
 
   const currentQuery = useMemo(
     () => (persistent ? (searchParams.get("query") ?? "") : localQuery),
@@ -191,7 +191,7 @@ export default function CourseBrowser({
           onOpenChange={setOpen}
           persistent={persistent}
           // API response
-          loading={loading && !data?.courseList}
+          loading={loading && courses.length === 0}
           // Manage courses
           onSelect={onSelect}
           currentCourses={currentCourses}

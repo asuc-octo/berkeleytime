@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import ClassContext from "./context";
+import ClassContext from "@/contexts/ClassContext";
 
 const useClass = () => {
   const classContext = useContext(ClassContext);

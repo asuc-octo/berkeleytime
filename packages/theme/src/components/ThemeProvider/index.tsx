@@ -32,12 +32,12 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     <div className={styles.root}>
       <IconoirProvider
         iconProps={{
-          strokeWidth: 2,
+          strokeWidth: 1.5,
           width: 16,
           height: 16,
         }}
       >
-        <TooltipProvider delayDuration={0}>
+        <TooltipProvider delayDuration={250}>
           <ThemeContext.Provider value={{ theme: theme, setTheme }}>
             {children}
           </ThemeContext.Provider>

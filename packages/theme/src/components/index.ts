@@ -6,3 +6,4 @@ export * from "./LoadingIndicator";
 export * from "./MenuItem";
 export * from "./ThemeProvider";
 export * from "./Tooltip";
+export * from "./Dialog";

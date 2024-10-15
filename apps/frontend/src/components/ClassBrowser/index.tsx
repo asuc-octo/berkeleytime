@@ -26,7 +26,7 @@ import {
 import BrowserContext from "./browserContext";
 
 interface ClassBrowserProps {
-  onClassSelect: (_class: IClass) => void;
+  onSelect: (subject: string, courseNumber: string, number: string) => void;
   responsive?: boolean;
   semester: Semester;
   year: number;
@@ -34,7 +34,7 @@ interface ClassBrowserProps {
 }
 
 export default function ClassBrowser({
-  onClassSelect,
+  onSelect,
   responsive = true,
   semester: currentSemester,
   year: currentYear,
@@ -328,7 +328,7 @@ export default function ClassBrowser({
         })}
       >
         <Filters />
-        <List onClassSelect={onClassSelect} />
+        <List onSelect={onSelect} />
       </div>
     </BrowserContext.Provider>
   );

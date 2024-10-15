@@ -15,7 +15,7 @@ import { Button, IconButton, MenuItem, Tooltip } from "@repo/theme";
 import Week from "@/app/Schedule/Week";
 import { useUpdateSchedule } from "@/hooks/api";
 import useSchedule from "@/hooks/useSchedule";
-import { GET_CLASS, GetClassResponse, ISection } from "@/lib/api";
+import { ISection, READ_CLASS, ReadClassResponse } from "@/lib/api";
 
 import { getY } from "../schedule";
 import { getSelectedSections } from "../schedule";
@@ -223,8 +223,8 @@ export default function Editor() {
       }
 
       // Fetch the selected class
-      const { data } = await apolloClient.query<GetClassResponse>({
-        query: GET_CLASS,
+      const { data } = await apolloClient.query<ReadClassResponse>({
+        query: READ_CLASS,
         variables: {
           year: schedule.year,
           semester: schedule.semester,
