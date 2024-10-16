@@ -1,7 +1,11 @@
 import { lazy } from "react";
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  RouterProvider,
+  createBrowserRouter,
+  redirect,
+} from "react-router-dom";
 
 import { ThemeProvider } from "@repo/theme";
 
@@ -34,6 +38,7 @@ const Compare = lazy(() => import("@/app/Schedule/Comparison"));
 const Manage = lazy(() => import("@/app/Schedule/Editor"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 const Map = lazy(() => import("@/app/Map"));
+const Plans = lazy(() => import("@/app/Plans"));
 
 const router = createBrowserRouter([
   {
@@ -58,6 +63,10 @@ const router = createBrowserRouter([
           {
             element: <Compare />,
             path: "compare/:comparisonId?",
+          },
+          {
+            path: "*",
+            loader: () => redirect("."),
           },
         ],
       },
@@ -107,6 +116,10 @@ const router = createBrowserRouter([
             element: <Course.Grades />,
             path: "grades",
           },
+          {
+            path: "*",
+            loader: () => redirect("."),
+          },
         ],
       },
       {
@@ -129,6 +142,10 @@ const router = createBrowserRouter([
             element: <Class.Grades />,
             path: "grades",
           },
+          {
+            path: "*",
+            loader: () => redirect("."),
+          },
         ],
       },
       {
@@ -136,10 +153,18 @@ const router = createBrowserRouter([
         path: "schedules",
       },
       {
+        element: <Plans />,
+        path: "plans",
+      },
+      {
         element: <Plan />,
-        path: "plan",
+        path: "plans/:planId",
       },
     ],
+  },
+  {
+    path: "*",
+    loader: () => redirect("/"),
   },
 ]);
 
