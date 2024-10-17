@@ -4,7 +4,7 @@ import { Link, NavLink } from "react-router-dom";
 
 import { Button, IconButton, MenuItem } from "@repo/theme";
 
-import useUser from "@/hooks/useUser";
+import { useReadUser } from "@/hooks/api";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { signIn, signOut } from "@/lib/api";
 
@@ -18,7 +18,7 @@ interface NavigationBarProps {
 export default function NavigationBar({ invert }: NavigationBarProps) {
   const { width } = useWindowDimensions();
 
-  const { data: user } = useUser();
+  const { data: user } = useReadUser();
 
   return (
     <div

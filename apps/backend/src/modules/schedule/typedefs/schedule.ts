@@ -3,7 +3,7 @@ import { gql } from "graphql-tag";
 const typedef = gql`
   type SelectedClass {
     class: Class!
-    selectedSections: [Int!]
+    selectedSections: [String!]
   }
 
   type Event {
@@ -45,7 +45,7 @@ const typedef = gql`
     subject: String!
     courseNumber: String!
     number: String!
-    sections: [Int!]!
+    sections: [String!]!
   }
 
   input UpdateScheduleInput {

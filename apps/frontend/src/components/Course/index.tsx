@@ -1,4 +1,4 @@
-import { ReactNode, Suspense, useMemo, useState } from "react";
+import { ReactNode, Suspense, useMemo } from "react";
 
 import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
@@ -8,6 +8,8 @@ import {
   Expand,
   GridPlus,
   Link as LinkIcon,
+  Pin,
+  PinSolid,
   ShareIos,
   Xmark,
 } from "iconoir-react";
@@ -25,7 +27,9 @@ import {
 
 import AverageGrade from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
-import { useReadCourse } from "@/hooks/api";
+import { CoursePin } from "@/contexts/PinsContext";
+import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
+import usePins from "@/hooks/usePins";
 import { ICourse } from "@/lib/api";
 
 import styles from "./Class.module.scss";
@@ -94,10 +98,13 @@ export default function Course({
   dialog,
   course: providedCourse,
 }: CourseProps) {
+  const { pins, addPin, removePin } = usePins();
+
   const location = useLocation();
 
-  // TODO: Bookmarks
-  const [bookmarked, setBookmarked] = useState(false);
+  const { data: user } = useReadUser();
+
+  const [updateUser] = useUpdateUser();
 
   const { data, loading } = useReadCourse(subject as string, number as string, {
     // Allow course to be provided
@@ -105,6 +112,45 @@ export default function Course({
   });
 
   const course = useMemo(() => providedCourse ?? data, [providedCourse, data]);
+
+  const input = useMemo(() => {
+    if (!course) return;
+
+    return {
+      subject: course.subject,
+      number: course.number,
+    };
+  }, [course]);
+
+  const pin = useMemo(() => {
+    if (!input) return;
+
+    return {
+      id: `${input.subject}-${input.number}`,
+      type: "course",
+      data: input,
+    } as CoursePin;
+  }, [input, pins]);
+
+  const pinned = useMemo(() => {
+    if (!input) return;
+
+    return pins.find(
+      (pin) =>
+        pin.type === "course" &&
+        pin.data.subject === input.subject &&
+        pin.data.number === input.number
+    );
+  }, [input, pins]);
+
+  const bookmarked = useMemo(() => {
+    if (!user || !input) return;
+
+    return user.bookmarkedCourses.some(
+      (course) =>
+        course.subject === input.subject && course.number === input.number
+    );
+  }, [user, input]);
 
   const context = useMemo(() => {
     if (!course) return;
@@ -120,6 +166,39 @@ export default function Course({
     () => context && navigator.canShare && navigator.canShare(context),
     [context]
   );
+
+  const bookmark = async () => {
+    if (!user || !course) return;
+
+    const bookmarked = user.bookmarkedCourses.some(
+      (course) =>
+        course.subject === course.subject && course.number === course.number
+    );
+
+    const bookmarkedCourses = bookmarked
+      ? user.bookmarkedCourses.filter(
+          (course) =>
+            course.subject !== course.subject || course.number !== course.number
+        )
+      : user.bookmarkedCourses.concat(course);
+
+    await updateUser(
+      {
+        bookmarkedCourses: bookmarkedCourses.map((course) => ({
+          subject: course.subject,
+          number: course.number,
+        })),
+      },
+      {
+        optimisticResponse: {
+          updateUser: {
+            ...user,
+            bookmarkedCourses,
+          },
+        },
+      }
+    );
+  };
 
   const share = () => {
     if (!context) return;
@@ -147,7 +226,7 @@ export default function Course({
   }
 
   // TODO: Error state
-  if (!course) {
+  if (!course || !pin) {
     return <></>;
   }
 
@@ -163,9 +242,19 @@ export default function Course({
                   className={classNames(styles.bookmark, {
                     [styles.active]: bookmarked,
                   })}
-                  onClick={() => setBookmarked(!bookmarked)}
+                  onClick={() => bookmark()}
                 >
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip content={pinned ? "Remove pin" : "Pin"}>
+                <IconButton
+                  className={classNames(styles.bookmark, {
+                    [styles.active]: pinned,
+                  })}
+                  onClick={() => (pinned ? removePin(pin) : addPin(pin))}
+                >
+                  {pinned ? <PinSolid /> : <Pin />}
                 </IconButton>
               </Tooltip>
               <Tooltip content="Add to plan">

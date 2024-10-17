@@ -139,7 +139,7 @@ export default async (app: Application, redis: RedisClientType) => {
         const email = profile.emails?.[0].value;
 
         if (!email) {
-          return done(null, false, { message: "No email found" });
+          return done(null, false, { message: "Invalid" });
         }
 
         let user = await UserModel.findOne({ email });
@@ -147,9 +147,9 @@ export default async (app: Application, redis: RedisClientType) => {
         if (!user) {
           user = new UserModel({
             email,
-            google_id: profile.id,
+            googleId: profile.id,
             name: profile.displayName,
-            // refresh_token: refreshToken, <-------------- currently not needed.
+            // TODO: refreshToken
           });
         }
 

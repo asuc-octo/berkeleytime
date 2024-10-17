@@ -2,7 +2,7 @@ import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
 export const userSchema = new Schema(
   {
-    google_id: {
+    googleId: {
       type: String,
       trim: true,
       required: true,
@@ -19,6 +19,50 @@ export const userSchema = new Schema(
       type: String,
       trim: true,
       required: true,
+    },
+    bookmarkedClasses: {
+      required: false,
+      default: [],
+      type: [
+        {
+          year: {
+            type: Number,
+            required: true,
+          },
+          semester: {
+            type: String,
+            required: true,
+          },
+          subject: {
+            type: String,
+            required: true,
+          },
+          courseNumber: {
+            type: String,
+            required: true,
+          },
+          number: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
+    },
+    bookmarkedCourses: {
+      required: false,
+      default: [],
+      type: [
+        {
+          subject: {
+            type: String,
+            required: true,
+          },
+          number: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
     },
     refresh_token: {
       type: String,

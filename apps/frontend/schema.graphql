@@ -14,6 +14,8 @@ directive @oneOf on INPUT_OBJECT
 type User {
   email: String!
   student: Boolean!
+  bookmarkedCourses: [Course!]!
+  bookmarkedClasses: [Class!]!
 }
 
 type Query {
@@ -24,37 +26,10 @@ type Query {
     classNum: String
     term: TermInput
   ): Grade
-  course(subject: String!, courseNumber: String!, term: TermInput): Course
-  class(
-    subject: String!
-    courseNumber: String!
-    term: TermInput!
-    classNumber: String!
-  ): Class
-  section(
-    subject: String!
-    courseNumber: String!
-    term: TermInput!
-    classNumber: String!
-    sectionNumber: String!
-  ): Section
-
-  """
-  Get info about all courses and their corresponding classes for a given semester.
-
-  Used primarily in the catalog page.
-  """
-  catalog(term: TermInput!): [Course!]
-
-  """
-  Get a list of all course names across all semesters.
-
-  Useful for searching for courses.
-  """
-  courseList: [Course!]
+  catalog(term: TermInput!): [Course!]!
   ping: String! @deprecated(reason: "test")
   schedules: [Schedule]
-  schedule(id: String!): Schedule
+  schedule(id: ID!): Schedule
 
   """
   Query for terms.
@@ -65,6 +40,48 @@ type Query {
   Query for a term.
   """
   term(year: Int!, semester: Semester!): Term
+  course(subject: String!, number: String!): Course
+  courses: [Course!]!
+  class(
+    year: Int!
+    semester: Semester!
+    subject: String!
+    courseNumber: String!
+    number: String!
+  ): Class
+  section(
+    year: Int!
+    semester: Semester!
+    subject: String!
+    courseNumber: String!
+    classNumber: String!
+    number: String!
+  ): Section
+}
+
+input BookmarkedCourseInput {
+  subject: String!
+  number: String!
+}
+
+input BookmarkedClassInput {
+  year: Int!
+  semester: Semester!
+  subject: String!
+  courseNumber: String!
+  number: String!
+}
+
+input UpdateUserInput {
+  bookmarkedClasses: [BookmarkedClassInput!]
+  bookmarkedCourses: [BookmarkedCourseInput!]
+}
+
+type Mutation {
+  updateUser(user: UpdateUserInput!): User
+  deleteSchedule(id: ID!): ID
+  createSchedule(schedule: CreateScheduleInput!): Schedule
+  updateSchedule(id: ID!, schedule: UpdateScheduleInput!): Schedule
 }
 
 type Grade {
@@ -77,14 +94,144 @@ type GradeDistributionItem {
   count: Int!
 }
 
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
 """
-Info shared between Classes within and across semesters.
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
+scalar JSON
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
+"""
+ISODate custom scalar type
+"""
+scalar ISODate
+
+"""
+The combination of year and season that corresponds to a specific term. Both year and season/semester are required.
+"""
+input TermInput {
+  year: Int!
+  semester: Semester!
+}
+
+enum Semester {
+  Summer
+  Fall
+  Spring
+  Winter
+}
+
+type SelectedClass {
+  class: Class!
+  selectedSections: [String!]
+}
+
+type Event {
+  startTime: String!
+  endTime: String!
+  days: [Boolean!]!
+  location: String
+  title: String!
+  description: String
+}
+
+type Schedule {
+  _id: ID
+  name: String!
+  createdBy: String!
+  year: Int!
+  semester: String!
+  term: Term!
+  public: Boolean!
+  classes: [SelectedClass!]!
+  events: [Event!]!
+}
+
+input EventInput {
+  startTime: String!
+  endTime: String!
+  days: [Boolean!]!
+  location: String
+  title: String!
+  description: String
+}
+
+input SelectedClassInput {
+  subject: String!
+  courseNumber: String!
+  number: String!
+  sections: [String!]!
+}
+
+input UpdateScheduleInput {
+  name: String
+  events: [EventInput]
+  classes: [SelectedClassInput]
+  public: Boolean
+}
+
+input CreateScheduleInput {
+  name: String!
+  year: Int!
+  semester: String!
+  events: [EventInput!]
+  classes: [SelectedClassInput!]
+  public: Boolean
+}
+
+enum TemporalPosition {
+  Past
+  Current
+  Future
+}
+
+"""
+Session
+"""
+type Session {
+  temporalPosition: TemporalPosition!
+  name: String!
+  startDate: String
+  endDate: String
+}
+
+"""
+Term
+"""
+type Term {
+  semester: Semester!
+  year: Int!
+  temporalPosition: TemporalPosition!
+  startDate: String!
+  endDate: String!
+  sessions: [Session!]!
+}
+
 type Course {
-  classes(term: TermInput): [Class!]!
+  """
+  Identifiers
+  """
+  subject: String!
+  number: String!
+
+  """
+  Relationships
+  """
+  classes: [Class!]!
   crossListing: [Course!]!
-  sections(term: TermInput, primary: Boolean): [Section!]!
   requiredCourses: [Course!]!
+
+  """
+  Attributes
+  """
   requirements: String
   description: String!
   fromDate: String!
@@ -92,31 +239,18 @@ type Course {
   gradingBasis: CourseGradingBasis!
   finalExam: CourseFinalExam
   academicCareer: AcademicCareer!
-  number: String!
-  subject: String!
   title: String!
   primaryInstructionMethod: InstructionMethod!
   toDate: String!
   typicallyOffered: [String!]
-  raw: JSONObject!
-  lastUpdated: ISODate!
 }
 
-enum AcademicCareer {
-  """
-  Undergraduate
-  """
-  UGRD
-
-  """
-  Graduate
-  """
-  GRAD
-
-  """
-  UC Extension
-  """
-  UCBX
+enum CourseGradingBasis {
+  completedNotation
+  passFail
+  letter
+  satisfactory
+  graded
 }
 
 enum CourseFinalExam {
@@ -146,33 +280,163 @@ enum CourseFinalExam {
   Y
 }
 
-enum CourseGradingBasis {
-  completedNotation
-  passFail
-  letter
-  satisfactory
-  graded
+enum AcademicCareer {
+  """
+  Undergraduate
+  """
+  UGRD
+
+  """
+  Graduate
+  """
+  GRAD
+
+  """
+  UC Extension
+  """
+  UCBX
 }
 
-"""
-Data for a specific class in a specific semester. There may be more than one Class for a given Course in a given semester.
-"""
+enum InstructionMethod {
+  """
+  Unknown
+  """
+  UNK
+
+  """
+  Demonstration
+  """
+  DEM
+
+  """
+  Conversation
+  """
+  CON
+
+  """
+  Workshop
+  """
+  WOR
+
+  """
+  Web-Based Discussion
+  """
+  WBD
+
+  """
+  Clinic
+  """
+  CLC
+
+  """
+  Directed Group Study
+  """
+  GRP
+
+  """
+  Discussion
+  """
+  DIS
+
+  """
+  Tutorial
+  """
+  TUT
+
+  """
+  Field Work
+  """
+  FLD
+
+  """
+  Lecture
+  """
+  LEC
+
+  """
+  Laboratory
+  """
+  LAB
+
+  """
+  Session
+  """
+  SES
+
+  """
+  Studio
+  """
+  STD
+
+  """
+  Self-paced
+  """
+  SLF
+
+  """
+  Colloquium
+  """
+  COL
+
+  """
+  Web-Based Lecture
+  """
+  WBL
+
+  """
+  Independent Study
+  """
+  IND
+
+  """
+  Internship
+  """
+  INT
+
+  """
+  Reading
+  """
+  REA
+
+  """
+  Recitation
+  """
+  REC
+
+  """
+  Seminar
+  """
+  SEM
+}
+
 type Class {
+  """
+  Identifiers
+  """
+  subject: String!
+  courseNumber: String!
+  number: String!
+  year: Int!
+  semester: Semester!
+  session: String!
+
+  """
+  Relationships
+  """
   course: Course!
   primarySection: Section!
   sections: [Section!]!
-  session: Session!
+  term: Term!
+
+  """
+  Attributes
+  """
   gradingBasis: ClassGradingBasis!
   finalExam: ClassFinalExam!
   description: String
   title: String
-  number: String!
-  semester: Semester!
-  year: Int!
   unitsMax: Float!
   unitsMin: Float!
-  raw: JSONObject!
-  lastUpdated: ISODate!
 }
 
 enum ClassFinalExam {
@@ -239,26 +503,31 @@ enum ClassGradingBasis {
   IOP
 }
 
-"""
-Session
-"""
-type Session {
-  temporalPosition: TemporalPosition!
-  name: String!
-  startDate: String
-  endDate: String
-}
-
-"""
-Sections are each associated with one Class.
-"""
 type Section {
+  """
+  Identifiers
+  """
+  subject: String!
+  courseNumber: String!
+  classNumber: String!
+  number: String!
+  year: Int!
+  semester: Semester!
+  ccn: Int!
+
+  """
+  Relationships
+  """
   class: Class!
   course: Course!
-  enrollmentHistory: [EnrollmentDay!]
-  ccn: Int!
-  number: String!
+  term: Term!
+
+  """
+  Attributes
+  """
+  session: String!
   primary: Boolean!
+  enrollmentHistory: [EnrollmentDay!]
   component: Component!
   meetings: [Meeting!]!
   exams: [Exam!]!
@@ -271,8 +540,6 @@ type Section {
   waitlistCount: Int!
   enrollMax: Int!
   waitlistMax: Int!
-  raw: JSONObject!
-  lastUpdated: ISODate!
 }
 
 enum Component {
@@ -392,118 +659,6 @@ enum Component {
   DEM
 }
 
-enum InstructionMethod {
-  """
-  Unknown
-  """
-  UNK
-
-  """
-  Demonstration
-  """
-  DEM
-
-  """
-  Conversation
-  """
-  CON
-
-  """
-  Workshop
-  """
-  WOR
-
-  """
-  Web-Based Discussion
-  """
-  WBD
-
-  """
-  Clinic
-  """
-  CLC
-
-  """
-  Directed Group Study
-  """
-  GRP
-
-  """
-  Discussion
-  """
-  DIS
-
-  """
-  Tutorial
-  """
-  TUT
-
-  """
-  Field Work
-  """
-  FLD
-
-  """
-  Lecture
-  """
-  LEC
-
-  """
-  Laboratory
-  """
-  LAB
-
-  """
-  Session
-  """
-  SES
-
-  """
-  Studio
-  """
-  STD
-
-  """
-  Self-paced
-  """
-  SLF
-
-  """
-  Colloquium
-  """
-  COL
-
-  """
-  Web-Based Lecture
-  """
-  WBL
-
-  """
-  Independent Study
-  """
-  IND
-
-  """
-  Internship
-  """
-  INT
-
-  """
-  Reading
-  """
-  REA
-
-  """
-  Recitation
-  """
-  REC
-
-  """
-  Seminar
-  """
-  SEM
-}
-
 type Reservation {
   enrollCount: Int!
   enrollMax: Int!
@@ -538,128 +693,4 @@ type EnrollmentDay {
   enrollMax: Int!
   waitlistCount: Int!
   waitlistMax: Int!
-}
-
-type CourseListItem {
-  subject: String!
-  number: String!
-}
-
-enum CacheControlScope {
-  PUBLIC
-  PRIVATE
-}
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
-
-"""
-The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSONObject
-
-"""
-ISODate custom scalar type
-"""
-scalar ISODate
-
-"""
-The combination of year and season that corresponds to a specific term. Both year and season/semester are required.
-"""
-input TermInput {
-  year: Int!
-  semester: Semester!
-}
-
-enum Semester {
-  Summer
-  Fall
-  Spring
-  Winter
-}
-
-type TermOutput {
-  year: Int!
-  semester: String!
-}
-
-type SelectedClass {
-  class: Class!
-  selectedSections: [String!]
-}
-
-type Event {
-  startTime: String!
-  endTime: String!
-  days: [Boolean!]!
-  location: String
-  title: String!
-  description: String
-}
-
-type Schedule {
-  _id: ID
-  name: String!
-  createdBy: String!
-  term: TermOutput!
-  public: Boolean!
-  classes: [SelectedClass!]
-  events: [Event!]
-}
-
-input EventInput {
-  startTime: String!
-  endTime: String!
-  days: [Boolean!]!
-  location: String
-  title: String!
-  description: String
-}
-
-input SelectedClassInput {
-  subject: String!
-  courseNumber: String!
-  classNumber: String!
-  sections: [String!]!
-}
-
-input UpdateScheduleInput {
-  name: String
-  events: [EventInput]
-  courses: [SelectedClassInput]
-  public: Boolean
-}
-
-input CreateScheduleInput {
-  name: String!
-  term: TermInput!
-  events: [EventInput!]
-  courses: [SelectedClassInput!]
-  public: Boolean
-}
-
-type Mutation {
-  deleteSchedule(id: ID!): ID
-  createSchedule(schedule: CreateScheduleInput!): Schedule
-  updateSchedule(id: ID!, schedule: UpdateScheduleInput!): Schedule
-}
-
-enum TemporalPosition {
-  Past
-  Current
-  Future
-}
-
-"""
-Term
-"""
-type Term {
-  semester: Semester!
-  year: Int!
-  temporalPosition: TemporalPosition!
-  startDate: String
-  endDate: String
-  sessions: [Session!]!
 }

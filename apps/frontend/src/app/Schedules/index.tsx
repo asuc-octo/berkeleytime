@@ -2,12 +2,11 @@ import { Link } from "react-router-dom";
 
 import { Container } from "@repo/theme";
 
-import { useCreateSchedule, useReadSchedules } from "@/hooks/api";
-import useUser from "@/hooks/useUser";
+import { useCreateSchedule, useReadSchedules, useReadUser } from "@/hooks/api";
 import { Semester } from "@/lib/api";
 
 export default function Schedules() {
-  const { data: user, loading: userLoading } = useUser();
+  const { data: user, loading: userLoading } = useReadUser();
 
   const { data: schedules, loading: schedulesLoading } = useReadSchedules({
     skip: !user,

@@ -4,6 +4,7 @@ import { TermModule } from "../term/generated-types/module-types";
 import {
   createSchedule,
   deleteSchedule,
+  getClasses,
   getSchedule,
   getSchedules,
   updateSchedule,
@@ -33,6 +34,22 @@ const resolvers: ScheduleModule.Resolvers = {
       const term = await getTerm(parent.year, parent.semester as Semester);
 
       return term as unknown as TermModule.Term;
+    },
+
+    classes: async (parent: IntermediateSchedule | ScheduleModule.Schedule) => {
+      if (
+        parent.classes[0] &&
+        (parent.classes[0] as ScheduleModule.SelectedClass).class
+      )
+        return parent.classes as ScheduleModule.SelectedClass[];
+
+      const classes = await getClasses(
+        parent.year,
+        parent.semester as Semester,
+        parent.classes as ScheduleModule.SelectedClassInput[]
+      );
+
+      return classes;
     },
   },
 

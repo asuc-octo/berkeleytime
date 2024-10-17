@@ -1,15 +1,81 @@
 import { gql } from "@apollo/client";
 
+import { IClass } from "./classes";
+import { ICourse } from "./courses";
+
 export interface IUser {
   email: string;
   student: boolean;
+  bookmarkedCourses: ICourse[];
+  bookmarkedClasses: IClass[];
 }
 
-export const GET_USER = gql`
+export interface ReadUserResponse {
+  user: IUser;
+}
+
+export const READ_USER = gql`
   query GetUser {
     user {
       email
       student
+      bookmarkedCourses {
+        title
+        subject
+        number
+      }
+      bookmarkedClasses {
+        title
+        subject
+        number
+        courseNumber
+        year
+        semester
+      }
+    }
+  }
+`;
+
+export interface IBookmarkedCourseInput {
+  subject: string;
+  number: string;
+}
+
+export interface IBookmarkedClassInput {
+  subject: string;
+  number: string;
+  courseNumber: string;
+  year: string;
+  semester: string;
+}
+
+export interface IUserInput {
+  bookmarkedCourses?: IBookmarkedCourseInput[];
+  bookmarkedClasses?: IBookmarkedClassInput[];
+}
+
+export interface UpdateUserResponse {
+  updateUser: IUser;
+}
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($user: UpdateUserInput!) {
+    updateUser(user: $user) {
+      email
+      student
+      bookmarkedCourses {
+        title
+        subject
+        number
+      }
+      bookmarkedClasses {
+        title
+        subject
+        number
+        courseNumber
+        year
+        semester
+      }
     }
   }
 `;

@@ -1,10 +1,15 @@
-import { ScheduleModel, TermModel } from "@repo/common";
+import { ClassModel, ScheduleModel, TermModel } from "@repo/common";
 
 import {
   CreateScheduleInput,
+  SelectedClassInput,
+  Semester,
   UpdateScheduleInput,
 } from "../../generated-types/graphql";
+import { formatClass } from "../class/formatter";
+import { ClassModule } from "../class/generated-types/module-types";
 import { formatSchedule } from "./formatter";
+import { ScheduleModule } from "./generated-types/module-types";
 
 export const getSchedules = async (context: any) => {
   if (!context.user._id) throw new Error("Unauthorized");
@@ -90,4 +95,30 @@ export const updateSchedule = async (
   if (!schedule) throw new Error("Not found");
 
   return await formatSchedule(schedule);
+};
+
+export const getClasses = async (
+  year: Number,
+  semester: Semester,
+  selectedClasses: SelectedClassInput[]
+) => {
+  const classes = [];
+
+  for (const selectedClass of selectedClasses) {
+    const _class = await ClassModel.findOne({
+      number: selectedClass.number,
+      "course.subjectArea.code": selectedClass.subject,
+      "course.catalogNumber.formatted": selectedClass.courseNumber,
+      "session.term.name": `${year} ${semester}`,
+    }).lean();
+
+    if (!_class) continue;
+
+    classes.push({
+      class: formatClass(_class) as unknown as ClassModule.Class,
+      selectedSections: selectedClass.sections,
+    } as ScheduleModule.SelectedClass);
+  }
+
+  return classes;
 };

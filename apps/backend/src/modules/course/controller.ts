@@ -10,12 +10,12 @@ import { IntermediateCourse, formatCourse } from "./formatter";
 
 export const getCourse = async (
   subject: string,
-  courseNumber: string,
+  number: string,
   info?: GraphQLResolveInfo | null
 ) => {
   const course = await CourseModel.findOne({
     "subjectArea.code": subject,
-    "catalogNumber.formatted": courseNumber,
+    "catalogNumber.formatted": number,
   })
     .sort({ fromDate: -1 })
     .lean();
