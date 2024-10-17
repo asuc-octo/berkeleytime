@@ -9,6 +9,8 @@ import {
   CalendarPlus,
   OpenBook,
   OpenNewWindow,
+  Pin,
+  PinSolid,
   SidebarCollapse,
   SidebarExpand,
   Xmark,
@@ -30,7 +32,9 @@ import Capacity from "@/components/Capacity";
 import CourseDrawer from "@/components/CourseDrawer";
 import Units from "@/components/Units";
 import ClassContext from "@/contexts/ClassContext";
+import { ClassPin } from "@/contexts/PinsContext";
 import { useReadClass } from "@/hooks/api/classes/useReadClass";
+import usePins from "@/hooks/usePins";
 import { IClass, Semester } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
@@ -123,6 +127,8 @@ export default function Class({
   onClose,
   dialog,
 }: ClassProps) {
+  const { pins, addPin, removePin } = usePins();
+
   const location = useLocation();
 
   // TODO: Bookmarks
@@ -142,11 +148,33 @@ export default function Class({
 
   const _class = useMemo(() => providedClass ?? data, [data, providedClass]);
 
+  const pin = useMemo(() => {
+    if (!_class) return;
+
+    const { year, semester, subject, courseNumber, number } = _class;
+
+    const id = `${year}-${semester}-${subject}-${courseNumber}-${number}`;
+
+    return {
+      id,
+      type: "class",
+      data: {
+        year,
+        semester,
+        subject,
+        courseNumber,
+        number,
+      },
+    } as ClassPin;
+  }, [year, semester, subject, courseNumber, number]);
+
+  const pinned = useMemo(() => pins.some((p) => p.id === pin?.id), [pins, pin]);
+
   if (loading) {
     return <></>;
   }
 
-  if (!_class) {
+  if (!_class || !pin) {
     return <></>;
   }
 
@@ -163,9 +191,7 @@ export default function Class({
                   </IconButton>
                 </Tooltip>
               )}
-              <Tooltip
-                content={bookmarked ? "Remove bookmark" : "Bookmark course"}
-              >
+              <Tooltip content={bookmarked ? "Remove bookmark" : "Bookmark"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
                     [styles.active]: bookmarked,
@@ -175,7 +201,17 @@ export default function Class({
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
               </Tooltip>
-              <Tooltip content="Add class to schedule">
+              <Tooltip content={pinned ? "Remove pin" : "Pin"}>
+                <IconButton
+                  className={classNames(styles.bookmark, {
+                    [styles.active]: pinned,
+                  })}
+                  onClick={() => (pinned ? removePin(pin) : addPin(pin))}
+                >
+                  {pinned ? <PinSolid /> : <Pin />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip content="Add to schedule">
                 <IconButton>
                   <CalendarPlus />
                 </IconButton>
@@ -254,7 +290,7 @@ export default function Class({
             </div>
           </div>
           <h1 className={styles.heading}>
-            {_class.subject} {_class.courseNumber} {_class.number}
+            {_class.subject} {_class.courseNumber} #{_class.number}
           </h1>
           <p className={styles.description}>
             {_class.title || _class.course.title}

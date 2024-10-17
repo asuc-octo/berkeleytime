@@ -1,6 +1,5 @@
 import { ReactNode, Suspense, useMemo, useState } from "react";
 
-import { useQuery } from "@apollo/client";
 import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
 import {
@@ -8,6 +7,8 @@ import {
   BookmarkSolid,
   Expand,
   GridPlus,
+  Link as LinkIcon,
+  ShareIos,
   Xmark,
 } from "iconoir-react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
@@ -24,7 +25,8 @@ import {
 
 import AverageGrade from "@/components/AverageGrade";
 import CourseContext from "@/contexts/CourseContext";
-import { GET_COURSE, GetCourseResponse, ICourse } from "@/lib/api";
+import { useReadCourse } from "@/hooks/api";
+import { ICourse } from "@/lib/api";
 
 import styles from "./Class.module.scss";
 import Classes from "./Classes";
@@ -97,16 +99,47 @@ export default function Course({
   // TODO: Bookmarks
   const [bookmarked, setBookmarked] = useState(false);
 
-  const { data, loading } = useQuery<GetCourseResponse>(GET_COURSE, {
-    variables: {
-      subject,
-      number,
-    },
+  const { data, loading } = useReadCourse(subject as string, number as string, {
     // Allow course to be provided
     skip: !!providedCourse,
   });
 
-  const course = useMemo(() => providedCourse ?? data?.course, [data]);
+  const course = useMemo(() => providedCourse ?? data, [providedCourse, data]);
+
+  const context = useMemo(() => {
+    if (!course) return;
+
+    return {
+      title: `${course.subject} ${course.number}`,
+      text: course.title,
+      url: `${window.location.origin}/courses/${course.subject}/${course.number}`,
+    };
+  }, [course]);
+
+  const canShare = useMemo(
+    () => context && navigator.canShare && navigator.canShare(context),
+    [context]
+  );
+
+  const share = () => {
+    if (!context) return;
+
+    if (canShare) {
+      try {
+        navigator.share(context);
+      } catch {
+        // TODO: Handle error
+      }
+
+      return;
+    }
+
+    try {
+      navigator.clipboard.writeText(context.url);
+    } catch {
+      // TODO: Handle error
+    }
+  };
 
   // TODO: Loading state
   if (loading) {
@@ -125,9 +158,7 @@ export default function Course({
         <Container size="sm">
           <div className={styles.row}>
             <div className={styles.group}>
-              <Tooltip
-                content={bookmarked ? "Remove bookmark" : "Bookmark course"}
-              >
+              <Tooltip content={bookmarked ? "Remove bookmark" : "Bookmark"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
                     [styles.active]: bookmarked,
@@ -137,13 +168,26 @@ export default function Course({
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
               </Tooltip>
-              <Tooltip content="Add course to plan">
+              <Tooltip content="Add to plan">
                 <IconButton>
                   <GridPlus />
                 </IconButton>
               </Tooltip>
             </div>
             <div className={styles.group}>
+              {canShare ? (
+                <Tooltip content="Share">
+                  <IconButton onClick={() => share()}>
+                    <ShareIos />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Tooltip content="Copy link">
+                  <IconButton onClick={() => share()}>
+                    <LinkIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
               {dialog && (
                 <Tooltip content="Expand">
                   <IconButton as={Link} to={`/courses/${subject}/${number}`}>

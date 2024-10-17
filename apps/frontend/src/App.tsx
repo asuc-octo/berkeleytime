@@ -14,6 +14,7 @@ import Enrollment from "@/app/Enrollment";
 import Grades from "@/app/Grades";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
+import PinsProvider from "@/components/PinsProvider";
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
@@ -177,7 +178,9 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>
-        <RouterProvider router={router} />
+        <PinsProvider>
+          <RouterProvider router={router} />
+        </PinsProvider>
       </ThemeProvider>
     </ApolloProvider>
   );

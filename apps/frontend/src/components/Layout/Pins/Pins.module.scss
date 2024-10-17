@@ -1,0 +1,26 @@
+.overlay {
+  background: linear-gradient(to left, rgb(255 255 255 / 50%), transparent);
+  inset: 0;
+  position: fixed;
+  z-index: 988;
+}
+
+.content {
+  width: 384px;
+  border-left: 1px solid var(--border-color);
+  flex-shrink: 0;
+  position: fixed;
+  height: 100dvh;
+  background-color: var(--background-color);
+  right: 0;
+  top: 0;
+  z-index: 989;
+
+  .header {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    display: flex;
+    gap: 12px;
+  }
+}

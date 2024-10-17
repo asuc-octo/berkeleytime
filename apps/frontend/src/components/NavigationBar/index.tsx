@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ArrowRight, Menu, User } from "iconoir-react";
+import { ArrowRight, Menu, Pin, User } from "iconoir-react";
 import { Link, NavLink } from "react-router-dom";
 
 import { Button, IconButton, MenuItem } from "@repo/theme";
@@ -8,6 +8,7 @@ import useUser from "@/hooks/useUser";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { signIn, signOut } from "@/lib/api";
 
+import PinsDrawer from "../Layout/Pins";
 import styles from "./NavigationBar.module.scss";
 
 interface NavigationBarProps {
@@ -65,6 +66,11 @@ export default function NavigationBar({ invert }: NavigationBarProps) {
             {user ? user.email : "Sign in"}
             {user ? <User /> : <ArrowRight />}
           </Button>
+          <PinsDrawer>
+            <IconButton>
+              <Pin />
+            </IconButton>
+          </PinsDrawer>
         </>
       )}
     </div>

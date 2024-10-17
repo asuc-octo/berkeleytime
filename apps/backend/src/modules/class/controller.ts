@@ -26,17 +26,16 @@ export const getSecondarySections = async (
   semester: string,
   subject: string,
   courseNumber: string,
-  classNumber: string
+  number: string
 ) => {
-  return await SectionModel.find({
+  const sections = await SectionModel.find({
     "class.course.subjectArea.code": subject,
     "class.course.catalogNumber.formatted": courseNumber,
     "class.session.term.name": `${year} ${semester}`,
-    "class.number": classNumber,
-    "association.primary": false,
-  })
-    .lean()
-    .then((sections) => sections.map(formatSection));
+    "class.number": { $regex: `^(${number[number.length - 1]}|999)` },
+  }).lean();
+
+  return sections.map(formatSection);
 };
 
 export const getPrimarySection = async (
@@ -51,7 +50,6 @@ export const getPrimarySection = async (
     "class.course.catalogNumber.formatted": courseNumber,
     "class.session.term.name": `${year} ${semester}`,
     "class.number": classNumber,
-    "association.primary": true,
   }).lean();
 
   if (!section) return null;
@@ -64,15 +62,13 @@ export const getSection = async (
   semester: string,
   subject: string,
   courseNumber: string,
-  classNumber: string,
-  sectionNumber: string
+  number: string
 ) => {
   const section = await SectionModel.findOne({
     "class.course.subjectArea.code": subject,
     "class.course.catalogNumber.formatted": courseNumber,
     "class.session.term.name": `${year} ${semester}`,
-    "class.number": classNumber,
-    number: sectionNumber,
+    number: number,
   }).lean();
 
   if (!section) return null;

@@ -58,8 +58,6 @@ export const getClassesByCourse = async (
 };
 
 export const getAssociatedCourses = async (courses: string[]) => {
-  console.log(courses);
-
   const queries = courses.map((course) => {
     const split = course.split(" ");
 
@@ -77,8 +75,6 @@ export const getAssociatedCourses = async (courses: string[]) => {
   })
     .sort({ fromDate: -1 })
     .lean();
-
-  console.log(associatedCourses);
 
   return (
     associatedCourses

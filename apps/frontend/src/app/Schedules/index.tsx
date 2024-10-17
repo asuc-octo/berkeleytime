@@ -19,28 +19,28 @@ export default function Schedules() {
 
   if (!user) return <></>;
 
-  if (schedules) {
-    return (
-      <Container>
-        <button
-          onClick={() =>
-            createSchedule({
-              name: "Test",
-              year: 2024,
-              semester: Semester.Fall,
-            })
-          }
-        >
-          Create Schedule
-        </button>
-        {schedules?.map((schedule) => (
-          <div key={schedule._id}>
-            <Link to={schedule._id}>{schedule.name}</Link>
-          </div>
-        ))}
-      </Container>
-    );
+  if (!schedules) {
+    return <></>;
   }
 
-  return <></>;
+  return (
+    <Container>
+      <button
+        onClick={() =>
+          createSchedule({
+            name: "Test",
+            year: 2024,
+            semester: Semester.Fall,
+          })
+        }
+      >
+        Create Schedule
+      </button>
+      {schedules?.map((schedule) => (
+        <div key={schedule._id}>
+          <Link to={schedule._id}>{schedule.name}</Link>
+        </div>
+      ))}
+    </Container>
+  );
 }

@@ -3,7 +3,11 @@ import { RedisClientType, createClient } from "redis";
 import { config } from "../../config";
 
 export default async (): Promise<RedisClientType> => {
-  return (await createClient({
+  const client = createClient({
     url: config.redisUri,
-  }).connect()) as RedisClientType;
+  });
+
+  await client.connect();
+
+  return client as RedisClientType;
 };

@@ -18,16 +18,21 @@ class RedisCache implements KeyValueCache {
   }
 
   async get(key: string) {
-    return (await this.client.get(this.prefix + key)) ?? undefined;
+    const value = await this.client.get(this.prefix + key);
+
+    return value ?? undefined;
   }
 
-  async set(key: string, value: string) {
-    // ttl options are intentionally ignored because we will invalidate cache in update script
+  async set(key: string, value: string | null) {
+    if (!value) return;
+
     await this.client.set(this.prefix + key, value);
   }
 
   async delete(key: string) {
-    return (await this.client.del(this.prefix + key)) === 1;
+    const success = await this.client.del(this.prefix + key);
+
+    return success === 1;
   }
 }
 
@@ -50,7 +55,9 @@ export default async (redis: RedisClientType) => {
     plugins: [
       ...protection.plugins,
       ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
-      ApolloServerPluginCacheControl({ calculateHttpHeaders: false }),
+      ApolloServerPluginCacheControl({
+        calculateHttpHeaders: false,
+      }),
       responseCachePlugin(),
     ],
     // TODO(production): Disable introspection in production

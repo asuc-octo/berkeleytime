@@ -27,11 +27,11 @@ export interface ICourse {
   typicallyOffered: Semester[] | null;
 }
 
-export interface GetCourseResponse {
+export interface ReadCourseResponse {
   course: ICourse;
 }
 
-export const GET_COURSE = gql`
+export const READ_COURSE = gql`
   query GetCourse($subject: String!, $number: String!) {
     course(subject: $subject, number: $number) {
       subject

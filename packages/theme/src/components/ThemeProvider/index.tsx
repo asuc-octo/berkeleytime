@@ -32,7 +32,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     <div className={styles.root}>
       <IconoirProvider
         iconProps={{
-          strokeWidth: 1.5,
+          strokeWidth: 2,
           width: 16,
           height: 16,
         }}

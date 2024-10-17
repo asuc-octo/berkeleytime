@@ -25,16 +25,12 @@ const resolvers: ClassModule.Resolvers = {
       return _class as unknown as ClassModule.Class;
     },
 
-    section: async (
-      _,
-      { subject, courseNumber, classNumber, number, year, semester }
-    ) => {
+    section: async (_, { subject, courseNumber, number, year, semester }) => {
       const section = await getSection(
         year,
         semester,
         subject,
         courseNumber,
-        classNumber,
         number
       );
 
