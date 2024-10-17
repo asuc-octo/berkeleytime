@@ -1,0 +1,107 @@
+.content {
+  height: 100dvh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: var(--foreground-color);
+  width: 288px;
+  z-index: 989;
+  display: flex;
+  flex-direction: column;
+
+  &[data-state="open"] {
+    animation: slideIn 150ms ease-out;
+  }
+
+  &[data-state="closed"] {
+    animation: slideOut 150ms ease-in;
+  }
+
+  @media (width > 512px) {
+    border-right: 1px solid var(--border-color);
+  }
+
+  @media (width <= 512px) {
+    width: 100%;
+  }
+
+  .body {
+    padding: 24px;
+    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
+
+    .group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .label {
+        font-size: 14px;
+        color: var(--label-color);
+        line-height: 1;
+      }
+
+      .item {
+        font-size: 14px;
+        color: var(--heading-color);
+        line-height: 1;
+        font-weight: 500;
+        transition: color 100ms ease-in-out;
+
+        &:hover {
+          color: var(--paragraph-color);
+        }
+      }
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px;
+
+    .brand {
+      font-size: 24px;
+      font-weight: 580;
+      font-feature-settings:
+        "cv05" on,
+        "cv13" on,
+        "ss07" on,
+        "cv12" on,
+        "cv06" on;
+      color: var(--blue-500);
+      cursor: pointer;
+      transition: all 100ms ease-in-out;
+      margin-right: auto;
+
+      &:hover {
+        color: var(--blue-600);
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
