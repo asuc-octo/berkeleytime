@@ -7,7 +7,7 @@ import { Button, IconButton } from "@repo/theme";
 
 import usePins from "@/hooks/usePins";
 
-import styles from "./Pins.module.scss";
+import styles from "./PinsDrawer.module.scss";
 
 interface PinsDrawerProps {
   children: ReactNode;

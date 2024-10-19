@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
+import { Plugins, Sortable } from "@shopify/draggable";
 import { Plus } from "iconoir-react";
 
 import { Button } from "@repo/theme";
@@ -15,6 +16,7 @@ import styles from "./SideBar.module.scss";
 interface SideBarProps {
   schedule: ISchedule;
   expanded: boolean[];
+  onSortEnd: (previousIndex: number, currentIndex: number) => void;
   onClassSelect: (
     subject: string,
     courseNumber: string,
@@ -44,8 +46,38 @@ export default function SideBar({
   onSectionMouseOver,
   onSectionMouseOut,
   onExpandedChange,
+  onSortEnd,
 }: SideBarProps) {
+  const bodyRef = useRef<HTMLDivElement>(null);
+
   const [minimum, maximum] = useMemo(() => getUnits(schedule), [schedule]);
+
+  useEffect(() => {
+    if (!bodyRef.current) return;
+
+    const sortable = new Sortable(bodyRef.current, {
+      draggable: `[data-draggable]`,
+      distance: 8,
+      mirror: {
+        constrainDimensions: true,
+      },
+      plugins: [Plugins.ResizeMirror],
+    });
+
+    sortable.on("drag:stop", (event) => {
+      event.cancel();
+    });
+
+    sortable.on("sortable:stop", (event) => {
+      const { oldIndex, newIndex } = event;
+
+      onSortEnd(oldIndex, newIndex);
+    });
+
+    return () => {
+      sortable.destroy();
+    };
+  }, [onSortEnd]);
 
   return (
     <div className={styles.root}>
@@ -73,7 +105,7 @@ export default function SideBar({
           </Button>
         </Catalog>
       </div>
-      <div className={styles.body}>
+      <div className={styles.body} ref={bodyRef}>
         {schedule.classes.map((selectedClass, index) => {
           return (
             <Class

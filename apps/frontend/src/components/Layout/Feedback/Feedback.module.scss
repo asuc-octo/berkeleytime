@@ -14,16 +14,11 @@
     height: 48px;
     transform: translateX(calc(100% - 48px));
     pointer-events: auto;
+    transition: transform 150ms ease-out;
 
     &:hover,
     &:focus {
-      animation: slideOut 250ms ease-in-out forwards;
+      transform: translateX(0);
     }
-  }
-}
-
-@keyframes slideOut {
-  to {
-    transform: translateY(0);
   }
 }

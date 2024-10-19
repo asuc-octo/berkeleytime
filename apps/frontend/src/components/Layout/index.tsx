@@ -19,7 +19,7 @@ interface LayoutProps {
 export default function Layout({
   header = true,
   footer = true,
-  feedback,
+  feedback = true,
 }: LayoutProps) {
   return (
     <div className={styles.root}>

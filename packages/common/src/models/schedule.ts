@@ -48,7 +48,7 @@ export const selectedClassSchema = new Schema({
     required: true,
   },
   sections: {
-    type: [String],
+    type: [Number],
     trim: true,
     required: false,
   },

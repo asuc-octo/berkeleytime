@@ -1,11 +1,9 @@
 .content {
   height: 100dvh;
-  position: fixed;
   left: 0;
   top: 0;
   background-color: var(--foreground-color);
   width: 288px;
-  z-index: 989;
   display: flex;
   flex-direction: column;
 

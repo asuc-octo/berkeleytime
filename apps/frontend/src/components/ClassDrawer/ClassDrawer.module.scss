@@ -1,12 +1,10 @@
 .content {
   height: 100dvh;
-  position: fixed;
   right: 0;
   top: 0;
   background-color: var(--background-color);
   width: 640px;
   border-left: 1px solid var(--border-color);
-  z-index: 989;
   display: flex;
   flex-direction: column;
 

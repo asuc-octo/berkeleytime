@@ -4,6 +4,7 @@ import { MutationHookOptions, Reference, useMutation } from "@apollo/client";
 
 import {
   IScheduleInput,
+  READ_SCHEDULE,
   ScheduleIdentifier,
   UPDATE_SCHEDULE,
   UpdateScheduleResponse,
@@ -16,9 +17,16 @@ export const useUpdateSchedule = () => {
 
       if (!schedule) return;
 
+      cache.writeQuery({
+        query: READ_SCHEDULE,
+        variables: { id: schedule._id },
+        data: {
+          schedule,
+        },
+      });
+
       cache.modify({
         fields: {
-          // TODO: Properly type
           schedules: (existingSchedules = [], { readField }) =>
             existingSchedules.map((reference: Reference) =>
               readField("_id", reference) === schedule._id

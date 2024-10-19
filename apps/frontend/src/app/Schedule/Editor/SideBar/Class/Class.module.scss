@@ -1,6 +1,27 @@
 .root {
   display: flex;
 
+  &:global(.draggable-mirror) {
+    border-color: var(--blue-500);
+    z-index: 999;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
+  }
+
+  &:global(.draggable-source--is-dragging) {
+    background-color: transparent;
+    box-shadow: unset;
+    border-style: dashed;
+
+    .body {
+      visibility: hidden;
+    }
+  }
+
+  &:not(:global(.draggable-source--is-dragging)) {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 2.5%);
+    background-color: var(--foreground-color);
+  }
+
   .border {
     width: 8px;
     background-color: var(--purple-500);

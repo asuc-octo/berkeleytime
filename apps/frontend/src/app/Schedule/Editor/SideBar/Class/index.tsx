@@ -49,7 +49,7 @@ export default function Class({
   }, [_class]);
 
   return (
-    <div className={styles.root}>
+    <div className={styles.root} data-draggable>
       <div
         className={styles.border}
         style={{

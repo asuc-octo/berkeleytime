@@ -7,7 +7,7 @@ import { Button, IconButton, MenuItem } from "@repo/theme";
 import { useReadUser } from "@/hooks/api";
 import { signIn, signOut } from "@/lib/api";
 
-import PinsDrawer from "../Layout/Pins";
+import PinsDrawer from "../Layout/PinsDrawer";
 import styles from "./NavigationBar.module.scss";
 import SideBar from "./SideBar";
 

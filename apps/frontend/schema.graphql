@@ -57,6 +57,13 @@ type Query {
     classNumber: String!
     number: String!
   ): Section
+  enrollment(
+    year: Int!
+    semester: Semester!
+    subject: String!
+    courseNumber: String!
+    number: String!
+  ): Section!
 }
 
 input BookmarkedCourseInput {
@@ -131,7 +138,7 @@ enum Semester {
 
 type SelectedClass {
   class: Class!
-  selectedSections: [String!]
+  selectedSections: [Int!]
 }
 
 type Event {
@@ -144,7 +151,7 @@ type Event {
 }
 
 type Schedule {
-  _id: ID
+  _id: ID!
   name: String!
   createdBy: String!
   year: Int!
@@ -168,7 +175,7 @@ input SelectedClassInput {
   subject: String!
   courseNumber: String!
   number: String!
-  sections: [String!]!
+  sections: [Int!]!
 }
 
 input UpdateScheduleInput {

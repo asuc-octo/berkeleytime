@@ -164,6 +164,41 @@ export default function Editor() {
     [setCurrentSection, tab]
   );
 
+  const handleSortEnd = useCallback(
+    (previousIndex: number, currentIndex: number) => {
+      // Clone the schedule for immutability
+      const _schedule = structuredClone(schedule);
+
+      const [removed] = _schedule.classes.splice(previousIndex, 1);
+
+      _schedule.classes.splice(currentIndex, 0, removed);
+
+      // Update the schedule
+      updateSchedule(
+        schedule._id,
+        {
+          classes: _schedule.classes.map(
+            ({
+              selectedSections,
+              class: { number, subject, courseNumber },
+            }) => ({
+              subject,
+              courseNumber,
+              number,
+              sections: selectedSections,
+            })
+          ),
+        },
+        {
+          optimisticResponse: {
+            updateSchedule: _schedule,
+          },
+        }
+      );
+    },
+    [schedule]
+  );
+
   const handleClassSelect = useCallback(
     async (subject: string, courseNumber: string, number: string) => {
       // Clone the schedule for immutability
@@ -178,6 +213,8 @@ export default function Editor() {
 
       // Move existing classes to the top rather than duplicating them
       if (existingClass) {
+        console.log("existingClass", existingClass);
+
         const index = _schedule.classes.findIndex(
           (selectedClass) =>
             selectedClass.class.subject === subject &&
@@ -282,7 +319,7 @@ export default function Editor() {
         }
       );
     },
-    [apolloClient, setExpanded]
+    [apolloClient, setExpanded, schedule]
   );
 
   const handleExpandedChange = (index: number, expanded: boolean) => {
@@ -347,6 +384,7 @@ export default function Editor() {
           onExpandedChange={handleExpandedChange}
           onSectionMouseOver={handleSectionMouseOver}
           onSectionMouseOut={() => setCurrentSection(null)}
+          onSortEnd={handleSortEnd}
         />
         <div className={styles.view} ref={bodyRef} id="boundary">
           {tab === 0 ? (

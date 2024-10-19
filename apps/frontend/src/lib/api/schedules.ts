@@ -157,14 +157,85 @@ export const UPDATE_SCHEDULE = gql`
       _id
       name
       public
-      year
       createdBy
+      year
       semester
+      term {
+        startDate
+        endDate
+      }
       classes {
         class {
           subject
+          unitsMax
+          unitsMin
           courseNumber
           number
+          course {
+            title
+          }
+          primarySection {
+            courseNumber
+            classNumber
+            subject
+            number
+            startDate
+            endDate
+            ccn
+            component
+            enrollCount
+            enrollMax
+            waitlistCount
+            waitlistMax
+            meetings {
+              days
+              location
+              endTime
+              startTime
+              instructors {
+                familyName
+                givenName
+              }
+            }
+            exams {
+              date
+              final
+              location
+              startTime
+              endTime
+            }
+          }
+          sections {
+            number
+            courseNumber
+            classNumber
+            subject
+            ccn
+            component
+            enrollCount
+            startDate
+            endDate
+            enrollMax
+            waitlistCount
+            waitlistMax
+            meetings {
+              days
+              location
+              endTime
+              startTime
+              instructors {
+                familyName
+                givenName
+              }
+            }
+            exams {
+              date
+              final
+              location
+              startTime
+              endTime
+            }
+          }
         }
         selectedSections
       }
