@@ -27,7 +27,7 @@ jobs:
     name: Deploy with SSH
     needs: [build-push]
     runs-on: ubuntu-latest
-
+  
     steps:
       - name: SSH and Helm Install
         uses: appleboy/ssh-action@v1.0.3
@@ -36,11 +36,15 @@ jobs:
           username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
+            set -e  # Exit immediately if a command fails
             cd ./infra
+  
+            # Check if the Helm release exists
             if helm status bt-prod-app ; then
+              # Restart deployments if the Helm release exists
               kubectl rollout restart deployment bt-prod-app-backend
               kubectl rollout restart deployment bt-prod-app-frontend
             else
+              # Install the Helm release if it doesn't exist
               helm install bt-prod-app ./app --namespace=bt \
                 --set host=stanfurdtime.com
-            fi
