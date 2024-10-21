@@ -46,7 +46,7 @@ const router = createBrowserRouter([
     element: <Layout header={false} footer={false} />,
     children: [
       {
-        element: <Discover />,;
+        element: <Discover />,
         path: "discover",
       },
       {
