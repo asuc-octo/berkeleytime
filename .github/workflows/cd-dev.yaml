@@ -51,8 +51,13 @@ jobs:
           username: root
           key: ${{ secrets.SSH_KEY }}
           script: |
+            set -e  # Exit immediately if a command fails
             cd ./infra
+
+            # Uninstall the old helm chart if it exists
             helm uninstall bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} || true
+
+            # Install new chart; this will fail the script if an error occurs
             helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} ./app --namespace=bt \
               --set env=dev \
               --set ttl=${{ inputs.ttl }} \
