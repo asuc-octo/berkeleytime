@@ -59,6 +59,15 @@ const router = createBrowserRouter([
 
 					return null;
 				}
+			},
+			{
+				path: '/decal-survey',
+				loader: () => {
+					window.location.href =
+						'https://docs.google.com/forms/d/e/1FAIpQLScEZrT1nQOgVlw4KvUj8gYdm-JQFw1RjIn35E-TeiW3E2KCYg/viewform';
+
+					return null;
+				}
 			}
 			// { path: '/apply', lazy: Apply },
 			// { path: '/infosesh', lazy: InfoSesh },
