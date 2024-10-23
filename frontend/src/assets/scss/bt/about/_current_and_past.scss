@@ -22,6 +22,16 @@
 	align-items: flex-start;
 	margin-bottom: 25px;
 
+	.headshot-placeholder {
+		width: 150px;
+		height: 150px;
+		background-color: rgba(142, 159, 200, 0.1098039216);
+		border-radius: 3px;
+		margin-bottom: 10px;
+		display: grid;
+		place-items: center;
+	}
+
 	// use width/height to enforce aspect ratio i guess
 	.headshot {
 		width: 150px;

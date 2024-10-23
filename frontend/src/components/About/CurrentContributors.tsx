@@ -1,6 +1,6 @@
 import { H3 } from '../../bt/custom';
 import { current } from '../../lib/contributors';
-import { Globe } from 'iconoir-react';
+import { Globe, ProfileCircle } from 'iconoir-react';
 
 const CurrentContributors = () => (
 	<div className="current-contributors mb-5">
@@ -10,10 +10,16 @@ const CurrentContributors = () => (
 		<div>
 			{current.items.map(({ name, img, site, role }) => (
 				<div key={name} className="contributor-card">
-					<div className="headshot">
-						<img className="serious" src={img?.base} alt={name} />
-						<img src={img?.silly ? img?.silly : img?.base} alt={name} />
-					</div>
+					{img ? (
+						<div className="headshot">
+							<img className="serious" src={img?.base} alt={name} />
+							<img src={img?.silly ? img?.silly : img?.base} alt={name} />
+						</div>
+					) : (
+						<div className="headshot-placeholder">
+							<ProfileCircle width={64} height={64} color={'#8A8A8A'} />
+						</div>
+					)}
 					<div className="name">
 						<p className="bt-light-bold">{name}</p>
 						{site ? (

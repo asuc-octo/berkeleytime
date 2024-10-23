@@ -236,7 +236,8 @@ export const current: Contributors = {
 			role: 'Member',
 			site: 'https://www.linkedin.com/in/cheuk-ki-wong-90b65522a/'
 			// img: {
-			//   silly: path('cheuk2.jpg')
+			// 	base: path('cheuk1.jpg'),
+			// 	silly: path('cheuk2.jpg')
 			// }
 		},
 		{
