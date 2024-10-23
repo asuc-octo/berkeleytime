@@ -17,20 +17,20 @@ export const current: Contributors = {
 	name: 'Current Team',
 	items: [
 		{
-			name: 'Matthew Rowland',
-			role: 'Technical Product Manager',
-			site: 'https://www.linkedin.com/in/matthew-rowland-dev/',
-			img: {
-				base: path('matthew1.jpg')
-			}
-		},
-		{
 			name: 'Michelle Tran',
 			role: 'Product Manager',
 			site: 'https://www.linkedin.com/in/tranmichelletm/',
 			img: {
 				base: path('michelle1.jpg'),
 				silly: path('michelle2.jpeg')
+			}
+		},
+		{
+			name: 'Matthew Rowland',
+			role: 'Technical Product Manager',
+			site: 'https://www.linkedin.com/in/matthew-rowland-dev/',
+			img: {
+				base: path('matthew1.jpg')
 			}
 		},
 		{

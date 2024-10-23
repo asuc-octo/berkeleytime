@@ -4,6 +4,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
+import vsharp from 'vite-plugin-vsharp';
 import path from 'path';
 
 export default defineConfig({
@@ -11,10 +12,7 @@ export default defineConfig({
 	server: {
 		host: true,
 		port: 3000,
-		open: true,
-		watch: {
-			usePolling: true
-		}
+		open: true
 	},
 	publicDir: path.resolve(__dirname, 'public'),
 	plugins: [
@@ -22,6 +20,9 @@ export default defineConfig({
 		svgr(),
 		tsconfigPaths(),
 		visualizer(),
+		vsharp({
+			excludePublic: ['public']
+		}),
 		createHtmlPlugin({
 			minify: true,
 			entry: '/index.tsx',
