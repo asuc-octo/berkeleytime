@@ -1,36 +1,26 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [
-    ".env"
-  ],
+  "globalDependencies": [".env"],
   "ui": "stream",
   "tasks": {
     "build": {
-      "dependsOn": [
-        "generate",
-        "^build"
-      ],
-      "outputs": [
-        "dist/**"
-      ]
+      "dependsOn": ["generate", "^build"],
+      "outputs": ["dist/**"]
     },
     "course": {
       "cache": false
     },
     "generate": {
-      "outputs": [
-        "generated-types/**"
-      ]
+      "outputs": ["generated-types/**"]
     },
     "lint": {},
     "start": {
-      "dependsOn": [
-        "generate"
-      ]
+      "dependsOn": ["generate"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["^build"]
     }
   }
 }
