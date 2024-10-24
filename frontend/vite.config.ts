@@ -21,6 +21,8 @@ export default defineConfig({
 		tsconfigPaths(),
 		visualizer(),
 		vsharp({
+      width: 640,
+      height: 640,
 			excludePublic: ['public']
 		}),
 		createHtmlPlugin({
