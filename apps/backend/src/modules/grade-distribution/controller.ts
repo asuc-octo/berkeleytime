@@ -142,8 +142,6 @@ export const points: { [key: string]: number } = {
 
 export const getAverageGrade = (distribution: Grade[]) => {
   const total = distribution.reduce((acc, { letter, count }) => {
-    console.log("letter", letter);
-
     if (points[letter]) return acc + count;
 
     // Ignore letters not included in grade point average
@@ -176,8 +174,6 @@ export const getGradeDistributionByCourse = async (
 
   const distribution = getDistribution(distributions);
 
-  console.log("distribution", distribution);
-
   return {
     average: getAverageGrade(distribution),
     distribution,
@@ -192,8 +188,6 @@ export const getGradeDistributionByClass = async (
   semester: Semester
 ) => {
   const name = `${year} ${semester}`;
-
-  console.log(subject, courseNumber, number, name);
 
   const section = await SectionModel.findOne({
     "class.course.subjectArea.code": subject,
