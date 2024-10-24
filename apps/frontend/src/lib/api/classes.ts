@@ -238,7 +238,9 @@ export const READ_CLASS = gql`
       course {
         title
         description
-        gradeAverage
+        gradeDistribution {
+          average
+        }
         academicCareer
         requirements
       }

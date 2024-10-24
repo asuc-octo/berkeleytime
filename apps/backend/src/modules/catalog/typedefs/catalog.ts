@@ -2,6 +2,6 @@ import { gql } from "graphql-tag";
 
 export default gql`
   type Query {
-    catalog(term: TermInput!): [Course!]!
+    catalog(year: Int!, semester: Semester!): [Course!]!
   }
 `;

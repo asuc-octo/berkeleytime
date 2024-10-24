@@ -3,6 +3,16 @@ import { gql } from "@apollo/client";
 import { AcademicCareer, IClass, InstructionMethod } from ".";
 import { Semester } from "./terms";
 
+export interface Grade {
+  letter: string;
+  count: number;
+}
+
+export interface GradeDistribution {
+  average: number | null;
+  distribution: Grade[];
+}
+
 export interface ICourse {
   // Identifiers
   subject: string;
@@ -12,13 +22,13 @@ export interface ICourse {
   classes: IClass[];
   crossListing: ICourse[];
   requiredCourses: ICourse[];
+  gradeDistribution: GradeDistribution;
 
   // Attributes
   requirements: string | null;
   primaryInstructionMethod: InstructionMethod;
   description: string;
   fromDate: string;
-  gradeAverage: number | null;
   gradingBasis: string;
   finalExam: string | null;
   academicCareer: AcademicCareer;
@@ -39,7 +49,13 @@ export const READ_COURSE = gql`
       title
       description
       academicCareer
-      gradeAverage
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
+        }
+      }
       gradingBasis
       finalExam
       requirements
@@ -66,7 +82,13 @@ export const GET_COURSES = gql`
       subject
       number
       title
-      gradeAverage
+      gradeDistribution {
+        average
+        distribution {
+          letter
+          count
+        }
+      }
       academicCareer
       finalExam
       gradingBasis
@@ -81,12 +103,14 @@ export interface GetClassesResponse {
 }
 
 export const GET_CLASSES = gql`
-  query GetClasses($term: TermInput!) {
-    catalog(term: $term) {
+  query GetClasses($year: Int!, $semester: Semester!) {
+    catalog(year: $year, semester: $semester) {
       subject
       number
       title
-      gradeAverage
+      gradeDistribution {
+        average
+      }
       academicCareer
       classes {
         subject

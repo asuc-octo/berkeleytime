@@ -300,7 +300,7 @@ export default function Course({
           </h1>
           <p className={styles.description}>{course.title}</p>
           <div className={styles.group}>
-            <AverageGrade gradeAverage={course.gradeAverage} />
+            <AverageGrade gradeDistribution={course.gradeDistribution} />
           </div>
           {dialog ? (
             <Tabs.List className={styles.menu} defaultValue="overview">

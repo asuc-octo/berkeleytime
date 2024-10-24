@@ -296,7 +296,7 @@ export default function Class({
             {_class.title || _class.course.title}
           </p>
           <div className={styles.group}>
-            <AverageGrade gradeAverage={_class.course.gradeAverage} />
+            <AverageGrade gradeDistribution={_class.course.gradeDistribution} />
             <Capacity
               enrollCount={_class.primarySection.enrollCount}
               enrollMax={_class.primarySection.enrollMax}

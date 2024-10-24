@@ -2,55 +2,59 @@ import { useMemo } from "react";
 
 import * as Tooltip from "@radix-ui/react-tooltip";
 
+import { GradeDistribution } from "@/lib/api";
+
 import styles from "./AverageGrade.module.scss";
 
 interface AverageGradeProps {
-  gradeAverage: number | null;
+  gradeDistribution: GradeDistribution;
 }
 
-export default function AverageGrade({ gradeAverage }: AverageGradeProps) {
+export default function AverageGrade({
+  gradeDistribution: { average },
+}: AverageGradeProps) {
   const text = useMemo(
     () =>
-      !gradeAverage
+      !average
         ? "N/A"
-        : gradeAverage > 4
+        : average > 4
           ? "A+"
-          : gradeAverage > 3.7
+          : average > 3.7
             ? "A"
-            : gradeAverage > 3.5
+            : average > 3.5
               ? "A-"
-              : gradeAverage > 3
+              : average > 3
                 ? "B+"
-                : gradeAverage > 2.7
+                : average > 2.7
                   ? "B"
-                  : gradeAverage > 2.5
+                  : average > 2.5
                     ? "B-"
-                    : gradeAverage > 2
+                    : average > 2
                       ? "C+"
-                      : gradeAverage > 1.7
+                      : average > 1.7
                         ? "C"
-                        : gradeAverage > 1.5
+                        : average > 1.5
                           ? "C-"
-                          : gradeAverage > 1
+                          : average > 1
                             ? "D+"
-                            : gradeAverage > 0.7
+                            : average > 0.7
                               ? "D"
-                              : gradeAverage
+                              : average
                                 ? "D-"
                                 : "F",
-    [gradeAverage]
+    [average]
   );
 
   const color = useMemo(
     () =>
-      !gradeAverage
+      !average
         ? "var(--paragraph-color)"
-        : gradeAverage > 3.5
+        : average > 3.5
           ? "var(--emerald-500)"
-          : gradeAverage > 2.5
+          : average > 2.5
             ? "var(--amber-500)"
             : "var(--rose-500)",
-    [gradeAverage]
+    [average]
   );
 
   return (
@@ -70,12 +74,12 @@ export default function AverageGrade({ gradeAverage }: AverageGradeProps) {
           <div className={styles.content}>
             <Tooltip.Arrow className={styles.arrow} />
             <p className={styles.title}>Average grade</p>
-            {gradeAverage ? (
+            {average ? (
               <p className={styles.description}>
                 Students have received{" "}
                 {["A", "F"].includes(text[0]) ? "an " : "a "}
                 <span style={{ color }}>
-                  {text} ({gradeAverage.toLocaleString()})
+                  {text} ({average.toLocaleString()})
                 </span>{" "}
                 in this course on average across all semesters this course has
                 been offered.

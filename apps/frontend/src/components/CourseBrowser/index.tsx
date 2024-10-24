@@ -139,13 +139,13 @@ export default function CourseBrowser({
       // Clone the courses to avoid sorting in-place
       filteredClasses = structuredClone(filteredClasses).sort((a, b) => {
         if (currentSortBy === SortBy.AverageGrade) {
-          return b.gradeAverage === a.gradeAverage
+          return b.gradeDistribution.average === a.gradeDistribution.average
             ? 0
-            : b.gradeAverage === null
+            : b.gradeDistribution.average === null
               ? -1
-              : a.gradeAverage === null
+              : a.gradeDistribution.average === null
                 ? 1
-                : b.gradeAverage - a.gradeAverage;
+                : b.gradeDistribution.average - a.gradeDistribution.average;
         }
 
         // Classes are by default sorted by relevance and number

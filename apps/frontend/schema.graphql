@@ -22,11 +22,14 @@ type Query {
   user: User
   grade(
     subject: String!
-    courseNum: String!
-    classNum: String
-    term: TermInput
-  ): Grade
-  catalog(term: TermInput!): [Course!]!
+    courseNumber: String!
+    classNumber: String
+    year: Int
+    semester: Semester
+    givenName: String
+    familyName: String
+  ): GradeDistribution!
+  catalog(year: Int!, semester: Semester!): [Course!]!
   ping: String! @deprecated(reason: "test")
   schedules: [Schedule]
   schedule(id: ID!): Schedule
@@ -91,12 +94,12 @@ type Mutation {
   updateSchedule(id: ID!, schedule: UpdateScheduleInput!): Schedule
 }
 
-type Grade {
+type GradeDistribution {
   average: Float
-  distribution: [GradeDistributionItem]
+  distribution: [Grade!]!
 }
 
-type GradeDistributionItem {
+type Grade {
   letter: String!
   count: Int!
 }
@@ -242,7 +245,7 @@ type Course {
   requirements: String
   description: String!
   fromDate: String!
-  gradeAverage: Float
+  gradeDistribution: GradeDistribution!
   gradingBasis: CourseGradingBasis!
   finalExam: CourseFinalExam
   academicCareer: AcademicCareer!
@@ -434,6 +437,7 @@ type Class {
   primarySection: Section!
   sections: [Section!]!
   term: Term!
+  gradeDistribution: GradeDistribution!
 
   """
   Attributes

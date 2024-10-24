@@ -103,13 +103,15 @@ addEventListener(
     // Clone the courses to avoid sorting in-place
     filteredClasses.sort((a, b) => {
       if (sortBy === SortBy.AverageGrade) {
-        return b.course.gradeAverage === a.course.gradeAverage
+        return b.course.gradeDistribution.average ===
+          a.course.gradeDistribution.average
           ? 0
-          : b.course.gradeAverage === null
+          : b.course.gradeDistribution.average === null
             ? -1
-            : a.course.gradeAverage === null
+            : a.course.gradeDistribution.average === null
               ? 1
-              : b.course.gradeAverage - a.course.gradeAverage;
+              : b.course.gradeDistribution.average -
+                a.course.gradeDistribution.average;
       }
 
       if (sortBy === SortBy.Units) {

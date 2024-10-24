@@ -100,7 +100,9 @@ export const getCatalog = async (
     catalog[id] = {
       ...formatCourse(c),
       classes: [],
-      gradeAverage: 0, // getAverage(gradesMap[key]),
+      gradeDistribution: {
+        average: null,
+      },
     };
   }
 
@@ -108,10 +110,11 @@ export const getCatalog = async (
     const id = getCsCourseId(c.course as CourseType);
 
     if (!(id in catalog)) {
-      // throw new Error(`Class ${c.course?.subjectArea?.code} ${c.course?.catalogNumber?.formatted}`
-      //     + ` has a course id ${id} that doesn't exist for the ${term.semester} ${term.year} term.`)
+      console.warn(
+        `Class ${c.course?.subjectArea?.code} ${c.course?.catalogNumber?.formatted}` +
+          ` has a course id ${id} that doesn't exist for the ${semester} ${year} term.`
+      );
 
-      // TODO(production): log
       continue;
     }
 
@@ -124,10 +127,10 @@ export const getCatalog = async (
     const id = getCsCourseId(s.class.course as CourseType);
 
     if (!(id in catalog)) {
-      // throw new Error(`Section ${s.class.course?.subjectArea?.code} ${s.class.course?.catalogNumber?.formatted}`
-      //     + ` has a course id ${id} that doesn't exist for the ${term.semester} ${term.year} term.`)
+      console.warn(
+        `Section ${s.class.course?.subjectArea?.code} ${s.class.course?.catalogNumber?.formatted} has a course id ${id} that doesn't exist for the ${semester} ${year} term.`
+      );
 
-      // TODO(production): log
       continue;
     }
 

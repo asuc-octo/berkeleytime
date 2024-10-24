@@ -2,6 +2,7 @@ import { ClassModel, CourseModel } from "@repo/common";
 
 import { formatClass } from "../class/formatter";
 import { IntermediateCourse, formatCourse } from "./formatter";
+import { CourseModule } from "./generated-types/module-types";
 
 export const getCourse = async (subject: string, number: string) => {
   const course = await CourseModel.findOne({
@@ -125,6 +126,10 @@ export const getCourses = async () => {
 
   return courses.map((c) => ({
     ...formatCourse(c),
-    gradeAverage: 0, //getAverage(gradesMap[getCourseKey(c)]),
-  })) as IntermediateCourse[];
+    gradeDistribution: {
+      average: null,
+    },
+  })) as (Exclude<IntermediateCourse, "gradeDistribution"> & {
+    gradeDistribution: CourseModule.Course["gradeDistribution"];
+  })[];
 };
