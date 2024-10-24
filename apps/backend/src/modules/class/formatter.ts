@@ -15,6 +15,7 @@ export type IntermediateClass = Omit<
   term: null;
   primarySection: null;
   sections: null;
+  gradeDistribution: null;
 };
 
 export const formatDate = (date?: string | number | Date | null) => {
@@ -38,6 +39,7 @@ export const formatClass = (_class: ClassType) => {
     session: _class.session?.id as string,
 
     course: null,
+    gradeDistribution: null,
     term: null,
     primarySection: null,
     sections: null,

@@ -20,7 +20,7 @@ export default gql`
     requirements: String
     description: String!
     fromDate: String!
-    gradeAverage: Float
+    gradeDistribution: GradeDistribution!
     gradingBasis: CourseGradingBasis!
     finalExam: CourseFinalExam
     academicCareer: AcademicCareer!

@@ -11,11 +11,12 @@ import { CourseModule } from "./generated-types/module-types";
 
 export type IntermediateCourse = Omit<
   CourseModule.Course,
-  "classes" | "crossListing" | "requiredCourses"
+  "classes" | "crossListing" | "requiredCourses" | "gradeDistribution"
 > & {
   classes: null;
   crossListing: string[];
   requiredCourses: string[];
+  gradeDistribution: null;
 };
 
 export function formatCourse(course: CourseType) {
@@ -23,6 +24,7 @@ export function formatCourse(course: CourseType) {
     subject: course.subjectArea?.code as string,
     number: course.catalogNumber?.formatted as string,
 
+    gradeDistribution: null,
     classes: null,
     crossListing: course.crossListing?.courses ?? [],
     requiredCourses:

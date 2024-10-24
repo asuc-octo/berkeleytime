@@ -1,5 +1,6 @@
 import { getCourse } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
+import { getGradeDistributionByClass } from "../grade-distribution/controller";
 import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
 import {
@@ -81,6 +82,22 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return secondarySections as unknown as ClassModule.Section[];
+    },
+
+    gradeDistribution: async (
+      parent: IntermediateClass | ClassModule.Class
+    ) => {
+      if (parent.gradeDistribution) return parent.gradeDistribution;
+
+      const gradeDistribution = await getGradeDistributionByClass(
+        parent.subject,
+        parent.courseNumber,
+        parent.number,
+        parent.year,
+        parent.semester
+      );
+
+      return gradeDistribution;
     },
   },
 

@@ -13,7 +13,6 @@ import { getCourseKey, getCsCourseId } from "../../utils/course";
 import { getChildren } from "../../utils/graphql";
 import { formatClass, formatSection } from "../class/formatter";
 import { formatCourse } from "../course/formatter";
-import { getAverage } from "../grade/controller";
 import { CatalogModule } from "./generated-types/module-types";
 
 function matchCsCourseId(id: any) {
@@ -25,6 +24,7 @@ function matchCsCourseId(id: any) {
   };
 }
 
+// TODO: Grade distributions
 export const getCatalog = async (
   year: number,
   semester: string,
@@ -91,7 +91,7 @@ export const getCatalog = async (
   const catalog: any = {};
 
   for (const c of courses) {
-    const key = getCourseKey(c);
+    // const key = getCourseKey(c);
     const id = getCsCourseId(c);
 
     // skip duplicates
@@ -100,7 +100,7 @@ export const getCatalog = async (
     catalog[id] = {
       ...formatCourse(c),
       classes: [],
-      gradeAverage: getAverage(gradesMap[key]),
+      gradeAverage: 0, // getAverage(gradesMap[key]),
     };
   }
 

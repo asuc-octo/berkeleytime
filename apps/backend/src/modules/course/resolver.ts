@@ -1,3 +1,4 @@
+import { getGradeDistributionByCourse } from "../grade-distribution/controller";
 import {
   getAssociatedCourses,
   getClassesByCourse,
@@ -9,14 +10,14 @@ import { CourseModule } from "./generated-types/module-types";
 
 const resolvers: CourseModule.Resolvers = {
   Query: {
-    course: async (_, { subject, number }, _context, info) => {
-      const course = await getCourse(subject, number, info);
+    course: async (_, { subject, number }, _context, _info) => {
+      const course = await getCourse(subject, number);
 
       return course as unknown as CourseModule.Course;
     },
 
-    courses: async (_, _arguments, _context, info) => {
-      const courses = getCourses(info);
+    courses: async (_, _arguments, _context, _info) => {
+      const courses = getCourses();
 
       return courses as unknown as CourseModule.Course[];
     },
@@ -59,6 +60,19 @@ const resolvers: CourseModule.Resolvers = {
       );
 
       return associatedCourses as unknown as CourseModule.Course[];
+    },
+
+    gradeDistribution: async (
+      parent: IntermediateCourse | CourseModule.Course
+    ) => {
+      if (parent.gradeDistribution) return parent.gradeDistribution;
+
+      const gradeDistribution = await getGradeDistributionByCourse(
+        parent.subject,
+        parent.number
+      );
+
+      return gradeDistribution;
     },
   },
 

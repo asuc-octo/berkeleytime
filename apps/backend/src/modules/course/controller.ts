@@ -1,18 +1,9 @@
-import { GraphQLResolveInfo } from "graphql";
+import { ClassModel, CourseModel } from "@repo/common";
 
-import { ClassModel, CourseModel, GradeModel, GradeType } from "@repo/common";
-
-import { getCourseKey } from "../../utils/course";
-import { getChildren } from "../../utils/graphql";
 import { formatClass } from "../class/formatter";
-import { getAverage } from "../grade/controller";
 import { IntermediateCourse, formatCourse } from "./formatter";
 
-export const getCourse = async (
-  subject: string,
-  number: string,
-  info?: GraphQLResolveInfo | null
-) => {
+export const getCourse = async (subject: string, number: string) => {
   const course = await CourseModel.findOne({
     "subjectArea.code": subject,
     "catalogNumber.formatted": number,
@@ -22,27 +13,7 @@ export const getCourse = async (
 
   if (!course) return null;
 
-  const formattedCourse = formatCourse(course);
-
-  if (info && getChildren(info).includes("gradeAverage")) {
-    const grades: GradeType[] = [];
-
-    const gradesQuery = await GradeModel.find(
-      {
-        CourseSubjectShortNm: course?.subjectArea?.description,
-        CourseNumber: course?.catalogNumber?.formatted,
-      },
-      { GradeNm: 1, EnrollmentCnt: 1 }
-    );
-
-    for (const grade of gradesQuery) {
-      grades.push(grade);
-    }
-
-    formattedCourse.gradeAverage = getAverage(grades);
-  }
-
-  return formattedCourse;
+  return formatCourse(course);
 };
 
 export const getClassesByCourse = async (
@@ -92,7 +63,8 @@ export const getAssociatedCourses = async (courses: string[]) => {
   );
 };
 
-export const getCourses = async (info: GraphQLResolveInfo) => {
+// TODO: Grade distributions
+export const getCourses = async () => {
   const courses = await CourseModel.aggregate([
     {
       $match: {
@@ -119,40 +91,40 @@ export const getCourses = async (info: GraphQLResolveInfo) => {
     },
   ]);
 
-  /* Map grades to course keys for easy lookup */
-  const gradesMap: { [key: string]: GradeType[] } = {};
-  courses.forEach((c) => (gradesMap[getCourseKey(c)] = []));
+  // /* Map grades to course keys for easy lookup */
+  // const gradesMap: { [key: string]: GradeType[] } = {};
+  // courses.forEach((c) => (gradesMap[getCourseKey(c)] = []));
 
-  const children = getChildren(info);
+  // const children = getChildren(info);
 
-  if (children.includes("gradeAverage")) {
-    const grades = await GradeModel.find(
-      {
-        /*
-                    No filters because an appropriately large filter
-                    is actually significantly slower than no filter.
-                */
-      },
-      {
-        CourseSubjectShortNm: 1,
-        CourseNumber: 1,
-        GradeNm: 1,
-        EnrollmentCnt: 1,
-      }
-    ).lean();
+  // if (children.includes("gradeAverage")) {
+  //   const grades = await GradeModel.find(
+  //     {
+  //       /*
+  //                   No filters because an appropriately large filter
+  //                   is actually significantly slower than no filter.
+  //               */
+  //     },
+  //     {
+  //       CourseSubjectShortNm: 1,
+  //       CourseNumber: 1,
+  //       GradeNm: 1,
+  //       EnrollmentCnt: 1,
+  //     }
+  //   ).lean();
 
-    for (const g of grades) {
-      const key = `${g.CourseSubjectShortNm as string} ${
-        g.CourseNumber as string
-      }`;
-      if (key in gradesMap) {
-        gradesMap[key].push(g);
-      }
-    }
-  }
+  //   for (const g of grades) {
+  //     const key = `${g.CourseSubjectShortNm as string} ${
+  //       g.CourseNumber as string
+  //     }`;
+  //     if (key in gradesMap) {
+  //       gradesMap[key].push(g);
+  //     }
+  //   }
+  // }
 
   return courses.map((c) => ({
     ...formatCourse(c),
-    gradeAverage: getAverage(gradesMap[getCourseKey(c)]),
+    gradeAverage: 0, //getAverage(gradesMap[getCourseKey(c)]),
   })) as IntermediateCourse[];
 };

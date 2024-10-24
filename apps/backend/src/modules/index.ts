@@ -5,14 +5,14 @@ import Class from "./class";
 import Common from "./common";
 import Course from "./course";
 import Enrollment from "./enrollment";
-import Grade from "./grade";
+import GradeDistribution from "./grade-distribution";
 import Schedule from "./schedule";
 import Term from "./term";
 import User from "./user";
 
 const modules = [
   User,
-  Grade,
+  GradeDistribution,
   Catalog,
   Common,
   Schedule,
