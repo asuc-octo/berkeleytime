@@ -169,8 +169,8 @@ export const getGradeDistributionByCourse = async (
     subject,
   });
 
-  if (distributions.length === 0)
-    throw new Error("No grade distributions found");
+  // if (distributions.length === 0)
+  //   throw new Error("No grade distributions found");
 
   const distribution = getDistribution(distributions);
 
@@ -205,8 +205,8 @@ export const getGradeDistributionByClass = async (
     classNumber: section.id,
   });
 
-  if (distributions.length === 0)
-    throw new Error("No grade distributions found");
+  // if (distributions.length === 0)
+  //   throw new Error("No grade distributions found");
 
   const distribution = getDistribution(distributions);
 
@@ -233,8 +233,8 @@ export const getGradeDistributionBySemester = async (
     termId: term.id,
   });
 
-  if (distributions.length === 0)
-    throw new Error("No grade distributions found");
+  // if (distributions.length === 0)
+  //   throw new Error("No grade distributions found");
 
   const distribution = getDistribution(distributions);
 
@@ -264,8 +264,8 @@ export const getGradeDistributionByInstructor = async (
     classNumber: { $in: sections.map((section) => section.id) },
   });
 
-  if (distributions.length === 0)
-    throw new Error("No grade distributions found");
+  // if (distributions.length === 0)
+  //   throw new Error("No grade distributions found");
 
   const distribution = getDistribution(distributions);
 
@@ -300,8 +300,8 @@ export const getGradeDistributionByInstructorAndSemester = async (
     classNumber: { $in: sections.map((section) => section.id) },
   });
 
-  if (distributions.length === 0)
-    throw new Error("No grade distributions found");
+  // if (distributions.length === 0)
+  //   throw new Error("No grade distributions found");
 
   const distribution = getDistribution(distributions);
 

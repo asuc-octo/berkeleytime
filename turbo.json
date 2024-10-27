@@ -15,7 +15,7 @@
     },
     "lint": {},
     "start": {
-      "dependsOn": ["generate"]
+      "dependsOn": ["generate", "^build"]
     },
     "dev": {
       "cache": false,

@@ -2,7 +2,6 @@ import { useMemo } from "react";
 
 import { ArrowSeparateVertical, ArrowUnionVertical } from "iconoir-react";
 
-import AverageGrade from "@/components/AverageGrade";
 import Capacity from "@/components/Capacity";
 import Units from "@/components/Units";
 import { Component, IClass, componentMap } from "@/lib/api";
@@ -72,9 +71,9 @@ export default function Class({
               {_class.title ?? _class.course.title}
             </p>
             <div className={styles.row}>
-              <AverageGrade
+              {/* <AverageGrade
                 gradeDistribution={_class.course.gradeDistribution}
-              />
+              /> */}
               <Capacity
                 enrollCount={_class.primarySection.enrollCount}
                 enrollMax={_class.primarySection.enrollMax}
