@@ -11,7 +11,7 @@ services:
       - mongodb
     networks:
       - bt
-    restart: always
+    restart: no
     volumes:
       - ./apps/datapuller/src:/datapuller/apps/datapuller/src
       - ./.env:/datapuller/apps/datapuller/.env

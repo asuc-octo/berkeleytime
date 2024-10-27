@@ -14,8 +14,8 @@
         "dist/**"
       ]
     },
-    "course": {
-      "cache": false
+    "section": {
+      "cache": true
     },
     "generate": {
       "outputs": [

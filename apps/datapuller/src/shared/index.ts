@@ -3,12 +3,12 @@ import { Logger } from "tslog";
 import { loadConfig } from "./config";
 
 export default function setup() {
-  loadConfig();
+  const config = loadConfig();
 
   const log = new Logger({
     type: "pretty",
     prettyLogTimeZone: "local",
   });
 
-  return { log };
+  return { log, config };
 }
