@@ -19,7 +19,7 @@ type RatingSummary {
 }   
 type Rating {
     class: Class!
-    name: String!
+    question: String!
     value: Int!
 }
 type Query {
@@ -28,12 +28,12 @@ type Query {
 } 
 type CreateRatingInput {
     class: String!
-    name: String! 
+    question: String! 
     value: Int! 
 }
 type Mutation {
-    createRating(rating: CreateRatingInput): @auth
-    deleteRating(): @auth
+    createRating(rating: CreateRatingInput): RatingSummary! @auth
+    deleteRating(subject: String!, number: String!): RatingSummary! @auth
 }
 `;
 

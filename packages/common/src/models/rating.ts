@@ -48,5 +48,4 @@ export const RatingModel = mongoose.model(
   ratingSchema,
   "crowdsource_rating"
 );
-
 export type RatingType = InferSchemaType<typeof ratingSchema>;
