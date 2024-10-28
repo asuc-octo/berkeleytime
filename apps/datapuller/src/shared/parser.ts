@@ -78,7 +78,7 @@ function mapMeeting(meeting: any): ISectionItem["meetings"][0] {
       "meeting.location.description",
       ""
     ),
-    instructors: meeting.assignedInstructors.map(mapInstructor),
+    instructors: meeting.assignedInstructors?.map(mapInstructor) || [],
   };
 }
 

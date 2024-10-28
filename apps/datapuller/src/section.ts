@@ -1,70 +1,36 @@
-import {
-  ClassSection,
-  ClassSectionPayload,
-  ClassesAPI,
-} from "@repo/sis-api/classes";
+import { ISectionItem } from "@repo/common";
+import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
 import setup from "./shared";
 import mapSectionToNewSection from "./shared/parser";
+import { fetchPaginatedData } from "./shared/utils";
 
 async function updateSections() {
-  const { config } = setup();
-  console.log(config);
-  // modularize to passing in type of API, then app_id and app_key
+  const { config, log } = setup();
   const classesAPI = new ClassesAPI();
-  //const sections: NewSectionType[] = [];
-  let page = 1;
-  let retries = 3;
 
-  while (retries > 0) {
-    try {
-      const response = await classesAPI.v1.getClassSectionsUsingGet(
-        {
-          "term-id": "2248",
-          "page-number": page,
-          "page-size": 100,
-        },
-        {
-          headers: {
-            app_id: config.sis.CLASS_APP_ID,
-            app_key: config.sis.CLASS_APP_KEY,
-          },
-        }
-      );
-      const data = (await response.json()) as ClassSectionPayload;
-      if (data) {
-        const classSections: ClassSection[] =
-          data.apiResponse?.response?.classSections || [];
-        //console.log(classSections[0]);
-        console.log(mapSectionToNewSection(classSections[0]));
-      }
-    } catch (error) {
-      console.log(`Unexpected error querying SIS API. Error: "${error}"`);
+  const sections = await fetchPaginatedData<ISectionItem, ClassSection>(
+    classesAPI.v1,
+    "getClassSectionsUsingGet",
+    { "term-id": "2248" },
+    {
+      app_id: config.sis.CLASS_APP_ID,
+      app_key: config.sis.CLASS_APP_KEY,
+    },
+    (data) => data.apiResponse.response.classSections || [],
+    mapSectionToNewSection
+  );
 
-      if (retries === 0) {
-        console.log(`Too many errors querying SIS API. Terminating update...`);
-        break;
-      }
-
-      retries--;
-
-      console.log(`Retrying...`);
-
-      continue;
-    }
-    page++;
-  }
-
-  console.log(`Updating sections for Spring 2024...`);
+  log.info(`Updated ${sections.length} sections for Spring 2024`);
 }
 
 const initialize = async () => {
+  const { log } = setup();
   try {
-    console.log("\n=== UPDATE SECTIONS ===");
+    log.info("\n=== UPDATE SECTIONS ===");
     await updateSections();
   } catch (error) {
-    console.error(error);
-
+    log.error(error);
     process.exit(1);
   }
 
