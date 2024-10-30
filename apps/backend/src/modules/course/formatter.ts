@@ -9,15 +9,18 @@ import {
 import { formatDate } from "../class/formatter";
 import { CourseModule } from "./generated-types/module-types";
 
-export type IntermediateCourse = Omit<
-  CourseModule.Course,
-  "classes" | "crossListing" | "requiredCourses" | "gradeDistribution"
-> & {
+interface Relationships {
   classes: null;
   crossListing: string[];
   requiredCourses: string[];
   gradeDistribution: null;
-};
+}
+
+export type IntermediateCourse = Omit<
+  CourseModule.Course,
+  keyof Relationships
+> &
+  Relationships;
 
 export function formatCourse(course: CourseType) {
   return {
