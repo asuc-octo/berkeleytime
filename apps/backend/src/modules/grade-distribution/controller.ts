@@ -138,21 +138,23 @@ export const points: { [key: string]: number } = {
   D: 1,
   "D-": 0.7,
   "D+": 1.3,
+  F: 0,
 };
 
 export const getAverageGrade = (distribution: Grade[]) => {
   const total = distribution.reduce((acc, { letter, count }) => {
-    if (points[letter]) return acc + count;
+    if (Object.keys(points).includes(letter)) return acc + count;
 
-    // Ignore letters not included in grade point average
+    // Ignore letters not included in GPA
     return acc;
   }, 0);
 
-  // For distributions without a grade point average, return null
+  // For distributions without a GPA, return null
   if (total === 0) return null;
 
   const weightedTotal = distribution.reduce((acc, { letter, count }) => {
-    if (points[letter]) return points[letter] * count + acc;
+    if (Object.keys(points).includes(letter))
+      return points[letter] * count + acc;
 
     return acc;
   }, 0);
