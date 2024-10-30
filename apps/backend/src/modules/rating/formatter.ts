@@ -3,14 +3,15 @@ import {
   Rating, 
   AggregatedRatings,
   Metric,
-  Category
-} from './typedefs/rating';
+  Category,
+  Semester
+} from '../../generated-types/graphql';
 // mongo -> graphql (models -> typedefs)
 
 export const formatUserRating = (rating: RatingType): Rating => ({
   subject: rating.subject,
   courseNumber: rating.courseNumber,
-  semester: rating.semester,
+  semester: rating.semester as Semester,
   year: rating.year,
   class: rating.class,
 
@@ -22,7 +23,7 @@ export const formatUserRating = (rating: RatingType): Rating => ({
 
 // does mongo always return an array? single return val vs multiple val
 export const formatUserRatings = (ratings: any[]): Rating[] => {
-  return ratings.map(formatUserRatings);
+  return ratings.map(formatUserRating);
 };
 
 // grandparent group by class -> done
