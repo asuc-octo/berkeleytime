@@ -166,10 +166,10 @@ const updateCourses = async () => {
     config.sis.COURSE_APP_ID,
     config.sis.COURSE_APP_KEY,
     SIS_COURSE_URL,
-    "courses",
-    {
-      "status-code": "ACTIVE",
-    }
+    "courses"
+    // {
+    //   "status-code": "ACTIVE",
+    // }
   );
 
   const operations = courses.map((course) => ({
