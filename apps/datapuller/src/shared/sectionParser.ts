@@ -1,99 +1,18 @@
 import { ISectionItem } from "@repo/common";
 import { ClassSection } from "@repo/sis-api/classes";
 
-function getRequiredField<T>(
-  value: T | undefined,
-  fieldName: string,
-  defaultValue: T
-): T {
-  if (value === undefined || value === null) {
-    console.warn(`Missing required field: ${fieldName}`);
-    return defaultValue;
-  }
-  return value;
-}
-
-function mapSeatReservation(
-  reservation: any
-): ISectionItem["enrollment"]["reservations"][0] {
-  return {
-    number: getRequiredField(reservation.number, "reservation.number", 0),
-    requirementGroup: getRequiredField(
-      reservation.requirementGroup?.description,
-      "reservation.requirementGroup.description",
-      ""
-    ),
-    maxEnroll: getRequiredField(
-      reservation.maxEnroll,
-      "reservation.maxEnroll",
-      0
-    ),
-    enrolledCount: getRequiredField(
-      reservation.enrolledCount,
-      "reservation.enrolledCount",
-      0
-    ),
-  };
-}
-
-function mapInstructor(
-  instructor: any
-): ISectionItem["meetings"][0]["instructors"][0] {
-  const name =
-    instructor.instructor?.names?.find((n: any) => n.type?.code === "PRF") ||
-    instructor.instructor?.names?.[0];
-
-  return {
-    printInScheduleOfClasses: getRequiredField(
-      instructor.printInScheduleOfClasses,
-      "instructor.printInScheduleOfClasses",
-      false
-    ),
-    familyName: getRequiredField(name?.familyName, "instructor.familyName", ""),
-    givenName: getRequiredField(name?.givenName, "instructor.givenName", ""),
-    role: getRequiredField(instructor.role?.code, "instructor.role.code", ""),
-  };
-}
-
-function mapMeeting(meeting: any): ISectionItem["meetings"][0] {
-  return {
-    number: getRequiredField(meeting.number, "meeting.number", 0),
-    days: [
-      meeting.meetsMonday,
-      meeting.meetsTuesday,
-      meeting.meetsWednesday,
-      meeting.meetsThursday,
-      meeting.meetsFriday,
-      meeting.meetsSaturday,
-      meeting.meetsSunday,
-    ].map((day, index) =>
-      getRequiredField(day, `meeting.day[${index}]`, false)
-    ),
-    startTime: getRequiredField(meeting.startTime, "meeting.startTime", ""),
-    endTime: getRequiredField(meeting.endTime, "meeting.endTime", ""),
-    startDate: getRequiredField(meeting.startDate, "meeting.startDate", ""),
-    endDate: getRequiredField(meeting.endDate, "meeting.endDate", ""),
-    location: getRequiredField(
-      meeting.location?.description,
-      "meeting.location.description",
-      ""
-    ),
-    instructors: meeting.assignedInstructors?.map(mapInstructor) || [],
-  };
-}
+import { getRequiredField } from "./utils";
 
 export default function mapSectionToNewSection(
   original: ClassSection
 ): ISectionItem {
-  const courseId = getRequiredField(
-    original.class?.course?.identifiers?.find((i) => i.type == "cs-course-id")
-      ?.id,
-    "courseId",
-    ""
-  );
-
   const newSection: ISectionItem = {
-    courseId,
+    courseId: getRequiredField(
+      original.class?.course?.identifiers?.find((i) => i.type == "cs-course-id")
+        ?.id,
+      "courseId",
+      ""
+    ),
     classNumber: getRequiredField(original.class?.number, "classNumber", ""),
     sessionId: getRequiredField(original.class?.session?.id, "sessionId", ""),
     termId: getRequiredField(original.class?.session?.term?.id, "termId", ""),
@@ -113,8 +32,8 @@ export default function mapSectionToNewSection(
     ),
     graded: getRequiredField(original.graded, "graded", false),
     feesExist: getRequiredField(original.feesExist, "feesExist", false),
-    startDate: new Date(getRequiredField(original.startDate, "startDate", "")),
-    endDate: new Date(getRequiredField(original.endDate, "endDate", "")),
+    startDate: getRequiredField(original.startDate, "startDate", ""),
+    endDate: getRequiredField(original.endDate, "endDate", ""),
     addConsentRequired: getRequiredField(
       original.addConsentRequired?.code,
       "addConsentRequired.code",
@@ -168,12 +87,28 @@ export default function mapSectionToNewSection(
         0
       ),
       reservations:
-        original.enrollmentStatus?.seatReservations?.map(mapSeatReservation) ||
-        [],
+        original.enrollmentStatus?.seatReservations?.map((reservation) => ({
+          number: getRequiredField(reservation.number, "reservation.number", 0),
+          requirementGroup: getRequiredField(
+            reservation.requirementGroup?.description,
+            "reservation.requirementGroup.description",
+            ""
+          ),
+          maxEnroll: getRequiredField(
+            reservation.maxEnroll,
+            "reservation.maxEnroll",
+            0
+          ),
+          enrolledCount: getRequiredField(
+            reservation.enrolledCount,
+            "reservation.enrolledCount",
+            0
+          ),
+        })) || [],
     },
     exams:
       original.exams?.map((exam) => ({
-        date: new Date(getRequiredField(exam.date, "exam.date", "")),
+        date: getRequiredField(exam.date, "exam.date", ""),
         startTime: getRequiredField(exam.startTime, "exam.startTime", ""),
         endTime: getRequiredField(exam.endTime, "exam.endTime", ""),
         location: getRequiredField(
@@ -184,7 +119,59 @@ export default function mapSectionToNewSection(
         number: getRequiredField(exam.number, "exam.number", 0),
         type: getRequiredField(exam.type?.code, "exam.type.code", ""),
       })) || [],
-    meetings: original.meetings?.map(mapMeeting) || [],
+    meetings:
+      original.meetings?.map((meeting) => ({
+        number: getRequiredField(meeting.number, "meeting.number", 0),
+        days: [
+          meeting.meetsMonday,
+          meeting.meetsTuesday,
+          meeting.meetsWednesday,
+          meeting.meetsThursday,
+          meeting.meetsFriday,
+          meeting.meetsSaturday,
+          meeting.meetsSunday,
+        ].map((day, index) =>
+          getRequiredField(day, `meeting.day[${index}]`, false)
+        ),
+        startTime: getRequiredField(meeting.startTime, "meeting.startTime", ""),
+        endTime: getRequiredField(meeting.endTime, "meeting.endTime", ""),
+        startDate: getRequiredField(meeting.startDate, "meeting.startDate", ""),
+        endDate: getRequiredField(meeting.endDate, "meeting.endDate", ""),
+        location: getRequiredField(
+          meeting.location?.description,
+          "meeting.location.description",
+          ""
+        ),
+        instructors:
+          meeting.assignedInstructors?.map((instructor) => {
+            const name =
+              instructor.instructor?.names?.find(
+                (n: any) => n.type?.code === "PRF"
+              ) || instructor.instructor?.names?.[0];
+            return {
+              printInScheduleOfClasses: getRequiredField(
+                instructor.printInScheduleOfClasses,
+                "instructor.printInScheduleOfClasses",
+                false
+              ),
+              familyName: getRequiredField(
+                name?.familyName,
+                "instructor.familyName",
+                ""
+              ),
+              givenName: getRequiredField(
+                name?.givenName,
+                "instructor.givenName",
+                ""
+              ),
+              role: getRequiredField(
+                instructor.role?.code,
+                "instructor.role.code",
+                ""
+              ),
+            };
+          }) || [],
+      })) || [],
   };
 
   return newSection;

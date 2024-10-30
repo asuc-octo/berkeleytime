@@ -6,3 +6,5 @@ export * from "./term";
 export * from "./course";
 export * from "./section";
 export * from "./sectionNew";
+export * from "./courseNew";
+export * from "./classNew";

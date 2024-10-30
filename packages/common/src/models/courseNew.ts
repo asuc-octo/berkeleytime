@@ -3,63 +3,45 @@ import { Document, Schema, model } from "mongoose";
 export interface ICourseItem {
   // identifiers[type=cs-course-id]
   courseId: string;
-
   // subjectArea.code
   subject: string;
-
   // catalogNumber.formatted
   number: string;
-
   title: string;
   description: string;
-
   // academicCareer.code
   academicCareer: string;
-
   // primaryInstructionMethod.code
   primaryInstructionMethod: string;
-
   // gradingBasis.code
   gradingBasis: string;
-
   // status.code
   status: string;
-
   fromDate: string;
   toDate: string;
-
   printInCatalog: boolean;
-
   // finalExam.code
   finalExam: string;
-
   // academicGroup.code
   academicGroup: string;
-
   // academicOrganization.code
   academicOrganization: string;
-
   instructorAddConsentRequired: boolean;
   instructorDropConsentRequired: boolean;
   allowMultipleEnrollments: boolean;
   spansMultipleTerms: boolean;
   multipleTermNumber: number;
   anyFeesExist: boolean;
-
   repeatability: {
     repeatable: boolean;
     maxCredit: number;
     maxCount: number;
   };
-
   preparation: {
     recommendedText: string;
-
     // recommendedCourses.identifiers[type=cs-course-id]
     recommendedCourses: string[];
-
     requiredText: string;
-
     // requiredCourses.identifiers[type=cs-course-id]
     requiredCourses: string[];
   };
@@ -67,34 +49,28 @@ export interface ICourseItem {
   gradeReplacement: {
     // gradeReplacementText
     text: string;
-
     // gradeReplacementGroup
     group: string;
-
     // gradeReplacementCourses.identifiers[type=cs-course-id]
     courses: string[];
   };
 
   // crossListing.courses.identifiers[type=cs-course-id]
   crossListing: string[];
-
   // formatsOffered.typicallyOffered.terms[]
   formatsOffered: {
     description: string;
-
     // typicallyOffered.terms[]
     typicallyOffered: {
       comments: string;
       terms: string[];
     };
-
     formats: {
       termsAllowed: string[];
       description: string;
       components: {
         // instructionMethod.code
         instructionMethod: string;
-
         primary: boolean;
         minContactHours: number;
         maxContactHours: number;
@@ -105,14 +81,11 @@ export interface ICourseItem {
 
   // requirementsFulfilled[].code
   requirementsFulfilled: string[];
-
   courseObjectives: string[];
   studentLearningOutcomes: string[];
-
   creditRestriction: {
     // restrictionText
     text: string;
-
     // restrictionCourses
     courses: {
       // course.identifiers[type=cs-course-id]
@@ -120,9 +93,7 @@ export interface ICourseItem {
       maxCreditPercentage: number;
     }[];
   };
-
   blindGrading: boolean;
-
   credit: {
     type: string;
     value: {
@@ -134,19 +105,16 @@ export interface ICourseItem {
       };
     };
   };
-
   // NOTE: Determine how formatsOffered factors
   workloadHours: number;
   contactHours: number;
-
   // NOTE: Replace with cs-course-id of former course
   formerDisplayName: string;
-
   createdDate: string;
   updatedDate: string;
 }
 
-export interface ISectionItemDocument extends ICourseItem, Document {}
+export interface ICourseItemDocument extends ICourseItem, Document {}
 
 const courseSchema = new Schema<ICourseItem>({
   courseId: { type: String, required: true, unique: true },

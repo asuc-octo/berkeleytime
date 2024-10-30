@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import { Logger } from "tslog";
 
 // Safely get the environment variable in the process
 const env = (name: string): string => {
@@ -12,6 +13,7 @@ const env = (name: string): string => {
 };
 
 export interface Config {
+  log: Logger<unknown>;
   isDev: boolean;
   mongoDB: {
     uri: string;
@@ -29,7 +31,13 @@ export interface Config {
 export function loadConfig(): Config {
   dotenv.config();
 
+  const log = new Logger({
+    type: "pretty",
+    prettyLogTimeZone: "local",
+  });
+
   return {
+    log,
     isDev: env("NODE_ENV") === "development",
     mongoDB: {
       uri: env("MONGODB_URI"),

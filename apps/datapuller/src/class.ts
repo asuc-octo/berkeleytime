@@ -1,12 +1,12 @@
-import { ISectionItem } from "@repo/common";
-import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
+import { IClassItem } from "@repo/common";
+import { ClassesAPI } from "@repo/sis-api/classes";
 
 import setup from "./shared";
+import mapClassToNewClass, { CombinedClass } from "./shared/classParser";
 import { Config } from "./shared/config";
-import mapSectionToNewSection from "./shared/sectionParser";
 import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
 
-async function updateSections(config: Config) {
+async function updateClasses(config: Config) {
   const log = config.log;
   const classesAPI = new ClassesAPI();
 
@@ -18,29 +18,29 @@ async function updateSections(config: Config) {
 
   log.info(activeTerms);
 
-  const sections = await fetchPaginatedData<ISectionItem, ClassSection>(
+  const classes = await fetchPaginatedData<IClassItem, CombinedClass>(
     log,
     classesAPI.v1,
     activeTerms,
-    "getClassSectionsUsingGet",
+    "getClassesUsingGet",
     {
       app_id: config.sis.CLASS_APP_ID,
       app_key: config.sis.CLASS_APP_KEY,
     },
-    (data) => data.apiResponse.response.classSections || [],
-    mapSectionToNewSection
+    (data) => data.apiResponse.response.classes || [],
+    mapClassToNewClass
   );
 
-  log.info("Example Section:", sections[0]);
+  log.info("Example Class:", classes[0]);
 
-  log.info(`Updated ${sections.length} sections for Spring 2024`);
+  log.info(`Updated ${classes.length} classes for active terms`);
 }
 
 const initialize = async () => {
   const { config } = setup();
   try {
-    config.log.info("\n=== UPDATE SECTIONS ===");
-    await updateSections(config);
+    config.log.info("\n=== UPDATE CLASSES ===");
+    await updateClasses(config);
   } catch (error) {
     config.log.error(error);
     process.exit(1);

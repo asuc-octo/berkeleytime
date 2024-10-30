@@ -1,7 +1,48 @@
+import { Logger } from "tslog";
+
+import { Term, TermsAPI } from "@repo/sis-api/terms";
+
+type TemporalPosition = "" | "Previous" | "Current" | "Next";
+
+export async function fetchActiveTerms(
+  logger: Logger<unknown>,
+  headers: Record<string, string>
+): Promise<string[]> {
+  const termsAPI = new TermsAPI();
+  const activeTermIds: string[] = [];
+
+  const currentTerms: TemporalPosition[] = ["Current", "Next"];
+
+  for (const term of currentTerms) {
+    try {
+      logger.info(`Fetching ${term} terms`);
+      const response = await termsAPI.v2.getByTermsUsingGet(
+        {
+          "temporal-position": term,
+        },
+        {
+          headers,
+        }
+      );
+
+      const data = await response.json();
+      activeTermIds.push(...data.response.terms.map((term: Term) => term.id));
+    } catch (error) {
+      logger.error(`Unexpected error querying API. Error: "${error}"`);
+    }
+  }
+  const uniqueActiveTermIds = Array.from(new Set(activeTermIds));
+
+  logger.info(`Fetched ${uniqueActiveTermIds.length} unique active term IDs`);
+
+  return uniqueActiveTermIds;
+}
+
 export async function fetchPaginatedData<T, R>(
+  logger: Logger<unknown>,
   api: any,
+  terms: string[],
   method: string,
-  baseParams: Record<string, any>,
   headers: Record<string, string>,
   responseProcessor: (data: any) => R[],
   itemProcessor: (item: R) => T
@@ -10,51 +51,69 @@ export async function fetchPaginatedData<T, R>(
   let page = 1;
   let retries = 1;
 
-  while (retries > 0) {
-    try {
-      const response = await api[method](
-        {
-          ...baseParams,
-          "page-number": page,
-          "page-size": 100,
-        },
-        { headers }
-      );
+  for (const term of terms) {
+    while (retries > 0) {
+      try {
+        const response = await api[method](
+          {
+            "term-id": term,
+            "page-number": page,
+            "page-size": 100,
+          },
+          { headers }
+        );
 
-      const data = await response.json();
-      const processedData = responseProcessor(data);
+        const data = await response.json();
+        const processedData = responseProcessor(data);
 
-      if (processedData.length === 0) {
-        break; // No more data to fetch
-      }
-      console.log("Mapping processedData with itemProcessor...");
-      const transformedData = processedData.map((item, index) => {
-        try {
-          return itemProcessor(item);
-        } catch (error) {
-          console.error(`Error processing item at index ${index}:`, error);
-          console.error("Problematic item:", JSON.stringify(item, null, 2));
-          throw error;
+        if (processedData.length === 0) {
+          break; // No more data to fetch
         }
-      });
+        logger.info("Mapping processedData with itemProcessor...");
+        const transformedData = processedData.map((item, index) => {
+          try {
+            return itemProcessor(item);
+          } catch (error) {
+            logger.error(`Error processing item at index ${index}:`, error);
+            logger.error("Problematic item:", JSON.stringify(item, null, 2));
+            throw error;
+          }
+        });
 
-      results.push(...transformedData);
-      console.log(`Processed ${processedData.length} items from page ${page}.`);
-      page++;
-      retries = 1; // Reset retries on successful fetch
-    } catch (error) {
-      console.log(`Error fetching page ${page} of data`);
-      console.log(`Unexpected error querying API. Error: "${error}"`);
+        results.push(...transformedData);
+        logger.info("result", transformedData);
+        logger.info(
+          `Processed ${processedData.length} items from page ${page}.`
+        );
+        page++;
+        retries = 1;
+      } catch (error) {
+        logger.error(`Error fetching page ${page} of data`);
+        logger.error(`Unexpected error querying API. Error: "${error}"`);
 
-      if (retries === 0) {
-        console.log(`Too many errors querying API. Terminating update...`);
-        break;
+        if (retries === 0) {
+          logger.error(`Too many errors querying API. Terminating update...`);
+          break;
+        }
+
+        retries--;
+        logger.info(`Retrying...`);
       }
-
-      retries--;
-      console.log(`Retrying...`);
     }
   }
 
   return results;
+}
+
+export function getRequiredField<T>(
+  value: T | undefined,
+  fieldName: string,
+  defaultValue: T
+): T {
+  if (value === undefined || value === null) {
+    // TODO: Maybe add back?
+    console.warn(`Missing required field: ${fieldName}`);
+    return defaultValue;
+  }
+  return value;
 }

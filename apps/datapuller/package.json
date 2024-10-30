@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "build": "tsc --noEmit",
-    "section": "tsx src/section.ts"
+    "section": "tsx src/section.ts",
+    "class": "tsx src/class.ts",
+    "course": "tsx src/course.ts"
   },
   "devDependencies": {
     "@types/node": "^20.14.12",

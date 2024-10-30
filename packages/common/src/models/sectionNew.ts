@@ -14,8 +14,8 @@ export interface ISectionItem {
   printInScheduleOfClasses: boolean;
   graded: boolean;
   feesExist: boolean;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   addConsentRequired: string;
   dropConsentRequired: string;
   primary: boolean;
@@ -36,7 +36,7 @@ export interface ISectionItem {
     }[];
   };
   exams: {
-    date: Date;
+    date: string;
     startTime: string;
     endTime: string;
     location: string;
@@ -75,8 +75,8 @@ const sectionSchema = new Schema<ISectionItem>({
   printInScheduleOfClasses: { type: Boolean, required: true },
   graded: { type: Boolean, required: true },
   feesExist: { type: Boolean, required: true },
-  startDate: { type: Date, required: true },
-  endDate: { type: Date, required: true },
+  startDate: { type: String, required: true },
+  endDate: { type: String, required: true },
   addConsentRequired: { type: String, required: true },
   dropConsentRequired: { type: String, required: true },
   primary: { type: Boolean, required: true },
@@ -100,7 +100,7 @@ const sectionSchema = new Schema<ISectionItem>({
   },
   exams: [
     {
-      date: { type: Date, required: true },
+      date: { type: String, required: true },
       startTime: { type: String, required: true },
       endTime: { type: String, required: true },
       location: { type: String, required: true },

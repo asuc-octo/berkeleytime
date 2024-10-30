@@ -3,53 +3,39 @@ import { Document, Schema, model } from "mongoose";
 export interface IClassItem {
   // course.identifiers[cs-course-id]
   courseId: string;
-
   // session.term.id
   termId: string;
-
   // session.id
   sessionId: string;
-
   number: string;
   offeringNumber: number;
-
   // classTitle
   title: string;
-
   // classDescription
   description: string;
-
   allowedUnits: {
     minimum: number;
     maximum: number;
     forAcademicProgress: number;
     forFinancialAid: number;
   };
-
   // gradingBasis.code
   gradingBasis: string;
-
   // status.code
   status: string;
-
   // finalExam.code
   finalExam: string;
-
   // instructionMode.code
   instructionMode: string;
-
   anyPrintInScheduleOfClasses: boolean;
   contactHours: number;
-
   // NOTE: Exclude if always the same as course blindGrading
   blindGrading: boolean;
-
   // NOTE: Exclude if always the same as course requirementsFulfilled
   // requirementDesignation.code
   requirementDesignation: string;
-
-  // requisites[].description
-  requisites: string[];
+  // requisites.description
+  requisites: string;
 }
 
 export interface IClassItemDocument extends IClassItem, Document {}
@@ -76,7 +62,7 @@ const classSchema = new Schema<IClassItem>({
   contactHours: { type: Number, required: true },
   blindGrading: { type: Boolean, required: true },
   requirementDesignation: { type: String, required: true },
-  requisites: { type: [String], required: true },
+  requisites: { type: String, required: true },
 });
 
 export const NewClassModel = model<IClassItem>("NewClass", classSchema);
