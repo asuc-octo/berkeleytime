@@ -1,39 +1,66 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
-type HistogramEntry {
+type AggregatedRatings {
+    "Class identifer"
+    subject: String!
+    courseNumber: String!
+    semester: Semester!
+    year: Int!
+    class: String!
+
+    metrics: [Metric!]!
+}
+type Metric {
+    metricName: String!
+    descriptor: String!
+    count: Int!
+    mean: Int!
+    categories: [Category!]!
+}
+type Category {
     value: Int!
     count: Int!
-    class: String!
 }
-type ClassHistogram {
-    class: Class
-    histogram: [HistogramEntry!]
-}
-type RatingSummary {
-    name: String!
-    class_histogram: [ClassHistogram!]
-    overall_histogram: [HistogramEntry!]
-    totalCount: Int!
-    average: Float!
-}   
 type Rating {
-    class: Class!
-    question: String!
+    "Class identifer"
+    subject: String!
+    courseNumber: String!
+    semester: Semester!
+    year: Int!
+    class: String!
+
+    createdBy: String!
+
+    metricName: String!
     value: Int!
 }
-type Query {
-    rating(name: String!, subject: String!, number: String!): RatingSummary!
-    user_ratings(subject: String!, number: String!): [Rating] @auth
-} 
-type CreateRatingInput {
+type ClassIdentifier {
+    subject: String!
+    courseNumber: String!
+    semester: Semester!
+    year: Int!
     class: String!
-    question: String! 
-    value: Int! 
+}
+type Query {
+    aggregatedRatings(class: ClassIdentifier!, isAllTime: Boolean!): AggregatedRatings!
+    userRatings(subject: String!, number: String!): [Rating!]! @auth
+}
+type RatingIdentifier {
+    "Class Identifers"
+    subject: String!
+    courseNumber: String!
+    semester: Semester!
+    year: Int!
+    class: String!
+
+    "User(google_id) & Metrics Identifers"
+    createdBy: String!
+    metricName: String!
 }
 type Mutation {
-    createRating(rating: CreateRatingInput): RatingSummary! @auth
-    deleteRating(subject: String!, number: String!): RatingSummary! @auth
+    createRating(rating: RatingIdentifier!, value: Int!): AggregatedRatings! @auth
+    deleteRating(rating: RatingIdentifier!): AggregatedRatings! @auth
 }
 `;
 

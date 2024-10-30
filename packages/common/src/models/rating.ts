@@ -15,26 +15,36 @@ const ratingSchema = new Schema({
     required: true,
     immutable: true,
   },
-  class: {
-    type: Schema.Types.ObjectId,
-    ref: 'Class',
+  subject: {
+    type: String,
     required: true,
-    immutable: true
   },
-  // likert int 1 -> 5 values
-  // boolean 0/1 values
-  // string properties assign hash code
+  courseNumber: {
+    type: String,
+    required: true,
+  },
+  semester: {
+    type: String,
+    required: true,
+  },
+  year: {
+    type: String,
+    required: true,
+  },
+  class: {
+    type: String,
+    required: true,
+  },
+  metricName: {
+    type: String,
+    required: true,
+  },
   value: {
     type: Number,
     required: true,
     validate: {
       validator: Number.isInteger,
     }
-  },
-  // indicate value type (granularity: specific questions)
-  value_type: {
-    type: String,
-    required: true,
   }
 }, {
   timestamps: {
@@ -43,9 +53,5 @@ const ratingSchema = new Schema({
   },
 });
 
-export const RatingModel = mongoose.model(
-  "crowdsource_rating",
-  ratingSchema,
-  "crowdsource_rating"
-);
+export const RatingModel = mongoose.model("CrowdSource", ratingSchema,);
 export type RatingType = InferSchemaType<typeof ratingSchema>;
