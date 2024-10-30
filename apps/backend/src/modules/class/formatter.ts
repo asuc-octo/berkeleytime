@@ -7,16 +7,16 @@ import {
 } from "../../generated-types/graphql";
 import { ClassModule } from "./generated-types/module-types";
 
-export type IntermediateClass = Omit<
-  ClassModule.Class,
-  "course" | "term" | "primarySection" | "sections"
-> & {
+interface Relationships {
   course: null;
   term: null;
   primarySection: null;
   sections: null;
   gradeDistribution: null;
-};
+}
+
+export type IntermediateClass = Omit<ClassModule.Class, keyof Relationships> &
+  Relationships;
 
 export const formatDate = (date?: string | number | Date | null) => {
   if (!date) return date;
