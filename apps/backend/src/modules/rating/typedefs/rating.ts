@@ -43,7 +43,7 @@ type ClassIdentifier {
     class: String!
 }
 type Query {
-    aggregatedRatings(class: ClassIdentifier!, isAllTime: Boolean!): AggregatedRatings!
+    aggregatedRatings(classIdentifier: ClassIdentifier!, isAllTime: Boolean!): AggregatedRatings!
     userRatings(subject: String!, number: String!): [Rating!]! @auth
 }
 type RatingIdentifier {

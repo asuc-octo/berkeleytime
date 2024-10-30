@@ -66,4 +66,3 @@ export const formatClassRatings = (ratings: any): AggregatedRatings => ({
   class: ratings[0].class,
   metrics: formatMetrics(ratings)
 });
-
