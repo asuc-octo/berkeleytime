@@ -43,6 +43,7 @@ import Enrollment from "./Enrollment";
 import Grades from "./Grades";
 import Overview from "./Overview";
 import Sections from "./Sections";
+import Ratings from "./Ratings";
 
 interface BodyProps {
   children: ReactNode;
@@ -320,6 +321,9 @@ export default function Class({
               <Tabs.Trigger value="grades" asChild>
                 <MenuItem>Grades</MenuItem>
               </Tabs.Trigger>
+              <Tabs.Trigger value="ratings" asChild>
+                <MenuItem>Ratings</MenuItem>
+              </Tabs.Trigger>
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
@@ -341,6 +345,11 @@ export default function Class({
               <NavLink to={{ ...location, pathname: "grades" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Grades</MenuItem>
+                )}
+              </NavLink>
+              <NavLink to={{ pathname: "ratings"}}>
+                {({ isActive }) => (
+                  <MenuItem active={isActive}>Ratings</MenuItem>
                 )}
               </NavLink>
             </div>
@@ -365,6 +374,9 @@ export default function Class({
             </Tabs.Content>
             <Tabs.Content value="grades" asChild>
               <Grades />
+            </Tabs.Content>
+            <Tabs.Content value="ratings" asChild>
+              <Ratings />
             </Tabs.Content>
           </Body>
         </ClassContext.Provider>

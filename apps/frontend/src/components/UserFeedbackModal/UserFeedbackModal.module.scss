@@ -1,0 +1,278 @@
+.overlay {
+  background-color: rgb(0 0 0 / 60%);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 50;
+}
+
+.modal {
+  background-color: var(--foreground-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 32px rgb(0 0 0 / 25%);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 600px;
+  max-height: 85vh;
+  padding: 24px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 51;
+}
+
+.modalHeader {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.modalTitle {
+  color: var(--heading-color);
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.subtitleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modalSubtitle {
+  color: var(--paragraph-color);
+  font-size: 16px;
+  margin: 0;
+}
+
+.modalContent {
+  margin-bottom: 0px;
+}
+
+.combinedForm {
+  max-height: calc(85vh - 220px);
+  overflow-y: auto;
+  padding-right: 12px;
+  margin-right: -12px;
+  margin-top:0;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--background-color);
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--label-color);
+    border-radius: 3px;
+    opacity: 0.8;
+    
+    &:hover {
+      background: var(--paragraph-color);
+    }
+  }
+}
+
+.termSelect {
+  display: none;
+}
+
+.termDropdown {
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--heading-color);
+  background-color: var(--foreground-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+
+  &:hover {
+    border-color: var(--blue-400);
+  }
+
+  &:focus {
+    border-color: var(--blue-500);
+    box-shadow: 0 0 0 2px var(--blue-200);
+  }
+}
+
+.modalFooter {
+  position: sticky;
+  
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.sectionTitle {
+  color: var(--heading-color);
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.formGroup {
+  margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 40px;
+  }
+
+  h3, p {
+    color: var(--heading-color);
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+}
+
+.ratingScale {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+
+  span {
+    color: var(--paragraph-color);
+    font-size: 14px;
+    min-width: 80px;
+  }
+}
+
+.ratingButtons {
+  display: flex;
+  gap: 8px;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.ratingButton {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: none;
+  color: var(--heading-color);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: var(--background-hover-color);
+    border-color: var(--blue-500);
+  }
+
+  &.selected {
+    background-color: var(--blue-500);
+    border-color: var(--blue-500);
+    color: white;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--blue-200);
+  }
+}
+
+.radioOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--paragraph-color);
+    font-size: 14px;
+    cursor: pointer;
+
+    input[type="radio"] {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 50%;
+      margin: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:checked {
+        border-color: var(--blue-500);
+        background-color: var(--blue-500);
+        box-shadow: inset 0 0 0 3px var(--foreground-color);
+      }
+
+      &:hover:not(:checked) {
+        border-color: var(--blue-400);
+      }
+    }
+  }
+}
+
+.attendanceSection {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-color);
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.closeButton {
+  position: absolute;
+  right: 24px;
+  top: 24px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--label-color);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--heading-color);
+  }
+
+  &:focus {
+    outline: none;
+    color: var(--heading-color);
+  }
+}
