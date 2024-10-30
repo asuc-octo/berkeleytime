@@ -165,6 +165,8 @@ export interface ISection {
   startDate: string;
   endDate: string;
   exams: IExam[];
+  attendanceRequired: boolean;
+  lecturesRecorded: boolean;
 }
 
 export interface IReservation {

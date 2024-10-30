@@ -1,10 +1,22 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { NavArrowDown } from 'iconoir-react';
 import * as Tooltip from "@radix-ui/react-tooltip";
-import * as Dialog from "@radix-ui/react-dialog";
 import { Container, Button } from "@repo/theme";
-import styles from './Ratings.module.scss';
+import { UserFeedbackModal } from '@/components/UserFeedbackModal';
 import ClassContext from "@/contexts/ClassContext";
+import styles from './Ratings.module.scss';
+
+interface TooltipContentProps {
+  title: string;
+  description: string;
+}
+
+const TooltipContent: React.FC<TooltipContentProps> = ({ title, description }) => (
+  <div>
+    <h4 className={styles.tooltipTitle}>{title}</h4>
+    <p className={styles.tooltipDescription}>{description}</p>
+  </div>
+);
 
 interface RatingDetailProps {
   title: string;
@@ -27,19 +39,22 @@ const RatingDetail: React.FC<RatingDetailProps> = ({
   reviewCount
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [shouldAnimate, setShouldAnimate] = useState(true);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
 
-  // Start animation slightly after expansion
   useEffect(() => {
+    let timer: NodeJS.Timeout;
     if (isExpanded) {
-      const timer = setTimeout(() => {
-        setShouldAnimate(true);
-      }, 200); // Delay to match the slideDown animation
-      return () => {
-        clearTimeout(timer);
-        setShouldAnimate(false);
-      };
+      setShouldAnimate(false);
+      // Using requestAnimationFrame for smoother animation
+      requestAnimationFrame(() => {
+        timer = setTimeout(() => {
+          setShouldAnimate(true);
+        }, 50);
+      });
     }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [isExpanded]);
 
   return (
@@ -92,7 +107,7 @@ const RatingDetail: React.FC<RatingDetailProps> = ({
                   className={styles.bar}
                   style={{ 
                     width: shouldAnimate ? `${stat.percentage}%` : '0%',
-                    transitionDelay: `${index * 100}ms`
+                    transitionDelay: `${index * 60}ms`
                   }}
                 />
               </div>
@@ -107,122 +122,10 @@ const RatingDetail: React.FC<RatingDetailProps> = ({
   );
 };
 
-interface TooltipContentProps {
-  title: string;
-  description: string;
-}
-
-const TooltipContent: React.FC<TooltipContentProps> = ({ title, description }) => (
-  <div>
-    <h4 className={styles.tooltipTitle}>{title}</h4>
-    <p className={styles.tooltipDescription}>{description}</p>
-  </div>
-);
-
-function RatingModal() {
-  const { class: currentClass } = useContext(ClassContext);
-  const [ratings, setRatings] = useState({
-    usefulness: 0,
-    difficulty: 0,
-    workload: 0
-  });
-
-  const handleRatingClick = (type: 'usefulness' | 'difficulty' | 'workload', value: number) => {
-    setRatings(prev => ({
-      ...prev,
-      [type]: value,
-      [type]: prev[type] === value ? 0 : value
-    }));
-  };
-
-  const getRatingButtonClass = (type: 'usefulness' | 'difficulty' | 'workload', value: number) => {
-    return `${styles.ratingButton} ${ratings[type] === value ? styles.selected : ''}`;
-  };
-
-  return (
-    <Dialog.Portal>
-      <Dialog.Overlay className={styles.overlay} />
-      <Dialog.Content className={styles.modal}>
-        <div className={styles.modalHeader}>
-          <Dialog.Title className={styles.modalTitle}>
-            Rate Course
-          </Dialog.Title>
-          <Dialog.Description className={styles.modalSubtitle}>
-            {currentClass.subject} {currentClass.courseNumber} • {currentClass.semester} {currentClass.year}
-          </Dialog.Description>
-        </div>
-
-        <div className={styles.modalContent}>
-          <div className={styles.ratingQuestion}>
-            <h3>1. How would you rate the usefulness of this course?</h3>
-            <div className={styles.ratingScale}>
-              <span>Not useful</span>
-              <div className={styles.ratingButtons}>
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <button
-                    key={value}
-                    className={getRatingButtonClass('usefulness', value)}
-                    onClick={() => handleRatingClick('usefulness', value)}
-                  >
-                    {value}
-                  </button>
-                ))}
-              </div>
-              <span>Very useful</span>
-            </div>
-          </div>
-
-          <div className={styles.ratingQuestion}>
-            <h3>2. How would you rate the difficulty of this course?</h3>
-            <div className={styles.ratingScale}>
-              <span>Very easy</span>
-              <div className={styles.ratingButtons}>
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <button
-                    key={value}
-                    className={getRatingButtonClass('difficulty', value)}
-                    onClick={() => handleRatingClick('difficulty', value)}
-                  >
-                    {value}
-                  </button>
-                ))}
-              </div>
-              <span>Very difficult</span>
-            </div>
-          </div>
-
-          <div className={styles.ratingQuestion}>
-            <h3>3. How would you rate the workload of this course?</h3>
-            <div className={styles.ratingScale}>
-              <span>Very light</span>
-              <div className={styles.ratingButtons}>
-                {[1, 2, 3, 4, 5].map((value) => (
-                  <button
-                    key={value}
-                    className={getRatingButtonClass('workload', value)}
-                    onClick={() => handleRatingClick('workload', value)}
-                  >
-                    {value}
-                  </button>
-                ))}
-              </div>
-              <span>Very heavy</span>
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.modalFooter}>
-          <Dialog.Close asChild>
-            <Button variant="secondary">Cancel</Button>
-          </Dialog.Close>
-          <Button>Submit Rating</Button>
-        </div>
-      </Dialog.Content>
-    </Dialog.Portal>
-  );
-}
-
 export default function Ratings() {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const { class: currentClass } = useContext(ClassContext);
+
   const ratingsData = [
     {
       title: "Usefulness",
@@ -272,12 +175,7 @@ export default function Ratings() {
     <div className={styles.root}>
       <Container size="sm">
         <div className={styles.header}>
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <Button>Add a review</Button>
-            </Dialog.Trigger>
-            <RatingModal />
-          </Dialog.Root>
+          <Button onClick={() => setModalOpen(true)}>Add a review</Button>
         </div>
         <div className={styles.ratingsContainer}>
           {ratingsData.map((ratingData) => (
@@ -287,6 +185,14 @@ export default function Ratings() {
             />
           ))}
         </div>
+
+        <UserFeedbackModal
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          title="Rate Course"
+          subtitle={`${currentClass.subject} ${currentClass.courseNumber} • ${currentClass.semester} ${currentClass.year}`}
+          currentClass={currentClass}
+        />
       </Container>
     </div>
   );
