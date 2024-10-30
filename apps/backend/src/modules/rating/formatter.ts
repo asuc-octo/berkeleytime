@@ -6,7 +6,6 @@ import {
   Category,
   Semester
 } from '../../generated-types/graphql';
-// mongo -> graphql (models -> typedefs)
 
 export const formatUserRating = (rating: RatingType): Rating => ({
   subject: rating.subject,
@@ -21,31 +20,26 @@ export const formatUserRating = (rating: RatingType): Rating => ({
   value: rating.value
 });
 
-// does mongo always return an array? single return val vs multiple val
 export const formatUserRatings = (ratings: any[]): Rating[] => {
   return ratings.map(formatUserRating);
 };
 
-// grandparent group by class -> done
-// parent group by metricName
-// group by category name -> aggregate metrics into count
 const formatCategories = (metric: any): Category[] => {
-  const categories: { [key: string]: number } = {};
+  const categories = new Map<number, number>();
   for (const rating of metric.ratings) {
     const category = rating.category;
-    if (categories[category]) {
-      categories[category] += 1;
-    } else {
-      categories[category] = 1;
-    }
+    categories.set(category, (categories.get(category) || 0) + 1);
   }
-  return Object.keys(categories).map(key => ({
-    value: key,
-    count: categories[key]
+  return Array.from(categories).map(([value, count]) => ({
+    value,
+    count
   }));
 }
 
 const formatMetrics = (ratings: any): Metric[] => {
+
+  // TODO: add descriptor logic
+
   const descriptor = 'test';
   const metrics: { [key: string]: any[] } = {};
   for (const rating of ratings) {
@@ -65,7 +59,6 @@ const formatMetrics = (ratings: any): Metric[] => {
 }
 
 export const formatClassRatings = (ratings: any): AggregatedRatings => ({
-  // use the first rating to get the class identifier (assume not empty)
   subject: ratings[0].subject,
   courseNumber: ratings[0].courseNumber,
   semester: ratings[0].semester,

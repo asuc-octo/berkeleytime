@@ -53,9 +53,6 @@ type RatingIdentifier {
     semester: Semester!
     year: Int!
     class: String!
-
-    "User(google_id) & Metrics Identifers"
-    createdBy: String!
     metricName: String!
 }
 type Mutation {
