@@ -53,16 +53,31 @@ export const createRating = async (
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
+  const numberScaleMetrics = ['Usefulness', 'Difficulty', 'Workload'] as const;
+  const booleanScaleMetrics = ['Attendance', 'Recording'] as const;
+
+  if (numberScaleMetrics.includes(ratingIdentifier.metricName as typeof numberScaleMetrics[number])) {
+    if (value < 1 || value > 5 || !Number.isInteger(value)) {
+      throw new Error(`${ratingIdentifier.metricName} rating must be an integer between 1 and 5`);
+    }
+  } else if (booleanScaleMetrics.includes(ratingIdentifier.metricName as typeof booleanScaleMetrics[number])) {
+    if (value !== 0 && value !== 1) {
+      throw new Error(`${ratingIdentifier.metricName} rating must be either 0 or 1`);
+    }
+  }
+  // potentially enforece value at mongodb level? - models file
+
   const existingRating = await checkRatingExists(context, ratingIdentifier);
   if (existingRating) {
     existingRating.value = value;
     return existingRating.save();
   }
 
+  // potential vunerability with rating identifier?
   const newRating = new RatingModel({
     ...ratingIdentifier,
     createdBy: context.user._id,
-    value
+    value: value
   });
   return newRating.save();
 };

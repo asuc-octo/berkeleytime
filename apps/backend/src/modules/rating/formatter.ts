@@ -4,7 +4,8 @@ import {
   AggregatedRatings,
   Metric,
   Category,
-  Semester
+  Semester,
+  MetricName
 } from '../../generated-types/graphql';
 
 export const formatUserRating = (rating: RatingType): Rating => ({
@@ -16,7 +17,7 @@ export const formatUserRating = (rating: RatingType): Rating => ({
 
   createdBy: rating.google_id,
 
-  metricName: rating.metricName,
+  metricName: rating.metricName as MetricName,
   value: rating.value
 });
 
@@ -37,24 +38,30 @@ const formatCategories = (metric: any): Category[] => {
 }
 
 const formatMetrics = (ratings: any): Metric[] => {
-
-  // TODO: add descriptor logic
-
   const descriptor = 'test';
-  const metrics: { [key: string]: any[] } = {};
+  const metrics: Record<MetricName, any[]> = {
+    Attendance: [],
+    Difficulty: [],
+    Recording: [],
+    Usefulness: [],
+    Workload: []
+  };
+  
   for (const rating of ratings) {
-    if (metrics[rating.metricName]) {
-      metrics[rating.metricName] += rating;
+    const metricName = rating.metricName as MetricName;
+    if (metrics[metricName]) {
+      metrics[metricName].push(rating);
     } else {
-      metrics[rating.metricName] = [rating];
+      metrics[metricName] = [rating];
     }
   }
-  return Object.keys(metrics).map(key => ({
-    metricName: key,
+  
+  return Object.entries(metrics).map(([key, ratings]) => ({
+    metricName: key as MetricName,
     descriptor: descriptor,
-    count: metrics[key].length,
-    mean: metrics[key].reduce((acc, curr) => acc + curr.value, 0) / metrics[key].length,
-    categories: formatCategories(metrics[key])
+    count: ratings.length,
+    mean: ratings.reduce((acc, curr) => acc + curr.value, 0) / ratings.length,
+    categories: formatCategories(ratings)
   }));
 }
 

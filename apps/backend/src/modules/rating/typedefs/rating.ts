@@ -1,6 +1,14 @@
 import { gql } from "graphql-tag";
 
 const typedef = gql`
+enum MetricName {
+    Usefulness
+    Difficulty
+    Workload
+    Attendance
+    Recording
+}
+
 type AggregatedRatings {
     "Class identifer"
     subject: String!
@@ -12,7 +20,7 @@ type AggregatedRatings {
     metrics: [Metric!]!
 }
 type Metric {
-    metricName: String!
+    metricName: MetricName!
     descriptor: String!
     count: Int!
     mean: Int!
@@ -32,7 +40,7 @@ type Rating {
 
     createdBy: String!
 
-    metricName: String!
+    metricName: MetricName!
     value: Int!
 }
 type ClassIdentifier {
@@ -53,7 +61,7 @@ type RatingIdentifier {
     semester: Semester!
     year: Int!
     class: String!
-    metricName: String!
+    metricName: MetricName!
 }
 type Mutation {
     createRating(rating: RatingIdentifier!, value: Int!): AggregatedRatings! @auth
