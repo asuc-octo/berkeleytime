@@ -47,5 +47,5 @@ jobs:
                 --set redisUri=redis://bt-stage-redis-master.bt.svc.cluster.local:6379
 
             # Check container status
-            kubectl rollout status --timeout=1200s deploy/bt-backend-staging
-            kubectl rollout status --timeout=1200s deploy/bt-frontend-staging
+            kubectl rollout status --timeout=1200s deployment bt-stage-app-backend
+            kubectl rollout status --timeout=1200s deployment bt-stage-app-frontend
