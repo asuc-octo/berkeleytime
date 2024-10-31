@@ -21,9 +21,8 @@ type AggregatedRatings {
 }
 type Metric {
     metricName: MetricName!
-    descriptor: String!
     count: Int!
-    mean: Int!
+    mean: Float!
     categories: [Category!]!
 }
 type Category {
