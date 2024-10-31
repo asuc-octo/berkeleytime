@@ -69,4 +69,4 @@ jobs:
               --set nodeEnv=development
 
             # Check container status
-            kubectl rollout status --timeout=1200s deploy/bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}
+            kubectl rollout status --timeout=1200s bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}
