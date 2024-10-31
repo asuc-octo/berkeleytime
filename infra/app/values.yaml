@@ -21,6 +21,13 @@ frontend:
     repository: octoberkeleytime/bt-frontend
     tag: prod
 
+  livenessProbe:
+    exec:
+      command:
+        - false
+    initialDelaySeconds: 0
+    periodSeconds: 1
+
 backend:
   replicas: 2
 
@@ -31,6 +38,13 @@ backend:
     registry: docker.io
     repository: octoberkeleytime/bt-backend
     tag: prod
+
+  livenessProbe:
+    exec:
+      command:
+        - false
+    initialDelaySeconds: 0
+    periodSeconds: 1
 
 updater:
   schedule: "0 0 * * *"
