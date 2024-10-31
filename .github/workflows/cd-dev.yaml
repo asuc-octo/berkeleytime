@@ -57,7 +57,7 @@ jobs:
             # Uninstall the old helm chart if it exists
             helm uninstall bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} || true
 
-            # Install new chart; this will fail the script if an error occurs
+            # Install new chart
             helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} ./app --namespace=bt \
               --set env=dev \
               --set ttl=${{ inputs.ttl }} \
@@ -67,3 +67,7 @@ jobs:
               --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
               --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
               --set nodeEnv=development
+
+            # Check container status
+            kubectl rollout status --timeout=1200s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-backend
+            kubectl rollout status --timeout=1200s deployment bt-dev-app-${{ needs.compute-sha.outputs.sha_short }}-frontend

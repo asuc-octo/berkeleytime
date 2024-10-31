@@ -48,3 +48,7 @@ jobs:
               # Install the Helm release if it doesn't exist
               helm install bt-prod-app ./app --namespace=bt \
                 --set host=stanfurdtime.com
+
+            # Check container status
+            kubectl rollout status --timeout=1200s deployment bt-prod-app-backend
+            kubectl rollout status --timeout=1200s deployment bt-prod-app-frontend
