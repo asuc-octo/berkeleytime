@@ -316,6 +316,9 @@ const initialize = async () => {
   try {
     await mongooseLoader();
 
+    let emptyArr = new Array();
+    console.log(emptyArr[0].toUpperCase());
+    
     console.log("\n=== UPDATE TERMS ===");
     await updateTerms();
 
