@@ -50,5 +50,5 @@ jobs:
                 --set host=stanfurdtime.com
 
             # Check container status
-            kubectl rollout status --timeout=1200s deploy/bt-backend-prod
-            kubectl rollout status --timeout=1200s deploy/bt-frontend-prod
+            kubectl rollout status --timeout=1200s deployment bt-prod-app-backend
+            kubectl rollout status --timeout=1200s deployment bt-prod-app-frontend
