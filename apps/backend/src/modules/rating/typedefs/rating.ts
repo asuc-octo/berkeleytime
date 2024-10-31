@@ -9,6 +9,9 @@ enum MetricName {
     Recording
 }
 
+"""
+Ratings by class
+"""
 type AggregatedRatings {
     "Class identifer"
     subject: String!
@@ -29,7 +32,15 @@ type Category {
     value: Int!
     count: Int!
 }
-type Rating {
+
+"""
+Ratings by user
+"""
+type UserRatings {
+    createdBy: String!
+    classes: [UserClass!]!
+}
+type UserClass {
     "Class identifer"
     subject: String!
     courseNumber: String!
@@ -37,12 +48,18 @@ type Rating {
     year: Int!
     class: String!
 
-    createdBy: String!
-
+    metrics: [UserMetric!]!
+}
+type UserMetric {
     metricName: MetricName!
     value: Int!
 }
+
+"""
+Get data
+"""
 type ClassIdentifier {
+    "Class identifer"
     subject: String!
     courseNumber: String!
     semester: Semester!
@@ -51,8 +68,12 @@ type ClassIdentifier {
 }
 type Query {
     aggregatedRatings(classIdentifier: ClassIdentifier!, isAllTime: Boolean!): AggregatedRatings!
-    userRatings(subject: String!, number: String!): [Rating!]! @auth
+    userRatings(subject: String!, number: String!): UserRatings! @auth
 }
+
+"""
+Modify data
+"""
 type RatingIdentifier {
     "Class Identifers"
     subject: String!
@@ -60,6 +81,7 @@ type RatingIdentifier {
     semester: Semester!
     year: Int!
     class: String!
+
     metricName: MetricName!
 }
 type Mutation {

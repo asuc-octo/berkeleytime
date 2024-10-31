@@ -7,7 +7,7 @@ import { RatingModule } from "./generated-types/module-types";
 
 const resolvers: RatingModule.Resolvers = {
   Query: {
-    aggregatedRatings: async (_, { classIdentifier, isAllTime }, context) => {
+    aggregatedRatings: async (_, { classIdentifier, isAllTime }) => {
       const aggregatedRatings = await getAggregatedRatings(classIdentifier, isAllTime);
       return aggregatedRatings as unknown as RatingModule.AggregatedRatings;
     },
