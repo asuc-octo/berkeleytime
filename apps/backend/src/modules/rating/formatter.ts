@@ -12,6 +12,7 @@ import {
   export const formatUserRatings = (ratings: UserRatings): UserRatings => {
   return {
     createdBy: ratings.createdBy,
+    count: ratings.count,
     classes: ratings.classes.map((userClass: UserClass) => ({
       subject: userClass.subject,
       courseNumber: userClass.courseNumber,
