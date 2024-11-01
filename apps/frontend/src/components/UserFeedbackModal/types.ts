@@ -3,4 +3,5 @@ export interface ClassData {
   courseNumber: string;
   semester: string;
   year: string;
+  number: string;
 }

@@ -35,11 +35,11 @@ export function UserFeedbackModal({
             </Dialog.Title>
             <div className={styles.subtitleRow}>
               <Dialog.Description className={styles.modalSubtitle}>
-                {currentClass.subject} {currentClass.courseNumber}
+                {currentClass.subject} {currentClass.courseNumber} {currentClass.number}
               </Dialog.Description>
               <select className={styles.termDropdown}>
                 <option>Fall 2024</option>
-                <option>testing</option>
+                <option>{currentClass.semester} {currentClass.year} </option>
                 <option>testing</option>
                 {/* figure out to get all da terms */}
                 {/* change ratings based on terms */} 
