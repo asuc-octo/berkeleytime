@@ -9,30 +9,6 @@ import {
   formatAggregatedRatings
 } from "./formatter";
 
-const checkRatingExists = async (context: any, ratingIdentifier: RatingIdentifier) => {
-  const existingRating = await RatingModel.findOne({
-    ...ratingIdentifier,
-    createdBy: context.user._id
-  });
-  return existingRating;
-};
-
-// potentially enforece value at mongodb level? - models file
-const checkValueConstraint = (metricName: MetricName, value: number) => {
-  const numberScaleMetrics = ['Usefulness', 'Difficulty', 'Workload'] as const;
-  const booleanScaleMetrics = ['Attendance', 'Recording'] as const; 
-
-  if (numberScaleMetrics.includes(metricName as typeof numberScaleMetrics[number])) {
-    if (value < 1 || value > 5 || !Number.isInteger(value)) {
-      throw new Error(`${metricName} rating must be an integer between 1 and 5`);
-    }
-  } else if (booleanScaleMetrics.includes(metricName as typeof booleanScaleMetrics[number])) {
-    if (value !== 0 && value !== 1) {
-      throw new Error(`${metricName} rating must be either 0 or 1`);
-    }
-  }
-}
-
 export const createRating = async (
   context: any, 
   ratingIdentifier: RatingIdentifier,
@@ -43,29 +19,41 @@ export const createRating = async (
   const existingRating = await checkRatingExists(context, ratingIdentifier);
   if (existingRating) {
     existingRating.value = value;
-    return existingRating.save();
+    await existingRating.save();
   }
-  const newRating = new RatingModel({
-    ...ratingIdentifier,
-    createdBy: context.user._id,
-    value: value
-  });
-  return newRating.save();
+  else {
+    await RatingModel.create({
+      ...ratingIdentifier,
+      createdBy: context.user._id,
+      value: value
+    });
+  }
+  const aggregated = await ratingAggregator(ratingIdentifier);
+  if (!aggregated.length) return null;
+  
+  return formatAggregatedRatings(aggregated[0]);
 };
 
 export const deleteRating = async (context: any, ratingIdentifier: RatingIdentifier) => {
   if (!context.user._id) throw new Error("Unauthorized");
-  const deletedRating = await RatingModel.findOneAndDelete({
+
+  await RatingModel.findOneAndDelete({
     ...ratingIdentifier,
     createdBy: context.user._id
   });
-  return deletedRating;
+
+  const aggregated = await ratingAggregator(ratingIdentifier);
+  if (!aggregated.length) return null;
+
+  return formatAggregatedRatings(aggregated[0]);
 };
 
 export const getUserRatings = async (context: any) => {
   if (!context.user._id) throw new Error("Unauthorized");
+
   const userRatings = await userRatingAggregator(context);
   if (!userRatings.length) return null;
+
   return formatUserRatings(userRatings[0]);
 };
 
@@ -85,8 +73,33 @@ export const getAggregatedRatings = async (
   }
   const aggregated = await ratingAggregator(filter);
   if (!aggregated.length) return null;
+
   return formatAggregatedRatings(aggregated[0]);
 };
+
+// Helper functions
+
+const checkRatingExists = async (context: any, ratingIdentifier: RatingIdentifier) => {
+  return await RatingModel.findOne({
+    ...ratingIdentifier,
+    createdBy: context.user._id
+  });
+};
+
+const checkValueConstraint = (metricName: MetricName, value: number) => {
+  const numberScaleMetrics = ['Usefulness', 'Difficulty', 'Workload'] as const;
+  const booleanScaleMetrics = ['Attendance', 'Recording'] as const; 
+
+  if (numberScaleMetrics.includes(metricName as typeof numberScaleMetrics[number])) {
+    if (value < 1 || value > 5 || !Number.isInteger(value)) {
+      throw new Error(`${metricName} rating must be an integer between 1 and 5`);
+    }
+  } else if (booleanScaleMetrics.includes(metricName as typeof booleanScaleMetrics[number])) {
+    if (value !== 0 && value !== 1) {
+      throw new Error(`${metricName} rating must be either 0 or 1`);
+    }
+  }
+}
 
 const userRatingAggregator = async (context: any) => {
   return await RatingModel.aggregate([
