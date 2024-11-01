@@ -1,4 +1,6 @@
-import { RatingModel } from '@repo/common';
+import { 
+  RatingModel
+} from '@repo/common';
 import {
   ClassIdentifier,
   MetricName,
@@ -9,14 +11,14 @@ import {
   formatAggregatedRatings
 } from "./formatter";
 
-// TODO: get list of all avaiable semesters with ratings (check for class offered?)
 // TODO: get list of all available semesters class offered in
 // TODO: get user ratings for given class
+
+// Front end calls getCourse(subject, number) to get semesters offered. getClassesByCourse
 
 export const createRating = async (
   context: any, 
   ratingIdentifier: RatingIdentifier,
-  email: string,
   value: number
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
@@ -33,7 +35,6 @@ export const createRating = async (
   else {
     await RatingModel.create({
       createdBy: context.user._id,
-      email: email,
       ...ratingIdentifier,
       value: value
     });
@@ -52,7 +53,7 @@ export const deleteRating = async (
 
   await RatingModel.findOneAndDelete({
     createdBy: context.user._id,
-    ...ratingIdentifier,
+    ...ratingIdentifier
   });
 
   return true;
@@ -118,7 +119,6 @@ const userRatingAggregator = async (context: any) => {
       $group: {
         _id: {
           createdBy: "$createdBy",
-          email: "$email",
           subject: "$subject",
           courseNumber: "$courseNumber",
           semester: "$semester",
@@ -138,7 +138,6 @@ const userRatingAggregator = async (context: any) => {
       $group: {
         _id: {
           createdBy: "$_id.createdBy",
-          email: "$_id.email"
         },
         classes: {
           $push: {
@@ -156,7 +155,6 @@ const userRatingAggregator = async (context: any) => {
     {
       $project: {
         _id: 0,
-        email: "$_id.email",
         createdBy: "$_id.createdBy",
         count: "$totalCount",
         classes: 1
@@ -255,7 +253,6 @@ const ratingAggregator = async (filter: any) => {
 // example userRatingAggregator return value:
 // {
 //   createdBy: "Pine",
-//   email: "user@berkeley.edu",
 //   count: 2,
 //   classes: [
 //     {

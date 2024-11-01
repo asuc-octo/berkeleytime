@@ -48,7 +48,6 @@ Ratings by user
 """
 type UserRatings {
     createdBy: String!
-    email: String!
     count: Int!
     classes: [UserClass!]!
 }
@@ -102,10 +101,11 @@ input RatingIdentifier {
 type Mutation {
     createRating(
         rating: RatingIdentifier!
-        email: String!
         value: Int!
     ): AggregatedRatings! @auth
-    deleteRating(rating: RatingIdentifier!): Boolean! @auth
+    deleteRating(
+        rating: RatingIdentifier!
+    ): Boolean! @auth
 }
 `;
 
