@@ -22,8 +22,8 @@ export const getClassesByCourse = async (
   courseNumber: string
 ) => {
   const classes = await ClassModel.find({
-    "subjectArea.code": subjectArea,
-    "catalogNumber.formatted": courseNumber,
+    "course.subjectArea.code": subjectArea,
+    "course.catalogNumber.formatted": courseNumber,
   }).lean();
 
   return classes.map(formatClass);
