@@ -13,18 +13,6 @@ import {
 // TODO: get list of all available semesters class offered in
 // TODO: get user ratings for given class
 
-export const getClassRatingsForUser = async (
-  context: any,
-  classIdentifier: ClassIdentifier
-) => {
-  if (!context.user._id) throw new Error("Unauthorized");
-
-  const aggregated = await ratingAggregator(classIdentifier);
-  if (!aggregated.length) return null;
-
-  return formatAggregatedRatings(aggregated[0]);
-};
-
 export const createRating = async (
   context: any, 
   ratingIdentifier: RatingIdentifier,
