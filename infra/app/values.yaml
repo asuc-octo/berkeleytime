@@ -35,4 +35,4 @@ backend:
 updater:
   schedule: "0 0 * * *"
   suspend: false
-  command: ["/bin/sh", "-c", "npm run update:catalog;"]
+  command: ["npm", "run", "update:catalog", "--workspace=backend"]
