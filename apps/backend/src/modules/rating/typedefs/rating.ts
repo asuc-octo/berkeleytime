@@ -52,7 +52,7 @@ type UserRatings {
     classes: [UserClass!]!
 }
 type UserClass {
-    "Class identifer"
+    "Class Identifiers"
     subject: String!
     courseNumber: String! 
     semester: Semester!
@@ -65,12 +65,16 @@ type UserMetric {
     metricName: MetricName!
     value: Int!
 }
+type SemesterAvailable {
+    year: Int!
+    semester: Semester!
+}
 
 """
 Get data
 """
 input ClassIdentifier {
-    "Class identifer"
+    "Class Identifiers"
     subject: String!
     courseNumber: String!
     semester: Semester!
@@ -82,14 +86,20 @@ type Query {
         classIdentifier: ClassIdentifier!
         isAllTime: Boolean!
     ): AggregatedRatings!
+
     userRatings: UserRatings! @auth
+
+    semestersOffered(
+        subject: String!
+        courseNumber: String!
+    ): [SemesterAvailable!]!
 }
 
 """
 Modify data
 """
 input RatingIdentifier {
-    "Class Identifers"
+    "Class Identifiers"
     subject: String!
     courseNumber: String!
     semester: Semester!
@@ -103,6 +113,7 @@ type Mutation {
         rating: RatingIdentifier!
         value: Int!
     ): AggregatedRatings! @auth
+
     deleteRating(
         rating: RatingIdentifier!
     ): Boolean! @auth

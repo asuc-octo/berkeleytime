@@ -8,13 +8,12 @@ import {
 } from "../../generated-types/graphql";
 import {
   formatUserRatings,
-  formatAggregatedRatings
+  formatAggregatedRatings,
+  formatSemesters
 } from "./formatter";
 
 // TODO: get list of all available semesters class offered in
 // TODO: get user ratings for given class
-
-// Front end calls getCourse(subject, number) to get semesters offered. getClassesByCourse
 
 export const createRating = async (
   context: any, 
@@ -30,7 +29,8 @@ export const createRating = async (
     await existingRating.save();
   }
 
-  // TODO: add ratechecking for user (get timestamps of most recent ratings)
+  // TODO: add ratechecking for user 
+  // (get timestamps of most recent ratings)
 
   else {
     await RatingModel.create({
@@ -88,16 +88,30 @@ export const getAggregatedRatings = async (
   return formatAggregatedRatings(aggregated[0]);
 };
 
+export const getSemestersOffered = async (
+  subject: string, 
+  courseNumber: string
+) => {
+  const semesters = await semesterAggregator(subject, courseNumber);
+  return formatSemesters(semesters);
+};
+
 // Helper functions
 
-const checkRatingExists = async (context: any, ratingIdentifier: RatingIdentifier) => {
+const checkRatingExists = async (
+  context: any, 
+  ratingIdentifier: RatingIdentifier
+) => {
   return await RatingModel.findOne({
     ...ratingIdentifier,
     createdBy: context.user._id
   });
 };
 
-const checkValueConstraint = (metricName: MetricName, value: number) => {
+const checkValueConstraint = (
+  metricName: MetricName, 
+  value: number
+) => {
   const numberScaleMetrics = ['Usefulness', 'Difficulty', 'Workload'] as const;
   const booleanScaleMetrics = ['Attendance', 'Recording'] as const; 
 
@@ -250,70 +264,13 @@ const ratingAggregator = async (filter: any) => {
   ]);
 };
 
-// example userRatingAggregator return value:
-// {
-//   createdBy: "Pine",
-//   count: 2,
-//   classes: [
-//     {
-//       subject: "COMPSCI",
-//       courseNumber: "1001",
-//       semester: "FALL",
-//       year: 2023,
-//       class: "61B",
-//       metrics: [
-//         { metricName: "Difficulty", value: 4, updatedAt: "2024-03-20T15:30:45.123Z" },
-//         { metricName: "Workload", value: 3, updatedAt: "2024-03-20T15:30:45.123Z" },
-//         { metricName: "Usefulness", value: 5, updatedAt: "2024-03-20T15:30:45.123Z" },
-//         { metricName: "Attendance", value: 0, updatedAt: "2024-03-20T15:30:45.123Z" },
-//         { metricName: "Recording", value: 1, updatedAt: "2024-03-20T15:30:45.123Z" }
-//       ]
-//     },
-//     {
-//       subject: "DATA",
-//       courseNumber: "1002",
-//       semester: "SPRING",
-//       year: 2024,
-//       class: "140",
-//       metrics: [
-//         { metricName: "Difficulty", value: 5, updatedAt: "2024-03-20T15:30:45.123Z" },
-//         { metricName: "Recording", value: 0, updatedAt: "2024-03-20T15:30:45.123Z" }
-//       ]
-//     }
-//   ],
-// }
-
-// example ratingAggregator return value:
-// {
-//   subject: "COMPSCI",
-//   courseNumber: "1003",
-//   semester: "FALL",
-//   year: 2023,
-//   class: "70",
-//   metrics: [
-//     {
-//       metricName: "Difficulty",
-//       count: 45,
-//       weightedAverage: 3.44,
-//       categories: [
-//         { value: 5, count: 10 },
-//         { value: 4, count: 15 },
-//         { value: 3, count: 10 },
-//         { value: 2, count: 5 },
-//         { value: 1, count: 5 }
-//       ]
-//     },
-//     {
-//       metricName: "Workload",
-//       count: 92,
-//       weightedAverage: 2.8,
-//       categories: [
-//         { value: 5, count: 15 },
-//         { value: 4, count: 12 },
-//         { value: 3, count: 10 },
-//         { value: 2, count: 50 },
-//         { value: 1, count: 5 }
-//       ]
-//     },
-//   ]
-// }
+const semesterAggregator = async (
+  subject: string, 
+  courseNumber: string
+) => {
+  return await RatingModel.aggregate([
+    { $match: { subject: subject, courseNumber: courseNumber } },
+    { $group: { _id: { semester: "$semester", year: "$year" } } },
+    { $project: { _id: 0, semester: "$_id.semester", year: "$_id.year" } }
+  ]);
+};
