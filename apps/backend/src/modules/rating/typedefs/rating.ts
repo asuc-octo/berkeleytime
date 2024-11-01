@@ -2,18 +2,21 @@ import { gql } from "graphql-tag";
 
 const typedef = gql`
 enum MetricName {
+    "Numerical metrics"
     Usefulness
     Difficulty
     Workload
+
+    "Boolean metrics"
     Attendance
     Recording
 }
 
 enum Semester {
-Fall
-Spring
-Summer
-Winter
+    Fall
+    Spring
+    Summer
+    Winter
 }
 
 """
@@ -32,7 +35,7 @@ type AggregatedRatings {
 type Metric {
     metricName: MetricName!
     count: Int!
-    mean: Float!
+    weightedAverage: Float!
     categories: [Category!]!
 }
 type Category {
@@ -45,6 +48,7 @@ Ratings by user
 """
 type UserRatings {
     createdBy: String!
+    email: String!
     count: Int!
     classes: [UserClass!]!
 }
@@ -75,7 +79,10 @@ input ClassIdentifier {
     class: String!
 }
 type Query {
-    aggregatedRatings(classIdentifier: ClassIdentifier!, isAllTime: Boolean!): AggregatedRatings!
+    aggregatedRatings(
+        classIdentifier: ClassIdentifier!
+        isAllTime: Boolean!
+    ): AggregatedRatings!
     userRatings: UserRatings! @auth
 }
 
@@ -93,7 +100,11 @@ input RatingIdentifier {
     metricName: MetricName!
 }
 type Mutation {
-    createRating(rating: RatingIdentifier!, value: Int!): AggregatedRatings! @auth
+    createRating(
+        rating: RatingIdentifier!
+        email: String!
+        value: Int!
+    ): AggregatedRatings! @auth
     deleteRating(rating: RatingIdentifier!): Boolean! @auth
 }
 `;

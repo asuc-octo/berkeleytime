@@ -18,8 +18,8 @@ const resolvers: RatingModule.Resolvers = {
     }
   },
   Mutation: {
-    createRating: async (_, { rating, value }, context) => {
-      const newRating = await createRating(context, rating, value);
+    createRating: async (_, { rating, email, value }, context) => {
+      const newRating = await createRating(context, rating, email, value);
       return newRating as unknown as RatingModule.AggregatedRatings;
     },
     deleteRating: async (_, { rating }, context) => {

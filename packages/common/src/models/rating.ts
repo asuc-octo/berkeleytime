@@ -8,6 +8,12 @@ const ratingSchema = new Schema({
     required: true,
     immutable: true,
   },
+  email: {
+    type: String,
+    trim: true,
+    required: true,
+    immutable: true,
+  },
   subject: {
     type: String,
     required: true,

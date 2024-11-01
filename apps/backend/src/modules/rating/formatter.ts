@@ -12,6 +12,7 @@ import {
   export const formatUserRatings = (ratings: UserRatings): UserRatings => {
   return {
     createdBy: ratings.createdBy,
+    email: ratings.email,
     count: ratings.count,
     classes: ratings.classes.map((userClass: UserClass) => ({
       subject: userClass.subject,
@@ -37,7 +38,7 @@ export const formatAggregatedRatings = (aggregated: AggregatedRatings): Aggregat
     metrics: aggregated.metrics.map((metric: Metric) => ({
       metricName: metric.metricName as MetricName,
       count: metric.count,
-      mean: metric.mean,
+      weightedAverage: metric.weightedAverage,
       categories: metric.categories.map((category: Category) => ({
         value: category.value,
         count: category.count
