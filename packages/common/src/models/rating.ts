@@ -2,14 +2,7 @@ import mongoose, { InferSchemaType, Schema } from "mongoose";
 
 const ratingSchema = new Schema({
   _id: Schema.Types.ObjectId,
-  google_id: {
-    type: String,
-    trim: true,
-    required: true,
-    immutable: true,
-    select: false,
-  },
-  email: {
+  createdBy: {
     type: String,
     trim: true,
     required: true,

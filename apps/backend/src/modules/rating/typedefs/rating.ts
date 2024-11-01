@@ -9,6 +9,13 @@ enum MetricName {
     Recording
 }
 
+enum Semester {
+Fall
+Spring
+Summer
+Winter
+}
+
 """
 Ratings by class
 """
@@ -44,7 +51,7 @@ type UserRatings {
 type UserClass {
     "Class identifer"
     subject: String!
-    courseNumber: String!
+    courseNumber: String! 
     semester: Semester!
     year: Int!
     class: String!
@@ -59,7 +66,7 @@ type UserMetric {
 """
 Get data
 """
-type ClassIdentifier {
+input ClassIdentifier {
     "Class identifer"
     subject: String!
     courseNumber: String!
@@ -75,7 +82,7 @@ type Query {
 """
 Modify data
 """
-type RatingIdentifier {
+input RatingIdentifier {
     "Class Identifers"
     subject: String!
     courseNumber: String!
@@ -87,7 +94,7 @@ type RatingIdentifier {
 }
 type Mutation {
     createRating(rating: RatingIdentifier!, value: Int!): AggregatedRatings! @auth
-    deleteRating(rating: RatingIdentifier!): AggregatedRatings! @auth
+    deleteRating(rating: RatingIdentifier!): Boolean! @auth
 }
 `;
 

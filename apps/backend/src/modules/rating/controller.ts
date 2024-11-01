@@ -42,10 +42,7 @@ export const deleteRating = async (context: any, ratingIdentifier: RatingIdentif
     createdBy: context.user._id
   });
 
-  const aggregated = await ratingAggregator(ratingIdentifier);
-  if (!aggregated.length) return null;
-
-  return formatAggregatedRatings(aggregated[0]);
+  return true;
 };
 
 export const getUserRatings = async (context: any) => {
@@ -101,7 +98,38 @@ const checkValueConstraint = (metricName: MetricName, value: number) => {
   }
 }
 
-// add counts for classes rated?
+// example return value:
+// {
+//   createdBy: "Pine",
+//   count: 2,
+//   classes: [
+//     {
+//       subject: "COMPSCI",
+//       courseNumber: "1001",
+//       semester: "FALL",
+//       year: 2023,
+//       class: "61B",
+//       metrics: [
+//         { metricName: "Difficulty", value: 4 },
+//         { metricName: "Workload", value: 3 },
+//         { metricName: "Usefulness", value: 5 },
+//         { metricName: "Attendance", value: 0 }
+//         { metricName: "Recording", value: 1 }
+//       ]
+//     },
+//     {
+//       subject: "DATA",
+//       courseNumber: "1002",
+//       semester: "SPRING",
+//       year: 2024,
+//       class: "140",
+//       metrics: [
+//         { metricName: "Difficulty", value: 5 },
+//         { metricName: "Recording", value: 0 }
+//       ]
+//     }
+//   ],
+// }
 const userRatingAggregator = async (context: any) => {
   return await RatingModel.aggregate([
     { $match: { createdBy: context.user._id } },
@@ -145,13 +173,47 @@ const userRatingAggregator = async (context: any) => {
       $project: {
         _id: 0,
         createdBy: "$_id.createdBy",
-        classes: 1,
-        count: "$totalCount"
+        count: "$totalCount",
+        classes: 1
       }
     }
   ]);
 };
 
+// example return value:
+// {
+//   subject: "COMPSCI",
+//   courseNumber: "1003",
+//   semester: "FALL",
+//   year: 2023,
+//   class: "70",
+//   metrics: [
+//     {
+//       metricName: "Difficulty",
+//       count: 521,
+//       mean: 3.8,
+//       categories: [
+//         { value: "5", count: 10 },
+//         { value: "4", count: 15 },
+//         { value: "3", count: 10 },
+//         { value: "2", count: 5 },
+//         { value: "1", count: 5 }
+//       ]
+//     },
+//     {
+//       metricName: "Workload",
+//       count: 452,
+//       mean: 4.2,
+//       categories: [
+//         { value: "5", count: 15 },
+//         { value: "4", count: 12 },
+//         { value: "3", count: 10 },
+//         { value: "2", count: 50 },
+//         { value: "1", count: 5 }
+//       ]
+//     },
+//   ]
+// }
 const ratingAggregator = async (filter: any) => {
   return await RatingModel.aggregate([
     { $match: filter },

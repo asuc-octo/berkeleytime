@@ -24,7 +24,7 @@ const resolvers: RatingModule.Resolvers = {
     },
     deleteRating: async (_, { rating }, context) => {
       const deletedRating = await deleteRating(context, rating);
-      return deletedRating as unknown as RatingModule.AggregatedRatings;
+      return deletedRating as unknown as boolean;
     }
   }
 };
