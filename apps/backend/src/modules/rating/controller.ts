@@ -9,7 +9,21 @@ import {
   formatAggregatedRatings
 } from "./formatter";
 
+// TODO: get list of all avaiable semesters with ratings (check for class offered?)
+// TODO: get list of all available semesters class offered in
 // TODO: get user ratings for given class
+
+export const getClassRatingsForUser = async (
+  context: any,
+  classIdentifier: ClassIdentifier
+) => {
+  if (!context.user._id) throw new Error("Unauthorized");
+
+  const aggregated = await ratingAggregator(classIdentifier);
+  if (!aggregated.length) return null;
+
+  return formatAggregatedRatings(aggregated[0]);
+};
 
 export const createRating = async (
   context: any, 
@@ -19,11 +33,15 @@ export const createRating = async (
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
   checkValueConstraint(ratingIdentifier.metricName, value);
+
   const existingRating = await checkRatingExists(context, ratingIdentifier);
   if (existingRating) {
     existingRating.value = value;
     await existingRating.save();
   }
+
+  // TODO: add ratechecking for user (get timestamps of most recent ratings)
+
   else {
     await RatingModel.create({
       createdBy: context.user._id,
@@ -122,7 +140,8 @@ const userRatingAggregator = async (context: any) => {
         metrics: {
           $push: {
             metricName: "$metricName",
-            value: "$value"
+            value: "$value",
+            // updatedAt: "$updatedAt" - not sure how to do the typedef
           }
         }
       }
@@ -258,11 +277,11 @@ const ratingAggregator = async (filter: any) => {
 //       year: 2023,
 //       class: "61B",
 //       metrics: [
-//         { metricName: "Difficulty", value: 4 },
-//         { metricName: "Workload", value: 3 },
-//         { metricName: "Usefulness", value: 5 },
-//         { metricName: "Attendance", value: 0 }
-//         { metricName: "Recording", value: 1 }
+//         { metricName: "Difficulty", value: 4, updatedAt: "2024-03-20T15:30:45.123Z" },
+//         { metricName: "Workload", value: 3, updatedAt: "2024-03-20T15:30:45.123Z" },
+//         { metricName: "Usefulness", value: 5, updatedAt: "2024-03-20T15:30:45.123Z" },
+//         { metricName: "Attendance", value: 0, updatedAt: "2024-03-20T15:30:45.123Z" },
+//         { metricName: "Recording", value: 1, updatedAt: "2024-03-20T15:30:45.123Z" }
 //       ]
 //     },
 //     {
@@ -272,8 +291,8 @@ const ratingAggregator = async (filter: any) => {
 //       year: 2024,
 //       class: "140",
 //       metrics: [
-//         { metricName: "Difficulty", value: 5 },
-//         { metricName: "Recording", value: 0 }
+//         { metricName: "Difficulty", value: 5, updatedAt: "2024-03-20T15:30:45.123Z" },
+//         { metricName: "Recording", value: 0, updatedAt: "2024-03-20T15:30:45.123Z" }
 //       ]
 //     }
 //   ],
@@ -292,11 +311,11 @@ const ratingAggregator = async (filter: any) => {
 //       count: 45,
 //       weightedAverage: 3.44,
 //       categories: [
-//         { value: "5", count: 10 },
-//         { value: "4", count: 15 },
-//         { value: "3", count: 10 },
-//         { value: "2", count: 5 },
-//         { value: "1", count: 5 }
+//         { value: 5, count: 10 },
+//         { value: 4, count: 15 },
+//         { value: 3, count: 10 },
+//         { value: 2, count: 5 },
+//         { value: 1, count: 5 }
 //       ]
 //     },
 //     {
@@ -304,11 +323,11 @@ const ratingAggregator = async (filter: any) => {
 //       count: 92,
 //       weightedAverage: 2.8,
 //       categories: [
-//         { value: "5", count: 15 },
-//         { value: "4", count: 12 },
-//         { value: "3", count: 10 },
-//         { value: "2", count: 50 },
-//         { value: "1", count: 5 }
+//         { value: 5, count: 15 },
+//         { value: 4, count: 12 },
+//         { value: 3, count: 10 },
+//         { value: 2, count: 50 },
+//         { value: 1, count: 5 }
 //       ]
 //     },
 //   ]

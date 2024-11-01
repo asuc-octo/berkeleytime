@@ -14,12 +14,14 @@ import {
     createdBy: ratings.createdBy,
     email: ratings.email,
     count: ratings.count,
+
     classes: ratings.classes.map((userClass: UserClass) => ({
       subject: userClass.subject,
       courseNumber: userClass.courseNumber,
       semester: userClass.semester as Semester,
       year: userClass.year,
       class: userClass.class,
+
       metrics: userClass.metrics.map((userMetric: UserMetric) => ({ 
         metricName: userMetric.metricName as MetricName,
         value: userMetric.value
@@ -35,10 +37,12 @@ export const formatAggregatedRatings = (aggregated: AggregatedRatings): Aggregat
     semester: aggregated.semester as Semester,
     year: aggregated.year,
     class: aggregated.class,
+
     metrics: aggregated.metrics.map((metric: Metric) => ({
       metricName: metric.metricName as MetricName,
       count: metric.count,
       weightedAverage: metric.weightedAverage,
+      
       categories: metric.categories.map((category: Category) => ({
         value: category.value,
         count: category.count
