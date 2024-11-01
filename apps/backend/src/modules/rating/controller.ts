@@ -63,8 +63,11 @@ export const getUserRatings = async (context: any) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
   const userRatings = await userRatingAggregator(context);
-  if (!userRatings.length) return null;
-
+  if (!userRatings.length) return {
+    createdBy: context.user._id,
+    count: 0,
+    classes: []
+  };
   return formatUserRatings(userRatings[0]);
 };
 
@@ -83,7 +86,14 @@ export const getAggregatedRatings = async (
     };
   }
   const aggregated = await ratingAggregator(filter);
-  if (!aggregated.length) return null;
+  if (!aggregated.length) return {
+    subject: classIdentifier.subject,
+    courseNumber: classIdentifier.courseNumber,
+    semester: classIdentifier.semester,
+    year: classIdentifier.year,
+    class: classIdentifier.class,
+    metrics: []
+  };
 
   return formatAggregatedRatings(aggregated[0]);
 };
