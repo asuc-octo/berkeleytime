@@ -38,6 +38,7 @@ Ratings by user
 """
 type UserRatings {
     createdBy: String!
+    count: Int!
     classes: [UserClass!]!
 }
 type UserClass {

@@ -101,6 +101,7 @@ const checkValueConstraint = (metricName: MetricName, value: number) => {
   }
 }
 
+// add counts for classes rated?
 const userRatingAggregator = async (context: any) => {
   return await RatingModel.aggregate([
     { $match: { createdBy: context.user._id } },
@@ -136,14 +137,16 @@ const userRatingAggregator = async (context: any) => {
             class: "$_id.class",
             metrics: "$metrics"
           }
-        }
+        },
+        totalCount: { $sum: 1 }
       }
     },
     {
       $project: {
         _id: 0,
         createdBy: "$_id.createdBy",
-        classes: 1
+        classes: 1,
+        count: "$totalCount"
       }
     }
   ]);
