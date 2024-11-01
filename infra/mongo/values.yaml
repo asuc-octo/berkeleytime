@@ -15,5 +15,7 @@ mongodb:
     existingClaim: bt-prod-mongo-pvc
 
     # path in pod. should be same for all mongo pods.
-    mountPath: /data/db
     size: 10Gi
+
+  volumePermissions:
+    enabled: true
