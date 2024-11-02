@@ -11,6 +11,7 @@ import {
 } from "./controller";
 import { IntermediateClass, IntermediateSection } from "./formatter";
 import { ClassModule } from "./generated-types/module-types";
+import { getAggregatedRatings } from "../rating/controller";
 
 const resolvers: ClassModule.Resolvers = {
   Query: {
@@ -98,6 +99,21 @@ const resolvers: ClassModule.Resolvers = {
       );
 
       return gradeDistribution;
+    },
+
+    aggregatedRatings: async (
+      parent: IntermediateClass | ClassModule.Class
+    ) => {
+      const aggregatedRatings = await getAggregatedRatings(
+        parent.subject,
+        parent.courseNumber,
+        parent.semester,
+        parent.year,
+        parent.number,
+        false
+      );
+
+      return aggregatedRatings;
     },
   },
 

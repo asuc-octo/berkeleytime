@@ -13,6 +13,7 @@ interface Relationships {
   primarySection: null;
   sections: null;
   gradeDistribution: null;
+  aggregatedRatings: null;
 }
 
 export type IntermediateClass = Omit<ClassModule.Class, keyof Relationships> &
@@ -43,6 +44,7 @@ export const formatClass = (_class: ClassType) => {
     term: null,
     primarySection: null,
     sections: null,
+    aggregatedRatings: null,
 
     description: _class.classDescription,
     gradingBasis: _class.gradingBasis?.description as ClassGradingBasis,

@@ -11,6 +11,9 @@ import {
   formatSemesters
 } from "./formatter";
 
+// TODO: test for cases intentionally trying to break mutation (out of bound values)
+// TODO: test for cases for fetching empty data
+
 export const createRating = async (
   context: any, 
   subject: string,
@@ -38,9 +41,6 @@ export const createRating = async (
     await existingRating.save();
   }
 
-  // TODO: add ratechecking for user 
-  // (get timestamps of most recent ratings)
-
   else {
     await RatingModel.create({
       createdBy: context.user._id,
@@ -61,6 +61,7 @@ export const createRating = async (
     year, 
     classNumber 
   });
+
   if (!aggregated.length) {
     return {
       subject,
@@ -115,7 +116,6 @@ export const getUserRatings = async (context: any) => {
   return formatUserRatings(userRatings[0]);
 };
 
-// is all time currently do not work
 export const getAggregatedRatings = async (
   subject: string,
   courseNumber: string,
@@ -215,9 +215,7 @@ const userRatingAggregator = async (context: any) => {
           classNumber: "$classNumber",
         },
         metrics: {
-          $push: {
-            metricName: "$metricName",
-            value: "$value",
+          $push: { metricName: "$metricName", value: "$value",
             // updatedAt: "$updatedAt" - not sure how to do the typedef
           }
         }
@@ -265,12 +263,7 @@ const ratingAggregator = async (filter: any) => {
         },
         totalCount: { $sum: 1 },
         sumValues: { $sum: "$value" },
-        categories: {
-          $push: {
-            value: "$value",
-            count: 1
-          }
-        }
+        categories: {$push: {value: "$value", count: 1}}
       }
     },
     {

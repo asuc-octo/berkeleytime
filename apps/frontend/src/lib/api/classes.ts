@@ -323,6 +323,19 @@ export const READ_CLASS = gql`
         startDate
         endDate
       }
+      aggregatedRatings {
+        classNumber
+        courseNumber
+        metrics {
+          categories {
+            count
+            value
+          }
+          count
+          metricName
+          weightedAverage
+        }
+      }
     }
   }
 `;
