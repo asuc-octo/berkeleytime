@@ -1,7 +1,8 @@
 import mongoose, { InferSchemaType, Schema } from "mongoose";
 
 const ratingSchema = new Schema({
-  _id: Schema.Types.ObjectId,
+  // auto generated id?
+  _id: { type: Schema.Types.ObjectId, auto: true },
   createdBy: {
     type: String,
     trim: true,
@@ -24,7 +25,7 @@ const ratingSchema = new Schema({
     type: Number,
     required: true,
   },
-  class: {
+  classNumber: {
     type: String,
     required: true,
   },
@@ -46,5 +47,5 @@ const ratingSchema = new Schema({
   },
 });
 
-export const RatingModel = mongoose.model("CrowdSource", ratingSchema,);
+export const RatingModel = mongoose.model("CrowdSource", ratingSchema);
 export type RatingType = InferSchemaType<typeof ratingSchema>;

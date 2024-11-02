@@ -2,9 +2,8 @@ import {
   RatingModel
 } from '@repo/common';
 import {
-  ClassIdentifier,
   MetricName,
-  RatingIdentifier
+  Semester
 } from "../../generated-types/graphql";
 import {
   formatUserRatings,
@@ -12,18 +11,28 @@ import {
   formatSemesters
 } from "./formatter";
 
-// TODO: get list of all available semesters class offered in
-// TODO: get user ratings for given class
-
 export const createRating = async (
   context: any, 
-  ratingIdentifier: RatingIdentifier,
+  subject: string,
+  courseNumber: string,
+  semester: Semester,
+  year: number,
+  classNumber: string,
+  metricName: MetricName,
   value: number
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
-  checkValueConstraint(ratingIdentifier.metricName, value);
+  checkValueConstraint(metricName, value);
 
-  const existingRating = await checkRatingExists(context, ratingIdentifier);
+  const existingRating = await checkRatingExists(
+    context, 
+    subject, 
+    courseNumber, 
+    semester, 
+    year, 
+    classNumber,
+    metricName
+  );
   if (existingRating) {
     existingRating.value = value;
     await existingRating.save();
@@ -35,26 +44,61 @@ export const createRating = async (
   else {
     await RatingModel.create({
       createdBy: context.user._id,
-      ...ratingIdentifier,
-      value: value
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metricName,
+      value
     });
   }
-  const aggregated = await ratingAggregator(ratingIdentifier);
-  if (!aggregated.length) return null;
-  
+
+  const aggregated = await ratingAggregator({ 
+    subject, 
+    courseNumber, 
+    semester, 
+    year, 
+    classNumber 
+  });
+  if (!aggregated.length) {
+    return {
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metrics: []
+    };
+  }
+
   return formatAggregatedRatings(aggregated[0]);
 };
 
 export const deleteRating = async (
   context: any, 
-  ratingIdentifier: RatingIdentifier
+  subject: string,
+  courseNumber: string,
+  semester: Semester,
+  year: number,
+  classNumber: string,
+  metricName: MetricName
 ) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
-  await RatingModel.findOneAndDelete({
+  const deletedRating = await RatingModel.findOneAndDelete({
     createdBy: context.user._id,
-    ...ratingIdentifier
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber,
+    metricName
   });
+
+  if (!deletedRating) {
+    throw new Error("Rating not found");
+  }
 
   return true;
 };
@@ -71,34 +115,45 @@ export const getUserRatings = async (context: any) => {
   return formatUserRatings(userRatings[0]);
 };
 
+// is all time currently do not work
 export const getAggregatedRatings = async (
-  classIdentifier: ClassIdentifier,
+  subject: string,
+  courseNumber: string,
+  semester: Semester,
+  year: number,
+  classNumber: string,
   isAllTime: boolean
 ) => {
   let filter;
   if (isAllTime) {
-    filter = classIdentifier;
+    filter = { 
+      subject, 
+      courseNumber, 
+      classNumber 
+    };
   } else {
     filter = {
-      subject: classIdentifier.subject,
-      courseNumber: classIdentifier.courseNumber,
-      class: classIdentifier.class
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber
     };
   }
   const aggregated = await ratingAggregator(filter);
   if (!aggregated.length) return {
-    subject: classIdentifier.subject,
-    courseNumber: classIdentifier.courseNumber,
-    semester: classIdentifier.semester,
-    year: classIdentifier.year,
-    class: classIdentifier.class,
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber,
     metrics: []
   };
 
   return formatAggregatedRatings(aggregated[0]);
 };
 
-export const getSemestersOffered = async (
+export const getSemestersWithRatings = async (
   subject: string, 
   courseNumber: string
 ) => {
@@ -110,10 +165,20 @@ export const getSemestersOffered = async (
 
 const checkRatingExists = async (
   context: any, 
-  ratingIdentifier: RatingIdentifier
+  subject: string,
+  courseNumber: string,
+  semester: Semester,
+  year: number,
+  classNumber: string,
+  metricName: MetricName
 ) => {
   return await RatingModel.findOne({
-    ...ratingIdentifier,
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber,
+    metricName,
     createdBy: context.user._id
   });
 };
@@ -147,7 +212,7 @@ const userRatingAggregator = async (context: any) => {
           courseNumber: "$courseNumber",
           semester: "$semester",
           year: "$year",
-          class: "$class",
+          classNumber: "$classNumber",
         },
         metrics: {
           $push: {
@@ -169,7 +234,7 @@ const userRatingAggregator = async (context: any) => {
             courseNumber: "$_id.courseNumber",
             semester: "$_id.semester",
             year: "$_id.year",
-            class: "$_id.class",
+            classNumber: "$_id.classNumber",
             metrics: "$metrics"
           }
         },
@@ -195,55 +260,31 @@ const ratingAggregator = async (filter: any) => {
         _id: {
           subject: "$subject",
           courseNumber: "$courseNumber",
-          semester: "$semester",
-          year: "$year",
-          class: "$class",
-          metricName: "$metricName",
-          category: "$category"
+          classNumber: "$classNumber",
+          metricName: "$metricName"
         },
-        categoryCount: { $sum: 1 },
-        values: { $push: "$value" }
-      }
-    },
-    {
-      $group: {
-        _id: {
-          subject: "$_id.subject",
-          courseNumber: "$_id.courseNumber",
-          semester: "$_id.semester",
-          year: "$_id.year",
-          class: "$_id.class",
-          metricName: "$_id.metricName"
-        },
-        totalCount: { $sum: "$categoryCount" },
-        sumValues: { $sum: { $sum: "$values" } },
+        totalCount: { $sum: 1 },
+        sumValues: { $sum: "$value" },
         categories: {
           $push: {
-            value: "$_id.category",
-            count: "$categoryCount"
+            value: "$value",
+            count: 1
           }
         }
       }
     },
     {
-      $addFields: {
-        weightedAverage: { $divide: ["$sumValues", "$totalCount"] }
-      }
-    },
-    {
       $group: {
         _id: {
           subject: "$_id.subject",
           courseNumber: "$_id.courseNumber",
-          semester: "$_id.semester",
-          year: "$_id.year",
-          class: "$_id.class"
+          classNumber: "$_id.classNumber"
         },
         metrics: {
           $push: {
             metricName: "$_id.metricName",
             count: "$totalCount",
-            weightedAverage: "$weightedAverage",
+            weightedAverage: { $divide: ["$sumValues", "$totalCount"] },
             categories: "$categories"
           }
         }
@@ -254,21 +295,8 @@ const ratingAggregator = async (filter: any) => {
         _id: 0,
         subject: "$_id.subject",
         courseNumber: "$_id.courseNumber",
-        semester: "$_id.semester",
-        year: "$_id.year",
-        class: "$_id.class",
-        metrics: {
-          $map: {
-            input: "$metrics",
-            as: "metric",
-            in: {
-              metricName: "$$metric.metricName",
-              count: "$$metric.count",
-              weightedAverage: "$$metric.weightedAverage",
-              categories: "$$metric.categories"
-            }
-          }
-        }
+        classNumber: "$_id.classNumber",
+        metrics: 1
       }
     }
   ]);

@@ -26,9 +26,7 @@ type AggregatedRatings {
     "Class identifer"
     subject: String!
     courseNumber: String!
-    semester: Semester!
-    year: Int!
-    class: String!
+    classNumber: String!
 
     metrics: [Metric!]!
 }
@@ -57,7 +55,7 @@ type UserClass {
     courseNumber: String! 
     semester: Semester!
     year: Int!
-    class: String!
+    classNumber: String!
 
     metrics: [UserMetric!]!
 }
@@ -73,23 +71,19 @@ type SemesterAvailable {
 """
 Get data
 """
-input ClassIdentifier {
-    "Class Identifiers"
-    subject: String!
-    courseNumber: String!
-    semester: Semester!
-    year: Int!
-    class: String!
-}
 type Query {
     aggregatedRatings(
-        classIdentifier: ClassIdentifier!
+        subject: String!
+        courseNumber: String!
+        semester: Semester!
+        year: Int!
+        classNumber: String!
         isAllTime: Boolean!
     ): AggregatedRatings!
 
     userRatings: UserRatings! @auth
 
-    semestersOffered(
+    semestersWithRatings(
         subject: String!
         courseNumber: String!
     ): [SemesterAvailable!]!
@@ -98,24 +92,27 @@ type Query {
 """
 Modify data
 """
-input RatingIdentifier {
-    "Class Identifiers"
-    subject: String!
-    courseNumber: String!
-    semester: Semester!
-    year: Int!
-    class: String!
-
-    metricName: MetricName!
-}
 type Mutation {
     createRating(
-        rating: RatingIdentifier!
+        "Class Identifiers"
+        subject: String!
+        courseNumber: String!
+        semester: Semester!
+        year: Int!
+        classNumber: String!
+
+        metricName: MetricName!
         value: Int!
     ): AggregatedRatings! @auth
 
     deleteRating(
-        rating: RatingIdentifier!
+        "Class Identifiers"
+        subject: String!
+        courseNumber: String!
+        semester: Semester!
+        year: Int!
+        classNumber: String!
+        metricName: MetricName!
     ): Boolean! @auth
 }
 `;

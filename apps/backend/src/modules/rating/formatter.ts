@@ -22,7 +22,7 @@ export const formatUserRatings = (
       courseNumber: userClass.courseNumber,
       semester: userClass.semester as Semester,
       year: userClass.year,
-      class: userClass.class,
+      classNumber: userClass.classNumber,
 
       metrics: userClass.metrics.map((userMetric: UserMetric) => ({ 
         metricName: userMetric.metricName as MetricName,
@@ -38,9 +38,7 @@ export const formatAggregatedRatings = (
   return {
     subject: aggregated.subject,
     courseNumber: aggregated.courseNumber,
-    semester: aggregated.semester as Semester,
-    year: aggregated.year,
-    class: aggregated.class,
+    classNumber: aggregated.classNumber,
 
     metrics: aggregated.metrics.map((metric: Metric) => ({
       metricName: metric.metricName as MetricName,
