@@ -11,89 +11,28 @@ Indicates exactly one field must be supplied and this field must not be `null`.
 """
 directive @oneOf on INPUT_OBJECT
 
-"""
-User account info.
-"""
 type User {
   email: String!
-  username: String!
-  first_name: String!
-  last_name: String!
-  major: [String!]!
-  last_login: String!
-  date_joined: String!
-  is_staff: Boolean!
-  is_active: Boolean!
-  email_class_update: Boolean!
-  email_grade_update: Boolean!
-  email_enrollment_opening: Boolean!
-  email_berkeleytime_update: Boolean!
-}
-
-"""
-User input type for mutations.
-"""
-input UserInput {
-  username: String
-  first_name: String
-  last_name: String
-  major: [String!]
-  email_class_update: Boolean
-  email_grade_update: Boolean
-  email_enrollment_opening: Boolean
-  email_berkeleytime_update: Boolean
+  student: Boolean!
+  bookmarkedCourses: [Course!]!
+  bookmarkedClasses: [Class!]!
 }
 
 type Query {
-  """
-  Query for user info.
-  """
   user: User
   grade(
     subject: String!
-    courseNum: String!
-    classNum: String
-    term: TermInput
-  ): Grade
-  course(subject: String!, courseNumber: String!, term: TermInput): Course
-  class(
-    subject: String!
     courseNumber: String!
-    term: TermInput!
-    classNumber: String!
-  ): Class
-  section(
-    subject: String!
-    courseNumber: String!
-    term: TermInput!
-    classNumber: String!
-    sectionNumber: String!
-  ): Section
-
-  """
-  Get info about all courses and their corresponding classes for a given semester.
-
-  Used primarily in the catalog page.
-  """
-  catalog(term: TermInput!): [Course!]
-
-  """
-  Get a list of all course names across all semesters.
-
-  Useful for searching for courses.
-  """
-  courseList: [Course!]
+    classNumber: String
+    year: Int
+    semester: Semester
+    givenName: String
+    familyName: String
+  ): GradeDistribution!
+  catalog(year: Int!, semester: Semester!): [Course!]!
   ping: String! @deprecated(reason: "test")
-
-  """
-  Takes in a user's email and returns all the schedules they created.
-  """
-  schedulesByUser: [Schedule]
-
-  """
-  Takes in a schedule's ObjectID and returns a specific schedule.
-  """
-  scheduleByID(id: String!): Schedule
+  schedules: [Schedule]
+  schedule(id: ID!): Schedule
 
   """
   Query for terms.
@@ -104,90 +43,224 @@ type Query {
   Query for a term.
   """
   term(year: Int!, semester: Semester!): Term
+  course(subject: String!, number: String!): Course
+  courses: [Course!]!
+  class(
+    year: Int!
+    semester: Semester!
+    subject: String!
+    courseNumber: String!
+    number: String!
+  ): Class
+  section(
+    year: Int!
+    semester: Semester!
+    subject: String!
+    courseNumber: String!
+    classNumber: String!
+    number: String!
+  ): Section
+  enrollment(
+    year: Int!
+    semester: Semester!
+    subject: String!
+    courseNumber: String!
+    number: String!
+  ): Section!
+}
+
+input BookmarkedCourseInput {
+  subject: String!
+  number: String!
+}
+
+input BookmarkedClassInput {
+  year: Int!
+  semester: Semester!
+  subject: String!
+  courseNumber: String!
+  number: String!
+}
+
+input UpdateUserInput {
+  bookmarkedClasses: [BookmarkedClassInput!]
+  bookmarkedCourses: [BookmarkedCourseInput!]
 }
 
 type Mutation {
-  """
-  Mutate user info.
-  """
-  updateUserInfo(newUserInfo: UserInput!): User
+  updateUser(user: UpdateUserInput!): User
+  deleteSchedule(id: ID!): ID
+  createSchedule(schedule: CreateScheduleInput!): Schedule
+  updateSchedule(id: ID!, schedule: UpdateScheduleInput!): Schedule
+}
 
-  """
-  Delete user account.
-  """
-  deleteUser: User
-
-  """
-  Takes in a schedule's ObjectID, deletes the schedule with that ID, and returns the ID.
-  """
-  removeScheduleByID(id: ID!): ID
-
-  """
-  Takes in schedule fields, creates a new schedule record in the database, and returns the schedule.
-  """
-  createNewSchedule(main_schedule: ScheduleInput!): Schedule
-
-  """
-  Takes in schedule fields, finds the schedule record in the database corresponding to the provided ID, updates the record, and returns the updated schedule.
-  """
-  editExistingSchedule(id: ID!, main_schedule: ScheduleInput!): Schedule
-
-  """
-  For the schedule specified by the ID, modifies the courses field and returns the updated schedule.
-  """
-  setSelectedClasses(id: ID!, courses: [SelectedCourseInput!]!): Schedule
+type GradeDistribution {
+  average: Float
+  distribution: [Grade!]!
 }
 
 type Grade {
-  average: Float
-  distribution: [GradeDistributionItem]
-}
-
-type GradeDistributionItem {
   letter: String!
   count: Int!
 }
 
+enum CacheControlScope {
+  PUBLIC
+  PRIVATE
+}
+
 """
-Info shared between Classes within and across semesters.
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
+scalar JSON
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
+"""
+ISODate custom scalar type
+"""
+scalar ISODate
+
+"""
+The combination of year and season that corresponds to a specific term. Both year and season/semester are required.
+"""
+input TermInput {
+  year: Int!
+  semester: Semester!
+}
+
+enum Semester {
+  Summer
+  Fall
+  Spring
+  Winter
+}
+
+type SelectedClass {
+  class: Class!
+  selectedSections: [Int!]
+}
+
+type Event {
+  startTime: String!
+  endTime: String!
+  days: [Boolean!]!
+  location: String
+  title: String!
+  description: String
+}
+
+type Schedule {
+  _id: ID!
+  name: String!
+  createdBy: String!
+  year: Int!
+  semester: String!
+  term: Term!
+  public: Boolean!
+  classes: [SelectedClass!]!
+  events: [Event!]!
+}
+
+input EventInput {
+  startTime: String!
+  endTime: String!
+  days: [Boolean!]!
+  location: String
+  title: String!
+  description: String
+}
+
+input SelectedClassInput {
+  subject: String!
+  courseNumber: String!
+  number: String!
+  sections: [Int!]!
+}
+
+input UpdateScheduleInput {
+  name: String
+  events: [EventInput]
+  classes: [SelectedClassInput]
+  public: Boolean
+}
+
+input CreateScheduleInput {
+  name: String!
+  year: Int!
+  semester: String!
+  events: [EventInput!]
+  classes: [SelectedClassInput!]
+  public: Boolean
+}
+
+enum TemporalPosition {
+  Past
+  Current
+  Future
+}
+
+"""
+Session
+"""
+type Session {
+  temporalPosition: TemporalPosition!
+  name: String!
+  startDate: String
+  endDate: String
+}
+
+"""
+Term
+"""
+type Term {
+  semester: Semester!
+  year: Int!
+  temporalPosition: TemporalPosition!
+  startDate: String!
+  endDate: String!
+  sessions: [Session!]!
+}
+
 type Course {
-  classes(term: TermInput): [Class!]!
+  """
+  Identifiers
+  """
+  subject: String!
+  number: String!
+
+  """
+  Relationships
+  """
+  classes: [Class!]!
   crossListing: [Course!]!
-  sections(term: TermInput, primary: Boolean): [Section!]!
   requiredCourses: [Course!]!
+
+  """
+  Attributes
+  """
   requirements: String
   description: String!
   fromDate: String!
-  gradeAverage: Float
+  gradeDistribution: GradeDistribution!
   gradingBasis: CourseGradingBasis!
   finalExam: CourseFinalExam
   academicCareer: AcademicCareer!
-  number: String!
-  subject: String!
   title: String!
   primaryInstructionMethod: InstructionMethod!
   toDate: String!
   typicallyOffered: [String!]
-  raw: JSONObject!
-  lastUpdated: ISODate!
 }
 
-enum AcademicCareer {
-  """
-  Undergraduate
-  """
-  UGRD
-
-  """
-  Graduate
-  """
-  GRAD
-
-  """
-  UC Extension
-  """
-  UCBX
+enum CourseGradingBasis {
+  completedNotation
+  passFail
+  letter
+  satisfactory
+  graded
 }
 
 enum CourseFinalExam {
@@ -217,240 +290,21 @@ enum CourseFinalExam {
   Y
 }
 
-enum CourseGradingBasis {
-  completedNotation
-  passFail
-  letter
-  satisfactory
-  graded
-}
-
-"""
-Data for a specific class in a specific semester. There may be more than one Class for a given Course in a given semester.
-"""
-type Class {
-  course: Course!
-  primarySection: Section!
-  sections: [Section!]!
-  session: Session!
-  gradingBasis: ClassGradingBasis!
-  finalExam: ClassFinalExam!
-  description: String
-  title: String
-  number: String!
-  semester: Semester!
-  year: Int!
-  unitsMax: Float!
-  unitsMin: Float!
-  raw: JSONObject!
-  lastUpdated: ISODate!
-}
-
-enum ClassFinalExam {
+enum AcademicCareer {
   """
-  Yes
+  Undergraduate
   """
-  Y
+  UGRD
 
   """
-  No
+  Graduate
   """
-  N
+  GRAD
 
   """
-  Alernate Method
+  UC Extension
   """
-  A
-
-  """
-  Common Final
-  """
-  C
-}
-
-enum ClassGradingBasis {
-  """
-  Elective Satisfactory/Unsat
-  """
-  ESU
-
-  """
-  Satisfactory/Unsatisfactory
-  """
-  SUS
-
-  """
-  Student Option
-  """
-  OPT
-
-  """
-  Pass/Not Pass
-  """
-  PNP
-
-  """
-  Multi-Term Course: Not Graded
-  """
-  BMT
-
-  """
-  Graded
-  """
-  GRD
-
-  """
-  Instructor Option
-  """
-  IOP
-}
-
-"""
-Session
-"""
-type Session {
-  temporalPosition: TemporalPosition!
-  name: String!
-  startDate: String
-  endDate: String
-}
-
-"""
-Sections are each associated with one Class.
-"""
-type Section {
-  class: Class!
-  course: Course!
-  enrollmentHistory: [EnrollmentDay!]
-  ccn: Int!
-  number: String!
-  primary: Boolean!
-  component: Component!
-  meetings: [Meeting!]!
-  exams: [Exam!]!
-  startDate: String!
-  endDate: String!
-  online: Boolean!
-  open: Boolean!
-  reservations: [Reservation!]
-  enrollCount: Int!
-  waitlistCount: Int!
-  enrollMax: Int!
-  waitlistMax: Int!
-  raw: JSONObject!
-  lastUpdated: ISODate!
-}
-
-enum Component {
-  """
-  Workshop
-  """
-  WOR
-
-  """
-  Web-Based Discussion
-  """
-  WBD
-
-  """
-  Clinic
-  """
-  CLN
-
-  """
-  Practicum
-  """
-  PRA
-
-  """
-  Directed Group Study
-  """
-  GRP
-
-  """
-  Discussion
-  """
-  DIS
-
-  """
-  Voluntary
-  """
-  VOL
-
-  """
-  Tutorial
-  """
-  TUT
-
-  """
-  Field Work
-  """
-  FLD
-
-  """
-  Lecture
-  """
-  LEC
-
-  """
-  Supplementary
-  """
-  SUP
-
-  """
-  Laboratory
-  """
-  LAB
-
-  """
-  Session
-  """
-  SES
-
-  """
-  Studio
-  """
-  STD
-
-  """
-  Self-paced
-  """
-  SLF
-
-  """
-  Colloquium
-  """
-  COL
-
-  """
-  Web-Based Lecture
-  """
-  WBL
-
-  """
-  Independent Study
-  """
-  IND
-
-  """
-  Internship
-  """
-  INT
-
-  """
-  Reading
-  """
-  REA
-
-  """
-  Recitation
-  """
-  REC
-
-  """
-  Seminar
-  """
-  SEM
+  UCBX
 }
 
 enum InstructionMethod {
@@ -565,6 +419,257 @@ enum InstructionMethod {
   SEM
 }
 
+type Class {
+  """
+  Identifiers
+  """
+  subject: String!
+  courseNumber: String!
+  number: String!
+  year: Int!
+  semester: Semester!
+  session: String!
+
+  """
+  Relationships
+  """
+  course: Course!
+  primarySection: Section!
+  sections: [Section!]!
+  term: Term!
+  gradeDistribution: GradeDistribution!
+
+  """
+  Attributes
+  """
+  gradingBasis: ClassGradingBasis!
+  finalExam: ClassFinalExam!
+  description: String
+  title: String
+  unitsMax: Float!
+  unitsMin: Float!
+}
+
+enum ClassFinalExam {
+  """
+  Yes
+  """
+  Y
+
+  """
+  No
+  """
+  N
+
+  """
+  Alernate Method
+  """
+  A
+
+  """
+  Common Final
+  """
+  C
+
+  """
+  Last Class Meeting
+  """
+  L
+}
+
+enum ClassGradingBasis {
+  """
+  Elective Satisfactory/Unsat
+  """
+  ESU
+
+  """
+  Satisfactory/Unsatisfactory
+  """
+  SUS
+
+  """
+  Student Option
+  """
+  OPT
+
+  """
+  Pass/Not Pass
+  """
+  PNP
+
+  """
+  Multi-Term Course: Not Graded
+  """
+  BMT
+
+  """
+  Graded
+  """
+  GRD
+
+  """
+  Instructor Option
+  """
+  IOP
+}
+
+type Section {
+  """
+  Identifiers
+  """
+  subject: String!
+  courseNumber: String!
+  classNumber: String!
+  number: String!
+  year: Int!
+  semester: Semester!
+  ccn: Int!
+
+  """
+  Relationships
+  """
+  class: Class!
+  course: Course!
+  term: Term!
+
+  """
+  Attributes
+  """
+  session: String!
+  primary: Boolean!
+  enrollmentHistory: [EnrollmentDay!]
+  component: Component!
+  meetings: [Meeting!]!
+  exams: [Exam!]!
+  startDate: String!
+  endDate: String!
+  online: Boolean!
+  open: Boolean!
+  reservations: [Reservation!]
+  enrollCount: Int!
+  waitlistCount: Int!
+  enrollMax: Int!
+  waitlistMax: Int!
+}
+
+enum Component {
+  """
+  Workshop
+  """
+  WOR
+
+  """
+  Web-Based Discussion
+  """
+  WBD
+
+  """
+  Clinic
+  """
+  CLN
+
+  """
+  Practicum
+  """
+  PRA
+
+  """
+  Directed Group Study
+  """
+  GRP
+
+  """
+  Discussion
+  """
+  DIS
+
+  """
+  Voluntary
+  """
+  VOL
+
+  """
+  Tutorial
+  """
+  TUT
+
+  """
+  Field Work
+  """
+  FLD
+
+  """
+  Lecture
+  """
+  LEC
+
+  """
+  Supplementary
+  """
+  SUP
+
+  """
+  Laboratory
+  """
+  LAB
+
+  """
+  Session
+  """
+  SES
+
+  """
+  Studio
+  """
+  STD
+
+  """
+  Self-paced
+  """
+  SLF
+
+  """
+  Colloquium
+  """
+  COL
+
+  """
+  Web-Based Lecture
+  """
+  WBL
+
+  """
+  Independent Study
+  """
+  IND
+
+  """
+  Internship
+  """
+  INT
+
+  """
+  Reading
+  """
+  REA
+
+  """
+  Recitation
+  """
+  REC
+
+  """
+  Seminar
+  """
+  SEM
+
+  """
+  Demonstration
+  """
+  DEM
+}
+
 type Reservation {
   enrollCount: Int!
   enrollMax: Int!
@@ -599,155 +704,4 @@ type EnrollmentDay {
   enrollMax: Int!
   waitlistCount: Int!
   waitlistMax: Int!
-}
-
-type CourseListItem {
-  subject: String!
-  number: String!
-}
-
-enum CacheControlScope {
-  PUBLIC
-  PRIVATE
-}
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
-
-"""
-The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSONObject
-
-"""
-ISODate custom scalar type
-"""
-scalar ISODate
-
-"""
-The combination of year and season that corresponds to a specific term. Both year and season/semester are required.
-"""
-input TermInput {
-  year: Int!
-  semester: Semester!
-}
-
-enum Semester {
-  Summer
-  Fall
-  Spring
-  Winter
-}
-
-type TermOutput {
-  year: Int!
-  semester: String!
-}
-
-input CustomEventInput {
-  start_time: String!
-  end_time: String!
-  title: String
-  location: String
-  description: String
-  days_of_week: String
-}
-
-input SelectedCourseInput {
-  class_ID: String!
-  primary_section_ID: String
-  secondary_section_IDs: [String!]
-}
-
-input ScheduleInput {
-  name: String
-  courses: [SelectedCourseInput!]
-  is_public: Boolean
-  term: TermInput!
-  custom_events: [CustomEventInput!]
-}
-
-type Schedule {
-  """
-  The ObjectID associated with the schedule record
-  """
-  _id: ID
-
-  """
-  The name of the schedule, such as "Oski's Fall schedule <3"
-  """
-  name: String
-
-  """
-  Identifier (probably email) for the user who created the schedule (such as oski@bereley.edu).
-  """
-  created_by: String!
-
-  """
-  Term corresponding to the schedule, such as "Fall 1986"
-  """
-  term: TermOutput!
-
-  """
-  Whether the user would like the schedule to be viewable by others.
-  """
-  is_public: Boolean!
-
-  """
-  Courses, see the SelectedCourse type below
-  """
-  courses: [SelectedCourse!]
-
-  """
-  Custom events, such as club meetings, that the user has added to their schedule.
-  """
-  custom_events: [CustomEvent!]
-  created: String!
-  revised: String!
-}
-
-type SelectedCourse {
-  """
-  Identifiers (probably cs-course-ids) for the classes the user has added to their schedule.
-  """
-  class_ID: String!
-
-  """
-  Identifiers (probably the "003" in "2022 Spring STAT 97 003") for the primary sections (typically lectures) the user has added to their schedule.
-  """
-  primary_section_ID: String
-
-  """
-  Identifiers (probably the "103" in "103 DIS") for the secondary sections (typically discussions) the user has added to their schedule.
-  """
-  secondary_section_IDs: [String!]
-}
-
-type CustomEvent {
-  start_time: String!
-  end_time: String!
-  title: String
-  location: String
-  description: String
-  days_of_week: String
-}
-
-enum TemporalPosition {
-  Past
-  Current
-  Future
-}
-
-"""
-Term
-"""
-type Term {
-  semester: Semester!
-  year: Int!
-  temporalPosition: TemporalPosition!
-  startDate: String
-  endDate: String
-  sessions: [Session!]!
 }

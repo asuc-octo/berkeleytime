@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { useQuery } from "@apollo/client";
 
-import { GET_SCHEDULES, GetSchedulesResponse, Semester } from "@/lib/api";
+import { READ_SCHEDULES, ReadSchedulesResponse, Semester } from "@/lib/api";
 
 import styles from "./Schedule.module.scss";
 
@@ -21,9 +21,9 @@ export default function Schedule({
   courseNumber,
   classNumber,
 }: ScheduleProps) {
-  const { data } = useQuery<GetSchedulesResponse>(GET_SCHEDULES);
+  const { data } = useQuery<ReadSchedulesResponse>(READ_SCHEDULES);
 
-  const schedules = useMemo(() => data?.schedulesByUser ?? [], [data]);
+  const schedules = useMemo(() => data?.schedules ?? [], [data]);
 
   const filteredSchedules = useMemo(
     () =>

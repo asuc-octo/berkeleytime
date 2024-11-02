@@ -1,0 +1,86 @@
+.overlay {
+  background: linear-gradient(
+    to left,
+    rgb(255 255 255 / 50%) 384px,
+    transparent
+  );
+  inset: 0;
+  position: fixed;
+  z-index: 988;
+
+  &[data-state="open"] {
+    animation: fadeIn 250ms ease-in;
+  }
+
+  &[data-state="closed"] {
+    animation: fadeOut 250ms ease-out;
+  }
+}
+
+.content {
+  width: 384px;
+  border-left: 1px solid var(--border-color);
+  flex-shrink: 0;
+  position: fixed;
+  height: 100dvh;
+  background-color: var(--background-color);
+  right: 0;
+  top: 0;
+  z-index: 989;
+
+  &[data-state="open"] {
+    animation: slideIn 150ms ease-out;
+  }
+
+  &[data-state="closed"] {
+    animation: slideOut 150ms ease-in;
+  }
+
+  .header {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--foreground-color);
+    display: flex;
+    gap: 12px;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}

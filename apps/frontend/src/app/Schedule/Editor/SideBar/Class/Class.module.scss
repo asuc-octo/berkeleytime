@@ -1,0 +1,124 @@
+.root {
+  display: flex;
+
+  &:global(.draggable-mirror) {
+    border-color: var(--blue-500);
+    z-index: 999;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
+  }
+
+  &:global(.draggable-source--is-dragging) {
+    background-color: transparent;
+    box-shadow: unset;
+    border-style: dashed;
+
+    .body {
+      visibility: hidden;
+    }
+  }
+
+  &:not(:global(.draggable-source--is-dragging)) {
+    box-shadow: 0 1px 2px rgb(0 0 0 / 2.5%);
+    background-color: var(--foreground-color);
+  }
+
+  .border {
+    width: 8px;
+    background-color: var(--purple-500);
+    border-radius: 8px 0 0 8px;
+  }
+
+  .body {
+    flex-grow: 1;
+    border-width: 1px 1px 1px 0;
+    border-radius: 0 8px 8px 0;
+    border-style: solid;
+    border-color: var(--border-color);
+    background-color: var(--foreground-color);
+    box-shadow: 0 1px 2px rgba(0 0 0 / 2.5%);
+    padding: 16px;
+  }
+
+  .group {
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .label {
+      font-size: 14px;
+      line-height: 1;
+      display: flex;
+      color: var(--label-color);
+
+      .component {
+        margin-left: 28px;
+      }
+
+      .time {
+        margin-left: auto;
+      }
+    }
+  }
+
+  .header {
+    display: flex;
+    cursor: pointer;
+    gap: 12px;
+    align-items: flex-start;
+    transition: all 100ms ease-in-out;
+
+    &:hover .icon {
+      color: var(--heading-color);
+    }
+
+    .icon {
+      color: var(--paragraph-color);
+      flex-shrink: 0;
+    }
+
+    .toolBar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .iconButton {
+        height: 24px;
+        width: 24px;
+      }
+    }
+
+    .text {
+      flex-grow: 1;
+      font-size: 14px;
+
+      .heading {
+        font-weight: 700;
+        color: var(--heading-color);
+        margin-bottom: 8px;
+        line-height: 1;
+      }
+
+      .description {
+        color: var(--paragraph-color);
+        line-height: 1.5;
+      }
+
+      .row {
+        display: flex;
+        gap: 12px;
+        margin-top: 12px;
+        align-items: center;
+        line-height: 1;
+
+        .units {
+          font-size: 14px;
+          user-select: none;
+          color: var(--paragraph-color);
+        }
+      }
+    }
+  }
+}

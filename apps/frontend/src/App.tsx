@@ -1,47 +1,54 @@
 import { lazy } from "react";
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import {
+  RouterProvider,
+  createBrowserRouter,
+  redirect,
+} from "react-router-dom";
+
+import { ThemeProvider } from "@repo/theme";
 
 import Catalog from "@/app/Catalog";
 import Enrollment from "@/app/Enrollment";
 import Grades from "@/app/Grades";
 import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
-import ThemeProvider from "@/components/ThemeProvider";
+import PinsProvider from "@/components/PinsProvider";
+
+const Class = {
+  Enrollment: lazy(() => import("@/components/Class/Enrollment")),
+  Grades: lazy(() => import("@/components/Class/Grades")),
+  Overview: lazy(() => import("@/components/Class/Overview")),
+  Sections: lazy(() => import("@/components/Class/Sections")),
+};
+
+const Course = {
+  Root: lazy(() => import("@/app/Course")),
+  Enrollment: lazy(() => import("@/components/Course/Enrollment")),
+  Grades: lazy(() => import("@/components/Course/Grades")),
+  Overview: lazy(() => import("@/components/Course/Overview")),
+  Classes: lazy(() => import("@/components/Course/Classes")),
+};
 
 const About = lazy(() => import("@/app/About"));
-const CatalogEnrollment = lazy(() => import("@/components/Class/Enrollment"));
-const CatalogGrades = lazy(() => import("@/components/Class/Grades"));
-const CatalogOverview = lazy(() => import("@/components/Class/Overview"));
-const CatalogSections = lazy(() => import("@/components/Class/Sections"));
 const Discover = lazy(() => import("@/app/Discover"));
 const Plan = lazy(() => import("@/app/Plan"));
 const Schedule = lazy(() => import("@/app/Schedule"));
-const Compare = lazy(() => import("@/app/Schedule/Compare"));
-const Manage = lazy(() => import("@/app/Schedule/Manage"));
+const Compare = lazy(() => import("@/app/Schedule/Comparison"));
+const Manage = lazy(() => import("@/app/Schedule/Editor"));
 const Schedules = lazy(() => import("@/app/Schedules"));
 const Map = lazy(() => import("@/app/Map"));
-const Account = lazy(() => import("@/app/Account"));
-const Dashboard = lazy(() => import("@/app/Dashboard"));
+const Plans = lazy(() => import("@/app/Plans"));
 
 const router = createBrowserRouter([
   {
-    element: <Dashboard />,
-    path: "dashboard",
-  },
-  {
-    element: <Layout header={false} />,
+    element: <Layout header={false} footer={false} />,
     children: [
       {
         element: <Discover />,
         path: "discover",
       },
-    ],
-  },
-  {
-    element: <Layout header={false} footer={false} />,
-    children: [
       {
         element: <Landing />,
         index: true,
@@ -56,7 +63,11 @@ const router = createBrowserRouter([
           },
           {
             element: <Compare />,
-            path: "compare/:comparedScheduleId?",
+            path: "compare/:comparisonId?",
+          },
+          {
+            path: "*",
+            loader: () => redirect("."),
           },
         ],
       },
@@ -73,10 +84,6 @@ const router = createBrowserRouter([
         element: <About />,
         path: "about",
       },
-      {
-        element: <Account />,
-        path: "account",
-      },
     ],
   },
   {
@@ -91,24 +98,54 @@ const router = createBrowserRouter([
         path: "enrollment",
       },
       {
-        element: <Catalog />,
-        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:classNumber?",
+        element: <Course.Root />,
+        path: "courses/:subject/:number",
         children: [
           {
-            element: <CatalogOverview />,
+            element: <Course.Overview />,
             index: true,
           },
           {
-            element: <CatalogSections />,
-            path: "sections",
+            element: <Course.Classes />,
+            path: "classes",
           },
           {
-            element: <CatalogEnrollment />,
+            element: <Course.Enrollment />,
             path: "enrollment",
           },
           {
-            element: <CatalogGrades />,
+            element: <Course.Grades />,
             path: "grades",
+          },
+          {
+            path: "*",
+            loader: () => redirect("."),
+          },
+        ],
+      },
+      {
+        element: <Catalog />,
+        path: "catalog/:year?/:semester?/:subject?/:courseNumber?/:number?",
+        children: [
+          {
+            element: <Class.Overview />,
+            index: true,
+          },
+          {
+            element: <Class.Sections />,
+            path: "sections",
+          },
+          {
+            element: <Class.Enrollment />,
+            path: "enrollment",
+          },
+          {
+            element: <Class.Grades />,
+            path: "grades",
+          },
+          {
+            path: "*",
+            loader: () => redirect("."),
           },
         ],
       },
@@ -117,10 +154,18 @@ const router = createBrowserRouter([
         path: "schedules",
       },
       {
+        element: <Plans />,
+        path: "plans",
+      },
+      {
         element: <Plan />,
-        path: "plan",
+        path: "plans/:planId",
       },
     ],
+  },
+  {
+    path: "*",
+    loader: () => redirect("/"),
   },
 ]);
 
@@ -133,7 +178,9 @@ export default function App() {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>
-        <RouterProvider router={router} />
+        <PinsProvider>
+          <RouterProvider router={router} />
+        </PinsProvider>
       </ThemeProvider>
     </ApolloProvider>
   );

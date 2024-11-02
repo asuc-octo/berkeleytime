@@ -11,7 +11,7 @@ export default function Course({
   subject,
   number,
   title,
-  gradeAverage,
+  gradeDistribution,
 }: ICourse) {
   return (
     <div className={classNames(styles.root, "draggable")}>
@@ -22,7 +22,7 @@ export default function Course({
           </p>
           <p className={styles.description}>{title}</p>
           <div className={styles.row}>
-            <AverageGrade gradeAverage={gradeAverage} />
+            <AverageGrade gradeDistribution={gradeDistribution} />
             <div className={styles.badge}>
               <Book />
               Major

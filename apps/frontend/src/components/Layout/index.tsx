@@ -1,14 +1,13 @@
 import { Suspense } from "react";
 
-import { MessageText } from "iconoir-react";
 import { Outlet } from "react-router";
 
-import Button from "@/components/Button";
+import { Boundary, LoadingIndicator } from "@repo/theme";
+
 import Footer from "@/components/Footer";
 import NavigationBar from "@/components/NavigationBar";
 
-import Boundary from "../Boundary";
-import LoadingIndicator from "../LoadingIndicator";
+import Feedback from "./Feedback";
 import styles from "./Layout.module.scss";
 
 interface LayoutProps {
@@ -20,7 +19,7 @@ interface LayoutProps {
 export default function Layout({
   header = true,
   footer = true,
-  feedback,
+  feedback = true,
 }: LayoutProps) {
   return (
     <div className={styles.root}>
@@ -29,7 +28,7 @@ export default function Layout({
         <Suspense
           fallback={
             <Boundary>
-              <LoadingIndicator />
+              <LoadingIndicator size="lg" />
             </Boundary>
           }
         >
@@ -37,19 +36,7 @@ export default function Layout({
         </Suspense>
       </div>
       {footer && <Footer />}
-      {feedback && (
-        <div className={styles.feedback}>
-          <Button
-            as="a"
-            href="https://forms.gle/zeAUQAHrMcrRJyhK6"
-            target="_blank"
-            className={styles.button}
-          >
-            <MessageText />
-            Provide feedback
-          </Button>
-        </div>
-      )}
+      {feedback && <Feedback />}
     </div>
   );
 }

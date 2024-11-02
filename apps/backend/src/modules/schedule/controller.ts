@@ -1,105 +1,124 @@
-import { omitBy } from "lodash";
-
-import { ScheduleModel } from "@repo/common";
+import { ClassModel, ScheduleModel, TermModel } from "@repo/common";
 
 import {
-  CustomEventInput,
-  Schedule,
-  ScheduleInput,
-  SelectedCourseInput,
+  CreateScheduleInput,
+  SelectedClassInput,
+  Semester,
+  UpdateScheduleInput,
 } from "../../generated-types/graphql";
+import { formatClass } from "../class/formatter";
+import { ClassModule } from "../class/generated-types/module-types";
 import { formatSchedule } from "./formatter";
+import { ScheduleModule } from "./generated-types/module-types";
 
-// get the schedules for a user
-export async function getSchedulesByUser(
-  context: any
-): Promise<Schedule[] | null> {
-  if (!context.user._id) throw new Error("User is not authenticated");
+export const getSchedules = async (context: any) => {
+  if (!context.user._id) throw new Error("Unauthorized");
 
-  const userSchedules = await ScheduleModel.find({
-    created_by: context.user._id,
+  const schedules = await ScheduleModel.find({
+    createdBy: context.user._id,
   });
-  if (userSchedules.length == 0) {
-    throw new Error("No schedules found for this user");
-  }
-  return userSchedules.map(formatSchedule);
-}
 
-// get the schedule for a user and a specific term
-export async function getScheduleByID(id: string): Promise<Schedule> {
-  const scheduleFromID = await ScheduleModel.findById({ _id: id });
-  if (!scheduleFromID) {
-    throw new Error("No schedules found with this ID");
-  }
-  return formatSchedule(scheduleFromID);
-}
+  return await Promise.all(schedules.map(formatSchedule));
+};
 
-// delete a schedule specified by ObjectID
-export async function removeSchedule(scheduleID: string): Promise<string> {
-  const deletedSchedule = await ScheduleModel.findByIdAndDelete(scheduleID);
-  if (!deletedSchedule) {
-    throw new Error("Schedule deletion failed");
-  }
-  return scheduleID;
-}
-
-function removeNullEventVals(custom_event: CustomEventInput) {
-  for (const key in custom_event) {
-    if (custom_event[key as keyof CustomEventInput] === null) {
-      delete custom_event[key as keyof CustomEventInput];
-    }
-  }
-}
-
-// create a new schedule
-export async function createSchedule(
-  main_schedule: ScheduleInput,
-  context: any
-): Promise<Schedule> {
-  if (!context.user._id) throw new Error("User is not authenticated");
-  if (main_schedule.custom_events) {
-    main_schedule.custom_events.forEach(removeNullEventVals);
-  }
-  const non_null_schedule = omitBy(main_schedule, (value) => value == null);
-  const newSchedule = await ScheduleModel.create({
-    ...non_null_schedule,
-    created_by: context.user._id,
+export const getSchedule = async (context: any, id: string) => {
+  const schedule = await ScheduleModel.findOne({
+    _id: id,
+    $or: [{ public: true }, { createdBy: context.user._id }],
   });
-  return formatSchedule(newSchedule);
-}
 
-// update an existing schedule
-export async function editSchedule(
-  schedule_ID: string,
-  main_schedule: ScheduleInput
-): Promise<Schedule> {
-  if (main_schedule.custom_events) {
-    main_schedule.custom_events.forEach(removeNullEventVals);
-  }
-  const non_null_schedule = omitBy(main_schedule, (value) => value == null);
-  const updatedSchedule = await ScheduleModel.findByIdAndUpdate(
-    schedule_ID,
-    non_null_schedule,
-    { returnDocument: "after" }
-  );
-  if (!updatedSchedule) {
-    throw new Error("Unable to update existing schedule");
-  }
-  return formatSchedule(updatedSchedule);
-}
+  if (!schedule) throw new Error("Not found");
 
-// update class selection in an existing schedule
-export async function setClasses(
-  scheduleID: string,
-  courses: SelectedCourseInput[]
-): Promise<Schedule> {
-  const existingSchedule = await ScheduleModel.findByIdAndUpdate(
-    scheduleID,
-    { courses: courses },
-    { returnDocument: "after" }
-  );
-  if (!existingSchedule) {
-    throw new Error("Unable to update existing schedule's class selection");
+  return await formatSchedule(schedule);
+};
+
+export const deleteSchedule = async (context: any, id: string) => {
+  const schedule = await ScheduleModel.findOneAndDelete({
+    _id: id,
+    createdBy: context.user._id,
+  });
+
+  if (!schedule) throw new Error("Not found");
+
+  return schedule._id.toString();
+};
+
+export const createSchedule = async (
+  context: any,
+  input: CreateScheduleInput
+) => {
+  if (!context.user._id) throw new Error("Unauthorized");
+
+  const term = await TermModel.findOne({
+    name: `${input.year} ${input.semester}`,
+  });
+
+  if (!term) throw new Error("Invalid term");
+
+  const schedule = await ScheduleModel.create({
+    ...input,
+    createdBy: context.user._id,
+  });
+
+  return await formatSchedule(schedule);
+};
+
+export const updateSchedule = async (
+  context: any,
+  id: string,
+  input: UpdateScheduleInput
+) => {
+  if (!context.user._id) throw new Error("Unauthorized");
+
+  // Filter out duplicates
+  if (input.classes) {
+    input.classes = input.classes.filter(
+      (selectedClass, index) =>
+        selectedClass &&
+        index ===
+          input.classes?.findIndex(
+            (currentClass) =>
+              currentClass &&
+              currentClass.subject === selectedClass.subject &&
+              currentClass.courseNumber === selectedClass.courseNumber &&
+              currentClass.number === selectedClass.number
+          )
+    );
   }
-  return formatSchedule(existingSchedule);
-}
+
+  const schedule = await ScheduleModel.findOneAndUpdate(
+    { _id: id, createdBy: context.user._id },
+    input,
+    { new: true }
+  );
+
+  if (!schedule) throw new Error("Not found");
+
+  return await formatSchedule(schedule);
+};
+
+export const getClasses = async (
+  year: Number,
+  semester: Semester,
+  selectedClasses: SelectedClassInput[]
+) => {
+  const classes = [];
+
+  for (const selectedClass of selectedClasses) {
+    const _class = await ClassModel.findOne({
+      number: selectedClass.number,
+      "course.subjectArea.code": selectedClass.subject,
+      "course.catalogNumber.formatted": selectedClass.courseNumber,
+      "session.term.name": `${year} ${semester}`,
+    }).lean();
+
+    if (!_class) continue;
+
+    classes.push({
+      class: formatClass(_class) as unknown as ClassModule.Class,
+      selectedSections: selectedClass.sections,
+    } as ScheduleModule.SelectedClass);
+  }
+
+  return classes;
+};

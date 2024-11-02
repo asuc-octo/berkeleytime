@@ -2,7 +2,8 @@ import { forwardRef } from "react";
 
 import { Plus } from "iconoir-react";
 
-import IconButton from "@/components/IconButton";
+import { IconButton } from "@repo/theme";
+
 import Units from "@/components/Units";
 import { ICourse, Semester } from "@/lib/api";
 

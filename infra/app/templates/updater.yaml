@@ -1,9 +1,11 @@
+{{ if not (eq .Values.env "dev") }}
+# do not run CronJob in dev environment
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "bt-app.cronJobName" . }}
+  name: {{ include "bt-app.updaterName" . }}
   labels:
-    {{- include "bt-app.backendLabels" . | nindent 4 }}
+    {{- include "bt-app.updaterLabels" . | nindent 4 }}
 spec:
   schedule: {{ .Values.updater.schedule }}
   suspend: {{ .Values.updater.suspend }}
@@ -14,6 +16,7 @@ spec:
           containers:
             - name: backend-cron-job
               image: {{ printf "%s/%s:%s" .Values.backend.image.registry .Values.backend.image.repository .Values.backend.image.tag }}
+              imagePullPolicy: Always
               command: {{ .Values.updater.command | toJson }}
               ports:
                 - containerPort: {{ .Values.backend.port }}
@@ -47,3 +50,4 @@ spec:
                 - name: SESSION_SECRET
                   value: "_"
           restartPolicy: OnFailure
+{{ end }}

@@ -60,5 +60,4 @@ WORKDIR /frontend
 
 RUN ["turbo", "run", "build", "--filter=frontend", "--env-mode=loose"]
 
-COPY /apps/frontend/dist ./apps/frontend/dist
 ENTRYPOINT ["turbo", "run", "start", "--filter=frontend"]

@@ -13,7 +13,7 @@ interface CourseProps {
 }
 
 const Course = forwardRef<HTMLDivElement, CourseProps & ICourse>(
-  ({ title, subject, number, gradeAverage, index, onClick }, ref) => {
+  ({ title, subject, number, gradeDistribution, index, onClick }, ref) => {
     return (
       <div
         className={styles.root}
@@ -27,7 +27,7 @@ const Course = forwardRef<HTMLDivElement, CourseProps & ICourse>(
           </p>
           <p className={styles.description}>{title}</p>
           <div className={styles.row}>
-            <AverageGrade gradeAverage={gradeAverage} />
+            <AverageGrade gradeDistribution={gradeDistribution} />
           </div>
         </div>
         <div className={styles.column}>

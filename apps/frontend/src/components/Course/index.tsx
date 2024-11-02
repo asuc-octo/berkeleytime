@@ -1,27 +1,42 @@
-import { ReactNode, Suspense, useMemo, useState } from "react";
+import { ReactNode, Suspense, useMemo } from "react";
 
-import { useQuery } from "@apollo/client";
-import { DialogClose } from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
 import classNames from "classnames";
-import { Bookmark, BookmarkSolid, CalendarPlus, Xmark } from "iconoir-react";
-import { NavLink, Outlet, useSearchParams } from "react-router-dom";
+import {
+  Bookmark,
+  BookmarkSolid,
+  Expand,
+  GridPlus,
+  Link as LinkIcon,
+  Pin,
+  PinSolid,
+  ShareIos,
+  Xmark,
+} from "iconoir-react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+
+import {
+  Boundary,
+  Container,
+  Dialog,
+  IconButton,
+  LoadingIndicator,
+  MenuItem,
+  Tooltip,
+} from "@repo/theme";
 
 import AverageGrade from "@/components/AverageGrade";
-import Boundary from "@/components/Boundary";
-import Container from "@/components/Container";
-import IconButton from "@/components/IconButton";
-import LoadingIndicator from "@/components/LoadingIndicator";
-import MenuItem from "@/components/MenuItem";
-import Tooltip from "@/components/Tooltip";
-import { GET_COURSE, GetCourseResponse, ICourse } from "@/lib/api";
+import CourseContext from "@/contexts/CourseContext";
+import { CoursePin } from "@/contexts/PinsContext";
+import { useReadCourse, useReadUser, useUpdateUser } from "@/hooks/api";
+import usePins from "@/hooks/usePins";
+import { ICourse } from "@/lib/api";
 
 import styles from "./Class.module.scss";
 import Classes from "./Classes";
 import Enrollment from "./Enrollment";
 import Grades from "./Grades";
 import Overview from "./Overview";
-import ClassContext from "./context";
 
 interface BodyProps {
   children: ReactNode;
@@ -59,85 +74,223 @@ function Root({ dialog, children }: RootProps) {
   );
 }
 
-interface CourseProps {
-  subject: string;
-  number: string;
-  partialCourse?: ICourse | null;
+interface BaseProps {
   dialog?: boolean;
 }
+
+interface ControlledProps extends BaseProps {
+  course: ICourse;
+  subject?: never;
+  number?: never;
+}
+
+interface UncontrolledProps extends BaseProps {
+  course?: never;
+  subject: string;
+  number: string;
+}
+
+export type CourseProps = ControlledProps | UncontrolledProps;
 
 export default function Course({
   subject,
   number,
-  partialCourse,
   dialog,
+  course: providedCourse,
 }: CourseProps) {
-  const [searchParams] = useSearchParams();
-  const [bookmarked, setBookmarked] = useState(false);
+  const { pins, addPin, removePin } = usePins();
 
-  const { data, loading } = useQuery<GetCourseResponse>(GET_COURSE, {
-    variables: {
-      subject,
-      number,
-    },
+  const location = useLocation();
+
+  const { data: user } = useReadUser();
+
+  const [updateUser] = useUpdateUser();
+
+  const { data, loading } = useReadCourse(subject as string, number as string, {
+    // Allow course to be provided
+    skip: !!providedCourse,
   });
 
-  // TODO: Properly type a partial ICourse
-  const course = useMemo(
-    () => (data?.course ?? partialCourse) as ICourse,
-    [data]
+  const course = useMemo(() => providedCourse ?? data, [providedCourse, data]);
+
+  const input = useMemo(() => {
+    if (!course) return;
+
+    return {
+      subject: course.subject,
+      number: course.number,
+    };
+  }, [course]);
+
+  const pin = useMemo(() => {
+    if (!input) return;
+
+    return {
+      id: `${input.subject}-${input.number}`,
+      type: "course",
+      data: input,
+    } as CoursePin;
+  }, [input, pins]);
+
+  const pinned = useMemo(() => {
+    if (!input) return;
+
+    return pins.find(
+      (pin) =>
+        pin.type === "course" &&
+        pin.data.subject === input.subject &&
+        pin.data.number === input.number
+    );
+  }, [input, pins]);
+
+  const bookmarked = useMemo(() => {
+    if (!user || !input) return;
+
+    return user.bookmarkedCourses.some(
+      (course) =>
+        course.subject === input.subject && course.number === input.number
+    );
+  }, [user, input]);
+
+  const context = useMemo(() => {
+    if (!course) return;
+
+    return {
+      title: `${course.subject} ${course.number}`,
+      text: course.title,
+      url: `${window.location.origin}/courses/${course.subject}/${course.number}`,
+    };
+  }, [course]);
+
+  const canShare = useMemo(
+    () => context && navigator.canShare && navigator.canShare(context),
+    [context]
   );
 
-  const search = useMemo(() => searchParams.toString(), [searchParams]);
+  const bookmark = async () => {
+    if (!user || !course) return;
 
+    const bookmarked = user.bookmarkedCourses.some(
+      (course) =>
+        course.subject === course.subject && course.number === course.number
+    );
+
+    const bookmarkedCourses = bookmarked
+      ? user.bookmarkedCourses.filter(
+          (course) =>
+            course.subject !== course.subject || course.number !== course.number
+        )
+      : user.bookmarkedCourses.concat(course);
+
+    await updateUser(
+      {
+        bookmarkedCourses: bookmarkedCourses.map((course) => ({
+          subject: course.subject,
+          number: course.number,
+        })),
+      },
+      {
+        optimisticResponse: {
+          updateUser: {
+            ...user,
+            bookmarkedCourses,
+          },
+        },
+      }
+    );
+  };
+
+  const share = () => {
+    if (!context) return;
+
+    if (canShare) {
+      try {
+        navigator.share(context);
+      } catch {
+        // TODO: Handle error
+      }
+
+      return;
+    }
+
+    try {
+      navigator.clipboard.writeText(context.url);
+    } catch {
+      // TODO: Handle error
+    }
+  };
+
+  // TODO: Loading state
+  if (loading) {
+    return <></>;
+  }
+
+  // TODO: Error state
+  if (!course || !pin) {
+    return <></>;
+  }
+
+  // TODO: Differentiate between class and course
   return (
     <Root dialog={dialog}>
       <div className={styles.header}>
-        <Container size="small">
+        <Container size="sm">
           <div className={styles.row}>
             <div className={styles.group}>
-              <Tooltip
-                content={bookmarked ? "Remove bookmark" : "Bookmark course"}
-              >
+              <Tooltip content={bookmarked ? "Remove bookmark" : "Bookmark"}>
                 <IconButton
                   className={classNames(styles.bookmark, {
                     [styles.active]: bookmarked,
                   })}
-                  onClick={() => setBookmarked(!bookmarked)}
+                  onClick={() => bookmark()}
                 >
                   {bookmarked ? <BookmarkSolid /> : <Bookmark />}
                 </IconButton>
               </Tooltip>
-              <Tooltip content="Add class to schedule">
+              <Tooltip content={pinned ? "Remove pin" : "Pin"}>
+                <IconButton
+                  className={classNames(styles.bookmark, {
+                    [styles.active]: pinned,
+                  })}
+                  onClick={() => (pinned ? removePin(pin) : addPin(pin))}
+                >
+                  {pinned ? <PinSolid /> : <Pin />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip content="Add to plan">
                 <IconButton>
-                  <CalendarPlus />
+                  <GridPlus />
                 </IconButton>
               </Tooltip>
             </div>
             <div className={styles.group}>
-              {/* <Tooltip content="Berkeley Academic Guide">
-                <IconButton
-                  as="a"
-                  href={getExternalLink(
-                    year,
-                    semester,
-                    subject,
-                    courseNumber,
-                    _class.primarySection.number,
-                    _class.primarySection.component
-                  )}
-                  target="_blank"
-                >
-                  <OpenNewWindow />
-                </IconButton>
-              </Tooltip> */}
+              {canShare ? (
+                <Tooltip content="Share">
+                  <IconButton onClick={() => share()}>
+                    <ShareIos />
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Tooltip content="Copy link">
+                  <IconButton onClick={() => share()}>
+                    <LinkIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {dialog && (
+                <Tooltip content="Expand">
+                  <IconButton as={Link} to={`/courses/${subject}/${number}`}>
+                    <Expand />
+                  </IconButton>
+                </Tooltip>
+              )}
               {dialog && (
                 <Tooltip content="Close">
-                  <DialogClose asChild>
+                  <Dialog.Close asChild>
                     <IconButton>
                       <Xmark />
                     </IconButton>
-                  </DialogClose>
+                  </Dialog.Close>
                 </Tooltip>
               )}
             </div>
@@ -147,7 +300,7 @@ export default function Course({
           </h1>
           <p className={styles.description}>{course.title}</p>
           <div className={styles.group}>
-            <AverageGrade gradeAverage={course.gradeAverage} />
+            <AverageGrade gradeDistribution={course.gradeDistribution} />
           </div>
           {dialog ? (
             <Tabs.List className={styles.menu} defaultValue="overview">
@@ -166,22 +319,22 @@ export default function Course({
             </Tabs.List>
           ) : (
             <div className={styles.menu}>
-              <NavLink to={{ pathname: ".", search }} end>
+              <NavLink to={{ ...location, pathname: "." }} end>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Overview</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "classes", search }}>
+              <NavLink to={{ ...location, pathname: "classes" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Classes</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "enrollment", search }}>
+              <NavLink to={{ ...location, pathname: "enrollment" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Enrollment</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "grades", search }}>
+              <NavLink to={{ ...location, pathname: "grades" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Grades</MenuItem>
                 )}
@@ -190,36 +343,27 @@ export default function Course({
           )}
         </Container>
       </div>
-      <Container size="small">
-        {data ? (
-          <ClassContext.Provider
-            value={{
-              subject,
-              number,
-              partialCourse,
-              dialog,
-            }}
-          >
-            <Body dialog={dialog}>
-              <Tabs.Content value="overview" asChild>
-                <Overview />
-              </Tabs.Content>
-              <Tabs.Content value="classes" asChild>
-                <Classes />
-              </Tabs.Content>
-              <Tabs.Content value="enrollment" asChild>
-                <Enrollment />
-              </Tabs.Content>
-              <Tabs.Content value="grades" asChild>
-                <Grades />
-              </Tabs.Content>
-            </Body>
-          </ClassContext.Provider>
-        ) : loading ? (
-          <>{/* TODO: Loading */}</>
-        ) : (
-          <>{/* TODO: Error */}</>
-        )}
+      <Container size="sm">
+        <CourseContext.Provider
+          value={{
+            course,
+          }}
+        >
+          <Body dialog={dialog}>
+            <Tabs.Content value="overview" asChild>
+              <Overview />
+            </Tabs.Content>
+            <Tabs.Content value="classes" asChild>
+              <Classes />
+            </Tabs.Content>
+            <Tabs.Content value="enrollment" asChild>
+              <Enrollment />
+            </Tabs.Content>
+            <Tabs.Content value="grades" asChild>
+              <Grades />
+            </Tabs.Content>
+          </Body>
+        </CourseContext.Provider>
       </Container>
     </Root>
   );

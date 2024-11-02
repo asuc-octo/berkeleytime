@@ -1,9 +1,3 @@
-/**
- * package.json override for oauth is to resolve package dependency issues in passport-google-oauth20 and
- * passport-aouth2. Once these packages are updated, this override can be removed.
- *
- * Opened pull request: https://github.com/jaredhanson/passport-oauth2/pull/165
- */
 import RedisStore from "connect-redis";
 import type { Application } from "express";
 import session from "express-session";
@@ -144,9 +138,8 @@ export default async (app: Application, redis: RedisClientType) => {
       async (_, __, profile, done) => {
         const email = profile.emails?.[0].value;
 
-        // null check for type safety
         if (!email) {
-          return done(null, false, { message: "No email found" });
+          return done(null, false, { message: "Invalid" });
         }
 
         let user = await UserModel.findOne({ email });
@@ -154,15 +147,12 @@ export default async (app: Application, redis: RedisClientType) => {
         if (!user) {
           user = new UserModel({
             email,
-            google_id: profile.id,
-            username: profile.displayName,
-            first_name: profile.name?.givenName || "",
-            last_name: profile.name?.familyName || "",
-            // refresh_token: refreshToken, <-------------- currently not needed.
+            googleId: profile.id,
+            name: profile.displayName,
+            // TODO: refreshToken
           });
         }
 
-        user.last_login = new Date();
         const doc = await user.save();
 
         done(null, doc);

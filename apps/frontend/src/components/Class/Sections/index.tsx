@@ -1,42 +1,24 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useQuery } from "@apollo/client";
 import classNames from "classnames";
 import { FrameAltEmpty, OpenNewWindow } from "iconoir-react";
+
+import { IconButton, Tooltip } from "@repo/theme";
 
 import CCN from "@/components/CCN";
 import Capacity from "@/components/Capacity";
 import Details from "@/components/Details";
-import IconButton from "@/components/IconButton";
-import Tooltip from "@/components/Tooltip";
-import { Component, GET_CLASS, IClass, componentMap } from "@/lib/api";
+import useClass from "@/hooks/useClass";
+import { Component, componentMap } from "@/lib/api";
 import { getExternalLink } from "@/lib/section";
 
-import useClass from "../useClass";
 import styles from "./Sections.module.scss";
 
 export default function Sections() {
-  const { subject, courseNumber, classNumber, semester, year } = useClass();
+  const { class: _class } = useClass();
 
   const viewRef = useRef<HTMLDivElement>(null);
   const [group, setGroup] = useState<Component | null>(null);
-
-  // TODO: Handle loading state
-  const { data } = useQuery<{ class: IClass }>(GET_CLASS, {
-    variables: {
-      term: {
-        semester,
-        year,
-      },
-      subject,
-      courseNumber,
-      classNumber,
-    },
-  });
-
-  // Because Sections will only be rendered when data loaded, we do
-  // not need to worry about loading or error states for right now
-  const _class = useMemo(() => data?.class as IClass, [data]);
 
   // TODO: Include primarySection
   const groups = useMemo(() => {
@@ -152,10 +134,10 @@ export default function Sections() {
                   <Tooltip content="Berkeley Academic Guide">
                     <a
                       href={getExternalLink(
-                        year,
-                        semester,
-                        courseNumber,
-                        classNumber,
+                        _class.year,
+                        _class.semester,
+                        _class.courseNumber,
+                        _class.number,
                         section.number,
                         section.component
                       )}

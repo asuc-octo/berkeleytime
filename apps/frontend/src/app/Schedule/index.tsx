@@ -1,45 +1,23 @@
-import { useState } from "react";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 
-import { useQuery } from "@apollo/client";
-import { Outlet } from "react-router";
-import { useNavigate, useParams } from "react-router-dom";
-
-import Boundary from "@/components/Boundary";
-import LoadingIndicator from "@/components/LoadingIndicator";
-import { GET_SCHEDULE, GetScheduleResponse, IClass, ISection } from "@/lib/api";
-
-import { ScheduleContextType } from "./schedule";
+import ScheduleContext from "@/contexts/ScheduleContext";
+import { useReadSchedule } from "@/hooks/api";
+import { ScheduleIdentifier } from "@/lib/api";
 
 export default function Schedule() {
   const { scheduleId } = useParams();
 
   const navigate = useNavigate();
 
-  const { data } = useQuery<GetScheduleResponse>(GET_SCHEDULE, {
+  const { data: schedule } = useReadSchedule(scheduleId as ScheduleIdentifier, {
     onError: () => navigate("/schedules"),
-    variables: { id: scheduleId },
   });
 
-  const [selectedSections, setSelectedSections] = useState<ISection[]>([]);
-  const [classes, setClasses] = useState<IClass[]>([]);
-  const [expanded, setExpanded] = useState<boolean[]>([]);
-
-  return data ? (
-    <Outlet
-      context={
-        {
-          selectedSections,
-          setSelectedSections,
-          classes,
-          setClasses,
-          expanded,
-          setExpanded,
-        } satisfies ScheduleContextType
-      }
-    />
+  return schedule ? (
+    <ScheduleContext.Provider value={{ schedule }}>
+      <Outlet />
+    </ScheduleContext.Provider>
   ) : (
-    <Boundary>
-      <LoadingIndicator size={32} />
-    </Boundary>
+    <></>
   );
 }

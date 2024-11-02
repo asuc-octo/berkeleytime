@@ -4,8 +4,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { ArrowRight, FrameAltEmpty, Sparks } from "iconoir-react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import LoadingIndicator from "@/components/LoadingIndicator";
-import { IClass } from "@/lib/api";
+import { LoadingIndicator } from "@repo/theme";
 
 import Header from "../Header";
 import useBrowser from "../useBrowser";
@@ -13,10 +12,10 @@ import Class from "./Class";
 import styles from "./List.module.scss";
 
 interface ListProps {
-  onClassSelect: (_class: IClass) => void;
+  onSelect: (subject: string, courseNumber: string, number: string) => void;
 }
 
-export default function List({ onClassSelect }: ListProps) {
+export default function List({ onSelect }: ListProps) {
   const { classes, loading } = useBrowser();
 
   const rootRef = useRef<HTMLDivElement>(null);
@@ -50,7 +49,7 @@ export default function List({ onClassSelect }: ListProps) {
         <Header />
         {loading && items.length === 0 ? (
           <div className={styles.placeholder}>
-            <LoadingIndicator size={32} />
+            <LoadingIndicator size="lg" />
             <div className={styles.text}>
               <p className={styles.heading}>Fetching courses...</p>
               <p className={styles.description}>
@@ -84,7 +83,9 @@ export default function List({ onClassSelect }: ListProps) {
                   index={index}
                   key={key}
                   ref={virtualizer.measureElement}
-                  onClick={() => onClassSelect(_class)}
+                  onClick={() =>
+                    onSelect(_class.subject, _class.courseNumber, _class.number)
+                  }
                 />
               );
             })}

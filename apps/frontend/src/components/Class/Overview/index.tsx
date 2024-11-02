@@ -1,32 +1,10 @@
-import { useMemo } from "react";
-
-import { useQuery } from "@apollo/client";
-
 import Details from "@/components/Details";
-import { GET_CLASS, IClass } from "@/lib/api";
+import useClass from "@/hooks/useClass";
 
-import useClass from "../useClass";
 import styles from "./Overview.module.scss";
 
 export default function Overview() {
-  const { subject, courseNumber, classNumber, semester, year } = useClass();
-
-  // TODO: Handle loading state
-  const { data } = useQuery<{ class: IClass }>(GET_CLASS, {
-    variables: {
-      term: {
-        semester,
-        year,
-      },
-      subject,
-      courseNumber,
-      classNumber,
-    },
-  });
-
-  // Because Overview will only be rendered when data loaded, we do
-  // not need to worry about loading or error states for right now
-  const _class = useMemo(() => data?.class as IClass, [data]);
+  const { class: _class } = useClass();
 
   return (
     <div className={styles.root}>

@@ -21,7 +21,7 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
         title: courseTitle,
         subject,
         number: courseNumber,
-        gradeAverage,
+        gradeDistribution,
       },
       title,
       number,
@@ -46,7 +46,7 @@ const Course = forwardRef<HTMLDivElement, ClassProps & IClass>(
           </p>
           <p className={styles.description}>{title ?? courseTitle}</p>
           <div className={styles.row}>
-            <AverageGrade gradeAverage={gradeAverage} />
+            <AverageGrade gradeDistribution={gradeDistribution} />
             <Capacity
               enrollCount={enrollCount}
               enrollMax={enrollMax}

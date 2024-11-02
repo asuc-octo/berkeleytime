@@ -1,0 +1,64 @@
+name: Deploy to Development
+
+concurrency:
+  group: dev-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      ttl:
+        description: "Deployment time to live in hours"
+        required: true
+        type: number
+        default: 24
+
+jobs:
+  compute-sha:
+    name: Compute sha_short
+    runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.vars.outputs.sha_short }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set vars
+        id: vars
+        run: |
+          echo "sha_short=$(git rev-parse --short ${{ github.sha }})" >> $GITHUB_OUTPUT
+
+  build-push:
+    name: Build and Push Images
+    needs: [compute-sha]
+    uses: ./.github/workflows/cd.yaml
+    with:
+      tag: ${{ needs.compute-sha.outputs.sha_short }}
+    secrets: inherit
+
+  deploy:
+    name: Deploy with SSH
+    needs: [compute-sha, build-push]
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - name: SSH and Helm Install
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ./infra
+            helm uninstall bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} || true
+            helm install bt-dev-app-${{ needs.compute-sha.outputs.sha_short }} ./app --namespace=bt \
+              --set env=dev \
+              --set ttl=${{ inputs.ttl }} \
+              --set-string frontend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
+              --set-string backend.image.tag=${{ needs.compute-sha.outputs.sha_short }} \
+              --set host=${{ needs.compute-sha.outputs.sha_short }}.stanfurdtime.com \
+              --set mongoUri=mongodb://bt-dev-mongo-mongodb.bt.svc.cluster.local:27017/bt \
+              --set redisUri=redis://bt-dev-redis-master.bt.svc.cluster.local:6379 \
+              --set nodeEnv=development

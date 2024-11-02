@@ -1,12 +1,35 @@
-import { Dispatch, SetStateAction } from "react";
+import { ISchedule, ISection } from "@/lib/api";
 
-import { IClass, ISection } from "@/lib/api";
+const defaultUnits = [0, 0];
 
-export interface ScheduleContextType {
-  selectedSections: ISection[];
-  setSelectedSections: Dispatch<SetStateAction<ISection[]>>;
-  classes: IClass[];
-  setClasses: Dispatch<SetStateAction<IClass[]>>;
-  expanded: boolean[];
-  setExpanded: Dispatch<SetStateAction<boolean[]>>;
-}
+export const getY = (time: string) => {
+  const [hour, minute] = time.split(":");
+  return (parseInt(hour) - 6) * 60 + parseInt(minute);
+};
+
+export const getUnits = (schedule?: ISchedule) => {
+  return (schedule?.classes.reduce(
+    ([minimum, maximum], { class: { unitsMax, unitsMin } }) => [
+      minimum + unitsMin,
+      maximum + unitsMax,
+    ],
+    defaultUnits
+  ) ?? defaultUnits) as [minimum: number, maximum: number];
+};
+
+export const getSelectedSections = (schedule?: ISchedule) => {
+  return (
+    schedule?.classes.flatMap(({ selectedSections, class: _class }) =>
+      selectedSections.reduce((acc, section) => {
+        const _section =
+          _class.primarySection.ccn === section
+            ? _class.primarySection
+            : _class.sections.find(
+                (currentSection) => currentSection.ccn === section
+              );
+
+        return _section ? [...acc, _section] : acc;
+      }, [] as ISection[])
+    ) ?? []
+  );
+};

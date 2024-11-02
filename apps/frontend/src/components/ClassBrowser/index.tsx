@@ -26,7 +26,7 @@ import {
 import BrowserContext from "./browserContext";
 
 interface ClassBrowserProps {
-  onClassSelect: (_class: IClass) => void;
+  onSelect: (subject: string, courseNumber: string, number: string) => void;
   responsive?: boolean;
   semester: Semester;
   year: number;
@@ -34,7 +34,7 @@ interface ClassBrowserProps {
 }
 
 export default function ClassBrowser({
-  onClassSelect,
+  onSelect,
   responsive = true,
   semester: currentSemester,
   year: currentYear,
@@ -54,10 +54,8 @@ export default function ClassBrowser({
 
   const { data, loading } = useQuery<GetClassesResponse>(GET_CLASSES, {
     variables: {
-      term: {
-        semester: currentSemester,
-        year: currentYear,
-      },
+      semester: currentSemester,
+      year: currentYear,
     },
   });
 
@@ -73,7 +71,7 @@ export default function ClassBrowser({
                 subject: course.subject,
                 number: course.number,
                 title: course.title,
-                gradeAverage: course.gradeAverage,
+                gradeDistribution: course.gradeDistribution,
                 academicCareer: course.academicCareer,
               },
             }) as IClass
@@ -190,13 +188,15 @@ export default function ClassBrowser({
       // Clone the courses to avoid sorting in-place
       filteredClasses = structuredClone(filteredClasses).sort((a, b) => {
         if (sortBy === SortBy.AverageGrade) {
-          return b.course.gradeAverage === a.course.gradeAverage
+          return b.course.gradeDistribution.average ===
+            a.course.gradeDistribution.average
             ? 0
-            : b.course.gradeAverage === null
+            : b.course.gradeDistribution.average === null
               ? -1
-              : a.course.gradeAverage === null
+              : a.course.gradeDistribution.average === null
                 ? 1
-                : b.course.gradeAverage - a.course.gradeAverage;
+                : b.course.gradeDistribution.average -
+                  a.course.gradeDistribution.average;
         }
 
         if (sortBy === SortBy.Units) {
@@ -328,7 +328,7 @@ export default function ClassBrowser({
         })}
       >
         <Filters />
-        <List onClassSelect={onClassSelect} />
+        <List onSelect={onSelect} />
       </div>
     </BrowserContext.Provider>
   );

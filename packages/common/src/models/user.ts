@@ -2,7 +2,7 @@ import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
 export const userSchema = new Schema(
   {
-    google_id: {
+    googleId: {
       type: String,
       trim: true,
       required: true,
@@ -15,62 +15,54 @@ export const userSchema = new Schema(
       required: true,
       immutable: true,
     },
-    username: {
+    name: {
       type: String,
       trim: true,
       required: true,
     },
-    first_name: {
-      type: String,
-      trim: true,
-      required: true,
-    },
-    last_name: {
-      type: String,
-      trim: true,
-      required: true,
-    },
-    major: {
-      type: [String],
-      trim: true,
-      required: true,
+    bookmarkedClasses: {
+      required: false,
       default: [],
+      type: [
+        {
+          year: {
+            type: Number,
+            required: true,
+          },
+          semester: {
+            type: String,
+            required: true,
+          },
+          subject: {
+            type: String,
+            required: true,
+          },
+          courseNumber: {
+            type: String,
+            required: true,
+          },
+          number: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
     },
-    last_login: {
-      type: Date,
-      trim: true,
-      required: true,
-      default: Date.now,
-    },
-    is_staff: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    is_active: {
-      type: Boolean,
-      required: true,
-      default: true,
-    },
-    email_class_update: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    email_grade_update: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    email_enrollment_opening: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    email_berkeleytime_update: {
-      type: Boolean,
-      required: true,
-      default: false,
+    bookmarkedCourses: {
+      required: false,
+      default: [],
+      type: [
+        {
+          subject: {
+            type: String,
+            required: true,
+          },
+          number: {
+            type: String,
+            required: true,
+          },
+        },
+      ],
     },
     refresh_token: {
       type: String,
@@ -79,8 +71,14 @@ export const userSchema = new Schema(
       select: false,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: {
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+    },
+  }
 );
 
-export const UserModel = mongoose.model("user", userSchema, "user");
+export const UserModel = mongoose.model("user", userSchema);
+
 export type UserType = Document & InferSchemaType<typeof userSchema>;

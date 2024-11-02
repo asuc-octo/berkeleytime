@@ -1,77 +1,85 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useCallback, useMemo, useState } from "react";
 
-import { useApolloClient, useQuery } from "@apollo/client";
-import { ArrowRight, Calendar } from "iconoir-react";
+import { useQuery } from "@apollo/client";
+import { ArrowRight } from "iconoir-react";
 
-import AverageGrade from "@/components/AverageGrade";
-import Button from "@/components/Button";
-import Container from "@/components/Container";
-import Footer from "@/components/Footer";
+import { Button } from "@repo/theme";
+
+import CourseDrawer from "@/components/CourseDrawer";
 import NavigationBar from "@/components/NavigationBar";
-import Units from "@/components/Units";
-import {
-  GET_COURSE,
-  GET_COURSES,
-  GetCoursesResponse,
-  ICourse,
-  Semester,
-} from "@/lib/api";
+import { GET_COURSES, GetCoursesResponse, ICourse } from "@/lib/api";
 
 import styles from "./Discover.module.scss";
 import Placeholder from "./Placeholder";
 
-const score = {
-  [Semester.Fall]: 4,
-  [Semester.Summer]: 3,
-  [Semester.Spring]: 2,
-  [Semester.Winter]: 1,
-};
+interface RawResult {
+  model: string;
+  courses: [
+    {
+      subject: string;
+      number: string;
+      score?: number;
+    },
+  ];
+}
+
+interface Result {
+  model: string;
+  courses: ICourse[];
+}
 
 export default function Discover() {
   const [input, setInput] = useState("");
-  const [courses, setCourses] = useState<ICourse[]>([]);
-  const apolloClient = useApolloClient();
 
   const { data } = useQuery<GetCoursesResponse>(GET_COURSES);
 
-  console.log(data);
+  const courses = useMemo(() => data?.courses ?? [], [data]);
 
-  const getCourse = async (name: string) => {
-    const [subject, courseNumber] = name.split(" ");
+  const [results, setResults] = useState<Result[]>([]);
 
-    const { data } = await apolloClient.query<{ course: ICourse }>({
-      query: GET_COURSE,
-      variables: { subject, courseNumber },
-    });
+  const handleSubmit = useCallback(
+    async (event: FormEvent) => {
+      event.preventDefault();
 
-    if (!data) return;
+      try {
+        const response = await fetch(
+          `http://localhost:8000/courses?query=${encodeURIComponent(input)}`
+        );
 
-    return data.course;
-  };
+        const data = (await response.json()) as RawResult[];
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
+        const results = data.map((result) => {
+          return {
+            ...result,
+            courses: result.courses
+              .toSorted((a, b) => {
+                if (a.score && b.score) {
+                  return b.score - a.score;
+                }
 
-    const response = await fetch(
-      `http://localhost:3002/query?input=${encodeURIComponent(input)}&topK=24`
-    );
+                return 0;
+              })
+              .reduce((acc, c) => {
+                const course = courses.find(
+                  ({ subject, number }) =>
+                    subject.replaceAll(" ", "") === c.subject &&
+                    number === c.number
+                );
 
-    if (!response.ok) return;
+                if (course) return [...acc, course];
 
-    const { matches } = (await response.json()) as {
-      matches: { id: string }[];
-    };
+                return acc;
+              }, [] as ICourse[]),
+          };
+        });
 
-    const courses = await Promise.all(
-      matches.map(({ id: name }) => getCourse(name))
-    );
-
-    setCourses(
-      courses.filter(
-        (course) => course && course.classes.length !== 0
-      ) as ICourse[]
-    );
-  };
+        setResults(results);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [input, courses]
+  );
 
   return (
     <div className={styles.root}>
@@ -87,66 +95,34 @@ export default function Discover() {
               onChange={(event) => setInput(event.target.value)}
             />
             <Placeholder className={styles.placeholder} />
-            <Button className={styles.button}>
+            <Button className={styles.button} variant="solid">
               Search
               <ArrowRight />
             </Button>
           </form>
         </div>
       </div>
-      <Container>
-        <div className={styles.body}>
-          <div className={styles.sideBar}></div>
-          <div className={styles.view}>
-            {courses
-              .sort((a, b) => {
-                const getTerm = (course: ICourse) => {
-                  return [...course.classes].sort(
-                    (a, b) =>
-                      a.year - b.year || score[a.semester] - score[b.semester]
-                  )[0];
-                };
-
-                return (
-                  getTerm(b).year - getTerm(a).year ||
-                  score[getTerm(b).semester] - score[getTerm(a).semester]
-                );
-              })
-              .map((course) => {
-                const { year, semester } = [...course.classes].sort(
-                  (a, b) =>
-                    a.year - b.year || score[a.semester] - score[b.semester]
-                )[0];
-
-                const { unitsMax, unitsMin } = course.classes.reduce(
-                  (acc, { unitsMax, unitsMin }) => ({
-                    unitsMax: Math.max(acc.unitsMax, unitsMax),
-                    unitsMin: Math.min(acc.unitsMin, unitsMin),
-                  }),
-                  { unitsMax: 0, unitsMin: 0 }
-                );
-
-                return (
-                  <div className={styles.course} key={course.number}>
-                    <p className={styles.title}>
-                      {course.subject} {course.number}
-                    </p>
-                    <p className={styles.description}>{course.title}</p>
-                    <div className={styles.row}>
-                      <AverageGrade gradeAverage={course.gradeAverage} />
-                      <div className={styles.badge}>
-                        <Calendar />
-                        {semester} {year}
-                      </div>
-                      <Units unitsMax={unitsMax} unitsMin={unitsMin} />
-                    </div>
-                  </div>
-                );
-              })}
+      <div className={styles.body}>
+        {results.map((result) => (
+          <div key={result.model} className={styles.column}>
+            <p>{result.model}</p>
+            {result.courses.map((course, index) => (
+              <CourseDrawer
+                key={index}
+                subject={course.subject.replaceAll(" ", "")}
+                number={course.number}
+              >
+                <div className={styles.course}>
+                  <p className={styles.title}>
+                    {course.subject} {course.number}
+                  </p>
+                  <p className={styles.description}>{course.title}</p>
+                </div>
+              </CourseDrawer>
+            ))}
           </div>
-        </div>
-      </Container>
-      <Footer />
+        ))}
+      </div>
     </div>
   );
 }

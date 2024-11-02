@@ -1,19 +1,20 @@
 .root {
+  height: 100dvh;
+
   .body {
     display: flex;
-    gap: 48px;
-    padding: 48px 0;
+    overflow: auto;
 
-    .sideBar {
-      width: 288px;
-      flex-shrink: 0;
-    }
-
-    .view {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+    .column {
+      display: flex;
+      flex-direction: column;
       gap: 12px;
-      flex-grow: 1;
+      padding: 12px;
+      width: 320px;
+
+      &:not(:last-child) {
+        border-right: 1px solid var(--border-color);
+      }
 
       .course {
         border-radius: 8px;
@@ -36,27 +37,6 @@
           font-size: 14px;
           color: var(--paragraph-color);
           line-height: 1.5;
-          margin-bottom: 12px;
-        }
-
-        .row {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-top: auto;
-
-          .badge {
-            font-size: 14px;
-            line-height: 1;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--gray-500);
-            background-color: var(--background-color);
-            padding: 0 12px;
-            border-radius: 16px;
-          }
         }
       }
     }

@@ -37,6 +37,7 @@ services:
     restart: always
     volumes:
       - ./apps/frontend/src:/frontend/apps/frontend/src
+      - ./packages/theme/src:/frontend/packages/theme/src
       - ./apps/frontend/public:/frontend/apps/frontend/public
   mongodb:
     image: mongo:5
