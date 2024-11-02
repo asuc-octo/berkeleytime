@@ -42,8 +42,8 @@ import styles from "./Class.module.scss";
 import Enrollment from "./Enrollment";
 import Grades from "./Grades";
 import Overview from "./Overview";
-import Sections from "./Sections";
 import Ratings from "./Ratings";
+import Sections from "./Sections";
 
 interface BodyProps {
   children: ReactNode;
@@ -347,7 +347,7 @@ export default function Class({
                   <MenuItem active={isActive}>Grades</MenuItem>
                 )}
               </NavLink>
-              <NavLink to={{ pathname: "ratings"}}>
+              <NavLink to={{ pathname: "ratings" }}>
                 {({ isActive }) => (
                   <MenuItem active={isActive}>Ratings</MenuItem>
                 )}

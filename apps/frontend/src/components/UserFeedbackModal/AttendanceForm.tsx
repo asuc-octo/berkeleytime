@@ -1,12 +1,6 @@
-import React from 'react';
-import styles from './UserFeedbackModal.module.scss';
-import { ClassData } from './types';
+import styles from "./UserFeedbackModal.module.scss";
 
-interface AttendanceFormProps {
-  currentClass: ClassData;
-}
-
-export function AttendanceForm({ currentClass }: AttendanceFormProps) {
+export function AttendanceForm() {
   return (
     <div className={styles.attendanceSection}>
       <h2 className={styles.sectionTitle}>Attendance & Recording</h2>

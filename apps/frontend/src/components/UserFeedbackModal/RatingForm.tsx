@@ -1,22 +1,18 @@
-import React, { useState } from 'react';
-import styles from './UserFeedbackModal.module.scss';
-import { ClassData } from './types';
+import { useState } from "react";
 
-interface RatingFormProps {
-  currentClass: ClassData;
-}
+import styles from "./UserFeedbackModal.module.scss";
 
-export function RatingsForm({ currentClass }: RatingFormProps) {
+export function RatingsForm() {
   const [ratings, setRatings] = useState({
     usefulness: 0,
     difficulty: 0,
-    workload: 0
+    workload: 0,
   });
 
   const handleRatingClick = (type: keyof typeof ratings, value: number) => {
-    setRatings(prev => ({
+    setRatings((prev) => ({
       ...prev,
-      [type]: prev[type] === value ? 0 : value
+      [type]: prev[type] === value ? 0 : value,
     }));
   };
 
@@ -34,7 +30,7 @@ export function RatingsForm({ currentClass }: RatingFormProps) {
           {[1, 2, 3, 4, 5].map((value) => (
             <button
               key={value}
-              className={`${styles.ratingButton} ${ratings[type] === value ? styles.selected : ''}`}
+              className={`${styles.ratingButton} ${ratings[type] === value ? styles.selected : ""}`}
               onClick={() => handleRatingClick(type, value)}
               type="button"
             >
@@ -50,26 +46,26 @@ export function RatingsForm({ currentClass }: RatingFormProps) {
   return (
     <div className={styles.ratingSection}>
       <h2 className={styles.sectionTitle}>Course Ratings</h2>
-      
+
       {renderRatingScale(
-        'usefulness',
-        '1. How would you rate the usefulness of this course?',
-        'Not useful',
-        'Very useful'
+        "usefulness",
+        "1. How would you rate the usefulness of this course?",
+        "Not useful",
+        "Very useful"
       )}
 
       {renderRatingScale(
-        'difficulty',
-        '2. How would you rate the difficulty of this course?',
-        'Very easy',
-        'Very difficult'
+        "difficulty",
+        "2. How would you rate the difficulty of this course?",
+        "Very easy",
+        "Very difficult"
       )}
 
       {renderRatingScale(
-        'workload',
-        '3. How would you rate the workload of this course?',
-        'Very light',
-        'Very heavy'
+        "workload",
+        "3. How would you rate the workload of this course?",
+        "Very light",
+        "Very heavy"
       )}
     </div>
   );
