@@ -1,21 +1,17 @@
-import { 
-  RatingModel
-} from '@repo/common';
+import { RatingModel } from "@repo/common";
+
+import { MetricName, Semester } from "../../generated-types/graphql";
 import {
-  MetricName,
-  Semester
-} from "../../generated-types/graphql";
-import {
-  formatUserRatings,
   formatAggregatedRatings,
-  formatSemesters
+  formatSemesters,
+  formatUserRatings,
 } from "./formatter";
 
 // TODO: test for cases intentionally trying to break mutation (out of bound values)
 // TODO: test for cases for fetching empty data
 
 export const createRating = async (
-  context: any, 
+  context: any,
   subject: string,
   courseNumber: string,
   semester: Semester,
@@ -28,20 +24,18 @@ export const createRating = async (
   checkValueConstraint(metricName, value);
 
   const existingRating = await checkRatingExists(
-    context, 
-    subject, 
-    courseNumber, 
-    semester, 
-    year, 
+    context,
+    subject,
+    courseNumber,
+    semester,
+    year,
     classNumber,
     metricName
   );
   if (existingRating) {
     existingRating.value = value;
     await existingRating.save();
-  }
-
-  else {
+  } else {
     await RatingModel.create({
       createdBy: context.user._id,
       subject,
@@ -50,16 +44,16 @@ export const createRating = async (
       year,
       classNumber,
       metricName,
-      value
+      value,
     });
   }
 
-  const aggregated = await ratingAggregator({ 
-    subject, 
-    courseNumber, 
-    semester, 
-    year, 
-    classNumber 
+  const aggregated = await ratingAggregator({
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber,
   });
 
   if (!aggregated.length) {
@@ -69,7 +63,7 @@ export const createRating = async (
       semester,
       year,
       classNumber,
-      metrics: []
+      metrics: [],
     };
   }
 
@@ -77,7 +71,7 @@ export const createRating = async (
 };
 
 export const deleteRating = async (
-  context: any, 
+  context: any,
   subject: string,
   courseNumber: string,
   semester: Semester,
@@ -94,7 +88,7 @@ export const deleteRating = async (
     semester,
     year,
     classNumber,
-    metricName
+    metricName,
   });
 
   if (!deletedRating) {
@@ -108,11 +102,12 @@ export const getUserRatings = async (context: any) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
   const userRatings = await userRatingAggregator(context);
-  if (!userRatings.length) return {
-    createdBy: context.user._id,
-    count: 0,
-    classes: []
-  };
+  if (!userRatings.length)
+    return {
+      createdBy: context.user._id,
+      count: 0,
+      classes: [],
+    };
   return formatUserRatings(userRatings[0]);
 };
 
@@ -126,10 +121,10 @@ export const getAggregatedRatings = async (
 ) => {
   let filter;
   if (isAllTime) {
-    filter = { 
-      subject, 
-      courseNumber, 
-      classNumber 
+    filter = {
+      subject,
+      courseNumber,
+      classNumber,
     };
   } else {
     filter = {
@@ -137,24 +132,25 @@ export const getAggregatedRatings = async (
       courseNumber,
       semester,
       year,
-      classNumber
+      classNumber,
     };
   }
   const aggregated = await ratingAggregator(filter);
-  if (!aggregated.length) return {
-    subject,
-    courseNumber,
-    semester,
-    year,
-    classNumber,
-    metrics: []
-  };
+  if (!aggregated.length)
+    return {
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metrics: [],
+    };
 
   return formatAggregatedRatings(aggregated[0]);
 };
 
 export const getSemestersWithRatings = async (
-  subject: string, 
+  subject: string,
   courseNumber: string
 ) => {
   const semesters = await semesterAggregator(subject, courseNumber);
@@ -164,7 +160,7 @@ export const getSemestersWithRatings = async (
 // Helper functions
 
 const checkRatingExists = async (
-  context: any, 
+  context: any,
   subject: string,
   courseNumber: string,
   semester: Semester,
@@ -179,27 +175,34 @@ const checkRatingExists = async (
     year,
     classNumber,
     metricName,
-    createdBy: context.user._id
+    createdBy: context.user._id,
   });
 };
 
-const checkValueConstraint = (
-  metricName: MetricName, 
-  value: number
-) => {
-  const numberScaleMetrics = ['Usefulness', 'Difficulty', 'Workload'] as const;
-  const booleanScaleMetrics = ['Attendance', 'Recording'] as const; 
+const checkValueConstraint = (metricName: MetricName, value: number) => {
+  const numberScaleMetrics = ["Usefulness", "Difficulty", "Workload"] as const;
+  const booleanScaleMetrics = ["Attendance", "Recording"] as const;
 
-  if (numberScaleMetrics.includes(metricName as typeof numberScaleMetrics[number])) {
+  if (
+    numberScaleMetrics.includes(
+      metricName as (typeof numberScaleMetrics)[number]
+    )
+  ) {
     if (value < 1 || value > 5 || !Number.isInteger(value)) {
-      throw new Error(`${metricName} rating must be an integer between 1 and 5`);
+      throw new Error(
+        `${metricName} rating must be an integer between 1 and 5`
+      );
     }
-  } else if (booleanScaleMetrics.includes(metricName as typeof booleanScaleMetrics[number])) {
+  } else if (
+    booleanScaleMetrics.includes(
+      metricName as (typeof booleanScaleMetrics)[number]
+    )
+  ) {
     if (value !== 0 && value !== 1) {
       throw new Error(`${metricName} rating must be either 0 or 1`);
     }
   }
-}
+};
 
 const userRatingAggregator = async (context: any) => {
   return await RatingModel.aggregate([
@@ -215,11 +218,13 @@ const userRatingAggregator = async (context: any) => {
           classNumber: "$classNumber",
         },
         metrics: {
-          $push: { metricName: "$metricName", value: "$value",
+          $push: {
+            metricName: "$metricName",
+            value: "$value",
             // updatedAt: "$updatedAt" - not sure how to do the typedef
-          }
-        }
-      }
+          },
+        },
+      },
     },
     {
       $group: {
@@ -233,20 +238,20 @@ const userRatingAggregator = async (context: any) => {
             semester: "$_id.semester",
             year: "$_id.year",
             classNumber: "$_id.classNumber",
-            metrics: "$metrics"
-          }
+            metrics: "$metrics",
+          },
         },
-        totalCount: { $sum: 1 }
-      }
+        totalCount: { $sum: 1 },
+      },
     },
     {
       $project: {
         _id: 0,
         createdBy: "$_id.createdBy",
         count: "$totalCount",
-        classes: 1
-      }
-    }
+        classes: 1,
+      },
+    },
   ]);
 };
 
@@ -259,29 +264,29 @@ const ratingAggregator = async (filter: any) => {
           subject: "$subject",
           courseNumber: "$courseNumber",
           classNumber: "$classNumber",
-          metricName: "$metricName"
+          metricName: "$metricName",
         },
         totalCount: { $sum: 1 },
         sumValues: { $sum: "$value" },
-        categories: {$push: {value: "$value", count: 1}}
-      }
+        categories: { $push: { value: "$value", count: 1 } },
+      },
     },
     {
       $group: {
         _id: {
           subject: "$_id.subject",
           courseNumber: "$_id.courseNumber",
-          classNumber: "$_id.classNumber"
+          classNumber: "$_id.classNumber",
         },
         metrics: {
           $push: {
             metricName: "$_id.metricName",
             count: "$totalCount",
             weightedAverage: { $divide: ["$sumValues", "$totalCount"] },
-            categories: "$categories"
-          }
-        }
-      }
+            categories: "$categories",
+          },
+        },
+      },
     },
     {
       $project: {
@@ -289,19 +294,16 @@ const ratingAggregator = async (filter: any) => {
         subject: "$_id.subject",
         courseNumber: "$_id.courseNumber",
         classNumber: "$_id.classNumber",
-        metrics: 1
-      }
-    }
+        metrics: 1,
+      },
+    },
   ]);
 };
 
-const semesterAggregator = async (
-  subject: string, 
-  courseNumber: string
-) => {
+const semesterAggregator = async (subject: string, courseNumber: string) => {
   return await RatingModel.aggregate([
     { $match: { subject: subject, courseNumber: courseNumber } },
     { $group: { _id: { semester: "$semester", year: "$year" } } },
-    { $project: { _id: 0, semester: "$_id.semester", year: "$_id.year" } }
+    { $project: { _id: 0, semester: "$_id.semester", year: "$_id.year" } },
   ]);
 };

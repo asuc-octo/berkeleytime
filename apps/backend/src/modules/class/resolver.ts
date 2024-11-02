@@ -1,6 +1,7 @@
 import { getCourse } from "../course/controller";
 import { CourseModule } from "../course/generated-types/module-types";
 import { getGradeDistributionByClass } from "../grade-distribution/controller";
+import { getAggregatedRatings } from "../rating/controller";
 import { getTerm } from "../term/controller";
 import { TermModule } from "../term/generated-types/module-types";
 import {
@@ -11,7 +12,6 @@ import {
 } from "./controller";
 import { IntermediateClass, IntermediateSection } from "./formatter";
 import { ClassModule } from "./generated-types/module-types";
-import { getAggregatedRatings } from "../rating/controller";
 
 const resolvers: ClassModule.Resolvers = {
   Query: {
