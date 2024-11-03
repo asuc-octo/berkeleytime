@@ -41,7 +41,7 @@ export async function fetchActiveTerms(
 export async function fetchPaginatedData<T, R>(
   logger: Logger<unknown>,
   api: any,
-  terms: string[],
+  terms: string[] | null,
   method: string,
   headers: Record<string, string>,
   responseProcessor: (data: any) => R[],
@@ -51,24 +51,26 @@ export async function fetchPaginatedData<T, R>(
   let page = 1;
   let retries = 1;
 
-  for (const term of terms) {
+  const fetchData = async (termId?: string) => {
     while (retries > 0) {
       try {
-        const response = await api[method](
-          {
-            "term-id": term,
-            "page-number": page,
-            "page-size": 100,
-          },
-          { headers }
-        );
+        const params: Record<string, any> = {
+          "page-number": page,
+          "page-size": 100,
+        };
+        if (termId) {
+          params["term-id"] = termId;
+        }
+
+        const response = await api[method](params, { headers });
 
         const data = await response.json();
         const processedData = responseProcessor(data);
 
         if (processedData.length === 0) {
-          break; // No more data to fetch
+          return false;
         }
+
         logger.info("Mapping processedData with itemProcessor...");
         const transformedData = processedData.map((item, index) => {
           try {
@@ -87,18 +89,36 @@ export async function fetchPaginatedData<T, R>(
         );
         page++;
         retries = 1;
+        return true;
       } catch (error) {
         logger.error(`Error fetching page ${page} of data`);
         logger.error(`Unexpected error querying API. Error: "${error}"`);
 
         if (retries === 0) {
           logger.error(`Too many errors querying API. Terminating update...`);
-          break;
+          return false;
         }
 
         retries--;
         logger.info(`Retrying...`);
       }
+    }
+    return false;
+  };
+
+  if (terms && terms.length > 0) {
+    for (const term of terms) {
+      let hasMoreData = true;
+      while (hasMoreData) {
+        hasMoreData = await fetchData(term);
+      }
+      page = 1; // Reset page for next term
+    }
+    // TODO: verify
+  } else {
+    let hasMoreData = true;
+    while (hasMoreData) {
+      hasMoreData = await fetchData();
     }
   }
 

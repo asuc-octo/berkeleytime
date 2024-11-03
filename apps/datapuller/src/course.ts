@@ -4,24 +4,16 @@ import { CoursesAPI } from "@repo/sis-api/courses";
 import setup from "./shared";
 import { Config } from "./shared/config";
 import mapCourseToNewCourse, { CombinedCourse } from "./shared/courseParser";
-import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
+import { fetchPaginatedData } from "./shared/utils";
 
 async function updateCourses(config: Config) {
   const log = config.log;
   const coursesAPI = new CoursesAPI();
 
-  log.info("Fetching Active Terms");
-  const activeTerms = await fetchActiveTerms(log, {
-    app_id: config.sis.TERM_APP_ID,
-    app_key: config.sis.TERM_APP_KEY,
-  });
-
-  log.info(activeTerms);
-
   const courses = await fetchPaginatedData<ICourseItem, CombinedCourse>(
     log,
     coursesAPI.v4,
-    activeTerms,
+    [],
     "findCourseCollectionUsingGet",
     {
       app_id: config.sis.COURSE_APP_ID,
