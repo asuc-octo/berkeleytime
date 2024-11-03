@@ -1,4 +1,4 @@
-import { RatingModel } from "@repo/common";
+import { RatingModel, AggregatedRatingModel } from "@repo/common";
 
 import { MetricName, Semester } from "../../generated-types/graphql";
 import {
@@ -32,10 +32,17 @@ export const createRating = async (
     classNumber,
     metricName
   );
+
+  // update existing rating
+  // look for old metric category in aggregatedRatingModel, - 1 count. if new count is 0, delete from aggregatedRatingModel
+  // look for new metric category in aggregatedRatingModel, + 1 count
+  // abstract out -1 and delete rating logic?
   if (existingRating) {
     existingRating.value = value;
     await existingRating.save();
   } else {
+    // create new rating
+    // look for metric category in aggregatedRatingModel, + 1 count. initialize if not exists
     await RatingModel.create({
       createdBy: context.user._id,
       subject,
@@ -48,6 +55,7 @@ export const createRating = async (
     });
   }
 
+  // new aggregator will use aggregatedRatingModel, using static category counts. Calculate weightedAverage
   const aggregated = await ratingAggregator({
     subject,
     courseNumber,
@@ -70,6 +78,7 @@ export const createRating = async (
   return formatAggregatedRatings(aggregated[0]);
 };
 
+// if delete = true, find metric category in aggregatedRatingModel, - 1 count. if new count is 0, delete from aggregatedRatingModel
 export const deleteRating = async (
   context: any,
   subject: string,
@@ -149,6 +158,7 @@ export const getAggregatedRatings = async (
   return formatAggregatedRatings(aggregated[0]);
 };
 
+// use aggregatedRatingModel for more efficient query
 export const getSemestersWithRatings = async (
   subject: string,
   courseNumber: string
