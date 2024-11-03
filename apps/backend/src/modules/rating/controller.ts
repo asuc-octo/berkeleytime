@@ -1,4 +1,4 @@
-import { RatingModel, AggregatedRatingModel } from "@repo/common";
+import { RatingModel } from "@repo/common";
 
 import { MetricName, Semester } from "../../generated-types/graphql";
 import {
