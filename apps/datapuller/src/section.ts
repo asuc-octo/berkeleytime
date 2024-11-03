@@ -1,4 +1,4 @@
-import { ISectionItem } from "@repo/common";
+import { ISectionItem, SectionModel } from "@repo/common";
 import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
 import setup from "./shared";
@@ -34,6 +34,21 @@ async function updateSections(config: Config) {
   log.info("Example Section:", sections[0]);
 
   log.info(`Updated ${sections.length} sections for Spring 2024`);
+
+  await SectionModel.deleteMany({});
+
+  // Insert sections in batches of 5000
+  const insertBatchSize = 5000;
+
+  for (let i = 0; i < sections.length; i += insertBatchSize) {
+    const batch = sections.slice(i, i + insertBatchSize);
+
+    console.log(`Inserting batch ${i / insertBatchSize + 1}...`);
+
+    await SectionModel.insertMany(batch, { ordered: false });
+  }
+
+  console.log(`Completed updating database with new section data.`);
 }
 
 const initialize = async () => {

@@ -1,4 +1,4 @@
-import { IClassItem } from "@repo/common";
+import { ClassModel, IClassItem } from "@repo/common";
 import { ClassesAPI } from "@repo/sis-api/classes";
 
 import setup from "./shared";
@@ -32,6 +32,21 @@ async function updateClasses(config: Config) {
   );
 
   log.info("Example Class:", classes[0]);
+
+  await ClassModel.deleteMany({});
+
+  // Insert classes in batches of 5000
+  const insertBatchSize = 5000;
+
+  for (let i = 0; i < classes.length; i += insertBatchSize) {
+    const batch = classes.slice(i, i + insertBatchSize);
+
+    console.log(`Inserting batch ${i / insertBatchSize + 1}...`);
+
+    await ClassModel.insertMany(batch, { ordered: false });
+  }
+
+  console.log(`Completed updating database with new class data.`);
 
   log.info(`Updated ${classes.length} classes for active terms`);
 }
