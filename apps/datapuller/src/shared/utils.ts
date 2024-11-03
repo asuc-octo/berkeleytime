@@ -48,77 +48,72 @@ export async function fetchPaginatedData<T, R>(
   itemProcessor: (item: R) => T
 ): Promise<T[]> {
   const results: T[] = [];
+  const queryBatchSize = 50;
   let page = 1;
-  let retries = 1;
 
-  const fetchData = async (termId?: string) => {
-    while (retries > 0) {
-      try {
-        const params: Record<string, any> = {
-          "page-number": page,
-          "page-size": 100,
-        };
-        if (termId) {
-          params["term-id"] = termId;
-        }
+  const fetchBatch = async (termId?: string) => {
+    logger.info(`Querying ${queryBatchSize} pages from page ${page}...`);
+    const promises = [];
 
-        const response = await api[method](params, { headers });
-
-        const data = await response.json();
-        const processedData = responseProcessor(data);
-
-        if (processedData.length === 0) {
-          return false;
-        }
-
-        logger.info("Mapping processedData with itemProcessor...");
-        const transformedData = processedData.map((item, index) => {
-          try {
-            return itemProcessor(item);
-          } catch (error) {
-            logger.error(`Error processing item at index ${index}:`, error);
-            logger.error("Problematic item:", JSON.stringify(item, null, 2));
-            throw error;
-          }
-        });
-
-        results.push(...transformedData);
-        logger.info("result", transformedData);
-        logger.info(
-          `Processed ${processedData.length} items from page ${page}.`
-        );
-        page++;
-        retries = 1;
-        return true;
-      } catch (error) {
-        logger.error(`Error fetching page ${page} of data`);
-        logger.error(`Unexpected error querying API. Error: "${error}"`);
-
-        if (retries === 0) {
-          logger.error(`Too many errors querying API. Terminating update...`);
-          return false;
-        }
-
-        retries--;
-        logger.info(`Retrying...`);
+    for (let i = 0; i < queryBatchSize; i++) {
+      const params: Record<string, any> = {
+        "page-number": (page + i).toString(),
+        "page-size": "50",
+      };
+      if (termId) {
+        params["term-id"] = termId;
       }
+
+      promises.push(
+        api[method](params, { headers })
+          .then((response: any) => response.json())
+          .then((data: any) => responseProcessor(data))
+          .catch((error: any) => {
+            logger.error(`Error fetching page ${page + i}: ${error.message}`);
+            return [];
+          })
+      );
     }
-    return false;
+
+    const batchResults = await Promise.all(promises);
+    const flattenedResults = batchResults.flat();
+
+    logger.info(`Processed ${flattenedResults.length} items in this batch.`);
+
+    return flattenedResults;
+  };
+
+  const processBatch = async (termId?: string) => {
+    const batchData = await fetchBatch(termId);
+    if (batchData.length === 0) return false;
+
+    const transformedData = batchData.map((item, index) => {
+      try {
+        return itemProcessor(item);
+      } catch (error) {
+        logger.error(`Error processing item at index ${index}:`, error);
+        logger.error("Problematic item:", JSON.stringify(item, null, 2));
+        throw error;
+      }
+    });
+
+    results.push(...transformedData);
+    page += queryBatchSize;
+    return true;
   };
 
   if (terms && terms.length > 0) {
     for (const term of terms) {
       let hasMoreData = true;
       while (hasMoreData) {
-        hasMoreData = await fetchData(term);
+        hasMoreData = await processBatch(term);
       }
-      page = 1; // Reset page for next term
+      page = 1;
     }
-    // TODO: verify
   } else {
     let hasMoreData = true;
     while (hasMoreData) {
-      hasMoreData = await fetchData();
+      hasMoreData = await processBatch();
     }
   }
 

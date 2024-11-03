@@ -13,7 +13,7 @@ async function updateCourses(config: Config) {
   const courses = await fetchPaginatedData<ICourseItem, CombinedCourse>(
     log,
     coursesAPI.v4,
-    [],
+    null,
     "findCourseCollectionUsingGet",
     {
       app_id: config.sis.COURSE_APP_ID,
