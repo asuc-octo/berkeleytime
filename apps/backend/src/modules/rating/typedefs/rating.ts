@@ -19,7 +19,7 @@ const typedef = gql`
     "Class identifer"
     subject: String!
     courseNumber: String!
-    classNumber: String!
+    classNumber: String! 
 
     metrics: [Metric!]!
   }

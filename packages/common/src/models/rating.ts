@@ -52,7 +52,7 @@ const ratingSchema = new Schema(
 export const RatingModel = mongoose.model("rating", ratingSchema);
 export type RatingType = InferSchemaType<typeof ratingSchema>;
 
-const aggregatedRatingSchema = new Schema({
+const aggregatedMetricsSchema = new Schema({
   _id: { type: Schema.Types.ObjectId, auto: true },
   subject: {
     type: String,
@@ -78,20 +78,20 @@ const aggregatedRatingSchema = new Schema({
     type: String,
     required: true,
   },
-  category: {
-    type: String,
-    required: true,
-  },
-  count: {
+  catgoryValue: {
     type: Number,
-    required: true,
+    required: true
   },
+  categoryCount: {
+    type: Number,
+    required: true
+  }
 });
 
-export const AggregatedRatingModel = mongoose.model(
-  "aggregatedRating",
-  aggregatedRatingSchema
+export const AggregatedMetricsModel = mongoose.model(
+  "aggregatedMetrics",
+  aggregatedMetricsSchema
 );
-export type AggregatedRatingType = InferSchemaType<
-  typeof aggregatedRatingSchema
+export type AggregatedMetricsSchema = InferSchemaType<
+  typeof aggregatedMetricsSchema
 >;
