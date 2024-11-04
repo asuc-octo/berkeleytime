@@ -80,12 +80,12 @@ const aggregatedMetricsSchema = new Schema({
   },
   categoryValue: {
     type: Number,
-    required: true
+    required: true,
   },
   categoryCount: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 });
 
 export const AggregatedMetricsModel = mongoose.model(

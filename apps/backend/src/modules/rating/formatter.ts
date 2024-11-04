@@ -6,7 +6,7 @@ import {
   Semester,
   UserClass,
   UserMetric,
-  UserRatings
+  UserRatings,
 } from "../../generated-types/graphql";
 
 export const formatUserRatings = (ratings: UserRatings): UserRatings => {
@@ -50,9 +50,7 @@ export const formatAggregatedRatings = (
   };
 };
 
-export const formatUserClassRatings = (
-  ratings: UserClass
-): UserClass => {
+export const formatUserClassRatings = (ratings: UserClass): UserClass => {
   return {
     subject: ratings.subject,
     courseNumber: ratings.courseNumber,

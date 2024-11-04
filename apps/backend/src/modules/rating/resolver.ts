@@ -2,8 +2,8 @@ import {
   createRating,
   deleteRating,
   getAggregatedRatings,
+  getUserClassRatings,
   getUserRatings,
-  getUserClassRatings
 } from "./controller";
 import { RatingModule } from "./generated-types/module-types";
 
@@ -43,7 +43,7 @@ const resolvers: RatingModule.Resolvers = {
         classNumber
       );
       return userClassRatings as unknown as RatingModule.UserClass;
-    }
+    },
   },
   Mutation: {
     createRating: async (
