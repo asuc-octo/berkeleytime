@@ -289,7 +289,13 @@ export const getAggregatedRatings = async (
           $push: {
             metricName: "$_id.metricName",
             count: "$totalCount",
-            weightedAverage: { $cond: [ { $eq: ["$totalCount", 0] }, 0, { $divide: ["$sumValues", "$totalCount"] } ] },
+            weightedAverage: {
+              $cond: [
+                { $eq: ["$totalCount", 0] },
+                0,
+                { $divide: ["$sumValues", "$totalCount"] },
+              ],
+            },
             categories: "$categories",
           },
         },
