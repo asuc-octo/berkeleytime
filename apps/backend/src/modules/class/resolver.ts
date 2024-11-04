@@ -109,8 +109,7 @@ const resolvers: ClassModule.Resolvers = {
         parent.courseNumber,
         parent.semester,
         parent.year,
-        parent.number,
-        false
+        parent.number
       );
 
       return aggregatedRatings;

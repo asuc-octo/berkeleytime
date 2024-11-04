@@ -71,10 +71,17 @@ const typedef = gql`
       semester: Semester!
       year: Int!
       classNumber: String!
-      isAllTime: Boolean!
     ): AggregatedRatings!
 
     userRatings: UserRatings! @auth
+
+    userClassRatings(
+      subject: String!
+      courseNumber: String!
+      semester: Semester!
+      year: Int!
+      classNumber: String!
+    ): UserClass! @auth
 
     semestersWithRatings(
       subject: String!

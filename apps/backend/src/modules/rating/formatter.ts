@@ -4,7 +4,6 @@ import {
   Metric,
   MetricName,
   Semester,
-  SemesterAvailable,
   UserClass,
   UserMetric,
   UserRatings,
@@ -51,11 +50,16 @@ export const formatAggregatedRatings = (
   };
 };
 
-export const formatSemesters = (
-  semesters: SemesterAvailable[]
-): SemesterAvailable[] => {
-  return semesters.map((semester: SemesterAvailable) => ({
-    semester: semester.semester as Semester,
-    year: semester.year,
-  }));
+export const formatUserClassRatings = (ratings: UserClass): UserClass => {
+  return {
+    subject: ratings.subject,
+    courseNumber: ratings.courseNumber,
+    semester: ratings.semester,
+    year: ratings.year,
+    classNumber: ratings.classNumber,
+    metrics: ratings.metrics.map((metric: UserMetric) => ({
+      metricName: metric.metricName as MetricName,
+      value: metric.value,
+    })),
+  };
 };

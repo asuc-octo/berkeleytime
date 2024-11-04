@@ -2,7 +2,7 @@ import {
   createRating,
   deleteRating,
   getAggregatedRatings,
-  getSemestersWithRatings,
+  getUserClassRatings,
   getUserRatings,
 } from "./controller";
 import { RatingModule } from "./generated-types/module-types";
@@ -11,7 +11,7 @@ const resolvers: RatingModule.Resolvers = {
   Query: {
     aggregatedRatings: async (
       _,
-      { subject, courseNumber, semester, year, classNumber, isAllTime },
+      { subject, courseNumber, semester, year, classNumber },
       __
     ) => {
       const aggregatedRatings = await getAggregatedRatings(
@@ -19,8 +19,7 @@ const resolvers: RatingModule.Resolvers = {
         courseNumber,
         semester,
         year,
-        classNumber,
-        isAllTime
+        classNumber
       );
       return aggregatedRatings as unknown as RatingModule.AggregatedRatings;
     },
@@ -30,9 +29,20 @@ const resolvers: RatingModule.Resolvers = {
       return userRatings as unknown as RatingModule.UserRatings;
     },
 
-    semestersWithRatings: async (_, { subject, courseNumber }, __) => {
-      const semesters = await getSemestersWithRatings(subject, courseNumber);
-      return semesters as unknown as RatingModule.SemesterAvailable[];
+    userClassRatings: async (
+      _,
+      { subject, courseNumber, semester, year, classNumber },
+      context
+    ) => {
+      const userClassRatings = await getUserClassRatings(
+        context,
+        subject,
+        courseNumber,
+        semester,
+        year,
+        classNumber
+      );
+      return userClassRatings as unknown as RatingModule.UserClass;
     },
   },
   Mutation: {

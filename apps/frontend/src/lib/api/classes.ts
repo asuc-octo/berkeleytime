@@ -251,6 +251,17 @@ export const READ_CLASS = gql`
         classes {
           year
           semester
+          aggregatedRatings {
+            metrics {
+              categories {
+                count
+                value
+              }
+              count
+              metricName
+              weightedAverage
+            }
+          }
         }
         gradeDistribution {
           average
@@ -322,19 +333,6 @@ export const READ_CLASS = gql`
         waitlistMax
         startDate
         endDate
-      }
-      aggregatedRatings {
-        classNumber
-        courseNumber
-        metrics {
-          categories {
-            count
-            value
-          }
-          count
-          metricName
-          weightedAverage
-        }
       }
     }
   }
