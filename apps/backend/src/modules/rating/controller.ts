@@ -3,11 +3,12 @@ import { AggregatedMetricsModel, RatingModel } from "@repo/common";
 import { MetricName, Semester } from "../../generated-types/graphql";
 import {
   formatAggregatedRatings,
+  formatUserClassRatings,
   formatUserRatings,
 } from "./formatter";
 
-// TODO: test for cases intentionally trying to break mutation (out of bound values)
-// TODO: test for cases for fetching empty data
+export const numberScaleMetrics = ["Usefulness", "Difficulty", "Workload"] as MetricName[];
+export const booleanScaleMetrics = ["Attendance", "Recording"] as MetricName[];
 
 export const createRating = async (
   context: any,
@@ -26,13 +27,16 @@ export const createRating = async (
     context,
     subject,
     courseNumber,
-    semester,
-    year,
-    classNumber,
     metricName
   );
 
-  if (existingRating) {
+  let skipEdit = false;
+  if (existingRating && (existingRating.semester != semester || existingRating.year != year || existingRating.classNumber != classNumber)) {
+    deleteRating(context, existingRating.subject, existingRating.courseNumber, existingRating.semester as Semester, existingRating.year, existingRating.classNumber, existingRating.metricName as MetricName);
+    skipEdit = true;
+  }
+  if (existingRating && !skipEdit) {
+    
     const oldValue = existingRating.value;
     existingRating.value = value;
     existingRating.save();
@@ -115,25 +119,30 @@ const handleCategoryChange = async (
     metric.categoryCount += delta;
     await metric.save();
   } else if (isIncrement) { 
-    const newMetric = await AggregatedMetricsModel.create({
-      subject,
-      courseNumber,
-      semester,
-      year,
-      classNumber,
-      metricName,
-      categoryValue,
-      categoryCount: 1,
-  })
-    await newMetric.save();
+    let range = [];
+    if (numberScaleMetrics.includes(metricName)) {
+      range = [1, 2, 3, 4, 5];
+    } else {
+      range = [0, 1];
+    }
+    for (const v of range) {
+      (await AggregatedMetricsModel.create({
+        subject,
+        courseNumber,
+        semester,
+        year,
+        classNumber,
+        metricName,
+        v,
+        categoryCount: (v == categoryValue) ? 1 : 0,
+      })).save();
+    }
   } else {
     throw new Error("Aggregated Rating does not exist, cannot decrement");
   }
   
 }
 
-
-// if delete = true, find metric category in aggregatedRatingModel, - 1 count. if new count is 0, delete from aggregatedRatingModel
 export const deleteRating = async (
   context: any,
   subject: string,
@@ -162,10 +171,39 @@ export const deleteRating = async (
   return true;
 };
 
+export const getUserClassRatings = async (
+  context: any, 
+  subject: string, 
+  courseNumber: string, 
+  semester: Semester, 
+  year: number, 
+  classNumber: string
+) => {
+  if (!context.user._id) throw new Error("Unauthorized");
+  const userRatings = await userClassRatingsAggregator(
+    context,
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber,
+  );
+  if (!userRatings.length)
+    return {
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metrics: [],
+    };
+  return formatUserClassRatings(userRatings[0]);
+}
+
 export const getUserRatings = async (context: any) => {
   if (!context.user._id) throw new Error("Unauthorized");
 
-  const userRatings = await userRatingAggregator(context);
+  const userRatings = await userRatingsAggregator(context);
   if (!userRatings.length)
     return {
       createdBy: context.user._id,
@@ -198,7 +236,7 @@ export const getAggregatedRatings = async (
         subject: "$subject",
         courseNumber: "$courseNumber",
         classNumber: "$classNumber",
-        semester: "$",
+        semester: "$semester",
         metricName: "$metricName",
       }, 
       totalCount: { $sum: 1 },
@@ -254,25 +292,17 @@ const checkRatingExists = async (
   context: any,
   subject: string,
   courseNumber: string,
-  semester: Semester,
-  year: number,
-  classNumber: string,
   metricName: MetricName
 ) => {
   return await RatingModel.findOne({
     subject,
     courseNumber,
-    semester,
-    year,
-    classNumber,
     metricName,
     createdBy: context.user._id,
   });
 };
 
 const checkValueConstraint = (metricName: MetricName, value: number) => {
-  const numberScaleMetrics = ["Usefulness", "Difficulty", "Workload"] as const;
-  const booleanScaleMetrics = ["Attendance", "Recording"] as const;
 
   if (
     numberScaleMetrics.includes(
@@ -295,7 +325,7 @@ const checkValueConstraint = (metricName: MetricName, value: number) => {
   }
 };
 
-const userRatingAggregator = async (context: any) => {
+const userRatingsAggregator = async (context: any) => {
   return await RatingModel.aggregate([
     { $match: { createdBy: context.user._id } },
     {
@@ -343,5 +373,56 @@ const userRatingAggregator = async (context: any) => {
         classes: 1,
       },
     },
+  ]);
+};
+
+const userClassRatingsAggregator = async (
+  context: any, 
+  subject: string, 
+  courseNumber: string, 
+  semester: Semester, 
+  year: number, 
+  classNumber: string
+) => {
+  if (!context.user._id) throw new Error("Unauthorized");
+  return await RatingModel.aggregate([
+    { 
+      $match: { 
+        createdBy: context.user._id,
+        subject: subject,
+        courseNumber: courseNumber,
+        semester: semester,
+        year: year,
+        classNumber: classNumber
+      } 
+    },
+    {
+      $group: {
+        _id: {
+          subject: "$subject",
+          courseNumber: "$courseNumber",
+          semester: "$semester",
+          year: "$year",
+          classNumber: "$classNumber"
+        },
+        metrics: {
+          $push: {
+            metricName: "$metricName",
+            value: "$value"
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        subject: "$_id.subject",
+        courseNumber: "$_id.courseNumber",
+        semester: "$_id.semester",
+        year: "$_id.year",
+        classNumber: "$_id.classNumber",
+        metrics: 1
+      }
+    }
   ]);
 };

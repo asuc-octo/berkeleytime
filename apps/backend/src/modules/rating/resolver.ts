@@ -3,6 +3,7 @@ import {
   deleteRating,
   getAggregatedRatings,
   getUserRatings,
+  getUserClassRatings
 } from "./controller";
 import { RatingModule } from "./generated-types/module-types";
 
@@ -27,6 +28,22 @@ const resolvers: RatingModule.Resolvers = {
       const userRatings = await getUserRatings(context);
       return userRatings as unknown as RatingModule.UserRatings;
     },
+
+    userClassRatings: async (
+      _,
+      { subject, courseNumber, semester, year, classNumber },
+      context
+    ) => {
+      const userClassRatings = await getUserClassRatings(
+        context,
+        subject,
+        courseNumber,
+        semester,
+        year,
+        classNumber
+      );
+      return userClassRatings as unknown as RatingModule.UserClass;
+    }
   },
   Mutation: {
     createRating: async (

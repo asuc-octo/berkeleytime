@@ -78,7 +78,7 @@ const aggregatedMetricsSchema = new Schema({
     type: String,
     required: true,
   },
-  catgoryValue: {
+  categoryValue: {
     type: Number,
     required: true
   },
