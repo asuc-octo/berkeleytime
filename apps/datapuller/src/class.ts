@@ -33,7 +33,9 @@ async function updateClasses(config: Config) {
 
   log.info("Example Class:", classes[0]);
 
-  await ClassModel.deleteMany({});
+  await ClassModel.deleteMany({
+    "session.term.id": { $in: activeTerms },
+  });
 
   // Insert classes in batches of 5000
   const insertBatchSize = 5000;

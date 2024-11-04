@@ -35,7 +35,9 @@ async function updateSections(config: Config) {
 
   log.info(`Updated ${sections.length} sections for Spring 2024`);
 
-  await SectionModel.deleteMany({});
+  await SectionModel.deleteMany({
+    "class.session.term.id": { $in: activeTerms },
+  });
 
   // Insert sections in batches of 5000
   const insertBatchSize = 5000;
