@@ -113,55 +113,6 @@ export const createRating = async (
   );
 };
 
-const handleCategoryChange = async (
-  subject: string,
-  courseNumber: string,
-  semester: Semester,
-  year: number,
-  classNumber: string,
-  metricName: MetricName,
-  categoryValue: Number,
-  isIncrement: Boolean // false means is decrement
-) => {
-  const delta = isIncrement ? 1 : -1;
-  const metric = await AggregatedMetricsModel.findOne({
-    subject: subject,
-    courseNumber: courseNumber,
-    semester: semester,
-    year: year,
-    classNumber: classNumber,
-    metricName: metricName,
-    categoryValue: categoryValue,
-  });
-  if (metric) {
-    metric.categoryCount += delta;
-    await metric.save();
-  } else if (isIncrement) {
-    let range = [];
-    if (numberScaleMetrics.includes(metricName)) {
-      range = [1, 2, 3, 4, 5];
-    } else {
-      range = [0, 1];
-    }
-    for (const v of range) {
-      (
-        await AggregatedMetricsModel.create({
-          subject: subject,
-          courseNumber: courseNumber,
-          semester: semester,
-          year: year,
-          classNumber: classNumber,
-          metricName: metricName,
-          categoryValue: v,
-          categoryCount: v == categoryValue ? 1 : 0,
-        })
-      ).save();
-    }
-  } else {
-    throw new Error("Aggregated Rating does not exist, cannot decrement");
-  }
-};
-
 export const deleteRating = async (
   context: any,
   subject: string,
@@ -345,6 +296,55 @@ const checkValueConstraint = (metricName: MetricName, value: number) => {
     if (value !== 0 && value !== 1) {
       throw new Error(`${metricName} rating must be either 0 or 1`);
     }
+  }
+};
+
+const handleCategoryChange = async (
+  subject: string,
+  courseNumber: string,
+  semester: Semester,
+  year: number,
+  classNumber: string,
+  metricName: MetricName,
+  categoryValue: Number,
+  isIncrement: Boolean // false means is decrement
+) => {
+  const delta = isIncrement ? 1 : -1;
+  const metric = await AggregatedMetricsModel.findOne({
+    subject: subject,
+    courseNumber: courseNumber,
+    semester: semester,
+    year: year,
+    classNumber: classNumber,
+    metricName: metricName,
+    categoryValue: categoryValue,
+  });
+  if (metric) {
+    metric.categoryCount += delta;
+    await metric.save();
+  } else if (isIncrement) {
+    let range = [];
+    if (numberScaleMetrics.includes(metricName)) {
+      range = [1, 2, 3, 4, 5];
+    } else {
+      range = [0, 1];
+    }
+    for (const v of range) {
+      (
+        await AggregatedMetricsModel.create({
+          subject: subject,
+          courseNumber: courseNumber,
+          semester: semester,
+          year: year,
+          classNumber: classNumber,
+          metricName: metricName,
+          categoryValue: v,
+          categoryCount: v == categoryValue ? 1 : 0,
+        })
+      ).save();
+    }
+  } else {
+    throw new Error("Aggregated Rating does not exist, cannot decrement");
   }
 };
 
