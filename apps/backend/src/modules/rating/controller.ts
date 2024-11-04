@@ -269,7 +269,7 @@ export const getAggregatedRatings = async (
           semester: "$semester",
           metricName: "$metricName",
         },
-        totalCount: { $sum: 1 },
+        totalCount: { $sum: "$categoryCount" },
         sumValues: {
           $sum: { $multiply: ["$categoryValue", "$categoryCount"] },
         },
@@ -335,21 +335,13 @@ const checkRatingExists = async (
 };
 
 const checkValueConstraint = (metricName: MetricName, value: number) => {
-  if (
-    numberScaleMetrics.includes(
-      metricName as (typeof numberScaleMetrics)[number]
-    )
-  ) {
+  if (numberScaleMetrics.includes(metricName)) {
     if (value < 1 || value > 5 || !Number.isInteger(value)) {
       throw new Error(
         `${metricName} rating must be an integer between 1 and 5`
       );
     }
-  } else if (
-    booleanScaleMetrics.includes(
-      metricName as (typeof booleanScaleMetrics)[number]
-    )
-  ) {
+  } else if (booleanScaleMetrics.includes(metricName)) {
     if (value !== 0 && value !== 1) {
       throw new Error(`${metricName} rating must be either 0 or 1`);
     }
