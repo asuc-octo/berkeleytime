@@ -334,11 +334,6 @@ export const READ_CLASS = gql`
         startDate
         endDate
       }
-      aggregatedRatings {
-        metrics {
-          count
-        }
-      }
     }
   }
 `;

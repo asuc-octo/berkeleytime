@@ -35,6 +35,7 @@ export const createRating = async (
   );
 
   let skipEdit = false;
+  console.log(existingRating)
   if (
     existingRating &&
     (existingRating.semester != semester ||
@@ -54,41 +55,43 @@ export const createRating = async (
   }
   if (existingRating && !skipEdit) {
     const oldValue = existingRating.value;
-    existingRating.value = value;
-    existingRating.save();
+    if (oldValue != value) {
+      existingRating.value = value;
+      existingRating.save();
 
-    // decrement count of old category
-    handleCategoryChange(
-      subject,
-      courseNumber,
-      semester,
-      year,
-      classNumber,
-      metricName,
-      oldValue,
-      false
-    );
-    // incremdent count of new category
-    handleCategoryChange(
-      subject,
-      courseNumber,
-      semester,
-      year,
-      classNumber,
-      metricName,
-      value,
-      true
-    );
+      // decrement count of old category
+      handleCategoryChange(
+        subject,
+        courseNumber,
+        semester,
+        year,
+        classNumber,
+        metricName,
+        oldValue,
+        false
+      );
+      // incremdent count of new category
+      handleCategoryChange(
+        subject,
+        courseNumber,
+        semester,
+        year,
+        classNumber,
+        metricName,
+        value,
+        true
+      );
+    }
   } else {
     await RatingModel.create({
       createdBy: context.user._id,
-      subject,
-      courseNumber,
-      semester,
-      year,
-      classNumber,
-      metricName,
-      value,
+      subject: subject,
+      courseNumber: courseNumber,
+      semester: semester,
+      year: year,
+      classNumber: classNumber,
+      metricName: metricName,
+      value: value,
     });
     handleCategoryChange(
       subject,
@@ -143,13 +146,13 @@ const handleCategoryChange = async (
     for (const v of range) {
       (
         await AggregatedMetricsModel.create({
-          subject,
-          courseNumber,
-          semester,
-          year,
-          classNumber,
-          metricName,
-          v,
+          subject: subject,
+          courseNumber: courseNumber,
+          semester: semester,
+          year: year,
+          classNumber: classNumber,
+          metricName: metricName,
+          categoryValue: v,
           categoryCount: v == categoryValue ? 1 : 0,
         })
       ).save();
@@ -183,6 +186,17 @@ export const deleteRating = async (
   if (!deletedRating) {
     throw new Error("Rating not found");
   }
+
+  handleCategoryChange(
+    subject,
+    courseNumber,
+    semester,
+    year,
+    classNumber,
+    metricName,
+    deletedRating.value,
+    false
+  )
 
   return true;
 };
