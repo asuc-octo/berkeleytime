@@ -35,7 +35,7 @@ export const createRating = async (
   );
 
   let skipEdit = false;
-  console.log(existingRating)
+  console.log(existingRating);
   if (
     existingRating &&
     (existingRating.semester != semester ||
@@ -196,7 +196,7 @@ export const deleteRating = async (
     metricName,
     deletedRating.value,
     false
-  )
+  );
 
   return true;
 };
