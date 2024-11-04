@@ -1,9 +1,9 @@
 import { ClassModel, IClassItem } from "@repo/common";
 import { ClassesAPI } from "@repo/sis-api/classes";
 
+import { Config } from "./config";
 import setup from "./shared";
 import mapClassToNewClass, { CombinedClass } from "./shared/classParser";
-import { Config } from "./shared/config";
 import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
 
 async function updateClasses(config: Config) {
@@ -54,7 +54,7 @@ async function updateClasses(config: Config) {
 }
 
 const initialize = async () => {
-  const { config } = setup();
+  const { config } = await setup();
   try {
     config.log.info("\n=== UPDATE CLASSES ===");
     await updateClasses(config);

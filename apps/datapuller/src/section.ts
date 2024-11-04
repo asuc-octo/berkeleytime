@@ -1,8 +1,8 @@
 import { ISectionItem, SectionModel } from "@repo/common";
 import { ClassSection, ClassesAPI } from "@repo/sis-api/classes";
 
+import { Config } from "./config";
 import setup from "./shared";
-import { Config } from "./shared/config";
 import mapSectionToNewSection from "./shared/sectionParser";
 import { fetchActiveTerms, fetchPaginatedData } from "./shared/utils";
 
@@ -54,7 +54,7 @@ async function updateSections(config: Config) {
 }
 
 const initialize = async () => {
-  const { config } = setup();
+  const { config } = await setup();
   try {
     config.log.info("\n=== UPDATE SECTIONS ===");
     await updateSections(config);
