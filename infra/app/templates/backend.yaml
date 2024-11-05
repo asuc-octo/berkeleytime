@@ -51,14 +51,10 @@ spec:
               value: "_"
           readinessProbe:
             httpGet:
-              path: "http://localhost:5001/api/graphql"
+              path: {{ .Values.backend.path }}
               port: {{ .Values.backend.port }}
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            # timeoutSeconds: 2
-            # successThreshold: 1
-            # failureThreshold: 3
-
+            initialDelaySeconds: 3
+            periodSeconds: 3
 
 ---
 

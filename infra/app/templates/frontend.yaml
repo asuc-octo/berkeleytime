@@ -26,11 +26,9 @@ spec:
               port: {{ .Values.frontend.port }}
             # exec:
             #   command: ["/bin/bash", "-c", "/usr/local/bin/frontend-readiness.sh"]
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            # timeoutSeconds: 5
-            # successThreshold: 1
-            # failureThreshold: 3
+            initialDelaySeconds: 3
+            periodSeconds: 3
+            
 ---
 
 apiVersion: v1
