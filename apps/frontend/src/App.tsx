@@ -41,9 +41,6 @@ const Schedules = lazy(() => import("@/app/Schedules"));
 const Map = lazy(() => import("@/app/Map"));
 const Plans = lazy(() => import("@/app/Plans"));
 
-const t: Number[] = [];
-console.log(t[0]);
-
 const router = createBrowserRouter([
   {
     element: <Layout header={false} footer={false} />,
@@ -178,6 +175,9 @@ const client = new ApolloClient({
 });
 
 export default function App() {
+  const t: Number[] = [];
+  console.log(t[0]);
+
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>

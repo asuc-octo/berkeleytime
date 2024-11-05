@@ -21,10 +21,13 @@ spec:
           ports:
             - containerPort: {{ .Values.frontend.port }}
           livenessProbe:
-            exec:
-              command: ["/bin/bash", "-c", "/usr/local/bin/frontend-readiness.sh"]
+            httpGet:
+              path: "/"
+              port: {{ .Values.frontend.port }}
+            # exec:
+            #   command: ["/bin/bash", "-c", "/usr/local/bin/frontend-readiness.sh"]
             initialDelaySeconds: 5
-            periodSeconds: 5
+            periodSeconds: 10
             # timeoutSeconds: 5
             # successThreshold: 1
             # failureThreshold: 3
