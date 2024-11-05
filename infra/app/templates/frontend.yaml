@@ -20,7 +20,7 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.frontend.port }}
-          livenessProbe:
+          readinessProbe:
             exec:
               command:
                 - /bin/sh
