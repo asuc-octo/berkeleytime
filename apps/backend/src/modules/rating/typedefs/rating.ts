@@ -16,10 +16,12 @@ const typedef = gql`
   Ratings by class
   """
   type AggregatedRatings {
-    "Class identifer"
+    "Class identifier"
     subject: String!
     courseNumber: String!
     classNumber: String!
+    semester: Semester!
+    year: Int!
 
     metrics: [Metric!]!
   }
@@ -82,11 +84,6 @@ const typedef = gql`
       year: Int!
       classNumber: String!
     ): UserClass! @auth
-
-    semestersWithRatings(
-      subject: String!
-      courseNumber: String!
-    ): [SemesterAvailable!]!
   }
 
   """

@@ -7,12 +7,15 @@ import {
   formatUserRatings,
 } from "./formatter";
 
-export const numberScaleMetrics = [
+const numberScaleMetrics = [
   "Usefulness",
   "Difficulty",
   "Workload",
 ] as MetricName[];
-export const booleanScaleMetrics = ["Attendance", "Recording"] as MetricName[];
+const booleanScaleMetrics = [
+  "Attendance", 
+  "Recording"
+] as MetricName[];
 
 export const createRating = async (
   context: any,
@@ -218,6 +221,7 @@ export const getAggregatedRatings = async (
           courseNumber: "$courseNumber",
           classNumber: "$classNumber",
           semester: "$semester",
+          year: "$year",
           metricName: "$metricName",
         },
         totalCount: { $sum: "$categoryCount" },
@@ -235,6 +239,8 @@ export const getAggregatedRatings = async (
           subject: "$_id.subject",
           courseNumber: "$_id.courseNumber",
           classNumber: "$_id.classNumber",
+          semester: "$_id.semester",
+          year: "$_id.year",
         },
         metrics: {
           $push: {
@@ -258,6 +264,8 @@ export const getAggregatedRatings = async (
         subject: "$_id.subject",
         courseNumber: "$_id.courseNumber",
         classNumber: "$_id.classNumber",
+        semester: "$_id.semester",
+        year: "$_id.year",
         metrics: 1,
       },
     },

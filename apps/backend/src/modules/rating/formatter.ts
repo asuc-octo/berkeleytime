@@ -36,6 +36,8 @@ export const formatAggregatedRatings = (
     subject: aggregated.subject,
     courseNumber: aggregated.courseNumber,
     classNumber: aggregated.classNumber,
+    semester: aggregated.semester as Semester,
+    year: aggregated.year,
 
     metrics: aggregated.metrics.map((metric: Metric) => ({
       metricName: metric.metricName as MetricName,
@@ -50,7 +52,9 @@ export const formatAggregatedRatings = (
   };
 };
 
-export const formatUserClassRatings = (ratings: UserClass): UserClass => {
+export const formatUserClassRatings = (
+  ratings: UserClass
+): UserClass => {
   return {
     subject: ratings.subject,
     courseNumber: ratings.courseNumber,
@@ -59,7 +63,7 @@ export const formatUserClassRatings = (ratings: UserClass): UserClass => {
     classNumber: ratings.classNumber,
     metrics: ratings.metrics.map((metric: UserMetric) => ({
       metricName: metric.metricName as MetricName,
-      value: metric.value,
+      value: metric.value
     })),
   };
 };
