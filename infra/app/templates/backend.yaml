@@ -51,7 +51,7 @@ spec:
               value: "_"
           readinessProbe:
             httpGet:
-              path: "/"
+              path: "/graphql"
               port: {{ .Values.backend.port }}
             initialDelaySeconds: 5
             periodSeconds: 5
