@@ -51,10 +51,10 @@ spec:
               value: "_"
           readinessProbe:
             httpGet:
-              path: {{ .Values.backend.path }}
+              path: "/"
               port: {{ .Values.backend.port }}
             initialDelaySeconds: 5
-            periodSeconds: 10
+            periodSeconds: 5
             # timeoutSeconds: 2
             # successThreshold: 1
             # failureThreshold: 3
