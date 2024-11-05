@@ -87,15 +87,17 @@ export async function fetchPaginatedData<T, R>(
     const batchData = await fetchBatch(termId);
     if (batchData.length === 0) return false;
 
-    const transformedData = batchData.map((item, index) => {
+    const transformedData = batchData.reduce((acc, item, index) => {
       try {
-        return itemProcessor(item);
+        const processedItem = itemProcessor(item);
+        acc.push(processedItem);
       } catch (error) {
         logger.error(`Error processing item at index ${index}:`, error);
         logger.error("Problematic item:", JSON.stringify(item, null, 2));
-        throw error;
       }
-    });
+      return acc;
+    }, [] as T[]);
+    logger.info(`Processed ${transformedData.length} items in this batch.`);
 
     results.push(...transformedData);
     page += queryBatchSize;

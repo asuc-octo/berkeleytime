@@ -18,7 +18,7 @@ export default function mapCourseToNewCourse(
 
   if (!courseId || !number || !subject) {
     // Handle missing essential fields as needed
-    return {} as ICourseItem;
+    throw new Error(`Course ${subject} ${number} is missing essential fields`);
   }
 
   // Top-level properties
