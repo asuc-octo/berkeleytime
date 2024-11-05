@@ -16,8 +16,9 @@ import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import PinsProvider from "@/components/PinsProvider";
 
-const t: Number[] = [];
-console.log(t[0]);
+setTimeout(() => {
+  throw new Error("Intentional runtime error");
+}, 1000);
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),

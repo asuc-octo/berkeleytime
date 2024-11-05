@@ -52,7 +52,7 @@ spec:
           readinessProbe:
             httpGet:
               path: "/api/graphql"
-              port: {{ .Values.backend.port }}
+              # port: {{ .Values.backend.port }}
             initialDelaySeconds: 5
             periodSeconds: 5
             # timeoutSeconds: 2
