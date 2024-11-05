@@ -294,7 +294,7 @@ const initialize = async () => {
     await updateCourses();
 
     const currentTerms = await TermModel.find({
-      temporalPosition: { $or: ["Current", "Next"] },
+      temporalPosition: { $in: ["Current", "Future"] },
     }).lean();
 
     console.log("\n=== UPDATE CLASSES ===");
