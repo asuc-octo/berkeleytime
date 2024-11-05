@@ -20,7 +20,15 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.frontend.port }}
-
+          livenessProbe:
+            httpGet:
+              path: "/"
+              port: {{ .Values.frontend.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            # timeoutSeconds: 5
+            # successThreshold: 1
+            # failureThreshold: 3
 ---
 
 apiVersion: v1

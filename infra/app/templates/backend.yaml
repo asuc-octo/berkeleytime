@@ -49,6 +49,16 @@ spec:
               value: "_"
             - name: SESSION_SECRET
               value: "_"
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.backend.path }}
+              port: {{ .Values.backend.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            # timeoutSeconds: 2
+            # successThreshold: 1
+            # failureThreshold: 3
+
 
 ---
 
