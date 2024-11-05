@@ -179,6 +179,10 @@ const client = new ApolloClient({
 });
 
 export default function App() {
+  setTimeout(() => {
+    throw new Error("Intentional runtime error");
+  }, 1000);
+
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>
