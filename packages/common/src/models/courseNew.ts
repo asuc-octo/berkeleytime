@@ -7,205 +7,205 @@ export interface ICourseItem {
   subject: string;
   // catalogNumber.formatted
   number: string;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   // academicCareer.code
-  academicCareer: string;
+  academicCareer?: string;
   // primaryInstructionMethod.code
-  primaryInstructionMethod: string;
+  primaryInstructionMethod?: string;
   // gradingBasis.code
-  gradingBasis: string;
+  gradingBasis?: string;
   // status.code
-  status: string;
-  fromDate: string;
-  toDate: string;
-  printInCatalog: boolean;
+  status?: string;
+  fromDate?: string;
+  toDate?: string;
+  printInCatalog?: boolean;
   // finalExam.code
-  finalExam: string;
+  finalExam?: string;
   // academicGroup.code
-  academicGroup: string;
+  academicGroup?: string;
   // academicOrganization.code
-  academicOrganization: string;
-  instructorAddConsentRequired: boolean;
-  instructorDropConsentRequired: boolean;
-  allowMultipleEnrollments: boolean;
-  spansMultipleTerms: boolean;
-  multipleTermNumber: number;
-  anyFeesExist: boolean;
-  repeatability: {
-    repeatable: boolean;
-    maxCredit: number;
-    maxCount: number;
+  academicOrganization?: string;
+  instructorAddConsentRequired?: boolean;
+  instructorDropConsentRequired?: boolean;
+  allowMultipleEnrollments?: boolean;
+  spansMultipleTerms?: boolean;
+  multipleTermNumber?: number;
+  anyFeesExist?: boolean;
+  repeatability?: {
+    repeatable?: boolean;
+    maxCredit?: number;
+    maxCount?: number;
   };
-  preparation: {
-    recommendedText: string;
+  preparation?: {
+    recommendedText?: string;
     // recommendedCourses.identifiers[type=cs-course-id]
-    recommendedCourses: string[];
-    requiredText: string;
+    recommendedCourses?: string[];
+    requiredText?: string;
     // requiredCourses.identifiers[type=cs-course-id]
-    requiredCourses: string[];
+    requiredCourses?: string[];
   };
 
-  gradeReplacement: {
+  gradeReplacement?: {
     // gradeReplacementText
-    text: string;
+    text?: string;
     // gradeReplacementGroup
-    group: string;
+    group?: string;
     // gradeReplacementCourses.identifiers[type=cs-course-id]
-    courses: string[];
+    courses?: string[];
   };
 
   // crossListing.courses.identifiers[type=cs-course-id]
-  crossListing: string[];
+  crossListing?: string[];
   // formatsOffered.typicallyOffered.terms[]
-  formatsOffered: {
-    description: string;
+  formatsOffered?: {
+    description?: string;
     // typicallyOffered.terms[]
-    typicallyOffered: {
-      comments: string;
-      terms: string[];
+    typicallyOffered?: {
+      comments?: string;
+      terms?: string[];
     };
-    formats: {
-      termsAllowed: string[];
-      description: string;
-      components: {
+    formats?: {
+      termsAllowed?: string[];
+      description?: string;
+      components?: {
         // instructionMethod.code
-        instructionMethod: string;
-        primary: boolean;
-        minContactHours: number;
-        maxContactHours: number;
-        feesExist: boolean;
+        instructionMethod?: string;
+        primary?: boolean;
+        minContactHours?: number;
+        maxContactHours?: number;
+        feesExist?: boolean;
       }[];
     }[];
   };
 
   // requirementsFulfilled[].code
-  requirementsFulfilled: string[];
-  courseObjectives: string[];
-  studentLearningOutcomes: string[];
-  creditRestriction: {
+  requirementsFulfilled?: string[];
+  courseObjectives?: string[];
+  studentLearningOutcomes?: string[];
+  creditRestriction?: {
     // restrictionText
-    text: string;
+    text?: string;
     // restrictionCourses
-    courses: {
+    courses?: {
       // course.identifiers[type=cs-course-id]
-      courseId: string;
-      maxCreditPercentage: number;
+      courseId?: string;
+      maxCreditPercentage?: number;
     }[];
   };
-  blindGrading: boolean;
-  credit: {
-    type: string;
-    value: {
-      discrete: number[];
-      fixed: number;
-      range: {
-        maxUnits: number;
-        minUnits: number;
+  blindGrading?: boolean;
+  credit?: {
+    type?: string;
+    value?: {
+      discrete?: number[];
+      fixed?: number;
+      range?: {
+        maxUnits?: number;
+        minUnits?: number;
       };
     };
   };
   // NOTE: Determine how formatsOffered factors
-  workloadHours: number;
-  contactHours: number;
+  workloadHours?: number;
+  contactHours?: number;
   // NOTE: Replace with cs-course-id of former course
-  formerDisplayName: string;
-  createdDate: string;
-  updatedDate: string;
+  formerDisplayName?: string;
+  createdDate?: string;
+  updatedDate?: string;
 }
 
 export interface ICourseItemDocument extends ICourseItem, Document {}
 
 const courseSchema = new Schema<ICourseItem>({
   courseId: { type: String, required: true, unique: true },
-  subject: { type: String, required: true },
-  number: { type: String, required: true },
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  academicCareer: { type: String, required: true },
-  primaryInstructionMethod: { type: String, required: true },
-  gradingBasis: { type: String, required: true },
-  status: { type: String, required: true },
-  fromDate: { type: String, required: true },
-  toDate: { type: String, required: true },
-  printInCatalog: { type: Boolean, required: true },
-  finalExam: { type: String, required: true },
-  academicGroup: { type: String, required: true },
-  academicOrganization: { type: String, required: true },
-  instructorAddConsentRequired: { type: Boolean, required: true },
-  instructorDropConsentRequired: { type: Boolean, required: true },
-  allowMultipleEnrollments: { type: Boolean, required: true },
-  spansMultipleTerms: { type: Boolean, required: true },
-  multipleTermNumber: { type: Number, required: true },
-  anyFeesExist: { type: Boolean, required: true },
+  subject: { type: String, required: true, unique: true },
+  number: { type: String, required: true, unique: true },
+  title: { type: String },
+  description: { type: String },
+  academicCareer: { type: String },
+  primaryInstructionMethod: { type: String },
+  gradingBasis: { type: String },
+  status: { type: String },
+  fromDate: { type: String },
+  toDate: { type: String },
+  printInCatalog: { type: Boolean },
+  finalExam: { type: String },
+  academicGroup: { type: String },
+  academicOrganization: { type: String },
+  instructorAddConsentRequired: { type: Boolean },
+  instructorDropConsentRequired: { type: Boolean },
+  allowMultipleEnrollments: { type: Boolean },
+  spansMultipleTerms: { type: Boolean },
+  multipleTermNumber: { type: Number },
+  anyFeesExist: { type: Boolean },
   repeatability: {
-    repeatable: { type: Boolean, required: true },
-    maxCredit: { type: Number, required: true },
-    maxCount: { type: Number, required: true },
+    repeatable: { type: Boolean },
+    maxCredit: { type: Number },
+    maxCount: { type: Number },
   },
   preparation: {
-    recommendedText: { type: String, required: true },
-    recommendedCourses: { type: [String], required: true },
-    requiredText: { type: String, required: true },
-    requiredCourses: { type: [String], required: true },
+    recommendedText: { type: String },
+    recommendedCourses: { type: [String] },
+    requiredText: { type: String },
+    requiredCourses: { type: [String] },
   },
   gradeReplacement: {
-    text: { type: String, required: true },
-    group: { type: String, required: true },
-    courses: { type: [String], required: true },
+    text: { type: String },
+    group: { type: String },
+    courses: { type: [String] },
   },
-  crossListing: { type: [String], required: true },
+  crossListing: { type: [String] },
   formatsOffered: {
-    description: { type: String, required: true },
+    description: { type: String },
     typicallyOffered: {
-      comments: { type: String, required: true },
-      terms: { type: [String], required: true },
+      comments: { type: String },
+      terms: { type: [String] },
     },
     formats: [
       {
-        termsAllowed: { type: [String], required: true },
-        description: { type: String, required: true },
+        termsAllowed: { type: [String] },
+        description: { type: String },
         components: [
           {
-            instructionMethod: { type: String, required: true },
-            primary: { type: Boolean, required: true },
-            minContactHours: { type: Number, required: true },
-            maxContactHours: { type: Number, required: true },
-            feesExist: { type: Boolean, required: true },
+            instructionMethod: { type: String },
+            primary: { type: Boolean },
+            minContactHours: { type: Number },
+            maxContactHours: { type: Number },
+            feesExist: { type: Boolean },
           },
         ],
       },
     ],
   },
-  requirementsFulfilled: { type: [String], required: true },
-  courseObjectives: { type: [String], required: true },
-  studentLearningOutcomes: { type: [String], required: true },
+  requirementsFulfilled: { type: [String] },
+  courseObjectives: { type: [String] },
+  studentLearningOutcomes: { type: [String] },
   creditRestriction: {
-    text: { type: String, required: true },
+    text: { type: String },
     courses: [
       {
-        courseId: { type: String, required: true },
-        maxCreditPercentage: { type: Number, required: true },
+        courseId: { type: String },
+        maxCreditPercentage: { type: Number },
       },
     ],
   },
-  blindGrading: { type: Boolean, required: true },
+  blindGrading: { type: Boolean },
   credit: {
-    type: { type: String, required: true },
+    type: { type: String },
     value: {
-      discrete: { type: [Number], required: true },
-      fixed: { type: Number, required: true },
+      discrete: { type: [Number] },
+      fixed: { type: Number },
       range: {
-        maxUnits: { type: Number, required: true },
-        minUnits: { type: Number, required: true },
+        maxUnits: { type: Number },
+        minUnits: { type: Number },
       },
     },
   },
-  workloadHours: { type: Number, required: true },
-  contactHours: { type: Number, required: true },
-  formerDisplayName: { type: String, required: true },
-  createdDate: { type: String, required: true },
-  updatedDate: { type: String, required: true },
+  workloadHours: { type: Number },
+  contactHours: { type: Number },
+  formerDisplayName: { type: String },
+  createdDate: { type: String },
+  updatedDate: { type: String },
 });
 
 export const NewCourseModel = model<ICourseItem>("NewCourse", courseSchema);

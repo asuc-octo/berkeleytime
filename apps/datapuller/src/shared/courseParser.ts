@@ -2,8 +2,6 @@ import { ICourseItem } from "@repo/common";
 import { Course as ClassCourse } from "@repo/sis-api/classes";
 import { Course } from "@repo/sis-api/courses";
 
-import { getRequiredField } from "./utils";
-
 // Include other relevant fields missing in the auto-generated Course type
 export type CombinedCourse = Course & {
   gradeReplacement: ClassCourse["gradeReplacement"];
@@ -12,280 +10,191 @@ export type CombinedCourse = Course & {
 export default function mapCourseToNewCourse(
   original: CombinedCourse
 ): ICourseItem {
-  const courseId = getRequiredField(
-    original.identifiers?.find((i) => i.type == "cs-course-id")?.id,
-    "courseId",
-    ""
+  const courseId = original.identifiers?.find(
+    (i) => i.type === "cs-course-id"
+  )?.id;
+  const number = original.catalogNumber?.formatted;
+  const subject = original.subjectArea?.code;
+
+  if (!courseId || !number || !subject) {
+    // Handle missing essential fields as needed
+    return {} as ICourseItem;
+  }
+
+  // Top-level properties
+  const title = original.title;
+  const description = original.description;
+  const academicCareer = original.academicCareer?.code;
+  const primaryInstructionMethod = original.primaryInstructionMethod?.code;
+  const gradingBasis = original.gradingBasis?.code;
+  const status = original.status?.code;
+  const fromDate = original.fromDate;
+  const toDate = original.toDate;
+  const finalExam = original.finalExam?.code;
+  const academicGroup = original.academicGroup?.code;
+  const academicOrganization = original.academicOrganization?.code;
+  const printInCatalog = original.printInCatalog;
+  const instructorAddConsentRequired = original.instructorAddConsentRequired;
+  const instructorDropConsentRequired = original.instructorDropConsentRequired;
+  const allowMultipleEnrollments = original.allowMultipleEnrollments;
+  const spansMultipleTerms = original.spansMultipleTerms;
+  const multipleTermNumber = original.multipleTermNumber;
+  const anyFeesExist = original.anyFeesExist;
+  const blindGrading = original.blindGrading;
+  const workloadHours = original.workloadHours;
+  const contactHours = original.contactHours;
+  const formerDisplayName = original.formerDisplayName;
+  const createdDate = original.createdDate;
+  const updatedDate = original.updatedDate;
+
+  // Repeatability
+  const repeatability = original.repeatability;
+  const repeatable = repeatability?.repeatable;
+  const maxCredit = repeatability?.maxCredit;
+  const maxCount = repeatability?.maxCount;
+
+  // Preparation
+  const preparation = original.preparation;
+  const recommendedText = preparation?.recommendedText;
+  const requiredText = preparation?.requiredText;
+  const recommendedCourses = preparation?.recommendedCourses?.map(
+    (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
+  );
+  const requiredCourses = preparation?.requiredCourses?.map(
+    (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
   );
 
+  // Grade Replacement
+  const gradeReplacement = original.gradeReplacement;
+  const gradeReplacementText = gradeReplacement?.gradeReplacementText;
+  const gradeReplacementGroup = gradeReplacement?.gradeReplacementGroup;
+  const gradeReplacementCourses =
+    gradeReplacement?.gradeReplacementCourses?.map(
+      (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
+    );
+
+  // Cross Listing
+  // TODO: verify
+  const crossListing = original.crossListing?.courses;
+
+  // Formats Offered
+  const formatsOffered = original.formatsOffered;
+  const formatsOfferedDescription = formatsOffered?.description;
+  const typicallyOffered = formatsOffered?.typicallyOffered;
+  const typicallyOfferedComments = typicallyOffered?.comments;
+  const typicallyOfferedTerms = typicallyOffered?.terms;
+  const formats = formatsOffered?.formats?.map((format) => ({
+    termsAllowed: format.termsAllowed,
+    description: format.description,
+    components: format.components?.map((component) => ({
+      instructionMethod: component.instructionMethod?.code,
+      primary: component.primary,
+      minContactHours: component.minContactHours,
+      maxContactHours: component.maxContactHours,
+      feesExist: component.feesExist,
+    })),
+  }));
+
+  // Requirements Fulfilled
+  const requirementsFulfilled = original.requirementsFulfilled
+    ?.map((r) => r.code)
+    .filter((code): code is string => code !== undefined);
+
+  // Course Objectives and Student Learning Outcomes
+  const courseObjectives = original.courseObjectives;
+  const studentLearningOutcomes = original.studentLearningOutcomes;
+
+  // Credit Restriction
+  const creditRestriction = original.creditRestriction;
+  const creditRestrictionText = creditRestriction?.restrictionText;
+  const creditRestrictionCourses = creditRestriction?.restrictionCourses?.map(
+    (c) => ({
+      courseId:
+        c.course?.identifiers?.find((i) => i.type === "cs-course-id")?.id || "",
+      maxCreditPercentage: c.maxCreditPercentage,
+    })
+  );
+
+  // Credit
+  const credit = original.credit;
+  const creditType = credit?.type;
+  const creditValueDiscrete = credit?.value?.discrete?.units;
+  const creditValueFixed = credit?.value?.fixed?.units;
+  const creditValueRangeMinUnits = credit?.value?.range?.minUnits;
+  const creditValueRangeMaxUnits = credit?.value?.range?.maxUnits;
+
+  // Construct the newCourse object
   const newCourse: ICourseItem = {
     courseId,
-    subject: getRequiredField(
-      original.subjectArea?.code,
-      "subjectArea.code",
-      ""
-    ),
-    number: getRequiredField(
-      original.catalogNumber?.formatted,
-      "catalogNumber.formatted",
-      ""
-    ),
-    title: getRequiredField(original.title, "title", ""),
-    description: getRequiredField(original.description, "description", ""),
-    academicCareer: getRequiredField(
-      original.academicCareer?.code,
-      "academicCareer.code",
-      ""
-    ),
-    primaryInstructionMethod: getRequiredField(
-      original.primaryInstructionMethod?.code,
-      "primaryInstructionMethod.code",
-      ""
-    ),
-    gradingBasis: getRequiredField(
-      original.gradingBasis?.code,
-      "gradingBasis.code",
-      ""
-    ),
-    status: getRequiredField(original.status?.code, "status.code", ""),
-    fromDate: getRequiredField(original.fromDate, "fromDate", ""),
-    toDate: getRequiredField(original.toDate, "toDate", ""),
-    printInCatalog: getRequiredField(
-      original.printInCatalog,
-      "printInCatalog",
-      false
-    ),
-    finalExam: getRequiredField(original.finalExam?.code, "finalExam.code", ""),
-    academicGroup: getRequiredField(
-      original.academicGroup?.code,
-      "academicGroup.code",
-      ""
-    ),
-    academicOrganization: getRequiredField(
-      original.academicOrganization?.code,
-      "academicOrganization.code",
-      ""
-    ),
-    instructorAddConsentRequired: getRequiredField(
-      original.instructorAddConsentRequired,
-      "instructorAddConsentRequired",
-      false
-    ),
-    instructorDropConsentRequired: getRequiredField(
-      original.instructorDropConsentRequired,
-      "instructorDropConsentRequired",
-      false
-    ),
-    allowMultipleEnrollments: getRequiredField(
-      original.allowMultipleEnrollments,
-      "allowMultipleEnrollments",
-      false
-    ),
-    spansMultipleTerms: getRequiredField(
-      original.spansMultipleTerms,
-      "spansMultipleTerms",
-      false
-    ),
-    multipleTermNumber: getRequiredField(
-      original.multipleTermNumber,
-      "multipleTermNumber",
-      0
-    ),
-    anyFeesExist: getRequiredField(
-      original.anyFeesExist,
-      "anyFeesExist",
-      false
-    ),
+    subject,
+    number,
+    title,
+    description,
+    academicCareer,
+    primaryInstructionMethod,
+    gradingBasis,
+    status,
+    fromDate,
+    toDate,
+    printInCatalog,
+    finalExam,
+    academicGroup,
+    academicOrganization,
+    instructorAddConsentRequired,
+    instructorDropConsentRequired,
+    allowMultipleEnrollments,
+    spansMultipleTerms,
+    multipleTermNumber,
+    anyFeesExist,
     repeatability: {
-      repeatable: getRequiredField(
-        original.repeatability?.repeatable,
-        "repeatability.repeatable",
-        false
-      ),
-      maxCredit: getRequiredField(
-        original.repeatability?.maxCredit,
-        "repeatability.maxCredit",
-        0
-      ),
-      maxCount: getRequiredField(
-        original.repeatability?.maxCount,
-        "repeatability.maxCount",
-        0
-      ),
+      repeatable,
+      maxCredit,
+      maxCount,
     },
     preparation: {
-      recommendedText: getRequiredField(
-        original.preparation?.recommendedText,
-        "preparation.recommendedText",
-        ""
-      ),
-      recommendedCourses:
-        original.preparation?.recommendedCourses?.map(
-          (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
-        ) || [],
-      requiredText: getRequiredField(
-        original.preparation?.requiredText,
-        "preparation.requiredText",
-        ""
-      ),
-      requiredCourses:
-        original.preparation?.requiredCourses?.map(
-          (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
-        ) || [],
+      recommendedText,
+      recommendedCourses,
+      requiredText,
+      requiredCourses,
     },
     gradeReplacement: {
-      text: getRequiredField(
-        original.gradeReplacement?.gradeReplacementText,
-        "gradeReplacement.gradeReplacementText",
-        ""
-      ),
-      group: getRequiredField(
-        original.gradeReplacement?.gradeReplacementGroup,
-        "gradeReplacement.gradeReplacementGroup",
-        ""
-      ),
-      courses:
-        original.gradeReplacement?.gradeReplacementCourses?.map(
-          (c) => c.identifiers?.find((i) => i.type === "cs-course-id")?.id || ""
-        ) || [],
+      text: gradeReplacementText,
+      group: gradeReplacementGroup,
+      courses: gradeReplacementCourses,
     },
-    crossListing: getRequiredField(
-      original.crossListing?.courses,
-      "crossListing.courses",
-      []
-    ),
+    crossListing,
     formatsOffered: {
-      description: getRequiredField(
-        original.formatsOffered?.description,
-        "formatsOffered.description",
-        ""
-      ),
+      description: formatsOfferedDescription,
       typicallyOffered: {
-        comments: getRequiredField(
-          original.formatsOffered?.typicallyOffered?.comments,
-          "formatsOffered.typicallyOffered.comments",
-          ""
-        ),
-        terms: getRequiredField(
-          original.formatsOffered?.typicallyOffered?.terms,
-          "formatsOffered.typicallyOffered.terms",
-          []
-        ),
+        comments: typicallyOfferedComments,
+        terms: typicallyOfferedTerms,
       },
-      formats:
-        original.formatsOffered?.formats?.map((format) => ({
-          termsAllowed: getRequiredField(
-            format.termsAllowed,
-            "formatsOffered.formats.termsAllowed",
-            []
-          ),
-          description: getRequiredField(
-            format.description,
-            "formatsOffered.formats.description",
-            ""
-          ),
-          components:
-            format.components?.map((component) => ({
-              instructionMethod: getRequiredField(
-                component.instructionMethod?.code,
-                "formatsOffered.formats.components.instructionMethod.code",
-                ""
-              ),
-              primary: getRequiredField(
-                component.primary,
-                "formatsOffered.formats.components.primary",
-                false
-              ),
-              minContactHours: getRequiredField(
-                component.minContactHours,
-                "formatsOffered.formats.components.minContactHours",
-                0
-              ),
-              maxContactHours: getRequiredField(
-                component.maxContactHours,
-                "formatsOffered.formats.components.maxContactHours",
-                0
-              ),
-              feesExist: getRequiredField(
-                component.feesExist,
-                "formatsOffered.formats.components.feesExist",
-                false
-              ),
-            })) || [],
-        })) || [],
+      formats,
     },
-    requirementsFulfilled:
-      original.requirementsFulfilled?.map((r) =>
-        getRequiredField(r.code, "requirementsFulfilled.code", "")
-      ) || [],
-    courseObjectives: getRequiredField(
-      original.courseObjectives,
-      "courseObjectives",
-      []
-    ),
-    studentLearningOutcomes: getRequiredField(
-      original.studentLearningOutcomes,
-      "studentLearningOutcomes",
-      []
-    ),
+    requirementsFulfilled,
+    courseObjectives,
+    studentLearningOutcomes,
     creditRestriction: {
-      text: getRequiredField(
-        original.creditRestriction?.restrictionText,
-        "creditRestriction.restrictionText",
-        ""
-      ),
-      courses:
-        original.creditRestriction?.restrictionCourses?.map((c) => ({
-          courseId:
-            c.course?.identifiers?.find((i) => i.type === "cs-course-id")?.id ||
-            "",
-          maxCreditPercentage: getRequiredField(
-            c.maxCreditPercentage,
-            "creditRestriction.restrictionCourses.maxCreditPercentage",
-            0
-          ),
-        })) || [],
+      text: creditRestrictionText,
+      courses: creditRestrictionCourses,
     },
-    blindGrading: getRequiredField(
-      original.blindGrading,
-      "blindGrading",
-      false
-    ),
+    blindGrading,
     credit: {
-      type: getRequiredField(original.credit?.type, "credit.type", ""),
+      type: creditType,
       value: {
-        discrete:
-          original.credit?.value?.discrete?.units?.map((unit) =>
-            getRequiredField(unit, "credit.value.discrete.units", 0)
-          ) || [],
-        fixed: getRequiredField(
-          original.credit?.value?.fixed?.units,
-          "credit.value.fixed.units",
-          0
-        ),
+        discrete: creditValueDiscrete,
+        fixed: creditValueFixed,
         range: {
-          minUnits: getRequiredField(
-            original.credit?.value?.range?.minUnits,
-            "credit.value.range.minUnits",
-            0
-          ),
-          maxUnits: getRequiredField(
-            original.credit?.value?.range?.maxUnits,
-            "credit.value.range.maxUnits",
-            0
-          ),
+          minUnits: creditValueRangeMinUnits,
+          maxUnits: creditValueRangeMaxUnits,
         },
       },
     },
-    workloadHours: getRequiredField(original.workloadHours, "workloadHours", 0),
-    contactHours: getRequiredField(original.contactHours, "contactHours", 0),
-    formerDisplayName: getRequiredField(
-      original.formerDisplayName,
-      "formerDisplayName",
-      ""
-    ),
-    createdDate: getRequiredField(original.createdDate, "createdDate", ""),
-    updatedDate: getRequiredField(original.updatedDate, "updatedDate", ""),
+    workloadHours,
+    contactHours,
+    formerDisplayName,
+    createdDate,
+    updatedDate,
   };
 
   return newCourse;
