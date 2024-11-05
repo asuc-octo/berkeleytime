@@ -16,6 +16,9 @@ import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import PinsProvider from "@/components/PinsProvider";
 
+const t: Number[] = [];
+console.log(t[0]);
+
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
   Grades: lazy(() => import("@/components/Class/Grades")),
@@ -175,9 +178,6 @@ const client = new ApolloClient({
 });
 
 export default function App() {
-  const t: Number[] = [];
-  console.log(t[0]);
-
   return (
     <ApolloProvider client={client}>
       <ThemeProvider>
