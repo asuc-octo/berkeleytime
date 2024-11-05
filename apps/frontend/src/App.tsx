@@ -16,9 +16,9 @@ import Landing from "@/app/Landing";
 import Layout from "@/components/Layout";
 import PinsProvider from "@/components/PinsProvider";
 
-setTimeout(() => {
-  throw new Error("Intentional runtime error");
-}, 1000);
+// setTimeout(() => {
+//   throw new Error("Intentional runtime error");
+// }, 1000);
 
 const Class = {
   Enrollment: lazy(() => import("@/components/Class/Enrollment")),
@@ -179,9 +179,9 @@ const client = new ApolloClient({
 });
 
 export default function App() {
-  setTimeout(() => {
-    throw new Error("Intentional runtime error");
-  }, 1000);
+  // setTimeout(() => {
+  //   throw new Error("Intentional runtime error");
+  // }, 1000);
 
   return (
     <ApolloProvider client={client}>
