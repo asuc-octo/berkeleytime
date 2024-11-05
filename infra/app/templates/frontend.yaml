@@ -25,7 +25,7 @@ spec:
               path: "/"
               port: {{ .Values.frontend.port }}
             initialDelaySeconds: 5
-            periodSeconds: 10
+            periodSeconds: 5
             # timeoutSeconds: 5
             # successThreshold: 1
             # failureThreshold: 3
