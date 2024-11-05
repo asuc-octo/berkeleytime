@@ -297,11 +297,17 @@ const initialize = async () => {
       temporalPosition: { $in: ["Current", "Future"] },
     }).lean();
 
+    // Remove duplicate terms
+    const filteredTerms = currentTerms.filter(
+      ({ id }, index) =>
+        index === currentTerms.findIndex((term) => term.id === id)
+    );
+
     console.log("\n=== UPDATE CLASSES ===");
-    await updateClasses(currentTerms);
+    await updateClasses(filteredTerms);
 
     console.log("\n=== UPDATE SECTIONS ===");
-    await updateSections(currentTerms);
+    await updateSections(filteredTerms);
   } catch (error) {
     console.error(error);
 
