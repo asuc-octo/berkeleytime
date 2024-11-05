@@ -50,12 +50,19 @@ spec:
             - name: SESSION_SECRET
               value: "_"
           livenessProbe:
-            httpGet:
-              path: {{ .Values.backend.path }}
-              port: {{ .Values.backend.port }}
-            httpHeaders:
-              - name: Custom-header
-                value: Awesome
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - >
+                  STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST http://localhost:5001/api/graphql -H "Custom-Header: Awesome" -d '{ "query": "{ __typename }" }');
+                  if [ "$STATUS" -eq 200 ]; then exit 0; else exit 1; fi
+            # httpGet:
+            #   path: {{ .Values.backend.path }}
+            #   port: {{ .Values.backend.port }}
+            # httpHeaders:
+            #   - name: Custom-header
+            #     value: Awesome
             initialDelaySeconds: 3
             periodSeconds: 3
 
