@@ -63,7 +63,7 @@ export const createRating = async (
       existingRating.save();
 
       // decrement count of old category
-      handleCategoryChange(
+      handleCategoryCountChange(
         subject,
         courseNumber,
         semester,
@@ -74,7 +74,7 @@ export const createRating = async (
         false
       );
       // incremdent count of new category
-      handleCategoryChange(
+      handleCategoryCountChange(
         subject,
         courseNumber,
         semester,
@@ -96,7 +96,7 @@ export const createRating = async (
       metricName: metricName,
       value: value,
     });
-    handleCategoryChange(
+    handleCategoryCountChange(
       subject,
       courseNumber,
       semester,
@@ -141,7 +141,7 @@ export const deleteRating = async (
     throw new Error("Rating not found");
   }
 
-  handleCategoryChange(
+  handleCategoryCountChange(
     subject,
     courseNumber,
     semester,
@@ -204,7 +204,113 @@ export const getAggregatedRatings = async (
   year: number,
   classNumber: string
 ) => {
-  const aggregated = await AggregatedMetricsModel.aggregate([
+  const aggregated = await ratingAggregator(
+    subject,
+    courseNumber,
+    classNumber,
+    semester,
+    year
+  );
+  if (!aggregated || !aggregated[0])
+    return {
+      subject,
+      courseNumber,
+      semester,
+      year,
+      classNumber,
+      metrics: [],
+    };
+
+  return formatAggregatedRatings(aggregated[0]);
+};
+
+// Helper functions
+
+const checkRatingExists = async (
+  context: any,
+  subject: string,
+  courseNumber: string,
+  metricName: MetricName
+) => {
+  return await RatingModel.findOne({
+    subject,
+    courseNumber,
+    metricName,
+    createdBy: context.user._id,
+  });
+};
+
+const checkValueConstraint = (metricName: MetricName, value: number) => {
+  if (numberScaleMetrics.includes(metricName)) {
+    if (value < 1 || value > 5 || !Number.isInteger(value)) {
+      throw new Error(
+        `${metricName} rating must be an integer between 1 and 5`
+      );
+    }
+  } else if (booleanScaleMetrics.includes(metricName)) {
+    if (value !== 0 && value !== 1) {
+      throw new Error(`${metricName} rating must be either 0 or 1`);
+    }
+  }
+};
+
+const handleCategoryCountChange = async (
+  subject: string,
+  courseNumber: string,
+  semester: Semester,
+  year: number,
+  classNumber: string,
+  metricName: MetricName,
+  categoryValue: Number,
+  isIncrement: Boolean // false means is decrement
+) => {
+  const delta = isIncrement ? 1 : -1;
+  const metric = await AggregatedMetricsModel.findOne({
+    subject: subject,
+    courseNumber: courseNumber,
+    semester: semester,
+    year: year,
+    classNumber: classNumber,
+    metricName: metricName,
+    categoryValue: categoryValue,
+  });
+  if (metric) {
+    metric.categoryCount += delta;
+    await metric.save();
+  } else if (isIncrement) {
+    let range = [];
+    if (numberScaleMetrics.includes(metricName)) {
+      range = [1, 2, 3, 4, 5];
+    } else {
+      range = [0, 1];
+    }
+    for (const v of range) {
+      (
+        await AggregatedMetricsModel.create({
+          subject: subject,
+          courseNumber: courseNumber,
+          semester: semester,
+          year: year,
+          classNumber: classNumber,
+          metricName: metricName,
+          categoryValue: v,
+          categoryCount: v == categoryValue ? 1 : 0,
+        })
+      ).save();
+    }
+  } else {
+    throw new Error("Aggregated Rating does not exist, cannot decrement");
+  }
+};
+
+const ratingAggregator = async (
+  subject: string,
+  courseNumber: string,
+  classNumber: string,
+  semester: Semester,
+  year: number
+) => {
+  return await AggregatedMetricsModel.aggregate([
     {
       $match: {
         subject,
@@ -270,96 +376,6 @@ export const getAggregatedRatings = async (
       },
     },
   ]);
-  if (!aggregated.length)
-    return {
-      subject,
-      courseNumber,
-      semester,
-      year,
-      classNumber,
-      metrics: [],
-    };
-
-  return formatAggregatedRatings(aggregated[0]);
-};
-
-// Helper functions
-
-const checkRatingExists = async (
-  context: any,
-  subject: string,
-  courseNumber: string,
-  metricName: MetricName
-) => {
-  return await RatingModel.findOne({
-    subject,
-    courseNumber,
-    metricName,
-    createdBy: context.user._id,
-  });
-};
-
-const checkValueConstraint = (metricName: MetricName, value: number) => {
-  if (numberScaleMetrics.includes(metricName)) {
-    if (value < 1 || value > 5 || !Number.isInteger(value)) {
-      throw new Error(
-        `${metricName} rating must be an integer between 1 and 5`
-      );
-    }
-  } else if (booleanScaleMetrics.includes(metricName)) {
-    if (value !== 0 && value !== 1) {
-      throw new Error(`${metricName} rating must be either 0 or 1`);
-    }
-  }
-};
-
-const handleCategoryChange = async (
-  subject: string,
-  courseNumber: string,
-  semester: Semester,
-  year: number,
-  classNumber: string,
-  metricName: MetricName,
-  categoryValue: Number,
-  isIncrement: Boolean // false means is decrement
-) => {
-  const delta = isIncrement ? 1 : -1;
-  const metric = await AggregatedMetricsModel.findOne({
-    subject: subject,
-    courseNumber: courseNumber,
-    semester: semester,
-    year: year,
-    classNumber: classNumber,
-    metricName: metricName,
-    categoryValue: categoryValue,
-  });
-  if (metric) {
-    metric.categoryCount += delta;
-    await metric.save();
-  } else if (isIncrement) {
-    let range = [];
-    if (numberScaleMetrics.includes(metricName)) {
-      range = [1, 2, 3, 4, 5];
-    } else {
-      range = [0, 1];
-    }
-    for (const v of range) {
-      (
-        await AggregatedMetricsModel.create({
-          subject: subject,
-          courseNumber: courseNumber,
-          semester: semester,
-          year: year,
-          classNumber: classNumber,
-          metricName: metricName,
-          categoryValue: v,
-          categoryCount: v == categoryValue ? 1 : 0,
-        })
-      ).save();
-    }
-  } else {
-    throw new Error("Aggregated Rating does not exist, cannot decrement");
-  }
 };
 
 const userRatingsAggregator = async (context: any) => {
