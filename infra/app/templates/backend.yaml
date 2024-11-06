@@ -50,19 +50,9 @@ spec:
             - name: SESSION_SECRET
               value: "_"
           readinessProbe:
-            # exec:
-            #   command:
-            #     - /bin/sh
-            #     - -c
-            #     - >
-            #       STATUS=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://fbdde27.stanfurdtime.com/api/graphql -H "Custom-Header: Awesome" -d '{ "query": "{ __typename }" }');
-            #       if [ "$STATUS" -eq 200 ]; then exit 0; else exit 1; fi
             httpGet:
               path: /healthz
               port: {{ .Values.backend.port }}
-            # httpHeaders:
-            #   - name: Custom-header
-            #     value: Awesome
             initialDelaySeconds: 15
             periodSeconds: 3
 
