@@ -100,7 +100,7 @@ export default function Hero() {
       <div className={styles.container}>
         <div className={styles.text}>
           <h1 className={styles.heading}>
-            Confidently plan and manage your schedule
+            Matthew's pod is inactive and gonna lose the pod cup!!
           </h1>
           <h2 className={styles.description}>
             Berkeley's largest course discovery platform built and run by
