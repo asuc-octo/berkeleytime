@@ -20,6 +20,16 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.frontend.port }}
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - >
+                  CONTENT=$(curl -s https://localhost:{{ .Values.frontend.port }});
+                  if [[ "$CONTENT" != *"<div id="root"></div>"* ]]; then exit 1; else exit 0; fi
+            initialDelaySeconds: 15
+            periodSeconds: 3
 
 ---
 

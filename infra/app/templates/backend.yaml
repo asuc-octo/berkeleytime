@@ -49,6 +49,12 @@ spec:
               value: "_"
             - name: SESSION_SECRET
               value: "_"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.backend.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 3
 
 ---
 
