@@ -23,7 +23,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: {{ .Values.backend.port }}
+              port: {{ .Values.frontend.port }}
             initialDelaySeconds: 15
             periodSeconds: 3
 
