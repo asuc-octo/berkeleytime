@@ -14,8 +14,8 @@ export default gql`
   type Query {
     grade(
       subject: String!
-      courseNumber: String!
-      classNumber: String
+      courseNumber: CourseNumber!
+      classNumber: ClassNumber
       year: Int
       semester: Semester
       givenName: String

@@ -1,5 +1,7 @@
 import mongoose, { Document, InferSchemaType, Schema } from "mongoose";
 
+import { semester } from "./term";
+
 export const customEventSchema = new Schema({
   startTime: {
     type: String,
@@ -49,7 +51,6 @@ export const selectedClassSchema = new Schema({
   },
   sections: {
     type: [Number],
-    trim: true,
     required: false,
   },
 });
@@ -80,9 +81,8 @@ export const scheduleSchema = new Schema(
       required: true,
     },
     semester: {
-      type: String,
+      ...semester,
       required: true,
-      trim: true,
     },
     events: {
       type: [customEventSchema],

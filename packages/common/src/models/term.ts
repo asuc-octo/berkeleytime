@@ -5,7 +5,12 @@ import { descriptor } from "../lib/sis";
 
 const temporalPosition = {
   type: String,
-  enum: ["Previous", "Current", "Next", "Past", "Future"],
+  enum: ["Previous", "Current", "Next"],
+};
+
+export const semester = {
+  type: String,
+  enum: ["Spring", "Summer", "Fall", "Winter"],
 };
 
 export const sessionSchema = new Schema(

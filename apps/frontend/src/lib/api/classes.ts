@@ -215,8 +215,8 @@ export const READ_CLASS = gql`
     $year: Int!
     $semester: Semester!
     $subject: String!
-    $courseNumber: String!
-    $number: String!
+    $courseNumber: CourseNumber!
+    $number: ClassNumber!
   ) {
     class(
       year: $year

@@ -1,4 +1,4 @@
-import { InferSchemaType, Schema, model } from "mongoose";
+import mongoose, { InferSchemaType, Schema } from "mongoose";
 
 const gradeDistributionSchema = new Schema(
   {
@@ -47,7 +47,7 @@ const gradeDistributionSchema = new Schema(
   }
 );
 
-export const GradeDistributionModel = model(
+export const GradeDistributionModel = mongoose.model(
   "gradeDistribution",
   gradeDistributionSchema,
   "grade-distributions"

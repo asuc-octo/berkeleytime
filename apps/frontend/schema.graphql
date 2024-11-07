@@ -22,8 +22,8 @@ type Query {
   user: User
   grade(
     subject: String!
-    courseNumber: String!
-    classNumber: String
+    courseNumber: CourseNumber!
+    classNumber: ClassNumber
     year: Int
     semester: Semester
     givenName: String
@@ -43,43 +43,43 @@ type Query {
   Query for a term.
   """
   term(year: Int!, semester: Semester!): Term
-  course(subject: String!, number: String!): Course
+  course(subject: String!, number: CourseNumber!): Course
   courses: [Course!]!
   class(
     year: Int!
     semester: Semester!
     subject: String!
-    courseNumber: String!
-    number: String!
+    courseNumber: CourseNumber!
+    number: ClassNumber!
   ): Class
   section(
     year: Int!
     semester: Semester!
     subject: String!
-    courseNumber: String!
-    classNumber: String!
-    number: String!
+    courseNumber: CourseNumber!
+    classNumber: ClassNumber!
+    number: SectionNumber!
   ): Section
   enrollment(
     year: Int!
     semester: Semester!
     subject: String!
-    courseNumber: String!
-    number: String!
+    courseNumber: CourseNumber!
+    number: SectionNumber!
   ): Section!
 }
 
 input BookmarkedCourseInput {
   subject: String!
-  number: String!
+  number: CourseNumber!
 }
 
 input BookmarkedClassInput {
   year: Int!
   semester: Semester!
   subject: String!
-  courseNumber: String!
-  number: String!
+  courseNumber: CourseNumber!
+  number: ClassNumber!
 }
 
 input UpdateUserInput {
@@ -141,7 +141,7 @@ enum Semester {
 
 type SelectedClass {
   class: Class!
-  selectedSections: [Int!]
+  selectedSections: [SectionIdentifier!]
 }
 
 type Event {
@@ -158,7 +158,7 @@ type Schedule {
   name: String!
   createdBy: String!
   year: Int!
-  semester: String!
+  semester: Semester!
   term: Term!
   public: Boolean!
   classes: [SelectedClass!]!
@@ -176,9 +176,9 @@ input EventInput {
 
 input SelectedClassInput {
   subject: String!
-  courseNumber: String!
-  number: String!
-  sections: [Int!]!
+  courseNumber: CourseNumber!
+  number: ClassNumber!
+  sections: [SectionIdentifier!]!
 }
 
 input UpdateScheduleInput {
@@ -191,7 +191,7 @@ input UpdateScheduleInput {
 input CreateScheduleInput {
   name: String!
   year: Int!
-  semester: String!
+  semester: Semester!
   events: [EventInput!]
   classes: [SelectedClassInput!]
   public: Boolean
@@ -225,12 +225,17 @@ type Term {
   sessions: [Session!]!
 }
 
+"""
+Unique course number, such as 61A or C54
+"""
+scalar CourseNumber
+
 type Course {
   """
   Identifiers
   """
   subject: String!
-  number: String!
+  number: CourseNumber!
 
   """
   Relationships
@@ -419,13 +424,18 @@ enum InstructionMethod {
   SEM
 }
 
+"""
+Unique class number (primary section number), such as 001 or 003
+"""
+scalar ClassNumber
+
 type Class {
   """
   Identifiers
   """
   subject: String!
-  courseNumber: String!
-  number: String!
+  courseNumber: CourseNumber!
+  number: ClassNumber!
   year: Int!
   semester: Semester!
   session: String!
@@ -514,17 +524,27 @@ enum ClassGradingBasis {
   IOP
 }
 
+"""
+Unique section number, such as 101, 105L, or 999
+"""
+scalar SectionNumber
+
+"""
+Unique 5-digit section identifier (CCN), such as 28082 or 67231
+"""
+scalar SectionIdentifier
+
 type Section {
   """
   Identifiers
   """
   subject: String!
-  courseNumber: String!
-  classNumber: String!
-  number: String!
+  courseNumber: CourseNumber!
+  classNumber: ClassNumber!
+  number: SectionNumber!
   year: Int!
   semester: Semester!
-  ccn: Int!
+  ccn: SectionIdentifier!
 
   """
   Relationships
