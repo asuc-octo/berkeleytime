@@ -43,12 +43,22 @@ spec:
               value: "_"
             - name: SIS_COURSE_APP_KEY
               value: "_"
+            - name: SIS_TERM_APP_ID
+              value: "_"
+            - name: SIS_TERM_APP_KEY
+              value: "_"
             - name: GOOGLE_CLIENT_ID
               value: "_"
             - name: GOOGLE_CLIENT_SECRET
               value: "_"
             - name: SESSION_SECRET
               value: "_"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.backend.port }}
+            initialDelaySeconds: 15
+            periodSeconds: 3
 
 ---
 

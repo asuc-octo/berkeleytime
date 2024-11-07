@@ -7,6 +7,9 @@ import loaders from "./loaders";
 export default async (config: Config) => {
   const app = express();
   app.set("trust proxy", 1);
+  app.get("/healthz", (_, res) => {
+    res.status(200).send("OK");
+  });
 
   await loaders(app);
 
