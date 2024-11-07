@@ -1,4 +1,4 @@
-import { Document, Schema, model } from "mongoose";
+import { Document, Model, Schema, model } from "mongoose";
 
 export interface ICourseItem {
   // identifiers[type=cs-course-id]
@@ -208,4 +208,7 @@ const courseSchema = new Schema<ICourseItem>({
   updatedDate: { type: String },
 });
 
-export const NewCourseModel = model<ICourseItem>("NewCourse", courseSchema);
+export const NewCourseModel: Model<ICourseItem> = model<ICourseItem>(
+  "NewCourse",
+  courseSchema
+);

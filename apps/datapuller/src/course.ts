@@ -1,4 +1,4 @@
-import { CourseModel, ICourseItem } from "@repo/common";
+import { ICourseItem, NewCourseModel } from "@repo/common";
 import { CoursesAPI } from "@repo/sis-api/courses";
 
 import { Config } from "./config";
@@ -25,7 +25,7 @@ async function updateCourses(config: Config) {
 
   log.info("Example Course:", courses[0]);
 
-  await CourseModel.deleteMany({});
+  await NewCourseModel.deleteMany({});
 
   // Insert courses in batches of 5000
   const insertBatchSize = 5000;
@@ -35,7 +35,7 @@ async function updateCourses(config: Config) {
 
     console.log(`Inserting batch ${i / insertBatchSize + 1}...`);
 
-    await CourseModel.insertMany(batch, { ordered: false });
+    await NewCourseModel.insertMany(batch, { ordered: false });
   }
 
   console.log(`Completed updating database with new course data.`);

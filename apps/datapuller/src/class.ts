@@ -1,4 +1,4 @@
-import { ClassModel, IClassItem } from "@repo/common";
+import { IClassItem, NewClassModel } from "@repo/common";
 import { ClassesAPI } from "@repo/sis-api/classes";
 
 import { Config } from "./config";
@@ -33,7 +33,7 @@ async function updateClasses(config: Config) {
 
   log.info("Example Class:", classes[0]);
 
-  await ClassModel.deleteMany({
+  await NewClassModel.deleteMany({
     "session.term.id": { $in: activeTerms },
   });
 
@@ -45,7 +45,7 @@ async function updateClasses(config: Config) {
 
     console.log(`Inserting batch ${i / insertBatchSize + 1}...`);
 
-    await ClassModel.insertMany(batch, { ordered: false });
+    await NewClassModel.insertMany(batch, { ordered: false });
   }
 
   console.log(`Completed updating database with new class data.`);
