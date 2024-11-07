@@ -29,7 +29,7 @@ type Query {
     givenName: String
     familyName: String
   ): GradeDistribution!
-  catalog(year: Int!, semester: Semester!): [Course!]!
+  catalog(year: Int!, semester: Semester!): [Class!]!
   ping: String! @deprecated(reason: "test")
   schedules: [Schedule]
   schedule(id: ID!): Schedule
